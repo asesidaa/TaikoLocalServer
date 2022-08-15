@@ -18,9 +18,7 @@ builder.Services.AddControllers().AddProtoBufNet();
 builder.Services.AddHttpLogging(options =>
 {
     options.LoggingFields = HttpLoggingFields.RequestPropertiesAndHeaders |
-                            HttpLoggingFields.ResponsePropertiesAndHeaders |
-                            HttpLoggingFields.RequestBody;
-    options.RequestHeaders.Add("Pragma");
+                            HttpLoggingFields.ResponsePropertiesAndHeaders;
 });
 
 var app = builder.Build();

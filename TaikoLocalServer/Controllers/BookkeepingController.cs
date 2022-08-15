@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Swan.Formatters;
-using taiko.game;
-
-namespace TaikoLocalServer.Controllers;
+﻿namespace TaikoLocalServer.Controllers;
 
 [ApiController]
 [Route("/v12r03/chassis/bookkeeping.php")]

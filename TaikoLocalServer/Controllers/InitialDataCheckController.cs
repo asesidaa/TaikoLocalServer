@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Swan.Formatters;
-using taiko.game;
-using taiko.vsinterface;
+﻿using taiko.vsinterface;
 
 namespace TaikoLocalServer.Controllers;
 
@@ -22,10 +19,12 @@ public class InitialDataCheckController:ControllerBase
     public IActionResult InitialDataCheck([FromBody] InitialdatacheckRequest request)
     {
         logger.LogInformation("Heartbeat request: {Request}", request.Stringify());
-        var response = new InitialdatacheckResponse()
+        var response = new InitialdatacheckResponse
         {
             Result = 1,
-            IsDanplay = true
+            IsDanplay = true,
+            IsAibattle = true,
+            IsClose = false
         };
 
         return Ok(response);
