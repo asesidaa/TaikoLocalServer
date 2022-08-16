@@ -14,7 +14,7 @@ public class BookkeepingController : ControllerBase
     public IActionResult StartupAuth([FromBody] BookKeepingRequest request)
     {
         logger.LogInformation("Bookkeeping request: {Request}", request.Stringify());
-        var response = new BookKeepingResponse()
+        var response = new BookKeepingResponse
         {
             Result = 1
         };

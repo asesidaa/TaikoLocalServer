@@ -15,7 +15,7 @@ public class VerifyQrCodeController : ControllerBase
     [Produces("application/protobuf")]
     public IActionResult VerifyQrCode([FromBody] VerifyQrcodeRequest request)
     {
-        logger.LogInformation("VerifyQrCodeController request : {Request}", request.Stringify());
+        logger.LogInformation("VerifyQrCode request : {Request}", request.Stringify());
 
         var response = new VerifyQrcodeResponse
         {

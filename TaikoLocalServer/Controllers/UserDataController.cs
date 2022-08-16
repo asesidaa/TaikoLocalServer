@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using TaikoLocalServer.Utils;
 
 namespace TaikoLocalServer.Controllers;
 
@@ -15,11 +16,28 @@ public class UserDataController : ControllerBase
     [Produces("application/protobuf")]
     public IActionResult GetUserData([FromBody] UserDataRequest request)
     {
-        logger.LogInformation("UserDataController request : {Request}", request.Stringify());
+        logger.LogInformation("UserData request : {Request}", request.Stringify());
 
-        var response = new UserDataResponse()
+        var response = new UserDataResponse
         {
-            Result = 1
+            Result = 1,
+            ToneFlg = GZipBytesUtil.GetEmptyJsonGZipBytes(),
+            TitleFlg = GZipBytesUtil.GetEmptyJsonGZipBytes(),
+            ReleaseSongFlg = GZipBytesUtil.GetEmptyJsonGZipBytes(),
+            UraReleaseSongFlg = GZipBytesUtil.GetEmptyJsonGZipBytes(),
+            DefaultOptionSetting = GZipBytesUtil.GetEmptyJsonGZipBytes(),
+            DispScoreType = 0,
+            DispLevelChassis = 0,
+            DispLevelSelf = 0,
+            IsDispTojiruOn = true,
+            NotesPosition = 0,
+            IsVoiceOn = true,
+            IsChallengecompe = false,
+            IsSkipOn = true,
+            DifficultyPlayedCourse = 0,
+            DifficultyPlayedStar = 0,
+            TotalCreditCnt = 1,
+            SongRecentCnt = 0
         };
 
         return Ok(response);

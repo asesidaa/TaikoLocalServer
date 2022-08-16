@@ -15,7 +15,7 @@ public class RewardItemController : ControllerBase
     [Produces("application/protobuf")]
     public IActionResult RewardItem([FromBody] RewardItemRequest request)
     {
-        logger.LogInformation("RewardItemController request : {Request}", request.Stringify());
+        logger.LogInformation("RewardItem request : {Request}", request.Stringify());
 
         var response = new RewardItemResponse
         {

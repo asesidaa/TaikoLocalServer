@@ -15,7 +15,7 @@ public class GetShopFolderController : ControllerBase
     [Produces("application/protobuf")]
     public IActionResult GetShopFolder([FromBody] GetShopFolderRequest request)
     {
-        logger.LogInformation("GetShopFolderController request : {Request}", request.Stringify());
+        logger.LogInformation("GetShopFolder request : {Request}", request.Stringify());
 
         var response = new GetShopFolderResponse
         {

@@ -16,7 +16,7 @@ public class StartupAuthController : ControllerBase
     [Produces("application/protobuf")]
     public IActionResult StartupAuth([FromBody] StartupAuthRequest request)
     {
-        logger.LogInformation("Heartbeat request: {Request}", request.Stringify());
+        logger.LogInformation("StartupAuth request: {Request}", request.Stringify());
         var response = new StartupAuthResponse
         {
             Result = 1

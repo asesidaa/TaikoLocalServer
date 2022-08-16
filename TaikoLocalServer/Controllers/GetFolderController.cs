@@ -15,7 +15,7 @@ public class GetFolderController : ControllerBase
     [Produces("application/protobuf")]
     public IActionResult GetFolder([FromBody] GetfolderRequest request)
     {
-        logger.LogInformation("GetFolderController request : {Request}", request.Stringify());
+        logger.LogInformation("GetFolder request : {Request}", request.Stringify());
 
         var response = new GetfolderResponse
         {

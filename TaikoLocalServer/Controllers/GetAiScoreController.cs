@@ -15,7 +15,7 @@ public class GetAiScoreController : ControllerBase
     [Produces("application/protobuf")]
     public IActionResult GetAiScore([FromBody] GetAiScoreRequest request)
     {
-        logger.LogInformation("request : {Request}", request.Stringify());
+        logger.LogInformation("GetAiScore request : {Request}", request.Stringify());
 
         var response = new GetAiScoreResponse
         {

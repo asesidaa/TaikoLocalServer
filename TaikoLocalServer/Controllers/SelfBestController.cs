@@ -15,9 +15,9 @@ public class SelfBestController : ControllerBase
     [Produces("application/protobuf")]
     public IActionResult SelfBest([FromBody] SelfBestRequest request)
     {
-        logger.LogInformation("SelfBestController request : {Request}", request.Stringify());
+        logger.LogInformation("SelfBest request : {Request}", request.Stringify());
 
-        var response = new SelfBestResponse()
+        var response = new SelfBestResponse
         {
             Result = 1
         };

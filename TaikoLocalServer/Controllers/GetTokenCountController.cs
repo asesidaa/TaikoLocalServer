@@ -15,7 +15,7 @@ public class GetTokenCountController : ControllerBase
     [Produces("application/protobuf")]
     public IActionResult GetTokenCount([FromBody] GetTokenCountRequest request)
     {
-        logger.LogInformation("GetTokenCountController request : {Request}", request.Stringify());
+        logger.LogInformation("GetTokenCount request : {Request}", request.Stringify());
 
         var response = new GetTokenCountResponse
         {

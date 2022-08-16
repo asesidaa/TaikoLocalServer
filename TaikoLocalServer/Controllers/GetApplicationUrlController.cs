@@ -17,7 +17,7 @@ public class GetApplicationUrlController : ControllerBase
     [Produces("application/protobuf")]
     public IActionResult GetApplicationUrl([FromBody] GetApplicationUrlRequest request)
     {
-        logger.LogInformation("request : {Request}", request.Stringify());
+        logger.LogInformation("GetApplicationUrl request : {Request}", request.Stringify());
 
         var response = new GetApplicationUrlResponse
         {

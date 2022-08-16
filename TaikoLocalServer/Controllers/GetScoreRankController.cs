@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using TaikoLocalServer.Utils;
 
 namespace TaikoLocalServer.Controllers;
 
@@ -15,10 +16,13 @@ public class GetScoreRankController : ControllerBase
     [Produces("application/protobuf")]
     public IActionResult GetScoreRank([FromBody] GetScoreRankRequest request)
     {
-        logger.LogInformation("GetScoreRankController request : {Request}", request.Stringify());
+        logger.LogInformation("GetScoreRank request : {Request}", request.Stringify());
         var response = new GetScoreRankResponse
         {
-            Result = 1
+            Result = 1,
+            IkiScoreRankFlg = GZipBytesUtil.GetEmptyJsonGZipBytes(),
+            KiwamiScoreRankFlg = GZipBytesUtil.GetEmptyJsonGZipBytes(),
+            MiyabiScoreRankFlg = GZipBytesUtil.GetEmptyJsonGZipBytes()
         };
         
         return Ok(response);

@@ -18,7 +18,7 @@ public class InitialDataCheckController:ControllerBase
     [Produces("application/protobuf")]
     public IActionResult InitialDataCheck([FromBody] InitialdatacheckRequest request)
     {
-        logger.LogInformation("Heartbeat request: {Request}", request.Stringify());
+        logger.LogInformation("InitialDataCheck request: {Request}", request.Stringify());
         var response = new InitialdatacheckResponse
         {
             Result = 1,
@@ -26,6 +26,17 @@ public class InitialDataCheckController:ControllerBase
             IsAibattle = true,
             IsClose = false
         };
+        /*response.AryMovieInfoes.Add(new InitialdatacheckResponse.MovieData
+        {
+            MovieId = 2,
+            EnableDays = 9999
+        });*/
+        
+        response.AryTelopDatas.Add(new InitialdatacheckResponse.InformationData
+        {
+            InfoId = 0,
+            VerupNo = 1
+        });
 
         return Ok(response);
     }

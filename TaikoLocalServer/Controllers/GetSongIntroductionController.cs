@@ -15,7 +15,7 @@ public class GetSongIntroductionController : ControllerBase
     [Produces("application/protobuf")]
     public IActionResult GetSongIntroduction([FromBody] GetSongIntroductionRequest request)
     {
-        logger.LogInformation("GetSongIntroductionController request : {Request}", request.Stringify());
+        logger.LogInformation("GetSongIntroduction request : {Request}", request.Stringify());
 
         var response = new GetSongIntroductionResponse
         {

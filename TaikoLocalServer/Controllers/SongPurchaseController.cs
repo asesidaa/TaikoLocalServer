@@ -15,9 +15,9 @@ public class SongPurchaseController : ControllerBase
     [Produces("application/protobuf")]
     public IActionResult SongPurchase([FromBody] SongPurchaseRequest request)
     {
-        logger.LogInformation("SongPurchaseController request : {Request}", request.Stringify());
+        logger.LogInformation("SongPurchase request : {Request}", request.Stringify());
 
-        var response = new SongPurchaseResponse()
+        var response = new SongPurchaseResponse
         {
             Result = 1
         };

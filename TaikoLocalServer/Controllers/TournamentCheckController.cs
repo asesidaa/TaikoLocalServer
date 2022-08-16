@@ -15,9 +15,9 @@ public class TournamentCheckController : ControllerBase
     [Produces("application/protobuf")]
     public IActionResult TournamentCheck([FromBody] TournamentcheckRequest request)
     {
-        logger.LogInformation("TournamentCheckController request : {Request}", request.Stringify());
+        logger.LogInformation("TournamentCheck request : {Request}", request.Stringify());
 
-        var response = new TournamentcheckResponse()
+        var response = new TournamentcheckResponse
         {
             Result = 1,
         };

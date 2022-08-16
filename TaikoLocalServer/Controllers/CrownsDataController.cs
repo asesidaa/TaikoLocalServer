@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using TaikoLocalServer.Utils;
 
 namespace TaikoLocalServer.Controllers;
 
@@ -19,7 +20,9 @@ public class CrownsDataController : ControllerBase
 
         var response = new CrownsDataResponse
         {
-            Result = 1
+            Result = 1,
+            CrownFlg = GZipBytesUtil.GetEmptyJsonGZipBytes(),
+            DondafulCrownFlg = GZipBytesUtil.GetEmptyJsonGZipBytes()
         };
 
         return Ok(response);

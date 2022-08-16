@@ -16,13 +16,13 @@ public class PlayResultController : ControllerBase
     [Produces("application/protobuf")]
     public IActionResult UploadPlayResult([FromBody] PlayResultRequest request)
     {
-        logger.LogInformation("PlayResultController request : {Request}", request.Stringify());
+        logger.LogInformation("PlayResult request : {Request}", request.Stringify());
 
         var playResultData = Serializer.Deserialize<PlayResultDataRequest>(new ReadOnlyMemory<byte>(request.PlayresultData));
         
         logger.LogInformation("Play result data {Data}", playResultData.Stringify());
 
-        var response = new PlayResultResponse()
+        var response = new PlayResultResponse
         {
             Result = 1
         };

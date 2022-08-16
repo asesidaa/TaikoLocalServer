@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Swan.Extensions;
 
 namespace TaikoLocalServer.Controllers;
 
@@ -15,11 +16,18 @@ public class GetTelopController : ControllerBase
     [Produces("application/protobuf")]
     public IActionResult GetTelop([FromBody] GettelopRequest request)
     {
-        logger.LogInformation("GetTelopController request : {Request}", request.Stringify());
+        logger.LogInformation("GetTelop request : {Request}", request.Stringify());
 
+        var startDateTime = DateTime.Now - TimeSpan.FromDays(999.0);
+        var endDateTime = DateTime.Now + TimeSpan.FromDays(999.0);
+        
         var response = new GettelopResponse
         {
-            Result = 1
+            Result = 1,
+            StartDatetime = startDateTime.ToUnixTimeMilliseconds().ToString(),
+            EndDatetime = endDateTime.ToUnixTimeMilliseconds().ToString(),
+            Telop = "Hello world",
+            VerupNo = 1
         };
 
         return Ok(response);
