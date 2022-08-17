@@ -18,27 +18,20 @@ public class UserDataController : ControllerBase
     {
         logger.LogInformation("UserData request : {Request}", request.Stringify());
 
+        var enabledArray = new byte[1000];
+        Array.Fill(enabledArray, (byte)1);
         var response = new UserDataResponse
         {
             Result = 1,
-            ToneFlg = GZipBytesUtil.GetEmptyJsonGZipBytes(),
-            TitleFlg = GZipBytesUtil.GetEmptyJsonGZipBytes(),
-            ReleaseSongFlg = GZipBytesUtil.GetEmptyJsonGZipBytes(),
-            UraReleaseSongFlg = GZipBytesUtil.GetEmptyJsonGZipBytes(),
-            DefaultOptionSetting = GZipBytesUtil.GetEmptyJsonGZipBytes(),
-            DispScoreType = 0,
-            DispLevelChassis = 0,
-            DispLevelSelf = 0,
-            IsDispTojiruOn = true,
-            NotesPosition = 0,
-            IsVoiceOn = true,
-            IsChallengecompe = false,
-            IsSkipOn = true,
-            DifficultyPlayedCourse = 0,
-            DifficultyPlayedStar = 0,
-            TotalCreditCnt = 1,
+            ToneFlg = GZipBytesUtil.GetGZipBytes(new byte[1000]),
+            TitleFlg = GZipBytesUtil.GetGZipBytes(new byte[1000]),
+            ReleaseSongFlg = GZipBytesUtil.GetGZipBytes(enabledArray),
+            UraReleaseSongFlg = GZipBytesUtil.GetGZipBytes(enabledArray),
+            DefaultOptionSetting = GZipBytesUtil.GetGZipBytes(new byte[1000]),
             SongRecentCnt = 0
         };
+        
+        
 
         return Ok(response);
     }

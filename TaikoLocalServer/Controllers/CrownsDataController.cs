@@ -21,8 +21,8 @@ public class CrownsDataController : ControllerBase
         var response = new CrownsDataResponse
         {
             Result = 1,
-            CrownFlg = GZipBytesUtil.GetEmptyJsonGZipBytes(),
-            DondafulCrownFlg = GZipBytesUtil.GetEmptyJsonGZipBytes()
+            CrownFlg = GZipBytesUtil.GetGZipBytes(new byte[1000]),
+            DondafulCrownFlg = GZipBytesUtil.GetGZipBytes(new byte[1000])
         };
 
         return Ok(response);

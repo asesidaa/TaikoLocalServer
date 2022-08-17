@@ -20,9 +20,9 @@ public class GetScoreRankController : ControllerBase
         var response = new GetScoreRankResponse
         {
             Result = 1,
-            IkiScoreRankFlg = GZipBytesUtil.GetEmptyJsonGZipBytes(),
-            KiwamiScoreRankFlg = GZipBytesUtil.GetEmptyJsonGZipBytes(),
-            MiyabiScoreRankFlg = GZipBytesUtil.GetEmptyJsonGZipBytes()
+            IkiScoreRankFlg = GZipBytesUtil.GetGZipBytes(new byte[1000]),
+            KiwamiScoreRankFlg = GZipBytesUtil.GetGZipBytes(new byte[1000]),
+            MiyabiScoreRankFlg = GZipBytesUtil.GetGZipBytes(new byte[1000])
         };
         
         return Ok(response);

@@ -2,6 +2,7 @@ using System.Security.Authentication;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.HttpOverrides;
 using TaikoLocalServer.Middlewares;
+
 var builder = WebApplication.CreateBuilder(args);
 // Manually enable tls 1.0
 builder.WebHost.UseKestrel(kestrelOptions =>

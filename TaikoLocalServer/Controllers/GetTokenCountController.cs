@@ -21,6 +21,12 @@ public class GetTokenCountController : ControllerBase
         {
             Result = 1
         };
+        
+        response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
+        {
+            TokenCount = 0,
+            TokenId = 1000
+        });
 
         return Ok(response);
     }
