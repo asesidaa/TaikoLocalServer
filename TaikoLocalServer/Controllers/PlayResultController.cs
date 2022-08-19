@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using ProtoBuf;
+using TaikoLocalServer.Utils;
 
 namespace TaikoLocalServer.Controllers;
 
@@ -17,8 +18,9 @@ public class PlayResultController : ControllerBase
     public IActionResult UploadPlayResult([FromBody] PlayResultRequest request)
     {
         logger.LogInformation("PlayResult request : {Request}", request.Stringify());
+        var decompressed = GZipBytesUtil.DecompressGZipBytes(request.PlayresultData);
 
-        var playResultData = Serializer.Deserialize<PlayResultDataRequest>(new ReadOnlyMemory<byte>(request.PlayresultData));
+        var playResultData = Serializer.Deserialize<PlayResultDataRequest>(new ReadOnlySpan<byte>(decompressed));
         
         logger.LogInformation("Play result data {Data}", playResultData.Stringify());
 

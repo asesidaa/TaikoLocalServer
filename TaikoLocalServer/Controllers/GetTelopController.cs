@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Swan.Extensions;
+using TaikoLocalServer.Common;
 
 namespace TaikoLocalServer.Controllers;
 
@@ -24,8 +25,8 @@ public class GetTelopController : ControllerBase
         var response = new GettelopResponse
         {
             Result = 1,
-            StartDatetime = startDateTime.ToUnixTimeMilliseconds().ToString(),
-            EndDatetime = endDateTime.ToUnixTimeMilliseconds().ToString(),
+            StartDatetime = startDateTime.ToString(Constants.DATE_TIME_FORMAT),
+            EndDatetime = endDateTime.ToString(Constants.DATE_TIME_FORMAT),
             Telop = "Hello world",
             VerupNo = 1
         };

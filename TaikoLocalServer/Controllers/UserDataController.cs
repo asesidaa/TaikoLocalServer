@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using TaikoLocalServer.Utils;
+﻿using TaikoLocalServer.Utils;
 
 namespace TaikoLocalServer.Controllers;
 
@@ -18,17 +17,22 @@ public class UserDataController : ControllerBase
     {
         logger.LogInformation("UserData request : {Request}", request.Stringify());
 
-        var enabledArray = new byte[1000];
-        Array.Fill(enabledArray, (byte)1);
+        var musicAttributeManager = MusicAttributeManager.Instance;
+        
+        var releaseSongArray = musicAttributeManager.Musics.ToArray();
+        var uraSongArray = musicAttributeManager.MusicsWithUra.ToArray();
+        
         var response = new UserDataResponse
         {
             Result = 1,
             ToneFlg = GZipBytesUtil.GetGZipBytes(new byte[1000]),
             TitleFlg = GZipBytesUtil.GetGZipBytes(new byte[1000]),
-            ReleaseSongFlg = GZipBytesUtil.GetGZipBytes(enabledArray),
-            UraReleaseSongFlg = GZipBytesUtil.GetGZipBytes(enabledArray),
-            DefaultOptionSetting = GZipBytesUtil.GetGZipBytes(new byte[1000]),
-            SongRecentCnt = 0
+            ReleaseSongFlg = GZipBytesUtil.GetGZipBytes(releaseSongArray),
+            UraReleaseSongFlg = GZipBytesUtil.GetGZipBytes(uraSongArray),
+            DefaultOptionSetting = new byte[] {0b10001001, 0b00000000},
+            SongRecentCnt = 0,
+            IsVoiceOn = true,
+            IsSkipOn = true,
         };
         
         

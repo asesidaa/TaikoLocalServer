@@ -21,6 +21,12 @@ public class GetShopFolderController : ControllerBase
         {
             Result = 1
         };
+        
+        response.AryShopFolderDatas.Add(new GetShopFolderResponse.ShopFolderData
+        {
+            Price = 1,
+            SongNo = 2
+        });
 
         return Ok(response);
     }

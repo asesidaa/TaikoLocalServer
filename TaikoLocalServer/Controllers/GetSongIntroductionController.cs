@@ -21,14 +21,17 @@ public class GetSongIntroductionController : ControllerBase
         {
             Result = 1
         };
-        
-        response.ArySongIntroductionDatas.Add(new GetSongIntroductionResponse.SongIntroductionData
+
+        foreach (var setId in request.SetIds)
         {
-            MainSongNo = 1,
-            SubSongNoes = new uint[] {2,3},
-            SetId = request.SetIds[0],
-            VerupNo = 1
-        });
+            response.ArySongIntroductionDatas.Add(new GetSongIntroductionResponse.SongIntroductionData
+            {
+                MainSongNo = 2,
+                SubSongNoes = new uint[] {177,193,3,4},
+                SetId = setId,
+                VerupNo = 1
+            });
+        }
 
         return Ok(response);
     }

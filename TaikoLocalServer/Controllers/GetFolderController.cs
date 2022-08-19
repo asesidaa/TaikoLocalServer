@@ -22,6 +22,17 @@ public class GetFolderController : ControllerBase
             Result = 1
         };
 
+        foreach (var folderId in request.FolderIds)
+        {
+            response.AryEventfolderDatas.Add(new GetfolderResponse.EventfolderData
+            {
+                FolderId = folderId,
+                Priority = 1,
+                SongNoes = new uint[] {1,2},
+                VerupNo = 1
+            });
+        }
+
         return Ok(response);
     }
 }

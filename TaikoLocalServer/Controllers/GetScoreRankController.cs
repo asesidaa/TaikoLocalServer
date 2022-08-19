@@ -17,12 +17,13 @@ public class GetScoreRankController : ControllerBase
     public IActionResult GetScoreRank([FromBody] GetScoreRankRequest request)
     {
         logger.LogInformation("GetScoreRank request : {Request}", request.Stringify());
+        var manager = MusicAttributeManager.Instance;
         var response = new GetScoreRankResponse
         {
             Result = 1,
-            IkiScoreRankFlg = GZipBytesUtil.GetGZipBytes(new byte[1000]),
-            KiwamiScoreRankFlg = GZipBytesUtil.GetGZipBytes(new byte[1000]),
-            MiyabiScoreRankFlg = GZipBytesUtil.GetGZipBytes(new byte[1000])
+            IkiScoreRankFlg = GZipBytesUtil.GetGZipBytes(new byte[manager.Musics.Count * 4]),
+            KiwamiScoreRankFlg = GZipBytesUtil.GetGZipBytes(new byte[manager.Musics.Count * 4]),
+            MiyabiScoreRankFlg = GZipBytesUtil.GetGZipBytes(new byte[manager.Musics.Count * 4])
         };
         
         return Ok(response);

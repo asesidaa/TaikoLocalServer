@@ -5,7 +5,7 @@ namespace TaikoLocalServer.Utils;
 
 public class MusicAttributeManager
 {
-    private Dictionary<uint,MusicAttribute> musicAttributes;
+    public readonly Dictionary<uint,MusicAttribute> MusicAttributes;
 
     static MusicAttributeManager()
     {
@@ -30,13 +30,28 @@ public class MusicAttributeManager
         {
             throw new ApplicationException();
         }
-        musicAttributes = result.ToDictionary(attribute => attribute.MusicId);
+        MusicAttributes = result.ToDictionary(attribute => attribute.MusicId);
+
+        Musics = MusicAttributes
+            .Where(attribute => attribute.Value.HasUra)
+            .Select(pair => pair.Key).ToList();
+        Musics.Sort();
+        
+        MusicsWithUra = MusicAttributes
+            .Where(attribute => attribute.Value.HasUra)
+            .Select(pair => pair.Key)
+            .ToList();
+        MusicsWithUra.Sort();
     }
 
     public static MusicAttributeManager Instance { get; } = new();
 
+    public readonly List<uint> Musics;
+
+    public readonly List<uint> MusicsWithUra;
+
     public bool MusicHasUra(uint musicId)
     {
-        return musicAttributes[musicId].HasUra;
+        return MusicAttributes[musicId].HasUra;
     }
 }
