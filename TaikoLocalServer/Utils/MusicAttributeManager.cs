@@ -32,15 +32,13 @@ public class MusicAttributeManager
         }
         MusicAttributes = result.ToDictionary(attribute => attribute.MusicId);
 
-        Musics = MusicAttributes
-            .Where(attribute => attribute.Value.HasUra)
-            .Select(pair => pair.Key).ToList();
+        Musics = MusicAttributes.Select(pair => pair.Key)
+                                .ToList();
         Musics.Sort();
         
-        MusicsWithUra = MusicAttributes
-            .Where(attribute => attribute.Value.HasUra)
-            .Select(pair => pair.Key)
-            .ToList();
+        MusicsWithUra = MusicAttributes.Where(attribute => attribute.Value.HasUra)
+                                       .Select(pair => pair.Key)
+                                       .ToList();
         MusicsWithUra.Sort();
     }
 

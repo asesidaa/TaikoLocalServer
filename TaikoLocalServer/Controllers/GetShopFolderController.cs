@@ -19,7 +19,9 @@ public class GetShopFolderController : ControllerBase
 
         var response = new GetShopFolderResponse
         {
-            Result = 1
+            Result = 1,
+            TokenId = 1,
+            VerupNo = 2
         };
         
         response.AryShopFolderDatas.Add(new GetShopFolderResponse.ShopFolderData

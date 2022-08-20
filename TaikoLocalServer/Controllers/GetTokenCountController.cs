@@ -25,7 +25,7 @@ public class GetTokenCountController : ControllerBase
         response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
         {
             TokenCount = 10,
-            TokenId = 1000
+            TokenId = 1
         });
 
         return Ok(response);

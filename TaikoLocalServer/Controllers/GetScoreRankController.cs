@@ -21,9 +21,9 @@ public class GetScoreRankController : ControllerBase
         var response = new GetScoreRankResponse
         {
             Result = 1,
-            IkiScoreRankFlg = GZipBytesUtil.GetGZipBytes(new byte[manager.Musics.Count * 4]),
-            KiwamiScoreRankFlg = GZipBytesUtil.GetGZipBytes(new byte[manager.Musics.Count * 4]),
-            MiyabiScoreRankFlg = GZipBytesUtil.GetGZipBytes(new byte[manager.Musics.Count * 4])
+            IkiScoreRankFlg = GZipBytesUtil.GetGZipBytes(new byte[manager.Musics.Count * 9]),
+            KiwamiScoreRankFlg = GZipBytesUtil.GetGZipBytes(new byte[manager.Musics.Count * 9]),
+            MiyabiScoreRankFlg = GZipBytesUtil.GetGZipBytes(new byte[manager.Musics.Count * 9])
         };
         
         return Ok(response);

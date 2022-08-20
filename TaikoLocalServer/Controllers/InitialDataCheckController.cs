@@ -1,4 +1,5 @@
-﻿using Swan.Extensions;
+﻿using System.Collections;
+using Swan.Extensions;
 using TaikoLocalServer.Common;
 using TaikoLocalServer.Utils;
 
@@ -22,16 +23,25 @@ public class InitialDataCheckController : ControllerBase
     {
         logger.LogInformation("InitialDataCheck request: {Request}", request.Stringify());
 
-        var enabledArray = new uint[] {1, 2, 7, 11, 14, 17};
+        var enabledArray = new byte[Constants.MUSIC_FLAG_BYTES];
+
         var response = new InitialdatacheckResponse
         {
             Result = 1,
             IsDanplay = false,
             IsAibattle = false,
             IsClose = false,
-            SongIntroductionEndDatetime = (DateTime.Now + TimeSpan.FromDays(999)).ToString(Constants.DATE_TIME_FORMAT),
-            DefaultSongFlg = GZipBytesUtil.GetGZipBytes(enabledArray),
-            AryTelopDatas =
+            //SongIntroductionEndDatetime = (DateTime.Now + TimeSpan.FromDays(999)).ToString(Constants.DATE_TIME_FORMAT),
+            DefaultSongFlg = enabledArray,
+            AryShopFolderDatas =
+            {
+                new InitialdatacheckResponse.InformationData
+                {
+                    InfoId = 1,
+                    VerupNo = 2
+                }
+            },
+            /*AryTelopDatas =
             {
                 new InitialdatacheckResponse.InformationData
                 {
@@ -47,14 +57,7 @@ public class InitialDataCheckController : ControllerBase
                     VerupNo = 1
                 }
             },
-            AryShopFolderDatas =
-            {
-                new InitialdatacheckResponse.InformationData
-                {
-                    InfoId = 1,
-                    VerupNo = 1
-                }
-            },
+
             AryDanOdaiDatas =
             {
                 new InitialdatacheckResponse.InformationData
@@ -88,12 +91,13 @@ public class InitialDataCheckController : ControllerBase
                     VerupNo = 1
                 }
             }
+        };*/
+            /*response.AryMovieInfoes.Add(new InitialdatacheckResponse.MovieData
+            {
+                MovieId = 2,
+                EnableDays = 9999
+            });*/
         };
-        /*response.AryMovieInfoes.Add(new InitialdatacheckResponse.MovieData
-        {
-            MovieId = 2,
-            EnableDays = 9999
-        });*/
         return Ok(response);
     }
 

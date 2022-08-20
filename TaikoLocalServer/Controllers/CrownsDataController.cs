@@ -19,11 +19,12 @@ public class CrownsDataController : ControllerBase
         logger.LogInformation("CrownsData request : {Request}", request.Stringify());
 
         var manager = MusicAttributeManager.Instance;
+        var crown = new byte[manager.Musics.Count*8];
         var response = new CrownsDataResponse
         {
             Result = 1,
-            CrownFlg = GZipBytesUtil.GetGZipBytes(new byte[manager.Musics.Count*4]),
-            DondafulCrownFlg = GZipBytesUtil.GetGZipBytes(new byte[manager.Musics.Count*4])
+            CrownFlg = GZipBytesUtil.GetGZipBytes(crown),
+            DondafulCrownFlg = GZipBytesUtil.GetGZipBytes(new byte[manager.Musics.Count*8])
         };
 
         return Ok(response);

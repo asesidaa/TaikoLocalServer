@@ -21,6 +21,7 @@ builder.Services.AddHttpLogging(options =>
     options.LoggingFields = HttpLoggingFields.RequestPropertiesAndHeaders |
                             HttpLoggingFields.ResponsePropertiesAndHeaders;
 });
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 app.UseForwardedHeaders(new ForwardedHeadersOptions
