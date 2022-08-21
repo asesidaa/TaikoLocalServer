@@ -22,16 +22,15 @@ public class UserDataController : ControllerBase
 
         var musicAttributeManager = MusicAttributeManager.Instance;
 
-        var releaseSongArray = new byte[Constants.MUSIC_FLAG_BYTES];
+        var releaseSongArray = new byte[Constants.MUSIC_FLAG_ARRAY_SIZE];
         var test = new BitArray(Constants.MUSIC_ID_MAX);
         foreach (var music in musicAttributeManager.Musics)
         {
             test.Set((int)music, true);
         }
-        test.Set(2, false);
         test.CopyTo(releaseSongArray, 0); 
         
-        var uraSongArray = new byte[Constants.MUSIC_FLAG_BYTES];
+        var uraSongArray = new byte[Constants.MUSIC_FLAG_ARRAY_SIZE];
         test.SetAll(false);
         foreach (var music in musicAttributeManager.MusicsWithUra)
         {

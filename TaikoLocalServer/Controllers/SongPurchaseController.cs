@@ -19,7 +19,8 @@ public class SongPurchaseController : ControllerBase
 
         var response = new SongPurchaseResponse
         {
-            Result = 1
+            Result = 1,
+            TokenCount = (int)(10 - request.Price)
         };
 
         return Ok(response);

@@ -23,7 +23,7 @@ public class InitialDataCheckController : ControllerBase
     {
         logger.LogInformation("InitialDataCheck request: {Request}", request.Stringify());
 
-        var enabledArray = new byte[Constants.MUSIC_FLAG_BYTES];
+        var enabledArray = new byte[Constants.MUSIC_FLAG_ARRAY_SIZE];
 
         var response = new InitialdatacheckResponse
         {

@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Collections;
+using System.Collections.Specialized;
+using Microsoft.AspNetCore.Http;
+using TaikoLocalServer.Common;
+using TaikoLocalServer.Common.Enums;
 using TaikoLocalServer.Utils;
 
 namespace TaikoLocalServer.Controllers;
@@ -8,8 +12,13 @@ namespace TaikoLocalServer.Controllers;
 public class CrownsDataController : ControllerBase
 {
     private readonly ILogger<CrownsDataController> logger;
-    public CrownsDataController(ILogger<CrownsDataController> logger) {
+    
+    private readonly IConfiguration configuration;
+    
+    public CrownsDataController(ILogger<CrownsDataController> logger, IConfiguration configuration)
+    {
         this.logger = logger;
+        this.configuration = configuration;
     }
 
     [HttpPost]
@@ -18,13 +27,14 @@ public class CrownsDataController : ControllerBase
     {
         logger.LogInformation("CrownsData request : {Request}", request.Stringify());
 
-        var manager = MusicAttributeManager.Instance;
-        var crown = new byte[manager.Musics.Count*8];
+        var crown = new ushort[Constants.CROWN_FLAG_ARRAY_SIZE];
+        var bytes = new byte[Constants.DONDAFUL_CROWN_FLAG_ARRAY_SIZE];
+        
         var response = new CrownsDataResponse
         {
             Result = 1,
             CrownFlg = GZipBytesUtil.GetGZipBytes(crown),
-            DondafulCrownFlg = GZipBytesUtil.GetGZipBytes(new byte[manager.Musics.Count*8])
+            DondafulCrownFlg = GZipBytesUtil.GetGZipBytes(bytes)
         };
 
         return Ok(response);
