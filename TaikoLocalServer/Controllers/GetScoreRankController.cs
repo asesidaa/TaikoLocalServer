@@ -19,12 +19,9 @@ public class GetScoreRankController : ControllerBase
     public IActionResult GetScoreRank([FromBody] GetScoreRankRequest request)
     {
         logger.LogInformation("GetScoreRank request : {Request}", request.Stringify());
-        var manager = MusicAttributeManager.Instance;
         var kiwamiScores = new byte[Constants.KIWAMI_SCORE_RANK_ARRAY_SIZE];
         var miyabiScores = new ushort[Constants.MIYABI_CORE_RANK_ARRAY_SIZE];
-        miyabiScores[2] = (ushort)MiyabiScoreRank.OniSakura;
         var ikiScores = new ushort[Constants.IKI_CORE_RANK_ARRAY_SIZE];
-        ikiScores[135] = (ushort)IkiScoreRank.OniWhite;
         var response = new GetScoreRankResponse
         {
             Result = 1,
