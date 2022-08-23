@@ -48,7 +48,7 @@ public class UserDataController : ControllerBase
             DefaultOptionSetting = new byte[] {0b10001001, 0b00000000},
             SongRecentCnt = 0,
             IsVoiceOn = true,
-            IsSkipOn = true,
+            IsSkipOn = true
         };
         
         

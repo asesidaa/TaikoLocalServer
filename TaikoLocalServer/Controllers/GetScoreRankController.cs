@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
+using TaikoLocalServer.Common;
+using TaikoLocalServer.Common.Enums;
 using TaikoLocalServer.Utils;
 
 namespace TaikoLocalServer.Controllers;
@@ -18,12 +20,17 @@ public class GetScoreRankController : ControllerBase
     {
         logger.LogInformation("GetScoreRank request : {Request}", request.Stringify());
         var manager = MusicAttributeManager.Instance;
+        var kiwamiScores = new byte[Constants.KIWAMI_SCORE_RANK_ARRAY_SIZE];
+        var miyabiScores = new ushort[Constants.MIYABI_CORE_RANK_ARRAY_SIZE];
+        miyabiScores[2] = (ushort)MiyabiScoreRank.OniSakura;
+        var ikiScores = new ushort[Constants.IKI_CORE_RANK_ARRAY_SIZE];
+        ikiScores[135] = (ushort)IkiScoreRank.OniWhite;
         var response = new GetScoreRankResponse
         {
             Result = 1,
-            IkiScoreRankFlg = GZipBytesUtil.GetGZipBytes(new byte[manager.Musics.Count * 9]),
-            KiwamiScoreRankFlg = GZipBytesUtil.GetGZipBytes(new byte[manager.Musics.Count * 9]),
-            MiyabiScoreRankFlg = GZipBytesUtil.GetGZipBytes(new byte[manager.Musics.Count * 9])
+            IkiScoreRankFlg = GZipBytesUtil.GetGZipBytes(ikiScores),
+            KiwamiScoreRankFlg = GZipBytesUtil.GetGZipBytes(kiwamiScores),
+            MiyabiScoreRankFlg = GZipBytesUtil.GetGZipBytes(miyabiScores)
         };
         
         return Ok(response);

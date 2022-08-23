@@ -11,4 +11,10 @@ public static class Constants
     public const int CROWN_FLAG_ARRAY_SIZE = MUSIC_ID_MAX + 1;
     
     public const int DONDAFUL_CROWN_FLAG_ARRAY_SIZE = MUSIC_ID_MAX + 1;
+
+    public const int KIWAMI_SCORE_RANK_ARRAY_SIZE = MUSIC_ID_MAX + 1;
+
+    public const int IKI_CORE_RANK_ARRAY_SIZE = MUSIC_ID_MAX + 1;
+    
+    public const int MIYABI_CORE_RANK_ARRAY_SIZE = MUSIC_ID_MAX + 1;
 }
