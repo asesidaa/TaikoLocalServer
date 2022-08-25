@@ -23,30 +23,29 @@ public class UserDataController : ControllerBase
         var musicAttributeManager = MusicAttributeManager.Instance;
 
         var releaseSongArray = new byte[Constants.MUSIC_FLAG_ARRAY_SIZE];
-        var test = new BitArray(Constants.MUSIC_ID_MAX);
+        var bitSet = new BitArray(Constants.MUSIC_ID_MAX);
         foreach (var music in musicAttributeManager.Musics)
         {
-            test.Set((int)music, true);
+            bitSet.Set((int)music, true);
         }
-        test.CopyTo(releaseSongArray, 0); 
+        bitSet.CopyTo(releaseSongArray, 0); 
         
         var uraSongArray = new byte[Constants.MUSIC_FLAG_ARRAY_SIZE];
-        test.SetAll(false);
+        bitSet.SetAll(false);
         foreach (var music in musicAttributeManager.MusicsWithUra)
         {
-            test.Set((int)music, true);
+            bitSet.Set((int)music, true);
         }
-        test.CopyTo(uraSongArray, 0);
+        bitSet.CopyTo(uraSongArray, 0);
         
         var response = new UserDataResponse
         {
             Result = 1,
-            ToneFlg = new byte[] {9},
+            ToneFlg = new byte[] {0},
             // TitleFlg = GZipBytesUtil.GetGZipBytes(new byte[100]),
             ReleaseSongFlg = releaseSongArray,
             UraReleaseSongFlg = uraSongArray,
-            DefaultOptionSetting = new byte[] {0b10001001, 0b00000000},
-            SongRecentCnt = 0,
+            DefaultOptionSetting = new byte[] {0},
             IsVoiceOn = true,
             IsSkipOn = true
         };

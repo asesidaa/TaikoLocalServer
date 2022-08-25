@@ -1,6 +1,9 @@
 using System.Security.Authentication;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
+using TaikoLocalServer.Common;
+using TaikoLocalServer.Context;
 using TaikoLocalServer.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,14 +19,28 @@ builder.WebHost.UseKestrel(kestrelOptions =>
 // Add services to the container.
 
 builder.Services.AddControllers().AddProtoBufNet();
+builder.Services.AddDbContext<TaikoDbContext>(option =>
+{
+    var path = Path.Combine(PathHelper.GetDataPath(), Constants.DB_NAME);
+    option.UseSqlite($"Data Source={path}");
+});
 builder.Services.AddHttpLogging(options =>
 {
-    options.LoggingFields = HttpLoggingFields.RequestPropertiesAndHeaders |
-                            HttpLoggingFields.ResponsePropertiesAndHeaders;
+    options.LoggingFields = HttpLoggingFields.RequestProperties |
+                            HttpLoggingFields.ResponseStatusCode;
 });
 builder.Services.AddMemoryCache();
 
 var app = builder.Build();
+
+// Migrate db
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<TaikoDbContext>();
+    db.Database.Migrate();
+}
+
+// For reverse proxy
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto

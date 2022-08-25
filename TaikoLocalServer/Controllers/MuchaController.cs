@@ -17,7 +17,7 @@ public class MuchaController : ControllerBase
 
     public ContentResult BoardAuth([FromForm] MuchaUpdateCheckRequest request)
     {
-        logger.LogInformation("Request is {Request}", request.Stringify());
+        logger.LogInformation("Mucha request: {Request}", request.Stringify());
         var serverTime = DateTime.Now.ToString("yyyyMMddHHmm");
         var utcServerTime = DateTime.UtcNow.ToString("yyyyMMddHHmm");
         var response = new Dictionary<string, string>

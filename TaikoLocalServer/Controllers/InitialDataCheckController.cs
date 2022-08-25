@@ -21,7 +21,7 @@ public class InitialDataCheckController : ControllerBase
     [Produces("application/protobuf")]
     public IActionResult InitialDataCheck([FromBody] InitialdatacheckRequest request)
     {
-        logger.LogInformation("InitialDataCheck request: {Request}", request.Stringify());
+        logger.LogInformation("Initial data check request: {Request}", request.Stringify());
 
         var enabledArray = new byte[Constants.MUSIC_FLAG_ARRAY_SIZE];
 

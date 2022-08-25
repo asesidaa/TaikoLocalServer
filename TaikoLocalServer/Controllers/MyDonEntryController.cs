@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
+using TaikoLocalServer.Context;
+using TaikoLocalServer.Entities;
 using TaikoLocalServer.Utils;
 
 namespace TaikoLocalServer.Controllers;
@@ -8,8 +10,13 @@ namespace TaikoLocalServer.Controllers;
 public class MyDonEntryController : ControllerBase
 {
     private readonly ILogger<MyDonEntryController> logger;
-    public MyDonEntryController(ILogger<MyDonEntryController> logger) {
+
+    private readonly TaikoDbContext context;
+    
+    public MyDonEntryController(ILogger<MyDonEntryController> logger, TaikoDbContext context)
+    {
         this.logger = logger;
+        this.context = context;
     }
 
     [HttpPost]
@@ -18,13 +25,27 @@ public class MyDonEntryController : ControllerBase
     {
         logger.LogInformation("MyDonEntry request : {Request}", request.Stringify());
 
+        var newId = context.Cards.Any() ? context.Cards.Max(card => card.Baid) + 1 : 1;
+        context.Cards.Add(new Card
+        {
+            AccessCode = request.AccessCode,
+            Baid = newId
+        });
+        context.UserData.Add(new UserDatum
+        {
+            Baid = newId,
+            MyDonName = request.MydonName,
+            
+        });
+        context.SaveChanges();
+        
         var response = new MydonEntryResponse
         {
             Result = 1,
             ComSvrResult = 1,
             AccessCode = request.AccessCode,
             Accesstoken = "12345",
-            Baid = 1,
+            Baid = newId,
             MbId = 1,
             MydonName = request.MydonName,
             CardOwnNum = 1,

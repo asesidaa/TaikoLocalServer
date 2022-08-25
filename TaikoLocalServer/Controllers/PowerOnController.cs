@@ -20,7 +20,7 @@ public class PowerOnController : ControllerBase
     [HttpPost]
     public ContentResult PowerOn([FromForm] PowerOnRequest request)
     {
-        logger.LogInformation("{Request}",request.Stringify());
+        logger.LogInformation("Power on request: {Request}",request.Stringify());
         var now = DateTime.Now;
         var response = new Dictionary<string, string>
         {

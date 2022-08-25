@@ -1,6 +1,6 @@
 ﻿namespace TaikoLocalServer.Common.Enums;
 
-public enum Difficulty
+public enum Difficulty : uint
 {
     Easy   = 1,
     Normal = 2,

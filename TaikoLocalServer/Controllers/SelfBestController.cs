@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
+using TaikoLocalServer.Common.Enums;
+using TaikoLocalServer.Context;
+using TaikoLocalServer.Entities;
 using TaikoLocalServer.Models;
 using TaikoLocalServer.Utils;
 
@@ -11,9 +14,12 @@ public class SelfBestController : ControllerBase
 {
     private readonly ILogger<SelfBestController> logger;
 
-    public SelfBestController(ILogger<SelfBestController> logger)
+    private readonly TaikoDbContext context;
+    
+    public SelfBestController(ILogger<SelfBestController> logger, TaikoDbContext context)
     {
         this.logger = logger;
+        this.context = context;
     }
 
     [HttpPost]
@@ -29,6 +35,11 @@ public class SelfBestController : ControllerBase
         };
 
         var manager = MusicAttributeManager.Instance;
+        var difficulty = (Difficulty)request.Level;
+        var playerBestData = context.SongBestData
+            .Where(datum => datum.Baid == request.Baid &&
+                            datum.Difficulty == difficulty)
+            .ToList();
         foreach (var songNo in request.ArySongNoes)
         {
             if (!manager.MusicAttributes.ContainsKey(songNo))
@@ -37,13 +48,15 @@ public class SelfBestController : ControllerBase
                 continue;
             }
 
+            var songBestDatum = playerBestData.FirstOrDefault(datum => datum.SongId == songNo, new SongBestDatum());
+
             var selfBestData = new SelfBestResponse.SelfBestData
             {
                 SongNo = songNo,
-                SelfBestScore = 0,
-                SelfBestScoreRate = 0,
-                UraBestScore = 0,
-                UraBestScoreRate = 0
+                SelfBestScore = difficulty != Difficulty.UraOni ? songBestDatum.BestScore : 0,
+                SelfBestScoreRate = difficulty != Difficulty.UraOni ? songBestDatum.BestRate : 0,
+                UraBestScore = difficulty == Difficulty.UraOni ? songBestDatum.BestScore : 0,
+                UraBestScoreRate = difficulty == Difficulty.UraOni ? songBestDatum.BestRate : 0
             };
             response.ArySelfbestScores.Add(selfBestData);
         }
