@@ -96,6 +96,9 @@ public class BaidController:ControllerBase
             costumeData = new List<uint> { 0, 1, 1, 1, 1 };
         }
 
+        var costumeFlag = new byte[10];
+        Array.Fill(costumeFlag, byte.MaxValue);
+
         response = new BAIDResponse
         {
             Result = 1,
@@ -112,22 +115,22 @@ public class BaidController:ControllerBase
             MydonName = userData.MyDonName,
             Title = userData.Title,
             TitleplateId = userData.TitlePlateId,
-            ColorFace = userData.ColorFace,
-            ColorBody = userData.ColorBody,
-            ColorLimb = userData.ColorLimb,
+            ColorFace = 1,
+            ColorBody = 1,
+            ColorLimb = 1,
             AryCostumedata = new BAIDResponse.CostumeData
             {
-                Costume1 = costumeData[0],
-                Costume2 = costumeData[1],
-                Costume3 = costumeData[2],
-                Costume4 = costumeData[3],
-                Costume5 = costumeData[4]
+                Costume1 = ValueHelpers.GetNonZeroValue(costumeData[0]),
+                Costume2 = ValueHelpers.GetNonZeroValue(costumeData[1]),
+                Costume3 = ValueHelpers.GetNonZeroValue(costumeData[2]),
+                Costume4 = ValueHelpers.GetNonZeroValue(costumeData[3]),
+                Costume5 = ValueHelpers.GetNonZeroValue(costumeData[4])
             },
-            CostumeFlg1 = new byte[10],
-            CostumeFlg2 = new byte[10],
-            CostumeFlg3 = new byte[10],
-            CostumeFlg4 = new byte[10],
-            CostumeFlg5 = new byte[10],
+            CostumeFlg1 = costumeFlag,
+            CostumeFlg2 = costumeFlag,
+            CostumeFlg3 = costumeFlag,
+            CostumeFlg4 = costumeFlag,
+            CostumeFlg5 = costumeFlag,
             LastPlayDatetime = userData.LastPlayDatetime.ToString(Constants.DATE_TIME_FORMAT),
             IsDispDanOn = userData.DisplayDan,
             GotDanMax = 1,

@@ -48,45 +48,61 @@ public class PlayResultController : ControllerBase
         userdata.TitlePlateId = playResultData.TitleplateId;
         var costumeData = new List<uint>
         {
-            playResultData.AryCurrentCostume.Costume1,
-            playResultData.AryCurrentCostume.Costume2,
-            playResultData.AryCurrentCostume.Costume3,
-            playResultData.AryCurrentCostume.Costume4,
-            playResultData.AryCurrentCostume.Costume5
+            ValueHelpers.GetNonZeroValue(playResultData.AryCurrentCostume.Costume1),
+            ValueHelpers.GetNonZeroValue(playResultData.AryCurrentCostume.Costume2),
+            ValueHelpers.GetNonZeroValue(playResultData.AryCurrentCostume.Costume3),
+            ValueHelpers.GetNonZeroValue(playResultData.AryCurrentCostume.Costume4),
+            ValueHelpers.GetNonZeroValue(playResultData.AryCurrentCostume.Costume5)
         };
         userdata.CostumeData = JsonSerializer.Serialize(costumeData);
+
+        var lastPlayDatetime = DateTime.ParseExact(playResultData.PlayDatetime, Constants.DATE_TIME_FORMAT, CultureInfo.InvariantCulture);
+        userdata.LastPlayDatetime = lastPlayDatetime;
         context.UserData.Update(userdata);
 
+        var bestData = context.SongBestData.Where(datum => datum.Baid == request.BaidConf).ToList();
         foreach (var stageData in playResultData.AryStageInfoes)
         {
-            var bestData = context.SongBestData
-                .FirstOrDefault(datum => datum.Baid == request.BaidConf &&
-                                datum.SongId == stageData.SongNo &&
-                                datum.Difficulty == (Difficulty)stageData.Level,
-                    new SongBestDatum
-                    {
-                        Baid = request.BaidConf,
-                        SongId = stageData.SongNo,
-                        Difficulty = (Difficulty)stageData.Level
-                    });
-            if ((uint)bestData.BestCrown < stageData.PlayResult)
+            var insert = false;
+            var bestDatum = bestData
+                .FirstOrDefault(datum => datum.SongId == stageData.SongNo &&
+                                         datum.Difficulty == (Difficulty)stageData.Level);
+            if (bestDatum is null)
             {
-                bestData.BestCrown = (CrownType)stageData.PlayResult;
+                insert = true;
+                bestDatum = new SongBestDatum
+                {
+                    Baid = request.BaidConf,
+                    SongId = stageData.SongNo,
+                    Difficulty = (Difficulty)stageData.Level
+                };
             }
-            if ((uint)bestData.BestScoreRank < stageData.ScoreRank)
+            if ((uint)bestDatum.BestCrown < stageData.PlayResult)
             {
-                bestData.BestScoreRank = (ScoreRank)stageData.ScoreRank;
+                bestDatum.BestCrown = (CrownType)stageData.PlayResult;
             }
-            if (bestData.BestScore < stageData.PlayScore)
+            if ((uint)bestDatum.BestScoreRank < stageData.ScoreRank)
             {
-                bestData.BestScore = stageData.PlayScore;
+                bestDatum.BestScoreRank = (ScoreRank)stageData.ScoreRank;
             }
-            if (bestData.BestRate < stageData.ScoreRate)
+            if (bestDatum.BestScore < stageData.PlayScore)
             {
-                bestData.BestRate = stageData.ScoreRate;
+                bestDatum.BestScore = stageData.PlayScore;
+            }
+            if (bestDatum.BestRate < stageData.ScoreRate)
+            {
+                bestDatum.BestRate = stageData.ScoreRate;
             }
 
-            context.SongBestData.Update(bestData);
+            if (insert)
+            {
+                context.SongBestData.Add(bestDatum);
+            }
+            else
+            {
+                context.SongBestData.Update(bestDatum);
+            }
+            
             var playData = new SongPlayDatum
             {
                 Baid = request.BaidConf,
@@ -101,7 +117,7 @@ public class PlayResultController : ControllerBase
                 ScoreRank = (ScoreRank)stageData.ScoreRank,
                 Skipped = stageData.IsSkipUse,
                 SongId = stageData.SongNo,
-                PlayTime = DateTime.ParseExact(playResultData.PlayDatetime, Constants.DATE_TIME_FORMAT, CultureInfo.InvariantCulture)
+                PlayTime = lastPlayDatetime
             };
             context.SongPlayData.Add(playData);
         }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using TaikoLocalServer.Common.Enums;
 using TaikoLocalServer.Context;
 using TaikoLocalServer.Entities;
 using TaikoLocalServer.Utils;
@@ -35,7 +36,9 @@ public class MyDonEntryController : ControllerBase
         {
             Baid = newId,
             MyDonName = request.MydonName,
-            
+            DisplayDan = false,
+            DisplayAchievement = true,
+            AchievementDisplayDifficulty = Difficulty.Easy
         });
         context.SaveChanges();
         

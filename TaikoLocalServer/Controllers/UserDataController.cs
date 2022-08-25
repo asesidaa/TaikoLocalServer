@@ -47,7 +47,7 @@ public class UserDataController : ControllerBase
             UraReleaseSongFlg = uraSongArray,
             DefaultOptionSetting = new byte[] {0},
             IsVoiceOn = true,
-            IsSkipOn = true
+            IsSkipOn = false
         };
         
         
