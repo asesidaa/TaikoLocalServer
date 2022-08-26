@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using TaikoLocalServer.Common;
+﻿using TaikoLocalServer.Common;
 using TaikoLocalServer.Common.Enums;
 using TaikoLocalServer.Context;
 using TaikoLocalServer.Utils;

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using TaikoLocalServer.Common.Enums;
+﻿using TaikoLocalServer.Common.Enums;
 
 namespace TaikoLocalServer.Entities
 {

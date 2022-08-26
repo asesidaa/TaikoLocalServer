@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using System.Text.Json;
-using Microsoft.AspNetCore.Http;
 using ProtoBuf;
 using TaikoLocalServer.Common;
 using TaikoLocalServer.Common.Enums;

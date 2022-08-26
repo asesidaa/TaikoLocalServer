@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Swan.Extensions;
-using TaikoLocalServer.Common;
+﻿using TaikoLocalServer.Common;
 
 namespace TaikoLocalServer.Controllers;
 

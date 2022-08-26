@@ -115,9 +115,9 @@ public class BaidController:ControllerBase
             MydonName = userData.MyDonName,
             Title = userData.Title,
             TitleplateId = userData.TitlePlateId,
-            ColorFace = 1,
+            ColorFace = 0,
             ColorBody = 1,
-            ColorLimb = 1,
+            ColorLimb = 3,
             AryCostumedata = new BAIDResponse.CostumeData
             {
                 Costume1 = ValueHelpers.GetNonZeroValue(costumeData[0]),
@@ -142,7 +142,7 @@ public class BaidController:ControllerBase
             AryScoreRankCounts = scoreRankCount,
             IsDispAchievementOn = userData.DisplayAchievement,
             DispAchievementType = (uint)userData.AchievementDisplayDifficulty,
-            IsDispAchievementTypeSet = false,
+            IsDispAchievementTypeSet = true,
             LastPlayMode = 0,
             IsDispSouuchiOn = true,
             AiRank = 0,

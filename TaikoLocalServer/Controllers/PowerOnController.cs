@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Swan.Formatters;
-using TaikoLocalServer.Models;
+﻿using TaikoLocalServer.Models;
 using TaikoLocalServer.Utils;
 
 namespace TaikoLocalServer.Controllers;

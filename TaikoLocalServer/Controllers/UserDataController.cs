@@ -1,6 +1,6 @@
 ﻿using System.Collections;
-using System.Runtime.InteropServices;
 using TaikoLocalServer.Common;
+using TaikoLocalServer.Context;
 using TaikoLocalServer.Utils;
 
 namespace TaikoLocalServer.Controllers;
@@ -10,8 +10,13 @@ namespace TaikoLocalServer.Controllers;
 public class UserDataController : ControllerBase
 {
     private readonly ILogger<UserDataController> logger;
-    public UserDataController(ILogger<UserDataController> logger) {
+    
+    private readonly TaikoDbContext context;
+    
+    public UserDataController(ILogger<UserDataController> logger, TaikoDbContext context)
+    {
         this.logger = logger;
+        this.context = context;
     }
 
     [HttpPost]
@@ -37,17 +42,32 @@ public class UserDataController : ControllerBase
             bitSet.Set((int)music, true);
         }
         bitSet.CopyTo(uraSongArray, 0);
-        
+
+        var toneArray = new byte[5];
+        Array.Fill(toneArray, byte.MaxValue);
+
+        var recentSongs = context.SongPlayData
+            .Where(datum => datum.Baid == request.Baid)
+            .OrderByDescending(datum => datum.PlayTime)
+            .AsEnumerable()
+            .DistinctBy(datum => datum.SongId)
+            .Take(10)
+            .Select(datum => datum.SongId)
+            .ToArray();
+
         var response = new UserDataResponse
         {
             Result = 1,
-            ToneFlg = new byte[] {0},
+            ToneFlg = toneArray,
             // TitleFlg = GZipBytesUtil.GetGZipBytes(new byte[100]),
             ReleaseSongFlg = releaseSongArray,
             UraReleaseSongFlg = uraSongArray,
             DefaultOptionSetting = new byte[] {0},
             IsVoiceOn = true,
-            IsSkipOn = false
+            IsSkipOn = false,
+            IsChallengecompe = false,
+            SongRecentCnt = (uint)recentSongs.Length,
+            AryRecentSongNoes = recentSongs
         };
         
         

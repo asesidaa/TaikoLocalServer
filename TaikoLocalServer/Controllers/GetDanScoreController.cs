@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace TaikoLocalServer.Controllers;
+﻿namespace TaikoLocalServer.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]

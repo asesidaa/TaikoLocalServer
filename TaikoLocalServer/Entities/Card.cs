@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace TaikoLocalServer.Entities
+﻿namespace TaikoLocalServer.Entities
 {
     public partial class Card
     {

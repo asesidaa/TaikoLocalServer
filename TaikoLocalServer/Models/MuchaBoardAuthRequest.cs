@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace TaikoLocalServer.Models;
+﻿namespace TaikoLocalServer.Models;
 
 public class MuchaBoardAuthRequest
 {
