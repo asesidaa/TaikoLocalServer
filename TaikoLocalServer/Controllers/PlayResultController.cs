@@ -47,11 +47,11 @@ public class PlayResultController : ControllerBase
         userdata.TitlePlateId = playResultData.TitleplateId;
         var costumeData = new List<uint>
         {
-            ValueHelpers.GetNonZeroValue(playResultData.AryCurrentCostume.Costume1),
-            ValueHelpers.GetNonZeroValue(playResultData.AryCurrentCostume.Costume2),
-            ValueHelpers.GetNonZeroValue(playResultData.AryCurrentCostume.Costume3),
-            ValueHelpers.GetNonZeroValue(playResultData.AryCurrentCostume.Costume4),
-            ValueHelpers.GetNonZeroValue(playResultData.AryCurrentCostume.Costume5)
+            playResultData.AryCurrentCostume.Costume1,
+            playResultData.AryCurrentCostume.Costume2,
+            playResultData.AryCurrentCostume.Costume3,
+            playResultData.AryCurrentCostume.Costume4,
+            playResultData.AryCurrentCostume.Costume5
         };
         userdata.CostumeData = JsonSerializer.Serialize(costumeData);
 

@@ -89,7 +89,7 @@ public class BaidController:ControllerBase
         }
 
 
-        var costumeData = new List<uint>{ 0, 1, 1, 1, 1 };
+        var costumeData = new List<uint>{ 0, 0, 0, 0, 0 };
         try
         {
             costumeData = JsonSerializer.Deserialize<List<uint>>(userData.CostumeData);
@@ -101,7 +101,7 @@ public class BaidController:ControllerBase
         if (costumeData == null || costumeData.Count < 5)
         {
             logger.LogWarning("Costume data is null or count less than 5!");
-            costumeData = new List<uint> { 0, 1, 1, 1, 1 };
+            costumeData = new List<uint> { 0, 0, 0, 0, 0 };
         }
 
         var costumeFlag = new byte[10];
@@ -128,11 +128,11 @@ public class BaidController:ControllerBase
             ColorLimb = 3,
             AryCostumedata = new BAIDResponse.CostumeData
             {
-                Costume1 = ValueHelpers.GetNonZeroValue(costumeData[0]),
-                Costume2 = ValueHelpers.GetNonZeroValue(costumeData[1]),
-                Costume3 = ValueHelpers.GetNonZeroValue(costumeData[2]),
-                Costume4 = ValueHelpers.GetNonZeroValue(costumeData[3]),
-                Costume5 = ValueHelpers.GetNonZeroValue(costumeData[4])
+                Costume1 = costumeData[0],
+                Costume2 = costumeData[1],
+                Costume3 = costumeData[2],
+                Costume4 = costumeData[3],
+                Costume5 = costumeData[4]
             },
             CostumeFlg1 = costumeFlag,
             CostumeFlg2 = costumeFlag,
