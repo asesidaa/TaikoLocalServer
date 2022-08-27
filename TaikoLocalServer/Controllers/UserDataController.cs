@@ -19,6 +19,13 @@ public class UserDataController : ControllerBase
         this.context = context;
     }
 
+    public record PlayTimeOrderTuple(DateTime PlayTime, uint SongNumber)
+    {
+        public override string ToString() {
+            return $"{{ PlayTime = {PlayTime}, SongNumber = {SongNumber} }}";
+        }
+    }
+
     [HttpPost]
     [Produces("application/protobuf")]
     public IActionResult GetUserData([FromBody] UserDataRequest request)
@@ -49,7 +56,12 @@ public class UserDataController : ControllerBase
         var recentSongs = context.SongPlayData
             .Where(datum => datum.Baid == request.Baid)
             .AsEnumerable()
-            .Reverse()
+            .OrderByDescending(datum => new PlayTimeOrderTuple(datum.PlayTime, datum.SongNumber), 
+                               Comparer<PlayTimeOrderTuple>.Create((tuple1, tuple2) =>
+                               {
+                                   var timeOrder = tuple1.PlayTime.CompareTo(tuple2.PlayTime);
+                                   return timeOrder != 0 ? timeOrder : tuple1.SongNumber.CompareTo(tuple2.SongNumber);
+                               }))
             .DistinctBy(datum => datum.SongId)
             .Take(10)
             .Select(datum => datum.SongId)

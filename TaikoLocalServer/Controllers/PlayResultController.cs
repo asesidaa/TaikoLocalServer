@@ -60,25 +60,21 @@ public class PlayResultController : ControllerBase
         context.UserData.Update(userdata);
 
         var bestData = context.SongBestData.Where(datum => datum.Baid == request.BaidConf).ToList();
-        foreach (var stageData in playResultData.AryStageInfoes)
+        for (var songNumber = 0; songNumber < playResultData.AryStageInfoes.Count; songNumber++)
         {
+            var stageData = playResultData.AryStageInfoes[songNumber];
             var insert = false;
             var bestDatum = bestData
                 .FirstOrDefault(datum => datum.SongId == stageData.SongNo &&
                                          datum.Difficulty == (Difficulty)stageData.Level);
-            var crown = CrownType.None;
-            if (stageData.PlayResult > 0)
+           
+            // Determine whether it is dondaful crown as this is not reflected by play result
+            var crown = (CrownType)stageData.PlayResult;
+            if (crown == CrownType.Gold && stageData.OkCnt == 0)
             {
-                crown = CrownType.Clear;
-                if (stageData.NgCnt == 0)
-                {
-                    crown = CrownType.Gold;
-                    if (stageData.OkCnt == 0)
-                    {
-                        crown = CrownType.Dondaful;
-                    }
-                }
+                crown = CrownType.Dondaful;
             }
+            
             if (bestDatum is null)
             {
                 insert = true;
@@ -89,22 +85,8 @@ public class PlayResultController : ControllerBase
                     Difficulty = (Difficulty)stageData.Level
                 };
             }
-            if (bestDatum.BestCrown < crown)
-            {
-                bestDatum.BestCrown = crown;
-            }
-            if ((uint)bestDatum.BestScoreRank < stageData.ScoreRank)
-            {
-                bestDatum.BestScoreRank = (ScoreRank)stageData.ScoreRank;
-            }
-            if (bestDatum.BestScore < stageData.PlayScore)
-            {
-                bestDatum.BestScore = stageData.PlayScore;
-            }
-            if (bestDatum.BestRate < stageData.ScoreRate)
-            {
-                bestDatum.BestRate = stageData.ScoreRate;
-            }
+            
+            bestDatum.UpdateBestData(crown, stageData.ScoreRank, stageData.PlayScore, stageData.ScoreRate);
 
             if (insert)
             {
@@ -114,10 +96,11 @@ public class PlayResultController : ControllerBase
             {
                 context.SongBestData.Update(bestDatum);
             }
-            
+
             var playData = new SongPlayDatum
             {
                 Baid = request.BaidConf,
+                SongNumber = (uint)songNumber,
                 GoodCount = stageData.GoodCnt,
                 OkCount = stageData.OkCnt,
                 MissCount = stageData.NgCnt,

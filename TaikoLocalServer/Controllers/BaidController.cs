@@ -59,23 +59,26 @@ public class BaidController:ControllerBase
             userData = context.UserData.First(datum => datum.Baid == baid);
         }
 
-        var achievementDisplayDifficulty = userData.AchievementDisplayDifficulty == Difficulty.None ? 
-            context.SongPlayData.Where(datum => datum.Crown >= CrownType.Clear).Any() ?
-            context.SongPlayData.Where(datum => datum.Crown >= CrownType.Clear).Max(datum => datum.Difficulty) :
-            Difficulty.Easy : userData.AchievementDisplayDifficulty;
+        var songBestData = context.SongBestData.Where(datum => datum.Baid == baid).ToList();
+        
+        var achievementDisplayDifficulty = userData.AchievementDisplayDifficulty;
+        if (userData.AchievementDisplayDifficulty == Difficulty.None)
+        {
+            achievementDisplayDifficulty = songBestData.Any(datum => datum.BestCrown >= CrownType.Clear) ? 
+                songBestData.Where(datum => datum.BestCrown >= CrownType.Clear).Max(datum => datum.Difficulty) : 
+                Difficulty.Easy;
+        }
 
-        var songBestData = context.SongBestData
-            .Where(datum => datum.Baid == baid &&
-                            achievementDisplayDifficulty != Difficulty.UraOni ?
-                            datum.Difficulty == achievementDisplayDifficulty :
-                            datum.Difficulty == Difficulty.Oni || datum.Difficulty == Difficulty.UraOni);
+        var songCountData = songBestData.Where(datum => achievementDisplayDifficulty != Difficulty.UraOni ?
+                                                   datum.Difficulty == achievementDisplayDifficulty : 
+                                                   datum.Difficulty is Difficulty.Oni or Difficulty.UraOni).ToList();
 
         var crownCount = new uint[3];
         foreach (var crownType in Enum.GetValues<CrownType>())
         {
             if (crownType != CrownType.None)
             {
-                crownCount[(int)crownType - 1] = (uint)songBestData.Count(datum => datum.BestCrown == crownType);
+                crownCount[(int)crownType - 1] = (uint)songCountData.Count(datum => datum.BestCrown == crownType);
             }
         }
 
@@ -84,7 +87,7 @@ public class BaidController:ControllerBase
         {
             if (scoreRankType != ScoreRank.None)
             {
-                scoreRankCount[(int)scoreRankType - 2] = (uint)songBestData.Count(datum => datum.BestScoreRank == scoreRankType);
+                scoreRankCount[(int)scoreRankType - 2] = (uint)songCountData.Count(datum => datum.BestScoreRank == scoreRankType);
             }
         }
 
