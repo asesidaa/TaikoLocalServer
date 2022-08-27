@@ -1,4 +1,6 @@
-﻿using TaikoLocalServer.Common;
+﻿using System.Collections;
+using TaikoLocalServer.Common;
+using TaikoLocalServer.Utils;
 
 namespace TaikoLocalServer.Controllers;
 
@@ -20,7 +22,15 @@ public class InitialDataCheckController : ControllerBase
     {
         logger.LogInformation("Initial data check request: {Request}", request.Stringify());
 
+        var musicAttributeManager = MusicAttributeManager.Instance;
+
         var enabledArray = new byte[Constants.MUSIC_FLAG_ARRAY_SIZE];
+        var bitSet = new BitArray(Constants.MUSIC_ID_MAX);
+        foreach (var music in musicAttributeManager.Musics)
+        {
+            bitSet.Set((int)music, true);
+        }
+        bitSet.CopyTo(enabledArray, 0);
 
         var response = new InitialdatacheckResponse
         {
@@ -30,6 +40,7 @@ public class InitialDataCheckController : ControllerBase
             IsClose = false,
             //SongIntroductionEndDatetime = (DateTime.Now + TimeSpan.FromDays(999)).ToString(Constants.DATE_TIME_FORMAT),
             DefaultSongFlg = enabledArray,
+            AchievementSongBit = enabledArray,
             AryShopFolderDatas =
             {
                 new InitialdatacheckResponse.InformationData
