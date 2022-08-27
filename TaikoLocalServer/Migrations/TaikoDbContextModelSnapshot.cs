@@ -109,6 +109,9 @@ namespace TaikoLocalServer.Migrations
                     b.Property<uint>("SongId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<uint>("SongNumber")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Baid");
