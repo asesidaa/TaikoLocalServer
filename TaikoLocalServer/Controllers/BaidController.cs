@@ -59,9 +59,17 @@ public class BaidController:ControllerBase
             userData = context.UserData.First(datum => datum.Baid == baid);
         }
 
+        var achievementDisplayDifficulty = userData.AchievementDisplayDifficulty == Difficulty.None ? 
+            context.SongPlayData.Where(datum => datum.Crown >= CrownType.Clear).Any() ?
+            context.SongPlayData.Where(datum => datum.Crown >= CrownType.Clear).Max(datum => datum.Difficulty) :
+            Difficulty.Easy : userData.AchievementDisplayDifficulty;
+
         var songBestData = context.SongBestData
-            .Where(datum => datum.Baid == baid && 
-                            datum.Difficulty == userData.AchievementDisplayDifficulty);
+            .Where(datum => datum.Baid == baid &&
+                            achievementDisplayDifficulty != Difficulty.UraOni ?
+                            datum.Difficulty == achievementDisplayDifficulty :
+                            datum.Difficulty == Difficulty.Oni || datum.Difficulty == Difficulty.UraOni);
+
         var crownCount = new uint[3];
         foreach (var crownType in Enum.GetValues<CrownType>())
         {
@@ -141,7 +149,7 @@ public class BaidController:ControllerBase
             AryCrownCounts = crownCount,
             AryScoreRankCounts = scoreRankCount,
             IsDispAchievementOn = userData.DisplayAchievement,
-            DispAchievementType = (uint)userData.AchievementDisplayDifficulty,
+            DispAchievementType = (uint)achievementDisplayDifficulty,
             IsDispAchievementTypeSet = true,
             LastPlayMode = 0,
             IsDispSouuchiOn = true,

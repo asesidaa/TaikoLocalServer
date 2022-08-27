@@ -116,7 +116,8 @@ public class PlayResultController : ControllerBase
                 ScoreRank = (ScoreRank)stageData.ScoreRank,
                 Skipped = stageData.IsSkipUse,
                 SongId = stageData.SongNo,
-                PlayTime = lastPlayDatetime
+                PlayTime = lastPlayDatetime,
+                Difficulty = (Difficulty)stageData.Level
             };
             context.SongPlayData.Add(playData);
         }
