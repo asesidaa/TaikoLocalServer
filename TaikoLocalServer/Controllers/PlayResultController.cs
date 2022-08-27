@@ -66,6 +66,19 @@ public class PlayResultController : ControllerBase
             var bestDatum = bestData
                 .FirstOrDefault(datum => datum.SongId == stageData.SongNo &&
                                          datum.Difficulty == (Difficulty)stageData.Level);
+            var crown = CrownType.None;
+            if (stageData.PlayResult > 0)
+            {
+                crown = CrownType.Clear;
+                if (stageData.NgCnt == 0)
+                {
+                    crown = CrownType.Gold;
+                    if (stageData.OkCnt == 0)
+                    {
+                        crown = CrownType.Dondaful;
+                    }
+                }
+            }
             if (bestDatum is null)
             {
                 insert = true;
@@ -76,9 +89,9 @@ public class PlayResultController : ControllerBase
                     Difficulty = (Difficulty)stageData.Level
                 };
             }
-            if ((uint)bestDatum.BestCrown < stageData.PlayResult)
+            if (bestDatum.BestCrown < crown)
             {
-                bestDatum.BestCrown = (CrownType)stageData.PlayResult;
+                bestDatum.BestCrown = crown;
             }
             if ((uint)bestDatum.BestScoreRank < stageData.ScoreRank)
             {
@@ -110,7 +123,7 @@ public class PlayResultController : ControllerBase
                 MissCount = stageData.NgCnt,
                 ComboCount = stageData.ComboCnt,
                 HitCount = stageData.HitCnt,
-                Crown = (CrownType)stageData.PlayResult,
+                Crown = crown,
                 Score = stageData.PlayScore,
                 ScoreRate = stageData.ScoreRate,
                 ScoreRank = (ScoreRank)stageData.ScoreRank,

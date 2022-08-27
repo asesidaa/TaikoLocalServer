@@ -48,8 +48,8 @@ public class UserDataController : ControllerBase
 
         var recentSongs = context.SongPlayData
             .Where(datum => datum.Baid == request.Baid)
-            .OrderByDescending(datum => datum.PlayTime)
             .AsEnumerable()
+            .Reverse()
             .DistinctBy(datum => datum.SongId)
             .Take(10)
             .Select(datum => datum.SongId)
