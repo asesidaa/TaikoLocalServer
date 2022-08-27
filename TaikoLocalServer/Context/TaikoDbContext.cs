@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TaikoLocalServer.Common;
-using TaikoLocalServer.Entities;
 
 namespace TaikoLocalServer.Context
 {

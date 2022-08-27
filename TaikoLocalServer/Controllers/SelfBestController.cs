@@ -1,9 +1,4 @@
-﻿using TaikoLocalServer.Common.Enums;
-using TaikoLocalServer.Context;
-using TaikoLocalServer.Entities;
-using TaikoLocalServer.Utils;
-
-namespace TaikoLocalServer.Controllers;
+﻿namespace TaikoLocalServer.Controllers;
 
 [Route("/v12r03/chassis/selfbest.php")]
 [ApiController]

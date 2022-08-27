@@ -1,6 +1,4 @@
-﻿using TaikoLocalServer.Common.Enums;
-
-namespace TaikoLocalServer.Entities;
+﻿namespace TaikoLocalServer.Entities;
 
 public partial class SongBestDatum
 {

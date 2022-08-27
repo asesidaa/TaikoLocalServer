@@ -6,4 +6,5 @@ global using TaikoLocalServer.Common;
 global using TaikoLocalServer.Common.Enums;
 global using TaikoLocalServer.Context;
 global using TaikoLocalServer.Entities;
+global using TaikoLocalServer.Models;
 global using TaikoLocalServer.Utils;

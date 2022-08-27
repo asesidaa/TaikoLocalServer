@@ -1,7 +1,4 @@
-﻿using TaikoLocalServer.Models;
-using TaikoLocalServer.Utils;
-
-namespace TaikoLocalServer.Controllers;
+﻿namespace TaikoLocalServer.Controllers;
 
 [ApiController]
 [Route("/sys/servlet/PowerOn")]

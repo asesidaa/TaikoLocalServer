@@ -1,9 +1,4 @@
-﻿using TaikoLocalServer.Common;
-using TaikoLocalServer.Common.Enums;
-using TaikoLocalServer.Context;
-using TaikoLocalServer.Utils;
-
-namespace TaikoLocalServer.Controllers;
+﻿namespace TaikoLocalServer.Controllers;
 
 [Route("/v12r03/chassis/getscorerank.php")]
 [ApiController]

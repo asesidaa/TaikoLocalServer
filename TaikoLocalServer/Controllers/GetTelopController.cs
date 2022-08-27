@@ -1,6 +1,4 @@
-﻿using TaikoLocalServer.Common;
-
-namespace TaikoLocalServer.Controllers;
+﻿namespace TaikoLocalServer.Controllers;
 
 [Route("/v12r03/chassis/gettelop.php")]
 [ApiController]

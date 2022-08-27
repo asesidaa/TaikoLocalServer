@@ -1,6 +1,4 @@
-﻿using TaikoLocalServer.Common.Enums;
-
-namespace TaikoLocalServer.Common;
+﻿namespace TaikoLocalServer.Common;
 
 public static class FlagCalculator
 {
