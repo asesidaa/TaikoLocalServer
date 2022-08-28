@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace TaikoLocalServer.Utils;
+namespace TaikoLocalServer.Common.Utils;
 
 public class MusicAttributeManager
 {
@@ -12,23 +12,16 @@ public class MusicAttributeManager
 
     private MusicAttributeManager()
     {
-        var path = Environment.ProcessPath;
-        if (path is null)
-        {
-            throw new ApplicationException();
-        }
-        var parentPath = Directory.GetParent(path);
-        if (parentPath is null)
-        {
-            throw new ApplicationException();
-        }
-        var filePath = Path.Combine(parentPath.ToString(), "wwwroot", "music_attribute.json");
+        var dataPath = PathHelper.GetDataPath();
+        var filePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_FILE_NAME);
         var jsonString = File.ReadAllText(filePath);
+        
         var result = JsonSerializer.Deserialize<List<MusicAttribute>>(jsonString);
         if (result is null)
         {
-            throw new ApplicationException();
+            throw new ApplicationException("Cannot parse music attribute json!");
         }
+        
         MusicAttributes = result.ToDictionary(attribute => attribute.MusicId);
 
         Musics = MusicAttributes.Select(pair => pair.Key)
@@ -46,9 +39,4 @@ public class MusicAttributeManager
     public readonly List<uint> Musics;
 
     public readonly List<uint> MusicsWithUra;
-
-    public bool MusicHasUra(uint musicId)
-    {
-        return MusicAttributes[musicId].HasUra;
-    }
 }

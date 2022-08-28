@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace TaikoLocalServer.Utils;
+namespace TaikoLocalServer.Common.Utils;
 
 public static class FormOutputUtil
 {

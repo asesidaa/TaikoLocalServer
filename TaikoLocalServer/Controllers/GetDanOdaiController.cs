@@ -1,4 +1,6 @@
-﻿namespace TaikoLocalServer.Controllers;
+﻿using Swan.Mapping;
+
+namespace TaikoLocalServer.Controllers;
 
 [Route("/v12r03/chassis/getdanodai.php")]
 [ApiController]
@@ -20,79 +22,22 @@ public class GetDanOdaiController : ControllerBase
             Result = 1
         };
 
+        if (request.Type == 2)
+        {
+            return Ok(response);
+        }
+
+        var manager = DanOdaiDataManager.Instance;
         foreach (var danId in request.DanIds)
         {
-            response.AryOdaiDatas.Add(new GetDanOdaiResponse.OdaiData
+            manager.OdaiDataList.TryGetValue(danId, out var odaiData);
+            if (odaiData is null)
             {
-                DanId = danId,
-                Title = "5kyuu",
-                VerupNo = 1,
-                AryOdaiSongs = { new GetDanOdaiResponse.OdaiData.OdaiSong
-                {
-                    IsHiddenSongName = false,
-                    Level = 1,
-                    SongNo = 956
-                },new GetDanOdaiResponse.OdaiData.OdaiSong
-                {
-                    IsHiddenSongName = false,
-                    Level = 1,
-                    SongNo = 839
-                },new GetDanOdaiResponse.OdaiData.OdaiSong
-                {
-                    IsHiddenSongName = false,
-                    Level = 1,
-                    SongNo = 937
-                } },
-                AryOdaiBorders = { new GetDanOdaiResponse.OdaiData.OdaiBorder
-                {
-                    OdaiType = 1,
-                    BorderType = 1,
-                    RedBorder1 = 1,
-                    RedBorder2 = 5,
-                    RedBorder3 = 8,
-                    RedBorderTotal = 10,
-                    GoldBorder1 = 1,
-                    GoldBorder2 = 5,
-                    GoldBorder3 = 8,
-                    GoldBorderTotal = 10
-                } ,new GetDanOdaiResponse.OdaiData.OdaiBorder
-                {
-                    OdaiType = 2,
-                    BorderType = 1,
-                    RedBorder1 = 1,
-                    RedBorder2 = 5,
-                    RedBorder3 = 8,
-                    RedBorderTotal = 10,
-                    GoldBorder1 = 1,
-                    GoldBorder2 = 5,
-                    GoldBorder3 = 8,
-                    GoldBorderTotal = 10
-                } ,new GetDanOdaiResponse.OdaiData.OdaiBorder
-                {
-                    OdaiType = 3,
-                    BorderType = 1,
-                    RedBorder1 = 1,
-                    RedBorder2 = 5,
-                    RedBorder3 = 8,
-                    RedBorderTotal = 10,
-                    GoldBorder1 = 1,
-                    GoldBorder2 = 5,
-                    GoldBorder3 = 8,
-                    GoldBorderTotal = 10
-                } ,new GetDanOdaiResponse.OdaiData.OdaiBorder
-                {
-                    OdaiType = 4,
-                    BorderType = 1,
-                    RedBorder1 = 1,
-                    RedBorder2 = 5,
-                    RedBorder3 = 8,
-                    RedBorderTotal = 10,
-                    GoldBorder1 = 1,
-                    GoldBorder2 = 5,
-                    GoldBorder3 = 8,
-                    GoldBorderTotal = 10
-                } }
-            });
+                logger.LogWarning("Requested dan id {Id} does not exist!", danId);
+                continue;
+            }
+
+            response.AryOdaiDatas.Add(odaiData);
         }
 
         return Ok(response);

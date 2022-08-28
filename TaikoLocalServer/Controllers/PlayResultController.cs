@@ -53,7 +53,7 @@ public class PlayResultController : ControllerBase
         var lastPlayDatetime = DateTime.ParseExact(playResultData.PlayDatetime, Constants.DATE_TIME_FORMAT, CultureInfo.InvariantCulture);
         userdata.LastPlayDatetime = lastPlayDatetime;
         context.UserData.Update(userdata);
-
+        
         var bestData = context.SongBestData.Where(datum => datum.Baid == request.BaidConf).ToList();
         for (var songNumber = 0; songNumber < playResultData.AryStageInfoes.Count; songNumber++)
         {

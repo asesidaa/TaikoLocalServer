@@ -30,10 +30,20 @@ public class InitialDataCheckController : ControllerBase
         }
         bitSet.CopyTo(enabledArray, 0);
 
+        var danData = new List<InitialdatacheckResponse.InformationData>();
+        for (var danId = 1; danId <= 19; danId++)
+        {
+            danData.Add(new InitialdatacheckResponse.InformationData
+            {
+                InfoId = (uint)danId,
+                VerupNo = 0
+            });
+        }
+        
         var response = new InitialdatacheckResponse
         {
             Result = 1,
-            IsDanplay = false,
+            IsDanplay = true,
             IsAibattle = false,
             IsClose = false,
             //SongIntroductionEndDatetime = (DateTime.Now + TimeSpan.FromDays(999)).ToString(Constants.DATE_TIME_FORMAT),
@@ -46,7 +56,7 @@ public class InitialDataCheckController : ControllerBase
                     InfoId = 1,
                     VerupNo = 2
                 }
-            },
+            }
             /*AryTelopDatas =
             {
                 new InitialdatacheckResponse.InformationData
@@ -64,14 +74,7 @@ public class InitialDataCheckController : ControllerBase
                 }
             },
 
-            AryDanOdaiDatas =
-            {
-                new InitialdatacheckResponse.InformationData
-                {
-                    InfoId = 1,
-                    VerupNo = 1
-                }
-            },
+
             AryDanextraOdaiDatas =
             {
                 new InitialdatacheckResponse.InformationData
@@ -104,6 +107,7 @@ public class InitialDataCheckController : ControllerBase
                 EnableDays = 9999
             });*/
         };
+        response.AryDanOdaiDatas.AddRange(danData);
         return Ok(response);
     }
 
