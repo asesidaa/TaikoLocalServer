@@ -121,9 +121,9 @@ public class BaidController:ControllerBase
             MydonName = userData.MyDonName,
             Title = userData.Title,
             TitleplateId = userData.TitlePlateId,
-            ColorFace = 0,
-            ColorBody = 1,
-            ColorLimb = 3,
+            ColorFace = userData.ColorFace,
+            ColorBody = userData.ColorBody,
+            ColorLimb = userData.ColorLimb,
             AryCostumedata = new BAIDResponse.CostumeData
             {
                 Costume1 = costumeData[0],

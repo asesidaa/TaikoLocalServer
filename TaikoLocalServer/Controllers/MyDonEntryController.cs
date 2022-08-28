@@ -32,7 +32,10 @@ public class MyDonEntryController : ControllerBase
             MyDonName = request.MydonName,
             DisplayDan = false,
             DisplayAchievement = true,
-            AchievementDisplayDifficulty = Difficulty.None
+            AchievementDisplayDifficulty = Difficulty.None,
+            ColorFace = 0,
+            ColorBody = 1,
+            ColorLimb = 3
         });
         context.SaveChanges();
         
