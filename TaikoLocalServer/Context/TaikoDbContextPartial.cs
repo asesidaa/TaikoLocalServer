@@ -27,7 +27,7 @@ public partial class TaikoDbContext
             entity.HasKey(e => new { e.Baid, e.DanId, e.SongNumber });
 
             entity.HasOne(d => d.Parent)
-                .WithMany()
+                .WithMany(p => p.DanStageScoreData)
                 .HasPrincipalKey(p => new {p.Baid, p.DanId})
                 .HasForeignKey(d => new {d.Baid, d.DanId})
                 .OnDelete(DeleteBehavior.Cascade);
