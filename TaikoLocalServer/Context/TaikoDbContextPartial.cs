@@ -12,12 +12,14 @@ public partial class TaikoDbContext
         modelBuilder.Entity<DanScoreDatum>(entity =>
         {
             entity.HasKey(e => new { e.Baid, e.DanId });
-            
+
             entity.HasOne(d => d.Ba)
                 .WithMany()
                 .HasPrincipalKey(p => p.Baid)
                 .HasForeignKey(d => d.Baid)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entity.Property(e => e.ClearState).HasConversion<uint>().HasDefaultValue(DanClearState.NotClear);
         });
 
         modelBuilder.Entity<DanStageScoreDatum>(entity =>
@@ -26,8 +28,8 @@ public partial class TaikoDbContext
 
             entity.HasOne(d => d.Parent)
                 .WithMany()
-                .HasPrincipalKey(p => p.Baid)
-                .HasForeignKey(d => d.Baid)
+                .HasPrincipalKey(p => new {p.Baid, p.DanId})
+                .HasForeignKey(d => new {d.Baid, d.DanId})
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }

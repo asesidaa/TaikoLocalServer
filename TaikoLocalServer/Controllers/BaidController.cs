@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using System.Collections;
+using System.Collections.Specialized;
+using System.Text.Json;
 
 namespace TaikoLocalServer.Controllers;
 
@@ -105,6 +107,14 @@ public class BaidController:ControllerBase
         var costumeFlag = new byte[10];
         Array.Fill(costumeFlag, byte.MaxValue);
 
+        var danData = context.DanScoreData.Where(datum => datum.Baid == baid).ToList();
+        var maxDan = danData.Where(datum => datum.ClearState != DanClearState.NotClear)
+            .Select(datum => datum.DanId)
+            .DefaultIfEmpty()
+            .Max();
+        var gotDanFlagArray = FlagCalculator.ComputeGotDanFlags(danData);
+        logger.LogInformation("Got dan array {Array}", gotDanFlagArray.Stringify());
+
         response = new BAIDResponse
         {
             Result = 1,
@@ -138,9 +148,9 @@ public class BaidController:ControllerBase
             CostumeFlg4 = costumeFlag,
             CostumeFlg5 = costumeFlag,
             LastPlayDatetime = userData.LastPlayDatetime.ToString(Constants.DATE_TIME_FORMAT),
-            IsDispDanOn = userData.DisplayDan,
-            GotDanMax = 1,
-            GotDanFlg = new byte[20],
+            IsDispDanOn = /*userData.DisplayDan*/ true,
+            GotDanMax = maxDan,
+            GotDanFlg = gotDanFlagArray,
             GotDanextraFlg = new byte[20],
             DefaultToneSetting = 0,
             GenericInfoFlg = new byte[10],

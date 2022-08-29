@@ -11,7 +11,7 @@ public class PlayResultController : ControllerBase
     private readonly ILogger<PlayResultController> logger;
 
     private readonly TaikoDbContext context;
-    
+
     public PlayResultController(ILogger<PlayResultController> logger, TaikoDbContext context)
     {
         this.logger = logger;
@@ -26,9 +26,142 @@ public class PlayResultController : ControllerBase
         var decompressed = GZipBytesUtil.DecompressGZipBytes(request.PlayresultData);
 
         var playResultData = Serializer.Deserialize<PlayResultDataRequest>(new ReadOnlySpan<byte>(decompressed));
-        
+
         logger.LogInformation("Play result data {Data}", playResultData.Stringify());
 
+        var response = new PlayResultResponse
+        {
+            Result = 1
+        };   
+       
+        var lastPlayDatetime = DateTime.ParseExact(playResultData.PlayDatetime, Constants.DATE_TIME_FORMAT, CultureInfo.InvariantCulture);
+        
+        UpdateUserData(request, playResultData, lastPlayDatetime);
+        var playMode = (PlayMode)playResultData.PlayMode;
+        
+        if (playMode == PlayMode.DanMode)
+        {
+            UpdateDanPlayData(request, playResultData);
+            context.SaveChanges();
+            return Ok(response);
+        }
+        
+        var bestData = context.SongBestData.Where(datum => datum.Baid == request.BaidConf).ToList();
+        for (var songNumber = 0; songNumber < playResultData.AryStageInfoes.Count; songNumber++)
+        {
+            var stageData = playResultData.AryStageInfoes[songNumber];
+            
+            UpdateBestData(request, stageData, bestData);
+
+            UpdatePlayData(request, songNumber, stageData, lastPlayDatetime);
+        }
+
+        context.SaveChanges();
+        return Ok(response);
+    }
+
+    private void UpdateDanPlayData(PlayResultRequest request, PlayResultDataRequest playResultDataRequest)
+    {
+        if (playResultDataRequest.IsNotRecordedDan)
+        {
+            return;
+        }
+        var danScoreDataQuery = context.DanScoreData
+             .Where(datum => datum.Baid == request.BaidConf &&
+                             datum.DanId == playResultDataRequest.DanId);
+        var danScoreData = new DanScoreDatum
+        {
+            Baid = request.BaidConf,
+            DanId = playResultDataRequest.DanId
+        };
+        var insert = true;
+        if (danScoreDataQuery.Any())
+        {
+            danScoreData = danScoreDataQuery.First();
+            insert = false;
+        }
+        danScoreData.ClearState = (DanClearState)playResultDataRequest.DanResult;
+        danScoreData.ArrivalSongCount = (uint)playResultDataRequest.AryStageInfoes.Count;
+        danScoreData.ComboCountTotal = playResultDataRequest.ComboCntTotal;
+        danScoreData.SoulGaugeTotal = playResultDataRequest.SoulGaugeTotal;
+
+        UpdateDanStageData(playResultDataRequest, danScoreData);
+
+        if (insert)
+        {
+            context.DanScoreData.Add(danScoreData);
+            return;
+        }
+        context.DanScoreData.Update(danScoreData);
+    }
+    private void UpdateDanStageData(PlayResultDataRequest playResultDataRequest, DanScoreDatum danScoreData)
+    {
+        for (var songNumber = 0; songNumber < playResultDataRequest.AryStageInfoes.Count; songNumber++)
+        {
+            var stageData = playResultDataRequest.AryStageInfoes[songNumber];
+            var add = true;
+
+            var danStageData = new DanStageScoreDatum
+            {
+                Baid = danScoreData.Baid,
+                DanId = danScoreData.DanId,
+                SongNumber = (uint)songNumber
+            };
+            if (danScoreData.DanStageScoreData.Any(datum => datum.SongNumber == songNumber))
+            {
+                danStageData = danScoreData.DanStageScoreData.First(datum => datum.SongNumber == songNumber);
+                add = false;
+            }
+
+            if (danStageData.HighScore >= stageData.PlayScore)
+            {
+                continue;
+            }
+            danStageData.GoodCount = stageData.GoodCnt;
+            danStageData.OkCount = stageData.OkCnt;
+            danStageData.BadCount = stageData.NgCnt;
+            danStageData.PlayScore = stageData.PlayScore;
+            danStageData.HighScore = stageData.PlayScore;
+            danStageData.ComboCount = stageData.ComboCnt;
+            danStageData.TotalHitCount = stageData.HitCnt;
+            danStageData.DrumrollCount = stageData.PoundCnt;
+
+            if (add)
+            {
+                context.DanStageScoreData.Add(danStageData);
+                // danScoreData.DanStageScoreData.Add(danStageData);
+                continue;
+            }
+
+            context.DanStageScoreData.Update(danStageData);
+            // danScoreData.DanStageScoreData[songNumber] = danStageData;
+        }
+    }
+
+    private void UpdatePlayData(PlayResultRequest request, int songNumber, PlayResultDataRequest.StageData stageData, DateTime lastPlayDatetime)
+    {
+        var playData = new SongPlayDatum
+        {
+            Baid = request.BaidConf,
+            SongNumber = (uint)songNumber,
+            GoodCount = stageData.GoodCnt,
+            OkCount = stageData.OkCnt,
+            MissCount = stageData.NgCnt,
+            ComboCount = stageData.ComboCnt,
+            HitCount = stageData.HitCnt,
+            Crown = PlayResultToCrown(stageData),
+            Score = stageData.PlayScore,
+            ScoreRate = stageData.ScoreRate,
+            ScoreRank = (ScoreRank)stageData.ScoreRank,
+            Skipped = stageData.IsSkipUse,
+            SongId = stageData.SongNo,
+            PlayTime = lastPlayDatetime,
+            Difficulty = (Difficulty)stageData.Level
+        };
+        context.SongPlayData.Add(playData);
+    }
+    private void UpdateUserData(PlayResultRequest request, PlayResultDataRequest playResultData, DateTime lastPlayDatetime)
+    {
         var userdata = new UserDatum
         {
             Baid = request.BaidConf
@@ -50,75 +183,50 @@ public class PlayResultController : ControllerBase
         };
         userdata.CostumeData = JsonSerializer.Serialize(costumeData);
 
-        var lastPlayDatetime = DateTime.ParseExact(playResultData.PlayDatetime, Constants.DATE_TIME_FORMAT, CultureInfo.InvariantCulture);
         userdata.LastPlayDatetime = lastPlayDatetime;
         context.UserData.Update(userdata);
-        
-        var bestData = context.SongBestData.Where(datum => datum.Baid == request.BaidConf).ToList();
-        for (var songNumber = 0; songNumber < playResultData.AryStageInfoes.Count; songNumber++)
+    }
+
+    private void UpdateBestData(PlayResultRequest request, PlayResultDataRequest.StageData stageData, IEnumerable<SongBestDatum> bestData)
+    {
+        var insert = false;
+        var data = stageData;
+        var bestDatum = bestData
+            .FirstOrDefault(datum => datum.SongId == data.SongNo &&
+                                     datum.Difficulty == (Difficulty)data.Level);
+
+        // Determine whether it is dondaful crown as this is not reflected by play result
+        var crown = PlayResultToCrown(stageData);
+
+        if (bestDatum is null)
         {
-            var stageData = playResultData.AryStageInfoes[songNumber];
-            var insert = false;
-            var bestDatum = bestData
-                .FirstOrDefault(datum => datum.SongId == stageData.SongNo &&
-                                         datum.Difficulty == (Difficulty)stageData.Level);
-           
-            // Determine whether it is dondaful crown as this is not reflected by play result
-            var crown = (CrownType)stageData.PlayResult;
-            if (crown == CrownType.Gold && stageData.OkCnt == 0)
-            {
-                crown = CrownType.Dondaful;
-            }
-            
-            if (bestDatum is null)
-            {
-                insert = true;
-                bestDatum = new SongBestDatum
-                {
-                    Baid = request.BaidConf,
-                    SongId = stageData.SongNo,
-                    Difficulty = (Difficulty)stageData.Level
-                };
-            }
-            
-            bestDatum.UpdateBestData(crown, stageData.ScoreRank, stageData.PlayScore, stageData.ScoreRate);
-
-            if (insert)
-            {
-                context.SongBestData.Add(bestDatum);
-            }
-            else
-            {
-                context.SongBestData.Update(bestDatum);
-            }
-
-            var playData = new SongPlayDatum
+            insert = true;
+            bestDatum = new SongBestDatum
             {
                 Baid = request.BaidConf,
-                SongNumber = (uint)songNumber,
-                GoodCount = stageData.GoodCnt,
-                OkCount = stageData.OkCnt,
-                MissCount = stageData.NgCnt,
-                ComboCount = stageData.ComboCnt,
-                HitCount = stageData.HitCnt,
-                Crown = crown,
-                Score = stageData.PlayScore,
-                ScoreRate = stageData.ScoreRate,
-                ScoreRank = (ScoreRank)stageData.ScoreRank,
-                Skipped = stageData.IsSkipUse,
                 SongId = stageData.SongNo,
-                PlayTime = lastPlayDatetime,
                 Difficulty = (Difficulty)stageData.Level
             };
-            context.SongPlayData.Add(playData);
         }
 
-        context.SaveChanges();
-        var response = new PlayResultResponse
-        {
-            Result = 1
-        };
+        bestDatum.UpdateBestData(crown, stageData.ScoreRank, stageData.PlayScore, stageData.ScoreRate);
 
-        return Ok(response);
+        if (insert)
+        {
+            context.SongBestData.Add(bestDatum);
+        }
+        else
+        {
+            context.SongBestData.Update(bestDatum);
+        }
+    }
+    private static CrownType PlayResultToCrown(PlayResultDataRequest.StageData stageData)
+    {
+        var crown = (CrownType)stageData.PlayResult;
+        if (crown == CrownType.Gold && stageData.OkCnt == 0)
+        {
+            crown = CrownType.Dondaful;
+        }
+        return crown;
     }
 }

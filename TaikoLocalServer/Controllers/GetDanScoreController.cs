@@ -1,12 +1,20 @@
-﻿namespace TaikoLocalServer.Controllers;
+﻿using Microsoft.EntityFrameworkCore;
+using Swan.Mapping;
 
-[Route("api/[controller]")]
+namespace TaikoLocalServer.Controllers;
+
+[Route("/v12r03/chassis/getdanscore.php")]
 [ApiController]
 public class GetDanScoreController : ControllerBase
 {
     private readonly ILogger<GetDanScoreController> logger;
-    public GetDanScoreController(ILogger<GetDanScoreController> logger) {
+    
+    private readonly TaikoDbContext context;
+
+    public GetDanScoreController(ILogger<GetDanScoreController> logger, TaikoDbContext context)
+    {
         this.logger = logger;
+        this.context = context;
     }
 
     [HttpPost]
@@ -19,6 +27,30 @@ public class GetDanScoreController : ControllerBase
         {
             Result = 1
         };
+
+        var danScoreData = context.DanScoreData
+            .Where(datum => datum.Baid == request.Baid)
+            .Include(datum => datum.DanStageScoreData)
+            .ToList();
+
+        foreach (var danId in request.DanIds)
+        {
+            var datum = danScoreData.FirstOrDefault(scoreDatum => scoreDatum.DanId == danId, new DanScoreDatum());
+
+            var responseData = new GetDanScoreResponse.DanScoreData
+            {
+                DanId = danId,
+                ArrivalSongCnt = datum.ArrivalSongCount,
+                ComboCntTotal = datum.ComboCountTotal,
+                SoulGaugeTotal = datum.SoulGaugeTotal
+            };
+            foreach (var stageScoreDatum in datum.DanStageScoreData)
+            {
+                responseData.AryDanScoreDataStages.Add(ObjectMappers.DanStageDataMap.Apply(stageScoreDatum));
+            }
+            
+            response.AryDanScoreDatas.Add(responseData);
+        }
 
         return Ok(response);
     }

@@ -31,12 +31,12 @@ public class InitialDataCheckController : ControllerBase
         bitSet.CopyTo(enabledArray, 0);
 
         var danData = new List<InitialdatacheckResponse.InformationData>();
-        for (var danId = 1; danId <= 19; danId++)
+        for (var danId = Constants.MIN_DAN_ID; danId <= Constants.MAX_DAN_ID; danId++)
         {
             danData.Add(new InitialdatacheckResponse.InformationData
             {
                 InfoId = (uint)danId,
-                VerupNo = 0
+                VerupNo = 1
             });
         }
         

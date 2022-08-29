@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TaikoLocalServer.Context;
 
@@ -10,9 +11,11 @@ using TaikoLocalServer.Context;
 namespace TaikoLocalServer.Migrations
 {
     [DbContext(typeof(TaikoDbContext))]
-    partial class TaikoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220828171353_AddClearState")]
+    partial class AddClearState
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.0-preview.7.22376.2");
@@ -77,12 +80,6 @@ namespace TaikoLocalServer.Migrations
                     b.Property<uint>("ComboCount")
                         .HasColumnType("INTEGER");
 
-                    b.Property<uint?>("DanScoreDatumBaid")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<uint?>("DanScoreDatumDanId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<uint>("DrumrollCount")
                         .HasColumnType("INTEGER");
 
@@ -102,8 +99,6 @@ namespace TaikoLocalServer.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Baid", "DanId", "SongNumber");
-
-                    b.HasIndex("DanScoreDatumBaid", "DanScoreDatumDanId");
 
                     b.ToTable("DanStageScoreData");
                 });
@@ -272,13 +267,16 @@ namespace TaikoLocalServer.Migrations
                 {
                     b.HasOne("TaikoLocalServer.Entities.DanScoreDatum", "Parent")
                         .WithMany()
-                        .HasForeignKey("Baid", "DanId")
+                        .HasForeignKey("Baid")
+                        .HasPrincipalKey("Baid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TaikoLocalServer.Entities.DanScoreDatum", null)
                         .WithMany("DanStageScoreData")
-                        .HasForeignKey("DanScoreDatumBaid", "DanScoreDatumDanId");
+                        .HasForeignKey("Baid", "DanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Parent");
                 });

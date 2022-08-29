@@ -1,4 +1,4 @@
-﻿namespace TaikoLocalServer.Common;
+﻿namespace TaikoLocalServer.Common.Utils;
 
 public static class PathHelper
 {

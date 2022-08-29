@@ -1,4 +1,7 @@
-﻿namespace TaikoLocalServer.Common;
+﻿using System.Collections.Specialized;
+using System.Runtime.InteropServices;
+
+namespace TaikoLocalServer.Common;
 
 public static class FlagCalculator
 {
@@ -63,5 +66,44 @@ public static class FlagCalculator
         var result = resultBase << offset;
 
         return (ushort)(previous | result);
+    }
+
+    public static byte[] ComputeGotDanFlags(List<DanScoreDatum> danScoreData)
+    {
+        var gotDanFlagList = new List<int>();
+        var gotDanFlag = new BitVector32();
+        var section1 = BitVector32.CreateSection(8);
+        var section2 = BitVector32.CreateSection(8, section1);
+        var section3 = BitVector32.CreateSection(8, section2);
+        var section4 = BitVector32.CreateSection(8, section3);
+        var section5 = BitVector32.CreateSection(8, section4);
+        var section6 = BitVector32.CreateSection(8, section5);
+        var section7 = BitVector32.CreateSection(8, section6);
+        var section8 = BitVector32.CreateSection(8, section7);
+
+        var sections = new[] { section1, section2, section3, section4, section5, section6, section7, section8 };
+
+        for (var i = Constants.MIN_DAN_ID; i < Constants.MAX_DAN_ID; i++)
+        {
+            var danId = i;
+            var flag = 0;
+            if (danScoreData.Any(datum => datum.DanId == danId))
+            {
+                var danScore = danScoreData.First(datum => datum.DanId == danId);
+                flag = (int)danScore.ClearState + 1;
+            }
+            var section = sections[(danId - 1) % 8];
+            gotDanFlag[section] = flag;
+
+            if (!section.Equals(section8))
+            {
+                continue;
+            }
+            gotDanFlagList.Add(gotDanFlag.Data);
+            gotDanFlag = new BitVector32();
+        }
+        
+        gotDanFlagList.Add(gotDanFlag.Data);
+        return MemoryMarshal.AsBytes(new ReadOnlySpan<int>(gotDanFlagList.ToArray())).ToArray();
     }
 }
