@@ -1,6 +1,5 @@
 ﻿namespace TaikoLocalServer.Controllers;
 
-[ApiController]
 public class MuchaController : ControllerBase
 {
     private const string UrlBase = "https://v402-front.mucha-prd.nbgi-amnet.jp:10122";
