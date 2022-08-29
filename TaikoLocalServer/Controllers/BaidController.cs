@@ -139,7 +139,7 @@ public class BaidController:ControllerBase
             CostumeFlg5 = costumeFlag,
             LastPlayDatetime = userData.LastPlayDatetime.ToString(Constants.DATE_TIME_FORMAT),
             IsDispDanOn = userData.DisplayDan,
-            GotDanMax = 1,
+            GotDanMax = 0,
             GotDanFlg = new byte[20],
             GotDanextraFlg = new byte[20],
             DefaultToneSetting = 0,
