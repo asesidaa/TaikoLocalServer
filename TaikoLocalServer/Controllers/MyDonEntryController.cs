@@ -30,7 +30,7 @@ public class MyDonEntryController : ControllerBase
         {
             Baid = newId,
             MyDonName = request.MydonName,
-            DisplayDan = false,
+            DisplayDan = true,
             DisplayAchievement = true,
             AchievementDisplayDifficulty = Difficulty.None,
             ColorFace = 0,
