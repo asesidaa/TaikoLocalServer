@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Swan.Mapping;
-
-namespace TaikoLocalServer.Controllers;
+﻿namespace TaikoLocalServer.Controllers;
 
 [Route("/v12r03/chassis/getdanscore.php")]
 [ApiController]

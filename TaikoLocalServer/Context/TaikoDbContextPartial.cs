@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace TaikoLocalServer.Context;
+﻿namespace TaikoLocalServer.Context;
 
 public partial class TaikoDbContext
 {

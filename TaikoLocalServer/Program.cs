@@ -1,7 +1,6 @@
 using System.Security.Authentication;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.EntityFrameworkCore;
 using TaikoLocalServer.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
