@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Specialized;
-using System.Text.Json;
+﻿using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 
 namespace TaikoLocalServer.Controllers;
 
@@ -107,7 +106,10 @@ public class BaidController:ControllerBase
         var costumeFlag = new byte[10];
         Array.Fill(costumeFlag, byte.MaxValue);
 
-        var danData = context.DanScoreData.Where(datum => datum.Baid == baid).ToList();
+        var danData = context.DanScoreData
+            .Where(datum => datum.Baid == baid)
+            .Include(datum => datum.DanStageScoreData)
+            .ToList();
         var maxDan = danData.Where(datum => datum.ClearState != DanClearState.NotClear)
             .Select(datum => datum.DanId)
             .DefaultIfEmpty()

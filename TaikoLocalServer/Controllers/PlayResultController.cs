@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using ProtoBuf;
 
 namespace TaikoLocalServer.Controllers;
@@ -68,7 +69,8 @@ public class PlayResultController : ControllerBase
         }
         var danScoreDataQuery = context.DanScoreData
              .Where(datum => datum.Baid == request.BaidConf &&
-                             datum.DanId == playResultDataRequest.DanId);
+                             datum.DanId == playResultDataRequest.DanId)
+             .Include(datum => datum.DanStageScoreData);
         var danScoreData = new DanScoreDatum
         {
             Baid = request.BaidConf,
