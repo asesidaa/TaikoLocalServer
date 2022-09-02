@@ -30,7 +30,7 @@ public class SelfBestController : ControllerBase
         var difficulty = (Difficulty)request.Level;
         var playerBestData = context.SongBestData
             .Where(datum => datum.Baid == request.Baid &&
-                            datum.Difficulty == difficulty)
+                            (datum.Difficulty == difficulty || (datum.Difficulty == Difficulty.UraOni && difficulty == Difficulty.Oni)))
             .ToList();
         foreach (var songNo in request.ArySongNoes)
         {
@@ -40,16 +40,27 @@ public class SelfBestController : ControllerBase
                 continue;
             }
 
-            var songBestDatum = playerBestData.FirstOrDefault(datum => datum.SongId == songNo, new SongBestDatum());
+            var songBestDatum = playerBestData.Where(datum => datum.SongId == songNo);
 
             var selfBestData = new SelfBestResponse.SelfBestData
             {
                 SongNo = songNo,
-                SelfBestScore = difficulty != Difficulty.UraOni ? songBestDatum.BestScore : 0,
-                SelfBestScoreRate = difficulty != Difficulty.UraOni ? songBestDatum.BestRate : 0,
-                UraBestScore = difficulty == Difficulty.UraOni ? songBestDatum.BestScore : 0,
-                UraBestScoreRate = difficulty == Difficulty.UraOni ? songBestDatum.BestRate : 0
             };
+
+            foreach (var datum in songBestDatum)
+            {
+                if (datum.Difficulty == difficulty)
+                {
+                    selfBestData.SelfBestScore = datum.BestScore;
+                    selfBestData.SelfBestScoreRate = datum.BestRate;
+                }
+                else if (datum.Difficulty == Difficulty.UraOni)
+                {
+                    selfBestData.UraBestScore = datum.BestScore;
+                    selfBestData.UraBestScoreRate = datum.BestRate;
+                }
+            }
+
             response.ArySelfbestScores.Add(selfBestData);
         }
         response.ArySelfbestScores.Sort((data, otherData) => data.SongNo.CompareTo(otherData.SongNo));
