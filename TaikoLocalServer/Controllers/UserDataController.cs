@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Text.Json;
 
 namespace TaikoLocalServer.Controllers;
 
@@ -53,6 +54,27 @@ public class UserDataController : ControllerBase
             .Take(10)
             .ToArray();
 
+        var userData = new UserDatum();
+        if (context.UserData.Any(datum => datum.Baid == request.Baid))
+        {
+            userData = context.UserData.First(datum => datum.Baid == request.Baid);
+        }
+
+        var favoriteSongs = new uint[] { 0 };
+        try
+        {
+            favoriteSongs = JsonSerializer.Deserialize<uint[]>(userData.FavoriteSongsArray);
+        }
+        catch (JsonException e)
+        {
+            logger.LogError(e, "Parsing favorite songs json data failed");
+        }
+        if (favoriteSongs == null || favoriteSongs.Length < 1)
+        {
+            logger.LogWarning("Favorite songs is null!");
+            favoriteSongs = new uint[] { };
+        }
+
         var response = new UserDataResponse
         {
             Result = 1,
@@ -61,10 +83,11 @@ public class UserDataController : ControllerBase
             ReleaseSongFlg = releaseSongArray,
             UraReleaseSongFlg = uraSongArray,
             DefaultOptionSetting = new byte[] {0},
-            IsVoiceOn = true,
-            IsSkipOn = false,
+            IsVoiceOn = userData.IsVoiceOn,
+            IsSkipOn = userData.IsSkipOn,
             IsChallengecompe = false,
             SongRecentCnt = (uint)recentSongs.Length,
+            AryFavoriteSongNoes = favoriteSongs,
             AryRecentSongNoes = recentSongs
         };
         
