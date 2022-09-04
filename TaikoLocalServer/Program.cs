@@ -2,6 +2,7 @@ using System.Security.Authentication;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.HttpOverrides;
 using TaikoLocalServer.Middlewares;
+using TaikoLocalServer.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 // Manually enable tls 1.0
@@ -14,11 +15,17 @@ builder.WebHost.UseKestrel(kestrelOptions =>
 });
 
 // Add services to the container.
-
+builder.Services.AddOptions();
+builder.Services.Configure<UrlSettings>(builder.Configuration.GetSection(nameof(UrlSettings)));
 builder.Services.AddControllers().AddProtoBufNet();
 builder.Services.AddDbContext<TaikoDbContext>(option =>
 {
-    var path = Path.Combine(PathHelper.GetDataPath(), Constants.DB_NAME);
+    var dbName = builder.Configuration["DbFileName"];
+    if (string.IsNullOrEmpty(dbName))
+    {
+        dbName = Constants.DEFAULT_DB_NAME;
+    }
+    var path = Path.Combine(PathHelper.GetDataPath(), dbName);
     option.UseSqlite($"Data Source={path}");
 });
 builder.Services.AddHttpLogging(options =>

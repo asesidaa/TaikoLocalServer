@@ -1,4 +1,4 @@
-﻿namespace TaikoLocalServer.Common.Enums;
+﻿namespace SharedProject.Enums;
 
 public enum PlayMode
 {

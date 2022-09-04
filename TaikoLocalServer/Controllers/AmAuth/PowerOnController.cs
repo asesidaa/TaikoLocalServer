@@ -1,10 +1,18 @@
-﻿namespace TaikoLocalServer.Controllers.AmAuth;
+﻿using Microsoft.Extensions.Options;
+using TaikoLocalServer.Settings;
+
+namespace TaikoLocalServer.Controllers.AmAuth;
 
 [ApiController]
 [Route("/sys/servlet/PowerOn")]
 public class PowerOnController : BaseController<PowerOnController>
 {
-    private const string HOST_STARTUP = "vsapi.taiko-p.jp";
+    private readonly UrlSettings settings;
+
+    public PowerOnController(IOptions<UrlSettings> settings)
+    {
+        this.settings = settings.Value;
+    }
 
     [HttpPost]
     public ContentResult PowerOn([FromForm] PowerOnRequest request)
@@ -14,8 +22,8 @@ public class PowerOnController : BaseController<PowerOnController>
         var response = new Dictionary<string, string>
         {
             {"stat", "1"},
-            {"uri", HOST_STARTUP},
-            {"host", HOST_STARTUP},
+            {"uri", settings.GameUrl},
+            {"host", settings.GameUrl},
             {"place_id", "JPN0123"},
             {"name", "NAMCO"},
             {"nickname", "NAMCO"},

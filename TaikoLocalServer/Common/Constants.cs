@@ -18,7 +18,7 @@ public static class Constants
     
     public const int MIYABI_CORE_RANK_ARRAY_SIZE = MUSIC_ID_MAX + 1;
 
-    public const string DB_NAME = "taiko.db3";
+    public const string DEFAULT_DB_NAME = "taiko.db3";
 
     public const string MUSIC_ATTRIBUTE_FILE_NAME = "music_attribute.json";
 

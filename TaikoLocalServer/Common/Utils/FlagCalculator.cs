@@ -1,7 +1,7 @@
 ﻿using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 
-namespace TaikoLocalServer.Common;
+namespace TaikoLocalServer.Common.Utils;
 
 public static class FlagCalculator
 {
