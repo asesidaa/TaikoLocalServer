@@ -34,6 +34,16 @@ builder.Services.AddHttpLogging(options =>
                             HttpLoggingFields.ResponseStatusCode;
 });
 builder.Services.AddMemoryCache();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DevCorsPolicy", builder =>
+    {
+        builder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 
@@ -52,6 +62,7 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 
 app.UseHttpLogging();
 app.MapControllers();
+app.UseCors("DevCorsPolicy");
 
 app.UseWhen(context => context.Request.Path.StartsWithSegments("/sys/servlet/PowerOn", StringComparison.InvariantCulture),
             applicationBuilder => applicationBuilder.UseAllNetRequestMiddleware());

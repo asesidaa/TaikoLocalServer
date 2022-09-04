@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaikoLocalServer", "TaikoLo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedProject", "SharedProject\SharedProject.csproj", "{34BAE5CA-D46B-489B-8617-3CEB2C0C614F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaikoWebUI", "TaikoWebUI\TaikoWebUI.csproj", "{3F02C2B8-D970-4E8D-89AA-1B938DA6E2FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{34BAE5CA-D46B-489B-8617-3CEB2C0C614F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34BAE5CA-D46B-489B-8617-3CEB2C0C614F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34BAE5CA-D46B-489B-8617-3CEB2C0C614F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F02C2B8-D970-4E8D-89AA-1B938DA6E2FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F02C2B8-D970-4E8D-89AA-1B938DA6E2FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F02C2B8-D970-4E8D-89AA-1B938DA6E2FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F02C2B8-D970-4E8D-89AA-1B938DA6E2FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -19,7 +19,11 @@ public class DashboardController : BaseController<DashboardController>
     public DashboardResponse GetDashboard()
     {
         var cards = context.Cards.AsEnumerable();
-        var users = cards.Select(card => card.CopyPropertiesToNew<User>()).ToList();
+        var users = cards.Select(card => new User
+        {
+            AccessCode = card.AccessCode,
+            Baid = card.Baid
+        }).ToList();
         return new DashboardResponse
         {
             Users = users
