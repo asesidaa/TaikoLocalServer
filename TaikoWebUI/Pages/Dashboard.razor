@@ -1,5 +1,6 @@
 ﻿@using SharedProject.Models.Responses
 @inject HttpClient Client
+@inject NavigationManager UriHelper
 
 @page "/Dashboard"
 <MudContainer>
@@ -18,6 +19,9 @@
                             <CardHeaderContent>
                                 <MudText Typo="Typo.h5">Baid @user.Baid</MudText>
                             </CardHeaderContent>
+                            <CardHeaderActions>
+                                <MudIconButton OnClick="() => NavigateToProfile(user.Baid)" Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />
+                            </CardHeaderActions>
                         </MudCardHeader>
                         <MudCardContent>
                             <MudText Typo="Typo.h6">Access Code</MudText>
@@ -40,4 +44,9 @@
         response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
     }
 
+
+    void NavigateToProfile(uint baid)
+    {
+        UriHelper.NavigateTo($"/Card/{baid}");
+    }
 }
