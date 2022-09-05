@@ -7,11 +7,13 @@
         public string Title { get; set; } = string.Empty;
         public uint TitlePlateId { get; set; }
         public string FavoriteSongsArray { get; set; } = string.Empty;
-        public int OptionSetting { get; set; }
+        public short OptionSetting { get; set; }
+        public int NotesPosition { get; set; }
         public bool IsVoiceOn { get; set; }
         public bool IsSkipOn { get; set; }
+        public uint SelectedToneId { get; set; }
         public DateTime LastPlayDatetime { get; set; }
-        public long LastPlayMode { get; set; }
+        public uint LastPlayMode { get; set; }
         public uint ColorBody { get; set; }
         public uint ColorFace { get; set; }
         public uint ColorLimb { get; set; }

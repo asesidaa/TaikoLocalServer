@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Buffers.Binary;
+using System.Collections;
 using System.Text.Json;
 using Throw;
 
@@ -39,7 +40,7 @@ public class UserDataController : BaseController<UserDataController>
         }
         bitSet.CopyTo(uraSongArray, 0);
 
-        var toneArray = new byte[5];
+        var toneArray = new byte[16];
         Array.Fill(toneArray, byte.MaxValue);
 
         var recentSongs = context.SongPlayData
@@ -72,6 +73,9 @@ public class UserDataController : BaseController<UserDataController>
         // which means database content need to be fixed, so better throw
         favoriteSongs.ThrowIfNull("Favorite song should never be null!");
 
+        var defaultOptions = new byte[2];
+        BinaryPrimitives.WriteInt16LittleEndian(defaultOptions, userData.OptionSetting);
+        
         var response = new UserDataResponse
         {
             Result = 1,
@@ -85,7 +89,8 @@ public class UserDataController : BaseController<UserDataController>
             IsChallengecompe = false,
             SongRecentCnt = (uint)recentSongs.Length,
             AryFavoriteSongNoes = favoriteSongs,
-            AryRecentSongNoes = recentSongs
+            AryRecentSongNoes = recentSongs,
+            NotesPosition = userData.NotesPosition
         };
         
         

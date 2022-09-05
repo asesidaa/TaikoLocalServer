@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Buffers.Binary;
+using System.Globalization;
 using System.Text.Json;
 
 namespace TaikoLocalServer.Controllers.Game;
@@ -176,7 +177,15 @@ public class PlayResultController : BaseController<PlayResultController>
         };
         userdata.CostumeData = JsonSerializer.Serialize(costumeData);
 
+        var lastStage = playResultData.AryStageInfoes.Last();
+        var option = BinaryPrimitives.ReadInt16LittleEndian(lastStage.OptionFlg);
+        userdata.OptionSetting = option;
+        userdata.IsSkipOn = lastStage.IsSkipOn;
+        userdata.IsVoiceOn = lastStage.IsVoiceOn;
+        userdata.NotesPosition = lastStage.NotesPosition;
+
         userdata.LastPlayDatetime = lastPlayDatetime;
+        userdata.LastPlayMode = playResultData.PlayMode;
         context.UserData.Update(userdata);
     }
 
