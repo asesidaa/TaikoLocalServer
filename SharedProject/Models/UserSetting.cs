@@ -19,4 +19,6 @@ public class UserSetting
     public PlaySetting PlaySetting { get; set; } = new();
     
     public int NotesPosition { get; set; }
+
+    public string MyDonName { get; set; } = String.Empty;
 }

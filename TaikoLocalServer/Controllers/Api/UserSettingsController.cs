@@ -35,7 +35,8 @@ public class UserSettingsController : BaseController<UserSettingsController>
             IsSkipOn = user.IsSkipOn,
             NotesPosition = user.NotesPosition,
             PlaySetting = PlaySettingConverter.ShortToPlaySetting(user.OptionSetting),
-            ToneId = user.SelectedToneId
+            ToneId = user.SelectedToneId,
+            MyDonName = user.MyDonName
         };
         return Ok(response);
     }
@@ -58,6 +59,7 @@ public class UserSettingsController : BaseController<UserSettingsController>
         user.SelectedToneId = userSetting.ToneId;
         user.AchievementDisplayDifficulty = userSetting.AchievementDisplayDifficulty;
         user.OptionSetting = PlaySettingConverter.PlaySettingToShort(userSetting.PlaySetting);
+        user.MyDonName = userSetting.MyDonName;
 
         context.Update(user);
         await context.SaveChangesAsync();
