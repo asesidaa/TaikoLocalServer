@@ -1,8 +1,115 @@
 ﻿@page "/Card/{baid}"
+@using SharedProject.Models.Responses
+@using SharedProject.Enums
+@using SharedProject.Models
+@inject HttpClient Client
 
 <h1>Card: @Baid</h1>
 
+@if (response is not null)
+{
+    <MudStack>
+        <MudSelect @bind-Value="@response.IsDisplayAchievement"
+                   Label="Is Display Achievement Panel">
+            <MudSelectItem Value="@true">On</MudSelectItem>
+            <MudSelectItem Value="@false">Off</MudSelectItem>
+        </MudSelect>
+        <MudSelect @bind-Value="@response.IsSkipOn"
+                   Label="Is Skip On">
+            <MudSelectItem Value="@true">On</MudSelectItem>
+            <MudSelectItem Value="@false">Off</MudSelectItem>
+        </MudSelect>
+        <MudSelect @bind-Value="@response.IsVoiceOn"
+                   Label="Is Voice On">
+            <MudSelectItem Value="@true">On</MudSelectItem>
+            <MudSelectItem Value="@false">Off</MudSelectItem>
+        </MudSelect>
+        <MudSelect @bind-Value="@response.IsDisplayDanOnNamePlate"
+                   Label="Should Dan be Displayed On Name Plate">
+            <MudSelectItem Value="@true">On</MudSelectItem>
+            <MudSelectItem Value="@false">Off</MudSelectItem>
+        </MudSelect>
+        <MudSelect @bind-Value="@response.AchievementDisplayDifficulty"
+                   Label="Difficulty Used on Achievement Panel">
+            @foreach (var item in Enum.GetValues<Difficulty>())
+            {
+                <MudSelectItem Value="@item"/>
+            }
+        </MudSelect>
+        <MudSelect @bind-Value="@response.NotesPosition"
+                   Label="Notes Position">
+            @for (var i = -5; i <= 5; i++)
+            {
+                <MudSelectItem Value="@i"/>
+            }
+        </MudSelect>
+        <MudSelect @bind-Value="@response.PlaySetting.RandomType"
+                   Label="Random">
+            @foreach (var item in Enum.GetValues<RandomType>())
+            {
+                <MudSelectItem Value="@item"/>
+            }
+        </MudSelect>
+        <MudSelect @bind-Value="@response.PlaySetting.Speed"
+                   Label="Speed">
+            @for (uint i = 0; i < 15; i++)
+            {
+                var index= i;
+                <MudSelectItem Value="@i">@speedStrings[index]</MudSelectItem>
+            }
+        </MudSelect>
+        <MudSelect @bind-Value="@response.PlaySetting.IsInverseOn"
+                   Label="Inverse">
+            <MudSelectItem Value="@true">On</MudSelectItem>
+            <MudSelectItem Value="@false">Off</MudSelectItem>
+        </MudSelect>
+        <MudSelect @bind-Value="@response.PlaySetting.IsVanishOn"
+                   Label="Vanish">
+            <MudSelectItem Value="@true">On</MudSelectItem>
+            <MudSelectItem Value="@false">Off</MudSelectItem>
+        </MudSelect>
+                        <MudButton Disabled="@isSavingOptions"
+                                   OnClick="SaveOptions"
+                                   Variant="Variant.Filled"
+                                   Color="Color.Info">
+                            @if (isSavingOptions)
+                            {
+                                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+                                <MudText Class="ms-2">Saving...</MudText>
+                            }
+                            else
+                            {
+                                <MudIcon Icon="@Icons.Filled.Save"></MudIcon>
+                                <MudText>Save</MudText>
+                            }
+                        </MudButton>
+    </MudStack>
+}
+
 @code {
+
     [Parameter]
     public string? Baid { get; set; }
+
+    private UserSetting? response;
+
+    private bool isSavingOptions;
+        
+    private readonly string[] speedStrings = { "1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9",
+        "2.0", "2.5", "3.0", "3.5", "4.0"};
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        isSavingOptions = false;
+        response = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
+    }
+
+    private async Task SaveOptions()
+    {
+        isSavingOptions = true;
+        await Client.PostAsJsonAsync($"api/UserSettings/{Baid}", response);
+        isSavingOptions = false;
+    }   
+
 }

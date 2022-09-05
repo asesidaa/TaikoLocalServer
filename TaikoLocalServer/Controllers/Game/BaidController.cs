@@ -146,7 +146,7 @@ public class BaidController : BaseController<BaidController>
             CostumeFlg4 = costumeFlag,
             CostumeFlg5 = costumeFlag,
             LastPlayDatetime = userData.LastPlayDatetime.ToString(Constants.DATE_TIME_FORMAT),
-            IsDispDanOn = /*userData.DisplayDan*/ true,
+            IsDispDanOn = userData.DisplayDan,
             GotDanMax = maxDan,
             GotDanFlg = gotDanFlagArray,
             GotDanextraFlg = new byte[20],

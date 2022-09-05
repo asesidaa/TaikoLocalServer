@@ -83,7 +83,7 @@ public class UserDataController : BaseController<UserDataController>
             // TitleFlg = GZipBytesUtil.GetGZipBytes(new byte[100]),
             ReleaseSongFlg = releaseSongArray,
             UraReleaseSongFlg = uraSongArray,
-            DefaultOptionSetting = new byte[] {0},
+            DefaultOptionSetting = defaultOptions,
             IsVoiceOn = userData.IsVoiceOn,
             IsSkipOn = userData.IsSkipOn,
             IsChallengecompe = false,
