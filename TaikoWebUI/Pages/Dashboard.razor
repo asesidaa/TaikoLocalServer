@@ -3,37 +3,42 @@
 @inject NavigationManager UriHelper
 
 @page "/Dashboard"
-<MudContainer>
-    @if (response is null)
-    {
-        <MudText>No Data</MudText>
-    }
-    else
-    {
-        <MudGrid>
-            @foreach (var user in response.Users)
-            {
-                <MudItem>
-                    <MudCard>
-                        <MudCardHeader>
-                            <CardHeaderContent>
-                                <MudText Typo="Typo.h5">Baid @user.Baid</MudText>
-                            </CardHeaderContent>
-                            <CardHeaderActions>
-                                <MudIconButton OnClick="() => NavigateToProfile(user.Baid)" Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />
-                            </CardHeaderActions>
-                        </MudCardHeader>
-                        <MudCardContent>
-                            <MudText Typo="Typo.h6">Access Code</MudText>
-                            <MudText>@user.AccessCode</MudText>
-                        </MudCardContent>
-                    </MudCard>
-                </MudItem>
-            }
-        </MudGrid>
-    }
-    
-</MudContainer>
+
+<h1>Dashboard</h1>
+
+@if (response is null)
+{
+    <MudText Align="Align.Center" Class="my-8">
+        No Data
+    </MudText>
+}
+else
+{
+    <MudGrid Class="my-8">
+        @foreach (var user in response.Users)
+        {
+            <MudItem xs="12" md="6" lg="4">
+                <MudCard Outlined="true">
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6" Style="font-weight:bold">@user.Baid</MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudText Style="font-weight:bold">Access Code</MudText>
+                        <MudText Style="font-family:monospace">@user.AccessCode</MudText>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
+                            <MudButton Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error">Delete</MudButton>
+                            <MudButton OnClick="() => NavigateToProfile(user.Baid)" Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary">Edit</MudButton>
+                        </MudStack>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
+}
 
 @code {
     private DashboardResponse? response;

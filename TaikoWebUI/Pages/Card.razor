@@ -4,6 +4,8 @@
 @using SharedProject.Models
 @inject HttpClient Client
 
+<MudBreadcrumbs Items="_breadcrumbs" Class="px-0"></MudBreadcrumbs>
+
 <h1>Card: @Baid</h1>
 
 @if (response is not null)
@@ -84,7 +86,7 @@
                 <MudButton Disabled="@isSavingOptions"
                         OnClick="SaveOptions"
                         Variant="Variant.Filled"
-                        Color="Color.Info">
+                        Color="Color.Primary">
                     @if (isSavingOptions)
                     {
                         <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
@@ -99,6 +101,11 @@
             </MudStack>
         </MudItem>
     </MudGrid>
+
+    <MudScrollToTop>
+        <MudFab Color="Color.Secondary" Icon="@Icons.Filled.ArrowCircleUp" />
+    </MudScrollToTop>
+
 }
 
 @code {
@@ -117,11 +124,18 @@
 
     private readonly string[] notePositionStrings = new string[] { "-5", "-4", "-3", "-2", "-1", "0", "+1", "+2", "+3", "+4", "+5"};
 
+    private List<BreadcrumbItem> _breadcrumbs = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Dashboard", href: "Dashboard"),
+    };
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         isSavingOptions = false;
         response = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
+
+        _breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
     }
 
     private async Task SaveOptions()
@@ -129,6 +143,5 @@
         isSavingOptions = true;
         await Client.PostAsJsonAsync($"api/UserSettings/{Baid}", response);
         isSavingOptions = false;
-    }   
-
+    }  
 }
