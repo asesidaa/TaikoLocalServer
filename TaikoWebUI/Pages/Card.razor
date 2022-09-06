@@ -18,19 +18,21 @@
 
                     <MudTextField @bind-Value="@response.MyDonName" Label="Name" Variant="Variant.Outlined"></MudTextField>
 
+                    <MudTextField @bind-Value="@response.Title" Label="Title" Variant="Variant.Outlined"></MudTextField>
+
                     <MudSelect @bind-Value="@response.IsDisplayAchievement"
-                           Label="Is Display Achievement Panel">
+                           Label="Display Achievement Panel">
                         <MudSelectItem Value="@true">On</MudSelectItem>
                         <MudSelectItem Value="@false">Off</MudSelectItem>
                     </MudSelect>
 
                     <MudSelect @bind-Value="@response.IsDisplayDanOnNamePlate"
-                           Label="Display Dan on Name Plate">
+                           Label="Display Dan Rank on Name Plate">
                         <MudSelectItem Value="@true">On</MudSelectItem>
                         <MudSelectItem Value="@false">Off</MudSelectItem>
                     </MudSelect>
                     <MudSelect @bind-Value="@response.AchievementDisplayDifficulty"
-                           Label="Difficulty Used on Achievement Panel">
+                           Label="Achievement Panel Difficulty">
                         @foreach (var item in Enum.GetValues<Difficulty>())
                         {
                             <MudSelectItem Value="@item" />

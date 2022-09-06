@@ -21,4 +21,6 @@ public class UserSetting
     public int NotesPosition { get; set; }
 
     public string MyDonName { get; set; } = String.Empty;
+
+    public string Title { get; set; } = String.Empty;
 }

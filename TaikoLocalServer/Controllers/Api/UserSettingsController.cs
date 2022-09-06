@@ -36,7 +36,8 @@ public class UserSettingsController : BaseController<UserSettingsController>
             NotesPosition = user.NotesPosition,
             PlaySetting = PlaySettingConverter.ShortToPlaySetting(user.OptionSetting),
             ToneId = user.SelectedToneId,
-            MyDonName = user.MyDonName
+            MyDonName = user.MyDonName,
+            Title = user.Title
         };
         return Ok(response);
     }
@@ -60,6 +61,7 @@ public class UserSettingsController : BaseController<UserSettingsController>
         user.AchievementDisplayDifficulty = userSetting.AchievementDisplayDifficulty;
         user.OptionSetting = PlaySettingConverter.PlaySettingToShort(userSetting.PlaySetting);
         user.MyDonName = userSetting.MyDonName;
+        user.Title = userSetting.Title;
 
         context.Update(user);
         await context.SaveChangesAsync();
