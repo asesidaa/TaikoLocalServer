@@ -74,6 +74,14 @@
                                     }
                                 </MudSelect>
 
+                                <MudSelect @bind-Value="@response.ToneId" Label="Tone">
+                                    @for (uint i = 0; i < 19; i++)
+                                    {
+                                        var index = i;
+                                        <MudSelectItem Value="@i">@toneStrings[index]</MudSelectItem>
+                                    }
+                                </MudSelect>
+
                                 <MudSlider Class="mb-8" @bind-Value="@response.NotesPosition" Size="Size.Medium" Min="-5" Max="5" Step="1" TickMarks="true" TickMarkLabels="@notePositionStrings">
                                     <MudText Typo="Typo.caption">Notes Position</MudText>
                                 </MudSlider>
@@ -126,6 +134,14 @@
     };
 
     private readonly string[] notePositionStrings = { "-5", "-4", "-3", "-2", "-1", "0", "+1", "+2", "+3", "+4", "+5" };
+
+    private readonly string[] toneStrings = {
+        "Taiko", "Festival", "Dogs & Cats", "Deluxe",
+        "Drumset", "Tambourine", "Don Wada", "Clapping",
+        "Conga", "8-Bit", "Heave-ho", "Mecha",
+        "Bujain", "Rap", "Hosogai", "Akemi",
+        "Synth Drum", "Shuriken", "Bubble Pop", "Electric Guitar"
+    };
 
     private List<BreadcrumbItem> breadcrumbs = new()
     {
