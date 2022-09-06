@@ -17,27 +17,27 @@
                     <h2>Profile Options</h2>
 
                     <MudTextField @bind-Value="@response.MyDonName" Label="Name" Variant="Variant.Outlined"></MudTextField>
-
                     <MudTextField @bind-Value="@response.Title" Label="Title" Variant="Variant.Outlined"></MudTextField>
 
-                    <MudSelect @bind-Value="@response.IsDisplayAchievement"
-                               Label="Display Achievement Panel">
-                        <MudSelectItem Value="@true">On</MudSelectItem>
-                        <MudSelectItem Value="@false">Off</MudSelectItem>
-                    </MudSelect>
-
-                    <MudSelect @bind-Value="@response.IsDisplayDanOnNamePlate"
-                               Label="Display Dan Rank on Name Plate">
-                        <MudSelectItem Value="@true">On</MudSelectItem>
-                        <MudSelectItem Value="@false">Off</MudSelectItem>
-                    </MudSelect>
-                    <MudSelect @bind-Value="@response.AchievementDisplayDifficulty"
-                               Label="Achievement Panel Difficulty">
-                        @foreach (var item in Enum.GetValues<Difficulty>())
-                        {
-                            <MudSelectItem Value="@item"/>
-                        }
-                    </MudSelect>
+                    <MudGrid>
+                        <MudItem xs="12" md="6">
+                            <MudStack Spacing="2" Class="mt-5">
+                                <MudSwitch @bind-Checked="@response.IsDisplayAchievement" Label="Display Achievement Panel" Color="Color.Primary" />
+                                <MudSwitch @bind-Checked="@response.IsDisplayDanOnNamePlate" Label="Display Dan Rank on Name Plate" Color="Color.Primary" />
+                            </MudStack>
+                        </MudItem>
+                        <MudItem xs="12" md="6">
+                            <MudStack Spacing="6">
+                                <MudSelect @bind-Value="@response.AchievementDisplayDifficulty"
+                                       Label="Achievement Panel Difficulty">
+                                    @foreach (var item in Enum.GetValues<Difficulty>())
+                                    {
+                                        <MudSelectItem Value="@item" />
+                                    }
+                                </MudSelect>
+                            </MudStack>
+                        </MudItem>
+                    </MudGrid>
                 </MudStack>
             </MudPaper>
 
@@ -48,11 +48,8 @@
                         <MudItem xs="12" md="4">
                             <MudStack Spacing="6">
                                 <MudSwitch @bind-Checked="@response.PlaySetting.IsVanishOn" Label="Vanish" Color="Color.Primary"/>
-
                                 <MudSwitch @bind-Checked="@response.PlaySetting.IsInverseOn" Label="Inverse" Color="Color.Primary"/>
-
                                 <MudSwitch @bind-Checked="@response.IsSkipOn" Label="Give Up" Color="Color.Primary"/>
-
                                 <MudSwitch @bind-Checked="@response.IsVoiceOn" Label="Voice" Color="Color.Primary"/>
                             </MudStack>
                         </MudItem>
