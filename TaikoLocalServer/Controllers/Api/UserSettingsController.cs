@@ -45,7 +45,7 @@ public class UserSettingsController : BaseController<UserSettingsController>
     [HttpPost]
     public async Task<IActionResult> SaveUserSetting(uint baid, UserSetting userSetting)
     {
-        var user = await context.UserData.FirstOrDefaultAsync(datum => datum.Baid == baid);
+        var user = await context.UserData.FindAsync(baid);
 
         if (user is null)
         {

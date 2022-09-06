@@ -4,7 +4,7 @@
 @using SharedProject.Models
 @inject HttpClient Client
 
-<MudBreadcrumbs Items="_breadcrumbs" Class="px-0"></MudBreadcrumbs>
+<MudBreadcrumbs Items="breadcrumbs" Class="px-0"></MudBreadcrumbs>
 
 <h1>Card: @Baid</h1>
 
@@ -21,21 +21,21 @@
                     <MudTextField @bind-Value="@response.Title" Label="Title" Variant="Variant.Outlined"></MudTextField>
 
                     <MudSelect @bind-Value="@response.IsDisplayAchievement"
-                           Label="Display Achievement Panel">
+                               Label="Display Achievement Panel">
                         <MudSelectItem Value="@true">On</MudSelectItem>
                         <MudSelectItem Value="@false">Off</MudSelectItem>
                     </MudSelect>
 
                     <MudSelect @bind-Value="@response.IsDisplayDanOnNamePlate"
-                           Label="Display Dan Rank on Name Plate">
+                               Label="Display Dan Rank on Name Plate">
                         <MudSelectItem Value="@true">On</MudSelectItem>
                         <MudSelectItem Value="@false">Off</MudSelectItem>
                     </MudSelect>
                     <MudSelect @bind-Value="@response.AchievementDisplayDifficulty"
-                           Label="Achievement Panel Difficulty">
+                               Label="Achievement Panel Difficulty">
                         @foreach (var item in Enum.GetValues<Difficulty>())
                         {
-                            <MudSelectItem Value="@item" />
+                            <MudSelectItem Value="@item"/>
                         }
                     </MudSelect>
                 </MudStack>
@@ -47,13 +47,13 @@
                     <MudGrid>
                         <MudItem xs="12" md="4">
                             <MudStack Spacing="6">
-                                <MudSwitch @bind-Checked="@response.PlaySetting.IsVanishOn" Label="Vanish" Color="Color.Primary" />
+                                <MudSwitch @bind-Checked="@response.PlaySetting.IsVanishOn" Label="Vanish" Color="Color.Primary"/>
 
-                                <MudSwitch @bind-Checked="@response.PlaySetting.IsInverseOn" Label="Inverse" Color="Color.Primary" />
+                                <MudSwitch @bind-Checked="@response.PlaySetting.IsInverseOn" Label="Inverse" Color="Color.Primary"/>
 
-                                <MudSwitch @bind-Checked="@response.IsSkipOn" Label="Give Up" Color="Color.Primary" />
+                                <MudSwitch @bind-Checked="@response.IsSkipOn" Label="Give Up" Color="Color.Primary"/>
 
-                                <MudSwitch @bind-Checked="@response.IsVoiceOn" Label="Voice" Color="Color.Primary" />
+                                <MudSwitch @bind-Checked="@response.IsVoiceOn" Label="Voice" Color="Color.Primary"/>
                             </MudStack>
                         </MudItem>
                         <MudItem xs="12" md="8">
@@ -67,10 +67,10 @@
                                 </MudSelect>
 
                                 <MudSelect @bind-Value="@response.PlaySetting.RandomType"
-                                       Label="Random">
+                                           Label="Random">
                                     @foreach (var item in Enum.GetValues<RandomType>())
                                     {
-                                        <MudSelectItem Value="@item" />
+                                        <MudSelectItem Value="@item"/>
                                     }
                                 </MudSelect>
 
@@ -86,12 +86,12 @@
         <MudItem md="4" xs="12" Class="py-8 px-8 my-4 pt-8">
             <MudStack Spacing="6" Style="top:100px" Class="sticky">
                 <MudButton Disabled="@isSavingOptions"
-                        OnClick="SaveOptions"
-                        Variant="Variant.Filled"
-                        Color="Color.Primary">
+                           OnClick="SaveOptions"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary">
                     @if (isSavingOptions)
                     {
-                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
                         <MudText Class="ms-2">Saving...</MudText>
                     }
                     else
@@ -105,9 +105,8 @@
     </MudGrid>
 
     <MudScrollToTop>
-        <MudFab Color="Color.Secondary" Icon="@Icons.Filled.ArrowCircleUp" />
+        <MudFab Color="Color.Secondary" Icon="@Icons.Filled.ArrowCircleUp"/>
     </MudScrollToTop>
-
 }
 
 @code {
@@ -119,12 +118,16 @@
 
     private bool isSavingOptions;
 
-    private readonly string[] speedStrings = { "1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9",
-        "2.0", "2.5", "3.0", "3.5", "4.0"};
+    private readonly string[] speedStrings =
+    {
+        "1.0", "1.1", "1.2", "1.3", "1.4",
+        "1.5", "1.6", "1.7", "1.8", "1.9",
+        "2.0", "2.5", "3.0", "3.5", "4.0"
+    };
 
-    private readonly string[] notePositionStrings = new string[] { "-5", "-4", "-3", "-2", "-1", "0", "+1", "+2", "+3", "+4", "+5"};
+    private readonly string[] notePositionStrings = { "-5", "-4", "-3", "-2", "-1", "0", "+1", "+2", "+3", "+4", "+5" };
 
-    private List<BreadcrumbItem> _breadcrumbs = new List<BreadcrumbItem>
+    private List<BreadcrumbItem> breadcrumbs = new()
     {
         new BreadcrumbItem("Dashboard", href: "Dashboard"),
     };
@@ -135,7 +138,7 @@
         isSavingOptions = false;
         response = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
 
-        _breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
+        breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
     }
 
     private async Task SaveOptions()
@@ -143,5 +146,6 @@
         isSavingOptions = true;
         await Client.PostAsJsonAsync($"api/UserSettings/{Baid}", response);
         isSavingOptions = false;
-    }  
+    }
+
 }

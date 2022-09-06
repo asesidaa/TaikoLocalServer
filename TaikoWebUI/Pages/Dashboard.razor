@@ -1,77 +1,87 @@
 ﻿@using SharedProject.Models.Responses
+@using TaikoWebUI.Pages.Dialogs
+@using SharedProject.Models
 @inject HttpClient Client
 @inject NavigationManager UriHelper
+@inject IDialogService DialogService
 
 @page "/Dashboard"
 
 <h1>Dashboard</h1>
 
 <MudGrid Class="my-8">
-@if (response is null)
-{
-    @if (isLoading is true) {
-            @for (uint i = 0; i < 3; i++) {
+    @if (response is null)
+    {
+        @for (uint i = 0; i < 3; i++)
+            {
                 <MudItem xs="12" md="6" lg="4">
                     <MudCard Outlined="true">
                         <MudCardContent>
-                            <MudSkeleton Width="30%" Height="42px;" Class="mb-5" />
-                            <MudSkeleton Width="80%" />
-                            <MudSkeleton Width="100%" />
+                            <MudSkeleton Width="30%" Height="42px;" Class="mb-5"/>
+                            <MudSkeleton Width="80%"/>
+                            <MudSkeleton Width="100%"/>
                         </MudCardContent>
                         <MudCardActions>
                             <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
-                                <MudSkeleton Width="64px" Height="40px" />
-                                <MudSkeleton Width="64px" Height="40px" />
+                                <MudSkeleton Width="64px" Height="40px"/>
+                                <MudSkeleton Width="64px" Height="40px"/>
                             </MudStack>
                         </MudCardActions>
                     </MudCard>
                 </MudItem>
             }
-    } else {
+        }
+    else if(response.Users.Count != 0)
+    {
+        @foreach (var user in response.Users)
+        {
+            <MudItem xs="12" md="6" lg="4">
+                <MudCard Outlined="true">
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6" Style="font-weight:bold">@user.Baid</MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudText Style="font-weight:bold">Access Code</MudText>
+                        <MudText Style="font-family:monospace">@user.AccessCode</MudText>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
+                            <MudButton Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Delete"
+                                       Color="Color.Error"
+                                       OnClick="_ => DeleteCard(user)">
+                                Delete
+                            </MudButton>
+                            <MudButton OnClick="() => NavigateToProfile(user.Baid)"
+                                       Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Edit"
+                                       Color="Color.Primary">
+                                Edit
+                            </MudButton>
+                        </MudStack>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        }
+    }
+    else
+    {
         <MudItem xs="12">
             <MudText Align="Align.Center" Class="my-8">
                 No data.
             </MudText>
         </MudItem>
     }
-}
-else
-{
-    @foreach (var user in response.Users)
-    {
-        <MudItem xs="12" md="6" lg="4">
-            <MudCard Outlined="true">
-                <MudCardHeader>
-                    <CardHeaderContent>
-                        <MudText Typo="Typo.h6" Style="font-weight:bold">@user.Baid</MudText>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                <MudCardContent>
-                    <MudText Style="font-weight:bold">Access Code</MudText>
-                    <MudText Style="font-family:monospace">@user.AccessCode</MudText>
-                </MudCardContent>
-                <MudCardActions>
-                    <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
-                        <MudButton Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error">Delete</MudButton>
-                        <MudButton OnClick="() => NavigateToProfile(user.Baid)" Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary">Edit</MudButton>
-                    </MudStack>
-                </MudCardActions>
-            </MudCard>
-        </MudItem>
-    }
-}
 </MudGrid>
+
 
 @code {
     private DashboardResponse? response;
-    private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
-
-        isLoading = false;
     }
 
 
@@ -79,4 +89,23 @@ else
     {
         UriHelper.NavigateTo($"/Card/{baid}");
     }
+
+    private async Task DeleteCard(User user)
+    {
+        var parameters = new DialogParameters
+        {
+            ["user"] = user
+        };
+
+        var dialog = DialogService.Show<CardDeleteConfirmDialog>("Delete Card", parameters);
+        var result = await dialog.Result;
+
+        if (result.Cancelled)
+        {
+            return;
+        }
+
+        response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
+    }
+
 }
