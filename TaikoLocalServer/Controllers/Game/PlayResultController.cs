@@ -79,10 +79,10 @@ public class PlayResultController : BaseController<PlayResultController>
             danScoreData = danScoreDataQuery.First();
             insert = false;
         }
-        danScoreData.ClearState = (DanClearState)playResultDataRequest.DanResult;
-        danScoreData.ArrivalSongCount = (uint)playResultDataRequest.AryStageInfoes.Count;
-        danScoreData.ComboCountTotal = playResultDataRequest.ComboCntTotal;
-        danScoreData.SoulGaugeTotal = playResultDataRequest.SoulGaugeTotal;
+        danScoreData.ClearState = (DanClearState)Math.Max(playResultDataRequest.DanResult, (uint)danScoreData.ClearState);
+        danScoreData.ArrivalSongCount = Math.Max((uint)playResultDataRequest.AryStageInfoes.Count, danScoreData.ArrivalSongCount);
+        danScoreData.ComboCountTotal = Math.Max(playResultDataRequest.ComboCntTotal, danScoreData.ComboCountTotal);
+        danScoreData.SoulGaugeTotal = Math.Max(playResultDataRequest.SoulGaugeTotal, danScoreData.SoulGaugeTotal);
 
         UpdateDanStageData(playResultDataRequest, danScoreData);
 
@@ -112,23 +112,21 @@ public class PlayResultController : BaseController<PlayResultController>
                 add = false;
             }
 
-            // FIXME: Add proper logic for high score update
-            if (danStageData.HighScore >= stageData.PlayScore)
-            {
-                continue;
-            }
-            
-            ObjectMappers.DanStageResponseToDbMap.Apply(stageData, danStageData);
+            danStageData.HighScore = Math.Max(danStageData.HighScore, stageData.PlayScore);
+            danStageData.ComboCount = Math.Max(danStageData.ComboCount, stageData.ComboCnt);
+            danStageData.DrumrollCount = Math.Max(danStageData.DrumrollCount, stageData.PoundCnt);
+            danStageData.GoodCount = Math.Max(danStageData.GoodCount, stageData.GoodCnt);
+            danStageData.TotalHitCount = Math.Max(danStageData.TotalHitCount, stageData.HitCnt);
+            danStageData.OkCount = Math.Min(danStageData.OkCount, stageData.OkCnt);
+            danStageData.BadCount = Math.Min(danStageData.BadCount, stageData.NgCnt);
 
             if (add)
             {
                 context.DanStageScoreData.Add(danStageData);
-                // danScoreData.DanStageScoreData.Add(danStageData);
                 continue;
             }
 
             context.DanStageScoreData.Update(danStageData);
-            // danScoreData.DanStageScoreData[songNumber] = danStageData;
         }
     }
 
