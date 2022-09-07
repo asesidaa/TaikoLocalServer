@@ -1,5 +1,4 @@
 ﻿@page "/Card/{baid}"
-@using SharedProject.Models.Responses
 @using SharedProject.Enums
 @using SharedProject.Models
 @inject HttpClient Client
@@ -25,24 +24,24 @@
                         <MudItem xs="12" md="4">
                             <MudSelect @bind-Value="@response.TitlePlateId" Label="Title Plate">
                                 @for (uint i = 0; i < 8; i++)
-                                    {
-                                        var index = i;
-                                        <MudSelectItem Value="@i">@titlePlateStrings[index]</MudSelectItem>
-                                    }
+                                {
+                                    var index = i;
+                                    <MudSelectItem Value="@i">@titlePlateStrings[index]</MudSelectItem>
+                                }
                             </MudSelect>
                         </MudItem>
                     </MudGrid>
-                    
+
                     <MudSelect @bind-Value="@response.AchievementDisplayDifficulty"
-                            Label="Achievement Panel Difficulty">
+                               Label="Achievement Panel Difficulty">
                         @foreach (var item in Enum.GetValues<Difficulty>())
                         {
-                            <MudSelectItem Value="@item" />
+                            <MudSelectItem Value="@item"/>
                         }
                     </MudSelect>
 
-                    <MudSwitch @bind-Checked="@response.IsDisplayAchievement" Label="Display Achievement Panel" Color="Color.Primary" />
-                    <MudSwitch @bind-Checked="@response.IsDisplayDanOnNamePlate" Label="Display Dan Rank on Name Plate" Color="Color.Primary" />
+                    <MudSwitch @bind-Checked="@response.IsDisplayAchievement" Label="Display Achievement Panel" Color="Color.Primary"/>
+                    <MudSwitch @bind-Checked="@response.IsDisplayDanOnNamePlate" Label="Display Dan Rank on Name Plate" Color="Color.Primary"/>
                 </MudStack>
             </MudPaper>
 
@@ -137,7 +136,8 @@
 
     private readonly string[] notePositionStrings = { "-5", "-4", "-3", "-2", "-1", "0", "+1", "+2", "+3", "+4", "+5" };
 
-    private readonly string[] toneStrings = {
+    private readonly string[] toneStrings =
+    {
         "Taiko", "Festival", "Dogs & Cats", "Deluxe",
         "Drumset", "Tambourine", "Don Wada", "Clapping",
         "Conga", "8-Bit", "Heave-ho", "Mecha",
@@ -145,7 +145,8 @@
         "Synth Drum", "Shuriken", "Bubble Pop", "Electric Guitar"
     };
 
-    private readonly string[] titlePlateStrings = {
+    private readonly string[] titlePlateStrings =
+    {
         "Wood", "Rainbow", "Gold", "Purple",
         "AI 1", "AI 2", "AI 3", "AI 4"
     };
