@@ -13,40 +13,45 @@
     <MudGrid>
         <MudItem xs="12" md="8">
             <MudPaper Class="py-8 px-8 my-8" Outlined="true">
-                <MudStack Spacing="6">
+                <MudStack Spacing="4">
                     <h2>Profile Options</h2>
 
-                    <MudTextField @bind-Value="@response.MyDonName" Label="Name" Variant="Variant.Outlined"></MudTextField>
-                    <MudTextField @bind-Value="@response.Title" Label="Title" Variant="Variant.Outlined"></MudTextField>
+                    <MudTextField @bind-Value="@response.MyDonName" Label="Name"></MudTextField>
 
                     <MudGrid>
-                        <MudItem xs="12" md="6">
-                            <MudStack Spacing="2" Class="mt-5">
-                                <MudSwitch @bind-Checked="@response.IsDisplayAchievement" Label="Display Achievement Panel" Color="Color.Primary" />
-                                <MudSwitch @bind-Checked="@response.IsDisplayDanOnNamePlate" Label="Display Dan Rank on Name Plate" Color="Color.Primary" />
-                            </MudStack>
+                        <MudItem xs="12" md="8">
+                            <MudTextField @bind-Value="@response.Title" Label="Title"></MudTextField>
                         </MudItem>
-                        <MudItem xs="12" md="6">
-                            <MudStack Spacing="6">
-                                <MudSelect @bind-Value="@response.AchievementDisplayDifficulty"
-                                       Label="Achievement Panel Difficulty">
-                                    @foreach (var item in Enum.GetValues<Difficulty>())
+                        <MudItem xs="12" md="4">
+                            <MudSelect @bind-Value="@response.TitlePlateId" Label="Title Plate">
+                                @for (uint i = 0; i < 8; i++)
                                     {
-                                        <MudSelectItem Value="@item" />
+                                        var index = i;
+                                        <MudSelectItem Value="@i">@titlePlateStrings[index]</MudSelectItem>
                                     }
-                                </MudSelect>
-                            </MudStack>
+                            </MudSelect>
                         </MudItem>
                     </MudGrid>
+                    
+                    <MudSelect @bind-Value="@response.AchievementDisplayDifficulty"
+                            Label="Achievement Panel Difficulty">
+                        @foreach (var item in Enum.GetValues<Difficulty>())
+                        {
+                            <MudSelectItem Value="@item" />
+                        }
+                    </MudSelect>
+
+                    <MudSwitch @bind-Checked="@response.IsDisplayAchievement" Label="Display Achievement Panel" Color="Color.Primary" />
+                    <MudSwitch @bind-Checked="@response.IsDisplayDanOnNamePlate" Label="Display Dan Rank on Name Plate" Color="Color.Primary" />
                 </MudStack>
             </MudPaper>
 
             <MudPaper Class="py-8 px-8 my-8" Outlined="true">
-                <MudStack Spacing="6">
+                <MudStack Spacing="4">
                     <h2>Song Options</h2>
                     <MudGrid>
                         <MudItem xs="12" md="4">
-                            <MudStack Spacing="6">
+                            <MudStack Spacing="4">
                                 <MudSwitch @bind-Checked="@response.PlaySetting.IsVanishOn" Label="Vanish" Color="Color.Primary"/>
                                 <MudSwitch @bind-Checked="@response.PlaySetting.IsInverseOn" Label="Inverse" Color="Color.Primary"/>
                                 <MudSwitch @bind-Checked="@response.IsSkipOn" Label="Give Up" Color="Color.Primary"/>
@@ -54,7 +59,7 @@
                             </MudStack>
                         </MudItem>
                         <MudItem xs="12" md="8">
-                            <MudStack Spacing="6">
+                            <MudStack Spacing="4">
                                 <MudSelect @bind-Value="@response.PlaySetting.Speed" Label="Speed">
                                     @for (uint i = 0; i < 15; i++)
                                     {
@@ -89,7 +94,7 @@
             </MudPaper>
         </MudItem>
         <MudItem md="4" xs="12" Class="py-8 px-8 my-4 pt-8">
-            <MudStack Spacing="6" Style="top:100px" Class="sticky">
+            <MudStack Spacing="4" Style="top:100px" Class="sticky">
                 <MudButton Disabled="@isSavingOptions"
                            OnClick="SaveOptions"
                            Variant="Variant.Filled"
@@ -140,9 +145,14 @@
         "Synth Drum", "Shuriken", "Bubble Pop", "Electric Guitar"
     };
 
+    private readonly string[] titlePlateStrings = {
+        "Wood", "Rainbow", "Gold", "Purple",
+        "AI 1", "AI 2", "AI 3", "AI 4"
+    };
+
     private List<BreadcrumbItem> breadcrumbs = new()
     {
-        new BreadcrumbItem("Dashboard", href: "Dashboard"),
+        new BreadcrumbItem("Dashboard", href: ""),
     };
 
     protected override async Task OnInitializedAsync()
