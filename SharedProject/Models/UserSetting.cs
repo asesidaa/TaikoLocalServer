@@ -23,4 +23,6 @@ public class UserSetting
     public string MyDonName { get; set; } = String.Empty;
 
     public string Title { get; set; } = String.Empty;
+
+    public uint TitlePlateId { get; set; }
 }
