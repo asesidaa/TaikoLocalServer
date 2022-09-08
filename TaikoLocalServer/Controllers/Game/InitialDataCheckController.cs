@@ -40,6 +40,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
             IsClose = false,
             DefaultSongFlg = enabledArray,
             AchievementSongBit = enabledArray,
+            SongIntroductionEndDatetime = DateTime.Now.AddYears(10).ToString(Constants.DATE_TIME_FORMAT),
             AryShopFolderDatas =
             {
                 new InitialdatacheckResponse.InformationData

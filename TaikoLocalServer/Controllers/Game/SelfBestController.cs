@@ -1,4 +1,5 @@
-﻿using Throw;
+﻿using TaikoLocalServer.Services.Interfaces;
+using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -6,16 +7,16 @@ namespace TaikoLocalServer.Controllers.Game;
 [ApiController]
 public class SelfBestController : BaseController<SelfBestController>
 {
-    private readonly TaikoDbContext context;
+    private readonly ISongBestDatumService songBestDatumService;
     
-    public SelfBestController(TaikoDbContext context)
+    public SelfBestController(ISongBestDatumService songBestDatumService)
     {
-        this.context = context;
+        this.songBestDatumService = songBestDatumService;
     }
 
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult SelfBest([FromBody] SelfBestRequest request)
+    public async Task<IActionResult> SelfBest([FromBody] SelfBestRequest request)
     {
         Logger.LogInformation("SelfBest request : {Request}", request.Stringify());
 
@@ -30,10 +31,10 @@ public class SelfBestController : BaseController<SelfBestController>
         var requestDifficulty = (Difficulty)request.Level;
         requestDifficulty.Throw().IfOutOfRange();
         
-        var playerBestData = context.SongBestData
-            .Where(datum => datum.Baid == request.Baid &&
-                            (datum.Difficulty == requestDifficulty ||
-                             (datum.Difficulty == Difficulty.UraOni && requestDifficulty == Difficulty.Oni)))
+        var playerBestData = await songBestDatumService.GetAllSongBestData(request.Baid);
+        playerBestData = playerBestData
+            .Where(datum => datum.Difficulty == requestDifficulty ||
+                            (datum.Difficulty == Difficulty.UraOni && requestDifficulty == Difficulty.Oni))
             .ToList();
         foreach (var songNo in request.ArySongNoes)
         {

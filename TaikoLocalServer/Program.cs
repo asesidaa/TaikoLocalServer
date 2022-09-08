@@ -2,6 +2,9 @@ using System.Security.Authentication;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.HttpOverrides;
 using TaikoLocalServer.Middlewares;
+using TaikoLocalServer.Services;
+using TaikoLocalServer.Services.Extentions;
+using TaikoLocalServer.Services.Interfaces;
 using TaikoLocalServer.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,6 +47,7 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader();
     });
 });
+builder.Services.AddTaikoDbServices();
 
 var app = builder.Build();
 

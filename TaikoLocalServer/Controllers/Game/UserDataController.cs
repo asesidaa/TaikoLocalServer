@@ -1,6 +1,7 @@
 ﻿using System.Buffers.Binary;
 using System.Collections;
 using System.Text.Json;
+using TaikoLocalServer.Services.Interfaces;
 using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
@@ -9,16 +10,19 @@ namespace TaikoLocalServer.Controllers.Game;
 [ApiController]
 public class UserDataController : BaseController<UserDataController>
 {
-    private readonly TaikoDbContext context;
+    private readonly IUserDatumService userDatumService;
+
+    private readonly ISongPlayDatumService songPlayDatumService;
     
-    public UserDataController(TaikoDbContext context)
+    public UserDataController(IUserDatumService userDatumService, ISongPlayDatumService songPlayDatumService)
     {
-        this.context = context;
+        this.userDatumService = userDatumService;
+        this.songPlayDatumService = songPlayDatumService;
     }
 
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult GetUserData([FromBody] UserDataRequest request)
+    public async Task<IActionResult> GetUserData([FromBody] UserDataRequest request)
     {
         Logger.LogInformation("UserData request : {Request}", request.Stringify());
 
@@ -43,8 +47,7 @@ public class UserDataController : BaseController<UserDataController>
         var toneArray = new byte[16];
         Array.Fill(toneArray, byte.MaxValue);
 
-        var recentSongs = context.SongPlayData
-            .Where(datum => datum.Baid == request.Baid)
+        var recentSongs = (await songPlayDatumService.GetSongPlayDatumByBaid(request.Baid))
             .AsEnumerable()
             .OrderByDescending(datum => datum.PlayTime)
             .ThenByDescending(datum => datum.SongNumber)
@@ -64,11 +67,7 @@ public class UserDataController : BaseController<UserDataController>
 
         recentSongs = recentSet.ToArray();
 
-        var userData = new UserDatum();
-        if (context.UserData.Any(datum => datum.Baid == request.Baid))
-        {
-            userData = context.UserData.First(datum => datum.Baid == request.Baid);
-        }
+        var userData = await userDatumService.GetFirstUserDatumOrDefault(request.Baid);
 
         var favoriteSongs = Array.Empty<uint>();
         try

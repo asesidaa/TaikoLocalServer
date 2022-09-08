@@ -1,23 +1,25 @@
-﻿namespace TaikoLocalServer.Controllers.Game;
+﻿using TaikoLocalServer.Services.Interfaces;
+
+namespace TaikoLocalServer.Controllers.Game;
 
 [Route("/v12r03/chassis/crownsdata.php")]
 [ApiController]
 public class CrownsDataController : BaseController<CrownsDataController>
 {
-    private readonly TaikoDbContext context;
+    private readonly ISongBestDatumService songBestDatumService;
 
-    public CrownsDataController(TaikoDbContext context)
+    public CrownsDataController(ISongBestDatumService songBestDatumService)
     {
-        this.context = context;
+        this.songBestDatumService = songBestDatumService;
     }
 
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult CrownsData([FromBody] CrownsDataRequest request)
+    public async Task<IActionResult> CrownsData([FromBody] CrownsDataRequest request)
     {
         Logger.LogInformation("CrownsData request : {Request}", request.Stringify());
 
-        var songBestData = context.SongBestData.Where(datum => datum.Baid == request.Baid).ToList();
+        var songBestData = await songBestDatumService.GetAllSongBestData(request.Baid);
         
         var crown = new ushort[Constants.CROWN_FLAG_ARRAY_SIZE];
         var dondafulCrown = new byte[Constants.DONDAFUL_CROWN_FLAG_ARRAY_SIZE];

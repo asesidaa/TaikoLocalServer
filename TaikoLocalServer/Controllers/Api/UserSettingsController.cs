@@ -2,6 +2,8 @@
 using SharedProject.Models;
 using SharedProject.Models.Responses;
 using SharedProject.Utils;
+using TaikoLocalServer.Services;
+using TaikoLocalServer.Services.Interfaces;
 
 namespace TaikoLocalServer.Controllers.Api;
 
@@ -11,15 +13,18 @@ public class UserSettingsController : BaseController<UserSettingsController>
 {
     private readonly TaikoDbContext context;
 
-    public UserSettingsController(TaikoDbContext context)
+    private readonly IUserDatumService userDatumService;
+
+    public UserSettingsController(TaikoDbContext context, IUserDatumService userDatumService)
     {
         this.context = context;
+        this.userDatumService = userDatumService;
     }
 
     [HttpGet]
     public async Task<ActionResult<UserSetting>> GetUserSetting(uint baid)
     {
-        var user = await context.UserData.FirstOrDefaultAsync(datum => datum.Baid == baid);
+        var user = await userDatumService.GetFirstUserDatumOrNull(baid);
 
         if (user is null)
         {
@@ -46,7 +51,7 @@ public class UserSettingsController : BaseController<UserSettingsController>
     [HttpPost]
     public async Task<IActionResult> SaveUserSetting(uint baid, UserSetting userSetting)
     {
-        var user = await context.UserData.FindAsync(baid);
+        var user = await userDatumService.GetFirstUserDatumOrNull(baid);
 
         if (user is null)
         {
@@ -65,8 +70,7 @@ public class UserSettingsController : BaseController<UserSettingsController>
         user.Title = userSetting.Title;
         user.TitlePlateId = userSetting.TitlePlateId;
 
-        context.Update(user);
-        await context.SaveChangesAsync();
+        await userDatumService.UpdateUserDatum(user);
 
         return NoContent();
     }

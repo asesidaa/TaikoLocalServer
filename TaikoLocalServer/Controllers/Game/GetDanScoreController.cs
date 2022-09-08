@@ -1,19 +1,21 @@
-﻿namespace TaikoLocalServer.Controllers.Game;
+﻿using TaikoLocalServer.Services.Interfaces;
+
+namespace TaikoLocalServer.Controllers.Game;
 
 [Route("/v12r03/chassis/getdanscore.php")]
 [ApiController]
 public class GetDanScoreController : BaseController<GetDanScoreController>
 {
-    private readonly TaikoDbContext context;
+    private readonly IDanScoreDatumService danScoreDatumService;
 
-    public GetDanScoreController(TaikoDbContext context)
+    public GetDanScoreController(IDanScoreDatumService danScoreDatumService)
     {
-        this.context = context;
+        this.danScoreDatumService = danScoreDatumService;
     }
 
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult GetDanScore([FromBody] GetDanScoreRequest request)
+    public async Task<IActionResult> GetDanScore([FromBody] GetDanScoreRequest request)
     {
         Logger.LogInformation("GetDanScore request : {Request}", request.Stringify());
 
@@ -22,10 +24,7 @@ public class GetDanScoreController : BaseController<GetDanScoreController>
             Result = 1
         };
 
-        var danScoreData = context.DanScoreData
-            .Where(datum => datum.Baid == request.Baid)
-            .Include(datum => datum.DanStageScoreData)
-            .ToList();
+        var danScoreData = await danScoreDatumService.GetDanScoreDatumByBaid(request.Baid);
 
         foreach (var danId in request.DanIds)
         {
