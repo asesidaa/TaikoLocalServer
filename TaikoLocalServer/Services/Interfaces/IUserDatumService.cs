@@ -13,4 +13,8 @@ public interface IUserDatumService
     public Task InsertUserDatum(UserDatum userDatum);
     
     public Task UpdateUserDatum(UserDatum userDatum);
+
+    public Task<List<uint>> GetFavoriteSongIds(uint baid);
+
+    public Task UpdateFavoriteSong(uint baid, uint songId, bool isFavorite);
 }

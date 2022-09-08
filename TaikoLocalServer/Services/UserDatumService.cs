@@ -1,4 +1,6 @@
-﻿using TaikoLocalServer.Services.Interfaces;
+﻿using System.Text.Json;
+using TaikoLocalServer.Services.Interfaces;
+using Throw;
 
 namespace TaikoLocalServer.Services;
 
@@ -6,9 +8,12 @@ public class UserDatumService : IUserDatumService
 {
     private readonly TaikoDbContext context;
 
-    public UserDatumService(TaikoDbContext context)
+    private readonly ILogger<UserDatumService> logger;
+
+    public UserDatumService(TaikoDbContext context, ILogger<UserDatumService> logger)
     {
         this.context = context;
+        this.logger = logger;
     }
 
     public async Task<UserDatum?> GetFirstUserDatumOrNull(uint baid)
@@ -50,4 +55,58 @@ public class UserDatumService : IUserDatumService
         context.Update(userDatum);
         await context.SaveChangesAsync();
     }
+
+    public async Task<List<uint>> GetFavoriteSongIds(uint baid)
+    {
+        var userDatum = await context.UserData.FindAsync(baid);
+        userDatum.ThrowIfNull();
+
+        using var stringStream = GZipBytesUtil.GenerateStreamFromString(userDatum.FavoriteSongsArray);
+        List<uint>? result;
+        try
+        {
+            result = await JsonSerializer.DeserializeAsync<List<uint>>(stringStream);
+        }
+        catch (JsonException e)
+        {
+            logger.LogError(e, "Parse favorite song array json failed! Is the user initialized correctly?");
+            result = new List<uint>();
+        }
+        result.ThrowIfNull("Song favorite array should never be null!");
+        return result;
+    }
+
+    public async Task UpdateFavoriteSong(uint baid, uint songId, bool isFavorite)
+    {
+        var userDatum = await context.UserData.FindAsync(baid);
+        userDatum.ThrowIfNull();
+
+        using var stringStream = GZipBytesUtil.GenerateStreamFromString(userDatum.FavoriteSongsArray);
+        List<uint>? favoriteSongIds;
+        try
+        {
+            favoriteSongIds = await JsonSerializer.DeserializeAsync<List<uint>>(stringStream);
+        }
+        catch (JsonException e)
+        {
+            logger.LogError(e, "Parse favorite song array json failed! Is the user initialized correctly?");
+            favoriteSongIds = new List<uint>();
+        }
+        favoriteSongIds.ThrowIfNull("Song favorite array should never be null!");
+        var favoriteSet = new HashSet<uint>(favoriteSongIds);
+        if (isFavorite)
+        {
+            favoriteSet.Add(songId);
+        }
+        else
+        {
+            favoriteSet.Remove(songId);
+        }
+        
+        await JsonSerializer.SerializeAsync(stringStream, favoriteSet);
+
+        context.Update(userDatum);
+        await context.SaveChangesAsync();
+    }
+    
 }
