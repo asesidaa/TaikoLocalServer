@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using TaikoLocalServer.Services.Interfaces;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -6,24 +7,35 @@ namespace TaikoLocalServer.Controllers.Game;
 [Route("/v12r03/chassis/baidcheck.php")]
 public class BaidController : BaseController<BaidController>
 {
-    private readonly TaikoDbContext context;
+    private readonly IUserDatumService userDatumService;
 
-    public BaidController(TaikoDbContext context)
+    private readonly ICardService cardService;
+
+    private readonly ISongBestDatumService songBestDatumService;
+
+    private readonly IDanScoreDatumService danScoreDatumService;
+
+    public BaidController(IUserDatumService userDatumService, ICardService cardService, 
+        ISongBestDatumService songBestDatumService, IDanScoreDatumService danScoreDatumService)
     {
-        this.context = context;
+        this.userDatumService = userDatumService;
+        this.cardService = cardService;
+        this.songBestDatumService = songBestDatumService;
+        this.danScoreDatumService = danScoreDatumService;
     }
 
 
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult GetBaid([FromBody] BAIDRequest request)
+    public async Task<IActionResult> GetBaid([FromBody] BAIDRequest request)
     {
         Logger.LogInformation("Baid request: {Request}", request.Stringify());
         BAIDResponse response;
-        if (!context.Cards.Any(card => card.AccessCode == request.AccessCode))
+        var card = await cardService.GetCardByAccessCode(request.AccessCode);
+        if (card is null)
         {
-            Logger.LogInformation("New user from access code {AccessCode}", request.AccessCode);
-            var newId = context.Cards.Any() ? context.Cards.Max(card => card.Baid) + 1 : 1;
+            Logger.LogInformation("New user with access code {AccessCode}", request.AccessCode);
+            var newId = cardService.GetNextBaid();
 
             response = new BAIDResponse
             {
@@ -43,15 +55,11 @@ public class BaidController : BaseController<BaidController>
             return Ok(response);
         }
 
-        var baid = context.Cards.First(card => card.AccessCode == request.AccessCode).Baid;
+        var baid = card.Baid;
 
-        var userData = new UserDatum();
-        if (context.UserData.Any(datum => datum.Baid == baid))
-        {
-            userData = context.UserData.First(datum => datum.Baid == baid);
-        }
+        var userData = await userDatumService.GetFirstUserDatumOrDefault(baid);
 
-        var songBestData = context.SongBestData.Where(datum => datum.Baid == baid).ToList();
+        var songBestData = await songBestDatumService.GetAllSongBestData(baid);
         
         var achievementDisplayDifficulty = userData.AchievementDisplayDifficulty;
         if (userData.AchievementDisplayDifficulty == Difficulty.None)
@@ -102,16 +110,13 @@ public class BaidController : BaseController<BaidController>
         var costumeFlag = new byte[10];
         Array.Fill(costumeFlag, byte.MaxValue);
 
-        var danData = context.DanScoreData
-            .Where(datum => datum.Baid == baid)
-            .Include(datum => datum.DanStageScoreData)
-            .ToList();
+        var danData = await danScoreDatumService.GetDanScoreDatumByBaid(baid);
+        
         var maxDan = danData.Where(datum => datum.ClearState != DanClearState.NotClear)
             .Select(datum => datum.DanId)
             .DefaultIfEmpty()
             .Max();
         var gotDanFlagArray = FlagCalculator.ComputeGotDanFlags(danData);
-        Logger.LogInformation("Got dan array {Array}", gotDanFlagArray.Stringify());
 
         response = new BAIDResponse
         {

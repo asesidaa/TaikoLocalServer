@@ -1,30 +1,36 @@
-﻿namespace TaikoLocalServer.Controllers.Game;
+﻿using TaikoLocalServer.Services;
+using TaikoLocalServer.Services.Interfaces;
+
+namespace TaikoLocalServer.Controllers.Game;
 
 [Route("/v12r03/chassis/mydonentry.php")]
 [ApiController]
 public class MyDonEntryController : BaseController<MyDonEntryController>
 {
-    private readonly TaikoDbContext context;
+    private readonly IUserDatumService userDatumService;
+
+    private readonly ICardService cardService;
     
-    public MyDonEntryController(TaikoDbContext context)
+    public MyDonEntryController(IUserDatumService userDatumService, ICardService cardService)
     {
-        this.context = context;
+        this.userDatumService = userDatumService;
+        this.cardService = cardService;
     }
 
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult GetMyDonEntry([FromBody] MydonEntryRequest request)
+    public async Task<IActionResult> GetMyDonEntry([FromBody] MydonEntryRequest request)
     {
         Logger.LogInformation("MyDonEntry request : {Request}", request.Stringify());
 
-        var newId = context.Cards.Any() ? context.Cards.Max(card => card.Baid) + 1 : 1;
-        context.Cards.Add(new Card
+        var newId = cardService.GetNextBaid();
+        await cardService.AddCard(new Card
         {
             AccessCode = request.AccessCode,
             Baid = newId
         });
-        
-        context.UserData.Add(new UserDatum
+
+        var newUser = new UserDatum
         {
             Baid = newId,
             MyDonName = request.MydonName,
@@ -35,9 +41,10 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
             ColorBody = 1,
             ColorLimb = 3,
             FavoriteSongsArray = "{}"
-        });
-        context.SaveChanges();
-        
+        };
+
+        await userDatumService.InsertUserDatum(newUser);
+
         var response = new MydonEntryResponse
         {
             Result = 1,

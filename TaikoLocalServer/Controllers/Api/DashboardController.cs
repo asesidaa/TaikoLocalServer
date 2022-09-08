@@ -1,6 +1,7 @@
 ﻿using SharedProject.Models;
 using SharedProject.Models.Responses;
 using Swan.Mapping;
+using TaikoLocalServer.Services.Interfaces;
 
 namespace TaikoLocalServer.Controllers.Api;
 
@@ -10,16 +11,18 @@ public class DashboardController : BaseController<DashboardController>
 {
     private readonly TaikoDbContext context;
 
-    public DashboardController(TaikoDbContext context)
+    private readonly ICardService cardService;
+
+    public DashboardController(TaikoDbContext context, ICardService cardService)
     {
         this.context = context;
+        this.cardService = cardService;
     }
 
     [HttpGet]
-    public DashboardResponse GetDashboard()
+    public async Task<DashboardResponse> GetDashboard()
     {
-        var cards = context.Cards.AsEnumerable();
-        var users = cards.Select(card => card.CopyPropertiesToNew<User>()).ToList();
+        var users = await cardService.GetUsersFromCards();
         return new DashboardResponse
         {
             Users = users

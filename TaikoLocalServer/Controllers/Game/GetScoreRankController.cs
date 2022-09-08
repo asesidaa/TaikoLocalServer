@@ -1,25 +1,27 @@
-﻿namespace TaikoLocalServer.Controllers.Game;
+﻿using TaikoLocalServer.Services.Interfaces;
+
+namespace TaikoLocalServer.Controllers.Game;
 
 [Route("/v12r03/chassis/getscorerank.php")]
 [ApiController]
 public class GetScoreRankController : BaseController<GetScoreRankController>
 {
-    private readonly TaikoDbContext context;
+    private readonly ISongBestDatumService songBestDatumService;
     
-    public GetScoreRankController(TaikoDbContext context)
+    public GetScoreRankController(ISongBestDatumService songBestDatumService)
     {
-        this.context = context;
+        this.songBestDatumService = songBestDatumService;
     }
 
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult GetScoreRank([FromBody] GetScoreRankRequest request)
+    public async Task<IActionResult> GetScoreRank([FromBody] GetScoreRankRequest request)
     {
         Logger.LogInformation("GetScoreRank request : {Request}", request.Stringify());
         var kiwamiScores = new byte[Constants.KIWAMI_SCORE_RANK_ARRAY_SIZE];
         var miyabiScores = new ushort[Constants.MIYABI_CORE_RANK_ARRAY_SIZE];
         var ikiScores = new ushort[Constants.IKI_CORE_RANK_ARRAY_SIZE];
-        var songBestData = context.SongBestData.Where(datum => datum.Baid == request.Baid).ToList();
+        var songBestData = await songBestDatumService.GetAllSongBestData(request.Baid);
         
         for (var songId = 0; songId < Constants.MUSIC_ID_MAX; songId++)
         {
