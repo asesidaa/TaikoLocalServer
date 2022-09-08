@@ -51,8 +51,8 @@ public class UserDataController : BaseController<UserDataController>
             .Select(datum => datum.SongId)
             .ToArray();
         
-        // Use custom implementation as distictby cannot guarantee preserved element
-        var recentSet = new SortedSet<uint>();
+        // Use custom implementation as distinctby cannot guarantee preserved element
+        var recentSet = new OrderedSet<uint>();
         foreach (var id in recentSongs)
         {
             recentSet.Add(id);
@@ -103,8 +103,6 @@ public class UserDataController : BaseController<UserDataController>
             AryRecentSongNoes = recentSongs,
             NotesPosition = userData.NotesPosition
         };
-        
-        
 
         return Ok(response);
     }
