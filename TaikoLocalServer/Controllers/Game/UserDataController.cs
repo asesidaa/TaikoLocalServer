@@ -46,12 +46,23 @@ public class UserDataController : BaseController<UserDataController>
         var recentSongs = context.SongPlayData
             .Where(datum => datum.Baid == request.Baid)
             .AsEnumerable()
-            .DistinctBy(datum => datum.SongId)
             .OrderByDescending(datum => datum.PlayTime)
             .ThenByDescending(datum => datum.SongNumber)
             .Select(datum => datum.SongId)
-            .Take(10)
             .ToArray();
+        
+        // Use custom implementation as distictby cannot guarantee preserved element
+        var recentSet = new SortedSet<uint>();
+        foreach (var id in recentSongs)
+        {
+            recentSet.Add(id);
+            if (recentSet.Count == 10)
+            {
+                break;
+            }
+        }
+
+        recentSongs = recentSet.ToArray();
 
         var userData = new UserDatum();
         if (context.UserData.Any(datum => datum.Baid == request.Baid))
