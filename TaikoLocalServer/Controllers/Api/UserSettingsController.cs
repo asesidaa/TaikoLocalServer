@@ -11,13 +11,10 @@ namespace TaikoLocalServer.Controllers.Api;
 [Route("/api/[controller]/{baid}")]
 public class UserSettingsController : BaseController<UserSettingsController>
 {
-    private readonly TaikoDbContext context;
-
     private readonly IUserDatumService userDatumService;
 
-    public UserSettingsController(TaikoDbContext context, IUserDatumService userDatumService)
+    public UserSettingsController(IUserDatumService userDatumService)
     {
-        this.context = context;
         this.userDatumService = userDatumService;
     }
 

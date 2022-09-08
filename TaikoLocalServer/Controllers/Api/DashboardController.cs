@@ -9,13 +9,10 @@ namespace TaikoLocalServer.Controllers.Api;
 [Route("/api/[controller]")]
 public class DashboardController : BaseController<DashboardController>
 {
-    private readonly TaikoDbContext context;
-
     private readonly ICardService cardService;
 
-    public DashboardController(TaikoDbContext context, ICardService cardService)
+    public DashboardController(ICardService cardService)
     {
-        this.context = context;
         this.cardService = cardService;
     }
 

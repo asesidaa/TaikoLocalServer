@@ -6,6 +6,11 @@ namespace TaikoLocalServer.Common.Utils;
 
 public static class GZipBytesUtil
 {
+    public static MemoryStream GenerateStreamFromString(string value)
+    {
+        return new MemoryStream(Encoding.UTF8.GetBytes(value));
+    }
+    
     public static byte[] GetEmptyJsonGZipBytes()
     {
         var outputStream = new MemoryStream(1024);
