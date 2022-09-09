@@ -20,8 +20,8 @@ public class GameDataService : IGameDataService
 
     public async Task InitializeAsync(string dataBaseUrl)
     {
-        var musicInfo = await client.GetFromJsonAsync<MusicInfo>($"{dataBaseUrl}/data/musicinfo");
-        var wordList = await client.GetFromJsonAsync<WordList>($"{dataBaseUrl}/data/wordlist");
+        var musicInfo = await client.GetFromJsonAsync<MusicInfo>($"{dataBaseUrl}/data/musicinfo.json");
+        var wordList = await client.GetFromJsonAsync<WordList>($"{dataBaseUrl}/data/wordlist.json");
 
         musicInfo.ThrowIfNull();
         wordList.ThrowIfNull();
