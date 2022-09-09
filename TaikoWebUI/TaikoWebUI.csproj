@@ -16,5 +16,14 @@
       <ProjectReference Include="..\SharedProject\SharedProject.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Update="wwwroot\data\musicinfo">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Update="wwwroot\data\wordlist">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 
 </Project>

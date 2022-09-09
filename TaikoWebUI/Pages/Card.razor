@@ -1,4 +1,4 @@
-﻿@page "/Card/{baid}"
+﻿@page "/Card/{baid:int}"
 @using SharedProject.Enums
 @using SharedProject.Models
 @inject HttpClient Client
@@ -121,7 +121,7 @@
 @code {
 
     [Parameter]
-    public string? Baid { get; set; }
+    public int Baid { get; set; }
 
     private UserSetting? response;
 

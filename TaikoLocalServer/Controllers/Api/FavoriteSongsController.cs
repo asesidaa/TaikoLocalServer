@@ -1,4 +1,5 @@
-﻿using TaikoLocalServer.Services.Interfaces;
+﻿using SharedProject.Models.Requests;
+using TaikoLocalServer.Services.Interfaces;
 
 namespace TaikoLocalServer.Controllers.Api;
 
@@ -14,16 +15,16 @@ public class FavoriteSongsController : BaseController<FavoriteSongsController>
     }
 
     [HttpPost]
-    public async Task<IActionResult> UpdateFavoriteSong(uint baid, uint songId, bool isFavorite)
+    public async Task<IActionResult> UpdateFavoriteSong(SetFavoriteRequest request)
     {
-        var user = await userDatumService.GetFirstUserDatumOrNull(baid);
+        var user = await userDatumService.GetFirstUserDatumOrNull(request.Baid);
 
         if (user is null)
         {
             return NotFound();
         }
 
-        await userDatumService.UpdateFavoriteSong(baid, songId, isFavorite);
+        await userDatumService.UpdateFavoriteSong(request.Baid, request.SongId, request.IsFavorite);
         return NoContent();
     }
 }
