@@ -18,6 +18,10 @@ builder.Services.AddSingleton<IGameDataService, GameDataService>();
 var host = builder.Build();
 
 var gameDataService = host.Services.GetRequiredService<IGameDataService>();
+#if DEBUG
 await gameDataService.InitializeAsync(builder.Configuration.GetValue<string>("DataBaseUrl"));
+#else
+await gameDataService.InitializeAsync(builder.Configuration.GetValue<string>("BaseUrl"));
+#endif
 
 await host.RunAsync();

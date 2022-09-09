@@ -64,13 +64,18 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 });
 
+// For blazor hosting
+app.UseBlazorFrameworkFiles();
+app.UseStaticFiles();
+app.UseRouting();
+
+
 app.UseHttpLogging();
 app.MapControllers();
+app.MapFallbackToFile("index.html");
 app.UseCors("DevCorsPolicy");
 
 app.UseWhen(context => context.Request.Path.StartsWithSegments("/sys/servlet/PowerOn", StringComparison.InvariantCulture),
             applicationBuilder => applicationBuilder.UseAllNetRequestMiddleware());
-
-app.MapGet("/", () => "Hello world");
 
 app.Run();
