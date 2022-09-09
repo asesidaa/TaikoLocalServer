@@ -102,9 +102,14 @@ public class UserDatumService : IUserDatumService
         {
             favoriteSet.Remove(songId);
         }
-        
-        await JsonSerializer.SerializeAsync(stringStream, favoriteSet);
 
+        using var newFavoriteSongStream = new MemoryStream();
+        await JsonSerializer.SerializeAsync(newFavoriteSongStream, favoriteSet);
+        newFavoriteSongStream.Position = 0;
+        using var reader = new StreamReader(newFavoriteSongStream);
+
+        userDatum.FavoriteSongsArray = await reader.ReadToEndAsync();
+        logger.LogInformation("Favorite songs are: {Favorite}", userDatum.FavoriteSongsArray);
         context.Update(userDatum);
         await context.SaveChangesAsync();
     }

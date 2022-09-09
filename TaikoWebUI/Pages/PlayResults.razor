@@ -1,0 +1,82 @@
+﻿@using TaikoWebUI.Services
+@using SharedProject.Models.Responses
+@using SharedProject.Models
+@using SharedProject.Models.Requests
+@inject IGameDataService GameDataService
+@inject HttpClient Client
+
+@page "/PlayResults/{baid:int}"
+<h3>PlayResults for baid : @Baid</h3>
+
+@if (response is null)
+{
+    <MudText>No data</MudText>
+}
+else
+{
+    <MudDataGrid Items="@response.SongBestData">
+        <Columns>
+            @* Notice here we have to use cell template for custom conversion *@
+            @* Field is retrieved using reflection, so it is a string with name equals field name*@
+            <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Song Name">
+                <CellTemplate>
+                    <MudText>@GameDataService.GetMusicNameBySongId(context.Item.SongId)</MudText>
+                </CellTemplate>
+            </Column>
+            <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Artist">
+                <CellTemplate>
+                    <MudText>@GameDataService.GetMusicArtistBySongId(context.Item.SongId)</MudText>
+                </CellTemplate>
+            </Column>
+            <Column T="SongBestData" Field="@nameof(SongBestData.Difficulty)" Title="Difficulty"/>
+            <Column T="SongBestData" Field="@nameof(SongBestData.BestScore)" Title="Best score"/>
+            <Column T="SongBestData" Field="@nameof(SongBestData.BestCrown)" Title="Best crown"/>
+            <Column T="SongBestData" Field="@nameof(SongBestData.BestRate)" Title="Best rate"/>
+            <Column T="SongBestData" Field="@nameof(SongBestData.BestScoreRank)" Title="Best score rank"/>
+            <Column T="SongBestData" Field="@nameof(SongBestData.IsFavorite)" Title="Is favorite">
+                <CellTemplate>
+                    <MudToggleIconButton Toggled="@context.Item.IsFavorite"
+                                         ToggledChanged="@(async () => await OnFavoriteToggled(context.Item))"
+                                         Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
+                                         Title="Add to favorite"
+                                         ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
+                                         ToggledTitle="Remove from favorite"/>
+                </CellTemplate>
+            </Column>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="SongBestData"/>
+        </PagerContent>
+    </MudDataGrid>
+}
+
+
+@code {
+
+    [Parameter]
+    public int Baid { get; set; }
+
+    private SongBestResponse? response;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        response = await Client.GetFromJsonAsync<SongBestResponse>($"api/PlayData/{Baid}");
+    }
+
+    private async Task OnFavoriteToggled(SongBestData data)
+    {
+        var request = new SetFavoriteRequest
+        {
+            Baid = (uint)Baid,
+            IsFavorite = !data.IsFavorite,
+            SongId = data.SongId
+        };
+        var result = await Client.PostAsJsonAsync("api/FavoriteSongs", request);
+        if (result.IsSuccessStatusCode)
+        {
+            data.IsFavorite = !data.IsFavorite;
+        }
+    }
+
+}

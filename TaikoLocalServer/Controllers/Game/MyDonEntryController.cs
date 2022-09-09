@@ -40,7 +40,7 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
             ColorFace = 0,
             ColorBody = 1,
             ColorLimb = 3,
-            FavoriteSongsArray = "{}"
+            FavoriteSongsArray = "[]"
         };
 
         await userDatumService.InsertUserDatum(newUser);
