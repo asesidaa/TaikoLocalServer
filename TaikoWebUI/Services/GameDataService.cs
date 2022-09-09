@@ -26,7 +26,8 @@ public class GameDataService : IGameDataService
         musicInfo.ThrowIfNull();
         wordList.ThrowIfNull();
         
-        var dict = wordList.WordListEntries.ToImmutableDictionary(entry => entry.Key);
+        var dict = wordList.WordListEntries.GroupBy(entry => entry.Key)
+            .ToImmutableDictionary(group => group.Key, group => group.First());
         foreach (var music in musicInfo.Items)
         {
             var songNameKey = $"song_{music.Id}";
