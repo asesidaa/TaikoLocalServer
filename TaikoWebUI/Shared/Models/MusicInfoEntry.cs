@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using SharedProject.Enums;
 
 namespace TaikoWebUI.Shared.Models;
 
@@ -11,5 +12,5 @@ public class MusicInfoEntry
     public uint SongId { get; set; }
     
     [JsonPropertyName("genreNo")]
-    public uint Genre { get; set; }
+    public SongGenre Genre { get; set; }
 }
