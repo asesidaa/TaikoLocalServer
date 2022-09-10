@@ -31,7 +31,7 @@
                 {
                     @if (difficulty is not Difficulty.None)
                     {
-                        <MudTabPanel Text="@difficulty.ToString()" Icon="@getDifficultyIcon(difficulty)">
+                        <MudTabPanel Text="@GetDifficultyTitle(difficulty)" Icon="@GetDifficultyIcon(difficulty)">
                             <MudDataGrid Items="@response.SongBestData.Where(data => data.Difficulty == difficulty)"
                                      ColumnResizeMode="ResizeMode.Container">
                                 <Columns>
@@ -61,9 +61,9 @@
                                     </Column>
                                     <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Genre" Sortable="false">
                                         <CellTemplate>
-                                            <MudChip Style="@getGenreStyle(GameDataService.GetMusicGenreBySongId(context.Item.SongId))"
+                                            <MudChip Style="@GetGenreStyle(GameDataService.GetMusicGenreBySongId(context.Item.SongId))"
                                                      Size="Size.Small">
-                                                @getGenreTitle(GameDataService.GetMusicGenreBySongId(context.Item.SongId))
+                                                @GetGenreTitle(GameDataService.GetMusicGenreBySongId(context.Item.SongId))
                                             </MudChip>
                                         </CellTemplate>
                                     </Column>
@@ -79,7 +79,7 @@
                                         <CellTemplate>
                                             @if (context.Item.BestScoreRank is not ScoreRank.None)
                                             {
-                                                <MudTooltip Text="@(getRankText(context.Item.BestScoreRank))" Arrow="true" Placement="Placement.Top">
+                                                <MudTooltip Text="@(GetRankText(context.Item.BestScoreRank))" Arrow="true" Placement="Placement.Top">
                                                     <img src="@($"/images/rank_{context.Item.BestScoreRank}.png")" alt="@(context.Item.BestScoreRank)" style="@ICON_STYLE"/>
                                                 </MudTooltip>
                                             }
@@ -154,14 +154,14 @@
         return crown switch
         {
             CrownType.None => "Fail",
-            CrownType.Clear => "Cleared",
+            CrownType.Clear => "Clear",
             CrownType.Gold => "Full Combo",
             CrownType.Dondaful => "Donderful Combo",
             _ => ""
         };
     }
 
-    private string getRankText(ScoreRank rank)
+    private static string GetRankText(ScoreRank rank)
     {
         return rank switch
         {
@@ -176,12 +176,25 @@
         };
     }
 
-    private string getDifficultyIcon(Difficulty difficulty) 
+    private static string GetDifficultyTitle(Difficulty difficulty)
     {
-        return $"<image href='/images/{difficulty}.png' alt='{difficulty}' width='24' height='24'/>";
+        return difficulty switch
+        {
+            Difficulty.Easy => "Easy",
+            Difficulty.Normal => "Normal",
+            Difficulty.Hard => "Hard",
+            Difficulty.Oni => "Oni",
+            Difficulty.UraOni => "Ura Oni",
+            _ => ""
+        };
     }
 
-    private string getGenreTitle(SongGenre genre)
+    private static string GetDifficultyIcon(Difficulty difficulty) 
+    {
+        return $"<image href='/images/difficulty_{difficulty}.png' alt='{difficulty}' width='24' height='24'/>";
+    }
+
+    private static string GetGenreTitle(SongGenre genre)
     {
         return genre switch
         {
@@ -197,7 +210,7 @@
         };
     }
 
-    private string getGenreStyle(SongGenre genre)
+    private static string GetGenreStyle(SongGenre genre)
     {
         return genre switch
         {
