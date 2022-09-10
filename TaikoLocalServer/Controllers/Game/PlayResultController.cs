@@ -141,6 +141,7 @@ public class PlayResultController : BaseController<PlayResultController>
             MissCount = stageData.NgCnt,
             ComboCount = stageData.ComboCnt,
             HitCount = stageData.HitCnt,
+            DrumrollCount = stageData.PoundCnt,
             Crown = PlayResultToCrown(stageData),
             Score = stageData.PlayScore,
             ScoreRate = stageData.ScoreRate,
