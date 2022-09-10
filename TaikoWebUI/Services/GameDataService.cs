@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Net.Http.Json;
+using SharedProject.Enums;
 using TaikoWebUI.Shared.Models;
 using Throw;
 
@@ -9,9 +10,7 @@ public class GameDataService : IGameDataService
 {
     private readonly HttpClient client;
 
-    private readonly Dictionary<uint, string> musicNameMap = new();
-
-    private readonly Dictionary<uint, string> musicArtistMap = new();
+    private readonly Dictionary<uint, MusicDetail> musicMap = new();
 
     public GameDataService(HttpClient client)
     {
@@ -22,10 +21,13 @@ public class GameDataService : IGameDataService
     {
         var musicInfo = await client.GetFromJsonAsync<MusicInfo>($"{dataBaseUrl}/data/musicinfo.json");
         var wordList = await client.GetFromJsonAsync<WordList>($"{dataBaseUrl}/data/wordlist.json");
+        var musicOrder = await client.GetFromJsonAsync<MusicOrder>($"{dataBaseUrl}/data/music_order.json");
 
         musicInfo.ThrowIfNull();
         wordList.ThrowIfNull();
+        musicOrder.ThrowIfNull();
         
+        // To prevent duplicate entries in wordlist
         var dict = wordList.WordListEntries.GroupBy(entry => entry.Key)
             .ToImmutableDictionary(group => group.Key, group => group.First());
         foreach (var music in musicInfo.Items)
@@ -35,19 +37,47 @@ public class GameDataService : IGameDataService
             
             var musicName = dict.GetValueOrDefault(songNameKey, new WordListEntry());
             var musicArtist = dict.GetValueOrDefault(songArtistKey, new WordListEntry());
-            
-            musicNameMap.TryAdd(music.SongId, musicName.JapaneseText);
-            musicArtistMap.TryAdd(music.SongId, musicArtist.JapaneseText);
+
+            var musicSongId = music.SongId;
+            var musicDetail = new MusicDetail
+            {
+                SongId = musicSongId,
+                SongName = musicName.JapaneseText,
+                ArtistName = musicArtist.JapaneseText,
+                Genre = music.Genre
+            };
+
+            musicMap.TryAdd(musicSongId, musicDetail);
+        }
+
+        for (var index = 0; index < musicOrder.Order.Count; index++)
+        {
+            var musicOrderEntry = musicOrder.Order[index];
+            var songId = musicOrderEntry.SongId;
+            if (musicMap.ContainsKey(songId))
+            {
+                musicMap[songId].Index = index;
+            }
         }
     }
 
     public string GetMusicNameBySongId(uint songId)
     {
-        return musicNameMap.GetValueOrDefault(songId, string.Empty);
+       return musicMap.TryGetValue(songId, out var musicDetail) ? musicDetail.SongName : string.Empty;
     }
 
     public string GetMusicArtistBySongId(uint songId)
     {
-        return musicArtistMap.GetValueOrDefault(songId, string.Empty);
+        return musicMap.TryGetValue(songId, out var musicDetail) ? musicDetail.ArtistName : string.Empty;
     }
+    public SongGenre GetMusicGenreBySongId(uint songId)
+    {
+        return musicMap.TryGetValue(songId, out var musicDetail) ? musicDetail.Genre : SongGenre.Variety;
+    }
+
+    public int GetMusicIndexBySongId(uint songId)
+    {
+        return musicMap.TryGetValue(songId, out var musicDetail) ? musicDetail.Index : int.MaxValue;
+    }
+
 }
