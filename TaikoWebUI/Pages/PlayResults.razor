@@ -36,7 +36,7 @@ else
                 <Column T="SongBestData" Field="@nameof(SongBestData.Difficulty)" Title="Difficulty">
                     <CellTemplate>
                             <MudTooltip Text="@(context.Item.Difficulty.ToString())" Arrow="true" Placement="Placement.Top">
-                            <img src="@($"/images/{context.Item.Difficulty}.png")" alt="@(context.Item.Difficulty)" style="width:25px;height:25px;" />
+                            <img src="@($"/images/{context.Item.Difficulty}.png")" alt="@(context.Item.Difficulty)" style="@ICON_STYLE" />
                         </MudTooltip>
                     </CellTemplate>
                 </Column>
@@ -44,7 +44,7 @@ else
                 <Column T="SongBestData" Field="@nameof(SongBestData.BestCrown)" Title="Best Crown">
                     <CellTemplate>
                             <MudTooltip Text="@(GetCrownText(context.Item.BestCrown))" Arrow="true" Placement="Placement.Top">
-                                <img src="@($"/images/crown_{context.Item.BestCrown}.png")" alt="@(context.Item.BestCrown)" style="width:25px;height:25px;" />
+                                <img src="@($"/images/crown_{context.Item.BestCrown}.png")" alt="@(context.Item.BestCrown)" style="@ICON_STYLE" />
                         </MudTooltip>
                     </CellTemplate>
                 </Column>
@@ -83,7 +83,9 @@ else
 
     private SongBestResponse? response;
 
-    private List<BreadcrumbItem> breadcrumbs = new()
+    private const string ICON_STYLE = "width:25px; height:25px;";
+
+    private readonly List<BreadcrumbItem> breadcrumbs = new()
     {
         new BreadcrumbItem("Cards", href: "/Cards"),
     };
