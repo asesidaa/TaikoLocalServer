@@ -26,14 +26,16 @@
     else
     {
         <MudItem xs="12">
-            <MudTabs Elevation="0" Border="true" Rounded="true" ApplyEffectsToContainer="true" PanelClass="py-6">
+            <MudTabs Elevation="0" Border="true" Rounded="true" ApplyEffectsToContainer="true" Outlined="true" Class="mb-10">
                 @foreach (var difficulty in Enum.GetValues<Difficulty>())
                 {
                     @if (difficulty is not Difficulty.None)
                     {
-                        <MudTabPanel Text="@GetDifficultyTitle(difficulty)" Icon="@GetDifficultyIcon(difficulty)">
+                        <MudTabPanel Text="@GetDifficultyTitle(difficulty)" 
+                                     Icon="@GetDifficultyIcon(difficulty)">
+
                             <MudDataGrid Items="@response.SongBestData.Where(data => data.Difficulty == difficulty)"
-                                     ColumnResizeMode="ResizeMode.Container">
+                                     ColumnResizeMode="ResizeMode.Container" RowsPerPage="25" Elevation="0">
                                 <Columns>
                                     <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Song" StickyLeft="true" Class="clm-row-large">
                                         <CellTemplate>
@@ -75,7 +77,7 @@
                                             </MudTooltip>
                                         </CellTemplate>
                                     </Column>
-                                    <Column T="SongBestData" Field="@nameof(SongBestData.BestScoreRank)" Title="Best Rank">
+                                    <Column T="SongBestData" Field="@nameof(SongBestData.BestScoreRank)" Title="Best Rank" Sortable="false">
                                         <CellTemplate>
                                             @if (context.Item.BestScoreRank is not ScoreRank.None)
                                             {
@@ -96,6 +98,7 @@
                                     <MudDataGridPager T="SongBestData"/>
                                 </PagerContent>
                             </MudDataGrid>
+
                         </MudTabPanel>
                     }
                 }
