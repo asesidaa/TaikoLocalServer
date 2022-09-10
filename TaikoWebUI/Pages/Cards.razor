@@ -55,16 +55,21 @@
                             </MudCardContent>
                             <MudCardActions>
                                 <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
-                                    <MudButton Href="@($"Cards/{user.Baid}/PlayResults")"
-                                               Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Filled.FeaturedPlayList"
-                                               Color="Color.Primary">
-                                        View Play Data
-                                    </MudButton>
                                     <MudButton Href="@($"Cards/{user.Baid}/Profile")"
                                        Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Edit"
                                        Color="Color.Primary">
                                         Edit Profile
                                     </MudButton>
+                                    <MudMenu Size="Size.Small" 
+                                             Color="Color.Primary"
+                                             Label="View Play Data"
+                                             StartIcon="@Icons.Filled.FeaturedPlayList"
+                                             EndIcon="@Icons.Filled.KeyboardArrowDown"
+                                             FullWidth="true"
+                                             AnchorOrigin="Origin.BottomCenter"
+                                             TransformOrigin="Origin.TopCenter">
+                                        <MudMenuItem Href="@($"Cards/{user.Baid}/PlayResults")">Taiko Mode</MudMenuItem>
+                                    </MudMenu>
                                 </MudStack>
                             </MudCardActions>
                         </MudCard>

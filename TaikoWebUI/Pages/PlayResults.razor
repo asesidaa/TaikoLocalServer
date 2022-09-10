@@ -11,7 +11,7 @@
 
 <MudBreadcrumbs Items="breadcrumbs" Class="px-0"></MudBreadcrumbs>
 
-<h1>Play Data</h1>
+<h1>Taiko Mode</h1>
 <MudText Typo="Typo.caption">Card: @Baid</MudText>
 
 <MudGrid Class="my-8">
@@ -59,7 +59,7 @@
                                             </MudGrid>
                                         </CellTemplate>
                                     </Column>
-                                    <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Genre">
+                                    <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Genre" Sortable="false">
                                         <CellTemplate>
                                             <MudChip Style="@getGenreStyle(GameDataService.GetMusicGenreBySongId(context.Item.SongId))"
                                                      Size="Size.Small">
@@ -90,7 +90,7 @@
                                 <Column T="SongBestData" Field="@nameof(SongBestData.MissCount)" Title="Bad" Sortable="false"/>
                                 <Column T="SongBestData" Field="@nameof(SongBestData.DrumrollCount)" Title="Drum Roll" Sortable="false"/>
                                 <Column T="SongBestData" Field="@nameof(SongBestData.ComboCount)" Title="Max Combo" Sortable="false"/>
-                                <Column T="SongBestData" Field="@nameof(SongBestData.LastPlayTime)" Title="Last Play Time"/>
+                                <Column T="SongBestData" Field="@nameof(SongBestData.LastPlayTime)" Title="Last Played"/>
                             </Columns>
                             <PagerContent>
                                 <MudDataGridPager T="SongBestData"/>
@@ -131,7 +131,7 @@
         });
 
         breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
-        breadcrumbs.Add(new BreadcrumbItem("Play Data", href: $"/Cards/{Baid}/PlayResults", disabled: false));
+        breadcrumbs.Add(new BreadcrumbItem("Taiko Mode", href: $"/Cards/{Baid}/PlayResults", disabled: false));
     }
 
     private async Task OnFavoriteToggled(SongBestData data)
@@ -166,13 +166,13 @@
         return rank switch
         {
             ScoreRank.None => "None",
-            ScoreRank.White => "Stylish (White)",
-            ScoreRank.Bronze => "Stylish (Bronze)",
-            ScoreRank.Silver => "Stylish (Silver)",
-            ScoreRank.Gold => "Graceful (Gold)",
-            ScoreRank.Sakura => "Graceful (Sakura)",
-            ScoreRank.Purple => "Graceful (Purple)",
-            ScoreRank.Dondaful => "Top Class (Donderful)",
+            ScoreRank.White => "Stylish",
+            ScoreRank.Bronze => "Stylish",
+            ScoreRank.Silver => "Stylish",
+            ScoreRank.Gold => "Graceful",
+            ScoreRank.Sakura => "Graceful",
+            ScoreRank.Purple => "Graceful",
+            ScoreRank.Dondaful => "Top Class",
             _ => ""
         };
     }
