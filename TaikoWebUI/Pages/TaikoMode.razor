@@ -7,7 +7,7 @@
 @inject IGameDataService GameDataService
 @inject HttpClient Client
 
-@page "/Cards/{baid:int}/PlayResults"
+@page "/Cards/{baid:int}/TaikoMode"
 
 <MudBreadcrumbs Items="breadcrumbs" Class="px-0"></MudBreadcrumbs>
 
@@ -131,7 +131,7 @@
         });
 
         breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
-        breadcrumbs.Add(new BreadcrumbItem("Taiko Mode", href: $"/Cards/{Baid}/PlayResults", disabled: false));
+        breadcrumbs.Add(new BreadcrumbItem("Taiko Mode", href: $"/Cards/{Baid}/TaikoMode", disabled: false));
     }
 
     private async Task OnFavoriteToggled(SongBestData data)

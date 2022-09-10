@@ -1,0 +1,50 @@
+﻿@using TaikoWebUI.Services
+@using SharedProject.Models.Responses
+@using SharedProject.Models
+@using SharedProject.Models.Requests
+@using SharedProject.Enums
+@using Throw
+@inject IGameDataService GameDataService
+@inject HttpClient Client
+
+@page "/Cards/{baid:int}/DaniDojo"
+
+<MudBreadcrumbs Items="breadcrumbs" Class="px-0"></MudBreadcrumbs>
+
+<h1>Dani Dojo</h1>
+<MudText Typo="Typo.caption">Card: @Baid</MudText>
+
+<MudGrid Class="my-8">
+
+</MudGrid>
+
+
+@code {
+
+    [Parameter]
+    public int Baid { get; set; }
+
+    private SongBestResponse? response;
+
+    private const string ICON_STYLE = "width:25px; height:25px;";
+
+    private readonly List<BreadcrumbItem> breadcrumbs = new()
+    {
+        new BreadcrumbItem("Cards", href: "/Cards"),
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        response = await Client.GetFromJsonAsync<SongBestResponse>($"api/PlayData/{Baid}");
+        response.ThrowIfNull();
+        response.SongBestData.Sort((data1, data2) =>
+        {
+            return GameDataService.GetMusicIndexBySongId(data1.SongId)
+                .CompareTo(GameDataService.GetMusicIndexBySongId(data2.SongId));
+        });
+
+        breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
+        breadcrumbs.Add(new BreadcrumbItem("Dani Dojo", href: $"/Cards/{Baid}/DaniDojo", disabled: false));
+    }
+}
