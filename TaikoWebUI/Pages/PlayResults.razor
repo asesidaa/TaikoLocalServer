@@ -25,15 +25,29 @@
 else
 {
     <MudItem xs="12">
-        <MudDataGrid Items="@response.SongBestData">
+        <MudDataGrid Items="@response.SongBestData" ColumnResizeMode="ResizeMode.Container">
             <Columns>
-                <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Song">
+                    <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Song" StickyLeft="true" Class="clm-row-large">
                     <CellTemplate>
-                        <MudText Typo="Typo.body2" Style="font-weight:bold">@GameDataService.GetMusicNameBySongId(context.Item.SongId)</MudText>
-                        <MudText Typo="Typo.caption">@GameDataService.GetMusicArtistBySongId(context.Item.SongId)</MudText>
+                        <MudStack Row="true" AlignItems="AlignItems.Center">
+                            <MudStack>
+                                <MudToggleIconButton Toggled="@context.Item.IsFavorite"
+                                        ToggledChanged="@(async () => await OnFavoriteToggled(context.Item))"
+                                        Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
+                                        Title="Add to favorites"
+                                        ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
+                                        ToggledTitle="Remove from favorites"
+                                        Size="Size.Small"
+                                        ToggledSize="Size.Small" />
+                            </MudStack>
+                            <MudStack Spacing="0">
+                                <MudText Typo="Typo.body2" Style="font-weight:bold">@GameDataService.GetMusicNameBySongId(context.Item.SongId)</MudText>
+                                <MudText Typo="Typo.caption">@GameDataService.GetMusicArtistBySongId(context.Item.SongId)</MudText>
+                            </MudStack>
+                        </MudStack>
                     </CellTemplate>
                 </Column>
-                <Column T="SongBestData" Field="@nameof(SongBestData.Difficulty)" Title="Difficulty">
+                <Column T="SongBestData" Field="@nameof(SongBestData.Difficulty)" Title="Course">
                     <CellTemplate>
                             <MudTooltip Text="@(context.Item.Difficulty.ToString())" Arrow="true" Placement="Placement.Top">
                             <img src="@($"/images/{context.Item.Difficulty}.png")" alt="@(context.Item.Difficulty)" style="@ICON_STYLE" />
@@ -41,40 +55,30 @@ else
                     </CellTemplate>
                 </Column>
                 <Column T="SongBestData" Field="@nameof(SongBestData.BestScore)" Title="Best Score"/>
-                <Column T="SongBestData" Field="@nameof(SongBestData.GoodCount)" Title="Good" />
-                <Column T="SongBestData" Field="@nameof(SongBestData.OkCount)" Title="Ok" />
-                <Column T="SongBestData" Field="@nameof(SongBestData.MissCount)" Title="Bad" />
-                <Column T="SongBestData" Field="@nameof(SongBestData.DrumrollCount)" Title="Drum Rolls" />
-                <Column T="SongBestData" Field="@nameof(SongBestData.ComboCount)" Title="Max Combo" />
-                @*<Column T="SongBestData" Field="@nameof(SongBestData.HitCount)" Title="Hit" />*@
                 <Column T="SongBestData" Field="@nameof(SongBestData.BestCrown)" Title="Best Crown">
                     <CellTemplate>
-                            <MudTooltip Text="@(GetCrownText(context.Item.BestCrown))" Arrow="true" Placement="Placement.Top">
-                                <img src="@($"/images/crown_{context.Item.BestCrown}.png")" alt="@(context.Item.BestCrown)" style="@ICON_STYLE" />
+                        <MudTooltip Text="@(GetCrownText(context.Item.BestCrown))" Arrow="true" Placement="Placement.Top">
+                            <img src="@($"/images/crown_{context.Item.BestCrown}.png")" alt="@(context.Item.BestCrown)" style="@ICON_STYLE" />
                         </MudTooltip>
                     </CellTemplate>
                 </Column>
                 <Column T="SongBestData" Field="@nameof(SongBestData.BestScoreRank)" Title="Best Rank">
                     <CellTemplate>
-                            @if (context.Item.BestScoreRank is not ScoreRank.None)
-                            {
-                                <MudTooltip Text="@(getRankText(context.Item.BestScoreRank))" Arrow="true" Placement="Placement.Top">
-                                    <img src="@($"/images/rank_{context.Item.BestScoreRank}.png")" alt="@(context.Item.BestScoreRank)" style="@ICON_STYLE" />
-                                </MudTooltip>
-                            }
+                        @if (context.Item.BestScoreRank is not ScoreRank.None)
+                        {
+                            <MudTooltip Text="@(getRankText(context.Item.BestScoreRank))" Arrow="true" Placement="Placement.Top">
+                                <img src="@($"/images/rank_{context.Item.BestScoreRank}.png")" alt="@(context.Item.BestScoreRank)" style="@ICON_STYLE" />
+                            </MudTooltip>
+                        }
                     </CellTemplate>
                 </Column>
+                <Column T="SongBestData" Field="@nameof(SongBestData.GoodCount)" Title="Good" />
+                <Column T="SongBestData" Field="@nameof(SongBestData.OkCount)" Title="Ok" />
+                <Column T="SongBestData" Field="@nameof(SongBestData.MissCount)" Title="Bad" />
+                <Column T="SongBestData" Field="@nameof(SongBestData.DrumrollCount)" Title="Drum Roll" />
+                <Column T="SongBestData" Field="@nameof(SongBestData.ComboCount)" Title="Max Combo" />
+                @*<Column T="SongBestData" Field="@nameof(SongBestData.HitCount)" Title="Hit" />*@
                 @*<Column T="SongBestData" Field="@nameof(SongBestData.BestRate)" Title="Best Rate"/>*@
-                <Column T="SongBestData" Field="@nameof(SongBestData.IsFavorite)" Title="Favorite">
-                    <CellTemplate>
-                        <MudToggleIconButton Toggled="@context.Item.IsFavorite"
-                                             ToggledChanged="@(async () => await OnFavoriteToggled(context.Item))"
-                                             Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
-                                             Title="Add to favorites"
-                                             ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
-                                             ToggledTitle="Remove from favorites"/>
-                    </CellTemplate>
-                </Column>
             </Columns>
             <PagerContent>
                 <MudDataGridPager T="SongBestData"/>
