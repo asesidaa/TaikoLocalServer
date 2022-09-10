@@ -30,7 +30,7 @@
                 @foreach (var genre in Enum.GetValues<SongGenre>())
                 {
                     <MudTabPanel Text="@genre.ToString()">
-                        <MudDataGrid Items="@response.SongBestData.Where(data => GameDataService.GetMusicGenreBySongId(data.SongId) == genre)" 
+                        <MudDataGrid Items="@response.SongBestData.Where(data => GameDataService.GetMusicGenreBySongId(data.SongId) == genre)"
                                      ColumnResizeMode="ResizeMode.Container">
                             <Columns>
                                 <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Song" StickyLeft="true" Class="clm-row-large">
@@ -44,14 +44,14 @@
                                             </MudItem>
                                             <MudItem xs="2">
                                                 <MudStack Justify="Justify.Center" AlignItems="AlignItems.End" Style="height:100%">
-                                                    <MudToggleIconButton Toggled="@context.Item.IsFavorite"
-                                                                         ToggledChanged="@(async () => await OnFavoriteToggled(context.Item))"
-                                                                         Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
-                                                                         Title="Add to favorites"
-                                                                         ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
-                                                                         ToggledTitle="Remove from favorites"
-                                                                         Size="Size.Small"
-                                                                         ToggledSize="Size.Small"/>
+                                                    <MudTooltip Text="@(context.Item.IsFavorite ? "Remove from favorites" : "Add to favorites")" Arrow="true" Placement="Placement.Top">
+                                                        <MudToggleIconButton Toggled="@context.Item.IsFavorite"
+                                                                             ToggledChanged="@(async () => await OnFavoriteToggled(context.Item))"
+                                                                             Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
+                                                                             ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
+                                                                             Size="Size.Small"
+                                                                             ToggledSize="Size.Small"/>
+                                                    </MudTooltip>
                                                 </MudStack>
                                             </MudItem>
                                         </MudGrid>
