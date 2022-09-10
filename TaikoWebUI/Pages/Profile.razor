@@ -1,11 +1,12 @@
-﻿@page "/Card/{baid:int}"
+﻿@page "/Cards/{baid:int}/Profile"
 @using SharedProject.Enums
 @using SharedProject.Models
 @inject HttpClient Client
 
 <MudBreadcrumbs Items="breadcrumbs" Class="px-0"></MudBreadcrumbs>
 
-<h1>Card: @Baid</h1>
+<h1>Profile</h1>
+<MudText Typo="Typo.caption">Card: @Baid</MudText>
 
 @if (response is not null)
 {
@@ -153,7 +154,7 @@
 
     private List<BreadcrumbItem> breadcrumbs = new()
     {
-        new BreadcrumbItem("Dashboard", href: ""),
+        new BreadcrumbItem("Cards", href: "/Cards"),
     };
 
     protected override async Task OnInitializedAsync()
@@ -163,6 +164,7 @@
         response = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
 
         breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
+        breadcrumbs.Add(new BreadcrumbItem("Profile", href: $"/Cards/{Baid}/Profile", disabled: false));
     }
 
     private async Task SaveOptions()
