@@ -41,6 +41,12 @@ else
                     </CellTemplate>
                 </Column>
                 <Column T="SongBestData" Field="@nameof(SongBestData.BestScore)" Title="Best Score"/>
+                <Column T="SongBestData" Field="@nameof(SongBestData.GoodCount)" Title="Good" />
+                <Column T="SongBestData" Field="@nameof(SongBestData.OkCount)" Title="Ok" />
+                <Column T="SongBestData" Field="@nameof(SongBestData.MissCount)" Title="Bad" />
+                <Column T="SongBestData" Field="@nameof(SongBestData.DrumrollCount)" Title="Drum Rolls" />
+                <Column T="SongBestData" Field="@nameof(SongBestData.ComboCount)" Title="Max Combo" />
+                @*<Column T="SongBestData" Field="@nameof(SongBestData.HitCount)" Title="Hit" />*@
                 <Column T="SongBestData" Field="@nameof(SongBestData.BestCrown)" Title="Best Crown">
                     <CellTemplate>
                             <MudTooltip Text="@(GetCrownText(context.Item.BestCrown))" Arrow="true" Placement="Placement.Top">
@@ -48,14 +54,17 @@ else
                         </MudTooltip>
                     </CellTemplate>
                 </Column>
-                <Column T="SongBestData" Field="@nameof(SongBestData.BestScoreRank)" Title="Best Rank" />
-                <Column T="SongBestData" Field="@nameof(SongBestData.BestRate)" Title="Best Rate"/>
-                <Column T="SongBestData" Field="@nameof(SongBestData.GoodCount)" Title="Good"/>
-                <Column T="SongBestData" Field="@nameof(SongBestData.OkCount)" Title="Ok"/>
-                <Column T="SongBestData" Field="@nameof(SongBestData.MissCount)" Title="Miss"/>
-                <Column T="SongBestData" Field="@nameof(SongBestData.ComboCount)" Title="Max Combo"/>
-                <Column T="SongBestData" Field="@nameof(SongBestData.DrumrollCount)" Title="Drum Rolls"/>
-                <Column T="SongBestData" Field="@nameof(SongBestData.HitCount)" Title="Hit"/>
+                <Column T="SongBestData" Field="@nameof(SongBestData.BestScoreRank)" Title="Best Rank">
+                    <CellTemplate>
+                            @if (context.Item.BestScoreRank is not ScoreRank.None)
+                            {
+                                <MudTooltip Text="@(getRankText(context.Item.BestScoreRank))" Arrow="true" Placement="Placement.Top">
+                                    <img src="@($"/images/rank_{context.Item.BestScoreRank}.png")" alt="@(context.Item.BestScoreRank)" style="@ICON_STYLE" />
+                                </MudTooltip>
+                            }
+                    </CellTemplate>
+                </Column>
+                @*<Column T="SongBestData" Field="@nameof(SongBestData.BestRate)" Title="Best Rate"/>*@
                 <Column T="SongBestData" Field="@nameof(SongBestData.IsFavorite)" Title="Favorite">
                     <CellTemplate>
                         <MudToggleIconButton Toggled="@context.Item.IsFavorite"
@@ -122,6 +131,22 @@ else
             CrownType.Clear => "Cleared",
             CrownType.Gold => "Full Combo",
             CrownType.Dondaful => "Donderful Combo",
+            _ => ""
+        };
+    }
+
+    private string getRankText(ScoreRank rank)
+    {
+        return rank switch
+        {
+            ScoreRank.None => "None",
+            ScoreRank.White => "Stylish (White)",
+            ScoreRank.Bronze => "Stylish (Bronze)",
+            ScoreRank.Silver => "Stylish (Silver)",
+            ScoreRank.Gold => "Graceful (Gold)",
+            ScoreRank.Sakura => "Graceful (Sakura)",
+            ScoreRank.Purple => "Graceful (Purple)",
+            ScoreRank.Dondaful => "Top Class (Donderful)",
             _ => ""
         };
     }
