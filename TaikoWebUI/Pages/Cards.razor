@@ -41,10 +41,12 @@
                                     <MudText Typo="Typo.h6" Style="font-weight:bold">@user.Baid</MudText>
                                 </CardHeaderContent>
                                 <CardHeaderActions>
-                                    <MudMenu Icon="@Icons.Material.Filled.MoreVert">
+                            <MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense="true" AnchorOrigin="Origin.BottomLeft"
+                             TransformOrigin="Origin.TopLeft" Size="Size.Small">
                                         <MudMenuItem Icon="@Icons.Material.Filled.Delete"
-                                                     OnClick="_ => DeleteCard(user)">
-                                                     Delete Card
+                                                     OnClick="_ => DeleteCard(user)"
+                                                     IconColor="@Color.Error">
+                                            Delete Card
                                         </MudMenuItem>
                                     </MudMenu>
                                 </CardHeaderActions>
@@ -60,7 +62,8 @@
                                        Color="Color.Primary">
                                         Edit Profile
                                     </MudButton>
-                                    <MudMenu Size="Size.Small" 
+                                    <MudMenu Size="Size.Small"
+                                             Dense="true"
                                              Color="Color.Primary"
                                              Label="View Play Data"
                                              StartIcon="@Icons.Filled.FeaturedPlayList"

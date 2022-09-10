@@ -84,19 +84,19 @@
                                                 </MudTooltip>
                                             }
                                         </CellTemplate>
-                                </Column>
-                                <Column T="SongBestData" Field="@nameof(SongBestData.GoodCount)" Title="Good" Sortable="false"/>
-                                <Column T="SongBestData" Field="@nameof(SongBestData.OkCount)" Title="Ok" Sortable="false"/>
-                                <Column T="SongBestData" Field="@nameof(SongBestData.MissCount)" Title="Bad" Sortable="false"/>
-                                <Column T="SongBestData" Field="@nameof(SongBestData.DrumrollCount)" Title="Drum Roll" Sortable="false"/>
-                                <Column T="SongBestData" Field="@nameof(SongBestData.ComboCount)" Title="Max Combo" Sortable="false"/>
-                                <Column T="SongBestData" Field="@nameof(SongBestData.LastPlayTime)" Title="Last Played"/>
-                            </Columns>
-                            <PagerContent>
-                                <MudDataGridPager T="SongBestData"/>
-                            </PagerContent>
-                        </MudDataGrid>
-                    </MudTabPanel>
+                                    </Column>
+                                    <Column T="SongBestData" Field="@nameof(SongBestData.GoodCount)" Title="Good" Sortable="false"/>
+                                    <Column T="SongBestData" Field="@nameof(SongBestData.OkCount)" Title="Ok" Sortable="false"/>
+                                    <Column T="SongBestData" Field="@nameof(SongBestData.MissCount)" Title="Bad" Sortable="false"/>
+                                    <Column T="SongBestData" Field="@nameof(SongBestData.DrumrollCount)" Title="Drum Roll" Sortable="false"/>
+                                    <Column T="SongBestData" Field="@nameof(SongBestData.ComboCount)" Title="Max Combo" Sortable="false"/>
+                                    <Column T="SongBestData" Field="@nameof(SongBestData.LastPlayTime)" Title="Last Played"/>
+                                </Columns>
+                                <PagerContent>
+                                    <MudDataGridPager T="SongBestData"/>
+                                </PagerContent>
+                            </MudDataGrid>
+                        </MudTabPanel>
                     }
                 }
             </MudTabs>
@@ -165,7 +165,6 @@
     {
         return rank switch
         {
-            ScoreRank.None => "None",
             ScoreRank.White => "Stylish",
             ScoreRank.Bronze => "Stylish",
             ScoreRank.Silver => "Stylish",
