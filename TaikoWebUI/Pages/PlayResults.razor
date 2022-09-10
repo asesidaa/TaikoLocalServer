@@ -5,50 +5,56 @@
 @inject IGameDataService GameDataService
 @inject HttpClient Client
 
-@page "/PlayResults/{baid:int}"
-<h3>PlayResults for baid : @Baid</h3>
+@page "/Cards/{baid:int}/PlayResults"
 
+<MudBreadcrumbs Items="breadcrumbs" Class="px-0"></MudBreadcrumbs>
+
+<h1>Play Data</h1>
+<MudText Typo="Typo.caption">Card: @Baid</MudText>
+
+<MudGrid Class="my-8">
 @if (response is null)
 {
-    <MudText>No data</MudText>
+    <MudItem xs="12">
+        <MudText Align="Align.Center">
+            No data.
+        </MudText>
+    </MudItem>
 }
 else
 {
-    <MudDataGrid Items="@response.SongBestData">
-        <Columns>
-            @* Notice here we have to use cell template for custom conversion *@
-            @* Field is retrieved using reflection, so it is a string with name equals field name*@
-            <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Song Name">
-                <CellTemplate>
-                    <MudText>@GameDataService.GetMusicNameBySongId(context.Item.SongId)</MudText>
-                </CellTemplate>
-            </Column>
-            <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Artist">
-                <CellTemplate>
-                    <MudText>@GameDataService.GetMusicArtistBySongId(context.Item.SongId)</MudText>
-                </CellTemplate>
-            </Column>
-            <Column T="SongBestData" Field="@nameof(SongBestData.Difficulty)" Title="Difficulty"/>
-            <Column T="SongBestData" Field="@nameof(SongBestData.BestScore)" Title="Best score"/>
-            <Column T="SongBestData" Field="@nameof(SongBestData.BestCrown)" Title="Best crown"/>
-            <Column T="SongBestData" Field="@nameof(SongBestData.BestRate)" Title="Best rate"/>
-            <Column T="SongBestData" Field="@nameof(SongBestData.BestScoreRank)" Title="Best score rank"/>
-            <Column T="SongBestData" Field="@nameof(SongBestData.IsFavorite)" Title="Is favorite">
-                <CellTemplate>
-                    <MudToggleIconButton Toggled="@context.Item.IsFavorite"
-                                         ToggledChanged="@(async () => await OnFavoriteToggled(context.Item))"
-                                         Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
-                                         Title="Add to favorite"
-                                         ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
-                                         ToggledTitle="Remove from favorite"/>
-                </CellTemplate>
-            </Column>
-        </Columns>
-        <PagerContent>
-            <MudDataGridPager T="SongBestData"/>
-        </PagerContent>
-    </MudDataGrid>
+    <MudItem xs="12">
+        <MudDataGrid Items="@response.SongBestData">
+            <Columns>
+                <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Song">
+                    <CellTemplate>
+                        <MudText Typo="Typo.body2" Style="font-weight:bold">@GameDataService.GetMusicNameBySongId(context.Item.SongId)</MudText>
+                        <MudText Typo="Typo.caption">@GameDataService.GetMusicArtistBySongId(context.Item.SongId)</MudText>
+                    </CellTemplate>
+                </Column>
+                <Column T="SongBestData" Field="@nameof(SongBestData.Difficulty)" Title="Difficulty"/>
+                <Column T="SongBestData" Field="@nameof(SongBestData.BestScore)" Title="Best Score"/>
+                <Column T="SongBestData" Field="@nameof(SongBestData.BestCrown)" Title="Best Crown"/>
+                <Column T="SongBestData" Field="@nameof(SongBestData.BestScoreRank)" Title="Best Rank" />
+                <Column T="SongBestData" Field="@nameof(SongBestData.BestRate)" Title="Best Rate"/>
+                <Column T="SongBestData" Field="@nameof(SongBestData.IsFavorite)" Title="Favorite">
+                    <CellTemplate>
+                        <MudToggleIconButton Toggled="@context.Item.IsFavorite"
+                                             ToggledChanged="@(async () => await OnFavoriteToggled(context.Item))"
+                                             Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
+                                             Title="Add to favorites"
+                                             ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
+                                             ToggledTitle="Remove from favorites"/>
+                    </CellTemplate>
+                </Column>
+            </Columns>
+            <PagerContent>
+                <MudDataGridPager T="SongBestData"/>
+            </PagerContent>
+        </MudDataGrid>
+    </MudItem>
 }
+</MudGrid>
 
 
 @code {
@@ -58,10 +64,18 @@ else
 
     private SongBestResponse? response;
 
+    private List<BreadcrumbItem> breadcrumbs = new()
+    {
+        new BreadcrumbItem("Cards", href: "/Cards"),
+    };
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         response = await Client.GetFromJsonAsync<SongBestResponse>($"api/PlayData/{Baid}");
+        
+        breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
+        breadcrumbs.Add(new BreadcrumbItem("Play Data", href: $"/Cards/{Baid}/PlayResults", disabled: false));
     }
 
     private async Task OnFavoriteToggled(SongBestData data)
