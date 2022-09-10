@@ -29,22 +29,26 @@ else
             <Columns>
                     <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Song" StickyLeft="true" Class="clm-row-large">
                     <CellTemplate>
-                        <MudStack Row="true" AlignItems="AlignItems.Center">
-                            <MudStack>
-                                <MudToggleIconButton Toggled="@context.Item.IsFavorite"
-                                        ToggledChanged="@(async () => await OnFavoriteToggled(context.Item))"
-                                        Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
-                                        Title="Add to favorites"
-                                        ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
-                                        ToggledTitle="Remove from favorites"
-                                        Size="Size.Small"
-                                        ToggledSize="Size.Small" />
-                            </MudStack>
-                            <MudStack Spacing="0">
-                                <MudText Typo="Typo.body2" Style="font-weight:bold">@GameDataService.GetMusicNameBySongId(context.Item.SongId)</MudText>
-                                <MudText Typo="Typo.caption">@GameDataService.GetMusicArtistBySongId(context.Item.SongId)</MudText>
-                            </MudStack>
-                        </MudStack>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="10">
+                                <MudStack Spacing="0">
+                                    <MudText Typo="Typo.body2" Style="font-weight:bold">@GameDataService.GetMusicNameBySongId(context.Item.SongId)</MudText>
+                                    <MudText Typo="Typo.caption">@GameDataService.GetMusicArtistBySongId(context.Item.SongId)</MudText>
+                                </MudStack>
+                            </MudItem>
+                            <MudItem xs="2">
+                                <MudStack Justify="Justify.Center" AlignItems="AlignItems.End" Style="height:100%">
+                                        <MudTooltip Text="@(context.Item.IsFavorite ? "Remove from favorites" : "Add to favorites")" Arrow="true" Placement="Placement.Top">
+                                        <MudToggleIconButton Toggled="@context.Item.IsFavorite"
+                                                     ToggledChanged="@(async () => await OnFavoriteToggled(context.Item))"
+                                                     Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
+                                                     ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
+                                                     Size="Size.Small"
+                                                     ToggledSize="Size.Small" />
+                                    </MudTooltip>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
                     </CellTemplate>
                 </Column>
                 <Column T="SongBestData" Field="@nameof(SongBestData.Difficulty)" Title="Course">
