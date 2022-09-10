@@ -18,6 +18,7 @@
         public uint MissCount { get; set; }
         public uint ComboCount { get; set; }
         public uint HitCount { get; set; }
+        public uint DrumrollCount { get; set; }
         public bool Skipped { get; set; }
         public DateTime PlayTime { get; set; }
 

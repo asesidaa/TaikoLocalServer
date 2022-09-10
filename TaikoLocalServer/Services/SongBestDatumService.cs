@@ -38,18 +38,33 @@ public class SongBestDatumService : ISongBestDatumService
 
     public async Task<List<SongBestData>> GetAllSongBestAsModel(uint baid)
     {
-        var songbestDbData = await context.SongBestData.Where(datum => datum.Baid == baid).ToListAsync();
+        var songbestDbData = await context.SongBestData.Where(datum => datum.Baid == baid)
+            .ToListAsync();
 
         var result = songbestDbData.Select(datum => datum.CopyPropertiesToNew<SongBestData>()).ToList();
 
         var playLogs = await context.SongPlayData.Where(datum => datum.Baid == baid).ToListAsync();
         foreach (var bestData in result)
         {
-            var lastPlayLog = playLogs.Where(datum => datum.Difficulty == bestData.Difficulty &&
-                                    datum.SongId == bestData.SongId)
+            var songPlayDatums = playLogs.Where(datum => datum.Difficulty == bestData.Difficulty &&
+                                                         datum.SongId == bestData.SongId).ToArray();
+            songPlayDatums.Throw($"Play log for song id {bestData.SongId} is null! " +
+                                 "Something is wrong with db!")
+                .IfEmpty();
+            var lastPlayLog = songPlayDatums
                 .MaxBy(datum => datum.PlayTime);
-            lastPlayLog.ThrowIfNull("Last play log is null! Something is wrong with db!");
-            bestData.LastPlayTime = lastPlayLog.PlayTime;
+            bestData.LastPlayTime = lastPlayLog!.PlayTime;
+            
+            var bestLog = songPlayDatums
+                .MaxBy(datum => datum.Score);
+            bestLog.CopyOnlyPropertiesTo(bestData,
+                nameof(SongPlayDatum.GoodCount),
+                nameof(SongPlayDatum.OkCount),
+                nameof(SongPlayDatum.MissCount),
+                nameof(SongPlayDatum.HitCount),
+                nameof(SongPlayDatum.DrumrollCount),
+                nameof(SongPlayDatum.ComboCount)
+            );
         }
 
         return result;

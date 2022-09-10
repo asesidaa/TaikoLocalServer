@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TaikoLocalServer.Context;
 
@@ -10,9 +11,11 @@ using TaikoLocalServer.Context;
 namespace TaikoLocalServer.Migrations
 {
     [DbContext(typeof(TaikoDbContext))]
-    partial class TaikoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220910055624_AddDrumrollCount")]
+    partial class AddDrumrollCount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.0-preview.7.22376.2");
@@ -57,7 +60,7 @@ namespace TaikoLocalServer.Migrations
 
                     b.HasKey("Baid", "DanId");
 
-                    b.ToTable("DanScoreData", (string)null);
+                    b.ToTable("DanScoreData");
                 });
 
             modelBuilder.Entity("TaikoLocalServer.Entities.DanStageScoreDatum", b =>
@@ -97,7 +100,7 @@ namespace TaikoLocalServer.Migrations
 
                     b.HasKey("Baid", "DanId", "SongNumber");
 
-                    b.ToTable("DanStageScoreData", (string)null);
+                    b.ToTable("DanStageScoreData");
                 });
 
             modelBuilder.Entity("TaikoLocalServer.Entities.SongBestDatum", b =>
@@ -125,7 +128,7 @@ namespace TaikoLocalServer.Migrations
 
                     b.HasKey("Baid", "SongId", "Difficulty");
 
-                    b.ToTable("SongBestData", (string)null);
+                    b.ToTable("SongBestData");
                 });
 
             modelBuilder.Entity("TaikoLocalServer.Entities.SongPlayDatum", b =>
@@ -186,7 +189,7 @@ namespace TaikoLocalServer.Migrations
 
                     b.HasIndex("Baid");
 
-                    b.ToTable("SongPlayData", (string)null);
+                    b.ToTable("SongPlayData");
                 });
 
             modelBuilder.Entity("TaikoLocalServer.Entities.UserDatum", b =>
@@ -254,7 +257,7 @@ namespace TaikoLocalServer.Migrations
 
                     b.HasKey("Baid");
 
-                    b.ToTable("UserData", (string)null);
+                    b.ToTable("UserData");
                 });
 
             modelBuilder.Entity("TaikoLocalServer.Entities.DanScoreDatum", b =>

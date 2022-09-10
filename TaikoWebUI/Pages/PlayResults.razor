@@ -2,6 +2,7 @@
 @using SharedProject.Models.Responses
 @using SharedProject.Models
 @using SharedProject.Models.Requests
+@using SharedProject.Enums
 @inject IGameDataService GameDataService
 @inject HttpClient Client
 
@@ -42,13 +43,19 @@ else
                 <Column T="SongBestData" Field="@nameof(SongBestData.BestScore)" Title="Best Score"/>
                 <Column T="SongBestData" Field="@nameof(SongBestData.BestCrown)" Title="Best Crown">
                     <CellTemplate>
-                            <MudTooltip Text="@(getCrownText(context.Item.BestCrown.ToString()))" Arrow="true" Placement="Placement.Top">
+                            <MudTooltip Text="@(GetCrownText(context.Item.BestCrown))" Arrow="true" Placement="Placement.Top">
                                 <img src="@($"/images/crown_{context.Item.BestCrown}.png")" alt="@(context.Item.BestCrown)" style="width:25px;height:25px;" />
                         </MudTooltip>
                     </CellTemplate>
                 </Column>
                 <Column T="SongBestData" Field="@nameof(SongBestData.BestScoreRank)" Title="Best Rank" />
                 <Column T="SongBestData" Field="@nameof(SongBestData.BestRate)" Title="Best Rate"/>
+                <Column T="SongBestData" Field="@nameof(SongBestData.GoodCount)" Title="Good"/>
+                <Column T="SongBestData" Field="@nameof(SongBestData.OkCount)" Title="Ok"/>
+                <Column T="SongBestData" Field="@nameof(SongBestData.MissCount)" Title="Miss"/>
+                <Column T="SongBestData" Field="@nameof(SongBestData.ComboCount)" Title="Max Combo"/>
+                <Column T="SongBestData" Field="@nameof(SongBestData.DrumrollCount)" Title="Drum Rolls"/>
+                <Column T="SongBestData" Field="@nameof(SongBestData.HitCount)" Title="Hit"/>
                 <Column T="SongBestData" Field="@nameof(SongBestData.IsFavorite)" Title="Favorite">
                     <CellTemplate>
                         <MudToggleIconButton Toggled="@context.Item.IsFavorite"
@@ -105,14 +112,14 @@ else
         }
     }
 
-    private string getCrownText(String crown)
+    private static string GetCrownText(CrownType crown)
     {
         return crown switch
         {
-            "None" => "Fail",
-            "Clear" => "Cleared",
-            "Gold" => "Full Combo",
-            "Dondaful" => "Donderful Combo",
+            CrownType.None => "Fail",
+            CrownType.Clear => "Cleared",
+            CrownType.Gold => "Full Combo",
+            CrownType.Dondaful => "Donderful Combo",
             _ => ""
         };
     }
