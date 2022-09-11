@@ -37,4 +37,32 @@ public partial class DaniDojo
             _ => throw new ArgumentOutOfRangeException()
         };
     }
+
+    private static string GetDanTitle(string title)
+    {
+        return title switch
+        {
+            "5kyuu" => "Fifth Kyuu",
+            "4kyuu" => "Fourth Kyuu",
+            "3kyuu" => "Third Kyuu",
+            "2kyuu" => "Second Kyuu",
+            "1kyuu" => "First Kyuu",
+            "1dan"  => "First Dan",
+            "2dan"  => "Second Dan",
+            "3dan"  => "Third Dan",
+            "4dan"  => "Fourth Dan",
+            "5dan"  => "Fifth Dan",
+            "6dan"  => "Sixth Dan",
+            "7dan"  => "Seventh Dan",
+            "8dan"  => "Eighth Dan",
+            "9dan"  => "Ninth Dan",
+            "10dan" => "Tenth Dan",
+            "11dan" => "Kuroto",
+            "12dan" => "Meijin",
+            "13dan" => "Chojin",
+            "14dan" => "Tatsujin",
+            "15dan" => "Gaiden",
+            _ => ""
+        };
+    }
 }

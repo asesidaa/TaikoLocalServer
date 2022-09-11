@@ -7,56 +7,64 @@
 
 <h1>Dani Dojo</h1>
 <MudText Typo="Typo.caption">Card: @Baid</MudText>
-<MudContainer>
-    <MudTabs>
-        @for (uint i = 1; i <= 19; i++)
-        {
-            var danId = i;
-            var danData = GameDataService.GetDanDataById(danId);
-            <MudTabPanel Text="@danData.Title">
-                @foreach (var data in danData.OdaiBorderList)
-                {
-                    <MudText>@DanRequirementToString(data)</MudText>
-                }
-                @if (bestDataMap.ContainsKey(danId))
-                {
-                    var danBestData = bestDataMap[danId];
-                    <MudText>Clear state: @danBestData.ClearState </MudText>
-                    <MudText>Best Soul gauge: @danBestData.SoulGaugeTotal </MudText>
-                    <MudText>Best Total Combo: @danBestData.ComboCountTotal </MudText>
-                    <MudGrid>
-                        @foreach (var bestStage in danBestData.DanBestStageDataList)
-                        {
-                            var songNumber = bestStage.SongNumber;
-                            var danDataOdaiSong = danData.OdaiSongList[(int)songNumber];
-                            <MudItem>
-                                <MudText>Song Number: @songNumber</MudText>
-                                <MudText>
-                                    Song Name:
-                                    @GameDataService.GetMusicNameBySongId(danDataOdaiSong.SongNo)
-                                </MudText>
-                                <MudText>Song Difficulty: @((Difficulty)danDataOdaiSong.Level)</MudText>
-                                <MudText>
-                                    Song play detail <br/>
-                                    Good : @bestStage.GoodCount <br/>
-                                    Ok : @bestStage.OkCount <br/>
-                                    Bad : @bestStage.BadCount <br/>
-                                    Combo : @bestStage.ComboCount<br/>
-                                    Drumroll : @bestStage.DrumrollCount <br/>
-                                    Total hit : @bestStage.TotalHitCount
-                                </MudText>
-                            </MudItem>
-                        }
-                    </MudGrid>
 
-                }
-                else
+<MudGrid Class="my-4">
+    <MudItem xs="12">
+        <MudPaper Elevation="0" Outlined="true">
+            <MudTabs>
+                @for (uint i = 1; i <= 19; i++)
                 {
-                    <MudText>
-                        This dan course hasn't been played
-                    </MudText>
+                    var danId = i;
+                    var danData = GameDataService.GetDanDataById(danId);
+                    <MudTabPanel Text="@GetDanTitle(danData.Title)">
+                        <MudGrid Class="px-12 py-8">
+                            @if (!bestDataMap.ContainsKey(danId)) {
+                                <MudItem xs="12">
+                                    <MudAlert Severity="Severity.Info">This dan course hasn't been played yet.</MudAlert>
+                                </MudItem>
+                            }
+                            <MudItem xs="12">
+                                @foreach (var data in danData.OdaiBorderList)
+                                {
+                                    <MudText>@DanRequirementToString(data)</MudText>
+                                }
+                                @if (bestDataMap.ContainsKey(danId))
+                                {
+                                    var danBestData = bestDataMap[danId];
+                                    <MudText>Clear state: @danBestData.ClearState </MudText>
+                                    <MudText>Best Soul gauge: @danBestData.SoulGaugeTotal </MudText>
+                                    <MudText>Best Total Combo: @danBestData.ComboCountTotal </MudText>
+                                    <MudGrid>
+                                        @foreach (var bestStage in danBestData.DanBestStageDataList)
+                                        {
+                                            var songNumber = bestStage.SongNumber;
+                                            var danDataOdaiSong = danData.OdaiSongList[(int)songNumber];
+                                            <MudItem>
+                                                <MudText>Song Number: @songNumber</MudText>
+                                                <MudText>
+                                                    Song Name:
+                                                    @GameDataService.GetMusicNameBySongId(danDataOdaiSong.SongNo)
+                                                </MudText>
+                                                <MudText>Song Difficulty: @((Difficulty)danDataOdaiSong.Level)</MudText>
+                                                    <MudText>
+                                                        Song play detail <br />
+                                                        Good : @bestStage.GoodCount <br />
+                                                        Ok : @bestStage.OkCount <br />
+                                                        Bad : @bestStage.BadCount <br />
+                                                        Combo : @bestStage.ComboCount<br />
+                                                        Drumroll : @bestStage.DrumrollCount <br />
+                                                        Total hit : @bestStage.TotalHitCount
+                                                    </MudText>
+                                                </MudItem>
+                                        }
+                                    </MudGrid>
+
+                                }
+                            </MudItem>
+                        </MudGrid>
+                    </MudTabPanel>
                 }
-            </MudTabPanel>
-        }
-    </MudTabs>
-</MudContainer>
+            </MudTabs>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
