@@ -33,9 +33,10 @@
                     {
                         <MudTabPanel Text="@GetDifficultyTitle(difficulty)" 
                                      Icon="@GetDifficultyIcon(difficulty)">
-
+                            @if (@response.SongBestData.Where(data => data.Difficulty == difficulty).Count() > 0)
+                            {
                             <MudDataGrid Items="@response.SongBestData.Where(data => data.Difficulty == difficulty)"
-                                     ColumnResizeMode="ResizeMode.Container" RowsPerPage="25" Elevation="0">
+                                    ColumnResizeMode="ResizeMode.Container" RowsPerPage="25" Elevation="0">
                                 <Columns>
                                     <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Song" StickyLeft="true" Class="clm-row-large">
                                         <CellTemplate>
@@ -50,11 +51,11 @@
                                                     <MudStack Justify="Justify.Center" AlignItems="AlignItems.End" Style="height:100%">
                                                         <MudTooltip Text="@(context.Item.IsFavorite ? "Remove from favorites" : "Add to favorites")" Arrow="true" Placement="Placement.Top">
                                                             <MudToggleIconButton Toggled="@context.Item.IsFavorite"
-                                                                             ToggledChanged="@(async () => await OnFavoriteToggled(context.Item))"
-                                                                             Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
-                                                                             ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
-                                                                             Size="Size.Small"
-                                                                             ToggledSize="Size.Small"/>
+                                                                            ToggledChanged="@(async () => await OnFavoriteToggled(context.Item))"
+                                                                            Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
+                                                                            ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
+                                                                            Size="Size.Small"
+                                                                            ToggledSize="Size.Small"/>
                                                         </MudTooltip>
                                                     </MudStack>
                                                 </MudItem>
@@ -64,7 +65,7 @@
                                     <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Genre" Sortable="false">
                                         <CellTemplate>
                                             <MudChip Style="@GetGenreStyle(GameDataService.GetMusicGenreBySongId(context.Item.SongId))"
-                                                     Size="Size.Small">
+                                                    Size="Size.Small">
                                                 @GetGenreTitle(GameDataService.GetMusicGenreBySongId(context.Item.SongId))
                                             </MudChip>
                                         </CellTemplate>
@@ -98,6 +99,15 @@
                                     <MudDataGridPager T="SongBestData"/>
                                 </PagerContent>
                             </MudDataGrid>
+                            } else {
+                                <MudGrid>
+                                    <MudItem xs="12">
+                                        <MudText Align="Align.Center" Class="my-8">
+                                            No data for selected difficulty.
+                                        </MudText>
+                                    </MudItem>
+                                </MudGrid>
+                            }
 
                         </MudTabPanel>
                     }
