@@ -17,13 +17,63 @@
                     var danId = i;
                     var danData = GameDataService.GetDanDataById(danId);
                     <MudTabPanel Text="@GetDanTitle(danData.Title)">
-                        <MudGrid Class="px-12 py-8">
-                            @if (!bestDataMap.ContainsKey(danId)) {
+                        <MudGrid Class="pa-8">
+
+                            @if (!bestDataMap.ContainsKey(danId))
+                            {
                                 <MudItem xs="12">
                                     <MudAlert Severity="Severity.Info">This dan course hasn't been played yet.</MudAlert>
                                 </MudItem>
                             }
+
+                            @for (uint i = 0; i <= 2; i++)
+                            {
+                                var danDataOdaiSong = danData.OdaiSongList[(int)i];
+                                var sectionNumber = (int)i + 1;
+                                <MudItem xs="12" Class="pb-1">
+                                    <MudCard Outlined="true" Class="pa-4">
+                                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="16">
+                                            <MudStack Class="pl-3">
+                                                <h3>@sectionNumber</h3>
+                                            </MudStack>
+
+                                            <MudStack AlignItems="AlignItems.Center" Spacing="1">
+                                                <img src=@($"/images/difficulty_{(Difficulty)danDataOdaiSong.Level}.png") style="width:40px;height:40px;" />
+                                                <MudText Typo="Typo.caption">@((Difficulty)danDataOdaiSong.Level)</MudText>
+                                            </MudStack>
+
+                                            <MudStack Spacing="0">
+                                                <MudText Typo="Typo.body1" Style="font-weight: bold;">@GameDataService.GetMusicNameBySongId(danDataOdaiSong.SongNo)</MudText>
+                                                <MudText Typo="Typo.caption">@GameDataService.GetMusicArtistBySongId(danDataOdaiSong.SongNo)</MudText>
+                                            </MudStack>
+                                        </MudStack>
+                                    </MudCard>
+                                </MudItem>
+                            }
+
                             <MudItem xs="12">
+                                <MudGrid>
+                                    <MudItem xs="12" md="4">
+                                        <MudCard Outlined="true" Class="pa-4">
+                                            <h4>Soul Gauge</h4>
+                                        </MudCard>
+                                    </MudItem>
+
+                                    <MudItem xs="12" md="8">
+                                        <MudStack>
+                                            <MudCard Outlined="true" Class="pa-4">
+                                                <h4>Requirement Placeholder</h4>
+                                            </MudCard>
+                                            <MudCard Outlined="true" Class="pa-4">
+                                                <h4>Requirement Placeholder</h4>
+                                            </MudCard>
+                                            <MudCard Outlined="true" Class="pa-4">
+                                                <h4>Requirement Placeholder</h4>
+                                            </MudCard>
+                                        </MudStack>
+                                    </MudItem>
+                                </MudGrid>
+
                                 @foreach (var data in danData.OdaiBorderList)
                                 {
                                     <MudText>@DanRequirementToString(data)</MudText>
