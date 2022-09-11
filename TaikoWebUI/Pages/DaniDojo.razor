@@ -1,10 +1,4 @@
-﻿@using TaikoWebUI.Services
-@using SharedProject.Models.Responses
-@using SharedProject.Models
-@using SharedProject.Models.Requests
-@using SharedProject.Enums
-@using Throw
-@inject IGameDataService GameDataService
+﻿@inject IGameDataService GameDataService
 @inject HttpClient Client
 
 @page "/Cards/{baid:int}/DaniDojo"
@@ -13,10 +7,59 @@
 
 <h1>Dani Dojo</h1>
 <MudText Typo="Typo.caption">Card: @Baid</MudText>
+<MudContainer>
+    <MudTabs>
+        @for (uint i = 1; i <= 19; i++)
+        {
+            var danId = i;
+            var danData = GameDataService.GetDanDataById(danId);
+            <MudTabPanel Text="@danData.Title">
+                @foreach (var data in danData.OdaiBorderList)
+                {
+                    <MudText>@DanRequirementToString(data)</MudText>
+                }
+                @if (bestDataMap.ContainsKey(danId))
+                {
+                    var danBestData = bestDataMap[danId];
+                    <MudText>Clear state: @danBestData.ClearState </MudText>
+                    <MudText>Best Soul gauge: @danBestData.SoulGaugeTotal </MudText>
+                    <MudText>Best Total Combo: @danBestData.ComboCountTotal </MudText>
+                    <MudGrid>
+                        @foreach (var bestStage in danBestData.DanBestStageDataList)
+                        {
+                            var songNumber = bestStage.SongNumber;
+                            var danDataOdaiSong = danData.OdaiSongList[(int)songNumber];
+                            <MudItem>
+                                <MudText>Song Number: @songNumber</MudText>
+                                <MudText>
+                                    Song Name:
+                                    @GameDataService.GetMusicNameBySongId(danDataOdaiSong.SongNo)
+                                </MudText>
+                                <MudText>Song Difficulty: @((Difficulty)danDataOdaiSong.Level)</MudText>
+                                <MudText>
+                                    Song play detail <br/>
+                                    Good : @bestStage.GoodCount <br/>
+                                    Ok : @bestStage.OkCount <br/>
+                                    Bad : @bestStage.BadCount <br/>
+                                    Combo : @bestStage.ComboCount<br/>
+                                    Drumroll : @bestStage.DrumrollCount <br/>
+                                    Total hit : @bestStage.TotalHitCount
+                                </MudText>
+                            </MudItem>
+                        }
+                    </MudGrid>
 
-<MudGrid Class="my-8">
-
-</MudGrid>
+                }
+                else
+                {
+                    <MudText>
+                        This dan course hasn't been played
+                    </MudText>
+                }
+            </MudTabPanel>
+        }
+    </MudTabs>
+</MudContainer>
 
 
 @code {
@@ -24,9 +67,9 @@
     [Parameter]
     public int Baid { get; set; }
 
-    private SongBestResponse? response;
+    private DanBestDataResponse? response;
 
-    private const string ICON_STYLE = "width:25px; height:25px;";
+    private Dictionary<uint, DanBestData> bestDataMap = new();
 
     private readonly List<BreadcrumbItem> breadcrumbs = new()
     {
@@ -36,15 +79,24 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        response = await Client.GetFromJsonAsync<SongBestResponse>($"api/PlayData/{Baid}");
+        response = await Client.GetFromJsonAsync<DanBestDataResponse>($"api/DanBestData/{Baid}");
         response.ThrowIfNull();
-        response.SongBestData.Sort((data1, data2) =>
-        {
-            return GameDataService.GetMusicIndexBySongId(data1.SongId)
-                .CompareTo(GameDataService.GetMusicIndexBySongId(data2.SongId));
-        });
+        bestDataMap = response.DanBestDataList.ToDictionary(data => data.DanId);
 
         breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
         breadcrumbs.Add(new BreadcrumbItem("Dani Dojo", href: $"/Cards/{Baid}/DaniDojo", disabled: false));
+    }
+
+    private static string DanRequirementToString(DanData.OdaiBorder data)
+    {
+        var danConditionType = (DanConditionType)data.OdaiType;
+        return (DanBorderType)data.BorderType switch
+        {
+            DanBorderType.All => $"{danConditionType}, Pass: {data.RedBorderTotal}, Gold: {data.GoldBorderTotal} ",
+            DanBorderType.PerSong => $"{danConditionType}, " +
+                                     $"Pass 1: {data.RedBorder1}, Pass 2: {data.RedBorder2}, Pass 3: {data.RedBorder3}" +
+                                     $"Gold 1: {data.GoldBorder1}, Gold 2: {data.GoldBorder1}, Pass 3: {data.GoldBorder1}",
+            _ => throw new ArgumentOutOfRangeException()
+            };
     }
 }

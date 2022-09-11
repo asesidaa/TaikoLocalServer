@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Net.Http.Json;
 using SharedProject.Enums;
+using SharedProject.Models;
 using TaikoWebUI.Shared.Models;
 using Throw;
 
@@ -12,6 +13,8 @@ public class GameDataService : IGameDataService
 
     private readonly Dictionary<uint, MusicDetail> musicMap = new();
 
+    private ImmutableDictionary<uint, DanData> danMap = null!;
+
     public GameDataService(HttpClient client)
     {
         this.client = client;
@@ -22,10 +25,14 @@ public class GameDataService : IGameDataService
         var musicInfo = await client.GetFromJsonAsync<MusicInfo>($"{dataBaseUrl}/data/musicinfo.json");
         var wordList = await client.GetFromJsonAsync<WordList>($"{dataBaseUrl}/data/wordlist.json");
         var musicOrder = await client.GetFromJsonAsync<MusicOrder>($"{dataBaseUrl}/data/music_order.json");
+        var danData = await client.GetFromJsonAsync<List<DanData>>($"{dataBaseUrl}/data/dan_data.json");
 
         musicInfo.ThrowIfNull();
         wordList.ThrowIfNull();
         musicOrder.ThrowIfNull();
+        danData.ThrowIfNull();
+
+        danMap = danData.ToImmutableDictionary(data => data.DanId);
         
         // To prevent duplicate entries in wordlist
         var dict = wordList.WordListEntries.GroupBy(entry => entry.Key)
@@ -78,6 +85,10 @@ public class GameDataService : IGameDataService
     public int GetMusicIndexBySongId(uint songId)
     {
         return musicMap.TryGetValue(songId, out var musicDetail) ? musicDetail.Index : int.MaxValue;
+    }
+    public DanData GetDanDataById(uint danId)
+    {
+        return danMap.GetValueOrDefault(danId, new DanData());
     }
 
 }
