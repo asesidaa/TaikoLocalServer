@@ -1,6 +1,4 @@
-﻿using SharedProject.Models.Responses;
-
-namespace TaikoWebUI.Pages; 
+﻿namespace TaikoWebUI.Pages; 
 
 public partial class TaikoMode
 {

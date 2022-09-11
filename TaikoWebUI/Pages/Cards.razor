@@ -1,6 +1,4 @@
-﻿@using TaikoWebUI.Pages.Dialogs
-@using SharedProject.Models.Responses
-@inject HttpClient Client
+﻿@inject HttpClient Client
 @inject IDialogService DialogService
 
 @page "/Cards"
@@ -89,33 +87,3 @@
             </MudItem>
     }
 </MudGrid>
-
-
-@code {
-    private DashboardResponse? response;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-        response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
-    }
-
-    private async Task DeleteCard(User user)
-    {
-        var parameters = new DialogParameters
-            {
-                ["user"] = user
-            };
-
-        var dialog = DialogService.Show<CardDeleteConfirmDialog>("Delete Card", parameters);
-        var result = await dialog.Result;
-
-        if (result.Cancelled)
-        {
-            return;
-        }
-
-        response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
-    }
-
-}
