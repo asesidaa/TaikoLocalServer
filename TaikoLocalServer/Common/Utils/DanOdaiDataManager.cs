@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Text.Json;
+using SharedProject.Models;
 using Swan.Mapping;
 
 namespace TaikoLocalServer.Common.Utils;
@@ -16,7 +17,7 @@ public class DanOdaiDataManager
         var filePath = Path.Combine(dataPath, Constants.DAN_DATA_FILE_NAME);
         var jsonString = File.ReadAllText(filePath);
         
-        var result = JsonSerializer.Deserialize<List<OdaiData>>(jsonString);
+        var result = JsonSerializer.Deserialize<List<DanData>>(jsonString);
 
         if (result is null)
         {
@@ -25,7 +26,7 @@ public class DanOdaiDataManager
 
         OdaiDataList = result.ToImmutableDictionary(data => data.DanId, ToResponseOdaiData);
     }
-    private GetDanOdaiResponse.OdaiData ToResponseOdaiData(OdaiData data)
+    private GetDanOdaiResponse.OdaiData ToResponseOdaiData(DanData data)
     {
         var responseOdaiData = new GetDanOdaiResponse.OdaiData
         {

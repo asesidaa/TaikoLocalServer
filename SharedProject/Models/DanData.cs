@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace TaikoLocalServer.Models;
+namespace SharedProject.Models;
 
-public class OdaiData
+public class DanData
 {
     [JsonPropertyName("danId")]
     public uint DanId { get; set; }

@@ -1,50 +1,7 @@
-﻿@using SharedProject.Models.Responses
-@using TaikoWebUI.Pages.Dialogs
-@using SharedProject.Models
-@inject HttpClient Client
-@inject NavigationManager UriHelper
-@inject IDialogService DialogService
-
-@page "/"
+﻿@page "/"
 
 <h1>Dashboard</h1>
 
 <MudText Class="mt-8">
     Welcome to TaikoWebUI!
 </MudText>
-
-
-@code {
-    private DashboardResponse? response;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-        response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
-    }
-
-
-    private void NavigateToProfile(uint baid)
-    {
-        UriHelper.NavigateTo($"/Card/{baid}");
-    }
-
-    private async Task DeleteCard(User user)
-    {
-        var parameters = new DialogParameters
-            {
-                ["user"] = user
-            };
-
-        var dialog = DialogService.Show<CardDeleteConfirmDialog>("Delete Card", parameters);
-        var result = await dialog.Result;
-
-        if (result.Cancelled)
-        {
-            return;
-        }
-
-        response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
-    }
-
-}

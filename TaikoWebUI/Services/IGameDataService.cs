@@ -1,4 +1,5 @@
 ﻿using SharedProject.Enums;
+using SharedProject.Models;
 using TaikoWebUI.Shared.Models;
 
 namespace TaikoWebUI.Services;
@@ -14,4 +15,6 @@ public interface IGameDataService
     public SongGenre GetMusicGenreBySongId(uint songId);
 
     public int GetMusicIndexBySongId(uint songId);
+
+    public DanData GetDanDataById(uint danId);
 }
