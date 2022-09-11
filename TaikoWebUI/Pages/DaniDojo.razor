@@ -28,38 +28,73 @@
 
                             @for (uint i = 0; i <= 2; i++)
                             {
+                                var index = i;
                                 var danDataOdaiSong = danData.OdaiSongList[(int)i];
                                 var sectionNumber = (int)i + 1;
                                 <MudItem xs="12" Class="pb-1">
                                     <MudCard Outlined="true" Class="pa-4">
-                                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="16">
-                                            <MudStack Class="pl-3">
+                                        <MudGrid Style="display:flex; align-items: center; justify-content: flex-start;">
+                                            <MudItem xs="1" md="1" Style="display:flex;flex-direction:column;align-items:center;">
                                                 <h3>@sectionNumber</h3>
-                                            </MudStack>
+                                            </MudItem>
 
-                                            <MudStack AlignItems="AlignItems.Center" Spacing="1">
+                                            <MudItem xs="2" md="1" Style="display:flex;flex-direction:column;align-items:center;">
                                                 <img src=@($"/images/difficulty_{(Difficulty)danDataOdaiSong.Level}.png") style="width:40px;height:40px;" />
                                                 <MudText Typo="Typo.caption">@((Difficulty)danDataOdaiSong.Level)</MudText>
-                                            </MudStack>
+                                            </MudItem>
 
-                                            <MudStack Spacing="0">
+                                            <MudItem xs="9" md="4" Style="display:flex;flex-direction:column;" Class="pl-4">
                                                 <MudText Typo="Typo.body1" Style="font-weight: bold;">@GameDataService.GetMusicNameBySongId(danDataOdaiSong.SongNo)</MudText>
                                                 <MudText Typo="Typo.caption">@GameDataService.GetMusicArtistBySongId(danDataOdaiSong.SongNo)</MudText>
-                                            </MudStack>
-                                        </MudStack>
+                                            </MudItem>
+
+                                            <MudItem xs="12" md="6" Style="display:flex;flex-direction:column;">
+                                                @if (bestDataMap.ContainsKey(danId))
+                                                {
+                                                    var danBestData = bestDataMap[danId];
+                                                    var bestStage = danBestData.DanBestStageDataList[(int)index];
+                                                    <MudStack Row="true" Spacing="4" Justify="Justify.SpaceEvenly">
+                                                        <MudCard Elevation="0">
+                                                            <MudText Typo="Typo.caption">Good</MudText>
+                                                            <MudText Typo="Typo.body1" Style="font-weight: bold;">@bestStage.GoodCount</MudText>
+                                                        </MudCard>
+                                                        <MudCard Elevation="0">
+                                                            <MudText Typo="Typo.caption">OK</MudText>
+                                                            <MudText Typo="Typo.body1" Style="font-weight: bold;">@bestStage.OkCount</MudText>
+                                                        </MudCard>
+                                                        <MudCard Elevation="0">
+                                                            <MudText Typo="Typo.caption">Bad</MudText>
+                                                            <MudText Typo="Typo.body1" Style="font-weight: bold;">@bestStage.BadCount</MudText>
+                                                        </MudCard>
+                                                        <MudCard Elevation="0">
+                                                            <MudText Typo="Typo.caption">Drumroll</MudText>
+                                                            <MudText Typo="Typo.body1" Style="font-weight: bold;">@bestStage.DrumrollCount</MudText>
+                                                        </MudCard>
+                                                        <MudCard Elevation="0">
+                                                            <MudText Typo="Typo.caption">MAX Combo</MudText>
+                                                            <MudText Typo="Typo.body1" Style="font-weight: bold;">@bestStage.ComboCount</MudText>
+                                                        </MudCard>
+                                                        <MudCard Elevation="0">
+                                                            <MudText Typo="Typo.caption">Total Hits</MudText>
+                                                            <MudText Typo="Typo.body1" Style="font-weight: bold;">@bestStage.TotalHitCount</MudText>
+                                                        </MudCard>
+                                                    </MudStack>
+                                                }
+                                            </MudItem>
+                                        </MudGrid>
                                     </MudCard>
                                 </MudItem>
                             }
 
                             <MudItem xs="12">
                                 <MudGrid>
-                                    <MudItem xs="12" md="4">
+                                    <MudItem xs="12" md="3">
                                         <MudCard Outlined="true" Class="pa-4">
                                             <h4>Soul Gauge</h4>
                                         </MudCard>
                                     </MudItem>
 
-                                    <MudItem xs="12" md="8">
+                                    <MudItem xs="12" md="9">
                                         <MudStack>
                                             <MudCard Outlined="true" Class="pa-4">
                                                 <h4>Requirement Placeholder</h4>
