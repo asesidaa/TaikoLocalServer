@@ -1,0 +1,21 @@
+﻿.dani-results .mud-progress-linear {
+    height: 25px !important;
+}
+
+.mud-progress-linear.bar-pass-gold .mud-progress-linear-bars .mud-progress-linear-bar {
+    background: linear-gradient( 90deg, rgb(255,83,147) 0%, rgb(255,248,6) 15%, rgb(122,255,79) 30%, rgb(122,244,255) 50%, rgb(149,104,255) 65%, rgb(255,98,244) 85%, rgb(255,83,147) 100% );
+}
+
+.mud-progress-linear.bar-pass-red .mud-progress-linear-bars .mud-progress-linear-bar {
+    background-color: #FF3C05;
+}
+
+.mud-progress-linear.bar-default .mud-progress-linear-bars .mud-progress-linear-bar {
+    background-color: lightgrey;
+}
+
+.mud-progress-linear.bar-pass-gold .mud-typography,
+.mud-progress-linear.bar-pass-red .mud-typography {
+    font-weight: bold;
+    color: white;
+}

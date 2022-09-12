@@ -33,9 +33,11 @@
                                             </MudItem>
 
                                             <MudItem xs="2" md="1" Style="display:flex;flex-direction:column;align-items:center;">
-                                                <img src=@($"/images/difficulty_{difficulty}.png") style="width:40px;height:40px;"  alt="@difficulty"/>
-                                                <MudText Typo="Typo.caption">@difficulty</MudText>
-                                                <MudText Typo="Typo.caption">Level star: @GameDataService.GetMusicStarLevel(danDataOdaiSong.SongNo, difficulty)</MudText>
+                                                <img src=@($"/images/difficulty_{difficulty}.png") style="width:40px;height:40px;margin-bottom:2px;"  alt="@difficulty"/>
+                                                <MudStack Row="true" Spacing="0" Justify="Justify.Center" AlignItems="AlignItems.Center">
+                                                    <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small" />
+                                                    <MudText Typo="Typo.caption" Style="line-height:1;margin-top:2px;margin-right:2px;">@GameDataService.GetMusicStarLevel(danDataOdaiSong.SongNo, difficulty)</MudText>
+                                                </MudStack>
                                             </MudItem>
 
                                             <MudItem xs="9" md="4" Style="display:flex;flex-direction:column;" Class="pl-4">
@@ -85,48 +87,83 @@
                                 </MudItem>
                             }
 
-                            <MudItem xs="12">
+                            <MudItem xs="12" Class="dani-results">
                                 <MudGrid>
                                     <MudItem xs="12" md="3">
-                                        <MudCard Outlined="true" Class="pa-4">
-                                            <MudCardHeader>
+                                        <MudCard Outlined="true" Class="pa-2">
+                                            <MudCardHeader Class="pb-0">
                                                 <CardHeaderContent>
                                                     <MudText Typo="Typo.h6">Soul Gauge</MudText>
                                                 </CardHeaderContent>
                                             </MudCardHeader>
                                             <MudCardContent>
-                                                <MudText>
-                                                    Soul gauge needed to pass: @GetSoulGauge(danData, false)
-                                                </MudText>
-                                                <MudText>
-                                                    Soul gauge needed to gold clear: @GetSoulGauge(danData, true)
-                                                </MudText>
-                                                @if (bestDataMap.ContainsKey(danId))
-                                                {
-                                                    var danBestData = bestDataMap[danId];
-                                                    <MudText>
-                                                        Best Soul gauge: @(danBestData.SoulGaugeTotal)%
-                                                    </MudText>
-                                                }
+                                                <MudStack Spacing="8">
+                                                    @{
+                                                        var redRequirement = GetSoulGauge(danData, false);
+                                                        var goldRequirement = GetSoulGauge(danData, true);
+                                                        var barClass = "bar-default";
+                                                        var resultText = "Failed";
+                                                    }
+                                                    <MudStack Spacing="1">
+                                                        <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">Result</MudText>
+                                                        @if (bestDataMap.ContainsKey(danId))
+                                                        {
+                                                            var danBestData = bestDataMap[danId];
+
+                                                            if (danBestData.SoulGaugeTotal >= redRequirement) {
+                                                                barClass = "bar-pass-red";
+                                                                resultText = "Passed";
+                                                            }
+
+                                                            if (danBestData.SoulGaugeTotal >= goldRequirement) {
+                                                                barClass = "bar-pass-gold";
+                                                                resultText = "Gold";
+                                                            }
+                                                            
+                                                            <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="100" Value="@danBestData.SoulGaugeTotal">
+                                                                <MudText Typo="Typo.caption">@(danBestData.SoulGaugeTotal)%</MudText>
+                                                            </MudProgressLinear>
+                                                            <MudText Typo="Typo.caption" Style="text-align: right">@resultText</MudText>
+                                                        } else {
+                                                            <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="100" Value="0">
+                                                                <MudText Typo="Typo.caption">0%</MudText>
+                                                            </MudProgressLinear>
+                                                            <MudText Typo="Typo.caption" Style="text-align: right">N/A</MudText>
+                                                        }
+                                                    </MudStack>
+                                                    <MudStack Spacing="1">
+                                                        <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">Conditions</MudText>
+                                                        <MudStack Row="true" Justify="Justify.SpaceBetween">
+                                                            <MudStack Spacing="0">
+                                                                <MudText Typo="Typo.caption">Red</MudText>
+                                                                <MudText Typo="Typo.body1">> @redRequirement%</MudText>
+                                                            </MudStack>
+                                                            <MudStack Spacing="0">
+                                                                <MudText Typo="Typo.caption">Gold</MudText>
+                                                                <MudText Typo="Typo.body1">> @goldRequirement%</MudText>
+                                                            </MudStack>
+                                                        </MudStack>
+                                                    </MudStack>
+                                                </MudStack>
                                             </MudCardContent>
                                         </MudCard>
                                     </MudItem>
 
                                     <MudItem xs="12" md="9">
+                                        <MudStack Spacing="4">
                                         @for (var j = 1; j < danData.OdaiBorderList.Count; j++)
                                         {
                                             var border = danData.OdaiBorderList[j];
-                                            <MudStack>
-                                                <MudCard Outlined="true" Class="pa-4">
+                                            
+                                                <MudCard Outlined="true" Class="pa-2">
                                                     <MudCardHeader>
                                                         <CardHeaderContent>
-                                                            <MudText Typo="Typo.h4">
+                                                            <MudText Typo="Typo.h6">
                                                                 @GetDanRequirementTitle(border)
                                                             </MudText>
                                                         </CardHeaderContent>
                                                     </MudCardHeader>
                                                     <MudCardContent>
-
                                                         @{
                                                             var borderType = (DanBorderType)border.BorderType;
                                                         }
@@ -167,8 +204,8 @@
                                                         }
                                                     </MudCardContent>
                                                 </MudCard>
-                                            </MudStack>
                                         }
+                                        </MudStack>
                                     </MudItem>
                                 </MudGrid>
                             </MudItem>
