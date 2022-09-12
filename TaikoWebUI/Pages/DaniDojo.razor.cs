@@ -34,9 +34,9 @@ public partial class DaniDojo
         return danConditionType switch
         {
             DanConditionType.TotalHitCount => "Total Hits",
-            DanConditionType.GoodCount => "Good Notes",
-            DanConditionType.OkCount => "OK Notes",
-            DanConditionType.BadCount => "Bad Notes",
+            DanConditionType.GoodCount => "Good Hits",
+            DanConditionType.OkCount => "OK Hits",
+            DanConditionType.BadCount => "Bad Hits",
             DanConditionType.SoulGauge => "Soul Gauge",
             DanConditionType.DrumrollCount => "Drumroll Hits",
             DanConditionType.Score => "Score",
