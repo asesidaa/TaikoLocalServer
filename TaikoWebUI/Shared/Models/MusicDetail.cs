@@ -1,6 +1,4 @@
-﻿using SharedProject.Enums;
-
-namespace TaikoWebUI.Shared.Models;
+﻿namespace TaikoWebUI.Shared.Models;
 
 public class MusicDetail
 {

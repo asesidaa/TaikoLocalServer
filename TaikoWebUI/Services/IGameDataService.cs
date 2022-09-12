@@ -1,8 +1,4 @@
-﻿using SharedProject.Enums;
-using SharedProject.Models;
-using TaikoWebUI.Shared.Models;
-
-namespace TaikoWebUI.Services;
+﻿namespace TaikoWebUI.Services;
 
 public interface IGameDataService
 {

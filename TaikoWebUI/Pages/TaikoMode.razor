@@ -37,8 +37,8 @@
                                                 <MudGrid Justify="Justify.Center">
                                                     <MudItem xs="10">
                                                         <MudStack Spacing="0">
-                                                            <MudText Typo="Typo.body2" Style="font-weight:bold">@GameDataService.GetMusicNameBySongId(context.Item.SongId)</MudText>
-                                                            <MudText Typo="Typo.caption">@GameDataService.GetMusicArtistBySongId(context.Item.SongId)</MudText>
+                                                            <MudText Typo="Typo.body2" Style="font-weight:bold">@context.Item.MusicName</MudText>
+                                                            <MudText Typo="Typo.caption">@context.Item.MusicArtist</MudText>
                                                         </MudStack>
                                                     </MudItem>
                                                     <MudItem xs="2">
@@ -56,12 +56,12 @@
                                                 </MudGrid>
                                             </CellTemplate>
                                         </Column>
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Genre"
+                                        <Column T="SongBestData" Field="@nameof(SongBestData.Genre)" Title="Genre"
                                                 Sortable="false" Filterable="true">
                                             <CellTemplate>
-                                                <MudChip Style="@GetGenreStyle(GameDataService.GetMusicGenreBySongId(context.Item.SongId))"
+                                                <MudChip Style="@GetGenreStyle(context.Item.Genre)"
                                                          Size="Size.Small">
-                                                    @GetGenreTitle(GameDataService.GetMusicGenreBySongId(context.Item.SongId))
+                                                    @GetGenreTitle(context.Item.Genre)
                                                 </MudChip>
                                             </CellTemplate>
                                         </Column>
