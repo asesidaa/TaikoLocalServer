@@ -39,9 +39,9 @@ builder.Services.AddHttpLogging(options =>
 builder.Services.AddMemoryCache();
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("DevCorsPolicy", builder =>
+    options.AddPolicy("DevCorsPolicy", policy =>
     {
-        builder
+        policy
             .AllowAnyOrigin()
             .AllowAnyMethod()
             .AllowAnyHeader();
@@ -64,6 +64,7 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 });
 
+app.UseCors("DevCorsPolicy");
 // For blazor hosting
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
@@ -73,7 +74,6 @@ app.UseRouting();
 app.UseHttpLogging();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
-app.UseCors("DevCorsPolicy");
 
 app.UseWhen(context => context.Request.Path.StartsWithSegments("/sys/servlet/PowerOn", StringComparison.InvariantCulture),
             applicationBuilder => applicationBuilder.UseAllNetRequestMiddleware());
