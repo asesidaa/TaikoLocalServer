@@ -21,6 +21,15 @@ public partial class TaikoMode
         await base.OnInitializedAsync();
         response = await Client.GetFromJsonAsync<SongBestResponse>($"api/PlayData/{Baid}");
         response.ThrowIfNull();
+        
+        response.SongBestData.ForEach(data =>
+        {
+            var songId = data.SongId;
+            data.Genre = GameDataService.GetMusicGenreBySongId(songId);
+            data.MusicName = GameDataService.GetMusicNameBySongId(songId);
+            data.MusicArtist = GameDataService.GetMusicArtistBySongId(songId);
+        });
+        
         songBestDataMap = response.SongBestData.GroupBy(data => data.Difficulty)
             .ToDictionary(data => data.Key, 
                           data => data.ToList());

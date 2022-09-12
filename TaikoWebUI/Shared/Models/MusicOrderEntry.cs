@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using SharedProject.Enums;
 
 namespace TaikoWebUI.Shared.Models;
 

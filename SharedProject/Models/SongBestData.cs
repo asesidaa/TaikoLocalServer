@@ -5,6 +5,12 @@ namespace SharedProject.Models;
 public class SongBestData
 {
     public uint SongId { get; set; }
+
+    public SongGenre Genre { get; set; }
+
+    public string MusicName { get; set; } = string.Empty;
+
+    public string MusicArtist { get; set; } = string.Empty;
     
     public Difficulty Difficulty { get; set; }
     
