@@ -1,4 +1,5 @@
-﻿using System.Net.NetworkInformation;
+﻿using SharedProject.Enums;
+using System.Net.NetworkInformation;
 
 namespace TaikoWebUI.Pages;
 
@@ -27,6 +28,21 @@ public partial class DaniDojo
 
         breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
         breadcrumbs.Add(new BreadcrumbItem("Dani Dojo", href: $"/Cards/{Baid}/DaniDojo", disabled: false));
+    }
+
+    private static string GetDanClearStateString(DanClearState danClearState)
+    {
+        return danClearState switch
+        {
+            DanClearState.NotClear => "Not Cleared",
+            DanClearState.RedNormalClear => "Red Clear",
+            DanClearState.RedFullComboClear => "Red Full Combo",
+            DanClearState.RedPerfectClear => "Red Donderful Combo",
+            DanClearState.GoldNormalClear => "Gold Clear",
+            DanClearState.GoldFullComboClear => "Gold Full Combo",
+            DanClearState.GoldPerfectClear => "Gold Donderful Combo",
+            _ => ""
+        };
     }
 
     private static string GetDanRequirementString(DanConditionType danConditionType)
@@ -180,6 +196,18 @@ public partial class DaniDojo
         }
 
         return icon;
+    }
+
+    private DanClearState GetDanResultState(uint danId)
+    {
+        if (bestDataMap.ContainsKey(danId))
+        {
+            return bestDataMap[danId].ClearState;
+        }
+        else
+        {
+            return DanClearState.NotClear;
+        }
     }
 
     private static uint GetSoulGauge(DanData data, bool isGold)
