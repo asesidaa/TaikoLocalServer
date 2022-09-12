@@ -110,7 +110,9 @@ public class PlayResultController : BaseController<PlayResultController>
                 {
                     Baid = danScoreData.Baid,
                     DanId = danScoreData.DanId,
-                    SongNumber = (uint)songNumber
+                    SongNumber = (uint)songNumber,
+                    OkCount = stageData.OkCnt,
+                    BadCount = stageData.NgCnt
                 });
 
             danStageData.HighScore = Math.Max(danStageData.HighScore, stageData.PlayScore);
