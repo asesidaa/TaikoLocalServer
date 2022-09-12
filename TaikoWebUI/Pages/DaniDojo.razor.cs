@@ -65,4 +65,21 @@ public partial class DaniDojo
             _ => ""
         };
     }
+
+    private string GetDanResultIcon(uint danId)
+    {
+        string icon = "";
+
+        if (bestDataMap.ContainsKey(danId))
+        {
+            var state = bestDataMap[danId].ClearState;
+            
+            if (state is not DanClearState.NotClear)
+            {
+                icon = $"<image href='/images/dani_{state}.png' width='24' height='24'/>";
+            }
+        }
+
+        return icon;
+    }
 }
