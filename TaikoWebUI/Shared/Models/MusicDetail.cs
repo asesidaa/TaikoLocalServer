@@ -11,4 +11,14 @@ public class MusicDetail
     public string ArtistName { get; set; } = string.Empty;
     
     public SongGenre Genre { get; set; }
+    
+    public int StarEasy { get; set; }
+    
+    public int StarNormal { get; set; }
+    
+    public int StarHard { get; set; }
+    
+    public int StarOni { get; set; }
+    
+    public int StarUra { get; set; }
 }
