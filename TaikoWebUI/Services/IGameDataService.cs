@@ -13,4 +13,6 @@ public interface IGameDataService
     public int GetMusicIndexBySongId(uint songId);
 
     public DanData GetDanDataById(uint danId);
+
+    public int GetMusicStarLevel(uint songId, Difficulty difficulty);
 }

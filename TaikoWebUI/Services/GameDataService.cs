@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using Swan.Mapping;
 using TaikoWebUI.Shared.Models;
 
 namespace TaikoWebUI.Services;
@@ -42,13 +43,9 @@ public class GameDataService : IGameDataService
             var musicArtist = dict.GetValueOrDefault(songArtistKey, new WordListEntry());
 
             var musicSongId = music.SongId;
-            var musicDetail = new MusicDetail
-            {
-                SongId = musicSongId,
-                SongName = musicName.JapaneseText,
-                ArtistName = musicArtist.JapaneseText,
-                Genre = music.Genre
-            };
+            var musicDetail = music.CopyPropertiesToNew<MusicDetail>();
+            musicDetail.SongName = musicName.JapaneseText;
+            musicDetail.ArtistName = musicArtist.JapaneseText;
 
             musicMap.TryAdd(musicSongId, musicDetail);
         }
@@ -87,4 +84,18 @@ public class GameDataService : IGameDataService
         return danMap.GetValueOrDefault(danId, new DanData());
     }
 
+    public int GetMusicStarLevel(uint songId, Difficulty difficulty)
+    {
+        var success = musicMap.TryGetValue(songId, out var musicDetail);
+        return difficulty switch
+        {
+            Difficulty.None => throw new ArgumentException("Difficulty cannot be none"),
+            Difficulty.Easy => success ? musicDetail!.StarEasy : 0,
+            Difficulty.Normal => success ? musicDetail!.StarNormal : 0,
+            Difficulty.Hard => success ? musicDetail!.StarHard : 0,
+            Difficulty.Oni => success ? musicDetail!.StarOni : 0,
+            Difficulty.UraOni => success ? musicDetail!.StarUra : 0,
+            _ => throw new ArgumentOutOfRangeException(nameof(difficulty), difficulty, null)
+        };
+    }
 }
