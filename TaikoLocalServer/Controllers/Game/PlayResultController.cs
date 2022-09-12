@@ -63,6 +63,13 @@ public class PlayResultController : BaseController<PlayResultController>
         {
             var stageData = playResultData.AryStageInfoes[songNumber];
 
+            if (playMode == PlayMode.AiBattle)
+            {
+                await UpdateAiBattleData(request, stageData);
+                // Update AI win count here somewhere, or in UpdatePlayData?
+                // I have no clue how to update input median or variance
+            }
+
             await UpdateBestData(request, stageData, bestData);
 
             await UpdatePlayData(request, songNumber, stageData, lastPlayDatetime);
@@ -206,6 +213,19 @@ public class PlayResultController : BaseController<PlayResultController>
         bestDatum.UpdateBestData(crown, stageData.ScoreRank, stageData.PlayScore, stageData.ScoreRate);
 
         await songBestDatumService.UpdateOrInsertSongBestDatum(bestDatum);
+    }
+
+    private async Task UpdateAiBattleData(PlayResultRequest request, StageData stageData)
+    {
+        for (int i = 0; i < stageData.ArySectionDatas.Count; i++)
+        {
+            // Only update crown if it's a higher crown than the previous best crown
+
+            // Maybe have a "SectionNo" variable for which section number it is on the DB
+            // compare DB.SectionNo == i
+            // if any aspect of the section is higher than the previous best, update it
+            // Similar to Dan best play updates
+        }
     }
 
     private static CrownType PlayResultToCrown(StageData stageData)
