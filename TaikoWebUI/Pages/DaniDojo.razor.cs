@@ -1,4 +1,6 @@
-﻿namespace TaikoWebUI.Pages;
+﻿using System.Net.NetworkInformation;
+
+namespace TaikoWebUI.Pages;
 
 public partial class DaniDojo
 {
@@ -27,13 +29,32 @@ public partial class DaniDojo
         breadcrumbs.Add(new BreadcrumbItem("Dani Dojo", href: $"/Cards/{Baid}/DaniDojo", disabled: false));
     }
 
+    private static string GetDanRequirementString(DanConditionType danConditionType)
+    {
+        return danConditionType switch
+        {
+            DanConditionType.TotalHitCount => "Total Hits",
+            DanConditionType.GoodCount => "Good Notes",
+            DanConditionType.OkCount => "OK Notes",
+            DanConditionType.BadCount => "Bad Notes",
+            DanConditionType.SoulGauge => "Soul Gauge",
+            DanConditionType.DrumrollCount => "Drumroll Hits",
+            DanConditionType.Score => "Score",
+            DanConditionType.ComboCount => "MAX Combo",
+            _ => ""
+        };
+    }
+
     private static string GetDanRequirementTitle(DanData.OdaiBorder data)
     {
         var danConditionType = (DanConditionType)data.OdaiType;
+
+        string danConditionTitle = GetDanRequirementString(danConditionType);
+
         return (DanBorderType)data.BorderType switch
         {
-            DanBorderType.All => $"{danConditionType}, All song",
-            DanBorderType.PerSong => $"{danConditionType}, Per song",
+            DanBorderType.All => $"{danConditionTitle} (All stages)",
+            DanBorderType.PerSong => $"{danConditionTitle} (Per stage)",
             _ => throw new ArgumentOutOfRangeException(nameof(data))
         };
     }
@@ -161,7 +182,7 @@ public partial class DaniDojo
         return icon;
     }
 
-    private static string GetSoulGauge(DanData data, bool isGold)
+    private static uint GetSoulGauge(DanData data, bool isGold)
     {
         var borders = data.OdaiBorderList;
         var soulBorder =
@@ -170,9 +191,9 @@ public partial class DaniDojo
 
         if (isGold)
         {
-            return $"{soulBorder.GoldBorderTotal}%";
+            return soulBorder.GoldBorderTotal;
         }
 
-        return $"{soulBorder.RedBorderTotal}%";
+        return soulBorder.RedBorderTotal;
     }
 }

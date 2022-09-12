@@ -90,26 +90,57 @@
                             <MudItem xs="12">
                                 <MudGrid>
                                     <MudItem xs="12" md="3">
-                                        <MudCard Outlined="true" Class="pa-4">
-                                            <MudCardHeader>
+                                        <MudCard Outlined="true" Class="pa-2">
+                                            <MudCardHeader Class="pb-0">
                                                 <CardHeaderContent>
                                                     <MudText Typo="Typo.h6">Soul Gauge</MudText>
                                                 </CardHeaderContent>
                                             </MudCardHeader>
                                             <MudCardContent>
-                                                <MudText>
-                                                    Soul gauge needed to pass: @GetSoulGauge(danData, false)
-                                                </MudText>
-                                                <MudText>
-                                                    Soul gauge needed to gold clear: @GetSoulGauge(danData, true)
-                                                </MudText>
-                                                @if (bestDataMap.ContainsKey(danId))
-                                                {
-                                                    var danBestData = bestDataMap[danId];
-                                                    <MudText>
-                                                        Best Soul gauge: @(danBestData.SoulGaugeTotal)%
-                                                    </MudText>
-                                                }
+                                                <MudStack>
+                                                    @{
+                                                        var redRequirement = GetSoulGauge(danData, false);
+                                                        var goldRequirement = GetSoulGauge(danData, true);
+                                                        var barColor = Color.Default;
+                                                    }
+                                                    <MudStack Spacing="1">
+                                                        <MudText Typo="Typo.caption" Style="font-weight:bold;">Result:</MudText>
+                                                        @if (bestDataMap.ContainsKey(danId))
+                                                        {
+                                                            var danBestData = bestDataMap[danId];
+
+                                                            if (danBestData.SoulGaugeTotal >= redRequirement) {
+                                                                barColor = Color.Error;
+                                                            }
+
+                                                            if (danBestData.SoulGaugeTotal >= goldRequirement) {
+                                                                barColor = Color.Warning;
+                                                            }
+                                                            <MudProgressLinear Color="@barColor" Rounded="true" Size="Size.Large" Style="height: 20px" Max="100" Value="@danBestData.SoulGaugeTotal">
+                                                                <MudText Typo="Typo.caption" Style="color: white;">@(danBestData.SoulGaugeTotal)%</MudText>
+                                                            </MudProgressLinear>
+                                                        } else {
+                                                            <MudProgressLinear Color="@barColor" Rounded="true" Size="Size.Large" Style="height: 20px" Max="100" Value="0">
+                                                                <MudText Typo="Typo.caption">0%</MudText>
+                                                            </MudProgressLinear>
+                                                        }
+                                                    </MudStack>
+                                                    <MudStack Spacing="1">
+                                                        <MudCard Outlined="true" Class="pa-1">
+                                                            <MudStack Row="true">
+                                                                <MudText Typo="Typo.caption" Style="font-weight:bold;">Red Requirement:</MudText>
+                                                                <MudText Typo="Typo.caption">@redRequirement%</MudText>
+                                                            </MudStack>
+                                                        </MudCard>
+
+                                                        <MudCard Outlined="true" Class="pa-1">
+                                                            <MudStack Row="true">
+                                                                <MudText Typo="Typo.caption" Style="font-weight:bold;">Gold Requirement:</MudText>
+                                                                <MudText Typo="Typo.caption">@goldRequirement%</MudText>
+                                                            </MudStack>
+                                                        </MudCard>
+                                                    </MudStack>
+                                                </MudStack>
                                             </MudCardContent>
                                         </MudCard>
                                     </MudItem>
@@ -119,16 +150,15 @@
                                         {
                                             var border = danData.OdaiBorderList[j];
                                             <MudStack>
-                                                <MudCard Outlined="true" Class="pa-4">
+                                                <MudCard Outlined="true" Class="pa-2">
                                                     <MudCardHeader>
                                                         <CardHeaderContent>
-                                                            <MudText Typo="Typo.h4">
+                                                            <MudText Typo="Typo.h6">
                                                                 @GetDanRequirementTitle(border)
                                                             </MudText>
                                                         </CardHeaderContent>
                                                     </MudCardHeader>
                                                     <MudCardContent>
-
                                                         @{
                                                             var borderType = (DanBorderType)border.BorderType;
                                                         }
