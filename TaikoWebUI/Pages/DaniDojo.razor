@@ -87,7 +87,7 @@
                                 </MudItem>
                             }
 
-                            <MudItem xs="12">
+                            <MudItem xs="12" Class="dani-results">
                                 <MudGrid>
                                     <MudItem xs="12" md="3">
                                         <MudCard Outlined="true" Class="pa-2">
@@ -97,48 +97,52 @@
                                                 </CardHeaderContent>
                                             </MudCardHeader>
                                             <MudCardContent>
-                                                <MudStack>
+                                                <MudStack Spacing="8">
                                                     @{
                                                         var redRequirement = GetSoulGauge(danData, false);
                                                         var goldRequirement = GetSoulGauge(danData, true);
-                                                        var barColor = Color.Default;
+                                                        var barClass = "bar-default";
+                                                        var resultText = "Failed";
                                                     }
                                                     <MudStack Spacing="1">
-                                                        <MudText Typo="Typo.caption" Style="font-weight:bold;">Result:</MudText>
+                                                        <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">Result</MudText>
                                                         @if (bestDataMap.ContainsKey(danId))
                                                         {
                                                             var danBestData = bestDataMap[danId];
 
                                                             if (danBestData.SoulGaugeTotal >= redRequirement) {
-                                                                barColor = Color.Error;
+                                                                barClass = "bar-pass-red";
+                                                                resultText = "Passed";
                                                             }
 
                                                             if (danBestData.SoulGaugeTotal >= goldRequirement) {
-                                                                barColor = Color.Warning;
+                                                                barClass = "bar-pass-gold";
+                                                                resultText = "Gold";
                                                             }
-                                                            <MudProgressLinear Color="@barColor" Rounded="true" Size="Size.Large" Style="height: 20px" Max="100" Value="@danBestData.SoulGaugeTotal">
-                                                                <MudText Typo="Typo.caption" Style="color: white;">@(danBestData.SoulGaugeTotal)%</MudText>
+                                                            
+                                                            <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="100" Value="@danBestData.SoulGaugeTotal">
+                                                                <MudText Typo="Typo.caption">@(danBestData.SoulGaugeTotal)%</MudText>
                                                             </MudProgressLinear>
+                                                            <MudText Typo="Typo.caption" Style="text-align: right">@resultText</MudText>
                                                         } else {
-                                                            <MudProgressLinear Color="@barColor" Rounded="true" Size="Size.Large" Style="height: 20px" Max="100" Value="0">
+                                                            <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="100" Value="0">
                                                                 <MudText Typo="Typo.caption">0%</MudText>
                                                             </MudProgressLinear>
+                                                            <MudText Typo="Typo.caption" Style="text-align: right">N/A</MudText>
                                                         }
                                                     </MudStack>
                                                     <MudStack Spacing="1">
-                                                        <MudCard Outlined="true" Class="pa-1">
-                                                            <MudStack Row="true">
-                                                                <MudText Typo="Typo.caption" Style="font-weight:bold;">Red Requirement:</MudText>
-                                                                <MudText Typo="Typo.caption">@redRequirement%</MudText>
+                                                        <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">Conditions</MudText>
+                                                        <MudStack Row="true" Justify="Justify.SpaceBetween">
+                                                            <MudStack Spacing="0">
+                                                                <MudText Typo="Typo.caption">Red</MudText>
+                                                                <MudText Typo="Typo.body1">> @redRequirement%</MudText>
                                                             </MudStack>
-                                                        </MudCard>
-
-                                                        <MudCard Outlined="true" Class="pa-1">
-                                                            <MudStack Row="true">
-                                                                <MudText Typo="Typo.caption" Style="font-weight:bold;">Gold Requirement:</MudText>
-                                                                <MudText Typo="Typo.caption">@goldRequirement%</MudText>
+                                                            <MudStack Spacing="0">
+                                                                <MudText Typo="Typo.caption">Gold</MudText>
+                                                                <MudText Typo="Typo.body1">> @goldRequirement%</MudText>
                                                             </MudStack>
-                                                        </MudCard>
+                                                        </MudStack>
                                                     </MudStack>
                                                 </MudStack>
                                             </MudCardContent>
@@ -146,10 +150,11 @@
                                     </MudItem>
 
                                     <MudItem xs="12" md="9">
+                                        <MudStack Spacing="4">
                                         @for (var j = 1; j < danData.OdaiBorderList.Count; j++)
                                         {
                                             var border = danData.OdaiBorderList[j];
-                                            <MudStack>
+                                            
                                                 <MudCard Outlined="true" Class="pa-2">
                                                     <MudCardHeader>
                                                         <CardHeaderContent>
@@ -199,8 +204,8 @@
                                                         }
                                                     </MudCardContent>
                                                 </MudCard>
-                                            </MudStack>
                                         }
+                                        </MudStack>
                                     </MudItem>
                                 </MudGrid>
                             </MudItem>
