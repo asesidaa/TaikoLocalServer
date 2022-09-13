@@ -58,7 +58,7 @@
                                         </Column>
                                         <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Level" Sortable="false">
                                             <CellTemplate>
-                                                <MudStack Row="true" Spacing="0" AlignItems="AlignItems.Center">
+                                                <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
                                                     <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small" />
                                                     <MudText Typo="Typo.caption" Style="line-height:1;margin-top:2px;margin-right:2px;">@GameDataService.GetMusicStarLevel(@context.Item.SongId, difficulty)</MudText>
                                                 </MudStack>

@@ -65,14 +65,7 @@ public partial class DaniDojo
     {
         var danConditionType = (DanConditionType)data.OdaiType;
 
-        string danConditionTitle = GetDanRequirementString(danConditionType);
-
-        return (DanBorderType)data.BorderType switch
-        {
-            DanBorderType.All => $"{danConditionTitle} (All stages)",
-            DanBorderType.PerSong => $"{danConditionTitle} (Per stage)",
-            _ => throw new ArgumentOutOfRangeException(nameof(data))
-        };
+        return GetDanRequirementString(danConditionType);
     }
 
     private static string GetDanRequirementAll(DanData.OdaiBorder odaiBorder)
@@ -115,21 +108,19 @@ public partial class DaniDojo
             _ => throw new ArgumentOutOfRangeException(nameof(odaiBorder))
         };
     }
-
-    private static string GetAllBestFromData(DanConditionType type, DanBestData data)
+    
+    private static long GetAllBestFromData(DanConditionType type, DanBestData data)
     {
         return type switch
         {
             DanConditionType.SoulGauge => throw new ArgumentException("Soul gauge should not be here"),
-            DanConditionType.GoodCount => data.DanBestStageDataList.Sum(stageData => stageData.GoodCount).ToString(),
-            DanConditionType.OkCount => data.DanBestStageDataList.Sum(stageData => stageData.OkCount).ToString(),
-            DanConditionType.BadCount => data.DanBestStageDataList.Sum(stageData => stageData.BadCount).ToString(),
-            DanConditionType.ComboCount => data.ComboCountTotal.ToString(),
-            DanConditionType.DrumrollCount => data.DanBestStageDataList.Sum(stageData => stageData.DrumrollCount)
-                .ToString(),
-            DanConditionType.Score => data.DanBestStageDataList.Sum(stageData => stageData.PlayScore).ToString(),
-            DanConditionType.TotalHitCount => data.DanBestStageDataList.Sum(stageData => stageData.TotalHitCount)
-                .ToString(),
+            DanConditionType.GoodCount => data.DanBestStageDataList.Sum(stageData => stageData.GoodCount),
+            DanConditionType.OkCount => data.DanBestStageDataList.Sum(stageData => stageData.OkCount),
+            DanConditionType.BadCount => data.DanBestStageDataList.Sum(stageData => stageData.BadCount),
+            DanConditionType.ComboCount => data.ComboCountTotal,
+            DanConditionType.DrumrollCount => data.DanBestStageDataList.Sum(stageData => stageData.DrumrollCount),
+            DanConditionType.Score => data.DanBestStageDataList.Sum(stageData => stageData.PlayScore),
+            DanConditionType.TotalHitCount => data.DanBestStageDataList.Sum(stageData => stageData.TotalHitCount),
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
     }
