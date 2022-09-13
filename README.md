@@ -12,7 +12,10 @@ This is a server for Taiko no Tatsujin Nijiiro ver 08.18
 
 1. Download the server from release page, extract anywhere
 
-2. Modify hosts, add the following entries:
+2. From game's Data\x64\datatable folder, find music_attribute.bin, musicinfo.bin, music_order.bin and wordlist.bin, decompress them, add .json prefix to them.
+   The result is music_attribute.json, musicinfo.json, music_order.json and wordlist.json. Put music_attribute.json under wwwroot, the others under wwwroot/data folder in server.
+
+3. Modify hosts, add the following entries:
 
    ```
    server.ip      tenporouter.loc
@@ -23,7 +26,7 @@ This is a server for Taiko no Tatsujin Nijiiro ver 08.18
 
    where `server.ip` is your computers ip (or the server's ip)
 
-3. Setup Apache as reverse proxy. Notice the following assumes a windows install, the server also works on Linux, but the guide only covers windows. 
+4. Setup Apache as reverse proxy. Notice the following assumes a windows install, the server also works on Linux, but the guide only covers windows. 
 
    1. Download [Apache](https://www.apachelounge.com/download/), extract anywhere
 
@@ -33,13 +36,13 @@ This is a server for Taiko no Tatsujin Nijiiro ver 08.18
    
       If everything is correct, run bin/httpd.exe, a command prompt will open (and stay open, if it shut down, probably something is not setup correctly)
    
-4. Now run the server, if everything is setup correctly, visit http://localhost:5000, you should be able to see the web ui up and running without errors.
+5. Now run the server, if everything is setup correctly, visit http://localhost:5000, you should be able to see the web ui up and running without errors.
 
-5. Go to game folder, copy the config files (AMConfig.ini and WritableConfig.ini) in the AMCUS folder from server release to AMCUS folder and replace the original ones.
+6. Go to game folder, copy the config files (AMConfig.ini and WritableConfig.ini) in the AMCUS folder from server release to AMCUS folder and replace the original ones.
 
-6. Open command prompt as admin, navigate to game root folder (where init.ps1 is). Run `regsvr32 .\AMCUS\iauthdll.dll`. It should prompt about success.
+7. Open command prompt as admin, navigate to game root folder (where init.ps1 is). Run `regsvr32 .\AMCUS\iauthdll.dll`. It should prompt about success.
 
-7. Run AMCUS/AMAuthd.exe, then run AMCUS/AMUpdater.exe. If the updater run and exits without issue, you are ready to run the game and connect to server.
+8. Run AMCUS/AMAuthd.exe, then run AMCUS/AMUpdater.exe. If the updater run and exits without issue, you are ready to run the game and connect to server.
 
-8. Run the game, it should now connect to the server.
+9. Run the game, it should now connect to the server.
 
