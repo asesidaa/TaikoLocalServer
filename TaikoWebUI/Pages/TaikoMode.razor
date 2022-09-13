@@ -32,28 +32,20 @@
                                 <MudDataGrid Items="@songBestDataMap[difficulty]"
                                              ColumnResizeMode="ResizeMode.Container" RowsPerPage="25" Elevation="0">
                                     <Columns>
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Song" StickyLeft="true" Class="clm-row-large">
+                                        <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Song" StickyLeft="true" CellStyle="width:20%;min-width:400px;">
                                             <CellTemplate>
-                                                <MudGrid Justify="Justify.Center">
-                                                    <MudItem xs="10">
-                                                        <MudStack Spacing="0">
-                                                            <MudText Typo="Typo.body2" Style="font-weight:bold">@context.Item.MusicName</MudText>
-                                                            <MudText Typo="Typo.caption">@context.Item.MusicArtist</MudText>
-                                                        </MudStack>
-                                                    </MudItem>
-                                                    <MudItem xs="2">
-                                                        <MudStack Justify="Justify.Center" AlignItems="AlignItems.End" Style="height:100%">
-                                                            <MudTooltip Text="@(context.Item.IsFavorite ? "Remove from favorites" : "Add to favorites")" Arrow="true" Placement="Placement.Top">
-                                                                <MudToggleIconButton Toggled="@context.Item.IsFavorite"
-                                                                                     ToggledChanged="@(async () => await OnFavoriteToggled(context.Item))"
-                                                                                     Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
-                                                                                     ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
-                                                                                     Size="Size.Small"
-                                                                                     ToggledSize="Size.Small"/>
-                                                            </MudTooltip>
-                                                        </MudStack>
-                                                    </MudItem>
-                                                </MudGrid>
+                                                <MudStack Row="true" Justify="Justify.SpaceBetween">
+                                                    <div>
+                                                        <MudText Typo="Typo.body2" Style="font-weight:bold">@context.Item.MusicName</MudText>
+                                                        <MudText Typo="Typo.caption">@context.Item.MusicArtist</MudText>
+                                                    </div>
+                                                    <MudToggleIconButton Toggled="@context.Item.IsFavorite"
+                                                         ToggledChanged="@(async () => await OnFavoriteToggled(context.Item))"
+                                                         Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
+                                                         ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
+                                                         Size="Size.Small"
+                                                         ToggledSize="Size.Small" />
+                                                </MudStack>
                                             </CellTemplate>
                                         </Column>
                                         <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Level" Sortable="false">
