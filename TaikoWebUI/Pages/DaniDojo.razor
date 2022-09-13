@@ -59,7 +59,7 @@
                                                     <MudTooltip Text="@difficulty.ToString()" Placement="Placement.Top" Arrow="true">
                                                         <img src=@($"/images/difficulty_{difficulty}.png") style="width:40px;height:40px;margin-bottom:2px;" alt="@difficulty" />
                                                     </MudTooltip>
-                                                    <MudStack Row="true" Spacing="0" Justify="Justify.Center" AlignItems="AlignItems.Center">
+                                                    <MudStack Row="true" Spacing="1" Justify="Justify.Center" AlignItems="AlignItems.Center">
                                                         <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small" />
                                                         <MudText Typo="Typo.caption" Style="line-height:1;margin-top:2px;margin-right:2px;">@GameDataService.GetMusicStarLevel(danDataOdaiSong.SongNo, difficulty)</MudText>
                                                     </MudStack>
@@ -163,7 +163,7 @@
                                                     </MudStack>
                                                     <MudStack Spacing="1">
                                                         <MudText Typo="Typo.subtitle2" Style="font-weight:bold">Conditions</MudText>
-                                                        <MudStack Row="true" Justify="Justify.SpaceBetween">
+                                                        <MudStack Row="true" Spacing="16">
                                                             <MudStack Spacing="0">
                                                                 <MudText Typo="Typo.caption">Red</MudText>
                                                                 <MudText Typo="Typo.body1" Style="font-weight: bold">> @redRequirement%</MudText>
@@ -290,7 +290,7 @@
                                                             {
                                                                 var songNumber = k;
                                                                 var redRequirement = GetSongBorderCondition(border, songNumber, false);
-                                                                var goldRequirement = GetSongBorderCondition(border, songNumber, false);
+                                                                var goldRequirement = GetSongBorderCondition(border, songNumber, true);
                                                                 var barClass = "bar-default";
                                                                 var resultText = "Failed";
 

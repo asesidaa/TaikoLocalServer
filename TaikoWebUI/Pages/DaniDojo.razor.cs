@@ -156,17 +156,22 @@ public partial class DaniDojo
     private string GetDanResultIcon(uint danId)
     {
         var icon = "";
+        var notClearIcon = "<image href='/images/dani_NotClear.png' width='24' height='24' style='filter: contrast(0.65)'/>";
 
         if (!bestDataMap.ContainsKey(danId))
         {
-           return "<image href='/images/dani_NotClear.png' width='24' height='24' style='filter: contrast(0.65)'/>";
+           return notClearIcon;
         }
         
         var state = bestDataMap[danId].ClearState;
             
-        if (state is not DanClearState.NotClear)
+        if (state is DanClearState.NotClear)
         {
-            icon = $"<image href='/images/dani_{state}.png' width='24' height='24'/>";
+            icon = notClearIcon;
+        }
+        else
+        {
+            icon = $"<image href='/images/dani_{state}.png' width='24' height='24' />";
         }
 
         return icon;
