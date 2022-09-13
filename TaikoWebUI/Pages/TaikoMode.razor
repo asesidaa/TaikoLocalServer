@@ -32,9 +32,9 @@
                                 <MudDataGrid Items="@songBestDataMap[difficulty]"
                                              ColumnResizeMode="ResizeMode.Container" RowsPerPage="25" Elevation="0">
                                     <Columns>
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Song" StickyLeft="true" CellStyle="width:20%;min-width:400px;">
+                                        <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Song" StickyLeft="true" CellStyle="min-width:400px;">
                                             <CellTemplate>
-                                                <MudStack Row="true" Justify="Justify.SpaceBetween">
+                                                <MudStack Row="true" Justify="Justify.SpaceBetween" Style="width:100%">
                                                     <div>
                                                         <MudText Typo="Typo.body2" Style="font-weight:bold">@context.Item.MusicName</MudText>
                                                         <MudText Typo="Typo.caption">@context.Item.MusicArtist</MudText>
@@ -44,7 +44,8 @@
                                                          Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
                                                          ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
                                                          Size="Size.Small"
-                                                         ToggledSize="Size.Small" />
+                                                         ToggledSize="Size.Small"
+                                                         Title="Add to favorites" ToggledTitle="Remove from favorites"/>
                                                 </MudStack>
                                             </CellTemplate>
                                         </Column>
@@ -68,18 +69,14 @@
                                         <Column T="SongBestData" Field="@nameof(SongBestData.BestScore)" Title="Best Score"/>
                                         <Column T="SongBestData" Field="@nameof(SongBestData.BestCrown)" Title="Best Crown">
                                             <CellTemplate>
-                                                <MudTooltip Text="@(GetCrownText(context.Item.BestCrown))" Arrow="true" Placement="Placement.Top">
-                                                    <img src="@($"/images/crown_{context.Item.BestCrown}.png")" alt="@(context.Item.BestCrown)" style="@IconStyle"/>
-                                                </MudTooltip>
+                                                <img src="@($"/images/crown_{context.Item.BestCrown}.png")" alt="@(GetCrownText(context.Item.BestCrown))" style="@IconStyle" />
                                             </CellTemplate>
                                         </Column>
                                         <Column T="SongBestData" Field="@nameof(SongBestData.BestScoreRank)" Title="Best Rank" Sortable="false">
                                             <CellTemplate>
                                                 @if (context.Item.BestScoreRank is not ScoreRank.None)
                                                 {
-                                                    <MudTooltip Text="@(GetRankText(context.Item.BestScoreRank))" Arrow="true" Placement="Placement.Top">
-                                                        <img src="@($"/images/rank_{context.Item.BestScoreRank}.png")" alt="@(context.Item.BestScoreRank)" style="@IconStyle"/>
-                                                    </MudTooltip>
+                                                    <img src="@($"/images/rank_{context.Item.BestScoreRank}.png")" alt="@(GetRankText(context.Item.BestScoreRank))" style="@IconStyle" />
                                                 }
                                             </CellTemplate>
                                         </Column>
