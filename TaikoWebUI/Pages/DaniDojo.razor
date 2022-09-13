@@ -246,7 +246,7 @@
                                                                                 resultText = "Gold";
                                                                             }
 
-                                                                            <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="goldRequirement" Value="@bestData">
+                                                                            <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="@goldRequirement" Value="@bestData">
                                                                                 <MudText Typo="Typo.caption">@bestData</MudText>
                                                                             </MudProgressLinear>
                                                                             <MudText Typo="Typo.caption" Style="text-align: right">@resultText</MudText>
@@ -285,27 +285,82 @@
                                                     }
                                                     else
                                                     {
-                                                        <MudStack Row="true">
+                                                        <MudGrid>
                                                             @for (var k = 0; k < 3; k++)
                                                             {
                                                                 var songNumber = k;
-                                                                <MudText>
-                                                                    @GetDanRequirementPerSong(border, songNumber)
-                                                                </MudText>
-                                                                @if (!bestDataMap.ContainsKey(danId))
-                                                                {
-                                                                    continue;
-                                                                }
-                                                                var bestData = bestDataMap[danId];
-                                                                if (k >= bestData.DanBestStageDataList.Count)
-                                                                {
-                                                                    break;
-                                                                }
-                                                                <MudText>
-                                                                    Best: @GetSongBestFromData((DanConditionType)border.OdaiType, bestData, songNumber)
-                                                                </MudText>
+                                                                var redRequirement = border.RedBorderTotal;
+                                                                var goldRequirement = border.GoldBorderTotal;
+                                                                var barClass = "bar-default";
+                                                                var resultText = "Failed";
+
+                                                                <MudItem xs="12" md="4">
+                                                                    <MudCard Outlined="true">
+                                                                        <MudCardHeader>
+                                                                            <CardHeaderContent>
+                                                                                <MudText Typo="Typo.body1" Style="font-weight:bold">Stage @(songNumber + 1)</MudText>
+                                                                            </CardHeaderContent>
+                                                                        </MudCardHeader>
+                                                                        <MudCardContent>
+                                                                            <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">Result</MudText>
+                                                                        @if (bestDataMap.ContainsKey(danId))
+                                                                        {
+                                                                            var danBestData = bestDataMap[danId];
+                                                                            var bestData = GetSongBestFromData((DanConditionType)border.OdaiType, danBestData, songNumber);
+                                                                            if ((DanConditionType)border.OdaiType is DanConditionType.BadCount)
+                                                                            {
+                                                                                if (bestData <= redRequirement)
+                                                                                {
+                                                                                    barClass = "bar-pass-red";
+                                                                                    resultText = "Passed";
+                                                                                }
+
+                                                                                if (bestData <= goldRequirement)
+                                                                                {
+                                                                                    barClass = "bar-pass-gold";
+                                                                                    resultText = "Gold";
+                                                                                }
+
+                                                                                <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="@redRequirement" Value="@(redRequirement - bestData)">
+                                                                                    <MudText Typo="Typo.caption">@bestData</MudText>
+                                                                                </MudProgressLinear>
+                                                                                <MudText Typo="Typo.caption" Style="text-align: right">@resultText</MudText>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                if (bestData >= redRequirement)
+                                                                                {
+                                                                                    barClass = "bar-pass-red";
+                                                                                    resultText = "Passed";
+                                                                                }
+
+                                                                                if (bestData >= goldRequirement)
+                                                                                {
+                                                                                    barClass = "bar-pass-gold";
+                                                                                    resultText = "Gold";
+                                                                                }
+
+                                                                                @goldRequirement
+
+                                                                                <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="@goldRequirement" Value="@bestData">
+                                                                                    <MudText Typo="Typo.caption">@bestData</MudText>
+                                                                                </MudProgressLinear>
+                                                                                <MudText Typo="Typo.caption" Style="text-align: right">@resultText</MudText>
+                                                                            }
+
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="100" Value="0">
+                                                                                <MudText Typo="Typo.caption">0</MudText>
+                                                                            </MudProgressLinear>
+                                                                            <MudText Typo="Typo.caption" Style="text-align: right">N/A</MudText>
+                                                                        }
+                                                                        </MudCardContent>
+                                                                    </MudCard>
+                                                                </MudItem>
                                                             }
-                                                        </MudStack>
+                                                        </MudGrid>
                                                     }
                                                 </MudCardContent>
                                             </MudCard>

@@ -125,19 +125,19 @@ public partial class DaniDojo
         };
     }
 
-    private static string GetSongBestFromData(DanConditionType type, DanBestData data, int songNumber)
+    private static uint GetSongBestFromData(DanConditionType type, DanBestData data, int songNumber)
     {
         songNumber.Throw().IfOutOfRange(0, 2);
         return type switch
         {
             DanConditionType.SoulGauge => throw new ArgumentException("Soul gauge should not be here"),
-            DanConditionType.GoodCount => data.DanBestStageDataList[songNumber].GoodCount.ToString(),
-            DanConditionType.OkCount => data.DanBestStageDataList[songNumber].OkCount.ToString(),
-            DanConditionType.BadCount => data.DanBestStageDataList[songNumber].BadCount.ToString(),
-            DanConditionType.ComboCount => data.DanBestStageDataList[songNumber].ComboCount.ToString(),
-            DanConditionType.DrumrollCount => data.DanBestStageDataList[songNumber].DrumrollCount.ToString(),
-            DanConditionType.Score => data.DanBestStageDataList[songNumber].PlayScore.ToString(),
-            DanConditionType.TotalHitCount => data.DanBestStageDataList[songNumber].TotalHitCount.ToString(),
+            DanConditionType.GoodCount => data.DanBestStageDataList[songNumber].GoodCount,
+            DanConditionType.OkCount => data.DanBestStageDataList[songNumber].OkCount,
+            DanConditionType.BadCount => data.DanBestStageDataList[songNumber].BadCount,
+            DanConditionType.ComboCount => data.DanBestStageDataList[songNumber].ComboCount,
+            DanConditionType.DrumrollCount => data.DanBestStageDataList[songNumber].DrumrollCount,
+            DanConditionType.Score => data.DanBestStageDataList[songNumber].PlayScore,
+            DanConditionType.TotalHitCount => data.DanBestStageDataList[songNumber].TotalHitCount,
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
     }
