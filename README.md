@@ -35,7 +35,7 @@ This is a server for Taiko no Tatsujin Nijiiro ver 08.18
    
 4. Now run the server, if everything is setup correctly, visit http://localhost:5000, you should be able to see the web ui up and running without errors.
 
-5. Go to game folder, copy the config files (AMConfig.ini and WritableConfig.ini) in the config folder from server release to AMCUS folder and replace the original ones.
+5. Go to game folder, copy the config files (AMConfig.ini and WritableConfig.ini) in the AMCUS folder from server release to AMCUS folder and replace the original ones.
 
 6. Open command prompt as admin, navigate to game root folder (where init.ps1 is). Run `regsvr32 .\AMCUS\iauthdll.dll`. It should prompt about success.
 
