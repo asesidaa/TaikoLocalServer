@@ -34,18 +34,20 @@
                                     <Columns>
                                         <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Song" StickyLeft="true" CellStyle="min-width:400px;">
                                             <CellTemplate>
-                                                <MudStack Row="true" Justify="Justify.SpaceBetween" Style="width:100%">
+                                                <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Style="width:100%">
                                                     <div>
                                                         <MudText Typo="Typo.body2" Style="font-weight:bold">@context.Item.MusicName</MudText>
                                                         <MudText Typo="Typo.caption">@context.Item.MusicArtist</MudText>
                                                     </div>
-                                                    <MudToggleIconButton Toggled="@context.Item.IsFavorite"
-                                                         ToggledChanged="@(async () => await OnFavoriteToggled(context.Item))"
-                                                         Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
-                                                         ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
-                                                         Size="Size.Small"
-                                                         ToggledSize="Size.Small"
-                                                         Title="Add to favorites" ToggledTitle="Remove from favorites"/>
+                                                    <div>
+                                                        <MudToggleIconButton Toggled="@context.Item.IsFavorite"
+                                                             ToggledChanged="@(async () => await OnFavoriteToggled(context.Item))"
+                                                             Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
+                                                             ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
+                                                             Size="Size.Small"
+                                                             ToggledSize="Size.Small"
+                                                             Title="Add to favorites" ToggledTitle="Remove from favorites"/>
+                                                    </div>
                                                 </MudStack>
                                             </CellTemplate>
                                         </Column>
@@ -69,14 +71,14 @@
                                         <Column T="SongBestData" Field="@nameof(SongBestData.BestScore)" Title="Best Score"/>
                                         <Column T="SongBestData" Field="@nameof(SongBestData.BestCrown)" Title="Best Crown">
                                             <CellTemplate>
-                                                <img src="@($"/images/crown_{context.Item.BestCrown}.png")" alt="@(GetCrownText(context.Item.BestCrown))" style="@IconStyle" />
+                                                <img src="@($"/images/crown_{context.Item.BestCrown}.png")" alt="@(GetCrownText(context.Item.BestCrown))" title="@(GetCrownText(context.Item.BestCrown))" style="@IconStyle" />
                                             </CellTemplate>
                                         </Column>
                                         <Column T="SongBestData" Field="@nameof(SongBestData.BestScoreRank)" Title="Best Rank" Sortable="false">
                                             <CellTemplate>
                                                 @if (context.Item.BestScoreRank is not ScoreRank.None)
                                                 {
-                                                    <img src="@($"/images/rank_{context.Item.BestScoreRank}.png")" alt="@(GetRankText(context.Item.BestScoreRank))" style="@IconStyle" />
+                                                    <img src="@($"/images/rank_{context.Item.BestScoreRank}.png")" alt="@(GetRankText(context.Item.BestScoreRank))" title="@(GetRankText(context.Item.BestScoreRank))" style="@IconStyle" />
                                                 }
                                             </CellTemplate>
                                         </Column>
