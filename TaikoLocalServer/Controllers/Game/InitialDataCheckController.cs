@@ -36,7 +36,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
         {
             Result = 1,
             IsDanplay = true,
-            IsAibattle = true,
+            IsAibattle = false,
             IsClose = false,
             DefaultSongFlg = enabledArray,
             AchievementSongBit = enabledArray,
