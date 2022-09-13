@@ -67,47 +67,6 @@ public partial class DaniDojo
 
         return GetDanRequirementString(danConditionType);
     }
-
-    private static string GetDanRequirementAll(DanData.OdaiBorder odaiBorder)
-    {
-        ((DanBorderType)odaiBorder.BorderType).Throw().IfNotEquals(DanBorderType.All);
-        var type = (DanConditionType)odaiBorder.OdaiType;
-        var template =
-            $"Pass when {{0}} {{1}} {odaiBorder.RedBorderTotal}, gold when {{1}} {odaiBorder.GoldBorderTotal}";
-        return type switch
-        {
-            DanConditionType.SoulGauge => throw new ArgumentException("Soul gauge should not be here"),
-            DanConditionType.GoodCount => string.Format(template, "good count", "exceeds"),
-            DanConditionType.OkCount => string.Format(template, "ok count", "exceeds"),
-            DanConditionType.BadCount => string.Format(template, "bad count", "below"),
-            DanConditionType.ComboCount => string.Format(template, "combo count", "exceeds"),
-            DanConditionType.DrumrollCount => string.Format(template, "drum roll count", "exceeds"),
-            DanConditionType.Score => string.Format(template, "score", "exceeds"),
-            DanConditionType.TotalHitCount => string.Format(template, "hit count", "exceeds"),
-            _ => throw new ArgumentOutOfRangeException(nameof(odaiBorder))
-        };
-    }
-
-    private static string GetDanRequirementPerSong(DanData.OdaiBorder odaiBorder, int songNumber)
-    {
-        songNumber.Throw().IfOutOfRange(0, 2);
-        ((DanBorderType)odaiBorder.BorderType).Throw().IfNotEquals(DanBorderType.PerSong);
-        var type = (DanConditionType)odaiBorder.OdaiType;
-        var template =
-            $"Pass when song{songNumber}'s {{0}} {{1}} {odaiBorder.RedBorderTotal}, gold when {{1}} {odaiBorder.GoldBorderTotal}";
-        return type switch
-        {
-            DanConditionType.SoulGauge => throw new ArgumentException("Soul gauge should not be here"),
-            DanConditionType.GoodCount => string.Format(template, "good count", "exceeds"),
-            DanConditionType.OkCount => string.Format(template, "ok count", "exceeds"),
-            DanConditionType.BadCount => string.Format(template, "bad count", "below"),
-            DanConditionType.ComboCount => string.Format(template, "combo count", "exceeds"),
-            DanConditionType.DrumrollCount => string.Format(template, "drum roll count", "exceeds"),
-            DanConditionType.Score => string.Format(template, "score", "exceeds"),
-            DanConditionType.TotalHitCount => string.Format(template, "hit count", "exceeds"),
-            _ => throw new ArgumentOutOfRangeException(nameof(odaiBorder))
-        };
-    }
     
     private static long GetAllBestFromData(DanConditionType type, DanBestData data)
     {
@@ -140,6 +99,30 @@ public partial class DaniDojo
             DanConditionType.TotalHitCount => data.DanBestStageDataList[songNumber].TotalHitCount,
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
+    }
+
+    private static uint GetSongBorderCondition(DanData.OdaiBorder data, int songNumber, bool isGold)
+    {
+        if (!isGold)
+        {
+            return songNumber switch
+            {
+                0 => data.RedBorder1,
+                1 => data.RedBorder2,
+                2 => data.RedBorder3,
+                _ => 0
+            };
+        }
+        else
+        {
+            return songNumber switch
+            {
+                0 => data.GoldBorder1,
+                1 => data.GoldBorder2,
+                2 => data.GoldBorder3,
+                _ => 0
+            };
+        }
     }
 
     private static string GetDanTitle(string title)
@@ -176,7 +159,7 @@ public partial class DaniDojo
 
         if (!bestDataMap.ContainsKey(danId))
         {
-            return icon;
+           return "<image href='/images/dani_NotClear.png' width='24' height='24' style='filter: contrast(0.65)'/>";
         }
         
         var state = bestDataMap[danId].ClearState;
