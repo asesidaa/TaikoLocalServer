@@ -30,12 +30,12 @@
                             @if (songBestDataMap.ContainsKey(difficulty))
                             {
                                 <MudDataGrid Items="@songBestDataMap[difficulty]"
-                                             ColumnResizeMode="ResizeMode.Container" RowsPerPage="25" Elevation="0">
+                                             ColumnResizeMode="ResizeMode.None" RowsPerPage="25" Elevation="0">
                                     <Columns>
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Song" StickyLeft="true" CellStyle="min-width:400px;">
+                                        <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Song" StickyLeft="true">
                                             <CellTemplate>
-                                                <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Style="width:100%">
-                                                    <div>
+                                                <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                                                    <div style="width:300px">
                                                         <MudText Typo="Typo.body2" Style="font-weight:bold">@context.Item.MusicName</MudText>
                                                         <MudText Typo="Typo.caption">@context.Item.MusicArtist</MudText>
                                                     </div>
