@@ -11,14 +11,15 @@
 <MudGrid Class="my-4 pb-10">
     <MudItem xs="12">
         <MudPaper Elevation="0" Outlined="true">
-            <MudTabs ActivePanelIndex="0" Rounded="true" Border="true">
+            <MudTabs ActivePanelIndex="0" Rounded="true" Border="true" PanelClass="pa-8">
                 @for (uint i = 1; i <= 19; i++)
                 {
                     var danId = i;
                     var danData = GameDataService.GetDanDataById(danId);
 
                     <MudTabPanel Text="@GetDanTitle(danData.Title)" Icon="@GetDanResultIcon(danId)">
-                        <MudGrid Class="pa-8 d-flex">
+                        <MudText Typo="Typo.h5" Class="mb-4">Details</MudText>
+                        <MudGrid Class="d-flex">
                             <MudItem xs="12" sm="12" md="3" Class="pb-1">
                                 <MudCard Outlined="true" Style="height:100%;">
                                     <MudCardHeader Class="pb-0">
@@ -112,12 +113,15 @@
                                 }
                                 </MudGrid>
                             </MudItem>
+                        </MudGrid>
 
+                        <MudText Typo="Typo.h5" Class="mt-10 mb-4">Conditions</MudText>
+                        <MudGrid>
                             <MudItem xs="12" Class="dani-results">
                                 <MudGrid>
                                     <MudItem xs="12" md="3">
                                         <MudCard Outlined="true" Class="pa-2">
-                                            <MudCardHeader Class="pb-0">
+                                            <MudCardHeader>
                                                 <CardHeaderContent>
                                                     <MudText Typo="Typo.h6">Soul Gauge</MudText>
                                                 </CardHeaderContent>
@@ -181,55 +185,130 @@
                                         {
                                             var border = danData.OdaiBorderList[j];
                                             
-                                                <MudCard Outlined="true" Class="pa-2">
-                                                    <MudCardHeader>
-                                                        <CardHeaderContent>
-                                                            <MudText Typo="Typo.h6">
-                                                                @GetDanRequirementTitle(border)
-                                                            </MudText>
-                                                        </CardHeaderContent>
-                                                    </MudCardHeader>
-                                                    <MudCardContent>
-                                                        @{
-                                                            var borderType = (DanBorderType)border.BorderType;
-                                                        }
-                                                        @if (borderType == DanBorderType.All)
-                                                        {
-                                                            <MudText>@GetDanRequirementAll(border)</MudText>
-                                                            @if (bestDataMap.ContainsKey(danId))
+                                            <MudCard Outlined="true" Class="pa-2">
+                                                <MudCardHeader>
+                                                    <CardHeaderContent>
+                                                        <MudText Typo="Typo.h6">
+                                                            @GetDanRequirementTitle(border)
+                                                        </MudText>
+                                                    </CardHeaderContent>
+                                                </MudCardHeader>
+                                                <MudCardContent>
+                                                    @{
+                                                        var borderType = (DanBorderType)border.BorderType;
+                                                    }
+                                                    @if (borderType == DanBorderType.All)
+                                                    {
+                                                            <MudStack Spacing="8">
+                                                                @{
+                                                                    var redRequirement = border.RedBorderTotal;
+                                                                    var goldRequirement = border.GoldBorderTotal;
+                                                                    var barClass = "bar-default";
+                                                                    var resultText = "Failed";
+                                                                }
+                                                                <MudStack Spacing="1">
+                                                                    <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">Result</MudText>
+                                                                    @if (bestDataMap.ContainsKey(danId))
+                                                                    {
+                                                                        var danBestData = bestDataMap[danId];
+                                                                        var bestData = GetAllBestFromData((DanConditionType)border.OdaiType, danBestData);
+
+                                                                        if ((DanConditionType)border.OdaiType is DanConditionType.BadCount)
+                                                                        {
+                                                                            if (bestData <= redRequirement)
+                                                                            {
+                                                                                barClass = "bar-pass-red";
+                                                                                resultText = "Passed";
+                                                                            }
+
+                                                                            if (bestData <= goldRequirement)
+                                                                            {
+                                                                                barClass = "bar-pass-gold";
+                                                                                resultText = "Gold";
+                                                                            }
+
+                                                                            <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="@redRequirement" Value="@(redRequirement - bestData)">
+                                                                                <MudText Typo="Typo.caption">@bestData</MudText>
+                                                                            </MudProgressLinear>
+                                                                            <MudText Typo="Typo.caption" Style="text-align: right">@resultText</MudText>
+                                                                        } 
+                                                                        else 
+                                                                        {
+                                                                            if (bestData >= redRequirement)
+                                                                            {
+                                                                                barClass = "bar-pass-red";
+                                                                                resultText = "Passed";
+                                                                            }
+
+                                                                            if (bestData >= goldRequirement)
+                                                                            {
+                                                                                barClass = "bar-pass-gold";
+                                                                                resultText = "Gold";
+                                                                            }
+
+                                                                            <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="goldRequirement" Value="@bestData">
+                                                                                <MudText Typo="Typo.caption">@bestData</MudText>
+                                                                            </MudProgressLinear>
+                                                                            <MudText Typo="Typo.caption" Style="text-align: right">@resultText</MudText>
+                                                                        }
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="100" Value="0">
+                                                                            <MudText Typo="Typo.caption">0</MudText>
+                                                                        </MudProgressLinear>
+                                                                        <MudText Typo="Typo.caption" Style="text-align: right">N/A</MudText>
+                                                                    }
+                                                                </MudStack>
+                                                                @{
+                                                                    string conditionOperator = ">";
+                                                                    if ((DanConditionType)border.OdaiType is DanConditionType.BadCount)
+                                                                    {
+                                                                        conditionOperator = "<";
+                                                                    }
+                                                                }
+                                                                <MudStack Spacing="1">
+                                                                    <MudText Typo="Typo.subtitle2" Style="font-weight:bold">Conditions</MudText>
+                                                                    <MudStack Row="true" Spacing="16">
+                                                                        <MudStack Spacing="0">
+                                                                            <MudText Typo="Typo.caption">Red</MudText>
+                                                                            <MudText Typo="Typo.body1" Style="font-weight: bold">@conditionOperator @redRequirement</MudText>
+                                                                        </MudStack>
+                                                                        <MudStack Spacing="0">
+                                                                            <MudText Typo="Typo.caption">Gold</MudText>
+                                                                            <MudText Typo="Typo.body1" Style="font-weight: bold">@conditionOperator @goldRequirement</MudText>
+                                                                        </MudStack>
+                                                                    </MudStack>
+                                                                </MudStack>
+                                                            </MudStack>
+                                                    }
+                                                    else
+                                                    {
+                                                        <MudStack Row="true">
+                                                            @for (var k = 0; k < 3; k++)
                                                             {
-                                                                var bestData = bestDataMap[danId];
+                                                                var songNumber = k;
                                                                 <MudText>
-                                                                    Best: @GetAllBestFromData((DanConditionType)border.OdaiType, bestData)
+                                                                    @GetDanRequirementPerSong(border, songNumber)
+                                                                </MudText>
+                                                                @if (!bestDataMap.ContainsKey(danId))
+                                                                {
+                                                                    continue;
+                                                                }
+                                                                var bestData = bestDataMap[danId];
+                                                                if (k >= bestData.DanBestStageDataList.Count)
+                                                                {
+                                                                    break;
+                                                                }
+                                                                <MudText>
+                                                                    Best: @GetSongBestFromData((DanConditionType)border.OdaiType, bestData, songNumber)
                                                                 </MudText>
                                                             }
-                                                        }
-                                                        else
-                                                        {
-                                                            <MudStack Row="true">
-                                                                @for (var k = 0; k < 3; k++)
-                                                                {
-                                                                    var songNumber = k;
-                                                                    <MudText>
-                                                                        @GetDanRequirementPerSong(border, songNumber)
-                                                                    </MudText>
-                                                                    @if (!bestDataMap.ContainsKey(danId))
-                                                                    {
-                                                                        continue;
-                                                                    }
-                                                                    var bestData = bestDataMap[danId];
-                                                                    if (k >= bestData.DanBestStageDataList.Count)
-                                                                    {
-                                                                        break;
-                                                                    }
-                                                                    <MudText>
-                                                                        Best: @GetSongBestFromData((DanConditionType)border.OdaiType, bestData, songNumber)
-                                                                    </MudText>
-                                                                }
-                                                            </MudStack>
-                                                        }
-                                                    </MudCardContent>
-                                                </MudCard>
+                                                        </MudStack>
+                                                    }
+                                                </MudCardContent>
+                                            </MudCard>
                                         }
                                         </MudStack>
                                     </MudItem>

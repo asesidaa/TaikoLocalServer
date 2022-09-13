@@ -7,7 +7,7 @@
 }
 
 .mud-progress-linear.bar-pass-red .mud-progress-linear-bars .mud-progress-linear-bar {
-    background-color: #FF3C05;
+    background-color: #ff584d;
 }
 
 .mud-progress-linear.bar-default .mud-progress-linear-bars .mud-progress-linear-bar {
@@ -17,5 +17,5 @@
 .mud-progress-linear.bar-pass-gold .mud-typography,
 .mud-progress-linear.bar-pass-red .mud-typography {
     font-weight: bold;
-    color: white;
+    color: #333;
 }
