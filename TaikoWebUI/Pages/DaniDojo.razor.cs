@@ -1,7 +1,4 @@
-﻿using SharedProject.Enums;
-using System.Net.NetworkInformation;
-
-namespace TaikoWebUI.Pages;
+﻿namespace TaikoWebUI.Pages;
 
 public partial class DaniDojo
 {
@@ -113,16 +110,14 @@ public partial class DaniDojo
                 _ => 0
             };
         }
-        else
+
+        return songNumber switch
         {
-            return songNumber switch
-            {
-                0 => data.GoldBorder1,
-                1 => data.GoldBorder2,
-                2 => data.GoldBorder3,
-                _ => 0
-            };
-        }
+            0 => data.GoldBorder1,
+            1 => data.GoldBorder2,
+            2 => data.GoldBorder3,
+            _ => 0
+        };
     }
 
     private static string GetDanTitle(string title)
@@ -155,8 +150,8 @@ public partial class DaniDojo
 
     private string GetDanResultIcon(uint danId)
     {
-        var icon = "";
-        var notClearIcon = "<image href='/images/dani_NotClear.png' width='24' height='24' style='filter: contrast(0.65)'/>";
+        string icon;
+        const string notClearIcon = "<image href='/images/dani_NotClear.png' width='24' height='24' style='filter: contrast(0.65)'/>";
 
         if (!bestDataMap.ContainsKey(danId))
         {
@@ -165,28 +160,14 @@ public partial class DaniDojo
         
         var state = bestDataMap[danId].ClearState;
             
-        if (state is DanClearState.NotClear)
-        {
-            icon = notClearIcon;
-        }
-        else
-        {
-            icon = $"<image href='/images/dani_{state}.png' width='24' height='24' />";
-        }
+        icon = state is DanClearState.NotClear ? notClearIcon : $"<image href='/images/dani_{state}.png' width='24' height='24' />";
 
         return icon;
     }
 
     private DanClearState GetDanResultState(uint danId)
     {
-        if (bestDataMap.ContainsKey(danId))
-        {
-            return bestDataMap[danId].ClearState;
-        }
-        else
-        {
-            return DanClearState.NotClear;
-        }
+        return bestDataMap.ContainsKey(danId) ? bestDataMap[danId].ClearState : DanClearState.NotClear;
     }
 
     private static uint GetSoulGauge(DanData data, bool isGold)
@@ -196,11 +177,6 @@ public partial class DaniDojo
             borders.FirstOrDefault(border => (DanConditionType)border.BorderType == DanConditionType.SoulGauge,
                 new DanData.OdaiBorder());
 
-        if (isGold)
-        {
-            return soulBorder.GoldBorderTotal;
-        }
-
-        return soulBorder.RedBorderTotal;
+        return isGold ? soulBorder.GoldBorderTotal : soulBorder.RedBorderTotal;
     }
 }

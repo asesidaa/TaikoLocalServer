@@ -31,9 +31,9 @@
                                         <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Spacing="6">
                                             @{
                                                 var danResultState = GetDanResultState(danId);
-                                                string danClearStateString = GetDanClearStateString(danResultState);
+                                                var danClearStateString = GetDanClearStateString(danResultState);
                                             }
-                                            <img src=@($"/images/dani_{danResultState.ToString()}.png") style="max-width:150px; width:100%;" />
+                                            <img src=@($"/images/dani_{danResultState.ToString()}.png") style="max-width:150px; width:100%;" alt="danResultState.ToString()"/>
                                             <MudText Typo="Typo.body1">@danClearStateString</MudText>
                                         </MudStack>
                                     </MudCardContent>
@@ -262,7 +262,7 @@
                                                                     }
                                                                 </MudStack>
                                                                 @{
-                                                                    string conditionOperator = ">";
+                                                                    var conditionOperator = ">";
                                                                     if ((DanConditionType)border.OdaiType is DanConditionType.BadCount)
                                                                     {
                                                                         conditionOperator = "<";
@@ -359,7 +359,7 @@
                                                                             </MudStack>
                                                                         }
                                                                         @{
-                                                                            string conditionOperator = ">";
+                                                                            var conditionOperator = ">";
                                                                             if ((DanConditionType)border.OdaiType is DanConditionType.BadCount)
                                                                             {
                                                                                 conditionOperator = "<";
