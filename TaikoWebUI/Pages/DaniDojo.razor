@@ -228,7 +228,7 @@
                                                                             }
 
                                                                             <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="@redRequirement" Value="@(redRequirement - bestData)">
-                                                                                <MudText Typo="Typo.caption">@bestData</MudText>
+                                                                                <MudText Typo="Typo.caption">@(redRequirement - bestData)</MudText>
                                                                             </MudProgressLinear>
                                                                             <MudText Typo="Typo.caption" Style="text-align: right">@resultText</MudText>
                                                                         } 
@@ -289,8 +289,8 @@
                                                             @for (var k = 0; k < 3; k++)
                                                             {
                                                                 var songNumber = k;
-                                                                var redRequirement = border.RedBorderTotal;
-                                                                var goldRequirement = border.GoldBorderTotal;
+                                                                var redRequirement = GetSongBorderCondition(border, songNumber, false);
+                                                                var goldRequirement = GetSongBorderCondition(border, songNumber, false);
                                                                 var barClass = "bar-default";
                                                                 var resultText = "Failed";
 
@@ -322,7 +322,7 @@
                                                                                 }
 
                                                                                 <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="@redRequirement" Value="@(redRequirement - bestData)">
-                                                                                    <MudText Typo="Typo.caption">@bestData</MudText>
+                                                                                    <MudText Typo="Typo.caption">@(redRequirement - bestData)</MudText>
                                                                                 </MudProgressLinear>
                                                                                 <MudText Typo="Typo.caption" Style="text-align: right">@resultText</MudText>
                                                                             }
@@ -340,12 +340,12 @@
                                                                                     resultText = "Gold";
                                                                                 }
 
-                                                                                @goldRequirement
-
-                                                                                <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="@goldRequirement" Value="@bestData">
+                                                                                <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="@(goldRequirement > 0 ? goldRequirement : 1)" Value="@(goldRequirement > 0 ? bestData : 1)">
                                                                                     <MudText Typo="Typo.caption">@bestData</MudText>
                                                                                 </MudProgressLinear>
-                                                                                <MudText Typo="Typo.caption" Style="text-align: right">@resultText</MudText>
+                                                                                <MudStack Class="mt-1" AlignItems="AlignItems.End">
+                                                                                    <MudText Typo="Typo.caption">@resultText</MudText>
+                                                                                </MudStack>
                                                                             }
 
                                                                         }
@@ -354,8 +354,34 @@
                                                                             <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="100" Value="0">
                                                                                 <MudText Typo="Typo.caption">0</MudText>
                                                                             </MudProgressLinear>
-                                                                            <MudText Typo="Typo.caption" Style="text-align: right">N/A</MudText>
+                                                                            <MudStack Class="mt-1" AlignItems="AlignItems.End">
+                                                                                <MudText Typo="Typo.caption">N/A</MudText>
+                                                                            </MudStack>
                                                                         }
+                                                                        @{
+                                                                            string conditionOperator = ">";
+                                                                            if ((DanConditionType)border.OdaiType is DanConditionType.BadCount)
+                                                                            {
+                                                                                conditionOperator = "<";
+                                                                            }
+
+                                                                            if (redRequirement == 0) {
+                                                                                conditionOperator = "";
+                                                                            }
+                                                                        }
+                                                                        <MudStack Spacing="1" Class="mt-8">
+                                                                            <MudText Typo="Typo.subtitle2" Style="font-weight:bold">Conditions</MudText>
+                                                                            <MudStack Row="true" Spacing="16">
+                                                                                <MudStack Spacing="0">
+                                                                                    <MudText Typo="Typo.caption">Red</MudText>
+                                                                                    <MudText Typo="Typo.body1" Style="font-weight: bold">@conditionOperator @redRequirement</MudText>
+                                                                                </MudStack>
+                                                                                <MudStack Spacing="0">
+                                                                                    <MudText Typo="Typo.caption">Gold</MudText>
+                                                                                    <MudText Typo="Typo.body1" Style="font-weight: bold">@conditionOperator @goldRequirement</MudText>
+                                                                                </MudStack>
+                                                                            </MudStack>
+                                                                        </MudStack>
                                                                         </MudCardContent>
                                                                     </MudCard>
                                                                 </MudItem>
