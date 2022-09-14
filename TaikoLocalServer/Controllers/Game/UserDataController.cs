@@ -1,5 +1,4 @@
 ﻿using System.Buffers.Binary;
-using System.Collections;
 using System.Text.Json;
 using TaikoLocalServer.Services.Interfaces;
 using Throw;
@@ -28,21 +27,11 @@ public class UserDataController : BaseController<UserDataController>
 
         var musicAttributeManager = MusicAttributeManager.Instance;
 
-        var releaseSongArray = new byte[Constants.MUSIC_FLAG_ARRAY_SIZE];
-        var bitSet = new BitArray(Constants.MUSIC_ID_MAX);
-        foreach (var music in musicAttributeManager.Musics)
-        {
-            bitSet.Set((int)music, true);
-        }
-        bitSet.CopyTo(releaseSongArray, 0); 
-        
-        var uraSongArray = new byte[Constants.MUSIC_FLAG_ARRAY_SIZE];
-        bitSet.SetAll(false);
-        foreach (var music in musicAttributeManager.MusicsWithUra)
-        {
-            bitSet.Set((int)music, true);
-        }
-        bitSet.CopyTo(uraSongArray, 0);
+        var releaseSongArray =
+            FlagCalculator.GetBitArrayFromIds(musicAttributeManager.Musics, Constants.MUSIC_ID_MAX, Logger);
+
+        var uraSongArray =
+            FlagCalculator.GetBitArrayFromIds(musicAttributeManager.MusicsWithUra, Constants.MUSIC_ID_MAX, Logger);
 
         var userData = await userDatumService.GetFirstUserDatumOrDefault(request.Baid);
 
@@ -60,13 +49,7 @@ public class UserDataController : BaseController<UserDataController>
         // which means database content need to be fixed, so better throw
         toneFlg.ThrowIfNull("Tone flg should never be null!");
 
-        var toneArray = new byte[Constants.TONE_UID_MAX];
-        bitSet = new BitArray(Constants.TONE_UID_MAX);
-        foreach (var tone in toneFlg)
-        {
-            bitSet.Set((int)tone, true);
-        }
-        bitSet.CopyTo(toneArray, 0);
+        var toneArray = FlagCalculator.GetBitArrayFromIds(toneFlg, Constants.TONE_UID_MAX, Logger);
 
         var titleFlg = Array.Empty<uint>();
         try
@@ -82,13 +65,7 @@ public class UserDataController : BaseController<UserDataController>
         // which means database content need to be fixed, so better throw
         titleFlg.ThrowIfNull("Title flg should never be null!");
 
-        var titleArray = new byte[Constants.TITLE_UID_MAX];
-        bitSet = new BitArray(Constants.TITLE_UID_MAX);
-        foreach (var title in titleFlg)
-        {
-            bitSet.Set((int)title, true);
-        }
-        bitSet.CopyTo(titleArray, 0);
+        var titleArray = FlagCalculator.GetBitArrayFromIds(titleFlg, Constants.TITLE_UID_MAX, Logger);
 
         var recentSongs = (await songPlayDatumService.GetSongPlayDatumByBaid(request.Baid))
             .AsEnumerable()
