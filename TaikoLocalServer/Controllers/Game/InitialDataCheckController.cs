@@ -14,13 +14,8 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 
         var musicAttributeManager = MusicAttributeManager.Instance;
 
-        var enabledArray = new byte[Constants.MUSIC_FLAG_ARRAY_SIZE];
-        var bitSet = new BitArray(Constants.MUSIC_ID_MAX);
-        foreach (var music in musicAttributeManager.Musics)
-        {
-            bitSet.Set((int)music, true);
-        }
-        bitSet.CopyTo(enabledArray, 0);
+        var enabledArray =
+            FlagCalculator.GetBitArrayFromIds(musicAttributeManager.Musics, Constants.MUSIC_ID_MAX, Logger);
 
         var danData = new List<InitialdatacheckResponse.InformationData>();
         for (var danId = Constants.MIN_DAN_ID; danId <= Constants.MAX_DAN_ID; danId++)

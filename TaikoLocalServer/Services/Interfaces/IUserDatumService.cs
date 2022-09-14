@@ -17,4 +17,6 @@ public interface IUserDatumService
     public Task<List<uint>> GetFavoriteSongIds(uint baid);
 
     public Task UpdateFavoriteSong(uint baid, uint songId, bool isFavorite);
+    
+    
 }

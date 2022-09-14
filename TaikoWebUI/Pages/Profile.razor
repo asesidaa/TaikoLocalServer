@@ -90,6 +90,31 @@
                     </MudGrid>
                 </MudStack>
             </MudPaper>
+
+            <MudPaper Class="py-8 px-8 my-8" Outlined="true">
+                <MudStack Spacing="4">
+                    <MudText Typo="Typo.h2">Costume Options</MudText>
+                    <MudGrid>
+                        <MudItem xs="12" md="4">
+                            <MudStack Spacing="4">
+                                <MudTextField @bind-Value="@response.Kigurumi" Label="Kigurumi"/>
+                                <MudTextField @bind-Value="@response.Head" Label="Head"/>
+                                <MudTextField @bind-Value="@response.Face" Label="Face"/>
+                                <MudTextField @bind-Value="@response.Body" Label="Body"/>
+                                <MudTextField @bind-Value="@response.Puchi" Label="Puchi"/>
+                            </MudStack>
+                        </MudItem>
+                        <MudItem xs="12" md="4">
+                            <MudStack Spacing="4">
+                                <MudTextField @bind-Value="@response.BodyColor" Label="BodyColor"/>
+                                <MudTextField @bind-Value="@response.FaceColor" Label="FaceColor"/>
+                                <MudTextField @bind-Value="@response.LimbColor" Label="LimbColor"/>
+                            </MudStack>
+                        </MudItem>
+                    </MudGrid>
+                </MudStack>
+
+            </MudPaper>
         </MudItem>
         <MudItem md="4" xs="12" Class="py-8 px-8 my-4 pt-8">
             <MudStack Spacing="4" Style="top:100px" Class="sticky">

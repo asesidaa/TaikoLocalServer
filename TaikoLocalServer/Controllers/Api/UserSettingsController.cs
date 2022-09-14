@@ -1,9 +1,11 @@
 ﻿using System.Buffers.Binary;
+using System.Text.Json;
 using SharedProject.Models;
 using SharedProject.Models.Responses;
 using SharedProject.Utils;
 using TaikoLocalServer.Services;
 using TaikoLocalServer.Services.Interfaces;
+using Throw;
 
 namespace TaikoLocalServer.Controllers.Api;
 
@@ -28,6 +30,10 @@ public class UserSettingsController : BaseController<UserSettingsController>
             return NotFound();
         }
 
+        var costumeData = JsonHelper.GetCostumeDataFromUserData(user, Logger);
+
+        var costumeUnlockData = JsonHelper.GetCostumeUnlockDataFromUserData(user, Logger);
+
         var response = new UserSetting
         {
             AchievementDisplayDifficulty = user.AchievementDisplayDifficulty,
@@ -40,7 +46,20 @@ public class UserSettingsController : BaseController<UserSettingsController>
             ToneId = user.SelectedToneId,
             MyDonName = user.MyDonName,
             Title = user.Title,
-            TitlePlateId = user.TitlePlateId
+            TitlePlateId = user.TitlePlateId,
+            Kigurumi = costumeData[0],
+            Head = costumeData[1],
+            Body = costumeData[2],
+            Face = costumeData[3],
+            Puchi = costumeData[4],
+            UnlockedKigurumi = costumeUnlockData[0],
+            UnlockedHead  = costumeUnlockData[1],
+            UnlockedBody  = costumeUnlockData[2],
+            UnlockedFace  = costumeUnlockData[3],
+            UnlockedPuchi = costumeUnlockData[4],
+            BodyColor = user.ColorBody,
+            FaceColor = user.ColorFace,
+            LimbColor = user.ColorLimb
         };
         return Ok(response);
     }
@@ -55,6 +74,15 @@ public class UserSettingsController : BaseController<UserSettingsController>
             return NotFound();
         }
 
+        var costumes = new List<uint>
+        {
+            userSetting.Kigurumi,
+            userSetting.Head,
+            userSetting.Body,
+            userSetting.Face,
+            userSetting.Puchi,
+        };
+        
         user.IsSkipOn = userSetting.IsSkipOn;
         user.IsVoiceOn = userSetting.IsVoiceOn;
         user.DisplayAchievement = userSetting.IsDisplayAchievement;
@@ -66,6 +94,11 @@ public class UserSettingsController : BaseController<UserSettingsController>
         user.MyDonName = userSetting.MyDonName;
         user.Title = userSetting.Title;
         user.TitlePlateId = userSetting.TitlePlateId;
+        user.ColorBody = userSetting.BodyColor;
+        user.ColorFace = userSetting.FaceColor;
+        user.ColorLimb = userSetting.LimbColor;
+        user.CostumeData = JsonSerializer.Serialize(costumes);
+        
 
         await userDatumService.UpdateUserDatum(user);
 
