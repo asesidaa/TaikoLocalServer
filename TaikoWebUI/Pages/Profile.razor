@@ -11,7 +11,7 @@
     <MudGrid Class="my-4 pb-10">
         <MudItem xs="12" md="8">
             <MudPaper Elevation="0" Outlined="true">
-                <MudTabs ActivePanelIndex="0" Rounded="true" Border="true" PanelClass="pa-8">
+                <MudTabs Rounded="true" Border="true" PanelClass="pa-8">
                     <MudTabPanel Text="Profile">
                         <MudStack Spacing="4">
                             <h2>Profile Options</h2>
@@ -56,7 +56,8 @@
                                             @for (uint i = 0; i < GameDataService.COSTUME_HEAD_MAX; i++)
                                             {
                                                 var index = i;
-                                                <MudSelectItem Value="@index">@index</MudSelectItem>
+                                                var costumeTitle = GameDataService.headMap[index];
+                                                <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
                                             }
                                         </MudSelect>
 
@@ -64,7 +65,8 @@
                                             @for (uint i = 0; i < GameDataService.COSTUME_BODY_MAX; i++)
                                             {
                                                 var index = i;
-                                                <MudSelectItem Value="@index">@index</MudSelectItem>
+                                                var costumeTitle = GameDataService.bodyMap[index];
+                                                <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
                                             }
                                         </MudSelect>
 
@@ -72,7 +74,8 @@
                                             @for (uint i = 0; i < GameDataService.COSTUME_FACE_MAX; i++)
                                             {
                                                 var index = i;
-                                                <MudSelectItem Value="@index">@index</MudSelectItem>
+                                                var costumeTitle = GameDataService.faceMap[index];
+                                                <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
                                             }
                                         </MudSelect>
 
@@ -80,7 +83,8 @@
                                             @for (uint i = 0; i < GameDataService.COSTUME_KIGURUMI_MAX; i++)
                                             {
                                                 var index = i;
-                                                <MudSelectItem Value="@index">@index</MudSelectItem>
+                                                var costumeTitle = GameDataService.kigurumiMap[index];
+                                                <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
                                             }
                                         </MudSelect>
 
@@ -88,7 +92,8 @@
                                             @for (uint i = 0; i < GameDataService.COSTUME_PUCHI_MAX; i++)
                                             {
                                                 var index = i;
-                                                <MudSelectItem Value="@index">@index</MudSelectItem>
+                                                var costumeTitle = GameDataService.puchiMap[index];
+                                                <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
                                             }
                                         </MudSelect>
                                     </MudStack>

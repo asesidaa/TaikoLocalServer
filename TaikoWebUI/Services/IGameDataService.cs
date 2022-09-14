@@ -8,8 +8,6 @@ public interface IGameDataService
 
     public string GetMusicArtistBySongId(uint songId);
 
-    public string GetCostumeTitleById(uint costumeId, string type);
-
     public SongGenre GetMusicGenreBySongId(uint songId);
 
     public int GetMusicIndexBySongId(uint songId);
