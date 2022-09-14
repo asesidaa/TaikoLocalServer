@@ -13,12 +13,12 @@ public class GameDataService : IGameDataService
 
     private ImmutableDictionary<uint, DanData> danMap = null!;
 
-    public const uint COSTUME_HEAD_MAX = 138;
-    public const uint COSTUME_FACE_MAX = 57;
-    public const uint COSTUME_BODY_MAX = 154;
-    public const uint COSTUME_KIGURUMI_MAX = 152;
-    public const uint COSTUME_PUCHI_MAX = 127;
-    public const uint COSTUME_COLOR_MAX = 62;
+    public const uint COSTUME_HEAD_MAX = 140;
+    public const uint COSTUME_FACE_MAX = 59;
+    public const uint COSTUME_BODY_MAX = 156;
+    public const uint COSTUME_KIGURUMI_MAX = 154;
+    public const uint COSTUME_PUCHI_MAX = 129;
+    public const uint COSTUME_COLOR_MAX = 63;
     
     public static string[] headMap = new string[COSTUME_HEAD_MAX];
     public static string[] faceMap = new string[COSTUME_FACE_MAX];
