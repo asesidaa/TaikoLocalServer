@@ -1,7 +1,6 @@
 ﻿using System.Buffers.Binary;
 using System.Globalization;
 using System.Text.Json;
-using TaikoLocalServer.Entities;
 using TaikoLocalServer.Services.Interfaces;
 using Throw;
 
@@ -66,7 +65,7 @@ public class PlayResultController : BaseController<PlayResultController>
 
             if (playMode == PlayMode.AiBattle)
             {
-                await UpdateAiBattleData(request, stageData);
+                // await UpdateAiBattleData(request, stageData);
                 // Update AI win count here somewhere, or in UpdatePlayData?
                 // I have no clue how to update input median or variance
             }
@@ -75,7 +74,7 @@ public class PlayResultController : BaseController<PlayResultController>
 
             await UpdatePlayData(request, songNumber, stageData, lastPlayDatetime);
         }
-        
+
         return Ok(response);
     }
 
@@ -193,21 +192,78 @@ public class PlayResultController : BaseController<PlayResultController>
         userdata.LastPlayDatetime = lastPlayDatetime;
         userdata.LastPlayMode = playResultData.PlayMode;
 
-        var toneFlgData = JsonSerializer.Deserialize<List<uint>>(userdata.ToneFlgArray);
-        toneFlgData?.AddRange(playResultData.GetToneNoes ?? new uint[0]);
-        userdata.ToneFlgArray = JsonSerializer.Serialize(toneFlgData);
-        var titleFlgData = JsonSerializer.Deserialize<List<uint>>(userdata.TitleFlgArray);
-        titleFlgData?.AddRange(playResultData.GetTitleNoes ?? new uint[0]);
-        userdata.TitleFlgArray = JsonSerializer.Serialize(titleFlgData);
-        var costumeFlgData = JsonSerializer.Deserialize<List<List<uint>>>(userdata.CostumeFlgArray);
-        costumeFlgData?[0].AddRange(playResultData.GetCostumeNo1s ?? new uint[0]);
-        costumeFlgData?[1].AddRange(playResultData.GetCostumeNo2s ?? new uint[0]);
-        costumeFlgData?[2].AddRange(playResultData.GetCostumeNo3s ?? new uint[0]);
-        costumeFlgData?[3].AddRange(playResultData.GetCostumeNo4s ?? new uint[0]);
-        costumeFlgData?[4].AddRange(playResultData.GetCostumeNo5s ?? new uint[0]);
-        userdata.CostumeFlgArray = JsonSerializer.Serialize(costumeFlgData);
+        userdata.ToneFlgArray =
+            UpdateJsonUintFlagArray(userdata.ToneFlgArray, playResultData.GetToneNoes, nameof(userdata.ToneFlgArray));
+
+        userdata.TitleFlgArray =
+            UpdateJsonUintFlagArray(userdata.TitleFlgArray, playResultData.GetTitleNoes,
+                nameof(userdata.TitleFlgArray));
+
+        userdata.CostumeFlgArray = UpdateJsonCostumeFlagArray(userdata.CostumeFlgArray,
+            new[]
+            {
+                playResultData.GetCostumeNo1s,
+                playResultData.GetCostumeNo2s,
+                playResultData.GetCostumeNo3s,
+                playResultData.GetCostumeNo4s,
+                playResultData.GetCostumeNo5s
+            });
 
         await userDatumService.UpdateUserDatum(userdata);
+    }
+
+    private string UpdateJsonUintFlagArray(string originalValue, IReadOnlyCollection<uint>? newValue, string fieldName)
+    {
+        var flgData = new List<uint>();
+        try
+        {
+            flgData = JsonSerializer.Deserialize<List<uint>>(originalValue);
+        }
+        catch (JsonException e)
+        {
+            Logger.LogError(e, "Parsing {FieldName} json data failed", fieldName);
+        }
+
+        flgData?.AddRange(newValue ?? Array.Empty<uint>());
+        var flgArray = flgData ?? new List<uint>();
+        return JsonSerializer.Serialize(flgArray);
+    }
+
+    private string UpdateJsonCostumeFlagArray(string originalValue, IReadOnlyList<IReadOnlyCollection<uint>?>? newValue)
+    {
+        var flgData = new List<List<uint>>();
+        try
+        {
+            flgData = JsonSerializer.Deserialize<List<List<uint>>>(originalValue);
+        }
+        catch (JsonException e)
+        {
+            Logger.LogError(e, "Parsing Costume flag json data failed");
+        }
+
+        if (flgData is null)
+        {
+            flgData = new List<List<uint>>();
+        }
+
+        for (var index = 0; index < flgData.Count; index++)
+        {
+            var subFlgData = flgData[index];
+            subFlgData.AddRange(newValue?[index] ?? Array.Empty<uint>());
+        }
+
+        if (flgData.Count >= 5)
+        {
+            return JsonSerializer.Serialize(flgData);
+        }
+
+        Logger.LogWarning("Costume flag array count less than 5!");
+        flgData = new List<List<uint>>
+        {
+            new(), new(), new(), new(), new()
+        };
+
+        return JsonSerializer.Serialize(flgData);
     }
 
     private async Task UpdateBestData(PlayResultRequest request, StageData stageData,
@@ -231,7 +287,8 @@ public class PlayResultController : BaseController<PlayResultController>
         await songBestDatumService.UpdateOrInsertSongBestDatum(bestDatum);
     }
 
-    private async Task UpdateAiBattleData(PlayResultRequest request, StageData stageData)
+    // TODO: AI battle
+    /*private async Task UpdateAiBattleData(PlayResultRequest request, StageData stageData)
     {
         for (int i = 0; i < stageData.ArySectionDatas.Count; i++)
         {
@@ -242,7 +299,7 @@ public class PlayResultController : BaseController<PlayResultController>
             // if any aspect of the section is higher than the previous best, update it
             // Similar to Dan best play updates
         }
-    }
+    }*/
 
     private static CrownType PlayResultToCrown(StageData stageData)
     {
