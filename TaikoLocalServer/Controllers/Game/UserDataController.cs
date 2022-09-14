@@ -12,11 +12,14 @@ public class UserDataController : BaseController<UserDataController>
     private readonly IUserDatumService userDatumService;
 
     private readonly ISongPlayDatumService songPlayDatumService;
+
+    private readonly IGameDataService gameDataService;
     
-    public UserDataController(IUserDatumService userDatumService, ISongPlayDatumService songPlayDatumService)
+    public UserDataController(IUserDatumService userDatumService, ISongPlayDatumService songPlayDatumService, IGameDataService gameDataService)
     {
         this.userDatumService = userDatumService;
         this.songPlayDatumService = songPlayDatumService;
+        this.gameDataService = gameDataService;
     }
 
     [HttpPost]
@@ -25,13 +28,11 @@ public class UserDataController : BaseController<UserDataController>
     {
         Logger.LogInformation("UserData request : {Request}", request.Stringify());
 
-        var musicAttributeManager = MusicAttributeManager.Instance;
-
         var releaseSongArray =
-            FlagCalculator.GetBitArrayFromIds(musicAttributeManager.Musics, Constants.MUSIC_ID_MAX, Logger);
+            FlagCalculator.GetBitArrayFromIds(gameDataService.GetMusicList(), Constants.MUSIC_ID_MAX, Logger);
 
         var uraSongArray =
-            FlagCalculator.GetBitArrayFromIds(musicAttributeManager.MusicsWithUra, Constants.MUSIC_ID_MAX, Logger);
+            FlagCalculator.GetBitArrayFromIds(gameDataService.GetMusicWithUraList(), Constants.MUSIC_ID_MAX, Logger);
 
         var userData = await userDatumService.GetFirstUserDatumOrDefault(request.Baid);
 

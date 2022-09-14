@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using TaikoLocalServer.Services.Interfaces;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -6,17 +7,22 @@ namespace TaikoLocalServer.Controllers.Game;
 [Route("/v12r03/chassis/initialdatacheck.php")]
 public class InitialDataCheckController : BaseController<InitialDataCheckController>
 {
+    private readonly IGameDataService gameDataService;
+
+    public InitialDataCheckController(IGameDataService gameDataService)
+    {
+        this.gameDataService = gameDataService;
+    }
+
     [HttpPost]
     [Produces("application/protobuf")]
     public IActionResult InitialDataCheck([FromBody] InitialdatacheckRequest request)
     {
         Logger.LogInformation("Initial data check request: {Request}", request.Stringify());
 
-        var musicAttributeManager = MusicAttributeManager.Instance;
-
         var enabledArray = new byte[Constants.MUSIC_FLAG_ARRAY_SIZE];
         var bitSet = new BitArray(Constants.MUSIC_ID_MAX);
-        foreach (var music in musicAttributeManager.Musics)
+        foreach (var music in gameDataService.GetMusicList())
         {
             bitSet.Set((int)music, true);
         }
@@ -31,10 +37,9 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
                 VerupNo = 1
             });
         }
-
-        var manager = SongIntroductionDataManager.Instance;
+        
         var introData = new List<InitialdatacheckResponse.InformationData>();
-        for (var setId = 1; setId <= manager.IntroDataList.Count; setId++)
+        for (var setId = 1; setId <= gameDataService.GetSongIntroDictionary().Count; setId++)
         {
             introData.Add(new InitialdatacheckResponse.InformationData
             {

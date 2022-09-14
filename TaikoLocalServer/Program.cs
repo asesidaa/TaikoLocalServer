@@ -6,6 +6,7 @@ using TaikoLocalServer.Services;
 using TaikoLocalServer.Services.Extentions;
 using TaikoLocalServer.Services.Interfaces;
 using TaikoLocalServer.Settings;
+using Throw;
 
 var builder = WebApplication.CreateBuilder(args);
 // Manually enable tls 1.0
@@ -19,6 +20,7 @@ builder.WebHost.UseKestrel(kestrelOptions =>
 
 // Add services to the container.
 builder.Services.AddOptions();
+builder.Services.AddSingleton<IGameDataService, GameDataService>();
 builder.Services.Configure<UrlSettings>(builder.Configuration.GetSection(nameof(UrlSettings)));
 builder.Services.AddControllers().AddProtoBufNet();
 builder.Services.AddDbContext<TaikoDbContext>(option =>
@@ -57,6 +59,10 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<TaikoDbContext>();
     db.Database.Migrate();
 }
+
+var gameDataService = app.Services.GetService<IGameDataService>();
+gameDataService.ThrowIfNull();
+await gameDataService.InitializeAsync();
 
 // For reverse proxy
 app.UseForwardedHeaders(new ForwardedHeadersOptions

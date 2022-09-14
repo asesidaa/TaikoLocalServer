@@ -8,10 +8,13 @@ namespace TaikoLocalServer.Controllers.Game;
 public class SelfBestController : BaseController<SelfBestController>
 {
     private readonly ISongBestDatumService songBestDatumService;
+
+    private readonly IGameDataService gameDataService;
     
-    public SelfBestController(ISongBestDatumService songBestDatumService)
+    public SelfBestController(ISongBestDatumService songBestDatumService, IGameDataService gameDataService)
     {
         this.songBestDatumService = songBestDatumService;
+        this.gameDataService = gameDataService;
     }
 
     [HttpPost]
@@ -25,8 +28,6 @@ public class SelfBestController : BaseController<SelfBestController>
             Result = 1,
             Level = request.Level
         };
-
-        var manager = MusicAttributeManager.Instance;
         
         var requestDifficulty = (Difficulty)request.Level;
         requestDifficulty.Throw().IfOutOfRange();
@@ -38,7 +39,7 @@ public class SelfBestController : BaseController<SelfBestController>
             .ToList();
         foreach (var songNo in request.ArySongNoes)
         {
-            if (!manager.MusicAttributes.ContainsKey(songNo))
+            if (!gameDataService.GetMusicAttributes().ContainsKey(songNo))
             {
                 Logger.LogWarning("Music no {No} is missing!", songNo);
                 continue;
