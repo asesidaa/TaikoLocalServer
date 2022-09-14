@@ -13,18 +13,21 @@ public class GameDataService : IGameDataService
 
     private ImmutableDictionary<uint, DanData> danMap = null!;
 
-    public const uint COSTUME_HEAD_MAX = 140;
-    public const uint COSTUME_FACE_MAX = 59;
-    public const uint COSTUME_BODY_MAX = 156;
-    public const uint COSTUME_KIGURUMI_MAX = 154;
-    public const uint COSTUME_PUCHI_MAX = 129;
-    public const uint COSTUME_COLOR_MAX = 63;
-    
+    public const int COSTUME_HEAD_MAX = 140;
+    public const int COSTUME_FACE_MAX = 59;
+    public const int COSTUME_BODY_MAX = 156;
+    public const int COSTUME_KIGURUMI_MAX = 154;
+    public const int COSTUME_PUCHI_MAX = 129;
+    public const int COSTUME_COLOR_MAX = 63;
+    public const int PLAYER_TITLE_MAX = 749;
+
     public static string[] headMap = new string[COSTUME_HEAD_MAX];
     public static string[] faceMap = new string[COSTUME_FACE_MAX];
     public static string[] bodyMap = new string[COSTUME_BODY_MAX];
     public static string[] kigurumiMap = new string[COSTUME_KIGURUMI_MAX];
     public static string[] puchiMap = new string[COSTUME_PUCHI_MAX];
+
+    public static Dictionary<int, string> titleMap = new();
 
     public GameDataService(HttpClient client)
     {
@@ -117,6 +120,22 @@ public class GameDataService : IGameDataService
 
             var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
             puchiMap[index] = costumeWordlistItem.JapaneseText;
+        }
+
+        for (var i = 1; i < PLAYER_TITLE_MAX; i++)
+        {
+            var index = i;
+            var key = $"syougou_{index}";
+
+            var titleWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
+
+            // prevent duplicate values with different keys
+            if (titleMap.ContainsValue(titleWordlistItem.JapaneseText))
+            {
+                continue;
+            }
+
+            titleMap.TryAdd(index, titleWordlistItem.JapaneseText);
         }
     }
 

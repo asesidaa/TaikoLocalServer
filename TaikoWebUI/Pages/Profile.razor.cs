@@ -1,4 +1,5 @@
 ﻿using MudBlazor.Utilities;
+using static MudBlazor.Colors;
 
 namespace TaikoWebUI.Pages;
 
@@ -72,4 +73,15 @@ public partial class Profile
         isSavingOptions = false;
     }
 
+    private async Task<IEnumerable<string>> SearchForTitle(string value)
+    {
+        var titles = GameDataService.titleMap;
+
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return titles.Values;
+        }
+
+        return titles.Values.Where(x => x.Contains(value, StringComparison.OrdinalIgnoreCase));
+    }
 }
