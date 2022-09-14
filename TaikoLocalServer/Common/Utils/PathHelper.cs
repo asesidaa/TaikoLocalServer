@@ -14,6 +14,6 @@ public static class PathHelper
         {
             throw new ApplicationException();
         }
-        return Path.Combine(parentPath.ToString(), "wwwroot");
+        return Path.Combine(parentPath.ToString(), "wwwroot", "data");
     }
 }
