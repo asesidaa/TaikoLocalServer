@@ -57,5 +57,9 @@ This is a server for Taiko no Tatsujin Nijiiro ver 08.18
 
 ### Run the server on another computer
 
-If you want to run the server on another computer, the procedure is identical with an extra step. Before you open browser, in `wwwroot/appsettings.json`, change `BaseUrl` to `https://naominet.jp:10122` then instead of visit localhost, visit the server using domain name to test.
+If you want to run the server on another computer, the procedure is almost identical. 
+
+Before you open browser, in `wwwroot/appsettings.json`, change `BaseUrl` to `https://naominet.jp:10122` then instead of visit localhost, visit the server using domain name to test.
+
+Also note that now the cetificate also need to be imported on client computer, or web ui may not work. If you don't need https, change `BaseUrl` to `http://server.ip:80`, and visit on client. The game does not care about certificate.
 
