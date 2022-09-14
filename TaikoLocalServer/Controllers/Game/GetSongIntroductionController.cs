@@ -1,9 +1,18 @@
-﻿namespace TaikoLocalServer.Controllers.Game;
+﻿using TaikoLocalServer.Services.Interfaces;
+
+namespace TaikoLocalServer.Controllers.Game;
 
 [Route("/v12r03/chassis/getsongintroduction.php")]
 [ApiController]
 public class GetSongIntroductionController : BaseController<GetSongIntroductionController>
 {
+    private readonly IGameDataService gameDataService;
+
+    public GetSongIntroductionController(IGameDataService gameDataService)
+    {
+        this.gameDataService = gameDataService;
+    }
+
     [HttpPost]
     [Produces("application/protobuf")]
     public IActionResult GetSongIntroduction([FromBody] GetSongIntroductionRequest request)
@@ -14,16 +23,17 @@ public class GetSongIntroductionController : BaseController<GetSongIntroductionC
         {
             Result = 1
         };
-
+        
         foreach (var setId in request.SetIds)
         {
-            response.ArySongIntroductionDatas.Add(new GetSongIntroductionResponse.SongIntroductionData
+            gameDataService.GetSongIntroDictionary().TryGetValue(setId, out var introData);
+            if (introData is null)
             {
-                MainSongNo = 2,
-                SubSongNoes = new uint[] {177,193,3,4},
-                SetId = setId,
-                VerupNo = 1
-            });
+                Logger.LogWarning("Requested set id {Id} does not exist!", setId);
+                continue;
+            }
+
+            response.ArySongIntroductionDatas.Add(introData);
         }
 
         return Ok(response);

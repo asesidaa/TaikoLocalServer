@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using TaikoLocalServer.Services.Interfaces;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -6,6 +7,13 @@ namespace TaikoLocalServer.Controllers.Game;
 [Route("/v12r03/chassis/initialdatacheck.php")]
 public class InitialDataCheckController : BaseController<InitialDataCheckController>
 {
+    private readonly IGameDataService gameDataService;
+
+    public InitialDataCheckController(IGameDataService gameDataService)
+    {
+        this.gameDataService = gameDataService;
+    }
+
     [HttpPost]
     [Produces("application/protobuf")]
     public IActionResult InitialDataCheck([FromBody] InitialdatacheckRequest request)
@@ -23,6 +31,16 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
             danData.Add(new InitialdatacheckResponse.InformationData
             {
                 InfoId = (uint)danId,
+                VerupNo = 1
+            });
+        }
+        
+        var introData = new List<InitialdatacheckResponse.InformationData>();
+        for (var setId = 1; setId <= gameDataService.GetSongIntroDictionary().Count; setId++)
+        {
+            introData.Add(new InitialdatacheckResponse.InformationData
+            {
+                InfoId = (uint)setId,
                 VerupNo = 1
             });
         }
@@ -95,6 +113,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
             });*/
         };
         response.AryDanOdaiDatas.AddRange(danData);
+        response.ArySongIntroductionDatas.AddRange(introData);
         return Ok(response);
     }
 
