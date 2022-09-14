@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using TaikoLocalServer.Services.Interfaces;
+﻿using TaikoLocalServer.Services.Interfaces;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -20,13 +19,8 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
     {
         Logger.LogInformation("Initial data check request: {Request}", request.Stringify());
 
-        var enabledArray = new byte[Constants.MUSIC_FLAG_ARRAY_SIZE];
-        var bitSet = new BitArray(Constants.MUSIC_ID_MAX);
-        foreach (var music in gameDataService.GetMusicList())
-        {
-            bitSet.Set((int)music, true);
-        }
-        bitSet.CopyTo(enabledArray, 0);
+        var enabledArray =
+            FlagCalculator.GetBitArrayFromIds(gameDataService.GetMusicList(), Constants.MUSIC_ID_MAX, Logger);
 
         var danData = new List<InitialdatacheckResponse.InformationData>();
         for (var danId = Constants.MIN_DAN_ID; danId <= Constants.MAX_DAN_ID; danId++)
