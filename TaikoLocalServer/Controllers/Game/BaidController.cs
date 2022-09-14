@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-using TaikoLocalServer.Services.Interfaces;
-using Throw;
+﻿using TaikoLocalServer.Services.Interfaces;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -79,34 +77,9 @@ public class BaidController : BaseController<BaidController>
         var scoreRankCount = CalculateScoreRankCount(songCountData);
 
 
-        var costumeData = new List<uint>{ 0, 0, 0, 0, 0 };
-        try
-        {
-            costumeData = JsonSerializer.Deserialize<List<uint>>(userData.CostumeData);
-        }
-        catch (JsonException e)
-        {
-            Logger.LogError(e, "Parsing costume json data failed");
-        }
-        if (costumeData == null || costumeData.Count < 5)
-        {
-            Logger.LogWarning("Costume data is null or count less than 5!");
-            costumeData = new List<uint> { 0, 0, 0, 0, 0 };
-        }
+        var costumeData = JsonHelper.GetCostumeDataFromUserData(userData, Logger);
 
-        var costumeArrays = Array.Empty<uint[]>();
-        try
-        {
-            costumeArrays = JsonSerializer.Deserialize<uint[][]>(userData.CostumeFlgArray);
-        }
-        catch (JsonException e)
-        {
-            Logger.LogError(e, "Parsing costume flg json data failed");
-        }
-
-        // The only way to get a null is provide string "null" as input,
-        // which means database content need to be fixed, so better throw
-        costumeArrays.ThrowIfNull("Costume flg should never be null!");
+        var costumeArrays = JsonHelper.GetCostumeUnlockDataFromUserData(userData, Logger);
 
         var costumeFlagArrays = Constants.CostumeFlagArraySizes
             .Select((size, index) => FlagCalculator.GetBitArrayFromIds(costumeArrays[index], size, Logger))

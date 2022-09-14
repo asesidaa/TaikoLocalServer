@@ -30,7 +30,7 @@ builder.Services.AddDbContext<TaikoDbContext>(option =>
     {
         dbName = Constants.DEFAULT_DB_NAME;
     }
-    var path = Path.Combine(PathHelper.GetDataPath(), dbName);
+    var path = Path.Combine(PathHelper.GetRootPath(), dbName);
     option.UseSqlite($"Data Source={path}");
 });
 builder.Services.AddHttpLogging(options =>

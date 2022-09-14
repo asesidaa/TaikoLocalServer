@@ -1,4 +1,7 @@
-﻿namespace TaikoWebUI.Pages;
+﻿using MudBlazor.Utilities;
+using static MudBlazor.Colors;
+
+namespace TaikoWebUI.Pages;
 
 public partial class Profile
 {
@@ -8,6 +11,21 @@ public partial class Profile
     private UserSetting? response;
 
     private bool isSavingOptions;
+
+    public string[] costumeColors = 
+    {
+        "#F84828", "#68C0C0", "#DC1500", "#F8F0E0", "#009687", "#00BF87",
+        "#00FF9A", "#66FFC2", "#FFFFFF", "#690000", "#FF0000", "#FF6666",
+        "#FFB3B3", "#00BCC2", "#00F7FF", "#66FAFF", "#B3FDFF", "#E4E4E4", 
+        "#993800", "#FF5E00", "#FF9E78", "#FFCFB3", "#005199", "#0088FF", 
+        "#66B8FF", "#B3DBFF", "#B9B9B9", "#B37700", "#FFAA00", "#FFCC66",
+        "#FFE2B3", "#000C80", "#0019FF", "#6675FF", "#B3BAFF", "#858585",
+        "#B39B00", "#FFDD00", "#FFFF00", "#FFFF71", "#2B0080", "#5500FF", 
+        "#9966FF", "#CCB3FF", "#505050", "#38A100", "#78C900", "#B3FF00",
+        "#DCFF8A", "#610080", "#C400FF", "#DC66FF", "#EDB3FF", "#232323",
+        "#006600", "#00B800", "#00FF00", "#8AFF9E", "#990059", "#FF0095",
+        "#FF66BF", "#FFB3DF", "#000000"
+    };
 
     private readonly string[] speedStrings =
     {
@@ -55,4 +73,15 @@ public partial class Profile
         isSavingOptions = false;
     }
 
+    private async Task<IEnumerable<string>> SearchForTitle(string value)
+    {
+        var titles = GameDataService.titleMap;
+
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return titles.Values;
+        }
+
+        return titles.Values.Where(x => x.Contains(value, StringComparison.OrdinalIgnoreCase));
+    }
 }

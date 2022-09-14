@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using MudBlazor.Utilities;
 using Swan.Mapping;
 using TaikoWebUI.Shared.Models;
 
@@ -11,6 +12,22 @@ public class GameDataService : IGameDataService
     private readonly Dictionary<uint, MusicDetail> musicMap = new();
 
     private ImmutableDictionary<uint, DanData> danMap = null!;
+
+    public const int COSTUME_HEAD_MAX = 140;
+    public const int COSTUME_FACE_MAX = 59;
+    public const int COSTUME_BODY_MAX = 156;
+    public const int COSTUME_KIGURUMI_MAX = 154;
+    public const int COSTUME_PUCHI_MAX = 129;
+    public const int COSTUME_COLOR_MAX = 63;
+    public const int PLAYER_TITLE_MAX = 749;
+
+    public static string[] headMap = new string[COSTUME_HEAD_MAX];
+    public static string[] faceMap = new string[COSTUME_FACE_MAX];
+    public static string[] bodyMap = new string[COSTUME_BODY_MAX];
+    public static string[] kigurumiMap = new string[COSTUME_KIGURUMI_MAX];
+    public static string[] puchiMap = new string[COSTUME_PUCHI_MAX];
+
+    public static Dictionary<int, string> titleMap = new();
 
     public GameDataService(HttpClient client)
     {
@@ -38,7 +55,7 @@ public class GameDataService : IGameDataService
         {
             var songNameKey = $"song_{music.Id}";
             var songArtistKey = $"song_sub_{music.Id}";
-            
+
             var musicName = dict.GetValueOrDefault(songNameKey, new WordListEntry());
             var musicArtist = dict.GetValueOrDefault(songArtistKey, new WordListEntry());
 
@@ -58,6 +75,67 @@ public class GameDataService : IGameDataService
             {
                 musicMap[songId].Index = index;
             }
+        }
+
+        for (var i = 0; i < COSTUME_HEAD_MAX; i++)
+        {
+            var index = i;
+            var key = $"costume_head_{index}";
+
+            var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
+            headMap[index] = costumeWordlistItem.JapaneseText;
+        }
+
+        for (var i = 0; i < COSTUME_FACE_MAX; i++)
+        {
+            var index = i;
+            var key = $"costume_face_{index}";
+
+            var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
+            faceMap[index] = costumeWordlistItem.JapaneseText;
+        }
+
+        for (var i = 0; i < COSTUME_BODY_MAX; i++)
+        {
+            var index = i;
+            var key = $"costume_body_{index}";
+
+            var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
+            bodyMap[index] = costumeWordlistItem.JapaneseText;
+        }
+
+        for (var i = 0; i < COSTUME_KIGURUMI_MAX; i++)
+        {
+            var index = i;
+            var key = $"costume_kigurumi_{index}";
+
+            var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
+            kigurumiMap[index] = costumeWordlistItem.JapaneseText;
+        }
+
+        for (var i = 0; i < COSTUME_PUCHI_MAX; i++)
+        {
+            var index = i;
+            var key = $"costume_puchi_{index}";
+
+            var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
+            puchiMap[index] = costumeWordlistItem.JapaneseText;
+        }
+
+        for (var i = 1; i < PLAYER_TITLE_MAX; i++)
+        {
+            var index = i;
+            var key = $"syougou_{index}";
+
+            var titleWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
+
+            // prevent duplicate values with different keys
+            if (titleMap.ContainsValue(titleWordlistItem.JapaneseText))
+            {
+                continue;
+            }
+
+            titleMap.TryAdd(index, titleWordlistItem.JapaneseText);
         }
     }
 
