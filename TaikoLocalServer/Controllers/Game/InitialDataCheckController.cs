@@ -20,10 +20,8 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
     {
         Logger.LogInformation("Initial data check request: {Request}", request.Stringify());
 
-        var musicAttributeManager = MusicAttributeManager.Instance;
-
         var enabledArray =
-            FlagCalculator.GetBitArrayFromIds(musicAttributeManager.Musics, Constants.MUSIC_ID_MAX, Logger);
+            FlagCalculator.GetBitArrayFromIds(gameDataService.GetMusicList(), Constants.MUSIC_ID_MAX, Logger);
 
         var danData = new List<InitialdatacheckResponse.InformationData>();
         for (var danId = Constants.MIN_DAN_ID; danId <= Constants.MAX_DAN_ID; danId++)
