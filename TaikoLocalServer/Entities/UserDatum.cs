@@ -7,6 +7,9 @@
         public string Title { get; set; } = string.Empty;
         public uint TitlePlateId { get; set; }
         public string FavoriteSongsArray { get; set; } = string.Empty;
+        public string ToneFlgArray { get; set; } = string.Empty;
+        public string TitleFlgArray { get; set; } = string.Empty;
+        public string CostumeFlgArray { get; set; } = string.Empty;
         public short OptionSetting { get; set; }
         public int NotesPosition { get; set; }
         public bool IsVoiceOn { get; set; }
