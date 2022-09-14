@@ -35,4 +35,6 @@ public static class Constants
     public const int COSTUME_FLAG_3_ARRAY_SIZE = 156;
     public const int COSTUME_FLAG_4_ARRAY_SIZE = 58;
     public const int COSTUME_FLAG_5_ARRAY_SIZE = 129;
+    
+    public static readonly int[] CostumeFlagArraySizes = {154, 140, 156, 58, 129};
 }
