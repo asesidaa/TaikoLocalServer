@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using MudBlazor.Utilities;
 using Swan.Mapping;
 using TaikoWebUI.Shared.Models;
 
@@ -11,6 +12,15 @@ public class GameDataService : IGameDataService
     private readonly Dictionary<uint, MusicDetail> musicMap = new();
 
     private ImmutableDictionary<uint, DanData> danMap = null!;
+
+    private ImmutableDictionary<uint, CostumeData> costumeMap = null!;
+
+    public const uint COSTUME_HEAD_MAX = 138;
+    public const uint COSTUME_FACE_MAX = 57;
+    public const uint COSTUME_BODY_MAX = 154;
+    public const uint COSTUME_KIGURUMI_MAX = 152;
+    public const uint COSTUME_PUCHI_MAX = 127;
+    public const uint COSTUME_COLOR_MAX = 62;
 
     public GameDataService(HttpClient client)
     {
@@ -38,7 +48,7 @@ public class GameDataService : IGameDataService
         {
             var songNameKey = $"song_{music.Id}";
             var songArtistKey = $"song_sub_{music.Id}";
-            
+
             var musicName = dict.GetValueOrDefault(songNameKey, new WordListEntry());
             var musicArtist = dict.GetValueOrDefault(songArtistKey, new WordListEntry());
 
@@ -82,6 +92,11 @@ public class GameDataService : IGameDataService
     public DanData GetDanDataById(uint danId)
     {
         return danMap.GetValueOrDefault(danId, new DanData());
+    }
+
+    public string GetCostumeTitleById(uint costumeId, string type)
+    {
+        return "";
     }
 
     public int GetMusicStarLevel(uint songId, Difficulty difficulty)
