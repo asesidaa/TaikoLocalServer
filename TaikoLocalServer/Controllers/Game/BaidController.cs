@@ -1,5 +1,8 @@
-﻿using System.Text.Json;
+﻿using System.Collections.Generic;
+using System.Collections;
+using System.Text.Json;
 using TaikoLocalServer.Services.Interfaces;
+using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -107,8 +110,59 @@ public class BaidController : BaseController<BaidController>
             costumeData = new List<uint> { 0, 0, 0, 0, 0 };
         }
 
-        var costumeFlag = new byte[10];
-        Array.Fill(costumeFlag, byte.MaxValue);
+        var costumeArrays = Array.Empty<uint[]>();
+        try
+        {
+            costumeArrays = JsonSerializer.Deserialize<uint[][]>(userData.CostumeFlgArray);
+        }
+        catch (JsonException e)
+        {
+            Logger.LogError(e, "Parsing costume flg json data failed");
+        }
+
+        // The only way to get a null is provide string "null" as input,
+        // which means database content need to be fixed, so better throw
+        costumeArrays.ThrowIfNull("Costume flg should never be null!");
+
+        var costumeFlg1 = new byte[Constants.COSTUME_FLAG_1_ARRAY_SIZE];
+        var bitSet = new BitArray(Constants.COSTUME_FLAG_1_ARRAY_SIZE);
+        foreach (var costume in costumeArrays[0])
+        {
+            bitSet.Set((int)costume, true);
+        }
+        bitSet.CopyTo(costumeFlg1, 0);
+
+        var costumeFlg2 = new byte[Constants.COSTUME_FLAG_2_ARRAY_SIZE];
+        bitSet = new BitArray(Constants.COSTUME_FLAG_2_ARRAY_SIZE);
+        foreach (var costume in costumeArrays[1])
+        {
+            bitSet.Set((int)costume, true);
+        }
+        bitSet.CopyTo(costumeFlg2, 0);
+
+        var costumeFlg3 = new byte[Constants.COSTUME_FLAG_3_ARRAY_SIZE];
+        bitSet = new BitArray(Constants.COSTUME_FLAG_3_ARRAY_SIZE);
+        foreach (var costume in costumeArrays[2])
+        {
+            bitSet.Set((int)costume, true);
+        }
+        bitSet.CopyTo(costumeFlg3, 0);
+
+        var costumeFlg4 = new byte[Constants.COSTUME_FLAG_4_ARRAY_SIZE];
+        bitSet = new BitArray(Constants.COSTUME_FLAG_4_ARRAY_SIZE);
+        foreach (var costume in costumeArrays[3])
+        {
+            bitSet.Set((int)costume, true);
+        }
+        bitSet.CopyTo(costumeFlg4, 0);
+
+        var costumeFlg5 = new byte[Constants.COSTUME_FLAG_5_ARRAY_SIZE];
+        bitSet = new BitArray(Constants.COSTUME_FLAG_5_ARRAY_SIZE);
+        foreach (var costume in costumeArrays[4])
+        {
+            bitSet.Set((int)costume, true);
+        }
+        bitSet.CopyTo(costumeFlg5, 0);
 
         var danData = await danScoreDatumService.GetDanScoreDatumByBaid(baid);
         
@@ -145,11 +199,11 @@ public class BaidController : BaseController<BaidController>
                 Costume4 = costumeData[3],
                 Costume5 = costumeData[4]
             },
-            CostumeFlg1 = costumeFlag,
-            CostumeFlg2 = costumeFlag,
-            CostumeFlg3 = costumeFlag,
-            CostumeFlg4 = costumeFlag,
-            CostumeFlg5 = costumeFlag,
+            CostumeFlg1 = costumeFlg1,
+            CostumeFlg2 = costumeFlg2,
+            CostumeFlg3 = costumeFlg3,
+            CostumeFlg4 = costumeFlg4,
+            CostumeFlg5 = costumeFlg5,
             LastPlayDatetime = userData.LastPlayDatetime.ToString(Constants.DATE_TIME_FORMAT),
             IsDispDanOn = userData.DisplayDan,
             GotDanMax = maxDan,

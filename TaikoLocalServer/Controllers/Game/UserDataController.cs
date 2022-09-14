@@ -44,8 +44,51 @@ public class UserDataController : BaseController<UserDataController>
         }
         bitSet.CopyTo(uraSongArray, 0);
 
-        var toneArray = new byte[16];
-        Array.Fill(toneArray, byte.MaxValue);
+        var userData = await userDatumService.GetFirstUserDatumOrDefault(request.Baid);
+
+        var toneFlg = Array.Empty<uint>();
+        try
+        {
+            toneFlg = JsonSerializer.Deserialize<uint[]>(userData.ToneFlgArray);
+        }
+        catch (JsonException e)
+        {
+            Logger.LogError(e, "Parsing tone flg json data failed");
+        }
+
+        // The only way to get a null is provide string "null" as input,
+        // which means database content need to be fixed, so better throw
+        toneFlg.ThrowIfNull("Tone flg should never be null!");
+
+        var toneArray = new byte[Constants.TONE_UID_MAX];
+        bitSet = new BitArray(Constants.TONE_UID_MAX);
+        foreach (var tone in toneFlg)
+        {
+            bitSet.Set((int)tone, true);
+        }
+        bitSet.CopyTo(toneArray, 0);
+
+        var titleFlg = Array.Empty<uint>();
+        try
+        {
+            titleFlg = JsonSerializer.Deserialize<uint[]>(userData.TitleFlgArray);
+        }
+        catch (JsonException e)
+        {
+            Logger.LogError(e, "Parsing title flg json data failed");
+        }
+
+        // The only way to get a null is provide string "null" as input,
+        // which means database content need to be fixed, so better throw
+        titleFlg.ThrowIfNull("Title flg should never be null!");
+
+        var titleArray = new byte[Constants.TITLE_UID_MAX];
+        bitSet = new BitArray(Constants.TITLE_UID_MAX);
+        foreach (var title in titleFlg)
+        {
+            bitSet.Set((int)title, true);
+        }
+        bitSet.CopyTo(titleArray, 0);
 
         var recentSongs = (await songPlayDatumService.GetSongPlayDatumByBaid(request.Baid))
             .AsEnumerable()
@@ -66,8 +109,6 @@ public class UserDataController : BaseController<UserDataController>
         }
 
         recentSongs = recentSet.ToArray();
-
-        var userData = await userDatumService.GetFirstUserDatumOrDefault(request.Baid);
 
         var favoriteSongs = Array.Empty<uint>();
         try
@@ -90,7 +131,7 @@ public class UserDataController : BaseController<UserDataController>
         {
             Result = 1,
             ToneFlg = toneArray,
-            // TitleFlg = GZipBytesUtil.GetGZipBytes(new byte[100]),
+            TitleFlg = titleArray,
             ReleaseSongFlg = releaseSongArray,
             UraReleaseSongFlg = uraSongArray,
             DefaultOptionSetting = defaultOptions,

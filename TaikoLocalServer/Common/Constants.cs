@@ -27,4 +27,12 @@ public static class Constants
     public const int MIN_DAN_ID = 1;
     public const int MAX_DAN_ID = 19;
     public const int GOT_DAN_BITS = MAX_DAN_ID * 4;
+
+    public const int TONE_UID_MAX = 19;
+    public const int TITLE_UID_MAX = 814;
+    public const int COSTUME_FLAG_1_ARRAY_SIZE = 154;
+    public const int COSTUME_FLAG_2_ARRAY_SIZE = 140;
+    public const int COSTUME_FLAG_3_ARRAY_SIZE = 156;
+    public const int COSTUME_FLAG_4_ARRAY_SIZE = 58;
+    public const int COSTUME_FLAG_5_ARRAY_SIZE = 129;
 }
