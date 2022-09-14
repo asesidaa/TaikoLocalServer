@@ -31,6 +31,17 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
                 VerupNo = 1
             });
         }
+
+        var manager = SongIntroductionDataManager.Instance;
+        var introData = new List<InitialdatacheckResponse.InformationData>();
+        for (var setId = 1; setId <= manager.IntroDataList.Count; setId++)
+        {
+            introData.Add(new InitialdatacheckResponse.InformationData
+            {
+                InfoId = (uint)setId,
+                VerupNo = 1
+            });
+        }
         
         var response = new InitialdatacheckResponse
         {
@@ -100,6 +111,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
             });*/
         };
         response.AryDanOdaiDatas.AddRange(danData);
+        response.ArySongIntroductionDatas.AddRange(introData);
         return Ok(response);
     }
 

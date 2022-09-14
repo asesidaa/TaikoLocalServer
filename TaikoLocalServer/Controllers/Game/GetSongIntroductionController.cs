@@ -15,15 +15,17 @@ public class GetSongIntroductionController : BaseController<GetSongIntroductionC
             Result = 1
         };
 
+        var manager = SongIntroductionDataManager.Instance;
         foreach (var setId in request.SetIds)
         {
-            response.ArySongIntroductionDatas.Add(new GetSongIntroductionResponse.SongIntroductionData
+            manager.IntroDataList.TryGetValue(setId, out var introData);
+            if (introData is null)
             {
-                MainSongNo = 2,
-                SubSongNoes = new uint[] {177,193,3,4},
-                SetId = setId,
-                VerupNo = 1
-            });
+                Logger.LogWarning("Requested set id {Id} does not exist!", setId);
+                continue;
+            }
+
+            response.ArySongIntroductionDatas.Add(introData);
         }
 
         return Ok(response);
