@@ -24,6 +24,8 @@ public static class Constants
 
     public const string DAN_DATA_FILE_NAME = "dan_data.json";
 
+    public const string INTRO_DATA_FILE_NAME = "intro_data.json";
+
     public const int MIN_DAN_ID = 1;
     public const int MAX_DAN_ID = 19;
     public const int GOT_DAN_BITS = MAX_DAN_ID * 4;
