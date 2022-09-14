@@ -13,14 +13,18 @@ public class GameDataService : IGameDataService
 
     private ImmutableDictionary<uint, DanData> danMap = null!;
 
-    private ImmutableDictionary<uint, CostumeData> costumeMap = null!;
-
     public const uint COSTUME_HEAD_MAX = 138;
     public const uint COSTUME_FACE_MAX = 57;
     public const uint COSTUME_BODY_MAX = 154;
     public const uint COSTUME_KIGURUMI_MAX = 152;
     public const uint COSTUME_PUCHI_MAX = 127;
     public const uint COSTUME_COLOR_MAX = 62;
+    
+    public static string[] headMap = new string[COSTUME_HEAD_MAX];
+    public static string[] faceMap = new string[COSTUME_FACE_MAX];
+    public static string[] bodyMap = new string[COSTUME_BODY_MAX];
+    public static string[] kigurumiMap = new string[COSTUME_KIGURUMI_MAX];
+    public static string[] puchiMap = new string[COSTUME_PUCHI_MAX];
 
     public GameDataService(HttpClient client)
     {
@@ -69,6 +73,51 @@ public class GameDataService : IGameDataService
                 musicMap[songId].Index = index;
             }
         }
+
+        for (var i = 0; i < COSTUME_HEAD_MAX; i++)
+        {
+            var index = i;
+            var key = $"costume_head_{index}";
+
+            var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
+            headMap[index] = costumeWordlistItem.JapaneseText;
+        }
+
+        for (var i = 0; i < COSTUME_FACE_MAX; i++)
+        {
+            var index = i;
+            var key = $"costume_face_{index}";
+
+            var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
+            faceMap[index] = costumeWordlistItem.JapaneseText;
+        }
+
+        for (var i = 0; i < COSTUME_BODY_MAX; i++)
+        {
+            var index = i;
+            var key = $"costume_body_{index}";
+
+            var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
+            bodyMap[index] = costumeWordlistItem.JapaneseText;
+        }
+
+        for (var i = 0; i < COSTUME_KIGURUMI_MAX; i++)
+        {
+            var index = i;
+            var key = $"costume_kigurumi_{index}";
+
+            var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
+            kigurumiMap[index] = costumeWordlistItem.JapaneseText;
+        }
+
+        for (var i = 0; i < COSTUME_PUCHI_MAX; i++)
+        {
+            var index = i;
+            var key = $"costume_puchi_{index}";
+
+            var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
+            puchiMap[index] = costumeWordlistItem.JapaneseText;
+        }
     }
 
     public string GetMusicNameBySongId(uint songId)
@@ -92,11 +141,6 @@ public class GameDataService : IGameDataService
     public DanData GetDanDataById(uint danId)
     {
         return danMap.GetValueOrDefault(danId, new DanData());
-    }
-
-    public string GetCostumeTitleById(uint costumeId, string type)
-    {
-        return "";
     }
 
     public int GetMusicStarLevel(uint songId, Difficulty difficulty)
