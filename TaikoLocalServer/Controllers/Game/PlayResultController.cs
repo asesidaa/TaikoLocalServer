@@ -1,6 +1,7 @@
 ﻿using System.Buffers.Binary;
 using System.Globalization;
 using System.Text.Json;
+using TaikoLocalServer.Entities;
 using TaikoLocalServer.Services.Interfaces;
 using Throw;
 
@@ -191,6 +192,21 @@ public class PlayResultController : BaseController<PlayResultController>
 
         userdata.LastPlayDatetime = lastPlayDatetime;
         userdata.LastPlayMode = playResultData.PlayMode;
+
+        var toneFlgData = JsonSerializer.Deserialize<List<uint>>(userdata.ToneFlgArray);
+        toneFlgData?.AddRange(playResultData.GetToneNoes ?? new uint[0]);
+        userdata.ToneFlgArray = JsonSerializer.Serialize(toneFlgData);
+        var titleFlgData = JsonSerializer.Deserialize<List<uint>>(userdata.TitleFlgArray);
+        titleFlgData?.AddRange(playResultData.GetTitleNoes ?? new uint[0]);
+        userdata.TitleFlgArray = JsonSerializer.Serialize(titleFlgData);
+        var costumeFlgData = JsonSerializer.Deserialize<List<List<uint>>>(userdata.CostumeFlgArray);
+        costumeFlgData?[0].AddRange(playResultData.GetCostumeNo1s ?? new uint[0]);
+        costumeFlgData?[1].AddRange(playResultData.GetCostumeNo2s ?? new uint[0]);
+        costumeFlgData?[2].AddRange(playResultData.GetCostumeNo3s ?? new uint[0]);
+        costumeFlgData?[3].AddRange(playResultData.GetCostumeNo4s ?? new uint[0]);
+        costumeFlgData?[4].AddRange(playResultData.GetCostumeNo5s ?? new uint[0]);
+        userdata.CostumeFlgArray = JsonSerializer.Serialize(costumeFlgData);
+
         await userDatumService.UpdateUserDatum(userdata);
     }
 
