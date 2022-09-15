@@ -45,7 +45,7 @@ This is a server for Taiko no Tatsujin Nijiiro ver 08.18
 
       If everything is correct, run bin/httpd.exe, a command prompt will open (and stay open, if it shut down, probably something is not setup correctly)
 
-5. Now run the server, if everything is setup correctly, visit http://localhost:5000, you should be able to see the web ui up and running without errors.
+5. Now run the server, if everything is setup correctly, visit http://localhost:5000, you should be able to see the web ui up and running without errors. (If you encounter errors in web ui for the first time, try visit https://naominet.jp:10122/)
 
 6. Go to game folder, copy the config files (AMConfig.ini and WritableConfig.ini) in the AMCUS folder from server release to AMCUS folder and replace the original ones.
 
