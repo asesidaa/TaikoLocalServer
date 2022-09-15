@@ -11,23 +11,15 @@ public class GameDataService : IGameDataService
 
     private readonly Dictionary<uint, MusicDetail> musicMap = new();
 
-    private ImmutableDictionary<uint, DanData> danMap = null!;
+    private ImmutableDictionary<uint, DanData> danMap = ImmutableDictionary<uint, DanData>.Empty;
+    
+    private ImmutableHashSet<string> titles = ImmutableHashSet<string>.Empty;
 
-    public const int COSTUME_HEAD_MAX = 140;
-    public const int COSTUME_FACE_MAX = 58;
-    public const int COSTUME_BODY_MAX = 156;
-    public const int COSTUME_KIGURUMI_MAX = 154;
-    public const int COSTUME_PUCHI_MAX = 129;
-    public const int COSTUME_COLOR_MAX = 63;
-    public const int PLAYER_TITLE_MAX = 750;
-
-    public static string[] headMap = new string[COSTUME_HEAD_MAX];
-    public static string[] faceMap = new string[COSTUME_FACE_MAX];
-    public static string[] bodyMap = new string[COSTUME_BODY_MAX];
-    public static string[] kigurumiMap = new string[COSTUME_KIGURUMI_MAX];
-    public static string[] puchiMap = new string[COSTUME_PUCHI_MAX];
-
-    public static Dictionary<int, string> titleMap = new();
+    private readonly string[] headTitles = new string[Constants.COSTUME_HEAD_MAX];
+    private readonly string[] faceTitles = new string[Constants.COSTUME_FACE_MAX];
+    private readonly string[] bodyTitles = new string[Constants.COSTUME_BODY_MAX];
+    private readonly string[] kigurumiMTitles = new string[Constants.COSTUME_KIGURUMI_MAX];
+    private readonly string[] puchiTitles = new string[Constants.COSTUME_PUCHI_MAX];
 
     public GameDataService(HttpClient client)
     {
@@ -51,6 +43,88 @@ public class GameDataService : IGameDataService
         // To prevent duplicate entries in wordlist
         var dict = wordList.WordListEntries.GroupBy(entry => entry.Key)
             .ToImmutableDictionary(group => group.Key, group => group.First());
+        await Task.Run(()=>InitializeMusicMap(musicInfo, dict, musicOrder));
+
+        await Task.Run(() => InitializeHeadTitles(dict));
+        await Task.Run(() => InitializeFaceTitles(dict));
+        await Task.Run(() => InitializeBodyTitles(dict));
+        await Task.Run(() => InitializePuchiTitles(dict));
+        await Task.Run(() => InitializeKigurumiTitles(dict));
+        await Task.Run(() => InitializeTitles(dict));
+    }
+
+    private void InitializeTitles(ImmutableDictionary<string, WordListEntry> dict)
+    {
+        var set = ImmutableHashSet.CreateBuilder<string>();
+        for (var i = 1; i < Constants.PLAYER_TITLE_MAX; i++)
+        {
+            var key = $"syougou_{i}";
+
+            var titleWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
+
+            set.Add(titleWordlistItem.JapaneseText);
+        }
+
+        titles = set.ToImmutable();
+    }
+
+    private void InitializePuchiTitles(ImmutableDictionary<string, WordListEntry> dict)
+    {
+        for (var i = 0; i < Constants.COSTUME_PUCHI_MAX; i++)
+        {
+            var key = $"costume_puchi_{i}";
+
+            var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
+            puchiTitles[i] = costumeWordlistItem.JapaneseText;
+        }
+    }
+
+    private void InitializeKigurumiTitles(ImmutableDictionary<string, WordListEntry> dict)
+    {
+        for (var i = 0; i < Constants.COSTUME_KIGURUMI_MAX; i++)
+        {
+            var key = $"costume_kigurumi_{i}";
+
+            var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
+            kigurumiMTitles[i] = costumeWordlistItem.JapaneseText;
+        }
+    }
+
+    private void InitializeBodyTitles(ImmutableDictionary<string, WordListEntry> dict)
+    {
+        for (var i = 0; i < Constants.COSTUME_BODY_MAX; i++)
+        {
+            var key = $"costume_body_{i}";
+
+            var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
+            bodyTitles[i] = costumeWordlistItem.JapaneseText;
+        }
+    }
+
+    private void InitializeFaceTitles(ImmutableDictionary<string, WordListEntry> dict)
+    {
+        for (var i = 0; i < Constants.COSTUME_FACE_MAX; i++)
+        {
+            var key = $"costume_face_{i}";
+
+            var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
+            faceTitles[i] = costumeWordlistItem.JapaneseText;
+        }
+    }
+
+    private void InitializeHeadTitles(ImmutableDictionary<string, WordListEntry> dict)
+    {
+        for (var i = 0; i < Constants.COSTUME_HEAD_MAX; i++)
+        {
+            var key = $"costume_head_{i}";
+
+            var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
+            headTitles[i] = costumeWordlistItem.JapaneseText;
+        }
+    }
+
+    private void InitializeMusicMap(MusicInfo musicInfo, ImmutableDictionary<string, WordListEntry> dict, MusicOrder musicOrder)
+    {
         foreach (var music in musicInfo.Items)
         {
             var songNameKey = $"song_{music.Id}";
@@ -75,67 +149,6 @@ public class GameDataService : IGameDataService
             {
                 musicMap[songId].Index = index;
             }
-        }
-
-        for (var i = 0; i < COSTUME_HEAD_MAX; i++)
-        {
-            var index = i;
-            var key = $"costume_head_{index}";
-
-            var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
-            headMap[index] = costumeWordlistItem.JapaneseText;
-        }
-
-        for (var i = 0; i < COSTUME_FACE_MAX; i++)
-        {
-            var index = i;
-            var key = $"costume_face_{index}";
-
-            var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
-            faceMap[index] = costumeWordlistItem.JapaneseText;
-        }
-
-        for (var i = 0; i < COSTUME_BODY_MAX; i++)
-        {
-            var index = i;
-            var key = $"costume_body_{index}";
-
-            var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
-            bodyMap[index] = costumeWordlistItem.JapaneseText;
-        }
-
-        for (var i = 0; i < COSTUME_KIGURUMI_MAX; i++)
-        {
-            var index = i;
-            var key = $"costume_kigurumi_{index}";
-
-            var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
-            kigurumiMap[index] = costumeWordlistItem.JapaneseText;
-        }
-
-        for (var i = 0; i < COSTUME_PUCHI_MAX; i++)
-        {
-            var index = i;
-            var key = $"costume_puchi_{index}";
-
-            var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
-            puchiMap[index] = costumeWordlistItem.JapaneseText;
-        }
-
-        for (var i = 1; i < PLAYER_TITLE_MAX; i++)
-        {
-            var index = i;
-            var key = $"syougou_{index}";
-
-            var titleWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
-
-            // prevent duplicate values with different keys
-            if (titleMap.ContainsValue(titleWordlistItem.JapaneseText))
-            {
-                continue;
-            }
-
-            titleMap.TryAdd(index, titleWordlistItem.JapaneseText);
         }
     }
 
@@ -175,5 +188,35 @@ public class GameDataService : IGameDataService
             Difficulty.UraOni => success ? musicDetail!.StarUra : 0,
             _ => throw new ArgumentOutOfRangeException(nameof(difficulty), difficulty, null)
         };
+    }
+
+    public string GetHeadTitle(uint index)
+    {
+        return index < headTitles.Length ? headTitles[index] : string.Empty;
+    }
+
+    public string GetKigurumiTitle(uint index)
+    {
+        return index < kigurumiMTitles.Length ? kigurumiMTitles[index] : string.Empty;
+    }
+
+    public string GetBodyTitle(uint index)
+    {
+        return index < bodyTitles.Length ? bodyTitles[index] : string.Empty;
+    }
+
+    public string GetFaceTitle(uint index)
+    {
+        return index < faceTitles.Length ? faceTitles[index] : string.Empty;
+    }
+
+    public string GetPuchiTitle(uint index)
+    {
+        return index < puchiTitles.Length ? puchiTitles[index] : string.Empty;
+    }
+
+    public IEnumerable<string> GetTitles()
+    {
+        return titles.ToArray();
     }
 }
