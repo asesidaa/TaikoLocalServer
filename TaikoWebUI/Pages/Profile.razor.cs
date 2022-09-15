@@ -86,7 +86,7 @@ public partial class Profile
         {
             ["UserSetting"] = response
         };
-        var dialog = DialogService.Show<ChooseTitleDialog>("Choose a built in dialog", parameters, options);
+        var dialog = DialogService.Show<ChooseTitleDialog>("Player Titles", parameters, options);
         var result = await dialog.Result;
         if (!result.Cancelled)
         {
