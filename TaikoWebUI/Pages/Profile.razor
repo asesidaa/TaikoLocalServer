@@ -20,7 +20,15 @@
 
                             <MudGrid>
                                 <MudItem xs="12" md="8">
-                                    <MudAutocomplete @bind-Value="@response.Title" Label="Title" SearchFunc="@SearchForTitle" CoerceValue="true" MaxItems="@GameDataService.PLAYER_TITLE_MAX" />
+                                    @if (EnterTextDirectly)
+                                    {
+                                        <MudTextField @bind-Value = "@response.Title" Label = "Title"></MudTextField>
+                                    }
+                                    else
+                                    {
+                                        <MudAutocomplete @bind-Value = "@response.Title" Label = "Title" SearchFunc = "@SearchForTitle" CoerceValue = "true" MaxItems = "@GameDataService.PLAYER_TITLE_MAX" />
+                                    }
+                                    <MudSwitch @bind-Checked="EnterTextDirectly" Class="mud-width-full" Color="Color.Primary">Enter Text Directly</MudSwitch>
                                 </MudItem>
                                 <MudItem xs="12" md="4">
                                     <MudSelect @bind-Value="@response.TitlePlateId" Label="Title Plate">
@@ -206,4 +214,8 @@
             
         </MudItem>
     </MudGrid>
+
+    @code {
+        private bool EnterTextDirectly;
+    }
 }
