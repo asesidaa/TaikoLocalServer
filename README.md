@@ -13,7 +13,7 @@ This is a server for Taiko no Tatsujin Nijiiro ver 08.18
 1. Download the server from release page, extract anywhere
 
 2. From game's `Data\x64\datatable` folder, find `music_attribute.bin`, `musicinfo.bin`, `music_order.bin` and `wordlist.bin`, decompress them, add `.json` prefix to them.
-   The result is `music_attribute.json`, `musicinfo.json`, `music_order.json` and `wordlist.json`. Put `music_attribute.json` under `wwwroot`, the others under` wwwroot/data` folder in server.
+   The result is `music_attribute.json`, `musicinfo.json`, `music_order.json` and `wordlist.json`. Put the json files under` wwwroot/data` folder in server.
 
 3. Modify hosts, add the following entries:
 
@@ -30,9 +30,9 @@ This is a server for Taiko no Tatsujin Nijiiro ver 08.18
 
    1. Download [Apache](https://www.apachelounge.com/download/), extract anywhere
 
-   2. **Copy the content in Apache folder to installed Apache root folder (and replace)**
+   2. **Copy the content in release rar's Apache folder to installed Apache root folder (and replace, which includes httpd.conf and httpd-vhosts.conf, if no prompt to replace files, you are extracting to wrong folder)**
 
-   3. Open `conf/httpd.conf`, find this line, modify it to your Apache install (extracted) full path
+   3. Open `conf/httpd.conf` (under installed Apache folder), find this line (line 37 by default), modify it to your Apache install (extracted) full path
 
       ```htaccess
       # For example, if your Apache is extracted to C:\users\username\Apache24, then this should be "c:/users/username/Apache24"
