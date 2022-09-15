@@ -23,7 +23,7 @@
                 <MudDataGridPager T="Title"/>
             </PagerContent>
         </MudDataGrid>*@
-        <MudTable Items="@titles" Filter="@Filter" @bind-SelectedItem="@selectedTitle">
+        <MudTable Items="@titles" Filter="@Filter" @bind-SelectedItem="@selectedTitle" Height="40vh">
             <ColGroup>
                 <col style="width: 150px;" />
                 <col />
@@ -32,8 +32,6 @@
                 <col style="width: 150px;" />
             </ColGroup>
             <ToolBarContent>
-                <MudText Typo="Typo.h6">Built in titles</MudText>
-                <MudSpacer/>
                 <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
                               AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0">
                 </MudTextField>
