@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using MudBlazor.Utilities;
 using Swan.Mapping;
 using TaikoWebUI.Shared.Models;
 
@@ -7,19 +6,19 @@ namespace TaikoWebUI.Services;
 
 public class GameDataService : IGameDataService
 {
+    private readonly string[] bodyTitles = new string[Constants.COSTUME_BODY_MAX];
     private readonly HttpClient client;
-
-    private readonly Dictionary<uint, MusicDetail> musicMap = new();
-
-    private ImmutableDictionary<uint, DanData> danMap = ImmutableDictionary<uint, DanData>.Empty;
-    
-    private ImmutableHashSet<string> titles = ImmutableHashSet<string>.Empty;
+    private readonly string[] faceTitles = new string[Constants.COSTUME_FACE_MAX];
 
     private readonly string[] headTitles = new string[Constants.COSTUME_HEAD_MAX];
-    private readonly string[] faceTitles = new string[Constants.COSTUME_FACE_MAX];
-    private readonly string[] bodyTitles = new string[Constants.COSTUME_BODY_MAX];
     private readonly string[] kigurumiMTitles = new string[Constants.COSTUME_KIGURUMI_MAX];
+
+    private readonly Dictionary<uint, MusicDetail> musicMap = new();
     private readonly string[] puchiTitles = new string[Constants.COSTUME_PUCHI_MAX];
+
+    private ImmutableDictionary<uint, DanData> danMap = ImmutableDictionary<uint, DanData>.Empty;
+
+    private ImmutableHashSet<string> titles = ImmutableHashSet<string>.Empty;
 
     public GameDataService(HttpClient client)
     {
@@ -39,11 +38,11 @@ public class GameDataService : IGameDataService
         danData.ThrowIfNull();
 
         danMap = danData.ToImmutableDictionary(data => data.DanId);
-        
+
         // To prevent duplicate entries in wordlist
         var dict = wordList.WordListEntries.GroupBy(entry => entry.Key)
             .ToImmutableDictionary(group => group.Key, group => group.First());
-        await Task.Run(()=>InitializeMusicMap(musicInfo, dict, musicOrder));
+        await Task.Run(() => InitializeMusicMap(musicInfo, dict, musicOrder));
 
         await Task.Run(() => InitializeHeadTitles(dict));
         await Task.Run(() => InitializeFaceTitles(dict));
@@ -51,6 +50,76 @@ public class GameDataService : IGameDataService
         await Task.Run(() => InitializePuchiTitles(dict));
         await Task.Run(() => InitializeKigurumiTitles(dict));
         await Task.Run(() => InitializeTitles(dict));
+    }
+
+    public string GetMusicNameBySongId(uint songId)
+    {
+        return musicMap.TryGetValue(songId, out var musicDetail) ? musicDetail.SongName : string.Empty;
+    }
+
+    public string GetMusicArtistBySongId(uint songId)
+    {
+        return musicMap.TryGetValue(songId, out var musicDetail) ? musicDetail.ArtistName : string.Empty;
+    }
+
+    public SongGenre GetMusicGenreBySongId(uint songId)
+    {
+        return musicMap.TryGetValue(songId, out var musicDetail) ? musicDetail.Genre : SongGenre.Variety;
+    }
+
+    public int GetMusicIndexBySongId(uint songId)
+    {
+        return musicMap.TryGetValue(songId, out var musicDetail) ? musicDetail.Index : int.MaxValue;
+    }
+
+    public DanData GetDanDataById(uint danId)
+    {
+        return danMap.GetValueOrDefault(danId, new DanData());
+    }
+
+    public int GetMusicStarLevel(uint songId, Difficulty difficulty)
+    {
+        var success = musicMap.TryGetValue(songId, out var musicDetail);
+        return difficulty switch
+        {
+            Difficulty.None => throw new ArgumentException("Difficulty cannot be none"),
+            Difficulty.Easy => success ? musicDetail!.StarEasy : 0,
+            Difficulty.Normal => success ? musicDetail!.StarNormal : 0,
+            Difficulty.Hard => success ? musicDetail!.StarHard : 0,
+            Difficulty.Oni => success ? musicDetail!.StarOni : 0,
+            Difficulty.UraOni => success ? musicDetail!.StarUra : 0,
+            _ => throw new ArgumentOutOfRangeException(nameof(difficulty), difficulty, null)
+        };
+    }
+
+    public string GetHeadTitle(uint index)
+    {
+        return index < headTitles.Length ? headTitles[index] : string.Empty;
+    }
+
+    public string GetKigurumiTitle(uint index)
+    {
+        return index < kigurumiMTitles.Length ? kigurumiMTitles[index] : string.Empty;
+    }
+
+    public string GetBodyTitle(uint index)
+    {
+        return index < bodyTitles.Length ? bodyTitles[index] : string.Empty;
+    }
+
+    public string GetFaceTitle(uint index)
+    {
+        return index < faceTitles.Length ? faceTitles[index] : string.Empty;
+    }
+
+    public string GetPuchiTitle(uint index)
+    {
+        return index < puchiTitles.Length ? puchiTitles[index] : string.Empty;
+    }
+
+    public IEnumerable<string> GetTitles()
+    {
+        return titles.ToArray();
     }
 
     private void InitializeTitles(ImmutableDictionary<string, WordListEntry> dict)
@@ -123,7 +192,8 @@ public class GameDataService : IGameDataService
         }
     }
 
-    private void InitializeMusicMap(MusicInfo musicInfo, ImmutableDictionary<string, WordListEntry> dict, MusicOrder musicOrder)
+    private void InitializeMusicMap(MusicInfo musicInfo, ImmutableDictionary<string, WordListEntry> dict,
+        MusicOrder musicOrder)
     {
         foreach (var music in musicInfo.Items)
         {
@@ -150,73 +220,5 @@ public class GameDataService : IGameDataService
                 musicMap[songId].Index = index;
             }
         }
-    }
-
-    public string GetMusicNameBySongId(uint songId)
-    {
-       return musicMap.TryGetValue(songId, out var musicDetail) ? musicDetail.SongName : string.Empty;
-    }
-
-    public string GetMusicArtistBySongId(uint songId)
-    {
-        return musicMap.TryGetValue(songId, out var musicDetail) ? musicDetail.ArtistName : string.Empty;
-    }
-    public SongGenre GetMusicGenreBySongId(uint songId)
-    {
-        return musicMap.TryGetValue(songId, out var musicDetail) ? musicDetail.Genre : SongGenre.Variety;
-    }
-
-    public int GetMusicIndexBySongId(uint songId)
-    {
-        return musicMap.TryGetValue(songId, out var musicDetail) ? musicDetail.Index : int.MaxValue;
-    }
-    public DanData GetDanDataById(uint danId)
-    {
-        return danMap.GetValueOrDefault(danId, new DanData());
-    }
-
-    public int GetMusicStarLevel(uint songId, Difficulty difficulty)
-    {
-        var success = musicMap.TryGetValue(songId, out var musicDetail);
-        return difficulty switch
-        {
-            Difficulty.None => throw new ArgumentException("Difficulty cannot be none"),
-            Difficulty.Easy => success ? musicDetail!.StarEasy : 0,
-            Difficulty.Normal => success ? musicDetail!.StarNormal : 0,
-            Difficulty.Hard => success ? musicDetail!.StarHard : 0,
-            Difficulty.Oni => success ? musicDetail!.StarOni : 0,
-            Difficulty.UraOni => success ? musicDetail!.StarUra : 0,
-            _ => throw new ArgumentOutOfRangeException(nameof(difficulty), difficulty, null)
-        };
-    }
-
-    public string GetHeadTitle(uint index)
-    {
-        return index < headTitles.Length ? headTitles[index] : string.Empty;
-    }
-
-    public string GetKigurumiTitle(uint index)
-    {
-        return index < kigurumiMTitles.Length ? kigurumiMTitles[index] : string.Empty;
-    }
-
-    public string GetBodyTitle(uint index)
-    {
-        return index < bodyTitles.Length ? bodyTitles[index] : string.Empty;
-    }
-
-    public string GetFaceTitle(uint index)
-    {
-        return index < faceTitles.Length ? faceTitles[index] : string.Empty;
-    }
-
-    public string GetPuchiTitle(uint index)
-    {
-        return index < puchiTitles.Length ? puchiTitles[index] : string.Empty;
-    }
-
-    public IEnumerable<string> GetTitles()
-    {
-        return titles.ToArray();
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-
-namespace TaikoWebUI.Services;
+﻿namespace TaikoWebUI.Services;
 
 public interface IGameDataService
 {
