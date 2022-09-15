@@ -4,25 +4,6 @@
 
 <MudDialog>
     <DialogContent>
-        @*<MudDataGrid T="Title" Items="@GameDataService.GetTitles()"
-                     @bind-SelectedItem="@selectedTitle" Filterable="false"
-                     QuickFilter="@Filter">
-            <ToolBarContent>
-                <MudText Typo="Typo.h6">Built in titles</MudText>
-                <MudSpacer/>
-                <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0">
-                </MudTextField>
-            </ToolBarContent>
-            <Columns>
-                <SelectColumn T="Title" ShowInFooter="false" ShowInHeader="false"/>
-                <Column T="Title" Field="@nameof(Title.TitleId)" Title="Id"/>
-                <Column T="Title" Field="@nameof(Title.TitleName)" Title="Name"/>
-            </Columns>
-            <PagerContent>
-                <MudDataGridPager T="Title"/>
-            </PagerContent>
-        </MudDataGrid>*@
         <MudTable Items="@titles" Filter="@Filter" @bind-SelectedItem="@selectedTitle" Height="40vh" Hover="true">
             <ColGroup>
                 <col style="width: 50px;" />
@@ -50,7 +31,7 @@
                 <MudTd DataLabel="Name" Class="cursor-pointer">@context.TitleName</MudTd>
             </RowTemplate>
             <PagerContent>
-                <MudTablePager />
+                <MudTablePager/>
             </PagerContent>
         </MudTable>
         <MudText Class="mt-4 d-block" Typo="Typo.caption"><b>Selected Title:</b> @selectedTitle?.TitleName</MudText>
@@ -80,10 +61,17 @@
         base.OnInitialized();
         var titleSet = GameDataService.GetTitles();
         titles = titleSet.ToImmutableList().Sort((title, title1) => title.TitleId.CompareTo(title1.TitleId));
-        titleSet.TryGetValue(new Title
+        var currentTitle = new Title
         {
             TitleName = UserSetting.Title
-        }, out selectedTitle);
+        };
+        if (titleSet.Contains(currentTitle)) 
+        {
+            titleSet.TryGetValue(new Title
+            {
+                TitleName = UserSetting.Title
+            }, out selectedTitle);
+        }
     }
 
     private bool Filter(Title title)
