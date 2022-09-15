@@ -76,10 +76,11 @@ public partial class Profile
     {
         var options = new DialogOptions
         {
-            // CloseButton = false,
+            //CloseButton = false,
             CloseOnEscapeKey = false,
             DisableBackdropClick = true,
-            FullScreen = true
+            MaxWidth = MaxWidth.Medium,
+            FullWidth = true
         };
         var parameters = new DialogParameters
         {
