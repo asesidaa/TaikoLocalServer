@@ -23,7 +23,7 @@
                         <MudGrid>
                             <MudItem xs="12" md="8">
                                 <MudTextField @bind-Value="@response.Title" Label="Title"/>
-                                <MudButton Color="Color.Primary" OnClick="@((e)=>OpenChooseTitleDialog())">
+                                <MudButton Color="Color.Primary" Class="mt-1" Size="Size.Small" OnClick="@((e)=>OpenChooseTitleDialog())">
                                     Choose a built in title
                                 </MudButton>
                             </MudItem>
