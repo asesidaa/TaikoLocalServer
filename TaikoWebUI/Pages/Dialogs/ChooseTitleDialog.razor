@@ -1,0 +1,104 @@
+﻿@using TaikoWebUI.Shared.Models
+@using System.Collections.Immutable
+@inject IGameDataService GameDataService
+
+<MudDialog>
+    <DialogContent>
+        @*<MudDataGrid T="Title" Items="@GameDataService.GetTitles()"
+                     @bind-SelectedItem="@selectedTitle" Filterable="false"
+                     QuickFilter="@Filter">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Built in titles</MudText>
+                <MudSpacer/>
+                <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0">
+                </MudTextField>
+            </ToolBarContent>
+            <Columns>
+                <SelectColumn T="Title" ShowInFooter="false" ShowInHeader="false"/>
+                <Column T="Title" Field="@nameof(Title.TitleId)" Title="Id"/>
+                <Column T="Title" Field="@nameof(Title.TitleName)" Title="Name"/>
+            </Columns>
+            <PagerContent>
+                <MudDataGridPager T="Title"/>
+            </PagerContent>
+        </MudDataGrid>*@
+        <MudTable Items="@titles" Filter="@Filter" @bind-SelectedItem="@selectedTitle">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Built in titles</MudText>
+                <MudSpacer/>
+                <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0">
+                </MudTextField>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>
+                    <MudTableSortLabel SortBy="@(new Func<Title, object>(x => x.TitleId))">
+                        Id
+                    </MudTableSortLabel> 
+                </MudTh>
+                <MudTh>
+                    <MudTableSortLabel SortBy="@(new Func<Title, object>(x => x.TitleName))">
+                        Name
+                    </MudTableSortLabel>
+                </MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Id">@context.TitleId</MudTd>
+                <MudTd DataLabel="Name">@context.TitleName</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager  PageSizeOptions="new []{10}"/>
+            </PagerContent>
+        </MudTable>
+        <MudText>Selected Title: @selectedTitle?.TitleName</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public UserSetting UserSetting { get; set; } = new();
+
+    private IEnumerable<Title> titles = new List<Title>();
+
+    private Title? selectedTitle;
+
+    private string searchString = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        var titleSet = GameDataService.GetTitles();
+        titles = titleSet.ToImmutableList().Sort((title, title1) => title.TitleId.CompareTo(title1.TitleId));
+        titleSet.TryGetValue(new Title
+        {
+            TitleName = UserSetting.Title
+        }, out selectedTitle);
+    }
+
+    private bool Filter(Title title)
+    {
+        return string.IsNullOrEmpty(searchString) ||
+               title.TitleName.Contains(searchString, StringComparison.InvariantCultureIgnoreCase);
+    }
+
+    private void Submit()
+    {
+        if (selectedTitle is not null)
+        {
+            UserSetting.Title = selectedTitle.TitleName;
+        }
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+
+}

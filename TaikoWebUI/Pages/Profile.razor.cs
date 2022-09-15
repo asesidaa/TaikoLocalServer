@@ -1,4 +1,6 @@
-﻿namespace TaikoWebUI.Pages;
+﻿using TaikoWebUI.Pages.Dialogs;
+
+namespace TaikoWebUI.Pages;
 
 public partial class Profile
 {
@@ -8,8 +10,6 @@ public partial class Profile
     private UserSetting? response;
 
     private bool isSavingOptions;
-    
-    private bool enterTextDirectly;
 
     private static readonly string[] CostumeColors = 
     {
@@ -71,12 +71,25 @@ public partial class Profile
         await Client.PostAsJsonAsync($"api/UserSettings/{Baid}", response);
         isSavingOptions = false;
     }
-    
-    private async Task<IEnumerable<string>> SearchForTitle(string value)
-    {
-        await Task.Delay(1);
-        var titles = GameDataService.GetTitles();
 
-        return string.IsNullOrWhiteSpace(value) ? titles : titles.Where(x => x.Contains(value, StringComparison.OrdinalIgnoreCase));
+    private async Task OpenChooseTitleDialog()
+    {
+        var options = new DialogOptions
+        {
+            // CloseButton = false,
+            CloseOnEscapeKey = false,
+            DisableBackdropClick = true,
+            FullScreen = true
+        };
+        var parameters = new DialogParameters
+        {
+            ["UserSetting"] = response
+        };
+        var dialog = DialogService.Show<ChooseTitleDialog>("Choose a built in dialog", parameters, options);
+        var result = await dialog.Result;
+        if (!result.Cancelled)
+        {
+            StateHasChanged();
+        }
     }
 }
