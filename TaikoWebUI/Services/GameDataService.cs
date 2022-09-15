@@ -18,7 +18,7 @@ public class GameDataService : IGameDataService
 
     private ImmutableDictionary<uint, DanData> danMap = ImmutableDictionary<uint, DanData>.Empty;
 
-    private ImmutableHashSet<string> titles = ImmutableHashSet<string>.Empty;
+    private ImmutableHashSet<Title> titles = ImmutableHashSet<Title>.Empty;
 
     public GameDataService(HttpClient client)
     {
@@ -117,21 +117,24 @@ public class GameDataService : IGameDataService
         return index < puchiTitles.Length ? puchiTitles[index] : string.Empty;
     }
 
-    public IEnumerable<string> GetTitles()
+    public ImmutableHashSet<Title> GetTitles()
     {
-        return titles.ToArray();
+        return titles;
     }
 
     private void InitializeTitles(ImmutableDictionary<string, WordListEntry> dict)
     {
-        var set = ImmutableHashSet.CreateBuilder<string>();
+        var set = ImmutableHashSet.CreateBuilder<Title>();
         for (var i = 1; i < Constants.PLAYER_TITLE_MAX; i++)
         {
             var key = $"syougou_{i}";
 
             var titleWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
 
-            set.Add(titleWordlistItem.JapaneseText);
+            set.Add(new Title{
+                TitleName = titleWordlistItem.JapaneseText,
+                TitleId = i
+            });
         }
 
         titles = set.ToImmutable();

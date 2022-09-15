@@ -1,6 +1,7 @@
 ﻿@page "/Cards/{baid:int}/Profile"
 @inject HttpClient Client
 @inject IGameDataService GameDataService
+@inject IDialogService DialogService
 
 <MudBreadcrumbs Items="breadcrumbs" Class="px-0"></MudBreadcrumbs>
 
@@ -22,7 +23,9 @@
                         <MudGrid>
                             <MudItem xs="12" md="8">
                                 <MudTextField @bind-Value="@response.Title" Label="Title"/>
-                                <MudButton></MudButton>
+                                <MudButton Color="Color.Primary" OnClick="@((e)=>OpenChooseTitleDialog())">
+                                    Choose a built in title
+                                </MudButton>
                             </MudItem>
                             <MudItem xs="12" md="4">
                                 <MudSelect @bind-Value="@response.TitlePlateId" Label="Title Plate">

@@ -1,4 +1,7 @@
-﻿namespace TaikoWebUI.Services;
+﻿using System.Collections.Immutable;
+using TaikoWebUI.Shared.Models;
+
+namespace TaikoWebUI.Services;
 
 public interface IGameDataService
 {
@@ -22,5 +25,5 @@ public interface IGameDataService
     public string GetFaceTitle(uint index);
     public string GetPuchiTitle(uint index);
 
-    public IEnumerable<string> GetTitles();
+    public ImmutableHashSet<Title> GetTitles();
 }
