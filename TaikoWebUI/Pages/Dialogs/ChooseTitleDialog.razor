@@ -24,6 +24,13 @@
             </PagerContent>
         </MudDataGrid>*@
         <MudTable Items="@titles" Filter="@Filter" @bind-SelectedItem="@selectedTitle">
+            <ColGroup>
+                <col style="width: 150px;" />
+                <col />
+                <col />
+                <col />
+                <col style="width: 150px;" />
+            </ColGroup>
             <ToolBarContent>
                 <MudText Typo="Typo.h6">Built in titles</MudText>
                 <MudSpacer/>
@@ -44,14 +51,14 @@
                 </MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="Id">@context.TitleId</MudTd>
-                <MudTd DataLabel="Name">@context.TitleName</MudTd>
+                <MudTd DataLabel="Id" Class="cursor-pointer">@context.TitleId</MudTd>
+                <MudTd DataLabel="Name" Class="cursor-pointer">@context.TitleName</MudTd>
             </RowTemplate>
             <PagerContent>
                 <MudTablePager  PageSizeOptions="new []{10}"/>
             </PagerContent>
         </MudTable>
-        <MudText>Selected Title: @selectedTitle?.TitleName</MudText>
+        <MudText Class="pt-4">Selected Title: @selectedTitle?.TitleName</MudText>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
