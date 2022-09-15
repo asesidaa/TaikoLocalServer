@@ -21,18 +21,8 @@
 
                         <MudGrid>
                             <MudItem xs="12" md="8">
-                                @if (enterTextDirectly)
-                                {
-                                    <MudTextField @bind-Value="@response.Title" Label="Title"></MudTextField>
-                                }
-                                else
-                                {
-                                    <MudAutocomplete @bind-Value="@response.Title" Label="Title" 
-                                                     Dense="true" Clearable="true" Immediate="true" 
-                                                     SearchFunc="@SearchForTitle" CoerceValue="true" CoerceText="true"
-                                                     MaxItems="@Constants.PLAYER_TITLE_MAX"/>
-                                }
-                                <MudSwitch @bind-Checked="enterTextDirectly" Class="mud-width-full" Color="Color.Primary">Enter Text Directly</MudSwitch>
+                                <MudTextField @bind-Value="@response.Title" Label="Title"/>
+                                <MudButton></MudButton>
                             </MudItem>
                             <MudItem xs="12" md="4">
                                 <MudSelect @bind-Value="@response.TitlePlateId" Label="Title Plate">

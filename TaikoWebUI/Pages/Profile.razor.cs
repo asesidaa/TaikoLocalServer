@@ -1,7 +1,4 @@
-﻿using MudBlazor.Utilities;
-using static MudBlazor.Colors;
-
-namespace TaikoWebUI.Pages;
+﻿namespace TaikoWebUI.Pages;
 
 public partial class Profile
 {
@@ -74,11 +71,10 @@ public partial class Profile
         await Client.PostAsJsonAsync($"api/UserSettings/{Baid}", response);
         isSavingOptions = false;
     }
-
-#pragma warning disable CS1998
+    
     private async Task<IEnumerable<string>> SearchForTitle(string value)
-#pragma warning restore CS1998
     {
+        await Task.Delay(1);
         var titles = GameDataService.GetTitles();
 
         return string.IsNullOrWhiteSpace(value) ? titles : titles.Where(x => x.Contains(value, StringComparison.OrdinalIgnoreCase));
