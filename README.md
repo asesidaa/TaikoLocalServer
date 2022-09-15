@@ -30,7 +30,7 @@ This is a server for Taiko no Tatsujin Nijiiro ver 08.18
 
    1. Download [Apache](https://www.apachelounge.com/download/), extract anywhere
 
-   2. Copy the content in Apache folder to Apache root folder (and replace)
+   2. **Copy the content in Apache folder to installed Apache root folder (and replace)**
 
    3. Open `conf/httpd.conf`, find this line, modify it to your Apache install (extracted) full path
 
