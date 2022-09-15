@@ -1,4 +1,7 @@
-﻿namespace TaikoWebUI.Services;
+﻿using System.Collections.Immutable;
+using TaikoWebUI.Shared.Models;
+
+namespace TaikoWebUI.Services;
 
 public interface IGameDataService
 {
@@ -15,4 +18,12 @@ public interface IGameDataService
     public DanData GetDanDataById(uint danId);
 
     public int GetMusicStarLevel(uint songId, Difficulty difficulty);
+
+    public string GetHeadTitle(uint index);
+    public string GetKigurumiTitle(uint index);
+    public string GetBodyTitle(uint index);
+    public string GetFaceTitle(uint index);
+    public string GetPuchiTitle(uint index);
+
+    public ImmutableHashSet<Title> GetTitles();
 }

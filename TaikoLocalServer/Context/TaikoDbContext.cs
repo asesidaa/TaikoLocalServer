@@ -22,7 +22,7 @@
             {
                 return;
             }
-            var path = Path.Combine(PathHelper.GetDataPath(), Constants.DEFAULT_DB_NAME);
+            var path = Path.Combine(PathHelper.GetRootPath(), Constants.DEFAULT_DB_NAME);
             optionsBuilder.UseSqlite($"Data Source={path}");
         }
 
