@@ -196,8 +196,7 @@ public class PlayResultController : BaseController<PlayResultController>
             UpdateJsonUintFlagArray(userdata.ToneFlgArray, playResultData.GetToneNoes, nameof(userdata.ToneFlgArray));
 
         userdata.TitleFlgArray =
-            UpdateJsonUintFlagArray(userdata.TitleFlgArray, playResultData.GetTitleNoes,
-                nameof(userdata.TitleFlgArray));
+            UpdateJsonUintFlagArray(userdata.TitleFlgArray, playResultData.GetTitleNoes, nameof(userdata.TitleFlgArray));
 
         userdata.CostumeFlgArray = UpdateJsonCostumeFlagArray(userdata.CostumeFlgArray,
             new[]
@@ -208,6 +207,9 @@ public class PlayResultController : BaseController<PlayResultController>
                 playResultData.GetCostumeNo4s,
                 playResultData.GetCostumeNo5s
             });
+
+        userdata.GenericInfoFlgArray =
+            UpdateJsonUintFlagArray(userdata.GenericInfoFlgArray, playResultData.GetGenericInfoNoes, nameof(userdata.GenericInfoFlgArray));
 
         await userDatumService.UpdateUserDatum(userdata);
     }

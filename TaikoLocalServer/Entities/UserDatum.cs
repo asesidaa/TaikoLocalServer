@@ -9,7 +9,8 @@
         public string FavoriteSongsArray { get; set; } = "[]";
         public string ToneFlgArray { get; set; } = "[]";
         public string TitleFlgArray { get; set; } = "[]";
-        public string CostumeFlgArray { get; set; } = "[]";
+        public string CostumeFlgArray { get; set; } = "[[],[],[],[],[]]";
+        public string GenericInfoFlgArray { get; set; } = "[]";
         public short OptionSetting { get; set; }
         public int NotesPosition { get; set; }
         public bool IsVoiceOn { get; set; }

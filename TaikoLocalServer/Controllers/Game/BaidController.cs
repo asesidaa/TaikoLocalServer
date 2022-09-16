@@ -1,4 +1,6 @@
-﻿using TaikoLocalServer.Services.Interfaces;
+﻿using System.Text.Json;
+using TaikoLocalServer.Services.Interfaces;
+using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -93,6 +95,23 @@ public class BaidController : BaseController<BaidController>
             .Max();
         var gotDanFlagArray = FlagCalculator.ComputeGotDanFlags(danData);
 
+        var genericInfoFlg = Array.Empty<uint>();
+        try
+        {
+            genericInfoFlg = JsonSerializer.Deserialize<uint[]>(userData.GenericInfoFlgArray);
+        }
+        catch (JsonException e)
+        {
+            Logger.LogError(e, "Parsing genericinfo flg json data failed");
+        }
+
+        // The only way to get a null is provide string "null" as input,
+        // which means database content need to be fixed, so better throw
+        genericInfoFlg.ThrowIfNull("Genericinfo flg should never be null!");
+
+        var genericInfoFlgLength = genericInfoFlg.Any()? genericInfoFlg.Max() + 1 : 0;
+        var genericInfoFlgArray = FlagCalculator.GetBitArrayFromIds(genericInfoFlg, (int)genericInfoFlgLength, Logger);
+
         response = new BAIDResponse
         {
             Result = 1,
@@ -131,7 +150,7 @@ public class BaidController : BaseController<BaidController>
             GotDanFlg = gotDanFlagArray,
             GotDanextraFlg = new byte[20],
             DefaultToneSetting = userData.SelectedToneId,
-            GenericInfoFlg = new byte[10],
+            GenericInfoFlg = genericInfoFlgArray,
             AryCrownCounts = crownCount,
             AryScoreRankCounts = scoreRankCount,
             IsDispAchievementOn = userData.DisplayAchievement,

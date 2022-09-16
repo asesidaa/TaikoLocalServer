@@ -43,7 +43,8 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
             FavoriteSongsArray = "[]",
             ToneFlgArray = "[]",
             TitleFlgArray = "[]",
-            CostumeFlgArray = "[[],[],[],[],[]]"
+            CostumeFlgArray = "[[],[],[],[],[]]",
+            GenericInfoFlgArray = "[]"
         };
 
         await userDatumService.InsertUserDatum(newUser);
