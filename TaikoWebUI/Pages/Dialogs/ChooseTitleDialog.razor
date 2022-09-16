@@ -27,8 +27,15 @@
                 </MudTh>
             </HeaderContent>
             <RowTemplate>
+                @{
+                    // Disable nullable warnings, which seems to be a false positive
+                    # pragma warning disable CS8602
+                }
                 <MudTd DataLabel="Id" Class="cursor-pointer">@context.TitleId</MudTd>
                 <MudTd DataLabel="Title" Class="cursor-pointer">@context.TitleName</MudTd>
+                @{
+                    #pragma warning restore CS8602
+                }
             </RowTemplate>
             <PagerContent>
                 <MudTablePager/>
@@ -74,8 +81,12 @@
         }
     }
 
-    private bool Filter(Title title)
+    private bool Filter(Title? title)
     {
+        if (title is null)
+        {
+            return false;
+        }
         return string.IsNullOrEmpty(searchString) ||
                title.TitleName.Contains(searchString, StringComparison.InvariantCultureIgnoreCase);
     }
