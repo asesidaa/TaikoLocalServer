@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System.Collections;
+using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 
 namespace TaikoLocalServer.Common.Utils;
@@ -105,5 +106,23 @@ public static class FlagCalculator
         
         gotDanFlagList.Add(gotDanFlag.Data);
         return MemoryMarshal.AsBytes(new ReadOnlySpan<int>(gotDanFlagList.ToArray())).ToArray();
+    }
+
+    public static byte[] GetBitArrayFromIds(IEnumerable<uint> idArray, int bitArraySize, ILogger logger)
+    {
+        var result = new byte[bitArraySize / 8 + 1];
+        var bitSet = new BitArray(bitArraySize + 1);
+        foreach (var id in idArray)
+        {
+            if (id >= bitArraySize)
+            {
+                logger.LogWarning("Id out of range!");
+                continue;
+            }
+            bitSet.Set((int)id, true);
+        }
+        bitSet.CopyTo(result, 0);
+
+        return result;
     }
 }

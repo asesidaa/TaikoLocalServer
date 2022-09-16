@@ -2,7 +2,7 @@
 
 public static class PathHelper
 {
-    public static string GetDataPath()
+    public static string GetRootPath()
     {
         var path = Environment.ProcessPath;
         if (path is null)
@@ -15,5 +15,10 @@ public static class PathHelper
             throw new ApplicationException();
         }
         return Path.Combine(parentPath.ToString(), "wwwroot");
+    }
+    
+    public static string GetDataPath()
+    {
+        return Path.Combine(GetRootPath(), "data");
     }
 }

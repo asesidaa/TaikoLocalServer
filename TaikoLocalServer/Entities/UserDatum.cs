@@ -6,7 +6,11 @@
         public string MyDonName { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
         public uint TitlePlateId { get; set; }
-        public string FavoriteSongsArray { get; set; } = string.Empty;
+        public string FavoriteSongsArray { get; set; } = "[]";
+        public string ToneFlgArray { get; set; } = "[]";
+        public string TitleFlgArray { get; set; } = "[]";
+        public string CostumeFlgArray { get; set; } = "[[],[],[],[],[]]";
+        public string GenericInfoFlgArray { get; set; } = "[]";
         public short OptionSetting { get; set; }
         public int NotesPosition { get; set; }
         public bool IsVoiceOn { get; set; }
@@ -17,7 +21,7 @@
         public uint ColorBody { get; set; }
         public uint ColorFace { get; set; }
         public uint ColorLimb { get; set; }
-        public string CostumeData { get; set; } = string.Empty;
+        public string CostumeData { get; set; } = "[[],[],[],[],[]]";
         public bool DisplayDan { get; set; }
         public bool DisplayAchievement { get; set; }
         public Difficulty AchievementDisplayDifficulty { get; set; }

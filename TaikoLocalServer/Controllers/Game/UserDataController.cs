@@ -1,5 +1,4 @@
 ﻿using System.Buffers.Binary;
-using System.Collections;
 using System.Text.Json;
 using TaikoLocalServer.Services.Interfaces;
 using Throw;
@@ -13,11 +12,14 @@ public class UserDataController : BaseController<UserDataController>
     private readonly IUserDatumService userDatumService;
 
     private readonly ISongPlayDatumService songPlayDatumService;
+
+    private readonly IGameDataService gameDataService;
     
-    public UserDataController(IUserDatumService userDatumService, ISongPlayDatumService songPlayDatumService)
+    public UserDataController(IUserDatumService userDatumService, ISongPlayDatumService songPlayDatumService, IGameDataService gameDataService)
     {
         this.userDatumService = userDatumService;
         this.songPlayDatumService = songPlayDatumService;
+        this.gameDataService = gameDataService;
     }
 
     [HttpPost]
@@ -26,26 +28,45 @@ public class UserDataController : BaseController<UserDataController>
     {
         Logger.LogInformation("UserData request : {Request}", request.Stringify());
 
-        var musicAttributeManager = MusicAttributeManager.Instance;
+        var releaseSongArray =
+            FlagCalculator.GetBitArrayFromIds(gameDataService.GetMusicList(), Constants.MUSIC_ID_MAX, Logger);
 
-        var releaseSongArray = new byte[Constants.MUSIC_FLAG_ARRAY_SIZE];
-        var bitSet = new BitArray(Constants.MUSIC_ID_MAX);
-        foreach (var music in musicAttributeManager.Musics)
-        {
-            bitSet.Set((int)music, true);
-        }
-        bitSet.CopyTo(releaseSongArray, 0); 
-        
-        var uraSongArray = new byte[Constants.MUSIC_FLAG_ARRAY_SIZE];
-        bitSet.SetAll(false);
-        foreach (var music in musicAttributeManager.MusicsWithUra)
-        {
-            bitSet.Set((int)music, true);
-        }
-        bitSet.CopyTo(uraSongArray, 0);
+        var uraSongArray =
+            FlagCalculator.GetBitArrayFromIds(gameDataService.GetMusicWithUraList(), Constants.MUSIC_ID_MAX, Logger);
 
-        var toneArray = new byte[16];
-        Array.Fill(toneArray, byte.MaxValue);
+        var userData = await userDatumService.GetFirstUserDatumOrDefault(request.Baid);
+
+        var toneFlg = Array.Empty<uint>();
+        try
+        {
+            toneFlg = JsonSerializer.Deserialize<uint[]>(userData.ToneFlgArray);
+        }
+        catch (JsonException e)
+        {
+            Logger.LogError(e, "Parsing tone flg json data failed");
+        }
+
+        // The only way to get a null is provide string "null" as input,
+        // which means database content need to be fixed, so better throw
+        toneFlg.ThrowIfNull("Tone flg should never be null!");
+
+        var toneArray = FlagCalculator.GetBitArrayFromIds(toneFlg, Constants.TONE_UID_MAX, Logger);
+
+        var titleFlg = Array.Empty<uint>();
+        try
+        {
+            titleFlg = JsonSerializer.Deserialize<uint[]>(userData.TitleFlgArray);
+        }
+        catch (JsonException e)
+        {
+            Logger.LogError(e, "Parsing title flg json data failed");
+        }
+
+        // The only way to get a null is provide string "null" as input,
+        // which means database content need to be fixed, so better throw
+        titleFlg.ThrowIfNull("Title flg should never be null!");
+
+        var titleArray = FlagCalculator.GetBitArrayFromIds(titleFlg, Constants.TITLE_UID_MAX, Logger);
 
         var recentSongs = (await songPlayDatumService.GetSongPlayDatumByBaid(request.Baid))
             .AsEnumerable()
@@ -66,8 +87,6 @@ public class UserDataController : BaseController<UserDataController>
         }
 
         recentSongs = recentSet.ToArray();
-
-        var userData = await userDatumService.GetFirstUserDatumOrDefault(request.Baid);
 
         var favoriteSongs = Array.Empty<uint>();
         try
@@ -90,7 +109,7 @@ public class UserDataController : BaseController<UserDataController>
         {
             Result = 1,
             ToneFlg = toneArray,
-            // TitleFlg = GZipBytesUtil.GetGZipBytes(new byte[100]),
+            TitleFlg = titleArray,
             ReleaseSongFlg = releaseSongArray,
             UraReleaseSongFlg = uraSongArray,
             DefaultOptionSetting = defaultOptions,
