@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using TaikoLocalServer.Services.Interfaces;
+using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -73,42 +74,18 @@ public class BaidController : BaseController<BaidController>
                                                    datum.Difficulty == achievementDisplayDifficulty : 
                                                    datum.Difficulty is Difficulty.Oni or Difficulty.UraOni).ToList();
 
-        var crownCount = new uint[3];
-        foreach (var crownType in Enum.GetValues<CrownType>())
-        {
-            if (crownType != CrownType.None)
-            {
-                crownCount[(int)crownType - 1] = (uint)songCountData.Count(datum => datum.BestCrown == crownType);
-            }
-        }
+        var crownCount = CalculateCrownCount(songCountData);
 
-        var scoreRankCount = new uint[7];
-        foreach (var scoreRankType in Enum.GetValues<ScoreRank>())
-        {
-            if (scoreRankType != ScoreRank.None)
-            {
-                scoreRankCount[(int)scoreRankType - 2] = (uint)songCountData.Count(datum => datum.BestScoreRank == scoreRankType);
-            }
-        }
+        var scoreRankCount = CalculateScoreRankCount(songCountData);
 
 
-        var costumeData = new List<uint>{ 0, 0, 0, 0, 0 };
-        try
-        {
-            costumeData = JsonSerializer.Deserialize<List<uint>>(userData.CostumeData);
-        }
-        catch (JsonException e)
-        {
-            Logger.LogError(e, "Parsing costume json data failed");
-        }
-        if (costumeData == null || costumeData.Count < 5)
-        {
-            Logger.LogWarning("Costume data is null or count less than 5!");
-            costumeData = new List<uint> { 0, 0, 0, 0, 0 };
-        }
+        var costumeData = JsonHelper.GetCostumeDataFromUserData(userData, Logger);
 
-        var costumeFlag = new byte[10];
-        Array.Fill(costumeFlag, byte.MaxValue);
+        var costumeArrays = JsonHelper.GetCostumeUnlockDataFromUserData(userData, Logger);
+
+        var costumeFlagArrays = Constants.CostumeFlagArraySizes
+            .Select((size, index) => FlagCalculator.GetBitArrayFromIds(costumeArrays[index], size, Logger))
+            .ToList();
 
         var danData = await danScoreDatumService.GetDanScoreDatumByBaid(baid);
         
@@ -117,6 +94,23 @@ public class BaidController : BaseController<BaidController>
             .DefaultIfEmpty()
             .Max();
         var gotDanFlagArray = FlagCalculator.ComputeGotDanFlags(danData);
+
+        var genericInfoFlg = Array.Empty<uint>();
+        try
+        {
+            genericInfoFlg = JsonSerializer.Deserialize<uint[]>(userData.GenericInfoFlgArray);
+        }
+        catch (JsonException e)
+        {
+            Logger.LogError(e, "Parsing genericinfo flg json data failed");
+        }
+
+        // The only way to get a null is provide string "null" as input,
+        // which means database content need to be fixed, so better throw
+        genericInfoFlg.ThrowIfNull("Genericinfo flg should never be null!");
+
+        var genericInfoFlgLength = genericInfoFlg.Any()? genericInfoFlg.Max() + 1 : 0;
+        var genericInfoFlgArray = FlagCalculator.GetBitArrayFromIds(genericInfoFlg, (int)genericInfoFlgLength, Logger);
 
         response = new BAIDResponse
         {
@@ -145,18 +139,18 @@ public class BaidController : BaseController<BaidController>
                 Costume4 = costumeData[3],
                 Costume5 = costumeData[4]
             },
-            CostumeFlg1 = costumeFlag,
-            CostumeFlg2 = costumeFlag,
-            CostumeFlg3 = costumeFlag,
-            CostumeFlg4 = costumeFlag,
-            CostumeFlg5 = costumeFlag,
+            CostumeFlg1 = costumeFlagArrays[0],
+            CostumeFlg2 = costumeFlagArrays[1],
+            CostumeFlg3 = costumeFlagArrays[2],
+            CostumeFlg4 = costumeFlagArrays[3],
+            CostumeFlg5 = costumeFlagArrays[4],
             LastPlayDatetime = userData.LastPlayDatetime.ToString(Constants.DATE_TIME_FORMAT),
             IsDispDanOn = userData.DisplayDan,
             GotDanMax = maxDan,
             GotDanFlg = gotDanFlagArray,
             GotDanextraFlg = new byte[20],
             DefaultToneSetting = userData.SelectedToneId,
-            GenericInfoFlg = new byte[10],
+            GenericInfoFlg = genericInfoFlgArray,
             AryCrownCounts = crownCount,
             AryScoreRankCounts = scoreRankCount,
             IsDispAchievementOn = userData.DisplayAchievement,
@@ -173,4 +167,32 @@ public class BaidController : BaseController<BaidController>
         return Ok(response);
     }
 
+    private static uint[] CalculateScoreRankCount(IReadOnlyCollection<SongBestDatum> songCountData)
+    {
+        var scoreRankCount = new uint[7];
+        foreach (var scoreRankType in Enum.GetValues<ScoreRank>())
+        {
+            if (scoreRankType != ScoreRank.None)
+            {
+                scoreRankCount[(int)scoreRankType - 2] =
+                    (uint)songCountData.Count(datum => datum.BestScoreRank == scoreRankType);
+            }
+        }
+
+        return scoreRankCount;
+    }
+
+    private static uint[] CalculateCrownCount(IReadOnlyCollection<SongBestDatum> songCountData)
+    {
+        var crownCount = new uint[3];
+        foreach (var crownType in Enum.GetValues<CrownType>())
+        {
+            if (crownType != CrownType.None)
+            {
+                crownCount[(int)crownType - 1] = (uint)songCountData.Count(datum => datum.BestCrown == crownType);
+            }
+        }
+
+        return crownCount;
+    }
 }

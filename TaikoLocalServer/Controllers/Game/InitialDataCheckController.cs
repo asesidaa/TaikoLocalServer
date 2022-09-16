@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using TaikoLocalServer.Services.Interfaces;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -6,21 +6,21 @@ namespace TaikoLocalServer.Controllers.Game;
 [Route("/v12r03/chassis/initialdatacheck.php")]
 public class InitialDataCheckController : BaseController<InitialDataCheckController>
 {
+    private readonly IGameDataService gameDataService;
+
+    public InitialDataCheckController(IGameDataService gameDataService)
+    {
+        this.gameDataService = gameDataService;
+    }
+
     [HttpPost]
     [Produces("application/protobuf")]
     public IActionResult InitialDataCheck([FromBody] InitialdatacheckRequest request)
     {
         Logger.LogInformation("Initial data check request: {Request}", request.Stringify());
 
-        var musicAttributeManager = MusicAttributeManager.Instance;
-
-        var enabledArray = new byte[Constants.MUSIC_FLAG_ARRAY_SIZE];
-        var bitSet = new BitArray(Constants.MUSIC_ID_MAX);
-        foreach (var music in musicAttributeManager.Musics)
-        {
-            bitSet.Set((int)music, true);
-        }
-        bitSet.CopyTo(enabledArray, 0);
+        var enabledArray =
+            FlagCalculator.GetBitArrayFromIds(gameDataService.GetMusicList(), Constants.MUSIC_ID_MAX, Logger);
 
         var danData = new List<InitialdatacheckResponse.InformationData>();
         for (var danId = Constants.MIN_DAN_ID; danId <= Constants.MAX_DAN_ID; danId++)
@@ -28,6 +28,16 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
             danData.Add(new InitialdatacheckResponse.InformationData
             {
                 InfoId = (uint)danId,
+                VerupNo = 1
+            });
+        }
+        
+        var introData = new List<InitialdatacheckResponse.InformationData>();
+        for (var setId = 1; setId <= gameDataService.GetSongIntroDictionary().Count; setId++)
+        {
+            introData.Add(new InitialdatacheckResponse.InformationData
+            {
+                InfoId = (uint)setId,
                 VerupNo = 1
             });
         }
@@ -100,6 +110,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
             });*/
         };
         response.AryDanOdaiDatas.AddRange(danData);
+        response.ArySongIntroductionDatas.AddRange(introData);
         return Ok(response);
     }
 

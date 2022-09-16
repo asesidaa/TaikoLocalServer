@@ -1,9 +1,18 @@
-﻿namespace TaikoLocalServer.Controllers.Game;
+﻿using TaikoLocalServer.Services.Interfaces;
+
+namespace TaikoLocalServer.Controllers.Game;
 
 [Route("/v12r03/chassis/getdanodai.php")]
 [ApiController]
 public class GetDanOdaiController : BaseController<GetDanOdaiController>
 {
+    private readonly IGameDataService gameDataService;
+
+    public GetDanOdaiController(IGameDataService gameDataService)
+    {
+        this.gameDataService = gameDataService;
+    }
+
     [HttpPost]
     [Produces("application/protobuf")]
     public IActionResult GetDanOdai([FromBody] GetDanOdaiRequest request)
@@ -19,11 +28,10 @@ public class GetDanOdaiController : BaseController<GetDanOdaiController>
         {
             return Ok(response);
         }
-
-        var manager = DanOdaiDataManager.Instance;
+        
         foreach (var danId in request.DanIds)
         {
-            manager.OdaiDataList.TryGetValue(danId, out var odaiData);
+            gameDataService.GetDanDataDictionary().TryGetValue(danId, out var odaiData);
             if (odaiData is null)
             {
                 Logger.LogWarning("Requested dan id {Id} does not exist!", danId);

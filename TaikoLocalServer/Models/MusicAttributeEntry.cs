@@ -2,7 +2,7 @@
 
 namespace TaikoLocalServer.Models;
 
-public class MusicAttribute
+public class MusicAttributeEntry
 {
     [JsonPropertyName("uniqueId")]
     public uint MusicId { get; set; }
