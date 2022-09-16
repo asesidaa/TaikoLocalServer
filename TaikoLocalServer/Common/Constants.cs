@@ -4,7 +4,7 @@ public static class Constants
 {
     public const string DATE_TIME_FORMAT = "yyyyMMddHHmmss";
 
-    public const int MUSIC_ID_MAX = 1600;
+    public const int MUSIC_ID_MAX = 9000;
 
     public const int CROWN_FLAG_ARRAY_SIZE = MUSIC_ID_MAX + 1;
     
