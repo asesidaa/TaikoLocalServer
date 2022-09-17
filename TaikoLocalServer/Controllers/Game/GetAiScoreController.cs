@@ -17,7 +17,7 @@ public class GetAiScoreController : BaseController<GetAiScoreController>
 
         // There's either 3 or 5 total sections
         // SectionNo doesn't seem to actually affect which section is being assigned to, only the List order matters
-        response.AryBestSectionDatas.Add(new GetAiScoreResponse.AiBestSectionData()
+        /*response.AryBestSectionDatas.Add(new GetAiScoreResponse.AiBestSectionData()
         {
             SectionNo = 1,
             Crown = (uint)CrownType.Clear,
@@ -66,7 +66,7 @@ public class GetAiScoreController : BaseController<GetAiScoreController>
             OkCnt = 50,
             NgCnt = 25,
             PoundCnt = 12
-        });
+        });*/
 
         return Ok(response);
     }
