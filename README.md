@@ -51,7 +51,7 @@ With the newest release (>=2.00) of TaikoArcadeLoader, you no longer need to run
 
    where `server.ip` is your computer's ip (or the server's ip)
 
-5. Run TaikoReverseProxy and TaikoLocalServer, then run Taiko.exe
+5. Run TaikoReverseProxy and TaikoLocalServer, then run the game. You can access the WebUI by going to https://naominet.jp:10122/
 
 
 ### Server setup (for TAL<2.00 or other loaders)
