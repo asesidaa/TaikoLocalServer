@@ -17,7 +17,7 @@ This is a server for Taiko no Tatsujin Nijiiro ver 08.18
 
 With the newest release (>=2.00) of TaikoArcadeLoader, you no longer need to run AMAuthd or AMUpdater.
 
-1. Download the latest release of [TaikoArcadeLoader](https://github.com/BroGamer4256/TaikoArcadeLoader) and install it.
+1. Download the latest release of [TaikoArcadeLoader](https://github.com/BroGamer4256/TaikoArcadeLoader) and install it. Make sure to setup TAL using the config.toml and set the `server` parameter to your local IP address. 
 2. Download the latest release of [TaikoReverseProxy](https://github.com/shiibe/TaikoReverseProxy).
 3. In the `Data\x64\datatable` folder of the game, find the following files:
 
