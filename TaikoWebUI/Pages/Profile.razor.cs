@@ -1,5 +1,4 @@
-﻿using MudBlazor.Utilities;
-using static MudBlazor.Colors;
+﻿using TaikoWebUI.Pages.Dialogs;
 
 namespace TaikoWebUI.Pages;
 
@@ -12,7 +11,7 @@ public partial class Profile
 
     private bool isSavingOptions;
 
-    public string[] costumeColors = 
+    private static readonly string[] CostumeColors = 
     {
         "#F84828", "#68C0C0", "#DC1500", "#F8F0E0", "#009687", "#00BF87",
         "#00FF9A", "#66FFC2", "#FFFFFF", "#690000", "#FF0000", "#FF6666",
@@ -27,16 +26,16 @@ public partial class Profile
         "#FF66BF", "#FFB3DF", "#000000"
     };
 
-    private readonly string[] speedStrings =
+    private static readonly string[] SpeedStrings =
     {
         "1.0", "1.1", "1.2", "1.3", "1.4",
         "1.5", "1.6", "1.7", "1.8", "1.9",
         "2.0", "2.5", "3.0", "3.5", "4.0"
     };
 
-    private readonly string[] notePositionStrings = { "-5", "-4", "-3", "-2", "-1", "0", "+1", "+2", "+3", "+4", "+5" };
+    private static readonly string[] NotePositionStrings = { "-5", "-4", "-3", "-2", "-1", "0", "+1", "+2", "+3", "+4", "+5" };
 
-    private readonly string[] toneStrings =
+    private static readonly string[] ToneStrings =
     {
         "Taiko", "Festival", "Dogs & Cats", "Deluxe",
         "Drumset", "Tambourine", "Don Wada", "Clapping",
@@ -45,13 +44,13 @@ public partial class Profile
         "Synth Drum", "Shuriken", "Bubble Pop", "Electric Guitar"
     };
 
-    private readonly string[] titlePlateStrings =
+    private static readonly string[] TitlePlateStrings =
     {
         "Wood", "Rainbow", "Gold", "Purple",
         "AI 1", "AI 2", "AI 3", "AI 4"
     };
 
-    private List<BreadcrumbItem> breadcrumbs = new()
+    private readonly List<BreadcrumbItem> breadcrumbs = new()
     {
         new BreadcrumbItem("Cards", href: "/Cards"),
     };
@@ -73,15 +72,25 @@ public partial class Profile
         isSavingOptions = false;
     }
 
-    private async Task<IEnumerable<string>> SearchForTitle(string value)
+    private async Task OpenChooseTitleDialog()
     {
-        var titles = GameDataService.titleMap;
-
-        if (string.IsNullOrWhiteSpace(value))
+        var options = new DialogOptions
         {
-            return titles.Values;
+            //CloseButton = false,
+            CloseOnEscapeKey = false,
+            DisableBackdropClick = true,
+            MaxWidth = MaxWidth.Medium,
+            FullWidth = true
+        };
+        var parameters = new DialogParameters
+        {
+            ["UserSetting"] = response
+        };
+        var dialog = DialogService.Show<ChooseTitleDialog>("Player Titles", parameters, options);
+        var result = await dialog.Result;
+        if (!result.Cancelled)
+        {
+            StateHasChanged();
         }
-
-        return titles.Values.Where(x => x.Contains(value, StringComparison.OrdinalIgnoreCase));
     }
 }
