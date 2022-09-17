@@ -13,9 +13,7 @@ public class GetAiDataController : BaseController<GetAiDataController>
         var response = new GetAiDataResponse
         {
             Result  = 1,
-            TotalWinnings = 1,
-            InputMedian = "1",
-            InputVariance = "0.576389"
+            TotalWinnings = 0
         };
 
         return Ok(response);
