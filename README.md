@@ -15,7 +15,7 @@ This is a server for Taiko no Tatsujin Nijiiro ver 08.18
 
 ### Quick Setup
 
-With the newest release (>=2.00) of TaikoArcadeLoader, you no longer need to edit hosts or run AMAuthd or AMUpdater.
+With the newest release (>=2.00) of TaikoArcadeLoader, you no longer need to run AMAuthd or AMUpdater.
 
 1. Download the latest release of [TaikoArcadeLoader](https://github.com/BroGamer4256/TaikoArcadeLoader) and install it.
 2. Download the latest release of [TaikoReverseProxy](https://github.com/shiibe/TaikoReverseProxy).
@@ -38,8 +38,20 @@ With the newest release (>=2.00) of TaikoArcadeLoader, you no longer need to edi
     ```
 
     Then put these in TaikoLocalServer's `wwwroot/data` folder.
+    
 
-4. Run TaikoReverseProxy and TaikoLocalServer, then run Taiko.exe
+4. Modify hosts, add the following entries (this step can be done automatically with TaikoReverseProxy, check the config for it):
+
+   ```
+   server.ip      tenporouter.loc
+   server.ip      naominet.jp
+   server.ip      v402-front.mucha-prd.nbgi-amnet.jp
+   server.ip      vsapi.taiko-p.jp
+   ```
+
+   where `server.ip` is your computer's ip (or the server's ip)
+
+5. Run TaikoReverseProxy and TaikoLocalServer, then run Taiko.exe
 
 
 ### Server setup (for TAL<2.00 or other loaders)
