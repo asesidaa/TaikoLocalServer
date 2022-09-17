@@ -54,6 +54,7 @@ public class PlayResultController : BaseController<PlayResultController>
         if (await userDatumService.GetFirstUserDatumOrNull(request.BaidConf) is null)
         {
             Logger.LogWarning("Game uploading a non exisiting user with baid {Baid}", request.BaidConf);
+            return Ok(response);
         }
 
         var lastPlayDatetime = DateTime.ParseExact(playResultData.PlayDatetime, Constants.DATE_TIME_FORMAT,
