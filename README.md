@@ -42,7 +42,7 @@ With the newest release (>2.00) of TaikoArcadeLoader, you no longer need to edit
 4. Run TaikoReverseProxy and TaikoLocalServer, then run Taiko.exe
 
 
-### Server setup
+### Server setup (for TAL<2.00 or other loaders)
 
 1. Download the server from release page, extract anywhere
 
