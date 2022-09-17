@@ -28,7 +28,7 @@ With the newest release (>2.00) of TaikoArcadeLoader, you no longer need to edit
     wordlist.bin
     ```
 
-    Extract them (you can use 7zip) and rename the extracted file like so:
+    Extract them (you can use [7zip](https://www.7-zip.org)) and rename the extracted file like so:
 
     ```
     music_attribute -> music_attribute.json
