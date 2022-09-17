@@ -17,8 +17,8 @@ This is a server for Taiko no Tatsujin Nijiiro ver 08.18
 
 With the newest release (>2.00) of TaikoArcadeLoader, you no longer need to edit hosts or run AMAuthd or AMUpdater.
 
-1. Download the latest release of TaikoArcadeLoader and install it.
-2. Download the latest release of TaikoReverseProxy.
+1. Download the latest release of [TaikoArcadeLoader](https://github.com/BroGamer4256/TaikoArcadeLoader) and install it.
+2. Download the latest release of [TaikoReverseProxy](https://github.com/shiibe/TaikoReverseProxy).
 3. In the `Data\x64\datatable` folder of the game, find the following files:
 
     ```
@@ -32,9 +32,9 @@ With the newest release (>2.00) of TaikoArcadeLoader, you no longer need to edit
 
     ```
     music_attribute -> music_attribute.json
-    musicinfo -> musicinfo.json
-    music_order -> music_order.json
-    wordlist -> wordlist.json
+    musicinfo       -> musicinfo.json
+    music_order     -> music_order.json
+    wordlist        -> wordlist.json
     ```
 
     Then put these in TaikoLocalServer's `wwwroot/data` folder.
