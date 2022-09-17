@@ -45,6 +45,17 @@ public class PlayResultController : BaseController<PlayResultController>
             Result = 1
         };
 
+        // Fix issue caused by guest play, god knows why they send guest play data
+        if (request.BaidConf == 0)
+        {
+            return Ok(response);
+        }
+
+        if (await userDatumService.GetFirstUserDatumOrNull(request.BaidConf) is null)
+        {
+            Logger.LogWarning("Game uploading a non exisiting user with baid {Baid}", request.BaidConf);
+        }
+
         var lastPlayDatetime = DateTime.ParseExact(playResultData.PlayDatetime, Constants.DATE_TIME_FORMAT,
             CultureInfo.InvariantCulture);
 
@@ -168,7 +179,7 @@ public class PlayResultController : BaseController<PlayResultController>
     {
         var userdata = await userDatumService.GetFirstUserDatumOrNull(request.BaidConf);
 
-        userdata.ThrowIfNull();
+        userdata.ThrowIfNull($"User data is null! Baid: {request.BaidConf}");
 
         userdata.Title = playResultData.Title;
         userdata.TitlePlateId = playResultData.TitleplateId;

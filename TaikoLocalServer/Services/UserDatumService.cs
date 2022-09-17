@@ -59,7 +59,7 @@ public class UserDatumService : IUserDatumService
     public async Task<List<uint>> GetFavoriteSongIds(uint baid)
     {
         var userDatum = await context.UserData.FindAsync(baid);
-        userDatum.ThrowIfNull();
+        userDatum.ThrowIfNull($"User with baid: {baid} not found!");
 
         using var stringStream = GZipBytesUtil.GenerateStreamFromString(userDatum.FavoriteSongsArray);
         List<uint>? result;
@@ -79,7 +79,7 @@ public class UserDatumService : IUserDatumService
     public async Task UpdateFavoriteSong(uint baid, uint songId, bool isFavorite)
     {
         var userDatum = await context.UserData.FindAsync(baid);
-        userDatum.ThrowIfNull();
+        userDatum.ThrowIfNull($"User with baid: {baid} not found!");
 
         using var stringStream = GZipBytesUtil.GenerateStreamFromString(userDatum.FavoriteSongsArray);
         List<uint>? favoriteSongIds;
