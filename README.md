@@ -51,7 +51,9 @@ With the newest release (>=2.00) of TaikoArcadeLoader, you no longer need to run
 
    where `server.ip` is your computer's ip (or the server's ip)
 
-5. Run TaikoReverseProxy and TaikoLocalServer, then run the game. You can access the WebUI by going to `https://naominet.jp:10122/` in your browser.
+5. Open command prompt as admin, navigate to game root folder (where init.ps1 is). Run `regsvr32 .\AMCUS\iauthdll.dll`. It should prompt about success
+
+6. Run TaikoReverseProxy and TaikoLocalServer, then run the game. You can access the WebUI by going to `https://naominet.jp:10122/` in your browser.
 
 
 ### Server setup (for TAL<2.00 or other loaders)
