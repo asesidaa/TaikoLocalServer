@@ -16,13 +16,16 @@ public class BaidController : BaseController<BaidController>
 
     private readonly IDanScoreDatumService danScoreDatumService;
 
+    private readonly IAiDatumService aiDatumService;
+
     public BaidController(IUserDatumService userDatumService, ICardService cardService, 
-        ISongBestDatumService songBestDatumService, IDanScoreDatumService danScoreDatumService)
+        ISongBestDatumService songBestDatumService, IDanScoreDatumService danScoreDatumService, IAiDatumService aiDatumService)
     {
         this.userDatumService = userDatumService;
         this.cardService = cardService;
         this.songBestDatumService = songBestDatumService;
         this.danScoreDatumService = danScoreDatumService;
+        this.aiDatumService = aiDatumService;
     }
 
 
@@ -112,6 +115,9 @@ public class BaidController : BaseController<BaidController>
         var genericInfoFlgLength = genericInfoFlg.Any()? genericInfoFlg.Max() + 1 : 0;
         var genericInfoFlgArray = FlagCalculator.GetBitArrayFromIds(genericInfoFlg, (int)genericInfoFlgLength, Logger);
 
+        var aiScores = await aiDatumService.GetAllAiScoreById(baid);
+        var totalWin = aiScores.Count(datum => datum.IsWin);
+
         response = new BAIDResponse
         {
             Result = 1,
@@ -159,7 +165,7 @@ public class BaidController : BaseController<BaidController>
             LastPlayMode = userData.LastPlayMode,
             IsDispSouuchiOn = true,
             AiRank = 0,
-            AiTotalWin = 0,
+            AiTotalWin = (uint)totalWin,
             Accesstoken = "123456",
             ContentInfo = GZipBytesUtil.GetGZipBytes(new byte[10])
         };

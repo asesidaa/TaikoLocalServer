@@ -1,12 +1,22 @@
-﻿namespace TaikoLocalServer.Controllers.Game;
+﻿using TaikoLocalServer.Services.Interfaces;
+using Throw;
+
+namespace TaikoLocalServer.Controllers.Game;
 
 [Route("/v12r03/chassis/getaiscore.php")]
 [ApiController]
 public class GetAiScoreController : BaseController<GetAiScoreController>
 {
+    private readonly IAiDatumService aiDatumService;
+
+    public GetAiScoreController(IAiDatumService aiDatumService)
+    {
+        this.aiDatumService = aiDatumService;
+    }
+
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult GetAiScore([FromBody] GetAiScoreRequest request)
+    public async Task<IActionResult> GetAiScore([FromBody] GetAiScoreRequest request)
     {
         Logger.LogInformation("GetAiScore request : {Request}", request.Stringify());
 
@@ -14,6 +24,30 @@ public class GetAiScoreController : BaseController<GetAiScoreController>
         {
             Result = 1
         };
+
+        var difficulty = (Difficulty)request.Level;
+        difficulty.Throw().IfOutOfRange();
+
+        var aiData = await aiDatumService.GetSongAiScore(request.Baid, request.SongNo, difficulty);
+        if (aiData is null)
+        {
+            return Ok(response);
+        }
+
+        for (var index = 0; index < aiData.AiSectionScoreData.Count; index++)
+        {
+            var sectionScoreDatum = aiData.AiSectionScoreData[index];
+            response.AryBestSectionDatas.Add(new GetAiScoreResponse.AiBestSectionData
+            {
+                Crown = (uint)sectionScoreDatum.Crown,
+                GoodCnt = sectionScoreDatum.GoodCount,
+                OkCnt = sectionScoreDatum.OkCount,
+                NgCnt = sectionScoreDatum.MissCount,
+                PoundCnt = sectionScoreDatum.DrumrollCount,
+                Score = sectionScoreDatum.Score,
+                SectionNo = (uint)index
+            });
+        }
 
         // There's either 3 or 5 total sections
         // SectionNo doesn't seem to actually affect which section is being assigned to, only the List order matters

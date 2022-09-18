@@ -1,19 +1,30 @@
-﻿namespace TaikoLocalServer.Controllers.Game;
+﻿using TaikoLocalServer.Services.Interfaces;
+
+namespace TaikoLocalServer.Controllers.Game;
 
 [Route("/v12r03/chassis/getaidata.php")]
 [ApiController]
 public class GetAiDataController : BaseController<GetAiDataController>
 {
+    private readonly IAiDatumService aiDatumService;
+
+    public GetAiDataController(IAiDatumService aiDatumService)
+    {
+        this.aiDatumService = aiDatumService;
+    }
+
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult GetAiData([FromBody] GetAiDataRequest request)
+    public async Task<IActionResult> GetAiData([FromBody] GetAiDataRequest request)
     {
         Logger.LogInformation("GetAiData request : {Request}", request.Stringify());
 
+        var aiScoreData = await aiDatumService.GetAllAiScoreById(request.Baid);
+        var totalWin = aiScoreData.Count(datum => datum.IsWin);
         var response = new GetAiDataResponse
         {
             Result  = 1,
-            TotalWinnings = 0
+            TotalWinnings = (uint)totalWin
         };
 
         return Ok(response);
