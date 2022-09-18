@@ -32,7 +32,7 @@ public class SongBestDatumService : ISongBestDatumService
             return;
         }
 
-        await context.SongBestData.AddAsync(datum);
+        context.SongBestData.Add(datum);
         await context.SaveChangesAsync();
     }
 
