@@ -1,6 +1,4 @@
-﻿using TaikoLocalServer.Services.Interfaces;
-
-namespace TaikoLocalServer.Controllers.Game;
+﻿namespace TaikoLocalServer.Controllers.Game;
 
 [Route("/v12r03/chassis/getaidata.php")]
 [ApiController]
@@ -24,7 +22,9 @@ public class GetAiDataController : BaseController<GetAiDataController>
         var response = new GetAiDataResponse
         {
             Result  = 1,
-            TotalWinnings = (uint)totalWin
+            TotalWinnings = (uint)totalWin,
+            InputMedian = "1000",
+            InputVariance = "2000"
         };
 
         return Ok(response);

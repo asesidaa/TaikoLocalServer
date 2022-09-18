@@ -10,3 +10,5 @@ global using TaikoLocalServer.Common.Utils;
 global using TaikoLocalServer.Context;
 global using TaikoLocalServer.Entities;
 global using TaikoLocalServer.Models;
+global using TaikoLocalServer.Services;
+global using TaikoLocalServer.Services.Interfaces;

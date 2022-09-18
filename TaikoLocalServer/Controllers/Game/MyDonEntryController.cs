@@ -1,7 +1,4 @@
-﻿using TaikoLocalServer.Services;
-using TaikoLocalServer.Services.Interfaces;
-
-namespace TaikoLocalServer.Controllers.Game;
+﻿namespace TaikoLocalServer.Controllers.Game;
 
 [Route("/v12r03/chassis/mydonentry.php")]
 [ApiController]

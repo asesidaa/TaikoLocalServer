@@ -1,6 +1,4 @@
-﻿using TaikoLocalServer.Services.Interfaces;
-
-namespace TaikoLocalServer.Services.Extentions;
+﻿namespace TaikoLocalServer.Services.Extentions;
 
 public static class ServiceExtensions
 {

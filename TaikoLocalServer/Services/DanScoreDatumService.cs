@@ -1,6 +1,4 @@
-﻿using TaikoLocalServer.Services.Interfaces;
-
-namespace TaikoLocalServer.Services;
+﻿namespace TaikoLocalServer.Services;
 
 public class DanScoreDatumService : IDanScoreDatumService
 {
