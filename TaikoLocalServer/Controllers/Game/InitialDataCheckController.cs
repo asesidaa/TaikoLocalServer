@@ -1,6 +1,4 @@
-﻿using TaikoLocalServer.Services.Interfaces;
-
-namespace TaikoLocalServer.Controllers.Game;
+﻿namespace TaikoLocalServer.Controllers.Game;
 
 [ApiController]
 [Route("/v12r03/chassis/initialdatacheck.php")]

@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using TaikoLocalServer.Services.Interfaces;
 using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
@@ -164,7 +163,7 @@ public class BaidController : BaseController<BaidController>
             IsDispAchievementTypeSet = true,
             LastPlayMode = userData.LastPlayMode,
             IsDispSouuchiOn = true,
-            AiRank = 0,
+            AiRank = 1,
             AiTotalWin = (uint)totalWin,
             Accesstoken = "123456",
             ContentInfo = GZipBytesUtil.GetGZipBytes(new byte[10])
