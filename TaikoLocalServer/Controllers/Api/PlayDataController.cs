@@ -1,4 +1,5 @@
-﻿using SharedProject.Models.Responses;
+﻿using System.Collections.Immutable;
+using SharedProject.Models.Responses;
 
 namespace TaikoLocalServer.Controllers.Api;
 
@@ -30,11 +31,16 @@ public class PlayDataController : BaseController<PlayDataController>
         }
 
         var songBestRecords = await songBestDatumService.GetAllSongBestAsModel(baid);
-        var songPlayLogs = await songPlayDatumService.GetSongPlayDatumByBaid(baid);
+        var playLogs = await songPlayDatumService.GetSongPlayDatumByBaid(baid);
         foreach (var songBestData in songBestRecords)
         {
-            songBestData.PlayCount = songPlayLogs.Count(datum => datum.SongId == songBestData.SongId &&
-                                                                 datum.Difficulty == songBestData.Difficulty);
+            var songPlayLogs = playLogs.Where(datum => datum.SongId == songBestData.SongId &&
+                                                       datum.Difficulty == songBestData.Difficulty).ToList();
+            songBestData.PlayCount = songPlayLogs.Count;
+            var groups = songPlayLogs.GroupBy(datum => datum.Crown).ToLookup(datums => datums.Key);
+            songBestData.ClearCount = groups[CrownType.Clear].Count();
+            songBestData.FullComboCount = groups[CrownType.Gold].Count();
+            songBestData.PerfectCount = groups[CrownType.Dondaful].Count();
         }
         var favoriteSongs = await userDatumService.GetFavoriteSongIds(baid);
         var favoriteSet = favoriteSongs.ToHashSet();

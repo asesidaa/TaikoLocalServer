@@ -15,6 +15,9 @@ public class SongBestData
     public Difficulty Difficulty { get; set; }
     
     public int PlayCount { get; set; }
+    public int ClearCount { get; set; }
+    public int FullComboCount { get; set; }
+    public int PerfectCount { get; set; }
     
     public uint BestScore { get; set; }
     
