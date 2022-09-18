@@ -14,6 +14,8 @@ public class SongBestData
     
     public Difficulty Difficulty { get; set; }
     
+    public int PlayCount { get; set; }
+    
     public uint BestScore { get; set; }
     
     public uint BestRate { get; set; }
