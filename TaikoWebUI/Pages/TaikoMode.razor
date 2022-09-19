@@ -30,7 +30,7 @@
                             @if (songBestDataMap.ContainsKey(difficulty))
                             {
                                 <MudDataGrid Items="@songBestDataMap[difficulty]"
-                                             ColumnResizeMode="ResizeMode.None" RowsPerPage="25" Elevation="0">
+                                             ColumnResizeMode="ResizeMode.None" RowsPerPage="25" Elevation="0" ShowMenuIcon="true">
                                     <Columns>
                                         <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Song" StickyLeft="true">
                                             <CellTemplate>
@@ -51,7 +51,7 @@
                                                 </MudStack>
                                             </CellTemplate>
                                         </Column>
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Level" Sortable="false">
+                                        <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Level" Sortable="false" Hideable="true">
                                             <CellTemplate>
                                                 <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
                                                     <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small" />
@@ -60,7 +60,7 @@
                                             </CellTemplate>
                                         </Column>
                                         <Column T="SongBestData" Field="@nameof(SongBestData.Genre)" Title="Genre"
-                                                Sortable="false" Filterable="true">
+                                                Sortable="false" Filterable="true" Hideable="true">
                                             <CellTemplate>
                                                 <MudChip Style="@GetGenreStyle(context.Item.Genre)"
                                                          Size="Size.Small">
@@ -68,13 +68,13 @@
                                                 </MudChip>
                                             </CellTemplate>
                                         </Column>
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.BestScore)" Title="Best Score"/>
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.BestCrown)" Title="Best Crown">
+                                        <Column T="SongBestData" Field="@nameof(SongBestData.BestScore)" Title="Best Score" Hideable="true" />
+                                        <Column T="SongBestData" Field="@nameof(SongBestData.BestCrown)" Title="Best Crown" Hideable="true">
                                             <CellTemplate>
                                                 <img src="@($"/images/crown_{context.Item.BestCrown}.png")" alt="@(GetCrownText(context.Item.BestCrown))" title="@(GetCrownText(context.Item.BestCrown))" style="@IconStyle" />
                                             </CellTemplate>
                                         </Column>
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.BestScoreRank)" Title="Best Rank" Sortable="false">
+                                        <Column T="SongBestData" Field="@nameof(SongBestData.BestScoreRank)" Title="Best Rank" Sortable="false" Hideable="true">
                                             <CellTemplate>
                                                 @if (context.Item.BestScoreRank is not ScoreRank.None)
                                                 {
@@ -82,12 +82,16 @@
                                                 }
                                             </CellTemplate>
                                         </Column>
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.GoodCount)" Title="Good" Sortable="false"/>
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.OkCount)" Title="OK" Sortable="false"/>
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.MissCount)" Title="Bad" Sortable="false"/>
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.DrumrollCount)" Title="Drumroll" Sortable="false"/>
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.ComboCount)" Title="MAX Combo" Sortable="false"/>
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.LastPlayTime)" Title="Last Played"/>
+                                        <Column T="SongBestData" Field="@nameof(SongBestData.GoodCount)" Title="Good" Sortable="false" Hideable="true" />
+                                        <Column T="SongBestData" Field="@nameof(SongBestData.OkCount)" Title="OK" Sortable="false" Hideable="true" />
+                                        <Column T="SongBestData" Field="@nameof(SongBestData.MissCount)" Title="Bad" Sortable="false" Hideable="true" />
+                                        <Column T="SongBestData" Field="@nameof(SongBestData.DrumrollCount)" Title="Drumroll" Sortable="false"Hideable="true"/>
+                                        <Column T="SongBestData" Field="@nameof(SongBestData.ComboCount)" Title="MAX Combo" Sortable="false" Hideable="true" />
+                                        <Column T="SongBestData" Field="@nameof(SongBestData.LastPlayTime)" Title="Last Played"Hideable="true"/>
+                                        <Column T="SongBestData" Field="@nameof(SongBestData.PlayCount)" Title="Total Plays" Hideable="true"/>
+                                        <Column T="SongBestData" Field="@nameof(SongBestData.ClearCount)" Title="Total Clears" Hideable="true"/>
+                                        <Column T="SongBestData" Field="@nameof(SongBestData.FullComboCount)" Title="Total Full Combos" Hideable="true"/>
+                                        <Column T="SongBestData" Field="@nameof(SongBestData.PerfectCount)" Title="Total Donderful Combos" Hideable="true" />
                                     </Columns>
                                     <PagerContent>
                                         <MudDataGridPager T="SongBestData"/>
