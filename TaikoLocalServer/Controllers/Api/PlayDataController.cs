@@ -37,10 +37,9 @@ public class PlayDataController : BaseController<PlayDataController>
             var songPlayLogs = playLogs.Where(datum => datum.SongId == songBestData.SongId &&
                                                        datum.Difficulty == songBestData.Difficulty).ToList();
             songBestData.PlayCount = songPlayLogs.Count;
-            var groups = songPlayLogs.GroupBy(datum => datum.Crown).ToLookup(datums => datums.Key);
-            songBestData.ClearCount = groups[CrownType.Clear].Count();
-            songBestData.FullComboCount = groups[CrownType.Gold].Count();
-            songBestData.PerfectCount = groups[CrownType.Dondaful].Count();
+            songBestData.ClearCount = songPlayLogs.Count(datum => datum.Crown >= CrownType.Clear);
+            songBestData.FullComboCount = songPlayLogs.Count(datum => datum.Crown >= CrownType.Gold);
+            songBestData.PerfectCount = songPlayLogs.Count(datum => datum.Crown >= CrownType.Dondaful);
         }
         var favoriteSongs = await userDatumService.GetFavoriteSongIds(baid);
         var favoriteSet = favoriteSongs.ToHashSet();
