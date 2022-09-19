@@ -223,6 +223,7 @@ public class PlayResultController : BaseController<PlayResultController>
         userdata.GenericInfoFlgArray =
             UpdateJsonUintFlagArray(userdata.GenericInfoFlgArray, playResultData.GetGenericInfoNoes, nameof(userdata.GenericInfoFlgArray));
 
+        userdata.AiWinCount += playResultData.AryStageInfoes.Count(data => data.IsWin);
         await userDatumService.UpdateUserDatum(userdata);
     }
 
@@ -352,7 +353,9 @@ public class PlayResultController : BaseController<PlayResultController>
             Baid = request.BaidConf,
             SongId = stageData.SongNo,
             Difficulty = difficulty,
-            SectionIndex = index
+            SectionIndex = index,
+            OkCount = sectionData.OkCnt,
+            MissCount = sectionData.NgCnt
         };
         aiSectionScoreDatum.UpdateBest(sectionData);
         aiScoreDatum.AiSectionScoreData.Add(aiSectionScoreDatum);

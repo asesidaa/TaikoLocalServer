@@ -113,10 +113,7 @@ public class BaidController : BaseController<BaidController>
 
         var genericInfoFlgLength = genericInfoFlg.Any()? genericInfoFlg.Max() + 1 : 0;
         var genericInfoFlgArray = FlagCalculator.GetBitArrayFromIds(genericInfoFlg, (int)genericInfoFlgLength, Logger);
-
-        var aiScores = await aiDatumService.GetAllAiScoreById(baid);
-        var totalWin = aiScores.Count(datum => datum.IsWin);
-
+        
         response = new BAIDResponse
         {
             Result = 1,
@@ -164,7 +161,7 @@ public class BaidController : BaseController<BaidController>
             LastPlayMode = userData.LastPlayMode,
             IsDispSouuchiOn = true,
             AiRank = 1,
-            AiTotalWin = (uint)totalWin,
+            AiTotalWin = (uint)userData.AiWinCount,
             Accesstoken = "123456",
             ContentInfo = GZipBytesUtil.GetGZipBytes(new byte[10])
         };

@@ -1,14 +1,16 @@
-﻿namespace TaikoLocalServer.Controllers.Game;
+﻿using Throw;
+
+namespace TaikoLocalServer.Controllers.Game;
 
 [Route("/v12r03/chassis/getaidata.php")]
 [ApiController]
 public class GetAiDataController : BaseController<GetAiDataController>
 {
-    private readonly IAiDatumService aiDatumService;
+    private readonly IUserDatumService userDatumService;
 
-    public GetAiDataController(IAiDatumService aiDatumService)
+    public GetAiDataController(IUserDatumService userDatumService)
     {
-        this.aiDatumService = aiDatumService;
+        this.userDatumService = userDatumService;
     }
 
     [HttpPost]
@@ -17,12 +19,12 @@ public class GetAiDataController : BaseController<GetAiDataController>
     {
         Logger.LogInformation("GetAiData request : {Request}", request.Stringify());
 
-        var aiScoreData = await aiDatumService.GetAllAiScoreById(request.Baid);
-        var totalWin = aiScoreData.Count(datum => datum.IsWin);
+        var user = await userDatumService.GetFirstUserDatumOrNull(request.Baid);
+        user.ThrowIfNull($"User with baid {request.Baid} does not exist!");
         var response = new GetAiDataResponse
         {
             Result  = 1,
-            TotalWinnings = (uint)totalWin,
+            TotalWinnings = (uint)user.AiWinCount,
             InputMedian = "1000",
             InputVariance = "2000"
         };
