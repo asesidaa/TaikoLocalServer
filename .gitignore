@@ -396,3 +396,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+TaikoLocalServer/wwwroot/data/music_attribute.bin
