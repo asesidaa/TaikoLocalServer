@@ -19,6 +19,7 @@ public static class Constants
     public const string DEFAULT_DB_NAME = "taiko.db3";
 
     public const string MUSIC_ATTRIBUTE_FILE_NAME = "music_attribute.json";
+    public const string MUSIC_ATTRIBUTE_COMPRESSED_FILE_NAME = "music_attribute.bin";
 
     public const string DAN_DATA_FILE_NAME = "dan_data.json";
 

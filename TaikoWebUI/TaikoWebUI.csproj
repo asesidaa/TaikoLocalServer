@@ -8,9 +8,10 @@
 
     <ItemGroup>
         <PackageReference Include="Autocomplete.Clients" Version="1.1.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.7" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.7" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.9" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.9" PrivateAssets="all" />
         <PackageReference Include="MudBlazor" Version="6.0.15" />
+        <PackageReference Include="SharpZipLib" Version="1.4.0" />
         <PackageReference Include="Swan.Core" Version="6.0.2-beta.90" />
     </ItemGroup>
 
@@ -20,15 +21,6 @@
 
     <ItemGroup>
       <Content Update="wwwroot\appsettings.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Update="wwwroot\data\musicinfo.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Update="wwwroot\data\wordlist.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Update="wwwroot\data\music_order.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
