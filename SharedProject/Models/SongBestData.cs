@@ -42,4 +42,6 @@ public class SongBestData
     public uint HitCount { get; set; }
     
     public uint DrumrollCount { get; set; }
+    
+    public List<AiSectionBestData> AiSectionBestData { get; set; }
 }
