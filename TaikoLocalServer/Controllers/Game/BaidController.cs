@@ -113,7 +113,12 @@ public class BaidController : BaseController<BaidController>
 
         var genericInfoFlgLength = genericInfoFlg.Any()? genericInfoFlg.Max() + 1 : 0;
         var genericInfoFlgArray = FlagCalculator.GetBitArrayFromIds(genericInfoFlg, (int)genericInfoFlgLength, Logger);
-        
+
+        var aiRank = (uint)(userData.AiWinCount / 10);
+        if (aiRank > 11)
+        {
+            aiRank = 11;
+        }
         response = new BAIDResponse
         {
             Result = 1,
@@ -160,7 +165,7 @@ public class BaidController : BaseController<BaidController>
             IsDispAchievementTypeSet = true,
             LastPlayMode = userData.LastPlayMode,
             IsDispSouuchiOn = true,
-            AiRank = 1,
+            AiRank = aiRank,
             AiTotalWin = (uint)userData.AiWinCount,
             Accesstoken = "123456",
             ContentInfo = GZipBytesUtil.GetGZipBytes(new byte[10])
