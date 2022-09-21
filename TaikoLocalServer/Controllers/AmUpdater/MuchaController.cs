@@ -5,9 +5,9 @@ namespace TaikoLocalServer.Controllers.AmUpdater;
 
 public class MuchaController : BaseController<MuchaController>
 {
-    private readonly UrlSettings settings;
+    private readonly ServerSettings settings;
 
-    public MuchaController(IOptions<UrlSettings> settings)
+    public MuchaController(IOptions<ServerSettings> settings)
     {
         this.settings = settings.Value;
     }
