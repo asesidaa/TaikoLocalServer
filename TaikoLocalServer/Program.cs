@@ -35,10 +35,17 @@ try
         configuration.WriteTo.Console().ReadFrom.Configuration(context.Configuration);
     });
 
+    if (builder.Configuration.GetValue<bool>("ServerSettings:EnableMoreSongs"))
+    {
+        Log.Warning("Song limit expanded! Currently the game has issue loading crown/score rank and " +
+                    "probably more server related data for songs with id > 1599. " +
+                    "Also, the game can have random crashes because of that! Use at your own risk!");
+    }
+
     // Add services to the container.
     builder.Services.AddOptions();
     builder.Services.AddSingleton<IGameDataService, GameDataService>();
-    builder.Services.Configure<UrlSettings>(builder.Configuration.GetSection(nameof(UrlSettings)));
+    builder.Services.Configure<ServerSettings>(builder.Configuration.GetSection(nameof(ServerSettings)));
     builder.Services.AddControllers().AddProtoBufNet();
     builder.Services.AddDbContext<TaikoDbContext>(option =>
     {

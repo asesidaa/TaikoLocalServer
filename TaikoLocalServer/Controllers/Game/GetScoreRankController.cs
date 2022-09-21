@@ -1,14 +1,20 @@
-﻿namespace TaikoLocalServer.Controllers.Game;
+﻿using Microsoft.Extensions.Options;
+using TaikoLocalServer.Settings;
+
+namespace TaikoLocalServer.Controllers.Game;
 
 [Route("/v12r03/chassis/getscorerank.php")]
 [ApiController]
 public class GetScoreRankController : BaseController<GetScoreRankController>
 {
     private readonly ISongBestDatumService songBestDatumService;
+
+    private readonly ServerSettings settings;
     
-    public GetScoreRankController(ISongBestDatumService songBestDatumService)
+    public GetScoreRankController(ISongBestDatumService songBestDatumService, IOptions<ServerSettings> settings)
     {
         this.songBestDatumService = songBestDatumService;
+        this.settings = settings.Value;
     }
 
     [HttpPost]
@@ -16,12 +22,13 @@ public class GetScoreRankController : BaseController<GetScoreRankController>
     public async Task<IActionResult> GetScoreRank([FromBody] GetScoreRankRequest request)
     {
         Logger.LogInformation("GetScoreRank request : {Request}", request.Stringify());
-        var kiwamiScores = new byte[Constants.KIWAMI_SCORE_RANK_ARRAY_SIZE];
-        var miyabiScores = new ushort[Constants.MIYABI_CORE_RANK_ARRAY_SIZE];
-        var ikiScores = new ushort[Constants.IKI_CORE_RANK_ARRAY_SIZE];
+        var songIdMax = settings.EnableMoreSongs ? Constants.MUSIC_ID_MAX_EXPANDED : Constants.MUSIC_ID_MAX;
+        var kiwamiScores = new byte[songIdMax + 1];
+        var miyabiScores = new ushort[songIdMax + 1];
+        var ikiScores = new ushort[songIdMax + 1];
         var songBestData = await songBestDatumService.GetAllSongBestData(request.Baid);
         
-        for (var songId = 0; songId < Constants.MUSIC_ID_MAX; songId++)
+        for (var songId = 0; songId < songIdMax; songId++)
         {
             var id = songId;
             kiwamiScores[songId] = songBestData

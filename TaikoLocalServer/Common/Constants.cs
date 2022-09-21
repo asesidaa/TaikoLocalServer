@@ -4,17 +4,9 @@ public static class Constants
 {
     public const string DATE_TIME_FORMAT = "yyyyMMddHHmmss";
 
-    public const int MUSIC_ID_MAX = 9000;
+    public const int MUSIC_ID_MAX = 1599;
 
-    public const int CROWN_FLAG_ARRAY_SIZE = MUSIC_ID_MAX + 1;
-    
-    public const int DONDAFUL_CROWN_FLAG_ARRAY_SIZE = MUSIC_ID_MAX + 1;
-
-    public const int KIWAMI_SCORE_RANK_ARRAY_SIZE = MUSIC_ID_MAX + 1;
-
-    public const int IKI_CORE_RANK_ARRAY_SIZE = MUSIC_ID_MAX + 1;
-    
-    public const int MIYABI_CORE_RANK_ARRAY_SIZE = MUSIC_ID_MAX + 1;
+    public const int MUSIC_ID_MAX_EXPANDED = 9000;
 
     public const string DEFAULT_DB_NAME = "taiko.db3";
 

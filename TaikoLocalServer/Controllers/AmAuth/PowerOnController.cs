@@ -7,9 +7,9 @@ namespace TaikoLocalServer.Controllers.AmAuth;
 [Route("/sys/servlet/PowerOn")]
 public class PowerOnController : BaseController<PowerOnController>
 {
-    private readonly UrlSettings settings;
+    private readonly ServerSettings settings;
 
-    public PowerOnController(IOptions<UrlSettings> settings)
+    public PowerOnController(IOptions<ServerSettings> settings)
     {
         this.settings = settings.Value;
     }
