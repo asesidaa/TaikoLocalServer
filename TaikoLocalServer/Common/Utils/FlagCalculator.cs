@@ -116,7 +116,7 @@ public static class FlagCalculator
         {
             if (id >= bitArraySize)
             {
-                logger.LogWarning("Id out of range!");
+                logger.LogWarning("Id {Id} out of range!", id);
                 continue;
             }
             bitSet.Set((int)id, true);

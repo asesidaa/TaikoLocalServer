@@ -30,6 +30,7 @@ public class GameDataService : IGameDataService
 
     public async Task InitializeAsync(string dataBaseUrl)
     {
+        dataBaseUrl = dataBaseUrl.TrimEnd('/');
         var musicInfo = await GetData<MusicInfo>(dataBaseUrl, Constants.MUSIC_INFO_BASE_NAME);
         var wordList = await GetData<WordList>(dataBaseUrl, Constants.WORD_LIST_BASE_NAME);
         var musicOrder = await GetData<MusicOrder>(dataBaseUrl, Constants.MUSIC_ORDER_BASE_NAME);

@@ -23,11 +23,8 @@ try
     // Manually enable tls 1.0
     builder.WebHost.UseKestrel(kestrelOptions =>
     {
-        kestrelOptions.ConfigureHttpsDefaults(httpsOptions =>
-        {
-            httpsOptions.SslProtocols =
-                SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Tls13;
-        });
+        kestrelOptions.ConfigureHttpsDefaults(options => 
+            options.SslProtocols = SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Tls13);
     });
 
     builder.Host.UseSerilog((context, configuration) =>
