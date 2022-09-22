@@ -7,7 +7,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddSingleton(sp => new HttpClient
 {
-    BaseAddress = new Uri(builder.Configuration.GetValue<string>("BaseUrl"))
+    BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
 });
 builder.Services.AddMudServices();
 builder.Services.AddSingleton<IGameDataService, GameDataService>();
@@ -15,10 +15,6 @@ builder.Services.AddSingleton<IGameDataService, GameDataService>();
 var host = builder.Build();
 
 var gameDataService = host.Services.GetRequiredService<IGameDataService>();
-#if DEBUG
-await gameDataService.InitializeAsync(builder.Configuration.GetValue<string>("DataBaseUrl"));
-#else
-await gameDataService.InitializeAsync(builder.Configuration.GetValue<string>("BaseUrl"));
-#endif
+await gameDataService.InitializeAsync(builder.HostEnvironment.BaseAddress);
 
 await host.RunAsync();
