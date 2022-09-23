@@ -44,4 +44,6 @@ public class SongBestData
     public uint DrumrollCount { get; set; }
     
     public List<AiSectionBestData> AiSectionBestData { get; set; }
+
+    public bool ShowAiData { get; set; } = false;
 }

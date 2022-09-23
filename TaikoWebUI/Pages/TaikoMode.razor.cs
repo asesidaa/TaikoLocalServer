@@ -1,4 +1,7 @@
-﻿namespace TaikoWebUI.Pages; 
+﻿using static MudBlazor.Colors;
+using System;
+
+namespace TaikoWebUI.Pages; 
 
 public partial class TaikoMode
 {
@@ -133,7 +136,12 @@ public partial class TaikoMode
             SongGenre.Variety => "background: #1dc83b; color: #fff",
             SongGenre.Classical => "background: #bfa356",
             _ => ""
-            };
+        };
+    }
+
+    private static void ToggleShowAiData(SongBestData data)
+    {
+        data.ShowAiData = !data.ShowAiData;
     }
 }
 
