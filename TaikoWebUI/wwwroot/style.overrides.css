@@ -34,3 +34,18 @@
 .columns-panel {
     column-count: 2;
 }
+
+.ai-battle-td {
+    position: sticky;
+    left: 0;
+    top: 0;
+    z-index: 99;
+    background: #FAFAFA;
+    display: none;
+}
+
+@media only screen and (min-width: 600px) {
+    .ai-battle-td {
+        display: revert;
+    }
+}
