@@ -1,11 +1,11 @@
 ﻿@inject IGameDataService GameDataService
 @inject HttpClient Client
 
-@page "/Cards/{baid:int}/TaikoMode"
+@page "/Cards/{baid:int}/HighScores"
 
 <MudBreadcrumbs Items="breadcrumbs" Class="px-0"></MudBreadcrumbs>
 
-<h1>Taiko Mode</h1>
+<h1>High Scores</h1>
 <MudText Typo="Typo.caption">Card: @Baid</MudText>
 
 <MudGrid Class="my-8">
@@ -89,7 +89,7 @@
                                         <Column T="SongBestData" Field="@nameof(SongBestData.ComboCount)" Title="MAX Combo" Sortable="false" />
                                         <Column T="SongBestData" Field="@nameof(SongBestData.ShowAiData)" Title="AI Battle Data">
                                             <CellTemplate>
-                                                <MudButton Variant="Variant.Outlined" Size="Size.Small" OnClick="@(()=> ToggleShowAiData(context.Item))">@(context.Item.ShowAiData ? "Hide" : "Show")</MudButton>
+                                                <MudButton Variant="Variant.Outlined" Size="Size.Small" OnClick="@(()=> ToggleShowAiData(context.Item))" Disabled="@(!IsAiDataPresent(context.Item))">@(context.Item.ShowAiData ? "Hide" : "Show")</MudButton>
                                             </CellTemplate>
                                         </Column>
                                         <Column T="SongBestData" Field="@nameof(SongBestData.LastPlayTime)" Title="Last Played" Hideable="true" />
@@ -102,25 +102,39 @@
 		                            @if (context.Item.ShowAiData)
 				                    {
                                         <MudTr>
-                                            <td colspan="1" />
+                                            <td colspan="1" class="pa-3" style="background: #FAFAFA">
+                                                <MudText Typo="Typo.body2" Style="font-weight: bold">
+                                                    AI Battle Data
+                                                </MudText>
+                                            </td>
                                             <td colspan="16">
                                                 <MudTable Elevation="0" ReadOnly="true" 
                                                           Items="@context.Item.AiSectionBestData" Context="aiSectionContext">
                                                     <HeaderContent>
-                                                        <MudTh>Section No</MudTh>
-                                                        <MudTh>Is win?</MudTh>
-                                                        <MudTh>Section Score</MudTh>
-                                                        <MudTh>Section Crown</MudTh>
-                                                        <MudTh>Section Good Count</MudTh>
-                                                        <MudTh>Section Ok Count</MudTh>
-                                                        <MudTh>Section Miss Count</MudTh>
-                                                        <MudTh>Section Drumroll Count</MudTh>
+                                                        <MudTh>Section No.</MudTh>
+                                                        <MudTh>Result</MudTh>
+                                                        <MudTh>Score</MudTh>
+                                                        <MudTh>Crown</MudTh>
+                                                        <MudTh>Good</MudTh>
+                                                        <MudTh>OK</MudTh>
+                                                        <MudTh>Bad</MudTh>
+                                                        <MudTh>Drumroll</MudTh>
                                                     </HeaderContent>
                                                     <RowTemplate>
-                                                        <MudTd>@aiSectionContext.SectionIndex</MudTd>
-                                                        <MudTd>@aiSectionContext.IsWin</MudTd>
+                                                        <MudTd>@(aiSectionContext.SectionIndex + 1)</MudTd>
+                                                        <MudTd>
+                                                            @if (@aiSectionContext.IsWin) {
+                                                                <img src="@($"/images/ai_Win.png")" alt="Win" title="Win" style="@IconStyle" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <img src="@($"/images/ai_Lose.png")" alt="Lose" title="Lose" style="@IconStyle" />
+                                                            }
+                                                        </MudTd>
                                                         <MudTd>@aiSectionContext.Score</MudTd>
-                                                        <MudTd>@aiSectionContext.Crown</MudTd>
+                                                        <MudTd>
+                                                            <img src="@($"/images/ai_crown_{aiSectionContext.Crown}.png")" alt="@(GetCrownText(aiSectionContext.Crown))" title="@(GetCrownText(aiSectionContext.Crown))" style="@IconStyle" />
+                                                        </MudTd>
                                                         <MudTd>@aiSectionContext.GoodCount</MudTd>
                                                         <MudTd>@aiSectionContext.OkCount</MudTd>
                                                         <MudTd>@aiSectionContext.MissCount</MudTd>
