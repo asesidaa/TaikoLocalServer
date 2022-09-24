@@ -26,6 +26,7 @@
         public bool DisplayAchievement { get; set; }
         public Difficulty AchievementDisplayDifficulty { get; set; }
 
+        public int AiWinCount { get; set; }
         public virtual Card? Ba { get; set; }
     }
 }

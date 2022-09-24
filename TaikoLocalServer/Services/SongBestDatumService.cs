@@ -1,6 +1,5 @@
 ﻿using SharedProject.Models;
 using Swan.Mapping;
-using TaikoLocalServer.Services.Interfaces;
 using Throw;
 
 namespace TaikoLocalServer.Services;
@@ -32,7 +31,7 @@ public class SongBestDatumService : ISongBestDatumService
             return;
         }
 
-        await context.SongBestData.AddAsync(datum);
+        context.SongBestData.Add(datum);
         await context.SaveChangesAsync();
     }
 
@@ -42,6 +41,10 @@ public class SongBestDatumService : ISongBestDatumService
             .ToListAsync();
 
         var result = songbestDbData.Select(datum => datum.CopyPropertiesToNew<SongBestData>()).ToList();
+
+        var aiSectionBest = await context.AiScoreData.Where(datum => datum.Baid == baid)
+            .Include(datum => datum.AiSectionScoreData)
+            .ToListAsync();
 
         var playLogs = await context.SongPlayData.Where(datum => datum.Baid == baid).ToListAsync();
         foreach (var bestData in result)
@@ -65,6 +68,16 @@ public class SongBestDatumService : ISongBestDatumService
                 nameof(SongPlayDatum.DrumrollCount),
                 nameof(SongPlayDatum.ComboCount)
             );
+
+            var aiSection = aiSectionBest.FirstOrDefault(datum => datum.Difficulty == bestData.Difficulty &&
+                                                         datum.SongId == bestData.SongId);
+            if (aiSection is null)
+            {
+                continue;
+            }
+
+            bestData.AiSectionBestData = aiSection.AiSectionScoreData
+                .Select(datum => datum.CopyPropertiesToNew<AiSectionBestData>()).ToList();
         }
 
         return result;

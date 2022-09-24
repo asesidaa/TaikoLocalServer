@@ -1,4 +1,6 @@
-﻿using TaikoLocalServer.Services.Interfaces;
+﻿using System.Runtime.InteropServices;
+using Microsoft.Extensions.Options;
+using TaikoLocalServer.Settings;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -8,9 +10,12 @@ public class CrownsDataController : BaseController<CrownsDataController>
 {
     private readonly ISongBestDatumService songBestDatumService;
 
-    public CrownsDataController(ISongBestDatumService songBestDatumService)
+    private readonly ServerSettings settings;
+
+    public CrownsDataController(ISongBestDatumService songBestDatumService, IOptions<ServerSettings> settings)
     {
         this.songBestDatumService = songBestDatumService;
+        this.settings = settings.Value;
     }
 
     [HttpPost]
@@ -21,10 +26,11 @@ public class CrownsDataController : BaseController<CrownsDataController>
 
         var songBestData = await songBestDatumService.GetAllSongBestData(request.Baid);
         
-        var crown = new ushort[Constants.CROWN_FLAG_ARRAY_SIZE];
-        var dondafulCrown = new byte[Constants.DONDAFUL_CROWN_FLAG_ARRAY_SIZE];
+        var songIdMax = settings.EnableMoreSongs ? Constants.MUSIC_ID_MAX_EXPANDED : Constants.MUSIC_ID_MAX;
+        var crown = new ushort[songIdMax + 1];
+        var dondafulCrown = new byte[songIdMax + 1];
 
-        for (var songId = 0; songId < Constants.MUSIC_ID_MAX; songId++)
+        for (var songId = 0; songId < songIdMax; songId++)
         {
             var id = songId;
             dondafulCrown[songId] = songBestData
@@ -41,7 +47,7 @@ public class CrownsDataController : BaseController<CrownsDataController>
                 // Calculate flag according to difficulty
                 .Aggregate((ushort)0, (flag, datum) => FlagCalculator.ComputeCrownFlag(flag, datum.BestCrown, datum.Difficulty));
         }
-        
+
         var response = new CrownsDataResponse
         {
             Result = 1,

@@ -14,6 +14,11 @@ public class SongBestData
     
     public Difficulty Difficulty { get; set; }
     
+    public int PlayCount { get; set; }
+    public int ClearCount { get; set; }
+    public int FullComboCount { get; set; }
+    public int PerfectCount { get; set; }
+    
     public uint BestScore { get; set; }
     
     public uint BestRate { get; set; }
@@ -37,4 +42,8 @@ public class SongBestData
     public uint HitCount { get; set; }
     
     public uint DrumrollCount { get; set; }
+
+    public List<AiSectionBestData> AiSectionBestData { get; set; } = new();
+
+    public bool ShowAiData { get; set; }
 }
