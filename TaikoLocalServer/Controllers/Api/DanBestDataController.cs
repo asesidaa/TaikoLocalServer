@@ -1,7 +1,6 @@
 ﻿using SharedProject.Models;
 using SharedProject.Models.Responses;
 using Swan.Mapping;
-using TaikoLocalServer.Services.Interfaces;
 
 namespace TaikoLocalServer.Controllers.Api;
 

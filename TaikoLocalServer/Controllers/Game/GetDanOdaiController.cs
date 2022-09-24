@@ -1,6 +1,4 @@
-﻿using TaikoLocalServer.Services.Interfaces;
-
-namespace TaikoLocalServer.Controllers.Game;
+﻿namespace TaikoLocalServer.Controllers.Game;
 
 [Route("/v12r03/chassis/getdanodai.php")]
 [ApiController]

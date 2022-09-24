@@ -1,4 +1,5 @@
-﻿using TaikoLocalServer.Services.Interfaces;
+﻿using Microsoft.Extensions.Options;
+using TaikoLocalServer.Settings;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -8,9 +9,12 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 {
     private readonly IGameDataService gameDataService;
 
-    public InitialDataCheckController(IGameDataService gameDataService)
+    private readonly ServerSettings settings;
+
+    public InitialDataCheckController(IGameDataService gameDataService, IOptions<ServerSettings> settings)
     {
         this.gameDataService = gameDataService;
+        this.settings = settings.Value;
     }
 
     [HttpPost]
@@ -19,8 +23,9 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
     {
         Logger.LogInformation("Initial data check request: {Request}", request.Stringify());
 
+        var songIdMax = settings.EnableMoreSongs ? Constants.MUSIC_ID_MAX_EXPANDED : Constants.MUSIC_ID_MAX;
         var enabledArray =
-            FlagCalculator.GetBitArrayFromIds(gameDataService.GetMusicList(), Constants.MUSIC_ID_MAX, Logger);
+            FlagCalculator.GetBitArrayFromIds(gameDataService.GetMusicList(), songIdMax, Logger);
 
         var danData = new List<InitialdatacheckResponse.InformationData>();
         for (var danId = Constants.MIN_DAN_ID; danId <= Constants.MAX_DAN_ID; danId++)
@@ -46,7 +51,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
         {
             Result = 1,
             IsDanplay = true,
-            IsAibattle = false,
+            IsAibattle = true,
             IsClose = false,
             DefaultSongFlg = enabledArray,
             AchievementSongBit = enabledArray,

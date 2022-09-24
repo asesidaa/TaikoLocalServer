@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using TaikoLocalServer.Services.Interfaces;
 using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
@@ -16,13 +15,16 @@ public class BaidController : BaseController<BaidController>
 
     private readonly IDanScoreDatumService danScoreDatumService;
 
+    private readonly IAiDatumService aiDatumService;
+
     public BaidController(IUserDatumService userDatumService, ICardService cardService, 
-        ISongBestDatumService songBestDatumService, IDanScoreDatumService danScoreDatumService)
+        ISongBestDatumService songBestDatumService, IDanScoreDatumService danScoreDatumService, IAiDatumService aiDatumService)
     {
         this.userDatumService = userDatumService;
         this.cardService = cardService;
         this.songBestDatumService = songBestDatumService;
         this.danScoreDatumService = danScoreDatumService;
+        this.aiDatumService = aiDatumService;
     }
 
 
@@ -112,6 +114,11 @@ public class BaidController : BaseController<BaidController>
         var genericInfoFlgLength = genericInfoFlg.Any()? genericInfoFlg.Max() + 1 : 0;
         var genericInfoFlgArray = FlagCalculator.GetBitArrayFromIds(genericInfoFlg, (int)genericInfoFlgLength, Logger);
 
+        var aiRank = (uint)(userData.AiWinCount / 10);
+        if (aiRank > 11)
+        {
+            aiRank = 11;
+        }
         response = new BAIDResponse
         {
             Result = 1,
@@ -158,8 +165,8 @@ public class BaidController : BaseController<BaidController>
             IsDispAchievementTypeSet = true,
             LastPlayMode = userData.LastPlayMode,
             IsDispSouuchiOn = true,
-            AiRank = 0,
-            AiTotalWin = 0,
+            AiRank = aiRank,
+            AiTotalWin = (uint)userData.AiWinCount,
             Accesstoken = "123456",
             ContentInfo = GZipBytesUtil.GetGZipBytes(new byte[10])
         };

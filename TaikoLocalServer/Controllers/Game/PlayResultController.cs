@@ -1,7 +1,6 @@
 ﻿using System.Buffers.Binary;
 using System.Globalization;
 using System.Text.Json;
-using TaikoLocalServer.Services.Interfaces;
 using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
@@ -20,13 +19,16 @@ public class PlayResultController : BaseController<PlayResultController>
 
     private readonly IDanScoreDatumService danScoreDatumService;
 
+    private readonly IAiDatumService aiDatumService;
+
     public PlayResultController(IUserDatumService userDatumService, ISongPlayDatumService songPlayDatumService,
-        ISongBestDatumService songBestDatumService, IDanScoreDatumService danScoreDatumService)
+        ISongBestDatumService songBestDatumService, IDanScoreDatumService danScoreDatumService, IAiDatumService aiDatumService)
     {
         this.userDatumService = userDatumService;
         this.songPlayDatumService = songPlayDatumService;
         this.songBestDatumService = songBestDatumService;
         this.danScoreDatumService = danScoreDatumService;
+        this.aiDatumService = aiDatumService;
     }
 
     [HttpPost]
@@ -77,9 +79,7 @@ public class PlayResultController : BaseController<PlayResultController>
 
             if (playMode == PlayMode.AiBattle)
             {
-                // await UpdateAiBattleData(request, stageData);
-                // Update AI win count here somewhere, or in UpdatePlayData?
-                // I have no clue how to update input median or variance
+                await UpdateAiBattleData(request, stageData);
             }
 
             await UpdateBestData(request, stageData, bestData);
@@ -163,7 +163,7 @@ public class PlayResultController : BaseController<PlayResultController>
             ComboCount = stageData.ComboCnt,
             HitCount = stageData.HitCnt,
             DrumrollCount = stageData.PoundCnt,
-            Crown = PlayResultToCrown(stageData),
+            Crown = PlayResultToCrown(stageData.PlayResult, stageData.OkCnt),
             Score = stageData.PlayScore,
             ScoreRate = stageData.ScoreRate,
             ScoreRank = (ScoreRank)stageData.ScoreRank,
@@ -229,6 +229,7 @@ public class PlayResultController : BaseController<PlayResultController>
         userdata.GenericInfoFlgArray =
             UpdateJsonUintFlagArray(userdata.GenericInfoFlgArray, playResultData.GetGenericInfoNoes, nameof(userdata.GenericInfoFlgArray));
 
+        userdata.AiWinCount += playResultData.AryStageInfoes.Count(data => data.IsWin);
         await userDatumService.UpdateUserDatum(userdata);
     }
 
@@ -300,7 +301,7 @@ public class PlayResultController : BaseController<PlayResultController>
                 });
 
         // Determine whether it is dondaful crown as this is not reflected by play result
-        var crown = PlayResultToCrown(stageData);
+        var crown = PlayResultToCrown(stageData.PlayResult, stageData.OkCnt);
 
         bestDatum.UpdateBestData(crown, stageData.ScoreRank, stageData.PlayScore, stageData.ScoreRate);
 
@@ -308,23 +309,69 @@ public class PlayResultController : BaseController<PlayResultController>
     }
 
     // TODO: AI battle
-    /*private async Task UpdateAiBattleData(PlayResultRequest request, StageData stageData)
+    private async Task UpdateAiBattleData(PlayResultRequest request, StageData stageData)
     {
-        for (int i = 0; i < stageData.ArySectionDatas.Count; i++)
+        var difficulty = (Difficulty)stageData.Level;
+        difficulty.Throw().IfOutOfRange();
+        var existing = await aiDatumService.GetSongAiScore(request.BaidConf, 
+            stageData.SongNo, difficulty);
+
+        if (existing is null)
         {
-            // Only update crown if it's a higher crown than the previous best crown
+            var aiScoreDatum = new AiScoreDatum
+            {
+                Baid = request.BaidConf,
+                SongId = stageData.SongNo,
+                Difficulty = difficulty,
+                IsWin = stageData.IsWin
+            };
+            for (var index = 0; index < stageData.ArySectionDatas.Count; index++)
+            {
+                AddNewAiSectionScore(request, stageData, index, difficulty, aiScoreDatum);
+            }
 
-            // Maybe have a "SectionNo" variable for which section number it is on the DB
-            // compare DB.SectionNo == i
-            // if any aspect of the section is higher than the previous best, update it
-            // Similar to Dan best play updates
+            await aiDatumService.InsertSongAiScore(aiScoreDatum);
+            return;
         }
-    }*/
 
-    private static CrownType PlayResultToCrown(StageData stageData)
+        for (var index = 0; index < stageData.ArySectionDatas.Count; index++)
+        {
+            var sectionData = stageData.ArySectionDatas[index];
+            if (index < existing.AiSectionScoreData.Count)
+            {
+                existing.AiSectionScoreData[index].UpdateBest(sectionData);
+            }
+            else
+            {
+                AddNewAiSectionScore(request,stageData,index,difficulty,existing);
+            }
+        }
+
+        await aiDatumService.UpdateSongAiScore(existing);
+    }
+
+    private static void AddNewAiSectionScore(PlayResultRequest request, StageData stageData, int index, Difficulty difficulty,
+        AiScoreDatum aiScoreDatum)
     {
-        var crown = (CrownType)stageData.PlayResult;
-        if (crown == CrownType.Gold && stageData.OkCnt == 0)
+        var sectionData = stageData.ArySectionDatas[index];
+        var aiSectionScoreDatum = new AiSectionScoreDatum
+        {
+            Baid = request.BaidConf,
+            SongId = stageData.SongNo,
+            Difficulty = difficulty,
+            SectionIndex = index,
+            OkCount = sectionData.OkCnt,
+            MissCount = sectionData.NgCnt
+        };
+        aiSectionScoreDatum.UpdateBest(sectionData);
+        aiScoreDatum.AiSectionScoreData.Add(aiSectionScoreDatum);
+    }
+
+
+    private static CrownType PlayResultToCrown(uint playResult, uint okCount)
+    {
+        var crown = (CrownType)playResult;
+        if (crown == CrownType.Gold && okCount == 0)
         {
             crown = CrownType.Dondaful;
         }

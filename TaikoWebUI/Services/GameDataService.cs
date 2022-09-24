@@ -1,4 +1,7 @@
 ﻿using System.Collections.Immutable;
+using System.Net;
+using System.Text.Json;
+using ICSharpCode.SharpZipLib.GZip;
 using Swan.Mapping;
 using TaikoWebUI.Shared.Models;
 
@@ -27,16 +30,13 @@ public class GameDataService : IGameDataService
 
     public async Task InitializeAsync(string dataBaseUrl)
     {
-        var musicInfo = await client.GetFromJsonAsync<MusicInfo>($"{dataBaseUrl}/data/musicinfo.json");
-        var wordList = await client.GetFromJsonAsync<WordList>($"{dataBaseUrl}/data/wordlist.json");
-        var musicOrder = await client.GetFromJsonAsync<MusicOrder>($"{dataBaseUrl}/data/music_order.json");
+        dataBaseUrl = dataBaseUrl.TrimEnd('/');
+        var musicInfo = await GetData<MusicInfo>(dataBaseUrl, Constants.MUSIC_INFO_BASE_NAME);
+        var wordList = await GetData<WordList>(dataBaseUrl, Constants.WORD_LIST_BASE_NAME);
+        var musicOrder = await GetData<MusicOrder>(dataBaseUrl, Constants.MUSIC_ORDER_BASE_NAME);
         var danData = await client.GetFromJsonAsync<List<DanData>>($"{dataBaseUrl}/data/dan_data.json");
 
-        musicInfo.ThrowIfNull();
-        wordList.ThrowIfNull();
-        musicOrder.ThrowIfNull();
         danData.ThrowIfNull();
-
         danMap = danData.ToImmutableDictionary(data => data.DanId);
 
         // To prevent duplicate entries in wordlist
@@ -52,6 +52,36 @@ public class GameDataService : IGameDataService
         await Task.Run(() => InitializeTitles(dict));
     }
 
+    private async Task<T> GetData<T>(string dataBaseUrl, string fileBaseName) where T : notnull
+    {
+        T? data;
+        try
+        {
+            data = await client.GetFromJsonAsync<T>($"{dataBaseUrl}/data/{fileBaseName}.json");
+            data.ThrowIfNull();
+            return data;
+        }
+        catch (HttpRequestException e)
+        {
+            if (e.StatusCode != HttpStatusCode.NotFound)
+            {
+                throw;
+            }
+            await using var compressed = await client.GetStreamAsync($"{dataBaseUrl}/data/{fileBaseName}.bin");
+            await using var gZipInputStream = new GZipInputStream(compressed);
+            using var decompressed = new MemoryStream();
+            
+            // Decompress
+            await gZipInputStream.CopyToAsync(decompressed);
+
+            // Reset stream for reading
+            decompressed.Position = 0;
+            data = await JsonSerializer.DeserializeAsync<T>(decompressed);
+            data.ThrowIfNull();
+            return data;
+        }
+    }
+    
     public string GetMusicNameBySongId(uint songId)
     {
         return musicMap.TryGetValue(songId, out var musicDetail) ? musicDetail.SongName : string.Empty;

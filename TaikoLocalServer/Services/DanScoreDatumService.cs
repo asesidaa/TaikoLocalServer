@@ -1,6 +1,4 @@
-﻿using TaikoLocalServer.Services.Interfaces;
-
-namespace TaikoLocalServer.Services;
+﻿namespace TaikoLocalServer.Services;
 
 public class DanScoreDatumService : IDanScoreDatumService
 {
@@ -30,7 +28,7 @@ public class DanScoreDatumService : IDanScoreDatumService
         var existing = await context.DanScoreData.FindAsync(datum.Baid, datum.DanId);
         if (existing is null)
         {
-            await context.DanScoreData.AddAsync(datum);
+            context.DanScoreData.Add(datum);
             await context.SaveChangesAsync();
             return;
         }

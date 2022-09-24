@@ -1,6 +1,4 @@
-﻿using TaikoLocalServer.Services.Interfaces;
-
-namespace TaikoLocalServer.Services;
+﻿namespace TaikoLocalServer.Services;
 
 class SongPlayDatumService : ISongPlayDatumService
 {
@@ -18,7 +16,7 @@ class SongPlayDatumService : ISongPlayDatumService
 
     public async Task AddSongPlayDatum(SongPlayDatum datum)
     {
-        await context.SongPlayData.AddAsync(datum);
+        context.SongPlayData.Add(datum);
         await context.SaveChangesAsync();
     }
 }

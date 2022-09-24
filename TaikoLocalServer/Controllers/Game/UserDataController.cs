@@ -1,6 +1,7 @@
 ﻿using System.Buffers.Binary;
 using System.Text.Json;
-using TaikoLocalServer.Services.Interfaces;
+using Microsoft.Extensions.Options;
+using TaikoLocalServer.Settings;
 using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
@@ -14,12 +15,16 @@ public class UserDataController : BaseController<UserDataController>
     private readonly ISongPlayDatumService songPlayDatumService;
 
     private readonly IGameDataService gameDataService;
+
+    private readonly ServerSettings settings;
     
-    public UserDataController(IUserDatumService userDatumService, ISongPlayDatumService songPlayDatumService, IGameDataService gameDataService)
+    public UserDataController(IUserDatumService userDatumService, ISongPlayDatumService songPlayDatumService, 
+        IGameDataService gameDataService, IOptions<ServerSettings> settings)
     {
         this.userDatumService = userDatumService;
         this.songPlayDatumService = songPlayDatumService;
         this.gameDataService = gameDataService;
+        this.settings = settings.Value;
     }
 
     [HttpPost]
@@ -28,11 +33,12 @@ public class UserDataController : BaseController<UserDataController>
     {
         Logger.LogInformation("UserData request : {Request}", request.Stringify());
 
+        var songIdMax = settings.EnableMoreSongs ? Constants.MUSIC_ID_MAX_EXPANDED : Constants.MUSIC_ID_MAX;
         var releaseSongArray =
-            FlagCalculator.GetBitArrayFromIds(gameDataService.GetMusicList(), Constants.MUSIC_ID_MAX, Logger);
+            FlagCalculator.GetBitArrayFromIds(gameDataService.GetMusicList(), songIdMax, Logger);
 
         var uraSongArray =
-            FlagCalculator.GetBitArrayFromIds(gameDataService.GetMusicWithUraList(), Constants.MUSIC_ID_MAX, Logger);
+            FlagCalculator.GetBitArrayFromIds(gameDataService.GetMusicWithUraList(), songIdMax, Logger);
 
         var userData = await userDatumService.GetFirstUserDatumOrDefault(request.Baid);
 

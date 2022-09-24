@@ -1,12 +1,15 @@
-﻿namespace TaikoWebUI.Pages; 
+﻿using static MudBlazor.Colors;
+using System;
 
-public partial class TaikoMode
+namespace TaikoWebUI.Pages; 
+
+public partial class HighScores
 {
     [Parameter]
     public int Baid { get; set; }
 
     private const string IconStyle = "width:25px; height:25px;";
-
+    
     private SongBestResponse? response;
 
     private Dictionary<Difficulty, List<SongBestData>> songBestDataMap = new();
@@ -41,7 +44,7 @@ public partial class TaikoMode
         
 
         breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
-        breadcrumbs.Add(new BreadcrumbItem("Taiko Mode", href: $"/Cards/{Baid}/TaikoMode", disabled: false));
+        breadcrumbs.Add(new BreadcrumbItem("High Scores", href: $"/Cards/{Baid}/HighScores", disabled: false));
     }
 
     private async Task OnFavoriteToggled(SongBestData data)
@@ -133,7 +136,19 @@ public partial class TaikoMode
             SongGenre.Variety => "background: #1dc83b; color: #fff",
             SongGenre.Classical => "background: #bfa356",
             _ => ""
-            };
+        };
+    }
+
+    private static void ToggleShowAiData(SongBestData data)
+    {
+        data.ShowAiData = !data.ShowAiData;
+    }
+
+    private static bool IsAiDataPresent(SongBestData data)
+    {
+        var aiData = data.AiSectionBestData;
+
+        return aiData.Count > 0;
     }
 }
 

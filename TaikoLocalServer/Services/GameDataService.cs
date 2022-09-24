@@ -1,8 +1,8 @@
 ﻿using System.Collections.Immutable;
 using System.Text.Json;
+using ICSharpCode.SharpZipLib.GZip;
 using SharedProject.Models;
 using Swan.Mapping;
-using TaikoLocalServer.Services.Interfaces;
 using Throw;
 
 namespace TaikoLocalServer.Services;
@@ -54,6 +54,10 @@ public class GameDataService : IGameDataService
         var danDataPath = Path.Combine(dataPath, Constants.DAN_DATA_FILE_NAME);
         var songIntroDataPath = Path.Combine(dataPath, Constants.INTRO_DATA_FILE_NAME);
 
+        if (!File.Exists(musicAttributePath))
+        {
+            TryDecompressMusicAttribute();
+        }
         await using var musicAttributeFile = File.OpenRead(musicAttributePath);
         await using var danDataFile = File.OpenRead(danDataPath);
         await using var songIntroDataFile = File.OpenRead(songIntroDataPath);
@@ -67,6 +71,18 @@ public class GameDataService : IGameDataService
         InitializeDanData(danData);
 
         InitializeIntroData(introData);
+    }
+
+    private static void TryDecompressMusicAttribute()
+    {
+        var dataPath = PathHelper.GetDataPath();
+        var musicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_FILE_NAME);
+        var compressedMusicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_COMPRESSED_FILE_NAME);
+        
+        using var compressed = File.Open(compressedMusicAttributePath, FileMode.Open);
+        using var output = File.Create(musicAttributePath);
+        
+        GZip.Decompress(compressed, output, true);
     }
 
     private void InitializeIntroData(List<SongIntroductionData>? introData)
