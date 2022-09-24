@@ -27,8 +27,9 @@ With the newest release (from [this](https://github.com/BroGamer4256/TaikoArcade
    ```toml
    server = "https://divamodarchive.com" # Change https://divamodarchive.com to your/server's ip, like 192.168.1.100
    ```
+7. Open command prompt as admin, navigate to game root folder (where `init.ps1` is). Run `regsvr32 .\AMCUS\iauthdll.dll`. It should prompt about success
 
-7. Now the game should be able to connect.
+8. Now the game should be able to connect.
 
 ### About certificates
 
