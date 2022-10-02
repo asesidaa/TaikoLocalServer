@@ -179,4 +179,16 @@ public partial class DaniDojo
 
         return isGold ? soulBorder.GoldBorderTotal : soulBorder.RedBorderTotal;
     }
+
+    private static string GetDanConditionOperator(DanConditionType type)
+    {
+        var conditionOperator = ">";
+
+        if (type is DanConditionType.BadCount or DanConditionType.OkCount)
+        {
+            conditionOperator = "<";
+        }
+
+        return conditionOperator;
+    }
 }

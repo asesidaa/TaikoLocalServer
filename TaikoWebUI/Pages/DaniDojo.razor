@@ -262,11 +262,7 @@
                                                                     }
                                                                 </MudStack>
                                                                 @{
-                                                                    var conditionOperator = ">";
-                                                                    if ((DanConditionType)border.OdaiType is DanConditionType.BadCount)
-                                                                    {
-                                                                        conditionOperator = "<";
-                                                                    }
+                                                                    var conditionOperator = GetDanConditionOperator((DanConditionType)border.OdaiType);
                                                                 }
                                                                 <MudStack Spacing="1">
                                                                     <MudText Typo="Typo.subtitle2" Style="font-weight:bold">Conditions</MudText>
@@ -359,11 +355,8 @@
                                                                             </MudStack>
                                                                         }
                                                                         @{
-                                                                            var conditionOperator = ">";
-                                                                            if ((DanConditionType)border.OdaiType is DanConditionType.BadCount)
-                                                                            {
-                                                                                conditionOperator = "<";
-                                                                            }
+                                                                            var conditionOperator = GetDanConditionOperator((DanConditionType)border.OdaiType);
+                                                                
 
                                                                             if (redRequirement == 0) {
                                                                                 conditionOperator = "";
