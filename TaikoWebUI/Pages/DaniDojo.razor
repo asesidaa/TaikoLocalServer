@@ -213,7 +213,7 @@
                                                                         var danBestData = bestDataMap[danId];
                                                                         var bestData = GetAllBestFromData((DanConditionType)border.OdaiType, danBestData);
 
-                                                                        if ((DanConditionType)border.OdaiType is DanConditionType.BadCount)
+                                                                        if ((DanConditionType)border.OdaiType is DanConditionType.BadCount or DanConditionType.OkCount)
                                                                         {
                                                                             if (bestData <= redRequirement)
                                                                             {
@@ -303,7 +303,7 @@
                                                                         {
                                                                             var danBestData = bestDataMap[danId];
                                                                             var bestData = GetSongBestFromData((DanConditionType)border.OdaiType, danBestData, songNumber);
-                                                                            if ((DanConditionType)border.OdaiType is DanConditionType.BadCount)
+                                                                            if ((DanConditionType)border.OdaiType is DanConditionType.BadCount or DanConditionType.OkCount)
                                                                             {
                                                                                 if (bestData <= redRequirement)
                                                                                 {
