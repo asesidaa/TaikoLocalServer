@@ -77,6 +77,12 @@ public class PlayResultController : BaseController<PlayResultController>
         {
             var stageData = playResultData.AryStageInfoes[songNumber];
 
+            if (stageData.IsSkipUse)
+            {
+                await UpdatePlayData(request, songNumber, stageData, lastPlayDatetime);
+                continue;
+            }
+
             if (playMode == PlayMode.AiBattle)
             {
                 await UpdateAiBattleData(request, stageData);
@@ -307,8 +313,7 @@ public class PlayResultController : BaseController<PlayResultController>
 
         await songBestDatumService.UpdateOrInsertSongBestDatum(bestDatum);
     }
-
-    // TODO: AI battle
+    
     private async Task UpdateAiBattleData(PlayResultRequest request, StageData stageData)
     {
         var difficulty = (Difficulty)stageData.Level;
