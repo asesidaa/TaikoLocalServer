@@ -209,7 +209,7 @@ public class PlayResultController : BaseController<PlayResultController>
             var option = BinaryPrimitives.ReadInt16LittleEndian(lastStage.OptionFlg);
             userdata.OptionSetting = option;
             userdata.IsSkipOn = lastStage.IsSkipOn;
-            userdata.IsVoiceOn = lastStage.IsVoiceOn;
+            userdata.IsVoiceOn = !lastStage.IsVoiceOn;
             userdata.NotesPosition = lastStage.NotesPosition;
         }
 
