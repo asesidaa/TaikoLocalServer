@@ -7,7 +7,7 @@ public partial class DaniDojo
 
     private DanBestDataResponse? response;
 
-    private Dictionary<uint, DanBestData> bestDataMap = new();
+    private static Dictionary<uint, DanBestData> bestDataMap = new();
 
     private readonly List<BreadcrumbItem> breadcrumbs = new()
     {
@@ -64,7 +64,7 @@ public partial class DaniDojo
 
         return GetDanRequirementString(danConditionType);
     }
-    
+
     private static long GetAllBestFromData(DanConditionType type, DanBestData data)
     {
         return type switch
@@ -129,15 +129,15 @@ public partial class DaniDojo
             "3kyuu" => "Third Kyuu",
             "2kyuu" => "Second Kyuu",
             "1kyuu" => "First Kyuu",
-            "1dan"  => "First Dan",
-            "2dan"  => "Second Dan",
-            "3dan"  => "Third Dan",
-            "4dan"  => "Fourth Dan",
-            "5dan"  => "Fifth Dan",
-            "6dan"  => "Sixth Dan",
-            "7dan"  => "Seventh Dan",
-            "8dan"  => "Eighth Dan",
-            "9dan"  => "Ninth Dan",
+            "1dan" => "First Dan",
+            "2dan" => "Second Dan",
+            "3dan" => "Third Dan",
+            "4dan" => "Fourth Dan",
+            "5dan" => "Fifth Dan",
+            "6dan" => "Sixth Dan",
+            "7dan" => "Seventh Dan",
+            "8dan" => "Eighth Dan",
+            "9dan" => "Ninth Dan",
             "10dan" => "Tenth Dan",
             "11dan" => "Kuroto",
             "12dan" => "Meijin",
@@ -155,11 +155,11 @@ public partial class DaniDojo
 
         if (!bestDataMap.ContainsKey(danId))
         {
-           return notClearIcon;
+            return notClearIcon;
         }
-        
+
         var state = bestDataMap[danId].ClearState;
-            
+
         icon = state is DanClearState.NotClear ? notClearIcon : $"<image href='/images/dani_{state}.png' width='24' height='24' />";
 
         return icon;
@@ -190,5 +190,40 @@ public partial class DaniDojo
         }
 
         return conditionOperator;
+    }
+
+    private static long GetTotalScore(uint danId)
+    {
+        return bestDataMap.ContainsKey(danId) ? bestDataMap[danId].DanBestStageDataList.Sum(stageData => stageData.HighScore) : 0;
+    }
+
+    private static long GetTotalGoodHits(uint danId)
+    {
+        return bestDataMap.ContainsKey(danId) ? bestDataMap[danId].DanBestStageDataList.Sum(stageData => stageData.GoodCount) : 0;
+    }
+
+    private static long GetTotalOkHits(uint danId)
+    {
+        return bestDataMap.ContainsKey(danId) ? bestDataMap[danId].DanBestStageDataList.Sum(stageData => stageData.OkCount) : 0;
+    }
+
+    private static long GetTotalBadHits(uint danId)
+    {
+        return bestDataMap.ContainsKey(danId) ? bestDataMap[danId].DanBestStageDataList.Sum(stageData => stageData.BadCount) : 0;
+    }
+
+    private static long GetTotalDrumrollHits(uint danId)
+    {
+        return bestDataMap.ContainsKey(danId) ? bestDataMap[danId].DanBestStageDataList.Sum(stageData => stageData.DrumrollCount) : 0;
+    }
+
+    private static long GetTotalMaxCombo(uint danId)
+    {
+        return bestDataMap.ContainsKey(danId) ? bestDataMap[danId].DanBestStageDataList.Sum(stageData => stageData.ComboCount) : 0;
+    }
+
+    private static long GetTotalHits(uint danId)
+    {
+        return bestDataMap.ContainsKey(danId) ? bestDataMap[danId].DanBestStageDataList.Sum(stageData => stageData.TotalHitCount) : 0;
     }
 }
