@@ -34,6 +34,7 @@
                                                 var danClearStateString = GetDanClearStateString(danResultState);
                                             }
                                             <img src=@($"/images/dani_{danResultState.ToString()}.png") style="max-width:150px; width:100%;" alt="danResultState.ToString()"/>
+                                            <MudText Typo="Typo.body1">@danClearStateString</MudText>
                                         </MudStack>
                                     </MudCardContent>
                                 </MudCard>
@@ -296,8 +297,11 @@
                                                                                 resultText = "Gold";
                                                                             }
 
-                                                                            <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="@redRequirement" Value="@(redRequirement - bestData)">
-                                                                                <MudText Typo="Typo.caption">@(redRequirement - bestData)</MudText>
+                                                                            var resultValue = redRequirement - bestData;
+                                                                            if (resultValue < 0) resultValue = 0;
+
+                                                                            <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="@redRequirement" Value="@resultValue">
+                                                                                <MudText Typo="Typo.caption">@resultValue</MudText>
                                                                             </MudProgressLinear>
                                                                             <MudText Typo="Typo.caption" Style="text-align: right">@resultText</MudText>
                                                                         } 
@@ -385,9 +389,11 @@
                                                                                     barClass = "bar-pass-gold";
                                                                                     resultText = "Gold";
                                                                                 }
+                                                                                var resultValue = redRequirement - bestData;
+                                                                                if (resultValue < 0) resultValue = 0;
 
-                                                                                <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="@redRequirement" Value="@(redRequirement - bestData)">
-                                                                                    <MudText Typo="Typo.caption">@(redRequirement - bestData)</MudText>
+                                                                                <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="@redRequirement" Value="@resultValue">
+                                                                                    <MudText Typo="Typo.caption">@resultValue</MudText>
                                                                                 </MudProgressLinear>
                                                                                 <MudText Typo="Typo.caption" Style="text-align: right">@resultText</MudText>
                                                                             }
