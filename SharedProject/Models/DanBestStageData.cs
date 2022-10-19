@@ -17,4 +17,6 @@ public class DanBestStageData
     public uint TotalHitCount { get; set; }
     
     public uint ComboCount { get; set; }
+
+    public uint HighScore { get; set; }
 }
