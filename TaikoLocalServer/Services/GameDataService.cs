@@ -1,8 +1,10 @@
 ﻿using System.Collections.Immutable;
 using System.Text.Json;
 using ICSharpCode.SharpZipLib.GZip;
+using Microsoft.Extensions.Options;
 using SharedProject.Models;
 using Swan.Mapping;
+using TaikoLocalServer.Settings;
 using Throw;
 
 namespace TaikoLocalServer.Services;
@@ -21,6 +23,13 @@ public class GameDataService : IGameDataService
     private List<uint> musics = new();
 
     private List<uint> musicsWithUra = new();
+    
+    private readonly DataSettings settings;
+
+    public GameDataService(IOptions<DataSettings> settings)
+    {
+        this.settings = settings.Value;
+    }
 
     public List<uint> GetMusicList()
     {
@@ -51,10 +60,11 @@ public class GameDataService : IGameDataService
     {
         var dataPath = PathHelper.GetDataPath();
         var musicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_FILE_NAME);
-        var danDataPath = Path.Combine(dataPath, Constants.DAN_DATA_FILE_NAME);
-        var songIntroDataPath = Path.Combine(dataPath, Constants.INTRO_DATA_FILE_NAME);
+        var compressedMusicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_COMPRESSED_FILE_NAME);
+        var danDataPath = Path.Combine(dataPath, settings.DanDataFileName);
+        var songIntroDataPath = Path.Combine(dataPath, settings.IntroDataFileName);
 
-        if (!File.Exists(musicAttributePath))
+        if (File.Exists(compressedMusicAttributePath))
         {
             TryDecompressMusicAttribute();
         }

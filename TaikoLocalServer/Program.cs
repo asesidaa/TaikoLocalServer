@@ -20,6 +20,17 @@ Log.Information("Server starting up...");
 try
 {
     var builder = WebApplication.CreateBuilder(args);
+    
+    builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
+    {
+        const string configurationsDirectory = "Configurations";
+        config.AddJsonFile($"{configurationsDirectory}/Kestrel.json", optional: true, reloadOnChange: false);
+        config.AddJsonFile($"{configurationsDirectory}/Logging.json", optional: false, reloadOnChange: false);
+        config.AddJsonFile($"{configurationsDirectory}/Database.json", optional: false, reloadOnChange: false);
+        config.AddJsonFile($"{configurationsDirectory}/ServerSettings.json", optional: false, reloadOnChange: false);
+        config.AddJsonFile($"{configurationsDirectory}/DataSettings.json", optional: true, reloadOnChange: false);
+    });
+    
     // Manually enable tls 1.0
     builder.WebHost.UseKestrel(kestrelOptions =>
     {
@@ -34,15 +45,14 @@ try
 
     if (builder.Configuration.GetValue<bool>("ServerSettings:EnableMoreSongs"))
     {
-        Log.Warning("Song limit expanded! Currently the game has issue loading crown/score rank and " +
-                    "probably more server related data for songs with id > 1599. " +
-                    "Also, the game can have random crashes because of that! Use at your own risk!");
+        Log.Warning("Song limit expanded! Use at your own risk!");
     }
 
     // Add services to the container.
     builder.Services.AddOptions();
     builder.Services.AddSingleton<IGameDataService, GameDataService>();
     builder.Services.Configure<ServerSettings>(builder.Configuration.GetSection(nameof(ServerSettings)));
+    builder.Services.Configure<DataSettings>(builder.Configuration.GetSection(nameof(DataSettings)));
     builder.Services.AddControllers().AddProtoBufNet();
     builder.Services.AddDbContext<TaikoDbContext>(option =>
     {
