@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using GameDatabase.Entities;
 
 namespace TaikoLocalServer.Common.Utils;
 

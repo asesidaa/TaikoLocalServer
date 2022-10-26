@@ -1,4 +1,6 @@
-﻿namespace TaikoLocalServer.Services.Interfaces;
+﻿using GameDatabase.Entities;
+
+namespace TaikoLocalServer.Services.Interfaces;
 
 public interface IDanScoreDatumService
 {

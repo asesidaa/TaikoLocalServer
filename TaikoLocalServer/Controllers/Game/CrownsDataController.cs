@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using TaikoLocalServer.Settings;
 
 namespace TaikoLocalServer.Controllers.Game;
