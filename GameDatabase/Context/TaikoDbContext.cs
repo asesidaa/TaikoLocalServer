@@ -26,6 +26,7 @@ namespace GameDatabase.Context
             {
                 return;
             }
+
             var path = Path.Combine(PathHelper.GetRootPath(), "taiko.db3");
             optionsBuilder.UseSqlite($"Data Source={path}");
         }
@@ -54,10 +55,10 @@ namespace GameDatabase.Context
 
                 entity.Property(e => e.Difficulty)
                     .HasConversion<uint>();
-                
+
                 entity.Property(e => e.BestCrown)
                     .HasConversion<uint>();
-                
+
                 entity.Property(e => e.BestScoreRank)
                     .HasConversion<uint>();
             });
@@ -75,13 +76,13 @@ namespace GameDatabase.Context
                     .HasPrincipalKey(p => p.Baid)
                     .HasForeignKey(d => d.Baid)
                     .OnDelete(DeleteBehavior.Cascade);
-                
+
                 entity.Property(e => e.Difficulty)
                     .HasConversion<uint>();
-                
+
                 entity.Property(e => e.ScoreRank)
                     .HasConversion<uint>();
-                
+
                 entity.Property(e => e.Crown)
                     .HasConversion<uint>();
             });
@@ -97,7 +98,7 @@ namespace GameDatabase.Context
                     .HasPrincipalKey(p => p.Baid)
                     .HasForeignKey(d => d.Baid)
                     .OnDelete(DeleteBehavior.Cascade);
-                
+
                 entity.Property(e => e.AchievementDisplayDifficulty)
                     .HasConversion<uint>();
             });

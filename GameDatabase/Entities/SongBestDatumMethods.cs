@@ -10,17 +10,17 @@ public partial class SongBestDatum
         {
             BestCrown = crown;
         }
-            
+
         if ((uint)BestScoreRank < scoreRank)
         {
-           BestScoreRank = (ScoreRank)scoreRank;
+            BestScoreRank = (ScoreRank)scoreRank;
         }
-            
+
         if (BestScore < playScore)
         {
             BestScore = playScore;
         }
-            
+
         if (BestRate < scoreRate)
         {
             BestRate = scoreRate;

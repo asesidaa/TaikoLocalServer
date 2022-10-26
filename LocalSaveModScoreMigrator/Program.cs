@@ -61,8 +61,8 @@ foreach (var playRecord in playRecordJson)
         SongId = songId
     };
     db.SongPlayData.Add(playLog);
-    
-    
+
+
     var best = new SongBestDatum
     {
         Baid = user.Baid,
