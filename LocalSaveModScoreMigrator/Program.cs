@@ -28,7 +28,7 @@ if (playRecordJson is null)
 
 Console.WriteLine(playRecordJson.First().SongId);
 
-var musicInfoJson = File.ReadAllText("musicinfo.json");
+var musicInfoJson = File.ReadAllText("wwwroot/musicinfo.json");
 var musicInfo = JsonSerializer.Deserialize<MusicInfo>(musicInfoJson);
 
 if (musicInfo is null)
