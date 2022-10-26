@@ -32,8 +32,8 @@ public partial class TaikoDbContext
 
             entity.HasOne(d => d.Parent)
                 .WithMany(p => p.DanStageScoreData)
-                .HasPrincipalKey(p => new {p.Baid, p.DanId})
-                .HasForeignKey(d => new {d.Baid, d.DanId})
+                .HasPrincipalKey(p => new { p.Baid, p.DanId })
+                .HasForeignKey(d => new { d.Baid, d.DanId })
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -47,16 +47,16 @@ public partial class TaikoDbContext
                 .HasForeignKey(d => d.Baid)
                 .OnDelete(DeleteBehavior.Cascade);
         });
-        
-        
+
+
         modelBuilder.Entity<AiSectionScoreDatum>(entity =>
         {
             entity.HasKey(e => new { e.Baid, e.SongId, e.Difficulty, e.SectionIndex });
 
             entity.HasOne(d => d.Parent)
                 .WithMany(p => p.AiSectionScoreData)
-                .HasPrincipalKey(p => new {p.Baid, p.SongId, p.Difficulty })
-                .HasForeignKey(d => new {d.Baid, d.SongId, d.Difficulty })
+                .HasPrincipalKey(p => new { p.Baid, p.SongId, p.Difficulty })
+                .HasForeignKey(d => new { d.Baid, d.SongId, d.Difficulty })
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }

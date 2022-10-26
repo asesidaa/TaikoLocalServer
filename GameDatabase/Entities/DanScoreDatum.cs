@@ -11,6 +11,6 @@ public class DanScoreDatum
     public uint ComboCountTotal { get; set; }
     public DanClearState ClearState { get; set; }
     public List<DanStageScoreDatum> DanStageScoreData { get; set; } = new();
-    
+
     public virtual Card? Ba { get; set; }
 }

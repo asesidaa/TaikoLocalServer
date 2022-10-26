@@ -10,7 +10,8 @@ public class DateTimeConverter : JsonConverter<DateTime>
     public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         Debug.Assert(typeToConvert == typeof(DateTime));
-        var dateTime = DateTime.ParseExact(reader.GetString() ?? string.Empty, "dd_MM_yy-HH_mm_ss", CultureInfo.InvariantCulture);
+        var dateTime = DateTime.ParseExact(reader.GetString() ?? string.Empty, "dd_MM_yy-HH_mm_ss",
+            CultureInfo.InvariantCulture);
         return dateTime;
     }
 
