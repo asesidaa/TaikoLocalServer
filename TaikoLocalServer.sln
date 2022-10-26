@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedProject", "SharedProj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaikoWebUI", "TaikoWebUI\TaikoWebUI.csproj", "{3F02C2B8-D970-4E8D-89AA-1B938DA6E2FE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameDatabase", "GameDatabase\GameDatabase.csproj", "{76F2B4D1-C05E-40F4-B577-095CA7DF0528}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalSaveModScoreMigrator", "LocalSaveModScoreMigrator\LocalSaveModScoreMigrator.csproj", "{72FAD857-4791-4925-8536-22FABD5976EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{3F02C2B8-D970-4E8D-89AA-1B938DA6E2FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F02C2B8-D970-4E8D-89AA-1B938DA6E2FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F02C2B8-D970-4E8D-89AA-1B938DA6E2FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76F2B4D1-C05E-40F4-B577-095CA7DF0528}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76F2B4D1-C05E-40F4-B577-095CA7DF0528}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76F2B4D1-C05E-40F4-B577-095CA7DF0528}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76F2B4D1-C05E-40F4-B577-095CA7DF0528}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72FAD857-4791-4925-8536-22FABD5976EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72FAD857-4791-4925-8536-22FABD5976EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72FAD857-4791-4925-8536-22FABD5976EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72FAD857-4791-4925-8536-22FABD5976EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

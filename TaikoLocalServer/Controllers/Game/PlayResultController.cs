@@ -1,6 +1,7 @@
 ﻿using System.Buffers.Binary;
 using System.Globalization;
 using System.Text.Json;
+using GameDatabase.Entities;
 using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;

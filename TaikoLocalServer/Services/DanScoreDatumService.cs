@@ -1,4 +1,7 @@
-﻿namespace TaikoLocalServer.Services;
+﻿using GameDatabase.Context;
+using GameDatabase.Entities;
+
+namespace TaikoLocalServer.Services;
 
 public class DanScoreDatumService : IDanScoreDatumService
 {

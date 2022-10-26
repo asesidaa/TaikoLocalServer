@@ -76,6 +76,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\GameDatabase\GameDatabase.csproj" />
       <ProjectReference Include="..\SharedProject\SharedProject.csproj" />
       <ProjectReference Include="..\TaikoWebUI\TaikoWebUI.csproj" />
     </ItemGroup>

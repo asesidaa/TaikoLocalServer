@@ -1,4 +1,6 @@
-﻿namespace TaikoLocalServer.Controllers.Game;
+﻿using GameDatabase.Entities;
+
+namespace TaikoLocalServer.Controllers.Game;
 
 [Route("/v12r03/chassis/mydonentry.php")]
 [ApiController]

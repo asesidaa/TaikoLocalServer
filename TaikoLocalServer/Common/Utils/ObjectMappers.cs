@@ -1,4 +1,5 @@
-﻿using Swan.Mapping;
+﻿using GameDatabase.Entities;
+using Swan.Mapping;
 
 namespace TaikoLocalServer.Common.Utils;
 

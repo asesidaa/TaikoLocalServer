@@ -1,4 +1,5 @@
-﻿using Throw;
+﻿using GameDatabase.Entities;
+using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
