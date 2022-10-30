@@ -48,19 +48,27 @@ var musicInfoArgument = new Argument<FileInfo?>(
     isDefault: true,
     parse: result => Parse(result, "wwwroot/data/musicinfo.json")
 );
+
+var baidArgument = new Argument<int>(
+    name: "--baid",
+    description: "Target card's baid, data will be imported to that card",
+    getDefaultValue: () => 1
+);
+
 rootCommand.Add(saveFileArgument);
 rootCommand.Add(dbFileArgument);
 rootCommand.Add(musicInfoArgument);
+rootCommand.Add(baidArgument);
 
-rootCommand.SetHandler((saveFile, dbFile, musicInfoFile) => Run(saveFile!, dbFile!, musicInfoFile!), 
-    saveFileArgument, dbFileArgument, musicInfoArgument);
+rootCommand.SetHandler((saveFile, dbFile, musicInfoFile, baid) => Run(saveFile!, dbFile!, musicInfoFile!, baid), 
+    saveFileArgument, dbFileArgument, musicInfoArgument, baidArgument);
 
 await rootCommand.InvokeAsync(args);
 
-void Run(FileSystemInfo saveFile, FileSystemInfo dbFile, FileSystemInfo musicInfoFile)
+void Run(FileSystemInfo saveFile, FileSystemInfo dbFile, FileSystemInfo musicInfoFile, int baid)
 {
     using var db = new TaikoDbContext(dbFile.FullName);
-    var card = db.Cards.First();
+    var card = db.Cards.First(card1 => card1.Baid == baid);
     Console.WriteLine(card.Baid);
     Console.WriteLine(card.AccessCode);
 
