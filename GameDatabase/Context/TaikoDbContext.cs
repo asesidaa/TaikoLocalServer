@@ -6,6 +6,7 @@ namespace GameDatabase.Context
 {
     public partial class TaikoDbContext : DbContext
     {
+        private string? dbFilePath;
         public TaikoDbContext()
         {
         }
@@ -13,6 +14,11 @@ namespace GameDatabase.Context
         public TaikoDbContext(DbContextOptions<TaikoDbContext> options)
             : base(options)
         {
+        }
+
+        public TaikoDbContext(string dbFilePath)
+        {
+            this.dbFilePath = dbFilePath;
         }
 
         public virtual DbSet<Card> Cards { get; set; } = null!;
@@ -28,6 +34,10 @@ namespace GameDatabase.Context
             }
 
             var path = Path.Combine(PathHelper.GetRootPath(), "taiko.db3");
+            if (dbFilePath is not null)
+            {
+                path = dbFilePath;
+            }
             optionsBuilder.UseSqlite($"Data Source={path}");
         }
 
