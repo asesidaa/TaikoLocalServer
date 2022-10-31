@@ -28,28 +28,28 @@ FileInfo? Parse(SymbolResult result, string defaultFileName)
     return null;
 }
 
-var saveFileArgument = new Argument<FileInfo?>(
+var saveFileArgument = new Option<FileInfo?>(
     name: "--save-file",
     description: "Path to the save file from local save mod",
     isDefault: true,
-    parse: result => Parse(result, "record_enso_p1.json")
+    parseArgument: result => Parse(result, "record_enso_p1.json")
 );
 
-var dbFileArgument = new Argument<FileInfo?>(
+var dbFileArgument = new Option<FileInfo?>(
     name: "--db-file-path",
     description: "Path to the database file for local server",
     isDefault: true,
-    parse: result => Parse(result, "wwwroot/taiko.db3")
+    parseArgument: result => Parse(result, "wwwroot/taiko.db3")
 );
 
-var musicInfoArgument = new Argument<FileInfo?>(
+var musicInfoArgument = new Option<FileInfo?>(
     name: "--music-info-file",
     description: "Path to the music info json/bin file",
     isDefault: true,
-    parse: result => Parse(result, "wwwroot/data/musicinfo.json")
+    parseArgument: result => Parse(result, "wwwroot/data/musicinfo.json")
 );
 
-var baidArgument = new Argument<int>(
+var baidArgument = new Option<int>(
     name: "--baid",
     description: "Target card's baid, data will be imported to that card",
     getDefaultValue: () => 1
