@@ -29,11 +29,12 @@ FileInfo? Parse(SymbolResult result, string defaultFileName)
 }
 
 var saveFileArgument = new Option<FileInfo?>(
-    name: "--save-file",
+    name: "--save-file-path",
     description: "Path to the save file from local save mod",
     isDefault: true,
     parseArgument: result => Parse(result, "record_enso_p1.json")
 );
+saveFileArgument.AddAlias("-s");
 
 var dbFileArgument = new Option<FileInfo?>(
     name: "--db-file-path",
@@ -41,19 +42,22 @@ var dbFileArgument = new Option<FileInfo?>(
     isDefault: true,
     parseArgument: result => Parse(result, "wwwroot/taiko.db3")
 );
+dbFileArgument.AddAlias("-db");
 
 var musicInfoArgument = new Option<FileInfo?>(
-    name: "--music-info-file",
+    name: "--musicinfo-file-path",
     description: "Path to the music info json/bin file",
     isDefault: true,
     parseArgument: result => Parse(result, "wwwroot/data/musicinfo.json")
 );
+musicInfoArgument.AddAlias("-m");
 
 var baidArgument = new Option<int>(
     name: "--baid",
     description: "Target card's baid, data will be imported to that card",
     getDefaultValue: () => 1
 );
+baidArgument.AddAlias("-b");
 
 rootCommand.Add(saveFileArgument);
 rootCommand.Add(dbFileArgument);
@@ -68,9 +72,21 @@ await rootCommand.InvokeAsync(args);
 void Run(FileSystemInfo saveFile, FileSystemInfo dbFile, FileSystemInfo musicInfoFile, int baid)
 {
     using var db = new TaikoDbContext(dbFile.FullName);
-    var card = db.Cards.First(card1 => card1.Baid == baid);
-    Console.WriteLine(card.Baid);
-    Console.WriteLine(card.AccessCode);
+    var card = db.Cards.FirstOrDefault(card1 => card1.Baid == baid);
+    if (card is null)
+    {
+        Console.ResetColor();
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.Error.WriteLine($"Card with baid {baid} does not exist!");
+        Console.ResetColor();
+        return;
+    }
+    
+    Console.ResetColor();
+    Console.ForegroundColor = ConsoleColor.Cyan;
+    Console.WriteLine($"Baid: {card.Baid}");
+    Console.WriteLine($"Access code: {card.AccessCode}");
+    Console.ResetColor();
 
     var localSaveJson = File.ReadAllText(saveFile.FullName);
     var options = new JsonSerializerOptions
@@ -116,12 +132,18 @@ void Run(FileSystemInfo saveFile, FileSystemInfo dbFile, FileSystemInfo musicInf
         var key = playRecord.SongId.Split("_")[1];
         if (!musicInfoMap.ContainsKey(key))
         {
+            Console.ResetColor();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"Key {key} does not exist!!!");
+            Console.ResetColor();
             continue;
         }
         var songId = musicInfoMap[key];
-        Console.WriteLine(songId);
-        Console.WriteLine(playRecord.DateTime);
+        Console.ResetColor();
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine($"Importing song with id: {songId}");
+        Console.WriteLine($"Song play time: {playRecord.DateTime}");
+        Console.ResetColor();
         var playLog = new SongPlayDatum
         {
             Baid = user.Baid,
