@@ -2,6 +2,7 @@
   "WebUiSettings": {
     "LoginRequired": true,
     "AdminUserName": "admin",
-    "AdminPassword": "admin"
+    "AdminPassword": "admin",
+    "OnlyAdmin": false
   }
 }

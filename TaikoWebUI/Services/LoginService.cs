@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using OneOf.Types;
 using TaikoWebUI.Settings;
 
 namespace TaikoWebUI.Services;
@@ -7,7 +8,13 @@ public class LoginService
 {
     private readonly string adminPassword;
     private readonly string adminUsername;
-
+    public bool LoginRequired { get; }
+    public bool IsLoggedIn { get; private set; }
+    public int Baid { get; private set; }
+    private int CardNum { get; set; }
+    public bool IsAdmin { get; private set; }
+    private bool OnlyAdmin { get; set; }
+    
     public LoginService(IOptions<WebUiSettings> settings)
     {
         IsLoggedIn = false;
@@ -18,13 +25,8 @@ public class LoginService
         adminUsername = webUiSettings.AdminUsername;
         adminPassword = webUiSettings.AdminPassword;
         LoginRequired = webUiSettings.LoginRequired;
+        OnlyAdmin = webUiSettings.OnlyAdmin;
     }
-
-    public bool LoginRequired { get; }
-    public bool IsLoggedIn { get; private set; }
-    public int Baid { get; private set; }
-    private int CardNum { get; set; }
-    public bool IsAdmin { get; private set; }
 
     public bool Login(string inputCardNum, string inputPassword, DashboardResponse response)
     {
@@ -37,7 +39,10 @@ public class LoginService
             return true;
         }
 
+        if (OnlyAdmin) return false;
+        
         if (!int.TryParse(inputCardNum, out var n) || n >= response.Users.Count) return false;
+        
         CardNum = n;
         Baid = n;
         IsLoggedIn = true;
