@@ -52,36 +52,6 @@ public class GameDataService : IGameDataService
         await Task.Run(() => InitializeTitles(dict));
     }
 
-    private async Task<T> GetData<T>(string dataBaseUrl, string fileBaseName) where T : notnull
-    {
-        T? data;
-        try
-        {
-            data = await client.GetFromJsonAsync<T>($"{dataBaseUrl}/data/{fileBaseName}.json");
-            data.ThrowIfNull();
-            return data;
-        }
-        catch (HttpRequestException e)
-        {
-            if (e.StatusCode != HttpStatusCode.NotFound)
-            {
-                throw;
-            }
-            await using var compressed = await client.GetStreamAsync($"{dataBaseUrl}/data/{fileBaseName}.bin");
-            await using var gZipInputStream = new GZipInputStream(compressed);
-            using var decompressed = new MemoryStream();
-            
-            // Decompress
-            await gZipInputStream.CopyToAsync(decompressed);
-
-            // Reset stream for reading
-            decompressed.Position = 0;
-            data = await JsonSerializer.DeserializeAsync<T>(decompressed);
-            data.ThrowIfNull();
-            return data;
-        }
-    }
-    
     public string GetMusicNameBySongId(uint songId)
     {
         return musicMap.TryGetValue(songId, out var musicDetail) ? musicDetail.SongName : string.Empty;
@@ -152,6 +122,33 @@ public class GameDataService : IGameDataService
         return titles;
     }
 
+    private async Task<T> GetData<T>(string dataBaseUrl, string fileBaseName) where T : notnull
+    {
+        T? data;
+        try
+        {
+            data = await client.GetFromJsonAsync<T>($"{dataBaseUrl}/data/{fileBaseName}.json");
+            data.ThrowIfNull();
+            return data;
+        }
+        catch (HttpRequestException e)
+        {
+            if (e.StatusCode != HttpStatusCode.NotFound) throw;
+            await using var compressed = await client.GetStreamAsync($"{dataBaseUrl}/data/{fileBaseName}.bin");
+            await using var gZipInputStream = new GZipInputStream(compressed);
+            using var decompressed = new MemoryStream();
+
+            // Decompress
+            await gZipInputStream.CopyToAsync(decompressed);
+
+            // Reset stream for reading
+            decompressed.Position = 0;
+            data = await JsonSerializer.DeserializeAsync<T>(decompressed);
+            data.ThrowIfNull();
+            return data;
+        }
+    }
+
     private void InitializeTitles(ImmutableDictionary<string, WordListEntry> dict)
     {
         var set = ImmutableHashSet.CreateBuilder<Title>();
@@ -161,7 +158,8 @@ public class GameDataService : IGameDataService
 
             var titleWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
 
-            set.Add(new Title{
+            set.Add(new Title
+            {
                 TitleName = titleWordlistItem.JapaneseText,
                 TitleId = i
             });
@@ -248,10 +246,7 @@ public class GameDataService : IGameDataService
         {
             var musicOrderEntry = musicOrder.Order[index];
             var songId = musicOrderEntry.SongId;
-            if (musicMap.ContainsKey(songId))
-            {
-                musicMap[songId].Index = index;
-            }
+            if (musicMap.ContainsKey(songId)) musicMap[songId].Index = index;
         }
     }
 }

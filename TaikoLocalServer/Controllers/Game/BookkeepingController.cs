@@ -13,9 +13,8 @@ public class BookkeepingController : BaseController<BookkeepingController>
         {
             Result = 1
         };
-        
+
 
         return Ok(response);
     }
-    
 }

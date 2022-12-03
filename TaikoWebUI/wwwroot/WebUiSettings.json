@@ -1,0 +1,7 @@
+{
+  "WebUiSettings": {
+    "LoginRequired": true,
+    "AdminUserName": "admin",
+    "AdminPassword": "admin"
+  }
+}

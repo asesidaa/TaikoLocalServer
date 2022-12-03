@@ -59,7 +59,7 @@ public class SongBestDatumService : ISongBestDatumService
             var lastPlayLog = songPlayDatums
                 .MaxBy(datum => datum.PlayTime);
             bestData.LastPlayTime = lastPlayLog!.PlayTime;
-            
+
             var bestLog = songPlayDatums
                 .MaxBy(datum => datum.Score);
             bestLog.CopyOnlyPropertiesTo(bestData,
@@ -72,11 +72,8 @@ public class SongBestDatumService : ISongBestDatumService
             );
 
             var aiSection = aiSectionBest.FirstOrDefault(datum => datum.Difficulty == bestData.Difficulty &&
-                                                         datum.SongId == bestData.SongId);
-            if (aiSection is null)
-            {
-                continue;
-            }
+                                                                  datum.SongId == bestData.SongId);
+            if (aiSection is null) continue;
 
             bestData.AiSectionBestData = aiSection.AiSectionScoreData
                 .Select(datum => datum.CopyPropertiesToNew<AiSectionBestData>()).ToList();

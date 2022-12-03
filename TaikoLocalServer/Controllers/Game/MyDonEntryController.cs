@@ -6,10 +6,9 @@ namespace TaikoLocalServer.Controllers.Game;
 [ApiController]
 public class MyDonEntryController : BaseController<MyDonEntryController>
 {
+    private readonly ICardService cardService;
     private readonly IUserDatumService userDatumService;
 
-    private readonly ICardService cardService;
-    
     public MyDonEntryController(IUserDatumService userDatumService, ICardService cardService)
     {
         this.userDatumService = userDatumService;

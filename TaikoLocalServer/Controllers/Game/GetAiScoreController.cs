@@ -28,10 +28,7 @@ public class GetAiScoreController : BaseController<GetAiScoreController>
         difficulty.Throw().IfOutOfRange();
 
         var aiData = await aiDatumService.GetSongAiScore(request.Baid, request.SongNo, difficulty);
-        if (aiData is null)
-        {
-            return Ok(response);
-        }
+        if (aiData is null) return Ok(response);
 
         for (var index = 0; index < aiData.AiSectionScoreData.Count; index++)
         {

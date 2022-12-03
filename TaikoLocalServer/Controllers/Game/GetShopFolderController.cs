@@ -16,7 +16,7 @@ public class GetShopFolderController : BaseController<GetShopFolderController>
             TokenId = 1,
             VerupNo = 2
         };
-        
+
         response.AryShopFolderDatas.Add(new GetShopFolderResponse.ShopFolderData
         {
             Price = 1,

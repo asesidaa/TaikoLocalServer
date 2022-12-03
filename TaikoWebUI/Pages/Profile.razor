@@ -2,213 +2,232 @@
 @inject HttpClient Client
 @inject IGameDataService GameDataService
 @inject IDialogService DialogService
+@inject LoginService LoginService
 
 <MudBreadcrumbs Items="breadcrumbs" Class="px-0"></MudBreadcrumbs>
 
 <h1>Profile</h1>
-<MudText Typo="Typo.caption">Card: @Baid</MudText>
+@if (LoginService.LoginRequired)
+{
+    <MudText Typo="Typo.caption">Card: @LoginService.GetCardNum()</MudText>
+}
+else
+{
+    <MudText Typo="Typo.caption">Card: @Baid</MudText>
+}
 
 @if (response is not null)
 {
-    <MudGrid Class="my-4 pb-10">
-    <MudItem xs="12" md="8">
-        <MudPaper Elevation="0" Outlined="true">
-            <MudTabs Rounded="true" Border="true" PanelClass="pa-8">
-                <MudTabPanel Text="Profile">
-                    <MudStack Spacing="4">
-                        <h2>Profile Options</h2>
+    @if (LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.Baid != Baid && !LoginService.IsAdmin)))
+    {
+        <MudItem xs="12">
+            <MudText Align="Align.Center" Class="my-8">
+                Please log in by clicking on "cards" tab first.
+            </MudText>
+        </MudItem>
+    }
+    else
+    {
+        <MudGrid Class="my-4 pb-10">
+            <MudItem xs="12" md="8">
+                <MudPaper Elevation="0" Outlined="true">
+                    <MudTabs Rounded="true" Border="true" PanelClass="pa-8">
+                        <MudTabPanel Text="Profile">
+                            <MudStack Spacing="4">
+                                <h2>Profile Options</h2>
 
-                        <MudTextField @bind-Value="@response.MyDonName" Label="Name"></MudTextField>
+                                <MudTextField @bind-Value="@response.MyDonName" Label="Name"></MudTextField>
 
-                        <MudGrid>
-                            <MudItem xs="12" md="8">
-                                <MudTextField @bind-Value="@response.Title" Label="Title"/>
-                                <MudButton Color="Color.Primary" Class="mt-1" Size="Size.Small" OnClick="@((e)=>OpenChooseTitleDialog())">
-                                    Select a Title
-                                </MudButton>
-                            </MudItem>
-                            <MudItem xs="12" md="4">
-                                <MudSelect @bind-Value="@response.TitlePlateId" Label="Title Plate">
-                                    @for (uint i = 0; i < 8; i++)
+                                <MudGrid>
+                                    <MudItem xs="12" md="8">
+                                        <MudTextField @bind-Value="@response.Title" Label="Title"/>
+                                        <MudButton Color="Color.Primary" Class="mt-1" Size="Size.Small" OnClick="@(e => OpenChooseTitleDialog())">
+                                            Select a Title
+                                        </MudButton>
+                                    </MudItem>
+                                    <MudItem xs="12" md="4">
+                                        <MudSelect @bind-Value="@response.TitlePlateId" Label="Title Plate">
+                                            @for (uint i = 0; i < 8; i++)
+                                            {
+                                                var index = i;
+                                                <MudSelectItem Value="@i">@TitlePlateStrings[index]</MudSelectItem>
+                                            }
+                                        </MudSelect>
+                                    </MudItem>
+                                </MudGrid>
+
+                                <MudSelect @bind-Value="@response.AchievementDisplayDifficulty"
+                                           Label="Achievement Panel Difficulty">
+                                    @foreach (var item in Enum.GetValues<Difficulty>())
                                     {
-                                        var index = i;
-                                        <MudSelectItem Value="@i">@TitlePlateStrings[index]</MudSelectItem>
+                                        <MudSelectItem Value="@item"/>
                                     }
                                 </MudSelect>
-                            </MudItem>
-                        </MudGrid>
 
-                        <MudSelect @bind-Value="@response.AchievementDisplayDifficulty"
-                                   Label="Achievement Panel Difficulty">
-                            @foreach (var item in Enum.GetValues<Difficulty>())
-                            {
-                                <MudSelectItem Value="@item"/>
-                            }
-                        </MudSelect>
+                                <MudSwitch @bind-Checked="@response.IsDisplayAchievement" Label="Display Achievement Panel" Color="Color.Primary"/>
+                                <MudSwitch @bind-Checked="@response.IsDisplayDanOnNamePlate" Label="Display Dan Rank on Name Plate" Color="Color.Primary"/>
+                            </MudStack>
+                        </MudTabPanel>
 
-                        <MudSwitch @bind-Checked="@response.IsDisplayAchievement" Label="Display Achievement Panel" Color="Color.Primary"/>
-                        <MudSwitch @bind-Checked="@response.IsDisplayDanOnNamePlate" Label="Display Dan Rank on Name Plate" Color="Color.Primary"/>
-                    </MudStack>
-                </MudTabPanel>
+                        <MudTabPanel Text="Costume">
+                            <MudStack Spacing="4">
+                                <h2>Costume Options</h2>
+                                <MudGrid>
+                                    <MudItem xs="12">
+                                        <MudStack Spacing="4" Class="mb-8">
+                                            <MudSelect @bind-Value="@response.Head" Label="Head">
+                                                @for (var i = 0; i < Constants.COSTUME_HEAD_MAX; i++)
+                                                {
+                                                    var index = (uint)i;
+                                                    var costumeTitle = GameDataService.GetHeadTitle(index);
+                                                    <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
+                                                }
+                                            </MudSelect>
 
-                <MudTabPanel Text="Costume">
-                    <MudStack Spacing="4">
-                        <h2>Costume Options</h2>
-                        <MudGrid>
-                            <MudItem xs="12">
-                                <MudStack Spacing="4" Class="mb-8">
-                                    <MudSelect @bind-Value="@response.Head" Label="Head">
-                                        @for (var i = 0; i < Constants.COSTUME_HEAD_MAX; i++)
-                                        {
-                                            var index = (uint)i;
-                                            var costumeTitle = GameDataService.GetHeadTitle(index);
-                                            <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
-                                        }
-                                    </MudSelect>
+                                            <MudSelect @bind-Value="@response.Body" Label="Body">
+                                                @for (var i = 0; i < Constants.COSTUME_BODY_MAX; i++)
+                                                {
+                                                    var index = (uint)i;
+                                                    var costumeTitle = GameDataService.GetBodyTitle(index);
+                                                    <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
+                                                }
+                                            </MudSelect>
 
-                                    <MudSelect @bind-Value="@response.Body" Label="Body">
-                                        @for (var i = 0; i < Constants.COSTUME_BODY_MAX; i++)
-                                        {
-                                            var index = (uint)i;
-                                            var costumeTitle = GameDataService.GetBodyTitle(index);
-                                            <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
-                                        }
-                                    </MudSelect>
+                                            <MudSelect @bind-Value="@response.Face" Label="Face">
+                                                @for (var i = 0; i < Constants.COSTUME_FACE_MAX; i++)
+                                                {
+                                                    var index = (uint)i;
+                                                    var costumeTitle = GameDataService.GetFaceTitle(index);
+                                                    <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
+                                                }
+                                            </MudSelect>
 
-                                    <MudSelect @bind-Value="@response.Face" Label="Face">
-                                        @for (var i = 0; i < Constants.COSTUME_FACE_MAX; i++)
-                                        {
-                                            var index = (uint)i;
-                                            var costumeTitle = GameDataService.GetFaceTitle(index);
-                                            <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
-                                        }
-                                    </MudSelect>
+                                            <MudSelect @bind-Value="@response.Kigurumi" Label="Kigurumi">
+                                                @for (var i = 0; i < Constants.COSTUME_KIGURUMI_MAX; i++)
+                                                {
+                                                    var index = (uint)i;
+                                                    var costumeTitle = GameDataService.GetKigurumiTitle(index);
+                                                    <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
+                                                }
+                                            </MudSelect>
 
-                                    <MudSelect @bind-Value="@response.Kigurumi" Label="Kigurumi">
-                                        @for (var i = 0; i < Constants.COSTUME_KIGURUMI_MAX; i++)
-                                        {
-                                            var index = (uint)i;
-                                            var costumeTitle = GameDataService.GetKigurumiTitle(index);
-                                            <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
-                                        }
-                                    </MudSelect>
+                                            <MudSelect @bind-Value="@response.Puchi" Label="Puchi">
+                                                @for (var i = 0; i < Constants.COSTUME_PUCHI_MAX; i++)
+                                                {
+                                                    var index = (uint)i;
+                                                    var costumeTitle = GameDataService.GetPuchiTitle(index);
+                                                    <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
+                                                }
+                                            </MudSelect>
+                                        </MudStack>
 
-                                    <MudSelect @bind-Value="@response.Puchi" Label="Puchi">
-                                        @for (var i = 0; i < Constants.COSTUME_PUCHI_MAX; i++)
-                                        {
-                                            var index = (uint)i;
-                                            var costumeTitle = GameDataService.GetPuchiTitle(index);
-                                            <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
-                                        }
-                                    </MudSelect>
-                                </MudStack>
+                                        <MudStack Row="true">
+                                            <MudSelect @bind-Value="@response.BodyColor" Label="Body Color">
+                                                @for (uint i = 0; i < Constants.COSTUME_COLOR_MAX; i++)
+                                                {
+                                                    var index = i;
+                                                    <MudSelectItem Value="@index">
+                                                        <div class="color-box" style=@($"background: {CostumeColors[index]}")></div>
+                                                        @index
+                                                    </MudSelectItem>
+                                                }
+                                            </MudSelect>
+                                            <MudSelect @bind-Value="@response.FaceColor" Label="Face Color">
+                                                @for (uint i = 0; i < Constants.COSTUME_COLOR_MAX; i++)
+                                                {
+                                                    var index = i;
+                                                    <MudSelectItem Value="@index">
+                                                        <div class="color-box" style=@($"background: {CostumeColors[index]}")></div>
+                                                        @index
+                                                    </MudSelectItem>
+                                                }
+                                            </MudSelect>
+                                            <MudSelect @bind-Value="@response.LimbColor" Label="Limb Color">
+                                                @for (uint i = 0; i < Constants.COSTUME_COLOR_MAX; i++)
+                                                {
+                                                    var index = i;
+                                                    <MudSelectItem Value="@index">
+                                                        <div class="color-box" style=@($"background: {CostumeColors[index]}")></div>
+                                                        @index
+                                                    </MudSelectItem>
+                                                }
+                                            </MudSelect>
+                                        </MudStack>
+                                    </MudItem>
+                                </MudGrid>
+                            </MudStack>
+                        </MudTabPanel>
 
-                                <MudStack Row="true">
-                                    <MudSelect @bind-Value="@response.BodyColor" Label="Body Color">
-                                        @for (uint i = 0; i < Constants.COSTUME_COLOR_MAX; i++)
-                                        {
-                                            var index = i;
-                                            <MudSelectItem Value="@index">
-                                                <div class="color-box" style=@($"background: {CostumeColors[index]}")></div>
-                                                @index
-                                            </MudSelectItem>
-                                        }
-                                    </MudSelect>
-                                    <MudSelect @bind-Value="@response.FaceColor" Label="Face Color">
-                                        @for (uint i = 0; i < Constants.COSTUME_COLOR_MAX; i++)
-                                        {
-                                            var index = i;
-                                            <MudSelectItem Value="@index">
-                                                <div class="color-box" style=@($"background: {CostumeColors[index]}")></div>
-                                                @index
-                                            </MudSelectItem>
-                                        }
-                                    </MudSelect>
-                                    <MudSelect @bind-Value="@response.LimbColor" Label="Limb Color">
-                                        @for (uint i = 0; i < Constants.COSTUME_COLOR_MAX; i++)
-                                        {
-                                            var index = i;
-                                            <MudSelectItem Value="@index">
-                                                <div class="color-box" style=@($"background: {CostumeColors[index]}")></div>
-                                                @index
-                                            </MudSelectItem>
-                                        }
-                                    </MudSelect>
-                                </MudStack>
-                            </MudItem>
-                        </MudGrid>
-                    </MudStack>
-                </MudTabPanel>
+                        <MudTabPanel Text="Song Options">
+                            <MudStack Spacing="4">
+                                <h2>Song Options</h2>
+                                <MudGrid>
+                                    <MudItem xs="12" md="4">
+                                        <MudStack Spacing="4">
+                                            <MudSwitch @bind-Checked="@response.PlaySetting.IsVanishOn" Label="Vanish" Color="Color.Primary"/>
+                                            <MudSwitch @bind-Checked="@response.PlaySetting.IsInverseOn" Label="Inverse" Color="Color.Primary"/>
+                                            <MudSwitch @bind-Checked="@response.IsSkipOn" Label="Give Up" Color="Color.Primary"/>
+                                            <MudSwitch @bind-Checked="@response.IsVoiceOn" Label="Voice" Color="Color.Primary"/>
+                                        </MudStack>
+                                    </MudItem>
+                                    <MudItem xs="12" md="8">
+                                        <MudStack Spacing="4">
+                                            <MudSelect @bind-Value="@response.PlaySetting.Speed" Label="Speed">
+                                                @for (uint i = 0; i < 15; i++)
+                                                {
+                                                    var index = i;
+                                                    <MudSelectItem Value="@i">@SpeedStrings[index]</MudSelectItem>
+                                                }
+                                            </MudSelect>
 
-                <MudTabPanel Text="Song Options">
-                    <MudStack Spacing="4">
-                        <h2>Song Options</h2>
-                        <MudGrid>
-                            <MudItem xs="12" md="4">
-                                <MudStack Spacing="4">
-                                    <MudSwitch @bind-Checked="@response.PlaySetting.IsVanishOn" Label="Vanish" Color="Color.Primary"/>
-                                    <MudSwitch @bind-Checked="@response.PlaySetting.IsInverseOn" Label="Inverse" Color="Color.Primary"/>
-                                    <MudSwitch @bind-Checked="@response.IsSkipOn" Label="Give Up" Color="Color.Primary"/>
-                                    <MudSwitch @bind-Checked="@response.IsVoiceOn" Label="Voice" Color="Color.Primary"/>
-                                </MudStack>
-                            </MudItem>
-                            <MudItem xs="12" md="8">
-                                <MudStack Spacing="4">
-                                    <MudSelect @bind-Value="@response.PlaySetting.Speed" Label="Speed">
-                                        @for (uint i = 0; i < 15; i++)
-                                        {
-                                            var index = i;
-                                            <MudSelectItem Value="@i">@SpeedStrings[index]</MudSelectItem>
-                                        }
-                                    </MudSelect>
+                                            <MudSelect @bind-Value="@response.PlaySetting.RandomType"
+                                                       Label="Random">
+                                                @foreach (var item in Enum.GetValues<RandomType>())
+                                                {
+                                                    <MudSelectItem Value="@item"/>
+                                                }
+                                            </MudSelect>
 
-                                    <MudSelect @bind-Value="@response.PlaySetting.RandomType"
-                                               Label="Random">
-                                        @foreach (var item in Enum.GetValues<RandomType>())
-                                        {
-                                            <MudSelectItem Value="@item"/>
-                                        }
-                                    </MudSelect>
+                                            <MudSelect @bind-Value="@response.ToneId" Label="Tone">
+                                                @for (uint i = 0; i < 19; i++)
+                                                {
+                                                    var index = i;
+                                                    <MudSelectItem Value="@i">@ToneStrings[index]</MudSelectItem>
+                                                }
+                                            </MudSelect>
 
-                                    <MudSelect @bind-Value="@response.ToneId" Label="Tone">
-                                        @for (uint i = 0; i < 19; i++)
-                                        {
-                                            var index = i;
-                                            <MudSelectItem Value="@i">@ToneStrings[index]</MudSelectItem>
-                                        }
-                                    </MudSelect>
+                                            <MudSlider Class="mb-8" @bind-Value="@response.NotesPosition" Size="Size.Medium" Min="-5" Max="5" Step="1" TickMarks="true" TickMarkLabels="@NotePositionStrings">
+                                                <MudText Typo="Typo.caption">Notes Position</MudText>
+                                            </MudSlider>
+                                        </MudStack>
+                                    </MudItem>
+                                </MudGrid>
+                            </MudStack>
+                        </MudTabPanel>
+                    </MudTabs>
+                </MudPaper>
+            </MudItem>
 
-                                    <MudSlider Class="mb-8" @bind-Value="@response.NotesPosition" Size="Size.Medium" Min="-5" Max="5" Step="1" TickMarks="true" TickMarkLabels="@NotePositionStrings">
-                                        <MudText Typo="Typo.caption">Notes Position</MudText>
-                                    </MudSlider>
-                                </MudStack>
-                            </MudItem>
-                        </MudGrid>
-                    </MudStack>
-                </MudTabPanel>
-            </MudTabs>
-        </MudPaper>
-    </MudItem>
+            <MudItem md="4" xs="12" Class="py-4 px-8">
+                <MudStack Style="top:100px" Class="sticky">
+                    <MudButton Disabled="@isSavingOptions"
+                               OnClick="SaveOptions"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary">
+                        @if (isSavingOptions)
+                        {
+                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+                            <MudText Class="ms-2">Saving...</MudText>
+                        }
+                        else
+                        {
+                            <MudIcon Icon="@Icons.Filled.Save" Class="mx-2"></MudIcon>
+                            <MudText>Save</MudText>
+                        }
+                    </MudButton>
+                </MudStack>
 
-    <MudItem md="4" xs="12" Class="py-4 px-8">
-        <MudStack Style="top:100px" Class="sticky">
-            <MudButton Disabled="@isSavingOptions"
-                       OnClick="SaveOptions"
-                       Variant="Variant.Filled"
-                       Color="Color.Primary">
-                @if (isSavingOptions)
-                {
-                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
-                    <MudText Class="ms-2">Saving...</MudText>
-                }
-                else
-                {
-                    <MudIcon Icon="@Icons.Filled.Save" Class="mx-2"></MudIcon>
-                    <MudText>Save</MudText>
-                }
-            </MudButton>
-        </MudStack>
-
-    </MudItem>
-    </MudGrid>
+            </MudItem>
+        </MudGrid>
+    }
 }

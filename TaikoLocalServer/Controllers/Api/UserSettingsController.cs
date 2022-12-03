@@ -20,10 +20,7 @@ public class UserSettingsController : BaseController<UserSettingsController>
     {
         var user = await userDatumService.GetFirstUserDatumOrNull(baid);
 
-        if (user is null)
-        {
-            return NotFound();
-        }
+        if (user is null) return NotFound();
 
         var costumeData = JsonHelper.GetCostumeDataFromUserData(user, Logger);
 
@@ -48,9 +45,9 @@ public class UserSettingsController : BaseController<UserSettingsController>
             Face = costumeData[3],
             Puchi = costumeData[4],
             UnlockedKigurumi = costumeUnlockData[0],
-            UnlockedHead  = costumeUnlockData[1],
-            UnlockedBody  = costumeUnlockData[2],
-            UnlockedFace  = costumeUnlockData[3],
+            UnlockedHead = costumeUnlockData[1],
+            UnlockedBody = costumeUnlockData[2],
+            UnlockedFace = costumeUnlockData[3],
             UnlockedPuchi = costumeUnlockData[4],
             BodyColor = user.ColorBody,
             FaceColor = user.ColorFace,
@@ -64,10 +61,7 @@ public class UserSettingsController : BaseController<UserSettingsController>
     {
         var user = await userDatumService.GetFirstUserDatumOrNull(baid);
 
-        if (user is null)
-        {
-            return NotFound();
-        }
+        if (user is null) return NotFound();
 
         var costumes = new List<uint>
         {
@@ -75,9 +69,9 @@ public class UserSettingsController : BaseController<UserSettingsController>
             userSetting.Head,
             userSetting.Body,
             userSetting.Face,
-            userSetting.Puchi,
+            userSetting.Puchi
         };
-        
+
         user.IsSkipOn = userSetting.IsSkipOn;
         user.IsVoiceOn = userSetting.IsVoiceOn;
         user.DisplayAchievement = userSetting.IsDisplayAchievement;
@@ -93,11 +87,10 @@ public class UserSettingsController : BaseController<UserSettingsController>
         user.ColorFace = userSetting.FaceColor;
         user.ColorLimb = userSetting.LimbColor;
         user.CostumeData = JsonSerializer.Serialize(costumes);
-        
+
 
         await userDatumService.UpdateUserDatum(user);
 
         return NoContent();
     }
-
 }

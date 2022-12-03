@@ -7,9 +7,8 @@ namespace TaikoLocalServer.Controllers.Game;
 [ApiController]
 public class CrownsDataController : BaseController<CrownsDataController>
 {
-    private readonly ISongBestDatumService songBestDatumService;
-
     private readonly ServerSettings settings;
+    private readonly ISongBestDatumService songBestDatumService;
 
     public CrownsDataController(ISongBestDatumService songBestDatumService, IOptions<ServerSettings> settings)
     {
@@ -24,7 +23,7 @@ public class CrownsDataController : BaseController<CrownsDataController>
         Logger.LogInformation("CrownsData request : {Request}", request.Stringify());
 
         var songBestData = await songBestDatumService.GetAllSongBestData(request.Baid);
-        
+
         var songIdMax = settings.EnableMoreSongs ? Constants.MUSIC_ID_MAX_EXPANDED : Constants.MUSIC_ID_MAX;
         var crown = new ushort[songIdMax + 1];
         var dondafulCrown = new byte[songIdMax + 1];
@@ -38,13 +37,14 @@ public class CrownsDataController : BaseController<CrownsDataController>
                                 datum.BestCrown == CrownType.Dondaful)
                 // Calculate flag according to difficulty
                 .Aggregate((byte)0, (flag, datum) => FlagCalculator.ComputeDondafulCrownFlag(flag, datum.Difficulty));
-            
+
             crown[songId] = songBestData
                 // Select song of this song id with clear or fc crown
                 .Where(datum => datum.SongId == id &&
                                 datum.BestCrown is CrownType.Clear or CrownType.Gold)
                 // Calculate flag according to difficulty
-                .Aggregate((ushort)0, (flag, datum) => FlagCalculator.ComputeCrownFlag(flag, datum.BestCrown, datum.Difficulty));
+                .Aggregate((ushort)0,
+                    (flag, datum) => FlagCalculator.ComputeCrownFlag(flag, datum.BestCrown, datum.Difficulty));
         }
 
         var response = new CrownsDataResponse

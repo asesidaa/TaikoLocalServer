@@ -21,7 +21,7 @@ public class GetSongIntroductionController : BaseController<GetSongIntroductionC
         {
             Result = 1
         };
-        
+
         foreach (var setId in request.SetIds)
         {
             gameDataService.GetSongIntroDictionary().TryGetValue(setId, out var introData);

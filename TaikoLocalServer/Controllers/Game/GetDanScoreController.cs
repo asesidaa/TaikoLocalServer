@@ -38,10 +38,8 @@ public class GetDanScoreController : BaseController<GetDanScoreController>
                 SoulGaugeTotal = datum.SoulGaugeTotal
             };
             foreach (var stageScoreDatum in datum.DanStageScoreData)
-            {
                 responseData.AryDanScoreDataStages.Add(ObjectMappers.DanStageDbToResponseMap.Apply(stageScoreDatum));
-            }
-            
+
             response.AryDanScoreDatas.Add(responseData);
         }
 

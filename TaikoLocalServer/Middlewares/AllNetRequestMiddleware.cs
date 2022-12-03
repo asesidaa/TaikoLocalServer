@@ -25,7 +25,7 @@ public class AllNetRequestMiddleware
             await next(context);
             return;
         }
-        
+
         context.Request.EnableBuffering();
         var bodyAsText = await new StreamReader(context.Request.Body).ReadToEndAsync();
         var compressed = Convert.FromBase64String(bodyAsText);
@@ -37,7 +37,7 @@ public class AllNetRequestMiddleware
         // Call the next delegate/middleware in the pipeline.
         await next(context);
     }
-    
+
     private static Stream Decompress(byte[] data)
     {
         var outputStream = new MemoryStream();

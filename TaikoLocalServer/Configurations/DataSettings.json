@@ -1,7 +1,7 @@
 {
-  "DataSettings" : {
-    "DanDataFileName" : "dan_data.json",
-    "EventDataFileName" : "event_data.json",
-    "IntroDataFileName" : "intro_data.json"
-  } 
+  "DataSettings": {
+    "DanDataFileName": "dan_data.json",
+    "EventDataFileName": "event_data.json",
+    "IntroDataFileName": "intro_data.json"
+  }
 }

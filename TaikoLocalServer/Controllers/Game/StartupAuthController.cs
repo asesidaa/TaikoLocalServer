@@ -16,11 +16,11 @@ public class StartupAuthController : BaseController<StartupAuthController>
             Result = 1
         };
         var info = request.AryOperationInfoes.ConvertAll(input =>
-                                                             new StartupAuthResponse.OperationData
-                                                             {
-                                                                 KeyData = input.KeyData,
-                                                                 ValueData = input.ValueData
-                                                             });
+            new StartupAuthResponse.OperationData
+            {
+                KeyData = input.KeyData,
+                ValueData = input.ValueData
+            });
         response.AryOperationInfoes.AddRange(info);
 
         return Ok(response);

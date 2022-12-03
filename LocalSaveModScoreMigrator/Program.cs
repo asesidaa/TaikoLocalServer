@@ -13,23 +13,17 @@ var rootCommand = new RootCommand("Command-line tool to migrate saves from local
 
 FileInfo? Parse(SymbolResult result, string defaultFileName)
 {
-    if (result.Tokens.Count == 0)
-    {
-        return new FileInfo(defaultFileName);
-    }
+    if (result.Tokens.Count == 0) return new FileInfo(defaultFileName);
 
     var filePath = result.Tokens.Single().Value;
-    if (File.Exists(filePath))
-    {
-        return new FileInfo(filePath);
-    }
+    if (File.Exists(filePath)) return new FileInfo(filePath);
 
     result.ErrorMessage = $"File {filePath} does not exist";
     return null;
 }
 
 var saveFileArgument = new Option<FileInfo?>(
-    name: "--save-file-path",
+    "--save-file-path",
     description: "Path to the save file from local save mod",
     isDefault: true,
     parseArgument: result => Parse(result, "record_enso_p1.json")
@@ -37,7 +31,7 @@ var saveFileArgument = new Option<FileInfo?>(
 saveFileArgument.AddAlias("-s");
 
 var dbFileArgument = new Option<FileInfo?>(
-    name: "--db-file-path",
+    "--db-file-path",
     description: "Path to the database file for local server",
     isDefault: true,
     parseArgument: result => Parse(result, "wwwroot/taiko.db3")
@@ -45,7 +39,7 @@ var dbFileArgument = new Option<FileInfo?>(
 dbFileArgument.AddAlias("-db");
 
 var musicInfoArgument = new Option<FileInfo?>(
-    name: "--musicinfo-file-path",
+    "--musicinfo-file-path",
     description: "Path to the music info json/bin file",
     isDefault: true,
     parseArgument: result => Parse(result, "wwwroot/data/musicinfo.json")
@@ -53,7 +47,7 @@ var musicInfoArgument = new Option<FileInfo?>(
 musicInfoArgument.AddAlias("-m");
 
 var baidArgument = new Option<int>(
-    name: "--baid",
+    "--baid",
     description: "Target card's baid, data will be imported to that card",
     getDefaultValue: () => 1
 );
@@ -64,7 +58,7 @@ rootCommand.Add(dbFileArgument);
 rootCommand.Add(musicInfoArgument);
 rootCommand.Add(baidArgument);
 
-rootCommand.SetHandler((saveFile, dbFile, musicInfoFile, baid) => Run(saveFile!, dbFile!, musicInfoFile!, baid), 
+rootCommand.SetHandler((saveFile, dbFile, musicInfoFile, baid) => Run(saveFile!, dbFile!, musicInfoFile!, baid),
     saveFileArgument, dbFileArgument, musicInfoArgument, baidArgument);
 
 await rootCommand.InvokeAsync(args);
@@ -81,7 +75,7 @@ void Run(FileSystemInfo saveFile, FileSystemInfo dbFile, FileSystemInfo musicInf
         Console.ResetColor();
         return;
     }
-    
+
     Console.ResetColor();
     Console.ForegroundColor = ConsoleColor.Cyan;
     Console.WriteLine($"Baid: {card.Baid}");
@@ -96,20 +90,17 @@ void Run(FileSystemInfo saveFile, FileSystemInfo dbFile, FileSystemInfo musicInf
     options.Converters.Add(new DateTimeConverter());
     options.Converters.Add(new ScoreRankConverter());
     var playRecordJson = JsonSerializer.Deserialize<List<PlayRecordJson>>(localSaveJson, options);
-    if (playRecordJson is null)
-    {
-        throw new ApplicationException("Play record json is null");
-    }
+    if (playRecordJson is null) throw new ApplicationException("Play record json is null");
 
     Console.WriteLine(playRecordJson.First().SongId);
-    
+
     var musicInfoJson = File.ReadAllText(musicInfoFile.FullName);
     if (musicInfoFile.FullName.EndsWith(".bin"))
     {
         var compressed = File.OpenRead(musicInfoFile.FullName);
         using var gZipInputStream = new GZipInputStream(compressed);
         using var decompressed = new MemoryStream();
-            
+
         // Decompress
         gZipInputStream.CopyTo(decompressed);
 
@@ -117,12 +108,10 @@ void Run(FileSystemInfo saveFile, FileSystemInfo dbFile, FileSystemInfo musicInf
         decompressed.Position = 0;
         musicInfoJson = Encoding.UTF8.GetString(decompressed.ToArray());
     }
+
     var musicInfo = JsonSerializer.Deserialize<MusicInfo>(musicInfoJson);
 
-    if (musicInfo is null)
-    {
-        throw new ApplicationException("Music info is null");
-    }
+    if (musicInfo is null) throw new ApplicationException("Music info is null");
 
     var user = db.UserData.First();
     var musicInfoMap = musicInfo.Items.DistinctBy(entry => entry.Id)
@@ -138,6 +127,7 @@ void Run(FileSystemInfo saveFile, FileSystemInfo dbFile, FileSystemInfo musicInf
             Console.ResetColor();
             continue;
         }
+
         var songId = musicInfoMap[key];
         Console.ResetColor();
         Console.ForegroundColor = ConsoleColor.Cyan;

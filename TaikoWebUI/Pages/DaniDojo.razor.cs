@@ -2,17 +2,16 @@
 
 public partial class DaniDojo
 {
-    [Parameter]
-    public int Baid { get; set; }
-
-    private DanBestDataResponse? response;
-
     private static Dictionary<uint, DanBestData> bestDataMap = new();
 
     private readonly List<BreadcrumbItem> breadcrumbs = new()
     {
-        new BreadcrumbItem("Cards", href: "/Cards"),
+        new BreadcrumbItem("Cards", "/Cards")
     };
+
+    private DanBestDataResponse? response;
+
+    [Parameter] public int Baid { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -23,8 +22,8 @@ public partial class DaniDojo
             .Sort((stageData, otherStageData) => stageData.SongNumber.CompareTo(otherStageData.SongNumber)));
         bestDataMap = response.DanBestDataList.ToDictionary(data => data.DanId);
 
-        breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
-        breadcrumbs.Add(new BreadcrumbItem("Dani Dojo", href: $"/Cards/{Baid}/DaniDojo", disabled: false));
+        breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", null, true));
+        breadcrumbs.Add(new BreadcrumbItem("Dani Dojo", $"/Cards/{Baid}/DaniDojo"));
     }
 
     private static string GetDanClearStateString(DanClearState danClearState)
@@ -101,7 +100,6 @@ public partial class DaniDojo
     private static uint GetSongBorderCondition(DanData.OdaiBorder data, int songNumber, bool isGold)
     {
         if (!isGold)
-        {
             return songNumber switch
             {
                 0 => data.RedBorder1,
@@ -109,7 +107,6 @@ public partial class DaniDojo
                 2 => data.RedBorder3,
                 _ => 0
             };
-        }
 
         return songNumber switch
         {
@@ -151,16 +148,16 @@ public partial class DaniDojo
     private string GetDanResultIcon(uint danId)
     {
         string icon;
-        const string notClearIcon = "<image href='/images/dani_NotClear.png' width='24' height='24' style='filter: contrast(0.65)'/>";
+        const string notClearIcon =
+            "<image href='/images/dani_NotClear.png' width='24' height='24' style='filter: contrast(0.65)'/>";
 
-        if (!bestDataMap.ContainsKey(danId))
-        {
-            return notClearIcon;
-        }
+        if (!bestDataMap.ContainsKey(danId)) return notClearIcon;
 
         var state = bestDataMap[danId].ClearState;
 
-        icon = state is DanClearState.NotClear ? notClearIcon : $"<image href='/images/dani_{state}.png' width='24' height='24' />";
+        icon = state is DanClearState.NotClear
+            ? notClearIcon
+            : $"<image href='/images/dani_{state}.png' width='24' height='24' />";
 
         return icon;
     }
@@ -184,46 +181,57 @@ public partial class DaniDojo
     {
         var conditionOperator = ">";
 
-        if (type is DanConditionType.BadCount or DanConditionType.OkCount)
-        {
-            conditionOperator = "<";
-        }
+        if (type is DanConditionType.BadCount or DanConditionType.OkCount) conditionOperator = "<";
 
         return conditionOperator;
     }
 
     private static long GetTotalScore(uint danId)
     {
-        return bestDataMap.ContainsKey(danId) ? bestDataMap[danId].DanBestStageDataList.Sum(stageData => stageData.HighScore) : 0;
+        return bestDataMap.ContainsKey(danId)
+            ? bestDataMap[danId].DanBestStageDataList.Sum(stageData => stageData.HighScore)
+            : 0;
     }
 
     private static long GetTotalGoodHits(uint danId)
     {
-        return bestDataMap.ContainsKey(danId) ? bestDataMap[danId].DanBestStageDataList.Sum(stageData => stageData.GoodCount) : 0;
+        return bestDataMap.ContainsKey(danId)
+            ? bestDataMap[danId].DanBestStageDataList.Sum(stageData => stageData.GoodCount)
+            : 0;
     }
 
     private static long GetTotalOkHits(uint danId)
     {
-        return bestDataMap.ContainsKey(danId) ? bestDataMap[danId].DanBestStageDataList.Sum(stageData => stageData.OkCount) : 0;
+        return bestDataMap.ContainsKey(danId)
+            ? bestDataMap[danId].DanBestStageDataList.Sum(stageData => stageData.OkCount)
+            : 0;
     }
 
     private static long GetTotalBadHits(uint danId)
     {
-        return bestDataMap.ContainsKey(danId) ? bestDataMap[danId].DanBestStageDataList.Sum(stageData => stageData.BadCount) : 0;
+        return bestDataMap.ContainsKey(danId)
+            ? bestDataMap[danId].DanBestStageDataList.Sum(stageData => stageData.BadCount)
+            : 0;
     }
 
     private static long GetTotalDrumrollHits(uint danId)
     {
-        return bestDataMap.ContainsKey(danId) ? bestDataMap[danId].DanBestStageDataList.Sum(stageData => stageData.DrumrollCount) : 0;
+        return bestDataMap.ContainsKey(danId)
+            ? bestDataMap[danId].DanBestStageDataList.Sum(stageData => stageData.DrumrollCount)
+            : 0;
     }
 
     private static long GetTotalMaxCombo(uint danId)
     {
-        return bestDataMap.ContainsKey(danId) ? bestDataMap[danId].DanBestStageDataList.Sum(stageData => stageData.ComboCount) : 0;
+        return bestDataMap.ContainsKey(danId)
+            ? bestDataMap[danId].DanBestStageDataList.Sum(stageData => stageData.ComboCount)
+            : 0;
     }
 
     private static long GetTotalHits(uint danId)
     {
-        return bestDataMap.ContainsKey(danId) ? bestDataMap[danId].DanBestStageDataList.Sum(stageData => stageData.TotalHitCount) : 0;
+        return bestDataMap.ContainsKey(danId)
+            ? bestDataMap[danId].DanBestStageDataList.Sum(stageData => stageData.TotalHitCount)
+            : 0;
     }
 }

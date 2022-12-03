@@ -2,12 +2,12 @@ using System.Reflection;
 using System.Security.Authentication;
 using GameDatabase.Context;
 using Microsoft.AspNetCore.HttpOverrides;
+using Serilog;
+using SharedProject.Utils;
 using TaikoLocalServer.Middlewares;
 using TaikoLocalServer.Services.Extentions;
 using TaikoLocalServer.Settings;
 using Throw;
-using Serilog;
-using SharedProject.Utils;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -22,21 +22,21 @@ Log.Information("Server starting up...");
 try
 {
     var builder = WebApplication.CreateBuilder(args);
-    
+
     builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
     {
         const string configurationsDirectory = "Configurations";
-        config.AddJsonFile($"{configurationsDirectory}/Kestrel.json", optional: true, reloadOnChange: false);
-        config.AddJsonFile($"{configurationsDirectory}/Logging.json", optional: false, reloadOnChange: false);
-        config.AddJsonFile($"{configurationsDirectory}/Database.json", optional: false, reloadOnChange: false);
-        config.AddJsonFile($"{configurationsDirectory}/ServerSettings.json", optional: false, reloadOnChange: false);
-        config.AddJsonFile($"{configurationsDirectory}/DataSettings.json", optional: true, reloadOnChange: false);
+        config.AddJsonFile($"{configurationsDirectory}/Kestrel.json", true, false);
+        config.AddJsonFile($"{configurationsDirectory}/Logging.json", false, false);
+        config.AddJsonFile($"{configurationsDirectory}/Database.json", false, false);
+        config.AddJsonFile($"{configurationsDirectory}/ServerSettings.json", false, false);
+        config.AddJsonFile($"{configurationsDirectory}/DataSettings.json", true, false);
     });
-    
+
     // Manually enable tls 1.0
     builder.WebHost.UseKestrel(kestrelOptions =>
     {
-        kestrelOptions.ConfigureHttpsDefaults(options => 
+        kestrelOptions.ConfigureHttpsDefaults(options =>
             options.SslProtocols = SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Tls13);
     });
 
@@ -46,9 +46,7 @@ try
     });
 
     if (builder.Configuration.GetValue<bool>("ServerSettings:EnableMoreSongs"))
-    {
         Log.Warning("Song limit expanded! Use at your own risk!");
-    }
 
     // Add services to the container.
     builder.Services.AddOptions();
@@ -59,10 +57,7 @@ try
     builder.Services.AddDbContext<TaikoDbContext>(option =>
     {
         var dbName = builder.Configuration["DbFileName"];
-        if (string.IsNullOrEmpty(dbName))
-        {
-            dbName = Constants.DEFAULT_DB_NAME;
-        }
+        if (string.IsNullOrEmpty(dbName)) dbName = Constants.DEFAULT_DB_NAME;
 
         var path = Path.Combine(PathHelper.GetRootPath(), dbName);
         option.UseSqlite($"Data Source={path}");

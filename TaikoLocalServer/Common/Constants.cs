@@ -21,7 +21,7 @@ public static class Constants
     public const int MAX_DAN_ID = 19;
 
     public const int TONE_UID_MAX = 19;
-    
+
     public const int TITLE_UID_MAX = 814;
 
     private const int COSTUME_FLAG_1_ARRAY_SIZE = 154;
@@ -29,13 +29,13 @@ public static class Constants
     private const int COSTUME_FLAG_3_ARRAY_SIZE = 156;
     private const int COSTUME_FLAG_4_ARRAY_SIZE = 58;
     private const int COSTUME_FLAG_5_ARRAY_SIZE = 129;
-    public static readonly int[] CostumeFlagArraySizes = 
+
+    public static readonly int[] CostumeFlagArraySizes =
     {
-        COSTUME_FLAG_1_ARRAY_SIZE, 
-        COSTUME_FLAG_2_ARRAY_SIZE, 
-        COSTUME_FLAG_3_ARRAY_SIZE, 
-        COSTUME_FLAG_4_ARRAY_SIZE, 
+        COSTUME_FLAG_1_ARRAY_SIZE,
+        COSTUME_FLAG_2_ARRAY_SIZE,
+        COSTUME_FLAG_3_ARRAY_SIZE,
+        COSTUME_FLAG_4_ARRAY_SIZE,
         COSTUME_FLAG_5_ARRAY_SIZE
-        
     };
 }

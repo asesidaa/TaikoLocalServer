@@ -6,24 +6,22 @@ using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
-using StageData = PlayResultDataRequest.StageData;
-
 [Route("/v12r03/chassis/playresult.php")]
 [ApiController]
 public class PlayResultController : BaseController<PlayResultController>
 {
-    private readonly IUserDatumService userDatumService;
-
-    private readonly ISongPlayDatumService songPlayDatumService;
-
-    private readonly ISongBestDatumService songBestDatumService;
+    private readonly IAiDatumService aiDatumService;
 
     private readonly IDanScoreDatumService danScoreDatumService;
 
-    private readonly IAiDatumService aiDatumService;
+    private readonly ISongBestDatumService songBestDatumService;
+
+    private readonly ISongPlayDatumService songPlayDatumService;
+    private readonly IUserDatumService userDatumService;
 
     public PlayResultController(IUserDatumService userDatumService, ISongPlayDatumService songPlayDatumService,
-        ISongBestDatumService songBestDatumService, IDanScoreDatumService danScoreDatumService, IAiDatumService aiDatumService)
+        ISongBestDatumService songBestDatumService, IDanScoreDatumService danScoreDatumService,
+        IAiDatumService aiDatumService)
     {
         this.userDatumService = userDatumService;
         this.songPlayDatumService = songPlayDatumService;
@@ -49,10 +47,7 @@ public class PlayResultController : BaseController<PlayResultController>
         };
 
         // Fix issue caused by guest play, god knows why they send guest play data
-        if (request.BaidConf == 0)
-        {
-            return Ok(response);
-        }
+        if (request.BaidConf == 0) return Ok(response);
 
         if (await userDatumService.GetFirstUserDatumOrNull(request.BaidConf) is null)
         {
@@ -84,10 +79,7 @@ public class PlayResultController : BaseController<PlayResultController>
                 continue;
             }
 
-            if (playMode == PlayMode.AiBattle)
-            {
-                await UpdateAiBattleData(request, stageData);
-            }
+            if (playMode == PlayMode.AiBattle) await UpdateAiBattleData(request, stageData);
 
             await UpdateBestData(request, stageData, bestData);
 
@@ -150,14 +142,12 @@ public class PlayResultController : BaseController<PlayResultController>
             danStageData.BadCount = Math.Min(danStageData.BadCount, stageData.NgCnt);
 
             var index = danScoreData.DanStageScoreData.IndexOf(danStageData);
-            if (index == -1)
-            {
-                danScoreData.DanStageScoreData.Add(danStageData);
-            }
+            if (index == -1) danScoreData.DanStageScoreData.Add(danStageData);
         }
     }
 
-    private async Task UpdatePlayData(PlayResultRequest request, int songNumber, StageData stageData,
+    private async Task UpdatePlayData(PlayResultRequest request, int songNumber,
+        PlayResultDataRequest.StageData stageData,
         DateTime lastPlayDatetime)
     {
         var songPlayDatum = new SongPlayDatum
@@ -190,7 +180,7 @@ public class PlayResultController : BaseController<PlayResultController>
         userdata.ThrowIfNull($"User data is null! Baid: {request.BaidConf}");
 
         var playMode = (PlayMode)playResultData.PlayMode;
-        
+
         userdata.Title = playResultData.Title;
         userdata.TitlePlateId = playResultData.TitleplateId;
         var costumeData = new List<uint>
@@ -221,7 +211,8 @@ public class PlayResultController : BaseController<PlayResultController>
             UpdateJsonUintFlagArray(userdata.ToneFlgArray, playResultData.GetToneNoes, nameof(userdata.ToneFlgArray));
 
         userdata.TitleFlgArray =
-            UpdateJsonUintFlagArray(userdata.TitleFlgArray, playResultData.GetTitleNoes, nameof(userdata.TitleFlgArray));
+            UpdateJsonUintFlagArray(userdata.TitleFlgArray, playResultData.GetTitleNoes,
+                nameof(userdata.TitleFlgArray));
 
         userdata.CostumeFlgArray = UpdateJsonCostumeFlagArray(userdata.CostumeFlgArray,
             new[]
@@ -234,7 +225,8 @@ public class PlayResultController : BaseController<PlayResultController>
             });
 
         userdata.GenericInfoFlgArray =
-            UpdateJsonUintFlagArray(userdata.GenericInfoFlgArray, playResultData.GetGenericInfoNoes, nameof(userdata.GenericInfoFlgArray));
+            UpdateJsonUintFlagArray(userdata.GenericInfoFlgArray, playResultData.GetGenericInfoNoes,
+                nameof(userdata.GenericInfoFlgArray));
 
         userdata.AiWinCount += playResultData.AryStageInfoes.Count(data => data.IsWin);
         await userDatumService.UpdateUserDatum(userdata);
@@ -269,10 +261,7 @@ public class PlayResultController : BaseController<PlayResultController>
             Logger.LogError(e, "Parsing Costume flag json data failed");
         }
 
-        if (flgData is null)
-        {
-            flgData = new List<List<uint>>();
-        }
+        if (flgData is null) flgData = new List<List<uint>>();
 
         for (var index = 0; index < flgData.Count; index++)
         {
@@ -280,10 +269,7 @@ public class PlayResultController : BaseController<PlayResultController>
             subFlgData.AddRange(newValue?[index] ?? Array.Empty<uint>());
         }
 
-        if (flgData.Count >= 5)
-        {
-            return JsonSerializer.Serialize(flgData);
-        }
+        if (flgData.Count >= 5) return JsonSerializer.Serialize(flgData);
 
         Logger.LogWarning("Costume flag array count less than 5!");
         flgData = new List<List<uint>>
@@ -294,7 +280,7 @@ public class PlayResultController : BaseController<PlayResultController>
         return JsonSerializer.Serialize(flgData);
     }
 
-    private async Task UpdateBestData(PlayResultRequest request, StageData stageData,
+    private async Task UpdateBestData(PlayResultRequest request, PlayResultDataRequest.StageData stageData,
         IEnumerable<SongBestDatum> bestData)
     {
         var bestDatum = bestData
@@ -314,12 +300,12 @@ public class PlayResultController : BaseController<PlayResultController>
 
         await songBestDatumService.UpdateOrInsertSongBestDatum(bestDatum);
     }
-    
-    private async Task UpdateAiBattleData(PlayResultRequest request, StageData stageData)
+
+    private async Task UpdateAiBattleData(PlayResultRequest request, PlayResultDataRequest.StageData stageData)
     {
         var difficulty = (Difficulty)stageData.Level;
         difficulty.Throw().IfOutOfRange();
-        var existing = await aiDatumService.GetSongAiScore(request.BaidConf, 
+        var existing = await aiDatumService.GetSongAiScore(request.BaidConf,
             stageData.SongNo, difficulty);
 
         if (existing is null)
@@ -332,9 +318,7 @@ public class PlayResultController : BaseController<PlayResultController>
                 IsWin = stageData.IsWin
             };
             for (var index = 0; index < stageData.ArySectionDatas.Count; index++)
-            {
                 AddNewAiSectionScore(request, stageData, index, difficulty, aiScoreDatum);
-            }
 
             await aiDatumService.InsertSongAiScore(aiScoreDatum);
             return;
@@ -344,19 +328,16 @@ public class PlayResultController : BaseController<PlayResultController>
         {
             var sectionData = stageData.ArySectionDatas[index];
             if (index < existing.AiSectionScoreData.Count)
-            {
                 existing.AiSectionScoreData[index].UpdateBest(sectionData);
-            }
             else
-            {
-                AddNewAiSectionScore(request,stageData,index,difficulty,existing);
-            }
+                AddNewAiSectionScore(request, stageData, index, difficulty, existing);
         }
 
         await aiDatumService.UpdateSongAiScore(existing);
     }
 
-    private static void AddNewAiSectionScore(PlayResultRequest request, StageData stageData, int index, Difficulty difficulty,
+    private static void AddNewAiSectionScore(PlayResultRequest request, PlayResultDataRequest.StageData stageData,
+        int index, Difficulty difficulty,
         AiScoreDatum aiScoreDatum)
     {
         var sectionData = stageData.ArySectionDatas[index];
@@ -377,10 +358,7 @@ public class PlayResultController : BaseController<PlayResultController>
     private static CrownType PlayResultToCrown(uint playResult, uint okCount)
     {
         var crown = (CrownType)playResult;
-        if (crown == CrownType.Gold && okCount == 0)
-        {
-            crown = CrownType.Dondaful;
-        }
+        if (crown == CrownType.Gold && okCount == 0) crown = CrownType.Dondaful;
 
         return crown;
     }

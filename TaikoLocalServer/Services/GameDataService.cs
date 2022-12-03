@@ -12,20 +12,20 @@ namespace TaikoLocalServer.Services;
 
 public class GameDataService : IGameDataService
 {
-    private ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> danDataDictionary = 
+    private readonly DataSettings settings;
+
+    private ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> danDataDictionary =
         ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData>.Empty;
 
-    private ImmutableDictionary<uint, GetSongIntroductionResponse.SongIntroductionData> introDataDictionary = 
+    private ImmutableDictionary<uint, GetSongIntroductionResponse.SongIntroductionData> introDataDictionary =
         ImmutableDictionary<uint, GetSongIntroductionResponse.SongIntroductionData>.Empty;
-    
-    private ImmutableDictionary<uint, MusicAttributeEntry> musicAttributes = 
+
+    private ImmutableDictionary<uint, MusicAttributeEntry> musicAttributes =
         ImmutableDictionary<uint, MusicAttributeEntry>.Empty;
 
     private List<uint> musics = new();
 
     private List<uint> musicsWithUra = new();
-    
-    private readonly DataSettings settings;
 
     public GameDataService(IOptions<DataSettings> settings)
     {
@@ -65,10 +65,7 @@ public class GameDataService : IGameDataService
         var danDataPath = Path.Combine(dataPath, settings.DanDataFileName);
         var songIntroDataPath = Path.Combine(dataPath, settings.IntroDataFileName);
 
-        if (File.Exists(compressedMusicAttributePath))
-        {
-            TryDecompressMusicAttribute();
-        }
+        if (File.Exists(compressedMusicAttributePath)) TryDecompressMusicAttribute();
         await using var musicAttributeFile = File.OpenRead(musicAttributePath);
         await using var danDataFile = File.OpenRead(danDataPath);
         await using var songIntroDataFile = File.OpenRead(songIntroDataPath);
@@ -89,10 +86,10 @@ public class GameDataService : IGameDataService
         var dataPath = PathHelper.GetDataPath();
         var musicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_FILE_NAME);
         var compressedMusicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_COMPRESSED_FILE_NAME);
-        
+
         using var compressed = File.Open(compressedMusicAttributePath, FileMode.Open);
         using var output = File.Create(musicAttributePath);
-        
+
         GZip.Decompress(compressed, output, true);
     }
 
@@ -133,10 +130,12 @@ public class GameDataService : IGameDataService
             VerupNo = data.VerupNo
         };
 
-        var odaiSongs = data.OdaiSongList.Select(song => song.CopyPropertiesToNew<GetDanOdaiResponse.OdaiData.OdaiSong>());
+        var odaiSongs =
+            data.OdaiSongList.Select(song => song.CopyPropertiesToNew<GetDanOdaiResponse.OdaiData.OdaiSong>());
         responseOdaiData.AryOdaiSongs.AddRange(odaiSongs);
 
-        var odaiBorders = data.OdaiBorderList.Select(border => border.CopyPropertiesToNew<GetDanOdaiResponse.OdaiData.OdaiBorder>());
+        var odaiBorders =
+            data.OdaiBorderList.Select(border => border.CopyPropertiesToNew<GetDanOdaiResponse.OdaiData.OdaiBorder>());
         responseOdaiData.AryOdaiBorders.AddRange(odaiBorders);
 
         return responseOdaiData;

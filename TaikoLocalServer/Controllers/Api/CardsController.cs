@@ -18,5 +18,4 @@ public class CardsController : BaseController<CardsController>
 
         return result ? NoContent() : NotFound();
     }
-    
 }

@@ -3,7 +3,7 @@ using GameDatabase.Entities;
 
 namespace TaikoLocalServer.Services;
 
-class SongPlayDatumService : ISongPlayDatumService
+internal class SongPlayDatumService : ISongPlayDatumService
 {
     private readonly TaikoDbContext context;
 

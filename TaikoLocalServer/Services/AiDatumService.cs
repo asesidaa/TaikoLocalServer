@@ -41,10 +41,7 @@ public class AiDatumService : IAiDatumService
     public async Task InsertSongAiScore(AiScoreDatum datum)
     {
         var existing = await context.AiScoreData.FindAsync(datum.Baid, datum.SongId, datum.Difficulty);
-        if (existing is not null)
-        {
-            throw new ArgumentException("Ai score already exists!", nameof(datum));
-        }
+        if (existing is not null) throw new ArgumentException("Ai score already exists!", nameof(datum));
         context.AiScoreData.Add(datum);
         await context.SaveChangesAsync();
     }

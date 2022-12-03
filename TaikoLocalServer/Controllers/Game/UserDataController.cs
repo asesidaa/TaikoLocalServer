@@ -10,15 +10,14 @@ namespace TaikoLocalServer.Controllers.Game;
 [ApiController]
 public class UserDataController : BaseController<UserDataController>
 {
-    private readonly IUserDatumService userDatumService;
-
-    private readonly ISongPlayDatumService songPlayDatumService;
-
     private readonly IGameDataService gameDataService;
 
     private readonly ServerSettings settings;
-    
-    public UserDataController(IUserDatumService userDatumService, ISongPlayDatumService songPlayDatumService, 
+
+    private readonly ISongPlayDatumService songPlayDatumService;
+    private readonly IUserDatumService userDatumService;
+
+    public UserDataController(IUserDatumService userDatumService, ISongPlayDatumService songPlayDatumService,
         IGameDataService gameDataService, IOptions<ServerSettings> settings)
     {
         this.userDatumService = userDatumService;
@@ -80,16 +79,13 @@ public class UserDataController : BaseController<UserDataController>
             .ThenByDescending(datum => datum.SongNumber)
             .Select(datum => datum.SongId)
             .ToArray();
-        
+
         // Use custom implementation as distinctby cannot guarantee preserved element
         var recentSet = new OrderedSet<uint>();
         foreach (var id in recentSongs)
         {
             recentSet.Add(id);
-            if (recentSet.Count == 10)
-            {
-                break;
-            }
+            if (recentSet.Count == 10) break;
         }
 
         recentSongs = recentSet.ToArray();
@@ -110,7 +106,7 @@ public class UserDataController : BaseController<UserDataController>
 
         var defaultOptions = new byte[2];
         BinaryPrimitives.WriteInt16LittleEndian(defaultOptions, userData.OptionSetting);
-        
+
         var response = new UserDataResponse
         {
             Result = 1,

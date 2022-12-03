@@ -16,15 +16,13 @@ public class GetFolderController : BaseController<GetFolderController>
         };
 
         foreach (var folderId in request.FolderIds)
-        {
             response.AryEventfolderDatas.Add(new GetfolderResponse.EventfolderData
             {
                 FolderId = folderId,
                 Priority = 1,
-                SongNoes = new uint[] {1,2},
+                SongNoes = new uint[] { 1, 2 },
                 VerupNo = 1
             });
-        }
 
         return Ok(response);
     }
