@@ -109,7 +109,7 @@
             }
             else
             {
-                var user = response.Users[LoginService.Baid - 1];
+                var user = response.Users[checked((int)LoginService.Baid - 1)];
                 <MudContainer>
                     <MudGrid Justify="Justify.Center">
                         <MudItem xs="12" md="6" lg="4">

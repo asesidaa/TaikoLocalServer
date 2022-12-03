@@ -10,7 +10,7 @@ public class LoginService
     private readonly string adminUsername;
     public bool LoginRequired { get; }
     public bool IsLoggedIn { get; private set; }
-    public int Baid { get; private set; }
+    public uint Baid { get; private set; }
     private int CardNum { get; set; }
     public bool IsAdmin { get; private set; }
     private bool OnlyAdmin { get; set; }
@@ -28,7 +28,7 @@ public class LoginService
         OnlyAdmin = webUiSettings.OnlyAdmin;
     }
 
-    public bool Login(string inputCardNum, string inputPassword, DashboardResponse response)
+    public int Login(string inputCardNum, string inputPassword, DashboardResponse response)
     {
         if (inputCardNum == adminUsername && inputPassword == adminPassword)
         {
@@ -36,18 +36,21 @@ public class LoginService
             Baid = 0;
             IsLoggedIn = true;
             IsAdmin = true;
-            return true;
+            return 1;
         }
 
-        if (OnlyAdmin) return false;
-        
-        if (!int.TryParse(inputCardNum, out var n) || n >= response.Users.Count) return false;
-        
-        CardNum = n;
-        Baid = n;
-        IsLoggedIn = true;
-        IsAdmin = false;
-        return true;
+        if (OnlyAdmin) return 0;
+
+        foreach (var user in response.Users.Where(user => user.AccessCode == inputCardNum))
+        {
+            if (inputPassword != user.Password) return 2;
+            CardNum = int.Parse(user.AccessCode);
+            Baid = user.Baid;
+            IsLoggedIn = true;
+            IsAdmin = false;
+            return 1;
+        }
+        return 3;
     }
 
     public void Logout()

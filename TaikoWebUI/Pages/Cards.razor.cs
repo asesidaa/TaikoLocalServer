@@ -32,14 +32,35 @@ public partial class Cards
 
     private async Task OnLogin()
     {
-        if (response != null && LoginService.Login(cardNum, password, response))
-            NavigationManager.NavigateTo("/Cards");
-        else
-            await DialogService.ShowMessageBox(
-                "Error",
-                (MarkupString)"Card number not found.<br />Please play one game with this card number to register it.",
-                "Ok");
-        loginForm.Reset();
+        if (response != null)
+        {
+            var result = LoginService.Login(cardNum, password, response);
+            switch (result)
+            {
+                case 0 :
+                    await DialogService.ShowMessageBox(
+                        "Error",
+                        "Only admin can log in.",
+                        "Ok");
+                    loginForm.Reset();
+                    break;
+                case 1:
+                    NavigationManager.NavigateTo("/Cards");
+                    break;
+                case 2:
+                    await DialogService.ShowMessageBox(
+                        "Error",
+                        "Wrong password!",
+                        "Ok");
+                    break;
+                case 3:
+                    await DialogService.ShowMessageBox(
+                        "Error",
+                        (MarkupString)"Card number not found.<br />Please play one game with this card number to register it.",
+                        "Ok");
+                    break;
+            }
+        }
     }
 
     private void OnLogout()
