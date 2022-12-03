@@ -37,7 +37,7 @@ public partial class Cards
             var result = LoginService.Login(cardNum, password, response);
             switch (result)
             {
-                case 0 :
+                case 0:
                     await DialogService.ShowMessageBox(
                         "Error",
                         "Only admin can log in.",
