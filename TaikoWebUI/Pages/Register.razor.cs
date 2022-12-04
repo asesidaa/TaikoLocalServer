@@ -1,12 +1,12 @@
-﻿using TaikoWebUI.Pages.Dialogs;
+﻿namespace TaikoWebUI.Pages;
 
-namespace TaikoWebUI.Pages;
-
-public partial class Cards
+public partial class Register
 {
     private string cardNum = "";
-    private MudForm loginForm = default!;
+    private MudForm registerForm = default!;
     private string password = "";
+    private string confirmPassword = "";
+    
     private DashboardResponse? response;
 
     protected override async Task OnInitializedAsync()
@@ -14,27 +14,12 @@ public partial class Cards
         await base.OnInitializedAsync();
         response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
     }
-
-    private async Task DeleteCard(User user)
-    {
-        var parameters = new DialogParameters
-        {
-            ["user"] = user
-        };
-
-        var dialog = DialogService.Show<CardDeleteConfirmDialog>("Delete Card", parameters);
-        var result = await dialog.Result;
-
-        if (result.Cancelled) return;
-
-        response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
-    }
-
-    private async Task OnLogin()
+    
+    private async Task OnRegister()
     {
         if (response != null)
         {
-            var result = LoginService.Login(cardNum, password, response);
+            var result = await LoginService.Register(cardNum, password, confirmPassword, response, Client);
             switch (result)
             {
                 case 0:
@@ -42,15 +27,19 @@ public partial class Cards
                         "Error",
                         "Only admin can log in.",
                         "Ok");
-                    loginForm.Reset();
+                    NavigationManager.NavigateTo("/Cards");
                     break;
                 case 1:
+                    await DialogService.ShowMessageBox(
+                        "Success",
+                        "Card registered successfully.",
+                        "Ok");
                     NavigationManager.NavigateTo("/Cards");
                     break;
                 case 2:
                     await DialogService.ShowMessageBox(
                         "Error",
-                        "Wrong password!",
+                        "Confirm password is not the same as password.",
                         "Ok");
                     break;
                 case 3:
@@ -64,16 +53,11 @@ public partial class Cards
                     await DialogService.ShowMessageBox(
                         "Error",
                         (MarkupString)
-                        "Card number not registered.<br />Please use register button to create a password first.",
+                        "Card is already registered, please use set password to login.",
                         "Ok");
+                    NavigationManager.NavigateTo("/Cards");
                     break;
             }
         }
-    }
-
-    private void OnLogout()
-    {
-        LoginService.Logout();
-        NavigationManager.NavigateTo("/Cards");
     }
 }

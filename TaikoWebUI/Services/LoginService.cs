@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
-using OneOf.Types;
 using TaikoWebUI.Settings;
+using SharedProject.Models.Requests;
 
 namespace TaikoWebUI.Services;
 
@@ -8,12 +8,13 @@ public class LoginService
 {
     private readonly string adminPassword;
     private readonly string adminUsername;
-    public bool LoginRequired { get; }
     public bool IsLoggedIn { get; private set; }
     public uint Baid { get; private set; }
     private int CardNum { get; set; }
     public bool IsAdmin { get; private set; }
-    private bool OnlyAdmin { get; set; }
+    
+    public bool LoginRequired { get; }
+    public bool OnlyAdmin { get; }
     
     public LoginService(IOptions<WebUiSettings> settings)
     {
@@ -43,6 +44,7 @@ public class LoginService
 
         foreach (var user in response.Users.Where(user => user.AccessCode == inputCardNum))
         {
+            if (user.Password == "") return 4;
             if (inputPassword != user.Password) return 2;
             CardNum = int.Parse(user.AccessCode);
             Baid = user.Baid;
@@ -50,6 +52,27 @@ public class LoginService
             IsAdmin = false;
             return 1;
         }
+
+        return 3;
+    }
+
+    public async Task<int> Register(string inputCardNum, string inputPassword, string inputConfirmPassword,
+        DashboardResponse response, HttpClient client)
+    {
+        if (OnlyAdmin) return 0;
+        foreach (var user in response.Users.Where(user => user.AccessCode == inputCardNum))
+        {
+            if (user.Password != "") return 4;
+            if (inputPassword != inputConfirmPassword) return 2;
+            var request = new SetPasswordRequest
+            {
+                AccessCode = user.AccessCode,
+                Password = inputPassword
+            };
+            var responseMessage = await client.PostAsJsonAsync("api/Cards", request);
+            return responseMessage.IsSuccessStatusCode ? 1 : 3;
+        }
+
         return 3;
     }
 
@@ -59,6 +82,11 @@ public class LoginService
         IsAdmin = false;
         Baid = 0;
         CardNum = 0;
+    }
+
+    public int GetBaid()
+    {
+        return checked((int)Baid);
     }
 
     public string GetCardNum()
