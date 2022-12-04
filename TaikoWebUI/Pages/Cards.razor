@@ -160,11 +160,16 @@
                                         </MudMenu>
                                     </MudStack>
                                 </MudCardActions>
-                                <MudCardActions>
-                                    <MudButton OnClick="OnLogout" FullWidth="true" Class="mt-3" Variant="Variant.Filled">
-                                        Log Out
-                                    </MudButton>
-                                </MudCardActions>
+                                <MudCardContent>
+                                    <MudStack Row="true">
+                                        <MudButton OnClick="OnLogout" FullWidth="true" Class="mt-3" StartIcon="@Icons.Filled.Logout" Color="Color.Primary" Variant="Variant.Filled">
+                                            Log Out
+                                        </MudButton>
+                                        <MudButton Href="Cards/ChangePassword" FullWidth="true" Class="mt-3" StartIcon="@Icons.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled">
+                                            Change Password
+                                        </MudButton>
+                                    </MudStack>
+                                </MudCardContent>
                             </MudCard>
                         </MudItem>
                     </MudGrid>

@@ -45,7 +45,7 @@ public class LoginService
         foreach (var user in response.Users.Where(user => user.AccessCode == inputCardNum))
         {
             if (user.Password == "") return 4;
-            if (inputPassword != user.Password) return 2;
+            if (ComputeHash(inputPassword) != user.Password) return 2;
             CardNum = int.Parse(user.AccessCode);
             Baid = user.Baid;
             IsLoggedIn = true;
@@ -67,12 +67,38 @@ public class LoginService
             var request = new SetPasswordRequest
             {
                 AccessCode = user.AccessCode,
-                Password = inputPassword
+                Password = ComputeHash(inputPassword)
             };
             var responseMessage = await client.PostAsJsonAsync("api/Cards", request);
             return responseMessage.IsSuccessStatusCode ? 1 : 3;
         }
 
+        return 3;
+    }
+
+    private string ComputeHash(string inputPassword)
+    {
+        var encDataByte = System.Text.Encoding.UTF8.GetBytes(inputPassword);
+        var encodedData = Convert.ToBase64String(encDataByte);
+        return encodedData;
+    }
+
+    public async Task<int> ChangePassword(string inputCardNum, string inputOldPassword, string inputNewPassword,
+        string inputConfirmNewPassword, DashboardResponse response, HttpClient client)
+    {
+        if (OnlyAdmin) return 0;
+        foreach (var user in response.Users.Where(user => user.AccessCode == inputCardNum))
+        {
+            if (user.Password != ComputeHash(inputOldPassword)) return 4;
+            if (inputNewPassword != inputConfirmNewPassword) return 2;
+            var request = new SetPasswordRequest
+            {
+                AccessCode = user.AccessCode,
+                Password = ComputeHash(inputNewPassword)
+            };
+            var responseMessage = await client.PostAsJsonAsync("api/Cards", request);
+            return responseMessage.IsSuccessStatusCode ? 1 : 3;
+        }
         return 3;
     }
 

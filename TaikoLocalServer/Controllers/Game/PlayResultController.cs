@@ -193,16 +193,17 @@ public class PlayResultController : BaseController<PlayResultController>
         };
         userdata.CostumeData = JsonSerializer.Serialize(costumeData);
 
+        // Official cabinet does not save option at the end of the game, so I turned it off. -S-Sebb??
         // Skip user setting saving when in dan mode as dan mode uses its own default setting
-        if (playMode != PlayMode.DanMode)
-        {
-            var lastStage = playResultData.AryStageInfoes.Last();
-            var option = BinaryPrimitives.ReadInt16LittleEndian(lastStage.OptionFlg);
-            userdata.OptionSetting = option;
-            userdata.IsSkipOn = lastStage.IsSkipOn;
-            userdata.IsVoiceOn = !lastStage.IsVoiceOn;
-            userdata.NotesPosition = lastStage.NotesPosition;
-        }
+        // if (playMode != PlayMode.DanMode)
+        // {
+        //     var lastStage = playResultData.AryStageInfoes.Last();
+        //     var option = BinaryPrimitives.ReadInt16LittleEndian(lastStage.OptionFlg);
+        //     userdata.OptionSetting = option;
+        //     userdata.IsSkipOn = lastStage.IsSkipOn;
+        //     userdata.IsVoiceOn = !lastStage.IsVoiceOn;
+        //     userdata.NotesPosition = lastStage.NotesPosition;
+        // }
 
         userdata.LastPlayDatetime = lastPlayDatetime;
         userdata.LastPlayMode = playResultData.PlayMode;
