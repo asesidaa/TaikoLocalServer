@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
 using TaikoWebUI.Settings;
-using SharedProject.Models.Requests;
 
 namespace TaikoWebUI.Services;
 

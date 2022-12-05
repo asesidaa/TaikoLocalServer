@@ -42,7 +42,7 @@
         <Content Update="wwwroot\data\wordlist.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-        <Content Update="wwwroot\WebUiSettings.json">
+        <Content Update="wwwroot\appsettings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
     </ItemGroup>

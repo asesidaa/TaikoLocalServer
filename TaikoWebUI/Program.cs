@@ -13,16 +13,10 @@ builder.Services.AddSingleton(sp => new HttpClient
 });
 builder.Services.AddMudServices();
 builder.Services.AddSingleton<IGameDataService, GameDataService>();
-builder.Services.AddScoped<LoginService>();
 
-var http = new HttpClient
-{
-    BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
-};
-using var response = await http.GetAsync("WebUiSettings.json");
-await using var stream = await response.Content.ReadAsStreamAsync();
-builder.Configuration.AddJsonStream(stream);
 builder.Services.Configure<WebUiSettings>(builder.Configuration.GetSection(nameof(WebUiSettings)));
+
+builder.Services.AddScoped<LoginService>();
 
 var host = builder.Build();
 
