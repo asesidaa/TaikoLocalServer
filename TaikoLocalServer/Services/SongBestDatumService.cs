@@ -68,7 +68,8 @@ public class SongBestDatumService : ISongBestDatumService
                 nameof(SongPlayDatum.MissCount),
                 nameof(SongPlayDatum.HitCount),
                 nameof(SongPlayDatum.DrumrollCount),
-                nameof(SongPlayDatum.ComboCount)
+                nameof(SongPlayDatum.ComboCount),
+                nameof(SongPlayDatum.Option)
             );
 
             var aiSection = aiSectionBest.FirstOrDefault(datum => datum.Difficulty == bestData.Difficulty &&
