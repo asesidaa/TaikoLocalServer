@@ -11,6 +11,7 @@ public partial class SongBestDatum
     public uint BestRate { get; set; }
     public CrownType BestCrown { get; set; }
     public ScoreRank BestScoreRank { get; set; }
+    public short Option { get; set; }
 
     public virtual Card? Ba { get; set; }
 }

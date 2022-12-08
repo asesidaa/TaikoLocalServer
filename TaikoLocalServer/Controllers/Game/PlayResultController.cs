@@ -150,6 +150,7 @@ public class PlayResultController : BaseController<PlayResultController>
         PlayResultDataRequest.StageData stageData,
         DateTime lastPlayDatetime)
     {
+        var option = BinaryPrimitives.ReadInt16LittleEndian(stageData.OptionFlg);
         var songPlayDatum = new SongPlayDatum
         {
             Baid = request.BaidConf,
@@ -167,7 +168,8 @@ public class PlayResultController : BaseController<PlayResultController>
             Skipped = stageData.IsSkipUse,
             SongId = stageData.SongNo,
             PlayTime = lastPlayDatetime,
-            Difficulty = (Difficulty)stageData.Level
+            Difficulty = (Difficulty)stageData.Level,
+            Option = option
         };
         await songPlayDatumService.AddSongPlayDatum(songPlayDatum);
     }
@@ -297,7 +299,8 @@ public class PlayResultController : BaseController<PlayResultController>
         // Determine whether it is dondaful crown as this is not reflected by play result
         var crown = PlayResultToCrown(stageData.PlayResult, stageData.OkCnt);
 
-        bestDatum.UpdateBestData(crown, stageData.ScoreRank, stageData.PlayScore, stageData.ScoreRate);
+        var option = BinaryPrimitives.ReadInt16LittleEndian(stageData.OptionFlg);
+        bestDatum.UpdateBestData(crown, stageData.ScoreRank, stageData.PlayScore, stageData.ScoreRate, option);
 
         await songBestDatumService.UpdateOrInsertSongBestDatum(bestDatum);
     }

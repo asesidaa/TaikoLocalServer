@@ -23,6 +23,6 @@ public class SongPlayDatum
     public uint DrumrollCount { get; set; }
     public bool Skipped { get; set; }
     public DateTime PlayTime { get; set; }
-
+    public short Option { get; set; }
     public virtual Card? Ba { get; set; }
 }
