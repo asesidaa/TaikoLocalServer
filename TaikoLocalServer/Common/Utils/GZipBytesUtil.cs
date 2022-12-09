@@ -10,7 +10,7 @@ public static class GZipBytesUtil
     {
         return new MemoryStream(Encoding.UTF8.GetBytes(value));
     }
-    
+
     public static byte[] GetEmptyJsonGZipBytes()
     {
         var outputStream = new MemoryStream(1024);

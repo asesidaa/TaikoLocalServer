@@ -13,7 +13,6 @@ public class MuchaController : BaseController<MuchaController>
     }
 
     [HttpPost("/mucha_front/boardauth.do")]
-
     public ContentResult BoardAuth([FromForm] MuchaUpdateCheckRequest request)
     {
         Logger.LogInformation("Mucha request: {Request}", request.Stringify());

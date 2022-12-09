@@ -27,14 +27,6 @@ public class OrderedSet<T> : ICollection<T> where T : notnull
         Add(item);
     }
 
-    public bool Add(T item)
-    {
-        if (dictionary.ContainsKey(item)) return false;
-        var node = linkedList.AddLast(item);
-        dictionary.Add(item, node);
-        return true;
-    }
-
     public void Clear()
     {
         linkedList.Clear();
@@ -69,5 +61,13 @@ public class OrderedSet<T> : ICollection<T> where T : notnull
     public void CopyTo(T[] array, int arrayIndex)
     {
         linkedList.CopyTo(array, arrayIndex);
+    }
+
+    public bool Add(T item)
+    {
+        if (dictionary.ContainsKey(item)) return false;
+        var node = linkedList.AddLast(item);
+        dictionary.Add(item, node);
+        return true;
     }
 }

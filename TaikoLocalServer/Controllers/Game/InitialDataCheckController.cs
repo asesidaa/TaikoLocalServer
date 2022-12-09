@@ -29,24 +29,20 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 
         var danData = new List<InitialdatacheckResponse.InformationData>();
         for (var danId = Constants.MIN_DAN_ID; danId <= Constants.MAX_DAN_ID; danId++)
-        {
             danData.Add(new InitialdatacheckResponse.InformationData
             {
                 InfoId = (uint)danId,
                 VerupNo = 1
             });
-        }
-        
+
         var introData = new List<InitialdatacheckResponse.InformationData>();
         for (var setId = 1; setId <= gameDataService.GetSongIntroDictionary().Count; setId++)
-        {
             introData.Add(new InitialdatacheckResponse.InformationData
             {
                 InfoId = (uint)setId,
                 VerupNo = 1
             });
-        }
-        
+
         var response = new InitialdatacheckResponse
         {
             Result = 1,
@@ -118,5 +114,4 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
         response.ArySongIntroductionDatas.AddRange(introData);
         return Ok(response);
     }
-
 }

@@ -39,12 +39,21 @@ public class CardService : ICardService
     {
         var card = await context.Cards.FindAsync(accessCode);
 
-        if (card is null)
-        {
-            return false;
-        }
+        if (card is null) return false;
 
         context.Cards.Remove(card);
+        await context.SaveChangesAsync();
+
+        return true;
+    }
+    
+    public async Task<bool> UpdatePassword(string accessCode, string password)
+    {
+        var card = await context.Cards.FindAsync(accessCode);
+
+        if (card is null) return false;
+
+        card.Password = password;
         await context.SaveChangesAsync();
 
         return true;

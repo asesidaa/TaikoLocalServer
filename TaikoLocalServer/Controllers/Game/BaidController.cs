@@ -8,18 +8,18 @@ namespace TaikoLocalServer.Controllers.Game;
 [Route("/v12r03/chassis/baidcheck.php")]
 public class BaidController : BaseController<BaidController>
 {
-    private readonly IUserDatumService userDatumService;
+    private readonly IAiDatumService aiDatumService;
 
     private readonly ICardService cardService;
 
-    private readonly ISongBestDatumService songBestDatumService;
-
     private readonly IDanScoreDatumService danScoreDatumService;
 
-    private readonly IAiDatumService aiDatumService;
+    private readonly ISongBestDatumService songBestDatumService;
+    private readonly IUserDatumService userDatumService;
 
-    public BaidController(IUserDatumService userDatumService, ICardService cardService, 
-        ISongBestDatumService songBestDatumService, IDanScoreDatumService danScoreDatumService, IAiDatumService aiDatumService)
+    public BaidController(IUserDatumService userDatumService, ICardService cardService,
+        ISongBestDatumService songBestDatumService, IDanScoreDatumService danScoreDatumService,
+        IAiDatumService aiDatumService)
     {
         this.userDatumService = userDatumService;
         this.cardService = cardService;
@@ -64,18 +64,17 @@ public class BaidController : BaseController<BaidController>
         var userData = await userDatumService.GetFirstUserDatumOrDefault(baid);
 
         var songBestData = await songBestDatumService.GetAllSongBestData(baid);
-        
+
         var achievementDisplayDifficulty = userData.AchievementDisplayDifficulty;
         if (userData.AchievementDisplayDifficulty == Difficulty.None)
-        {
-            achievementDisplayDifficulty = songBestData.Any(datum => datum.BestCrown >= CrownType.Clear) ? 
-                songBestData.Where(datum => datum.BestCrown >= CrownType.Clear).Max(datum => datum.Difficulty) : 
-                Difficulty.Easy;
-        }
+            achievementDisplayDifficulty = songBestData.Any(datum => datum.BestCrown >= CrownType.Clear)
+                ? songBestData.Where(datum => datum.BestCrown >= CrownType.Clear).Max(datum => datum.Difficulty)
+                : Difficulty.Easy;
 
-        var songCountData = songBestData.Where(datum => achievementDisplayDifficulty != Difficulty.UraOni ?
-                                                   datum.Difficulty == achievementDisplayDifficulty : 
-                                                   datum.Difficulty is Difficulty.Oni or Difficulty.UraOni).ToList();
+        var songCountData = songBestData.Where(datum =>
+            achievementDisplayDifficulty != Difficulty.UraOni
+                ? datum.Difficulty == achievementDisplayDifficulty
+                : datum.Difficulty is Difficulty.Oni or Difficulty.UraOni).ToList();
 
         var crownCount = CalculateCrownCount(songCountData);
 
@@ -91,7 +90,7 @@ public class BaidController : BaseController<BaidController>
             .ToList();
 
         var danData = await danScoreDatumService.GetDanScoreDatumByBaid(baid);
-        
+
         var maxDan = danData.Where(datum => datum.ClearState != DanClearState.NotClear)
             .Select(datum => datum.DanId)
             .DefaultIfEmpty()
@@ -112,14 +111,11 @@ public class BaidController : BaseController<BaidController>
         // which means database content need to be fixed, so better throw
         genericInfoFlg.ThrowIfNull("Genericinfo flg should never be null!");
 
-        var genericInfoFlgLength = genericInfoFlg.Any()? genericInfoFlg.Max() + 1 : 0;
+        var genericInfoFlgLength = genericInfoFlg.Any() ? genericInfoFlg.Max() + 1 : 0;
         var genericInfoFlgArray = FlagCalculator.GetBitArrayFromIds(genericInfoFlg, (int)genericInfoFlgLength, Logger);
 
         var aiRank = (uint)(userData.AiWinCount / 10);
-        if (aiRank > 11)
-        {
-            aiRank = 11;
-        }
+        if (aiRank > 11) aiRank = 11;
         response = new BAIDResponse
         {
             Result = 1,
@@ -179,13 +175,9 @@ public class BaidController : BaseController<BaidController>
     {
         var scoreRankCount = new uint[7];
         foreach (var scoreRankType in Enum.GetValues<ScoreRank>())
-        {
             if (scoreRankType != ScoreRank.None)
-            {
                 scoreRankCount[(int)scoreRankType - 2] =
                     (uint)songCountData.Count(datum => datum.BestScoreRank == scoreRankType);
-            }
-        }
 
         return scoreRankCount;
     }
@@ -194,12 +186,8 @@ public class BaidController : BaseController<BaidController>
     {
         var crownCount = new uint[3];
         foreach (var crownType in Enum.GetValues<CrownType>())
-        {
             if (crownType != CrownType.None)
-            {
                 crownCount[(int)crownType - 1] = (uint)songCountData.Count(datum => datum.BestCrown == crownType);
-            }
-        }
 
         return crownCount;
     }

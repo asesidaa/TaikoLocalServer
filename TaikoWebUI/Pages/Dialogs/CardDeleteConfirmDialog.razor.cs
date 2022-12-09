@@ -2,15 +2,15 @@
 
 public partial class CardDeleteConfirmDialog
 {
-    
-    [CascadingParameter]
-    MudDialogInstance MudDialog { get; set; } = null!;
+    [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = null!;
 
-    [Parameter]
-    public User User { get; set; } = new();
+    [Parameter] public User User { get; set; } = new();
 
-    private void Cancel() => MudDialog.Cancel();
-    
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
     private async Task DeleteCard()
     {
         var responseMessage = await Client.DeleteAsync($"api/Cards/{User.AccessCode}");

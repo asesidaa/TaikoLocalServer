@@ -1,8 +1,9 @@
-﻿namespace GameDatabase.Entities
+﻿namespace GameDatabase.Entities;
+
+public class Card
 {
-    public partial class Card
-    {
-        public string AccessCode { get; set; } = null!;
-        public uint Baid { get; set; }
-    }
+    public string AccessCode { get; set; } = null!;
+    public uint Baid { get; set; }
+
+    public string Password { get; set; } = null!;
 }

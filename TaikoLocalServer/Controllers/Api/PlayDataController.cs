@@ -6,13 +6,12 @@ namespace TaikoLocalServer.Controllers.Api;
 [Route("api/[controller]")]
 public class PlayDataController : BaseController<PlayDataController>
 {
-    private readonly IUserDatumService userDatumService;
-
     private readonly ISongBestDatumService songBestDatumService;
 
     private readonly ISongPlayDatumService songPlayDatumService;
+    private readonly IUserDatumService userDatumService;
 
-    public PlayDataController(IUserDatumService userDatumService, ISongBestDatumService songBestDatumService, 
+    public PlayDataController(IUserDatumService userDatumService, ISongBestDatumService songBestDatumService,
         ISongPlayDatumService songPlayDatumService)
     {
         this.userDatumService = userDatumService;
@@ -24,10 +23,7 @@ public class PlayDataController : BaseController<PlayDataController>
     public async Task<ActionResult<SongBestResponse>> GetSongBestRecords(uint baid)
     {
         var user = await userDatumService.GetFirstUserDatumOrNull(baid);
-        if (user is null)
-        {
-            return NotFound();
-        }
+        if (user is null) return NotFound();
 
         var songBestRecords = await songBestDatumService.GetAllSongBestAsModel(baid);
         var playLogs = await songPlayDatumService.GetSongPlayDatumByBaid(baid);
@@ -40,12 +36,11 @@ public class PlayDataController : BaseController<PlayDataController>
             songBestData.FullComboCount = songPlayLogs.Count(datum => datum.Crown >= CrownType.Gold);
             songBestData.PerfectCount = songPlayLogs.Count(datum => datum.Crown >= CrownType.Dondaful);
         }
+
         var favoriteSongs = await userDatumService.GetFavoriteSongIds(baid);
         var favoriteSet = favoriteSongs.ToHashSet();
-        foreach (var songBestRecord in songBestRecords.Where(songBestRecord => favoriteSet.Contains(songBestRecord.SongId)))
-        {
-            songBestRecord.IsFavorite = true;
-        }
+        foreach (var songBestRecord in songBestRecords.Where(songBestRecord =>
+                     favoriteSet.Contains(songBestRecord.SongId))) songBestRecord.IsFavorite = true;
 
         return Ok(new SongBestResponse
         {

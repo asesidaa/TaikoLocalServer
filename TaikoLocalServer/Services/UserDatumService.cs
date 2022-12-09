@@ -73,6 +73,7 @@ public class UserDatumService : IUserDatumService
             logger.LogError(e, "Parse favorite song array json failed! Is the user initialized correctly?");
             result = new List<uint>();
         }
+
         result.ThrowIfNull("Song favorite array should never be null!");
         return result;
     }
@@ -93,16 +94,13 @@ public class UserDatumService : IUserDatumService
             logger.LogError(e, "Parse favorite song array json failed! Is the user initialized correctly?");
             favoriteSongIds = new List<uint>();
         }
+
         favoriteSongIds.ThrowIfNull("Song favorite array should never be null!");
         var favoriteSet = new HashSet<uint>(favoriteSongIds);
         if (isFavorite)
-        {
             favoriteSet.Add(songId);
-        }
         else
-        {
             favoriteSet.Remove(songId);
-        }
 
         using var newFavoriteSongStream = new MemoryStream();
         await JsonSerializer.SerializeAsync(newFavoriteSongStream, favoriteSet);
@@ -114,5 +112,4 @@ public class UserDatumService : IUserDatumService
         context.Update(userDatum);
         await context.SaveChangesAsync();
     }
-    
 }

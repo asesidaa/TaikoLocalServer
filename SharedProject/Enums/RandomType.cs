@@ -1,4 +1,5 @@
 ﻿// ReSharper disable UnusedMember.Global
+
 namespace SharedProject.Enums;
 
 public enum RandomType

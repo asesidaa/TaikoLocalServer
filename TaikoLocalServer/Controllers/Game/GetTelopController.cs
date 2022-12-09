@@ -12,7 +12,7 @@ public class GetTelopController : BaseController<GetTelopController>
 
         var startDateTime = DateTime.Now - TimeSpan.FromDays(999.0);
         var endDateTime = DateTime.Now + TimeSpan.FromDays(999.0);
-        
+
         var response = new GettelopResponse
         {
             Result = 1,

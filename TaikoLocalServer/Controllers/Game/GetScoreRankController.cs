@@ -7,10 +7,9 @@ namespace TaikoLocalServer.Controllers.Game;
 [ApiController]
 public class GetScoreRankController : BaseController<GetScoreRankController>
 {
+    private readonly ServerSettings settings;
     private readonly ISongBestDatumService songBestDatumService;
 
-    private readonly ServerSettings settings;
-    
     public GetScoreRankController(ISongBestDatumService songBestDatumService, IOptions<ServerSettings> settings)
     {
         this.songBestDatumService = songBestDatumService;
@@ -27,7 +26,7 @@ public class GetScoreRankController : BaseController<GetScoreRankController>
         var miyabiScores = new ushort[songIdMax + 1];
         var ikiScores = new ushort[songIdMax + 1];
         var songBestData = await songBestDatumService.GetAllSongBestData(request.Baid);
-        
+
         for (var songId = 0; songId < songIdMax; songId++)
         {
             var id = songId;
@@ -35,17 +34,22 @@ public class GetScoreRankController : BaseController<GetScoreRankController>
                 .Where(datum => datum.SongId == id &&
                                 datum.BestScoreRank == ScoreRank.Dondaful)
                 .Aggregate((byte)0, (flag, datum) => FlagCalculator.ComputeKiwamiScoreRankFlag(flag, datum.Difficulty));
-            
+
             ikiScores[songId] = songBestData
                 .Where(datum => datum.SongId == id &&
                                 datum.BestScoreRank is ScoreRank.White or ScoreRank.Bronze or ScoreRank.Silver)
-                .Aggregate((ushort)0, (flag, datum) => FlagCalculator.ComputeMiyabiOrIkiScoreRank(flag, datum.BestScoreRank, datum.Difficulty));
-            
+                .Aggregate((ushort)0,
+                    (flag, datum) =>
+                        FlagCalculator.ComputeMiyabiOrIkiScoreRank(flag, datum.BestScoreRank, datum.Difficulty));
+
             miyabiScores[songId] = songBestData
                 .Where(datum => datum.SongId == id &&
                                 datum.BestScoreRank is ScoreRank.Gold or ScoreRank.Purple or ScoreRank.Sakura)
-                .Aggregate((ushort)0, (flag, datum) => FlagCalculator.ComputeMiyabiOrIkiScoreRank(flag, datum.BestScoreRank, datum.Difficulty));
+                .Aggregate((ushort)0,
+                    (flag, datum) =>
+                        FlagCalculator.ComputeMiyabiOrIkiScoreRank(flag, datum.BestScoreRank, datum.Difficulty));
         }
+
         var response = new GetScoreRankResponse
         {
             Result = 1,
@@ -53,7 +57,7 @@ public class GetScoreRankController : BaseController<GetScoreRankController>
             KiwamiScoreRankFlg = GZipBytesUtil.GetGZipBytes(kiwamiScores),
             MiyabiScoreRankFlg = GZipBytesUtil.GetGZipBytes(miyabiScores)
         };
-        
+
         return Ok(response);
     }
 }

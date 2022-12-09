@@ -1,88 +1,188 @@
 ﻿@inject HttpClient Client
 @inject IDialogService DialogService
+@inject LoginService LoginService
+@inject NavigationManager NavigationManager
 
 @page "/Cards"
 
 <h1>Cards</h1>
-
 <MudGrid Class="my-8">
     @if (response is null)
     {
         @for (uint i = 0; i < 3; i++)
         {
-                        <MudItem xs="12" md="6" lg="4">
-                            <MudCard Outlined="true">
-                                <MudCardContent>
-                                    <MudSkeleton Width="30%" Height="42px;" Class="mb-5"/>
-                                    <MudSkeleton Width="80%"/>
-                                    <MudSkeleton Width="100%"/>
-                                </MudCardContent>
-                                <MudCardActions>
-                                    <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
-                                        <MudSkeleton Width="64px" Height="40px"/>
-                                        <MudSkeleton Width="64px" Height="40px"/>
-                                    </MudStack>
-                                </MudCardActions>
-                            </MudCard>
-                        </MudItem>
+            <MudItem xs="12" md="6" lg="4">
+                <MudCard Outlined="true">
+                    <MudCardContent>
+                        <MudSkeleton Width="30%" Height="42px;" Class="mb-5"/>
+                        <MudSkeleton Width="80%"/>
+                        <MudSkeleton Width="100%"/>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
+                            <MudSkeleton Width="64px" Height="40px"/>
+                            <MudSkeleton Width="64px" Height="40px"/>
+                        </MudStack>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
         }
     }
     else if (response.Users.Count != 0)
     {
-        @foreach (var user in response.Users)
+        if (LoginService.IsAdmin || !LoginService.LoginRequired)
         {
-                    <MudItem xs="12" md="6" lg="4">
-                        <MudCard Outlined="true">
-                            <MudCardHeader>
-                                <CardHeaderContent>
-                                    <MudText Typo="Typo.h6" Style="font-weight:bold">@user.Baid</MudText>
-                                </CardHeaderContent>
-                                <CardHeaderActions>
-                            <MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense="true" AnchorOrigin="Origin.BottomLeft"
-                             TransformOrigin="Origin.TopLeft" Size="Size.Small">
-                                        <MudMenuItem Icon="@Icons.Material.Filled.Delete"
-                                                     OnClick="_ => DeleteCard(user)"
-                                                     IconColor="@Color.Error">
-                                            Delete Card
-                                        </MudMenuItem>
-                                    </MudMenu>
-                                </CardHeaderActions>
-                            </MudCardHeader>
-                            <MudCardContent>
-                                <MudText Style="font-weight:bold">Access Code</MudText>
-                                <MudText Style="font-family:monospace">@user.AccessCode</MudText>
-                            </MudCardContent>
-                            <MudCardActions>
-                                <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
-                                    <MudButton Href="@($"Cards/{user.Baid}/Profile")"
-                                       Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Edit"
-                                       Color="Color.Primary">
-                                        Edit Profile
-                                    </MudButton>
-                                    <MudMenu Size="Size.Small"
-                                             Dense="true"
-                                             Color="Color.Primary"
-                                             Label="View Play Data"
-                                             StartIcon="@Icons.Filled.FeaturedPlayList"
-                                             EndIcon="@Icons.Filled.KeyboardArrowDown"
-                                             FullWidth="true"
-                                             AnchorOrigin="Origin.BottomCenter"
-                                             TransformOrigin="Origin.TopCenter">
-                                        <MudMenuItem Href="@($"Cards/{user.Baid}/HighScores")">High Scores</MudMenuItem>
-                                        <MudMenuItem Href="@($"Cards/{user.Baid}/DaniDojo")">Dani Dojo</MudMenuItem>
-                                    </MudMenu>
-                                </MudStack>
-                            </MudCardActions>
-                        </MudCard>
-                    </MudItem>
+            @foreach (var user in response.Users)
+            {
+                <MudItem xs="12" md="6" lg="4">
+                    <MudCard Outlined="true">
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.h6" Style="font-weight:bold">@user.Baid</MudText>
+                            </CardHeaderContent>
+                            <CardHeaderActions>
+                                <MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense="true" AnchorOrigin="Origin.BottomLeft"
+                                         TransformOrigin="Origin.TopLeft" Size="Size.Small">
+                                    <MudMenuItem Icon="@Icons.Material.Filled.Delete"
+                                                 OnClick="_ => DeleteCard(user)"
+                                                 IconColor="@Color.Error">
+                                        Delete Card
+                                    </MudMenuItem>
+                                </MudMenu>
+                            </CardHeaderActions>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            <MudText Style="font-weight:bold">Access Code</MudText>
+                            <MudText Style="font-family:monospace">@user.AccessCode</MudText>
+                        </MudCardContent>
+                        <MudCardActions>
+                            <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
+                                <MudButton Href="@($"Cards/{user.Baid}/Profile")"
+                                           Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Edit"
+                                           Color="Color.Primary">
+                                    Edit Profile
+                                </MudButton>
+                                <MudMenu Size="Size.Small"
+                                         Dense="true"
+                                         Color="Color.Primary"
+                                         Label="View Play Data"
+                                         StartIcon="@Icons.Filled.FeaturedPlayList"
+                                         EndIcon="@Icons.Filled.KeyboardArrowDown"
+                                         FullWidth="true"
+                                         AnchorOrigin="Origin.BottomCenter"
+                                         TransformOrigin="Origin.TopCenter">
+                                    <MudMenuItem Href="@($"Cards/{user.Baid}/HighScores")">High Scores</MudMenuItem>
+                                    <MudMenuItem Href="@($"Cards/{user.Baid}/DaniDojo")">Dani Dojo</MudMenuItem>
+                                </MudMenu>
+                            </MudStack>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        }
+        else
+        {
+            @if (!LoginService.IsLoggedIn)
+            {
+                <MudContainer>
+                    <MudGrid Justify="Justify.Center">
+                        <MudItem xs="4" class="mt-8">
+                            <MudCard>
+                                <MudCardContent>
+                                    <MudForm @ref="loginForm">
+                                        <MudText Typo="Typo.h4" Align="Align.Center">Login</MudText>
+                                        <MudTextField @bind-value="cardNum" InputType="InputType.Text" T="string"
+                                                      FullWidth="true" Required="@true" RequiredError="Card Number is required"
+                                                      Label="Card Number"/>
+                                        <MudTextField @bind-Value="password" InputType="InputType.Password"
+                                                      T="string" FullWidth="true" Required="@true"
+                                                      RequiredError="Password is required"
+                                                      Label="Password">
+                                        </MudTextField>
+                                        <MudStack Row="true">
+                                            <MudButton OnClick="OnLogin" FullWidth="true" Class="mt-3" StartIcon="@Icons.Filled.Login" Color="Color.Primary" Variant="Variant.Filled">Login</MudButton>
+                                            @if (!LoginService.OnlyAdmin)
+                                            {
+                                                <MudButton Href="@("Cards/Register")" FullWidth="true" Class="mt-3" StartIcon="@Icons.Filled.AddCard" Color="Color.Primary" Variant="Variant.Filled">Register</MudButton>
+                                            }
+                                        </MudStack>
+                                    </MudForm>
+                                </MudCardContent>
+                            </MudCard>
+                        </MudItem>
+                    </MudGrid>
+                </MudContainer>
+            }
+            else
+            {
+                var user = response.Users[LoginService.GetBaid() - 1];
+                <MudContainer>
+                    <MudGrid Justify="Justify.Center">
+                        <MudItem xs="12" md="6" lg="4">
+                            <MudCard Outlined="true">
+                                <MudCardHeader>
+                                    <CardHeaderContent>
+                                        <MudText Typo="Typo.h6" Style="font-weight:bold">@user.Baid</MudText>
+                                    </CardHeaderContent>
+                                    <CardHeaderActions>
+                                        <MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense="true" AnchorOrigin="Origin.BottomLeft"
+                                                 TransformOrigin="Origin.TopLeft" Size="Size.Small">
+                                            <MudMenuItem Icon="@Icons.Material.Filled.Delete"
+                                                         OnClick="_ => DeleteCard(user)"
+                                                         IconColor="@Color.Error">
+                                                Delete Card
+                                            </MudMenuItem>
+                                        </MudMenu>
+                                    </CardHeaderActions>
+                                </MudCardHeader>
+                                <MudCardContent>
+                                    <MudText Style="font-weight:bold">Access Code</MudText>
+                                    <MudText Style="font-family:monospace">@user.AccessCode</MudText>
+                                </MudCardContent>
+                                <MudCardActions>
+                                    <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
+                                        <MudButton Href="@($"Cards/{user.Baid}/Profile")"
+                                                   Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Edit"
+                                                   Color="Color.Primary">
+                                            Edit Profile
+                                        </MudButton>
+                                        <MudMenu Size="Size.Small"
+                                                 Dense="true"
+                                                 Color="Color.Primary"
+                                                 Label="View Play Data"
+                                                 StartIcon="@Icons.Filled.FeaturedPlayList"
+                                                 EndIcon="@Icons.Filled.KeyboardArrowDown"
+                                                 FullWidth="true"
+                                                 AnchorOrigin="Origin.BottomCenter"
+                                                 TransformOrigin="Origin.TopCenter">
+                                            <MudMenuItem Href="@($"Cards/{user.Baid}/HighScores")">High Scores</MudMenuItem>
+                                            <MudMenuItem Href="@($"Cards/{user.Baid}/DaniDojo")">Dani Dojo</MudMenuItem>
+                                        </MudMenu>
+                                    </MudStack>
+                                </MudCardActions>
+                                <MudCardContent>
+                                    <MudStack Row="true">
+                                        <MudButton OnClick="OnLogout" FullWidth="true" Class="mt-3" StartIcon="@Icons.Filled.Logout" Color="Color.Primary" Variant="Variant.Filled">
+                                            Log Out
+                                        </MudButton>
+                                        <MudButton Href="Cards/ChangePassword" FullWidth="true" Class="mt-3" StartIcon="@Icons.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled">
+                                            Change Password
+                                        </MudButton>
+                                    </MudStack>
+                                </MudCardContent>
+                            </MudCard>
+                        </MudItem>
+                    </MudGrid>
+                </MudContainer>
+            }
         }
     }
     else
     {
-            <MudItem xs="12">
-                <MudText Align="Align.Center" Class="my-8">
-                    No data.
-                </MudText>
-            </MudItem>
+        <MudItem xs="12">
+            <MudText Align="Align.Center" Class="my-8">
+                No data.
+            </MudText>
+        </MudItem>
     }
 </MudGrid>

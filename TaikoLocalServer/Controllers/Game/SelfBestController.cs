@@ -7,10 +7,9 @@ namespace TaikoLocalServer.Controllers.Game;
 [ApiController]
 public class SelfBestController : BaseController<SelfBestController>
 {
+    private readonly IGameDataService gameDataService;
     private readonly ISongBestDatumService songBestDatumService;
 
-    private readonly IGameDataService gameDataService;
-    
     public SelfBestController(ISongBestDatumService songBestDatumService, IGameDataService gameDataService)
     {
         this.songBestDatumService = songBestDatumService;
@@ -28,10 +27,10 @@ public class SelfBestController : BaseController<SelfBestController>
             Result = 1,
             Level = request.Level
         };
-        
+
         var requestDifficulty = (Difficulty)request.Level;
         requestDifficulty.Throw().IfOutOfRange();
-        
+
         var playerBestData = await songBestDatumService.GetAllSongBestData(request.Baid);
         playerBestData = playerBestData
             .Where(datum => datum.Difficulty == requestDifficulty ||
@@ -49,18 +48,20 @@ public class SelfBestController : BaseController<SelfBestController>
 
             response.ArySelfbestScores.Add(selfBestData);
         }
+
         response.ArySelfbestScores.Sort((data, otherData) => data.SongNo.CompareTo(otherData.SongNo));
-        
+
         return Ok(response);
     }
 
-    private static SelfBestResponse.SelfBestData GetSongSelfBestData(IEnumerable<SongBestDatum> playerBestData, uint songNo)
+    private static SelfBestResponse.SelfBestData GetSongSelfBestData(IEnumerable<SongBestDatum> playerBestData,
+        uint songNo)
     {
         var songBestDatum = playerBestData.Where(datum => datum.SongId == songNo);
 
         var selfBestData = new SelfBestResponse.SelfBestData
         {
-            SongNo = songNo,
+            SongNo = songNo
         };
 
         foreach (var datum in songBestDatum)

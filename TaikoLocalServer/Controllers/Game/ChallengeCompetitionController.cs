@@ -16,6 +16,5 @@ public class ChallengeCompetitionController : BaseController<ChallengeCompetitio
         };
 
         return Ok(response);
-
     }
 }

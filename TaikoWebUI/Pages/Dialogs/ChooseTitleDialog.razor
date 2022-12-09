@@ -1,13 +1,13 @@
-﻿@using TaikoWebUI.Shared.Models
-@using System.Collections.Immutable
+﻿@using System.Collections.Immutable
+@using TaikoWebUI.Shared.Models
 @inject IGameDataService GameDataService
 
 <MudDialog>
     <DialogContent>
         <MudTable Items="@titles" Filter="@Filter" @bind-SelectedItem="@selectedTitle" Height="40vh" Hover="true">
             <ColGroup>
-                <col style="width: 50px;" />
-                <col />
+                <col style="width: 50px;"/>
+                <col/>
             </ColGroup>
             <ToolBarContent>
                 <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
@@ -18,7 +18,7 @@
                 <MudTh>
                     <MudTableSortLabel SortBy="@(new Func<Title, object>(x => x.TitleId))">
                         ID
-                    </MudTableSortLabel> 
+                    </MudTableSortLabel>
                 </MudTh>
                 <MudTh>
                     <MudTableSortLabel SortBy="@(new Func<Title, object>(x => x.TitleName))">
@@ -41,7 +41,9 @@
                 <MudTablePager/>
             </PagerContent>
         </MudTable>
-        <MudText Class="mt-4 d-block" Typo="Typo.caption"><b>Selected Title:</b> @selectedTitle?.TitleName</MudText>
+        <MudText Class="mt-4 d-block" Typo="Typo.caption">
+            <b>Selected Title:</b> @selectedTitle?.TitleName
+        </MudText>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
@@ -72,7 +74,7 @@
         {
             TitleName = UserSetting.Title
         };
-        if (titleSet.Contains(currentTitle)) 
+        if (titleSet.Contains(currentTitle))
         {
             titleSet.TryGetValue(new Title
             {
@@ -100,6 +102,9 @@
         MudDialog.Close(DialogResult.Ok(true));
     }
 
-    private void Cancel() => MudDialog.Cancel();
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
 
 }

@@ -5,7 +5,7 @@ namespace TaikoLocalServer.Services.Interfaces;
 public interface IGameDataService
 {
     public Task InitializeAsync();
-    
+
     public List<uint> GetMusicList();
 
     public List<uint> GetMusicWithUraList();

@@ -8,5 +8,5 @@ public enum DanClearState
     RedPerfectClear,
     GoldNormalClear,
     GoldFullComboClear,
-    GoldPerfectClear,
+    GoldPerfectClear
 }

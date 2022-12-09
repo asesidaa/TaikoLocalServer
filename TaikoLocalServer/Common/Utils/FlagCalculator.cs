@@ -30,6 +30,7 @@ public static class FlagCalculator
             default:
                 throw new ArgumentOutOfRangeException(nameof(crownType), crownType, null);
         }
+
         var offset = ((int)difficulty - 1) * 2;
         var flag = (ushort)(flagBase << offset);
         return (ushort)(previous | flag);
@@ -64,6 +65,7 @@ public static class FlagCalculator
             default:
                 throw new ArgumentOutOfRangeException(nameof(scoreRank), scoreRank, "Score rank out of range");
         }
+
         var offset = ((int)difficulty - 1) * 2;
         var result = resultBase << offset;
 
@@ -94,17 +96,15 @@ public static class FlagCalculator
                 var danScore = danScoreData.First(datum => datum.DanId == danId);
                 flag = (int)danScore.ClearState + 1;
             }
+
             var section = sections[(danId - 1) % 8];
             gotDanFlag[section] = flag;
 
-            if (!section.Equals(section8))
-            {
-                continue;
-            }
+            if (!section.Equals(section8)) continue;
             gotDanFlagList.Add(gotDanFlag.Data);
             gotDanFlag = new BitVector32();
         }
-        
+
         gotDanFlagList.Add(gotDanFlag.Data);
         return MemoryMarshal.AsBytes(new ReadOnlySpan<int>(gotDanFlagList.ToArray())).ToArray();
     }
@@ -120,8 +120,10 @@ public static class FlagCalculator
                 logger.LogWarning("Id {Id} out of range!", id);
                 continue;
             }
+
             bitSet.Set((int)id, true);
         }
+
         bitSet.CopyTo(result, 0);
 
         return result;

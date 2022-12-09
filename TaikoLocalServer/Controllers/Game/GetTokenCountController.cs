@@ -14,7 +14,7 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
         {
             Result = 1
         };
-        
+
         response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
         {
             TokenCount = 10,

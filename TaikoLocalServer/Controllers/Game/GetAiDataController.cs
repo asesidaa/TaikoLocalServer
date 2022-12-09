@@ -23,7 +23,7 @@ public class GetAiDataController : BaseController<GetAiDataController>
         user.ThrowIfNull($"User with baid {request.Baid} does not exist!");
         var response = new GetAiDataResponse
         {
-            Result  = 1,
+            Result = 1,
             TotalWinnings = (uint)user.AiWinCount,
             InputMedian = "1000",
             InputVariance = "2000"

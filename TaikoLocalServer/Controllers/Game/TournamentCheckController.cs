@@ -12,7 +12,7 @@ public class TournamentCheckController : BaseController<TournamentCheckControlle
 
         var response = new TournamentcheckResponse
         {
-            Result = 1,
+            Result = 1
         };
 
         return Ok(response);
