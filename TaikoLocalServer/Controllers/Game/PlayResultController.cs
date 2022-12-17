@@ -51,7 +51,7 @@ public class PlayResultController : BaseController<PlayResultController>
 
         if (await userDatumService.GetFirstUserDatumOrNull(request.BaidConf) is null)
         {
-            Logger.LogWarning("Game uploading a non exisiting user with baid {Baid}", request.BaidConf);
+            Logger.LogWarning("Game uploading a non existing user with baid {Baid}", request.BaidConf);
             return Ok(response);
         }
 

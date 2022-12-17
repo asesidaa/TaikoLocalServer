@@ -25,7 +25,8 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
         await cardService.AddCard(new Card
         {
             AccessCode = request.AccessCode,
-            Baid = newId
+            Baid = newId,
+            Password = ""
         });
 
         var newUser = new UserDatum
@@ -42,7 +43,8 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
             ToneFlgArray = "[]",
             TitleFlgArray = "[]",
             CostumeFlgArray = "[[],[],[],[],[]]",
-            GenericInfoFlgArray = "[]"
+            GenericInfoFlgArray = "[]",
+            TotalGameCount = 0
         };
 
         await userDatumService.InsertUserDatum(newUser);

@@ -5,25 +5,25 @@
 namespace TaikoLocalServer.Migrations
 {
     /// <inheritdoc />
-    public partial class AddPasswordToCard : Migration
+    public partial class AddTotalGameCountToUserData : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "Password",
-                table: "Card",
-                type: "TEXT",
-                nullable: true,
-                defaultValue: "");
+            migrationBuilder.AddColumn<int>(
+                name: "TotalGameCount",
+                table: "UserData",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Password",
-                table: "Card");
+                name: "TotalGameCount",
+                table: "UserData");
         }
     }
 }
