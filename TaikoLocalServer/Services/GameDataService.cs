@@ -21,6 +21,9 @@ public class GameDataService : IGameDataService
     private ImmutableDictionary<uint, MusicAttributeEntry> musicAttributes = 
         ImmutableDictionary<uint, MusicAttributeEntry>.Empty;
 
+    private ImmutableDictionary<uint, GetfolderResponse.EventfolderData> folderDictionary =
+        ImmutableDictionary<uint, GetfolderResponse.EventfolderData>.Empty;
+
     private List<uint> musics = new();
 
     private List<uint> musicsWithUra = new();
@@ -51,10 +54,15 @@ public class GameDataService : IGameDataService
     {
         return danDataDictionary;
     }
-
+    
     public ImmutableDictionary<uint, GetSongIntroductionResponse.SongIntroductionData> GetSongIntroDictionary()
     {
         return introDataDictionary;
+    }
+
+    public ImmutableDictionary<uint, GetfolderResponse.EventfolderData> GetFolderDictionary()
+    {
+        return folderDictionary;
     }
 
     public async Task InitializeAsync()
@@ -64,6 +72,7 @@ public class GameDataService : IGameDataService
         var compressedMusicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_COMPRESSED_FILE_NAME);
         var danDataPath = Path.Combine(dataPath, settings.DanDataFileName);
         var songIntroDataPath = Path.Combine(dataPath, settings.IntroDataFileName);
+        var eventFolderDataPath = Path.Combine(dataPath, settings.EventFolderDataFileName);
 
         if (File.Exists(compressedMusicAttributePath))
         {
@@ -72,16 +81,20 @@ public class GameDataService : IGameDataService
         await using var musicAttributeFile = File.OpenRead(musicAttributePath);
         await using var danDataFile = File.OpenRead(danDataPath);
         await using var songIntroDataFile = File.OpenRead(songIntroDataPath);
+        await using var eventFolderDataFile = File.OpenRead(eventFolderDataPath);
 
         var attributesData = await JsonSerializer.DeserializeAsync<MusicAttributes>(musicAttributeFile);
         var danData = await JsonSerializer.DeserializeAsync<List<DanData>>(danDataFile);
         var introData = await JsonSerializer.DeserializeAsync<List<SongIntroductionData>>(songIntroDataFile);
+        var eventFolderData = await JsonSerializer.DeserializeAsync<List<EventFolderData>>(eventFolderDataFile);
 
         InitializeMusicAttributes(attributesData);
 
         InitializeDanData(danData);
 
         InitializeIntroData(introData);
+
+        InitializeEventFolderData(eventFolderData);
     }
 
     private static void TryDecompressMusicAttribute()
@@ -106,6 +119,12 @@ public class GameDataService : IGameDataService
     {
         danData.ThrowIfNull("Shouldn't happen!");
         danDataDictionary = danData.ToImmutableDictionary(data => data.DanId, ToResponseOdaiData);
+    }
+
+    private void InitializeEventFolderData(List<EventFolderData>? eventFolderData)
+    {
+        eventFolderData.ThrowIfNull("Shouldn't happen!");
+        folderDictionary = eventFolderData.ToImmutableDictionary(data => data.FolderId, ToResponseEventFolderData);
     }
 
     private void InitializeMusicAttributes(MusicAttributes? attributesData)
@@ -153,5 +172,18 @@ public class GameDataService : IGameDataService
         };
 
         return responseOdaiData;
+    }
+
+    private static GetfolderResponse.EventfolderData ToResponseEventFolderData(EventFolderData data)
+    {
+        var responseEventFolderData = new GetfolderResponse.EventfolderData
+        {
+            FolderId = data.FolderId,
+            VerupNo = data.VerupNo,
+            Priority = data.Priority,
+            SongNoes = data.SongNo
+        };
+
+        return responseEventFolderData;
     }
 }

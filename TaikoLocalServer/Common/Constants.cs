@@ -14,8 +14,12 @@ public static class Constants
     public const string MUSIC_ATTRIBUTE_COMPRESSED_FILE_NAME = "music_attribute.bin";
 
     public const string DAN_DATA_FILE_NAME = "dan_data.json";
-
     public const string INTRO_DATA_FILE_NAME = "intro_data.json";
+    public const string EVENT_FOLDER_DATA_FILE_NAME = "event_folder_data.json";
+
+    public static readonly int[] EVENT_FOLDER_IDS = {
+        1, 2, 3, 4, 5, 6, 7, 8, 12, 13, 14
+    };
 
     public const int MIN_DAN_ID = 1;
     public const int MAX_DAN_ID = 19;
