@@ -15,4 +15,7 @@ public interface IGameDataService
     public ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> GetDanDataDictionary();
 
     public ImmutableDictionary<uint, GetSongIntroductionResponse.SongIntroductionData> GetSongIntroDictionary();
+
+    public ImmutableDictionary<uint, GetfolderResponse.EventfolderData> GetFolderDictionary();
 }
+

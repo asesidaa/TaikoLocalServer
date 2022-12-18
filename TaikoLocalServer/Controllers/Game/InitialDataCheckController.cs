@@ -46,7 +46,17 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
                 VerupNo = 1
             });
         }
-        
+
+        var eventFolderData = new List<InitialdatacheckResponse.InformationData>();
+        foreach (var folderId in Constants.EVENT_FOLDER_IDS)
+        {
+            eventFolderData.Add(new InitialdatacheckResponse.InformationData
+            {
+                InfoId = (uint)folderId,
+                VerupNo = 0
+            });
+        }
+
         var response = new InitialdatacheckResponse
         {
             Result = 1,
@@ -63,7 +73,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
                     InfoId = 1,
                     VerupNo = 2
                 }
-            }
+            },
             /*AryTelopDatas =
             {
                 new InitialdatacheckResponse.InformationData
@@ -72,16 +82,6 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
                     VerupNo = 1
                 }
             },
-            ArySongIntroductionDatas =
-            {
-                new InitialdatacheckResponse.InformationData
-                {
-                    InfoId = 1,
-                    VerupNo = 1
-                }
-            },
-
-
             AryDanextraOdaiDatas =
             {
                 new InitialdatacheckResponse.InformationData
@@ -90,7 +90,6 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
                     VerupNo = 1
                 }
             },
-
             AryAiEventDatas =
             {
                 new InitialdatacheckResponse.AiEventData
@@ -99,23 +98,19 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
                     TokenId = 1
                 }
             },
-            AryEventfolderDatas =
+            AryMovieInfos = 
             {
-                new InitialdatacheckResponse.InformationData
+                new InitialdatacheckResponse.MovieData
                 {
-                    InfoId = 1,
-                    VerupNo = 1
+                    MovieId = 2,
+                    EnableDays = 9999
                 }
-            }
-        };*/
-            /*response.AryMovieInfoes.Add(new InitialdatacheckResponse.MovieData
-            {
-                MovieId = 2,
-                EnableDays = 9999
-            });*/
+            }*/
         };
+            
         response.AryDanOdaiDatas.AddRange(danData);
         response.ArySongIntroductionDatas.AddRange(introData);
+        response.AryEventfolderDatas.AddRange(eventFolderData);
         return Ok(response);
     }
 
