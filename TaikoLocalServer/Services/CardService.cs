@@ -46,14 +46,15 @@ public class CardService : ICardService
 
         return true;
     }
-    
-    public async Task<bool> UpdatePassword(string accessCode, string password)
+
+    public async Task<bool> UpdatePassword(string accessCode, string password, string salt)
     {
         var card = await context.Cards.FindAsync(accessCode);
 
         if (card is null) return false;
 
         card.Password = password;
+        card.Salt = salt;
         await context.SaveChangesAsync();
 
         return true;

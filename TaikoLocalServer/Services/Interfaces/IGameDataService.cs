@@ -10,6 +10,8 @@ public interface IGameDataService
 
     public List<uint> GetMusicWithUraList();
 
+    public List<uint> GetMusicWithGenre17List();
+
     public ImmutableDictionary<uint, MusicAttributeEntry> GetMusicAttributes();
 
     public ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> GetDanDataDictionary();

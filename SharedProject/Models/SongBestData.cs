@@ -46,6 +46,6 @@ public class SongBestData
     public List<AiSectionBestData> AiSectionBestData { get; set; } = new();
 
     public bool ShowAiData { get; set; }
-    
+
     public short Option { get; set; }
 }

@@ -3,10 +3,10 @@
 public partial class Register
 {
     private string cardNum = "";
-    private MudForm registerForm = default!;
-    private string password = "";
     private string confirmPassword = "";
-    
+    private string password = "";
+    private MudForm registerForm = default!;
+
     private DashboardResponse? response;
 
     protected override async Task OnInitializedAsync()
@@ -14,7 +14,7 @@ public partial class Register
         await base.OnInitializedAsync();
         response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
     }
-    
+
     private async Task OnRegister()
     {
         if (response != null)

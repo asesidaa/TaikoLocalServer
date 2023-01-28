@@ -4,10 +4,10 @@ public partial class ChangePassword
 {
     private string cardNum = "";
     private MudForm changePasswordForm = default!;
+    private string confirmNewPassword = "";
     private string newPassword = "";
     private string oldPassword = "";
-    private string confirmNewPassword = "";
-    
+
     private DashboardResponse? response;
 
     protected override async Task OnInitializedAsync()
@@ -15,12 +15,13 @@ public partial class ChangePassword
         await base.OnInitializedAsync();
         response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
     }
-    
+
     private async Task OnChangePassword()
     {
         if (response != null)
         {
-            var result = await LoginService.ChangePassword(cardNum, oldPassword, newPassword, confirmNewPassword, response, Client);
+            var result = await LoginService.ChangePassword(cardNum, oldPassword, newPassword, confirmNewPassword,
+                response, Client);
             switch (result)
             {
                 case 0:

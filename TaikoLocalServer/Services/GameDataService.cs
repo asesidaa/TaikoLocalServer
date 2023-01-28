@@ -6,6 +6,7 @@ using SharedProject.Models;
 using SharedProject.Utils;
 using Swan.Mapping;
 using TaikoLocalServer.Settings;
+using TaikoWebUI.Shared.Models;
 using Throw;
 
 namespace TaikoLocalServer.Services;
@@ -23,9 +24,13 @@ public class GameDataService : IGameDataService
     private ImmutableDictionary<uint, MusicAttributeEntry> musicAttributes =
         ImmutableDictionary<uint, MusicAttributeEntry>.Empty;
 
+    private List<MusicOrderEntry> musicOrders = new();
+
     private List<uint> musics = new();
 
     private List<uint> musicsWithUra = new();
+
+    private List<uint> musicWithGenre17 = new();
 
     public GameDataService(IOptions<DataSettings> settings)
     {
@@ -40,6 +45,11 @@ public class GameDataService : IGameDataService
     public List<uint> GetMusicWithUraList()
     {
         return musicsWithUra;
+    }
+
+    public List<uint> GetMusicWithGenre17List()
+    {
+        return musicWithGenre17;
     }
 
     public ImmutableDictionary<uint, MusicAttributeEntry> GetMusicAttributes()
@@ -62,23 +72,35 @@ public class GameDataService : IGameDataService
         var dataPath = PathHelper.GetDataPath();
         var musicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_FILE_NAME);
         var compressedMusicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_COMPRESSED_FILE_NAME);
+        var musicOrderPath = Path.Combine(dataPath, Constants.MUSIC_ORDER_FILE_NAME);
+        var compressedMusicOrderPath = Path.Combine(dataPath, Constants.MUSIC_ORDER_COMPRESSED_FILE_NAME);
         var danDataPath = Path.Combine(dataPath, settings.DanDataFileName);
         var songIntroDataPath = Path.Combine(dataPath, settings.IntroDataFileName);
 
         if (File.Exists(compressedMusicAttributePath)) TryDecompressMusicAttribute();
         await using var musicAttributeFile = File.OpenRead(musicAttributePath);
+        if (File.Exists(compressedMusicOrderPath)) TryDecompressMusicOrder();
+        await using var musicOrderFile = File.OpenRead(musicOrderPath);
         await using var danDataFile = File.OpenRead(danDataPath);
         await using var songIntroDataFile = File.OpenRead(songIntroDataPath);
 
         var attributesData = await JsonSerializer.DeserializeAsync<MusicAttributes>(musicAttributeFile);
+        var ordersData = await JsonSerializer.DeserializeAsync<MusicOrder>(musicOrderFile);
         var danData = await JsonSerializer.DeserializeAsync<List<DanData>>(danDataFile);
         var introData = await JsonSerializer.DeserializeAsync<List<SongIntroductionData>>(songIntroDataFile);
 
         InitializeMusicAttributes(attributesData);
+        
+        InitializeMusicOrders(ordersData);
 
         InitializeDanData(danData);
 
         InitializeIntroData(introData);
+    }
+
+    public List<MusicOrderEntry> GetMusicOrders()
+    {
+        return musicOrders;
     }
 
     private static void TryDecompressMusicAttribute()
@@ -89,6 +111,18 @@ public class GameDataService : IGameDataService
 
         using var compressed = File.Open(compressedMusicAttributePath, FileMode.Open);
         using var output = File.Create(musicAttributePath);
+
+        GZip.Decompress(compressed, output, true);
+    }
+
+    private static void TryDecompressMusicOrder()
+    {
+        var dataPath = PathHelper.GetDataPath();
+        var musicOrderPath = Path.Combine(dataPath, Constants.MUSIC_ORDER_FILE_NAME);
+        var compressedMusicOrderPath = Path.Combine(dataPath, Constants.MUSIC_ORDER_COMPRESSED_FILE_NAME);
+
+        using var compressed = File.Open(compressedMusicOrderPath, FileMode.Open);
+        using var output = File.Create(musicOrderPath);
 
         GZip.Decompress(compressed, output, true);
     }
@@ -119,6 +153,18 @@ public class GameDataService : IGameDataService
             .Select(pair => pair.Key)
             .ToList();
         musicsWithUra.Sort();
+    }
+
+    private void InitializeMusicOrders(MusicOrder? ordersData)
+    {
+        ordersData.ThrowIfNull("Shouldn't happen!");
+
+        musicOrders = ordersData.Order.ToList();
+
+        musicWithGenre17 = musicOrders.Where(x => x.GenreNo == 17)
+            .Select(x => x.SongId)
+            .ToList();
+        musicWithGenre17.Sort();
     }
 
     private static GetDanOdaiResponse.OdaiData ToResponseOdaiData(DanData data)

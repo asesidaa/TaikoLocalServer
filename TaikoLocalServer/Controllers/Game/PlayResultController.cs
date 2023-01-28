@@ -13,6 +13,7 @@ public class PlayResultController : BaseController<PlayResultController>
     private readonly IAiDatumService aiDatumService;
 
     private readonly IDanScoreDatumService danScoreDatumService;
+    private readonly IGameDataService gameDataService;
 
     private readonly ISongBestDatumService songBestDatumService;
 
@@ -21,13 +22,14 @@ public class PlayResultController : BaseController<PlayResultController>
 
     public PlayResultController(IUserDatumService userDatumService, ISongPlayDatumService songPlayDatumService,
         ISongBestDatumService songBestDatumService, IDanScoreDatumService danScoreDatumService,
-        IAiDatumService aiDatumService)
+        IAiDatumService aiDatumService, IGameDataService gameDataService)
     {
         this.userDatumService = userDatumService;
         this.songPlayDatumService = songPlayDatumService;
         this.songBestDatumService = songBestDatumService;
         this.danScoreDatumService = danScoreDatumService;
         this.aiDatumService = aiDatumService;
+        this.gameDataService = gameDataService;
     }
 
     [HttpPost]
@@ -73,8 +75,18 @@ public class PlayResultController : BaseController<PlayResultController>
         {
             var stageData = playResultData.AryStageInfoes[songNumber];
 
+            var songId = stageData.SongNo;
+            // var musicWithGenre17List = gameDataService.GetMusicWithGenre17List();
+            //
+            // if (musicWithGenre17List.Any(x => x == songId))
+            // {
+            //     Logger.LogInformation("Skipping song {SongId} because it's a genre 17 song", songId);
+            //     continue;
+            // }
+
             if (stageData.IsSkipUse)
             {
+                Logger.LogInformation("Skipping updating best data for song {SongId} because skip is used", songId);
                 await UpdatePlayData(request, songNumber, stageData, lastPlayDatetime);
                 continue;
             }

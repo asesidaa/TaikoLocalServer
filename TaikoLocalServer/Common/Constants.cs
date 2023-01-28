@@ -13,6 +13,9 @@ public static class Constants
     public const string MUSIC_ATTRIBUTE_FILE_NAME = "music_attribute.json";
     public const string MUSIC_ATTRIBUTE_COMPRESSED_FILE_NAME = "music_attribute.bin";
 
+    public const string MUSIC_ORDER_FILE_NAME = "music_order.json";
+    public const string MUSIC_ORDER_COMPRESSED_FILE_NAME = "music_order.bin";
+
     public const string DAN_DATA_FILE_NAME = "dan_data.json";
 
     public const string INTRO_DATA_FILE_NAME = "intro_data.json";
