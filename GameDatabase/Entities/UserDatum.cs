@@ -33,5 +33,5 @@ public class UserDatum
     public int TotalGameCount { get; set; }
     public virtual Card? Ba { get; set; }
 
-    public string TokenCountDict { get; set; } = "{4:0, 1000:0}";
+    public string TokenCountDict { get; set; } = "{}";
 }

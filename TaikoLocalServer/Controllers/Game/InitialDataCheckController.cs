@@ -43,7 +43,8 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
                 VerupNo = 1
             });
 
-        var eventFolderData = Constants.EVENT_FOLDER_IDS.Select(folderId => new InitialdatacheckResponse.InformationData { InfoId = (uint)folderId, VerupNo = 0 }).ToList();
+        var eventFolderData = Constants.EVENT_FOLDER_IDS.Select(folderId => new InitialdatacheckResponse.InformationData
+            { InfoId = (uint)folderId, VerupNo = 0 }).ToList();
 
 
         var response = new InitialdatacheckResponse

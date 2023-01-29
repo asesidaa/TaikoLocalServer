@@ -1,5 +1,5 @@
-﻿using Throw;
-using System.Text.Json;
+﻿using System.Text.Json;
+using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -13,7 +13,7 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
     {
         this.userDatumService = userDatumService;
     }
-    
+
     [HttpPost]
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetTokenCount([FromBody] GetTokenCountRequest request)
@@ -26,38 +26,32 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
         var tokenCountDict = new Dictionary<uint, int>();
         try
         {
-            tokenCountDict = JsonSerializer.Deserialize<Dictionary<uint, int>>(user.TokenCountDict);
+            tokenCountDict = !string.IsNullOrEmpty(user.TokenCountDict)
+                ? JsonSerializer.Deserialize<Dictionary<uint, int>>(user.TokenCountDict)
+                : new Dictionary<uint, int>();
         }
         catch (JsonException e)
         {
             Logger.LogError(e, "Parsing TokenCountDict json data failed");
         }
-        
+
         tokenCountDict.ThrowIfNull("TokenCountDict should never be null");
-        
-        if (!tokenCountDict.ContainsKey(4))
-        {
-            tokenCountDict.Add(4, 0);
-        }
-        
-        if (!tokenCountDict.ContainsKey(1000))
-        {
-            tokenCountDict.Add(1000, 0);
-        }
-        
+
+        if (!tokenCountDict.ContainsKey(4)) tokenCountDict.Add(4, 0);
+
+        if (!tokenCountDict.ContainsKey(1000)) tokenCountDict.Add(1000, 0);
+
         var response = new GetTokenCountResponse
         {
             Result = 1
         };
-        
+
         foreach (var (key, value) in tokenCountDict)
-        {
             response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
             {
                 TokenCount = value,
                 TokenId = key
             });
-        }
 
         return Ok(response);
     }

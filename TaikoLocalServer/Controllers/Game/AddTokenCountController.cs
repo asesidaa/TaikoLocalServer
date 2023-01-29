@@ -1,5 +1,5 @@
-﻿using Throw;
-using System.Text.Json;
+﻿using System.Text.Json;
+using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -13,7 +13,7 @@ public class AddTokenCountController : BaseController<AddTokenCountController>
     {
         this.userDatumService = userDatumService;
     }
-    
+
     [HttpPost]
     [Produces("application/protobuf")]
     public async Task<IActionResult> AddTokenCount([FromBody] AddTokenCountRequest request)
@@ -22,37 +22,35 @@ public class AddTokenCountController : BaseController<AddTokenCountController>
 
         var user = await userDatumService.GetFirstUserDatumOrNull(request.Baid);
         user.ThrowIfNull($"User with baid {request.Baid} does not exist!");
-        
+
         var tokenCountDict = new Dictionary<uint, int>();
         try
         {
-            tokenCountDict = JsonSerializer.Deserialize<Dictionary<uint, int>>(user.TokenCountDict);
+            tokenCountDict = !string.IsNullOrEmpty(user.TokenCountDict)
+                ? JsonSerializer.Deserialize<Dictionary<uint, int>>(user.TokenCountDict)
+                : new Dictionary<uint, int>();
         }
         catch (JsonException e)
         {
             Logger.LogError(e, "Parsing TokenCountDict json data failed");
         }
-        
+
         tokenCountDict.ThrowIfNull("TokenCountDict should never be null");
 
         foreach (var addTokenCountData in request.AryAddTokenCountDatas)
         {
             var tokenId = addTokenCountData.TokenId;
             var addTokenCount = addTokenCountData.AddTokenCount;
-            
+
             if (tokenCountDict.ContainsKey(tokenId))
-            {
                 tokenCountDict[tokenId] += addTokenCount;
-            }
             else
-            {
                 tokenCountDict.Add(tokenId, addTokenCount);
-            }
         }
-        
+
         user.TokenCountDict = JsonSerializer.Serialize(tokenCountDict);
         await userDatumService.UpdateUserDatum(user);
-        
+
         var response = new AddTokenCountResponse
         {
             Result = 1

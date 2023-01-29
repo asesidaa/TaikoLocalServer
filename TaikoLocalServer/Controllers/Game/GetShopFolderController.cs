@@ -22,7 +22,7 @@ public class GetShopFolderController : BaseController<GetShopFolderController>
             Price = 1,
             SongNo = 2
         });
-        
+
         response.AryShopFolderDatas.Add(new GetShopFolderResponse.ShopFolderData
         {
             Price = 114514,
