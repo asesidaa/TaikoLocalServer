@@ -1,7 +1,7 @@
-﻿using System.Text;
+﻿using System.Security.Cryptography;
+using System.Text;
 using Microsoft.Extensions.Options;
 using TaikoWebUI.Settings;
-using System.Security.Cryptography;
 
 namespace TaikoWebUI.Services;
 
@@ -79,7 +79,7 @@ public class LoginService
 
         return 3;
     }
-    
+
     private static string CreateSalt()
     {
         //Generate a cryptographic random number.

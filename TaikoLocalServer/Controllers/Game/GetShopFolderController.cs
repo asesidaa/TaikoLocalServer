@@ -13,7 +13,7 @@ public class GetShopFolderController : BaseController<GetShopFolderController>
         var response = new GetShopFolderResponse
         {
             Result = 1,
-            TokenId = 1,
+            TokenId = 1000,
             VerupNo = 2
         };
 
@@ -21,6 +21,12 @@ public class GetShopFolderController : BaseController<GetShopFolderController>
         {
             Price = 1,
             SongNo = 2
+        });
+        
+        response.AryShopFolderDatas.Add(new GetShopFolderResponse.ShopFolderData
+        {
+            Price = 114514,
+            SongNo = 1189
         });
 
         return Ok(response);
