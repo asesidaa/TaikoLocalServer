@@ -24,8 +24,13 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
         Logger.LogInformation("Initial data check request: {Request}", request.Stringify());
 
         var songIdMax = settings.EnableMoreSongs ? Constants.MUSIC_ID_MAX_EXPANDED : Constants.MUSIC_ID_MAX;
+        var shopFolderDictionary = gameDataService.GetShopFolderDictionary();
+        var shopSongNoList = shopFolderDictionary.Select(shopFolder => shopFolder.Value.SongNo).ToList();
+        var musicList = gameDataService.GetMusicList();
+        var enabledMusicList = musicList.Except(shopSongNoList);
+
         var enabledArray =
-            FlagCalculator.GetBitArrayFromIds(gameDataService.GetMusicList(), songIdMax, Logger);
+            FlagCalculator.GetBitArrayFromIds(enabledMusicList, songIdMax, Logger);
 
         var danData = new List<InitialdatacheckResponse.InformationData>();
         for (var danId = Constants.MIN_DAN_ID; danId <= Constants.MAX_DAN_ID; danId++)

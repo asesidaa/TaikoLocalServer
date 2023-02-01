@@ -35,6 +35,11 @@ public class GameDataService : IGameDataService
 
     private List<uint> musicWithGenre17 = new();
 
+    private ImmutableDictionary<uint, GetShopFolderResponse.ShopFolderData> shopFolderDictionary =
+        ImmutableDictionary<uint, GetShopFolderResponse.ShopFolderData>.Empty;
+
+    private Dictionary<string, uint> tokenDataDictionary = new();
+
     public GameDataService(IOptions<DataSettings> settings)
     {
         this.settings = settings.Value;
@@ -75,6 +80,16 @@ public class GameDataService : IGameDataService
         return folderDictionary;
     }
 
+    public ImmutableDictionary<uint, GetShopFolderResponse.ShopFolderData> GetShopFolderDictionary()
+    {
+        return shopFolderDictionary;
+    }
+
+    public Dictionary<string, uint> GetTokenDataDictionary()
+    {
+        return tokenDataDictionary;
+    }
+
     public async Task InitializeAsync()
     {
         var dataPath = PathHelper.GetDataPath();
@@ -85,6 +100,8 @@ public class GameDataService : IGameDataService
         var danDataPath = Path.Combine(dataPath, settings.DanDataFileName);
         var songIntroDataPath = Path.Combine(dataPath, settings.IntroDataFileName);
         var eventFolderDataPath = Path.Combine(dataPath, settings.EventFolderDataFileName);
+        var shopFolderDataPath = Path.Combine(dataPath, settings.ShopFolderDataFileName);
+        var tokenDataPath = Path.Combine(dataPath, settings.TokenDataFileName);
 
         if (File.Exists(compressedMusicAttributePath)) TryDecompressMusicAttribute();
         await using var musicAttributeFile = File.OpenRead(musicAttributePath);
@@ -93,12 +110,16 @@ public class GameDataService : IGameDataService
         await using var danDataFile = File.OpenRead(danDataPath);
         await using var songIntroDataFile = File.OpenRead(songIntroDataPath);
         await using var eventFolderDataFile = File.OpenRead(eventFolderDataPath);
+        await using var shopFolderDataFile = File.OpenRead(shopFolderDataPath);
+        await using var tokenDataFile = File.OpenRead(tokenDataPath);
 
         var attributesData = await JsonSerializer.DeserializeAsync<MusicAttributes>(musicAttributeFile);
         var ordersData = await JsonSerializer.DeserializeAsync<MusicOrder>(musicOrderFile);
         var danData = await JsonSerializer.DeserializeAsync<List<DanData>>(danDataFile);
         var introData = await JsonSerializer.DeserializeAsync<List<SongIntroductionData>>(songIntroDataFile);
         var eventFolderData = await JsonSerializer.DeserializeAsync<List<EventFolderData>>(eventFolderDataFile);
+        var shopFolderData = await JsonSerializer.DeserializeAsync<List<ShopFolderData>>(shopFolderDataFile);
+        var tokenData = await JsonSerializer.DeserializeAsync<Dictionary<string, uint>>(tokenDataFile);
 
         InitializeMusicAttributes(attributesData);
 
@@ -109,6 +130,10 @@ public class GameDataService : IGameDataService
         InitializeIntroData(introData);
 
         InitializeEventFolderData(eventFolderData);
+
+        InitializeShopFolderData(shopFolderData);
+
+        InitializeTokenData(tokenData);
     }
 
     public List<MusicOrderEntry> GetMusicOrders()
@@ -156,6 +181,18 @@ public class GameDataService : IGameDataService
     {
         eventFolderData.ThrowIfNull("Shouldn't happen!");
         folderDictionary = eventFolderData.ToImmutableDictionary(data => data.FolderId, ToResponseEventFolderData);
+    }
+
+    private void InitializeShopFolderData(List<ShopFolderData>? shopFolderData)
+    {
+        shopFolderData.ThrowIfNull("Shouldn't happen!");
+        shopFolderDictionary = shopFolderData.ToImmutableDictionary(data => data.SongNo, ToResponseShopFolderData);
+    }
+
+    private void InitializeTokenData(Dictionary<string, uint>? tokenData)
+    {
+        tokenData.ThrowIfNull("Shouldn't happen!");
+        tokenDataDictionary = tokenData;
     }
 
     private void InitializeMusicAttributes(MusicAttributes? attributesData)
@@ -230,5 +267,16 @@ public class GameDataService : IGameDataService
         };
 
         return responseEventFolderData;
+    }
+
+    private static GetShopFolderResponse.ShopFolderData ToResponseShopFolderData(ShopFolderData data)
+    {
+        var responseShopFolderData = new GetShopFolderResponse.ShopFolderData
+        {
+            SongNo = data.SongNo,
+            Price = data.Price
+        };
+
+        return responseShopFolderData;
     }
 }

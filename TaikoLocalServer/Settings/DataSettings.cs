@@ -7,4 +7,8 @@ public class DataSettings
     public string EventFolderDataFileName { get; set; } = "event_folder_data.json";
 
     public string IntroDataFileName { get; set; } = "intro_data.json";
+
+    public string ShopFolderDataFileName { get; set; } = "shop_folder_data.json";
+
+    public string TokenDataFileName { get; set; } = "token_data.json";
 }

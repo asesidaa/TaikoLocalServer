@@ -32,7 +32,7 @@ public class AddTokenCountController : BaseController<AddTokenCountController>
         }
         catch (JsonException e)
         {
-            Logger.LogError(e, "Parsing TokenCountDict json data failed");
+            Logger.LogError(e, "Parsing TokenCountDict data for user with baid {Request} failed!", request.Baid);
         }
 
         tokenCountDict.ThrowIfNull("TokenCountDict should never be null");

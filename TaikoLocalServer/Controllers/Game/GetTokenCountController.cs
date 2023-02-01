@@ -7,11 +7,13 @@ namespace TaikoLocalServer.Controllers.Game;
 [ApiController]
 public class GetTokenCountController : BaseController<GetTokenCountController>
 {
+    private readonly IGameDataService gameDataService;
     private readonly IUserDatumService userDatumService;
 
-    public GetTokenCountController(IUserDatumService userDatumService)
+    public GetTokenCountController(IUserDatumService userDatumService, IGameDataService gameDataService)
     {
         this.userDatumService = userDatumService;
+        this.gameDataService = gameDataService;
     }
 
     [HttpPost]
@@ -21,6 +23,9 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
         Logger.LogInformation("GetTokenCount request : {Request}", request.Stringify());
 
         var user = await userDatumService.GetFirstUserDatumOrNull(request.Baid);
+        var tokenDataDictionary = gameDataService.GetTokenDataDictionary();
+        tokenDataDictionary.TryGetValue("shopTokenId", out var shopTokenId);
+        tokenDataDictionary.TryGetValue("kaTokenId", out var kaTokenId);
         user.ThrowIfNull($"User with baid {request.Baid} does not exist!");
 
         var tokenCountDict = new Dictionary<uint, int>();
@@ -32,14 +37,14 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
         }
         catch (JsonException e)
         {
-            Logger.LogError(e, "Parsing TokenCountDict json data failed");
+            Logger.LogError(e, "Parsing TokenCountDict data for user with baid {Request} failed!", request.Baid);
         }
 
         tokenCountDict.ThrowIfNull("TokenCountDict should never be null");
 
-        if (!tokenCountDict.ContainsKey(4)) tokenCountDict.Add(4, 0);
+        if (!tokenCountDict.ContainsKey(shopTokenId)) tokenCountDict.Add(shopTokenId, 0);
 
-        if (!tokenCountDict.ContainsKey(1000)) tokenCountDict.Add(1000, 0);
+        if (!tokenCountDict.ContainsKey(kaTokenId)) tokenCountDict.Add(kaTokenId, 0);
 
         var response = new GetTokenCountResponse
         {

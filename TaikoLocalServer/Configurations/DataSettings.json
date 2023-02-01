@@ -2,6 +2,8 @@
   "DataSettings": {
     "DanDataFileName": "dan_data.json",
     "EventFolderDataFileName": "event_folder_data.json",
-    "IntroDataFileName": "intro_data.json"
+    "IntroDataFileName": "intro_data.json",
+    "ShopFolderDataFileName": "shop_folder_data.json",
+    "TokenDataFileName": "token_data.json"
   }
 }

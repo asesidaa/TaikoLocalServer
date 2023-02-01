@@ -27,11 +27,9 @@ public class UserDatum
     public bool DisplayDan { get; set; }
     public bool DisplayAchievement { get; set; }
     public Difficulty AchievementDisplayDifficulty { get; set; }
-
     public int AiWinCount { get; set; }
-
     public int TotalGameCount { get; set; }
     public virtual Card? Ba { get; set; }
-
     public string TokenCountDict { get; set; } = "{}";
+    public string UnlockedSongIdList { get; set; } = "[]";
 }
