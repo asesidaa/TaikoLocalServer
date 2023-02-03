@@ -27,7 +27,9 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
         var shopFolderDictionary = gameDataService.GetShopFolderDictionary();
         var shopSongNoList = shopFolderDictionary.Select(shopFolder => shopFolder.Value.SongNo).ToList();
         var musicList = gameDataService.GetMusicList();
+        var lockedSongsList = gameDataService.GetLockedSongsList();
         var enabledMusicList = musicList.Except(shopSongNoList);
+        enabledMusicList = enabledMusicList.Except(lockedSongsList);
 
         var enabledArray =
             FlagCalculator.GetBitArrayFromIds(enabledMusicList, songIdMax, Logger);
@@ -60,7 +62,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
             IsClose = false,
             DefaultSongFlg = enabledArray,
             AchievementSongBit = enabledArray,
-            SongIntroductionEndDatetime = DateTime.Now.AddYears(10).ToString(Constants.DATE_TIME_FORMAT),
+            // SongIntroductionEndDatetime = DateTime.Now.AddYears(10).ToString(Constants.DATE_TIME_FORMAT),
             AryShopFolderDatas =
             {
                 new InitialdatacheckResponse.InformationData
@@ -68,43 +70,43 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
                     InfoId = 1,
                     VerupNo = 2
                 }
-            }
-            /*AryTelopDatas =
-            {
-                new InitialdatacheckResponse.InformationData
-                {
-                    InfoId = 1,
-                    VerupNo = 1
-                }
             },
-            AryDanextraOdaiDatas =
-            {
-                new InitialdatacheckResponse.InformationData
-                {
-                    InfoId = 1,
-                    VerupNo = 1
-                }
-            },
-            AryAiEventDatas =
-            {
-                new InitialdatacheckResponse.AiEventData
-                {
-                    AiEventId = 1,
-                    TokenId = 1
-                }
-            },
-            AryMovieInfos = 
+            AryMovieInfoes =
             {
                 new InitialdatacheckResponse.MovieData
                 {
                     MovieId = 2,
                     EnableDays = 9999
                 }
-            }*/
+            }
+            // AryTelopDatas =
+            // {
+            //     new InitialdatacheckResponse.InformationData
+            //     {
+            //         InfoId = 1,
+            //         VerupNo = 1
+            //     }
+            // },
+            // AryDanextraOdaiDatas =
+            // {
+            //     new InitialdatacheckResponse.InformationData
+            //     {
+            //         InfoId = 1,
+            //         VerupNo = 1
+            //     }
+            // },
+            // AryAiEventDatas =
+            // {
+            //     new InitialdatacheckResponse.AiEventData
+            //     {
+            //         AiEventId = 1,
+            //         TokenId = 1
+            //     }
+            // },
         };
 
         response.AryDanOdaiDatas.AddRange(danData);
-        response.ArySongIntroductionDatas.AddRange(introData);
+        // response.ArySongIntroductionDatas.AddRange(introData);
         response.AryEventfolderDatas.AddRange(eventFolderData);
         return Ok(response);
     }

@@ -15,7 +15,7 @@ namespace TaikoLocalServer.Migrations
                 table: "UserData",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: "[]");
         }
 
         /// <inheritdoc />

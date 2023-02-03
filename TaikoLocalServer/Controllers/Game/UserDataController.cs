@@ -51,11 +51,14 @@ public class UserDataController : BaseController<UserDataController>
         var songIdMax = settings.EnableMoreSongs ? Constants.MUSIC_ID_MAX_EXPANDED : Constants.MUSIC_ID_MAX;
         var shopFolderDictionary = gameDataService.GetShopFolderDictionary();
         var shopSongNoList = shopFolderDictionary.Select(shopFolder => shopFolder.Value.SongNo).ToList();
-        var lockedShopSongNoList = shopSongNoList.Except(unlockedSongIdList).ToList();
+        var lockedSongsList = gameDataService.GetLockedSongsList();
+        lockedSongsList.AddRange(shopSongNoList.Except(lockedSongsList));
+        lockedSongsList = lockedSongsList.Except(unlockedSongIdList).ToList();
         var musicList = gameDataService.GetMusicList();
         var musicWithUraList = gameDataService.GetMusicWithUraList();
-        var enabledMusicList = musicList.Except(lockedShopSongNoList);
-        var enabledMusicWithUraList = musicWithUraList.Except(lockedShopSongNoList);
+        
+        var enabledMusicList = musicList.Except(lockedSongsList);
+        var enabledMusicWithUraList = musicWithUraList.Except(lockedSongsList);
 
         var releaseSongArray =
             FlagCalculator.GetBitArrayFromIds(enabledMusicList, songIdMax, Logger);

@@ -23,4 +23,6 @@ public interface IGameDataService
     public ImmutableDictionary<uint, GetShopFolderResponse.ShopFolderData> GetShopFolderDictionary();
 
     public Dictionary<string, uint> GetTokenDataDictionary();
+
+    public List<uint> GetLockedSongsList();
 }

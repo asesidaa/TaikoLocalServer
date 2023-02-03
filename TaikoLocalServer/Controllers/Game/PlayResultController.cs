@@ -80,13 +80,11 @@ public class PlayResultController : BaseController<PlayResultController>
             //
             // if (musicWithGenre17List.Any(x => x == songId))
             // {
-            //     Logger.LogInformation("Skipping song {SongId} because it's a genre 17 song", songId);
             //     continue;
             // }
 
             if (stageData.IsSkipUse)
             {
-                Logger.LogInformation("Skipping updating best data for song {SongId} because skip is used", songId);
                 await UpdatePlayData(request, songNumber, stageData, lastPlayDatetime);
                 continue;
             }
@@ -207,6 +205,16 @@ public class PlayResultController : BaseController<PlayResultController>
         };
         userdata.CostumeData = JsonSerializer.Serialize(costumeData);
 
+        var releaseSongNoes = playResultData.ReleaseSongNoes;
+        var uraReleaseSongNoes = playResultData.UraReleaseSongNoes;
+
+        if (releaseSongNoes != null)
+            userdata.UnlockedSongIdList = UpdateUnlockedSongIdList(userdata.UnlockedSongIdList, releaseSongNoes,
+                nameof(userdata.UnlockedSongIdList));
+        if (uraReleaseSongNoes != null)
+            userdata.UnlockedSongIdList = UpdateUnlockedSongIdList(userdata.UnlockedSongIdList, uraReleaseSongNoes,
+                nameof(userdata.UnlockedSongIdList));
+
         // Official cabinet does not save option at the end of the game, so I turned it off. -S-Sebb??
         // Skip user setting saving when in dan mode as dan mode uses its own default setting
         // if (playMode != PlayMode.DanMode)
@@ -262,6 +270,27 @@ public class PlayResultController : BaseController<PlayResultController>
         flgData?.AddRange(newValue ?? Array.Empty<uint>());
         var flgArray = flgData ?? new List<uint>();
         return JsonSerializer.Serialize(flgArray);
+    }
+
+    private string UpdateUnlockedSongIdList(string originalValue, IEnumerable<uint> releaseSongNoes, string fieldName)
+    {
+        var unlockedSongIdList = new List<uint>();
+        try
+        {
+            JsonSerializer.Deserialize<List<uint>>(originalValue);
+        }
+        catch (JsonException e)
+        {
+            Logger.LogError(e, "Parsing {FieldName} json data failed", fieldName);
+        }
+
+        unlockedSongIdList.ThrowIfNull("UnlockedSongIdList should never be null");
+
+        foreach (var songNo in releaseSongNoes)
+            if (!unlockedSongIdList.Contains(songNo))
+                unlockedSongIdList.Add(songNo);
+
+        return JsonSerializer.Serialize(unlockedSongIdList);
     }
 
     private string UpdateJsonCostumeFlagArray(string originalValue, IReadOnlyList<IReadOnlyCollection<uint>?>? newValue)

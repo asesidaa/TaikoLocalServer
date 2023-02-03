@@ -24,6 +24,8 @@ public class GameDataService : IGameDataService
     private ImmutableDictionary<uint, GetSongIntroductionResponse.SongIntroductionData> introDataDictionary =
         ImmutableDictionary<uint, GetSongIntroductionResponse.SongIntroductionData>.Empty;
 
+    private List<uint> lockedSongsList = new();
+
     private ImmutableDictionary<uint, MusicAttributeEntry> musicAttributes =
         ImmutableDictionary<uint, MusicAttributeEntry>.Empty;
 
@@ -90,6 +92,11 @@ public class GameDataService : IGameDataService
         return tokenDataDictionary;
     }
 
+    public List<uint> GetLockedSongsList()
+    {
+        return lockedSongsList;
+    }
+
     public async Task InitializeAsync()
     {
         var dataPath = PathHelper.GetDataPath();
@@ -102,6 +109,7 @@ public class GameDataService : IGameDataService
         var eventFolderDataPath = Path.Combine(dataPath, settings.EventFolderDataFileName);
         var shopFolderDataPath = Path.Combine(dataPath, settings.ShopFolderDataFileName);
         var tokenDataPath = Path.Combine(dataPath, settings.TokenDataFileName);
+        var lockedSongsDataPath = Path.Combine(dataPath, settings.LockedSongsDataFileName);
 
         if (File.Exists(compressedMusicAttributePath)) TryDecompressMusicAttribute();
         await using var musicAttributeFile = File.OpenRead(musicAttributePath);
@@ -112,6 +120,7 @@ public class GameDataService : IGameDataService
         await using var eventFolderDataFile = File.OpenRead(eventFolderDataPath);
         await using var shopFolderDataFile = File.OpenRead(shopFolderDataPath);
         await using var tokenDataFile = File.OpenRead(tokenDataPath);
+        await using var lockedSongsDataFile = File.OpenRead(lockedSongsDataPath);
 
         var attributesData = await JsonSerializer.DeserializeAsync<MusicAttributes>(musicAttributeFile);
         var ordersData = await JsonSerializer.DeserializeAsync<MusicOrder>(musicOrderFile);
@@ -120,6 +129,7 @@ public class GameDataService : IGameDataService
         var eventFolderData = await JsonSerializer.DeserializeAsync<List<EventFolderData>>(eventFolderDataFile);
         var shopFolderData = await JsonSerializer.DeserializeAsync<List<ShopFolderData>>(shopFolderDataFile);
         var tokenData = await JsonSerializer.DeserializeAsync<Dictionary<string, uint>>(tokenDataFile);
+        var lockedSongsData = await JsonSerializer.DeserializeAsync<Dictionary<string, uint[]>>(lockedSongsDataFile);
 
         InitializeMusicAttributes(attributesData);
 
@@ -134,6 +144,8 @@ public class GameDataService : IGameDataService
         InitializeShopFolderData(shopFolderData);
 
         InitializeTokenData(tokenData);
+
+        InitializeLockedSongsData(lockedSongsData);
     }
 
     public List<MusicOrderEntry> GetMusicOrders()
@@ -193,6 +205,12 @@ public class GameDataService : IGameDataService
     {
         tokenData.ThrowIfNull("Shouldn't happen!");
         tokenDataDictionary = tokenData;
+    }
+
+    private void InitializeLockedSongsData(Dictionary<string, uint[]>? lockedSongsData)
+    {
+        lockedSongsData.ThrowIfNull("Shouldn't happen!");
+        lockedSongsList = lockedSongsData["songNo"].ToList();
     }
 
     private void InitializeMusicAttributes(MusicAttributes? attributesData)
