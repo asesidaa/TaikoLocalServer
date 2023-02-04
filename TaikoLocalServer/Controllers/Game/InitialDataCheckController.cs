@@ -62,7 +62,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
             IsClose = false,
             DefaultSongFlg = enabledArray,
             AchievementSongBit = enabledArray,
-            // SongIntroductionEndDatetime = DateTime.Now.AddYears(10).ToString(Constants.DATE_TIME_FORMAT),
+            SongIntroductionEndDatetime = DateTime.Now.AddYears(10).ToString(Constants.DATE_TIME_FORMAT),
             AryShopFolderDatas =
             {
                 new InitialdatacheckResponse.InformationData
@@ -71,14 +71,14 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
                     VerupNo = 2
                 }
             },
-            AryMovieInfoes =
-            {
-                new InitialdatacheckResponse.MovieData
-                {
-                    MovieId = 2,
-                    EnableDays = 9999
-                }
-            }
+            // AryMovieInfoes =
+            // {
+            //     new InitialdatacheckResponse.MovieData
+            //     {
+            //         MovieId = 1,
+            //         EnableDays = 9999
+            //     }
+            // }
             // AryTelopDatas =
             // {
             //     new InitialdatacheckResponse.InformationData
@@ -106,7 +106,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
         };
 
         response.AryDanOdaiDatas.AddRange(danData);
-        // response.ArySongIntroductionDatas.AddRange(introData);
+        response.ArySongIntroductionDatas.AddRange(introData);
         response.AryEventfolderDatas.AddRange(eventFolderData);
         return Ok(response);
     }
