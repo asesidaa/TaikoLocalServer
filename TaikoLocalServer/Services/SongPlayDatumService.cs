@@ -22,4 +22,11 @@ internal class SongPlayDatumService : ISongPlayDatumService
         context.SongPlayData.Add(datum);
         await context.SaveChangesAsync();
     }
+
+    public int GetSongPlayCount(uint baid)
+    {
+        var songPlayDataList = context.SongPlayData.Where(datum => datum.Baid == baid).ToList();
+        var totalGameCount = songPlayDataList.Count(datum => datum.SongNumber == 0);
+        return totalGameCount;
+    }
 }

@@ -205,6 +205,13 @@ public class PlayResultController : BaseController<PlayResultController>
         };
         userdata.CostumeData = JsonSerializer.Serialize(costumeData);
 
+        if (userdata.TotalGameCount == 0)
+        {
+            userdata.TotalGameCount = songPlayDatumService.GetSongPlayCount(request.BaidConf);
+        }
+
+        userdata.TotalGameCount++;
+
         var releaseSongNoes = playResultData.ReleaseSongNoes;
         var uraReleaseSongNoes = playResultData.UraReleaseSongNoes;
 
