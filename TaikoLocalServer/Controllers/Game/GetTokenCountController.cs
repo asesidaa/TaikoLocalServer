@@ -41,6 +41,11 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
         }
 
         tokenCountDict.ThrowIfNull("TokenCountDict should never be null");
+        
+        // if (!tokenCountDict.Any())
+        // {
+        //     tokenCountDict.Add(shopTokenId, 120);
+        // }
 
         if (!tokenCountDict.ContainsKey(shopTokenId)) tokenCountDict.Add(shopTokenId, 0);
 

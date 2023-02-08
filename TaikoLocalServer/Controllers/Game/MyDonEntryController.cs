@@ -26,7 +26,8 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
         {
             AccessCode = request.AccessCode,
             Baid = newId,
-            Password = ""
+            Password = "",
+            Salt = ""
         });
 
         var newUser = new UserDatum
