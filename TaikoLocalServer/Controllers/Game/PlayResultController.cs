@@ -88,7 +88,7 @@ public class PlayResultController : BaseController<PlayResultController>
 
             if (playMode == PlayMode.AiBattle) await UpdateAiBattleData(request, stageData);
 
-            await UpdateBestData(request, stageData, bestData);
+            await UpdateBestData(request, stageData, bestData, lastPlayDatetime);
 
             await UpdatePlayData(request, songNumber, stageData, lastPlayDatetime);
         }
@@ -304,7 +304,7 @@ public class PlayResultController : BaseController<PlayResultController>
     }
 
     private async Task UpdateBestData(PlayResultRequest request, PlayResultDataRequest.StageData stageData,
-        IEnumerable<SongBestDatum> bestData)
+        IEnumerable<SongBestDatum> bestData, DateTime lastPlayDatetime)
     {
         var bestDatum = bestData
             .FirstOrDefault(datum => datum.SongId == stageData.SongNo &&
@@ -322,7 +322,7 @@ public class PlayResultController : BaseController<PlayResultController>
         var option = BinaryPrimitives.ReadInt16LittleEndian(stageData.OptionFlg);
         bestDatum.UpdateBestData(crown, stageData.ScoreRank, stageData.PlayScore, stageData.ScoreRate, 
             stageData.GoodCnt, stageData.OkCnt, stageData.NgCnt, stageData.ComboCnt, stageData.HitCnt, 
-            stageData.PoundCnt, option);
+            stageData.PoundCnt, lastPlayDatetime, option);
 
         await songBestDatumService.UpdateOrInsertSongBestDatum(bestDatum);
     }
