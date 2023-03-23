@@ -76,12 +76,9 @@ public class PlayResultController : BaseController<PlayResultController>
             var stageData = playResultData.AryStageInfoes[songNumber];
 
             var songId = stageData.SongNo;
-            // var musicWithGenre17List = gameDataService.GetMusicWithGenre17List();
-            //
-            // if (musicWithGenre17List.Any(x => x == songId))
-            // {
-            //     continue;
-            // }
+            var musicWithGenre17List = gameDataService.GetMusicWithGenre17List();
+
+            if (musicWithGenre17List.Any(x => x == songId)) continue;
 
             if (stageData.IsSkipUse)
             {
@@ -206,21 +203,17 @@ public class PlayResultController : BaseController<PlayResultController>
         userdata.CostumeData = JsonSerializer.Serialize(costumeData);
 
         if (userdata.TotalGameCount == 0)
-        {
             userdata.TotalGameCount = songPlayDatumService.GetSongPlayCount(request.BaidConf);
-        }
 
         userdata.TotalGameCount++;
 
         var releaseSongNoes = playResultData.ReleaseSongNoes;
         var uraReleaseSongNoes = playResultData.UraReleaseSongNoes;
 
-        if (releaseSongNoes != null)
-            userdata.UnlockedSongIdList = UpdateUnlockedSongIdList(userdata.UnlockedSongIdList, releaseSongNoes,
-                nameof(userdata.UnlockedSongIdList));
-        if (uraReleaseSongNoes != null)
-            userdata.UnlockedSongIdList = UpdateUnlockedSongIdList(userdata.UnlockedSongIdList, uraReleaseSongNoes,
-                nameof(userdata.UnlockedSongIdList));
+        userdata.UnlockedSongIdList = UpdateJsonUintFlagArray(userdata.UnlockedSongIdList, releaseSongNoes,
+            nameof(userdata.UnlockedSongIdList));
+        userdata.UnlockedSongIdList = UpdateJsonUintFlagArray(userdata.UnlockedSongIdList, uraReleaseSongNoes,
+            nameof(userdata.UnlockedSongIdList));
 
         // Official cabinet does not save option at the end of the game, so I turned it off. -S-Sebb??
         // Skip user setting saving when in dan mode as dan mode uses its own default setting
@@ -279,27 +272,6 @@ public class PlayResultController : BaseController<PlayResultController>
         return JsonSerializer.Serialize(flgArray);
     }
 
-    private string UpdateUnlockedSongIdList(string originalValue, IEnumerable<uint> releaseSongNoes, string fieldName)
-    {
-        var unlockedSongIdList = new List<uint>();
-        try
-        {
-            JsonSerializer.Deserialize<List<uint>>(originalValue);
-        }
-        catch (JsonException e)
-        {
-            Logger.LogError(e, "Parsing {FieldName} json data failed", fieldName);
-        }
-
-        unlockedSongIdList.ThrowIfNull("UnlockedSongIdList should never be null");
-
-        foreach (var songNo in releaseSongNoes)
-            if (!unlockedSongIdList.Contains(songNo))
-                unlockedSongIdList.Add(songNo);
-
-        return JsonSerializer.Serialize(unlockedSongIdList);
-    }
-
     private string UpdateJsonCostumeFlagArray(string originalValue, IReadOnlyList<IReadOnlyCollection<uint>?>? newValue)
     {
         var flgData = new List<List<uint>>();
@@ -348,7 +320,9 @@ public class PlayResultController : BaseController<PlayResultController>
         var crown = PlayResultToCrown(stageData.PlayResult, stageData.OkCnt);
 
         var option = BinaryPrimitives.ReadInt16LittleEndian(stageData.OptionFlg);
-        bestDatum.UpdateBestData(crown, stageData.ScoreRank, stageData.PlayScore, stageData.ScoreRate, option);
+        bestDatum.UpdateBestData(crown, stageData.ScoreRank, stageData.PlayScore, stageData.ScoreRate, 
+            stageData.GoodCnt, stageData.OkCnt, stageData.NgCnt, stageData.ComboCnt, stageData.HitCnt, 
+            stageData.PoundCnt, option);
 
         await songBestDatumService.UpdateOrInsertSongBestDatum(bestDatum);
     }

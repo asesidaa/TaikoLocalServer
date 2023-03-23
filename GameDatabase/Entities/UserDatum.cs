@@ -9,7 +9,7 @@ public class UserDatum
     public string Title { get; set; } = string.Empty;
     public uint TitlePlateId { get; set; }
     public string FavoriteSongsArray { get; set; } = "[]";
-    public string ToneFlgArray { get; set; } = "[]";
+    public string ToneFlgArray { get; set; } = "[0]";
     public string TitleFlgArray { get; set; } = "[]";
     public string CostumeFlgArray { get; set; } = "[[],[],[],[],[]]";
     public string GenericInfoFlgArray { get; set; } = "[]";

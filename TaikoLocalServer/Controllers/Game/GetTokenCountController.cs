@@ -41,15 +41,15 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
         }
 
         tokenCountDict.ThrowIfNull("TokenCountDict should never be null");
-        
-        // if (!tokenCountDict.Any())
-        // {
-        //     tokenCountDict.Add(shopTokenId, 120);
-        // }
+
+        if (!tokenCountDict.Any()) tokenCountDict.Add(shopTokenId, 120);
 
         if (!tokenCountDict.ContainsKey(shopTokenId)) tokenCountDict.Add(shopTokenId, 0);
 
         if (!tokenCountDict.ContainsKey(kaTokenId)) tokenCountDict.Add(kaTokenId, 0);
+
+        user.TokenCountDict = JsonSerializer.Serialize(tokenCountDict);
+        await userDatumService.UpdateUserDatum(user);
 
         var response = new GetTokenCountResponse
         {

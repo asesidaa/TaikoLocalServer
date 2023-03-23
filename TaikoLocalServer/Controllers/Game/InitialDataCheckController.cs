@@ -70,7 +70,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
                     InfoId = 1,
                     VerupNo = 2
                 }
-            },
+            }
             // AryMovieInfoes =
             // {
             //     new InitialdatacheckResponse.MovieData

@@ -56,7 +56,7 @@ public class UserDataController : BaseController<UserDataController>
         lockedSongsList = lockedSongsList.Except(unlockedSongIdList).ToList();
         var musicList = gameDataService.GetMusicList();
         var musicWithUraList = gameDataService.GetMusicWithUraList();
-        
+
         var enabledMusicList = musicList.Except(lockedSongsList);
         var enabledMusicWithUraList = musicWithUraList.Except(lockedSongsList);
 
@@ -79,6 +79,15 @@ public class UserDataController : BaseController<UserDataController>
         // The only way to get a null is provide string "null" as input,
         // which means database content need to be fixed, so better throw
         toneFlg.ThrowIfNull("Tone flg should never be null!");
+
+        if (!toneFlg.ToList().Contains(0))
+        {
+            var toneFlgList = toneFlg.ToList();
+            toneFlgList.Add(0);
+            toneFlg = toneFlgList.ToArray();
+            userData.ToneFlgArray = JsonSerializer.Serialize(toneFlg);
+            await userDatumService.UpdateUserDatum(userData);
+        }
 
         var toneArray = FlagCalculator.GetBitArrayFromIds(toneFlg, Constants.TONE_UID_MAX, Logger);
 
