@@ -11,12 +11,16 @@ public partial class SongBestDatum
         if (BestCrown < crown)
         {
             BestCrown = crown;
-            Option = option;
         }
 
         if ((uint)BestScoreRank < scoreRank)
         {
             BestScoreRank = (ScoreRank)scoreRank;
+        }
+
+        if (BestScore < playScore)
+        {
+            BestScore = playScore;
             BestGoodCount = goodCnt;
             BestOkCount = okCnt;
             BestMissCount = ngCnt;
@@ -27,16 +31,9 @@ public partial class SongBestDatum
             Option = option;
         }
 
-        if (BestScore < playScore)
-        {
-            BestScore = playScore;
-            Option = option;
-        }
-
         if (BestRate < scoreRate)
         {
             BestRate = scoreRate;
-            Option = option;
         }
     }
 }
