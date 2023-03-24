@@ -37,19 +37,6 @@ public class SongBestDatumService : ISongBestDatumService
         await context.SaveChangesAsync();
     }
 
-    public async Task UpdateAllSongBestDatum()
-    {
-        foreach (var userDatum in context.UserData)
-        {
-            var userSongBestList = context.SongBestData.Where(datum => datum.Baid == userDatum.Baid).ToListAsync();
-            var userSongPlayList = context.SongPlayData.Where(datum => datum.Baid == userDatum.Baid).ToListAsync();
-            foreach (var userSongBest in userSongBestList)
-            {
-                
-            }
-        }
-    }
-
     public async Task<List<SongBestData>> GetAllSongBestAsModel(uint baid)
     {
         var songbestDbData = await context.SongBestData.Where(datum => datum.Baid == baid)
