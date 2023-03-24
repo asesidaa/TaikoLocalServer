@@ -55,14 +55,19 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
         {
             Result = 1
         };
+        
+        response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
+        {
+            TokenCount = tokenCountDict[shopTokenId],
+            TokenId = shopTokenId
+        });
 
-        foreach (var (key, value) in tokenCountDict)
-            response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
-            {
-                TokenCount = value,
-                TokenId = key
-            });
-
+        response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
+        {
+            TokenCount = tokenCountDict[kaTokenId],
+            TokenId = kaTokenId
+        });
+        
         return Ok(response);
     }
 }
