@@ -1,0 +1,23 @@
+﻿@inject HttpClient Client
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.DeleteForever" Class="mr-3 mb-n1"/>
+            Delete card?
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudText>
+            Do you really want to delete the card?
+            All the related data will also be deleted and this process cannot be undone!
+        </MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Error" OnClick="DeleteCard">
+            <MudText>Delete Card</MudText>
+        </MudButton>
+    </DialogActions>
+</MudDialog>

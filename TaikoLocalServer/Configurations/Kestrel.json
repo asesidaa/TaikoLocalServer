@@ -1,0 +1,28 @@
+{
+  "Kestrel": {
+    "Endpoints": {
+      "BaseServer": {
+        "Url": "http://0.0.0.0:5000"
+      },
+      "AmAuthServer": {
+        "Url": "http://0.0.0.0:80"
+      },
+      "MuchaServer": {
+        "Url": "https://0.0.0.0:10122"
+      },
+      "GameServer1": {
+        "Url": "https://0.0.0.0:57402"
+      },
+      "GameServer2": {
+        "Url": "https://0.0.0.0:54431"
+      }
+    },
+    "Certificates": {
+      "Default": {
+        "Path": "Certificates/cert.pfx",
+        "Password": "",
+        "AllowInvalid": true
+      }
+    }
+  }
+}
