@@ -125,6 +125,17 @@ try
         applicationBuilder => applicationBuilder.UseAllNetRequestMiddleware());
 
     app.Run();
+    
+    app.Use(async (context, next) =>
+    {
+        await next();
+    
+        if (context.Response.StatusCode >= 400)
+        {
+            Log.Error("Unknown request from: {RemoteIpAddress} {Method} {Path} {StatusCode}",
+                context.Connection.RemoteIpAddress, context.Request.Method, context.Request.Path, context.Response.StatusCode);
+        }
+    });
 }
 catch (Exception ex)
 {
