@@ -31,7 +31,13 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 		var uraReleaseBit =
 			FlagCalculator.GetBitArrayFromIds(defaultSongWithUraList, songIdMax, Logger);
 
-		var aryVerUp = new List<InitialdatacheckResponse.VerupNoData1>();
+		var verupNo1 = new uint[] { 2, 3, 4, 5, 6, 7, 8, 13, 15, 24, 25, 26, 27, 28, 29, 30, 31 };
+		var aryVerUp = verupNo1.Select(i => new InitialdatacheckResponse.VerupNoData1
+			{
+				MasterType = i,
+				VerupNo = 1
+			})
+			.ToList();
 
 		var response = new InitialdatacheckResponse
 		{
@@ -40,68 +46,20 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 			AchievementSongBit = enabledArray,
 			UraReleaseBit = uraReleaseBit,
 			SongIntroductionEndDatetime = DateTime.Now.AddYears(10).ToString(Constants.DATE_TIME_FORMAT),
-			// AryAiEventDatas =
-			// {
-			// 	new InitialdatacheckResponse.AiEventData
-			// 	{
-			// 		AiEventId = 18,
-			// 		TokenId = 4
-			// 	}
-			// },
-			AryVerupNoData1s =
-			{
-				
-				new InitialdatacheckResponse.VerupNoData1
-				{
-					MasterType = 1,
-					VerupNo = 0
-				},
-				new InitialdatacheckResponse.VerupNoData1
-				{
-					MasterType = 2,
-					VerupNo = 0
-				},
-				new InitialdatacheckResponse.VerupNoData1
-				{
-					MasterType = 3,
-					VerupNo = 0
-				},
-				new InitialdatacheckResponse.VerupNoData1
-				{
-					MasterType = 4,
-					VerupNo = 0
-				},
-				new InitialdatacheckResponse.VerupNoData1
-				{
-					MasterType = 5,
-					VerupNo = 0
-				}
-			},
-			// AryVerupNoData1s =
-			// {
-			// 	new InitialdatacheckResponse.VerupNoData2
-			// 	{
-			// 		MasterType = 3,
-			// 		AryInformationDatas =
-			// 		{
-			// 			new InitialdatacheckResponse.VerupNoData2.InformationData
-			// 			{
-			// 				InfoId = 1,
-			// 				VerupNo = 2
-			// 			}
-			// 		}
-			// 	}
-			// }
 		};
+		response.AryVerupNoData1s.AddRange(aryVerUp);
 		
 		var danData = new List<InitialdatacheckResponse.VerupNoData2.InformationData>();
-		for (var danId = Constants.MIN_DAN_ID; danId <= Constants.MAX_DAN_ID; danId++)
+		for (var danId = Constants.MIN_DAN_ID; danId <= 1; danId++)
+		{
 			danData.Add(new InitialdatacheckResponse.VerupNoData2.InformationData
 			{
 				InfoId = (uint)danId,
 				VerupNo = 1
 			});
-		for (uint i = 0; i < 11; i++)
+		}
+		var verupNo2 = new uint[] { 11, 101, 102, 103, 105 };
+		foreach (var i in verupNo2)
 		{
 			var verUp2 = new InitialdatacheckResponse.VerupNoData2
 			{
@@ -110,7 +68,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 			verUp2.AryInformationDatas.AddRange(danData);
 			response.AryVerupNoData2s.Add(verUp2);
 		}
-		response.AryChassisFunctionIds = new uint[] { 3 };
+		response.AryChassisFunctionIds = new uint[] {1,2,3};
 
 
 		return Ok(response);

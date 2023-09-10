@@ -7,22 +7,17 @@ namespace TaikoLocalServer.Controllers.Game;
 [Route("/v12r00_cn/chassis/getgenericmaster.php")]
 public class GetGenericMasterController : BaseController<GetGenericMasterController>
 {
-	private readonly IGameDataService gameDataService;
-
-	private readonly ServerSettings settings;
-
 	[HttpPost]
 	[Produces("application/protobuf")]
 	public IActionResult GetGenericMaster([FromBody] GetGenericMasterRequest request)
 	{
 		Logger.LogInformation("GetGenericMasterRequest: {Request}", request.Stringify());
 
-		var response = new GetGenericMasterResponse()
+		var response = new GetGenericMasterResponse
 		{
 			Result = 1,
 			VerupNo = 2,
-			// EnableIdBit = new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF }
-			EnableIdBit = new byte[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+			EnableIdBit = Enumerable.Repeat((byte)1, 20).ToArray(),
 		};
 
 
