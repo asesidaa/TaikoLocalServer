@@ -26,10 +26,17 @@ public class GameDataService : IGameDataService
 
 	private ImmutableDictionary<uint, GetfolderResponse.EventfolderData> folderDictionary =
 		ImmutableDictionary<uint, GetfolderResponse.EventfolderData>.Empty;
+	
+	private ImmutableDictionary<uint, GetShopFolderResponse.ShopFolderData> shopFolderDictionary =
+		ImmutableDictionary<uint, GetShopFolderResponse.ShopFolderData>.Empty;
 
 	private List<uint> musics = new();
 
 	private List<uint> musicsWithUra = new();
+	
+	private List<uint> lockedSongsList = new();
+
+	private Dictionary<string, uint> tokenDataDictionary = new();
 
 	private readonly DataSettings settings;
 
@@ -72,6 +79,21 @@ public class GameDataService : IGameDataService
 	{
 		return folderDictionary;
 	}
+	
+	public ImmutableDictionary<uint, GetShopFolderResponse.ShopFolderData> GetShopFolderDictionary()
+	{
+		return shopFolderDictionary;
+	}
+	
+	public Dictionary<string, uint> GetTokenDataDictionary()
+	{
+		return tokenDataDictionary;
+	}
+
+	public List<uint> GetLockedSongsList()
+	{
+		return lockedSongsList;
+	}
 
 	public async Task InitializeAsync()
 	{
@@ -83,6 +105,9 @@ public class GameDataService : IGameDataService
 		var danDataPath = Path.Combine(dataPath, settings.DanDataFileName);
 		var songIntroDataPath = Path.Combine(dataPath, settings.IntroDataFileName);
 		var eventFolderDataPath = Path.Combine(dataPath, settings.EventFolderDataFileName);
+		var shopFolderDataPath = Path.Combine(dataPath, settings.ShopFolderDataFileName);
+		var tokenDataPath = Path.Combine(dataPath, settings.TokenDataFileName);
+		var lockedSongsDataPath = Path.Combine(dataPath, settings.LockedSongsDataFileName);
 
 		if (File.Exists(compressedMusicInfoPath))
 		{
@@ -97,12 +122,18 @@ public class GameDataService : IGameDataService
 		await using var danDataFile = File.OpenRead(danDataPath);
 		await using var songIntroDataFile = File.OpenRead(songIntroDataPath);
 		await using var eventFolderDataFile = File.OpenRead(eventFolderDataPath);
+		await using var shopFolderDataFile = File.OpenRead(shopFolderDataPath);
+		await using var tokenDataFile = File.OpenRead(tokenDataPath);
+		await using var lockedSongsDataFile = File.OpenRead(lockedSongsDataPath);
 
 		var infoesData = await JsonSerializer.DeserializeAsync<MusicInfoes>(musicInfoFile);
 		var attributesData = await JsonSerializer.DeserializeAsync<MusicAttributes>(musicAttributeFile);
 		var danData = await JsonSerializer.DeserializeAsync<List<DanData>>(danDataFile);
 		var introData = await JsonSerializer.DeserializeAsync<List<SongIntroductionData>>(songIntroDataFile);
 		var eventFolderData = await JsonSerializer.DeserializeAsync<List<EventFolderData>>(eventFolderDataFile);
+		var shopFolderData = await JsonSerializer.DeserializeAsync<List<ShopFolderData>>(shopFolderDataFile);
+		var tokenData = await JsonSerializer.DeserializeAsync<Dictionary<string, uint>>(tokenDataFile);
+		var lockedSongsData = await JsonSerializer.DeserializeAsync<Dictionary<string, uint[]>>(lockedSongsDataFile);
 
 		InitializeMusicInfoes(infoesData);
 
@@ -113,6 +144,12 @@ public class GameDataService : IGameDataService
 		InitializeIntroData(introData);
 
 		InitializeEventFolderData(eventFolderData);
+		
+		InitializeShopFolderData(shopFolderData);
+		
+		InitializeTokenData(tokenData);
+
+		InitializeLockedSongsData(lockedSongsData);
 	}
 
 	private static void TryDecompressMusicInfo()
@@ -179,7 +216,25 @@ public class GameDataService : IGameDataService
 			.ToList();
 		musics.Sort();
 	}
+	
+	private void InitializeShopFolderData(List<ShopFolderData>? shopFolderData)
+	{
+		shopFolderData.ThrowIfNull("Shouldn't happen!");
+		shopFolderDictionary = shopFolderData.ToImmutableDictionary(data => data.SongNo, ToResponseShopFolderData);
+	}
 
+	private void InitializeTokenData(Dictionary<string, uint>? tokenData)
+	{
+		tokenData.ThrowIfNull("Shouldn't happen!");
+		tokenDataDictionary = tokenData;
+	}
+
+	private void InitializeLockedSongsData(Dictionary<string, uint[]>? lockedSongsData)
+	{
+		lockedSongsData.ThrowIfNull("Shouldn't happen!");
+		lockedSongsList = lockedSongsData["songNo"].ToList();
+	}
+	
 	private static GetDanOdaiResponse.OdaiData ToResponseOdaiData(DanData data)
 	{
 		var responseOdaiData = new GetDanOdaiResponse.OdaiData
@@ -222,5 +277,16 @@ public class GameDataService : IGameDataService
 		};
 
 		return responseEventFolderData;
+	}
+	
+	private static GetShopFolderResponse.ShopFolderData ToResponseShopFolderData(ShopFolderData data)
+	{
+		var responseShopFolderData = new GetShopFolderResponse.ShopFolderData
+		{
+			SongNo = data.SongNo,
+			Price = data.Price
+		};
+
+		return responseShopFolderData;
 	}
 }

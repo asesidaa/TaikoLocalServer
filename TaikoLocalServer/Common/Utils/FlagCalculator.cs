@@ -126,4 +126,22 @@ public static class FlagCalculator
 
         return result;
     }
+    
+    public static byte[] GetBitArrayTrue(int bitArraySize)
+    {
+        var result = new byte[(bitArraySize / 8) + 1];
+        var bitSet = new BitArray(bitArraySize, true);
+        bitSet.CopyTo(result, 0);
+
+        return result;
+    }
+    
+    public static byte[] GetBitArrayFalse(int bitArraySize)
+    {
+        var result = new byte[(bitArraySize / 8) + 1];
+        var bitSet = new BitArray(bitArraySize, false);
+        bitSet.CopyTo(result, 0);
+
+        return result;
+    }
 }

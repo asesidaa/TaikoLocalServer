@@ -17,7 +17,7 @@ public class GetGenericMasterController : BaseController<GetGenericMasterControl
 		{
 			Result = 1,
 			VerupNo = 2,
-			EnableIdBit = Enumerable.Repeat((byte)1, 20).ToArray(),
+			EnableIdBit = FlagCalculator.GetBitArrayTrue(20)
 		};
 
 
