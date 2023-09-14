@@ -64,10 +64,10 @@
       <Content Update="wwwroot\data\movie_data.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Update="wwwroot\data\music_order.bin">
+      <Content Update="wwwroot\data\music_order.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Update="wwwroot\data\musicinfo.bin">
+      <Content Update="wwwroot\data\musicinfo.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Update="wwwroot\data\shop_folder_data.json">
@@ -76,7 +76,7 @@
       <Content Update="wwwroot\data\token_data.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Update="wwwroot\data\wordlist.bin">
+      <Content Update="wwwroot\data\wordlist.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
@@ -91,7 +91,7 @@
       <Content Update="wwwroot\data\intro_data.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Update="wwwroot\data\music_attribute.bin">
+      <Content Update="wwwroot\data\music_attribute.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Update="wwwroot\data\music_attribute.json">

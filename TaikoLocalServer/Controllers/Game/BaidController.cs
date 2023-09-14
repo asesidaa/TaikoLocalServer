@@ -118,6 +118,7 @@ public class BaidController : BaseController<BaidController>
 			PlayerType = 0,
 			Baid = baid,
 			MydonName = userData.MyDonName,
+			MydonNameLanguage = 4,
 			Title = userData.Title,
 			TitleplateId = userData.TitlePlateId,
 			ColorFace = userData.ColorFace,

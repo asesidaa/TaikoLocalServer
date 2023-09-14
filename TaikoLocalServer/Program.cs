@@ -117,15 +117,6 @@ try
 
 
     app.UseHttpLogging();
-    app.MapControllers();
-    app.MapFallbackToFile("index.html");
-
-    app.UseWhen(
-        context => context.Request.Path.StartsWithSegments("/sys/servlet/PowerOn", StringComparison.InvariantCulture),
-        applicationBuilder => applicationBuilder.UseAllNetRequestMiddleware());
-
-    app.Run();
-    
     app.Use(async (context, next) =>
     {
         await next();
@@ -136,6 +127,14 @@ try
                 context.Connection.RemoteIpAddress, context.Request.Method, context.Request.Path, context.Response.StatusCode);
         }
     });
+    app.MapControllers();
+    app.MapFallbackToFile("index.html");
+
+    app.UseWhen(
+        context => context.Request.Path.StartsWithSegments("/sys/servlet/PowerOn", StringComparison.InvariantCulture),
+        applicationBuilder => applicationBuilder.UseAllNetRequestMiddleware());
+
+    app.Run();
 }
 catch (Exception ex)
 {

@@ -53,6 +53,7 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
 			Result = 1,
 			Baid = newId,
 			MydonName = request.MydonName,
+			MydonNameLanguage = 4
 		};
 
 		return Ok(response);
