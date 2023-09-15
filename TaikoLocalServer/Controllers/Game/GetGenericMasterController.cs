@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using TaikoLocalServer.Settings;
-
-namespace TaikoLocalServer.Controllers.Game;
+﻿namespace TaikoLocalServer.Controllers.Game;
 
 [ApiController]
 [Route("/v12r00_cn/chassis/getgenericmaster.php")]
@@ -17,7 +14,7 @@ public class GetGenericMasterController : BaseController<GetGenericMasterControl
 		{
 			Result = 1,
 			VerupNo = 2,
-			EnableIdBit = FlagCalculator.GetBitArrayTrue(20)
+			EnableIdBit = FlagCalculator.GetBitArrayTrue(5000)
 		};
 
 
