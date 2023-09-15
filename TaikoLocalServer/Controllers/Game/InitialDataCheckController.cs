@@ -74,12 +74,12 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 				VerupNo = 1
 			});
 		}
-		var verUp2Type102 = new InitialdatacheckResponse.VerupNoData2
+		var verUp2Type103 = new InitialdatacheckResponse.VerupNoData2
 		{
-			MasterType = 102,
+			MasterType = 103,
 		};
-		verUp2Type102.AryInformationDatas.AddRange(eventFolderData);
-		response.AryVerupNoData2s.Add(verUp2Type102);
+		verUp2Type103.AryInformationDatas.AddRange(eventFolderData);
+		response.AryVerupNoData2s.Add(verUp2Type103);
 
 		var songIntroData = new List<InitialdatacheckResponse.VerupNoData2.InformationData>();
 		var verUp2Type105 = new InitialdatacheckResponse.VerupNoData2
