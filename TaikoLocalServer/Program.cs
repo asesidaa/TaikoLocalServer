@@ -23,22 +23,12 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
     
-    builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
-    {
-        const string configurationsDirectory = "Configurations";
-        config.AddJsonFile($"{configurationsDirectory}/Kestrel.json", optional: true, reloadOnChange: false);
-        config.AddJsonFile($"{configurationsDirectory}/Logging.json", optional: false, reloadOnChange: false);
-        config.AddJsonFile($"{configurationsDirectory}/Database.json", optional: false, reloadOnChange: false);
-        config.AddJsonFile($"{configurationsDirectory}/ServerSettings.json", optional: false, reloadOnChange: false);
-        config.AddJsonFile($"{configurationsDirectory}/DataSettings.json", optional: true, reloadOnChange: false);
-    });
-    
-    // Manually enable tls 1.0
-    builder.WebHost.UseKestrel(kestrelOptions =>
-    {
-        kestrelOptions.ConfigureHttpsDefaults(options => 
-            options.SslProtocols = SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Tls13);
-    });
+    const string configurationsDirectory = "Configurations";
+    builder.Configuration.AddJsonFile($"{configurationsDirectory}/Kestrel.json", optional: true, reloadOnChange: false);
+    builder.Configuration.AddJsonFile($"{configurationsDirectory}/Logging.json", optional: false, reloadOnChange: false);
+    builder.Configuration.AddJsonFile($"{configurationsDirectory}/Database.json", optional: false, reloadOnChange: false);
+    builder.Configuration.AddJsonFile($"{configurationsDirectory}/ServerSettings.json", optional: false, reloadOnChange: false);
+    builder.Configuration.AddJsonFile($"{configurationsDirectory}/DataSettings.json", optional: true, reloadOnChange: false);
 
     builder.Host.UseSerilog((context, configuration) =>
     {

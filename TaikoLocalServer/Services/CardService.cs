@@ -21,7 +21,7 @@ public class CardService : ICardService
 
 	public ulong GetNextBaid()
 	{
-		return context.Cards.Any() ? context.Cards.Max(card => card.Baid) + 1 : 1;
+		return context.Cards.Any() ? context.Cards.ToList().Max(card => card.Baid) + 1 : 1;
 	}
 
 	public async Task<List<User>> GetUsersFromCards()

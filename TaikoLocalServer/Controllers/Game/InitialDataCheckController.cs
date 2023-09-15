@@ -50,7 +50,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 		response.AryVerupNoData1s.AddRange(aryVerUp);
 		
 		var danData = new List<InitialdatacheckResponse.VerupNoData2.InformationData>();
-		for (var danId = Constants.MIN_DAN_ID; danId <= 18; danId++)
+		for (var danId = Constants.MIN_DAN_ID; danId <= Constants.MAX_DAN_ID; danId++)
 		{
 			danData.Add(new InitialdatacheckResponse.VerupNoData2.InformationData
 			{
