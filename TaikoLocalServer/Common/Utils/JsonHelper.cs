@@ -10,6 +10,7 @@ public static class JsonHelper
         var costumeData = new List<uint> { 0, 0, 0, 0, 0 };
         try
         {
+            // logger.LogInformation(userData.CostumeData);
             costumeData = JsonSerializer.Deserialize<List<uint>>(userData.CostumeData);
         }
         catch (JsonException e)
