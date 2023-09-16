@@ -118,14 +118,15 @@ public class UserDataController : BaseController<UserDataController>
             TitleFlg = titleArray,
             ReleaseSongFlg = releaseSongArray,
             UraReleaseSongFlg = uraSongArray,
+            AryFavoriteSongNoes = favoriteSongs,
+            AryRecentSongNoes = recentSongs,
             DefaultOptionSetting = defaultOptions,
+            NotesPosition = userData.NotesPosition,
             IsVoiceOn = userData.IsVoiceOn,
             IsSkipOn = userData.IsSkipOn,
             IsChallengecompe = false,
             SongRecentCnt = (uint)recentSongs.Length,
-            AryFavoriteSongNoes = favoriteSongs,
-            AryRecentSongNoes = recentSongs,
-            NotesPosition = userData.NotesPosition
+            TotalCreditCnt = 99
         };
 
         return Ok(response);
