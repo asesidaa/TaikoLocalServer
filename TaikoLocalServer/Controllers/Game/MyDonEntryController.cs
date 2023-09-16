@@ -43,7 +43,9 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
 			ToneFlgArray = "[]",
 			TitleFlgArray = "[]",
 			CostumeFlgArray = "[[],[],[],[],[]]",
-			GenericInfoFlgArray = "[]"
+			GenericInfoFlgArray = "[]",
+			TokenCountDict = "{}",
+			UnlockedSongIdList = "[]"
 		};
 
 		await userDatumService.InsertUserDatum(newUser);
