@@ -26,6 +26,8 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
         var tokenDataDictionary = gameDataService.GetTokenDataDictionary();
         tokenDataDictionary.TryGetValue("shopTokenId", out var shopTokenId);
         tokenDataDictionary.TryGetValue("kaTokenId", out var kaTokenId);
+        tokenDataDictionary.TryGetValue("onePieceTokenId", out var onePieceTokenId);
+        tokenDataDictionary.TryGetValue("soshinaTokenId", out var soshinaTokenId);
         user.ThrowIfNull($"User with baid {request.Baid} does not exist!");
 
         var tokenCountDict = new Dictionary<uint, int>();
@@ -67,6 +69,28 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
             {
                 TokenCount = tokenCountDict[castedKaTokenId],
                 TokenId = castedKaTokenId
+            });
+        }
+        
+        if (onePieceTokenId > 0)
+        {
+            var castedOnePieceTokenId = (uint)onePieceTokenId;
+            tokenCountDict.TryAdd(castedOnePieceTokenId, 0);
+            response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
+            {
+                TokenCount = tokenCountDict[castedOnePieceTokenId],
+                TokenId = castedOnePieceTokenId
+            });
+        }
+        
+        if (soshinaTokenId > 0)
+        {
+            var castedSoshinaTokenId = (uint)soshinaTokenId;
+            tokenCountDict.TryAdd(castedSoshinaTokenId, 0);
+            response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
+            {
+                TokenCount = tokenCountDict[castedSoshinaTokenId],
+                TokenId = castedSoshinaTokenId
             });
         }
 

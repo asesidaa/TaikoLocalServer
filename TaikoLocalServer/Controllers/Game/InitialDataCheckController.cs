@@ -31,7 +31,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 		var uraReleaseBit =
 			FlagCalculator.GetBitArrayFromIds(defaultSongWithUraList, songIdMax, Logger);
 
-		var verupNo1 = new uint[] { 2, 3, 4, 5, 6, 7, 8, 13, 104 };
+		var verupNo1 = new uint[] { 2, 3, 4, 5, 6, 7, 8, 13, 15, 24, 25, 26, 27, 28, 29, 30, 31, 104 };
 		var aryVerUp = verupNo1.Select(i => new InitialdatacheckResponse.VerupNoData1
 			{
 				MasterType = i,
