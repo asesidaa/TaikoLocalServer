@@ -41,32 +41,37 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
         }
 
         tokenCountDict.ThrowIfNull("TokenCountDict should never be null");
-
-        if (tokenCountDict.Count == 0) tokenCountDict.Add(shopTokenId, 0);
-
-        tokenCountDict.TryAdd(shopTokenId, 0);
-
-        tokenCountDict.TryAdd(kaTokenId, 0);
-
-        user.TokenCountDict = JsonSerializer.Serialize(tokenCountDict);
-        await userDatumService.UpdateUserDatum(user);
-
+        
         var response = new GetTokenCountResponse
         {
             Result = 1
         };
         
-        response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
+        if (tokenCountDict.Count == 0) tokenCountDict.Add(1, 0);
+        if (shopTokenId > 0)
         {
-            TokenCount = tokenCountDict[shopTokenId],
-            TokenId = shopTokenId
-        });
+            var castedShopTokenId = (uint)shopTokenId;
+            tokenCountDict.TryAdd(castedShopTokenId, 0);
+            response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
+            {
+                TokenCount = tokenCountDict[castedShopTokenId],
+                TokenId = castedShopTokenId
+            });
+        }
 
-        response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
+        if (kaTokenId > 0)
         {
-            TokenCount = tokenCountDict[kaTokenId],
-            TokenId = kaTokenId
-        });
+            var castedKaTokenId = (uint)kaTokenId;
+            tokenCountDict.TryAdd(castedKaTokenId, 0);
+            response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
+            {
+                TokenCount = tokenCountDict[castedKaTokenId],
+                TokenId = castedKaTokenId
+            });
+        }
+
+        user.TokenCountDict = JsonSerializer.Serialize(tokenCountDict);
+        await userDatumService.UpdateUserDatum(user);
         
         return Ok(response);
     }

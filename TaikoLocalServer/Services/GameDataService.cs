@@ -39,7 +39,7 @@ public class GameDataService : IGameDataService
 
 	private List<uint> lockedSongsList = new();
 
-	private Dictionary<string, uint> tokenDataDictionary = new();
+	private Dictionary<string, int> tokenDataDictionary = new();
 
 	private readonly DataSettings settings;
 
@@ -93,7 +93,7 @@ public class GameDataService : IGameDataService
 		return shopFolderDictionary;
 	}
 
-	public Dictionary<string, uint> GetTokenDataDictionary()
+	public Dictionary<string, int> GetTokenDataDictionary()
 	{
 		return tokenDataDictionary;
 	}
@@ -143,7 +143,7 @@ public class GameDataService : IGameDataService
 		var movieData = await JsonSerializer.DeserializeAsync<List<MovieData>>(movieDataFile);
 		var eventFolderData = await JsonSerializer.DeserializeAsync<List<EventFolderData>>(eventFolderDataFile);
 		var shopFolderData = await JsonSerializer.DeserializeAsync<List<ShopFolderData>>(shopFolderDataFile);
-		var tokenData = await JsonSerializer.DeserializeAsync<Dictionary<string, uint>>(tokenDataFile);
+		var tokenData = await JsonSerializer.DeserializeAsync<Dictionary<string, int>>(tokenDataFile);
 		var lockedSongsData = await JsonSerializer.DeserializeAsync<Dictionary<string, uint[]>>(lockedSongsDataFile);
 
 		InitializeMusicInfoes(infoesData);
@@ -242,7 +242,7 @@ public class GameDataService : IGameDataService
 		shopFolderDictionary = shopFolderData.ToImmutableDictionary(data => data.SongNo, ToResponseShopFolderData);
 	}
 
-	private void InitializeTokenData(Dictionary<string, uint>? tokenData)
+	private void InitializeTokenData(Dictionary<string, int>? tokenData)
 	{
 		tokenData.ThrowIfNull("Shouldn't happen!");
 		tokenDataDictionary = tokenData;

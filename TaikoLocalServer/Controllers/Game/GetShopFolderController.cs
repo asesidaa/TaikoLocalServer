@@ -24,7 +24,7 @@ public class GetShopFolderController : BaseController<GetShopFolderController>
         var response = new GetShopFolderResponse
         {
             Result = 1,
-            TokenId = shopTokenId,
+            TokenId = shopTokenId > 0 ? (uint)shopTokenId : 1,
             VerupNo = 2
         };
 

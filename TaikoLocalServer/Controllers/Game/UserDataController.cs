@@ -125,8 +125,7 @@ public class UserDataController : BaseController<UserDataController>
             IsVoiceOn = userData.IsVoiceOn,
             IsSkipOn = userData.IsSkipOn,
             IsChallengecompe = false,
-            SongRecentCnt = (uint)recentSongs.Length,
-            TotalCreditCnt = 0
+            SongRecentCnt = (uint)recentSongs.Length
         };
 
         return Ok(response);
