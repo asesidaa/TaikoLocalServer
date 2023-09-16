@@ -5,7 +5,8 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <Version>0.4.0-alpha</Version>
-        <LangVersion>12</LangVersion>
+        <LangVersion>11</LangVersion>
+		<EnableConfigurationBindingGenerator>false</EnableConfigurationBindingGenerator>
     </PropertyGroup>
 
     <ItemGroup>
