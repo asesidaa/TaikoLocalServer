@@ -39,8 +39,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 			UraReleaseBit = uraReleaseBit,
 			SongIntroductionEndDatetime = DateTime.Now.AddYears(10).ToString(Constants.DATE_TIME_FORMAT),
 		};
-		response.AryVerupNoData1s.AddRange(aryVerUp);
-		
+
 		var verupNo1 = new uint[] { 2, 3, 4, 5, 6, 7, 8, 13, 15, 24, 25, 26, 27, 28, 29, 30, 31, 104 };
 		var aryVerUp = verupNo1.Select(i => new InitialdatacheckResponse.VerupNoData1
 			{
@@ -48,6 +47,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 				VerupNo = 1
 			})
 			.ToList();
+		response.AryVerupNoData1s.AddRange(aryVerUp);
 		
 		var danData = new List<InitialdatacheckResponse.VerupNoData2.InformationData>();
 		for (var danId = Constants.MIN_DAN_ID; danId <= Constants.MAX_DAN_ID; danId++)
