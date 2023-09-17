@@ -29,5 +29,7 @@ public interface IGameDataService
 	public Dictionary<string, int> GetTokenDataDictionary();
 
 	public List<uint> GetLockedSongsList();
+	
+	public ImmutableDictionary<string, uint> GetQRCodeDataDictionary();
 }
 

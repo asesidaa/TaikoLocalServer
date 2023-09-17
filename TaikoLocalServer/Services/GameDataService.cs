@@ -36,6 +36,8 @@ public class GameDataService : IGameDataService
 	private ImmutableDictionary<uint, GetShopFolderResponse.ShopFolderData> shopFolderDictionary =
 		ImmutableDictionary<uint, GetShopFolderResponse.ShopFolderData>.Empty;
 
+	private ImmutableDictionary<string, uint> qrCodeDataDictionary = ImmutableDictionary<string, uint>.Empty;
+
 	private List<uint> musics = new();
 
 	private List<uint> musicsWithUra = new();
@@ -110,6 +112,11 @@ public class GameDataService : IGameDataService
 	{
 		return lockedSongsList;
 	}
+	
+	public ImmutableDictionary<string, uint> GetQRCodeDataDictionary()
+	{
+		return qrCodeDataDictionary;
+	}
 
 	public async Task InitializeAsync()
 	{
@@ -126,6 +133,7 @@ public class GameDataService : IGameDataService
 		var shopFolderDataPath = Path.Combine(dataPath, settings.ShopFolderDataFileName);
 		var tokenDataPath = Path.Combine(dataPath, settings.TokenDataFileName);
 		var lockedSongsDataPath = Path.Combine(dataPath, settings.LockedSongsDataFileName);
+		var qrCodeDataPath = Path.Combine(dataPath, settings.QRCodeDataFileName);
 
 		if (File.Exists(compressedMusicInfoPath))
 		{
@@ -145,6 +153,7 @@ public class GameDataService : IGameDataService
 		await using var shopFolderDataFile = File.OpenRead(shopFolderDataPath);
 		await using var tokenDataFile = File.OpenRead(tokenDataPath);
 		await using var lockedSongsDataFile = File.OpenRead(lockedSongsDataPath);
+		await using var qrCodeDataFile = File.OpenRead(qrCodeDataPath);
 
 		var infoesData = await JsonSerializer.DeserializeAsync<MusicInfoes>(musicInfoFile);
 		var attributesData = await JsonSerializer.DeserializeAsync<MusicAttributes>(musicAttributeFile);
@@ -156,6 +165,7 @@ public class GameDataService : IGameDataService
 		var shopFolderData = await JsonSerializer.DeserializeAsync<List<ShopFolderData>>(shopFolderDataFile);
 		var tokenData = await JsonSerializer.DeserializeAsync<Dictionary<string, int>>(tokenDataFile);
 		var lockedSongsData = await JsonSerializer.DeserializeAsync<Dictionary<string, uint[]>>(lockedSongsDataFile);
+		var qrCodeData = await JsonSerializer.DeserializeAsync<List<QRCodeData>>(qrCodeDataFile);
 
 		InitializeMusicInfoes(infoesData);
 
@@ -176,6 +186,8 @@ public class GameDataService : IGameDataService
 		InitializeTokenData(tokenData);
 
 		InitializeLockedSongsData(lockedSongsData);
+		
+		InitializeQRCodeData(qrCodeData);
 	}
 
 	private static void TryDecompressMusicInfo()
@@ -271,6 +283,12 @@ public class GameDataService : IGameDataService
 	{
 		lockedSongsData.ThrowIfNull("Shouldn't happen!");
 		lockedSongsList = lockedSongsData["songNo"].ToList();
+	}
+	
+	private void InitializeQRCodeData(List<QRCodeData>? qrCodeData)
+	{
+		qrCodeData.ThrowIfNull("Shouldn't happen!");
+		qrCodeDataDictionary = qrCodeData.ToImmutableDictionary(data => data.Serial, data => data.Id);
 	}
 
 	private static GetDanOdaiResponse.OdaiData ToResponseOdaiData(DanData data)
