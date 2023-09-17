@@ -39,6 +39,9 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 			UraReleaseBit = uraReleaseBit,
 			SongIntroductionEndDatetime = DateTime.Now.AddYears(10).ToString(Constants.DATE_TIME_FORMAT),
 		};
+		
+		var movieDataDictionary = gameDataService.GetMovieDataDictionary();
+		foreach (var movieData in movieDataDictionary) response.AryMovieInfoes.Add(movieData.Value);
 
 		var verupNo1 = new uint[] { 2, 3, 4, 5, 6, 7, 8, 13, 15, 24, 25, 26, 27, 28, 29, 30, 31, 104 };
 		var aryVerUp = verupNo1.Select(i => new InitialdatacheckResponse.VerupNoData1
@@ -64,6 +67,13 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 		};
 		verUp2Type101.AryInformationDatas.AddRange(danData);
 		response.AryVerupNoData2s.Add(verUp2Type101);
+		
+		var verUp2Type102 = new InitialdatacheckResponse.VerupNoData2
+		{
+			MasterType = 102,
+		};
+		verUp2Type102.AryInformationDatas.AddRange(danData);
+		response.AryVerupNoData2s.Add(verUp2Type102);
 		
 		var eventFolderData = new List<InitialdatacheckResponse.VerupNoData2.InformationData>();
 		foreach (var folderId in Constants.EVENT_FOLDER_IDS)
@@ -98,9 +108,6 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 		response.AryVerupNoData2s.Add(verUp2Type105);
 		
 		response.AryChassisFunctionIds = new uint[] {1,2,3};
-		
-		var movieDataDictionary = gameDataService.GetMovieDataDictionary();
-		foreach (var movieData in movieDataDictionary) response.AryMovieInfoes.Add(movieData.Value);
 
 		return Ok(response);
 	}

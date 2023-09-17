@@ -13,7 +13,7 @@ public class VerifyQrCodeController : BaseController<VerifyQrCodeController>
         var response = new VerifyQrcodeResponse
         {
             Result = 1,
-            QrcodeId   = 1
+            QrcodeId = 999999001
         };
 
         return Ok(response);

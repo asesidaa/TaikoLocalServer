@@ -22,10 +22,10 @@ public class GetDanOdaiController : BaseController<GetDanOdaiController>
             Result = 1
         };
 
-        if (request.Type == 2)
-        {
-            return Ok(response);
-        }
+        // if (request.Type == 2)
+        // {
+        //     return Ok(response);
+        // }
         
         foreach (var danId in request.DanIds)
         {
