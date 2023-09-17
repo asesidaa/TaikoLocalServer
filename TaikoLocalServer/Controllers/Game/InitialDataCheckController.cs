@@ -24,12 +24,17 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 		Logger.LogInformation("Initial data check request: {Request}", request.Stringify());
 
 		var songIdMax = settings.EnableMoreSongs ? Constants.MUSIC_ID_MAX_EXPANDED : Constants.MUSIC_ID_MAX;
+		
+		var musicList = gameDataService.GetMusicList();
+		var lockedSongsList = gameDataService.GetLockedSongsList();
+		var enabledMusicList = musicList.Except(lockedSongsList);
 		var enabledArray =
-			FlagCalculator.GetBitArrayFromIds(gameDataService.GetMusicList(), songIdMax, Logger);
+			FlagCalculator.GetBitArrayFromIds(enabledMusicList, songIdMax, Logger);
 
 		var defaultSongWithUraList = gameDataService.GetMusicWithUraList();
+		var enabledUraList = defaultSongWithUraList.Except(lockedSongsList);
 		var uraReleaseBit =
-			FlagCalculator.GetBitArrayFromIds(defaultSongWithUraList, songIdMax, Logger);
+			FlagCalculator.GetBitArrayFromIds(enabledUraList, songIdMax, Logger);
 
 		var response = new InitialdatacheckResponse
 		{
@@ -68,12 +73,13 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 		verUp2Type101.AryInformationDatas.AddRange(danData);
 		response.AryVerupNoData2s.Add(verUp2Type101);
 		
-		var verUp2Type102 = new InitialdatacheckResponse.VerupNoData2
-		{
-			MasterType = 102,
-		};
-		verUp2Type102.AryInformationDatas.AddRange(danData);
-		response.AryVerupNoData2s.Add(verUp2Type102);
+		// gaiden testing
+		// var verUp2Type102 = new InitialdatacheckResponse.VerupNoData2
+		// {
+		// 	MasterType = 102,
+		// };
+		// verUp2Type102.AryInformationDatas.AddRange(danData);
+		// response.AryVerupNoData2s.Add(verUp2Type102);
 		
 		var eventFolderData = new List<InitialdatacheckResponse.VerupNoData2.InformationData>();
 		foreach (var folderId in Constants.EVENT_FOLDER_IDS)
