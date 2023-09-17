@@ -24,12 +24,17 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 		Logger.LogInformation("Initial data check request: {Request}", request.Stringify());
 
 		var songIdMax = settings.EnableMoreSongs ? Constants.MUSIC_ID_MAX_EXPANDED : Constants.MUSIC_ID_MAX;
+		
+		var musicList = gameDataService.GetMusicList();
+		var lockedSongsList = gameDataService.GetLockedSongsList();
+		var enabledMusicList = musicList.Except(lockedSongsList);
 		var enabledArray =
-			FlagCalculator.GetBitArrayFromIds(gameDataService.GetMusicList(), songIdMax, Logger);
+			FlagCalculator.GetBitArrayFromIds(enabledMusicList, songIdMax, Logger);
 
 		var defaultSongWithUraList = gameDataService.GetMusicWithUraList();
+		var enabledUraMusicList = defaultSongWithUraList.Except(lockedSongsList);
 		var uraReleaseBit =
-			FlagCalculator.GetBitArrayFromIds(defaultSongWithUraList, songIdMax, Logger);
+			FlagCalculator.GetBitArrayFromIds(enabledUraMusicList, songIdMax, Logger);
 
 		var response = new InitialdatacheckResponse
 		{
