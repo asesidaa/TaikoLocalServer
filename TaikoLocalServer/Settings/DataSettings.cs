@@ -3,6 +3,8 @@
 public class DataSettings
 {
 	public string DanDataFileName { get; set; } = "dan_data.json";
+	
+	public string GaidenDataFileName { get; set; } = "gaiden_data.json";
 
 	public string EventFolderDataFileName { get; set; } = "event_folder_data.json";
 

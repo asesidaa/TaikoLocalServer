@@ -73,11 +73,22 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 		verUp2Type101.AryInformationDatas.AddRange(danData);
 		response.AryVerupNoData2s.Add(verUp2Type101);
 		
+		var gaidenData = new List<InitialdatacheckResponse.VerupNoData2.InformationData>();
+		var gaidenDataDictionary = gameDataService.GetGaidenDataDictionary();
+		foreach (var gaidenId in gaidenDataDictionary.Keys)
+		{
+			gaidenData.Add(new InitialdatacheckResponse.VerupNoData2.InformationData
+			{
+				InfoId = gaidenId,
+				VerupNo = 1
+			});
+		}
+		
 		var verUp2Type102 = new InitialdatacheckResponse.VerupNoData2
 		{
 			MasterType = 102,
 		};
-		verUp2Type102.AryInformationDatas.AddRange(danData);
+		verUp2Type102.AryInformationDatas.AddRange(gaidenData);
 		response.AryVerupNoData2s.Add(verUp2Type102);
 		
 		var eventFolderData = new List<InitialdatacheckResponse.VerupNoData2.InformationData>();

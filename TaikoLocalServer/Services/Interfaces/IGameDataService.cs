@@ -15,6 +15,8 @@ public interface IGameDataService
 	public ImmutableDictionary<uint, MusicAttributeEntry> GetMusicAttributes();
 
 	public ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> GetDanDataDictionary();
+	
+	public ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> GetGaidenDataDictionary();
 
 	public ImmutableDictionary<uint, GetSongIntroductionResponse.SongIntroductionData> GetSongIntroDictionary();
 

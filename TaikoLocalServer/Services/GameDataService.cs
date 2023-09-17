@@ -17,6 +17,9 @@ public class GameDataService : IGameDataService
 
 	private ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> danDataDictionary =
 		ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData>.Empty;
+	
+	private ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> gaidenDataDictionary =
+		ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData>.Empty;
 
 	private ImmutableDictionary<uint, GetSongIntroductionResponse.SongIntroductionData> introDataDictionary =
 		ImmutableDictionary<uint, GetSongIntroductionResponse.SongIntroductionData>.Empty;
@@ -72,6 +75,11 @@ public class GameDataService : IGameDataService
 	{
 		return danDataDictionary;
 	}
+	
+	public ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> GetGaidenDataDictionary()
+	{
+		return gaidenDataDictionary;
+	}
 
 	public ImmutableDictionary<uint, GetSongIntroductionResponse.SongIntroductionData> GetSongIntroDictionary()
 	{
@@ -111,6 +119,7 @@ public class GameDataService : IGameDataService
 		var musicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_FILE_NAME);
 		var compressedMusicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_COMPRESSED_FILE_NAME);
 		var danDataPath = Path.Combine(dataPath, settings.DanDataFileName);
+		var gaidenDataPath = Path.Combine(dataPath, settings.GaidenDataFileName);
 		var songIntroDataPath = Path.Combine(dataPath, settings.IntroDataFileName);
 		var movieDataPath = Path.Combine(dataPath, settings.MovieDataFileName);
 		var eventFolderDataPath = Path.Combine(dataPath, settings.EventFolderDataFileName);
@@ -129,6 +138,7 @@ public class GameDataService : IGameDataService
 		await using var musicInfoFile = File.OpenRead(musicInfoPath);
 		await using var musicAttributeFile = File.OpenRead(musicAttributePath);
 		await using var danDataFile = File.OpenRead(danDataPath);
+		await using var gaidenDataFile = File.OpenRead(gaidenDataPath);
 		await using var songIntroDataFile = File.OpenRead(songIntroDataPath);
 		await using var movieDataFile = File.OpenRead(movieDataPath);
 		await using var eventFolderDataFile = File.OpenRead(eventFolderDataPath);
@@ -139,6 +149,7 @@ public class GameDataService : IGameDataService
 		var infoesData = await JsonSerializer.DeserializeAsync<MusicInfoes>(musicInfoFile);
 		var attributesData = await JsonSerializer.DeserializeAsync<MusicAttributes>(musicAttributeFile);
 		var danData = await JsonSerializer.DeserializeAsync<List<DanData>>(danDataFile);
+		var gaidenData = await JsonSerializer.DeserializeAsync<List<DanData>>(gaidenDataFile);
 		var introData = await JsonSerializer.DeserializeAsync<List<SongIntroductionData>>(songIntroDataFile);
 		var movieData = await JsonSerializer.DeserializeAsync<List<MovieData>>(movieDataFile);
 		var eventFolderData = await JsonSerializer.DeserializeAsync<List<EventFolderData>>(eventFolderDataFile);
@@ -151,6 +162,8 @@ public class GameDataService : IGameDataService
 		InitializeMusicAttributes(attributesData);
 
 		InitializeDanData(danData);
+		
+		InitializeGaidenData(gaidenData);
 
 		InitializeIntroData(introData);
 
@@ -205,6 +218,12 @@ public class GameDataService : IGameDataService
 	{
 		danData.ThrowIfNull("Shouldn't happen!");
 		danDataDictionary = danData.ToImmutableDictionary(data => data.DanId, ToResponseOdaiData);
+	}
+	
+	private void InitializeGaidenData(List<DanData>? gaidenData)
+	{
+		gaidenData.ThrowIfNull("Shouldn't happen!");
+		gaidenDataDictionary = gaidenData.ToImmutableDictionary(data => data.DanId, ToResponseOdaiData);
 	}
 
 	private void InitializeEventFolderData(List<EventFolderData>? eventFolderData)
