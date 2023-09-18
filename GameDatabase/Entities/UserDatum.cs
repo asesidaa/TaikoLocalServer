@@ -17,6 +17,8 @@ namespace GameDatabase.Entities
 		public int NotesPosition { get; set; }
 		public bool IsVoiceOn { get; set; }
 		public bool IsSkipOn { get; set; }
+		public string DifficultyPlayedArray { get; set; } = "[]";
+		public string DifficultySettingArray { get; set; } = "[]";
 		public uint SelectedToneId { get; set; }
 		public DateTime LastPlayDatetime { get; set; }
 		public uint LastPlayMode { get; set; }
