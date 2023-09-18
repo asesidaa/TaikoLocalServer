@@ -28,6 +28,8 @@ public class UserSetting
 
     public string MyDonName { get; set; } = string.Empty;
 
+    public uint MyDonNameLanguage { get; set; }
+
     public string Title { get; set; } = string.Empty;
 
     public uint TitlePlateId { get; set; }

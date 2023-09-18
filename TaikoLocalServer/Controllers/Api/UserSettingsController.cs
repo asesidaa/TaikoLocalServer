@@ -45,6 +45,7 @@ public class UserSettingsController : BaseController<UserSettingsController>
             PlaySetting = PlaySettingConverter.ShortToPlaySetting(user.OptionSetting),
             ToneId = user.SelectedToneId,
             MyDonName = user.MyDonName,
+            MyDonNameLanguage = user.MyDonNameLanguage,
             Title = user.Title,
             TitlePlateId = user.TitlePlateId,
             Kigurumi = costumeData[0],
@@ -100,6 +101,7 @@ public class UserSettingsController : BaseController<UserSettingsController>
         user.AchievementDisplayDifficulty = userSetting.AchievementDisplayDifficulty;
         user.OptionSetting = PlaySettingConverter.PlaySettingToShort(userSetting.PlaySetting);
         user.MyDonName = userSetting.MyDonName;
+        user.MyDonNameLanguage = userSetting.MyDonNameLanguage;
         user.Title = userSetting.Title;
         user.TitlePlateId = userSetting.TitlePlateId;
         user.ColorBody = userSetting.BodyColor;
