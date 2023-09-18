@@ -110,7 +110,27 @@ public class UserDataController : BaseController<UserDataController>
 
         var defaultOptions = new byte[2];
         BinaryPrimitives.WriteInt16LittleEndian(defaultOptions, userData.OptionSetting);
+
+        var difficultyPlayedArray = Array.Empty<uint>();
+        try
+        {
+            difficultyPlayedArray = JsonSerializer.Deserialize<uint[]>(userData.DifficultyPlayedArray);
+        }
+        catch (JsonException e)
+        {
+            Logger.LogError(e, "Parsing difficulty played json data failed");
+        }
         
+        var difficultySettingArray = Array.Empty<uint>();
+        try
+        {
+            difficultySettingArray = JsonSerializer.Deserialize<uint[]>(userData.DifficultySettingArray);
+        }
+        catch (JsonException e)
+        {
+            Logger.LogError(e, "Parsing difficulty setting json data failed");
+        }
+
         var response = new UserDataResponse
         {
             Result = 1,
@@ -127,6 +147,20 @@ public class UserDataController : BaseController<UserDataController>
             IsChallengecompe = false,
             SongRecentCnt = (uint)recentSongs.Length
         };
+
+        if (difficultyPlayedArray is { Length: >= 3 })
+        {
+            response.DifficultyPlayedCourse = difficultyPlayedArray[0];
+            response.DifficultyPlayedStar = difficultyPlayedArray[1];
+            response.DifficultyPlayedSort = difficultyPlayedArray[2];
+        }
+        
+        if (difficultySettingArray is { Length: >= 3 })
+        {
+            response.DifficultySettingCourse = difficultySettingArray[0];
+            response.DifficultySettingStar = difficultySettingArray[1];
+            response.DifficultySettingSort = difficultySettingArray[2];
+        }
 
         return Ok(response);
     }
