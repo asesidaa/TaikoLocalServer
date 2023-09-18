@@ -1,6 +1,6 @@
-﻿using System.Buffers.Binary;
+﻿using Microsoft.Extensions.Options;
+using System.Buffers.Binary;
 using System.Text.Json;
-using Microsoft.Extensions.Options;
 using TaikoLocalServer.Settings;
 using Throw;
 
@@ -17,8 +17,8 @@ public class UserDataController : BaseController<UserDataController>
     private readonly IGameDataService gameDataService;
 
     private readonly ServerSettings settings;
-    
-    public UserDataController(IUserDatumService userDatumService, ISongPlayDatumService songPlayDatumService, 
+
+    public UserDataController(IUserDatumService userDatumService, ISongPlayDatumService songPlayDatumService,
         IGameDataService gameDataService, IOptions<ServerSettings> settings)
     {
         this.userDatumService = userDatumService;
@@ -80,7 +80,7 @@ public class UserDataController : BaseController<UserDataController>
             .ThenByDescending(datum => datum.SongNumber)
             .Select(datum => datum.SongId)
             .ToArray();
-        
+
         // Use custom implementation as distinctby cannot guarantee preserved element
         var recentSet = new OrderedSet<uint>();
         foreach (var id in recentSongs)
@@ -111,25 +111,16 @@ public class UserDataController : BaseController<UserDataController>
         var defaultOptions = new byte[2];
         BinaryPrimitives.WriteInt16LittleEndian(defaultOptions, userData.OptionSetting);
 
-        var difficultyPlayedArray = Array.Empty<uint>();
-        try
+        var difficultySettingArray = JsonHelper.GetUIntArrayFromJson(userData.DifficultySettingArray, 3, Logger, nameof(userData.DifficultySettingArray));
+        for (int i = 0; i < 3; i++)
         {
-            difficultyPlayedArray = JsonSerializer.Deserialize<uint[]>(userData.DifficultyPlayedArray);
+            if (difficultySettingArray[i] >= 2)
+            {
+                difficultySettingArray[i] -= 1;
+            }
         }
-        catch (JsonException e)
-        {
-            Logger.LogError(e, "Parsing difficulty played json data failed");
-        }
-        
-        var difficultySettingArray = Array.Empty<uint>();
-        try
-        {
-            difficultySettingArray = JsonSerializer.Deserialize<uint[]>(userData.DifficultySettingArray);
-        }
-        catch (JsonException e)
-        {
-            Logger.LogError(e, "Parsing difficulty setting json data failed");
-        }
+
+        var difficultyPlayedArray = JsonHelper.GetUIntArrayFromJson(userData.DifficultyPlayedArray, 3, Logger, nameof(userData.DifficultyPlayedArray));
 
         var response = new UserDataResponse
         {
@@ -144,23 +135,15 @@ public class UserDataController : BaseController<UserDataController>
             NotesPosition = userData.NotesPosition,
             IsVoiceOn = userData.IsVoiceOn,
             IsSkipOn = userData.IsSkipOn,
+            DifficultySettingCourse = difficultySettingArray[0],
+            DifficultySettingStar = difficultySettingArray[1],
+            DifficultySettingSort = difficultySettingArray[2],
+            DifficultyPlayedCourse = difficultyPlayedArray[0],
+            DifficultyPlayedStar = difficultyPlayedArray[1],
+            DifficultyPlayedSort = difficultyPlayedArray[2],
             IsChallengecompe = false,
             SongRecentCnt = (uint)recentSongs.Length
         };
-
-        if (difficultyPlayedArray is { Length: >= 3 })
-        {
-            response.DifficultyPlayedCourse = difficultyPlayedArray[0];
-            response.DifficultyPlayedStar = difficultyPlayedArray[1];
-            response.DifficultyPlayedSort = difficultyPlayedArray[2];
-        }
-        
-        if (difficultySettingArray is { Length: >= 3 })
-        {
-            response.DifficultySettingCourse = difficultySettingArray[0];
-            response.DifficultySettingStar = difficultySettingArray[1];
-            response.DifficultySettingSort = difficultySettingArray[2];
-        }
 
         return Ok(response);
     }

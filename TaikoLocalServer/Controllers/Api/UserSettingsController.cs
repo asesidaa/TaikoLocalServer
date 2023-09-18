@@ -1,6 +1,6 @@
-﻿using System.Text.Json;
-using SharedProject.Models;
+﻿using SharedProject.Models;
 using SharedProject.Utils;
+using System.Text.Json;
 
 namespace TaikoLocalServer.Controllers.Api;
 
@@ -25,6 +25,8 @@ public class UserSettingsController : BaseController<UserSettingsController>
             return NotFound();
         }
 
+        var difficultySettingArray = JsonHelper.GetUIntArrayFromJson(user.DifficultySettingArray, 3, Logger, nameof(user.DifficultySettingArray));
+
         var costumeData = JsonHelper.GetCostumeDataFromUserData(user, Logger);
 
         var costumeUnlockData = JsonHelper.GetCostumeUnlockDataFromUserData(user, Logger);
@@ -34,6 +36,9 @@ public class UserSettingsController : BaseController<UserSettingsController>
             AchievementDisplayDifficulty = user.AchievementDisplayDifficulty,
             IsDisplayAchievement = user.DisplayAchievement,
             IsDisplayDanOnNamePlate = user.DisplayDan,
+            DifficultySettingCourse = difficultySettingArray[0],
+            DifficultySettingStar = difficultySettingArray[1],
+            DifficultySettingSort = difficultySettingArray[2],
             IsVoiceOn = user.IsVoiceOn,
             IsSkipOn = user.IsSkipOn,
             NotesPosition = user.NotesPosition,
@@ -48,9 +53,9 @@ public class UserSettingsController : BaseController<UserSettingsController>
             Face = costumeData[3],
             Puchi = costumeData[4],
             UnlockedKigurumi = costumeUnlockData[0],
-            UnlockedHead  = costumeUnlockData[1],
-            UnlockedBody  = costumeUnlockData[2],
-            UnlockedFace  = costumeUnlockData[3],
+            UnlockedHead = costumeUnlockData[1],
+            UnlockedBody = costumeUnlockData[2],
+            UnlockedFace = costumeUnlockData[3],
             UnlockedPuchi = costumeUnlockData[4],
             BodyColor = user.ColorBody,
             FaceColor = user.ColorFace,
@@ -77,11 +82,19 @@ public class UserSettingsController : BaseController<UserSettingsController>
             userSetting.Face,
             userSetting.Puchi,
         };
-        
+
+        var difficultySettings = new List<uint>
+        {
+            userSetting.DifficultySettingCourse,
+            userSetting.DifficultySettingStar,
+            userSetting.DifficultySettingSort
+        };
+
         user.IsSkipOn = userSetting.IsSkipOn;
         user.IsVoiceOn = userSetting.IsVoiceOn;
         user.DisplayAchievement = userSetting.IsDisplayAchievement;
         user.DisplayDan = userSetting.IsDisplayDanOnNamePlate;
+        user.DifficultySettingArray = JsonSerializer.Serialize(difficultySettings);
         user.NotesPosition = userSetting.NotesPosition;
         user.SelectedToneId = userSetting.ToneId;
         user.AchievementDisplayDifficulty = userSetting.AchievementDisplayDifficulty;
@@ -93,7 +106,6 @@ public class UserSettingsController : BaseController<UserSettingsController>
         user.ColorFace = userSetting.FaceColor;
         user.ColorLimb = userSetting.LimbColor;
         user.CostumeData = JsonSerializer.Serialize(costumes);
-        
 
         await userDatumService.UpdateUserDatum(user);
 
