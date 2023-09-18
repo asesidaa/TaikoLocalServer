@@ -6,6 +6,7 @@ namespace GameDatabase.Entities
 	{
 		public ulong Baid { get; set; }
 		public string MyDonName { get; set; } = string.Empty;
+		public uint MyDonNameLanguage { get; set; }
 		public string Title { get; set; } = string.Empty;
 		public uint TitlePlateId { get; set; }
 		public string FavoriteSongsArray { get; set; } = "[]";

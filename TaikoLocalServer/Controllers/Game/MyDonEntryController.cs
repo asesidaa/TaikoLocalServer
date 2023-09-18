@@ -33,6 +33,7 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
 		{
 			Baid = newId,
 			MyDonName = request.MydonName,
+			MyDonNameLanguage = 0,
 			DisplayDan = true,
 			DisplayAchievement = true,
 			AchievementDisplayDifficulty = Difficulty.None,
@@ -55,7 +56,7 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
 			Result = 1,
 			Baid = newId,
 			MydonName = request.MydonName,
-			MydonNameLanguage = 4
+			MydonNameLanguage = 0
 		};
 
 		return Ok(response);
