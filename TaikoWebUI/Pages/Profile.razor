@@ -18,7 +18,20 @@
                         <MudStack Spacing="4">
                             <h2>Profile Options</h2>
 
-                            <MudTextField @bind-Value="@response.MyDonName" Label="Name"></MudTextField>
+                            <MudGrid>
+                                <MudItem xs="12" md="8">
+                                    <MudTextField @bind-Value="@response.MyDonName" Label="Name"></MudTextField>
+                                </MudItem>
+                                <MudItem xs="12" md="4">
+                                    <MudSelect @bind-Value="@response.MyDonNameLanguage" Label="Language">
+                                        @for (uint i = 0; i < LanguageStrings.Length; i++)
+                                        {
+                                            var index = i;
+                                            <MudSelectItem Value="@i">@LanguageStrings[index]</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </MudItem>
+                            </MudGrid>
 
                             <MudGrid>
                                 <MudItem xs="12" md="8">
@@ -29,7 +42,7 @@
                                 </MudItem>
                                 <MudItem xs="12" md="4">
                                     <MudSelect @bind-Value="@response.TitlePlateId" Label="Title Plate">
-                                        @for (uint i = 0; i < 8; i++)
+                                        @for (uint i = 0; i < TitlePlateStrings.Length; i++)
                                         {
                                             var index = i;
                                             <MudSelectItem Value="@i">@TitlePlateStrings[index]</MudSelectItem>
@@ -188,7 +201,7 @@
                                 <MudItem xs="12" md="8">
                                     <MudStack Spacing="4">
                                         <MudSelect @bind-Value="@response.PlaySetting.Speed" Label="Speed">
-                                            @for (uint i = 0; i < 15; i++)
+                                            @for (uint i = 0; i < SpeedStrings.Length; i++)
                                             {
                                                 var index = i;
                                                 <MudSelectItem Value="@i">@SpeedStrings[index]</MudSelectItem>
@@ -204,7 +217,7 @@
                                         </MudSelect>
 
                                         <MudSelect @bind-Value="@response.ToneId" Label="Tone">
-                                            @for (uint i = 0; i < 19; i++)
+                                            @for (uint i = 0; i < ToneStrings.Length; i++)
                                             {
                                                 var index = i;
                                                 <MudSelectItem Value="@i">@ToneStrings[index]</MudSelectItem>

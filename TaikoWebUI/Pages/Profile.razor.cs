@@ -44,6 +44,11 @@ public partial class Profile
         "Synth Drum", "Shuriken", "Bubble Pop", "Electric Guitar"
     };
 
+    private static readonly string[] LanguageStrings =
+    {
+        "Japanese", "English", "Chinese (Traditional)", "Korean", "Chinese (Simplified)"
+    };
+
     private static readonly string[] TitlePlateStrings =
     {
         "Wood", "Rainbow", "Gold", "Purple",
