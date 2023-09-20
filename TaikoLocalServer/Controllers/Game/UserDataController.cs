@@ -34,13 +34,34 @@ public class UserDataController : BaseController<UserDataController>
         Logger.LogInformation("UserData request : {Request}", request.Stringify());
 
         var songIdMax = settings.EnableMoreSongs ? Constants.MUSIC_ID_MAX_EXPANDED : Constants.MUSIC_ID_MAX;
-        var releaseSongArray =
-            FlagCalculator.GetBitArrayFromIds(gameDataService.GetMusicList(), songIdMax, Logger);
-
-        var uraSongArray =
-            FlagCalculator.GetBitArrayFromIds(gameDataService.GetMusicWithUraList(), songIdMax, Logger);
 
         var userData = await userDatumService.GetFirstUserDatumOrDefault(request.Baid);
+        
+        var unlockedSongIdList = new List<uint>();
+        try
+        {
+            unlockedSongIdList = !string.IsNullOrEmpty(userData.UnlockedSongIdList)
+                ? JsonSerializer.Deserialize<List<uint>>(userData.UnlockedSongIdList)
+                : new List<uint>();
+        }
+        catch (JsonException e)
+        {
+            Logger.LogError(e, "Parsing UnlockedSongIdList data for user with baid {Request} failed!", request.Baid);
+        }
+
+        unlockedSongIdList.ThrowIfNull("UnlockedSongIdList should never be null");
+        
+        var musicList = gameDataService.GetMusicList();
+        var lockedSongsList = gameDataService.GetLockedSongsList();
+        lockedSongsList = lockedSongsList.Except(unlockedSongIdList).ToList();
+        var enabledMusicList = musicList.Except(lockedSongsList);
+        var releaseSongArray =
+            FlagCalculator.GetBitArrayFromIds(enabledMusicList, songIdMax, Logger);
+
+        var defaultSongWithUraList = gameDataService.GetMusicWithUraList();
+        var enabledUraMusicList = defaultSongWithUraList.Except(lockedSongsList);
+        var uraSongArray =
+            FlagCalculator.GetBitArrayFromIds(enabledUraMusicList, songIdMax, Logger);
 
         var toneFlg = Array.Empty<uint>();
         try
