@@ -92,11 +92,12 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 		response.AryVerupNoData2s.Add(verUp2Type102);
 		
 		var eventFolderData = new List<InitialdatacheckResponse.VerupNoData2.InformationData>();
-		foreach (var folderId in Constants.EVENT_FOLDER_IDS)
+		var eventFolderDictionary = gameDataService.GetFolderDictionary();
+		foreach (var folderId in eventFolderDictionary.Keys)
 		{
 			eventFolderData.Add(new InitialdatacheckResponse.VerupNoData2.InformationData
 			{
-				InfoId = (uint)folderId,
+				InfoId = folderId,
 				VerupNo = 1
 			});
 		}
