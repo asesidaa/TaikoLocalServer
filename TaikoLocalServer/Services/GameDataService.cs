@@ -17,7 +17,7 @@ public class GameDataService : IGameDataService
 
 	private ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> danDataDictionary =
 		ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData>.Empty;
-	
+
 	private ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> gaidenDataDictionary =
 		ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData>.Empty;
 
@@ -77,7 +77,7 @@ public class GameDataService : IGameDataService
 	{
 		return danDataDictionary;
 	}
-	
+
 	public ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> GetGaidenDataDictionary()
 	{
 		return gaidenDataDictionary;
@@ -112,7 +112,7 @@ public class GameDataService : IGameDataService
 	{
 		return lockedSongsList;
 	}
-	
+
 	public ImmutableDictionary<string, uint> GetQRCodeDataDictionary()
 	{
 		return qrCodeDataDictionary;
@@ -172,7 +172,7 @@ public class GameDataService : IGameDataService
 		InitializeMusicAttributes(attributesData);
 
 		InitializeDanData(danData);
-		
+
 		InitializeGaidenData(gaidenData);
 
 		InitializeIntroData(introData);
@@ -186,7 +186,7 @@ public class GameDataService : IGameDataService
 		InitializeTokenData(tokenData);
 
 		InitializeLockedSongsData(lockedSongsData);
-		
+
 		InitializeQRCodeData(qrCodeData);
 	}
 
@@ -231,7 +231,7 @@ public class GameDataService : IGameDataService
 		danData.ThrowIfNull("Shouldn't happen!");
 		danDataDictionary = danData.ToImmutableDictionary(data => data.DanId, ToResponseOdaiData);
 	}
-	
+
 	private void InitializeGaidenData(List<DanData>? gaidenData)
 	{
 		gaidenData.ThrowIfNull("Shouldn't happen!");
@@ -284,7 +284,7 @@ public class GameDataService : IGameDataService
 		lockedSongsData.ThrowIfNull("Shouldn't happen!");
 		lockedSongsList = lockedSongsData["songNo"].ToList();
 	}
-	
+
 	private void InitializeQRCodeData(List<QRCodeData>? qrCodeData)
 	{
 		qrCodeData.ThrowIfNull("Shouldn't happen!");
@@ -340,7 +340,8 @@ public class GameDataService : IGameDataService
 			FolderId = data.FolderId,
 			VerupNo = data.VerupNo,
 			Priority = data.Priority,
-			SongNoes = data.SongNo
+			SongNoes = data.SongNo,
+			ParentFolderId = data.ParentFolderId
 		};
 
 		return responseEventFolderData;
