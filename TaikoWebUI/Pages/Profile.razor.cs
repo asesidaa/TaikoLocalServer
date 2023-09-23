@@ -111,7 +111,7 @@ public partial class Profile
         };
         var dialog = DialogService.Show<ChooseTitleDialog>("Player Titles", parameters, options);
         var result = await dialog.Result;
-        if (!result.Cancelled)
+        if (!result.Canceled)
         {
             StateHasChanged();
         }

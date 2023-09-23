@@ -64,7 +64,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 			danData.Add(new InitialdatacheckResponse.VerupNoData2.InformationData
 			{
 				InfoId = (uint)danId,
-				VerupNo = odaiData is not null ? odaiData.VerupNo : 1
+				VerupNo = odaiData?.VerupNo ?? 1
 			});
 		}
 		var verUp2Type101 = new InitialdatacheckResponse.VerupNoData2
@@ -82,7 +82,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 			gaidenData.Add(new InitialdatacheckResponse.VerupNoData2.InformationData
 			{
 				InfoId = gaidenId,
-				VerupNo = odaiData is not null ? odaiData.VerupNo : 1
+				VerupNo = odaiData?.VerupNo ?? 1
 			});
 		}
 
@@ -101,7 +101,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 			eventFolderData.Add(new InitialdatacheckResponse.VerupNoData2.InformationData
 			{
 				InfoId = folderId,
-				VerupNo = folderData is not null ? folderData.VerupNo : 1
+				VerupNo = folderData?.VerupNo ?? 1
 			});
 		}
 		var verUp2Type103 = new InitialdatacheckResponse.VerupNoData2
@@ -119,7 +119,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 			songIntroData.Add(new InitialdatacheckResponse.VerupNoData2.InformationData
 			{
 				InfoId = setId,
-				VerupNo = introData is not null ? introData.VerupNo : 1
+				VerupNo = introData?.VerupNo ?? 1
 			});
 		}
 		var verUp2Type105 = new InitialdatacheckResponse.VerupNoData2

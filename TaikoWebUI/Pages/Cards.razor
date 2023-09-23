@@ -41,7 +41,7 @@
                             <MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense="true" AnchorOrigin="Origin.BottomLeft"
                              TransformOrigin="Origin.TopLeft" Size="Size.Small">
                                         <MudMenuItem Icon="@Icons.Material.Filled.Delete"
-                                                     OnClick="_ => DeleteCard(user)"
+                                                     OnClick="@(_ => DeleteCard(user))"
                                                      IconColor="@Color.Error">
                                             Delete Card
                                         </MudMenuItem>
@@ -63,8 +63,8 @@
                                              Dense="true"
                                              Color="Color.Primary"
                                              Label="View Play Data"
-                                             StartIcon="@Icons.Filled.FeaturedPlayList"
-                                             EndIcon="@Icons.Filled.KeyboardArrowDown"
+                                             StartIcon="@Icons.Material.Filled.FeaturedPlayList"
+                                             EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
                                              FullWidth="true"
                                              AnchorOrigin="Origin.BottomCenter"
                                              TransformOrigin="Origin.TopCenter">
