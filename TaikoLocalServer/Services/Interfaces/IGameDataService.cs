@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using SharedProject.Models;
 
 namespace TaikoLocalServer.Services.Interfaces;
 
@@ -24,7 +25,7 @@ public interface IGameDataService
 
 	public ImmutableDictionary<uint, GetfolderResponse.EventfolderData> GetFolderDictionary();
 
-	public ImmutableDictionary<uint, GetShopFolderResponse.ShopFolderData> GetShopFolderDictionary();
+	public List<GetShopFolderResponse.ShopFolderData> GetShopFolderList();
 
 	public Dictionary<string, int> GetTokenDataDictionary();
 

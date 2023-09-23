@@ -33,10 +33,9 @@ public class GameDataService : IGameDataService
 	private ImmutableDictionary<uint, GetfolderResponse.EventfolderData> folderDictionary =
 		ImmutableDictionary<uint, GetfolderResponse.EventfolderData>.Empty;
 
-	private ImmutableDictionary<uint, GetShopFolderResponse.ShopFolderData> shopFolderDictionary =
-		ImmutableDictionary<uint, GetShopFolderResponse.ShopFolderData>.Empty;
-
 	private ImmutableDictionary<string, uint> qrCodeDataDictionary = ImmutableDictionary<string, uint>.Empty;
+	
+	private List<GetShopFolderResponse.ShopFolderData> shopFolderList = new();
 
 	private List<uint> musics = new();
 
@@ -98,9 +97,9 @@ public class GameDataService : IGameDataService
 		return folderDictionary;
 	}
 
-	public ImmutableDictionary<uint, GetShopFolderResponse.ShopFolderData> GetShopFolderDictionary()
+	public List<GetShopFolderResponse.ShopFolderData> GetShopFolderList()
 	{
-		return shopFolderDictionary;
+		return shopFolderList;
 	}
 
 	public Dictionary<string, int> GetTokenDataDictionary()
@@ -270,7 +269,10 @@ public class GameDataService : IGameDataService
 	private void InitializeShopFolderData(List<ShopFolderData>? shopFolderData)
 	{
 		shopFolderData.ThrowIfNull("Shouldn't happen!");
-		shopFolderDictionary = shopFolderData.ToImmutableDictionary(data => data.SongNo, ToResponseShopFolderData);
+		foreach (var folderData in shopFolderData)
+		{
+			shopFolderList.Add(ToResponseShopFolderData(folderData));
+		}
 	}
 
 	private void InitializeTokenData(Dictionary<string, int>? tokenData)
