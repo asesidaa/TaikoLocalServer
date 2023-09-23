@@ -27,9 +27,13 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 
 		var musicList = gameDataService.GetMusicList();
 		var lockedSongsList = gameDataService.GetLockedSongsList();
-		var enabledMusicList = musicList.Except(lockedSongsList);
+
 		var enabledArray =
-			FlagCalculator.GetBitArrayFromIds(enabledMusicList, songIdMax, Logger);
+			FlagCalculator.GetBitArrayFromIds(musicList, songIdMax, Logger);
+
+		var defaultSongList = musicList.Except(lockedSongsList);
+		var defaultSongFlg =
+			FlagCalculator.GetBitArrayFromIds(defaultSongList, songIdMax, Logger);
 
 		var defaultSongWithUraList = gameDataService.GetMusicWithUraList();
 		var enabledUraMusicList = defaultSongWithUraList.Except(lockedSongsList);
@@ -39,7 +43,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 		var response = new InitialdatacheckResponse
 		{
 			Result = 1,
-			DefaultSongFlg = enabledArray,
+			DefaultSongFlg = defaultSongFlg,
 			AchievementSongBit = enabledArray,
 			UraReleaseBit = uraReleaseBit,
 			SongIntroductionEndDatetime = DateTime.Now.AddYears(10).ToString(Constants.DATE_TIME_FORMAT),
