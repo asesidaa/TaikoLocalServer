@@ -19,7 +19,7 @@ public class GetShopFolderController : BaseController<GetShopFolderController>
 
         gameDataService.GetTokenDataDictionary().TryGetValue("shopTokenId", out var shopTokenId);
 
-        var shopFolderDictionary = gameDataService.GetShopFolderDictionary();
+        var shopFolderList = gameDataService.GetShopFolderList();
 
         var response = new GetShopFolderResponse
         {
@@ -28,7 +28,7 @@ public class GetShopFolderController : BaseController<GetShopFolderController>
             VerupNo = 2
         };
 
-        foreach (var shopFolder in shopFolderDictionary) response.AryShopFolderDatas.Add(shopFolder.Value);
+        response.AryShopFolderDatas.AddRange(shopFolderList);
 
         return Ok(response);
     }

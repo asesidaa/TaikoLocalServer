@@ -21,15 +21,19 @@ public class PlayResultController : BaseController<PlayResultController>
     private readonly IDanScoreDatumService danScoreDatumService;
 
     private readonly IAiDatumService aiDatumService;
+    
+    private readonly IGameDataService gameDataService;
 
     public PlayResultController(IUserDatumService userDatumService, ISongPlayDatumService songPlayDatumService,
-        ISongBestDatumService songBestDatumService, IDanScoreDatumService danScoreDatumService, IAiDatumService aiDatumService)
+        ISongBestDatumService songBestDatumService, IDanScoreDatumService danScoreDatumService, IAiDatumService aiDatumService,
+        IGameDataService gameDataService)
     {
         this.userDatumService = userDatumService;
         this.songPlayDatumService = songPlayDatumService;
         this.songBestDatumService = songBestDatumService;
         this.danScoreDatumService = danScoreDatumService;
         this.aiDatumService = aiDatumService;
+        this.gameDataService = gameDataService;
     }
 
     [HttpPost]
@@ -74,10 +78,11 @@ public class PlayResultController : BaseController<PlayResultController>
         }
 
         var bestData = await songBestDatumService.GetAllSongBestData(request.BaidConf);
+        
         for (var songNumber = 0; songNumber < playResultData.AryStageInfoes.Count; songNumber++)
         {
             var stageData = playResultData.AryStageInfoes[songNumber];
-
+            
             if (stageData.IsSkipUse)
             {
                 await UpdatePlayData(request, songNumber, stageData, lastPlayDatetime);

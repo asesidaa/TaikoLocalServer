@@ -46,7 +46,6 @@ public class GetDanOdaiController : BaseController<GetDanOdaiController>
                     Logger.LogWarning("Requested dan id {Id} does not exist!", danId);
                     continue;
                 }
-                Logger.LogInformation(odaiData.Stringify());
 
                 response.AryOdaiDatas.Add(odaiData);
             }
