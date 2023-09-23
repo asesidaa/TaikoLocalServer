@@ -1,18 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <LangVersion>11</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Autocomplete.Clients" Version="1.1.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.9" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.9" PrivateAssets="all" />
-        <PackageReference Include="MudBlazor" Version="6.0.15" />
-        <PackageReference Include="SharpZipLib" Version="1.4.0" />
-        <PackageReference Include="Swan.Core" Version="6.0.2-beta.90" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0-rc.1.23421.29" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0-rc.1.23421.29" PrivateAssets="all" />
+        <PackageReference Include="MudBlazor" Version="6.10.0" />
+        <PackageReference Include="SharpZipLib" Version="1.4.2" />
+        <PackageReference Include="Swan.Core" Version="7.0.0-beta.2" />
     </ItemGroup>
 
     <ItemGroup>

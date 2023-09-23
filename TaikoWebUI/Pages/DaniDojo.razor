@@ -129,7 +129,7 @@
                                                             <img src=@($"/images/difficulty_{difficulty}.png") style="width:40px;height:40px;margin-bottom:2px;" alt="@difficulty" />
                                                         </MudTooltip>
                                                         <MudStack Row="true" Spacing="1" Justify="Justify.Center" AlignItems="AlignItems.Center">
-                                                            <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small" />
+                                                            <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
                                                             <MudText Typo="Typo.caption" Style="line-height:1;margin-top:2px;margin-right:2px;">@GameDataService.GetMusicStarLevel(danDataOdaiSong.SongNo, difficulty)</MudText>
                                                         </MudStack>
                                                     </MudItem>
@@ -140,9 +140,8 @@
                                                     </MudItem>
 
 
-                                                    @if (bestDataMap.ContainsKey(danId))
+                                                    @if (bestDataMap.TryGetValue(danId, out var danBestData))
                                                     {
-                                                        var danBestData = bestDataMap[danId];
                                                         if (danBestData.DanBestStageDataList.Count > index)
                                                         {
                                                             var bestStage = danBestData.DanBestStageDataList[index];
@@ -206,10 +205,8 @@
                                                     }
                                                     <MudStack Spacing="1">
                                                         <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">Result</MudText>
-                                                        @if (bestDataMap.ContainsKey(danId))
+                                                        @if (bestDataMap.TryGetValue(danId, out var danBestData))
                                                         {
-                                                            var danBestData = bestDataMap[danId];
-
                                                             if (danBestData.SoulGaugeTotal >= redRequirement) {
                                                                 barClass = "bar-pass-red";
                                                                 resultText = "Pass";
@@ -221,7 +218,7 @@
                                                             }
                                                             
                                                             <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="100" Value="@danBestData.SoulGaugeTotal">
-                                                                <MudText Typo="Typo.caption">@(danBestData.SoulGaugeTotal)%</MudText>
+                                                                <MudText Typo="Typo.caption">@danBestData.SoulGaugeTotal%</MudText>
                                                             </MudProgressLinear>
                                                             <MudText Typo="Typo.caption" Style="text-align: right">@resultText</MudText>
                                                         } else {
@@ -278,9 +275,8 @@
                                                                 }
                                                                 <MudStack Spacing="1">
                                                                     <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">Result</MudText>
-                                                                    @if (bestDataMap.ContainsKey(danId))
+                                                                    @if (bestDataMap.TryGetValue(danId, out var danBestData))
                                                                     {
-                                                                        var danBestData = bestDataMap[danId];
                                                                         var bestData = GetAllBestFromData((DanConditionType)border.OdaiType, danBestData);
 
                                                                         if ((DanConditionType)border.OdaiType is DanConditionType.BadCount or DanConditionType.OkCount)
@@ -372,9 +368,8 @@
                                                                         </MudCardHeader>
                                                                         <MudCardContent>
                                                                             <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">Result</MudText>
-                                                                        @if (bestDataMap.ContainsKey(danId))
+                                                                        @if (bestDataMap.TryGetValue(danId, out var danBestData))
                                                                         {
-                                                                            var danBestData = bestDataMap[danId];
                                                                             var bestData = GetSongBestFromData((DanConditionType)border.OdaiType, danBestData, songNumber);
                                                                             if ((DanConditionType)border.OdaiType is DanConditionType.BadCount or DanConditionType.OkCount)
                                                                             {
@@ -390,7 +385,7 @@
                                                                                     resultText = "Gold";
                                                                                 }
                                                                                 var resultValue = redRequirement - bestData;
-                                                                                if (resultValue < 0) resultValue = 0;
+                                                                                if (bestData >= redRequirement) resultValue = 0;
 
                                                                                 <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="@redRequirement" Value="@resultValue">
                                                                                     <MudText Typo="Typo.caption">@resultValue</MudText>

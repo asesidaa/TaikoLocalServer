@@ -27,12 +27,12 @@
                     {
                         <MudTabPanel Text="@GetDifficultyTitle(difficulty)"
                                      Icon="@GetDifficultyIcon(difficulty)">
-                            @if (songBestDataMap.ContainsKey(difficulty))
+                            @if (songBestDataMap.TryGetValue(difficulty, out var value))
                             {
-                                <MudDataGrid Items="@songBestDataMap[difficulty]" RowClick="(DataGridRowClickEventArgs<SongBestData> _) => { return;}"
+                                <MudDataGrid Items="@value"
                                              ColumnResizeMode="ResizeMode.None" RowsPerPage="25" Elevation="0">
                                     <Columns>
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Song" StickyLeft="true">
+                                        <TemplateColumn T="SongBestData" Title="Song" StickyLeft="true">
                                             <CellTemplate>
                                                 <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
                                                     <div style="width:300px">
@@ -50,16 +50,16 @@
                                                     </div>
                                                 </MudStack>
                                             </CellTemplate>
-                                        </Column>
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.SongId)" Title="Level" Sortable="false">
+                                        </TemplateColumn>
+                                        <TemplateColumn T="SongBestData" Title="Level" Sortable="false">
                                             <CellTemplate>
                                                 <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
-                                                    <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small" />
+                                                    <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
                                                     <MudText Typo="Typo.caption" Style="line-height:1;margin-top:2px;margin-right:2px;">@GameDataService.GetMusicStarLevel(@context.Item.SongId, difficulty)</MudText>
                                                 </MudStack>
                                             </CellTemplate>
-                                        </Column>
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.Genre)" Title="Genre"
+                                        </TemplateColumn>
+                                        <TemplateColumn T="SongBestData" Title="Genre"
                                                 Sortable="false" Filterable="true">
                                             <CellTemplate>
                                                 <MudChip Style="@GetGenreStyle(context.Item.Genre)"
@@ -67,27 +67,27 @@
                                                     @GetGenreTitle(context.Item.Genre)
                                                 </MudChip>
                                             </CellTemplate>
-                                        </Column>
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.BestScore)" Title="Best Score" />
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.BestCrown)" Title="Best Crown">
+                                        </TemplateColumn>
+                                        <PropertyColumn Property="data => data.BestScore" Title="Best Score" />
+                                        <TemplateColumn T="SongBestData" Title="Best Crown">
                                             <CellTemplate>
                                                 <img src="@($"/images/crown_{context.Item.BestCrown}.png")" alt="@(GetCrownText(context.Item.BestCrown))" title="@(GetCrownText(context.Item.BestCrown))" style="@IconStyle" />
                                             </CellTemplate>
-                                        </Column>
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.BestScoreRank)" Title="Best Rank" Sortable="false">
+                                        </TemplateColumn>
+                                        <TemplateColumn T="SongBestData" Title="Best Rank" Sortable="false">
                                             <CellTemplate>
                                                 @if (context.Item.BestScoreRank is not ScoreRank.None)
                                                 {
                                                     <img src="@($"/images/rank_{context.Item.BestScoreRank}.png")" alt="@(GetRankText(context.Item.BestScoreRank))" title="@(GetRankText(context.Item.BestScoreRank))" style="@IconStyle" />
                                                 }
                                             </CellTemplate>
-                                        </Column>
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.GoodCount)" Title="Good" Sortable="false" />
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.OkCount)" Title="OK" Sortable="false" />
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.MissCount)" Title="Bad" Sortable="false" />
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.DrumrollCount)" Title="Drumroll" Sortable="false"/>
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.ComboCount)" Title="MAX Combo" Sortable="false" />
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.ShowAiData)" Title="AI Battle Data">
+                                        </TemplateColumn>
+                                        <PropertyColumn Property="data => data.GoodCount" Title="Good" Sortable="false" />
+                                        <PropertyColumn Property="data => data.OkCount" Title="OK" Sortable="false" />
+                                        <PropertyColumn Property="data => data.MissCount" Title="Bad" Sortable="false" />
+                                        <PropertyColumn Property="data => data.DrumrollCount" Title="Drumroll" Sortable="false"/>
+                                        <PropertyColumn Property="data => data.ComboCount" Title="MAX Combo" Sortable="false" />
+                                        <TemplateColumn T="SongBestData" Title="AI Battle Data">
                                             <CellTemplate>
                                                 <MudButton Variant="Variant.Outlined" Size="Size.Small" 
                                                            OnClick="@(() => ToggleShowAiData(context.Item))" 
@@ -95,12 +95,12 @@
                                                     @(context.Item.ShowAiData ? "Hide" : "Show")
                                                 </MudButton>
                                             </CellTemplate>
-                                        </Column>
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.LastPlayTime)" Title="Last Played" Hideable="true" />
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.PlayCount)" Title="Total Plays" Hideable="true" />
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.ClearCount)" Title="Total Clears" Hideable="true" />
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.FullComboCount)" Title="Total Full Combos" Hideable="true" />
-                                        <Column T="SongBestData" Field="@nameof(SongBestData.PerfectCount)" Title="Total Donderful Combos" Hideable="true" />
+                                        </TemplateColumn>
+                                        <PropertyColumn Property="data => data.LastPlayTime" Title="Last Played" Hideable="true" />
+                                        <PropertyColumn Property="data => data.PlayCount" Title="Total Plays" Hideable="true" />
+                                        <PropertyColumn Property="data => data.ClearCount" Title="Total Clears" Hideable="true" />
+                                        <PropertyColumn Property="data => data.FullComboCount" Title="Total Full Combos" Hideable="true" />
+                                        <PropertyColumn Property="data => data.PerfectCount" Title="Total Donderful Combos" Hideable="true" />
                                     </Columns>
                                     <ChildRowContent>
 		                            @if (context.Item.ShowAiData)

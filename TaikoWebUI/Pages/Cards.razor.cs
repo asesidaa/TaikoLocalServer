@@ -22,7 +22,7 @@ public partial class Cards
         var dialog = DialogService.Show<CardDeleteConfirmDialog>("Delete Card", parameters);
         var result = await dialog.Result;
 
-        if (result.Cancelled)
+        if (result.Canceled)
         {
             return;
         }
