@@ -79,9 +79,23 @@ public class PlayResultController : BaseController<PlayResultController>
 
         var bestData = await songBestDatumService.GetAllSongBestData(request.BaidConf);
         
+        // gameDataService.GetFolderDictionary().TryGetValue(9, out var folder9Data);
+
+        // var folder9Songs = new List<uint>();
+        //
+        // if (folder9Data is not null)
+        // {
+        //     folder9Songs.AddRange(folder9Data.SongNoes);
+        // }
+        
         for (var songNumber = 0; songNumber < playResultData.AryStageInfoes.Count; songNumber++)
         {
             var stageData = playResultData.AryStageInfoes[songNumber];
+
+            // if (folder9Songs.Contains(stageData.SongNo))
+            // {
+            //     continue;
+            // }
             
             if (stageData.IsSkipUse)
             {
