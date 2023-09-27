@@ -36,9 +36,8 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 			FlagCalculator.GetBitArrayFromIds(defaultSongList, songIdMax, Logger);
 
 		var defaultSongWithUraList = gameDataService.GetMusicWithUraList();
-		var enabledUraMusicList = defaultSongWithUraList.Except(lockedSongsList);
 		var uraReleaseBit =
-			FlagCalculator.GetBitArrayFromIds(enabledUraMusicList, songIdMax, Logger);
+			FlagCalculator.GetBitArrayFromIds(defaultSongWithUraList, songIdMax, Logger);
 
 		var response = new InitialdatacheckResponse
 		{
@@ -62,12 +61,13 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
 		response.AryVerupNoData1s.AddRange(aryVerUp);
 
 		var danData = new List<InitialdatacheckResponse.VerupNoData2.InformationData>();
-		for (var danId = Constants.MIN_DAN_ID; danId <= Constants.MAX_DAN_ID; danId++)
+		var danDataDictionary = gameDataService.GetDanDataDictionary();
+		foreach (var danId in danDataDictionary.Keys)
 		{
-			gameDataService.GetDanDataDictionary().TryGetValue((uint)danId, out var odaiData);
+			gameDataService.GetDanDataDictionary().TryGetValue(danId, out var odaiData);
 			danData.Add(new InitialdatacheckResponse.VerupNoData2.InformationData
 			{
-				InfoId = (uint)danId,
+				InfoId = danId,
 				VerupNo = odaiData?.VerupNo ?? 1
 			});
 		}
