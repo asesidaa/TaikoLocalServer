@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.HttpOverrides;
 using TaikoLocalServer.Middlewares;
 using TaikoLocalServer.Services.Extentions;
 using TaikoLocalServer.Settings;
+using TaikoLocalServer.Logging;
 using Throw;
 using Serilog;
+using Serilog.Sinks.File.Header;
 using SharedProject.Utils;
 
 Log.Logger = new LoggerConfiguration()
@@ -30,9 +32,21 @@ try
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/ServerSettings.json", optional: false, reloadOnChange: false);
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/DataSettings.json", optional: true, reloadOnChange: false);
 
+    var headClerkFilterExpression = "StartsWith(@m, 'Headclerk2 request:')";
+    var csvHeader = "TimeStamp,ChassisId,ShopId,Baid,PlayedAt,IsRight,Type,Amount";
+    
     builder.Host.UseSerilog((context, configuration) =>
     {
-        configuration.WriteTo.Console().ReadFrom.Configuration(context.Configuration);
+        configuration.WriteTo.Logger(x =>
+        {
+            x.WriteTo.Console().ReadFrom.Configuration(context.Configuration);
+        }).WriteTo.Logger(x =>
+        {
+            x.WriteTo.File(new CsvFormatter(),
+                path: "./Logs/HeadClerkLog.csv",
+                hooks: new HeaderWriter(csvHeader));
+            x.Filter.ByIncludingOnly(headClerkFilterExpression);
+        });
     });
 
     if (builder.Configuration.GetValue<bool>("ServerSettings:EnableMoreSongs"))
