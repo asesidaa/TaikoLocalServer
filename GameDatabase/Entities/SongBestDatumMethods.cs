@@ -4,9 +4,7 @@ namespace GameDatabase.Entities;
 
 public partial class SongBestDatum
 {
-    public void UpdateBestData(CrownType crown, uint scoreRank, uint playScore, uint scoreRate, 
-        uint goodCnt, uint okCnt, uint ngCnt, uint comboCnt, uint hitCnt, uint poundCnt, DateTime lastPlayDateTime,
-        short option)
+    public void UpdateBestData(CrownType crown, uint scoreRank, uint playScore, uint scoreRate)
     {
         if (BestCrown < crown)
         {
@@ -21,14 +19,6 @@ public partial class SongBestDatum
         if (BestScore < playScore)
         {
             BestScore = playScore;
-            BestGoodCount = goodCnt;
-            BestOkCount = okCnt;
-            BestMissCount = ngCnt;
-            BestComboCount = comboCnt;
-            BestHitCount = hitCnt;
-            BestDrumrollCount = poundCnt;
-            PlayTime = lastPlayDateTime;
-            Option = option;
         }
 
         if (BestRate < scoreRate)

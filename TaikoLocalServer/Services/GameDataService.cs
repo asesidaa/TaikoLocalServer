@@ -1,300 +1,362 @@
-﻿using System.Collections.Immutable;
-using System.Text.Json;
-using ICSharpCode.SharpZipLib.GZip;
+﻿using ICSharpCode.SharpZipLib.GZip;
 using Microsoft.Extensions.Options;
 using SharedProject.Models;
 using SharedProject.Utils;
 using Swan.Mapping;
+using System.Collections.Immutable;
+using System.Text.Json;
 using TaikoLocalServer.Settings;
-using TaikoWebUI.Shared.Models;
 using Throw;
 
 namespace TaikoLocalServer.Services;
 
 public class GameDataService : IGameDataService
 {
-    private readonly DataSettings settings;
+	private ImmutableDictionary<uint, MusicInfoEntry> musicInfoes =
+		ImmutableDictionary<uint, MusicInfoEntry>.Empty;
 
-    private ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> danDataDictionary =
-        ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData>.Empty;
+	private ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> danDataDictionary =
+		ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData>.Empty;
 
-    private ImmutableDictionary<uint, GetfolderResponse.EventfolderData> folderDictionary =
-        ImmutableDictionary<uint, GetfolderResponse.EventfolderData>.Empty;
+	private ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> gaidenDataDictionary =
+		ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData>.Empty;
 
-    private ImmutableDictionary<uint, GetSongIntroductionResponse.SongIntroductionData> introDataDictionary =
-        ImmutableDictionary<uint, GetSongIntroductionResponse.SongIntroductionData>.Empty;
+	private ImmutableDictionary<uint, GetSongIntroductionResponse.SongIntroductionData> introDataDictionary =
+		ImmutableDictionary<uint, GetSongIntroductionResponse.SongIntroductionData>.Empty;
 
-    private List<uint> lockedSongsList = new();
+	private ImmutableDictionary<uint, InitialdatacheckResponse.MovieData> movieDataDictionary =
+		ImmutableDictionary<uint, InitialdatacheckResponse.MovieData>.Empty;
 
-    private ImmutableDictionary<uint, MusicAttributeEntry> musicAttributes =
-        ImmutableDictionary<uint, MusicAttributeEntry>.Empty;
+	private ImmutableDictionary<uint, MusicAttributeEntry> musicAttributes =
+		ImmutableDictionary<uint, MusicAttributeEntry>.Empty;
 
-    private List<MusicOrderEntry> musicOrders = new();
+	private ImmutableDictionary<uint, GetfolderResponse.EventfolderData> folderDictionary =
+		ImmutableDictionary<uint, GetfolderResponse.EventfolderData>.Empty;
 
-    private List<uint> musics = new();
+	private ImmutableDictionary<string, uint> qrCodeDataDictionary = ImmutableDictionary<string, uint>.Empty;
+	
+	private List<GetShopFolderResponse.ShopFolderData> shopFolderList = new();
 
-    private List<uint> musicsWithUra = new();
+	private List<uint> musics = new();
 
-    private List<uint> musicWithGenre17 = new();
+	private List<uint> musicsWithUra = new();
 
-    private ImmutableDictionary<uint, GetShopFolderResponse.ShopFolderData> shopFolderDictionary =
-        ImmutableDictionary<uint, GetShopFolderResponse.ShopFolderData>.Empty;
+	private List<uint> lockedSongsList = new();
 
-    private Dictionary<string, uint> tokenDataDictionary = new();
+	private Dictionary<string, int> tokenDataDictionary = new();
 
-    public GameDataService(IOptions<DataSettings> settings)
-    {
-        this.settings = settings.Value;
-    }
+	private readonly DataSettings settings;
 
-    public List<uint> GetMusicList()
-    {
-        return musics;
-    }
+	public GameDataService(IOptions<DataSettings> settings)
+	{
+		this.settings = settings.Value;
+	}
 
-    public List<uint> GetMusicWithUraList()
-    {
-        return musicsWithUra;
-    }
+	public List<uint> GetMusicList()
+	{
+		return musics;
+	}
 
-    public List<uint> GetMusicWithGenre17List()
-    {
-        return musicWithGenre17;
-    }
+	public List<uint> GetMusicWithUraList()
+	{
+		return musicsWithUra;
+	}
 
-    public ImmutableDictionary<uint, MusicAttributeEntry> GetMusicAttributes()
-    {
-        return musicAttributes;
-    }
+	public ImmutableDictionary<uint, MusicInfoEntry> GetMusicInfoes()
+	{
+		return musicInfoes;
+	}
 
-    public ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> GetDanDataDictionary()
-    {
-        return danDataDictionary;
-    }
+	public ImmutableDictionary<uint, MusicAttributeEntry> GetMusicAttributes()
+	{
+		return musicAttributes;
+	}
 
-    public ImmutableDictionary<uint, GetSongIntroductionResponse.SongIntroductionData> GetSongIntroDictionary()
-    {
-        return introDataDictionary;
-    }
+	public ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> GetDanDataDictionary()
+	{
+		return danDataDictionary;
+	}
 
-    public ImmutableDictionary<uint, GetfolderResponse.EventfolderData> GetFolderDictionary()
-    {
-        return folderDictionary;
-    }
+	public ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> GetGaidenDataDictionary()
+	{
+		return gaidenDataDictionary;
+	}
 
-    public ImmutableDictionary<uint, GetShopFolderResponse.ShopFolderData> GetShopFolderDictionary()
-    {
-        return shopFolderDictionary;
-    }
+	public ImmutableDictionary<uint, GetSongIntroductionResponse.SongIntroductionData> GetSongIntroDictionary()
+	{
+		return introDataDictionary;
+	}
 
-    public Dictionary<string, uint> GetTokenDataDictionary()
-    {
-        return tokenDataDictionary;
-    }
+	public ImmutableDictionary<uint, InitialdatacheckResponse.MovieData> GetMovieDataDictionary()
+	{
+		return movieDataDictionary;
+	}
 
-    public List<uint> GetLockedSongsList()
-    {
-        return lockedSongsList;
-    }
+	public ImmutableDictionary<uint, GetfolderResponse.EventfolderData> GetFolderDictionary()
+	{
+		return folderDictionary;
+	}
 
-    public async Task InitializeAsync()
-    {
-        var dataPath = PathHelper.GetDataPath();
-        var musicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_FILE_NAME);
-        var compressedMusicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_COMPRESSED_FILE_NAME);
-        var musicOrderPath = Path.Combine(dataPath, Constants.MUSIC_ORDER_FILE_NAME);
-        var compressedMusicOrderPath = Path.Combine(dataPath, Constants.MUSIC_ORDER_COMPRESSED_FILE_NAME);
-        var danDataPath = Path.Combine(dataPath, settings.DanDataFileName);
-        var songIntroDataPath = Path.Combine(dataPath, settings.IntroDataFileName);
-        var eventFolderDataPath = Path.Combine(dataPath, settings.EventFolderDataFileName);
-        var shopFolderDataPath = Path.Combine(dataPath, settings.ShopFolderDataFileName);
-        var tokenDataPath = Path.Combine(dataPath, settings.TokenDataFileName);
-        var lockedSongsDataPath = Path.Combine(dataPath, settings.LockedSongsDataFileName);
+	public List<GetShopFolderResponse.ShopFolderData> GetShopFolderList()
+	{
+		return shopFolderList;
+	}
 
-        if (File.Exists(compressedMusicAttributePath)) TryDecompressMusicAttribute();
-        await using var musicAttributeFile = File.OpenRead(musicAttributePath);
-        if (File.Exists(compressedMusicOrderPath)) TryDecompressMusicOrder();
-        await using var musicOrderFile = File.OpenRead(musicOrderPath);
-        await using var danDataFile = File.OpenRead(danDataPath);
-        await using var songIntroDataFile = File.OpenRead(songIntroDataPath);
-        await using var eventFolderDataFile = File.OpenRead(eventFolderDataPath);
-        await using var shopFolderDataFile = File.OpenRead(shopFolderDataPath);
-        await using var tokenDataFile = File.OpenRead(tokenDataPath);
-        await using var lockedSongsDataFile = File.OpenRead(lockedSongsDataPath);
+	public Dictionary<string, int> GetTokenDataDictionary()
+	{
+		return tokenDataDictionary;
+	}
 
-        var attributesData = await JsonSerializer.DeserializeAsync<MusicAttributes>(musicAttributeFile);
-        var ordersData = await JsonSerializer.DeserializeAsync<MusicOrder>(musicOrderFile);
-        var danData = await JsonSerializer.DeserializeAsync<List<DanData>>(danDataFile);
-        var introData = await JsonSerializer.DeserializeAsync<List<SongIntroductionData>>(songIntroDataFile);
-        var eventFolderData = await JsonSerializer.DeserializeAsync<List<EventFolderData>>(eventFolderDataFile);
-        var shopFolderData = await JsonSerializer.DeserializeAsync<List<ShopFolderData>>(shopFolderDataFile);
-        var tokenData = await JsonSerializer.DeserializeAsync<Dictionary<string, uint>>(tokenDataFile);
-        var lockedSongsData = await JsonSerializer.DeserializeAsync<Dictionary<string, uint[]>>(lockedSongsDataFile);
+	public List<uint> GetLockedSongsList()
+	{
+		return lockedSongsList;
+	}
 
-        InitializeMusicAttributes(attributesData);
+	public ImmutableDictionary<string, uint> GetQRCodeDataDictionary()
+	{
+		return qrCodeDataDictionary;
+	}
 
-        InitializeMusicOrders(ordersData);
+	public async Task InitializeAsync()
+	{
+		var dataPath = PathHelper.GetDataPath();
+		var musicInfoPath = Path.Combine(dataPath, Constants.MUSIC_INFO_FILE_NAME);
+		var compressedMusicInfoPath = Path.Combine(dataPath, Constants.MUSIC_INFO_COMPRESSED_FILE_NAME);
+		var musicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_FILE_NAME);
+		var compressedMusicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_COMPRESSED_FILE_NAME);
+		var danDataPath = Path.Combine(dataPath, settings.DanDataFileName);
+		var gaidenDataPath = Path.Combine(dataPath, settings.GaidenDataFileName);
+		var songIntroDataPath = Path.Combine(dataPath, settings.IntroDataFileName);
+		var movieDataPath = Path.Combine(dataPath, settings.MovieDataFileName);
+		var eventFolderDataPath = Path.Combine(dataPath, settings.EventFolderDataFileName);
+		var shopFolderDataPath = Path.Combine(dataPath, settings.ShopFolderDataFileName);
+		var tokenDataPath = Path.Combine(dataPath, settings.TokenDataFileName);
+		var lockedSongsDataPath = Path.Combine(dataPath, settings.LockedSongsDataFileName);
+		var qrCodeDataPath = Path.Combine(dataPath, settings.QRCodeDataFileName);
 
-        InitializeDanData(danData);
+		if (File.Exists(compressedMusicInfoPath))
+		{
+			TryDecompressMusicInfo();
+		}
+		if (File.Exists(compressedMusicAttributePath))
+		{
+			TryDecompressMusicAttribute();
+		}
+		await using var musicInfoFile = File.OpenRead(musicInfoPath);
+		await using var musicAttributeFile = File.OpenRead(musicAttributePath);
+		await using var danDataFile = File.OpenRead(danDataPath);
+		await using var gaidenDataFile = File.OpenRead(gaidenDataPath);
+		await using var songIntroDataFile = File.OpenRead(songIntroDataPath);
+		await using var movieDataFile = File.OpenRead(movieDataPath);
+		await using var eventFolderDataFile = File.OpenRead(eventFolderDataPath);
+		await using var shopFolderDataFile = File.OpenRead(shopFolderDataPath);
+		await using var tokenDataFile = File.OpenRead(tokenDataPath);
+		await using var lockedSongsDataFile = File.OpenRead(lockedSongsDataPath);
+		await using var qrCodeDataFile = File.OpenRead(qrCodeDataPath);
 
-        InitializeIntroData(introData);
+		var infoesData = await JsonSerializer.DeserializeAsync<MusicInfoes>(musicInfoFile);
+		var attributesData = await JsonSerializer.DeserializeAsync<MusicAttributes>(musicAttributeFile);
+		var danData = await JsonSerializer.DeserializeAsync<List<DanData>>(danDataFile);
+		var gaidenData = await JsonSerializer.DeserializeAsync<List<DanData>>(gaidenDataFile);
+		var introData = await JsonSerializer.DeserializeAsync<List<SongIntroductionData>>(songIntroDataFile);
+		var movieData = await JsonSerializer.DeserializeAsync<List<MovieData>>(movieDataFile);
+		var eventFolderData = await JsonSerializer.DeserializeAsync<List<EventFolderData>>(eventFolderDataFile);
+		var shopFolderData = await JsonSerializer.DeserializeAsync<List<ShopFolderData>>(shopFolderDataFile);
+		var tokenData = await JsonSerializer.DeserializeAsync<Dictionary<string, int>>(tokenDataFile);
+		var lockedSongsData = await JsonSerializer.DeserializeAsync<Dictionary<string, uint[]>>(lockedSongsDataFile);
+		var qrCodeData = await JsonSerializer.DeserializeAsync<List<QRCodeData>>(qrCodeDataFile);
 
-        InitializeEventFolderData(eventFolderData);
+		InitializeMusicInfoes(infoesData);
 
-        InitializeShopFolderData(shopFolderData);
+		InitializeMusicAttributes(attributesData);
 
-        InitializeTokenData(tokenData);
+		InitializeDanData(danData);
 
-        InitializeLockedSongsData(lockedSongsData);
-    }
+		InitializeGaidenData(gaidenData);
 
-    public List<MusicOrderEntry> GetMusicOrders()
-    {
-        return musicOrders;
-    }
+		InitializeIntroData(introData);
 
-    private static void TryDecompressMusicAttribute()
-    {
-        var dataPath = PathHelper.GetDataPath();
-        var musicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_FILE_NAME);
-        var compressedMusicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_COMPRESSED_FILE_NAME);
+		InitializeMovieData(movieData);
 
-        using var compressed = File.Open(compressedMusicAttributePath, FileMode.Open);
-        using var output = File.Create(musicAttributePath);
+		InitializeEventFolderData(eventFolderData);
 
-        GZip.Decompress(compressed, output, true);
-    }
+		InitializeShopFolderData(shopFolderData);
 
-    private static void TryDecompressMusicOrder()
-    {
-        var dataPath = PathHelper.GetDataPath();
-        var musicOrderPath = Path.Combine(dataPath, Constants.MUSIC_ORDER_FILE_NAME);
-        var compressedMusicOrderPath = Path.Combine(dataPath, Constants.MUSIC_ORDER_COMPRESSED_FILE_NAME);
+		InitializeTokenData(tokenData);
 
-        using var compressed = File.Open(compressedMusicOrderPath, FileMode.Open);
-        using var output = File.Create(musicOrderPath);
+		InitializeLockedSongsData(lockedSongsData);
 
-        GZip.Decompress(compressed, output, true);
-    }
+		InitializeQRCodeData(qrCodeData);
+	}
 
-    private void InitializeIntroData(List<SongIntroductionData>? introData)
-    {
-        introData.ThrowIfNull("Shouldn't happen!");
-        introDataDictionary = introData.ToImmutableDictionary(data => data.SetId, ToResponseIntroData);
-    }
+	private static void TryDecompressMusicInfo()
+	{
+		var dataPath = PathHelper.GetDataPath();
+		var musicInfoPath = Path.Combine(dataPath, Constants.MUSIC_INFO_FILE_NAME);
+		var compressedMusicInfoPath = Path.Combine(dataPath, Constants.MUSIC_INFO_COMPRESSED_FILE_NAME);
 
-    private void InitializeDanData(List<DanData>? danData)
-    {
-        danData.ThrowIfNull("Shouldn't happen!");
-        danDataDictionary = danData.ToImmutableDictionary(data => data.DanId, ToResponseOdaiData);
-    }
+		using var compressed = File.Open(compressedMusicInfoPath, FileMode.Open);
+		using var output = File.Create(musicInfoPath);
 
-    private void InitializeEventFolderData(List<EventFolderData>? eventFolderData)
-    {
-        eventFolderData.ThrowIfNull("Shouldn't happen!");
-        folderDictionary = eventFolderData.ToImmutableDictionary(data => data.FolderId, ToResponseEventFolderData);
-    }
+		GZip.Decompress(compressed, output, true);
+	}
 
-    private void InitializeShopFolderData(List<ShopFolderData>? shopFolderData)
-    {
-        shopFolderData.ThrowIfNull("Shouldn't happen!");
-        shopFolderDictionary = shopFolderData.ToImmutableDictionary(data => data.SongNo, ToResponseShopFolderData);
-    }
+	private static void TryDecompressMusicAttribute()
+	{
+		var dataPath = PathHelper.GetDataPath();
+		var musicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_FILE_NAME);
+		var compressedMusicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_COMPRESSED_FILE_NAME);
 
-    private void InitializeTokenData(Dictionary<string, uint>? tokenData)
-    {
-        tokenData.ThrowIfNull("Shouldn't happen!");
-        tokenDataDictionary = tokenData;
-    }
+		using var compressed = File.Open(compressedMusicAttributePath, FileMode.Open);
+		using var output = File.Create(musicAttributePath);
 
-    private void InitializeLockedSongsData(Dictionary<string, uint[]>? lockedSongsData)
-    {
-        lockedSongsData.ThrowIfNull("Shouldn't happen!");
-        lockedSongsList = lockedSongsData["songNo"].ToList();
-    }
+		GZip.Decompress(compressed, output, true);
+	}
 
-    private void InitializeMusicAttributes(MusicAttributes? attributesData)
-    {
-        attributesData.ThrowIfNull("Shouldn't happen!");
+	private void InitializeIntroData(List<SongIntroductionData>? introData)
+	{
+		introData.ThrowIfNull("Shouldn't happen!");
+		introDataDictionary = introData.ToImmutableDictionary(data => data.SetId, ToResponseIntroData);
+	}
 
-        musicAttributes = attributesData.MusicAttributeEntries.ToImmutableDictionary(attribute => attribute.MusicId);
+	private void InitializeMovieData(List<MovieData>? movieData)
+	{
+		movieData.ThrowIfNull("Shouldn't happen!");
+		movieDataDictionary = movieData.ToImmutableDictionary(data => data.MovieId, ToResponseMovieData);
+	}
 
-        musics = musicAttributes.Select(pair => pair.Key)
-            .ToList();
-        musics.Sort();
+	private void InitializeDanData(List<DanData>? danData)
+	{
+		danData.ThrowIfNull("Shouldn't happen!");
+		danDataDictionary = danData.ToImmutableDictionary(data => data.DanId, ToResponseOdaiData);
+	}
 
-        musicsWithUra = musicAttributes.Where(attribute => attribute.Value.HasUra)
-            .Select(pair => pair.Key)
-            .ToList();
-        musicsWithUra.Sort();
-    }
+	private void InitializeGaidenData(List<DanData>? gaidenData)
+	{
+		gaidenData.ThrowIfNull("Shouldn't happen!");
+		gaidenDataDictionary = gaidenData.ToImmutableDictionary(data => data.DanId, ToResponseOdaiData);
+	}
 
-    private void InitializeMusicOrders(MusicOrder? ordersData)
-    {
-        ordersData.ThrowIfNull("Shouldn't happen!");
+	private void InitializeEventFolderData(List<EventFolderData>? eventFolderData)
+	{
+		eventFolderData.ThrowIfNull("Shouldn't happen!");
+		folderDictionary = eventFolderData.ToImmutableDictionary(data => data.FolderId, ToResponseEventFolderData);
+	}
 
-        musicOrders = ordersData.Order.ToList();
+	private void InitializeMusicInfoes(MusicInfoes? infoesData)
+	{
+		infoesData.ThrowIfNull("Shouldn't happen!");
 
-        musicWithGenre17 = musicOrders.Where(x => x.GenreNo == 17)
-            .Select(x => x.SongId)
-            .ToList();
-        musicWithGenre17.Sort();
-    }
+		musicInfoes = infoesData.MusicInfoEntries.ToImmutableDictionary(info => info.MusicId);
 
-    private static GetDanOdaiResponse.OdaiData ToResponseOdaiData(DanData data)
-    {
-        var responseOdaiData = new GetDanOdaiResponse.OdaiData
-        {
-            DanId = data.DanId,
-            Title = data.Title,
-            VerupNo = data.VerupNo
-        };
+		musicsWithUra = musicInfoes.Where(info => info.Value.starUra > 0)
+			.Select(pair => pair.Key)
+			.ToList();
+		musicsWithUra.Sort();
+	}
 
-        var odaiSongs =
-            data.OdaiSongList.Select(song => song.CopyPropertiesToNew<GetDanOdaiResponse.OdaiData.OdaiSong>());
-        responseOdaiData.AryOdaiSongs.AddRange(odaiSongs);
+	private void InitializeMusicAttributes(MusicAttributes? attributesData)
+	{
+		attributesData.ThrowIfNull("Shouldn't happen!");
 
-        var odaiBorders =
-            data.OdaiBorderList.Select(border => border.CopyPropertiesToNew<GetDanOdaiResponse.OdaiData.OdaiBorder>());
-        responseOdaiData.AryOdaiBorders.AddRange(odaiBorders);
+		musicAttributes = attributesData.MusicAttributeEntries.ToImmutableDictionary(attribute => attribute.MusicId);
 
-        return responseOdaiData;
-    }
+		musics = musicAttributes.Select(pair => pair.Key)
+			.ToList();
+		musics.Sort();
+	}
 
-    private static GetSongIntroductionResponse.SongIntroductionData ToResponseIntroData(SongIntroductionData data)
-    {
-        var responseOdaiData = new GetSongIntroductionResponse.SongIntroductionData
-        {
-            SetId = data.SetId,
-            VerupNo = data.VerupNo,
-            MainSongNo = data.MainSongNo,
-            SubSongNoes = data.SubSongNo
-        };
+	private void InitializeShopFolderData(List<ShopFolderData>? shopFolderData)
+	{
+		shopFolderData.ThrowIfNull("Shouldn't happen!");
+		foreach (var folderData in shopFolderData)
+		{
+			shopFolderList.Add(ToResponseShopFolderData(folderData));
+		}
+	}
 
-        return responseOdaiData;
-    }
+	private void InitializeTokenData(Dictionary<string, int>? tokenData)
+	{
+		tokenData.ThrowIfNull("Shouldn't happen!");
+		tokenDataDictionary = tokenData;
+	}
 
-    private static GetfolderResponse.EventfolderData ToResponseEventFolderData(EventFolderData data)
-    {
-        var responseEventFolderData = new GetfolderResponse.EventfolderData
-        {
-            FolderId = data.FolderId,
-            VerupNo = data.VerupNo,
-            Priority = data.Priority,
-            SongNoes = data.SongNo
-        };
+	private void InitializeLockedSongsData(Dictionary<string, uint[]>? lockedSongsData)
+	{
+		lockedSongsData.ThrowIfNull("Shouldn't happen!");
+		lockedSongsList = lockedSongsData["songNo"].ToList();
+	}
 
-        return responseEventFolderData;
-    }
+	private void InitializeQRCodeData(List<QRCodeData>? qrCodeData)
+	{
+		qrCodeData.ThrowIfNull("Shouldn't happen!");
+		qrCodeDataDictionary = qrCodeData.ToImmutableDictionary(data => data.Serial, data => data.Id);
+	}
 
-    private static GetShopFolderResponse.ShopFolderData ToResponseShopFolderData(ShopFolderData data)
-    {
-        var responseShopFolderData = new GetShopFolderResponse.ShopFolderData
-        {
-            SongNo = data.SongNo,
-            Price = data.Price
-        };
+	private static GetDanOdaiResponse.OdaiData ToResponseOdaiData(DanData data)
+	{
+		var responseOdaiData = new GetDanOdaiResponse.OdaiData
+		{
+			DanId = data.DanId,
+			Title = data.Title,
+			VerupNo = data.VerupNo
+		};
 
-        return responseShopFolderData;
-    }
+		var odaiSongs = data.OdaiSongList.Select(song => song.CopyPropertiesToNew<GetDanOdaiResponse.OdaiData.OdaiSong>());
+		responseOdaiData.AryOdaiSongs.AddRange(odaiSongs);
+
+		var odaiBorders = data.OdaiBorderList.Select(border => border.CopyPropertiesToNew<GetDanOdaiResponse.OdaiData.OdaiBorder>());
+		responseOdaiData.AryOdaiBorders.AddRange(odaiBorders);
+
+		return responseOdaiData;
+	}
+
+	private static GetSongIntroductionResponse.SongIntroductionData ToResponseIntroData(SongIntroductionData data)
+	{
+		var responseIntroData = new GetSongIntroductionResponse.SongIntroductionData
+		{
+			SetId = data.SetId,
+			VerupNo = data.VerupNo,
+			MainSongNo = data.MainSongNo,
+			SubSongNoes = data.SubSongNo
+		};
+
+		return responseIntroData;
+	}
+
+	private static InitialdatacheckResponse.MovieData ToResponseMovieData(MovieData data)
+	{
+		var responseMovieData = new InitialdatacheckResponse.MovieData
+		{
+			MovieId = data.MovieId,
+			EnableDays = data.EnableDays
+		};
+
+		return responseMovieData;
+	}
+
+	private static GetfolderResponse.EventfolderData ToResponseEventFolderData(EventFolderData data)
+	{
+		var responseEventFolderData = new GetfolderResponse.EventfolderData
+		{
+			FolderId = data.FolderId,
+			VerupNo = data.VerupNo,
+			Priority = data.Priority,
+			SongNoes = data.SongNo,
+			ParentFolderId = data.ParentFolderId
+		};
+
+		return responseEventFolderData;
+	}
+
+	private static GetShopFolderResponse.ShopFolderData ToResponseShopFolderData(ShopFolderData data)
+	{
+		var responseShopFolderData = new GetShopFolderResponse.ShopFolderData
+		{
+			SongNo = data.SongNo,
+			Price = data.Price
+		};
+
+		return responseShopFolderData;
+	}
 }

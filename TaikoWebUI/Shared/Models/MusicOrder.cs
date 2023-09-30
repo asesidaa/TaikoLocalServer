@@ -4,5 +4,6 @@ namespace TaikoWebUI.Shared.Models;
 
 public class MusicOrder
 {
-    [JsonPropertyName("items")] public List<MusicOrderEntry> Order { get; set; } = new();
+    [JsonPropertyName("items")]
+    public List<MusicOrderEntry> Order { get; set; } = new();
 }

@@ -1,26 +1,30 @@
-﻿namespace TaikoWebUI.Pages;
+﻿using static MudBlazor.Colors;
+using System;
+
+namespace TaikoWebUI.Pages; 
 
 public partial class HighScores
 {
+    [Parameter]
+    public int Baid { get; set; }
+
     private const string IconStyle = "width:25px; height:25px;";
-
-    private readonly List<BreadcrumbItem> breadcrumbs = new()
-    {
-        new BreadcrumbItem("Cards", "/Cards")
-    };
-
+    
     private SongBestResponse? response;
 
     private Dictionary<Difficulty, List<SongBestData>> songBestDataMap = new();
 
-    [Parameter] public int Baid { get; set; }
+    private readonly List<BreadcrumbItem> breadcrumbs = new()
+    {
+        new BreadcrumbItem("Cards", href: "/Cards"),
+    };
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         response = await Client.GetFromJsonAsync<SongBestResponse>($"api/PlayData/{Baid}");
         response.ThrowIfNull();
-
+        
         response.SongBestData.ForEach(data =>
         {
             var songId = data.SongId;
@@ -28,17 +32,19 @@ public partial class HighScores
             data.MusicName = GameDataService.GetMusicNameBySongId(songId);
             data.MusicArtist = GameDataService.GetMusicArtistBySongId(songId);
         });
-
+        
         songBestDataMap = response.SongBestData.GroupBy(data => data.Difficulty)
-            .ToDictionary(data => data.Key,
-                data => data.ToList());
+            .ToDictionary(data => data.Key, 
+                          data => data.ToList());
         foreach (var songBestDataList in songBestDataMap.Values)
+        {
             songBestDataList.Sort((data1, data2) => GameDataService.GetMusicIndexBySongId(data1.SongId)
-                .CompareTo(GameDataService.GetMusicIndexBySongId(data2.SongId)));
+                                      .CompareTo(GameDataService.GetMusicIndexBySongId(data2.SongId)));
+        }
+        
 
-
-        breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", null, true));
-        breadcrumbs.Add(new BreadcrumbItem("High Scores", $"/Cards/{Baid}/HighScores"));
+        breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
+        breadcrumbs.Add(new BreadcrumbItem("High Scores", href: $"/Cards/{Baid}/HighScores", disabled: false));
     }
 
     private async Task OnFavoriteToggled(SongBestData data)
@@ -50,7 +56,10 @@ public partial class HighScores
             SongId = data.SongId
         };
         var result = await Client.PostAsJsonAsync("api/FavoriteSongs", request);
-        if (result.IsSuccessStatusCode) data.IsFavorite = !data.IsFavorite;
+        if (result.IsSuccessStatusCode)
+        {
+            data.IsFavorite = !data.IsFavorite;
+        }
     }
 
     private static string GetCrownText(CrownType crown)
@@ -62,7 +71,7 @@ public partial class HighScores
             CrownType.Gold => "Full Combo",
             CrownType.Dondaful => "Donderful Combo",
             _ => ""
-        };
+            };
     }
 
     private static string GetRankText(ScoreRank rank)
@@ -77,7 +86,7 @@ public partial class HighScores
             ScoreRank.Purple => "Graceful",
             ScoreRank.Dondaful => "Top Class",
             _ => ""
-        };
+            };
     }
 
     private static string GetDifficultyTitle(Difficulty difficulty)
@@ -90,7 +99,7 @@ public partial class HighScores
             Difficulty.Oni => "Oni",
             Difficulty.UraOni => "Ura Oni",
             _ => ""
-        };
+            };
     }
 
     private static string GetDifficultyIcon(Difficulty difficulty)
@@ -111,7 +120,7 @@ public partial class HighScores
             SongGenre.Variety => "Variety",
             SongGenre.Classical => "Classical",
             _ => ""
-        };
+            };
     }
 
     private static string GetGenreStyle(SongGenre genre)
@@ -142,3 +151,4 @@ public partial class HighScores
         return aiData.Count > 0;
     }
 }
+

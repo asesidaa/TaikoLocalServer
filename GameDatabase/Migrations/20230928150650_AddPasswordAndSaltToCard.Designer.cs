@@ -11,18 +11,18 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace TaikoLocalServer.Migrations
 {
     [DbContext(typeof(TaikoDbContext))]
-    [Migration("20230201015652_AddUnlockedSongIdListToUserData")]
-    partial class AddUnlockedSongIdListToUserData
+    [Migration("20230928150650_AddPasswordAndSaltToCard")]
+    partial class AddPasswordAndSaltToCard
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "7.0.0");
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.0-rc.1.23419.6");
 
             modelBuilder.Entity("GameDatabase.Entities.AiScoreDatum", b =>
                 {
-                    b.Property<uint>("Baid")
+                    b.Property<ulong>("Baid")
                         .HasColumnType("INTEGER");
 
                     b.Property<uint>("SongId")
@@ -41,7 +41,7 @@ namespace TaikoLocalServer.Migrations
 
             modelBuilder.Entity("GameDatabase.Entities.AiSectionScoreDatum", b =>
                 {
-                    b.Property<uint>("Baid")
+                    b.Property<ulong>("Baid")
                         .HasColumnType("INTEGER");
 
                     b.Property<uint>("SongId")
@@ -84,7 +84,7 @@ namespace TaikoLocalServer.Migrations
                     b.Property<string>("AccessCode")
                         .HasColumnType("TEXT");
 
-                    b.Property<uint>("Baid")
+                    b.Property<ulong>("Baid")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Password")
@@ -105,7 +105,7 @@ namespace TaikoLocalServer.Migrations
 
             modelBuilder.Entity("GameDatabase.Entities.DanScoreDatum", b =>
                 {
-                    b.Property<uint>("Baid")
+                    b.Property<ulong>("Baid")
                         .HasColumnType("INTEGER");
 
                     b.Property<uint>("DanId")
@@ -132,7 +132,7 @@ namespace TaikoLocalServer.Migrations
 
             modelBuilder.Entity("GameDatabase.Entities.DanStageScoreDatum", b =>
                 {
-                    b.Property<uint>("Baid")
+                    b.Property<ulong>("Baid")
                         .HasColumnType("INTEGER");
 
                     b.Property<uint>("DanId")
@@ -172,7 +172,7 @@ namespace TaikoLocalServer.Migrations
 
             modelBuilder.Entity("GameDatabase.Entities.SongBestDatum", b =>
                 {
-                    b.Property<uint>("Baid")
+                    b.Property<ulong>("Baid")
                         .HasColumnType("INTEGER");
 
                     b.Property<uint>("SongId")
@@ -193,9 +193,6 @@ namespace TaikoLocalServer.Migrations
                     b.Property<uint>("BestScoreRank")
                         .HasColumnType("INTEGER");
 
-                    b.Property<short>("Option")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Baid", "SongId", "Difficulty");
 
                     b.ToTable("SongBestData");
@@ -207,7 +204,7 @@ namespace TaikoLocalServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<uint>("Baid")
+                    b.Property<ulong>("Baid")
                         .HasColumnType("INTEGER");
 
                     b.Property<uint>("ComboCount")
@@ -232,9 +229,6 @@ namespace TaikoLocalServer.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<uint>("OkCount")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<short>("Option")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("PlayTime")
@@ -267,7 +261,7 @@ namespace TaikoLocalServer.Migrations
 
             modelBuilder.Entity("GameDatabase.Entities.UserDatum", b =>
                 {
-                    b.Property<uint>("Baid")
+                    b.Property<ulong>("Baid")
                         .HasColumnType("INTEGER");
 
                     b.Property<uint>("AchievementDisplayDifficulty")
@@ -290,6 +284,14 @@ namespace TaikoLocalServer.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CostumeFlgArray")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DifficultyPlayedArray")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DifficultySettingArray")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -323,6 +325,9 @@ namespace TaikoLocalServer.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<uint>("MyDonNameLanguage")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("NotesPosition")
                         .HasColumnType("INTEGER");
 
@@ -350,9 +355,6 @@ namespace TaikoLocalServer.Migrations
                     b.Property<string>("ToneFlgArray")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("TotalGameCount")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("UnlockedSongIdList")
                         .IsRequired()

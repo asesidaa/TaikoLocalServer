@@ -1,5 +1,4 @@
 ﻿// Global using directives
-
 global using System.Net.Http;
 global using System.Net.Http.Json;
 global using Microsoft.AspNetCore.Components;

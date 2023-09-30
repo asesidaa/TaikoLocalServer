@@ -36,18 +36,31 @@ else
                             <MudStack Spacing="4">
                                 <h2>Profile Options</h2>
 
-                                <MudTextField @bind-Value="@response.MyDonName" Label="Name"></MudTextField>
+                                <MudGrid>
+                                    <MudItem xs="12" md="8">
+                                        <MudTextField @bind-Value="@response.MyDonName" Label="Name"></MudTextField>
+                                    </MudItem>
+                                    <MudItem xs="12" md="4">
+                                        <MudSelect @bind-Value="@response.MyDonNameLanguage" Label="Language">
+                                            @for (uint i = 0; i < LanguageStrings.Length; i++)
+                                            {
+                                                var index = i;
+                                                <MudSelectItem Value="@i">@LanguageStrings[index]</MudSelectItem>
+                                            }
+                                        </MudSelect>
+                                    </MudItem>
+                                </MudGrid>
 
                                 <MudGrid>
                                     <MudItem xs="12" md="8">
-                                        <MudTextField @bind-Value="@response.Title" Label="Title"/>
-                                        <MudButton Color="Color.Primary" Class="mt-1" Size="Size.Small" OnClick="@(e => OpenChooseTitleDialog())">
+                                        <MudTextField @bind-Value="@response.Title" Label="Title" />
+                                        <MudButton Color="Color.Primary" Class="mt-1" Size="Size.Small" OnClick="@((_)=>OpenChooseTitleDialog())">
                                             Select a Title
                                         </MudButton>
                                     </MudItem>
                                     <MudItem xs="12" md="4">
                                         <MudSelect @bind-Value="@response.TitlePlateId" Label="Title Plate">
-                                            @for (uint i = 0; i < 8; i++)
+                                            @for (uint i = 0; i < TitlePlateStrings.Length; i++)
                                             {
                                                 var index = i;
                                                 <MudSelectItem Value="@i">@TitlePlateStrings[index]</MudSelectItem>
@@ -60,12 +73,45 @@ else
                                            Label="Achievement Panel Difficulty">
                                     @foreach (var item in Enum.GetValues<Difficulty>())
                                     {
-                                        <MudSelectItem Value="@item"/>
+                                        <MudSelectItem Value="@item" />
                                     }
                                 </MudSelect>
 
-                                <MudSwitch @bind-Checked="@response.IsDisplayAchievement" Label="Display Achievement Panel" Color="Color.Primary"/>
-                                <MudSwitch @bind-Checked="@response.IsDisplayDanOnNamePlate" Label="Display Dan Rank on Name Plate" Color="Color.Primary"/>
+                                <MudGrid>
+                                    <MudItem xs="12" md="4">
+                                        <MudStack Spacing="4">
+                                            <MudSwitch @bind-Checked="@response.IsDisplayAchievement" Label="Display Achievement Panel" Color="Color.Primary" />
+                                            <MudSwitch @bind-Checked="@response.IsDisplayDanOnNamePlate" Label="Display Dan Rank on Name Plate" Color="Color.Primary" />
+                                        </MudStack>
+                                    </MudItem>
+                                    <MudItem xs="12" md="8">
+                                        <MudStack Spacing="4">
+                                            <MudSelect @bind-Value="@response.DifficultySettingCourse" Label="Difficulty Setting Course">
+                                                @for (uint i = 0; i < DifficultySettingCourseStrings.Length; i++)
+                                                {
+                                                    var index = i;
+                                                    <MudSelectItem Value="@i">@DifficultySettingCourseStrings[index]</MudSelectItem>
+                                                }
+                                            </MudSelect>
+
+                                            <MudSelect @bind-Value="@response.DifficultySettingStar" Label="Difficulty Setting Star">
+                                                @for (uint i = 0; i < DifficultySettingStarStrings.Length; i++)
+                                                {
+                                                    var index = i;
+                                                    <MudSelectItem Value="@i">@DifficultySettingStarStrings[index]</MudSelectItem>
+                                                }
+                                            </MudSelect>
+
+                                            <MudSelect @bind-Value="@response.DifficultySettingSort" Label="Difficulty Setting Sort">
+                                                @for (uint i = 0; i < DifficultySettingSortStrings.Length; i++)
+                                                {
+                                                    var index = i;
+                                                    <MudSelectItem Value="@i">@DifficultySettingSortStrings[index]</MudSelectItem>
+                                                }
+                                            </MudSelect>
+                                        </MudStack>
+                                    </MudItem>
+                                </MudGrid>
                             </MudStack>
                         </MudTabPanel>
 
@@ -164,16 +210,16 @@ else
                                 <MudGrid>
                                     <MudItem xs="12" md="4">
                                         <MudStack Spacing="4">
-                                            <MudSwitch @bind-Checked="@response.PlaySetting.IsVanishOn" Label="Vanish" Color="Color.Primary"/>
-                                            <MudSwitch @bind-Checked="@response.PlaySetting.IsInverseOn" Label="Inverse" Color="Color.Primary"/>
-                                            <MudSwitch @bind-Checked="@response.IsSkipOn" Label="Give Up" Color="Color.Primary"/>
-                                            <MudSwitch @bind-Checked="@response.IsVoiceOn" Label="Voice" Color="Color.Primary"/>
+                                            <MudSwitch @bind-Checked="@response.PlaySetting.IsVanishOn" Label="Vanish" Color="Color.Primary" />
+                                            <MudSwitch @bind-Checked="@response.PlaySetting.IsInverseOn" Label="Inverse" Color="Color.Primary" />
+                                            <MudSwitch @bind-Checked="@response.IsSkipOn" Label="Give Up" Color="Color.Primary" />
+                                            <MudSwitch @bind-Checked="@response.IsVoiceOn" Label="Voice" Color="Color.Primary" />
                                         </MudStack>
                                     </MudItem>
                                     <MudItem xs="12" md="8">
                                         <MudStack Spacing="4">
                                             <MudSelect @bind-Value="@response.PlaySetting.Speed" Label="Speed">
-                                                @for (uint i = 0; i < 15; i++)
+                                                @for (uint i = 0; i < SpeedStrings.Length; i++)
                                                 {
                                                     var index = i;
                                                     <MudSelectItem Value="@i">@SpeedStrings[index]</MudSelectItem>
@@ -184,12 +230,12 @@ else
                                                        Label="Random">
                                                 @foreach (var item in Enum.GetValues<RandomType>())
                                                 {
-                                                    <MudSelectItem Value="@item"/>
+                                                    <MudSelectItem Value="@item" />
                                                 }
                                             </MudSelect>
 
                                             <MudSelect @bind-Value="@response.ToneId" Label="Tone">
-                                                @for (uint i = 0; i < 19; i++)
+                                                @for (uint i = 0; i < ToneStrings.Length; i++)
                                                 {
                                                     var index = i;
                                                     <MudSelectItem Value="@i">@ToneStrings[index]</MudSelectItem>
@@ -216,12 +262,12 @@ else
                                Color="Color.Primary">
                         @if (isSavingOptions)
                         {
-                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
                             <MudText Class="ms-2">Saving...</MudText>
                         }
                         else
                         {
-                            <MudIcon Icon="@Icons.Filled.Save" Class="mx-2"></MudIcon>
+                            <MudIcon Icon="@Icons.Material.Filled.Save" Class="mx-2"></MudIcon>
                             <MudText>Save</MudText>
                         }
                     </MudButton>

@@ -1,6 +1,6 @@
-﻿using System.Text.Json;
-using SharedProject.Models;
+﻿using SharedProject.Models;
 using SharedProject.Utils;
+using System.Text.Json;
 
 namespace TaikoLocalServer.Controllers.Api;
 
@@ -16,11 +16,16 @@ public class UserSettingsController : BaseController<UserSettingsController>
     }
 
     [HttpGet]
-    public async Task<ActionResult<UserSetting>> GetUserSetting(uint baid)
+    public async Task<ActionResult<UserSetting>> GetUserSetting(ulong baid)
     {
         var user = await userDatumService.GetFirstUserDatumOrNull(baid);
 
-        if (user is null) return NotFound();
+        if (user is null)
+        {
+            return NotFound();
+        }
+
+        var difficultySettingArray = JsonHelper.GetUIntArrayFromJson(user.DifficultySettingArray, 3, Logger, nameof(user.DifficultySettingArray));
 
         var costumeData = JsonHelper.GetCostumeDataFromUserData(user, Logger);
 
@@ -31,12 +36,16 @@ public class UserSettingsController : BaseController<UserSettingsController>
             AchievementDisplayDifficulty = user.AchievementDisplayDifficulty,
             IsDisplayAchievement = user.DisplayAchievement,
             IsDisplayDanOnNamePlate = user.DisplayDan,
+            DifficultySettingCourse = difficultySettingArray[0],
+            DifficultySettingStar = difficultySettingArray[1],
+            DifficultySettingSort = difficultySettingArray[2],
             IsVoiceOn = user.IsVoiceOn,
             IsSkipOn = user.IsSkipOn,
             NotesPosition = user.NotesPosition,
             PlaySetting = PlaySettingConverter.ShortToPlaySetting(user.OptionSetting),
             ToneId = user.SelectedToneId,
             MyDonName = user.MyDonName,
+            MyDonNameLanguage = user.MyDonNameLanguage,
             Title = user.Title,
             TitlePlateId = user.TitlePlateId,
             Kigurumi = costumeData[0],
@@ -57,11 +66,14 @@ public class UserSettingsController : BaseController<UserSettingsController>
     }
 
     [HttpPost]
-    public async Task<IActionResult> SaveUserSetting(uint baid, UserSetting userSetting)
+    public async Task<IActionResult> SaveUserSetting(ulong baid, UserSetting userSetting)
     {
         var user = await userDatumService.GetFirstUserDatumOrNull(baid);
 
-        if (user is null) return NotFound();
+        if (user is null)
+        {
+            return NotFound();
+        }
 
         var costumes = new List<uint>
         {
@@ -69,18 +81,27 @@ public class UserSettingsController : BaseController<UserSettingsController>
             userSetting.Head,
             userSetting.Body,
             userSetting.Face,
-            userSetting.Puchi
+            userSetting.Puchi,
+        };
+
+        var difficultySettings = new List<uint>
+        {
+            userSetting.DifficultySettingCourse,
+            userSetting.DifficultySettingStar,
+            userSetting.DifficultySettingSort
         };
 
         user.IsSkipOn = userSetting.IsSkipOn;
         user.IsVoiceOn = userSetting.IsVoiceOn;
         user.DisplayAchievement = userSetting.IsDisplayAchievement;
         user.DisplayDan = userSetting.IsDisplayDanOnNamePlate;
+        user.DifficultySettingArray = JsonSerializer.Serialize(difficultySettings);
         user.NotesPosition = userSetting.NotesPosition;
         user.SelectedToneId = userSetting.ToneId;
         user.AchievementDisplayDifficulty = userSetting.AchievementDisplayDifficulty;
         user.OptionSetting = PlaySettingConverter.PlaySettingToShort(userSetting.PlaySetting);
         user.MyDonName = userSetting.MyDonName;
+        user.MyDonNameLanguage = userSetting.MyDonNameLanguage;
         user.Title = userSetting.Title;
         user.TitlePlateId = userSetting.TitlePlateId;
         user.ColorBody = userSetting.BodyColor;
@@ -88,9 +109,9 @@ public class UserSettingsController : BaseController<UserSettingsController>
         user.ColorLimb = userSetting.LimbColor;
         user.CostumeData = JsonSerializer.Serialize(costumes);
 
-
         await userDatumService.UpdateUserDatum(user);
 
         return NoContent();
     }
+
 }

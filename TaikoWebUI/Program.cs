@@ -3,7 +3,6 @@ using MudBlazor.Services;
 using TaikoWebUI.Settings;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
-
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 

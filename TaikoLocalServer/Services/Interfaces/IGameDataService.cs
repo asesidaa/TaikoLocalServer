@@ -1,28 +1,36 @@
 ﻿using System.Collections.Immutable;
+using SharedProject.Models;
 
 namespace TaikoLocalServer.Services.Interfaces;
 
 public interface IGameDataService
 {
-    public Task InitializeAsync();
+	public Task InitializeAsync();
 
-    public List<uint> GetMusicList();
+	public List<uint> GetMusicList();
 
-    public List<uint> GetMusicWithUraList();
+	public List<uint> GetMusicWithUraList();
 
-    public List<uint> GetMusicWithGenre17List();
+	public ImmutableDictionary<uint, MusicInfoEntry> GetMusicInfoes();
 
-    public ImmutableDictionary<uint, MusicAttributeEntry> GetMusicAttributes();
+	public ImmutableDictionary<uint, MusicAttributeEntry> GetMusicAttributes();
 
-    public ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> GetDanDataDictionary();
+	public ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> GetDanDataDictionary();
+	
+	public ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> GetGaidenDataDictionary();
 
-    public ImmutableDictionary<uint, GetSongIntroductionResponse.SongIntroductionData> GetSongIntroDictionary();
+	public ImmutableDictionary<uint, GetSongIntroductionResponse.SongIntroductionData> GetSongIntroDictionary();
 
-    public ImmutableDictionary<uint, GetfolderResponse.EventfolderData> GetFolderDictionary();
+	public ImmutableDictionary<uint, InitialdatacheckResponse.MovieData> GetMovieDataDictionary();
 
-    public ImmutableDictionary<uint, GetShopFolderResponse.ShopFolderData> GetShopFolderDictionary();
+	public ImmutableDictionary<uint, GetfolderResponse.EventfolderData> GetFolderDictionary();
 
-    public Dictionary<string, uint> GetTokenDataDictionary();
+	public List<GetShopFolderResponse.ShopFolderData> GetShopFolderList();
 
-    public List<uint> GetLockedSongsList();
+	public Dictionary<string, int> GetTokenDataDictionary();
+
+	public List<uint> GetLockedSongsList();
+	
+	public ImmutableDictionary<string, uint> GetQRCodeDataDictionary();
 }
+

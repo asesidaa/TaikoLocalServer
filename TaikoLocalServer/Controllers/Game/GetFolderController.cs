@@ -1,11 +1,10 @@
 ﻿namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r03/chassis/getfolder.php")]
+[Route("/v12r00_cn/chassis/getfolder.php")]
 [ApiController]
 public class GetFolderController : BaseController<GetFolderController>
 {
     private readonly IGameDataService gameDataService;
-
     public GetFolderController(IGameDataService gameDataService)
     {
         this.gameDataService = gameDataService;

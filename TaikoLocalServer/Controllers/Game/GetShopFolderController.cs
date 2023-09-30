@@ -1,6 +1,6 @@
 ﻿namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r03/chassis/getshopfolder.php")]
+[Route("/v12r00_cn/chassis/getshopfolder.php")]
 [ApiController]
 public class GetShopFolderController : BaseController<GetShopFolderController>
 {
@@ -19,16 +19,16 @@ public class GetShopFolderController : BaseController<GetShopFolderController>
 
         gameDataService.GetTokenDataDictionary().TryGetValue("shopTokenId", out var shopTokenId);
 
-        var shopFolderDictionary = gameDataService.GetShopFolderDictionary();
+        var shopFolderList = gameDataService.GetShopFolderList();
 
         var response = new GetShopFolderResponse
         {
             Result = 1,
-            TokenId = shopTokenId,
+            TokenId = shopTokenId > 0 ? (uint)shopTokenId : 1,
             VerupNo = 2
         };
 
-        foreach (var shopFolder in shopFolderDictionary) response.AryShopFolderDatas.Add(shopFolder.Value);
+        response.AryShopFolderDatas.AddRange(shopFolderList);
 
         return Ok(response);
     }

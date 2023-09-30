@@ -4,5 +4,6 @@ namespace TaikoWebUI.Shared.Models;
 
 public class WordList
 {
-    [JsonPropertyName("items")] public List<WordListEntry> WordListEntries { get; set; } = new();
+    [JsonPropertyName("items")]
+    public List<WordListEntry> WordListEntries { get; set; } = new();
 }

@@ -4,6 +4,5 @@ public abstract class BaseController<T> : ControllerBase where T : BaseControlle
 {
     private ILogger<T>? logger;
 
-    protected ILogger<T> Logger => (logger ??= HttpContext.RequestServices.GetService<ILogger<T>>()) ??
-                                   throw new InvalidOperationException();
+    protected ILogger<T> Logger => (logger ??= HttpContext.RequestServices.GetService<ILogger<T>>()) ?? throw new InvalidOperationException();
 }

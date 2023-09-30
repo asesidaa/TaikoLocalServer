@@ -1,4 +1,6 @@
 ﻿{
-  "shopTokenId": 4,
-  "kaTokenId": 1000
+  "shopTokenId": -1,
+  "kaTokenId": -1,
+  "onePieceTokenId": 100100,
+  "soshinaTokenId": 100200
 }

@@ -3,7 +3,7 @@ using GameDatabase.Entities;
 
 namespace TaikoLocalServer.Services;
 
-internal class SongPlayDatumService : ISongPlayDatumService
+class SongPlayDatumService : ISongPlayDatumService
 {
     private readonly TaikoDbContext context;
 
@@ -12,7 +12,7 @@ internal class SongPlayDatumService : ISongPlayDatumService
         this.context = context;
     }
 
-    public async Task<List<SongPlayDatum>> GetSongPlayDatumByBaid(uint baid)
+    public async Task<List<SongPlayDatum>> GetSongPlayDatumByBaid(ulong baid)
     {
         return await context.SongPlayData.Where(datum => datum.Baid == baid).ToListAsync();
     }
@@ -21,12 +21,5 @@ internal class SongPlayDatumService : ISongPlayDatumService
     {
         context.SongPlayData.Add(datum);
         await context.SaveChangesAsync();
-    }
-
-    public int GetSongPlayCount(uint baid)
-    {
-        var songPlayDataList = context.SongPlayData.Where(datum => datum.Baid == baid).ToList();
-        var totalGameCount = songPlayDataList.Count(datum => datum.SongNumber == 0);
-        return totalGameCount;
     }
 }

@@ -5,13 +5,20 @@
 namespace TaikoLocalServer.Migrations
 {
     /// <inheritdoc />
-    public partial class AddUnlockedSongIdListToUserData : Migration
+    public partial class AddDifficultyPlayedArrayAndDifficultySettingArrayToUserData : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "UnlockedSongIdList",
+                name: "DifficultyPlayedArray",
+                table: "UserData",
+                type: "TEXT",
+                nullable: false,
+                defaultValue: "[]");
+
+            migrationBuilder.AddColumn<string>(
+                name: "DifficultySettingArray",
                 table: "UserData",
                 type: "TEXT",
                 nullable: false,
@@ -22,7 +29,11 @@ namespace TaikoLocalServer.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "UnlockedSongIdList",
+                name: "DifficultyPlayedArray",
+                table: "UserData");
+
+            migrationBuilder.DropColumn(
+                name: "DifficultySettingArray",
                 table: "UserData");
         }
     }

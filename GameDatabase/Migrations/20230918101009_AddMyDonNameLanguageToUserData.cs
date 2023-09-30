@@ -5,25 +5,25 @@
 namespace TaikoLocalServer.Migrations
 {
     /// <inheritdoc />
-    public partial class AddSaltToCard : Migration
+    public partial class AddMyDonNameLanguageToUserData : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "Salt",
-                table: "Card",
-                type: "TEXT",
+            migrationBuilder.AddColumn<uint>(
+                name: "MyDonNameLanguage",
+                table: "UserData",
+                type: "INTEGER",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: 0u);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Salt",
-                table: "Card");
+                name: "MyDonNameLanguage",
+                table: "UserData");
         }
     }
 }

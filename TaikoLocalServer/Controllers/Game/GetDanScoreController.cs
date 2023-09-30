@@ -2,7 +2,7 @@
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r03/chassis/getdanscore.php")]
+[Route("/v12r00_cn/chassis/getdanscore.php")]
 [ApiController]
 public class GetDanScoreController : BaseController<GetDanScoreController>
 {
@@ -38,8 +38,10 @@ public class GetDanScoreController : BaseController<GetDanScoreController>
                 SoulGaugeTotal = datum.SoulGaugeTotal
             };
             foreach (var stageScoreDatum in datum.DanStageScoreData)
+            {
                 responseData.AryDanScoreDataStages.Add(ObjectMappers.DanStageDbToResponseMap.Apply(stageScoreDatum));
-
+            }
+            
             response.AryDanScoreDatas.Add(responseData);
         }
 

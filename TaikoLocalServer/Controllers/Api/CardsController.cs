@@ -20,7 +20,7 @@ public class CardsController : BaseController<CardsController>
 
         return result ? NoContent() : NotFound();
     }
-
+    
     [HttpPost]
     public async Task<IActionResult> UpdatePassword(SetPasswordRequest request)
     {

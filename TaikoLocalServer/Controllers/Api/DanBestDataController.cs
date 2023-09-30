@@ -10,13 +10,12 @@ public class DanBestDataController : BaseController<DanBestDataController>
 {
     private readonly IDanScoreDatumService danScoreDatumService;
 
-    public DanBestDataController(IDanScoreDatumService danScoreDatumService)
-    {
+    public DanBestDataController(IDanScoreDatumService danScoreDatumService) {
         this.danScoreDatumService = danScoreDatumService;
     }
-
+    
     [HttpGet("{baid}")]
-    public async Task<IActionResult> GetDanBestData(uint baid)
+    public async Task<IActionResult> GetDanBestData(ulong baid)
     {
         var danScores = await danScoreDatumService.GetDanScoreDatumByBaid(baid);
         var danDataList = new List<DanBestData>();
@@ -24,8 +23,7 @@ public class DanBestDataController : BaseController<DanBestDataController>
         foreach (var danScore in danScores)
         {
             var danData = danScore.CopyPropertiesToNew<DanBestData>();
-            danData.DanBestStageDataList = danScore.DanStageScoreData
-                .Select(datum => datum.CopyPropertiesToNew<DanBestStageData>()).ToList();
+            danData.DanBestStageDataList = danScore.DanStageScoreData.Select(datum => datum.CopyPropertiesToNew<DanBestStageData>()).ToList();
             danDataList.Add(danData);
         }
 

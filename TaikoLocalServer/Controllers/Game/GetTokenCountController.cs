@@ -3,7 +3,7 @@ using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r03/chassis/gettokencount.php")]
+[Route("/v12r00_cn/chassis/gettokencount.php")]
 [ApiController]
 public class GetTokenCountController : BaseController<GetTokenCountController>
 {
@@ -15,7 +15,7 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
         this.userDatumService = userDatumService;
         this.gameDataService = gameDataService;
     }
-
+    
     [HttpPost]
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetTokenCount([FromBody] GetTokenCountRequest request)
@@ -26,6 +26,8 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
         var tokenDataDictionary = gameDataService.GetTokenDataDictionary();
         tokenDataDictionary.TryGetValue("shopTokenId", out var shopTokenId);
         tokenDataDictionary.TryGetValue("kaTokenId", out var kaTokenId);
+        tokenDataDictionary.TryGetValue("onePieceTokenId", out var onePieceTokenId);
+        tokenDataDictionary.TryGetValue("soshinaTokenId", out var soshinaTokenId);
         user.ThrowIfNull($"User with baid {request.Baid} does not exist!");
 
         var tokenCountDict = new Dictionary<uint, int>();
@@ -41,32 +43,59 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
         }
 
         tokenCountDict.ThrowIfNull("TokenCountDict should never be null");
-
-        if (!tokenCountDict.Any()) tokenCountDict.Add(shopTokenId, 120);
-
-        if (!tokenCountDict.ContainsKey(shopTokenId)) tokenCountDict.Add(shopTokenId, 0);
-
-        if (!tokenCountDict.ContainsKey(kaTokenId)) tokenCountDict.Add(kaTokenId, 0);
-
-        user.TokenCountDict = JsonSerializer.Serialize(tokenCountDict);
-        await userDatumService.UpdateUserDatum(user);
-
+        
         var response = new GetTokenCountResponse
         {
             Result = 1
         };
         
-        response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
+        if (tokenCountDict.Count == 0) tokenCountDict.Add(1, 0);
+        if (shopTokenId > 0)
         {
-            TokenCount = tokenCountDict[shopTokenId],
-            TokenId = shopTokenId
-        });
+            var castedShopTokenId = (uint)shopTokenId;
+            tokenCountDict.TryAdd(castedShopTokenId, 0);
+            response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
+            {
+                TokenCount = tokenCountDict[castedShopTokenId],
+                TokenId = castedShopTokenId
+            });
+        }
 
-        response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
+        if (kaTokenId > 0)
         {
-            TokenCount = tokenCountDict[kaTokenId],
-            TokenId = kaTokenId
-        });
+            var castedKaTokenId = (uint)kaTokenId;
+            tokenCountDict.TryAdd(castedKaTokenId, 0);
+            response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
+            {
+                TokenCount = tokenCountDict[castedKaTokenId],
+                TokenId = castedKaTokenId
+            });
+        }
+        
+        if (onePieceTokenId > 0)
+        {
+            var castedOnePieceTokenId = (uint)onePieceTokenId;
+            tokenCountDict.TryAdd(castedOnePieceTokenId, 0);
+            response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
+            {
+                TokenCount = tokenCountDict[castedOnePieceTokenId],
+                TokenId = castedOnePieceTokenId
+            });
+        }
+        
+        if (soshinaTokenId > 0)
+        {
+            var castedSoshinaTokenId = (uint)soshinaTokenId;
+            tokenCountDict.TryAdd(castedSoshinaTokenId, 0);
+            response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
+            {
+                TokenCount = tokenCountDict[castedSoshinaTokenId],
+                TokenId = castedSoshinaTokenId
+            });
+        }
+
+        user.TokenCountDict = JsonSerializer.Serialize(tokenCountDict);
+        await userDatumService.UpdateUserDatum(user);
         
         return Ok(response);
     }

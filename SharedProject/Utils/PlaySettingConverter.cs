@@ -1,4 +1,6 @@
-﻿using System.Collections.Specialized;
+﻿using System.Buffers.Binary;
+using System.Collections;
+using System.Collections.Specialized;
 using SharedProject.Enums;
 using SharedProject.Models;
 using Throw;
@@ -40,7 +42,7 @@ public static class PlaySettingConverter
         bits[vanishSection] = setting.IsVanishOn ? 1 : 0;
         bits[inverseSection] = setting.IsInverseOn ? 1 : 0;
         bits[randomSection] = (int)setting.RandomType;
-
+        
         return (short)bits.Data;
     }
 }

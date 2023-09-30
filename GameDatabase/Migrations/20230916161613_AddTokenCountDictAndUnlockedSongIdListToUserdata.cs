@@ -5,7 +5,7 @@
 namespace TaikoLocalServer.Migrations
 {
     /// <inheritdoc />
-    public partial class AddTokenCountDictToUserData : Migration
+    public partial class AddTokenCountDictAndUnlockedSongIdListToUserdata : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,7 +15,14 @@ namespace TaikoLocalServer.Migrations
                 table: "UserData",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "{}");
+                defaultValue: "");
+
+            migrationBuilder.AddColumn<string>(
+                name: "UnlockedSongIdList",
+                table: "UserData",
+                type: "TEXT",
+                nullable: false,
+                defaultValue: "");
         }
 
         /// <inheritdoc />
@@ -23,6 +30,10 @@ namespace TaikoLocalServer.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "TokenCountDict",
+                table: "UserData");
+
+            migrationBuilder.DropColumn(
+                name: "UnlockedSongIdList",
                 table: "UserData");
         }
     }

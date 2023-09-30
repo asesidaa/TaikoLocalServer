@@ -10,6 +10,12 @@ public class UserSetting
 
     public bool IsDisplayDanOnNamePlate { get; set; }
 
+    public uint DifficultySettingCourse { get; set; }
+
+    public uint DifficultySettingStar { get; set; }
+
+    public uint DifficultySettingSort { get; set; }
+
     public bool IsVoiceOn { get; set; }
 
     public bool IsSkipOn { get; set; }
@@ -21,6 +27,8 @@ public class UserSetting
     public int NotesPosition { get; set; }
 
     public string MyDonName { get; set; } = string.Empty;
+
+    public uint MyDonNameLanguage { get; set; }
 
     public string Title { get; set; } = string.Empty;
 
@@ -51,4 +59,5 @@ public class UserSetting
     public uint BodyColor { get; set; }
 
     public uint LimbColor { get; set; }
+
 }

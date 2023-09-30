@@ -5,7 +5,7 @@
 namespace TaikoLocalServer.Migrations
 {
     /// <inheritdoc />
-    public partial class AddPasswordToCard : Migration
+    public partial class AddPasswordAndSaltToCard : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -14,7 +14,14 @@ namespace TaikoLocalServer.Migrations
                 name: "Password",
                 table: "Card",
                 type: "TEXT",
-                nullable: true,
+                nullable: false,
+                defaultValue: "");
+
+            migrationBuilder.AddColumn<string>(
+                name: "Salt",
+                table: "Card",
+                type: "TEXT",
+                nullable: false,
                 defaultValue: "");
         }
 
@@ -23,6 +30,10 @@ namespace TaikoLocalServer.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "Password",
+                table: "Card");
+
+            migrationBuilder.DropColumn(
+                name: "Salt",
                 table: "Card");
         }
     }

@@ -18,7 +18,10 @@ public class FavoriteSongsController : BaseController<FavoriteSongsController>
     {
         var user = await userDatumService.GetFirstUserDatumOrNull(request.Baid);
 
-        if (user is null) return NotFound();
+        if (user is null)
+        {
+            return NotFound();
+        }
 
         await userDatumService.UpdateFavoriteSong(request.Baid, request.SongId, request.IsFavorite);
         return NoContent();

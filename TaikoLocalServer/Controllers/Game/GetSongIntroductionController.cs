@@ -1,6 +1,6 @@
 ﻿namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r03/chassis/getsongintroduction.php")]
+[Route("/v12r00_cn/chassis/getsongintroduction.php")]
 [ApiController]
 public class GetSongIntroductionController : BaseController<GetSongIntroductionController>
 {
@@ -21,7 +21,7 @@ public class GetSongIntroductionController : BaseController<GetSongIntroductionC
         {
             Result = 1
         };
-
+        
         foreach (var setId in request.SetIds)
         {
             gameDataService.GetSongIntroDictionary().TryGetValue(setId, out var introData);
