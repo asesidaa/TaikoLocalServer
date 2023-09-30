@@ -14,7 +14,8 @@ public class CsvFormatter: ITextFormatter
         logEvent.Properties.TryGetValue("IsRight", out var isRight);
         logEvent.Properties.TryGetValue("Type", out var type);
         logEvent.Properties.TryGetValue("Amount", out var amount);
-        output.Write(logEvent.Timestamp.ToString("yyyy-MM-dd HH:mm:ss"));
+        
+        output.Write(logEvent.Timestamp.ToString("yyyy-MM-dd"));
         output.Write(",");
         output.Write(chassisId);
         output.Write(",");

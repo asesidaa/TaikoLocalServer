@@ -31,22 +31,19 @@ try
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/Database.json", optional: false, reloadOnChange: false);
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/ServerSettings.json", optional: false, reloadOnChange: false);
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/DataSettings.json", optional: true, reloadOnChange: false);
-
-    var headClerkFilterExpression = "StartsWith(@m, 'Headclerk2 request:')";
-    var csvHeader = "TimeStamp,ChassisId,ShopId,Baid,PlayedAt,IsRight,Type,Amount";
     
     builder.Host.UseSerilog((context, configuration) =>
     {
-        configuration.WriteTo.Logger(x =>
-        {
-            x.WriteTo.Console().ReadFrom.Configuration(context.Configuration);
-        }).WriteTo.Logger(x =>
-        {
-            x.WriteTo.File(new CsvFormatter(),
-                path: "./Logs/HeadClerkLog.csv",
-                hooks: new HeaderWriter(csvHeader));
-            x.Filter.ByIncludingOnly(headClerkFilterExpression);
-        });
+        configuration
+            .WriteTo.Console().ReadFrom.Configuration(context.Configuration)
+            .WriteTo.Logger(x =>
+            {
+                x.WriteTo.File(new CsvFormatter(),
+                    path: "./Logs/HeadClerkLog-.csv",
+                    hooks: new HeaderWriter("Date,ChassisId,ShopId,Baid,PlayedAt,IsRight,Type,Amount"),
+                    rollingInterval: RollingInterval.Day);
+                x.Filter.ByIncludingOnly("StartsWith(@m, 'CSV WRITE:')");
+            });
     });
 
     if (builder.Configuration.GetValue<bool>("ServerSettings:EnableMoreSongs"))
