@@ -40,6 +40,11 @@
                                 <CardHeaderActions>
                             <MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense="true" AnchorOrigin="Origin.BottomLeft"
                              TransformOrigin="Origin.TopLeft" Size="Size.Small">
+                                        <MudMenuItem Icon="@Icons.Material.Filled.QrCode"
+                                                             OnClick="@(_ => ShowQrCode(user))"
+                                                             IconColor="@Color.Primary">
+                                            Show QR Code
+                                        </MudMenuItem>
                                         <MudMenuItem Icon="@Icons.Material.Filled.Delete"
                                                      OnClick="@(_ => DeleteCard(user))"
                                                      IconColor="@Color.Error">
@@ -50,7 +55,7 @@
                             </MudCardHeader>
                             <MudCardContent>
                                 <MudText Style="font-weight:bold">Access Code</MudText>
-                                <MudText Style="font-family:monospace">@user.AccessCode</MudText>
+                                <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">@user.AccessCode</MudText>
                             </MudCardContent>
                             <MudCardActions>
                                 <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
@@ -9,6 +9,7 @@
 
     <ItemGroup>
         <PackageReference Include="Autocomplete.Clients" Version="1.1.0" />
+        <PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="6.5.10" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0-rc.1.23421.29" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0-rc.1.23421.29" PrivateAssets="all" />
         <PackageReference Include="MudBlazor" Version="6.10.0" />
