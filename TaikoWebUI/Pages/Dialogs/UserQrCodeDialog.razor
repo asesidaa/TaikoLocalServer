@@ -2,14 +2,13 @@
 @using System.Collections.Immutable
 @inject IGameDataService GameDataService
 
-<MudDialog>
+<MudDialog Class="dialog-user-qr-code">
     <DialogContent>
         <MudExtensions.MudBarcode
         Value="@qrCode"
         BarcodeFormat="ZXing.BarcodeFormat.QR_CODE"
         Height="300" 
-        Width="300" 
-        StrokeWidth="0.1" />
+        Width="300" />
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
