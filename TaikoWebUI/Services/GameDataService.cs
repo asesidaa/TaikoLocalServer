@@ -1,5 +1,7 @@
 ﻿using System.Collections.Immutable;
+using System.IO.Compression;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text.Json;
 using ICSharpCode.SharpZipLib.GZip;
 using Swan.Mapping;
@@ -54,32 +56,9 @@ public class GameDataService : IGameDataService
 
     private async Task<T> GetData<T>(string dataBaseUrl, string fileBaseName) where T : notnull
     {
-        T? data;
-        try
-        {
-            data = await client.GetFromJsonAsync<T>($"{dataBaseUrl}/data/{fileBaseName}.json");
-            data.ThrowIfNull();
-            return data;
-        }
-        catch (HttpRequestException e)
-        {
-            if (e.StatusCode != HttpStatusCode.NotFound)
-            {
-                throw;
-            }
-            await using var compressed = await client.GetStreamAsync($"{dataBaseUrl}/data/{fileBaseName}.bin");
-            await using var gZipInputStream = new GZipInputStream(compressed);
-            using var decompressed = new MemoryStream();
-            
-            // Decompress
-            await gZipInputStream.CopyToAsync(decompressed);
-
-            // Reset stream for reading
-            decompressed.Position = 0;
-            data = await JsonSerializer.DeserializeAsync<T>(decompressed);
-            data.ThrowIfNull();
-            return data;
-        }
+        var data = await client.GetFromJsonAsync<T>($"{dataBaseUrl}/data/{fileBaseName}.json");
+        data.ThrowIfNull();
+        return data;
     }
     
     public string GetMusicNameBySongId(uint songId)
