@@ -1,0 +1,38 @@
+﻿@using TaikoWebUI.Shared.Models
+@using System.Collections.Immutable
+@inject IGameDataService GameDataService
+
+<MudDialog Class="dialog-user-qr-code">
+    <DialogContent>
+        <MudExtensions.MudBarcode
+        Value="@qrCode"
+        BarcodeFormat="ZXing.BarcodeFormat.QR_CODE"
+        Height="300" 
+        Width="300" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public User User { get; set; } = new();
+
+    private string qrCode = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        qrCode = "BNTTCNID" + User.AccessCode;
+    }
+
+    private void Submit()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+}

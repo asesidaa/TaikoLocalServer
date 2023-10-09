@@ -3,7 +3,7 @@
 public partial class DaniDojo
 {
     [Parameter]
-    public int Baid { get; set; }
+    public ulong Baid { get; set; }
 
     private DanBestDataResponse? response;
 

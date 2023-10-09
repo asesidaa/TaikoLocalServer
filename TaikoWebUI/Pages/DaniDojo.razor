@@ -296,7 +296,7 @@ else
                                                                         @if (bestDataMap.TryGetValue(danId, out var danBestData))
                                                                         {
                                                                             var bestData = GetAllBestFromData((DanConditionType)border.OdaiType, danBestData);
-
+                                                                            
                                                                             if ((DanConditionType)border.OdaiType is DanConditionType.BadCount or DanConditionType.OkCount)
                                                                             {
                                                                                 if (bestData <= redRequirement)
@@ -332,7 +332,7 @@ else
                                                                                     barClass = "bar-pass-gold";
                                                                                     resultText = "Gold";
                                                                                 }
-
+                                                                                
                                                                                 <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="@goldRequirement" Value="@bestData">
                                                                                     <MudText Typo="Typo.caption">@bestData</MudText>
                                                                                 </MudProgressLinear>

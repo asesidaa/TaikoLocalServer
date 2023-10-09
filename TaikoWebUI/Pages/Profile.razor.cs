@@ -5,7 +5,7 @@ namespace TaikoWebUI.Pages;
 public partial class Profile
 {
     [Parameter]
-    public int Baid { get; set; }
+    public ulong Baid { get; set; }
 
     private UserSetting? response;
 

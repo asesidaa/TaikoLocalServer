@@ -6,7 +6,7 @@ namespace TaikoWebUI.Pages;
 public partial class HighScores
 {
     [Parameter]
-    public int Baid { get; set; }
+    public ulong Baid { get; set; }
 
     private const string IconStyle = "width:25px; height:25px;";
     

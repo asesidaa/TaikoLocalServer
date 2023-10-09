@@ -91,7 +91,7 @@ namespace TaikoLocalServer.Migrations
                     b.Property<string>("Salt")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
+                    
                     b.HasKey("AccessCode");
 
                     b.HasIndex(new[] { "Baid" }, "IX_Card_Baid")

@@ -24,7 +24,7 @@ public class LoginService
     }
 
     public bool IsLoggedIn { get; private set; }
-    public uint Baid { get; private set; }
+    public ulong Baid { get; private set; }
     private int CardNum { get; set; }
     public bool IsAdmin { get; private set; }
 

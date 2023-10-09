@@ -4,6 +4,8 @@ using SharedProject.Models;
 using SharedProject.Utils;
 using Swan.Mapping;
 using System.Collections.Immutable;
+using System.IO.Compression;
+using System.Security.Cryptography;
 using System.Text.Json;
 using TaikoLocalServer.Settings;
 using Throw;
@@ -120,10 +122,19 @@ public class GameDataService : IGameDataService
 	public async Task InitializeAsync()
 	{
 		var dataPath = PathHelper.GetDataPath();
-		var musicInfoPath = Path.Combine(dataPath, Constants.MUSIC_INFO_FILE_NAME);
-		var compressedMusicInfoPath = Path.Combine(dataPath, Constants.MUSIC_INFO_COMPRESSED_FILE_NAME);
-		var musicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_FILE_NAME);
-		var compressedMusicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_COMPRESSED_FILE_NAME);
+		
+		var musicInfoPath = Path.Combine(dataPath, $"{Constants.MUSIC_INFO_BASE_NAME}.json");
+		var enctyptedInfo = Path.Combine(dataPath, $"{Constants.MUSIC_INFO_BASE_NAME}.bin");
+		
+		var musicAttributePath = Path.Combine(dataPath, $"{Constants.MUSIC_ATTRIBUTE_BASE_NAME}.json");
+		var encryptedAttribute = Path.Combine(dataPath, $"{Constants.MUSIC_ATTRIBUTE_BASE_NAME}.bin");
+		
+		var wordlistPath = Path.Combine(dataPath, $"{Constants.WORDLIST_BASE_NAME}.json");
+		var encryptedWordlist = Path.Combine(dataPath, $"{Constants.WORDLIST_BASE_NAME}.bin");
+		
+		var musicOrderPath = Path.Combine(dataPath, $"{Constants.MUSIC_ORDER_BASE_NAME}.json");
+		var encryptedMusicOrder = Path.Combine(dataPath, $"{Constants.MUSIC_ORDER_BASE_NAME}.bin");
+		
 		var danDataPath = Path.Combine(dataPath, settings.DanDataFileName);
 		var gaidenDataPath = Path.Combine(dataPath, settings.GaidenDataFileName);
 		var songIntroDataPath = Path.Combine(dataPath, settings.IntroDataFileName);
@@ -133,15 +144,33 @@ public class GameDataService : IGameDataService
 		var tokenDataPath = Path.Combine(dataPath, settings.TokenDataFileName);
 		var lockedSongsDataPath = Path.Combine(dataPath, settings.LockedSongsDataFileName);
 		var qrCodeDataPath = Path.Combine(dataPath, settings.QRCodeDataFileName);
+		
+		if (File.Exists(enctyptedInfo))
+		{
+			DecryptDataTable(enctyptedInfo, musicInfoPath);
+		}
+		if (File.Exists(encryptedAttribute))
+		{
+			DecryptDataTable(encryptedAttribute, musicAttributePath);
+		}
+		if (File.Exists(encryptedWordlist))
+		{
+			DecryptDataTable(encryptedWordlist, wordlistPath);
+		}
+		if (File.Exists(encryptedMusicOrder))
+		{
+			DecryptDataTable(encryptedMusicOrder, musicOrderPath);
+		}
 
-		if (File.Exists(compressedMusicInfoPath))
+		if (!File.Exists(wordlistPath))
 		{
-			TryDecompressMusicInfo();
+			throw new FileNotFoundException("Wordlist file not found!");
 		}
-		if (File.Exists(compressedMusicAttributePath))
+		if (!File.Exists(musicOrderPath))
 		{
-			TryDecompressMusicAttribute();
+			throw new FileNotFoundException("Music order file not found!");
 		}
+		
 		await using var musicInfoFile = File.OpenRead(musicInfoPath);
 		await using var musicAttributeFile = File.OpenRead(musicAttributePath);
 		await using var danDataFile = File.OpenRead(danDataPath);
@@ -188,30 +217,27 @@ public class GameDataService : IGameDataService
 
 		InitializeQRCodeData(qrCodeData);
 	}
-
-	private static void TryDecompressMusicInfo()
+	
+	private static void DecryptDataTable(string inputFileName, string outputFileName)
 	{
-		var dataPath = PathHelper.GetDataPath();
-		var musicInfoPath = Path.Combine(dataPath, Constants.MUSIC_INFO_FILE_NAME);
-		var compressedMusicInfoPath = Path.Combine(dataPath, Constants.MUSIC_INFO_COMPRESSED_FILE_NAME);
-
-		using var compressed = File.Open(compressedMusicInfoPath, FileMode.Open);
-		using var output = File.Create(musicInfoPath);
-
-		GZip.Decompress(compressed, output, true);
-	}
-
-	private static void TryDecompressMusicAttribute()
-	{
-		var dataPath = PathHelper.GetDataPath();
-		var musicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_FILE_NAME);
-		var compressedMusicAttributePath = Path.Combine(dataPath, Constants.MUSIC_ATTRIBUTE_COMPRESSED_FILE_NAME);
-
-		using var compressed = File.Open(compressedMusicAttributePath, FileMode.Open);
-		using var output = File.Create(musicAttributePath);
-
-		GZip.Decompress(compressed, output, true);
-	}
+		var aes = Aes.Create();
+		aes.Mode = CipherMode.CBC;
+		aes.KeySize = 256;
+		aes.Padding = PaddingMode.PKCS7;
+		aes.Key = Convert.FromHexString("3530304242323633353537423431384139353134383346433246464231354534");
+		var iv = new byte[16];
+		using var fs = File.OpenRead(inputFileName);
+		var count = fs.Read(iv, 0, 16);
+		count.Throw("Read IV for datatable failed!").IfNotEquals(16);
+		aes.IV = iv;
+		using var cs = new CryptoStream(fs, aes.CreateDecryptor(), CryptoStreamMode.Read);
+		using var ms = new MemoryStream();
+		cs.CopyTo(ms);
+		ms.Position = 0;
+		using var gz = new GZipStream(ms, CompressionMode.Decompress);
+		using var output = File.Create(outputFileName);
+		gz.CopyTo(output);
+	} 
 
 	private void InitializeIntroData(List<SongIntroductionData>? introData)
 	{

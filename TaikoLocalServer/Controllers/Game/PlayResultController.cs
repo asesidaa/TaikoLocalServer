@@ -91,7 +91,7 @@ public class PlayResultController : BaseController<PlayResultController>
         for (var songNumber = 0; songNumber < playResultData.AryStageInfoes.Count; songNumber++)
         {
             var stageData = playResultData.AryStageInfoes[songNumber];
-
+            
             if (folder9Songs.Contains(stageData.SongNo))
             {
                 continue;

@@ -9,12 +9,14 @@ public static class Constants
 	public const int MUSIC_ID_MAX_EXPANDED = 9000;
 
 	public const string DEFAULT_DB_NAME = "taiko.db3";
-
-	public const string MUSIC_INFO_FILE_NAME = "musicinfo.json";
-	public const string MUSIC_INFO_COMPRESSED_FILE_NAME = "musicinfo.bin";
-
-	public const string MUSIC_ATTRIBUTE_FILE_NAME = "music_attribute.json";
+	
+	public const string MUSIC_INFO_BASE_NAME = "musicinfo";
+	public const string MUSIC_ATTRIBUTE_BASE_NAME = "music_attribute";
 	public const string MUSIC_ATTRIBUTE_COMPRESSED_FILE_NAME = "music_attribute.bin";
+	
+	
+	public const string WORDLIST_BASE_NAME = "wordlist";
+	public const string MUSIC_ORDER_BASE_NAME = "music_order";
 
 	public const string DAN_DATA_FILE_NAME = "dan_data.json";
 	public const string INTRO_DATA_FILE_NAME = "intro_data.json";
@@ -24,7 +26,7 @@ public static class Constants
 	public const int MAX_DAN_ID = 19;
 
 	public const int TONE_UID_MAX = 19;
-
+	
 	public const int TITLE_UID_MAX = 1599;
 
 	private const int COSTUME_FLAG_1_ARRAY_SIZE = 156; // Kigurumi
