@@ -77,7 +77,7 @@ public class UserDataController : BaseController<UserDataController>
         // which means database content need to be fixed, so better throw
         toneFlg.ThrowIfNull("Tone flg should never be null!");
 
-        var toneArray = FlagCalculator.GetBitArrayFromIds(toneFlg, Constants.TONE_UID_MAX, Logger);
+        var toneArray = FlagCalculator.GetBitArrayFromIds(toneFlg, gameDataService.GetToneFlagArraySize(), Logger);
 
         var titleFlg = Array.Empty<uint>();
         try
@@ -93,7 +93,7 @@ public class UserDataController : BaseController<UserDataController>
         // which means database content need to be fixed, so better throw
         titleFlg.ThrowIfNull("Title flg should never be null!");
 
-        var titleArray = FlagCalculator.GetBitArrayFromIds(titleFlg, Constants.TITLE_UID_MAX, Logger);
+        var titleArray = FlagCalculator.GetBitArrayFromIds(titleFlg, gameDataService.GetTitleFlagArraySize(), Logger);
 
         var recentSongs = (await songPlayDatumService.GetSongPlayDatumByBaid(request.Baid))
             .AsEnumerable()

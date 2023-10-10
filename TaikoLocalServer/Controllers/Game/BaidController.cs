@@ -17,15 +17,19 @@ public class BaidController : BaseController<BaidController>
 	private readonly IDanScoreDatumService danScoreDatumService;
 
 	private readonly IAiDatumService aiDatumService;
+	
+	private readonly IGameDataService gameDataService;
 
 	public BaidController(IUserDatumService userDatumService, ICardService cardService,
-		ISongBestDatumService songBestDatumService, IDanScoreDatumService danScoreDatumService, IAiDatumService aiDatumService)
+		ISongBestDatumService songBestDatumService, IDanScoreDatumService danScoreDatumService, IAiDatumService aiDatumService,
+		IGameDataService gameDataService)
 	{
 		this.userDatumService = userDatumService;
 		this.cardService = cardService;
 		this.songBestDatumService = songBestDatumService;
 		this.danScoreDatumService = danScoreDatumService;
 		this.aiDatumService = aiDatumService;
+		this.gameDataService = gameDataService;
 	}
 
 
@@ -78,7 +82,7 @@ public class BaidController : BaseController<BaidController>
 
 		var costumeArrays = JsonHelper.GetCostumeUnlockDataFromUserData(userData, Logger);
 
-		var costumeFlagArrays = Constants.CostumeFlagArraySizes
+		var costumeFlagArrays = gameDataService.GetCostumeFlagArraySizes()
 			.Select((size, index) => FlagCalculator.GetBitArrayFromIds(costumeArrays[index], size, Logger))
 			.ToList();
 
@@ -88,7 +92,10 @@ public class BaidController : BaseController<BaidController>
 			.Select(datum => datum.DanId)
 			.DefaultIfEmpty()
 			.Max();
-		var gotDanFlagArray = FlagCalculator.ComputeGotDanFlags(danData);
+		
+		var danDataDictionary = gameDataService.GetDanDataDictionary();
+		var danIdList = danDataDictionary.Keys.ToList();
+		var gotDanFlagArray = FlagCalculator.ComputeGotDanFlags(danData, danIdList);
 
 		var genericInfoFlg = Array.Empty<uint>();
 		try

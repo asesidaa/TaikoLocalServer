@@ -13,8 +13,6 @@ public interface IGameDataService
 
 	public ImmutableDictionary<uint, MusicInfoEntry> GetMusicInfoes();
 
-	public ImmutableDictionary<uint, MusicAttributeEntry> GetMusicAttributes();
-
 	public ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> GetDanDataDictionary();
 	
 	public ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> GetGaidenDataDictionary();
@@ -30,6 +28,12 @@ public interface IGameDataService
 	public Dictionary<string, int> GetTokenDataDictionary();
 
 	public List<uint> GetLockedSongsList();
+
+	public List<int> GetCostumeFlagArraySizes();
+
+	public int GetTitleFlagArraySize();
+	
+	public int GetToneFlagArraySize();
 	
 	public ImmutableDictionary<string, uint> GetQRCodeDataDictionary();
 }

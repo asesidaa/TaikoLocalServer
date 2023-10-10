@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Immutable;
 using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 using GameDatabase.Entities;
@@ -70,7 +71,7 @@ public static class FlagCalculator
         return (ushort)(previous | result);
     }
 
-    public static byte[] ComputeGotDanFlags(List<DanScoreDatum> danScoreData)
+    public static byte[] ComputeGotDanFlags(List<DanScoreDatum> danScoreData, List<uint> danIdList)
     {
         var gotDanFlagList = new List<int>();
         var gotDanFlag = new BitVector32();
@@ -84,10 +85,9 @@ public static class FlagCalculator
         var section8 = BitVector32.CreateSection(8, section7);
 
         var sections = new[] { section1, section2, section3, section4, section5, section6, section7, section8 };
-
-        for (var i = Constants.MIN_DAN_ID; i < Constants.MAX_DAN_ID; i++)
+        
+        foreach (var danId in danIdList)
         {
-            var danId = i;
             var flag = 0;
             if (danScoreData.Any(datum => datum.DanId == danId))
             {
