@@ -29,9 +29,6 @@ public class GameDataService : IGameDataService
 	private ImmutableDictionary<uint, InitialdatacheckResponse.MovieData> movieDataDictionary =
 		ImmutableDictionary<uint, InitialdatacheckResponse.MovieData>.Empty;
 
-	private ImmutableDictionary<uint, MusicAttributeEntry> musicAttributes =
-		ImmutableDictionary<uint, MusicAttributeEntry>.Empty;
-
 	private ImmutableDictionary<uint, GetfolderResponse.EventfolderData> folderDictionary =
 		ImmutableDictionary<uint, GetfolderResponse.EventfolderData>.Empty;
 
@@ -44,6 +41,12 @@ public class GameDataService : IGameDataService
 	private List<uint> musicsWithUra = new();
 
 	private List<uint> lockedSongsList = new();
+	
+	private List<int> costumeFlagArraySizes = new();
+	
+	private int titleFlagArraySize;
+	
+	private int toneFlagArraySize;
 
 	private Dictionary<string, int> tokenDataDictionary = new();
 
@@ -67,11 +70,6 @@ public class GameDataService : IGameDataService
 	public ImmutableDictionary<uint, MusicInfoEntry> GetMusicInfoes()
 	{
 		return musicInfoes;
-	}
-
-	public ImmutableDictionary<uint, MusicAttributeEntry> GetMusicAttributes()
-	{
-		return musicAttributes;
 	}
 
 	public ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> GetDanDataDictionary()
@@ -113,6 +111,21 @@ public class GameDataService : IGameDataService
 	{
 		return lockedSongsList;
 	}
+	
+	public List<int> GetCostumeFlagArraySizes()
+	{
+		return costumeFlagArraySizes;
+	}
+	
+	public int GetTitleFlagArraySize()
+	{
+		return titleFlagArraySize;
+	}
+	
+	public int GetToneFlagArraySize()
+	{
+		return toneFlagArraySize;
+	}
 
 	public ImmutableDictionary<string, uint> GetQRCodeDataDictionary()
 	{
@@ -124,16 +137,22 @@ public class GameDataService : IGameDataService
 		var dataPath = PathHelper.GetDataPath();
 		
 		var musicInfoPath = Path.Combine(dataPath, $"{Constants.MUSIC_INFO_BASE_NAME}.json");
-		var enctyptedInfo = Path.Combine(dataPath, $"{Constants.MUSIC_INFO_BASE_NAME}.bin");
-		
-		var musicAttributePath = Path.Combine(dataPath, $"{Constants.MUSIC_ATTRIBUTE_BASE_NAME}.json");
-		var encryptedAttribute = Path.Combine(dataPath, $"{Constants.MUSIC_ATTRIBUTE_BASE_NAME}.bin");
+		var encryptedInfo = Path.Combine(dataPath, $"{Constants.MUSIC_INFO_BASE_NAME}.bin");
 		
 		var wordlistPath = Path.Combine(dataPath, $"{Constants.WORDLIST_BASE_NAME}.json");
 		var encryptedWordlist = Path.Combine(dataPath, $"{Constants.WORDLIST_BASE_NAME}.bin");
 		
 		var musicOrderPath = Path.Combine(dataPath, $"{Constants.MUSIC_ORDER_BASE_NAME}.json");
 		var encryptedMusicOrder = Path.Combine(dataPath, $"{Constants.MUSIC_ORDER_BASE_NAME}.bin");
+		
+		var donCosRewardPath = Path.Combine(dataPath, $"{Constants.DON_COS_REWARD_BASE_NAME}.json");
+		var encryptedDonCosReward = Path.Combine(dataPath, $"{Constants.DON_COS_REWARD_BASE_NAME}.bin");
+		
+		var shougouPath = Path.Combine(dataPath, $"{Constants.SHOUGOU_BASE_NAME}.json");
+		var encryptedShougou = Path.Combine(dataPath, $"{Constants.SHOUGOU_BASE_NAME}.bin");
+		
+		var neiroPath = Path.Combine(dataPath, $"{Constants.NEIRO_BASE_NAME}.json");
+		var encryptedNeiro = Path.Combine(dataPath, $"{Constants.NEIRO_BASE_NAME}.bin");
 		
 		var danDataPath = Path.Combine(dataPath, settings.DanDataFileName);
 		var gaidenDataPath = Path.Combine(dataPath, settings.GaidenDataFileName);
@@ -145,13 +164,9 @@ public class GameDataService : IGameDataService
 		var lockedSongsDataPath = Path.Combine(dataPath, settings.LockedSongsDataFileName);
 		var qrCodeDataPath = Path.Combine(dataPath, settings.QRCodeDataFileName);
 
-		if (File.Exists(enctyptedInfo))
+		if (File.Exists(encryptedInfo))
 		{
-			DecryptDataTable(enctyptedInfo, musicInfoPath);
-		}
-		if (File.Exists(encryptedAttribute))
-		{
-			DecryptDataTable(encryptedAttribute, musicAttributePath);
+			DecryptDataTable(encryptedInfo, musicInfoPath);
 		}
 		if (File.Exists(encryptedWordlist))
 		{
@@ -161,7 +176,23 @@ public class GameDataService : IGameDataService
 		{
 			DecryptDataTable(encryptedMusicOrder, musicOrderPath);
 		}
-
+		if (File.Exists(encryptedDonCosReward))
+		{
+			DecryptDataTable(encryptedDonCosReward, donCosRewardPath);
+		}
+		if (File.Exists(encryptedShougou))
+		{
+			DecryptDataTable(encryptedShougou, shougouPath);
+		}
+		if (File.Exists(encryptedNeiro))
+		{
+			DecryptDataTable(encryptedNeiro, neiroPath);
+		}
+		
+		if (!File.Exists(musicInfoPath))
+		{
+			throw new FileNotFoundException("Music info file not found!");
+		}
 		if (!File.Exists(wordlistPath))
 		{
 			throw new FileNotFoundException("Wordlist file not found!");
@@ -170,9 +201,20 @@ public class GameDataService : IGameDataService
 		{
 			throw new FileNotFoundException("Music order file not found!");
 		}
+		if (!File.Exists(donCosRewardPath))
+		{
+			throw new FileNotFoundException("Don cos reward file not found!");
+		}
+		if (!File.Exists(shougouPath))
+		{
+			throw new FileNotFoundException("Shougou file not found!");
+		}
+		if (!File.Exists(neiroPath))
+		{
+			throw new FileNotFoundException("Neiro file not found!");
+		}
 		
 		await using var musicInfoFile = File.OpenRead(musicInfoPath);
-		await using var musicAttributeFile = File.OpenRead(musicAttributePath);
 		await using var danDataFile = File.OpenRead(danDataPath);
 		await using var gaidenDataFile = File.OpenRead(gaidenDataPath);
 		await using var songIntroDataFile = File.OpenRead(songIntroDataPath);
@@ -181,10 +223,12 @@ public class GameDataService : IGameDataService
 		await using var shopFolderDataFile = File.OpenRead(shopFolderDataPath);
 		await using var tokenDataFile = File.OpenRead(tokenDataPath);
 		await using var lockedSongsDataFile = File.OpenRead(lockedSongsDataPath);
+		await using var donCosRewardFile = File.OpenRead(donCosRewardPath);
+		await using var shougouFile = File.OpenRead(shougouPath);
+		await using var neiroFile = File.OpenRead(neiroPath);
 		await using var qrCodeDataFile = File.OpenRead(qrCodeDataPath);
 
 		var infoesData = await JsonSerializer.DeserializeAsync<MusicInfoes>(musicInfoFile);
-		var attributesData = await JsonSerializer.DeserializeAsync<MusicAttributes>(musicAttributeFile);
 		var danData = await JsonSerializer.DeserializeAsync<List<DanData>>(danDataFile);
 		var gaidenData = await JsonSerializer.DeserializeAsync<List<DanData>>(gaidenDataFile);
 		var introData = await JsonSerializer.DeserializeAsync<List<SongIntroductionData>>(songIntroDataFile);
@@ -193,11 +237,12 @@ public class GameDataService : IGameDataService
 		var shopFolderData = await JsonSerializer.DeserializeAsync<List<ShopFolderData>>(shopFolderDataFile);
 		var tokenData = await JsonSerializer.DeserializeAsync<Dictionary<string, int>>(tokenDataFile);
 		var lockedSongsData = await JsonSerializer.DeserializeAsync<Dictionary<string, uint[]>>(lockedSongsDataFile);
+		var donCosRewardData = await JsonSerializer.DeserializeAsync<DonCosRewards>(donCosRewardFile);
+		var shougouData = await JsonSerializer.DeserializeAsync<Shougous>(shougouFile);
+		var neiroData = await JsonSerializer.DeserializeAsync<Neiros>(neiroFile);
 		var qrCodeData = await JsonSerializer.DeserializeAsync<List<QRCodeData>>(qrCodeDataFile);
 
 		InitializeMusicInfoes(infoesData);
-
-		InitializeMusicAttributes(attributesData);
 
 		InitializeDanData(danData);
 
@@ -214,8 +259,14 @@ public class GameDataService : IGameDataService
 		InitializeTokenData(tokenData);
 
 		InitializeLockedSongsData(lockedSongsData);
+		
+		InitializeCostumeFlagArraySizes(donCosRewardData);
+		
+		InitializeTitleFlagArraySize(shougouData);
+		
+		InitializeToneFlagArraySize(neiroData);
 
-		InitializeQRCodeData(qrCodeData);
+		InitializeQrCodeData(qrCodeData);
 	}
 
 	private static void DecryptDataTable(string inputFileName, string outputFileName)
@@ -275,21 +326,14 @@ public class GameDataService : IGameDataService
 
 		musicInfoes = infoesData.MusicInfoEntries.ToImmutableDictionary(info => info.MusicId);
 
+		musics = musicInfoes.Select(pair => pair.Key)
+			.ToList();
+		musics.Sort();
+		
 		musicsWithUra = musicInfoes.Where(info => info.Value.starUra > 0)
 			.Select(pair => pair.Key)
 			.ToList();
 		musicsWithUra.Sort();
-	}
-
-	private void InitializeMusicAttributes(MusicAttributes? attributesData)
-	{
-		attributesData.ThrowIfNull("Shouldn't happen!");
-
-		musicAttributes = attributesData.MusicAttributeEntries.ToImmutableDictionary(attribute => attribute.MusicId);
-
-		musics = musicAttributes.Select(pair => pair.Key)
-			.ToList();
-		musics.Sort();
 	}
 
 	private void InitializeShopFolderData(List<ShopFolderData>? shopFolderData)
@@ -312,8 +356,49 @@ public class GameDataService : IGameDataService
 		lockedSongsData.ThrowIfNull("Shouldn't happen!");
 		lockedSongsList = lockedSongsData["songNo"].ToList();
 	}
-
-	private void InitializeQRCodeData(List<QRCodeData>? qrCodeData)
+	
+	private void InitializeCostumeFlagArraySizes(DonCosRewards? donCosRewardData)
+	{
+		donCosRewardData.ThrowIfNull("Shouldn't happen!");
+		var kigurumiUniqueIdList = donCosRewardData.DonCosRewardEntries
+			.Where(entry => entry.cosType == "kigurumi")
+			.Select(entry => entry.uniqueId);
+		var headUniqueIdList = donCosRewardData.DonCosRewardEntries
+			.Where(entry => entry.cosType == "head")
+			.Select(entry => entry.uniqueId);
+		var bodyUniqueIdList = donCosRewardData.DonCosRewardEntries
+			.Where(entry => entry.cosType == "body")
+			.Select(entry => entry.uniqueId);
+		var faceUniqueIdList = donCosRewardData.DonCosRewardEntries
+			.Where(entry => entry.cosType == "face")
+			.Select(entry => entry.uniqueId);
+		var puchiUniqueIdList = donCosRewardData.DonCosRewardEntries
+			.Where(entry => entry.cosType == "puchi")
+			.Select(entry => entry.uniqueId);
+		
+		costumeFlagArraySizes = new List<int>
+		{
+			(int)kigurumiUniqueIdList.Max(),
+			(int)headUniqueIdList.Max(),
+			(int)bodyUniqueIdList.Max(),
+			(int)faceUniqueIdList.Max(),
+			(int)puchiUniqueIdList.Max()
+		};
+	}
+	
+	private void InitializeTitleFlagArraySize(Shougous? shougouData)
+	{
+		shougouData.ThrowIfNull("Shouldn't happen!");
+		titleFlagArraySize = (int)shougouData.ShougouEntries.Max(entry => entry.uniqueId);
+	}
+	
+	private void InitializeToneFlagArraySize(Neiros? neiroData)
+	{
+		neiroData.ThrowIfNull("Shouldn't happen!");
+		toneFlagArraySize = (int)neiroData.NeiroEntries.Max(entry => entry.uniqueId);
+	}
+	
+	private void InitializeQrCodeData(List<QRCodeData>? qrCodeData)
 	{
 		qrCodeData.ThrowIfNull("Shouldn't happen!");
 		qrCodeDataDictionary = qrCodeData.ToImmutableDictionary(data => data.Serial, data => data.Id);

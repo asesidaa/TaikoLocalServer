@@ -39,7 +39,7 @@ public class SelfBestController : BaseController<SelfBestController>
             .ToList();
         foreach (var songNo in request.ArySongNoes)
         {
-            if (!gameDataService.GetMusicAttributes().ContainsKey(songNo))
+            if (!gameDataService.GetMusicList().Contains(songNo))
             {
                 Logger.LogWarning("Music no {No} is missing!", songNo);
                 continue;
