@@ -76,6 +76,14 @@ public class UserDataController : BaseController<UserDataController>
         // The only way to get a null is provide string "null" as input,
         // which means database content need to be fixed, so better throw
         toneFlg.ThrowIfNull("Tone flg should never be null!");
+        
+        // If toneFlg is empty, add 0 to it
+        if (toneFlg.Length == 0)
+        {
+            toneFlg = new uint[] { 0 };
+            userData.ToneFlgArray = JsonSerializer.Serialize(toneFlg);
+            await userDatumService.UpdateUserDatum(userData);
+        }
 
         var toneArray = FlagCalculator.GetBitArrayFromIds(toneFlg, gameDataService.GetToneFlagArraySize(), Logger);
 

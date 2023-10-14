@@ -41,7 +41,7 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
 			ColorBody = 1,
 			ColorLimb = 3,
 			FavoriteSongsArray = "[]",
-			ToneFlgArray = "[]",
+			ToneFlgArray = "[0]",
 			TitleFlgArray = "[]",
 			CostumeFlgArray = "[[],[],[],[],[]]",
 			GenericInfoFlgArray = "[]",

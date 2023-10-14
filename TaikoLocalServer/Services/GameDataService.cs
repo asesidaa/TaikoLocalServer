@@ -378,24 +378,24 @@ public class GameDataService : IGameDataService
 		
 		costumeFlagArraySizes = new List<int>
 		{
-			(int)kigurumiUniqueIdList.Max(),
-			(int)headUniqueIdList.Max(),
-			(int)bodyUniqueIdList.Max(),
-			(int)faceUniqueIdList.Max(),
-			(int)puchiUniqueIdList.Max()
+			(int)kigurumiUniqueIdList.Max() + 1,
+			(int)headUniqueIdList.Max() + 1,
+			(int)bodyUniqueIdList.Max() + 1,
+			(int)faceUniqueIdList.Max() + 1,
+			(int)puchiUniqueIdList.Max() + 1
 		};
 	}
 	
 	private void InitializeTitleFlagArraySize(Shougous? shougouData)
 	{
 		shougouData.ThrowIfNull("Shouldn't happen!");
-		titleFlagArraySize = (int)shougouData.ShougouEntries.Max(entry => entry.uniqueId);
+		titleFlagArraySize = (int)shougouData.ShougouEntries.Max(entry => entry.uniqueId) + 1;
 	}
 	
 	private void InitializeToneFlagArraySize(Neiros? neiroData)
 	{
 		neiroData.ThrowIfNull("Shouldn't happen!");
-		toneFlagArraySize = (int)neiroData.NeiroEntries.Max(entry => entry.uniqueId);
+		toneFlagArraySize = (int)neiroData.NeiroEntries.Max(entry => entry.uniqueId) + 1;
 	}
 	
 	private void InitializeQrCodeData(List<QRCodeData>? qrCodeData)
