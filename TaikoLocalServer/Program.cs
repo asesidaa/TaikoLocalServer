@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Security.Authentication;
 using GameDatabase.Context;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.HttpOverrides;
 using TaikoLocalServer.Middlewares;
 using TaikoLocalServer.Services.Extentions;
@@ -22,6 +23,13 @@ Log.Information("Server starting up...");
 try
 {
     var builder = WebApplication.CreateBuilder(args);
+    
+    builder.Services.AddHttpLogging(options =>
+    {
+        options.LoggingFields = HttpLoggingFields.All;
+        options.RequestBodyLogLimit = 32768;
+        options.ResponseBodyLogLimit = 32768;
+    });
     
     const string configurationsDirectory = "Configurations";
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/Kestrel.json", optional: true, reloadOnChange: false);
