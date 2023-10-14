@@ -1,5 +1,7 @@
 using System.Reflection;
 using System.Security.Authentication;
+using Serilog.Sinks.File.Header;
+using TaikoLocalServer.Logging;
 using GameDatabase.Context;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -40,7 +42,16 @@ try
 
     builder.Host.UseSerilog((context, configuration) =>
     {
-        configuration.WriteTo.Console().ReadFrom.Configuration(context.Configuration);
+        configuration
+            .WriteTo.Console().ReadFrom.Configuration(context.Configuration)
+            .WriteTo.Logger(x =>
+            {
+                x.WriteTo.File(new CsvFormatter(),
+                    path: "./Logs/HeadClerkLog-.csv",
+                    hooks: new HeaderWriter("Date,ChassisId,ShopId,Baid,PlayedAt,IsRight,Type,Amount"),
+                    rollingInterval: RollingInterval.Day);
+                x.Filter.ByIncludingOnly("StartsWith(@m, 'CSV WRITE:')");
+            });
     });
 
     if (builder.Configuration.GetValue<bool>("ServerSettings:EnableMoreSongs"))
