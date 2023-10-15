@@ -1,9 +1,4 @@
 ﻿using System.Collections.Immutable;
-using System.IO.Compression;
-using System.Net;
-using System.Security.Cryptography;
-using System.Text.Json;
-using ICSharpCode.SharpZipLib.GZip;
 using Swan.Mapping;
 using TaikoWebUI.Shared.Models;
 
@@ -11,15 +6,19 @@ namespace TaikoWebUI.Services;
 
 public class GameDataService : IGameDataService
 {
-    private readonly string[] bodyTitles = new string[Constants.COSTUME_BODY_MAX];
+    private string[] bodyTitles;
     private readonly HttpClient client;
-    private readonly string[] faceTitles = new string[Constants.COSTUME_FACE_MAX];
+    private string[] faceTitles;
 
-    private readonly string[] headTitles = new string[Constants.COSTUME_HEAD_MAX];
-    private readonly string[] kigurumiMTitles = new string[Constants.COSTUME_KIGURUMI_MAX];
+    private string[] headTitles;
+    private string[] kigurumiTitles;
 
     private readonly Dictionary<uint, MusicDetail> musicMap = new();
-    private readonly string[] puchiTitles = new string[Constants.COSTUME_PUCHI_MAX];
+    private string[] puchiTitles;
+    
+    private List<int> costumeFlagArraySizes = new();
+	
+    private int titleFlagArraySize;
 
     private ImmutableDictionary<uint, DanData> danMap = ImmutableDictionary<uint, DanData>.Empty;
 
@@ -34,8 +33,10 @@ public class GameDataService : IGameDataService
     {
         dataBaseUrl = dataBaseUrl.TrimEnd('/');
         var musicInfo = await GetData<MusicInfo>(dataBaseUrl, Constants.MUSIC_INFO_BASE_NAME);
-        var wordList = await GetData<WordList>(dataBaseUrl, Constants.WORD_LIST_BASE_NAME);
+        var wordList = await GetData<WordList>(dataBaseUrl, Constants.WORDLIST_BASE_NAME);
         var musicOrder = await GetData<MusicOrder>(dataBaseUrl, Constants.MUSIC_ORDER_BASE_NAME);
+        var donCosRewardData = await GetData<DonCosRewards>(dataBaseUrl, Constants.DON_COS_REWARD_BASE_NAME);
+        var shougouData = await GetData<Shougous>(dataBaseUrl, Constants.SHOUGOU_BASE_NAME);
         var danData = await client.GetFromJsonAsync<List<DanData>>($"{dataBaseUrl}/data/dan_data.json");
 
         danData.ThrowIfNull();
@@ -45,6 +46,9 @@ public class GameDataService : IGameDataService
         var dict = wordList.WordListEntries.GroupBy(entry => entry.Key)
             .ToImmutableDictionary(group => group.Key, group => group.First());
         await Task.Run(() => InitializeMusicMap(musicInfo, dict, musicOrder));
+        
+        InitializeCostumeFlagArraySizes(donCosRewardData);
+        InitializeTitleFlagArraySize(shougouData);
 
         await Task.Run(() => InitializeHeadTitles(dict));
         await Task.Run(() => InitializeFaceTitles(dict));
@@ -108,7 +112,7 @@ public class GameDataService : IGameDataService
 
     public string GetKigurumiTitle(uint index)
     {
-        return index < kigurumiMTitles.Length ? kigurumiMTitles[index] : string.Empty;
+        return index < kigurumiTitles.Length ? kigurumiTitles[index] : string.Empty;
     }
 
     public string GetBodyTitle(uint index)
@@ -130,11 +134,22 @@ public class GameDataService : IGameDataService
     {
         return titles;
     }
+    
+    public List<int> GetCostumeFlagArraySizes()
+    {
+        return costumeFlagArraySizes;
+    }
+    
+    private void InitializeTitleFlagArraySize(Shougous? shougouData)
+    {
+        shougouData.ThrowIfNull("Shouldn't happen!");
+        titleFlagArraySize = (int)shougouData.ShougouEntries.Max(entry => entry.uniqueId) + 1;
+    }
 
     private void InitializeTitles(ImmutableDictionary<string, WordListEntry> dict)
     {
         var set = ImmutableHashSet.CreateBuilder<Title>();
-        for (var i = 1; i < Constants.PLAYER_TITLE_MAX; i++)
+        for (var i = 1; i < titleFlagArraySize; i++)
         {
             var key = $"syougou_{i}";
 
@@ -148,32 +163,67 @@ public class GameDataService : IGameDataService
 
         titles = set.ToImmutable();
     }
-
-    private void InitializePuchiTitles(ImmutableDictionary<string, WordListEntry> dict)
+    
+    private void InitializeCostumeFlagArraySizes(DonCosRewards? donCosRewardData)
     {
-        for (var i = 0; i < Constants.COSTUME_PUCHI_MAX; i++)
+        donCosRewardData.ThrowIfNull("Shouldn't happen!");
+        var kigurumiUniqueIdList = donCosRewardData.DonCosRewardEntries
+            .Where(entry => entry.cosType == "kigurumi")
+            .Select(entry => entry.uniqueId);
+        var headUniqueIdList = donCosRewardData.DonCosRewardEntries
+            .Where(entry => entry.cosType == "head")
+            .Select(entry => entry.uniqueId);
+        var bodyUniqueIdList = donCosRewardData.DonCosRewardEntries
+            .Where(entry => entry.cosType == "body")
+            .Select(entry => entry.uniqueId);
+        var faceUniqueIdList = donCosRewardData.DonCosRewardEntries
+            .Where(entry => entry.cosType == "face")
+            .Select(entry => entry.uniqueId);
+        var puchiUniqueIdList = donCosRewardData.DonCosRewardEntries
+            .Where(entry => entry.cosType == "puchi")
+            .Select(entry => entry.uniqueId);
+		
+        costumeFlagArraySizes = new List<int>
         {
-            var key = $"costume_puchi_{i}";
-
-            var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
-            puchiTitles[i] = costumeWordlistItem.JapaneseText;
-        }
+            (int)kigurumiUniqueIdList.Max() + 1,
+            (int)headUniqueIdList.Max() + 1,
+            (int)bodyUniqueIdList.Max() + 1,
+            (int)faceUniqueIdList.Max() + 1,
+            (int)puchiUniqueIdList.Max() + 1
+        };
     }
-
+    
     private void InitializeKigurumiTitles(ImmutableDictionary<string, WordListEntry> dict)
     {
-        for (var i = 0; i < Constants.COSTUME_KIGURUMI_MAX; i++)
+        var costumeKigurumiMax = costumeFlagArraySizes[0];
+        kigurumiTitles = new string[costumeKigurumiMax];
+        for (var i = 0; i < costumeKigurumiMax; i++)
         {
             var key = $"costume_kigurumi_{i}";
 
             var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
-            kigurumiMTitles[i] = costumeWordlistItem.JapaneseText;
+            kigurumiTitles[i] = costumeWordlistItem.JapaneseText;
         }
     }
+    
+    private void InitializeHeadTitles(ImmutableDictionary<string, WordListEntry> dict)
+    {
+        var costumeHeadMax = costumeFlagArraySizes[1];
+        headTitles = new string[costumeHeadMax];
+        for (var i = 0; i < costumeHeadMax; i++)
+        {
+            var key = $"costume_head_{i}";
 
+            var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
+            headTitles[i] = costumeWordlistItem.JapaneseText;
+        }
+    }
+    
     private void InitializeBodyTitles(ImmutableDictionary<string, WordListEntry> dict)
     {
-        for (var i = 0; i < Constants.COSTUME_BODY_MAX; i++)
+        var costumeBodyMax = costumeFlagArraySizes[2];
+        bodyTitles = new string[costumeBodyMax];
+        for (var i = 0; i < costumeBodyMax; i++)
         {
             var key = $"costume_body_{i}";
 
@@ -181,10 +231,12 @@ public class GameDataService : IGameDataService
             bodyTitles[i] = costumeWordlistItem.JapaneseText;
         }
     }
-
+    
     private void InitializeFaceTitles(ImmutableDictionary<string, WordListEntry> dict)
     {
-        for (var i = 0; i < Constants.COSTUME_FACE_MAX; i++)
+        var costumeFaceMax = costumeFlagArraySizes[3];
+        faceTitles = new string[costumeFaceMax];
+        for (var i = 0; i < costumeFaceMax; i++)
         {
             var key = $"costume_face_{i}";
 
@@ -193,14 +245,16 @@ public class GameDataService : IGameDataService
         }
     }
 
-    private void InitializeHeadTitles(ImmutableDictionary<string, WordListEntry> dict)
+    private void InitializePuchiTitles(ImmutableDictionary<string, WordListEntry> dict)
     {
-        for (var i = 0; i < Constants.COSTUME_HEAD_MAX; i++)
+        var costumePuchiMax = costumeFlagArraySizes[4];
+        puchiTitles = new string[costumePuchiMax];
+        for (var i = 0; i < costumePuchiMax; i++)
         {
-            var key = $"costume_head_{i}";
+            var key = $"costume_puchi_{i}";
 
             var costumeWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
-            headTitles[i] = costumeWordlistItem.JapaneseText;
+            puchiTitles[i] = costumeWordlistItem.JapaneseText;
         }
     }
 

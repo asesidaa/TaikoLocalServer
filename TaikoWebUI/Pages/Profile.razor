@@ -104,7 +104,7 @@
                                 <MudItem xs="12">
                                     <MudStack Spacing="4" Class="mb-8">
                                         <MudSelect @bind-Value="@response.Head" Label="Head">
-                                            @for (var i = 0; i < Constants.COSTUME_HEAD_MAX; i++)
+                                            @for (var i = 0; i < costumeFlagArraySizes[1]; i++)
                                             {
                                                 var index = (uint)i;
                                                 var costumeTitle = GameDataService.GetHeadTitle(index);
@@ -113,7 +113,7 @@
                                         </MudSelect>
 
                                         <MudSelect @bind-Value="@response.Body" Label="Body">
-                                            @for (var i = 0; i < Constants.COSTUME_BODY_MAX; i++)
+                                            @for (var i = 0; i < costumeFlagArraySizes[2]; i++)
                                             {
                                                 var index = (uint)i;
                                                 var costumeTitle = GameDataService.GetBodyTitle(index);
@@ -122,7 +122,7 @@
                                         </MudSelect>
 
                                         <MudSelect @bind-Value="@response.Face" Label="Face">
-                                            @for (var i = 0; i < Constants.COSTUME_FACE_MAX; i++)
+                                            @for (var i = 0; i < costumeFlagArraySizes[3]; i++)
                                             {
                                                 var index = (uint)i;
                                                 var costumeTitle = GameDataService.GetFaceTitle(index);
@@ -131,7 +131,7 @@
                                         </MudSelect>
 
                                         <MudSelect @bind-Value="@response.Kigurumi" Label="Kigurumi">
-                                            @for (var i = 0; i < Constants.COSTUME_KIGURUMI_MAX; i++)
+                                            @for (var i = 0; i < costumeFlagArraySizes[0]; i++)
                                             {
                                                 var index = (uint)i;
                                                 var costumeTitle = GameDataService.GetKigurumiTitle(index);
@@ -140,7 +140,7 @@
                                         </MudSelect>
 
                                         <MudSelect @bind-Value="@response.Puchi" Label="Puchi">
-                                            @for (var i = 0; i < Constants.COSTUME_PUCHI_MAX; i++)
+                                            @for (var i = 0; i < costumeFlagArraySizes[4]; i++)
                                             {
                                                 var index = (uint)i;
                                                 var costumeTitle = GameDataService.GetPuchiTitle(index);
