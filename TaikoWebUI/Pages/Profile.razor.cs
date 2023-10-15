@@ -77,6 +77,8 @@ public partial class Profile
     {
         new BreadcrumbItem("Cards", href: "/Cards"),
     };
+    
+    private List<int> costumeFlagArraySizes = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -86,6 +88,8 @@ public partial class Profile
 
         breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
         breadcrumbs.Add(new BreadcrumbItem("Profile", href: $"/Cards/{Baid}/Profile", disabled: false));
+        
+        costumeFlagArraySizes = GameDataService.GetCostumeFlagArraySizes();
     }
 
     private async Task SaveOptions()
