@@ -1,5 +1,6 @@
 ﻿using GameDatabase.Entities;
 using System.Text.Json;
+using Serilog;
 using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
@@ -96,6 +97,11 @@ public class BaidController : BaseController<BaidController>
 		var danDataDictionary = gameDataService.GetDanDataDictionary();
 		var danIdList = danDataDictionary.Keys.ToList();
 		var gotDanFlagArray = FlagCalculator.ComputeGotDanFlags(danData, danIdList);
+		
+		var gaidenDataDictionary = gameDataService.GetGaidenDataDictionary();
+		var gaidenIdList = gaidenDataDictionary.Keys.ToList();
+		danIdList.AddRange(gaidenIdList);
+		var gotGaidenFlagArray = FlagCalculator.ComputeGotDanFlags(danData, danIdList);
 
 		var genericInfoFlg = Array.Empty<uint>();
 		try
@@ -148,7 +154,7 @@ public class BaidController : BaseController<BaidController>
 			IsDispDanOn = userData.DisplayDan,
 			GotDanMax = maxDan,
 			GotDanFlg = gotDanFlagArray,
-			GotDanextraFlg = new byte[20],
+			GotDanextraFlg = gotGaidenFlagArray,
 			DefaultToneSetting = userData.SelectedToneId,
 			GenericInfoFlg = genericInfoFlgArray,
 			AryCrownCounts = crownCount,

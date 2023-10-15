@@ -71,7 +71,7 @@ public class PlayResultController : BaseController<PlayResultController>
 
         var playMode = (PlayMode)playResultData.PlayMode;
 
-        if (playMode == PlayMode.DanMode)
+        if (playMode is PlayMode.DanMode or PlayMode.GaidenMode)
         {
             await UpdateDanPlayData(request, playResultData);
             return Ok(response);
