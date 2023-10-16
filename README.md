@@ -1,6 +1,6 @@
 # Taiko Local Server
 
-This is a server for Taiko no Tatsujin Nijiiro ver 08.18
+This is a server for Taiko no Tatsujin Nijiiro ver CHN
 
 ## Setup
 
@@ -14,7 +14,7 @@ With the newest release (from [this](https://github.com/BroGamer4256/TaikoArcade
 
 1. Extract the server release anywhere
 
-2. From the game files, copy `music_attribute.bin`, `music_order.bin`, `musicinfo.bin` and `wordlist.bin` to `wwwroot/data` folder.
+2. From the game files, copy `music_order.bin`, `musicinfo.bin`, `wordlist.bin`, `don_cos_reward.bin`, `shougou.bin` to `wwwroot/data` folder.
 
 3. (Optional) Instead of direct copy, extract the specified game files (using 7zip), rename them by adding the file extension `.json` and copy the jsons over.
 
@@ -25,11 +25,10 @@ With the newest release (from [this](https://github.com/BroGamer4256/TaikoArcade
 6. Modify comfig.toml from TAL, edit the following line:
 
    ```toml
-   server = "https://divamodarchive.com" # Change https://divamodarchive.com to your/server's ip, like 192.168.1.100
+   server = "https://divamodarchive.com" # Change https://divamodarchive.com to your/server's ip, like 192.168.1.100 or 127.0.0.1
    ```
-7. Open command prompt as admin, navigate to game root folder (where `init.ps1` is). Run `regsvr32 .\AMCUS\iauthdll.dll`. It should prompt about success (This only need to be done once)
-
-8. Now the game should be able to connect.
+   
+7. Now the game should be able to connect.
 
 ### About certificates
 
