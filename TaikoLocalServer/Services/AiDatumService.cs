@@ -13,14 +13,14 @@ public class AiDatumService : IAiDatumService
         this.context = context;
     }
 
-    public async Task<List<AiScoreDatum>> GetAllAiScoreById(uint baid)
+    public async Task<List<AiScoreDatum>> GetAllAiScoreById(ulong baid)
     {
         return await context.AiScoreData.Where(datum => datum.Baid == baid)
             .Include(datum => datum.AiSectionScoreData)
             .ToListAsync();
     }
 
-    public async Task<AiScoreDatum?> GetSongAiScore(uint baid, uint songId, Difficulty difficulty)
+    public async Task<AiScoreDatum?> GetSongAiScore(ulong baid, uint songId, Difficulty difficulty)
     {
         return await context.AiScoreData.Where(datum => datum.Baid == baid &&
                                                         datum.SongId == songId &&

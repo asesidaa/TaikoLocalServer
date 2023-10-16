@@ -8,249 +8,248 @@
 #pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace taiko.vsinterface
 {
+	[global::ProtoBuf.ProtoContract()]
+	public partial class StartupAuthRequest : global::ProtoBuf.IExtensible
+	{
+		private global::ProtoBuf.IExtension __pbn__extensionData;
+		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
-    [global::ProtoBuf.ProtoContract()]
-    public partial class StartupAuthRequest : global::ProtoBuf.IExtensible
-    {
-        private global::ProtoBuf.IExtension __pbn__extensionData;
-        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+		[global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+		public string ChassisId { get; set; }
 
-        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
-        public string ChassisId { get; set; }
+		[global::ProtoBuf.ProtoMember(2, Name = @"usbmem_key")]
+		[global::System.ComponentModel.DefaultValue("")]
+		public string UsbmemKey
+		{
+			get => __pbn__UsbmemKey ?? "";
+			set => __pbn__UsbmemKey = value;
+		}
+		public bool ShouldSerializeUsbmemKey() => __pbn__UsbmemKey != null;
+		public void ResetUsbmemKey() => __pbn__UsbmemKey = null;
+		private string __pbn__UsbmemKey;
 
-        [global::ProtoBuf.ProtoMember(2, Name = @"usbmem_key")]
-        [global::System.ComponentModel.DefaultValue("")]
-        public string UsbmemKey
-        {
-            get => __pbn__UsbmemKey ?? "";
-            set => __pbn__UsbmemKey = value;
-        }
-        public bool ShouldSerializeUsbmemKey() => __pbn__UsbmemKey != null;
-        public void ResetUsbmemKey() => __pbn__UsbmemKey = null;
-        private string __pbn__UsbmemKey;
+		[global::ProtoBuf.ProtoMember(3, Name = @"hdd_ver", IsRequired = true)]
+		public uint HddVer { get; set; }
 
-        [global::ProtoBuf.ProtoMember(3, Name = @"hdd_ver", IsRequired = true)]
-        public uint HddVer { get; set; }
+		[global::ProtoBuf.ProtoMember(4, Name = @"usbmem_ver")]
+		public uint UsbmemVer
+		{
+			get => __pbn__UsbmemVer.GetValueOrDefault();
+			set => __pbn__UsbmemVer = value;
+		}
+		public bool ShouldSerializeUsbmemVer() => __pbn__UsbmemVer != null;
+		public void ResetUsbmemVer() => __pbn__UsbmemVer = null;
+		private uint? __pbn__UsbmemVer;
 
-        [global::ProtoBuf.ProtoMember(4, Name = @"usbmem_ver")]
-        public uint UsbmemVer
-        {
-            get => __pbn__UsbmemVer.GetValueOrDefault();
-            set => __pbn__UsbmemVer = value;
-        }
-        public bool ShouldSerializeUsbmemVer() => __pbn__UsbmemVer != null;
-        public void ResetUsbmemVer() => __pbn__UsbmemVer = null;
-        private uint? __pbn__UsbmemVer;
+		[global::ProtoBuf.ProtoMember(5, Name = @"shop_id", IsRequired = true)]
+		public string ShopId { get; set; }
 
-        [global::ProtoBuf.ProtoMember(5, Name = @"shop_id", IsRequired = true)]
-        public string ShopId { get; set; }
+		[global::ProtoBuf.ProtoMember(6, Name = @"rack_id")]
+		[global::System.ComponentModel.DefaultValue("")]
+		public string RackId
+		{
+			get => __pbn__RackId ?? "";
+			set => __pbn__RackId = value;
+		}
+		public bool ShouldSerializeRackId() => __pbn__RackId != null;
+		public void ResetRackId() => __pbn__RackId = null;
+		private string __pbn__RackId;
 
-        [global::ProtoBuf.ProtoMember(6, Name = @"rack_id")]
-        [global::System.ComponentModel.DefaultValue("")]
-        public string RackId
-        {
-            get => __pbn__RackId ?? "";
-            set => __pbn__RackId = value;
-        }
-        public bool ShouldSerializeRackId() => __pbn__RackId != null;
-        public void ResetRackId() => __pbn__RackId = null;
-        private string __pbn__RackId;
+		[global::ProtoBuf.ProtoMember(7, Name = @"country_id")]
+		[global::System.ComponentModel.DefaultValue("")]
+		public string CountryId
+		{
+			get => __pbn__CountryId ?? "";
+			set => __pbn__CountryId = value;
+		}
+		public bool ShouldSerializeCountryId() => __pbn__CountryId != null;
+		public void ResetCountryId() => __pbn__CountryId = null;
+		private string __pbn__CountryId;
 
-        [global::ProtoBuf.ProtoMember(7, Name = @"country_id")]
-        [global::System.ComponentModel.DefaultValue("")]
-        public string CountryId
-        {
-            get => __pbn__CountryId ?? "";
-            set => __pbn__CountryId = value;
-        }
-        public bool ShouldSerializeCountryId() => __pbn__CountryId != null;
-        public void ResetCountryId() => __pbn__CountryId = null;
-        private string __pbn__CountryId;
+		[global::ProtoBuf.ProtoMember(8, Name = @"ary_operation_info")]
+		public global::System.Collections.Generic.List<OperationData> AryOperationInfoes { get; } = new global::System.Collections.Generic.List<OperationData>();
 
-        [global::ProtoBuf.ProtoMember(8, Name = @"ary_operation_info")]
-        public global::System.Collections.Generic.List<OperationData> AryOperationInfoes { get; } = new global::System.Collections.Generic.List<OperationData>();
+		[global::ProtoBuf.ProtoContract()]
+		public partial class OperationData : global::ProtoBuf.IExtensible
+		{
+			private global::ProtoBuf.IExtension __pbn__extensionData;
+			global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+				=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
-        [global::ProtoBuf.ProtoContract()]
-        public partial class OperationData : global::ProtoBuf.IExtensible
-        {
-            private global::ProtoBuf.IExtension __pbn__extensionData;
-            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+			[global::ProtoBuf.ProtoMember(1, Name = @"key_data", IsRequired = true)]
+			public uint KeyData { get; set; }
 
-            [global::ProtoBuf.ProtoMember(1, Name = @"key_data", IsRequired = true)]
-            public uint KeyData { get; set; }
+			[global::ProtoBuf.ProtoMember(2, Name = @"value_data", IsRequired = true)]
+			public byte[] ValueData { get; set; }
 
-            [global::ProtoBuf.ProtoMember(2, Name = @"value_data", IsRequired = true)]
-            public byte[] ValueData { get; set; }
+		}
 
-        }
+	}
 
-    }
+	[global::ProtoBuf.ProtoContract()]
+	public partial class StartupAuthResponse : global::ProtoBuf.IExtensible
+	{
+		private global::ProtoBuf.IExtension __pbn__extensionData;
+		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
-    [global::ProtoBuf.ProtoContract()]
-    public partial class StartupAuthResponse : global::ProtoBuf.IExtensible
-    {
-        private global::ProtoBuf.IExtension __pbn__extensionData;
-        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+		public uint Result { get; set; }
 
-        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-        public uint Result { get; set; }
+		[global::ProtoBuf.ProtoMember(2, Name = @"ary_movie_info")]
+		public global::System.Collections.Generic.List<MovieData> AryMovieInfoes { get; } = new global::System.Collections.Generic.List<MovieData>();
 
-        [global::ProtoBuf.ProtoMember(2, Name = @"ary_movie_info")]
-        public global::System.Collections.Generic.List<MovieData> AryMovieInfoes { get; } = new global::System.Collections.Generic.List<MovieData>();
+		[global::ProtoBuf.ProtoMember(3, Name = @"ary_operation_info")]
+		public global::System.Collections.Generic.List<OperationData> AryOperationInfoes { get; } = new global::System.Collections.Generic.List<OperationData>();
 
-        [global::ProtoBuf.ProtoMember(3, Name = @"ary_operation_info")]
-        public global::System.Collections.Generic.List<OperationData> AryOperationInfoes { get; } = new global::System.Collections.Generic.List<OperationData>();
+		[global::ProtoBuf.ProtoContract()]
+		public partial class MovieData : global::ProtoBuf.IExtensible
+		{
+			private global::ProtoBuf.IExtension __pbn__extensionData;
+			global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+				=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
-        [global::ProtoBuf.ProtoContract()]
-        public partial class MovieData : global::ProtoBuf.IExtensible
-        {
-            private global::ProtoBuf.IExtension __pbn__extensionData;
-            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+			[global::ProtoBuf.ProtoMember(1, Name = @"movie_id", IsRequired = true)]
+			public uint MovieId { get; set; }
 
-            [global::ProtoBuf.ProtoMember(1, Name = @"movie_id", IsRequired = true)]
-            public uint MovieId { get; set; }
+			[global::ProtoBuf.ProtoMember(2, Name = @"enable_days", IsRequired = true)]
+			public uint EnableDays { get; set; }
 
-            [global::ProtoBuf.ProtoMember(2, Name = @"enable_days", IsRequired = true)]
-            public uint EnableDays { get; set; }
+		}
 
-        }
+		[global::ProtoBuf.ProtoContract()]
+		public partial class OperationData : global::ProtoBuf.IExtensible
+		{
+			private global::ProtoBuf.IExtension __pbn__extensionData;
+			global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+				=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
-        [global::ProtoBuf.ProtoContract()]
-        public partial class OperationData : global::ProtoBuf.IExtensible
-        {
-            private global::ProtoBuf.IExtension __pbn__extensionData;
-            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+			[global::ProtoBuf.ProtoMember(1, Name = @"key_data", IsRequired = true)]
+			public uint KeyData { get; set; }
 
-            [global::ProtoBuf.ProtoMember(1, Name = @"key_data", IsRequired = true)]
-            public uint KeyData { get; set; }
+			[global::ProtoBuf.ProtoMember(2, Name = @"value_data", IsRequired = true)]
+			public byte[] ValueData { get; set; }
 
-            [global::ProtoBuf.ProtoMember(2, Name = @"value_data", IsRequired = true)]
-            public byte[] ValueData { get; set; }
+		}
 
-        }
+	}
 
-    }
+	[global::ProtoBuf.ProtoContract()]
+	public partial class VerupAuthRequest : global::ProtoBuf.IExtensible
+	{
+		private global::ProtoBuf.IExtension __pbn__extensionData;
+		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
-    [global::ProtoBuf.ProtoContract()]
-    public partial class VerupAuthRequest : global::ProtoBuf.IExtensible
-    {
-        private global::ProtoBuf.IExtension __pbn__extensionData;
-        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+		[global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+		public string ChassisId { get; set; }
 
-        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
-        public string ChassisId { get; set; }
+		[global::ProtoBuf.ProtoMember(2, Name = @"usbmem_key", IsRequired = true)]
+		public string UsbmemKey { get; set; }
 
-        [global::ProtoBuf.ProtoMember(2, Name = @"usbmem_key", IsRequired = true)]
-        public string UsbmemKey { get; set; }
+		[global::ProtoBuf.ProtoMember(3, Name = @"hdd_ver", IsRequired = true)]
+		public uint HddVer { get; set; }
 
-        [global::ProtoBuf.ProtoMember(3, Name = @"hdd_ver", IsRequired = true)]
-        public uint HddVer { get; set; }
+		[global::ProtoBuf.ProtoMember(4, Name = @"usbmem_ver", IsRequired = true)]
+		public uint UsbmemVer { get; set; }
 
-        [global::ProtoBuf.ProtoMember(4, Name = @"usbmem_ver", IsRequired = true)]
-        public uint UsbmemVer { get; set; }
+		[global::ProtoBuf.ProtoMember(5, Name = @"shop_id", IsRequired = true)]
+		public string ShopId { get; set; }
 
-        [global::ProtoBuf.ProtoMember(5, Name = @"shop_id", IsRequired = true)]
-        public string ShopId { get; set; }
+		[global::ProtoBuf.ProtoMember(6, Name = @"rack_id")]
+		[global::System.ComponentModel.DefaultValue("")]
+		public string RackId
+		{
+			get => __pbn__RackId ?? "";
+			set => __pbn__RackId = value;
+		}
+		public bool ShouldSerializeRackId() => __pbn__RackId != null;
+		public void ResetRackId() => __pbn__RackId = null;
+		private string __pbn__RackId;
 
-        [global::ProtoBuf.ProtoMember(6, Name = @"rack_id")]
-        [global::System.ComponentModel.DefaultValue("")]
-        public string RackId
-        {
-            get => __pbn__RackId ?? "";
-            set => __pbn__RackId = value;
-        }
-        public bool ShouldSerializeRackId() => __pbn__RackId != null;
-        public void ResetRackId() => __pbn__RackId = null;
-        private string __pbn__RackId;
+		[global::ProtoBuf.ProtoMember(7, Name = @"country_id")]
+		[global::System.ComponentModel.DefaultValue("")]
+		public string CountryId
+		{
+			get => __pbn__CountryId ?? "";
+			set => __pbn__CountryId = value;
+		}
+		public bool ShouldSerializeCountryId() => __pbn__CountryId != null;
+		public void ResetCountryId() => __pbn__CountryId = null;
+		private string __pbn__CountryId;
 
-        [global::ProtoBuf.ProtoMember(7, Name = @"country_id")]
-        [global::System.ComponentModel.DefaultValue("")]
-        public string CountryId
-        {
-            get => __pbn__CountryId ?? "";
-            set => __pbn__CountryId = value;
-        }
-        public bool ShouldSerializeCountryId() => __pbn__CountryId != null;
-        public void ResetCountryId() => __pbn__CountryId = null;
-        private string __pbn__CountryId;
+	}
 
-    }
+	[global::ProtoBuf.ProtoContract()]
+	public partial class VerupAuthResponse : global::ProtoBuf.IExtensible
+	{
+		private global::ProtoBuf.IExtension __pbn__extensionData;
+		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
-    [global::ProtoBuf.ProtoContract()]
-    public partial class VerupAuthResponse : global::ProtoBuf.IExtensible
-    {
-        private global::ProtoBuf.IExtension __pbn__extensionData;
-        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+		public uint Result { get; set; }
 
-        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-        public uint Result { get; set; }
+	}
 
-    }
+	[global::ProtoBuf.ProtoContract()]
+	public partial class VerupCompleteRequest : global::ProtoBuf.IExtensible
+	{
+		private global::ProtoBuf.IExtension __pbn__extensionData;
+		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
-    [global::ProtoBuf.ProtoContract()]
-    public partial class VerupCompleteRequest : global::ProtoBuf.IExtensible
-    {
-        private global::ProtoBuf.IExtension __pbn__extensionData;
-        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+		[global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+		public string ChassisId { get; set; }
 
-        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
-        public string ChassisId { get; set; }
+		[global::ProtoBuf.ProtoMember(2, Name = @"usbmem_key", IsRequired = true)]
+		public string UsbmemKey { get; set; }
 
-        [global::ProtoBuf.ProtoMember(2, Name = @"usbmem_key", IsRequired = true)]
-        public string UsbmemKey { get; set; }
+		[global::ProtoBuf.ProtoMember(3, Name = @"hdd_ver", IsRequired = true)]
+		public uint HddVer { get; set; }
 
-        [global::ProtoBuf.ProtoMember(3, Name = @"hdd_ver", IsRequired = true)]
-        public uint HddVer { get; set; }
+		[global::ProtoBuf.ProtoMember(4, Name = @"usbmem_ver", IsRequired = true)]
+		public uint UsbmemVer { get; set; }
 
-        [global::ProtoBuf.ProtoMember(4, Name = @"usbmem_ver", IsRequired = true)]
-        public uint UsbmemVer { get; set; }
+		[global::ProtoBuf.ProtoMember(5, Name = @"shop_id", IsRequired = true)]
+		public string ShopId { get; set; }
 
-        [global::ProtoBuf.ProtoMember(5, Name = @"shop_id", IsRequired = true)]
-        public string ShopId { get; set; }
+		[global::ProtoBuf.ProtoMember(6, Name = @"rack_id")]
+		[global::System.ComponentModel.DefaultValue("")]
+		public string RackId
+		{
+			get => __pbn__RackId ?? "";
+			set => __pbn__RackId = value;
+		}
+		public bool ShouldSerializeRackId() => __pbn__RackId != null;
+		public void ResetRackId() => __pbn__RackId = null;
+		private string __pbn__RackId;
 
-        [global::ProtoBuf.ProtoMember(6, Name = @"rack_id")]
-        [global::System.ComponentModel.DefaultValue("")]
-        public string RackId
-        {
-            get => __pbn__RackId ?? "";
-            set => __pbn__RackId = value;
-        }
-        public bool ShouldSerializeRackId() => __pbn__RackId != null;
-        public void ResetRackId() => __pbn__RackId = null;
-        private string __pbn__RackId;
+		[global::ProtoBuf.ProtoMember(7, Name = @"country_id")]
+		[global::System.ComponentModel.DefaultValue("")]
+		public string CountryId
+		{
+			get => __pbn__CountryId ?? "";
+			set => __pbn__CountryId = value;
+		}
+		public bool ShouldSerializeCountryId() => __pbn__CountryId != null;
+		public void ResetCountryId() => __pbn__CountryId = null;
+		private string __pbn__CountryId;
 
-        [global::ProtoBuf.ProtoMember(7, Name = @"country_id")]
-        [global::System.ComponentModel.DefaultValue("")]
-        public string CountryId
-        {
-            get => __pbn__CountryId ?? "";
-            set => __pbn__CountryId = value;
-        }
-        public bool ShouldSerializeCountryId() => __pbn__CountryId != null;
-        public void ResetCountryId() => __pbn__CountryId = null;
-        private string __pbn__CountryId;
+	}
 
-    }
+	[global::ProtoBuf.ProtoContract()]
+	public partial class VerupCompleteResponse : global::ProtoBuf.IExtensible
+	{
+		private global::ProtoBuf.IExtension __pbn__extensionData;
+		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
-    [global::ProtoBuf.ProtoContract()]
-    public partial class VerupCompleteResponse : global::ProtoBuf.IExtensible
-    {
-        private global::ProtoBuf.IExtension __pbn__extensionData;
-        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+		public uint Result { get; set; }
 
-        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-        public uint Result { get; set; }
-
-    }
+	}
 
 }
 

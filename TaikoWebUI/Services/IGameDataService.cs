@@ -24,6 +24,8 @@ public interface IGameDataService
     public string GetBodyTitle(uint index);
     public string GetFaceTitle(uint index);
     public string GetPuchiTitle(uint index);
+    
+    public List<int> GetCostumeFlagArraySizes();
 
     public ImmutableHashSet<Title> GetTitles();
 }

@@ -21,7 +21,7 @@ public class PlayDataController : BaseController<PlayDataController>
     }
 
     [HttpGet("{baid}")]
-    public async Task<ActionResult<SongBestResponse>> GetSongBestRecords(uint baid)
+    public async Task<ActionResult<SongBestResponse>> GetSongBestRecords(ulong baid)
     {
         var user = await userDatumService.GetFirstUserDatumOrNull(baid);
         if (user is null)

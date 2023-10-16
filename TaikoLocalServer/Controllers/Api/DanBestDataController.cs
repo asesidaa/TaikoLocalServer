@@ -15,7 +15,7 @@ public class DanBestDataController : BaseController<DanBestDataController>
     }
     
     [HttpGet("{baid}")]
-    public async Task<IActionResult> GetDanBestData(uint baid)
+    public async Task<IActionResult> GetDanBestData(ulong baid)
     {
         var danScores = await danScoreDatumService.GetDanScoreDatumByBaid(baid);
         var danDataList = new List<DanBestData>();
