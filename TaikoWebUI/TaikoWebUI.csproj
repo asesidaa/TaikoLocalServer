@@ -23,28 +23,24 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Update="wwwroot\data\musicinfo.bin">
+      <Content Update="wwwroot\data\datatable\musicinfo.bin">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Update="wwwroot\data\music_order.bin">
+      <Content Update="wwwroot\data\datatable\music_order.bin">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Update="wwwroot\data\wordlist.bin">
+      <Content Update="wwwroot\data\datatable\wordlist.bin">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Update="wwwroot\data\music_order.json">
+      <Content Update="wwwroot\data\datatable\music_order.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Update="wwwroot\data\musicinfo.json">
+      <Content Update="wwwroot\data\datatable\musicinfo.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Update="wwwroot\data\wordlist.json">
+      <Content Update="wwwroot\data\datatable\wordlist.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="wwwroot\data" />
     </ItemGroup>
 
 

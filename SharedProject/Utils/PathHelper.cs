@@ -21,4 +21,9 @@ public static class PathHelper
     {
         return Path.Combine(GetRootPath(), "data");
     }
+
+	public static string GetDatatablePath()
+	{
+		return Path.Combine(GetDataPath(), "datatable");
+	}
 }
