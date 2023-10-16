@@ -17,12 +17,12 @@ public class UserDatumService : IUserDatumService
         this.logger = logger;
     }
 
-    public async Task<UserDatum?> GetFirstUserDatumOrNull(uint baid)
+    public async Task<UserDatum?> GetFirstUserDatumOrNull(ulong baid)
     {
         return await context.UserData.FindAsync(baid);
     }
 
-    public async Task<UserDatum> GetFirstUserDatumOrDefault(uint baid)
+    public async Task<UserDatum> GetFirstUserDatumOrDefault(ulong baid)
     {
         return await context.UserData.FindAsync(baid) ?? new UserDatum();
     }
@@ -57,7 +57,7 @@ public class UserDatumService : IUserDatumService
         await context.SaveChangesAsync();
     }
 
-    public async Task<List<uint>> GetFavoriteSongIds(uint baid)
+    public async Task<List<uint>> GetFavoriteSongIds(ulong baid)
     {
         var userDatum = await context.UserData.FindAsync(baid);
         userDatum.ThrowIfNull($"User with baid: {baid} not found!");
@@ -77,7 +77,7 @@ public class UserDatumService : IUserDatumService
         return result;
     }
 
-    public async Task UpdateFavoriteSong(uint baid, uint songId, bool isFavorite)
+    public async Task UpdateFavoriteSong(ulong baid, uint songId, bool isFavorite)
     {
         var userDatum = await context.UserData.FindAsync(baid);
         userDatum.ThrowIfNull($"User with baid: {baid} not found!");

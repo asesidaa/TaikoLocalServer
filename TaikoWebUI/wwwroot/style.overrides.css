@@ -44,6 +44,11 @@
     display: none;
 }
 
+.dialog-user-qr-code svg {
+    /* makes the qr code render with no subpixels */
+    transform: scale(1.1);
+}
+
 @media only screen and (min-width: 600px) {
     .ai-battle-td {
         display: revert;

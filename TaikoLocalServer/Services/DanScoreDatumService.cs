@@ -12,14 +12,14 @@ public class DanScoreDatumService : IDanScoreDatumService
         this.context = context;
     }
 
-    public async Task<List<DanScoreDatum>> GetDanScoreDatumByBaid(uint baid)
+    public async Task<List<DanScoreDatum>> GetDanScoreDatumByBaid(ulong baid)
     {
         return await context.DanScoreData.Where(datum => datum.Baid == baid)
             .Include(datum => datum.DanStageScoreData)
             .ToListAsync();
     }
 
-    public async Task<DanScoreDatum?> GetSingleDanScoreDatum(uint baid, uint danId)
+    public async Task<DanScoreDatum?> GetSingleDanScoreDatum(ulong baid, uint danId)
     {
         return await context.DanScoreData.Include(datum => datum.DanStageScoreData)
             .FirstOrDefaultAsync(datum => datum.Baid == baid &&

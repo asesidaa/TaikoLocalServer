@@ -1,6 +1,6 @@
 ﻿namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r03/chassis/rewarditem.php")]
+[Route("/v12r00_cn/chassis/rewarditem.php")]
 [ApiController]
 public class RewardItemController : BaseController<RewardItemController>
 {

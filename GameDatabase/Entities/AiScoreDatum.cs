@@ -4,7 +4,7 @@ namespace GameDatabase.Entities;
 
 public class AiScoreDatum
 {
-    public uint Baid { get; set; }
+    public ulong Baid { get; set; }
 
     public uint SongId { get; set; }
 
