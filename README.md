@@ -16,9 +16,9 @@ This is a server for Taiko no Tatsujin Nijiiro ver CHN
 
 3. (Optional) In `Certificates` folder, import `root.pfx` to trusted root store, `cert.pfx` to personal store. All the other import options can be kept default.
 
-4. Visit http://localhost:5000 and (Optional, only if you have done step 4) https://localhost:10122, if  the web ui starts without errors, the config is fine.
+4. Visit http://localhost:5000 if the web ui starts without errors, the config is fine.
    
-5. Now the game should be able to connect.
+5. Now start the game and it should be able to connect.
 
 ## Data config
 
