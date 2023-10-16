@@ -2,7 +2,7 @@
 
 public class DanStageScoreDatum
 {
-    public uint Baid { get; set; }
+    public ulong Baid { get; set; }
 
     public uint DanId { get; set; }
 

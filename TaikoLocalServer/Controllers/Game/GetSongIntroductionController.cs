@@ -1,6 +1,6 @@
 ﻿namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r03/chassis/getsongintroduction.php")]
+[Route("/v12r00_cn/chassis/getsongintroduction.php")]
 [ApiController]
 public class GetSongIntroductionController : BaseController<GetSongIntroductionController>
 {

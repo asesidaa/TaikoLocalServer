@@ -1,6 +1,6 @@
 ﻿namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r03/chassis/gettelop.php")]
+[Route("/v12r00_cn/chassis/gettelop.php")]
 [ApiController]
 public class GetTelopController : BaseController<GetTelopController>
 {

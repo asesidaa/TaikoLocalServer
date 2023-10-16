@@ -8,6 +8,6 @@ public enum SongGenre
     Vocaloid = 3,
     GameMusic = 4,
     NamcoOriginal = 5,
-    Variety = 7,
-    Classical = 8
+    Variety = 6,
+    Classical = 7
 }

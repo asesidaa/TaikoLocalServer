@@ -1,6 +1,6 @@
 ﻿namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r03/chassis/getapplicationurl.php")]
+[Route("/v12r00_cn/chassis/getapplicationurl.php")]
 [ApiController]
 public class GetApplicationUrlController : BaseController<GetApplicationUrlController>
 {

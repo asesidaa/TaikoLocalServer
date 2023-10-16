@@ -1,6 +1,6 @@
 ﻿namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r03/chassis/tournamentcheck.php")]
+[Route("/v12r00_cn/chassis/tournamentcheck.php")]
 [ApiController]
 public class TournamentCheckController : BaseController<TournamentCheckController>
 {
