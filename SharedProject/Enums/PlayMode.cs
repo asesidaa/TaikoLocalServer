@@ -4,6 +4,6 @@ public enum PlayMode
 {
     Normal = 0,
     DanMode = 1,
-    // Not sure about this
+    GaidenMode = 4,
     AiBattle = 6
 }

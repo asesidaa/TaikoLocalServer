@@ -1,6 +1,9 @@
 using System.Reflection;
 using System.Security.Authentication;
+using Serilog.Sinks.File.Header;
+using TaikoLocalServer.Logging;
 using GameDatabase.Context;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.HttpOverrides;
 using TaikoLocalServer.Middlewares;
 using TaikoLocalServer.Services.Extentions;
@@ -23,26 +26,32 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
     
-    builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
+    builder.Services.AddHttpLogging(options =>
     {
-        const string configurationsDirectory = "Configurations";
-        config.AddJsonFile($"{configurationsDirectory}/Kestrel.json", optional: true, reloadOnChange: false);
-        config.AddJsonFile($"{configurationsDirectory}/Logging.json", optional: false, reloadOnChange: false);
-        config.AddJsonFile($"{configurationsDirectory}/Database.json", optional: false, reloadOnChange: false);
-        config.AddJsonFile($"{configurationsDirectory}/ServerSettings.json", optional: false, reloadOnChange: false);
-        config.AddJsonFile($"{configurationsDirectory}/DataSettings.json", optional: true, reloadOnChange: false);
+        options.LoggingFields = HttpLoggingFields.All;
+        options.RequestBodyLogLimit = 32768;
+        options.ResponseBodyLogLimit = 32768;
     });
     
-    // Manually enable tls 1.0
-    builder.WebHost.UseKestrel(kestrelOptions =>
-    {
-        kestrelOptions.ConfigureHttpsDefaults(options => 
-            options.SslProtocols = SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Tls13);
-    });
+    const string configurationsDirectory = "Configurations";
+    builder.Configuration.AddJsonFile($"{configurationsDirectory}/Kestrel.json", optional: true, reloadOnChange: false);
+    builder.Configuration.AddJsonFile($"{configurationsDirectory}/Logging.json", optional: false, reloadOnChange: false);
+    builder.Configuration.AddJsonFile($"{configurationsDirectory}/Database.json", optional: false, reloadOnChange: false);
+    builder.Configuration.AddJsonFile($"{configurationsDirectory}/ServerSettings.json", optional: false, reloadOnChange: false);
+    builder.Configuration.AddJsonFile($"{configurationsDirectory}/DataSettings.json", optional: true, reloadOnChange: false);
 
     builder.Host.UseSerilog((context, configuration) =>
     {
-        configuration.WriteTo.Console().ReadFrom.Configuration(context.Configuration);
+        configuration
+            .WriteTo.Console().ReadFrom.Configuration(context.Configuration)
+            .WriteTo.Logger(x =>
+            {
+                x.WriteTo.File(new CsvFormatter(),
+                    path: "./Logs/HeadClerkLog-.csv",
+                    hooks: new HeaderWriter("Date,ChassisId,ShopId,Baid,PlayedAt,IsRight,Type,Amount"),
+                    rollingInterval: RollingInterval.Day);
+                x.Filter.ByIncludingOnly("StartsWith(@m, 'CSV WRITE:')");
+            });
     });
 
     if (builder.Configuration.GetValue<bool>("ServerSettings:EnableMoreSongs"))
@@ -117,6 +126,16 @@ try
 
 
     app.UseHttpLogging();
+    app.Use(async (context, next) =>
+    {
+        await next();
+    
+        if (context.Response.StatusCode >= 400)
+        {
+            Log.Error("Unknown request from: {RemoteIpAddress} {Method} {Path} {StatusCode}",
+                context.Connection.RemoteIpAddress, context.Request.Method, context.Request.Path, context.Response.StatusCode);
+        }
+    });
     app.MapControllers();
     app.MapFallbackToFile("index.html");
 

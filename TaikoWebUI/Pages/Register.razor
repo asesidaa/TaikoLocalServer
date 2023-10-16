@@ -1,0 +1,43 @@
+﻿@inject HttpClient Client
+@inject IDialogService DialogService
+@inject LoginService LoginService
+@inject NavigationManager NavigationManager
+
+@page "/Cards/Register"
+
+<h1>Cards</h1>
+
+@if (LoginService.OnlyAdmin || !LoginService.LoginRequired)
+{
+    <h1>Register is turned off</h1>
+}
+else
+{
+    <MudContainer>
+        <MudGrid Justify="Justify.Center">
+            <MudItem xs="4" class="mt-8">
+                <MudCard>
+                    <MudCardContent>
+                        <MudForm @ref="registerForm">
+                            <MudText Typo="Typo.h4" Align="Align.Center">Register</MudText>
+                            <MudTextField @bind-value="cardNum" InputType="InputType.Text" T="string"
+                                          FullWidth="true" Required="@true" RequiredError="Card Number is required"
+                                          Label="Card Number"/>
+                            <MudTextField @bind-Value="password" InputType="InputType.Password"
+                                          T="string" FullWidth="true" Required="@true"
+                                          RequiredError="Password is required"
+                                          Label="Password">
+                            </MudTextField>
+                            <MudTextField @bind-Value="confirmPassword" InputType="InputType.Password"
+                                          T="string" FullWidth="true" Required="@true"
+                                          RequiredError="Confirm password is required"
+                                          Label="Confirm Password">
+                            </MudTextField>
+                            <MudButton OnClick="OnRegister" FullWidth="true" Class="mt-3" StartIcon="@Icons.Filled.AddCard" Color="Color.Primary" Variant="Variant.Filled">Register</MudButton>
+                        </MudForm>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+}
