@@ -33,6 +33,7 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
 		{
 			Baid = newId,
 			MyDonName = request.MydonName,
+			MyDonNameLanguage = 0,
 			DisplayDan = true,
 			DisplayAchievement = true,
 			AchievementDisplayDifficulty = Difficulty.None,
@@ -40,10 +41,12 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
 			ColorBody = 1,
 			ColorLimb = 3,
 			FavoriteSongsArray = "[]",
-			ToneFlgArray = "[]",
+			ToneFlgArray = "[0]",
 			TitleFlgArray = "[]",
 			CostumeFlgArray = "[[],[],[],[],[]]",
-			GenericInfoFlgArray = "[]"
+			GenericInfoFlgArray = "[]",
+			TokenCountDict = "{}",
+			UnlockedSongIdList = "[]"
 		};
 
 		await userDatumService.InsertUserDatum(newUser);
@@ -53,6 +56,7 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
 			Result = 1,
 			Baid = newId,
 			MydonName = request.MydonName,
+			MydonNameLanguage = 0
 		};
 
 		return Ok(response);

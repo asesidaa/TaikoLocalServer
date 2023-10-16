@@ -11,15 +11,15 @@ public partial class Profile
 
     private bool isSavingOptions;
 
-    private static readonly string[] CostumeColors = 
+    private static readonly string[] CostumeColors =
     {
         "#F84828", "#68C0C0", "#DC1500", "#F8F0E0", "#009687", "#00BF87",
         "#00FF9A", "#66FFC2", "#FFFFFF", "#690000", "#FF0000", "#FF6666",
-        "#FFB3B3", "#00BCC2", "#00F7FF", "#66FAFF", "#B3FDFF", "#E4E4E4", 
-        "#993800", "#FF5E00", "#FF9E78", "#FFCFB3", "#005199", "#0088FF", 
+        "#FFB3B3", "#00BCC2", "#00F7FF", "#66FAFF", "#B3FDFF", "#E4E4E4",
+        "#993800", "#FF5E00", "#FF9E78", "#FFCFB3", "#005199", "#0088FF",
         "#66B8FF", "#B3DBFF", "#B9B9B9", "#B37700", "#FFAA00", "#FFCC66",
         "#FFE2B3", "#000C80", "#0019FF", "#6675FF", "#B3BAFF", "#858585",
-        "#B39B00", "#FFDD00", "#FFFF00", "#FFFF71", "#2B0080", "#5500FF", 
+        "#B39B00", "#FFDD00", "#FFFF00", "#FFFF71", "#2B0080", "#5500FF",
         "#9966FF", "#CCB3FF", "#505050", "#38A100", "#78C900", "#B3FF00",
         "#DCFF8A", "#610080", "#C400FF", "#DC66FF", "#EDB3FF", "#232323",
         "#006600", "#00B800", "#00FF00", "#8AFF9E", "#990059", "#FF0095",
@@ -44,16 +44,41 @@ public partial class Profile
         "Synth Drum", "Shuriken", "Bubble Pop", "Electric Guitar"
     };
 
+    private static readonly string[] LanguageStrings =
+    {
+        "Japanese", "English", "Chinese (Traditional)", "Korean", "Chinese (Simplified)"
+    };
+
     private static readonly string[] TitlePlateStrings =
     {
         "Wood", "Rainbow", "Gold", "Purple",
         "AI 1", "AI 2", "AI 3", "AI 4"
     };
 
+    private static readonly string[] DifficultySettingCourseStrings =
+    {
+        "None", "Set up each time",
+        "Easy", "Normal", "Hard", "Oni", "Ura Oni"
+    };
+
+    private static readonly string[] DifficultySettingStarStrings =
+    {
+        "None", "Set up each time",
+        "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
+    };
+
+    private static readonly string[] DifficultySettingSortStrings =
+    {
+        "None", "Set up each time", "Default",
+        "Not cleared", "Not Full Combo", "Not Donderful Combo"
+    };
+
     private readonly List<BreadcrumbItem> breadcrumbs = new()
     {
         new BreadcrumbItem("Cards", href: "/Cards"),
     };
+    
+    private List<int> costumeFlagArraySizes = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -63,6 +88,8 @@ public partial class Profile
 
         breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
         breadcrumbs.Add(new BreadcrumbItem("Profile", href: $"/Cards/{Baid}/Profile", disabled: false));
+        
+        costumeFlagArraySizes = GameDataService.GetCostumeFlagArraySizes();
     }
 
     private async Task SaveOptions()
@@ -88,7 +115,7 @@ public partial class Profile
         };
         var dialog = DialogService.Show<ChooseTitleDialog>("Player Titles", parameters, options);
         var result = await dialog.Result;
-        if (!result.Cancelled)
+        if (!result.Canceled)
         {
             StateHasChanged();
         }

@@ -22,7 +22,7 @@ public partial class Cards
         var dialog = DialogService.Show<CardDeleteConfirmDialog>("Delete Card", parameters);
         var result = await dialog.Result;
 
-        if (result.Cancelled)
+        if (result.Canceled)
         {
             return;
         }
@@ -30,4 +30,15 @@ public partial class Cards
         response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
     }
 
+    private Task ShowQrCode(User user)
+    {
+        var parameters = new DialogParameters
+        {
+            ["user"] = user
+        };
+
+        DialogService.Show<UserQrCodeDialog>("QR Code", parameters);
+
+        return Task.CompletedTask;
+    }
 }
