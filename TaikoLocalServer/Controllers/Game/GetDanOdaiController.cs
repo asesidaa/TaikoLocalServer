@@ -16,29 +16,41 @@ public class GetDanOdaiController : BaseController<GetDanOdaiController>
     public IActionResult GetDanOdai([FromBody] GetDanOdaiRequest request)
     {
         Logger.LogInformation("GetDanOdai request : {Request}", request.Stringify());
-
+        
         var response = new GetDanOdaiResponse
         {
             Result = 1
         };
 
-        if (request.Type == 2)
+        if (request.Type == 1)
         {
-            return Ok(response);
+            foreach (var danId in request.DanIds)
+            {
+                gameDataService.GetDanDataDictionary().TryGetValue(danId, out var odaiData);
+                if (odaiData is null)
+                {
+                    Logger.LogWarning("Requested dan id {Id} does not exist!", danId);
+                    continue;
+                }
+
+                response.AryOdaiDatas.Add(odaiData);
+            }
+        }
+        else if (request.Type == 2)
+        {
+            foreach (var danId in request.DanIds)
+            {
+                gameDataService.GetGaidenDataDictionary().TryGetValue(danId, out var odaiData);
+                if (odaiData is null)
+                {
+                    Logger.LogWarning("Requested dan id {Id} does not exist!", danId);
+                    continue;
+                }
+
+                response.AryOdaiDatas.Add(odaiData);
+            }
         }
         
-        foreach (var danId in request.DanIds)
-        {
-            gameDataService.GetDanDataDictionary().TryGetValue(danId, out var odaiData);
-            if (odaiData is null)
-            {
-                Logger.LogWarning("Requested dan id {Id} does not exist!", danId);
-                continue;
-            }
-
-            response.AryOdaiDatas.Add(odaiData);
-        }
-
         return Ok(response);
     }
 }
