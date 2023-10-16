@@ -60,7 +60,7 @@ public class GameDataService : IGameDataService
 
     private async Task<T> GetData<T>(string dataBaseUrl, string fileBaseName) where T : notnull
     {
-        var data = await client.GetFromJsonAsync<T>($"{dataBaseUrl}/data/{fileBaseName}.json");
+        var data = await client.GetFromJsonAsync<T>($"{dataBaseUrl}/data/datatable/{fileBaseName}.json");
         data.ThrowIfNull();
         return data;
     }
