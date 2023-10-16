@@ -135,24 +135,25 @@ public class GameDataService : IGameDataService
 	public async Task InitializeAsync()
 	{
 		var dataPath = PathHelper.GetDataPath();
+		var datatablePath = PathHelper.GetDatatablePath();
+
+		var musicInfoPath = Path.Combine(datatablePath, $"{Constants.MUSIC_INFO_BASE_NAME}.json");
+		var encryptedInfo = Path.Combine(datatablePath, $"{Constants.MUSIC_INFO_BASE_NAME}.bin");
 		
-		var musicInfoPath = Path.Combine(dataPath, $"{Constants.MUSIC_INFO_BASE_NAME}.json");
-		var encryptedInfo = Path.Combine(dataPath, $"{Constants.MUSIC_INFO_BASE_NAME}.bin");
+		var wordlistPath = Path.Combine(datatablePath, $"{Constants.WORDLIST_BASE_NAME}.json");
+		var encryptedWordlist = Path.Combine(datatablePath, $"{Constants.WORDLIST_BASE_NAME}.bin");
 		
-		var wordlistPath = Path.Combine(dataPath, $"{Constants.WORDLIST_BASE_NAME}.json");
-		var encryptedWordlist = Path.Combine(dataPath, $"{Constants.WORDLIST_BASE_NAME}.bin");
+		var musicOrderPath = Path.Combine(datatablePath, $"{Constants.MUSIC_ORDER_BASE_NAME}.json");
+		var encryptedMusicOrder = Path.Combine(datatablePath, $"{Constants.MUSIC_ORDER_BASE_NAME}.bin");
 		
-		var musicOrderPath = Path.Combine(dataPath, $"{Constants.MUSIC_ORDER_BASE_NAME}.json");
-		var encryptedMusicOrder = Path.Combine(dataPath, $"{Constants.MUSIC_ORDER_BASE_NAME}.bin");
+		var donCosRewardPath = Path.Combine(datatablePath, $"{Constants.DON_COS_REWARD_BASE_NAME}.json");
+		var encryptedDonCosReward = Path.Combine(datatablePath, $"{Constants.DON_COS_REWARD_BASE_NAME}.bin");
 		
-		var donCosRewardPath = Path.Combine(dataPath, $"{Constants.DON_COS_REWARD_BASE_NAME}.json");
-		var encryptedDonCosReward = Path.Combine(dataPath, $"{Constants.DON_COS_REWARD_BASE_NAME}.bin");
+		var shougouPath = Path.Combine(datatablePath, $"{Constants.SHOUGOU_BASE_NAME}.json");
+		var encryptedShougou = Path.Combine(datatablePath, $"{Constants.SHOUGOU_BASE_NAME}.bin");
 		
-		var shougouPath = Path.Combine(dataPath, $"{Constants.SHOUGOU_BASE_NAME}.json");
-		var encryptedShougou = Path.Combine(dataPath, $"{Constants.SHOUGOU_BASE_NAME}.bin");
-		
-		var neiroPath = Path.Combine(dataPath, $"{Constants.NEIRO_BASE_NAME}.json");
-		var encryptedNeiro = Path.Combine(dataPath, $"{Constants.NEIRO_BASE_NAME}.bin");
+		var neiroPath = Path.Combine(datatablePath, $"{Constants.NEIRO_BASE_NAME}.json");
+		var encryptedNeiro = Path.Combine(datatablePath, $"{Constants.NEIRO_BASE_NAME}.bin");
 		
 		var danDataPath = Path.Combine(dataPath, settings.DanDataFileName);
 		var gaidenDataPath = Path.Combine(dataPath, settings.GaidenDataFileName);
