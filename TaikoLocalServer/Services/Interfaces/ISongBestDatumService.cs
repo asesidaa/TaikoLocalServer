@@ -7,7 +7,11 @@ public interface ISongBestDatumService
 {
     public Task<List<SongBestDatum>> GetAllSongBestData(ulong baid);
 
-    public Task UpdateOrInsertSongBestDatum(SongBestDatum datum);
+    public Task<SongBestDatum?> GetSongBestData(ulong baid, uint songId, Difficulty difficulty);
+
+    public Task UpdateSongBestData(SongBestDatum datum);
+
+    public Task InsertSongBestData(SongBestDatum datum);
 
     public Task<List<SongBestData>> GetAllSongBestAsModel(ulong baid);
 }

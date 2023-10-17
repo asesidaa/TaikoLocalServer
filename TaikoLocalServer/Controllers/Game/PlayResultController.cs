@@ -77,8 +77,6 @@ public class PlayResultController : BaseController<PlayResultController>
             await UpdateDanPlayData(request, playResultData, danType);
             return Ok(response);
         }
-
-        var bestData = await songBestDatumService.GetAllSongBestData(request.BaidConf);
         
         gameDataService.GetFolderDictionary().TryGetValue(9, out var folder9Data);
 
@@ -109,7 +107,7 @@ public class PlayResultController : BaseController<PlayResultController>
                 await UpdateAiBattleData(request, stageData);
             }
 
-            await UpdateBestData(request, stageData, bestData);
+            await UpdateBestData(request, stageData);
 
             await UpdatePlayData(request, songNumber, stageData, lastPlayDatetime);
         }
@@ -325,25 +323,35 @@ public class PlayResultController : BaseController<PlayResultController>
         return JsonSerializer.Serialize(flgData);
     }
 
-    private async Task UpdateBestData(PlayResultRequest request, StageData stageData,
-        IEnumerable<SongBestDatum> bestData)
+    private async Task UpdateBestData(PlayResultRequest request, StageData stageData)
     {
-        var bestDatum = bestData
-            .FirstOrDefault(datum => datum.SongId == stageData.SongNo &&
-                                     datum.Difficulty == (Difficulty)stageData.Level,
-                new SongBestDatum
-                {
-                    Baid = request.BaidConf,
-                    SongId = stageData.SongNo,
-                    Difficulty = (Difficulty)stageData.Level
-                });
+        var difficulty = (Difficulty)stageData.Level;
+        difficulty.Throw().IfOutOfRange();
+        var existing = await songBestDatumService.GetSongBestData(request.BaidConf, stageData.SongNo, difficulty);
 
         // Determine whether it is dondaful crown as this is not reflected by play result
         var crown = PlayResultToCrown(stageData.PlayResult, stageData.OkCnt);
 
-        bestDatum.UpdateBestData(crown, stageData.ScoreRank, stageData.PlayScore, stageData.ScoreRate);
+        if (existing is null)
+        {
+            var songBestDatum = new SongBestDatum
+            {
+                Baid = request.BaidConf,
+                SongId = stageData.SongNo,
+                Difficulty = difficulty,
+                BestScore = stageData.PlayScore,
+                BestRate = stageData.ScoreRate,
+                BestCrown = crown,
+                BestScoreRank = (ScoreRank)stageData.ScoreRank
+            };
 
-        await songBestDatumService.UpdateOrInsertSongBestDatum(bestDatum);
+            await songBestDatumService.InsertSongBestData(songBestDatum);
+            return;
+        }
+
+        existing.UpdateBestData(crown, stageData.ScoreRank, stageData.PlayScore, stageData.ScoreRate);
+
+        await songBestDatumService.UpdateSongBestData(existing);
     }
     
     private async Task UpdateAiBattleData(PlayResultRequest request, StageData stageData)
