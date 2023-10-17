@@ -15,7 +15,7 @@ public partial class TaikoDbContext
     {
         modelBuilder.Entity<DanScoreDatum>(entity =>
         {
-            entity.HasKey(e => new { e.Baid, e.DanId });
+            entity.HasKey(e => new { e.Baid, e.DanId, e.DanType });
 
             entity.HasOne(d => d.Ba)
                 .WithMany()
@@ -24,17 +24,18 @@ public partial class TaikoDbContext
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity.Property(e => e.ClearState).HasConversion<uint>().HasDefaultValue(DanClearState.NotClear);
+            entity.Property(e => e.DanType).HasConversion<int>().HasDefaultValue(DanType.Normal);
         });
 
         modelBuilder.Entity<DanStageScoreDatum>(entity =>
         {
-            entity.HasKey(e => new { e.Baid, e.DanId, e.SongNumber });
+            entity.HasKey(e => new { e.Baid, e.DanId, e.DanType, e.SongNumber });
 
             entity.HasOne(d => d.Parent)
                 .WithMany(p => p.DanStageScoreData)
-                .HasPrincipalKey(p => new { p.Baid, p.DanId })
-                .HasForeignKey(d => new { d.Baid, d.DanId })
+                .HasForeignKey(d => new { d.Baid, d.DanId, d.DanType })
                 .OnDelete(DeleteBehavior.Cascade);
+            entity.Property(e => e.DanType).HasConversion<int>().HasDefaultValue(DanType.Normal);
         });
 
         modelBuilder.Entity<AiScoreDatum>(entity =>

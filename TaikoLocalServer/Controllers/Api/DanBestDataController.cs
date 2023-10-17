@@ -17,7 +17,8 @@ public class DanBestDataController : BaseController<DanBestDataController>
     [HttpGet("{baid}")]
     public async Task<IActionResult> GetDanBestData(ulong baid)
     {
-        var danScores = await danScoreDatumService.GetDanScoreDatumByBaid(baid);
+        // FIXME: Handle gaiden in here and web ui
+        var danScores = await danScoreDatumService.GetDanScoreDataList(baid, DanType.Normal);
         var danDataList = new List<DanBestData>();
 
         foreach (var danScore in danScores)

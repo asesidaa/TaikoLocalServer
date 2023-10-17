@@ -73,7 +73,8 @@ public class PlayResultController : BaseController<PlayResultController>
 
         if (playMode is PlayMode.DanMode or PlayMode.GaidenMode)
         {
-            await UpdateDanPlayData(request, playResultData);
+            var danType = playMode == PlayMode.DanMode ? DanType.Normal : DanType.Gaiden;
+            await UpdateDanPlayData(request, playResultData, danType);
             return Ok(response);
         }
 
@@ -116,7 +117,7 @@ public class PlayResultController : BaseController<PlayResultController>
         return Ok(response);
     }
 
-    private async Task UpdateDanPlayData(PlayResultRequest request, PlayResultDataRequest playResultDataRequest)
+    private async Task UpdateDanPlayData(PlayResultRequest request, PlayResultDataRequest playResultDataRequest, DanType danType)
     {
         if (playResultDataRequest.IsNotRecordedDan)
         {
@@ -125,11 +126,12 @@ public class PlayResultController : BaseController<PlayResultController>
         }
 
         var danScoreData =
-            await danScoreDatumService.GetSingleDanScoreDatum(request.BaidConf, playResultDataRequest.DanId) ??
+            await danScoreDatumService.GetSingleDanScoreDatum(request.BaidConf, playResultDataRequest.DanId, danType) ??
             new DanScoreDatum
             {
                 Baid = request.BaidConf,
-                DanId = playResultDataRequest.DanId
+                DanId = playResultDataRequest.DanId,
+                DanType = danType
             };
         danScoreData.ClearState =
             (DanClearState)Math.Max(playResultDataRequest.DanResult, (uint)danScoreData.ClearState);
@@ -155,6 +157,7 @@ public class PlayResultController : BaseController<PlayResultController>
                 {
                     Baid = danScoreData.Baid,
                     DanId = danScoreData.DanId,
+                    DanType = danScoreData.DanType,
                     SongNumber = (uint)songNumber,
                     OkCount = stageData.OkCnt,
                     BadCount = stageData.NgCnt

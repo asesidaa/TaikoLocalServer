@@ -87,7 +87,7 @@ public class BaidController : BaseController<BaidController>
 			.Select((size, index) => FlagCalculator.GetBitArrayFromIds(costumeArrays[index], size, Logger))
 			.ToList();
 
-		var danData = await danScoreDatumService.GetDanScoreDatumByBaid(baid);
+		var danData = await danScoreDatumService.GetDanScoreDataList(baid, DanType.Normal);
 
 		var maxDan = danData.Where(datum => datum.ClearState != DanClearState.NotClear)
 			.Select(datum => datum.DanId)

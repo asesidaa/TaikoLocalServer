@@ -1,4 +1,5 @@
 ﻿using GameDatabase.Entities;
+using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -24,7 +25,9 @@ public class GetDanScoreController : BaseController<GetDanScoreController>
             Result = 1
         };
 
-        var danScoreData = await danScoreDatumService.GetDanScoreDatumByBaid(request.Baid);
+        var danType = (DanType)request.Type;
+        danType.Throw().IfOutOfRange();
+        var danScoreData = await danScoreDatumService.GetDanScoreDataList(request.Baid, danType);
 
         foreach (var danId in request.DanIds)
         {
