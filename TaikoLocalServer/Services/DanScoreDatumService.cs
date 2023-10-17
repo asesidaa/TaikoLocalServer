@@ -29,7 +29,7 @@ public class DanScoreDatumService : IDanScoreDatumService
 
     public async Task InsertOrUpdateDanScoreDatum(DanScoreDatum datum)
     {
-        var existing = await context.DanScoreData.FindAsync(datum.Baid, datum.DanId);
+        var existing = await context.DanScoreData.FindAsync(datum.Baid, datum.DanId, datum.DanType);
         if (existing is null)
         {
             context.DanScoreData.Add(datum);

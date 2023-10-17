@@ -97,11 +97,12 @@ public class BaidController : BaseController<BaidController>
 		var danDataDictionary = gameDataService.GetDanDataDictionary();
 		var danIdList = danDataDictionary.Keys.ToList();
 		var gotDanFlagArray = FlagCalculator.ComputeGotDanFlags(danData, danIdList);
-		
+
+		var gaidenData = await danScoreDatumService.GetDanScoreDataList(baid, DanType.Gaiden);
+
 		var gaidenDataDictionary = gameDataService.GetGaidenDataDictionary();
 		var gaidenIdList = gaidenDataDictionary.Keys.ToList();
-		danIdList.AddRange(gaidenIdList);
-		var gotGaidenFlagArray = FlagCalculator.ComputeGotDanFlags(danData, danIdList);
+		var gotGaidenFlagArray = FlagCalculator.ComputeGotDanFlags(gaidenData, gaidenIdList);
 
 		var genericInfoFlg = Array.Empty<uint>();
 		try
