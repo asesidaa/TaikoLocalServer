@@ -1,10 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Version>0.4.0-alpha</Version>
+        <Version>1.0.0-beta</Version>
         <LangVersion>11</LangVersion>
 		<EnableConfigurationBindingGenerator>false</EnableConfigurationBindingGenerator>
     </PropertyGroup>
@@ -115,6 +115,9 @@
       <Content Update="wwwroot\data\neiro.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <Content Update="wwwroot\datatable\.placeholder">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>
@@ -132,7 +135,9 @@
     <ItemGroup>
       <ProjectReference Include="..\GameDatabase\GameDatabase.csproj" />
       <ProjectReference Include="..\SharedProject\SharedProject.csproj" />
-      <ProjectReference Include="..\TaikoWebUI\TaikoWebUI.csproj" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(Configuration)'=='Debug'">
+        <ProjectReference Include="..\TaikoWebUI\TaikoWebUI.csproj" />
     </ItemGroup>
 
 </Project>
