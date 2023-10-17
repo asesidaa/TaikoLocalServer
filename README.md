@@ -12,7 +12,7 @@ This is a server for Taiko no Tatsujin Nijiiro ver CHN
 
 1. Extract the server release anywhere
 
-2. From the game files, copy `music_order.bin`, `musicinfo.bin`, `wordlist.bin`, `don_cos_reward.bin`, `shougou.bin` to `wwwroot/data` folder.
+2. From the game files, copy `music_order.bin`, `musicinfo.bin`, `wordlist.bin`, `don_cos_reward.bin`, `shougou.bin` to `wwwroot/data/datatable` folder.
 
 3. (Optional) In `Certificates` folder, import `root.pfx` to trusted root store, `cert.pfx` to personal store. All the other import options can be kept default.
 
