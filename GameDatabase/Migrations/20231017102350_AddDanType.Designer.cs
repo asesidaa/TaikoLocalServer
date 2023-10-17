@@ -3,16 +3,19 @@ using System;
 using GameDatabase.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace TaikoLocalServer.Migrations
+namespace GameDatabase.Migrations
 {
     [DbContext(typeof(TaikoDbContext))]
-    partial class TaikoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231017102350_AddDanType")]
+    partial class AddDanType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0-rc.1.23419.6");
@@ -109,6 +112,7 @@ namespace TaikoLocalServer.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("DanType")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasDefaultValue(1);
 
@@ -140,6 +144,7 @@ namespace TaikoLocalServer.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("DanType")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasDefaultValue(1);
 

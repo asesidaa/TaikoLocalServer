@@ -6,6 +6,7 @@ public class DanScoreDatum
 {
     public ulong Baid { get; set; }
     public uint DanId { get; set; }
+    public DanType DanType { get; set; }
     public uint ArrivalSongCount { get; set; }
     public uint SoulGaugeTotal { get; set; }
     public uint ComboCountTotal { get; set; }
