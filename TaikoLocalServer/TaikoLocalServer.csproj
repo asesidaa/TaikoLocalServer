@@ -7,6 +7,7 @@
         <Version>1.0.0-beta</Version>
         <LangVersion>11</LangVersion>
 		<EnableConfigurationBindingGenerator>false</EnableConfigurationBindingGenerator>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
     </PropertyGroup>
 
     <ItemGroup>

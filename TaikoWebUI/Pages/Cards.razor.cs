@@ -25,7 +25,7 @@ public partial class Cards
         var dialog = DialogService.Show<CardDeleteConfirmDialog>("Delete Card", parameters);
         var result = await dialog.Result;
 
-        if (result.Cancelled) return;
+        if (result.Canceled) return;
 
         response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
     }
@@ -42,7 +42,7 @@ public partial class Cards
                         "Error",
                         "Only admin can log in.",
                         "Ok");
-                    loginForm.Reset();
+                    await loginForm.ResetAsync();
                     break;
                 case 1:
                     NavigationManager.NavigateTo("/Cards");
