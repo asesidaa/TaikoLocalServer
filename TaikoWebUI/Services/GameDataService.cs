@@ -6,15 +6,15 @@ namespace TaikoWebUI.Services;
 
 public class GameDataService : IGameDataService
 {
-    private string[] bodyTitles;
+    private string[] bodyTitles = {};
     private readonly HttpClient client;
-    private string[] faceTitles;
+    private string[] faceTitles = {};
 
-    private string[] headTitles;
-    private string[] kigurumiTitles;
+    private string[] headTitles = {};
+    private string[] kigurumiTitles = {};
 
     private readonly Dictionary<uint, MusicDetail> musicMap = new();
-    private string[] puchiTitles;
+    private string[] puchiTitles = {};
     
     private List<int> costumeFlagArraySizes = new();
 	
@@ -281,9 +281,9 @@ public class GameDataService : IGameDataService
         {
             var musicOrderEntry = musicOrder.Order[index];
             var songId = musicOrderEntry.SongId;
-            if (musicMap.ContainsKey(songId))
+            if (musicMap.TryGetValue(songId, out var value))
             {
-                musicMap[songId].Index = index;
+                value.Index = index;
             }
         }
     }
