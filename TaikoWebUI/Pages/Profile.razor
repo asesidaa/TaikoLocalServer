@@ -254,39 +254,44 @@ else
                 </MudPaper>
             </MudItem>
     
-            <MudItem md="4" xs="12" Class="py-4 px-8">
+            <MudItem md="4" xs="12" Class="py-3 px-3">
                 <MudStack Spacing="4" Class="sticky" Style="top:100px">
-                    <MudCard style="height: 400px;">
-                        <MudCardContent>
-                            <div style="position:relative">
-                                @if (response.Kigurumi == 0)
-                                {
-                                    <MudImage Fluid="true" style=@($"position:absolute; filter: {CostumeColorFilters[response.BodyColor]}") Src=@ImageOrDefault("masks/body-bodymask", response.Body, "masks/body-bodymask-0000") />
-                                    <MudImage Fluid="true" style=@($"position:absolute; filter: {CostumeColorFilters[response.FaceColor]}") Src=@ImageOrDefault("masks/body-facemask", response.Body, "masks/body-facemask-0000") />
-                                    <MudImage Fluid="true" style="position:absolute;" onerror="this.src='images/Costumes/body/body-0000.png'" Src=@($"images/Costumes/body/body-{response.Body.ToString().PadLeft(4, '0')}.png") />
+                        <MudCard style="height: auto" Outlined="true">
+                            <MudCardContent>
+                                @* Player Visualizer *@
+                                <MudItem style="text-align: center;">
+                                    <MudItem style="position:relative">
+                                        @if (response.Kigurumi == 0)
+                                        {
+                                            <MudImage Fluid="true" style=@($"position: relative; top: 0; left: 0; filter: {CostumeColorFilters[response.BodyColor]}") Src=@ImageOrDefault("masks/body-bodymask", response.Body, "masks/body-bodymask-0000") />
+                                            <MudImage Fluid="true" style=@($"position:absolute; top: 0; left: 0; right: 0; margin: 0 auto; filter: {CostumeColorFilters[response.FaceColor]}") Src=@ImageOrDefault("masks/body-facemask", response.Body, "masks/body-facemask-0000") />
+                                            <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/body/body-0000.png'" Src=@($"images/Costumes/body/body-{response.Body.ToString().PadLeft(4, '0')}.png") />
+                                            <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/face/face-0000.png'" Src=@($"images/Costumes/face/face-{response.Face.ToString().PadLeft(4, '0')}.png") />
+                                            <MudImage Fluid="true" style=@($"position:absolute; top: 0; left: 0; right: 0; margin: 0 auto; filter: {CostumeColorFilters[response.BodyColor]}") Src=@ImageOrDefault("masks/head-bodymask", response.Head, "head/head-0000") />
+                                            <MudImage Fluid="true" style=@($"position:absolute; top: 0; left: 0; right: 0; margin: 0 auto; filter: {CostumeColorFilters[response.FaceColor]}") Src=@ImageOrDefault("masks/head-facemask", response.Head, "head/head-0000") />
+                                            <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/head/head-0000.png'" Src=@($"images/Costumes/head/head-{response.Head.ToString().PadLeft(4, '0')}.png") />
+                                        }
+                                        else
+                                        {
+                                            <MudImage Fluid="true" style=@($"position: relative; top: 0; left: 0; filter: {CostumeColorFilters[response.BodyColor]}") Src=@ImageOrDefault("masks/kigurumi-bodymask", response.Kigurumi, "masks/body-bodymask-0000") />
+                                            <MudImage Fluid="true" style=@($"position:absolute; top: 0; left: 0; right: 0; margin: 0 auto; filter: {CostumeColorFilters[response.FaceColor]}") Src=@ImageOrDefault("masks/kigurumi-facemask", response.Kigurumi, "masks/body-facemask-0000") />
+                                            <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/kigurumi/kigurumi-0000.png'" Src=@($"images/Costumes/kigurumi/kigurumi-{response.Kigurumi.ToString().PadLeft(4, '0')}.png") />
+                                        }
+                                        <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/puchi/puchi-0000.png'" Src=@($"images/Costumes/puchi/puchi-{response.Puchi.ToString().PadLeft(4, '0')}.png") />
+                                    </MudItem>
+                                </MudItem>
 
-                                    <MudImage Fluid="true" style="position:absolute;" onerror="this.src='images/Costumes/face/face-0000.png'" Src=@($"images/Costumes/face/face-{response.Face.ToString().PadLeft(4, '0')}.png") />
-
-                                    <MudImage Fluid="true" style=@($"position:absolute; filter: {CostumeColorFilters[response.BodyColor]}") Src=@ImageOrDefault("masks/head-bodymask", response.Head, "head/head-0000") />
-                                    <MudImage Fluid="true" style=@($"position:absolute; filter: {CostumeColorFilters[response.FaceColor]}") Src=@ImageOrDefault("masks/head-facemask", response.Head, "head/head-0000") />
-                                    <MudImage Fluid="true" style="position:absolute;" onerror="this.src='images/Costumes/head/head-0000.png'" Src=@($"images/Costumes/head/head-{response.Head.ToString().PadLeft(4, '0')}.png") />
-                                }
-                                else
-                                {
-                                    <MudImage Fluid="true" style=@($"position:absolute; filter: {CostumeColorFilters[response.BodyColor]}") Src=@ImageOrDefault("masks/kigurumi-bodymask", response.Kigurumi, "masks/body-bodymask-0000") />
-                                    <MudImage Fluid="true" style=@($"position:absolute; filter: {CostumeColorFilters[response.FaceColor]}") Src=@ImageOrDefault("masks/kigurumi-facemask", response.Kigurumi, "masks/body-facemask-0000") />
-                                    <MudImage Fluid="true" style="position:absolute;" onerror="this.src='images/Costumes/kigurumi/kigurumi-0000.png'" Src=@($"images/Costumes/kigurumi/kigurumi-{response.Kigurumi.ToString().PadLeft(4, '0')}.png") />
-                                }
-                                <MudImage Fluid="true" style="position:absolute;" onerror="this.src='images/Costumes/puchi/puchi-0000.png'" Src=@($"images/Costumes/puchi/puchi-{response.Puchi.ToString().PadLeft(4, '0')}.png") />
-                                
-                            </div>
-                        </MudCardContent>
-    @*                     <MudCardActions>
-                            <MudButton Variant="Variant.Text" Color="Color.Primary">Share</MudButton>
-                            <MudButton Variant="Variant.Text" Color="Color.Primary">Learn More</MudButton>
-                        </MudCardActions> *@
-                    </MudCard>
-
+                                @* Player Nameplate *@
+                                <MudItem style="text-align: center; position:relative;">
+                                    <MudImage Fluid="true" style="position: relative; top: 0; left: 0;" Src="images/Nameplates/nameplate.png" />
+                                    <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" Src=@($"images/Nameplates/nameplate_{TitlePlateStrings[response.TitlePlateId].Replace(' ', '_')}.png") />
+                                    @if (response.IsDisplayDanOnNamePlate)
+                                    {
+                                        <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" Src=@($"images/Nameplates/nameplate_dan.png") />
+                                    }
+                                </MudItem>
+                            </MudCardContent>
+                        </MudCard>
                     <MudButton Disabled="@isSavingOptions"
                                OnClick="SaveOptions"
                                Variant="Variant.Filled"
@@ -303,6 +308,7 @@ else
                         }
                     </MudButton>
                 </MudStack>
+                
             </MudItem>
         </MudGrid>
     }
