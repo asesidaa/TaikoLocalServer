@@ -21,19 +21,15 @@ public class PlayResultController : BaseController<PlayResultController>
     private readonly IDanScoreDatumService danScoreDatumService;
 
     private readonly IAiDatumService aiDatumService;
-    
-    private readonly IGameDataService gameDataService;
 
     public PlayResultController(IUserDatumService userDatumService, ISongPlayDatumService songPlayDatumService,
-        ISongBestDatumService songBestDatumService, IDanScoreDatumService danScoreDatumService, IAiDatumService aiDatumService,
-        IGameDataService gameDataService)
+        ISongBestDatumService songBestDatumService, IDanScoreDatumService danScoreDatumService, IAiDatumService aiDatumService)
     {
         this.userDatumService = userDatumService;
         this.songPlayDatumService = songPlayDatumService;
         this.songBestDatumService = songBestDatumService;
         this.danScoreDatumService = danScoreDatumService;
         this.aiDatumService = aiDatumService;
-        this.gameDataService = gameDataService;
     }
 
     [HttpPost]
@@ -78,23 +74,9 @@ public class PlayResultController : BaseController<PlayResultController>
             return Ok(response);
         }
         
-        gameDataService.GetFolderDictionary().TryGetValue(9, out var folder9Data);
-
-        var folder9Songs = new List<uint>();
-        
-        if (folder9Data is not null)
-        {
-            folder9Songs.AddRange(folder9Data.SongNoes);
-        }
-        
         for (var songNumber = 0; songNumber < playResultData.AryStageInfoes.Count; songNumber++)
         {
             var stageData = playResultData.AryStageInfoes[songNumber];
-
-            if (folder9Songs.Contains(stageData.SongNo))
-            {
-                continue;
-            }
             
             if (stageData.IsSkipUse)
             {
