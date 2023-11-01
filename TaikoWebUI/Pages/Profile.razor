@@ -3,8 +3,10 @@
 @inject IGameDataService GameDataService
 @inject IDialogService DialogService
 @inject LoginService LoginService
+@inject IJSRuntime JS
 
 <MudBreadcrumbs Items="breadcrumbs" Class="px-0"></MudBreadcrumbs>
+
 
 <h1>Profile</h1>
 @if (LoginService.LoginRequired)
@@ -35,10 +37,9 @@ else
                         <MudTabPanel Text="Profile">
                             <MudStack Spacing="4">
                                 <h2>Profile Options</h2>
-    
                                 <MudGrid>
                                     <MudItem xs="12" md="8">
-                                        <MudTextField @bind-Value="@response.MyDonName" Label="Name"></MudTextField>
+                                        <MudTextField TextChanged="UpdateMyDonName" @bind-Value="@response.MyDonName" Label="Name"></MudTextField>
                                     </MudItem>
                                     <MudItem xs="12" md="4">
                                         <MudSelect @bind-Value="@response.MyDonNameLanguage" Label="Language">
@@ -50,10 +51,10 @@ else
                                         </MudSelect>
                                     </MudItem>
                                 </MudGrid>
-    
+
                                 <MudGrid>
                                     <MudItem xs="12" md="8">
-                                        <MudTextField @bind-Value="@response.Title" Label="Title" />
+                                        <MudTextField TextChanged="UpdateTitle" @bind-Value="@response.Title" Label="Title" />
                                         <MudButton Color="Color.Primary" Class="mt-1" Size="Size.Small" OnClick="@((_)=>OpenChooseTitleDialog())">
                                             Select a Title
                                         </MudButton>
@@ -68,7 +69,7 @@ else
                                         </MudSelect>
                                     </MudItem>
                                 </MudGrid>
-    
+
                                 <MudSelect @bind-Value="@response.AchievementDisplayDifficulty"
                                            Label="Achievement Panel Difficulty">
                                     @foreach (var item in Enum.GetValues<Difficulty>())
@@ -76,12 +77,12 @@ else
                                         <MudSelectItem Value="@item" />
                                     }
                                 </MudSelect>
-    
+
                                 <MudGrid>
                                     <MudItem xs="12" md="4">
                                         <MudStack Spacing="4">
                                             <MudSwitch @bind-Checked="@response.IsDisplayAchievement" Label="Display Achievement Panel" Color="Color.Primary" />
-                                            <MudSwitch @bind-Checked="@response.IsDisplayDanOnNamePlate" Label="Display Dan Rank on Name Plate" Color="Color.Primary" />
+                                            <MudSwitch  @bind-Checked="@response.IsDisplayDanOnNamePlate" Label="Display Dan Rank on Name Plate" Color="Color.Primary" />
                                         </MudStack>
                                     </MudItem>
                                     <MudItem xs="12" md="8">
@@ -93,7 +94,7 @@ else
                                                     <MudSelectItem Value="@i">@DifficultySettingCourseStrings[index]</MudSelectItem>
                                                 }
                                             </MudSelect>
-    
+
                                             <MudSelect @bind-Value="@response.DifficultySettingStar" Label="Difficulty Setting Star">
                                                 @for (uint i = 0; i < DifficultySettingStarStrings.Length; i++)
                                                 {
@@ -101,7 +102,7 @@ else
                                                     <MudSelectItem Value="@i">@DifficultySettingStarStrings[index]</MudSelectItem>
                                                 }
                                             </MudSelect>
-    
+
                                             <MudSelect @bind-Value="@response.DifficultySettingSort" Label="Difficulty Setting Sort">
                                                 @for (uint i = 0; i < DifficultySettingSortStrings.Length; i++)
                                                 {
@@ -114,7 +115,7 @@ else
                                 </MudGrid>
                             </MudStack>
                         </MudTabPanel>
-    
+
                         <MudTabPanel Text="Costume">
                             <MudStack Spacing="4">
                                 <h2>Costume Options</h2>
@@ -129,7 +130,7 @@ else
                                                     <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
                                                 }
                                             </MudSelect>
-    
+
                                             <MudSelect @bind-Value="@response.Body" Label="Body">
                                                 @for (var i = 0; i < costumeFlagArraySizes[2]; i++)
                                                 {
@@ -138,7 +139,7 @@ else
                                                     <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
                                                 }
                                             </MudSelect>
-    
+
                                             <MudSelect @bind-Value="@response.Face" Label="Face">
                                                 @for (var i = 0; i < costumeFlagArraySizes[3]; i++)
                                                 {
@@ -147,7 +148,7 @@ else
                                                     <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
                                                 }
                                             </MudSelect>
-    
+
                                             <MudSelect @bind-Value="@response.Kigurumi" Label="Kigurumi">
                                                 @for (var i = 0; i < costumeFlagArraySizes[0]; i++)
                                                 {
@@ -156,7 +157,7 @@ else
                                                     <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
                                                 }
                                             </MudSelect>
-    
+
                                             <MudSelect @bind-Value="@response.Puchi" Label="Puchi">
                                                 @for (var i = 0; i < costumeFlagArraySizes[4]; i++)
                                                 {
@@ -166,7 +167,7 @@ else
                                                 }
                                             </MudSelect>
                                         </MudStack>
-    
+
                                         <MudStack Row="true">
                                             <MudSelect @bind-Value="@response.BodyColor" Label="Body Color">
                                                 @for (uint i = 0; i < Constants.COSTUME_COLOR_MAX; i++)
@@ -203,7 +204,7 @@ else
                                 </MudGrid>
                             </MudStack>
                         </MudTabPanel>
-    
+
                         <MudTabPanel Text="Song Options">
                             <MudStack Spacing="4">
                                 <h2>Song Options</h2>
@@ -225,7 +226,7 @@ else
                                                     <MudSelectItem Value="@i">@SpeedStrings[index]</MudSelectItem>
                                                 }
                                             </MudSelect>
-    
+
                                             <MudSelect @bind-Value="@response.PlaySetting.RandomType"
                                                        Label="Random">
                                                 @foreach (var item in Enum.GetValues<RandomType>())
@@ -233,7 +234,7 @@ else
                                                     <MudSelectItem Value="@item" />
                                                 }
                                             </MudSelect>
-    
+
                                             <MudSelect @bind-Value="@response.ToneId" Label="Tone">
                                                 @for (uint i = 0; i < ToneStrings.Length; i++)
                                                 {
@@ -241,7 +242,7 @@ else
                                                     <MudSelectItem Value="@i">@ToneStrings[index]</MudSelectItem>
                                                 }
                                             </MudSelect>
-    
+
                                             <MudSlider Class="mb-8" @bind-Value="@response.NotesPosition" Size="Size.Medium" Min="-5" Max="5" Step="1" TickMarks="true" TickMarkLabels="@NotePositionStrings">
                                                 <MudText Typo="Typo.caption">Notes Position</MudText>
                                             </MudSlider>
@@ -253,45 +254,60 @@ else
                     </MudTabs>
                 </MudPaper>
             </MudItem>
-    
+
             <MudItem md="4" xs="12" Class="py-3 px-3">
                 <MudStack Spacing="4" Class="sticky" Style="top:100px">
-                        <MudCard style="height: auto" Outlined="true">
-                            <MudCardContent>
-                                @* Player Visualizer *@
-                                <MudItem style="text-align: center;">
-                                    <MudItem style="position:relative">
-                                        @if (response.Kigurumi == 0)
-                                        {
-                                            <MudImage Fluid="true" style=@($"position: relative; top: 0; left: 0; filter: {CostumeColorFilters[response.BodyColor]}") Src=@ImageOrDefault("masks/body-bodymask", response.Body, "masks/body-bodymask-0000") />
-                                            <MudImage Fluid="true" style=@($"position:absolute; top: 0; left: 0; right: 0; margin: 0 auto; filter: {CostumeColorFilters[response.FaceColor]}") Src=@ImageOrDefault("masks/body-facemask", response.Body, "masks/body-facemask-0000") />
-                                            <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/body/body-0000.png'" Src=@($"images/Costumes/body/body-{response.Body.ToString().PadLeft(4, '0')}.png") />
-                                            <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/face/face-0000.png'" Src=@($"images/Costumes/face/face-{response.Face.ToString().PadLeft(4, '0')}.png") />
-                                            <MudImage Fluid="true" style=@($"position:absolute; top: 0; left: 0; right: 0; margin: 0 auto; filter: {CostumeColorFilters[response.BodyColor]}") Src=@ImageOrDefault("masks/head-bodymask", response.Head, "head/head-0000") />
-                                            <MudImage Fluid="true" style=@($"position:absolute; top: 0; left: 0; right: 0; margin: 0 auto; filter: {CostumeColorFilters[response.FaceColor]}") Src=@ImageOrDefault("masks/head-facemask", response.Head, "head/head-0000") />
-                                            <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/head/head-0000.png'" Src=@($"images/Costumes/head/head-{response.Head.ToString().PadLeft(4, '0')}.png") />
-                                        }
-                                        else
-                                        {
-                                            <MudImage Fluid="true" style=@($"position: relative; top: 0; left: 0; filter: {CostumeColorFilters[response.BodyColor]}") Src=@ImageOrDefault("masks/kigurumi-bodymask", response.Kigurumi, "masks/body-bodymask-0000") />
-                                            <MudImage Fluid="true" style=@($"position:absolute; top: 0; left: 0; right: 0; margin: 0 auto; filter: {CostumeColorFilters[response.FaceColor]}") Src=@ImageOrDefault("masks/kigurumi-facemask", response.Kigurumi, "masks/body-facemask-0000") />
-                                            <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/kigurumi/kigurumi-0000.png'" Src=@($"images/Costumes/kigurumi/kigurumi-{response.Kigurumi.ToString().PadLeft(4, '0')}.png") />
-                                        }
-                                        <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/puchi/puchi-0000.png'" Src=@($"images/Costumes/puchi/puchi-{response.Puchi.ToString().PadLeft(4, '0')}.png") />
+                    <MudCard style="height: auto" Outlined="true">
+                        <MudCardContent>
+                            @* Player Visualizer *@
+                            <MudItem style="text-align: center;">
+                                <MudItem style="position:relative">
+                                    @if (response.Kigurumi == 0)
+                                    {
+                                        <MudImage Fluid="true" style=@($"position: relative; top: 0; left: 0; filter: {CostumeColorFilters[response.BodyColor]}") Src=@ImageOrDefault("masks/body-bodymask", response.Body, "masks/body-bodymask-0000") />
+                                        <MudImage Fluid="true" style=@($"position:absolute; top: 0; left: 0; right: 0; margin: 0 auto; filter: {CostumeColorFilters[response.FaceColor]}") Src=@ImageOrDefault("masks/body-facemask", response.Body, "masks/body-facemask-0000") />
+                                        <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/body/body-0000.png'" Src=@($"images/Costumes/body/body-{response.Body.ToString().PadLeft(4, '0')}.png") />
+                                        <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/face/face-0000.png'" Src=@($"images/Costumes/face/face-{response.Face.ToString().PadLeft(4, '0')}.png") />
+                                        <MudImage Fluid="true" style=@($"position:absolute; top: 0; left: 0; right: 0; margin: 0 auto; filter: {CostumeColorFilters[response.BodyColor]}") Src=@ImageOrDefault("masks/head-bodymask", response.Head, "head/head-0000") />
+                                        <MudImage Fluid="true" style=@($"position:absolute; top: 0; left: 0; right: 0; margin: 0 auto; filter: {CostumeColorFilters[response.FaceColor]}") Src=@ImageOrDefault("masks/head-facemask", response.Head, "head/head-0000") />
+                                        <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/head/head-0000.png'" Src=@($"images/Costumes/head/head-{response.Head.ToString().PadLeft(4, '0')}.png") />
+                                    }
+                                    else
+                                    {
+                                        <MudImage Fluid="true" style=@($"position: relative; top: 0; left: 0; filter: {CostumeColorFilters[response.BodyColor]}") Src=@ImageOrDefault("masks/kigurumi-bodymask", response.Kigurumi, "masks/body-bodymask-0000") />
+                                        <MudImage Fluid="true" style=@($"position:absolute; top: 0; left: 0; right: 0; margin: 0 auto; filter: {CostumeColorFilters[response.FaceColor]}") Src=@ImageOrDefault("masks/kigurumi-facemask", response.Kigurumi, "masks/body-facemask-0000") />
+                                        <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/kigurumi/kigurumi-0000.png'" Src=@($"images/Costumes/kigurumi/kigurumi-{response.Kigurumi.ToString().PadLeft(4, '0')}.png") />
+                                    }
+                                    <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/puchi/puchi-0000.png'" Src=@($"images/Costumes/puchi/puchi-{response.Puchi.ToString().PadLeft(4, '0')}.png") />
+                                </MudItem>
+                            </MudItem>
+
+
+                            @* Player Nameplate *@
+                            <MudItem style="text-align: center; position:relative;">
+                                @* Title text *@
+                                <MudItem style="position:absolute; top: 7%; left:0; right:1.1%; height:38%; width:min(96%, 320px); margin: 0 auto; z-index:2; vertical-align: middle;">
+                                    <MudItem Style="position:absolute; height:100%; width:80%; right: 10%;">
+                                        <MudText Id="nameplate-title" Style="position:absolute; height:100%; top: 0; left: 0; right: 0; margin: auto auto; font-family: 'Nijiiro', sans-serif; color:black">@response.Title</MudText>
                                     </MudItem>
                                 </MudItem>
-
-                                @* Player Nameplate *@
-                                <MudItem style="text-align: center; position:relative;">
-                                    <MudImage Fluid="true" style="position: relative; top: 0; left: 0;" Src="images/Nameplates/nameplate.png" />
-                                    <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" Src=@($"images/Nameplates/nameplate_{TitlePlateStrings[response.TitlePlateId].Replace(' ', '_')}.png") />
-                                    @if (response.IsDisplayDanOnNamePlate)
-                                    {
-                                        <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" Src=@($"images/Nameplates/nameplate_dan.png") />
-                                    }
+                                @* Name text *@
+                                <MudItem Style="position:absolute; top: 47%; left:0; right:1.1%; height:41%; width:min(96%, 320px); margin: 0 auto; z-index:2">
+                                    @* Name textoffset to the right for Dan Rank *@
+                                    <MudItem Style=@($"position:absolute; height:100%; right: 10%; {(response.IsDisplayDanOnNamePlate ? "width:46%;" : "width:80%;")}")>
+                                        <MudText Id="nameplate-name-outline" Style="position:absolute; height:100%; top: 0; left: 0; right: 0; margin: auto auto; font-family: 'Nijiiro', sans-serif; -webkit-text-stroke: 5px; -webkit-text-stroke-color: black">@response.MyDonName</MudText>
+                                        <MudText Id="nameplate-name" Style="position:absolute; height:100%; top: 0; left: 0; right: 0; margin: auto auto; font-family: 'Nijiiro', sans-serif; color:white">@response.MyDonName</MudText>
+                                    </MudItem>
                                 </MudItem>
-                            </MudCardContent>
-                        </MudCard>
+                                <MudImage onload="nameplateLoaded()" Id="nameplate" Fluid="true" Style="position: relative; top: 0; left: 0;" Src="images/Nameplates/nameplate.png" />
+                                <MudImage Fluid="true" Style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" Src=@($"images/Nameplates/nameplate_{TitlePlateStrings[response.TitlePlateId].Replace(' ', '_')}.png") />
+                                @if (response.IsDisplayDanOnNamePlate)
+                                {
+                                    <MudImage Fluid="true" Style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" Src="images/Nameplates/nameplate_dan.png" />
+                                }
+                            </MudItem>
+                        </MudCardContent>
+                    </MudCard>
                     <MudButton Disabled="@isSavingOptions"
                                OnClick="SaveOptions"
                                Variant="Variant.Filled"
@@ -308,8 +324,20 @@ else
                         }
                     </MudButton>
                 </MudStack>
-                
+
             </MudItem>
         </MudGrid>
+    }
+}
+
+@code {
+    private async Task UpdateMyDonName()
+    {
+        @if (response is not null) await JS.InvokeVoidAsync("updateMyDonName", response.MyDonName);
+    }
+
+    private async Task UpdateTitle()
+    {
+        @if (response is not null) await JS.InvokeVoidAsync("updateTitle", response.Title);
     }
 }
