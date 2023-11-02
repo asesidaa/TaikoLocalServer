@@ -35,20 +35,15 @@ public partial class Profile
         "masks/body-bodymask-0070", "masks/body-bodymask-0092", "masks/body-bodymask-0121",
         "masks/body-bodymask-0123", "masks/body-bodymask-0127", "masks/body-bodymask-0136",
         "masks/body-bodymask-0153",
-
         "masks/body-facemask-0005", "masks/body-facemask-0015", "masks/body-facemask-0030",
         "masks/body-facemask-0064", "masks/body-facemask-0065", "masks/body-facemask-0069",
         "masks/body-facemask-0090", "masks/body-facemask-0092", "masks/body-facemask-0136",
         "masks/body-facemask-0151", "masks/body-facemask-0152", "masks/body-facemask-0153",
-
         "masks/head-bodymask-0113", "masks/head-bodymask-0138",
-
         "masks/head-facemask-0003", "masks/head-facemask-0113", "masks/head-facemask-0137", 
         "masks/head-facemask-0138",
-
         "masks/kigurumi-bodymask-0052", "masks/kigurumi-bodymask-0109", "masks/kigurumi-bodymask-0110",
         "masks/kigurumi-bodymask-0115", "masks/kigurumi-bodymask-0123",
-
         "masks/kigurumi-facemask-0052", "masks/kigurumi-facemask-0109", "masks/kigurumi-facemask-0110",
         "masks/kigurumi-facemask-0115", "masks/kigurumi-facemask-0123",
     };
