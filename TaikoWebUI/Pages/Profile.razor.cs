@@ -171,6 +171,8 @@ public partial class Profile
     
     private List<int> costumeFlagArraySizes = new();
 
+    private int[] scoresArray = new int[9];
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -190,7 +192,7 @@ public partial class Profile
         isSavingOptions = false;
     }
 
-    public static string ImageOrDefault(string file, uint id, string defaultfile)
+    public static string CostumeOrDefault(string file, uint id, string defaultfile)
     {
         var path = "/images/Costumes/";
         var filename = file + "-" + id.ToString().PadLeft(4, '0');

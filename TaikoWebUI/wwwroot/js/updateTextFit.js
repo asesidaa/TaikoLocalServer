@@ -54,9 +54,11 @@ function initNameplate() {
 }
 
 function updateFit() {
-    textFit(title, { alignHoriz: true, alignVert: true });
-    textFit(myDonName, { alignHoriz: true, alignVert: true });
-    textFit(myDonNameOutline, { alignHoriz: true, alignVert: true });
+    if (title.offsetWidth > 0 && title.offsetHeight > 0) {
+        textFit(title, { alignHoriz: true, alignVert: true });
+        textFit(myDonName, { alignHoriz: true, alignVert: true });
+        textFit(myDonNameOutline, { alignHoriz: true, alignVert: true });
+    }
 }
 
 
