@@ -104,3 +104,21 @@ a, .btn-link {
     .loading-progress-text:after {
         content: var(--blazor-load-percentage-text, "Loading");
     }
+
+.nameplateTextOutline {
+    -webkit-text-stroke: 5px;
+    -webkit-text-stroke-color: black
+
+}
+
+.nameplateText {
+    font-family: 'Nijiiro', sans-serif !important;
+    position: absolute;
+    height: 100%;
+    top: 0;
+    right: 0;
+    left: 0;
+    margin: 0 auto;
+    color: white;
+    margin: auto auto;
+}

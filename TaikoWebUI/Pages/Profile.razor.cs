@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Linq;
 using TaikoWebUI.Pages.Dialogs;
+using static MudBlazor.CategoryTypes;
 
 namespace TaikoWebUI.Pages;
 
@@ -8,6 +9,8 @@ public partial class Profile
 {
     [Parameter]
     public int Baid { get; set; }
+
+    private SongBestResponse? songresponse;
 
     private UserSetting? response;
 
@@ -40,7 +43,7 @@ public partial class Profile
         "masks/body-facemask-0090", "masks/body-facemask-0092", "masks/body-facemask-0136",
         "masks/body-facemask-0151", "masks/body-facemask-0152", "masks/body-facemask-0153",
         "masks/head-bodymask-0113", "masks/head-bodymask-0138",
-        "masks/head-facemask-0003", "masks/head-facemask-0113", "masks/head-facemask-0137", 
+        "masks/head-facemask-0003", "masks/head-facemask-0113", "masks/head-facemask-0137",
         "masks/head-facemask-0138",
         "masks/kigurumi-bodymask-0052", "masks/kigurumi-bodymask-0109", "masks/kigurumi-bodymask-0110",
         "masks/kigurumi-bodymask-0115", "masks/kigurumi-bodymask-0123",
@@ -168,10 +171,12 @@ public partial class Profile
     {
         new BreadcrumbItem("Cards", href: "/Cards"),
     };
-    
+
+    private Dictionary<Difficulty, List<SongBestData>> songBestDataMap = new();
+
     private List<int> costumeFlagArraySizes = new();
 
-    private int[] scoresArray = new int[9];
+    private int[] scoresArray = new int[10];
 
     protected override async Task OnInitializedAsync()
     {
@@ -181,8 +186,29 @@ public partial class Profile
 
         breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
         breadcrumbs.Add(new BreadcrumbItem("Profile", href: $"/Cards/{Baid}/Profile", disabled: false));
-        
+
         costumeFlagArraySizes = GameDataService.GetCostumeFlagArraySizes();
+
+        songresponse = await Client.GetFromJsonAsync<SongBestResponse>($"api/PlayData/{Baid}");
+        songresponse.ThrowIfNull();
+
+        songresponse.SongBestData.ForEach(data =>
+        {
+            var songId = data.SongId;
+            data.Genre = GameDataService.GetMusicGenreBySongId(songId);
+            data.MusicName = GameDataService.GetMusicNameBySongId(songId);
+            data.MusicArtist = GameDataService.GetMusicArtistBySongId(songId);
+        });
+
+        songBestDataMap = songresponse.SongBestData.GroupBy(data => data.Difficulty)
+            .ToDictionary(data => data.Key,
+                          data => data.ToList());
+        foreach (var songBestDataList in songBestDataMap.Values)
+        {
+            songBestDataList.Sort((data1, data2) => GameDataService.GetMusicIndexBySongId(data1.SongId)
+                                      .CompareTo(GameDataService.GetMusicIndexBySongId(data2.SongId)));
+        }
+
     }
 
     private async Task SaveOptions()
@@ -190,6 +216,27 @@ public partial class Profile
         isSavingOptions = true;
         await Client.PostAsJsonAsync($"api/UserSettings/{Baid}", response);
         isSavingOptions = false;
+    }
+
+    private void UpdateScores(Difficulty difficulty)
+    {
+        Console.WriteLine("Updating difficulty : " + (int)difficulty);
+
+        response.AchievementDisplayDifficulty = difficulty;
+        scoresArray = new int[10];
+
+        if (difficulty is not Difficulty.None)
+            if (songBestDataMap.TryGetValue(difficulty, out var values))
+            {
+                foreach (var value in values)
+                {
+                    Console.WriteLine("Updating for songId : " + value.SongId);
+                    if (value.BestCrown == CrownType.Clear) scoresArray[7]++;
+                    if (value.BestCrown == CrownType.Gold) scoresArray[8]++;
+                    if (value.BestCrown == CrownType.Dondaful) scoresArray[9]++;
+                }
+                StateHasChanged();
+            }
     }
 
     public static string CostumeOrDefault(string file, uint id, string defaultfile)
