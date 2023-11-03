@@ -70,8 +70,7 @@ else
                                     </MudItem>
                                 </MudGrid>
 
-                                <MudSelect @bind-Value="@response.AchievementDisplayDifficulty"
-                                           Label="Achievement Panel Difficulty">
+                                <MudSelect T="Difficulty" ValueChanged=@UpdateScores Value=@response.AchievementDisplayDifficulty Label="Achievement Panel Difficulty">
                                     @foreach (var item in Enum.GetValues<Difficulty>())
                                     {
                                         <MudSelectItem Value="@item" />
@@ -316,18 +315,54 @@ else
                                 <MudTabPanel Text="Achievement Panel">
                                     <MudItem style="text-align: center; position:relative;">
                                         @* Achievement panel Text *@
-                                        <MudItem Style="position:absolute; top: 0; left:0; right:0; height:100%; width:min(96%, 320px); margin: 0 auto; z-index:2; vertical-align: middle;">
+                                        <MudItem Id="scoreboard" Style="position:absolute; top: 0; left:0; right:0; height:100%; width:min(96%, 320px); margin: 0 auto; z-index:2; vertical-align: middle;">
                                             <MudItem Style="position:absolute; height:18%; width:100%; top:11%">
-
+                                                <MudItem Style="position:absolute; height:100%; width:15%; left:78%">
+                                                    <MudText Class="nameplateText nameplateTextOutline">@scoresArray[0]</MudText>
+                                                    <MudText Class="nameplateText">@scoresArray[0]</MudText>
+                                                </MudItem>
                                             </MudItem>
                                             <MudItem Style="position:absolute; height:18%; width:100%; top:30%">
-
+                                                <MudItem Style="position:absolute; height:100%; width:15%; left:19%">
+                                                    <MudText Class="nameplateText nameplateTextOutline">@scoresArray[1]</MudText>
+                                                    <MudText Class="nameplateText">@scoresArray[1]</MudText>
+                                                </MudItem>
+                                                <MudItem Style="position:absolute; height:100%; width:15%; left:48%">
+                                                    <MudText Class="nameplateText nameplateTextOutline">@scoresArray[2]</MudText>
+                                                    <MudText Class="nameplateText">@scoresArray[2]</MudText>
+                                                </MudItem>
+                                                <MudItem Style="position:absolute; height:100%; width:15%; left:78%">
+                                                    <MudText Class="nameplateText nameplateTextOutline">@scoresArray[3]</MudText>
+                                                    <MudText Class="nameplateText">@scoresArray[3]</MudText>
+                                                </MudItem>
                                             </MudItem>
                                             <MudItem Style="position:absolute; height:18%; width:100%; top:49%">
-
+                                                <MudItem Style="position:absolute; height:100%; width:15%; left:19%">
+                                                    <MudText Class="nameplateText nameplateTextOutline">@scoresArray[4]</MudText>
+                                                    <MudText Class="nameplateText">@scoresArray[4]</MudText>
+                                                </MudItem>
+                                                <MudItem Style="position:absolute; height:100%; width:15%; left:48%">
+                                                    <MudText Class="nameplateText nameplateTextOutline">@scoresArray[5]</MudText>
+                                                    <MudText Class="nameplateText">@scoresArray[5]</MudText>
+                                                </MudItem>
+                                                <MudItem Style="position:absolute; height:100%; width:15%; left:78%">
+                                                    <MudText Class="nameplateText nameplateTextOutline">@scoresArray[6]</MudText>
+                                                    <MudText Class="nameplateText">@scoresArray[6]</MudText>
+                                                </MudItem>
                                             </MudItem>
                                             <MudItem Style="position:absolute; height:18%; width:100%; top:69%">
-
+                                                <MudItem Style="position:absolute; height:100%; width:15%; left:19%">
+                                                    <MudText Class="nameplateText nameplateTextOutline">@scoresArray[7]</MudText>
+                                                    <MudText Class="nameplateText">@scoresArray[7]</MudText>
+                                                </MudItem>
+                                                <MudItem Style="position:absolute; height:100%; width:15%; left:48%">
+                                                    <MudText Class="nameplateText nameplateTextOutline">@scoresArray[8]</MudText>
+                                                    <MudText Class="nameplateText">@scoresArray[8]</MudText>
+                                                </MudItem>
+                                                <MudItem Style="position:absolute; height:100%; width:15%; left:78%">
+                                                    <MudText Class="nameplateText nameplateTextOutline">@scoresArray[9]</MudText>
+                                                    <MudText Class="nameplateText">@scoresArray[9]</MudText>
+                                                </MudItem>
                                             </MudItem>
                                         </MudItem>
                                         <MudImage Fluid="true" style="position: relative; top: 0;" Src=@($"images/rank_panel_{DifficultySettingCourseStrings[(int) response.AchievementDisplayDifficulty + 1].Replace(' ', '_')}.png") />
