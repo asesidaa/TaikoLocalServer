@@ -1,5 +1,10 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+@font-face {
+    font-family: 'Nijiiro';
+    src: url('Nijiiro.woff2') format('woff2')
+}
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
