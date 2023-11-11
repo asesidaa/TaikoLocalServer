@@ -3,16 +3,19 @@ using System;
 using GameDatabase.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace TaikoLocalServer.Migrations
+namespace GameDatabase.Migrations
 {
     [DbContext(typeof(TaikoDbContext))]
-    partial class TaikoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231111164910_RemoveBaidUniquenessFromCard")]
+    partial class RemoveBaidUniquenessFromCard
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0-rc.2.23480.1");

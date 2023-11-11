@@ -5,6 +5,7 @@ public static class ServiceExtensions
     public static IServiceCollection AddTaikoDbServices(this IServiceCollection services)
     {
         services.AddScoped<ICardService, CardService>();
+        services.AddScoped<ICredentialService, CredentialService>();
         services.AddScoped<IUserDatumService, UserDatumService>();
         services.AddScoped<ISongPlayDatumService, SongPlayDatumService>();
         services.AddScoped<ISongBestDatumService, SongBestDatumService>();

@@ -14,6 +14,4 @@ public interface ICardService
 	public Task AddCard(Card card);
 
 	public Task<bool> DeleteCard(string accessCode);
-	
-	public Task<bool> UpdatePassword(string accessCode, string password, string salt);
 }

@@ -46,15 +46,17 @@ public class LoginService
 
         foreach (var user in response.Users.Where(user => user.AccessCode == inputCardNum))
         {
-            if (user.Password == "") return 4;
-            if (ComputeHash(inputPassword, user.Salt) != user.Password) return 2;
-            CardNum = int.Parse(user.AccessCode);
-            Baid = user.Baid;
-            IsLoggedIn = true;
-            IsAdmin = false;
-            return 1;
+            foreach (var userCredential in response.UserCredentials.Where(userCredential => userCredential.Baid == user.Baid))
+            {
+                if (userCredential.Password == "") return 4;
+                if (ComputeHash(inputPassword, userCredential.Salt) != userCredential.Password) return 2;
+                CardNum = int.Parse(user.AccessCode);
+                Baid = user.Baid;
+                IsLoggedIn = true;
+                IsAdmin = false;
+                return 1;
+            }
         }
-
         return 3;
     }
 
@@ -64,17 +66,20 @@ public class LoginService
         if (OnlyAdmin) return 0;
         foreach (var user in response.Users.Where(user => user.AccessCode == inputCardNum))
         {
-            if (user.Password != "") return 4;
-            if (inputPassword != inputConfirmPassword) return 2;
-            var salt = CreateSalt();
-            var request = new SetPasswordRequest
+            foreach (var userCredential in response.UserCredentials.Where(userCredential => userCredential.Baid == user.Baid))
             {
-                AccessCode = user.AccessCode,
-                Password = ComputeHash(inputPassword, salt),
-                Salt = salt
-            };
-            var responseMessage = await client.PostAsJsonAsync("api/Cards", request);
-            return responseMessage.IsSuccessStatusCode ? 1 : 3;
+                if (userCredential.Password != "") return 4;
+                if (inputPassword != inputConfirmPassword) return 2;
+                var salt = CreateSalt();
+                var request = new SetPasswordRequest
+                {
+                    Baid = user.Baid,
+                    Password = ComputeHash(inputPassword, salt),
+                    Salt = salt
+                };
+                var responseMessage = await client.PostAsJsonAsync("api/Credentials", request);
+                return responseMessage.IsSuccessStatusCode ? 1 : 3;
+            }
         }
 
         return 3;
@@ -111,16 +116,19 @@ public class LoginService
         if (OnlyAdmin) return 0;
         foreach (var user in response.Users.Where(user => user.AccessCode == inputCardNum))
         {
-            if (user.Password != ComputeHash(inputOldPassword, user.Salt)) return 4;
-            if (inputNewPassword != inputConfirmNewPassword) return 2;
-            var request = new SetPasswordRequest
+            foreach (var userCredential in response.UserCredentials.Where(userCredential => userCredential.Baid == user.Baid))
             {
-                AccessCode = user.AccessCode,
-                Password = ComputeHash(inputNewPassword, user.Salt),
-                Salt = user.Salt
-            };
-            var responseMessage = await client.PostAsJsonAsync("api/Cards", request);
-            return responseMessage.IsSuccessStatusCode ? 1 : 3;
+                if (userCredential.Password != ComputeHash(inputOldPassword, userCredential.Salt)) return 4;
+                if (inputNewPassword != inputConfirmNewPassword) return 2;
+                var request = new SetPasswordRequest
+                {
+                    Baid = user.Baid,
+                    Password = ComputeHash(inputNewPassword, userCredential.Salt),
+                    Salt = userCredential.Salt
+                };
+                var responseMessage = await client.PostAsJsonAsync("api/Credentials", request);
+                return responseMessage.IsSuccessStatusCode ? 1 : 3;
+            }
         }
 
         return 3;

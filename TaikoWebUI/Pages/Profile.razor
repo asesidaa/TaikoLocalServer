@@ -1,4 +1,4 @@
-﻿@page "/Cards/{baid:int}/Profile"
+﻿@page "/Users/{baid:int}/Profile"
 @inject HttpClient Client
 @inject IGameDataService GameDataService
 @inject IDialogService DialogService
@@ -24,7 +24,7 @@ else
     {
         <MudItem xs="12">
             <MudText Align="Align.Center" Class="my-8">
-                Please log in by clicking on "cards" tab first.
+                Please log in by clicking on "Users" tab first.
             </MudText>
         </MudItem>
     }

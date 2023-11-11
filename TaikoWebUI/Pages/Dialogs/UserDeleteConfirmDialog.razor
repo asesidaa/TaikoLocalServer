@@ -5,19 +5,19 @@
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.DeleteForever" Class="mr-3 mb-n1"/>
-            Delete card?
+            Delete user?
         </MudText>
     </TitleContent>
     <DialogContent>
         <MudText>
-            Do you really want to delete the card?
-            All the related data will also be deleted and this process cannot be undone!
+            Do you really want to delete this user's data?
+            All the related data will be deleted and this process cannot be undone!
         </MudText>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Error" OnClick="DeleteCard">
-            <MudText>Delete Card</MudText>
+        <MudButton Color="Color.Error" OnClick="DeleteUser">
+            <MudText>Delete User</MudText>
         </MudButton>
     </DialogActions>
 </MudDialog>

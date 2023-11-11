@@ -2,7 +2,7 @@
 @inject HttpClient Client
 @inject LoginService LoginService
 
-@page "/Cards/{baid:int}/DaniDojo"
+@page "/Users/{baid:int}/DaniDojo"
 
 <MudBreadcrumbs Items="breadcrumbs" Class="px-0"></MudBreadcrumbs>
 
@@ -20,7 +20,7 @@ else
 {
     <MudItem xs="12">
         <MudText Align="Align.Center" Class="my-8">
-            Please log in by clicking on "cards" tab first.
+            Please log in by clicking on "Users" tab first.
         </MudText>
     </MudItem>
 }

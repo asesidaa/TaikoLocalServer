@@ -3,16 +3,19 @@ using System;
 using GameDatabase.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace TaikoLocalServer.Migrations
+namespace GameDatabase.Migrations
 {
     [DbContext(typeof(TaikoDbContext))]
-    partial class TaikoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231111155016_CopyPasswordSaltFromCardToCredential")]
+    partial class CopyPasswordSaltFromCardToCredential
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0-rc.2.23480.1");
@@ -84,7 +87,18 @@ namespace TaikoLocalServer.Migrations
                     b.Property<ulong>("Baid")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Salt")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("AccessCode");
+
+                    b.HasIndex(new[] { "Baid" }, "IX_Card_Baid")
+                        .IsUnique();
 
                     b.ToTable("Card", (string)null);
                 });
@@ -92,6 +106,7 @@ namespace TaikoLocalServer.Migrations
             modelBuilder.Entity("GameDatabase.Entities.Credential", b =>
                 {
                     b.Property<ulong>("Baid")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Password")
@@ -400,18 +415,6 @@ namespace TaikoLocalServer.Migrations
                         .IsRequired();
 
                     b.Navigation("Parent");
-                });
-
-            modelBuilder.Entity("GameDatabase.Entities.Credential", b =>
-                {
-                    b.HasOne("GameDatabase.Entities.Card", "Ba")
-                        .WithMany()
-                        .HasForeignKey("Baid")
-                        .HasPrincipalKey("Baid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Ba");
                 });
 
             modelBuilder.Entity("GameDatabase.Entities.DanScoreDatum", b =>

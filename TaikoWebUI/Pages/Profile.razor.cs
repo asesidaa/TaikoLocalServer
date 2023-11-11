@@ -166,7 +166,7 @@ public partial class Profile
 
     private readonly List<BreadcrumbItem> breadcrumbs = new()
     {
-        new BreadcrumbItem("Cards", href: "/Cards"),
+        new BreadcrumbItem("Users", href: "/Users"),
     };
     
     private List<int> costumeFlagArraySizes = new();
@@ -178,7 +178,7 @@ public partial class Profile
         response = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
 
         breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
-        breadcrumbs.Add(new BreadcrumbItem("Profile", href: $"/Cards/{Baid}/Profile", disabled: false));
+        breadcrumbs.Add(new BreadcrumbItem("Profile", href: $"/Users/{Baid}/Profile", disabled: false));
         
         costumeFlagArraySizes = GameDataService.GetCostumeFlagArraySizes();
     }

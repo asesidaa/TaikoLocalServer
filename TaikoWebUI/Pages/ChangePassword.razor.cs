@@ -29,14 +29,14 @@ public partial class ChangePassword
                         "Error",
                         "Only admin can log in.",
                         "Ok");
-                    NavigationManager.NavigateTo("/Cards");
+                    NavigationManager.NavigateTo("/Users");
                     break;
                 case 1:
                     await DialogService.ShowMessageBox(
                         "Success",
                         "Password changed successfully.",
                         "Ok");
-                    NavigationManager.NavigateTo("/Cards");
+                    NavigationManager.NavigateTo("/Users");
                     break;
                 case 2:
                     await DialogService.ShowMessageBox(
