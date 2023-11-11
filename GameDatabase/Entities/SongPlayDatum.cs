@@ -24,6 +24,6 @@ namespace GameDatabase.Entities
         public bool Skipped { get; set; }
         public DateTime PlayTime { get; set; }
 
-        public virtual Card? Ba { get; set; }
+        public virtual UserDatum? Ba { get; set; }
     }
 }

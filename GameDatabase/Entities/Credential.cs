@@ -6,6 +6,6 @@
         public string Password { get; set; } = null!;
         public string Salt { get; set; } = null!;
         
-        public virtual Card? Ba { get; set; }
+        public virtual UserDatum? Ba { get; set; }
     }
 }

@@ -28,7 +28,7 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        qrCode = "BNTTCNID" + User.AccessCode;
+        qrCode = "BNTTCNID" + User.AccessCodes.First();
     }
 
     private void Submit()

@@ -1,4 +1,5 @@
 ﻿using SharedProject.Enums;
+using SharedProject.Models;
 
 namespace GameDatabase.Entities;
 
@@ -14,5 +15,5 @@ public class AiScoreDatum
 
     public List<AiSectionScoreDatum> AiSectionScoreData { get; set; } = new();
 
-    public virtual Card? Ba { get; set; }
+    public virtual UserDatum? Ba { get; set; }
 }

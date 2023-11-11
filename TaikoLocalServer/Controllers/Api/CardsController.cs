@@ -14,9 +14,9 @@ public class CardsController : BaseController<CardsController>
     }
 
     [HttpDelete("{accessCode}")]
-    public async Task<IActionResult> DeleteUser(string accessCode)
+    public async Task<IActionResult> DeleteUser(uint baid)
     {
-        var result = await cardService.DeleteCard(accessCode);
+        var result = await cardService.DeleteCard(baid);
 
         return result ? NoContent() : NotFound();
     }

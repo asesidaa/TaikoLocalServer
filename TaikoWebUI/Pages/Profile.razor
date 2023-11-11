@@ -3,24 +3,17 @@
 @inject IGameDataService GameDataService
 @inject IDialogService DialogService
 @inject LoginService LoginService
-@inject IJSRuntime JS
+@inject IJSRuntime Js
 
 <MudBreadcrumbs Items="breadcrumbs" Class="px-0"></MudBreadcrumbs>
 
 
 <h1>Profile</h1>
-@if (LoginService.LoginRequired)
-{
-    <MudText Typo="Typo.caption">Card: @LoginService.GetCardNum()</MudText>
-}
-else
-{
-    <MudText Typo="Typo.caption">Card: @Baid</MudText>
-}
+<MudText Typo="Typo.caption">User: @Baid</MudText>
 
 @if (response is not null)
 {
-    @if (LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.Baid != Baid && !LoginService.IsAdmin)))
+    @if (LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.GetLoggedInUser().Baid != Baid && !LoginService.IsAdmin)))
     {
         <MudItem xs="12">
             <MudText Align="Align.Center" Class="my-8">
@@ -333,11 +326,11 @@ else
 @code {
     private async Task UpdateMyDonName()
     {
-        @if (response is not null) await JS.InvokeVoidAsync("updateMyDonName", response.MyDonName);
+        @if (response is not null) await Js.InvokeVoidAsync("updateMyDonName", response.MyDonName);
     }
 
     private async Task UpdateTitle()
     {
-        @if (response is not null) await JS.InvokeVoidAsync("updateTitle", response.Title);
+        @if (response is not null) await Js.InvokeVoidAsync("updateTitle", response.Title);
     }
 }
