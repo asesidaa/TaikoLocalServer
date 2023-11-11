@@ -3,9 +3,9 @@
 @inject LoginService LoginService
 @inject NavigationManager NavigationManager
 
-@page "/Cards"
+@page "/Users"
 
-<h1>Cards</h1>
+<h1>Users</h1>
 <MudGrid Class="my-8">
     @if (response is null)
     {
@@ -50,9 +50,9 @@
                                     </MudMenuItem>
                                     <MudDivider/>
                                     <MudMenuItem Icon="@Icons.Material.Filled.Delete"
-                                                 OnClick="@(_ => DeleteCard(user))"
+                                                 OnClick="@(_ => DeleteUser(user))"
                                                  IconColor="@Color.Error">
-                                        Delete Card
+                                        Delete User
                                     </MudMenuItem>
                                 </MudMenu>
                             </CardHeaderActions>
@@ -63,7 +63,7 @@
                         </MudCardContent>
                         <MudCardActions>
                             <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
-                                <MudButton Href="@($"Cards/{user.Baid}/Profile")"
+                                <MudButton Href="@($"Users/{user.Baid}/Profile")"
                                            Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Edit"
                                            Color="Color.Primary">
                                     Edit Profile
@@ -77,8 +77,8 @@
                                          FullWidth="true"
                                          AnchorOrigin="Origin.BottomCenter"
                                          TransformOrigin="Origin.TopCenter">
-                                    <MudMenuItem Href="@($"Cards/{user.Baid}/HighScores")">High Scores</MudMenuItem>
-                                    <MudMenuItem Href="@($"Cards/{user.Baid}/DaniDojo")">Dani Dojo</MudMenuItem>
+                                    <MudMenuItem Href="@($"Users/{user.Baid}/HighScores")">High Scores</MudMenuItem>
+                                    <MudMenuItem Href="@($"Users/{user.Baid}/DaniDojo")">Dani Dojo</MudMenuItem>
                                 </MudMenu>
                             </MudStack>
                         </MudCardActions>
@@ -109,7 +109,7 @@
                                             <MudButton OnClick="OnLogin" FullWidth="true" Class="mt-3" StartIcon="@Icons.Material.Filled.Login" Color="Color.Primary" Variant="Variant.Filled">Login</MudButton>
                                             @if (!LoginService.OnlyAdmin)
                                             {
-                                                <MudButton Href="@("Cards/Register")" FullWidth="true" Class="mt-3" StartIcon="@Icons.Material.Filled.AddCard" Color="Color.Primary" Variant="Variant.Filled">Register</MudButton>
+                                                <MudButton Href="@("Users/Register")" FullWidth="true" Class="mt-3" StartIcon="@Icons.Material.Filled.AddCard" Color="Color.Primary" Variant="Variant.Filled">Register</MudButton>
                                             }
                                         </MudStack>
                                     </MudForm>
@@ -138,9 +138,9 @@
                                     </MudMenuItem>
                                     <MudDivider/>
                                     <MudMenuItem Icon="@Icons.Material.Filled.Delete"
-                                                 OnClick="@(_ => DeleteCard(user))"
+                                                 OnClick="@(_ => DeleteUser(user))"
                                                  IconColor="@Color.Error">
-                                        Delete Card
+                                        Delete User
                                     </MudMenuItem>
                                 </MudMenu>
                             </CardHeaderActions>
@@ -151,7 +151,7 @@
                         </MudCardContent>
                         <MudCardActions>
                             <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
-                                <MudButton Href="@($"Cards/{user.Baid}/Profile")"
+                                <MudButton Href="@($"Users/{user.Baid}/Profile")"
                                            Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Edit"
                                            Color="Color.Primary">
                                     Edit Profile
@@ -165,8 +165,8 @@
                                          FullWidth="true"
                                          AnchorOrigin="Origin.BottomCenter"
                                          TransformOrigin="Origin.TopCenter">
-                                    <MudMenuItem Href="@($"Cards/{user.Baid}/HighScores")">High Scores</MudMenuItem>
-                                    <MudMenuItem Href="@($"Cards/{user.Baid}/DaniDojo")">Dani Dojo</MudMenuItem>
+                                    <MudMenuItem Href="@($"Users/{user.Baid}/HighScores")">High Scores</MudMenuItem>
+                                    <MudMenuItem Href="@($"Users/{user.Baid}/DaniDojo")">Dani Dojo</MudMenuItem>
                                 </MudMenu>
                             </MudStack>
                         </MudCardActions>

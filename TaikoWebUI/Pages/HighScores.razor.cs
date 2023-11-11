@@ -16,7 +16,7 @@ public partial class HighScores
 
     private readonly List<BreadcrumbItem> breadcrumbs = new()
     {
-        new BreadcrumbItem("Cards", href: "/Cards"),
+        new BreadcrumbItem("Users", href: "/Users"),
     };
 
     protected override async Task OnInitializedAsync()
@@ -44,7 +44,7 @@ public partial class HighScores
         
 
         breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
-        breadcrumbs.Add(new BreadcrumbItem("High Scores", href: $"/Cards/{Baid}/HighScores", disabled: false));
+        breadcrumbs.Add(new BreadcrumbItem("High Scores", href: $"/Users/{Baid}/HighScores", disabled: false));
     }
 
     private async Task OnFavoriteToggled(SongBestData data)

@@ -20,14 +20,4 @@ public class CardsController : BaseController<CardsController>
 
         return result ? NoContent() : NotFound();
     }
-    
-    [HttpPost]
-    public async Task<IActionResult> UpdatePassword(SetPasswordRequest request)
-    {
-        var accessCode = request.AccessCode;
-        var password = request.Password;
-        var salt = request.Salt;
-        var result = await cardService.UpdatePassword(accessCode, password, salt);
-        return result ? NoContent() : NotFound();
-    }
 }

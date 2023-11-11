@@ -2,7 +2,7 @@
 
 namespace TaikoWebUI.Pages;
 
-public partial class Cards
+public partial class Users
 {
     private string cardNum = "";
     private MudForm loginForm = default!;
@@ -15,19 +15,20 @@ public partial class Cards
         response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
     }
 
-    private async Task DeleteCard(User user)
+    private async Task DeleteUser(User user)
     {
         var parameters = new DialogParameters
         {
             ["user"] = user
         };
 
-        var dialog = DialogService.Show<CardDeleteConfirmDialog>("Delete Card", parameters);
+        var dialog = DialogService.Show<UserDeleteConfirmDialog>("Delete User", parameters);
         var result = await dialog.Result;
 
         if (result.Canceled) return;
 
         response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
+        OnLogout();
     }
     
     private async Task OnLogin()
@@ -45,7 +46,7 @@ public partial class Cards
                     await loginForm.ResetAsync();
                     break;
                 case 1:
-                    NavigationManager.NavigateTo("/Cards");
+                    NavigationManager.NavigateTo("/Users");
                     break;
                 case 2:
                     await DialogService.ShowMessageBox(
@@ -74,7 +75,7 @@ public partial class Cards
     private void OnLogout()
     {
         LoginService.Logout();
-        NavigationManager.NavigateTo("/Cards");
+        NavigationManager.NavigateTo("/Users");
     }
     
     private Task ShowQrCode(User user)

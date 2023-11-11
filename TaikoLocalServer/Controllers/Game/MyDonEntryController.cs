@@ -9,11 +9,14 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
 	private readonly IUserDatumService userDatumService;
 
 	private readonly ICardService cardService;
+	
+	private readonly ICredentialService credentialService;
 
-	public MyDonEntryController(IUserDatumService userDatumService, ICardService cardService)
+	public MyDonEntryController(IUserDatumService userDatumService, ICardService cardService, ICredentialService credentialService)
 	{
 		this.userDatumService = userDatumService;
 		this.cardService = cardService;
+		this.credentialService = credentialService;
 	}
 
 	[HttpPost]
@@ -26,6 +29,11 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
 		await cardService.AddCard(new Card
 		{
 			AccessCode = request.WechatQrStr,
+			Baid = newId
+		});
+		
+		await credentialService.AddCredential(new Credential
+		{
 			Baid = newId,
 			Password = "",
 			Salt = ""

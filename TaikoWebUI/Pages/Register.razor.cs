@@ -27,14 +27,14 @@ public partial class Register
                         "Error",
                         "Only admin can log in.",
                         "Ok");
-                    NavigationManager.NavigateTo("/Cards");
+                    NavigationManager.NavigateTo("/Users");
                     break;
                 case 1:
                     await DialogService.ShowMessageBox(
                         "Success",
                         "Card registered successfully.",
                         "Ok");
-                    NavigationManager.NavigateTo("/Cards");
+                    NavigationManager.NavigateTo("/Users");
                     break;
                 case 2:
                     await DialogService.ShowMessageBox(
@@ -55,7 +55,7 @@ public partial class Register
                         (MarkupString)
                         "Card is already registered, please use set password to login.",
                         "Ok");
-                    NavigationManager.NavigateTo("/Cards");
+                    NavigationManager.NavigateTo("/Users");
                     break;
             }
         }
