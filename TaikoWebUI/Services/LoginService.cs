@@ -13,8 +13,6 @@ public class LoginService
     public LoginService(IOptions<WebUiSettings> settings)
     {
         IsLoggedIn = false;
-        Baid = 0;
-        CardNum = 0;
         IsAdmin = false;
         var webUiSettings = settings.Value;
         adminUsername = webUiSettings.AdminUsername;
@@ -24,8 +22,7 @@ public class LoginService
     }
 
     public bool IsLoggedIn { get; private set; }
-    public uint Baid { get; private set; }
-    private int CardNum { get; set; }
+    private User LoggedInUser { get; set; } = new();
     public bool IsAdmin { get; private set; }
 
     public bool LoginRequired { get; }
@@ -35,8 +32,6 @@ public class LoginService
     {
         if (inputCardNum == adminUsername && inputPassword == adminPassword)
         {
-            CardNum = 0;
-            Baid = 0;
             IsLoggedIn = true;
             IsAdmin = true;
             return 1;
@@ -44,15 +39,14 @@ public class LoginService
 
         if (OnlyAdmin) return 0;
 
-        foreach (var user in response.Users.Where(user => user.AccessCode == inputCardNum))
+        foreach (var user in response.Users.Where(user => user.AccessCodes.Contains(inputCardNum)))
         {
             foreach (var userCredential in response.UserCredentials.Where(userCredential => userCredential.Baid == user.Baid))
             {
                 if (userCredential.Password == "") return 4;
                 if (ComputeHash(inputPassword, userCredential.Salt) != userCredential.Password) return 2;
-                CardNum = int.Parse(user.AccessCode);
-                Baid = user.Baid;
                 IsLoggedIn = true;
+                LoggedInUser = user;
                 IsAdmin = false;
                 return 1;
             }
@@ -64,7 +58,7 @@ public class LoginService
         DashboardResponse response, HttpClient client)
     {
         if (OnlyAdmin) return 0;
-        foreach (var user in response.Users.Where(user => user.AccessCode == inputCardNum))
+        foreach (var user in response.Users.Where(user => user.AccessCodes.Contains(inputCardNum)))
         {
             foreach (var userCredential in response.UserCredentials.Where(userCredential => userCredential.Baid == user.Baid))
             {
@@ -114,7 +108,7 @@ public class LoginService
         string inputConfirmNewPassword, DashboardResponse response, HttpClient client)
     {
         if (OnlyAdmin) return 0;
-        foreach (var user in response.Users.Where(user => user.AccessCode == inputCardNum))
+        foreach (var user in response.Users.Where(user => user.AccessCodes.Contains(inputCardNum)))
         {
             foreach (var userCredential in response.UserCredentials.Where(userCredential => userCredential.Baid == user.Baid))
             {
@@ -137,19 +131,12 @@ public class LoginService
     public void Logout()
     {
         IsLoggedIn = false;
+        LoggedInUser = new User();
         IsAdmin = false;
-        Baid = 0;
-        CardNum = 0;
     }
 
-    public int GetBaid()
+    public User GetLoggedInUser()
     {
-        return checked((int)Baid);
-    }
-
-    public string GetCardNum()
-    {
-        if (IsAdmin) return "Admin";
-        return CardNum == 0 ? "Not logged in" : CardNum.ToString();
+        return LoggedInUser;
     }
 }

@@ -22,7 +22,7 @@ public partial class UserDeleteConfirmDialog
             return;
         }
         
-        var cardResponseMessage = await Client.DeleteAsync($"api/Cards/{User.AccessCode}");
+        var cardResponseMessage = await Client.DeleteAsync($"api/Cards/{User.Baid}");
 
         if (!cardResponseMessage.IsSuccessStatusCode)
         {

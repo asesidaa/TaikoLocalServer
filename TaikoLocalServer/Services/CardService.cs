@@ -1,5 +1,6 @@
 ﻿using GameDatabase.Context;
 using GameDatabase.Entities;
+using OneOf.Types;
 using SharedProject.Models;
 using Swan.Mapping;
 
@@ -26,7 +27,30 @@ public class CardService : ICardService
 
 	public async Task<List<User>> GetUsersFromCards()
 	{
-		return await context.Cards.Select(card => card.CopyPropertiesToNew<User>(null)).ToListAsync();
+		var cardEntries = await context.Cards.ToListAsync();
+		List<User> users = new();
+		var found = false;
+		foreach (var cardEntry in cardEntries)
+		{
+			foreach (var user in users.Where(user => user.Baid == cardEntry.Baid))
+			{
+				user.AccessCodes.Add(cardEntry.AccessCode);
+				found = true;
+			}
+
+			if (!found)
+			{
+				var user = new User
+				{
+					Baid = (uint)cardEntry.Baid,
+					AccessCodes = new List<string> {cardEntry.AccessCode}
+				};
+				users.Add(user);
+			}
+
+			found = false;
+		}
+		return users;
 	}
 
 	public async Task AddCard(Card card)
@@ -35,16 +59,14 @@ public class CardService : ICardService
 		await context.SaveChangesAsync();
 	}
 
-	public async Task<bool> DeleteCard(string accessCode)
+	public async Task<bool> DeleteCard(uint baid)
 	{
-		var card = await context.Cards.FindAsync(accessCode);
+		var cards = await context.Cards.ToListAsync();
+		var deletingCards = cards.Where(card => card.Baid == baid).ToList();
 
-		if (card is null)
-		{
-			return false;
-		}
+		if (deletingCards.Count == 0) return false;
 
-		context.Cards.Remove(card);
+		context.RemoveRange(deletingCards);
 		await context.SaveChangesAsync();
 
 		return true;

@@ -4,5 +4,7 @@
     {
         public string AccessCode { get; set; } = null!;
         public ulong Baid { get; set; }
+        
+        public virtual UserDatum? Ba { get; set; }
     }
 }
