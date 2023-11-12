@@ -6,6 +6,11 @@ public partial class Register
     private string confirmPassword = "";
     private string password = "";
     private MudForm registerForm = default!;
+    
+    private MudDatePicker datePicker = new();
+    private MudTimePicker timePicker = new();
+    private DateTime? date = DateTime.Today;
+    private TimeSpan? time = new TimeSpan(00, 45, 00);
 
     private DashboardResponse? response;
 
@@ -17,9 +22,10 @@ public partial class Register
 
     private async Task OnRegister()
     {
+        var inputDateTime = date!.Value.Date + time!.Value;
         if (response != null)
         {
-            var result = await LoginService.Register(accessCode, password, confirmPassword, response, Client);
+            var result = await LoginService.Register(accessCode, inputDateTime, password, confirmPassword, response, Client);
             switch (result)
             {
                 case 0:
@@ -56,6 +62,13 @@ public partial class Register
                         "Access code is already registered, please use set password to login.",
                         "Ok");
                     NavigationManager.NavigateTo("/Users");
+                    break;
+                case 5:
+                    await DialogService.ShowMessageBox(
+                        "Error",
+                        (MarkupString)
+                        "Wrong last play time.<br />If you have forgotten when you last played, please play another game with this access code.",
+                        "Ok");
                     break;
             }
         }

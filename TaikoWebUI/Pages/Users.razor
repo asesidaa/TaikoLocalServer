@@ -54,12 +54,15 @@
                                                  IconColor="@Color.Primary">
                                         Manage Access Codes
                                     </MudMenuItem>
-                                    <MudDivider/>
-                                    <MudMenuItem Icon="@Icons.Material.Filled.Delete"
-                                                 OnClick="@(_ => DeleteUser(user))"
-                                                 IconColor="@Color.Error">
-                                        Delete User
-                                    </MudMenuItem>
+                                    @if (LoginService.AllowUserDelete)
+                                    {
+                                        <MudDivider/>
+                                        <MudMenuItem Icon="@Icons.Material.Filled.Delete"
+                                                     OnClick="@(_ => DeleteUser(user))"
+                                                     IconColor="@Color.Error">
+                                            Delete User
+                                        </MudMenuItem>
+                                    }
                                 </MudMenu>
                             </CardHeaderActions>
                         </MudCardHeader>
@@ -153,12 +156,15 @@
                                                      IconColor="@Color.Primary">
                                             Manage Access Codes
                                         </MudMenuItem>
-                                        <MudDivider/>
-                                        <MudMenuItem Icon="@Icons.Material.Filled.Delete"
-                                                     OnClick="@(_ => DeleteUser(user))"
-                                                     IconColor="@Color.Error">
-                                            Delete User
-                                        </MudMenuItem>
+                                        @if (LoginService.AllowUserDelete)
+                                        {
+                                            <MudDivider/>
+                                            <MudMenuItem Icon="@Icons.Material.Filled.Delete"
+                                                         OnClick="@(_ => DeleteUser(user))"
+                                                         IconColor="@Color.Error">
+                                                Delete User
+                                            </MudMenuItem>
+                                        }
                                     </MudMenu>
                                 </CardHeaderActions>
                             </MudCardHeader>

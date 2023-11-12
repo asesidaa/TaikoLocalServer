@@ -5,8 +5,8 @@ namespace TaikoLocalServer.Models;
 public class DonCosRewardEntry
 {
 	[JsonPropertyName("cosType")]
-	public string cosType { get; set; } = null!;
+	public string CosType { get; set; } = null!;
 
 	[JsonPropertyName("uniqueId")]
-	public uint uniqueId { get; set; }
+	public uint UniqueId { get; set; }
 }

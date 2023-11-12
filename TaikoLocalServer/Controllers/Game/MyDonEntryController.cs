@@ -53,7 +53,7 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
 			FavoriteSongsArray = "[]",
 			ToneFlgArray = "[0]",
 			TitleFlgArray = "[]",
-			CostumeFlgArray = "[[],[],[],[],[]]",
+			CostumeFlgArray = "[[0],[0],[0],[0],[0]]",
 			GenericInfoFlgArray = "[]",
 			TokenCountDict = "{}",
 			UnlockedSongIdList = "[]"

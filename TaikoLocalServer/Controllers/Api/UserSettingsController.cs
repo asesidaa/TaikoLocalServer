@@ -25,12 +25,24 @@ public class UserSettingsController : BaseController<UserSettingsController>
             return NotFound();
         }
 
-        var difficultySettingArray = JsonHelper.GetUIntArrayFromJson(user.DifficultySettingArray, 3, Logger, nameof(user.DifficultySettingArray));
+        var difficultySettingArray = JsonHelper.GetUIntArrayFromJson(user.DifficultySettingArray, 3, Logger,
+            nameof(user.DifficultySettingArray));
 
         var costumeData = JsonHelper.GetCostumeDataFromUserData(user, Logger);
 
         var costumeUnlockData = JsonHelper.GetCostumeUnlockDataFromUserData(user, Logger);
 
+        var unlockedTitle = JsonHelper.GetUIntArrayFromJson(user.TitleFlgArray, 0, Logger, nameof(user.TitleFlgArray))
+            .ToList();
+
+        for (var i = 0; i < 5; i++)
+        {
+            if (!costumeUnlockData[i].Contains(0))
+            {
+                costumeUnlockData[i].Add(0);
+            }
+        }
+        
         var response = new UserSetting
         {
             AchievementDisplayDifficulty = user.AchievementDisplayDifficulty,
@@ -58,9 +70,11 @@ public class UserSettingsController : BaseController<UserSettingsController>
             UnlockedBody = costumeUnlockData[2],
             UnlockedFace = costumeUnlockData[3],
             UnlockedPuchi = costumeUnlockData[4],
+            UnlockedTitle = unlockedTitle,
             BodyColor = user.ColorBody,
             FaceColor = user.ColorFace,
-            LimbColor = user.ColorLimb
+            LimbColor = user.ColorLimb,
+            LastPlayDateTime = user.LastPlayDatetime
         };
         return Ok(response);
     }

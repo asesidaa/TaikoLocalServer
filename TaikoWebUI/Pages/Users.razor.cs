@@ -17,6 +17,14 @@ public partial class Users
 
     private async Task DeleteUser(User user)
     {
+        if (!LoginService.AllowUserDelete)
+        {
+            await DialogService.ShowMessageBox(
+                "Error",
+                "User deletion is disabled by admin.",
+                "Ok");
+            return;
+        }
         var parameters = new DialogParameters
         {
             ["user"] = user
