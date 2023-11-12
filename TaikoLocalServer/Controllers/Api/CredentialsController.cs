@@ -12,14 +12,6 @@ public class CredentialsController : BaseController<CredentialsController>
     {
         this.credentialService = credentialService;
     }
-
-    [HttpDelete("{baid}")]
-    public async Task<IActionResult> DeleteUser(uint baid)
-    {
-        var result = await credentialService.DeleteCredential(baid);
-
-        return result ? NoContent() : NotFound();
-    }
     
     [HttpPost]
     public async Task<IActionResult> UpdatePassword(SetPasswordRequest request)

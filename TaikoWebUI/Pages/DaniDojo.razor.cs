@@ -23,7 +23,7 @@ public partial class DaniDojo
             .Sort((stageData, otherStageData) => stageData.SongNumber.CompareTo(otherStageData.SongNumber)));
         bestDataMap = response.DanBestDataList.ToDictionary(data => data.DanId);
 
-        breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
+        breadcrumbs.Add(new BreadcrumbItem($"User: {Baid}", href: null, disabled: true));
         breadcrumbs.Add(new BreadcrumbItem("Dani Dojo", href: $"/Users/{Baid}/DaniDojo", disabled: false));
     }
 

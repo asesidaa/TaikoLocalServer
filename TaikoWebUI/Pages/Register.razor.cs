@@ -2,7 +2,7 @@
 
 public partial class Register
 {
-    private string cardNum = "";
+    private string accessCode = "";
     private string confirmPassword = "";
     private string password = "";
     private MudForm registerForm = default!;
@@ -19,7 +19,7 @@ public partial class Register
     {
         if (response != null)
         {
-            var result = await LoginService.Register(cardNum, password, confirmPassword, response, Client);
+            var result = await LoginService.Register(accessCode, password, confirmPassword, response, Client);
             switch (result)
             {
                 case 0:
@@ -32,7 +32,7 @@ public partial class Register
                 case 1:
                     await DialogService.ShowMessageBox(
                         "Success",
-                        "Card registered successfully.",
+                        "Access code registered successfully.",
                         "Ok");
                     NavigationManager.NavigateTo("/Users");
                     break;
@@ -46,14 +46,14 @@ public partial class Register
                     await DialogService.ShowMessageBox(
                         "Error",
                         (MarkupString)
-                        "Card number not found.<br />Please play one game with this card number to register it.",
+                        "Access code not found.<br />Please play one game with this access code to register it.",
                         "Ok");
                     break;
                 case 4:
                     await DialogService.ShowMessageBox(
                         "Error",
                         (MarkupString)
-                        "Card is already registered, please use set password to login.",
+                        "Access code is already registered, please use set password to login.",
                         "Ok");
                     NavigationManager.NavigateTo("/Users");
                     break;
