@@ -53,11 +53,14 @@ public class UserSetting
     public List<uint> UnlockedFace { get; set; } = new();
 
     public List<uint> UnlockedPuchi { get; set; } = new();
+    
+    public List<uint> UnlockedTitle { get; set; } = new();
 
     public uint FaceColor { get; set; }
 
     public uint BodyColor { get; set; }
 
     public uint LimbColor { get; set; }
-
+    
+    public DateTime LastPlayDateTime { get; set; }
 }

@@ -11,7 +11,10 @@ public class LoginService
     private readonly string adminUsername;
     public bool LoginRequired { get; }
     public bool OnlyAdmin { get; }
-    private int BoundAccessCodeUpperLimit;
+    private readonly int boundAccessCodeUpperLimit;
+    public bool RegisterWithLastPlayTime { get; }
+    public bool AllowUserDelete { get; }
+    public bool AllowFreeProfileEditing { get; }
 
     public LoginService(IOptions<WebUiSettings> settings)
     {
@@ -22,7 +25,10 @@ public class LoginService
         adminPassword = webUiSettings.AdminPassword;
         LoginRequired = webUiSettings.LoginRequired;
         OnlyAdmin = webUiSettings.OnlyAdmin;
-        BoundAccessCodeUpperLimit = webUiSettings.BoundAccessCodeUpperLimit;
+        boundAccessCodeUpperLimit = webUiSettings.BoundAccessCodeUpperLimit;
+        RegisterWithLastPlayTime = webUiSettings.RegisterWithLastPlayTime;
+        AllowUserDelete = webUiSettings.AllowUserDelete;
+        AllowFreeProfileEditing = webUiSettings.AllowFreeProfileEditing;
     }
 
     public bool IsLoggedIn { get; private set; }
@@ -55,14 +61,23 @@ public class LoginService
         return 3;
     }
 
-    public async Task<int> Register(string inputCardNum, string inputPassword, string inputConfirmPassword,
+    public async Task<int> Register(string inputCardNum, DateTime inputDateTime, string inputPassword, string inputConfirmPassword,
         DashboardResponse response, HttpClient client)
     {
         if (OnlyAdmin) return 0;
+        
         foreach (var user in response.Users.Where(user => user.AccessCodes.Contains(inputCardNum)))
         {
             foreach (var userCredential in response.UserCredentials.Where(userCredential => userCredential.Baid == user.Baid))
             {
+                if (RegisterWithLastPlayTime)
+                {
+                    var userSettingResponse = await client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{user.Baid}");
+                    if (userSettingResponse is null) return 3;
+                    var lastPlayDateTime = userSettingResponse.LastPlayDateTime;
+                    var diffMinutes = (inputDateTime - lastPlayDateTime).Duration().TotalMinutes;
+                    if (diffMinutes > 5) return 5;
+                }
                 if (userCredential.Password != "") return 4;
                 if (inputPassword != inputConfirmPassword) return 2;
                 var salt = CreateSalt();
@@ -153,7 +168,7 @@ public class LoginService
     public async Task<int> BindAccessCode(string inputAccessCode, HttpClient client)
     {
         if (!IsLoggedIn) return 0;
-        if (LoggedInUser.AccessCodes.Count >= BoundAccessCodeUpperLimit) return 2;
+        if (LoggedInUser.AccessCodes.Count >= boundAccessCodeUpperLimit) return 2;
         var request = new BindAccessCodeRequest
         {
             AccessCode = inputAccessCode,

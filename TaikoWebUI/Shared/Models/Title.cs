@@ -5,6 +5,8 @@ public class Title
     public int TitleId { get; set; }
     
     public string TitleName { get; init; } = string.Empty;
+    
+    public uint TitleRarity { get; init; }
 
     public override bool Equals(object? obj)
     {
