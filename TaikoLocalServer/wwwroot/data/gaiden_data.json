@@ -1,37 +1,37 @@
 [
   {
-    "danId": 20,
-    "verupNo": 1,
-    "title": "gaiden_2022_odai_7",
-    "aryOdaiSong": [
+    "danId":20,
+    "verupNo":1,
+    "title":"gaiden_2022_odai_7",
+    "aryOdaiSong":[
       {
-        "songNo": 828,
-        "level": 2,
-        "isHiddenSongName": false
+        "songNo":828,
+        "level":2,
+        "isHiddenSongName":false
       },
       {
-        "songNo": 187,
-        "level": 2,
-        "isHiddenSongName": false
+        "songNo":187,
+        "level":2,
+        "isHiddenSongName":false
       },
       {
-        "songNo": 789,
-        "level": 2,
-        "isHiddenSongName": false
+        "songNo":789,
+        "level":2,
+        "isHiddenSongName":false
       }
     ],
-    "aryOdaiBorder": [
+    "aryOdaiBorder":[
       {
-        "odaiType": 1,
-        "borderType": 1,
-        "redBorderTotal": 92,
-        "goldBorderTotal": 95
+        "odaiType":1,
+        "borderType":1,
+        "redBorderTotal":92,
+        "goldBorderTotal":95
       },
       {
-        "odaiType": 8,
-        "borderType": 1,
-        "redBorderTotal": 786,
-        "goldBorderTotal": 832
+        "odaiType":8,
+        "borderType":1,
+        "redBorderTotal":786,
+        "goldBorderTotal":832
       }
     ]
   }

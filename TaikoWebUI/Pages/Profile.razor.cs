@@ -177,7 +177,7 @@ public partial class Profile
         isSavingOptions = false;
         response = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
 
-        breadcrumbs.Add(new BreadcrumbItem($"User: {Baid}", href: null, disabled: true));
+        breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
         breadcrumbs.Add(new BreadcrumbItem("Profile", href: $"/Users/{Baid}/Profile", disabled: false));
         
         costumeFlagArraySizes = GameDataService.GetCostumeFlagArraySizes();

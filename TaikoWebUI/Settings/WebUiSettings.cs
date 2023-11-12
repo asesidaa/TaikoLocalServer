@@ -6,6 +6,4 @@ public class WebUiSettings
     public string AdminUsername { get; set; } = string.Empty;
     public string AdminPassword { get; set; } = string.Empty;
     public bool OnlyAdmin { get; set; }
-    
-    public int BoundAccessCodeUpperLimit { get; set; }
 }

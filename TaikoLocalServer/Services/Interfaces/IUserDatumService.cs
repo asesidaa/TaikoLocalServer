@@ -16,9 +16,9 @@ public interface IUserDatumService
 
 	public Task UpdateUserDatum(UserDatum userDatum);
 
-	public Task<bool> DeleteUser(uint baid);
-
 	public Task<List<uint>> GetFavoriteSongIds(ulong baid);
 
 	public Task UpdateFavoriteSong(ulong baid, uint songId, bool isFavorite);
+
+
 }

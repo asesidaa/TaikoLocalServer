@@ -30,7 +30,7 @@
     }
     else if (response.Users.Count != 0)
     {
-        if (LoginService.IsAdmin || !LoginService.LoginRequired) // Admin mode, can see all users
+        if (LoginService.IsAdmin || !LoginService.LoginRequired)
         {
             @foreach (var user in response.Users)
             {
@@ -38,7 +38,7 @@
                     <MudCard Outlined="true">
                         <MudCardHeader>
                             <CardHeaderContent>
-                                <MudText Typo="Typo.h6" Style="font-weight:bold">User: @user.Baid</MudText>
+                                <MudText Typo="Typo.h6" Style="font-weight:bold">@user.Baid</MudText>
                             </CardHeaderContent>
                             <CardHeaderActions>
                                 <MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense="true" AnchorOrigin="Origin.BottomLeft"
@@ -47,12 +47,6 @@
                                                  OnClick="@(_ => ShowQrCode(user))"
                                                  IconColor="@Color.Primary">
                                         Show QR Code
-                                    </MudMenuItem>
-                                    <MudDivider/>
-                                    <MudMenuItem Icon="@Icons.Material.Filled.FeaturedPlayList"
-                                                 Href="@($"Users/{user.Baid}/AccessCode")"
-                                                 IconColor="@Color.Primary">
-                                        Manage Access Codes
                                     </MudMenuItem>
                                     <MudDivider/>
                                     <MudMenuItem Icon="@Icons.Material.Filled.Delete"
@@ -65,11 +59,14 @@
                         </MudCardHeader>
                         <MudCardContent>
                             <MudText Style="font-weight:bold">Access Code</MudText>
-                            <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">@user.AccessCodes[0]</MudText>
-                            @if (user.AccessCodes.Count > 1)
-                            {
-                                <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">... and @(user.AccessCodes.Count-1) other access code(s)</MudText>
-                            }
+                            <MudGrid>
+                                @foreach (var accessCode in user.AccessCodes)
+                                {
+                                    <MudItem xs="12">
+                                        <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">@accessCode</MudText>
+                                    </MudItem>
+                                }
+                            </MudGrid>
                         </MudCardContent>
                         <MudCardActions>
                             <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
@@ -98,7 +95,7 @@
         }
         else
         {
-            @if (!LoginService.IsLoggedIn) // Not logged in, show login form
+            @if (!LoginService.IsLoggedIn)
             {
                 <MudContainer>
                     <MudGrid Justify="Justify.Center">
@@ -107,10 +104,10 @@
                                 <MudCardContent>
                                     <MudForm @ref="loginForm">
                                         <MudText Typo="Typo.h4" Align="Align.Center">Login</MudText>
-                                        <MudTextField @bind-value="inputAccessCode" InputType="InputType.Text" T="string"
-                                                      FullWidth="true" Required="@true" RequiredError="Access code is required"
-                                                      Label="Access code"/>
-                                        <MudTextField @bind-Value="inputPassword" InputType="InputType.Password"
+                                        <MudTextField @bind-value="cardNum" InputType="InputType.Text" T="string"
+                                                      FullWidth="true" Required="@true" RequiredError="Card Number is required"
+                                                      Label="Card Number"/>
+                                        <MudTextField @bind-Value="password" InputType="InputType.Password"
                                                       T="string" FullWidth="true" Required="@true"
                                                       RequiredError="Password is required"
                                                       Label="Password">
@@ -131,13 +128,13 @@
             }
             else
             {
-                var user = LoginService.GetLoggedInUser(); // Logged in, show only own user
+                var user = LoginService.GetLoggedInUser();
                 <MudGrid Justify="Justify.Center">
                     <MudItem xs="12" md="6" lg="4">
                         <MudCard Outlined="true">
                             <MudCardHeader>
                                 <CardHeaderContent>
-                                    <MudText Typo="Typo.h6" Style="font-weight:bold">User: @user.Baid</MudText>
+                                    <MudText Typo="Typo.h6" Style="font-weight:bold">@user.Baid</MudText>
                                 </CardHeaderContent>
                                 <CardHeaderActions>
                                     <MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense="true" AnchorOrigin="Origin.BottomLeft"
@@ -146,12 +143,6 @@
                                                      OnClick="@(_ => ShowQrCode(user))"
                                                      IconColor="@Color.Primary">
                                             Show QR Code
-                                        </MudMenuItem>
-                                        <MudDivider/>
-                                        <MudMenuItem Icon="@Icons.Material.Filled.FeaturedPlayList"
-                                                     Href="@($"Users/{user.Baid}/AccessCode")"
-                                                     IconColor="@Color.Primary">
-                                            Manage Access Codes
                                         </MudMenuItem>
                                         <MudDivider/>
                                         <MudMenuItem Icon="@Icons.Material.Filled.Delete"
@@ -164,11 +155,14 @@
                             </MudCardHeader>
                             <MudCardContent>
                                 <MudText Style="font-weight:bold">Access Code</MudText>
-                                <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">@user.AccessCodes[0]</MudText>
-                                @if (user.AccessCodes.Count > 1)
-                                {
-                                    <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">... and @(user.AccessCodes.Count-1) other access code(s)</MudText>
-                                }
+                                <MudGrid>
+                                    @foreach (var accessCode in user.AccessCodes)
+                                    {
+                                        <MudItem xs="12">
+                                            <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">@accessCode</MudText>
+                                        </MudItem>
+                                    }
+                                </MudGrid>
                             </MudCardContent>
                             <MudCardActions>
                                 <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
@@ -181,7 +175,7 @@
                                              Dense="true"
                                              Color="Color.Primary"
                                              Label="View Play Data"
-                                             StartIcon="@Icons.Material.Filled.DataExploration"
+                                             StartIcon="@Icons.Material.Filled.FeaturedPlayList"
                                              EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
                                              FullWidth="true"
                                              AnchorOrigin="Origin.BottomCenter"
@@ -198,7 +192,7 @@
         }
     }
     else
-    { // No users in the database
+    {
         <MudItem xs="12">
             <MudText Align="Align.Center" Class="my-8">
                 No data.

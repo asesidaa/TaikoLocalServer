@@ -4,7 +4,6 @@ var myDonName;
 var myDonNameOutline;
 var init = false
 const observer = new ResizeObserver(handleResize);
-
 function handleResize() {
     updateFit()
 }
@@ -42,22 +41,22 @@ function initNameplate() {
     if (window.location.href.indexOf("Profile") > -1) {
         waitForElm('#nameplate-title').then((elm) => {
             title = elm
-            waitForElm('#nameplate-name').then((elm) => {
-                myDonName = elm
-                waitForElm('#nameplate-name-outline').then((elm) => {
-                    myDonNameOutline = elm
-                    observer.observe(document.getElementById('nameplate'));
-                    init = true
+                waitForElm('#nameplate-name').then((elm) => {
+                    myDonName = elm
+                    waitForElm('#nameplate-name-outline').then((elm) => {
+                        myDonNameOutline = elm
+                        observer.observe(document.getElementById('nameplate'));
+                        init = true
+                    });
                 });
-            });
         });
     }
 }
 
 function updateFit() {
-    textFit(title, {alignHoriz: true, alignVert: true});
-    textFit(myDonName, {alignHoriz: true, alignVert: true});
-    textFit(myDonNameOutline, {alignHoriz: true, alignVert: true});
+    textFit(title, { alignHoriz: true, alignVert: true });
+    textFit(myDonName, { alignHoriz: true, alignVert: true });
+    textFit(myDonNameOutline, { alignHoriz: true, alignVert: true });
 }
 
 
@@ -69,7 +68,6 @@ function updateMyDonName(elm) {
         updateFit()
     }
 }
-
 function updateTitle(elm) {
     if (init) {
         title.textContent = elm

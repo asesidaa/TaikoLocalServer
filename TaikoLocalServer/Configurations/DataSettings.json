@@ -1,13 +1,13 @@
 {
-  "DataSettings": {
-    "DanDataFileName": "dan_data.json",
-    "GaidenDataFileName": "gaiden_data.json",
-    "EventFolderDataFileName": "event_folder_data.json",
-    "IntroDataFileName": "intro_data.json",
+  "DataSettings" : {
+    "DanDataFileName" : "dan_data.json",
+    "GaidenDataFileName" : "gaiden_data.json",
+    "EventFolderDataFileName" : "event_folder_data.json",
+    "IntroDataFileName" : "intro_data.json",
     "MovieDataFileName": "movie_data.json",
     "ShopFolderDataFileName": "shop_folder_data.json",
     "TokenDataFileName": "token_data.json",
     "LockedSongsDataFileName": "locked_songs_data.json",
     "QRCodeDataFileName": "qrcode_data.json"
-  }
+  } 
 }
