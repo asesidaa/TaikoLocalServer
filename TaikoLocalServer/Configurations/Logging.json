@@ -1,6 +1,9 @@
 {
   "Serilog": {
-    "Using":  [ "Serilog.Sinks.Console", "Serilog.Sinks.File" ],
+    "Using": [
+      "Serilog.Sinks.Console",
+      "Serilog.Sinks.File"
+    ],
     "MinimumLevel": {
       "Default": "Information",
       "Override": {
@@ -20,7 +23,10 @@
     "WriteTo": [
       {
         "Name": "File",
-        "Args": { "path":  "./Logs/log-.txt", "rollingInterval": "Day" }
+        "Args": {
+          "path": "./Logs/log-.txt",
+          "rollingInterval": "Day"
+        }
       }
     ]
   }

@@ -4,9 +4,9 @@ namespace TaikoWebUI.Pages;
 
 public partial class Users
 {
-    private string cardNum = "";
+    private string inputAccessCode = "";
     private MudForm loginForm = default!;
-    private string password = "";
+    private string inputPassword = "";
     private DashboardResponse? response;
 
     protected override async Task OnInitializedAsync()
@@ -35,7 +35,7 @@ public partial class Users
     {
         if (response != null)
         {
-            var result = LoginService.Login(cardNum, password, response);
+            var result = LoginService.Login(inputAccessCode, inputPassword, response);
             switch (result)
             {
                 case 0:
@@ -58,14 +58,14 @@ public partial class Users
                     await DialogService.ShowMessageBox(
                         "Error",
                         (MarkupString)
-                        "Card number not found.<br />Please play one game with this card number to register it.",
+                        "Access code not found.<br />Please play one game with this access code to register it.",
                         "Ok");
                     break;
                 case 4:
                     await DialogService.ShowMessageBox(
                         "Error",
                         (MarkupString)
-                        "Card number not registered.<br />Please use register button to create a password first.",
+                        "Access code not registered.<br />Please use register button to create a password first.",
                         "Ok");
                     break;
             }
