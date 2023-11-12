@@ -43,7 +43,7 @@ public partial class HighScores
         }
         
 
-        breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
+        breadcrumbs.Add(new BreadcrumbItem($"User: {Baid}", href: null, disabled: true));
         breadcrumbs.Add(new BreadcrumbItem("High Scores", href: $"/Users/{Baid}/HighScores", disabled: false));
     }
 

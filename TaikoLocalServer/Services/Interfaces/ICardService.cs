@@ -12,6 +12,6 @@ public interface ICardService
 	public Task<List<User>> GetUsersFromCards();
 
 	public Task AddCard(Card card);
-
-	public Task<bool> DeleteCard(uint baid);
+	
+	public Task<bool> DeleteCard(string accessCode);
 }
