@@ -13,24 +13,15 @@ public partial class UserDeleteConfirmDialog
     
     private async Task DeleteUser()
     {
-        var credentialResponseMessage = await Client.DeleteAsync($"api/Credentials/{User.Baid}");
+        var responseMessage = await Client.DeleteAsync($"api/Users/{User.Baid}");
 
-        if (!credentialResponseMessage.IsSuccessStatusCode)
-        {
-            Snackbar.Add("Something went wrong when deleting user credentials!", Severity.Error);
-            MudDialog.Close(DialogResult.Ok(false));
-            return;
-        }
-        
-        var cardResponseMessage = await Client.DeleteAsync($"api/Cards/{User.Baid}");
-
-        if (!cardResponseMessage.IsSuccessStatusCode)
+        if (!responseMessage.IsSuccessStatusCode)
         {
             Snackbar.Add("Something went wrong when deleting user!", Severity.Error);
             MudDialog.Close(DialogResult.Ok(false));
             return;
         }
-
+        
         Snackbar.Add("Delete success!", Severity.Success);
         MudDialog.Close(DialogResult.Ok(true));
     }
