@@ -20,9 +20,9 @@ else
                     <MudCardContent>
                         <MudForm @ref="registerForm">
                             <MudText Typo="Typo.h4" Align="Align.Center">Register</MudText>
-                            <MudTextField @bind-value="accessCode" InputType="InputType.Text" T="string"
-                                          FullWidth="true" Required="@true" RequiredError="Access Code is required"
-                                          Label="Access Code"/>
+                            <MudTextField @bind-value="cardNum" InputType="InputType.Text" T="string"
+                                          FullWidth="true" Required="@true" RequiredError="Card Number is required"
+                                          Label="Card Number"/>
                             <MudTextField @bind-Value="password" InputType="InputType.Password"
                                           T="string" FullWidth="true" Required="@true"
                                           RequiredError="Password is required"

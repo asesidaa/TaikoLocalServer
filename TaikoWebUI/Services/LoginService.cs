@@ -9,9 +9,6 @@ public class LoginService
 {
     private readonly string adminPassword;
     private readonly string adminUsername;
-    public bool LoginRequired { get; }
-    public bool OnlyAdmin { get; }
-    private int BoundAccessCodeUpperLimit;
 
     public LoginService(IOptions<WebUiSettings> settings)
     {
@@ -22,12 +19,14 @@ public class LoginService
         adminPassword = webUiSettings.AdminPassword;
         LoginRequired = webUiSettings.LoginRequired;
         OnlyAdmin = webUiSettings.OnlyAdmin;
-        BoundAccessCodeUpperLimit = webUiSettings.BoundAccessCodeUpperLimit;
     }
 
     public bool IsLoggedIn { get; private set; }
     private User LoggedInUser { get; set; } = new();
     public bool IsAdmin { get; private set; }
+
+    public bool LoginRequired { get; }
+    public bool OnlyAdmin { get; }
 
     public int Login(string inputCardNum, string inputPassword, DashboardResponse response)
     {
@@ -139,27 +138,5 @@ public class LoginService
     public User GetLoggedInUser()
     {
         return LoggedInUser;
-    }
-    
-    public void ResetLoggedInUser(DashboardResponse? response)
-    {
-        if (response is null) return;
-        var baid = LoggedInUser.Baid;
-        var newLoggedInUser = response.Users.FirstOrDefault(u => u.Baid == baid);
-        if (newLoggedInUser is null) return;
-        LoggedInUser = newLoggedInUser;
-    }
-    
-    public async Task<int> BindAccessCode(string inputAccessCode, HttpClient client)
-    {
-        if (!IsLoggedIn) return 0;
-        if (LoggedInUser.AccessCodes.Count >= BoundAccessCodeUpperLimit) return 2;
-        var request = new BindAccessCodeRequest
-        {
-            AccessCode = inputAccessCode,
-            Baid = LoggedInUser.Baid
-        };
-        var responseMessage = await client.PostAsJsonAsync("api/Cards", request);
-        return responseMessage.IsSuccessStatusCode ? 1 : 3;
     }
 }

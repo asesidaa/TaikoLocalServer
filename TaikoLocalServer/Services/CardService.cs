@@ -58,13 +58,17 @@ public class CardService : ICardService
 		context.Add(card);
 		await context.SaveChangesAsync();
 	}
-	
-	public async Task<bool> DeleteCard(string accessCode)
+
+	public async Task<bool> DeleteCard(uint baid)
 	{
-		var card = await context.Cards.FindAsync(accessCode);
-		if (card == null) return false;
-		context.Cards.Remove(card);
+		var cards = await context.Cards.ToListAsync();
+		var deletingCards = cards.Where(card => card.Baid == baid).ToList();
+
+		if (deletingCards.Count == 0) return false;
+
+		context.RemoveRange(deletingCards);
 		await context.SaveChangesAsync();
+
 		return true;
 	}
 }
