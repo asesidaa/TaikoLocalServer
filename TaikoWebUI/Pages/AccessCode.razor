@@ -34,7 +34,7 @@ else
     {
         @if ((LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.GetLoggedInUser().Baid != Baid && !LoginService.IsAdmin))) || User is null)
         {
-            <MudItem xs="12">
+            <MudItem xs="12" md="6" lg="4">
                 <MudText Align="Align.Center" Class="my-8">
                     Please log in by clicking on "Users" tab first.
                 </MudText>
@@ -43,7 +43,7 @@ else
         else
         {
             <MudGrid Justify="Justify.Center">
-                <MudItem xs="6" md="4" lg="4">
+                <MudItem xs="12" md="6" lg="4">
                     <MudCard>
                         <MudCardContent>
                             <MudForm @ref="bindAccessCodeForm">
@@ -61,7 +61,7 @@ else
             {
                 var accessCode = User.AccessCodes[idx];
                 var localIdx = idx + 1;
-                <MudItem xs="6" md="4" lg="4">
+                <MudItem xs="12" md="6" lg="4">
                     <MudCard Outlined="true">
                         <MudCardHeader>
                             <CardHeaderContent>

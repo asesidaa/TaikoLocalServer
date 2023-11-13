@@ -15,7 +15,7 @@ else
 {
     <MudContainer>
         <MudGrid Justify="Justify.Center">
-            <MudItem xs="4" class="mt-8">
+            <MudItem xs="12" md="6" lg="4" class="mt-8">
                 <MudCard>
                     <MudCardContent>
                         <MudForm @ref="registerForm">
@@ -25,13 +25,7 @@ else
                                           Label="Access Code"/>
                             @if (LoginService.RegisterWithLastPlayTime)
                             {
-                                <MudDatePicker @ref="datePicker" Label="Last Play Date" @bind-Date="date" AutoClose="false">
-                                    <PickerActions>
-                                        <MudButton Class="mr-auto align-self-start" OnClick="@(() => datePicker.Clear())">Clear</MudButton>
-                                        <MudButton OnClick="@(() => datePicker.Close(false))">Cancel</MudButton>
-                                        <MudButton Color="Color.Primary" OnClick="@(() => datePicker.Close())">Ok</MudButton>
-                                    </PickerActions>
-                                </MudDatePicker>
+                                <MudDatePicker @ref="datePicker" Label="Last Play Date" @bind-Date="date" AutoClose="true"/>
                                 <MudTimePicker @ref="timePicker" AmPm="true" Label="Last Play Time(5 min within when credit ended)" @bind-Time="time" AutoClose="false">
                                     <PickerActions>
                                         <MudButton Class="mr-auto align-self-start" OnClick="@(() => timePicker.Clear())">Clear</MudButton>
