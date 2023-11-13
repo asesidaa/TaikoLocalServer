@@ -26,13 +26,7 @@ else
                             @if (LoginService.RegisterWithLastPlayTime)
                             {
                                 <MudDatePicker @ref="datePicker" Label="Last Play Date" @bind-Date="date" AutoClose="true"/>
-                                <MudTimePicker @ref="timePicker" AmPm="true" Label="Last Play Time(5 min within when credit ended)" @bind-Time="time" AutoClose="false">
-                                    <PickerActions>
-                                        <MudButton Class="mr-auto align-self-start" OnClick="@(() => timePicker.Clear())">Clear</MudButton>
-                                        <MudButton OnClick="@(() => timePicker.Close(false))">Cancel</MudButton>
-                                        <MudButton Color="Color.Primary" OnClick="@(() => timePicker.Close())">Ok</MudButton>
-                                    </PickerActions>
-                                </MudTimePicker>
+                                <MudTimePicker @ref="timePicker" AmPm="true" Label="Last Play Time(5 min around credit end)" @bind-Time="time" AutoClose="true"/>
                             }
                             <MudTextField @bind-Value="password" InputType="InputType.Password"
                                           T="string" FullWidth="true" Required="@true"
