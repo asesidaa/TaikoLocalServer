@@ -26,18 +26,6 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
 		Logger.LogInformation("MyDonEntry request : {Request}", request.Stringify());
 
 		var newId = cardService.GetNextBaid();
-		await cardService.AddCard(new Card
-		{
-			AccessCode = request.WechatQrStr,
-			Baid = newId
-		});
-		
-		await credentialService.AddCredential(new Credential
-		{
-			Baid = newId,
-			Password = "",
-			Salt = ""
-		});
 
 		var newUser = new UserDatum
 		{
@@ -58,8 +46,20 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
 			TokenCountDict = "{}",
 			UnlockedSongIdList = "[]"
 		};
-
 		await userDatumService.InsertUserDatum(newUser);
+
+		await cardService.AddCard(new Card
+		{
+			AccessCode = request.WechatQrStr,
+			Baid = newId
+		});
+		
+		await credentialService.AddCredential(new Credential
+		{
+			Baid = newId,
+			Password = "",
+			Salt = ""
+		});
 
 		var response = new MydonEntryResponse
 		{
