@@ -1,6 +1,7 @@
 ﻿using SharedProject.Models;
 using SharedProject.Utils;
 using System.Text.Json;
+using Throw;
 
 namespace TaikoLocalServer.Controllers.Api;
 
@@ -122,6 +123,21 @@ public class UserSettingsController : BaseController<UserSettingsController>
         user.ColorFace = userSetting.FaceColor;
         user.ColorLimb = userSetting.LimbColor;
         user.CostumeData = JsonSerializer.Serialize(costumes);
+
+        // If a locked tone is selected, unlock it
+        uint[] toneFlg = { 0u };
+        try
+        {
+            toneFlg = JsonSerializer.Deserialize<uint[]>(user.ToneFlgArray)!;
+        }
+        catch (JsonException e)
+        {
+            Logger.LogError(e, "Parsing tone flg json data failed");
+        }
+        toneFlg.ThrowIfNull("Tone flg should never be null!");
+        toneFlg = toneFlg.Append(0u).Append(userSetting.ToneId).Distinct().ToArray();
+
+        user.ToneFlgArray = JsonSerializer.Serialize(toneFlg);
 
         await userDatumService.UpdateUserDatum(user);
 
