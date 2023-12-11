@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using SharedProject.Enums;
 using System.Linq;
 using TaikoWebUI.Pages.Dialogs;
 using static MudBlazor.CategoryTypes;
@@ -174,6 +175,8 @@ public partial class Profile
 
     private Dictionary<Difficulty, List<SongBestData>> songBestDataMap = new();
 
+    private Difficulty highestDifficulty = Difficulty.Easy;
+
     private List<int> costumeFlagArraySizes = new();
 
     private int[] scoresArray = new int[10];
@@ -183,6 +186,7 @@ public partial class Profile
         await base.OnInitializedAsync();
         isSavingOptions = false;
         response = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
+        response.ThrowIfNull();
 
         breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
         breadcrumbs.Add(new BreadcrumbItem("Profile", href: $"/Cards/{Baid}/Profile", disabled: false));
@@ -209,6 +213,14 @@ public partial class Profile
                                       .CompareTo(GameDataService.GetMusicIndexBySongId(data2.SongId)));
         }
 
+        for (int i = 0; i < (int)Difficulty.UraOni; i++)
+            if (songBestDataMap.TryGetValue((Difficulty)i, out var values))
+            {
+                highestDifficulty = (Difficulty)i;
+            }
+                    
+
+        UpdateScores(response.AchievementDisplayDifficulty);
     }
 
     private async Task SaveOptions()
@@ -220,23 +232,58 @@ public partial class Profile
 
     private void UpdateScores(Difficulty difficulty)
     {
-        Console.WriteLine("Updating difficulty : " + (int)difficulty);
-
+        //Console.WriteLine("Updating difficulty : " + (int)difficulty);
+        response.ThrowIfNull();
         response.AchievementDisplayDifficulty = difficulty;
         scoresArray = new int[10];
 
-        if (difficulty is not Difficulty.None)
-            if (songBestDataMap.TryGetValue(difficulty, out var values))
+        if (difficulty is Difficulty.None) difficulty = highestDifficulty;
+
+        if (songBestDataMap.TryGetValue(difficulty, out var values))
+        {
+            foreach (var value in values)
             {
-                foreach (var value in values)
+                //Console.WriteLine("Updating for songId : " + value.SongId);
+                switch (value.BestScoreRank)
                 {
-                    Console.WriteLine("Updating for songId : " + value.SongId);
-                    if (value.BestCrown == CrownType.Clear) scoresArray[7]++;
-                    if (value.BestCrown == CrownType.Gold) scoresArray[8]++;
-                    if (value.BestCrown == CrownType.Dondaful) scoresArray[9]++;
+                    case ScoreRank.Dondaful:
+                        scoresArray[0]++;
+                        break;
+                    case ScoreRank.Gold:
+                        scoresArray[1]++;
+                        break;
+                    case ScoreRank.Sakura:
+                        scoresArray[2]++;
+                        break;
+                    case ScoreRank.Purple:
+                        scoresArray[3]++;
+                        break;
+                    case ScoreRank.White:
+                        scoresArray[4]++;
+                        break;
+                    case ScoreRank.Bronze:
+                        scoresArray[5]++;
+                        break;
+                    case ScoreRank.Silver:
+                        scoresArray[6]++;
+                        break;
                 }
-                StateHasChanged();
+
+                switch (value.BestCrown)
+                {
+                    case CrownType.Clear:
+                        scoresArray[7]++;
+                        break;
+                    case CrownType.Gold:
+                        scoresArray[8]++;
+                        break;
+                    case CrownType.Dondaful:
+                        scoresArray[9]++;
+                        break;
+                }
             }
+
+        }
     }
 
     public static string CostumeOrDefault(string file, uint id, string defaultfile)

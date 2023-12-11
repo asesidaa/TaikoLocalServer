@@ -122,3 +122,24 @@ a, .btn-link {
     color: white;
     margin: auto auto;
 }
+
+.nameplateTextLeft {
+    position: absolute;
+    height: 100%;
+    width: 15%;
+    left: 19%
+}
+
+.nameplateTextCenter {
+    position: absolute;
+    height: 100%;
+    width: 15%;
+    left: 48%
+}
+
+.nameplateTextRight {
+    position: absolute;
+    height: 100%;
+    width: 15%;
+    left: 78%
+}
