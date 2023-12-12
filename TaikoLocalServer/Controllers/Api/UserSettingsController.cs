@@ -1,6 +1,7 @@
 ﻿using SharedProject.Models;
 using SharedProject.Utils;
 using System.Text.Json;
+using Throw;
 
 namespace TaikoLocalServer.Controllers.Api;
 
@@ -25,12 +26,24 @@ public class UserSettingsController : BaseController<UserSettingsController>
             return NotFound();
         }
 
-        var difficultySettingArray = JsonHelper.GetUIntArrayFromJson(user.DifficultySettingArray, 3, Logger, nameof(user.DifficultySettingArray));
+        var difficultySettingArray = JsonHelper.GetUIntArrayFromJson(user.DifficultySettingArray, 3, Logger,
+            nameof(user.DifficultySettingArray));
 
         var costumeData = JsonHelper.GetCostumeDataFromUserData(user, Logger);
 
         var costumeUnlockData = JsonHelper.GetCostumeUnlockDataFromUserData(user, Logger);
 
+        var unlockedTitle = JsonHelper.GetUIntArrayFromJson(user.TitleFlgArray, 0, Logger, nameof(user.TitleFlgArray))
+            .ToList();
+
+        for (var i = 0; i < 5; i++)
+        {
+            if (!costumeUnlockData[i].Contains(0))
+            {
+                costumeUnlockData[i].Add(0);
+            }
+        }
+        
         var response = new UserSetting
         {
             AchievementDisplayDifficulty = user.AchievementDisplayDifficulty,
@@ -58,9 +71,11 @@ public class UserSettingsController : BaseController<UserSettingsController>
             UnlockedBody = costumeUnlockData[2],
             UnlockedFace = costumeUnlockData[3],
             UnlockedPuchi = costumeUnlockData[4],
+            UnlockedTitle = unlockedTitle,
             BodyColor = user.ColorBody,
             FaceColor = user.ColorFace,
-            LimbColor = user.ColorLimb
+            LimbColor = user.ColorLimb,
+            LastPlayDateTime = user.LastPlayDatetime
         };
         return Ok(response);
     }
@@ -108,6 +123,21 @@ public class UserSettingsController : BaseController<UserSettingsController>
         user.ColorFace = userSetting.FaceColor;
         user.ColorLimb = userSetting.LimbColor;
         user.CostumeData = JsonSerializer.Serialize(costumes);
+
+        // If a locked tone is selected, unlock it
+        uint[] toneFlg = { 0u };
+        try
+        {
+            toneFlg = JsonSerializer.Deserialize<uint[]>(user.ToneFlgArray)!;
+        }
+        catch (JsonException e)
+        {
+            Logger.LogError(e, "Parsing tone flg json data failed");
+        }
+        toneFlg.ThrowIfNull("Tone flg should never be null!");
+        toneFlg = toneFlg.Append(0u).Append(userSetting.ToneId).Distinct().ToArray();
+
+        user.ToneFlgArray = JsonSerializer.Serialize(toneFlg);
 
         await userDatumService.UpdateUserDatum(user);
 

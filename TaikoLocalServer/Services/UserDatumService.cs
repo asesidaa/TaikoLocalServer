@@ -56,6 +56,16 @@ public class UserDatumService : IUserDatumService
         context.Update(userDatum);
         await context.SaveChangesAsync();
     }
+    
+    public async Task<bool> DeleteUser(uint baid)
+    {
+        var userDatum = await context.UserData.FindAsync((ulong)baid);
+        if (userDatum == null) return false;
+        context.UserData.Remove(userDatum);
+        await context.SaveChangesAsync();
+
+        return true;
+    }
 
     public async Task<List<uint>> GetFavoriteSongIds(ulong baid)
     {

@@ -1,4 +1,5 @@
-﻿using SharedProject.Models.Requests;
+﻿using GameDatabase.Entities;
+using SharedProject.Models.Requests;
 
 namespace TaikoLocalServer.Controllers.Api;
 
@@ -12,7 +13,7 @@ public class CardsController : BaseController<CardsController>
     {
         this.cardService = cardService;
     }
-
+    
     [HttpDelete("{accessCode}")]
     public async Task<IActionResult> DeleteUser(string accessCode)
     {
@@ -22,12 +23,21 @@ public class CardsController : BaseController<CardsController>
     }
     
     [HttpPost]
-    public async Task<IActionResult> UpdatePassword(SetPasswordRequest request)
+    public async Task<IActionResult> BindAccessCode(BindAccessCodeRequest request)
     {
         var accessCode = request.AccessCode;
-        var password = request.Password;
-        var salt = request.Salt;
-        var result = await cardService.UpdatePassword(accessCode, password, salt);
-        return result ? NoContent() : NotFound();
+        var baid = request.Baid;
+        var existingCard = await cardService.GetCardByAccessCode(accessCode);
+        if (existingCard is not null)
+        {
+            return BadRequest("Access code already exists");
+        }
+        var newCard = new Card
+        {
+          Baid  = baid,
+          AccessCode = accessCode
+        };
+        await cardService.AddCard(newCard);
+        return NoContent();
     }
 }

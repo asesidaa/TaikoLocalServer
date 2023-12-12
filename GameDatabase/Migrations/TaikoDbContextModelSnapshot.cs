@@ -15,7 +15,7 @@ namespace TaikoLocalServer.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.0-rc.1.23419.6");
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.0-rc.2.23480.1");
 
             modelBuilder.Entity("GameDatabase.Entities.AiScoreDatum", b =>
                 {
@@ -84,6 +84,18 @@ namespace TaikoLocalServer.Migrations
                     b.Property<ulong>("Baid")
                         .HasColumnType("INTEGER");
 
+                    b.HasKey("AccessCode");
+
+                    b.HasIndex("Baid");
+
+                    b.ToTable("Card", (string)null);
+                });
+
+            modelBuilder.Entity("GameDatabase.Entities.Credential", b =>
+                {
+                    b.Property<ulong>("Baid")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -92,12 +104,9 @@ namespace TaikoLocalServer.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("AccessCode");
+                    b.HasKey("Baid");
 
-                    b.HasIndex(new[] { "Baid" }, "IX_Card_Baid")
-                        .IsUnique();
-
-                    b.ToTable("Card", (string)null);
+                    b.ToTable("Credential", (string)null);
                 });
 
             modelBuilder.Entity("GameDatabase.Entities.DanScoreDatum", b =>
@@ -109,6 +118,7 @@ namespace TaikoLocalServer.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("DanType")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasDefaultValue(1);
 
@@ -140,6 +150,7 @@ namespace TaikoLocalServer.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("DanType")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasDefaultValue(1);
 
@@ -267,6 +278,7 @@ namespace TaikoLocalServer.Migrations
             modelBuilder.Entity("GameDatabase.Entities.UserDatum", b =>
                 {
                     b.Property<ulong>("Baid")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<uint>("AchievementDisplayDifficulty")
@@ -372,10 +384,9 @@ namespace TaikoLocalServer.Migrations
 
             modelBuilder.Entity("GameDatabase.Entities.AiScoreDatum", b =>
                 {
-                    b.HasOne("GameDatabase.Entities.Card", "Ba")
+                    b.HasOne("GameDatabase.Entities.UserDatum", "Ba")
                         .WithMany()
                         .HasForeignKey("Baid")
-                        .HasPrincipalKey("Baid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -393,12 +404,33 @@ namespace TaikoLocalServer.Migrations
                     b.Navigation("Parent");
                 });
 
-            modelBuilder.Entity("GameDatabase.Entities.DanScoreDatum", b =>
+            modelBuilder.Entity("GameDatabase.Entities.Card", b =>
                 {
-                    b.HasOne("GameDatabase.Entities.Card", "Ba")
+                    b.HasOne("GameDatabase.Entities.UserDatum", "Ba")
                         .WithMany()
                         .HasForeignKey("Baid")
-                        .HasPrincipalKey("Baid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ba");
+                });
+
+            modelBuilder.Entity("GameDatabase.Entities.Credential", b =>
+                {
+                    b.HasOne("GameDatabase.Entities.UserDatum", "Ba")
+                        .WithMany()
+                        .HasForeignKey("Baid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ba");
+                });
+
+            modelBuilder.Entity("GameDatabase.Entities.DanScoreDatum", b =>
+                {
+                    b.HasOne("GameDatabase.Entities.UserDatum", "Ba")
+                        .WithMany()
+                        .HasForeignKey("Baid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -418,10 +450,9 @@ namespace TaikoLocalServer.Migrations
 
             modelBuilder.Entity("GameDatabase.Entities.SongBestDatum", b =>
                 {
-                    b.HasOne("GameDatabase.Entities.Card", "Ba")
+                    b.HasOne("GameDatabase.Entities.UserDatum", "Ba")
                         .WithMany()
                         .HasForeignKey("Baid")
-                        .HasPrincipalKey("Baid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -430,22 +461,9 @@ namespace TaikoLocalServer.Migrations
 
             modelBuilder.Entity("GameDatabase.Entities.SongPlayDatum", b =>
                 {
-                    b.HasOne("GameDatabase.Entities.Card", "Ba")
+                    b.HasOne("GameDatabase.Entities.UserDatum", "Ba")
                         .WithMany()
                         .HasForeignKey("Baid")
-                        .HasPrincipalKey("Baid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Ba");
-                });
-
-            modelBuilder.Entity("GameDatabase.Entities.UserDatum", b =>
-                {
-                    b.HasOne("GameDatabase.Entities.Card", "Ba")
-                        .WithMany()
-                        .HasForeignKey("Baid")
-                        .HasPrincipalKey("Baid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

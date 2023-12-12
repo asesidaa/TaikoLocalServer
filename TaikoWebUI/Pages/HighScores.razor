@@ -2,19 +2,13 @@
 @inject HttpClient Client
 @inject LoginService LoginService
 
-@page "/Cards/{baid:int}/HighScores"
+@page "/Users/{baid:int}/HighScores"
 
 <MudBreadcrumbs Items="breadcrumbs" Class="px-0"></MudBreadcrumbs>
 
 <h1>High Scores</h1>
-@if (LoginService.LoginRequired)
-{
-    <MudText Typo="Typo.caption">Card: @LoginService.GetCardNum()</MudText>
-}
-else
-{
-    <MudText Typo="Typo.caption">Card: @Baid</MudText>
-}
+<MudText Typo="Typo.caption">User: @Baid</MudText>
+
 
 <MudGrid Class="my-8">
     @if (response is null)
@@ -27,11 +21,11 @@ else
     }
     else
     {
-        @if (LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.Baid != Baid && !LoginService.IsAdmin)))
+        @if (LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.GetLoggedInUser().Baid != Baid && !LoginService.IsAdmin)))
         {
             <MudItem xs="12">
                 <MudText Align="Align.Center" Class="my-8">
-                    Please log in by clicking on "cards" tab first.
+                    Please log in by clicking on "Users" tab first.
                 </MudText>
             </MudItem>
         }

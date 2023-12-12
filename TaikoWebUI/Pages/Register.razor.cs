@@ -2,10 +2,15 @@
 
 public partial class Register
 {
-    private string cardNum = "";
+    private string accessCode = "";
     private string confirmPassword = "";
     private string password = "";
     private MudForm registerForm = default!;
+    
+    private MudDatePicker datePicker = new();
+    private MudTimePicker timePicker = new();
+    private DateTime? date = DateTime.Today;
+    private TimeSpan? time = new TimeSpan(00, 45, 00);
 
     private DashboardResponse? response;
 
@@ -17,9 +22,10 @@ public partial class Register
 
     private async Task OnRegister()
     {
+        var inputDateTime = date!.Value.Date + time!.Value;
         if (response != null)
         {
-            var result = await LoginService.Register(cardNum, password, confirmPassword, response, Client);
+            var result = await LoginService.Register(accessCode, inputDateTime, password, confirmPassword, response, Client);
             switch (result)
             {
                 case 0:
@@ -27,14 +33,14 @@ public partial class Register
                         "Error",
                         "Only admin can log in.",
                         "Ok");
-                    NavigationManager.NavigateTo("/Cards");
+                    NavigationManager.NavigateTo("/Users");
                     break;
                 case 1:
                     await DialogService.ShowMessageBox(
                         "Success",
-                        "Card registered successfully.",
+                        "Access code registered successfully.",
                         "Ok");
-                    NavigationManager.NavigateTo("/Cards");
+                    NavigationManager.NavigateTo("/Users");
                     break;
                 case 2:
                     await DialogService.ShowMessageBox(
@@ -46,16 +52,23 @@ public partial class Register
                     await DialogService.ShowMessageBox(
                         "Error",
                         (MarkupString)
-                        "Card number not found.<br />Please play one game with this card number to register it.",
+                        "Access code not found.<br />Please play one game with this access code to register it.",
                         "Ok");
                     break;
                 case 4:
                     await DialogService.ShowMessageBox(
                         "Error",
                         (MarkupString)
-                        "Card is already registered, please use set password to login.",
+                        "Access code is already registered, please use set password to login.",
                         "Ok");
-                    NavigationManager.NavigateTo("/Cards");
+                    NavigationManager.NavigateTo("/Users");
+                    break;
+                case 5:
+                    await DialogService.ShowMessageBox(
+                        "Error",
+                        (MarkupString)
+                        "Wrong last play time.<br />If you have forgotten when you last played, please play another game with this access code.",
+                        "Ok");
                     break;
             }
         }

@@ -170,7 +170,7 @@ public partial class Profile
 
     private readonly List<BreadcrumbItem> breadcrumbs = new()
     {
-        new BreadcrumbItem("Cards", href: "/Cards"),
+        new BreadcrumbItem("Users", href: "/Users"),
     };
 
     private Dictionary<Difficulty, List<SongBestData>> songBestDataMap = new();
@@ -178,6 +178,12 @@ public partial class Profile
     private Difficulty highestDifficulty = Difficulty.Easy;
 
     private List<int> costumeFlagArraySizes = new();
+
+    private List<uint> unlockedHeadCostumes = new();
+    private List<uint> unlockedBodyCostumes = new();
+    private List<uint> unlockedFaceCostumes = new();
+    private List<uint> unlockedKigurumiCostumes = new();
+    private List<uint> unlockedPuchiCostumes = new();
 
     private int[] scoresArray = new int[10];
 
@@ -188,8 +194,17 @@ public partial class Profile
         response = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
         response.ThrowIfNull();
 
-        breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
-        breadcrumbs.Add(new BreadcrumbItem("Profile", href: $"/Cards/{Baid}/Profile", disabled: false));
+        breadcrumbs.Add(new BreadcrumbItem($"User: {Baid}", href: null, disabled: true));
+        breadcrumbs.Add(new BreadcrumbItem("Profile", href: $"/Users/{Baid}/Profile", disabled: false));
+
+        if (response != null)
+        {
+            unlockedHeadCostumes = response.UnlockedHead.Distinct().OrderBy(x => x).ToList();
+            unlockedBodyCostumes = response.UnlockedBody.Distinct().OrderBy(x => x).ToList();
+            unlockedFaceCostumes = response.UnlockedFace.Distinct().OrderBy(x => x).ToList();
+            unlockedKigurumiCostumes = response.UnlockedKigurumi.Distinct().OrderBy(x => x).ToList();
+            unlockedPuchiCostumes = response.UnlockedPuchi.Distinct().OrderBy(x => x).ToList();
+        }
 
         costumeFlagArraySizes = GameDataService.GetCostumeFlagArraySizes();
 
@@ -218,7 +233,7 @@ public partial class Profile
             {
                 highestDifficulty = (Difficulty)i;
             }
-                    
+
 
         UpdateScores(response.AchievementDisplayDifficulty);
     }
@@ -305,9 +320,10 @@ public partial class Profile
             MaxWidth = MaxWidth.Medium,
             FullWidth = true
         };
-        var parameters = new DialogParameters
+        var parameters = new DialogParameters<ChooseTitleDialog>
         {
-            ["UserSetting"] = response
+            {x => x.UserSetting, response},
+            {x => x.AllowFreeProfileEditing, LoginService.AllowFreeProfileEditing}
         };
         var dialog = DialogService.Show<ChooseTitleDialog>("Player Titles", parameters, options);
         var result = await dialog.Result;

@@ -331,7 +331,7 @@ public class GameDataService : IGameDataService
 			.ToList();
 		musics.Sort();
 		
-		musicsWithUra = musicInfoes.Where(info => info.Value.starUra > 0)
+		musicsWithUra = musicInfoes.Where(info => info.Value.StarUra > 0)
 			.Select(pair => pair.Key)
 			.ToList();
 		musicsWithUra.Sort();
@@ -362,20 +362,20 @@ public class GameDataService : IGameDataService
 	{
 		donCosRewardData.ThrowIfNull("Shouldn't happen!");
 		var kigurumiUniqueIdList = donCosRewardData.DonCosRewardEntries
-			.Where(entry => entry.cosType == "kigurumi")
-			.Select(entry => entry.uniqueId);
+			.Where(entry => entry.CosType == "kigurumi")
+			.Select(entry => entry.UniqueId);
 		var headUniqueIdList = donCosRewardData.DonCosRewardEntries
-			.Where(entry => entry.cosType == "head")
-			.Select(entry => entry.uniqueId);
+			.Where(entry => entry.CosType == "head")
+			.Select(entry => entry.UniqueId);
 		var bodyUniqueIdList = donCosRewardData.DonCosRewardEntries
-			.Where(entry => entry.cosType == "body")
-			.Select(entry => entry.uniqueId);
+			.Where(entry => entry.CosType == "body")
+			.Select(entry => entry.UniqueId);
 		var faceUniqueIdList = donCosRewardData.DonCosRewardEntries
-			.Where(entry => entry.cosType == "face")
-			.Select(entry => entry.uniqueId);
+			.Where(entry => entry.CosType == "face")
+			.Select(entry => entry.UniqueId);
 		var puchiUniqueIdList = donCosRewardData.DonCosRewardEntries
-			.Where(entry => entry.cosType == "puchi")
-			.Select(entry => entry.uniqueId);
+			.Where(entry => entry.CosType == "puchi")
+			.Select(entry => entry.UniqueId);
 		
 		costumeFlagArraySizes = new List<int>
 		{
@@ -390,13 +390,13 @@ public class GameDataService : IGameDataService
 	private void InitializeTitleFlagArraySize(Shougous? shougouData)
 	{
 		shougouData.ThrowIfNull("Shouldn't happen!");
-		titleFlagArraySize = (int)shougouData.ShougouEntries.Max(entry => entry.uniqueId) + 1;
+		titleFlagArraySize = (int)shougouData.ShougouEntries.Max(entry => entry.UniqueId) + 1;
 	}
 	
 	private void InitializeToneFlagArraySize(Neiros? neiroData)
 	{
 		neiroData.ThrowIfNull("Shouldn't happen!");
-		toneFlagArraySize = (int)neiroData.NeiroEntries.Max(entry => entry.uniqueId) + 1;
+		toneFlagArraySize = (int)neiroData.NeiroEntries.Max(entry => entry.UniqueId) + 1;
 	}
 	
 	private void InitializeQrCodeData(List<QRCodeData>? qrCodeData)

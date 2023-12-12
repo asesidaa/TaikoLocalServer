@@ -8,5 +8,5 @@ public class MusicInfoEntry
 	public uint MusicId { get; set; }
 
 	[JsonPropertyName("starUra")]
-	public uint starUra { get; set; }
+	public uint StarUra { get; set; }
 }

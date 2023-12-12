@@ -33,6 +33,5 @@ namespace GameDatabase.Entities
 		public int AiWinCount { get; set; }
 		public string TokenCountDict { get; set; } = "{}";
 		public string UnlockedSongIdList { get; set; } = "[]";
-		public virtual Card? Ba { get; set; }
 	}
 }

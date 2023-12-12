@@ -1,6 +1,6 @@
 ﻿namespace TaikoWebUI.Pages.Dialogs;
 
-public partial class CardDeleteConfirmDialog
+public partial class UserDeleteConfirmDialog
 {
     
     [CascadingParameter]
@@ -11,17 +11,17 @@ public partial class CardDeleteConfirmDialog
 
     private void Cancel() => MudDialog.Cancel();
     
-    private async Task DeleteCard()
+    private async Task DeleteUser()
     {
-        var responseMessage = await Client.DeleteAsync($"api/Cards/{User.AccessCode}");
+        var responseMessage = await Client.DeleteAsync($"api/Users/{User.Baid}");
 
         if (!responseMessage.IsSuccessStatusCode)
         {
-            Snackbar.Add("Something went wrong when deleting card!", Severity.Error);
+            Snackbar.Add("Something went wrong when deleting user!", Severity.Error);
             MudDialog.Close(DialogResult.Ok(false));
             return;
         }
-
+        
         Snackbar.Add("Delete success!", Severity.Success);
         MudDialog.Close(DialogResult.Ok(true));
     }

@@ -13,5 +13,5 @@ public class DanScoreDatum
     public DanClearState ClearState { get; set; }
     public List<DanStageScoreDatum> DanStageScoreData { get; set; } = new();
 
-    public virtual Card? Ba { get; set; }
+    public virtual UserDatum? Ba { get; set; }
 }

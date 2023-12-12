@@ -9,11 +9,14 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
 	private readonly IUserDatumService userDatumService;
 
 	private readonly ICardService cardService;
+	
+	private readonly ICredentialService credentialService;
 
-	public MyDonEntryController(IUserDatumService userDatumService, ICardService cardService)
+	public MyDonEntryController(IUserDatumService userDatumService, ICardService cardService, ICredentialService credentialService)
 	{
 		this.userDatumService = userDatumService;
 		this.cardService = cardService;
+		this.credentialService = credentialService;
 	}
 
 	[HttpPost]
@@ -23,13 +26,6 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
 		Logger.LogInformation("MyDonEntry request : {Request}", request.Stringify());
 
 		var newId = cardService.GetNextBaid();
-		await cardService.AddCard(new Card
-		{
-			AccessCode = request.WechatQrStr,
-			Baid = newId,
-			Password = "",
-			Salt = ""
-		});
 
 		var newUser = new UserDatum
 		{
@@ -45,13 +41,25 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
 			FavoriteSongsArray = "[]",
 			ToneFlgArray = "[0]",
 			TitleFlgArray = "[]",
-			CostumeFlgArray = "[[],[],[],[],[]]",
+			CostumeFlgArray = "[[0],[0],[0],[0],[0]]",
 			GenericInfoFlgArray = "[]",
 			TokenCountDict = "{}",
 			UnlockedSongIdList = "[]"
 		};
-
 		await userDatumService.InsertUserDatum(newUser);
+
+		await cardService.AddCard(new Card
+		{
+			AccessCode = request.WechatQrStr,
+			Baid = newId
+		});
+		
+		await credentialService.AddCredential(new Credential
+		{
+			Baid = newId,
+			Password = "",
+			Salt = ""
+		});
 
 		var response = new MydonEntryResponse
 		{

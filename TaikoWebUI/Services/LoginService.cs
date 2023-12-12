@@ -9,34 +9,36 @@ public class LoginService
 {
     private readonly string adminPassword;
     private readonly string adminUsername;
+    public bool LoginRequired { get; }
+    public bool OnlyAdmin { get; }
+    private readonly int boundAccessCodeUpperLimit;
+    public bool RegisterWithLastPlayTime { get; }
+    public bool AllowUserDelete { get; }
+    public bool AllowFreeProfileEditing { get; }
 
     public LoginService(IOptions<WebUiSettings> settings)
     {
         IsLoggedIn = false;
-        Baid = 0;
-        CardNum = 0;
         IsAdmin = false;
         var webUiSettings = settings.Value;
         adminUsername = webUiSettings.AdminUsername;
         adminPassword = webUiSettings.AdminPassword;
         LoginRequired = webUiSettings.LoginRequired;
         OnlyAdmin = webUiSettings.OnlyAdmin;
+        boundAccessCodeUpperLimit = webUiSettings.BoundAccessCodeUpperLimit;
+        RegisterWithLastPlayTime = webUiSettings.RegisterWithLastPlayTime;
+        AllowUserDelete = webUiSettings.AllowUserDelete;
+        AllowFreeProfileEditing = webUiSettings.AllowFreeProfileEditing;
     }
 
     public bool IsLoggedIn { get; private set; }
-    public uint Baid { get; private set; }
-    private int CardNum { get; set; }
+    private User LoggedInUser { get; set; } = new();
     public bool IsAdmin { get; private set; }
-
-    public bool LoginRequired { get; }
-    public bool OnlyAdmin { get; }
 
     public int Login(string inputCardNum, string inputPassword, DashboardResponse response)
     {
         if (inputCardNum == adminUsername && inputPassword == adminPassword)
         {
-            CardNum = 0;
-            Baid = 0;
             IsLoggedIn = true;
             IsAdmin = true;
             return 1;
@@ -44,37 +46,50 @@ public class LoginService
 
         if (OnlyAdmin) return 0;
 
-        foreach (var user in response.Users.Where(user => user.AccessCode == inputCardNum))
+        foreach (var user in response.Users.Where(user => user.AccessCodes.Contains(inputCardNum)))
         {
-            if (user.Password == "") return 4;
-            if (ComputeHash(inputPassword, user.Salt) != user.Password) return 2;
-            CardNum = int.Parse(user.AccessCode);
-            Baid = user.Baid;
-            IsLoggedIn = true;
-            IsAdmin = false;
-            return 1;
+            foreach (var userCredential in response.UserCredentials.Where(userCredential => userCredential.Baid == user.Baid))
+            {
+                if (userCredential.Password == "") return 4;
+                if (ComputeHash(inputPassword, userCredential.Salt) != userCredential.Password) return 2;
+                IsLoggedIn = true;
+                LoggedInUser = user;
+                IsAdmin = false;
+                return 1;
+            }
         }
-
         return 3;
     }
 
-    public async Task<int> Register(string inputCardNum, string inputPassword, string inputConfirmPassword,
+    public async Task<int> Register(string inputCardNum, DateTime inputDateTime, string inputPassword, string inputConfirmPassword,
         DashboardResponse response, HttpClient client)
     {
         if (OnlyAdmin) return 0;
-        foreach (var user in response.Users.Where(user => user.AccessCode == inputCardNum))
+        
+        foreach (var user in response.Users.Where(user => user.AccessCodes.Contains(inputCardNum)))
         {
-            if (user.Password != "") return 4;
-            if (inputPassword != inputConfirmPassword) return 2;
-            var salt = CreateSalt();
-            var request = new SetPasswordRequest
+            foreach (var userCredential in response.UserCredentials.Where(userCredential => userCredential.Baid == user.Baid))
             {
-                AccessCode = user.AccessCode,
-                Password = ComputeHash(inputPassword, salt),
-                Salt = salt
-            };
-            var responseMessage = await client.PostAsJsonAsync("api/Cards", request);
-            return responseMessage.IsSuccessStatusCode ? 1 : 3;
+                if (RegisterWithLastPlayTime)
+                {
+                    var userSettingResponse = await client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{user.Baid}");
+                    if (userSettingResponse is null) return 3;
+                    var lastPlayDateTime = userSettingResponse.LastPlayDateTime;
+                    var diffMinutes = (inputDateTime - lastPlayDateTime).Duration().TotalMinutes;
+                    if (diffMinutes > 5) return 5;
+                }
+                if (userCredential.Password != "") return 4;
+                if (inputPassword != inputConfirmPassword) return 2;
+                var salt = CreateSalt();
+                var request = new SetPasswordRequest
+                {
+                    Baid = user.Baid,
+                    Password = ComputeHash(inputPassword, salt),
+                    Salt = salt
+                };
+                var responseMessage = await client.PostAsJsonAsync("api/Credentials", request);
+                return responseMessage.IsSuccessStatusCode ? 1 : 3;
+            }
         }
 
         return 3;
@@ -109,18 +124,21 @@ public class LoginService
         string inputConfirmNewPassword, DashboardResponse response, HttpClient client)
     {
         if (OnlyAdmin) return 0;
-        foreach (var user in response.Users.Where(user => user.AccessCode == inputCardNum))
+        foreach (var user in response.Users.Where(user => user.AccessCodes.Contains(inputCardNum)))
         {
-            if (user.Password != ComputeHash(inputOldPassword, user.Salt)) return 4;
-            if (inputNewPassword != inputConfirmNewPassword) return 2;
-            var request = new SetPasswordRequest
+            foreach (var userCredential in response.UserCredentials.Where(userCredential => userCredential.Baid == user.Baid))
             {
-                AccessCode = user.AccessCode,
-                Password = ComputeHash(inputNewPassword, user.Salt),
-                Salt = user.Salt
-            };
-            var responseMessage = await client.PostAsJsonAsync("api/Cards", request);
-            return responseMessage.IsSuccessStatusCode ? 1 : 3;
+                if (userCredential.Password != ComputeHash(inputOldPassword, userCredential.Salt)) return 4;
+                if (inputNewPassword != inputConfirmNewPassword) return 2;
+                var request = new SetPasswordRequest
+                {
+                    Baid = user.Baid,
+                    Password = ComputeHash(inputNewPassword, userCredential.Salt),
+                    Salt = userCredential.Salt
+                };
+                var responseMessage = await client.PostAsJsonAsync("api/Credentials", request);
+                return responseMessage.IsSuccessStatusCode ? 1 : 3;
+            }
         }
 
         return 3;
@@ -129,19 +147,34 @@ public class LoginService
     public void Logout()
     {
         IsLoggedIn = false;
+        LoggedInUser = new User();
         IsAdmin = false;
-        Baid = 0;
-        CardNum = 0;
     }
 
-    public int GetBaid()
+    public User GetLoggedInUser()
     {
-        return checked((int)Baid);
+        return LoggedInUser;
     }
-
-    public string GetCardNum()
+    
+    public void ResetLoggedInUser(DashboardResponse? response)
     {
-        if (IsAdmin) return "Admin";
-        return CardNum == 0 ? "Not logged in" : CardNum.ToString();
+        if (response is null) return;
+        var baid = LoggedInUser.Baid;
+        var newLoggedInUser = response.Users.FirstOrDefault(u => u.Baid == baid);
+        if (newLoggedInUser is null) return;
+        LoggedInUser = newLoggedInUser;
+    }
+    
+    public async Task<int> BindAccessCode(string inputAccessCode, HttpClient client)
+    {
+        if (!IsLoggedIn) return 0;
+        if (LoggedInUser.AccessCodes.Count >= boundAccessCodeUpperLimit) return 2;
+        var request = new BindAccessCodeRequest
+        {
+            AccessCode = inputAccessCode,
+            Baid = LoggedInUser.Baid
+        };
+        var responseMessage = await client.PostAsJsonAsync("api/Cards", request);
+        return responseMessage.IsSuccessStatusCode ? 1 : 3;
     }
 }
