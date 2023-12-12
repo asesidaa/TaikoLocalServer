@@ -3,9 +3,9 @@
 @inject LoginService LoginService
 @inject NavigationManager NavigationManager
 
-@page "/Cards/Register"
+@page "/Users/Register"
 
-<h1>Cards</h1>
+<h1>Users</h1>
 
 @if (LoginService.OnlyAdmin || !LoginService.LoginRequired)
 {
@@ -15,14 +15,19 @@ else
 {
     <MudContainer>
         <MudGrid Justify="Justify.Center">
-            <MudItem xs="4" class="mt-8">
+            <MudItem xs="12" md="6" lg="4" class="mt-8">
                 <MudCard>
                     <MudCardContent>
                         <MudForm @ref="registerForm">
                             <MudText Typo="Typo.h4" Align="Align.Center">Register</MudText>
-                            <MudTextField @bind-value="cardNum" InputType="InputType.Text" T="string"
-                                          FullWidth="true" Required="@true" RequiredError="Card Number is required"
-                                          Label="Card Number"/>
+                            <MudTextField @bind-value="accessCode" InputType="InputType.Text" T="string"
+                                          FullWidth="true" Required="@true" RequiredError="Access Code is required"
+                                          Label="Access Code"/>
+                            @if (LoginService.RegisterWithLastPlayTime)
+                            {
+                                <MudDatePicker @ref="datePicker" Label="Last Play Date" @bind-Date="date" AutoClose="true"/>
+                                <MudTimePicker @ref="timePicker" AmPm="true" Label="Last Play Time(5 min around credit end)" @bind-Time="time" AutoClose="true"/>
+                            }
                             <MudTextField @bind-Value="password" InputType="InputType.Password"
                                           T="string" FullWidth="true" Required="@true"
                                           RequiredError="Password is required"

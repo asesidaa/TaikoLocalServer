@@ -12,6 +12,6 @@ namespace GameDatabase.Entities
 		public CrownType BestCrown { get; set; }
 		public ScoreRank BestScoreRank { get; set; }
 
-		public virtual Card? Ba { get; set; }
+		public virtual UserDatum? Ba { get; set; }
 	}
 }

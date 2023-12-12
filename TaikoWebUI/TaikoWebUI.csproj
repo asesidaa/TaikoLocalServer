@@ -46,5 +46,20 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Pages\Pages\AccessCode.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Pages\ChangePassword.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Pages\DaniDojo.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Pages\Dashboard.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Pages\Dialogs\AccessCodeDeleteConfirmDialog.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Pages\Dialogs\ChooseTitleDialog.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Pages\Dialogs\UserDeleteConfirmDialog.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Pages\Dialogs\UserQrCodeDialog.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Pages\HighScores.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Pages\Profile.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Pages\Register.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Pages\Users.razor" />
+    </ItemGroup>
+
 
 </Project>

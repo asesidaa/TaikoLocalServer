@@ -11,7 +11,7 @@ public partial class DaniDojo
 
     private readonly List<BreadcrumbItem> breadcrumbs = new()
     {
-        new BreadcrumbItem("Cards", href: "/Cards"),
+        new BreadcrumbItem("Users", href: "/Users"),
     };
 
     protected override async Task OnInitializedAsync()
@@ -23,8 +23,8 @@ public partial class DaniDojo
             .Sort((stageData, otherStageData) => stageData.SongNumber.CompareTo(otherStageData.SongNumber)));
         bestDataMap = response.DanBestDataList.ToDictionary(data => data.DanId);
 
-        breadcrumbs.Add(new BreadcrumbItem($"Card: {Baid}", href: null, disabled: true));
-        breadcrumbs.Add(new BreadcrumbItem("Dani Dojo", href: $"/Cards/{Baid}/DaniDojo", disabled: false));
+        breadcrumbs.Add(new BreadcrumbItem($"User: {Baid}", href: null, disabled: true));
+        breadcrumbs.Add(new BreadcrumbItem("Dani Dojo", href: $"/Users/{Baid}/DaniDojo", disabled: false));
     }
 
     private static string GetDanClearStateString(DanClearState danClearState)

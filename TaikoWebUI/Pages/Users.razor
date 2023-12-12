@@ -1,0 +1,214 @@
+﻿@inject HttpClient Client
+@inject IDialogService DialogService
+@inject LoginService LoginService
+@inject NavigationManager NavigationManager
+
+@page "/Users"
+
+<h1>Users</h1>
+<MudGrid Class="my-8">
+    @if (response is null)
+    {
+        @for (uint i = 0; i < 3; i++)
+        {
+            <MudItem xs="12" md="6" lg="4">
+                <MudCard Outlined="true">
+                    <MudCardContent>
+                        <MudSkeleton Width="30%" Height="42px;" Class="mb-5"/>
+                        <MudSkeleton Width="80%"/>
+                        <MudSkeleton Width="100%"/>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
+                            <MudSkeleton Width="64px" Height="40px"/>
+                            <MudSkeleton Width="64px" Height="40px"/>
+                        </MudStack>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        }
+    }
+    else if (response.Users.Count != 0)
+    {
+        if (LoginService.IsAdmin || !LoginService.LoginRequired) // Admin mode, can see all users
+        {
+            @foreach (var user in response.Users)
+            {
+                <MudItem xs="12" md="6" lg="4">
+                    <MudCard Outlined="true">
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.h6" Style="font-weight:bold">User: @user.Baid</MudText>
+                            </CardHeaderContent>
+                            <CardHeaderActions>
+                                <MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense="true" AnchorOrigin="Origin.BottomLeft"
+                                         TransformOrigin="Origin.TopLeft" Size="Size.Small">
+                                    <MudMenuItem Icon="@Icons.Material.Filled.QrCode"
+                                                 OnClick="@(_ => ShowQrCode(user))"
+                                                 IconColor="@Color.Primary">
+                                        Show QR Code
+                                    </MudMenuItem>
+                                    <MudDivider/>
+                                    <MudMenuItem Icon="@Icons.Material.Filled.FeaturedPlayList"
+                                                 Href="@($"Users/{user.Baid}/AccessCode")"
+                                                 IconColor="@Color.Primary">
+                                        Manage Access Codes
+                                    </MudMenuItem>
+                                    @if (LoginService.AllowUserDelete)
+                                    {
+                                        <MudDivider/>
+                                        <MudMenuItem Icon="@Icons.Material.Filled.Delete"
+                                                     OnClick="@(_ => DeleteUser(user))"
+                                                     IconColor="@Color.Error">
+                                            Delete User
+                                        </MudMenuItem>
+                                    }
+                                </MudMenu>
+                            </CardHeaderActions>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            <MudText Style="font-weight:bold">Access Code</MudText>
+                            <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">@user.AccessCodes[0]</MudText>
+                            @if (user.AccessCodes.Count > 1)
+                            {
+                                <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">... and @(user.AccessCodes.Count-1) other access code(s)</MudText>
+                            }
+                        </MudCardContent>
+                        <MudCardActions>
+                            <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
+                                <MudButton Href="@($"Users/{user.Baid}/Profile")"
+                                           Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Edit"
+                                           Color="Color.Primary">
+                                    Edit Profile
+                                </MudButton>
+                                <MudMenu Size="Size.Small"
+                                         Dense="true"
+                                         Color="Color.Primary"
+                                         Label="View Play Data"
+                                         StartIcon="@Icons.Material.Filled.FeaturedPlayList"
+                                         EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
+                                         FullWidth="true"
+                                         AnchorOrigin="Origin.BottomCenter"
+                                         TransformOrigin="Origin.TopCenter">
+                                    <MudMenuItem Href="@($"Users/{user.Baid}/HighScores")">High Scores</MudMenuItem>
+                                    <MudMenuItem Href="@($"Users/{user.Baid}/DaniDojo")">Dani Dojo</MudMenuItem>
+                                </MudMenu>
+                            </MudStack>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        }
+        else
+        {
+            @if (!LoginService.IsLoggedIn) // Not logged in, show login form
+            {
+                <MudContainer>
+                    <MudGrid Justify="Justify.Center">
+                        <MudItem xs="12" md="6" lg="4" class="mt-8">
+                            <MudCard>
+                                <MudCardContent>
+                                    <MudForm @ref="loginForm">
+                                        <MudText Typo="Typo.h4" Align="Align.Center">Login</MudText>
+                                        <MudTextField @bind-value="inputAccessCode" InputType="InputType.Text" T="string"
+                                                      FullWidth="true" Required="@true" RequiredError="Access code is required"
+                                                      Label="Access code"/>
+                                        <MudTextField @bind-Value="inputPassword" InputType="InputType.Password"
+                                                      T="string" FullWidth="true" Required="@true"
+                                                      RequiredError="Password is required"
+                                                      Label="Password">
+                                        </MudTextField>
+                                        <MudStack Row="true">
+                                            <MudButton OnClick="OnLogin" FullWidth="true" Class="mt-3" StartIcon="@Icons.Material.Filled.Login" Color="Color.Primary" Variant="Variant.Filled">Login</MudButton>
+                                            @if (!LoginService.OnlyAdmin)
+                                            {
+                                                <MudButton Href="@("Users/Register")" FullWidth="true" Class="mt-3" StartIcon="@Icons.Material.Filled.AddCard" Color="Color.Primary" Variant="Variant.Filled">Register</MudButton>
+                                            }
+                                        </MudStack>
+                                    </MudForm>
+                                </MudCardContent>
+                            </MudCard>
+                        </MudItem>
+                    </MudGrid>
+                </MudContainer>
+            }
+            else
+            {
+                var user = LoginService.GetLoggedInUser(); // Logged in, show only own user
+                <MudGrid Justify="Justify.Center">
+                    <MudItem xs="12" md="6" lg="4">
+                        <MudCard Outlined="true">
+                            <MudCardHeader>
+                                <CardHeaderContent>
+                                    <MudText Typo="Typo.h6" Style="font-weight:bold">User: @user.Baid</MudText>
+                                </CardHeaderContent>
+                                <CardHeaderActions>
+                                    <MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense="true" AnchorOrigin="Origin.BottomLeft"
+                                             TransformOrigin="Origin.TopLeft" Size="Size.Small">
+                                        <MudMenuItem Icon="@Icons.Material.Filled.QrCode"
+                                                     OnClick="@(_ => ShowQrCode(user))"
+                                                     IconColor="@Color.Primary">
+                                            Show QR Code
+                                        </MudMenuItem>
+                                        <MudDivider/>
+                                        <MudMenuItem Icon="@Icons.Material.Filled.FeaturedPlayList"
+                                                     Href="@($"Users/{user.Baid}/AccessCode")"
+                                                     IconColor="@Color.Primary">
+                                            Manage Access Codes
+                                        </MudMenuItem>
+                                        @if (LoginService.AllowUserDelete)
+                                        {
+                                            <MudDivider/>
+                                            <MudMenuItem Icon="@Icons.Material.Filled.Delete"
+                                                         OnClick="@(_ => DeleteUser(user))"
+                                                         IconColor="@Color.Error">
+                                                Delete User
+                                            </MudMenuItem>
+                                        }
+                                    </MudMenu>
+                                </CardHeaderActions>
+                            </MudCardHeader>
+                            <MudCardContent>
+                                <MudText Style="font-weight:bold">Access Code</MudText>
+                                <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">@user.AccessCodes[0]</MudText>
+                                @if (user.AccessCodes.Count > 1)
+                                {
+                                    <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">... and @(user.AccessCodes.Count-1) other access code(s)</MudText>
+                                }
+                            </MudCardContent>
+                            <MudCardActions>
+                                <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
+                                    <MudButton Href="@($"Users/{user.Baid}/Profile")"
+                                               Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Edit"
+                                               Color="Color.Primary">
+                                        Edit Profile
+                                    </MudButton>
+                                    <MudMenu Size="Size.Small"
+                                             Dense="true"
+                                             Color="Color.Primary"
+                                             Label="View Play Data"
+                                             StartIcon="@Icons.Material.Filled.DataExploration"
+                                             EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
+                                             FullWidth="true"
+                                             AnchorOrigin="Origin.BottomCenter"
+                                             TransformOrigin="Origin.TopCenter">
+                                        <MudMenuItem Href="@($"Users/{user.Baid}/HighScores")">High Scores</MudMenuItem>
+                                        <MudMenuItem Href="@($"Users/{user.Baid}/DaniDojo")">Dani Dojo</MudMenuItem>
+                                    </MudMenu>
+                                </MudStack>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                </MudGrid>
+            }
+        }
+    }
+    else
+    { // No users in the database
+        <MudItem xs="12">
+            <MudText Align="Align.Center" Class="my-8">
+                No data.
+            </MudText>
+        </MudItem>
+    }
+</MudGrid>

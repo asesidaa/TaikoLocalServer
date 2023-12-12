@@ -55,7 +55,7 @@ public class GameDataService : IGameDataService
         await Task.Run(() => InitializeBodyTitles(dict));
         await Task.Run(() => InitializePuchiTitles(dict));
         await Task.Run(() => InitializeKigurumiTitles(dict));
-        await Task.Run(() => InitializeTitles(dict));
+        await Task.Run(() => InitializeTitles(dict, shougouData));
     }
 
     private async Task<T> GetData<T>(string dataBaseUrl, string fileBaseName) where T : notnull
@@ -143,21 +143,29 @@ public class GameDataService : IGameDataService
     private void InitializeTitleFlagArraySize(Shougous? shougouData)
     {
         shougouData.ThrowIfNull("Shouldn't happen!");
-        titleFlagArraySize = (int)shougouData.ShougouEntries.Max(entry => entry.uniqueId) + 1;
+        titleFlagArraySize = (int)shougouData.ShougouEntries.Max(entry => entry.UniqueId) + 1;
     }
 
-    private void InitializeTitles(ImmutableDictionary<string, WordListEntry> dict)
+    private void InitializeTitles(ImmutableDictionary<string, WordListEntry> dict, Shougous? shougouData)
     {
+        shougouData.ThrowIfNull("Shouldn't happen!");
+        
         var set = ImmutableHashSet.CreateBuilder<Title>();
         for (var i = 1; i < titleFlagArraySize; i++)
         {
             var key = $"syougou_{i}";
 
             var titleWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
+            
+            var titleRarity = shougouData.ShougouEntries
+                .Where(entry => entry.UniqueId == i)
+                .Select(entry => entry.Rarity)
+                .FirstOrDefault();
 
             set.Add(new Title{
                 TitleName = titleWordlistItem.JapaneseText,
-                TitleId = i
+                TitleId = i,
+                TitleRarity = titleRarity
             });
         }
 
@@ -168,20 +176,20 @@ public class GameDataService : IGameDataService
     {
         donCosRewardData.ThrowIfNull("Shouldn't happen!");
         var kigurumiUniqueIdList = donCosRewardData.DonCosRewardEntries
-            .Where(entry => entry.cosType == "kigurumi")
-            .Select(entry => entry.uniqueId);
+            .Where(entry => entry.CosType == "kigurumi")
+            .Select(entry => entry.UniqueId);
         var headUniqueIdList = donCosRewardData.DonCosRewardEntries
-            .Where(entry => entry.cosType == "head")
-            .Select(entry => entry.uniqueId);
+            .Where(entry => entry.CosType == "head")
+            .Select(entry => entry.UniqueId);
         var bodyUniqueIdList = donCosRewardData.DonCosRewardEntries
-            .Where(entry => entry.cosType == "body")
-            .Select(entry => entry.uniqueId);
+            .Where(entry => entry.CosType == "body")
+            .Select(entry => entry.UniqueId);
         var faceUniqueIdList = donCosRewardData.DonCosRewardEntries
-            .Where(entry => entry.cosType == "face")
-            .Select(entry => entry.uniqueId);
+            .Where(entry => entry.CosType == "face")
+            .Select(entry => entry.UniqueId);
         var puchiUniqueIdList = donCosRewardData.DonCosRewardEntries
-            .Where(entry => entry.cosType == "puchi")
-            .Select(entry => entry.uniqueId);
+            .Where(entry => entry.CosType == "puchi")
+            .Select(entry => entry.UniqueId);
 		
         costumeFlagArraySizes = new List<int>
         {

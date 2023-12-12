@@ -22,6 +22,7 @@ namespace GameDatabase.Context
         }
 
         public virtual DbSet<Card> Cards { get; set; } = null!;
+        public virtual DbSet<Credential> Credentials { get; set; } = null!;
         public virtual DbSet<SongBestDatum> SongBestData { get; set; } = null!;
         public virtual DbSet<SongPlayDatum> SongPlayData { get; set; } = null!;
         public virtual DbSet<UserDatum> UserData { get; set; } = null!;
@@ -48,9 +49,25 @@ namespace GameDatabase.Context
                 entity.HasKey(e => e.AccessCode);
 
                 entity.ToTable("Card");
+                
+                entity.HasOne(d => d.Ba)
+                    .WithMany()
+                    .HasPrincipalKey(p => p.Baid)
+                    .HasForeignKey(d => d.Baid)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+            
+            modelBuilder.Entity<Credential>(entity =>
+            {
+                entity.HasKey(e => e.Baid);
 
-                entity.HasIndex(e => e.Baid, "IX_Card_Baid")
-                    .IsUnique();
+                entity.ToTable("Credential");
+                
+                entity.HasOne(d => d.Ba)
+                    .WithMany()
+                    .HasPrincipalKey(p => p.Baid)
+                    .HasForeignKey(d => d.Baid)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<SongBestDatum>(entity =>
@@ -102,12 +119,6 @@ namespace GameDatabase.Context
                 entity.HasKey(e => e.Baid);
 
                 entity.Property(e => e.LastPlayDatetime).HasColumnType("datetime");
-
-                entity.HasOne(d => d.Ba)
-                    .WithMany()
-                    .HasPrincipalKey(p => p.Baid)
-                    .HasForeignKey(d => d.Baid)
-                    .OnDelete(DeleteBehavior.Cascade);
 
                 entity.Property(e => e.AchievementDisplayDifficulty)
                     .HasConversion<uint>();
