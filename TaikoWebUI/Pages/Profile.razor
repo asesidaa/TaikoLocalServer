@@ -454,18 +454,18 @@
 @code {
     private async Task UpdateMyDonName()
     {
-        @if (response is not null) await JS.InvokeVoidAsync("updateMyDonNameText", response.MyDonName);
+        @if (response is not null) await Js.InvokeVoidAsync("updateMyDonNameText", response.MyDonName);
     }
 
     private async Task UpdateTitle()
     {
         @if (response is not null) await 
-    JS.InvokeVoidAsync("updateTitleText", response.Title);
+    Js.InvokeVoidAsync("updateTitleText", response.Title);
     }
 
     private async Task UpdateScoreboard(Difficulty difficulty)
     {
         UpdateScores(difficulty);
-        await JS.InvokeVoidAsync("updateScoreboardText", scoresArray);
+        await Js.InvokeVoidAsync("updateScoreboardText", scoresArray);
     }
 }
