@@ -167,6 +167,7 @@ public class LoginService
     
     public async Task<int> BindAccessCode(string inputAccessCode, HttpClient client)
     {
+        if (inputAccessCode.Trim() == "") return 4;
         if (!IsLoggedIn) return 0;
         if (LoggedInUser.AccessCodes.Count >= boundAccessCodeUpperLimit) return 2;
         var request = new BindAccessCodeRequest

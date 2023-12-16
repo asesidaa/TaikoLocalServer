@@ -99,6 +99,13 @@ public partial class AccessCode
                         "Access code already bound.<br />Please delete it from the bound user first.",
                         "Ok");
                     break;
+                case 4:
+                    await DialogService.ShowMessageBox(
+                        "Error",
+                        (MarkupString)
+                        "Access code cannot be empty.<br />Please enter a valid access code.",
+                        "Ok");
+                    break;
             }
         }
     }
