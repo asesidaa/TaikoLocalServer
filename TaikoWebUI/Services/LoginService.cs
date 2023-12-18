@@ -7,8 +7,6 @@ namespace TaikoWebUI.Services;
 
 public class LoginService
 {
-    private readonly string adminPassword;
-    private readonly string adminUsername;
     public bool LoginRequired { get; }
     public bool OnlyAdmin { get; }
     private readonly int boundAccessCodeUpperLimit;
@@ -21,8 +19,6 @@ public class LoginService
         IsLoggedIn = false;
         IsAdmin = false;
         var webUiSettings = settings.Value;
-        adminUsername = webUiSettings.AdminUsername;
-        adminPassword = webUiSettings.AdminPassword;
         LoginRequired = webUiSettings.LoginRequired;
         OnlyAdmin = webUiSettings.OnlyAdmin;
         boundAccessCodeUpperLimit = webUiSettings.BoundAccessCodeUpperLimit;
@@ -37,24 +33,16 @@ public class LoginService
 
     public int Login(string inputCardNum, string inputPassword, DashboardResponse response)
     {
-        if (inputCardNum == adminUsername && inputPassword == adminPassword)
-        {
-            IsLoggedIn = true;
-            IsAdmin = true;
-            return 1;
-        }
-
-        if (OnlyAdmin) return 0;
-
         foreach (var user in response.Users.Where(user => user.AccessCodes.Contains(inputCardNum)))
         {
             foreach (var userCredential in response.UserCredentials.Where(userCredential => userCredential.Baid == user.Baid))
             {
                 if (userCredential.Password == "") return 4;
                 if (ComputeHash(inputPassword, userCredential.Salt) != userCredential.Password) return 2;
+                IsAdmin = user.IsAdmin;
+                if (!IsAdmin && OnlyAdmin) return 0;
                 IsLoggedIn = true;
                 LoggedInUser = user;
-                IsAdmin = false;
                 return 1;
             }
         }
