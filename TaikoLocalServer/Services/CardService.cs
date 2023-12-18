@@ -28,28 +28,13 @@ public class CardService : ICardService
 	public async Task<List<User>> GetUsersFromCards()
 	{
 		var cardEntries = await context.Cards.ToListAsync();
-		List<User> users = new();
-		var found = false;
-		foreach (var cardEntry in cardEntries)
+		var userEntries = await context.UserData.ToListAsync();
+		var users = userEntries.Select(userEntry => new User
 		{
-			foreach (var user in users.Where(user => user.Baid == cardEntry.Baid))
-			{
-				user.AccessCodes.Add(cardEntry.AccessCode);
-				found = true;
-			}
-
-			if (!found)
-			{
-				var user = new User
-				{
-					Baid = (uint)cardEntry.Baid,
-					AccessCodes = new List<string> {cardEntry.AccessCode}
-				};
-				users.Add(user);
-			}
-
-			found = false;
-		}
+			Baid = (uint)userEntry.Baid,
+			AccessCodes = cardEntries.Where(cardEntry => cardEntry.Baid == userEntry.Baid).Select(cardEntry => cardEntry.AccessCode).ToList(),
+			IsAdmin = userEntry.IsAdmin
+		}).ToList();
 		return users;
 	}
 

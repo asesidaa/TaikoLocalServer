@@ -54,6 +54,12 @@
                                                  IconColor="@Color.Primary">
                                         Manage Access Codes
                                     </MudMenuItem>
+                                    <MudDivider/>
+                                    <MudMenuItem Icon="@Icons.Material.Filled.Lock"
+                                                 Href="@($"Users/{user.Baid}/ChangePassword")"
+                                                 IconColor="@Color.Primary">
+                                        Change Password
+                                    </MudMenuItem>
                                     @if (LoginService.AllowUserDelete)
                                     {
                                         <MudDivider/>
@@ -155,6 +161,12 @@
                                                      Href="@($"Users/{user.Baid}/AccessCode")"
                                                      IconColor="@Color.Primary">
                                             Manage Access Codes
+                                        </MudMenuItem>
+                                        <MudDivider/>
+                                        <MudMenuItem Icon="@Icons.Material.Filled.Lock"
+                                                     Href="@($"Users/ChangePassword")"
+                                                     IconColor="@Color.Primary">
+                                            Change Password
                                         </MudMenuItem>
                                         @if (LoginService.AllowUserDelete)
                                         {
