@@ -104,4 +104,42 @@ a, .btn-link {
     .loading-progress-text:after {
         content: var(--blazor-load-percentage-text, "Loading");
     }
-    /* Change text to "Ok" when loading is complete */
+
+.nameplateTextOutline {
+    -webkit-text-stroke: 5px;
+    -webkit-text-stroke-color: black
+
+}
+
+.nameplateText {
+    font-family: 'Nijiiro', sans-serif !important;
+    position: absolute;
+    height: 100%;
+    top: 0;
+    right: 0;
+    left: 0;
+    margin: 0 auto;
+    color: white;
+    margin: auto auto;
+}
+
+.nameplateTextLeft {
+    position: absolute;
+    height: 100%;
+    width: 15%;
+    left: 19%
+}
+
+.nameplateTextCenter {
+    position: absolute;
+    height: 100%;
+    width: 15%;
+    left: 48%
+}
+
+.nameplateTextRight {
+    position: absolute;
+    height: 100%;
+    width: 15%;
+    left: 78%
+}

@@ -2,10 +2,18 @@
 var title;
 var myDonName;
 var myDonNameOutline;
+var scoreboard;
 var init = false
-const observer = new ResizeObserver(handleResize);
-function handleResize() {
-    updateFit()
+
+const nameplateObserver = new ResizeObserver(handleNameplateResize);
+const scoreboardObserver = new ResizeObserver(handleScoreboardResize);
+
+function handleNameplateResize() {
+    fitNameplate();
+}
+
+function handleScoreboardResize() {
+    fitScoreboard();
 }
 
 function waitForElm(selector) {
@@ -33,7 +41,8 @@ var pushState = history.pushState;
 history.pushState = function () {
     pushState.apply(history, arguments);
     init = false;
-    observer.disconnect();
+    nameplateObserver.disconnect();
+    scoreboardObserver.disconnect();
 };
 
 // Fetches all the relevant objects on the page so updateFit can reference them later
@@ -41,41 +50,89 @@ function initNameplate() {
     if (window.location.href.indexOf("Profile") > -1) {
         waitForElm('#nameplate-title').then((elm) => {
             title = elm
-                waitForElm('#nameplate-name').then((elm) => {
-                    myDonName = elm
-                    waitForElm('#nameplate-name-outline').then((elm) => {
-                        myDonNameOutline = elm
-                        observer.observe(document.getElementById('nameplate'));
-                        init = true
-                    });
+            waitForElm('#nameplate-name').then((elm) => {
+                myDonName = elm
+                waitForElm('#nameplate-name-outline').then((elm) => {
+                    myDonNameOutline = elm
+                    nameplateObserver.observe(document.getElementById('nameplate'));
+                    init = true
                 });
+            });
         });
     }
 }
 
-function updateFit() {
-    textFit(title, { alignHoriz: true, alignVert: true });
-    textFit(myDonName, { alignHoriz: true, alignVert: true });
-    textFit(myDonNameOutline, { alignHoriz: true, alignVert: true });
+function initScoreboard() {
+    if (window.location.href.indexOf("Profile") > -1) {
+        waitForElm('#scoreboard').then((elm) => {
+            scoreboard = elm
+            scoreboardObserver.observe(elm);
+        });
+    }
 }
 
+function fitNameplate() {
+    if (title.offsetWidth > 0 && title.offsetHeight > 0) {
+        textFit(title, { alignHoriz: true, alignVert: true });
+        textFit(myDonName, { alignHoriz: true, alignVert: true });
+        textFit(myDonNameOutline, { alignHoriz: true, alignVert: true });
+    }
+}
+
+function fitScoreboard() {
+    if (scoreboard.offsetWidth > 0 && scoreboard.offsetHeight > 0) {
+        var row = scoreboard.children;
+        for (var i = 0; i < row.length; i++) {
+            var column = row[i].children;
+            for (var j = 0; j < column.length; j++) {
+                var texts = column[j].children;
+                for (var k = 0; k < texts.length; k++) {
+                    if (texts[k].offsetWidth > 0 && texts[k].offsetHeight > 0) {
+                        textFit(texts[k], { alignHoriz: true, alignVert: true });
+                    }
+                }
+            }
+        }
+    }
+}
 
 // Used to individually update texts on the nameplate
-function updateMyDonName(elm) {
+function updateMyDonNameText(elm) {
     if (init) {
         myDonName.textContent = elm
         myDonNameOutline.textContent = elm
-        updateFit()
+        fitNameplate()
     }
 }
-function updateTitle(elm) {
+function updateTitleText(elm) {
     if (init) {
         title.textContent = elm
-        updateFit()
+        fitNameplate()
+    }
+}
+
+function updateScoreboardText(elm) {
+    if (init) {
+        index = 0;
+        var row = scoreboard.children;
+        for (var i = 0; i < row.length; i++) {
+            var column = row[i].children;
+            for (var j = 0; j < column.length; j++) {
+                var texts = column[j].children;
+                for (var k = 0; k < texts.length; k++) {
+                    if (texts[k].offsetWidth > 0 && texts[k].offsetHeight > 0) {
+                        texts[k].textContent = elm[index];
+                    }
+                }
+                index++;
+            }
+        }
+        fitScoreboard()
     }
 }
 
 // Called by html onload when the image of the nameplate is loaded (this ensures the first fit is properly done)
 function nameplateLoaded() {
-    initNameplate()
+    initNameplate();
+    initScoreboard();
 }

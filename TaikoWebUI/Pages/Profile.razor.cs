@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
+using SharedProject.Enums;
 using System.Linq;
 using TaikoWebUI.Pages.Dialogs;
+using static MudBlazor.CategoryTypes;
 
 namespace TaikoWebUI.Pages;
 
@@ -8,6 +10,8 @@ public partial class Profile
 {
     [Parameter]
     public int Baid { get; set; }
+
+    private SongBestResponse? songresponse;
 
     private UserSetting? response;
 
@@ -40,7 +44,7 @@ public partial class Profile
         "masks/body-facemask-0090", "masks/body-facemask-0092", "masks/body-facemask-0136",
         "masks/body-facemask-0151", "masks/body-facemask-0152", "masks/body-facemask-0153",
         "masks/head-bodymask-0113", "masks/head-bodymask-0138",
-        "masks/head-facemask-0003", "masks/head-facemask-0113", "masks/head-facemask-0137", 
+        "masks/head-facemask-0003", "masks/head-facemask-0113", "masks/head-facemask-0137",
         "masks/head-facemask-0138",
         "masks/kigurumi-bodymask-0052", "masks/kigurumi-bodymask-0109", "masks/kigurumi-bodymask-0110",
         "masks/kigurumi-bodymask-0115", "masks/kigurumi-bodymask-0123",
@@ -168,20 +172,27 @@ public partial class Profile
     {
         new BreadcrumbItem("Users", href: "/Users"),
     };
-    
+
+    private Dictionary<Difficulty, List<SongBestData>> songBestDataMap = new();
+
+    private Difficulty highestDifficulty = Difficulty.Easy;
+
     private List<int> costumeFlagArraySizes = new();
-    
+
     private List<uint> unlockedHeadCostumes = new();
     private List<uint> unlockedBodyCostumes = new();
     private List<uint> unlockedFaceCostumes = new();
     private List<uint> unlockedKigurumiCostumes = new();
     private List<uint> unlockedPuchiCostumes = new();
 
+    private int[] scoresArray = new int[10];
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         isSavingOptions = false;
         response = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
+        response.ThrowIfNull();
 
         breadcrumbs.Add(new BreadcrumbItem($"User: {Baid}", href: null, disabled: true));
         breadcrumbs.Add(new BreadcrumbItem("Profile", href: $"/Users/{Baid}/Profile", disabled: false));
@@ -194,8 +205,37 @@ public partial class Profile
             unlockedKigurumiCostumes = response.UnlockedKigurumi.Distinct().OrderBy(x => x).ToList();
             unlockedPuchiCostumes = response.UnlockedPuchi.Distinct().OrderBy(x => x).ToList();
         }
-        
+
         costumeFlagArraySizes = GameDataService.GetCostumeFlagArraySizes();
+
+        songresponse = await Client.GetFromJsonAsync<SongBestResponse>($"api/PlayData/{Baid}");
+        songresponse.ThrowIfNull();
+
+        songresponse.SongBestData.ForEach(data =>
+        {
+            var songId = data.SongId;
+            data.Genre = GameDataService.GetMusicGenreBySongId(songId);
+            data.MusicName = GameDataService.GetMusicNameBySongId(songId);
+            data.MusicArtist = GameDataService.GetMusicArtistBySongId(songId);
+        });
+
+        songBestDataMap = songresponse.SongBestData.GroupBy(data => data.Difficulty)
+            .ToDictionary(data => data.Key,
+                          data => data.ToList());
+        foreach (var songBestDataList in songBestDataMap.Values)
+        {
+            songBestDataList.Sort((data1, data2) => GameDataService.GetMusicIndexBySongId(data1.SongId)
+                                      .CompareTo(GameDataService.GetMusicIndexBySongId(data2.SongId)));
+        }
+
+        for (int i = 0; i < (int)Difficulty.UraOni; i++)
+            if (songBestDataMap.TryGetValue((Difficulty)i, out var values))
+            {
+                highestDifficulty = (Difficulty)i;
+            }
+
+
+        UpdateScores(response.AchievementDisplayDifficulty);
     }
 
     private async Task SaveOptions()
@@ -205,7 +245,63 @@ public partial class Profile
         isSavingOptions = false;
     }
 
-    public static string ImageOrDefault(string file, uint id, string defaultfile)
+    private void UpdateScores(Difficulty difficulty)
+    {
+        //Console.WriteLine("Updating difficulty : " + (int)difficulty);
+        response.ThrowIfNull();
+        response.AchievementDisplayDifficulty = difficulty;
+        scoresArray = new int[10];
+
+        if (difficulty is Difficulty.None) difficulty = highestDifficulty;
+
+        if (songBestDataMap.TryGetValue(difficulty, out var values))
+        {
+            foreach (var value in values)
+            {
+                //Console.WriteLine("Updating for songId : " + value.SongId);
+                switch (value.BestScoreRank)
+                {
+                    case ScoreRank.Dondaful:
+                        scoresArray[0]++;
+                        break;
+                    case ScoreRank.Gold:
+                        scoresArray[1]++;
+                        break;
+                    case ScoreRank.Sakura:
+                        scoresArray[2]++;
+                        break;
+                    case ScoreRank.Purple:
+                        scoresArray[3]++;
+                        break;
+                    case ScoreRank.White:
+                        scoresArray[4]++;
+                        break;
+                    case ScoreRank.Bronze:
+                        scoresArray[5]++;
+                        break;
+                    case ScoreRank.Silver:
+                        scoresArray[6]++;
+                        break;
+                }
+
+                switch (value.BestCrown)
+                {
+                    case CrownType.Clear:
+                        scoresArray[7]++;
+                        break;
+                    case CrownType.Gold:
+                        scoresArray[8]++;
+                        break;
+                    case CrownType.Dondaful:
+                        scoresArray[9]++;
+                        break;
+                }
+            }
+
+        }
+    }
+
+    public static string CostumeOrDefault(string file, uint id, string defaultfile)
     {
         var path = "/images/Costumes/";
         var filename = file + "-" + id.ToString().PadLeft(4, '0');
