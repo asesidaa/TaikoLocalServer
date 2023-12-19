@@ -152,16 +152,17 @@ public class LoginService
         if (newLoggedInUser is null) return;
         LoggedInUser = newLoggedInUser;
     }
-    
-    public async Task<int> BindAccessCode(string inputAccessCode, HttpClient client)
+
+    public async Task<int> BindAccessCode(string inputAccessCode, User user, HttpClient client)
     {
-        if (inputAccessCode.Trim() == "") return 4;
-        if (!IsLoggedIn) return 0;
-        if (LoggedInUser.AccessCodes.Count >= boundAccessCodeUpperLimit) return 2;
+        if (inputAccessCode.Trim() == "") return 4; /*Empty access code*/
+        if (!IsLoggedIn && LoginRequired) return 0; /*User not connected and login is required*/
+        if (LoginRequired && !IsAdmin && !(user.Baid == GetLoggedInUser().Baid)) return 5; /*User not admin trying to update someone elses Access Codes*/
+        if (user.AccessCodes.Count >= boundAccessCodeUpperLimit) return 2; /*Limit of codes has been reached*/
         var request = new BindAccessCodeRequest
         {
             AccessCode = inputAccessCode,
-            Baid = LoggedInUser.Baid
+            Baid = user.Baid
         };
         var responseMessage = await client.PostAsJsonAsync("api/Cards", request);
         return responseMessage.IsSuccessStatusCode ? 1 : 3;
