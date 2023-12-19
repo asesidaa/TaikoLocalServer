@@ -38,6 +38,29 @@ public partial class Users
         response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
         OnLogout();
     }
+
+    private async Task ResetPassword(User user)
+    {
+        if (!LoginService.IsAdmin)
+        {
+            await DialogService.ShowMessageBox(
+                "Error",
+                "Only admin can reset password.",
+                "Ok");
+            return;
+        }
+        var parameters = new DialogParameters
+        {
+            ["user"] = user
+        };
+
+        var dialog = DialogService.Show<ResetPasswordConfirmDialog>("Reset Password", parameters);
+        var result = await dialog.Result;
+
+        if (result.Canceled) return;
+
+        response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
+    }
     
     private async Task OnLogin()
     {
