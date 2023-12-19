@@ -67,7 +67,7 @@ public partial class AccessCode
     {
         if (response != null)
         {
-            var result = await LoginService.BindAccessCode(inputAccessCode, Client);
+            var result = await LoginService.BindAccessCode(inputAccessCode.ToUpper().Trim(), response.Users.First(u => u.Baid == Baid), Client);
             switch (result)
             {
                 case 0:
@@ -104,6 +104,13 @@ public partial class AccessCode
                         "Error",
                         (MarkupString)
                         "Access code cannot be empty.<br />Please enter a valid access code.",
+                        "Ok");
+                    break;
+                case 5:
+                    await DialogService.ShowMessageBox(
+                        "Error",
+                        (MarkupString)
+                        "You can't do that!<br />You need to be an admin to edit someone else's access codes.",
                         "Ok");
                     break;
             }
