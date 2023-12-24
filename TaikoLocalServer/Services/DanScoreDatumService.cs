@@ -40,4 +40,10 @@ public class DanScoreDatumService : IDanScoreDatumService
         context.DanScoreData.Update(datum);
         await context.SaveChangesAsync();
     }
+    public void TrackDanStageData(DanStageScoreDatum datum)
+    {
+        context.DanStageScoreData.Add(datum);
+    }
+
+
 }

@@ -154,7 +154,7 @@ public class PlayResultController : BaseController<PlayResultController>
             var index = danScoreData.DanStageScoreData.IndexOf(danStageData);
             if (index == -1)
             {
-                danScoreData.DanStageScoreData.Add(danStageData);
+                danScoreDatumService.TrackDanStageData(danStageData);
             }
         }
     }
