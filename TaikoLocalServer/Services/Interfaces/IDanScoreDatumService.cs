@@ -9,4 +9,6 @@ public interface IDanScoreDatumService
     public Task<DanScoreDatum?> GetSingleDanScoreDatum(ulong baid, uint danId, DanType danType);
 
     public Task InsertOrUpdateDanScoreDatum(DanScoreDatum datum);
+
+    public void TrackDanStageData(DanStageScoreDatum datum);
 }
