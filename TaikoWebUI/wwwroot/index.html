@@ -31,6 +31,12 @@
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
     <script src="js/textFit.min.js"></script>
     <script src="js/updateTextFit.js"></script>
+    <script>
+        window.blazorCulture = {
+            get: () => localStorage['BlazorCulture'],
+            set: (value) => localStorage['BlazorCulture'] = value
+        };
+    </script>
 </body>
 
 </html>

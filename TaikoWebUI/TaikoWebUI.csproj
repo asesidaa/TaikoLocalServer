@@ -7,6 +7,8 @@
         <LangVersion>11</LangVersion>
         <WasmEnableSIMD>false</WasmEnableSIMD>
         <WasmEnableExceptionHandling>false</WasmEnableExceptionHandling>
+        <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
+        <InvariantGlobalization>false</InvariantGlobalization>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,6 +16,8 @@
         <PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="6.5.10" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0-rc.1.23421.29" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0-rc.1.23421.29" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="8.0.1" />
         <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0-rc.1.23419.4" />
         <PackageReference Include="MudBlazor" Version="6.10.0" />
         <PackageReference Include="SharpZipLib" Version="1.4.2" />
@@ -62,6 +66,32 @@
       <_ContentIncludedByDefault Remove="Pages\Pages\Register.razor" />
       <_ContentIncludedByDefault Remove="Pages\Pages\Users.razor" />
     </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Update="Localization\LocalizationResource.en-US.resx">
+            <SubType>Designer</SubType>
+            <Generator>ResXFileCodeGenerator</Generator>
+            <CustomToolNamespace>LocalizationResource</CustomToolNamespace>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Localization\LocalizationResource.zh-Hans.resx">
+            <SubType>Designer</SubType>
+            <Generator>ResXFileCodeGenerator</Generator>
+            <CustomToolNamespace>LocalizationResource</CustomToolNamespace>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Localization\LocalizationResource.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>LocalizationResource.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Localization\LocalizationResource.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>LocalizationResource.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+    
 
 
 </Project>
