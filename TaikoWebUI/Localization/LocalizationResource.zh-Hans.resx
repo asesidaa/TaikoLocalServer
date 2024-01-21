@@ -20,4 +20,16 @@
     <data name="edit profile" xml:space="preserve">
         <value>编辑档案</value>
     </data>
+    <data name="user" xml:space="preserve">
+        <value>用户</value>
+    </data>
+    <data name="view play data" xml:space="preserve">
+        <value>查看最高分</value>
+    </data>
+    <data name="high scores" xml:space="preserve">
+        <value>演奏模式</value>
+    </data>
+    <data name="dani dojo" xml:space="preserve">
+        <value>段位道场</value>
+    </data>
 </root>

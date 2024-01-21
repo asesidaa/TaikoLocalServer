@@ -20,4 +20,16 @@
     <data name="edit profile" xml:space="preserve">
         <value>Edit Profile</value>
     </data>
+    <data name="user" xml:space="preserve">
+        <value>User</value>
+    </data>
+    <data name="view play data" xml:space="preserve">
+        <value>View Play Data</value>
+    </data>
+    <data name="high scores" xml:space="preserve">
+        <value>High Scores</value>
+    </data>
+    <data name="dani dojo" xml:space="preserve">
+        <value>Dani Dojo</value>
+    </data>
 </root>
