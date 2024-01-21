@@ -5,7 +5,7 @@
 
 @page "/Users"
 
-<h1>Users</h1>
+<h1>@Localizer["users"]</h1>
 <MudGrid Class="my-8">
     @if (response is null)
     {
@@ -94,7 +94,7 @@
                                 <MudButton Href="@($"Users/{user.Baid}/Profile")"
                                            Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Edit"
                                            Color="Color.Primary">
-                                    Edit Profile
+                                    @Localizer["edit profile"]
                                 </MudButton>
                                 <MudMenu Size="Size.Small"
                                          Dense="true"
