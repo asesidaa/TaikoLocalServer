@@ -38,7 +38,7 @@
                     <MudCard Outlined="true">
                         <MudCardHeader>
                             <CardHeaderContent>
-                                <MudText Typo="Typo.h6" Style="font-weight:bold">User: @user.Baid</MudText>
+                                <MudText Typo="Typo.h6" Style="font-weight:bold">@Localizer["user"]: @user.Baid</MudText>
                                 </CardHeaderContent>
                                 <CardHeaderActions>
                                     <MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense="true" AnchorOrigin="Origin.BottomLeft"
@@ -99,14 +99,14 @@
                                 <MudMenu Size="Size.Small"
                                          Dense="true"
                                          Color="Color.Primary"
-                                         Label="View Play Data"
+                                         Label="@Localizer["view play data"]"
                                          StartIcon="@Icons.Material.Filled.FeaturedPlayList"
                                          EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
                                          FullWidth="true"
                                          AnchorOrigin="Origin.BottomCenter"
                                          TransformOrigin="Origin.TopCenter">
-                                    <MudMenuItem Href="@($"Users/{user.Baid}/HighScores")">High Scores</MudMenuItem>
-                                    <MudMenuItem Href="@($"Users/{user.Baid}/DaniDojo")">Dani Dojo</MudMenuItem>
+                                    <MudMenuItem Href="@($"Users/{user.Baid}/HighScores")">@Localizer["high scores"]</MudMenuItem>
+                                    <MudMenuItem Href="@($"Users/{user.Baid}/DaniDojo")">@Localizer["dani dojo"]</MudMenuItem>
                                 </MudMenu>
                             </MudStack>
                         </MudCardActions>
