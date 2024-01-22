@@ -82,6 +82,11 @@
           <Generator>ResXFileCodeGenerator</Generator>
           <LastGenOutput>LocalizationResource.Designer.cs</LastGenOutput>
         </EmbeddedResource>
+        <EmbeddedResource Update="Localization\LocalizationResource.ja.resx">
+            <SubType>Designer</SubType>
+            <Generator>ResXFileCodeGenerator</Generator>
+            <CustomToolNamespace>LocalizationResource</CustomToolNamespace>
+        </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
