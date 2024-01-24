@@ -87,6 +87,11 @@
             <Generator>ResXFileCodeGenerator</Generator>
             <CustomToolNamespace>LocalizationResource</CustomToolNamespace>
         </EmbeddedResource>
+        <EmbeddedResource Update="Localization\LocalizationResource.zh-Hant.resx">
+          <SubType>Designer</SubType>
+          <Generator>ResXFileCodeGenerator</Generator>
+          <CustomToolNamespace>LocalizationResource</CustomToolNamespace>
+        </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
