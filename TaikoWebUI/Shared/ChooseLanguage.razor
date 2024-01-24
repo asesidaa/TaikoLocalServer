@@ -1,6 +1,9 @@
 ﻿@using System.Globalization;
+@using Microsoft.Extensions.Options
+@using TaikoWebUI.Settings
 @inject NavigationManager NavigationManager
 @inject IJSRuntime        JSRuntime
+@inject IOptions<WebUiSettings> Settings
 
 <MudMenu Icon="@Icons.Material.Filled.Language" Color="Color.Inherit">
     @foreach (var culture in SupportedCultures)
@@ -11,12 +14,21 @@
 
 
 @code{
-    public readonly Dictionary<CultureInfo, string> SupportedCultures = new()
+    public Dictionary<CultureInfo, string> SupportedCultures = new();
+
+    protected override void OnInitialized()
     {
-        { new CultureInfo("en-US"), "English" },
-        { new CultureInfo("zh-Hans"), "简体中文" },
-        { new CultureInfo("ja"), "日本語" },
-    };
+        base.OnInitialized();
+        foreach (var language in Settings.Value.SupportedLanguages)
+        {
+            SupportedCultures.Add(new CultureInfo(language.CultureCode), language.DisplayName);
+        }
+
+        if (SupportedCultures.Count == 0)
+        {
+            SupportedCultures.Add(new CultureInfo("en-US"), "English");
+        }
+    }
 
     private void RequestCultureChange(CultureInfo newCulture)
     {
