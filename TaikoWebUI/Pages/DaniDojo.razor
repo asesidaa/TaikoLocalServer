@@ -6,14 +6,14 @@
 
 <MudBreadcrumbs Items="breadcrumbs" Class="px-0"></MudBreadcrumbs>
 
-<h1>Dani Dojo</h1>
+<h1>@Localizer["Key_03"]</h1>
 <MudText Typo="Typo.caption">User: @Baid</MudText>
 
 @if (LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.GetLoggedInUser().Baid != Baid && !LoginService.IsAdmin)))
 {
     <MudItem xs="12">
         <MudText Align="Align.Center" Class="my-8">
-            Please log in by clicking on "Users" tab first.
+            @Localizer["Key_02"]
         </MudText>
     </MudItem>
 }
@@ -29,13 +29,13 @@ else
                         var danData = GameDataService.GetDanDataById(danId);
 
                         <MudTabPanel Text="@GetDanTitle(danData.Title)" Icon="@GetDanResultIcon(danId)">
-                            <MudText Typo="Typo.h5" Class="mb-4">Details</MudText>
+                            <MudText Typo="Typo.h5" Class="mb-4">@Localizer["Details"]</MudText>
                             <MudGrid Class="d-flex">
                                 <MudItem xs="12" sm="12" md="4" Class="pb-1">
                                     <MudCard Outlined="true" Style="height:100%;">
                                         <MudCardHeader Class="pb-0">
                                             <CardHeaderContent>
-                                                <MudText Typo="Typo.h6">Result</MudText>
+                                                <MudText Typo="Typo.h6">@Localizer["Result"]</MudText>
                                             </CardHeaderContent>
                                         </MudCardHeader>
                                         <MudCardContent Class="d-flex py-10" Style="justify-content:center;">
@@ -56,7 +56,7 @@ else
                                         <MudCard Outlined="true">
                                             <MudCardHeader Class="pb-0">
                                                 <CardHeaderContent>
-                                                    <MudText Typo="Typo.h6">High Score</MudText>
+                                                    <MudText Typo="Typo.h6">@Localizer["Key_01"]</MudText>
                                                 </CardHeaderContent>
                                             </MudCardHeader>
                                             <MudCardContent Class="d-flex py-10" Style="justify-content:center">
@@ -72,7 +72,7 @@ else
                                         <MudCard Outlined="true">
                                             <MudCardHeader Class="pb-0">
                                             <CardHeaderContent>
-                                                <MudText Typo="Typo.h6">Totals</MudText>
+                                                <MudText Typo="Typo.h6">@Localizer["Totals"]</MudText>
                                             </CardHeaderContent>
                                             </MudCardHeader>
                                             <MudCardContent Class="d-flex py-10" Style="justify-content:center">
@@ -87,27 +87,27 @@ else
                                                 
                                                 <MudStack Row="true" Spacing="4" Justify="Justify.SpaceEvenly" Style="width:100%">
                                                     <MudCard Elevation="0">
-                                                        <MudText Typo="Typo.caption">Good</MudText>
+                                                        <MudText Typo="Typo.caption">@Localizer["Good"]</MudText>
                                                         <MudText Typo="Typo.body1" Style="font-weight: bold;">@totalGoods</MudText>
                                                     </MudCard>
                                                     <MudCard Elevation="0">
-                                                        <MudText Typo="Typo.caption">OK</MudText>
+                                                        <MudText Typo="Typo.caption">@Localizer["OK"]</MudText>
                                                         <MudText Typo="Typo.body1" Style="font-weight: bold;">@totalOks</MudText>
                                                     </MudCard>
                                                     <MudCard Elevation="0">
-                                                        <MudText Typo="Typo.caption">Bad</MudText>
+                                                        <MudText Typo="Typo.caption">@Localizer["Bad"]</MudText>
                                                         <MudText Typo="Typo.body1" Style="font-weight: bold;">@totalBads</MudText>
                                                     </MudCard>
                                                     <MudCard Elevation="0">
-                                                        <MudText Typo="Typo.caption">Drumroll</MudText>
+                                                        <MudText Typo="Typo.caption">@Localizer["Drumroll"]</MudText>
                                                         <MudText Typo="Typo.body1" Style="font-weight: bold;">@totalDrumroll</MudText>
                                                     </MudCard>
                                                     <MudCard Elevation="0">
-                                                        <MudText Typo="Typo.caption">MAX Combo</MudText>
+                                                        <MudText Typo="Typo.caption">@Localizer["MAX Combo"]</MudText>
                                                         <MudText Typo="Typo.body1" Style="font-weight: bold;">@totalMaxCombo</MudText>
                                                     </MudCard>
                                                     <MudCard Elevation="0">
-                                                        <MudText Typo="Typo.caption">Total Hits</MudText>
+                                                        <MudText Typo="Typo.caption">@Localizer["Total Hits"]</MudText>
                                                         <MudText Typo="Typo.body1" Style="font-weight: bold;">@totalHits</MudText>
                                                     </MudCard>
                                                 </MudStack>
@@ -117,7 +117,7 @@ else
                                 </MudItem>
                             </MudGrid>
 
-                            <MudText Typo="Typo.h5" Class="mt-10 mb-4">Songs</MudText>
+                            <MudText Typo="Typo.h5" Class="mt-10 mb-4">@Localizer["Songs"]</MudText>
                             <MudGrid>
                                 <MudItem xs="12">
                                     <MudGrid Class="d-block">
@@ -160,27 +160,27 @@ else
                                                                 <MudItem xs="12" md="6" Style="display:flex;flex-direction:column;">
                                                                     <MudStack Row="true" Spacing="4" Justify="Justify.SpaceEvenly">
                                                                         <MudCard Elevation="0">
-                                                                            <MudText Typo="Typo.caption">Good</MudText>
+                                                                            <MudText Typo="Typo.caption">@Localizer["Good"]</MudText>
                                                                             <MudText Typo="Typo.body1" Style="font-weight: bold;">@bestStage.GoodCount</MudText>
                                                                         </MudCard>
                                                                         <MudCard Elevation="0">
-                                                                            <MudText Typo="Typo.caption">OK</MudText>
+                                                                            <MudText Typo="Typo.caption">@Localizer["OK"]</MudText>
                                                                             <MudText Typo="Typo.body1" Style="font-weight: bold;">@bestStage.OkCount</MudText>
                                                                         </MudCard>
                                                                         <MudCard Elevation="0">
-                                                                            <MudText Typo="Typo.caption">Bad</MudText>
+                                                                            <MudText Typo="Typo.caption">@Localizer["Bad"]</MudText>
                                                                             <MudText Typo="Typo.body1" Style="font-weight: bold;">@bestStage.BadCount</MudText>
                                                                         </MudCard>
                                                                         <MudCard Elevation="0">
-                                                                            <MudText Typo="Typo.caption">Drumroll</MudText>
+                                                                            <MudText Typo="Typo.caption">@Localizer["Drumroll"]</MudText>
                                                                             <MudText Typo="Typo.body1" Style="font-weight: bold;">@bestStage.DrumrollCount</MudText>
                                                                         </MudCard>
                                                                         <MudCard Elevation="0">
-                                                                            <MudText Typo="Typo.caption">MAX Combo</MudText>
+                                                                            <MudText Typo="Typo.caption">@Localizer["MAX Combo"]</MudText>
                                                                             <MudText Typo="Typo.body1" Style="font-weight: bold;">@bestStage.ComboCount</MudText>
                                                                         </MudCard>
                                                                         <MudCard Elevation="0">
-                                                                            <MudText Typo="Typo.caption">Total Hits</MudText>
+                                                                            <MudText Typo="Typo.caption">@Localizer["Total Hits"]</MudText>
                                                                             <MudText Typo="Typo.body1" Style="font-weight: bold;">@bestStage.TotalHitCount</MudText>
                                                                         </MudCard>
                                                                     </MudStack>
@@ -195,7 +195,7 @@ else
                                 </MudItem>
                             </MudGrid>
 
-                            <MudText Typo="Typo.h5" Class="mt-10 mb-4">Conditions</MudText>
+                            <MudText Typo="Typo.h5" Class="mt-10 mb-4">@Localizer["Conditions"]</MudText>
                             <MudGrid>
                                 <MudItem xs="12" Class="dani-results">
                                     <MudGrid>
@@ -203,7 +203,7 @@ else
                                             <MudCard Outlined="true" Class="pa-2">
                                                 <MudCardHeader>
                                                     <CardHeaderContent>
-                                                        <MudText Typo="Typo.h6">Soul Gauge</MudText>
+                                                        <MudText Typo="Typo.h6">@Localizer["Soul Gauge"]</MudText>
                                                     </CardHeaderContent>
                                                 </MudCardHeader>
                                                 <MudCardContent>
@@ -212,20 +212,20 @@ else
                                                             var redRequirement = GetSoulGauge(danData, false);
                                                             var goldRequirement = GetSoulGauge(danData, true);
                                                             var barClass = "bar-default";
-                                                            var resultText = "Failed";
+                                                            var resultText = @Localizer["Failed"];
                                                         }
                                                         <MudStack Spacing="1">
-                                                            <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">Result</MudText>
+                                                            <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">@Localizer["Result"]</MudText>
                                                             @if (bestDataMap.TryGetValue(danId, out var danBestData))
                                                             {
                                                                 if (danBestData.SoulGaugeTotal >= redRequirement) {
                                                                     barClass = "bar-pass-red";
-                                                                    resultText = "Pass";
+                                                                    resultText = @Localizer["Pass"];
                                                                 }
 
                                                                 if (danBestData.SoulGaugeTotal >= goldRequirement) {
                                                                     barClass = "bar-pass-gold";
-                                                                    resultText = "Gold";
+                                                                    resultText = @Localizer["Gold"];
                                                                 }
                                                                 
                                                                 <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="100" Value="@danBestData.SoulGaugeTotal">
@@ -240,14 +240,14 @@ else
                                                             }
                                                         </MudStack>
                                                         <MudStack Spacing="1">
-                                                            <MudText Typo="Typo.subtitle2" Style="font-weight:bold">Conditions</MudText>
+                                                            <MudText Typo="Typo.subtitle2" Style="font-weight:bold">@Localizer["Conditions"]</MudText>
                                                             <MudStack Row="true" Spacing="16">
                                                                 <MudStack Spacing="0">
-                                                                    <MudText Typo="Typo.caption">Red</MudText>
+                                                                    <MudText Typo="Typo.caption">@Localizer["Red"]</MudText>
                                                                     <MudText Typo="Typo.body1" Style="font-weight: bold">> @redRequirement%</MudText>
                                                                 </MudStack>
                                                                 <MudStack Spacing="0">
-                                                                    <MudText Typo="Typo.caption">Gold</MudText>
+                                                                    <MudText Typo="Typo.caption">@Localizer["Gold"]</MudText>
                                                                     <MudText Typo="Typo.body1" Style="font-weight: bold">> @goldRequirement%</MudText>
                                                                 </MudStack>
                                                             </MudStack>
@@ -282,10 +282,10 @@ else
                                                                         var redRequirement = border.RedBorderTotal;
                                                                         var goldRequirement = border.GoldBorderTotal;
                                                                         var barClass = "bar-default";
-                                                                        var resultText = "Failed";
+                                                                        var resultText = @Localizer["Failed"];
                                                                     }
                                                                     <MudStack Spacing="1">
-                                                                        <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">Result</MudText>
+                                                                        <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">@Localizer["Result"]</MudText>
                                                                         @if (bestDataMap.TryGetValue(danId, out var danBestData))
                                                                         {
                                                                             var bestData = GetAllBestFromData((DanConditionType)border.OdaiType, danBestData);
@@ -295,13 +295,13 @@ else
                                                                                 if (bestData <= redRequirement)
                                                                                 {
                                                                                     barClass = "bar-pass-red";
-                                                                                    resultText = "Pass";
+                                                                                    resultText = @Localizer["Pass"];
                                                                                 }
 
                                                                                 if (bestData <= goldRequirement)
                                                                                 {
                                                                                     barClass = "bar-pass-gold";
-                                                                                    resultText = "Gold";
+                                                                                    resultText = @Localizer["Gold"];
                                                                                 }
 
                                                                                 var resultValue = redRequirement - bestData;
@@ -317,13 +317,13 @@ else
                                                                                 if (bestData >= redRequirement)
                                                                                 {
                                                                                     barClass = "bar-pass-red";
-                                                                                    resultText = "Pass";
+                                                                                    resultText = @Localizer["Pass"];
                                                                                 }
 
                                                                                 if (bestData >= goldRequirement)
                                                                                 {
                                                                                     barClass = "bar-pass-gold";
-                                                                                    resultText = "Gold";
+                                                                                    resultText = @Localizer["Gold"];
                                                                                 }
 
                                                                                 <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="@goldRequirement" Value="@bestData">
@@ -345,14 +345,14 @@ else
                                                                         var conditionOperator = GetDanConditionOperator((DanConditionType)border.OdaiType);
                                                                     }
                                                                     <MudStack Spacing="1">
-                                                                        <MudText Typo="Typo.subtitle2" Style="font-weight:bold">Conditions</MudText>
+                                                                        <MudText Typo="Typo.subtitle2" Style="font-weight:bold">@Localizer["Conditions"]</MudText>
                                                                         <MudStack Row="true" Spacing="16">
                                                                             <MudStack Spacing="0">
-                                                                                <MudText Typo="Typo.caption">Red</MudText>
+                                                                                <MudText Typo="Typo.caption">@Localizer["Red"]</MudText>
                                                                                 <MudText Typo="Typo.body1" Style="font-weight: bold">@conditionOperator @redRequirement</MudText>
                                                                             </MudStack>
                                                                             <MudStack Spacing="0">
-                                                                                <MudText Typo="Typo.caption">Gold</MudText>
+                                                                                <MudText Typo="Typo.caption">@Localizer["Gold"]</MudText>
                                                                                 <MudText Typo="Typo.body1" Style="font-weight: bold">@conditionOperator @goldRequirement</MudText>
                                                                             </MudStack>
                                                                         </MudStack>
@@ -368,17 +368,17 @@ else
                                                                     var redRequirement = GetSongBorderCondition(border, songNumber, false);
                                                                     var goldRequirement = GetSongBorderCondition(border, songNumber, true);
                                                                     var barClass = "bar-default";
-                                                                    var resultText = "Failed";
+                                                                    var resultText = @Localizer["Failed"];
 
                                                                     <MudItem xs="12" md="4">
                                                                         <MudCard Outlined="true">
                                                                             <MudCardHeader>
                                                                                 <CardHeaderContent>
-                                                                                    <MudText Typo="Typo.body1" Style="font-weight:bold">Stage @(songNumber + 1)</MudText>
+                                                                                    <MudText Typo="Typo.body1" Style="font-weight:bold">@Localizer["Stage"] @(songNumber + 1)</MudText>
                                                                                 </CardHeaderContent>
                                                                             </MudCardHeader>
                                                                             <MudCardContent>
-                                                                                <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">Result</MudText>
+                                                                                <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">@Localizer["Result"]</MudText>
                                                                             @if (bestDataMap.TryGetValue(danId, out var danBestData))
                                                                             {
                                                                                 var bestData = GetSongBestFromData((DanConditionType)border.OdaiType, danBestData, songNumber);
@@ -387,13 +387,13 @@ else
                                                                                     if (bestData <= redRequirement)
                                                                                     {
                                                                                         barClass = "bar-pass-red";
-                                                                                        resultText = "Pass";
+                                                                                        resultText = @Localizer["Pass"];
                                                                                     }
 
                                                                                     if (bestData <= goldRequirement)
                                                                                     {
                                                                                         barClass = "bar-pass-gold";
-                                                                                        resultText = "Gold";
+                                                                                        resultText = @Localizer["Gold"];
                                                                                     }
                                                                                     var resultValue = redRequirement - bestData;
                                                                                     if (bestData >= redRequirement) resultValue = 0;
@@ -408,13 +408,13 @@ else
                                                                                     if (bestData >= redRequirement)
                                                                                     {
                                                                                         barClass = "bar-pass-red";
-                                                                                        resultText = "Pass";
+                                                                                        resultText = @Localizer["Pass"];
                                                                                     }
 
                                                                                     if (bestData >= goldRequirement)
                                                                                     {
                                                                                         barClass = "bar-pass-gold";
-                                                                                        resultText = "Gold";
+                                                                                        resultText = @Localizer["Gold"];
                                                                                     }
 
                                                                                     <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="@(goldRequirement > 0 ? goldRequirement : 1)" Value="@(goldRequirement > 0 ? bestData : 1)">
@@ -444,14 +444,14 @@ else
                                                                                 }
                                                                             }
                                                                             <MudStack Spacing="1" Class="mt-8">
-                                                                                <MudText Typo="Typo.subtitle2" Style="font-weight:bold">Conditions</MudText>
+                                                                                <MudText Typo="Typo.subtitle2" Style="font-weight:bold">@Localizer["Conditions"]</MudText>
                                                                                 <MudStack Row="true" Spacing="16">
                                                                                     <MudStack Spacing="0">
-                                                                                        <MudText Typo="Typo.caption">Red</MudText>
+                                                                                        <MudText Typo="Typo.caption">@Localizer["Red"]</MudText>
                                                                                         <MudText Typo="Typo.body1" Style="font-weight: bold">@conditionOperator @redRequirement</MudText>
                                                                                     </MudStack>
                                                                                     <MudStack Spacing="0">
-                                                                                        <MudText Typo="Typo.caption">Gold</MudText>
+                                                                                        <MudText Typo="Typo.caption">@Localizer["Gold"]</MudText>
                                                                                         <MudText Typo="Typo.body1" Style="font-weight: bold">@conditionOperator @goldRequirement</MudText>
                                                                                     </MudStack>
                                                                                 </MudStack>
