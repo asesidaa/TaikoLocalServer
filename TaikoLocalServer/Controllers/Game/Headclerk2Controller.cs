@@ -10,7 +10,7 @@ public class Headclerk2Controller : BaseController<Headclerk2Controller>
     {
         Logger.LogInformation("Headclerk2 request: {Request}", request.Stringify());
 
-        var chassisId = request.ChassisId;
+        /*var chassisId = request.ChassisId;
         var shopId = request.ShopId;
         foreach (var playInfo in request.AryPlayInfoes)
         {
@@ -27,7 +27,7 @@ public class Headclerk2Controller : BaseController<Headclerk2Controller>
                                   "IsRight:{IsRight},\n" +
                                   "Type:{Type},\n" +
                                   "Amount{Amount}", chassisId, shopId, baid, playedAt, isRight, type, amount);
-        }
+        }*/
 		
         var response = new HeadClerk2Response
         {

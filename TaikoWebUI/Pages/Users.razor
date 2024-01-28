@@ -47,26 +47,26 @@
                                                      OnClick="@(_ => ShowQrCode(user))"
                                                      OnTouch="@(_ => ShowQrCode(user))"
                                                      IconColor="@Color.Primary">
-                                            Show QR Code
+                                            @Localizer["Show QR Code"]
                                         </MudMenuItem>
                                         <MudDivider />
                                         <MudMenuItem Icon="@Icons.Material.Filled.FeaturedPlayList"
                                                      Href="@($"Users/{user.Baid}/AccessCode")"
                                                      IconColor="@Color.Primary">
-                                            Manage Access Codes
+                                            @Localizer["Manage Access Codes"]
                                         </MudMenuItem>
                                         <MudDivider />
                                         <MudMenuItem Icon="@Icons.Material.Filled.Lock"
                                                      Href="@($"Users/ChangePassword")"
                                                      IconColor="@Color.Primary">
-                                            Change Password
+                                            @Localizer["Change Password"]
                                         </MudMenuItem>
                                         <MudDivider />
                                         <MudMenuItem Icon="@Icons.Material.Filled.LockReset"
                                                      OnClick="@(_ => ResetPassword(user))"
                                                      OnTouch="@(_ => ResetPassword(user))"
                                                      IconColor="@Color.Primary">
-                                            Reset Password
+                                            @Localizer["Reset Password"]
                                         </MudMenuItem>
                                         @if (LoginService.AllowUserDelete)
                                     {
@@ -75,7 +75,7 @@
                                                      OnClick="@(_ => DeleteUser(user))"
                                                      OnTouch="@(_ => DeleteUser(user))"
                                                      IconColor="@Color.Error">
-                                            Delete User
+                                            @Localizer["Delete User"]
                                         </MudMenuItem>
                                     }
                                 </MudMenu>
@@ -230,7 +230,7 @@
     { // No users in the database
         <MudItem xs="12">
             <MudText Align="Align.Center" Class="my-8">
-                No data.
+                @Localizer["No data."]
             </MudText>
         </MudItem>
     }

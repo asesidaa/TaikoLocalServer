@@ -6,7 +6,7 @@
 
 <MudBreadcrumbs Items="breadcrumbs" Class="px-0"></MudBreadcrumbs>
 
-<h1>High Scores</h1>
+<h1>@Localizer["Key_01"]</h1>
 <MudText Typo="Typo.caption">User: @Baid</MudText>
 
 
@@ -15,7 +15,7 @@
     {
         <MudItem xs="12">
             <MudText Align="Align.Center">
-                No data.
+                @Localizer["No data."]
             </MudText>
         </MudItem>
     }
@@ -25,7 +25,7 @@
         {
             <MudItem xs="12">
                 <MudText Align="Align.Center" Class="my-8">
-                    Please log in by clicking on "Users" tab first.
+                    @Localizer["Key_02"]
                 </MudText>
             </MudItem>
         }
@@ -44,7 +44,7 @@
                                     <MudDataGrid Items="@value"
                                                  ColumnResizeMode="ResizeMode.None" RowsPerPage="25" Elevation="0">
                                         <Columns>
-                                            <TemplateColumn T="SongBestData" Title="Song" StickyLeft="true">
+                                            <TemplateColumn T="SongBestData" Title=@Localizer["Song"] StickyLeft="true">
                                                 <CellTemplate>
                                                     <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
                                                         <div style="width:300px">
@@ -63,7 +63,7 @@
                                                     </MudStack>
                                                 </CellTemplate>
                                             </TemplateColumn>
-                                            <TemplateColumn T="SongBestData" Title="Level" Sortable="false">
+                                            <TemplateColumn T="SongBestData" Title=@Localizer["Level"] Sortable="false">
                                                 <CellTemplate>
                                                     <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
                                                         <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
@@ -71,7 +71,7 @@
                                                     </MudStack>
                                                 </CellTemplate>
                                             </TemplateColumn>
-                                            <TemplateColumn T="SongBestData" Title="Genre"
+                                            <TemplateColumn T="SongBestData" Title=@Localizer["Genre"]
                                                             Sortable="false" Filterable="true">
                                                 <CellTemplate>
                                                     <MudChip Style="@GetGenreStyle(context.Item.Genre)"
@@ -80,13 +80,13 @@
                                                     </MudChip>
                                                 </CellTemplate>
                                             </TemplateColumn>
-                                            <PropertyColumn Property="data => data.BestScore" Title="Best Score" />
-                                            <TemplateColumn T="SongBestData" Title="Best Crown">
+                                            <PropertyColumn Property="data => data.BestScore" Title=@Localizer["Best Score"] />
+                                            <TemplateColumn T="SongBestData" Title=@Localizer["Best Crown"]>
                                                 <CellTemplate>
                                                     <img src="@($"/images/crown_{context.Item.BestCrown}.png")" alt="@(GetCrownText(context.Item.BestCrown))" title="@(GetCrownText(context.Item.BestCrown))" style="@IconStyle" />
                                                 </CellTemplate>
                                             </TemplateColumn>
-                                            <TemplateColumn T="SongBestData" Title="Best Rank" Sortable="false">
+                                            <TemplateColumn T="SongBestData" Title=@Localizer["Best Rank"] Sortable="false">
                                                 <CellTemplate>
                                                     @if (context.Item.BestScoreRank is not ScoreRank.None)
                                                     {
@@ -94,25 +94,25 @@
                                                     }
                                                 </CellTemplate>
                                             </TemplateColumn>
-                                            <PropertyColumn Property="data => data.GoodCount" Title="Good" Sortable="false" />
-                                            <PropertyColumn Property="data => data.OkCount" Title="OK" Sortable="false" />
-                                            <PropertyColumn Property="data => data.MissCount" Title="Bad" Sortable="false" />
-                                            <PropertyColumn Property="data => data.DrumrollCount" Title="Drumroll" Sortable="false"/>
-                                            <PropertyColumn Property="data => data.ComboCount" Title="MAX Combo" Sortable="false" />
-                                            <TemplateColumn T="SongBestData" Title="AI Battle Data">
+                                            <PropertyColumn Property="data => data.GoodCount" Title=@Localizer["Good"] Sortable="false" />
+                                            <PropertyColumn Property="data => data.OkCount" Title=@Localizer["OK"] Sortable="false" />
+                                            <PropertyColumn Property="data => data.MissCount" Title=@Localizer["Bad"] Sortable="false" />
+                                            <PropertyColumn Property="data => data.DrumrollCount" Title=@Localizer["Drumroll"] Sortable="false"/>
+                                            <PropertyColumn Property="data => data.ComboCount" Title=@Localizer["MAX Combo"] Sortable="false" />
+                                            <TemplateColumn T="SongBestData" Title=@Localizer["AI Battle Data"]>
                                                 <CellTemplate>
                                                     <MudButton Variant="Variant.Outlined" Size="Size.Small" 
                                                                OnClick="@(() => ToggleShowAiData(context.Item))" 
                                                                Disabled="@(!IsAiDataPresent(context.Item))">
-                                                        @(context.Item.ShowAiData ? "Hide" : "Show")
+                                                        @(context.Item.ShowAiData ? @Localizer["Hide"] : @Localizer["Show"])
                                                     </MudButton>
                                                 </CellTemplate>
                                             </TemplateColumn>
-                                            <PropertyColumn Property="data => data.LastPlayTime" Title="Last Played" Hideable="true" />
-                                            <PropertyColumn Property="data => data.PlayCount" Title="Total Plays" Hideable="true" />
-                                            <PropertyColumn Property="data => data.ClearCount" Title="Total Clears" Hideable="true" />
-                                            <PropertyColumn Property="data => data.FullComboCount" Title="Total Full Combos" Hideable="true" />
-                                            <PropertyColumn Property="data => data.PerfectCount" Title="Total Donderful Combos" Hideable="true" />
+                                            <PropertyColumn Property="data => data.LastPlayTime" Title=@Localizer["Last Palyed"] Hideable="true" />
+                                            <PropertyColumn Property="data => data.PlayCount" Title=@Localizer["Total Plays"] Hideable="true" />
+                                            <PropertyColumn Property="data => data.ClearCount" Title=@Localizer["Total Clears"] Hideable="true" />
+                                            <PropertyColumn Property="data => data.FullComboCount" Title=@Localizer["Total Full Combos"] Hideable="true" />
+                                            <PropertyColumn Property="data => data.PerfectCount" Title=@Localizer["Total Donderful Combos"] Hideable="true" />
                                         </Columns>
                                         <ChildRowContent>
                                             @if (context.Item.ShowAiData)
@@ -120,21 +120,21 @@
                                                 <tr>
                                                     <td colspan="1" class="pa-3 ai-battle-td">
                                                         <MudText Typo="Typo.body2" Style="font-weight: bold">
-                                                            AI Battle Data
+                                                            @Localizer["AI Battle Data"]
                                                         </MudText>
                                                     </td>
                                                     <td colspan="16">
                                                         <MudTable Elevation="0" ReadOnly="true"
                                                                   Items="@context.Item.AiSectionBestData" Context="aiSectionContext">
                                                             <HeaderContent>
-                                                                <MudTh>Section No.</MudTh>
-                                                                <MudTh>Result</MudTh>
-                                                                <MudTh>Score</MudTh>
-                                                                <MudTh>Crown</MudTh>
-                                                                <MudTh>Good</MudTh>
-                                                                <MudTh>OK</MudTh>
-                                                                <MudTh>Bad</MudTh>
-                                                                <MudTh>Drumroll</MudTh>
+                                                                <MudTh>@Localizer["Section No."]</MudTh>
+                                                                <MudTh>@Localizer["Result"]</MudTh>
+                                                                <MudTh>@Localizer["Score"]</MudTh>
+                                                                <MudTh>@Localizer["Crown"]</MudTh>
+                                                                <MudTh>@Localizer["Good"]</MudTh>
+                                                                <MudTh>@Localizer["OK"]</MudTh>
+                                                                <MudTh>@Localizer["Bad"]</MudTh>
+                                                                <MudTh>@Localizer["Drumroll"]</MudTh>
                                                             </HeaderContent>
                                                             <RowTemplate>
                                                                 <MudTd>@(aiSectionContext.SectionIndex + 1)</MudTd>
