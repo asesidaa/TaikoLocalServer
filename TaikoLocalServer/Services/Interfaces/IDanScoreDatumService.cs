@@ -4,9 +4,9 @@ namespace TaikoLocalServer.Services.Interfaces;
 
 public interface IDanScoreDatumService
 {
-    public Task<List<DanScoreDatum>> GetDanScoreDataList(ulong baid, DanType danType);
-    
-    public Task<DanScoreDatum?> GetSingleDanScoreDatum(ulong baid, uint danId, DanType danType);
+    public Task<List<DanScoreDatum>> GetDanScoreDataList(uint baid, DanType danType);
+
+    public Task<DanScoreDatum?> GetSingleDanScoreDatum(uint baid, uint danId, DanType danType);
 
     public Task InsertOrUpdateDanScoreDatum(DanScoreDatum datum);
 

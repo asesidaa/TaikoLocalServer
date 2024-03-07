@@ -6,7 +6,7 @@ using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r00_cn/chassis/userdata.php")]
+[Route("/v12r08_ww/chassis/userdata.php")]
 [ApiController]
 public class UserDataController : BaseController<UserDataController>
 {

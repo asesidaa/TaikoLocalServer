@@ -3,7 +3,7 @@ using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r00_cn/chassis/getdanscore.php")]
+[Route("/v12r08_ww/chassis/getdanscore.php")]
 [ApiController]
 public class GetDanScoreController : BaseController<GetDanScoreController>
 {

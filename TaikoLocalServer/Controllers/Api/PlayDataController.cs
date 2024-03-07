@@ -12,7 +12,7 @@ public class PlayDataController : BaseController<PlayDataController>
 
     private readonly ISongPlayDatumService songPlayDatumService;
 
-    public PlayDataController(IUserDatumService userDatumService, ISongBestDatumService songBestDatumService, 
+    public PlayDataController(IUserDatumService userDatumService, ISongBestDatumService songBestDatumService,
         ISongPlayDatumService songPlayDatumService)
     {
         this.userDatumService = userDatumService;
@@ -21,7 +21,7 @@ public class PlayDataController : BaseController<PlayDataController>
     }
 
     [HttpGet("{baid}")]
-    public async Task<ActionResult<SongBestResponse>> GetSongBestRecords(ulong baid)
+    public async Task<ActionResult<SongBestResponse>> GetSongBestRecords(uint baid)
     {
         var user = await userDatumService.GetFirstUserDatumOrNull(baid);
         if (user is null)

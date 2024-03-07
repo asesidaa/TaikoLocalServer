@@ -1,6 +1,6 @@
 ﻿namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r00_cn/chassis/executeqrcode.php")]
+[Route("/v12r08_ww/chassis/executeqrcode.php")]
 [ApiController]
 public class ExecuteQrCodeController : BaseController<ExecuteQrCodeController>
 {

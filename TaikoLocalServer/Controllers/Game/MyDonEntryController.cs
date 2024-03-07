@@ -2,73 +2,73 @@
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r00_cn/chassis/mydonentry.php")]
+[Route("/v12r08_ww/chassis/mydonentry.php")]
 [ApiController]
 public class MyDonEntryController : BaseController<MyDonEntryController>
 {
-	private readonly IUserDatumService userDatumService;
+    private readonly IUserDatumService userDatumService;
 
-	private readonly ICardService cardService;
-	
-	private readonly ICredentialService credentialService;
+    private readonly ICardService cardService;
 
-	public MyDonEntryController(IUserDatumService userDatumService, ICardService cardService, ICredentialService credentialService)
-	{
-		this.userDatumService = userDatumService;
-		this.cardService = cardService;
-		this.credentialService = credentialService;
-	}
+    private readonly ICredentialService credentialService;
 
-	[HttpPost]
-	[Produces("application/protobuf")]
-	public async Task<IActionResult> GetMyDonEntry([FromBody] MydonEntryRequest request)
-	{
-		Logger.LogInformation("MyDonEntry request : {Request}", request.Stringify());
+    public MyDonEntryController(IUserDatumService userDatumService, ICardService cardService, ICredentialService credentialService)
+    {
+        this.userDatumService = userDatumService;
+        this.cardService = cardService;
+        this.credentialService = credentialService;
+    }
 
-		var newId = cardService.GetNextBaid();
+    [HttpPost]
+    [Produces("application/protobuf")]
+    public async Task<IActionResult> GetMyDonEntry([FromBody] MydonEntryRequest request)
+    {
+        Logger.LogInformation("MyDonEntry request : {Request}", request.Stringify());
 
-		var newUser = new UserDatum
-		{
-			Baid = newId,
-			MyDonName = request.MydonName,
-			MyDonNameLanguage = 0,
-			DisplayDan = true,
-			DisplayAchievement = true,
-			AchievementDisplayDifficulty = Difficulty.None,
-			ColorFace = 0,
-			ColorBody = 1,
-			ColorLimb = 3,
-			FavoriteSongsArray = "[]",
-			ToneFlgArray = "[0]",
-			TitleFlgArray = "[]",
-			CostumeFlgArray = "[[0],[0],[0],[0],[0]]",
-			GenericInfoFlgArray = "[]",
-			TokenCountDict = "{}",
-			UnlockedSongIdList = "[]"
-		};
-		await userDatumService.InsertUserDatum(newUser);
+        var newId = cardService.GetNextBaid();
 
-		await cardService.AddCard(new Card
-		{
-			AccessCode = request.WechatQrStr,
-			Baid = newId
-		});
-		
-		await credentialService.AddCredential(new Credential
-		{
-			Baid = newId,
-			Password = "",
-			Salt = ""
-		});
+        var newUser = new UserDatum
+        {
+            Baid = newId,
+            MyDonName = request.MydonName,
+            MyDonNameLanguage = 0,
+            DisplayDan = true,
+            DisplayAchievement = true,
+            AchievementDisplayDifficulty = Difficulty.None,
+            ColorFace = 0,
+            ColorBody = 1,
+            ColorLimb = 3,
+            FavoriteSongsArray = "[]",
+            ToneFlgArray = "[0]",
+            TitleFlgArray = "[]",
+            CostumeFlgArray = "[[0],[0],[0],[0],[0]]",
+            GenericInfoFlgArray = "[]",
+            TokenCountDict = "{}",
+            UnlockedSongIdList = "[]"
+        };
+        await userDatumService.InsertUserDatum(newUser);
 
-		var response = new MydonEntryResponse
-		{
-			Result = 1,
-			Baid = newId,
-			MydonName = request.MydonName,
-			MydonNameLanguage = 0
-		};
+        await cardService.AddCard(new Card
+        {
+            AccessCode = request.AccessCode,
+            Baid = newId
+        });
 
-		return Ok(response);
-	}
+        await credentialService.AddCredential(new Credential
+        {
+            Baid = newId,
+            Password = "",
+            Salt = ""
+        });
+
+        var response = new MydonEntryResponse
+        {
+            Result = 1,
+            Baid = newId,
+            MydonName = request.MydonName,
+            MydonNameLanguage = 0
+        };
+
+        return Ok(response);
+    }
 }

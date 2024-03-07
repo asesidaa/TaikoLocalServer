@@ -3,7 +3,7 @@ using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r00_cn/chassis/gettokencount.php")]
+[Route("/v12r08_ww/chassis/gettokencount.php")]
 [ApiController]
 public class GetTokenCountController : BaseController<GetTokenCountController>
 {

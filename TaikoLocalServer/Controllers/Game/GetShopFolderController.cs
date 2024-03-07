@@ -1,6 +1,6 @@
 ﻿namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r00_cn/chassis/getshopfolder.php")]
+[Route("/v12r08_ww/chassis/getshopfolder_w4xik0uw.php")]
 [ApiController]
 public class GetShopFolderController : BaseController<GetShopFolderController>
 {

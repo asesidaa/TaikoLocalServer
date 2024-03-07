@@ -4,7 +4,7 @@ namespace GameDatabase.Entities;
 
 public class DanScoreDatum
 {
-    public ulong Baid { get; set; }
+    public uint Baid { get; set; }
     public uint DanId { get; set; }
     public DanType DanType { get; set; }
     public uint ArrivalSongCount { get; set; }

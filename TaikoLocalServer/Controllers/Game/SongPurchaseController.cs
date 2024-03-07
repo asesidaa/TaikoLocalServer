@@ -3,7 +3,7 @@ using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r00_cn/chassis/songpurchase.php")]
+[Route("/v12r08_ww/chassis/songpurchase.php")]
 [ApiController]
 public class SongPurchaseController : BaseController<SongPurchaseController>
 {

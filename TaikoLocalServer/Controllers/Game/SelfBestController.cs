@@ -3,7 +3,7 @@ using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r00_cn/chassis/selfbest.php")]
+[Route("/v12r08_ww/chassis/selfbest.php")]
 [ApiController]
 public class SelfBestController : BaseController<SelfBestController>
 {
