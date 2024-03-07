@@ -3,7 +3,7 @@ using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r08_ww/chassis/gettokencount.php")]
+[Route("/v12r08_ww/chassis/gettokencount_iut9g23g.php")]
 [ApiController]
 public class GetTokenCountController : BaseController<GetTokenCountController>
 {
@@ -15,7 +15,7 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
         this.userDatumService = userDatumService;
         this.gameDataService = gameDataService;
     }
-    
+
     [HttpPost]
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetTokenCount([FromBody] GetTokenCountRequest request)
@@ -43,12 +43,12 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
         }
 
         tokenCountDict.ThrowIfNull("TokenCountDict should never be null");
-        
+
         var response = new GetTokenCountResponse
         {
             Result = 1
         };
-        
+
         if (tokenCountDict.Count == 0) tokenCountDict.Add(1, 0);
         if (shopTokenId > 0)
         {
@@ -71,7 +71,7 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
                 TokenId = castedKaTokenId
             });
         }
-        
+
         if (onePieceTokenId > 0)
         {
             var castedOnePieceTokenId = (uint)onePieceTokenId;
@@ -82,7 +82,7 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
                 TokenId = castedOnePieceTokenId
             });
         }
-        
+
         if (soshinaTokenId > 0)
         {
             var castedSoshinaTokenId = (uint)soshinaTokenId;
@@ -96,7 +96,7 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
 
         user.TokenCountDict = JsonSerializer.Serialize(tokenCountDict);
         await userDatumService.UpdateUserDatum(user);
-        
+
         return Ok(response);
     }
 }

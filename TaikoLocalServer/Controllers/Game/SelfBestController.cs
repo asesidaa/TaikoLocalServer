@@ -3,14 +3,14 @@ using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r08_ww/chassis/selfbest.php")]
+[Route("/v12r08_ww/chassis/selfbest_5nz47auu.php")]
 [ApiController]
 public class SelfBestController : BaseController<SelfBestController>
 {
     private readonly ISongBestDatumService songBestDatumService;
 
     private readonly IGameDataService gameDataService;
-    
+
     public SelfBestController(ISongBestDatumService songBestDatumService, IGameDataService gameDataService)
     {
         this.songBestDatumService = songBestDatumService;
@@ -28,10 +28,10 @@ public class SelfBestController : BaseController<SelfBestController>
             Result = 1,
             Level = request.Level
         };
-        
+
         var requestDifficulty = (Difficulty)request.Level;
         requestDifficulty.Throw().IfOutOfRange();
-        
+
         var playerBestData = await songBestDatumService.GetAllSongBestData(request.Baid);
         playerBestData = playerBestData
             .Where(datum => datum.Difficulty == requestDifficulty ||
@@ -50,7 +50,7 @@ public class SelfBestController : BaseController<SelfBestController>
             response.ArySelfbestScores.Add(selfBestData);
         }
         response.ArySelfbestScores.Sort((data, otherData) => data.SongNo.CompareTo(otherData.SongNo));
-        
+
         return Ok(response);
     }
 

@@ -3,7 +3,7 @@ using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r08_ww/chassis/songpurchase.php")]
+[Route("/v12r08_ww/chassis/songpurchase_wm2fh5bl.php")]
 [ApiController]
 public class SongPurchaseController : BaseController<SongPurchaseController>
 {
@@ -36,7 +36,7 @@ public class SongPurchaseController : BaseController<SongPurchaseController>
         }
 
         tokenCountDict.ThrowIfNull("TokenCountDict should never be null");
-        
+
         Logger.LogInformation("Original UnlockedSongIdList: {UnlockedSongIdList}", user.UnlockedSongIdList);
 
         var unlockedSongIdList = new List<uint>();
@@ -59,9 +59,9 @@ public class SongPurchaseController : BaseController<SongPurchaseController>
 
         user.TokenCountDict = JsonSerializer.Serialize(tokenCountDict);
         user.UnlockedSongIdList = JsonSerializer.Serialize(unlockedSongIdList);
-        
+
         Logger.LogInformation("Updated UnlockedSongIdList: {UnlockedSongIdList}", user.UnlockedSongIdList);
-        
+
         await userDatumService.UpdateUserDatum(user);
 
         var response = new SongPurchaseResponse

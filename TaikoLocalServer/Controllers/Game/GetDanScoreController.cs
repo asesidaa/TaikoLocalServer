@@ -3,7 +3,7 @@ using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r08_ww/chassis/getdanscore.php")]
+[Route("/v12r08_ww/chassis/getdanscore_frqhg7q6.php")]
 [ApiController]
 public class GetDanScoreController : BaseController<GetDanScoreController>
 {
@@ -44,7 +44,7 @@ public class GetDanScoreController : BaseController<GetDanScoreController>
             {
                 responseData.AryDanScoreDataStages.Add(ObjectMappers.DanStageDbToResponseMap.Apply(stageScoreDatum));
             }
-            
+
             response.AryDanScoreDatas.Add(responseData);
         }
 
