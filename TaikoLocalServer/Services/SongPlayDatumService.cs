@@ -12,7 +12,7 @@ class SongPlayDatumService : ISongPlayDatumService
         this.context = context;
     }
 
-    public async Task<List<SongPlayDatum>> GetSongPlayDatumByBaid(ulong baid)
+    public async Task<List<SongPlayDatum>> GetSongPlayDatumByBaid(uint baid)
     {
         return await context.SongPlayData.Where(datum => datum.Baid == baid).ToListAsync();
     }

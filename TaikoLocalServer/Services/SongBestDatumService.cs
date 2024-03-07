@@ -15,12 +15,12 @@ public class SongBestDatumService : ISongBestDatumService
         this.context = context;
     }
 
-    public async Task<List<SongBestDatum>> GetAllSongBestData(ulong baid)
+    public async Task<List<SongBestDatum>> GetAllSongBestData(uint baid)
     {
         return await context.SongBestData.Where(datum => datum.Baid == baid).ToListAsync();
     }
 
-    public async Task<SongBestDatum?> GetSongBestData(ulong baid, uint songId, Difficulty difficulty)
+    public async Task<SongBestDatum?> GetSongBestData(uint baid, uint songId, Difficulty difficulty)
     {
         return await context.SongBestData.Where(datum => datum.Baid == baid &&
                                                         datum.SongId == songId &&
@@ -48,7 +48,7 @@ public class SongBestDatumService : ISongBestDatumService
         await context.SaveChangesAsync();
     }
 
-    public async Task<List<SongBestData>> GetAllSongBestAsModel(ulong baid)
+    public async Task<List<SongBestData>> GetAllSongBestAsModel(uint baid)
     {
         var songbestDbData = await context.SongBestData.Where(datum => datum.Baid == baid)
             .ToListAsync();
@@ -70,7 +70,7 @@ public class SongBestDatumService : ISongBestDatumService
             var lastPlayLog = songPlayDatums
                 .MaxBy(datum => datum.PlayTime);
             bestData.LastPlayTime = lastPlayLog!.PlayTime;
-            
+
             var bestLog = songPlayDatums
                 .MaxBy(datum => datum.Score);
             bestLog.CopyOnlyPropertiesTo(bestData,

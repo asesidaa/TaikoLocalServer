@@ -1,7 +1,7 @@
 ﻿namespace TaikoLocalServer.Controllers.Game;
 
 [ApiController]
-[Route("/v12r00_cn/chassis/bookkeeping.php")]
+[Route("/v12r08_ww/chassis/bookkeeping_s4esi5un.php")]
 public class BookkeepingController : BaseController<BookkeepingController>
 {
     [HttpPost]
@@ -13,9 +13,9 @@ public class BookkeepingController : BaseController<BookkeepingController>
         {
             Result = 1
         };
-        
+
 
         return Ok(response);
     }
-    
+
 }

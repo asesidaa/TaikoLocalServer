@@ -2,7 +2,7 @@
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r00_cn/chassis/getaiscore.php")]
+[Route("/v12r08_ww/chassis/getaiscore.php")]
 [ApiController]
 public class GetAiScoreController : BaseController<GetAiScoreController>
 {

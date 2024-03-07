@@ -10,12 +10,13 @@ public class DanBestDataController : BaseController<DanBestDataController>
 {
     private readonly IDanScoreDatumService danScoreDatumService;
 
-    public DanBestDataController(IDanScoreDatumService danScoreDatumService) {
+    public DanBestDataController(IDanScoreDatumService danScoreDatumService)
+    {
         this.danScoreDatumService = danScoreDatumService;
     }
-    
+
     [HttpGet("{baid}")]
-    public async Task<IActionResult> GetDanBestData(ulong baid)
+    public async Task<IActionResult> GetDanBestData(uint baid)
     {
         // FIXME: Handle gaiden in here and web ui
         var danScores = await danScoreDatumService.GetDanScoreDataList(baid, DanType.Normal);

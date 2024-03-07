@@ -2,7 +2,7 @@
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r00_cn/chassis/getaidata.php")]
+[Route("/v12r08_ww/chassis/getaidata.php")]
 [ApiController]
 public class GetAiDataController : BaseController<GetAiDataController>
 {

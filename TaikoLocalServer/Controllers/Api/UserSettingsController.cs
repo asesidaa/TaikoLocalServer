@@ -17,7 +17,7 @@ public class UserSettingsController : BaseController<UserSettingsController>
     }
 
     [HttpGet]
-    public async Task<ActionResult<UserSetting>> GetUserSetting(ulong baid)
+    public async Task<ActionResult<UserSetting>> GetUserSetting(uint baid)
     {
         var user = await userDatumService.GetFirstUserDatumOrNull(baid);
 
@@ -43,7 +43,7 @@ public class UserSettingsController : BaseController<UserSettingsController>
                 costumeUnlockData[i].Add(0);
             }
         }
-        
+
         var response = new UserSetting
         {
             AchievementDisplayDifficulty = user.AchievementDisplayDifficulty,
@@ -81,7 +81,7 @@ public class UserSettingsController : BaseController<UserSettingsController>
     }
 
     [HttpPost]
-    public async Task<IActionResult> SaveUserSetting(ulong baid, UserSetting userSetting)
+    public async Task<IActionResult> SaveUserSetting(uint baid, UserSetting userSetting)
     {
         var user = await userDatumService.GetFirstUserDatumOrNull(baid);
 

@@ -3,7 +3,7 @@ using TaikoLocalServer.Settings;
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r00_cn/chassis/getscorerank.php")]
+[Route("/v12r08_ww/chassis/getscorerank.php")]
 [ApiController]
 public class GetScoreRankController : BaseController<GetScoreRankController>
 {

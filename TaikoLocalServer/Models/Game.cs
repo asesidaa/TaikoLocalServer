@@ -8,3220 +8,3373 @@
 #pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace taiko.game
 {
-	[global::ProtoBuf.ProtoContract()]
-	public partial class HeartBeatRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    [global::ProtoBuf.ProtoContract()]
+    public partial class HeartBeatRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
-		[global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
 
-		[global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
 
-	}
+    }
 
-	[global::ProtoBuf.ProtoContract()]
-	public partial class HeartBeatResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    [global::ProtoBuf.ProtoContract()]
+    public partial class HeartBeatResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
 
-		[global::ProtoBuf.ProtoMember(2, Name = @"game_svr_stat", IsRequired = true)]
-		public uint GameSvrStat { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class BookKeepingRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"update_date", IsRequired = true)]
-		public string UpdateDate { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"credit_cost_1", IsRequired = true)]
-		public uint CreditCost1 { get; set; }
-
-		[global::ProtoBuf.ProtoMember(5, Name = @"credit_cost_2", IsRequired = true)]
-		public uint CreditCost2 { get; set; }
-
-		[global::ProtoBuf.ProtoMember(6, Name = @"credit_songs_1", IsRequired = true)]
-		public uint CreditSongs1 { get; set; }
-
-		[global::ProtoBuf.ProtoMember(7, Name = @"credit_songs_2", IsRequired = true)]
-		public uint CreditSongs2 { get; set; }
-
-		[global::ProtoBuf.ProtoMember(8, Name = @"all_play_cnt", IsRequired = true)]
-		public uint AllPlayCnt { get; set; }
-
-		[global::ProtoBuf.ProtoMember(9, Name = @"service_sw_cnt", IsRequired = true)]
-		public uint ServiceSwCnt { get; set; }
-
-		[global::ProtoBuf.ProtoMember(10, Name = @"free_play_cnt", IsRequired = true)]
-		public uint FreePlayCnt { get; set; }
-
-		[global::ProtoBuf.ProtoMember(11, Name = @"error_log")]
-		[global::System.ComponentModel.DefaultValue("")]
-		public string ErrorLog
-		{
-			get => __pbn__ErrorLog ?? "";
-			set => __pbn__ErrorLog = value;
-		}
-		public bool ShouldSerializeErrorLog() => __pbn__ErrorLog != null;
-		public void ResetErrorLog() => __pbn__ErrorLog = null;
-		private string __pbn__ErrorLog;
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class BookKeepingResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class InitialdatacheckRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"hdd_ver", IsRequired = true)]
-		public uint HddVer { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class InitialdatacheckResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"default_song_flg")]
-		public byte[] DefaultSongFlg
-		{
-			get => __pbn__DefaultSongFlg;
-			set => __pbn__DefaultSongFlg = value;
-		}
-		public bool ShouldSerializeDefaultSongFlg() => __pbn__DefaultSongFlg != null;
-		public void ResetDefaultSongFlg() => __pbn__DefaultSongFlg = null;
-		private byte[] __pbn__DefaultSongFlg;
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"achievement_song_bit")]
-		public byte[] AchievementSongBit
-		{
-			get => __pbn__AchievementSongBit;
-			set => __pbn__AchievementSongBit = value;
-		}
-		public bool ShouldSerializeAchievementSongBit() => __pbn__AchievementSongBit != null;
-		public void ResetAchievementSongBit() => __pbn__AchievementSongBit = null;
-		private byte[] __pbn__AchievementSongBit;
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"ura_release_bit")]
-		public byte[] UraReleaseBit
-		{
-			get => __pbn__UraReleaseBit;
-			set => __pbn__UraReleaseBit = value;
-		}
-		public bool ShouldSerializeUraReleaseBit() => __pbn__UraReleaseBit != null;
-		public void ResetUraReleaseBit() => __pbn__UraReleaseBit = null;
-		private byte[] __pbn__UraReleaseBit;
-
-		[global::ProtoBuf.ProtoMember(5, Name = @"song_introduction_end_datetime")]
-		[global::System.ComponentModel.DefaultValue("")]
-		public string SongIntroductionEndDatetime
-		{
-			get => __pbn__SongIntroductionEndDatetime ?? "";
-			set => __pbn__SongIntroductionEndDatetime = value;
-		}
-		public bool ShouldSerializeSongIntroductionEndDatetime() => __pbn__SongIntroductionEndDatetime != null;
-		public void ResetSongIntroductionEndDatetime() => __pbn__SongIntroductionEndDatetime = null;
-		private string __pbn__SongIntroductionEndDatetime;
-
-		[global::ProtoBuf.ProtoMember(6, Name = @"ary_movie_info")]
-		public global::System.Collections.Generic.List<MovieData> AryMovieInfoes { get; } = new global::System.Collections.Generic.List<MovieData>();
-
-		[global::ProtoBuf.ProtoMember(7, Name = @"ary_ai_event_data")]
-		public global::System.Collections.Generic.List<AiEventData> AryAiEventDatas { get; } = new global::System.Collections.Generic.List<AiEventData>();
-
-		[global::ProtoBuf.ProtoMember(8, Name = @"ary_chassis_function_id")]
-		public uint[] AryChassisFunctionIds { get; set; }
-
-		[global::ProtoBuf.ProtoMember(9, Name = @"ary_verup_no_data_1")]
-		public global::System.Collections.Generic.List<VerupNoData1> AryVerupNoData1s { get; } = new global::System.Collections.Generic.List<VerupNoData1>();
-
-		[global::ProtoBuf.ProtoMember(10, Name = @"ary_verup_no_data_2")]
-		public global::System.Collections.Generic.List<VerupNoData2> AryVerupNoData2s { get; } = new global::System.Collections.Generic.List<VerupNoData2>();
-
-		[global::ProtoBuf.ProtoMember(11, Name = @"server_current_datetime")]
-		public ulong ServerCurrentDatetime
-		{
-			get => __pbn__ServerCurrentDatetime.GetValueOrDefault();
-			set => __pbn__ServerCurrentDatetime = value;
-		}
-		public bool ShouldSerializeServerCurrentDatetime() => __pbn__ServerCurrentDatetime != null;
-		public void ResetServerCurrentDatetime() => __pbn__ServerCurrentDatetime = null;
-		private ulong? __pbn__ServerCurrentDatetime;
-
-		[global::ProtoBuf.ProtoContract()]
-		public partial class MovieData : global::ProtoBuf.IExtensible
-		{
-			private global::ProtoBuf.IExtension __pbn__extensionData;
-			global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-				=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-			[global::ProtoBuf.ProtoMember(1, Name = @"movie_id", IsRequired = true)]
-			public uint MovieId { get; set; }
-
-			[global::ProtoBuf.ProtoMember(2, Name = @"enable_days", IsRequired = true)]
-			public uint EnableDays { get; set; }
-
-		}
-
-		[global::ProtoBuf.ProtoContract()]
-		public partial class AiEventData : global::ProtoBuf.IExtensible
-		{
-			private global::ProtoBuf.IExtension __pbn__extensionData;
-			global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-				=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-			[global::ProtoBuf.ProtoMember(1, Name = @"ai_event_id", IsRequired = true)]
-			public uint AiEventId { get; set; }
-
-			[global::ProtoBuf.ProtoMember(2, Name = @"token_id")]
-			public uint TokenId
-			{
-				get => __pbn__TokenId.GetValueOrDefault();
-				set => __pbn__TokenId = value;
-			}
-			public bool ShouldSerializeTokenId() => __pbn__TokenId != null;
-			public void ResetTokenId() => __pbn__TokenId = null;
-			private uint? __pbn__TokenId;
-
-		}
-
-		[global::ProtoBuf.ProtoContract()]
-		public partial class VerupNoData1 : global::ProtoBuf.IExtensible
-		{
-			private global::ProtoBuf.IExtension __pbn__extensionData;
-			global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-				=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-			[global::ProtoBuf.ProtoMember(1, Name = @"master_type", IsRequired = true)]
-			public uint MasterType { get; set; }
-
-			[global::ProtoBuf.ProtoMember(2, Name = @"verup_no", IsRequired = true)]
-			public uint VerupNo { get; set; }
-
-		}
-
-		[global::ProtoBuf.ProtoContract()]
-		public partial class VerupNoData2 : global::ProtoBuf.IExtensible
-		{
-			private global::ProtoBuf.IExtension __pbn__extensionData;
-			global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-				=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-			[global::ProtoBuf.ProtoMember(1, Name = @"master_type", IsRequired = true)]
-			public uint MasterType { get; set; }
-
-			[global::ProtoBuf.ProtoMember(2, Name = @"ary_information_data")]
-			public global::System.Collections.Generic.List<InformationData> AryInformationDatas { get; } = new global::System.Collections.Generic.List<InformationData>();
-
-			[global::ProtoBuf.ProtoContract()]
-			public partial class InformationData : global::ProtoBuf.IExtensible
-			{
-				private global::ProtoBuf.IExtension __pbn__extensionData;
-				global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-					=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-				[global::ProtoBuf.ProtoMember(1, Name = @"info_id", IsRequired = true)]
-				public uint InfoId { get; set; }
-
-				[global::ProtoBuf.ProtoMember(2, Name = @"verup_no", IsRequired = true)]
-				public uint VerupNo { get; set; }
-
-			}
-
-		}
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GettelopRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"telop_id", IsRequired = true)]
-		public uint TelopId { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GettelopResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"verup_no")]
-		public uint VerupNo
-		{
-			get => __pbn__VerupNo.GetValueOrDefault();
-			set => __pbn__VerupNo = value;
-		}
-		public bool ShouldSerializeVerupNo() => __pbn__VerupNo != null;
-		public void ResetVerupNo() => __pbn__VerupNo = null;
-		private uint? __pbn__VerupNo;
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"start_datetime")]
-		[global::System.ComponentModel.DefaultValue("")]
-		public string StartDatetime
-		{
-			get => __pbn__StartDatetime ?? "";
-			set => __pbn__StartDatetime = value;
-		}
-		public bool ShouldSerializeStartDatetime() => __pbn__StartDatetime != null;
-		public void ResetStartDatetime() => __pbn__StartDatetime = null;
-		private string __pbn__StartDatetime;
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"end_datetime")]
-		[global::System.ComponentModel.DefaultValue("")]
-		public string EndDatetime
-		{
-			get => __pbn__EndDatetime ?? "";
-			set => __pbn__EndDatetime = value;
-		}
-		public bool ShouldSerializeEndDatetime() => __pbn__EndDatetime != null;
-		public void ResetEndDatetime() => __pbn__EndDatetime = null;
-		private string __pbn__EndDatetime;
-
-		[global::ProtoBuf.ProtoMember(5, Name = @"telop")]
-		[global::System.ComponentModel.DefaultValue("")]
-		public string Telop
-		{
-			get => __pbn__Telop ?? "";
-			set => __pbn__Telop = value;
-		}
-		public bool ShouldSerializeTelop() => __pbn__Telop != null;
-		public void ResetTelop() => __pbn__Telop = null;
-		private string __pbn__Telop;
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GetfolderRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"folder_id")]
-		public uint[] FolderIds { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GetfolderResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"ary_eventfolder_data")]
-		public global::System.Collections.Generic.List<EventfolderData> AryEventfolderDatas { get; } = new global::System.Collections.Generic.List<EventfolderData>();
-
-		[global::ProtoBuf.ProtoContract()]
-		public partial class EventfolderData : global::ProtoBuf.IExtensible
-		{
-			private global::ProtoBuf.IExtension __pbn__extensionData;
-			global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-				=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-			[global::ProtoBuf.ProtoMember(1, Name = @"folder_id", IsRequired = true)]
-			public uint FolderId { get; set; }
-
-			[global::ProtoBuf.ProtoMember(2, Name = @"verup_no", IsRequired = true)]
-			public uint VerupNo { get; set; }
-
-			[global::ProtoBuf.ProtoMember(3, Name = @"priority", IsRequired = true)]
-			public uint Priority { get; set; }
-
-			[global::ProtoBuf.ProtoMember(4, Name = @"song_no")]
-			public uint[] SongNoes { get; set; }
-
-			[global::ProtoBuf.ProtoMember(5, Name = @"parent_folder_id", IsRequired = true)]
-			public uint ParentFolderId { get; set; }
-
-		}
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GetShopFolderRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GetShopFolderResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"verup_no")]
-		public uint VerupNo
-		{
-			get => __pbn__VerupNo.GetValueOrDefault();
-			set => __pbn__VerupNo = value;
-		}
-		public bool ShouldSerializeVerupNo() => __pbn__VerupNo != null;
-		public void ResetVerupNo() => __pbn__VerupNo = null;
-		private uint? __pbn__VerupNo;
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"token_id")]
-		public uint TokenId
-		{
-			get => __pbn__TokenId.GetValueOrDefault();
-			set => __pbn__TokenId = value;
-		}
-		public bool ShouldSerializeTokenId() => __pbn__TokenId != null;
-		public void ResetTokenId() => __pbn__TokenId = null;
-		private uint? __pbn__TokenId;
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"ary_shop_folder_data")]
-		public global::System.Collections.Generic.List<ShopFolderData> AryShopFolderDatas { get; } = new global::System.Collections.Generic.List<ShopFolderData>();
-
-		[global::ProtoBuf.ProtoContract()]
-		public partial class ShopFolderData : global::ProtoBuf.IExtensible
-		{
-			private global::ProtoBuf.IExtension __pbn__extensionData;
-			global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-				=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-			[global::ProtoBuf.ProtoMember(1, Name = @"song_no", IsRequired = true)]
-			public uint SongNo { get; set; }
-
-			[global::ProtoBuf.ProtoMember(2, Name = @"price", IsRequired = true)]
-			public uint Price { get; set; }
-
-		}
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GetSongIntroductionRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"set_id")]
-		public uint[] SetIds { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GetSongIntroductionResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"ary_song_introduction_data")]
-		public global::System.Collections.Generic.List<SongIntroductionData> ArySongIntroductionDatas { get; } = new global::System.Collections.Generic.List<SongIntroductionData>();
-
-		[global::ProtoBuf.ProtoContract()]
-		public partial class SongIntroductionData : global::ProtoBuf.IExtensible
-		{
-			private global::ProtoBuf.IExtension __pbn__extensionData;
-			global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-				=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-			[global::ProtoBuf.ProtoMember(1, Name = @"set_id", IsRequired = true)]
-			public uint SetId { get; set; }
-
-			[global::ProtoBuf.ProtoMember(2, Name = @"verup_no", IsRequired = true)]
-			public uint VerupNo { get; set; }
-
-			[global::ProtoBuf.ProtoMember(3, Name = @"main_song_no")]
-			public uint MainSongNo
-			{
-				get => __pbn__MainSongNo.GetValueOrDefault();
-				set => __pbn__MainSongNo = value;
-			}
-			public bool ShouldSerializeMainSongNo() => __pbn__MainSongNo != null;
-			public void ResetMainSongNo() => __pbn__MainSongNo = null;
-			private uint? __pbn__MainSongNo;
-
-			[global::ProtoBuf.ProtoMember(4, Name = @"sub_song_no")]
-			public uint[] SubSongNoes { get; set; }
-
-		}
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class TournamentcheckRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"kit_id", IsRequired = true)]
-		public uint KitId { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class TournamentcheckResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"rare_rate")]
-		public uint RareRate
-		{
-			get => __pbn__RareRate.GetValueOrDefault();
-			set => __pbn__RareRate = value;
-		}
-		public bool ShouldSerializeRareRate() => __pbn__RareRate != null;
-		public void ResetRareRate() => __pbn__RareRate = null;
-		private uint? __pbn__RareRate;
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"ary_gacha_song_data")]
-		public global::System.Collections.Generic.List<GachainfoData> AryGachaSongDatas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"ary_gacha_tone_data")]
-		public global::System.Collections.Generic.List<GachainfoData> AryGachaToneDatas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
-
-		[global::ProtoBuf.ProtoMember(5, Name = @"ary_gacha_costume_1_data")]
-		public global::System.Collections.Generic.List<GachainfoData> AryGachaCostume1Datas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
-
-		[global::ProtoBuf.ProtoMember(6, Name = @"ary_gacha_costume_2_data")]
-		public global::System.Collections.Generic.List<GachainfoData> AryGachaCostume2Datas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
-
-		[global::ProtoBuf.ProtoMember(7, Name = @"ary_gacha_costume_3_data")]
-		public global::System.Collections.Generic.List<GachainfoData> AryGachaCostume3Datas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
-
-		[global::ProtoBuf.ProtoMember(8, Name = @"ary_gacha_costume_4_data")]
-		public global::System.Collections.Generic.List<GachainfoData> AryGachaCostume4Datas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
-
-		[global::ProtoBuf.ProtoMember(9, Name = @"ary_gacha_costume_5_data")]
-		public global::System.Collections.Generic.List<GachainfoData> AryGachaCostume5Datas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
-
-		[global::ProtoBuf.ProtoMember(10, Name = @"ary_gacha_title_data")]
-		public global::System.Collections.Generic.List<GachainfoData> AryGachaTitleDatas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
-
-		[global::ProtoBuf.ProtoContract()]
-		public partial class GachainfoData : global::ProtoBuf.IExtensible
-		{
-			private global::ProtoBuf.IExtension __pbn__extensionData;
-			global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-				=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-			[global::ProtoBuf.ProtoMember(1, Name = @"normal_gacha_flg", IsRequired = true)]
-			public byte[] NormalGachaFlg { get; set; }
-
-			[global::ProtoBuf.ProtoMember(2, Name = @"rare_gacha_flg", IsRequired = true)]
-			public byte[] RareGachaFlg { get; set; }
-
-		}
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GetDanOdaiRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"type", IsRequired = true)]
-		public uint Type { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"dan_id")]
-		public uint[] DanIds { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GetDanOdaiResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"ary_odai_data")]
-		public global::System.Collections.Generic.List<OdaiData> AryOdaiDatas { get; } = new global::System.Collections.Generic.List<OdaiData>();
-
-		[global::ProtoBuf.ProtoContract()]
-		public partial class OdaiData : global::ProtoBuf.IExtensible
-		{
-			private global::ProtoBuf.IExtension __pbn__extensionData;
-			global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-				=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-			[global::ProtoBuf.ProtoMember(1, Name = @"dan_id", IsRequired = true)]
-			public uint DanId { get; set; }
-
-			[global::ProtoBuf.ProtoMember(2, Name = @"verup_no", IsRequired = true)]
-			public uint VerupNo { get; set; }
-
-			[global::ProtoBuf.ProtoMember(3, Name = @"title", IsRequired = true)]
-			public string Title { get; set; }
-
-			[global::ProtoBuf.ProtoMember(4, Name = @"ary_odai_song")]
-			public global::System.Collections.Generic.List<OdaiSong> AryOdaiSongs { get; } = new global::System.Collections.Generic.List<OdaiSong>();
-
-			[global::ProtoBuf.ProtoMember(5, Name = @"ary_odai_border")]
-			public global::System.Collections.Generic.List<OdaiBorder> AryOdaiBorders { get; } = new global::System.Collections.Generic.List<OdaiBorder>();
-
-			[global::ProtoBuf.ProtoContract()]
-			public partial class OdaiSong : global::ProtoBuf.IExtensible
-			{
-				private global::ProtoBuf.IExtension __pbn__extensionData;
-				global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-					=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-				[global::ProtoBuf.ProtoMember(1, Name = @"song_no", IsRequired = true)]
-				public uint SongNo { get; set; }
-
-				[global::ProtoBuf.ProtoMember(2, Name = @"level", IsRequired = true)]
-				public uint Level { get; set; }
-
-				[global::ProtoBuf.ProtoMember(3, Name = @"is_hidden_song_name", IsRequired = true)]
-				public bool IsHiddenSongName { get; set; }
-
-			}
-
-			[global::ProtoBuf.ProtoContract()]
-			public partial class OdaiBorder : global::ProtoBuf.IExtensible
-			{
-				private global::ProtoBuf.IExtension __pbn__extensionData;
-				global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-					=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-				[global::ProtoBuf.ProtoMember(1, Name = @"odai_type", IsRequired = true)]
-				public uint OdaiType { get; set; }
-
-				[global::ProtoBuf.ProtoMember(2, Name = @"border_type", IsRequired = true)]
-				public uint BorderType { get; set; }
-
-				[global::ProtoBuf.ProtoMember(3, Name = @"red_border_total")]
-				public uint RedBorderTotal
-				{
-					get => __pbn__RedBorderTotal.GetValueOrDefault();
-					set => __pbn__RedBorderTotal = value;
-				}
-				public bool ShouldSerializeRedBorderTotal() => __pbn__RedBorderTotal != null;
-				public void ResetRedBorderTotal() => __pbn__RedBorderTotal = null;
-				private uint? __pbn__RedBorderTotal;
-
-				[global::ProtoBuf.ProtoMember(4, Name = @"gold_border_total")]
-				public uint GoldBorderTotal
-				{
-					get => __pbn__GoldBorderTotal.GetValueOrDefault();
-					set => __pbn__GoldBorderTotal = value;
-				}
-				public bool ShouldSerializeGoldBorderTotal() => __pbn__GoldBorderTotal != null;
-				public void ResetGoldBorderTotal() => __pbn__GoldBorderTotal = null;
-				private uint? __pbn__GoldBorderTotal;
-
-				[global::ProtoBuf.ProtoMember(5, Name = @"red_border_1")]
-				public uint RedBorder1
-				{
-					get => __pbn__RedBorder1.GetValueOrDefault();
-					set => __pbn__RedBorder1 = value;
-				}
-				public bool ShouldSerializeRedBorder1() => __pbn__RedBorder1 != null;
-				public void ResetRedBorder1() => __pbn__RedBorder1 = null;
-				private uint? __pbn__RedBorder1;
-
-				[global::ProtoBuf.ProtoMember(6, Name = @"gold_border_1")]
-				public uint GoldBorder1
-				{
-					get => __pbn__GoldBorder1.GetValueOrDefault();
-					set => __pbn__GoldBorder1 = value;
-				}
-				public bool ShouldSerializeGoldBorder1() => __pbn__GoldBorder1 != null;
-				public void ResetGoldBorder1() => __pbn__GoldBorder1 = null;
-				private uint? __pbn__GoldBorder1;
-
-				[global::ProtoBuf.ProtoMember(7, Name = @"red_border_2")]
-				public uint RedBorder2
-				{
-					get => __pbn__RedBorder2.GetValueOrDefault();
-					set => __pbn__RedBorder2 = value;
-				}
-				public bool ShouldSerializeRedBorder2() => __pbn__RedBorder2 != null;
-				public void ResetRedBorder2() => __pbn__RedBorder2 = null;
-				private uint? __pbn__RedBorder2;
-
-				[global::ProtoBuf.ProtoMember(8, Name = @"gold_border_2")]
-				public uint GoldBorder2
-				{
-					get => __pbn__GoldBorder2.GetValueOrDefault();
-					set => __pbn__GoldBorder2 = value;
-				}
-				public bool ShouldSerializeGoldBorder2() => __pbn__GoldBorder2 != null;
-				public void ResetGoldBorder2() => __pbn__GoldBorder2 = null;
-				private uint? __pbn__GoldBorder2;
-
-				[global::ProtoBuf.ProtoMember(9, Name = @"red_border_3")]
-				public uint RedBorder3
-				{
-					get => __pbn__RedBorder3.GetValueOrDefault();
-					set => __pbn__RedBorder3 = value;
-				}
-				public bool ShouldSerializeRedBorder3() => __pbn__RedBorder3 != null;
-				public void ResetRedBorder3() => __pbn__RedBorder3 = null;
-				private uint? __pbn__RedBorder3;
-
-				[global::ProtoBuf.ProtoMember(10, Name = @"gold_border_3")]
-				public uint GoldBorder3
-				{
-					get => __pbn__GoldBorder3.GetValueOrDefault();
-					set => __pbn__GoldBorder3 = value;
-				}
-				public bool ShouldSerializeGoldBorder3() => __pbn__GoldBorder3 != null;
-				public void ResetGoldBorder3() => __pbn__GoldBorder3 = null;
-				private uint? __pbn__GoldBorder3;
-
-			}
-
-		}
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class VerifyQrcodeRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"baid", IsRequired = true)]
-		public ulong Baid { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"qrcode_serial", IsRequired = true)]
-		public string QrcodeSerial { get; set; }
-
-		[global::ProtoBuf.ProtoMember(5, Name = @"is_new_card")]
-		public bool IsNewCard
-		{
-			get => __pbn__IsNewCard.GetValueOrDefault();
-			set => __pbn__IsNewCard = value;
-		}
-		public bool ShouldSerializeIsNewCard() => __pbn__IsNewCard != null;
-		public void ResetIsNewCard() => __pbn__IsNewCard = null;
-		private bool? __pbn__IsNewCard;
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class VerifyQrcodeResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"qrcode_id")]
-		public uint QrcodeId
-		{
-			get => __pbn__QrcodeId.GetValueOrDefault();
-			set => __pbn__QrcodeId = value;
-		}
-		public bool ShouldSerializeQrcodeId() => __pbn__QrcodeId != null;
-		public void ResetQrcodeId() => __pbn__QrcodeId = null;
-		private uint? __pbn__QrcodeId;
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class ExecuteQrcodeRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"baid", IsRequired = true)]
-		public ulong Baid { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"qrcode_serial", IsRequired = true)]
-		public string QrcodeSerial { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class ExecuteQrcodeResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"qrcode_id")]
-		public uint QrcodeId
-		{
-			get => __pbn__QrcodeId.GetValueOrDefault();
-			set => __pbn__QrcodeId = value;
-		}
-		public bool ShouldSerializeQrcodeId() => __pbn__QrcodeId != null;
-		public void ResetQrcodeId() => __pbn__QrcodeId = null;
-		private uint? __pbn__QrcodeId;
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GetApplicationUrlRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"baid", IsRequired = true)]
-		public ulong Baid { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"qrcode_id", IsRequired = true)]
-		public uint QrcodeId { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GetApplicationUrlResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"application_url")]
-		[global::System.ComponentModel.DefaultValue("")]
-		public string ApplicationUrl
-		{
-			get => __pbn__ApplicationUrl ?? "";
-			set => __pbn__ApplicationUrl = value;
-		}
-		public bool ShouldSerializeApplicationUrl() => __pbn__ApplicationUrl != null;
-		public void ResetApplicationUrl() => __pbn__ApplicationUrl = null;
-		private string __pbn__ApplicationUrl;
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class SetAnyStringRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"any_string", IsRequired = true)]
-		public string AnyString { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class SetAnyStringResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GetGenericMasterRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"master_type", IsRequired = true)]
-		public uint MasterType { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GetGenericMasterResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"verup_no")]
-		public uint VerupNo
-		{
-			get => __pbn__VerupNo.GetValueOrDefault();
-			set => __pbn__VerupNo = value;
-		}
-		public bool ShouldSerializeVerupNo() => __pbn__VerupNo != null;
-		public void ResetVerupNo() => __pbn__VerupNo = null;
-		private uint? __pbn__VerupNo;
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"enable_id_bit")]
-		public byte[] EnableIdBit
-		{
-			get => __pbn__EnableIdBit;
-			set => __pbn__EnableIdBit = value;
-		}
-		public bool ShouldSerializeEnableIdBit() => __pbn__EnableIdBit != null;
-		public void ResetEnableIdBit() => __pbn__EnableIdBit = null;
-		private byte[] __pbn__EnableIdBit;
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class MusicUsbAuth1Request : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"usbmem_ver", IsRequired = true)]
-		public string UsbmemVer { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"usbmem_serial", IsRequired = true)]
-		public string UsbmemSerial { get; set; }
-
-		[global::ProtoBuf.ProtoMember(5, Name = @"usbmem_vid", IsRequired = true)]
-		public string UsbmemVid { get; set; }
-
-		[global::ProtoBuf.ProtoMember(6, Name = @"usbmem_pid", IsRequired = true)]
-		public string UsbmemPid { get; set; }
-
-		[global::ProtoBuf.ProtoMember(7, Name = @"app_ver", IsRequired = true)]
-		public uint AppVer { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class MusicUsbAuth1Response : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"secret_key_1")]
-		[global::System.ComponentModel.DefaultValue("")]
-		public string SecretKey1
-		{
-			get => __pbn__SecretKey1 ?? "";
-			set => __pbn__SecretKey1 = value;
-		}
-		public bool ShouldSerializeSecretKey1() => __pbn__SecretKey1 != null;
-		public void ResetSecretKey1() => __pbn__SecretKey1 = null;
-		private string __pbn__SecretKey1;
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"secret_key_2")]
-		[global::System.ComponentModel.DefaultValue("")]
-		public string SecretKey2
-		{
-			get => __pbn__SecretKey2 ?? "";
-			set => __pbn__SecretKey2 = value;
-		}
-		public bool ShouldSerializeSecretKey2() => __pbn__SecretKey2 != null;
-		public void ResetSecretKey2() => __pbn__SecretKey2 = null;
-		private string __pbn__SecretKey2;
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"datafile_hash")]
-		[global::System.ComponentModel.DefaultValue("")]
-		public string DatafileHash
-		{
-			get => __pbn__DatafileHash ?? "";
-			set => __pbn__DatafileHash = value;
-		}
-		public bool ShouldSerializeDatafileHash() => __pbn__DatafileHash != null;
-		public void ResetDatafileHash() => __pbn__DatafileHash = null;
-		private string __pbn__DatafileHash;
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class MusicUsbAuth2Request : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"usbmem_ver", IsRequired = true)]
-		public string UsbmemVer { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"usbmem_serial", IsRequired = true)]
-		public string UsbmemSerial { get; set; }
-
-		[global::ProtoBuf.ProtoMember(5, Name = @"usbmem_vid", IsRequired = true)]
-		public string UsbmemVid { get; set; }
-
-		[global::ProtoBuf.ProtoMember(6, Name = @"usbmem_pid", IsRequired = true)]
-		public string UsbmemPid { get; set; }
-
-		[global::ProtoBuf.ProtoMember(7, Name = @"app_ver", IsRequired = true)]
-		public uint AppVer { get; set; }
-
-		[global::ProtoBuf.ProtoMember(8, Name = @"datafile_hash", IsRequired = true)]
-		public string DatafileHash { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class MusicUsbAuth2Response : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class BAIDRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"wechat_qr_str", IsRequired = true)]
-		public string WechatQrStr { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"country_id", IsRequired = true)]
-		public string CountryId { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class BAIDResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"player_type")]
-		public uint PlayerType
-		{
-			get => __pbn__PlayerType.GetValueOrDefault();
-			set => __pbn__PlayerType = value;
-		}
-		public bool ShouldSerializePlayerType() => __pbn__PlayerType != null;
-		public void ResetPlayerType() => __pbn__PlayerType = null;
-		private uint? __pbn__PlayerType;
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"baid")]
-		public ulong Baid
-		{
-			get => __pbn__Baid.GetValueOrDefault();
-			set => __pbn__Baid = value;
-		}
-		public bool ShouldSerializeBaid() => __pbn__Baid != null;
-		public void ResetBaid() => __pbn__Baid = null;
-		private ulong? __pbn__Baid;
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"mydon_name")]
-		[global::System.ComponentModel.DefaultValue("")]
-		public string MydonName
-		{
-			get => __pbn__MydonName ?? "";
-			set => __pbn__MydonName = value;
-		}
-		public bool ShouldSerializeMydonName() => __pbn__MydonName != null;
-		public void ResetMydonName() => __pbn__MydonName = null;
-		private string __pbn__MydonName;
-
-		[global::ProtoBuf.ProtoMember(5, Name = @"mydon_name_language")]
-		public uint MydonNameLanguage
-		{
-			get => __pbn__MydonNameLanguage.GetValueOrDefault();
-			set => __pbn__MydonNameLanguage = value;
-		}
-		public bool ShouldSerializeMydonNameLanguage() => __pbn__MydonNameLanguage != null;
-		public void ResetMydonNameLanguage() => __pbn__MydonNameLanguage = null;
-		private uint? __pbn__MydonNameLanguage;
-
-		[global::ProtoBuf.ProtoMember(6, Name = @"title")]
-		[global::System.ComponentModel.DefaultValue("")]
-		public string Title
-		{
-			get => __pbn__Title ?? "";
-			set => __pbn__Title = value;
-		}
-		public bool ShouldSerializeTitle() => __pbn__Title != null;
-		public void ResetTitle() => __pbn__Title = null;
-		private string __pbn__Title;
-
-		[global::ProtoBuf.ProtoMember(7, Name = @"titleplate_id")]
-		public uint TitleplateId
-		{
-			get => __pbn__TitleplateId.GetValueOrDefault();
-			set => __pbn__TitleplateId = value;
-		}
-		public bool ShouldSerializeTitleplateId() => __pbn__TitleplateId != null;
-		public void ResetTitleplateId() => __pbn__TitleplateId = null;
-		private uint? __pbn__TitleplateId;
-
-		[global::ProtoBuf.ProtoMember(8, Name = @"color_face")]
-		public uint ColorFace
-		{
-			get => __pbn__ColorFace.GetValueOrDefault();
-			set => __pbn__ColorFace = value;
-		}
-		public bool ShouldSerializeColorFace() => __pbn__ColorFace != null;
-		public void ResetColorFace() => __pbn__ColorFace = null;
-		private uint? __pbn__ColorFace;
-
-		[global::ProtoBuf.ProtoMember(9, Name = @"color_body")]
-		public uint ColorBody
-		{
-			get => __pbn__ColorBody.GetValueOrDefault();
-			set => __pbn__ColorBody = value;
-		}
-		public bool ShouldSerializeColorBody() => __pbn__ColorBody != null;
-		public void ResetColorBody() => __pbn__ColorBody = null;
-		private uint? __pbn__ColorBody;
-
-		[global::ProtoBuf.ProtoMember(10, Name = @"color_limb")]
-		public uint ColorLimb
-		{
-			get => __pbn__ColorLimb.GetValueOrDefault();
-			set => __pbn__ColorLimb = value;
-		}
-		public bool ShouldSerializeColorLimb() => __pbn__ColorLimb != null;
-		public void ResetColorLimb() => __pbn__ColorLimb = null;
-		private uint? __pbn__ColorLimb;
-
-		[global::ProtoBuf.ProtoMember(11, Name = @"ary_costumedata")]
-		public CostumeData AryCostumedata { get; set; }
-
-		[global::ProtoBuf.ProtoMember(12, Name = @"costume_flg_1")]
-		public byte[] CostumeFlg1
-		{
-			get => __pbn__CostumeFlg1;
-			set => __pbn__CostumeFlg1 = value;
-		}
-		public bool ShouldSerializeCostumeFlg1() => __pbn__CostumeFlg1 != null;
-		public void ResetCostumeFlg1() => __pbn__CostumeFlg1 = null;
-		private byte[] __pbn__CostumeFlg1;
-
-		[global::ProtoBuf.ProtoMember(13, Name = @"costume_flg_2")]
-		public byte[] CostumeFlg2
-		{
-			get => __pbn__CostumeFlg2;
-			set => __pbn__CostumeFlg2 = value;
-		}
-		public bool ShouldSerializeCostumeFlg2() => __pbn__CostumeFlg2 != null;
-		public void ResetCostumeFlg2() => __pbn__CostumeFlg2 = null;
-		private byte[] __pbn__CostumeFlg2;
-
-		[global::ProtoBuf.ProtoMember(14, Name = @"costume_flg_3")]
-		public byte[] CostumeFlg3
-		{
-			get => __pbn__CostumeFlg3;
-			set => __pbn__CostumeFlg3 = value;
-		}
-		public bool ShouldSerializeCostumeFlg3() => __pbn__CostumeFlg3 != null;
-		public void ResetCostumeFlg3() => __pbn__CostumeFlg3 = null;
-		private byte[] __pbn__CostumeFlg3;
-
-		[global::ProtoBuf.ProtoMember(15, Name = @"costume_flg_4")]
-		public byte[] CostumeFlg4
-		{
-			get => __pbn__CostumeFlg4;
-			set => __pbn__CostumeFlg4 = value;
-		}
-		public bool ShouldSerializeCostumeFlg4() => __pbn__CostumeFlg4 != null;
-		public void ResetCostumeFlg4() => __pbn__CostumeFlg4 = null;
-		private byte[] __pbn__CostumeFlg4;
-
-		[global::ProtoBuf.ProtoMember(16, Name = @"costume_flg_5")]
-		public byte[] CostumeFlg5
-		{
-			get => __pbn__CostumeFlg5;
-			set => __pbn__CostumeFlg5 = value;
-		}
-		public bool ShouldSerializeCostumeFlg5() => __pbn__CostumeFlg5 != null;
-		public void ResetCostumeFlg5() => __pbn__CostumeFlg5 = null;
-		private byte[] __pbn__CostumeFlg5;
-
-		[global::ProtoBuf.ProtoMember(17, Name = @"last_play_datetime")]
-		[global::System.ComponentModel.DefaultValue("")]
-		public string LastPlayDatetime
-		{
-			get => __pbn__LastPlayDatetime ?? "";
-			set => __pbn__LastPlayDatetime = value;
-		}
-		public bool ShouldSerializeLastPlayDatetime() => __pbn__LastPlayDatetime != null;
-		public void ResetLastPlayDatetime() => __pbn__LastPlayDatetime = null;
-		private string __pbn__LastPlayDatetime;
-
-		[global::ProtoBuf.ProtoMember(18, Name = @"is_disp_dan_on")]
-		public bool IsDispDanOn
-		{
-			get => __pbn__IsDispDanOn.GetValueOrDefault();
-			set => __pbn__IsDispDanOn = value;
-		}
-		public bool ShouldSerializeIsDispDanOn() => __pbn__IsDispDanOn != null;
-		public void ResetIsDispDanOn() => __pbn__IsDispDanOn = null;
-		private bool? __pbn__IsDispDanOn;
-
-		[global::ProtoBuf.ProtoMember(19, Name = @"got_dan_max")]
-		public uint GotDanMax
-		{
-			get => __pbn__GotDanMax.GetValueOrDefault();
-			set => __pbn__GotDanMax = value;
-		}
-		public bool ShouldSerializeGotDanMax() => __pbn__GotDanMax != null;
-		public void ResetGotDanMax() => __pbn__GotDanMax = null;
-		private uint? __pbn__GotDanMax;
-
-		[global::ProtoBuf.ProtoMember(20, Name = @"got_dan_flg")]
-		public byte[] GotDanFlg
-		{
-			get => __pbn__GotDanFlg;
-			set => __pbn__GotDanFlg = value;
-		}
-		public bool ShouldSerializeGotDanFlg() => __pbn__GotDanFlg != null;
-		public void ResetGotDanFlg() => __pbn__GotDanFlg = null;
-		private byte[] __pbn__GotDanFlg;
-
-		[global::ProtoBuf.ProtoMember(21, Name = @"got_danextra_flg")]
-		public byte[] GotDanextraFlg
-		{
-			get => __pbn__GotDanextraFlg;
-			set => __pbn__GotDanextraFlg = value;
-		}
-		public bool ShouldSerializeGotDanextraFlg() => __pbn__GotDanextraFlg != null;
-		public void ResetGotDanextraFlg() => __pbn__GotDanextraFlg = null;
-		private byte[] __pbn__GotDanextraFlg;
-
-		[global::ProtoBuf.ProtoMember(22, Name = @"default_tone_setting")]
-		public uint DefaultToneSetting
-		{
-			get => __pbn__DefaultToneSetting.GetValueOrDefault();
-			set => __pbn__DefaultToneSetting = value;
-		}
-		public bool ShouldSerializeDefaultToneSetting() => __pbn__DefaultToneSetting != null;
-		public void ResetDefaultToneSetting() => __pbn__DefaultToneSetting = null;
-		private uint? __pbn__DefaultToneSetting;
-
-		[global::ProtoBuf.ProtoMember(23, Name = @"generic_info_flg")]
-		public byte[] GenericInfoFlg
-		{
-			get => __pbn__GenericInfoFlg;
-			set => __pbn__GenericInfoFlg = value;
-		}
-		public bool ShouldSerializeGenericInfoFlg() => __pbn__GenericInfoFlg != null;
-		public void ResetGenericInfoFlg() => __pbn__GenericInfoFlg = null;
-		private byte[] __pbn__GenericInfoFlg;
-
-		[global::ProtoBuf.ProtoMember(24, Name = @"ary_crown_count")]
-		public uint[] AryCrownCounts { get; set; }
-
-		[global::ProtoBuf.ProtoMember(25, Name = @"ary_score_rank_count")]
-		public uint[] AryScoreRankCounts { get; set; }
-
-		[global::ProtoBuf.ProtoMember(26, Name = @"is_disp_achievement_on")]
-		public bool IsDispAchievementOn
-		{
-			get => __pbn__IsDispAchievementOn.GetValueOrDefault();
-			set => __pbn__IsDispAchievementOn = value;
-		}
-		public bool ShouldSerializeIsDispAchievementOn() => __pbn__IsDispAchievementOn != null;
-		public void ResetIsDispAchievementOn() => __pbn__IsDispAchievementOn = null;
-		private bool? __pbn__IsDispAchievementOn;
-
-		[global::ProtoBuf.ProtoMember(27, Name = @"disp_achievement_type")]
-		public uint DispAchievementType
-		{
-			get => __pbn__DispAchievementType.GetValueOrDefault();
-			set => __pbn__DispAchievementType = value;
-		}
-		public bool ShouldSerializeDispAchievementType() => __pbn__DispAchievementType != null;
-		public void ResetDispAchievementType() => __pbn__DispAchievementType = null;
-		private uint? __pbn__DispAchievementType;
-
-		[global::ProtoBuf.ProtoMember(28, Name = @"is_disp_achievement_type_set")]
-		public bool IsDispAchievementTypeSet
-		{
-			get => __pbn__IsDispAchievementTypeSet.GetValueOrDefault();
-			set => __pbn__IsDispAchievementTypeSet = value;
-		}
-		public bool ShouldSerializeIsDispAchievementTypeSet() => __pbn__IsDispAchievementTypeSet != null;
-		public void ResetIsDispAchievementTypeSet() => __pbn__IsDispAchievementTypeSet = null;
-		private bool? __pbn__IsDispAchievementTypeSet;
-
-		[global::ProtoBuf.ProtoMember(29, Name = @"last_play_mode")]
-		public uint LastPlayMode
-		{
-			get => __pbn__LastPlayMode.GetValueOrDefault();
-			set => __pbn__LastPlayMode = value;
-		}
-		public bool ShouldSerializeLastPlayMode() => __pbn__LastPlayMode != null;
-		public void ResetLastPlayMode() => __pbn__LastPlayMode = null;
-		private uint? __pbn__LastPlayMode;
-
-		[global::ProtoBuf.ProtoMember(30, Name = @"is_disp_souuchi_on")]
-		public bool IsDispSouuchiOn
-		{
-			get => __pbn__IsDispSouuchiOn.GetValueOrDefault();
-			set => __pbn__IsDispSouuchiOn = value;
-		}
-		public bool ShouldSerializeIsDispSouuchiOn() => __pbn__IsDispSouuchiOn != null;
-		public void ResetIsDispSouuchiOn() => __pbn__IsDispSouuchiOn = null;
-		private bool? __pbn__IsDispSouuchiOn;
-
-		[global::ProtoBuf.ProtoContract()]
-		public partial class CostumeData : global::ProtoBuf.IExtensible
-		{
-			private global::ProtoBuf.IExtension __pbn__extensionData;
-			global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-				=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-			[global::ProtoBuf.ProtoMember(1, Name = @"costume_1")]
-			public uint Costume1
-			{
-				get => __pbn__Costume1.GetValueOrDefault();
-				set => __pbn__Costume1 = value;
-			}
-			public bool ShouldSerializeCostume1() => __pbn__Costume1 != null;
-			public void ResetCostume1() => __pbn__Costume1 = null;
-			private uint? __pbn__Costume1;
-
-			[global::ProtoBuf.ProtoMember(2, Name = @"costume_2")]
-			public uint Costume2
-			{
-				get => __pbn__Costume2.GetValueOrDefault();
-				set => __pbn__Costume2 = value;
-			}
-			public bool ShouldSerializeCostume2() => __pbn__Costume2 != null;
-			public void ResetCostume2() => __pbn__Costume2 = null;
-			private uint? __pbn__Costume2;
-
-			[global::ProtoBuf.ProtoMember(3, Name = @"costume_3")]
-			public uint Costume3
-			{
-				get => __pbn__Costume3.GetValueOrDefault();
-				set => __pbn__Costume3 = value;
-			}
-			public bool ShouldSerializeCostume3() => __pbn__Costume3 != null;
-			public void ResetCostume3() => __pbn__Costume3 = null;
-			private uint? __pbn__Costume3;
-
-			[global::ProtoBuf.ProtoMember(4, Name = @"costume_4")]
-			public uint Costume4
-			{
-				get => __pbn__Costume4.GetValueOrDefault();
-				set => __pbn__Costume4 = value;
-			}
-			public bool ShouldSerializeCostume4() => __pbn__Costume4 != null;
-			public void ResetCostume4() => __pbn__Costume4 = null;
-			private uint? __pbn__Costume4;
-
-			[global::ProtoBuf.ProtoMember(5, Name = @"costume_5")]
-			public uint Costume5
-			{
-				get => __pbn__Costume5.GetValueOrDefault();
-				set => __pbn__Costume5 = value;
-			}
-			public bool ShouldSerializeCostume5() => __pbn__Costume5 != null;
-			public void ResetCostume5() => __pbn__Costume5 = null;
-			private uint? __pbn__Costume5;
-
-		}
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class MydonEntryRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"wechat_qr_str", IsRequired = true)]
-		public string WechatQrStr { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"country_id", IsRequired = true)]
-		public string CountryId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(5, Name = @"mydon_name", IsRequired = true)]
-		public string MydonName { get; set; }
-
-		[global::ProtoBuf.ProtoMember(6, Name = @"mydon_name_language", IsRequired = true)]
-		public uint MydonNameLanguage { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class MydonEntryResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"baid")]
-		public ulong Baid
-		{
-			get => __pbn__Baid.GetValueOrDefault();
-			set => __pbn__Baid = value;
-		}
-		public bool ShouldSerializeBaid() => __pbn__Baid != null;
-		public void ResetBaid() => __pbn__Baid = null;
-		private ulong? __pbn__Baid;
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"mydon_name")]
-		[global::System.ComponentModel.DefaultValue("")]
-		public string MydonName
-		{
-			get => __pbn__MydonName ?? "";
-			set => __pbn__MydonName = value;
-		}
-		public bool ShouldSerializeMydonName() => __pbn__MydonName != null;
-		public void ResetMydonName() => __pbn__MydonName = null;
-		private string __pbn__MydonName;
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"mydon_name_language")]
-		public uint MydonNameLanguage
-		{
-			get => __pbn__MydonNameLanguage.GetValueOrDefault();
-			set => __pbn__MydonNameLanguage = value;
-		}
-		public bool ShouldSerializeMydonNameLanguage() => __pbn__MydonNameLanguage != null;
-		public void ResetMydonNameLanguage() => __pbn__MydonNameLanguage = null;
-		private uint? __pbn__MydonNameLanguage;
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class UserDataRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"wechat_qr_str", IsRequired = true)]
-		public string WechatQrStr { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"baid", IsRequired = true)]
-		public ulong Baid { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class UserDataResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"tone_flg")]
-		public byte[] ToneFlg
-		{
-			get => __pbn__ToneFlg;
-			set => __pbn__ToneFlg = value;
-		}
-		public bool ShouldSerializeToneFlg() => __pbn__ToneFlg != null;
-		public void ResetToneFlg() => __pbn__ToneFlg = null;
-		private byte[] __pbn__ToneFlg;
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"title_flg")]
-		public byte[] TitleFlg
-		{
-			get => __pbn__TitleFlg;
-			set => __pbn__TitleFlg = value;
-		}
-		public bool ShouldSerializeTitleFlg() => __pbn__TitleFlg != null;
-		public void ResetTitleFlg() => __pbn__TitleFlg = null;
-		private byte[] __pbn__TitleFlg;
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"release_song_flg")]
-		public byte[] ReleaseSongFlg
-		{
-			get => __pbn__ReleaseSongFlg;
-			set => __pbn__ReleaseSongFlg = value;
-		}
-		public bool ShouldSerializeReleaseSongFlg() => __pbn__ReleaseSongFlg != null;
-		public void ResetReleaseSongFlg() => __pbn__ReleaseSongFlg = null;
-		private byte[] __pbn__ReleaseSongFlg;
-
-		[global::ProtoBuf.ProtoMember(5, Name = @"ura_release_song_flg")]
-		public byte[] UraReleaseSongFlg
-		{
-			get => __pbn__UraReleaseSongFlg;
-			set => __pbn__UraReleaseSongFlg = value;
-		}
-		public bool ShouldSerializeUraReleaseSongFlg() => __pbn__UraReleaseSongFlg != null;
-		public void ResetUraReleaseSongFlg() => __pbn__UraReleaseSongFlg = null;
-		private byte[] __pbn__UraReleaseSongFlg;
-
-		[global::ProtoBuf.ProtoMember(6, Name = @"ary_favorite_song_no")]
-		public uint[] AryFavoriteSongNoes { get; set; }
-
-		[global::ProtoBuf.ProtoMember(7, Name = @"ary_recent_song_no")]
-		public uint[] AryRecentSongNoes { get; set; }
-
-		[global::ProtoBuf.ProtoMember(8, Name = @"disp_score_type")]
-		public uint DispScoreType
-		{
-			get => __pbn__DispScoreType.GetValueOrDefault();
-			set => __pbn__DispScoreType = value;
-		}
-		public bool ShouldSerializeDispScoreType() => __pbn__DispScoreType != null;
-		public void ResetDispScoreType() => __pbn__DispScoreType = null;
-		private uint? __pbn__DispScoreType;
-
-		[global::ProtoBuf.ProtoMember(9, Name = @"disp_level_chassis")]
-		public uint DispLevelChassis
-		{
-			get => __pbn__DispLevelChassis.GetValueOrDefault();
-			set => __pbn__DispLevelChassis = value;
-		}
-		public bool ShouldSerializeDispLevelChassis() => __pbn__DispLevelChassis != null;
-		public void ResetDispLevelChassis() => __pbn__DispLevelChassis = null;
-		private uint? __pbn__DispLevelChassis;
-
-		[global::ProtoBuf.ProtoMember(10, Name = @"disp_level_self")]
-		public uint DispLevelSelf
-		{
-			get => __pbn__DispLevelSelf.GetValueOrDefault();
-			set => __pbn__DispLevelSelf = value;
-		}
-		public bool ShouldSerializeDispLevelSelf() => __pbn__DispLevelSelf != null;
-		public void ResetDispLevelSelf() => __pbn__DispLevelSelf = null;
-		private uint? __pbn__DispLevelSelf;
-
-		[global::ProtoBuf.ProtoMember(11, Name = @"is_disp_tojiru_on")]
-		public bool IsDispTojiruOn
-		{
-			get => __pbn__IsDispTojiruOn.GetValueOrDefault();
-			set => __pbn__IsDispTojiruOn = value;
-		}
-		public bool ShouldSerializeIsDispTojiruOn() => __pbn__IsDispTojiruOn != null;
-		public void ResetIsDispTojiruOn() => __pbn__IsDispTojiruOn = null;
-		private bool? __pbn__IsDispTojiruOn;
-
-		[global::ProtoBuf.ProtoMember(12, Name = @"default_option_setting")]
-		public byte[] DefaultOptionSetting
-		{
-			get => __pbn__DefaultOptionSetting;
-			set => __pbn__DefaultOptionSetting = value;
-		}
-		public bool ShouldSerializeDefaultOptionSetting() => __pbn__DefaultOptionSetting != null;
-		public void ResetDefaultOptionSetting() => __pbn__DefaultOptionSetting = null;
-		private byte[] __pbn__DefaultOptionSetting;
-
-		[global::ProtoBuf.ProtoMember(13, Name = @"notes_position", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
-		public int NotesPosition
-		{
-			get => __pbn__NotesPosition.GetValueOrDefault();
-			set => __pbn__NotesPosition = value;
-		}
-		public bool ShouldSerializeNotesPosition() => __pbn__NotesPosition != null;
-		public void ResetNotesPosition() => __pbn__NotesPosition = null;
-		private int? __pbn__NotesPosition;
-
-		[global::ProtoBuf.ProtoMember(14, Name = @"is_voice_on")]
-		public bool IsVoiceOn
-		{
-			get => __pbn__IsVoiceOn.GetValueOrDefault();
-			set => __pbn__IsVoiceOn = value;
-		}
-		public bool ShouldSerializeIsVoiceOn() => __pbn__IsVoiceOn != null;
-		public void ResetIsVoiceOn() => __pbn__IsVoiceOn = null;
-		private bool? __pbn__IsVoiceOn;
-
-		[global::ProtoBuf.ProtoMember(15, Name = @"is_skip_on")]
-		public bool IsSkipOn
-		{
-			get => __pbn__IsSkipOn.GetValueOrDefault();
-			set => __pbn__IsSkipOn = value;
-		}
-		public bool ShouldSerializeIsSkipOn() => __pbn__IsSkipOn != null;
-		public void ResetIsSkipOn() => __pbn__IsSkipOn = null;
-		private bool? __pbn__IsSkipOn;
-
-		[global::ProtoBuf.ProtoMember(16, Name = @"difficulty_setting_course")]
-		public uint DifficultySettingCourse
-		{
-			get => __pbn__DifficultySettingCourse.GetValueOrDefault();
-			set => __pbn__DifficultySettingCourse = value;
-		}
-		public bool ShouldSerializeDifficultySettingCourse() => __pbn__DifficultySettingCourse != null;
-		public void ResetDifficultySettingCourse() => __pbn__DifficultySettingCourse = null;
-		private uint? __pbn__DifficultySettingCourse;
-
-		[global::ProtoBuf.ProtoMember(17, Name = @"difficulty_setting_star")]
-		public uint DifficultySettingStar
-		{
-			get => __pbn__DifficultySettingStar.GetValueOrDefault();
-			set => __pbn__DifficultySettingStar = value;
-		}
-		public bool ShouldSerializeDifficultySettingStar() => __pbn__DifficultySettingStar != null;
-		public void ResetDifficultySettingStar() => __pbn__DifficultySettingStar = null;
-		private uint? __pbn__DifficultySettingStar;
-
-		[global::ProtoBuf.ProtoMember(18, Name = @"difficulty_setting_sort")]
-		public uint DifficultySettingSort
-		{
-			get => __pbn__DifficultySettingSort.GetValueOrDefault();
-			set => __pbn__DifficultySettingSort = value;
-		}
-		public bool ShouldSerializeDifficultySettingSort() => __pbn__DifficultySettingSort != null;
-		public void ResetDifficultySettingSort() => __pbn__DifficultySettingSort = null;
-		private uint? __pbn__DifficultySettingSort;
-
-		[global::ProtoBuf.ProtoMember(19, Name = @"difficulty_played_course")]
-		public uint DifficultyPlayedCourse
-		{
-			get => __pbn__DifficultyPlayedCourse.GetValueOrDefault();
-			set => __pbn__DifficultyPlayedCourse = value;
-		}
-		public bool ShouldSerializeDifficultyPlayedCourse() => __pbn__DifficultyPlayedCourse != null;
-		public void ResetDifficultyPlayedCourse() => __pbn__DifficultyPlayedCourse = null;
-		private uint? __pbn__DifficultyPlayedCourse;
-
-		[global::ProtoBuf.ProtoMember(20, Name = @"difficulty_played_star")]
-		public uint DifficultyPlayedStar
-		{
-			get => __pbn__DifficultyPlayedStar.GetValueOrDefault();
-			set => __pbn__DifficultyPlayedStar = value;
-		}
-		public bool ShouldSerializeDifficultyPlayedStar() => __pbn__DifficultyPlayedStar != null;
-		public void ResetDifficultyPlayedStar() => __pbn__DifficultyPlayedStar = null;
-		private uint? __pbn__DifficultyPlayedStar;
-
-		[global::ProtoBuf.ProtoMember(21, Name = @"difficulty_played_sort")]
-		public uint DifficultyPlayedSort
-		{
-			get => __pbn__DifficultyPlayedSort.GetValueOrDefault();
-			set => __pbn__DifficultyPlayedSort = value;
-		}
-		public bool ShouldSerializeDifficultyPlayedSort() => __pbn__DifficultyPlayedSort != null;
-		public void ResetDifficultyPlayedSort() => __pbn__DifficultyPlayedSort = null;
-		private uint? __pbn__DifficultyPlayedSort;
-
-		[global::ProtoBuf.ProtoMember(22, Name = @"total_credit_cnt")]
-		public uint TotalCreditCnt
-		{
-			get => __pbn__TotalCreditCnt.GetValueOrDefault();
-			set => __pbn__TotalCreditCnt = value;
-		}
-		public bool ShouldSerializeTotalCreditCnt() => __pbn__TotalCreditCnt != null;
-		public void ResetTotalCreditCnt() => __pbn__TotalCreditCnt = null;
-		private uint? __pbn__TotalCreditCnt;
-
-		[global::ProtoBuf.ProtoMember(23, Name = @"song_recent_cnt")]
-		public uint SongRecentCnt
-		{
-			get => __pbn__SongRecentCnt.GetValueOrDefault();
-			set => __pbn__SongRecentCnt = value;
-		}
-		public bool ShouldSerializeSongRecentCnt() => __pbn__SongRecentCnt != null;
-		public void ResetSongRecentCnt() => __pbn__SongRecentCnt = null;
-		private uint? __pbn__SongRecentCnt;
-
-		[global::ProtoBuf.ProtoMember(24, Name = @"is_challengecompe")]
-		public bool IsChallengecompe
-		{
-			get => __pbn__IsChallengecompe.GetValueOrDefault();
-			set => __pbn__IsChallengecompe = value;
-		}
-		public bool ShouldSerializeIsChallengecompe() => __pbn__IsChallengecompe != null;
-		public void ResetIsChallengecompe() => __pbn__IsChallengecompe = null;
-		private bool? __pbn__IsChallengecompe;
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class PlayResultRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"baid_conf", IsRequired = true)]
-		public ulong BaidConf { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"chassis_id_conf", IsRequired = true)]
-		public string ChassisIdConf { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"shop_id_conf", IsRequired = true)]
-		public string ShopIdConf { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"play_datetime_conf", IsRequired = true)]
-		public string PlayDatetimeConf { get; set; }
-
-		[global::ProtoBuf.ProtoMember(5, Name = @"playresult_data", IsRequired = true)]
-		public byte[] PlayresultData { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class PlayResultResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class PlayResultDataRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"wechat_qr_str", IsRequired = true)]
-		public string WechatQrStr { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"baid", IsRequired = true)]
-		public ulong Baid { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(5, Name = @"play_datetime", IsRequired = true)]
-		public string PlayDatetime { get; set; }
-
-		[global::ProtoBuf.ProtoMember(6, Name = @"is_right", IsRequired = true)]
-		public bool IsRight { get; set; }
-
-		[global::ProtoBuf.ProtoMember(7, Name = @"card_type", IsRequired = true)]
-		public uint CardType { get; set; }
-
-		[global::ProtoBuf.ProtoMember(8, Name = @"is_two_players", IsRequired = true)]
-		public bool IsTwoPlayers { get; set; }
-
-		[global::ProtoBuf.ProtoMember(9, Name = @"ary_stage_info")]
-		public global::System.Collections.Generic.List<StageData> AryStageInfoes { get; } = new global::System.Collections.Generic.List<StageData>();
-
-		[global::ProtoBuf.ProtoMember(10, Name = @"release_song_no")]
-		public uint[] ReleaseSongNoes { get; set; }
-
-		[global::ProtoBuf.ProtoMember(11, Name = @"ura_release_song_no")]
-		public uint[] UraReleaseSongNoes { get; set; }
-
-		[global::ProtoBuf.ProtoMember(12, Name = @"get_tone_no")]
-		public uint[] GetToneNoes { get; set; }
-
-		[global::ProtoBuf.ProtoMember(13, Name = @"get_costume_no_1")]
-		public uint[] GetCostumeNo1s { get; set; }
-
-		[global::ProtoBuf.ProtoMember(14, Name = @"get_costume_no_2")]
-		public uint[] GetCostumeNo2s { get; set; }
-
-		[global::ProtoBuf.ProtoMember(15, Name = @"get_costume_no_3")]
-		public uint[] GetCostumeNo3s { get; set; }
-
-		[global::ProtoBuf.ProtoMember(16, Name = @"get_costume_no_4")]
-		public uint[] GetCostumeNo4s { get; set; }
-
-		[global::ProtoBuf.ProtoMember(17, Name = @"get_costume_no_5")]
-		public uint[] GetCostumeNo5s { get; set; }
-
-		[global::ProtoBuf.ProtoMember(18, Name = @"get_title_no")]
-		public uint[] GetTitleNoes { get; set; }
-
-		[global::ProtoBuf.ProtoMember(19, Name = @"get_generic_info_no")]
-		public uint[] GetGenericInfoNoes { get; set; }
-
-		[global::ProtoBuf.ProtoMember(20, Name = @"ary_play_costume", IsRequired = true)]
-		public CostumeData AryPlayCostume { get; set; }
-
-		[global::ProtoBuf.ProtoMember(21, Name = @"ary_current_costume", IsRequired = true)]
-		public CostumeData AryCurrentCostume { get; set; }
-
-		[global::ProtoBuf.ProtoMember(22, Name = @"title")]
-		[global::System.ComponentModel.DefaultValue("")]
-		public string Title
-		{
-			get => __pbn__Title ?? "";
-			set => __pbn__Title = value;
-		}
-		public bool ShouldSerializeTitle() => __pbn__Title != null;
-		public void ResetTitle() => __pbn__Title = null;
-		private string __pbn__Title;
-
-		[global::ProtoBuf.ProtoMember(23, Name = @"titleplate_id")]
-		public uint TitleplateId
-		{
-			get => __pbn__TitleplateId.GetValueOrDefault();
-			set => __pbn__TitleplateId = value;
-		}
-		public bool ShouldSerializeTitleplateId() => __pbn__TitleplateId != null;
-		public void ResetTitleplateId() => __pbn__TitleplateId = null;
-		private uint? __pbn__TitleplateId;
-
-		[global::ProtoBuf.ProtoMember(24, Name = @"play_mode", IsRequired = true)]
-		public uint PlayMode { get; set; }
-
-		[global::ProtoBuf.ProtoMember(25, Name = @"collaboration_id")]
-		public uint CollaborationId
-		{
-			get => __pbn__CollaborationId.GetValueOrDefault();
-			set => __pbn__CollaborationId = value;
-		}
-		public bool ShouldSerializeCollaborationId() => __pbn__CollaborationId != null;
-		public void ResetCollaborationId() => __pbn__CollaborationId = null;
-		private uint? __pbn__CollaborationId;
-
-		[global::ProtoBuf.ProtoMember(26, Name = @"dan_id")]
-		public uint DanId
-		{
-			get => __pbn__DanId.GetValueOrDefault();
-			set => __pbn__DanId = value;
-		}
-		public bool ShouldSerializeDanId() => __pbn__DanId != null;
-		public void ResetDanId() => __pbn__DanId = null;
-		private uint? __pbn__DanId;
-
-		[global::ProtoBuf.ProtoMember(27, Name = @"dan_result")]
-		public uint DanResult
-		{
-			get => __pbn__DanResult.GetValueOrDefault();
-			set => __pbn__DanResult = value;
-		}
-		public bool ShouldSerializeDanResult() => __pbn__DanResult != null;
-		public void ResetDanResult() => __pbn__DanResult = null;
-		private uint? __pbn__DanResult;
-
-		[global::ProtoBuf.ProtoMember(28, Name = @"soul_gauge_total")]
-		public uint SoulGaugeTotal
-		{
-			get => __pbn__SoulGaugeTotal.GetValueOrDefault();
-			set => __pbn__SoulGaugeTotal = value;
-		}
-		public bool ShouldSerializeSoulGaugeTotal() => __pbn__SoulGaugeTotal != null;
-		public void ResetSoulGaugeTotal() => __pbn__SoulGaugeTotal = null;
-		private uint? __pbn__SoulGaugeTotal;
-
-		[global::ProtoBuf.ProtoMember(29, Name = @"combo_cnt_total")]
-		public uint ComboCntTotal
-		{
-			get => __pbn__ComboCntTotal.GetValueOrDefault();
-			set => __pbn__ComboCntTotal = value;
-		}
-		public bool ShouldSerializeComboCntTotal() => __pbn__ComboCntTotal != null;
-		public void ResetComboCntTotal() => __pbn__ComboCntTotal = null;
-		private uint? __pbn__ComboCntTotal;
-
-		[global::ProtoBuf.ProtoMember(30, Name = @"is_not_recorded_dan")]
-		public bool IsNotRecordedDan
-		{
-			get => __pbn__IsNotRecordedDan.GetValueOrDefault();
-			set => __pbn__IsNotRecordedDan = value;
-		}
-		public bool ShouldSerializeIsNotRecordedDan() => __pbn__IsNotRecordedDan != null;
-		public void ResetIsNotRecordedDan() => __pbn__IsNotRecordedDan = null;
-		private bool? __pbn__IsNotRecordedDan;
-
-		[global::ProtoBuf.ProtoMember(31, Name = @"area_code", IsRequired = true)]
-		public uint AreaCode { get; set; }
-
-		[global::ProtoBuf.ProtoMember(32, Name = @"reserved", IsRequired = true)]
-		public byte[] Reserved { get; set; }
-
-		[global::ProtoBuf.ProtoMember(33, Name = @"tournament_mode")]
-		public uint TournamentMode
-		{
-			get => __pbn__TournamentMode.GetValueOrDefault();
-			set => __pbn__TournamentMode = value;
-		}
-		public bool ShouldSerializeTournamentMode() => __pbn__TournamentMode != null;
-		public void ResetTournamentMode() => __pbn__TournamentMode = null;
-		private uint? __pbn__TournamentMode;
-
-		[global::ProtoBuf.ProtoMember(34, Name = @"difficulty_played_course")]
-		public uint DifficultyPlayedCourse
-		{
-			get => __pbn__DifficultyPlayedCourse.GetValueOrDefault();
-			set => __pbn__DifficultyPlayedCourse = value;
-		}
-		public bool ShouldSerializeDifficultyPlayedCourse() => __pbn__DifficultyPlayedCourse != null;
-		public void ResetDifficultyPlayedCourse() => __pbn__DifficultyPlayedCourse = null;
-		private uint? __pbn__DifficultyPlayedCourse;
-
-		[global::ProtoBuf.ProtoMember(35, Name = @"difficulty_played_star")]
-		public uint DifficultyPlayedStar
-		{
-			get => __pbn__DifficultyPlayedStar.GetValueOrDefault();
-			set => __pbn__DifficultyPlayedStar = value;
-		}
-		public bool ShouldSerializeDifficultyPlayedStar() => __pbn__DifficultyPlayedStar != null;
-		public void ResetDifficultyPlayedStar() => __pbn__DifficultyPlayedStar = null;
-		private uint? __pbn__DifficultyPlayedStar;
-
-		[global::ProtoBuf.ProtoMember(36, Name = @"difficulty_played_sort")]
-		public uint DifficultyPlayedSort
-		{
-			get => __pbn__DifficultyPlayedSort.GetValueOrDefault();
-			set => __pbn__DifficultyPlayedSort = value;
-		}
-		public bool ShouldSerializeDifficultyPlayedSort() => __pbn__DifficultyPlayedSort != null;
-		public void ResetDifficultyPlayedSort() => __pbn__DifficultyPlayedSort = null;
-		private uint? __pbn__DifficultyPlayedSort;
-
-		[global::ProtoBuf.ProtoMember(37, Name = @"is_random_use_play")]
-		public uint IsRandomUsePlay
-		{
-			get => __pbn__IsRandomUsePlay.GetValueOrDefault();
-			set => __pbn__IsRandomUsePlay = value;
-		}
-		public bool ShouldSerializeIsRandomUsePlay() => __pbn__IsRandomUsePlay != null;
-		public void ResetIsRandomUsePlay() => __pbn__IsRandomUsePlay = null;
-		private uint? __pbn__IsRandomUsePlay;
-
-		[global::ProtoBuf.ProtoMember(38, Name = @"input_median")]
-		[global::System.ComponentModel.DefaultValue("")]
-		public string InputMedian
-		{
-			get => __pbn__InputMedian ?? "";
-			set => __pbn__InputMedian = value;
-		}
-		public bool ShouldSerializeInputMedian() => __pbn__InputMedian != null;
-		public void ResetInputMedian() => __pbn__InputMedian = null;
-		private string __pbn__InputMedian;
-
-		[global::ProtoBuf.ProtoMember(39, Name = @"input_variance")]
-		[global::System.ComponentModel.DefaultValue("")]
-		public string InputVariance
-		{
-			get => __pbn__InputVariance ?? "";
-			set => __pbn__InputVariance = value;
-		}
-		public bool ShouldSerializeInputVariance() => __pbn__InputVariance != null;
-		public void ResetInputVariance() => __pbn__InputVariance = null;
-		private string __pbn__InputVariance;
-
-		[global::ProtoBuf.ProtoContract()]
-		public partial class StageData : global::ProtoBuf.IExtensible
-		{
-			private global::ProtoBuf.IExtension __pbn__extensionData;
-			global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-				=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-			[global::ProtoBuf.ProtoMember(1, Name = @"song_no", IsRequired = true)]
-			public uint SongNo { get; set; }
-
-			[global::ProtoBuf.ProtoMember(2, Name = @"level", IsRequired = true)]
-			public uint Level { get; set; }
-
-			[global::ProtoBuf.ProtoMember(3, Name = @"stage_mode", IsRequired = true)]
-			public uint StageMode { get; set; }
-
-			[global::ProtoBuf.ProtoMember(4, Name = @"play_result", IsRequired = true)]
-			public uint PlayResult { get; set; }
-
-			[global::ProtoBuf.ProtoMember(5, Name = @"play_score", IsRequired = true)]
-			public uint PlayScore { get; set; }
-
-			[global::ProtoBuf.ProtoMember(6, Name = @"score_rate", IsRequired = true)]
-			public uint ScoreRate { get; set; }
-
-			[global::ProtoBuf.ProtoMember(7, Name = @"score_rank", IsRequired = true)]
-			public uint ScoreRank { get; set; }
-
-			[global::ProtoBuf.ProtoMember(8, Name = @"good_cnt", IsRequired = true)]
-			public uint GoodCnt { get; set; }
-
-			[global::ProtoBuf.ProtoMember(9, Name = @"ok_cnt", IsRequired = true)]
-			public uint OkCnt { get; set; }
-
-			[global::ProtoBuf.ProtoMember(10, Name = @"ng_cnt", IsRequired = true)]
-			public uint NgCnt { get; set; }
-
-			[global::ProtoBuf.ProtoMember(11, Name = @"pound_cnt", IsRequired = true)]
-			public uint PoundCnt { get; set; }
-
-			[global::ProtoBuf.ProtoMember(12, Name = @"combo_cnt", IsRequired = true)]
-			public uint ComboCnt { get; set; }
-
-			[global::ProtoBuf.ProtoMember(13, Name = @"hit_cnt")]
-			public uint HitCnt
-			{
-				get => __pbn__HitCnt.GetValueOrDefault();
-				set => __pbn__HitCnt = value;
-			}
-			public bool ShouldSerializeHitCnt() => __pbn__HitCnt != null;
-			public void ResetHitCnt() => __pbn__HitCnt = null;
-			private uint? __pbn__HitCnt;
-
-			[global::ProtoBuf.ProtoMember(14, Name = @"option_flg", IsRequired = true)]
-			public byte[] OptionFlg { get; set; }
-
-			[global::ProtoBuf.ProtoMember(15, Name = @"tone_flg", IsRequired = true)]
-			public byte[] ToneFlg { get; set; }
-
-			[global::ProtoBuf.ProtoMember(16, Name = @"notes_position", DataFormat = global::ProtoBuf.DataFormat.ZigZag, IsRequired = true)]
-			public int NotesPosition { get; set; }
-
-			[global::ProtoBuf.ProtoMember(17, Name = @"is_voice_on", IsRequired = true)]
-			public bool IsVoiceOn { get; set; }
-
-			[global::ProtoBuf.ProtoMember(18, Name = @"is_skip_on", IsRequired = true)]
-			public bool IsSkipOn { get; set; }
-
-			[global::ProtoBuf.ProtoMember(19, Name = @"is_skip_use", IsRequired = true)]
-			public bool IsSkipUse { get; set; }
-
-			[global::ProtoBuf.ProtoMember(20, Name = @"ary_challenge_id")]
-			public global::System.Collections.Generic.List<ResultcompeData> AryChallengeIds { get; } = new global::System.Collections.Generic.List<ResultcompeData>();
-
-			[global::ProtoBuf.ProtoMember(21, Name = @"ary_user_compe_id")]
-			public global::System.Collections.Generic.List<ResultcompeData> AryUserCompeIds { get; } = new global::System.Collections.Generic.List<ResultcompeData>();
-
-			[global::ProtoBuf.ProtoMember(22, Name = @"ary_bng_compe_id")]
-			public global::System.Collections.Generic.List<ResultcompeData> AryBngCompeIds { get; } = new global::System.Collections.Generic.List<ResultcompeData>();
-
-			[global::ProtoBuf.ProtoMember(23, Name = @"music_categ", IsRequired = true)]
-			public uint MusicCateg { get; set; }
-
-			[global::ProtoBuf.ProtoMember(24, Name = @"is_favorite", IsRequired = true)]
-			public bool IsFavorite { get; set; }
-
-			[global::ProtoBuf.ProtoMember(25, Name = @"is_recent", IsRequired = true)]
-			public bool IsRecent { get; set; }
-
-			[global::ProtoBuf.ProtoMember(26, Name = @"selected_folder_id", IsRequired = true)]
-			public uint SelectedFolderId { get; set; }
-
-			[global::ProtoBuf.ProtoMember(27, Name = @"is_random_use_stage")]
-			public uint IsRandomUseStage
-			{
-				get => __pbn__IsRandomUseStage.GetValueOrDefault();
-				set => __pbn__IsRandomUseStage = value;
-			}
-			public bool ShouldSerializeIsRandomUseStage() => __pbn__IsRandomUseStage != null;
-			public void ResetIsRandomUseStage() => __pbn__IsRandomUseStage = null;
-			private uint? __pbn__IsRandomUseStage;
-
-			[global::ProtoBuf.ProtoMember(28, Name = @"is_papamama", IsRequired = true)]
-			public bool IsPapamama { get; set; }
-
-			[global::ProtoBuf.ProtoMember(29, Name = @"star_level", IsRequired = true)]
-			public uint StarLevel { get; set; }
-
-			[global::ProtoBuf.ProtoMember(30, Name = @"is_win")]
-			public bool IsWin
-			{
-				get => __pbn__IsWin.GetValueOrDefault();
-				set => __pbn__IsWin = value;
-			}
-			public bool ShouldSerializeIsWin() => __pbn__IsWin != null;
-			public void ResetIsWin() => __pbn__IsWin = null;
-			private bool? __pbn__IsWin;
-
-			[global::ProtoBuf.ProtoMember(31, Name = @"ary_section_data")]
-			public global::System.Collections.Generic.List<AiStageSectionData> ArySectionDatas { get; } = new global::System.Collections.Generic.List<AiStageSectionData>();
-
-			[global::ProtoBuf.ProtoContract()]
-			public partial class ResultcompeData : global::ProtoBuf.IExtensible
-			{
-				private global::ProtoBuf.IExtension __pbn__extensionData;
-				global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-					=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-				[global::ProtoBuf.ProtoMember(1, Name = @"compe_id", IsRequired = true)]
-				public uint CompeId { get; set; }
-
-				[global::ProtoBuf.ProtoMember(2, Name = @"track_no", IsRequired = true)]
-				public uint TrackNo { get; set; }
-
-			}
-
-			[global::ProtoBuf.ProtoContract()]
-			public partial class AiStageSectionData : global::ProtoBuf.IExtensible
-			{
-				private global::ProtoBuf.IExtension __pbn__extensionData;
-				global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-					=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-				[global::ProtoBuf.ProtoMember(1, Name = @"is_win", IsRequired = true)]
-				public bool IsWin { get; set; }
-
-				[global::ProtoBuf.ProtoMember(2, Name = @"crown", IsRequired = true)]
-				public uint Crown { get; set; }
-
-				[global::ProtoBuf.ProtoMember(3, Name = @"score", IsRequired = true)]
-				public uint Score { get; set; }
-
-				[global::ProtoBuf.ProtoMember(4, Name = @"good_cnt", IsRequired = true)]
-				public uint GoodCnt { get; set; }
-
-				[global::ProtoBuf.ProtoMember(5, Name = @"ok_cnt", IsRequired = true)]
-				public uint OkCnt { get; set; }
-
-				[global::ProtoBuf.ProtoMember(6, Name = @"ng_cnt", IsRequired = true)]
-				public uint NgCnt { get; set; }
-
-				[global::ProtoBuf.ProtoMember(7, Name = @"pound_cnt", IsRequired = true)]
-				public uint PoundCnt { get; set; }
-
-			}
-
-		}
-
-		[global::ProtoBuf.ProtoContract()]
-		public partial class CostumeData : global::ProtoBuf.IExtensible
-		{
-			private global::ProtoBuf.IExtension __pbn__extensionData;
-			global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-				=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-			[global::ProtoBuf.ProtoMember(1, Name = @"costume_1")]
-			public uint Costume1
-			{
-				get => __pbn__Costume1.GetValueOrDefault();
-				set => __pbn__Costume1 = value;
-			}
-			public bool ShouldSerializeCostume1() => __pbn__Costume1 != null;
-			public void ResetCostume1() => __pbn__Costume1 = null;
-			private uint? __pbn__Costume1;
-
-			[global::ProtoBuf.ProtoMember(2, Name = @"costume_2")]
-			public uint Costume2
-			{
-				get => __pbn__Costume2.GetValueOrDefault();
-				set => __pbn__Costume2 = value;
-			}
-			public bool ShouldSerializeCostume2() => __pbn__Costume2 != null;
-			public void ResetCostume2() => __pbn__Costume2 = null;
-			private uint? __pbn__Costume2;
-
-			[global::ProtoBuf.ProtoMember(3, Name = @"costume_3")]
-			public uint Costume3
-			{
-				get => __pbn__Costume3.GetValueOrDefault();
-				set => __pbn__Costume3 = value;
-			}
-			public bool ShouldSerializeCostume3() => __pbn__Costume3 != null;
-			public void ResetCostume3() => __pbn__Costume3 = null;
-			private uint? __pbn__Costume3;
-
-			[global::ProtoBuf.ProtoMember(4, Name = @"costume_4")]
-			public uint Costume4
-			{
-				get => __pbn__Costume4.GetValueOrDefault();
-				set => __pbn__Costume4 = value;
-			}
-			public bool ShouldSerializeCostume4() => __pbn__Costume4 != null;
-			public void ResetCostume4() => __pbn__Costume4 = null;
-			private uint? __pbn__Costume4;
-
-			[global::ProtoBuf.ProtoMember(5, Name = @"costume_5")]
-			public uint Costume5
-			{
-				get => __pbn__Costume5.GetValueOrDefault();
-				set => __pbn__Costume5 = value;
-			}
-			public bool ShouldSerializeCostume5() => __pbn__Costume5 != null;
-			public void ResetCostume5() => __pbn__Costume5 = null;
-			private uint? __pbn__Costume5;
-
-		}
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class SelfBestRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"wechat_qr_str", IsRequired = true)]
-		public string WechatQrStr { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"baid", IsRequired = true)]
-		public ulong Baid { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(5, Name = @"level")]
-		public uint Level
-		{
-			get => __pbn__Level.GetValueOrDefault();
-			set => __pbn__Level = value;
-		}
-		public bool ShouldSerializeLevel() => __pbn__Level != null;
-		public void ResetLevel() => __pbn__Level = null;
-		private uint? __pbn__Level;
-
-		[global::ProtoBuf.ProtoMember(6, Name = @"ary_song_no")]
-		public uint[] ArySongNoes { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class SelfBestResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"level")]
-		public uint Level
-		{
-			get => __pbn__Level.GetValueOrDefault();
-			set => __pbn__Level = value;
-		}
-		public bool ShouldSerializeLevel() => __pbn__Level != null;
-		public void ResetLevel() => __pbn__Level = null;
-		private uint? __pbn__Level;
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"ary_selfbest_score")]
-		public global::System.Collections.Generic.List<SelfBestData> ArySelfbestScores { get; } = new global::System.Collections.Generic.List<SelfBestData>();
-
-		[global::ProtoBuf.ProtoContract()]
-		public partial class SelfBestData : global::ProtoBuf.IExtensible
-		{
-			private global::ProtoBuf.IExtension __pbn__extensionData;
-			global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-				=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-			[global::ProtoBuf.ProtoMember(1, Name = @"song_no", IsRequired = true)]
-			public uint SongNo { get; set; }
-
-			[global::ProtoBuf.ProtoMember(2, Name = @"self_best_score", IsRequired = true)]
-			public uint SelfBestScore { get; set; }
-
-			[global::ProtoBuf.ProtoMember(3, Name = @"self_best_score_rate", IsRequired = true)]
-			public uint SelfBestScoreRate { get; set; }
-
-			[global::ProtoBuf.ProtoMember(4, Name = @"ura_best_score", IsRequired = true)]
-			public uint UraBestScore { get; set; }
-
-			[global::ProtoBuf.ProtoMember(5, Name = @"ura_best_score_rate", IsRequired = true)]
-			public uint UraBestScoreRate { get; set; }
-
-		}
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class CrownsDataRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"wechat_qr_str", IsRequired = true)]
-		public string WechatQrStr { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"baid", IsRequired = true)]
-		public ulong Baid { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class CrownsDataResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"crown_flg")]
-		public byte[] CrownFlg
-		{
-			get => __pbn__CrownFlg;
-			set => __pbn__CrownFlg = value;
-		}
-		public bool ShouldSerializeCrownFlg() => __pbn__CrownFlg != null;
-		public void ResetCrownFlg() => __pbn__CrownFlg = null;
-		private byte[] __pbn__CrownFlg;
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"dondaful_crown_flg")]
-		public byte[] DondafulCrownFlg
-		{
-			get => __pbn__DondafulCrownFlg;
-			set => __pbn__DondafulCrownFlg = value;
-		}
-		public bool ShouldSerializeDondafulCrownFlg() => __pbn__DondafulCrownFlg != null;
-		public void ResetDondafulCrownFlg() => __pbn__DondafulCrownFlg = null;
-		private byte[] __pbn__DondafulCrownFlg;
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class ChallengeCompeRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"wechat_qr_str", IsRequired = true)]
-		public string WechatQrStr { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"baid", IsRequired = true)]
-		public ulong Baid { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class ChallengeCompeResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"ary_challenge_stat")]
-		public global::System.Collections.Generic.List<CompeData> AryChallengeStats { get; } = new global::System.Collections.Generic.List<CompeData>();
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"ary_user_compe_stat")]
-		public global::System.Collections.Generic.List<CompeData> AryUserCompeStats { get; } = new global::System.Collections.Generic.List<CompeData>();
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"ary_bng_compe_stat")]
-		public global::System.Collections.Generic.List<CompeData> AryBngCompeStats { get; } = new global::System.Collections.Generic.List<CompeData>();
-
-		[global::ProtoBuf.ProtoContract()]
-		public partial class CompeData : global::ProtoBuf.IExtensible
-		{
-			private global::ProtoBuf.IExtension __pbn__extensionData;
-			global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-				=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-			[global::ProtoBuf.ProtoMember(1, Name = @"compe_id", IsRequired = true)]
-			public uint CompeId { get; set; }
-
-			[global::ProtoBuf.ProtoMember(2, Name = @"ary_track_stat")]
-			public global::System.Collections.Generic.List<TracksData> AryTrackStats { get; } = new global::System.Collections.Generic.List<TracksData>();
-
-			[global::ProtoBuf.ProtoContract()]
-			public partial class TracksData : global::ProtoBuf.IExtensible
-			{
-				private global::ProtoBuf.IExtension __pbn__extensionData;
-				global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-					=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-				[global::ProtoBuf.ProtoMember(1, Name = @"song_no", IsRequired = true)]
-				public uint SongNo { get; set; }
-
-				[global::ProtoBuf.ProtoMember(2, Name = @"level", IsRequired = true)]
-				public uint Level { get; set; }
-
-				[global::ProtoBuf.ProtoMember(3, Name = @"option_flg", IsRequired = true)]
-				public byte[] OptionFlg { get; set; }
-
-				[global::ProtoBuf.ProtoMember(4, Name = @"high_score", IsRequired = true)]
-				public uint HighScore { get; set; }
-
-			}
-
-		}
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GetAiDataRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"wechat_qr_str", IsRequired = true)]
-		public string WechatQrStr { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"baid", IsRequired = true)]
-		public ulong Baid { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GetAiDataResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"total_winnings")]
-		public uint TotalWinnings
-		{
-			get => __pbn__TotalWinnings.GetValueOrDefault();
-			set => __pbn__TotalWinnings = value;
-		}
-		public bool ShouldSerializeTotalWinnings() => __pbn__TotalWinnings != null;
-		public void ResetTotalWinnings() => __pbn__TotalWinnings = null;
-		private uint? __pbn__TotalWinnings;
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"input_median")]
-		[global::System.ComponentModel.DefaultValue("")]
-		public string InputMedian
-		{
-			get => __pbn__InputMedian ?? "";
-			set => __pbn__InputMedian = value;
-		}
-		public bool ShouldSerializeInputMedian() => __pbn__InputMedian != null;
-		public void ResetInputMedian() => __pbn__InputMedian = null;
-		private string __pbn__InputMedian;
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"input_variance")]
-		[global::System.ComponentModel.DefaultValue("")]
-		public string InputVariance
-		{
-			get => __pbn__InputVariance ?? "";
-			set => __pbn__InputVariance = value;
-		}
-		public bool ShouldSerializeInputVariance() => __pbn__InputVariance != null;
-		public void ResetInputVariance() => __pbn__InputVariance = null;
-		private string __pbn__InputVariance;
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GetAiScoreRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"wechat_qr_str", IsRequired = true)]
-		public string WechatQrStr { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"baid", IsRequired = true)]
-		public ulong Baid { get; set; }
-
-		[global::ProtoBuf.ProtoMember(5, Name = @"song_no", IsRequired = true)]
-		public uint SongNo { get; set; }
-
-		[global::ProtoBuf.ProtoMember(6, Name = @"level", IsRequired = true)]
-		public uint Level { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GetAiScoreResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"ary_best_section_data")]
-		public global::System.Collections.Generic.List<AiBestSectionData> AryBestSectionDatas { get; } = new global::System.Collections.Generic.List<AiBestSectionData>();
-
-		[global::ProtoBuf.ProtoContract()]
-		public partial class AiBestSectionData : global::ProtoBuf.IExtensible
-		{
-			private global::ProtoBuf.IExtension __pbn__extensionData;
-			global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-				=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-			[global::ProtoBuf.ProtoMember(1, Name = @"section_no", IsRequired = true)]
-			public uint SectionNo { get; set; }
-
-			[global::ProtoBuf.ProtoMember(2, Name = @"crown")]
-			public uint Crown
-			{
-				get => __pbn__Crown.GetValueOrDefault();
-				set => __pbn__Crown = value;
-			}
-			public bool ShouldSerializeCrown() => __pbn__Crown != null;
-			public void ResetCrown() => __pbn__Crown = null;
-			private uint? __pbn__Crown;
-
-			[global::ProtoBuf.ProtoMember(3, Name = @"score")]
-			public uint Score
-			{
-				get => __pbn__Score.GetValueOrDefault();
-				set => __pbn__Score = value;
-			}
-			public bool ShouldSerializeScore() => __pbn__Score != null;
-			public void ResetScore() => __pbn__Score = null;
-			private uint? __pbn__Score;
-
-			[global::ProtoBuf.ProtoMember(4, Name = @"good_cnt", IsRequired = true)]
-			public uint GoodCnt { get; set; }
-
-			[global::ProtoBuf.ProtoMember(5, Name = @"ok_cnt", IsRequired = true)]
-			public uint OkCnt { get; set; }
-
-			[global::ProtoBuf.ProtoMember(6, Name = @"ng_cnt", IsRequired = true)]
-			public uint NgCnt { get; set; }
-
-			[global::ProtoBuf.ProtoMember(7, Name = @"pound_cnt", IsRequired = true)]
-			public uint PoundCnt { get; set; }
-
-		}
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GetTokenCountRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"wechat_qr_str", IsRequired = true)]
-		public string WechatQrStr { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"baid", IsRequired = true)]
-		public ulong Baid { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GetTokenCountResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"ary_token_count_data")]
-		public global::System.Collections.Generic.List<TokenCountData> AryTokenCountDatas { get; } = new global::System.Collections.Generic.List<TokenCountData>();
-
-		[global::ProtoBuf.ProtoContract()]
-		public partial class TokenCountData : global::ProtoBuf.IExtensible
-		{
-			private global::ProtoBuf.IExtension __pbn__extensionData;
-			global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-				=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-			[global::ProtoBuf.ProtoMember(1, Name = @"token_id", IsRequired = true)]
-			public uint TokenId { get; set; }
-
-			[global::ProtoBuf.ProtoMember(2, Name = @"token_count", DataFormat = global::ProtoBuf.DataFormat.ZigZag, IsRequired = true)]
-			public int TokenCount { get; set; }
-
-		}
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class AddTokenCountRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"wechat_qr_str", IsRequired = true)]
-		public string WechatQrStr { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"baid", IsRequired = true)]
-		public ulong Baid { get; set; }
-
-		[global::ProtoBuf.ProtoMember(5, Name = @"ary_add_token_count_data")]
-		public global::System.Collections.Generic.List<AddTokenCountData> AryAddTokenCountDatas { get; } = new global::System.Collections.Generic.List<AddTokenCountData>();
-
-		[global::ProtoBuf.ProtoContract()]
-		public partial class AddTokenCountData : global::ProtoBuf.IExtensible
-		{
-			private global::ProtoBuf.IExtension __pbn__extensionData;
-			global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-				=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-			[global::ProtoBuf.ProtoMember(1, Name = @"token_id", IsRequired = true)]
-			public uint TokenId { get; set; }
-
-			[global::ProtoBuf.ProtoMember(2, Name = @"add_token_count", DataFormat = global::ProtoBuf.DataFormat.ZigZag, IsRequired = true)]
-			public int AddTokenCount { get; set; }
-
-		}
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class AddTokenCountResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class SongPurchaseRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"wechat_qr_str", IsRequired = true)]
-		public string WechatQrStr { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"baid", IsRequired = true)]
-		public ulong Baid { get; set; }
-
-		[global::ProtoBuf.ProtoMember(5, Name = @"song_no", IsRequired = true)]
-		public uint SongNo { get; set; }
-
-		[global::ProtoBuf.ProtoMember(6, Name = @"token_id", IsRequired = true)]
-		public uint TokenId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(7, Name = @"price", IsRequired = true)]
-		public uint Price { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class SongPurchaseResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"token_count", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
-		public int TokenCount
-		{
-			get => __pbn__TokenCount.GetValueOrDefault();
-			set => __pbn__TokenCount = value;
-		}
-		public bool ShouldSerializeTokenCount() => __pbn__TokenCount != null;
-		public void ResetTokenCount() => __pbn__TokenCount = null;
-		private int? __pbn__TokenCount;
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class HeadClerk2Request : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"ary_play_info")]
-		public global::System.Collections.Generic.List<PlayData> AryPlayInfoes { get; } = new global::System.Collections.Generic.List<PlayData>();
-
-		[global::ProtoBuf.ProtoContract()]
-		public partial class PlayData : global::ProtoBuf.IExtensible
-		{
-			private global::ProtoBuf.IExtension __pbn__extensionData;
-			global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-				=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-			[global::ProtoBuf.ProtoMember(1, Name = @"baid", IsRequired = true)]
-			public ulong Baid { get; set; }
-
-			[global::ProtoBuf.ProtoMember(2, Name = @"played_at", IsRequired = true)]
-			public string PlayedAt { get; set; }
-
-			[global::ProtoBuf.ProtoMember(3, Name = @"is_right", IsRequired = true)]
-			public bool IsRight { get; set; }
-
-			[global::ProtoBuf.ProtoMember(4, Name = @"type")]
-			public uint Type
-			{
-				get => __pbn__Type.GetValueOrDefault();
-				set => __pbn__Type = value;
-			}
-			public bool ShouldSerializeType() => __pbn__Type != null;
-			public void ResetType() => __pbn__Type = null;
-			private uint? __pbn__Type;
-
-			[global::ProtoBuf.ProtoMember(5, Name = @"amount")]
-			public uint Amount
-			{
-				get => __pbn__Amount.GetValueOrDefault();
-				set => __pbn__Amount = value;
-			}
-			public bool ShouldSerializeAmount() => __pbn__Amount != null;
-			public void ResetAmount() => __pbn__Amount = null;
-			private uint? __pbn__Amount;
-
-		}
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class HeadClerk2Response : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class RewardcardcheckRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"wechat_qr_str", IsRequired = true)]
-		public string WechatQrStr { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"country_id", IsRequired = true)]
-		public string CountryId { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class RewardcardcheckResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"baid")]
-		public ulong Baid
-		{
-			get => __pbn__Baid.GetValueOrDefault();
-			set => __pbn__Baid = value;
-		}
-		public bool ShouldSerializeBaid() => __pbn__Baid != null;
-		public void ResetBaid() => __pbn__Baid = null;
-		private ulong? __pbn__Baid;
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class RewardexecutionRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"wechat_qr_str", IsRequired = true)]
-		public string WechatQrStr { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"baid", IsRequired = true)]
-		public ulong Baid { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(5, Name = @"release_song_no")]
-		public uint[] ReleaseSongNoes { get; set; }
-
-		[global::ProtoBuf.ProtoMember(6, Name = @"get_tone_no")]
-		public uint[] GetToneNoes { get; set; }
-
-		[global::ProtoBuf.ProtoMember(7, Name = @"get_costume_no_1")]
-		public uint[] GetCostumeNo1s { get; set; }
-
-		[global::ProtoBuf.ProtoMember(8, Name = @"get_costume_no_2")]
-		public uint[] GetCostumeNo2s { get; set; }
-
-		[global::ProtoBuf.ProtoMember(9, Name = @"get_costume_no_3")]
-		public uint[] GetCostumeNo3s { get; set; }
-
-		[global::ProtoBuf.ProtoMember(10, Name = @"get_costume_no_4")]
-		public uint[] GetCostumeNo4s { get; set; }
-
-		[global::ProtoBuf.ProtoMember(11, Name = @"get_costume_no_5")]
-		public uint[] GetCostumeNo5s { get; set; }
-
-		[global::ProtoBuf.ProtoMember(12, Name = @"get_title_no")]
-		public uint[] GetTitleNoes { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class RewardexecutionResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GetDanScoreRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"wechat_qr_str", IsRequired = true)]
-		public string WechatQrStr { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"baid", IsRequired = true)]
-		public ulong Baid { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(5, Name = @"type", IsRequired = true)]
-		public uint Type { get; set; }
-
-		[global::ProtoBuf.ProtoMember(6, Name = @"dan_id")]
-		public uint[] DanIds { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GetDanScoreResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"ary_dan_score_data")]
-		public global::System.Collections.Generic.List<DanScoreData> AryDanScoreDatas { get; } = new global::System.Collections.Generic.List<DanScoreData>();
-
-		[global::ProtoBuf.ProtoContract()]
-		public partial class DanScoreData : global::ProtoBuf.IExtensible
-		{
-			private global::ProtoBuf.IExtension __pbn__extensionData;
-			global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-				=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-			[global::ProtoBuf.ProtoMember(1, Name = @"dan_id", IsRequired = true)]
-			public uint DanId { get; set; }
-
-			[global::ProtoBuf.ProtoMember(2, Name = @"arrival_song_cnt", IsRequired = true)]
-			public uint ArrivalSongCnt { get; set; }
-
-			[global::ProtoBuf.ProtoMember(3, Name = @"soul_gauge_total", IsRequired = true)]
-			public uint SoulGaugeTotal { get; set; }
-
-			[global::ProtoBuf.ProtoMember(4, Name = @"combo_cnt_total", IsRequired = true)]
-			public uint ComboCntTotal { get; set; }
-
-			[global::ProtoBuf.ProtoMember(5, Name = @"ary_dan_score_data_stage")]
-			public global::System.Collections.Generic.List<DanScoreDataStage> AryDanScoreDataStages { get; } = new global::System.Collections.Generic.List<DanScoreDataStage>();
-
-			[global::ProtoBuf.ProtoContract()]
-			public partial class DanScoreDataStage : global::ProtoBuf.IExtensible
-			{
-				private global::ProtoBuf.IExtension __pbn__extensionData;
-				global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-					=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-				[global::ProtoBuf.ProtoMember(1, Name = @"play_score", IsRequired = true)]
-				public uint PlayScore { get; set; }
-
-				[global::ProtoBuf.ProtoMember(2, Name = @"good_cnt", IsRequired = true)]
-				public uint GoodCnt { get; set; }
-
-				[global::ProtoBuf.ProtoMember(3, Name = @"ok_cnt", IsRequired = true)]
-				public uint OkCnt { get; set; }
-
-				[global::ProtoBuf.ProtoMember(4, Name = @"ng_cnt", IsRequired = true)]
-				public uint NgCnt { get; set; }
-
-				[global::ProtoBuf.ProtoMember(5, Name = @"pound_cnt", IsRequired = true)]
-				public uint PoundCnt { get; set; }
-
-				[global::ProtoBuf.ProtoMember(6, Name = @"hit_cnt", IsRequired = true)]
-				public uint HitCnt { get; set; }
-
-				[global::ProtoBuf.ProtoMember(7, Name = @"combo_cnt", IsRequired = true)]
-				public uint ComboCnt { get; set; }
-
-				[global::ProtoBuf.ProtoMember(8, Name = @"high_score")]
-				public uint HighScore
-				{
-					get => __pbn__HighScore.GetValueOrDefault();
-					set => __pbn__HighScore = value;
-				}
-				public bool ShouldSerializeHighScore() => __pbn__HighScore != null;
-				public void ResetHighScore() => __pbn__HighScore = null;
-				private uint? __pbn__HighScore;
-
-			}
-
-		}
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class RewardItemRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"wechat_qr_str", IsRequired = true)]
-		public string WechatQrStr { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"baid", IsRequired = true)]
-		public ulong Baid { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(5, Name = @"release_song_no")]
-		public uint[] ReleaseSongNoes { get; set; }
-
-		[global::ProtoBuf.ProtoMember(6, Name = @"ura_release_song_no")]
-		public uint[] UraReleaseSongNoes { get; set; }
-
-		[global::ProtoBuf.ProtoMember(7, Name = @"get_tone_no")]
-		public uint[] GetToneNoes { get; set; }
-
-		[global::ProtoBuf.ProtoMember(8, Name = @"get_costume_no_1")]
-		public uint[] GetCostumeNo1s { get; set; }
-
-		[global::ProtoBuf.ProtoMember(9, Name = @"get_costume_no_2")]
-		public uint[] GetCostumeNo2s { get; set; }
-
-		[global::ProtoBuf.ProtoMember(10, Name = @"get_costume_no_3")]
-		public uint[] GetCostumeNo3s { get; set; }
-
-		[global::ProtoBuf.ProtoMember(11, Name = @"get_costume_no_4")]
-		public uint[] GetCostumeNo4s { get; set; }
-
-		[global::ProtoBuf.ProtoMember(12, Name = @"get_costume_no_5")]
-		public uint[] GetCostumeNo5s { get; set; }
-
-		[global::ProtoBuf.ProtoMember(13, Name = @"get_title_no")]
-		public uint[] GetTitleNoes { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class RewardItemResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GetScoreRankRequest : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"wechat_qr_str", IsRequired = true)]
-		public string WechatQrStr { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"baid", IsRequired = true)]
-		public ulong Baid { get; set; }
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"chassis_id", IsRequired = true)]
-		public string ChassisId { get; set; }
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"shop_id", IsRequired = true)]
-		public string ShopId { get; set; }
-
-	}
-
-	[global::ProtoBuf.ProtoContract()]
-	public partial class GetScoreRankResponse : global::ProtoBuf.IExtensible
-	{
-		private global::ProtoBuf.IExtension __pbn__extensionData;
-		global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-			=> global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-		[global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
-		public uint Result { get; set; }
-
-		[global::ProtoBuf.ProtoMember(2, Name = @"iki_score_rank_flg")]
-		public byte[] IkiScoreRankFlg
-		{
-			get => __pbn__IkiScoreRankFlg;
-			set => __pbn__IkiScoreRankFlg = value;
-		}
-		public bool ShouldSerializeIkiScoreRankFlg() => __pbn__IkiScoreRankFlg != null;
-		public void ResetIkiScoreRankFlg() => __pbn__IkiScoreRankFlg = null;
-		private byte[] __pbn__IkiScoreRankFlg;
-
-		[global::ProtoBuf.ProtoMember(3, Name = @"miyabi_score_rank_flg")]
-		public byte[] MiyabiScoreRankFlg
-		{
-			get => __pbn__MiyabiScoreRankFlg;
-			set => __pbn__MiyabiScoreRankFlg = value;
-		}
-		public bool ShouldSerializeMiyabiScoreRankFlg() => __pbn__MiyabiScoreRankFlg != null;
-		public void ResetMiyabiScoreRankFlg() => __pbn__MiyabiScoreRankFlg = null;
-		private byte[] __pbn__MiyabiScoreRankFlg;
-
-		[global::ProtoBuf.ProtoMember(4, Name = @"kiwami_score_rank_flg")]
-		public byte[] KiwamiScoreRankFlg
-		{
-			get => __pbn__KiwamiScoreRankFlg;
-			set => __pbn__KiwamiScoreRankFlg = value;
-		}
-		public bool ShouldSerializeKiwamiScoreRankFlg() => __pbn__KiwamiScoreRankFlg != null;
-		public void ResetKiwamiScoreRankFlg() => __pbn__KiwamiScoreRankFlg = null;
-		private byte[] __pbn__KiwamiScoreRankFlg;
-
-	}
-
+        [global::ProtoBuf.ProtoMember(2, Name = @"com_svr_stat", IsRequired = true)]
+        public uint ComSvrStat { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"game_svr_stat", IsRequired = true)]
+        public uint GameSvrStat { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class BookKeepingRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"update_date", IsRequired = true)]
+        public string UpdateDate { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"credit_cost_1", IsRequired = true)]
+        public uint CreditCost1 { get; set; }
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"credit_cost_2", IsRequired = true)]
+        public uint CreditCost2 { get; set; }
+
+        [global::ProtoBuf.ProtoMember(6, Name = @"credit_songs_1", IsRequired = true)]
+        public uint CreditSongs1 { get; set; }
+
+        [global::ProtoBuf.ProtoMember(7, Name = @"credit_songs_2", IsRequired = true)]
+        public uint CreditSongs2 { get; set; }
+
+        [global::ProtoBuf.ProtoMember(8, Name = @"all_play_cnt", IsRequired = true)]
+        public uint AllPlayCnt { get; set; }
+
+        [global::ProtoBuf.ProtoMember(9, Name = @"service_sw_cnt", IsRequired = true)]
+        public uint ServiceSwCnt { get; set; }
+
+        [global::ProtoBuf.ProtoMember(10, Name = @"free_play_cnt", IsRequired = true)]
+        public uint FreePlayCnt { get; set; }
+
+        [global::ProtoBuf.ProtoMember(11, Name = @"error_log")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string ErrorLog
+        {
+            get => __pbn__ErrorLog ?? "";
+            set => __pbn__ErrorLog = value;
+        }
+        public bool ShouldSerializeErrorLog() => __pbn__ErrorLog != null;
+        public void ResetErrorLog() => __pbn__ErrorLog = null;
+        private string __pbn__ErrorLog;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class BookKeepingResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class InitialdatacheckRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class InitialdatacheckResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"default_song_flg")]
+        public byte[] DefaultSongFlg
+        {
+            get => __pbn__DefaultSongFlg;
+            set => __pbn__DefaultSongFlg = value;
+        }
+        public bool ShouldSerializeDefaultSongFlg() => __pbn__DefaultSongFlg != null;
+        public void ResetDefaultSongFlg() => __pbn__DefaultSongFlg = null;
+        private byte[] __pbn__DefaultSongFlg;
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"achievement_song_bit")]
+        public byte[] AchievementSongBit
+        {
+            get => __pbn__AchievementSongBit;
+            set => __pbn__AchievementSongBit = value;
+        }
+        public bool ShouldSerializeAchievementSongBit() => __pbn__AchievementSongBit != null;
+        public void ResetAchievementSongBit() => __pbn__AchievementSongBit = null;
+        private byte[] __pbn__AchievementSongBit;
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"ura_release_bit")]
+        public byte[] UraReleaseBit
+        {
+            get => __pbn__UraReleaseBit;
+            set => __pbn__UraReleaseBit = value;
+        }
+        public bool ShouldSerializeUraReleaseBit() => __pbn__UraReleaseBit != null;
+        public void ResetUraReleaseBit() => __pbn__UraReleaseBit = null;
+        private byte[] __pbn__UraReleaseBit;
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"song_introduction_end_datetime")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string SongIntroductionEndDatetime
+        {
+            get => __pbn__SongIntroductionEndDatetime ?? "";
+            set => __pbn__SongIntroductionEndDatetime = value;
+        }
+        public bool ShouldSerializeSongIntroductionEndDatetime() => __pbn__SongIntroductionEndDatetime != null;
+        public void ResetSongIntroductionEndDatetime() => __pbn__SongIntroductionEndDatetime = null;
+        private string __pbn__SongIntroductionEndDatetime;
+
+        [global::ProtoBuf.ProtoMember(6, Name = @"ary_movie_info")]
+        public global::System.Collections.Generic.List<MovieData> AryMovieInfoes { get; } = new global::System.Collections.Generic.List<MovieData>();
+
+        [global::ProtoBuf.ProtoMember(7, Name = @"ary_ai_event_data")]
+        public global::System.Collections.Generic.List<AiEventData> AryAiEventDatas { get; } = new global::System.Collections.Generic.List<AiEventData>();
+
+        [global::ProtoBuf.ProtoMember(8, Name = @"ary_chassis_function_id")]
+        public uint[] AryChassisFunctionIds { get; set; }
+
+        [global::ProtoBuf.ProtoMember(9, Name = @"ary_verup_no_data_1")]
+        public global::System.Collections.Generic.List<VerupNoData1> AryVerupNoData1s { get; } = new global::System.Collections.Generic.List<VerupNoData1>();
+
+        [global::ProtoBuf.ProtoMember(10, Name = @"ary_verup_no_data_2")]
+        public global::System.Collections.Generic.List<VerupNoData2> AryVerupNoData2s { get; } = new global::System.Collections.Generic.List<VerupNoData2>();
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class MovieData : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1, Name = @"movie_id", IsRequired = true)]
+            public uint MovieId { get; set; }
+
+            [global::ProtoBuf.ProtoMember(2, Name = @"enable_days", IsRequired = true)]
+            public uint EnableDays { get; set; }
+
+        }
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class AiEventData : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1, Name = @"ai_event_id", IsRequired = true)]
+            public uint AiEventId { get; set; }
+
+            [global::ProtoBuf.ProtoMember(2, Name = @"token_id")]
+            public uint TokenId
+            {
+                get => __pbn__TokenId.GetValueOrDefault();
+                set => __pbn__TokenId = value;
+            }
+            public bool ShouldSerializeTokenId() => __pbn__TokenId != null;
+            public void ResetTokenId() => __pbn__TokenId = null;
+            private uint? __pbn__TokenId;
+
+        }
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class VerupNoData1 : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1, Name = @"master_type", IsRequired = true)]
+            public uint MasterType { get; set; }
+
+            [global::ProtoBuf.ProtoMember(2, Name = @"verup_no", IsRequired = true)]
+            public uint VerupNo { get; set; }
+
+        }
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class VerupNoData2 : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1, Name = @"master_type", IsRequired = true)]
+            public uint MasterType { get; set; }
+
+            [global::ProtoBuf.ProtoMember(2, Name = @"ary_information_data")]
+            public global::System.Collections.Generic.List<InformationData> AryInformationDatas { get; } = new global::System.Collections.Generic.List<InformationData>();
+
+            [global::ProtoBuf.ProtoContract()]
+            public partial class InformationData : global::ProtoBuf.IExtensible
+            {
+                private global::ProtoBuf.IExtension __pbn__extensionData;
+                global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                    => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+                [global::ProtoBuf.ProtoMember(1, Name = @"info_id", IsRequired = true)]
+                public uint InfoId { get; set; }
+
+                [global::ProtoBuf.ProtoMember(2, Name = @"verup_no", IsRequired = true)]
+                public uint VerupNo { get; set; }
+
+            }
+
+        }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GettelopRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"telop_id", IsRequired = true)]
+        public uint TelopId { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GettelopResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"verup_no")]
+        public uint VerupNo
+        {
+            get => __pbn__VerupNo.GetValueOrDefault();
+            set => __pbn__VerupNo = value;
+        }
+        public bool ShouldSerializeVerupNo() => __pbn__VerupNo != null;
+        public void ResetVerupNo() => __pbn__VerupNo = null;
+        private uint? __pbn__VerupNo;
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"start_datetime")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string StartDatetime
+        {
+            get => __pbn__StartDatetime ?? "";
+            set => __pbn__StartDatetime = value;
+        }
+        public bool ShouldSerializeStartDatetime() => __pbn__StartDatetime != null;
+        public void ResetStartDatetime() => __pbn__StartDatetime = null;
+        private string __pbn__StartDatetime;
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"end_datetime")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string EndDatetime
+        {
+            get => __pbn__EndDatetime ?? "";
+            set => __pbn__EndDatetime = value;
+        }
+        public bool ShouldSerializeEndDatetime() => __pbn__EndDatetime != null;
+        public void ResetEndDatetime() => __pbn__EndDatetime = null;
+        private string __pbn__EndDatetime;
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"telop")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Telop
+        {
+            get => __pbn__Telop ?? "";
+            set => __pbn__Telop = value;
+        }
+        public bool ShouldSerializeTelop() => __pbn__Telop != null;
+        public void ResetTelop() => __pbn__Telop = null;
+        private string __pbn__Telop;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetfolderRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"folder_id")]
+        public uint[] FolderIds { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetfolderResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"ary_eventfolder_data")]
+        public global::System.Collections.Generic.List<EventfolderData> AryEventfolderDatas { get; } = new global::System.Collections.Generic.List<EventfolderData>();
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class EventfolderData : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1, Name = @"folder_id", IsRequired = true)]
+            public uint FolderId { get; set; }
+
+            [global::ProtoBuf.ProtoMember(2, Name = @"verup_no", IsRequired = true)]
+            public uint VerupNo { get; set; }
+
+            [global::ProtoBuf.ProtoMember(3, Name = @"priority", IsRequired = true)]
+            public uint Priority { get; set; }
+
+            [global::ProtoBuf.ProtoMember(4, Name = @"song_no")]
+            public uint[] SongNoes { get; set; }
+
+            [global::ProtoBuf.ProtoMember(5, Name = @"parent_folder_id", IsRequired = true)]
+            public uint ParentFolderId { get; set; }
+
+        }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetShopFolderRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetShopFolderResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"verup_no")]
+        public uint VerupNo
+        {
+            get => __pbn__VerupNo.GetValueOrDefault();
+            set => __pbn__VerupNo = value;
+        }
+        public bool ShouldSerializeVerupNo() => __pbn__VerupNo != null;
+        public void ResetVerupNo() => __pbn__VerupNo = null;
+        private uint? __pbn__VerupNo;
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"token_id")]
+        public uint TokenId
+        {
+            get => __pbn__TokenId.GetValueOrDefault();
+            set => __pbn__TokenId = value;
+        }
+        public bool ShouldSerializeTokenId() => __pbn__TokenId != null;
+        public void ResetTokenId() => __pbn__TokenId = null;
+        private uint? __pbn__TokenId;
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"ary_shop_folder_data")]
+        public global::System.Collections.Generic.List<ShopFolderData> AryShopFolderDatas { get; } = new global::System.Collections.Generic.List<ShopFolderData>();
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class ShopFolderData : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1, Name = @"song_no", IsRequired = true)]
+            public uint SongNo { get; set; }
+
+            [global::ProtoBuf.ProtoMember(2, Name = @"type", IsRequired = true)]
+            public uint Type { get; set; }
+
+            [global::ProtoBuf.ProtoMember(3, Name = @"price", IsRequired = true)]
+            public uint Price { get; set; }
+
+        }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetSongIntroductionRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"set_id")]
+        public uint[] SetIds { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetSongIntroductionResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"ary_song_introduction_data")]
+        public global::System.Collections.Generic.List<SongIntroductionData> ArySongIntroductionDatas { get; } = new global::System.Collections.Generic.List<SongIntroductionData>();
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class SongIntroductionData : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1, Name = @"set_id", IsRequired = true)]
+            public uint SetId { get; set; }
+
+            [global::ProtoBuf.ProtoMember(2, Name = @"verup_no", IsRequired = true)]
+            public uint VerupNo { get; set; }
+
+            [global::ProtoBuf.ProtoMember(3, Name = @"main_song_no")]
+            public uint MainSongNo
+            {
+                get => __pbn__MainSongNo.GetValueOrDefault();
+                set => __pbn__MainSongNo = value;
+            }
+            public bool ShouldSerializeMainSongNo() => __pbn__MainSongNo != null;
+            public void ResetMainSongNo() => __pbn__MainSongNo = null;
+            private uint? __pbn__MainSongNo;
+
+            [global::ProtoBuf.ProtoMember(4, Name = @"sub_song_no")]
+            public uint[] SubSongNoes { get; set; }
+
+        }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class TournamentcheckRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"kit_id", IsRequired = true)]
+        public uint KitId { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class TournamentcheckResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"rare_rate")]
+        public uint RareRate
+        {
+            get => __pbn__RareRate.GetValueOrDefault();
+            set => __pbn__RareRate = value;
+        }
+        public bool ShouldSerializeRareRate() => __pbn__RareRate != null;
+        public void ResetRareRate() => __pbn__RareRate = null;
+        private uint? __pbn__RareRate;
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"ary_gacha_song_data")]
+        public global::System.Collections.Generic.List<GachainfoData> AryGachaSongDatas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"ary_gacha_tone_data")]
+        public global::System.Collections.Generic.List<GachainfoData> AryGachaToneDatas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"ary_gacha_costume_1_data")]
+        public global::System.Collections.Generic.List<GachainfoData> AryGachaCostume1Datas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
+
+        [global::ProtoBuf.ProtoMember(6, Name = @"ary_gacha_costume_2_data")]
+        public global::System.Collections.Generic.List<GachainfoData> AryGachaCostume2Datas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
+
+        [global::ProtoBuf.ProtoMember(7, Name = @"ary_gacha_costume_3_data")]
+        public global::System.Collections.Generic.List<GachainfoData> AryGachaCostume3Datas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
+
+        [global::ProtoBuf.ProtoMember(8, Name = @"ary_gacha_costume_4_data")]
+        public global::System.Collections.Generic.List<GachainfoData> AryGachaCostume4Datas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
+
+        [global::ProtoBuf.ProtoMember(9, Name = @"ary_gacha_costume_5_data")]
+        public global::System.Collections.Generic.List<GachainfoData> AryGachaCostume5Datas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
+
+        [global::ProtoBuf.ProtoMember(10, Name = @"ary_gacha_title_data")]
+        public global::System.Collections.Generic.List<GachainfoData> AryGachaTitleDatas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class GachainfoData : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1, Name = @"normal_gacha_flg", IsRequired = true)]
+            public byte[] NormalGachaFlg { get; set; }
+
+            [global::ProtoBuf.ProtoMember(2, Name = @"rare_gacha_flg", IsRequired = true)]
+            public byte[] RareGachaFlg { get; set; }
+
+        }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetDanOdaiRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"type", IsRequired = true)]
+        public uint Type { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"dan_id")]
+        public uint[] DanIds { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetDanOdaiResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"ary_odai_data")]
+        public global::System.Collections.Generic.List<OdaiData> AryOdaiDatas { get; } = new global::System.Collections.Generic.List<OdaiData>();
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class OdaiData : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1, Name = @"dan_id", IsRequired = true)]
+            public uint DanId { get; set; }
+
+            [global::ProtoBuf.ProtoMember(2, Name = @"verup_no", IsRequired = true)]
+            public uint VerupNo { get; set; }
+
+            [global::ProtoBuf.ProtoMember(3, Name = @"title", IsRequired = true)]
+            public string Title { get; set; }
+
+            [global::ProtoBuf.ProtoMember(4, Name = @"ary_odai_song")]
+            public global::System.Collections.Generic.List<OdaiSong> AryOdaiSongs { get; } = new global::System.Collections.Generic.List<OdaiSong>();
+
+            [global::ProtoBuf.ProtoMember(5, Name = @"ary_odai_border")]
+            public global::System.Collections.Generic.List<OdaiBorder> AryOdaiBorders { get; } = new global::System.Collections.Generic.List<OdaiBorder>();
+
+            [global::ProtoBuf.ProtoContract()]
+            public partial class OdaiSong : global::ProtoBuf.IExtensible
+            {
+                private global::ProtoBuf.IExtension __pbn__extensionData;
+                global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                    => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+                [global::ProtoBuf.ProtoMember(1, Name = @"song_no", IsRequired = true)]
+                public uint SongNo { get; set; }
+
+                [global::ProtoBuf.ProtoMember(2, Name = @"level", IsRequired = true)]
+                public uint Level { get; set; }
+
+                [global::ProtoBuf.ProtoMember(3, Name = @"is_hidden_song_name", IsRequired = true)]
+                public bool IsHiddenSongName { get; set; }
+
+            }
+
+            [global::ProtoBuf.ProtoContract()]
+            public partial class OdaiBorder : global::ProtoBuf.IExtensible
+            {
+                private global::ProtoBuf.IExtension __pbn__extensionData;
+                global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                    => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+                [global::ProtoBuf.ProtoMember(1, Name = @"odai_type", IsRequired = true)]
+                public uint OdaiType { get; set; }
+
+                [global::ProtoBuf.ProtoMember(2, Name = @"border_type", IsRequired = true)]
+                public uint BorderType { get; set; }
+
+                [global::ProtoBuf.ProtoMember(3, Name = @"red_border_total")]
+                public uint RedBorderTotal
+                {
+                    get => __pbn__RedBorderTotal.GetValueOrDefault();
+                    set => __pbn__RedBorderTotal = value;
+                }
+                public bool ShouldSerializeRedBorderTotal() => __pbn__RedBorderTotal != null;
+                public void ResetRedBorderTotal() => __pbn__RedBorderTotal = null;
+                private uint? __pbn__RedBorderTotal;
+
+                [global::ProtoBuf.ProtoMember(4, Name = @"gold_border_total")]
+                public uint GoldBorderTotal
+                {
+                    get => __pbn__GoldBorderTotal.GetValueOrDefault();
+                    set => __pbn__GoldBorderTotal = value;
+                }
+                public bool ShouldSerializeGoldBorderTotal() => __pbn__GoldBorderTotal != null;
+                public void ResetGoldBorderTotal() => __pbn__GoldBorderTotal = null;
+                private uint? __pbn__GoldBorderTotal;
+
+                [global::ProtoBuf.ProtoMember(5, Name = @"red_border_1")]
+                public uint RedBorder1
+                {
+                    get => __pbn__RedBorder1.GetValueOrDefault();
+                    set => __pbn__RedBorder1 = value;
+                }
+                public bool ShouldSerializeRedBorder1() => __pbn__RedBorder1 != null;
+                public void ResetRedBorder1() => __pbn__RedBorder1 = null;
+                private uint? __pbn__RedBorder1;
+
+                [global::ProtoBuf.ProtoMember(6, Name = @"gold_border_1")]
+                public uint GoldBorder1
+                {
+                    get => __pbn__GoldBorder1.GetValueOrDefault();
+                    set => __pbn__GoldBorder1 = value;
+                }
+                public bool ShouldSerializeGoldBorder1() => __pbn__GoldBorder1 != null;
+                public void ResetGoldBorder1() => __pbn__GoldBorder1 = null;
+                private uint? __pbn__GoldBorder1;
+
+                [global::ProtoBuf.ProtoMember(7, Name = @"red_border_2")]
+                public uint RedBorder2
+                {
+                    get => __pbn__RedBorder2.GetValueOrDefault();
+                    set => __pbn__RedBorder2 = value;
+                }
+                public bool ShouldSerializeRedBorder2() => __pbn__RedBorder2 != null;
+                public void ResetRedBorder2() => __pbn__RedBorder2 = null;
+                private uint? __pbn__RedBorder2;
+
+                [global::ProtoBuf.ProtoMember(8, Name = @"gold_border_2")]
+                public uint GoldBorder2
+                {
+                    get => __pbn__GoldBorder2.GetValueOrDefault();
+                    set => __pbn__GoldBorder2 = value;
+                }
+                public bool ShouldSerializeGoldBorder2() => __pbn__GoldBorder2 != null;
+                public void ResetGoldBorder2() => __pbn__GoldBorder2 = null;
+                private uint? __pbn__GoldBorder2;
+
+                [global::ProtoBuf.ProtoMember(9, Name = @"red_border_3")]
+                public uint RedBorder3
+                {
+                    get => __pbn__RedBorder3.GetValueOrDefault();
+                    set => __pbn__RedBorder3 = value;
+                }
+                public bool ShouldSerializeRedBorder3() => __pbn__RedBorder3 != null;
+                public void ResetRedBorder3() => __pbn__RedBorder3 = null;
+                private uint? __pbn__RedBorder3;
+
+                [global::ProtoBuf.ProtoMember(10, Name = @"gold_border_3")]
+                public uint GoldBorder3
+                {
+                    get => __pbn__GoldBorder3.GetValueOrDefault();
+                    set => __pbn__GoldBorder3 = value;
+                }
+                public bool ShouldSerializeGoldBorder3() => __pbn__GoldBorder3 != null;
+                public void ResetGoldBorder3() => __pbn__GoldBorder3 = null;
+                private uint? __pbn__GoldBorder3;
+
+            }
+
+        }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class VerifyQrcodeRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"baid", IsRequired = true)]
+        public uint Baid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"qrcode_serial", IsRequired = true)]
+        public string QrcodeSerial { get; set; }
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"is_new_card")]
+        public bool IsNewCard
+        {
+            get => __pbn__IsNewCard.GetValueOrDefault();
+            set => __pbn__IsNewCard = value;
+        }
+        public bool ShouldSerializeIsNewCard() => __pbn__IsNewCard != null;
+        public void ResetIsNewCard() => __pbn__IsNewCard = null;
+        private bool? __pbn__IsNewCard;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class VerifyQrcodeResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"qrcode_id")]
+        public uint QrcodeId
+        {
+            get => __pbn__QrcodeId.GetValueOrDefault();
+            set => __pbn__QrcodeId = value;
+        }
+        public bool ShouldSerializeQrcodeId() => __pbn__QrcodeId != null;
+        public void ResetQrcodeId() => __pbn__QrcodeId = null;
+        private uint? __pbn__QrcodeId;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class ExecuteQrcodeRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"baid", IsRequired = true)]
+        public uint Baid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"qrcode_serial", IsRequired = true)]
+        public string QrcodeSerial { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class ExecuteQrcodeResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"qrcode_id")]
+        public uint QrcodeId
+        {
+            get => __pbn__QrcodeId.GetValueOrDefault();
+            set => __pbn__QrcodeId = value;
+        }
+        public bool ShouldSerializeQrcodeId() => __pbn__QrcodeId != null;
+        public void ResetQrcodeId() => __pbn__QrcodeId = null;
+        private uint? __pbn__QrcodeId;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetApplicationUrlRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"baid", IsRequired = true)]
+        public uint Baid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"qrcode_id", IsRequired = true)]
+        public uint QrcodeId { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetApplicationUrlResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"application_url")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string ApplicationUrl
+        {
+            get => __pbn__ApplicationUrl ?? "";
+            set => __pbn__ApplicationUrl = value;
+        }
+        public bool ShouldSerializeApplicationUrl() => __pbn__ApplicationUrl != null;
+        public void ResetApplicationUrl() => __pbn__ApplicationUrl = null;
+        private string __pbn__ApplicationUrl;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class SetAnyStringRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"any_string", IsRequired = true)]
+        public string AnyString { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class SetAnyStringResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetGenericMasterRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"master_type", IsRequired = true)]
+        public uint MasterType { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetGenericMasterResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"verup_no")]
+        public uint VerupNo
+        {
+            get => __pbn__VerupNo.GetValueOrDefault();
+            set => __pbn__VerupNo = value;
+        }
+        public bool ShouldSerializeVerupNo() => __pbn__VerupNo != null;
+        public void ResetVerupNo() => __pbn__VerupNo = null;
+        private uint? __pbn__VerupNo;
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"enable_id_bit")]
+        public byte[] EnableIdBit
+        {
+            get => __pbn__EnableIdBit;
+            set => __pbn__EnableIdBit = value;
+        }
+        public bool ShouldSerializeEnableIdBit() => __pbn__EnableIdBit != null;
+        public void ResetEnableIdBit() => __pbn__EnableIdBit = null;
+        private byte[] __pbn__EnableIdBit;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class MusicUsbAuth1Request : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"usbmem_ver", IsRequired = true)]
+        public string UsbmemVer { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"usbmem_serial", IsRequired = true)]
+        public string UsbmemSerial { get; set; }
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"usbmem_vid", IsRequired = true)]
+        public string UsbmemVid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(6, Name = @"usbmem_pid", IsRequired = true)]
+        public string UsbmemPid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(7, Name = @"app_ver", IsRequired = true)]
+        public uint AppVer { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class MusicUsbAuth1Response : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"secret_key_1")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string SecretKey1
+        {
+            get => __pbn__SecretKey1 ?? "";
+            set => __pbn__SecretKey1 = value;
+        }
+        public bool ShouldSerializeSecretKey1() => __pbn__SecretKey1 != null;
+        public void ResetSecretKey1() => __pbn__SecretKey1 = null;
+        private string __pbn__SecretKey1;
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"secret_key_2")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string SecretKey2
+        {
+            get => __pbn__SecretKey2 ?? "";
+            set => __pbn__SecretKey2 = value;
+        }
+        public bool ShouldSerializeSecretKey2() => __pbn__SecretKey2 != null;
+        public void ResetSecretKey2() => __pbn__SecretKey2 = null;
+        private string __pbn__SecretKey2;
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"datafile_hash")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string DatafileHash
+        {
+            get => __pbn__DatafileHash ?? "";
+            set => __pbn__DatafileHash = value;
+        }
+        public bool ShouldSerializeDatafileHash() => __pbn__DatafileHash != null;
+        public void ResetDatafileHash() => __pbn__DatafileHash = null;
+        private string __pbn__DatafileHash;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class MusicUsbAuth2Request : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"usbmem_ver", IsRequired = true)]
+        public string UsbmemVer { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"usbmem_serial", IsRequired = true)]
+        public string UsbmemSerial { get; set; }
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"usbmem_vid", IsRequired = true)]
+        public string UsbmemVid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(6, Name = @"usbmem_pid", IsRequired = true)]
+        public string UsbmemPid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(7, Name = @"app_ver", IsRequired = true)]
+        public uint AppVer { get; set; }
+
+        [global::ProtoBuf.ProtoMember(8, Name = @"datafile_hash", IsRequired = true)]
+        public string DatafileHash { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class MusicUsbAuth2Response : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class BAIDRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"device_type", IsRequired = true)]
+        public uint DeviceType { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"access_code", IsRequired = true)]
+        public string AccessCode { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"chip_id", IsRequired = true)]
+        public string ChipId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(6, Name = @"country_id", IsRequired = true)]
+        public string CountryId { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class BAIDResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"player_type")]
+        public uint PlayerType
+        {
+            get => __pbn__PlayerType.GetValueOrDefault();
+            set => __pbn__PlayerType = value;
+        }
+        public bool ShouldSerializePlayerType() => __pbn__PlayerType != null;
+        public void ResetPlayerType() => __pbn__PlayerType = null;
+        private uint? __pbn__PlayerType;
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"com_svr_result")]
+        public uint ComSvrResult
+        {
+            get => __pbn__ComSvrResult.GetValueOrDefault();
+            set => __pbn__ComSvrResult = value;
+        }
+        public bool ShouldSerializeComSvrResult() => __pbn__ComSvrResult != null;
+        public void ResetComSvrResult() => __pbn__ComSvrResult = null;
+        private uint? __pbn__ComSvrResult;
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"mb_id")]
+        public uint MbId
+        {
+            get => __pbn__MbId.GetValueOrDefault();
+            set => __pbn__MbId = value;
+        }
+        public bool ShouldSerializeMbId() => __pbn__MbId != null;
+        public void ResetMbId() => __pbn__MbId = null;
+        private uint? __pbn__MbId;
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"baid")]
+        public uint Baid
+        {
+            get => __pbn__Baid.GetValueOrDefault();
+            set => __pbn__Baid = value;
+        }
+        public bool ShouldSerializeBaid() => __pbn__Baid != null;
+        public void ResetBaid() => __pbn__Baid = null;
+        private uint? __pbn__Baid;
+
+        [global::ProtoBuf.ProtoMember(6, Name = @"access_code")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string AccessCode
+        {
+            get => __pbn__AccessCode ?? "";
+            set => __pbn__AccessCode = value;
+        }
+        public bool ShouldSerializeAccessCode() => __pbn__AccessCode != null;
+        public void ResetAccessCode() => __pbn__AccessCode = null;
+        private string __pbn__AccessCode;
+
+        [global::ProtoBuf.ProtoMember(7, Name = @"is_publish")]
+        public bool IsPublish
+        {
+            get => __pbn__IsPublish.GetValueOrDefault();
+            set => __pbn__IsPublish = value;
+        }
+        public bool ShouldSerializeIsPublish() => __pbn__IsPublish != null;
+        public void ResetIsPublish() => __pbn__IsPublish = null;
+        private bool? __pbn__IsPublish;
+
+        [global::ProtoBuf.ProtoMember(8, Name = @"card_own_num")]
+        public uint CardOwnNum
+        {
+            get => __pbn__CardOwnNum.GetValueOrDefault();
+            set => __pbn__CardOwnNum = value;
+        }
+        public bool ShouldSerializeCardOwnNum() => __pbn__CardOwnNum != null;
+        public void ResetCardOwnNum() => __pbn__CardOwnNum = null;
+        private uint? __pbn__CardOwnNum;
+
+        [global::ProtoBuf.ProtoMember(9, Name = @"reg_country_id")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string RegCountryId
+        {
+            get => __pbn__RegCountryId ?? "";
+            set => __pbn__RegCountryId = value;
+        }
+        public bool ShouldSerializeRegCountryId() => __pbn__RegCountryId != null;
+        public void ResetRegCountryId() => __pbn__RegCountryId = null;
+        private string __pbn__RegCountryId;
+
+        [global::ProtoBuf.ProtoMember(10, Name = @"purpose_id")]
+        public uint PurposeId
+        {
+            get => __pbn__PurposeId.GetValueOrDefault();
+            set => __pbn__PurposeId = value;
+        }
+        public bool ShouldSerializePurposeId() => __pbn__PurposeId != null;
+        public void ResetPurposeId() => __pbn__PurposeId = null;
+        private uint? __pbn__PurposeId;
+
+        [global::ProtoBuf.ProtoMember(11, Name = @"region_id")]
+        public uint RegionId
+        {
+            get => __pbn__RegionId.GetValueOrDefault();
+            set => __pbn__RegionId = value;
+        }
+        public bool ShouldSerializeRegionId() => __pbn__RegionId != null;
+        public void ResetRegionId() => __pbn__RegionId = null;
+        private uint? __pbn__RegionId;
+
+        [global::ProtoBuf.ProtoMember(12, Name = @"mydon_name")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string MydonName
+        {
+            get => __pbn__MydonName ?? "";
+            set => __pbn__MydonName = value;
+        }
+        public bool ShouldSerializeMydonName() => __pbn__MydonName != null;
+        public void ResetMydonName() => __pbn__MydonName = null;
+        private string __pbn__MydonName;
+
+        [global::ProtoBuf.ProtoMember(13, Name = @"mydon_name_language")]
+        public uint MydonNameLanguage
+        {
+            get => __pbn__MydonNameLanguage.GetValueOrDefault();
+            set => __pbn__MydonNameLanguage = value;
+        }
+        public bool ShouldSerializeMydonNameLanguage() => __pbn__MydonNameLanguage != null;
+        public void ResetMydonNameLanguage() => __pbn__MydonNameLanguage = null;
+        private uint? __pbn__MydonNameLanguage;
+
+        [global::ProtoBuf.ProtoMember(14, Name = @"title")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Title
+        {
+            get => __pbn__Title ?? "";
+            set => __pbn__Title = value;
+        }
+        public bool ShouldSerializeTitle() => __pbn__Title != null;
+        public void ResetTitle() => __pbn__Title = null;
+        private string __pbn__Title;
+
+        [global::ProtoBuf.ProtoMember(15, Name = @"titleplate_id")]
+        public uint TitleplateId
+        {
+            get => __pbn__TitleplateId.GetValueOrDefault();
+            set => __pbn__TitleplateId = value;
+        }
+        public bool ShouldSerializeTitleplateId() => __pbn__TitleplateId != null;
+        public void ResetTitleplateId() => __pbn__TitleplateId = null;
+        private uint? __pbn__TitleplateId;
+
+        [global::ProtoBuf.ProtoMember(16, Name = @"color_face")]
+        public uint ColorFace
+        {
+            get => __pbn__ColorFace.GetValueOrDefault();
+            set => __pbn__ColorFace = value;
+        }
+        public bool ShouldSerializeColorFace() => __pbn__ColorFace != null;
+        public void ResetColorFace() => __pbn__ColorFace = null;
+        private uint? __pbn__ColorFace;
+
+        [global::ProtoBuf.ProtoMember(17, Name = @"color_body")]
+        public uint ColorBody
+        {
+            get => __pbn__ColorBody.GetValueOrDefault();
+            set => __pbn__ColorBody = value;
+        }
+        public bool ShouldSerializeColorBody() => __pbn__ColorBody != null;
+        public void ResetColorBody() => __pbn__ColorBody = null;
+        private uint? __pbn__ColorBody;
+
+        [global::ProtoBuf.ProtoMember(18, Name = @"color_limb")]
+        public uint ColorLimb
+        {
+            get => __pbn__ColorLimb.GetValueOrDefault();
+            set => __pbn__ColorLimb = value;
+        }
+        public bool ShouldSerializeColorLimb() => __pbn__ColorLimb != null;
+        public void ResetColorLimb() => __pbn__ColorLimb = null;
+        private uint? __pbn__ColorLimb;
+
+        [global::ProtoBuf.ProtoMember(19, Name = @"ary_costumedata")]
+        public CostumeData AryCostumedata { get; set; }
+
+        [global::ProtoBuf.ProtoMember(20, Name = @"costume_flg_1")]
+        public byte[] CostumeFlg1
+        {
+            get => __pbn__CostumeFlg1;
+            set => __pbn__CostumeFlg1 = value;
+        }
+        public bool ShouldSerializeCostumeFlg1() => __pbn__CostumeFlg1 != null;
+        public void ResetCostumeFlg1() => __pbn__CostumeFlg1 = null;
+        private byte[] __pbn__CostumeFlg1;
+
+        [global::ProtoBuf.ProtoMember(21, Name = @"costume_flg_2")]
+        public byte[] CostumeFlg2
+        {
+            get => __pbn__CostumeFlg2;
+            set => __pbn__CostumeFlg2 = value;
+        }
+        public bool ShouldSerializeCostumeFlg2() => __pbn__CostumeFlg2 != null;
+        public void ResetCostumeFlg2() => __pbn__CostumeFlg2 = null;
+        private byte[] __pbn__CostumeFlg2;
+
+        [global::ProtoBuf.ProtoMember(22, Name = @"costume_flg_3")]
+        public byte[] CostumeFlg3
+        {
+            get => __pbn__CostumeFlg3;
+            set => __pbn__CostumeFlg3 = value;
+        }
+        public bool ShouldSerializeCostumeFlg3() => __pbn__CostumeFlg3 != null;
+        public void ResetCostumeFlg3() => __pbn__CostumeFlg3 = null;
+        private byte[] __pbn__CostumeFlg3;
+
+        [global::ProtoBuf.ProtoMember(23, Name = @"costume_flg_4")]
+        public byte[] CostumeFlg4
+        {
+            get => __pbn__CostumeFlg4;
+            set => __pbn__CostumeFlg4 = value;
+        }
+        public bool ShouldSerializeCostumeFlg4() => __pbn__CostumeFlg4 != null;
+        public void ResetCostumeFlg4() => __pbn__CostumeFlg4 = null;
+        private byte[] __pbn__CostumeFlg4;
+
+        [global::ProtoBuf.ProtoMember(24, Name = @"costume_flg_5")]
+        public byte[] CostumeFlg5
+        {
+            get => __pbn__CostumeFlg5;
+            set => __pbn__CostumeFlg5 = value;
+        }
+        public bool ShouldSerializeCostumeFlg5() => __pbn__CostumeFlg5 != null;
+        public void ResetCostumeFlg5() => __pbn__CostumeFlg5 = null;
+        private byte[] __pbn__CostumeFlg5;
+
+        [global::ProtoBuf.ProtoMember(25, Name = @"last_play_datetime")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string LastPlayDatetime
+        {
+            get => __pbn__LastPlayDatetime ?? "";
+            set => __pbn__LastPlayDatetime = value;
+        }
+        public bool ShouldSerializeLastPlayDatetime() => __pbn__LastPlayDatetime != null;
+        public void ResetLastPlayDatetime() => __pbn__LastPlayDatetime = null;
+        private string __pbn__LastPlayDatetime;
+
+        [global::ProtoBuf.ProtoMember(26, Name = @"is_disp_dan_on")]
+        public bool IsDispDanOn
+        {
+            get => __pbn__IsDispDanOn.GetValueOrDefault();
+            set => __pbn__IsDispDanOn = value;
+        }
+        public bool ShouldSerializeIsDispDanOn() => __pbn__IsDispDanOn != null;
+        public void ResetIsDispDanOn() => __pbn__IsDispDanOn = null;
+        private bool? __pbn__IsDispDanOn;
+
+        [global::ProtoBuf.ProtoMember(27, Name = @"got_dan_max")]
+        public uint GotDanMax
+        {
+            get => __pbn__GotDanMax.GetValueOrDefault();
+            set => __pbn__GotDanMax = value;
+        }
+        public bool ShouldSerializeGotDanMax() => __pbn__GotDanMax != null;
+        public void ResetGotDanMax() => __pbn__GotDanMax = null;
+        private uint? __pbn__GotDanMax;
+
+        [global::ProtoBuf.ProtoMember(28, Name = @"got_dan_flg")]
+        public byte[] GotDanFlg
+        {
+            get => __pbn__GotDanFlg;
+            set => __pbn__GotDanFlg = value;
+        }
+        public bool ShouldSerializeGotDanFlg() => __pbn__GotDanFlg != null;
+        public void ResetGotDanFlg() => __pbn__GotDanFlg = null;
+        private byte[] __pbn__GotDanFlg;
+
+        [global::ProtoBuf.ProtoMember(29, Name = @"got_danextra_flg")]
+        public byte[] GotDanextraFlg
+        {
+            get => __pbn__GotDanextraFlg;
+            set => __pbn__GotDanextraFlg = value;
+        }
+        public bool ShouldSerializeGotDanextraFlg() => __pbn__GotDanextraFlg != null;
+        public void ResetGotDanextraFlg() => __pbn__GotDanextraFlg = null;
+        private byte[] __pbn__GotDanextraFlg;
+
+        [global::ProtoBuf.ProtoMember(30, Name = @"default_tone_setting")]
+        public uint DefaultToneSetting
+        {
+            get => __pbn__DefaultToneSetting.GetValueOrDefault();
+            set => __pbn__DefaultToneSetting = value;
+        }
+        public bool ShouldSerializeDefaultToneSetting() => __pbn__DefaultToneSetting != null;
+        public void ResetDefaultToneSetting() => __pbn__DefaultToneSetting = null;
+        private uint? __pbn__DefaultToneSetting;
+
+        [global::ProtoBuf.ProtoMember(31, Name = @"generic_info_flg")]
+        public byte[] GenericInfoFlg
+        {
+            get => __pbn__GenericInfoFlg;
+            set => __pbn__GenericInfoFlg = value;
+        }
+        public bool ShouldSerializeGenericInfoFlg() => __pbn__GenericInfoFlg != null;
+        public void ResetGenericInfoFlg() => __pbn__GenericInfoFlg = null;
+        private byte[] __pbn__GenericInfoFlg;
+
+        [global::ProtoBuf.ProtoMember(32, Name = @"ary_crown_count")]
+        public uint[] AryCrownCounts { get; set; }
+
+        [global::ProtoBuf.ProtoMember(33, Name = @"ary_score_rank_count")]
+        public uint[] AryScoreRankCounts { get; set; }
+
+        [global::ProtoBuf.ProtoMember(34, Name = @"is_disp_achievement_on")]
+        public bool IsDispAchievementOn
+        {
+            get => __pbn__IsDispAchievementOn.GetValueOrDefault();
+            set => __pbn__IsDispAchievementOn = value;
+        }
+        public bool ShouldSerializeIsDispAchievementOn() => __pbn__IsDispAchievementOn != null;
+        public void ResetIsDispAchievementOn() => __pbn__IsDispAchievementOn = null;
+        private bool? __pbn__IsDispAchievementOn;
+
+        [global::ProtoBuf.ProtoMember(35, Name = @"disp_achievement_type")]
+        public uint DispAchievementType
+        {
+            get => __pbn__DispAchievementType.GetValueOrDefault();
+            set => __pbn__DispAchievementType = value;
+        }
+        public bool ShouldSerializeDispAchievementType() => __pbn__DispAchievementType != null;
+        public void ResetDispAchievementType() => __pbn__DispAchievementType = null;
+        private uint? __pbn__DispAchievementType;
+
+        [global::ProtoBuf.ProtoMember(36, Name = @"is_disp_achievement_type_set")]
+        public bool IsDispAchievementTypeSet
+        {
+            get => __pbn__IsDispAchievementTypeSet.GetValueOrDefault();
+            set => __pbn__IsDispAchievementTypeSet = value;
+        }
+        public bool ShouldSerializeIsDispAchievementTypeSet() => __pbn__IsDispAchievementTypeSet != null;
+        public void ResetIsDispAchievementTypeSet() => __pbn__IsDispAchievementTypeSet = null;
+        private bool? __pbn__IsDispAchievementTypeSet;
+
+        [global::ProtoBuf.ProtoMember(37, Name = @"last_play_mode")]
+        public uint LastPlayMode
+        {
+            get => __pbn__LastPlayMode.GetValueOrDefault();
+            set => __pbn__LastPlayMode = value;
+        }
+        public bool ShouldSerializeLastPlayMode() => __pbn__LastPlayMode != null;
+        public void ResetLastPlayMode() => __pbn__LastPlayMode = null;
+        private uint? __pbn__LastPlayMode;
+
+        [global::ProtoBuf.ProtoMember(38, Name = @"is_disp_souuchi_on")]
+        public bool IsDispSouuchiOn
+        {
+            get => __pbn__IsDispSouuchiOn.GetValueOrDefault();
+            set => __pbn__IsDispSouuchiOn = value;
+        }
+        public bool ShouldSerializeIsDispSouuchiOn() => __pbn__IsDispSouuchiOn != null;
+        public void ResetIsDispSouuchiOn() => __pbn__IsDispSouuchiOn = null;
+        private bool? __pbn__IsDispSouuchiOn;
+
+        [global::ProtoBuf.ProtoMember(39, Name = @"ai_rank")]
+        public uint AiRank
+        {
+            get => __pbn__AiRank.GetValueOrDefault();
+            set => __pbn__AiRank = value;
+        }
+        public bool ShouldSerializeAiRank() => __pbn__AiRank != null;
+        public void ResetAiRank() => __pbn__AiRank = null;
+        private uint? __pbn__AiRank;
+
+        [global::ProtoBuf.ProtoMember(40, Name = @"ai_total_win")]
+        public uint AiTotalWin
+        {
+            get => __pbn__AiTotalWin.GetValueOrDefault();
+            set => __pbn__AiTotalWin = value;
+        }
+        public bool ShouldSerializeAiTotalWin() => __pbn__AiTotalWin != null;
+        public void ResetAiTotalWin() => __pbn__AiTotalWin = null;
+        private uint? __pbn__AiTotalWin;
+
+        [global::ProtoBuf.ProtoMember(41, Name = @"accesstoken")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Accesstoken
+        {
+            get => __pbn__Accesstoken ?? "";
+            set => __pbn__Accesstoken = value;
+        }
+        public bool ShouldSerializeAccesstoken() => __pbn__Accesstoken != null;
+        public void ResetAccesstoken() => __pbn__Accesstoken = null;
+        private string __pbn__Accesstoken;
+
+        [global::ProtoBuf.ProtoMember(42, Name = @"content_info")]
+        public byte[] ContentInfo
+        {
+            get => __pbn__ContentInfo;
+            set => __pbn__ContentInfo = value;
+        }
+        public bool ShouldSerializeContentInfo() => __pbn__ContentInfo != null;
+        public void ResetContentInfo() => __pbn__ContentInfo = null;
+        private byte[] __pbn__ContentInfo;
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class CostumeData : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1, Name = @"costume_1")]
+            public uint Costume1
+            {
+                get => __pbn__Costume1.GetValueOrDefault();
+                set => __pbn__Costume1 = value;
+            }
+            public bool ShouldSerializeCostume1() => __pbn__Costume1 != null;
+            public void ResetCostume1() => __pbn__Costume1 = null;
+            private uint? __pbn__Costume1;
+
+            [global::ProtoBuf.ProtoMember(2, Name = @"costume_2")]
+            public uint Costume2
+            {
+                get => __pbn__Costume2.GetValueOrDefault();
+                set => __pbn__Costume2 = value;
+            }
+            public bool ShouldSerializeCostume2() => __pbn__Costume2 != null;
+            public void ResetCostume2() => __pbn__Costume2 = null;
+            private uint? __pbn__Costume2;
+
+            [global::ProtoBuf.ProtoMember(3, Name = @"costume_3")]
+            public uint Costume3
+            {
+                get => __pbn__Costume3.GetValueOrDefault();
+                set => __pbn__Costume3 = value;
+            }
+            public bool ShouldSerializeCostume3() => __pbn__Costume3 != null;
+            public void ResetCostume3() => __pbn__Costume3 = null;
+            private uint? __pbn__Costume3;
+
+            [global::ProtoBuf.ProtoMember(4, Name = @"costume_4")]
+            public uint Costume4
+            {
+                get => __pbn__Costume4.GetValueOrDefault();
+                set => __pbn__Costume4 = value;
+            }
+            public bool ShouldSerializeCostume4() => __pbn__Costume4 != null;
+            public void ResetCostume4() => __pbn__Costume4 = null;
+            private uint? __pbn__Costume4;
+
+            [global::ProtoBuf.ProtoMember(5, Name = @"costume_5")]
+            public uint Costume5
+            {
+                get => __pbn__Costume5.GetValueOrDefault();
+                set => __pbn__Costume5 = value;
+            }
+            public bool ShouldSerializeCostume5() => __pbn__Costume5 != null;
+            public void ResetCostume5() => __pbn__Costume5 = null;
+            private uint? __pbn__Costume5;
+
+        }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class MydonEntryRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"device_type", IsRequired = true)]
+        public uint DeviceType { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"access_code", IsRequired = true)]
+        public string AccessCode { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"chip_id", IsRequired = true)]
+        public string ChipId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(6, Name = @"country_id", IsRequired = true)]
+        public string CountryId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(7, Name = @"mydon_name", IsRequired = true)]
+        public string MydonName { get; set; }
+
+        [global::ProtoBuf.ProtoMember(8, Name = @"mydon_name_language", IsRequired = true)]
+        public uint MydonNameLanguage { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class MydonEntryResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"com_svr_result")]
+        public uint ComSvrResult
+        {
+            get => __pbn__ComSvrResult.GetValueOrDefault();
+            set => __pbn__ComSvrResult = value;
+        }
+        public bool ShouldSerializeComSvrResult() => __pbn__ComSvrResult != null;
+        public void ResetComSvrResult() => __pbn__ComSvrResult = null;
+        private uint? __pbn__ComSvrResult;
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"mb_id")]
+        public uint MbId
+        {
+            get => __pbn__MbId.GetValueOrDefault();
+            set => __pbn__MbId = value;
+        }
+        public bool ShouldSerializeMbId() => __pbn__MbId != null;
+        public void ResetMbId() => __pbn__MbId = null;
+        private uint? __pbn__MbId;
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"baid")]
+        public uint Baid
+        {
+            get => __pbn__Baid.GetValueOrDefault();
+            set => __pbn__Baid = value;
+        }
+        public bool ShouldSerializeBaid() => __pbn__Baid != null;
+        public void ResetBaid() => __pbn__Baid = null;
+        private uint? __pbn__Baid;
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"access_code")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string AccessCode
+        {
+            get => __pbn__AccessCode ?? "";
+            set => __pbn__AccessCode = value;
+        }
+        public bool ShouldSerializeAccessCode() => __pbn__AccessCode != null;
+        public void ResetAccessCode() => __pbn__AccessCode = null;
+        private string __pbn__AccessCode;
+
+        [global::ProtoBuf.ProtoMember(6, Name = @"is_publish")]
+        public bool IsPublish
+        {
+            get => __pbn__IsPublish.GetValueOrDefault();
+            set => __pbn__IsPublish = value;
+        }
+        public bool ShouldSerializeIsPublish() => __pbn__IsPublish != null;
+        public void ResetIsPublish() => __pbn__IsPublish = null;
+        private bool? __pbn__IsPublish;
+
+        [global::ProtoBuf.ProtoMember(7, Name = @"card_own_num")]
+        public uint CardOwnNum
+        {
+            get => __pbn__CardOwnNum.GetValueOrDefault();
+            set => __pbn__CardOwnNum = value;
+        }
+        public bool ShouldSerializeCardOwnNum() => __pbn__CardOwnNum != null;
+        public void ResetCardOwnNum() => __pbn__CardOwnNum = null;
+        private uint? __pbn__CardOwnNum;
+
+        [global::ProtoBuf.ProtoMember(8, Name = @"reg_country_id")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string RegCountryId
+        {
+            get => __pbn__RegCountryId ?? "";
+            set => __pbn__RegCountryId = value;
+        }
+        public bool ShouldSerializeRegCountryId() => __pbn__RegCountryId != null;
+        public void ResetRegCountryId() => __pbn__RegCountryId = null;
+        private string __pbn__RegCountryId;
+
+        [global::ProtoBuf.ProtoMember(9, Name = @"purpose_id")]
+        public uint PurposeId
+        {
+            get => __pbn__PurposeId.GetValueOrDefault();
+            set => __pbn__PurposeId = value;
+        }
+        public bool ShouldSerializePurposeId() => __pbn__PurposeId != null;
+        public void ResetPurposeId() => __pbn__PurposeId = null;
+        private uint? __pbn__PurposeId;
+
+        [global::ProtoBuf.ProtoMember(10, Name = @"region_id")]
+        public uint RegionId
+        {
+            get => __pbn__RegionId.GetValueOrDefault();
+            set => __pbn__RegionId = value;
+        }
+        public bool ShouldSerializeRegionId() => __pbn__RegionId != null;
+        public void ResetRegionId() => __pbn__RegionId = null;
+        private uint? __pbn__RegionId;
+
+        [global::ProtoBuf.ProtoMember(11, Name = @"mydon_name")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string MydonName
+        {
+            get => __pbn__MydonName ?? "";
+            set => __pbn__MydonName = value;
+        }
+        public bool ShouldSerializeMydonName() => __pbn__MydonName != null;
+        public void ResetMydonName() => __pbn__MydonName = null;
+        private string __pbn__MydonName;
+
+        [global::ProtoBuf.ProtoMember(12, Name = @"mydon_name_language")]
+        public uint MydonNameLanguage
+        {
+            get => __pbn__MydonNameLanguage.GetValueOrDefault();
+            set => __pbn__MydonNameLanguage = value;
+        }
+        public bool ShouldSerializeMydonNameLanguage() => __pbn__MydonNameLanguage != null;
+        public void ResetMydonNameLanguage() => __pbn__MydonNameLanguage = null;
+        private uint? __pbn__MydonNameLanguage;
+
+        [global::ProtoBuf.ProtoMember(13, Name = @"accesstoken")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Accesstoken
+        {
+            get => __pbn__Accesstoken ?? "";
+            set => __pbn__Accesstoken = value;
+        }
+        public bool ShouldSerializeAccesstoken() => __pbn__Accesstoken != null;
+        public void ResetAccesstoken() => __pbn__Accesstoken = null;
+        private string __pbn__Accesstoken;
+
+        [global::ProtoBuf.ProtoMember(14, Name = @"content_info")]
+        public byte[] ContentInfo
+        {
+            get => __pbn__ContentInfo;
+            set => __pbn__ContentInfo = value;
+        }
+        public bool ShouldSerializeContentInfo() => __pbn__ContentInfo != null;
+        public void ResetContentInfo() => __pbn__ContentInfo = null;
+        private byte[] __pbn__ContentInfo;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserDataRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"baid", IsRequired = true)]
+        public uint Baid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserDataResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"tone_flg")]
+        public byte[] ToneFlg
+        {
+            get => __pbn__ToneFlg;
+            set => __pbn__ToneFlg = value;
+        }
+        public bool ShouldSerializeToneFlg() => __pbn__ToneFlg != null;
+        public void ResetToneFlg() => __pbn__ToneFlg = null;
+        private byte[] __pbn__ToneFlg;
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"title_flg")]
+        public byte[] TitleFlg
+        {
+            get => __pbn__TitleFlg;
+            set => __pbn__TitleFlg = value;
+        }
+        public bool ShouldSerializeTitleFlg() => __pbn__TitleFlg != null;
+        public void ResetTitleFlg() => __pbn__TitleFlg = null;
+        private byte[] __pbn__TitleFlg;
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"release_song_flg")]
+        public byte[] ReleaseSongFlg
+        {
+            get => __pbn__ReleaseSongFlg;
+            set => __pbn__ReleaseSongFlg = value;
+        }
+        public bool ShouldSerializeReleaseSongFlg() => __pbn__ReleaseSongFlg != null;
+        public void ResetReleaseSongFlg() => __pbn__ReleaseSongFlg = null;
+        private byte[] __pbn__ReleaseSongFlg;
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"ura_release_song_flg")]
+        public byte[] UraReleaseSongFlg
+        {
+            get => __pbn__UraReleaseSongFlg;
+            set => __pbn__UraReleaseSongFlg = value;
+        }
+        public bool ShouldSerializeUraReleaseSongFlg() => __pbn__UraReleaseSongFlg != null;
+        public void ResetUraReleaseSongFlg() => __pbn__UraReleaseSongFlg = null;
+        private byte[] __pbn__UraReleaseSongFlg;
+
+        [global::ProtoBuf.ProtoMember(6, Name = @"ary_favorite_song_no")]
+        public uint[] AryFavoriteSongNoes { get; set; }
+
+        [global::ProtoBuf.ProtoMember(7, Name = @"ary_recent_song_no")]
+        public uint[] AryRecentSongNoes { get; set; }
+
+        [global::ProtoBuf.ProtoMember(8, Name = @"disp_score_type")]
+        public uint DispScoreType
+        {
+            get => __pbn__DispScoreType.GetValueOrDefault();
+            set => __pbn__DispScoreType = value;
+        }
+        public bool ShouldSerializeDispScoreType() => __pbn__DispScoreType != null;
+        public void ResetDispScoreType() => __pbn__DispScoreType = null;
+        private uint? __pbn__DispScoreType;
+
+        [global::ProtoBuf.ProtoMember(9, Name = @"disp_level_chassis")]
+        public uint DispLevelChassis
+        {
+            get => __pbn__DispLevelChassis.GetValueOrDefault();
+            set => __pbn__DispLevelChassis = value;
+        }
+        public bool ShouldSerializeDispLevelChassis() => __pbn__DispLevelChassis != null;
+        public void ResetDispLevelChassis() => __pbn__DispLevelChassis = null;
+        private uint? __pbn__DispLevelChassis;
+
+        [global::ProtoBuf.ProtoMember(10, Name = @"disp_level_self")]
+        public uint DispLevelSelf
+        {
+            get => __pbn__DispLevelSelf.GetValueOrDefault();
+            set => __pbn__DispLevelSelf = value;
+        }
+        public bool ShouldSerializeDispLevelSelf() => __pbn__DispLevelSelf != null;
+        public void ResetDispLevelSelf() => __pbn__DispLevelSelf = null;
+        private uint? __pbn__DispLevelSelf;
+
+        [global::ProtoBuf.ProtoMember(11, Name = @"is_disp_tojiru_on")]
+        public bool IsDispTojiruOn
+        {
+            get => __pbn__IsDispTojiruOn.GetValueOrDefault();
+            set => __pbn__IsDispTojiruOn = value;
+        }
+        public bool ShouldSerializeIsDispTojiruOn() => __pbn__IsDispTojiruOn != null;
+        public void ResetIsDispTojiruOn() => __pbn__IsDispTojiruOn = null;
+        private bool? __pbn__IsDispTojiruOn;
+
+        [global::ProtoBuf.ProtoMember(12, Name = @"default_option_setting")]
+        public byte[] DefaultOptionSetting
+        {
+            get => __pbn__DefaultOptionSetting;
+            set => __pbn__DefaultOptionSetting = value;
+        }
+        public bool ShouldSerializeDefaultOptionSetting() => __pbn__DefaultOptionSetting != null;
+        public void ResetDefaultOptionSetting() => __pbn__DefaultOptionSetting = null;
+        private byte[] __pbn__DefaultOptionSetting;
+
+        [global::ProtoBuf.ProtoMember(13, Name = @"notes_position", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+        public int NotesPosition
+        {
+            get => __pbn__NotesPosition.GetValueOrDefault();
+            set => __pbn__NotesPosition = value;
+        }
+        public bool ShouldSerializeNotesPosition() => __pbn__NotesPosition != null;
+        public void ResetNotesPosition() => __pbn__NotesPosition = null;
+        private int? __pbn__NotesPosition;
+
+        [global::ProtoBuf.ProtoMember(14, Name = @"is_voice_on")]
+        public bool IsVoiceOn
+        {
+            get => __pbn__IsVoiceOn.GetValueOrDefault();
+            set => __pbn__IsVoiceOn = value;
+        }
+        public bool ShouldSerializeIsVoiceOn() => __pbn__IsVoiceOn != null;
+        public void ResetIsVoiceOn() => __pbn__IsVoiceOn = null;
+        private bool? __pbn__IsVoiceOn;
+
+        [global::ProtoBuf.ProtoMember(15, Name = @"is_skip_on")]
+        public bool IsSkipOn
+        {
+            get => __pbn__IsSkipOn.GetValueOrDefault();
+            set => __pbn__IsSkipOn = value;
+        }
+        public bool ShouldSerializeIsSkipOn() => __pbn__IsSkipOn != null;
+        public void ResetIsSkipOn() => __pbn__IsSkipOn = null;
+        private bool? __pbn__IsSkipOn;
+
+        [global::ProtoBuf.ProtoMember(16, Name = @"difficulty_setting_course")]
+        public uint DifficultySettingCourse
+        {
+            get => __pbn__DifficultySettingCourse.GetValueOrDefault();
+            set => __pbn__DifficultySettingCourse = value;
+        }
+        public bool ShouldSerializeDifficultySettingCourse() => __pbn__DifficultySettingCourse != null;
+        public void ResetDifficultySettingCourse() => __pbn__DifficultySettingCourse = null;
+        private uint? __pbn__DifficultySettingCourse;
+
+        [global::ProtoBuf.ProtoMember(17, Name = @"difficulty_setting_star")]
+        public uint DifficultySettingStar
+        {
+            get => __pbn__DifficultySettingStar.GetValueOrDefault();
+            set => __pbn__DifficultySettingStar = value;
+        }
+        public bool ShouldSerializeDifficultySettingStar() => __pbn__DifficultySettingStar != null;
+        public void ResetDifficultySettingStar() => __pbn__DifficultySettingStar = null;
+        private uint? __pbn__DifficultySettingStar;
+
+        [global::ProtoBuf.ProtoMember(18, Name = @"difficulty_setting_sort")]
+        public uint DifficultySettingSort
+        {
+            get => __pbn__DifficultySettingSort.GetValueOrDefault();
+            set => __pbn__DifficultySettingSort = value;
+        }
+        public bool ShouldSerializeDifficultySettingSort() => __pbn__DifficultySettingSort != null;
+        public void ResetDifficultySettingSort() => __pbn__DifficultySettingSort = null;
+        private uint? __pbn__DifficultySettingSort;
+
+        [global::ProtoBuf.ProtoMember(19, Name = @"difficulty_played_course")]
+        public uint DifficultyPlayedCourse
+        {
+            get => __pbn__DifficultyPlayedCourse.GetValueOrDefault();
+            set => __pbn__DifficultyPlayedCourse = value;
+        }
+        public bool ShouldSerializeDifficultyPlayedCourse() => __pbn__DifficultyPlayedCourse != null;
+        public void ResetDifficultyPlayedCourse() => __pbn__DifficultyPlayedCourse = null;
+        private uint? __pbn__DifficultyPlayedCourse;
+
+        [global::ProtoBuf.ProtoMember(20, Name = @"difficulty_played_star")]
+        public uint DifficultyPlayedStar
+        {
+            get => __pbn__DifficultyPlayedStar.GetValueOrDefault();
+            set => __pbn__DifficultyPlayedStar = value;
+        }
+        public bool ShouldSerializeDifficultyPlayedStar() => __pbn__DifficultyPlayedStar != null;
+        public void ResetDifficultyPlayedStar() => __pbn__DifficultyPlayedStar = null;
+        private uint? __pbn__DifficultyPlayedStar;
+
+        [global::ProtoBuf.ProtoMember(21, Name = @"difficulty_played_sort")]
+        public uint DifficultyPlayedSort
+        {
+            get => __pbn__DifficultyPlayedSort.GetValueOrDefault();
+            set => __pbn__DifficultyPlayedSort = value;
+        }
+        public bool ShouldSerializeDifficultyPlayedSort() => __pbn__DifficultyPlayedSort != null;
+        public void ResetDifficultyPlayedSort() => __pbn__DifficultyPlayedSort = null;
+        private uint? __pbn__DifficultyPlayedSort;
+
+        [global::ProtoBuf.ProtoMember(22, Name = @"total_credit_cnt")]
+        public uint TotalCreditCnt
+        {
+            get => __pbn__TotalCreditCnt.GetValueOrDefault();
+            set => __pbn__TotalCreditCnt = value;
+        }
+        public bool ShouldSerializeTotalCreditCnt() => __pbn__TotalCreditCnt != null;
+        public void ResetTotalCreditCnt() => __pbn__TotalCreditCnt = null;
+        private uint? __pbn__TotalCreditCnt;
+
+        [global::ProtoBuf.ProtoMember(23, Name = @"song_recent_cnt")]
+        public uint SongRecentCnt
+        {
+            get => __pbn__SongRecentCnt.GetValueOrDefault();
+            set => __pbn__SongRecentCnt = value;
+        }
+        public bool ShouldSerializeSongRecentCnt() => __pbn__SongRecentCnt != null;
+        public void ResetSongRecentCnt() => __pbn__SongRecentCnt = null;
+        private uint? __pbn__SongRecentCnt;
+
+        [global::ProtoBuf.ProtoMember(24, Name = @"is_challengecompe")]
+        public bool IsChallengecompe
+        {
+            get => __pbn__IsChallengecompe.GetValueOrDefault();
+            set => __pbn__IsChallengecompe = value;
+        }
+        public bool ShouldSerializeIsChallengecompe() => __pbn__IsChallengecompe != null;
+        public void ResetIsChallengecompe() => __pbn__IsChallengecompe = null;
+        private bool? __pbn__IsChallengecompe;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class PlayResultRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"baid_conf", IsRequired = true)]
+        public uint BaidConf { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"chassis_id_conf", IsRequired = true)]
+        public string ChassisIdConf { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"shop_id_conf", IsRequired = true)]
+        public string ShopIdConf { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"play_datetime_conf", IsRequired = true)]
+        public string PlayDatetimeConf { get; set; }
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"playresult_data", IsRequired = true)]
+        public byte[] PlayresultData { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class PlayResultResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class PlayResultDataRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"baid", IsRequired = true)]
+        public uint Baid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"play_datetime", IsRequired = true)]
+        public string PlayDatetime { get; set; }
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"is_right", IsRequired = true)]
+        public bool IsRight { get; set; }
+
+        [global::ProtoBuf.ProtoMember(6, Name = @"card_type", IsRequired = true)]
+        public uint CardType { get; set; }
+
+        [global::ProtoBuf.ProtoMember(7, Name = @"is_two_players", IsRequired = true)]
+        public bool IsTwoPlayers { get; set; }
+
+        [global::ProtoBuf.ProtoMember(8, Name = @"ary_stage_info")]
+        public global::System.Collections.Generic.List<StageData> AryStageInfoes { get; } = new global::System.Collections.Generic.List<StageData>();
+
+        [global::ProtoBuf.ProtoMember(9, Name = @"release_song_no")]
+        public uint[] ReleaseSongNoes { get; set; }
+
+        [global::ProtoBuf.ProtoMember(10, Name = @"ura_release_song_no")]
+        public uint[] UraReleaseSongNoes { get; set; }
+
+        [global::ProtoBuf.ProtoMember(11, Name = @"get_tone_no")]
+        public uint[] GetToneNoes { get; set; }
+
+        [global::ProtoBuf.ProtoMember(12, Name = @"get_costume_no_1")]
+        public uint[] GetCostumeNo1s { get; set; }
+
+        [global::ProtoBuf.ProtoMember(13, Name = @"get_costume_no_2")]
+        public uint[] GetCostumeNo2s { get; set; }
+
+        [global::ProtoBuf.ProtoMember(14, Name = @"get_costume_no_3")]
+        public uint[] GetCostumeNo3s { get; set; }
+
+        [global::ProtoBuf.ProtoMember(15, Name = @"get_costume_no_4")]
+        public uint[] GetCostumeNo4s { get; set; }
+
+        [global::ProtoBuf.ProtoMember(16, Name = @"get_costume_no_5")]
+        public uint[] GetCostumeNo5s { get; set; }
+
+        [global::ProtoBuf.ProtoMember(17, Name = @"get_title_no")]
+        public uint[] GetTitleNoes { get; set; }
+
+        [global::ProtoBuf.ProtoMember(18, Name = @"get_generic_info_no")]
+        public uint[] GetGenericInfoNoes { get; set; }
+
+        [global::ProtoBuf.ProtoMember(19, Name = @"ary_play_costume", IsRequired = true)]
+        public CostumeData AryPlayCostume { get; set; }
+
+        [global::ProtoBuf.ProtoMember(20, Name = @"ary_current_costume", IsRequired = true)]
+        public CostumeData AryCurrentCostume { get; set; }
+
+        [global::ProtoBuf.ProtoMember(21, Name = @"title")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Title
+        {
+            get => __pbn__Title ?? "";
+            set => __pbn__Title = value;
+        }
+        public bool ShouldSerializeTitle() => __pbn__Title != null;
+        public void ResetTitle() => __pbn__Title = null;
+        private string __pbn__Title;
+
+        [global::ProtoBuf.ProtoMember(22, Name = @"titleplate_id")]
+        public uint TitleplateId
+        {
+            get => __pbn__TitleplateId.GetValueOrDefault();
+            set => __pbn__TitleplateId = value;
+        }
+        public bool ShouldSerializeTitleplateId() => __pbn__TitleplateId != null;
+        public void ResetTitleplateId() => __pbn__TitleplateId = null;
+        private uint? __pbn__TitleplateId;
+
+        [global::ProtoBuf.ProtoMember(23, Name = @"play_mode", IsRequired = true)]
+        public uint PlayMode { get; set; }
+
+        [global::ProtoBuf.ProtoMember(24, Name = @"collaboration_id")]
+        public uint CollaborationId
+        {
+            get => __pbn__CollaborationId.GetValueOrDefault();
+            set => __pbn__CollaborationId = value;
+        }
+        public bool ShouldSerializeCollaborationId() => __pbn__CollaborationId != null;
+        public void ResetCollaborationId() => __pbn__CollaborationId = null;
+        private uint? __pbn__CollaborationId;
+
+        [global::ProtoBuf.ProtoMember(25, Name = @"dan_id")]
+        public uint DanId
+        {
+            get => __pbn__DanId.GetValueOrDefault();
+            set => __pbn__DanId = value;
+        }
+        public bool ShouldSerializeDanId() => __pbn__DanId != null;
+        public void ResetDanId() => __pbn__DanId = null;
+        private uint? __pbn__DanId;
+
+        [global::ProtoBuf.ProtoMember(26, Name = @"dan_result")]
+        public uint DanResult
+        {
+            get => __pbn__DanResult.GetValueOrDefault();
+            set => __pbn__DanResult = value;
+        }
+        public bool ShouldSerializeDanResult() => __pbn__DanResult != null;
+        public void ResetDanResult() => __pbn__DanResult = null;
+        private uint? __pbn__DanResult;
+
+        [global::ProtoBuf.ProtoMember(27, Name = @"soul_gauge_total")]
+        public uint SoulGaugeTotal
+        {
+            get => __pbn__SoulGaugeTotal.GetValueOrDefault();
+            set => __pbn__SoulGaugeTotal = value;
+        }
+        public bool ShouldSerializeSoulGaugeTotal() => __pbn__SoulGaugeTotal != null;
+        public void ResetSoulGaugeTotal() => __pbn__SoulGaugeTotal = null;
+        private uint? __pbn__SoulGaugeTotal;
+
+        [global::ProtoBuf.ProtoMember(28, Name = @"combo_cnt_total")]
+        public uint ComboCntTotal
+        {
+            get => __pbn__ComboCntTotal.GetValueOrDefault();
+            set => __pbn__ComboCntTotal = value;
+        }
+        public bool ShouldSerializeComboCntTotal() => __pbn__ComboCntTotal != null;
+        public void ResetComboCntTotal() => __pbn__ComboCntTotal = null;
+        private uint? __pbn__ComboCntTotal;
+
+        [global::ProtoBuf.ProtoMember(29, Name = @"is_not_recorded_dan")]
+        public bool IsNotRecordedDan
+        {
+            get => __pbn__IsNotRecordedDan.GetValueOrDefault();
+            set => __pbn__IsNotRecordedDan = value;
+        }
+        public bool ShouldSerializeIsNotRecordedDan() => __pbn__IsNotRecordedDan != null;
+        public void ResetIsNotRecordedDan() => __pbn__IsNotRecordedDan = null;
+        private bool? __pbn__IsNotRecordedDan;
+
+        [global::ProtoBuf.ProtoMember(30, Name = @"area_code", IsRequired = true)]
+        public uint AreaCode { get; set; }
+
+        [global::ProtoBuf.ProtoMember(31, Name = @"reserved", IsRequired = true)]
+        public byte[] Reserved { get; set; }
+
+        [global::ProtoBuf.ProtoMember(32, Name = @"tournament_mode")]
+        public uint TournamentMode
+        {
+            get => __pbn__TournamentMode.GetValueOrDefault();
+            set => __pbn__TournamentMode = value;
+        }
+        public bool ShouldSerializeTournamentMode() => __pbn__TournamentMode != null;
+        public void ResetTournamentMode() => __pbn__TournamentMode = null;
+        private uint? __pbn__TournamentMode;
+
+        [global::ProtoBuf.ProtoMember(33, Name = @"accesstoken")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Accesstoken
+        {
+            get => __pbn__Accesstoken ?? "";
+            set => __pbn__Accesstoken = value;
+        }
+        public bool ShouldSerializeAccesstoken() => __pbn__Accesstoken != null;
+        public void ResetAccesstoken() => __pbn__Accesstoken = null;
+        private string __pbn__Accesstoken;
+
+        [global::ProtoBuf.ProtoMember(34, Name = @"content_info")]
+        public byte[] ContentInfo
+        {
+            get => __pbn__ContentInfo;
+            set => __pbn__ContentInfo = value;
+        }
+        public bool ShouldSerializeContentInfo() => __pbn__ContentInfo != null;
+        public void ResetContentInfo() => __pbn__ContentInfo = null;
+        private byte[] __pbn__ContentInfo;
+
+        [global::ProtoBuf.ProtoMember(35, Name = @"difficulty_played_course")]
+        public uint DifficultyPlayedCourse
+        {
+            get => __pbn__DifficultyPlayedCourse.GetValueOrDefault();
+            set => __pbn__DifficultyPlayedCourse = value;
+        }
+        public bool ShouldSerializeDifficultyPlayedCourse() => __pbn__DifficultyPlayedCourse != null;
+        public void ResetDifficultyPlayedCourse() => __pbn__DifficultyPlayedCourse = null;
+        private uint? __pbn__DifficultyPlayedCourse;
+
+        [global::ProtoBuf.ProtoMember(36, Name = @"difficulty_played_star")]
+        public uint DifficultyPlayedStar
+        {
+            get => __pbn__DifficultyPlayedStar.GetValueOrDefault();
+            set => __pbn__DifficultyPlayedStar = value;
+        }
+        public bool ShouldSerializeDifficultyPlayedStar() => __pbn__DifficultyPlayedStar != null;
+        public void ResetDifficultyPlayedStar() => __pbn__DifficultyPlayedStar = null;
+        private uint? __pbn__DifficultyPlayedStar;
+
+        [global::ProtoBuf.ProtoMember(37, Name = @"difficulty_played_sort")]
+        public uint DifficultyPlayedSort
+        {
+            get => __pbn__DifficultyPlayedSort.GetValueOrDefault();
+            set => __pbn__DifficultyPlayedSort = value;
+        }
+        public bool ShouldSerializeDifficultyPlayedSort() => __pbn__DifficultyPlayedSort != null;
+        public void ResetDifficultyPlayedSort() => __pbn__DifficultyPlayedSort = null;
+        private uint? __pbn__DifficultyPlayedSort;
+
+        [global::ProtoBuf.ProtoMember(38, Name = @"is_random_use_play")]
+        public uint IsRandomUsePlay
+        {
+            get => __pbn__IsRandomUsePlay.GetValueOrDefault();
+            set => __pbn__IsRandomUsePlay = value;
+        }
+        public bool ShouldSerializeIsRandomUsePlay() => __pbn__IsRandomUsePlay != null;
+        public void ResetIsRandomUsePlay() => __pbn__IsRandomUsePlay = null;
+        private uint? __pbn__IsRandomUsePlay;
+
+        [global::ProtoBuf.ProtoMember(39, Name = @"input_median")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string InputMedian
+        {
+            get => __pbn__InputMedian ?? "";
+            set => __pbn__InputMedian = value;
+        }
+        public bool ShouldSerializeInputMedian() => __pbn__InputMedian != null;
+        public void ResetInputMedian() => __pbn__InputMedian = null;
+        private string __pbn__InputMedian;
+
+        [global::ProtoBuf.ProtoMember(40, Name = @"input_variance")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string InputVariance
+        {
+            get => __pbn__InputVariance ?? "";
+            set => __pbn__InputVariance = value;
+        }
+        public bool ShouldSerializeInputVariance() => __pbn__InputVariance != null;
+        public void ResetInputVariance() => __pbn__InputVariance = null;
+        private string __pbn__InputVariance;
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class StageData : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1, Name = @"song_no", IsRequired = true)]
+            public uint SongNo { get; set; }
+
+            [global::ProtoBuf.ProtoMember(2, Name = @"level", IsRequired = true)]
+            public uint Level { get; set; }
+
+            [global::ProtoBuf.ProtoMember(3, Name = @"stage_mode", IsRequired = true)]
+            public uint StageMode { get; set; }
+
+            [global::ProtoBuf.ProtoMember(4, Name = @"play_result", IsRequired = true)]
+            public uint PlayResult { get; set; }
+
+            [global::ProtoBuf.ProtoMember(5, Name = @"play_score", IsRequired = true)]
+            public uint PlayScore { get; set; }
+
+            [global::ProtoBuf.ProtoMember(6, Name = @"score_rate", IsRequired = true)]
+            public uint ScoreRate { get; set; }
+
+            [global::ProtoBuf.ProtoMember(7, Name = @"score_rank", IsRequired = true)]
+            public uint ScoreRank { get; set; }
+
+            [global::ProtoBuf.ProtoMember(8, Name = @"good_cnt", IsRequired = true)]
+            public uint GoodCnt { get; set; }
+
+            [global::ProtoBuf.ProtoMember(9, Name = @"ok_cnt", IsRequired = true)]
+            public uint OkCnt { get; set; }
+
+            [global::ProtoBuf.ProtoMember(10, Name = @"ng_cnt", IsRequired = true)]
+            public uint NgCnt { get; set; }
+
+            [global::ProtoBuf.ProtoMember(11, Name = @"pound_cnt", IsRequired = true)]
+            public uint PoundCnt { get; set; }
+
+            [global::ProtoBuf.ProtoMember(12, Name = @"combo_cnt", IsRequired = true)]
+            public uint ComboCnt { get; set; }
+
+            [global::ProtoBuf.ProtoMember(13, Name = @"hit_cnt")]
+            public uint HitCnt
+            {
+                get => __pbn__HitCnt.GetValueOrDefault();
+                set => __pbn__HitCnt = value;
+            }
+            public bool ShouldSerializeHitCnt() => __pbn__HitCnt != null;
+            public void ResetHitCnt() => __pbn__HitCnt = null;
+            private uint? __pbn__HitCnt;
+
+            [global::ProtoBuf.ProtoMember(14, Name = @"option_flg", IsRequired = true)]
+            public byte[] OptionFlg { get; set; }
+
+            [global::ProtoBuf.ProtoMember(15, Name = @"tone_flg", IsRequired = true)]
+            public byte[] ToneFlg { get; set; }
+
+            [global::ProtoBuf.ProtoMember(16, Name = @"notes_position", DataFormat = global::ProtoBuf.DataFormat.ZigZag, IsRequired = true)]
+            public int NotesPosition { get; set; }
+
+            [global::ProtoBuf.ProtoMember(17, Name = @"is_voice_on", IsRequired = true)]
+            public bool IsVoiceOn { get; set; }
+
+            [global::ProtoBuf.ProtoMember(18, Name = @"is_skip_on", IsRequired = true)]
+            public bool IsSkipOn { get; set; }
+
+            [global::ProtoBuf.ProtoMember(19, Name = @"is_skip_use", IsRequired = true)]
+            public bool IsSkipUse { get; set; }
+
+            [global::ProtoBuf.ProtoMember(20, Name = @"support_level", IsRequired = true)]
+            public uint SupportLevel { get; set; }
+
+            [global::ProtoBuf.ProtoMember(21, Name = @"ary_challenge_id")]
+            public global::System.Collections.Generic.List<ResultcompeData> AryChallengeIds { get; } = new global::System.Collections.Generic.List<ResultcompeData>();
+
+            [global::ProtoBuf.ProtoMember(22, Name = @"ary_user_compe_id")]
+            public global::System.Collections.Generic.List<ResultcompeData> AryUserCompeIds { get; } = new global::System.Collections.Generic.List<ResultcompeData>();
+
+            [global::ProtoBuf.ProtoMember(23, Name = @"ary_bng_compe_id")]
+            public global::System.Collections.Generic.List<ResultcompeData> AryBngCompeIds { get; } = new global::System.Collections.Generic.List<ResultcompeData>();
+
+            [global::ProtoBuf.ProtoMember(24, Name = @"music_categ", IsRequired = true)]
+            public uint MusicCateg { get; set; }
+
+            [global::ProtoBuf.ProtoMember(25, Name = @"is_favorite", IsRequired = true)]
+            public bool IsFavorite { get; set; }
+
+            [global::ProtoBuf.ProtoMember(26, Name = @"is_recent", IsRequired = true)]
+            public bool IsRecent { get; set; }
+
+            [global::ProtoBuf.ProtoMember(27, Name = @"selected_folder_id", IsRequired = true)]
+            public uint SelectedFolderId { get; set; }
+
+            [global::ProtoBuf.ProtoMember(28, Name = @"is_random_use_stage")]
+            public uint IsRandomUseStage
+            {
+                get => __pbn__IsRandomUseStage.GetValueOrDefault();
+                set => __pbn__IsRandomUseStage = value;
+            }
+            public bool ShouldSerializeIsRandomUseStage() => __pbn__IsRandomUseStage != null;
+            public void ResetIsRandomUseStage() => __pbn__IsRandomUseStage = null;
+            private uint? __pbn__IsRandomUseStage;
+
+            [global::ProtoBuf.ProtoMember(29, Name = @"is_papamama", IsRequired = true)]
+            public bool IsPapamama { get; set; }
+
+            [global::ProtoBuf.ProtoMember(30, Name = @"star_level", IsRequired = true)]
+            public uint StarLevel { get; set; }
+
+            [global::ProtoBuf.ProtoMember(31, Name = @"is_win")]
+            public bool IsWin
+            {
+                get => __pbn__IsWin.GetValueOrDefault();
+                set => __pbn__IsWin = value;
+            }
+            public bool ShouldSerializeIsWin() => __pbn__IsWin != null;
+            public void ResetIsWin() => __pbn__IsWin = null;
+            private bool? __pbn__IsWin;
+
+            [global::ProtoBuf.ProtoMember(32, Name = @"ary_section_data")]
+            public global::System.Collections.Generic.List<AiStageSectionData> ArySectionDatas { get; } = new global::System.Collections.Generic.List<AiStageSectionData>();
+
+            [global::ProtoBuf.ProtoContract()]
+            public partial class ResultcompeData : global::ProtoBuf.IExtensible
+            {
+                private global::ProtoBuf.IExtension __pbn__extensionData;
+                global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                    => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+                [global::ProtoBuf.ProtoMember(1, Name = @"compe_id", IsRequired = true)]
+                public uint CompeId { get; set; }
+
+                [global::ProtoBuf.ProtoMember(2, Name = @"track_no", IsRequired = true)]
+                public uint TrackNo { get; set; }
+
+            }
+
+            [global::ProtoBuf.ProtoContract()]
+            public partial class AiStageSectionData : global::ProtoBuf.IExtensible
+            {
+                private global::ProtoBuf.IExtension __pbn__extensionData;
+                global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                    => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+                [global::ProtoBuf.ProtoMember(1, Name = @"is_win", IsRequired = true)]
+                public bool IsWin { get; set; }
+
+                [global::ProtoBuf.ProtoMember(2, Name = @"crown", IsRequired = true)]
+                public uint Crown { get; set; }
+
+                [global::ProtoBuf.ProtoMember(3, Name = @"score", IsRequired = true)]
+                public uint Score { get; set; }
+
+                [global::ProtoBuf.ProtoMember(4, Name = @"good_cnt", IsRequired = true)]
+                public uint GoodCnt { get; set; }
+
+                [global::ProtoBuf.ProtoMember(5, Name = @"ok_cnt", IsRequired = true)]
+                public uint OkCnt { get; set; }
+
+                [global::ProtoBuf.ProtoMember(6, Name = @"ng_cnt", IsRequired = true)]
+                public uint NgCnt { get; set; }
+
+                [global::ProtoBuf.ProtoMember(7, Name = @"pound_cnt", IsRequired = true)]
+                public uint PoundCnt { get; set; }
+
+            }
+
+        }
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class CostumeData : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1, Name = @"costume_1")]
+            public uint Costume1
+            {
+                get => __pbn__Costume1.GetValueOrDefault();
+                set => __pbn__Costume1 = value;
+            }
+            public bool ShouldSerializeCostume1() => __pbn__Costume1 != null;
+            public void ResetCostume1() => __pbn__Costume1 = null;
+            private uint? __pbn__Costume1;
+
+            [global::ProtoBuf.ProtoMember(2, Name = @"costume_2")]
+            public uint Costume2
+            {
+                get => __pbn__Costume2.GetValueOrDefault();
+                set => __pbn__Costume2 = value;
+            }
+            public bool ShouldSerializeCostume2() => __pbn__Costume2 != null;
+            public void ResetCostume2() => __pbn__Costume2 = null;
+            private uint? __pbn__Costume2;
+
+            [global::ProtoBuf.ProtoMember(3, Name = @"costume_3")]
+            public uint Costume3
+            {
+                get => __pbn__Costume3.GetValueOrDefault();
+                set => __pbn__Costume3 = value;
+            }
+            public bool ShouldSerializeCostume3() => __pbn__Costume3 != null;
+            public void ResetCostume3() => __pbn__Costume3 = null;
+            private uint? __pbn__Costume3;
+
+            [global::ProtoBuf.ProtoMember(4, Name = @"costume_4")]
+            public uint Costume4
+            {
+                get => __pbn__Costume4.GetValueOrDefault();
+                set => __pbn__Costume4 = value;
+            }
+            public bool ShouldSerializeCostume4() => __pbn__Costume4 != null;
+            public void ResetCostume4() => __pbn__Costume4 = null;
+            private uint? __pbn__Costume4;
+
+            [global::ProtoBuf.ProtoMember(5, Name = @"costume_5")]
+            public uint Costume5
+            {
+                get => __pbn__Costume5.GetValueOrDefault();
+                set => __pbn__Costume5 = value;
+            }
+            public bool ShouldSerializeCostume5() => __pbn__Costume5 != null;
+            public void ResetCostume5() => __pbn__Costume5 = null;
+            private uint? __pbn__Costume5;
+
+        }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class SelfBestRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"baid", IsRequired = true)]
+        public uint Baid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"level")]
+        public uint Level
+        {
+            get => __pbn__Level.GetValueOrDefault();
+            set => __pbn__Level = value;
+        }
+        public bool ShouldSerializeLevel() => __pbn__Level != null;
+        public void ResetLevel() => __pbn__Level = null;
+        private uint? __pbn__Level;
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"ary_song_no")]
+        public uint[] ArySongNoes { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class SelfBestResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"level")]
+        public uint Level
+        {
+            get => __pbn__Level.GetValueOrDefault();
+            set => __pbn__Level = value;
+        }
+        public bool ShouldSerializeLevel() => __pbn__Level != null;
+        public void ResetLevel() => __pbn__Level = null;
+        private uint? __pbn__Level;
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"ary_selfbest_score")]
+        public global::System.Collections.Generic.List<SelfBestData> ArySelfbestScores { get; } = new global::System.Collections.Generic.List<SelfBestData>();
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class SelfBestData : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1, Name = @"song_no", IsRequired = true)]
+            public uint SongNo { get; set; }
+
+            [global::ProtoBuf.ProtoMember(2, Name = @"self_best_score", IsRequired = true)]
+            public uint SelfBestScore { get; set; }
+
+            [global::ProtoBuf.ProtoMember(3, Name = @"self_best_score_rate", IsRequired = true)]
+            public uint SelfBestScoreRate { get; set; }
+
+            [global::ProtoBuf.ProtoMember(4, Name = @"ura_best_score", IsRequired = true)]
+            public uint UraBestScore { get; set; }
+
+            [global::ProtoBuf.ProtoMember(5, Name = @"ura_best_score_rate", IsRequired = true)]
+            public uint UraBestScoreRate { get; set; }
+
+        }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CrownsDataRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"baid", IsRequired = true)]
+        public uint Baid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CrownsDataResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"crown_flg")]
+        public byte[] CrownFlg
+        {
+            get => __pbn__CrownFlg;
+            set => __pbn__CrownFlg = value;
+        }
+        public bool ShouldSerializeCrownFlg() => __pbn__CrownFlg != null;
+        public void ResetCrownFlg() => __pbn__CrownFlg = null;
+        private byte[] __pbn__CrownFlg;
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"dondaful_crown_flg")]
+        public byte[] DondafulCrownFlg
+        {
+            get => __pbn__DondafulCrownFlg;
+            set => __pbn__DondafulCrownFlg = value;
+        }
+        public bool ShouldSerializeDondafulCrownFlg() => __pbn__DondafulCrownFlg != null;
+        public void ResetDondafulCrownFlg() => __pbn__DondafulCrownFlg = null;
+        private byte[] __pbn__DondafulCrownFlg;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class ChallengeCompeRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"baid", IsRequired = true)]
+        public uint Baid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class ChallengeCompeResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"ary_challenge_stat")]
+        public global::System.Collections.Generic.List<CompeData> AryChallengeStats { get; } = new global::System.Collections.Generic.List<CompeData>();
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"ary_user_compe_stat")]
+        public global::System.Collections.Generic.List<CompeData> AryUserCompeStats { get; } = new global::System.Collections.Generic.List<CompeData>();
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"ary_bng_compe_stat")]
+        public global::System.Collections.Generic.List<CompeData> AryBngCompeStats { get; } = new global::System.Collections.Generic.List<CompeData>();
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class CompeData : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1, Name = @"compe_id", IsRequired = true)]
+            public uint CompeId { get; set; }
+
+            [global::ProtoBuf.ProtoMember(2, Name = @"ary_track_stat")]
+            public global::System.Collections.Generic.List<TracksData> AryTrackStats { get; } = new global::System.Collections.Generic.List<TracksData>();
+
+            [global::ProtoBuf.ProtoContract()]
+            public partial class TracksData : global::ProtoBuf.IExtensible
+            {
+                private global::ProtoBuf.IExtension __pbn__extensionData;
+                global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                    => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+                [global::ProtoBuf.ProtoMember(1, Name = @"song_no", IsRequired = true)]
+                public uint SongNo { get; set; }
+
+                [global::ProtoBuf.ProtoMember(2, Name = @"level", IsRequired = true)]
+                public uint Level { get; set; }
+
+                [global::ProtoBuf.ProtoMember(3, Name = @"option_flg", IsRequired = true)]
+                public byte[] OptionFlg { get; set; }
+
+                [global::ProtoBuf.ProtoMember(4, Name = @"high_score", IsRequired = true)]
+                public uint HighScore { get; set; }
+
+            }
+
+        }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetAiDataRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"baid", IsRequired = true)]
+        public uint Baid { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetAiDataResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"total_winnings")]
+        public uint TotalWinnings
+        {
+            get => __pbn__TotalWinnings.GetValueOrDefault();
+            set => __pbn__TotalWinnings = value;
+        }
+        public bool ShouldSerializeTotalWinnings() => __pbn__TotalWinnings != null;
+        public void ResetTotalWinnings() => __pbn__TotalWinnings = null;
+        private uint? __pbn__TotalWinnings;
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"input_median")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string InputMedian
+        {
+            get => __pbn__InputMedian ?? "";
+            set => __pbn__InputMedian = value;
+        }
+        public bool ShouldSerializeInputMedian() => __pbn__InputMedian != null;
+        public void ResetInputMedian() => __pbn__InputMedian = null;
+        private string __pbn__InputMedian;
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"input_variance")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string InputVariance
+        {
+            get => __pbn__InputVariance ?? "";
+            set => __pbn__InputVariance = value;
+        }
+        public bool ShouldSerializeInputVariance() => __pbn__InputVariance != null;
+        public void ResetInputVariance() => __pbn__InputVariance = null;
+        private string __pbn__InputVariance;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetAiScoreRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"baid", IsRequired = true)]
+        public uint Baid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"song_no", IsRequired = true)]
+        public uint SongNo { get; set; }
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"level", IsRequired = true)]
+        public uint Level { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetAiScoreResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"ary_best_section_data")]
+        public global::System.Collections.Generic.List<AiBestSectionData> AryBestSectionDatas { get; } = new global::System.Collections.Generic.List<AiBestSectionData>();
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class AiBestSectionData : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1, Name = @"section_no", IsRequired = true)]
+            public uint SectionNo { get; set; }
+
+            [global::ProtoBuf.ProtoMember(2, Name = @"crown")]
+            public uint Crown
+            {
+                get => __pbn__Crown.GetValueOrDefault();
+                set => __pbn__Crown = value;
+            }
+            public bool ShouldSerializeCrown() => __pbn__Crown != null;
+            public void ResetCrown() => __pbn__Crown = null;
+            private uint? __pbn__Crown;
+
+            [global::ProtoBuf.ProtoMember(3, Name = @"score")]
+            public uint Score
+            {
+                get => __pbn__Score.GetValueOrDefault();
+                set => __pbn__Score = value;
+            }
+            public bool ShouldSerializeScore() => __pbn__Score != null;
+            public void ResetScore() => __pbn__Score = null;
+            private uint? __pbn__Score;
+
+            [global::ProtoBuf.ProtoMember(4, Name = @"good_cnt", IsRequired = true)]
+            public uint GoodCnt { get; set; }
+
+            [global::ProtoBuf.ProtoMember(5, Name = @"ok_cnt", IsRequired = true)]
+            public uint OkCnt { get; set; }
+
+            [global::ProtoBuf.ProtoMember(6, Name = @"ng_cnt", IsRequired = true)]
+            public uint NgCnt { get; set; }
+
+            [global::ProtoBuf.ProtoMember(7, Name = @"pound_cnt", IsRequired = true)]
+            public uint PoundCnt { get; set; }
+
+        }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetTokenCountRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"baid", IsRequired = true)]
+        public uint Baid { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetTokenCountResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"ary_token_count_data")]
+        public global::System.Collections.Generic.List<TokenCountData> AryTokenCountDatas { get; } = new global::System.Collections.Generic.List<TokenCountData>();
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class TokenCountData : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1, Name = @"token_id", IsRequired = true)]
+            public uint TokenId { get; set; }
+
+            [global::ProtoBuf.ProtoMember(2, Name = @"token_count", DataFormat = global::ProtoBuf.DataFormat.ZigZag, IsRequired = true)]
+            public int TokenCount { get; set; }
+
+        }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class AddTokenCountRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"baid", IsRequired = true)]
+        public uint Baid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"ary_add_token_count_data")]
+        public global::System.Collections.Generic.List<AddTokenCountData> AryAddTokenCountDatas { get; } = new global::System.Collections.Generic.List<AddTokenCountData>();
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class AddTokenCountData : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1, Name = @"token_id", IsRequired = true)]
+            public uint TokenId { get; set; }
+
+            [global::ProtoBuf.ProtoMember(2, Name = @"add_token_count", DataFormat = global::ProtoBuf.DataFormat.ZigZag, IsRequired = true)]
+            public int AddTokenCount { get; set; }
+
+        }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class AddTokenCountResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class SongPurchaseRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"baid", IsRequired = true)]
+        public uint Baid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"song_no", IsRequired = true)]
+        public uint SongNo { get; set; }
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"type", IsRequired = true)]
+        public uint Type { get; set; }
+
+        [global::ProtoBuf.ProtoMember(6, Name = @"token_id", IsRequired = true)]
+        public uint TokenId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(7, Name = @"price", IsRequired = true)]
+        public uint Price { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class SongPurchaseResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"token_count", DataFormat = global::ProtoBuf.DataFormat.ZigZag)]
+        public int TokenCount
+        {
+            get => __pbn__TokenCount.GetValueOrDefault();
+            set => __pbn__TokenCount = value;
+        }
+        public bool ShouldSerializeTokenCount() => __pbn__TokenCount != null;
+        public void ResetTokenCount() => __pbn__TokenCount = null;
+        private int? __pbn__TokenCount;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class RewardcardcheckRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"device_type", IsRequired = true)]
+        public uint DeviceType { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"access_code", IsRequired = true)]
+        public string AccessCode { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"chip_id", IsRequired = true)]
+        public string ChipId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(6, Name = @"country_id", IsRequired = true)]
+        public string CountryId { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class RewardcardcheckResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"baid")]
+        public uint Baid
+        {
+            get => __pbn__Baid.GetValueOrDefault();
+            set => __pbn__Baid = value;
+        }
+        public bool ShouldSerializeBaid() => __pbn__Baid != null;
+        public void ResetBaid() => __pbn__Baid = null;
+        private uint? __pbn__Baid;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class RewardexecutionRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"baid", IsRequired = true)]
+        public uint Baid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"release_song_no")]
+        public uint[] ReleaseSongNoes { get; set; }
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"get_tone_no")]
+        public uint[] GetToneNoes { get; set; }
+
+        [global::ProtoBuf.ProtoMember(6, Name = @"get_costume_no_1")]
+        public uint[] GetCostumeNo1s { get; set; }
+
+        [global::ProtoBuf.ProtoMember(7, Name = @"get_costume_no_2")]
+        public uint[] GetCostumeNo2s { get; set; }
+
+        [global::ProtoBuf.ProtoMember(8, Name = @"get_costume_no_3")]
+        public uint[] GetCostumeNo3s { get; set; }
+
+        [global::ProtoBuf.ProtoMember(9, Name = @"get_costume_no_4")]
+        public uint[] GetCostumeNo4s { get; set; }
+
+        [global::ProtoBuf.ProtoMember(10, Name = @"get_costume_no_5")]
+        public uint[] GetCostumeNo5s { get; set; }
+
+        [global::ProtoBuf.ProtoMember(11, Name = @"get_title_no")]
+        public uint[] GetTitleNoes { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class RewardexecutionResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetDanScoreRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"baid", IsRequired = true)]
+        public uint Baid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"type", IsRequired = true)]
+        public uint Type { get; set; }
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"dan_id")]
+        public uint[] DanIds { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetDanScoreResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"ary_dan_score_data")]
+        public global::System.Collections.Generic.List<DanScoreData> AryDanScoreDatas { get; } = new global::System.Collections.Generic.List<DanScoreData>();
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class DanScoreData : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1, Name = @"dan_id", IsRequired = true)]
+            public uint DanId { get; set; }
+
+            [global::ProtoBuf.ProtoMember(2, Name = @"arrival_song_cnt", IsRequired = true)]
+            public uint ArrivalSongCnt { get; set; }
+
+            [global::ProtoBuf.ProtoMember(3, Name = @"soul_gauge_total", IsRequired = true)]
+            public uint SoulGaugeTotal { get; set; }
+
+            [global::ProtoBuf.ProtoMember(4, Name = @"combo_cnt_total", IsRequired = true)]
+            public uint ComboCntTotal { get; set; }
+
+            [global::ProtoBuf.ProtoMember(5, Name = @"ary_dan_score_data_stage")]
+            public global::System.Collections.Generic.List<DanScoreDataStage> AryDanScoreDataStages { get; } = new global::System.Collections.Generic.List<DanScoreDataStage>();
+
+            [global::ProtoBuf.ProtoContract()]
+            public partial class DanScoreDataStage : global::ProtoBuf.IExtensible
+            {
+                private global::ProtoBuf.IExtension __pbn__extensionData;
+                global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                    => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+                [global::ProtoBuf.ProtoMember(1, Name = @"play_score", IsRequired = true)]
+                public uint PlayScore { get; set; }
+
+                [global::ProtoBuf.ProtoMember(2, Name = @"good_cnt", IsRequired = true)]
+                public uint GoodCnt { get; set; }
+
+                [global::ProtoBuf.ProtoMember(3, Name = @"ok_cnt", IsRequired = true)]
+                public uint OkCnt { get; set; }
+
+                [global::ProtoBuf.ProtoMember(4, Name = @"ng_cnt", IsRequired = true)]
+                public uint NgCnt { get; set; }
+
+                [global::ProtoBuf.ProtoMember(5, Name = @"pound_cnt", IsRequired = true)]
+                public uint PoundCnt { get; set; }
+
+                [global::ProtoBuf.ProtoMember(6, Name = @"hit_cnt", IsRequired = true)]
+                public uint HitCnt { get; set; }
+
+                [global::ProtoBuf.ProtoMember(7, Name = @"combo_cnt", IsRequired = true)]
+                public uint ComboCnt { get; set; }
+
+                [global::ProtoBuf.ProtoMember(8, Name = @"high_score")]
+                public uint HighScore
+                {
+                    get => __pbn__HighScore.GetValueOrDefault();
+                    set => __pbn__HighScore = value;
+                }
+                public bool ShouldSerializeHighScore() => __pbn__HighScore != null;
+                public void ResetHighScore() => __pbn__HighScore = null;
+                private uint? __pbn__HighScore;
+
+            }
+
+        }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class RewardItemRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"baid", IsRequired = true)]
+        public uint Baid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"release_song_no")]
+        public uint[] ReleaseSongNoes { get; set; }
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"ura_release_song_no")]
+        public uint[] UraReleaseSongNoes { get; set; }
+
+        [global::ProtoBuf.ProtoMember(6, Name = @"get_tone_no")]
+        public uint[] GetToneNoes { get; set; }
+
+        [global::ProtoBuf.ProtoMember(7, Name = @"get_costume_no_1")]
+        public uint[] GetCostumeNo1s { get; set; }
+
+        [global::ProtoBuf.ProtoMember(8, Name = @"get_costume_no_2")]
+        public uint[] GetCostumeNo2s { get; set; }
+
+        [global::ProtoBuf.ProtoMember(9, Name = @"get_costume_no_3")]
+        public uint[] GetCostumeNo3s { get; set; }
+
+        [global::ProtoBuf.ProtoMember(10, Name = @"get_costume_no_4")]
+        public uint[] GetCostumeNo4s { get; set; }
+
+        [global::ProtoBuf.ProtoMember(11, Name = @"get_costume_no_5")]
+        public uint[] GetCostumeNo5s { get; set; }
+
+        [global::ProtoBuf.ProtoMember(12, Name = @"get_title_no")]
+        public uint[] GetTitleNoes { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class RewardItemResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetScoreRankRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"baid", IsRequired = true)]
+        public uint Baid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetScoreRankResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"iki_score_rank_flg")]
+        public byte[] IkiScoreRankFlg
+        {
+            get => __pbn__IkiScoreRankFlg;
+            set => __pbn__IkiScoreRankFlg = value;
+        }
+        public bool ShouldSerializeIkiScoreRankFlg() => __pbn__IkiScoreRankFlg != null;
+        public void ResetIkiScoreRankFlg() => __pbn__IkiScoreRankFlg = null;
+        private byte[] __pbn__IkiScoreRankFlg;
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"miyabi_score_rank_flg")]
+        public byte[] MiyabiScoreRankFlg
+        {
+            get => __pbn__MiyabiScoreRankFlg;
+            set => __pbn__MiyabiScoreRankFlg = value;
+        }
+        public bool ShouldSerializeMiyabiScoreRankFlg() => __pbn__MiyabiScoreRankFlg != null;
+        public void ResetMiyabiScoreRankFlg() => __pbn__MiyabiScoreRankFlg = null;
+        private byte[] __pbn__MiyabiScoreRankFlg;
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"kiwami_score_rank_flg")]
+        public byte[] KiwamiScoreRankFlg
+        {
+            get => __pbn__KiwamiScoreRankFlg;
+            set => __pbn__KiwamiScoreRankFlg = value;
+        }
+        public bool ShouldSerializeKiwamiScoreRankFlg() => __pbn__KiwamiScoreRankFlg != null;
+        public void ResetKiwamiScoreRankFlg() => __pbn__KiwamiScoreRankFlg = null;
+        private byte[] __pbn__KiwamiScoreRankFlg;
+
+    }
 }
 
 #pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192

@@ -1,6 +1,6 @@
 ﻿namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r00_cn/chassis/getdanodai.php")]
+[Route("/v12r08_ww/chassis/getdanodai_ela9zu1a.php")]
 [ApiController]
 public class GetDanOdaiController : BaseController<GetDanOdaiController>
 {
@@ -16,7 +16,7 @@ public class GetDanOdaiController : BaseController<GetDanOdaiController>
     public IActionResult GetDanOdai([FromBody] GetDanOdaiRequest request)
     {
         Logger.LogInformation("GetDanOdai request : {Request}", request.Stringify());
-        
+
         var response = new GetDanOdaiResponse
         {
             Result = 1
@@ -50,7 +50,7 @@ public class GetDanOdaiController : BaseController<GetDanOdaiController>
                 response.AryOdaiDatas.Add(odaiData);
             }
         }
-        
+
         return Ok(response);
     }
 }

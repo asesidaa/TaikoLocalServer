@@ -1,6 +1,6 @@
-﻿using System.Text.Json;
-using GameDatabase.Context;
+﻿using GameDatabase.Context;
 using GameDatabase.Entities;
+using System.Text.Json;
 using Throw;
 
 namespace TaikoLocalServer.Services;
@@ -17,12 +17,12 @@ public class UserDatumService : IUserDatumService
         this.logger = logger;
     }
 
-    public async Task<UserDatum?> GetFirstUserDatumOrNull(ulong baid)
+    public async Task<UserDatum?> GetFirstUserDatumOrNull(uint baid)
     {
         return await context.UserData.FindAsync(baid);
     }
 
-    public async Task<UserDatum> GetFirstUserDatumOrDefault(ulong baid)
+    public async Task<UserDatum> GetFirstUserDatumOrDefault(uint baid)
     {
         return await context.UserData.FindAsync(baid) ?? new UserDatum();
     }
@@ -56,10 +56,10 @@ public class UserDatumService : IUserDatumService
         context.Update(userDatum);
         await context.SaveChangesAsync();
     }
-    
+
     public async Task<bool> DeleteUser(uint baid)
     {
-        var userDatum = await context.UserData.FindAsync((ulong)baid);
+        var userDatum = await context.UserData.FindAsync(baid);
         if (userDatum == null) return false;
         context.UserData.Remove(userDatum);
         await context.SaveChangesAsync();
@@ -67,7 +67,7 @@ public class UserDatumService : IUserDatumService
         return true;
     }
 
-    public async Task<List<uint>> GetFavoriteSongIds(ulong baid)
+    public async Task<List<uint>> GetFavoriteSongIds(uint baid)
     {
         var userDatum = await context.UserData.FindAsync(baid);
         userDatum.ThrowIfNull($"User with baid: {baid} not found!");
@@ -87,7 +87,7 @@ public class UserDatumService : IUserDatumService
         return result;
     }
 
-    public async Task UpdateFavoriteSong(ulong baid, uint songId, bool isFavorite)
+    public async Task UpdateFavoriteSong(uint baid, uint songId, bool isFavorite)
     {
         var userDatum = await context.UserData.FindAsync(baid);
         userDatum.ThrowIfNull($"User with baid: {baid} not found!");
@@ -124,5 +124,5 @@ public class UserDatumService : IUserDatumService
         context.Update(userDatum);
         await context.SaveChangesAsync();
     }
-    
+
 }

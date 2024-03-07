@@ -1,6 +1,6 @@
 ﻿namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r00_cn/chassis/setanystring.php")]
+[Route("/v12r08_ww/chassis/setanystring_mssxf3bo.php")]
 [ApiController]
 public class SetAnyStringController : BaseController<SetAnyStringController>
 {

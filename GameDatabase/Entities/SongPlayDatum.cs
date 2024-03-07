@@ -5,7 +5,7 @@ namespace GameDatabase.Entities
     public partial class SongPlayDatum
     {
         public long Id { get; set; }
-        public ulong Baid { get; set; }
+        public uint Baid { get; set; }
 
         public uint SongNumber { get; set; }
 

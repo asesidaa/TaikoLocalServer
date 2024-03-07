@@ -8,7 +8,7 @@ namespace TaikoLocalServer.Controllers.Game;
 
 using StageData = PlayResultDataRequest.StageData;
 
-[Route("/v12r00_cn/chassis/playresult.php")]
+[Route("/v12r08_ww/chassis/playresult.php")]
 [ApiController]
 public class PlayResultController : BaseController<PlayResultController>
 {

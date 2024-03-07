@@ -13,7 +13,7 @@ public class CredentialService : ICredentialService
     {
         this.context = context;
     }
-    
+
     public async Task<List<UserCredential>> GetUserCredentialsFromCredentials()
     {
         return await context.Credentials.Select(credential => credential.CopyPropertiesToNew<UserCredential>(null)).ToListAsync();
@@ -27,7 +27,7 @@ public class CredentialService : ICredentialService
 
     public async Task<bool> DeleteCredential(uint baid)
     {
-        var credential = await context.Credentials.FindAsync((ulong)baid);
+        var credential = await context.Credentials.FindAsync(baid);
 
         if (credential is null) return false;
 
@@ -36,10 +36,10 @@ public class CredentialService : ICredentialService
 
         return true;
     }
-	
+
     public async Task<bool> UpdatePassword(uint baid, string password, string salt)
     {
-        var credential = await context.Credentials.FindAsync((ulong)baid);
+        var credential = await context.Credentials.FindAsync(baid);
 
         if (credential is null) return false;
 
