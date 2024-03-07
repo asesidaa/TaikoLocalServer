@@ -3,7 +3,7 @@ using TaikoLocalServer.Settings;
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r08_ww/chassis/crownsdata.php")]
+[Route("/v12r08_ww/chassis/crownsdata_oqgqy90s.php")]
 [ApiController]
 public class CrownsDataController : BaseController<CrownsDataController>
 {
@@ -24,7 +24,7 @@ public class CrownsDataController : BaseController<CrownsDataController>
         Logger.LogInformation("CrownsData request : {Request}", request.Stringify());
 
         var songBestData = await songBestDatumService.GetAllSongBestData(request.Baid);
-        
+
         var songIdMax = settings.EnableMoreSongs ? Constants.MUSIC_ID_MAX_EXPANDED : Constants.MUSIC_ID_MAX;
         var crown = new ushort[songIdMax + 1];
         var dondafulCrown = new byte[songIdMax + 1];
@@ -38,7 +38,7 @@ public class CrownsDataController : BaseController<CrownsDataController>
                                 datum.BestCrown == CrownType.Dondaful)
                 // Calculate flag according to difficulty
                 .Aggregate((byte)0, (flag, datum) => FlagCalculator.ComputeDondafulCrownFlag(flag, datum.Difficulty));
-            
+
             crown[songId] = songBestData
                 // Select song of this song id with clear or fc crown
                 .Where(datum => datum.SongId == id &&

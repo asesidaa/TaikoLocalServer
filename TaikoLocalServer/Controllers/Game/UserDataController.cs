@@ -6,7 +6,7 @@ using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r08_ww/chassis/userdata.php")]
+[Route("/v12r08_ww/chassis/userdata_gc6x17o8.php")]
 [ApiController]
 public class UserDataController : BaseController<UserDataController>
 {
@@ -36,7 +36,7 @@ public class UserDataController : BaseController<UserDataController>
         var songIdMax = settings.EnableMoreSongs ? Constants.MUSIC_ID_MAX_EXPANDED : Constants.MUSIC_ID_MAX;
 
         var userData = await userDatumService.GetFirstUserDatumOrDefault(request.Baid);
-        
+
         var unlockedSongIdList = new List<uint>();
         try
         {
@@ -50,7 +50,7 @@ public class UserDataController : BaseController<UserDataController>
         }
 
         unlockedSongIdList.ThrowIfNull("UnlockedSongIdList should never be null");
-        
+
         var musicList = gameDataService.GetMusicList();
         var lockedSongsList = gameDataService.GetLockedSongsList();
         lockedSongsList = lockedSongsList.Except(unlockedSongIdList).ToList();
@@ -76,7 +76,7 @@ public class UserDataController : BaseController<UserDataController>
         // The only way to get a null is provide string "null" as input,
         // which means database content need to be fixed, so better throw
         toneFlg.ThrowIfNull("Tone flg should never be null!");
-        
+
         // If toneFlg is empty, add 0 to it
         if (toneFlg.Length == 0)
         {

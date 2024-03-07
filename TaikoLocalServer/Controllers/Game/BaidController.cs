@@ -5,7 +5,7 @@ using Throw;
 namespace TaikoLocalServer.Controllers.Game;
 
 [ApiController]
-[Route("/v12r08_ww/chassis/baidcheck.php")]
+[Route("/v12r08_ww/chassis/baidcheck_dcfxit1u.php")]
 public class BaidController : BaseController<BaidController>
 {
     private readonly IUserDatumService userDatumService;

@@ -1,14 +1,13 @@
-﻿using System.Buffers.Binary;
+﻿using GameDatabase.Entities;
 using System.Globalization;
 using System.Text.Json;
-using GameDatabase.Entities;
 using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
 using StageData = PlayResultDataRequest.StageData;
 
-[Route("/v12r08_ww/chassis/playresult.php")]
+[Route("/v12r08_ww/chassis/playresult_r3ky4a4z.php")]
 [ApiController]
 public class PlayResultController : BaseController<PlayResultController>
 {
@@ -73,11 +72,11 @@ public class PlayResultController : BaseController<PlayResultController>
             await UpdateDanPlayData(request, playResultData, danType);
             return Ok(response);
         }
-        
+
         for (var songNumber = 0; songNumber < playResultData.AryStageInfoes.Count; songNumber++)
         {
             var stageData = playResultData.AryStageInfoes[songNumber];
-            
+
             if (stageData.IsSkipUse)
             {
                 await UpdatePlayData(request, songNumber, stageData, lastPlayDatetime);
@@ -192,7 +191,7 @@ public class PlayResultController : BaseController<PlayResultController>
         userdata.ThrowIfNull($"User data is null! Baid: {request.BaidConf}");
 
         var playMode = (PlayMode)playResultData.PlayMode;
-        
+
         userdata.Title = playResultData.Title;
         userdata.TitlePlateId = playResultData.TitleplateId;
         var costumeData = new List<uint>
@@ -246,7 +245,7 @@ public class PlayResultController : BaseController<PlayResultController>
             playResultData.DifficultyPlayedSort
         };
         userdata.DifficultyPlayedArray = JsonSerializer.Serialize(difficultyPlayedArray);
-        
+
         userdata.AiWinCount += playResultData.AryStageInfoes.Count(data => data.IsWin);
         await userDatumService.UpdateUserDatum(userdata);
     }
@@ -335,12 +334,12 @@ public class PlayResultController : BaseController<PlayResultController>
 
         await songBestDatumService.UpdateSongBestData(existing);
     }
-    
+
     private async Task UpdateAiBattleData(PlayResultRequest request, StageData stageData)
     {
         var difficulty = (Difficulty)stageData.Level;
         difficulty.Throw().IfOutOfRange();
-        var existing = await aiDatumService.GetSongAiScore(request.BaidConf, 
+        var existing = await aiDatumService.GetSongAiScore(request.BaidConf,
             stageData.SongNo, difficulty);
 
         if (existing is null)
@@ -370,7 +369,7 @@ public class PlayResultController : BaseController<PlayResultController>
             }
             else
             {
-                AddNewAiSectionScore(request,stageData,index,difficulty,existing);
+                AddNewAiSectionScore(request, stageData, index, difficulty, existing);
             }
         }
 

@@ -2,7 +2,7 @@
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r08_ww/chassis/mydonentry.php")]
+[Route("/v12r08_ww/chassis/mydonentry_3nrd7kwk.php")]
 [ApiController]
 public class MyDonEntryController : BaseController<MyDonEntryController>
 {

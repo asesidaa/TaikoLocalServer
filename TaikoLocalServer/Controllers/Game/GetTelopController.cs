@@ -1,6 +1,6 @@
 ﻿namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r08_ww/chassis/gettelop.php")]
+[Route("/v12r08_ww/chassis/gettelop_o0cb2z3e.php")]
 [ApiController]
 public class GetTelopController : BaseController<GetTelopController>
 {
@@ -12,7 +12,7 @@ public class GetTelopController : BaseController<GetTelopController>
 
         var startDateTime = DateTime.Now - TimeSpan.FromDays(999.0);
         var endDateTime = DateTime.Now + TimeSpan.FromDays(999.0);
-        
+
         var response = new GettelopResponse
         {
             Result = 1,

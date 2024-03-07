@@ -2,7 +2,7 @@
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r08_ww/chassis/getaidata.php")]
+[Route("/v12r08_ww/chassis/getaidata_6x30b9nr.php")]
 [ApiController]
 public class GetAiDataController : BaseController<GetAiDataController>
 {
@@ -23,7 +23,7 @@ public class GetAiDataController : BaseController<GetAiDataController>
         user.ThrowIfNull($"User with baid {request.Baid} does not exist!");
         var response = new GetAiDataResponse
         {
-            Result  = 1,
+            Result = 1,
             TotalWinnings = (uint)user.AiWinCount,
             InputMedian = "1000",
             InputVariance = "2000"
