@@ -23,12 +23,42 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
         Logger.LogInformation("GetTokenCount request : {Request}", request.Stringify());
 
         var user = await userDatumService.GetFirstUserDatumOrNull(request.Baid);
+        user.ThrowIfNull($"User with baid {request.Baid} does not exist!");
+
         var tokenDataDictionary = gameDataService.GetTokenDataDictionary();
         tokenDataDictionary.TryGetValue("shopTokenId", out var shopTokenId);
         tokenDataDictionary.TryGetValue("kaTokenId", out var kaTokenId);
         tokenDataDictionary.TryGetValue("onePieceTokenId", out var onePieceTokenId);
         tokenDataDictionary.TryGetValue("soshinaTokenId", out var soshinaTokenId);
-        user.ThrowIfNull($"User with baid {request.Baid} does not exist!");
+        tokenDataDictionary.TryGetValue("Yatsushika1TokenId", out var yatsushika1TokenId);
+        tokenDataDictionary.TryGetValue("Yatsushika2TokenId", out var yatsushika2TokenId);
+        tokenDataDictionary.TryGetValue("Yatsushika3TokenId", out var yatsushika3TokenId);
+        tokenDataDictionary.TryGetValue("Yatsushika4TokenId", out var yatsushika4TokenId);
+        tokenDataDictionary.TryGetValue("MaskedKid1TokenId", out var maskedKid1TokenId);
+        tokenDataDictionary.TryGetValue("MaskedKid2TokenId", out var maskedKid2TokenId);
+        tokenDataDictionary.TryGetValue("MaskedKid3TokenId", out var maskedKid3TokenId);
+        tokenDataDictionary.TryGetValue("MaskedKid4TokenId", out var maskedKid4TokenId);
+        tokenDataDictionary.TryGetValue("Kiyoshi1TokenId", out var kiyoshi1TokenId);
+        tokenDataDictionary.TryGetValue("Kiyoshi2TokenId", out var kiyoshi2TokenId);
+        tokenDataDictionary.TryGetValue("Kiyoshi3TokenId", out var kiyoshi3TokenId);
+        tokenDataDictionary.TryGetValue("Kiyoshi4TokenId", out var kiyoshi4TokenId);
+        tokenDataDictionary.TryGetValue("Amitie1TokenId", out var amitie1TokenId);
+        tokenDataDictionary.TryGetValue("Amitie2TokenId", out var amitie2TokenId);
+        tokenDataDictionary.TryGetValue("Amitie3TokenId", out var amitie3TokenId);
+        tokenDataDictionary.TryGetValue("Amitie4TokenId", out var amitie4TokenId);
+        tokenDataDictionary.TryGetValue("Machina1TokenId", out var machina1TokenId);
+        tokenDataDictionary.TryGetValue("Machina2TokenId", out var machina2TokenId);
+        tokenDataDictionary.TryGetValue("Machina3TokenId", out var machina3TokenId);
+        tokenDataDictionary.TryGetValue("Machina4TokenId", out var machina4TokenId);
+
+        int[] tokenDataIdArray =
+        {
+            shopTokenId, kaTokenId, onePieceTokenId, soshinaTokenId, yatsushika1TokenId, yatsushika2TokenId,
+            yatsushika3TokenId, yatsushika4TokenId, maskedKid1TokenId, maskedKid2TokenId, maskedKid3TokenId,
+            maskedKid4TokenId, kiyoshi1TokenId, kiyoshi2TokenId, kiyoshi3TokenId, kiyoshi4TokenId, amitie1TokenId,
+            amitie2TokenId, amitie3TokenId, amitie4TokenId, machina1TokenId, machina2TokenId, machina3TokenId,
+            machina4TokenId
+        };
 
         var tokenCountDict = new Dictionary<uint, int>();
         try
@@ -49,48 +79,15 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
             Result = 1
         };
 
-        if (tokenCountDict.Count == 0) tokenCountDict.Add(1, 0);
-        if (shopTokenId > 0)
+        foreach (var tokenDataId in tokenDataIdArray)
         {
-            var castedShopTokenId = (uint)shopTokenId;
-            tokenCountDict.TryAdd(castedShopTokenId, 0);
+            if (tokenDataId <= 0) continue;
+            var castedTokenDataId = (uint)tokenDataId;
+            tokenCountDict.TryAdd(castedTokenDataId, 0);
             response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
             {
-                TokenCount = tokenCountDict[castedShopTokenId],
-                TokenId = castedShopTokenId
-            });
-        }
-
-        if (kaTokenId > 0)
-        {
-            var castedKaTokenId = (uint)kaTokenId;
-            tokenCountDict.TryAdd(castedKaTokenId, 0);
-            response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
-            {
-                TokenCount = tokenCountDict[castedKaTokenId],
-                TokenId = castedKaTokenId
-            });
-        }
-
-        if (onePieceTokenId > 0)
-        {
-            var castedOnePieceTokenId = (uint)onePieceTokenId;
-            tokenCountDict.TryAdd(castedOnePieceTokenId, 0);
-            response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
-            {
-                TokenCount = tokenCountDict[castedOnePieceTokenId],
-                TokenId = castedOnePieceTokenId
-            });
-        }
-
-        if (soshinaTokenId > 0)
-        {
-            var castedSoshinaTokenId = (uint)soshinaTokenId;
-            tokenCountDict.TryAdd(castedSoshinaTokenId, 0);
-            response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
-            {
-                TokenCount = tokenCountDict[castedSoshinaTokenId],
-                TokenId = castedSoshinaTokenId
+                TokenCount = tokenCountDict[castedTokenDataId],
+                TokenId = castedTokenDataId
             });
         }
 
