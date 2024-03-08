@@ -20,6 +20,7 @@ builder.Services.Configure<WebUiSettings>(builder.Configuration.GetSection(nameo
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddLocalization();
 builder.Services.AddSingleton<MudLocalizer, ResXMudLocalizer>();
+builder.Services.AddSingleton<IStringUtil, StringUtil>();
 
 var host = builder.Build();
 
