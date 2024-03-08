@@ -36,7 +36,10 @@ public class PlayResultController : BaseController<PlayResultController>
     public async Task<IActionResult> UploadPlayResult([FromBody] PlayResultRequest request)
     {
         Logger.LogInformation("PlayResult request : {Request}", request.Stringify());
-        var decompressed = GZipBytesUtil.DecompressGZipBytes(request.PlayresultData);
+
+        var truncated = request.PlayresultData.Skip(32).ToArray();
+
+        var decompressed = GZipBytesUtil.DecompressGZipBytes(truncated);
 
         var playResultData = Serializer.Deserialize<PlayResultDataRequest>(new ReadOnlySpan<byte>(decompressed));
 
