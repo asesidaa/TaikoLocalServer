@@ -4,6 +4,6 @@ namespace TaikoWebUI.Shared.Models;
 
 public class Neiros
 {
-	[JsonPropertyName("items")]
-	public List<NeiroEntry> NeiroEntries { get; set; } = new();
+    [JsonPropertyName("items")]
+    public List<NeiroEntry> NeiroEntries { get; set; } = new();
 }

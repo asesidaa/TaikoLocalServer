@@ -11,14 +11,14 @@
             </ColGroup>
             <ToolBarContent>
                 <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0">
+                    AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0">
                 </MudTextField>
             </ToolBarContent>
             <HeaderContent>
                 <MudTh>
                     <MudTableSortLabel SortBy="@(new Func<Title, object>(x => x.TitleId))">
                         @Localizer["ID"]
-                    </MudTableSortLabel> 
+                    </MudTableSortLabel>
                 </MudTh>
                 <MudTh>
                     <MudTableSortLabel SortBy="@(new Func<Title, object>(x => x.TitleName))">
@@ -29,24 +29,24 @@
             <RowTemplate>
                 @{
                     // Disable nullable warnings, which seems to be a false positive
-                    # pragma warning disable CS8602
+#pragma warning disable CS8602
                 }
                 <MudTd DataLabel="Id" Class="cursor-pointer">@context.TitleId</MudTd>
                 <MudTd DataLabel="Title" Class="cursor-pointer">@context.TitleName</MudTd>
                 @{
-                    #pragma warning restore CS8602
+#pragma warning restore CS8602
                 }
             </RowTemplate>
             <PagerContent>
-                <MudTablePager/>
+                <MudTablePager />
             </PagerContent>
         </MudTable>
         <MudText Class="mt-4 d-block" Typo="Typo.caption"> <b>@Localizer["Selected Title:"]</b> @selectedTitle?.TitleName</MudText>
     </DialogContent>
     <DialogActions>
-            <MudButton OnClick="Cancel">
-                @Localizer["Cancel"]
-            </MudButton>
+        <MudButton OnClick="Cancel">
+            @Localizer["Cancel"]
+        </MudButton>
         <MudButton Color="Color.Primary" OnClick="Submit">
             @Localizer["Okay"]
         </MudButton>
@@ -81,15 +81,15 @@
         }
         titles = titleSet.ToImmutableList().Sort((title, title1) => title.TitleId.CompareTo(title1.TitleId));
         var currentTitle = new Title
-        {
-            TitleName = UserSetting.Title
-        };
-        if (titleSet.Contains(currentTitle)) 
-        {
-            titleSet.TryGetValue(new Title
             {
                 TitleName = UserSetting.Title
-            }, out selectedTitle);
+            };
+        if (titleSet.Contains(currentTitle))
+        {
+            titleSet.TryGetValue(new Title
+                {
+                    TitleName = UserSetting.Title
+                }, out selectedTitle);
         }
     }
 
@@ -100,7 +100,7 @@
             return false;
         }
         return string.IsNullOrEmpty(searchString) ||
-               title.TitleName.Contains(searchString, StringComparison.InvariantCultureIgnoreCase);
+        title.TitleName.Contains(searchString, StringComparison.InvariantCultureIgnoreCase);
     }
 
     private void Submit()

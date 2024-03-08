@@ -4,6 +4,6 @@ namespace TaikoWebUI.Shared.Models;
 
 public class MusicInfo
 {
-    [JsonPropertyName("items")] 
+    [JsonPropertyName("items")]
     public List<MusicInfoEntry> Items { get; set; } = new();
 }

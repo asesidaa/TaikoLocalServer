@@ -49,7 +49,7 @@ public partial class Users
             await DialogService.ShowMessageBox(
                 "Error",
                 "Only admin can reset password.",
-                "Ok", null , null, options);
+                "Ok", null, null, options);
             return;
         }
         var parameters = new DialogParameters
@@ -64,7 +64,7 @@ public partial class Users
 
         response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
     }
-    
+
     private async Task OnLogin()
     {
         if (response != null)
@@ -112,7 +112,7 @@ public partial class Users
         LoginService.Logout();
         NavigationManager.NavigateTo("/Users");
     }
-    
+
     private Task ShowQrCode(User user)
     {
         var parameters = new DialogParameters

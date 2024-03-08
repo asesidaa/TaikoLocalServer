@@ -6,7 +6,7 @@ namespace TaikoWebUI.Services;
 public interface IGameDataService
 {
     public Task InitializeAsync(string dataBaseUrl);
-    
+
     public string GetMusicNameBySongId(uint songId, string? language = null);
 
     public string GetMusicArtistBySongId(uint songId, string? language = null);
@@ -24,7 +24,7 @@ public interface IGameDataService
     public string GetBodyTitle(uint index);
     public string GetFaceTitle(uint index);
     public string GetPuchiTitle(uint index);
-    
+
     public List<int> GetCostumeFlagArraySizes();
 
     public ImmutableHashSet<Title> GetTitles();

@@ -6,18 +6,18 @@ namespace TaikoWebUI.Services;
 
 public class GameDataService : IGameDataService
 {
-    private string[] bodyTitles = {};
+    private string[] bodyTitles = { };
     private readonly HttpClient client;
-    private string[] faceTitles = {};
+    private string[] faceTitles = { };
 
-    private string[] headTitles = {};
-    private string[] kigurumiTitles = {};
+    private string[] headTitles = { };
+    private string[] kigurumiTitles = { };
 
     private readonly Dictionary<uint, MusicDetail> musicMap = new();
-    private string[] puchiTitles = {};
-    
+    private string[] puchiTitles = { };
+
     private List<int> costumeFlagArraySizes = new();
-	
+
     private int titleFlagArraySize;
 
     private ImmutableDictionary<uint, DanData> danMap = ImmutableDictionary<uint, DanData>.Empty;
@@ -46,7 +46,7 @@ public class GameDataService : IGameDataService
         var dict = wordList.WordListEntries.GroupBy(entry => entry.Key)
             .ToImmutableDictionary(group => group.Key, group => group.First());
         await Task.Run(() => InitializeMusicMap(musicInfo, dict, musicOrder));
-        
+
         InitializeCostumeFlagArraySizes(donCosRewardData);
         InitializeTitleFlagArraySize(shougouData);
 
@@ -64,7 +64,7 @@ public class GameDataService : IGameDataService
         data.ThrowIfNull();
         return data;
     }
-    
+
     public string GetMusicNameBySongId(uint songId, string? language = "ja")
     {
         return musicMap.TryGetValue(songId, out var musicDetail) ? language switch
@@ -150,12 +150,12 @@ public class GameDataService : IGameDataService
     {
         return titles;
     }
-    
+
     public List<int> GetCostumeFlagArraySizes()
     {
         return costumeFlagArraySizes;
     }
-    
+
     private void InitializeTitleFlagArraySize(Shougous? shougouData)
     {
         shougouData.ThrowIfNull("Shouldn't happen!");
@@ -165,20 +165,21 @@ public class GameDataService : IGameDataService
     private void InitializeTitles(ImmutableDictionary<string, WordListEntry> dict, Shougous? shougouData)
     {
         shougouData.ThrowIfNull("Shouldn't happen!");
-        
+
         var set = ImmutableHashSet.CreateBuilder<Title>();
         for (var i = 1; i < titleFlagArraySize; i++)
         {
             var key = $"syougou_{i}";
 
             var titleWordlistItem = dict.GetValueOrDefault(key, new WordListEntry());
-            
+
             var titleRarity = shougouData.ShougouEntries
                 .Where(entry => entry.UniqueId == i)
                 .Select(entry => entry.Rarity)
                 .FirstOrDefault();
 
-            set.Add(new Title{
+            set.Add(new Title
+            {
                 TitleName = titleWordlistItem.JapaneseText,
                 TitleId = i,
                 TitleRarity = titleRarity
@@ -187,7 +188,7 @@ public class GameDataService : IGameDataService
 
         titles = set.ToImmutable();
     }
-    
+
     private void InitializeCostumeFlagArraySizes(DonCosRewards? donCosRewardData)
     {
         donCosRewardData.ThrowIfNull("Shouldn't happen!");
@@ -206,7 +207,7 @@ public class GameDataService : IGameDataService
         var puchiUniqueIdList = donCosRewardData.DonCosRewardEntries
             .Where(entry => entry.CosType == "puchi")
             .Select(entry => entry.UniqueId);
-		
+
         costumeFlagArraySizes = new List<int>
         {
             (int)kigurumiUniqueIdList.Max() + 1,
@@ -216,7 +217,7 @@ public class GameDataService : IGameDataService
             (int)puchiUniqueIdList.Max() + 1
         };
     }
-    
+
     private void InitializeKigurumiTitles(ImmutableDictionary<string, WordListEntry> dict)
     {
         var costumeKigurumiMax = costumeFlagArraySizes[0];
@@ -229,7 +230,7 @@ public class GameDataService : IGameDataService
             kigurumiTitles[i] = costumeWordlistItem.JapaneseText;
         }
     }
-    
+
     private void InitializeHeadTitles(ImmutableDictionary<string, WordListEntry> dict)
     {
         var costumeHeadMax = costumeFlagArraySizes[1];
@@ -242,7 +243,7 @@ public class GameDataService : IGameDataService
             headTitles[i] = costumeWordlistItem.JapaneseText;
         }
     }
-    
+
     private void InitializeBodyTitles(ImmutableDictionary<string, WordListEntry> dict)
     {
         var costumeBodyMax = costumeFlagArraySizes[2];
@@ -255,7 +256,7 @@ public class GameDataService : IGameDataService
             bodyTitles[i] = costumeWordlistItem.JapaneseText;
         }
     }
-    
+
     private void InitializeFaceTitles(ImmutableDictionary<string, WordListEntry> dict)
     {
         var costumeFaceMax = costumeFlagArraySizes[3];
