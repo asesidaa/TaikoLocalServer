@@ -6,10 +6,10 @@
 
 <MudBreadcrumbs Items="breadcrumbs" Class="px-0"></MudBreadcrumbs>
 
-<h1>Access Code Management</h1>
+<MudText Typo="Typo.h4">Access Code Management</MudText>
 <MudText Typo="Typo.caption">User: @Baid</MudText>
 
-<div class="mt-4">
+<div class="mt-8">
 
         @if (response is null)
     {
@@ -31,7 +31,7 @@
         }
         else
         {
-            <MudCard Outlined="true" Class="mb-4">
+            <MudCard Outlined="true" Class="mb-6">
                 <MudCardContent>
                     <MudGrid Spacing="3">
                         <MudItem xs="12">
@@ -58,7 +58,7 @@
 
             <MudCard Outlined="true">
                 <MudCardContent>
-                    <MudGrid Spacing="3">
+                    <MudGrid Spacing="3" Class="pb-2">
                         <MudItem xs="12">
                             <MudText Typo="Typo.h6">Access Codes</MudText>
                         </MudItem>

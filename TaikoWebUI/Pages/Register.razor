@@ -5,11 +5,11 @@
 
 @page "/Users/Register"
 
-<h1>Users</h1>
+<MudText Typo="Typo.h4" Class="mb-4">Register</MudText>
 
 @if (LoginService.OnlyAdmin || !LoginService.LoginRequired)
 {
-    <h1>Register is turned off</h1>
+    <MudText Typo="Typo.body1">Registration is currently closed.</MudText>
 }
 else
 {
