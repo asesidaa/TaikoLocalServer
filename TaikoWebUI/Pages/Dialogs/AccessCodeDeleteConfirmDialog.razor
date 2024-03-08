@@ -3,21 +3,30 @@
 
 <MudDialog>
     <TitleContent>
-        <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Filled.DeleteForever" Class="mr-3 mb-n1"/>
-            Delete user?
-        </MudText>
+        <div class="d-flex align-items-center gap-2">
+            <MudIcon Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" />
+            <MudText Typo="Typo.h6">@Localizer["Delete User"]</MudText>
+        </div>
     </TitleContent>
     <DialogContent>
+        <MudText Typo="Typo.body1" Class="mb-1">
+            @Localizer["Are you sure you want to delete this access code?"]
+        </MudText>
+
         <MudText>
-            Do you really want to delete the access code @AccessCode?
-            This process cannot be undone!
+            <code>
+                <pre>
+                    @String.Format("{0:0000 0000 0000 0000 0000}", (Int64.Parse(AccessCode)))
+                </pre>
+            </code>
         </MudText>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">CANCEL</MudButton>
-        <MudButton Color="Color.Error" OnClick="DeleteAccessCode">
-            <MudText>DELETE</MudText>
+        <MudButton OnClick="Cancel">
+            @Localizer["Cancel"]
+        </MudButton>
+        <MudButton Color="Color.Error" OnClick="DeleteAccessCode" Icon="@Icons.Material.Filled.Delete">
+            @Localizer["Delete"]
         </MudButton>
     </DialogActions>
 </MudDialog>

@@ -17,12 +17,12 @@
             <HeaderContent>
                 <MudTh>
                     <MudTableSortLabel SortBy="@(new Func<Title, object>(x => x.TitleId))">
-                        ID
+                        @Localizer["ID"]
                     </MudTableSortLabel> 
                 </MudTh>
                 <MudTh>
                     <MudTableSortLabel SortBy="@(new Func<Title, object>(x => x.TitleName))">
-                        Title
+                        @Localizer["Title"]
                     </MudTableSortLabel>
                 </MudTh>
             </HeaderContent>
@@ -41,11 +41,15 @@
                 <MudTablePager/>
             </PagerContent>
         </MudTable>
-        <MudText Class="mt-4 d-block" Typo="Typo.caption"><b>Selected Title:</b> @selectedTitle?.TitleName</MudText>
+        <MudText Class="mt-4 d-block" Typo="Typo.caption"> <b>@Localizer["Selected Title:"]</b> @selectedTitle?.TitleName</MudText>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+            <MudButton OnClick="Cancel">
+                @Localizer["Cancel"]
+            </MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">
+            @Localizer["Okay"]
+        </MudButton>
     </DialogActions>
 </MudDialog>
 
