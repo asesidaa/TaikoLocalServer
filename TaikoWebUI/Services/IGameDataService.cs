@@ -7,9 +7,9 @@ public interface IGameDataService
 {
     public Task InitializeAsync(string dataBaseUrl);
     
-    public string GetMusicNameBySongId(uint songId);
+    public string GetMusicNameBySongId(uint songId, string? language = null);
 
-    public string GetMusicArtistBySongId(uint songId);
+    public string GetMusicArtistBySongId(uint songId, string? language = null);
 
     public SongGenre GetMusicGenreBySongId(uint songId);
 

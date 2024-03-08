@@ -1,6 +1,7 @@
 ﻿@inject IGameDataService GameDataService
 @inject HttpClient Client
 @inject LoginService LoginService
+@inject IJSRuntime JSRuntime
 
 @page "/Users/{baid:int}/DaniDojo"
 
@@ -146,8 +147,8 @@ else
                                                         </MudItem>
 
                                                         <MudItem xs="9" md="4" Style="display:flex;flex-direction:column;" Class="pl-4">
-                                                            <MudText Typo="Typo.body1" Style="font-weight: bold;">@GameDataService.GetMusicNameBySongId(danDataOdaiSong.SongNo)</MudText>
-                                                            <MudText Typo="Typo.caption">@GameDataService.GetMusicArtistBySongId(danDataOdaiSong.SongNo)</MudText>
+                                                            <MudText Typo="Typo.body1" Style="font-weight: bold;">@GameDataService.GetMusicNameBySongId(danDataOdaiSong.SongNo, @CurrentLanguage)</MudText>
+                                                            <MudText Typo="Typo.caption">@GameDataService.GetMusicArtistBySongId(danDataOdaiSong.SongNo, @CurrentLanguage)</MudText>
                                                         </MudItem>
 
 

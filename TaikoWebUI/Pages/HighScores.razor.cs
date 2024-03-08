@@ -1,5 +1,6 @@
 ﻿using static MudBlazor.Colors;
 using System;
+using Microsoft.JSInterop;
 
 namespace TaikoWebUI.Pages; 
 
@@ -24,13 +25,15 @@ public partial class HighScores
         await base.OnInitializedAsync();
         response = await Client.GetFromJsonAsync<SongBestResponse>($"api/PlayData/{Baid}");
         response.ThrowIfNull();
-        
+
+        var language = await JSRuntime.InvokeAsync<string>("blazorCulture.get");
+
         response.SongBestData.ForEach(data =>
         {
             var songId = data.SongId;
             data.Genre = GameDataService.GetMusicGenreBySongId(songId);
-            data.MusicName = GameDataService.GetMusicNameBySongId(songId);
-            data.MusicArtist = GameDataService.GetMusicArtistBySongId(songId);
+            data.MusicName = GameDataService.GetMusicNameBySongId(songId, string.IsNullOrEmpty(language) ? "ja" : language);
+            data.MusicArtist = GameDataService.GetMusicArtistBySongId(songId, string.IsNullOrEmpty(language) ? "ja" : language);
         });
         
         songBestDataMap = response.SongBestData.GroupBy(data => data.Difficulty)
