@@ -3,6 +3,7 @@
 @inject IDialogService DialogService
 @inject LoginService LoginService
 @inject NavigationManager NavigationManager
+@inject IStringUtil StringUtil
 
 <MudBreadcrumbs Items="breadcrumbs" Class="px-0"></MudBreadcrumbs>
 
@@ -71,7 +72,7 @@
                                     <MudGrid Spacing="2" Class="d-flex align-center">
                                         <MudItem xs="12" md="8" Class="d-flex align-center">
                                             <pre class="mb-0" style="font-size:16px">
-                                                @foreach (var digitGroup in SplitIntoGroups(accessCode, 4))
+                                                @foreach (var digitGroup in StringUtil.SplitIntoGroups(accessCode, 4))
 											{
 												<span class="mr-2">@digitGroup</span>
 											}
@@ -94,15 +95,3 @@
         }
     }
 </div>
-
-@code {
-    List<string> SplitIntoGroups(string str, int groupSize)
-    {
-        List<string> groups = new List<string>();
-        for (int i = 0; i < str.Length; i += groupSize)
-        {
-            groups.Add(str.Substring(i, Math.Min(groupSize, str.Length - i)));
-        }
-        return groups;
-    }
-}

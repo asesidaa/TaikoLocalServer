@@ -2,6 +2,7 @@
 @inject IDialogService DialogService
 @inject LoginService LoginService
 @inject NavigationManager NavigationManager
+@inject IStringUtil StringUtil
 
 @page "/Users"
 
@@ -87,7 +88,7 @@
                         <MudCardContent>
                             <MudText Style="font-weight:bold">Access Code</MudText>
                             <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">
-                                @foreach (var digitGroup in SplitIntoGroups(user.AccessCodes[0], 4))
+                                @foreach (var digitGroup in StringUtil.SplitIntoGroups(user.AccessCodes[0], 4))
                                 {
                                     <span class="mr-2">@digitGroup</span>
                                 }
@@ -202,7 +203,7 @@
                             <MudCardContent>
                                 <MudText Style="font-weight:bold">Access Code</MudText>
                                 <MudText>
-                                    @foreach (var digitGroup in SplitIntoGroups(user.AccessCodes[0], 4))
+                                    @foreach (var digitGroup in StringUtil.SplitIntoGroups(user.AccessCodes[0], 4))
                                     {
                                         <span class="mr-2">@digitGroup</span>
                                     }
@@ -249,15 +250,3 @@
         </MudItem>
     }
 </MudGrid>
-
-@code {
-    List<string> SplitIntoGroups(string str, int groupSize)
-    {
-        List<string> groups = new List<string>();
-        for (int i = 0; i < str.Length; i += groupSize)
-        {
-            groups.Add(str.Substring(i, Math.Min(groupSize, str.Length - i)));
-        }
-        return groups;
-    }
-}
