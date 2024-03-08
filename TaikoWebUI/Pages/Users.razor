@@ -86,8 +86,10 @@
                         </MudCardHeader>
                         <MudCardContent>
                             <MudText Style="font-weight:bold">Access Code</MudText>
-                            <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">@user.AccessCodes[0]</MudText>
-                                @if (user.AccessCodes.Count > 1)
+                            <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">
+                                @String.Format("{0:0000 0000 0000 0000 0000}", (Int64.Parse(user.AccessCodes[0])))
+                            </MudText>
+                            @if (user.AccessCodes.Count > 1)
                             {
                                 <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">... and @(user.AccessCodes.Count - 1) other access code(s)</MudText>
                             }
@@ -196,11 +198,13 @@
                             </MudCardHeader>
                             <MudCardContent>
                                 <MudText Style="font-weight:bold">Access Code</MudText>
-                                <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">@user.AccessCodes[0]</MudText>
+                                <MudText>
+                                    @String.Format("{0:0000 0000 0000 0000 0000}", (Int64.Parse(user.AccessCodes[0])))
+                                </MudText>
                                     @if (user.AccessCodes.Count > 1)
-                                {
-                                    <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">... and @(user.AccessCodes.Count - 1) other access code(s)</MudText>
-                                }
+                                    {
+                                        <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">... and @(user.AccessCodes.Count - 1) other access code(s)</MudText>
+                                    }
                             </MudCardContent>
                             <MudCardActions>
                                 <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">

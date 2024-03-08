@@ -70,7 +70,9 @@
                                 <div Style="border-bottom:1px solid #eee; padding: 5px 0;">
                                     <MudGrid Spacing="2" Class="d-flex align-center">
                                         <MudItem xs="12" md="8">
-                                            <MudText>@accessCode</MudText>
+                                            <MudText>
+                                                @String.Format("{0:0000 0000 0000 0000 0000}", (Int64.Parse(accessCode)))
+                                            </MudText>
                                             </MudItem>
                                             <MudItem xs="12" md="4" Class="d-flex justify-end">
                                                 <MudButton OnClick="@(_ => DeleteAccessCode(accessCode))"
