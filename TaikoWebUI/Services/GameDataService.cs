@@ -65,14 +65,30 @@ public class GameDataService : IGameDataService
         return data;
     }
     
-    public string GetMusicNameBySongId(uint songId)
+    public string GetMusicNameBySongId(uint songId, string? language)
     {
-        return musicMap.TryGetValue(songId, out var musicDetail) ? musicDetail.SongName : string.Empty;
+        return musicMap.TryGetValue(songId, out var musicDetail) ? language switch
+        {
+            "ja" => musicDetail.SongName,
+            "en-US" => musicDetail.SongNameEN,
+            "zh-Hans" => musicDetail.SongNameCN,
+            "zh-Hant" => musicDetail.SongNameCN,
+            "ko" => musicDetail.SongNameKO,
+            _ => musicDetail.SongName
+        } : string.Empty;
     }
 
-    public string GetMusicArtistBySongId(uint songId)
+    public string GetMusicArtistBySongId(uint songId, string? language)
     {
-        return musicMap.TryGetValue(songId, out var musicDetail) ? musicDetail.ArtistName : string.Empty;
+        return musicMap.TryGetValue(songId, out var musicDetail) ? language switch
+        {
+            "jp" => musicDetail.ArtistName,
+            "en-US" => musicDetail.ArtistNameEN,
+            "zh-Hans" => musicDetail.ArtistNameCN,
+            "zh-Hant" => musicDetail.ArtistNameCN,
+            "ko" => musicDetail.ArtistNameKO,
+            _ => musicDetail.ArtistName
+        } : string.Empty;
     }
 
     public SongGenre GetMusicGenreBySongId(uint songId)
@@ -281,6 +297,16 @@ public class GameDataService : IGameDataService
             var musicDetail = music.CopyPropertiesToNew<MusicDetail>();
             musicDetail.SongName = musicName.JapaneseText;
             musicDetail.ArtistName = musicArtist.JapaneseText;
+
+            // Add localized names
+            musicDetail.SongNameEN = musicName.EnglishUsText;
+            musicDetail.ArtistNameEN = musicArtist.EnglishUsText;
+
+            musicDetail.SongNameCN = musicName.ChineseTText;
+            musicDetail.ArtistNameCN = musicArtist.ChineseTText;
+
+            musicDetail.SongNameKO = musicName.KoreanText;
+            musicDetail.ArtistNameKO = musicArtist.KoreanText;
 
             musicMap.TryAdd(musicSongId, musicDetail);
         }

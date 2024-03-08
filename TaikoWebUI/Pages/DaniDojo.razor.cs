@@ -1,9 +1,13 @@
-﻿namespace TaikoWebUI.Pages;
+﻿using Microsoft.JSInterop;
+
+namespace TaikoWebUI.Pages;
 
 public partial class DaniDojo
 {
     [Parameter]
     public int Baid { get; set; }
+
+    public string CurrentLanguage { get; set; } = "ja";
 
     private DanBestDataResponse? response;
 
@@ -17,11 +21,14 @@ public partial class DaniDojo
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+
         response = await Client.GetFromJsonAsync<DanBestDataResponse>($"api/DanBestData/{Baid}");
         response.ThrowIfNull();
         response.DanBestDataList.ForEach(data => data.DanBestStageDataList
             .Sort((stageData, otherStageData) => stageData.SongNumber.CompareTo(otherStageData.SongNumber)));
         bestDataMap = response.DanBestDataList.ToDictionary(data => data.DanId);
+
+        CurrentLanguage = await JSRuntime.InvokeAsync<string>("blazorCulture.get");
 
         breadcrumbs.Add(new BreadcrumbItem($"User: {Baid}", href: null, disabled: true));
         breadcrumbs.Add(new BreadcrumbItem("Dani Dojo", href: $"/Users/{Baid}/DaniDojo", disabled: false));

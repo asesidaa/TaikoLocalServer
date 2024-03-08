@@ -7,8 +7,14 @@ public class MusicDetail
     public int Index { get; set; }
 
     public string SongName { get; set; } = string.Empty;
+    public string SongNameEN { get; set; } = string.Empty;
+    public string SongNameCN { get; set; } = string.Empty;
+    public string SongNameKO { get; set; } = string.Empty;
     
     public string ArtistName { get; set; } = string.Empty;
+    public string ArtistNameEN { get; set; } = string.Empty;
+    public string ArtistNameCN { get; set; } = string.Empty;
+    public string ArtistNameKO { get; set; } = string.Empty;
     
     public SongGenre Genre { get; set; }
     
