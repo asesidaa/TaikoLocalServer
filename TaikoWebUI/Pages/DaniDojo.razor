@@ -6,7 +6,7 @@
 
 <MudBreadcrumbs Items="breadcrumbs" Class="px-0"></MudBreadcrumbs>
 
-<h1>@Localizer["Key_03"]</h1>
+<MudText Typo="Typo.h4">@Localizer["Key_03"]</MudText>
 <MudText Typo="Typo.caption">User: @Baid</MudText>
 
 @if (LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.GetLoggedInUser().Baid != Baid && !LoginService.IsAdmin)))

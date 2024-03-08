@@ -5,7 +5,7 @@
 
 @page "/Users"
 
-<h1>@Localizer["users"]</h1>
+<MudText Typo="Typo.h4">@Localizer["users"]</MudText>
 <MudGrid Class="my-8">
     @if (response is null)
     {
@@ -39,44 +39,47 @@
                         <MudCardHeader>
                             <CardHeaderContent>
                                 <MudText Typo="Typo.h6" Style="font-weight:bold">@Localizer["user"]: @user.Baid</MudText>
-                                </CardHeaderContent>
-                                <CardHeaderActions>
-                                    <MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense="true" AnchorOrigin="Origin.BottomLeft"
-                                             TransformOrigin="Origin.TopLeft" Size="Size.Small">
-                                        <MudMenuItem Icon="@Icons.Material.Filled.QrCode"
-                                                     OnClick="@(_ => ShowQrCode(user))"
-                                                     OnTouch="@(_ => ShowQrCode(user))"
-                                                     IconColor="@Color.Primary">
-                                            @Localizer["Show QR Code"]
-                                        </MudMenuItem>
-                                        <MudDivider />
-                                        <MudMenuItem Icon="@Icons.Material.Filled.FeaturedPlayList"
-                                                     Href="@($"Users/{user.Baid}/AccessCode")"
-                                                     IconColor="@Color.Primary">
-                                            @Localizer["Manage Access Codes"]
-                                        </MudMenuItem>
-                                        <MudDivider />
-                                        <MudMenuItem Icon="@Icons.Material.Filled.Lock"
-                                                     Href="@($"Users/ChangePassword")"
-                                                     IconColor="@Color.Primary">
-                                            @Localizer["Change Password"]
-                                        </MudMenuItem>
-                                        <MudDivider />
-                                        <MudMenuItem Icon="@Icons.Material.Filled.LockReset"
-                                                     OnClick="@(_ => ResetPassword(user))"
-                                                     OnTouch="@(_ => ResetPassword(user))"
-                                                     IconColor="@Color.Primary">
-                                            @Localizer["Reset Password"]
-                                        </MudMenuItem>
-                                        @if (LoginService.AllowUserDelete)
+                            </CardHeaderContent>
+                            <CardHeaderActions>
+                                <MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense="true" AnchorOrigin="Origin.BottomLeft"
+                                            TransformOrigin="Origin.TopLeft" Size="Size.Small">
+                                    <MudMenuItem Icon="@Icons.Material.Filled.QrCode"
+                                                    OnClick="@(_ => ShowQrCode(user))"
+                                                    OnTouch="@(_ => ShowQrCode(user))"
+                                                    IconColor="@Color.Primary">
+                                        @Localizer["Show QR Code"]
+                                    </MudMenuItem>
+                                    <MudDivider />
+                                    <MudMenuItem Icon="@Icons.Material.Filled.FeaturedPlayList"
+                                                    Href="@($"Users/{user.Baid}/AccessCode")"
+                                                    IconColor="@Color.Primary">
+                                        @Localizer["Manage Access Codes"]
+                                    </MudMenuItem>
+                                    <MudDivider />
+                                    @if (LoginService.OnlyAdmin || LoginService.LoginRequired)
                                     {
-                                        <MudDivider />
-                                        <MudMenuItem Icon="@Icons.Material.Filled.Delete"
-                                                     OnClick="@(_ => DeleteUser(user))"
-                                                     OnTouch="@(_ => DeleteUser(user))"
-                                                     IconColor="@Color.Error">
-                                            @Localizer["Delete User"]
-                                        </MudMenuItem>
+                                    <MudMenuItem Icon="@Icons.Material.Filled.Lock"
+                                                    Href="@($"Users/ChangePassword")"
+                                                    IconColor="@Color.Primary">
+                                        @Localizer["Change Password"]
+                                    </MudMenuItem>
+                                    <MudDivider />
+                                    <MudMenuItem Icon="@Icons.Material.Filled.LockReset"
+                                                    OnClick="@(_ => ResetPassword(user))"
+                                                    OnTouch="@(_ => ResetPassword(user))"
+                                                    IconColor="@Color.Primary">
+                                        @Localizer["Reset Password"]
+                                    </MudMenuItem>
+                                    <MudDivider />
+                                    }
+                                    @if (LoginService.AllowUserDelete)
+                                    {
+                                    <MudMenuItem Icon="@Icons.Material.Filled.Delete"
+                                                    OnClick="@(_ => DeleteUser(user))"
+                                                    OnTouch="@(_ => DeleteUser(user))"
+                                                    IconColor="@Color.Error">
+                                        @Localizer["Delete User"]
+                                    </MudMenuItem>
                                     }
                                 </MudMenu>
                             </CardHeaderActions>

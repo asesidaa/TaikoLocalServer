@@ -6,9 +6,7 @@
 @inject IJSRuntime Js
 
 <MudBreadcrumbs Items="breadcrumbs" Class="px-0"></MudBreadcrumbs>
-
-
-<h1>@Localizer["Profile"]</h1>
+<MudText Typo="Typo.h4">@Localizer["Profile"]</MudText>
 <MudText Typo="Typo.caption">User: @Baid</MudText>
 
 @if (response is not null)
@@ -29,7 +27,7 @@
                     <MudTabs Rounded="true" Border="true" PanelClass="pa-8">
                         <MudTabPanel Text="@Localizer["Profile"]">
                             <MudStack Spacing="4">
-                                <h2>@Localizer["Profile Options"]</h2>
+                                <MudText Typo="Typo.h6">@Localizer["Profile Options"]</MudText>
                                 <MudGrid>
                                     <MudItem xs="12" md="8">
                                         <MudTextField TextChanged="UpdateMyDonName" @bind-Value="@response.MyDonName" Label=@Localizer["Name"]></MudTextField>
@@ -120,7 +118,7 @@
 
                         <MudTabPanel Text="@Localizer["Costume"]">
                             <MudStack Spacing="4">
-                                <h2>@Localizer["Costume Options"]</h2>
+                                <MudText Typo="Typo.h6">@Localizer["Costume Options"]</MudText>
                                 <MudGrid>
                                     <MudItem xs="12">
                                         <MudStack Spacing="4" Class="mb-8">
@@ -259,7 +257,7 @@
 
                         <MudTabPanel Text="@Localizer["Song Options"]">
                             <MudStack Spacing="4">
-                                <h2>@Localizer["Song Options"]</h2>
+                                <MudText Typo="Typo.h6">@Localizer["Song Options"]</MudText>
                                 <MudGrid>
                                     <MudItem xs="12" md="4">
                                         <MudStack Spacing="4">
