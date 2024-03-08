@@ -2,7 +2,7 @@
 using System;
 using Microsoft.JSInterop;
 
-namespace TaikoWebUI.Pages; 
+namespace TaikoWebUI.Pages;
 
 public partial class HighScores
 {
@@ -10,7 +10,7 @@ public partial class HighScores
     public int Baid { get; set; }
 
     private const string IconStyle = "width:25px; height:25px;";
-    
+
     private SongBestResponse? response;
 
     private Dictionary<Difficulty, List<SongBestData>> songBestDataMap = new();
@@ -35,16 +35,16 @@ public partial class HighScores
             data.MusicName = GameDataService.GetMusicNameBySongId(songId, string.IsNullOrEmpty(language) ? "ja" : language);
             data.MusicArtist = GameDataService.GetMusicArtistBySongId(songId, string.IsNullOrEmpty(language) ? "ja" : language);
         });
-        
+
         songBestDataMap = response.SongBestData.GroupBy(data => data.Difficulty)
-            .ToDictionary(data => data.Key, 
+            .ToDictionary(data => data.Key,
                           data => data.ToList());
         foreach (var songBestDataList in songBestDataMap.Values)
         {
             songBestDataList.Sort((data1, data2) => GameDataService.GetMusicIndexBySongId(data1.SongId)
                                       .CompareTo(GameDataService.GetMusicIndexBySongId(data2.SongId)));
         }
-        
+
 
         breadcrumbs.Add(new BreadcrumbItem($"User: {Baid}", href: null, disabled: true));
         breadcrumbs.Add(new BreadcrumbItem("High Scores", href: $"/Users/{Baid}/HighScores", disabled: false));
@@ -74,7 +74,7 @@ public partial class HighScores
             CrownType.Gold => "Full Combo",
             CrownType.Dondaful => "Donderful Combo",
             _ => ""
-            };
+        };
     }
 
     private static string GetRankText(ScoreRank rank)
@@ -89,7 +89,7 @@ public partial class HighScores
             ScoreRank.Purple => "Graceful",
             ScoreRank.Dondaful => "Top Class",
             _ => ""
-            };
+        };
     }
 
     private static string GetDifficultyTitle(Difficulty difficulty)
@@ -102,7 +102,7 @@ public partial class HighScores
             Difficulty.Oni => "Oni",
             Difficulty.UraOni => "Ura Oni",
             _ => ""
-            };
+        };
     }
 
     private static string GetDifficultyIcon(Difficulty difficulty)
@@ -123,7 +123,7 @@ public partial class HighScores
             SongGenre.Variety => "Variety",
             SongGenre.Classical => "Classical",
             _ => ""
-            };
+        };
     }
 
     private static string GetGenreStyle(SongGenre genre)
@@ -154,4 +154,3 @@ public partial class HighScores
         return aiData.Count > 0;
     }
 }
-

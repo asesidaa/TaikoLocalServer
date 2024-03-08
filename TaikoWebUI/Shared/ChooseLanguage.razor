@@ -2,7 +2,7 @@
 @using Microsoft.Extensions.Options
 @using TaikoWebUI.Settings
 @inject NavigationManager NavigationManager
-@inject IJSRuntime        JSRuntime
+@inject IJSRuntime JSRuntime
 @inject IOptions<WebUiSettings> Settings
 
 <MudMenu Icon="@Icons.Material.Filled.Language" Color="Color.Inherit">
@@ -12,8 +12,7 @@
     }
 </MudMenu>
 
-
-@code{
+@code {
     public Dictionary<CultureInfo, string> SupportedCultures = new();
 
     protected override void OnInitialized()
@@ -43,4 +42,3 @@
     }
 
 }
-

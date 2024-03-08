@@ -8,14 +8,14 @@ public partial class AccessCode
 {
     [Parameter]
     public int Baid { get; set; }
-    
+
     private string inputAccessCode = "";
     private MudForm bindAccessCodeForm = default!;
 
     private User? User { get; set; } = new();
-    
+
     private DashboardResponse? response;
-    
+
     private readonly List<BreadcrumbItem> breadcrumbs = new()
     {
         new BreadcrumbItem("Users", href: "/Users"),
@@ -28,7 +28,7 @@ public partial class AccessCode
         breadcrumbs.Add(new BreadcrumbItem($"User: {Baid}", href: null, disabled: true));
         breadcrumbs.Add(new BreadcrumbItem("Access Code Management", href: $"/Users/{Baid}/AccessCode", disabled: false));
     }
-    
+
     private async Task InitializeUser()
     {
         response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
@@ -45,7 +45,7 @@ public partial class AccessCode
             User = LoginService.GetLoggedInUser();
         }
     }
-    
+
     private async Task DeleteAccessCode(string accessCode)
     {
         var parameters = new DialogParameters<AccessCodeDeleteConfirmDialog>
@@ -58,7 +58,7 @@ public partial class AccessCode
         var result = await dialog.Result;
 
         if (result.Canceled) return;
-        
+
         await InitializeUser();
         NavigationManager.NavigateTo(NavigationManager.Uri);
     }

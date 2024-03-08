@@ -2,7 +2,7 @@
 
 public partial class ResetPasswordConfirmDialog
 {
-    
+
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; } = null!;
 
@@ -10,7 +10,7 @@ public partial class ResetPasswordConfirmDialog
     public User User { get; set; } = new();
 
     private void Cancel() => MudDialog.Cancel();
-    
+
     private async Task ResetPassword()
     {
         var request = new SetPasswordRequest
@@ -27,7 +27,7 @@ public partial class ResetPasswordConfirmDialog
             MudDialog.Close(DialogResult.Ok(false));
             return;
         }
-        
+
         Snackbar.Add("Reset password success!", Severity.Success);
         MudDialog.Close(DialogResult.Ok(true));
     }

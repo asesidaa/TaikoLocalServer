@@ -6,7 +6,7 @@ public partial class Register
     private string confirmPassword = "";
     private string password = "";
     private MudForm registerForm = default!;
-    
+
     private MudDatePicker datePicker = new();
     private MudTimePicker timePicker = new();
     private DateTime? date = DateTime.Today;

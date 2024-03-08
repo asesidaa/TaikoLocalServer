@@ -2,7 +2,7 @@
 
 public partial class UserDeleteConfirmDialog
 {
-    
+
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; } = null!;
 
@@ -10,7 +10,7 @@ public partial class UserDeleteConfirmDialog
     public User User { get; set; } = new();
 
     private void Cancel() => MudDialog.Cancel();
-    
+
     private async Task DeleteUser()
     {
         var responseMessage = await Client.DeleteAsync($"api/Users/{User.Baid}");
@@ -21,7 +21,7 @@ public partial class UserDeleteConfirmDialog
             MudDialog.Close(DialogResult.Ok(false));
             return;
         }
-        
+
         Snackbar.Add("Delete success!", Severity.Success);
         MudDialog.Close(DialogResult.Ok(true));
     }
