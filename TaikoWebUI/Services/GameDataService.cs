@@ -65,7 +65,7 @@ public class GameDataService : IGameDataService
         return data;
     }
     
-    public string GetMusicNameBySongId(uint songId, string? language)
+    public string GetMusicNameBySongId(uint songId, string? language = "ja")
     {
         return musicMap.TryGetValue(songId, out var musicDetail) ? language switch
         {
@@ -78,7 +78,7 @@ public class GameDataService : IGameDataService
         } : string.Empty;
     }
 
-    public string GetMusicArtistBySongId(uint songId, string? language)
+    public string GetMusicArtistBySongId(uint songId, string? language = "ja")
     {
         return musicMap.TryGetValue(songId, out var musicDetail) ? language switch
         {
