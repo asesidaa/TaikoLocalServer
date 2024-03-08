@@ -25,7 +25,7 @@
         {
             <MudItem xs="12">
                 <MudText Align="Align.Center" Class="my-8">
-                    Please log in by clicking on "Users" tab first.
+                    You are not authorized to see this page. Please log in by clicking on "Users" tab first.
                 </MudText>
             </MudItem>
         }
@@ -69,18 +69,21 @@
                             <MudItem xs="12">
                                 <div Style="border-bottom:1px solid #eee; padding: 5px 0;">
                                     <MudGrid Spacing="2" Class="d-flex align-center">
-                                        <MudItem xs="12" md="8">
-                                            <MudText>
-                                                @String.Format("{0:0000 0000 0000 0000 0000}", (Int64.Parse(accessCode)))
-                                            </MudText>
-                                            </MudItem>
-                                            <MudItem xs="12" md="4" Class="d-flex justify-end">
-                                                <MudButton OnClick="@(_ => DeleteAccessCode(accessCode))"
-                                                           Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Delete"
-                                                           Color="Color.Error">
-                                                    Remove
-                                                </MudButton>
-                                            </MudItem>
+                                        <MudItem xs="12" md="8" Class="d-flex align-center">
+                                            <pre class="mb-0" style="font-size:16px">
+                                                @foreach (var digitGroup in SplitIntoGroups(accessCode, 4))
+											{
+												<span class="mr-2">@digitGroup</span>
+											}
+                                            </pre>
+                                        </MudItem>
+                                        <MudItem xs="12" md="4" Class="d-flex justify-end">
+                                            <MudButton OnClick="@(_ => DeleteAccessCode(accessCode))"
+                                                        Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Delete"
+                                                        Color="Color.Error">
+                                                @Localizer["Delete"]
+                                            </MudButton>
+                                        </MudItem>
                                         </MudGrid>
                                     </div>
                                 </MudItem>
@@ -91,3 +94,15 @@
         }
     }
 </div>
+
+@code {
+    List<string> SplitIntoGroups(string str, int groupSize)
+    {
+        List<string> groups = new List<string>();
+        for (int i = 0; i < str.Length; i += groupSize)
+        {
+            groups.Add(str.Substring(i, Math.Min(groupSize, str.Length - i)));
+        }
+        return groups;
+    }
+}
