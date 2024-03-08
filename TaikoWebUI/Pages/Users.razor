@@ -87,11 +87,14 @@
                         <MudCardContent>
                             <MudText Style="font-weight:bold">Access Code</MudText>
                             <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">
-                                @String.Format("{0:0000 0000 0000 0000 0000}", (Int64.Parse(user.AccessCodes[0])))
+                                @foreach (var digitGroup in SplitIntoGroups(user.AccessCodes[0], 4))
+                                {
+                                    <span class="mr-2">@digitGroup</span>
+                                }
                             </MudText>
                             @if (user.AccessCodes.Count > 1)
                             {
-                                <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">... and @(user.AccessCodes.Count - 1) other access code(s)</MudText>
+                                <MudText Typo="Typo.caption">... and @(user.AccessCodes.Count - 1) other access code(s)</MudText>
                             }
                         </MudCardContent>
                         <MudCardActions>
@@ -199,11 +202,15 @@
                             <MudCardContent>
                                 <MudText Style="font-weight:bold">Access Code</MudText>
                                 <MudText>
-                                    @String.Format("{0:0000 0000 0000 0000 0000}", (Int64.Parse(user.AccessCodes[0])))
+                                    @foreach (var digitGroup in SplitIntoGroups(user.AccessCodes[0], 4))
+                                    {
+                                        <span class="mr-2">@digitGroup</span>
+                                    }
                                 </MudText>
+                                <MudText Typo="Typo.caption">... and @(user.AccessCodes.Count - 1) other access code(s)</MudText>
                                     @if (user.AccessCodes.Count > 1)
                                     {
-                                        <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">... and @(user.AccessCodes.Count - 1) other access code(s)</MudText>
+                                        <MudText Typo="Typo.caption">... and @(user.AccessCodes.Count - 1) other access code(s)</MudText>
                                     }
                             </MudCardContent>
                             <MudCardActions>
@@ -242,3 +249,15 @@
         </MudItem>
     }
 </MudGrid>
+
+@code {
+    List<string> SplitIntoGroups(string str, int groupSize)
+    {
+        List<string> groups = new List<string>();
+        for (int i = 0; i < str.Length; i += groupSize)
+        {
+            groups.Add(str.Substring(i, Math.Min(groupSize, str.Length - i)));
+        }
+        return groups;
+    }
+}
