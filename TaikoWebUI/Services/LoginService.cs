@@ -7,6 +7,8 @@ namespace TaikoWebUI.Services;
 
 public class LoginService
 {
+	public event EventHandler? LoginStatusChanged;
+    public delegate void LoginStatusChangedEventHandler(object? sender, EventArgs e);
     public bool LoginRequired { get; }
     public bool OnlyAdmin { get; }
     private readonly int boundAccessCodeUpperLimit;
@@ -31,6 +33,11 @@ public class LoginService
     private User LoggedInUser { get; set; } = new();
     public bool IsAdmin { get; private set; }
 
+    protected virtual void OnLoginStatusChanged()
+    {
+        LoginStatusChanged?.Invoke(this, EventArgs.Empty);
+    }
+
     public int Login(string inputCardNum, string inputPassword, DashboardResponse response)
     {
         foreach (var user in response.Users.Where(user => user.AccessCodes.Contains(inputCardNum)))
@@ -43,6 +50,9 @@ public class LoginService
                 if (!IsAdmin && OnlyAdmin) return 0;
                 IsLoggedIn = true;
                 LoggedInUser = user;
+
+                OnLoginStatusChanged();
+
                 return 1;
             }
         }
@@ -137,6 +147,7 @@ public class LoginService
         IsLoggedIn = false;
         LoggedInUser = new User();
         IsAdmin = false;
+        OnLoginStatusChanged();
     }
 
     public User GetLoggedInUser()

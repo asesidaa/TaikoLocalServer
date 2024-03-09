@@ -34,7 +34,7 @@ public partial class Register
                         "Error",
                         "Only admin can log in.",
                         "Ok", null, null, options);
-                    NavigationManager.NavigateTo("/Users");
+                    NavigationManager.NavigateTo("/Dashboard");
                     break;
                 case 1:
                     await DialogService.ShowMessageBox(

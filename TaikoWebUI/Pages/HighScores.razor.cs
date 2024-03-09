@@ -12,6 +12,7 @@ public partial class HighScores
     private const string IconStyle = "width:25px; height:25px;";
 
     private SongBestResponse? response;
+    private UserSetting? userSetting;
 
     private Dictionary<Difficulty, List<SongBestData>> songBestDataMap = new();
 
@@ -25,6 +26,8 @@ public partial class HighScores
         await base.OnInitializedAsync();
         response = await Client.GetFromJsonAsync<SongBestResponse>($"api/PlayData/{Baid}");
         response.ThrowIfNull();
+
+        userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
 
         var language = await JSRuntime.InvokeAsync<string>("blazorCulture.get");
 
@@ -46,7 +49,7 @@ public partial class HighScores
         }
 
 
-        breadcrumbs.Add(new BreadcrumbItem($"User: {Baid}", href: null, disabled: true));
+        breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
         breadcrumbs.Add(new BreadcrumbItem("High Scores", href: $"/Users/{Baid}/HighScores", disabled: false));
     }
 

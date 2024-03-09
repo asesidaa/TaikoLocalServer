@@ -194,7 +194,7 @@ public partial class Profile
         response = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
         response.ThrowIfNull();
 
-        breadcrumbs.Add(new BreadcrumbItem($"User: {Baid}", href: null, disabled: true));
+        breadcrumbs.Add(new BreadcrumbItem($"{response.MyDonName}", href: null, disabled: true));
         breadcrumbs.Add(new BreadcrumbItem("Profile", href: $"/Users/{Baid}/Profile", disabled: false));
 
         if (response != null)
@@ -247,7 +247,6 @@ public partial class Profile
 
     private void UpdateScores(Difficulty difficulty)
     {
-        //Console.WriteLine("Updating difficulty : " + (int)difficulty);
         response.ThrowIfNull();
         response.AchievementDisplayDifficulty = difficulty;
         scoresArray = new int[10];
@@ -258,7 +257,6 @@ public partial class Profile
         {
             foreach (var value in values)
             {
-                //Console.WriteLine("Updating for songId : " + value.SongId);
                 switch (value.BestScoreRank)
                 {
                     case ScoreRank.Dondaful:
@@ -300,7 +298,6 @@ public partial class Profile
 
         }
     }
-
     public static string CostumeOrDefault(string file, uint id, string defaultfile)
     {
         var path = "/images/Costumes/";

@@ -1,0 +1,175 @@
+﻿@using Microsoft.AspNetCore.Components;
+@using TaikoWebUI.Pages.Dialogs;
+@inject IDialogService DialogService;
+@inject IStringUtil StringUtil;
+@inject LoginService LoginService;
+@inject HttpClient Client
+@inject NavigationManager NavigationManager
+
+@if (user is not null)
+{
+    <MudCard Outlined="true">
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h6" Style="font-weight:bold">@userSetting?.MyDonName</MudText>
+                <MudText Typo="Typo.caption">User ID: @user.Baid</MudText>
+                </CardHeaderContent>
+                <CardHeaderActions>
+                    <MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense="true" AnchorOrigin="Origin.BottomLeft"
+                             TransformOrigin="Origin.TopLeft" Size="Size.Small">
+                        <MudMenuItem Icon="@Icons.Material.Filled.QrCode"
+                                     OnClick="@(_ => ShowQrCode(user))"
+                                     OnTouch="@(_ => ShowQrCode(user))"
+                                     IconColor="@Color.Primary">
+                            @Localizer["Show QR Code"]
+                    </MudMenuItem>
+                    <MudDivider />
+                    <MudMenuItem Icon="@Icons.Material.Filled.FeaturedPlayList"
+                                 Href="@($"Users/{user.Baid}/AccessCode")"
+                                 IconColor="@Color.Primary">
+                        @Localizer["Manage Access Codes"]
+                    </MudMenuItem>
+                    <MudDivider />
+                    @if (LoginService.OnlyAdmin || LoginService.LoginRequired)
+                    {
+                        <MudMenuItem Icon="@Icons.Material.Filled.Lock"
+                                     Href="@($"/ChangePassword")"
+                                     IconColor="@Color.Primary">
+                            @Localizer["Change Password"]
+                        </MudMenuItem>
+                        <MudDivider />
+                    }
+                    @if (LoginService.LoginRequired && LoginService.IsAdmin)
+                    {
+                        <MudMenuItem Icon="@Icons.Material.Filled.Lock"
+                                     OnClick="@(_ => ResetPassword(user))"
+                                     OnTouch="@(_ => ResetPassword(user))"
+                                     IconColor="@Color.Primary">
+                            @Localizer["Reset Password"]
+                        </MudMenuItem>
+                        <MudDivider />
+                    }
+                    @if (LoginService.AllowUserDelete)
+                    {
+                        <MudMenuItem Icon="@Icons.Material.Filled.Delete"
+                                     OnClick="@(_ => DeleteUser(user))"
+                                     OnTouch="@(_ => DeleteUser(user))"
+                                     IconColor="@Color.Error">
+                            @Localizer["Delete User"]
+                        </MudMenuItem>
+                    }
+                </MudMenu>
+            </CardHeaderActions>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudText Style="font-weight:bold">Access Code</MudText>
+            <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">
+                @foreach (var digitGroup in StringUtil.SplitIntoGroups(user.AccessCodes[0], 4))
+                {
+                    <span class="mr-2">@digitGroup</span>
+                }
+            </MudText>
+            @if (user.AccessCodes.Count > 1)
+            {
+                <MudText Typo="Typo.caption">... and @(user.AccessCodes.Count - 1) other access code(s)</MudText>
+            }
+        </MudCardContent>
+        <MudCardActions>
+            <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
+                <MudButton Href="@($"Users/{user.Baid}/Profile")"
+                           Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Edit"
+                           Color="Color.Primary">
+                    @Localizer["edit profile"]
+                </MudButton>
+                <MudMenu Size="Size.Small"
+                         Dense="true"
+                         Color="Color.Primary"
+                         Label="@Localizer["view play data"]"
+                         StartIcon="@Icons.Material.Filled.FeaturedPlayList"
+                         EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
+                         FullWidth="true"
+                         AnchorOrigin="Origin.BottomCenter"
+                         TransformOrigin="Origin.TopCenter">
+                    <MudMenuItem Href="@($"Users/{user.Baid}/HighScores")">@Localizer["high scores"]</MudMenuItem>
+                        <MudMenuItem Href="@($"Users/{user.Baid}/DaniDojo")">@Localizer["dani dojo"]</MudMenuItem>
+                    </MudMenu>
+                </MudStack>
+            </MudCardActions>
+        </MudCard>
+}
+
+@code {
+    [Parameter] public User? user { get; set; }
+    private DashboardResponse? response;
+    private UserSetting? userSetting;
+
+    protected override async Task OnInitializedAsync()
+    {   if (user is not null)
+        {
+            userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{user.Baid}");
+        }
+    }
+
+    private Task ShowQrCode(User user)
+    {
+        var parameters = new DialogParameters
+            {
+                ["user"] = user
+            };
+
+        var options = new DialogOptions() { DisableBackdropClick = true };
+        DialogService.Show<UserQrCodeDialog>("QR Code", parameters, options);
+
+        return Task.CompletedTask;
+    }
+
+    private async Task ResetPassword(User user)
+    {
+        var options = new DialogOptions() { DisableBackdropClick = true };
+        if (LoginService.LoginRequired && !LoginService.IsAdmin)
+        {
+            await DialogService.ShowMessageBox(
+                "Error",
+                "Only admin can reset password.",
+                "Ok", null, null, options);
+            return;
+        }
+        var parameters = new DialogParameters
+            {
+                ["user"] = user
+            };
+
+        var dialog = DialogService.Show<ResetPasswordConfirmDialog>("Reset Password", parameters, options);
+        var result = await dialog.Result;
+
+        if (result.Canceled) return;
+
+        response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
+    }
+
+    private async Task DeleteUser(User user)
+    {
+        var options = new DialogOptions() { DisableBackdropClick = true };
+        if (!LoginService.AllowUserDelete)
+        {
+            await DialogService.ShowMessageBox(
+                "Error",
+                "User deletion is disabled by admin.",
+                "Ok", null, null, options);
+            return;
+        }
+        var parameters = new DialogParameters
+            {
+                ["user"] = user
+            };
+
+        var dialog = DialogService.Show<UserDeleteConfirmDialog>("Delete User", parameters, options);
+        var result = await dialog.Result;
+
+        if (result.Canceled) return;
+
+        response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
+        LoginService.Logout();
+        NavigationManager.NavigateTo("/Users");
+    }
+}
