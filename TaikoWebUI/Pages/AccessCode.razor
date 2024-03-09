@@ -5,93 +5,91 @@
 @inject NavigationManager NavigationManager
 @inject IStringUtil StringUtil
 
-<MudBreadcrumbs Items="breadcrumbs" Class="px-0"></MudBreadcrumbs>
-
-<MudText Typo="Typo.h4">Access Code Management</MudText>
-<MudText Typo="Typo.caption">User ID: @Baid</MudText>
-
-<div class="mt-8">
-
-        @if (response is null)
+@if (response is not null)
+{
+    @if ((LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.GetLoggedInUser().Baid != Baid && !LoginService.IsAdmin))) || User is null)
     {
-        <MudGrid>
-            <MudItem xs="12">
-                <MudProgressCircular Size="Size.Large" Color="Color.Primary" />
-            </MudItem>
-        </MudGrid>
-    }
-    else
-    {
-        @if ((LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.GetLoggedInUser().Baid != Baid && !LoginService.IsAdmin))) || User is null)
+        if (!LoginService.IsLoggedIn)
         {
-            <MudItem xs="12">
-                <MudText Align="Align.Center" Class="my-8">
-                    You are not authorized to see this page. Please log in by clicking on "Users" tab first.
-                </MudText>
-            </MudItem>
+            NavigationManager.NavigateTo("/Login");
         }
         else
         {
-            <MudCard Outlined="true" Class="mb-6">
-                <MudCardContent>
-                    <MudGrid Spacing="3">
-                        <MudItem xs="12">
-                            <MudText Typo="Typo.h6">Bind New Access Code</MudText>
-                            <MudText Typo="Typo.body1">
-                                Enter a new access code to bind to this user account.
-                            </MudText>
-                            <MudForm @ref="bindAccessCodeForm">
-                                <MudGrid Spacing="2" Class="mt-4">
-                                    <MudItem xs="12" md="10">
-                                        <MudTextField @bind-value="inputAccessCode" InputType="InputType.Text" T="string"
-                                                      FullWidth="true" Required="@true" RequiredError="Access Code is required" Variant="Variant.Outlined" Margin="Margin.Dense"
-                                                      Label="New Access Code" />
-                                    </MudItem>
-                                    <MudItem xs="12" md="2">
-                                        <MudButton OnClick="OnBind" FullWidth="true" StartIcon="@Icons.Material.Filled.AddCard" Color="Color.Primary" Variant="Variant.Filled" Class="mt-1">Bind</MudButton>
-                                    </MudItem>
-                                </MudGrid>
-                            </MudForm>
-                        </MudItem>
-                    </MudGrid>
-                </MudCardContent>
-            </MudCard>
-
-            <MudCard Outlined="true">
-                <MudCardContent>
-                    <MudGrid Spacing="3" Class="pb-2">
-                        <MudItem xs="12">
-                            <MudText Typo="Typo.h6">Access Codes</MudText>
-                        </MudItem>
-                        @for (var idx = 0; idx < User.AccessCodes.Count; idx++)
-                        {
-                            var accessCode = User.AccessCodes[idx];
-                            var localIdx = idx + 1;
+            NavigationManager.NavigateTo("/");
+        }
+    }
+    else
+    {
+        <MudBreadcrumbs Items="breadcrumbs" Class="p-0 mb-2"></MudBreadcrumbs>
+        <MudText Typo="Typo.h4">Access Codes</MudText>
+        <MudText Typo="Typo.caption">User ID: @Baid</MudText>
+        <MudGrid Class="my-4 pb-10">
+            <MudItem xs="12">
+                <MudCard Outlined="true" Class="mb-6">
+                    <MudCardContent>
+                        <MudGrid Spacing="3">
                             <MudItem xs="12">
-                                <div Style="border-bottom:1px solid #eee; padding: 5px 0;">
-                                    <MudGrid Spacing="2" Class="d-flex align-center">
-                                        <MudItem xs="12" md="8" Class="d-flex align-center">
-                                            <pre class="mb-0" style="font-size:16px">
-                                                @foreach (var digitGroup in StringUtil.SplitIntoGroups(accessCode, 4))
-											{
-												<span class="mr-2">@digitGroup</span>
-											}
-                                            </pre>
+                                <MudText Typo="Typo.h6">Add Access Code</MudText>
+                                <MudForm @ref="bindAccessCodeForm">
+                                    <MudGrid Spacing="2" Class="mt-4">
+                                        <MudItem xs="12" md="10">
+                                            <MudTextField @bind-value="inputAccessCode" InputType="InputType.Text" T="string"
+                                                          FullWidth="true" Required="@true" RequiredError="Access Code is required" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                                          Label="New Access Code" />
                                         </MudItem>
-                                        <MudItem xs="12" md="4" Class="d-flex justify-end">
-                                            <MudButton OnClick="@(_ => DeleteAccessCode(accessCode))"
-                                                        Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Delete"
-                                                        Color="Color.Error">
-                                                @Localizer["Delete"]
-                                            </MudButton>
+                                        <MudItem xs="12" md="2">
+                                            <MudButton OnClick="OnBind" FullWidth="true" StartIcon="@Icons.Material.Filled.AddCard" Color="Color.Primary" Variant="Variant.Filled" Class="mt-1">Add</MudButton>
                                         </MudItem>
+                                    </MudGrid>
+                                </MudForm>
+                            </MudItem>
+                        </MudGrid>
+                    </MudCardContent>
+                </MudCard>
+
+                <MudCard Outlined="true">
+                    <MudCardContent>
+                        <MudGrid Spacing="3" Class="pb-2">
+                            <MudItem xs="12">
+                                <MudText Typo="Typo.h6">Access Codes</MudText>
+                            </MudItem>
+                            @for (var idx = 0; idx < User.AccessCodes.Count; idx++)
+                            {
+                                var accessCode = User.AccessCodes[idx];
+                                var localIdx = idx + 1;
+                                <MudItem xs="12" Class="py-0">
+                                    <div Style="border-bottom:1px solid #eee; padding: 5px 0;">
+                                        <MudGrid Spacing="2" Class="d-flex align-center">
+                                            <MudItem xs="12" md="8" Class="d-flex align-center">
+                                                <pre class="mb-0" style="font-size:16px">
+                                                    @foreach (var digitGroup in StringUtil.SplitIntoGroups(accessCode, 4))
+                                                    {
+                                                    <span class="mr-2">@digitGroup</span>
+                                                    }
+                                                            </pre>
+                                            </MudItem>
+                                            <MudItem xs="12" md="4" Class="d-flex justify-end">
+                                                <MudButton OnClick="@(_ => DeleteAccessCode(accessCode))"
+                                                           Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Delete"
+                                                           Color="Color.Error">
+                                                    @Localizer["Delete"]
+                                                </MudButton>
+                                            </MudItem>
                                         </MudGrid>
                                     </div>
                                 </MudItem>
-                        }
-                    </MudGrid>
-                </MudCardContent>
-            </MudCard>
-        }
-    }
-</div>
+                            }
+                        </MudGrid>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>    
+        </MudGrid>
+
+    } 
+}
+else
+{
+    <MudContainer Style="display:flex;margin:50px 0;align-items:center;justify-content:center;">
+        <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+    </MudContainer>
+}
