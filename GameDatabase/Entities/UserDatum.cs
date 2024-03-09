@@ -31,7 +31,7 @@ namespace GameDatabase.Entities
         public bool DisplayAchievement { get; set; }
         public Difficulty AchievementDisplayDifficulty { get; set; }
         public int AiWinCount { get; set; }
-        public string TokenCountDict { get; set; } = "{}";
+        public List<Token> Tokens { get; set; } = new();
         public string UnlockedSongIdList { get; set; } = "[]";
         public bool IsAdmin { get; set; }
     }

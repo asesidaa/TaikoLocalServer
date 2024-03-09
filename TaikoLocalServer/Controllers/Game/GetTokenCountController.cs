@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using GameDatabase.Entities;
 using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
@@ -60,20 +61,6 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
             machina4TokenId
         };
 
-        var tokenCountDict = new Dictionary<uint, int>();
-        try
-        {
-            tokenCountDict = !string.IsNullOrEmpty(user.TokenCountDict)
-                ? JsonSerializer.Deserialize<Dictionary<uint, int>>(user.TokenCountDict)
-                : new Dictionary<uint, int>();
-        }
-        catch (JsonException e)
-        {
-            Logger.LogError(e, "Parsing TokenCountDict data for user with baid {Request} failed!", request.Baid);
-        }
-
-        tokenCountDict.ThrowIfNull("TokenCountDict should never be null");
-
         var response = new GetTokenCountResponse
         {
             Result = 1
@@ -83,15 +70,22 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
         {
             if (tokenDataId <= 0) continue;
             var castedTokenDataId = (uint)tokenDataId;
-            tokenCountDict.TryAdd(castedTokenDataId, 0);
+            if (user.Tokens.All(token => token.Id != castedTokenDataId))
+            {
+                user.Tokens.Add(new Token
+                {
+                    Id = (int)castedTokenDataId,
+                    Count = 0
+                }); 
+            }
+            var tokenCount = user.Tokens.First(token => token.Id == castedTokenDataId).Count;
             response.AryTokenCountDatas.Add(new GetTokenCountResponse.TokenCountData
             {
-                TokenCount = tokenCountDict[castedTokenDataId],
+                TokenCount = tokenCount,
                 TokenId = castedTokenDataId
             });
         }
-
-        user.TokenCountDict = JsonSerializer.Serialize(tokenCountDict);
+        
         await userDatumService.UpdateUserDatum(user);
 
         return Ok(response);
