@@ -13,15 +13,12 @@
             <CardHeaderContent>
                 <div style="display:flex;flex-wrap:wrap;gap:5px;">
                     <MudText Typo="Typo.h6" Style="font-weight:bold;word-break:break-all">@userSetting?.MyDonName</MudText>
-                    @if (LoginService.LoginRequired)
+                    @if (user?.IsAdmin == true)
                     {
-                        @if (user?.IsAdmin == true)
-                        {
-                            <MudChip Color="Color.Secondary" Size="Size.Small">@Localizer["Admin"]</MudChip>
-                        }
+                        <MudChip Color="Color.Secondary" Size="Size.Small">@Localizer["Admin"]</MudChip>
                     }
                 </div>
-                <MudText Typo="Typo.caption">User ID: @user.Baid</MudText>
+                <MudText Typo="Typo.caption">User ID: @user?.Baid</MudText>
                 </CardHeaderContent>
                 <CardHeaderActions>
                     <MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense="true" AnchorOrigin="Origin.BottomLeft"
