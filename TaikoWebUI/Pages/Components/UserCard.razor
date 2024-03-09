@@ -68,7 +68,7 @@
             </CardHeaderActions>
         </MudCardHeader>
         <MudCardContent>
-            <MudText Style="font-weight:bold">Access Code</MudText>
+            <MudText Typo="Typo.body2" Style="font-weight:bold">Access Code</MudText>
             <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">
                 @foreach (var digitGroup in StringUtil.SplitIntoGroups(user.AccessCodes[0], 4))
                 {
