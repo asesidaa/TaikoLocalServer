@@ -28,7 +28,7 @@
 			    <MudNavLink Href="@($"Users/{currentUser.Baid}/HighScores")" Match="NavLinkMatch.All">@Localizer["Key_01"]</MudNavLink>
 			    <MudNavLink Href="@($"Users/{currentUser.Baid}/DaniDojo")" Match="NavLinkMatch.All">@Localizer["Key_03"]</MudNavLink>
             </MudNavGroup>
-            <MudNavGroup Title="Settings" Expanded="false" Icon="@Icons.Material.Filled.Settings">
+            <MudNavGroup Title="Settings" Expanded="_settingsOpen" Icon="@Icons.Material.Filled.Settings">
                 <MudNavLink OnClick="ShowQrCode">@Localizer["Show QR Code"]</MudNavLink>
                 <MudNavLink Href="/ChangePassword" Match="NavLinkMatch.All">@Localizer["Change Password"]</MudNavLink>
                 <MudNavLink Href="@($"Users/{currentUser.Baid}/AccessCode")" Match="NavLinkMatch.All">@Localizer["Manage Access Codes"]</MudNavLink>
@@ -45,6 +45,9 @@
 </MudNavMenu>
 
 @code {
+
+    private bool _settingsOpen = false;
+
     protected override void OnInitialized()
     {
         LoginService.LoginStatusChanged += HandleLoginStatusChanged;
@@ -72,6 +75,9 @@
 
         var options = new DialogOptions() { DisableBackdropClick = true };
         DialogService.Show<UserQrCodeDialog>("QR Code", parameters, options);
+
+        // Prevent the settings menu from closing
+        _settingsOpen = true;
     }
 
     private async Task Logout()
