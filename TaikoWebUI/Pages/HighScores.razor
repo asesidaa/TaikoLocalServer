@@ -2,14 +2,13 @@
 @inject HttpClient Client
 @inject LoginService LoginService
 @inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
 
 @page "/Users/{baid:int}/HighScores"
 
-<MudBreadcrumbs Items="breadcrumbs" Class="px-0"></MudBreadcrumbs>
-
+<MudBreadcrumbs Items="breadcrumbs" Class="p-0 mb-2"></MudBreadcrumbs>
 <MudText Typo="Typo.h4">@Localizer["Key_01"]</MudText>
 <MudText Typo="Typo.caption">User ID: @Baid</MudText>
-
 
 <MudGrid Class="my-8">
     @if (response is null)
@@ -24,11 +23,14 @@
     {
         @if (LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.GetLoggedInUser().Baid != Baid && !LoginService.IsAdmin)))
         {
-            <MudItem xs="12">
-                <MudText Align="Align.Center" Class="my-8">
-                    @Localizer["Key_02"]
-                </MudText>
-            </MudItem>
+            if (!LoginService.IsLoggedIn)
+            {
+                NavigationManager.NavigateTo("/Login");
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/");
+            }
         }
         else
         {
