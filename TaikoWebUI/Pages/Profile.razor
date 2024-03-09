@@ -7,7 +7,7 @@
 
 <MudBreadcrumbs Items="breadcrumbs" Class="px-0"></MudBreadcrumbs>
 <MudText Typo="Typo.h4">@Localizer["Profile"]</MudText>
-<MudText Typo="Typo.caption">User: @Baid</MudText>
+<MudText Typo="Typo.caption">User ID: @Baid</MudText>
 
 @if (response is not null)
 {
@@ -30,7 +30,7 @@
                                 <MudText Typo="Typo.h6">@Localizer["Profile Options"]</MudText>
                                 <MudGrid>
                                     <MudItem xs="12" md="8">
-                                        <MudTextField TextChanged="UpdateMyDonName" @bind-Value="@response.MyDonName" Label=@Localizer["Name"]></MudTextField>
+                                        <MudTextField TextChanged="UpdateMyDonName" Required="true" @bind-Value="@response.MyDonName" Label=@Localizer["Name"]></MudTextField>
                                     </MudItem>
                                     <MudItem xs="12" md="4">
                                         <MudSelect @bind-Value="@response.MyDonNameLanguage" Label=@Localizer["Language"]>
@@ -457,8 +457,7 @@
 
     private async Task UpdateTitle()
     {
-        @if (response is not null) await 
-    Js.InvokeVoidAsync("updateTitleText", response.Title);
+        @if (response is not null) await Js.InvokeVoidAsync("updateTitleText", response.Title);
     }
 
     private async Task UpdateScoreboard(Difficulty difficulty)

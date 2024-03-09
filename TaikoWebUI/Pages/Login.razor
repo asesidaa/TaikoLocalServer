@@ -1,0 +1,45 @@
+﻿@inject HttpClient Client
+@inject IDialogService DialogService
+@inject LoginService LoginService
+@inject NavigationManager NavigationManager
+
+@page "/Login"
+
+<MudGrid Class="my-8">
+                @if (!LoginService.IsLoggedIn) // Not logged in, show login form
+                {
+                    <MudContainer>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="12" md="6" lg="4" class="mt-8">
+                                <MudCard Elevation="0" Outlined="true">
+                                    <MudCardContent>
+                                        <MudForm @ref="loginForm">
+                                            <MudText Typo="Typo.h5" Class="mb-4">Login</MudText>
+                                            <div style="display:flex;flex-direction:column;gap:15px;">
+                                                <MudTextField @bind-value="inputAccessCode" InputType="InputType.Text" T="string"
+                                                              FullWidth="true" Required="@true" RequiredError="Access code is required"
+                                                              Label="Access code" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                                                <MudTextField @bind-Value="inputPassword" InputType="InputType.Password"
+                                                              T="string" FullWidth="true" Required="@true"
+                                                              RequiredError="Password is required"
+                                                              Label="Password" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                                                <MudStack Row="true" Class="mt-2">
+                                                    <MudButton OnClick="OnLogin" FullWidth="true" StartIcon="@Icons.Material.Filled.Login" Color="Color.Primary" Variant="Variant.Filled">Login</MudButton>
+                                                    @if (!LoginService.OnlyAdmin)
+                                                    {
+                                                        <MudButton Href="@("/Register")" FullWidth="true" StartIcon="@Icons.Material.Filled.AddCard" Color="Color.Primary" Variant="Variant.Filled">Register</MudButton>
+                                                    }
+                                                </MudStack>
+                                            </div>
+                                        </MudForm>
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudItem>
+                        </MudGrid>
+        </MudContainer>
+    } else
+    {
+        // Already logged in
+        NavigationManager.NavigateTo("/");
+    }
+</MudGrid>

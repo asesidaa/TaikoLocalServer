@@ -10,6 +10,7 @@ public partial class DaniDojo
     public string CurrentLanguage { get; set; } = "ja";
 
     private DanBestDataResponse? response;
+    private UserSetting? userSetting;
 
     private static Dictionary<uint, DanBestData> bestDataMap = new();
 
@@ -30,7 +31,9 @@ public partial class DaniDojo
 
         CurrentLanguage = await JSRuntime.InvokeAsync<string>("blazorCulture.get");
 
-        breadcrumbs.Add(new BreadcrumbItem($"User: {Baid}", href: null, disabled: true));
+        userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
+
+        breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
         breadcrumbs.Add(new BreadcrumbItem("Dani Dojo", href: $"/Users/{Baid}/DaniDojo", disabled: false));
     }
 

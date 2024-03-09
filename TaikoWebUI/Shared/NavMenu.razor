@@ -1,4 +1,91 @@
-﻿<MudNavMenu>
+﻿@inject LoginService LoginService
+@inject NavigationManager NavigationManager
+@inject IDialogService DialogService
+
+@using TaikoWebUI.Pages.Dialogs;
+
+<MudNavMenu Rounded="true" Class="pa-2" Margin="Margin.Dense" Color="Color.Primary">
     <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">@Localizer["dashboard"]</MudNavLink>
-    <MudNavLink Href="/Users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.CreditCard">@Localizer["users"]</MudNavLink>
+    @if (LoginService.IsAdmin || !LoginService.LoginRequired)
+    {
+    <MudNavLink Href="/Users" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.People">@Localizer["Users"]</MudNavLink>
+    }
+    
+    @{
+		var currentUser = LoginService.GetLoggedInUser();
+
+		if (LoginService.LoginRequired && !LoginService.OnlyAdmin && !LoginService.IsLoggedIn) {
+            <MudDivider />
+            <MudNavLink Href="/Login" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Login">@Localizer["Login"]</MudNavLink>
+			<MudNavLink Href="/Register" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.AddCard">@Localizer["Register"]</MudNavLink>
+		}
+
+        if (LoginService.IsLoggedIn && currentUser != null)
+		{
+            <MudDivider />
+			<MudNavLink Href="@($"Users/{currentUser.Baid}/Profile")" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Person">@Localizer["Profile"]</MudNavLink>
+            <MudNavGroup Title="Play Data" Expanded="true" Icon="@Icons.Material.Filled.TrendingUp">
+			    <MudNavLink Href="@($"Users/{currentUser.Baid}/HighScores")" Match="NavLinkMatch.All">@Localizer["Key_01"]</MudNavLink>
+			    <MudNavLink Href="@($"Users/{currentUser.Baid}/DaniDojo")" Match="NavLinkMatch.All">@Localizer["Key_03"]</MudNavLink>
+            </MudNavGroup>
+            <MudNavGroup Title="Settings" Expanded="false" Icon="@Icons.Material.Filled.Settings">
+                <MudNavLink OnClick="ShowQrCode">@Localizer["Show QR Code"]</MudNavLink>
+                <MudNavLink Href="/ChangePassword" Match="NavLinkMatch.All">@Localizer["Change Password"]</MudNavLink>
+                <MudNavLink Href="@($"Users/{currentUser.Baid}/AccessCode")" Match="NavLinkMatch.All">@Localizer["Manage Access Codes"]</MudNavLink>
+            </MudNavGroup>
+		}
+
+        if (LoginService.IsLoggedIn)
+		{
+            <MudDivider />
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Logout" IconColor="Color.Error" OnClick="Logout">@Localizer["Log Out"]</MudNavLink>
+		}
+
+	}
 </MudNavMenu>
+
+@code {
+    protected override void OnInitialized()
+    {
+        LoginService.LoginStatusChanged += HandleLoginStatusChanged;
+    }
+
+    private void HandleLoginStatusChanged(object? sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            LoginService.LoginStatusChanged += HandleLoginStatusChanged;
+        }
+    }
+
+    private void ShowQrCode()
+    {
+        var parameters = new DialogParameters
+            {
+                ["user"] = LoginService.GetLoggedInUser()
+            };
+
+        var options = new DialogOptions() { DisableBackdropClick = true };
+        DialogService.Show<UserQrCodeDialog>("QR Code", parameters, options);
+    }
+
+    private async Task Logout()
+	{
+		var result = await DialogService.ShowMessageBox(
+			"Log Out",
+			"Are you sure you want to log out?",
+			yesText: "Log Out",
+			noText: "Cancel");
+
+		if (result == true)
+		{
+			LoginService.Logout();
+			NavigationManager.NavigateTo("/");
+		}
+	}
+}

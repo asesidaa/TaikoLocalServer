@@ -6,23 +6,18 @@ namespace TaikoWebUI.Services;
 
 public class GameDataService : IGameDataService
 {
-    private string[] bodyTitles = { };
     private readonly HttpClient client;
-    private string[] faceTitles = { };
+    private readonly Dictionary<uint, MusicDetail> musicMap = new();
+    private List<int> costumeFlagArraySizes = new();
+    private int titleFlagArraySize;
+    private ImmutableDictionary<uint, DanData> danMap = ImmutableDictionary<uint, DanData>.Empty;
+    private ImmutableHashSet<Title> titles = ImmutableHashSet<Title>.Empty;
 
+    private string[] bodyTitles = { };
+    private string[] faceTitles = { };
     private string[] headTitles = { };
     private string[] kigurumiTitles = { };
-
-    private readonly Dictionary<uint, MusicDetail> musicMap = new();
     private string[] puchiTitles = { };
-
-    private List<int> costumeFlagArraySizes = new();
-
-    private int titleFlagArraySize;
-
-    private ImmutableDictionary<uint, DanData> danMap = ImmutableDictionary<uint, DanData>.Empty;
-
-    private ImmutableHashSet<Title> titles = ImmutableHashSet<Title>.Empty;
 
     public GameDataService(HttpClient client)
     {
