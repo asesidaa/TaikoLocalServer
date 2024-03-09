@@ -19,9 +19,10 @@
                     {
                         <MudSkeleton Width="35%" Height="32px" />
                     }
+
                     @if (user?.IsAdmin == true)
                     {
-                        <MudChip Color="Color.Secondary" Size="Size.Small">@Localizer["Admin"]</MudChip>
+                        <MudChip Variant="Variant.Outlined" Color="Color.Info" Size="Size.Small" Icon="@Icons.Material.TwoTone.AdminPanelSettings">@Localizer["Admin"]</MudChip>
                     }
                 </div>
                 <MudText Typo="Typo.caption">User ID: @user?.Baid</MudText>

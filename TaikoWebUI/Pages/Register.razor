@@ -7,17 +7,25 @@
 
 @if (LoginService.OnlyAdmin || !LoginService.LoginRequired)
 {
-    <MudText Typo="Typo.body1">Registration is currently closed.</MudText>
+    Console.WriteLine("Registration is disabled. Redirecting to Dashboard...");
+    NavigationManager.NavigateTo("/");
+}
+else if (LoginService.IsLoggedIn)
+{
+	// User is already logged in. Redirect to dashboard.
+	NavigationManager.NavigateTo("/");
 }
 else
 {
     <MudContainer>
         <MudGrid Justify="Justify.Center">
-            <MudItem xs="12" md="6" lg="4" class="mt-8">
+            <MudItem xs="12" md="6" lg="4">
                 <MudCard Elevation="0" Outlined="true">
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h5">Register</MudText>
+                    </MudCardHeader>
                     <MudCardContent>
                         <MudForm @ref="registerForm">
-                            <MudText Typo="Typo.h5" Class="mb-4">Register</MudText>
                             <div style="display:flex;flex-direction:column;gap:15px;">
                             <MudTextField @bind-value="accessCode" InputType="InputType.Text" T="string"
                                           FullWidth="true" Required="@true" RequiredError="Access Code is required"
