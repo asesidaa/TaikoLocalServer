@@ -124,7 +124,7 @@
     <value>ユーザー管理</value>
   </data>
   <data name="edit profile" xml:space="preserve">
-    <value>ファイル編集</value>
+    <value>プロフィール編集</value>
   </data>
   <data name="user" xml:space="preserve">
     <value>ユーザー</value>
@@ -271,16 +271,16 @@
     <value>段位道場</value>
   </data>
   <data name="Profile" xml:space="preserve">
-    <value>ファイル</value>
+    <value>プロフィール</value>
   </data>
   <data name="Profile Options" xml:space="preserve">
-    <value>ファイルオプション</value>
+    <value>プロフィール設定</value>
   </data>
   <data name="Costume" xml:space="preserve">
     <value>着せ替え</value>
   </data>
   <data name="Costume Options" xml:space="preserve">
-    <value>着せ替えオプション</value>
+    <value>着せ替え設定</value>
   </data>
   <data name="Song Options" xml:space="preserve">
     <value>演奏オプション</value>
@@ -307,22 +307,22 @@
     <value>称号タイプ</value>
   </data>
   <data name="Achievement Panel Difficulty" xml:space="preserve">
-    <value>総合成績パネル難易度設定</value>
+    <value>総合成績パネルの難易度</value>
   </data>
   <data name="Display Dan Rank on Name Plate" xml:space="preserve">
     <value>段位表示</value>
   </data>
   <data name="Display Achievement Panel" xml:space="preserve">
-    <value>総合成績パネル表示</value>
+    <value>成績表示</value>
   </data>
   <data name="Difficulty Setting Course" xml:space="preserve">
-    <value>むずかしさからえらぶ難易度設定</value>
+    <value>むずかしさからえらぶの難易度</value>
   </data>
   <data name="Difficulty Setting Star" xml:space="preserve">
-    <value>むずかしさからえらぶ★数設定</value>
+    <value>むずかしさからえらぶの★数</value>
   </data>
   <data name="Difficulty Setting Sort" xml:space="preserve">
-    <value>むずかしさからえらぶ表示順設定</value>
+    <value>むずかしさからえらぶの表示順</value>
   </data>
   <data name="Select a Title" xml:space="preserve">
     <value>称号を選択してください</value>
