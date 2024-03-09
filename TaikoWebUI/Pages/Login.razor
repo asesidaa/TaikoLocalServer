@@ -6,8 +6,9 @@
 @page "/Login"
 
 
-@if (!LoginService.IsLoggedIn) // Not logged in, show login form
+@if (!LoginService.IsLoggedIn) 
 {
+    // Not logged in, show login form
     <MudContainer>
         <MudGrid Justify="Justify.Center">
             <MudItem xs="12" md="6" lg="4">
@@ -20,7 +21,7 @@
                             <div style="display:flex;flex-direction:column;gap:15px;">
                                 <MudTextField @bind-value="inputAccessCode" InputType="InputType.Text" T="string"
                                                 FullWidth="true" Required="@true" RequiredError="Access code is required"
-                                                Label="Access code" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                                                Label="Access Code" Variant="Variant.Outlined" Margin="Margin.Dense" />
                                 <MudTextField @bind-Value="inputPassword" InputType="InputType.Password"
                                                 T="string" FullWidth="true" Required="@true"
                                                 RequiredError="Password is required"
@@ -35,6 +36,6 @@
     </MudContainer>
 } else
 {
-    // Already logged in
+    // Already logged in, redirect to Dashboard
     NavigationManager.NavigateTo("/");
 }
