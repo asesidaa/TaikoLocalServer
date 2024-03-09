@@ -244,6 +244,12 @@ public partial class Profile
         isSavingOptions = true;
         await Client.PostAsJsonAsync($"api/UserSettings/{Baid}", response);
         isSavingOptions = false;
+
+        // Adjust breadcrumb if name is changed
+        if (response != null && response.MyDonName != null)
+        {
+            breadcrumbs[^2] = new BreadcrumbItem($"{response.MyDonName}", href: null, disabled: true);
+        }
     }
 
     private void UpdateScores(Difficulty difficulty)
