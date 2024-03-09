@@ -14,10 +14,7 @@ public partial class DaniDojo
 
     private static Dictionary<uint, DanBestData> bestDataMap = new();
 
-    private readonly List<BreadcrumbItem> breadcrumbs = new()
-    {
-        new BreadcrumbItem("Users", href: "/Users"),
-    };
+    private readonly List<BreadcrumbItem> breadcrumbs = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -33,6 +30,14 @@ public partial class DaniDojo
 
         userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
 
+        if (LoginService.IsLoggedIn && !LoginService.IsAdmin)
+        {
+            breadcrumbs.Add(new BreadcrumbItem("Dashboard", href: "/"));
+        }
+        else
+        {
+            breadcrumbs.Add(new BreadcrumbItem("Users", href: "/Users"));
+        };
         breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
         breadcrumbs.Add(new BreadcrumbItem("Dani Dojo", href: $"/Users/{Baid}/DaniDojo", disabled: false));
     }
