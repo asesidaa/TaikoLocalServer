@@ -50,7 +50,7 @@ public class PlayDataController : BaseController<PlayDataController>
         foreach (var songBestRecord in songBestRecords)
         {
             songBestRecord.RecentPlayData = playLogs.Where(datum => datum.SongId == songBestRecord.SongId)
-                .OrderByDescending(datum => datum.PlayTime).Take(15).ToList();
+                .OrderByDescending(datum => datum.PlayTime).Take(10).ToList();
         }
 
         return Ok(new SongBestResponse
