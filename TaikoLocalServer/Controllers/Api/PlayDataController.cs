@@ -47,6 +47,12 @@ public class PlayDataController : BaseController<PlayDataController>
             songBestRecord.IsFavorite = true;
         }
 
+        foreach (var songBestRecord in songBestRecords)
+        {
+            songBestRecord.RecentPlayData = playLogs.Where(datum => datum.SongId == songBestRecord.SongId)
+                .OrderByDescending(datum => datum.PlayTime).Take(15).ToList();
+        }
+
         return Ok(new SongBestResponse
         {
             SongBestData = songBestRecords

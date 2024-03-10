@@ -1,4 +1,5 @@
 ﻿using GameDatabase.Entities;
+using SharedProject.Entities;
 
 namespace TaikoLocalServer.Controllers.Game;
 

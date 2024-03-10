@@ -1,4 +1,6 @@
-﻿namespace GameDatabase.Entities
+﻿using SharedProject.Entities;
+
+namespace GameDatabase.Entities
 {
     public partial class Card
     {

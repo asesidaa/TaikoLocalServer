@@ -1,5 +1,6 @@
 ﻿using GameDatabase.Context;
 using GameDatabase.Entities;
+using SharedProject.Entities;
 using SharedProject.Models;
 using Swan.Mapping;
 using Throw;

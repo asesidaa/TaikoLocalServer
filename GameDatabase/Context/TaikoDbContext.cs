@@ -1,6 +1,7 @@
 ﻿using GameDatabase.Entities;
 using Microsoft.EntityFrameworkCore;
 using SharedProject.Utils;
+using SharedProject.Entities;
 
 namespace GameDatabase.Context
 {
