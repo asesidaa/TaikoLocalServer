@@ -30,19 +30,23 @@ else
                     <MudCardHeader>
                         <MudText Typo="Typo.h6">Recent Plays</MudText>
                     </MudCardHeader>
-                    <MudCardContent>
+                    <MudCardContent Class="p-0">
 						@if (SongBestData is not null && SongBestData.RecentPlayData is not null && SongBestData.RecentPlayData.Count > 0)
 						{
-						    <MudTable Items="@SongBestData.RecentPlayData" Class="table-striped" Dense="true">
+						    <MudTable Items="@SongBestData.RecentPlayData" Class="table-striped" Elevation="0">
 						        <HeaderContent>
                                     <MudTh>Play Time</MudTh>
                                     <MudTh>Difficulty</MudTh>
                                     <MudTh>Score</MudTh>
+                                    <MudTh>Crown</MudTh>
+                                    <MudTh>Rank</MudTh>
                                 </HeaderContent>
                                 <RowTemplate>
                                     <MudTd>@context.PlayTime</MudTd>
 	                                <MudTd>@context.Difficulty</MudTd>
 	                                <MudTd>@context.Score</MudTd>
+                                    <MudTd>@context.Crown</MudTd>
+                                    <MudTd>@context.ScoreRank</MudTd>
                                 </RowTemplate>
 						    </MudTable>
 						}
