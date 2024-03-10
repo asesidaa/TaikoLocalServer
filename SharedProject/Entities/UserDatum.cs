@@ -1,6 +1,6 @@
 ﻿using SharedProject.Enums;
 
-namespace GameDatabase.Entities
+namespace SharedProject.Entities
 {
     public partial class UserDatum
     {

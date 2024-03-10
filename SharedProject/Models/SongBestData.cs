@@ -1,4 +1,5 @@
 ﻿using SharedProject.Enums;
+using SharedProject.Entities;
 
 namespace SharedProject.Models;
 
@@ -46,4 +47,6 @@ public class SongBestData
     public List<AiSectionBestData> AiSectionBestData { get; set; } = new();
 
     public bool ShowAiData { get; set; }
+
+    public List<SongPlayDatum> RecentPlayData { get; set; } = new();
 }

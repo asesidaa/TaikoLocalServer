@@ -1,5 +1,5 @@
 ﻿using GameDatabase.Context;
-using GameDatabase.Entities;
+using SharedProject.Entities;
 
 namespace TaikoLocalServer.Services;
 
