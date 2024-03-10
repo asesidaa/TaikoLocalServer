@@ -5,7 +5,7 @@
 @inject IJSRuntime JSRuntime
 @inject IOptions<WebUiSettings> Settings
 
-<MudMenu Icon="@Icons.Material.Filled.Language" Color="Color.Inherit">
+<MudMenu Icon="@Icons.Material.Filled.Translate" Color="Color.Inherit" Size="Size.Small" Dense="true">
     @foreach (var culture in SupportedCultures)
     {
         <MudMenuItem OnClick="() => RequestCultureChange(culture.Key)">@culture.Value</MudMenuItem>

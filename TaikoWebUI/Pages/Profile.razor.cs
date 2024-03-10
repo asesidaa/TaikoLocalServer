@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using SharedProject.Enums;
-using System.Linq;
-using TaikoWebUI.Pages.Dialogs;
-using static MudBlazor.CategoryTypes;
+﻿using TaikoWebUI.Pages.Dialogs;
 
 namespace TaikoWebUI.Pages;
 
@@ -168,10 +164,7 @@ public partial class Profile
         "Not cleared", "Not Full Combo", "Not Donderful Combo"
     };
 
-    private readonly List<BreadcrumbItem> breadcrumbs = new()
-    {
-        new BreadcrumbItem("Users", href: "/Users"),
-    };
+    private readonly List<BreadcrumbItem> breadcrumbs = new();
 
     private Dictionary<Difficulty, List<SongBestData>> songBestDataMap = new();
 
@@ -194,6 +187,14 @@ public partial class Profile
         response = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
         response.ThrowIfNull();
 
+        if (LoginService.IsLoggedIn && !LoginService.IsAdmin)
+        {
+            breadcrumbs.Add(new BreadcrumbItem("Dashboard", href: "/"));
+        }
+        else
+        {
+            breadcrumbs.Add(new BreadcrumbItem("Users", href: "/Users"));
+        };
         breadcrumbs.Add(new BreadcrumbItem($"{response.MyDonName}", href: null, disabled: true));
         breadcrumbs.Add(new BreadcrumbItem("Profile", href: $"/Users/{Baid}/Profile", disabled: false));
 
@@ -243,6 +244,12 @@ public partial class Profile
         isSavingOptions = true;
         await Client.PostAsJsonAsync($"api/UserSettings/{Baid}", response);
         isSavingOptions = false;
+
+        // Adjust breadcrumb if name is changed
+        if (response != null && response.MyDonName != null)
+        {
+            breadcrumbs[^2] = new BreadcrumbItem($"{response.MyDonName}", href: null, disabled: true);
+        }
     }
 
     private void UpdateScores(Difficulty difficulty)
