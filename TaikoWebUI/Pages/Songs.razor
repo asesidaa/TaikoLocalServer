@@ -4,11 +4,10 @@
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 
-@page "/Users/{baid:int}/HighScores"
+@page "/Users/{baid:int}/Songs"
 
 <MudBreadcrumbs Items="breadcrumbs" Class="p-0 mb-2"></MudBreadcrumbs>
 <MudText Typo="Typo.h4">@Localizer["Key_01"]</MudText>
-<MudText Typo="Typo.caption">User ID: @Baid</MudText>
 
 <MudGrid Class="my-8">
     @if (response is null)
@@ -51,7 +50,9 @@
                                                 <CellTemplate>
                                                     <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
                                                         <div style="width:300px">
-                                                            <MudText Typo="Typo.body2" Style="font-weight:bold">@context.Item.MusicName</MudText>
+                                                            <a href="@($"/Users/{Baid}/Songs/{context.Item.SongId}")">
+																<MudText Typo="Typo.body2" Style="font-weight:bold">@context.Item.MusicName</MudText>
+                                                            </a>
                                                             <MudText Typo="Typo.caption">@context.Item.MusicArtist</MudText>
                                                         </div>
                                                         <div>

@@ -20,7 +20,7 @@
                         <MudSkeleton Width="35%" Height="32px" />
                     }
 
-                    @if (user?.IsAdmin == true)
+                    @if (LoginService.LoginRequired && user?.IsAdmin == true)
                     {
                         <MudChip Variant="Variant.Outlined" Color="Color.Info" Size="Size.Small" Icon="@Icons.Material.TwoTone.AdminPanelSettings">@Localizer["Admin"]</MudChip>
                     }
@@ -103,7 +103,7 @@
                          FullWidth="true"
                          AnchorOrigin="Origin.BottomCenter"
                          TransformOrigin="Origin.TopCenter">
-                    <MudMenuItem Href="@($"Users/{user.Baid}/HighScores")">@Localizer["high scores"]</MudMenuItem>
+                    <MudMenuItem Href="@($"Users/{user.Baid}/Songs")">@Localizer["high scores"]</MudMenuItem>
                         <MudMenuItem Href="@($"Users/{user.Baid}/DaniDojo")">@Localizer["dani dojo"]</MudMenuItem>
                     </MudMenu>
                 </MudStack>

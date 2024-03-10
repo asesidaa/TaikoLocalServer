@@ -6,11 +6,6 @@
 
 @page "/Users/{baid:int}/DaniDojo"
 
-<MudBreadcrumbs Items="breadcrumbs" Class="p-0 mb-2"></MudBreadcrumbs>
-
-<MudText Typo="Typo.h4">@Localizer["Key_03"]</MudText>
-<MudText Typo="Typo.caption">User ID: @Baid</MudText>
-
 @if (LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.GetLoggedInUser().Baid != Baid && !LoginService.IsAdmin)))
 {
     if (!LoginService.IsLoggedIn)
@@ -24,6 +19,8 @@
 }
 else
 {
+    <MudBreadcrumbs Items="breadcrumbs" Class="p-0 mb-2"></MudBreadcrumbs>
+    <MudText Typo="Typo.h4">@Localizer["Key_03"]</MudText>
     <MudGrid Class="my-4 pb-10">
         <MudItem xs="12">
             <MudPaper Elevation="0" Outlined="true">
