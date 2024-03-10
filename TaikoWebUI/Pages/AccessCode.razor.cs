@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Linq;
-using TaikoWebUI.Pages.Dialogs;
+﻿using TaikoWebUI.Pages.Dialogs;
 
 namespace TaikoWebUI.Pages;
 
@@ -15,18 +13,27 @@ public partial class AccessCode
     private User? User { get; set; } = new();
 
     private DashboardResponse? response;
+    private UserSetting? userSetting;
 
-    private readonly List<BreadcrumbItem> breadcrumbs = new()
-    {
-        new BreadcrumbItem("Users", href: "/Users"),
-    };
+    private readonly List<BreadcrumbItem> breadcrumbs = new();
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         await InitializeUser();
-        breadcrumbs.Add(new BreadcrumbItem($"User: {Baid}", href: null, disabled: true));
-        breadcrumbs.Add(new BreadcrumbItem("Access Code Management", href: $"/Users/{Baid}/AccessCode", disabled: false));
+
+        userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
+
+        if (LoginService.IsLoggedIn && !LoginService.IsAdmin)
+        {
+            breadcrumbs.Add(new BreadcrumbItem("Dashboard", href: "/"));
+        }
+        else
+        {
+            breadcrumbs.Add(new BreadcrumbItem("Users", href: "/Users"));
+        };
+        breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
+        breadcrumbs.Add(new BreadcrumbItem("Access Codes", href: $"/Users/{Baid}/AccessCode", disabled: false));
     }
 
     private async Task InitializeUser()

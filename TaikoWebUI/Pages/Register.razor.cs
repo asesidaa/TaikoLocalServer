@@ -34,14 +34,14 @@ public partial class Register
                         "Error",
                         "Only admin can log in.",
                         "Ok", null, null, options);
-                    NavigationManager.NavigateTo("/Dashboard");
+                    NavigationManager.NavigateTo("/");
                     break;
                 case 1:
                     await DialogService.ShowMessageBox(
                         "Success",
                         "Access code registered successfully.",
                         "Ok", null, null, options);
-                    NavigationManager.NavigateTo("/Users");
+                    NavigationManager.NavigateTo("/Login");
                     break;
                 case 2:
                     await DialogService.ShowMessageBox(
@@ -62,7 +62,7 @@ public partial class Register
                         (MarkupString)
                         "Access code is already registered, please use set password to login.",
                         "Ok", null, null, options);
-                    NavigationManager.NavigateTo("/Users");
+                    NavigationManager.NavigateTo("/Login");
                     break;
                 case 5:
                     await DialogService.ShowMessageBox(

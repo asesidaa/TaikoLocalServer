@@ -40,6 +40,9 @@ public class LoginService
 
     public int Login(string inputCardNum, string inputPassword, DashboardResponse response)
     {
+        // strip spaces or dashes from card number
+        inputCardNum = inputCardNum.Replace(" ", "").Replace("-", "");
+
         foreach (var user in response.Users.Where(user => user.AccessCodes.Contains(inputCardNum)))
         {
             foreach (var userCredential in response.UserCredentials.Where(userCredential => userCredential.Baid == user.Baid))
@@ -63,6 +66,9 @@ public class LoginService
         DashboardResponse response, HttpClient client)
     {
         if (OnlyAdmin) return 0;
+
+        // strip spaces or dashes from card number
+        inputCardNum = inputCardNum.Replace(" ", "").Replace("-", "");
 
         foreach (var user in response.Users.Where(user => user.AccessCodes.Contains(inputCardNum)))
         {

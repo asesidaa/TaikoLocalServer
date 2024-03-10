@@ -25,16 +25,14 @@
             }
             else
             {
+                // Not admin, redirect
                 @if (!LoginService.IsLoggedIn) // Not logged in, show login form
                 {
                     NavigationManager.NavigateTo("/Login");
                 }
                 else
                 {
-                    var user = LoginService.GetLoggedInUser(); // Logged in, show only own user
-                    <MudItem xs="12" md="6" lg="4">
-                        <UserCard user="user" />
-                    </MudItem>
+                    NavigationManager.NavigateTo("/");
                 }
             }
         }
@@ -49,7 +47,7 @@
     } else
     {
         // Loading...
-        @for (uint i = 0; i < 3; i++)
+        @for (uint i = 0; i < 6; i++)
         {
             <MudItem xs="12" md="6" lg="4">
                 <MudCard Outlined="true">

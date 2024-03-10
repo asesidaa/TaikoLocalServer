@@ -16,10 +16,7 @@ public partial class HighScores
 
     private Dictionary<Difficulty, List<SongBestData>> songBestDataMap = new();
 
-    private readonly List<BreadcrumbItem> breadcrumbs = new()
-    {
-        new BreadcrumbItem("Users", href: "/Users"),
-    };
+    private readonly List<BreadcrumbItem> breadcrumbs = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -48,7 +45,14 @@ public partial class HighScores
                                       .CompareTo(GameDataService.GetMusicIndexBySongId(data2.SongId)));
         }
 
-
+        if (LoginService.IsLoggedIn && !LoginService.IsAdmin)
+        {
+            breadcrumbs.Add(new BreadcrumbItem("Dashboard", href: "/"));
+        }
+        else
+        {
+            breadcrumbs.Add(new BreadcrumbItem("Users", href: "/Users"));
+        };
         breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
         breadcrumbs.Add(new BreadcrumbItem("High Scores", href: $"/Users/{Baid}/HighScores", disabled: false));
     }
