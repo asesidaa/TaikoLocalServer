@@ -30,31 +30,44 @@ else
                     <MudCardHeader>
                         <MudText Typo="Typo.h6">Recent Plays</MudText>
                     </MudCardHeader>
-                    <MudCardContent Class="p-0">
+                    
 						@if (SongBestData is not null && SongBestData.RecentPlayData is not null && SongBestData.RecentPlayData.Count > 0)
 						{
-						    <MudTable Items="@SongBestData.RecentPlayData" Class="table-striped" Elevation="0">
+                        <MudCardContent Class="p-0">
+						    <MudTable Items="@SongBestData.RecentPlayData" Elevation="0" Striped="true">
 						        <HeaderContent>
                                     <MudTh>Play Time</MudTh>
                                     <MudTh>Difficulty</MudTh>
-                                    <MudTh>Score</MudTh>
                                     <MudTh>Crown</MudTh>
                                     <MudTh>Rank</MudTh>
+                                    <MudTh>Score</MudTh>
+                                    <MudTh>Good</MudTh>
+                                    <MudTh>Ok</MudTh>
+                                    <MudTh>Bad</MudTh>
+                                    <MudTh>Drumroll</MudTh>
+                                    <MudTh>Max Combo</MudTh>
                                 </HeaderContent>
                                 <RowTemplate>
                                     <MudTd>@context.PlayTime</MudTd>
 	                                <MudTd>@context.Difficulty</MudTd>
-	                                <MudTd>@context.Score</MudTd>
                                     <MudTd>@context.Crown</MudTd>
                                     <MudTd>@context.ScoreRank</MudTd>
+	                                <MudTd>@context.Score</MudTd>
+                                    <MudTd>@context.GoodCount</MudTd>
+                                    <MudTd>@context.OkCount</MudTd>
+                                    <MudTd>@context.MissCount</MudTd>
+                                    <MudTd>@context.DrumrollCount</MudTd>
+                                    <MudTd>@context.ComboCount</MudTd>
                                 </RowTemplate>
 						    </MudTable>
+                            </MudCardContent>
 						}
 						else
 						{
-						 <MudText Typo="Typo.body2">No recent plays</MudText>
+						    <MudCardContent>
+                                <MudText Typo="Typo.body2" Class="pb-8" Color="Color.Surface" Align="Align.Center">No recent play data.</MudText>
+                            </MudCardContent>
 						}
-                    </MudCardContent>
                 </MudCard>
             </MudItem>
         </MudGrid>
