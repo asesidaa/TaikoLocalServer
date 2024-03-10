@@ -1,0 +1,31 @@
+﻿@page "/Users/{baid:int}/Songs/{songId:int}"
+
+@inject IGameDataService GameDataService
+@inject HttpClient Client
+@inject LoginService LoginService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+@if (LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.GetLoggedInUser().Baid != Baid && !LoginService.IsAdmin)))
+{
+    if (!LoginService.IsLoggedIn)
+    {
+        NavigationManager.NavigateTo("/Login");
+    }
+    else
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}
+else
+{
+    if (response is not null)
+    {
+        <MudBreadcrumbs Items="breadcrumbs" Class="p-0 mb-3"></MudBreadcrumbs>
+        <MudText Typo="Typo.h5">@SongTitle</MudText>
+        <MudText Typo="Typo.body2">@SongArtist</MudText>
+        <MudGrid Class="my-4 pb-10">
+
+        </MudGrid>
+    }
+}

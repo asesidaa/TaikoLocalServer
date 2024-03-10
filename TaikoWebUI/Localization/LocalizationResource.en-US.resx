@@ -133,7 +133,7 @@
     <value>View Play Data</value>
   </data>
   <data name="high scores" xml:space="preserve">
-    <value>High Scores</value>
+    <value>Songs</value>
   </data>
   <data name="dani dojo" xml:space="preserve">
     <value>Dani Dojo</value>
@@ -208,7 +208,7 @@
     <value>Total Donderful Combos</value>
   </data>
   <data name="Key_01" xml:space="preserve">
-    <value>High Scores</value>
+    <value>Songs</value>
   </data>
   <data name="Hide" xml:space="preserve">
     <value>Hide</value>

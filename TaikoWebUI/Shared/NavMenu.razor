@@ -25,7 +25,7 @@
             <MudDivider />
 			<MudNavLink Href="@($"Users/{currentUser.Baid}/Profile")" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Person">@Localizer["Profile"]</MudNavLink>
             <MudNavGroup Title="Play Data" Expanded="true" Icon="@Icons.Material.Filled.EmojiEvents">
-			    <MudNavLink Href="@($"Users/{currentUser.Baid}/HighScores")" Match="NavLinkMatch.All">@Localizer["Key_01"]</MudNavLink>
+			    <MudNavLink Href="@($"Users/{currentUser.Baid}/Songs")" Match="NavLinkMatch.All">@Localizer["Key_01"]</MudNavLink>
 			    <MudNavLink Href="@($"Users/{currentUser.Baid}/DaniDojo")" Match="NavLinkMatch.All">@Localizer["Key_03"]</MudNavLink>
             </MudNavGroup>
             <MudNavGroup Title="Settings" Expanded="_settingsOpen" Icon="@Icons.Material.Filled.Settings">
@@ -40,12 +40,10 @@
             <MudDivider />
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Logout" IconColor="Color.Error" OnClick="Logout">@Localizer["Log Out"]</MudNavLink>
 		}
-
 	}
 </MudNavMenu>
 
 @code {
-
     private bool _settingsOpen = false;
 
     protected override void OnInitialized()

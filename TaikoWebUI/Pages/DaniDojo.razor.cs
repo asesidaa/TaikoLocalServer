@@ -6,7 +6,6 @@ public partial class DaniDojo
 {
     [Parameter]
     public int Baid { get; set; }
-
     public string CurrentLanguage { get; set; } = "ja";
 
     private DanBestDataResponse? response;

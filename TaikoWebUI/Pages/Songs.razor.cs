@@ -1,10 +1,8 @@
-﻿using static MudBlazor.Colors;
-using System;
-using Microsoft.JSInterop;
+﻿using Microsoft.JSInterop;
 
 namespace TaikoWebUI.Pages;
 
-public partial class HighScores
+public partial class Songs
 {
     [Parameter]
     public int Baid { get; set; }
@@ -54,7 +52,7 @@ public partial class HighScores
             breadcrumbs.Add(new BreadcrumbItem("Users", href: "/Users"));
         };
         breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
-        breadcrumbs.Add(new BreadcrumbItem("High Scores", href: $"/Users/{Baid}/HighScores", disabled: false));
+        breadcrumbs.Add(new BreadcrumbItem("Songs", href: $"/Users/{Baid}/Songs", disabled: false));
     }
 
     private async Task OnFavoriteToggled(SongBestData data)
