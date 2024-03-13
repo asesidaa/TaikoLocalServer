@@ -23,7 +23,7 @@ public class SongPurchaseController : BaseController<SongPurchaseController>
         var user = await userDatumService.GetFirstUserDatumOrNull(request.Baid);
         user.ThrowIfNull($"User with baid {request.Baid} does not exist!");
 
-        var tokenCountDict = new Dictionary<uint, int>();
+        /*var tokenCountDict = new Dictionary<uint, int>();
         try
         {
             tokenCountDict = !string.IsNullOrEmpty(user.TokenCountDict)
@@ -35,7 +35,7 @@ public class SongPurchaseController : BaseController<SongPurchaseController>
             Logger.LogError(e, "Parsing TokenCountDict data for user with baid {Request} failed!", request.Baid);
         }
 
-        tokenCountDict.ThrowIfNull("TokenCountDict should never be null");
+        tokenCountDict.ThrowIfNull("TokenCountDict should never be null");*/
 
         Logger.LogInformation("Original UnlockedSongIdList: {UnlockedSongIdList}", user.UnlockedSongIdList);
 
@@ -53,11 +53,21 @@ public class SongPurchaseController : BaseController<SongPurchaseController>
 
         unlockedSongIdList.ThrowIfNull("UnlockedSongIdList should never be null");
 
-        if (tokenCountDict.ContainsKey(request.TokenId)) tokenCountDict[request.TokenId] -= (int)request.Price;
+        //if (tokenCountDict.ContainsKey(request.TokenId)) tokenCountDict[request.TokenId] -= (int)request.Price;
 
+        var token = user.Tokens.FirstOrDefault(t => t.Id == request.TokenId);
+        if (token is not null && token.Count >= request.Price)
+        {
+            token.Count -= (int)request.Price;
+        }
+        else
+        {
+            Logger.LogError("User with baid {Baid} does not have enough tokens to purchase song with id {SongNo}!", request.Baid, request.SongNo);
+            return Ok(new SongPurchaseResponse { Result = 0 });
+        }
+        
         if (!unlockedSongIdList.Contains(request.SongNo)) unlockedSongIdList.Add(request.SongNo);
 
-        user.TokenCountDict = JsonSerializer.Serialize(tokenCountDict);
         user.UnlockedSongIdList = JsonSerializer.Serialize(unlockedSongIdList);
 
         Logger.LogInformation("Updated UnlockedSongIdList: {UnlockedSongIdList}", user.UnlockedSongIdList);
@@ -67,7 +77,7 @@ public class SongPurchaseController : BaseController<SongPurchaseController>
         var response = new SongPurchaseResponse
         {
             Result = 1,
-            TokenCount = tokenCountDict[request.TokenId]
+            TokenCount = token.Count
         };
 
         return Ok(response);
