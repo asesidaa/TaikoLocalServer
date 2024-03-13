@@ -5,13 +5,13 @@ VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaikoLocalServer", "TaikoLocalServer\TaikoLocalServer.csproj", "{98FDA12C-CD3C-42D0-BEBE-4E809E6E41AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedProject", "SharedProject\SharedProject.csproj", "{34BAE5CA-D46B-489B-8617-3CEB2C0C614F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedProject", "SharedProject\SharedProject.csproj", "{34BAE5CA-D46B-489B-8617-3CEB2C0C614F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaikoWebUI", "TaikoWebUI\TaikoWebUI.csproj", "{3F02C2B8-D970-4E8D-89AA-1B938DA6E2FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaikoWebUI", "TaikoWebUI\TaikoWebUI.csproj", "{3F02C2B8-D970-4E8D-89AA-1B938DA6E2FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameDatabase", "GameDatabase\GameDatabase.csproj", "{76F2B4D1-C05E-40F4-B577-095CA7DF0528}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameDatabase", "GameDatabase\GameDatabase.csproj", "{76F2B4D1-C05E-40F4-B577-095CA7DF0528}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalSaveModScoreMigrator", "LocalSaveModScoreMigrator\LocalSaveModScoreMigrator.csproj", "{72FAD857-4791-4925-8536-22FABD5976EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalSaveModScoreMigrator", "LocalSaveModScoreMigrator\LocalSaveModScoreMigrator.csproj", "{72FAD857-4791-4925-8536-22FABD5976EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
