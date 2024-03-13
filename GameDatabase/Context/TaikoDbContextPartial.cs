@@ -10,6 +10,7 @@ public partial class TaikoDbContext
     public virtual DbSet<DanStageScoreDatum> DanStageScoreData { get; set; } = null!;
     public virtual DbSet<AiScoreDatum> AiScoreData { get; set; } = null!;
     public virtual DbSet<AiSectionScoreDatum> AiSectionScoreData { get; set; } = null!;
+    public virtual DbSet<Token> Tokens { get; set; } = null!;
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder)
     {
@@ -58,6 +59,17 @@ public partial class TaikoDbContext
                 .WithMany(p => p.AiSectionScoreData)
                 .HasPrincipalKey(p => new { p.Baid, p.SongId, p.Difficulty })
                 .HasForeignKey(d => new { d.Baid, d.SongId, d.Difficulty })
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Token>(entity =>
+        {
+            entity.HasKey(e => new { e.Baid, e.Id });
+
+            entity.HasOne(d => d.Datum)
+                .WithMany(p => p.Tokens)
+                .HasPrincipalKey(p => p.Baid)
+                .HasForeignKey(d => d.Baid)
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }

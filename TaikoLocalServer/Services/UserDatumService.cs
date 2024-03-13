@@ -19,12 +19,16 @@ public class UserDatumService : IUserDatumService
 
     public async Task<UserDatum?> GetFirstUserDatumOrNull(uint baid)
     {
-        return await context.UserData.FindAsync(baid);
+        return await context.UserData
+            .Include(d => d.Tokens)
+            .FirstOrDefaultAsync(d => d.Baid == baid);
     }
 
     public async Task<UserDatum> GetFirstUserDatumOrDefault(uint baid)
     {
-        return await context.UserData.FindAsync(baid) ?? new UserDatum();
+        return await context.UserData
+            .Include(d => d.Tokens)
+            .FirstOrDefaultAsync(d => d.Baid == baid) ??  new UserDatum();
     }
 
     public async Task<List<UserDatum>> GetAllUserData()
