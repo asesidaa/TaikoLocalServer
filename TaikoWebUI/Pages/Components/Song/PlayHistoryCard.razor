@@ -1,5 +1,4 @@
 ﻿@using TaikoWebUI.Utilities;
-@using SharedProject.Entities;
 
 <MudCard Outlined="true" Elevation="0">
     <MudCardHeader>
@@ -54,6 +53,6 @@
 </MudCard>
 
 @code {
-    [Parameter] public List<SongPlayDatum> Items { get; set; } = new List<SongPlayDatum>();
+    [Parameter] public List<SongPlayDatumDto> Items { get; set; } = new List<SongPlayDatumDto>();
     private const string IconStyle = "width:25px; height:25px;";
 }

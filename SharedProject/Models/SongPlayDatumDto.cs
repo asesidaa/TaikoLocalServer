@@ -1,14 +1,10 @@
 ﻿using SharedProject.Enums;
 
-namespace SharedProject.Entities
+namespace SharedProject.Models
 {
-    public partial class SongPlayDatum
+    public class SongPlayDatumDto
     {
-        public long Id { get; set; }
-        public uint Baid { get; set; }
-
         public uint SongNumber { get; set; }
-
         public uint SongId { get; set; }
         public Difficulty Difficulty { get; set; }
         public CrownType Crown { get; set; }
@@ -23,7 +19,5 @@ namespace SharedProject.Entities
         public uint DrumrollCount { get; set; }
         public bool Skipped { get; set; }
         public DateTime PlayTime { get; set; }
-
-        public virtual UserDatum? Ba { get; set; }
     }
 }

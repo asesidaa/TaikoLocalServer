@@ -1,5 +1,4 @@
 ﻿using SharedProject.Enums;
-using SharedProject.Entities;
 
 namespace GameDatabase.Entities;
 

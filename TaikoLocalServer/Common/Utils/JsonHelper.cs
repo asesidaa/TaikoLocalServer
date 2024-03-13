@@ -1,4 +1,4 @@
-﻿using SharedProject.Entities;
+﻿using GameDatabase.Entities;
 using System.Text.Json;
 
 namespace TaikoLocalServer.Common.Utils;

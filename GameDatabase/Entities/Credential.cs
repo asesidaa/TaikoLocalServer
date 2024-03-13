@@ -1,6 +1,4 @@
-﻿using SharedProject.Entities;
-
-namespace GameDatabase.Entities
+﻿namespace GameDatabase.Entities
 {
     public partial class Credential
     {

@@ -11,6 +11,7 @@ using TaikoLocalServer.Settings;
 using Throw;
 using Serilog;
 using SharedProject.Utils;
+using TaikoLocalServer.Controllers.Api;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -88,6 +89,7 @@ try
         });
     });
     builder.Services.AddTaikoDbServices();
+    builder.Services.AddSingleton<SongBestResponseMapper>();
 
     var app = builder.Build();
 
