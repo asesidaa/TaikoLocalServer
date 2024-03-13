@@ -1,0 +1,59 @@
+﻿@using TaikoWebUI.Utilities;
+@using SharedProject.Entities;
+
+<MudCard Outlined="true" Elevation="0">
+    <MudCardHeader>
+        <MudText Typo="Typo.h6">Play History</MudText>
+    </MudCardHeader>
+
+    @if (Items != null && Items.Count > 0)
+    {
+        <MudCardContent Class="p-0">
+            <MudTable Items="Items" Elevation="0" Striped="true">
+                <HeaderContent>
+                    <MudTh>@Localizer["Play Time"]</MudTh>
+                    <MudTh>@Localizer["Difficulty"]</MudTh>
+                    <MudTh>@Localizer["Crown"]</MudTh>
+                    <MudTh>@Localizer["Rank"]</MudTh>
+                    <MudTh>@Localizer["Score"]</MudTh>
+                    <MudTh>@Localizer["Good"]</MudTh>
+                    <MudTh>@Localizer["Ok"]</MudTh>
+                    <MudTh>@Localizer["Bad"]</MudTh>
+                    <MudTh>@Localizer["Drumroll"]</MudTh>
+                    <MudTh>@Localizer["Max Combo"]</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd>@context.PlayTime</MudTd>
+                        <MudTd>
+                            <img src="@ScoreUtils.GetDifficultyIcon(context.Difficulty)" alt="@context.Difficulty" title="@context.Difficulty" style="@IconStyle" />
+                        </MudTd>
+                        <MudTd>
+                            <img src="@($"/images/crown_{context.Crown}.png")" alt="@(ScoreUtils.GetCrownText(context.Crown))" title="@(ScoreUtils.GetCrownText(context.Crown))" style="@IconStyle" />
+                        </MudTd>
+                        <MudTd>
+                            <img src="@($"/images/rank_{context.ScoreRank}.png")" alt="@(ScoreUtils.GetRankText(context.ScoreRank))" title="@(ScoreUtils.GetRankText(context.ScoreRank))" style="@IconStyle" />
+                        </MudTd>
+                        <MudTd>@context.Score</MudTd>
+                        <MudTd>@context.GoodCount</MudTd>
+                        <MudTd>@context.OkCount</MudTd>
+                        <MudTd>@context.MissCount</MudTd>
+                        <MudTd>@context.DrumrollCount</MudTd>
+                        <MudTd>@context.ComboCount</MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudCardContent>
+    }
+    else
+    {
+        <MudCardContent>
+            <MudText Typo="Typo.body2" Class="pt-4 pb-8" Color="Color.Surface" Align="Align.Center">
+                @Localizer["No play history found."]
+            </MudText>
+        </MudCardContent>
+    }
+</MudCard>
+
+@code {
+    [Parameter] public List<SongPlayDatum> Items { get; set; } = new List<SongPlayDatum>();
+    private const string IconStyle = "width:25px; height:25px;";
+}

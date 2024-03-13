@@ -18,8 +18,6 @@ namespace TaikoWebUI.Pages
         private string SongTitle = string.Empty;
         private string SongArtist = string.Empty;
 
-        private const string IconStyle = "width:25px; height:25px;";
-
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
