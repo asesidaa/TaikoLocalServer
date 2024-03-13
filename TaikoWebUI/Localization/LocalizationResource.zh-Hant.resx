@@ -375,4 +375,7 @@
   <data name="Notes Position" xml:space="preserve">
     <value>音符位置調整</value>
   </data>
+  <data name="DateFormat" xml:space="preserve">
+    <value>yyyy/M/d tt ah:mm:ss</value>
+  </data>
 </root>
