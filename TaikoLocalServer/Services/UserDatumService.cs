@@ -1,5 +1,5 @@
 ﻿using GameDatabase.Context;
-using SharedProject.Entities;
+using GameDatabase.Entities;
 using System.Text.Json;
 using Throw;
 

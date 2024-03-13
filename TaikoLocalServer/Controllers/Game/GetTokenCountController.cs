@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using SharedProject.Entities;
+using GameDatabase.Entities;
 using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;

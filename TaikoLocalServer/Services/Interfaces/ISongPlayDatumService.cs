@@ -1,4 +1,4 @@
-﻿using SharedProject.Entities;
+﻿using GameDatabase.Entities;
 
 namespace TaikoLocalServer.Services.Interfaces;
 
