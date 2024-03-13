@@ -23,25 +23,25 @@
                     <MudTh>@Localizer["Max Combo"]</MudTh>
                 </HeaderContent>
                 <RowTemplate>
-                    <MudTd>@context.PlayTime</MudTd>
-                        <MudTd>
-                            <img src="@ScoreUtils.GetDifficultyIcon(context.Difficulty)" alt="@context.Difficulty" title="@context.Difficulty" style="@IconStyle" />
-                        </MudTd>
-                        <MudTd>
-                            <img src="@($"/images/crown_{context.Crown}.png")" alt="@(ScoreUtils.GetCrownText(context.Crown))" title="@(ScoreUtils.GetCrownText(context.Crown))" style="@IconStyle" />
-                        </MudTd>
-                        <MudTd>
-                            <img src="@($"/images/rank_{context.ScoreRank}.png")" alt="@(ScoreUtils.GetRankText(context.ScoreRank))" title="@(ScoreUtils.GetRankText(context.ScoreRank))" style="@IconStyle" />
-                        </MudTd>
-                        <MudTd>@context.Score</MudTd>
-                        <MudTd>@context.GoodCount</MudTd>
-                        <MudTd>@context.OkCount</MudTd>
-                        <MudTd>@context.MissCount</MudTd>
-                        <MudTd>@context.DrumrollCount</MudTd>
-                        <MudTd>@context.ComboCount</MudTd>
-                    </RowTemplate>
-                </MudTable>
-            </MudCardContent>
+                    <MudTd>@context.PlayTime.ToString(Localizer["DateFormat"])</MudTd>
+                    <MudTd>
+                        <img src="@ScoreUtils.GetDifficultyIcon(context.Difficulty)" alt="@context.Difficulty" title="@context.Difficulty" style="@IconStyle" />
+                    </MudTd>
+                    <MudTd>
+                        <img src="@($"/images/crown_{context.Crown}.png")" alt="@(ScoreUtils.GetCrownText(context.Crown))" title="@(ScoreUtils.GetCrownText(context.Crown))" style="@IconStyle" />
+                    </MudTd>
+                    <MudTd>
+                        <img src="@($"/images/rank_{context.ScoreRank}.png")" alt="@(ScoreUtils.GetRankText(context.ScoreRank))" title="@(ScoreUtils.GetRankText(context.ScoreRank))" style="@IconStyle" />
+                    </MudTd>
+                    <MudTd>@context.Score</MudTd>
+                    <MudTd>@context.GoodCount</MudTd>
+                    <MudTd>@context.OkCount</MudTd>
+                    <MudTd>@context.MissCount</MudTd>
+                    <MudTd>@context.DrumrollCount</MudTd>
+                    <MudTd>@context.ComboCount</MudTd>
+                </RowTemplate>
+            </MudTable>
+        </MudCardContent>
     }
     else
     {

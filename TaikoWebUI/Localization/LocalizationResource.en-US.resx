@@ -381,4 +381,7 @@
   <data name="reset_password_confirm_dialog_2" xml:space="preserve">
     <value>This will remove the user's current password and user will have to register again.</value>
   </data>
+  <data name="DateFormat" xml:space="preserve">
+    <value>MM/dd/yyyy h:mm:ss tt</value>
+  </data>
 </root>
