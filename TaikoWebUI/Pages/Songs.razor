@@ -41,7 +41,7 @@
                         @if (difficulty is not Difficulty.None)
                         {
                             <MudTabPanel Text="@ScoreUtils.GetDifficultyTitle(difficulty)"
-                                         Icon="@ScoreUtils.GetDifficultyIcon(difficulty)">
+                                         Icon="@ScoreUtils.GetDifficultyIconSvg(difficulty)">
                                 @if (songBestDataMap.TryGetValue(difficulty, out var value))
                                 {
                                     <MudDataGrid Items="@value"
@@ -101,6 +101,7 @@
                                             </TemplateColumn>
                                             <PropertyColumn Property="data => data.GoodCount" Title=@Localizer["Good"] Sortable="false" />
                                             <PropertyColumn Property="data => data.OkCount" Title=@Localizer["OK"] Sortable="false" />
+                                            <PropertyColumn Property="data => data.MissCount" Title=@Localizer["Bad"] Sortable="false" />
                                             <PropertyColumn Property="data => data.MissCount" Title=@Localizer["Bad"] Sortable="false" />
                                             <PropertyColumn Property="data => data.DrumrollCount" Title=@Localizer["Drumroll"] Sortable="false"/>
                                             <PropertyColumn Property="data => data.ComboCount" Title=@Localizer["MAX Combo"] Sortable="false" />

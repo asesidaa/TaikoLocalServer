@@ -6,6 +6,8 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 
+@using TaikoWebUI.Utilities;
+
 @if (LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.GetLoggedInUser().Baid != Baid && !LoginService.IsAdmin)))
 {
     if (!LoginService.IsLoggedIn)
@@ -28,7 +30,7 @@ else
             <MudItem xs="12">
                 <MudCard Outlined="true" Elevation="0">
                     <MudCardHeader>
-                        <MudText Typo="Typo.h6">Recent Plays</MudText>
+                        <MudText Typo="Typo.h6">Play History</MudText>
                     </MudCardHeader>
                     
 						@if (SongBestData is not null && SongBestData.RecentPlayData is not null && SongBestData.RecentPlayData.Count > 0)
@@ -49,9 +51,15 @@ else
                                 </HeaderContent>
                                 <RowTemplate>
                                     <MudTd>@context.PlayTime</MudTd>
-	                                <MudTd>@context.Difficulty</MudTd>
-                                    <MudTd>@context.Crown</MudTd>
-                                    <MudTd>@context.ScoreRank</MudTd>
+                                    <MudTd>
+                                         <img src="@ScoreUtils.GetDifficultyIcon(context.Difficulty)" alt="@context.Difficulty" title="@context.Difficulty" style="@IconStyle" />
+                                    </MudTd>
+                                    <MudTd>
+                                        <img src="@($"/images/crown_{context.Crown}.png")" alt="@(ScoreUtils.GetCrownText(context.Crown))" title="@(ScoreUtils.GetCrownText(context.Crown))" style="@IconStyle" />
+                                    </MudTd>
+                                    <MudTd>
+                                         <img src="@($"/images/rank_{context.ScoreRank}.png")" alt="@(ScoreUtils.GetRankText(context.ScoreRank))" title="@(ScoreUtils.GetRankText(context.ScoreRank))" style="@IconStyle" />
+                                    </MudTd>
 	                                <MudTd>@context.Score</MudTd>
                                     <MudTd>@context.GoodCount</MudTd>
                                     <MudTd>@context.OkCount</MudTd>
