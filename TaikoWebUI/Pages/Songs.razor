@@ -3,6 +3,7 @@
 @inject LoginService LoginService
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
+@using TaikoWebUI.Utilities
 
 @page "/Users/{baid:int}/Songs"
 
@@ -39,8 +40,8 @@
                     {
                         @if (difficulty is not Difficulty.None)
                         {
-                            <MudTabPanel Text="@GetDifficultyTitle(difficulty)"
-                                         Icon="@GetDifficultyIcon(difficulty)">
+                            <MudTabPanel Text="@ScoreUtils.GetDifficultyTitle(difficulty)"
+                                         Icon="@ScoreUtils.GetDifficultyIcon(difficulty)">
                                 @if (songBestDataMap.TryGetValue(difficulty, out var value))
                                 {
                                     <MudDataGrid Items="@value"
@@ -78,23 +79,23 @@
                                             <TemplateColumn T="SongBestData" Title=@Localizer["Genre"]
                                                             Sortable="false" Filterable="true">
                                                 <CellTemplate>
-                                                    <MudChip Style="@GetGenreStyle(context.Item.Genre)"
+                                                        <MudChip Style="@ScoreUtils.GetGenreStyle(context.Item.Genre)"
                                                              Size="Size.Small">
-                                                        @GetGenreTitle(context.Item.Genre)
+                                                            @ScoreUtils.GetGenreTitle(context.Item.Genre)
                                                     </MudChip>
                                                 </CellTemplate>
                                             </TemplateColumn>
                                             <PropertyColumn Property="data => data.BestScore" Title=@Localizer["Best Score"] />
                                             <TemplateColumn T="SongBestData" Title=@Localizer["Best Crown"]>
                                                 <CellTemplate>
-                                                    <img src="@($"/images/crown_{context.Item.BestCrown}.png")" alt="@(GetCrownText(context.Item.BestCrown))" title="@(GetCrownText(context.Item.BestCrown))" style="@IconStyle" />
+                                                    <img src="@($"/images/crown_{context.Item.BestCrown}.png")" alt="@(ScoreUtils.GetCrownText(context.Item.BestCrown))" title="@(ScoreUtils.GetCrownText(context.Item.BestCrown))" style="@IconStyle" />
                                                 </CellTemplate>
                                             </TemplateColumn>
                                             <TemplateColumn T="SongBestData" Title=@Localizer["Best Rank"] Sortable="false">
                                                 <CellTemplate>
                                                     @if (context.Item.BestScoreRank is not ScoreRank.None)
                                                     {
-                                                        <img src="@($"/images/rank_{context.Item.BestScoreRank}.png")" alt="@(GetRankText(context.Item.BestScoreRank))" title="@(GetRankText(context.Item.BestScoreRank))" style="@IconStyle" />
+                                                        <img src="@($"/images/rank_{context.Item.BestScoreRank}.png")" alt="@(ScoreUtils.GetRankText(context.Item.BestScoreRank))" title="@(ScoreUtils.GetRankText(context.Item.BestScoreRank))" style="@IconStyle" />
                                                     }
                                                 </CellTemplate>
                                             </TemplateColumn>
@@ -106,8 +107,8 @@
                                             <TemplateColumn T="SongBestData" Title=@Localizer["AI Battle Data"]>
                                                 <CellTemplate>
                                                     <MudButton Variant="Variant.Outlined" Size="Size.Small" 
-                                                               OnClick="@(() => ToggleShowAiData(context.Item))" 
-                                                               Disabled="@(!IsAiDataPresent(context.Item))">
+                                                               OnClick="@(() => ToggleShowAiData(context.Item))"
+                                                               Disabled="@(!ScoreUtils.IsAiDataPresent(context.Item))">
                                                         @(context.Item.ShowAiData ? @Localizer["Hide"] : @Localizer["Show"])
                                                     </MudButton>
                                                 </CellTemplate>
@@ -153,7 +154,7 @@
                                                                 </MudTd>
                                                                 <MudTd>@aiSectionContext.Score</MudTd>
                                                                 <MudTd>
-                                                                    <img src="@($"/images/ai_crown_{aiSectionContext.Crown}.png")" alt="@(GetCrownText(aiSectionContext.Crown))" title="@(GetCrownText(aiSectionContext.Crown))" style="@IconStyle" />
+                                                                    <img src="@($"/images/ai_crown_{aiSectionContext.Crown}.png")" alt="@(ScoreUtils.GetCrownText(aiSectionContext.Crown))" title="@(ScoreUtils.GetCrownText(aiSectionContext.Crown))" style="@IconStyle" />
                                                                 </MudTd>
                                                                 <MudTd>@aiSectionContext.GoodCount</MudTd>
                                                                 <MudTd>@aiSectionContext.OkCount</MudTd>

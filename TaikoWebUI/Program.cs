@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.JSInterop;
 using MudBlazor.Services;
 using TaikoWebUI.Settings;
+using TaikoWebUI.Utilities;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -20,7 +21,9 @@ builder.Services.Configure<WebUiSettings>(builder.Configuration.GetSection(nameo
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddLocalization();
 builder.Services.AddSingleton<MudLocalizer, ResXMudLocalizer>();
-builder.Services.AddSingleton<IStringUtil, StringUtil>();
+builder.Services.AddSingleton<ScoreUtils>();
+builder.Services.AddSingleton<StringUtil>();
+
 
 var host = builder.Build();
 

@@ -1,10 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Components;
 @using TaikoWebUI.Pages.Dialogs;
+@inject TaikoWebUI.Utilities.StringUtil StringUtil;
 @inject IDialogService DialogService;
-@inject IStringUtil StringUtil;
 @inject LoginService LoginService;
 @inject HttpClient Client
 @inject NavigationManager NavigationManager
+
 
 @if (user is not null)
 {
