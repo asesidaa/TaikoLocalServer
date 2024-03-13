@@ -1,4 +1,4 @@
-﻿namespace GameDatabase.Entities;
+﻿namespace SharedProject.Entities;
 
 public class Token
 {

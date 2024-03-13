@@ -376,6 +376,6 @@
     <value>音符位置调整</value>
   </data>
   <data name="DateFormat" xml:space="preserve">
-    <value>yyyy/M/d ah:mm:ss</value>
+    <value>yyyy/M/d HH:mm:ss</value>
   </data>
 </root>
