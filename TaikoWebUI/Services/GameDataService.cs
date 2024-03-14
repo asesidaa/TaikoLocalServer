@@ -60,6 +60,11 @@ public class GameDataService : IGameDataService
         return data;
     }
 
+    public List<MusicDetail> GetMusicMap()
+    {
+        return musicMap.Values.Where(musicDetail => musicDetail.SongId != 0).ToList();
+    }
+
     public string GetMusicNameBySongId(uint songId, string? language = "ja")
     {
         return musicMap.TryGetValue(songId, out var musicDetail) ? language switch
