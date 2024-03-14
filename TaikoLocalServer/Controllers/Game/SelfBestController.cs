@@ -1,81 +1,36 @@
 ﻿using GameDatabase.Entities;
+using TaikoLocalServer.Handlers;
+using TaikoLocalServer.Mappers;
 using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r08_ww/chassis/selfbest_5nz47auu.php")]
 [ApiController]
 public class SelfBestController : BaseController<SelfBestController>
 {
-    private readonly ISongBestDatumService songBestDatumService;
-
-    private readonly IGameDataService gameDataService;
-
-    public SelfBestController(ISongBestDatumService songBestDatumService, IGameDataService gameDataService)
-    {
-        this.songBestDatumService = songBestDatumService;
-        this.gameDataService = gameDataService;
-    }
-
-    [HttpPost]
+    [HttpPost("/v12r08_ww/chassis/selfbest_5nz47auu.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> SelfBest([FromBody] SelfBestRequest request)
     {
         Logger.LogInformation("SelfBest request : {Request}", request.Stringify());
 
-        var response = new SelfBestResponse
-        {
-            Result = 1,
-            Level = request.Level
-        };
-
-        var requestDifficulty = (Difficulty)request.Level;
-        requestDifficulty.Throw().IfOutOfRange();
-
-        var playerBestData = await songBestDatumService.GetAllSongBestData(request.Baid);
-        playerBestData = playerBestData
-            .Where(datum => datum.Difficulty == requestDifficulty ||
-                            (datum.Difficulty == Difficulty.UraOni && requestDifficulty == Difficulty.Oni))
-            .ToList();
-        foreach (var songNo in request.ArySongNoes)
-        {
-            if (!gameDataService.GetMusicList().Contains(songNo))
-            {
-                Logger.LogWarning("Music no {No} is missing!", songNo);
-                continue;
-            }
-
-            var selfBestData = GetSongSelfBestData(playerBestData, songNo);
-
-            response.ArySelfbestScores.Add(selfBestData);
-        }
-        response.ArySelfbestScores.Sort((data, otherData) => data.SongNo.CompareTo(otherData.SongNo));
+        var commonResponse =
+            await Mediator.Send(new GetSelfBestQuery(request.Baid, request.Level, request.ArySongNoes));
+        var response = SelfBestMappers.MapTo3906(commonResponse);
 
         return Ok(response);
     }
-
-    private static SelfBestResponse.SelfBestData GetSongSelfBestData(IEnumerable<SongBestDatum> playerBestData, uint songNo)
+    
+    [HttpPost("/v12r00_cn/chassis/selfbest.php")]
+    [Produces("application/protobuf")]
+    public async Task<IActionResult> SelfBest3209([FromBody] Models.v3209.SelfBestRequest request)
     {
-        var songBestDatum = playerBestData.Where(datum => datum.SongId == songNo);
+        Logger.LogInformation("SelfBest3209 request : {Request}", request.Stringify());
 
-        var selfBestData = new SelfBestResponse.SelfBestData
-        {
-            SongNo = songNo,
-        };
+        var commonResponse =
+            await Mediator.Send(new GetSelfBestQuery((uint)request.Baid, request.Level, request.ArySongNoes));
+        var response = SelfBestMappers.MapTo3209(commonResponse);
 
-        foreach (var datum in songBestDatum)
-        {
-            if (datum.Difficulty == Difficulty.UraOni)
-            {
-                selfBestData.UraBestScore = datum.BestScore;
-                selfBestData.UraBestScoreRate = datum.BestRate;
-                continue;
-            }
-
-            selfBestData.SelfBestScore = datum.BestScore;
-            selfBestData.SelfBestScoreRate = datum.BestRate;
-        }
-
-        return selfBestData;
+        return Ok(response);
     }
 }

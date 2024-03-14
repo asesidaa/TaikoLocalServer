@@ -2,7 +2,7 @@
 
 namespace SharedProject.Models;
 
-public class SongIntroductionData
+public class SongIntroductionData : IVerupNo
 {
     [JsonPropertyName("setId")]
     public uint SetId { get; set; }
@@ -14,5 +14,5 @@ public class SongIntroductionData
     public uint MainSongNo { get; set; }
 
     [JsonPropertyName("subSongNo")]
-    public uint[]? SubSongNo { get; set; }
+    public uint[]? SubSongNoes { get; set; }
 }

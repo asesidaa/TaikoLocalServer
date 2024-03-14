@@ -222,11 +222,16 @@ public class PlayResultController : BaseController<PlayResultController>
         userdata.LastPlayDatetime = lastPlayDatetime;
         userdata.LastPlayMode = playResultData.PlayMode;
 
-        userdata.ToneFlgArray =
-            UpdateJsonUintFlagArray(userdata.ToneFlgArray, playResultData.GetToneNoes, nameof(userdata.ToneFlgArray));
+        var tones = userdata.ToneFlgArray.ToList();
+        tones.AddRange(playResultData.GetToneNoes);
+        userdata.ToneFlgArray = tones.ToArray();
+            //UpdateJsonUintFlagArray(userdata.ToneFlgArray, playResultData.GetToneNoes, nameof(userdata.ToneFlgArray));
 
-        userdata.TitleFlgArray =
-            UpdateJsonUintFlagArray(userdata.TitleFlgArray, playResultData.GetTitleNoes, nameof(userdata.TitleFlgArray));
+        /*userdata.TitleFlgArray =
+            UpdateJsonUintFlagArray(userdata.TitleFlgArray, playResultData.GetTitleNoes, nameof(userdata.TitleFlgArray));*/
+        var titles = userdata.TitleFlgArray.ToList();
+        titles.AddRange(playResultData.GetTitleNoes);
+        userdata.TitleFlgArray = titles.ToArray();
 
         userdata.CostumeFlgArray = UpdateJsonCostumeFlagArray(userdata.CostumeFlgArray,
             new[]
@@ -238,8 +243,11 @@ public class PlayResultController : BaseController<PlayResultController>
                 playResultData.GetCostumeNo5s
             });
 
-        userdata.GenericInfoFlgArray =
-            UpdateJsonUintFlagArray(userdata.GenericInfoFlgArray, playResultData.GetGenericInfoNoes, nameof(userdata.GenericInfoFlgArray));
+        /*userdata.GenericInfoFlgArray =
+            UpdateJsonUintFlagArray(userdata.GenericInfoFlgArray, playResultData.GetGenericInfoNoes, nameof(userdata.GenericInfoFlgArray));*/
+        var genericInfo = userdata.GenericInfoFlgArray.ToList();
+        genericInfo.AddRange(playResultData.GetGenericInfoNoes);
+        userdata.GenericInfoFlgArray = genericInfo.ToArray();
 
         var difficultyPlayedArray = new List<uint>
         {

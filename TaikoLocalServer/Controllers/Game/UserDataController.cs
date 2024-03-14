@@ -37,7 +37,7 @@ public class UserDataController : BaseController<UserDataController>
 
         var userData = await userDatumService.GetFirstUserDatumOrDefault(request.Baid);
 
-        var unlockedSongIdList = new List<uint>();
+        var unlockedSongIdList = userData.UnlockedSongIdList;/*new List<uint>();
         try
         {
             unlockedSongIdList = !string.IsNullOrEmpty(userData.UnlockedSongIdList)
@@ -49,7 +49,7 @@ public class UserDataController : BaseController<UserDataController>
             Logger.LogError(e, "Parsing UnlockedSongIdList data for user with baid {Request} failed!", request.Baid);
         }
 
-        unlockedSongIdList.ThrowIfNull("UnlockedSongIdList should never be null");
+        unlockedSongIdList.ThrowIfNull("UnlockedSongIdList should never be null");*/
 
         var musicList = gameDataService.GetMusicList();
         var lockedSongsList = gameDataService.GetLockedSongsList();
@@ -63,7 +63,7 @@ public class UserDataController : BaseController<UserDataController>
         var uraSongArray =
             FlagCalculator.GetBitArrayFromIds(enabledUraMusicList, songIdMax, Logger);
 
-        var toneFlg = Array.Empty<uint>();
+        var toneFlg = userData.ToneFlgArray;/*Array.Empty<uint>();
         try
         {
             toneFlg = JsonSerializer.Deserialize<uint[]>(userData.ToneFlgArray);
@@ -75,19 +75,19 @@ public class UserDataController : BaseController<UserDataController>
 
         // The only way to get a null is provide string "null" as input,
         // which means database content need to be fixed, so better throw
-        toneFlg.ThrowIfNull("Tone flg should never be null!");
+        toneFlg.ThrowIfNull("Tone flg should never be null!");*/
 
         // If toneFlg is empty, add 0 to it
         if (toneFlg.Length == 0)
         {
             toneFlg = new uint[] { 0 };
-            userData.ToneFlgArray = JsonSerializer.Serialize(toneFlg);
+            userData.ToneFlgArray = toneFlg;//JsonSerializer.Serialize(toneFlg);
             await userDatumService.UpdateUserDatum(userData);
         }
 
         var toneArray = FlagCalculator.GetBitArrayFromIds(toneFlg, gameDataService.GetToneFlagArraySize(), Logger);
 
-        var titleFlg = Array.Empty<uint>();
+        var titleFlg = userData.TitleFlgArray;/*Array.Empty<uint>();
         try
         {
             titleFlg = JsonSerializer.Deserialize<uint[]>(userData.TitleFlgArray);
@@ -99,7 +99,7 @@ public class UserDataController : BaseController<UserDataController>
 
         // The only way to get a null is provide string "null" as input,
         // which means database content need to be fixed, so better throw
-        titleFlg.ThrowIfNull("Title flg should never be null!");
+        titleFlg.ThrowIfNull("Title flg should never be null!");*/
 
         var titleArray = FlagCalculator.GetBitArrayFromIds(titleFlg, gameDataService.GetTitleFlagArraySize(), Logger);
 
@@ -123,7 +123,7 @@ public class UserDataController : BaseController<UserDataController>
 
         recentSongs = recentSet.ToArray();
 
-        var favoriteSongs = Array.Empty<uint>();
+        var favoriteSongs = userData.FavoriteSongsArray;/*Array.Empty<uint>();
         try
         {
             favoriteSongs = JsonSerializer.Deserialize<uint[]>(userData.FavoriteSongsArray);
@@ -135,7 +135,7 @@ public class UserDataController : BaseController<UserDataController>
 
         // The only way to get a null is provide string "null" as input,
         // which means database content need to be fixed, so better throw
-        favoriteSongs.ThrowIfNull("Favorite song should never be null!");
+        favoriteSongs.ThrowIfNull("Favorite song should never be null!");*/
 
         var defaultOptions = new byte[2];
         BinaryPrimitives.WriteInt16LittleEndian(defaultOptions, userData.OptionSetting);
