@@ -1,6 +1,7 @@
 ﻿using Microsoft.JSInterop;
 using TaikoWebUI.Shared.Models;
 
+
 namespace TaikoWebUI.Pages;
 
 public partial class Songs
@@ -9,6 +10,10 @@ public partial class Songs
     public int Baid { get; set; }
 
     private const string IconStyle = "width:25px; height:25px;";
+
+    private string Search { get; set; } = string.Empty;
+    private string GenreFilter { get; set; } = string.Empty;
+    private string CurrentLanguage { get; set; } = "ja";
 
     private SongBestResponse? response;
     private UserSetting? userSetting;
@@ -26,27 +31,9 @@ public partial class Songs
         response.ThrowIfNull();
 
         userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
-
-        var language = await JSRuntime.InvokeAsync<string>("blazorCulture.get");
-
         musicMap = GameDataService.GetMusicList();
 
-        response.SongBestData.ForEach(data =>
-        {
-            var songId = data.SongId;
-            data.Genre = GameDataService.GetMusicGenreBySongId(songId);
-            data.MusicName = GameDataService.GetMusicNameBySongId(songId, string.IsNullOrEmpty(language) ? "ja" : language);
-            data.MusicArtist = GameDataService.GetMusicArtistBySongId(songId, string.IsNullOrEmpty(language) ? "ja" : language);
-        });
-
-        songBestDataMap = response.SongBestData.GroupBy(data => data.Difficulty)
-            .ToDictionary(data => data.Key,
-                          data => data.ToList());
-        foreach (var songBestDataList in songBestDataMap.Values)
-        {
-            songBestDataList.Sort((data1, data2) => GameDataService.GetMusicIndexBySongId(data1.SongId)
-                                      .CompareTo(GameDataService.GetMusicIndexBySongId(data2.SongId)));
-        }
+        CurrentLanguage = await JSRuntime.InvokeAsync<string>("blazorCulture.get");
 
         if (LoginService.IsLoggedIn && !LoginService.IsAdmin)
         {
@@ -75,8 +62,30 @@ public partial class Songs
         }
     }
 
-    private static void ToggleShowAiData(SongBestData data)
+    private bool FilterSongs(MusicDetail musicDetail)
     {
-        data.ShowAiData = !data.ShowAiData;
+        var stringsToCheck = new List<string>
+        {
+            musicDetail.SongName,
+            musicDetail.SongNameEN,
+            musicDetail.SongNameCN,
+            musicDetail.SongNameKO,
+            musicDetail.ArtistName,
+            musicDetail.ArtistNameEN,
+            musicDetail.ArtistNameCN,
+            musicDetail.ArtistNameKO
+        };
+
+        if (!string.IsNullOrEmpty(Search) && !stringsToCheck.Any(s => s.Contains(Search, StringComparison.OrdinalIgnoreCase)))
+        {
+            return false;
+        }
+
+        if (!string.IsNullOrEmpty(GenreFilter) && musicDetail.Genre != Enum.Parse<SongGenre>(GenreFilter))
+        {
+            return false;
+        }
+
+        return true;
     }
 }

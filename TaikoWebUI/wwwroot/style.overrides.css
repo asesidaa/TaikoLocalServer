@@ -20,6 +20,12 @@
     color: #333;
 }
 
+.mud-table-toolbar {
+    flex-wrap: wrap;
+    height: inherit;
+    padding: 20px 10px;
+}
+
 .color-box {
     width: 16px;
     height: 16px;
