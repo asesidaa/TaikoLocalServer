@@ -3,7 +3,9 @@
 @inject LoginService LoginService
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
-@using TaikoWebUI.Utilities
+@using TaikoWebUI.Utilities;
+@using TaikoWebUI.Shared.Models;
+@using SharedProject.Enums;
 
 @page "/Users/{baid:int}/Songs"
 
@@ -33,18 +35,53 @@
         else
         {
             <MudItem xs="12">
-                <MudTable Items="musicMap" Elevation="0" Outlined="true">
+                <MudTable Items="musicMap" Elevation="0" Outlined="true" Filter="@FilterSongs" Striped="true">
+                    <ToolBarContent>
+                        <MudGrid Spacing="2">
+                            <MudItem xs="12" md="8">
+                                <MudTextField @bind-Value="Search"
+                                              Placeholder="@Localizer["Search by Title or Artist"]"
+                                              Variant="Variant.Outlined"
+                                              Margin="Margin.Dense"
+                                              Adornment="Adornment.Start"
+                                              AdornmentIcon="@Icons.Material.Filled.Search"
+                                              IconSize="Size.Medium" />
+                            </MudItem>
+                            <MudItem xs="12" md="4">
+                                <MudSelect @bind-Value="GenreFilter" T="string" Label="@Localizer["Filter by Genre"]" Variant="Variant.Outlined" Margin="Margin.Dense" Clearable="true">
+                                    @foreach (var genre in Enum.GetValues(typeof(SongGenre)))
+                                    {
+                                        var genreValue = (SongGenre)genre;
+                                        <MudSelectItem Value="@genreValue.ToString()" Label="@Localizer[$"Key_{genreValue}"]">
+                                            @ScoreUtils.GetGenreTitle(genreValue)
+                                    </MudSelectItem>
+                                    }
+                                </MudSelect>
+                            </MudItem>
+                        </MudGrid>
+                    </ToolBarContent>
                     <HeaderContent>
-                        <MudTh>Title</MudTh>
+                        <MudTh>
+                            <MudTableSortLabel T="MusicDetail" SortBy="context => GameDataService.GetMusicNameBySongId(context.SongId, CurrentLanguage)">
+                                Song Title / Artist
+                            </MudTableSortLabel>
+                        </MudTh>
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTh>
+                        <MudTd>
                             <a href="@($"/Users/{Baid}/Songs/{context.SongId}")">
-                                <MudText Typo="Typo.body2" Style="font-weight:bold">@context.SongNameEN</MudText>
-                                <MudText Typo="Typo.caption">@context.ArtistNameEN</MudText>
+                                <MudText Typo="Typo.body2">
+                                    @GameDataService.GetMusicNameBySongId(context.SongId, CurrentLanguage)
+                                </MudText>
+                                <MudText Typo="Typo.caption">
+                                    @GameDataService.GetMusicArtistBySongId(context.SongId, CurrentLanguage)
+                                </MudText>
 							</a>
-                        </MudTh>
+                        </MudTd>
                     </RowTemplate>
+                    <PagerContent>
+                        <MudTablePager />
+                    </PagerContent>
                 </MudTable>
             </MudItem>
         }
