@@ -1,4 +1,5 @@
 ﻿using Microsoft.JSInterop;
+using TaikoWebUI.Shared.Models;
 
 namespace TaikoWebUI.Pages;
 
@@ -16,6 +17,8 @@ public partial class Songs
 
     private readonly List<BreadcrumbItem> breadcrumbs = new();
 
+    private List<MusicDetail> musicMap = new();
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -25,6 +28,8 @@ public partial class Songs
         userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
 
         var language = await JSRuntime.InvokeAsync<string>("blazorCulture.get");
+
+        musicMap = GameDataService.GetMusicMap();
 
         response.SongBestData.ForEach(data =>
         {
