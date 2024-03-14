@@ -5,12 +5,12 @@
 <MudSnackbarProvider />
 
 <MudLayout>
-    <MudAppBar Elevation="1">
+    <MudAppBar Elevation="0">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudSpacer />
         <ChooseLanguage />
     </MudAppBar>
-    <MudDrawer @bind-Open="_drawerOpen" Elevation="1">
+    <MudDrawer @bind-Open="_drawerOpen" Elevation="0" Style="border-right:1px solid #ededf0">
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">TaikoWebUI</MudText>
         </MudDrawerHeader>
