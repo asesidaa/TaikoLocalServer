@@ -2,7 +2,7 @@
 
 namespace SharedProject.Models;
 
-public class EventFolderData
+public class EventFolderData : IVerupNo
 {
 	[JsonPropertyName("folderId")]
 	public uint FolderId { get; set; }
@@ -14,7 +14,7 @@ public class EventFolderData
 	public uint Priority { get; set; }
 
 	[JsonPropertyName("songNo")]
-	public uint[]? SongNo { get; set; }
+	public uint[]? SongNoes { get; set; }
 
 	[JsonPropertyName("parentFolderId")]
 	public uint ParentFolderId { get; set; }

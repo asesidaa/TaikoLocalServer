@@ -33,7 +33,7 @@ namespace TaikoLocalServer.Migrations
 
                     b.HasKey("Baid", "SongId", "Difficulty");
 
-                    b.ToTable("AiScoreData");
+                    b.ToTable("AiScoreData", (string)null);
                 });
 
             modelBuilder.Entity("GameDatabase.Entities.AiSectionScoreDatum", b =>
@@ -73,7 +73,7 @@ namespace TaikoLocalServer.Migrations
 
                     b.HasKey("Baid", "SongId", "Difficulty", "SectionIndex");
 
-                    b.ToTable("AiSectionScoreData");
+                    b.ToTable("AiSectionScoreData", (string)null);
                 });
 
             modelBuilder.Entity("GameDatabase.Entities.Card", b =>
@@ -138,7 +138,7 @@ namespace TaikoLocalServer.Migrations
 
                     b.HasKey("Baid", "DanId", "DanType");
 
-                    b.ToTable("DanScoreData");
+                    b.ToTable("DanScoreData", (string)null);
                 });
 
             modelBuilder.Entity("GameDatabase.Entities.DanStageScoreDatum", b =>
@@ -183,7 +183,7 @@ namespace TaikoLocalServer.Migrations
 
                     b.HasKey("Baid", "DanId", "DanType", "SongNumber");
 
-                    b.ToTable("DanStageScoreData");
+                    b.ToTable("DanStageScoreData", (string)null);
                 });
 
             modelBuilder.Entity("GameDatabase.Entities.SongBestDatum", b =>
@@ -211,7 +211,7 @@ namespace TaikoLocalServer.Migrations
 
                     b.HasKey("Baid", "SongId", "Difficulty");
 
-                    b.ToTable("SongBestData");
+                    b.ToTable("SongBestData", (string)null);
                 });
 
             modelBuilder.Entity("GameDatabase.Entities.SongPlayDatum", b =>
@@ -272,7 +272,7 @@ namespace TaikoLocalServer.Migrations
 
                     b.HasIndex("Baid");
 
-                    b.ToTable("SongPlayData");
+                    b.ToTable("SongPlayData", (string)null);
                 });
 
             modelBuilder.Entity("GameDatabase.Entities.Token", b =>
@@ -288,7 +288,7 @@ namespace TaikoLocalServer.Migrations
 
                     b.HasKey("Baid", "Id");
 
-                    b.ToTable("Tokens");
+                    b.ToTable("Tokens", (string)null);
                 });
 
             modelBuilder.Entity("GameDatabase.Entities.UserDatum", b =>
@@ -394,7 +394,7 @@ namespace TaikoLocalServer.Migrations
 
                     b.HasKey("Baid");
 
-                    b.ToTable("UserData");
+                    b.ToTable("UserData", (string)null);
                 });
 
             modelBuilder.Entity("GameDatabase.Entities.AiScoreDatum", b =>

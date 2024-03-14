@@ -1,34 +1,31 @@
-﻿namespace TaikoLocalServer.Controllers.Game;
+﻿using TaikoLocalServer.Handlers;
+using TaikoLocalServer.Mappers;
 
-[Route("/v12r08_ww/chassis/getshopfolder_w4xik0uw.php")]
+namespace TaikoLocalServer.Controllers.Game;
+
 [ApiController]
 public class GetShopFolderController : BaseController<GetShopFolderController>
 {
-    private readonly IGameDataService gameDataService;
-
-    public GetShopFolderController(IGameDataService gameDataService)
-    {
-        this.gameDataService = gameDataService;
-    }
-
-    [HttpPost]
+    [HttpPost("/v12r08_ww/chassis/getshopfolder_w4xik0uw.php")]
     [Produces("application/protobuf")]
-    public IActionResult GetShopFolder([FromBody] GetShopFolderRequest request)
+    public async Task<IActionResult> GetShopFolder([FromBody] GetShopFolderRequest request)
     {
         Logger.LogInformation("GetShopFolder request : {Request}", request.Stringify());
 
-        gameDataService.GetTokenDataDictionary().TryGetValue("shopTokenId", out var shopTokenId);
+        var commonResponse = await Mediator.Send(new GetShopFolderQuery());
+        var response = ShopFolderDataMappers.MapTo3906(commonResponse);
 
-        var shopFolderList = gameDataService.GetShopFolderList();
+        return Ok(response);
+    }
+    
+    [HttpPost("/v12r00_cn/chassis/getshopfolder.php")]
+    [Produces("application/protobuf")]
+    public async Task<IActionResult> GetShopFolder3209([FromBody] Models.v3209.GetShopFolderRequest request)
+    {
+        Logger.LogInformation("GetShopFolder request : {Request}", request.Stringify());
 
-        var response = new GetShopFolderResponse
-        {
-            Result = 1,
-            TokenId = shopTokenId > 0 ? (uint)shopTokenId : 1,
-            VerupNo = 2
-        };
-
-        response.AryShopFolderDatas.AddRange(shopFolderList);
+        var commonResponse = await Mediator.Send(new GetShopFolderQuery());
+        var response = ShopFolderDataMappers.MapTo3209(commonResponse);
 
         return Ok(response);
     }

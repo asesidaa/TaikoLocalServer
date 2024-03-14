@@ -1,73 +1,31 @@
 ﻿using GameDatabase.Entities;
+using TaikoLocalServer.Handlers;
+using TaikoLocalServer.Mappers;
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r08_ww/chassis/mydonentry_3nrd7kwk.php")]
 [ApiController]
 public class MyDonEntryController : BaseController<MyDonEntryController>
 {
-    private readonly IUserDatumService userDatumService;
-
-    private readonly ICardService cardService;
-
-    private readonly ICredentialService credentialService;
-
-    public MyDonEntryController(IUserDatumService userDatumService, ICardService cardService, ICredentialService credentialService)
-    {
-        this.userDatumService = userDatumService;
-        this.cardService = cardService;
-        this.credentialService = credentialService;
-    }
-
-    [HttpPost]
+    [HttpPost("/v12r08_ww/chassis/mydonentry_3nrd7kwk.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetMyDonEntry([FromBody] MydonEntryRequest request)
     {
         Logger.LogInformation("MyDonEntry request : {Request}", request.Stringify());
 
-        var newId = cardService.GetNextBaid();
+        var commonResponse = await Mediator.Send(new AddMyDonEntryCommand(request.AccessCode, request.MydonName, request.MydonNameLanguage));
+        var response = MyDonEntryMappers.MapTo3906(commonResponse);
+        return Ok(response);
+    }
+    
+    [HttpPost("/v12r00_cn/chassis/mydonentry.php")]
+    [Produces("application/protobuf")]
+    public async Task<IActionResult> GetMyDonEntry3209([FromBody] Models.v3209.MydonEntryRequest request)
+    {
+        Logger.LogInformation("MyDonEntry request : {Request}", request.Stringify());
 
-        var newUser = new UserDatum
-        {
-            Baid = newId,
-            MyDonName = request.MydonName,
-            MyDonNameLanguage = 0,
-            DisplayDan = true,
-            DisplayAchievement = true,
-            AchievementDisplayDifficulty = Difficulty.None,
-            ColorFace = 0,
-            ColorBody = 1,
-            ColorLimb = 3,
-            FavoriteSongsArray = "[]",
-            ToneFlgArray = "[0]",
-            TitleFlgArray = "[]",
-            CostumeFlgArray = "[[0],[0],[0],[0],[0]]",
-            GenericInfoFlgArray = "[]",
-            UnlockedSongIdList = "[]"
-        };
-        await userDatumService.InsertUserDatum(newUser);
-
-        await cardService.AddCard(new Card
-        {
-            AccessCode = request.AccessCode,
-            Baid = newId
-        });
-
-        await credentialService.AddCredential(new Credential
-        {
-            Baid = newId,
-            Password = "",
-            Salt = ""
-        });
-
-        var response = new MydonEntryResponse
-        {
-            Result = 1,
-            Baid = newId,
-            MydonName = request.MydonName,
-            MydonNameLanguage = 0
-        };
-
+        var commonResponse = await Mediator.Send(new AddMyDonEntryCommand(request.WechatQrStr, request.MydonName, request.MydonNameLanguage));
+        var response = MyDonEntryMappers.MapTo3209(commonResponse);
         return Ok(response);
     }
 }

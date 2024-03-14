@@ -6,7 +6,7 @@
 
 #region Designer generated code
 #pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
-namespace taiko.game
+namespace TaikoLocalServer.Models.v3906
 {
     [global::ProtoBuf.ProtoContract()]
     public partial class HeartBeatRequest : global::ProtoBuf.IExtensible
@@ -657,10 +657,10 @@ namespace taiko.game
             public string Title { get; set; }
 
             [global::ProtoBuf.ProtoMember(4, Name = @"ary_odai_song")]
-            public global::System.Collections.Generic.List<OdaiSong> AryOdaiSongs { get; } = new global::System.Collections.Generic.List<OdaiSong>();
+            public global::System.Collections.Generic.List<OdaiSong> OdaiSongList { get; } = new global::System.Collections.Generic.List<OdaiSong>();
 
             [global::ProtoBuf.ProtoMember(5, Name = @"ary_odai_border")]
-            public global::System.Collections.Generic.List<OdaiBorder> AryOdaiBorders { get; } = new global::System.Collections.Generic.List<OdaiBorder>();
+            public global::System.Collections.Generic.List<OdaiBorder> OdaiBorderList { get; } = new global::System.Collections.Generic.List<OdaiBorder>();
 
             [global::ProtoBuf.ProtoContract()]
             public partial class OdaiSong : global::ProtoBuf.IExtensible
@@ -1260,7 +1260,7 @@ namespace taiko.game
 
         [global::ProtoBuf.ProtoMember(12, Name = @"mydon_name")]
         [global::System.ComponentModel.DefaultValue("")]
-        public string MydonName
+        public string MyDonName
         {
             get => __pbn__MydonName ?? "";
             set => __pbn__MydonName = value;
@@ -1270,7 +1270,7 @@ namespace taiko.game
         private string __pbn__MydonName;
 
         [global::ProtoBuf.ProtoMember(13, Name = @"mydon_name_language")]
-        public uint MydonNameLanguage
+        public uint MyDonNameLanguage
         {
             get => __pbn__MydonNameLanguage.GetValueOrDefault();
             set => __pbn__MydonNameLanguage = value;
@@ -1291,7 +1291,7 @@ namespace taiko.game
         private string __pbn__Title;
 
         [global::ProtoBuf.ProtoMember(15, Name = @"titleplate_id")]
-        public uint TitleplateId
+        public uint TitlePlateId
         {
             get => __pbn__TitleplateId.GetValueOrDefault();
             set => __pbn__TitleplateId = value;
@@ -1395,7 +1395,7 @@ namespace taiko.game
         private string __pbn__LastPlayDatetime;
 
         [global::ProtoBuf.ProtoMember(26, Name = @"is_disp_dan_on")]
-        public bool IsDispDanOn
+        public bool DisplayDan
         {
             get => __pbn__IsDispDanOn.GetValueOrDefault();
             set => __pbn__IsDispDanOn = value;
@@ -1425,17 +1425,17 @@ namespace taiko.game
         private byte[] __pbn__GotDanFlg;
 
         [global::ProtoBuf.ProtoMember(29, Name = @"got_danextra_flg")]
-        public byte[] GotDanextraFlg
+        public byte[] GotGaidenFlg
         {
-            get => __pbn__GotDanextraFlg;
-            set => __pbn__GotDanextraFlg = value;
+            get => pbnGotGaidenFlg;
+            set => pbnGotGaidenFlg = value;
         }
-        public bool ShouldSerializeGotDanextraFlg() => __pbn__GotDanextraFlg != null;
-        public void ResetGotDanextraFlg() => __pbn__GotDanextraFlg = null;
-        private byte[] __pbn__GotDanextraFlg;
+        public bool ShouldSerializeGotDanextraFlg() => pbnGotGaidenFlg != null;
+        public void ResetGotDanextraFlg() => pbnGotGaidenFlg = null;
+        private byte[] pbnGotGaidenFlg;
 
         [global::ProtoBuf.ProtoMember(30, Name = @"default_tone_setting")]
-        public uint DefaultToneSetting
+        public uint SelectedToneId
         {
             get => __pbn__DefaultToneSetting.GetValueOrDefault();
             set => __pbn__DefaultToneSetting = value;
@@ -2867,7 +2867,7 @@ namespace taiko.game
                 => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
             [global::ProtoBuf.ProtoMember(1, Name = @"section_no", IsRequired = true)]
-            public uint SectionNo { get; set; }
+            public uint SectionIndex { get; set; }
 
             [global::ProtoBuf.ProtoMember(2, Name = @"crown")]
             public uint Crown
@@ -2890,16 +2890,16 @@ namespace taiko.game
             private uint? __pbn__Score;
 
             [global::ProtoBuf.ProtoMember(4, Name = @"good_cnt", IsRequired = true)]
-            public uint GoodCnt { get; set; }
+            public uint GoodCount { get; set; }
 
             [global::ProtoBuf.ProtoMember(5, Name = @"ok_cnt", IsRequired = true)]
-            public uint OkCnt { get; set; }
+            public uint OkCount { get; set; }
 
             [global::ProtoBuf.ProtoMember(6, Name = @"ng_cnt", IsRequired = true)]
-            public uint NgCnt { get; set; }
+            public uint MissCount { get; set; }
 
             [global::ProtoBuf.ProtoMember(7, Name = @"pound_cnt", IsRequired = true)]
-            public uint PoundCnt { get; set; }
+            public uint DrumrollCount { get; set; }
 
         }
 

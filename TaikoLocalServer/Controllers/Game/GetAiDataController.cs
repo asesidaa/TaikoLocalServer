@@ -1,8 +1,8 @@
-﻿using Throw;
+﻿using TaikoLocalServer.Handlers;
+using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r08_ww/chassis/getaidata_6x30b9nr.php")]
 [ApiController]
 public class GetAiDataController : BaseController<GetAiDataController>
 {
@@ -13,22 +13,27 @@ public class GetAiDataController : BaseController<GetAiDataController>
         this.userDatumService = userDatumService;
     }
 
-    [HttpPost]
+    [HttpPost("/v12r08_ww/chassis/getaidata_6x30b9nr.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetAiData([FromBody] GetAiDataRequest request)
     {
         Logger.LogInformation("GetAiData request : {Request}", request.Stringify());
 
-        var user = await userDatumService.GetFirstUserDatumOrNull(request.Baid);
-        user.ThrowIfNull($"User with baid {request.Baid} does not exist!");
-        var response = new GetAiDataResponse
-        {
-            Result = 1,
-            TotalWinnings = (uint)user.AiWinCount,
-            InputMedian = "1000",
-            InputVariance = "2000"
-        };
+        var commonResponse = await Mediator.Send(new GetAiDataQuery(request.Baid));
+        var response = Mappers.AiDataResponseMapper.MapTo3906(commonResponse);
+        response.Result = 1;
+        return Ok(response);
+    }
+    
+    [HttpPost("/v12r00_cn/chassis/getaidata.php")]
+    [Produces("application/protobuf")]
+    public async Task<IActionResult> GetAiData3209([FromBody] Models.v3209.GetAiDataRequest request)
+    {
+        Logger.LogInformation("GetAiData request : {Request}", request.Stringify());
 
+        var commonResponse = await Mediator.Send(new GetAiDataQuery((uint)request.Baid));
+        var response = Mappers.AiDataResponseMapper.MapTo3209(commonResponse);
+        response.Result = 1;
         return Ok(response);
     }
 }
