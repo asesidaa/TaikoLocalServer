@@ -29,7 +29,7 @@ public partial class Songs
 
         var language = await JSRuntime.InvokeAsync<string>("blazorCulture.get");
 
-        musicMap = GameDataService.GetMusicMap();
+        musicMap = GameDataService.GetMusicList();
 
         response.SongBestData.ForEach(data =>
         {

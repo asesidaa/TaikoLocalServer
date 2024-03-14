@@ -60,7 +60,7 @@ public class GameDataService : IGameDataService
         return data;
     }
 
-    public List<MusicDetail> GetMusicMap()
+    public List<MusicDetail> GetMusicList()
     {
         return musicMap.Values.Where(musicDetail => musicDetail.SongId != 0).ToList();
     }
