@@ -30,6 +30,27 @@ public class VerifyQrCodeController : BaseController<VerifyQrCodeController>
 
         return Ok(response);
     }
+    
+    [HttpPost("/v12r00_cn/chassis/verifyqrcode.php")]
+    [Produces("application/protobuf")]
+    public IActionResult VerifyQrCode3209([FromBody] Models.v3209.VerifyQrcodeRequest request)
+    {
+        Logger.LogInformation("VerifyQrCode request : {Request}", request.Stringify());
+
+        var qrCodeId = VerifyQr(request.QrcodeSerial);
+        var response = new Models.v3209.VerifyQrcodeResponse
+        {
+            Result = 1,
+            QrcodeId = (uint)qrCodeId
+        };
+        
+        if (qrCodeId == -1)
+        {
+            response.Result = 51;
+        }
+
+        return Ok(response);
+    }
 
     private int VerifyQr(string serial)
     {
