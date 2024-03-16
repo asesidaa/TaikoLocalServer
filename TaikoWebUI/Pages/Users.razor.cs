@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-namespace TaikoWebUI.Pages;
+﻿namespace TaikoWebUI.Pages;
 
 public partial class Users
 {

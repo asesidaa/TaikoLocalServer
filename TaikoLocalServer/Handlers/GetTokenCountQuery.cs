@@ -29,19 +29,24 @@ public class GetTokenCountQueryHandler(IGameDataService gameDataService,
             tokenDataDictionary.TryGetValue(tokenName, out var tokenId);
             if (tokenId <= 0) continue;
             var token = await context.Tokens.FirstOrDefaultAsync(t => t.Baid == request.Baid &&
-                                                                      t.Id   == tokenId,
-                cancellationToken) ?? new Token
+                                                                      t.Id == tokenId,
+                cancellationToken);
+            if (token is null)
             {
-                Id = tokenId,
-                Count = 0
-            };
-
+                token = new Token
+                {
+                    Baid = request.Baid,
+                    Id = tokenId,
+                    Count = 0,
+                };
+                context.Tokens.Add(token);
+            }
+            
             response.AryTokenCountDatas.Add(new CommonTokenCountData
             {
                 TokenId = (uint)token.Id,
                 TokenCount = token.Count
             });
-            context.Tokens.Update(token);
         }
 
         await context.SaveChangesAsync(cancellationToken);

@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using TaikoWebUI.Pages.Dialogs;
-
-namespace TaikoWebUI.Pages;
+﻿namespace TaikoWebUI.Pages;
 
 public partial class Login
 {

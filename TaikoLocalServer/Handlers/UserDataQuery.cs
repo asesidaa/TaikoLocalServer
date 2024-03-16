@@ -30,7 +30,7 @@ public class UserDataQueryHandler(TaikoDbContext context, IGameDataService gameD
         var uraSongArray =
             FlagCalculator.GetBitArrayFromIds(enabledUraMusicList, Constants.MUSIC_ID_MAX, logger);
 
-        if (userData.ToneFlgArray.Length == 0)
+        if (userData.ToneFlgArray.Count == 0)
         {
             userData.ToneFlgArray = [0];
             context.UserData.Update(userData);
@@ -82,7 +82,7 @@ public class UserDataQueryHandler(TaikoDbContext context, IGameDataService gameD
             TitleFlg = titleArray,
             ReleaseSongFlg = releaseSongArray,
             UraReleaseSongFlg = uraSongArray,
-            AryFavoriteSongNoes = userData.FavoriteSongsArray,
+            AryFavoriteSongNoes = userData.FavoriteSongsArray.ToArray(),
             AryRecentSongNoes = recentSongs,
             DefaultOptionSetting = defaultOptions,
             NotesPosition = userData.NotesPosition,

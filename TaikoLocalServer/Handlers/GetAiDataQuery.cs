@@ -1,5 +1,4 @@
 ﻿using GameDatabase.Context;
-using MediatR;
 using TaikoLocalServer.Models.Application;
 using Throw;
 

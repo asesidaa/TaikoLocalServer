@@ -1,6 +1,5 @@
 ﻿using TaikoLocalServer.Handlers;
 using TaikoLocalServer.Mappers;
-using Throw;
 
 namespace TaikoLocalServer.Controllers.Game;
 

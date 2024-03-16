@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace SharedProject.Models;
+﻿namespace SharedProject.Models;
 
 public interface IVerupNo
 {

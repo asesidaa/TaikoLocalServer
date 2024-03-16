@@ -1,6 +1,4 @@
-﻿using GameDatabase.Entities;
-
-namespace TaikoLocalServer.Models.Application;
+﻿namespace TaikoLocalServer.Models.Application;
 
 public class CommonBaidResponse
 {

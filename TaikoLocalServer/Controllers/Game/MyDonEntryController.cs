@@ -1,5 +1,4 @@
-﻿using GameDatabase.Entities;
-using TaikoLocalServer.Handlers;
+﻿using TaikoLocalServer.Handlers;
 using TaikoLocalServer.Mappers;
 
 namespace TaikoLocalServer.Controllers.Game;
