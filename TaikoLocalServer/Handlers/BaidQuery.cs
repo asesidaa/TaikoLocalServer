@@ -6,21 +6,12 @@ namespace TaikoLocalServer.Handlers;
 
 public record BaidQuery(string AccessCode) : IRequest<CommonBaidResponse>;
 
-public class BaidQueryHandler : IRequestHandler<BaidQuery, CommonBaidResponse>
+public class BaidQueryHandler(
+    TaikoDbContext context,
+    ILogger<BaidQueryHandler> logger,
+    IGameDataService gameDataService)
+    : IRequestHandler<BaidQuery, CommonBaidResponse>
 {
-    private readonly TaikoDbContext context;
-    
-    private readonly ILogger<BaidQueryHandler> logger;
-
-    private readonly IGameDataService gameDataService;
-
-    public BaidQueryHandler(TaikoDbContext context, ILogger<BaidQueryHandler> logger, IGameDataService gameDataService)
-    {
-        this.context = context;
-        this.logger = logger;
-        this.gameDataService = gameDataService;
-    }
-
     public async Task<CommonBaidResponse> Handle(BaidQuery request, CancellationToken cancellationToken)
     {
         var card = await context.Cards.FindAsync(request.AccessCode);
@@ -30,12 +21,12 @@ public class BaidQueryHandler : IRequestHandler<BaidQuery, CommonBaidResponse>
             return new CommonBaidResponse
             {
                 IsNewUser = true,
-                Baid = context.Cards.Any() ? context.Cards.ToList().Max(c => c.Baid) + 1 : 1
+                Baid = context.Cards.Any() ? context.Cards.AsEnumerable().Max(c => c.Baid) + 1 : 1
             };
         }
 
         var baid = card.Baid;
-        var userData = await context.UserData.FindAsync(baid);
+        var userData = await context.UserData.FindAsync(baid, cancellationToken);
         userData.ThrowIfNull($"User not found for card with Baid {baid}!");
 
         var songBestData = context.SongBestData.Where(datum => datum.Baid == baid).ToList();
@@ -77,7 +68,8 @@ public class BaidQueryHandler : IRequestHandler<BaidQuery, CommonBaidResponse>
 
         var costumeData = JsonHelper.GetCostumeDataFromUserData(userData, logger);
 
-        var costumeArrays = JsonHelper.GetCostumeUnlockDataFromUserData(userData, logger);
+        List<List<uint>> costumeArrays = 
+            [userData.UnlockedKigurumi, userData.UnlockedHead, userData.UnlockedBody, userData.UnlockedFace, userData.UnlockedPuchi];
 
         var costumeFlagArrays = gameDataService.GetCostumeFlagArraySizes()
             .Select((size, index) => FlagCalculator.GetBitArrayFromIds(costumeArrays[index], size, logger))
