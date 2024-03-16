@@ -1,5 +1,4 @@
 using System.Reflection;
-using System.Security.Authentication;
 using Serilog.Sinks.File.Header;
 using TaikoLocalServer.Logging;
 using GameDatabase.Context;

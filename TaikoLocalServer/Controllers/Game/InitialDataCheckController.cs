@@ -1,7 +1,5 @@
-﻿using Microsoft.Extensions.Options;
-using TaikoLocalServer.Handlers;
+﻿using TaikoLocalServer.Handlers;
 using TaikoLocalServer.Mappers;
-using TaikoLocalServer.Settings;
 
 namespace TaikoLocalServer.Controllers.Game;
 

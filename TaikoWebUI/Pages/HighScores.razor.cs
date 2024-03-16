@@ -1,6 +1,4 @@
-﻿using static MudBlazor.Colors;
-using System;
-using Microsoft.JSInterop;
+﻿using Microsoft.JSInterop;
 
 namespace TaikoWebUI.Pages;
 

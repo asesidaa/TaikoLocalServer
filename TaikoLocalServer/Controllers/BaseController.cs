@@ -1,6 +1,4 @@
-﻿using MediatR;
-
-namespace TaikoLocalServer.Controllers;
+﻿namespace TaikoLocalServer.Controllers;
 
 public abstract class BaseController<T> : ControllerBase where T : BaseController<T>
 {

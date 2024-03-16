@@ -11,7 +11,7 @@ public class AddMyDonEntryCommandHandler(TaikoDbContext context, ILogger<AddMyDo
     public async Task<CommonMyDonEntryResponse> Handle(AddMyDonEntryCommand request, CancellationToken cancellationToken)
     {
         var nextBaid = await context.Cards.Select(card => card.Baid)
-            .DefaultIfEmpty(0u)
+            .DefaultIfEmpty()
             .MaxAsync(cancellationToken) + 1;
         var newUser = new UserDatum
         {

@@ -9,10 +9,15 @@ namespace GameDatabase.Entities
         public uint   MyDonNameLanguage   { get; set; }
         public string Title               { get; set; } = string.Empty;
         public uint   TitlePlateId        { get; set; }
-        public uint[] FavoriteSongsArray  { get; set; } = Array.Empty<uint>();
-        public uint[] ToneFlgArray        { get; set; } = Array.Empty<uint>();
-        public uint[] TitleFlgArray       { get; set; } = Array.Empty<uint>();
+        public List<uint> FavoriteSongsArray  { get; set; } = [];
+        public List<uint> ToneFlgArray        { get; set; } = [];
+        public List<uint> TitleFlgArray       { get; set; } = [];
         public string CostumeFlgArray     { get; set; } = "[[],[],[],[],[]]";
+        public List<uint> UnlockedKigurumi { get; set; } = [0];
+        public List<uint> UnlockedHead { get; set; } = [0];
+        public List<uint> UnlockedBody { get; set; }= [0];
+        public List<uint>     UnlockedFace { get; set; }= [0];
+        public List<uint> UnlockedPuchi{ get; set; }= [0];
         public uint[] GenericInfoFlgArray { get; set; } = Array.Empty<uint>();
         public short  OptionSetting       { get; set; }
         public int    NotesPosition       { get; set; }

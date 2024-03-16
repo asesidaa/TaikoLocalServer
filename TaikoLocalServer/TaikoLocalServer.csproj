@@ -4,7 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Version>1.0.0-beta</Version>
+        <Version>1.1.0</Version>
         <LangVersion>12</LangVersion>
 		<EnableConfigurationBindingGenerator>false</EnableConfigurationBindingGenerator>
         <ApplicationManifest>app.manifest</ApplicationManifest>

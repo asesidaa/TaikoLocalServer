@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-using GameDatabase.Context;
-using MediatR;
+﻿using GameDatabase.Context;
 using TaikoLocalServer.Models.Application;
 using Throw;
 
@@ -40,7 +38,7 @@ public class BaidQueryHandler : IRequestHandler<BaidQuery, CommonBaidResponse>
         var userData = await context.UserData.FindAsync(baid);
         userData.ThrowIfNull($"User not found for card with Baid {baid}!");
 
-        var songBestData = context.SongBestData.Where(datum => datum.Baid == baid);
+        var songBestData = context.SongBestData.Where(datum => datum.Baid == baid).ToList();
         var achievementDisplayDifficulty = userData.AchievementDisplayDifficulty;
         if (achievementDisplayDifficulty == Difficulty.None)
         {
@@ -51,10 +49,10 @@ public class BaidQueryHandler : IRequestHandler<BaidQuery, CommonBaidResponse>
                 .Max();
         }
         // For each crown type, calculate how many songs have that crown type
-        var crownCountData = await songBestData
+        var crownCountData = songBestData
             .Where(datum => datum.BestCrown >= CrownType.Clear)
             .GroupBy(datum => datum.BestCrown)
-            .ToDictionaryAsync(datums => datums.Key, datums => (uint)datums.Count(), cancellationToken);
+            .ToDictionary(datums => datums.Key, datums => (uint)datums.Count());
         var crownCount = new uint[3];
         foreach (var crownType in Enum.GetValues<CrownType>())
         {
@@ -64,10 +62,10 @@ public class BaidQueryHandler : IRequestHandler<BaidQuery, CommonBaidResponse>
             }
         }
         
-        var scoreRankData = await songBestData
+        var scoreRankData = songBestData
             .Where(datum => datum.BestCrown >= CrownType.Clear)
             .GroupBy(datum => datum.BestScoreRank)
-            .ToDictionaryAsync(datums => datums.Key, datums => (uint)datums.Count(), cancellationToken);
+            .ToDictionary(datums => datums.Key, datums => (uint)datums.Count());
         var scoreRankCount = new uint[7];
         foreach (var scoreRank in Enum.GetValues<ScoreRank>())
         {

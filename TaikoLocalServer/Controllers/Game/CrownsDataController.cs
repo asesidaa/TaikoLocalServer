@@ -54,7 +54,7 @@ public class CrownsDataController : BaseController<CrownsDataController>
     
     public record CrownData(byte[] CrownFlg, byte[] DondafulCrownFlg);
 
-    public async Task<CrownData> Handle(uint baid)
+    private async Task<CrownData> Handle(uint baid)
     {
         var songBestData = await songBestDatumService.GetAllSongBestData(baid);
 
