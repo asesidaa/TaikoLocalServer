@@ -5,13 +5,6 @@ namespace TaikoLocalServer.Controllers.Game;
 [ApiController]
 public class GetAiDataController : BaseController<GetAiDataController>
 {
-    private readonly IUserDatumService userDatumService;
-
-    public GetAiDataController(IUserDatumService userDatumService)
-    {
-        this.userDatumService = userDatumService;
-    }
-
     [HttpPost("/v12r08_ww/chassis/getaidata_6x30b9nr.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetAiData([FromBody] GetAiDataRequest request)
@@ -20,7 +13,6 @@ public class GetAiDataController : BaseController<GetAiDataController>
 
         var commonResponse = await Mediator.Send(new GetAiDataQuery(request.Baid));
         var response = Mappers.AiDataResponseMapper.MapTo3906(commonResponse);
-        response.Result = 1;
         return Ok(response);
     }
     
@@ -32,7 +24,6 @@ public class GetAiDataController : BaseController<GetAiDataController>
 
         var commonResponse = await Mediator.Send(new GetAiDataQuery((uint)request.Baid));
         var response = Mappers.AiDataResponseMapper.MapTo3209(commonResponse);
-        response.Result = 1;
         return Ok(response);
     }
 }

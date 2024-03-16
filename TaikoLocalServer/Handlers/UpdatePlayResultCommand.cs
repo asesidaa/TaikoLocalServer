@@ -54,6 +54,8 @@ public class UpdatePlayResultCommandHandler(TaikoDbContext context, ILogger<Upda
                 UpdateDanPlayData(danPlayData, playResultData);
                 context.DanScoreData.Update(danPlayData);
             }
+
+            await context.SaveChangesAsync(cancellationToken);
             return 1;
         }
         

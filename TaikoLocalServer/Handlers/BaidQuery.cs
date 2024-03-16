@@ -20,6 +20,7 @@ public class BaidQueryHandler(
             logger.LogInformation("New user with access code {AccessCode}", request.AccessCode);
             return new CommonBaidResponse
             {
+                Result = 1,
                 IsNewUser = true,
                 Baid = context.Cards.Any() ? context.Cards.AsEnumerable().Max(c => c.Baid) + 1 : 1
             };
@@ -108,6 +109,7 @@ public class BaidQueryHandler(
 
         return new CommonBaidResponse
         {
+            Result = 1,
             IsNewUser = false,
             Baid = baid,
             MyDonName = userData.MyDonName,

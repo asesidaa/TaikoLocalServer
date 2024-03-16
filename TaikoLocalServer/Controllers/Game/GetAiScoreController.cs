@@ -6,13 +6,6 @@ namespace TaikoLocalServer.Controllers.Game;
 [ApiController]
 public class GetAiScoreController : BaseController<GetAiScoreController>
 {
-    private readonly IAiDatumService aiDatumService;
-
-    public GetAiScoreController(IAiDatumService aiDatumService)
-    {
-        this.aiDatumService = aiDatumService;
-    }
-
     [HttpPost("/v12r08_ww/chassis/getaiscore_lp38po4w.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetAiScore([FromBody] GetAiScoreRequest request)
@@ -21,7 +14,6 @@ public class GetAiScoreController : BaseController<GetAiScoreController>
 
         var commonResponse = await Mediator.Send(new GetAiScoreQuery(request.Baid, request.SongNo, request.Level));
         var response = AiScoreMappers.MapTo3906(commonResponse);
-        response.Result = 1;
 
         return Ok(response);
     }
@@ -35,7 +27,6 @@ public class GetAiScoreController : BaseController<GetAiScoreController>
         var commonResponse =
             await Mediator.Send(new GetAiScoreQuery((uint)request.Baid, request.SongNo, request.Level));
         var response = AiScoreMappers.MapTo3209(commonResponse);
-        response.Result = 1;
 
         return Ok(response);
     }

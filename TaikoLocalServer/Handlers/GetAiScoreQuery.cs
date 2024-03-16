@@ -7,18 +7,9 @@ namespace TaikoLocalServer.Handlers;
 
 public record GetAiScoreQuery(uint Baid, uint SongId, uint Level) : IRequest<CommonAiScoreResponse>;
 
-public class GetAiScoreQueryHandler : IRequestHandler<GetAiScoreQuery, CommonAiScoreResponse>
+public class GetAiScoreQueryHandler(TaikoDbContext context, ILogger<GetAiScoreQueryHandler> logger)
+    : IRequestHandler<GetAiScoreQuery, CommonAiScoreResponse>
 {
-    private readonly TaikoDbContext context;
-    
-    private readonly ILogger<GetAiScoreQueryHandler> logger;
-
-    public GetAiScoreQueryHandler(TaikoDbContext context, ILogger<GetAiScoreQueryHandler> logger)
-    {
-        this.context = context;
-        this.logger = logger;
-    }
-
     public async Task<CommonAiScoreResponse> Handle(GetAiScoreQuery request, CancellationToken cancellationToken)
     {
         var difficulty = (Difficulty)request.Level;
@@ -29,6 +20,14 @@ public class GetAiScoreQueryHandler : IRequestHandler<GetAiScoreQuery, CommonAiS
                                                              datum.Difficulty == difficulty)
             .Include(datum => datum.AiSectionScoreData)
             .FirstOrDefaultAsync(cancellationToken);
-        return aiData is null ? new CommonAiScoreResponse() : AiScoreMappers.MapToCommonAiScoreResponse(aiData);
+        if (aiData is null)
+        {
+            return new CommonAiScoreResponse
+            {
+                Result = 1
+            };
+        }
+        aiData.AiSectionScoreData.Sort((a, b) => a.SectionIndex.CompareTo(b.SectionIndex));
+        return AiScoreMappers.MapAsSuccess(aiData);
     }
 }
