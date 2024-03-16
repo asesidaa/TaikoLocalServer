@@ -10,7 +10,6 @@ public static class ServiceExtensions
         services.AddScoped<ISongPlayDatumService, SongPlayDatumService>();
         services.AddScoped<ISongBestDatumService, SongBestDatumService>();
         services.AddScoped<IDanScoreDatumService, DanScoreDatumService>();
-        services.AddScoped<IAiDatumService, AiDatumService>();
 
         return services;
     }
