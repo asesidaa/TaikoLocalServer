@@ -1,6 +1,4 @@
-﻿using SharedProject.Models.Requests;
-
-namespace TaikoLocalServer.Controllers.Api;
+﻿namespace TaikoLocalServer.Controllers.Api;
 
 [ApiController]
 [Route("api/[controller]")]

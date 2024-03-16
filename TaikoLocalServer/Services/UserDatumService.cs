@@ -1,6 +1,5 @@
 ﻿using GameDatabase.Context;
 using GameDatabase.Entities;
-using System.Text.Json;
 using Throw;
 
 namespace TaikoLocalServer.Services;
@@ -75,40 +74,15 @@ public class UserDatumService : IUserDatumService
     {
         var userDatum = await context.UserData.FindAsync(baid);
         userDatum.ThrowIfNull($"User with baid: {baid} not found!");
-
-        using var stringStream = GZipBytesUtil.GenerateStreamFromString(userDatum.FavoriteSongsArray);
-        List<uint>? result;
-        try
-        {
-            result = await JsonSerializer.DeserializeAsync<List<uint>>(stringStream);
-        }
-        catch (JsonException e)
-        {
-            logger.LogError(e, "Parse favorite song array json failed! Is the user initialized correctly?");
-            result = new List<uint>();
-        }
-        result.ThrowIfNull("Song favorite array should never be null!");
-        return result;
+        return userDatum.FavoriteSongsArray.ToList();
     }
 
     public async Task UpdateFavoriteSong(uint baid, uint songId, bool isFavorite)
     {
         var userDatum = await context.UserData.FindAsync(baid);
         userDatum.ThrowIfNull($"User with baid: {baid} not found!");
-
-        using var stringStream = GZipBytesUtil.GenerateStreamFromString(userDatum.FavoriteSongsArray);
-        List<uint>? favoriteSongIds;
-        try
-        {
-            favoriteSongIds = await JsonSerializer.DeserializeAsync<List<uint>>(stringStream);
-        }
-        catch (JsonException e)
-        {
-            logger.LogError(e, "Parse favorite song array json failed! Is the user initialized correctly?");
-            favoriteSongIds = new List<uint>();
-        }
-        favoriteSongIds.ThrowIfNull("Song favorite array should never be null!");
-        var favoriteSet = new HashSet<uint>(favoriteSongIds);
+        
+        var favoriteSet = new HashSet<uint>(userDatum.FavoriteSongsArray);
         if (isFavorite)
         {
             favoriteSet.Add(songId);
@@ -118,13 +92,8 @@ public class UserDatumService : IUserDatumService
             favoriteSet.Remove(songId);
         }
 
-        using var newFavoriteSongStream = new MemoryStream();
-        await JsonSerializer.SerializeAsync(newFavoriteSongStream, favoriteSet);
-        newFavoriteSongStream.Position = 0;
-        using var reader = new StreamReader(newFavoriteSongStream);
-
-        userDatum.FavoriteSongsArray = await reader.ReadToEndAsync();
-        logger.LogInformation("Favorite songs are: {Favorite}", userDatum.FavoriteSongsArray);
+        userDatum.FavoriteSongsArray = favoriteSet.ToList();
+        //logger.LogInformation("Favorite songs are: {Favorite}", userDatum.FavoriteSongsArray);
         context.Update(userDatum);
         await context.SaveChangesAsync();
     }

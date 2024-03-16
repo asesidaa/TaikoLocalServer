@@ -1,7 +1,6 @@
 ﻿using SharedProject.Models;
 using SharedProject.Utils;
 using System.Text.Json;
-using Throw;
 
 namespace TaikoLocalServer.Controllers.Api;
 
@@ -31,9 +30,10 @@ public class UserSettingsController : BaseController<UserSettingsController>
 
         var costumeData = JsonHelper.GetCostumeDataFromUserData(user, Logger);
 
-        var costumeUnlockData = JsonHelper.GetCostumeUnlockDataFromUserData(user, Logger);
+        List<List<uint>> costumeUnlockData = 
+            [user.UnlockedKigurumi, user.UnlockedHead, user.UnlockedBody, user.UnlockedFace, user.UnlockedPuchi];
 
-        var unlockedTitle = JsonHelper.GetUIntArrayFromJson(user.TitleFlgArray, 0, Logger, nameof(user.TitleFlgArray))
+        var unlockedTitle = user.TitleFlgArray
             .ToList();
 
         for (var i = 0; i < 5; i++)
@@ -125,19 +125,10 @@ public class UserSettingsController : BaseController<UserSettingsController>
         user.CostumeData = JsonSerializer.Serialize(costumes);
 
         // If a locked tone is selected, unlock it
-        uint[] toneFlg = { 0u };
-        try
-        {
-            toneFlg = JsonSerializer.Deserialize<uint[]>(user.ToneFlgArray)!;
-        }
-        catch (JsonException e)
-        {
-            Logger.LogError(e, "Parsing tone flg json data failed");
-        }
-        toneFlg.ThrowIfNull("Tone flg should never be null!");
-        toneFlg = toneFlg.Append(0u).Append(userSetting.ToneId).Distinct().ToArray();
+        var toneFlg = user.ToneFlgArray;
+        toneFlg = toneFlg.Append(0u).Append(userSetting.ToneId).Distinct().ToList();
 
-        user.ToneFlgArray = JsonSerializer.Serialize(toneFlg);
+        user.ToneFlgArray = toneFlg;
 
         await userDatumService.UpdateUserDatum(user);
 

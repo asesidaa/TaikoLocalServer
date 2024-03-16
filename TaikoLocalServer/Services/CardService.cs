@@ -18,11 +18,6 @@ public class CardService : ICardService
         return await context.Cards.FindAsync(accessCode);
     }
 
-    public uint GetNextBaid()
-    {
-        return context.Cards.Any() ? context.Cards.ToList().Max(card => card.Baid) + 1 : 1;
-    }
-
     public async Task<List<User>> GetUsersFromCards()
     {
         var cardEntries = await context.Cards.ToListAsync();

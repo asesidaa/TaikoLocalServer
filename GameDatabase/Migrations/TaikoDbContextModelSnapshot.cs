@@ -388,6 +388,26 @@ namespace TaikoLocalServer.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("UnlockedBody")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UnlockedFace")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UnlockedHead")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UnlockedKigurumi")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UnlockedPuchi")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("UnlockedSongIdList")
                         .IsRequired()
                         .HasColumnType("TEXT");

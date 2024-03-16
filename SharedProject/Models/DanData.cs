@@ -2,7 +2,7 @@
 
 namespace SharedProject.Models;
 
-public class DanData
+public class DanData : IVerupNo
 {
     [JsonPropertyName("danId")]
     public uint DanId { get; set; }
