@@ -10,7 +10,7 @@ namespace GameDatabase.Entities
         public string Title               { get; set; } = string.Empty;
         public uint   TitlePlateId        { get; set; }
         public List<uint> FavoriteSongsArray  { get; set; } = [];
-        public List<uint> ToneFlgArray        { get; set; } = [];
+        public List<uint> ToneFlgArray        { get; set; } = [0];
         public List<uint> TitleFlgArray       { get; set; } = [];
         public string CostumeFlgArray     { get; set; } = "[[],[],[],[],[]]";
         public List<uint> UnlockedKigurumi { get; set; } = [0];

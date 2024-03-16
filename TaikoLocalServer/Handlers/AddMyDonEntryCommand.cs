@@ -27,7 +27,11 @@ public class AddMyDonEntryCommandHandler(TaikoDbContext context, ILogger<AddMyDo
             FavoriteSongsArray = [],
             ToneFlgArray = [0],
             TitleFlgArray = [],
-            CostumeFlgArray = "[[0],[0],[0],[0],[0]]",
+            UnlockedKigurumi = [0],
+            UnlockedBody = [0],
+            UnlockedFace = [0],
+            UnlockedHead = [0],
+            UnlockedPuchi = [0],
             GenericInfoFlgArray = [],
             UnlockedSongIdList = []
         };
