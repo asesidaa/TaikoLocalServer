@@ -2,6 +2,7 @@
 
 public class CommonAiScoreResponse
 {
+    public uint Result { get; set; }
     public List<CommonAiBestSectionData> AryBestSectionDatas { get; set; } = new();
 }
 

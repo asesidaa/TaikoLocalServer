@@ -30,19 +30,26 @@ public class GetSelfBestQueryHandler(IGameDataService gameDataService, TaikoDbCo
                              (datum.Difficulty == Difficulty.UraOni && requestDifficulty == Difficulty.Oni)))
             .OrderBy(datum => datum.SongId)
             .ToListAsync(cancellationToken);
+        var selfBestList = selfbestScores.ConvertAll(datum => new CommonSelfBestResponse.SelfBestData
+        {
+            SongNo = datum.SongId,
+            SelfBestScore = datum.BestScore,
+            UraBestScore = datum.Difficulty == Difficulty.UraOni ? datum.BestScore : 0,
+            SelfBestScoreRate = datum.BestRate,
+            UraBestScoreRate = datum.Difficulty == Difficulty.UraOni ? datum.BestRate : 0
+        });
+        // For songs that don't have a score, add them to the response with 0s
+        var missingSongs = requestSet.Except(selfBestList.Select(datum => datum.SongNo));
+        selfBestList.AddRange(missingSongs.Select(songNo => new CommonSelfBestResponse.SelfBestData
+        {
+            SongNo = songNo
+        }));
 
         var response = new CommonSelfBestResponse
         {
             Result = 1,
             Level = request.Difficulty,
-            ArySelfbestScores = selfbestScores.ConvertAll(datum => new CommonSelfBestResponse.SelfBestData
-            {
-                SongNo = datum.SongId,
-                SelfBestScore = datum.BestScore,
-                UraBestScore = datum.Difficulty == Difficulty.UraOni ? datum.BestScore : 0,
-                SelfBestScoreRate = datum.BestRate,
-                UraBestScoreRate = datum.Difficulty == Difficulty.UraOni ? datum.BestRate : 0
-            })
+            ArySelfbestScores = selfBestList
         };
 
         return response;

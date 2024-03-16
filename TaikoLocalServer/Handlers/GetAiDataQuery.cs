@@ -25,6 +25,7 @@ public class GetAiDataQueryHandler : IRequestHandler<GetAiDataQuery, CommonAiDat
         user.ThrowIfNull($"User with baid {request.Baid} does not exist!");
         var response = new CommonAiDataResponse
         {
+            Result = 1,
             TotalWinnings = (uint)user.AiWinCount,
             InputMedian = "1",
             InputVariance = "0"

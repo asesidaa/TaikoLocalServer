@@ -2,6 +2,7 @@
 
 public class CommonBaidResponse
 {
+    public uint Result { get; set; }
     public bool       IsNewUser                 { get;   set; }
     public uint       Baid              { get;   set; }
     public string     MyDonName         { get;   set; } = string.Empty;
