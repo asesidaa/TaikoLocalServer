@@ -16,6 +16,9 @@
       "GameServer2": {
         "Url": "https://0.0.0.0:54431"
       },
+      "GameServerCN": {
+        "Url": "https://0.0.0.0:57402"
+      },
       "GarmcServer": {
         "Url": "https://0.0.0.0:443"
       }

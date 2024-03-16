@@ -1,38 +1,28 @@
-﻿namespace TaikoLocalServer.Controllers.Game;
+﻿using TaikoLocalServer.Handlers;
+using TaikoLocalServer.Mappers;
 
-[Route("/v12r08_ww/chassis/getfolder_rffj346i.php")]
+namespace TaikoLocalServer.Controllers.Game;
+
 [ApiController]
 public class GetFolderController : BaseController<GetFolderController>
 {
-    private readonly IGameDataService gameDataService;
-    public GetFolderController(IGameDataService gameDataService)
-    {
-        this.gameDataService = gameDataService;
-    }
-
-    [HttpPost]
+    [HttpPost("/v12r08_ww/chassis/getfolder_rffj346i.php")]
     [Produces("application/protobuf")]
-    public IActionResult GetFolder([FromBody] GetfolderRequest request)
+    public async Task<IActionResult> GetFolder([FromBody] GetfolderRequest request)
     {
         Logger.LogInformation("GetFolder request : {Request}", request.Stringify());
-
-        var response = new GetfolderResponse
-        {
-            Result = 1
-        };
-
-        foreach (var folderId in request.FolderIds)
-        {
-            gameDataService.GetFolderDictionary().TryGetValue(folderId, out var folderData);
-            if (folderData is null)
-            {
-                Logger.LogWarning("Requested folder id {Id} does not exist!", folderId);
-                continue;
-            }
-
-            response.AryEventfolderDatas.Add(folderData);
-        }
-
+        var commonResponse = await Mediator.Send(new GetFolderQuery(request.FolderIds));
+        var response = FolderDataMappers.MapTo3906(commonResponse);
+        return Ok(response);
+    }
+    
+    [HttpPost("/v12r00_cn/chassis/getfolder.php")]
+    [Produces("application/protobuf")]
+    public async Task<IActionResult> GetFolder([FromBody] Models.v3209.GetfolderRequest request)
+    {
+        Logger.LogInformation("GetFolder3209 request : {Request}", request.Stringify());
+        var commonResponse = await Mediator.Send(new GetFolderQuery(request.FolderIds));
+        var response = FolderDataMappers.MapTo3209(commonResponse);
         return Ok(response);
     }
 }

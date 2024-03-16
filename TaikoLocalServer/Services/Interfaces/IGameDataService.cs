@@ -12,18 +12,18 @@ public interface IGameDataService
 	public List<uint> GetMusicWithUraList();
 
 	public ImmutableDictionary<uint, MusicInfoEntry> GetMusicInfoes();
-
-	public ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> GetDanDataDictionary();
 	
-	public ImmutableDictionary<uint, GetDanOdaiResponse.OdaiData> GetGaidenDataDictionary();
+	public ImmutableDictionary<uint, SongIntroductionData> GetSongIntroductionDictionary();
 
-	public ImmutableDictionary<uint, GetSongIntroductionResponse.SongIntroductionData> GetSongIntroDictionary();
+	public ImmutableDictionary<uint, MovieData> GetMovieDataDictionary();
 
-	public ImmutableDictionary<uint, InitialdatacheckResponse.MovieData> GetMovieDataDictionary();
+	public ImmutableDictionary<uint, EventFolderData> GetEventFolderDictionary();
+	
+	public ImmutableDictionary<uint, DanData> GetCommonDanDataDictionary();
+	
+	public ImmutableDictionary<uint, DanData> GetCommonGaidenDataDictionary();
 
-	public ImmutableDictionary<uint, GetfolderResponse.EventfolderData> GetFolderDictionary();
-
-	public List<GetShopFolderResponse.ShopFolderData> GetShopFolderList();
+	public List<ShopFolderData> GetShopFolderList();
 
 	public Dictionary<string, int> GetTokenDataDictionary();
 

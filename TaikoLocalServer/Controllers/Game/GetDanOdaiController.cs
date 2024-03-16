@@ -1,19 +1,14 @@
-﻿namespace TaikoLocalServer.Controllers.Game;
+﻿using TaikoLocalServer.Handlers;
+using TaikoLocalServer.Mappers;
 
-[Route("/v12r08_ww/chassis/getdanodai_ela9zu1a.php")]
+namespace TaikoLocalServer.Controllers.Game;
+
 [ApiController]
 public class GetDanOdaiController : BaseController<GetDanOdaiController>
 {
-    private readonly IGameDataService gameDataService;
-
-    public GetDanOdaiController(IGameDataService gameDataService)
-    {
-        this.gameDataService = gameDataService;
-    }
-
-    [HttpPost]
+    [HttpPost("/v12r08_ww/chassis/getdanodai_ela9zu1a.php")]
     [Produces("application/protobuf")]
-    public IActionResult GetDanOdai([FromBody] GetDanOdaiRequest request)
+    public async Task<IActionResult> GetDanOdai([FromBody] GetDanOdaiRequest request)
     {
         Logger.LogInformation("GetDanOdai request : {Request}", request.Stringify());
 
@@ -22,34 +17,25 @@ public class GetDanOdaiController : BaseController<GetDanOdaiController>
             Result = 1
         };
 
-        if (request.Type == 1)
-        {
-            foreach (var danId in request.DanIds)
-            {
-                gameDataService.GetDanDataDictionary().TryGetValue(danId, out var odaiData);
-                if (odaiData is null)
-                {
-                    Logger.LogWarning("Requested dan id {Id} does not exist!", danId);
-                    continue;
-                }
+        var odaiDataList = await Mediator.Send(new GetDanOdaiQuery(request.DanIds, request.Type));
+        response.AryOdaiDatas.AddRange(odaiDataList.Select(DanDataMappers.To3906OdaiData));
 
-                response.AryOdaiDatas.Add(odaiData);
-            }
-        }
-        else if (request.Type == 2)
-        {
-            foreach (var danId in request.DanIds)
-            {
-                gameDataService.GetGaidenDataDictionary().TryGetValue(danId, out var odaiData);
-                if (odaiData is null)
-                {
-                    Logger.LogWarning("Requested dan id {Id} does not exist!", danId);
-                    continue;
-                }
+        return Ok(response);
+    }
+    
+    [HttpPost("/v12r00_cn/chassis/getdanodai.php")]
+    [Produces("application/protobuf")]
+    public async Task<IActionResult> GetDanOdai3209([FromBody] Models.v3209.GetDanOdaiRequest request)
+    {
+        Logger.LogInformation("GetDanOdai request : {Request}", request.Stringify());
 
-                response.AryOdaiDatas.Add(odaiData);
-            }
-        }
+        var response = new Models.v3209.GetDanOdaiResponse
+        {
+            Result = 1
+        };
+
+        var odaiDataList = await Mediator.Send(new GetDanOdaiQuery(request.DanIds, request.Type));
+        response.AryOdaiDatas.AddRange(odaiDataList.Select(DanDataMappers.To3209OdaiData));
 
         return Ok(response);
     }

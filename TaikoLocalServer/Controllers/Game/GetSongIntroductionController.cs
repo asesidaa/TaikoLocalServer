@@ -1,6 +1,8 @@
-﻿namespace TaikoLocalServer.Controllers.Game;
+﻿using TaikoLocalServer.Handlers;
+using TaikoLocalServer.Mappers;
 
-[Route("/v12r08_ww/chassis/getsongintroduction_66blw6is.php")]
+namespace TaikoLocalServer.Controllers.Game;
+
 [ApiController]
 public class GetSongIntroductionController : BaseController<GetSongIntroductionController>
 {
@@ -11,29 +13,27 @@ public class GetSongIntroductionController : BaseController<GetSongIntroductionC
         this.gameDataService = gameDataService;
     }
 
-    [HttpPost]
+    [HttpPost("/v12r08_ww/chassis/getsongintroduction_66blw6is.php")]
     [Produces("application/protobuf")]
-    public IActionResult GetSongIntroduction([FromBody] GetSongIntroductionRequest request)
+    public async Task<IActionResult> GetSongIntroduction([FromBody] GetSongIntroductionRequest request)
     {
         Logger.LogInformation("GetSongIntroduction request : {Request}", request.Stringify());
 
-        var response = new GetSongIntroductionResponse
-        {
-            Result = 1
-        };
+        var commonResponse = await Mediator.Send(new GetSongIntroductionQuery(request.SetIds));
+        var response = SongIntroductionDataMappers.MapTo3906(commonResponse);
+        
+        return Ok(response);
+    }
+    
+    [HttpPost("/v12r00_cn/chassis/getsongintroduction.php")]
+    [Produces("application/protobuf")]
+    public async Task<IActionResult> GetSongIntroduction3209([FromBody] Models.v3209.GetSongIntroductionRequest request)
+    {
+        Logger.LogInformation("GetSongIntroduction request : {Request}", request.Stringify());
 
-        foreach (var setId in request.SetIds)
-        {
-            gameDataService.GetSongIntroDictionary().TryGetValue(setId, out var introData);
-            if (introData is null)
-            {
-                Logger.LogWarning("Requested set id {Id} does not exist!", setId);
-                continue;
-            }
-
-            response.ArySongIntroductionDatas.Add(introData);
-        }
-
+        var commonResponse = await Mediator.Send(new GetSongIntroductionQuery(request.SetIds));
+        var response = SongIntroductionDataMappers.MapTo3209(commonResponse);
+        
         return Ok(response);
     }
 }

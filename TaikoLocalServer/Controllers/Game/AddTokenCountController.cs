@@ -1,49 +1,36 @@
-﻿using System.Text.Json;
-using GameDatabase.Entities;
-using Throw;
+﻿using TaikoLocalServer.Handlers;
+using AddTokenCountRequestMapper = TaikoLocalServer.Mappers.AddTokenCountRequestMapper;
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r08_ww/chassis/addtokencount_7547j3o4.php")]
 [ApiController]
 public class AddTokenCountController : BaseController<AddTokenCountController>
 {
-    private readonly IUserDatumService userDatumService;
-
-    public AddTokenCountController(IUserDatumService userDatumService)
-    {
-        this.userDatumService = userDatumService;
-    }
-
-    [HttpPost]
+    [HttpPost("/v12r08_ww/chassis/addtokencount_7547j3o4.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> AddTokenCount([FromBody] AddTokenCountRequest request)
     {
-        Logger.LogInformation("AddTokenCount request : {Request}", request.Stringify());
+        Logger.LogInformation("[3906] AddTokenCount request : {Request}", request.Stringify());
 
-        var user = await userDatumService.GetFirstUserDatumOrNull(request.Baid);
-        user.ThrowIfNull($"User with baid {request.Baid} does not exist!");
+        var command = new AddTokenCountCommand(AddTokenCountRequestMapper.Map(request));
+        await Mediator.Send(command);
 
-        foreach (var addTokenCountData in request.AryAddTokenCountDatas)
+        var response = new AddTokenCountResponse
         {
-            var tokenId = addTokenCountData.TokenId;
-            var addTokenCount = addTokenCountData.AddTokenCount;
-            var token = user.Tokens.FirstOrDefault(t => t.Id == tokenId);
-            if (token != null)
-            {
-                token.Count += addTokenCount;
-            }
-            else
-            {
-                user.Tokens.Add(new Token
-                {
-                    Id = (int)tokenId,
-                    Count = addTokenCount
-                });
-            }
-        }
+            Result = 1
+        };
 
-        await userDatumService.UpdateUserDatum(user);
+        return Ok(response);
+    }
+    
+    [HttpPost("/v12r00_cn/chassis/addtokencount.php")]
+    [Produces("application/protobuf")]
+    public async Task<IActionResult> AddTokenCount3209([FromBody] Models.v3209.AddTokenCountRequest request)
+    {
+        Logger.LogInformation("[3209] AddTokenCount request : {Request}", request.Stringify());
+
+        var command = new AddTokenCountCommand(AddTokenCountRequestMapper.Map(request));
+        await Mediator.Send(command);
 
         var response = new AddTokenCountResponse
         {

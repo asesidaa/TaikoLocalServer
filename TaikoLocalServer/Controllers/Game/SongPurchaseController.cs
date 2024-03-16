@@ -1,85 +1,30 @@
-﻿using System.Text.Json;
-using Throw;
+﻿using TaikoLocalServer.Mappers;
 
 namespace TaikoLocalServer.Controllers.Game;
 
-[Route("/v12r08_ww/chassis/songpurchase_wm2fh5bl.php")]
 [ApiController]
 public class SongPurchaseController : BaseController<SongPurchaseController>
 {
-    private readonly IUserDatumService userDatumService;
-
-    public SongPurchaseController(IUserDatumService userDatumService)
-    {
-        this.userDatumService = userDatumService;
-    }
-
-    [HttpPost]
+    [HttpPost("/v12r08_ww/chassis/songpurchase_wm2fh5bl.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> SongPurchase([FromBody] SongPurchaseRequest request)
     {
         Logger.LogInformation("SongPurchase request : {Request}", request.Stringify());
 
-        var user = await userDatumService.GetFirstUserDatumOrNull(request.Baid);
-        user.ThrowIfNull($"User with baid {request.Baid} does not exist!");
+        var commonResponse = await Mediator.Send(SongPurchaseMappers.MapToCommand(request));
+        var response = SongPurchaseMappers.MapTo3906(commonResponse);
+       
+        return Ok(response);
+    }
+    
+    [HttpPost("/v12r00_cn/chassis/songpurchase.php")]
+    [Produces("application/protobuf")]
+    public async Task<IActionResult> SongPurchase3209([FromBody] Models.v3209.SongPurchaseRequest request)
+    {
+        Logger.LogInformation("SongPurchase request : {Request}", request.Stringify());
 
-        /*var tokenCountDict = new Dictionary<uint, int>();
-        try
-        {
-            tokenCountDict = !string.IsNullOrEmpty(user.TokenCountDict)
-                ? JsonSerializer.Deserialize<Dictionary<uint, int>>(user.TokenCountDict)
-                : new Dictionary<uint, int>();
-        }
-        catch (JsonException e)
-        {
-            Logger.LogError(e, "Parsing TokenCountDict data for user with baid {Request} failed!", request.Baid);
-        }
-
-        tokenCountDict.ThrowIfNull("TokenCountDict should never be null");*/
-
-        Logger.LogInformation("Original UnlockedSongIdList: {UnlockedSongIdList}", user.UnlockedSongIdList);
-
-        var unlockedSongIdList = new List<uint>();
-        try
-        {
-            unlockedSongIdList = !string.IsNullOrEmpty(user.UnlockedSongIdList)
-                ? JsonSerializer.Deserialize<List<uint>>(user.UnlockedSongIdList)
-                : new List<uint>();
-        }
-        catch (JsonException e)
-        {
-            Logger.LogError(e, "Parsing UnlockedSongIdList data for user with baid {Request} failed!", request.Baid);
-        }
-
-        unlockedSongIdList.ThrowIfNull("UnlockedSongIdList should never be null");
-
-        //if (tokenCountDict.ContainsKey(request.TokenId)) tokenCountDict[request.TokenId] -= (int)request.Price;
-
-        var token = user.Tokens.FirstOrDefault(t => t.Id == request.TokenId);
-        if (token is not null && token.Count >= request.Price)
-        {
-            token.Count -= (int)request.Price;
-        }
-        else
-        {
-            Logger.LogError("User with baid {Baid} does not have enough tokens to purchase song with id {SongNo}!", request.Baid, request.SongNo);
-            return Ok(new SongPurchaseResponse { Result = 0 });
-        }
-        
-        if (!unlockedSongIdList.Contains(request.SongNo)) unlockedSongIdList.Add(request.SongNo);
-
-        user.UnlockedSongIdList = JsonSerializer.Serialize(unlockedSongIdList);
-
-        Logger.LogInformation("Updated UnlockedSongIdList: {UnlockedSongIdList}", user.UnlockedSongIdList);
-
-        await userDatumService.UpdateUserDatum(user);
-
-        var response = new SongPurchaseResponse
-        {
-            Result = 1,
-            TokenCount = token.Count
-        };
-
+        var commonResponse = await Mediator.Send(SongPurchaseMappers.MapToCommand(request));
+        var response = SongPurchaseMappers.MapTo3209(commonResponse);
         return Ok(response);
     }
 }

@@ -1,5 +1,4 @@
 using System.Reflection;
-using System.Security.Authentication;
 using Serilog.Sinks.File.Header;
 using TaikoLocalServer.Logging;
 using GameDatabase.Context;
@@ -61,6 +60,7 @@ try
     }
 
     // Add services to the container.
+    builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
     builder.Services.AddOptions();
     builder.Services.AddSingleton<IGameDataService, GameDataService>();
     builder.Services.Configure<ServerSettings>(builder.Configuration.GetSection(nameof(ServerSettings)));
