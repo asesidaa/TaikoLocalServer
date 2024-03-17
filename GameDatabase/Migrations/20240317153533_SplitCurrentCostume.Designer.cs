@@ -3,16 +3,19 @@ using System;
 using GameDatabase.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace TaikoLocalServer.Migrations
+namespace GameDatabase.Migrations
 {
     [DbContext(typeof(TaikoDbContext))]
-    partial class TaikoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240317153533_SplitCurrentCostume")]
+    partial class SplitCurrentCostume
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
@@ -339,27 +342,9 @@ namespace TaikoLocalServer.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<uint>("DifficultyPlayedCourse")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<uint>("DifficultyPlayedSort")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<uint>("DifficultyPlayedStar")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("DifficultySettingArray")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<uint>("DifficultySettingCourse")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<uint>("DifficultySettingSort")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<uint>("DifficultySettingStar")
-                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("DisplayAchievement")
                         .HasColumnType("INTEGER");

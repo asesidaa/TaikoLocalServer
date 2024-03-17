@@ -66,9 +66,9 @@ public class BaidQueryHandler(
                 scoreRankCount[(int)scoreRank - 2] = scoreRankData.GetValueOrDefault(scoreRank, (uint)0);
             }
         }
-
-        var costumeData = JsonHelper.GetCostumeDataFromUserData(userData, logger);
-
+        
+        List<uint> costumeData = [userData.CurrentKigurumi, userData.CurrentHead, userData.CurrentBody, userData.CurrentFace, userData.CurrentPuchi];
+        
         List<List<uint>> costumeArrays = 
             [userData.UnlockedKigurumi, userData.UnlockedHead, userData.UnlockedBody, userData.UnlockedFace, userData.UnlockedPuchi];
 
