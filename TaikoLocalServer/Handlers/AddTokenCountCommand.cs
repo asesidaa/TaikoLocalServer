@@ -40,6 +40,7 @@ public class AddTokenCountCommandHandler : IRequestHandler<AddTokenCountCommand>
             {
                 user.Tokens.Add(new Token
                 {
+                    Baid = user.Baid,
                     Id = (int)tokenId,
                     Count = addTokenCount
                 });

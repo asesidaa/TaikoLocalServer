@@ -1,4 +1,5 @@
-﻿using GameDatabase.Entities;
+﻿using EntityFramework.Exceptions.Sqlite;
+using GameDatabase.Entities;
 using Microsoft.EntityFrameworkCore;
 using SharedProject.Utils;
 
@@ -40,6 +41,7 @@ namespace GameDatabase.Context
                 path = dbFilePath;
             }
             optionsBuilder.UseSqlite($"Data Source={path}");
+            optionsBuilder.UseExceptionProcessor().EnableSensitiveDataLogging();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
