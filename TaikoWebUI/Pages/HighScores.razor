@@ -1,0 +1,136 @@
+﻿@inject IGameDataService GameDataService
+@inject HttpClient Client
+@inject LoginService LoginService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@using TaikoWebUI.Utilities;
+
+@page "/Users/{baid:int}/HighScores"
+
+<MudBreadcrumbs Items="breadcrumbs" Class="p-0 mb-2"></MudBreadcrumbs>
+<MudText Typo="Typo.h4">@Localizer["High Scores"]</MudText>
+    <MudText Typo="Typo.caption">User ID: @Baid</MudText>
+
+    <MudGrid Class="my-8">
+        @if (response is null)
+    {
+        <MudItem xs="12">
+            <MudText Align="Align.Center">
+                @Localizer["No data."]
+            </MudText>
+        </MudItem>
+    }
+    else
+    {
+        @if (LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.GetLoggedInUser().Baid != Baid && !LoginService.IsAdmin)))
+        {
+            if (!LoginService.IsLoggedIn)
+            {
+                NavigationManager.NavigateTo("/Login");
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/");
+            }
+        }
+        else
+        {
+            <MudItem xs="12">
+                <MudTabs Elevation="0" Border="true" Rounded="true" ApplyEffectsToContainer="true" Outlined="true" Class="mb-10">
+                    @foreach (var difficulty in Enum.GetValues<Difficulty>())
+                    {
+                        @if (difficulty is not Difficulty.None)
+                        {
+                            <MudTabPanel Text="@ScoreUtils.GetDifficultyTitle(difficulty)"
+                                         Icon="@ScoreUtils.GetDifficultyIconSvg(difficulty)">
+                                @if (songBestDataMap.TryGetValue(difficulty, out var value))
+                                {
+                                    <MudDataGrid Items="@value"
+                                                 ColumnResizeMode="ResizeMode.None" RowsPerPage="25" Elevation="0">
+                                        <Columns>
+                                            <TemplateColumn T="SongBestData" Title=@Localizer["Song"] StickyLeft="true">
+                                                <CellTemplate>
+                                                    <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                                                        <div style="width:300px">
+                                                            <a href="@($"/Users/{Baid}/Songs/{context.Item.SongId}")">
+                                                                <MudText Typo="Typo.body2" Style="font-weight:bold">@context.Item.MusicName</MudText>
+                                                                <MudText Typo="Typo.caption">@context.Item.MusicArtist</MudText>
+                                                            </a>
+                                                        </div>
+                                                        <div>
+                                                            <MudToggleIconButton Toggled="@context.Item.IsFavorite"
+                                                                                 ToggledChanged="@(async () => await OnFavoriteToggled(context.Item))"
+                                                                                 Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
+                                                                                 ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
+                                                                                 Size="Size.Small"
+                                                                                 ToggledSize="Size.Small"
+                                                                                 Title="Add to favorites" ToggledTitle="Remove from favorites" />
+                                                        </div>
+                                                        </MudStack>
+                                                    </CellTemplate>
+                                                </TemplateColumn>
+                                                <TemplateColumn T="SongBestData" Title=@Localizer["Level"] Sortable="false">
+                                                    <CellTemplate>
+                                                        <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
+                                                            <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
+                                                            <MudText Typo="Typo.caption" Style="line-height:1;margin-top:2px;margin-right:2px;">@GameDataService.GetMusicStarLevel(@context.Item.SongId, difficulty)</MudText>
+                                                        </MudStack>
+                                                    </CellTemplate>
+                                                </TemplateColumn>
+                                                <TemplateColumn T="SongBestData" Title=@Localizer["Genre"]
+                                                                Sortable="false" Filterable="true">
+                                                    <CellTemplate>
+                                                        <MudChip Style="@ScoreUtils.GetGenreStyle(context.Item.Genre)"
+                                                                 Size="Size.Small">
+                                                            @ScoreUtils.GetGenreTitle(context.Item.Genre)
+                                                    </MudChip>
+                                                </CellTemplate>
+                                            </TemplateColumn>
+                                            <PropertyColumn Property="data => data.BestScore" Title=@Localizer["Best Score"] />
+                                            <TemplateColumn T="SongBestData" Title=@Localizer["Best Crown"]>
+                                                <CellTemplate>
+                                                    <img src="@($"/images/crown_{context.Item.BestCrown}.png")" alt="@(ScoreUtils.GetCrownText(context.Item.BestCrown))" title="@(ScoreUtils.GetCrownText(context.Item.BestCrown))" style="@IconStyle" />
+                                                </CellTemplate>
+                                            </TemplateColumn>
+                                            <TemplateColumn T="SongBestData" Title=@Localizer["Best Rank"] Sortable="false">
+                                                <CellTemplate>
+                                                    @if (context.Item.BestScoreRank is not ScoreRank.None)
+                                                    {
+                                                        <img src="@($"/images/rank_{context.Item.BestScoreRank}.png")" alt="@(ScoreUtils.GetRankText(context.Item.BestScoreRank))" title="@(ScoreUtils.GetRankText(context.Item.BestScoreRank))" style="@IconStyle" />
+                                                    }
+                                                </CellTemplate>
+                                            </TemplateColumn>
+                                            <PropertyColumn Property="data => data.GoodCount" Title=@Localizer["Good"] Sortable="false" />
+                                            <PropertyColumn Property="data => data.OkCount" Title=@Localizer["OK"] Sortable="false" />
+                                            <PropertyColumn Property="data => data.MissCount" Title=@Localizer["Bad"] Sortable="false" />
+                                            <PropertyColumn Property="data => data.DrumrollCount" Title=@Localizer["Drumroll"] Sortable="false" />
+                                            <PropertyColumn Property="data => data.ComboCount" Title=@Localizer["MAX Combo"] Sortable="false" />
+                                            <PropertyColumn Property="data => data.LastPlayTime" Title=@Localizer["Last Played"] Hideable="true" />
+                                            <PropertyColumn Property="data => data.PlayCount" Title=@Localizer["Total Plays"] Hideable="true" />
+                                            <PropertyColumn Property="data => data.ClearCount" Title=@Localizer["Total Clears"] Hideable="true" />
+                                            <PropertyColumn Property="data => data.FullComboCount" Title=@Localizer["Total Full Combos"] Hideable="true" />
+                                            <PropertyColumn Property="data => data.PerfectCount" Title=@Localizer["Total Donderful Combos"] Hideable="true" />
+                                        </Columns>
+                                        <PagerContent>
+                                            <MudDataGridPager T="SongBestData" />
+                                        </PagerContent>
+                                    </MudDataGrid>
+                                }
+                                else
+                                {
+                                    <MudGrid>
+                                        <MudItem xs="12">
+                                            <MudText Align="Align.Center" Class="my-16">
+                                                No data for selected difficulty.
+                                            </MudText>
+                                        </MudItem>
+                                    </MudGrid>
+                                }
+                            </MudTabPanel>
+                        }
+                    }
+                </MudTabs>
+            </MudItem>
+        }
+    }
+</MudGrid>

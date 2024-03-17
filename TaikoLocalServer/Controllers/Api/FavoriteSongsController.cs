@@ -26,4 +26,17 @@ public class FavoriteSongsController : BaseController<FavoriteSongsController>
         await userDatumService.UpdateFavoriteSong(request.Baid, request.SongId, request.IsFavorite);
         return NoContent();
     }
+
+    [HttpGet("{baid}")]
+    public async Task<IActionResult> GetFavoriteSongs(uint baid)
+    {
+        var user = await userDatumService.GetFirstUserDatumOrNull(baid);
+
+        if (user is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(user.FavoriteSongsArray);
+    }
 }

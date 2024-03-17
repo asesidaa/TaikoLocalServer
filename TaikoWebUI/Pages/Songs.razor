@@ -35,7 +35,7 @@
         else
         {
             <MudItem xs="12">
-                <MudTable Items="musicMap" Elevation="0" Outlined="true" Filter="@FilterSongs" Striped="true">
+                <MudTable Items="musicMap" Elevation="0" Outlined="true" Filter="@FilterSongs">
                     <ToolBarContent>
                         <MudGrid Spacing="2">
                             <MudItem xs="12" md="8">
@@ -54,7 +54,7 @@
                                         var genreValue = (SongGenre)genre;
                                         <MudSelectItem Value="@genreValue.ToString()" Label="@Localizer[$"Key_{genreValue}"]">
                                             @ScoreUtils.GetGenreTitle(genreValue)
-                                    </MudSelectItem>
+                                        </MudSelectItem>
                                     }
                                 </MudSelect>
                             </MudItem>
@@ -69,14 +69,27 @@
                     </HeaderContent>
                     <RowTemplate>
                         <MudTd>
-                            <a href="@($"/Users/{Baid}/Songs/{context.SongId}")">
-                                <MudText Typo="Typo.body2">
-                                    @GameDataService.GetMusicNameBySongId(context.SongId, CurrentLanguage)
-                                </MudText>
-                                <MudText Typo="Typo.caption">
-                                    @GameDataService.GetMusicArtistBySongId(context.SongId, CurrentLanguage)
-                                </MudText>
-							</a>
+                        <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                            <div>
+                                <a href="@($"/Users/{Baid}/Songs/{context.SongId}")">
+                                    <MudText Typo="Typo.body2">
+                                        @GameDataService.GetMusicNameBySongId(context.SongId, CurrentLanguage)
+                                    </MudText>
+                                    <MudText Typo="Typo.caption">
+                                        @GameDataService.GetMusicArtistBySongId(context.SongId, CurrentLanguage)
+                                    </MudText>
+                                </a>
+                            </div>
+                            <div>
+                                <MudToggleIconButton
+                                    Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
+                                    ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
+                                    Size="Size.Small"
+                                    ToggledSize="Size.Small"
+                                    Title="Add to favorites"
+                                    ToggledTitle="Remove from favorites" />
+                            </div>
+                            </MudStack>
                         </MudTd>
                     </RowTemplate>
                     <PagerContent>

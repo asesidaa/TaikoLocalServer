@@ -26,6 +26,7 @@
 			<MudNavLink Href="@($"Users/{currentUser.Baid}/Profile")" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Person">@Localizer["Profile"]</MudNavLink>
             <MudNavGroup Title="Play Data" Expanded="true" Icon="@Icons.Material.Filled.EmojiEvents">
 			    <MudNavLink Href="@($"Users/{currentUser.Baid}/Songs")" Match="NavLinkMatch.All">@Localizer["Key_01"]</MudNavLink>
+                <MudNavLink Href="@($"Users/{currentUser.Baid}/HighScores")" Match="NavLinkMatch.All">@Localizer["High Scores"]</MudNavLink>
 			    <MudNavLink Href="@($"Users/{currentUser.Baid}/DaniDojo")" Match="NavLinkMatch.All">@Localizer["Key_03"]</MudNavLink>
             </MudNavGroup>
             <MudNavGroup Title="Settings" Expanded="_settingsOpen" Icon="@Icons.Material.Filled.Settings">

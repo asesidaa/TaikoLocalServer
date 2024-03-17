@@ -104,7 +104,8 @@
                          FullWidth="true"
                          AnchorOrigin="Origin.BottomCenter"
                          TransformOrigin="Origin.TopCenter">
-                    <MudMenuItem Href="@($"Users/{user.Baid}/Songs")">@Localizer["high scores"]</MudMenuItem>
+                        <MudMenuItem Href="@($"Users/{user.Baid}/HighScores")">@Localizer["High Scores"]</MudMenuItem>
+                        <MudMenuItem Href="@($"Users/{user.Baid}/Songs")">@Localizer["Song List"]</MudMenuItem>
                         <MudMenuItem Href="@($"Users/{user.Baid}/DaniDojo")">@Localizer["dani dojo"]</MudMenuItem>
                     </MudMenu>
                 </MudStack>
