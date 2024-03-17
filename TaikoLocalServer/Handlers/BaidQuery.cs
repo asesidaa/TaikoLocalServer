@@ -102,9 +102,9 @@ public class BaidQueryHandler(
         var genericInfoFlgArray = FlagCalculator.GetBitArrayFromIds(genericInfoFlg, (int)genericInfoFlgLength, logger);
 
         var aiRank = (uint)(userData.AiWinCount / 10);
-        if (aiRank > 11)
+        if (aiRank > 10)
         {
-            aiRank = 11;
+            aiRank = 10;
         }
 
         return new CommonBaidResponse
@@ -132,7 +132,9 @@ public class BaidQueryHandler(
             LastPlayMode = userData.LastPlayMode,
             SelectedToneId = userData.SelectedToneId,
             Title = userData.Title,
-            TitlePlateId = userData.TitlePlateId
+            TitlePlateId = userData.TitlePlateId,
+            AiTotalWin = (uint)userData.AiWinCount,
+            AiRank = aiRank
         };
     }
 }
