@@ -1,6 +1,5 @@
 ﻿using SharedProject.Models;
 using SharedProject.Utils;
-using System.Text.Json;
 
 namespace TaikoLocalServer.Controllers.Api;
 
@@ -85,13 +84,6 @@ public class UserSettingsController : BaseController<UserSettingsController>
             return NotFound();
         }
 
-        var difficultySettings = new List<uint>
-        {
-            userSetting.DifficultySettingCourse,
-            userSetting.DifficultySettingStar,
-            userSetting.DifficultySettingSort
-        };
-
         user.IsSkipOn = userSetting.IsSkipOn;
         user.IsVoiceOn = userSetting.IsVoiceOn;
         user.DisplayAchievement = userSetting.IsDisplayAchievement;
@@ -110,7 +102,6 @@ public class UserSettingsController : BaseController<UserSettingsController>
         user.ColorBody = userSetting.BodyColor;
         user.ColorFace = userSetting.FaceColor;
         user.ColorLimb = userSetting.LimbColor;
-        // user.CostumeData = JsonSerializer.Serialize(costumes);
         user.CurrentKigurumi = userSetting.Kigurumi;
         user.CurrentHead = userSetting.Head;
         user.CurrentBody = userSetting.Body;

@@ -1,6 +1,4 @@
-﻿using GameDatabase.Entities;
-using Riok.Mapperly.Abstractions;
-using TaikoLocalServer.Models.Application;
+﻿using Riok.Mapperly.Abstractions;
 
 namespace TaikoLocalServer.Mappers;
 

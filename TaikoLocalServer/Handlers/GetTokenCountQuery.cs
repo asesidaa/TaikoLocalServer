@@ -1,6 +1,4 @@
 ﻿using GameDatabase.Context;
-using GameDatabase.Entities;
-using TaikoLocalServer.Models.Application;
 
 namespace TaikoLocalServer.Handlers;
 
@@ -8,7 +6,9 @@ public record GetTokenCountQuery(uint Baid) : IRequest<CommonGetTokenCountRespon
 
 public class GetTokenCountQueryHandler(IGameDataService gameDataService, 
     TaikoDbContext context, 
+#pragma warning disable CS9113 // Parameter is unread.
     ILogger<GetTokenCountQueryHandler> logger)
+#pragma warning restore CS9113 // Parameter is unread.
     : IRequestHandler<GetTokenCountQuery, CommonGetTokenCountResponse>
 {
     public async Task<CommonGetTokenCountResponse> Handle(GetTokenCountQuery request, CancellationToken cancellationToken)

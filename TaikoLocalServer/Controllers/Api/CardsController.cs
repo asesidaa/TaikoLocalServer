@@ -1,5 +1,4 @@
-﻿using GameDatabase.Entities;
-using SharedProject.Models.Requests;
+﻿using SharedProject.Models.Requests;
 
 namespace TaikoLocalServer.Controllers.Api;
 

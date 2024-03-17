@@ -1,13 +1,14 @@
 ﻿using GameDatabase.Context;
 using TaikoLocalServer.Mappers;
-using TaikoLocalServer.Models.Application;
 using Throw;
 
 namespace TaikoLocalServer.Handlers;
 
 public record GetAiScoreQuery(uint Baid, uint SongId, uint Level) : IRequest<CommonAiScoreResponse>;
 
+#pragma warning disable CS9113 // Parameter is unread.
 public class GetAiScoreQueryHandler(TaikoDbContext context, ILogger<GetAiScoreQueryHandler> logger)
+#pragma warning restore CS9113 // Parameter is unread.
     : IRequestHandler<GetAiScoreQuery, CommonAiScoreResponse>
 {
     public async Task<CommonAiScoreResponse> Handle(GetAiScoreQuery request, CancellationToken cancellationToken)

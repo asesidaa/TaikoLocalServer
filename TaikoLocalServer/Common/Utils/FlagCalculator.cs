@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Specialized;
 using System.Runtime.InteropServices;
-using GameDatabase.Entities;
 
 namespace TaikoLocalServer.Common.Utils;
 

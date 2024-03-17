@@ -1,5 +1,4 @@
-﻿using TaikoLocalServer.Handlers;
-using AddTokenCountRequestMapper = TaikoLocalServer.Mappers.AddTokenCountRequestMapper;
+﻿using AddTokenCountRequestMapper = TaikoLocalServer.Mappers.AddTokenCountRequestMapper;
 
 namespace TaikoLocalServer.Controllers.Game;
 
