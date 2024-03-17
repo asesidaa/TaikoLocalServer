@@ -3,46 +3,46 @@ namespace TaikoLocalServer.Models.Application;
 
 public class CommonPlayResultData
 {
-    public uint Baid { get; set; }
-    public string ChassisId { get; set; } = string.Empty;
-    public string ShopId { get; set; } = string.Empty;
-    public string PlayDatetime { get; set; } = string.Empty;
-    public bool IsRight { get; set; }
-    public uint CardType { get; set; }
-    public bool IsTwoPlayers { get; set; }
-    public List<StageData> AryStageInfoes { get; set; } = [];
-    public List<uint> ReleaseSongNoes { get; set; } = [];
-    public List<uint> UraReleaseSongNoes { get; set; } = [];
-    public List<uint> GetToneNoes { get; set; } = [];
-    public List<uint> GetCostumeNo1s { get; set; } = [];
-    public List<uint> GetCostumeNo2s { get; set; } = [];
-    public List<uint> GetCostumeNo3s { get; set; } = [];
-    public List<uint> GetCostumeNo4s { get; set; } = [];
-    public List<uint> GetCostumeNo5s { get; set; } = [];
-    public List<uint> GetTitleNoes { get; set; } = [];
-    public List<uint> GetGenericInfoNoes { get; set; } = [];
-    public CostumeData AryPlayCostume { get; set; } = new();
-    public CostumeData AryCurrentCostume { get; set; } = new();
-    public string Title { get; set; } = string.Empty;
-    public uint TitleplateId { get; set; }
-    public uint PlayMode { get; set; }
-    public uint CollaborationId { get; set; }
-    public uint DanId { get; set; }
-    public uint DanResult { get; set; }
-    public uint SoulGaugeTotal { get; set; }
-    public uint ComboCntTotal { get; set; }
-    public bool IsNotRecordedDan { get; set; }
-    public uint AreaCode { get; set; }
-    public byte[] Reserved { get; set; } = [];
-    public uint TournamentMode { get; set; }
-    public string Accesstoken { get; set; } = string.Empty;
-    public byte[] ContentInfo { get; set; } = [];
-    public uint DifficultyPlayedCourse { get; set; }
-    public uint DifficultyPlayedStar { get; set; }
-    public uint DifficultyPlayedSort { get; set; }
-    public uint IsRandomUsePlay { get; set; }
-    public string InputMedian { get; set; } = string.Empty;
-    public string InputVariance { get; set; } = string.Empty;
+    public uint            Baid                   { get; set; }
+    public string          ChassisId              { get; set; } = string.Empty;
+    public string          ShopId                 { get; set; } = string.Empty;
+    public string          PlayDatetime           { get; set; } = string.Empty;
+    public bool            IsRight                { get; set; }
+    public uint            CardType               { get; set; }
+    public bool            IsTwoPlayers           { get; set; }
+    public List<StageData> AryStageInfoes         { get; set; } = [];
+    public List<uint>      ReleaseSongNoes        { get; set; } = [];
+    public List<uint>      UraReleaseSongNoes     { get; set; } = [];
+    public List<uint>      GetToneNoes            { get; set; } = [];
+    public List<uint>      GetCostumeNo1s         { get; set; } = [];
+    public List<uint>      GetCostumeNo2s         { get; set; } = [];
+    public List<uint>      GetCostumeNo3s         { get; set; } = [];
+    public List<uint>      GetCostumeNo4s         { get; set; } = [];
+    public List<uint>      GetCostumeNo5s         { get; set; } = [];
+    public List<uint>      GetTitleNoes           { get; set; } = [];
+    public List<uint>      GetGenericInfoNoes     { get; set; } = [];
+    public CostumeData     AryPlayCostume         { get; set; } = new();
+    public CostumeData     AryCurrentCostume      { get; set; } = new();
+    public string          Title                  { get; set; } = string.Empty;
+    public uint            TitleplateId           { get; set; }
+    public uint            PlayMode               { get; set; }
+    public uint            CollaborationId        { get; set; }
+    public uint            DanId                  { get; set; }
+    public uint            DanResult              { get; set; }
+    public uint            SoulGaugeTotal         { get; set; }
+    public uint            ComboCntTotal          { get; set; }
+    public bool            IsNotRecordedDan       { get; set; }
+    public uint            AreaCode               { get; set; }
+    public byte[]          Reserved               { get; set; } = [];
+    public uint            TournamentMode         { get; set; }
+    public string          Accesstoken            { get; set; } = string.Empty;
+    public byte[]          ContentInfo            { get; set; } = [];
+    public uint            DifficultyPlayedCourse { get; set; }
+    public uint            DifficultyPlayedStar   { get; set; }
+    public uint            DifficultyPlayedSort   { get; set; }
+    public uint            IsRandomUsePlay        { get; set; }
+    public string          InputMedian            { get; set; } = string.Empty;
+    public string          InputVariance          { get; set; } = string.Empty;
     
     public class StageData
     {

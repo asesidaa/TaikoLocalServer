@@ -238,7 +238,12 @@ public class UpdatePlayResultCommandHandler(TaikoDbContext context, ILogger<Upda
             playResultData.AryCurrentCostume.Costume4,
             playResultData.AryCurrentCostume.Costume5
         };
-        user.CostumeData = JsonSerializer.Serialize(costumeData);
+        //user.CostumeData = JsonSerializer.Serialize(costumeData);
+        user.CurrentKigurumi = playResultData.AryCurrentCostume.Costume1;
+        user.CurrentHead = playResultData.AryCurrentCostume.Costume2;
+        user.CurrentBody = playResultData.AryCurrentCostume.Costume3;
+        user.CurrentFace = playResultData.AryCurrentCostume.Costume4;
+        user.CurrentPuchi = playResultData.AryCurrentCostume.Costume5;
         user.LastPlayDatetime = lastPlayDateTime;
         user.LastPlayMode = playResultData.PlayMode;
 
@@ -260,7 +265,10 @@ public class UpdatePlayResultCommandHandler(TaikoDbContext context, ILogger<Upda
             playResultData.DifficultyPlayedStar,
             playResultData.DifficultyPlayedSort
         };
-        user.DifficultyPlayedArray = JsonSerializer.Serialize(difficultyPlayedArray);
+        //user.DifficultyPlayedArray = JsonSerializer.Serialize(difficultyPlayedArray);
+        user.DifficultyPlayedCourse = playResultData.DifficultyPlayedCourse;
+        user.DifficultyPlayedStar = playResultData.DifficultyPlayedStar;
+        user.DifficultyPlayedSort = playResultData.DifficultyPlayedSort;
 
         user.AiWinCount += playResultData.AryStageInfoes.Count(data => data.IsWin);
     }

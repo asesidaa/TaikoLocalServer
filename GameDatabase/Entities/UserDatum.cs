@@ -23,24 +23,34 @@ namespace GameDatabase.Entities
         public int    NotesPosition       { get; set; }
         public bool   IsVoiceOn           { get; set; }
         public bool   IsSkipOn            { get; set; }
-        // TODO: Split into separate fields
         public string       DifficultyPlayedArray        { get; set; } = "[]";
-        // TODO: Split into separate fields
+        public uint DifficultyPlayedCourse { get; set; }
+        public uint DifficultyPlayedStar   { get; set; }
+        public uint DifficultyPlayedSort   { get; set; }
+
         public string       DifficultySettingArray       { get; set; } = "[]";
+        public uint DifficultySettingCourse { get; set; }
+        public uint DifficultySettingStar   { get; set; }
+        public uint DifficultySettingSort   { get; set; }
         public uint         SelectedToneId               { get; set; }
         public DateTime     LastPlayDatetime             { get; set; }
         public uint         LastPlayMode                 { get; set; }
         public uint         ColorBody                    { get; set; }
         public uint         ColorFace                    { get; set; }
         public uint         ColorLimb                    { get; set; }
-        // TODO: Split into separate fields
+
         public string      CostumeData                  { get; set; } = "[]";
+        public uint           CurrentKigurumi                            { get; set; }
+        public uint           CurrentHead                                { get; set; }
+        public uint           CurrentBody                                { get; set; }
+        public uint           CurrentFace                                { get; set; }
+        public uint           CurrentPuchi                               { get; set; }
         public bool        DisplayDan                   { get; set; }
         public bool        DisplayAchievement           { get; set; }
         public Difficulty  AchievementDisplayDifficulty { get; set; }
         public int         AiWinCount                   { get; set; }
         public List<Token> Tokens                       { get; set; } = new();
-        public List<uint>      UnlockedSongIdList           { get; set; } = [];
+        public List<uint>  UnlockedSongIdList           { get; set; } = [];
         public bool        IsAdmin                      { get; set; }
     }
 }
