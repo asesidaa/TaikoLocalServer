@@ -1,6 +1,4 @@
-﻿using TaikoLocalServer.Models.Application;
-
-namespace TaikoLocalServer.Handlers;
+﻿namespace TaikoLocalServer.Handlers;
 
 public record GetFolderQuery(uint[] FolderIds) : IRequest<CommonGetFolderResponse>;
 

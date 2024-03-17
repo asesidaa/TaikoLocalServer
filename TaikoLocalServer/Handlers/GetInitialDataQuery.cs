@@ -1,7 +1,6 @@
 ﻿using System.Collections.Immutable;
 using Microsoft.Extensions.Options;
 using SharedProject.Models;
-using TaikoLocalServer.Models.Application;
 using TaikoLocalServer.Settings;
 
 namespace TaikoLocalServer.Handlers;
