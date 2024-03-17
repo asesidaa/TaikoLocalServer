@@ -21,7 +21,7 @@ namespace GameDatabase.Entities
         public uint[] GenericInfoFlgArray { get; set; } = Array.Empty<uint>();
         public short  OptionSetting       { get; set; }
         public int    NotesPosition       { get; set; }
-        public bool   IsVoiceOn           { get; set; }
+        public bool   IsVoiceOn           { get; set; } = true;
         public bool   IsSkipOn            { get; set; }
         public string       DifficultyPlayedArray        { get; set; } = "[]";
         public uint DifficultyPlayedCourse { get; set; }
