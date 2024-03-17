@@ -18,7 +18,7 @@ public class UpdatePlayResultCommandHandler(TaikoDbContext context, ILogger<Upda
             return 1;
         }
 
-        var user = await context.UserData.FindAsync(request.Baid, cancellationToken);
+        var user = await context.UserData.FindAsync([request.Baid], cancellationToken);
         if (user is null)
         {
             logger.LogWarning("Game uploading a non exisiting user with baid {Baid}", request.Baid);
@@ -52,7 +52,6 @@ public class UpdatePlayResultCommandHandler(TaikoDbContext context, ILogger<Upda
             else
             {
                 UpdateDanPlayData(danPlayData, playResultData);
-                context.DanScoreData.Update(danPlayData);
             }
 
             await context.SaveChangesAsync(cancellationToken);
@@ -68,7 +67,32 @@ public class UpdatePlayResultCommandHandler(TaikoDbContext context, ILogger<Upda
                 await UpdateAiBattleData(playResultData, stageData);
             }
 
-            await UpdateBestData(playResultData, stageData);
+            var difficulty = (Difficulty)stageData.Level;
+            difficulty.Throw().IfOutOfRange();
+            var existing = await context.SongBestData.FindAsync([playResultData.Baid, stageData.SongNo, difficulty], cancellationToken);
+
+            // Determine whether it is dondaful crown as this is not reflected by play result
+            var crown = PlayResultToCrown(stageData.PlayResult, stageData.OkCnt);
+
+            if (existing is null)
+            {
+                var datum = new SongBestDatum
+                {
+                    Baid = playResultData.Baid,
+                    SongId = stageData.SongNo,
+                    Difficulty = difficulty,
+                    BestScore = stageData.PlayScore,
+                    BestRate = stageData.ScoreRate,
+                    BestCrown = crown,
+                    BestScoreRank = (ScoreRank)stageData.ScoreRank
+                };
+
+                context.SongBestData.Add(datum);
+            }
+            else
+            {
+                existing.UpdateBestData(crown, stageData.ScoreRank, stageData.PlayScore, stageData.ScoreRate);
+            }
 
             var songPlayDatum = new SongPlayDatum
             {
@@ -96,37 +120,6 @@ public class UpdatePlayResultCommandHandler(TaikoDbContext context, ILogger<Upda
         return 1;
     }
 
-    private async Task UpdateBestData(CommonPlayResultData playResultData, CommonPlayResultData.StageData stageData)
-    {
-        var difficulty = (Difficulty)stageData.Level;
-        difficulty.Throw().IfOutOfRange();
-        var existing = await context.SongBestData.FindAsync(playResultData.Baid, stageData.SongNo, difficulty);
-        
-
-        // Determine whether it is dondaful crown as this is not reflected by play result
-        var crown = PlayResultToCrown(stageData.PlayResult, stageData.OkCnt);
-
-        if (existing is null)
-        {
-            existing = new SongBestDatum
-            {
-                Baid = playResultData.Baid,
-                SongId = stageData.SongNo,
-                Difficulty = difficulty,
-                BestScore = stageData.PlayScore,
-                BestRate = stageData.ScoreRate,
-                BestCrown = crown,
-                BestScoreRank = (ScoreRank)stageData.ScoreRank
-            };
-
-            context.SongBestData.Add(existing);
-            return;
-        }
-
-        existing.UpdateBestData(crown, stageData.ScoreRank, stageData.PlayScore, stageData.ScoreRate);
-        context.SongBestData.Update(existing);
-    }
-
     private async Task UpdateAiBattleData(CommonPlayResultData playResultData, CommonPlayResultData.StageData stageData)
     {
         var difficulty = (Difficulty)stageData.Level;
@@ -135,7 +128,10 @@ public class UpdatePlayResultCommandHandler(TaikoDbContext context, ILogger<Upda
             .Include(datum => datum.AiSectionScoreData)
             .FirstOrDefaultAsync(datum => datum.Baid == playResultData.Baid &&
                                           datum.SongId == stageData.SongNo &&
-                                          datum.Difficulty == difficulty);
+                                          datum.Difficulty == difficulty)
+            ?? context.AiScoreData.Local.FirstOrDefault(datum => datum.Baid == playResultData.Baid &&
+                                                                             datum.SongId == stageData.SongNo &&
+                                                                             datum.Difficulty == difficulty);
         if (existing is null)
         {
             existing = new AiScoreDatum
@@ -185,10 +181,8 @@ public class UpdatePlayResultCommandHandler(TaikoDbContext context, ILogger<Upda
                 };
                 aiSectionScoreDatum.UpdateBest(sectionData);
                 existing.AiSectionScoreData.Add(aiSectionScoreDatum);
-                context.AiScoreData.Update(existing);
             }
         }
-        
     }
     
     private void UpdateDanPlayData(DanScoreDatum danPlayData, CommonPlayResultData playResultData)
@@ -269,7 +263,6 @@ public class UpdatePlayResultCommandHandler(TaikoDbContext context, ILogger<Upda
         user.DifficultyPlayedArray = JsonSerializer.Serialize(difficultyPlayedArray);
 
         user.AiWinCount += playResultData.AryStageInfoes.Count(data => data.IsWin);
-        context.UserData.Update(user);
     }
     
     private static CrownType PlayResultToCrown(uint playResult, uint okCount)
