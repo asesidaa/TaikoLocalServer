@@ -20,34 +20,6 @@ public class SongBestDatumService : ISongBestDatumService
         return await context.SongBestData.Where(datum => datum.Baid == baid).ToListAsync();
     }
 
-    public async Task<SongBestDatum?> GetSongBestData(uint baid, uint songId, Difficulty difficulty)
-    {
-        return await context.SongBestData.Where(datum => datum.Baid == baid &&
-                                                        datum.SongId == songId &&
-                                                        datum.Difficulty == difficulty)
-            .FirstOrDefaultAsync();
-    }
-
-    public async Task UpdateSongBestData(SongBestDatum datum)
-    {
-        var existing = await context.SongBestData.FindAsync(datum.Baid, datum.SongId, datum.Difficulty);
-        existing.ThrowIfNull("Cannot update a non-existing best data!");
-
-        context.SongBestData.Update(datum);
-        await context.SaveChangesAsync();
-    }
-
-    public async Task InsertSongBestData(SongBestDatum datum)
-    {
-        var existing = await context.SongBestData.FindAsync(datum.Baid, datum.SongId, datum.Difficulty);
-        if (existing is not null)
-        {
-            throw new ArgumentException("Best data already exists!", nameof(datum));
-        }
-        context.SongBestData.Add(datum);
-        await context.SaveChangesAsync();
-    }
-
     public async Task<List<SongBestData>> GetAllSongBestAsModel(uint baid)
     {
         var songbestDbData = await context.SongBestData.Where(datum => datum.Baid == baid)

@@ -23,37 +23,6 @@ public class UserDatumService : IUserDatumService
             .FirstOrDefaultAsync(d => d.Baid == baid);
     }
 
-    public async Task<UserDatum> GetFirstUserDatumOrDefault(uint baid)
-    {
-        return await context.UserData
-            .Include(d => d.Tokens)
-            .FirstOrDefaultAsync(d => d.Baid == baid) ??  new UserDatum();
-    }
-
-    public async Task<List<UserDatum>> GetAllUserData()
-    {
-        return await context.UserData.ToListAsync();
-    }
-
-    public async Task UpdateOrInsertUserDatum(UserDatum userDatum)
-    {
-        if (await context.UserData.AnyAsync(datum => datum.Baid == userDatum.Baid))
-        {
-            context.UserData.Add(userDatum);
-            await context.SaveChangesAsync();
-            return;
-        }
-
-        context.Update(userDatum);
-        await context.SaveChangesAsync();
-    }
-
-    public async Task InsertUserDatum(UserDatum userDatum)
-    {
-        context.UserData.Add(userDatum);
-        await context.SaveChangesAsync();
-    }
-
     public async Task UpdateUserDatum(UserDatum userDatum)
     {
         context.Update(userDatum);
