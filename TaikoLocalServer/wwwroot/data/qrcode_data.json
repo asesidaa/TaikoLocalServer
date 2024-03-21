@@ -1,6 +1,382 @@
 ﻿[
   {
-    "serial": "TOURNAMENT_2021_01",
-    "id": 12345
+    "serial": "COLLABO_IDOLiSH7_2020_01",
+    "id": 100002001
+  },
+  {
+    "serial": "COLLABO_IDOLiSH7_2020_02",
+    "id": 100002002
+  },
+  {
+    "serial": "COLLABO_IDOLiSH7_2020_03",
+    "id": 100002003
+  },
+  {
+    "serial": "COLLABO_IDOLiSH7_2020_04",
+    "id": 100002004
+  },
+  {
+    "serial": "COLLABO_IDOLiSH7_2020_05",
+    "id": 100002005
+  },
+  {
+    "serial": "COLLABO_IDOLiSH7_2020_06",
+    "id": 100002006
+  },
+  {
+    "serial": "COLLABO_IDOLiSH7_2020_07",
+    "id": 100002007
+  },
+  {
+    "serial": "COLLABO_TOHO_2020",
+    "id": 100003001
+  },
+  {
+    "serial": "COLLABO_TOHO_2022",
+    "id": 150019001
+  },
+  {
+    "serial": "COLLABO_IMAS_2021_01",
+    "id": 110008001
+  },
+  {
+    "serial": "COLLABO_IMAS_2021_02",
+    "id": 110008002
+  },
+  {
+    "serial": "COLLABO_IMAS_2021_03",
+    "id": 110008003
+  },
+  {
+    "serial": "COLLABO_IMAS_2021_04",
+    "id": 110008004
+  },
+  {
+    "serial": "COLLABO_IMAS_2021_05",
+    "id": 110008005
+  },
+  {
+    "serial": "COLLABO_IMAS_2021_06",
+    "id": 110008006
+  },
+  {
+    "serial": "COLLABO_IMAS_2021_07",
+    "id": 110008007
+  },
+  {
+    "serial": "COLLABO_IMAS_2021_08",
+    "id": 110008008
+  },
+  {
+    "serial": "COLLABO_IMAS_2021_09",
+    "id": 110008009
+  },
+  {
+    "serial": "COLLABO_IMAS_2021_10",
+    "id": 110008010
+  },
+  {
+    "serial": "COLLABO_IMAS_2021_11",
+    "id": 110008011
+  },
+  {
+    "serial": "COLLABO_IMAS_2021_12",
+    "id": 110008012
+  },
+  {
+    "serial": "COLLABO_IMAS_2021_13",
+    "id": 110008013
+  },
+  {
+    "serial": "FOLDER2020W",
+    "id": 308000001
+  },
+  {
+    "serial": "FOLDER2021W",
+    "id": 308000002
+  },
+  {
+    "serial": "FOLDER2022SU",
+    "id": 308000003
+  },
+  {
+    "serial": "APRIL2021_01",
+    "id": 308001001
+  },
+  {
+    "serial": "APRIL2022_01",
+    "id": 308001002
+  },
+  {
+    "serial": "APRIL2023_01",
+    "id": 100021001
+  },
+  {
+    "serial": "FOLDERFUA1",
+    "id": 308002001
+  },
+  {
+    "serial": "FOLDERFUA2",
+    "id": 308002002
+  },
+  {
+    "serial": "FOLDERFUA3",
+    "id": 308002003
+  },
+  {
+    "serial": "FOLDERFUA4",
+    "id": 308002004
+  },
+  {
+    "serial": "FOLDERFUA5",
+    "id": 308002005
+  },
+  {
+    "serial": "FOLDERFUA6",
+    "id": 308002006
+  },
+  {
+    "serial": "FOLDERFUA7",
+    "id": 308002007
+  },
+  {
+    "serial": "FOLDERFUA8",
+    "id": 308002008
+  },
+  {
+    "serial": "DG_2022_KD",
+    "id": 708000001
+  },
+  {
+    "serial": "DG_2022_SORA10",
+    "id": 708000002
+  },
+  {
+    "serial": "DG_2022_MOMO10",
+    "id": 708000003
+  },
+  {
+    "serial": "DG_2022_MOMOTA",
+    "id": 708000004
+  },
+  {
+    "serial": "DG_2022_KIMI10",
+    "id": 708000005
+  },
+  {
+    "serial": "DG_2022_KIMITA",
+    "id": 708000006
+  },
+  {
+    "serial": "DG_2022_MURA10",
+    "id": 708000007
+  },
+  {
+    "serial": "DG_2022_MURATA",
+    "id": 708000008
+  },
+  {
+    "serial": "DG_2022_WHIT10",
+    "id": 708000009
+  },
+  {
+    "serial": "DG_2022_WHITTA",
+    "id": 708000010
+  },
+  {
+    "serial": "DG_2022_RED10",
+    "id": 708000011
+  },
+  {
+    "serial": "DG_2022_REDTA",
+    "id": 708000012
+  },
+  {
+    "serial": "DG_2022_YELL10",
+    "id": 708000013
+  },
+  {
+    "serial": "DG_2022_YELLTA",
+    "id": 708000014
+  },
+  {
+    "serial": "DG_2022_BULE10",
+    "id": 708000015
+  },
+  {
+    "serial": "DG_2022_BULETA",
+    "id": 708000016
+  },
+  {
+    "serial": "DG_2022_GREE10",
+    "id": 708000017
+  },
+  {
+    "serial": "DG_2022_GREETA",
+    "id": 708000018
+  },
+  {
+    "serial": "DG_2022_NIJI10",
+    "id": 708000019
+  },
+  {
+    "serial": "DG_2022_NIJITA",
+    "id": 708000020
+  },
+  {
+    "serial": "DG_2022_CHOSEN01",
+    "id": 708000021
+  },
+  {
+    "serial": "DG_2022_STEMYU01",
+    "id": 708000022
+  },
+  {
+    "serial": "DG_2022_765CMB_L",
+    "id": 708000023
+  },
+  {
+    "serial": "DG_2022_765CMB_M",
+    "id": 708000024
+  },
+  {
+    "serial": "DG_2022_765CMB_H",
+    "id": 708000025
+  },
+  {
+    "serial": "DG_2022_YMSBC01_L",
+    "id": 708000026
+  },
+  {
+    "serial": "DG_2022_YMSBC01_M",
+    "id": 708000027
+  },
+  {
+    "serial": "DG_2022_YMSBC01_H",
+    "id": 708000028
+  },
+  {
+    "serial": "DG_2022_VSEC1_L",
+    "id": 708000029
+  },
+  {
+    "serial": "DG_2022_VSEC1_M",
+    "id": 708000030
+  },
+  {
+    "serial": "DG_2022_VSEC1_H",
+    "id": 708000031
+  },
+  {
+    "serial": "DG_2022_GREEKR",
+    "id": 708000032
+  },
+  {
+    "serial": "DG_2022_GREEMJ",
+    "id": 708000033
+  },
+  {
+    "serial": "DG_2022_GREECJ",
+    "id": 708000034
+  },
+  {
+    "serial": "DG_2022_GREEKR_LOAD",
+    "id": 708000035
+  },
+  {
+    "serial": "DG_2022_GREEMJ_LOAD",
+    "id": 708000036
+  },
+  {
+    "serial": "DG_2022_GREECJ_LOAD",
+    "id": 708000037
+  },
+  {
+    "serial": "DG_2022_HALLOW_L",
+    "id": 708000038
+  },
+  {
+    "serial": "DG_2022_HALLOW_M",
+    "id": 708000039
+  },
+  {
+    "serial": "DG_2022_HALLOW_H",
+    "id": 708000040
+  },
+  {
+    "serial": "DG_2022_280OVR_L",
+    "id": 708000041
+  },
+  {
+    "serial": "DG_2022_285OVR_M",
+    "id": 708000042
+  },
+  {
+    "serial": "DG_2022_290OVR_H",
+    "id": 708000043
+  },
+  {
+    "serial": "DG_2022_SUEP01",
+    "id": 708000044
+  },
+  {
+    "serial": "DG_2022_PS23SEC1_L",
+    "id": 708000045
+  },
+  {
+    "serial": "DG_2022_PS23SEC1_M",
+    "id": 708000046
+  },
+  {
+    "serial": "DG_2022_PS23SEC1_H",
+    "id": 708000047
+  },
+  {
+    "serial": "DG_2022_VOFES01",
+    "id": 708000048
+  },
+  {
+    "serial": "DG_2022_VOFES02",
+    "id": 708000049
+  },
+  {
+    "serial": "DG_2022_MKP01",
+    "id": 708000050
+  },
+  {
+    "serial": "DG_2022_MKP02",
+    "id": 708000051
+  },
+  {
+    "serial": "DG_2022_DONSCH_L",
+    "id": 708000052
+  },
+  {
+    "serial": "DG_2022_DONSCH_M",
+    "id": 708000053
+  },
+  {
+    "serial": "DG_2022_DONSCH_H",
+    "id": 708000054
+  },
+  {
+    "serial": "DG_2022_555CMB",
+    "id": 708000055
+  },
+  {
+    "serial": "DG_2022_666CMB",
+    "id": 708000056
+  },
+  {
+    "serial": "DG_2022_777CMB",
+    "id": 708000057
+  },
+  {
+    "serial": "DG_2022_1800ROLL_M",
+    "id": 708000058
+  },
+  {
+    "serial": "DG_2022_2500ROLL_M",
+    "id": 708000059
   }
 ]
