@@ -36,6 +36,14 @@
     "id": 150019001
   },
   {
+    "serial": "COLLABO_ONEPIECE_2021_01",
+    "id": 100010001
+  },
+  {
+    "serial": "COLLABO_ONEPIECE_2021_02",
+    "id": 100012001
+  },
+  {
     "serial": "COLLABO_IMAS_2021_01",
     "id": 110008001
   },
@@ -378,5 +386,9 @@
   {
     "serial": "DG_2022_2500ROLL_M",
     "id": 708000059
+  },
+  {
+    "serial": "TOURNAMENT_2021_01",
+    "id": 988002001
   }
 ]
