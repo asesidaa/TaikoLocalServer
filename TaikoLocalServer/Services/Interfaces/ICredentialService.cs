@@ -1,5 +1,4 @@
-﻿using GameDatabase.Entities;
-using SharedProject.Models;
+﻿using SharedProject.Models;
 
 namespace TaikoLocalServer.Services.Interfaces;
 

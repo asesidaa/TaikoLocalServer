@@ -1,6 +1,5 @@
 ﻿using SharedProject.Models;
 using SharedProject.Utils;
-using System.Text.Json;
 
 namespace TaikoLocalServer.Controllers.Api;
 
@@ -25,11 +24,6 @@ public class UserSettingsController : BaseController<UserSettingsController>
             return NotFound();
         }
 
-        var difficultySettingArray = JsonHelper.GetUIntArrayFromJson(user.DifficultySettingArray, 3, Logger,
-            nameof(user.DifficultySettingArray));
-
-        var costumeData = JsonHelper.GetCostumeDataFromUserData(user, Logger);
-
         List<List<uint>> costumeUnlockData = 
             [user.UnlockedKigurumi, user.UnlockedHead, user.UnlockedBody, user.UnlockedFace, user.UnlockedPuchi];
 
@@ -49,9 +43,9 @@ public class UserSettingsController : BaseController<UserSettingsController>
             AchievementDisplayDifficulty = user.AchievementDisplayDifficulty,
             IsDisplayAchievement = user.DisplayAchievement,
             IsDisplayDanOnNamePlate = user.DisplayDan,
-            DifficultySettingCourse = difficultySettingArray[0],
-            DifficultySettingStar = difficultySettingArray[1],
-            DifficultySettingSort = difficultySettingArray[2],
+            DifficultySettingCourse = user.DifficultySettingCourse,
+            DifficultySettingStar = user.DifficultySettingStar,
+            DifficultySettingSort = user.DifficultySettingSort,
             IsVoiceOn = user.IsVoiceOn,
             IsSkipOn = user.IsSkipOn,
             NotesPosition = user.NotesPosition,
@@ -61,11 +55,11 @@ public class UserSettingsController : BaseController<UserSettingsController>
             MyDonNameLanguage = user.MyDonNameLanguage,
             Title = user.Title,
             TitlePlateId = user.TitlePlateId,
-            Kigurumi = costumeData[0],
-            Head = costumeData[1],
-            Body = costumeData[2],
-            Face = costumeData[3],
-            Puchi = costumeData[4],
+            Kigurumi = user.CurrentKigurumi,
+            Head = user.CurrentHead,
+            Body = user.CurrentBody,
+            Face = user.CurrentFace,
+            Puchi = user.CurrentPuchi,
             UnlockedKigurumi = costumeUnlockData[0],
             UnlockedHead = costumeUnlockData[1],
             UnlockedBody = costumeUnlockData[2],
@@ -90,27 +84,13 @@ public class UserSettingsController : BaseController<UserSettingsController>
             return NotFound();
         }
 
-        var costumes = new List<uint>
-        {
-            userSetting.Kigurumi,
-            userSetting.Head,
-            userSetting.Body,
-            userSetting.Face,
-            userSetting.Puchi,
-        };
-
-        var difficultySettings = new List<uint>
-        {
-            userSetting.DifficultySettingCourse,
-            userSetting.DifficultySettingStar,
-            userSetting.DifficultySettingSort
-        };
-
         user.IsSkipOn = userSetting.IsSkipOn;
         user.IsVoiceOn = userSetting.IsVoiceOn;
         user.DisplayAchievement = userSetting.IsDisplayAchievement;
         user.DisplayDan = userSetting.IsDisplayDanOnNamePlate;
-        user.DifficultySettingArray = JsonSerializer.Serialize(difficultySettings);
+        user.DifficultySettingCourse = userSetting.DifficultySettingCourse;
+        user.DifficultySettingStar = userSetting.DifficultySettingStar;
+        user.DifficultySettingSort = userSetting.DifficultySettingSort;
         user.NotesPosition = userSetting.NotesPosition;
         user.SelectedToneId = userSetting.ToneId;
         user.AchievementDisplayDifficulty = userSetting.AchievementDisplayDifficulty;
@@ -122,7 +102,11 @@ public class UserSettingsController : BaseController<UserSettingsController>
         user.ColorBody = userSetting.BodyColor;
         user.ColorFace = userSetting.FaceColor;
         user.ColorLimb = userSetting.LimbColor;
-        user.CostumeData = JsonSerializer.Serialize(costumes);
+        user.CurrentKigurumi = userSetting.Kigurumi;
+        user.CurrentHead = userSetting.Head;
+        user.CurrentBody = userSetting.Body;
+        user.CurrentFace = userSetting.Face;
+        user.CurrentPuchi = userSetting.Puchi;
 
         // If a locked tone is selected, unlock it
         var toneFlg = user.ToneFlgArray;
