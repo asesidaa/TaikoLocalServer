@@ -1,6 +1,5 @@
 ﻿using System.Buffers.Binary;
 using GameDatabase.Context;
-using TaikoLocalServer.Models.Application;
 using Throw;
 
 namespace TaikoLocalServer.Handlers;
@@ -64,7 +63,7 @@ public class UserDataQueryHandler(TaikoDbContext context, IGameDataService gameD
         var defaultOptions = new byte[2];
         BinaryPrimitives.WriteInt16LittleEndian(defaultOptions, userData.OptionSetting);
 
-        var difficultySettingArray = JsonHelper.GetUIntArrayFromJson(userData.DifficultySettingArray, 3, logger, nameof(userData.DifficultySettingArray));
+        uint[] difficultySettingArray = [userData.DifficultySettingCourse, userData.DifficultySettingStar, userData.DifficultySettingSort];
         for (int i = 0; i < 3; i++)
         {
             if (difficultySettingArray[i] >= 2)
@@ -72,9 +71,7 @@ public class UserDataQueryHandler(TaikoDbContext context, IGameDataService gameD
                 difficultySettingArray[i] -= 1;
             }
         }
-
-        var difficultyPlayedArray = JsonHelper.GetUIntArrayFromJson(userData.DifficultyPlayedArray, 3, logger, nameof(userData.DifficultyPlayedArray));
-
+        
         var response = new CommonUserDataResponse
         {
             Result = 1,
@@ -91,9 +88,9 @@ public class UserDataQueryHandler(TaikoDbContext context, IGameDataService gameD
             DifficultySettingCourse = difficultySettingArray[0],
             DifficultySettingStar = difficultySettingArray[1],
             DifficultySettingSort = difficultySettingArray[2],
-            DifficultyPlayedCourse = difficultyPlayedArray[0],
-            DifficultyPlayedStar = difficultyPlayedArray[1],
-            DifficultyPlayedSort = difficultyPlayedArray[2],
+            DifficultyPlayedCourse = userData.DifficultyPlayedCourse,
+            DifficultyPlayedStar = userData.DifficultyPlayedStar,
+            DifficultyPlayedSort = userData.DifficultyPlayedSort,
             SongRecentCnt = (uint)recentSongs.Length,
             IsChallengecompe = false,
             // TODO: Other fields

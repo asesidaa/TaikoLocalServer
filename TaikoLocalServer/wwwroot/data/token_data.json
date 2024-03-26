@@ -1,6 +1,6 @@
 ﻿{
-  "shopTokenId": -1,
-  "kaTokenId": -1,
+  "seasonTokenId": -1,
+  "eventTokenId": -1,
   "onePieceTokenId": 100100,
   "soshinaTokenId": 100200,
   "Yatsushika1TokenId": 100300,

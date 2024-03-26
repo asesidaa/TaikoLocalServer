@@ -1,6 +1,4 @@
 ﻿using GameDatabase.Context;
-using GameDatabase.Entities;
-using TaikoLocalServer.Models.Application;
 using Throw;
 
 namespace TaikoLocalServer.Handlers;
@@ -40,6 +38,7 @@ public class AddTokenCountCommandHandler : IRequestHandler<AddTokenCountCommand>
             {
                 user.Tokens.Add(new Token
                 {
+                    Baid = user.Baid,
                     Id = (int)tokenId,
                     Count = addTokenCount
                 });

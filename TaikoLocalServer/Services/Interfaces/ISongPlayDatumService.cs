@@ -1,6 +1,4 @@
-﻿using GameDatabase.Entities;
-
-namespace TaikoLocalServer.Services.Interfaces;
+﻿namespace TaikoLocalServer.Services.Interfaces;
 
 public interface ISongPlayDatumService
 {

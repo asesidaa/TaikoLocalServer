@@ -1,5 +1,4 @@
 ﻿using GameDatabase.Context;
-using TaikoLocalServer.Models.Application;
 using Throw;
 
 namespace TaikoLocalServer.Handlers;
@@ -66,9 +65,9 @@ public class BaidQueryHandler(
                 scoreRankCount[(int)scoreRank - 2] = scoreRankData.GetValueOrDefault(scoreRank, (uint)0);
             }
         }
-
-        var costumeData = JsonHelper.GetCostumeDataFromUserData(userData, logger);
-
+        
+        List<uint> costumeData = [userData.CurrentKigurumi, userData.CurrentHead, userData.CurrentBody, userData.CurrentFace, userData.CurrentPuchi];
+        
         List<List<uint>> costumeArrays = 
             [userData.UnlockedKigurumi, userData.UnlockedHead, userData.UnlockedBody, userData.UnlockedFace, userData.UnlockedPuchi];
 
@@ -102,9 +101,9 @@ public class BaidQueryHandler(
         var genericInfoFlgArray = FlagCalculator.GetBitArrayFromIds(genericInfoFlg, (int)genericInfoFlgLength, logger);
 
         var aiRank = (uint)(userData.AiWinCount / 10);
-        if (aiRank > 11)
+        if (aiRank > 10)
         {
-            aiRank = 11;
+            aiRank = 10;
         }
 
         return new CommonBaidResponse
@@ -132,7 +131,9 @@ public class BaidQueryHandler(
             LastPlayMode = userData.LastPlayMode,
             SelectedToneId = userData.SelectedToneId,
             Title = userData.Title,
-            TitlePlateId = userData.TitlePlateId
+            TitlePlateId = userData.TitlePlateId,
+            AiTotalWin = (uint)userData.AiWinCount,
+            AiRank = aiRank
         };
     }
 }

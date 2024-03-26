@@ -1,6 +1,4 @@
-﻿using TaikoLocalServer.Handlers;
-
-namespace TaikoLocalServer.Controllers.Game;
+﻿namespace TaikoLocalServer.Controllers.Game;
 
 [ApiController]
 public class GetAiDataController : BaseController<GetAiDataController>
