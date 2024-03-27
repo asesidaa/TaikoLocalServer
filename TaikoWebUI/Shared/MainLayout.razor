@@ -11,7 +11,7 @@
         <MudSpacer />
         <ChooseLanguage />
     </MudAppBar>
-    <MudDrawer Elevation="0" Style="border-right:1px solid #ededf0" Open="@_drawerOpen">
+    <MudDrawer Elevation="0" Style="border-right:1px solid #ededf0" @bind-Open="_drawerOpen">
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">TaikoWebUI</MudText>
         </MudDrawerHeader>
@@ -45,5 +45,10 @@
 	{
 		_drawerOpen = !_drawerOpen;
 		await localStorage.SetItemAsync("drawerOpen", _drawerOpen);
+	}
+
+    private void ToggleDrawer()
+	{
+		_drawerOpen = !_drawerOpen;
 	}
 }
