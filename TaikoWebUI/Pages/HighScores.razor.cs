@@ -13,10 +13,10 @@ public partial class HighScores
 
     private SongBestResponse? response;
     private UserSetting? userSetting;
-
     private Dictionary<Difficulty, List<SongBestData>> songBestDataMap = new();
 
     private readonly List<BreadcrumbItem> breadcrumbs = new();
+    private int selectedDifficultyTab = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -45,6 +45,11 @@ public partial class HighScores
                                       .CompareTo(GameDataService.GetMusicIndexBySongId(data2.SongId)));
         }
 
+
+        // Set last selected tab from local storage
+        selectedDifficultyTab = await localStorage.GetItemAsync<int>($"HighScoresTab_{Baid}");
+
+        // Breadcrumbs
         if (LoginService.IsLoggedIn && !LoginService.IsAdmin)
         {
             breadcrumbs.Add(new BreadcrumbItem("Dashboard", href: "/"));
@@ -72,10 +77,9 @@ public partial class HighScores
         }
     }
 
-    private static bool IsAiDataPresent(SongBestData data)
+    private async Task OnTabChanged(int index)
     {
-        var aiData = data.AiSectionBestData;
-
-        return aiData.Count > 0;
+        selectedDifficultyTab = index;
+        await localStorage.SetItemAsync($"HighScoresTab_{Baid}", selectedDifficultyTab);
     }
 }
