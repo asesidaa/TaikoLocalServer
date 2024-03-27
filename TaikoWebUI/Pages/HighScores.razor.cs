@@ -45,7 +45,7 @@ public partial class HighScores
 
 
         // Set last selected tab from local storage
-        selectedDifficultyTab = await localStorage.GetItemAsync<int>($"highScoresTab_{Baid}");
+        selectedDifficultyTab = await localStorage.GetItemAsync<int>($"highScoresTab");
 
         // Breadcrumbs
         if (LoginService.IsLoggedIn && !LoginService.IsAdmin)
@@ -78,6 +78,6 @@ public partial class HighScores
     private async Task OnTabChanged(int index)
     {
         selectedDifficultyTab = index;
-        await localStorage.SetItemAsync($"highScoresTab_{Baid}", selectedDifficultyTab);
+        await localStorage.SetItemAsync($"highScoresTab", selectedDifficultyTab);
     }
 }
