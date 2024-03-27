@@ -32,7 +32,7 @@
             <MudNavGroup Title="Settings" Expanded="_settingsOpen" Icon="@Icons.Material.Filled.Settings">
                 <MudNavLink OnClick="ShowQrCode">@Localizer["Show QR Code"]</MudNavLink>
                 <MudNavLink Href="/ChangePassword" Match="NavLinkMatch.All">@Localizer["Change Password"]</MudNavLink>
-                <MudNavLink Href="@($"Users/{currentUser.Baid}/AccessCode")" Match="NavLinkMatch.All">@Localizer["Manage Access Codes"]</MudNavLink>
+                <MudNavLink Href="@($"Users/{currentUser.Baid}/AccessCode")" Match="NavLinkMatch.All">@Localizer["Access Codes"]</MudNavLink>
             </MudNavGroup>
 		}
 
