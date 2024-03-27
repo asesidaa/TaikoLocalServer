@@ -7,7 +7,7 @@
 @inject IJSRuntime JSRuntime
 
 @using TaikoWebUI.Utilities;
-@using TaikoWebUI.Pages.Components.Song;
+@using TaikoWebUI.Components.Song;
 
 @if (LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.GetLoggedInUser().Baid != Baid && !LoginService.IsAdmin)))
 {
