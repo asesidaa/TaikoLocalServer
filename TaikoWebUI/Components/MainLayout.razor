@@ -1,7 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 
-<MudThemeProvider IsDarkMode="@_isDarkMode" />
+<MudThemeProvider IsDarkMode="@_isDarkMode" Theme="@TaikoWebUiTheme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
@@ -21,7 +21,7 @@
         <NavMenu />
     </MudDrawer>
     <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="my-8">
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="my-8 pb-8">
             @Body
 
             <MudScrollToTop>
@@ -37,16 +37,16 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var hasLocalStorage = await localStorage.ContainKeyAsync("drawerOpen");
+        var hasDrawerOpenEntry = await localStorage.ContainKeyAsync("drawerOpen");
 
-        if (hasLocalStorage)
+        if (hasDrawerOpenEntry)
         {
             _drawerOpen = await localStorage.GetItemAsync<bool>("drawerOpen");
         }
 
-        var hasDarkMode = await localStorage.ContainKeyAsync("isDarkMode");
+        var hasDarkModeEntry = await localStorage.ContainKeyAsync("isDarkMode");
 
-        if (hasDarkMode)
+        if (hasDarkModeEntry)
         {
             _isDarkMode = await localStorage.GetItemAsync<bool>("isDarkMode");
         }
@@ -58,11 +58,6 @@
 		await localStorage.SetItemAsync("drawerOpen", _drawerOpen);
 	}
 
-    private void ToggleDrawer()
-	{
-		_drawerOpen = !_drawerOpen;
-	}
-
     private async Task ToggleDarkMode()
 	{
 		_isDarkMode = !_isDarkMode;
@@ -70,4 +65,21 @@
 	}
 
     private string DarkModeIcon => _isDarkMode ? Icons.Material.Filled.BrightnessLow : Icons.Material.Filled.Brightness2;
+
+    MudTheme TaikoWebUiTheme = new MudTheme()
+        {
+            Palette = new PaletteLight()
+            {
+                Primary = Colors.Indigo.Default,
+                PrimaryLighten = Colors.Indigo.Lighten2,
+                PrimaryDarken = Colors.Indigo.Darken2,
+                AppbarBackground = Colors.Indigo.Darken3,
+            },
+            PaletteDark = new PaletteDark()
+            {
+                Primary = Colors.Indigo.Accent1,
+                PrimaryLighten = Colors.Indigo.Lighten4,
+                PrimaryDarken = Colors.Indigo.Accent1,
+            },
+        };
 }
