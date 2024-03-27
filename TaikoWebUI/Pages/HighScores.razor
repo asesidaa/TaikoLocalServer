@@ -87,14 +87,14 @@
                                             <PropertyColumn Property="data => data.BestScore" Title=@Localizer["Best Score"] />
                                             <TemplateColumn T="SongBestData" Title=@Localizer["Best Crown"]>
                                                 <CellTemplate>
-                                                    <img src="@($"/images/crown_{context.Item.BestCrown}.png")" alt="@(ScoreUtils.GetCrownText(context.Item.BestCrown))" title="@(ScoreUtils.GetCrownText(context.Item.BestCrown))" style="@IconStyle" />
+                                                    <img src="@($"/images/crown_{context.Item.BestCrown}.png")" alt="@(ScoreUtils.GetCrownText(context.Item.BestCrown))" title="@(ScoreUtils.GetCrownText(context.Item.BestCrown))" style="@Constants.ICON_STYLE" />
                                                 </CellTemplate>
                                             </TemplateColumn>
                                             <TemplateColumn T="SongBestData" Title=@Localizer["Best Rank"] Sortable="false">
                                                 <CellTemplate>
                                                     @if (context.Item.BestScoreRank is not ScoreRank.None)
                                                     {
-                                                        <img src="@($"/images/rank_{context.Item.BestScoreRank}.png")" alt="@(ScoreUtils.GetRankText(context.Item.BestScoreRank))" title="@(ScoreUtils.GetRankText(context.Item.BestScoreRank))" style="@IconStyle" />
+                                                        <img src="@($"/images/rank_{context.Item.BestScoreRank}.png")" alt="@(ScoreUtils.GetRankText(context.Item.BestScoreRank))" title="@(ScoreUtils.GetRankText(context.Item.BestScoreRank))" style="@Constants.ICON_STYLE" />
                                                     }
                                                 </CellTemplate>
                                             </TemplateColumn>
