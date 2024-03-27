@@ -9,8 +9,6 @@ public partial class HighScores
     [Parameter]
     public int Baid { get; set; }
 
-    private const string IconStyle = "width:25px; height:25px;";
-
     private SongBestResponse? response;
     private UserSetting? userSetting;
     private Dictionary<Difficulty, List<SongBestData>> songBestDataMap = new();

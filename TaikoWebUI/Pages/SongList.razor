@@ -71,13 +71,24 @@
                                 Genre
                             </MudTableSortLabel>
                         </MudTh>
+                        @foreach (var difficulty in Enum.GetValues<Difficulty>())
+                        {
+                            @if (difficulty is not Difficulty.None)
+                            {
+                            <MudTh>
+							    <MudTableSortLabel T="MusicDetail" SortBy="context => GameDataService.GetMusicStarLevel(context.SongId, difficulty)">
+                                    <img src="@ScoreUtils.GetDifficultyIcon(difficulty)" alt="@ScoreUtils.GetDifficultyTitle(difficulty)" style="@Constants.ICON_STYLE" />
+							    </MudTableSortLabel>
+						    </MudTh>
+                            }
+                        }
                     </HeaderContent>
                     <RowTemplate>
                         <MudTd Style="width:400px">
                         <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
                             <div>
                                 <a href="@($"/Users/{Baid}/Songs/{context.SongId}")">
-                                    <MudText Typo="Typo.body2">
+                                    <MudText Typo="Typo.body2" Style="font-weight:bold">
                                         @GameDataService.GetMusicNameBySongId(context.SongId, CurrentLanguage)
                                     </MudText>
                                     <MudText Typo="Typo.caption">
@@ -101,6 +112,28 @@
 								@ScoreUtils.GetGenreTitle(context.Genre)
 							</MudChip>
                         </MudTd>
+                        @foreach (var difficulty in Enum.GetValues<Difficulty>())
+                        {
+                            @if (difficulty is not Difficulty.None)
+                            {
+                                var starLevel = GameDataService.GetMusicStarLevel(context.SongId, difficulty);
+                                <MudTd>
+                                    @if (starLevel > 0)
+									{
+                                        <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
+                                            <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
+                                            <MudText Typo="Typo.caption" Style="line-height:1;margin-top:2px;margin-right:2px;">@starLevel</MudText>
+                                        </MudStack>
+									}
+									else
+									{
+										<MudText Typo="Typo.body2" Style="font-weight:bold">
+											-
+										</MudText>
+									}
+                                </MudTd>
+                            }
+                        }
                     </RowTemplate>
                     <PagerContent>
                         <MudTablePager />
