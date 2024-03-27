@@ -3,6 +3,7 @@
 @inject LoginService LoginService
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 @using TaikoWebUI.Utilities;
 
 @page "/Users/{baid:int}/HighScores"
@@ -36,7 +37,7 @@
         else
         {
             <MudItem xs="12">
-                <MudTabs Elevation="0" Border="true" Rounded="true" ApplyEffectsToContainer="true" Outlined="true" Class="mb-10">
+                <MudTabs Elevation="0" Border="true" Rounded="true" ApplyEffectsToContainer="true" Outlined="true" Class="mb-10" ActivePanelIndexChanged="@(async (index) => await OnTabChanged(index))" ActivePanelIndex="@selectedDifficultyTab">
                     @foreach (var difficulty in Enum.GetValues<Difficulty>())
                     {
                         @if (difficulty is not Difficulty.None)

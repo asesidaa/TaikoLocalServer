@@ -66,9 +66,14 @@
                                 Song Title / Artist
                             </MudTableSortLabel>
                         </MudTh>
+                        <MudTh>
+                            <MudTableSortLabel T="MusicDetail" SortBy="context => context.Genre">
+                                Genre
+                            </MudTableSortLabel>
+                        </MudTh>
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTd>
+                        <MudTd Style="width:400px">
                         <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
                             <div>
                                 <a href="@($"/Users/{Baid}/Songs/{context.SongId}")">
@@ -90,6 +95,11 @@
                                     ToggledTitle="Remove from favorites" />
                             </div>
                             </MudStack>
+                        </MudTd>
+                        <MudTd>
+							<MudChip Style="@ScoreUtils.GetGenreStyle(context.Genre)" Size="Size.Small">
+								@ScoreUtils.GetGenreTitle(context.Genre)
+							</MudChip>
                         </MudTd>
                     </RowTemplate>
                     <PagerContent>

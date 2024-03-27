@@ -1,4 +1,5 @@
 using System.Globalization;
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.JSInterop;
 using MudBlazor.Services;
@@ -25,6 +26,9 @@ builder.Services.AddSingleton<ScoreUtils>();
 builder.Services.AddSingleton<StringUtil>();
 
 
+builder.Services.AddBlazoredLocalStorage();
+
+
 var host = builder.Build();
 
 var gameDataService = host.Services.GetRequiredService<IGameDataService>();
@@ -46,6 +50,5 @@ else
 
 CultureInfo.DefaultThreadCurrentCulture = culture;
 CultureInfo.DefaultThreadCurrentUICulture = culture;
-
 
 await host.RunAsync();

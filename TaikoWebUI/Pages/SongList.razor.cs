@@ -4,7 +4,7 @@ using TaikoWebUI.Shared.Models;
 
 namespace TaikoWebUI.Pages;
 
-public partial class Songs
+public partial class SongList
 {
     [Parameter]
     public int Baid { get; set; }
