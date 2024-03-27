@@ -10,16 +10,13 @@
 
 <MudBreadcrumbs Items="breadcrumbs" Class="p-0 mb-2"></MudBreadcrumbs>
 <MudText Typo="Typo.h4">@Localizer["High Scores"]</MudText>
-    <MudText Typo="Typo.caption">User ID: @Baid</MudText>
 
-    <MudGrid Class="my-8">
-        @if (response is null)
+<MudGrid Class="my-8">
+    @if (response is null)
     {
-        <MudItem xs="12">
-            <MudText Align="Align.Center">
-                @Localizer["No data."]
-            </MudText>
-        </MudItem>
+        <MudContainer Style="display:flex;margin:50px 0;align-items:center;justify-content:center;">
+            <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+        </MudContainer>
     }
     else
     {
