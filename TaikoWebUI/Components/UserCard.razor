@@ -78,10 +78,16 @@
         <MudCardContent>
             <MudText Typo="Typo.body2" Style="font-weight:bold">Access Code</MudText>
             <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">
-                @foreach (var digitGroup in StringUtil.SplitIntoGroups(user.AccessCodes[0], 4))
+                @if (user.AccessCodes.Count > 0)
                 {
-                    <span class="mr-2">@digitGroup</span>
-                }
+                    @foreach (var digitGroup in StringUtil.SplitIntoGroups(user.AccessCodes[0], 4))
+                    {
+                        <span class="mr-2">@digitGroup</span>
+                    }
+                } else
+				{
+					<span class="mr-2">@Localizer["N/A"]</span>
+				}
             </MudText>
             @if (user.AccessCodes.Count > 1)
             {
