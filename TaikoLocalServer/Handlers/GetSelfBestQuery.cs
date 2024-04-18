@@ -5,7 +5,7 @@ namespace TaikoLocalServer.Handlers;
 
 public record GetSelfBestQuery(uint Baid, uint Difficulty, uint[] SongIdList) : IRequest<CommonSelfBestResponse>;
 
-public class GetSelfBestQueryHandler(IGameDataService gameDataService, TaikoDbContext context, ILogger<GetSelfBestQueryHandler> logger) 
+public class GetSelfBestQueryHandler(IGameDataService gameDataService, TaikoDbContext context, ILogger<GetSelfBestQueryHandler> logger)
     : IRequestHandler<GetSelfBestQuery, CommonSelfBestResponse>
 {
     public async Task<CommonSelfBestResponse> Handle(GetSelfBestQuery request, CancellationToken cancellationToken)
@@ -21,22 +21,39 @@ public class GetSelfBestQueryHandler(IGameDataService gameDataService, TaikoDbCo
             logger.LogWarning("Invalid song IDs: {InvalidSongIds}", invalidSongIds.Stringify());
             requestSet.ExceptWith(invalidSongIds);
         }
-        
-        var selfbestScores = await context.SongBestData
-            .Where(datum => datum.Baid == request.Baid && 
+
+        var selfBestScores = await context.SongBestData
+            .Where(datum => datum.Baid == request.Baid &&
                             requestSet.Contains(datum.SongId) &&
-                            (datum.Difficulty == requestDifficulty || 
+                            (datum.Difficulty == requestDifficulty ||
                              (datum.Difficulty == Difficulty.UraOni && requestDifficulty == Difficulty.Oni)))
             .OrderBy(datum => datum.SongId)
             .ToListAsync(cancellationToken);
-        var selfBestList = selfbestScores.ConvertAll(datum => new CommonSelfBestResponse.SelfBestData
+        var selfBestList = new List<CommonSelfBestResponse.SelfBestData>();
+        foreach (var songId in selfBestScores.Select(datum => datum.SongId))
         {
-            SongNo = datum.SongId,
-            SelfBestScore = datum.BestScore,
-            UraBestScore = datum.Difficulty == Difficulty.UraOni ? datum.BestScore : 0,
-            SelfBestScoreRate = datum.BestRate,
-            UraBestScoreRate = datum.Difficulty == Difficulty.UraOni ? datum.BestRate : 0
-        });
+            var selfBest = new CommonSelfBestResponse.SelfBestData();
+            var selfBestScore = selfBestScores
+                .FirstOrDefault(datum => datum.SongId == songId &&
+                                         datum.Difficulty == requestDifficulty);
+            var uraSelfBestScore = selfBestScores
+                .FirstOrDefault(datum => datum.SongId == songId &&
+                                         (datum.Difficulty == Difficulty.UraOni && requestDifficulty == Difficulty.Oni));
+
+            selfBest.SongNo = songId;
+            if (selfBestScore is not null)
+            {
+                selfBest.SelfBestScore = selfBestScore.BestScore;
+                selfBest.SelfBestScoreRate = selfBestScore.BestRate;
+            }
+            if (uraSelfBestScore is not null)
+            {
+                selfBest.UraBestScore = uraSelfBestScore.BestScore;
+                selfBest.UraBestScoreRate = uraSelfBestScore.BestRate;
+            }
+
+            selfBestList.Add(selfBest);
+        }
         // For songs that don't have a score, add them to the response with 0s
         var missingSongs = requestSet.Except(selfBestList.Select(datum => datum.SongNo));
         selfBestList.AddRange(missingSongs.Select(songNo => new CommonSelfBestResponse.SelfBestData
