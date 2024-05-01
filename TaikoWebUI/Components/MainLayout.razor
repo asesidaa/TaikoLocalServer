@@ -1,7 +1,9 @@
 ﻿@inherits LayoutComponentBase
-@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject HttpClient Client
+@inject LoginService LoginService
 
-<MudThemeProvider IsDarkMode="@_isDarkMode" Theme="@TaikoWebUiTheme" />
+<MudThemeProvider IsDarkMode="@isDarkMode" Theme="@taikoWebUiTheme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
@@ -14,7 +16,7 @@
             <ChooseLanguage />
         </MudStack>
     </MudAppBar>
-    <MudDrawer Elevation="0" Style="border-right:1px solid #ededf0" @bind-Open="_drawerOpen">
+    <MudDrawer Elevation="0" Style="border-right:1px solid #ededf0" @bind-Open="drawerOpen">
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">TaikoWebUI</MudText>
         </MudDrawerHeader>
@@ -32,41 +34,61 @@
 </MudLayout>
 
 @code {
-    bool _drawerOpen = true;
-    bool _isDarkMode = false;
+    bool drawerOpen = true;
+    bool isDarkMode = false;
 
     protected override async Task OnInitializedAsync()
     {
-        var hasDrawerOpenEntry = await localStorage.ContainKeyAsync("drawerOpen");
+        var hasDrawerOpenEntry = await LocalStorage.ContainKeyAsync("drawerOpen");
 
         if (hasDrawerOpenEntry)
         {
-            _drawerOpen = await localStorage.GetItemAsync<bool>("drawerOpen");
+            drawerOpen = await LocalStorage.GetItemAsync<bool>("drawerOpen");
         }
 
-        var hasDarkModeEntry = await localStorage.ContainKeyAsync("isDarkMode");
+        var hasDarkModeEntry = await LocalStorage.ContainKeyAsync("isDarkMode");
 
         if (hasDarkModeEntry)
         {
-            _isDarkMode = await localStorage.GetItemAsync<bool>("isDarkMode");
+            isDarkMode = await LocalStorage.GetItemAsync<bool>("isDarkMode");
+        }
+
+        if (LoginService.LoginRequired)
+        {
+            // If not logged in, attempt to use JwtToken from local storage to log in
+            var hasJwtToken = await LocalStorage.ContainKeyAsync("authToken");
+            if (hasJwtToken)
+            {
+                var authToken = await LocalStorage.GetItemAsync<string>("authToken");
+                if (!string.IsNullOrWhiteSpace(authToken))
+                {
+                    // Attempt to log in with the token
+                    var loginResult = await LoginService.LoginWithAuthToken(authToken, Client);
+                    if (!loginResult)
+                    {
+                        // Failed to log in with the token, remove it
+                        await LocalStorage.RemoveItemAsync("authToken");
+                    }
+                }
+            }
         }
     }
 
     private async Task DrawerToggle()
 	{
-		_drawerOpen = !_drawerOpen;
-		await localStorage.SetItemAsync("drawerOpen", _drawerOpen);
+		drawerOpen = !drawerOpen;
+		await LocalStorage.SetItemAsync("drawerOpen", drawerOpen);
 	}
 
     private async Task ToggleDarkMode()
 	{
-		_isDarkMode = !_isDarkMode;
-		await localStorage.SetItemAsync("isDarkMode", _isDarkMode);
+		isDarkMode = !isDarkMode;
+		await LocalStorage.SetItemAsync("isDarkMode", isDarkMode);
 	}
 
-    private string DarkModeIcon => _isDarkMode ? Icons.Material.Filled.BrightnessLow : Icons.Material.Filled.Brightness2;
+    private string DarkModeIcon => isDarkMode ? Icons.Material.Filled.BrightnessLow : Icons.Material.Filled.Brightness2;
 
-    MudTheme TaikoWebUiTheme = new MudTheme()
+    readonly MudTheme taikoWebUiTheme = new()
         {
             Palette = new PaletteLight()
             {

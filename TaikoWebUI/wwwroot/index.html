@@ -14,30 +14,42 @@
 </head>
 
 <body>
-    <div id="app">
-        <div class="loader-container">
-            <div class="linear-progress"></div>
-            <div class="loading-text">
-                Loading...
-            </div>
+<div id="app">
+    <div class="loader-container">
+        <div class="linear-progress"></div>
+        <div class="loading-text">
+            Loading...
         </div>
     </div>
+</div>
 
-    <div id="blazor-error-ui">
-        An unhandled error has occurred.
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
-    </div>
-    <script src="_framework/blazor.webassembly.js"></script>
-    <script src="_content/MudBlazor/MudBlazor.min.js"></script>
-    <script src="js/textFit.min.js"></script>
-    <script src="js/updateTextFit.js"></script>
-    <script>
-        window.blazorCulture = {
-            get: () => localStorage['BlazorCulture'],
-            set: (value) => localStorage['BlazorCulture'] = value
-        };
-    </script>
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+<script src="_framework/blazor.webassembly.js"></script>
+<script src="_content/MudBlazor/MudBlazor.min.js"></script>
+<script src="js/textFit.min.js"></script>
+<script src="js/updateTextFit.js"></script>
+<script>
+    window.blazorCulture = {
+        get: () => localStorage['BlazorCulture'],
+        set: (value) => localStorage['BlazorCulture'] = value
+    };
+</script>
+<script>
+    window.clipboardCopy = {
+        copyText: function(text) {
+            navigator.clipboard.writeText(text).then(function () {
+                alert("Copied to clipboard!");
+            })
+                .catch(function (error) {
+                    console.error("Failed to copy text: ", error);
+                });
+        }
+    };
+</script>
 </body>
 
 </html>

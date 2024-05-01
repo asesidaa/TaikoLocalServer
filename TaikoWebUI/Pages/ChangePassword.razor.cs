@@ -26,37 +26,50 @@ public partial class ChangePassword
             {
                 case 0:
                     await DialogService.ShowMessageBox(
-                        "Error",
+                        Localizer["Error"],
                         "Only admin can log in.",
-                        "Ok");
+                        Localizer["Dialog OK"]);
                     NavigationManager.NavigateTo("/Users");
                     break;
                 case 1:
                     await DialogService.ShowMessageBox(
-                        "Success",
+                        Localizer["Success"],
                         "Password changed successfully.",
-                        "Ok");
+                        Localizer["Dialog OK"]);
                     NavigationManager.NavigateTo("/Users");
                     break;
                 case 2:
                     await DialogService.ShowMessageBox(
-                        "Error",
+                        Localizer["Error"],
                         "Confirm new password is not the same as new password.",
-                        "Ok");
+                        Localizer["Dialog OK"]);
                     break;
                 case 3:
                     await DialogService.ShowMessageBox(
-                        "Error",
+                        Localizer["Error"],
                         (MarkupString)
                         "Card number not found.<br />Please play one game with this card number to register it.",
-                        "Ok");
+                        Localizer["Dialog OK"]);
                     break;
                 case 4:
                     await DialogService.ShowMessageBox(
-                        "Error",
+                        Localizer["Error"],
                         (MarkupString)
                         "Old password is wrong!",
-                        "Ok");
+                        Localizer["Dialog OK"]);
+                    break;
+                case 5:
+                    await DialogService.ShowMessageBox(
+                        Localizer["Error"],
+                        (MarkupString)
+                        "Card number not registered.<br />Please use register button to create a password first.",
+                        Localizer["Dialog OK"]);
+                    break;
+                case 6:
+                    await DialogService.ShowMessageBox(
+                        Localizer["Error"],
+                        Localizer["Unknown Error"],
+                        Localizer["Dialog OK"]);
                     break;
             }
         }

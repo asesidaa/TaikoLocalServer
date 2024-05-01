@@ -10,7 +10,7 @@
 @page "/Users/{baid:int}/Songs"
 
 <MudBreadcrumbs Items="breadcrumbs" Class="p-0 mb-2"></MudBreadcrumbs>
-<MudText Typo="Typo.h4">@Localizer["Key_01"]</MudText>
+<MudText Typo="Typo.h4">@Localizer["Song List"]</MudText>
 
 <MudGrid Class="my-8">
     @if (response is null)
@@ -65,12 +65,12 @@
                     <HeaderContent>
                         <MudTh>
                             <MudTableSortLabel T="MusicDetail" SortBy="context => GameDataService.GetMusicNameBySongId(context.SongId, CurrentLanguage)">
-                                Song Title / Artist
+                                @Localizer["Song Title / Artist"]
                             </MudTableSortLabel>
                         </MudTh>
                         <MudTh>
                             <MudTableSortLabel T="MusicDetail" SortBy="context => context.Genre">
-                                Genre
+                                @Localizer["Genre"]
                             </MudTableSortLabel>
                         </MudTh>
                         @foreach (var difficulty in Enum.GetValues<Difficulty>())

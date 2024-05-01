@@ -1,7 +1,9 @@
-﻿using System.Security.Cryptography;
-using System.Text;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text.Json;
 using Microsoft.Extensions.Options;
 using TaikoWebUI.Settings;
+using Blazored.LocalStorage;
 
 namespace TaikoWebUI.Services;
 
@@ -15,9 +17,14 @@ public class LoginService
     public bool RegisterWithLastPlayTime { get; }
     public bool AllowUserDelete { get; }
     public bool AllowFreeProfileEditing { get; }
-
-    public LoginService(IOptions<WebUiSettings> settings)
+    public bool IsLoggedIn { get; private set; }
+    private User LoggedInUser { get; set; } = new();
+    public bool IsAdmin { get; private set; }
+    private readonly ILocalStorageService localStorage;
+    
+    public LoginService(IOptions<WebUiSettings> settings, ILocalStorageService localStorage)
     {
+        this.localStorage = localStorage;
         IsLoggedIn = false;
         IsAdmin = false;
         var webUiSettings = settings.Value;
@@ -28,131 +35,158 @@ public class LoginService
         AllowUserDelete = webUiSettings.AllowUserDelete;
         AllowFreeProfileEditing = webUiSettings.AllowFreeProfileEditing;
     }
-
-    public bool IsLoggedIn { get; private set; }
-    private User LoggedInUser { get; set; } = new();
-    public bool IsAdmin { get; private set; }
-
+    
     protected virtual void OnLoginStatusChanged()
     {
         LoginStatusChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    public int Login(string inputCardNum, string inputPassword, DashboardResponse response)
+    public async Task<int> Login(string inputAccessCode, string inputPassword, HttpClient client)
     {
         // strip spaces or dashes from card number
-        inputCardNum = inputCardNum.Replace(" ", "").Replace("-", "");
+        inputAccessCode = inputAccessCode.Replace(" ", "").Replace("-", "").Replace(":", "");
 
-        foreach (var user in response.Users.Where(user => user.AccessCodes.Contains(inputCardNum)))
+        var request = new LoginRequest
         {
-            foreach (var userCredential in response.UserCredentials.Where(userCredential => userCredential.Baid == user.Baid))
+            AccessCode = inputAccessCode,
+            Password = inputPassword
+        };
+        
+        var responseMessage = await client.PostAsJsonAsync("api/Auth/Login", request);
+
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            // Unauthorized, extract specific error message as json
+            var responseContent = await responseMessage.Content.ReadAsStringAsync();
+            var responseJson = JsonSerializer.Deserialize<Dictionary<string, string>>(responseContent);
+            // Unknown error message
+            if (responseJson is null) return 5;
+            var errorMessage = responseJson["message"];
+            return errorMessage switch
             {
-                if (userCredential.Password == "") return 4;
-                if (ComputeHash(inputPassword, userCredential.Salt) != userCredential.Password) return 2;
-                IsAdmin = user.IsAdmin;
-                if (!IsAdmin && OnlyAdmin) return 0;
-                IsLoggedIn = true;
-                LoggedInUser = user;
-
-                OnLoginStatusChanged();
-
-                return 1;
-            }
+                "Access Code Not Found" => 3,
+                "User Not Registered" => 4,
+                "Invalid Password" => 2,
+                _ => 5
+            };
         }
-        return 3;
+        else
+        {
+            // Authorized, store Jwt token
+            var responseContent = await responseMessage.Content.ReadAsStringAsync();
+            var responseJson = JsonSerializer.Deserialize<Dictionary<string, string>>(responseContent);
+            if (responseJson is null) return 5;
+            
+            var authToken = responseJson["authToken"];
+            await localStorage.SetItemAsync("authToken", authToken);
+            
+            return await LoginWithAuthToken(authToken, client) == false ? 5 : 1;
+        }
     }
 
-    public async Task<int> Register(string inputCardNum, DateTime inputDateTime, string inputPassword, string inputConfirmPassword,
-        DashboardResponse response, HttpClient client)
+    public async Task<bool> LoginWithAuthToken(string authToken, HttpClient client)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var jwtSecurityToken = handler.ReadJwtToken(authToken);
+        
+        // Check whether token is expired
+        if (jwtSecurityToken.ValidTo < DateTime.UtcNow) return false;
+        
+        var baid = jwtSecurityToken.Claims.First(claim => claim.Type == ClaimTypes.Name).Value;
+        var isAdmin = jwtSecurityToken.Claims.First(claim => claim.Type == ClaimTypes.Role).Value == "Admin";
+        
+        var response = await client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
+
+        var user = response?.Users.FirstOrDefault(u => u.Baid == uint.Parse(baid));
+        if (user is null) return false;
+        
+        IsLoggedIn = true;
+        IsAdmin = isAdmin;
+        LoggedInUser = user;
+        OnLoginStatusChanged();
+        return true;
+    }
+
+    public async Task<int> Register(string inputCardNum, DateTime inputDateTime, string inputPassword,
+        string inputConfirmPassword,
+        DashboardResponse response, HttpClient client, string inviteCode)
     {
         if (OnlyAdmin) return 0;
 
+        if (inputPassword != inputConfirmPassword) return 2;
+
         // strip spaces or dashes from card number
-        inputCardNum = inputCardNum.Replace(" ", "").Replace("-", "");
+        inputCardNum = inputCardNum.Replace(" ", "").Replace("-", "").Replace(":", "");
 
-        foreach (var user in response.Users.Where(user => user.AccessCodes.Contains(inputCardNum)))
+        var request = new RegisterRequest
         {
-            foreach (var userCredential in response.UserCredentials.Where(userCredential => userCredential.Baid == user.Baid))
-            {
-                if (RegisterWithLastPlayTime)
-                {
-                    var userSettingResponse = await client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{user.Baid}");
-                    if (userSettingResponse is null) return 3;
-                    var lastPlayDateTime = userSettingResponse.LastPlayDateTime;
-                    var diffMinutes = (inputDateTime - lastPlayDateTime).Duration().TotalMinutes;
-                    if (diffMinutes > 5) return 5;
-                }
-                if (userCredential.Password != "") return 4;
-                if (inputPassword != inputConfirmPassword) return 2;
-                var salt = CreateSalt();
-                var request = new SetPasswordRequest
-                {
-                    Baid = user.Baid,
-                    Password = ComputeHash(inputPassword, salt),
-                    Salt = salt
-                };
-                var responseMessage = await client.PostAsJsonAsync("api/Credentials", request);
-                return responseMessage.IsSuccessStatusCode ? 1 : 3;
-            }
-        }
+            AccessCode = inputCardNum,
+            Password = inputPassword,
+            RegisterWithLastPlayTime = RegisterWithLastPlayTime,
+            LastPlayDateTime = inputDateTime,
+            InviteCode = inviteCode
+        };
 
-        return 3;
+        var responseMessage = await client.PostAsJsonAsync("api/Auth/Register", request);
+
+        if (responseMessage.IsSuccessStatusCode) return 1;
+        
+        // Unauthorized, extract specific error message as json
+        var responseContent = await responseMessage.Content.ReadAsStringAsync();
+        var responseJson = JsonSerializer.Deserialize<Dictionary<string, string>>(responseContent);
+        // Unknown error message
+        if (responseJson is null) return 6;
+        var errorMessage = responseJson["message"];
+        return errorMessage switch
+        {
+            "Access Code Not Found" => 3,
+            "User Already Registered" => 4,
+            "Wrong Last Play Time" => 5,
+            _ => 6
+        };
     }
-
-    private static string CreateSalt()
-    {
-        //Generate a cryptographic random number.
-        var randomNumber = new byte[32];
-        var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(randomNumber);
-        var salt = Convert.ToBase64String(randomNumber);
-
-        // Return a Base64 string representation of the random number.
-        return salt;
-    }
-
-    private static string ComputeHash(string inputPassword, string salt)
-    {
-        var encDataByte = Encoding.UTF8.GetBytes(inputPassword + salt);
-        var encodedData = Convert.ToBase64String(encDataByte);
-        encDataByte = Encoding.UTF8.GetBytes(encodedData);
-        encodedData = Convert.ToBase64String(encDataByte);
-        encDataByte = Encoding.UTF8.GetBytes(encodedData);
-        encodedData = Convert.ToBase64String(encDataByte);
-        encDataByte = Encoding.UTF8.GetBytes(encodedData);
-        encodedData = Convert.ToBase64String(encDataByte);
-        return encodedData;
-    }
-
-    public async Task<int> ChangePassword(string inputCardNum, string inputOldPassword, string inputNewPassword,
+    
+    public async Task<int> ChangePassword(string inputAccessCode, string inputOldPassword, string inputNewPassword,
         string inputConfirmNewPassword, DashboardResponse response, HttpClient client)
     {
         if (OnlyAdmin) return 0;
-        foreach (var user in response.Users.Where(user => user.AccessCodes.Contains(inputCardNum)))
+        
+        if (inputNewPassword != inputConfirmNewPassword) return 2;
+        
+        var request = new ChangePasswordRequest
         {
-            foreach (var userCredential in response.UserCredentials.Where(userCredential => userCredential.Baid == user.Baid))
-            {
-                if (userCredential.Password != ComputeHash(inputOldPassword, userCredential.Salt)) return 4;
-                if (inputNewPassword != inputConfirmNewPassword) return 2;
-                var request = new SetPasswordRequest
-                {
-                    Baid = user.Baid,
-                    Password = ComputeHash(inputNewPassword, userCredential.Salt),
-                    Salt = userCredential.Salt
-                };
-                var responseMessage = await client.PostAsJsonAsync("api/Credentials", request);
-                return responseMessage.IsSuccessStatusCode ? 1 : 3;
-            }
-        }
-
-        return 3;
+            AccessCode = inputAccessCode,
+            OldPassword = inputOldPassword,
+            NewPassword = inputNewPassword
+        };
+        
+        var responseMessage = await client.PostAsJsonAsync("api/Auth/ChangePassword", request);
+        
+        if (responseMessage.IsSuccessStatusCode) return 1;
+        
+        // Unauthorized, extract specific error message as json
+        var responseContent = await responseMessage.Content.ReadAsStringAsync();
+        var responseJson = JsonSerializer.Deserialize<Dictionary<string, string>>(responseContent);
+        // Unknown error message
+        if (responseJson is null) return 6;
+        var errorMessage = responseJson["message"];
+        return errorMessage switch
+        {
+            "Access Code Not Found" => 3,
+            "User Not Registered" => 5,
+            "Wrong Old Password" => 4,
+            _ => 6
+        };
     }
 
-    public void Logout()
+    public async Task Logout()
     {
         IsLoggedIn = false;
         LoggedInUser = new User();
         IsAdmin = false;
+        
+        // Clear JWT token
+        await localStorage.RemoveItemAsync("authToken");
         OnLoginStatusChanged();
     }
 
@@ -174,7 +208,7 @@ public class LoginService
     {
         if (inputAccessCode.Trim() == "") return 4; /*Empty access code*/
         if (!IsLoggedIn && LoginRequired) return 0; /*User not connected and login is required*/
-        if (LoginRequired && !IsAdmin && !(user.Baid == GetLoggedInUser().Baid)) return 5; /*User not admin trying to update someone elses Access Codes*/
+        if (LoginRequired && !IsAdmin && user.Baid != GetLoggedInUser().Baid) return 5; /*User not admin trying to update someone elses Access Codes*/
         if (user.AccessCodes.Count >= boundAccessCodeUpperLimit) return 2; /*Limit of codes has been reached*/
         var request = new BindAccessCodeRequest
         {

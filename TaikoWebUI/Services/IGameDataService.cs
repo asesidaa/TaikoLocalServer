@@ -27,7 +27,21 @@ public interface IGameDataService
     public string GetFaceTitle(uint index);
     public string GetPuchiTitle(uint index);
 
-    public List<int> GetCostumeFlagArraySizes();
+    public List<uint> GetKigurumiUniqueIdList();
+    public List<uint> GetHeadUniqueIdList();
+    public List<uint> GetBodyUniqueIdList();
+    public List<uint> GetFaceUniqueIdList();
+    public List<uint> GetPuchiUniqueIdList();
+    public List<uint> GetTitleUniqueIdList();
+    public List<uint> GetTitlePlateIdList();
+    
+    public List<uint> GetLockedKigurumiUniqueIdList();
+    public List<uint> GetLockedHeadUniqueIdList();
+    public List<uint> GetLockedBodyUniqueIdList();
+    public List<uint> GetLockedFaceUniqueIdList();
+    public List<uint> GetLockedPuchiUniqueIdList();
+    public List<uint> GetLockedTitleUniqueIdList();
+    public List<uint> GetLockedTitlePlateIdList();
 
     public ImmutableHashSet<Title> GetTitles();
 }

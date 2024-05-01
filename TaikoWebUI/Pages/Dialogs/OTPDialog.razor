@@ -1,0 +1,36 @@
+﻿@inject HttpClient Client
+@inject ISnackbar Snackbar
+@inject IJSRuntime Js
+
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.h6">@Otp</MudText>
+        <div style="height: 1rem"></div>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                   OnClick="@(_ => CopyToClipboard(Otp))">
+            @Localizer["Copy to Clipboard"]
+        </MudButton>
+        <div style="height: 1rem"></div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="@Submit">@Localizer["Dialog OK"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public string Otp { get; set; } = "";
+    
+    private async Task CopyToClipboard(string text)
+    {
+        await Js.InvokeVoidAsync("clipboardCopy.copyText", text);
+    }
+    
+    private void Submit()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+}

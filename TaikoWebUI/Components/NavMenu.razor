@@ -5,7 +5,7 @@
 @using TaikoWebUI.Pages.Dialogs;
 
 <MudNavMenu Rounded="true" Class="pa-2" Margin="Margin.Dense" Color="Color.Primary">
-    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">@Localizer["dashboard"]</MudNavLink>
+    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">@Localizer["Dashboard"]</MudNavLink>
     @if (LoginService.IsAdmin || !LoginService.LoginRequired)
     {
     <MudNavLink Href="/Users" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.People">@Localizer["Users"]</MudNavLink>
@@ -24,12 +24,13 @@
 		{
             <MudDivider />
 			<MudNavLink Href="@($"Users/{currentUser.Baid}/Profile")" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Person">@Localizer["Profile"]</MudNavLink>
-            <MudNavGroup Title="Play Data" Expanded="true" Icon="@Icons.Material.Filled.EmojiEvents">
-			    <MudNavLink Href="@($"Users/{currentUser.Baid}/Songs")" Match="NavLinkMatch.All">@Localizer["Key_01"]</MudNavLink>
-                <MudNavLink Href="@($"Users/{currentUser.Baid}/HighScores")" Match="NavLinkMatch.All">@Localizer["High Scores"]</MudNavLink>
-			    <MudNavLink Href="@($"Users/{currentUser.Baid}/DaniDojo")" Match="NavLinkMatch.All">@Localizer["Key_03"]</MudNavLink>
+            <MudNavGroup Title=@Localizer["Play Data"] Expanded="true" Icon="@Icons.Material.Filled.EmojiEvents">
+			    <MudNavLink Href="@($"Users/{currentUser.Baid}/Songs")" Match="NavLinkMatch.All">@Localizer["Song List"]</MudNavLink>
+			    <MudNavLink Href="@($"Users/{currentUser.Baid}/HighScores")" Match="NavLinkMatch.All">@Localizer["High Scores"]</MudNavLink>
+	            <MudNavLink Href="@($"Users/{currentUser.Baid}/PlayHistory")" Match="NavLinkMatch.All">@Localizer["Play History"]</MudNavLink>
+			    <MudNavLink Href="@($"Users/{currentUser.Baid}/DaniDojo")" Match="NavLinkMatch.All">@Localizer["Dani Dojo"]</MudNavLink>
             </MudNavGroup>
-            <MudNavGroup Title="Settings" Expanded="_settingsOpen" Icon="@Icons.Material.Filled.Settings">
+            <MudNavGroup Title=@Localizer["Settings"] Expanded="_settingsOpen" Icon="@Icons.Material.Filled.Settings">
                 <MudNavLink OnClick="ShowQrCode">@Localizer["Show QR Code"]</MudNavLink>
                 <MudNavLink Href="/ChangePassword" Match="NavLinkMatch.All">@Localizer["Change Password"]</MudNavLink>
                 <MudNavLink Href="@($"Users/{currentUser.Baid}/AccessCode")" Match="NavLinkMatch.All">@Localizer["Access Codes"]</MudNavLink>
@@ -73,7 +74,7 @@
             };
 
         var options = new DialogOptions() { DisableBackdropClick = true };
-        DialogService.Show<UserQrCodeDialog>("QR Code", parameters, options);
+        DialogService.Show<UserQrCodeDialog>(@Localizer["QR Code"], parameters, options);
 
         // Prevent the settings menu from closing
         _settingsOpen = true;

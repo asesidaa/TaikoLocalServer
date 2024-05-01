@@ -43,14 +43,14 @@ namespace TaikoWebUI.Pages
 
             if (LoginService.IsLoggedIn && !LoginService.IsAdmin)
             {
-                breadcrumbs.Add(new BreadcrumbItem("Dashboard", href: "/"));
+                breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
             }
             else
             {
-                breadcrumbs.Add(new BreadcrumbItem("Users", href: "/Users"));
+                breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
             };
             breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
-            breadcrumbs.Add(new BreadcrumbItem("Songs", href: $"/Users/{Baid}/Songs", disabled: false));
+            breadcrumbs.Add(new BreadcrumbItem(Localizer["Song List"], href: $"/Users/{Baid}/Songs", disabled: false));
             breadcrumbs.Add(new BreadcrumbItem(_songTitle, href: $"/Users/{Baid}/Songs/{SongId}", disabled: false));
         }
     }

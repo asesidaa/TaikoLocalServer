@@ -17,15 +17,15 @@ public partial class Login
     {
         if (response != null)
         {
-            var result = LoginService.Login(inputAccessCode, inputPassword, response);
-            var options = new DialogOptions() { DisableBackdropClick = true };
+            var result = await LoginService.Login(inputAccessCode, inputPassword, Client);
+            var options = new DialogOptions { DisableBackdropClick = true };
             switch (result)
             {
                 case 0:
                     await DialogService.ShowMessageBox(
-                        "Error",
+                        Localizer["Error"],
                     "Only admin can log in.",
-                        "Ok", null, null, options);
+                        Localizer["Dialog OK"], null, null, options);
                     await loginForm.ResetAsync();
                     break;
                 case 1:
@@ -33,23 +33,29 @@ public partial class Login
                     break;
                 case 2:
                     await DialogService.ShowMessageBox(
-                        "Error",
+                        Localizer["Error"],
                         "Wrong password!",
-                        "Ok", null, null, options);
+                        Localizer["Dialog OK"], null, null, options);
                     break;
                 case 3:
                     await DialogService.ShowMessageBox(
-                        "Error",
+                        Localizer["Error"],
                         (MarkupString)
                         "Access code not found.<br />Please play one game with this access code to register it.",
-                        "Ok", null, null, options);
+                        Localizer["Dialog OK"], null, null, options);
                     break;
                 case 4:
                     await DialogService.ShowMessageBox(
-                        "Error",
+                        Localizer["Error"],
                         (MarkupString)
                         "Access code not registered.<br />Please use register button to create a password first.",
-                        "Ok", null, null, options);
+                        Localizer["Dialog OK"], null, null, options);
+                    break;
+                case 5:
+                    await DialogService.ShowMessageBox(
+                        Localizer["Error"],
+                        Localizer["Unknown Error"],
+                        Localizer["Dialog OK"], null, null, options);
                     break;
             }
         }

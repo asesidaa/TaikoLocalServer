@@ -1,4 +1,5 @@
-﻿@using Microsoft.AspNetCore.Components;
+﻿@using System.Text.Json
+@using Microsoft.AspNetCore.Components;
 @using TaikoWebUI.Pages.Dialogs;
 @inject TaikoWebUI.Utilities.StringUtil StringUtil;
 @inject IDialogService DialogService;
@@ -26,7 +27,7 @@
                         <MudChip Variant="Variant.Outlined" Color="Color.Info" Size="Size.Small" Icon="@Icons.Material.TwoTone.AdminPanelSettings">@Localizer["Admin"]</MudChip>
                     }
                 </div>
-                <MudText Typo="Typo.caption">User ID: @user?.Baid</MudText>
+                <MudText Typo="Typo.caption">@Localizer["User"] BAID: @user?.Baid</MudText>
                 </CardHeaderContent>
                 <CardHeaderActions>
                     <MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense="true" AnchorOrigin="Origin.BottomLeft"
@@ -55,6 +56,16 @@
                     }
                     @if (LoginService.LoginRequired && LoginService.IsAdmin)
                     {
+                        <MudMenuItem Icon="@Icons.Material.Filled.Password"
+                                     OnClick="@(_ => GenerateInviteCode(user.Baid))"
+                                     OnTouch="@(_ => GenerateInviteCode(user.Baid))"
+                                     IconColor="@Color.Primary">
+                            @Localizer["Generate Invite Code"]
+                        </MudMenuItem>
+                        <MudDivider />
+                    }
+                    @if (LoginService.LoginRequired && LoginService.IsAdmin)
+                    {
                         <MudMenuItem Icon="@Icons.Material.Filled.LockReset"
                                      OnClick="@(_ => ResetPassword(user))"
                                      OnTouch="@(_ => ResetPassword(user))"
@@ -76,7 +87,7 @@
             </CardHeaderActions>
         </MudCardHeader>
         <MudCardContent>
-            <MudText Typo="Typo.body2" Style="font-weight:bold">Access Code</MudText>
+            <MudText Typo="Typo.body2" Style="font-weight:bold">@Localizer["Access Code"]</MudText>
             <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">
                 @if (user.AccessCodes.Count > 0)
                 {
@@ -91,7 +102,12 @@
             </MudText>
             @if (user.AccessCodes.Count > 1)
             {
-                <MudText Typo="Typo.caption">... and @(user.AccessCodes.Count - 1) other access code(s)</MudText>
+                <MudText Typo="Typo.caption">... @Localizer["and"] @(user.AccessCodes.Count - 1) @Localizer["other access code(s)"]</MudText>
+            }
+            else
+            {
+                // Empty line to keep the layout consistent
+                <MudText Typo="Typo.caption"> </MudText>
             }
         </MudCardContent>
         <MudCardActions>
@@ -104,19 +120,20 @@
                 <MudMenu Size="Size.Small"
                          Dense="true"
                          Color="Color.Primary"
-                         Label="@Localizer["view play data"]"
+                         Label="@Localizer["View Play Data"]"
                          StartIcon="@Icons.Material.Filled.EmojiEvents"
                          EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
                          FullWidth="true"
                          AnchorOrigin="Origin.BottomCenter"
                          TransformOrigin="Origin.TopCenter">
-                        <MudMenuItem Href="@($"Users/{user.Baid}/HighScores")">@Localizer["High Scores"]</MudMenuItem>
-                        <MudMenuItem Href="@($"Users/{user.Baid}/Songs")">@Localizer["Song List"]</MudMenuItem>
-                        <MudMenuItem Href="@($"Users/{user.Baid}/DaniDojo")">@Localizer["dani dojo"]</MudMenuItem>
-                    </MudMenu>
-                </MudStack>
-            </MudCardActions>
-        </MudCard>
+                    <MudMenuItem Href="@($"Users/{user.Baid}/HighScores")">@Localizer["High Scores"]</MudMenuItem>
+                    <MudMenuItem Href="@($"Users/{user.Baid}/PlayHistory")">@Localizer["Play History"]</MudMenuItem>
+                    <MudMenuItem Href="@($"Users/{user.Baid}/Songs")">@Localizer["Song List"]</MudMenuItem>
+                    <MudMenuItem Href="@($"Users/{user.Baid}/DaniDojo")">@Localizer["Dani Dojo"]</MudMenuItem>
+                </MudMenu>
+            </MudStack>
+        </MudCardActions>
+    </MudCard>
 }
 
 @code {
@@ -139,7 +156,7 @@
             };
 
         var options = new DialogOptions() { DisableBackdropClick = true };
-        DialogService.Show<UserQrCodeDialog>("QR Code", parameters, options);
+        DialogService.Show<UserQrCodeDialog>(Localizer["QR Code"], parameters, options);
 
         return Task.CompletedTask;
     }
@@ -150,9 +167,9 @@
         if (LoginService.LoginRequired && !LoginService.IsAdmin)
         {
             await DialogService.ShowMessageBox(
-                "Error",
+                Localizer["Error"],
                 "Only admin can reset password.",
-                "Ok", null, null, options);
+                Localizer["Dialog OK"], null, null, options);
             return;
         }
         var parameters = new DialogParameters
@@ -160,7 +177,7 @@
                 ["user"] = user
             };
 
-        var dialog = DialogService.Show<ResetPasswordConfirmDialog>("Reset Password", parameters, options);
+        var dialog = DialogService.Show<ResetPasswordConfirmDialog>(Localizer["Reset Password"], parameters, options);
         var result = await dialog.Result;
 
         if (result.Canceled) return;
@@ -174,9 +191,9 @@
         if (!LoginService.AllowUserDelete)
         {
             await DialogService.ShowMessageBox(
-                "Error",
+                Localizer["Error"],
                 "User deletion is disabled by admin.",
-                "Ok", null, null, options);
+                Localizer["Dialog OK"], null, null, options);
             return;
         }
         var parameters = new DialogParameters
@@ -184,7 +201,7 @@
                 ["user"] = user
             };
 
-        var dialog = DialogService.Show<UserDeleteConfirmDialog>("Delete User", parameters, options);
+        var dialog = DialogService.Show<UserDeleteConfirmDialog>(Localizer["Delete User"], parameters, options);
         var result = await dialog.Result;
 
         if (result.Canceled) return;
@@ -192,5 +209,47 @@
         response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
         LoginService.Logout();
         NavigationManager.NavigateTo("/Users");
+    }
+    
+    private async Task GenerateInviteCode(uint baid)
+    {
+        var request = new GenerateOtpRequest
+        {
+            Baid = baid
+        };
+        
+        var responseMessage = await Client.PostAsJsonAsync("api/Auth/GenerateOtp", request);
+        
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            await DialogService.ShowMessageBox(
+                Localizer["Error"],
+                Localizer["Unknown Error"],
+                Localizer["Dialog OK"], null, null, new DialogOptions { DisableBackdropClick = true });
+            return;
+        }
+        
+        var responseContent = await responseMessage.Content.ReadAsStringAsync();
+        var responseJson = JsonSerializer.Deserialize<Dictionary<string, string>>(responseContent);
+        if (responseJson == null)
+        {
+            await DialogService.ShowMessageBox(
+                Localizer["Error"],
+                Localizer["Unknown Error"],
+                Localizer["Dialog OK"], null, null, new DialogOptions { DisableBackdropClick = true });
+            return;
+        }
+        
+        var otp = responseJson["otp"];
+        
+        var parameters = new DialogParameters
+        {
+            ["otp"] = otp
+        };
+
+        var options = new DialogOptions() { DisableBackdropClick = true };
+        DialogService.Show<OTPDialog>(Localizer["Invite Code"], parameters, options);
+
+        
     }
 }

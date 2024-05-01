@@ -22,30 +22,32 @@ else
             <MudItem xs="12" md="6" lg="4">
                 <MudCard Elevation="0" Outlined="true">
                     <MudCardHeader>
-                        <MudText Typo="Typo.h5">Register</MudText>
+                        <MudText Typo="Typo.h5">@Localizer["Register"]</MudText>
                     </MudCardHeader>
                     <MudCardContent>
                         <MudForm @ref="registerForm">
                             <div style="display:flex;flex-direction:column;gap:15px;">
                             <MudTextField @bind-value="accessCode" InputType="InputType.Text" T="string"
-                                          FullWidth="true" Required="@true" RequiredError="Access Code is required"
-                                          Label="Access Code" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                                          FullWidth="true" Required="@true" RequiredError=@Localizer["Access Code is required"]
+                                          Label=@Localizer["Access Code"] Variant="Variant.Outlined" Margin="Margin.Dense" />
                             @if (LoginService.RegisterWithLastPlayTime)
                             {
-                                <MudDatePicker @ref="datePicker" Label="Last Play Date" @bind-Date="date" AutoClose="true" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                                <MudTimePicker @ref="timePicker" AmPm="true" Label="Last Play Time(5 min around credit end)" @bind-Time="time" AutoClose="true" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                                <MudTextField @bind-value="inviteCode" InputType="InputType.Text" T="string"
+                                              FullWidth="true" Label=@Localizer["Invite Code (Optional)"]/>
+                                <MudDatePicker @ref="datePicker" Label=@Localizer["Last Play Date"] @bind-Date="date" AutoClose="true" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                                <MudTimePicker @ref="timePicker" AmPm="true" Label=@Localizer["Last Play Time(5 Min Around Credit End)"] @bind-Time="time" AutoClose="true" Variant="Variant.Outlined" Margin="Margin.Dense" />
                             }
                             <MudTextField @bind-Value="password" InputType="InputType.Password"
                                           T="string" FullWidth="true" Required="@true"
-                                          RequiredError="Password is required"
-                                          Label="Password" Variant="Variant.Outlined" Margin="Margin.Dense">
+                                          RequiredError=@Localizer["Password is Required"]
+                                          Label=@Localizer["Password"] Variant="Variant.Outlined" Margin="Margin.Dense">
                             </MudTextField>
                             <MudTextField @bind-Value="confirmPassword" InputType="InputType.Password"
                                           T="string" FullWidth="true" Required="@true"
-                                          RequiredError="Confirm password is required"
-                                          Label="Confirm Password" Variant="Variant.Outlined" Margin="Margin.Dense">
+                                          RequiredError=@Localizer["Confirm Password is Required"]
+                                          Label=@Localizer["Confirm Password"] Variant="Variant.Outlined" Margin="Margin.Dense">
                             </MudTextField>
-                            <MudButton OnClick="OnRegister" FullWidth="true" StartIcon="@Icons.Material.Filled.AddCard" Color="Color.Primary" Variant="Variant.Filled">Register</MudButton>
+                            <MudButton OnClick="OnRegister" FullWidth="true" StartIcon="@Icons.Material.Filled.AddCard" Color="Color.Primary" Variant="Variant.Filled">@Localizer["Register"]</MudButton>
                             </div>      
                         </MudForm>
                     </MudCardContent>

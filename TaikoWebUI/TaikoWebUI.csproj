@@ -13,59 +13,61 @@
 
     <ItemGroup>
         <PackageReference Include="Autocomplete.Clients" Version="1.1.0" />
-		<PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
-        <PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="6.5.10" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0-rc.1.23421.29" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0-rc.1.23421.29" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.2" />
-        <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="8.0.2" />
-        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0-rc.1.23419.4" />
-        <PackageReference Include="MudBlazor" Version="6.17.0" />
+        <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+        <PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="6.9.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.4" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.4" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.4" />
+        <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="8.0.4" />
+        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+        <PackageReference Include="MudBlazor" Version="6.19.1" />
+        <PackageReference Include="Otp.NET" Version="1.4.0" />
         <PackageReference Include="SharpZipLib" Version="1.4.2" />
         <PackageReference Include="Swan.Core" Version="7.0.0-beta.2" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.2" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\SharedProject\SharedProject.csproj" />
+        <ProjectReference Include="..\SharedProject\SharedProject.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <Content Update="wwwroot\appsettings.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Update="wwwroot\data\datatable\musicinfo.bin">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Update="wwwroot\data\datatable\music_order.bin">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Update="wwwroot\data\datatable\wordlist.bin">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Update="wwwroot\data\datatable\music_order.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Update="wwwroot\data\datatable\musicinfo.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Update="wwwroot\data\datatable\wordlist.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
+        <Content Update="wwwroot\appsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Update="wwwroot\data\datatable\musicinfo.bin">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Update="wwwroot\data\datatable\music_order.bin">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Update="wwwroot\data\datatable\wordlist.bin">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Update="wwwroot\data\datatable\music_order.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Update="wwwroot\data\datatable\musicinfo.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Update="wwwroot\data\datatable\wordlist.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
     <ItemGroup>
-      <_ContentIncludedByDefault Remove="Pages\Pages\AccessCode.razor" />
-      <_ContentIncludedByDefault Remove="Pages\Pages\ChangePassword.razor" />
-      <_ContentIncludedByDefault Remove="Pages\Pages\DaniDojo.razor" />
-      <_ContentIncludedByDefault Remove="Pages\Pages\Dashboard.razor" />
-      <_ContentIncludedByDefault Remove="Pages\Pages\Dialogs\AccessCodeDeleteConfirmDialog.razor" />
-      <_ContentIncludedByDefault Remove="Pages\Pages\Dialogs\ChooseTitleDialog.razor" />
-      <_ContentIncludedByDefault Remove="Pages\Pages\Dialogs\UserDeleteConfirmDialog.razor" />
-      <_ContentIncludedByDefault Remove="Pages\Pages\Dialogs\UserQrCodeDialog.razor" />
-      <_ContentIncludedByDefault Remove="Pages\Pages\HighScores.razor" />
-      <_ContentIncludedByDefault Remove="Pages\Pages\Profile.razor" />
-      <_ContentIncludedByDefault Remove="Pages\Pages\Register.razor" />
-      <_ContentIncludedByDefault Remove="Pages\Pages\Users.razor" />
+        <_ContentIncludedByDefault Remove="Pages\Pages\AccessCode.razor" />
+        <_ContentIncludedByDefault Remove="Pages\Pages\ChangePassword.razor" />
+        <_ContentIncludedByDefault Remove="Pages\Pages\DaniDojo.razor" />
+        <_ContentIncludedByDefault Remove="Pages\Pages\Dashboard.razor" />
+        <_ContentIncludedByDefault Remove="Pages\Pages\Dialogs\AccessCodeDeleteConfirmDialog.razor" />
+        <_ContentIncludedByDefault Remove="Pages\Pages\Dialogs\ChooseTitleDialog.razor" />
+        <_ContentIncludedByDefault Remove="Pages\Pages\Dialogs\UserDeleteConfirmDialog.razor" />
+        <_ContentIncludedByDefault Remove="Pages\Pages\Dialogs\UserQrCodeDialog.razor" />
+        <_ContentIncludedByDefault Remove="Pages\Pages\HighScores.razor" />
+        <_ContentIncludedByDefault Remove="Pages\Pages\Profile.razor" />
+        <_ContentIncludedByDefault Remove="Pages\Pages\Register.razor" />
+        <_ContentIncludedByDefault Remove="Pages\Pages\Users.razor" />
     </ItemGroup>
 
     <ItemGroup>
@@ -80,8 +82,8 @@
             <CustomToolNamespace>LocalizationResource</CustomToolNamespace>
         </EmbeddedResource>
         <EmbeddedResource Update="Localization\LocalizationResource.resx">
-          <Generator>ResXFileCodeGenerator</Generator>
-          <LastGenOutput>LocalizationResource.Designer.cs</LastGenOutput>
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>LocalizationResource.Designer.cs</LastGenOutput>
         </EmbeddedResource>
         <EmbeddedResource Update="Localization\LocalizationResource.ja.resx">
             <SubType>Designer</SubType>
@@ -89,20 +91,20 @@
             <CustomToolNamespace>LocalizationResource</CustomToolNamespace>
         </EmbeddedResource>
         <EmbeddedResource Update="Localization\LocalizationResource.zh-Hant.resx">
-          <SubType>Designer</SubType>
-          <Generator>ResXFileCodeGenerator</Generator>
-          <CustomToolNamespace>LocalizationResource</CustomToolNamespace>
+            <SubType>Designer</SubType>
+            <Generator>ResXFileCodeGenerator</Generator>
+            <CustomToolNamespace>LocalizationResource</CustomToolNamespace>
         </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Localization\LocalizationResource.Designer.cs">
-        <DesignTime>True</DesignTime>
-        <AutoGen>True</AutoGen>
-        <DependentUpon>LocalizationResource.resx</DependentUpon>
-      </Compile>
+        <Compile Update="Localization\LocalizationResource.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>LocalizationResource.resx</DependentUpon>
+        </Compile>
     </ItemGroup>
-    
+
 
 
 </Project>

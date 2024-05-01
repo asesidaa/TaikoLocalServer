@@ -135,15 +135,15 @@ public partial class Profile
         "Synth Drum", "Shuriken", "Bubble Pop", "Electric Guitar"
     };
 
-    private static readonly string[] LanguageStrings =
-    {
-        "Japanese", "English", "Chinese (Traditional)", "Korean", "Chinese (Simplified)"
-    };
-
     private static readonly string[] TitlePlateStrings =
     {
         "Wood", "Rainbow", "Gold", "Purple",
         "AI 1", "AI 2", "AI 3", "AI 4"
+    };
+    
+    private static readonly string[] LanguageStrings =
+    {
+        "Japanese", "English", "Chinese (Traditional)", "Korean", "Chinese (Simplified)"
     };
 
     private static readonly string[] DifficultySettingCourseStrings =
@@ -169,14 +169,14 @@ public partial class Profile
     private Dictionary<Difficulty, List<SongBestData>> songBestDataMap = new();
 
     private Difficulty highestDifficulty = Difficulty.Easy;
-
-    private List<int> costumeFlagArraySizes = new();
-
-    private List<uint> unlockedHeadCostumes = new();
-    private List<uint> unlockedBodyCostumes = new();
-    private List<uint> unlockedFaceCostumes = new();
-    private List<uint> unlockedKigurumiCostumes = new();
-    private List<uint> unlockedPuchiCostumes = new();
+    
+    private List<uint> kigurumiUniqueIdList = new();
+    private List<uint> headUniqueIdList = new();
+    private List<uint> bodyUniqueIdList = new();
+    private List<uint> faceUniqueIdList = new();
+    private List<uint> puchiUniqueIdList = new();
+    private List<uint> titleUniqueIdList = new();
+    private List<uint> titlePlateIdList = new();
 
     private int[] scoresArray = new int[10];
 
@@ -189,25 +189,17 @@ public partial class Profile
 
         if (LoginService.IsLoggedIn && !LoginService.IsAdmin)
         {
-            breadcrumbs.Add(new BreadcrumbItem("Dashboard", href: "/"));
+            breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
         }
         else
         {
-            breadcrumbs.Add(new BreadcrumbItem("Users", href: "/Users"));
+            breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
         };
         breadcrumbs.Add(new BreadcrumbItem($"{response.MyDonName}", href: null, disabled: true));
-        breadcrumbs.Add(new BreadcrumbItem("Profile", href: $"/Users/{Baid}/Profile", disabled: false));
-
-        if (response != null)
-        {
-            unlockedHeadCostumes = response.UnlockedHead.Distinct().OrderBy(x => x).ToList();
-            unlockedBodyCostumes = response.UnlockedBody.Distinct().OrderBy(x => x).ToList();
-            unlockedFaceCostumes = response.UnlockedFace.Distinct().OrderBy(x => x).ToList();
-            unlockedKigurumiCostumes = response.UnlockedKigurumi.Distinct().OrderBy(x => x).ToList();
-            unlockedPuchiCostumes = response.UnlockedPuchi.Distinct().OrderBy(x => x).ToList();
-        }
-
-        costumeFlagArraySizes = GameDataService.GetCostumeFlagArraySizes();
+        breadcrumbs.Add(new BreadcrumbItem(Localizer["Profile"], href: $"/Users/{Baid}/Profile", disabled: false));
+        
+        InitializeAvailableCostumes();
+        InitializeAvailableTitles();
 
         songresponse = await Client.GetFromJsonAsync<SongBestResponse>($"api/PlayData/{Baid}");
         songresponse.ThrowIfNull();
@@ -229,16 +221,86 @@ public partial class Profile
                                       .CompareTo(GameDataService.GetMusicIndexBySongId(data2.SongId)));
         }
 
-        for (int i = 0; i < (int)Difficulty.UraOni; i++)
+        for (var i = 0; i < (int)Difficulty.UraOni; i++)
             if (songBestDataMap.TryGetValue((Difficulty)i, out var values))
             {
                 highestDifficulty = (Difficulty)i;
             }
-
-
-        UpdateScores(response.AchievementDisplayDifficulty);
+        
+        if (response != null) UpdateScores(response.AchievementDisplayDifficulty);
     }
 
+    private void InitializeAvailableCostumes()
+    {
+        var unlockedKigurumi = response != null ? response.UnlockedKigurumi : new List<uint>();
+        var unlockedHead = response != null ? response.UnlockedHead : new List<uint>();
+        var unlockedBody = response != null ? response.UnlockedBody : new List<uint>();
+        var unlockedFace = response != null ? response.UnlockedFace : new List<uint>();
+        var unlockedPuchi = response != null ? response.UnlockedPuchi : new List<uint>();
+        
+        if (LoginService.AllowFreeProfileEditing)
+        {
+            kigurumiUniqueIdList = GameDataService.GetKigurumiUniqueIdList();
+            headUniqueIdList = GameDataService.GetHeadUniqueIdList();
+            bodyUniqueIdList = GameDataService.GetBodyUniqueIdList();
+            faceUniqueIdList = GameDataService.GetFaceUniqueIdList();
+            puchiUniqueIdList = GameDataService.GetPuchiUniqueIdList();
+            
+            // Lock costumes in LockedCostumesList but not in UnlockedCostumesList
+            var lockedKigurumiUniqueIdList = GameDataService.GetLockedKigurumiUniqueIdList().Except(unlockedKigurumi).ToList();
+            var lockedHeadUniqueIdList = GameDataService.GetLockedHeadUniqueIdList().Except(unlockedHead).ToList();
+            var lockedBodyUniqueIdList = GameDataService.GetLockedBodyUniqueIdList().Except(unlockedBody).ToList();
+            var lockedFaceUniqueIdList = GameDataService.GetLockedFaceUniqueIdList().Except(unlockedFace).ToList();
+            var lockedPuchiUniqueIdList = GameDataService.GetLockedPuchiUniqueIdList().Except(unlockedPuchi).ToList();
+            
+            lockedKigurumiUniqueIdList.ForEach(id => kigurumiUniqueIdList.Remove(id));
+            lockedHeadUniqueIdList.ForEach(id => headUniqueIdList.Remove(id));
+            lockedBodyUniqueIdList.ForEach(id => bodyUniqueIdList.Remove(id));
+            lockedFaceUniqueIdList.ForEach(id => faceUniqueIdList.Remove(id));
+            lockedPuchiUniqueIdList.ForEach(id => puchiUniqueIdList.Remove(id));
+        }
+        else
+        {
+            // Only unlock costumes that are in both UnlockedCostumesList and CostumeList
+            kigurumiUniqueIdList = GameDataService.GetKigurumiUniqueIdList().Intersect(unlockedKigurumi).ToList();
+            headUniqueIdList = GameDataService.GetHeadUniqueIdList().Intersect(unlockedHead).ToList();
+            bodyUniqueIdList = GameDataService.GetBodyUniqueIdList().Intersect(unlockedBody).ToList();
+            faceUniqueIdList = GameDataService.GetFaceUniqueIdList().Intersect(unlockedFace).ToList();
+            puchiUniqueIdList = GameDataService.GetPuchiUniqueIdList().Intersect(unlockedPuchi).ToList();
+        }
+    }
+    
+    private void InitializeAvailableTitlePlates()
+    {
+        titlePlateIdList = GameDataService.GetTitlePlateIdList().Except(GameDataService.GetLockedTitlePlateIdList()).ToList();
+        // Cut off ids longer than TitlePlateStrings
+        titlePlateIdList = titlePlateIdList.Where(id => id < TitlePlateStrings.Length).Except(GameDataService.GetLockedTitlePlateIdList()).ToList();
+    }
+    
+    private void InitializeAvailableTitles()
+    {
+        InitializeAvailableTitlePlates();
+        
+        var unlockedTitle = response != null ? response.UnlockedTitle : new List<uint>();
+        
+        if (LoginService.AllowFreeProfileEditing)
+        {
+            titleUniqueIdList = GameDataService.GetTitleUniqueIdList();
+            
+            var titles = GameDataService.GetTitles();
+            // Lock titles in LockedTitlesList but not in UnlockedTitle
+            var lockedTitleUniqueIdList = GameDataService.GetLockedTitleUniqueIdList().Except(unlockedTitle).ToList();
+            // Lock titles with rarity not in titlePlateIdList and not in unlockedTitle
+            lockedTitleUniqueIdList.AddRange(titles.Where(title => !titlePlateIdList.Contains(title.TitleRarity) && !unlockedTitle.Contains(title.TitleId)).Select(title => title.TitleId));
+            titleUniqueIdList = titleUniqueIdList.Except(lockedTitleUniqueIdList).ToList();
+        }
+        else
+        {
+            // Only unlock titles that are in both UnlockedTitlesList and TitleList
+            titleUniqueIdList = GameDataService.GetTitleUniqueIdList().Intersect(unlockedTitle).ToList();
+        }
+    }
+    
     private async Task SaveOptions()
     {
         isSavingOptions = true;
@@ -246,7 +308,7 @@ public partial class Profile
         isSavingOptions = false;
 
         // Adjust breadcrumb if name is changed
-        if (response != null && response.MyDonName != null)
+        if (response != null)
         {
             breadcrumbs[^2] = new BreadcrumbItem($"{response.MyDonName}", href: null, disabled: true);
         }
@@ -260,49 +322,47 @@ public partial class Profile
 
         if (difficulty is Difficulty.None) difficulty = highestDifficulty;
 
-        if (songBestDataMap.TryGetValue(difficulty, out var values))
+        if (!songBestDataMap.TryGetValue(difficulty, out var values)) return;
+        
+        foreach (var value in values)
         {
-            foreach (var value in values)
+            switch (value.BestScoreRank)
             {
-                switch (value.BestScoreRank)
-                {
-                    case ScoreRank.Dondaful:
-                        scoresArray[0]++;
-                        break;
-                    case ScoreRank.Gold:
-                        scoresArray[1]++;
-                        break;
-                    case ScoreRank.Sakura:
-                        scoresArray[2]++;
-                        break;
-                    case ScoreRank.Purple:
-                        scoresArray[3]++;
-                        break;
-                    case ScoreRank.White:
-                        scoresArray[4]++;
-                        break;
-                    case ScoreRank.Bronze:
-                        scoresArray[5]++;
-                        break;
-                    case ScoreRank.Silver:
-                        scoresArray[6]++;
-                        break;
-                }
-
-                switch (value.BestCrown)
-                {
-                    case CrownType.Clear:
-                        scoresArray[7]++;
-                        break;
-                    case CrownType.Gold:
-                        scoresArray[8]++;
-                        break;
-                    case CrownType.Dondaful:
-                        scoresArray[9]++;
-                        break;
-                }
+                case ScoreRank.Dondaful:
+                    scoresArray[0]++;
+                    break;
+                case ScoreRank.Gold:
+                    scoresArray[1]++;
+                    break;
+                case ScoreRank.Sakura:
+                    scoresArray[2]++;
+                    break;
+                case ScoreRank.Purple:
+                    scoresArray[3]++;
+                    break;
+                case ScoreRank.White:
+                    scoresArray[4]++;
+                    break;
+                case ScoreRank.Bronze:
+                    scoresArray[5]++;
+                    break;
+                case ScoreRank.Silver:
+                    scoresArray[6]++;
+                    break;
             }
 
+            switch (value.BestCrown)
+            {
+                case CrownType.Clear:
+                    scoresArray[7]++;
+                    break;
+                case CrownType.Gold:
+                    scoresArray[8]++;
+                    break;
+                case CrownType.Dondaful:
+                    scoresArray[9]++;
+                    break;
+            }
         }
     }
     public static string CostumeOrDefault(string file, uint id, string defaultfile)
