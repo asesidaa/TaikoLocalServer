@@ -4,15 +4,8 @@ using Swan.Mapping;
 
 namespace TaikoLocalServer.Services;
 
-public class CredentialService : ICredentialService
+public class CredentialService(TaikoDbContext context) : ICredentialService
 {
-    private readonly TaikoDbContext context;
-
-    public CredentialService(TaikoDbContext context)
-    {
-        this.context = context;
-    }
-
     public async Task<List<UserCredential>> GetUserCredentialsFromCredentials()
     {
         return await context.Credentials.Select(credential => credential.CopyPropertiesToNew<UserCredential>(null)).ToListAsync();
@@ -47,5 +40,10 @@ public class CredentialService : ICredentialService
         await context.SaveChangesAsync();
 
         return true;
+    }
+    
+    public async Task<Credential?> GetCredentialByBaid(uint baid)
+    {
+        return await context.Credentials.FindAsync(baid);
     }
 }

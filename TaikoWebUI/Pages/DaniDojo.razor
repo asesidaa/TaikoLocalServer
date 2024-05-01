@@ -20,7 +20,7 @@
 else
 {
     <MudBreadcrumbs Items="breadcrumbs" Class="p-0 mb-2"></MudBreadcrumbs>
-    <MudText Typo="Typo.h4">@Localizer["Key_03"]</MudText>
+    <MudText Typo="Typo.h4">@Localizer["Dani Dojo"]</MudText>
     <MudGrid Class="my-4 pb-10">
         <MudItem xs="12">
             <MudPaper Elevation="0" Outlined="true">
@@ -58,7 +58,7 @@ else
                                         <MudCard Outlined="true">
                                             <MudCardHeader Class="pb-0">
                                                 <CardHeaderContent>
-                                                    <MudText Typo="Typo.h6">@Localizer["Key_01"]</MudText>
+                                                    <MudText Typo="Typo.h6">@Localizer["Score"]</MudText>
                                                 </CardHeaderContent>
                                             </MudCardHeader>
                                             <MudCardContent Class="d-flex py-10" Style="justify-content:center">
@@ -119,7 +119,7 @@ else
                                 </MudItem>
                             </MudGrid>
 
-                            <MudText Typo="Typo.h5" Class="mt-10 mb-4">@Localizer["Songs"]</MudText>
+                            <MudText Typo="Typo.h5" Class="mt-10 mb-4">@Localizer["Course Songs"]</MudText>
                             <MudGrid>
                                 <MudItem xs="12">
                                     <MudGrid Class="d-block">
@@ -214,7 +214,7 @@ else
                                                             var redRequirement = GetSoulGauge(danData, false);
                                                             var goldRequirement = GetSoulGauge(danData, true);
                                                             var barClass = "bar-default";
-                                                            var resultText = @Localizer["Failed"];
+                                                            var resultText = @Localizer["Not Cleared"];
                                                         }
                                                         <MudStack Spacing="1">
                                                             <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">@Localizer["Result"]</MudText>
@@ -284,7 +284,7 @@ else
                                                                         var redRequirement = border.RedBorderTotal;
                                                                         var goldRequirement = border.GoldBorderTotal;
                                                                         var barClass = "bar-default";
-                                                                        var resultText = @Localizer["Failed"];
+                                                                        var resultText = @Localizer["Not Cleared"];
                                                                     }
                                                                     <MudStack Spacing="1">
                                                                         <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">@Localizer["Result"]</MudText>
@@ -370,7 +370,7 @@ else
                                                                     var redRequirement = GetSongBorderCondition(border, songNumber, false);
                                                                     var goldRequirement = GetSongBorderCondition(border, songNumber, true);
                                                                     var barClass = "bar-default";
-                                                                    var resultText = @Localizer["Failed"];
+                                                                    var resultText = @Localizer["Not Cleared"];
 
                                                                     <MudItem xs="12" md="4">
                                                                         <MudCard Outlined="true">

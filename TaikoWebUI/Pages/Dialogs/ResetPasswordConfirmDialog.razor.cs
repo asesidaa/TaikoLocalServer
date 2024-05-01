@@ -2,9 +2,7 @@
 
 public partial class ResetPasswordConfirmDialog
 {
-
-    [CascadingParameter]
-    MudDialogInstance MudDialog { get; set; } = null!;
+    [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = null!;
 
     [Parameter]
     public User User { get; set; } = new();
@@ -13,14 +11,12 @@ public partial class ResetPasswordConfirmDialog
 
     private async Task ResetPassword()
     {
-        var request = new SetPasswordRequest
+        var request = new ResetPasswordRequest
         {
-            Baid = User.Baid,
-            Password = "",
-            Salt = ""
+            Baid = User.Baid
         };
-        var responseMessage = await Client.PostAsJsonAsync("api/Credentials", request);
-
+        
+        var responseMessage = await Client.PostAsJsonAsync("api/Auth/ResetPassword", request);
         if (!responseMessage.IsSuccessStatusCode)
         {
             Snackbar.Add("Something went wrong when resetting password!", Severity.Error);

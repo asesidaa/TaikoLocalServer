@@ -7,23 +7,19 @@ namespace TaikoLocalServer.Controllers.Api;
 public class DashboardController : BaseController<DashboardController>
 {
     private readonly ICardService cardService;
-    private readonly ICredentialService credentialService;
 
-    public DashboardController(ICardService cardService, ICredentialService credentialService)
+    public DashboardController(ICardService cardService)
     {
         this.cardService = cardService;
-        this.credentialService = credentialService;
     }
 
     [HttpGet]
     public async Task<DashboardResponse> GetDashboard()
     {
         var users = await cardService.GetUsersFromCards();
-        var credentials = await credentialService.GetUserCredentialsFromCredentials();
         return new DashboardResponse
         {
-            Users = users,
-            UserCredentials = credentials
+            Users = users
         };
     }
     

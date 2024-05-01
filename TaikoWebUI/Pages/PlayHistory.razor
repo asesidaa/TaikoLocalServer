@@ -1,0 +1,145 @@
+@inject IGameDataService GameDataService
+@inject HttpClient Client
+@inject LoginService LoginService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@using TaikoWebUI.Utilities;
+@using TaikoWebUI.Shared.Models;
+@using SharedProject.Enums;
+
+@page "/Users/{baid:int}/PlayHistory"
+
+<MudBreadcrumbs Items="breadcrumbs" Class="p-0 mb-2"></MudBreadcrumbs>
+<MudText Typo="Typo.h4">@Localizer["Play History"]</MudText>
+
+<MudGrid Class="my-8">
+    @if (response is null)
+    {
+        <MudContainer Style="display:flex;margin:50px 0;align-items:center;justify-content:center;">
+            <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+        </MudContainer>
+    }
+    else
+    {
+        @if (LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.GetLoggedInUser().Baid != Baid && !LoginService.IsAdmin)))
+        {
+            <MudItem xs="12">
+                <MudText Align="Align.Center" Class="my-8">
+                    @Localizer["Log In First"]
+                </MudText>
+            </MudItem>
+        }
+        else
+        {
+            <MudItem xs="12">
+                <MudTable Items="@songHistoryDataMap.Values.ToList()" Elevation="0" Outlined="true" Filter=@FilterSongs Virtualize="true" RowsPerPage="25">
+                    <ToolBarContent>
+                        <MudGrid Spacing="2">
+                            <MudItem xs="12" md="4">
+                                <MudText Typo="Typo.h6">@Localizer["Total Plays"]:@songHistoryDataMap.Values.Count</MudText>
+                            </MudItem>
+                            <MudItem xs="12" md="8">
+                                <MudTextField @bind-Value="Search"
+                                              Placeholder=@Localizer["Search by Title, Artist or Date"]
+                                              Variant="Variant.Outlined"
+                                              Clearable="true"
+                                              Immediate="true"
+                                              Margin="Margin.Dense"
+                                              Adornment="Adornment.Start"
+                                              AdornmentIcon="@Icons.Material.Filled.Search"
+                                              IconSize="Size.Medium"/>
+                            </MudItem>
+                        </MudGrid>
+                    </ToolBarContent>
+                    <HeaderContent>
+                        <MudTh>
+                            <MudTableSortLabel InitialDirection="SortDirection.Descending" T="List<SongHistoryData>" SortBy="x => x[0].PlayTime">
+                                @Localizer["Play Time"]
+                            </MudTableSortLabel>
+                        </MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd Style="width:400px">
+                            <MudText>
+                                @CultureInfo.CurrentCulture.TextInfo.ToTitleCase(context[0].PlayTime.ToString(Localizer["DateFormat"]))
+                            </MudText>
+                        </MudTd>
+                    </RowTemplate>
+                    <ChildRowContent>
+                        <MudTable Items="@context" T="SongHistoryData" Context="songHistoryData" Elevation="0" Striped="false" Hover="false" ReadOnly="true">
+                            <HeaderContent>
+                                <MudTh>@Localizer["Difficulty"]</MudTh>
+                                <MudTh>@Localizer["Level"]</MudTh>
+                                <MudTh>@Localizer["Song Name"]</MudTh>
+                                <MudTh>@Localizer["Genre"]</MudTh>
+                                <MudTh>@Localizer["Score"]</MudTh>
+                                <MudTh>@Localizer["Crown"]</MudTh>
+                                <MudTh>@Localizer["Rank"]</MudTh>
+                                <MudTh>@Localizer["Good"]</MudTh>
+                                <MudTh>@Localizer["OK"]</MudTh>
+                                <MudTh>@Localizer["Bad"]</MudTh>
+                                <MudTh>@Localizer["Drumroll"]</MudTh>
+                                <MudTh>@Localizer["MAX Combo"]</MudTh>
+                                <MudTh>@Localizer["Song Number"]</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                @* Difficulty rating *@
+                                <MudTd DataLabel="Difficulty" Style="text-align:center"><MudIcon Style=@IconStyle Icon="@GetDifficultyIcon(songHistoryData.Difficulty)" /></MudTd>
+                                @* Star rating *@
+                                <MudTd DataLabel="Stars" Style="text-align:center">
+                                    <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
+                                        <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
+                                        <MudText Typo="Typo.caption" Style="line-height:1;margin-top:2px;margin-right:2px;">@songHistoryData.Stars</MudText>
+                                    </MudStack>
+                                </MudTd>
+
+                                @* Song title *@
+                                <MudTd DataLabel="Song">
+                                    <div>
+                                        <a href="@($"/Users/{Baid}/Songs/{songHistoryData.SongId}")">
+                                            <MudText Typo="Typo.body2" Style="font-weight:bold">@songHistoryData.MusicName</MudText>
+                                            <MudText Typo="Typo.caption">@songHistoryData.MusicArtist</MudText>
+                                        </a>
+                                    </div>
+                                    <div>
+                                        <MudToggleIconButton Toggled="@songHistoryData.IsFavorite"
+                                                             ToggledChanged="@(async () => await OnFavoriteToggled(songHistoryData))"
+                                                             Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
+                                                             ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
+                                                             Size="Size.Small"
+                                                             ToggledSize="Size.Small"
+                                                             Title="Add to favorites" ToggledTitle="Remove from favorites" />
+                                    </div>
+                                </MudTd>
+
+                                @* Genre display *@
+                                <MudTd DataLabel="Genre" Style="text-align:left">
+                                    <MudChip Style=@GetGenreStyle(songHistoryData.Genre) Size="Size.Small">@GetGenreTitle(songHistoryData.Genre)</MudChip>
+                                </MudTd>
+
+                                <MudTd>@(songHistoryData.Score)</MudTd>
+                                <MudTd Style="text-align:center"><img src="@($"/images/crown_{songHistoryData.Crown}.png")" alt="@(GetCrownText(songHistoryData.Crown))" title="@(GetCrownText(songHistoryData.Crown))" style=@IconStyle /></MudTd>
+                                <MudTd Style="text-align:center">
+                                    @if (songHistoryData.ScoreRank is not ScoreRank.None)
+                                    {
+                                    <img src="@($"/images/rank_{songHistoryData.ScoreRank}.png")" alt="@(GetRankText(songHistoryData.ScoreRank))" title="@(GetRankText(songHistoryData.ScoreRank))" style=@IconStyle />
+                                    }
+                                </MudTd>
+                                <MudTd>@(songHistoryData.GoodCount)</MudTd>
+                                <MudTd>@(songHistoryData.OkCount)</MudTd>
+                                <MudTd>@(songHistoryData.MissCount)</MudTd>
+                                <MudTd>@(songHistoryData.DrumrollCount)</MudTd>
+                                <MudTd>@(songHistoryData.ComboCount)</MudTd>
+                                <MudTd>@(songHistoryData.SongNumber + 1)</MudTd>
+                            </RowTemplate>
+                        </MudTable>
+                    </ChildRowContent>
+                    <PagerContent>
+                        <MudTablePager />
+                    </PagerContent>
+                </MudTable>
+            </MudItem>
+        }
+    }
+</MudGrid>
+

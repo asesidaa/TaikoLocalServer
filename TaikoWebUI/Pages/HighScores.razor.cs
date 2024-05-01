@@ -50,14 +50,14 @@ public partial class HighScores
         // Breadcrumbs
         if (LoginService.IsLoggedIn && !LoginService.IsAdmin)
         {
-            breadcrumbs.Add(new BreadcrumbItem("Dashboard", href: "/"));
+            breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
         }
         else
         {
-            breadcrumbs.Add(new BreadcrumbItem("Users", href: "/Users"));
+            breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
         };
         breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
-        breadcrumbs.Add(new BreadcrumbItem("High Scores", href: $"/Users/{Baid}/HighScores", disabled: false));
+        breadcrumbs.Add(new BreadcrumbItem(Localizer["High Scores"], href: $"/Users/{Baid}/HighScores", disabled: false));
     }
 
     private async Task OnFavoriteToggled(SongBestData data)

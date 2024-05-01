@@ -26,14 +26,14 @@ public partial class AccessCode
 
         if (LoginService.IsLoggedIn && !LoginService.IsAdmin)
         {
-            breadcrumbs.Add(new BreadcrumbItem("Dashboard", href: "/"));
+            breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
         }
         else
         {
-            breadcrumbs.Add(new BreadcrumbItem("Users", href: "/Users"));
+            breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
         };
         breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
-        breadcrumbs.Add(new BreadcrumbItem("Access Codes", href: $"/Users/{Baid}/AccessCode", disabled: false));
+        breadcrumbs.Add(new BreadcrumbItem(Localizer["Access Codes"], href: $"/Users/{Baid}/AccessCode", disabled: false));
     }
 
     private async Task InitializeUser()
