@@ -576,4 +576,22 @@
   <data name="Success" xml:space="preserve">
     <value>Success</value>
   </data>
+  <data name="Ura Oni" xml:space="preserve">
+    <value>Ura</value>
+  </data>
+  <data name="Oni" xml:space="preserve">
+    <value>Extreme</value>
+  </data>
+  <data name="Hard" xml:space="preserve">
+    <value>Hard</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="Easy" xml:space="preserve">
+    <value>Easy</value>
+  </data>
+  <data name="Rows Per Page:" xml:space="preserve">
+    <value>Rows Per Page:</value>
+  </data>
 </root>

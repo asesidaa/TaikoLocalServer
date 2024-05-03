@@ -1,6 +1,7 @@
 ﻿@using TaikoWebUI.Shared.Models
 @using System.Collections.Immutable
 @inject IGameDataService GameDataService
+@inject IJSRuntime Js
 
 <MudDialog>
     <DialogContent>
@@ -38,7 +39,7 @@
                 }
             </RowTemplate>
             <PagerContent>
-                <MudTablePager />
+                <MudTablePager RowsPerPageString=@Localizer["Rows Per Page"] />
             </PagerContent>
         </MudTable>
         <MudText Class="mt-4 d-block" Typo="Typo.caption"> <b>@Localizer["Selected Title:"]</b> @selectedTitle?.TitleName</MudText>
@@ -103,13 +104,15 @@
         title.TitleName.Contains(searchString, StringComparison.InvariantCultureIgnoreCase);
     }
 
-    private void Submit()
+    private async Task Submit()
     {
         if (selectedTitle is not null)
         {
             UserSetting.Title = selectedTitle.TitleName;
             UserSetting.TitlePlateId = selectedTitle.TitleRarity;
         }
+        
+        await Js.InvokeVoidAsync("updateTitleText", UserSetting.Title);
         MudDialog.Close(DialogResult.Ok(true));
     }
 

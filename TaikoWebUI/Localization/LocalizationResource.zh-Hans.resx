@@ -573,4 +573,22 @@
   <data name="Success" xml:space="preserve">
     <value>成功</value>
   </data>
+  <data name="Ura Oni" xml:space="preserve">
+    <value>里譜面</value>
+  </data>
+  <data name="Oni" xml:space="preserve">
+    <value>魔王</value>
+  </data>
+  <data name="Hard" xml:space="preserve">
+    <value>困难</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>普通</value>
+  </data>
+  <data name="Easy" xml:space="preserve">
+    <value>简单</value>
+  </data>
+  <data name="Rows Per Page:" xml:space="preserve">
+    <value>每页行数</value>
+  </data>
 </root>

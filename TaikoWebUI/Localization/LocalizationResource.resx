@@ -369,4 +369,22 @@
   <data name="Success" xml:space="preserve">
     <value />
   </data>
+  <data name="Ura Oni" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Oni" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hard" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Easy" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rows Per Page:" xml:space="preserve">
+    <value />
+  </data>
 </root>

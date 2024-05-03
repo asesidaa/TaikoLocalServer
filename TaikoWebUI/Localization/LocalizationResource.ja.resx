@@ -576,4 +576,22 @@
   <data name="Success" xml:space="preserve">
     <value>成功</value>
   </data>
+  <data name="Ura Oni" xml:space="preserve">
+    <value>おに裏</value>
+  </data>
+  <data name="Oni" xml:space="preserve">
+    <value>おに</value>
+  </data>
+  <data name="Hard" xml:space="preserve">
+    <value>むずかしい</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>ふつう</value>
+  </data>
+  <data name="Easy" xml:space="preserve">
+    <value>かんたん</value>
+  </data>
+  <data name="Rows Per Page:" xml:space="preserve">
+    <value>1ページ当たりの行数</value>
+  </data>
 </root>

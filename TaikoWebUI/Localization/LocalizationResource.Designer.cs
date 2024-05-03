@@ -278,6 +278,15 @@ namespace TaikoWebUI.Localization {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        internal static string Easy {
+            get {
+                return ResourceManager.GetString("Easy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         internal static string Eighth_Dan {
             get {
                 return ResourceManager.GetString("Eighth Dan", resourceCulture);
@@ -389,6 +398,15 @@ namespace TaikoWebUI.Localization {
         internal static string Gold_Full_Combo {
             get {
                 return ResourceManager.GetString("Gold Full Combo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Hard {
+            get {
+                return ResourceManager.GetString("Hard", resourceCulture);
             }
         }
         
@@ -512,6 +530,15 @@ namespace TaikoWebUI.Localization {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        internal static string Normal {
+            get {
+                return ResourceManager.GetString("Normal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         internal static string Not_Cleared {
             get {
                 return ResourceManager.GetString("Not Cleared", resourceCulture);
@@ -524,6 +551,15 @@ namespace TaikoWebUI.Localization {
         internal static string Old_Password {
             get {
                 return ResourceManager.GetString("Old Password", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Oni {
+            get {
+                return ResourceManager.GetString("Oni", resourceCulture);
             }
         }
         
@@ -623,6 +659,15 @@ namespace TaikoWebUI.Localization {
         internal static string Register {
             get {
                 return ResourceManager.GetString("Register", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Rows_Per_Page_ {
+            get {
+                return ResourceManager.GetString("Rows Per Page:", resourceCulture);
             }
         }
         
@@ -785,6 +830,15 @@ namespace TaikoWebUI.Localization {
         internal static string Unregister {
             get {
                 return ResourceManager.GetString("Unregister", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Ura_Oni {
+            get {
+                return ResourceManager.GetString("Ura Oni", resourceCulture);
             }
         }
         
