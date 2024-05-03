@@ -45,7 +45,7 @@ public partial class DaniDojo
     {
         return danClearState switch
         {
-            DanClearState.NotClear => Localizer["Failed"],
+            DanClearState.NotClear => Localizer["Not Cleared"],
             DanClearState.RedNormalClear => Localizer["Red"],
             DanClearState.RedFullComboClear => Localizer["Red Full Combo"],
             DanClearState.RedPerfectClear => Localizer["Red Donderful Combo"],
