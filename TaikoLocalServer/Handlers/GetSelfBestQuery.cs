@@ -27,10 +27,9 @@ public class GetSelfBestQueryHandler(IGameDataService gameDataService, TaikoDbCo
                             requestSet.Contains(datum.SongId) &&
                             (datum.Difficulty == requestDifficulty ||
                              (datum.Difficulty == Difficulty.UraOni && requestDifficulty == Difficulty.Oni)))
-            .OrderBy(datum => datum.SongId)
             .ToListAsync(cancellationToken);
         var selfBestList = new List<CommonSelfBestResponse.SelfBestData>();
-        foreach (var songId in selfBestScores.Select(datum => datum.SongId))
+        foreach (var songId in request.SongIdList)
         {
             var selfBest = new CommonSelfBestResponse.SelfBestData();
             var selfBestScore = selfBestScores
@@ -38,7 +37,7 @@ public class GetSelfBestQueryHandler(IGameDataService gameDataService, TaikoDbCo
                                          datum.Difficulty == requestDifficulty);
             var uraSelfBestScore = selfBestScores
                 .FirstOrDefault(datum => datum.SongId == songId &&
-                                         (datum.Difficulty == Difficulty.UraOni && requestDifficulty == Difficulty.Oni));
+                                         datum.Difficulty == Difficulty.UraOni && requestDifficulty == Difficulty.Oni);
 
             selfBest.SongNo = songId;
             if (selfBestScore is not null)
@@ -54,12 +53,6 @@ public class GetSelfBestQueryHandler(IGameDataService gameDataService, TaikoDbCo
 
             selfBestList.Add(selfBest);
         }
-        // For songs that don't have a score, add them to the response with 0s
-        var missingSongs = requestSet.Except(selfBestList.Select(datum => datum.SongNo));
-        selfBestList.AddRange(missingSongs.Select(songNo => new CommonSelfBestResponse.SelfBestData
-        {
-            SongNo = songNo
-        }));
 
         var response = new CommonSelfBestResponse
         {
