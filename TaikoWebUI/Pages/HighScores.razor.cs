@@ -2,6 +2,7 @@
 using System;
 using Microsoft.JSInterop;
 
+
 namespace TaikoWebUI.Pages;
 
 public partial class HighScores
@@ -24,7 +25,7 @@ public partial class HighScores
 
         userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
 
-        var language = await JSRuntime.InvokeAsync<string>("blazorCulture.get");
+        var language = await JsRuntime.InvokeAsync<string>("blazorCulture.get");
 
         response.SongBestData.ForEach(data =>
         {
@@ -42,13 +43,12 @@ public partial class HighScores
             songBestDataList.Sort((data1, data2) => GameDataService.GetMusicIndexBySongId(data1.SongId)
                                       .CompareTo(GameDataService.GetMusicIndexBySongId(data2.SongId)));
         }
-
-
+        
         // Set last selected tab from local storage
-        selectedDifficultyTab = await localStorage.GetItemAsync<int>($"highScoresTab");
+        selectedDifficultyTab = await LocalStorage.GetItemAsync<int>($"highScoresTab");
 
         // Breadcrumbs
-        if (LoginService.IsLoggedIn && !LoginService.IsAdmin)
+        if (AuthService.IsLoggedIn && !AuthService.IsAdmin)
         {
             breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
         }
@@ -78,6 +78,6 @@ public partial class HighScores
     private async Task OnTabChanged(int index)
     {
         selectedDifficultyTab = index;
-        await localStorage.SetItemAsync($"highScoresTab", selectedDifficultyTab);
+        await LocalStorage.SetItemAsync($"highScoresTab", selectedDifficultyTab);
     }
 }

@@ -1,7 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @inject HttpClient Client
-@inject LoginService LoginService
+@inject AuthService AuthService
 
 <MudThemeProvider IsDarkMode="@isDarkMode" Theme="@taikoWebUiTheme" />
 <MudDialogProvider />
@@ -53,24 +53,10 @@
             isDarkMode = await LocalStorage.GetItemAsync<bool>("isDarkMode");
         }
 
-        if (LoginService.LoginRequired)
+        if (AuthService.LoginRequired)
         {
             // If not logged in, attempt to use JwtToken from local storage to log in
-            var hasJwtToken = await LocalStorage.ContainKeyAsync("authToken");
-            if (hasJwtToken)
-            {
-                var authToken = await LocalStorage.GetItemAsync<string>("authToken");
-                if (!string.IsNullOrWhiteSpace(authToken))
-                {
-                    // Attempt to log in with the token
-                    var loginResult = await LoginService.LoginWithAuthToken(authToken, Client);
-                    if (!loginResult)
-                    {
-                        // Failed to log in with the token, remove it
-                        await LocalStorage.RemoveItemAsync("authToken");
-                    }
-                }
-            }
+            await AuthService.LoginWithAuthToken();
         }
     }
 

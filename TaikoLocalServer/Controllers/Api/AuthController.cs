@@ -2,18 +2,20 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using TaikoLocalServer.Settings;
 using OtpNet;
 using SharedProject.Models.Requests;
+using TaikoLocalServer.Filters;
 
 namespace TaikoLocalServer.Controllers.Api;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(ICredentialService credentialService, ICardService cardService,
-    IUserDatumService userDatumService, IOptions<AuthSettings> settings) : BaseController<AuthController>
+public class AuthController(IAuthService authService, IUserDatumService userDatumService, 
+    IOptions<AuthSettings> settings) : BaseController<AuthController>
 {
     private readonly AuthSettings authSettings = settings.Value;
     
@@ -79,16 +81,17 @@ public class AuthController(ICredentialService credentialService, ICardService c
     }
     
     [HttpPost("Login")]
+    [AllowAnonymous]
     public async Task<IActionResult> Login(LoginRequest loginRequest)
     {
         var accessCode = loginRequest.AccessCode;
         var password = loginRequest.Password;
         
-        var card = await cardService.GetCardByAccessCode(accessCode);
+        var card = await authService.GetCardByAccessCode(accessCode);
         if (card == null) 
             return Unauthorized(new { message = "Access Code Not Found" });
          
-        var credential = await credentialService.GetCredentialByBaid(card.Baid);
+        var credential = await authService.GetCredentialByBaid(card.Baid);
         if (credential == null)
             return Unauthorized(new { message = "Credential Not Found" });
         
@@ -111,8 +114,23 @@ public class AuthController(ICredentialService credentialService, ICardService c
         // Return the token with key authToken
         return Ok(new { authToken });
     }
+    
+    [HttpPost("LoginWithToken")]
+    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
+    public IActionResult LoginWithToken()
+    {
+        var tokenInfo = authService.ExtractTokenInfo(HttpContext);
+        if (tokenInfo == null)
+        {
+            return Unauthorized();
+        }
+
+        return Ok();
+    }
+    
 
     [HttpPost("Register")]
+    [AllowAnonymous]
     public async Task<IActionResult> Register(RegisterRequest registerRequest)
     {
         var accessCode = registerRequest.AccessCode;
@@ -121,11 +139,11 @@ public class AuthController(ICredentialService credentialService, ICardService c
         var registerWithLastPlayTime = registerRequest.RegisterWithLastPlayTime;
         var inviteCode = registerRequest.InviteCode;
         
-        var card = await cardService.GetCardByAccessCode(accessCode);
+        var card = await authService.GetCardByAccessCode(accessCode);
         if (card == null) 
             return Unauthorized(new { message = "Access Code Not Found" });
         
-        var credential = await credentialService.GetCredentialByBaid(card.Baid);
+        var credential = await authService.GetCredentialByBaid(card.Baid);
         if (credential == null)
             return Unauthorized(new { message = "Credential Not Found" });
         
@@ -156,22 +174,41 @@ public class AuthController(ICredentialService credentialService, ICardService c
         var salt = CreateSalt();
         var hashedPassword = ComputeHash(password, salt);
 
-        var result = await credentialService.UpdatePassword(card.Baid, hashedPassword, salt);
+        var result = await authService.UpdatePassword(card.Baid, hashedPassword, salt);
         return result ? Ok() : Unauthorized( new { message = "Failed to Update Password" });
     }
 
     [HttpPost("ChangePassword")]
+    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<IActionResult> ChangePassword(ChangePasswordRequest changePasswordRequest)
     {
+        if (authSettings.LoginRequired)
+        {
+            var tokenInfo = authService.ExtractTokenInfo(HttpContext);
+            if (tokenInfo == null)
+            {
+                return Unauthorized();
+            }
+
+            if (!tokenInfo.Value.isAdmin)
+            {
+                var requestBaid = authService.GetCardByAccessCode(changePasswordRequest.AccessCode).Result?.Baid;
+                if (requestBaid != tokenInfo.Value.baid)
+                {
+                    return Forbid();
+                }
+            }
+        }
+        
         var accessCode = changePasswordRequest.AccessCode;
         var oldPassword = changePasswordRequest.OldPassword;
         var newPassword = changePasswordRequest.NewPassword;
         
-        var card = await cardService.GetCardByAccessCode(accessCode);
+        var card = await authService.GetCardByAccessCode(accessCode);
         if (card == null) 
             return Unauthorized(new { message = "Access Code Not Found" });
         
-        var credential = await credentialService.GetCredentialByBaid(card.Baid);
+        var credential = await authService.GetCredentialByBaid(card.Baid);
         if (credential == null)
             return Unauthorized(new { message = "Credential Not Found" });
         
@@ -187,35 +224,57 @@ public class AuthController(ICredentialService credentialService, ICardService c
         var salt = CreateSalt();
         var hashedNewPassword = ComputeHash(newPassword, salt);
         
-        var result = await credentialService.UpdatePassword(card.Baid, hashedNewPassword, salt);
+        var result = await authService.UpdatePassword(card.Baid, hashedNewPassword, salt);
         return result ? Ok() : Unauthorized( new { message = "Failed to Update Password" });
     }
     
     [HttpPost("ResetPassword")]
+    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<IActionResult> ResetPassword(ResetPasswordRequest resetPasswordRequest)
     {
+        if (authSettings.LoginRequired)
+        {
+            var tokenInfo = authService.ExtractTokenInfo(HttpContext);
+            if (tokenInfo == null)
+            {
+                return Unauthorized();
+            }
+
+            if (!tokenInfo.Value.isAdmin && resetPasswordRequest.Baid != tokenInfo.Value.baid)
+            {
+                return Forbid();
+            }
+        }
+        
         var baid = resetPasswordRequest.Baid;
         
-        var credential = await credentialService.GetCredentialByBaid(baid);
+        var credential = await authService.GetCredentialByBaid(baid);
         if (credential == null)
             return Unauthorized(new { message = "Credential Not Found" });
         
-        var result = await credentialService.UpdatePassword(baid, "", "");
+        var result = await authService.UpdatePassword(baid, "", "");
         return result ? Ok() : Unauthorized( new { message = "Failed to Reset Password" });
     }
 
     [HttpPost("GenerateOtp")]
+    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public IActionResult GenerateOtp(GenerateOtpRequest generateOtpRequest)
     {
+        if (authSettings.LoginRequired)
+        {
+            var tokenInfo = authService.ExtractTokenInfo(HttpContext);
+            if (tokenInfo == null)
+            {
+                return Unauthorized();
+            }
+
+            if (!tokenInfo.Value.isAdmin)
+            {
+                return Forbid();
+            }
+        }
+        
         var totp = MakeTotp(generateOtpRequest.Baid);
         return Ok(new { otp = totp.ComputeTotp() });
-    }
-    
-    [HttpPost("VerifyOtp")]
-    public IActionResult VerifyOtpHandler(VerifyOtpRequest verifyOtpRequest)
-    {
-        if (VerifyOtp(verifyOtpRequest.Otp, verifyOtpRequest.Baid))
-            return Ok();
-        return Unauthorized();
     }
 }

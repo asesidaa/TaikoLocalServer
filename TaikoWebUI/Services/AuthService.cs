@@ -1,4 +1,6 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
@@ -7,10 +9,9 @@ using Blazored.LocalStorage;
 
 namespace TaikoWebUI.Services;
 
-public class LoginService
+public sealed class AuthService
 {
-	public event EventHandler? LoginStatusChanged;
-    public delegate void LoginStatusChangedEventHandler(object? sender, EventArgs e);
+    public event EventHandler? LoginStatusChanged;
     public bool LoginRequired { get; }
     public bool OnlyAdmin { get; }
     private readonly int boundAccessCodeUpperLimit;
@@ -18,11 +19,12 @@ public class LoginService
     public bool AllowUserDelete { get; }
     public bool AllowFreeProfileEditing { get; }
     public bool IsLoggedIn { get; private set; }
-    private User LoggedInUser { get; set; } = new();
+    private uint LoggedInBaid { get; set; }
     public bool IsAdmin { get; private set; }
     private readonly ILocalStorageService localStorage;
-    
-    public LoginService(IOptions<WebUiSettings> settings, ILocalStorageService localStorage)
+    private readonly HttpClient client;
+
+    public AuthService(IOptions<WebUiSettings> settings, ILocalStorageService localStorage, HttpClient client)
     {
         this.localStorage = localStorage;
         IsLoggedIn = false;
@@ -34,14 +36,24 @@ public class LoginService
         RegisterWithLastPlayTime = webUiSettings.RegisterWithLastPlayTime;
         AllowUserDelete = webUiSettings.AllowUserDelete;
         AllowFreeProfileEditing = webUiSettings.AllowFreeProfileEditing;
+        this.client = client;
     }
-    
-    protected virtual void OnLoginStatusChanged()
+
+    private void OnLoginStatusChanged()
     {
         LoginStatusChanged?.Invoke(this, EventArgs.Empty);
     }
+    
+    private static (uint, bool) GetBaidAndIsAdminFromToken(string authToken)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var jwtSecurityToken = handler.ReadJwtToken(authToken);
+        var baid = uint.Parse(jwtSecurityToken.Claims.First(claim => claim.Type == ClaimTypes.Name).Value);
+        var isAdmin = jwtSecurityToken.Claims.First(claim => claim.Type == ClaimTypes.Role).Value == "Admin";
+        return (baid, isAdmin);
+    }
 
-    public async Task<int> Login(string inputAccessCode, string inputPassword, HttpClient client)
+    public async Task<int> Login(string inputAccessCode, string inputPassword)
     {
         // strip spaces or dashes from card number
         inputAccessCode = inputAccessCode.Replace(" ", "").Replace("-", "").Replace(":", "");
@@ -51,7 +63,7 @@ public class LoginService
             AccessCode = inputAccessCode,
             Password = inputPassword
         };
-        
+
         var responseMessage = await client.PostAsJsonAsync("api/Auth/Login", request);
 
         if (!responseMessage.IsSuccessStatusCode)
@@ -76,40 +88,48 @@ public class LoginService
             var responseContent = await responseMessage.Content.ReadAsStringAsync();
             var responseJson = JsonSerializer.Deserialize<Dictionary<string, string>>(responseContent);
             if (responseJson is null) return 5;
-            
+
             var authToken = responseJson["authToken"];
             await localStorage.SetItemAsync("authToken", authToken);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
             
-            return await LoginWithAuthToken(authToken, client) == false ? 5 : 1;
+            var (baid, isAdmin) = GetBaidAndIsAdminFromToken(authToken);
+            IsLoggedIn = true;
+            IsAdmin = isAdmin;
+            LoggedInBaid = baid;
+            OnLoginStatusChanged();
+            return 1;
         }
     }
 
-    public async Task<bool> LoginWithAuthToken(string authToken, HttpClient client)
+    public async Task LoginWithAuthToken()
     {
-        var handler = new JwtSecurityTokenHandler();
-        var jwtSecurityToken = handler.ReadJwtToken(authToken);
+        var hasAuthToken = await localStorage.ContainKeyAsync("authToken");
+        if (!hasAuthToken) return;
         
-        // Check whether token is expired
-        if (jwtSecurityToken.ValidTo < DateTime.UtcNow) return false;
+        // Attempt to get JWT token from local storage
+        var authToken = await localStorage.GetItemAsync<string>("authToken");
+        if (authToken == null) return;
         
-        var baid = jwtSecurityToken.Claims.First(claim => claim.Type == ClaimTypes.Name).Value;
-        var isAdmin = jwtSecurityToken.Claims.First(claim => claim.Type == ClaimTypes.Role).Value == "Admin";
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+        var responseMessage = await client.PostAsync("api/Auth/LoginWithToken", null);
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            // Clear JWT token
+            await localStorage.RemoveItemAsync("authToken");
+            return;
+        }
         
-        var response = await client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
+        var (baid, isAdmin) = GetBaidAndIsAdminFromToken(authToken);
 
-        var user = response?.Users.FirstOrDefault(u => u.Baid == uint.Parse(baid));
-        if (user is null) return false;
-        
         IsLoggedIn = true;
         IsAdmin = isAdmin;
-        LoggedInUser = user;
+        LoggedInBaid = baid;
         OnLoginStatusChanged();
-        return true;
     }
 
     public async Task<int> Register(string inputCardNum, DateTime inputDateTime, string inputPassword,
-        string inputConfirmPassword,
-        DashboardResponse response, HttpClient client, string inviteCode)
+        string inputConfirmPassword, string inviteCode)
     {
         if (OnlyAdmin) return 0;
 
@@ -130,7 +150,7 @@ public class LoginService
         var responseMessage = await client.PostAsJsonAsync("api/Auth/Register", request);
 
         if (responseMessage.IsSuccessStatusCode) return 1;
-        
+
         // Unauthorized, extract specific error message as json
         var responseContent = await responseMessage.Content.ReadAsStringAsync();
         var responseJson = JsonSerializer.Deserialize<Dictionary<string, string>>(responseContent);
@@ -145,25 +165,25 @@ public class LoginService
             _ => 6
         };
     }
-    
+
     public async Task<int> ChangePassword(string inputAccessCode, string inputOldPassword, string inputNewPassword,
-        string inputConfirmNewPassword, DashboardResponse response, HttpClient client)
+        string inputConfirmNewPassword)
     {
         if (OnlyAdmin) return 0;
-        
+
         if (inputNewPassword != inputConfirmNewPassword) return 2;
-        
+
         var request = new ChangePasswordRequest
         {
             AccessCode = inputAccessCode,
             OldPassword = inputOldPassword,
             NewPassword = inputNewPassword
         };
-        
+
         var responseMessage = await client.PostAsJsonAsync("api/Auth/ChangePassword", request);
-        
+
         if (responseMessage.IsSuccessStatusCode) return 1;
-        
+
         // Unauthorized, extract specific error message as json
         var responseContent = await responseMessage.Content.ReadAsStringAsync();
         var responseJson = JsonSerializer.Deserialize<Dictionary<string, string>>(responseContent);
@@ -182,40 +202,39 @@ public class LoginService
     public async Task Logout()
     {
         IsLoggedIn = false;
-        LoggedInUser = new User();
+        LoggedInBaid = 0;
         IsAdmin = false;
-        
+
         // Clear JWT token
         await localStorage.RemoveItemAsync("authToken");
         OnLoginStatusChanged();
     }
 
-    public User GetLoggedInUser()
+    public async Task<User?> GetLoggedInUser()
     {
-        return LoggedInUser;
+        return await client.GetFromJsonAsync<User>($"api/Users/{LoggedInBaid}");
+    }
+    
+    public uint GetLoggedInBaid()
+    {
+        return LoggedInBaid;
     }
 
-    public void ResetLoggedInUser(DashboardResponse? response)
-    {
-        if (response is null) return;
-        var baid = LoggedInUser.Baid;
-        var newLoggedInUser = response.Users.FirstOrDefault(u => u.Baid == baid);
-        if (newLoggedInUser is null) return;
-        LoggedInUser = newLoggedInUser;
-    }
-
-    public async Task<int> BindAccessCode(string inputAccessCode, User user, HttpClient client)
+    public async Task<int> BindAccessCode(string inputAccessCode, User user)
     {
         if (inputAccessCode.Trim() == "") return 4; /*Empty access code*/
         if (!IsLoggedIn && LoginRequired) return 0; /*User not connected and login is required*/
-        if (LoginRequired && !IsAdmin && user.Baid != GetLoggedInUser().Baid) return 5; /*User not admin trying to update someone elses Access Codes*/
+        var loggedInUser = await GetLoggedInUser();
+        if (loggedInUser == null) return 0;
+        if (LoginRequired && !IsAdmin && user.Baid != loggedInUser.Baid) return 5; /*User not admin trying to update someone else's Access Codes*/
         if (user.AccessCodes.Count >= boundAccessCodeUpperLimit) return 2; /*Limit of codes has been reached*/
+
         var request = new BindAccessCodeRequest
         {
             AccessCode = inputAccessCode,
             Baid = user.Baid
         };
-        var responseMessage = await client.PostAsJsonAsync("api/Cards", request);
+        var responseMessage = await client.PostAsJsonAsync("api/Cards/BindAccessCode", request);
         return responseMessage.IsSuccessStatusCode ? 1 : 3;
     }
 }

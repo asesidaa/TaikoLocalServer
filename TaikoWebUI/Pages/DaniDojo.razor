@@ -1,14 +1,14 @@
 ﻿@inject IGameDataService GameDataService
 @inject HttpClient Client
-@inject LoginService LoginService
-@inject IJSRuntime JSRuntime
+@inject AuthService AuthService
+@inject IJSRuntime JsRuntime
 @inject NavigationManager NavigationManager
 
 @page "/Users/{baid:int}/DaniDojo"
 
-@if (LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.GetLoggedInUser().Baid != Baid && !LoginService.IsAdmin)))
+@if (AuthService.LoginRequired && (!AuthService.IsLoggedIn || (AuthService.GetLoggedInBaid() != Baid && !AuthService.IsAdmin)))
 {
-    if (!LoginService.IsLoggedIn)
+    if (!AuthService.IsLoggedIn)
 	{
         NavigationManager.NavigateTo("/Login");
 	}
@@ -370,7 +370,7 @@ else
                                                                     var redRequirement = GetSongBorderCondition(border, songNumber, false);
                                                                     var goldRequirement = GetSongBorderCondition(border, songNumber, true);
                                                                     var barClass = "bar-default";
-                                                                    var resultText = @Localizer["Not Cleared"];
+                                                                    var resultText = Localizer["Not Cleared"];
 
                                                                     <MudItem xs="12" md="4">
                                                                         <MudCard Outlined="true">
@@ -381,7 +381,7 @@ else
                                                                             </MudCardHeader>
                                                                             <MudCardContent>
                                                                                 <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">@Localizer["Result"]</MudText>
-                                                                            @if (bestDataMap.TryGetValue(danId, out var danBestData))
+                                                                            @if (bestDataMap.TryGetValue(danId, out var danBestData) && (danBestData.DanBestStageDataList.Count > songNumber))
                                                                             {
                                                                                 var bestData = GetSongBestFromData((DanConditionType)border.OdaiType, danBestData, songNumber);
                                                                                 if ((DanConditionType)border.OdaiType is DanConditionType.BadCount or DanConditionType.OkCount)
@@ -389,14 +389,15 @@ else
                                                                                     if (bestData <= redRequirement)
                                                                                     {
                                                                                         barClass = "bar-pass-red";
-                                                                                        resultText = @Localizer["Pass"];
+                                                                                        resultText = Localizer["Pass"];
                                                                                     }
 
                                                                                     if (bestData <= goldRequirement)
                                                                                     {
                                                                                         barClass = "bar-pass-gold";
-                                                                                        resultText = @Localizer["Gold"];
+                                                                                        resultText = Localizer["Gold"];
                                                                                     }
+
                                                                                     var resultValue = redRequirement - bestData;
                                                                                     if (bestData >= redRequirement) resultValue = 0;
 
@@ -410,13 +411,13 @@ else
                                                                                     if (bestData >= redRequirement)
                                                                                     {
                                                                                         barClass = "bar-pass-red";
-                                                                                        resultText = @Localizer["Pass"];
+                                                                                        resultText = Localizer["Pass"];
                                                                                     }
 
                                                                                     if (bestData >= goldRequirement)
                                                                                     {
                                                                                         barClass = "bar-pass-gold";
-                                                                                        resultText = @Localizer["Gold"];
+                                                                                        resultText = Localizer["Gold"];
                                                                                     }
 
                                                                                     <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="@(goldRequirement > 0 ? goldRequirement : 1)" Value="@(goldRequirement > 0 ? bestData : 1)">
@@ -426,7 +427,6 @@ else
                                                                                         <MudText Typo="Typo.caption">@resultText</MudText>
                                                                                     </MudStack>
                                                                                 }
-
                                                                             }
                                                                             else
                                                                             {

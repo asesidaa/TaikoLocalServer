@@ -14,6 +14,7 @@ using Throw;
 using Serilog;
 using SharedProject.Utils;
 using TaikoLocalServer.Controllers.Api;
+using TaikoLocalServer.Filters;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -43,7 +44,8 @@ try
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/ServerSettings.json", optional: false, reloadOnChange: false);
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/DataSettings.json", optional: true, reloadOnChange: false);
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/AuthSettings.json", optional: true, reloadOnChange: false);
-
+    builder.Configuration.AddJsonFile("wwwroot/appsettings.json", optional: true, reloadOnChange: true); // Add appsettings.json
+    
     builder.Host.UseSerilog((context, configuration) =>
     {
         configuration
@@ -70,6 +72,11 @@ try
     builder.Services.Configure<ServerSettings>(builder.Configuration.GetSection(nameof(ServerSettings)));
     builder.Services.Configure<DataSettings>(builder.Configuration.GetSection(nameof(DataSettings)));
     builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection(nameof(AuthSettings)));
+
+    // Read LoginRequired setting from appsettings.json
+    var loginRequired = builder.Configuration.GetValue<bool>("LoginRequired");
+    builder.Services.Configure<AuthSettings>(options => { options.LoginRequired = loginRequired; });
+
     // Add Authentication with JWT
     builder.Services.AddAuthentication(options =>
         {
@@ -89,6 +96,8 @@ try
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection(nameof(AuthSettings))["JwtKey"] ?? throw new InvalidOperationException()))
             };
         });
+
+    builder.Services.AddScoped<AuthorizeIfRequiredAttribute>(); // Register the custom attribute
     
     builder.Services.AddControllers().AddProtoBufNet();
     builder.Services.AddDbContext<TaikoDbContext>(option =>
@@ -151,6 +160,10 @@ try
     app.UseStaticFiles();
     app.UseRouting();
     
+    // Enable Authentication and Authorization middleware
+    app.UseAuthentication();
+    app.UseAuthorization();
+    
     app.UseHttpLogging();
     app.Use(async (context, next) =>
     {
@@ -160,6 +173,7 @@ try
         {
             Log.Error("Unknown request from: {RemoteIpAddress} {Method} {Path} {StatusCode}",
                 context.Connection.RemoteIpAddress, context.Request.Method, context.Request.Path, context.Response.StatusCode);
+            Log.Error("Request headers: {Headers}", context.Request.Headers);
         }
     });
     app.MapControllers();

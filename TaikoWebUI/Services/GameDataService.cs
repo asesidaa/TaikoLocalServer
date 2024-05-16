@@ -234,6 +234,11 @@ public class GameDataService : IGameDataService
                 .Select(entry => entry.Rarity)
                 .FirstOrDefault();
 
+            if (!titlePlateIdList.Contains(titleRarity))
+            {
+                titlePlateIdList.Add(titleRarity);
+            }
+            
             set.Add(new Title
             {
                 TitleName = titleWordlistItem.JapaneseText,

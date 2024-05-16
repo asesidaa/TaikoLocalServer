@@ -68,6 +68,12 @@
         <_ContentIncludedByDefault Remove="Pages\Pages\Profile.razor" />
         <_ContentIncludedByDefault Remove="Pages\Pages\Register.razor" />
         <_ContentIncludedByDefault Remove="Pages\Pages\Users.razor" />
+        <_ContentIncludedByDefault Remove="Pages\Pages\Dialogs\OTPDialog.razor" />
+        <_ContentIncludedByDefault Remove="Pages\Pages\Dialogs\ResetPasswordConfirmDialog.razor" />
+        <_ContentIncludedByDefault Remove="Pages\Pages\Login.razor" />
+        <_ContentIncludedByDefault Remove="Pages\Pages\PlayHistory.razor" />
+        <_ContentIncludedByDefault Remove="Pages\Pages\Song.razor" />
+        <_ContentIncludedByDefault Remove="Pages\Pages\SongList.razor" />
     </ItemGroup>
 
     <ItemGroup>
@@ -103,6 +109,15 @@
             <AutoGen>True</AutoGen>
             <DependentUpon>LocalizationResource.resx</DependentUpon>
         </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Pages\Pages\AccessCode.razor" />
+      <UpToDateCheckInput Remove="Pages\Pages\ChangePassword.razor" />
+      <UpToDateCheckInput Remove="Pages\Pages\DaniDojo.razor" />
+      <UpToDateCheckInput Remove="Pages\Pages\Dashboard.razor" />
+      <UpToDateCheckInput Remove="Pages\Pages\Dialogs\AccessCodeDeleteConfirmDialog.razor" />
+      <UpToDateCheckInput Remove="Pages\Pages\Dialogs\ChooseTitleDialog.razor" />
     </ItemGroup>
 
 

@@ -17,52 +17,52 @@
             <MudTable Items="Items" Elevation="0" Striped="true">
                 <HeaderContent>
                     <MudTh>
-                        <MudTableSortLabel InitialDirection="SortDirection.Descending" T="SongPlayDatumDto" SortBy="x => x.PlayTime">
+                        <MudTableSortLabel InitialDirection="SortDirection.Descending" T="SongHistoryData" SortBy="x => x.PlayTime">
                             @Localizer["Play Time"]
                         </MudTableSortLabel>
                     </MudTh>
                     <MudTh>
-                        <MudTableSortLabel T="SongPlayDatumDto" SortBy="x => x.Difficulty">
+                        <MudTableSortLabel T="SongHistoryData" SortBy="x => x.Difficulty">
                             @Localizer["Difficulty"]
                         </MudTableSortLabel>
                     </MudTh>
                     <MudTh>
-                        <MudTableSortLabel T="SongPlayDatumDto" SortBy="x => x.Crown">
+                        <MudTableSortLabel T="SongHistoryData" SortBy="x => x.Crown">
                             @Localizer["Crown"]
                         </MudTableSortLabel>
                     </MudTh>
                     <MudTh>
-                        <MudTableSortLabel T="SongPlayDatumDto" SortBy="x => x.ScoreRank">
+                        <MudTableSortLabel T="SongHistoryData" SortBy="x => x.ScoreRank">
                             @Localizer["Rank"]
                         </MudTableSortLabel>
                     </MudTh>
                     <MudTh>
-                        <MudTableSortLabel T="SongPlayDatumDto" SortBy="x => x.Score">
+                        <MudTableSortLabel T="SongHistoryData" SortBy="x => x.Score">
                             @Localizer["Score"]
                         </MudTableSortLabel>
                     </MudTh>
                     <MudTh>
-                        <MudTableSortLabel T="SongPlayDatumDto" SortBy="x => x.GoodCount">
+                        <MudTableSortLabel T="SongHistoryData" SortBy="x => x.GoodCount">
                             @Localizer["Good"]
                         </MudTableSortLabel>
                     </MudTh>
                     <MudTh>
-                        <MudTableSortLabel T="SongPlayDatumDto" SortBy="x => x.OkCount">
+                        <MudTableSortLabel T="SongHistoryData" SortBy="x => x.OkCount">
                             @Localizer["OK"]
                         </MudTableSortLabel>
                     </MudTh>
                     <MudTh>
-                        <MudTableSortLabel T="SongPlayDatumDto" SortBy="x => x.MissCount">
+                        <MudTableSortLabel T="SongHistoryData" SortBy="x => x.MissCount">
                             @Localizer["Bad"]
                         </MudTableSortLabel>
                     </MudTh>
                     <MudTh>
-                        <MudTableSortLabel T="SongPlayDatumDto" SortBy="x => x.DrumrollCount">
+                        <MudTableSortLabel T="SongHistoryData" SortBy="x => x.DrumrollCount">
                             @Localizer["Drumroll"]
                         </MudTableSortLabel>
                     </MudTh>
                     <MudTh>
-                        <MudTableSortLabel T="SongPlayDatumDto" SortBy="x => x.ComboCount">
+                        <MudTableSortLabel T="SongHistoryData" SortBy="x => x.ComboCount">
                             @Localizer["MAX Combo"]
                         </MudTableSortLabel>
                     </MudTh>
@@ -102,6 +102,6 @@
 </MudCard>
 
 @code {
-    [Parameter] public List<SongPlayDatumDto> Items { get; set; } = new();
+    [Parameter] public List<SongHistoryData> Items { get; set; } = new();
     private const string IconStyle = "width:25px; height:25px;";
 }

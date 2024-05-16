@@ -5,36 +5,33 @@ namespace TaikoLocalServer.Services.Interfaces;
 
 public interface IGameDataService
 {
-	public Task InitializeAsync();
+    public Task InitializeAsync();
 
-	public List<uint> GetMusicList();
+    public List<uint> GetMusicList();
 
-	public List<uint> GetMusicWithUraList();
-
-	public ImmutableDictionary<uint, MusicInfoEntry> GetMusicInfoes();
+    public List<uint> GetMusicWithUraList();
 	
-	public ImmutableDictionary<uint, SongIntroductionData> GetSongIntroductionDictionary();
+    public ImmutableDictionary<uint, SongIntroductionData> GetSongIntroductionDictionary();
 
-	public ImmutableDictionary<uint, MovieData> GetMovieDataDictionary();
+    public ImmutableDictionary<uint, MovieData> GetMovieDataDictionary();
 
-	public ImmutableDictionary<uint, EventFolderData> GetEventFolderDictionary();
+    public ImmutableDictionary<uint, EventFolderData> GetEventFolderDictionary();
 	
-	public ImmutableDictionary<uint, DanData> GetCommonDanDataDictionary();
+    public ImmutableDictionary<uint, DanData> GetCommonDanDataDictionary();
 	
-	public ImmutableDictionary<uint, DanData> GetCommonGaidenDataDictionary();
+    public ImmutableDictionary<uint, DanData> GetCommonGaidenDataDictionary();
 
-	public List<ShopFolderData> GetShopFolderList();
+    public List<ShopFolderData> GetShopFolderList();
 
-	public Dictionary<string, int> GetTokenDataDictionary();
+    public Dictionary<string, int> GetTokenDataDictionary();
 
-	public List<uint> GetLockedSongsList();
+    public List<uint> GetLockedSongsList();
 
-	public List<int> GetCostumeFlagArraySizes();
+    public List<int> GetCostumeFlagArraySizes();
 
-	public int GetTitleFlagArraySize();
+    public int GetTitleFlagArraySize();
 	
-	public int GetToneFlagArraySize();
+    public int GetToneFlagArraySize();
 	
-	public ImmutableDictionary<string, uint> GetQRCodeDataDictionary();
+    public ImmutableDictionary<string, uint> GetQRCodeDataDictionary();
 }
-

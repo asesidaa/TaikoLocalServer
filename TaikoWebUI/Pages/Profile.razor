@@ -2,15 +2,15 @@
 @inject HttpClient Client
 @inject IGameDataService GameDataService
 @inject IDialogService DialogService
-@inject LoginService LoginService
-@inject IJSRuntime Js
+@inject AuthService AuthService
+@inject IJSRuntime JsRuntime
 @inject NavigationManager NavigationManager
 
 @if (response is not null)
 {
-    @if (LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.GetLoggedInUser().Baid != Baid && !LoginService.IsAdmin)))
+    @if (AuthService.LoginRequired && (!AuthService.IsLoggedIn || (AuthService.GetLoggedInBaid() != Baid && !AuthService.IsAdmin)))
     {
-        if (!LoginService.IsLoggedIn)
+        if (!AuthService.IsLoggedIn)
         {
             NavigationManager.NavigateTo("/Login");
         }
@@ -47,7 +47,7 @@
 
                                 <MudGrid>
                                     <MudItem xs="12" md="8">
-                                        @if (LoginService.AllowFreeProfileEditing)
+                                        @if (AuthService.AllowFreeProfileEditing)
                                         {
                                             <MudTextField TextChanged="UpdateTitle" @bind-Value="@response.Title" Label=@Localizer["Title"]/>
                                         }
@@ -55,18 +55,17 @@
                                         {
                                             <MudTextField ReadOnly="true" @bind-Value="@response.Title" Label=@Localizer["Title"]/>
                                         }
-                                        <MudButton Color="Color.Primary" Class="mt-1" Size="Size.Small" OnClick="@((_) => OpenChooseTitleDialog())">
+                                        <MudButton Color="Color.Primary" Class="mt-1" Size="Size.Small" OnClick="@(_ => OpenChooseTitleDialog())">
                                             @Localizer["Select a Title"]
                                         </MudButton>
                                     </MudItem>
-                                    @if (LoginService.AllowFreeProfileEditing)
+                                    @if (AuthService.AllowFreeProfileEditing)
                                     {
                                         <MudItem xs="12" md="4">
                                             <MudSelect @bind-Value="@response.TitlePlateId" Label=@Localizer["Title Plate"]>
-                                                @for (uint i = 0; i < TitlePlateStrings.Length; i++)
+                                                @foreach (var index in titlePlateIdList)
                                                 {
-                                                    var index = i;
-                                                    <MudSelectItem Value="@i">@TitlePlateStrings[index]</MudSelectItem>
+                                                    <MudSelectItem Value="@index">@TitlePlateStrings[index]</MudSelectItem>
                                                 }
                                             </MudSelect>
                                         </MudItem>
@@ -402,17 +401,17 @@ else
 @code {
     private async Task UpdateMyDonName()
     {
-        @if (response is not null) await Js.InvokeVoidAsync("updateMyDonNameText", response.MyDonName);
+        @if (response is not null) await JsRuntime.InvokeVoidAsync("updateMyDonNameText", response.MyDonName);
     }
 
     private async Task UpdateTitle()
     {
-        @if (response is not null) await Js.InvokeVoidAsync("updateTitleText", response.Title);
+        @if (response is not null) await JsRuntime.InvokeVoidAsync("updateTitleText", response.Title);
     }
 
     private async Task UpdateScoreboard(Difficulty difficulty)
     {
         UpdateScores(difficulty);
-        await Js.InvokeVoidAsync("updateScoreboardText", scoresArray);
+        await JsRuntime.InvokeVoidAsync("updateScoreboardText", scoresArray);
     }
 }

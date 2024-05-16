@@ -16,7 +16,7 @@ public partial class PlayHistory
 
     private string Search { get; set; } = string.Empty;
 
-    private string? CurrentLanguage;
+    private string? currentLanguage;
 
     private SongHistoryResponse? response;
 
@@ -31,14 +31,14 @@ public partial class PlayHistory
         response = await Client.GetFromJsonAsync<SongHistoryResponse>($"api/PlayHistory/{(uint)Baid}");
         response.ThrowIfNull();
         
-        CurrentLanguage = await JSRuntime.InvokeAsync<string>("blazorCulture.get");
+        currentLanguage = await JSRuntime.InvokeAsync<string>("blazorCulture.get");
 
         response.SongHistoryData.ForEach(data =>
         {
             var songId = data.SongId;
             data.Genre = GameDataService.GetMusicGenreBySongId(songId);
-            data.MusicName = GameDataService.GetMusicNameBySongId(songId, string.IsNullOrEmpty(CurrentLanguage) ? "ja" : CurrentLanguage);
-            data.MusicArtist = GameDataService.GetMusicArtistBySongId(songId, string.IsNullOrEmpty(CurrentLanguage) ? "ja" : CurrentLanguage);
+            data.MusicName = GameDataService.GetMusicNameBySongId(songId, string.IsNullOrEmpty(currentLanguage) ? "ja" : currentLanguage);
+            data.MusicArtist = GameDataService.GetMusicArtistBySongId(songId, string.IsNullOrEmpty(currentLanguage) ? "ja" : currentLanguage);
             data.Stars = GameDataService.GetMusicStarLevel(songId, data.Difficulty);
             data.ShowDetails = false;
         });
@@ -134,7 +134,7 @@ public partial class PlayHistory
             return true;
         }
 
-        var language = CurrentLanguage ?? "ja";
+        var language = currentLanguage ?? "ja";
         
         if (songHistoryDataList[0].PlayTime
             .ToString("dddd d MMMM yyyy - HH:mm", CultureInfo.CreateSpecificCulture(language))

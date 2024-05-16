@@ -1,7 +1,7 @@
 ﻿@inject IGameDataService GameDataService
 @inject HttpClient Client
-@inject LoginService LoginService
-@inject IJSRuntime JSRuntime
+@inject AuthService AuthService
+@inject IJSRuntime JsRuntime
 @inject NavigationManager NavigationManager
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @using TaikoWebUI.Utilities;
@@ -20,9 +20,9 @@
     }
     else
     {
-        @if (LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.GetLoggedInUser().Baid != Baid && !LoginService.IsAdmin)))
+        @if (AuthService.LoginRequired && (!AuthService.IsLoggedIn || (AuthService.GetLoggedInBaid() != Baid && !AuthService.IsAdmin)))
         {
-            if (!LoginService.IsLoggedIn)
+            if (!AuthService.IsLoggedIn)
             {
                 NavigationManager.NavigateTo("/Login");
             }

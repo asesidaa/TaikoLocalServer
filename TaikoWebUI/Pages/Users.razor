@@ -1,6 +1,5 @@
 ﻿@inject HttpClient Client
-@inject IDialogService DialogService
-@inject LoginService LoginService
+@inject AuthService AuthService
 @inject NavigationManager NavigationManager
 
 @using TaikoWebUI.Components
@@ -9,61 +8,44 @@
 
 <MudText Typo="Typo.h4">@Localizer["Users"]</MudText>
 <MudGrid Class="my-8">
-    @if (response is not null)
-    {
-        // Response received and users are available
-        if (response.Users.Count != 0)
-        {
-            if (LoginService.IsAdmin || !LoginService.LoginRequired) // Admin mode, can see all users
-            {
-                @foreach (var user in response.Users)
-                {
-                    <MudItem xs="12" md="6" lg="4">
-                        <UserCard user="user" />
-                    </MudItem>
-                }
+    @if (!AuthService.LoginRequired || (AuthService.LoginRequired && AuthService.IsAdmin)) {
+        if (users == null) {
+            // Loading...
+            for (uint i = 0; i < 6; i++) {
+                <MudItem xs="12" md="6" lg="4">
+                    <MudCard Outlined="true">
+                        <MudCardContent>
+                            <MudSkeleton Width="30%" Height="42px;" Class="mb-5" />
+                            <MudSkeleton Width="80%" />
+                            <MudSkeleton Width="100%" />
+                        </MudCardContent>
+                        <MudCardActions>
+                            <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
+                                <MudSkeleton Width="64px" Height="40px" />
+                                <MudSkeleton Width="64px" Height="40px" />
+                            </MudStack>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
             }
-            else
+        } else if (users.Count > 0) {
+            foreach (var user in users)
             {
-                // Not admin, redirect
-                @if (!LoginService.IsLoggedIn) // Not logged in, show login form
-                {
-                    NavigationManager.NavigateTo("/Login");
-                }
-                else
-                {
-                    NavigationManager.NavigateTo("/");
-                }
+                <MudItem xs="12" md="6" lg="4">
+                    <UserCard User="user" />
+                </MudItem>
             }
-        }
-        else
-        { // No users in the database
+        } else { // No users in the database
             <MudItem xs="12">
                 <MudText Align="Align.Center" Class="my-8">
                     @Localizer["No data."]
                 </MudText>
             </MudItem>
         }
-    } else
-    {
-        // Loading...
-        @for (uint i = 0; i < 6; i++)
-        {
-            <MudItem xs="12" md="6" lg="4">
-                <MudCard Outlined="true">
-                    <MudCardContent>
-                        <MudSkeleton Width="30%" Height="42px;" Class="mb-5" />
-                        <MudSkeleton Width="80%" />
-                        <MudSkeleton Width="100%" />
-                    </MudCardContent>
-                    <MudCardActions>
-                        <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
-                            <MudSkeleton Width="64px" Height="40px" />
-                            <MudSkeleton Width="64px" Height="40px" />
-                        </MudStack>
-                    </MudCardActions>
-                </MudCard>
-            </MudItem>
-        }
+    } else if (AuthService.LoginRequired && !AuthService.IsLoggedIn) {
+        // Not logged in, redirect
+        NavigationManager.NavigateTo("/Login");
+    } else {
+        NavigationManager.NavigateTo("/");
     }
 </MudGrid>
