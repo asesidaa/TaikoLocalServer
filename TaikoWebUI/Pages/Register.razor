@@ -1,16 +1,16 @@
 ﻿@inject HttpClient Client
 @inject IDialogService DialogService
-@inject LoginService LoginService
+@inject AuthService AuthService
 @inject NavigationManager NavigationManager
 
 @page "/Register"
 
-@if (LoginService.OnlyAdmin || !LoginService.LoginRequired)
+@if (AuthService.OnlyAdmin || !AuthService.LoginRequired)
 {
     Console.WriteLine("Registration is disabled. Redirecting to Dashboard...");
     NavigationManager.NavigateTo("/");
 }
-else if (LoginService.IsLoggedIn)
+else if (AuthService.IsLoggedIn)
 {
 	// User is already logged in. Redirect to dashboard.
 	NavigationManager.NavigateTo("/");
@@ -30,7 +30,7 @@ else
                             <MudTextField @bind-value="accessCode" InputType="InputType.Text" T="string"
                                           FullWidth="true" Required="@true" RequiredError=@Localizer["Access Code is required"]
                                           Label=@Localizer["Access Code"] Variant="Variant.Outlined" Margin="Margin.Dense" />
-                            @if (LoginService.RegisterWithLastPlayTime)
+                            @if (AuthService.RegisterWithLastPlayTime)
                             {
                                 <MudTextField @bind-value="inviteCode" InputType="InputType.Text" T="string"
                                               FullWidth="true" Label=@Localizer["Invite Code (Optional)"]/>

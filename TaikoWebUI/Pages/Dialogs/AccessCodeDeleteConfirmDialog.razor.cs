@@ -1,16 +1,25 @@
-﻿namespace TaikoWebUI.Pages.Dialogs;
+﻿using System.Net.Http.Headers;
+using Blazored.LocalStorage;
+
+namespace TaikoWebUI.Pages.Dialogs;
 
 public partial class AccessCodeDeleteConfirmDialog
 {
 
-    [CascadingParameter]
-    MudDialogInstance MudDialog { get; set; } = null!;
+    [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = null!;
 
     [Parameter]
     public User User { get; set; } = new();
 
     [Parameter]
     public string AccessCode { get; set; } = "";
+    
+    [Inject]
+    public ILocalStorageService LocalStorage { get; set; } = null!;
+    
+    [Inject]
+    public AuthService AuthService { get; set; } = null!;
+
 
     private void Cancel() => MudDialog.Cancel();
 

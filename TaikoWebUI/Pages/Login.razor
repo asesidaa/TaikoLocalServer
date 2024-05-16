@@ -1,12 +1,12 @@
 ﻿@inject HttpClient Client
 @inject IDialogService DialogService
-@inject LoginService LoginService
+@inject AuthService AuthService
 @inject NavigationManager NavigationManager
 
 @page "/Login"
 
 
-@if (!LoginService.IsLoggedIn) 
+@if (!AuthService.IsLoggedIn) 
 {
     // Not logged in, show login form
     <MudContainer>

@@ -19,7 +19,7 @@ builder.Services.AddSingleton<IGameDataService, GameDataService>();
 
 builder.Services.Configure<WebUiSettings>(builder.Configuration.GetSection(nameof(WebUiSettings)));
 
-builder.Services.AddScoped<LoginService>();
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddLocalization();
 builder.Services.AddSingleton<MudLocalizer, ResXMudLocalizer>();
 builder.Services.AddSingleton<ScoreUtils>();

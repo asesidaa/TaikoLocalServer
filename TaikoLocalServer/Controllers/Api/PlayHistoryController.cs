@@ -1,22 +1,36 @@
-﻿using GameDatabase.Entities;
+﻿using Microsoft.Extensions.Options;
 using SharedProject.Models;
 using SharedProject.Models.Responses;
+using TaikoLocalServer.Filters;
+using TaikoLocalServer.Settings;
 
 namespace TaikoLocalServer.Controllers.Api;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PlayHistoryController(
-    IUserDatumService userDatumService,
-    ISongBestDatumService songBestDatumService,
-    ISongPlayDatumService songPlayDatumService)
-    : BaseController<PlayDataController>
+public class PlayHistoryController(IUserDatumService userDatumService, ISongPlayDatumService songPlayDatumService,
+    IAuthService authService, IOptions<AuthSettings> settings) : BaseController<PlayDataController>
 {
-    private readonly ISongBestDatumService songBestDatumService = songBestDatumService;
-
+    private readonly AuthSettings authSettings = settings.Value;
+    
     [HttpGet("{baid}")]
+    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<ActionResult<SongHistoryResponse>> GetSongHistory(uint baid)
     {
+        if (authSettings.LoginRequired)
+        {
+            var tokenInfo = authService.ExtractTokenInfo(HttpContext);
+            if (tokenInfo is null)
+            {
+                return Unauthorized();
+            }
+            
+            if (tokenInfo.Value.baid != baid && !tokenInfo.Value.isAdmin)
+            {
+                return Forbid();
+            }
+        }
+        
         var user = await userDatumService.GetFirstUserDatumOrNull(baid);
         if (user is null)
         {

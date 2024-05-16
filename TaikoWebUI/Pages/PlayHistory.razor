@@ -1,6 +1,6 @@
 @inject IGameDataService GameDataService
 @inject HttpClient Client
-@inject LoginService LoginService
+@inject AuthService AuthService
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 @using TaikoWebUI.Utilities;
@@ -21,7 +21,7 @@
     }
     else
     {
-        @if (LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.GetLoggedInUser().Baid != Baid && !LoginService.IsAdmin)))
+        @if (AuthService.LoginRequired && (!AuthService.IsLoggedIn || (AuthService.GetLoggedInBaid() != Baid && !AuthService.IsAdmin)))
         {
             <MudItem xs="12">
                 <MudText Align="Align.Center" Class="my-8">
@@ -135,7 +135,7 @@
                         </MudTable>
                     </ChildRowContent>
                     <PagerContent>
-                        <MudTablePager RowsPerPageString=@Localizer["Rows Per Page"] />
+                        <MudTablePager RowsPerPageString=@Localizer["Rows Per Page:"] />
                     </PagerContent>
                 </MudTable>
             </MudItem>

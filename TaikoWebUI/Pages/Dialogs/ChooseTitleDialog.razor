@@ -64,6 +64,9 @@
 
     [Parameter]
     public bool AllowFreeProfileEditing { get; set; }
+    
+    [Parameter]
+    public List<uint> TitleUniqueIdList { get; set; } = new();
 
     private IEnumerable<Title> titles = new List<Title>();
 
@@ -78,7 +81,12 @@
         if (!AllowFreeProfileEditing)
         {
             var unlockedTitle = UserSetting.UnlockedTitle;
-            titleSet = titleSet.Where(title => unlockedTitle.Contains((uint)title.TitleId)).ToImmutableHashSet();
+            titleSet = titleSet.Where(title => unlockedTitle.Contains(title.TitleId)).ToImmutableHashSet();
+        }
+        else
+        {
+            // Only allow titles in titleUniqueIdList
+            titleSet = titleSet.Where(title => TitleUniqueIdList.Contains(title.TitleId)).ToImmutableHashSet();
         }
         titles = titleSet.ToImmutableList().Sort((title, title1) => title.TitleId.CompareTo(title1.TitleId));
         var currentTitle = new Title

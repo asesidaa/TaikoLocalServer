@@ -1,4 +1,7 @@
-﻿namespace TaikoWebUI.Pages.Dialogs;
+﻿using System.Net.Http.Headers;
+using Blazored.LocalStorage;
+
+namespace TaikoWebUI.Pages.Dialogs;
 
 public partial class ResetPasswordConfirmDialog
 {
@@ -6,6 +9,12 @@ public partial class ResetPasswordConfirmDialog
 
     [Parameter]
     public User User { get; set; } = new();
+    
+    [Inject]
+    public ILocalStorageService LocalStorage { get; set; } = null!;
+    
+    [Inject]
+    public AuthService AuthService { get; set; } = null!;
 
     private void Cancel() => MudDialog.Cancel();
 

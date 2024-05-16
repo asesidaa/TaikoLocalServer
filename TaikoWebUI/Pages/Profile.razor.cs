@@ -187,7 +187,7 @@ public partial class Profile
         response = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
         response.ThrowIfNull();
 
-        if (LoginService.IsLoggedIn && !LoginService.IsAdmin)
+        if (AuthService.IsLoggedIn && !AuthService.IsAdmin)
         {
             breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
         }
@@ -238,7 +238,7 @@ public partial class Profile
         var unlockedFace = response != null ? response.UnlockedFace : new List<uint>();
         var unlockedPuchi = response != null ? response.UnlockedPuchi : new List<uint>();
         
-        if (LoginService.AllowFreeProfileEditing)
+        if (AuthService.AllowFreeProfileEditing)
         {
             kigurumiUniqueIdList = GameDataService.GetKigurumiUniqueIdList();
             headUniqueIdList = GameDataService.GetHeadUniqueIdList();
@@ -272,7 +272,7 @@ public partial class Profile
     
     private void InitializeAvailableTitlePlates()
     {
-        titlePlateIdList = GameDataService.GetTitlePlateIdList().Except(GameDataService.GetLockedTitlePlateIdList()).ToList();
+        titlePlateIdList = GameDataService.GetTitlePlateIdList().ToList();
         // Cut off ids longer than TitlePlateStrings
         titlePlateIdList = titlePlateIdList.Where(id => id < TitlePlateStrings.Length).Except(GameDataService.GetLockedTitlePlateIdList()).ToList();
     }
@@ -283,15 +283,18 @@ public partial class Profile
         
         var unlockedTitle = response != null ? response.UnlockedTitle : new List<uint>();
         
-        if (LoginService.AllowFreeProfileEditing)
+        if (AuthService.AllowFreeProfileEditing)
         {
             titleUniqueIdList = GameDataService.GetTitleUniqueIdList();
             
             var titles = GameDataService.GetTitles();
             // Lock titles in LockedTitlesList but not in UnlockedTitle
-            var lockedTitleUniqueIdList = GameDataService.GetLockedTitleUniqueIdList().Except(unlockedTitle).ToList();
-            // Lock titles with rarity not in titlePlateIdList and not in unlockedTitle
-            lockedTitleUniqueIdList.AddRange(titles.Where(title => !titlePlateIdList.Contains(title.TitleRarity) && !unlockedTitle.Contains(title.TitleId)).Select(title => title.TitleId));
+            var lockedTitleUniqueIdList = GameDataService.GetLockedTitleUniqueIdList().ToList();
+            var lockedTitlePlateIdList = GameDataService.GetLockedTitlePlateIdList().ToList();
+            // Unlock titles in UnlockedTitlesList
+            lockedTitleUniqueIdList = lockedTitleUniqueIdList.Except(unlockedTitle).ToList();
+            // Find uniqueIds of titles with rarity in lockedTitlePlateIdList
+            lockedTitleUniqueIdList.AddRange(titles.Where(title => lockedTitlePlateIdList.Contains(title.TitleRarity)).Select(title => title.TitleId));
             titleUniqueIdList = titleUniqueIdList.Except(lockedTitleUniqueIdList).ToList();
         }
         else
@@ -387,7 +390,8 @@ public partial class Profile
         var parameters = new DialogParameters<ChooseTitleDialog>
         {
             {x => x.UserSetting, response},
-            {x => x.AllowFreeProfileEditing, LoginService.AllowFreeProfileEditing}
+            {x => x.AllowFreeProfileEditing, AuthService.AllowFreeProfileEditing},
+            {x => x.TitleUniqueIdList, titleUniqueIdList}
         };
         var dialog = DialogService.Show<ChooseTitleDialog>("Player Titles", parameters, options);
         var result = await dialog.Result;

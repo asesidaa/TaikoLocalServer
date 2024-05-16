@@ -25,11 +25,11 @@ public partial class DaniDojo
             .Sort((stageData, otherStageData) => stageData.SongNumber.CompareTo(otherStageData.SongNumber)));
         bestDataMap = response.DanBestDataList.ToDictionary(data => data.DanId);
 
-        CurrentLanguage = await JSRuntime.InvokeAsync<string>("blazorCulture.get");
+        CurrentLanguage = await JsRuntime.InvokeAsync<string>("blazorCulture.get");
 
         userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
 
-        if (LoginService.IsLoggedIn && !LoginService.IsAdmin)
+        if (AuthService.IsLoggedIn && !AuthService.IsAdmin)
         {
             breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
         }
@@ -98,6 +98,7 @@ public partial class DaniDojo
     private static uint GetSongBestFromData(DanConditionType type, DanBestData data, int songNumber)
     {
         songNumber.Throw().IfOutOfRange(0, 2);
+        
         return type switch
         {
             DanConditionType.SoulGauge => throw new ArgumentException("Soul gauge should not be here"),

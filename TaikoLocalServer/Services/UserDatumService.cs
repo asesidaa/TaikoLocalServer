@@ -3,18 +3,8 @@ using Throw;
 
 namespace TaikoLocalServer.Services;
 
-public class UserDatumService : IUserDatumService
+public class UserDatumService(TaikoDbContext context) : IUserDatumService
 {
-    private readonly TaikoDbContext context;
-
-    private readonly ILogger<UserDatumService> logger;
-
-    public UserDatumService(TaikoDbContext context, ILogger<UserDatumService> logger)
-    {
-        this.context = context;
-        this.logger = logger;
-    }
-
     public async Task<UserDatum?> GetFirstUserDatumOrNull(uint baid)
     {
         return await context.UserData
