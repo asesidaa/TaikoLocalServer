@@ -23,20 +23,23 @@
     {
         @if (AuthService.LoginRequired && (!AuthService.IsLoggedIn || (AuthService.GetLoggedInBaid() != Baid && !AuthService.IsAdmin)))
         {
-            <MudItem xs="12">
-                <MudText Align="Align.Center" Class="my-8">
-                    @Localizer["Log In First"]
-                </MudText>
-            </MudItem>
+            if (!AuthService.IsLoggedIn)
+            {
+                NavigationManager.NavigateTo("/Login");
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/");
+            }
         }
         else
         {
             <MudItem xs="12">
-                <MudTable Items="@songHistoryDataMap.Values.ToList()" Elevation="0" Outlined="true" Filter=@FilterSongs Virtualize="true" RowsPerPage="25">
+                <MudTable Items="@songHistoryDataMap.Values.ToList()" Elevation="0" Filter=@FilterSongs Virtualize="true" RowsPerPage="25" Bordered="false" Dense="true">
                     <ToolBarContent>
-                        <MudGrid Spacing="2">
+                        <MudGrid Spacing="2" Justify="Justify.SpaceBetween">
                             <MudItem xs="12" md="4">
-                                <MudText Typo="Typo.h6">@Localizer["Total Plays"]:@songHistoryDataMap.Values.Count</MudText>
+                                <MudText Typo="Typo.caption">@Localizer["Total Credits Played"]: @songHistoryDataMap.Values.Count</MudText>
                             </MudItem>
                             <MudItem xs="12" md="8">
                                 <MudTextField @bind-Value="Search"
@@ -59,18 +62,18 @@
                         </MudTh>
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTd Style="width:400px">
-                            <MudText>
+                        <div class="mt-4 mb-1">
+                            <MudText Typo="Typo.subtitle2">
                                 @CultureInfo.CurrentCulture.TextInfo.ToTitleCase(context[0].PlayTime.ToString(Localizer["DateFormat"]))
                             </MudText>
-                        </MudTd>
+                        </div>
                     </RowTemplate>
                     <ChildRowContent>
-                        <MudTable Items="@context" T="SongHistoryData" Context="songHistoryData" Elevation="0" Striped="false" Hover="false" ReadOnly="true">
+                        <MudTable Items="@context" T="SongHistoryData" Context="songHistoryData" Elevation="0" Striped="false" Hover="false" ReadOnly="true" Outlined="true" Class="mb-8">
                             <HeaderContent>
                                 <MudTh>@Localizer["Difficulty"]</MudTh>
                                 <MudTh>@Localizer["Level"]</MudTh>
-                                <MudTh>@Localizer["Song Name"]</MudTh>
+                                <MudTh Style="width:500px">@Localizer["Song Name"]</MudTh>
                                 <MudTh>@Localizer["Genre"]</MudTh>
                                 <MudTh>@Localizer["Score"]</MudTh>
                                 <MudTh>@Localizer["Crown"]</MudTh>
@@ -80,7 +83,6 @@
                                 <MudTh>@Localizer["Bad"]</MudTh>
                                 <MudTh>@Localizer["Drumroll"]</MudTh>
                                 <MudTh>@Localizer["MAX Combo"]</MudTh>
-                                <MudTh>@Localizer["Song Number"]</MudTh>
                             </HeaderContent>
                             <RowTemplate>
                                 @* Difficulty rating *@
@@ -95,21 +97,23 @@
 
                                 @* Song title *@
                                 <MudTd DataLabel="Song">
-                                    <div>
-                                        <a href="@($"/Users/{Baid}/Songs/{songHistoryData.SongId}")">
-                                            <MudText Typo="Typo.body2" Style="font-weight:bold">@songHistoryData.MusicName</MudText>
-                                            <MudText Typo="Typo.caption">@songHistoryData.MusicArtist</MudText>
-                                        </a>
-                                    </div>
-                                    <div>
-                                        <MudToggleIconButton Toggled="@songHistoryData.IsFavorite"
-                                                             ToggledChanged="@(async () => await OnFavoriteToggled(songHistoryData))"
-                                                             Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
-                                                             ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
-                                                             Size="Size.Small"
-                                                             ToggledSize="Size.Small"
-                                                             Title="Add to favorites" ToggledTitle="Remove from favorites" />
-                                    </div>
+                                    <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                        <div>    
+                                            <a href="@($"/Users/{Baid}/Songs/{songHistoryData.SongId}")">
+                                                <MudText Typo="Typo.body2" Style="font-weight:bold">@songHistoryData.MusicName</MudText>
+                                                <MudText Typo="Typo.caption">@songHistoryData.MusicArtist</MudText>
+                                            </a>
+                                        </div>
+                                        <div>
+                                            <MudToggleIconButton Toggled="@songHistoryData.IsFavorite"
+                                                                 ToggledChanged="@(async () => await OnFavoriteToggled(songHistoryData))"
+                                                                 Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
+                                                                 ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
+                                                                 Size="Size.Small"
+                                                                 ToggledSize="Size.Small"
+                                                                 Title="Add to favorites" ToggledTitle="Remove from favorites" />
+                                        </div>
+                                    </MudStack>    
                                 </MudTd>
 
                                 @* Genre display *@
@@ -130,7 +134,6 @@
                                 <MudTd>@(songHistoryData.MissCount)</MudTd>
                                 <MudTd>@(songHistoryData.DrumrollCount)</MudTd>
                                 <MudTd>@(songHistoryData.ComboCount)</MudTd>
-                                <MudTd>@(songHistoryData.SongNumber + 1)</MudTd>
                             </RowTemplate>
                         </MudTable>
                     </ChildRowContent>
