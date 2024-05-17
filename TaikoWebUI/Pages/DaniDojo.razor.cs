@@ -25,54 +25,54 @@ public partial class DaniDojo
             .Sort((stageData, otherStageData) => stageData.SongNumber.CompareTo(otherStageData.SongNumber)));
         bestDataMap = response.DanBestDataList.ToDictionary(data => data.DanId);
 
-        CurrentLanguage = await JSRuntime.InvokeAsync<string>("blazorCulture.get");
+        CurrentLanguage = await JsRuntime.InvokeAsync<string>("blazorCulture.get");
 
         userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
 
-        if (LoginService.IsLoggedIn && !LoginService.IsAdmin)
+        if (AuthService.IsLoggedIn && !AuthService.IsAdmin)
         {
-            breadcrumbs.Add(new BreadcrumbItem("Dashboard", href: "/"));
+            breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
         }
         else
         {
-            breadcrumbs.Add(new BreadcrumbItem("Users", href: "/Users"));
+            breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
         };
         breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
-        breadcrumbs.Add(new BreadcrumbItem("Dani Dojo", href: $"/Users/{Baid}/DaniDojo", disabled: false));
+        breadcrumbs.Add(new BreadcrumbItem(Localizer["Dani Dojo"], href: $"/Users/{Baid}/DaniDojo", disabled: false));
     }
 
-    private static string GetDanClearStateString(DanClearState danClearState)
+    private string GetDanClearStateString(DanClearState danClearState)
     {
         return danClearState switch
         {
-            DanClearState.NotClear => "Not Cleared",
-            DanClearState.RedNormalClear => "Red Clear",
-            DanClearState.RedFullComboClear => "Red Full Combo",
-            DanClearState.RedPerfectClear => "Red Donderful Combo",
-            DanClearState.GoldNormalClear => "Gold Clear",
-            DanClearState.GoldFullComboClear => "Gold Full Combo",
-            DanClearState.GoldPerfectClear => "Gold Donderful Combo",
+            DanClearState.NotClear => Localizer["Not Cleared"],
+            DanClearState.RedNormalClear => Localizer["Red"],
+            DanClearState.RedFullComboClear => Localizer["Red Full Combo"],
+            DanClearState.RedPerfectClear => Localizer["Red Donderful Combo"],
+            DanClearState.GoldNormalClear => Localizer["Gold"],
+            DanClearState.GoldFullComboClear => Localizer["Gold Full Combo"],
+            DanClearState.GoldPerfectClear => Localizer["Gold Donderful Combo"],
             _ => ""
         };
     }
 
-    private static string GetDanRequirementString(DanConditionType danConditionType)
+    private string GetDanRequirementString(DanConditionType danConditionType)
     {
         return danConditionType switch
         {
-            DanConditionType.TotalHitCount => "Total Hits",
-            DanConditionType.GoodCount => "Good Hits",
-            DanConditionType.OkCount => "OK Hits",
-            DanConditionType.BadCount => "Bad Hits",
-            DanConditionType.SoulGauge => "Soul Gauge",
-            DanConditionType.DrumrollCount => "Drumroll Hits",
-            DanConditionType.Score => "Score",
-            DanConditionType.ComboCount => "MAX Combo",
+            DanConditionType.TotalHitCount => Localizer["Total Hits"],
+            DanConditionType.GoodCount => Localizer["Good"],
+            DanConditionType.OkCount => Localizer["OK"],
+            DanConditionType.BadCount => Localizer["Bad"],
+            DanConditionType.SoulGauge => Localizer["Soul Gauge"],
+            DanConditionType.DrumrollCount => Localizer["Drumroll"],
+            DanConditionType.Score => Localizer["Score"],
+            DanConditionType.ComboCount => Localizer["MAX Combo"],
             _ => ""
         };
     }
 
-    private static string GetDanRequirementTitle(DanData.OdaiBorder data)
+    private string GetDanRequirementTitle(DanData.OdaiBorder data)
     {
         var danConditionType = (DanConditionType)data.OdaiType;
 
@@ -98,6 +98,7 @@ public partial class DaniDojo
     private static uint GetSongBestFromData(DanConditionType type, DanBestData data, int songNumber)
     {
         songNumber.Throw().IfOutOfRange(0, 2);
+        
         return type switch
         {
             DanConditionType.SoulGauge => throw new ArgumentException("Soul gauge should not be here"),
@@ -134,30 +135,30 @@ public partial class DaniDojo
         };
     }
 
-    private static string GetDanTitle(string title)
+    private string GetDanTitle(string title)
     {
         return title switch
         {
-            "5kyuu" => "Fifth Kyuu",
-            "4kyuu" => "Fourth Kyuu",
-            "3kyuu" => "Third Kyuu",
-            "2kyuu" => "Second Kyuu",
-            "1kyuu" => "First Kyuu",
-            "1dan" => "First Dan",
-            "2dan" => "Second Dan",
-            "3dan" => "Third Dan",
-            "4dan" => "Fourth Dan",
-            "5dan" => "Fifth Dan",
-            "6dan" => "Sixth Dan",
-            "7dan" => "Seventh Dan",
-            "8dan" => "Eighth Dan",
-            "9dan" => "Ninth Dan",
-            "10dan" => "Tenth Dan",
-            "11dan" => "Kuroto",
-            "12dan" => "Meijin",
-            "13dan" => "Chojin",
-            "14dan" => "Tatsujin",
-            "15dan" => "Gaiden",
+            "5kyuu" => Localizer["Fifth Kyuu"],
+            "4kyuu" => Localizer["Fourth Kyuu"],
+            "3kyuu" => Localizer["Third Kyuu"],
+            "2kyuu" => Localizer["Second Kyuu"],
+            "1kyuu" => Localizer["First Kyuu"],
+            "1dan" => Localizer["First Dan"],
+            "2dan" => Localizer["Second Dan"],
+            "3dan" => Localizer["Third Dan"],
+            "4dan" => Localizer["Fourth Dan"],
+            "5dan" => Localizer["Fifth Dan"],
+            "6dan" => Localizer["Sixth Dan"],
+            "7dan" => Localizer["Seventh Dan"],
+            "8dan" => Localizer["Eighth Dan"],
+            "9dan" => Localizer["Ninth Dan"],
+            "10dan" => Localizer["Tenth Dan"],
+            "11dan" => Localizer["Kuroto"],
+            "12dan" => Localizer["Meijin"],
+            "13dan" => Localizer["Chojin"],
+            "14dan" => Localizer["Tatsujin"],
+            "15dan" => Localizer["Gaiden"],
             _ => ""
         };
     }

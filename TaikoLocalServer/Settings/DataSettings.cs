@@ -18,5 +18,9 @@ public class DataSettings
 
 	public string LockedSongsDataFileName { get; set; } = "locked_songs_data.json";
 	
-	public string QRCodeDataFileName { get; set; } = "qrcode_data.json";
+	public string QrCodeDataFileName { get; set; } = "qrcode_data.json";
+	
+	public string LockedCostumeDataFileName { get; set; } = "locked_costume_data.json";
+
+	public string LockedTitleDataFileName { get; set; } = "locked_title_data.json";
 }

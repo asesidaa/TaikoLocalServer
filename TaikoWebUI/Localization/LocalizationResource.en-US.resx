@@ -117,31 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="dashboard" xml:space="preserve">
+  <data name="Dashboard" xml:space="preserve">
     <value>Dashboard</value>
   </data>
-  <data name="users" xml:space="preserve">
+  <data name="Users" xml:space="preserve">
     <value>Users</value>
   </data>
   <data name="edit profile" xml:space="preserve">
     <value>Edit Profile</value>
   </data>
-  <data name="user" xml:space="preserve">
+  <data name="User" xml:space="preserve">
     <value>User</value>
   </data>
-  <data name="view play data" xml:space="preserve">
+  <data name="View Play Data" xml:space="preserve">
     <value>View Play Data</value>
   </data>
-  <data name="high scores" xml:space="preserve">
-    <value>Songs</value>
-  </data>
-  <data name="dani dojo" xml:space="preserve">
-    <value>Dani Dojo</value>
+  <data name="High Scores" xml:space="preserve">
+    <value>High Scores</value>
   </data>
   <data name="Show QR Code" xml:space="preserve">
     <value>Show QR Code</value>
   </data>
-  <data name="Manage Access Codes" xml:space="preserve">
+  <data name="Access Codes" xml:space="preserve">
     <value>Manage Access Codes</value>
   </data>
   <data name="Change Password" xml:space="preserve">
@@ -156,7 +153,7 @@
   <data name="Welcome to TaikoWebUI!" xml:space="preserve">
     <value>Welcome to TaikoWebUI!</value>
   </data>
-  <data name="Song" xml:space="preserve">
+  <data name="Song Name" xml:space="preserve">
     <value>Song</value>
   </data>
   <data name="Level" xml:space="preserve">
@@ -207,7 +204,7 @@
   <data name="Total Donderful Combos" xml:space="preserve">
     <value>Total Donderful Combos</value>
   </data>
-  <data name="Key_01" xml:space="preserve">
+  <data name="Song List" xml:space="preserve">
     <value>Songs</value>
   </data>
   <data name="Hide" xml:space="preserve">
@@ -229,9 +226,9 @@
     <value>Crown</value>
   </data>
   <data name="No data." xml:space="preserve">
-    <value>No data.</value>
+    <value>No data</value>
   </data>
-  <data name="Key_02" xml:space="preserve">
+  <data name="Log In First" xml:space="preserve">
     <value>"Please log in by clicking on "Users" tab first.</value>
   </data>
   <data name="Total Hits" xml:space="preserve">
@@ -240,20 +237,20 @@
   <data name="Soul Gauge" xml:space="preserve">
     <value>Soul Gauge</value>
   </data>
-  <data name="Songs" xml:space="preserve">
+  <data name="Course Songs" xml:space="preserve">
     <value>Songs</value>
   </data>
   <data name="Conditions" xml:space="preserve">
     <value>Conditions</value>
   </data>
   <data name="Red" xml:space="preserve">
-    <value>Red</value>
+    <value>Red Clear</value>
   </data>
   <data name="Gold" xml:space="preserve">
     <value>Gold</value>
   </data>
-  <data name="Failed" xml:space="preserve">
-    <value>Failed</value>
+  <data name="Not Cleared" xml:space="preserve">
+    <value>Not Cleared</value>
   </data>
   <data name="Pass" xml:space="preserve">
     <value>Pass</value>
@@ -267,7 +264,7 @@
   <data name="Stage" xml:space="preserve">
     <value>Stage</value>
   </data>
-  <data name="Key_03" xml:space="preserve">
+  <data name="Dani Dojo" xml:space="preserve">
     <value>Dani Dojo</value>
   </data>
   <data name="Profile" xml:space="preserve">
@@ -383,5 +380,218 @@
   </data>
   <data name="DateFormat" xml:space="preserve">
     <value>MM/dd/yyyy h:mm:ss tt</value>
+  </data>
+  <data name="Generate Invite Code" xml:space="preserve">
+    <value>Generate Invite Code</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="Log In" xml:space="preserve">
+    <value>Log In</value>
+  </data>
+  <data name="Log Out" xml:space="preserve">
+    <value>Log Out</value>
+  </data>
+  <data name="Play Data" xml:space="preserve">
+    <value>Play Data</value>
+  </data>
+  <data name="Add Access Code" xml:space="preserve">
+    <value>Add Access Code</value>
+  </data>
+  <data name="New Access Code" xml:space="preserve">
+    <value>New Access Code</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Access Code" xml:space="preserve">
+    <value>Access Code</value>
+  </data>
+  <data name="Old Password" xml:space="preserve">
+    <value>Old Password</value>
+  </data>
+  <data name="New Password" xml:space="preserve">
+    <value>New Password</value>
+  </data>
+  <data name="Confirm New Password" xml:space="preserve">
+    <value>Confirm New Password</value>
+  </data>
+  <data name="Dialog OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="QR Code" xml:space="preserve">
+    <value>QR Code</value>
+  </data>
+  <data name="Chojin" xml:space="preserve">
+    <value>Chojin</value>
+  </data>
+  <data name="Eighth Dan" xml:space="preserve">
+    <value>Eighth Dan</value>
+  </data>
+  <data name="Fifth Dan" xml:space="preserve">
+    <value>5th Dan</value>
+  </data>
+  <data name="Fifth Kyuu" xml:space="preserve">
+    <value>5th Kyuu</value>
+  </data>
+  <data name="First Dan" xml:space="preserve">
+    <value>1st Dan</value>
+  </data>
+  <data name="First Kyuu" xml:space="preserve">
+    <value>1st Kyuu</value>
+  </data>
+  <data name="Fourth Dan" xml:space="preserve">
+    <value>4th Dan</value>
+  </data>
+  <data name="Fourth Kyuu" xml:space="preserve">
+    <value>4th Kyuu</value>
+  </data>
+  <data name="Gaiden" xml:space="preserve">
+    <value>Gaiden</value>
+  </data>
+  <data name="Kuroto" xml:space="preserve">
+    <value>Kuroto</value>
+  </data>
+  <data name="Meijin" xml:space="preserve">
+    <value>Meijin</value>
+  </data>
+  <data name="Ninth Dan" xml:space="preserve">
+    <value>9th Dan</value>
+  </data>
+  <data name="Second Dan" xml:space="preserve">
+    <value>2nd Dan</value>
+  </data>
+  <data name="Second Kyuu" xml:space="preserve">
+    <value>2nd Kyuu</value>
+  </data>
+  <data name="Seventh Dan" xml:space="preserve">
+    <value>7th Dan</value>
+  </data>
+  <data name="Sixth Dan" xml:space="preserve">
+    <value>6th Dan</value>
+  </data>
+  <data name="Tatsujin" xml:space="preserve">
+    <value>Tatsujin</value>
+  </data>
+  <data name="Tenth Dan" xml:space="preserve">
+    <value>10th Dan</value>
+  </data>
+  <data name="Third Dan" xml:space="preserve">
+    <value>3rd Dan</value>
+  </data>
+  <data name="Third Kyuu" xml:space="preserve">
+    <value>3rd Kyuu</value>
+  </data>
+  <data name="Gold Full Combo" xml:space="preserve">
+    <value>Gold Full Combo</value>
+  </data>
+  <data name="Red Donderful Combo" xml:space="preserve">
+    <value>Red Donderful Combo</value>
+  </data>
+  <data name="Red Full Combo" xml:space="preserve">
+    <value>Red Full Combo</value>
+  </data>
+  <data name="Gold Donderful Combo" xml:space="preserve">
+    <value>Gold Donderful Combo</value>
+  </data>
+  <data name="Song Title / Artist" xml:space="preserve">
+    <value>Song Title / Artist</value>
+  </data>
+  <data name="Search by Title or Artist" xml:space="preserve">
+    <value>Search by Title or Artist</value>
+  </data>
+  <data name="Filter by Genre" xml:space="preserve">
+    <value>Filter by Genre</value>
+  </data>
+  <data name="Play History" xml:space="preserve">
+    <value>Play History</value>
+  </data>
+  <data name="No Play History Found" xml:space="preserve">
+    <value>No play history found</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Play Time" xml:space="preserve">
+    <value>Play Time</value>
+  </data>
+  <data name="Rank" xml:space="preserve">
+    <value>Rank</value>
+  </data>
+  <data name="Difficulty" xml:space="preserve">
+    <value>Difficulty</value>
+  </data>
+  <data name="Song Number" xml:space="preserve">
+    <value>Song Number</value>
+  </data>
+  <data name="Search by Title, Artist or Date" xml:space="preserve">
+    <value>Search by Title, Artist or Date</value>
+  </data>
+  <data name="Unregister" xml:space="preserve">
+    <value>Unregister</value>
+  </data>
+  <data name="and" xml:space="preserve">
+    <value>and</value>
+  </data>
+  <data name="other access code(s)" xml:space="preserve">
+    <value>other Access Code(s)</value>
+  </data>
+  <data name="Copy to Clipboard" xml:space="preserve">
+    <value>Copy to Clipboard</value>
+  </data>
+  <data name="Invite Code" xml:space="preserve">
+    <value>Invite Code</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Access Code is Required" xml:space="preserve">
+    <value>Access Code is required</value>
+  </data>
+  <data name="&quot;Invite Code (Optional)&quot;" xml:space="preserve">
+    <value>"Invite Code (Optional)"</value>
+  </data>
+  <data name="Last Play Date" xml:space="preserve">
+    <value>Last Play Date</value>
+  </data>
+  <data name="Last Play Time(5 Min Around Credit End)" xml:space="preserve">
+    <value>Last Play Time(5 Min Around Credit End)</value>
+  </data>
+  <data name="Password is Required" xml:space="preserve">
+    <value>Password is required</value>
+  </data>
+  <data name="Confirm Password" xml:space="preserve">
+    <value>Confirm Password</value>
+  </data>
+  <data name="Confirm Password is Required" xml:space="preserve">
+    <value>Confirm password is required</value>
+  </data>
+  <data name="Unknown Error" xml:space="preserve">
+    <value>Unknown Error</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="Ura Oni" xml:space="preserve">
+    <value>Ura</value>
+  </data>
+  <data name="Oni" xml:space="preserve">
+    <value>Extreme</value>
+  </data>
+  <data name="Hard" xml:space="preserve">
+    <value>Hard</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="Easy" xml:space="preserve">
+    <value>Easy</value>
+  </data>
+  <data name="Rows Per Page:" xml:space="preserve">
+    <value>Rows Per Page:</value>
   </data>
 </root>

@@ -1,12 +1,12 @@
 ﻿@inject HttpClient Client
 @inject IDialogService DialogService
-@inject LoginService LoginService
+@inject AuthService AuthService
 @inject NavigationManager NavigationManager
 
 @page "/Login"
 
 
-@if (!LoginService.IsLoggedIn) 
+@if (!AuthService.IsLoggedIn) 
 {
     // Not logged in, show login form
     <MudContainer>
@@ -21,11 +21,11 @@
                             <div style="display:flex;flex-direction:column;gap:15px;">
                                 <MudTextField @bind-value="inputAccessCode" InputType="InputType.Text" T="string"
                                                 FullWidth="true" Required="@true" RequiredError="Access code is required"
-                                                Label="Access Code" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                                                Label=@Localizer["Access Code"] Variant="Variant.Outlined" Margin="Margin.Dense" />
                                 <MudTextField @bind-Value="inputPassword" InputType="InputType.Password"
                                                 T="string" FullWidth="true" Required="@true"
                                                 RequiredError="Password is required"
-                                                Label="Password" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                                                Label=@Localizer["Password"] Variant="Variant.Outlined" Margin="Margin.Dense" />
                                 <MudButton OnClick="OnLogin" FullWidth="true" StartIcon="@Icons.Material.Filled.Login" Color="Color.Primary" Variant="Variant.Filled">@Localizer["Log In"]</MudButton>
                             </div>
                         </MudForm>

@@ -1,22 +1,36 @@
-﻿using SharedProject.Models;
+﻿using Microsoft.Extensions.Options;
+using SharedProject.Models;
 using SharedProject.Utils;
+using TaikoLocalServer.Filters;
+using TaikoLocalServer.Settings;
 
 namespace TaikoLocalServer.Controllers.Api;
 
 [ApiController]
 [Route("/api/[controller]/{baid}")]
-public class UserSettingsController : BaseController<UserSettingsController>
+public class UserSettingsController(IUserDatumService userDatumService, IAuthService authService, 
+    IOptions<AuthSettings> settings) : BaseController<UserSettingsController>
 {
-    private readonly IUserDatumService userDatumService;
-
-    public UserSettingsController(IUserDatumService userDatumService)
-    {
-        this.userDatumService = userDatumService;
-    }
-
+    private readonly AuthSettings authSettings = settings.Value;
+    
     [HttpGet]
+    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<ActionResult<UserSetting>> GetUserSetting(uint baid)
     {
+        if (authSettings.LoginRequired)
+        {
+            var tokenInfo = authService.ExtractTokenInfo(HttpContext);
+            if (tokenInfo is null)
+            {
+                return Unauthorized();
+            }
+            
+            if (tokenInfo.Value.baid != baid && !tokenInfo.Value.isAdmin)
+            {
+                return Forbid();
+            }
+        }
+        
         var user = await userDatumService.GetFirstUserDatumOrNull(baid);
 
         if (user is null)
@@ -75,8 +89,23 @@ public class UserSettingsController : BaseController<UserSettingsController>
     }
 
     [HttpPost]
+    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<IActionResult> SaveUserSetting(uint baid, UserSetting userSetting)
     {
+        if (authSettings.LoginRequired)
+        {
+            var tokenInfo = authService.ExtractTokenInfo(HttpContext);
+            if (tokenInfo is null)
+            {
+                return Unauthorized();
+            }
+            
+            if (tokenInfo.Value.baid != baid && !tokenInfo.Value.isAdmin)
+            {
+                return Forbid();
+            }
+        }
+        
         var user = await userDatumService.GetFirstUserDatumOrNull(baid);
 
         if (user is null)

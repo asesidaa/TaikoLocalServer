@@ -2,7 +2,7 @@
 
 namespace TaikoLocalServer.Models;
 
-public class MusicInfoes
+public class MusicInfos
 {
 	[JsonPropertyName("items")]
 	public List<MusicInfoEntry> MusicInfoEntries { get; set; } = new();

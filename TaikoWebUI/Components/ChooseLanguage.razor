@@ -8,7 +8,7 @@
 <MudMenu Icon="@Icons.Material.Filled.Translate" Color="Color.Inherit" Size="Size.Small" Dense="true">
     @foreach (var culture in SupportedCultures)
     {
-        <MudMenuItem OnClick="() => RequestCultureChange(culture.Key)">@culture.Value</MudMenuItem>
+        <MudMenuItem OnClick="() => RequestCultureChange(culture.Key)" OnTouch="() => RequestCultureChange(culture.Key)">@culture.Value</MudMenuItem>
     }
 </MudMenu>
 

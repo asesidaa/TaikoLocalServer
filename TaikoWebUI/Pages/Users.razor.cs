@@ -2,11 +2,14 @@
 
 public partial class Users
 {
-    private DashboardResponse? response;
+    private List<User>? users;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        response = await Client.GetFromJsonAsync<DashboardResponse>("api/Dashboard");
+        if (AuthService.IsAdmin || !AuthService.LoginRequired)
+        {
+            users = await Client.GetFromJsonAsync<List<User>>("api/Users");
+        }
     }
 }

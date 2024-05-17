@@ -117,32 +117,29 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="dashboard" xml:space="preserve">
+  <data name="Dashboard" xml:space="preserve">
     <value>首頁</value>
   </data>
-  <data name="users" xml:space="preserve">
+  <data name="Users" xml:space="preserve">
     <value>管理用戶</value>
   </data>
   <data name="edit profile" xml:space="preserve">
     <value>編輯檔案</value>
   </data>
-  <data name="user" xml:space="preserve">
+  <data name="User" xml:space="preserve">
     <value>用戶</value>
   </data>
-  <data name="view play data" xml:space="preserve">
+  <data name="View Play Data" xml:space="preserve">
     <value>查看記錄</value>
   </data>
-  <data name="high scores" xml:space="preserve">
-    <value>演奏模式</value>
-  </data>
-  <data name="dani dojo" xml:space="preserve">
-    <value>段位道場</value>
+  <data name="High Scores" xml:space="preserve">
+    <value>最高分</value>
   </data>
   <data name="Show QR Code" xml:space="preserve">
     <value>查看QR Code</value>
   </data>
-  <data name="Manage Access Codes" xml:space="preserve">
-    <value>管理Access Codes</value>
+  <data name="Access Codes" xml:space="preserve">
+    <value>管理訪問碼</value>
   </data>
   <data name="Change Password" xml:space="preserve">
     <value>更改密碼</value>
@@ -156,7 +153,7 @@
   <data name="Welcome to TaikoWebUI!" xml:space="preserve">
     <value>歡迎來到TaikoWebUI!</value>
   </data>
-  <data name="Song" xml:space="preserve">
+  <data name="Song Name" xml:space="preserve">
     <value>曲名</value>
   </data>
   <data name="Level" xml:space="preserve">
@@ -207,8 +204,8 @@
   <data name="Total Donderful Combos" xml:space="preserve">
     <value>總全良次數</value>
   </data>
-  <data name="Key_01" xml:space="preserve">
-    <value>最佳得分</value>
+  <data name="Song List" xml:space="preserve">
+    <value>曲目列表</value>
   </data>
   <data name="Hide" xml:space="preserve">
     <value>隱藏</value>
@@ -229,18 +226,18 @@
     <value>皇冠</value>
   </data>
   <data name="No data." xml:space="preserve">
-    <value>沒有數據.</value>
+    <value>沒有數據</value>
   </data>
-  <data name="Key_02" xml:space="preserve">
+  <data name="Log In First" xml:space="preserve">
     <value>"請先在管理用戶那邊登入</value>
   </data>
   <data name="Total Hits" xml:space="preserve">
-    <value>"總打擊次數</value>
+    <value>總打擊次數</value>
   </data>
   <data name="Soul Gauge" xml:space="preserve">
     <value>魂條</value>
   </data>
-  <data name="Songs" xml:space="preserve">
+  <data name="Course Songs" xml:space="preserve">
     <value>課題曲</value>
   </data>
   <data name="Conditions" xml:space="preserve">
@@ -252,8 +249,8 @@
   <data name="Gold" xml:space="preserve">
     <value>金合格</value>
   </data>
-  <data name="Failed" xml:space="preserve">
-    <value>不合格</value>
+  <data name="Not Cleared" xml:space="preserve">
+    <value>未合格</value>
   </data>
   <data name="Pass" xml:space="preserve">
     <value>合格</value>
@@ -267,7 +264,7 @@
   <data name="Stage" xml:space="preserve">
     <value>曲目</value>
   </data>
-  <data name="Key_03" xml:space="preserve">
+  <data name="Dani Dojo" xml:space="preserve">
     <value>段位道埸</value>
   </data>
   <data name="Profile" xml:space="preserve">
@@ -377,5 +374,221 @@
   </data>
   <data name="DateFormat" xml:space="preserve">
     <value>yyyy/M/d HH:mm:ss</value>
+  </data>
+  <data name="Generate Invite Code" xml:space="preserve">
+    <value>生成邀請碼</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>注冊</value>
+  </data>
+  <data name="reset_password_confirm_dialog_1" xml:space="preserve">
+    <value>確定要為這位用戶重置密碼嗎？</value>
+  </data>
+  <data name="reset_password_confirm_dialog_2" xml:space="preserve">
+    <value>重置密碼后，用戶需要再次注冊</value>
+  </data>
+  <data name="Log In" xml:space="preserve">
+    <value>登錄</value>
+  </data>
+  <data name="Log Out" xml:space="preserve">
+    <value>登出</value>
+  </data>
+  <data name="Play Data" xml:space="preserve">
+    <value>游玩數據</value>
+  </data>
+  <data name="Add Access Code" xml:space="preserve">
+    <value>新增訪問碼</value>
+  </data>
+  <data name="New Access Code" xml:space="preserve">
+    <value>新訪問碼</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="Access Code" xml:space="preserve">
+    <value>訪問碼</value>
+  </data>
+  <data name="Old Password" xml:space="preserve">
+    <value>現有密碼</value>
+  </data>
+  <data name="New Password" xml:space="preserve">
+    <value>新密碼</value>
+  </data>
+  <data name="Confirm New Password" xml:space="preserve">
+    <value>再次輸入新密碼</value>
+  </data>
+  <data name="Dialog OK" xml:space="preserve">
+    <value>確認</value>
+  </data>
+  <data name="QR Code" xml:space="preserve">
+    <value>查看QR Code</value>
+  </data>
+  <data name="Chojin" xml:space="preserve">
+    <value>超人</value>
+  </data>
+  <data name="Eighth Dan" xml:space="preserve">
+    <value>八段</value>
+  </data>
+  <data name="Gaiden" xml:space="preserve">
+    <value>外傳</value>
+  </data>
+  <data name="Fourth Kyuu" xml:space="preserve">
+    <value>四級</value>
+  </data>
+  <data name="Fourth Dan" xml:space="preserve">
+    <value>四段</value>
+  </data>
+  <data name="First Kyuu" xml:space="preserve">
+    <value>一級</value>
+  </data>
+  <data name="First Dan" xml:space="preserve">
+    <value>一段</value>
+  </data>
+  <data name="Fifth Kyuu" xml:space="preserve">
+    <value>五級</value>
+  </data>
+  <data name="Fifth Dan" xml:space="preserve">
+    <value>五段</value>
+  </data>
+  <data name="Kuroto" xml:space="preserve">
+    <value>玄人</value>
+  </data>
+  <data name="Meijin" xml:space="preserve">
+    <value>名人</value>
+  </data>
+  <data name="Ninth Dan" xml:space="preserve">
+    <value>九段</value>
+  </data>
+  <data name="Second Dan" xml:space="preserve">
+    <value>二段</value>
+  </data>
+  <data name="Second Kyuu" xml:space="preserve">
+    <value>二級</value>
+  </data>
+  <data name="Seventh Dan" xml:space="preserve">
+    <value>七段</value>
+  </data>
+  <data name="Sixth Dan" xml:space="preserve">
+    <value>六段</value>
+  </data>
+  <data name="Tatsujin" xml:space="preserve">
+    <value>達人</value>
+  </data>
+  <data name="Tenth Dan" xml:space="preserve">
+    <value>十段</value>
+  </data>
+  <data name="Third Dan" xml:space="preserve">
+    <value>三段</value>
+  </data>
+  <data name="Third Kyuu" xml:space="preserve">
+    <value>三級</value>
+  </data>
+  <data name="Gold Full Combo" xml:space="preserve">
+    <value>金金合格</value>
+  </data>
+  <data name="Red Donderful Combo" xml:space="preserve">
+    <value>虹赤合格</value>
+  </data>
+  <data name="Red Full Combo" xml:space="preserve">
+    <value>金赤合格</value>
+  </data>
+  <data name="Gold Donderful Combo" xml:space="preserve">
+    <value>虹金合格</value>
+  </data>
+  <data name="Song Title / Artist" xml:space="preserve">
+    <value>曲名 / Artist</value>
+  </data>
+  <data name="Search by Title or Artist" xml:space="preserve">
+    <value>曲名/Artist名搜索</value>
+  </data>
+  <data name="Filter by Genre" xml:space="preserve">
+    <value>分類過濾</value>
+  </data>
+  <data name="Play History" xml:space="preserve">
+    <value>游玩歷史</value>
+  </data>
+  <data name="No Play History Found" xml:space="preserve">
+    <value>没有游玩歷史</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>密碼</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="Play Time" xml:space="preserve">
+    <value>游玩時間</value>
+  </data>
+  <data name="Rank" xml:space="preserve">
+    <value>評價</value>
+  </data>
+  <data name="Difficulty" xml:space="preserve">
+    <value>難度</value>
+  </data>
+  <data name="Song Number" xml:space="preserve">
+    <value>曲數</value>
+  </data>
+  <data name="Search by Title, Artist or Date" xml:space="preserve">
+    <value>曲名/Artist名/日期搜索</value>
+  </data>
+  <data name="Unregister" xml:space="preserve">
+    <value>注銷賬號</value>
+  </data>
+  <data name="and" xml:space="preserve">
+    <value>和</value>
+  </data>
+  <data name="other access code(s)" xml:space="preserve">
+    <value>個其他訪問碼</value>
+  </data>
+  <data name="Copy to Clipboard" xml:space="preserve">
+    <value>複製到粘貼板</value>
+  </data>
+  <data name="Invite Code" xml:space="preserve">
+    <value>邀請碼</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value> 錯誤</value>
+  </data>
+  <data name="Access Code is Required" xml:space="preserve">
+    <value>訪問碼為必填項</value>
+  </data>
+  <data name="&quot;Invite Code (Optional)&quot;" xml:space="preserve">
+    <value>邀請碼(可選)</value>
+  </data>
+  <data name="Last Play Time(5 Min Around Credit End)" xml:space="preserve">
+    <value>最後游玩時間(游戲結束5分鐘内)</value>
+  </data>
+  <data name="Password is Required" xml:space="preserve">
+    <value>密碼為必填項</value>
+  </data>
+  <data name="Confirm Password" xml:space="preserve">
+    <value>再次輸入密碼</value>
+  </data>
+  <data name="Confirm Password is Required" xml:space="preserve">
+    <value>再次輸入密碼為必填項</value>
+  </data>
+  <data name="Unknown Error" xml:space="preserve">
+    <value>不明錯誤</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>成功</value>
+  </data>
+  <data name="Ura Oni" xml:space="preserve">
+    <value>裏譜面</value>
+  </data>
+  <data name="Oni" xml:space="preserve">
+    <value>魔王</value>
+  </data>
+  <data name="Hard" xml:space="preserve">
+    <value>困難</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>普通</value>
+  </data>
+  <data name="Easy" xml:space="preserve">
+    <value>簡單</value>
+  </data>
+  <data name="Rows Per Page:" xml:space="preserve">
+    <value>每頁行數</value>
   </data>
 </root>
