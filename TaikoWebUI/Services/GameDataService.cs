@@ -8,8 +8,6 @@ public class GameDataService : IGameDataService
 {
     private readonly HttpClient client;
     private readonly Dictionary<uint, MusicDetail> musicMap = new();
-    private List<int> costumeFlagArraySizes = new();
-    private int titleFlagArraySize;
     private ImmutableDictionary<uint, DanData> danMap = ImmutableDictionary<uint, DanData>.Empty;
     private ImmutableHashSet<Title> titles = ImmutableHashSet<Title>.Empty;
 
@@ -18,6 +16,23 @@ public class GameDataService : IGameDataService
     private string[] headTitles = { };
     private string[] kigurumiTitles = { };
     private string[] puchiTitles = { };
+    
+    private List<uint> kigurumiUniqueIdList = new();
+    private List<uint> headUniqueIdList = new();
+    private List<uint> bodyUniqueIdList = new();
+    private List<uint> faceUniqueIdList = new();
+    private List<uint> puchiUniqueIdList = new();
+
+    private List<uint> titleUniqueIdList = new();
+    private List<uint> titlePlateIdList = new();
+    
+    private List<uint> lockedKigurumiUniqueIdList = new();
+    private List<uint> lockedHeadUniqueIdList = new();
+    private List<uint> lockedBodyUniqueIdList = new();
+    private List<uint> lockedFaceUniqueIdList = new();
+    private List<uint> lockedPuchiUniqueIdList = new();
+    private List<uint> lockedTitleUniqueIdList = new();
+    private List<uint> lockedTitlePlateIdList = new();
 
     public GameDataService(HttpClient client)
     {
@@ -38,19 +53,30 @@ public class GameDataService : IGameDataService
         danMap = danData.ToImmutableDictionary(data => data.DanId);
 
         // To prevent duplicate entries in wordlist
-        var dict = wordList.WordListEntries.GroupBy(entry => entry.Key)
+        var wordlistDict = wordList.WordListEntries.GroupBy(entry => entry.Key)
             .ToImmutableDictionary(group => group.Key, group => group.First());
-        await Task.Run(() => InitializeMusicMap(musicInfo, dict, musicOrder));
+        await Task.Run(() => InitializeMusicMap(musicInfo, wordlistDict, musicOrder));
 
-        InitializeCostumeFlagArraySizes(donCosRewardData);
-        InitializeTitleFlagArraySize(shougouData);
+        await Task.Run(() => InitializeCostumeIdLists(donCosRewardData));
+        await Task.Run(() => InitializeTitleIdList(shougouData));
 
-        await Task.Run(() => InitializeHeadTitles(dict));
-        await Task.Run(() => InitializeFaceTitles(dict));
-        await Task.Run(() => InitializeBodyTitles(dict));
-        await Task.Run(() => InitializePuchiTitles(dict));
-        await Task.Run(() => InitializeKigurumiTitles(dict));
-        await Task.Run(() => InitializeTitles(dict, shougouData));
+        await Task.Run(() => InitializeHeadTitles(wordlistDict));
+        await Task.Run(() => InitializeFaceTitles(wordlistDict));
+        await Task.Run(() => InitializeBodyTitles(wordlistDict));
+        await Task.Run(() => InitializePuchiTitles(wordlistDict));
+        await Task.Run(() => InitializeKigurumiTitles(wordlistDict));
+        await Task.Run(() => InitializeTitles(wordlistDict, shougouData));
+        
+        var lockedCostumeDataDictionary = await client.GetFromJsonAsync<Dictionary<string, List<uint>>>($"{dataBaseUrl}/data/locked_costume_data.json") ?? throw new InvalidOperationException();
+        lockedKigurumiUniqueIdList = lockedCostumeDataDictionary.GetValueOrDefault("Kigurumi") ?? new List<uint>();
+        lockedHeadUniqueIdList = lockedCostumeDataDictionary.GetValueOrDefault("Head") ?? new List<uint>();
+        lockedBodyUniqueIdList = lockedCostumeDataDictionary.GetValueOrDefault("Body") ?? new List<uint>();
+        lockedFaceUniqueIdList = lockedCostumeDataDictionary.GetValueOrDefault("Face") ?? new List<uint>();
+        lockedPuchiUniqueIdList = lockedCostumeDataDictionary.GetValueOrDefault("Puchi") ?? new List<uint>();
+        
+        var lockedTitleDataDictionary = await client.GetFromJsonAsync<Dictionary<string, List<uint>>>($"{dataBaseUrl}/data/locked_title_data.json") ?? throw new InvalidOperationException();
+        lockedTitleUniqueIdList = lockedTitleDataDictionary.GetValueOrDefault("TitleNo") ?? new List<uint>();
+        lockedTitlePlateIdList = lockedTitleDataDictionary.GetValueOrDefault("TitlePlateNo") ?? new List<uint>();
     }
 
     private async Task<T> GetData<T>(string dataBaseUrl, string fileBaseName) where T : notnull
@@ -150,16 +176,46 @@ public class GameDataService : IGameDataService
     {
         return titles;
     }
-
-    public List<int> GetCostumeFlagArraySizes()
+    
+    public List<uint> GetKigurumiUniqueIdList()
     {
-        return costumeFlagArraySizes;
+        return kigurumiUniqueIdList;
     }
-
-    private void InitializeTitleFlagArraySize(Shougous? shougouData)
+    
+    public List<uint> GetHeadUniqueIdList()
     {
-        shougouData.ThrowIfNull("Shouldn't happen!");
-        titleFlagArraySize = (int)shougouData.ShougouEntries.Max(entry => entry.UniqueId) + 1;
+        return headUniqueIdList;
+    }
+    
+    public List<uint> GetBodyUniqueIdList()
+    {
+        return bodyUniqueIdList;
+    }
+    
+    public List<uint> GetFaceUniqueIdList()
+    {
+        return faceUniqueIdList;
+    }
+    
+    public List<uint> GetPuchiUniqueIdList()
+    {
+        return puchiUniqueIdList;
+    }
+    
+    public List<uint> GetTitleUniqueIdList()
+    {
+        return titleUniqueIdList;
+    }
+    
+    public List<uint> GetTitlePlateIdList()
+    {
+        return titlePlateIdList;
+    }
+    
+    private void InitializeTitleIdList(Shougous? shougouData)
+    { 
+        shougouData.ThrowIfNull("Shouldn't happen!"); 
+        titleUniqueIdList = shougouData.ShougouEntries.Select(entry => entry.UniqueId).ToList();
     }
 
     private void InitializeTitles(ImmutableDictionary<string, WordListEntry> dict, Shougous? shougouData)
@@ -167,7 +223,7 @@ public class GameDataService : IGameDataService
         shougouData.ThrowIfNull("Shouldn't happen!");
 
         var set = ImmutableHashSet.CreateBuilder<Title>();
-        for (var i = 1; i < titleFlagArraySize; i++)
+        foreach (var i in titleUniqueIdList)
         {
             var key = $"syougou_{i}";
 
@@ -178,6 +234,11 @@ public class GameDataService : IGameDataService
                 .Select(entry => entry.Rarity)
                 .FirstOrDefault();
 
+            if (!titlePlateIdList.Contains(titleRarity))
+            {
+                titlePlateIdList.Add(titleRarity);
+            }
+            
             set.Add(new Title
             {
                 TitleName = titleWordlistItem.JapaneseText,
@@ -188,41 +249,31 @@ public class GameDataService : IGameDataService
 
         titles = set.ToImmutable();
     }
-
-    private void InitializeCostumeFlagArraySizes(DonCosRewards? donCosRewardData)
+    
+    private void InitializeCostumeIdLists(DonCosRewards? donCosRewardData)
     {
         donCosRewardData.ThrowIfNull("Shouldn't happen!");
-        var kigurumiUniqueIdList = donCosRewardData.DonCosRewardEntries
+        kigurumiUniqueIdList = donCosRewardData.DonCosRewardEntries
             .Where(entry => entry.CosType == "kigurumi")
-            .Select(entry => entry.UniqueId);
-        var headUniqueIdList = donCosRewardData.DonCosRewardEntries
+            .Select(entry => entry.UniqueId).ToList();
+        headUniqueIdList = donCosRewardData.DonCosRewardEntries
             .Where(entry => entry.CosType == "head")
-            .Select(entry => entry.UniqueId);
-        var bodyUniqueIdList = donCosRewardData.DonCosRewardEntries
+            .Select(entry => entry.UniqueId).ToList();
+        bodyUniqueIdList = donCosRewardData.DonCosRewardEntries
             .Where(entry => entry.CosType == "body")
-            .Select(entry => entry.UniqueId);
-        var faceUniqueIdList = donCosRewardData.DonCosRewardEntries
+            .Select(entry => entry.UniqueId).ToList();
+        faceUniqueIdList = donCosRewardData.DonCosRewardEntries
             .Where(entry => entry.CosType == "face")
-            .Select(entry => entry.UniqueId);
-        var puchiUniqueIdList = donCosRewardData.DonCosRewardEntries
+            .Select(entry => entry.UniqueId).ToList();
+        puchiUniqueIdList = donCosRewardData.DonCosRewardEntries
             .Where(entry => entry.CosType == "puchi")
-            .Select(entry => entry.UniqueId);
-
-        costumeFlagArraySizes = new List<int>
-        {
-            (int)kigurumiUniqueIdList.Max() + 1,
-            (int)headUniqueIdList.Max() + 1,
-            (int)bodyUniqueIdList.Max() + 1,
-            (int)faceUniqueIdList.Max() + 1,
-            (int)puchiUniqueIdList.Max() + 1
-        };
+            .Select(entry => entry.UniqueId).ToList();
     }
 
     private void InitializeKigurumiTitles(ImmutableDictionary<string, WordListEntry> dict)
     {
-        var costumeKigurumiMax = costumeFlagArraySizes[0];
-        kigurumiTitles = new string[costumeKigurumiMax];
-        for (var i = 0; i < costumeKigurumiMax; i++)
+        kigurumiTitles = new string[kigurumiUniqueIdList.Max() + 1];
+        foreach (var i in kigurumiUniqueIdList)
         {
             var key = $"costume_kigurumi_{i}";
 
@@ -233,9 +284,8 @@ public class GameDataService : IGameDataService
 
     private void InitializeHeadTitles(ImmutableDictionary<string, WordListEntry> dict)
     {
-        var costumeHeadMax = costumeFlagArraySizes[1];
-        headTitles = new string[costumeHeadMax];
-        for (var i = 0; i < costumeHeadMax; i++)
+        headTitles = new string[headUniqueIdList.Max() + 1];
+        foreach (var i in headUniqueIdList)
         {
             var key = $"costume_head_{i}";
 
@@ -246,9 +296,8 @@ public class GameDataService : IGameDataService
 
     private void InitializeBodyTitles(ImmutableDictionary<string, WordListEntry> dict)
     {
-        var costumeBodyMax = costumeFlagArraySizes[2];
-        bodyTitles = new string[costumeBodyMax];
-        for (var i = 0; i < costumeBodyMax; i++)
+        bodyTitles = new string[bodyUniqueIdList.Max() + 1];
+        foreach (var i in bodyUniqueIdList)
         {
             var key = $"costume_body_{i}";
 
@@ -259,9 +308,8 @@ public class GameDataService : IGameDataService
 
     private void InitializeFaceTitles(ImmutableDictionary<string, WordListEntry> dict)
     {
-        var costumeFaceMax = costumeFlagArraySizes[3];
-        faceTitles = new string[costumeFaceMax];
-        for (var i = 0; i < costumeFaceMax; i++)
+        faceTitles = new string[faceUniqueIdList.Max() + 1];
+        foreach (var i in faceUniqueIdList)
         {
             var key = $"costume_face_{i}";
 
@@ -272,9 +320,8 @@ public class GameDataService : IGameDataService
 
     private void InitializePuchiTitles(ImmutableDictionary<string, WordListEntry> dict)
     {
-        var costumePuchiMax = costumeFlagArraySizes[4];
-        puchiTitles = new string[costumePuchiMax];
-        for (var i = 0; i < costumePuchiMax; i++)
+        puchiTitles = new string[puchiUniqueIdList.Max() + 1];
+        foreach (var i in puchiUniqueIdList)
         {
             var key = $"costume_puchi_{i}";
 
@@ -321,5 +368,40 @@ public class GameDataService : IGameDataService
                 value.Index = index;
             }
         }
+    }
+    
+    public List<uint> GetLockedKigurumiUniqueIdList()
+    {
+        return lockedKigurumiUniqueIdList;
+    }
+    
+    public List<uint> GetLockedHeadUniqueIdList()
+    {
+        return lockedHeadUniqueIdList;
+    }
+    
+    public List<uint> GetLockedBodyUniqueIdList()
+    {
+        return lockedBodyUniqueIdList;
+    }
+    
+    public List<uint> GetLockedFaceUniqueIdList()
+    {
+        return lockedFaceUniqueIdList;
+    }
+    
+    public List<uint> GetLockedPuchiUniqueIdList()
+    {
+        return lockedPuchiUniqueIdList;
+    }
+    
+    public List<uint> GetLockedTitleUniqueIdList()
+    {
+        return lockedTitleUniqueIdList;
+    }
+    
+    public List<uint> GetLockedTitlePlateIdList()
+    {
+        return lockedTitlePlateIdList;
     }
 }

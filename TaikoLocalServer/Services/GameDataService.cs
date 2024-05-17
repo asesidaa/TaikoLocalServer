@@ -65,11 +65,6 @@ public class GameDataService : IGameDataService
         return musicsWithUra;
     }
 
-    public ImmutableDictionary<uint, MusicInfoEntry> GetMusicInfoes()
-    {
-        return musicInfoes;
-    }
-
     public ImmutableDictionary<uint, MovieData> GetMovieDataDictionary()
     {
         return movieDataDictionary;
@@ -161,7 +156,7 @@ public class GameDataService : IGameDataService
         var shopFolderDataPath = Path.Combine(dataPath, settings.ShopFolderDataFileName);
         var tokenDataPath = Path.Combine(dataPath, settings.TokenDataFileName);
         var lockedSongsDataPath = Path.Combine(dataPath, settings.LockedSongsDataFileName);
-        var qrCodeDataPath = Path.Combine(dataPath, settings.QRCodeDataFileName);
+        var qrCodeDataPath = Path.Combine(dataPath, settings.QrCodeDataFileName);
 
         var encryptedFiles = new List<string>
         {
@@ -213,7 +208,7 @@ public class GameDataService : IGameDataService
         await using var neiroFile = File.OpenRead(neiroPath);
         await using var qrCodeDataFile = File.OpenRead(qrCodeDataPath);
 
-        var infoesData = await JsonSerializer.DeserializeAsync<MusicInfoes>(musicInfoFile);
+        var infosData = await JsonSerializer.DeserializeAsync<MusicInfos>(musicInfoFile);
         var danData = await JsonSerializer.DeserializeAsync<List<DanData>>(danDataFile);
         var gaidenData = await JsonSerializer.DeserializeAsync<List<DanData>>(gaidenDataFile);
         var introData = await JsonSerializer.DeserializeAsync<List<SongIntroductionData>>(songIntroDataFile);
@@ -227,7 +222,7 @@ public class GameDataService : IGameDataService
         var neiroData = await JsonSerializer.DeserializeAsync<Neiros>(neiroFile);
         var qrCodeData = await JsonSerializer.DeserializeAsync<List<QRCodeData>>(qrCodeDataFile);
 
-        InitializeMusicInfoes(infoesData);
+        InitializeMusicInfos(infosData);
 
         InitializeDanData(danData);
 
@@ -305,11 +300,11 @@ public class GameDataService : IGameDataService
         eventFolderDictionary = eventFolderData.ToImmutableDictionary(d => d.FolderId);
     }
 
-    private void InitializeMusicInfoes(MusicInfoes? infoesData)
+    private void InitializeMusicInfos(MusicInfos? infosData)
     {
-        infoesData.ThrowIfNull("Shouldn't happen!");
+        infosData.ThrowIfNull("Shouldn't happen!");
 
-        musicInfoes = infoesData.MusicInfoEntries.ToImmutableDictionary(info => info.MusicId);
+        musicInfoes = infosData.MusicInfoEntries.ToImmutableDictionary(info => info.MusicId);
 
         musics = musicInfoes.Select(pair => pair.Key)
             .ToList();

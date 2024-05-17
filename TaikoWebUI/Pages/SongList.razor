@@ -1,16 +1,15 @@
 ﻿@inject IGameDataService GameDataService
 @inject HttpClient Client
-@inject LoginService LoginService
-@inject IJSRuntime JSRuntime
+@inject AuthService AuthService
+@inject IJSRuntime JsRuntime
 @inject NavigationManager NavigationManager
 @using TaikoWebUI.Utilities;
 @using TaikoWebUI.Shared.Models;
-@using SharedProject.Enums;
 
 @page "/Users/{baid:int}/Songs"
 
 <MudBreadcrumbs Items="breadcrumbs" Class="p-0 mb-2"></MudBreadcrumbs>
-<MudText Typo="Typo.h4">@Localizer["Key_01"]</MudText>
+<MudText Typo="Typo.h4">@Localizer["Song List"]</MudText>
 
 <MudGrid Class="my-8">
     @if (response is null)
@@ -21,16 +20,9 @@
     }
     else
     {
-        @if (LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.GetLoggedInUser().Baid != Baid && !LoginService.IsAdmin)))
+        @if (AuthService.LoginRequired && (!AuthService.IsLoggedIn || (AuthService.GetLoggedInBaid() != Baid && !AuthService.IsAdmin)))
         {
-            if (!LoginService.IsLoggedIn)
-            {
-                NavigationManager.NavigateTo("/Login");
-            }
-            else
-            {
-                NavigationManager.NavigateTo("/");
-            }
+            NavigationManager.NavigateTo(AuthService.IsLoggedIn ? "/" : "/Login");
         }
         else
         {
@@ -65,12 +57,12 @@
                     <HeaderContent>
                         <MudTh>
                             <MudTableSortLabel T="MusicDetail" SortBy="context => GameDataService.GetMusicNameBySongId(context.SongId, CurrentLanguage)">
-                                Song Title / Artist
+                                @Localizer["Song Title / Artist"]
                             </MudTableSortLabel>
                         </MudTh>
                         <MudTh>
                             <MudTableSortLabel T="MusicDetail" SortBy="context => context.Genre">
-                                Genre
+                                @Localizer["Genre"]
                             </MudTableSortLabel>
                         </MudTh>
                         @foreach (var difficulty in Enum.GetValues<Difficulty>())
@@ -138,7 +130,7 @@
                         }
                     </RowTemplate>
                     <PagerContent>
-                        <MudTablePager />
+                        <MudTablePager RowsPerPageString=@Localizer["Rows Per Page"] />
                     </PagerContent>
                 </MudTable>
             </MudItem>

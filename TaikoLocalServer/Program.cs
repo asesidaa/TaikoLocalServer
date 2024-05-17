@@ -1,9 +1,12 @@
 using System.Reflection;
+using System.Text;
 using Serilog.Sinks.File.Header;
 using TaikoLocalServer.Logging;
 using GameDatabase.Context;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.IdentityModel.Tokens;
 using TaikoLocalServer.Middlewares;
 using TaikoLocalServer.Services.Extentions;
 using TaikoLocalServer.Settings;
@@ -11,6 +14,7 @@ using Throw;
 using Serilog;
 using SharedProject.Utils;
 using TaikoLocalServer.Controllers.Api;
+using TaikoLocalServer.Filters;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -39,7 +43,9 @@ try
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/Database.json", optional: false, reloadOnChange: false);
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/ServerSettings.json", optional: false, reloadOnChange: false);
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/DataSettings.json", optional: true, reloadOnChange: false);
-
+    builder.Configuration.AddJsonFile($"{configurationsDirectory}/AuthSettings.json", optional: true, reloadOnChange: false);
+    builder.Configuration.AddJsonFile("wwwroot/appsettings.json", optional: true, reloadOnChange: true); // Add appsettings.json
+    
     builder.Host.UseSerilog((context, configuration) =>
     {
         configuration
@@ -65,6 +71,34 @@ try
     builder.Services.AddSingleton<IGameDataService, GameDataService>();
     builder.Services.Configure<ServerSettings>(builder.Configuration.GetSection(nameof(ServerSettings)));
     builder.Services.Configure<DataSettings>(builder.Configuration.GetSection(nameof(DataSettings)));
+    builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection(nameof(AuthSettings)));
+
+    // Read LoginRequired setting from appsettings.json
+    var loginRequired = builder.Configuration.GetValue<bool>("LoginRequired");
+    builder.Services.Configure<AuthSettings>(options => { options.LoginRequired = loginRequired; });
+
+    // Add Authentication with JWT
+    builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = builder.Configuration.GetSection(nameof(AuthSettings))["JwtIssuer"],
+                ValidAudience = builder.Configuration.GetSection(nameof(AuthSettings))["JwtAudience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection(nameof(AuthSettings))["JwtKey"] ?? throw new InvalidOperationException()))
+            };
+        });
+
+    builder.Services.AddScoped<AuthorizeIfRequiredAttribute>(); // Register the custom attribute
+    
     builder.Services.AddControllers().AddProtoBufNet();
     builder.Services.AddDbContext<TaikoDbContext>(option =>
     {
@@ -125,17 +159,21 @@ try
     app.UseBlazorFrameworkFiles();
     app.UseStaticFiles();
     app.UseRouting();
-
-
+    
+    // Enable Authentication and Authorization middleware
+    app.UseAuthentication();
+    app.UseAuthorization();
+    
     app.UseHttpLogging();
     app.Use(async (context, next) =>
     {
         await next();
-    
+        
         if (context.Response.StatusCode >= 400)
         {
             Log.Error("Unknown request from: {RemoteIpAddress} {Method} {Path} {StatusCode}",
                 context.Connection.RemoteIpAddress, context.Request.Method, context.Request.Path, context.Response.StatusCode);
+            Log.Error("Request headers: {Headers}", context.Request.Headers);
         }
     });
     app.MapControllers();

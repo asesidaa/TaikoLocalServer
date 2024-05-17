@@ -1,14 +1,14 @@
 ﻿@inject IGameDataService GameDataService
 @inject HttpClient Client
-@inject LoginService LoginService
-@inject IJSRuntime JSRuntime
+@inject AuthService AuthService
+@inject IJSRuntime JsRuntime
 @inject NavigationManager NavigationManager
 
 @page "/Users/{baid:int}/DaniDojo"
 
-@if (LoginService.LoginRequired && (!LoginService.IsLoggedIn || (LoginService.GetLoggedInUser().Baid != Baid && !LoginService.IsAdmin)))
+@if (AuthService.LoginRequired && (!AuthService.IsLoggedIn || (AuthService.GetLoggedInBaid() != Baid && !AuthService.IsAdmin)))
 {
-    if (!LoginService.IsLoggedIn)
+    if (!AuthService.IsLoggedIn)
 	{
         NavigationManager.NavigateTo("/Login");
 	}
@@ -20,7 +20,7 @@
 else
 {
     <MudBreadcrumbs Items="breadcrumbs" Class="p-0 mb-2"></MudBreadcrumbs>
-    <MudText Typo="Typo.h4">@Localizer["Key_03"]</MudText>
+    <MudText Typo="Typo.h4">@Localizer["Dani Dojo"]</MudText>
     <MudGrid Class="my-4 pb-10">
         <MudItem xs="12">
             <MudPaper Elevation="0" Outlined="true">
@@ -58,7 +58,7 @@ else
                                         <MudCard Outlined="true">
                                             <MudCardHeader Class="pb-0">
                                                 <CardHeaderContent>
-                                                    <MudText Typo="Typo.h6">@Localizer["Key_01"]</MudText>
+                                                    <MudText Typo="Typo.h6">@Localizer["Score"]</MudText>
                                                 </CardHeaderContent>
                                             </MudCardHeader>
                                             <MudCardContent Class="d-flex py-10" Style="justify-content:center">
@@ -119,7 +119,7 @@ else
                                 </MudItem>
                             </MudGrid>
 
-                            <MudText Typo="Typo.h5" Class="mt-10 mb-4">@Localizer["Songs"]</MudText>
+                            <MudText Typo="Typo.h5" Class="mt-10 mb-4">@Localizer["Course Songs"]</MudText>
                             <MudGrid>
                                 <MudItem xs="12">
                                     <MudGrid Class="d-block">
@@ -214,7 +214,7 @@ else
                                                             var redRequirement = GetSoulGauge(danData, false);
                                                             var goldRequirement = GetSoulGauge(danData, true);
                                                             var barClass = "bar-default";
-                                                            var resultText = @Localizer["Failed"];
+                                                            var resultText = @Localizer["Not Cleared"];
                                                         }
                                                         <MudStack Spacing="1">
                                                             <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">@Localizer["Result"]</MudText>
@@ -284,7 +284,7 @@ else
                                                                         var redRequirement = border.RedBorderTotal;
                                                                         var goldRequirement = border.GoldBorderTotal;
                                                                         var barClass = "bar-default";
-                                                                        var resultText = @Localizer["Failed"];
+                                                                        var resultText = @Localizer["Not Cleared"];
                                                                     }
                                                                     <MudStack Spacing="1">
                                                                         <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">@Localizer["Result"]</MudText>
@@ -370,7 +370,7 @@ else
                                                                     var redRequirement = GetSongBorderCondition(border, songNumber, false);
                                                                     var goldRequirement = GetSongBorderCondition(border, songNumber, true);
                                                                     var barClass = "bar-default";
-                                                                    var resultText = @Localizer["Failed"];
+                                                                    var resultText = Localizer["Not Cleared"];
 
                                                                     <MudItem xs="12" md="4">
                                                                         <MudCard Outlined="true">
@@ -381,7 +381,7 @@ else
                                                                             </MudCardHeader>
                                                                             <MudCardContent>
                                                                                 <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">@Localizer["Result"]</MudText>
-                                                                            @if (bestDataMap.TryGetValue(danId, out var danBestData))
+                                                                            @if (bestDataMap.TryGetValue(danId, out var danBestData) && (danBestData.DanBestStageDataList.Count > songNumber))
                                                                             {
                                                                                 var bestData = GetSongBestFromData((DanConditionType)border.OdaiType, danBestData, songNumber);
                                                                                 if ((DanConditionType)border.OdaiType is DanConditionType.BadCount or DanConditionType.OkCount)
@@ -389,14 +389,15 @@ else
                                                                                     if (bestData <= redRequirement)
                                                                                     {
                                                                                         barClass = "bar-pass-red";
-                                                                                        resultText = @Localizer["Pass"];
+                                                                                        resultText = Localizer["Pass"];
                                                                                     }
 
                                                                                     if (bestData <= goldRequirement)
                                                                                     {
                                                                                         barClass = "bar-pass-gold";
-                                                                                        resultText = @Localizer["Gold"];
+                                                                                        resultText = Localizer["Gold"];
                                                                                     }
+
                                                                                     var resultValue = redRequirement - bestData;
                                                                                     if (bestData >= redRequirement) resultValue = 0;
 
@@ -410,13 +411,13 @@ else
                                                                                     if (bestData >= redRequirement)
                                                                                     {
                                                                                         barClass = "bar-pass-red";
-                                                                                        resultText = @Localizer["Pass"];
+                                                                                        resultText = Localizer["Pass"];
                                                                                     }
 
                                                                                     if (bestData >= goldRequirement)
                                                                                     {
                                                                                         barClass = "bar-pass-gold";
-                                                                                        resultText = @Localizer["Gold"];
+                                                                                        resultText = Localizer["Gold"];
                                                                                     }
 
                                                                                     <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="@(goldRequirement > 0 ? goldRequirement : 1)" Value="@(goldRequirement > 0 ? bestData : 1)">
@@ -426,7 +427,6 @@ else
                                                                                         <MudText Typo="Typo.caption">@resultText</MudText>
                                                                                     </MudStack>
                                                                                 }
-
                                                                             }
                                                                             else
                                                                             {

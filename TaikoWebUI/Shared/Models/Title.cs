@@ -2,7 +2,7 @@
 
 public class Title
 {
-    public int TitleId { get; set; }
+    public uint TitleId { get; set; }
 
     public string TitleName { get; init; } = string.Empty;
 
