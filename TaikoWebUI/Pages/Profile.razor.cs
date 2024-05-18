@@ -1,4 +1,6 @@
-﻿using TaikoWebUI.Pages.Dialogs;
+﻿using System.Collections.Generic;
+using TaikoWebUI.Pages.Dialogs;
+using TaikoWebUI.Shared.Models;
 
 namespace TaikoWebUI.Pages;
 
@@ -323,11 +325,22 @@ public partial class Profile
         response.AchievementDisplayDifficulty = difficulty;
         scoresArray = new int[10];
 
-        if (difficulty is Difficulty.None) difficulty = highestDifficulty;
+        if (difficulty == Difficulty.None) difficulty = highestDifficulty;
 
         if (!songBestDataMap.TryGetValue(difficulty, out var values)) return;
-        
-        foreach (var value in values)
+
+        var valuesList = new List<SongBestData>(values);
+
+        if (difficulty == Difficulty.UraOni)
+        {
+            // Also include Oni scores
+            if (songBestDataMap.TryGetValue(Difficulty.Oni, out var oniValues))
+            {
+                valuesList.AddRange(oniValues);
+            }
+        }
+
+        foreach (var value in valuesList)
         {
             switch (value.BestScoreRank)
             {
@@ -368,6 +381,7 @@ public partial class Profile
             }
         }
     }
+
     public static string CostumeOrDefault(string file, uint id, string defaultfile)
     {
         var path = "/images/Costumes/";
