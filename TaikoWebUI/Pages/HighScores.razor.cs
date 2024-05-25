@@ -1,7 +1,4 @@
-﻿using static MudBlazor.Colors;
-using System;
-using Microsoft.JSInterop;
-
+﻿using Microsoft.JSInterop;
 
 namespace TaikoWebUI.Pages;
 
@@ -15,24 +12,32 @@ public partial class HighScores
     private Dictionary<Difficulty, List<SongBestData>> songBestDataMap = new();
 
     private readonly List<BreadcrumbItem> breadcrumbs = new();
-    private int selectedDifficultyTab = 0;
+    private int selectedDifficultyTab;
+    private Dictionary<uint, MusicDetail> musicDetailDictionary = new();
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        
+        if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
+        {
+            await AuthService.LoginWithAuthToken();
+        }
+        
         response = await Client.GetFromJsonAsync<SongBestResponse>($"api/PlayData/{Baid}");
         response.ThrowIfNull();
 
         userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
 
         var language = await JsRuntime.InvokeAsync<string>("blazorCulture.get");
+        musicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
 
         response.SongBestData.ForEach(data =>
         {
             var songId = data.SongId;
-            data.Genre = GameDataService.GetMusicGenreBySongId(songId);
-            data.MusicName = GameDataService.GetMusicNameBySongId(songId, string.IsNullOrEmpty(language) ? "ja" : language);
-            data.MusicArtist = GameDataService.GetMusicArtistBySongId(songId, string.IsNullOrEmpty(language) ? "ja" : language);
+            data.Genre = GameDataService.GetMusicGenreBySongId(musicDetailDictionary, songId);
+            data.MusicName = GameDataService.GetMusicNameBySongId(musicDetailDictionary, songId, string.IsNullOrEmpty(language) ? "ja" : language);
+            data.MusicArtist = GameDataService.GetMusicArtistBySongId(musicDetailDictionary, songId, string.IsNullOrEmpty(language) ? "ja" : language);
         });
 
         songBestDataMap = response.SongBestData.GroupBy(data => data.Difficulty)
@@ -40,8 +45,8 @@ public partial class HighScores
                           data => data.ToList());
         foreach (var songBestDataList in songBestDataMap.Values)
         {
-            songBestDataList.Sort((data1, data2) => GameDataService.GetMusicIndexBySongId(data1.SongId)
-                                      .CompareTo(GameDataService.GetMusicIndexBySongId(data2.SongId)));
+            songBestDataList.Sort((data1, data2) => GameDataService.GetMusicIndexBySongId(musicDetailDictionary, data1.SongId)
+                                      .CompareTo(GameDataService.GetMusicIndexBySongId(musicDetailDictionary, data2.SongId)));
         }
         
         // Set last selected tab from local storage

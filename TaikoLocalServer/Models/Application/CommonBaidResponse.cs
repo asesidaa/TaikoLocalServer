@@ -16,7 +16,7 @@ public class CommonBaidResponse
     public List<byte[]> CostumeFlagArrays { get; set; } 
         = new() { Array.Empty<byte>(), Array.Empty<byte>(), Array.Empty<byte>(), Array.Empty<byte>(), Array.Empty<byte>() };
 
-    public string LastPlayDatetime    { get; set; } = DateTime.Now.ToString(Constants.DATE_TIME_FORMAT);
+    public string LastPlayDatetime    { get; set; } = DateTime.Now.ToString(Constants.DateTimeFormat);
     public bool   DisplayDan          { get; set; }
     public uint   GotDanMax           { get; set; }
     public byte[] GotDanFlg           { get; set; } = Array.Empty<byte>();

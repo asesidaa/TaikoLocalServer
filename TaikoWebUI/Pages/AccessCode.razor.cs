@@ -19,6 +19,12 @@ public partial class AccessCode
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        
+        if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
+        {
+            await AuthService.LoginWithAuthToken();
+        }
+        
         await InitializeUser();
 
         userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");

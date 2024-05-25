@@ -17,7 +17,7 @@ public class GetInitialDataQueryHandler(IGameDataService gameDataService,
     
     public Task<CommonInitialDataCheckResponse> Handle(GetInitialDataQuery request, CancellationToken cancellationToken)
     {
-        var songIdMax = settings.EnableMoreSongs ? Constants.MUSIC_ID_MAX_EXPANDED : Constants.MUSIC_ID_MAX;
+        var songIdMax = settings.EnableMoreSongs ? Constants.MusicIdMaxExpanded : Constants.MusicIdMax;
 
         var musicList = gameDataService.GetMusicList();
         var lockedSongsList = gameDataService.GetLockedSongsList();
@@ -39,7 +39,7 @@ public class GetInitialDataQueryHandler(IGameDataService gameDataService,
             DefaultSongFlg = defaultSongFlg,
             AchievementSongBit = enabledArray,
             UraReleaseBit = uraReleaseBit,
-            SongIntroductionEndDatetime = DateTime.Now.AddYears(10).ToString(Constants.DATE_TIME_FORMAT),
+            SongIntroductionEndDatetime = DateTime.Now.AddYears(10).ToString(Constants.DateTimeFormat),
             ServerCurrentDatetime = (ulong)DateTimeOffset.Now.ToUnixTimeSeconds()
         };
 
@@ -65,18 +65,18 @@ public class GetInitialDataQueryHandler(IGameDataService gameDataService,
 
         CommonInitialDataCheckResponse.VerupNoData2[] verupNo2List =
         [
-            GetVerupNoData2(Constants.DAN_VERUP_MASTER_TYPE, commonDanDataDictionary),
-            GetVerupNoData2(Constants.GAIDEN_VERUP_MASTER_TYPE, commonGaidenDataDictionary),
-            GetVerupNoData2(Constants.FOLDER_VERUP_MASTER_TYPE, eventFolderDictionary),
-            GetVerupNoData2(Constants.INTRO_VERUP_MASTER_TYPE, songIntroDictionary)
+            GetVerupNoData2(Constants.DanVerupMasterType, commonDanDataDictionary),
+            GetVerupNoData2(Constants.GaidenVerupMasterType, commonGaidenDataDictionary),
+            GetVerupNoData2(Constants.FolderVerupMasterType, eventFolderDictionary),
+            GetVerupNoData2(Constants.IntroVerupMasterType, songIntroDictionary)
         ];
         response.AryVerupNoData2s.AddRange(verupNo2List);
 
         response.AryChassisFunctionIds = 
         [
-            Constants.FUNCTION_ID_DANI_AVAILABLE,
-            Constants.FUNCTION_ID_DANI_FOLDER_AVAILABLE,
-            Constants.FUNCTION_ID_AI_BATTLE_AVAILABLE
+            Constants.FunctionIdDaniAvailable,
+            Constants.FunctionIdDaniFolderAvailable,
+            Constants.FunctionIdAiBattleAvailable
         ];
 
         return Task.FromResult(response);

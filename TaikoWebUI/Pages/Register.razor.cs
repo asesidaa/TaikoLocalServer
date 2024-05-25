@@ -16,6 +16,11 @@ public partial class Register
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        
+        if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
+        {
+            await AuthService.LoginWithAuthToken();
+        }
     }
 
     private async Task OnRegister()

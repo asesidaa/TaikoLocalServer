@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
@@ -23,8 +22,10 @@ public sealed class AuthService
     public bool IsAdmin { get; private set; }
     private readonly ILocalStorageService localStorage;
     private readonly HttpClient client;
+    private readonly NavigationManager navigationManager;
 
-    public AuthService(IOptions<WebUiSettings> settings, ILocalStorageService localStorage, HttpClient client)
+    public AuthService(IOptions<WebUiSettings> settings, ILocalStorageService localStorage, HttpClient client,
+        NavigationManager navigationManager)
     {
         this.localStorage = localStorage;
         IsLoggedIn = false;
@@ -37,6 +38,7 @@ public sealed class AuthService
         AllowUserDelete = webUiSettings.AllowUserDelete;
         AllowFreeProfileEditing = webUiSettings.AllowFreeProfileEditing;
         this.client = client;
+        this.navigationManager = navigationManager;
     }
 
     private void OnLoginStatusChanged()
@@ -105,11 +107,19 @@ public sealed class AuthService
     public async Task LoginWithAuthToken()
     {
         var hasAuthToken = await localStorage.ContainKeyAsync("authToken");
-        if (!hasAuthToken) return;
+        if (!hasAuthToken)
+        {
+            navigationManager.NavigateTo("/Login");
+            return;
+        }
         
         // Attempt to get JWT token from local storage
         var authToken = await localStorage.GetItemAsync<string>("authToken");
-        if (authToken == null) return;
+        if (authToken == null)
+        {
+            navigationManager.NavigateTo("/Login");
+            return;
+        }
         
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
         var responseMessage = await client.PostAsync("api/Auth/LoginWithToken", null);
@@ -117,6 +127,7 @@ public sealed class AuthService
         {
             // Clear JWT token
             await localStorage.RemoveItemAsync("authToken");
+            navigationManager.NavigateTo("/Login");
             return;
         }
         

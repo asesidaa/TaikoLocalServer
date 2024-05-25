@@ -58,7 +58,7 @@ public class CrownsDataController : BaseController<CrownsDataController>
     {
         var songBestData = await songBestDatumService.GetAllSongBestData(baid);
 
-        var songIdMax = settings.EnableMoreSongs ? Constants.MUSIC_ID_MAX_EXPANDED : Constants.MUSIC_ID_MAX;
+        var songIdMax = settings.EnableMoreSongs ? Constants.MusicIdMaxExpanded : Constants.MusicIdMax;
         var crown = new ushort[songIdMax       + 1];
         var dondafulCrown = new byte[songIdMax + 1];
 

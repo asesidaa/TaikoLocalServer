@@ -143,13 +143,13 @@ else
                                                             </MudTooltip>
                                                             <MudStack Row="true" Spacing="1" Justify="Justify.Center" AlignItems="AlignItems.Center">
                                                                 <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
-                                                                <MudText Typo="Typo.caption" Style="line-height:1;margin-top:2px;margin-right:2px;">@GameDataService.GetMusicStarLevel(danDataOdaiSong.SongNo, difficulty)</MudText>
+                                                                <MudText Typo="Typo.caption" Style="line-height:1;margin-top:2px;margin-right:2px;">@GameDataService.GetMusicStarLevel(musicDetailDictionary, danDataOdaiSong.SongNo, difficulty)</MudText>
                                                             </MudStack>
                                                         </MudItem>
 
                                                         <MudItem xs="9" md="4" Style="display:flex;flex-direction:column;" Class="pl-4">
-                                                            <MudText Typo="Typo.body1" Style="font-weight: bold;">@GameDataService.GetMusicNameBySongId(danDataOdaiSong.SongNo, @CurrentLanguage)</MudText>
-                                                            <MudText Typo="Typo.caption">@GameDataService.GetMusicArtistBySongId(danDataOdaiSong.SongNo, @CurrentLanguage)</MudText>
+                                                            <MudText Typo="Typo.body1" Style="font-weight: bold;">@GameDataService.GetMusicNameBySongId(musicDetailDictionary, danDataOdaiSong.SongNo, @CurrentLanguage)</MudText>
+                                                            <MudText Typo="Typo.caption">@GameDataService.GetMusicArtistBySongId(musicDetailDictionary, danDataOdaiSong.SongNo, @CurrentLanguage)</MudText>
                                                         </MudItem>
 
 

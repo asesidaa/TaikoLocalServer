@@ -6,11 +6,12 @@ using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text.Json;
 using TaikoLocalServer.Settings;
+using TaikoWebUI.Shared.Models;
 using Throw;
 
 namespace TaikoLocalServer.Services;
 
-public class GameDataService : IGameDataService
+public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataService
 {
     private ImmutableDictionary<uint, DanData> commonDanDataDictionary =
         ImmutableDictionary<uint, DanData>.Empty;
@@ -18,7 +19,7 @@ public class GameDataService : IGameDataService
     private ImmutableDictionary<uint, DanData> commonGaidenDataDictionary =
         ImmutableDictionary<uint, DanData>.Empty;
 
-    private ImmutableDictionary<uint, MusicInfoEntry> musicInfoes =
+    private ImmutableDictionary<uint, MusicInfoEntry> musicInfos =
         ImmutableDictionary<uint, MusicInfoEntry>.Empty;
     
     private ImmutableDictionary<uint, MovieData> movieDataDictionary =
@@ -32,37 +33,44 @@ public class GameDataService : IGameDataService
     private ImmutableDictionary<uint, EventFolderData> eventFolderDictionary = 
         ImmutableDictionary<uint, EventFolderData>.Empty;
 
-    private List<ShopFolderData> shopFolderList = new();
+    private List<ShopFolderData> shopFolderList = [];
 
-    private List<uint> musics = new();
+    private List<uint> musicUniqueIdList = [];
 
-    private List<uint> musicsWithUra = new();
+    private List<uint> musicWithUraUniqueIdList = [];
 
-    private List<uint> lockedSongsList = new();
+    private List<uint> lockedSongsList = [];
 
-    private List<int> costumeFlagArraySizes = new();
+    private List<uint> lockedUraSongsList = [];
+    
+    private readonly Dictionary<uint, MusicDetail> musicDetailDictionary = new();
 
+    private readonly List<Costume> costumeList = [];
+    
+    private readonly Dictionary<uint, Title> titleDictionary = new();
+    
+    private Dictionary<string, List<uint>> lockedCostumeDataDictionary = new();
+    
+    private Dictionary<string, List<uint>> lockedTitleDataDictionary = new();
+
+    private List<int> costumeFlagArraySize = [];
+    
     private int titleFlagArraySize;
 
     private int toneFlagArraySize;
 
     private Dictionary<string, int> tokenDataDictionary = new();
 
-    private readonly DataSettings settings;
-
-    public GameDataService(IOptions<DataSettings> settings)
-    {
-        this.settings = settings.Value;
-    }
+    private readonly DataSettings settings = dataSettings.Value;
 
     public List<uint> GetMusicList()
     {
-        return musics;
+        return musicUniqueIdList;
     }
 
     public List<uint> GetMusicWithUraList()
     {
-        return musicsWithUra;
+        return musicWithUraUniqueIdList;
     }
 
     public ImmutableDictionary<uint, MovieData> GetMovieDataDictionary()
@@ -104,10 +112,40 @@ public class GameDataService : IGameDataService
     {
         return lockedSongsList;
     }
+    
+    public List<uint> GetLockedUraSongsList()
+    {
+        return lockedUraSongsList;
+    }
+    
+    public Dictionary<uint, MusicDetail> GetMusicDetailDictionary()
+    {
+        return musicDetailDictionary;
+    }
+    
+    public List<Costume> GetCostumeList()
+    {
+        return costumeList;
+    }
+    
+    public Dictionary<uint, Title> GetTitleDictionary()
+    {
+        return titleDictionary;
+    }
+    
+    public Dictionary<string, List<uint>> GetLockedCostumeDataDictionary()
+    {
+        return lockedCostumeDataDictionary;
+    }
+    
+    public Dictionary<string, List<uint>> GetLockedTitleDataDictionary()
+    {
+        return lockedTitleDataDictionary;
+    }
 
     public List<int> GetCostumeFlagArraySizes()
     {
-        return costumeFlagArraySizes;
+        return costumeFlagArraySize;
     }
 
     public int GetTitleFlagArraySize()
@@ -130,23 +168,23 @@ public class GameDataService : IGameDataService
         var dataPath = PathHelper.GetDataPath();
         var datatablePath = PathHelper.GetDatatablePath();
 
-        var musicInfoPath = Path.Combine(datatablePath, $"{Constants.MUSIC_INFO_BASE_NAME}.json");
-        var encryptedInfo = Path.Combine(datatablePath, $"{Constants.MUSIC_INFO_BASE_NAME}.bin");
+        var musicInfoPath = Path.Combine(datatablePath, $"{Constants.MusicInfoBaseName}.json");
+        var encryptedInfo = Path.Combine(datatablePath, $"{Constants.MusicInfoBaseName}.bin");
 
-        var wordlistPath = Path.Combine(datatablePath, $"{Constants.WORDLIST_BASE_NAME}.json");
-        var encryptedWordlist = Path.Combine(datatablePath, $"{Constants.WORDLIST_BASE_NAME}.bin");
+        var wordlistPath = Path.Combine(datatablePath, $"{Constants.WordlistBaseName}.json");
+        var encryptedWordlist = Path.Combine(datatablePath, $"{Constants.WordlistBaseName}.bin");
 
-        var musicOrderPath = Path.Combine(datatablePath, $"{Constants.MUSIC_ORDER_BASE_NAME}.json");
-        var encryptedMusicOrder = Path.Combine(datatablePath, $"{Constants.MUSIC_ORDER_BASE_NAME}.bin");
+        var musicOrderPath = Path.Combine(datatablePath, $"{Constants.MusicOrderBaseName}.json");
+        var encryptedMusicOrder = Path.Combine(datatablePath, $"{Constants.MusicOrderBaseName}.bin");
 
-        var donCosRewardPath = Path.Combine(datatablePath, $"{Constants.DON_COS_REWARD_BASE_NAME}.json");
-        var encryptedDonCosReward = Path.Combine(datatablePath, $"{Constants.DON_COS_REWARD_BASE_NAME}.bin");
+        var donCosRewardPath = Path.Combine(datatablePath, $"{Constants.DonCosRewardBaseName}.json");
+        var encryptedDonCosReward = Path.Combine(datatablePath, $"{Constants.DonCosRewardBaseName}.bin");
 
-        var shougouPath = Path.Combine(datatablePath, $"{Constants.SHOUGOU_BASE_NAME}.json");
-        var encryptedShougou = Path.Combine(datatablePath, $"{Constants.SHOUGOU_BASE_NAME}.bin");
+        var shougouPath = Path.Combine(datatablePath, $"{Constants.ShougouBaseName}.json");
+        var encryptedShougou = Path.Combine(datatablePath, $"{Constants.ShougouBaseName}.bin");
 
-        var neiroPath = Path.Combine(datatablePath, $"{Constants.NEIRO_BASE_NAME}.json");
-        var encryptedNeiro = Path.Combine(datatablePath, $"{Constants.NEIRO_BASE_NAME}.bin");
+        var neiroPath = Path.Combine(datatablePath, $"{Constants.NeiroBaseName}.json");
+        var encryptedNeiro = Path.Combine(datatablePath, $"{Constants.NeiroBaseName}.bin");
 
         var danDataPath = Path.Combine(dataPath, settings.DanDataFileName);
         var gaidenDataPath = Path.Combine(dataPath, settings.GaidenDataFileName);
@@ -157,6 +195,8 @@ public class GameDataService : IGameDataService
         var tokenDataPath = Path.Combine(dataPath, settings.TokenDataFileName);
         var lockedSongsDataPath = Path.Combine(dataPath, settings.LockedSongsDataFileName);
         var qrCodeDataPath = Path.Combine(dataPath, settings.QrCodeDataFileName);
+        var lockedCostumeDataPath = Path.Combine(dataPath, settings.LockedCostumeDataFileName);
+        var lockedTitleDataPath = Path.Combine(dataPath, settings.LockedTitleDataFileName);
 
         var encryptedFiles = new List<string>
         {
@@ -186,12 +226,9 @@ public class GameDataService : IGameDataService
             }
         }
 
-        foreach (var filePath in outputPaths)
+        foreach (var filePath in outputPaths.Where(filePath => !File.Exists(filePath)))
         {
-            if (!File.Exists(filePath))
-            {
-                throw new FileNotFoundException($"{Path.GetFileName(filePath)} file not found!");
-            }
+            throw new FileNotFoundException($"{Path.GetFileName(filePath)} file not found!");
         }
 
         await using var musicInfoFile = File.OpenRead(musicInfoPath);
@@ -207,8 +244,12 @@ public class GameDataService : IGameDataService
         await using var shougouFile = File.OpenRead(shougouPath);
         await using var neiroFile = File.OpenRead(neiroPath);
         await using var qrCodeDataFile = File.OpenRead(qrCodeDataPath);
+        await using var wordlistFile = File.OpenRead(wordlistPath);
+        await using var musicOrderFile = File.OpenRead(musicOrderPath);
+        await using var lockedCostumeDataFile = File.OpenRead(lockedCostumeDataPath);
+        await using var lockedTitleDataFile = File.OpenRead(lockedTitleDataPath);
 
-        var infosData = await JsonSerializer.DeserializeAsync<MusicInfos>(musicInfoFile);
+        var musicInfoData = await JsonSerializer.DeserializeAsync<MusicInfos>(musicInfoFile);
         var danData = await JsonSerializer.DeserializeAsync<List<DanData>>(danDataFile);
         var gaidenData = await JsonSerializer.DeserializeAsync<List<DanData>>(gaidenDataFile);
         var introData = await JsonSerializer.DeserializeAsync<List<SongIntroductionData>>(songIntroDataFile);
@@ -221,8 +262,12 @@ public class GameDataService : IGameDataService
         var shougouData = await JsonSerializer.DeserializeAsync<Shougous>(shougouFile);
         var neiroData = await JsonSerializer.DeserializeAsync<Neiros>(neiroFile);
         var qrCodeData = await JsonSerializer.DeserializeAsync<List<QRCodeData>>(qrCodeDataFile);
+        var wordlistData = await JsonSerializer.DeserializeAsync<WordList>(wordlistFile);
+        var musicOrderData = await JsonSerializer.DeserializeAsync<MusicOrder>(musicOrderFile);
+        var lockedCostumeData = await JsonSerializer.DeserializeAsync<Dictionary<string, uint[]>>(lockedCostumeDataFile);
+        var lockedTitleData = await JsonSerializer.DeserializeAsync<Dictionary<string, uint[]>>(lockedTitleDataFile);
 
-        InitializeMusicInfos(infosData);
+        InitializeMusicInfos(musicInfoData);
 
         InitializeDanData(danData);
 
@@ -239,10 +284,16 @@ public class GameDataService : IGameDataService
         InitializeTokenData(tokenData);
 
         InitializeLockedSongsData(lockedSongsData);
+        
+        InitializeMusicDetails(musicInfoData, musicOrderData, wordlistData);
 
-        InitializeCostumeFlagArraySizes(donCosRewardData);
+        InitializeCostumes(donCosRewardData, wordlistData);
 
-        InitializeTitleFlagArraySize(shougouData);
+        InitializeTitles(shougouData, wordlistData);
+        
+        InitializeLockedCostumeData(lockedCostumeData);
+        
+        InitializeLockedTitleData(lockedTitleData);
 
         InitializeToneFlagArraySize(neiroData);
 
@@ -304,16 +355,16 @@ public class GameDataService : IGameDataService
     {
         infosData.ThrowIfNull("Shouldn't happen!");
 
-        musicInfoes = infosData.MusicInfoEntries.ToImmutableDictionary(info => info.MusicId);
+        musicInfos = infosData.MusicInfoEntries.ToImmutableDictionary(info => info.MusicId);
 
-        musics = musicInfoes.Select(pair => pair.Key)
+        musicUniqueIdList = musicInfos.Select(pair => pair.Key)
             .ToList();
-        musics.Sort();
+        musicUniqueIdList.Sort();
 
-        musicsWithUra = musicInfoes.Where(info => info.Value.StarUra > 0)
+        musicWithUraUniqueIdList = musicInfos.Where(info => info.Value.StarUra > 0)
             .Select(pair => pair.Key)
             .ToList();
-        musicsWithUra.Sort();
+        musicWithUraUniqueIdList.Sort();
     }
 
     private void InitializeShopFolderData(List<ShopFolderData>? shopFolderData)
@@ -332,41 +383,129 @@ public class GameDataService : IGameDataService
     {
         lockedSongsData.ThrowIfNull("Shouldn't happen!");
         lockedSongsList = lockedSongsData["songNo"].ToList();
+        lockedUraSongsList = lockedSongsData["uraSongNo"].ToList();
+    }
+    
+    private void InitializeMusicDetails(MusicInfos? musicInfoData, MusicOrder? musicOrderData, WordList? wordlistData)
+    {
+        musicInfoData.ThrowIfNull("Shouldn't happen!");
+        musicOrderData.ThrowIfNull("Shouldn't happen!");
+        wordlistData.ThrowIfNull("Shouldn't happen!");
+        
+        foreach (var musicInfo in musicInfoData.MusicInfoEntries)
+        {
+            var musicId = musicInfo.Id;
+            var musicNameKey = $"song_{musicId}";
+            var musicArtistKey = $"song_sub_{musicId}";
+            var musicName = wordlistData.WordListEntries.First(entry => entry.Key == musicNameKey).JapaneseText;
+            var musicArtist = wordlistData.WordListEntries.First(entry => entry.Key == musicArtistKey).JapaneseText;
+            var musicNameEn = wordlistData.WordListEntries.First(entry => entry.Key == musicNameKey).EnglishUsText;
+            var musicArtistEn = wordlistData.WordListEntries.First(entry => entry.Key == musicArtistKey).EnglishUsText;
+            var musicNameCn = wordlistData.WordListEntries.First(entry => entry.Key == musicNameKey).ChineseTText;
+            var musicArtistCn = wordlistData.WordListEntries.First(entry => entry.Key == musicArtistKey).ChineseTText;
+            var musicNameKo = wordlistData.WordListEntries.First(entry => entry.Key == musicNameKey).KoreanText;
+            var musicArtistKo = wordlistData.WordListEntries.First(entry => entry.Key == musicArtistKey).KoreanText;
+            var musicUniqueId = musicInfo.MusicId;
+            var musicGenre = musicInfo.Genre;
+            var musicStarEasy = musicInfo.StarEasy;
+            var musicStarNormal = musicInfo.StarNormal;
+            var musicStarHard = musicInfo.StarHard;
+            var musicStarOni = musicInfo.StarOni;
+            var musicStarUra = musicInfo.StarUra;
+            var musicDetail = new MusicDetail
+            {
+                SongId = musicUniqueId,
+                SongName = musicName,
+                SongNameEN = musicNameEn,
+                SongNameCN = musicNameCn,
+                SongNameKO = musicNameKo,
+                ArtistName = musicArtist,
+                ArtistNameEN = musicArtistEn,
+                ArtistNameCN = musicArtistCn,
+                ArtistNameKO = musicArtistKo,
+                Genre = musicGenre,
+                StarEasy = musicStarEasy,
+                StarNormal = musicStarNormal,
+                StarHard = musicStarHard,
+                StarOni = musicStarOni,
+                StarUra = musicStarUra
+            };
+            musicDetailDictionary.TryAdd(musicUniqueId, musicDetail);
+        }
+        
+        for (var index = 0; index < musicOrderData.Order.Count; index++)
+        {
+            var musicOrderEntry = musicOrderData.Order[index];
+            var musicUniqueId = musicOrderEntry.SongId;
+            if (musicDetailDictionary.TryGetValue(musicUniqueId, out var musicDetail))
+            {
+                musicDetail.Index = index;
+            }
+        }
     }
 
-    private void InitializeCostumeFlagArraySizes(DonCosRewards? donCosRewardData)
+    private void InitializeCostumes(DonCosRewards? donCosRewardData, WordList? wordlistData)
     {
         donCosRewardData.ThrowIfNull("Shouldn't happen!");
-        var kigurumiUniqueIdList = donCosRewardData.DonCosRewardEntries
-            .Where(entry => entry.CosType == "kigurumi")
-            .Select(entry => entry.UniqueId);
-        var headUniqueIdList = donCosRewardData.DonCosRewardEntries
-            .Where(entry => entry.CosType == "head")
-            .Select(entry => entry.UniqueId);
-        var bodyUniqueIdList = donCosRewardData.DonCosRewardEntries
-            .Where(entry => entry.CosType == "body")
-            .Select(entry => entry.UniqueId);
-        var faceUniqueIdList = donCosRewardData.DonCosRewardEntries
-            .Where(entry => entry.CosType == "face")
-            .Select(entry => entry.UniqueId);
-        var puchiUniqueIdList = donCosRewardData.DonCosRewardEntries
-            .Where(entry => entry.CosType == "puchi")
-            .Select(entry => entry.UniqueId);
+        wordlistData.ThrowIfNull("Shouldn't happen!");
 
-        costumeFlagArraySizes = new List<int>
+        foreach (var donCosReward in donCosRewardData.DonCosRewardEntries)
         {
-            (int)kigurumiUniqueIdList.Max() + 1,
-            (int)headUniqueIdList.Max()     + 1,
-            (int)bodyUniqueIdList.Max()     + 1,
-            (int)faceUniqueIdList.Max()     + 1,
-            (int)puchiUniqueIdList.Max()    + 1
-        };
+            var cosType = donCosReward.CosType;
+            var costumeId = donCosReward.UniqueId;
+
+            var costumeNameKey = $"costume_{cosType}_{costumeId}";
+            var costumeName = wordlistData.WordListEntries.First(entry => entry.Key == costumeNameKey).JapaneseText;
+            var costume = new Costume
+            {
+                CostumeId = costumeId,
+                CostumeType = cosType,
+                CostumeName = costumeName
+            };
+            costumeList.Add(costume);
+        }
+
+        var kigurumiMaxArraySize = (int)costumeList.Where(costume => costume.CostumeType == "kigurumi").Max(costume => costume.CostumeId) + 1;
+        var headMaxArraySize = (int)costumeList.Where(costume => costume.CostumeType == "head").Max(costume => costume.CostumeId) + 1;
+        var bodyMaxArraySize = (int)costumeList.Where(costume => costume.CostumeType == "body").Max(costume => costume.CostumeId) + 1;
+        var faceMaxArraySize = (int)costumeList.Where(costume => costume.CostumeType == "face").Max(costume => costume.CostumeId) + 1;
+        var puchiMaxArraySize = (int)costumeList.Where(costume => costume.CostumeType == "puchi").Max(costume => costume.CostumeId) + 1;
+        costumeFlagArraySize =
+            [kigurumiMaxArraySize, headMaxArraySize, bodyMaxArraySize, faceMaxArraySize, puchiMaxArraySize];
     }
 
-    private void InitializeTitleFlagArraySize(Shougous? shougouData)
+    private void InitializeTitles(Shougous? shougouData, WordList? wordlistData)
     {
         shougouData.ThrowIfNull("Shouldn't happen!");
-        titleFlagArraySize = (int)shougouData.ShougouEntries.Max(entry => entry.UniqueId) + 1;
+        wordlistData.ThrowIfNull("Shouldn't happen!");
+    
+        foreach (var shougou in shougouData.ShougouEntries)
+        {
+            var titleId = shougou.UniqueId;
+            var titleNameKey = $"syougou_{titleId}";
+            var titleName = wordlistData.WordListEntries.First(entry => entry.Key == titleNameKey).JapaneseText;
+            var title = new Title
+            {
+                TitleId = titleId,
+                TitleName = titleName,
+                TitleRarity = shougou.Rarity
+            };
+            titleDictionary.TryAdd(titleId, title);
+        }
+        
+        titleFlagArraySize = (int)titleDictionary.Max(title => title.Key) + 1;
+    }
+    
+    private void InitializeLockedCostumeData(Dictionary<string, uint[]>? lockedCostumeData)
+    {
+        lockedCostumeData.ThrowIfNull("Shouldn't happen!");
+        lockedCostumeDataDictionary = lockedCostumeData.ToDictionary(pair => pair.Key, pair => pair.Value.ToList());
+    }
+    
+    private void InitializeLockedTitleData(Dictionary<string, uint[]>? lockedTitleData)
+    {
+        lockedTitleData.ThrowIfNull("Shouldn't happen!");
+        lockedTitleDataDictionary = lockedTitleData.ToDictionary(pair => pair.Key, pair => pair.Value.ToList());
     }
 
     private void InitializeToneFlagArraySize(Neiros? neiroData)
