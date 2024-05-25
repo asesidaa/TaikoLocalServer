@@ -21,6 +21,11 @@ namespace TaikoWebUI.Pages
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
+            
+            if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
+            {
+                await AuthService.LoginWithAuthToken();
+            }
 
             response = await Client.GetFromJsonAsync<SongHistoryResponse>($"api/PlayHistory/{(uint)Baid}");
             response.ThrowIfNull();
@@ -29,11 +34,13 @@ namespace TaikoWebUI.Pages
 
             // Get user settings
             userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
+            
+            var musicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
 
             // Get song title and artist
             var language = await JsRuntime.InvokeAsync<string>("blazorCulture.get");
-            songTitle = GameDataService.GetMusicNameBySongId((uint)SongId, string.IsNullOrEmpty(language) ? "ja" : language);
-            songArtist = GameDataService.GetMusicArtistBySongId((uint)SongId, string.IsNullOrEmpty(language) ? "ja" : language);
+            songTitle = GameDataService.GetMusicNameBySongId(musicDetailDictionary, (uint)SongId, string.IsNullOrEmpty(language) ? "ja" : language);
+            songArtist = GameDataService.GetMusicArtistBySongId(musicDetailDictionary, (uint)SongId, string.IsNullOrEmpty(language) ? "ja" : language);
 
             // Breadcrumbs
             var formattedSongTitle = songTitle;

@@ -126,35 +126,35 @@
                                             <MudSelect @bind-Value="@response.Head" Label=@Localizer["Head"]>
                                                 @foreach (var index in headUniqueIdList)
                                                 {
-                                                var costumeTitle = GameDataService.GetHeadTitle(index);
+                                                var costumeTitle = GameDataService.GetHeadTitle(costumeList, index);
                                                 <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
                                                 }
                                             </MudSelect>
                                             <MudSelect @bind-Value="@response.Body" Label=@Localizer["Body"]>
                                                 @foreach (var index in bodyUniqueIdList)
                                                 {
-                                                var costumeTitle = GameDataService.GetBodyTitle(index);
+                                                var costumeTitle = GameDataService.GetBodyTitle(costumeList, index);
                                                 <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
                                                 }
                                             </MudSelect>
                                             <MudSelect @bind-Value="@response.Face" Label=@Localizer["Face"]>
                                                 @foreach (var index in faceUniqueIdList)
                                                 {
-                                                var costumeTitle = GameDataService.GetFaceTitle(index);
+                                                var costumeTitle = GameDataService.GetFaceTitle(costumeList, index);
                                                 <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
                                                 }
                                             </MudSelect>
                                             <MudSelect @bind-Value="@response.Kigurumi" Label=@Localizer["Kigurumi"]>
                                                 @foreach (var index in kigurumiUniqueIdList)
                                                 {
-                                                var costumeTitle = GameDataService.GetKigurumiTitle(index);
+                                                var costumeTitle = GameDataService.GetKigurumiTitle(costumeList, index);
                                                 <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
                                                 }
                                             </MudSelect>
                                             <MudSelect @bind-Value="@response.Puchi" Label=@Localizer["Puchi"]>
                                                 @foreach (var index in puchiUniqueIdList)
                                                 {
-                                                var costumeTitle = GameDataService.GetPuchiTitle(index);
+                                                var costumeTitle = GameDataService.GetPuchiTitle(costumeList, index);
                                                 <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
                                                 }
                                             </MudSelect>

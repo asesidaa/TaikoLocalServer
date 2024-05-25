@@ -177,15 +177,31 @@ public partial class Profile
     private List<uint> puchiUniqueIdList = new();
     private List<uint> titleUniqueIdList = new();
     private List<uint> titlePlateIdList = new();
+    
+    private List<Costume> costumeList = new();
+    private Dictionary<uint, Title> titleDictionary = new();
+    private Dictionary<string, List<uint>> lockedCostumeDataDictionary = new();
+    private Dictionary<string, List<uint>> lockedTitleDataDictionary = new();
+    private List<Title> unlockedTitles = new();
 
     private int[] scoresArray = new int[10];
+    
+    private Dictionary<uint, MusicDetail> musicDetailDictionary = new();
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        
+        if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
+        {
+            await AuthService.LoginWithAuthToken();
+        }
+        
         isSavingOptions = false;
         response = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
         response.ThrowIfNull();
+        
+        musicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
 
         if (AuthService.IsLoggedIn && !AuthService.IsAdmin)
         {
@@ -194,9 +210,14 @@ public partial class Profile
         else
         {
             breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
-        };
+        }
         breadcrumbs.Add(new BreadcrumbItem($"{response.MyDonName}", href: null, disabled: true));
         breadcrumbs.Add(new BreadcrumbItem(Localizer["Profile"], href: $"/Users/{Baid}/Profile", disabled: false));
+        
+        costumeList = await GameDataService.GetCostumeList();
+        titleDictionary = await GameDataService.GetTitleDictionary();
+        lockedCostumeDataDictionary = await GameDataService.GetLockedCostumeDataDictionary();
+        lockedTitleDataDictionary = await GameDataService.GetLockedTitleDataDictionary();
         
         InitializeAvailableCostumes();
         InitializeAvailableTitles();
@@ -207,9 +228,9 @@ public partial class Profile
         songresponse.SongBestData.ForEach(data =>
         {
             var songId = data.SongId;
-            data.Genre = GameDataService.GetMusicGenreBySongId(songId);
-            data.MusicName = GameDataService.GetMusicNameBySongId(songId);
-            data.MusicArtist = GameDataService.GetMusicArtistBySongId(songId);
+            data.Genre = GameDataService.GetMusicGenreBySongId(musicDetailDictionary, songId);
+            data.MusicName = GameDataService.GetMusicNameBySongId(musicDetailDictionary, songId);
+            data.MusicArtist = GameDataService.GetMusicArtistBySongId(musicDetailDictionary, songId);
         });
 
         songBestDataMap = songresponse.SongBestData.GroupBy(data => data.Difficulty)
@@ -217,12 +238,12 @@ public partial class Profile
                           data => data.ToList());
         foreach (var songBestDataList in songBestDataMap.Values)
         {
-            songBestDataList.Sort((data1, data2) => GameDataService.GetMusicIndexBySongId(data1.SongId)
-                                      .CompareTo(GameDataService.GetMusicIndexBySongId(data2.SongId)));
+            songBestDataList.Sort((data1, data2) => GameDataService.GetMusicIndexBySongId(musicDetailDictionary, data1.SongId)
+                                      .CompareTo(GameDataService.GetMusicIndexBySongId(musicDetailDictionary, data2.SongId)));
         }
 
         for (var i = 0; i < (int)Difficulty.UraOni; i++)
-            if (songBestDataMap.TryGetValue((Difficulty)i, out var values))
+            if (songBestDataMap.ContainsKey((Difficulty)i) && songBestDataMap[(Difficulty)i].Count > 0)
             {
                 highestDifficulty = (Difficulty)i;
             }
@@ -240,18 +261,30 @@ public partial class Profile
         
         if (AuthService.AllowFreeProfileEditing)
         {
-            kigurumiUniqueIdList = GameDataService.GetKigurumiUniqueIdList();
-            headUniqueIdList = GameDataService.GetHeadUniqueIdList();
-            bodyUniqueIdList = GameDataService.GetBodyUniqueIdList();
-            faceUniqueIdList = GameDataService.GetFaceUniqueIdList();
-            puchiUniqueIdList = GameDataService.GetPuchiUniqueIdList();
+            kigurumiUniqueIdList = costumeList.Where(costume => costume.CostumeType == "kigurumi").Select(costume => costume.CostumeId).ToList();
+            headUniqueIdList = costumeList.Where(costume => costume.CostumeType == "head").Select(costume => costume.CostumeId).ToList();
+            bodyUniqueIdList = costumeList.Where(costume => costume.CostumeType == "body").Select(costume => costume.CostumeId).ToList();
+            faceUniqueIdList = costumeList.Where(costume => costume.CostumeType == "face").Select(costume => costume.CostumeId).ToList();
+            puchiUniqueIdList = costumeList.Where(costume => costume.CostumeType == "puchi").Select(costume => costume.CostumeId).ToList();
             
             // Lock costumes in LockedCostumesList but not in UnlockedCostumesList
-            var lockedKigurumiUniqueIdList = GameDataService.GetLockedKigurumiUniqueIdList().Except(unlockedKigurumi).ToList();
-            var lockedHeadUniqueIdList = GameDataService.GetLockedHeadUniqueIdList().Except(unlockedHead).ToList();
-            var lockedBodyUniqueIdList = GameDataService.GetLockedBodyUniqueIdList().Except(unlockedBody).ToList();
-            var lockedFaceUniqueIdList = GameDataService.GetLockedFaceUniqueIdList().Except(unlockedFace).ToList();
-            var lockedPuchiUniqueIdList = GameDataService.GetLockedPuchiUniqueIdList().Except(unlockedPuchi).ToList();
+            lockedCostumeDataDictionary.TryGetValue("kigurumi", out var lockedKigurumiUniqueIdList);
+            lockedCostumeDataDictionary.TryGetValue("head", out var lockedHeadUniqueIdList);
+            lockedCostumeDataDictionary.TryGetValue("body", out var lockedBodyUniqueIdList);
+            lockedCostumeDataDictionary.TryGetValue("face", out var lockedFaceUniqueIdList);
+            lockedCostumeDataDictionary.TryGetValue("puchi", out var lockedPuchiUniqueIdList);
+            
+            lockedKigurumiUniqueIdList ??= new List<uint>();
+            lockedHeadUniqueIdList ??= new List<uint>();
+            lockedBodyUniqueIdList ??= new List<uint>();
+            lockedFaceUniqueIdList ??= new List<uint>();
+            lockedPuchiUniqueIdList ??= new List<uint>();
+            
+            unlockedKigurumi.ForEach(id => kigurumiUniqueIdList.Add(id));
+            unlockedHead.ForEach(id => headUniqueIdList.Add(id));
+            unlockedBody.ForEach(id => bodyUniqueIdList.Add(id));
+            unlockedFace.ForEach(id => faceUniqueIdList.Add(id));
+            unlockedPuchi.ForEach(id => puchiUniqueIdList.Add(id));
             
             lockedKigurumiUniqueIdList.ForEach(id => kigurumiUniqueIdList.Remove(id));
             lockedHeadUniqueIdList.ForEach(id => headUniqueIdList.Remove(id));
@@ -262,19 +295,33 @@ public partial class Profile
         else
         {
             // Only unlock costumes that are in both UnlockedCostumesList and CostumeList
-            kigurumiUniqueIdList = GameDataService.GetKigurumiUniqueIdList().Intersect(unlockedKigurumi).ToList();
-            headUniqueIdList = GameDataService.GetHeadUniqueIdList().Intersect(unlockedHead).ToList();
-            bodyUniqueIdList = GameDataService.GetBodyUniqueIdList().Intersect(unlockedBody).ToList();
-            faceUniqueIdList = GameDataService.GetFaceUniqueIdList().Intersect(unlockedFace).ToList();
-            puchiUniqueIdList = GameDataService.GetPuchiUniqueIdList().Intersect(unlockedPuchi).ToList();
+            kigurumiUniqueIdList = costumeList.Where(costume => costume.CostumeType == "kigurumi").Select(costume => costume.CostumeId).Intersect(unlockedKigurumi).ToList();
+            headUniqueIdList = costumeList.Where(costume => costume.CostumeType == "head").Select(costume => costume.CostumeId).Intersect(unlockedHead).ToList();
+            bodyUniqueIdList = costumeList.Where(costume => costume.CostumeType == "body").Select(costume => costume.CostumeId).Intersect(unlockedBody).ToList();
+            faceUniqueIdList = costumeList.Where(costume => costume.CostumeType == "face").Select(costume => costume.CostumeId).Intersect(unlockedFace).ToList();
+            puchiUniqueIdList = costumeList.Where(costume => costume.CostumeType == "puchi").Select(costume => costume.CostumeId).Intersect(unlockedPuchi).ToList();
         }
+        
+        // Take unique values and sort
+        kigurumiUniqueIdList = kigurumiUniqueIdList.Distinct().OrderBy(id => id).ToList();
+        headUniqueIdList = headUniqueIdList.Distinct().OrderBy(id => id).ToList();
+        bodyUniqueIdList = bodyUniqueIdList.Distinct().OrderBy(id => id).ToList();
+        faceUniqueIdList = faceUniqueIdList.Distinct().OrderBy(id => id).ToList();
+        puchiUniqueIdList = puchiUniqueIdList.Distinct().OrderBy(id => id).ToList();
     }
     
     private void InitializeAvailableTitlePlates()
     {
-        titlePlateIdList = GameDataService.GetTitlePlateIdList().ToList();
+        titlePlateIdList = titleDictionary.Values.Select(title => title.TitleRarity).ToList();
+        
+        lockedTitleDataDictionary.TryGetValue("titlePlate", out var lockedTitlePlateIdList);
+        lockedTitlePlateIdList ??= new List<uint>();
+        
         // Cut off ids longer than TitlePlateStrings
-        titlePlateIdList = titlePlateIdList.Where(id => id < TitlePlateStrings.Length).Except(GameDataService.GetLockedTitlePlateIdList()).ToList();
+        titlePlateIdList = titlePlateIdList.Where(id => id < TitlePlateStrings.Length).Except(lockedTitlePlateIdList).ToList();
+        
+        // Take unique values and sort
+        titlePlateIdList = titlePlateIdList.Distinct().OrderBy(id => id).ToList();
     }
     
     private void InitializeAvailableTitles()
@@ -285,23 +332,32 @@ public partial class Profile
         
         if (AuthService.AllowFreeProfileEditing)
         {
-            titleUniqueIdList = GameDataService.GetTitleUniqueIdList();
+            titleUniqueIdList = titleDictionary.Values.Select(title => title.TitleId).ToList();
             
-            var titles = GameDataService.GetTitles();
             // Lock titles in LockedTitlesList but not in UnlockedTitle
-            var lockedTitleUniqueIdList = GameDataService.GetLockedTitleUniqueIdList().ToList();
-            var lockedTitlePlateIdList = GameDataService.GetLockedTitlePlateIdList().ToList();
+            lockedTitleDataDictionary.TryGetValue("title", out var lockedTitleUniqueIdList);
+            lockedTitleDataDictionary.TryGetValue("titlePlate", out var lockedTitlePlateIdList);
+            
+            lockedTitleUniqueIdList ??= new List<uint>();
+            lockedTitlePlateIdList ??= new List<uint>();
+            
             // Unlock titles in UnlockedTitlesList
             lockedTitleUniqueIdList = lockedTitleUniqueIdList.Except(unlockedTitle).ToList();
             // Find uniqueIds of titles with rarity in lockedTitlePlateIdList
-            lockedTitleUniqueIdList.AddRange(titles.Where(title => lockedTitlePlateIdList.Contains(title.TitleRarity)).Select(title => title.TitleId));
+            lockedTitleUniqueIdList.AddRange(titleDictionary.Values.Where(title => lockedTitlePlateIdList.Contains(title.TitleRarity)).Select(title => title.TitleId));
             titleUniqueIdList = titleUniqueIdList.Except(lockedTitleUniqueIdList).ToList();
         }
         else
         {
             // Only unlock titles that are in both UnlockedTitlesList and TitleList
-            titleUniqueIdList = GameDataService.GetTitleUniqueIdList().Intersect(unlockedTitle).ToList();
+            titleUniqueIdList = titleDictionary.Values.Select(title => title.TitleId).ToList();
+            titleUniqueIdList = titleUniqueIdList.Intersect(unlockedTitle).ToList();
         }
+        
+        unlockedTitles = titleDictionary.Values.Where(title => titleUniqueIdList.Contains(title.TitleId)).ToList();
+        
+        // Take unique values and sort
+        titleUniqueIdList = titleUniqueIdList.Distinct().OrderBy(id => id).ToList();
     }
     
     private async Task SaveOptions()
@@ -323,11 +379,22 @@ public partial class Profile
         response.AchievementDisplayDifficulty = difficulty;
         scoresArray = new int[10];
 
-        if (difficulty is Difficulty.None) difficulty = highestDifficulty;
+        if (difficulty == Difficulty.None) difficulty = highestDifficulty;
 
         if (!songBestDataMap.TryGetValue(difficulty, out var values)) return;
-        
-        foreach (var value in values)
+
+        var valuesList = new List<SongBestData>(values);
+
+        if (difficulty == Difficulty.UraOni)
+        {
+            // Also include Oni scores
+            if (songBestDataMap.TryGetValue(Difficulty.Oni, out var oniValues))
+            {
+                valuesList.AddRange(oniValues);
+            }
+        }
+
+        foreach (var value in valuesList)
         {
             switch (value.BestScoreRank)
             {
@@ -368,6 +435,7 @@ public partial class Profile
             }
         }
     }
+
     public static string CostumeOrDefault(string file, uint id, string defaultfile)
     {
         var path = "/images/Costumes/";
@@ -391,7 +459,7 @@ public partial class Profile
         {
             {x => x.UserSetting, response},
             {x => x.AllowFreeProfileEditing, AuthService.AllowFreeProfileEditing},
-            {x => x.TitleUniqueIdList, titleUniqueIdList}
+            {x => x.Titles, unlockedTitles},
         };
         var dialog = DialogService.Show<ChooseTitleDialog>("Player Titles", parameters, options);
         var result = await dialog.Result;

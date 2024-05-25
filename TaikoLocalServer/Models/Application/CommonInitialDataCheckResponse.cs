@@ -10,7 +10,7 @@ public class CommonInitialDataCheckResponse
     public byte[] UraReleaseBit      { get; set; } = [];
 
     public string SongIntroductionEndDatetime { get; set; } =
-        DateTime.Now.AddYears(10).ToString(Constants.DATE_TIME_FORMAT);
+        DateTime.Now.AddYears(10).ToString(Constants.DateTimeFormat);
 
     public List<MovieData>    AryMovieInfoes        { get; set; } = [];
     public List<AiEventData>  AryAiEventDatas       { get; set; } = [];

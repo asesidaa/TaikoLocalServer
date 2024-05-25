@@ -1,4 +1,4 @@
-﻿namespace TaikoWebUI.Shared.Models;
+﻿namespace SharedProject.Models;
 
 public class Title
 {

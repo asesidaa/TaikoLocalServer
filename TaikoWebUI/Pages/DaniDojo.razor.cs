@@ -12,12 +12,18 @@ public partial class DaniDojo
     private UserSetting? userSetting;
 
     private static Dictionary<uint, DanBestData> bestDataMap = new();
+    private Dictionary<uint, MusicDetail> musicDetailDictionary = new();
 
     private readonly List<BreadcrumbItem> breadcrumbs = new();
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        
+        if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
+        {
+            await AuthService.LoginWithAuthToken();
+        }
 
         response = await Client.GetFromJsonAsync<DanBestDataResponse>($"api/DanBestData/{Baid}");
         response.ThrowIfNull();
@@ -28,6 +34,8 @@ public partial class DaniDojo
         CurrentLanguage = await JsRuntime.InvokeAsync<string>("blazorCulture.get");
 
         userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
+        
+        musicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
 
         if (AuthService.IsLoggedIn && !AuthService.IsAdmin)
         {
