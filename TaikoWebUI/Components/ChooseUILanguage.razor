@@ -4,7 +4,7 @@
 @inject IJSRuntime JsRuntime
 @inject IOptions<WebUiSettings> Settings
 
-<MudMenu Icon="@Icons.Material.Filled.Language" Color="Color.Inherit" Size="Size.Small" Dense="true">
+<MudMenu Icon="@Icons.Material.Filled.Language" Color="Color.Inherit" Size="Size.Small" Dense="true" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopRight">
     <MudText Align="Align.Center" GutterBottom="true">@Localizer["UI Language"]</MudText>
     <MudDivider />
     @foreach (var culture in supportedCultures)
