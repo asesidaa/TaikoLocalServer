@@ -390,10 +390,10 @@
   <data name="Total Credits Played" xml:space="preserve">
     <value />
   </data>
-  <data name="UI Language" xml:space="preserve">
+  <data name="UI" xml:space="preserve">
     <value />
   </data>
-  <data name="Song Name Language" xml:space="preserve">
+  <data name="Add" xml:space="preserve">
     <value />
   </data>
 </root>

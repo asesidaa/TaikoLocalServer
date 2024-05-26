@@ -5,7 +5,7 @@
 @inject IOptions<WebUiSettings> Settings
 
 <MudMenu Icon="@Icons.Material.Filled.Language" Color="Color.Inherit" Size="Size.Small" Dense="true" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
-    <MudText Align="Align.Center" GutterBottom="true">@Localizer["UI Language"]</MudText>
+    <MudText Align="Align.Center" GutterBottom="true">@Localizer["UI"]</MudText>
     <MudDivider />
     @foreach (var culture in supportedCultures)
     {

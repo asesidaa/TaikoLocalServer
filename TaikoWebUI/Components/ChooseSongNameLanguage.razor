@@ -6,7 +6,7 @@
 @inject ILocalStorageService LocalStorage
 
 <MudMenu Icon="@Icons.Material.Filled.Translate" Color="Color.Inherit" Size="Size.Small" Dense="true" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
-    <MudText Align="Align.Center" GutterBottom="true">@Localizer["Song Name Language"]</MudText>
+    <MudText Align="Align.Center" GutterBottom="true">@Localizer["Song Name"]</MudText>
     <MudDivider />
     @foreach (var culture in supportedCultures)
     {
