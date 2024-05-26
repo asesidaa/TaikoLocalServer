@@ -52,15 +52,17 @@ namespace GameDatabase.Migrations
                 nullable: false,
                 defaultValue: 0u);
             
+            
             // Extract from json arrays
             migrationBuilder.Sql(@"
                 UPDATE UserData
-                SET DifficultyPlayedCourse = json_extract(DifficultyPlayedArray, '$[0]'),
-                    DifficultyPlayedStar = json_extract(DifficultyPlayedArray, '$[1]'),
-                    DifficultyPlayedSort = json_extract(DifficultyPlayedArray, '$[2]') ,
-                    DifficultySettingCourse = json_extract(DifficultySettingArray, '$[0]'),
-                    DifficultySettingStar = json_extract(DifficultySettingArray, '$[1]'),
-                    DifficultySettingSort = json_extract(DifficultySettingArray, '$[2]');
+                SET 
+                    DifficultyPlayedCourse = COALESCE(json_extract(DifficultyPlayedArray, '$[0]'), 0),
+                    DifficultyPlayedStar = COALESCE(json_extract(DifficultyPlayedArray, '$[1]'), 0),
+                    DifficultyPlayedSort = COALESCE(json_extract(DifficultyPlayedArray, '$[2]'), 0),
+                    DifficultySettingCourse = COALESCE(json_extract(DifficultySettingArray, '$[0]'), 0),
+                    DifficultySettingStar = COALESCE(json_extract(DifficultySettingArray, '$[1]'), 0),
+                    DifficultySettingSort = COALESCE(json_extract(DifficultySettingArray, '$[2]'), 0);
             ");
         }
 
