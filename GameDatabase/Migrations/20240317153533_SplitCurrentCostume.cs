@@ -47,11 +47,12 @@ namespace GameDatabase.Migrations
             // Split CostumeData (json array) into the new fields
             migrationBuilder.Sql(@"
                 UPDATE UserData
-                SET CurrentKigurumi = json_extract(CostumeData, '$[0]'),
-                    CurrentHead = json_extract(CostumeData, '$[1]'),
-                    CurrentBody = json_extract(CostumeData, '$[2]'),
-                    CurrentFace = json_extract(CostumeData, '$[3]'),
-                    CurrentPuchi = json_extract(CostumeData, '$[4]')");
+                SET CurrentKigurumi = COALESCE(json_extract(CostumeData, '$[0]'), 0),
+                    CurrentHead = COALESCE(json_extract(CostumeData, '$[1]'), 0),
+                    CurrentBody = COALESCE(json_extract(CostumeData, '$[2]'), 0),
+                    CurrentFace = COALESCE(json_extract(CostumeData, '$[3]'), 0),
+                    CurrentPuchi = COALESCE(json_extract(CostumeData, '$[4]'), 0);
+            ");
         }
 
         /// <inheritdoc />
