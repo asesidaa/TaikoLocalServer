@@ -818,6 +818,15 @@ namespace TaikoWebUI.Localization {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        internal static string Total_Credits_Played {
+            get {
+                return ResourceManager.GetString("Total Credits Played", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         internal static string Unknown_Error {
             get {
                 return ResourceManager.GetString("Unknown Error", resourceCulture);

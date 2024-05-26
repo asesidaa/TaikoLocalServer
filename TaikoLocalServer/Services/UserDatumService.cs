@@ -5,6 +5,11 @@ namespace TaikoLocalServer.Services;
 
 public class UserDatumService(TaikoDbContext context) : IUserDatumService
 {
+    public async Task<List<UserDatum>> GetAllUserDatum()
+    {
+        return await context.UserData.Include(d => d.Tokens).ToListAsync();
+    }
+    
     public async Task<UserDatum?> GetFirstUserDatumOrNull(uint baid)
     {
         return await context.UserData

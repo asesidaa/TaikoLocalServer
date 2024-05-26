@@ -7,13 +7,92 @@ using TaikoLocalServer.Settings;
 namespace TaikoLocalServer.Controllers.Api;
 
 [ApiController]
-[Route("/api/[controller]/{baid}")]
+[Route("/api/[controller]")]
 public class UserSettingsController(IUserDatumService userDatumService, IAuthService authService, 
     IOptions<AuthSettings> settings) : BaseController<UserSettingsController>
 {
     private readonly AuthSettings authSettings = settings.Value;
-    
+
     [HttpGet]
+    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
+    public async Task<ActionResult<List<UserSetting>>> GetAllUserSetting()
+    {
+        if (authSettings.LoginRequired)
+        {
+            var tokenInfo = authService.ExtractTokenInfo(HttpContext);
+            if (tokenInfo is null)
+            {
+                return Unauthorized();
+            }
+            
+            if (!tokenInfo.Value.isAdmin)
+            {
+                return Forbid();
+            }
+        }
+        
+        var users = await userDatumService.GetAllUserDatum();
+        
+        var response = new List<UserSetting>();
+        
+        foreach (var user in users)
+        {
+            List<List<uint>> costumeUnlockData = 
+                [user.UnlockedKigurumi, user.UnlockedHead, user.UnlockedBody, user.UnlockedFace, user.UnlockedPuchi];
+
+            var unlockedTitle = user.TitleFlgArray
+                .ToList();
+
+            for (var i = 0; i < 5; i++)
+            {
+                if (!costumeUnlockData[i].Contains(0))
+                {
+                    costumeUnlockData[i].Add(0);
+                }
+            }
+
+            var userSetting = new UserSetting
+            {
+                Baid = user.Baid,
+                AchievementDisplayDifficulty = user.AchievementDisplayDifficulty,
+                IsDisplayAchievement = user.DisplayAchievement,
+                IsDisplayDanOnNamePlate = user.DisplayDan,
+                DifficultySettingCourse = user.DifficultySettingCourse,
+                DifficultySettingStar = user.DifficultySettingStar,
+                DifficultySettingSort = user.DifficultySettingSort,
+                IsVoiceOn = user.IsVoiceOn,
+                IsSkipOn = user.IsSkipOn,
+                NotesPosition = user.NotesPosition,
+                PlaySetting = PlaySettingConverter.ShortToPlaySetting(user.OptionSetting),
+                ToneId = user.SelectedToneId,
+                MyDonName = user.MyDonName,
+                MyDonNameLanguage = user.MyDonNameLanguage,
+                Title = user.Title,
+                TitlePlateId = user.TitlePlateId,
+                Kigurumi = user.CurrentKigurumi,
+                Head = user.CurrentHead,
+                Body = user.CurrentBody,
+                Face = user.CurrentFace,
+                Puchi = user.CurrentPuchi,
+                UnlockedKigurumi = costumeUnlockData[0],
+                UnlockedHead = costumeUnlockData[1],
+                UnlockedBody = costumeUnlockData[2],
+                UnlockedFace = costumeUnlockData[3],
+                UnlockedPuchi = costumeUnlockData[4],
+                UnlockedTitle = unlockedTitle,
+                BodyColor = user.ColorBody,
+                FaceColor = user.ColorFace,
+                LimbColor = user.ColorLimb,
+                LastPlayDateTime = user.LastPlayDatetime
+            };
+            response.Add(userSetting);
+        }
+        
+        return Ok(response);
+    }
+    
+    
+    [HttpGet("{baid}")]
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<ActionResult<UserSetting>> GetUserSetting(uint baid)
     {
@@ -54,6 +133,7 @@ public class UserSettingsController(IUserDatumService userDatumService, IAuthSer
 
         var response = new UserSetting
         {
+            Baid = user.Baid,
             AchievementDisplayDifficulty = user.AchievementDisplayDifficulty,
             IsDisplayAchievement = user.DisplayAchievement,
             IsDisplayDanOnNamePlate = user.DisplayDan,
@@ -88,7 +168,7 @@ public class UserSettingsController(IUserDatumService userDatumService, IAuthSer
         return Ok(response);
     }
 
-    [HttpPost]
+    [HttpPost("{baid}")]
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<IActionResult> SaveUserSetting(uint baid, UserSetting userSetting)
     {

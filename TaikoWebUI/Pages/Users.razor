@@ -9,7 +9,7 @@
 <MudText Typo="Typo.h4">@Localizer["Users"]</MudText>
 <MudGrid Class="my-8">
     @if (!AuthService.LoginRequired || (AuthService.LoginRequired && AuthService.IsAdmin)) {
-        if (users == null) {
+        if (usersWithSettings == null) {
             // Loading...
             for (uint i = 0; i < 6; i++) {
                 <MudItem xs="12" md="6" lg="4">
@@ -28,11 +28,11 @@
                     </MudCard>
                 </MudItem>
             }
-        } else if (users.Count > 0) {
-            foreach (var user in users)
+        } else if (usersWithSettings.Count > 0) {
+            foreach (var (user, userSetting) in usersWithSettings)
             {
                 <MudItem xs="12" md="6" lg="4">
-                    <UserCard User="user" />
+                    <UserCard User="user" UserSetting="userSetting" />
                 </MudItem>
             }
         } else { // No users in the database

@@ -18,7 +18,7 @@ public class UpdatePlayResultCommandHandler(TaikoDbContext context, ILogger<Upda
         var user = await context.UserData.FindAsync([request.Baid], cancellationToken);
         if (user is null)
         {
-            logger.LogWarning("Game uploading a non exisiting user with baid {Baid}", request.Baid);
+            logger.LogWarning("Game uploading a non existing user with baid {Baid}", request.Baid);
             return 1;
         }
 
@@ -29,6 +29,11 @@ public class UpdatePlayResultCommandHandler(TaikoDbContext context, ILogger<Upda
         var playMode = (PlayMode)playResultData.PlayMode;
         if (playMode is PlayMode.DanMode or PlayMode.GaidenMode)
         {
+            if (playResultData.IsNotRecordedDan)
+            {
+                return 1;
+            }
+            
             var danType = playMode == PlayMode.DanMode ? DanType.Normal : DanType.Gaiden;
             var danPlayData = await context.DanScoreData
                 .Include(datum => datum.DanStageScoreData)

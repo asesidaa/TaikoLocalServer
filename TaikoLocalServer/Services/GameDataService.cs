@@ -40,8 +40,6 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
     private List<uint> musicWithUraUniqueIdList = [];
 
     private List<uint> lockedSongsList = [];
-
-    private List<uint> lockedUraSongsList = [];
     
     private readonly Dictionary<uint, MusicDetail> musicDetailDictionary = new();
 
@@ -111,11 +109,6 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
     public List<uint> GetLockedSongsList()
     {
         return lockedSongsList;
-    }
-    
-    public List<uint> GetLockedUraSongsList()
-    {
-        return lockedUraSongsList;
     }
     
     public Dictionary<uint, MusicDetail> GetMusicDetailDictionary()
@@ -383,7 +376,6 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
     {
         lockedSongsData.ThrowIfNull("Shouldn't happen!");
         lockedSongsList = lockedSongsData["songNo"].ToList();
-        lockedUraSongsList = lockedSongsData["uraSongNo"].ToList();
     }
     
     private void InitializeMusicDetails(MusicInfos? musicInfoData, MusicOrder? musicOrderData, WordList? wordlistData)
