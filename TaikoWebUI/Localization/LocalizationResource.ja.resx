@@ -594,4 +594,10 @@
   <data name="Rows Per Page:" xml:space="preserve">
     <value>1ページ当たりの行数</value>
   </data>
+  <data name="UI Language" xml:space="preserve">
+    <value>UI言語</value>
+  </data>
+  <data name="Song Name Language" xml:space="preserve">
+    <value>曲名言語</value>
+  </data>
 </root>

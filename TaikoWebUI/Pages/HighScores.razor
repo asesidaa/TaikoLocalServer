@@ -1,10 +1,10 @@
-﻿@inject IGameDataService GameDataService
+﻿@using TaikoWebUI.Utilities;
+
+@inject IGameDataService GameDataService
 @inject HttpClient Client
 @inject AuthService AuthService
-@inject IJSRuntime JsRuntime
 @inject NavigationManager NavigationManager
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
-@using TaikoWebUI.Utilities;
 
 @page "/Users/{baid:int}/HighScores"
 

@@ -591,4 +591,10 @@
   <data name="Rows Per Page:" xml:space="preserve">
     <value>每頁行數</value>
   </data>
+  <data name="UI Language" xml:space="preserve">
+    <value>界面語言</value>
+  </data>
+  <data name="Song Name Language" xml:space="preserve">
+    <value>曲名語言</value>
+  </data>
 </root>
