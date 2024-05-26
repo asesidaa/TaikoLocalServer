@@ -1,8 +1,11 @@
+@using Blazored.LocalStorage
+
 @inject IGameDataService GameDataService
 @inject HttpClient Client
 @inject AuthService AuthService
 @inject IJSRuntime JsRuntime
 @inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
 
 @page "/Users/{baid:int}/PlayHistory"
 

@@ -1,6 +1,4 @@
-﻿using Microsoft.JSInterop;
-
-namespace TaikoWebUI.Pages;
+﻿namespace TaikoWebUI.Pages;
 
 public partial class SongList
 {
@@ -9,7 +7,7 @@ public partial class SongList
     
     private string Search { get; set; } = string.Empty;
     private string GenreFilter { get; set; } = string.Empty;
-    private string CurrentLanguage { get; set; } = "ja";
+    private string? SongNameLanguage { get; set; }
 
     private SongBestResponse? response;
     private UserSetting? userSetting;
@@ -33,7 +31,9 @@ public partial class SongList
         userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
         musicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
 
-        CurrentLanguage = await JsRuntime.InvokeAsync<string>("blazorCulture.get");
+        SongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
+        
+        Console.WriteLine("Language: " + SongNameLanguage);
 
         if (AuthService.IsLoggedIn && !AuthService.IsAdmin)
         {

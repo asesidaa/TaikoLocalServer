@@ -1,9 +1,11 @@
-﻿@inject IGameDataService GameDataService
+﻿@using Blazored.LocalStorage
+@using TaikoWebUI.Utilities;
+
+@inject IGameDataService GameDataService
 @inject HttpClient Client
 @inject AuthService AuthService
-@inject IJSRuntime JsRuntime
+@inject ILocalStorageService LocalStorage
 @inject NavigationManager NavigationManager
-@using TaikoWebUI.Utilities;
 
 @page "/Users/{baid:int}/Songs"
 
@@ -55,7 +57,7 @@
                     </ToolBarContent>
                     <HeaderContent>
                         <MudTh>
-                            <MudTableSortLabel T="MusicDetail" SortBy="context => GameDataService.GetMusicNameBySongId(musicDetailDictionary, context.SongId, CurrentLanguage)">
+                            <MudTableSortLabel T="MusicDetail" SortBy="context => GameDataService.GetMusicNameBySongId(musicDetailDictionary, context.SongId, SongNameLanguage)">
                                 @Localizer["Song Title / Artist"]
                             </MudTableSortLabel>
                         </MudTh>
@@ -82,10 +84,10 @@
                             <div>
                                 <a href="@($"/Users/{Baid}/Songs/{context.SongId}")">
                                     <MudText Typo="Typo.body2" Style="font-weight:bold">
-                                        @GameDataService.GetMusicNameBySongId(musicDetailDictionary, context.SongId, CurrentLanguage)
+                                        @GameDataService.GetMusicNameBySongId(musicDetailDictionary, context.SongId, SongNameLanguage)
                                     </MudText>
                                     <MudText Typo="Typo.caption">
-                                        @GameDataService.GetMusicArtistBySongId(musicDetailDictionary, context.SongId, CurrentLanguage)
+                                        @GameDataService.GetMusicArtistBySongId(musicDetailDictionary, context.SongId, SongNameLanguage)
                                     </MudText>
                                 </a>
                             </div>

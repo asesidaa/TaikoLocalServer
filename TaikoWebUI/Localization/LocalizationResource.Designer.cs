@@ -755,6 +755,15 @@ namespace TaikoWebUI.Localization {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        internal static string Song_Name_Language {
+            get {
+                return ResourceManager.GetString("Song Name Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         internal static string Song_Number {
             get {
                 return ResourceManager.GetString("Song Number", resourceCulture);
@@ -821,6 +830,15 @@ namespace TaikoWebUI.Localization {
         internal static string Total_Credits_Played {
             get {
                 return ResourceManager.GetString("Total Credits Played", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string UI_Language {
+            get {
+                return ResourceManager.GetString("UI Language", resourceCulture);
             }
         }
         

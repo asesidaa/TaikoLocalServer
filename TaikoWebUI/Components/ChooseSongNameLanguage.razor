@@ -1,0 +1,54 @@
+﻿@using Blazored.LocalStorage
+@using Microsoft.Extensions.Options
+@using TaikoWebUI.Settings
+@inject NavigationManager NavigationManager
+@inject IOptions<WebUiSettings> Settings
+@inject ILocalStorageService LocalStorage
+
+<MudMenu Icon="@Icons.Material.Filled.Translate" Color="Color.Inherit" Size="Size.Small" Dense="true">
+    <MudText Align="Align.Center" GutterBottom="true">@Localizer["Song Name Language"]</MudText>
+    <MudDivider />
+    @foreach (var culture in supportedCultures)
+    {
+        <MudMenuItem OnClick="() => RequestCultureChange(culture.Key)" OnTouch="() => RequestCultureChange(culture.Key)">@culture.Value</MudMenuItem>
+    }
+</MudMenu>
+
+@code {
+    private readonly Dictionary<CultureInfo, string> supportedCultures = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        foreach (var language in Settings.Value.SupportedLanguages)
+        {
+            supportedCultures.Add(new CultureInfo(language.CultureCode), language.DisplayName);
+        }
+
+        if (supportedCultures.Count == 0)
+        {
+            supportedCultures.Add(new CultureInfo("en-US"), "English");
+        }
+        
+        var currentSongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
+        
+        if (string.IsNullOrEmpty(currentSongNameLanguage))
+        {
+            await LocalStorage.SetItemAsync("songNameLanguage", "en-US");
+        }
+    }
+
+    private async Task RequestCultureChange(CultureInfo newCulture)
+    {
+        var currentSongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
+        
+        if (currentSongNameLanguage == newCulture.Name)
+        {
+            return;
+        }
+
+        await LocalStorage.SetItemAsync("songNameLanguage", newCulture.Name);
+        
+        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+    }
+}

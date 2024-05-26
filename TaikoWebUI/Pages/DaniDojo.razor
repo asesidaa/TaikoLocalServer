@@ -1,8 +1,11 @@
-﻿@inject IGameDataService GameDataService
+﻿@using Blazored.LocalStorage
+
+@inject IGameDataService GameDataService
 @inject HttpClient Client
 @inject AuthService AuthService
 @inject IJSRuntime JsRuntime
 @inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
 
 @page "/Users/{baid:int}/DaniDojo"
 
@@ -148,12 +151,12 @@ else
                                                         </MudItem>
 
                                                         <MudItem xs="9" md="4" Style="display:flex;flex-direction:column;" Class="pl-4">
-                                                            <MudText Typo="Typo.body1" Style="font-weight: bold;">@GameDataService.GetMusicNameBySongId(musicDetailDictionary, danDataOdaiSong.SongNo, @CurrentLanguage)</MudText>
-                                                            <MudText Typo="Typo.caption">@GameDataService.GetMusicArtistBySongId(musicDetailDictionary, danDataOdaiSong.SongNo, @CurrentLanguage)</MudText>
+                                                            <MudText Typo="Typo.body1" Style="font-weight: bold;">@GameDataService.GetMusicNameBySongId(musicDetailDictionary, danDataOdaiSong.SongNo, SongNameLanguage)</MudText>
+                                                            <MudText Typo="Typo.caption">@GameDataService.GetMusicArtistBySongId(musicDetailDictionary, danDataOdaiSong.SongNo, SongNameLanguage)</MudText>
                                                         </MudItem>
 
 
-                                                        @if (bestDataMap.TryGetValue(danId, out var danBestData))
+                                                        @if (_bestDataMap.TryGetValue(danId, out var danBestData))
                                                         {
                                                             if (danBestData.DanBestStageDataList.Count > index)
                                                             {
@@ -218,7 +221,7 @@ else
                                                         }
                                                         <MudStack Spacing="1">
                                                             <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">@Localizer["Result"]</MudText>
-                                                            @if (bestDataMap.TryGetValue(danId, out var danBestData))
+                                                            @if (_bestDataMap.TryGetValue(danId, out var danBestData))
                                                             {
                                                                 if (danBestData.SoulGaugeTotal >= redRequirement) {
                                                                     barClass = "bar-pass-red";
@@ -288,7 +291,7 @@ else
                                                                     }
                                                                     <MudStack Spacing="1">
                                                                         <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">@Localizer["Result"]</MudText>
-                                                                        @if (bestDataMap.TryGetValue(danId, out var danBestData))
+                                                                        @if (_bestDataMap.TryGetValue(danId, out var danBestData))
                                                                         {
                                                                             var bestData = GetAllBestFromData((DanConditionType)border.OdaiType, danBestData);
 
@@ -381,7 +384,7 @@ else
                                                                             </MudCardHeader>
                                                                             <MudCardContent>
                                                                                 <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">@Localizer["Result"]</MudText>
-                                                                            @if (bestDataMap.TryGetValue(danId, out var danBestData) && (danBestData.DanBestStageDataList.Count > songNumber))
+                                                                            @if (_bestDataMap.TryGetValue(danId, out var danBestData) && (danBestData.DanBestStageDataList.Count > songNumber))
                                                                             {
                                                                                 var bestData = GetSongBestFromData((DanConditionType)border.OdaiType, danBestData, songNumber);
                                                                                 if ((DanConditionType)border.OdaiType is DanConditionType.BadCount or DanConditionType.OkCount)

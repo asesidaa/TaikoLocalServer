@@ -1,6 +1,4 @@
-﻿using Microsoft.JSInterop;
-
-namespace TaikoWebUI.Pages;
+﻿namespace TaikoWebUI.Pages;
 
 public partial class HighScores
 {
@@ -29,15 +27,15 @@ public partial class HighScores
 
         userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
 
-        var language = await JsRuntime.InvokeAsync<string>("blazorCulture.get");
+        var songNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
         musicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
 
         response.SongBestData.ForEach(data =>
         {
             var songId = data.SongId;
             data.Genre = GameDataService.GetMusicGenreBySongId(musicDetailDictionary, songId);
-            data.MusicName = GameDataService.GetMusicNameBySongId(musicDetailDictionary, songId, string.IsNullOrEmpty(language) ? "ja" : language);
-            data.MusicArtist = GameDataService.GetMusicArtistBySongId(musicDetailDictionary, songId, string.IsNullOrEmpty(language) ? "ja" : language);
+            data.MusicName = GameDataService.GetMusicNameBySongId(musicDetailDictionary, songId, string.IsNullOrEmpty(songNameLanguage) ? "ja" : songNameLanguage);
+            data.MusicArtist = GameDataService.GetMusicArtistBySongId(musicDetailDictionary, songId, string.IsNullOrEmpty(songNameLanguage) ? "ja" : songNameLanguage);
         });
 
         songBestDataMap = response.SongBestData.GroupBy(data => data.Difficulty)
