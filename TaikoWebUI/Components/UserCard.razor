@@ -141,10 +141,7 @@
 
     protected override async Task OnInitializedAsync()
     {   
-        if (User is not null)
-        {
-            UserSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{User.Baid}");
-        }
+        await base.OnInitializedAsync();
     }
 
     private Task ShowQrCode(User user)
