@@ -27,8 +27,6 @@ public interface IGameDataService
 
     public List<uint> GetLockedSongsList();
     
-    public List<uint> GetLockedUraSongsList();
-    
     public Dictionary<uint, MusicDetail> GetMusicDetailDictionary();
 
     public List<Costume> GetCostumeList();

@@ -387,4 +387,7 @@
   <data name="Rows Per Page:" xml:space="preserve">
     <value />
   </data>
+  <data name="Total Credits Played" xml:space="preserve">
+    <value />
+  </data>
 </root>

@@ -2,6 +2,8 @@
 
 public interface IUserDatumService
 {
+    public Task<List<UserDatum>> GetAllUserDatum();
+    
     public Task<UserDatum?> GetFirstUserDatumOrNull(uint baid);
 
     public Task UpdateUserDatum(UserDatum userDatum);

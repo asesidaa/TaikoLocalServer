@@ -13,9 +13,9 @@
         <MudCardHeader>
             <CardHeaderContent>
                 <div style="display:flex;flex-wrap:wrap;align-items:center;gap:5px;">
-                    @if (userSetting is not null)
+                    @if (UserSetting is not null)
                     {
-                        <MudText Typo="Typo.h6" Style="font-weight:bold;word-break:break-all">@userSetting?.MyDonName</MudText>
+                        <MudText Typo="Typo.h6" Style="font-weight:bold;word-break:break-all">@UserSetting?.MyDonName</MudText>
                     } else
                     {
                         <MudSkeleton Width="35%" Height="32px" />
@@ -137,13 +137,13 @@
 
 @code {
     [Parameter] public User? User { get; set; }
-    private UserSetting? userSetting;
+    [Parameter] public UserSetting? UserSetting { get; set; }
 
     protected override async Task OnInitializedAsync()
     {   
         if (User is not null)
         {
-            userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{User.Baid}");
+            UserSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{User.Baid}");
         }
     }
 

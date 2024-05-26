@@ -192,7 +192,7 @@
   <data name="Last Played" xml:space="preserve">
     <value>ラストプレイ</value>
   </data>
-  <data name="Total Plays" xml:space="preserve">
+  <data name="Total Credits Played" xml:space="preserve">
     <value>プレイ回数</value>
   </data>
   <data name="Total Clears" xml:space="preserve">

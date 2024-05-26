@@ -4,6 +4,8 @@ namespace SharedProject.Models;
 
 public class UserSetting
 {
+    public uint Baid { get; set; }
+    
     public uint ToneId { get; set; }
 
     public bool IsDisplayAchievement { get; set; }
