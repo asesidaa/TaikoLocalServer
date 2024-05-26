@@ -11,9 +11,9 @@
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="DrawerToggle" Size="Size.Small" />
         <MudSpacer />
         <MudStack Spacing="3" Row="true">
-            <MudIconButton Icon="@DarkModeIcon" Size="Size.Small" Color="Color.Inherit" OnClick="ToggleDarkMode" />
             <ChooseUILanguage />
             <ChooseSongNameLanguage />
+            <MudIconButton Icon="@DarkModeIcon" Size="Size.Small" Color="Color.Inherit" OnClick="ToggleDarkMode" />
         </MudStack>
     </MudAppBar>
     <MudDrawer Elevation="0" Style="border-right:1px solid #ededf0" @bind-Open="drawerOpen">
