@@ -386,6 +386,12 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
         
         foreach (var musicInfo in musicInfoData.MusicInfoEntries)
         {
+            var musicUniqueId = musicInfo.MusicId;
+            if (musicUniqueId == 0)
+            {
+                continue;
+            }
+            
             var musicId = musicInfo.Id;
             var musicNameKey = $"song_{musicId}";
             var musicArtistKey = $"song_sub_{musicId}";
@@ -397,7 +403,6 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
             var musicArtistCn = wordlistData.WordListEntries.First(entry => entry.Key == musicArtistKey).ChineseTText;
             var musicNameKo = wordlistData.WordListEntries.First(entry => entry.Key == musicNameKey).KoreanText;
             var musicArtistKo = wordlistData.WordListEntries.First(entry => entry.Key == musicArtistKey).KoreanText;
-            var musicUniqueId = musicInfo.MusicId;
             var musicGenre = musicInfo.Genre;
             var musicStarEasy = musicInfo.StarEasy;
             var musicStarNormal = musicInfo.StarNormal;
