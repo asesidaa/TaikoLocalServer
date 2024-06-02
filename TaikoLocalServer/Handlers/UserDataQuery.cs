@@ -22,12 +22,12 @@ public class UserDataQueryHandler(TaikoDbContext context, IGameDataService gameD
         lockedSongsList = lockedSongsList.Except(unlockedSongIdList).ToList();
         var enabledMusicList = musicList.Except(lockedSongsList);
         var releaseSongArray =
-            FlagCalculator.GetBitArrayFromIds(enabledMusicList, Constants.MUSIC_ID_MAX, logger);
+            FlagCalculator.GetBitArrayFromIds(enabledMusicList, Constants.MusicIdMax, logger);
 
         var defaultSongWithUraList = gameDataService.GetMusicWithUraList();
         var enabledUraMusicList = defaultSongWithUraList.Except(lockedSongsList);
         var uraSongArray =
-            FlagCalculator.GetBitArrayFromIds(enabledUraMusicList, Constants.MUSIC_ID_MAX, logger);
+            FlagCalculator.GetBitArrayFromIds(enabledUraMusicList, Constants.MusicIdMax, logger);
 
         if (userData.ToneFlgArray.Count == 0)
         {

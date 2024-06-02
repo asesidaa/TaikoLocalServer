@@ -15,8 +15,8 @@ public class GetTelopController : BaseController<GetTelopController>
         var response = new GettelopResponse
         {
             Result = 1,
-            StartDatetime = startDateTime.ToString(Constants.DATE_TIME_FORMAT),
-            EndDatetime = endDateTime.ToString(Constants.DATE_TIME_FORMAT),
+            StartDatetime = startDateTime.ToString(Constants.DateTimeFormat),
+            EndDatetime = endDateTime.ToString(Constants.DateTimeFormat),
             Telop = "Hello 3906",
             VerupNo = 1
         };
@@ -36,8 +36,8 @@ public class GetTelopController : BaseController<GetTelopController>
         var response = new Models.v3209.GettelopResponse
         {
             Result = 1,
-            StartDatetime = startDateTime.ToString(Constants.DATE_TIME_FORMAT),
-            EndDatetime = endDateTime.ToString(Constants.DATE_TIME_FORMAT),
+            StartDatetime = startDateTime.ToString(Constants.DateTimeFormat),
+            EndDatetime = endDateTime.ToString(Constants.DateTimeFormat),
             Telop = "Hello 3209",
             VerupNo = 1
         };

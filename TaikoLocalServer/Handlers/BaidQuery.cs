@@ -127,7 +127,7 @@ public class BaidQueryHandler(
             GotDanMax = maxDan,
             GotGaidenFlg = gotGaidenFlagArray,
             IsDispAchievementOn = userData.DisplayAchievement,
-            LastPlayDatetime = userData.LastPlayDatetime.ToString(Constants.DATE_TIME_FORMAT),
+            LastPlayDatetime = userData.LastPlayDatetime.ToString(Constants.DateTimeFormat),
             LastPlayMode = userData.LastPlayMode,
             SelectedToneId = userData.SelectedToneId,
             Title = userData.Title,

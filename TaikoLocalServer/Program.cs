@@ -15,6 +15,8 @@ using Serilog;
 using SharedProject.Utils;
 using TaikoLocalServer.Controllers.Api;
 using TaikoLocalServer.Filters;
+using Microsoft.AspNetCore.ResponseCompression;
+using System.IO.Compression;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -29,14 +31,14 @@ Log.Information("Server starting up...");
 try
 {
     var builder = WebApplication.CreateBuilder(args);
-    
+
     builder.Services.AddHttpLogging(options =>
     {
         options.LoggingFields = HttpLoggingFields.All;
         options.RequestBodyLogLimit = 32768;
         options.ResponseBodyLogLimit = 32768;
     });
-    
+
     const string configurationsDirectory = "Configurations";
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/Kestrel.json", optional: true, reloadOnChange: false);
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/Logging.json", optional: false, reloadOnChange: false);
@@ -44,8 +46,8 @@ try
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/ServerSettings.json", optional: false, reloadOnChange: false);
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/DataSettings.json", optional: true, reloadOnChange: false);
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/AuthSettings.json", optional: true, reloadOnChange: false);
-    builder.Configuration.AddJsonFile("wwwroot/appsettings.json", optional: true, reloadOnChange: true); // Add appsettings.json
-    
+    builder.Configuration.AddJsonFile("wwwroot/appsettings.json", optional: false, reloadOnChange: false);
+
     builder.Host.UseSerilog((context, configuration) =>
     {
         configuration
@@ -65,6 +67,19 @@ try
         Log.Warning("Song limit expanded! Use at your own risk!");
     }
 
+    // Add response compression services
+    builder.Services.AddResponseCompression(options =>
+    {
+        options.EnableForHttps = true;
+        options.Providers.Add<GzipCompressionProvider>();
+        options.Providers.Add<BrotliCompressionProvider>();
+    });
+
+    builder.Services.Configure<GzipCompressionProviderOptions>(options =>
+    {
+        options.Level = CompressionLevel.Fastest;
+    });
+
     // Add services to the container.
     builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
     builder.Services.AddOptions();
@@ -73,39 +88,38 @@ try
     builder.Services.Configure<DataSettings>(builder.Configuration.GetSection(nameof(DataSettings)));
     builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection(nameof(AuthSettings)));
 
-    // Read LoginRequired setting from appsettings.json
-    var loginRequired = builder.Configuration.GetValue<bool>("LoginRequired");
+    var loginRequired = builder.Configuration.GetSection("WebUiSettings").GetValue<bool>("LoginRequired");
     builder.Services.Configure<AuthSettings>(options => { options.LoginRequired = loginRequired; });
 
     // Add Authentication with JWT
     builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
         {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-        .AddJwtBearer(options =>
-        {
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = builder.Configuration.GetSection(nameof(AuthSettings))["JwtIssuer"],
-                ValidAudience = builder.Configuration.GetSection(nameof(AuthSettings))["JwtAudience"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection(nameof(AuthSettings))["JwtKey"] ?? throw new InvalidOperationException()))
-            };
-        });
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration.GetSection(nameof(AuthSettings))["JwtIssuer"],
+            ValidAudience = builder.Configuration.GetSection(nameof(AuthSettings))["JwtAudience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection(nameof(AuthSettings))["JwtKey"] ?? throw new InvalidOperationException()))
+        };
+    });
 
     builder.Services.AddScoped<AuthorizeIfRequiredAttribute>(); // Register the custom attribute
-    
+
     builder.Services.AddControllers().AddProtoBufNet();
     builder.Services.AddDbContext<TaikoDbContext>(option =>
     {
         var dbName = builder.Configuration["DbFileName"];
         if (string.IsNullOrEmpty(dbName))
         {
-            dbName = Constants.DEFAULT_DB_NAME;
+            dbName = Constants.DefaultDbName;
         }
 
         var path = Path.Combine(PathHelper.GetRootPath(), dbName);
@@ -148,6 +162,9 @@ try
     gameDataService.ThrowIfNull();
     await gameDataService.InitializeAsync();
 
+    // Use response compression
+    app.UseResponseCompression();
+
     // For reverse proxy
     app.UseForwardedHeaders(new ForwardedHeadersOptions
     {
@@ -159,21 +176,27 @@ try
     app.UseBlazorFrameworkFiles();
     app.UseStaticFiles();
     app.UseRouting();
-    
+
     // Enable Authentication and Authorization middleware
     app.UseAuthentication();
     app.UseAuthorization();
-    
+
     app.UseHttpLogging();
     app.Use(async (context, next) =>
     {
         await next();
-        
-        if (context.Response.StatusCode >= 400)
+
+        if (context.Response.StatusCode == StatusCodes.Status404NotFound)
         {
             Log.Error("Unknown request from: {RemoteIpAddress} {Method} {Path} {StatusCode}",
                 context.Connection.RemoteIpAddress, context.Request.Method, context.Request.Path, context.Response.StatusCode);
             Log.Error("Request headers: {Headers}", context.Request.Headers);
+        }
+        else if (context.Response.StatusCode != StatusCodes.Status200OK)
+        {
+            Log.Warning("Unsuccessful request from: {RemoteIpAddress} {Method} {Path} {StatusCode}",
+                context.Connection.RemoteIpAddress, context.Request.Method, context.Request.Path, context.Response.StatusCode);
+            Log.Warning("Request headers: {Headers}", context.Request.Headers);
         }
     });
     app.MapControllers();

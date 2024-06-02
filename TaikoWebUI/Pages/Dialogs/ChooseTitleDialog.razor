@@ -1,11 +1,10 @@
-﻿@using TaikoWebUI.Shared.Models
-@using System.Collections.Immutable
+﻿@using System.Collections.Immutable
 @inject IGameDataService GameDataService
 @inject IJSRuntime Js
 
 <MudDialog>
     <DialogContent>
-        <MudTable Items="@titles" Filter="@Filter" @bind-SelectedItem="@selectedTitle" Height="40vh" Hover="true">
+        <MudTable Items="@Titles" Filter="@Filter" @bind-SelectedItem="@selectedTitle" Height="40vh" Hover="true">
             <ColGroup>
                 <col style="width: 50px;" />
                 <col />
@@ -66,9 +65,7 @@
     public bool AllowFreeProfileEditing { get; set; }
     
     [Parameter]
-    public List<uint> TitleUniqueIdList { get; set; } = new();
-
-    private IEnumerable<Title> titles = new List<Title>();
+    public List<Title> Titles { get; set; } = new();
 
     private Title? selectedTitle;
 
@@ -77,28 +74,13 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        var titleSet = GameDataService.GetTitles();
-        if (!AllowFreeProfileEditing)
-        {
-            var unlockedTitle = UserSetting.UnlockedTitle;
-            titleSet = titleSet.Where(title => unlockedTitle.Contains(title.TitleId)).ToImmutableHashSet();
-        }
-        else
-        {
-            // Only allow titles in titleUniqueIdList
-            titleSet = titleSet.Where(title => TitleUniqueIdList.Contains(title.TitleId)).ToImmutableHashSet();
-        }
-        titles = titleSet.ToImmutableList().Sort((title, title1) => title.TitleId.CompareTo(title1.TitleId));
         var currentTitle = new Title
             {
                 TitleName = UserSetting.Title
             };
-        if (titleSet.Contains(currentTitle))
+        if (Titles.Contains(currentTitle))
         {
-            titleSet.TryGetValue(new Title
-                {
-                    TitleName = UserSetting.Title
-                }, out selectedTitle);
+            selectedTitle = currentTitle;
         }
     }
 

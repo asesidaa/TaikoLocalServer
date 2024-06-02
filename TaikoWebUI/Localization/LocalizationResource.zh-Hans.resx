@@ -192,7 +192,7 @@
   <data name="Last Played" xml:space="preserve">
     <value>最后游玩时间</value>
   </data>
-  <data name="Total Plays" xml:space="preserve">
+  <data name="Total Credits Played" xml:space="preserve">
     <value>总游玩次数</value>
   </data>
   <data name="Total Clears" xml:space="preserve">
@@ -590,5 +590,11 @@
   </data>
   <data name="Rows Per Page:" xml:space="preserve">
     <value>每页行数</value>
+  </data>
+  <data name="UI" xml:space="preserve">
+    <value>界面</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>添加</value>
   </data>
 </root>

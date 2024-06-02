@@ -1,9 +1,5 @@
-﻿using static MudBlazor.Colors;
-using System;
-using static MudBlazor.CategoryTypes;
-using System.Globalization;
+﻿using System.Globalization;
 using Microsoft.JSInterop;
-using TaikoWebUI.Shared.Models;
 
 namespace TaikoWebUI.Pages;
 
@@ -16,7 +12,7 @@ public partial class PlayHistory
 
     private string Search { get; set; } = string.Empty;
 
-    private string? currentLanguage;
+    private string? songNameLanguage;
 
     private SongHistoryResponse? response;
 
@@ -24,22 +20,32 @@ public partial class PlayHistory
     
     private readonly List<BreadcrumbItem> breadcrumbs = new();
 
+    private Dictionary<uint, MusicDetail> musicDetailDictionary = new();
+
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        
+        if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
+        {
+            await AuthService.LoginWithAuthToken();
+        }
+        
         response = await Client.GetFromJsonAsync<SongHistoryResponse>($"api/PlayHistory/{(uint)Baid}");
         response.ThrowIfNull();
         
-        currentLanguage = await JSRuntime.InvokeAsync<string>("blazorCulture.get");
+        songNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
+        
+        musicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
 
         response.SongHistoryData.ForEach(data =>
         {
             var songId = data.SongId;
-            data.Genre = GameDataService.GetMusicGenreBySongId(songId);
-            data.MusicName = GameDataService.GetMusicNameBySongId(songId, string.IsNullOrEmpty(currentLanguage) ? "ja" : currentLanguage);
-            data.MusicArtist = GameDataService.GetMusicArtistBySongId(songId, string.IsNullOrEmpty(currentLanguage) ? "ja" : currentLanguage);
-            data.Stars = GameDataService.GetMusicStarLevel(songId, data.Difficulty);
+            data.Genre = GameDataService.GetMusicGenreBySongId(musicDetailDictionary, songId);
+            data.MusicName = GameDataService.GetMusicNameBySongId(musicDetailDictionary, songId, string.IsNullOrEmpty(songNameLanguage) ? "ja" : songNameLanguage);
+            data.MusicArtist = GameDataService.GetMusicArtistBySongId(musicDetailDictionary, songId, string.IsNullOrEmpty(songNameLanguage) ? "ja" : songNameLanguage);
+            data.Stars = GameDataService.GetMusicStarLevel(musicDetailDictionary, songId, data.Difficulty);
             data.ShowDetails = false;
         });
 
@@ -134,7 +140,7 @@ public partial class PlayHistory
             return true;
         }
 
-        var language = currentLanguage ?? "ja";
+        var language = songNameLanguage ?? "ja";
         
         if (songHistoryDataList[0].PlayTime
             .ToString("dddd d MMMM yyyy - HH:mm", CultureInfo.CreateSpecificCulture(language))

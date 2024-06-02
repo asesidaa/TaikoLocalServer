@@ -1,12 +1,13 @@
 ﻿@page "/Users/{baid:int}/Songs/{songId:int}"
 
+@using Blazored.LocalStorage
+@using TaikoWebUI.Components.Song
+
 @inject IGameDataService GameDataService
 @inject HttpClient Client
 @inject AuthService AuthService
 @inject NavigationManager NavigationManager
-@inject IJSRuntime JsRuntime
-
-@using TaikoWebUI.Components.Song;
+@inject ILocalStorageService LocalStorage
 
 @if (AuthService.LoginRequired && (!AuthService.IsLoggedIn || (AuthService.GetLoggedInBaid() != Baid && !AuthService.IsAdmin)))
 {

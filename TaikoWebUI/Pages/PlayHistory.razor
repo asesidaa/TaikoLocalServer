@@ -1,11 +1,11 @@
+@using Blazored.LocalStorage
+
 @inject IGameDataService GameDataService
 @inject HttpClient Client
 @inject AuthService AuthService
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime JsRuntime
 @inject NavigationManager NavigationManager
-@using TaikoWebUI.Utilities;
-@using TaikoWebUI.Shared.Models;
-@using SharedProject.Enums;
+@inject ILocalStorageService LocalStorage
 
 @page "/Users/{baid:int}/PlayHistory"
 
@@ -113,7 +113,7 @@
                                                                  ToggledSize="Size.Small"
                                                                  Title="Add to favorites" ToggledTitle="Remove from favorites" />
                                         </div>
-                                    </MudStack>    
+                                    </MudStack>
                                 </MudTd>
 
                                 @* Genre display *@

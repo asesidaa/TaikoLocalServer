@@ -1,6 +1,5 @@
 ﻿@inherits LayoutComponentBase
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
-@inject HttpClient Client
 @inject AuthService AuthService
 
 <MudThemeProvider IsDarkMode="@isDarkMode" Theme="@taikoWebUiTheme" />
@@ -11,9 +10,10 @@
     <MudAppBar Elevation="0">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="DrawerToggle" Size="Size.Small" />
         <MudSpacer />
-        <MudStack Spacing="2" Row="true">
+        <MudStack Spacing="3" Row="true">
+            <ChooseUILanguage />
+            <ChooseSongNameLanguage />
             <MudIconButton Icon="@DarkModeIcon" Size="Size.Small" Color="Color.Inherit" OnClick="ToggleDarkMode" />
-            <ChooseLanguage />
         </MudStack>
     </MudAppBar>
     <MudDrawer Elevation="0" Style="border-right:1px solid #ededf0" @bind-Open="drawerOpen">
@@ -53,7 +53,7 @@
             isDarkMode = await LocalStorage.GetItemAsync<bool>("isDarkMode");
         }
 
-        if (AuthService.LoginRequired)
+        if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
         {
             // If not logged in, attempt to use JwtToken from local storage to log in
             await AuthService.LoginWithAuthToken();
