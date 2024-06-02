@@ -1,0 +1,121 @@
+﻿@using Blazored.LocalStorage
+@using Microsoft.Extensions.Options
+@using TaikoWebUI.Settings
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+@inject IOptions<WebUiSettings> Settings
+@inject ILocalStorageService LocalStorage
+
+<MudMenu Icon="@Icons.Material.Filled.Translate" Color="Color.Inherit" Size="Size.Small" Dense="true" MaxHeight="300" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+    <MudText Typo="Typo.overline" Align="Align.Left" GutterBottom="true" Style="padding: 0 16px;font-weight: bold;">@Localizer["UI"]</MudText>
+    @foreach (var culture in supportedCultures)
+    {
+    <MudMenuItem Class="lang-menu-item" IconSize="Size.Small" Icon="@cultureStatuses["UI"][culture.Key]" OnClick="() => RequestUiCultureChange(culture.Key)" OnTouch="() => RequestUiCultureChange(culture.Key)">@culture.Value</MudMenuItem>
+    }
+    <MudDivider />
+    <MudText Typo="Typo.overline" Align="Align.Left" GutterBottom="true" Style="padding: 0 16px;font-weight: bold;">@Localizer["Song List"]</MudText>
+    @foreach (var culture in supportedCultures)
+    {
+    <MudMenuItem Class="lang-menu-item" IconSize="Size.Small" Icon="@cultureStatuses["SongName"][culture.Key]" OnClick="() => RequestSongNameCultureChange(culture.Key)" OnTouch="() => RequestSongNameCultureChange(culture.Key)">@culture.Value</MudMenuItem>
+    }
+</MudMenu>
+
+@code {
+    private Dictionary<CultureInfo, string> supportedCultures = new();
+    private Dictionary<string, Dictionary<CultureInfo, string>> cultureStatuses = new();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        foreach (var language in Settings.Value.SupportedLanguages)
+        {
+            supportedCultures.Add(new CultureInfo(language.CultureCode), language.DisplayName);
+        }
+
+        if (supportedCultures.Count == 0)
+        {
+            supportedCultures.Add(new CultureInfo("en-US"), "English");
+        }
+        
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var currentSongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
+        
+        if (string.IsNullOrEmpty(currentSongNameLanguage))
+        {
+            await LocalStorage.SetItemAsync("songNameLanguage", "en-US");
+        }
+        
+        foreach (var culture in supportedCultures.Keys)
+        {
+            var uiStatus = GetActiveUiStatus(culture);
+            var songNameStatus = await GetActiveSongNameStatus(culture);
+
+            if (!cultureStatuses.ContainsKey("UI"))
+            {
+                cultureStatuses["UI"] = new Dictionary<CultureInfo, string>();
+            }
+            if (!cultureStatuses.ContainsKey("SongName"))
+            {
+                cultureStatuses["SongName"] = new Dictionary<CultureInfo, string>();
+            }
+
+            cultureStatuses["UI"][culture] = uiStatus;
+            cultureStatuses["SongName"][culture] = songNameStatus;
+        }
+    }
+
+    private void RequestUiCultureChange(CultureInfo newCulture)
+    {
+        if (Equals(CultureInfo.CurrentCulture, newCulture))
+        {
+            return;
+        }
+
+        var js = (IJSInProcessRuntime)JsRuntime;
+        js.InvokeVoid("blazorCulture.set", newCulture.Name);
+        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+    }
+    
+    private async Task RequestSongNameCultureChange(CultureInfo newCulture)
+    {
+        var currentSongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
+        
+        if (currentSongNameLanguage == newCulture.Name)
+        {
+            return;
+        }
+
+        await LocalStorage.SetItemAsync("songNameLanguage", newCulture.Name);
+        
+        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+    }
+    
+    private async Task<string> GetActiveStatusAsync(string type, CultureInfo culture)
+    {
+        switch (type)
+        {
+            case "UI":
+                return GetActiveUiStatus(culture);
+            case "SongName":
+                return await GetActiveSongNameStatus(culture);
+            default:
+                return string.Empty;
+        }
+    }
+    
+    private string GetActiveUiStatus(CultureInfo culture)
+    {
+        var currentUiLanguage = CultureInfo.CurrentCulture;
+        return Equals(currentUiLanguage, culture) ? Icons.Material.Filled.Check : string.Empty;
+    }
+    
+    private async Task<string> GetActiveSongNameStatus(CultureInfo culture)
+    {
+        var currentSongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
+        return currentSongNameLanguage == culture.Name ? Icons.Material.Filled.Check : string.Empty;
+    }
+}

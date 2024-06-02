@@ -55,6 +55,10 @@
     transform: scale(1.1);
 }
 
+.lang-menu-item .mud-list-item-icon {
+    min-width: 26px;
+}
+
 @media only screen and (min-width: 600px) {
     .ai-battle-td {
         display: revert;
