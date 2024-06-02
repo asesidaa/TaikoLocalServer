@@ -139,9 +139,13 @@ public partial class Profile
     private static readonly string[] TitlePlateStrings =
     {
         "Wood", "Rainbow", "Gold", "Purple",
-        "AI 1", "AI 2", "AI 3", "AI 4"
+        "AI 1", "AI 2", "AI 3", "AI 4",
+        "Onp 1", "Toho Y22 QR", "Toho Y22 1", "Toho Y22 2",
+        "Toho Y22 3", "Toho Y22 4", "Toho Y22 5", "AprilFool 1",
+        "AprilFool 2", "AprilFool 3", "AprilFool 4", "AprilFool 5",
+        "AprilFool 6"
     };
-    
+
     private static readonly string[] LanguageStrings =
     {
         "Japanese", "English", "Chinese (Traditional)", "Korean", "Chinese (Simplified)"
