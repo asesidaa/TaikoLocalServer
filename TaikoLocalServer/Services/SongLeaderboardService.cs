@@ -27,6 +27,7 @@ public class SongLeaderboardService : ISongLeaderboardService
             .ThenByDescending(x => x.BestRate)
             .Take(limit)
             .ToListAsync();
+        
 
         // get the user data for each score
         var leaderboard = new List<SongLeaderboard>();
@@ -46,13 +47,7 @@ public class SongLeaderboardService : ISongLeaderboardService
                 BestScore = score.BestScore,
                 BestRate = score.BestRate,
                 BestCrown = score.BestCrown,
-                BestScoreRank = score.BestScoreRank,
-                GoodCount = score.GoodCount,
-                OkCount = score.OkCount,
-                MissCount = score.MissCount,
-                ComboCount = score.ComboCount,
-                HitCount = score.HitCount,
-                DrumrollCount = score.DrumrollCount
+                BestScoreRank = score.BestScoreRank
             });
         }
 
@@ -81,13 +76,7 @@ public class SongLeaderboardService : ISongLeaderboardService
                     BestScore = currentUserScore.BestScore,
                     BestRate = currentUserScore.BestRate,
                     BestCrown = currentUserScore.BestCrown,
-                    BestScoreRank = currentUserScore.BestScoreRank,
-                    GoodCount = currentUserScore.GoodCount,
-                    OkCount = currentUserScore.OkCount,
-                    MissCount = currentUserScore.MissCount,
-                    ComboCount = currentUserScore.ComboCount,
-                    HitCount = currentUserScore.HitCount,
-                    DrumrollCount = currentUserScore.DrumrollCount
+                    BestScoreRank = currentUserScore.BestScoreRank
                 });
             }
         }
