@@ -74,6 +74,8 @@
         <_ContentIncludedByDefault Remove="Pages\Pages\PlayHistory.razor" />
         <_ContentIncludedByDefault Remove="Pages\Pages\Song.razor" />
         <_ContentIncludedByDefault Remove="Pages\Pages\SongList.razor" />
+        <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css" />
+        <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css.map" />
     </ItemGroup>
 
     <ItemGroup>

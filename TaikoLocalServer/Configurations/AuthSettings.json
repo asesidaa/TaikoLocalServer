@@ -3,6 +3,6 @@
     "JwtKey": "SuperSecretKeyAndHeresItsPadding",
     "JwtIssuer": "http://localhost:5000",
     "JwtAudience": "http://localhost:5000",
-    "AuthenticationRequired": false
+    "AuthenticationRequired": true
   }
 }
