@@ -27,7 +27,6 @@ public class SongLeaderboardService : ISongLeaderboardService
             .ThenByDescending(x => x.BestRate)
             .Take(limit)
             .ToListAsync();
-        
 
         // get the user data for each score
         var leaderboard = new List<SongLeaderboard>();

@@ -24,6 +24,10 @@ else
             <MudItem xs="12">
                 <PlayHistoryCard Items="@songHistoryData" />
             </MudItem>
+            
+            <MudItem xs="12">
+                <SongLeaderboardCard SongId="@SongId" Baid="@Baid" />
+            </MudItem>
         </MudGrid>
     }
 }

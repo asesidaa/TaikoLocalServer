@@ -1,2 +1,12 @@
-﻿@using TaikoWebUI.Utilities;
+﻿@inject HttpClient Client;
+@using TaikoWebUI.Utilities;
 
+<MudCard Outlined="true" Elevation="0">
+    <MudCardHeader>
+        <MudGrid Spacing="2">
+            <MudItem xs="12">
+                <MudText Typo="Typo.h6">@Localizer["Leaderboard"]</MudText>
+            </MudItem>
+        </MudGrid>
+    </MudCardHeader>
+</MudCard>
