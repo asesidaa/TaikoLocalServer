@@ -17,7 +17,7 @@ public class PlayHistoryController(IUserDatumService userDatumService, ISongPlay
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<ActionResult<SongHistoryResponse>> GetSongHistory(uint baid)
     {
-        if (authSettings.LoginRequired)
+        if (authSettings.AuthenticationRequired)
         {
             var tokenInfo = authService.ExtractTokenInfo(HttpContext);
             if (tokenInfo is null)

@@ -182,7 +182,7 @@ public class AuthController(IAuthService authService, IUserDatumService userDatu
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<IActionResult> ChangePassword(ChangePasswordRequest changePasswordRequest)
     {
-        if (authSettings.LoginRequired)
+        if (authSettings.AuthenticationRequired)
         {
             var tokenInfo = authService.ExtractTokenInfo(HttpContext);
             if (tokenInfo == null)
@@ -232,7 +232,7 @@ public class AuthController(IAuthService authService, IUserDatumService userDatu
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<IActionResult> ResetPassword(ResetPasswordRequest resetPasswordRequest)
     {
-        if (authSettings.LoginRequired)
+        if (authSettings.AuthenticationRequired)
         {
             var tokenInfo = authService.ExtractTokenInfo(HttpContext);
             if (tokenInfo == null)
@@ -260,7 +260,7 @@ public class AuthController(IAuthService authService, IUserDatumService userDatu
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public IActionResult GenerateOtp(GenerateOtpRequest generateOtpRequest)
     {
-        if (authSettings.LoginRequired)
+        if (authSettings.AuthenticationRequired)
         {
             var tokenInfo = authService.ExtractTokenInfo(HttpContext);
             if (tokenInfo == null)

@@ -17,7 +17,7 @@ public class UserSettingsController(IUserDatumService userDatumService, IAuthSer
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<ActionResult<List<UserSetting>>> GetAllUserSetting()
     {
-        if (authSettings.LoginRequired)
+        if (authSettings.AuthenticationRequired)
         {
             var tokenInfo = authService.ExtractTokenInfo(HttpContext);
             if (tokenInfo is null)
@@ -96,7 +96,7 @@ public class UserSettingsController(IUserDatumService userDatumService, IAuthSer
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<ActionResult<UserSetting>> GetUserSetting(uint baid)
     {
-        if (authSettings.LoginRequired)
+        if (authSettings.AuthenticationRequired)
         {
             var tokenInfo = authService.ExtractTokenInfo(HttpContext);
             if (tokenInfo is null)
@@ -172,7 +172,7 @@ public class UserSettingsController(IUserDatumService userDatumService, IAuthSer
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<IActionResult> SaveUserSetting(uint baid, UserSetting userSetting)
     {
-        if (authSettings.LoginRequired)
+        if (authSettings.AuthenticationRequired)
         {
             var tokenInfo = authService.ExtractTokenInfo(HttpContext);
             if (tokenInfo is null)
