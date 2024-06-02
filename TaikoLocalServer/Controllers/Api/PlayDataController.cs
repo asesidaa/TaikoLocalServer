@@ -19,7 +19,7 @@ public class PlayDataController(IUserDatumService userDatumService, ISongBestDat
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<ActionResult<SongBestResponse>> GetSongBestRecords(uint baid)
     {
-        if (authSettings.LoginRequired)
+        if (authSettings.AuthenticationRequired)
         {
             var tokenInfo = authService.ExtractTokenInfo(HttpContext);
             if (tokenInfo is null)

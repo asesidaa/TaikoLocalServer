@@ -46,7 +46,6 @@ try
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/ServerSettings.json", optional: false, reloadOnChange: false);
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/DataSettings.json", optional: true, reloadOnChange: false);
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/AuthSettings.json", optional: true, reloadOnChange: false);
-    builder.Configuration.AddJsonFile("wwwroot/appsettings.json", optional: false, reloadOnChange: false);
 
     builder.Host.UseSerilog((context, configuration) =>
     {
@@ -87,9 +86,6 @@ try
     builder.Services.Configure<ServerSettings>(builder.Configuration.GetSection(nameof(ServerSettings)));
     builder.Services.Configure<DataSettings>(builder.Configuration.GetSection(nameof(DataSettings)));
     builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection(nameof(AuthSettings)));
-
-    var loginRequired = builder.Configuration.GetSection("WebUiSettings").GetValue<bool>("LoginRequired");
-    builder.Services.Configure<AuthSettings>(options => { options.LoginRequired = loginRequired; });
 
     // Add Authentication with JWT
     builder.Services.AddAuthentication(options =>

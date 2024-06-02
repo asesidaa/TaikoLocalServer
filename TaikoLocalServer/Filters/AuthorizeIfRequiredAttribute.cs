@@ -8,7 +8,7 @@ namespace TaikoLocalServer.Filters
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class AuthorizeIfRequiredAttribute(IOptions<AuthSettings> settings) : Attribute, IAsyncAuthorizationFilter
     {
-        private readonly bool loginRequired = settings.Value.LoginRequired;
+        private readonly bool loginRequired = settings.Value.AuthenticationRequired;
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {

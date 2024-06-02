@@ -15,7 +15,7 @@ public class GameDataController(IGameDataService gameDataService, IAuthService a
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public IActionResult GetMusicDetails()
     {
-        if (authSettings.LoginRequired)
+        if (authSettings.AuthenticationRequired)
         {
             var tokenInfo = authService.ExtractTokenInfo(HttpContext);
             if (tokenInfo is null)
@@ -31,7 +31,7 @@ public class GameDataController(IGameDataService gameDataService, IAuthService a
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public IActionResult GetCostumes()
     {
-        if (authSettings.LoginRequired)
+        if (authSettings.AuthenticationRequired)
         {
             var tokenInfo = authService.ExtractTokenInfo(HttpContext);
             if (tokenInfo is null)
@@ -47,7 +47,7 @@ public class GameDataController(IGameDataService gameDataService, IAuthService a
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public IActionResult GetTitles()
     {
-        if (authSettings.LoginRequired)
+        if (authSettings.AuthenticationRequired)
         {
             var tokenInfo = authService.ExtractTokenInfo(HttpContext);
             if (tokenInfo is null)
@@ -63,7 +63,7 @@ public class GameDataController(IGameDataService gameDataService, IAuthService a
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public IActionResult GetLockedCostumes()
     {
-        if (authSettings.LoginRequired)
+        if (authSettings.AuthenticationRequired)
         {
             var tokenInfo = authService.ExtractTokenInfo(HttpContext);
             if (tokenInfo is null)
@@ -79,7 +79,7 @@ public class GameDataController(IGameDataService gameDataService, IAuthService a
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public IActionResult GetLockedTitles()
     {
-        if (authSettings.LoginRequired)
+        if (authSettings.AuthenticationRequired)
         {
             var tokenInfo = authService.ExtractTokenInfo(HttpContext);
             if (tokenInfo is null)

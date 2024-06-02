@@ -16,7 +16,7 @@ public class FavoriteSongsController(IUserDatumService userDatumService, IAuthSe
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<IActionResult> UpdateFavoriteSong(SetFavoriteRequest request)
     {
-        if (authSettings.LoginRequired)
+        if (authSettings.AuthenticationRequired)
         {
             var tokenInfo = authService.ExtractTokenInfo(HttpContext);
             if (tokenInfo is null)
@@ -45,7 +45,7 @@ public class FavoriteSongsController(IUserDatumService userDatumService, IAuthSe
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<IActionResult> GetFavoriteSongs(uint baid)
     {
-        if (authSettings.LoginRequired)
+        if (authSettings.AuthenticationRequired)
         {
             var tokenInfo = authService.ExtractTokenInfo(HttpContext);
             if (tokenInfo is null)

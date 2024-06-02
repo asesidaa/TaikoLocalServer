@@ -16,7 +16,7 @@ public class CardsController(IAuthService authService, IOptions<AuthSettings> se
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<IActionResult> DeleteAccessCode(string accessCode)
     {
-        if (authSettings.LoginRequired)
+        if (authSettings.AuthenticationRequired)
         {
             var tokenInfo = authService.ExtractTokenInfo(HttpContext);
             if (tokenInfo == null)
@@ -45,7 +45,7 @@ public class CardsController(IAuthService authService, IOptions<AuthSettings> se
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<IActionResult> BindAccessCode(BindAccessCodeRequest bindAccessCodeRequest)
     {
-        if (authSettings.LoginRequired)
+        if (authSettings.AuthenticationRequired)
         {
             var tokenInfo = authService.ExtractTokenInfo(HttpContext);
             if (tokenInfo == null)
