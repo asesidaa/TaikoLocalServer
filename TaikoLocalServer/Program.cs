@@ -87,9 +87,6 @@ try
     builder.Services.Configure<DataSettings>(builder.Configuration.GetSection(nameof(DataSettings)));
     builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection(nameof(AuthSettings)));
 
-    var loginRequired = builder.Configuration.GetSection("WebUiSettings").GetValue<bool>("LoginRequired");
-    builder.Services.Configure<AuthSettings>(options => { options.LoginRequired = loginRequired; });
-
     // Add Authentication with JWT
     builder.Services.AddAuthentication(options =>
     {

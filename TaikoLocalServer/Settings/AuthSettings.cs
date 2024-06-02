@@ -8,5 +8,5 @@ public class AuthSettings
 
     public string JwtAudience { get; set; } = string.Empty;
     
-    public bool LoginRequired { get; set; }
+    public bool AuthenticationRequired { get; set; }
 }

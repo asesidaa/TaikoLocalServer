@@ -18,7 +18,7 @@ public class DanBestDataController(IDanScoreDatumService danScoreDatumService, I
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<IActionResult> GetDanBestData(uint baid)
     {
-        if (authSettings.LoginRequired)
+        if (authSettings.AuthenticationRequired)
         {
             var tokenInfo = authService.ExtractTokenInfo(HttpContext);
             if (tokenInfo == null)
