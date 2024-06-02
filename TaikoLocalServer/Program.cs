@@ -46,7 +46,6 @@ try
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/ServerSettings.json", optional: false, reloadOnChange: false);
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/DataSettings.json", optional: true, reloadOnChange: false);
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/AuthSettings.json", optional: true, reloadOnChange: false);
-    builder.Configuration.AddJsonFile("wwwroot/appsettings.json", optional: false, reloadOnChange: false);
 
     builder.Host.UseSerilog((context, configuration) =>
     {
