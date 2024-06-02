@@ -48,11 +48,11 @@ namespace GameDatabase.Migrations
             // Split the costumeflgarray into separate fields
             migrationBuilder.Sql(@"
                 UPDATE UserData
-                SET UnlockedKigurumi = json_extract(CostumeFlgArray, '$[0]'),
-                    UnlockedHead = json_extract(CostumeFlgArray, '$[1]'),
-                    UnlockedBody = json_extract(CostumeFlgArray, '$[2]'),
-                    UnlockedFace = json_extract(CostumeFlgArray, '$[3]'),
-                    UnlockedPuchi = json_extract(CostumeFlgArray, '$[4]')");
+                SET UnlockedKigurumi = coalesce(json_extract(CostumeFlgArray, '$[0]'), '[]'),
+                    UnlockedHead = coalesce(json_extract(CostumeFlgArray, '$[1]'), '[]'),
+                    UnlockedBody = coalesce(json_extract(CostumeFlgArray, '$[2]'), '[]'),
+                    UnlockedFace = coalesce(json_extract(CostumeFlgArray, '$[3]'), '[]'),
+                    UnlockedPuchi = coalesce(json_extract(CostumeFlgArray, '$[4]'), '[]')");
             // Deduplicate values
             migrationBuilder.Sql(@"
                 UPDATE UserData

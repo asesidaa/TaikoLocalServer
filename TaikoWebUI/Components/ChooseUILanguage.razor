@@ -1,31 +1,32 @@
-﻿@using System.Globalization;
-@using Microsoft.Extensions.Options
+﻿@using Microsoft.Extensions.Options
 @using TaikoWebUI.Settings
 @inject NavigationManager NavigationManager
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime JsRuntime
 @inject IOptions<WebUiSettings> Settings
 
-<MudMenu Icon="@Icons.Material.Filled.Translate" Color="Color.Inherit" Size="Size.Small" Dense="true">
-    @foreach (var culture in SupportedCultures)
+<MudMenu Icon="@Icons.Material.Filled.Language" Color="Color.Inherit" Size="Size.Small" Dense="true" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+    <MudText Align="Align.Center" GutterBottom="true">@Localizer["UI"]</MudText>
+    <MudDivider />
+    @foreach (var culture in supportedCultures)
     {
         <MudMenuItem OnClick="() => RequestCultureChange(culture.Key)" OnTouch="() => RequestCultureChange(culture.Key)">@culture.Value</MudMenuItem>
     }
 </MudMenu>
 
 @code {
-    public Dictionary<CultureInfo, string> SupportedCultures = new();
+    private Dictionary<CultureInfo, string> supportedCultures = new();
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
         foreach (var language in Settings.Value.SupportedLanguages)
         {
-            SupportedCultures.Add(new CultureInfo(language.CultureCode), language.DisplayName);
+            supportedCultures.Add(new CultureInfo(language.CultureCode), language.DisplayName);
         }
 
-        if (SupportedCultures.Count == 0)
+        if (supportedCultures.Count == 0)
         {
-            SupportedCultures.Add(new CultureInfo("en-US"), "English");
+            supportedCultures.Add(new CultureInfo("en-US"), "English");
         }
     }
 
@@ -36,9 +37,8 @@
             return;
         }
 
-        var js = (IJSInProcessRuntime)JSRuntime;
+        var js = (IJSInProcessRuntime)JsRuntime;
         js.InvokeVoid("blazorCulture.set", newCulture.Name);
         NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
     }
-
 }

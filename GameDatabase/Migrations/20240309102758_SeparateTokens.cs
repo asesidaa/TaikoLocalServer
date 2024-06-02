@@ -40,7 +40,12 @@ namespace GameDatabase.Migrations
                 });
             foreach (var (baid, tokenCountDict) in tokenJsons)
             {
-                var tokenDict = JsonSerializer.Deserialize<Dictionary<int, int>>(tokenCountDict);
+                Dictionary<int, int> tokenDict;
+                if (string.IsNullOrEmpty(tokenCountDict)) {
+                    tokenDict = new();
+                } else {
+                    tokenDict = JsonSerializer.Deserialize<Dictionary<int, int>>(tokenCountDict);
+                }
                 foreach (var (key, value) in tokenDict)
                 {
                     migrationBuilder.InsertData(

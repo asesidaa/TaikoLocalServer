@@ -1,10 +1,11 @@
-﻿@inject IGameDataService GameDataService
+﻿@using Blazored.LocalStorage
+@using TaikoWebUI.Utilities;
+
+@inject IGameDataService GameDataService
 @inject HttpClient Client
 @inject AuthService AuthService
-@inject IJSRuntime JsRuntime
+@inject ILocalStorageService LocalStorage
 @inject NavigationManager NavigationManager
-@using TaikoWebUI.Utilities;
-@using TaikoWebUI.Shared.Models;
 
 @page "/Users/{baid:int}/Songs"
 
@@ -27,7 +28,7 @@
         else
         {
             <MudItem xs="12">
-                <MudTable Items="musicMap" Elevation="0" Outlined="true" Filter="@FilterSongs">
+                <MudTable Items="musicDetailDictionary.Values" Elevation="0" Outlined="true" Filter="@FilterSongs">
                     <ToolBarContent>
                         <MudGrid Spacing="2">
                             <MudItem xs="12" md="8">
@@ -56,7 +57,7 @@
                     </ToolBarContent>
                     <HeaderContent>
                         <MudTh>
-                            <MudTableSortLabel T="MusicDetail" SortBy="context => GameDataService.GetMusicNameBySongId(context.SongId, CurrentLanguage)">
+                            <MudTableSortLabel T="MusicDetail" SortBy="context => GameDataService.GetMusicNameBySongId(musicDetailDictionary, context.SongId, SongNameLanguage)">
                                 @Localizer["Song Title / Artist"]
                             </MudTableSortLabel>
                         </MudTh>
@@ -70,7 +71,7 @@
                             @if (difficulty is not Difficulty.None)
                             {
                             <MudTh>
-							    <MudTableSortLabel T="MusicDetail" SortBy="context => GameDataService.GetMusicStarLevel(context.SongId, difficulty)">
+							    <MudTableSortLabel T="MusicDetail" SortBy="context => GameDataService.GetMusicStarLevel(musicDetailDictionary, context.SongId, difficulty)">
                                     <img src="@ScoreUtils.GetDifficultyIcon(difficulty)" alt="@ScoreUtils.GetDifficultyTitle(difficulty)" style="@Constants.ICON_STYLE" />
 							    </MudTableSortLabel>
 						    </MudTh>
@@ -83,10 +84,10 @@
                             <div>
                                 <a href="@($"/Users/{Baid}/Songs/{context.SongId}")">
                                     <MudText Typo="Typo.body2" Style="font-weight:bold">
-                                        @GameDataService.GetMusicNameBySongId(context.SongId, CurrentLanguage)
+                                        @GameDataService.GetMusicNameBySongId(musicDetailDictionary, context.SongId, SongNameLanguage)
                                     </MudText>
                                     <MudText Typo="Typo.caption">
-                                        @GameDataService.GetMusicArtistBySongId(context.SongId, CurrentLanguage)
+                                        @GameDataService.GetMusicArtistBySongId(musicDetailDictionary, context.SongId, SongNameLanguage)
                                     </MudText>
                                 </a>
                             </div>
@@ -110,7 +111,7 @@
                         {
                             @if (difficulty is not Difficulty.None)
                             {
-                                var starLevel = GameDataService.GetMusicStarLevel(context.SongId, difficulty);
+                                var starLevel = GameDataService.GetMusicStarLevel(musicDetailDictionary, context.SongId, difficulty);
                                 <MudTd>
                                     @if (starLevel > 0)
 									{

@@ -1,9 +1,4 @@
-﻿using System.Reflection.Emit;
-using Microsoft.JSInterop;
-using TaikoWebUI.Shared.Models;
-
-
-namespace TaikoWebUI.Pages;
+﻿namespace TaikoWebUI.Pages;
 
 public partial class SongList
 {
@@ -12,25 +7,33 @@ public partial class SongList
     
     private string Search { get; set; } = string.Empty;
     private string GenreFilter { get; set; } = string.Empty;
-    private string CurrentLanguage { get; set; } = "ja";
+    private string? SongNameLanguage { get; set; }
 
     private SongBestResponse? response;
     private UserSetting? userSetting;
 
     private readonly List<BreadcrumbItem> breadcrumbs = new();
-
-    private List<MusicDetail> musicMap = new();
+    
+    private Dictionary<uint, MusicDetail> musicDetailDictionary = new();
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        
+        if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
+        {
+            await AuthService.LoginWithAuthToken();
+        }
+        
         response = await Client.GetFromJsonAsync<SongBestResponse>($"api/PlayData/{Baid}");
         response.ThrowIfNull();
 
         userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
-        musicMap = GameDataService.GetMusicList();
+        musicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
 
-        CurrentLanguage = await JsRuntime.InvokeAsync<string>("blazorCulture.get");
+        SongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
+        
+        Console.WriteLine("Language: " + SongNameLanguage);
 
         if (AuthService.IsLoggedIn && !AuthService.IsAdmin)
         {

@@ -192,7 +192,7 @@
   <data name="Last Played" xml:space="preserve">
     <value>Last Played</value>
   </data>
-  <data name="Total Plays" xml:space="preserve">
+  <data name="Total Credits Played" xml:space="preserve">
     <value>Total Plays</value>
   </data>
   <data name="Total Clears" xml:space="preserve">
@@ -593,5 +593,11 @@
   </data>
   <data name="Rows Per Page:" xml:space="preserve">
     <value>Rows Per Page:</value>
+  </data>
+  <data name="UI" xml:space="preserve">
+    <value>UI</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
   </data>
 </root>
