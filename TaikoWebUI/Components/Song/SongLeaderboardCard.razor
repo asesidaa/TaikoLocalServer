@@ -1,12 +1,67 @@
 ﻿@inject HttpClient Client;
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage;
+
 @using TaikoWebUI.Utilities;
 
 <MudCard Outlined="true" Elevation="0">
     <MudCardHeader>
-        <MudGrid Spacing="2">
-            <MudItem xs="12">
+        <MudGrid Spacing="2" Class="align-center">
+            <MudItem xs="12" md="6">
                 <MudText Typo="Typo.h6">@Localizer["Leaderboard"]</MudText>
+            </MudItem>
+
+            <MudItem xs="12" md="6">
+                <MudSelect Dense="true" T="string" Label="@Localizer["Difficulty"]" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="(value) => OnDifficultyChange(value)" Value="SelectedDifficulty">
+                    @foreach (var difficulty in Enum.GetValues(typeof(Difficulty)))
+                    {
+                        var difficultyValue = (Difficulty)difficulty;
+                        <MudSelectItem Value="@difficultyValue.ToString()">
+                            @ScoreUtils.GetDifficultyTitle(difficultyValue)
+                        </MudSelectItem>
+                    }
+                </MudSelect>
             </MudItem>
         </MudGrid>
     </MudCardHeader>
+    <MudCardContent>
+        @if (response == null)
+        {
+            <MudCircularProgress />
+        }
+        else
+        {
+            <MudTable Items="@response.Leaderboard" Class="leaderboard-table" Elevation="0" Outlined="false" Dense="true" Striped="true">
+                <HeaderContent>
+                    <MudTh>@Localizer["Rank"]</MudTh>
+                    <MudTh>@Localizer["Player"]</MudTh>
+                    <MudTh>@Localizer["Score"]</MudTh>
+                    <MudTh>@Localizer["Rank"]</MudTh>
+                    <MudTh>@Localizer["Crown"]</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd>@context.Rank</MudTd>
+                    <MudTd>
+                        <MudStack Row="true" AlignItems="AlignItems.Baseline">
+                            <MudText Typo="Typo.body1">@context.UserName</MudText>
+                            <MudText Typo="Typo.caption">(@Localizer["ID"]: @context.Baid)</MudText>
+                        </MudStack>
+                    </MudTd>
+                    <MudTd>@context.BestScore</MudTd>
+                    <MudTd>
+                        @if (context.BestScoreRank is not ScoreRank.None)
+                        {
+                        <img src="@($"/images/rank_{context.BestScoreRank}.png")" alt="@(ScoreUtils.GetRankText(context.BestScoreRank))" title="@(ScoreUtils.GetRankText(context.BestScoreRank))" style="@IconStyle"/>
+                        }
+                        else
+                        {
+                            <MudText Typo="Typo.body1">—</MudText>
+                        }  
+                    </MudTd>
+                    <MudTd>
+                        <img src="@($"/images/crown_{context.BestCrown}.png")" alt="@(ScoreUtils.GetCrownText(context.BestCrown))" title="@(ScoreUtils.GetCrownText(context.BestCrown))" style="@IconStyle"/>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+        }
+    </MudCardContent>
 </MudCard>

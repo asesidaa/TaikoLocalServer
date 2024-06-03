@@ -34,7 +34,7 @@ public class SongLeaderboardData(ISongLeaderboardService songLeaderboardService,
         }
 
         var leaderboard = await songLeaderboardService.GetSongLeaderboard(songId, (Difficulty)difficulty, (int)baid);
-
+        
         return Ok(new SongLeaderboardResponse
         {
             Leaderboard = leaderboard
