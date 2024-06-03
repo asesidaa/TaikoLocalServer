@@ -2,7 +2,6 @@
 
 @using Blazored.LocalStorage
 @using TaikoWebUI.Components.Song
-
 @inject IGameDataService GameDataService
 @inject HttpClient Client
 @inject AuthService AuthService
@@ -22,11 +21,10 @@ else
         <MudText Typo="Typo.body2">@songArtist</MudText>
         <MudGrid Class="my-4 pb-10">
             <MudItem xs="12">
-                <PlayHistoryCard Items="@songHistoryData" />
-            </MudItem>
-            
-            <MudItem xs="12">
                 <SongLeaderboardCard SongId="@SongId" Baid="@Baid" />
+            </MudItem>
+            <MudItem xs="12">
+                <PlayHistoryCard Items="@songHistoryData" />
             </MudItem>
         </MudGrid>
     }

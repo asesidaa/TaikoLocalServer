@@ -32,8 +32,6 @@ public partial class SongList
         musicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
 
         SongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
-        
-        Console.WriteLine("Language: " + SongNameLanguage);
 
         if (AuthService.IsLoggedIn && !AuthService.IsAdmin)
         {
