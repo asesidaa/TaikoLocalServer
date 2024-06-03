@@ -10,7 +10,7 @@
     </MudCardHeader>
     @if (Items.Count > 0)
     {
-        <MudCardContent Class="p-0">
+        <MudCardContent Class="pa-0">
             <MudTable Items="Items" Elevation="0" Striped="true">
                 <HeaderContent>
                     <MudTh>
@@ -90,7 +90,7 @@
     }
     else
     {
-        <MudCardContent>
+        <MudCardContent Class="pa-0">
             <MudText Typo="Typo.body2" Class="pt-4 pb-8" Color="Color.Surface" Align="Align.Center">
                 @Localizer["No Play History Found"]
             </MudText>
