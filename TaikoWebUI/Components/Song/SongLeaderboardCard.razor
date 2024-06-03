@@ -12,19 +12,19 @@
 
             <MudItem xs="6">
                 <MudStack Justify="Justify.FlexEnd" Row="true">
-                    <MudToggleGroup T="string" Label="@Localizer["Difficulty"]" Variant="Variant.Outlined" Dense="true" ValueChanged="(value) => OnDifficultyChange(value)" Value="SelectedDifficulty" Style="width:300px">
+                    <MudToggleGroup T="string" Label="@Localizer["Difficulty"]" Dense="true" ValueChanged="(value) => OnDifficultyChange(value)" Value="SelectedDifficulty" Style="width:300px">
                         @foreach (var difficulty in Enum.GetValues(typeof(Difficulty)))
                         {
-                        if ((Difficulty)difficulty == Difficulty.None)
-                        {
-                        continue;
-                        }
+                            if ((Difficulty)difficulty == Difficulty.None)
+                            {
+                                continue;
+                            }
 
-                        <MudToggleItem Value="@difficulty.ToString()">
-                            <div class="d-flex align-center">
-                                <img src="@($"/images/difficulty_{difficulty}.png")" alt="@difficulty.ToString()" title="@difficulty.ToString()" style="@Constants.ICON_STYLE"/>
-                            </div>
-                        </MudToggleItem>
+                            <MudToggleItem Value="@difficulty.ToString()">
+                                <div class="d-flex align-center">
+                                    <img src="@($"/images/difficulty_{difficulty}.png")" alt="@difficulty.ToString()" title="@difficulty.ToString()" style="@Constants.ICON_STYLE"/>
+                                </div>
+                            </MudToggleItem>
                         }
                     </MudToggleGroup>
                 </MudStack>
