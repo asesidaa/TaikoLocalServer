@@ -79,12 +79,6 @@ public class SongLeaderboardService : ISongLeaderboardService
                 });
             }
         }
-        Console.WriteLine("Leaderboard:");
-        // log the leaderboard to the console
-        foreach (var entry in leaderboard)
-        {
-            Console.WriteLine($"Rank: {entry.Rank}, Baid: {entry.Baid}, UserName: {entry.UserName}, BestScore: {entry.BestScore}, BestRate: {entry.BestRate}, BestCrown: {entry.BestCrown}, BestScoreRank: {entry.BestScoreRank}");
-        }
 
         return leaderboard;
     }
