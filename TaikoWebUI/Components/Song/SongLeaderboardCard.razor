@@ -6,26 +6,28 @@
 <MudCard Outlined="true" Elevation="0">
     <MudCardHeader>
         <MudGrid Spacing="2" Class="align-center pb-2">
-            <MudItem xs="12" md="6">
+            <MudItem xs="6">
                 <MudText Typo="Typo.h6">@Localizer["Leaderboard"]</MudText>
             </MudItem>
 
-            <MudItem xs="12" md="6">
-                <MudToggleGroup T="string" Label="@Localizer["Difficulty"]" Variant="Variant.Outlined" Dense="true" ValueChanged="(value) => OnDifficultyChange(value)" Value="SelectedDifficulty">
-                    @foreach (var difficulty in Enum.GetValues(typeof(Difficulty)))
-                    {
+            <MudItem xs="6">
+                <MudStack Justify="Justify.FlexEnd" Row="true">
+                    <MudToggleGroup T="string" Label="@Localizer["Difficulty"]" Variant="Variant.Outlined" Dense="true" ValueChanged="(value) => OnDifficultyChange(value)" Value="SelectedDifficulty" Style="width:300px">
+                        @foreach (var difficulty in Enum.GetValues(typeof(Difficulty)))
+                        {
                         if ((Difficulty)difficulty == Difficulty.None)
                         {
-                            continue;
+                        continue;
                         }
-                        
+
                         <MudToggleItem Value="@difficulty.ToString()">
                             <div class="d-flex align-center">
                                 <img src="@($"/images/difficulty_{difficulty}.png")" alt="@difficulty.ToString()" title="@difficulty.ToString()" style="@Constants.ICON_STYLE"/>
                             </div>
                         </MudToggleItem>
-                    }
-                </MudToggleGroup>
+                        }
+                    </MudToggleGroup>
+                </MudStack>
             </MudItem>
         </MudGrid>
     </MudCardHeader>
