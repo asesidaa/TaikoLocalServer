@@ -4,7 +4,6 @@ namespace TaikoWebUI.Components.Song;
 public partial class SongLeaderboardCard
 {
     private SongLeaderboardResponse? response = null;
-    private const string IconStyle = "width:25px; height:25px;";
     
     [Parameter]
     public int SongId { get; set; }
@@ -17,19 +16,25 @@ public partial class SongLeaderboardCard
 
     private string SelectedDifficulty { get; set; } = "Hard";
     
+    private bool isLoading = true;
+    
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         
-        response = await Client.GetFromJsonAsync<SongLeaderboardResponse>($"api/SongLeaderboardData/{(uint)Baid}/{(uint)SongId}/{(uint)Difficulty}");
+        response = await Client.GetFromJsonAsync<SongLeaderboardResponse>($"api/SongLeaderboard/{(uint)Baid}/{(uint)SongId}/{(uint)Difficulty}");
         response.ThrowIfNull();
+        
+        isLoading = false;
     }
     
     private async Task OnDifficultyChange(string difficulty)
     {
+        isLoading = true;
         SelectedDifficulty = difficulty;
         Difficulty = Enum.Parse<Difficulty>(SelectedDifficulty);
-        response = await Client.GetFromJsonAsync<SongLeaderboardResponse>($"api/SongLeaderboardData/{(uint)Baid}/{(uint)SongId}/{(uint)Difficulty}");
+        response = await Client.GetFromJsonAsync<SongLeaderboardResponse>($"api/SongLeaderboard/{(uint)Baid}/{(uint)SongId}/{(uint)Difficulty}");
         response.ThrowIfNull();
+        isLoading = false;
     }
 }

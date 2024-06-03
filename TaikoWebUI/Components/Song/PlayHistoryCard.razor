@@ -67,15 +67,15 @@
                 <RowTemplate>
                     <MudTd>@context.PlayTime.ToString(Localizer["DateFormat"])</MudTd>
                     <MudTd>
-                        <img src="@ScoreUtils.GetDifficultyIcon(context.Difficulty)" alt="@context.Difficulty" title="@context.Difficulty" style="@IconStyle"/>
+                        <img src="@ScoreUtils.GetDifficultyIcon(context.Difficulty)" alt="@context.Difficulty" title="@context.Difficulty" style="@Constants.ICON_STYLE"/>
                     </MudTd>
                     <MudTd>
-                        <img src="@($"/images/crown_{context.Crown}.png")" alt="@(ScoreUtils.GetCrownText(context.Crown))" title="@(ScoreUtils.GetCrownText(context.Crown))" style="@IconStyle"/>
+                        <img src="@($"/images/crown_{context.Crown}.png")" alt="@(ScoreUtils.GetCrownText(context.Crown))" title="@(ScoreUtils.GetCrownText(context.Crown))" style="@Constants.ICON_STYLE"/>
                     </MudTd>
                     <MudTd>
                         @if (context.ScoreRank is not ScoreRank.None)
                         {
-                            <img src="@($"/images/rank_{context.ScoreRank}.png")" alt="@(ScoreUtils.GetRankText(context.ScoreRank))" title="@(ScoreUtils.GetRankText(context.ScoreRank))" style="@IconStyle"/>
+                            <img src="@($"/images/rank_{context.ScoreRank}.png")" alt="@(ScoreUtils.GetRankText(context.ScoreRank))" title="@(ScoreUtils.GetRankText(context.ScoreRank))" style="@Constants.ICON_STYLE"/>
                         }
                     </MudTd>
                     <MudTd>@context.Score</MudTd>
@@ -99,6 +99,6 @@
 </MudCard>
 
 @code {
-    [Parameter] public List<SongHistoryData> Items { get; set; } = new();
-    private const string IconStyle = "width:25px; height:25px;";
+    [Parameter] 
+    public List<SongHistoryData> Items { get; set; } = new();
 }

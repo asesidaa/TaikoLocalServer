@@ -5,28 +5,44 @@
 
 <MudCard Outlined="true" Elevation="0">
     <MudCardHeader>
-        <MudGrid Spacing="2" Class="align-center">
+        <MudGrid Spacing="2" Class="align-center pb-2">
             <MudItem xs="12" md="6">
                 <MudText Typo="Typo.h6">@Localizer["Leaderboard"]</MudText>
             </MudItem>
 
             <MudItem xs="12" md="6">
-                <MudSelect Dense="true" T="string" Label="@Localizer["Difficulty"]" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="(value) => OnDifficultyChange(value)" Value="SelectedDifficulty">
+                <MudToggleGroup T="string" Label="@Localizer["Difficulty"]" Variant="Variant.Outlined" Dense="true" ValueChanged="(value) => OnDifficultyChange(value)" Value="SelectedDifficulty">
                     @foreach (var difficulty in Enum.GetValues(typeof(Difficulty)))
                     {
-                        var difficultyValue = (Difficulty)difficulty;
-                        <MudSelectItem Value="@difficultyValue.ToString()">
-                            @ScoreUtils.GetDifficultyTitle(difficultyValue)
-                        </MudSelectItem>
+                        if ((Difficulty)difficulty == Difficulty.None)
+                        {
+                            continue;
+                        }
+                        
+                        <MudToggleItem Value="@difficulty.ToString()">
+                            <div class="d-flex align-center">
+                                <img src="@($"/images/difficulty_{difficulty}.png")" alt="@difficulty.ToString()" title="@difficulty.ToString()" style="@Constants.ICON_STYLE"/>
+                            </div>
+                        </MudToggleItem>
                     }
-                </MudSelect>
+                </MudToggleGroup>
             </MudItem>
         </MudGrid>
     </MudCardHeader>
     <MudCardContent Class="pa-0">
-        @if (response == null)
+        @if (response == null || isLoading == true)
         {
             <MudCircularProgress />
+        }
+        else if (response.Leaderboard.Count == 0)
+        {
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudText Align="Align.Center" Class="my-16">
+                        @Localizer["NoData"]
+                    </MudText>
+                </MudItem>
+            </MudGrid>
         }
         else
         {
@@ -50,7 +66,7 @@
                     <MudTd>
                         @if (context.BestScoreRank is not ScoreRank.None)
                         {
-                        <img src="@($"/images/rank_{context.BestScoreRank}.png")" alt="@(ScoreUtils.GetRankText(context.BestScoreRank))" title="@(ScoreUtils.GetRankText(context.BestScoreRank))" style="@IconStyle"/>
+                        <img src="@($"/images/rank_{context.BestScoreRank}.png")" alt="@(ScoreUtils.GetRankText(context.BestScoreRank))" title="@(ScoreUtils.GetRankText(context.BestScoreRank))" style="@Constants.ICON_STYLE"/>
                         }
                         else
                         {
@@ -58,7 +74,7 @@
                         }  
                     </MudTd>
                     <MudTd>
-                        <img src="@($"/images/crown_{context.BestCrown}.png")" alt="@(ScoreUtils.GetCrownText(context.BestCrown))" title="@(ScoreUtils.GetCrownText(context.BestCrown))" style="@IconStyle"/>
+                        <img src="@($"/images/crown_{context.BestCrown}.png")" alt="@(ScoreUtils.GetCrownText(context.BestCrown))" title="@(ScoreUtils.GetCrownText(context.BestCrown))" style="@Constants.ICON_STYLE"/>
                     </MudTd>
                 </RowTemplate>
             </MudTable>
