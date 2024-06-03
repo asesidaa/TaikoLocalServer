@@ -9,8 +9,8 @@ namespace TaikoLocalServer.Controllers.Api;
 [ApiController]
 [Route("api/[controller]")]
 
-public class SongLeaderboardData(ISongLeaderboardService songLeaderboardService,IAuthService authService, IOptions<AuthSettings> settings) 
-    : BaseController<SongLeaderboardData>
+public class SongLeaderboardController(ISongLeaderboardService songLeaderboardService,IAuthService authService, IOptions<AuthSettings> settings) 
+    : BaseController<SongLeaderboardController>
 {
     private readonly AuthSettings authSettings = settings.Value;
 

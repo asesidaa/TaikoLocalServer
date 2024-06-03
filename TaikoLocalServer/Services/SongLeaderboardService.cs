@@ -37,6 +37,10 @@ public class SongLeaderboardService : ISongLeaderboardService
             var user = await context.UserData
                 .Where(x => x.Baid == score.Baid)
                 .FirstOrDefaultAsync();
+            
+            var playDatum = await context.SongPlayData
+                .Where(x => x.SongId == songId && x.Difficulty == difficulty && x.Baid == score.Baid)
+                .FirstOrDefaultAsync();
 
             leaderboard.Add(new SongLeaderboard
             {
