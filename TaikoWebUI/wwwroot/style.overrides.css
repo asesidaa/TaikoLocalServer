@@ -56,7 +56,7 @@
 }
 
 tr.is-current-user {
-    background-color: #bad4f5;
+    background-color: #bad4f5 !important;
 }
 
 tr.is-current-user td,
