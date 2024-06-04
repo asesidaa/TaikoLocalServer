@@ -55,4 +55,9 @@ public partial class SongLeaderboardCard
         response.ThrowIfNull();
         isLoading = false;
     }
+
+    private string GetActiveRowClass(SongLeaderboard leaderboard, int index)
+    {
+        return leaderboard.Baid == Baid ? "is-current-user" : "";
+    }
 }
