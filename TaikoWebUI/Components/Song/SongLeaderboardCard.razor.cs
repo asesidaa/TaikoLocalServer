@@ -37,7 +37,7 @@ public partial class SongLeaderboardCard
             Difficulty = Difficulty.Easy;
         }
         
-        response = await Client.GetFromJsonAsync<SongLeaderboardResponse>($"api/SongLeaderboard/{(uint)Baid}/{(uint)SongId}/{(uint)Difficulty}");
+        response = await Client.GetFromJsonAsync<SongLeaderboardResponse>($"api/SongLeaderboard/{(uint)SongId}?baid={(uint)Baid}&difficulty={(uint)Difficulty}");
         response.ThrowIfNull();
         
         isLoading = false;
@@ -51,7 +51,7 @@ public partial class SongLeaderboardCard
         
         await LocalStorage.SetItemAsync("songPageDifficulty", SelectedDifficulty);
         
-        response = await Client.GetFromJsonAsync<SongLeaderboardResponse>($"api/SongLeaderboard/{(uint)Baid}/{(uint)SongId}/{(uint)Difficulty}");
+        response = await Client.GetFromJsonAsync<SongLeaderboardResponse>($"api/SongLeaderboard/{(uint)SongId}?baid={(uint)Baid}&difficulty={(uint)Difficulty}");
         response.ThrowIfNull();
         isLoading = false;
     }

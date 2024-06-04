@@ -14,23 +14,32 @@ public class SongLeaderboardController(ISongLeaderboardService songLeaderboardSe
 {
     private readonly AuthSettings authSettings = settings.Value;
 
-    [HttpGet("{baid}/{songId}/{difficulty}")]
+    [HttpGet("{songId}")]
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
 
-    public async Task<ActionResult<SongLeaderboardResponse>> GetSongLeaderboard(uint baid, uint songId, uint difficulty)
+    public async Task<ActionResult<SongLeaderboardResponse>> GetSongLeaderboard(uint songId, [FromQuery] uint baid, [FromQuery] uint difficulty)
     {
-        if (authSettings.AuthenticationRequired)
+        // if baid id is provided, check authentication
+        if (!baid.Equals(0))
         {
-            var tokenInfo = authService.ExtractTokenInfo(HttpContext);
-            if (tokenInfo is null)
+            if (authSettings.AuthenticationRequired)
             {
-                return Unauthorized();
-            }
+                var tokenInfo = authService.ExtractTokenInfo(HttpContext);
+                if (tokenInfo is null)
+                {
+                    return Unauthorized();
+                }
 
-            if (tokenInfo.Value.baid != baid && !tokenInfo.Value.isAdmin)
-            {
-                return Forbid();
+                if (tokenInfo.Value.baid != baid && !tokenInfo.Value.isAdmin)
+                {
+                    return Forbid();
+                }
             }
+        }
+        
+        if (difficulty < 1 || difficulty > 5)
+        {
+            return BadRequest(new { Message = "Invalid difficulty. Please provide a number between 1-5." });
         }
 
         var leaderboard = await songLeaderboardService.GetSongLeaderboard(songId, (Difficulty)difficulty, (int)baid);
