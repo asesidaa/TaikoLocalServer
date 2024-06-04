@@ -32,11 +32,7 @@
         </MudGrid>
     </MudCardHeader>
     <MudCardContent Class="pa-0">
-        @if (response == null || isLoading == true)
-        {
-            <MudCircularProgress />
-        }
-        else if (response.Leaderboard.Count == 0)
+        @if (response == null || response.Leaderboard.Count == 0)
         {
             <MudGrid>
                 <MudItem xs="12">
@@ -48,7 +44,7 @@
         }
         else
         {
-            <MudTable Items="@response.Leaderboard" Class="leaderboard-table" Elevation="0" Outlined="false" Dense="true" Striped="true">
+            <MudTable Loading="isLoading" Items="@response.Leaderboard" Class="leaderboard-table" Elevation="0" Outlined="false" Dense="true" Striped="true">
                 <HeaderContent>
                     <MudTh>@Localizer["Rank"]</MudTh>
                     <MudTh>@Localizer["Player"]</MudTh>
