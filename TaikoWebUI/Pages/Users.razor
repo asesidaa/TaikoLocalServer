@@ -7,12 +7,12 @@
 @page "/Users"
 
 <MudText Typo="Typo.h4">@Localizer["Users"]</MudText>
-<MudGrid Class="my-8">
-    @if (!AuthService.LoginRequired || (AuthService.LoginRequired && AuthService.IsAdmin)) {
-        if (isLoading == true)
-        {
-            // Loading...
-            for (uint i = 0; i < 6; i++) {
+@if (!AuthService.LoginRequired || (AuthService.LoginRequired && AuthService.IsAdmin)) {
+    if (isLoading == true || response == null)
+    {
+        // Loading...
+        for (uint i = 0; i < 6; i++) {
+            <MudGrid Class="my-8">
                 <MudItem xs="12" md="6" lg="4">
                     <MudCard Outlined="true">
                         <MudCardContent>
@@ -28,25 +28,38 @@
                         </MudCardActions>
                     </MudCard>
                 </MudItem>
-            }
-        } else if (response.Users.Count > 0) {
-            foreach (var user in response.Users)
+            </MudGrid>
+        }
+    } else if (response.Users.Count > 0) {
+        <MudGrid Class="my-8">
+            @foreach (var user in response.Users)
             {
-                <MudItem xs="12" md="6" lg="4">
-                    <UserCard User="user" UserSetting="user.UserSetting" />
+            <MudItem xs="12" md="6" lg="4">
+                <UserCard User="user" UserSetting="user.UserSetting" />
+            </MudItem>
+            }
+            
+            @if (TotalPages > 1)
+            {
+                <MudItem xs="12">
+                    <div class="d-flex flex-column align-center">
+                        <MudPagination Class="pa-4" Rectangular="true" DisableElevation="true" Count="@TotalPages" Selected="currentPage" SelectedChanged="(page) => OnPageChange(page)" BoundaryCount="1" MiddleCount="3" />
+                    </div>
                 </MudItem>
             }
-        } else { // No users in the database
+        </MudGrid>
+    } else { // No users in the database
+        <MudGrid Class="my-8">
             <MudItem xs="12">
                 <MudText Align="Align.Center" Class="my-8">
                     @Localizer["No data."]
                 </MudText>
             </MudItem>
-        }
-    } else if (AuthService.LoginRequired && !AuthService.IsLoggedIn) {
-        // Not logged in, redirect
-        NavigationManager.NavigateTo("/Login");
-    } else {
-        NavigationManager.NavigateTo("/");
+        </MudGrid>
     }
-</MudGrid>
+} else if (AuthService.LoginRequired && !AuthService.IsLoggedIn) {
+    // Not logged in, redirect
+    NavigationManager.NavigateTo("/Login");
+} else {
+    NavigationManager.NavigateTo("/");
+}
