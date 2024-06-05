@@ -462,7 +462,7 @@
   <data name="ID" xml:space="preserve">
     <value />
   </data>
-  <data name="Edit profile" xml:space="preserve">
+  <data name="Edit Profile" xml:space="preserve">
     <value />
   </data>
   <data name="Access Code Delete Confirm" xml:space="preserve">
@@ -628,6 +628,9 @@
     <value />
   </data>
   <data name="No Data" xml:space="preserve">
+    <value />
+  </data>
+  <data name="User ID" xml:space="preserve">
     <value />
   </data>
 </root>
