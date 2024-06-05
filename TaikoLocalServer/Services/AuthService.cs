@@ -2,12 +2,16 @@
 using System.Security.Claims;
 using GameDatabase.Context;
 using SharedProject.Models;
+using SharedProject.Models.Responses;
 using Swan.Mapping;
+using TaikoLocalServer.Controllers.Api;
+using SharedProject.Utils;
 
 namespace TaikoLocalServer.Services;
 
 public class AuthService(TaikoDbContext context) : IAuthService
 {
+    private readonly UserSettingsController _userSettingsController;
     public async Task<Card?> GetCardByAccessCode(string accessCode)
     {
         return await context.Cards.FindAsync(accessCode);
@@ -26,17 +30,96 @@ public class AuthService(TaikoDbContext context) : IAuthService
         };
     }
 
-    public async Task<List<User>> GetUsersFromCards()
+    public async Task<UsersResponse> GetUsersFromCards(int page = 1, int limit = 12)
     {
-        var cardEntries = await context.Cards.ToListAsync();
-        var userEntries = await context.UserData.ToListAsync();
-        var users = userEntries.Select(userEntry => new User
+        // Get the total count of users
+        var totalUsers = await context.UserData.CountAsync();
+        
+        var users = new List<User>();
+
+        // Calculate the total pages
+        var totalPages = totalUsers / limit;
+
+        // If there is a remainder, add one to the total pages
+        if (totalUsers % limit > 0)
         {
-            Baid = userEntry.Baid,
-            AccessCodes = cardEntries.Where(cardEntry => cardEntry.Baid == userEntry.Baid).Select(cardEntry => cardEntry.AccessCode).ToList(),
-            IsAdmin = userEntry.IsAdmin
-        }).ToList();
-        return users;
+            totalPages++;
+        }
+
+        var cardEntries = await context.Cards.ToListAsync();
+        var userEntries = await context.UserData
+            .OrderBy(user => user.Baid)
+            .Skip((page - 1) * limit)
+            .Take(limit)
+            .ToListAsync();
+
+        foreach (var user in userEntries)
+        {
+            List<List<uint>> costumeUnlockData =
+                [user.UnlockedKigurumi, user.UnlockedHead, user.UnlockedBody, user.UnlockedFace, user.UnlockedPuchi];
+
+            var unlockedTitle = user.TitleFlgArray
+                .ToList();
+
+            for (var i = 0; i < 5; i++)
+            {
+                if (!costumeUnlockData[i].Contains(0))
+                {
+                    costumeUnlockData[i].Add(0);
+                }
+            }
+
+            var userSetting = new UserSetting
+            {
+                Baid = user.Baid,
+                AchievementDisplayDifficulty = user.AchievementDisplayDifficulty,
+                IsDisplayAchievement = user.DisplayAchievement,
+                IsDisplayDanOnNamePlate = user.DisplayDan,
+                DifficultySettingCourse = user.DifficultySettingCourse,
+                DifficultySettingStar = user.DifficultySettingStar,
+                DifficultySettingSort = user.DifficultySettingSort,
+                IsVoiceOn = user.IsVoiceOn,
+                IsSkipOn = user.IsSkipOn,
+                NotesPosition = user.NotesPosition,
+                PlaySetting = PlaySettingConverter.ShortToPlaySetting(user.OptionSetting),
+                ToneId = user.SelectedToneId,
+                MyDonName = user.MyDonName,
+                MyDonNameLanguage = user.MyDonNameLanguage,
+                Title = user.Title,
+                TitlePlateId = user.TitlePlateId,
+                Kigurumi = user.CurrentKigurumi,
+                Head = user.CurrentHead,
+                Body = user.CurrentBody,
+                Face = user.CurrentFace,
+                Puchi = user.CurrentPuchi,
+                UnlockedKigurumi = costumeUnlockData[0],
+                UnlockedHead = costumeUnlockData[1],
+                UnlockedBody = costumeUnlockData[2],
+                UnlockedFace = costumeUnlockData[3],
+                UnlockedPuchi = costumeUnlockData[4],
+                UnlockedTitle = unlockedTitle,
+                BodyColor = user.ColorBody,
+                FaceColor = user.ColorFace,
+                LimbColor = user.ColorLimb,
+                LastPlayDateTime = user.LastPlayDatetime
+            };
+
+            users.Add(new User
+            {
+                Baid = user.Baid,
+                AccessCodes = cardEntries.Where(card => card.Baid == user.Baid).Select(card => card.AccessCode).ToList(),
+                IsAdmin = user.IsAdmin,
+                UserSetting = userSetting
+            });
+        }
+        
+        return new UsersResponse
+        {
+            Users = users,
+            Page = page,
+            TotalPages = totalPages,
+            TotalUsers = totalUsers
+        };
     }
     
     public async Task AddCard(Card card)
