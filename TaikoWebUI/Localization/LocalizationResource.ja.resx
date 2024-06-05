@@ -123,7 +123,7 @@
   <data name="Users" xml:space="preserve">
     <value>ユーザー管理</value>
   </data>
-  <data name="edit profile" xml:space="preserve">
+  <data name="Edit Profile" xml:space="preserve">
     <value>プロフィール編集</value>
   </data>
   <data name="User" xml:space="preserve">
@@ -225,7 +225,7 @@
   <data name="Crown" xml:space="preserve">
     <value>王冠</value>
   </data>
-  <data name="No data." xml:space="preserve">
+  <data name="No Data" xml:space="preserve">
     <value>データがありません</value>
   </data>
   <data name="Log In First" xml:space="preserve">
@@ -249,7 +249,7 @@
   <data name="Gold" xml:space="preserve">
     <value>金合格</value>
   </data>
-  <data name="Not Cleared" xml:space="preserve">
+  <data name="Not Passed" xml:space="preserve">
     <value>未合格</value>
   </data>
   <data name="Pass" xml:space="preserve">
@@ -354,7 +354,7 @@
   <data name="Inverse" xml:space="preserve">
     <value>あべこべ</value>
   </data>
-  <data name="Give Up" xml:space="preserve">
+  <data name="Skip Song" xml:space="preserve">
     <value>演奏スキップ</value>
   </data>
   <data name="Voice" xml:space="preserve">
@@ -381,10 +381,10 @@
   <data name="Register" xml:space="preserve">
     <value>登録</value>
   </data>
-  <data name="reset_password_confirm_dialog_1" xml:space="preserve">
+  <data name="Reset Password Confirm 1" xml:space="preserve">
     <value>本当にこのユーザーのパスワードをリセットしますか？</value>
   </data>
-  <data name="reset_password_confirm_dialog_2" xml:space="preserve">
+  <data name="Reset Password Confirm 2" xml:space="preserve">
     <value>これにより、ユーザーの現在のパスワードは削除され、ユーザーは再度登録する必要があります。</value>
   </data>
   <data name="Log In" xml:space="preserve">
@@ -534,7 +534,7 @@
   <data name="Unregister" xml:space="preserve">
     <value>登録解除</value>
   </data>
-  <data name="and" xml:space="preserve">
+  <data name="And" xml:space="preserve">
     <value>と</value>
   </data>
   <data name="other access code(s)" xml:space="preserve">
@@ -599,5 +599,227 @@
   </data>
   <data name="Add" xml:space="preserve">
     <value>追加</value>
+  </data>
+  <data name="Access Code Bound Success" xml:space="preserve">
+    <value>新しいアクセスコードのバインドに成功。</value>
+  </data>
+  <data name="Not Logged In Error" xml:space="preserve">
+    <value>ログインしていません。&lt;br /&gt;ログインしてからもう一度お試しください。</value>
+  </data>
+  <data name="Access Code Upper Limit Error" xml:space="preserve">
+    <value>バウンドアクセスコードの上限に達しました。&lt;br /&gt;まずアクセスコードを1つ削除してください。</value>
+  </data>
+  <data name="Access Code Already Bound Error" xml:space="preserve">
+    <value>このアクセスコードはすでにバインドされています。</value>
+  </data>
+  <data name="Access Code Empty Error" xml:space="preserve">
+    <value>アクセスコードは空ではありません。&lt;br /&gt;有効なアクセスコードを入力してください。</value>
+  </data>
+  <data name="Access Code Not Admin Error" xml:space="preserve">
+    <value>この操作は許可されていません。&lt;br /&gt;他のユーザーのアクセスコードを編集できるのは管理者のみです。</value>
+  </data>
+  <data name="Login Only Admin Error" xml:space="preserve">
+    <value>ログインできるのは管理者のみです。</value>
+  </data>
+  <data name="Change Password Success" xml:space="preserve">
+    <value>パスワードの変更に成功しました。</value>
+  </data>
+  <data name="Change Password Different Confirm Password Error" xml:space="preserve">
+    <value>新しいパスワードが違うことを確認してください。&lt;br /&gt;もう一度確認してください。</value>
+  </data>
+  <data name="Unknown Access Code Error" xml:space="preserve">
+    <value>不明なアクセスコードです。&lt;br /&gt;このアクセスコードでゲームを1回プレイしてから、再度お試しください。</value>
+  </data>
+  <data name="Change Password Wrong Current Password Error" xml:space="preserve">
+    <value>現在のパスワードが間違っています。&lt;br /&gt;再度ご確認ください。</value>
+  </data>
+  <data name="Access Code Not Registered Error" xml:space="preserve">
+    <value>アクセスコードが登録されていません。&lt;br /&gt;まず登録してから再度お試しください。</value>
+  </data>
+  <data name="Login Wrong Password Error" xml:space="preserve">
+    <value>パスワードが間違っています。&lt;br /&gt;再度ご確認ください。</value>
+  </data>
+  <data name="Register Only Admin Error" xml:space="preserve">
+    <value>登録できるのは管理者のみです。</value>
+  </data>
+  <data name="Register Success" xml:space="preserve">
+    <value>アクセスコードが正常に登録されました。</value>
+  </data>
+  <data name="Register Different Confirm Password Error" xml:space="preserve">
+    <value>パスワードの確認がパスワードと一致しません。&lt;br /&gt;再度ご確認ください。</value>
+  </data>
+  <data name="Register Already Registered Error" xml:space="preserve">
+    <value>アクセスコードは既に登録されています。&lt;br /&gt;設定したパスワードを使用してログインしてください。</value>
+  </data>
+  <data name="Register Wrong Last Play Time Error" xml:space="preserve">
+    <value>最後のプレイ時間が間違っています。&lt;br /&gt;最後にプレイした時間を忘れた場合は、このアクセスコードで再度ゲームをプレイするか、管理者に連絡してください。</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="Access Code Delete Last Access Code Error" xml:space="preserve">
+    <value>ユーザーの最後のアクセスコードを削除できません。</value>
+  </data>
+  <data name="Access Code Delete Success" xml:space="preserve">
+    <value>アクセスコードが正常に削除されました。</value>
+  </data>
+  <data name="ID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Access Code Delete Confirm" xml:space="preserve">
+    <value>このアクセスコードを削除してもよろしいですか？</value>
+  </data>
+  <data name="Currently Selected:" xml:space="preserve">
+    <value>現在選択中:</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>リセット</value>
+  </data>
+  <data name="Delete User Confirm" xml:space="preserve">
+    <value>このユーザーのデータを本当に削除してもよろしいですか？&lt;br /&gt;関連するすべてのデータが削除され、この操作は元に戻せません！</value>
+  </data>
+  <data name="Delete User Success" xml:space="preserve">
+    <value>ユーザーが正常に削除されました。</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="Whimsical" xml:space="preserve">
+    <value>きまぐれ</value>
+  </data>
+  <data name="Messy" xml:space="preserve">
+    <value>でたらめ</value>
+  </data>
+  <data name="Taiko" xml:space="preserve">
+    <value>太鼓</value>
+  </data>
+  <data name="Matsuri" xml:space="preserve">
+    <value>お祭り</value>
+  </data>
+  <data name="Inuneko" xml:space="preserve">
+    <value>いぬねこ</value>
+  </data>
+  <data name="Wonderfultaiko" xml:space="preserve">
+    <value>豪華な太鼓</value>
+  </data>
+  <data name="Drum" xml:space="preserve">
+    <value>ドラム</value>
+  </data>
+  <data name="Tambourine" xml:space="preserve">
+    <value>タンバリン</value>
+  </data>
+  <data name="Wadadon" xml:space="preserve">
+    <value>和田どん</value>
+  </data>
+  <data name="Clapping" xml:space="preserve">
+    <value>手拍子</value>
+  </data>
+  <data name="Conga" xml:space="preserve">
+    <value>コンガ</value>
+  </data>
+  <data name="8bittaiko" xml:space="preserve">
+    <value>8ビット太鼓</value>
+  </data>
+  <data name="Soya" xml:space="preserve">
+    <value>ソイヤ</value>
+  </data>
+  <data name="Mekadon" xml:space="preserve">
+    <value>メカドン</value>
+  </data>
+  <data name="Funassyi" xml:space="preserve">
+    <value>ふなっしー </value>
+  </data>
+  <data name="Wrap" xml:space="preserve">
+    <value>ラップ</value>
+  </data>
+  <data name="Isogai" xml:space="preserve">
+    <value>細貝さん</value>
+  </data>
+  <data name="Akemi" xml:space="preserve">
+    <value>朱美ちゃん</value>
+  </data>
+  <data name="Synthdrum" xml:space="preserve">
+    <value>シンセドラム</value>
+  </data>
+  <data name="Shuriken" xml:space="preserve">
+    <value>しゅりけん</value>
+  </data>
+  <data name="Puchipuchi" xml:space="preserve">
+    <value>プチプチ</value>
+  </data>
+  <data name="Electric Guitar" xml:space="preserve">
+    <value>エレキギター</value>
+  </data>
+  <data name="UraOni" xml:space="preserve">
+    <value>おに裏</value>
+  </data>
+  <data name="Set Up Each Time" xml:space="preserve">
+    <value>毎回設定</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value>デフォルト</value>
+  </data>
+  <data name="Not Cleared" xml:space="preserve">
+    <value>未クリア優先</value>
+  </data>
+  <data name="Not Full Combo" xml:space="preserve">
+    <value>未フルコンボ優先</value>
+  </data>
+  <data name="Not Donderful Combo" xml:space="preserve">
+    <value>未ドンダフルコンボ優先</value>
+  </data>
+  <data name="Japanese" xml:space="preserve">
+    <value>日本語</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>英語</value>
+  </data>
+  <data name="Chinese Traditional" xml:space="preserve">
+    <value>繁体字中国語</value>
+  </data>
+  <data name="Korean" xml:space="preserve">
+    <value>韓国語</value>
+  </data>
+  <data name="Chinese Simplified" xml:space="preserve">
+    <value>簡体字中国語</value>
+  </data>
+  <data name="1 Star" xml:space="preserve">
+    <value>★ 1</value>
+  </data>
+  <data name="10 Star" xml:space="preserve">
+    <value>★ 10</value>
+  </data>
+  <data name="2 Star" xml:space="preserve">
+    <value>★ 2</value>
+  </data>
+  <data name="3 Star" xml:space="preserve">
+    <value>★ 3</value>
+  </data>
+  <data name="4 Star" xml:space="preserve">
+    <value>★ 4</value>
+  </data>
+  <data name="5 Star" xml:space="preserve">
+    <value>★ 5</value>
+  </data>
+  <data name="6 Star" xml:space="preserve">
+    <value>★ 6</value>
+  </data>
+  <data name="7 Star" xml:space="preserve">
+    <value>★ 7</value>
+  </data>
+  <data name="8 Star" xml:space="preserve">
+    <value>★ 8</value>
+  </data>
+  <data name="9 Star" xml:space="preserve">
+    <value>★ 9</value>
+  </data>
+  <data name="Log Out Confirm" xml:space="preserve">
+    <value>ログアウトしてもよろしいですか？</value>
+  </data>
+  <data name="Leaderboard" xml:space="preserve">
+    <value>ランキング</value>
+  </data>
+  <data name="User ID" xml:space="preserve">
+    <value>ユーザーID</value>
   </data>
 </root>

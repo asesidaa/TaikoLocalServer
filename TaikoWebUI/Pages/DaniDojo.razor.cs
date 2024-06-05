@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using System.Collections.Immutable;
+using Microsoft.JSInterop;
 
 namespace TaikoWebUI.Pages;
 
@@ -14,6 +15,7 @@ public partial class DaniDojo
 
     private static Dictionary<uint, DanBestData> _bestDataMap = new();
     private Dictionary<uint, MusicDetail> musicDetailDictionary = new();
+    private ImmutableDictionary<uint, DanData> danMap = ImmutableDictionary<uint, DanData>.Empty;
 
     private readonly List<BreadcrumbItem> breadcrumbs = new();
 
@@ -31,6 +33,8 @@ public partial class DaniDojo
         response.DanBestDataList.ForEach(data => data.DanBestStageDataList
             .Sort((stageData, otherStageData) => stageData.SongNumber.CompareTo(otherStageData.SongNumber)));
         _bestDataMap = response.DanBestDataList.ToDictionary(data => data.DanId);
+
+        danMap = GameDataService.GetDanMap();
 
         SongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
 
@@ -54,7 +58,7 @@ public partial class DaniDojo
     {
         return danClearState switch
         {
-            DanClearState.NotClear => Localizer["Not Cleared"],
+            DanClearState.NotClear => Localizer["Not Passed"],
             DanClearState.RedNormalClear => Localizer["Red"],
             DanClearState.RedFullComboClear => Localizer["Red Full Combo"],
             DanClearState.RedPerfectClear => Localizer["Red Donderful Combo"],

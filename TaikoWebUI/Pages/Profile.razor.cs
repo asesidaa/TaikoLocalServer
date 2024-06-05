@@ -129,11 +129,11 @@ public partial class Profile
 
     private static readonly string[] ToneStrings =
     {
-        "Taiko", "Festival", "Dogs & Cats", "Deluxe",
-        "Drumset", "Tambourine", "Don Wada", "Clapping",
-        "Conga", "8-Bit", "Heave-ho", "Mecha",
-        "Bujain", "Rap", "Hosogai", "Akemi",
-        "Synth Drum", "Shuriken", "Bubble Pop", "Electric Guitar"
+        "Taiko", "Matsuri", "Inuneko", "Wonderfultaiko",
+        "Drum", "Tambourine", "Wadadon", "Clapping",
+        "Conga", "8bittaiko", "Soya", "Mekadon",
+        "Funassyi", "Wrap", "Isogai", "Akemi",
+        "Synthdrum", "Shuriken", "Puchipuchi", "Electric Guitar"
     };
 
     private static readonly string[] TitlePlateStrings =
@@ -148,25 +148,25 @@ public partial class Profile
 
     private static readonly string[] LanguageStrings =
     {
-        "Japanese", "English", "Chinese (Traditional)", "Korean", "Chinese (Simplified)"
+        "Japanese", "English", "Chinese Traditional", "Korean", "Chinese Simplified"
     };
 
     private static readonly string[] DifficultySettingCourseStrings =
     {
-        "None", "Set up each time",
+        "None", "Set Up Each Time",
         "Easy", "Normal", "Hard", "Oni", "Ura Oni"
     };
 
     private static readonly string[] DifficultySettingStarStrings =
     {
-        "None", "Set up each time",
-        "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
+        "None", "Set Up Each Time",
+        "1 Star", "2 Star", "3 Star", "4 Star", "5 Star", "6 Star", "7 Star", "8 Star", "9 Star", "10 Star"
     };
 
     private static readonly string[] DifficultySettingSortStrings =
     {
-        "None", "Set up each time", "Default",
-        "Not cleared", "Not Full Combo", "Not Donderful Combo"
+        "None", "Set Up Each Time", "Default",
+        "Not Cleared", "Not Full Combo", "Not Donderful Combo"
     };
 
     private readonly List<BreadcrumbItem> breadcrumbs = new();

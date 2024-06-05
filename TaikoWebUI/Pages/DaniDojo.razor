@@ -1,9 +1,9 @@
-﻿@using Blazored.LocalStorage
+﻿@using System.ComponentModel.DataAnnotations
+@using Blazored.LocalStorage
 
 @inject IGameDataService GameDataService
 @inject HttpClient Client
 @inject AuthService AuthService
-@inject IJSRuntime JsRuntime
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService LocalStorage
 
@@ -28,10 +28,9 @@ else
         <MudItem xs="12">
             <MudPaper Elevation="0" Outlined="true">
                 <MudTabs ActivePanelIndex="0" Rounded="true" Border="true" PanelClass="pa-8">
-                    @for (uint i = 1; i <= 19; i++)
+                    @foreach (var danId in danMap.Keys)
                     {
-                        var danId = i;
-                        var danData = GameDataService.GetDanDataById(danId);
+                        var danData = danMap[danId];
 
                         <MudTabPanel Text="@GetDanTitle(danData.Title)" Icon="@GetDanResultIcon(danId)">
                             <MudText Typo="Typo.h5" Class="mb-4">@Localizer["Details"]</MudText>
@@ -217,7 +216,7 @@ else
                                                             var redRequirement = GetSoulGauge(danData, false);
                                                             var goldRequirement = GetSoulGauge(danData, true);
                                                             var barClass = "bar-default";
-                                                            var resultText = @Localizer["Not Cleared"];
+                                                            var resultText = Localizer["Not Passed"];
                                                         }
                                                         <MudStack Spacing="1">
                                                             <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">@Localizer["Result"]</MudText>
@@ -225,12 +224,12 @@ else
                                                             {
                                                                 if (danBestData.SoulGaugeTotal >= redRequirement) {
                                                                     barClass = "bar-pass-red";
-                                                                    resultText = @Localizer["Pass"];
+                                                                    resultText = Localizer["Pass"];
                                                                 }
 
                                                                 if (danBestData.SoulGaugeTotal >= goldRequirement) {
                                                                     barClass = "bar-pass-gold";
-                                                                    resultText = @Localizer["Gold"];
+                                                                    resultText = Localizer["Gold"];
                                                                 }
                                                                 
                                                                 <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="100" Value="@danBestData.SoulGaugeTotal">
@@ -287,7 +286,7 @@ else
                                                                         var redRequirement = border.RedBorderTotal;
                                                                         var goldRequirement = border.GoldBorderTotal;
                                                                         var barClass = "bar-default";
-                                                                        var resultText = @Localizer["Not Cleared"];
+                                                                        var resultText = Localizer["Not Passed"];
                                                                     }
                                                                     <MudStack Spacing="1">
                                                                         <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">@Localizer["Result"]</MudText>
@@ -297,18 +296,17 @@ else
 
                                                                             if ((DanConditionType)border.OdaiType is DanConditionType.BadCount or DanConditionType.OkCount)
                                                                             {
-                                                                                if (bestData <= redRequirement)
-                                                                                {
-                                                                                    barClass = "bar-pass-red";
-                                                                                    resultText = @Localizer["Pass"];
-                                                                                }
-
                                                                                 if (bestData <= goldRequirement)
                                                                                 {
                                                                                     barClass = "bar-pass-gold";
-                                                                                    resultText = @Localizer["Gold"];
+                                                                                    resultText = Localizer["Gold"];
+                                                                                } 
+                                                                                else if (bestData <= redRequirement)
+                                                                                {
+                                                                                    barClass = "bar-pass-red";
+                                                                                    resultText = Localizer["Pass"];
                                                                                 }
-
+                                                                                
                                                                                 var resultValue = redRequirement - bestData;
                                                                                 if (resultValue < 0) resultValue = 0;
 
@@ -319,19 +317,20 @@ else
                                                                             } 
                                                                             else 
                                                                             {
-                                                                                if (bestData >= redRequirement)
-                                                                                {
-                                                                                    barClass = "bar-pass-red";
-                                                                                    resultText = @Localizer["Pass"];
-                                                                                }
-
                                                                                 if (bestData >= goldRequirement)
                                                                                 {
                                                                                     barClass = "bar-pass-gold";
-                                                                                    resultText = @Localizer["Gold"];
+                                                                                    resultText = Localizer["Gold"];
+                                                                                } 
+                                                                                else if (bestData >= redRequirement)
+                                                                                {
+                                                                                    barClass = "bar-pass-red";
+                                                                                    resultText = Localizer["Pass"];
                                                                                 }
 
-                                                                                <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="@goldRequirement" Value="@bestData">
+                                                                                var resultValue = Math.Min(bestData, redRequirement);
+
+                                                                                <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="@redRequirement" Value="@resultValue">
                                                                                     <MudText Typo="Typo.caption">@bestData</MudText>
                                                                                 </MudProgressLinear>
                                                                                 <MudText Typo="Typo.caption" Style="text-align: right">@resultText</MudText>

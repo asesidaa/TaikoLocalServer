@@ -1,4 +1,6 @@
-﻿namespace TaikoWebUI.Services;
+﻿using System.Collections.Immutable;
+
+namespace TaikoWebUI.Services;
 
 public interface IGameDataService
 {
@@ -22,7 +24,7 @@ public interface IGameDataService
 
     public int GetMusicIndexBySongId(Dictionary<uint, MusicDetail> musicDetails,uint songId);
 
-    public DanData GetDanDataById(uint danId);
+    public ImmutableDictionary<uint, DanData> GetDanMap();
 
     public int GetMusicStarLevel(Dictionary<uint, MusicDetail> musicDetails, uint songId, Difficulty difficulty);
 

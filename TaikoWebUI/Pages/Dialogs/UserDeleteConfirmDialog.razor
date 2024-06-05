@@ -5,19 +5,18 @@
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.DeleteForever" Class="mr-3 mb-n1" />
-            Delete user?
+            @Localizer["Delete User"]
         </MudText>
     </TitleContent>
     <DialogContent>
         <MudText>
-            Do you really want to delete this user's data?
-            All the related data will be deleted and this process cannot be undone!
+            @Localizer["Delete User Confirm"]
         </MudText>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">CANCEL</MudButton>
         <MudButton Color="Color.Error" OnClick="DeleteUser">
-            <MudText>DELETE</MudText>
+            <MudText>@Localizer["Delete"]</MudText>
         </MudButton>
     </DialogActions>
 </MudDialog>
