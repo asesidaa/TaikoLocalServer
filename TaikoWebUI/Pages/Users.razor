@@ -9,11 +9,11 @@
 <MudText Typo="Typo.h4">@Localizer["Users"]</MudText>
 <MudGrid Class="my-8">
     @if (!AuthService.LoginRequired || (AuthService.LoginRequired && AuthService.IsAdmin)) {
-        if (isLoading == true)
+        if (isLoading == true || response == null)
         {
             // Loading...
-            for (uint i = 0; i < 6; i++) {
-                <MudItem xs="12" md="6" lg="4">
+            for (uint i = 0; i < pageSize; i++) {
+                <MudItem xs="12" md="6" lg="4" xl="3">
                     <MudCard Outlined="true">
                         <MudCardContent>
                             <MudSkeleton Width="30%" Height="42px;" Class="mb-5" />
@@ -32,7 +32,7 @@
         } else if (response.Users.Count > 0) {
             foreach (var user in response.Users)
             {
-                <MudItem xs="12" md="6" lg="4">
+                <MudItem xs="12" md="6" lg="4" xl="3">
                     <UserCard User="user" UserSetting="user.UserSetting" />
                 </MudItem>
             }
