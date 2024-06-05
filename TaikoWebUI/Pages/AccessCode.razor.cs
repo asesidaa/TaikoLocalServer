@@ -71,46 +71,47 @@ public partial class AccessCode
         {
             case 0:
                 await DialogService.ShowMessageBox(
-                    "Error",
+                    Localizer["Error"],
                     (MarkupString)
-                    "Not logged in.<br />Please log in first and try again.",
-                    "Ok");
+                    (string)Localizer["Not Logged In Error"],
+                    Localizer["Dialog OK"]);
                 break;
             case 1:
                 await DialogService.ShowMessageBox(
-                    "Success",
-                    "New access code bound successfully.",
-                    "Ok");
+                    Localizer["Success"],
+                    (MarkupString)
+                    (string)Localizer["Access Code Bound Success"],
+                    Localizer["Dialog OK"]);
                 await InitializeUser();
                 NavigationManager.NavigateTo(NavigationManager.Uri);
                 break;
             case 2:
                 await DialogService.ShowMessageBox(
-                    "Error",
+                    Localizer["Error"],
                     (MarkupString)
-                    "Bound access code upper limit reached.<br />Please delete one access code first.",
-                    "Ok");
+                    (string)Localizer["Access Code Upper Limit Error"],
+                    Localizer["Dialog OK"]);
                 break;
             case 3:
                 await DialogService.ShowMessageBox(
-                    "Error",
+                    Localizer["Error"],
                     (MarkupString)
-                    "Access code already bound.<br />Please delete it from the bound user first.",
-                    "Ok");
+                    (string)Localizer["Access Code Already Bound Error"],
+                    Localizer["Dialog OK"]);
                 break;
             case 4:
                 await DialogService.ShowMessageBox(
-                    "Error",
+                    Localizer["Error"],
                     (MarkupString)
-                    "Access code cannot be empty.<br />Please enter a valid access code.",
-                    "Ok");
+                    (string)Localizer["Access Code Empty Error"],
+                    Localizer["Dialog OK"]);
                 break;
             case 5:
                 await DialogService.ShowMessageBox(
-                    "Error",
+                    Localizer["Error"],
                     (MarkupString)
-                    "You can't do that!<br />You need to be an admin to edit someone else's access codes.",
-                    "Ok");
+                    (string)Localizer["Access Code Not Admin Error"],
+                    Localizer["Dialog OK"]);
                 break;
         }
     }

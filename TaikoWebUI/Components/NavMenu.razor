@@ -86,10 +86,10 @@
     private async Task Logout()
 	{
 		var result = await DialogService.ShowMessageBox(
-			"Log Out",
-			"Are you sure you want to log out?",
-			yesText: "Log Out",
-			noText: "Cancel");
+			Localizer["Log Out"],
+			Localizer["Log Out Confirm"],
+			yesText: Localizer["Log Out"],
+			noText: Localizer["Cancel"]);
 
 		if (result == true)
 		{

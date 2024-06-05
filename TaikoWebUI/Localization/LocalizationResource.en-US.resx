@@ -123,7 +123,7 @@
   <data name="Users" xml:space="preserve">
     <value>Users</value>
   </data>
-  <data name="edit profile" xml:space="preserve">
+  <data name="Edit Profile" xml:space="preserve">
     <value>Edit Profile</value>
   </data>
   <data name="User" xml:space="preserve">
@@ -225,7 +225,7 @@
   <data name="Crown" xml:space="preserve">
     <value>Crown</value>
   </data>
-  <data name="No data." xml:space="preserve">
+  <data name="No Data" xml:space="preserve">
     <value>No data</value>
   </data>
   <data name="Log In First" xml:space="preserve">
@@ -249,8 +249,8 @@
   <data name="Gold" xml:space="preserve">
     <value>Gold</value>
   </data>
-  <data name="Not Cleared" xml:space="preserve">
-    <value>Not Cleared</value>
+  <data name="Not Passed" xml:space="preserve">
+    <value>Not Passed</value>
   </data>
   <data name="Pass" xml:space="preserve">
     <value>Pass</value>
@@ -354,8 +354,8 @@
   <data name="Inverse" xml:space="preserve">
     <value>Inverse</value>
   </data>
-  <data name="Give Up" xml:space="preserve">
-    <value>Give Up</value>
+  <data name="Skip Song" xml:space="preserve">
+    <value>Skip Song</value>
   </data>
   <data name="Voice" xml:space="preserve">
     <value>Voice</value>
@@ -372,10 +372,10 @@
   <data name="Notes Position" xml:space="preserve">
     <value>Notes Position</value>
   </data>
-  <data name="reset_password_confirm_dialog_1" xml:space="preserve">
+  <data name="Reset Password Confirm 1" xml:space="preserve">
     <value>Are you sure you want to reset the password for this user?</value>
   </data>
-  <data name="reset_password_confirm_dialog_2" xml:space="preserve">
+  <data name="Reset Password Confirm 2" xml:space="preserve">
     <value>This will remove the user's current password and user will have to register again.</value>
   </data>
   <data name="DateFormat" xml:space="preserve">
@@ -534,7 +534,7 @@
   <data name="Unregister" xml:space="preserve">
     <value>Unregister</value>
   </data>
-  <data name="and" xml:space="preserve">
+  <data name="And" xml:space="preserve">
     <value>and</value>
   </data>
   <data name="other access code(s)" xml:space="preserve">
@@ -599,5 +599,227 @@
   </data>
   <data name="Add" xml:space="preserve">
     <value>Add</value>
+  </data>
+  <data name="Access Code Bound Success" xml:space="preserve">
+    <value>New access code bound successfully.</value>
+  </data>
+  <data name="Not Logged In Error" xml:space="preserve">
+    <value>Not logged in.&lt;br /&gt;Please log in first and try again.</value>
+  </data>
+  <data name="Access Code Upper Limit Error" xml:space="preserve">
+    <value>Bound access code upper limit reached.&lt;br /&gt;Please delete one access code first.</value>
+  </data>
+  <data name="Access Code Already Bound Error" xml:space="preserve">
+    <value>This access code has already been bound.</value>
+  </data>
+  <data name="Access Code Empty Error" xml:space="preserve">
+    <value>Access code cannot be empty.&lt;br /&gt;Please enter a valid access code.</value>
+  </data>
+  <data name="Access Code Not Admin Error" xml:space="preserve">
+    <value>This action is not allowed.&lt;br /&gt;Only admin will be able to edit another user's access code.</value>
+  </data>
+  <data name="Login Only Admin Error" xml:space="preserve">
+    <value>Only admin can log in.</value>
+  </data>
+  <data name="Change Password Success" xml:space="preserve">
+    <value>Password changed successfully.</value>
+  </data>
+  <data name="Change Password Different Confirm Password Error" xml:space="preserve">
+    <value>Confirm new password is different from new password.&lt;br /&gt;Please check again.</value>
+  </data>
+  <data name="Unknown Access Code Error" xml:space="preserve">
+    <value>Unknown access code.&lt;br /&gt;Please play one game with this access code and try again.</value>
+  </data>
+  <data name="Change Password Wrong Current Password Error" xml:space="preserve">
+    <value>Current password is wrong.&lt;br /&gt;Please check again.</value>
+  </data>
+  <data name="Access Code Not Registered Error" xml:space="preserve">
+    <value>Access code not registered.&lt;br /&gt;Please register first and try again.</value>
+  </data>
+  <data name="Login Wrong Password Error" xml:space="preserve">
+    <value>Wrong password.&lt;br /&gt;Please check again.</value>
+  </data>
+  <data name="Register Only Admin Error" xml:space="preserve">
+    <value>Only admin can register.</value>
+  </data>
+  <data name="Register Success" xml:space="preserve">
+    <value>Access code registered successfully.</value>
+  </data>
+  <data name="Register Different Confirm Password Error" xml:space="preserve">
+    <value>Confirm password is not the same as password.&lt;br /&gt;Please check again.</value>
+  </data>
+  <data name="Register Already Registered Error" xml:space="preserve">
+    <value>Access code is already registered.&lt;br /&gt;Please use set password to login.</value>
+  </data>
+  <data name="Register Wrong Last Play Time Error" xml:space="preserve">
+    <value>Wrong last play time.&lt;br /&gt;If you have forgotten when you last played, please play another game with this access code or contact admin.</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Access Code Delete Last Access Code Error" xml:space="preserve">
+    <value>Cannot delete user's last access code.</value>
+  </data>
+  <data name="Access Code Delete Success" xml:space="preserve">
+    <value>Access code deleted successfully.</value>
+  </data>
+  <data name="ID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Access Code Delete Confirm" xml:space="preserve">
+    <value>Are you sure you want to delete this access code?</value>
+  </data>
+  <data name="Currently Selected:" xml:space="preserve">
+    <value>Currently Selected:</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="Delete User Confirm" xml:space="preserve">
+    <value>Do you really want to delete this user's data?&lt;br /&gt;All the related data will be deleted and this process cannot be undone!</value>
+  </data>
+  <data name="Delete User Success" xml:space="preserve">
+    <value>User deleted successfully.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="Whimsical" xml:space="preserve">
+    <value>Whimsical</value>
+  </data>
+  <data name="Messy" xml:space="preserve">
+    <value>Messy</value>
+  </data>
+  <data name="Taiko" xml:space="preserve">
+    <value>Taiko</value>
+  </data>
+  <data name="Matsuri" xml:space="preserve">
+    <value>Festival</value>
+  </data>
+  <data name="Inuneko" xml:space="preserve">
+    <value>Dogs &amp; Cats</value>
+  </data>
+  <data name="Wonderfultaiko" xml:space="preserve">
+    <value>Deluxe Taiko</value>
+  </data>
+  <data name="Drum" xml:space="preserve">
+    <value>Drumset</value>
+  </data>
+  <data name="Tambourine" xml:space="preserve">
+    <value>Tambourine</value>
+  </data>
+  <data name="Wadadon" xml:space="preserve">
+    <value>Wadadon</value>
+  </data>
+  <data name="Clapping" xml:space="preserve">
+    <value>Clapping</value>
+  </data>
+  <data name="Conga" xml:space="preserve">
+    <value>Conga</value>
+  </data>
+  <data name="8bittaiko" xml:space="preserve">
+    <value>8-bit Taiko</value>
+  </data>
+  <data name="Soya" xml:space="preserve">
+    <value>Heave-ho</value>
+  </data>
+  <data name="Mekadon" xml:space="preserve">
+    <value>Mecha Don</value>
+  </data>
+  <data name="Funassyi" xml:space="preserve">
+    <value>Funassyi</value>
+  </data>
+  <data name="Wrap" xml:space="preserve">
+    <value>Rap</value>
+  </data>
+  <data name="Isogai" xml:space="preserve">
+    <value>Hosogai</value>
+  </data>
+  <data name="Akemi" xml:space="preserve">
+    <value>Akemi</value>
+  </data>
+  <data name="Synthdrum" xml:space="preserve">
+    <value>Synth Drum</value>
+  </data>
+  <data name="Shuriken" xml:space="preserve">
+    <value>Shuriken</value>
+  </data>
+  <data name="Puchipuchi" xml:space="preserve">
+    <value>Bubble Pop</value>
+  </data>
+  <data name="Electric Guitar" xml:space="preserve">
+    <value>Electric Guitar</value>
+  </data>
+  <data name="UraOni" xml:space="preserve">
+    <value>Ura</value>
+  </data>
+  <data name="Set Up Each Time" xml:space="preserve">
+    <value>Set Up Each Time</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="Not Cleared" xml:space="preserve">
+    <value>Not Cleared</value>
+  </data>
+  <data name="Not Full Combo" xml:space="preserve">
+    <value>Not Full Combo</value>
+  </data>
+  <data name="Not Donderful Combo" xml:space="preserve">
+    <value>Not Donderful Combo</value>
+  </data>
+  <data name="Japanese" xml:space="preserve">
+    <value>Japanese</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="Chinese Traditional" xml:space="preserve">
+    <value>Chinese Traditional</value>
+  </data>
+  <data name="Korean" xml:space="preserve">
+    <value>Korean</value>
+  </data>
+  <data name="Chinese Simplified" xml:space="preserve">
+    <value>Chinese Simplified</value>
+  </data>
+  <data name="1 Star" xml:space="preserve">
+    <value>★ 1</value>
+  </data>
+  <data name="10 Star" xml:space="preserve">
+    <value>★ 10</value>
+  </data>
+  <data name="2 Star" xml:space="preserve">
+    <value>★ 2</value>
+  </data>
+  <data name="3 Star" xml:space="preserve">
+    <value>★ 3</value>
+  </data>
+  <data name="4 Star" xml:space="preserve">
+    <value>★ 4</value>
+  </data>
+  <data name="5 Star" xml:space="preserve">
+    <value>★ 5</value>
+  </data>
+  <data name="6 Star" xml:space="preserve">
+    <value>★ 6</value>
+  </data>
+  <data name="7 Star" xml:space="preserve">
+    <value>★ 7</value>
+  </data>
+  <data name="8 Star" xml:space="preserve">
+    <value>★ 8</value>
+  </data>
+  <data name="9 Star" xml:space="preserve">
+    <value>★ 9</value>
+  </data>
+  <data name="Log Out Confirm" xml:space="preserve">
+    <value>Are you sure you want to log out?</value>
+  </data>
+  <data name="Leaderboard" xml:space="preserve">
+    <value>Leaderboard</value>
+  </data>
+  <data name="User ID" xml:space="preserve">
+    <value>User ID</value>
   </data>
 </root>

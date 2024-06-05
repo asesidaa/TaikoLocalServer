@@ -116,11 +116,11 @@ public class GameDataService : IGameDataService
         return musicDetails.TryGetValue(songId, out var musicDetail) ? musicDetail.Index : int.MaxValue;
     }
 
-    public DanData GetDanDataById(uint danId)
+    public ImmutableDictionary<uint, DanData> GetDanMap()
     {
-        return danMap.GetValueOrDefault(danId, new DanData());
+        return danMap;
     }
-
+    
     public int GetMusicStarLevel(Dictionary<uint, MusicDetail> musicDetails, uint songId, Difficulty difficulty)
     {
         var success = musicDetails.TryGetValue(songId, out var musicDetail);
