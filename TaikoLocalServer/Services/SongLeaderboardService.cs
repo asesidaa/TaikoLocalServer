@@ -51,10 +51,15 @@ public class SongLeaderboardService : ISongLeaderboardService
             var playDatum = await context.SongPlayData
                 .Where(x => x.SongId == songId && x.Difficulty == difficulty && x.Baid == score.Baid)
                 .FirstOrDefaultAsync();
+            
+            // calculate Rank based on page/limit
+            var rank = await context.SongBestData
+                .Where(x => x.SongId == songId && x.Difficulty == difficulty && x.BestScore > score.BestScore)
+                .CountAsync();
 
             leaderboard.Add(new SongLeaderboard
             {
-                Rank = (uint)leaderboard.Count + 1,
+                Rank = rank + 1,
                 Baid = score.Baid,
                 UserName = user?.MyDonName,
                 BestScore = score.BestScore,
@@ -85,10 +90,14 @@ public class SongLeaderboardService : ISongLeaderboardService
                 var user = await context.UserData
                     .Where(x => x.Baid == baid)
                     .FirstOrDefaultAsync();
+                
+                var rank = await context.SongBestData
+                    .Where(x => x.SongId == songId && x.Difficulty == difficulty && x.BestScore > currentUserScore.BestScore)
+                    .CountAsync();
 
                 leaderboard.Add(new SongLeaderboard
                 {
-                    Rank = (uint)userRank + 1,
+                    Rank = rank + 1,
                     Baid = currentUserScore.Baid,
                     UserName = user?.MyDonName,
                     BestScore = currentUserScore.BestScore,

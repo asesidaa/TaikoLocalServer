@@ -4,7 +4,7 @@ namespace SharedProject.Models;
 
 public class SongLeaderboard
 {
-    public uint Rank { get; set; }
+    public int Rank { get; set; }
     
     public uint Baid { get; set; }
     
