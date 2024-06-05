@@ -2,14 +2,15 @@
 @inject AuthService AuthService
 @inject NavigationManager NavigationManager
 
-@using TaikoWebUI.Components
+@using TaikoWebUI.Components;
 
 @page "/Users"
 
 <MudText Typo="Typo.h4">@Localizer["Users"]</MudText>
 <MudGrid Class="my-8">
     @if (!AuthService.LoginRequired || (AuthService.LoginRequired && AuthService.IsAdmin)) {
-        if (usersWithSettings == null) {
+        if (isLoading == true)
+        {
             // Loading...
             for (uint i = 0; i < 6; i++) {
                 <MudItem xs="12" md="6" lg="4">
@@ -28,11 +29,11 @@
                     </MudCard>
                 </MudItem>
             }
-        } else if (usersWithSettings.Count > 0) {
-            foreach (var (user, userSetting) in usersWithSettings)
+        } else if (response.Users.Count > 0) {
+            foreach (var user in response.Users)
             {
                 <MudItem xs="12" md="6" lg="4">
-                    <UserCard User="user" UserSetting="userSetting" />
+                    <UserCard User="user" UserSetting="user.UserSetting" />
                 </MudItem>
             }
         } else { // No users in the database

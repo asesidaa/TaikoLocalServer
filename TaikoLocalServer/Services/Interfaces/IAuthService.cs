@@ -1,4 +1,5 @@
 ﻿using SharedProject.Models;
+using SharedProject.Models.Responses;	
 
 namespace TaikoLocalServer.Services.Interfaces;
 
@@ -8,7 +9,7 @@ public interface IAuthService
 	
     public Task<Card?> GetCardByAccessCode(string accessCode);
 
-    public Task<List<User>> GetUsersFromCards();
+    public Task<UsersResponse> GetUsersFromCards(int page = 0, int limit = 12);
 
     public Task AddCard(Card card);
 
