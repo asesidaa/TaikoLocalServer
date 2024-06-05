@@ -980,6 +980,15 @@ namespace TaikoWebUI.Localization {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        internal static string No_Data {
+            get {
+                return ResourceManager.GetString("No Data", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         internal static string No_Play_History_Found {
             get {
                 return ResourceManager.GetString("No Play History Found", resourceCulture);
