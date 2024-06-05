@@ -249,8 +249,8 @@
   <data name="Gold" xml:space="preserve">
     <value>Gold</value>
   </data>
-  <data name="Not Cleared" xml:space="preserve">
-    <value>Not Cleared</value>
+  <data name="Not Passed" xml:space="preserve">
+    <value>Not Passed</value>
   </data>
   <data name="Pass" xml:space="preserve">
     <value>Pass</value>
@@ -354,8 +354,8 @@
   <data name="Inverse" xml:space="preserve">
     <value>Inverse</value>
   </data>
-  <data name="Give Up" xml:space="preserve">
-    <value>Give Up</value>
+  <data name="Skip Song" xml:space="preserve">
+    <value>Skip Song</value>
   </data>
   <data name="Voice" xml:space="preserve">
     <value>Voice</value>
@@ -680,5 +680,140 @@
   </data>
   <data name="Delete User Success" xml:space="preserve">
     <value>User deleted successfully.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="Whimsical" xml:space="preserve">
+    <value>Whimsical</value>
+  </data>
+  <data name="Messy" xml:space="preserve">
+    <value>Messy</value>
+  </data>
+  <data name="Taiko" xml:space="preserve">
+    <value>Taiko</value>
+  </data>
+  <data name="Matsuri" xml:space="preserve">
+    <value>Festival</value>
+  </data>
+  <data name="Inuneko" xml:space="preserve">
+    <value>Dogs &amp; Cats</value>
+  </data>
+  <data name="Wonderfultaiko" xml:space="preserve">
+    <value>Deluxe Taiko</value>
+  </data>
+  <data name="Drum" xml:space="preserve">
+    <value>Drumset</value>
+  </data>
+  <data name="Tambourine" xml:space="preserve">
+    <value>Tambourine</value>
+  </data>
+  <data name="Wadadon" xml:space="preserve">
+    <value>Wadadon</value>
+  </data>
+  <data name="Clapping" xml:space="preserve">
+    <value>Clapping</value>
+  </data>
+  <data name="Conga" xml:space="preserve">
+    <value>Conga</value>
+  </data>
+  <data name="8bittaiko" xml:space="preserve">
+    <value>8-bit Taiko</value>
+  </data>
+  <data name="Soya" xml:space="preserve">
+    <value>Heave-ho</value>
+  </data>
+  <data name="Mekadon" xml:space="preserve">
+    <value>Mecha Don</value>
+  </data>
+  <data name="Funassyi" xml:space="preserve">
+    <value>Funassyi</value>
+  </data>
+  <data name="Wrap" xml:space="preserve">
+    <value>Rap</value>
+  </data>
+  <data name="Isogai" xml:space="preserve">
+    <value>Hosogai</value>
+  </data>
+  <data name="Akemi" xml:space="preserve">
+    <value>Akemi</value>
+  </data>
+  <data name="Synthdrum" xml:space="preserve">
+    <value>Synth Drum</value>
+  </data>
+  <data name="Shuriken" xml:space="preserve">
+    <value>Shuriken</value>
+  </data>
+  <data name="Puchipuchi" xml:space="preserve">
+    <value>Bubble Pop</value>
+  </data>
+  <data name="Electric Guitar" xml:space="preserve">
+    <value>Electric Guitar</value>
+  </data>
+  <data name="UraOni" xml:space="preserve">
+    <value>Ura</value>
+  </data>
+  <data name="Set Up Each Time" xml:space="preserve">
+    <value>Set Up Each Time</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="Not Cleared" xml:space="preserve">
+    <value>Not Cleared</value>
+  </data>
+  <data name="Not Full Combo" xml:space="preserve">
+    <value>Not Full Combo</value>
+  </data>
+  <data name="Not Donderful Combo" xml:space="preserve">
+    <value>Not Donderful Combo</value>
+  </data>
+  <data name="Japanese" xml:space="preserve">
+    <value>Japanese</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="Chinese Traditional" xml:space="preserve">
+    <value>Chinese Traditional</value>
+  </data>
+  <data name="Korean" xml:space="preserve">
+    <value>Korean</value>
+  </data>
+  <data name="Chinese Simplified" xml:space="preserve">
+    <value>Chinese Simplified</value>
+  </data>
+  <data name="1 Star" xml:space="preserve">
+    <value>★ 1</value>
+  </data>
+  <data name="10 Star" xml:space="preserve">
+    <value>★ 10</value>
+  </data>
+  <data name="2 Star" xml:space="preserve">
+    <value>★ 2</value>
+  </data>
+  <data name="3 Star" xml:space="preserve">
+    <value>★ 3</value>
+  </data>
+  <data name="4 Star" xml:space="preserve">
+    <value>★ 4</value>
+  </data>
+  <data name="5 Star" xml:space="preserve">
+    <value>★ 5</value>
+  </data>
+  <data name="6 Star" xml:space="preserve">
+    <value>★ 6</value>
+  </data>
+  <data name="7 Star" xml:space="preserve">
+    <value>★ 7</value>
+  </data>
+  <data name="8 Star" xml:space="preserve">
+    <value>★ 8</value>
+  </data>
+  <data name="9 Star" xml:space="preserve">
+    <value>★ 9</value>
+  </data>
+  <data name="Log Out Confirm" xml:space="preserve">
+    <value>Are you sure you want to log out?</value>
   </data>
 </root>

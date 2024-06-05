@@ -39,7 +39,7 @@
                                             @for (uint i = 0; i < LanguageStrings.Length; i++)
                                             {
                                                 var index = i;
-                                                <MudSelectItem Value="@i">@LanguageStrings[index]</MudSelectItem>
+                                                <MudSelectItem Value="@i">@Localizer[LanguageStrings[index]]</MudSelectItem>
                                             }
                                         </MudSelect>
                                     </MudItem>
@@ -65,7 +65,7 @@
                                             <MudSelect @bind-Value="@response.TitlePlateId" Label=@Localizer["Title Plate"]>
                                                 @foreach (var index in titlePlateIdList)
                                                 {
-                                                    <MudSelectItem Value="@index">@TitlePlateStrings[index]</MudSelectItem>
+                                                    <MudSelectItem Value="@index">@Localizer[TitlePlateStrings[index]]</MudSelectItem>
                                                 }
                                             </MudSelect>
                                         </MudItem>
@@ -75,15 +75,15 @@
                                 <MudSelect T="Difficulty" ValueChanged=@UpdateScoreboard Value=@response.AchievementDisplayDifficulty Label=@Localizer["Achievement Panel Difficulty"]>
                                     @foreach (var item in Enum.GetValues<Difficulty>())
                                     {
-                                        <MudSelectItem Value="@item" />
+                                        <MudSelectItem Value="@item">@Localizer[item.ToString()]</MudSelectItem>
                                     }
                                 </MudSelect>
 
                                 <MudGrid>
                                     <MudItem xs="12" md="4">
                                         <MudStack Spacing="4">
-                                            <MudSwitch @bind-Checked="@response.IsDisplayAchievement" Label=@Localizer["Display Achievement Panel"] Color="Color.Primary" />
-                                            <MudSwitch @bind-Checked="@response.IsDisplayDanOnNamePlate" Label=@Localizer["Display Dan Rank on Name Plate"] Color="Color.Primary" />
+                                            <MudSwitch @bind-Value="@response.IsDisplayAchievement" Label=@Localizer["Display Achievement Panel"] Color="Color.Primary" />
+                                            <MudSwitch @bind-Value="@response.IsDisplayDanOnNamePlate" Label=@Localizer["Display Dan Rank on Name Plate"] Color="Color.Primary" />
                                         </MudStack>
                                     </MudItem>
                                     <MudItem xs="12" md="8">
@@ -92,7 +92,7 @@
                                                 @for (uint i = 0; i < DifficultySettingCourseStrings.Length; i++)
                                                 {
                                                     var index = i;
-                                                    <MudSelectItem Value="@i">@DifficultySettingCourseStrings[index]</MudSelectItem>
+                                                    <MudSelectItem Value="@i">@Localizer[DifficultySettingCourseStrings[index]]</MudSelectItem>
                                                 }
                                             </MudSelect>
 
@@ -100,7 +100,7 @@
                                                 @for (uint i = 0; i < DifficultySettingStarStrings.Length; i++)
                                                 {
                                                     var index = i;
-                                                    <MudSelectItem Value="@i">@DifficultySettingStarStrings[index]</MudSelectItem>
+                                                    <MudSelectItem Value="@i">@Localizer[DifficultySettingStarStrings[index]]</MudSelectItem>
                                                 }
                                             </MudSelect>
 
@@ -108,7 +108,7 @@
                                                 @for (uint i = 0; i < DifficultySettingSortStrings.Length; i++)
                                                 {
                                                     var index = i;
-                                                    <MudSelectItem Value="@i">@DifficultySettingSortStrings[index]</MudSelectItem>
+                                                    <MudSelectItem Value="@i">@Localizer[DifficultySettingSortStrings[index]]</MudSelectItem>
                                                 }
                                             </MudSelect>
                                         </MudStack>
@@ -203,10 +203,10 @@
                                 <MudGrid>
                                     <MudItem xs="12" md="4">
                                         <MudStack Spacing="4">
-                                            <MudSwitch @bind-Checked="@response.PlaySetting.IsVanishOn" Label=@Localizer["Vanish"] Color="Color.Primary" />
-                                            <MudSwitch @bind-Checked="@response.PlaySetting.IsInverseOn" Label=@Localizer["Inverse"] Color="Color.Primary" />
-                                            <MudSwitch @bind-Checked="@response.IsSkipOn" Label=@Localizer["Give Up"] Color="Color.Primary" />
-                                            <MudSwitch @bind-Checked="@response.IsVoiceOn" Label=@Localizer["Voice"] Color="Color.Primary" />
+                                            <MudSwitch @bind-Value="@response.PlaySetting.IsVanishOn" Label=@Localizer["Vanish"] Color="Color.Primary" />
+                                            <MudSwitch @bind-Value="@response.PlaySetting.IsInverseOn" Label=@Localizer["Inverse"] Color="Color.Primary" />
+                                            <MudSwitch @bind-Value="@response.IsSkipOn" Label=@Localizer["Give Up"] Color="Color.Primary" />
+                                            <MudSwitch @bind-Value="@response.IsVoiceOn" Label=@Localizer["Voice"] Color="Color.Primary" />
                                         </MudStack>
                                     </MudItem>
                                     <MudItem xs="12" md="8">
@@ -223,7 +223,7 @@
                                                        Label=@Localizer["Random"]>
                                                 @foreach (var item in Enum.GetValues<RandomType>())
                                                 {
-                                                    <MudSelectItem Value="@item" />
+                                                    <MudSelectItem Value="@item">@Localizer[item.ToString()]</MudSelectItem>
                                                 }
                                             </MudSelect>
 
@@ -231,7 +231,7 @@
                                                 @for (uint i = 0; i < ToneStrings.Length; i++)
                                                 {
                                                     var index = i;
-                                                    <MudSelectItem Value="@i">@ToneStrings[index]</MudSelectItem>
+                                                    <MudSelectItem Value="@i">@Localizer[ToneStrings[index]]</MudSelectItem>
                                                 }
                                             </MudSelect>
 
@@ -294,7 +294,7 @@
                                         </MudItem>
                                         <MudImage onload="nameplateLoaded()" Id="nameplate" Fluid="true" Style="position: relative; bottom: 0; left: 0;" Src="images/Nameplates/nameplate.png" />
                                         @* Check if image does not exist, use nameplate_Wood.png *@
-                                        <MudImage Fluid="true" Style="position:absolute; bottom: 0%; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Nameplates/nameplate_Wood.png'" Src=@($"images/Nameplates/nameplate_{TitlePlateStrings[response.TitlePlateId].Replace(' ', '_')}.png") />
+                                        <MudImage Fluid="true" Style="position:absolute; bottom: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Nameplates/nameplate_Wood.png'" Src=@($"images/Nameplates/nameplate_{TitlePlateStrings[response.TitlePlateId].Replace(' ', '_')}.png") />
                                         @if (response.IsDisplayDanOnNamePlate)
                                         {
                                             <MudImage Fluid="true" Style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" Src="images/Nameplates/nameplate_dan.png" />
