@@ -3,5 +3,5 @@
 using SharedProject.Models;
 public interface ISongLeaderboardService
 {
-    public Task<List<SongLeaderboard>> GetSongLeaderboard(uint songId, Difficulty difficulty, int baid, int limit = 10);
+    Task<(List<SongLeaderboard>, int)> GetSongLeaderboard(uint songId, Difficulty difficulty, int baid = 0, int page = 1, int limit = 10);
 }
