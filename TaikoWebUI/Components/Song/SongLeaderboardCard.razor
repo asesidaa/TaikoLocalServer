@@ -64,7 +64,7 @@
                     <MudTd>
                         @if (context.BestScoreRank is not ScoreRank.None)
                         {
-                        <img src="@($"/images/rank_{context.BestScoreRank}.png")" alt="@(ScoreUtils.GetRankText(context.BestScoreRank))" title="@(ScoreUtils.GetRankText(context.BestScoreRank))" style="@Constants.ICON_STYLE"/>
+                            <img src="@($"/images/rank_{context.BestScoreRank}.png")" alt="@(ScoreUtils.GetRankText(context.BestScoreRank))" title="@(ScoreUtils.GetRankText(context.BestScoreRank))" style="@Constants.ICON_STYLE"/>
                         }
                         else
                         {
@@ -75,6 +75,11 @@
                         <img src="@($"/images/crown_{context.BestCrown}.png")" alt="@(ScoreUtils.GetCrownText(context.BestCrown))" title="@(ScoreUtils.GetCrownText(context.BestCrown))" style="@Constants.ICON_STYLE"/>
                     </MudTd>
                 </RowTemplate>
+                <PagerContent>
+                    <div class="d-flex flex-column align-center">
+                        <MudPagination Class="pa-4" Count="@TotalPages" Selected="currentPage" SelectedChanged="(page) => OnPageChange(page)" BoundaryCount="1" MiddleCount="3" />
+                    </div>
+                </PagerContent>
             </MudTable>
         }
     </MudCardContent>

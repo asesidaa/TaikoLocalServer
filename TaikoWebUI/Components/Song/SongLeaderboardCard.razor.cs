@@ -15,8 +15,21 @@ public partial class SongLeaderboardCard
     public Difficulty Difficulty { get; set; } = Difficulty.None;
 
     private string SelectedDifficulty { get; set; } = "None";
+    private int TotalPages { get; set; } = 0;
     
     private bool isLoading = true;
+    private int currentPage = 1;
+    private int pageSize = 10;
+    
+    private async Task GetLeaderboardData()
+    {
+        isLoading = true;
+        response = await Client.GetFromJsonAsync<SongLeaderboardResponse>($"api/SongLeaderboard/{(uint)SongId}?baid={(uint)Baid}&difficulty={(uint)Difficulty}&page={currentPage}&limit={pageSize}");
+        response.ThrowIfNull();
+        
+        TotalPages = response.TotalPages;
+        isLoading = false;
+    }
     
     protected override async Task OnInitializedAsync()
     {
@@ -37,8 +50,7 @@ public partial class SongLeaderboardCard
             Difficulty = Difficulty.Easy;
         }
         
-        response = await Client.GetFromJsonAsync<SongLeaderboardResponse>($"api/SongLeaderboard/{(uint)SongId}?baid={(uint)Baid}&difficulty={(uint)Difficulty}");
-        response.ThrowIfNull();
+        await GetLeaderboardData();
         
         isLoading = false;
     }
@@ -50,10 +62,16 @@ public partial class SongLeaderboardCard
         Difficulty = Enum.Parse<Difficulty>(SelectedDifficulty);
         
         await LocalStorage.SetItemAsync("songPageDifficulty", SelectedDifficulty);
+        await GetLeaderboardData();
         
-        response = await Client.GetFromJsonAsync<SongLeaderboardResponse>($"api/SongLeaderboard/{(uint)SongId}?baid={(uint)Baid}&difficulty={(uint)Difficulty}");
-        response.ThrowIfNull();
+        currentPage = 1;
         isLoading = false;
+    }
+    
+    private async Task OnPageChange(int page)
+    {
+        currentPage = page;
+        await GetLeaderboardData();
     }
 
     private string GetActiveRowClass(SongLeaderboard leaderboard, int index)
