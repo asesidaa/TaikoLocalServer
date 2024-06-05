@@ -2,8 +2,22 @@
 
 public partial class Users
 {
-    // Tuple of User and UserSetting
-    private List<(User, UserSetting)>? usersWithSettings;
+    private UsersResponse? response = new();
+    
+    private int TotalPages { get; set; } = 0;
+    private bool isLoading = true;
+    private int currentPage = 1;
+    private int pageSize = 12;
+
+    private async Task GetUsersData()
+    {
+        isLoading = true;
+        response = await Client.GetFromJsonAsync<UsersResponse>($"api/Users?page={currentPage}&limit={pageSize}");
+        response.ThrowIfNull();
+
+        TotalPages = response.TotalPages;
+        isLoading = false;
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -15,17 +29,13 @@ public partial class Users
         
         if (AuthService.IsAdmin || !AuthService.LoginRequired)
         {
-            var users = await Client.GetFromJsonAsync<List<User>>("api/Users");
-            var userSettings = await Client.GetFromJsonAsync<List<UserSetting>>("api/UserSettings");
-            if (users != null && userSettings != null)
-            {
-                // Combine User and UserSetting with the same Baid
-                usersWithSettings = users.Join(userSettings,
-                    user => user.Baid,
-                    setting => setting.Baid,
-                    (user, setting) => (user, setting))
-                    .ToList();
-            }
+            await GetUsersData();
         }
+    }
+    
+    private async Task OnPageChange(int page)
+    {
+        currentPage = page;
+        await GetUsersData();
     }
 }

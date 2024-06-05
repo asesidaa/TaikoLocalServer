@@ -7,4 +7,6 @@ public class User
     public List<string> AccessCodes { get; set; } = new();
     
     public bool IsAdmin { get; set; }
+    
+    public UserSetting UserSetting { get; set; } = new();
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using SharedProject.Models;
+using SharedProject.Models.Responses;
 using TaikoLocalServer.Filters;
 using TaikoLocalServer.Settings;
 
@@ -36,23 +37,33 @@ public class UsersController(IUserDatumService userDatumService, IAuthService au
     
     [HttpGet]
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
-    public async Task<IEnumerable<User>> GetUsers()
+    public async Task<ActionResult<UsersResponse>> GetUsers([FromQuery] int page = 1, [FromQuery] int limit = 10)
     {
+        if (page < 1)
+        {
+            return BadRequest( new { Message = "Page number cannot be less than 1." });
+        }
+        
+        if (limit > 200)
+        {
+            return BadRequest( new { Message = "Limit cannot be greater than 200." });
+        }
+        
         if (authSettings.AuthenticationRequired)
         {
             var tokenInfo = authService.ExtractTokenInfo(HttpContext);
             if (tokenInfo == null)
             {
-                return Array.Empty<User>();
+                return new UsersResponse();
             }
 
             if (!tokenInfo.Value.isAdmin)
             {
-                return Array.Empty<User>();
+                return new UsersResponse();
             }
         }
 
-        return await authService.GetUsersFromCards();
+        return await authService.GetUsersFromCards(page, limit);
     }
     
     [HttpDelete("{baid}")]
