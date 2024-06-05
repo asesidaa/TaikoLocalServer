@@ -79,6 +79,11 @@
     </ItemGroup>
 
     <ItemGroup>
+        <EmbeddedResource Update="Localization\LocalizationResource.fr-FR.resx">
+          <SubType>Designer</SubType>
+          <CustomToolNamespace>LocalizationResource</CustomToolNamespace>
+          <Generator>ResXFileCodeGenerator</Generator>
+        </EmbeddedResource>
         <EmbeddedResource Update="Localization\LocalizationResource.en-US.resx">
             <SubType>Designer</SubType>
             <Generator>ResXFileCodeGenerator</Generator>

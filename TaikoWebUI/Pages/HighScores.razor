@@ -37,7 +37,7 @@
                                 @if (songBestDataMap.TryGetValue(difficulty, out var value))
                                 {
                                     // Rows per page 25
-                                    <MudTable Items="@value" Elevation="0" Striped="true" RowsPerPage="25">
+                                    <MudTable Items="@value" Elevation="0" Striped="true" RowsPerPage="25" Breakpoint=Breakpoint.None>
                                         <HeaderContent>
                                             <MudTh>
                                                 <MudText Typo="Typo.body2" Style="font-weight:bold">@Localizer["Song Name"]</MudText>
