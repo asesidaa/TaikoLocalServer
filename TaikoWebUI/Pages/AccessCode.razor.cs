@@ -43,15 +43,7 @@ public partial class AccessCode
 
     private async Task InitializeUser()
     {
-        if (!AuthService.LoginRequired)
-        {
-            var users = await Client.GetFromJsonAsync<List<User>>("api/Users");
-            if (users != null) User = users.FirstOrDefault(u => u.Baid == Baid);
-        }
-        else if (AuthService.IsLoggedIn)
-        {
-            User = await Client.GetFromJsonAsync<User>($"api/Users/{Baid}");
-        }
+        User = await Client.GetFromJsonAsync<User>($"api/Users/{Baid}");
     }
 
     private async Task DeleteAccessCode(string accessCode)
