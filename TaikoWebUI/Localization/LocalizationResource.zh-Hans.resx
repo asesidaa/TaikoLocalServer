@@ -123,7 +123,7 @@
   <data name="Users" xml:space="preserve">
     <value>用户管理</value>
   </data>
-  <data name="Edit profile" xml:space="preserve">
+  <data name="Edit Profile" xml:space="preserve">
     <value>编辑档案</value>
   </data>
   <data name="User" xml:space="preserve">
@@ -818,5 +818,8 @@
   </data>
   <data name="Leaderboard" xml:space="preserve">
     <value>排行榜</value>
+  </data>
+  <data name="User ID" xml:space="preserve">
+    <value>用户ID</value>
   </data>
 </root>

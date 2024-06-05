@@ -602,9 +602,9 @@ namespace TaikoWebUI.Localization {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
-        internal static string Edit_profile {
+        internal static string Edit_Profile {
             get {
-                return ResourceManager.GetString("Edit profile", resourceCulture);
+                return ResourceManager.GetString("Edit Profile", resourceCulture);
             }
         }
         
@@ -1541,6 +1541,15 @@ namespace TaikoWebUI.Localization {
         internal static string User {
             get {
                 return ResourceManager.GetString("User", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string User_ID {
+            get {
+                return ResourceManager.GetString("User ID", resourceCulture);
             }
         }
         
