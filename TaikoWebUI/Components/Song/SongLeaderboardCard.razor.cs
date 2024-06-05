@@ -55,7 +55,7 @@ public partial class SongLeaderboardCard
         isLoading = false;
     }
     
-    private async Task OnDifficultyChange(string difficulty)
+    private async Task OnDifficultyChange(string difficulty = "None")
     {
         isLoading = true;
         SelectedDifficulty = difficulty;
