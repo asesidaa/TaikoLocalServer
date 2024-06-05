@@ -35,7 +35,7 @@
         else
         {
             <MudItem xs="12">
-                <MudTable Items="@songHistoryDataMap.Values.ToList()" Elevation="0" Filter=@FilterSongs Virtualize="true" RowsPerPage="25" Bordered="false" Dense="true">
+                <MudTable Items="@songHistoryDataMap.Values.ToList()" Elevation="0" Filter=@FilterSongs Virtualize="true" RowsPerPage="25" Bordered="false" Dense="true" Breakpoint=Breakpoint.None>
                     <ToolBarContent>
                         <MudGrid Spacing="2" Justify="Justify.SpaceBetween">
                             <MudItem xs="12" md="4">
@@ -69,7 +69,7 @@
                         </div>
                     </RowTemplate>
                     <ChildRowContent>
-                        <MudTable Items="@context" T="SongHistoryData" Context="songHistoryData" Elevation="0" Striped="false" Hover="false" ReadOnly="true" Outlined="true" Class="mb-8">
+                        <MudTable Items="@context" T="SongHistoryData" Context="songHistoryData" Elevation="0" Striped="false" Hover="false" ReadOnly="true" Outlined="true" Class="mb-8" Breakpoint=Breakpoint.None>
                             <HeaderContent>
                                 <MudTh>@Localizer["Difficulty"]</MudTh>
                                 <MudTh>@Localizer["Level"]</MudTh>

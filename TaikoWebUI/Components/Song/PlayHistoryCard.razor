@@ -11,7 +11,7 @@
     @if (Items.Count > 0)
     {
         <MudCardContent Class="pa-0">
-            <MudTable Items="Items" Elevation="0" Striped="true" Dense="true">
+            <MudTable Items="Items" Elevation="0" Striped="true" Dense="true" Breakpoint=Breakpoint.None>
                 <HeaderContent>
                     <MudTh>
                         <MudTableSortLabel InitialDirection="SortDirection.Descending" T="SongHistoryData" SortBy="x => x.PlayTime">
