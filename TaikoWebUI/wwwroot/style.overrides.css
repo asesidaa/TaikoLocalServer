@@ -55,6 +55,16 @@
     transform: scale(1.1);
 }
 
+tr.is-current-user {
+    background-color: #d6e5f8 !important;
+}
+
+tr.is-current-user td,
+tr.is-current-user span,
+tr.is-current-user p {
+    font-weight: bold;
+}
+
 .lang-menu-item .mud-list-item-icon {
     min-width: 26px;
 }

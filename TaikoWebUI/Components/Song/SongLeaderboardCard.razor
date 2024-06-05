@@ -32,7 +32,7 @@
         </MudGrid>
     </MudCardHeader>
     <MudCardContent Class="pa-0">
-        @if (response == null || response.Leaderboard.Count == 0)
+        @if (response == null || response.LeaderboardData.Count == 0)
         {
             <MudGrid>
                 <MudItem xs="12">
@@ -44,7 +44,7 @@
         }
         else
         {
-            <MudTable Loading="isLoading" Items="@response.Leaderboard" Class="leaderboard-table" Elevation="0" Outlined="false" Dense="true" Striped="true" Breakpoint=Breakpoint.None>
+            <MudTable RowClassFunc="@GetActiveRowClass" Loading="isLoading" Items="@response.LeaderboardData" Class="leaderboard-table" Elevation="0" Outlined="false" Dense="true" Striped="true">
                 <HeaderContent>
                     <MudTh>@Localizer["Rank"]</MudTh>
                     <MudTh>@Localizer["Player"]</MudTh>
@@ -57,14 +57,14 @@
                     <MudTd>
                         <MudStack Row="true" AlignItems="AlignItems.Baseline">
                             <MudText Typo="Typo.body1">@context.UserName</MudText>
-                            <MudText Typo="Typo.caption">(@Localizer["ID"]: @context.Baid)</MudText>
+                            <MudText Typo="Typo.caption" Style="color: #9E9E9E">(@Localizer["ID"]: @context.Baid)</MudText>
                         </MudStack>
                     </MudTd>
                     <MudTd>@context.BestScore</MudTd>
                     <MudTd>
                         @if (context.BestScoreRank is not ScoreRank.None)
                         {
-                        <img src="@($"/images/rank_{context.BestScoreRank}.png")" alt="@(ScoreUtils.GetRankText(context.BestScoreRank))" title="@(ScoreUtils.GetRankText(context.BestScoreRank))" style="@Constants.ICON_STYLE"/>
+                            <img src="@($"/images/rank_{context.BestScoreRank}.png")" alt="@(ScoreUtils.GetRankText(context.BestScoreRank))" title="@(ScoreUtils.GetRankText(context.BestScoreRank))" style="@Constants.ICON_STYLE"/>
                         }
                         else
                         {
@@ -75,6 +75,14 @@
                         <img src="@($"/images/crown_{context.BestCrown}.png")" alt="@(ScoreUtils.GetCrownText(context.BestCrown))" title="@(ScoreUtils.GetCrownText(context.BestCrown))" style="@Constants.ICON_STYLE"/>
                     </MudTd>
                 </RowTemplate>
+                <PagerContent>
+                    @if (TotalPages > 1)
+                    {
+                        <div class="d-flex flex-column align-center">
+                            <MudPagination Class="pa-4" Rectangular="true" DisableElevation="true" Count="@TotalPages" Selected="currentPage" SelectedChanged="(page) => OnPageChange(page)" BoundaryCount="1" MiddleCount="3" />
+                        </div>
+                    }
+                </PagerContent>
             </MudTable>
         }
     </MudCardContent>
