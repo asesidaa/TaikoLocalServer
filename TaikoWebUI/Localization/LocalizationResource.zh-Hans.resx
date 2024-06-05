@@ -249,7 +249,7 @@
   <data name="Gold" xml:space="preserve">
     <value>金合格</value>
   </data>
-  <data name="Not Cleared" xml:space="preserve">
+  <data name="Not Passed" xml:space="preserve">
     <value>未合格</value>
   </data>
   <data name="Pass" xml:space="preserve">
@@ -354,8 +354,8 @@
   <data name="Inverse" xml:space="preserve">
     <value>反谱</value>
   </data>
-  <data name="Give Up" xml:space="preserve">
-    <value>放弃</value>
+  <data name="Skip Song" xml:space="preserve">
+    <value>跳过演奏</value>
   </data>
   <data name="Voice" xml:space="preserve">
     <value>声音</value>
@@ -680,5 +680,140 @@
   </data>
   <data name="Delete User Success" xml:space="preserve">
     <value>用户已成功删除。</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="Whimsical" xml:space="preserve">
+    <value>随兴</value>
+  </data>
+  <data name="Messy" xml:space="preserve">
+    <value>随意</value>
+  </data>
+  <data name="Taiko" xml:space="preserve">
+    <value>太鼓</value>
+  </data>
+  <data name="Matsuri" xml:space="preserve">
+    <value>祭典</value>
+  </data>
+  <data name="Inuneko" xml:space="preserve">
+    <value>狗与猫</value>
+  </data>
+  <data name="Wonderfultaiko" xml:space="preserve">
+    <value>豪华的太鼓</value>
+  </data>
+  <data name="Drum" xml:space="preserve">
+    <value>架子鼓</value>
+  </data>
+  <data name="Wadadon" xml:space="preserve">
+    <value>和田咚</value>
+  </data>
+  <data name="Clapping" xml:space="preserve">
+    <value>手拍子</value>
+  </data>
+  <data name="Conga" xml:space="preserve">
+    <value>康加鼓</value>
+  </data>
+  <data name="8bittaiko" xml:space="preserve">
+    <value>8-bit太鼓</value>
+  </data>
+  <data name="Soya" xml:space="preserve">
+    <value>嘿哟</value>
+  </data>
+  <data name="Mekadon" xml:space="preserve">
+    <value>机械咚</value>
+  </data>
+  <data name="Funassyi" xml:space="preserve">
+    <value>船梨精</value>
+  </data>
+  <data name="Wrap" xml:space="preserve">
+    <value>说唱</value>
+  </data>
+  <data name="Isogai" xml:space="preserve">
+    <value>細貝先生</value>
+  </data>
+  <data name="Akemi" xml:space="preserve">
+    <value>朱美酱</value>
+  </data>
+  <data name="Synthdrum" xml:space="preserve">
+    <value>合成鼓</value>
+  </data>
+  <data name="Tambourine" xml:space="preserve">
+    <value>铃鼓</value>
+  </data>
+  <data name="Shuriken" xml:space="preserve">
+    <value>手里剑</value>
+  </data>
+  <data name="Puchipuchi" xml:space="preserve">
+    <value>泡泡</value>
+  </data>
+  <data name="Electric Guitar" xml:space="preserve">
+    <value>电吉他</value>
+  </data>
+  <data name="UraOni" xml:space="preserve">
+    <value>里譜面</value>
+  </data>
+  <data name="Set Up Each Time" xml:space="preserve">
+    <value>每次设置</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value>默认</value>
+  </data>
+  <data name="Not Cleared" xml:space="preserve">
+    <value>未通关优先</value>
+  </data>
+  <data name="Not Full Combo" xml:space="preserve">
+    <value>未全连段优先</value>
+  </data>
+  <data name="Not Donderful Combo" xml:space="preserve">
+    <value>未全良连段优先</value>
+  </data>
+  <data name="Japanese" xml:space="preserve">
+    <value>日语</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>英语</value>
+  </data>
+  <data name="Chinese Traditional" xml:space="preserve">
+    <value>繁体中文</value>
+  </data>
+  <data name="Korean" xml:space="preserve">
+    <value>韩语</value>
+  </data>
+  <data name="Chinese Simplified" xml:space="preserve">
+    <value>简体中文</value>
+  </data>
+  <data name="1 Star" xml:space="preserve">
+    <value>★ 1</value>
+  </data>
+  <data name="10 Star" xml:space="preserve">
+    <value>★ 10</value>
+  </data>
+  <data name="2 Star" xml:space="preserve">
+    <value>★ 2</value>
+  </data>
+  <data name="3 Star" xml:space="preserve">
+    <value>★ 3</value>
+  </data>
+  <data name="4 Star" xml:space="preserve">
+    <value>★ 4</value>
+  </data>
+  <data name="5 Star" xml:space="preserve">
+    <value>★ 5</value>
+  </data>
+  <data name="6 Star" xml:space="preserve">
+    <value>★ 6</value>
+  </data>
+  <data name="7 Star" xml:space="preserve">
+    <value>★ 7</value>
+  </data>
+  <data name="8 Star" xml:space="preserve">
+    <value>★ 8</value>
+  </data>
+  <data name="9 Star" xml:space="preserve">
+    <value>★ 9</value>
+  </data>
+  <data name="Log Out Confirm" xml:space="preserve">
+    <value>您确定要登出吗？</value>
   </data>
 </root>
