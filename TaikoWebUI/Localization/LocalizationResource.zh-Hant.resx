@@ -816,4 +816,7 @@
   <data name="Log Out Confirm" xml:space="preserve">
     <value>您確定要登出嗎？</value>
   </data>
+  <data name="Leaderboard" xml:space="preserve">
+    <value>排行榜</value>
+  </data>
 </root>

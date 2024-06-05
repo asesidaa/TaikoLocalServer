@@ -854,6 +854,15 @@ namespace TaikoWebUI.Localization {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        internal static string Leaderboard {
+            get {
+                return ResourceManager.GetString("Leaderboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         internal static string Log_In {
             get {
                 return ResourceManager.GetString("Log In", resourceCulture);

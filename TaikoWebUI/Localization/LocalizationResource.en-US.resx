@@ -816,4 +816,7 @@
   <data name="Log Out Confirm" xml:space="preserve">
     <value>Are you sure you want to log out?</value>
   </data>
+  <data name="Leaderboard" xml:space="preserve">
+    <value>Leaderboard</value>
+  </data>
 </root>
