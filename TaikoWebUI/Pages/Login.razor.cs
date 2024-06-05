@@ -25,7 +25,8 @@ public partial class Login
             case 0:
                 await DialogService.ShowMessageBox(
                     Localizer["Error"],
-                "Only admin can log in.",
+                (MarkupString)
+                (string)Localizer["Login Only Admin Error"],
                     Localizer["Dialog OK"], null, null, options);
                 await loginForm.ResetAsync();
                 break;
@@ -35,21 +36,22 @@ public partial class Login
             case 2:
                 await DialogService.ShowMessageBox(
                     Localizer["Error"],
-                    "Wrong password!",
+                    (MarkupString)
+                    (string)Localizer["Login Wrong Password Error"],
                     Localizer["Dialog OK"], null, null, options);
                 break;
             case 3:
                 await DialogService.ShowMessageBox(
                     Localizer["Error"],
                     (MarkupString)
-                    "Access code not found.<br />Please play one game with this access code to register it.",
+                    (string)Localizer["Unknown Access Code Error"],
                     Localizer["Dialog OK"], null, null, options);
                 break;
             case 4:
                 await DialogService.ShowMessageBox(
                     Localizer["Error"],
                     (MarkupString)
-                    "Access code not registered.<br />Please use register button to create a password first.",
+                    (string)Localizer["Access Code Not Registered Error"],
                     Localizer["Dialog OK"], null, null, options);
                 break;
             case 5:

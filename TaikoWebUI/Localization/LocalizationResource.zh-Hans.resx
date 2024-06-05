@@ -123,7 +123,7 @@
   <data name="Users" xml:space="preserve">
     <value>用户管理</value>
   </data>
-  <data name="edit profile" xml:space="preserve">
+  <data name="Edit profile" xml:space="preserve">
     <value>编辑档案</value>
   </data>
   <data name="User" xml:space="preserve">
@@ -145,7 +145,7 @@
     <value>更改密码</value>
   </data>
   <data name="Reset Password" xml:space="preserve">
-    <value>重设密码</value>
+    <value>重置密码</value>
   </data>
   <data name="Delete User" xml:space="preserve">
     <value>删除帐号</value>
@@ -381,10 +381,10 @@
   <data name="Register" xml:space="preserve">
     <value>注册</value>
   </data>
-  <data name="reset_password_confirm_dialog_1" xml:space="preserve">
+  <data name="Reset Password Confirm 1" xml:space="preserve">
     <value>确定要为这位用户重置密码吗？</value>
   </data>
-  <data name="reset_password_confirm_dialog_2" xml:space="preserve">
+  <data name="Reset Password Confirm 2" xml:space="preserve">
     <value>重置密码后，用户需要再次注册</value>
   </data>
   <data name="Log In" xml:space="preserve">
@@ -534,7 +534,7 @@
   <data name="Unregister" xml:space="preserve">
     <value>注销账号</value>
   </data>
-  <data name="and" xml:space="preserve">
+  <data name="And" xml:space="preserve">
     <value>和</value>
   </data>
   <data name="other access code(s)" xml:space="preserve">
@@ -596,5 +596,89 @@
   </data>
   <data name="Add" xml:space="preserve">
     <value>添加</value>
+  </data>
+  <data name="Access Code Bound Success" xml:space="preserve">
+    <value>新访问码绑定成功。</value>
+  </data>
+  <data name="Not Logged In Error" xml:space="preserve">
+    <value>用户未登录。&lt;br /&gt;请先登录，然后再试一次。</value>
+  </data>
+  <data name="Access Code Upper Limit Error" xml:space="preserve">
+    <value>已达到绑定访问码数量上限。&lt;br /&gt;请先删除一个已绑定的访问码。</value>
+  </data>
+  <data name="Access Code Already Bound Error" xml:space="preserve">
+    <value>此访问码已被绑定。</value>
+  </data>
+  <data name="Access Code Empty Error" xml:space="preserve">
+    <value>访问码不能为空。&lt;br/&gt;请输入有效的访问码。</value>
+  </data>
+  <data name="Access Code Not Admin Error" xml:space="preserve">
+    <value>不允许执行此操作。&lt;br /&gt;只有管理员可以编辑其他用户的访问码。</value>
+  </data>
+  <data name="Login Only Admin Error" xml:space="preserve">
+    <value>只有管理员可以登录。</value>
+  </data>
+  <data name="Change Password Success" xml:space="preserve">
+    <value>密码更改成功。</value>
+  </data>
+  <data name="Change Password Different Confirm Password Error" xml:space="preserve">
+    <value>确认新密码与新密码不同。&lt;br /&gt;请再次检查。</value>
+  </data>
+  <data name="Unknown Access Code Error" xml:space="preserve">
+    <value>未知的访问码。&lt;br /&gt;请使用此访问码玩一局游戏后再试一次。</value>
+  </data>
+  <data name="Change Password Wrong Current Password Error" xml:space="preserve">
+    <value>当前密码错误。&lt;br /&gt;请再检查一次。</value>
+  </data>
+  <data name="Access Code Not Registered Error" xml:space="preserve">
+    <value>访问码未注册。&lt;br /&gt;请先注册然后再试一次。</value>
+  </data>
+  <data name="Login Wrong Password Error" xml:space="preserve">
+    <value>密码错误。&lt;br /&gt;请再检查一次。</value>
+  </data>
+  <data name="Register Only Admin Error" xml:space="preserve">
+    <value>只有管理员可以注册。</value>
+  </data>
+  <data name="Register Success" xml:space="preserve">
+    <value>访问码已成功注册。</value>
+  </data>
+  <data name="Register Different Confirm Password Error" xml:space="preserve">
+    <value>确认密码与密码不一致。&lt;br /&gt;请再检查一次。</value>
+  </data>
+  <data name="Register Already Registered Error" xml:space="preserve">
+    <value>访问码已注册。&lt;br /&gt;请使用设置的密码登录。</value>
+  </data>
+  <data name="Register Wrong Last Play Time Error" xml:space="preserve">
+    <value>最后的游戏时间错误。&lt;br /&gt;如果您忘记了上次玩游戏的时间，请使用此访问码再玩一局游戏或联系管理员。</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Access Code Delete Last Access Code Error" xml:space="preserve">
+    <value>无法删除用户的最后一个访问码。</value>
+  </data>
+  <data name="Access Code Delete Success" xml:space="preserve">
+    <value>访问码已成功删除。</value>
+  </data>
+  <data name="ID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Last Play Date" xml:space="preserve">
+    <value>最后游玩日期</value>
+  </data>
+  <data name="Access Code Delete Confirm" xml:space="preserve">
+    <value>您确定要删除此访问码吗？</value>
+  </data>
+  <data name="Currently Selected:" xml:space="preserve">
+    <value>当前选择：</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>重置</value>
+  </data>
+  <data name="Delete User Confirm" xml:space="preserve">
+    <value>您真的要删除该用户的数据吗？&lt;br /&gt;所有相关数据将被删除，此过程无法撤销！</value>
+  </data>
+  <data name="Delete User Success" xml:space="preserve">
+    <value>用户已成功删除。</value>
   </data>
 </root>

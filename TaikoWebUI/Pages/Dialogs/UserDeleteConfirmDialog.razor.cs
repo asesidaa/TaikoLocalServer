@@ -24,12 +24,12 @@ public partial class UserDeleteConfirmDialog
 
         if (!responseMessage.IsSuccessStatusCode)
         {
-            Snackbar.Add("Something went wrong when deleting user!", Severity.Error);
+            Snackbar.Add(Localizer["Unknown Error"], Severity.Error);
             MudDialog.Close(DialogResult.Ok(false));
             return;
         }
 
-        Snackbar.Add("Delete success!", Severity.Success);
+        Snackbar.Add(Localizer["Delete User Success"], Severity.Success);
         MudDialog.Close(DialogResult.Ok(true));
     }
 }

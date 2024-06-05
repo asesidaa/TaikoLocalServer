@@ -80,9 +80,90 @@ namespace TaikoWebUI.Localization {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        internal static string Access_Code_Already_Bound_Error {
+            get {
+                return ResourceManager.GetString("Access Code Already Bound Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Access_Code_Bound_Success {
+            get {
+                return ResourceManager.GetString("Access Code Bound Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Access_Code_Delete_Confirm {
+            get {
+                return ResourceManager.GetString("Access Code Delete Confirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Access_Code_Delete_Last_Access_Code_Error {
+            get {
+                return ResourceManager.GetString("Access Code Delete Last Access Code Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Access_Code_Delete_Success {
+            get {
+                return ResourceManager.GetString("Access Code Delete Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Access_Code_Empty_Error {
+            get {
+                return ResourceManager.GetString("Access Code Empty Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         internal static string Access_Code_is_Required {
             get {
                 return ResourceManager.GetString("Access Code is Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Access_Code_Not_Admin_Error {
+            get {
+                return ResourceManager.GetString("Access Code Not Admin Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Access_Code_Not_Registered_Error {
+            get {
+                return ResourceManager.GetString("Access Code Not Registered Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Access_Code_Upper_Limit_Error {
+            get {
+                return ResourceManager.GetString("Access Code Upper Limit Error", resourceCulture);
             }
         }
         
@@ -143,9 +224,9 @@ namespace TaikoWebUI.Localization {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
-        internal static string and {
+        internal static string And {
             get {
-                return ResourceManager.GetString("and", resourceCulture);
+                return ResourceManager.GetString("And", resourceCulture);
             }
         }
         
@@ -173,6 +254,42 @@ namespace TaikoWebUI.Localization {
         internal static string Best_Rank {
             get {
                 return ResourceManager.GetString("Best Rank", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Cancel {
+            get {
+                return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Change_Password_Different_Confirm_Password_Error {
+            get {
+                return ResourceManager.GetString("Change Password Different Confirm Password Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Change_Password_Success {
+            get {
+                return ResourceManager.GetString("Change Password Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Change_Password_Wrong_Current_Password_Error {
+            get {
+                return ResourceManager.GetString("Change Password Wrong Current Password Error", resourceCulture);
             }
         }
         
@@ -233,6 +350,15 @@ namespace TaikoWebUI.Localization {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        internal static string Currently_Selected_ {
+            get {
+                return ResourceManager.GetString("Currently Selected:", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         internal static string Dani_Dojo {
             get {
                 return ResourceManager.GetString("Dani Dojo", resourceCulture);
@@ -269,6 +395,24 @@ namespace TaikoWebUI.Localization {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        internal static string Delete_User_Confirm {
+            get {
+                return ResourceManager.GetString("Delete User Confirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Delete_User_Success {
+            get {
+                return ResourceManager.GetString("Delete User Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         internal static string Dialog_OK {
             get {
                 return ResourceManager.GetString("Dialog OK", resourceCulture);
@@ -290,6 +434,15 @@ namespace TaikoWebUI.Localization {
         internal static string Easy {
             get {
                 return ResourceManager.GetString("Easy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Edit_profile {
+            get {
+                return ResourceManager.GetString("Edit profile", resourceCulture);
             }
         }
         
@@ -431,6 +584,15 @@ namespace TaikoWebUI.Localization {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        internal static string ID {
+            get {
+                return ResourceManager.GetString("ID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         internal static string Invite_Code {
             get {
                 return ResourceManager.GetString("Invite Code", resourceCulture);
@@ -494,6 +656,24 @@ namespace TaikoWebUI.Localization {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        internal static string Login_Only_Admin_Error {
+            get {
+                return ResourceManager.GetString("Login Only Admin Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Login_Wrong_Password_Error {
+            get {
+                return ResourceManager.GetString("Login Wrong Password Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         internal static string Meijin {
             get {
                 return ResourceManager.GetString("Meijin", resourceCulture);
@@ -551,6 +731,15 @@ namespace TaikoWebUI.Localization {
         internal static string Not_Cleared {
             get {
                 return ResourceManager.GetString("Not Cleared", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Not_Logged_In_Error {
+            get {
+                return ResourceManager.GetString("Not Logged In Error", resourceCulture);
             }
         }
         
@@ -668,6 +857,78 @@ namespace TaikoWebUI.Localization {
         internal static string Register {
             get {
                 return ResourceManager.GetString("Register", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Register_Already_Registered_Error {
+            get {
+                return ResourceManager.GetString("Register Already Registered Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Register_Different_Confirm_Password_Error {
+            get {
+                return ResourceManager.GetString("Register Different Confirm Password Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Register_Only_Admin_Error {
+            get {
+                return ResourceManager.GetString("Register Only Admin Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Register_Success {
+            get {
+                return ResourceManager.GetString("Register Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Register_Wrong_Last_Play_Time_Error {
+            get {
+                return ResourceManager.GetString("Register Wrong Last Play Time Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Reset {
+            get {
+                return ResourceManager.GetString("Reset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Reset_Password_Confirm_1 {
+            get {
+                return ResourceManager.GetString("Reset Password Confirm 1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Reset_Password_Confirm_2 {
+            get {
+                return ResourceManager.GetString("Reset Password Confirm 2", resourceCulture);
             }
         }
         
@@ -839,6 +1100,15 @@ namespace TaikoWebUI.Localization {
         internal static string UI {
             get {
                 return ResourceManager.GetString("UI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Unknown_Access_Code_Error {
+            get {
+                return ResourceManager.GetString("Unknown Access Code Error", resourceCulture);
             }
         }
         

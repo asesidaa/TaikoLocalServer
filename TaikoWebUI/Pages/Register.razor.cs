@@ -28,35 +28,38 @@ public partial class Register
             case 0:
                 await DialogService.ShowMessageBox(
                     Localizer["Error"],
-                    "Only admin can register.",
+                    (MarkupString)
+                    (string)Localizer["Register Only Admin Error"],
                     Localizer["Dialog OK"], null, null, options);
                 NavigationManager.NavigateTo("/");
                 break;
             case 1:
                 await DialogService.ShowMessageBox(
                     Localizer["Success"],
-                    "Access code registered successfully.",
+                    (MarkupString)
+                    (string)Localizer["Register Success"],
                     Localizer["Dialog OK"], null, null, options);
                 NavigationManager.NavigateTo("/Login");
                 break;
             case 2:
                 await DialogService.ShowMessageBox(
                     Localizer["Error"],
-                    "Confirm password is not the same as password.",
+                    (MarkupString)
+                    (string)Localizer["Register Different Confirm Password Error"],
                     Localizer["Dialog OK"], null, null, options);
                 break;
             case 3:
                 await DialogService.ShowMessageBox(
                     Localizer["Error"],
                     (MarkupString)
-                    "Access code not found.<br />Please play one game with this access code to register it.",
+                    (string)Localizer["Unknown Access Code Error"],
                     Localizer["Dialog OK"], null, null, options);
                 break;
             case 4:
                 await DialogService.ShowMessageBox(
                     Localizer["Error"],
                     (MarkupString)
-                    "Access code is already registered, please use set password to login.",
+                    (string)Localizer["Register Already Registered Error"],
                     Localizer["Dialog OK"], null, null, options);
                 NavigationManager.NavigateTo("/Login");
                 break;
@@ -64,7 +67,7 @@ public partial class Register
                 await DialogService.ShowMessageBox(
                     Localizer["Error"],
                     (MarkupString)
-                    "Wrong last play time.<br />If you have forgotten when you last played, please play another game with this access code.",
+                    (string) Localizer["Register Wrong Last Play Time Error"],
                     Localizer["Dialog OK"], null, null, options);
                 break;
             case 6:

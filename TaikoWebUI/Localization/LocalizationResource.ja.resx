@@ -123,7 +123,7 @@
   <data name="Users" xml:space="preserve">
     <value>ユーザー管理</value>
   </data>
-  <data name="edit profile" xml:space="preserve">
+  <data name="Edit profile" xml:space="preserve">
     <value>プロフィール編集</value>
   </data>
   <data name="User" xml:space="preserve">
@@ -381,10 +381,10 @@
   <data name="Register" xml:space="preserve">
     <value>登録</value>
   </data>
-  <data name="reset_password_confirm_dialog_1" xml:space="preserve">
+  <data name="Reset Password Confirm 1" xml:space="preserve">
     <value>本当にこのユーザーのパスワードをリセットしますか？</value>
   </data>
-  <data name="reset_password_confirm_dialog_2" xml:space="preserve">
+  <data name="Reset Password Confirm 2" xml:space="preserve">
     <value>これにより、ユーザーの現在のパスワードは削除され、ユーザーは再度登録する必要があります。</value>
   </data>
   <data name="Log In" xml:space="preserve">
@@ -534,7 +534,7 @@
   <data name="Unregister" xml:space="preserve">
     <value>登録解除</value>
   </data>
-  <data name="and" xml:space="preserve">
+  <data name="And" xml:space="preserve">
     <value>と</value>
   </data>
   <data name="other access code(s)" xml:space="preserve">
@@ -599,5 +599,86 @@
   </data>
   <data name="Add" xml:space="preserve">
     <value>追加</value>
+  </data>
+  <data name="Access Code Bound Success" xml:space="preserve">
+    <value>新しいアクセスコードのバインドに成功。</value>
+  </data>
+  <data name="Not Logged In Error" xml:space="preserve">
+    <value>ログインしていません。&lt;br /&gt;ログインしてからもう一度お試しください。</value>
+  </data>
+  <data name="Access Code Upper Limit Error" xml:space="preserve">
+    <value>バウンドアクセスコードの上限に達しました。&lt;br /&gt;まずアクセスコードを1つ削除してください。</value>
+  </data>
+  <data name="Access Code Already Bound Error" xml:space="preserve">
+    <value>このアクセスコードはすでにバインドされています。</value>
+  </data>
+  <data name="Access Code Empty Error" xml:space="preserve">
+    <value>アクセスコードは空ではありません。&lt;br /&gt;有効なアクセスコードを入力してください。</value>
+  </data>
+  <data name="Access Code Not Admin Error" xml:space="preserve">
+    <value>この操作は許可されていません。&lt;br /&gt;他のユーザーのアクセスコードを編集できるのは管理者のみです。</value>
+  </data>
+  <data name="Login Only Admin Error" xml:space="preserve">
+    <value>ログインできるのは管理者のみです。</value>
+  </data>
+  <data name="Change Password Success" xml:space="preserve">
+    <value>パスワードの変更に成功しました。</value>
+  </data>
+  <data name="Change Password Different Confirm Password Error" xml:space="preserve">
+    <value>新しいパスワードが違うことを確認してください。&lt;br /&gt;もう一度確認してください。</value>
+  </data>
+  <data name="Unknown Access Code Error" xml:space="preserve">
+    <value>不明なアクセスコードです。&lt;br /&gt;このアクセスコードでゲームを1回プレイしてから、再度お試しください。</value>
+  </data>
+  <data name="Change Password Wrong Current Password Error" xml:space="preserve">
+    <value>現在のパスワードが間違っています。&lt;br /&gt;再度ご確認ください。</value>
+  </data>
+  <data name="Access Code Not Registered Error" xml:space="preserve">
+    <value>アクセスコードが登録されていません。&lt;br /&gt;まず登録してから再度お試しください。</value>
+  </data>
+  <data name="Login Wrong Password Error" xml:space="preserve">
+    <value>パスワードが間違っています。&lt;br /&gt;再度ご確認ください。</value>
+  </data>
+  <data name="Register Only Admin Error" xml:space="preserve">
+    <value>登録できるのは管理者のみです。</value>
+  </data>
+  <data name="Register Success" xml:space="preserve">
+    <value>アクセスコードが正常に登録されました。</value>
+  </data>
+  <data name="Register Different Confirm Password Error" xml:space="preserve">
+    <value>パスワードの確認がパスワードと一致しません。&lt;br /&gt;再度ご確認ください。</value>
+  </data>
+  <data name="Register Already Registered Error" xml:space="preserve">
+    <value>アクセスコードは既に登録されています。&lt;br /&gt;設定したパスワードを使用してログインしてください。</value>
+  </data>
+  <data name="Register Wrong Last Play Time Error" xml:space="preserve">
+    <value>最後のプレイ時間が間違っています。&lt;br /&gt;最後にプレイした時間を忘れた場合は、このアクセスコードで再度ゲームをプレイするか、管理者に連絡してください。</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="Access Code Delete Last Access Code Error" xml:space="preserve">
+    <value>ユーザーの最後のアクセスコードを削除できません。</value>
+  </data>
+  <data name="Access Code Delete Success" xml:space="preserve">
+    <value>アクセスコードが正常に削除されました。</value>
+  </data>
+  <data name="ID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Access Code Delete Confirm" xml:space="preserve">
+    <value>このアクセスコードを削除してもよろしいですか？</value>
+  </data>
+  <data name="Currently Selected:" xml:space="preserve">
+    <value>現在選択中:</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>リセット</value>
+  </data>
+  <data name="Delete User Confirm" xml:space="preserve">
+    <value>このユーザーのデータを本当に削除してもよろしいですか？&lt;br /&gt;関連するすべてのデータが削除され、この操作は元に戻せません！</value>
+  </data>
+  <data name="Delete User Success" xml:space="preserve">
+    <value>ユーザーが正常に削除されました。</value>
   </data>
 </root>

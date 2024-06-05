@@ -41,14 +41,14 @@
                 <MudTablePager RowsPerPageString=@Localizer["Rows Per Page"] />
             </PagerContent>
         </MudTable>
-        <MudText Class="mt-4 d-block" Typo="Typo.caption"> <b>@Localizer["Selected Title:"]</b> @selectedTitle?.TitleName</MudText>
+        <MudText Class="mt-4 d-block" Typo="Typo.caption"> <b>@Localizer["Currently Selected:"]</b> @selectedTitle?.TitleName</MudText>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">
             @Localizer["Cancel"]
         </MudButton>
         <MudButton Color="Color.Primary" OnClick="Submit">
-            @Localizer["Okay"]
+            @Localizer["Dialog OK"]
         </MudButton>
     </DialogActions>
 </MudDialog>
