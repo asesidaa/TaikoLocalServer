@@ -28,10 +28,9 @@ else
         <MudItem xs="12">
             <MudPaper Elevation="0" Outlined="true">
                 <MudTabs ActivePanelIndex="0" Rounded="true" Border="true" PanelClass="pa-8">
-                    @for (uint i = 1; i <= 19; i++)
+                    @foreach (var danId in danMap.Keys)
                     {
-                        var danId = i;
-                        var danData = GameDataService.GetDanDataById(danId);
+                        var danData = danMap[danId];
 
                         <MudTabPanel Text="@GetDanTitle(danData.Title)" Icon="@GetDanResultIcon(danId)">
                             <MudText Typo="Typo.h5" Class="mb-4">@Localizer["Details"]</MudText>
