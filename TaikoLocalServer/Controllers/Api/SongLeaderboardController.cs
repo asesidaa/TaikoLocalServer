@@ -16,8 +16,7 @@ public class SongLeaderboardController(ISongLeaderboardService songLeaderboardSe
 
     [HttpGet("{songId}")]
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
-
-    public async Task<ActionResult<SongLeaderboardResponse>> GetSongLeaderboard(uint songId, [FromQuery] uint baid, [FromQuery] uint difficulty)
+    public async Task<ActionResult<SongLeaderboardResponse>> GetSongLeaderboard(uint songId, [FromQuery] uint baid, [FromQuery] uint difficulty, [FromQuery] int page = 1, [FromQuery] int limit = 10)
     {
         // if baid id is provided, check authentication
         if (!baid.Equals(0))
@@ -37,16 +36,28 @@ public class SongLeaderboardController(ISongLeaderboardService songLeaderboardSe
             }
         }
         
+        if (page < 1)
+        {
+            return BadRequest(new { Message = "Page number cannot be less than 1." });
+        }
+        
+        if (limit > 200)
+        {
+            return BadRequest(new { Message = "Limit cannot be greater than 200." });
+        }
+        
         if (difficulty < 1 || difficulty > 5)
         {
             return BadRequest(new { Message = "Invalid difficulty. Please provide a number between 1-5." });
         }
 
-        var leaderboard = await songLeaderboardService.GetSongLeaderboard(songId, (Difficulty)difficulty, (int)baid);
-        
+        var (leaderboard, totalPages) = await songLeaderboardService.GetSongLeaderboard(songId, (Difficulty)difficulty, (int)baid, page, limit);
+
         return Ok(new SongLeaderboardResponse
         {
-            Leaderboard = leaderboard
+            LeaderboardData = leaderboard,
+            CurrentPage = page,
+            TotalPages = totalPages
         });
     }
 }
