@@ -1,6 +1,8 @@
 ﻿@inherits LayoutComponentBase
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @inject AuthService AuthService
+@using Microsoft.Extensions.Options;
+@using TaikoWebUI.Settings;
 
 <MudThemeProvider IsDarkMode="@isDarkMode" Theme="@taikoWebUiTheme" />
 <MudDialogProvider />
@@ -17,7 +19,7 @@
     </MudAppBar>
     <MudDrawer Elevation="0" Style="border-right:1px solid #ededf0" @bind-Open="drawerOpen">
         <MudDrawerHeader>
-            <MudText Typo="Typo.h6">TaikoWebUI</MudText>
+            <MudText Typo="Typo.h6">@title</MudText>
         </MudDrawerHeader>
         <NavMenu />
     </MudDrawer>
@@ -35,9 +37,20 @@
 @code {
     bool drawerOpen = true;
     bool isDarkMode = false;
+    string title = "TaikoWebUI";
 
+    [Inject]
+    IOptions<WebUiSettings> UiSettings { get; set; } = default!;
+
+    protected override void OnInitialized()
+    {
+        title = UiSettings.Value.Title;
+    }
+    
     protected override async Task OnInitializedAsync()
     {
+        
+        
         var hasDrawerOpenEntry = await LocalStorage.ContainKeyAsync("drawerOpen");
 
         if (hasDrawerOpenEntry)
