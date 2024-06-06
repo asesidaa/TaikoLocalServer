@@ -2,6 +2,7 @@
 
 public class WebUiSettings
 {
+    public string Title { get; set; } = "TaikoWebUI";
     public bool LoginRequired { get; set; }
     public bool OnlyAdmin { get; set; }
     public int BoundAccessCodeUpperLimit { get; set; }
