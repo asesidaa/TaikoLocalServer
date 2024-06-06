@@ -4,14 +4,12 @@ using GameDatabase.Context;
 using SharedProject.Models;
 using SharedProject.Models.Responses;
 using Swan.Mapping;
-using TaikoLocalServer.Controllers.Api;
 using SharedProject.Utils;
 
 namespace TaikoLocalServer.Services;
 
 public class AuthService(TaikoDbContext context) : IAuthService
 {
-    private readonly UserSettingsController _userSettingsController;
     public async Task<Card?> GetCardByAccessCode(string accessCode)
     {
         return await context.Cards.FindAsync(accessCode);
