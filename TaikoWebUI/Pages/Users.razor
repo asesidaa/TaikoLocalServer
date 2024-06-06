@@ -10,12 +10,26 @@
 <MudGrid Class="my-8">
     @if (!AuthService.LoginRequired || (AuthService.LoginRequired && AuthService.IsAdmin)) {
         <MudItem xs="12">
-            <MudInput Immediate="true" Style="width: 100%" @bind-Value="searchTerm" Clearable="true" FullWidth="true" TextChanged="(term => OnSearch(term))" Margin="Margin.Dense" Placeholder="@Localizer["Name, ID, or Access Code"]" Label="@Localizer["Search"]" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
+            <div class="d-flex justify-content-end gap-2">
+                <MudInput 
+                    @bind-Value="searchTerm" 
+                    TextChanged="(async term => { isLoading = true; await OnSearch(term); })"
+                    Immediate="true" 
+                    FullWidth="true"
+                    Clearable="true" 
+                    Margin="Margin.Dense" 
+                    Label="@Localizer["Search"]" 
+                    Placeholder="@Localizer["Name, ID, or Access Code"]" 
+                    Variant="Variant.Outlined" 
+                    Adornment="Adornment.Start" 
+                    AdornmentIcon="@Icons.Material.Filled.Search"
+                    Style="width: 100%" />
+            </div>
         </MudItem>
         @if (isLoading || response == null)
         {
             // Loading...
-            for (uint i = 0; i < pageSize; i++) {
+            for (uint i = 0; i < currentPageSize; i++) {
                 <MudItem xs="12" md="6" lg="4" xl="3">
                     <MudCard Outlined="true">
                         <MudCardContent>
