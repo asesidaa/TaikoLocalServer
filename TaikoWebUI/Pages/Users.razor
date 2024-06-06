@@ -10,7 +10,7 @@
 <MudGrid Class="my-8">
     @if (!AuthService.LoginRequired || (AuthService.LoginRequired && AuthService.IsAdmin)) {
         <MudItem xs="12">
-            <MudInput Style="width: 100%" @bind-Value="searchTerm" Clearable="true" FullWidth="true" TextChanged="(term => OnSearch(term))" Margin="Margin.Dense" Placeholder="@Localizer["User ID, Name, or Access Code"]" Label="@Localizer["Search"]" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
+            <MudInput Immediate="true" Style="width: 100%" @bind-Value="searchTerm" Clearable="true" FullWidth="true" TextChanged="(term => OnSearch(term))" Margin="Margin.Dense" Placeholder="@Localizer["User ID, Name, or Access Code"]" Label="@Localizer["Search"]" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
         </MudItem>
         @if (isLoading || response == null)
         {
