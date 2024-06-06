@@ -32,14 +32,21 @@
             .UseAdvancedExtensions()
             .UseEmojiAndSmiley()
             .Build();
-        
-        var markdown = await Http.GetStringAsync("Dashboard.md");
 
-        if (!string.IsNullOrWhiteSpace(markdown))
+        try
         {
-            markdownContent = Markdown.ToHtml(markdown, pipeline);
+            var markdown = await Http.GetStringAsync("Dashboard.md");
+
+            if (!string.IsNullOrWhiteSpace(markdown))
+            {
+                markdownContent = Markdown.ToHtml(markdown, pipeline);
+            }
         }
-        
+        catch (HttpRequestException)
+        {
+            markdownContent = "Error loading dashboard content.";
+        }
+
         isLoading = false;
     }
 }
