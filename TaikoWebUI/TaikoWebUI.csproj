@@ -15,6 +15,7 @@
         <PackageReference Include="Autocomplete.Clients" Version="1.1.0" />
         <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
         <PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="6.9.2" />
+        <PackageReference Include="Markdig" Version="0.37.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.4" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.4" PrivateAssets="all" />
         <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.4" />
@@ -34,6 +35,9 @@
     <ItemGroup>
         <Content Update="wwwroot\appsettings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Update="wwwroot\Dashboard.md">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
         <Content Update="wwwroot\data\datatable\musicinfo.bin">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

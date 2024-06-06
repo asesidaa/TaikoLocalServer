@@ -1,7 +1,40 @@
 ﻿@page "/"
+@inject HttpClient Http
+@using Markdig
 
 <MudText Typo="Typo.h4">@Localizer["Dashboard"]</MudText>
+<MudGrid Class="my-8">
+    <MudItem xs="12">
+        <MudPaper Elevation="0" Outlined="true">
+            <div class="markdown-container">
+                @if (isLoading)
+                {
+                    <MudCircularProgress />
+                }
+                else
+                {
+                    <div class="markdown-content">
+                        @((MarkupString)markdownContent)
+                    </div>
+                }
+            </div>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
 
-<MudText Class="mt-8">
-    @Localizer["Welcome to TaikoWebUI!"]
-</MudText>
+@code {
+    private string markdownContent = string.Empty;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var markdown = await Http.GetStringAsync("Dashboard.md");
+
+        if (!string.IsNullOrWhiteSpace(markdown))
+        {
+            markdownContent = Markdown.ToHtml(markdown);
+        }
+        
+        isLoading = false;
+    }
+}
