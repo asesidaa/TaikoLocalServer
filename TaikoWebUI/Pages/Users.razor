@@ -9,7 +9,10 @@
 <MudText Typo="Typo.h4">@Localizer["Users"]</MudText>
 <MudGrid Class="my-8">
     @if (!AuthService.LoginRequired || (AuthService.LoginRequired && AuthService.IsAdmin)) {
-        if (isLoading == true || response == null)
+        <MudItem xs="12">
+            <MudInput Style="width: 100%" @bind-Value="searchTerm" Clearable="true" FullWidth="true" TextChanged="(term => OnSearch(term))" Margin="Margin.Dense" Placeholder="@Localizer["User ID, Name, or Access Code"]" Label="@Localizer["Search"]" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
+        </MudItem>
+        @if (isLoading || response == null)
         {
             // Loading...
             for (uint i = 0; i < pageSize; i++) {

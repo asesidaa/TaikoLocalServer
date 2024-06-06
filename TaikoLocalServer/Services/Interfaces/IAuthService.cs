@@ -9,7 +9,7 @@ public interface IAuthService
 	
     public Task<Card?> GetCardByAccessCode(string accessCode);
 
-    public Task<UsersResponse> GetUsersFromCards(int page = 0, int limit = 12);
+    public Task<UsersResponse> GetUsersFromCards(int page = 0, int limit = 12, string? searchTerm = null);
 
     public Task AddCard(Card card);
 
