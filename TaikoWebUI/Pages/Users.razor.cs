@@ -40,10 +40,36 @@ public partial class Users
         await GetUsersData();
     }
     
+    private CancellationTokenSource? cts;
+
+    private async Task Debounce(Func<Task> action, int delayInMilliseconds)
+    {
+        // Cancel the previous task
+        cts?.Cancel();
+
+        // Create a new CancellationTokenSource
+        cts = new CancellationTokenSource();
+
+        try
+        {
+            // Wait for the delay
+            await Task.Delay(delayInMilliseconds, cts.Token);
+
+            // Execute the action
+            await action();
+        }
+        catch (TaskCanceledException)
+        {
+            // Ignore the exception
+        }
+    }
+    
     private async Task OnSearch(string search)
     {
         searchTerm = search;
         currentPage = 1;
-        await GetUsersData();
+
+        // Debounce the GetUsersData method
+        await Debounce(GetUsersData, 500); // 500 milliseconds delay
     }
 }
