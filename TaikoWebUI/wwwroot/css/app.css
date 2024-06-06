@@ -165,7 +165,7 @@
 }
 
 .markdown-content code {
-    background-color: #f8f8f8;
+    background-color: var(--mud-palette-background-grey);
     border: 1px solid #ccc;
     border-radius: 3px;
     font-size: 0.9em;
@@ -173,7 +173,7 @@
 }
    
 .markdown-content pre {
-    background-color: #f8f8f8;
+    background-color: var(--mud-palette-background-grey);
     border: 1px solid #ccc;
     border-radius: 3px;
     font-size: 0.9em;
