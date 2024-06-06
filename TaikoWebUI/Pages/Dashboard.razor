@@ -28,11 +28,16 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var pipeline = new MarkdownPipelineBuilder()
+            .UseAdvancedExtensions()
+            .UseEmojiAndSmiley()
+            .Build();
+        
         var markdown = await Http.GetStringAsync("Dashboard.md");
 
         if (!string.IsNullOrWhiteSpace(markdown))
         {
-            markdownContent = Markdown.ToHtml(markdown);
+            markdownContent = Markdown.ToHtml(markdown, pipeline);
         }
         
         isLoading = false;
