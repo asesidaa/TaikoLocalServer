@@ -43,7 +43,7 @@ public class AuthService(TaikoDbContext context) : IAuthService
             var lowerCaseSearchTerm = searchTerm.ToLower();
             userEntriesQuery = userEntriesQuery.Where(user => user.Baid.ToString() == lowerCaseSearchTerm
                                                               || user.MyDonName.ToLower().Contains(lowerCaseSearchTerm)
-                                                              || context.Cards.Any(card => card.Baid == user.Baid && card.AccessCode == lowerCaseSearchTerm));
+                                                              || context.Cards.Any(card => card.Baid == user.Baid && card.AccessCode.ToLower().Contains(lowerCaseSearchTerm)));
         }
 
         // Get the total count of users after applying the search term
