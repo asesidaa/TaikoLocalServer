@@ -37,7 +37,7 @@ public class UsersController(IUserDatumService userDatumService, IAuthService au
     
     [HttpGet]
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
-    public async Task<ActionResult<UsersResponse>> GetUsers([FromQuery] int page = 1, [FromQuery] int limit = 10)
+    public async Task<ActionResult<UsersResponse>> GetUsers([FromQuery] int page = 1, [FromQuery] int limit = 10, [FromQuery] string? searchTerm = null)
     {
         if (page < 1)
         {
@@ -63,7 +63,7 @@ public class UsersController(IUserDatumService userDatumService, IAuthService au
             }
         }
 
-        return await authService.GetUsersFromCards(page, limit);
+        return await authService.GetUsersFromCards(page, limit, searchTerm);
     }
     
     [HttpDelete("{baid}")]

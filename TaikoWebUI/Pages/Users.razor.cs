@@ -7,12 +7,13 @@ public partial class Users
     private int TotalPages { get; set; } = 0;
     private bool isLoading = true;
     private int currentPage = 1;
-    private int pageSize = 12;
+    private readonly int pageSize = 12;
+    private string? searchTerm = null;
 
     private async Task GetUsersData()
     {
         isLoading = true;
-        response = await Client.GetFromJsonAsync<UsersResponse>($"api/Users?page={currentPage}&limit={pageSize}");
+        response = await Client.GetFromJsonAsync<UsersResponse>($"api/Users?page={currentPage}&limit={pageSize}&searchTerm={searchTerm}");
         response.ThrowIfNull();
 
         TotalPages = response.TotalPages;
@@ -36,6 +37,13 @@ public partial class Users
     private async Task OnPageChange(int page)
     {
         currentPage = page;
+        await GetUsersData();
+    }
+    
+    private async Task OnSearch(string search)
+    {
+        searchTerm = search;
+        currentPage = 1;
         await GetUsersData();
     }
 }

@@ -30,12 +30,24 @@ public class AuthService(TaikoDbContext context) : IAuthService
         };
     }
 
-    public async Task<UsersResponse> GetUsersFromCards(int page = 1, int limit = 12)
+    public async Task<UsersResponse> GetUsersFromCards(int page = 1, int limit = 12, string? searchTerm = null)
     {
-        // Get the total count of users
-        var totalUsers = await context.UserData.CountAsync();
-        
         var users = new List<User>();
+
+        var cardEntries = await context.Cards.ToListAsync();
+        var userEntriesQuery = context.UserData.AsQueryable();
+
+        // If a search term is provided, filter the users based on the search term
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            var lowerCaseSearchTerm = searchTerm.ToLower();
+            userEntriesQuery = userEntriesQuery.Where(user => user.Baid.ToString() == lowerCaseSearchTerm
+                                                              || user.MyDonName.ToLower().Contains(lowerCaseSearchTerm)
+                                                              || context.Cards.Any(card => card.Baid == user.Baid && card.AccessCode == lowerCaseSearchTerm));
+        }
+
+        // Get the total count of users after applying the search term
+        var totalUsers = await userEntriesQuery.CountAsync();
 
         // Calculate the total pages
         var totalPages = totalUsers / limit;
@@ -46,8 +58,7 @@ public class AuthService(TaikoDbContext context) : IAuthService
             totalPages++;
         }
 
-        var cardEntries = await context.Cards.ToListAsync();
-        var userEntries = await context.UserData
+        var userEntries = await userEntriesQuery
             .OrderBy(user => user.Baid)
             .Skip((page - 1) * limit)
             .Take(limit)
