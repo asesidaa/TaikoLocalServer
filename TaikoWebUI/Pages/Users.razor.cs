@@ -3,7 +3,6 @@
 public partial class Users
 {
     private UsersResponse? response = new();
-    
     private CancellationTokenSource? cts;
     private int TotalPages { get; set; } = 0;
     private bool isLoading = true;
@@ -40,30 +39,6 @@ public partial class Users
         currentPage = page;
         await GetUsersData();
     }
-
-    private async Task Debounce(Func<Task> action, int delayInMilliseconds)
-    {
-        // Cancel the previous task
-        cts?.Cancel();
-
-        // Create a new CancellationTokenSource
-        cts = new CancellationTokenSource();
-
-        try
-        {
-            // Wait for the delay
-            await Task.Delay(delayInMilliseconds, cts.Token);
-
-            // Execute the action
-            await action();
-        }
-        catch (TaskCanceledException)
-        {
-            // Ignore the exception
-        }
-    }
-    
-    private CancellationTokenSource? cts;
 
     private async Task Debounce(Func<Task> action, int delayInMilliseconds)
     {
