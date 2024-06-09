@@ -12,7 +12,7 @@ public class SongLeaderboardService : ISongLeaderboardService
         this.context = context;
     }
 
-    public async Task<(List<SongLeaderboard>, int)> GetSongLeaderboard(uint songId, Difficulty difficulty, int baid = 0,
+    public async Task<(List<SongLeaderboard>, SongLeaderboard?, int, int)> GetSongLeaderboard(uint songId, Difficulty difficulty, int baid = 0,
         int page = 1, int limit = 10)
     {
         // Get the total count of scores for the song
@@ -34,6 +34,7 @@ public class SongLeaderboardService : ISongLeaderboardService
             .Where(x => x.SongId == songId && x.Difficulty == difficulty)
             .OrderByDescending(x => x.BestScore)
             .ThenByDescending(x => x.BestRate)
+            .ThenByDescending(x => x.BestCrown)
             .Skip((page - 1) * limit) // Subtract 1 because page numbers now start at 1
             .Take(limit)
             .ToListAsync();
@@ -46,10 +47,6 @@ public class SongLeaderboardService : ISongLeaderboardService
         {
             var user = await context.UserData
                 .Where(x => x.Baid == score.Baid)
-                .FirstOrDefaultAsync();
-            
-            var playDatum = await context.SongPlayData
-                .Where(x => x.SongId == songId && x.Difficulty == difficulty && x.Baid == score.Baid)
                 .FirstOrDefaultAsync();
             
             // calculate Rank based on page/limit
@@ -68,46 +65,38 @@ public class SongLeaderboardService : ISongLeaderboardService
                 BestScoreRank = score.BestScoreRank
             });
         }
-
-        if (baid == 0)
-        {
-            return (leaderboard, totalPages);
-        }
         
-        // get current user score if it exists
-        var currentUserScore = await context.SongBestData
-            .Where(x => x.SongId == songId && x.Difficulty == difficulty && x.Baid == baid)
-            .FirstOrDefaultAsync();
-
-        if (currentUserScore != null)
+        // Get UserScore if baid is provided
+        SongLeaderboard? userBestScore = null;
+        if (baid != 0)
         {
-            // check if they are in the limit
-            var userRank = leaderboard.FindIndex(x => x.Baid == baid);
+            var score = await context.SongBestData
+                .Where(x => x.SongId == songId && x.Difficulty == difficulty && x.Baid == baid)
+                .FirstOrDefaultAsync();
 
-            if (userRank >= limit)
+            if (score != null)
             {
-                // get the user data for the current user
                 var user = await context.UserData
                     .Where(x => x.Baid == baid)
                     .FirstOrDefaultAsync();
-                
+
                 var rank = await context.SongBestData
-                    .Where(x => x.SongId == songId && x.Difficulty == difficulty && x.BestScore > currentUserScore.BestScore)
+                    .Where(x => x.SongId == songId && x.Difficulty == difficulty && x.BestScore > score.BestScore)
                     .CountAsync();
 
-                leaderboard.Add(new SongLeaderboard
+                userBestScore = new SongLeaderboard
                 {
                     Rank = rank + 1,
-                    Baid = currentUserScore.Baid,
+                    Baid = score.Baid,
                     UserName = user?.MyDonName,
-                    BestScore = currentUserScore.BestScore,
-                    BestRate = currentUserScore.BestRate,
-                    BestCrown = currentUserScore.BestCrown,
-                    BestScoreRank = currentUserScore.BestScoreRank
-                });
+                    BestScore = score.BestScore,
+                    BestRate = score.BestRate,
+                    BestCrown = score.BestCrown,
+                    BestScoreRank = score.BestScoreRank
+                };
             }
         }
 
-        return (leaderboard, totalPages);
+        return (leaderboard, userBestScore, totalPages, totalScores);
     }
 }

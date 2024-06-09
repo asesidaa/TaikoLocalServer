@@ -1,9 +1,14 @@
 ﻿
+
+using Microsoft.Extensions.Options;
+using TaikoWebUI.Settings;
+
 namespace TaikoWebUI.Components.Song;
 
 public partial class SongLeaderboardCard
 {
-    private SongLeaderboardResponse? response = null;
+    [Inject]
+    IOptions<WebUiSettings> UiSettings { get; set; } = default!;
     
     [Parameter]
     public int SongId { get; set; }
@@ -13,13 +18,37 @@ public partial class SongLeaderboardCard
 
     [Parameter] 
     public Difficulty Difficulty { get; set; } = Difficulty.None;
-
-    private string SelectedDifficulty { get; set; } = "None";
-    private int TotalPages { get; set; } = 0;
     
+    private SongLeaderboardResponse? response = null;
+    private List<SongLeaderboard> LeaderboardScores { get; set; } = new();
+    private int TotalRows { get; set; } = 0;
+    private string SelectedDifficulty { get; set; } = "None";
+    private bool isPaginationEnabled = true;
+    private int TotalPages { get; set; } = 0;
     private bool isLoading = true;
     private int currentPage = 1;
     private int pageSize = 10;
+    
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        
+        if (UiSettings.Value.SongLeaderboardSettings.DisablePagination)
+        {
+            isPaginationEnabled = false;
+        }
+
+        if (UiSettings.Value.SongLeaderboardSettings.PageSize > 200 |
+            UiSettings.Value.SongLeaderboardSettings.PageSize <= 0)
+        {
+            Console.WriteLine("Invalid LeaderboardSettings.PageSize value in appsettings.json. The value must be between 1 and 200. Defaulting to 10.");
+        }
+        
+        if (UiSettings.Value.SongLeaderboardSettings.PageSize > 0 & UiSettings.Value.SongLeaderboardSettings.PageSize <= 200)
+        {
+            pageSize = UiSettings.Value.SongLeaderboardSettings.PageSize;
+        }
+    }
     
     private async Task GetLeaderboardData()
     {
@@ -27,7 +56,30 @@ public partial class SongLeaderboardCard
         response = await Client.GetFromJsonAsync<SongLeaderboardResponse>($"api/SongLeaderboard/{(uint)SongId}?baid={(uint)Baid}&difficulty={(uint)Difficulty}&page={currentPage}&limit={pageSize}");
         response.ThrowIfNull();
         
+        LeaderboardScores.Clear();
+        LeaderboardScores.AddRange(response.LeaderboardData);
+        
+        // set TotalPages
         TotalPages = response.TotalPages;
+    
+        if (response.UserScore != null)
+        {
+            // if baid isn't already in the LeaderboardScores, add it
+            if (LeaderboardScores.All(x => x.Baid != response.UserScore.Baid))
+            {
+                LeaderboardScores.Add(new SongLeaderboard()); // Add an empty row
+                LeaderboardScores.Add(response.UserScore);
+            }
+        }
+        
+        TotalRows = LeaderboardScores.Count;
+        
+        // log the LeaderboardScores
+        foreach (var score in LeaderboardScores)
+        {
+            Console.WriteLine(score.Rank + " " + score.Baid + " " + score.UserName + " " + score.BestScore + " " + score.BestRate + " " + score.BestCrown + " " + score.BestScoreRank);
+        }
+        
         isLoading = false;
     }
     

@@ -1,6 +1,7 @@
 ﻿@inject HttpClient Client;
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage;
-
+@using Microsoft.Extensions.Options;
+@using TaikoWebUI.Settings;
 @using TaikoWebUI.Utilities;
 
 <MudCard Outlined="true" Elevation="0">
@@ -44,7 +45,7 @@
         }
         else
         {
-            <MudTable RowClassFunc="@GetActiveRowClass" Loading="isLoading" Items="@response.LeaderboardData" Class="leaderboard-table" Elevation="0" Outlined="false" Dense="true" Striped="true">
+            <MudTable RowClassFunc="@GetActiveRowClass" Loading="isLoading" Items="@LeaderboardScores" Class="leaderboard-table" Elevation="0" Outlined="false" Dense="true" Striped="true">
                 <HeaderContent>
                     <MudTh>@Localizer["Rank"]</MudTh>
                     <MudTh>@Localizer["Player"]</MudTh>
@@ -53,37 +54,46 @@
                     <MudTh>@Localizer["Rank"]</MudTh>
                 </HeaderContent>
                 <RowTemplate>
-                    <MudTd>@context.Rank</MudTd>
-                    <MudTd>
-                        <MudStack Row="true" AlignItems="AlignItems.Baseline">
-                            <MudText Typo="Typo.body1">@context.UserName</MudText>
-                            <MudText Typo="Typo.caption" Style="color: #9E9E9E">(@Localizer["ID"]: @context.Baid)</MudText>
-                        </MudStack>
-                    </MudTd>
-                    <MudTd>@context.BestScore</MudTd>
-                    <MudTd>
-                        <img src="@($"/images/crown_{context.BestCrown}.png")" alt="@(ScoreUtils.GetCrownText(context.BestCrown))" title="@(ScoreUtils.GetCrownText(context.BestCrown))" style="@Constants.ICON_STYLE"/>
-                    </MudTd>
-                    <MudTd>
-                        @if (context.BestScoreRank is not ScoreRank.None)
-                        {
-                            <img src="@($"/images/rank_{context.BestScoreRank}.png")" alt="@(ScoreUtils.GetRankText(context.BestScoreRank))" title="@(ScoreUtils.GetRankText(context.BestScoreRank))" style="@Constants.ICON_STYLE"/>
-                        }
-                        else
-                        {
-                            <MudText Typo="Typo.body1">—</MudText>
-                        }  
-                    </MudTd>
-                </RowTemplate>
-                <PagerContent>
-                    @if (TotalPages > 1)
+                    @if ( @context.Rank > 0 && @context.BestScore > 0)
                     {
-                        <div class="d-flex flex-column align-center">
-                            <MudPagination Class="pa-4" Rectangular="true" DisableElevation="true" Count="@TotalPages" Selected="currentPage" SelectedChanged="(page) => OnPageChange(page)" BoundaryCount="1" MiddleCount="3" />
-                        </div>
+                        <MudTd>@context.Rank</MudTd>
+                        <MudTd>
+                            <MudStack Row="true" AlignItems="AlignItems.Baseline">
+                                <MudText Typo="Typo.body1">@context.UserName</MudText>
+                                <MudText Typo="Typo.caption" Style="color: #9E9E9E">(@Localizer["ID"]: @context.Baid)</MudText>
+                            </MudStack>
+                        </MudTd>
+                        <MudTd>@context.BestScore</MudTd>
+                        <MudTd>
+                            <img src="@($"/images/crown_{context.BestCrown}.png")" alt="@(ScoreUtils.GetCrownText(context.BestCrown))" title="@(ScoreUtils.GetCrownText(context.BestCrown))" style="@Constants.ICON_STYLE"/>
+                        </MudTd>
+                        <MudTd>
+                            @if (context.BestScoreRank is not ScoreRank.None)
+                            {
+                                <img src="@($"/images/rank_{context.BestScoreRank}.png")" alt="@(ScoreUtils.GetRankText(context.BestScoreRank))" title="@(ScoreUtils.GetRankText(context.BestScoreRank))" style="@Constants.ICON_STYLE"/>
+                            }
+                            else
+                            {
+                                <MudText Typo="Typo.body1">—</MudText>
+                            }  
+                        </MudTd>
                     }
-                </PagerContent>
+                    else
+                    {
+                        <MudTd colspan="6">
+                            <MudText Align="Align.Center" Class="my-1">
+                                ...
+                            </MudText>
+                        </MudTd>
+                    }
+                </RowTemplate>
             </MudTable>
+            @if (TotalPages > 1 && isPaginationEnabled)
+            {
+                <div class="d-flex flex-column align-center">
+                    <MudPagination Class="pa-4" Rectangular="true" DisableElevation="true" Count="@TotalPages" Selected="currentPage" SelectedChanged="(page) => OnPageChange(page)" BoundaryCount="1" MiddleCount="3" />
+                </div>
+            }
         }
     </MudCardContent>
 </MudCard>

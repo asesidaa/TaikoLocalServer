@@ -51,13 +51,15 @@ public class SongLeaderboardController(ISongLeaderboardService songLeaderboardSe
             return BadRequest(new { Message = "Invalid difficulty. Please provide a number between 1-5." });
         }
 
-        var (leaderboard, totalPages) = await songLeaderboardService.GetSongLeaderboard(songId, (Difficulty)difficulty, (int)baid, page, limit);
+        var (leaderboard, userScore, totalPages, totalScores) = await songLeaderboardService.GetSongLeaderboard(songId, (Difficulty)difficulty, (int)baid, page, limit);
 
         return Ok(new SongLeaderboardResponse
         {
             LeaderboardData = leaderboard,
+            UserScore = userScore,
             CurrentPage = page,
-            TotalPages = totalPages
+            TotalPages = totalPages,
+            TotalScores = totalScores
         });
     }
 }
