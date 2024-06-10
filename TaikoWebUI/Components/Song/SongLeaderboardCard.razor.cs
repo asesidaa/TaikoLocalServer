@@ -62,24 +62,15 @@ public partial class SongLeaderboardCard
         // set TotalPages
         TotalPages = response.TotalPages;
     
-        if (response.UserScore != null)
+        if (response.UserScore != null 
+            && LeaderboardScores.All(x => x.Baid != response.UserScore.Baid) 
+            && (LeaderboardScores.Count == 0 || response.UserScore.Rank >= LeaderboardScores[0].Rank))
         {
-            // if baid isn't already in the LeaderboardScores, add it
-            if (LeaderboardScores.All(x => x.Baid != response.UserScore.Baid))
-            {
-                LeaderboardScores.Add(new SongLeaderboard()); // Add an empty row
-                LeaderboardScores.Add(response.UserScore);
-            }
+            LeaderboardScores.Add(new SongLeaderboard()); // Add an empty row
+            LeaderboardScores.Add(response.UserScore);
         }
-        
+
         TotalRows = LeaderboardScores.Count;
-        
-        // log the LeaderboardScores
-        foreach (var score in LeaderboardScores)
-        {
-            Console.WriteLine(score.Rank + " " + score.Baid + " " + score.UserName + " " + score.BestScore + " " + score.BestRate + " " + score.BestCrown + " " + score.BestScoreRank);
-        }
-        
         isLoading = false;
     }
     
