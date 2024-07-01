@@ -71,4 +71,19 @@ public partial class SongList
 
         return true;
     }
+    
+    private async Task OnFavoriteToggled(MusicDetail data)
+    {
+        var request = new SetFavoriteRequest
+        {
+            Baid = (uint)Baid,
+            IsFavorite = !data.IsFavorite,
+            SongId = data.SongId
+        };
+        var result = await Client.PostAsJsonAsync("api/FavoriteSongs", request);
+        if (result.IsSuccessStatusCode)
+        {
+            data.IsFavorite = !data.IsFavorite;
+        }
+    }
 }

@@ -92,13 +92,13 @@
                                 </a>
                             </div>
                             <div>
-                                <MudToggleIconButton
-                                    Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
-                                    ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
-                                    Size="Size.Small"
-                                    ToggledSize="Size.Small"
-                                    Title="Add to favorites"
-                                    ToggledTitle="Remove from favorites" />
+                                <MudToggleIconButton Toggled="@context.IsFavorite"
+                                                     ToggledChanged="@(async () => await OnFavoriteToggled(context))"
+                                                     Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
+                                                     ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
+                                                     Size="Size.Small"
+                                                     ToggledSize="Size.Small"
+                                                     Title="Add to favorites" ToggledTitle="Remove from favorites" />
                             </div>
                             </MudStack>
                         </MudTd>
