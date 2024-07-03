@@ -8,6 +8,9 @@
         <LangVersion>12</LangVersion>
         <EnableConfigurationBindingGenerator>false</EnableConfigurationBindingGenerator>
         <ApplicationManifest>app.manifest</ApplicationManifest>
+        <PublishSingleFile>true</PublishSingleFile>
+        <SelfContained>true</SelfContained>
+        <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     </PropertyGroup>
 
     <ItemGroup>
@@ -184,9 +187,6 @@
     <ItemGroup>
         <ProjectReference Include="..\GameDatabase\GameDatabase.csproj" />
         <ProjectReference Include="..\SharedProject\SharedProject.csproj" />
-    </ItemGroup>
-    <ItemGroup Condition="'$(Configuration)'=='Debug'">
         <ProjectReference Include="..\TaikoWebUI\TaikoWebUI.csproj" />
     </ItemGroup>
-
 </Project>
