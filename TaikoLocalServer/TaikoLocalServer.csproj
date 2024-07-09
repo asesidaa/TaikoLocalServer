@@ -8,6 +8,8 @@
         <LangVersion>12</LangVersion>
         <EnableConfigurationBindingGenerator>false</EnableConfigurationBindingGenerator>
         <ApplicationManifest>app.manifest</ApplicationManifest>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)'!='Debug'">
         <PublishSingleFile>true</PublishSingleFile>
         <SelfContained>true</SelfContained>
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
