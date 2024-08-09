@@ -386,7 +386,15 @@ public partial class Profile
 
         if (difficulty == Difficulty.None) difficulty = highestDifficulty;
 
-        if (!songBestDataMap.TryGetValue(difficulty, out var values)) return;
+        if (!songBestDataMap.TryGetValue(difficulty, out var values))
+        {
+            if (difficulty == Difficulty.UraOni)
+            {
+                difficulty = Difficulty.Oni;
+                if (!songBestDataMap.TryGetValue(difficulty, out values)) return;
+            }
+            else return;
+        }
 
         var valuesList = new List<SongBestData>(values);
 
