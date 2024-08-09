@@ -54,9 +54,16 @@
                                     <MudGrid Spacing="2" Class="d-flex align-center">
                                         <MudItem xs="12" md="8" Class="d-flex align-center">
                                             <pre class="mb-0" style="font-size:16px">
-                                                @foreach (var digitGroup in StringUtil.SplitIntoGroups(accessCode, 4))
+                                                @if (accessCode.Length % 4 == 0 && StringUtil.OnlyHexInString(accessCode))
                                                 {
-                                                <span class="mr-2">@digitGroup</span>
+                                                    foreach (var digitGroup in StringUtil.SplitIntoGroups(accessCode, 4))
+                                                    {
+                                                        <span class="mr-2">@digitGroup</span>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span class="mr-2">@accessCode</span>
                                                 }
                                             </pre>
                                         </MudItem>

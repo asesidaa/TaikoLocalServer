@@ -45,7 +45,7 @@
         }
         else
         {
-            <MudTable RowClassFunc="@GetActiveRowClass" Loading="isLoading" Items="@LeaderboardScores" Class="leaderboard-table" Elevation="0" Outlined="false" Dense="true" Striped="true">
+            <MudTable RowClassFunc="@GetActiveRowClass" Loading="isLoading" Items="@LeaderboardScores" Class="leaderboard-table" Elevation="0" Outlined="false" Dense="true" Striped="true" Breakpoint=Breakpoint.None>
                 <HeaderContent>
                     <MudTh>@Localizer["Rank"]</MudTh>
                     <MudTh>@Localizer["Player"]</MudTh>
