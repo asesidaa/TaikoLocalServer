@@ -33,6 +33,11 @@ public partial class SongList
 
         SongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
 
+        foreach (var best in response.SongBestData)
+            foreach (var song in musicDetailDictionary)
+                if (best.SongId == song.Value.SongId)
+                    song.Value.IsFavorite = best.IsFavorite;
+
         if (AuthService.IsLoggedIn && !AuthService.IsAdmin)
         {
             breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
@@ -58,6 +63,8 @@ public partial class SongList
             musicDetail.ArtistNameCN,
             musicDetail.ArtistNameKO
         };
+
+        if (musicDetail.IsFavorite) stringsToCheck.Add("Favorite");
 
         if (!string.IsNullOrEmpty(Search) && !stringsToCheck.Any(s => s.Contains(Search, StringComparison.OrdinalIgnoreCase)))
         {
