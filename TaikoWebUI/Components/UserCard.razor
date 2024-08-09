@@ -90,9 +90,16 @@
             <MudText Style="font-family:monospace;overflow:hidden;overflow-x:scroll">
                 @if (User.AccessCodes.Count > 0)
                 {
-                    @foreach (var digitGroup in StringUtil.SplitIntoGroups(User.AccessCodes[0], 4))
+                    @if (User.AccessCodes[0].Length % 4 == 0 && StringUtil.OnlyHexInString(User.AccessCodes[0]))
                     {
-                        <span class="mr-2">@digitGroup</span>
+                        foreach (var digitGroup in StringUtil.SplitIntoGroups(User.AccessCodes[0], 4))
+                        {
+                            <span class="mr-2">@digitGroup</span>
+                        }
+                    }
+                    else
+                    {
+                        <span class="mr-2">@User.AccessCodes[0]</span>
                     }
                 } else
 				{

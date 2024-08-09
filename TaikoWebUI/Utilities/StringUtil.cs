@@ -16,5 +16,10 @@
             }
             return groups;
         }
+
+        public bool OnlyHexInString(string test)
+        {
+            return System.Text.RegularExpressions.Regex.IsMatch(test, @"\A\b[0-9a-fA-F]+\b\Z");
+        }
     }
 }
