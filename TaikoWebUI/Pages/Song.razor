@@ -9,13 +9,19 @@
 @inject ILocalStorageService LocalStorage
 @inject BreadcrumbsStateContainer BreadcrumbsStateContainer
 
-@if (AuthService.LoginRequired && (!AuthService.IsLoggedIn || (AuthService.GetLoggedInBaid() != Baid && !AuthService.IsAdmin)))
+@if (response is null)
 {
-    NavigationManager.NavigateTo(AuthService.IsLoggedIn ? "/" : "/Login");
+    <MudContainer Style="display:flex;margin:50px 0;align-items:center;justify-content:center;">
+        <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+    </MudContainer>
 }
 else
 {
-    if (response is not null)
+    @if (AuthService.LoginRequired && (!AuthService.IsLoggedIn || (AuthService.GetLoggedInBaid() != Baid && !AuthService.IsAdmin)))
+    {
+        NavigationManager.NavigateTo(AuthService.IsLoggedIn ? "/" : "/Login");
+    }
+    else
     {
         <MudText Typo="Typo.h5">@songTitle</MudText>
         <MudText Typo="Typo.body2">@songArtist</MudText>
