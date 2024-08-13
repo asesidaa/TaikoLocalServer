@@ -169,8 +169,6 @@ public partial class Profile
         "Not Cleared", "Not Full Combo", "Not Donderful Combo"
     };
 
-    private readonly List<BreadcrumbItem> breadcrumbs = new();
-
     private Dictionary<Difficulty, List<SongBestData>> songBestDataMap = new();
 
     private Difficulty highestDifficulty = Difficulty.Easy;
@@ -208,17 +206,19 @@ public partial class Profile
         
         musicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
 
+        BreadcrumbsStateContainer.breadcrumbs.Clear();
         if (AuthService.IsLoggedIn && !AuthService.IsAdmin)
         {
-            breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
+            BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
         }
         else
         {
-            breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
+            BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
         }
-        breadcrumbs.Add(new BreadcrumbItem($"{response.MyDonName}", href: null, disabled: true));
-        breadcrumbs.Add(new BreadcrumbItem(Localizer["Profile"], href: $"/Users/{Baid}/Profile", disabled: false));
-        
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{response.MyDonName}", href: null, disabled: true));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Profile"], href: $"/Users/{Baid}/Profile", disabled: false));
+        BreadcrumbsStateContainer.NotifyStateChanged();
+
         costumeList = await GameDataService.GetCostumeList();
         titleDictionary = await GameDataService.GetTitleDictionary();
         lockedCostumeDataDictionary = await GameDataService.GetLockedCostumeDataDictionary();
@@ -374,7 +374,7 @@ public partial class Profile
         // Adjust breadcrumb if name is changed
         if (response != null)
         {
-            breadcrumbs[^2] = new BreadcrumbItem($"{response.MyDonName}", href: null, disabled: true);
+            BreadcrumbsStateContainer.breadcrumbs[^2] = new BreadcrumbItem($"{response.MyDonName}", href: null, disabled: true);
         }
     }
 

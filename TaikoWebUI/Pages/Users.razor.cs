@@ -32,6 +32,10 @@ public partial class Users
         {
             await GetUsersData();
         }
+
+        BreadcrumbsStateContainer.breadcrumbs.Clear();
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
+        BreadcrumbsStateContainer.NotifyStateChanged();
     }
     
     private async Task OnPageChange(int page)

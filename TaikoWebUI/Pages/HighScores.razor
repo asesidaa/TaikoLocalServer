@@ -4,12 +4,10 @@
 @inject HttpClient Client
 @inject AuthService AuthService
 @inject NavigationManager NavigationManager
+@inject BreadcrumbsStateContainer BreadcrumbsStateContainer
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 @page "/Users/{baid:int}/HighScores"
-
-<MudBreadcrumbs Items="breadcrumbs" Class="p-0 mb-2"></MudBreadcrumbs>
-<MudText Typo="Typo.h4">@Localizer["High Scores"]</MudText>
 
 <MudGrid Class="my-8">
     @if (response is null)
