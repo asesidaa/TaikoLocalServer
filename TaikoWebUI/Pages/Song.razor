@@ -7,6 +7,7 @@
 @inject AuthService AuthService
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService LocalStorage
+@inject BreadcrumbsStateContainer BreadcrumbsStateContainer
 
 @if (AuthService.LoginRequired && (!AuthService.IsLoggedIn || (AuthService.GetLoggedInBaid() != Baid && !AuthService.IsAdmin)))
 {
@@ -16,7 +17,6 @@ else
 {
     if (response is not null)
     {
-        <MudBreadcrumbs Items="breadcrumbs" Class="p-0 mb-3"></MudBreadcrumbs>
         <MudText Typo="Typo.h5">@songTitle</MudText>
         <MudText Typo="Typo.body2">@songArtist</MudText>
         <MudGrid Class="my-4 pb-10">

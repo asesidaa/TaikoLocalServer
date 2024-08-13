@@ -3,6 +3,7 @@
 @inject IDialogService DialogService
 @inject AuthService AuthService
 @inject NavigationManager NavigationManager
+@inject BreadcrumbsStateContainer BreadcrumbsStateContainer
 @inject Utilities.StringUtil StringUtil;
 
 @if (AuthService.LoginRequired && (!AuthService.IsLoggedIn || (AuthService.GetLoggedInBaid() != Baid && !AuthService.IsAdmin))) {
@@ -13,8 +14,6 @@
         <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
     </MudContainer>
 } else {
-    <MudBreadcrumbs Items="breadcrumbs" Class="p-0 mb-2"></MudBreadcrumbs>
-    <MudText Typo="Typo.h4">@Localizer["Access Codes"]</MudText>
     <MudGrid Class="my-4 pb-10">
         <MudItem xs="12">
             <MudCard Outlined="true" Class="mb-6">

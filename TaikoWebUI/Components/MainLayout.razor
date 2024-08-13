@@ -1,8 +1,12 @@
 ﻿@inherits LayoutComponentBase
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @inject AuthService AuthService
+@inject BreadcrumbsStateContainer BreadcrumbsStateContainer
+
 @using Microsoft.Extensions.Options;
 @using TaikoWebUI.Settings;
+
+
 
 <MudThemeProvider IsDarkMode="@isDarkMode" Theme="@taikoWebUiTheme" />
 <MudDialogProvider />
@@ -11,6 +15,7 @@
 <MudLayout>
     <MudAppBar Elevation="0">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="DrawerToggle" Size="Size.Small" />
+        <MudBreadcrumbs Items="BreadcrumbsStateContainer.breadcrumbs" Class="p-0"></MudBreadcrumbs>
         <MudSpacer />
         <MudStack Spacing="3" Row="true">
             <LanguageToggle />
@@ -46,11 +51,14 @@
     {
         title = UiSettings.Value.Title;
     }
-    
+
     protected override async Task OnInitializedAsync()
     {
-        
-        
+        await base.OnInitializedAsync();
+
+        BreadcrumbsStateContainer.OnChange += StateHasChanged;
+
+
         var hasDrawerOpenEntry = await LocalStorage.ContainKeyAsync("drawerOpen");
 
         if (hasDrawerOpenEntry)
@@ -73,16 +81,16 @@
     }
 
     private async Task DrawerToggle()
-	{
-		drawerOpen = !drawerOpen;
-		await LocalStorage.SetItemAsync("drawerOpen", drawerOpen);
-	}
+    {
+        drawerOpen = !drawerOpen;
+        await LocalStorage.SetItemAsync("drawerOpen", drawerOpen);
+    }
 
     private async Task ToggleDarkMode()
-	{
-		isDarkMode = !isDarkMode;
-		await LocalStorage.SetItemAsync("isDarkMode", isDarkMode);
-	}
+    {
+        isDarkMode = !isDarkMode;
+        await LocalStorage.SetItemAsync("isDarkMode", isDarkMode);
+    }
 
     private string DarkModeIcon => isDarkMode ? Icons.Material.Filled.BrightnessLow : Icons.Material.Filled.Brightness2;
 
@@ -102,4 +110,9 @@
                 PrimaryDarken = Colors.Indigo.Accent1,
             },
         };
+
+    public void Dispose()
+    {
+        BreadcrumbsStateContainer.OnChange -= StateHasChanged;
+    }
 }

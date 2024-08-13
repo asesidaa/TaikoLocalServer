@@ -1,12 +1,12 @@
 ﻿@inject HttpClient Client
 @inject AuthService AuthService
 @inject NavigationManager NavigationManager
+@inject BreadcrumbsStateContainer BreadcrumbsStateContainer
 
 @using TaikoWebUI.Components;
 
 @page "/Users"
 
-<MudText Typo="Typo.h4">@Localizer["Users"]</MudText>
 <MudGrid Class="my-8">
     @if (!AuthService.LoginRequired || (AuthService.LoginRequired && AuthService.IsAdmin)) {
         <MudItem xs="12">
