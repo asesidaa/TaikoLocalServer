@@ -321,8 +321,8 @@
     <value>むずかしさからえらぶの難易度</value>
   </data>
     <data name="Difficulty Setting Star" xml:space="preserve">
-    <value>むずかしさからえらぶの★数</value>
-  </data>
+      <value>むずかしさからえらぶの★の数</value>
+    </data>
     <data name="Difficulty Setting Sort" xml:space="preserve">
     <value>むずかしさからえらぶの表示順</value>
   </data>
