@@ -5,7 +5,8 @@
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.DeleteForever" Class="mr-3 mb-n1" />
-            @Localizer["Delete User"]
+            (MarkupString)
+            (string)@Localizer["Delete User"]
         </MudText>
     </TitleContent>
     <DialogContent>
@@ -14,7 +15,7 @@
         </MudText>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">CANCEL</MudButton>
+        <MudButton OnClick="Cancel">@Localizer["Cancel"]</MudButton>
         <MudButton Color="Color.Error" OnClick="DeleteUser">
             <MudText>@Localizer["Delete"]</MudText>
         </MudButton>

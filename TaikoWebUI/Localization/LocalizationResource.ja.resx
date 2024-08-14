@@ -1,825 +1,839 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
-    Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
-    associated with the data types.
-    
-    Example:
-    
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-                
-    There are any number of "resheader" rows that contain simple 
-    name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
-    mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
-    extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
-    read any of the formats listed below.
-    
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
+    <!-- 
+      Microsoft ResX Schema 
+      
+      Version 2.0
+      
+      The primary goals of this format is to allow a simple XML format 
+      that is mostly human readable. The generation and parsing of the 
+      various data types are done through the TypeConverter classes 
+      associated with the data types.
+      
+      Example:
+      
+      ... ado.net/XML headers & schema ...
+      <resheader name="resmimetype">text/microsoft-resx</resheader>
+      <resheader name="version">2.0</resheader>
+      <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+      <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+      <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+      <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+      <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+          <value>[base64 mime encoded serialized .NET Framework object]</value>
+      </data>
+      <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+          <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+          <comment>This is a comment</comment>
+      </data>
+                  
+      There are any number of "resheader" rows that contain simple 
+      name/value pairs.
+      
+      Each data row contains a name, and value. The row also contains a 
+      type or mimetype. Type corresponds to a .NET class that support 
+      text/value conversion through the TypeConverter architecture. 
+      Classes that don't support this are serialized and stored with the 
+      mimetype set.
+      
+      The mimetype is used for serialized objects, and tells the 
+      ResXResourceReader how to depersist the object. This is currently not 
+      extensible. For a given mimetype the value must be set accordingly:
+      
+      Note - application/x-microsoft.net.object.binary.base64 is the format 
+      that the ResXResourceWriter will generate, however the reader can 
+      read any of the formats listed below.
+      
+      mimetype: application/x-microsoft.net.object.binary.base64
+      value   : The object must be serialized with 
+              : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+              : and then encoded with base64 encoding.
+      
+      mimetype: application/x-microsoft.net.object.soap.base64
+      value   : The object must be serialized with 
+              : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+              : and then encoded with base64 encoding.
+  
+      mimetype: application/x-microsoft.net.object.bytearray.base64
+      value   : The object must be serialized into a byte array 
+              : using a System.ComponentModel.TypeConverter
+              : and then encoded with base64 encoding.
+      -->
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
+                xmlns="">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
             <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
             </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <data name="Dashboard" xml:space="preserve">
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Dashboard" xml:space="preserve">
     <value>メニュー</value>
   </data>
-  <data name="Users" xml:space="preserve">
+    <data name="Users" xml:space="preserve">
     <value>ユーザー管理</value>
   </data>
-  <data name="Edit Profile" xml:space="preserve">
+    <data name="Edit Profile" xml:space="preserve">
     <value>プロフィール編集</value>
   </data>
-  <data name="User" xml:space="preserve">
+    <data name="User" xml:space="preserve">
     <value>ユーザー</value>
   </data>
-  <data name="View Play Data" xml:space="preserve">
+    <data name="View Play Data" xml:space="preserve">
     <value>プレイデータ</value>
   </data>
-  <data name="High Scores" xml:space="preserve">
+    <data name="High Scores" xml:space="preserve">
     <value>自己ベスト</value>
   </data>
-  <data name="Show QR Code" xml:space="preserve">
+    <data name="Show QR Code" xml:space="preserve">
     <value>QRコード</value>
   </data>
-  <data name="Access Codes" xml:space="preserve">
+    <data name="Access Codes" xml:space="preserve">
     <value>アクセスコード管理</value>
   </data>
-  <data name="Change Password" xml:space="preserve">
+    <data name="Change Password" xml:space="preserve">
     <value>パスワード変更</value>
   </data>
-  <data name="Reset Password" xml:space="preserve">
+    <data name="Reset Password" xml:space="preserve">
     <value>パスワードリセット</value>
   </data>
-  <data name="Delete User" xml:space="preserve">
+    <data name="Delete User" xml:space="preserve">
     <value>ユーザー削除</value>
   </data>
-  <data name="Welcome to TaikoWebUI!" xml:space="preserve">
+    <data name="Welcome to TaikoWebUI!" xml:space="preserve">
     <value>TaikoWebUIへようこそ!</value>
   </data>
-  <data name="Song Name" xml:space="preserve">
+    <data name="Song Name" xml:space="preserve">
     <value>曲名</value>
   </data>
-  <data name="Level" xml:space="preserve">
-    <value>★数</value>
+    <data name="Level" xml:space="preserve">
+    <value>★の数</value>
   </data>
-  <data name="Genre" xml:space="preserve">
+    <data name="Genre" xml:space="preserve">
     <value>ジャンル</value>
   </data>
-  <data name="Best Score" xml:space="preserve">
+    <data name="Best Score" xml:space="preserve">
     <value>ベストスコア</value>
   </data>
-  <data name="Best Crown" xml:space="preserve">
+    <data name="Best Crown" xml:space="preserve">
     <value>ベスト王冠</value>
   </data>
-  <data name="Best Rank" xml:space="preserve">
+    <data name="Best Rank" xml:space="preserve">
     <value>ベストランク</value>
   </data>
-  <data name="Good" xml:space="preserve">
+    <data name="Good" xml:space="preserve">
     <value>良</value>
   </data>
-  <data name="OK" xml:space="preserve">
+    <data name="OK" xml:space="preserve">
     <value>可</value>
   </data>
-  <data name="Bad" xml:space="preserve">
+    <data name="Bad" xml:space="preserve">
     <value>不可</value>
   </data>
-  <data name="Drumroll" xml:space="preserve">
+    <data name="Drumroll" xml:space="preserve">
     <value>連打</value>
   </data>
-  <data name="MAX Combo" xml:space="preserve">
+    <data name="MAX Combo" xml:space="preserve">
     <value>最大コンボ数</value>
   </data>
-  <data name="AI Battle Data" xml:space="preserve">
+    <data name="AI Battle Data" xml:space="preserve">
     <value>AIバトル演奏データ</value>
   </data>
-  <data name="Last Played" xml:space="preserve">
+    <data name="Last Played" xml:space="preserve">
     <value>ラストプレイ</value>
   </data>
-  <data name="Total Credits Played" xml:space="preserve">
+    <data name="Total Credits Played" xml:space="preserve">
     <value>プレイ回数</value>
   </data>
-  <data name="Total Clears" xml:space="preserve">
+    <data name="Total Clears" xml:space="preserve">
     <value>クリア回数</value>
   </data>
-  <data name="Total Full Combos" xml:space="preserve">
+    <data name="Total Full Combos" xml:space="preserve">
     <value>フルコンボ回数</value>
   </data>
-  <data name="Total Donderful Combos" xml:space="preserve">
+    <data name="Total Donderful Combos" xml:space="preserve">
     <value>ドンダフルコンボ回数</value>
   </data>
-  <data name="Song List" xml:space="preserve">
+    <data name="Song List" xml:space="preserve">
     <value>曲目リスト</value>
   </data>
-  <data name="Hide" xml:space="preserve">
+    <data name="Hide" xml:space="preserve">
     <value>隠す</value>
   </data>
-  <data name="Show" xml:space="preserve">
+    <data name="Show" xml:space="preserve">
     <value>表示</value>
   </data>
-  <data name="Section No." xml:space="preserve">
+    <data name="Section No." xml:space="preserve">
     <value>区間</value>
   </data>
-  <data name="Result" xml:space="preserve">
+    <data name="Result" xml:space="preserve">
     <value>結果</value>
   </data>
-  <data name="Score" xml:space="preserve">
+    <data name="Score" xml:space="preserve">
     <value>スコア</value>
   </data>
-  <data name="Crown" xml:space="preserve">
+    <data name="Crown" xml:space="preserve">
     <value>王冠</value>
   </data>
-  <data name="No Data" xml:space="preserve">
+    <data name="No Data" xml:space="preserve">
     <value>データがありません</value>
   </data>
-  <data name="Log In First" xml:space="preserve">
+    <data name="Log In First" xml:space="preserve">
     <value>"ユーザー管理"タブでログインしてください。</value>
   </data>
-  <data name="Total Hits" xml:space="preserve">
+    <data name="Total Hits" xml:space="preserve">
     <value>叩けた数</value>
   </data>
-  <data name="Soul Gauge" xml:space="preserve">
+    <data name="Soul Gauge" xml:space="preserve">
     <value>魂ゲージ</value>
   </data>
-  <data name="Course Songs" xml:space="preserve">
+    <data name="Course Songs" xml:space="preserve">
     <value>課題曲</value>
   </data>
-  <data name="Conditions" xml:space="preserve">
+    <data name="Conditions" xml:space="preserve">
     <value>条件</value>
   </data>
-  <data name="Red" xml:space="preserve">
+    <data name="Red" xml:space="preserve">
     <value>赤合格</value>
   </data>
-  <data name="Gold" xml:space="preserve">
+    <data name="Gold" xml:space="preserve">
     <value>金合格</value>
   </data>
-  <data name="Not Passed" xml:space="preserve">
+    <data name="Not Passed" xml:space="preserve">
     <value>未合格</value>
   </data>
-  <data name="Pass" xml:space="preserve">
+    <data name="Pass" xml:space="preserve">
     <value>合格</value>
   </data>
-  <data name="Totals" xml:space="preserve">
+    <data name="Totals" xml:space="preserve">
     <value>合計</value>
   </data>
-  <data name="Details" xml:space="preserve">
+    <data name="Details" xml:space="preserve">
     <value>記録</value>
   </data>
-  <data name="Stage" xml:space="preserve">
+    <data name="Stage" xml:space="preserve">
     <value>曲目</value>
   </data>
-  <data name="Dani Dojo" xml:space="preserve">
+    <data name="Dani Dojo" xml:space="preserve">
     <value>段位道場</value>
   </data>
-  <data name="Profile" xml:space="preserve">
+    <data name="Profile" xml:space="preserve">
     <value>プロフィール</value>
   </data>
-  <data name="Profile Options" xml:space="preserve">
+    <data name="Profile Options" xml:space="preserve">
     <value>プロフィール設定</value>
   </data>
-  <data name="Costume" xml:space="preserve">
+    <data name="Costume" xml:space="preserve">
     <value>着せ替え</value>
   </data>
-  <data name="Costume Options" xml:space="preserve">
+    <data name="Costume Options" xml:space="preserve">
     <value>着せ替え設定</value>
   </data>
-  <data name="Song Options" xml:space="preserve">
+    <data name="Song Options" xml:space="preserve">
     <value>演奏オプション</value>
   </data>
-  <data name="Player" xml:space="preserve">
+    <data name="Player" xml:space="preserve">
     <value>プレイヤー</value>
   </data>
-  <data name="Achievement Panel" xml:space="preserve">
+    <data name="Achievement Panel" xml:space="preserve">
     <value>総合成績パネル</value>
   </data>
-  <data name="Save" xml:space="preserve">
+    <data name="Save" xml:space="preserve">
     <value>保存</value>
   </data>
-  <data name="Language" xml:space="preserve">
+    <data name="Language" xml:space="preserve">
     <value>言語</value>
   </data>
-  <data name="Name" xml:space="preserve">
+    <data name="Name" xml:space="preserve">
     <value>名前</value>
   </data>
-  <data name="Title" xml:space="preserve">
+    <data name="Title" xml:space="preserve">
     <value>称号</value>
   </data>
-  <data name="Title Plate" xml:space="preserve">
+    <data name="Title Plate" xml:space="preserve">
     <value>称号タイプ</value>
   </data>
-  <data name="Achievement Panel Difficulty" xml:space="preserve">
+    <data name="Achievement Panel Difficulty" xml:space="preserve">
     <value>総合成績パネルの難易度</value>
   </data>
-  <data name="Display Dan Rank on Name Plate" xml:space="preserve">
+    <data name="Display Dan Rank on Name Plate" xml:space="preserve">
     <value>段位表示</value>
   </data>
-  <data name="Display Achievement Panel" xml:space="preserve">
+    <data name="Display Achievement Panel" xml:space="preserve">
     <value>成績表示</value>
   </data>
-  <data name="Difficulty Setting Course" xml:space="preserve">
+    <data name="Difficulty Setting Course" xml:space="preserve">
     <value>むずかしさからえらぶの難易度</value>
   </data>
-  <data name="Difficulty Setting Star" xml:space="preserve">
+    <data name="Difficulty Setting Star" xml:space="preserve">
     <value>むずかしさからえらぶの★数</value>
   </data>
-  <data name="Difficulty Setting Sort" xml:space="preserve">
+    <data name="Difficulty Setting Sort" xml:space="preserve">
     <value>むずかしさからえらぶの表示順</value>
   </data>
-  <data name="Select a Title" xml:space="preserve">
+    <data name="Select a Title" xml:space="preserve">
     <value>称号を選択してください</value>
   </data>
-  <data name="Head" xml:space="preserve">
+    <data name="Head" xml:space="preserve">
     <value>あたま</value>
   </data>
-  <data name="Body" xml:space="preserve">
+    <data name="Body" xml:space="preserve">
     <value>からだ</value>
   </data>
-  <data name="Face" xml:space="preserve">
+    <data name="Face" xml:space="preserve">
     <value>メイク</value>
   </data>
-  <data name="Kigurumi" xml:space="preserve">
+    <data name="Kigurumi" xml:space="preserve">
     <value>きぐるみ</value>
   </data>
-  <data name="Puchi" xml:space="preserve">
+    <data name="Puchi" xml:space="preserve">
     <value>ぷちキャラ</value>
   </data>
-  <data name="Body Color" xml:space="preserve">
+    <data name="Body Color" xml:space="preserve">
     <value>どうの色</value>
   </data>
-  <data name="Face Color" xml:space="preserve">
+    <data name="Face Color" xml:space="preserve">
     <value>かおの色</value>
   </data>
-  <data name="Limb Color" xml:space="preserve">
+    <data name="Limb Color" xml:space="preserve">
     <value>てあしの色</value>
   </data>
-  <data name="Vanish" xml:space="preserve">
+    <data name="Vanish" xml:space="preserve">
     <value>ドロン</value>
   </data>
-  <data name="Inverse" xml:space="preserve">
+    <data name="Inverse" xml:space="preserve">
     <value>あべこべ</value>
   </data>
-  <data name="Skip Song" xml:space="preserve">
+    <data name="Skip Song" xml:space="preserve">
     <value>演奏スキップ</value>
   </data>
-  <data name="Voice" xml:space="preserve">
+    <data name="Voice" xml:space="preserve">
     <value>ボイス</value>
   </data>
-  <data name="Speed" xml:space="preserve">
+    <data name="Speed" xml:space="preserve">
     <value>はやさ</value>
   </data>
-  <data name="Random" xml:space="preserve">
+    <data name="Random" xml:space="preserve">
     <value>ランダム</value>
   </data>
-  <data name="Tone" xml:space="preserve">
+    <data name="Tone" xml:space="preserve">
     <value>音色</value>
   </data>
-  <data name="Notes Position" xml:space="preserve">
+    <data name="Notes Position" xml:space="preserve">
     <value>音符位置調整</value>
   </data>
-  <data name="DateFormat" xml:space="preserve">
+    <data name="DateFormat" xml:space="preserve">
     <value>yyyy/MM/dd HH:mm:ss</value>
   </data>
-  <data name="Generate Invite Code" xml:space="preserve">
+    <data name="Generate Invite Code" xml:space="preserve">
     <value>招待コード生成</value>
   </data>
-  <data name="Register" xml:space="preserve">
+    <data name="Register" xml:space="preserve">
     <value>登録</value>
   </data>
-  <data name="Reset Password Confirm 1" xml:space="preserve">
+    <data name="Reset Password Confirm 1" xml:space="preserve">
     <value>本当にこのユーザーのパスワードをリセットしますか？</value>
   </data>
-  <data name="Reset Password Confirm 2" xml:space="preserve">
+    <data name="Reset Password Confirm 2" xml:space="preserve">
     <value>これにより、ユーザーの現在のパスワードは削除され、ユーザーは再度登録する必要があります。</value>
   </data>
-  <data name="Log In" xml:space="preserve">
+    <data name="Log In" xml:space="preserve">
     <value>ログイン</value>
   </data>
-  <data name="Log Out" xml:space="preserve">
+    <data name="Log Out" xml:space="preserve">
     <value>ログアウト</value>
   </data>
-  <data name="Play Data" xml:space="preserve">
+    <data name="Play Data" xml:space="preserve">
     <value>プレイデータ</value>
   </data>
-  <data name="Add Access Code" xml:space="preserve">
+    <data name="Add Access Code" xml:space="preserve">
     <value>アクセスコード追加</value>
   </data>
-  <data name="New Access Code" xml:space="preserve">
+    <data name="New Access Code" xml:space="preserve">
     <value>新しいアクセスコード</value>
   </data>
-  <data name="Delete" xml:space="preserve">
+    <data name="Delete" xml:space="preserve">
     <value>削除</value>
   </data>
-  <data name="Access Code" xml:space="preserve">
+    <data name="Access Code" xml:space="preserve">
     <value>アクセスコード</value>
   </data>
-  <data name="Old Password" xml:space="preserve">
+    <data name="Old Password" xml:space="preserve">
     <value>旧パスワード</value>
   </data>
-  <data name="New Password" xml:space="preserve">
+    <data name="New Password" xml:space="preserve">
     <value>新しいパスワード</value>
   </data>
-  <data name="Confirm New Password" xml:space="preserve">
+    <data name="Confirm New Password" xml:space="preserve">
     <value>パスワードの再入力</value>
   </data>
-  <data name="Dialog OK" xml:space="preserve">
+    <data name="Dialog OK" xml:space="preserve">
     <value>確認</value>
   </data>
-  <data name="QR Code" xml:space="preserve">
+    <data name="QR Code" xml:space="preserve">
     <value>QRコード</value>
   </data>
-  <data name="Chojin" xml:space="preserve">
+    <data name="Chojin" xml:space="preserve">
     <value>超人</value>
   </data>
-  <data name="Eighth Dan" xml:space="preserve">
+    <data name="Eighth Dan" xml:space="preserve">
     <value>八段</value>
   </data>
-  <data name="Fifth Dan" xml:space="preserve">
+    <data name="Fifth Dan" xml:space="preserve">
     <value>五段</value>
   </data>
-  <data name="Fifth Kyuu" xml:space="preserve">
+    <data name="Fifth Kyuu" xml:space="preserve">
     <value>五級</value>
   </data>
-  <data name="First Dan" xml:space="preserve">
+    <data name="First Dan" xml:space="preserve">
     <value>一段</value>
   </data>
-  <data name="First Kyuu" xml:space="preserve">
+    <data name="First Kyuu" xml:space="preserve">
     <value>一級</value>
   </data>
-  <data name="Fourth Dan" xml:space="preserve">
+    <data name="Fourth Dan" xml:space="preserve">
     <value>四段</value>
   </data>
-  <data name="Fourth Kyuu" xml:space="preserve">
+    <data name="Fourth Kyuu" xml:space="preserve">
     <value>四級</value>
   </data>
-  <data name="Gaiden" xml:space="preserve">
+    <data name="Gaiden" xml:space="preserve">
     <value>外伝</value>
   </data>
-  <data name="Kuroto" xml:space="preserve">
+    <data name="Kuroto" xml:space="preserve">
     <value>玄人</value>
   </data>
-  <data name="Meijin" xml:space="preserve">
+    <data name="Meijin" xml:space="preserve">
     <value>名人</value>
   </data>
-  <data name="Ninth Dan" xml:space="preserve">
+    <data name="Ninth Dan" xml:space="preserve">
     <value>九段</value>
   </data>
-  <data name="Second Dan" xml:space="preserve">
+    <data name="Second Dan" xml:space="preserve">
     <value>二段</value>
   </data>
-  <data name="Second Kyuu" xml:space="preserve">
+    <data name="Second Kyuu" xml:space="preserve">
     <value>二級</value>
   </data>
-  <data name="Seventh Dan" xml:space="preserve">
+    <data name="Seventh Dan" xml:space="preserve">
     <value>七段</value>
   </data>
-  <data name="Sixth Dan" xml:space="preserve">
+    <data name="Sixth Dan" xml:space="preserve">
     <value>六段</value>
   </data>
-  <data name="Tatsujin" xml:space="preserve">
+    <data name="Tatsujin" xml:space="preserve">
     <value>達人</value>
   </data>
-  <data name="Tenth Dan" xml:space="preserve">
+    <data name="Tenth Dan" xml:space="preserve">
     <value>十段</value>
   </data>
-  <data name="Third Dan" xml:space="preserve">
+    <data name="Third Dan" xml:space="preserve">
     <value>三段</value>
   </data>
-  <data name="Third Kyuu" xml:space="preserve">
+    <data name="Third Kyuu" xml:space="preserve">
     <value>三級</value>
   </data>
-  <data name="Gold Full Combo" xml:space="preserve">
+    <data name="Gold Full Combo" xml:space="preserve">
     <value>金金合格</value>
   </data>
-  <data name="Red Donderful Combo" xml:space="preserve">
+    <data name="Red Donderful Combo" xml:space="preserve">
     <value>虹赤合格</value>
   </data>
-  <data name="Red Full Combo" xml:space="preserve">
+    <data name="Red Full Combo" xml:space="preserve">
     <value>金赤合格</value>
   </data>
-  <data name="Gold Donderful Combo" xml:space="preserve">
+    <data name="Gold Donderful Combo" xml:space="preserve">
     <value>虹金合格</value>
   </data>
-  <data name="Song Title / Artist" xml:space="preserve">
+    <data name="Song Title / Artist" xml:space="preserve">
     <value>曲名 / Artist</value>
   </data>
-  <data name="Search by Title or Artist" xml:space="preserve">
-    <value>曲名・アーティスト名で検索</value>
+    <data name="Search by Title or Artist" xml:space="preserve">
+    <value>曲名、アーティスト名で検索</value>
   </data>
-  <data name="Filter by Genre" xml:space="preserve">
+    <data name="Filter by Genre" xml:space="preserve">
     <value>ジャンル検索</value>
   </data>
-  <data name="Play History" xml:space="preserve">
-    <value>プレー履歴</value>
+    <data name="Play History" xml:space="preserve">
+    <value>プレイ履歴</value>
   </data>
-  <data name="No Play History Found" xml:space="preserve">
-    <value>プレー履歴なし</value>
+    <data name="No Play History Found" xml:space="preserve">
+    <value>プレイ履歴なし</value>
   </data>
-  <data name="Password" xml:space="preserve">
+    <data name="Password" xml:space="preserve">
     <value>パスワード</value>
   </data>
-  <data name="Settings" xml:space="preserve">
+    <data name="Settings" xml:space="preserve">
     <value>設定</value>
   </data>
-  <data name="Play Time" xml:space="preserve">
-    <value>プレー時間</value>
+    <data name="Play Time" xml:space="preserve">
+    <value>プレイ時間</value>
   </data>
-  <data name="Rank" xml:space="preserve">
+    <data name="Rank" xml:space="preserve">
     <value>ランク</value>
   </data>
-  <data name="Difficulty" xml:space="preserve">
+    <data name="Difficulty" xml:space="preserve">
     <value>難易度</value>
   </data>
-  <data name="Song Number" xml:space="preserve">
+    <data name="Song Number" xml:space="preserve">
     <value>曲数</value>
   </data>
-  <data name="Search by Title, Artist or Date" xml:space="preserve">
-    <value>曲名・アーティスト名・日付で検索</value>
+    <data name="Search by Title, Artist or Date" xml:space="preserve">
+    <value>曲名、アーティスト名、日付で検索</value>
   </data>
-  <data name="Unregister" xml:space="preserve">
+    <data name="Unregister" xml:space="preserve">
     <value>登録解除</value>
   </data>
-  <data name="And" xml:space="preserve">
+    <data name="And" xml:space="preserve">
     <value>と</value>
   </data>
-  <data name="other access code(s)" xml:space="preserve">
+    <data name="other access code(s)" xml:space="preserve">
     <value>他のアクセスコード</value>
   </data>
-  <data name="Copy to Clipboard" xml:space="preserve">
+    <data name="Copy to Clipboard" xml:space="preserve">
     <value>クリップボードにコピー</value>
   </data>
-  <data name="Invite Code" xml:space="preserve">
+    <data name="Invite Code" xml:space="preserve">
     <value>招待コード</value>
   </data>
-  <data name="Error" xml:space="preserve">
+    <data name="Error" xml:space="preserve">
     <value>エラー</value>
   </data>
-  <data name="Access Code is Required" xml:space="preserve">
+    <data name="Access Code is Required" xml:space="preserve">
     <value>アクセスコードが必要です</value>
   </data>
-  <data name="&quot;Invite Code (Optional)&quot;" xml:space="preserve">
+    <data name="&quot;Invite Code (Optional)&quot;" xml:space="preserve">
     <value>招待コード（任意）</value>
   </data>
-  <data name="Last Play Date" xml:space="preserve">
+    <data name="Last Play Date" xml:space="preserve">
     <value>前回プレイデート</value>
   </data>
-  <data name="Last Play Time(5 Min Around Credit End)" xml:space="preserve">
-    <value>前回プレー時間(クレジット終了5分以内)</value>
+    <data name="Last Play Time(5 Min Around Credit End)" xml:space="preserve">
+    <value>前回プレイ時間(クレジット終了5分以内)</value>
   </data>
-  <data name="Password is Required" xml:space="preserve">
+    <data name="Password is Required" xml:space="preserve">
     <value>パスワードが必要です</value>
   </data>
-  <data name="Confirm Password" xml:space="preserve">
+    <data name="Confirm Password" xml:space="preserve">
     <value>パスワードの再入力</value>
   </data>
-  <data name="Confirm Password is Required" xml:space="preserve">
+    <data name="Confirm Password is Required" xml:space="preserve">
     <value>アクセスコードの再入力が必要です</value>
   </data>
-  <data name="Unknown Error" xml:space="preserve">
+    <data name="Unknown Error" xml:space="preserve">
     <value>未知のエラー</value>
   </data>
-  <data name="Success" xml:space="preserve">
+    <data name="Success" xml:space="preserve">
     <value>成功</value>
   </data>
-  <data name="Ura Oni" xml:space="preserve">
+    <data name="Ura Oni" xml:space="preserve">
     <value>おに裏</value>
   </data>
-  <data name="Oni" xml:space="preserve">
+    <data name="Oni" xml:space="preserve">
     <value>おに</value>
   </data>
-  <data name="Hard" xml:space="preserve">
+    <data name="Hard" xml:space="preserve">
     <value>むずかしい</value>
   </data>
-  <data name="Normal" xml:space="preserve">
+    <data name="Normal" xml:space="preserve">
     <value>ふつう</value>
   </data>
-  <data name="Easy" xml:space="preserve">
+    <data name="Easy" xml:space="preserve">
     <value>かんたん</value>
   </data>
-  <data name="Rows Per Page:" xml:space="preserve">
+    <data name="Rows Per Page:" xml:space="preserve">
     <value>1ページ当たりの行数</value>
   </data>
-  <data name="UI" xml:space="preserve">
+    <data name="UI" xml:space="preserve">
     <value>UI</value>
   </data>
-  <data name="Add" xml:space="preserve">
+    <data name="Add" xml:space="preserve">
     <value>追加</value>
   </data>
-  <data name="Access Code Bound Success" xml:space="preserve">
+    <data name="Access Code Bound Success" xml:space="preserve">
     <value>新しいアクセスコードのバインドに成功。</value>
   </data>
-  <data name="Not Logged In Error" xml:space="preserve">
+    <data name="Not Logged In Error" xml:space="preserve">
     <value>ログインしていません。&lt;br /&gt;ログインしてからもう一度お試しください。</value>
   </data>
-  <data name="Access Code Upper Limit Error" xml:space="preserve">
+    <data name="Access Code Upper Limit Error" xml:space="preserve">
     <value>バウンドアクセスコードの上限に達しました。&lt;br /&gt;まずアクセスコードを1つ削除してください。</value>
   </data>
-  <data name="Access Code Already Bound Error" xml:space="preserve">
+    <data name="Access Code Already Bound Error" xml:space="preserve">
     <value>このアクセスコードはすでにバインドされています。</value>
   </data>
-  <data name="Access Code Empty Error" xml:space="preserve">
+    <data name="Access Code Empty Error" xml:space="preserve">
     <value>アクセスコードは空ではありません。&lt;br /&gt;有効なアクセスコードを入力してください。</value>
   </data>
-  <data name="Access Code Not Admin Error" xml:space="preserve">
+    <data name="Access Code Not Admin Error" xml:space="preserve">
     <value>この操作は許可されていません。&lt;br /&gt;他のユーザーのアクセスコードを編集できるのは管理者のみです。</value>
   </data>
-  <data name="Login Only Admin Error" xml:space="preserve">
+    <data name="Login Only Admin Error" xml:space="preserve">
     <value>ログインできるのは管理者のみです。</value>
   </data>
-  <data name="Change Password Success" xml:space="preserve">
+    <data name="Change Password Success" xml:space="preserve">
     <value>パスワードの変更に成功しました。</value>
   </data>
-  <data name="Change Password Different Confirm Password Error" xml:space="preserve">
+    <data name="Change Password Different Confirm Password Error" xml:space="preserve">
     <value>新しいパスワードが違うことを確認してください。&lt;br /&gt;もう一度確認してください。</value>
   </data>
-  <data name="Unknown Access Code Error" xml:space="preserve">
+    <data name="Unknown Access Code Error" xml:space="preserve">
     <value>不明なアクセスコードです。&lt;br /&gt;このアクセスコードでゲームを1回プレイしてから、再度お試しください。</value>
   </data>
-  <data name="Change Password Wrong Current Password Error" xml:space="preserve">
+    <data name="Change Password Wrong Current Password Error" xml:space="preserve">
     <value>現在のパスワードが間違っています。&lt;br /&gt;再度ご確認ください。</value>
   </data>
-  <data name="Access Code Not Registered Error" xml:space="preserve">
+    <data name="Access Code Not Registered Error" xml:space="preserve">
     <value>アクセスコードが登録されていません。&lt;br /&gt;まず登録してから再度お試しください。</value>
   </data>
-  <data name="Login Wrong Password Error" xml:space="preserve">
+    <data name="Login Wrong Password Error" xml:space="preserve">
     <value>パスワードが間違っています。&lt;br /&gt;再度ご確認ください。</value>
   </data>
-  <data name="Register Only Admin Error" xml:space="preserve">
+    <data name="Register Only Admin Error" xml:space="preserve">
     <value>登録できるのは管理者のみです。</value>
   </data>
-  <data name="Register Success" xml:space="preserve">
+    <data name="Register Success" xml:space="preserve">
     <value>アクセスコードが正常に登録されました。</value>
   </data>
-  <data name="Register Different Confirm Password Error" xml:space="preserve">
+    <data name="Register Different Confirm Password Error" xml:space="preserve">
     <value>パスワードの確認がパスワードと一致しません。&lt;br /&gt;再度ご確認ください。</value>
   </data>
-  <data name="Register Already Registered Error" xml:space="preserve">
+    <data name="Register Already Registered Error" xml:space="preserve">
     <value>アクセスコードは既に登録されています。&lt;br /&gt;設定したパスワードを使用してログインしてください。</value>
   </data>
-  <data name="Register Wrong Last Play Time Error" xml:space="preserve">
+    <data name="Register Wrong Last Play Time Error" xml:space="preserve">
     <value>最後のプレイ時間が間違っています。&lt;br /&gt;最後にプレイした時間を忘れた場合は、このアクセスコードで再度ゲームをプレイするか、管理者に連絡してください。</value>
   </data>
-  <data name="Cancel" xml:space="preserve">
+    <data name="Cancel" xml:space="preserve">
     <value>キャンセル</value>
   </data>
-  <data name="Access Code Delete Last Access Code Error" xml:space="preserve">
+    <data name="Access Code Delete Last Access Code Error" xml:space="preserve">
     <value>ユーザーの最後のアクセスコードを削除できません。</value>
   </data>
-  <data name="Access Code Delete Success" xml:space="preserve">
+    <data name="Access Code Delete Success" xml:space="preserve">
     <value>アクセスコードが正常に削除されました。</value>
   </data>
-  <data name="ID" xml:space="preserve">
+    <data name="ID" xml:space="preserve">
     <value>ID</value>
   </data>
-  <data name="Access Code Delete Confirm" xml:space="preserve">
+    <data name="Access Code Delete Confirm" xml:space="preserve">
     <value>このアクセスコードを削除してもよろしいですか？</value>
   </data>
-  <data name="Currently Selected:" xml:space="preserve">
+    <data name="Currently Selected:" xml:space="preserve">
     <value>現在選択中:</value>
   </data>
-  <data name="Reset" xml:space="preserve">
+    <data name="Reset" xml:space="preserve">
     <value>リセット</value>
   </data>
-  <data name="Delete User Confirm" xml:space="preserve">
+    <data name="Delete User Confirm" xml:space="preserve">
     <value>このユーザーのデータを本当に削除してもよろしいですか？&lt;br /&gt;関連するすべてのデータが削除され、この操作は元に戻せません！</value>
   </data>
-  <data name="Delete User Success" xml:space="preserve">
+    <data name="Delete User Success" xml:space="preserve">
     <value>ユーザーが正常に削除されました。</value>
   </data>
-  <data name="None" xml:space="preserve">
+    <data name="None" xml:space="preserve">
     <value>なし</value>
   </data>
-  <data name="Whimsical" xml:space="preserve">
+    <data name="Whimsical" xml:space="preserve">
     <value>きまぐれ</value>
   </data>
-  <data name="Messy" xml:space="preserve">
+    <data name="Messy" xml:space="preserve">
     <value>でたらめ</value>
   </data>
-  <data name="Taiko" xml:space="preserve">
+    <data name="Taiko" xml:space="preserve">
     <value>太鼓</value>
   </data>
-  <data name="Matsuri" xml:space="preserve">
+    <data name="Matsuri" xml:space="preserve">
     <value>お祭り</value>
   </data>
-  <data name="Inuneko" xml:space="preserve">
+    <data name="Inuneko" xml:space="preserve">
     <value>いぬねこ</value>
   </data>
-  <data name="Wonderfultaiko" xml:space="preserve">
+    <data name="Wonderfultaiko" xml:space="preserve">
     <value>豪華な太鼓</value>
   </data>
-  <data name="Drum" xml:space="preserve">
+    <data name="Drum" xml:space="preserve">
     <value>ドラム</value>
   </data>
-  <data name="Tambourine" xml:space="preserve">
+    <data name="Tambourine" xml:space="preserve">
     <value>タンバリン</value>
   </data>
-  <data name="Wadadon" xml:space="preserve">
+    <data name="Wadadon" xml:space="preserve">
     <value>和田どん</value>
   </data>
-  <data name="Clapping" xml:space="preserve">
+    <data name="Clapping" xml:space="preserve">
     <value>手拍子</value>
   </data>
-  <data name="Conga" xml:space="preserve">
+    <data name="Conga" xml:space="preserve">
     <value>コンガ</value>
   </data>
-  <data name="8bittaiko" xml:space="preserve">
+    <data name="8bittaiko" xml:space="preserve">
     <value>8ビット太鼓</value>
   </data>
-  <data name="Soya" xml:space="preserve">
+    <data name="Soya" xml:space="preserve">
     <value>ソイヤ</value>
   </data>
-  <data name="Mekadon" xml:space="preserve">
+    <data name="Mekadon" xml:space="preserve">
     <value>メカドン</value>
   </data>
-  <data name="Funassyi" xml:space="preserve">
+    <data name="Funassyi" xml:space="preserve">
     <value>ふなっしー </value>
   </data>
-  <data name="Wrap" xml:space="preserve">
+    <data name="Wrap" xml:space="preserve">
     <value>ラップ</value>
   </data>
-  <data name="Isogai" xml:space="preserve">
+    <data name="Isogai" xml:space="preserve">
     <value>細貝さん</value>
   </data>
-  <data name="Akemi" xml:space="preserve">
+    <data name="Akemi" xml:space="preserve">
     <value>朱美ちゃん</value>
   </data>
-  <data name="Synthdrum" xml:space="preserve">
+    <data name="Synthdrum" xml:space="preserve">
     <value>シンセドラム</value>
   </data>
-  <data name="Shuriken" xml:space="preserve">
+    <data name="Shuriken" xml:space="preserve">
     <value>しゅりけん</value>
   </data>
-  <data name="Puchipuchi" xml:space="preserve">
+    <data name="Puchipuchi" xml:space="preserve">
     <value>プチプチ</value>
   </data>
-  <data name="Electric Guitar" xml:space="preserve">
+    <data name="Electric Guitar" xml:space="preserve">
     <value>エレキギター</value>
   </data>
-  <data name="UraOni" xml:space="preserve">
+    <data name="UraOni" xml:space="preserve">
     <value>おに裏</value>
   </data>
-  <data name="Set Up Each Time" xml:space="preserve">
+    <data name="Set Up Each Time" xml:space="preserve">
     <value>毎回設定</value>
   </data>
-  <data name="Default" xml:space="preserve">
+    <data name="Default" xml:space="preserve">
     <value>デフォルト</value>
   </data>
-  <data name="Not Cleared" xml:space="preserve">
+    <data name="Not Cleared" xml:space="preserve">
     <value>未クリア優先</value>
   </data>
-  <data name="Not Full Combo" xml:space="preserve">
+    <data name="Not Full Combo" xml:space="preserve">
     <value>未フルコンボ優先</value>
   </data>
-  <data name="Not Donderful Combo" xml:space="preserve">
+    <data name="Not Donderful Combo" xml:space="preserve">
     <value>未ドンダフルコンボ優先</value>
   </data>
-  <data name="Japanese" xml:space="preserve">
+    <data name="Japanese" xml:space="preserve">
     <value>日本語</value>
   </data>
-  <data name="English" xml:space="preserve">
+    <data name="English" xml:space="preserve">
     <value>英語</value>
   </data>
-  <data name="Chinese Traditional" xml:space="preserve">
+    <data name="Chinese Traditional" xml:space="preserve">
     <value>繁体字中国語</value>
   </data>
-  <data name="Korean" xml:space="preserve">
+    <data name="Korean" xml:space="preserve">
     <value>韓国語</value>
   </data>
-  <data name="Chinese Simplified" xml:space="preserve">
+    <data name="Chinese Simplified" xml:space="preserve">
     <value>簡体字中国語</value>
   </data>
-  <data name="1 Star" xml:space="preserve">
+    <data name="1 Star" xml:space="preserve">
     <value>★ 1</value>
   </data>
-  <data name="10 Star" xml:space="preserve">
+    <data name="10 Star" xml:space="preserve">
     <value>★ 10</value>
   </data>
-  <data name="2 Star" xml:space="preserve">
+    <data name="2 Star" xml:space="preserve">
     <value>★ 2</value>
   </data>
-  <data name="3 Star" xml:space="preserve">
+    <data name="3 Star" xml:space="preserve">
     <value>★ 3</value>
   </data>
-  <data name="4 Star" xml:space="preserve">
+    <data name="4 Star" xml:space="preserve">
     <value>★ 4</value>
   </data>
-  <data name="5 Star" xml:space="preserve">
+    <data name="5 Star" xml:space="preserve">
     <value>★ 5</value>
   </data>
-  <data name="6 Star" xml:space="preserve">
+    <data name="6 Star" xml:space="preserve">
     <value>★ 6</value>
   </data>
-  <data name="7 Star" xml:space="preserve">
+    <data name="7 Star" xml:space="preserve">
     <value>★ 7</value>
   </data>
-  <data name="8 Star" xml:space="preserve">
+    <data name="8 Star" xml:space="preserve">
     <value>★ 8</value>
   </data>
-  <data name="9 Star" xml:space="preserve">
+    <data name="9 Star" xml:space="preserve">
     <value>★ 9</value>
   </data>
-  <data name="Log Out Confirm" xml:space="preserve">
+    <data name="Log Out Confirm" xml:space="preserve">
     <value>ログアウトしてもよろしいですか？</value>
   </data>
-  <data name="Leaderboard" xml:space="preserve">
+    <data name="Leaderboard" xml:space="preserve">
     <value>ランキング</value>
   </data>
-  <data name="User ID" xml:space="preserve">
+    <data name="User ID" xml:space="preserve">
     <value>ユーザーID</value>
   </data>
+    <data name="Search by Name, ID, or Access Code" xml:space="preserve">
+    <value>名前、ID、アクセスコードで検索</value>
+  </data>
+    <data name="Player Titles" xml:space="preserve">
+      <value>プレイヤー称号</value>
+    </data>
+    <data name="Search" xml:space="preserve">
+      <value>検索</value>
+    </data>
 </root>
