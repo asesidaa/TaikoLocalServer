@@ -14,8 +14,6 @@ public partial class AccessCode
     
     private UserSetting? userSetting;
 
-    private readonly List<BreadcrumbItem> breadcrumbs = new();
-
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -29,16 +27,12 @@ public partial class AccessCode
 
         userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
 
-        if (AuthService.IsLoggedIn && !AuthService.IsAdmin)
-        {
-            breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
-        }
-        else
-        {
-            breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
-        }
-        breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
-        breadcrumbs.Add(new BreadcrumbItem(Localizer["Access Codes"], href: $"/Users/{Baid}/AccessCode", disabled: false));
+        BreadcrumbsStateContainer.breadcrumbs.Clear();
+        if (AuthService.IsLoggedIn && !AuthService.IsAdmin) BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
+        else BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Access Codes"], href: $"/Users/{Baid}/AccessCode", disabled: false));
+        BreadcrumbsStateContainer.NotifyStateChanged();
     }
 
     private async Task InitializeUser()

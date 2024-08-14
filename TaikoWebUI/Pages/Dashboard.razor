@@ -1,15 +1,15 @@
 ﻿@page "/"
-@inject HttpClient Http
 @using Markdig
+@inject HttpClient Http
+@inject BreadcrumbsStateContainer BreadcrumbsStateContainer
 
-<MudText Typo="Typo.h4">@Localizer["Dashboard"]</MudText>
 <MudGrid Class="my-8">
     <MudItem xs="12">
         <MudPaper Elevation="0" Outlined="true">
             <div class="markdown-container">
                 @if (isLoading)
                 {
-                    <MudCircularProgress />
+                    <MudProgressCircular/>
                 }
                 else
                 {
@@ -48,5 +48,9 @@
         }
 
         isLoading = false;
+
+        BreadcrumbsStateContainer.breadcrumbs.Clear();
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
+        BreadcrumbsStateContainer.NotifyStateChanged();
     }
 }

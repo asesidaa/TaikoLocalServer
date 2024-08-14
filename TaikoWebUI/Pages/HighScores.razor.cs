@@ -8,8 +8,6 @@ public partial class HighScores
     private SongBestResponse? response;
     private UserSetting? userSetting;
     private Dictionary<Difficulty, List<SongBestData>> songBestDataMap = new();
-
-    private readonly List<BreadcrumbItem> breadcrumbs = new();
     private int selectedDifficultyTab;
     private Dictionary<uint, MusicDetail> musicDetailDictionary = new();
 
@@ -51,16 +49,18 @@ public partial class HighScores
         selectedDifficultyTab = await LocalStorage.GetItemAsync<int>($"highScoresTab");
 
         // Breadcrumbs
+        BreadcrumbsStateContainer.breadcrumbs.Clear();
         if (AuthService.IsLoggedIn && !AuthService.IsAdmin)
         {
-            breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
+            BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
         }
         else
         {
-            breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
+            BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
         };
-        breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
-        breadcrumbs.Add(new BreadcrumbItem(Localizer["High Scores"], href: $"/Users/{Baid}/HighScores", disabled: false));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["High Scores"], href: $"/Users/{Baid}/HighScores", disabled: false));
+        BreadcrumbsStateContainer.NotifyStateChanged();
     }
 
     private async Task OnFavoriteToggled(SongBestData data)

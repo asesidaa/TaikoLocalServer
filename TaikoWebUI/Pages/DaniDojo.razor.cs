@@ -17,12 +17,10 @@ public partial class DaniDojo
     private Dictionary<uint, MusicDetail> musicDetailDictionary = new();
     private ImmutableDictionary<uint, DanData> danMap = ImmutableDictionary<uint, DanData>.Empty;
 
-    private readonly List<BreadcrumbItem> breadcrumbs = new();
-
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        
+
         if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
         {
             await AuthService.LoginWithAuthToken();
@@ -39,19 +37,16 @@ public partial class DaniDojo
         SongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
 
         userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
-        
+
         musicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
 
-        if (AuthService.IsLoggedIn && !AuthService.IsAdmin)
-        {
-            breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
-        }
-        else
-        {
-            breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
-        };
-        breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
-        breadcrumbs.Add(new BreadcrumbItem(Localizer["Dani Dojo"], href: $"/Users/{Baid}/DaniDojo", disabled: false));
+        // Breadcrumbs
+        BreadcrumbsStateContainer.breadcrumbs.Clear();
+        if (AuthService.IsLoggedIn && !AuthService.IsAdmin) BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
+        else BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dani Dojo"], href: $"/Users/{Baid}/DaniDojo", disabled: false));
+        BreadcrumbsStateContainer.NotifyStateChanged();
     }
 
     private string GetDanClearStateString(DanClearState danClearState)
@@ -111,7 +106,7 @@ public partial class DaniDojo
     private static uint GetSongBestFromData(DanConditionType type, DanBestData data, int songNumber)
     {
         songNumber.Throw().IfOutOfRange(0, 2);
-        
+
         return type switch
         {
             DanConditionType.SoulGauge => throw new ArgumentException("Soul gauge should not be here"),
