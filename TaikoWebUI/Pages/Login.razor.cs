@@ -16,7 +16,7 @@ public partial class Login
         }
 
         BreadcrumbsStateContainer.breadcrumbs.Clear();
-        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Login"], href: "/Login"));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Log In"], href: "/Login"));
         BreadcrumbsStateContainer.NotifyStateChanged();
     }
 

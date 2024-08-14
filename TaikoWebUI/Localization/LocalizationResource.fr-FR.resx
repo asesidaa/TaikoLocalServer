@@ -124,13 +124,13 @@
     <value>Utilisateurs</value>
   </data>
   <data name="Edit Profile" xml:space="preserve">
-    <value>Editer le profil</value>
+    <value>Profil</value>
   </data>
   <data name="User" xml:space="preserve">
     <value>Utilisateur</value>
   </data>
   <data name="View Play Data" xml:space="preserve">
-    <value>Voir les données de jeu</value>
+    <value>Données de jeu</value>
   </data>
   <data name="High Scores" xml:space="preserve">
     <value>Meilleurs Scores</value>
@@ -154,7 +154,7 @@
     <value>Bienvenue sur TaikoWebUI !</value>
   </data>
   <data name="Song Name" xml:space="preserve">
-    <value>Chart</value>
+    <value>Musique</value>
   </data>
   <data name="Level" xml:space="preserve">
     <value>Niveau</value>
@@ -205,7 +205,7 @@
     <value>Nombre total de Combos Donderful</value>
   </data>
   <data name="Song List" xml:space="preserve">
-    <value>Charts</value>
+    <value>Musiques</value>
   </data>
   <data name="Hide" xml:space="preserve">
     <value>Cacher</value>
@@ -238,7 +238,7 @@
     <value>Jauge d'âme</value>
   </data>
   <data name="Course Songs" xml:space="preserve">
-    <value>Chansons</value>
+    <value>Musiques</value>
   </data>
   <data name="Conditions" xml:space="preserve">
     <value>Conditions</value>
@@ -250,7 +250,7 @@
     <value>Gold</value>
   </data>
   <data name="Not Cleared" xml:space="preserve">
-    <value>Not Cleared</value>
+    <value>Pas Clear</value>
   </data>
   <data name="Pass" xml:space="preserve">
     <value>Pass</value>
@@ -286,7 +286,7 @@
     <value>Joueur</value>
   </data>
   <data name="Achievement Panel" xml:space="preserve">
-    <value>Tableau d'achèvements</value>
+    <value>Tableau de reussite</value>
   </data>
   <data name="Save" xml:space="preserve">
     <value>Sauvegarder</value>
@@ -304,13 +304,13 @@
     <value>Décor de Plaque</value>
   </data>
   <data name="Achievement Panel Difficulty" xml:space="preserve">
-    <value>Difficulté du tableau d'achèvements</value>
+    <value>Difficulté du tableau de réussite</value>
   </data>
   <data name="Display Dan Rank on Name Plate" xml:space="preserve">
     <value>Afficher le Dan sur la plaque</value>
   </data>
   <data name="Display Achievement Panel" xml:space="preserve">
-    <value>Afficher le tableau d'achèvements</value>
+    <value>Afficher le tableau de reussite</value>
   </data>
   <data name="Difficulty Setting Course" xml:space="preserve">
     <value>Mode recherche : Difficulté</value>
@@ -352,10 +352,7 @@
     <value>Disparition</value>
   </data>
   <data name="Inverse" xml:space="preserve">
-    <value>Inverse</value>
-  </data>
-  <data name="Give Up" xml:space="preserve">
-    <value>Abandon</value>
+    <value>Inverser</value>
   </data>
   <data name="Voice" xml:space="preserve">
     <value>Voix</value>
@@ -496,7 +493,7 @@
     <value>Gold Donderful Combo</value>
   </data>
   <data name="Song Title / Artist" xml:space="preserve">
-    <value>Titre / Artiste de la chanson</value>
+    <value>Titre / Artiste de la musique</value>
   </data>
   <data name="Search by Title or Artist" xml:space="preserve">
     <value>Recherche par titre ou par artiste</value>
@@ -553,13 +550,13 @@
     <value>Le code d'accès est requis</value>
   </data>
   <data name="&quot;Invite Code (Optional)&quot;" xml:space="preserve">
-    <value>" Code d'invitation (facultatif) "</value>
+    <value>"Code d'invitation (facultatif)"</value>
   </data>
   <data name="Last Play Date" xml:space="preserve">
     <value>Date de dernière partie</value>
   </data>
   <data name="Last Play Time(5 Min Around Credit End)" xml:space="preserve">
-    <value>Joué la dernière fois (5 minutes près vers la fin du crédit)</value>
+    <value>Joué la dernière fois (à 5 minutes près de la fin du crédit)</value>
   </data>
   <data name="Password is Required" xml:space="preserve">
     <value>Mot de passe est requis</value>
@@ -568,7 +565,7 @@
     <value>Confirmer le mot de passe</value>
   </data>
   <data name="Confirm Password is Required" xml:space="preserve">
-    <value>La confirmation du mot de passe est requise</value>
+    <value>Vous devez confirmer le mot de passe</value>
   </data>
   <data name="Unknown Error" xml:space="preserve">
     <value>Erreur inconnue</value>
@@ -580,7 +577,7 @@
     <value>Ura</value>
   </data>
   <data name="Oni" xml:space="preserve">
-    <value>Extreme</value>
+    <value>Oni</value>
   </data>
   <data name="Hard" xml:space="preserve">
     <value>Difficile</value>
@@ -679,6 +676,150 @@
     <value>Voulez-vous vraiment supprimer les données de cet utilisateur ? &lt;br /&gt;Toutes les données associées seront supprimées et ne pourront pas être récupérées !</value>
   </data>
   <data name="Delete User Success" xml:space="preserve">
-    <value>Utilisateur supprimé !</value>
+    <value>Utilisateur supprimé.</value>
+  </data>
+  <data name="1 Star" xml:space="preserve">
+    <value>★ 1</value>
+  </data>
+  <data name="2 Star" xml:space="preserve">
+    <value>★ 2</value>
+  </data>
+  <data name="3 Star" xml:space="preserve">
+    <value>★ 3</value>
+  </data>
+  <data name="4 Star" xml:space="preserve">
+    <value>★ 4</value>
+  </data>
+  <data name="5 Star" xml:space="preserve">
+    <value>★ 5</value>
+  </data>
+  <data name="6 Star" xml:space="preserve">
+    <value>★ 6</value>
+  </data>
+  <data name="7 Star" xml:space="preserve">
+    <value>★ 7</value>
+  </data>
+  <data name="8 Star" xml:space="preserve">
+    <value>★ 8</value>
+  </data>
+  <data name="9 Star" xml:space="preserve">
+    <value>★ 9</value>
+  </data>
+  <data name="10 Star" xml:space="preserve">
+    <value>★ 10</value>
+  </data>
+  <data name="Not Passed" xml:space="preserve">
+    <value>Non validé</value>
+  </data>
+  <data name="User ID" xml:space="preserve">
+    <value>ID de l'utilisateur</value>
+  </data>
+  <data name="Leaderboard" xml:space="preserve">
+    <value>Classement</value>
+  </data>
+  <data name="Log Out Confirm" xml:space="preserve">
+    <value>Êtes-vous sûr de vouloir vous déconnecter ?</value>
+  </data>
+  <data name="8bittaiko" xml:space="preserve">
+    <value>Taiko 8 bits</value>
+  </data>
+  <data name="Akemi" xml:space="preserve">
+    <value>Akemi</value>
+  </data>
+  <data name="Chinese Simplified" xml:space="preserve">
+    <value>Chinois simplifié</value>
+  </data>
+  <data name="Chinese Traditional" xml:space="preserve">
+    <value>Chinois traditionnel</value>
+  </data>
+  <data name="Clapping" xml:space="preserve">
+    <value>Applaudissements</value>
+  </data>
+  <data name="Conga" xml:space="preserve">
+    <value>Conga</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value>Défaut</value>
+  </data>
+  <data name="Drum" xml:space="preserve">
+    <value>Tambour</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Désactivé</value>
+  </data>
+  <data name="Whimsical" xml:space="preserve">
+    <value>Fantaisiste</value>
+  </data>
+  <data name="Messy" xml:space="preserve">
+    <value>Désordonné</value>
+  </data>
+  <data name="Taiko" xml:space="preserve">
+    <value>Taiko</value>
+  </data>
+  <data name="Matsuri" xml:space="preserve">
+    <value>Festival</value>
+  </data>
+  <data name="Inuneko" xml:space="preserve">
+    <value>Chiens &amp; Chats</value>
+  </data>
+  <data name="Wonderfultaiko" xml:space="preserve">
+    <value>Taiko Deluxe</value>
+  </data>
+  <data name="Tambourine" xml:space="preserve">
+    <value>Tambourin</value>
+  </data>
+  <data name="Wadadon" xml:space="preserve">
+    <value>Wadadon</value>
+  </data>
+  <data name="Soya" xml:space="preserve">
+    <value>Oh hisse</value>
+  </data>
+  <data name="Mekadon" xml:space="preserve">
+    <value>Don Mecha</value>
+  </data>
+  <data name="Funassyi" xml:space="preserve">
+    <value>Funassyi</value>
+  </data>
+  <data name="Wrap" xml:space="preserve">
+    <value>Rap</value>
+  </data>
+  <data name="Isogai" xml:space="preserve">
+    <value>Hosogai</value>
+  </data>
+  <data name="Synthdrum" xml:space="preserve">
+    <value>Tambour Synthétique</value>
+  </data>
+  <data name="Shuriken" xml:space="preserve">
+    <value>Shuriken</value>
+  </data>
+  <data name="Puchipuchi" xml:space="preserve">
+    <value>Bubble Pop</value>
+  </data>
+  <data name="Electric Guitar" xml:space="preserve">
+    <value>Guitare électrique</value>
+  </data>
+  <data name="UraOni" xml:space="preserve">
+    <value>Ura</value>
+  </data>
+  <data name="Set Up Each Time" xml:space="preserve">
+    <value>Configurer à chaque fois</value>
+  </data>
+  <data name="Not Full Combo" xml:space="preserve">
+    <value>Pas Full Combo</value>
+  </data>
+  <data name="Not Donderful Combo" xml:space="preserve">
+    <value>Pas Donderful Combo</value>
+  </data>
+  <data name="Japanese" xml:space="preserve">
+    <value>Japonais</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>Anglais</value>
+  </data>
+  <data name="Korean" xml:space="preserve">
+    <value>Coréen</value>
+  </data>
+  <data name="Skip Song" xml:space="preserve">
+    <value>Passer la chanson</value>
   </data>
 </root>

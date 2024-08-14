@@ -37,14 +37,6 @@ public partial class PlayHistory
 
         userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
 
-        //breadcrumbs
-        BreadcrumbsStateContainer.breadcrumbs.Clear();
-        if (AuthService.IsLoggedIn && !AuthService.IsAdmin) BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
-        else BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
-        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
-        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Play History"], href: $"/Users/{Baid}/PlayHistory", disabled: false));
-        BreadcrumbsStateContainer.NotifyStateChanged();
-
         songNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
         
         musicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
@@ -64,6 +56,14 @@ public partial class PlayHistory
         {
             songHistoryDataList.Sort((data1, data2) => data1.SongNumber.CompareTo(data2.SongNumber));
         }
+
+        //breadcrumbs
+        BreadcrumbsStateContainer.breadcrumbs.Clear();
+        if (AuthService.IsLoggedIn && !AuthService.IsAdmin) BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
+        else BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Play History"], href: $"/Users/{Baid}/PlayHistory", disabled: false));
+        BreadcrumbsStateContainer.NotifyStateChanged();
     }
 
     private static string GetCrownText(CrownType crown)
