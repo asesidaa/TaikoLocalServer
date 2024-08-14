@@ -26,6 +26,15 @@ var version = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyInformatio
     .InformationalVersion;
 Log.Information("TaikoLocalServer version {Version}", version);
 
+var buildTime = Assembly.GetEntryAssembly()?
+    .GetCustomAttributes<AssemblyMetadataAttribute>()
+    .FirstOrDefault(attr => attr.Key == "BuildTime")?.Value;
+
+if (buildTime != null)
+{
+    Log.Information("Build time: {BuildTime}", buildTime);
+}
+
 Log.Information("Server starting up...");
 
 try

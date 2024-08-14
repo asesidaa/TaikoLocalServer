@@ -1133,6 +1133,15 @@ namespace TaikoWebUI.Localization {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        internal static string Player_Titles {
+            get {
+                return ResourceManager.GetString("Player Titles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         internal static string Puchipuchi {
             get {
                 return ResourceManager.GetString("Puchipuchi", resourceCulture);
@@ -1262,6 +1271,24 @@ namespace TaikoWebUI.Localization {
         internal static string Rows_Per_Page_ {
             get {
                 return ResourceManager.GetString("Rows Per Page:", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Search {
+            get {
+                return ResourceManager.GetString("Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Search_by_Name__ID__or_Access_Code {
+            get {
+                return ResourceManager.GetString("Search by Name, ID, or Access Code", resourceCulture);
             }
         }
         

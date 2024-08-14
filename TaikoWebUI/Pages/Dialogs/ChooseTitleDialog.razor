@@ -1,17 +1,15 @@
-﻿@using System.Collections.Immutable
-@inject IGameDataService GameDataService
-@inject IJSRuntime Js
+﻿@inject IJSRuntime Js
 
 <MudDialog>
     <DialogContent>
         <MudTable Items="@Titles" Filter="@Filter" @bind-SelectedItem="@selectedTitle" Height="40vh" Hover="true">
             <ColGroup>
-                <col style="width: 50px;" />
-                <col />
+                <col style="width: 50px;"/>
+                <col/>
             </ColGroup>
             <ToolBarContent>
-                <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                    AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0">
+                <MudTextField @bind-Value="searchString" Placeholder=@Localizer["Search"] Adornment="Adornment.Start" Immediate="true"
+                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0">
                 </MudTextField>
             </ToolBarContent>
             <HeaderContent>
@@ -38,10 +36,12 @@
                 }
             </RowTemplate>
             <PagerContent>
-                <MudTablePager RowsPerPageString=@Localizer["Rows Per Page"] />
+                <MudTablePager RowsPerPageString=@Localizer["Rows Per Page:"]/>
             </PagerContent>
         </MudTable>
-        <MudText Class="mt-4 d-block" Typo="Typo.caption"> <b>@Localizer["Currently Selected:"]</b> @selectedTitle?.TitleName</MudText>
+        <MudText Class="mt-4 d-block" Typo="Typo.caption">
+            <b>@Localizer["Currently Selected:"]</b> @selectedTitle?.TitleName
+        </MudText>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">
@@ -55,17 +55,13 @@
 
 @code {
 
-    [CascadingParameter]
-    MudDialogInstance MudDialog { get; set; } = null!;
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
 
-    [Parameter]
-    public UserSetting UserSetting { get; set; } = new();
+    [Parameter] public UserSetting UserSetting { get; set; } = new();
 
-    [Parameter]
-    public bool AllowFreeProfileEditing { get; set; }
-    
-    [Parameter]
-    public List<Title> Titles { get; set; } = new();
+    [Parameter] public bool AllowFreeProfileEditing { get; set; }
+
+    [Parameter] public List<Title> Titles { get; set; } = new();
 
     private Title? selectedTitle;
 
@@ -75,9 +71,9 @@
     {
         base.OnInitialized();
         var currentTitle = new Title
-            {
-                TitleName = UserSetting.Title
-            };
+        {
+            TitleName = UserSetting.Title
+        };
         if (Titles.Contains(currentTitle))
         {
             selectedTitle = currentTitle;
@@ -90,8 +86,9 @@
         {
             return false;
         }
+
         return string.IsNullOrEmpty(searchString) ||
-        title.TitleName.Contains(searchString, StringComparison.InvariantCultureIgnoreCase);
+               title.TitleName.Contains(searchString, StringComparison.InvariantCultureIgnoreCase);
     }
 
     private async Task Submit()
@@ -101,11 +98,14 @@
             UserSetting.Title = selectedTitle.TitleName;
             UserSetting.TitlePlateId = selectedTitle.TitleRarity;
         }
-        
+
         await Js.InvokeVoidAsync("updateTitleText", UserSetting.Title);
         MudDialog.Close(DialogResult.Ok(true));
     }
 
-    private void Cancel() => MudDialog.Cancel();
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
 
 }

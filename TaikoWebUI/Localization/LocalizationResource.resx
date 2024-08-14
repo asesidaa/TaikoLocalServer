@@ -1,636 +1,650 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
-    Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
-    associated with the data types.
-    
-    Example:
-    
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-                
-    There are any number of "resheader" rows that contain simple 
-    name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
-    mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
-    extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
-    read any of the formats listed below.
-    
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
+    <!-- 
+      Microsoft ResX Schema 
+      
+      Version 2.0
+      
+      The primary goals of this format is to allow a simple XML format 
+      that is mostly human readable. The generation and parsing of the 
+      various data types are done through the TypeConverter classes 
+      associated with the data types.
+      
+      Example:
+      
+      ... ado.net/XML headers & schema ...
+      <resheader name="resmimetype">text/microsoft-resx</resheader>
+      <resheader name="version">2.0</resheader>
+      <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+      <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+      <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+      <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+      <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+          <value>[base64 mime encoded serialized .NET Framework object]</value>
+      </data>
+      <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+          <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+          <comment>This is a comment</comment>
+      </data>
+                  
+      There are any number of "resheader" rows that contain simple 
+      name/value pairs.
+      
+      Each data row contains a name, and value. The row also contains a 
+      type or mimetype. Type corresponds to a .NET class that support 
+      text/value conversion through the TypeConverter architecture. 
+      Classes that don't support this are serialized and stored with the 
+      mimetype set.
+      
+      The mimetype is used for serialized objects, and tells the 
+      ResXResourceReader how to depersist the object. This is currently not 
+      extensible. For a given mimetype the value must be set accordingly:
+      
+      Note - application/x-microsoft.net.object.binary.base64 is the format 
+      that the ResXResourceWriter will generate, however the reader can 
+      read any of the formats listed below.
+      
+      mimetype: application/x-microsoft.net.object.binary.base64
+      value   : The object must be serialized with 
+              : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+              : and then encoded with base64 encoding.
+      
+      mimetype: application/x-microsoft.net.object.soap.base64
+      value   : The object must be serialized with 
+              : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+              : and then encoded with base64 encoding.
+  
+      mimetype: application/x-microsoft.net.object.bytearray.base64
+      value   : The object must be serialized into a byte array 
+              : using a System.ComponentModel.TypeConverter
+              : and then encoded with base64 encoding.
+      -->
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
+                xmlns="">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
             <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
             </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <data name="DateFormat" xml:space="preserve">
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="DateFormat" xml:space="preserve">
     <value>MM/dd/yyyy h:mm:ss tt</value>
   </data>
-  <data name="Generate Invite Code" xml:space="preserve">
-    <value />
+    <data name="Generate Invite Code" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Register" xml:space="preserve">
-    <value />
+    <data name="Register" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Log In" xml:space="preserve">
-    <value />
+    <data name="Log In" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Achievement Panel" xml:space="preserve">
-    <value />
+    <data name="Achievement Panel" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Achievement Panel Difficulty" xml:space="preserve">
-    <value />
+    <data name="Achievement Panel Difficulty" xml:space="preserve">
+    <value/>
   </data>
-  <data name="AI Battle Data" xml:space="preserve">
-    <value />
+    <data name="AI Battle Data" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Bad" xml:space="preserve">
-    <value />
+    <data name="Bad" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Best Crown" xml:space="preserve">
-    <value />
+    <data name="Best Crown" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Best Rank" xml:space="preserve">
-    <value />
+    <data name="Best Rank" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Log Out" xml:space="preserve">
-    <value />
+    <data name="Log Out" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Play Data" xml:space="preserve">
-    <value />
+    <data name="Play Data" xml:space="preserve">
+    <value/>
   </data>
-  <data name="High Scores" xml:space="preserve">
-    <value />
+    <data name="High Scores" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Access Codes" xml:space="preserve">
-    <value />
+    <data name="Access Codes" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Add Access Code" xml:space="preserve">
-    <value />
+    <data name="Add Access Code" xml:space="preserve">
+    <value/>
   </data>
-  <data name="New Access Code" xml:space="preserve">
-    <value />
+    <data name="New Access Code" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Delete" xml:space="preserve">
-    <value />
+    <data name="Delete" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Access Code" xml:space="preserve">
-    <value />
+    <data name="Access Code" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Old Password" xml:space="preserve">
-    <value />
+    <data name="Old Password" xml:space="preserve">
+    <value/>
   </data>
-  <data name="New Password" xml:space="preserve">
-    <value />
+    <data name="New Password" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Confirm New Password" xml:space="preserve">
-    <value />
+    <data name="Confirm New Password" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Dialog OK" xml:space="preserve">
-    <value />
+    <data name="Dialog OK" xml:space="preserve">
+    <value/>
   </data>
-  <data name="QR Code" xml:space="preserve">
-    <value />
+    <data name="QR Code" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Fifth Kyuu" xml:space="preserve">
-    <value />
+    <data name="Fifth Kyuu" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Fourth Kyuu" xml:space="preserve">
-    <value />
+    <data name="Fourth Kyuu" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Third Kyuu" xml:space="preserve">
-    <value />
+    <data name="Third Kyuu" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Second Kyuu" xml:space="preserve">
-    <value />
+    <data name="Second Kyuu" xml:space="preserve">
+    <value/>
   </data>
-  <data name="First Kyuu" xml:space="preserve">
-    <value />
+    <data name="First Kyuu" xml:space="preserve">
+    <value/>
   </data>
-  <data name="First Dan" xml:space="preserve">
-    <value />
+    <data name="First Dan" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Second Dan" xml:space="preserve">
-    <value />
+    <data name="Second Dan" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Third Dan" xml:space="preserve">
-    <value />
+    <data name="Third Dan" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Fourth Dan" xml:space="preserve">
-    <value />
+    <data name="Fourth Dan" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Fifth Dan" xml:space="preserve">
-    <value />
+    <data name="Fifth Dan" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Sixth Dan" xml:space="preserve">
-    <value />
+    <data name="Sixth Dan" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Seventh Dan" xml:space="preserve">
-    <value />
+    <data name="Seventh Dan" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Eighth Dan" xml:space="preserve">
-    <value />
+    <data name="Eighth Dan" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Ninth Dan" xml:space="preserve">
-    <value />
+    <data name="Ninth Dan" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Tenth Dan" xml:space="preserve">
-    <value />
+    <data name="Tenth Dan" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Kuroto" xml:space="preserve">
-    <value />
+    <data name="Kuroto" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Meijin" xml:space="preserve">
-    <value />
+    <data name="Meijin" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Chojin" xml:space="preserve">
-    <value />
+    <data name="Chojin" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Tatsujin" xml:space="preserve">
-    <value />
+    <data name="Tatsujin" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Gaiden" xml:space="preserve">
-    <value />
+    <data name="Gaiden" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Gold Full Combo" xml:space="preserve">
-    <value />
+    <data name="Gold Full Combo" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Red Full Combo" xml:space="preserve">
-    <value />
+    <data name="Red Full Combo" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Red Donderful Combo" xml:space="preserve">
-    <value />
+    <data name="Red Donderful Combo" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Gold Donderful Combo" xml:space="preserve">
-    <value />
+    <data name="Gold Donderful Combo" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Song List" xml:space="preserve">
-    <value />
+    <data name="Song List" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Log In First" xml:space="preserve">
-    <value />
+    <data name="Log In First" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Dani Dojo" xml:space="preserve">
-    <value />
+    <data name="Dani Dojo" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Course Songs" xml:space="preserve">
-    <value />
+    <data name="Course Songs" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Song Name" xml:space="preserve">
-    <value />
+    <data name="Song Name" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Song Title / Artist" xml:space="preserve">
-    <value />
+    <data name="Song Title / Artist" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Search by Title or Artist" xml:space="preserve">
-    <value />
+    <data name="Search by Title or Artist" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Filter by Genre" xml:space="preserve">
-    <value />
+    <data name="Filter by Genre" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Play History" xml:space="preserve">
-    <value />
+    <data name="Play History" xml:space="preserve">
+    <value/>
   </data>
-  <data name="No Play History Found" xml:space="preserve">
-    <value />
+    <data name="No Play History Found" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Password" xml:space="preserve">
-    <value />
+    <data name="Password" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Settings" xml:space="preserve">
-    <value />
+    <data name="Settings" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Play Time" xml:space="preserve">
-    <value />
+    <data name="Play Time" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Rank" xml:space="preserve">
-    <value />
+    <data name="Rank" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Difficulty" xml:space="preserve">
-    <value />
+    <data name="Difficulty" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Song Number" xml:space="preserve">
-    <value />
+    <data name="Song Number" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Search by Title, Artist or Date" xml:space="preserve">
-    <value />
+    <data name="Search by Title, Artist or Date" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Users" xml:space="preserve">
-    <value />
+    <data name="Users" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Dashboard" xml:space="preserve">
-    <value />
+    <data name="Dashboard" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Unregister" xml:space="preserve">
-    <value />
+    <data name="Unregister" xml:space="preserve">
+    <value/>
   </data>
-  <data name="And" xml:space="preserve">
-    <value />
+    <data name="And" xml:space="preserve">
+    <value/>
   </data>
-  <data name="other access code(s)" xml:space="preserve">
-    <value />
+    <data name="other access code(s)" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Copy to Clipboard" xml:space="preserve">
-    <value />
+    <data name="Copy to Clipboard" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Invite Code" xml:space="preserve">
-    <value />
+    <data name="Invite Code" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Error" xml:space="preserve">
-    <value />
+    <data name="Error" xml:space="preserve">
+    <value/>
   </data>
-  <data name="View Play Data" xml:space="preserve">
-    <value />
+    <data name="View Play Data" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Not Passed" xml:space="preserve">
-    <value />
+    <data name="Not Passed" xml:space="preserve">
+    <value/>
   </data>
-  <data name="User" xml:space="preserve">
-    <value />
+    <data name="User" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Access Code is Required" xml:space="preserve">
-    <value />
+    <data name="Access Code is Required" xml:space="preserve">
+    <value/>
   </data>
-  <data name="&quot;Invite Code (Optional)&quot;" xml:space="preserve">
-    <value />
+    <data name="&quot;Invite Code (Optional)&quot;" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Last Play Date" xml:space="preserve">
-    <value />
+    <data name="Last Play Date" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Last Play Time(5 Min Around Credit End)" xml:space="preserve">
-    <value />
+    <data name="Last Play Time(5 Min Around Credit End)" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Password is Required" xml:space="preserve">
-    <value />
+    <data name="Password is Required" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Confirm Password" xml:space="preserve">
-    <value />
+    <data name="Confirm Password" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Confirm Password is Required" xml:space="preserve">
-    <value />
+    <data name="Confirm Password is Required" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Unknown Error" xml:space="preserve">
-    <value />
+    <data name="Unknown Error" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Success" xml:space="preserve">
-    <value />
+    <data name="Success" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Ura Oni" xml:space="preserve">
-    <value />
+    <data name="Ura Oni" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Oni" xml:space="preserve">
-    <value />
+    <data name="Oni" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Hard" xml:space="preserve">
-    <value />
+    <data name="Hard" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Normal" xml:space="preserve">
-    <value />
+    <data name="Normal" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Easy" xml:space="preserve">
-    <value />
+    <data name="Easy" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Rows Per Page:" xml:space="preserve">
-    <value />
+    <data name="Rows Per Page:" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Total Credits Played" xml:space="preserve">
-    <value />
+    <data name="Total Credits Played" xml:space="preserve">
+    <value/>
   </data>
-  <data name="UI" xml:space="preserve">
-    <value />
+    <data name="UI" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Add" xml:space="preserve">
-    <value />
+    <data name="Add" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Access Code Bound Success" xml:space="preserve">
-    <value />
+    <data name="Access Code Bound Success" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Not Logged In Error" xml:space="preserve">
-    <value />
+    <data name="Not Logged In Error" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Access Code Upper Limit Error" xml:space="preserve">
-    <value />
+    <data name="Access Code Upper Limit Error" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Access Code Already Bound Error" xml:space="preserve">
-    <value />
+    <data name="Access Code Already Bound Error" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Access Code Empty Error" xml:space="preserve">
-    <value />
+    <data name="Access Code Empty Error" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Access Code Not Admin Error" xml:space="preserve">
-    <value />
+    <data name="Access Code Not Admin Error" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Login Only Admin Error" xml:space="preserve">
-    <value />
+    <data name="Login Only Admin Error" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Change Password Success" xml:space="preserve">
-    <value />
+    <data name="Change Password Success" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Change Password Different Confirm Password Error" xml:space="preserve">
-    <value />
+    <data name="Change Password Different Confirm Password Error" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Unknown Access Code Error" xml:space="preserve">
-    <value />
+    <data name="Unknown Access Code Error" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Change Password Wrong Current Password Error" xml:space="preserve">
-    <value />
+    <data name="Change Password Wrong Current Password Error" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Access Code Not Registered Error" xml:space="preserve">
-    <value />
+    <data name="Access Code Not Registered Error" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Login Wrong Password Error" xml:space="preserve">
-    <value />
+    <data name="Login Wrong Password Error" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Register Only Admin Error" xml:space="preserve">
-    <value />
+    <data name="Register Only Admin Error" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Register Success" xml:space="preserve">
-    <value />
+    <data name="Register Success" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Register Different Confirm Password Error" xml:space="preserve">
-    <value />
+    <data name="Register Different Confirm Password Error" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Register Already Registered Error" xml:space="preserve">
-    <value />
+    <data name="Register Already Registered Error" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Register Wrong Last Play Time Error" xml:space="preserve">
-    <value />
+    <data name="Register Wrong Last Play Time Error" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Cancel" xml:space="preserve">
-    <value />
+    <data name="Cancel" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Access Code Delete Last Access Code Error" xml:space="preserve">
-    <value />
+    <data name="Access Code Delete Last Access Code Error" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Access Code Delete Success" xml:space="preserve">
-    <value />
+    <data name="Access Code Delete Success" xml:space="preserve">
+    <value/>
   </data>
-  <data name="ID" xml:space="preserve">
-    <value />
+    <data name="ID" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Edit Profile" xml:space="preserve">
-    <value />
+    <data name="Edit Profile" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Access Code Delete Confirm" xml:space="preserve">
-    <value />
+    <data name="Access Code Delete Confirm" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Currently Selected:" xml:space="preserve">
-    <value />
+    <data name="Currently Selected:" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Reset" xml:space="preserve">
-    <value />
+    <data name="Reset" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Reset Password Confirm 1" xml:space="preserve">
-    <value />
+    <data name="Reset Password Confirm 1" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Reset Password Confirm 2" xml:space="preserve">
-    <value />
+    <data name="Reset Password Confirm 2" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Delete User Confirm" xml:space="preserve">
-    <value />
+    <data name="Delete User Confirm" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Delete User Success" xml:space="preserve">
-    <value />
+    <data name="Delete User Success" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Skip Song" xml:space="preserve">
-    <value />
+    <data name="Skip Song" xml:space="preserve">
+    <value/>
   </data>
-  <data name="None" xml:space="preserve">
-    <value />
+    <data name="None" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Whimsical" xml:space="preserve">
-    <value />
+    <data name="Whimsical" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Messy" xml:space="preserve">
-    <value />
+    <data name="Messy" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Taiko" xml:space="preserve">
-    <value />
+    <data name="Taiko" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Matsuri" xml:space="preserve">
-    <value />
+    <data name="Matsuri" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Inuneko" xml:space="preserve">
-    <value />
+    <data name="Inuneko" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Wonderfultaiko" xml:space="preserve">
-    <value />
+    <data name="Wonderfultaiko" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Drum" xml:space="preserve">
-    <value />
+    <data name="Drum" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Tambourine" xml:space="preserve">
-    <value />
+    <data name="Tambourine" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Wadadon" xml:space="preserve">
-    <value />
+    <data name="Wadadon" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Clapping" xml:space="preserve">
-    <value />
+    <data name="Clapping" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Conga" xml:space="preserve">
-    <value />
+    <data name="Conga" xml:space="preserve">
+    <value/>
   </data>
-  <data name="8bittaiko" xml:space="preserve">
-    <value />
+    <data name="8bittaiko" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Soya" xml:space="preserve">
-    <value />
+    <data name="Soya" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Mekadon" xml:space="preserve">
-    <value />
+    <data name="Mekadon" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Funassyi" xml:space="preserve">
-    <value />
+    <data name="Funassyi" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Wrap" xml:space="preserve">
-    <value />
+    <data name="Wrap" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Isogai" xml:space="preserve">
-    <value />
+    <data name="Isogai" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Akemi" xml:space="preserve">
-    <value />
+    <data name="Akemi" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Synthdrum" xml:space="preserve">
-    <value />
+    <data name="Synthdrum" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Shuriken" xml:space="preserve">
-    <value />
+    <data name="Shuriken" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Puchipuchi" xml:space="preserve">
-    <value />
+    <data name="Puchipuchi" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Electric Guitar" xml:space="preserve">
-    <value />
+    <data name="Electric Guitar" xml:space="preserve">
+    <value/>
   </data>
-  <data name="UraOni" xml:space="preserve">
-    <value />
+    <data name="UraOni" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Set Up Each Time" xml:space="preserve">
-    <value />
+    <data name="Set Up Each Time" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Default" xml:space="preserve">
-    <value />
+    <data name="Default" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Not Cleared" xml:space="preserve">
-    <value />
+    <data name="Not Cleared" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Not Full Combo" xml:space="preserve">
-    <value />
+    <data name="Not Full Combo" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Not Donderful Combo" xml:space="preserve">
-    <value />
+    <data name="Not Donderful Combo" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Japanese" xml:space="preserve">
-    <value />
+    <data name="Japanese" xml:space="preserve">
+    <value/>
   </data>
-  <data name="English" xml:space="preserve">
-    <value />
+    <data name="English" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Chinese Traditional" xml:space="preserve">
-    <value />
+    <data name="Chinese Traditional" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Korean" xml:space="preserve">
-    <value />
+    <data name="Korean" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Chinese Simplified" xml:space="preserve">
-    <value />
+    <data name="Chinese Simplified" xml:space="preserve">
+    <value/>
   </data>
-  <data name="1 Star" xml:space="preserve">
-    <value />
+    <data name="1 Star" xml:space="preserve">
+    <value/>
   </data>
-  <data name="2 Star" xml:space="preserve">
-    <value />
+    <data name="2 Star" xml:space="preserve">
+    <value/>
   </data>
-  <data name="3 Star" xml:space="preserve">
-    <value />
+    <data name="3 Star" xml:space="preserve">
+    <value/>
   </data>
-  <data name="4 Star" xml:space="preserve">
-    <value />
+    <data name="4 Star" xml:space="preserve">
+    <value/>
   </data>
-  <data name="5 Star" xml:space="preserve">
-    <value />
+    <data name="5 Star" xml:space="preserve">
+    <value/>
   </data>
-  <data name="6 Star" xml:space="preserve">
-    <value />
+    <data name="6 Star" xml:space="preserve">
+    <value/>
   </data>
-  <data name="7 Star" xml:space="preserve">
-    <value />
+    <data name="7 Star" xml:space="preserve">
+    <value/>
   </data>
-  <data name="8 Star" xml:space="preserve">
-    <value />
+    <data name="8 Star" xml:space="preserve">
+    <value/>
   </data>
-  <data name="9 Star" xml:space="preserve">
-    <value />
+    <data name="9 Star" xml:space="preserve">
+    <value/>
   </data>
-  <data name="10 Star" xml:space="preserve">
-    <value />
+    <data name="10 Star" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Log Out Confirm" xml:space="preserve">
-    <value />
+    <data name="Log Out Confirm" xml:space="preserve">
+    <value/>
   </data>
-  <data name="Leaderboard" xml:space="preserve">
-    <value />
+    <data name="Leaderboard" xml:space="preserve">
+    <value/>
   </data>
-  <data name="No Data" xml:space="preserve">
-    <value />
+    <data name="No Data" xml:space="preserve">
+    <value/>
   </data>
-  <data name="User ID" xml:space="preserve">
-    <value />
+    <data name="User ID" xml:space="preserve">
+    <value/>
   </data>
+    <data name="Search by Name, ID, or Access Code" xml:space="preserve">
+    <value/>
+  </data>
+    <data name="Player Titles" xml:space="preserve">
+      <value />
+    </data>
+    <data name="Search" xml:space="preserve">
+      <value />
+    </data>
 </root>
