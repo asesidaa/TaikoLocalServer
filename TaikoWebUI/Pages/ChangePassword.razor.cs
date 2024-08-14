@@ -16,6 +16,10 @@ public partial class ChangePassword
         {
             await AuthService.LoginWithAuthToken();
         }
+
+        BreadcrumbsStateContainer.breadcrumbs.Clear();
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Change Password"], href: "/"));
+        BreadcrumbsStateContainer.NotifyStateChanged();
     }
 
     private async Task OnChangePassword()

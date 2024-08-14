@@ -35,6 +35,7 @@ builder.Services.AddLocalization();
 builder.Services.AddSingleton<MudLocalizer, ResXMudLocalizer>();
 builder.Services.AddSingleton<ScoreUtils>();
 builder.Services.AddSingleton<StringUtil>();
+builder.Services.AddSingleton<BreadcrumbsStateContainer>();
 builder.Services.AddBlazoredLocalStorage();
 
 var host = builder.Build();

@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using Microsoft.JSInterop;
+using SharedProject.Models;
 
 namespace TaikoWebUI.Pages;
 
@@ -15,10 +16,9 @@ public partial class PlayHistory
     private string? songNameLanguage;
 
     private SongHistoryResponse? response;
+    private UserSetting? userSetting;
 
     private Dictionary<DateTime, List<SongHistoryData>> songHistoryDataMap = new();
-    
-    private readonly List<BreadcrumbItem> breadcrumbs = new();
 
     private Dictionary<uint, MusicDetail> musicDetailDictionary = new();
 
@@ -34,7 +34,9 @@ public partial class PlayHistory
         
         response = await Client.GetFromJsonAsync<SongHistoryResponse>($"api/PlayHistory/{(uint)Baid}");
         response.ThrowIfNull();
-        
+
+        userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
+
         songNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
         
         musicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
@@ -54,6 +56,14 @@ public partial class PlayHistory
         {
             songHistoryDataList.Sort((data1, data2) => data1.SongNumber.CompareTo(data2.SongNumber));
         }
+
+        //breadcrumbs
+        BreadcrumbsStateContainer.breadcrumbs.Clear();
+        if (AuthService.IsLoggedIn && !AuthService.IsAdmin) BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
+        else BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Play History"], href: $"/Users/{Baid}/PlayHistory", disabled: false));
+        BreadcrumbsStateContainer.NotifyStateChanged();
     }
 
     private static string GetCrownText(CrownType crown)

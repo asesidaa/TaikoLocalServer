@@ -6,11 +6,9 @@
 @inject IJSRuntime JsRuntime
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService LocalStorage
+@inject BreadcrumbsStateContainer BreadcrumbsStateContainer
 
 @page "/Users/{baid:int}/PlayHistory"
-
-<MudBreadcrumbs Items="breadcrumbs" Class="p-0 mb-2"></MudBreadcrumbs>
-<MudText Typo="Typo.h4">@Localizer["Play History"]</MudText>
 
 <MudGrid Class="my-8">
     @if (response is null)
@@ -62,7 +60,7 @@
                         </MudTh>
                     </HeaderContent>
                     <RowTemplate>
-                        <div class="mt-4 mb-1">
+                        <div class="mt-4 mb-1 ml-4">
                             <MudText Typo="Typo.subtitle2">
                                 @CultureInfo.CurrentCulture.TextInfo.ToTitleCase(context[0].PlayTime.ToString(Localizer["DateFormat"]))
                             </MudText>
@@ -104,7 +102,7 @@
                                                 <MudText Typo="Typo.caption">@songHistoryData.MusicArtist</MudText>
                                             </a>
                                         </div>
-                                        <div>
+                                        @* <div>
                                             <MudToggleIconButton Toggled="@songHistoryData.IsFavorite"
                                                                  ToggledChanged="@(async () => await OnFavoriteToggled(songHistoryData))"
                                                                  Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
@@ -112,7 +110,7 @@
                                                                  Size="Size.Small"
                                                                  ToggledSize="Size.Small"
                                                                  Title="Add to favorites" ToggledTitle="Remove from favorites" />
-                                        </div>
+                                        </div> *@
                                     </MudStack>
                                 </MudTd>
 

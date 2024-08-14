@@ -14,6 +14,10 @@ public partial class Login
         {
             await AuthService.LoginWithAuthToken();
         }
+
+        BreadcrumbsStateContainer.breadcrumbs.Clear();
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Log In"], href: "/Login"));
+        BreadcrumbsStateContainer.NotifyStateChanged();
     }
 
     private async Task OnLogin()

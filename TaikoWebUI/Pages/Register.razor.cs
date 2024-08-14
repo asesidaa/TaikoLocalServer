@@ -16,6 +16,10 @@ public partial class Register
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+
+        BreadcrumbsStateContainer.breadcrumbs.Clear();
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Register"], href: "/Register"));
+        BreadcrumbsStateContainer.NotifyStateChanged();
     }
 
     private async Task OnRegister()

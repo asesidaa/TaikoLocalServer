@@ -11,7 +11,6 @@ public partial class Song
     private UserSetting? userSetting;
     private SongHistoryResponse? response;
     private List<SongHistoryData>? songHistoryData;
-    private readonly List<BreadcrumbItem> breadcrumbs = new();
 
     private string songTitle = string.Empty;
     private string songArtist = string.Empty;
@@ -19,7 +18,7 @@ public partial class Song
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-            
+
         if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
         {
             await AuthService.LoginWithAuthToken();
@@ -32,7 +31,7 @@ public partial class Song
 
         // Get user settings
         userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
-            
+
         var musicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
 
         // Get song title and artist
@@ -42,21 +41,14 @@ public partial class Song
 
         // Breadcrumbs
         var formattedSongTitle = songTitle;
-        if (formattedSongTitle.Length > 20)
-        {
-            formattedSongTitle = string.Concat(formattedSongTitle.AsSpan(0, 20), "...");
-        }
+        if (formattedSongTitle.Length > 20) formattedSongTitle = string.Concat(formattedSongTitle.AsSpan(0, 20), "...");
 
-        if (AuthService.IsLoggedIn && !AuthService.IsAdmin)
-        {
-            breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
-        }
-        else
-        {
-            breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
-        };
-        breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
-        breadcrumbs.Add(new BreadcrumbItem(Localizer["Song List"], href: $"/Users/{Baid}/Songs", disabled: false));
-        breadcrumbs.Add(new BreadcrumbItem(formattedSongTitle, href: $"/Users/{Baid}/Songs/{SongId}", disabled: false));
+        BreadcrumbsStateContainer.breadcrumbs.Clear();
+        if (AuthService.IsLoggedIn && !AuthService.IsAdmin) BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
+        else BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Song List"], href: $"/Users/{Baid}/Songs", disabled: false));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(formattedSongTitle, href: $"/Users/{Baid}/Songs/{SongId}", disabled: false));
+        BreadcrumbsStateContainer.NotifyStateChanged();
     }
 }
