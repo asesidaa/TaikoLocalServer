@@ -310,7 +310,7 @@
     <value>Afficher le Dan sur la plaque</value>
   </data>
   <data name="Display Achievement Panel" xml:space="preserve">
-    <value>Afficher le tableau de reussite</value>
+    <value>Afficher le Tableau de Réussite</value>
   </data>
   <data name="Difficulty Setting Course" xml:space="preserve">
     <value>Mode recherche : Difficulté</value>
@@ -821,5 +821,14 @@
   </data>
   <data name="Skip Song" xml:space="preserve">
     <value>Passer la chanson</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Rechercher</value>
+  </data>
+  <data name="Player Titles" xml:space="preserve">
+    <value>Titres du joueur</value>
+  </data>
+  <data name="Search by Name, ID, or Access Code" xml:space="preserve">
+    <value>Recherche par nom, identifiant ou code d'accès</value>
   </data>
 </root>

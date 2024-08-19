@@ -1141,7 +1141,7 @@ namespace TaikoWebUI.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Recherche une chaîne localisée semblable à .
         /// </summary>
         internal static string Puchipuchi {
             get {
@@ -1285,7 +1285,7 @@ namespace TaikoWebUI.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Recherche une chaîne localisée semblable à .
         /// </summary>
         internal static string Search_by_Name__ID__or_Access_Code {
             get {
@@ -1294,7 +1294,7 @@ namespace TaikoWebUI.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Recherche une chaîne localisée semblable à .
         /// </summary>
         internal static string Search_by_Title__Artist_or_Date {
             get {
