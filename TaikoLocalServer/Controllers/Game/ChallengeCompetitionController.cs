@@ -3,16 +3,14 @@
 [ApiController]
 public class ChallengeCompetitionController : BaseController<ChallengeCompetitionController>
 {
-    [HttpPost("/v12r08_ww/chassis/challengecompe.php")]
+
+    [HttpPost("/v12r08_ww/chassis/challengecompe_mn4g8uq1.php")]
     [Produces("application/protobuf")]
-    public IActionResult HandleChallenge([FromBody] ChallengeCompeRequest request)
+    public async Task<IActionResult> HandleChallenge([FromBody] ChallengeCompeRequest request)
     {
         Logger.LogInformation("ChallengeCompe request : {Request}", request.Stringify());
 
-        var response = new ChallengeCompeResponse
-        {
-            Result = 1
-        };
+        var response = await Mediator.Send(new ChallengeCompeteQuery(request.Baid));
 
         return Ok(response);
     }

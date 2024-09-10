@@ -1,12 +1,13 @@
 ﻿using System.Buffers.Binary;
 using GameDatabase.Context;
+using TaikoLocalServer.Services;
 using Throw;
 
 namespace TaikoLocalServer.Handlers;
 
 public record UserDataQuery(uint Baid) : IRequest<CommonUserDataResponse>;
 
-public class UserDataQueryHandler(TaikoDbContext context, IGameDataService gameDataService, ILogger<UserDataQueryHandler> logger) 
+public class UserDataQueryHandler(TaikoDbContext context, IGameDataService gameDataService, IChallengeCompeteService challengeCompeteService, ILogger<UserDataQueryHandler> logger) 
     : IRequestHandler<UserDataQuery, CommonUserDataResponse>
 {
 
@@ -71,7 +72,9 @@ public class UserDataQueryHandler(TaikoDbContext context, IGameDataService gameD
                 difficultySettingArray[i] -= 1;
             }
         }
-        
+
+        bool hasChallengeCompe = challengeCompeteService.HasChallengeCompete(request.Baid);
+
         var response = new CommonUserDataResponse
         {
             Result = 1,
@@ -92,7 +95,7 @@ public class UserDataQueryHandler(TaikoDbContext context, IGameDataService gameD
             DifficultyPlayedStar = userData.DifficultyPlayedStar,
             DifficultyPlayedSort = userData.DifficultyPlayedSort,
             SongRecentCnt = (uint)recentSongs.Length,
-            IsChallengecompe = false,
+            IsChallengecompe = hasChallengeCompe,
             // TODO: Other fields
         };
 
