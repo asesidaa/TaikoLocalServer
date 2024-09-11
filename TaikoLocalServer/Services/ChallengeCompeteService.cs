@@ -171,4 +171,58 @@ public class ChallengeCompeteService : IChallengeCompeteService
 
         return true;
     }
+
+    public async Task UpdateBestScore(uint baid, SongPlayDatum playData, short option)
+    {
+        List<ChallengeCompeteDatum> challengeCompetes = context.ChallengeCompeteData
+            .Include(e => e.Songs)
+            .Include(e => e.Participants)
+            .Where(e => e.CreateTime < DateTime.Now && DateTime.Now < e.ExpireTime)
+            .Where(e => e.Participants.Any(d => d.Baid == baid && d.IsActive))
+            .Where(e => e.Songs.Any(d => d.SongId == playData.SongId && d.SongOpt == option))
+            .ToList();
+        foreach (var challengeCompete in challengeCompetes)
+        {
+            ChallengeCompeteSongDatum? song = challengeCompete.Songs.Find(e => e.SongId == playData.SongId);
+            if (song == null || song.Difficulty != playData.Difficulty) continue;
+
+            ChallengeCompeteBestDatum? bestScore = song.BestScores.Find(e => e.Baid == baid);
+            if (bestScore == null)
+            {
+                await context.AddAsync(new ChallengeCompeteBestDatum
+                {
+                    CompId = song.CompId,
+                    Baid = baid,
+                    SongId = song.SongId,
+                    Difficulty = song.Difficulty,
+                    Crown = playData.Crown,
+                    Score = playData.Score,
+                    ScoreRate = playData.ScoreRate,
+                    ScoreRank = playData.ScoreRank,
+                    GoodCount = playData.GoodCount,
+                    OkCount = playData.OkCount,
+                    MissCount = playData.MissCount,
+                    ComboCount = playData.ComboCount,
+                    HitCount = playData.HitCount,
+                    DrumrollCount = playData.DrumrollCount,
+                    Skipped = playData.Skipped
+                });
+            }
+            else if (bestScore.Score < playData.Score)
+            {
+                bestScore.Crown = playData.Crown;
+                bestScore.Score = playData.Score;
+                bestScore.ScoreRate = playData.ScoreRate;
+                bestScore.ScoreRank = playData.ScoreRank;
+                bestScore.GoodCount = playData.GoodCount;
+                bestScore.OkCount = playData.OkCount;
+                bestScore.MissCount = playData.MissCount;
+                bestScore.ComboCount = playData.ComboCount;
+                bestScore.HitCount = playData.HitCount;
+                bestScore.DrumrollCount = playData.DrumrollCount;
+                bestScore.Skipped = playData.Skipped;
+                context.Update(bestScore);
+            }
+        }
+    }
 }

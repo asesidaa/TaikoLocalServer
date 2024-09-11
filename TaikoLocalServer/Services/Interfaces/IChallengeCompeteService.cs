@@ -15,4 +15,6 @@ public interface IChallengeCompeteService
     public Task CreateChallenge(uint baid, uint targetBaid, ChallengeCompeteInfo challengeCompeteInfo);
 
     public Task<bool> AnswerChallenge(uint compId, uint baid, bool accept);
+
+    public Task UpdateBestScore(uint baid, SongPlayDatum playData, short option);
 }
