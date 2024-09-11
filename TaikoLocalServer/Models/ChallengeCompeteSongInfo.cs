@@ -11,6 +11,15 @@ public class ChallengeCompeteSongInfo
     [JsonPropertyName("difficulty")]
     public Difficulty Difficulty { get; set; }
 
-    [JsonPropertyName("playSetting")]
-    public PlaySetting PlaySetting { get; set; } = new();
+    [JsonPropertyName("speed")]
+    public uint? Speed { get; set; } = null;
+
+    [JsonPropertyName("isVanishOn")]
+    public bool? IsVanishOn { get; set; } = null;
+
+    [JsonPropertyName("isInverseOn")]
+    public bool? IsInverseOn { get; set; } = null;
+
+    [JsonPropertyName("randomType")]
+    public RandomType? RandomType { get; set; } = null;
 }

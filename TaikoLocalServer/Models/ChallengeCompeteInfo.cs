@@ -16,6 +16,9 @@ public class ChallengeCompeteInfo
     [JsonPropertyName("maxParticipant")]
     public uint MaxParticipant { get; set; }
 
+    [JsonPropertyName("onlyPlayOnce")]
+    public bool OnlyPlayOnce { get; set; }
+
     [JsonPropertyName("lastFor")]
     public uint LastFor { get; set; }
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GameDatabase.Migrations
 {
     /// <inheritdoc />
-    public partial class AddChallengeCompete : Migration
+    public partial class AddChallengeCompetion : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,6 +18,7 @@ namespace GameDatabase.Migrations
                     CompId = table.Column<uint>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     CompeteMode = table.Column<uint>(type: "INTEGER", nullable: false),
+                    State = table.Column<uint>(type: "INTEGER", nullable: false),
                     Baid = table.Column<uint>(type: "INTEGER", nullable: false),
                     CompeteName = table.Column<string>(type: "TEXT", nullable: false),
                     CompeteDescribe = table.Column<string>(type: "TEXT", nullable: false),
@@ -25,6 +26,7 @@ namespace GameDatabase.Migrations
                     CreateTime = table.Column<DateTime>(type: "datetime", nullable: false),
                     ExpireTime = table.Column<DateTime>(type: "datetime", nullable: false),
                     RequireTitle = table.Column<uint>(type: "INTEGER", nullable: false),
+                    OnlyPlayOnce = table.Column<bool>(type: "INTEGER", nullable: false),
                     Share = table.Column<uint>(type: "INTEGER", nullable: false),
                     CompeteTarget = table.Column<uint>(type: "INTEGER", nullable: false)
                 },
@@ -65,7 +67,10 @@ namespace GameDatabase.Migrations
                     CompId = table.Column<uint>(type: "INTEGER", nullable: false),
                     SongId = table.Column<uint>(type: "INTEGER", nullable: false),
                     Difficulty = table.Column<uint>(type: "INTEGER", nullable: false),
-                    SongOpt = table.Column<short>(type: "INTEGER", nullable: false)
+                    Speed = table.Column<uint>(type: "INTEGER", nullable: true),
+                    IsVanishOn = table.Column<bool>(type: "INTEGER", nullable: true),
+                    IsInverseOn = table.Column<bool>(type: "INTEGER", nullable: true),
+                    RandomType = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {

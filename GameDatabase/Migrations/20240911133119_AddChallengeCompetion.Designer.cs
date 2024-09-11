@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameDatabase.Migrations
 {
     [DbContext(typeof(TaikoDbContext))]
-    [Migration("20240910100030_AddChallengeCompete")]
-    partial class AddChallengeCompete
+    [Migration("20240911133119_AddChallengeCompetion")]
+    partial class AddChallengeCompetion
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -182,10 +182,16 @@ namespace GameDatabase.Migrations
                     b.Property<uint>("MaxParticipant")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("OnlyPlayOnce")
+                        .HasColumnType("INTEGER");
+
                     b.Property<uint>("RequireTitle")
                         .HasColumnType("INTEGER");
 
                     b.Property<uint>("Share")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("State")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("CompId");
@@ -222,7 +228,16 @@ namespace GameDatabase.Migrations
                     b.Property<uint>("Difficulty")
                         .HasColumnType("INTEGER");
 
-                    b.Property<short>("SongOpt")
+                    b.Property<bool?>("IsInverseOn")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool?>("IsVanishOn")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("RandomType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint?>("Speed")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("CompId", "SongId");

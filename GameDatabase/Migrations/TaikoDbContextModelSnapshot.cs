@@ -179,10 +179,16 @@ namespace TaikoLocalServer.Migrations
                     b.Property<uint>("MaxParticipant")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("OnlyPlayOnce")
+                        .HasColumnType("INTEGER");
+
                     b.Property<uint>("RequireTitle")
                         .HasColumnType("INTEGER");
 
                     b.Property<uint>("Share")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("State")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("CompId");
@@ -219,7 +225,16 @@ namespace TaikoLocalServer.Migrations
                     b.Property<uint>("Difficulty")
                         .HasColumnType("INTEGER");
 
-                    b.Property<short>("SongOpt")
+                    b.Property<bool?>("IsInverseOn")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool?>("IsVanishOn")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("RandomType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint?>("Speed")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("CompId", "SongId");

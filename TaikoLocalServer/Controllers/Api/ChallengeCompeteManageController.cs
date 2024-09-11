@@ -11,8 +11,58 @@ public class ChallengeCompeteManageController(IChallengeCompeteService challenge
     public ActionResult<List<ChallengeCompeteDatum>> GetAllChallengeCompete()
     {
         List<ChallengeCompeteDatum> datum = challengeCompeteService.GetAllChallengeCompete();
+        foreach (var data in datum)
+        {
+            foreach (var participant in data.Participants)
+            {
+                participant.ChallengeCompeteData = null;
+            }
+            foreach (var song in data.Songs)
+            {
+                song.ChallengeCompeteData = null;
+                foreach (var bestScore in song.BestScores)
+                {
+                    bestScore.ChallengeCompeteSongData = null;
+                }
+            }
+        }
 
         return Ok(datum);
+    }
+
+    [HttpGet("test/{mode}")]
+    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
+    public ActionResult<List<ChallengeCompeteDatum>> testCreateCompete(uint mode)
+    {
+        ChallengeCompeteInfo info = new()
+        {
+            Name = "测试数据",
+            Desc = "测试数据描述",
+            CompeteMode = (CompeteModeType)mode,
+            MaxParticipant = 100,
+            LastFor = 365,
+            RequiredTitle = 0,
+            ShareType = ShareType.EveryOne,
+            CompeteTargetType = CompeteTargetType.EveryOne,
+            challengeCompeteSongs = [
+                new() {
+                    SongId = 1,
+                    Difficulty = Difficulty.Oni,
+                    RandomType = RandomType.Messy
+                },
+                new() {
+                    SongId = 2,
+                    Difficulty = Difficulty.Oni,
+                },
+                new() {
+                    SongId = 3,
+                    Difficulty = Difficulty.Oni,
+                },
+            ]
+        };
+        challengeCompeteService.CreateCompete(1, info);
+
+        return NoContent();
     }
 
     [HttpPost("{baid}/createCompete")]

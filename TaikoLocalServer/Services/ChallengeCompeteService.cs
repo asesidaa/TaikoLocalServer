@@ -1,5 +1,6 @@
 ﻿
 using GameDatabase.Context;
+using SharedProject.Models;
 using SharedProject.Utils;
 using Throw;
 
@@ -17,10 +18,17 @@ public class ChallengeCompeteService : IChallengeCompeteService
     {
         return context.ChallengeCompeteData
             .Include(c => c.Participants)
+            .Include(c => c.Songs)
+                .ThenInclude(s => s.BestScores)
             .Any(data =>
+                data.State == CompeteState.Normal &&
                 data.CreateTime < DateTime.Now &&
                 data.ExpireTime > DateTime.Now &&
-                data.Participants.Any(participant => participant.Baid == baid && participant.IsActive)
+                data.Participants.Any(participant => participant.Baid == baid && participant.IsActive) &&
+                (
+                    // Only Play Once need there is no Score for current Compete
+                    !data.OnlyPlayOnce || data.Songs.Any(song => !song.BestScores.Any(s => s.Baid == baid))
+                )
             );
     }
 
@@ -28,16 +36,27 @@ public class ChallengeCompeteService : IChallengeCompeteService
     {
         return context.ChallengeCompeteData
             .Include(c => c.Participants)
+            .Include(c => c.Songs)
+                .ThenInclude(s => s.BestScores)
             .Where(data =>
+                data.State == CompeteState.Normal &&
                 data.CreateTime < DateTime.Now &&
                 data.ExpireTime > DateTime.Now &&
-                data.Participants.Any(participant => participant.Baid == baid)
+                data.Participants.Any(participant => participant.Baid == baid && participant.IsActive) &&
+                (
+                    // Only Play Once need there is no Score for current Compete
+                    !data.OnlyPlayOnce || data.Songs.Any(song => !song.BestScores.Any(s => s.Baid == baid))
+                )
             ).ToList();
     }
 
     public List<ChallengeCompeteDatum> GetAllChallengeCompete()
     {
-        return context.ChallengeCompeteData.Where(data => true).ToList();
+        return context.ChallengeCompeteData
+            .Include(c => c.Participants)
+            .Include(c => c.Songs)
+                .ThenInclude(s => s.BestScores)
+            .Where(data => true).ToList();
     }
 
     public async Task CreateCompete(uint baid, ChallengeCompeteInfo challengeCompeteInfo)
@@ -46,10 +65,12 @@ public class ChallengeCompeteService : IChallengeCompeteService
         {
             CompId = context.ChallengeCompeteData.Any() ? context.ChallengeCompeteData.AsEnumerable().Max(c => c.CompId) + 1 : 1,
             CompeteMode = challengeCompeteInfo.CompeteMode,
+            State = CompeteState.Normal,
             Baid = baid,
             CompeteName = challengeCompeteInfo.Name,
             CompeteDescribe = challengeCompeteInfo.Desc,
             MaxParticipant = challengeCompeteInfo.MaxParticipant,
+            OnlyPlayOnce = challengeCompeteInfo.OnlyPlayOnce,
             CreateTime = DateTime.Now,
             ExpireTime = DateTime.Now.AddDays(challengeCompeteInfo.LastFor),
             RequireTitle = challengeCompeteInfo.RequiredTitle,
@@ -64,7 +85,10 @@ public class ChallengeCompeteService : IChallengeCompeteService
                 CompId = challengeCompeteData.CompId,
                 SongId = song.SongId,
                 Difficulty = song.Difficulty,
-                SongOpt = PlaySettingConverter.PlaySettingToShort(song.PlaySetting)
+                Speed = song.Speed,
+                IsInverseOn = song.IsInverseOn,
+                IsVanishOn = song.IsVanishOn,
+                RandomType = song.RandomType
             };
             await context.AddAsync(challengeCompeteSongData);
         }
@@ -75,6 +99,7 @@ public class ChallengeCompeteService : IChallengeCompeteService
             IsActive = true
         };
         await context.AddAsync(participantDatum);
+        await context.SaveChangesAsync();
     }
 
     public async Task<bool> ParticipateCompete(uint compId, uint baid)
@@ -95,6 +120,7 @@ public class ChallengeCompeteService : IChallengeCompeteService
             IsActive = true,
         };
         await context.AddAsync(participantDatum);
+        await context.SaveChangesAsync();
 
         return true;
     }
@@ -104,11 +130,13 @@ public class ChallengeCompeteService : IChallengeCompeteService
         ChallengeCompeteDatum challengeCompeteData = new()
         {
             CompId = context.ChallengeCompeteData.Any() ? context.ChallengeCompeteData.AsEnumerable().Max(c => c.CompId) + 1 : 1,
-            CompeteMode = challengeCompeteInfo.CompeteMode,
+            CompeteMode = CompeteModeType.Chanllenge,
+            State = CompeteState.Waiting,
             Baid = baid,
             CompeteName = challengeCompeteInfo.Name,
             CompeteDescribe = challengeCompeteInfo.Desc,
-            MaxParticipant = challengeCompeteInfo.MaxParticipant,
+            MaxParticipant = 2,
+            OnlyPlayOnce = challengeCompeteInfo.OnlyPlayOnce,
             CreateTime = DateTime.Now,
             ExpireTime = DateTime.Now.AddDays(challengeCompeteInfo.LastFor),
             RequireTitle = challengeCompeteInfo.RequiredTitle,
@@ -123,7 +151,10 @@ public class ChallengeCompeteService : IChallengeCompeteService
                 CompId = challengeCompeteData.CompId,
                 SongId = song.SongId,
                 Difficulty = song.Difficulty,
-                SongOpt = PlaySettingConverter.PlaySettingToShort(song.PlaySetting)
+                Speed = song.Speed,
+                IsInverseOn = song.IsInverseOn,
+                IsVanishOn = song.IsVanishOn,
+                RandomType = song.RandomType
             };
             await context.AddAsync(challengeCompeteSongData);
         }
@@ -141,6 +172,7 @@ public class ChallengeCompeteService : IChallengeCompeteService
             IsActive = false
         };
         await context.AddAsync(targetDatum);
+        await context.SaveChangesAsync();
     }
 
     public async Task<bool> AnswerChallenge(uint compId, uint baid, bool accept)
@@ -158,6 +190,7 @@ public class ChallengeCompeteService : IChallengeCompeteService
 
         if (accept)
         {
+            challengeCompete.State = CompeteState.Normal;
             foreach (var participant in challengeCompete.Participants)
             {
                 participant.IsActive = true;
@@ -166,8 +199,10 @@ public class ChallengeCompeteService : IChallengeCompeteService
         }
         else
         {
-            context.Remove(challengeCompete);
+            challengeCompete.State = CompeteState.Rejected;
         }
+        context.Update(challengeCompete);
+        await context.SaveChangesAsync();
 
         return true;
     }
@@ -176,15 +211,22 @@ public class ChallengeCompeteService : IChallengeCompeteService
     {
         List<ChallengeCompeteDatum> challengeCompetes = context.ChallengeCompeteData
             .Include(e => e.Songs)
+                .ThenInclude(s => s.BestScores)
             .Include(e => e.Participants)
             .Where(e => e.CreateTime < DateTime.Now && DateTime.Now < e.ExpireTime)
             .Where(e => e.Participants.Any(d => d.Baid == baid && d.IsActive))
-            .Where(e => e.Songs.Any(d => d.SongId == playData.SongId && d.SongOpt == option))
+            .Where(e => e.Songs.Any(d => d.SongId == playData.SongId && d.Difficulty == playData.Difficulty))
+            .Where(e => !e.OnlyPlayOnce || e.Songs.Any(song => !song.BestScores.Any(s => s.Baid == baid)))
             .ToList();
+        PlaySetting setting = PlaySettingConverter.ShortToPlaySetting(option);
         foreach (var challengeCompete in challengeCompetes)
         {
-            ChallengeCompeteSongDatum? song = challengeCompete.Songs.Find(e => e.SongId == playData.SongId);
-            if (song == null || song.Difficulty != playData.Difficulty) continue;
+            ChallengeCompeteSongDatum? song = challengeCompete.Songs.Find(e => e.SongId == playData.SongId && e.Difficulty == playData.Difficulty);
+            if (song == null) continue;
+            if (song.Speed != null && song.Speed != setting.Speed) continue;
+            if (song.IsVanishOn != null && song.IsVanishOn != setting.IsVanishOn) continue;
+            if (song.IsInverseOn != null && song.IsInverseOn != setting.IsInverseOn) continue;
+            if (song.RandomType != null && song.RandomType != setting.RandomType) continue;
 
             ChallengeCompeteBestDatum? bestScore = song.BestScores.Find(e => e.Baid == baid);
             if (bestScore == null)
@@ -208,7 +250,7 @@ public class ChallengeCompeteService : IChallengeCompeteService
                     Skipped = playData.Skipped
                 });
             }
-            else if (bestScore.Score < playData.Score)
+            else if (!challengeCompete.OnlyPlayOnce && bestScore.Score < playData.Score)
             {
                 bestScore.Crown = playData.Crown;
                 bestScore.Score = playData.Score;
@@ -224,5 +266,6 @@ public class ChallengeCompeteService : IChallengeCompeteService
                 context.Update(bestScore);
             }
         }
+        await context.AddRangeAsync();
     }
 }
