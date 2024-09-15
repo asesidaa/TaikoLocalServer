@@ -1,0 +1,100 @@
+﻿@inject IDialogService DialogService;
+@inject HttpClient Client
+
+@if (ChallengeCompetition != null)
+{
+    <MudCard>
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h6" Style="font-weight:bold;word-break:break-all">@ChallengeCompetition.CompeteName</MudText>
+                <MudText Typo="Typo.caption" Style="display: block">@Localizer["Comp ID"]:@ChallengeCompetition.CompId</MudText>
+                <MudText Typo="Typo.caption" Style="display: block">@Localizer["Describe"]:@ChallengeCompetition.CompeteDescribe</MudText>
+            </CardHeaderContent>
+            <CardHeaderActions>
+                @if (false && SelfHoldedChallengeCompetiton())
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />
+                }
+            </CardHeaderActions>
+        </MudCardHeader>
+        <MudCardContent>
+            
+            @{
+                foreach (var song in ChallengeCompetition.Songs)
+                {
+                    <div>
+                        <MudButton Variant="Variant.Text" StartIcon=@Icons.Material.Filled.Audiotrack>@song.MusicDetail?.SongName</MudButton>
+                    </div>
+                }
+            }
+        </MudCardContent>
+        <MudCardActions>
+            <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
+                <MudButton Disabled=@CanParticipateChallengeCompetition()
+                           OnClick=@(_ => AnswerChallenge(true))>@Localizer["Information"]</MudButton>
+                @if (ChallengeCompetition.CompeteMode == CompeteModeType.Chanllenge)
+                {
+                    <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
+                        <MudButton Disabled=@ChallengeNeedAnswer()
+                                   OnClick=@(_ => AnswerChallenge(true))>@Localizer["Accept"]</MudButton>
+                        <MudButton Disabled=@ChallengeNeedAnswer() 
+                                   OnClick=@(_ => AnswerChallenge(false))>@Localizer["Reject"]</MudButton>
+                    </MudButtonGroup>
+                }
+                else
+                {
+                    <MudButton Disabled=@CanParticipateChallengeCompetition()
+                               OnClick=@(_ => AnswerChallenge(true))>@Localizer["Participate"]</MudButton>
+                }
+            </MudStack>
+        </MudCardActions>
+    </MudCard>
+}
+
+@code {
+    [Parameter] public ChallengeCompetition? ChallengeCompetition { get; set; }
+    [Parameter] public uint Baid { get; set; }
+
+    private bool SelfHoldedChallengeCompetiton()
+    {
+        return ChallengeCompetition?.Baid == Baid || Baid == 0;
+    }
+
+    private bool ChallengeNeedAnswer()
+    {
+        return ChallengeCompetition?.State == CompeteState.Waiting && !SelfHoldedChallengeCompetiton();
+    }
+
+    private bool ParticipatedChallengeCompetition()
+    {
+        return ChallengeCompetition?.Participants?.Find(p => p.Baid == Baid) != null;
+    }
+
+    private bool CanParticipateChallengeCompetition()
+    {
+        return ChallengeCompetition?.CreateTime < DateTime.Now && DateTime.Now < ChallengeCompetition?.ExpireTime && !ParticipatedChallengeCompetition();
+    }
+
+    private async Task AnswerChallenge(bool accept)
+    {
+        if (ChallengeCompetition == null || ChallengeCompetition.State != CompeteState.Waiting) return;
+        var request = new AnswerChallengeRequest
+            {
+                CompId = ChallengeCompetition.CompId,
+                Baid = Baid,
+                Accept = accept
+            };
+        var response = await Client.PostAsJsonAsync("api/ChallengeCompetitionManage/AnswerChallenge", request);
+        if (!response.IsSuccessStatusCode)
+        {
+            await DialogService.ShowMessageBox(
+                Localizer["Error"],
+                Localizer["Unknown Error"],
+                Localizer["Dialog OK"], null, null, new DialogOptions { DisableBackdropClick = true });
+            return;
+        }
+
+        ChallengeCompetition.State = accept ? CompeteState.Normal : CompeteState.Rejected;
+
+    }
+}

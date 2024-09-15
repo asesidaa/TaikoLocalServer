@@ -73,7 +73,7 @@ public class UserDataQueryHandler(TaikoDbContext context, IGameDataService gameD
             }
         }
 
-        bool hasChallengeCompe = challengeCompeteService.HasChallengeCompete(request.Baid);
+        bool hasChallengeCompe = await challengeCompeteService.HasChallengeCompete(request.Baid);
 
         var response = new CommonUserDataResponse
         {

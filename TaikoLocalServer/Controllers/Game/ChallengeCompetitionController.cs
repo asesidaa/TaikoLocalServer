@@ -10,22 +10,21 @@ public class ChallengeCompetitionController : BaseController<ChallengeCompetitio
     {
         Logger.LogInformation("ChallengeCompe request : {Request}", request.Stringify());
 
-        var response = await Mediator.Send(new ChallengeCompeteQuery(request.Baid));
+        CommonChallengeCompeResponse response = await Mediator.Send(new ChallengeCompeteQuery(request.Baid));
+        var response_3906 = Mappers.ChallengeCompeMappers.MapTo3906(response);
 
-        return Ok(response);
+        return Ok(response_3906);
     }
     
     [HttpPost("/v12r00_cn/chassis/challengecompe.php")]
     [Produces("application/protobuf")]
-    public IActionResult HandleChallenge3209([FromBody] Models.v3209.ChallengeCompeRequest request)
+    public async Task<IActionResult> HandleChallenge3209([FromBody] Models.v3209.ChallengeCompeRequest request)
     {
         Logger.LogInformation("ChallengeCompe request : {Request}", request.Stringify());
 
-        var response = new Models.v3209.ChallengeCompeResponse
-        {
-            Result = 1
-        };
+        CommonChallengeCompeResponse response = await Mediator.Send(new ChallengeCompeteQuery((uint)request.Baid));
+        var response_3209 = Mappers.ChallengeCompeMappers.MapTo3209(response);
 
-        return Ok(response);
+        return Ok(response_3209);
     }
 }

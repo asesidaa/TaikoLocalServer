@@ -43,6 +43,14 @@
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Logout" IconColor="Color.Error" OnClick="Logout">@Localizer["Log Out"]</MudNavLink>
 		}
 	}
+
+    @{
+        <MudNavGroup Title=@Localizer["Challenge Competition Data"] Expanded="true" Icon="@Icons.Material.Filled.EmojiEvents">
+            <MudNavLink Href="@($"ChallengeCompe/{baid}/Challenge")" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.People">@Localizer["Challenge"]</MudNavLink>
+            <MudNavLink Href="@($"ChallengeCompe/{baid}/Competition")" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.WorkspacePremium">@Localizer["Competition"]</MudNavLink>
+            <MudNavLink Href="@($"ChallengeCompe/{baid}/OfficialCompetition")" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.EmojiEvents">@Localizer["Official Competition"]</MudNavLink>
+        </MudNavGroup>
+    }
 </MudNavMenu>
 
 @code {

@@ -1,0 +1,255 @@
+﻿@using System.Net
+@using TaikoWebUI.Utilities;
+
+@inject HttpClient Client
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService;
+
+<MudDialog Style="width: 700px">
+    <TitleContent>
+        @if (Mode == 1)
+        {
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.Flag" Class="mr-3 mb-n1" />
+                @Localizer["Create Challenge"]
+            </MudText>
+        }
+        else if (Mode == 2)
+        {
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.Flag" Class="mr-3 mb-n1" />
+                @Localizer["Create Competition"]
+            </MudText>
+        }
+        else if (Mode == 3)
+        {
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.Flag" Class="mr-3 mb-n1" />
+                @Localizer["Create Official Competition"]
+            </MudText>
+        }
+
+    </TitleContent>
+    <DialogContent>
+        <MudStack>
+            @if (Mode == 2 || Mode == 3)
+            {
+                <MudTextField Value="@Name" Label="@Localizer["Name"]"/>
+            }
+            <MudTextField Value="@Desc" Label="@Localizer["Describe"]" />
+            @for (int i = 0; i < Info.challengeCompeteSongs.Count; i ++)
+            {
+                var song_idx = i;
+                var song_label = Localizer["Song"] + $" {song_idx + 1}";
+                var song = Info.challengeCompeteSongs[song_idx];
+                <MudStack Spacing="2">
+                    <MudStack StretchItems="StretchItems.Start" Row="true">
+                        <MudField Value="@song.SongId" Label="@song_label" Variant="Variant.Outlined" InnerPadding="false">
+
+                            <MudIconButton Icon="@Icons.Material.Filled.Audiotrack" OnClick="@(_ => SelSong(song_idx))" Color="Color.Primary" />
+                            @if (difficulties[song_idx] != Difficulty.None)
+                            {
+                                Difficulty difficulty = difficulties[song_idx];
+                                <MudImage Src="@ScoreUtils.GetDifficultyIcon(difficulty)" Alt="@ScoreUtils.GetDifficultyTitle(difficulty)" Width="24" Height="48" Style="padding: 12px 0px 12px 0px; margin-right: 8px; vertical-align: middle;" />
+                            }
+                            <span style="vertical-align: middle; font-family: Nijiiro, sans-serif;">@(musicDetails[song_idx].SongId == 0 ? Localizer["No Select"] : musicDetails[song_idx].SongName)</span>
+                            
+                        </MudField>
+                        <MudIconButton Icon="@Icons.Material.Filled.Settings" Variant="Variant.Text" Color="Color.Primary" OnClick="(_ => OnExpandCollapseClick(song_idx))" />
+                        @if (Info.challengeCompeteSongs.Count > 1)
+                        {
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Text" Color="Color.Error" OnClick="(_ => DelSong(song_idx))" />
+                        }
+                    </MudStack>
+                    
+                    <MudCollapse Expanded="_expandeds[song_idx]">
+                        <MudStack Row="true">
+                            <MudSelect @bind-Value="@song.IsVanishOn" Label=@Localizer["Vanish"] AnchorOrigin="Origin.BottomCenter">
+                                <MudSelectItem Value="@(-1)">@Localizer["Any"]</MudSelectItem>
+                                <MudSelectItem Value="@(1)">@Localizer["On"]</MudSelectItem>
+                                <MudSelectItem Value="@(0)">@Localizer["Off"]</MudSelectItem>
+                            </MudSelect>
+                            <MudSelect @bind-Value="@song.IsInverseOn" Label=@Localizer["Inverse"] AnchorOrigin="Origin.BottomCenter">
+                                <MudSelectItem Value="@(-1)">@Localizer["Any"]</MudSelectItem>
+                                <MudSelectItem Value="@(1)">@Localizer["On"]</MudSelectItem>
+                                <MudSelectItem Value="@(0)">@Localizer["Off"]</MudSelectItem>
+                            </MudSelect>
+                            <MudSelect @bind-Value="@song.Speed" Label=@Localizer["Speed"] AnchorOrigin="Origin.BottomCenter">
+                                <MudSelectItem Value="@(-1)">@Localizer["Any"]</MudSelectItem>
+                                @for (uint idx = 0; idx < SpeedStrings.Length; idx++)
+                                {
+                                    var speed_idx = idx;
+                                    <MudSelectItem Value="@((int)speed_idx)">@SpeedStrings[speed_idx]</MudSelectItem>
+                                }
+                            </MudSelect>
+                            <MudSelect @bind-Value="@song.RandomType" Label=@Localizer["Random"] AnchorOrigin="Origin.BottomCenter">
+                                <MudSelectItem Value="@(-1)">@Localizer["Any"]</MudSelectItem>
+                                @foreach (var item in Enum.GetValues<RandomType>())
+                                {
+                                    <MudSelectItem Value="@((int)item)">@Localizer[item.ToString()]</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudStack>
+                    </MudCollapse>
+                </MudStack>
+                
+            }
+            @if (Info.challengeCompeteSongs.Count < MaxSongs)
+            {
+                <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" OnClick="AddSong" Size="Size.Medium" />
+            }
+            <MudNumericField HideSpinButtons="true" @bind-Value="@ParticipantCount" Label="@Localizer["Max Participant"]" Variant="Variant.Text" Min="1" Max="MaxParticipant" />
+            <MudNumericField HideSpinButtons="true" @bind-Value="@LastFor" Label="@Localizer["Last For (Days)"]" Variant="Variant.Text" Min="1" Max="MaxDays" />
+            <MudSwitch @bind-Value="@OnlyPlayOnce" Color="Color.Primary">@Localizer["Only Play Once"]</MudSwitch>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@Localizer["Cancel"]</MudButton>
+        <MudButton Color="Color.Surface" OnClick="CreateChallengeCompetition">@Localizer["Create"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public int Mode { get; set; } = 0;
+
+    [Parameter]
+    public int MaxSongs { get; set; } = 1;
+
+    [Parameter]
+    public int MaxDays { get; set; } = 30;
+
+    [Parameter]
+    public int MaxParticipant { get; set; } = 20;
+
+    [Parameter]
+    public ChallengeCompeteCreateInfo Info { get; set; } = new();
+
+    private static readonly string[] SpeedStrings =
+    {
+        "1.0", "1.1", "1.2", "1.3", "1.4",
+        "1.5", "1.6", "1.7", "1.8", "1.9",
+        "2.0", "2.5", "3.0", "3.5", "4.0"
+    };
+
+    private string Name = string.Empty;
+
+    private string Desc = string.Empty;
+
+    private bool[] _expandeds = new bool[0];
+
+    private MusicDetail[] musicDetails = new MusicDetail[0];
+
+    private Difficulty[] difficulties = new Difficulty[0];
+
+    private int LastFor = 1;
+
+    private int ParticipantCount = 1;
+
+    private bool OnlyPlayOnce = false;
+
+
+    protected override void OnInitialized()
+    {
+        _expandeds = new bool[MaxSongs];
+        musicDetails = new MusicDetail[MaxSongs];
+        difficulties = new Difficulty[MaxSongs];
+        for (int i = 0; i < MaxSongs; i++)
+        {
+            musicDetails[i] = new();
+            difficulties[i] = Difficulty.None;
+        }
+        Info.challengeCompeteSongs.Add(new());
+    }
+
+    private void AddSong()
+    {
+        Info.challengeCompeteSongs.Add(new());
+    }
+
+    private async Task SelSong(int i)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var parameters = new DialogParameters();
+        parameters.Add("SelectedSong", musicDetails[i]);
+
+        var reference = await DialogService.ShowAsync<ChooseSongDialog>(Localizer["Create"], parameters, options);
+        var songInfo = await reference.GetReturnValueAsync<SongInfo>();
+
+        if (songInfo != null) 
+        {
+            musicDetails[i] = songInfo.MusicDetail;
+            difficulties[i] = songInfo.Difficulty;
+        }
+    }
+
+    private void DelSong(int i)
+    {
+        Info.challengeCompeteSongs.RemoveAt(i);
+        for (int ex = i; ex < MaxSongs; ex ++)
+        {
+            if (ex + 1 < MaxSongs) 
+            {
+                _expandeds[ex] = _expandeds[ex + 1];
+                musicDetails[ex] = musicDetails[ex + 1];
+                difficulties[ex] = difficulties[ex + 1];
+            }
+            else 
+            {
+                _expandeds[ex] = false;
+                musicDetails[ex] = new();
+                difficulties[ex] = Difficulty.None;
+            }
+        }
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private async Task CreateChallengeCompetition()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        Info.Name = Name;
+        Info.Desc = Desc;
+        for (int i = 0; i < Info.challengeCompeteSongs.Count; i ++)
+        {
+            if (difficulties[i] == Difficulty.None)
+            {
+                await DialogService.ShowMessageBox(
+                    Localizer["Error"],
+                    (MarkupString)
+                    (string)Localizer["Must Select Song Error"],
+                    Localizer["Dialog OK"], null, null, options);
+                return;
+            }
+
+            Info.challengeCompeteSongs[i].SongId = musicDetails[i].SongId;
+            Info.challengeCompeteSongs[i].Difficulty = difficulties[i];
+        }
+        Info.MaxParticipant = (uint) ParticipantCount;
+        Info.LastFor = (uint) LastFor;
+        Info.CompeteMode = (CompeteModeType)Mode;
+        Info.OnlyPlayOnce = OnlyPlayOnce;
+
+        var resp = await Client.PostAsJsonAsync($"api/ChallengeCompeteManage/createOfficialCompete", Info);
+        if (resp.StatusCode != HttpStatusCode.OK)
+        {
+            await DialogService.ShowMessageBox(
+                    Localizer["Error"],
+                    (MarkupString)
+                    (string)Localizer["Create Compete Error"],
+                    Localizer["Dialog OK"], null, null, options);
+            return;
+        }
+
+        MudDialog.Close(DialogResult.Ok(1));
+    }
+
+    private void OnExpandCollapseClick(int i)
+    {
+        _expandeds[i] = !_expandeds[i];
+    }
+}

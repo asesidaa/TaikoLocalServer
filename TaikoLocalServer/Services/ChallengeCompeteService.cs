@@ -1,7 +1,9 @@
 ﻿
 using GameDatabase.Context;
 using SharedProject.Models;
+using SharedProject.Models.Responses;
 using SharedProject.Utils;
+using TaikoLocalServer.Services.Interfaces;
 using Throw;
 
 namespace TaikoLocalServer.Services;
@@ -9,18 +11,26 @@ namespace TaikoLocalServer.Services;
 public class ChallengeCompeteService : IChallengeCompeteService
 {
     private readonly TaikoDbContext context;
-    public ChallengeCompeteService(TaikoDbContext context)
+    private readonly IGameDataService gameDataService;
+    private readonly IUserDatumService userDatumService;
+
+    private Dictionary<uint, MusicDetail> musicDetailDict;
+    public ChallengeCompeteService(TaikoDbContext context, IGameDataService gameDataService, IUserDatumService userDatumService)
     {
         this.context = context;
+        this.gameDataService = gameDataService;
+        this.userDatumService = userDatumService;
+
+        this.musicDetailDict = gameDataService.GetMusicDetailDictionary();
     }
 
-    public bool HasChallengeCompete(uint baid)
+    public async Task<bool> HasChallengeCompete(uint baid)
     {
-        return context.ChallengeCompeteData
+        return await context.ChallengeCompeteData
             .Include(c => c.Participants)
             .Include(c => c.Songs)
                 .ThenInclude(s => s.BestScores)
-            .Any(data =>
+            .AnyAsync(data =>
                 data.State == CompeteState.Normal &&
                 data.CreateTime < DateTime.Now &&
                 data.ExpireTime > DateTime.Now &&
@@ -32,9 +42,9 @@ public class ChallengeCompeteService : IChallengeCompeteService
             );
     }
 
-    public List<ChallengeCompeteDatum> GetInProgressChallengeCompete(uint baid)
+    public async Task<List<ChallengeCompeteDatum>> GetInProgressChallengeCompete(uint baid)
     {
-        return context.ChallengeCompeteData
+        return await context.ChallengeCompeteData
             .Include(c => c.Participants)
             .Include(c => c.Songs)
                 .ThenInclude(s => s.BestScores)
@@ -47,19 +57,76 @@ public class ChallengeCompeteService : IChallengeCompeteService
                     // Only Play Once need there is no Score for current Compete
                     !data.OnlyPlayOnce || data.Songs.Any(song => !song.BestScores.Any(s => s.Baid == baid))
                 )
-            ).ToList();
+            ).ToListAsync();
     }
 
-    public List<ChallengeCompeteDatum> GetAllChallengeCompete()
+    public async Task<List<ChallengeCompeteDatum>> GetAllChallengeCompete()
     {
-        return context.ChallengeCompeteData
+        return await context.ChallengeCompeteData
             .Include(c => c.Participants)
             .Include(c => c.Songs)
                 .ThenInclude(s => s.BestScores)
-            .Where(data => true).ToList();
+            .Where(data => true).ToListAsync();
     }
 
-    public async Task CreateCompete(uint baid, ChallengeCompeteInfo challengeCompeteInfo)
+    public async Task<ChallengeCompetitionResponse> GetChallengeCompetePage(CompeteModeType mode, uint baid, bool inProgress, int page, int limit, string? search)
+    {
+        IQueryable<ChallengeCompeteDatum>? query = null;
+        string? lowSearch = search != null ? search.ToLower() : null;
+        if (mode == CompeteModeType.Chanllenge) 
+        {
+            query = context.ChallengeCompeteData
+                .Include(e => e.Songs).ThenInclude(e => e.BestScores).Include(e => e.Participants)
+                .Where(e => e.CompeteMode == CompeteModeType.Chanllenge)
+                .Where(e => inProgress == false || (e.CreateTime < DateTime.Now && DateTime.Now < e.ExpireTime))
+                .Where(e => baid == 0 || (e.Baid == baid || e.Participants.Any(p => p.Baid == baid)))
+                .Where(e => lowSearch == null || (e.CompId.ToString() == lowSearch || e.CompeteName.ToLower().Contains(lowSearch)));
+        } 
+        else if (mode == CompeteModeType.Compete)
+        {
+            query = context.ChallengeCompeteData
+                .Include(e => e.Songs).ThenInclude(e => e.BestScores).Include(e => e.Participants)
+                .Where(e => e.CompeteMode == CompeteModeType.Compete)
+                .Where(e => inProgress == false || (e.CreateTime < DateTime.Now && DateTime.Now < e.ExpireTime))
+                .Where(e => baid == 0 || (e.Baid == baid || e.Participants.Any(p => p.Baid == baid) || e.Share == ShareType.EveryOne))
+                .Where(e => lowSearch == null || (e.CompId.ToString() == lowSearch || e.CompeteName.ToLower().Contains(lowSearch)));
+        }
+        else if (mode == CompeteModeType.OfficialCompete)
+        {
+            query = context.ChallengeCompeteData
+                .Include(e => e.Songs).ThenInclude(e => e.BestScores).Include(e => e.Participants)
+                .Where(e => e.CompeteMode == CompeteModeType.OfficialCompete)
+                .Where(e => inProgress == false || (e.CreateTime < DateTime.Now && DateTime.Now < e.ExpireTime))
+                .Where(e => lowSearch == null || (e.CompId.ToString() == lowSearch || e.CompeteName.ToLower().Contains(lowSearch)));
+        }
+        if (query == null) return new ChallengeCompetitionResponse();
+
+        var total = await query.CountAsync();
+        var totalPage = total / limit;
+        if (total % limit > 0) totalPage += 1;
+
+        var challengeCompeteDatum= await query
+            .OrderBy(e => e.CompId).Skip((page - 1) * limit).Take(limit)
+            .ToListAsync();
+
+        List<ChallengeCompetition> converted = new();
+        foreach (var data in challengeCompeteDatum)
+        {
+            var challengeCompetition = Mappers.ChallengeCompeMappers.MapData(data);
+            challengeCompetition = await FillData(challengeCompetition);
+            converted.Add(challengeCompetition);
+        }
+
+        return new ChallengeCompetitionResponse
+        {
+            List = converted,
+            Page = page,
+            TotalPages = totalPage,
+            Total = total
+        };
+    }
+
+    public async Task CreateCompete(uint baid, ChallengeCompeteCreateInfo challengeCompeteInfo)
     {
         ChallengeCompeteDatum challengeCompeteData = new()
         {
@@ -85,20 +152,23 @@ public class ChallengeCompeteService : IChallengeCompeteService
                 CompId = challengeCompeteData.CompId,
                 SongId = song.SongId,
                 Difficulty = song.Difficulty,
-                Speed = song.Speed,
-                IsInverseOn = song.IsInverseOn,
-                IsVanishOn = song.IsVanishOn,
-                RandomType = song.RandomType
+                Speed = song.Speed == -1 ? null : (uint)song.Speed,
+                IsInverseOn = song.IsInverseOn == -1 ? null : (song.IsInverseOn != 0),
+                IsVanishOn = song.IsVanishOn == -1 ? null : (song.IsVanishOn != 0),
+                RandomType = song.RandomType == -1 ? null : (RandomType)song.RandomType,
             };
             await context.AddAsync(challengeCompeteSongData);
         }
-        ChallengeCompeteParticipantDatum participantDatum = new()
+        if (baid != 0)
         {
-            CompId = challengeCompeteData.CompId,
-            Baid = baid,
-            IsActive = true
-        };
-        await context.AddAsync(participantDatum);
+            ChallengeCompeteParticipantDatum participantDatum = new()
+            {
+                CompId = challengeCompeteData.CompId,
+                Baid = baid,
+                IsActive = true
+            };
+            await context.AddAsync(participantDatum);
+        }
         await context.SaveChangesAsync();
     }
 
@@ -125,7 +195,7 @@ public class ChallengeCompeteService : IChallengeCompeteService
         return true;
     }
 
-    public async Task CreateChallenge(uint baid, uint targetBaid, ChallengeCompeteInfo challengeCompeteInfo)
+    public async Task CreateChallenge(uint baid, uint targetBaid, ChallengeCompeteCreateInfo challengeCompeteInfo)
     {
         ChallengeCompeteDatum challengeCompeteData = new()
         {
@@ -151,10 +221,10 @@ public class ChallengeCompeteService : IChallengeCompeteService
                 CompId = challengeCompeteData.CompId,
                 SongId = song.SongId,
                 Difficulty = song.Difficulty,
-                Speed = song.Speed,
-                IsInverseOn = song.IsInverseOn,
-                IsVanishOn = song.IsVanishOn,
-                RandomType = song.RandomType
+                Speed = song.Speed == -1 ? null : (uint)song.Speed,
+                IsInverseOn = song.IsInverseOn == -1 ? null : (song.IsInverseOn != 0),
+                IsVanishOn = song.IsVanishOn == -1 ? null : (song.IsVanishOn != 0),
+                RandomType = song.RandomType == -1 ? null : (RandomType)song.RandomType,
             };
             await context.AddAsync(challengeCompeteSongData);
         }
@@ -267,5 +337,37 @@ public class ChallengeCompeteService : IChallengeCompeteService
             }
         }
         await context.AddRangeAsync();
+    }
+
+    public async Task<ChallengeCompetition> FillData(ChallengeCompetition challenge)
+    {
+        foreach (var song in challenge.Songs)
+        {
+            if (song == null) continue;
+            song.MusicDetail = musicDetailDict.GetValueOrDefault(song.SongId);
+            foreach (var score in song.BestScores)
+            {
+                UserDatum? user = await userDatumService.GetFirstUserDatumOrNull(score.Baid);
+                if (user == null) continue;
+                score.UserAppearance = new UserAppearance
+                {
+                    Baid = score.Baid,
+                    MyDonName = user.MyDonName,
+                    MyDonNameLanguage = user.MyDonNameLanguage,
+                    Title = user.Title,
+                    TitlePlateId = user.TitlePlateId,
+                    Kigurumi = user.CurrentKigurumi,
+                    Head = user.CurrentHead,
+                    Body = user.CurrentBody,
+                    Face = user.CurrentFace,
+                    Puchi = user.CurrentPuchi,
+                    FaceColor = user.ColorFace,
+                    BodyColor = user.ColorBody,
+                    LimbColor = user.ColorLimb,
+                };
+            }
+        }
+
+        return challenge;
     }
 }

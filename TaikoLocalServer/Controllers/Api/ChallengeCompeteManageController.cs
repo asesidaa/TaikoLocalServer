@@ -1,4 +1,7 @@
-﻿using TaikoLocalServer.Filters;
+﻿using MediatR;
+using SharedProject.Models;
+using SharedProject.Models.Responses;
+using TaikoLocalServer.Filters;
 
 namespace TaikoLocalServer.Controllers.Api;
 
@@ -8,33 +11,49 @@ public class ChallengeCompeteManageController(IChallengeCompeteService challenge
 {
     [HttpGet]
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
-    public ActionResult<List<ChallengeCompeteDatum>> GetAllChallengeCompete()
+    public async Task<ActionResult<List<ChallengeCompetition>>> GetAllChallengeCompete()
     {
-        List<ChallengeCompeteDatum> datum = challengeCompeteService.GetAllChallengeCompete();
+        List<ChallengeCompeteDatum> datum = await challengeCompeteService.GetAllChallengeCompete();
+        List<ChallengeCompetition> converted = new();
         foreach (var data in datum)
         {
-            foreach (var participant in data.Participants)
-            {
-                participant.ChallengeCompeteData = null;
-            }
-            foreach (var song in data.Songs)
-            {
-                song.ChallengeCompeteData = null;
-                foreach (var bestScore in song.BestScores)
-                {
-                    bestScore.ChallengeCompeteSongData = null;
-                }
-            }
+            var challengeCompetition = Mappers.ChallengeCompeMappers.MapData(data);
+            challengeCompetition = await challengeCompeteService.FillData(challengeCompetition);
+            converted.Add(challengeCompetition);
         }
 
-        return Ok(datum);
+        return Ok(converted);
+    }
+
+    [HttpGet("queryPage")]
+    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
+    public async Task<ActionResult<ChallengeCompetitionResponse>> GetChallengeCompePage([FromQuery] uint mode = 0, [FromQuery] uint baid = 0, [FromQuery] int inProgress = 0, [FromQuery] int page = 1, [FromQuery] int limit = 10, [FromQuery] string? searchTerm = null)
+    {
+        if (page < 1)
+        {
+            return BadRequest(new { Message = "Page number cannot be less than 1." });
+        }
+
+        if (limit > 200)
+        {
+            return BadRequest(new { Message = "Limit cannot be greater than 200." });
+        }
+
+        if (mode == 0)
+        {
+            return BadRequest(new { Message = "Invalid mode." });
+        }
+
+        ChallengeCompetitionResponse response = await challengeCompeteService.GetChallengeCompetePage((CompeteModeType)mode, baid, inProgress != 0, page, limit, searchTerm);
+
+        return Ok(response);
     }
 
     [HttpGet("test/{mode}")]
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public ActionResult<List<ChallengeCompeteDatum>> testCreateCompete(uint mode)
     {
-        ChallengeCompeteInfo info = new()
+        ChallengeCompeteCreateInfo info = new()
         {
             Name = "测试数据",
             Desc = "测试数据描述",
@@ -48,7 +67,7 @@ public class ChallengeCompeteManageController(IChallengeCompeteService challenge
                 new() {
                     SongId = 1,
                     Difficulty = Difficulty.Oni,
-                    RandomType = RandomType.Messy
+                    RandomType = (int)RandomType.Messy
                 },
                 new() {
                     SongId = 2,
@@ -65,10 +84,22 @@ public class ChallengeCompeteManageController(IChallengeCompeteService challenge
         return NoContent();
     }
 
+    [HttpPost("createOfficialCompete")]
+    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
+    public async Task<IActionResult> CreateCompete(ChallengeCompeteCreateInfo challengeCompeteInfo)
+    {
+        Logger.LogInformation("CreateOfficialCompete : {Request}", JsonFormatter.JsonSerialize(challengeCompeteInfo));
+
+        await challengeCompeteService.CreateCompete(0, challengeCompeteInfo);
+
+        return NoContent();
+    }
+
     [HttpPost("{baid}/createCompete")]
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
-    public async Task<IActionResult> CreateCompete(uint baid, ChallengeCompeteInfo challengeCompeteInfo)
+    public async Task<IActionResult> CreateCompete(uint baid, ChallengeCompeteCreateInfo challengeCompeteInfo)
     {
+        Logger.LogInformation("CreateCompete : {Request}", JsonFormatter.JsonSerialize(challengeCompeteInfo));
         await challengeCompeteService.CreateCompete(baid, challengeCompeteInfo);
 
         return NoContent();
@@ -76,8 +107,9 @@ public class ChallengeCompeteManageController(IChallengeCompeteService challenge
 
     [HttpPost("{baid}/createChallenge/{targetBaid}")]
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
-    public async Task<IActionResult> CreateChallenge(uint baid, uint targetBaid, ChallengeCompeteInfo challengeCompeteInfo)
+    public async Task<IActionResult> CreateChallenge(uint baid, uint targetBaid, ChallengeCompeteCreateInfo challengeCompeteInfo)
     {
+        Logger.LogInformation("CreateChallenge : {Request}", JsonFormatter.JsonSerialize(challengeCompeteInfo));
         await challengeCompeteService.CreateChallenge(baid, targetBaid, challengeCompeteInfo);
 
         return NoContent();

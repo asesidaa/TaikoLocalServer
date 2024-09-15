@@ -4,23 +4,23 @@ using System.Buffers.Binary;
 
 namespace TaikoLocalServer.Handlers;
 
-public record ChallengeCompeteQuery(uint Baid) : IRequest<ChallengeCompeResponse>;
+public record ChallengeCompeteQuery(uint Baid) : IRequest<CommonChallengeCompeResponse>;
 
-public class ChallengeCompeteQueryHandler(TaikoDbContext context, IChallengeCompeteService challengeCompeteService, ILogger<UserDataQueryHandler> logger)
-    : IRequestHandler<ChallengeCompeteQuery, ChallengeCompeResponse>
+public class ChallengeCompeteQueryHandler(IChallengeCompeteService challengeCompeteService)
+    : IRequestHandler<ChallengeCompeteQuery, CommonChallengeCompeResponse>
 {
 
-    public async Task<ChallengeCompeResponse> Handle(ChallengeCompeteQuery request, CancellationToken cancellationToken)
+    public async Task<CommonChallengeCompeResponse> Handle(ChallengeCompeteQuery request, CancellationToken cancellationToken)
     {
-        List<ChallengeCompeteDatum> competes = challengeCompeteService.GetInProgressChallengeCompete(request.Baid);
-        ChallengeCompeResponse response = new()
+        List<ChallengeCompeteDatum> competes = await challengeCompeteService.GetInProgressChallengeCompete(request.Baid);
+        CommonChallengeCompeResponse response = new()
         {
             Result = 1
         };
 
         foreach (var compete in competes)
         {
-            ChallengeCompeResponse.CompeData compeData = new()
+            CommonCompeData compeData = new()
             {
                 CompeId = compete.CompId
             };
@@ -45,7 +45,7 @@ public class ChallengeCompeteQueryHandler(TaikoDbContext context, IChallengeComp
                     }
                 }
 
-                ChallengeCompeResponse.CompeData.TracksData tracksData = new()
+                CommonTracksData tracksData = new()
                 {
                     SongNo = song.SongId,
                     Level = (uint) song.Difficulty,
