@@ -24,16 +24,16 @@
                               Variant="Variant.Outlined"
                               Adornment="Adornment.Start"
                               AdornmentIcon="@Icons.Material.Filled.Search" Style="width: 100%"/>
-                    @if (Mode == 1) {
-                        <MudButton Variant="Variant.Filled" Size="Size.Large" StartIcon="@Icons.Material.Filled.Add" Color="Color.Tertiary" Disabled="@(Baid==0)" OnClick=@(_ => OpenDialogAsync(1, 1)) Style="width: 80px">@Localizer["Add"]</MudButton>
+                    @if (Mode == 1 && Baid != 0) {
+                        <MudButton Variant="Variant.Filled" Size="Size.Large" StartIcon="@Icons.Material.Filled.Add" Color="Color.Tertiary" OnClick=@(_ => OpenDialogAsync(1, 1)) Style="width: 80px">@Localizer["Add"]</MudButton>
                     }
-                    else if (Mode == 2)
+                    else if (Mode == 2 && Baid != 0)
                     {
-                        <MudButton Variant="Variant.Filled" Size="Size.Large" StartIcon="@Icons.Material.Filled.Add" Color="Color.Tertiary" Disabled="@(Baid==0)" OnClick=@(_ => OpenDialogAsync(2, 3)) Style="width: 80px">@Localizer["Add"]</MudButton>
+                        <MudButton Variant="Variant.Filled" Size="Size.Large" StartIcon="@Icons.Material.Filled.Add" Color="Color.Tertiary" OnClick=@(_ => OpenDialogAsync(2, 3)) Style="width: 80px">@Localizer["Add"]</MudButton>
                     }
-                    else if (Mode == 3)
+                    else if (Mode == 3 && Baid == 0)
                     {
-                        <MudButton Variant="Variant.Filled" Size="Size.Large" StartIcon="@Icons.Material.Filled.Add" Color="Color.Tertiary" Disabled="@(Baid!=0)" OnClick=@(_ => OpenDialogAsync(3, 3)) Style="width: 80px">@Localizer["Add"]</MudButton>
+                        <MudButton Variant="Variant.Filled" Size="Size.Large" StartIcon="@Icons.Material.Filled.Add" Color="Color.Tertiary" OnClick=@(_ => OpenDialogAsync(3, 3)) Style="width: 80px">@Localizer["Add"]</MudButton>
                     }
                 </MudStack>
             </div>

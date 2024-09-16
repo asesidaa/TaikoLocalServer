@@ -81,6 +81,10 @@
                         <span style="padding-left: 20px;">@Localizer["Competition"]</span>
                     </MudNavLink>
                     <MudDivider />
+                    <MudNavLink Href="@($"ChallengeCompe/{User.Baid}/OfficialCompetition")" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.EmojiEvents" IconColor="Color.Warning">
+                        <span style="padding-left: 20px;">@Localizer["Official Competition"]</span>
+                    </MudNavLink>
+                    <MudDivider />
                     @if (AuthService.AllowUserDelete)
                     {
                         <MudMenuItem Icon="@Icons.Material.Filled.Delete"

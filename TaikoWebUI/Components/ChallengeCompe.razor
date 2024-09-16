@@ -66,10 +66,10 @@
                     }
                     else
                     {
-                        <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
-                            <MudButton Disabled="@(Baid == 0 || (ChallengeCompetition?.State == CompeteState.Waiting && ChallengeCompetition?.Baid == Baid))"
+                        <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled" OverrideStyles="false">
+                            <MudButton Color="Color.Success" Variant="Variant.Filled" Disabled="@(Baid == 0 || (ChallengeCompetition?.State == CompeteState.Waiting && ChallengeCompetition?.Baid == Baid))"
                                        OnClick=@(_ => AnswerChallenge(true))>@Localizer["Accept"]</MudButton>
-                            <MudButton Disabled="@(Baid == 0 || (ChallengeCompetition?.State == CompeteState.Waiting && ChallengeCompetition?.Baid == Baid))"
+                            <MudButton Color="Color.Error" Variant="Variant.Filled" Disabled="@(Baid == 0 || (ChallengeCompetition?.State == CompeteState.Waiting && ChallengeCompetition?.Baid == Baid))"
                                        OnClick=@(_ => AnswerChallenge(false))>@Localizer["Reject"]</MudButton>
                         </MudButtonGroup>
                     }
@@ -90,7 +90,7 @@
                             }
                             else
                             {
-                                <MudButton OnClick="AnswerCompete">@Localizer["Participate"]</MudButton>
+                                <MudButton OnClick="AnswerCompete" Color="Color.Success" Variant="Variant.Filled">@Localizer["Participate"]</MudButton>
                             }
                         }
                     }
