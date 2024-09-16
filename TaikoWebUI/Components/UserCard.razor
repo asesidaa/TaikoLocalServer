@@ -73,6 +73,14 @@
                         </MudMenuItem>
                         <MudDivider />
                     }
+                    <MudNavLink Href="@($"ChallengeCompe/{User.Baid}/Challenge")" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.People" IconColor="Color.Warning">
+                        <span style="padding-left: 20px;">@Localizer["Challenge"]</span>
+                    </MudNavLink>
+                    <MudDivider />
+                    <MudNavLink Href="@($"ChallengeCompe/{User.Baid}/Competition")" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.WorkspacePremium" IconColor="Color.Warning">
+                        <span style="padding-left: 20px;">@Localizer["Competition"]</span>
+                    </MudNavLink>
+                    <MudDivider />
                     @if (AuthService.AllowUserDelete)
                     {
                         <MudMenuItem Icon="@Icons.Material.Filled.Delete"

@@ -46,8 +46,7 @@
         </MudCardContent>
         <MudCardActions>
             <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
-                <MudButton Disabled=@CanParticipateChallengeCompetition()
-                           OnClick=@(_ => AnswerChallenge(true))>@Localizer["Information"]</MudButton>
+                <MudButton OnClick=@(_ => AnswerChallenge(true))>@Localizer["Information"]</MudButton>
                 @if (ChallengeCompetition.CompeteMode == CompeteModeType.Chanllenge)
                 {
                     @if (Baid == 0 || ChallengeCompetition?.Baid == Baid || ChallengeCompetition?.State != CompeteState.Waiting)
