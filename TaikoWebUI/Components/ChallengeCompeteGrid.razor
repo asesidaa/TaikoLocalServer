@@ -202,8 +202,8 @@
         var dialogRet = await DialogService.ShowAsync<AddChallengeCompetitionDialog>(Localizer["Create"], parameters, options);
         if (dialogRet != null)
         {
-            bool result = await dialogRet.GetReturnValueAsync<bool>();
-            if (result == true) await GetUsersData();
+            var result = await dialogRet.GetReturnValueAsync<bool?>();
+            if (result != null && result == true) await GetUsersData();
         }
     }
 }

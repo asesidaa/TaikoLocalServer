@@ -190,12 +190,15 @@
         parameters.Add("SelectedSong", musicDetails[i]);
 
         var reference = await DialogService.ShowAsync<ChooseSongDialog>(Localizer["Create"], parameters, options);
-        var songInfo = await reference.GetReturnValueAsync<SongInfo>();
-
-        if (songInfo != null) 
+        if (reference != null)
         {
-            musicDetails[i] = songInfo.MusicDetail;
-            difficulties[i] = songInfo.Difficulty;
+            var songInfo = await reference.GetReturnValueAsync<SongInfo>();
+
+            if (songInfo != null)
+            {
+                musicDetails[i] = songInfo.MusicDetail;
+                difficulties[i] = songInfo.Difficulty;
+            }
         }
     }
 
