@@ -17,6 +17,7 @@ public class ChallengeCompetition
     public bool OnlyPlayOnce { get; set; } = false;
     public ShareType Share { get; set; } = ShareType.EveryOne;
     public CompeteTargetType CompeteTarget { get; set; } = CompeteTargetType.EveryOne;
+    public UserAppearance? Holder { get; set; } = new();
     public List<ChallengeCompetitionSong> Songs { get; set; } = new();
     public List<ChallengeCompetitionParticipant> Participants { get; set; } = new();
 }

@@ -3,7 +3,6 @@ using GameDatabase.Context;
 using SharedProject.Models;
 using SharedProject.Models.Responses;
 using SharedProject.Utils;
-using TaikoLocalServer.Services.Interfaces;
 using Throw;
 
 namespace TaikoLocalServer.Services;
@@ -174,7 +173,8 @@ public class ChallengeCompeteService : IChallengeCompeteService
 
     public async Task<bool> ParticipateCompete(uint compId, uint baid)
     {
-        var challengeCompete = await context.ChallengeCompeteData.FindAsync(compId);
+        var challengeCompete = await context.ChallengeCompeteData
+            .Include(c => c.Participants).Where(c => c.CompId == compId).FirstOrDefaultAsync();
         challengeCompete.ThrowIfNull($"Challenge not found for CompId {compId}!");
 
         if (challengeCompete.MaxParticipant <= challengeCompete.Participants.Count()) return false;
@@ -247,16 +247,15 @@ public class ChallengeCompeteService : IChallengeCompeteService
 
     public async Task<bool> AnswerChallenge(uint compId, uint baid, bool accept)
     {
-        var challengeCompete = await context.ChallengeCompeteData.FindAsync(compId);
+        var challengeCompete = await context.ChallengeCompeteData
+            .Include(c => c.Participants).Where(c => c.CompId == compId).FirstOrDefaultAsync();
         challengeCompete.ThrowIfNull($"Challenge not found for CompId {compId}!");
 
         if (challengeCompete.Baid == baid) return false;
-        bool hasTarget = false;
-        foreach (var participant in challengeCompete.Participants)
+        if (!challengeCompete.Participants.Any(p => p.Baid == baid))
         {
-            if (participant.Baid == baid) hasTarget = true;
+            return false;
         }
-        if (!hasTarget) return false;
 
         if (accept)
         {
@@ -341,6 +340,14 @@ public class ChallengeCompeteService : IChallengeCompeteService
 
     public async Task<ChallengeCompetition> FillData(ChallengeCompetition challenge)
     {
+        UserDatum? holder = await userDatumService.GetFirstUserDatumOrNull(challenge.Baid);
+        challenge.Holder = convert(holder);
+        foreach (var participant in challenge.Participants)
+        {
+            if (participant == null) continue;
+            UserDatum? user = await userDatumService.GetFirstUserDatumOrNull(participant.Baid);
+            participant.UserInfo = convert(user);
+        }
         foreach (var song in challenge.Songs)
         {
             if (song == null) continue;
@@ -348,26 +355,31 @@ public class ChallengeCompeteService : IChallengeCompeteService
             foreach (var score in song.BestScores)
             {
                 UserDatum? user = await userDatumService.GetFirstUserDatumOrNull(score.Baid);
-                if (user == null) continue;
-                score.UserAppearance = new UserAppearance
-                {
-                    Baid = score.Baid,
-                    MyDonName = user.MyDonName,
-                    MyDonNameLanguage = user.MyDonNameLanguage,
-                    Title = user.Title,
-                    TitlePlateId = user.TitlePlateId,
-                    Kigurumi = user.CurrentKigurumi,
-                    Head = user.CurrentHead,
-                    Body = user.CurrentBody,
-                    Face = user.CurrentFace,
-                    Puchi = user.CurrentPuchi,
-                    FaceColor = user.ColorFace,
-                    BodyColor = user.ColorBody,
-                    LimbColor = user.ColorLimb,
-                };
+                score.UserAppearance = convert(user);
             }
         }
 
         return challenge;
+    }
+
+    private UserAppearance? convert(UserDatum? user)
+    {
+        if (user == null) return null;
+        return new UserAppearance
+        {
+            Baid = user.Baid,
+            MyDonName = user.MyDonName,
+            MyDonNameLanguage = user.MyDonNameLanguage,
+            Title = user.Title,
+            TitlePlateId = user.TitlePlateId,
+            Kigurumi = user.CurrentKigurumi,
+            Head = user.CurrentHead,
+            Body = user.CurrentBody,
+            Face = user.CurrentFace,
+            Puchi = user.CurrentPuchi,
+            FaceColor = user.ColorFace,
+            BodyColor = user.ColorBody,
+            LimbColor = user.ColorLimb,
+        };
     }
 }

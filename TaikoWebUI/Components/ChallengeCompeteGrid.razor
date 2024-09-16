@@ -65,7 +65,7 @@
             foreach (var challengeCompetition in response.List)
             {
                 <MudItem xs="12" md="6" lg="4" xl="3">
-                    <ChallengeCompe ChallengeCompetition="challengeCompetition" Baid="(uint)Baid" />
+                    <ChallengeCompe ChallengeCompetition="challengeCompetition" Baid="Baid" Refresh="UpdateCompete" />
                 </MudItem>
             }
         }
@@ -105,8 +105,6 @@
     [Parameter]
     public int Mode { get; set; }
 
-
-
     private ChallengeCompetitionResponse? response = new();
     private CancellationTokenSource? cts;
     private int TotalPages { get; set; } = 0;
@@ -125,6 +123,17 @@
 
         TotalPages = response.TotalPages;
         isLoading = false;
+    }
+
+    private async Task UpdateCompete(ChallengeCompetition cc)
+    {
+        await GetUsersData();
+        var updated = response?.List.Find(c => c.CompId == cc.CompId);
+        if (updated != null)
+        {
+            cc.CompeteMode = updated.CompeteMode;
+            cc.Participants = updated.Participants;
+        }
     }
 
     protected override async Task OnInitializedAsync()
@@ -182,13 +191,19 @@
         await Debounce(GetUsersData, 500); // 500 milliseconds delay
     }
 
-    private Task OpenDialogAsync(int mode, int maxSongs)
+    private async Task OpenDialogAsync(int mode, int maxSongs)
     {
         var options = new DialogOptions { CloseOnEscapeKey = true };
         var parameters = new DialogParameters();
         parameters.Add("Mode", mode);
         parameters.Add("MaxSongs", maxSongs);
+        parameters.Add("Baid", Baid);
 
-        return DialogService.ShowAsync<AddChallengeCompetitionDialog>(Localizer["Create"], parameters, options);
+        var dialogRet = await DialogService.ShowAsync<AddChallengeCompetitionDialog>(Localizer["Create"], parameters, options);
+        if (dialogRet != null)
+        {
+            bool result = await dialogRet.GetReturnValueAsync<bool>();
+            if (result == true) await GetUsersData();
+        }
     }
 }

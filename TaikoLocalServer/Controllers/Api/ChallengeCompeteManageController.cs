@@ -92,7 +92,7 @@ public class ChallengeCompeteManageController(IChallengeCompeteService challenge
 
         await challengeCompeteService.CreateCompete(0, challengeCompeteInfo);
 
-        return NoContent();
+        return Ok();
     }
 
     [HttpPost("{baid}/createCompete")]
@@ -102,7 +102,7 @@ public class ChallengeCompeteManageController(IChallengeCompeteService challenge
         Logger.LogInformation("CreateCompete : {Request}", JsonFormatter.JsonSerialize(challengeCompeteInfo));
         await challengeCompeteService.CreateCompete(baid, challengeCompeteInfo);
 
-        return NoContent();
+        return Ok();
     }
 
     [HttpPost("{baid}/createChallenge/{targetBaid}")]
@@ -112,13 +112,14 @@ public class ChallengeCompeteManageController(IChallengeCompeteService challenge
         Logger.LogInformation("CreateChallenge : {Request}", JsonFormatter.JsonSerialize(challengeCompeteInfo));
         await challengeCompeteService.CreateChallenge(baid, targetBaid, challengeCompeteInfo);
 
-        return NoContent();
+        return Ok();
     }
 
     [HttpGet("{baid}/joinCompete/{compId}")]
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<ActionResult<bool>> JoinCompete(uint baid, uint compId)
     {
+        Logger.LogInformation($"JoinCompete {baid} {compId}");
         bool result = await challengeCompeteService.ParticipateCompete(compId, baid);
 
         return Ok(result);
@@ -128,6 +129,7 @@ public class ChallengeCompeteManageController(IChallengeCompeteService challenge
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<ActionResult<bool>> AcceptChallenge(uint baid, uint compId)
     {
+        Logger.LogInformation($"AcceptChallenge {baid} {compId}");
         bool result = await challengeCompeteService.AnswerChallenge(compId, baid, true);
 
         return Ok(result);
@@ -137,6 +139,7 @@ public class ChallengeCompeteManageController(IChallengeCompeteService challenge
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<ActionResult<bool>> RejectChallenge(uint baid, uint compId)
     {
+        Logger.LogInformation($"RejectChallenge {baid} {compId}");
         bool result = await challengeCompeteService.AnswerChallenge(compId, baid, false);
 
         return Ok(result);

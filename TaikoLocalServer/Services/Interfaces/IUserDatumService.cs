@@ -1,9 +1,13 @@
-﻿namespace TaikoLocalServer.Services.Interfaces;
+﻿using SharedProject.Models;
+
+namespace TaikoLocalServer.Services.Interfaces;
 
 public interface IUserDatumService
 {
     public Task<List<UserDatum>> GetAllUserDatum();
-    
+
+    public Task<Dictionary<uint, User>> GetAllUserDict();
+
     public Task<UserDatum?> GetFirstUserDatumOrNull(uint baid);
 
     public Task UpdateUserDatum(UserDatum userDatum);

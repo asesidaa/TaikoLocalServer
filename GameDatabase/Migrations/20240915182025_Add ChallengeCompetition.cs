@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GameDatabase.Migrations
 {
     /// <inheritdoc />
-    public partial class AddChallengeCompetion : Migration
+    public partial class AddChallengeCompetition : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,6 +33,12 @@ namespace GameDatabase.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ChallengeCompeteData", x => x.CompId);
+                    table.ForeignKey(
+                        name: "FK_ChallengeCompeteData_UserData_Baid",
+                        column: x => x.Baid,
+                        principalTable: "UserData",
+                        principalColumn: "Baid",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -129,6 +135,12 @@ namespace GameDatabase.Migrations
                 name: "IX_ChallengeCompeteBestData_CompId_SongId",
                 table: "ChallengeCompeteBestData",
                 columns: new[] { "CompId", "SongId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ChallengeCompeteData_Baid",
+                table: "ChallengeCompeteData",
+                column: "Baid",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ChallengeCompeteParticipantData_Baid",

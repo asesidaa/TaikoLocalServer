@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameDatabase.Migrations
 {
     [DbContext(typeof(TaikoDbContext))]
-    [Migration("20240911133119_AddChallengeCompetion")]
-    partial class AddChallengeCompetion
+    [Migration("20240915191732_Update ChallengeCompetition")]
+    partial class UpdateChallengeCompetition
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

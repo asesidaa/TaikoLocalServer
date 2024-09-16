@@ -88,4 +88,17 @@ public class UsersController(IUserDatumService userDatumService, IAuthService au
 
         return result ? NoContent() : NotFound();
     }
+
+    [HttpGet("{baid}/AllUserDict")]
+    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
+    public async Task<IActionResult> AllUserDict(uint baid)
+    {
+        Dictionary<uint, User> data = await userDatumService.GetAllUserDict();
+        if (baid != 0)
+        {
+            data.Remove(baid);
+        }
+
+        return Ok(data);
+    }
 }
