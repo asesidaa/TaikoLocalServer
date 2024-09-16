@@ -49,6 +49,18 @@ public class ChallengeCompeteManageController(IChallengeCompeteService challenge
         return Ok(response);
     }
 
+    [HttpGet("comp/{compId}")]
+    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
+    public async Task<ActionResult<ChallengeCompetitionResponse>> GetChallengeCompe(uint compId)
+    {
+        var data = await challengeCompeteService.GetFirstOrDefaultCompete(compId);
+        if (data == null) return BadRequest(new { Message = $"Compete(CompId={compId}) is Not Exist!"});
+        var challengeCompetition = Mappers.ChallengeCompeMappers.MapData(data);
+        challengeCompetition = await challengeCompeteService.FillData(challengeCompetition);
+
+        return Ok(challengeCompetition);
+    }
+
     [HttpGet("test/{mode}")]
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public ActionResult<List<ChallengeCompeteDatum>> testCreateCompete(uint mode)

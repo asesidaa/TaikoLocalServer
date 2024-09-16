@@ -4,6 +4,7 @@ using SharedProject.Models;
 using SharedProject.Models.Responses;
 using SharedProject.Utils;
 using Throw;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace TaikoLocalServer.Services;
 
@@ -123,6 +124,14 @@ public class ChallengeCompeteService : IChallengeCompeteService
             TotalPages = totalPage,
             Total = total
         };
+    }
+
+    public Task<ChallengeCompeteDatum?> GetFirstOrDefaultCompete(uint compId)
+    {
+        return context.ChallengeCompeteData
+                .Include(e => e.Songs).ThenInclude(e => e.BestScores).Include(e => e.Participants)
+                .Where(c => c.CompId == compId)
+                .FirstOrDefaultAsync();
     }
 
     public async Task CreateCompete(uint baid, ChallengeCompeteCreateInfo challengeCompeteInfo)

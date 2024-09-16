@@ -1,30 +1,38 @@
-﻿@inject IDialogService DialogService;
+﻿@using Blazored.LocalStorage
+
 @inject HttpClient Client
+@inject IDialogService DialogService;
+@inject IGameDataService GameDataService
+@inject ILocalStorageService LocalStorage
 
 @if (ChallengeCompetition != null)
 {
     <MudCard>
         <MudCardHeader>
             <CardHeaderContent>
-                @if (ChallengeCompetition.CompeteMode == CompeteModeType.Chanllenge)
-                {
-                    if (Baid == 0)
+                <MudStack Row="true" Spacing="1">
+                    @if (ChallengeCompetition.CompeteMode == CompeteModeType.Chanllenge)
                     {
-                        <MudText Typo="Typo.h6" Style="font-weight:bold;word-break:break-all">@formatChallengeTitle(Localizer["FullChallengeTitle"])</MudText>
-                    }
-                    else if (ChallengeCompetition?.Baid != Baid)
-                    {
-                        <MudText Typo="Typo.h6" Style="font-weight:bold;word-break:break-all">@formatChallengeTitle(Localizer["ReceiverChallengeTitle"])</MudText>
+                        if (Baid == 0)
+                        {
+                            <MudText Typo="Typo.h6" Style="font-weight:bold;word-break:break-all">@formatChallengeTitle(Localizer["FullChallengeTitle"])</MudText>
+                        }
+                        else if (ChallengeCompetition?.Baid != Baid)
+                        {
+                            <MudIcon Icon="@Icons.Material.Filled.MoveToInbox" Color="Color.Secondary" Style="margin-top: 4px;" />
+                            <MudText Typo="Typo.h6" Style="font-weight:bold;word-break:break-all">@formatChallengeTitle(Localizer["ReceiverChallengeTitle"])</MudText>
+                        }
+                        else
+                        {
+                            <MudIcon Icon="@Icons.Material.Filled.ForwardToInbox" Color="Color.Primary" Style="margin-top: 4px;" />
+                            <MudText Typo="Typo.h6" Style="font-weight:bold;word-break:break-all">@formatChallengeTitle(Localizer["CreatorChallengeTitle"])</MudText>
+                        }
                     }
                     else
                     {
-                        <MudText Typo="Typo.h6" Style="font-weight:bold;word-break:break-all">@formatChallengeTitle(Localizer["CreatorChallengeTitle"])</MudText>
+                        <MudText Typo="Typo.h6" Style="font-weight:bold;word-break:break-all">@ChallengeCompetition?.CompeteName</MudText>
                     }
-                }
-                else
-                {
-                    <MudText Typo="Typo.h6" Style="font-weight:bold;word-break:break-all">@ChallengeCompetition?.CompeteName</MudText>
-                }
+                </MudStack>
                 
                 <MudText Typo="Typo.caption" Style="display: block">@Localizer["Comp ID"]:@ChallengeCompetition?.CompId</MudText>
                 <MudText Typo="Typo.caption" Style="display: block">@Localizer["Describe"]:@ChallengeCompetition?.CompeteDescribe</MudText>
@@ -42,7 +50,9 @@
                 foreach (var song in ChallengeCompetition.Songs)
                 {
                     <div>
-                        <MudButton Variant="Variant.Text" StartIcon=@Icons.Material.Filled.Audiotrack>@song.MusicDetail?.SongName</MudButton>
+                        <MudButton Variant="Variant.Text" StartIcon=@Icons.Material.Filled.Audiotrack>
+                            @GameDataService.GetMusicNameBySongId(MusicDetailDictionary, song.MusicDetail.SongId, SongNameLanguage)@(song.BestScores.Any(bs => bs.Baid == Baid) ? (" (" + Localizer["Played"] + ")") : "")
+                        </MudButton>
                     </div>
                 }
             }
@@ -110,6 +120,25 @@
     [Parameter] public ChallengeCompetition? ChallengeCompetition { get; set; }
     [Parameter] public int Baid { get; set; }
     [Parameter] public EventCallback<ChallengeCompetition> Refresh { get; set; }
+    [Parameter] public Dictionary<uint, MusicDetail>? MusicDetailDictionary { get; set; } = null;
+    [Parameter] public string? SongNameLanguage { get; set; } = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        base.OnInitialized();
+        if (SongNameLanguage == null) SongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
+        if (MusicDetailDictionary == null) MusicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
+    }
+
+    private string GetSongInfo(ChallengeCompetitionSong song)
+    {
+        var songName = GameDataService.GetMusicNameBySongId(MusicDetailDictionary, song.MusicDetail.SongId, SongNameLanguage);
+        if (song.BestScores.Any(bs => bs.Baid == Baid))
+        {
+            return songName + " (" + Localizer["Played"] + ")";
+        }
+        return songName;
+    }
 
     private bool SelfHoldedChallengeCompetiton()
     {

@@ -1,9 +1,12 @@
 ﻿@using System.Net
-@using TaikoWebUI.Utilities;
+@using Blazored.LocalStorage
+@using TaikoWebUI.Utilities
 
 @inject HttpClient Client
 @inject ISnackbar Snackbar
-@inject IDialogService DialogService;
+@inject IDialogService DialogService
+@inject IGameDataService GameDataService
+@inject ILocalStorageService LocalStorage
 
 <MudDialog Style="width: 700px">
     <TitleContent>
@@ -36,7 +39,7 @@
             {
                 <MudTextField ShrinkLabel @bind-Value="Info.Name" Label="@Localizer["Name"]" Counter="20" MaxLength="20" />
             }
-            <MudTextField @bind-Value="Info.Desc" Label="@((Mode == 1 ? Localizer["Challenge"] : "") + Localizer["Describe"])" />
+            <MudTextField ShrinkLabel @bind-Value="Info.Desc" Label="@((Mode == 1 ? Localizer["Challenge"] : "") + " " + Localizer["Describe"])" />
             @if (Mode == 1)
             {
                 <MudStack Row="true">
@@ -59,9 +62,10 @@
                                 Difficulty difficulty = difficulties[song_idx];
                                 <MudImage Src="@ScoreUtils.GetDifficultyIcon(difficulty)" Alt="@ScoreUtils.GetDifficultyTitle(difficulty)" Width="24" Height="48" Style="padding: 12px 0px 12px 0px; margin-right: 8px; vertical-align: middle;" />
                             }
-                            <span style="vertical-align: middle; font-family: Nijiiro, sans-serif;">@(musicDetails[song_idx].SongId == 0 ? Localizer["No Select"] : musicDetails[song_idx].SongName)</span>
-                            <MudButton StartIcon="@Icons.Material.Filled.Star" OnClick="@(_ => SelSong(song_idx))">@levels[song_idx]</MudButton>
-                            
+                            <span style="vertical-align: middle; font-family: Nijiiro, sans-serif;">@(musicDetails[song_idx].SongId == 0 ? Localizer["No Select"] : GameDataService.GetMusicNameBySongId(MusicDetailDictionary, musicDetails[song_idx].SongId, SongNameLanguage))</span>
+                            @if (levels[song_idx] > 0) {
+                                <MudButton StartIcon="@Icons.Material.Filled.Star" OnClick="@(_ => SelSong(song_idx))">@levels[song_idx]</MudButton>
+                            }
                         </MudField>
                         <MudIconButton Icon="@Icons.Material.Filled.Settings" Variant="Variant.Text" Color="Color.Primary" OnClick="(_ => OnExpandCollapseClick(song_idx))" />
                         @if (Info.challengeCompeteSongs.Count > 1)
@@ -69,20 +73,20 @@
                             <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Text" Color="Color.Error" OnClick="(_ => DelSong(song_idx))" />
                         }
                     </MudStack>
-                    
+
                     <MudCollapse Expanded="_expandeds[song_idx]">
-                        <MudStack Row="true">
-                            <MudSelect @bind-Value="song.IsVanishOn" Label=@Localizer["Vanish"] AnchorOrigin="Origin.BottomCenter">
+                        <MudStack StretchItems="StretchItems.All" Row="true">
+                            <MudSelect @bind-Value="song.IsVanishOn" Label=@Localizer["Vanish"] AnchorOrigin="Origin.BottomCenter" Style="width: 25%;">
                                 <MudSelectItem Value="@(-1)">@Localizer["Any"]</MudSelectItem>
                                 <MudSelectItem Value="@(1)">@Localizer["On"]</MudSelectItem>
                                 <MudSelectItem Value="@(0)">@Localizer["Off"]</MudSelectItem>
                             </MudSelect>
-                            <MudSelect @bind-Value="song.IsInverseOn" Label=@Localizer["Inverse"] AnchorOrigin="Origin.BottomCenter">
+                            <MudSelect @bind-Value="song.IsInverseOn" Label=@Localizer["Inverse"] AnchorOrigin="Origin.BottomCenter" Style="width: 25%;">
                                 <MudSelectItem Value="@(-1)">@Localizer["Any"]</MudSelectItem>
                                 <MudSelectItem Value="@(1)">@Localizer["On"]</MudSelectItem>
                                 <MudSelectItem Value="@(0)">@Localizer["Off"]</MudSelectItem>
                             </MudSelect>
-                            <MudSelect @bind-Value="song.Speed" Label=@Localizer["Speed"] AnchorOrigin="Origin.BottomCenter">
+                            <MudSelect @bind-Value="song.Speed" Label=@Localizer["Speed"] AnchorOrigin="Origin.BottomCenter" Style="width: 25%;">
                                 <MudSelectItem Value="@(-1)">@Localizer["Any"]</MudSelectItem>
                                 @for (uint idx = 0; idx < SpeedStrings.Length; idx++)
                                 {
@@ -90,7 +94,7 @@
                                     <MudSelectItem Value="@((int)speed_idx)">@SpeedStrings[speed_idx]</MudSelectItem>
                                 }
                             </MudSelect>
-                            <MudSelect @bind-Value="song.RandomType" Label=@Localizer["Random"] AnchorOrigin="Origin.BottomCenter">
+                            <MudSelect @bind-Value="song.RandomType" Label=@Localizer["Random"] AnchorOrigin="Origin.BottomCenter" Style="width: 25%;">
                                 <MudSelectItem Value="@(-1)">@Localizer["Any"]</MudSelectItem>
                                 @foreach (var item in Enum.GetValues<RandomType>())
                                 {
@@ -142,6 +146,10 @@
     [Parameter]
     public ChallengeCompeteCreateInfo Info { get; set; } = new();
 
+    private Dictionary<uint, MusicDetail> MusicDetailDictionary = new();
+
+    private string? SongNameLanguage;
+
     private static readonly string[] SpeedStrings =
     {
         "1.0", "1.1", "1.2", "1.3", "1.4",
@@ -168,8 +176,9 @@
     private bool OnlyPlayOnce = false;
 
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        base.OnInitialized();
         _expandeds = new bool[MaxSongs];
         musicDetails = new MusicDetail[MaxSongs];
         difficulties = new Difficulty[MaxSongs];
@@ -181,6 +190,8 @@
             levels[i] = 0;
         }
         Info.challengeCompeteSongs.Add(new());
+        SongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
+        MusicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
     }
 
     private void AddSong()
@@ -192,7 +203,8 @@
     {
         var options = new DialogOptions { CloseOnEscapeKey = true };
         var parameters = new DialogParameters();
-        parameters.Add("SelectedSong", musicDetails[i]);
+        parameters.Add("MusicDetailDictionary", MusicDetailDictionary);
+        parameters.Add("SongNameLanguage", SongNameLanguage);
 
         var reference = await DialogService.ShowAsync<ChooseSongDialog>(Localizer["Select Song"], parameters, options);
         if (reference != null)

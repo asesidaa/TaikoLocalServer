@@ -7,7 +7,7 @@
 
 <MudDialog Style="width: 1200px">
     <DialogContent>
-        <MudTable Items="musicDetailDictionary.Values" Filter="@FilterSongs" @bind-SelectedItem="@SelectedSong" Height="40vh" Hover="true">
+        <MudTable Items="MusicDetailDictionary.Values" Filter="@FilterSongs" Height="40vh" Hover="true">
             <ColGroup>
                 <col style="width: 50px;" />
                 <col />
@@ -25,7 +25,7 @@
             </ToolBarContent>
             <HeaderContent>
                 <MudTh>
-                    <MudTableSortLabel T="MusicDetail" SortBy="context => GameDataService.GetMusicNameBySongId(musicDetailDictionary, context.SongId, SongNameLanguage)">
+                    <MudTableSortLabel T="MusicDetail" SortBy="context => GameDataService.GetMusicNameBySongId(MusicDetailDictionary, context.SongId, SongNameLanguage)">
                         @Localizer["Song Title"]
                     </MudTableSortLabel>
                 </MudTh>
@@ -34,7 +34,7 @@
                     @if (difficulty is not Difficulty.None)
                     {
                         <MudTh>
-                            <MudTableSortLabel T="MusicDetail" SortBy="context => GameDataService.GetMusicStarLevel(musicDetailDictionary, context.SongId, difficulty)">
+                            <MudTableSortLabel T="MusicDetail" SortBy="context => GameDataService.GetMusicStarLevel(MusicDetailDictionary, context.SongId, difficulty)">
                                 <img src="@ScoreUtils.GetDifficultyIcon(difficulty)" alt="@ScoreUtils.GetDifficultyTitle(difficulty)" style="@Constants.ICON_STYLE" />
                             </MudTableSortLabel>
                         </MudTh>
@@ -44,18 +44,18 @@
             <RowTemplate>
                 <MudTd Style="width:400px">
                     <MudText Typo="Typo.body2" Style="font-weight:bold">
-                        @GameDataService.GetMusicNameBySongId(musicDetailDictionary, context.SongId, SongNameLanguage)
+                        @GameDataService.GetMusicNameBySongId(MusicDetailDictionary, context.SongId, SongNameLanguage)
                     </MudText>
                 </MudTd>
                 @foreach (var difficulty in Enum.GetValues<Difficulty>())
                 {
                     @if (difficulty is not Difficulty.None)
                     {
-                        var starLevel = GameDataService.GetMusicStarLevel(musicDetailDictionary, context.SongId, difficulty);
+                        var starLevel = GameDataService.GetMusicStarLevel(MusicDetailDictionary, context.SongId, difficulty);
                         <MudTd>
                             @if (starLevel > 0)
                             {
-                                <MudButton StartIcon="@Icons.Material.Filled.Star" OnClick="@(_ => Select(context, difficulty))">@starLevel</MudButton>
+                                <MudButton StartIcon="@Icons.Material.Filled.Star" OnClick="@(_ => Select(context, difficulty, starLevel))">@starLevel</MudButton>
                             }
                             else
                             {
@@ -83,11 +83,9 @@
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
 
-    [Parameter] public MusicDetail SelectedSong { get; set; } = new();
+    [Parameter] public Dictionary<uint, MusicDetail>? MusicDetailDictionary { get; set; } = null;
 
-    private Dictionary<uint, MusicDetail> musicDetailDictionary = new();
-
-    private string? SongNameLanguage;
+    [Parameter] public string? SongNameLanguage { get; set; } = null;
 
     private string Search { get; set; } = string.Empty;
 
@@ -96,8 +94,8 @@
     protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();
-        SongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
-        musicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
+        if (SongNameLanguage == null) SongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
+        if (MusicDetailDictionary == null) MusicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
 
     }
 
@@ -119,12 +117,13 @@
         return true;
     }
 
-    private void Select(MusicDetail musicDetail, Difficulty difficulty) 
+    private void Select(MusicDetail musicDetail, Difficulty difficulty, int level) 
     {
         MudDialog.Close(DialogResult.Ok(new SongInfo()
         {
             MusicDetail = musicDetail,
-            Difficulty = difficulty
+            Difficulty = difficulty,
+            Level = level,
         }));
     }
 

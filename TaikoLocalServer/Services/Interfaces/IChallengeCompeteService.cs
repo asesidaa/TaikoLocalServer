@@ -13,6 +13,8 @@ public interface IChallengeCompeteService
 
     public Task<ChallengeCompetitionResponse> GetChallengeCompetePage(CompeteModeType mode, uint baid, bool inProgress, int page, int limit, string? search);
 
+    public Task<ChallengeCompeteDatum> GetFirstOrDefaultCompete(uint compId);
+
     public Task CreateCompete(uint baid, ChallengeCompeteCreateInfo challengeCompeteInfo);
 
     public Task<bool> ParticipateCompete(uint compId, uint baid);

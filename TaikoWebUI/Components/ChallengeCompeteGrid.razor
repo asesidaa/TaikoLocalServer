@@ -1,8 +1,12 @@
-﻿@inject HttpClient Client
+﻿@using Blazored.LocalStorage
+
+@inject HttpClient Client
 @inject AuthService AuthService
+@inject IDialogService DialogService;
+@inject IGameDataService GameDataService
+@inject ILocalStorageService LocalStorage
 @inject NavigationManager NavigationManager
 @inject BreadcrumbsStateContainer BreadcrumbsStateContainer
-@inject IDialogService DialogService;
 
 @using TaikoWebUI.Components;
 @using TaikoWebUI.Pages.Dialogs
@@ -65,7 +69,11 @@
             foreach (var challengeCompetition in response.List)
             {
                 <MudItem xs="12" md="6" lg="4" xl="3">
-                    <ChallengeCompe ChallengeCompetition="challengeCompetition" Baid="Baid" Refresh="UpdateCompete" />
+                    <ChallengeCompe ChallengeCompetition="challengeCompetition" 
+                                    MusicDetailDictionary="MusicDetailDictionary"
+                                    SongNameLanguage="SongNameLanguage"
+                                    Baid="Baid" 
+                                    Refresh="UpdateCompete" />
                 </MudItem>
             }
         }
@@ -105,6 +113,12 @@
     [Parameter]
     public int Mode { get; set; }
 
+    [Parameter] 
+    public Dictionary<uint, MusicDetail>? MusicDetailDictionary { get; set; } = null;
+
+    [Parameter] 
+    public string? SongNameLanguage { get; set; } = null;
+
     private ChallengeCompetitionResponse? response = new();
     private CancellationTokenSource? cts;
     private int TotalPages { get; set; } = 0;
@@ -114,7 +128,7 @@
     private string? searchTerm = null;
     private bool inProgress = false;
 
-    private async Task GetUsersData()
+    private async Task GetChallengeCompetitionData()
     {
         isLoading = true;
 
@@ -127,7 +141,7 @@
 
     private async Task UpdateCompete(ChallengeCompetition cc)
     {
-        await GetUsersData();
+        await GetChallengeCompetitionData();
         var updated = response?.List.Find(c => c.CompId == cc.CompId);
         if (updated != null)
         {
@@ -139,6 +153,9 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        if (SongNameLanguage == null) SongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
+        if (MusicDetailDictionary == null) MusicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
+
         if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
         {
             await AuthService.LoginWithAuthToken();
@@ -146,18 +163,29 @@
 
         if (AuthService.IsAdmin || !AuthService.LoginRequired)
         {
-            await GetUsersData();
+            await GetChallengeCompetitionData();
         }
 
         BreadcrumbsStateContainer.breadcrumbs.Clear();
-        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
+        if (Mode == 1)
+        {
+            BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Challenge"], href: $"/ChallengeCompe/{Baid}/Challenge"));
+        } 
+        else if (Mode == 2)
+        {
+            BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Competition"], href: $"/ChallengeCompe/{Baid}/Competition"));
+        } 
+        else if (Mode == 3)
+        {
+            BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Official Competition"], href: $"/ChallengeCompe/{Baid}/OfficialCompetition"));
+        }
         BreadcrumbsStateContainer.NotifyStateChanged();
     }
 
     private async Task OnPageChange(int page)
     {
         currentPage = page;
-        await GetUsersData();
+        await GetChallengeCompetitionData();
     }
 
     private async Task Debounce(Func<Task> action, int delayInMilliseconds)
@@ -188,7 +216,7 @@
         currentPage = 1;
 
         // Debounce the GetUsersData method
-        await Debounce(GetUsersData, 500); // 500 milliseconds delay
+        await Debounce(GetChallengeCompetitionData, 500); // 500 milliseconds delay
     }
 
     private async Task OpenDialogAsync(int mode, int maxSongs, int maxDays = 30, int maxParticipant = 20)
@@ -205,7 +233,7 @@
         if (dialogRet != null)
         {
             var result = await dialogRet.GetReturnValueAsync<bool?>();
-            if (result != null && result == true) await GetUsersData();
+            if (result != null && result == true) await GetChallengeCompetitionData();
         }
     }
 }
