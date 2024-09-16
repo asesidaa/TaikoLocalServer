@@ -864,4 +864,70 @@
   <data name="Challenge Competition Data" xml:space="preserve">
     <value>Données de compétition de défi</value>
   </data>
+  <data name="Accepted" xml:space="preserve">
+    <value>Accepté</value>
+  </data>
+  <data name="Rejected" xml:space="preserve">
+    <value>Rejeté</value>
+  </data>
+  <data name="Challenge Target" xml:space="preserve">
+    <value>Objet de défi</value>
+  </data>
+  <data name="Last For (Days)" xml:space="preserve">
+    <value>Durée (jours)</value>
+  </data>
+  <data name="Song" xml:space="preserve">
+    <value>Chanson</value>
+  </data>
+  <data name="Only Play Once" xml:space="preserve">
+    <value>Jouer une seule fois</value>
+  </data>
+  <data name="Fulfilled" xml:space="preserve">
+    <value>Limite atteinte</value>
+  </data>
+  <data name="Participated" xml:space="preserve">
+    <value>Déjà participé</value>
+  </data>
+  <data name="FullChallengeTitle" xml:space="preserve">
+    <value>Défi de {From} à {To}</value>
+  </data>
+  <data name="ReceiverChallengeTitle" xml:space="preserve">
+    <value>Défi de {From}</value>
+  </data>
+  <data name="CreatorChallengeTitle" xml:space="preserve">
+    <value>Défi à {To}</value>
+  </data>
+  <data name="Create Challenge" xml:space="preserve">
+    <value>Créer un défi</value>
+  </data>
+  <data name="Create Competition" xml:space="preserve">
+    <value>Créer une compétition</value>
+  </data>
+  <data name="Create Official Competition" xml:space="preserve">
+    <value>Créer une compétition officielle</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Créer</value>
+  </data>
+  <data name="No Select" xml:space="preserve">
+    <value>Aucune chanson sélectionnée</value>
+  </data>
+  <data name="Max Participant" xml:space="preserve">
+    <value>Nombre maximal de participants</value>
+  </data>
+  <data name="Select Song" xml:space="preserve">
+    <value>Sélectionnez une chanson avec difficulté</value>
+  </data>
+  <data name="Select User" xml:space="preserve">
+    <value>Sélectionnez l'utilisateur cible du défi</value>
+  </data>
+  <data name="Any" xml:space="preserve">
+    <value>N'importe lequel</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>allumer</value>
+  </data>
+  <data name="Off" xml:space="preserve">
+    <value>fermeture</value>
+  </data>
 </root>

@@ -864,4 +864,70 @@
   <data name="Challenge Competition Data" xml:space="preserve">
     <value>挑戦と大会</value>
   </data>
+  <data name="Accepted" xml:space="preserve">
+    <value>受け入れられました</value>
+  </data>
+  <data name="Rejected" xml:space="preserve">
+    <value>拒否されました</value>
+  </data>
+  <data name="Challenge Target" xml:space="preserve">
+    <value>挑戦対象</value>
+  </data>
+  <data name="Last For (Days)" xml:space="preserve">
+    <value>期間 (日)</value>
+  </data>
+  <data name="Song" xml:space="preserve">
+    <value>曲</value>
+  </data>
+  <data name="Only Play Once" xml:space="preserve">
+    <value>一度だけプレイ</value>
+  </data>
+  <data name="Fulfilled" xml:space="preserve">
+    <value>すでに満席</value>
+  </data>
+  <data name="Participated" xml:space="preserve">
+    <value>参加済み</value>
+  </data>
+  <data name="FullChallengeTitle" xml:space="preserve">
+    <value>{From} から {To} への挑戦状</value>
+  </data>
+  <data name="ReceiverChallengeTitle" xml:space="preserve">
+    <value>{From} からの挑戦状</value>
+  </data>
+  <data name="CreatorChallengeTitle" xml:space="preserve">
+    <value>{To} への挑戦状</value>
+  </data>
+  <data name="Create Challenge" xml:space="preserve">
+    <value>挑戦状を作成する</value>
+  </data>
+  <data name="Create Competition" xml:space="preserve">
+    <value>大会を作成する</value>
+  </data>
+  <data name="Create Official Competition" xml:space="preserve">
+    <value>公式大会を作成する</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>作成する</value>
+  </data>
+  <data name="No Select" xml:space="preserve">
+    <value>曲が選択されていません</value>
+  </data>
+  <data name="Max Participant" xml:space="preserve">
+    <value>最大参加者数</value>
+  </data>
+  <data name="Select Song" xml:space="preserve">
+    <value>難しいと曲を選ぶ</value>
+  </data>
+  <data name="Select User" xml:space="preserve">
+    <value>挑戦対象を選択</value>
+  </data>
+  <data name="Any" xml:space="preserve">
+    <value>指定しない</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>オン</value>
+  </data>
+  <data name="Off" xml:space="preserve">
+    <value>オフ</value>
+  </data>
 </root>

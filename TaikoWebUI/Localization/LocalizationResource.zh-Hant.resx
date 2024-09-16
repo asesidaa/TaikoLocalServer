@@ -864,4 +864,70 @@
   <data name="Challenge Competition Data" xml:space="preserve">
     <value>挑戰與大赛</value>
   </data>
+  <data name="Accepted" xml:space="preserve">
+    <value>已接受</value>
+  </data>
+  <data name="Rejected" xml:space="preserve">
+    <value>已拒絕</value>
+  </data>
+  <data name="Challenge Target" xml:space="preserve">
+    <value>挑戰對象</value>
+  </data>
+  <data name="Last For (Days)" xml:space="preserve">
+    <value>持續時間（天）</value>
+  </data>
+  <data name="Song" xml:space="preserve">
+    <value>歌曲</value>
+  </data>
+  <data name="Only Play Once" xml:space="preserve">
+    <value>單次挑戰</value>
+  </data>
+  <data name="Fulfilled" xml:space="preserve">
+    <value>已滿員</value>
+  </data>
+  <data name="Participated" xml:space="preserve">
+    <value>已參加</value>
+  </data>
+  <data name="FullChallengeTitle" xml:space="preserve">
+    <value>{From} 向 {To} 發起的挑戰書</value>
+  </data>
+  <data name="ReceiverChallengeTitle" xml:space="preserve">
+    <value>來自 {From} 的挑戰書</value>
+  </data>
+  <data name="CreatorChallengeTitle" xml:space="preserve">
+    <value>向 {To} 發起的挑戰書</value>
+  </data>
+  <data name="Create Challenge" xml:space="preserve">
+    <value>發起挑戰</value>
+  </data>
+  <data name="Create Competition" xml:space="preserve">
+    <value>創建大賽</value>
+  </data>
+  <data name="Create Official Competition" xml:space="preserve">
+    <value>創建官方大賽</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>創建</value>
+  </data>
+  <data name="No Select" xml:space="preserve">
+    <value>未選擇歌曲</value>
+  </data>
+  <data name="Max Participant" xml:space="preserve">
+    <value>最大參與人數</value>
+  </data>
+  <data name="Select Song" xml:space="preserve">
+    <value>請選擇歌曲與難度</value>
+  </data>
+  <data name="Select User" xml:space="preserve">
+    <value>請選擇挑戰的對象</value>
+  </data>
+  <data name="Any" xml:space="preserve">
+    <value>任意</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>開啟</value>
+  </data>
+  <data name="Off" xml:space="preserve">
+    <value>關閉</value>
+  </data>
 </root>

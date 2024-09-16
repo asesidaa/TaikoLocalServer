@@ -8,14 +8,17 @@
             <CardHeaderContent>
                 @if (ChallengeCompetition.CompeteMode == CompeteModeType.Chanllenge)
                 {
-                    @if (ChallengeCompetition?.Baid != Baid)
+                    if (Baid == 0)
                     {
-                        <MudText Typo="Typo.h6" Style="font-weight:bold;word-break:break-all">@Localizer["From"] @ChallengeCompetition?.Holder?.MyDonName</MudText>
+                        <MudText Typo="Typo.h6" Style="font-weight:bold;word-break:break-all">@formatChallengeTitle(Localizer["FullChallengeTitle"])</MudText>
+                    }
+                    else if (ChallengeCompetition?.Baid != Baid)
+                    {
+                        <MudText Typo="Typo.h6" Style="font-weight:bold;word-break:break-all">@formatChallengeTitle(Localizer["ReceiverChallengeTitle"])</MudText>
                     }
                     else
                     {
-                        var participant = ChallengeCompetition?.Participants?.Find(p => p.Baid != Baid);
-                        <MudText Typo="Typo.h6" Style="font-weight:bold;word-break:break-all">@Localizer["To"] @participant?.UserInfo?.MyDonName</MudText>
+                        <MudText Typo="Typo.h6" Style="font-weight:bold;word-break:break-all">@formatChallengeTitle(Localizer["CreatorChallengeTitle"])</MudText>
                     }
                 }
                 else
@@ -86,13 +89,16 @@
                         {
                             if (ChallengeCompetition.MaxParticipant <= ChallengeCompetition.Participants.Count)
                             {
-                                <MudText Typo="Typo.body1" Style="padding: 6px 8px 6px 8px;" Color="Color.Warning">@Localizer["Fullfilled"]</MudText>
+                                <MudText Typo="Typo.body1" Style="padding: 6px 8px 6px 8px;" Color="Color.Warning">@Localizer["Fulfilled"]</MudText>
                             }
                             else
                             {
                                 <MudButton OnClick="AnswerCompete" Color="Color.Success" Variant="Variant.Filled">@Localizer["Participate"]</MudButton>
                             }
                         }
+                    } else
+                    {
+                        <MudText Typo="Typo.body1" Style="padding: 6px 8px 6px 8px;" Color="@((ChallengeCompetition.Participants.Count < ChallengeCompetition.MaxParticipant) ? Color.Primary : Color.Warning)">@ChallengeCompetition.Participants.Count / @ChallengeCompetition.MaxParticipant</MudText>
                     }
                 }
             </MudStack>
@@ -123,6 +129,13 @@
     private bool CanParticipateChallengeCompetition()
     {
         return ChallengeCompetition?.CreateTime < DateTime.Now && DateTime.Now < ChallengeCompetition?.ExpireTime && !ParticipatedChallengeCompetition();
+    }
+
+    private string formatChallengeTitle(string template)
+    {
+        return template
+            .Replace("{From}", ChallengeCompetition?.Holder?.MyDonName)
+            .Replace("{To}", ChallengeCompetition?.Participants?.Find(p => p.Baid != ChallengeCompetition?.Baid)?.UserInfo?.MyDonName);
     }
 
     private async Task AnswerChallenge(bool accept)

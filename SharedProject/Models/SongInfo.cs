@@ -8,4 +8,6 @@ public class SongInfo
 
     public Difficulty Difficulty { get; set; } = new();
 
+    public int Level { get; set; } = 0;
+
 }

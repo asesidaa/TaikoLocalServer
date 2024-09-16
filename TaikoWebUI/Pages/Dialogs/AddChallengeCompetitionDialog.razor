@@ -34,13 +34,13 @@
         <MudStack>
             @if (Mode == 2 || Mode == 3)
             {
-                <MudTextField @bind-Value="Info.Name" Label="@Localizer["Name"]" MaxLength="16"/>
+                <MudTextField ShrinkLabel @bind-Value="Info.Name" Label="@Localizer["Name"]" Counter="20" MaxLength="20" />
             }
             <MudTextField @bind-Value="Info.Desc" Label="@((Mode == 1 ? Localizer["Challenge"] : "") + Localizer["Describe"])" />
             @if (Mode == 1)
             {
                 <MudStack Row="true">
-                    <MudTextField @bind-Value="TargetUserName" Label="@Localizer["Challenge Target"]"/>
+                    <MudTextField ShrinkLabel @bind-Value="TargetUserName" Label="@Localizer["Challenge Target"]" />
                     <MudButton StartIcon="@Icons.Material.Filled.EmojiPeople" OnClick="@(_ => SelTarget())">@Localizer["Select"]</MudButton>
                 </MudStack>
             }
@@ -60,6 +60,7 @@
                                 <MudImage Src="@ScoreUtils.GetDifficultyIcon(difficulty)" Alt="@ScoreUtils.GetDifficultyTitle(difficulty)" Width="24" Height="48" Style="padding: 12px 0px 12px 0px; margin-right: 8px; vertical-align: middle;" />
                             }
                             <span style="vertical-align: middle; font-family: Nijiiro, sans-serif;">@(musicDetails[song_idx].SongId == 0 ? Localizer["No Select"] : musicDetails[song_idx].SongName)</span>
+                            <MudButton StartIcon="@Icons.Material.Filled.Star" OnClick="@(_ => SelSong(song_idx))">@levels[song_idx]</MudButton>
                             
                         </MudField>
                         <MudIconButton Icon="@Icons.Material.Filled.Settings" Variant="Variant.Text" Color="Color.Primary" OnClick="(_ => OnExpandCollapseClick(song_idx))" />
@@ -107,9 +108,9 @@
             }
             @if (Mode != 1)
             {
-                <MudNumericField HideSpinButtons="true" @bind-Value="ParticipantCount" Label="@Localizer["Max Participant"]" Variant="Variant.Text" Min="1" Max="MaxParticipant" />
+                <MudNumericField HideSpinButtons="true" @bind-Value="ParticipantCount" Label="@(Localizer["Max Participant"] + $"[2-{MaxParticipant}]")" Variant="Variant.Text" Min="2" Max="MaxParticipant" />
             }
-            <MudNumericField HideSpinButtons="true" @bind-Value="LastFor" Label="@Localizer["Last For (Days)"]" Variant="Variant.Text" Min="1" Max="MaxDays" />
+            <MudNumericField HideSpinButtons="true" @bind-Value="LastFor" Label="@(Localizer["Last For (Days)"] + $"[1-{MaxDays}]")" Variant="Variant.Text" Min="1" Max="MaxDays" />
             <MudSwitch @bind-Value="OnlyPlayOnce" Color="Color.Primary">@Localizer["Only Play Once"]</MudSwitch>
         </MudStack>
     </DialogContent>
@@ -158,9 +159,11 @@
 
     private Difficulty[] difficulties = new Difficulty[0];
 
-    private int LastFor = 1;
+    private int[] levels = new int[0];
 
-    private int ParticipantCount = 1;
+    private int LastFor = 7;
+
+    private int ParticipantCount = 5;
 
     private bool OnlyPlayOnce = false;
 
@@ -170,10 +173,12 @@
         _expandeds = new bool[MaxSongs];
         musicDetails = new MusicDetail[MaxSongs];
         difficulties = new Difficulty[MaxSongs];
+        levels = new int[MaxSongs];
         for (int i = 0; i < MaxSongs; i++)
         {
             musicDetails[i] = new();
             difficulties[i] = Difficulty.None;
+            levels[i] = 0;
         }
         Info.challengeCompeteSongs.Add(new());
     }
@@ -189,7 +194,7 @@
         var parameters = new DialogParameters();
         parameters.Add("SelectedSong", musicDetails[i]);
 
-        var reference = await DialogService.ShowAsync<ChooseSongDialog>(Localizer["Create"], parameters, options);
+        var reference = await DialogService.ShowAsync<ChooseSongDialog>(Localizer["Select Song"], parameters, options);
         if (reference != null)
         {
             var songInfo = await reference.GetReturnValueAsync<SongInfo>();
@@ -198,6 +203,7 @@
             {
                 musicDetails[i] = songInfo.MusicDetail;
                 difficulties[i] = songInfo.Difficulty;
+                levels[i] = songInfo.Level;
             }
         }
     }
@@ -212,12 +218,14 @@
                 _expandeds[ex] = _expandeds[ex + 1];
                 musicDetails[ex] = musicDetails[ex + 1];
                 difficulties[ex] = difficulties[ex + 1];
+                levels[ex] = levels[ex + 1];
             }
             else 
             {
                 _expandeds[ex] = false;
                 musicDetails[ex] = new();
                 difficulties[ex] = Difficulty.None;
+                levels[ex] = 0;
             }
         }
     }
@@ -262,6 +270,7 @@
 
         if (Mode == 1)
         {
+            Info.MaxParticipant = 2;
             if (TargetBaid == 0)
             {
                 await ShowError(Localizer["Must Select Challenge Target Error"]);

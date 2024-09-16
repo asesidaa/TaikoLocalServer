@@ -33,7 +33,7 @@
                     }
                     else if (Mode == 3 && Baid == 0)
                     {
-                        <MudButton Variant="Variant.Filled" Size="Size.Large" StartIcon="@Icons.Material.Filled.Add" Color="Color.Tertiary" OnClick=@(_ => OpenDialogAsync(3, 3)) Style="width: 80px">@Localizer["Add"]</MudButton>
+                        <MudButton Variant="Variant.Filled" Size="Size.Large" StartIcon="@Icons.Material.Filled.Add" Color="Color.Tertiary" OnClick=@(_ => OpenDialogAsync(3, 5, 365, 100)) Style="width: 80px">@Localizer["Add"]</MudButton>
                     }
                 </MudStack>
             </div>
@@ -191,12 +191,14 @@
         await Debounce(GetUsersData, 500); // 500 milliseconds delay
     }
 
-    private async Task OpenDialogAsync(int mode, int maxSongs)
+    private async Task OpenDialogAsync(int mode, int maxSongs, int maxDays = 30, int maxParticipant = 20)
     {
         var options = new DialogOptions { CloseOnEscapeKey = true };
         var parameters = new DialogParameters();
         parameters.Add("Mode", mode);
         parameters.Add("MaxSongs", maxSongs);
+        parameters.Add("MaxDays", maxDays);
+        parameters.Add("MaxParticipant", maxParticipant);
         parameters.Add("Baid", Baid);
 
         var dialogRet = await DialogService.ShowAsync<AddChallengeCompetitionDialog>(Localizer["Create"], parameters, options);

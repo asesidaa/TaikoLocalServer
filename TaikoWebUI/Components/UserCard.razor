@@ -39,7 +39,7 @@
                     </MudMenuItem>
                     <MudDivider />
                     <MudMenuItem Icon="@Icons.Material.Filled.FeaturedPlayList"
-                                 Href="@($"Users/{User.Baid}/AccessCode")"
+                                 Href="@($"Users/{User?.Baid}/AccessCode")"
                                  IconColor="@Color.Primary">
                         @Localizer["Access Codes"]
                     </MudMenuItem>
@@ -73,15 +73,15 @@
                         </MudMenuItem>
                         <MudDivider />
                     }
-                    <MudNavLink Href="@($"ChallengeCompe/{User.Baid}/Challenge")" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.People" IconColor="Color.Warning">
+                    <MudNavLink Href="@($"ChallengeCompe/{User?.Baid}/Challenge")" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.People" IconColor="Color.Warning">
                         <span style="padding-left: 20px;">@Localizer["Challenge"]</span>
                     </MudNavLink>
                     <MudDivider />
-                    <MudNavLink Href="@($"ChallengeCompe/{User.Baid}/Competition")" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.WorkspacePremium" IconColor="Color.Warning">
+                    <MudNavLink Href="@($"ChallengeCompe/{User?.Baid}/Competition")" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.WorkspacePremium" IconColor="Color.Warning">
                         <span style="padding-left: 20px;">@Localizer["Competition"]</span>
                     </MudNavLink>
                     <MudDivider />
-                    <MudNavLink Href="@($"ChallengeCompe/{User.Baid}/OfficialCompetition")" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.EmojiEvents" IconColor="Color.Warning">
+                    <MudNavLink Href="@($"ChallengeCompe/{User?.Baid}/OfficialCompetition")" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.EmojiEvents" IconColor="Color.Warning">
                         <span style="padding-left: 20px;">@Localizer["Official Competition"]</span>
                     </MudNavLink>
                     <MudDivider />

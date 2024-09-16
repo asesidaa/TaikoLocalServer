@@ -864,4 +864,70 @@
   <data name="Challenge Competition Data" xml:space="preserve">
     <value>Challenge Competition Data</value>
   </data>
+  <data name="Accepted" xml:space="preserve">
+    <value>Accepted</value>
+  </data>
+  <data name="Rejected" xml:space="preserve">
+    <value>Rejected</value>
+  </data>
+  <data name="Challenge Target" xml:space="preserve">
+    <value>Challenge User</value>
+  </data>
+  <data name="Last For (Days)" xml:space="preserve">
+    <value>Duration (days)</value>
+  </data>
+  <data name="Song" xml:space="preserve">
+    <value>Song</value>
+  </data>
+  <data name="Only Play Once" xml:space="preserve">
+    <value>Only Play Once</value>
+  </data>
+  <data name="Fulfilled" xml:space="preserve">
+    <value>Limit Reached</value>
+  </data>
+  <data name="Participated" xml:space="preserve">
+    <value>Participated</value>
+  </data>
+  <data name="FullChallengeTitle" xml:space="preserve">
+    <value>Challenge from {From} to {To}</value>
+  </data>
+  <data name="ReceiverChallengeTitle" xml:space="preserve">
+    <value>Challenge from {From}</value>
+  </data>
+  <data name="CreatorChallengeTitle" xml:space="preserve">
+    <value>Challenge to {To}</value>
+  </data>
+  <data name="Create Challenge" xml:space="preserve">
+    <value>Create Challenge</value>
+  </data>
+  <data name="Create Competition" xml:space="preserve">
+    <value>Create Competition</value>
+  </data>
+  <data name="Create Official Competition" xml:space="preserve">
+    <value>Create Official Competition</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="No Select" xml:space="preserve">
+    <value>No Selected Song</value>
+  </data>
+  <data name="Max Participant" xml:space="preserve">
+    <value>Max Participant</value>
+  </data>
+  <data name="Select Song" xml:space="preserve">
+    <value>Select a Song with Difficulty</value>
+  </data>
+  <data name="Select User" xml:space="preserve">
+    <value>Select Challenge Target User</value>
+  </data>
+  <data name="Any" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="Off" xml:space="preserve">
+    <value>Off</value>
+  </data>
 </root>
