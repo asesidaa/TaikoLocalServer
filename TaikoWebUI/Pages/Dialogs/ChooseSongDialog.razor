@@ -1,0 +1,135 @@
+﻿@using Blazored.LocalStorage
+@using TaikoWebUI.Utilities;
+
+@inject IJSRuntime Js
+@inject ILocalStorageService LocalStorage
+@inject IGameDataService GameDataService
+
+<MudDialog Style="width: 1200px">
+    <DialogContent>
+        <MudTable Items="MusicDetailDictionary.Values" Filter="@FilterSongs" Height="40vh" Hover="true">
+            <ColGroup>
+                <col style="width: 50px;" />
+                <col />
+            </ColGroup>
+            <ToolBarContent>
+                    <MudTextField @bind-Value="Search"
+                                  Placeholder="@Localizer["Search by Title"]"
+                                  Variant="Variant.Outlined"
+                                  Clearable="true"
+                                  Immediate="true"
+                                  Margin="Margin.Dense"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Search"
+                                  IconSize="Size.Medium" />
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>
+                    <MudTableSortLabel T="MusicDetail" SortBy="context => GameDataService.GetMusicNameBySongId(MusicDetailDictionary, context.SongId, SongNameLanguage)">
+                        @Localizer["Song Title"]
+                    </MudTableSortLabel>
+                </MudTh>
+                @foreach (var difficulty in Enum.GetValues<Difficulty>())
+                {
+                    @if (difficulty is not Difficulty.None)
+                    {
+                        <MudTh>
+                            <MudTableSortLabel T="MusicDetail" SortBy="context => GameDataService.GetMusicStarLevel(MusicDetailDictionary, context.SongId, difficulty)">
+                                <img src="@ScoreUtils.GetDifficultyIcon(difficulty)" alt="@ScoreUtils.GetDifficultyTitle(difficulty)" style="@Constants.ICON_STYLE" />
+                            </MudTableSortLabel>
+                        </MudTh>
+                    }
+                }
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd Style="width:400px">
+                    <MudText Typo="Typo.body2" Style="font-weight:bold">
+                        @GameDataService.GetMusicNameBySongId(MusicDetailDictionary, context.SongId, SongNameLanguage)
+                    </MudText>
+                </MudTd>
+                @foreach (var difficulty in Enum.GetValues<Difficulty>())
+                {
+                    @if (difficulty is not Difficulty.None)
+                    {
+                        var starLevel = GameDataService.GetMusicStarLevel(MusicDetailDictionary, context.SongId, difficulty);
+                        <MudTd>
+                            @if (starLevel > 0)
+                            {
+                                <MudButton StartIcon="@Icons.Material.Filled.Star" OnClick="@(_ => Select(context, difficulty, starLevel))">@starLevel</MudButton>
+                            }
+                            else
+                            {
+                                <MudText Typo="Typo.body2" Style="font-weight:bold">
+                                    -
+                                </MudText>
+                            }
+                        </MudTd>
+                    }
+                }
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager RowsPerPageString=@Localizer["Rows Per Page:"] />
+            </PagerContent>
+        </MudTable>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">
+            @Localizer["Cancel"]
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter] public Dictionary<uint, MusicDetail>? MusicDetailDictionary { get; set; } = null;
+
+    [Parameter] public string? SongNameLanguage { get; set; } = null;
+
+    private string Search { get; set; } = string.Empty;
+
+    private string searchString = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        base.OnInitialized();
+        if (SongNameLanguage == null) SongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
+        if (MusicDetailDictionary == null) MusicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
+
+    }
+
+    private bool FilterSongs(MusicDetail musicDetail)
+    {
+        var stringsToCheck = new List<string>
+        {
+            musicDetail.SongName,
+            musicDetail.SongNameEN,
+            musicDetail.SongNameCN,
+            musicDetail.SongNameKO,
+        };
+
+        if (!string.IsNullOrEmpty(Search) && !stringsToCheck.Any(s => s.Contains(Search, StringComparison.OrdinalIgnoreCase)))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private void Select(MusicDetail musicDetail, Difficulty difficulty, int level) 
+    {
+        MudDialog.Close(DialogResult.Ok(new SongInfo()
+        {
+            MusicDetail = musicDetail,
+            Difficulty = difficulty,
+            Level = level,
+        }));
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+}

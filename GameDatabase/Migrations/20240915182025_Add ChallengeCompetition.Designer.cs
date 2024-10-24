@@ -3,16 +3,19 @@ using System;
 using GameDatabase.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace TaikoLocalServer.Migrations
+namespace GameDatabase.Migrations
 {
     [DbContext(typeof(TaikoDbContext))]
-    partial class TaikoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240915182025_Add ChallengeCompetition")]
+    partial class AddChallengeCompetition
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
@@ -192,6 +195,9 @@ namespace TaikoLocalServer.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("CompId");
+
+                    b.HasIndex("Baid")
+                        .IsUnique();
 
                     b.ToTable("ChallengeCompeteData");
                 });
@@ -651,6 +657,17 @@ namespace TaikoLocalServer.Migrations
                     b.Navigation("ChallengeCompeteSongData");
 
                     b.Navigation("UserData");
+                });
+
+            modelBuilder.Entity("GameDatabase.Entities.ChallengeCompeteDatum", b =>
+                {
+                    b.HasOne("GameDatabase.Entities.UserDatum", "Holder")
+                        .WithOne()
+                        .HasForeignKey("GameDatabase.Entities.ChallengeCompeteDatum", "Baid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Holder");
                 });
 
             modelBuilder.Entity("GameDatabase.Entities.ChallengeCompeteParticipantDatum", b =>

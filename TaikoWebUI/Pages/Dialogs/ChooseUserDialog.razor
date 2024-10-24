@@ -1,0 +1,102 @@
+﻿@using Blazored.LocalStorage
+@using TaikoWebUI.Utilities;
+
+@inject IJSRuntime Js
+@inject ILocalStorageService LocalStorage
+@inject HttpClient HttpClient
+
+<MudDialog Style="width: 1200px">
+    <DialogContent>
+        <MudTable Items="userDict.Values" Filter="@FilterUser" Height="40vh" Hover="true">
+            <ColGroup>
+                <col style="width: 50px;" />
+                <col />
+            </ColGroup>
+            <ToolBarContent>
+                <MudTextField @bind-Value="Search"
+                              Placeholder="@Localizer["Search by Name"]"
+                              Variant="Variant.Outlined"
+                              Clearable="true"
+                              Immediate="true"
+                              Margin="Margin.Dense"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Search"
+                              IconSize="Size.Medium" />
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>
+                    <MudTableSortLabel T="User" SortBy="context => context.Baid">
+                        @Localizer["User ID"]
+                    </MudTableSortLabel>
+                </MudTh>
+                <MudTh>
+                    <MudTableSortLabel T="User" SortBy="context => context.UserSetting.MyDonName">
+                        @Localizer["Users"]
+                    </MudTableSortLabel>
+                </MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd Style="width: 100px">@context.Baid</MudTd>
+                <MudTd>
+                    <MudButton StartIcon="@Icons.Material.Filled.EmojiPeople" OnClick="@(_ => Select(context))">@context.UserSetting.MyDonName</MudButton>
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager RowsPerPageString=@Localizer["Rows Per Page:"] />
+            </PagerContent>
+        </MudTable>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">
+            @Localizer["Cancel"]
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter] public int Exclude { get; set; } = 0;
+
+    private Dictionary<uint, User> userDict = new();
+
+    private string Search { get; set; } = string.Empty;
+
+    private string searchString = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        base.OnInitialized();
+        Dictionary<uint, User>? dict = await HttpClient.GetFromJsonAsync<Dictionary<uint, User>>($"api/Users/{Exclude}/AllUserDict");
+        dict.ThrowIfNull();
+        userDict = dict;
+    }
+
+    private bool FilterUser(User user)
+    {
+        var stringsToCheck = new List<string>
+        {
+            user.Baid + "",
+            user.UserSetting.MyDonName
+        };
+
+        if (!string.IsNullOrEmpty(Search) && !stringsToCheck.Any(s => s.Contains(Search, StringComparison.OrdinalIgnoreCase)))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private void Select(User user)
+    {
+        MudDialog.Close(DialogResult.Ok(user));
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+}

@@ -1,0 +1,202 @@
+﻿@using Blazored.LocalStorage
+
+@inject HttpClient Client
+@inject IDialogService DialogService;
+@inject IGameDataService GameDataService
+@inject ILocalStorageService LocalStorage
+
+@if (ChallengeCompetition != null)
+{
+    <MudCard>
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudStack Row="true" Spacing="1">
+                    @if (ChallengeCompetition.CompeteMode == CompeteModeType.Chanllenge)
+                    {
+                        if (Baid == 0)
+                        {
+                            <MudText Typo="Typo.h6" Style="font-weight:bold;word-break:break-all">@formatChallengeTitle(Localizer["FullChallengeTitle"])</MudText>
+                        }
+                        else if (ChallengeCompetition?.Baid != Baid)
+                        {
+                            <MudIcon Icon="@Icons.Material.Filled.MoveToInbox" Color="Color.Secondary" Style="margin-top: 4px;" />
+                            <MudText Typo="Typo.h6" Style="font-weight:bold;word-break:break-all">@formatChallengeTitle(Localizer["ReceiverChallengeTitle"])</MudText>
+                        }
+                        else
+                        {
+                            <MudIcon Icon="@Icons.Material.Filled.ForwardToInbox" Color="Color.Primary" Style="margin-top: 4px;" />
+                            <MudText Typo="Typo.h6" Style="font-weight:bold;word-break:break-all">@formatChallengeTitle(Localizer["CreatorChallengeTitle"])</MudText>
+                        }
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.h6" Style="font-weight:bold;word-break:break-all">@ChallengeCompetition?.CompeteName</MudText>
+                    }
+                </MudStack>
+                
+                <MudText Typo="Typo.caption" Style="display: block">@Localizer["Comp ID"]:@ChallengeCompetition?.CompId</MudText>
+                <MudText Typo="Typo.caption" Style="display: block">@Localizer["Describe"]:@ChallengeCompetition?.CompeteDescribe</MudText>
+            </CardHeaderContent>
+            <CardHeaderActions>
+                @if (false && ChallengeCompetition?.Baid == Baid || Baid == 0)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />
+                }
+            </CardHeaderActions>
+        </MudCardHeader>
+        <MudCardContent>
+            
+            @{
+                foreach (var song in ChallengeCompetition.Songs)
+                {
+                    <div>
+                        <MudButton Variant="Variant.Text" StartIcon=@Icons.Material.Filled.Audiotrack>
+                            @GameDataService.GetMusicNameBySongId(MusicDetailDictionary, song.MusicDetail.SongId, SongNameLanguage)@(song.BestScores.Any(bs => bs.Baid == Baid) ? (" (" + Localizer["Played"] + ")") : "")
+                        </MudButton>
+                    </div>
+                }
+            }
+        </MudCardContent>
+        <MudCardActions>
+            <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
+                <MudButton OnClick=@(_ => AnswerChallenge(true))>@Localizer["Information"]</MudButton>
+                @if (ChallengeCompetition.CompeteMode == CompeteModeType.Chanllenge)
+                {
+                    @if (Baid == 0 || ChallengeCompetition?.Baid == Baid || ChallengeCompetition?.State != CompeteState.Waiting)
+                    {
+                        switch (ChallengeCompetition?.State)
+                        {
+                            case CompeteState.Waiting:
+                                <MudText Typo="Typo.body1" Style="padding: 6px 8px 6px 8px;" Color="Color.Primary">@Localizer["Waiting"]</MudText>
+                                break;
+                            case CompeteState.Normal:
+                                <MudText Typo="Typo.body1" Style="padding: 6px 8px 6px 8px;" Color="Color.Success">@Localizer["Accepted"]</MudText>
+                                break;
+                            case CompeteState.Rejected:
+                                <MudText Typo="Typo.body1" Style="padding: 6px 8px 6px 8px;" Color="Color.Error">@Localizer["Rejected"]</MudText>
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled" OverrideStyles="false">
+                            <MudButton Color="Color.Success" Variant="Variant.Filled" Disabled="@(Baid == 0 || (ChallengeCompetition?.State == CompeteState.Waiting && ChallengeCompetition?.Baid == Baid))"
+                                       OnClick=@(_ => AnswerChallenge(true))>@Localizer["Accept"]</MudButton>
+                            <MudButton Color="Color.Error" Variant="Variant.Filled" Disabled="@(Baid == 0 || (ChallengeCompetition?.State == CompeteState.Waiting && ChallengeCompetition?.Baid == Baid))"
+                                       OnClick=@(_ => AnswerChallenge(false))>@Localizer["Reject"]</MudButton>
+                        </MudButtonGroup>
+                    }
+                }
+                else if (ChallengeCompetition.CompeteMode == CompeteModeType.Compete || ChallengeCompetition.CompeteMode == CompeteModeType.OfficialCompete)
+                {
+                    if (Baid != 0)
+                    {
+                        if (ChallengeCompetition.Participants.Any(p => p.Baid == Baid))
+                        {
+                            <MudText Typo="Typo.body1" Style="padding: 6px 8px 6px 8px;" Color="Color.Success">@Localizer["Participated"]</MudText>
+                        }
+                        else
+                        {
+                            if (ChallengeCompetition.MaxParticipant <= ChallengeCompetition.Participants.Count)
+                            {
+                                <MudText Typo="Typo.body1" Style="padding: 6px 8px 6px 8px;" Color="Color.Warning">@Localizer["Fulfilled"]</MudText>
+                            }
+                            else
+                            {
+                                <MudButton OnClick="AnswerCompete" Color="Color.Success" Variant="Variant.Filled">@Localizer["Participate"]</MudButton>
+                            }
+                        }
+                    } else
+                    {
+                        <MudText Typo="Typo.body1" Style="padding: 6px 8px 6px 8px;" Color="@((ChallengeCompetition.Participants.Count < ChallengeCompetition.MaxParticipant) ? Color.Primary : Color.Warning)">@ChallengeCompetition.Participants.Count / @ChallengeCompetition.MaxParticipant</MudText>
+                    }
+                }
+            </MudStack>
+        </MudCardActions>
+    </MudCard>
+}
+
+@code {
+    [Parameter] public ChallengeCompetition? ChallengeCompetition { get; set; }
+    [Parameter] public int Baid { get; set; }
+    [Parameter] public EventCallback<ChallengeCompetition> Refresh { get; set; }
+    [Parameter] public Dictionary<uint, MusicDetail>? MusicDetailDictionary { get; set; } = null;
+    [Parameter] public string? SongNameLanguage { get; set; } = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        base.OnInitialized();
+        if (SongNameLanguage == null) SongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
+        if (MusicDetailDictionary == null) MusicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
+    }
+
+    private string GetSongInfo(ChallengeCompetitionSong song)
+    {
+        var songName = GameDataService.GetMusicNameBySongId(MusicDetailDictionary, song.MusicDetail.SongId, SongNameLanguage);
+        if (song.BestScores.Any(bs => bs.Baid == Baid))
+        {
+            return songName + " (" + Localizer["Played"] + ")";
+        }
+        return songName;
+    }
+
+    private bool SelfHoldedChallengeCompetiton()
+    {
+        return ChallengeCompetition?.Baid == Baid || Baid == 0;
+    }
+
+    private bool ChallengeNeedAnswer()
+    {
+        return Baid != 0 && ChallengeCompetition?.State == CompeteState.Waiting && ChallengeCompetition?.Baid != Baid;
+    }
+
+    private bool ParticipatedChallengeCompetition()
+    {
+        return ChallengeCompetition?.Participants?.Find(p => p.Baid == Baid) != null;
+    }
+
+    private bool CanParticipateChallengeCompetition()
+    {
+        return ChallengeCompetition?.CreateTime < DateTime.Now && DateTime.Now < ChallengeCompetition?.ExpireTime && !ParticipatedChallengeCompetition();
+    }
+
+    private string formatChallengeTitle(string template)
+    {
+        return template
+            .Replace("{From}", ChallengeCompetition?.Holder?.MyDonName)
+            .Replace("{To}", ChallengeCompetition?.Participants?.Find(p => p.Baid != ChallengeCompetition?.Baid)?.UserInfo?.MyDonName);
+    }
+
+    private async Task AnswerChallenge(bool accept)
+    {
+        if (ChallengeCompetition == null || ChallengeCompetition.State != CompeteState.Waiting) return;
+        var url = accept ? $"api/ChallengeCompeteManage/{Baid}/acceptChallenge/{ChallengeCompetition.CompId}" : $"api/ChallengeCompeteManage/{Baid}/rejectChallenge/{ChallengeCompetition.CompId}";
+        var response = await Client.GetAsync(url);
+        if (!response.IsSuccessStatusCode)
+        {
+            await DialogService.ShowMessageBox(
+                Localizer["Error"],
+                Localizer["Request Error"],
+                Localizer["Dialog OK"], null, null, new DialogOptions { DisableBackdropClick = true });
+            return;
+        }
+        await Refresh.InvokeAsync(ChallengeCompetition);
+
+        ChallengeCompetition.State = accept ? CompeteState.Normal : CompeteState.Rejected;
+    }
+
+    private async Task AnswerCompete()
+    {
+        if (ChallengeCompetition == null) return;
+        var response = await Client.GetAsync($"api/ChallengeCompeteManage/{Baid}/joinCompete/{ChallengeCompetition.CompId}");
+        if (!response.IsSuccessStatusCode)
+        {
+            await DialogService.ShowMessageBox(
+                Localizer["Error"],
+                Localizer["Request Error"],
+                Localizer["Dialog OK"], null, null, new DialogOptions { DisableBackdropClick = true });
+            return;
+        }
+        await Refresh.InvokeAsync(ChallengeCompetition);
+    }
+}

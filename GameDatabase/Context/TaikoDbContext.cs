@@ -127,8 +127,10 @@ namespace GameDatabase.Context
             });
 
             OnModelCreatingPartial(modelBuilder);
+            OnModelCreatingChallengeCompete(modelBuilder);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+        partial void OnModelCreatingChallengeCompete(ModelBuilder modelBuilder);
     }
 }

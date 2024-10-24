@@ -1,0 +1,10 @@
+﻿@using TaikoWebUI.Components;
+
+@page "/ChallengeCompe/{baid:int}/OfficialCompetition"
+
+<ChallengeCompeteGrid Baid="Baid" Mode="3"></ChallengeCompeteGrid>
+
+@code {
+    [Parameter]
+    public int Baid { get; set; }
+}
