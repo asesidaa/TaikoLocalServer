@@ -60,7 +60,7 @@
 }
 
 #blazor-error-ui {
-    background: lightyellow;
+    background: #ff2f2f;
     bottom: 0;
     box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
     display: none;
@@ -68,7 +68,7 @@
     padding: 0.6rem 1.25rem 0.7rem 1.25rem;
     position: fixed;
     width: 100%;
-    z-index: 1000;
+    z-index: 999999;
 }
 
 #blazor-error-ui .dismiss {
@@ -87,7 +87,6 @@
 .blazor-error-boundary::after {
     content: "An error has occurred."
 }
-
 
 .nameplateTextOutline {
     -webkit-text-stroke: 5px;
