@@ -270,7 +270,7 @@
                                                 <MudImage Fluid="true" style=@($"position:absolute; top: 0; left: 0; right: 0; margin: 0 auto; filter: {CostumeColorFilters[response.FaceColor]}") Src=@CostumeOrDefault("masks/kigurumi-facemask", response.Kigurumi, "masks/body-facemask-0000") />
                                                 <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/kigurumi/kigurumi-0000.png'" Src=@($"images/Costumes/kigurumi/kigurumi-{response.Kigurumi.ToString().PadLeft(4, '0')}.png") />
                                             }
-                                            <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/puchi/puchi-9999.png'" Src=@($"images/Costumes/puchi/puchi-{response.Puchi.ToString().PadLeft(4, '0')}.png") />
+                                            <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/puchi/puchi-9999.webp'" Src=@($"images/Costumes/puchi/puchi-{response.Puchi.ToString().PadLeft(4, '0')}.webp") />
                                         </MudItem>
                                     </MudItem>
 
