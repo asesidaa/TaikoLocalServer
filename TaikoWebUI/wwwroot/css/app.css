@@ -36,28 +36,28 @@
     position: relative;
 }
 
-    .linear-progress:after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: rgb(48,63,159);
-        transform: scaleX(var(--blazor-load-percentage, 0%));
-        transform-origin: left top;
-        transition: transform ease-out 0.25s;
-    }
+.linear-progress:after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgb(48, 63, 159);
+    transform: scaleX(var(--blazor-load-percentage, 0%));
+    transform-origin: left top;
+    transition: transform ease-out 0.25s;
+}
 
-    .linear-progress:before {
-        content: var(--blazor-load-percentage-text);
-        font-family: sans-serif;
-        font-size: 12px;
-        font-weight: bold;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        color: white;
-        transform: translate(-50%, -50%);
-        z-index: 999;
-    }
+.linear-progress:before {
+    content: var(--blazor-load-percentage-text);
+    font-family: sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    color: white;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+}
 
 #blazor-error-ui {
     background: lightyellow;
@@ -84,9 +84,9 @@
     color: white;
 }
 
-    .blazor-error-boundary::after {
-        content: "An error has occurred."
-    }
+.blazor-error-boundary::after {
+    content: "An error has occurred."
+}
 
 
 .nameplateTextOutline {
@@ -127,7 +127,7 @@
 }
 
 .markdown-container {
-    min-height:75vh;
+    min-height: 75vh;
     overflow-x: scroll;
 }
 
@@ -139,7 +139,7 @@
     max-width: 1000px;
     margin: 0 auto;
     padding: 25px;
-    
+
 }
 
 .markdown-content * {
@@ -173,7 +173,7 @@
     font-size: 0.9em;
     padding: 0 0.2em;
 }
-   
+
 .markdown-content pre {
     background-color: var(--mud-palette-background-grey);
     border: 1px solid #ccc;
@@ -217,7 +217,7 @@
 }
 
 .mud-progress-linear.bar-pass-gold .mud-progress-linear-bars .mud-progress-linear-bar {
-    background: linear-gradient( 90deg, rgb(255,83,147) 0%, rgb(255,248,6) 15%, rgb(255,248,6) 20%, rgb(122,255,79) 30%, rgb(122,244,255) 45%, rgb(149,104,255) 70%, rgb(255,98,244) 90%, rgb(255,98,244) 95%, rgb(255,83,147) 100% );
+    background: linear-gradient(90deg, rgb(255, 83, 147) 0%, rgb(255, 248, 6) 15%, rgb(255, 248, 6) 20%, rgb(122, 255, 79) 30%, rgb(122, 244, 255) 45%, rgb(149, 104, 255) 70%, rgb(255, 98, 244) 90%, rgb(255, 98, 244) 95%, rgb(255, 83, 147) 100%);
 }
 
 .mud-progress-linear.bar-pass-red .mud-progress-linear-bars .mud-progress-linear-bar {
@@ -290,14 +290,14 @@ tr.is-current-user p {
 }
 
 .mud-breadcrumb-item {
-    font-size: 15px;
+    font-size: 12px;
 }
 
-.mud-breadcrumb-item a,
-.mud-breadcrumb-separator span {
+.mud-breadcrumb-item a {
     color: white;
 }
 
-.mud-breadcrumb-item.mud-disabled a {
+.mud-breadcrumb-item.mud-disabled a,
+.mud-breadcrumb-separator span {
     color: rgba(255, 255, 255, 0.6);
 }
