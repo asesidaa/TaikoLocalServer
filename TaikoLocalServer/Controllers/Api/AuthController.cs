@@ -43,15 +43,7 @@ public class AuthController(IAuthService authService, IUserDatumService userDatu
     
     private static string ComputeHash(string inputPassword, string salt)
     {
-        var encDataByte = Encoding.UTF8.GetBytes(inputPassword + salt);
-        var encodedData = Convert.ToBase64String(encDataByte);
-        encDataByte = Encoding.UTF8.GetBytes(encodedData);
-        encodedData = Convert.ToBase64String(encDataByte);
-        encDataByte = Encoding.UTF8.GetBytes(encodedData);
-        encodedData = Convert.ToBase64String(encDataByte);
-        encDataByte = Encoding.UTF8.GetBytes(encodedData);
-        encodedData = Convert.ToBase64String(encDataByte);
-        return encodedData;
+        return BCrypt.Net.BCrypt.HashPassword(inputPassword, salt);
     }
     
     private static Totp MakeTotp(uint baid)
@@ -64,14 +56,7 @@ public class AuthController(IAuthService authService, IUserDatumService userDatu
     
     private static string CreateSalt()
     {
-        //Generate a cryptographic random number.
-        var randomNumber = new byte[32];
-        var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(randomNumber);
-        var salt = Convert.ToBase64String(randomNumber);
-
-        // Return a Base64 string representation of the random number.
-        return salt;
+        return BCrypt.Net.BCrypt.GenerateSalt(10);
     }
     
     private static bool VerifyOtp(string otp, uint baid)
@@ -150,6 +135,9 @@ public class AuthController(IAuthService authService, IUserDatumService userDatu
         if (credential.Password != "")
             return Unauthorized(new { message = "User Already Registered" });
 
+        if (password.Length <= 0)
+            return Unauthorized(new { message = "Password Cannot Be Empty !" });
+
         if (registerWithLastPlayTime)
         {
             var invited = false;
@@ -219,7 +207,10 @@ public class AuthController(IAuthService authService, IUserDatumService userDatu
         var hashedOldPassword = ComputeHash(oldPassword, credential.Salt);
         if (credential.Password != hashedOldPassword) 
             return Unauthorized(new { message = "Wrong Old Password" });
-        
+
+        if (newPassword.Length <= 0)
+            return Unauthorized(new { message = "Password Cannot Be Empty !" });
+
         // Hash the new password with the salt
         var salt = CreateSalt();
         var hashedNewPassword = ComputeHash(newPassword, salt);
