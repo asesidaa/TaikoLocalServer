@@ -28,34 +28,35 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="Templates\TemplateController.cs"/>
+        <Compile Remove="Templates\TemplateController.cs" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="DotNetZip" Version="1.16.0"/>
-        <PackageReference Include="MediatR" Version="12.2.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4"/>
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.4"/>
-        <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.2.0"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.4"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.4"/>
+        <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+        <PackageReference Include="DotNetZip" Version="1.16.0" />
+        <PackageReference Include="MediatR" Version="12.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.4" />
+        <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.2.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.4" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.4">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Otp.NET" Version="1.4.0"/>
-        <PackageReference Include="protobuf-net" Version="3.2.30"/>
-        <PackageReference Include="protobuf-net.AspNetCore" Version="3.2.12"/>
-        <PackageReference Include="Riok.Mapperly" Version="3.5.1"/>
-        <PackageReference Include="Serilog.AspNetCore" Version="8.0.2-dev-00334"/>
-        <PackageReference Include="Serilog.Expressions" Version="4.0.0"/>
-        <PackageReference Include="Serilog.Sinks.File.Header" Version="1.0.2"/>
-        <PackageReference Include="SharpZipLib" Version="1.4.2"/>
-        <PackageReference Include="Swan.Core" Version="7.0.0-beta.2"/>
-        <PackageReference Include="Swan.Logging" Version="6.0.2-beta.96"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
-        <PackageReference Include="Throw" Version="1.4.0"/>
-        <PackageReference Include="Yoh.Text.Json.NamingPolicies" Version="1.1.2"/>
+        <PackageReference Include="Otp.NET" Version="1.4.0" />
+        <PackageReference Include="protobuf-net" Version="3.2.30" />
+        <PackageReference Include="protobuf-net.AspNetCore" Version="3.2.12" />
+        <PackageReference Include="Riok.Mapperly" Version="3.5.1" />
+        <PackageReference Include="Serilog.AspNetCore" Version="8.0.2-dev-00334" />
+        <PackageReference Include="Serilog.Expressions" Version="4.0.0" />
+        <PackageReference Include="Serilog.Sinks.File.Header" Version="1.0.2" />
+        <PackageReference Include="SharpZipLib" Version="1.4.2" />
+        <PackageReference Include="Swan.Core" Version="7.0.0-beta.2" />
+        <PackageReference Include="Swan.Logging" Version="6.0.2-beta.96" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+        <PackageReference Include="Throw" Version="1.4.0" />
+        <PackageReference Include="Yoh.Text.Json.NamingPolicies" Version="1.1.2" />
     </ItemGroup>
 
     <ItemGroup>
@@ -65,26 +66,26 @@
         <None Update="Certificates\root.pfx">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <Content Remove="Configurations\ServerSettings.json"/>
+        <Content Remove="Configurations\ServerSettings.json" />
         <None Include="Configurations\AuthSettings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Include="Configurations\ServerSettings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <Content Remove="Configurations\Database.json"/>
+        <Content Remove="Configurations\Database.json" />
         <None Include="Configurations\Database.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <Content Remove="Configurations\DataSettings.json"/>
+        <Content Remove="Configurations\DataSettings.json" />
         <None Include="Configurations\DataSettings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <Content Remove="Configurations\Kestrel.json"/>
+        <Content Remove="Configurations\Kestrel.json" />
         <None Include="Configurations\Kestrel.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <Content Remove="Configurations\Logging.json"/>
+        <Content Remove="Configurations\Logging.json" />
         <None Include="Configurations\Logging.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
@@ -199,8 +200,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\GameDatabase\GameDatabase.csproj"/>
-        <ProjectReference Include="..\SharedProject\SharedProject.csproj"/>
-        <ProjectReference Include="..\TaikoWebUI\TaikoWebUI.csproj"/>
+        <ProjectReference Include="..\GameDatabase\GameDatabase.csproj" />
+        <ProjectReference Include="..\SharedProject\SharedProject.csproj" />
+        <ProjectReference Include="..\TaikoWebUI\TaikoWebUI.csproj" />
     </ItemGroup>
 </Project>
