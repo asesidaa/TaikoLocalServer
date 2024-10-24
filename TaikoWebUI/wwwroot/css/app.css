@@ -300,3 +300,10 @@ tr.is-current-user p {
 .mud-breadcrumb-separator span {
     color: rgba(255, 255, 255, 0.6);
 }
+
+.user-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
