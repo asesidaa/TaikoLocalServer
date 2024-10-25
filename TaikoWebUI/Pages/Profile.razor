@@ -258,19 +258,19 @@
                                             {
                                                 <MudImage Fluid="true" style=@($"position: relative; top: 0; left: 0; filter: {CostumeColorFilters[response.BodyColor]}") Src=@CostumeOrDefault("masks/body-bodymask", response.Body, "masks/body-bodymask-0000") />
                                                 <MudImage Fluid="true" style=@($"position:absolute; top: 0; left: 0; right: 0; margin: 0 auto; filter: {CostumeColorFilters[response.FaceColor]}") Src=@CostumeOrDefault("masks/body-facemask", response.Body, "masks/body-facemask-0000") />
-                                                <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/body/body-0000.png'" Src=@($"images/Costumes/body/body-{response.Body.ToString().PadLeft(4, '0')}.png") />
-                                                <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/face/face-0000.png'" Src=@($"images/Costumes/face/face-{response.Face.ToString().PadLeft(4, '0')}.png") />
+                                                <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/body/body-0000.webp'" Src=@($"images/Costumes/body/body-{response.Body.ToString().PadLeft(4, '0')}.webp") />
+                                                <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/face/face-0000.webp'" Src=@($"images/Costumes/face/face-{response.Face.ToString().PadLeft(4, '0')}.webp") />
                                                 <MudImage Fluid="true" style=@($"position:absolute; top: 0; left: 0; right: 0; margin: 0 auto; filter: {CostumeColorFilters[response.BodyColor]}") Src=@CostumeOrDefault("masks/head-bodymask", response.Head, "head/head-0000") />
                                                 <MudImage Fluid="true" style=@($"position:absolute; top: 0; left: 0; right: 0; margin: 0 auto; filter: {CostumeColorFilters[response.FaceColor]}") Src=@CostumeOrDefault("masks/head-facemask", response.Head, "head/head-0000") />
-                                                <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/head/head-0000.png'" Src=@($"images/Costumes/head/head-{response.Head.ToString().PadLeft(4, '0')}.png") />
+                                                <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/head/head-0000.webp'" Src=@($"images/Costumes/head/head-{response.Head.ToString().PadLeft(4, '0')}.webp") />
                                             }
                                             else
                                             {
                                                 <MudImage Fluid="true" style=@($"position: relative; top: 0; left: 0; filter: {CostumeColorFilters[response.BodyColor]}") Src=@CostumeOrDefault("masks/kigurumi-bodymask", response.Kigurumi, "masks/body-bodymask-0000") />
                                                 <MudImage Fluid="true" style=@($"position:absolute; top: 0; left: 0; right: 0; margin: 0 auto; filter: {CostumeColorFilters[response.FaceColor]}") Src=@CostumeOrDefault("masks/kigurumi-facemask", response.Kigurumi, "masks/body-facemask-0000") />
-                                                <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/kigurumi/kigurumi-0000.png'" Src=@($"images/Costumes/kigurumi/kigurumi-{response.Kigurumi.ToString().PadLeft(4, '0')}.png") />
+                                                <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/kigurumi/kigurumi-0000.webp'" Src=@($"images/Costumes/kigurumi/kigurumi-{response.Kigurumi.ToString().PadLeft(4, '0')}.webp") />
                                             }
-                                            <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/puchi/puchi-9999.webp'" Src=@($"images/Costumes/puchi/puchi-{response.Puchi.ToString().PadLeft(4, '0')}.webp") />
+                                            <MudImage Fluid="true" Class="puchi-floating" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/puchi/puchi-9999.webp'" Src=@($"images/Costumes/puchi/puchi-{response.Puchi.ToString().PadLeft(4, '0')}.webp") />
                                         </MudItem>
                                     </MudItem>
 
@@ -291,12 +291,12 @@
                                                 <MudText Id="nameplate-name" Style="position:absolute; height:100%; top: 0; left: 0; right: 0; margin: auto auto; font-family: 'Nijiiro', sans-serif; color:white">@response.MyDonName</MudText>
                                             </MudItem>
                                         </MudItem>
-                                        <MudImage onload="nameplateLoaded()" Id="nameplate" Fluid="true" Style="position: relative; bottom: 0; left: 0;" Src="images/Nameplates/nameplate.png" />
-                                        @* Check if image does not exist, use nameplate_Wood.png *@
-                                        <MudImage Fluid="true" Style="position:absolute; bottom: 6px; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Nameplates/nameplate_Wood.png'" Src=@($"images/Nameplates/nameplate_{TitlePlateStrings[response.TitlePlateId].Replace(' ', '_')}.png") />
+                                        <MudImage onload="nameplateLoaded()" Id="nameplate" Fluid="true" Style="position: relative; bottom: 0; left: 0;" Src="images/Nameplates/nameplate.webp" />
+                                        @* Check if image does not exist, use nameplate_Wood.webp *@
+                                        <MudImage Fluid="true" Style="position:absolute; bottom: 6px; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Nameplates/nameplate_Wood.webp'" Src=@($"images/Nameplates/nameplate_{TitlePlateStrings[response.TitlePlateId].Replace(' ', '_')}.webp") />
                                         @if (response.IsDisplayDanOnNamePlate)
                                         {
-                                            <MudImage Fluid="true" Style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" Src="images/Nameplates/nameplate_dan.png" />
+                                            <MudImage Fluid="true" Style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" Src="images/Nameplates/nameplate_dan.webp" />
                                         }
                                     </MudItem>
                                 </MudItem>
@@ -362,7 +362,7 @@
                                             </MudItem>
                                         </MudItem>
                                         @* Forbidden one-liner : Changes the AchievementDisplayDifficulty image asset. When "Difficulty.None" is selected, Defaults to highest difficulty the player currently has crowns / Ranks for. *@
-                                        <MudImage Fluid="true" style="position: relative; top: 0;" Src=@($"images/rank_panel_{DifficultySettingCourseStrings[response.AchievementDisplayDifficulty != Difficulty.None ? (int)response.AchievementDisplayDifficulty + 1 : (int)highestDifficulty + 1].Replace(' ', '_')}.png") />
+                                        <MudImage Fluid="true" style="position: relative; top: 0;" Src=@($"images/rank_panel_{DifficultySettingCourseStrings[response.AchievementDisplayDifficulty != Difficulty.None ? (int)response.AchievementDisplayDifficulty + 1 : (int)highestDifficulty + 1].Replace(' ', '_')}.webp") />
                                     </MudItem>
                                 </MudTabPanel>
                             }

@@ -453,8 +453,8 @@ public partial class Profile
     {
         var path = "/images/Costumes/";
         var filename = file + "-" + id.ToString().PadLeft(4, '0');
-        var imagePath = path + filename + ".png";
-        var imageSrc = Masks.Contains(filename) ? imagePath : path + defaultfile + ".png";
+        var imagePath = path + filename + ".webp";
+        var imageSrc = Masks.Contains(filename) ? imagePath : path + defaultfile + ".webp";
         return imageSrc;
     }
 

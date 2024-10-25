@@ -152,12 +152,12 @@
                                                 <MudText>@context.BestScore</MudText>
                                             </MudTd>
                                             <MudTd>
-                                                <img src="@($"/images/crown_{context.BestCrown}.png")" alt="@(ScoreUtils.GetCrownText(context.BestCrown))" title="@(ScoreUtils.GetCrownText(context.BestCrown))" style="@Constants.ICON_STYLE" />
+                                                <img src="@($"/images/crown_{context.BestCrown}.webp")" alt="@(ScoreUtils.GetCrownText(context.BestCrown))" title="@(ScoreUtils.GetCrownText(context.BestCrown))" style="@Constants.ICON_STYLE" />
                                             </MudTd>
                                             <MudTd>
                                                 @if (context.BestScoreRank is not ScoreRank.None)
                                                 {
-                                                    <img src="@($"/images/rank_{context.BestScoreRank}.png")" alt="@(ScoreUtils.GetRankText(context.BestScoreRank))" title="@(ScoreUtils.GetRankText(context.BestScoreRank))" style="@Constants.ICON_STYLE" />
+                                                    <img src="@($"/images/rank_{context.BestScoreRank}.webp")" alt="@(ScoreUtils.GetRankText(context.BestScoreRank))" title="@(ScoreUtils.GetRankText(context.BestScoreRank))" style="@Constants.ICON_STYLE" />
                                                 }
                                             </MudTd>
                                             <MudTd>

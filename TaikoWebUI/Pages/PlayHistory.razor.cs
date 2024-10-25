@@ -108,7 +108,7 @@ public partial class PlayHistory
 
     private static string GetDifficultyIcon(Difficulty difficulty)
     {
-        return $"<image href='/images/difficulty_{difficulty}.png' alt='{difficulty}' width='24' height='24'/>";
+        return $"<image href='/images/difficulty_{difficulty}.webp' alt='{difficulty}' width='24' height='24'/>";
     }
 
     private static string GetGenreTitle(SongGenre genre)

@@ -88,6 +88,21 @@
     content: "An error has occurred."
 }
 
+@keyframes puchi-floating-anim {
+    0% {
+        transform: translateY(0);
+    }
+
+    100% {
+        transform: translateY(-1.25rem);
+    }
+}
+
+.puchi-floating {
+    will-change: transform;
+    animation: puchi-floating-anim 0.8s ease-in-out alternate infinite;
+}
+
 .nameplateTextOutline {
     -webkit-text-stroke: 5px;
     -webkit-text-stroke-color: black

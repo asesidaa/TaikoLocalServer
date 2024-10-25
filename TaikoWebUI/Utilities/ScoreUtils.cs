@@ -45,12 +45,12 @@ namespace TaikoWebUI.Utilities
 
         public static string GetDifficultyIconSvg(Difficulty difficulty)
         {
-            return $"<image href='/images/difficulty_{difficulty}.png' alt='{difficulty}' width='24' height='24'/>";
+            return $"<image href='/images/difficulty_{difficulty}.webp' alt='{difficulty}' width='24' height='24'/>";
         }
 
         public static string GetDifficultyIcon(Difficulty difficulty)
         {
-            return $"/images/difficulty_{difficulty}.png";
+            return $"/images/difficulty_{difficulty}.webp";
         }
 
         public static string GetGenreTitle(SongGenre genre)

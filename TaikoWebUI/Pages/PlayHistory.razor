@@ -120,11 +120,11 @@
                                 </MudTd>
 
                                 <MudTd>@(songHistoryData.Score)</MudTd>
-                                <MudTd Style="text-align:center"><img src="@($"/images/crown_{songHistoryData.Crown}.png")" alt="@(GetCrownText(songHistoryData.Crown))" title="@(GetCrownText(songHistoryData.Crown))" style=@IconStyle /></MudTd>
+                                <MudTd Style="text-align:center"><img src="@($"/images/crown_{songHistoryData.Crown}.webp")" alt="@(GetCrownText(songHistoryData.Crown))" title="@(GetCrownText(songHistoryData.Crown))" style=@IconStyle /></MudTd>
                                 <MudTd Style="text-align:center">
                                     @if (songHistoryData.ScoreRank is not ScoreRank.None)
                                     {
-                                    <img src="@($"/images/rank_{songHistoryData.ScoreRank}.png")" alt="@(GetRankText(songHistoryData.ScoreRank))" title="@(GetRankText(songHistoryData.ScoreRank))" style=@IconStyle />
+                                    <img src="@($"/images/rank_{songHistoryData.ScoreRank}.webp")" alt="@(GetRankText(songHistoryData.ScoreRank))" title="@(GetRankText(songHistoryData.ScoreRank))" style=@IconStyle />
                                     }
                                 </MudTd>
                                 <MudTd>@(songHistoryData.GoodCount)</MudTd>

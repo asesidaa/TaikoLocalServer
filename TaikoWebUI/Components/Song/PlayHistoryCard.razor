@@ -70,12 +70,12 @@
                         <img src="@ScoreUtils.GetDifficultyIcon(context.Difficulty)" alt="@context.Difficulty" title="@context.Difficulty" style="@Constants.ICON_STYLE"/>
                     </MudTd>
                     <MudTd>
-                        <img src="@($"/images/crown_{context.Crown}.png")" alt="@(ScoreUtils.GetCrownText(context.Crown))" title="@(ScoreUtils.GetCrownText(context.Crown))" style="@Constants.ICON_STYLE"/>
+                        <img src="@($"/images/crown_{context.Crown}.webp")" alt="@(ScoreUtils.GetCrownText(context.Crown))" title="@(ScoreUtils.GetCrownText(context.Crown))" style="@Constants.ICON_STYLE"/>
                     </MudTd>
                     <MudTd>
                         @if (context.ScoreRank is not ScoreRank.None)
                         {
-                            <img src="@($"/images/rank_{context.ScoreRank}.png")" alt="@(ScoreUtils.GetRankText(context.ScoreRank))" title="@(ScoreUtils.GetRankText(context.ScoreRank))" style="@Constants.ICON_STYLE"/>
+                            <img src="@($"/images/rank_{context.ScoreRank}.webp")" alt="@(ScoreUtils.GetRankText(context.ScoreRank))" title="@(ScoreUtils.GetRankText(context.ScoreRank))" style="@Constants.ICON_STYLE"/>
                         }
                     </MudTd>
                     <MudTd>@context.Score</MudTd>
