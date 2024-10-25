@@ -33,7 +33,7 @@
         else
         {
             <MudItem xs="12">
-                <MudTable Items="@songHistoryDataMap.Values.ToList()" Elevation="0" Filter=@FilterSongs Virtualize="true" RowsPerPage="25" Bordered="false" Dense="true" Breakpoint=Breakpoint.None>
+                <MudTable Class="mud-table-outlined" Items="@songHistoryDataMap.Values.ToList()" Elevation="0" Filter=@FilterSongs Virtualize="true" RowsPerPage="25" Bordered="false" Dense="true" Breakpoint=Breakpoint.None>
                     <ToolBarContent>
                         <MudGrid Spacing="2" Justify="Justify.SpaceBetween">
                             <MudItem xs="12" md="4">

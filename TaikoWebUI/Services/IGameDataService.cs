@@ -28,9 +28,9 @@ public interface IGameDataService
 
     public int GetMusicStarLevel(Dictionary<uint, MusicDetail> musicDetails, uint songId, Difficulty difficulty);
 
-    public string GetHeadTitle(IEnumerable<Costume> costumes, uint index);
-    public string GetKigurumiTitle(IEnumerable<Costume> costumes, uint index);
-    public string GetBodyTitle(IEnumerable<Costume> costumes, uint index);
-    public string GetFaceTitle(IEnumerable<Costume> costumes, uint index);
-    public string GetPuchiTitle(IEnumerable<Costume> costumes, uint index);
+    public string GetHeadTitle(IEnumerable<Costume> costumes, uint index, string? language = "ja");
+    public string GetKigurumiTitle(IEnumerable<Costume> costumes, uint index, string? language = "ja");
+    public string GetBodyTitle(IEnumerable<Costume> costumes, uint index, string? language = "ja");
+    public string GetFaceTitle(IEnumerable<Costume> costumes, uint index, string? language = "ja");
+    public string GetPuchiTitle(IEnumerable<Costume> costumes, uint index, string? language = "ja");
 }

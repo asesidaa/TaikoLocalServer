@@ -86,6 +86,7 @@ public class GameDataService : IGameDataService
         {
             "ja" => musicDetail.SongName,
             "en-US" => musicDetail.SongNameEN,
+            "fr-FR" => musicDetail.SongNameEN,
             "zh-Hans" => musicDetail.SongNameCN,
             "zh-Hant" => musicDetail.SongNameCN,
             "ko" => musicDetail.SongNameKO,
@@ -99,6 +100,7 @@ public class GameDataService : IGameDataService
         {
             "jp" => musicDetail.ArtistName,
             "en-US" => musicDetail.ArtistNameEN,
+            "fr-FR" => musicDetail.ArtistNameEN,
             "zh-Hans" => musicDetail.ArtistNameCN,
             "zh-Hant" => musicDetail.ArtistNameCN,
             "ko" => musicDetail.ArtistNameKO,
@@ -136,29 +138,74 @@ public class GameDataService : IGameDataService
         };
     }
 
-    public string GetHeadTitle(IEnumerable<Costume> costumes, uint index)
+    public string GetHeadTitle(IEnumerable<Costume> costumes, uint index, string? language = "ja")
     {
-        return costumes.FirstOrDefault(costume => costume.CostumeType == "head" && costume.CostumeId == index)?.CostumeName ?? string.Empty;
+        return language switch
+        {
+            "jp" => costumes.FirstOrDefault(costume => costume.CostumeType == "head" && costume.CostumeId == index)?.CostumeName ?? string.Empty,
+            "en-US" => costumes.FirstOrDefault(costume => costume.CostumeType == "head" && costume.CostumeId == index)?.CostumeNameEN ?? string.Empty,
+            "fr-FR" => costumes.FirstOrDefault(costume => costume.CostumeType == "head" && costume.CostumeId == index)?.CostumeNameEN ?? string.Empty,
+            "zh-Hans" => costumes.FirstOrDefault(costume => costume.CostumeType == "head" && costume.CostumeId == index)?.CostumeNameCN ?? string.Empty,
+            "zh-Hant" => costumes.FirstOrDefault(costume => costume.CostumeType == "head" && costume.CostumeId == index)?.CostumeNameCN ?? string.Empty,
+            "ko" => costumes.FirstOrDefault(costume => costume.CostumeType == "head" && costume.CostumeId == index)?.CostumeNameKO ?? string.Empty,
+            _ => costumes.FirstOrDefault(costume => costume.CostumeType == "head" && costume.CostumeId == index)?.CostumeName ?? string.Empty
+        };
     }
 
-    public string GetKigurumiTitle(IEnumerable<Costume> costumes, uint index)
+    public string GetKigurumiTitle(IEnumerable<Costume> costumes, uint index, string? language = "ja")
     {
-        return costumes.FirstOrDefault(costume => costume.CostumeType == "kigurumi" && costume.CostumeId == index)?.CostumeName ?? string.Empty;
+        return language switch
+        {
+            "jp" => costumes.FirstOrDefault(costume => costume.CostumeType == "kigurumi" && costume.CostumeId == index)?.CostumeName ?? string.Empty,
+            "en-US" => costumes.FirstOrDefault(costume => costume.CostumeType == "kigurumi" && costume.CostumeId == index)?.CostumeNameEN ?? string.Empty,
+            "fr-FR" => costumes.FirstOrDefault(costume => costume.CostumeType == "kigurumi" && costume.CostumeId == index)?.CostumeNameEN ?? string.Empty,
+            "zh-Hans" => costumes.FirstOrDefault(costume => costume.CostumeType == "kigurumi" && costume.CostumeId == index)?.CostumeNameCN ?? string.Empty,
+            "zh-Hant" => costumes.FirstOrDefault(costume => costume.CostumeType == "kigurumi" && costume.CostumeId == index)?.CostumeNameCN ?? string.Empty,
+            "ko" => costumes.FirstOrDefault(costume => costume.CostumeType == "kigurumi" && costume.CostumeId == index)?.CostumeNameKO ?? string.Empty,
+            _ => costumes.FirstOrDefault(costume => costume.CostumeType == "kigurumi" && costume.CostumeId == index)?.CostumeName ?? string.Empty
+        };
     }
 
-    public string GetBodyTitle(IEnumerable<Costume> costumes, uint index)
+    public string GetBodyTitle(IEnumerable<Costume> costumes, uint index, string? language = "ja")
     {
-        return costumes.FirstOrDefault(costume => costume.CostumeType == "body" && costume.CostumeId == index)?.CostumeName ?? string.Empty;
+        return language switch
+        {
+            "jp" => costumes.FirstOrDefault(costume => costume.CostumeType == "body" && costume.CostumeId == index)?.CostumeName ?? string.Empty,
+            "en-US" => costumes.FirstOrDefault(costume => costume.CostumeType == "body" && costume.CostumeId == index)?.CostumeNameEN ?? string.Empty,
+            "fr-FR" => costumes.FirstOrDefault(costume => costume.CostumeType == "body" && costume.CostumeId == index)?.CostumeNameEN ?? string.Empty,
+            "zh-Hans" => costumes.FirstOrDefault(costume => costume.CostumeType == "body" && costume.CostumeId == index)?.CostumeNameCN ?? string.Empty,
+            "zh-Hant" => costumes.FirstOrDefault(costume => costume.CostumeType == "body" && costume.CostumeId == index)?.CostumeNameCN ?? string.Empty,
+            "ko" => costumes.FirstOrDefault(costume => costume.CostumeType == "body" && costume.CostumeId == index)?.CostumeNameKO ?? string.Empty,
+            _ => costumes.FirstOrDefault(costume => costume.CostumeType == "body" && costume.CostumeId == index)?.CostumeName ?? string.Empty
+        };
     }
 
-    public string GetFaceTitle(IEnumerable<Costume> costumes, uint index)
+    public string GetFaceTitle(IEnumerable<Costume> costumes, uint index, string? language = "ja")
     {
-        return costumes.FirstOrDefault(costume => costume.CostumeType == "face" && costume.CostumeId == index)?.CostumeName ?? string.Empty;
+        return language switch
+        {
+            "jp" => costumes.FirstOrDefault(costume => costume.CostumeType == "face" && costume.CostumeId == index)?.CostumeName ?? string.Empty,
+            "en-US" => costumes.FirstOrDefault(costume => costume.CostumeType == "face" && costume.CostumeId == index)?.CostumeNameEN ?? string.Empty,
+            "fr-FR" => costumes.FirstOrDefault(costume => costume.CostumeType == "face" && costume.CostumeId == index)?.CostumeNameEN ?? string.Empty,
+            "zh-Hans" => costumes.FirstOrDefault(costume => costume.CostumeType == "face" && costume.CostumeId == index)?.CostumeNameCN ?? string.Empty,
+            "zh-Hant" => costumes.FirstOrDefault(costume => costume.CostumeType == "face" && costume.CostumeId == index)?.CostumeNameCN ?? string.Empty,
+            "ko" => costumes.FirstOrDefault(costume => costume.CostumeType == "face" && costume.CostumeId == index)?.CostumeNameKO ?? string.Empty,
+            _ => costumes.FirstOrDefault(costume => costume.CostumeType == "face" && costume.CostumeId == index)?.CostumeName ?? string.Empty
+        };
     }
 
-    public string GetPuchiTitle(IEnumerable<Costume> costumes, uint index)
+    public string GetPuchiTitle(IEnumerable<Costume> costumes, uint index, string? language = "ja")
     {
-        return costumes.FirstOrDefault(costume => costume.CostumeType == "puchi" && costume.CostumeId == index)?.CostumeName ?? string.Empty;
+        return language switch
+        {
+            "jp" => costumes.FirstOrDefault(costume => costume.CostumeType == "puchi" && costume.CostumeId == index)?.CostumeName ?? string.Empty,
+            "en-US" => costumes.FirstOrDefault(costume => costume.CostumeType == "puchi" && costume.CostumeId == index)?.CostumeNameEN ?? string.Empty,
+            "fr-FR" => costumes.FirstOrDefault(costume => costume.CostumeType == "puchi" && costume.CostumeId == index)?.CostumeNameEN ?? string.Empty,
+            "zh-Hans" => costumes.FirstOrDefault(costume => costume.CostumeType == "puchi" && costume.CostumeId == index)?.CostumeNameCN ?? string.Empty,
+            "zh-Hant" => costumes.FirstOrDefault(costume => costume.CostumeType == "puchi" && costume.CostumeId == index)?.CostumeNameCN ?? string.Empty,
+            "ko" => costumes.FirstOrDefault(costume => costume.CostumeType == "puchi" && costume.CostumeId == index)?.CostumeNameKO ?? string.Empty,
+            _ => costumes.FirstOrDefault(costume => costume.CostumeType == "puchi" && costume.CostumeId == index)?.CostumeName ?? string.Empty
+        };
     }
     
     private async Task InitializeMusicDetailAsync()

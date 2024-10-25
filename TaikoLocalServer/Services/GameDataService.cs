@@ -453,11 +453,17 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
 
             var costumeNameKey = $"costume_{cosType}_{costumeId}";
             var costumeName = wordlistData.WordListEntries.First(entry => entry.Key == costumeNameKey).JapaneseText;
+            var costumeNameEn = wordlistData.WordListEntries.First(entry => entry.Key == costumeNameKey).EnglishUsText;
+            var costumeNameCn = wordlistData.WordListEntries.First(entry => entry.Key == costumeNameKey).ChineseTText;
+            var costumeNameKo = wordlistData.WordListEntries.First(entry => entry.Key == costumeNameKey).KoreanText;
             var costume = new Costume
             {
                 CostumeId = costumeId,
                 CostumeType = cosType,
-                CostumeName = costumeName
+                CostumeName = costumeName,
+                CostumeNameEN = costumeNameEn,
+                CostumeNameCN = costumeNameCn,
+                CostumeNameKO = costumeNameKo,
             };
             costumeList.Add(costume);
         }
