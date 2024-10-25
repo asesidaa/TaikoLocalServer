@@ -257,20 +257,22 @@
                                             @if (response.Kigurumi == 0)
                                             {
                                                 <MudImage Fluid="true" style=@($"position: relative; top: 0; left: 0; filter: {CostumeColorFilters[response.BodyColor]}") Src=@CostumeOrDefault("masks/body-bodymask", response.Body, "masks/body-bodymask-0000") />
-                                                <MudImage Fluid="true" style=@($"position:absolute; top: 0; left: 0; right: 0; margin: 0 auto; filter: {CostumeColorFilters[response.FaceColor]}") Src=@CostumeOrDefault("masks/body-facemask", response.Body, "masks/body-facemask-0000") />
-                                                <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/body/body-0000.webp'" Src=@($"images/Costumes/body/body-{response.Body.ToString().PadLeft(4, '0')}.webp") />
-                                                <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/face/face-0000.webp'" Src=@($"images/Costumes/face/face-{response.Face.ToString().PadLeft(4, '0')}.webp") />
-                                                <MudImage Fluid="true" style=@($"position:absolute; top: 0; left: 0; right: 0; margin: 0 auto; filter: {CostumeColorFilters[response.BodyColor]}") Src=@CostumeOrDefault("masks/head-bodymask", response.Head, "head/head-0000") />
-                                                <MudImage Fluid="true" style=@($"position:absolute; top: 0; left: 0; right: 0; margin: 0 auto; filter: {CostumeColorFilters[response.FaceColor]}") Src=@CostumeOrDefault("masks/head-facemask", response.Head, "head/head-0000") />
-                                                <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/head/head-0000.webp'" Src=@($"images/Costumes/head/head-{response.Head.ToString().PadLeft(4, '0')}.webp") />
+                                                <MudImage Fluid="true" Class="profile-image" style=@($"filter: {CostumeColorFilters[response.FaceColor]}") Src=@CostumeOrDefault("masks/body-facemask", response.Body, "masks/body-facemask-0000") />
+                                                <MudImage Fluid="true" Class="profile-image" onerror="this.src='images/Costumes/body/body-0000.webp'" Src=@($"images/Costumes/body/body-{response.Body.ToString().PadLeft(4, '0')}.webp") />
+                                                <MudImage Fluid="true" Class="profile-image" onerror="this.src='images/Costumes/face/face-0000.webp'" Src=@($"images/Costumes/face/face-{response.Face.ToString().PadLeft(4, '0')}.webp") />
+                                                <MudImage Fluid="true" Class="profile-image" style=@($"filter: {CostumeColorFilters[response.BodyColor]}") Src=@CostumeOrDefault("masks/head-bodymask", response.Head, "head/head-0000") />
+                                                <MudImage Fluid="true" Class="profile-image" style=@($"filter: {CostumeColorFilters[response.FaceColor]}") Src=@CostumeOrDefault("masks/head-facemask", response.Head, "head/head-0000") />
+                                                <MudImage Fluid="true" Class="profile-image" onerror="this.src='images/Costumes/head/head-0000.webp'" Src=@($"images/Costumes/head/head-{response.Head.ToString().PadLeft(4, '0')}.webp") />
                                             }
                                             else
                                             {
                                                 <MudImage Fluid="true" style=@($"position: relative; top: 0; left: 0; filter: {CostumeColorFilters[response.BodyColor]}") Src=@CostumeOrDefault("masks/kigurumi-bodymask", response.Kigurumi, "masks/body-bodymask-0000") />
-                                                <MudImage Fluid="true" style=@($"position:absolute; top: 0; left: 0; right: 0; margin: 0 auto; filter: {CostumeColorFilters[response.FaceColor]}") Src=@CostumeOrDefault("masks/kigurumi-facemask", response.Kigurumi, "masks/body-facemask-0000") />
-                                                <MudImage Fluid="true" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/kigurumi/kigurumi-0000.webp'" Src=@($"images/Costumes/kigurumi/kigurumi-{response.Kigurumi.ToString().PadLeft(4, '0')}.webp") />
+                                                <MudImage Fluid="true" Class="profile-image" style=@($"filter: {CostumeColorFilters[response.FaceColor]}") Src=@CostumeOrDefault("masks/kigurumi-facemask", response.Kigurumi, "masks/body-facemask-0000") />
+                                                <MudImage Fluid="true" Class="profile-image" onerror="this.src='images/Costumes/kigurumi/kigurumi-0000.webp'" Src=@($"images/Costumes/kigurumi/kigurumi-{response.Kigurumi.ToString().PadLeft(4, '0')}.webp") />
                                             }
-                                            <MudImage Fluid="true" Class="puchi-floating" style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Costumes/puchi/puchi-9999.webp'" Src=@($"images/Costumes/puchi/puchi-{response.Puchi.ToString().PadLeft(4, '0')}.webp") />
+                                            <MudItem Class="profile-image">
+                                                <MudImage Fluid="true" Class="puchi-floating" onerror="this.src='images/Costumes/puchi/puchi-9999.webp'" Src=@($"images/Costumes/puchi/puchi-{response.Puchi.ToString().PadLeft(4, '0')}.webp") />
+                                            </MudItem>
                                         </MudItem>
                                     </MudItem>
 
@@ -280,15 +282,15 @@
                                         @* Title text *@
                                         <MudItem style="position:absolute; top: 5.5%; left:0; right:1.1%; height:38%; width:min(96%, 320px); margin: 0 auto; z-index:2; vertical-align: middle;">
                                             <MudItem Style=@($"position:absolute; height:100%; {(response.TitlePlateId <= 7 ? "width:80%; right: 10%;" : "width:68%; right: 26%;")}")>
-                                                <MudText Id="nameplate-title" Style="position:absolute; height:100%; top: 0; left: 0; right: 0; margin: auto auto; font-family: 'Nijiiro', sans-serif; color:black">@response.Title</MudText>
+                                                <MudText Class="profile-image" Id="nameplate-title" Style="height:100%; margin: auto auto; font-family: 'Nijiiro', sans-serif; color:black">@response.Title</MudText>
                                             </MudItem>
                                         </MudItem>
                                         @* Name text *@
                                         <MudItem Style="position:absolute; top: 42.5%; left:0; right:1.1%; height:41%; width:min(96%, 320px); margin: 0 auto; z-index:2">
                                             @* Name textoffset to the right for Dan Rank *@
                                             <MudItem Style=@($"position:absolute; height:100%; right: 10%; {(response.IsDisplayDanOnNamePlate ? "width:46%;" : "width:80%;")}")>
-                                                <MudText Id="nameplate-name-outline" Style="position:absolute; height:100%; top: 0; left: 0; right: 0; margin: auto auto; font-family: 'Nijiiro', sans-serif; -webkit-text-stroke-width: 5px; -webkit-text-stroke-color: black">@response.MyDonName</MudText>
-                                                <MudText Id="nameplate-name" Style="position:absolute; height:100%; top: 0; left: 0; right: 0; margin: auto auto; font-family: 'Nijiiro', sans-serif; color:white">@response.MyDonName</MudText>
+                                                <MudText Id="nameplate-name-outline" Class="profile-image" Style="height:100%; font-family: 'Nijiiro', sans-serif; -webkit-text-stroke-width: 5px; -webkit-text-stroke-color: black">@response.MyDonName</MudText>
+                                                <MudText Id="nameplate-name" Class="profile-image" Style="height:100%; font-family: 'Nijiiro', sans-serif; color:white">@response.MyDonName</MudText>
                                             </MudItem>
                                         </MudItem>
                                         <MudImage onload="nameplateLoaded()" Id="nameplate" Fluid="true" Style="position: relative; bottom: 0; left: 0;" Src="images/Nameplates/nameplate.webp" />
@@ -296,7 +298,7 @@
                                         <MudImage Fluid="true" Style="position:absolute; bottom: 6px; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Nameplates/nameplate_Wood.webp'" Src=@($"images/Nameplates/nameplate_{TitlePlateStrings[response.TitlePlateId].Replace(' ', '_')}.webp") />
                                         @if (response.IsDisplayDanOnNamePlate)
                                         {
-                                            <MudImage Fluid="true" Style="position:absolute; top: 0; left: 0; right: 0; margin: 0 auto;" Src="images/Nameplates/nameplate_dan.webp" />
+                                            <MudImage Fluid="true" Class="profile-image" Src="images/Nameplates/nameplate_dan.webp" />
                                         }
                                     </MudItem>
                                 </MudItem>
@@ -307,7 +309,7 @@
                                 <MudTabPanel Text="@Localizer["Achievement Panel"]">
                                     <MudItem style="text-align: center; position:relative;">
                                         @* Achievement panel Text *@
-                                        <MudItem Id="scoreboard" Style="position:absolute; top: 0; left:0; right:0; height:100%; width:min(96%, 320px); margin: 0 auto; z-index:2; vertical-align: middle;">
+                                        <MudItem Id="scoreboard" Class="profile-image" Style="height:100%; width:min(96%, 320px); margin: 0 auto; z-index:2; vertical-align: middle;">
                                             @* First row *@
                                             <MudItem Style="position:absolute; height:18%; width:100%; top:11%">
                                                 <MudItem Class="nameplateTextRight">

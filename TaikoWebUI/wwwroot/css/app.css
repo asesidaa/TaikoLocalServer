@@ -103,6 +103,21 @@
     animation: puchi-floating-anim 0.8s ease-in-out alternate infinite;
 }
 
+@-moz-document url-prefix() {
+    .puchi-floating {
+        will-change: unset !important;
+        animation: none !important;
+    }
+}
+
+.profile-image{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
 .nameplateTextOutline {
     -webkit-text-stroke: 5px;
     -webkit-text-stroke-color: black
