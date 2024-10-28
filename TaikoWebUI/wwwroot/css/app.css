@@ -12,7 +12,7 @@
     top: 0;
     left: 0;
     z-index: 999;
-    background: white;
+    background: #27272F;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -22,7 +22,7 @@
 .loading-text {
     font-family: 'Nijiiro', sans-serif !important;
     font-size: 14px;
-    color: black;
+    color: white;
 }
 
 .linear-progress {
@@ -319,7 +319,7 @@ tr.is-current-user p {
 }
 
 .mud-breadcrumb-item {
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .mud-breadcrumb-item a {
