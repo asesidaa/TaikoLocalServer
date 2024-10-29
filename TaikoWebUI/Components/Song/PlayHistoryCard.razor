@@ -19,17 +19,17 @@
                         </MudTableSortLabel>
                     </MudTh>
                     <MudTh>
-                        <MudTableSortLabel T="SongHistoryData" SortBy="x => x.Difficulty">
+                        <MudTableSortLabel T="SongHistoryData" SortBy="x => (int)x.Difficulty * 1000000 + x.Score">
                             @Localizer["Difficulty"]
                         </MudTableSortLabel>
                     </MudTh>
                     <MudTh>
-                        <MudTableSortLabel T="SongHistoryData" SortBy="x => x.Crown">
+                        <MudTableSortLabel T="SongHistoryData" SortBy="x => (int)x.Crown * 1000000 + x.Score">
                             @Localizer["Crown"]
                         </MudTableSortLabel>
                     </MudTh>
                     <MudTh>
-                        <MudTableSortLabel T="SongHistoryData" SortBy="x => x.ScoreRank">
+                        <MudTableSortLabel T="SongHistoryData" SortBy="x => (int)x.ScoreRank * 1000000 + x.Score">
                             @Localizer["Rank"]
                         </MudTableSortLabel>
                     </MudTh>

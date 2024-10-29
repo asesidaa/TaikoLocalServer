@@ -5,13 +5,12 @@
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.DeleteForever" Class="mr-3 mb-n1" />
-            (MarkupString)
-            (string)@Localizer["Delete User"]
+            @((MarkupString)(string)@Localizer["Delete User"])
         </MudText>
     </TitleContent>
     <DialogContent>
         <MudText>
-            @Localizer["Delete User Confirm"]
+            @((MarkupString)(string)Localizer["Delete User Confirm"])
         </MudText>
     </DialogContent>
     <DialogActions>

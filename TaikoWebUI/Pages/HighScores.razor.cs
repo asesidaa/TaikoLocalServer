@@ -36,9 +36,16 @@ public partial class HighScores
             data.MusicArtist = GameDataService.GetMusicArtistBySongId(musicDetailDictionary, songId, string.IsNullOrEmpty(songNameLanguage) ? "ja" : songNameLanguage);
         });
 
+        //We get rid of entries with empty song names
+        //This can happen if the database has been used with a different version of the songlist (Omnimix/Version update)
+        response.SongBestData = response.SongBestData.FindAll(x => x.MusicName != "");
+
         songBestDataMap = response.SongBestData.GroupBy(data => data.Difficulty)
             .ToDictionary(data => data.Key,
                           data => data.ToList());
+
+
+
         foreach (var songBestDataList in songBestDataMap.Values)
         {
             songBestDataList.Sort((data1, data2) => GameDataService.GetMusicIndexBySongId(musicDetailDictionary, data1.SongId)

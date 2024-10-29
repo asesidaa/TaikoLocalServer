@@ -33,11 +33,11 @@
         else
         {
             <MudItem xs="12">
-                <MudTable Class="mud-table-outlined" Items="@songHistoryDataMap.Values.ToList()" Elevation="0" Filter=@FilterSongs Virtualize="true" RowsPerPage="25" Bordered="false" Dense="true" Breakpoint=Breakpoint.None>
+                <MudTable Class="mud-table-outlined" Items="@songHistoryDataMap.Values.ToList()" Elevation="0" Filter=@FilterSongs Virtualize="true" RowsPerPage="25" Striped="false" Hover="false" Bordered="false" Dense="true" Breakpoint=Breakpoint.None>
                     <ToolBarContent>
                         <MudGrid Spacing="2" Justify="Justify.SpaceBetween">
-                            <MudItem xs="12" md="4">
-                                <MudText Typo="Typo.caption">@Localizer["Total Credits Played"]: @songHistoryDataMap.Values.Count</MudText>
+                            <MudItem xs="12" md="4" Style="align-content: center;">
+                                <MudText Typo="Typo.body2">@Localizer["Total Credits Played"]: @songHistoryDataMap.Values.Count</MudText>
                             </MudItem>
                             <MudItem xs="12" md="8">
                                 <MudTextField @bind-Value="Search"
@@ -48,12 +48,12 @@
                                               Margin="Margin.Dense"
                                               Adornment="Adornment.Start"
                                               AdornmentIcon="@Icons.Material.Filled.Search"
-                                              IconSize="Size.Medium"/>
+                                              IconSize="Size.Medium" />
                             </MudItem>
                         </MudGrid>
                     </ToolBarContent>
                     <HeaderContent>
-                        <MudTh>
+                        <MudTh Style="text-align: initial !important;">
                             <MudTableSortLabel InitialDirection="SortDirection.Descending" T="List<SongHistoryData>" SortBy="x => x[0].PlayTime">
                                 @Localizer["Play Time"]
                             </MudTableSortLabel>
@@ -94,28 +94,19 @@
                                 </MudTd>
 
                                 @* Song title *@
-                                <MudTd DataLabel="Song">
+                                <MudTd DataLabel="Song" Style="text-align: initial !important;">
                                     <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                                        <div>    
+                                        <div>
                                             <a href="@($"/Users/{Baid}/Songs/{songHistoryData.SongId}")">
                                                 <MudText Typo="Typo.body2" Style="font-weight:bold">@songHistoryData.MusicName</MudText>
                                                 <MudText Typo="Typo.caption">@songHistoryData.MusicArtist</MudText>
                                             </a>
                                         </div>
-                                        @* <div>
-                                            <MudToggleIconButton Toggled="@songHistoryData.IsFavorite"
-                                                                 ToggledChanged="@(async () => await OnFavoriteToggled(songHistoryData))"
-                                                                 Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
-                                                                 ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
-                                                                 Size="Size.Small"
-                                                                 ToggledSize="Size.Small"
-                                                                 Title="Add to favorites" ToggledTitle="Remove from favorites" />
-                                        </div> *@
                                     </MudStack>
                                 </MudTd>
 
                                 @* Genre display *@
-                                <MudTd DataLabel="Genre" Style="text-align:left">
+                                <MudTd DataLabel="Genre">
                                     <MudChip Style=@GetGenreStyle(songHistoryData.Genre) Size="Size.Small">@GetGenreTitle(songHistoryData.Genre)</MudChip>
                                 </MudTd>
 
@@ -124,7 +115,7 @@
                                 <MudTd Style="text-align:center">
                                     @if (songHistoryData.ScoreRank is not ScoreRank.None)
                                     {
-                                    <img src="@($"/images/rank_{songHistoryData.ScoreRank}.webp")" alt="@(GetRankText(songHistoryData.ScoreRank))" title="@(GetRankText(songHistoryData.ScoreRank))" style=@IconStyle />
+                                        <img src="@($"/images/rank_{songHistoryData.ScoreRank}.webp")" alt="@(GetRankText(songHistoryData.ScoreRank))" title="@(GetRankText(songHistoryData.ScoreRank))" style=@IconStyle />
                                     }
                                 </MudTd>
                                 <MudTd>@(songHistoryData.GoodCount)</MudTd>

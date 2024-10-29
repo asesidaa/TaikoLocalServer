@@ -337,3 +337,9 @@ tr.is-current-user p {
     justify-content: space-between;
     height: 100%;
 }
+
+.mud-table-cell {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    text-align: center;
+}

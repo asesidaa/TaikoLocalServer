@@ -26,7 +26,7 @@
         else
         {
             <MudItem xs="12">
-                <MudTable Items="musicDetailDictionary.Values" Elevation="0" Outlined="true" Filter="@FilterSongs" Breakpoint=Breakpoint.None>
+                <MudTable Items="musicDetailDictionary.Values" Elevation="0" RowsPerPage="25" Outlined="true" Filter="@FilterSongs" Breakpoint=Breakpoint.None>
                     <ToolBarContent>
                         <MudGrid Spacing="2">
                             <MudItem xs="12" md="8">
@@ -68,42 +68,42 @@
                         {
                             @if (difficulty is not Difficulty.None)
                             {
-                            <MudTh>
-							    <MudTableSortLabel T="MusicDetail" SortBy="context => GameDataService.GetMusicStarLevel(musicDetailDictionary, context.SongId, difficulty)">
-                                    <img src="@ScoreUtils.GetDifficultyIcon(difficulty)" alt="@ScoreUtils.GetDifficultyTitle(difficulty)" style="@Constants.ICON_STYLE" />
-							    </MudTableSortLabel>
-						    </MudTh>
+                                <MudTh>
+                                    <MudTableSortLabel T="MusicDetail" SortBy="context => GameDataService.GetMusicStarLevel(musicDetailDictionary, context.SongId, difficulty)">
+                                        <img src="@ScoreUtils.GetDifficultyIcon(difficulty)" alt="@ScoreUtils.GetDifficultyTitle(difficulty)" style="@Constants.ICON_STYLE" />
+                                    </MudTableSortLabel>
+                                </MudTh>
                             }
                         }
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTd Style="width:400px">
-                        <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-                            <div>
-                                <a href="@($"/Users/{Baid}/Songs/{context.SongId}")">
-                                    <MudText Typo="Typo.body2" Style="font-weight:bold">
-                                        @GameDataService.GetMusicNameBySongId(musicDetailDictionary, context.SongId, SongNameLanguage)
-                                    </MudText>
-                                    <MudText Typo="Typo.caption">
-                                        @GameDataService.GetMusicArtistBySongId(musicDetailDictionary, context.SongId, SongNameLanguage)
-                                    </MudText>
-                                </a>
-                            </div>
-                            <div>
-                                <MudToggleIconButton Toggled="@context.IsFavorite"
-                                                     ToggledChanged="@(async () => await OnFavoriteToggled(context))"
-                                                     Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
-                                                     ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
-                                                     Size="Size.Small"
-                                                     ToggledSize="Size.Small"
-                                                     Title="Add to favorites" ToggledTitle="Remove from favorites" />
-                            </div>
+                        <MudTd Style="width:400px; text-align: initial !important;">
+                            <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                                <div>
+                                    <a href="@($"/Users/{Baid}/Songs/{context.SongId}")">
+                                        <MudText Typo="Typo.body2" Style="font-weight:bold">
+                                            @GameDataService.GetMusicNameBySongId(musicDetailDictionary, context.SongId, SongNameLanguage)
+                                        </MudText>
+                                        <MudText Typo="Typo.caption">
+                                            @GameDataService.GetMusicArtistBySongId(musicDetailDictionary, context.SongId, SongNameLanguage)
+                                        </MudText>
+                                    </a>
+                                </div>
+                                <div>
+                                    <MudToggleIconButton Toggled="@context.IsFavorite"
+                                                         ToggledChanged="@(async () => await OnFavoriteToggled(context))"
+                                                         Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
+                                                         ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
+                                                         Size="Size.Small"
+                                                         ToggledSize="Size.Small"
+                                                         Title="Add to favorites" ToggledTitle="Remove from favorites" />
+                                </div>
                             </MudStack>
                         </MudTd>
                         <MudTd>
-							<MudChip Style="@ScoreUtils.GetGenreStyle(context.Genre)" Size="Size.Small">
-								@ScoreUtils.GetGenreTitle(context.Genre)
-							</MudChip>
+                            <MudChip Style="@ScoreUtils.GetGenreStyle(context.Genre)" Size="Size.Small">
+                                @ScoreUtils.GetGenreTitle(context.Genre)
+                            </MudChip>
                         </MudTd>
                         @foreach (var difficulty in Enum.GetValues<Difficulty>())
                         {
@@ -112,18 +112,18 @@
                                 var starLevel = GameDataService.GetMusicStarLevel(musicDetailDictionary, context.SongId, difficulty);
                                 <MudTd>
                                     @if (starLevel > 0)
-									{
+                                    {
                                         <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
                                             <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
                                             <MudText Typo="Typo.caption" Style="line-height:1;margin-top:2px;margin-right:2px;">@starLevel</MudText>
                                         </MudStack>
-									}
-									else
-									{
-										<MudText Typo="Typo.body2" Style="font-weight:bold">
-											-
-										</MudText>
-									}
+                                    }
+                                    else
+                                    {
+                                        <MudText Typo="Typo.body2" Style="font-weight:bold">
+                                            -
+                                        </MudText>
+                                    }
                                 </MudTd>
                             }
                         }

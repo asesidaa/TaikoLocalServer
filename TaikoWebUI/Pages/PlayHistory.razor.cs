@@ -51,6 +51,10 @@ public partial class PlayHistory
             data.ShowDetails = false;
         });
 
+        //We get rid of entries with empty song names
+        //This can happen if the database has been used with a different version of the songlist (Omnimix/Version update)
+        response.SongHistoryData = response.SongHistoryData.FindAll(x => x.MusicName != "");
+
         songHistoryDataMap = response.SongHistoryData.GroupBy(data => data.PlayTime).ToDictionary(data => data.Key,data => data.ToList());
         foreach (var songHistoryDataList in songHistoryDataMap.Values)
         {

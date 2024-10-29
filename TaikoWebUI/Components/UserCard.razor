@@ -200,7 +200,7 @@
                 ["user"] = user
             };
 
-        var dialog = await DialogService.ShowAsync<UserDeleteConfirmDialog>(Localizer["Delete User"], parameters, options);
+        var dialog = await DialogService.ShowAsync<UserDeleteConfirmDialog>((string)Localizer["Delete User"], parameters, options);
         var result = await dialog.Result;
 
         if (result.Canceled) return;
@@ -210,7 +210,7 @@
             await AuthService.Logout();
         }
         
-        NavigationManager.NavigateTo("/Users");
+        NavigationManager.NavigateTo("/Users", true);
     }
     
     private async Task GenerateInviteCode(uint baid)

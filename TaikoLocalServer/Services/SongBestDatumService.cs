@@ -21,30 +21,23 @@ public class SongBestDatumService : ISongBestDatumService
 
     public async Task<List<SongBestData>> GetAllSongBestAsModel(uint baid)
     {
-        var songbestDbData = await context.SongBestData.Where(datum => datum.Baid == baid)
-            .ToListAsync();
+        var songbestDbData = await context.SongBestData.Where(datum => datum.Baid == baid).ToListAsync();
 
         var result = songbestDbData.Select(datum => datum.CopyPropertiesToNew<SongBestData>()).ToList();
 
-        var aiSectionBest = await context.AiScoreData.Where(datum => datum.Baid == baid)
-            .Include(datum => datum.AiSectionScoreData)
-            .ToListAsync();
+        var aiSectionBest = await context.AiScoreData.Where(datum => datum.Baid == baid).Include(datum => datum.AiSectionScoreData).ToListAsync();
 
         var playLogs = await context.SongPlayData.Where(datum => datum.Baid == baid).ToListAsync();
         foreach (var bestData in result)
         {
-            var songPlayDatums = playLogs.Where(datum => datum.Difficulty == bestData.Difficulty &&
-                                                         datum.SongId == bestData.SongId).ToArray();
-            songPlayDatums.Throw($"Play log for song id {bestData.SongId} is null! " +
-                                 "Something is wrong with db!")
-                .IfEmpty();
-            var lastPlayLog = songPlayDatums
-                .MaxBy(datum => datum.PlayTime);
-            bestData.LastPlayTime = lastPlayLog!.PlayTime;
+            var songPlayDatums = playLogs.Where(datum => datum.Difficulty == bestData.Difficulty && datum.SongId == bestData.SongId).ToArray();
+            songPlayDatums.Throw($"Play log for song id {bestData.SongId} is null! " + "Something is wrong with db!").IfEmpty();
 
-            var bestLog = songPlayDatums
-                .MaxBy(datum => datum.Score);
+            bestData.LastPlayTime = songPlayDatums.MaxBy(datum => datum.PlayTime)!.PlayTime;
+
+            var bestLog = songPlayDatums.MaxBy(datum => datum.Score);
             bestLog.CopyOnlyPropertiesTo(bestData,
+                nameof(SongPlayDatum.PlayTime),
                 nameof(SongPlayDatum.GoodCount),
                 nameof(SongPlayDatum.OkCount),
                 nameof(SongPlayDatum.MissCount),

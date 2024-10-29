@@ -163,13 +163,13 @@
     <value>Genre</value>
   </data>
   <data name="Best Score" xml:space="preserve">
-    <value>Meilleur score</value>
+    <value>Score</value>
   </data>
   <data name="Best Crown" xml:space="preserve">
-    <value>Meilleure couronne</value>
+    <value>Couronne</value>
   </data>
   <data name="Best Rank" xml:space="preserve">
-    <value>Meilleur rank</value>
+    <value>Rank</value>
   </data>
   <data name="Good" xml:space="preserve">
     <value>Good</value>
@@ -184,25 +184,25 @@
     <value>Drumroll</value>
   </data>
   <data name="MAX Combo" xml:space="preserve">
-    <value>Combo MAX</value>
+    <value>Combo</value>
   </data>
   <data name="AI Battle Data" xml:space="preserve">
     <value>Données du mode IA Battle</value>
   </data>
-  <data name="Last Played" xml:space="preserve">
-    <value>Joué la dernière fois</value>
+  <data name="Played" xml:space="preserve">
+    <value>Date</value>
   </data>
   <data name="Total Credits Played" xml:space="preserve">
-    <value>Nombre total de parties</value>
+    <value>Parties</value>
   </data>
   <data name="Total Clears" xml:space="preserve">
-    <value>Total Clears</value>
+    <value>Clears</value>
   </data>
   <data name="Total Full Combos" xml:space="preserve">
-    <value>Nombre total de Full Combos</value>
+    <value>Full Combos</value>
   </data>
   <data name="Total Donderful Combos" xml:space="preserve">
-    <value>Nombre total de Combos Donderful</value>
+    <value>Combos Donderful</value>
   </data>
   <data name="Song List" xml:space="preserve">
     <value>Musiques</value>
