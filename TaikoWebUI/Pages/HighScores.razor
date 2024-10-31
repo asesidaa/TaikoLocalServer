@@ -25,7 +25,7 @@
         else
         {
             <MudItem xs="12">
-                <MudTabs Elevation="0" Border="true"  Rounded="true" ApplyEffectsToContainer="true" Outlined="true" ActivePanelIndexChanged="@(async (index) => await OnTabChanged(index))" ActivePanelIndex="@selectedDifficultyTab">
+                <MudTabs Elevation="0" Border="true" MinimumTabWidth="100px" Rounded="true" ApplyEffectsToContainer="true" Outlined="true" ActivePanelIndexChanged="@(async (index) => await OnTabChanged(index))" ActivePanelIndex="@selectedDifficultyTab">
                     @foreach (var difficulty in Enum.GetValues<Difficulty>())
                     {
                         @if (difficulty is not Difficulty.None)
@@ -35,99 +35,99 @@
                                 @if (songBestDataMap.TryGetValue(difficulty, out var value))
                                 {
                                     // Rows per page 25
-                                    <MudTable Items="@value" Elevation="0" Striped="false" Outlined="true" RowsPerPage="25" Breakpoint=Breakpoint.None >
+                                    <MudTable Items="@value" Elevation="0" Striped="false" Outlined="true" RowsPerPage="25" Breakpoint=Breakpoint.None Filter="@FilterSongs">
+                                        <ToolBarContent>
+                                            <MudGrid Spacing="2">
+                                                <MudItem xs="12" md="8">
+                                                    <MudTextField @bind-Value="Search"
+                                                                  Placeholder="@Localizer["Search by Title or Artist"]"
+                                                                  Variant="Variant.Outlined"
+                                                                  Clearable="true"
+                                                                  Immediate="true"
+                                                                  Margin="Margin.Dense"
+                                                                  Adornment="Adornment.Start"
+                                                                  AdornmentIcon="@Icons.Material.Filled.Search"
+                                                                  IconSize="Size.Medium" />
+                                                </MudItem>
+                                                <MudItem xs="12" md="4">
+                                                    <MudSelect @bind-Value="GenreFilter" T="string" Label="@Localizer["Filter by Genre"]" Variant="Variant.Outlined" Margin="Margin.Dense" Clearable="true">
+                                                        @foreach (var genre in Enum.GetValues(typeof(SongGenre)))
+                                                        {
+                                                            var genreValue = (SongGenre)genre;
+                                                            <MudSelectItem Value="@genreValue.ToString()" Label="@Localizer[$"Key_{genreValue}"]">
+                                                                @ScoreUtils.GetGenreTitle(genreValue)
+                                                            </MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                </MudItem>
+                                            </MudGrid>
+                                        </ToolBarContent>
                                         <HeaderContent>
-                                            <MudTh>
+                                            <MudTh Style="width: 400px">
                                                 <MudTableSortLabel T="SongBestData" SortBy="x => GameDataService.GetMusicNameBySongId(musicDetailDictionary, x.SongId, CultureInfo.CurrentCulture.ToString())">
-                                                    <MudText>@Localizer["Song Name"]</MudText>
-                                                </MudTableSortLabel>
-                                            </MudTh>
-                                            <MudTh>
-                                                <MudTableSortLabel T="SongBestData" SortBy="x => GameDataService.GetMusicStarLevel(musicDetailDictionary, x.SongId, difficulty) * 1000000 + x.BestScore">
-                                                    <MudText>@Localizer["Level"]</MudText>
+                                                    <MudText Typo="Typo.body2">@Localizer["Song Title / Artist"]</MudText>
                                                 </MudTableSortLabel>
                                             </MudTh>
                                             <MudTh>
                                                 <MudTableSortLabel T="SongBestData" SortBy="x => (int)x.Genre * 1000000 + x.BestScore">
-                                                    <MudText>@Localizer["Genre"]</MudText>
+                                                    <MudText Typo="Typo.body2">@Localizer["Genre"]</MudText>
+                                                </MudTableSortLabel>
+                                            </MudTh>
+                                            <MudTh>
+                                                <MudTableSortLabel T="SongBestData" SortBy="x => GameDataService.GetMusicStarLevel(musicDetailDictionary, x.SongId, difficulty) * 1000000 + x.BestScore">
+                                                    <MudText Typo="Typo.body2">@Localizer["Level"]</MudText>
                                                 </MudTableSortLabel>
                                             </MudTh>
                                             <MudTh>
                                                 <MudTableSortLabel T="SongBestData" SortBy="x => x.BestScore">
-                                                    <MudText>@Localizer["Best Score"]</MudText>
+                                                    <MudText Typo="Typo.body2">@Localizer["Best Score"]</MudText>
                                                 </MudTableSortLabel>
                                             </MudTh>
                                             <MudTh>
                                                 <MudTableSortLabel T="SongBestData" SortBy="x => (int)x.BestCrown * 1000000 + x.BestScore">
-                                                    <MudText>@Localizer["Best Crown"]</MudText>
+                                                    <MudText Typo="Typo.body2">@Localizer["Best Crown"]</MudText>
                                                 </MudTableSortLabel>
                                             </MudTh>
                                             <MudTh>
                                                 <MudTableSortLabel T="SongBestData" SortBy="x => (int)x.BestScoreRank * 1000000 + x.BestScore">
-                                                    <MudText>@Localizer["Best Rank"]</MudText>
+                                                    <MudText Typo="Typo.body2">@Localizer["Best Rank"]</MudText>
                                                 </MudTableSortLabel>
                                             </MudTh>
-                                            <MudTh>
-                                                <MudTableSortLabel T="SongBestData" SortBy="x => x.GoodCount">
-                                                    <MudText>@Localizer["Good"]</MudText>
-                                                </MudTableSortLabel>
-                                            </MudTh>
-                                            <MudTh>
-                                                <MudTableSortLabel T="SongBestData" SortBy="x => x.OkCount">
-                                                    <MudText>@Localizer["OK"]</MudText>
-                                                </MudTableSortLabel>
-                                            </MudTh>
-                                            <MudTh>
-                                                <MudTableSortLabel T="SongBestData" SortBy="x => x.MissCount">
-                                                    <MudText>@Localizer["Bad"]</MudText>
-                                                </MudTableSortLabel>
-                                            </MudTh>
-                                            <MudTh>
-                                                <MudTableSortLabel T="SongBestData" SortBy="x => x.DrumrollCount">
-                                                    <MudText>@Localizer["Drumroll"]</MudText>
-                                                </MudTableSortLabel>
-                                            </MudTh>
-                                            <MudTh>
-                                                <MudTableSortLabel T="SongBestData" SortBy="x => x.ComboCount">
-                                                    <MudText>@Localizer["MAX Combo"]</MudText>
-                                                </MudTableSortLabel>
-                                            </MudTh>
+                                            @*                                             <MudTh>
+                        <MudTableSortLabel T="SongBestData" SortBy="x => x.GoodCount">
+                        <MudText Typo="Typo.body2">@Localizer["Good"]</MudText>
+                        </MudTableSortLabel>
+                        </MudTh>
+                        <MudTh>
+                        <MudTableSortLabel T="SongBestData" SortBy="x => x.OkCount">
+                        <MudText Typo="Typo.body2">@Localizer["OK"]</MudText>
+                        </MudTableSortLabel>
+                        </MudTh>
+                        <MudTh>
+                        <MudTableSortLabel T="SongBestData" SortBy="x => x.MissCount">
+                        <MudText Typo="Typo.body2">@Localizer["Bad"]</MudText>
+                        </MudTableSortLabel>
+                        </MudTh>
+                        <MudTh>
+                        <MudTableSortLabel T="SongBestData" SortBy="x => x.DrumrollCount">
+                        <MudText Typo="Typo.body2">@Localizer["Drumroll"]</MudText>
+                        </MudTableSortLabel>
+                        </MudTh>
+                        <MudTh>
+                        <MudTableSortLabel T="SongBestData" SortBy="x => x.ComboCount">
+                        <MudText Typo="Typo.body2">@Localizer["MAX Combo"]</MudText>
+                        </MudTableSortLabel>
+                        </MudTh> *@
                                             <MudTh>
                                                 <MudTableSortLabel T="SongBestData" InitialDirection="SortDirection.Descending" SortBy="x => x.PlayTime">
-                                                    <MudText>@Localizer["Played"]</MudText>
+                                                    <MudText Typo="Typo.body2">@Localizer["Played"]</MudText>
                                                 </MudTableSortLabel>
                                             </MudTh>
-@*                                             <MudTh>
-                                                <MudTableSortLabel T="SongBestData" SortBy="x => x.PlayCount">
-                                                    <MudText>@Localizer["Total Credits Played"]</MudText>
-                                                </MudTableSortLabel>
-                                            </MudTh>
-                                            <MudTh>
-                                                <MudTableSortLabel T="SongBestData" SortBy="x => x.ClearCount">
-                                                    <MudText>@Localizer["Total Clears"]</MudText>
-                                                </MudTableSortLabel>
-                                            </MudTh>
-                                            <MudTh>
-                                                <MudTableSortLabel T="SongBestData" SortBy="x => x.FullComboCount">
-                                                    <MudText>@Localizer["Total Full Combos"]</MudText>
-                                                </MudTableSortLabel>
-                                            </MudTh>
-                                            <MudTh>
-                                                <MudTableSortLabel T="SongBestData" SortBy="x => x.PerfectCount">
-                                                    <MudText>@Localizer["Total Donderful Combos"]</MudText>
-                                                </MudTableSortLabel>
-                                            </MudTh> *@
                                         </HeaderContent>
                                         <RowTemplate>
                                             <MudTd Style="text-align: initial !important;">
                                                 <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-                                                    <div style="width:400px">
-                                                        <a href="@($"/Users/{Baid}/Songs/{context.SongId}")">
-                                                            <MudText Typo="Typo.body2" Style="font-weight:bold">@context.MusicName</MudText>
-                                                            <MudText Typo="Typo.caption">@context.MusicArtist</MudText>
-                                                        </a>
-                                                    </div>
-                                                    @* <div>
+                                                    <div>
                                                         <MudToggleIconButton Toggled="@context.IsFavorite"
                                                                              ToggledChanged="@(async () => await OnFavoriteToggled(context))"
                                                                              Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
@@ -135,8 +135,20 @@
                                                                              Size="Size.Small"
                                                                              ToggledSize="Size.Small"
                                                                              Title="Add to favorites" ToggledTitle="Remove from favorites" />
-                                                    </div> *@
+                                                    </div>
+                                                    <div style="width:400px">
+                                                        <a href="@($"/Users/{Baid}/Songs/{context.SongId}")">
+                                                            <MudText Typo="Typo.body2" Style="font-weight:bold">@context.MusicName</MudText>
+                                                            <MudText Typo="Typo.caption">@context.MusicArtist</MudText>
+                                                        </a>
+                                                    </div>
                                                 </MudStack>
+                                            </MudTd>
+                                            <MudTd Style="width: 150px;">
+                                                <MudChip Style="@ScoreUtils.GetGenreStyle(context.Genre)"
+                                                         Size="Size.Small">
+                                                    @ScoreUtils.GetGenreTitle(context.Genre)
+                                                </MudChip>
                                             </MudTd>
                                             <MudTd>
                                                 <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
@@ -145,13 +157,7 @@
                                                 </MudStack>
                                             </MudTd>
                                             <MudTd>
-                                                <MudChip Style="@ScoreUtils.GetGenreStyle(context.Genre)"
-                                                         Size="Size.Small">
-                                                    @ScoreUtils.GetGenreTitle(context.Genre)
-                                                </MudChip>
-                                            </MudTd>
-                                            <MudTd>
-                                                <MudText>@context.BestScore</MudText>
+                                                <MudText Typo="Typo.body2">@context.BestScore</MudText>
                                             </MudTd>
                                             <MudTd>
                                                 <img src="@($"/images/crown_{context.BestCrown}.webp")" alt="@(ScoreUtils.GetCrownText(context.BestCrown))" title="@(ScoreUtils.GetCrownText(context.BestCrown))" style="@Constants.ICON_STYLE" />
@@ -162,36 +168,24 @@
                                                     <img src="@($"/images/rank_{context.BestScoreRank}.webp")" alt="@(ScoreUtils.GetRankText(context.BestScoreRank))" title="@(ScoreUtils.GetRankText(context.BestScoreRank))" style="@Constants.ICON_STYLE" />
                                                 }
                                             </MudTd>
+                                            @*                                             <MudTd>
+                        <MudText Typo="Typo.body2">@context.GoodCount</MudText>
+                        </MudTd>
+                        <MudTd>
+                        <MudText Typo="Typo.body2">@context.OkCount</MudText>
+                        </MudTd>
+                        <MudTd>
+                        <MudText Typo="Typo.body2">@context.MissCount</MudText>
+                        </MudTd>
+                        <MudTd>
+                        <MudText Typo="Typo.body2">@context.DrumrollCount</MudText>
+                        </MudTd>
+                        <MudTd>
+                        <MudText Typo="Typo.body2">@context.ComboCount</MudText>
+                        </MudTd> *@
                                             <MudTd>
-                                                <MudText>@context.GoodCount</MudText>
+                                                <MudText Typo="Typo.body2">@context.PlayTime</MudText>
                                             </MudTd>
-                                            <MudTd>
-                                                <MudText>@context.OkCount</MudText>
-                                            </MudTd>
-                                            <MudTd>
-                                                <MudText>@context.MissCount</MudText>
-                                            </MudTd>
-                                            <MudTd>
-                                                <MudText>@context.DrumrollCount</MudText>
-                                            </MudTd>
-                                            <MudTd>
-                                                <MudText>@context.ComboCount</MudText>
-                                            </MudTd>
-                                            <MudTd>
-                                                <MudText>@context.PlayTime</MudText>
-                                            </MudTd>
-@*                                             <MudTd>
-                                                <MudText>@context.PlayCount</MudText>
-                                            </MudTd>
-                                            <MudTd>
-                                                <MudText>@context.ClearCount</MudText>
-                                            </MudTd>
-                                            <MudTd>
-                                                <MudText>@context.FullComboCount</MudText>
-                                            </MudTd>
-                                            <MudTd>
-                                                <MudText>@context.PerfectCount</MudText>
-                                            </MudTd> *@
                                         </RowTemplate>
                                         <PagerContent>
                                             <MudTablePager RowsPerPageString=@Localizer["Rows Per Page:"] />

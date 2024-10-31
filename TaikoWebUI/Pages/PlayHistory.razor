@@ -69,10 +69,10 @@
                     <ChildRowContent>
                         <MudTable Items="@context" T="SongHistoryData" Context="songHistoryData" Elevation="0" Striped="false" Hover="false" ReadOnly="true" Outlined="true" Class="mb-8" Breakpoint=Breakpoint.None>
                             <HeaderContent>
+                                <MudTh Style="width:400px">@Localizer["Song Title / Artist"]</MudTh>
+                                <MudTh>@Localizer["Genre"]</MudTh>
                                 <MudTh>@Localizer["Difficulty"]</MudTh>
                                 <MudTh>@Localizer["Level"]</MudTh>
-                                <MudTh Style="width:500px">@Localizer["Song Name"]</MudTh>
-                                <MudTh>@Localizer["Genre"]</MudTh>
                                 <MudTh>@Localizer["Score"]</MudTh>
                                 <MudTh>@Localizer["Crown"]</MudTh>
                                 <MudTh>@Localizer["Rank"]</MudTh>
@@ -83,20 +83,10 @@
                                 <MudTh>@Localizer["MAX Combo"]</MudTh>
                             </HeaderContent>
                             <RowTemplate>
-                                @* Difficulty rating *@
-                                <MudTd DataLabel="Difficulty" Style="text-align:center"><MudIcon Style=@IconStyle Icon="@GetDifficultyIcon(songHistoryData.Difficulty)" /></MudTd>
-                                @* Star rating *@
-                                <MudTd DataLabel="Stars" Style="text-align:center">
-                                    <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
-                                        <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
-                                        <MudText Typo="Typo.caption" Style="line-height:1;margin-top:2px;margin-right:2px;">@songHistoryData.Stars</MudText>
-                                    </MudStack>
-                                </MudTd>
-
                                 @* Song title *@
                                 <MudTd DataLabel="Song" Style="text-align: initial !important;">
                                     <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                                        <div>
+                                        <div style="width:400px">
                                             <a href="@($"/Users/{Baid}/Songs/{songHistoryData.SongId}")">
                                                 <MudText Typo="Typo.body2" Style="font-weight:bold">@songHistoryData.MusicName</MudText>
                                                 <MudText Typo="Typo.caption">@songHistoryData.MusicArtist</MudText>
@@ -106,8 +96,19 @@
                                 </MudTd>
 
                                 @* Genre display *@
-                                <MudTd DataLabel="Genre">
+                                <MudTd DataLabel="Genre" Style="width: 150px;">
                                     <MudChip Style=@GetGenreStyle(songHistoryData.Genre) Size="Size.Small">@GetGenreTitle(songHistoryData.Genre)</MudChip>
+                                </MudTd>
+
+                                @* Difficulty rating *@
+                                <MudTd DataLabel="Difficulty" Style="text-align:center"><MudIcon Style=@IconStyle Icon="@GetDifficultyIcon(songHistoryData.Difficulty)" /></MudTd>
+
+                                @* Star rating *@
+                                <MudTd DataLabel="Stars" Style="text-align:center">
+                                    <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
+                                        <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
+                                        <MudText Typo="Typo.caption" Style="line-height:1;margin-top:2px;margin-right:2px;">@songHistoryData.Stars</MudText>
+                                    </MudStack>
                                 </MudTd>
 
                                 <MudTd>@(songHistoryData.Score)</MudTd>

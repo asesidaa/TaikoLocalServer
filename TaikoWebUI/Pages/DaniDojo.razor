@@ -27,7 +27,7 @@ else
     <MudGrid Class="my-4 pb-10">
         <MudItem xs="12">
             <MudPaper Elevation="0" Outlined="true">
-                <MudTabs ActivePanelIndex="0" Rounded="true" Border="true" PanelClass="pa-8">
+                <MudTabs ActivePanelIndex="0" Rounded="true" Border="true" MinimumTabWidth="100px" PanelClass="pa-8">
                     @foreach (var danId in danMap.Keys)
                     {
                         var danData = danMap[danId];

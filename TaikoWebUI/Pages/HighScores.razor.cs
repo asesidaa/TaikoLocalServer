@@ -11,6 +11,9 @@ public partial class HighScores
     private int selectedDifficultyTab;
     private Dictionary<uint, MusicDetail> musicDetailDictionary = new();
 
+    private string Search { get; set; } = string.Empty;
+    private string GenreFilter { get; set; } = string.Empty;
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -89,5 +92,30 @@ public partial class HighScores
     {
         selectedDifficultyTab = index;
         await LocalStorage.SetItemAsync($"highScoresTab", selectedDifficultyTab);
+    }
+
+    private bool FilterSongs(SongBestData songData)
+    {
+        var stringsToCheck = new List<string>
+        {
+            songData.MusicName,
+            songData.MusicArtist,
+            songData.BestScore.ToString(),
+            songData.PlayTime.ToString(),
+        };
+
+        if (songData.IsFavorite) stringsToCheck.Add("Favorite");
+
+        if (!string.IsNullOrEmpty(Search) && !stringsToCheck.Any(s => s.Contains(Search, StringComparison.OrdinalIgnoreCase)))
+        {
+            return false;
+        }
+
+        if (!string.IsNullOrEmpty(GenreFilter) && songData.Genre != Enum.Parse<SongGenre>(GenreFilter))
+        {
+            return false;
+        }
+
+        return true;
     }
 }

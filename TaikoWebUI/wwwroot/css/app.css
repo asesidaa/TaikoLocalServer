@@ -318,6 +318,13 @@ tr.is-current-user p {
     }
 }
 
+@media only screen and (max-width: 599px) {
+    .mud-button-root {
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+}
+
 .mud-breadcrumb-item {
     font-size: 14px;
 }
