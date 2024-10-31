@@ -3,11 +3,13 @@
 @inject AuthService AuthService
 @inject NavigationManager NavigationManager
 @inject BreadcrumbsStateContainer BreadcrumbsStateContainer
+@inject IKeyInterceptorFactory KeyInterceptorFactory
 
 @page "/Login"
+@using MudBlazor.Services
 
 
-@if (!AuthService.IsLoggedIn) 
+@if (!AuthService.IsLoggedIn)
 {
     // Not logged in, show login form
     <MudContainer>
@@ -21,13 +23,14 @@
                         <MudForm @ref="loginForm">
                             <div style="display:flex;flex-direction:column;gap:15px;">
                                 <MudTextField @bind-value="inputAccessCode" InputType="InputType.Text" T="string"
-                                                FullWidth="true" Required="@true" RequiredError="Access code is required"
-                                                Label=@Localizer["Access Code"] Variant="Variant.Outlined" Margin="Margin.Dense" />
+                                              FullWidth="true" Required="@true" OnKeyUp="HandleKeyDown"
+                                              RequiredError="Access code is required"
+                                              Label=@Localizer["Access Code"] Variant="Variant.Outlined" Margin="Margin.Dense" />
                                 <MudTextField @bind-Value="inputPassword" InputType="InputType.Password"
-                                                T="string" FullWidth="true" Required="@true"
-                                                RequiredError="Password is required"
-                                                Label=@Localizer["Password"] Variant="Variant.Outlined" Margin="Margin.Dense" />
-                                <MudButton OnClick="OnLogin" FullWidth="true" StartIcon="@Icons.Material.Filled.Login" Color="Color.Primary" Variant="Variant.Filled">@Localizer["Log In"]</MudButton>
+                                              T="string" FullWidth="true" Required="@true" OnKeyUp="HandleKeyDown"
+                                              RequiredError="Password is required"
+                                              Label=@Localizer["Password"] Variant="Variant.Outlined" Margin="Margin.Dense" />
+                                <MudButton OnClick="Submit" FullWidth="true" StartIcon="@Icons.Material.Filled.Login" Color="Color.Primary" Variant="Variant.Filled">@Localizer["Log In"]</MudButton>
                             </div>
                         </MudForm>
                     </MudCardContent>
@@ -35,7 +38,8 @@
             </MudItem>
         </MudGrid>
     </MudContainer>
-} else
+}
+else
 {
     // Already logged in, redirect to Dashboard
     NavigationManager.NavigateTo("/");

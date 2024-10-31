@@ -1,10 +1,19 @@
-﻿namespace TaikoWebUI.Pages;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TaikoWebUI.Pages;
 
 public partial class Register
 {
-    private string accessCode = "";
-    private string confirmPassword = "";
-    private string password = "";
+    [Required]
+    private string AccessCode { get; set; } = "";
+
+    [Required]
+    private string Password { get; set; } = "";
+
+    [Required]
+    [Compare(nameof(Password))]
+    private string ConfirmPassword { get; set; } = "";
+
     private MudForm registerForm = default!;
 
     private MudDatePicker datePicker = new();
@@ -12,6 +21,7 @@ public partial class Register
     private DateTime? date = DateTime.Today;
     private TimeSpan? time = new TimeSpan(00, 45, 00);
     private string inviteCode = "";
+    bool debounce = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -24,8 +34,9 @@ public partial class Register
 
     private async Task OnRegister()
     {
+        debounce = true;
         var inputDateTime = date!.Value.Date + time!.Value;
-        var result = await AuthService.Register(accessCode, inputDateTime, password, confirmPassword, inviteCode);
+        var result = await AuthService.Register(AccessCode, inputDateTime, Password, ConfirmPassword, inviteCode);
         var options = new DialogOptions { DisableBackdropClick = true };
         switch (result)
         {
@@ -71,7 +82,7 @@ public partial class Register
                 await DialogService.ShowMessageBox(
                     Localizer["Error"],
                     (MarkupString)
-                    (string) Localizer["Register Wrong Last Play Time Error"],
+                    (string)Localizer["Register Wrong Last Play Time Error"],
                     Localizer["Dialog OK"], null, null, options);
                 break;
             case 6:
@@ -80,6 +91,29 @@ public partial class Register
                     Localizer["Unknown Error"],
                     Localizer["Dialog OK"], null, null, options);
                 break;
+        }
+    }
+
+    internal void HandleKeyDown(KeyboardEventArgs args)
+    {
+        if (debounce) { debounce = !debounce; return; }
+        switch (args.Key)
+        {
+            case "Enter":
+                _ = Submit();
+                break;
+        }
+    }
+
+    private async Task Submit()
+    {
+        if (registerForm != null)
+        {
+            await registerForm.Validate();
+            if (registerForm.IsValid)
+            {
+                await OnRegister();
+            }
         }
     }
 }

@@ -1,15 +1,19 @@
-﻿namespace TaikoWebUI.Pages;
+﻿using MudBlazor.Services;
+using static MudBlazor.CategoryTypes;
+
+namespace TaikoWebUI.Pages;
 
 public partial class Login
 {
     private string inputAccessCode = "";
     private MudForm loginForm = default!;
     private string inputPassword = "";
+    bool debounce = false;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        
+
         if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
         {
             await AuthService.LoginWithAuthToken();
@@ -22,6 +26,7 @@ public partial class Login
 
     private async Task OnLogin()
     {
+        debounce = true;
         var result = await AuthService.Login(inputAccessCode, inputPassword);
         var options = new DialogOptions { DisableBackdropClick = true };
         switch (result)
@@ -64,6 +69,29 @@ public partial class Login
                     Localizer["Unknown Error"],
                     Localizer["Dialog OK"], null, null, options);
                 break;
+        }
+    }
+
+    internal void HandleKeyDown(KeyboardEventArgs args)
+    {
+        if (debounce) { debounce = !debounce; return; }
+        switch (args.Key)
+        {
+            case "Enter":
+                _ = Submit();
+                break;
+        }
+    }
+
+    private async Task Submit()
+    {
+        if (loginForm != null)
+        {
+            await loginForm.Validate();
+            if (loginForm.IsValid)
+            {
+                await OnLogin();
+            }
         }
     }
 }
