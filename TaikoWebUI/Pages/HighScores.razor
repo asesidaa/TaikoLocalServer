@@ -63,7 +63,7 @@
                                             </MudGrid>
                                         </ToolBarContent>
                                         <HeaderContent>
-                                            <MudTh Style="width: 400px">
+                                            <MudTh Style="width: 300px">
                                                 <MudTableSortLabel T="SongBestData" SortBy="x => GameDataService.GetMusicNameBySongId(musicDetailDictionary, x.SongId, CultureInfo.CurrentCulture.ToString())">
                                                     <MudText Typo="Typo.body2">@Localizer["Song Title / Artist"]</MudText>
                                                 </MudTableSortLabel>
@@ -127,7 +127,7 @@
                                         <RowTemplate>
                                             <MudTd Style="text-align: initial !important;">
                                                 <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-                                                    <div>
+                                                    <div style="margin: 4px;">
                                                         <MudToggleIconButton Toggled="@context.IsFavorite"
                                                                              ToggledChanged="@(async () => await OnFavoriteToggled(context))"
                                                                              Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
@@ -136,7 +136,7 @@
                                                                              ToggledSize="Size.Small"
                                                                              Title="Add to favorites" ToggledTitle="Remove from favorites" />
                                                     </div>
-                                                    <div style="width:400px">
+                                                    <div style="width:300px">
                                                         <a href="@($"/Users/{Baid}/Songs/{context.SongId}")">
                                                             <MudText Typo="Typo.body2" Style="font-weight:bold">@context.MusicName</MudText>
                                                             <MudText Typo="Typo.caption">@context.MusicArtist</MudText>

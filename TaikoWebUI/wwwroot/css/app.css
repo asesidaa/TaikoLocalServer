@@ -345,8 +345,21 @@ tr.is-current-user p {
     height: 100%;
 }
 
+.mud-table-toolbar {
+    display: block !important;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.tagged-toolbar .mud-table-toolbar {
+    background-color: var(--mud-palette-table-striped);
+}
+
 .mud-table-cell {
-    padding-top: 8px !important;
-    padding-bottom: 8px !important;
+    padding: 8px 4px 8px 4px !important;
     text-align: center;
+}
+
+.gap-3{
+    gap: 8px;
 }

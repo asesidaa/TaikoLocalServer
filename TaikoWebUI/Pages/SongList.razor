@@ -79,7 +79,7 @@
                     <RowTemplate>
                         <MudTd Style="text-align: initial !important;">
                             <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-                                <div>
+                                <div style="margin: 4px;">
                                     <MudToggleIconButton Toggled="@context.IsFavorite"
                                                          ToggledChanged="@(async () => await OnFavoriteToggled(context))"
                                                          Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"

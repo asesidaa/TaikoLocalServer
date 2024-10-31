@@ -33,7 +33,7 @@
         else
         {
             <MudItem xs="12">
-                <MudTable Class="mud-table-outlined" Items="@songHistoryDataMap.Values.ToList()" Elevation="0" Filter=@FilterSongs Virtualize="true" RowsPerPage="25" Striped="false" Hover="false" Bordered="false" Dense="true" Breakpoint=Breakpoint.None>
+                <MudTable Class="mud-table-outlined" Items="@songHistoryDataMap.Values.ToList()" Elevation="0" Filter=@FilterSongs RowsPerPage="25" Striped="false" Hover="false" Bordered="false" Dense="true"  Breakpoint=Breakpoint.None>
                     <ToolBarContent>
                         <MudGrid Spacing="2" Justify="Justify.SpaceBetween">
                             <MudItem xs="12" md="4" Style="align-content: center;">
@@ -60,33 +60,31 @@
                         </MudTh>
                     </HeaderContent>
                     <RowTemplate>
-                        <div class="mt-4 mb-1 ml-4">
-                            <MudText Typo="Typo.subtitle2">
-                                @CultureInfo.CurrentCulture.TextInfo.ToTitleCase(context[0].PlayTime.ToString(Localizer["DateFormat"]))
-                            </MudText>
-                        </div>
-                    </RowTemplate>
-                    <ChildRowContent>
-                        <MudTable Items="@context" T="SongHistoryData" Context="songHistoryData" Elevation="0" Striped="false" Hover="false" ReadOnly="true" Outlined="true" Class="mb-8" Breakpoint=Breakpoint.None>
+                        <MudTable Items="@context" T="SongHistoryData" Context="songHistoryData" Elevation="0" Class="tagged-toolbar" Striped="false" Hover="false" ReadOnly="true" Outlined="true" Breakpoint=Breakpoint.None>
+                            <ToolBarContent>
+                                <MudText Typo="Typo.body1">@CultureInfo.CurrentCulture.TextInfo.ToTitleCase(context[0].PlayTime.ToString(Localizer["DateFormat"]))</MudText>
+                            </ToolBarContent>
                             <HeaderContent>
-                                <MudTh Style="width:400px">@Localizer["Song Title / Artist"]</MudTh>
-                                <MudTh>@Localizer["Genre"]</MudTh>
-                                <MudTh>@Localizer["Difficulty"]</MudTh>
-                                <MudTh>@Localizer["Level"]</MudTh>
-                                <MudTh>@Localizer["Score"]</MudTh>
-                                <MudTh>@Localizer["Crown"]</MudTh>
-                                <MudTh>@Localizer["Rank"]</MudTh>
-                                <MudTh>@Localizer["Good"]</MudTh>
-                                <MudTh>@Localizer["OK"]</MudTh>
-                                <MudTh>@Localizer["Bad"]</MudTh>
-                                <MudTh>@Localizer["Drumroll"]</MudTh>
-                                <MudTh>@Localizer["MAX Combo"]</MudTh>
+                                <MudTh Style="width:300px; background-color: var(--mud-palette-table-striped);">@Localizer["Song Title / Artist"]</MudTh>
+                                <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Genre"]</MudTh>
+                                <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Level"]</MudTh>
+                                <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Score"]</MudTh>
+                                <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Crown"]</MudTh>
+                                <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Rank"]</MudTh>
+                                <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Good"]</MudTh>
+                                <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["OK"]</MudTh>
+                                <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Bad"]</MudTh>
+                                <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Drumroll"]</MudTh>
+                                <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["MAX Combo"]</MudTh>
                             </HeaderContent>
                             <RowTemplate>
                                 @* Song title *@
                                 <MudTd DataLabel="Song" Style="text-align: initial !important;">
                                     <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                                        <div style="width:400px">
+                                        <div style="margin: 4px; display: flex;">
+                                            <MudIcon Style=@IconStyle Icon="@GetDifficultyIcon(songHistoryData.Difficulty)" />
+                                        </div>
+                                        <div style="width:300px; padding-left: 4px;">
                                             <a href="@($"/Users/{Baid}/Songs/{songHistoryData.SongId}")">
                                                 <MudText Typo="Typo.body2" Style="font-weight:bold">@songHistoryData.MusicName</MudText>
                                                 <MudText Typo="Typo.caption">@songHistoryData.MusicArtist</MudText>
@@ -99,9 +97,6 @@
                                 <MudTd DataLabel="Genre" Style="width: 150px;">
                                     <MudChip Style=@GetGenreStyle(songHistoryData.Genre) Size="Size.Small">@GetGenreTitle(songHistoryData.Genre)</MudChip>
                                 </MudTd>
-
-                                @* Difficulty rating *@
-                                <MudTd DataLabel="Difficulty" Style="text-align:center"><MudIcon Style=@IconStyle Icon="@GetDifficultyIcon(songHistoryData.Difficulty)" /></MudTd>
 
                                 @* Star rating *@
                                 <MudTd DataLabel="Stars" Style="text-align:center">
@@ -126,7 +121,7 @@
                                 <MudTd>@(songHistoryData.ComboCount)</MudTd>
                             </RowTemplate>
                         </MudTable>
-                    </ChildRowContent>
+                    </RowTemplate>
                     <PagerContent>
                         <MudTablePager RowsPerPageString=@Localizer["Rows Per Page:"] />
                     </PagerContent>
