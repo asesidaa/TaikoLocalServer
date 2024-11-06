@@ -16,16 +16,17 @@ public class UserDataQueryHandler(TaikoDbContext context, IGameDataService gameD
         userData.ThrowIfNull($"User not found for Baid {request.Baid}!");
         
         var unlockedSongIdList = userData.UnlockedSongIdList;
+        var unlockedUraSongIdList = userData.UnlockedUraSongIdList;
 
         var musicList = gameDataService.GetMusicList();
-        var lockedSongsList = gameDataService.GetLockedSongsList();
-        lockedSongsList = lockedSongsList.Except(unlockedSongIdList).ToList();
+        var lockedSongsList = gameDataService.GetLockedSongsList().Except(unlockedSongIdList).ToList();
+        var lockedUraSongsList = gameDataService.GetLockedUraSongsList().Except(unlockedUraSongIdList).ToList();
         var enabledMusicList = musicList.Except(lockedSongsList);
         var releaseSongArray =
             FlagCalculator.GetBitArrayFromIds(enabledMusicList, Constants.MusicIdMax, logger);
 
         var defaultSongWithUraList = gameDataService.GetMusicWithUraList();
-        var enabledUraMusicList = defaultSongWithUraList.Except(lockedSongsList);
+        var enabledUraMusicList = defaultSongWithUraList.Except(lockedUraSongsList);
         var uraSongArray =
             FlagCalculator.GetBitArrayFromIds(enabledUraMusicList, Constants.MusicIdMax, logger);
 

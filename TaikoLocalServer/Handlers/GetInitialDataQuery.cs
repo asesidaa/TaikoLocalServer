@@ -21,6 +21,7 @@ public class GetInitialDataQueryHandler(IGameDataService gameDataService,
 
         var musicList = gameDataService.GetMusicList();
         var lockedSongsList = gameDataService.GetLockedSongsList();
+        var lockedUraSongsList = gameDataService.GetLockedUraSongsList();
 
         var enabledArray =
             FlagCalculator.GetBitArrayFromIds(musicList, songIdMax, logger);
@@ -29,7 +30,7 @@ public class GetInitialDataQueryHandler(IGameDataService gameDataService,
         var defaultSongFlg =
             FlagCalculator.GetBitArrayFromIds(defaultSongList, songIdMax, logger);
 
-        var defaultSongWithUraList = gameDataService.GetMusicWithUraList();
+        var defaultSongWithUraList = gameDataService.GetMusicWithUraList().Except(lockedUraSongsList);
         var uraReleaseBit =
             FlagCalculator.GetBitArrayFromIds(defaultSongWithUraList, songIdMax, logger);
 

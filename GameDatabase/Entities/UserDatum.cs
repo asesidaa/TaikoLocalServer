@@ -51,6 +51,7 @@ namespace GameDatabase.Entities
         public int         AiWinCount                   { get; set; }
         public List<Token> Tokens                       { get; set; } = new();
         public List<uint>  UnlockedSongIdList           { get; set; } = [];
+        public List<uint>  UnlockedUraSongIdList        { get; set; } = [];
         public bool        IsAdmin                      { get; set; }
     }
 }

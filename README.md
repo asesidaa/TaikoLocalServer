@@ -211,6 +211,9 @@ There are various data json files under wwwroot/data that can be customized.
     100,
     200,
     300
+  ],
+  "uraSongNo": [
+    // Fill in the uniqueId of songs whose ura chart you wish to lock
   ]
 }
 ```
@@ -241,10 +244,12 @@ There are various data json files under wwwroot/data that can be customized.
 [
   {
     "songNo": 100, // The uniqueId of the song
+    "type": 0, // 0 indicates the shop is selling the song itself
     "price": 20 // How many don coins buying this song costs, the type of don coin is specified by token_data.json
   },
   {
     "songNo": 200,
+    "type": 1, // And 1 indicates the shop is selling the song's ura chart
     "price": 20
   }
 ]

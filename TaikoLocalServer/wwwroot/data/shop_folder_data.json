@@ -1,6 +1,12 @@
 ﻿[
   {
-    "songNo": 2,
+    "songNo": 1,
+    "type": 0,
+    "price": 0
+  },
+  {
+    "songNo": 9,
+    "type": 1,
     "price": 0
   }
 ]
