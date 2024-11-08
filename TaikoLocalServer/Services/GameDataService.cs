@@ -403,14 +403,15 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
             var musicId = musicInfo.Id;
             var musicNameKey = $"song_{musicId}";
             var musicArtistKey = $"song_sub_{musicId}";
-            var musicName = wordlistData.WordListEntries.First(entry => entry.Key == musicNameKey).JapaneseText;
-            var musicArtist = wordlistData.WordListEntries.First(entry => entry.Key == musicArtistKey).JapaneseText;
-            var musicNameEn = wordlistData.WordListEntries.First(entry => entry.Key == musicNameKey).EnglishUsText;
-            var musicArtistEn = wordlistData.WordListEntries.First(entry => entry.Key == musicArtistKey).EnglishUsText;
-            var musicNameCn = wordlistData.WordListEntries.First(entry => entry.Key == musicNameKey).ChineseTText;
-            var musicArtistCn = wordlistData.WordListEntries.First(entry => entry.Key == musicArtistKey).ChineseTText;
-            var musicNameKo = wordlistData.WordListEntries.First(entry => entry.Key == musicNameKey).KoreanText;
-            var musicArtistKo = wordlistData.WordListEntries.First(entry => entry.Key == musicArtistKey).KoreanText;
+            //Using FirstOrDefault because the server could crash when the wordlist had missing song_sub entries.
+            var musicName = wordlistData.WordListEntries.FirstOrDefault(entry => entry.Key == musicNameKey)?.JapaneseText ?? "";
+            var musicArtist = wordlistData.WordListEntries.FirstOrDefault(entry => entry.Key == musicArtistKey)?.JapaneseText ?? "";
+            var musicNameEn = wordlistData.WordListEntries.FirstOrDefault(entry => entry.Key == musicNameKey)?.EnglishUsText ?? "";
+            var musicArtistEn = wordlistData.WordListEntries.FirstOrDefault(entry => entry.Key == musicArtistKey)?.EnglishUsText ?? "";
+            var musicNameCn = wordlistData.WordListEntries.FirstOrDefault(entry => entry.Key == musicNameKey)?.ChineseTText ?? "";
+            var musicArtistCn = wordlistData.WordListEntries.FirstOrDefault(entry => entry.Key == musicArtistKey)?.ChineseTText ?? "";
+            var musicNameKo = wordlistData.WordListEntries.FirstOrDefault(entry => entry.Key == musicNameKey)?.KoreanText ?? "";
+            var musicArtistKo = wordlistData.WordListEntries.FirstOrDefault(entry => entry.Key == musicArtistKey)?.KoreanText ?? "";
             var musicGenre = musicInfo.Genre;
             var musicStarEasy = musicInfo.StarEasy;
             var musicStarNormal = musicInfo.StarNormal;
