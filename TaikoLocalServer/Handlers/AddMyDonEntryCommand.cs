@@ -33,7 +33,8 @@ public class AddMyDonEntryCommandHandler(TaikoDbContext context, ILogger<AddMyDo
             UnlockedHead = [0],
             UnlockedPuchi = [0],
             GenericInfoFlgArray = [],
-            UnlockedSongIdList = []
+            UnlockedSongIdList = [],
+            UnlockedUraSongIdList = [],
         };
         
         context.UserData.Add(newUser);
