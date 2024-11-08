@@ -117,6 +117,13 @@ public partial class SongLeaderboardCard
         await GetLeaderboardData();
     }
 
+
+    private Task UserChanged(SongLeaderboard leaderboard)
+    {
+        NavigationManager.NavigateTo($"/Users/{leaderboard.Baid}/Songs/{SongId}", forceLoad: true);
+        return Task.CompletedTask;
+    }
+
     private string GetActiveRowClass(SongLeaderboard leaderboard, int index)
     {
         return leaderboard.Baid == Baid ? "is-current-user" : "";

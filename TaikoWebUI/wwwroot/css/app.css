@@ -363,3 +363,7 @@ tr.is-current-user p {
 .gap-3{
     gap: 8px;
 }
+
+.pointer {
+    cursor: pointer;
+}
