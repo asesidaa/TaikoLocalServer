@@ -7,4 +7,6 @@ public class ServerSettings
     public string GameUrl { get; set; } = string.Empty;
 
     public bool EnableMoreSongs { get; set; }
+
+    public int MoreSongsSize { get; set; } = Constants.MusicIdMaxExpanded;
 }

@@ -15,7 +15,7 @@ public class GetShopFolderHandler(IGameDataService gameDataService)
         {
             Result = 1,
             TokenId = seasonTokenId > 0 ? (uint)seasonTokenId : 1,
-            VerupNo = 2,
+            VerupNo = gameDataService.GetShopFolderVerup(),
             AryShopFolderDatas = shopFolderList
         };
 
