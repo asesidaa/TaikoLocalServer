@@ -23,6 +23,8 @@ public interface IGameDataService
 
     public List<ShopFolderData> GetShopFolderList();
 
+    public uint GetShopFolderVerup();
+
     public Dictionary<string, int> GetTokenDataDictionary();
 
     public List<uint> GetLockedSongsList();

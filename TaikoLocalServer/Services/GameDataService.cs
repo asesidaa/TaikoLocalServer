@@ -35,6 +35,8 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
 
     private List<ShopFolderData> shopFolderList = [];
 
+    private uint shopFolderVerup = 1;
+
     private List<uint> musicUniqueIdList = [];
 
     private List<uint> musicWithUraUniqueIdList = [];
@@ -101,6 +103,11 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
     public List<ShopFolderData> GetShopFolderList()
     {
         return shopFolderList;
+    }
+
+    public uint GetShopFolderVerup()
+    {
+        return shopFolderVerup;
     }
 
     public Dictionary<string, int> GetTokenDataDictionary()
@@ -230,6 +237,8 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
         {
             throw new FileNotFoundException($"{Path.GetFileName(filePath)} file not found!");
         }
+
+        shopFolderVerup = (uint)((File.GetLastWriteTime(shopFolderDataPath).ToFileTime() / 1000) % (1L << 32));
 
         await using var musicInfoFile = File.OpenRead(musicInfoPath);
         await using var danDataFile = File.OpenRead(danDataPath);

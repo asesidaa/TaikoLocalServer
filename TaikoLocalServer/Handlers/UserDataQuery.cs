@@ -1,14 +1,18 @@
 ﻿using System.Buffers.Binary;
 using GameDatabase.Context;
+using Microsoft.Extensions.Options;
+using TaikoLocalServer.Settings;
 using Throw;
 
 namespace TaikoLocalServer.Handlers;
 
 public record UserDataQuery(uint Baid) : IRequest<CommonUserDataResponse>;
 
-public class UserDataQueryHandler(TaikoDbContext context, IGameDataService gameDataService, ILogger<UserDataQueryHandler> logger) 
+public class UserDataQueryHandler(TaikoDbContext context, IGameDataService gameDataService, ILogger<UserDataQueryHandler> logger, IOptions<ServerSettings> settings) 
     : IRequestHandler<UserDataQuery, CommonUserDataResponse>
 {
+
+    private readonly ServerSettings settings = settings.Value;
 
     public async Task<CommonUserDataResponse> Handle(UserDataQuery request, CancellationToken cancellationToken)
     {
@@ -18,17 +22,19 @@ public class UserDataQueryHandler(TaikoDbContext context, IGameDataService gameD
         var unlockedSongIdList = userData.UnlockedSongIdList;
         var unlockedUraSongIdList = userData.UnlockedUraSongIdList;
 
+        var songIdMax = settings.EnableMoreSongs ? settings.MoreSongsSize : Constants.MusicIdMax;
+
         var musicList = gameDataService.GetMusicList();
         var lockedSongsList = gameDataService.GetLockedSongsList().Except(unlockedSongIdList).ToList();
         var lockedUraSongsList = gameDataService.GetLockedUraSongsList().Except(unlockedUraSongIdList).ToList();
         var enabledMusicList = musicList.Except(lockedSongsList);
         var releaseSongArray =
-            FlagCalculator.GetBitArrayFromIds(enabledMusicList, Constants.MusicIdMax, logger);
+            FlagCalculator.GetBitArrayFromIds(enabledMusicList, songIdMax, logger);
 
         var defaultSongWithUraList = gameDataService.GetMusicWithUraList();
         var enabledUraMusicList = defaultSongWithUraList.Except(lockedUraSongsList);
         var uraSongArray =
-            FlagCalculator.GetBitArrayFromIds(enabledUraMusicList, Constants.MusicIdMax, logger);
+            FlagCalculator.GetBitArrayFromIds(enabledUraMusicList, songIdMax, logger);
 
         if (userData.ToneFlgArray.Count == 0)
         {

@@ -17,6 +17,10 @@ public static class Constants
 	public const string ShougouBaseName = "shougou";
 	public const string NeiroBaseName = "neiro";
 
+	// Verup1
+    public const uint ShopVerupMasterType = 104;
+
+    // Verup2
 	public const uint DanVerupMasterType = 101;
 	public const uint GaidenVerupMasterType = 102;
 	public const uint FolderVerupMasterType = 103;
