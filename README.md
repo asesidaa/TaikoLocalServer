@@ -26,9 +26,9 @@ It is composed of two major components :
 ### TaikoLocalServer configuration
 
 There are various json files under [taikolocalserver/wwwroot/data](./TaikoLocalServer/wwwroot/data/) that can be customized.  
-Please refer to the [taikolocalserver](./TaikoLocalServer/README.md) folder for documentation.
+Please refer to the [taikolocalserver readme file](./TaikoLocalServer/README.md) for documentation.
 
 ### TaikoWebUI configuration
 
-The WebUI has a few settings you can change in [appsettings.json](./TaikoWebUI/wwwroot/appsettings.json)
-Please refer to the [taikowebui](./TaikoWebUI/README.md) folder for documentation.
+The WebUI has a few settings you can change in [appsettings.json](./TaikoWebUI/wwwroot/appsettings.json)  
+Please refer to the [taikowebui readme file](./TaikoWebUI/README.md) for documentation.
