@@ -10,6 +10,8 @@ public class WebUiSettings
     public bool AllowUserDelete { get; set; }
     public bool AllowFreeProfileEditing { get; set; }
 
+    public bool DisplayUnplayedDans { get; set; }
+
     public MaxWidth MaxWidth { get; set; }
     
     public SongLeaderboardSettings SongLeaderboardSettings { get; set; } = new SongLeaderboardSettings();
