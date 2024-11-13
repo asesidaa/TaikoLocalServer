@@ -1,6 +1,6 @@
 # Taiko Local Server
 
-This is a server for Taiko no Tatsujin Nijiiro ver 39.06  
+This is a server for Taiko no Tatsujin Nijiiro ver CHN and 39.06  
 It is composed of two major components :
 
 - [TaikoLocalServer](./TaikoLocalServer/): The server handling the game's requests

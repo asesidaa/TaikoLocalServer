@@ -1,7 +1,7 @@
 # Taiko Local Server
 
 This is the solution for server.  
-Server is implemented with ASP.NET Core 6. ORM is Entity Framework Core 6. Database is SQLite for easier setup.  
+Server is implemented with ASP.NET Core 8. ORM is Entity Framework Core 8. Database is SQLite for easier setup.  
 As the game uses protobuf, `protobuf-net` is used for serializing and deserializing the data.  
 
 - [Taiko Local Server](#taiko-local-server)
@@ -13,11 +13,15 @@ As the game uses protobuf, `protobuf-net` is used for serializing and deserializ
     - [locked\_songs\_data.json](#locked_songs_datajson)
     - [movie\_data.json](#movie_datajson)
     - [qrcode\_data.json](#qrcode_datajson)
+    - [shop\_folder\_data.json](#shop_folder_datajson)
+    - [token\_data.json](#token_datajson)
 
 ## Datatable documentation
 
 The server sends a variety of information to the game that you can edit.  
 You'll find a list of all the files bellow!
+
+The documentation is updated to reflect 39.06 files but most of it is similar for CHN.
 
 ### dan_data.json
 
@@ -123,7 +127,7 @@ This is used to populate event folders/genres
 ```json
 [
     {
-        "folderId": 1, // The folderId of the event folder, find corresponding folderId in the wordlist by searching keys called folder_eventX, where X is the folderId
+        "folderId": 1, // The folderId of the event folder
         //For 39.06, the list is the following:
         //1: Touhou Project Special
         //2: The Idolmaster Special
@@ -140,6 +144,7 @@ This is used to populate event folders/genres
         //13: Winter Seasonal Songs Pack
         //14: World Popular Songs
         //15: Taiko no Tatsujin 20th Anniversary Songs
+        //You can find the corresponding folderId in the wordlist by searching for keys called folder_eventX, where X is the folderId
         "verupNo": 1, // Used to control whether the client should update to a new event folder when offline cache files are still present
         "priority": 1, 
         "songNo": [] // The uniqueId of the songs to be added to this event folder, if left empty, this folder will not show up in-game
@@ -256,6 +261,11 @@ This is used to control which in-game movie is displayed before entering the gam
 [
   {
     "movie_id": 0, // The movie id can be the following: 
+    //1 = #Compass collab
+    //2 = Idolish 7
+    //3 = Touhou collab 2020,
+    //4 = DENONBU collab
+    //7 = DENONBU BuSho Film Festival
     //8 = iM@S 15th anniversary collab, 
     //9 = iM@S 15th anniversary collab (en), 
     //10 = ONE PIECE collab, 
@@ -265,6 +275,9 @@ This is used to control which in-game movie is displayed before entering the gam
     //16 = Taiko no Tatsujin 20th anniversary Soshina collab (en), 
     //17 = Taiko no Tatsujin 20th anniversary Soshina collab (zh-tw), 
     //18 = Taiko no Tatsujin 20th anniversary Soshina collab (ko)
+    //19 = Touhou collab 2021,
+    //20 = Hololive collab
+    //You can find the updated list for your game dump in the \Data\x64\movie folder, where the file names are the movie_ids.
     "enable_days": 0 // Simply set to 999 for the movie to always be displayed
   }
 ]
@@ -287,8 +300,10 @@ This is used to customize which qrcode's uniqueId is invoked when a qrcode reque
 ]
 ```
 
-- shop_folder_data.json: This is used to customize the in-game shop folder content.
-  
+### shop_folder_data.json
+
+This is used to customize the in-game shop folder content.
+
 ```json
 [
   {
@@ -304,7 +319,9 @@ This is used to customize which qrcode's uniqueId is invoked when a qrcode reque
 ]
 ```
 
-- token_data.json: This is used to customize in-game reward tokens.
+### token_data.json
+
+This is used to customize in-game reward tokens.
 
 ```json
 {
