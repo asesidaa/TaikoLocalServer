@@ -171,7 +171,7 @@ This is used to customize gaiden dans.
   {
     "danId":20, // The danId of the gaiden dan, can be the same value as a dan in dan_data.json, but has to be unique in all gaidens in gaiden_data.json
     "verupNo":1, // Used to control whether the client should update to a new dan when offline cache files are still present
-    "title":"[JPN]=復活！ブルー十段,[ENG]=Blue 10Dan", // The title of the gaiden dan, which will be displayed when scanning the QR code and in dani select interface. Use language code to specify each language's entry. [JPN], [CHS], [CHT], [KOR], [ENG] are supported. Use comma to separate each language's entry.
+    "title":"[JPN]=復活！ブルー十段,[ENG]=Blue 10Dan", // The title of the gaiden dan, which will be displayed when scanning the QR code and in dani select interface. Use language code to specify each language's entry. [JPN], [ENG], [CHN], [KOR], [CHS] are supported. Use comma to separate each language's entry.
     "aryOdaiSong":[ // Starting from here, it uses the same format as dan_data.json
       {
         "songNo":60,
