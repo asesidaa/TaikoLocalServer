@@ -26,8 +26,11 @@ public class UserDataQueryHandler(TaikoDbContext context, IGameDataService gameD
 
         var musicList = gameDataService.GetMusicList();
         var lockedSongsList = gameDataService.GetLockedSongsList().Except(unlockedSongIdList).ToList();
+        var doublePlaySongsList = gameDataService.GetDoublePlaySongsList();
         var lockedUraSongsList = gameDataService.GetLockedUraSongsList().Except(unlockedUraSongIdList).ToList();
         var enabledMusicList = musicList.Except(lockedSongsList);
+        // TODO: if user set Unlock DoublePlay disable the follow line
+        enabledMusicList = enabledMusicList.Except(doublePlaySongsList);
         var releaseSongArray =
             FlagCalculator.GetBitArrayFromIds(enabledMusicList, songIdMax, logger);
 

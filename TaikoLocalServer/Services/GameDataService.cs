@@ -43,6 +43,8 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
 
     private List<uint> lockedSongsList = [];
 
+    private List<uint> doublePlaySongsList = [];
+
     private List<uint> lockedUraSongsList = [];
     
     private readonly Dictionary<uint, MusicDetail> musicDetailDictionary = new();
@@ -119,7 +121,12 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
     {
         return lockedSongsList;
     }
-    
+
+    public List<uint> GetDoublePlaySongsList()
+    {
+        return doublePlaySongsList;
+    }
+
     public List<uint> GetLockedUraSongsList()
     {
         return lockedUraSongsList;
@@ -201,6 +208,7 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
         var shopFolderDataPath = Path.Combine(dataPath, settings.ShopFolderDataFileName);
         var tokenDataPath = Path.Combine(dataPath, settings.TokenDataFileName);
         var lockedSongsDataPath = Path.Combine(dataPath, settings.LockedSongsDataFileName);
+        var doublePlaySongsDataPath = Path.Combine(dataPath, settings.DoublePlaySongsData);
         var qrCodeDataPath = Path.Combine(dataPath, settings.QrCodeDataFileName);
         var lockedCostumeDataPath = Path.Combine(dataPath, settings.LockedCostumeDataFileName);
         var lockedTitleDataPath = Path.Combine(dataPath, settings.LockedTitleDataFileName);
@@ -249,6 +257,7 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
         await using var shopFolderDataFile = File.OpenRead(shopFolderDataPath);
         await using var tokenDataFile = File.OpenRead(tokenDataPath);
         await using var lockedSongsDataFile = File.OpenRead(lockedSongsDataPath);
+        await using var doublePlaySongsDataFile = File.OpenRead(doublePlaySongsDataPath);
         await using var donCosRewardFile = File.OpenRead(donCosRewardPath);
         await using var shougouFile = File.OpenRead(shougouPath);
         await using var neiroFile = File.OpenRead(neiroPath);
@@ -267,6 +276,7 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
         var shopFolderData = await JsonSerializer.DeserializeAsync<List<ShopFolderData>>(shopFolderDataFile);
         var tokenData = await JsonSerializer.DeserializeAsync<Dictionary<string, int>>(tokenDataFile);
         var lockedSongsData = await JsonSerializer.DeserializeAsync<Dictionary<string, uint[]>>(lockedSongsDataFile);
+        var doublePlaySongsData = await JsonSerializer.DeserializeAsync<Dictionary<string, uint[]>>(doublePlaySongsDataFile);
         var donCosRewardData = await JsonSerializer.DeserializeAsync<DonCosRewards>(donCosRewardFile);
         var shougouData = await JsonSerializer.DeserializeAsync<Shougous>(shougouFile);
         var neiroData = await JsonSerializer.DeserializeAsync<Neiros>(neiroFile);
@@ -393,6 +403,12 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
         lockedSongsData.ThrowIfNull("Shouldn't happen!");
         lockedSongsList = lockedSongsData["songNo"].ToList();
         lockedUraSongsList = lockedSongsData["uraSongNo"].ToList();
+    }
+
+    private void InitializeDoublePlaySongsData(Dictionary<string, uint[]>? doublePlaySongsData)
+    {
+        doublePlaySongsData.ThrowIfNull("Shouldn't happen!");
+        doublePlaySongsList = doublePlaySongsData["songNo"].ToList();
     }
     
     private void InitializeMusicDetails(MusicInfos? musicInfoData, MusicOrder? musicOrderData, WordList? wordlistData)

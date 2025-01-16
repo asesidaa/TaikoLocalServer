@@ -28,6 +28,8 @@ public interface IGameDataService
     public Dictionary<string, int> GetTokenDataDictionary();
 
     public List<uint> GetLockedSongsList();
+
+    public List<uint> GetDoublePlaySongsList();
     
     public List<uint> GetLockedUraSongsList();
     
