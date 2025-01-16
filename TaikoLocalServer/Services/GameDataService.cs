@@ -43,7 +43,7 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
 
     private List<uint> lockedSongsList = [];
 
-    private List<uint> doublePlaySongsList = [];
+    private List<uint> souUchiSongsList = [];
 
     private List<uint> lockedUraSongsList = [];
     
@@ -122,9 +122,9 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
         return lockedSongsList;
     }
 
-    public List<uint> GetDoublePlaySongsList()
+    public List<uint> GetSouUchiSongsList()
     {
-        return doublePlaySongsList;
+        return souUchiSongsList;
     }
 
     public List<uint> GetLockedUraSongsList()
@@ -208,7 +208,7 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
         var shopFolderDataPath = Path.Combine(dataPath, settings.ShopFolderDataFileName);
         var tokenDataPath = Path.Combine(dataPath, settings.TokenDataFileName);
         var lockedSongsDataPath = Path.Combine(dataPath, settings.LockedSongsDataFileName);
-        var doublePlaySongsDataPath = Path.Combine(dataPath, settings.DoublePlaySongsData);
+        var souUchiSongsDataPath = Path.Combine(dataPath, settings.SouUchiSongsData);
         var qrCodeDataPath = Path.Combine(dataPath, settings.QrCodeDataFileName);
         var lockedCostumeDataPath = Path.Combine(dataPath, settings.LockedCostumeDataFileName);
         var lockedTitleDataPath = Path.Combine(dataPath, settings.LockedTitleDataFileName);
@@ -257,7 +257,7 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
         await using var shopFolderDataFile = File.OpenRead(shopFolderDataPath);
         await using var tokenDataFile = File.OpenRead(tokenDataPath);
         await using var lockedSongsDataFile = File.OpenRead(lockedSongsDataPath);
-        await using var doublePlaySongsDataFile = File.OpenRead(doublePlaySongsDataPath);
+        await using var souUchiSongsDataFile = File.OpenRead(souUchiSongsDataPath);
         await using var donCosRewardFile = File.OpenRead(donCosRewardPath);
         await using var shougouFile = File.OpenRead(shougouPath);
         await using var neiroFile = File.OpenRead(neiroPath);
@@ -276,7 +276,7 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
         var shopFolderData = await JsonSerializer.DeserializeAsync<List<ShopFolderData>>(shopFolderDataFile);
         var tokenData = await JsonSerializer.DeserializeAsync<Dictionary<string, int>>(tokenDataFile);
         var lockedSongsData = await JsonSerializer.DeserializeAsync<Dictionary<string, uint[]>>(lockedSongsDataFile);
-        var doublePlaySongsData = await JsonSerializer.DeserializeAsync<Dictionary<string, uint[]>>(doublePlaySongsDataFile);
+        var souUchiSongsData = await JsonSerializer.DeserializeAsync<Dictionary<string, uint[]>>(souUchiSongsDataFile);
         var donCosRewardData = await JsonSerializer.DeserializeAsync<DonCosRewards>(donCosRewardFile);
         var shougouData = await JsonSerializer.DeserializeAsync<Shougous>(shougouFile);
         var neiroData = await JsonSerializer.DeserializeAsync<Neiros>(neiroFile);
@@ -303,6 +303,8 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
         InitializeTokenData(tokenData);
 
         InitializeLockedSongsData(lockedSongsData);
+
+        InitializeSouUchiSongsData(souUchiSongsData);
         
         InitializeMusicDetails(musicInfoData, musicOrderData, wordlistData);
 
@@ -405,10 +407,10 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
         lockedUraSongsList = lockedSongsData["uraSongNo"].ToList();
     }
 
-    private void InitializeDoublePlaySongsData(Dictionary<string, uint[]>? doublePlaySongsData)
+    private void InitializeSouUchiSongsData(Dictionary<string, uint[]>? souUchiSongsData)
     {
-        doublePlaySongsData.ThrowIfNull("Shouldn't happen!");
-        doublePlaySongsList = doublePlaySongsData["songNo"].ToList();
+        souUchiSongsData.ThrowIfNull("Shouldn't happen!");
+        souUchiSongsList = souUchiSongsData["songNo"].ToList();
     }
     
     private void InitializeMusicDetails(MusicInfos? musicInfoData, MusicOrder? musicOrderData, WordList? wordlistData)
