@@ -49,7 +49,7 @@ public class GetScoreRankController(ISongBestDatumService songBestDatumService, 
     
     private async Task<ScoreRankData> Handle(uint baid)
     {
-        var songIdMax = settings.EnableMoreSongs ? Constants.MusicIdMaxExpanded : Constants.MusicIdMax;
+        var songIdMax = settings.EnableMoreSongs ? settings.MoreSongsSize : Constants.MusicIdMax;
         var kiwamiScores = new byte[songIdMax   + 1];
         var miyabiScores = new ushort[songIdMax + 1];
         var ikiScores = new ushort[songIdMax    + 1];
