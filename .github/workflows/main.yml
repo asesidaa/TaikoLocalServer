@@ -75,7 +75,11 @@ jobs:
                   </PropertyGroup>
                 </Project>" > FolderProfile.pubxml
            cd ${{ github.workspace }}
-           
+
+      # Restore the application to populate the obj folder with RuntimeIdentifiers
+      - name: Restore the application
+        run: dotnet workload restore
+        
       # Build
       - name: Publish
         run: dotnet publish
