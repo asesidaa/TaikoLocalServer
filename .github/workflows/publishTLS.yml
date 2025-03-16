@@ -1,0 +1,45 @@
+name: TLS GitHub Actions
+run-name: Publish TLS executable program 🚀
+on: [push]
+env:
+  Major_Version_Number: '1'
+  Minor_Version_Number: '1'
+  Build_Number: ${{ github.run_number }}
+jobs:
+  TLS-GitHub-Actions:
+    runs-on: windows-latest
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event. Commiter is ${{ github.actor }}."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+        
+      # Install the .NET Core workload
+      - name: Install .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+         dotnet-version: 8.0.x
+
+      # Restore the application to populate the obj folder with RuntimeIdentifiers
+      - name: Restore the application
+        run: dotnet workload restore   
+        
+      - run: echo "🖥️ The workflow is now ready to publish application on the runner."
+        
+      # Build
+      - name: Publish
+        run: dotnet publish
+
+      # Upload the TLS package
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+         name: TLS ${{ env.Major_Version_Number }}.${{ env.Minor_Version_Number }}.${{ env.Build_Number }}
+         path: ${{ github.workspace }}\TaikoLocalServer\bin\Release\net8.0\win-x64\publish
+         include-hidden-files: true
+         
+      - run: echo "🍏 This job's status is ${{ job.status }}."
