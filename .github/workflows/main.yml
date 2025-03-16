@@ -1,8 +1,8 @@
 name: TLS GitHub Actions
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+run-name: ${{ github.actor }} is running 🚀
 on: [push]
 jobs:
-  Explore-GitHub-Actions:
+  TLS-GitHub-Actions:
     runs-on: windows-latest
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
@@ -30,10 +30,9 @@ jobs:
       - name: Publish
         run: dotnet publish
 
-      # Check whether datatable exist, If not then create this folder
-      - name: Check datatable folder
-        run: |
-             [ ! -d "${{ github.workspace }}\TaikoLocalServer\bin\Release\net8.0\win-x64\publish\wwwroot\data\datatable" ] && mkdir -p "${{ github.workspace }}\TaikoLocalServer\bin\Release\net8.0\win-x64\publish\wwwroot\data\datatable"
+      # Create datatable folder.
+      - name: Create datatable folder
+        run: mkdir -p "${{ github.workspace }}\TaikoLocalServer\bin\Release\net8.0\win-x64\publish\wwwroot\data\datatable"
         
       # Upload the TLS package
       - name: Upload build artifacts
