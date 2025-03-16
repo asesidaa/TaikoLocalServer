@@ -29,12 +29,17 @@ jobs:
       # Build
       - name: Publish
         run: dotnet publish
+
+      # Check whether datatable exist, If not then create this folder
+      - name: Check datatable folder
+        run: |
+             [ ! -d "${{ github.workspace }}\TaikoLocalServer\bin\Release\net8.0\win-x64\publish\wwwroot\data\datatable" ] && mkdir -p "${{ github.workspace }}\TaikoLocalServer\bin\Release\net8.0\win-x64\publish\wwwroot\data\datatable"
         
       # Upload the TLS package
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-         name: TLS Package
+         name: TLS ${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}
          path: ${{ github.workspace }}\TaikoLocalServer\bin\Release\net8.0\win-x64\publish
          
       - run: echo "🍏 This job's status is ${{ job.status }}."
