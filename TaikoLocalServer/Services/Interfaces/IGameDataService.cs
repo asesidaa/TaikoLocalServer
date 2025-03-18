@@ -29,7 +29,7 @@ public interface IGameDataService
 
     public List<uint> GetLockedSongsList();
 
-    public List<uint> GetSouUchiSongsList();
+    public List<uint> GetTimeLimitedSongsList();
     
     public List<uint> GetLockedUraSongsList();
     

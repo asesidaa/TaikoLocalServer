@@ -23,6 +23,7 @@ public static partial class BaidResponseMapper
         response.CostumeFlg3 = commonBaidResponse.CostumeFlagArrays[2];
         response.CostumeFlg4 = commonBaidResponse.CostumeFlagArrays[3];
         response.CostumeFlg5 = commonBaidResponse.CostumeFlagArrays[4];
+        response.IsDispSouuchiOn = commonBaidResponse.DisplaySouUchi;
         return response;
     }
     
@@ -44,6 +45,7 @@ public static partial class BaidResponseMapper
         response.CostumeFlg3 = commonBaidResponse.CostumeFlagArrays[2];
         response.CostumeFlg4 = commonBaidResponse.CostumeFlagArrays[3];
         response.CostumeFlg5 = commonBaidResponse.CostumeFlagArrays[4];
+        response.IsDispSouuchiOn = commonBaidResponse.DisplaySouUchi;
         return response;
     }
 }

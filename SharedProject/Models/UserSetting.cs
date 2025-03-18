@@ -12,6 +12,8 @@ public class UserSetting
 
     public bool IsDisplayDanOnNamePlate { get; set; }
 
+    public bool IsDisplaySouUchi { get; set; }
+
     public uint DifficultySettingCourse { get; set; }
 
     public uint DifficultySettingStar { get; set; }

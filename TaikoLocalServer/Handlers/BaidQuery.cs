@@ -29,6 +29,8 @@ public class BaidQueryHandler(
         var userData = await context.UserData.FindAsync(baid, cancellationToken);
         userData.ThrowIfNull($"User not found for card with Baid {baid}!");
 
+        var timeLimitSongsList = gameDataService.GetTimeLimitedSongsList();
+
         var songBestData = context.SongBestData.Where(datum => datum.Baid == baid).ToList();
         var achievementDisplayDifficulty = userData.AchievementDisplayDifficulty;
         if (achievementDisplayDifficulty == Difficulty.None)
@@ -41,7 +43,7 @@ public class BaidQueryHandler(
         }
         // For each crown type, calculate how many songs have that crown type
         var crownCountData = songBestData
-            .Where(datum => datum.Difficulty == achievementDisplayDifficulty || (achievementDisplayDifficulty == Difficulty.UraOni && datum.Difficulty == Difficulty.Oni))
+            .Where(datum => !timeLimitSongsList.Contains(datum.SongId) && (datum.Difficulty == achievementDisplayDifficulty || (achievementDisplayDifficulty == Difficulty.UraOni && datum.Difficulty == Difficulty.Oni)))
             .GroupBy(datum => datum.BestCrown)
             .ToDictionary(datums => datums.Key, datums => (uint)datums.Count());
         var crownCount = new uint[3];
@@ -54,7 +56,7 @@ public class BaidQueryHandler(
         }
         
         var scoreRankData = songBestData
-            .Where(datum => datum.Difficulty == achievementDisplayDifficulty || (achievementDisplayDifficulty == Difficulty.UraOni && datum.Difficulty == Difficulty.Oni))
+            .Where(datum => !timeLimitSongsList.Contains(datum.SongId) && (datum.Difficulty == achievementDisplayDifficulty || (achievementDisplayDifficulty == Difficulty.UraOni && datum.Difficulty == Difficulty.Oni)))
             .GroupBy(datum => datum.BestScoreRank)
             .ToDictionary(datums => datums.Key, datums => (uint)datums.Count());
         var scoreRankCount = new uint[7];
@@ -121,6 +123,7 @@ public class BaidQueryHandler(
             CostumeData = costumeData,
             CostumeFlagArrays = costumeFlagArrays,
             DisplayDan = userData.DisplayDan,
+            DisplaySouUchi = userData.DisplaySouUchi,
             DispAchievementType = (uint)achievementDisplayDifficulty,
             GenericInfoFlg = genericInfoFlgArray,
             GotDanFlg = gotDanFlagArray,

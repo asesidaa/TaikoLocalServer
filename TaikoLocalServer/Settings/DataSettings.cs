@@ -18,7 +18,7 @@ public class DataSettings
 
 	public string LockedSongsDataFileName { get; set; } = "locked_songs_data.json";
 
-	public string SouUchiSongsData { get; set; } = "souuchi_songs_data.json";
+	public string SpecialSongsDataFileName { get; set; } = "special_songs_data.json";
 
     public string QrCodeDataFileName { get; set; } = "qrcode_data.json";
 	
