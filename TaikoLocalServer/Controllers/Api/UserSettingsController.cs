@@ -57,6 +57,7 @@ public class UserSettingsController(IUserDatumService userDatumService, IAuthSer
                 AchievementDisplayDifficulty = user.AchievementDisplayDifficulty,
                 IsDisplayAchievement = user.DisplayAchievement,
                 IsDisplayDanOnNamePlate = user.DisplayDan,
+                IsDisplaySouUchi = user.DisplaySouUchi,
                 DifficultySettingCourse = user.DifficultySettingCourse,
                 DifficultySettingStar = user.DifficultySettingStar,
                 DifficultySettingSort = user.DifficultySettingSort,
@@ -137,6 +138,7 @@ public class UserSettingsController(IUserDatumService userDatumService, IAuthSer
             AchievementDisplayDifficulty = user.AchievementDisplayDifficulty,
             IsDisplayAchievement = user.DisplayAchievement,
             IsDisplayDanOnNamePlate = user.DisplayDan,
+            IsDisplaySouUchi = user.DisplaySouUchi,
             DifficultySettingCourse = user.DifficultySettingCourse,
             DifficultySettingStar = user.DifficultySettingStar,
             DifficultySettingSort = user.DifficultySettingSort,
@@ -197,6 +199,7 @@ public class UserSettingsController(IUserDatumService userDatumService, IAuthSer
         user.IsVoiceOn = userSetting.IsVoiceOn;
         user.DisplayAchievement = userSetting.IsDisplayAchievement;
         user.DisplayDan = userSetting.IsDisplayDanOnNamePlate;
+        user.DisplaySouUchi = userSetting.IsDisplaySouUchi;
         user.DifficultySettingCourse = userSetting.DifficultySettingCourse;
         user.DifficultySettingStar = userSetting.DifficultySettingStar;
         user.DifficultySettingSort = userSetting.DifficultySettingSort;

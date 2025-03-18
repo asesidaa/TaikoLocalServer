@@ -26,11 +26,8 @@ public class UserDataQueryHandler(TaikoDbContext context, IGameDataService gameD
 
         var musicList = gameDataService.GetMusicList();
         var lockedSongsList = gameDataService.GetLockedSongsList().Except(unlockedSongIdList).ToList();
-        var souUchiSongsList = gameDataService.GetSouUchiSongsList();
         var lockedUraSongsList = gameDataService.GetLockedUraSongsList().Except(unlockedUraSongIdList).ToList();
         var enabledMusicList = musicList.Except(lockedSongsList);
-        // TODO: if user set Unlock SouUchi disable the follow line
-        enabledMusicList = enabledMusicList.Except(souUchiSongsList);
         var releaseSongArray =
             FlagCalculator.GetBitArrayFromIds(enabledMusicList, songIdMax, logger);
 
@@ -46,7 +43,8 @@ public class UserDataQueryHandler(TaikoDbContext context, IGameDataService gameD
             await context.SaveChangesAsync(cancellationToken);
         }
         
-        var toneArray = FlagCalculator.GetBitArrayFromIds(userData.ToneFlgArray, gameDataService.GetToneFlagArraySize(), logger);
+        //var toneArray = FlagCalculator.GetBitArrayFromIds(userData.ToneFlgArray, gameDataService.GetToneFlagArraySize(), logger);
+        var toneArray = FlagCalculator.GetBitArrayTrue(gameDataService.GetToneFlagArraySize());
         
         var titleArray = FlagCalculator.GetBitArrayFromIds(userData.TitleFlgArray, gameDataService.GetTitleFlagArraySize(), logger);
 

@@ -41,6 +41,7 @@ namespace GameDatabase.Entities
         public uint           CurrentPuchi                               { get; set; }
         public bool        DisplayDan                   { get; set; }
         public bool        DisplayAchievement           { get; set; }
+        public bool        DisplaySouUchi               { get; set; }
         public Difficulty  AchievementDisplayDifficulty { get; set; }
         public int         AiWinCount                   { get; set; }
         public List<Token> Tokens                       { get; set; } = new();

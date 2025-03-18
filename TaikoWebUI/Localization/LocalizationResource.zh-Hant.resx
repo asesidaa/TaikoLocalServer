@@ -1,65 +1,65 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
-      Microsoft ResX Schema 
-      
-      Version 2.0
-      
-      The primary goals of this format is to allow a simple XML format 
-      that is mostly human readable. The generation and parsing of the 
-      various data types are done through the TypeConverter classes 
-      associated with the data types.
-      
-      Example:
-      
-      ... ado.net/XML headers & schema ...
-      <resheader name="resmimetype">text/microsoft-resx</resheader>
-      <resheader name="version">2.0</resheader>
-      <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-      <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-      <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-      <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-      <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-          <value>[base64 mime encoded serialized .NET Framework object]</value>
-      </data>
-      <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-          <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-          <comment>This is a comment</comment>
-      </data>
-                  
-      There are any number of "resheader" rows that contain simple 
-      name/value pairs.
-      
-      Each data row contains a name, and value. The row also contains a 
-      type or mimetype. Type corresponds to a .NET class that support 
-      text/value conversion through the TypeConverter architecture. 
-      Classes that don't support this are serialized and stored with the 
-      mimetype set.
-      
-      The mimetype is used for serialized objects, and tells the 
-      ResXResourceReader how to depersist the object. This is currently not 
-      extensible. For a given mimetype the value must be set accordingly:
-      
-      Note - application/x-microsoft.net.object.binary.base64 is the format 
-      that the ResXResourceWriter will generate, however the reader can 
-      read any of the formats listed below.
-      
-      mimetype: application/x-microsoft.net.object.binary.base64
-      value   : The object must be serialized with 
-              : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-              : and then encoded with base64 encoding.
-      
-      mimetype: application/x-microsoft.net.object.soap.base64
-      value   : The object must be serialized with 
-              : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-              : and then encoded with base64 encoding.
-  
-      mimetype: application/x-microsoft.net.object.bytearray.base64
-      value   : The object must be serialized into a byte array 
-              : using a System.ComponentModel.TypeConverter
-              : and then encoded with base64 encoding.
-      -->
-  <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root" xmlns="">
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
@@ -112,270 +112,11 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
-            PublicKeyToken=b77a5c561934e089
-        </value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
-            PublicKeyToken=b77a5c561934e089
-        </value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Dashboard" xml:space="preserve">
-    <value>首頁</value>
-  </data>
-  <data name="Users" xml:space="preserve">
-    <value>管理用戶</value>
-  </data>
-  <data name="Edit Profile" xml:space="preserve">
-    <value>編輯檔案</value>
-  </data>
-  <data name="User" xml:space="preserve">
-    <value>用戶</value>
-  </data>
-  <data name="View Play Data" xml:space="preserve">
-    <value>查看記錄</value>
-  </data>
-  <data name="High Scores" xml:space="preserve">
-    <value>最高分</value>
-  </data>
-  <data name="Show QR Code" xml:space="preserve">
-    <value>查看QR Code</value>
-  </data>
-  <data name="Access Codes" xml:space="preserve">
-    <value>管理訪問碼</value>
-  </data>
-  <data name="Change Password" xml:space="preserve">
-    <value>更改密碼</value>
-  </data>
-  <data name="Reset Password" xml:space="preserve">
-    <value>重置密碼</value>
-  </data>
-  <data name="Delete User" xml:space="preserve">
-    <value>刪除帳號</value>
-  </data>
-  <data name="Welcome to TaikoWebUI!" xml:space="preserve">
-    <value>歡迎來到TaikoWebUI!</value>
-  </data>
-  <data name="Song Name" xml:space="preserve">
-    <value>曲名</value>
-  </data>
-  <data name="Level" xml:space="preserve">
-    <value>★數</value>
-  </data>
-  <data name="Genre" xml:space="preserve">
-    <value>分類</value>
-  </data>
-  <data name="Best Score" xml:space="preserve">
-    <value>最佳成績</value>
-  </data>
-  <data name="Best Crown" xml:space="preserve">
-    <value>最佳皇冠</value>
-  </data>
-  <data name="Best Rank" xml:space="preserve">
-    <value>最佳評價</value>
-  </data>
-  <data name="Good" xml:space="preserve">
-    <value>良</value>
-  </data>
-  <data name="OK" xml:space="preserve">
-    <value>可</value>
-  </data>
-  <data name="Bad" xml:space="preserve">
-    <value>不可</value>
-  </data>
-  <data name="Drumroll" xml:space="preserve">
-    <value>連打</value>
-  </data>
-  <data name="MAX Combo" xml:space="preserve">
-    <value>最大連擊數</value>
-  </data>
-  <data name="AI Battle Data" xml:space="preserve">
-    <value>AI對戰數據</value>
-  </data>
-  <data name="Played" xml:space="preserve">
-    <value>日期</value>
-  </data>
-  <data name="Total Credits Played" xml:space="preserve">
-    <value>總遊玩次數</value>
-  </data>
-  <data name="Total Clears" xml:space="preserve">
-    <value>總通過次數</value>
-  </data>
-  <data name="Total Full Combos" xml:space="preserve">
-    <value>總全接次數</value>
-  </data>
-  <data name="Total Donderful Combos" xml:space="preserve">
-    <value>總全良次數</value>
-  </data>
-  <data name="Song List" xml:space="preserve">
-    <value>曲目列表</value>
-  </data>
-  <data name="Hide" xml:space="preserve">
-    <value>隱藏</value>
-  </data>
-  <data name="Show" xml:space="preserve">
-    <value>顯示</value>
-  </data>
-  <data name="Section No." xml:space="preserve">
-    <value>區間</value>
-  </data>
-  <data name="Result" xml:space="preserve">
-    <value>结果</value>
-  </data>
-  <data name="Score" xml:space="preserve">
-    <value>成績</value>
-  </data>
-  <data name="Crown" xml:space="preserve">
-    <value>皇冠</value>
-  </data>
-  <data name="No Data" xml:space="preserve">
-    <value>沒有數據</value>
-  </data>
-  <data name="Log In First" xml:space="preserve">
-    <value>"請先在管理用戶那邊登入</value>
-  </data>
-  <data name="Total Hits" xml:space="preserve">
-    <value>總打擊次數</value>
-  </data>
-  <data name="Soul Gauge" xml:space="preserve">
-    <value>魂條</value>
-  </data>
-  <data name="Course Songs" xml:space="preserve">
-    <value>課題曲</value>
-  </data>
-  <data name="Conditions" xml:space="preserve">
-    <value>條件</value>
-  </data>
-  <data name="Red" xml:space="preserve">
-    <value>赤合格</value>
-  </data>
-  <data name="Gold" xml:space="preserve">
-    <value>金合格</value>
-  </data>
-  <data name="Not Passed" xml:space="preserve">
-    <value>未合格</value>
-  </data>
-  <data name="Pass" xml:space="preserve">
-    <value>合格</value>
-  </data>
-  <data name="Totals" xml:space="preserve">
-    <value>總共</value>
-  </data>
-  <data name="Details" xml:space="preserve">
-    <value>記錄</value>
-  </data>
-  <data name="Stage" xml:space="preserve">
-    <value>曲目</value>
-  </data>
-  <data name="Dani Dojo" xml:space="preserve">
-    <value>段位道埸</value>
-  </data>
-  <data name="Profile" xml:space="preserve">
-    <value>檔案</value>
-  </data>
-  <data name="Profile Options" xml:space="preserve">
-    <value>檔案設定</value>
-  </data>
-  <data name="Costume" xml:space="preserve">
-    <value>裝飾</value>
-  </data>
-  <data name="Costume Options" xml:space="preserve">
-    <value>裝飾設定</value>
-  </data>
-  <data name="Song Options" xml:space="preserve">
-    <value>演奏設定</value>
-  </data>
-  <data name="Player" xml:space="preserve">
-    <value>玩家</value>
-  </data>
-  <data name="Achievement Panel" xml:space="preserve">
-    <value>成績版面</value>
-  </data>
-  <data name="Save" xml:space="preserve">
-    <value>儲存</value>
-  </data>
-  <data name="Language" xml:space="preserve">
-    <value>語言</value>
-  </data>
-  <data name="Name" xml:space="preserve">
-    <value>名字</value>
-  </data>
-  <data name="Title" xml:space="preserve">
-    <value>稱號</value>
-  </data>
-  <data name="Title Plate" xml:space="preserve">
-    <value>稱號種類</value>
-  </data>
-  <data name="Achievement Panel Difficulty" xml:space="preserve">
-    <value>成績版面難度</value>
-  </data>
-  <data name="Display Dan Rank on Name Plate" xml:space="preserve">
-    <value>顯示段位</value>
-  </data>
-  <data name="Display Achievement Panel" xml:space="preserve">
-    <value>顯示成績版面</value>
-  </data>
-  <data name="Difficulty Setting Course" xml:space="preserve">
-    <value>篩選歌曲版面難度</value>
-  </data>
-  <data name="Difficulty Setting Star" xml:space="preserve">
-    <value>篩選歌曲版面★數</value>
-  </data>
-  <data name="Difficulty Setting Sort" xml:space="preserve">
-    <value>篩選歌曲版面順序條件</value>
-  </data>
-  <data name="Select a Title" xml:space="preserve">
-    <value>選擇一個稱號</value>
-  </data>
-  <data name="Head" xml:space="preserve">
-    <value>頭部</value>
-  </data>
-  <data name="Body" xml:space="preserve">
-    <value>身體</value>
-  </data>
-  <data name="Face" xml:space="preserve">
-    <value>面部</value>
-  </data>
-  <data name="Kigurumi" xml:space="preserve">
-    <value>套装</value>
-  </data>
-  <data name="Puchi" xml:space="preserve">
-    <value>小角色</value>
-  </data>
-  <data name="Body Color" xml:space="preserve">
-    <value>身體顏色</value>
-  </data>
-  <data name="Face Color" xml:space="preserve">
-    <value>面部顏色</value>
-  </data>
-  <data name="Limb Color" xml:space="preserve">
-    <value>邊框顏色</value>
-  </data>
-  <data name="Vanish" xml:space="preserve">
-    <value>隱譜</value>
-  </data>
-  <data name="Inverse" xml:space="preserve">
-    <value>反譜</value>
-  </data>
-  <data name="Skip Song" xml:space="preserve">
-    <value>跳略演奏</value>
-  </data>
-  <data name="Voice" xml:space="preserve">
-    <value>聲音</value>
-  </data>
-  <data name="Speed" xml:space="preserve">
-    <value>流速</value>
-  </data>
-  <data name="Random" xml:space="preserve">
-    <value>隨機</value>
-  </data>
-  <data name="Tone" xml:space="preserve">
-    <value>音色</value>
-  </data>
-  <data name="Notes Position" xml:space="preserve">
-    <value>音符位置調整</value>
-  </data>
   <data name="DateFormat" xml:space="preserve">
     <value>yyyy/M/d HH:mm:ss</value>
   </data>
@@ -385,20 +126,38 @@
   <data name="Register" xml:space="preserve">
     <value>注冊</value>
   </data>
-  <data name="Reset Password Confirm 1" xml:space="preserve">
-    <value>確定要為這位用戶重置密碼嗎？</value>
-  </data>
-  <data name="Reset Password Confirm 2" xml:space="preserve">
-    <value>重置密碼后，用戶需要再次注冊</value>
-  </data>
   <data name="Log In" xml:space="preserve">
     <value>登錄</value>
+  </data>
+  <data name="Achievement Panel" xml:space="preserve">
+    <value>成績版面</value>
+  </data>
+  <data name="Achievement Panel Difficulty" xml:space="preserve">
+    <value>成績版面難度</value>
+  </data>
+  <data name="AI Battle Data" xml:space="preserve">
+    <value>AI對戰數據</value>
+  </data>
+  <data name="Bad" xml:space="preserve">
+    <value>不可</value>
+  </data>
+  <data name="Best Crown" xml:space="preserve">
+    <value>最佳皇冠</value>
+  </data>
+  <data name="Best Rank" xml:space="preserve">
+    <value>最佳評價</value>
   </data>
   <data name="Log Out" xml:space="preserve">
     <value>登出</value>
   </data>
   <data name="Play Data" xml:space="preserve">
     <value>游玩數據</value>
+  </data>
+  <data name="High Scores" xml:space="preserve">
+    <value>最高分</value>
+  </data>
+  <data name="Access Codes" xml:space="preserve">
+    <value>管理訪問碼</value>
   </data>
   <data name="Add Access Code" xml:space="preserve">
     <value>新增訪問碼</value>
@@ -427,20 +186,17 @@
   <data name="QR Code" xml:space="preserve">
     <value>查看QR Code</value>
   </data>
-  <data name="Chojin" xml:space="preserve">
-    <value>超人</value>
-  </data>
-  <data name="Eighth Dan" xml:space="preserve">
-    <value>八段</value>
-  </data>
-  <data name="Gaiden" xml:space="preserve">
-    <value>外傳</value>
+  <data name="Fifth Kyuu" xml:space="preserve">
+    <value>五級</value>
   </data>
   <data name="Fourth Kyuu" xml:space="preserve">
     <value>四級</value>
   </data>
-  <data name="Fourth Dan" xml:space="preserve">
-    <value>四段</value>
+  <data name="Third Kyuu" xml:space="preserve">
+    <value>三級</value>
+  </data>
+  <data name="Second Kyuu" xml:space="preserve">
+    <value>二級</value>
   </data>
   <data name="First Kyuu" xml:space="preserve">
     <value>一級</value>
@@ -448,11 +204,32 @@
   <data name="First Dan" xml:space="preserve">
     <value>一段</value>
   </data>
-  <data name="Fifth Kyuu" xml:space="preserve">
-    <value>五級</value>
+  <data name="Second Dan" xml:space="preserve">
+    <value>二段</value>
+  </data>
+  <data name="Third Dan" xml:space="preserve">
+    <value>三段</value>
+  </data>
+  <data name="Fourth Dan" xml:space="preserve">
+    <value>四段</value>
   </data>
   <data name="Fifth Dan" xml:space="preserve">
     <value>五段</value>
+  </data>
+  <data name="Sixth Dan" xml:space="preserve">
+    <value>六段</value>
+  </data>
+  <data name="Seventh Dan" xml:space="preserve">
+    <value>七段</value>
+  </data>
+  <data name="Eighth Dan" xml:space="preserve">
+    <value>八段</value>
+  </data>
+  <data name="Ninth Dan" xml:space="preserve">
+    <value>九段</value>
+  </data>
+  <data name="Tenth Dan" xml:space="preserve">
+    <value>十段</value>
   </data>
   <data name="Kuroto" xml:space="preserve">
     <value>玄人</value>
@@ -460,44 +237,41 @@
   <data name="Meijin" xml:space="preserve">
     <value>名人</value>
   </data>
-  <data name="Ninth Dan" xml:space="preserve">
-    <value>九段</value>
-  </data>
-  <data name="Second Dan" xml:space="preserve">
-    <value>二段</value>
-  </data>
-  <data name="Second Kyuu" xml:space="preserve">
-    <value>二級</value>
-  </data>
-  <data name="Seventh Dan" xml:space="preserve">
-    <value>七段</value>
-  </data>
-  <data name="Sixth Dan" xml:space="preserve">
-    <value>六段</value>
+  <data name="Chojin" xml:space="preserve">
+    <value>超人</value>
   </data>
   <data name="Tatsujin" xml:space="preserve">
     <value>達人</value>
   </data>
-  <data name="Tenth Dan" xml:space="preserve">
-    <value>十段</value>
-  </data>
-  <data name="Third Dan" xml:space="preserve">
-    <value>三段</value>
-  </data>
-  <data name="Third Kyuu" xml:space="preserve">
-    <value>三級</value>
+  <data name="Gaiden" xml:space="preserve">
+    <value>外傳</value>
   </data>
   <data name="Gold Full Combo" xml:space="preserve">
     <value>金金合格</value>
   </data>
-  <data name="Red Donderful Combo" xml:space="preserve">
-    <value>虹赤合格</value>
-  </data>
   <data name="Red Full Combo" xml:space="preserve">
     <value>金赤合格</value>
   </data>
+  <data name="Red Donderful Combo" xml:space="preserve">
+    <value>虹赤合格</value>
+  </data>
   <data name="Gold Donderful Combo" xml:space="preserve">
     <value>虹金合格</value>
+  </data>
+  <data name="Song List" xml:space="preserve">
+    <value>曲目列表</value>
+  </data>
+  <data name="Log In First" xml:space="preserve">
+    <value>"請先在管理用戶那邊登入</value>
+  </data>
+  <data name="Dani Dojo" xml:space="preserve">
+    <value>段位道埸</value>
+  </data>
+  <data name="Course Songs" xml:space="preserve">
+    <value>課題曲</value>
+  </data>
+  <data name="Song Name" xml:space="preserve">
+    <value>曲名</value>
   </data>
   <data name="Song Title / Artist" xml:space="preserve">
     <value>曲名 / Artist</value>
@@ -535,6 +309,12 @@
   <data name="Search by Title, Artist or Date" xml:space="preserve">
     <value>曲名/Artist名/日期搜索</value>
   </data>
+  <data name="Users" xml:space="preserve">
+    <value>管理用戶</value>
+  </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>首頁</value>
+  </data>
   <data name="Unregister" xml:space="preserve">
     <value>注銷賬號</value>
   </data>
@@ -553,11 +333,23 @@
   <data name="Error" xml:space="preserve">
     <value> 錯誤</value>
   </data>
+  <data name="View Play Data" xml:space="preserve">
+    <value>查看記錄</value>
+  </data>
+  <data name="Not Passed" xml:space="preserve">
+    <value>未合格</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>用戶</value>
+  </data>
   <data name="Access Code is Required" xml:space="preserve">
     <value>訪問碼為必填項</value>
   </data>
   <data name="&quot;Invite Code (Optional)&quot;" xml:space="preserve">
     <value>邀請碼(可選)</value>
+  </data>
+  <data name="Last Play Date" xml:space="preserve">
+    <value>最後游玩日期</value>
   </data>
   <data name="Last Play Time(5 Min Around Credit End)" xml:space="preserve">
     <value>最後游玩時間(游戲結束5分鐘内)</value>
@@ -594,6 +386,9 @@
   </data>
   <data name="Rows Per Page:" xml:space="preserve">
     <value>每頁行數</value>
+  </data>
+  <data name="Total Credits Played" xml:space="preserve">
+    <value>總遊玩次數</value>
   </data>
   <data name="UI" xml:space="preserve">
     <value>界面</value>
@@ -667,8 +462,8 @@
   <data name="ID" xml:space="preserve">
     <value>ID</value>
   </data>
-  <data name="Last Play Date" xml:space="preserve">
-    <value>最後游玩日期</value>
+  <data name="Edit Profile" xml:space="preserve">
+    <value>編輯檔案</value>
   </data>
   <data name="Access Code Delete Confirm" xml:space="preserve">
     <value>您確定要刪除此訪問碼嗎？</value>
@@ -679,11 +474,20 @@
   <data name="Reset" xml:space="preserve">
     <value>重置</value>
   </data>
+  <data name="Reset Password Confirm 1" xml:space="preserve">
+    <value>確定要為這位用戶重置密碼嗎？</value>
+  </data>
+  <data name="Reset Password Confirm 2" xml:space="preserve">
+    <value>重置密碼后，用戶需要再次注冊</value>
+  </data>
   <data name="Delete User Confirm" xml:space="preserve">
     <value>您真的要刪除該用戶的數據嗎？&lt;br /&gt;所有相關數據將被刪除，此過程無法撤銷！</value>
   </data>
   <data name="Delete User Success" xml:space="preserve">
     <value>用戶已成功刪除。</value>
+  </data>
+  <data name="Skip Song" xml:space="preserve">
+    <value>跳略演奏</value>
   </data>
   <data name="None" xml:space="preserve">
     <value>無</value>
@@ -708,6 +512,9 @@
   </data>
   <data name="Drum" xml:space="preserve">
     <value>爵士鼓</value>
+  </data>
+  <data name="Tambourine" xml:space="preserve">
+    <value>鈴鼓</value>
   </data>
   <data name="Wadadon" xml:space="preserve">
     <value>和田咚</value>
@@ -741,9 +548,6 @@
   </data>
   <data name="Synthdrum" xml:space="preserve">
     <value>合成鼓</value>
-  </data>
-  <data name="Tambourine" xml:space="preserve">
-    <value>鈴鼓</value>
   </data>
   <data name="Shuriken" xml:space="preserve">
     <value>手裏劍</value>
@@ -790,9 +594,6 @@
   <data name="1 Star" xml:space="preserve">
     <value>★ 1</value>
   </data>
-  <data name="10 Star" xml:space="preserve">
-    <value>★ 10</value>
-  </data>
   <data name="2 Star" xml:space="preserve">
     <value>★ 2</value>
   </data>
@@ -817,11 +618,17 @@
   <data name="9 Star" xml:space="preserve">
     <value>★ 9</value>
   </data>
+  <data name="10 Star" xml:space="preserve">
+    <value>★ 10</value>
+  </data>
   <data name="Log Out Confirm" xml:space="preserve">
     <value>您確定要登出嗎？</value>
   </data>
   <data name="Leaderboard" xml:space="preserve">
     <value>排行榜</value>
+  </data>
+  <data name="No Data" xml:space="preserve">
+    <value>沒有數據</value>
   </data>
   <data name="User ID" xml:space="preserve">
     <value>用戶ID</value>
@@ -830,9 +637,201 @@
     <value>按名稱，ID ，訪問碼搜索</value>
   </data>
   <data name="Player Titles" xml:space="preserve">
-      <value>玩家稱號</value>
-    </data>
+    <value>玩家稱號</value>
+  </data>
   <data name="Search" xml:space="preserve">
-      <value>搜索</value>
-    </data>
+    <value>搜索</value>
+  </data>
+  <data name="Show QR Code" xml:space="preserve">
+    <value>查看QR Code</value>
+  </data>
+  <data name="Change Password" xml:space="preserve">
+    <value>更改密碼</value>
+  </data>
+  <data name="Reset Password" xml:space="preserve">
+    <value>重置密碼</value>
+  </data>
+  <data name="Delete User" xml:space="preserve">
+    <value>刪除帳號</value>
+  </data>
+  <data name="Welcome to TaikoWebUI!" xml:space="preserve">
+    <value>歡迎來到TaikoWebUI!</value>
+  </data>
+  <data name="Level" xml:space="preserve">
+    <value>★數</value>
+  </data>
+  <data name="Genre" xml:space="preserve">
+    <value>分類</value>
+  </data>
+  <data name="Best Score" xml:space="preserve">
+    <value>最佳成績</value>
+  </data>
+  <data name="Good" xml:space="preserve">
+    <value>良</value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>可</value>
+  </data>
+  <data name="Drumroll" xml:space="preserve">
+    <value>連打</value>
+  </data>
+  <data name="MAX Combo" xml:space="preserve">
+    <value>最大連擊數</value>
+  </data>
+  <data name="Played" xml:space="preserve">
+    <value>日期</value>
+  </data>
+  <data name="Total Clears" xml:space="preserve">
+    <value>總通過次數</value>
+  </data>
+  <data name="Total Full Combos" xml:space="preserve">
+    <value>總全接次數</value>
+  </data>
+  <data name="Total Donderful Combos" xml:space="preserve">
+    <value>總全良次數</value>
+  </data>
+  <data name="Hide" xml:space="preserve">
+    <value>隱藏</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>顯示</value>
+  </data>
+  <data name="Section No." xml:space="preserve">
+    <value>區間</value>
+  </data>
+  <data name="Result" xml:space="preserve">
+    <value>结果</value>
+  </data>
+  <data name="Score" xml:space="preserve">
+    <value>成績</value>
+  </data>
+  <data name="Crown" xml:space="preserve">
+    <value>皇冠</value>
+  </data>
+  <data name="Total Hits" xml:space="preserve">
+    <value>總打擊次數</value>
+  </data>
+  <data name="Soul Gauge" xml:space="preserve">
+    <value>魂條</value>
+  </data>
+  <data name="Conditions" xml:space="preserve">
+    <value>條件</value>
+  </data>
+  <data name="Red" xml:space="preserve">
+    <value>赤合格</value>
+  </data>
+  <data name="Gold" xml:space="preserve">
+    <value>金合格</value>
+  </data>
+  <data name="Pass" xml:space="preserve">
+    <value>合格</value>
+  </data>
+  <data name="Totals" xml:space="preserve">
+    <value>總共</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>記錄</value>
+  </data>
+  <data name="Stage" xml:space="preserve">
+    <value>曲目</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>檔案</value>
+  </data>
+  <data name="Profile Options" xml:space="preserve">
+    <value>檔案設定</value>
+  </data>
+  <data name="Costume" xml:space="preserve">
+    <value>裝飾</value>
+  </data>
+  <data name="Costume Options" xml:space="preserve">
+    <value>裝飾設定</value>
+  </data>
+  <data name="Song Options" xml:space="preserve">
+    <value>演奏設定</value>
+  </data>
+  <data name="Player" xml:space="preserve">
+    <value>玩家</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>儲存</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>語言</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>名字</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>稱號</value>
+  </data>
+  <data name="Title Plate" xml:space="preserve">
+    <value>稱號種類</value>
+  </data>
+  <data name="Display Dan Rank on Name Plate" xml:space="preserve">
+    <value>顯示段位</value>
+  </data>
+  <data name="Display Achievement Panel" xml:space="preserve">
+    <value>顯示成績版面</value>
+  </data>
+  <data name="Difficulty Setting Course" xml:space="preserve">
+    <value>篩選歌曲版面難度</value>
+  </data>
+  <data name="Difficulty Setting Star" xml:space="preserve">
+    <value>篩選歌曲版面★數</value>
+  </data>
+  <data name="Difficulty Setting Sort" xml:space="preserve">
+    <value>篩選歌曲版面順序條件</value>
+  </data>
+  <data name="Select a Title" xml:space="preserve">
+    <value>選擇一個稱號</value>
+  </data>
+  <data name="Head" xml:space="preserve">
+    <value>頭部</value>
+  </data>
+  <data name="Body" xml:space="preserve">
+    <value>身體</value>
+  </data>
+  <data name="Face" xml:space="preserve">
+    <value>面部</value>
+  </data>
+  <data name="Kigurumi" xml:space="preserve">
+    <value>套装</value>
+  </data>
+  <data name="Puchi" xml:space="preserve">
+    <value>小角色</value>
+  </data>
+  <data name="Body Color" xml:space="preserve">
+    <value>身體顏色</value>
+  </data>
+  <data name="Face Color" xml:space="preserve">
+    <value>面部顏色</value>
+  </data>
+  <data name="Limb Color" xml:space="preserve">
+    <value>邊框顏色</value>
+  </data>
+  <data name="Vanish" xml:space="preserve">
+    <value>隱譜</value>
+  </data>
+  <data name="Inverse" xml:space="preserve">
+    <value>反譜</value>
+  </data>
+  <data name="Voice" xml:space="preserve">
+    <value>聲音</value>
+  </data>
+  <data name="Speed" xml:space="preserve">
+    <value>流速</value>
+  </data>
+  <data name="Random" xml:space="preserve">
+    <value>隨機</value>
+  </data>
+  <data name="Tone" xml:space="preserve">
+    <value>音色</value>
+  </data>
+  <data name="Notes Position" xml:space="preserve">
+    <value>音符位置調整</value>
+  </data>
+  <data name="Display SouUchi Songs" xml:space="preserve">
+    <value>顯示雙打譜面</value>
+  </data>
 </root>

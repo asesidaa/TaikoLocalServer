@@ -27,7 +27,6 @@ public class BaidController : BaseController<BaidController>
         response = Mappers.BaidResponseMapper.Map3906WithPostProcess(commonResponse);
         response.PlayerType = 0;
         response.IsDispAchievementTypeSet = true;
-        response.IsDispSouuchiOn = true;
         
         return Ok(response);
     }
@@ -57,7 +56,6 @@ public class BaidController : BaseController<BaidController>
         response = Mappers.BaidResponseMapper.Map3209WithPostProcess(commonResponse);
         response.PlayerType = 0;
         response.IsDispAchievementTypeSet = true;
-        response.IsDispSouuchiOn = true;
         
         return Ok(response);
     }
