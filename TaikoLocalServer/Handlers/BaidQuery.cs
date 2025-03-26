@@ -33,14 +33,15 @@ public class BaidQueryHandler(
 
         var songBestData = context.SongBestData.Where(datum => datum.Baid == baid).ToList();
         var achievementDisplayDifficulty = userData.AchievementDisplayDifficulty;
-        if (achievementDisplayDifficulty == Difficulty.None)
-        {
-            achievementDisplayDifficulty = songBestData
-                .Where(datum => datum.BestCrown >= CrownType.Clear)
-                .Select(datum => datum.Difficulty)
-                .DefaultIfEmpty(Difficulty.Easy)
-                .Max();
-        }
+        // Please Do not rewrite Difficulty.None, it will lock your Difficulty Panel level in one play
+        // if (achievementDisplayDifficulty == Difficulty.None)
+        // {
+        //     achievementDisplayDifficulty = songBestData
+        //         .Where(datum => datum.BestCrown >= CrownType.Clear)
+        //         .Select(datum => datum.Difficulty)
+        //         .DefaultIfEmpty(Difficulty.Easy)
+        //         .Max();
+        // }
         // For each crown type, calculate how many songs have that crown type
         var crownCountData = songBestData
             .Where(datum => !timeLimitSongsList.Contains(datum.SongId) && (datum.Difficulty == achievementDisplayDifficulty || (achievementDisplayDifficulty == Difficulty.UraOni && datum.Difficulty == Difficulty.Oni)))

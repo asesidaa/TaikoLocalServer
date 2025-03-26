@@ -14,7 +14,7 @@ public class MuchaController : BaseController<MuchaController>
 
     [HttpPost("/mucha_front/boardauth.do")]
 
-    public ContentResult BoardAuth([FromForm] MuchaUpdateCheckRequest request)
+    public ContentResult BoardAuth([FromForm] MuchaBoardAuthRequest request)
     {
         Logger.LogInformation("Mucha request: {Request}", request.Stringify());
         var serverTime = DateTime.Now.ToString("yyyyMMddHHmm");
@@ -64,7 +64,7 @@ public class MuchaController : BaseController<MuchaController>
     }
 
     [HttpPost("/mucha_front/updatacheck.do")]
-    public ContentResult UpdateCheck(MuchaBoardAuthRequest request)
+    public ContentResult UpdateCheck(MuchaUpdateCheckRequest request)
     {
         Logger.LogInformation("Request is {Request}", request.Stringify());
         var response = new Dictionary<string, string>
