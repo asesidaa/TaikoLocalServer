@@ -18,7 +18,7 @@ public class CommonBaidResponse
 
     public string LastPlayDatetime    { get; set; } = DateTime.Now.ToString(Constants.DateTimeFormat);
     public bool   DisplayDan          { get; set; }
-    public bool   DisplaySouUchi      { get; set; }
+    public bool   IsDispSouuchiOn { get; set; }
     public uint   GotDanMax           { get; set; }
     public byte[] GotDanFlg           { get; set; } = Array.Empty<byte>();
     public byte[] GotGaidenFlg        { get; set; } = Array.Empty<byte>();
@@ -28,6 +28,7 @@ public class CommonBaidResponse
     public uint[] AryScoreRankCounts  { get; set; } = Array.Empty<uint>();
     public bool   IsDispAchievementOn { get; set; }
     public uint   DispAchievementType { get; set; }
+    public bool   IsDispAchievementTypeSet { get; set; }
     public uint   LastPlayMode        { get; set; }
     public uint   AiRank              { get; set; }
     public uint   AiTotalWin                   { get; set; }
