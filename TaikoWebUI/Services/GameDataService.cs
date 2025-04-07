@@ -6,6 +6,7 @@ public class GameDataService : IGameDataService
 {
     private readonly HttpClient client;
     private ImmutableDictionary<uint, DanData> danMap = ImmutableDictionary<uint, DanData>.Empty;
+    private ImmutableDictionary<uint, DanData> gaidenMap = ImmutableDictionary<uint, DanData>.Empty;
     private Dictionary<uint, MusicDetail>? musicDetailDictionary = new();
     private List<Costume>? costumeList;
     private Dictionary<uint,Title>? titleDictionary = new();
@@ -28,6 +29,9 @@ public class GameDataService : IGameDataService
         var danData = await client.GetFromJsonAsync<List<DanData>>($"{dataBaseUrl}/data/dan_data.json");
         danData.ThrowIfNull();
         danMap = danData.ToImmutableDictionary(data => data.DanId);
+        var gaidenData = await client.GetFromJsonAsync<List<DanData>>($"{dataBaseUrl}/data/gaiden_data.json");
+        gaidenData.ThrowIfNull();
+        gaidenMap = gaidenData.ToImmutableDictionary(data =>data.DanId);
     }
     
     public async Task<Dictionary<uint, MusicDetail>> GetMusicDetailDictionary()
@@ -122,7 +126,12 @@ public class GameDataService : IGameDataService
     {
         return danMap;
     }
-    
+
+    public ImmutableDictionary<uint, DanData> GetGaidenMap()
+    {
+        return gaidenMap;
+    }
+
     public int GetMusicStarLevel(Dictionary<uint, MusicDetail> musicDetails, uint songId, Difficulty difficulty)
     {
         var success = musicDetails.TryGetValue(songId, out var musicDetail);

@@ -48,4 +48,39 @@ public class DanBestDataController(IDanScoreDatumService danScoreDatumService, I
             DanBestDataList = danDataList
         });
     }
+
+    [HttpGet("gaiden/{baid}")]
+    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
+    public async Task<IActionResult> GetGaidenBestData(uint baid)
+    {
+        if (authSettings.AuthenticationRequired)
+        {
+            var tokenInfo = authService.ExtractTokenInfo(HttpContext);
+            if (tokenInfo == null)
+            {
+                return Unauthorized();
+            }
+
+            if (!tokenInfo.Value.isAdmin && tokenInfo.Value.baid != baid)
+            {
+                return Forbid();
+            }
+        }
+
+        // FIXME: Handle gaiden in here and web ui
+        var danScores = await danScoreDatumService.GetDanScoreDataList(baid, DanType.Gaiden);
+        var danDataList = new List<DanBestData>();
+
+        foreach (var danScore in danScores)
+        {
+            var danData = danScore.CopyPropertiesToNew<DanBestData>();
+            danData.DanBestStageDataList = danScore.DanStageScoreData.Select(datum => datum.CopyPropertiesToNew<DanBestStageData>()).ToList();
+            danDataList.Add(danData);
+        }
+
+        return Ok(new DanBestDataResponse
+        {
+            DanBestDataList = danDataList
+        });
+    }
 }

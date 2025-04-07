@@ -834,4 +834,7 @@
   <data name="Display SouUchi Songs" xml:space="preserve">
     <value>双打曲表示</value>
   </data>
+  <data name="Gaiden Title" xml:space="preserve">
+    <value>外伝タイトル</value>
+  </data>
 </root>

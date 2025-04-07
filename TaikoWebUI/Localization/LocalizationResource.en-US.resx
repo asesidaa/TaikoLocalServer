@@ -834,4 +834,7 @@
   <data name="Display SouUchi Songs" xml:space="preserve">
     <value>Display SouUchi Songs</value>
   </data>
+  <data name="Gaiden Title" xml:space="preserve">
+    <value>Gaiden Title</value>
+  </data>
 </root>

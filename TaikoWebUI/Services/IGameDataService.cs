@@ -26,6 +26,8 @@ public interface IGameDataService
 
     public ImmutableDictionary<uint, DanData> GetDanMap();
 
+    public ImmutableDictionary<uint, DanData> GetGaidenMap();
+
     public int GetMusicStarLevel(Dictionary<uint, MusicDetail> musicDetails, uint songId, Difficulty difficulty);
 
     public string GetHeadTitle(IEnumerable<Costume> costumes, uint index, string? language = "ja");
