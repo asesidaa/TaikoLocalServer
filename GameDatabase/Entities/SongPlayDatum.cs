@@ -24,5 +24,7 @@ public partial class SongPlayDatum
     public bool Skipped { get; set; }
     public DateTime PlayTime { get; set; }
 
+    public uint OptionSetting { get; set; }
+
     public virtual UserDatum? Ba { get; set; }
 }

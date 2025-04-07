@@ -42,6 +42,8 @@ public class SongHistoryData
 
     public uint SongNumber { get; set; }
 
+    public PlaySetting PlaySetting { get; set; }
+
     //public List<AiSectionBestData> AiSectionBestData { get; set; } = new();
 
     //public bool ShowAiData { get; set; }

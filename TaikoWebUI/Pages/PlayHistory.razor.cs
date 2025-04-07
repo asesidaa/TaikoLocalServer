@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using Microsoft.JSInterop;
+using SharedProject.Enums;
 using SharedProject.Models;
 
 namespace TaikoWebUI.Pages;
@@ -191,6 +192,45 @@ public partial class PlayHistory
         if (result.IsSuccessStatusCode)
         {
             data.IsFavorite = !data.IsFavorite;
+        }
+    }
+
+    private static string GetSpeedIcon(PlaySetting playSetting)
+    {
+        return $"<image href='/images/speed_{playSetting.Speed}.webp' alt='{playSetting.Speed}' width='10' height='10'/>";
+    }
+
+    private static string GetVanishIcon(PlaySetting playSetting)
+    {
+        if (playSetting.IsVanishOn)
+        {
+            return $"<image href='/images/vanish.webp' alt='vanish' width='10' height='10'/>";
+        }
+        else {
+            return "";
+        }
+    }
+
+    private static string GetInverseIcon(PlaySetting playSetting)
+    {
+        if (playSetting.IsInverseOn)
+        {
+            return $"<image href='/images/inverse.webp' alt='inverse' width='10' height='10'/>";
+        }
+        else
+        {
+            return "";
+        }
+    }
+    private static string GetRandomIcon(PlaySetting playSetting)
+    {
+        if (playSetting.RandomType != 0)
+        {
+            return $"<image href='/images/random_{playSetting.RandomType}.webp' alt='{playSetting.RandomType}' width='10' height='10'/>";
+        }
+        else
+        {
+            return "";
         }
     }
 }

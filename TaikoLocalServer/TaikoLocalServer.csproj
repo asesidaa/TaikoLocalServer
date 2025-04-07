@@ -197,6 +197,9 @@
         <Content Update="wwwroot\data\intro_data.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
+		<Content Update="wwwroot\data\special_songs_data.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
     </ItemGroup>
 
     <ItemGroup>
