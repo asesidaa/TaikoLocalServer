@@ -8,7 +8,7 @@
 @inject ILocalStorageService LocalStorage
 @inject BreadcrumbsStateContainer BreadcrumbsStateContainer
 
-@page "/Users/{baid:int}/Gaiden/{danId:uint}"
+@page "/Users/{baid:int}/Gaiden/{danId:int}"
 
 @if (AuthService.LoginRequired && (!AuthService.IsLoggedIn || (AuthService.GetLoggedInBaid() != Baid && !AuthService.IsAdmin)))
 {
@@ -37,9 +37,9 @@ else
                     }
                     else
                     {
-                        var danData = danMap[danId];
+                        var danData = danMap[(uint)danId];
 
-                        <MudTabPanel Text="@GetDanTitle(danData.Title, SongNameLanguage)" Icon="@GetDanResultIcon(danId)">
+                        <MudTabPanel Text="@GetDanTitle(danData.Title, SongNameLanguage)" Icon="@GetDanResultIcon((uint)danId)">
                             <MudText Typo="Typo.h5" Class="mb-4">@Localizer["Details"]</MudText>
                             <MudGrid Class="d-flex">
                                 <MudItem xs="12" sm="12" md="4" Class="pb-1">
@@ -52,7 +52,7 @@ else
                                         <MudCardContent Class="d-flex py-10" Style="justify-content:center;">
                                             <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Spacing="6">
                                                 @{
-                                                    var danResultState = GetDanResultState(danId);
+                                                    var danResultState = GetDanResultState((uint)danId);
                                                     var danClearStateString = GetDanClearStateString(danResultState);
                                                 }
                                                 <img src=@($"/images/dani_{danResultState.ToString()}.webp") style="max-width:150px; width:100%;" alt="danResultState.ToString()" />
@@ -72,7 +72,7 @@ else
                                             </MudCardHeader>
                                             <MudCardContent Class="d-flex py-10" Style="justify-content:center">
                                                 @{
-                                                    var totalScore = GetTotalScore(danId);
+                                                    var totalScore = GetTotalScore((uint)danId);
                                                 }
 
                                                 <MudStack Row="true" Spacing="4" Justify="Justify.SpaceEvenly" Style="width:100%">
@@ -88,12 +88,12 @@ else
                                             </MudCardHeader>
                                             <MudCardContent Class="d-flex py-10" Style="justify-content:center">
                                                 @{
-                                                    var totalGoods = GetTotalGoodHits(danId);
-                                                    var totalOks = GetTotalOkHits(danId);
-                                                    var totalBads = GetTotalBadHits(danId);
-                                                    var totalDrumroll = GetTotalDrumrollHits(danId);
-                                                    var totalMaxCombo = GetTotalMaxCombo(danId);
-                                                    var totalHits = GetTotalHits(danId);
+                                                    var totalGoods = GetTotalGoodHits((uint)danId);
+                                                    var totalOks = GetTotalOkHits((uint)danId);
+                                                    var totalBads = GetTotalBadHits((uint)danId);
+                                                    var totalDrumroll = GetTotalDrumrollHits((uint)danId);
+                                                    var totalMaxCombo = GetTotalMaxCombo((uint)danId);
+                                                    var totalHits = GetTotalHits((uint)danId);
                                                 }
 
                                                 <MudStack Row="true" Spacing="4" Justify="Justify.SpaceEvenly" Style="width:100%">
@@ -164,7 +164,7 @@ else
                                                         </MudItem>
 
 
-                                                        @if (_bestDataMap.TryGetValue(danId, out var danBestData))
+                                                        @if (_bestDataMap.TryGetValue((uint)danId, out var danBestData))
                                                         {
                                                             if (danBestData.DanBestStageDataList.Count > index)
                                                             {
@@ -229,7 +229,7 @@ else
                                                         }
                                                         <MudStack Spacing="1">
                                                             <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">@Localizer["Result"]</MudText>
-                                                            @if (_bestDataMap.TryGetValue(danId, out var danBestData))
+                                                            @if (_bestDataMap.TryGetValue((uint)danId, out var danBestData))
                                                             {
                                                                 if (danBestData.SoulGaugeTotal >= redRequirement)
                                                                 {
@@ -303,7 +303,7 @@ else
                                                                     }
                                                                     <MudStack Spacing="1">
                                                                         <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">@Localizer["Result"]</MudText>
-                                                                        @if (_bestDataMap.TryGetValue(danId, out var danBestData))
+                                                                        @if (_bestDataMap.TryGetValue((uint)danId, out var danBestData))
                                                                         {
                                                                             var bestData = GetAllBestFromData((DanConditionType)border.OdaiType, danBestData);
 
@@ -396,7 +396,7 @@ else
                                                                                 </MudCardHeader>
                                                                                 <MudCardContent>
                                                                                     <MudText Typo="Typo.subtitle2" Style="font-weight:bold;">@Localizer["Result"]</MudText>
-                                                                                    @if (_bestDataMap.TryGetValue(danId, out var danBestData) && (danBestData.DanBestStageDataList.Count > songNumber))
+                                                                                    @if (_bestDataMap.TryGetValue((uint)danId, out var danBestData) && (danBestData.DanBestStageDataList.Count > songNumber))
                                                                                     {
                                                                                         var bestData = GetSongBestFromData((DanConditionType)border.OdaiType, danBestData, songNumber);
                                                                                         if ((DanConditionType)border.OdaiType is DanConditionType.BadCount or DanConditionType.OkCount)

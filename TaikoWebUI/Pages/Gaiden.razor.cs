@@ -13,7 +13,7 @@ public partial class Gaiden
     public int Baid { get; set; }
 
     [Parameter]
-    public uint danId { get; set; }
+    public int danId { get; set; }
 
     private string? SongNameLanguage { get; set; }
 
