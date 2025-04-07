@@ -28,6 +28,7 @@ public partial class GaidenList
 
         userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
         musicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
+        danDatas = GameDataService.GetGaidenMap().Values.ToList();
 
         SongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
 
