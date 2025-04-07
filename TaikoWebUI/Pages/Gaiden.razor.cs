@@ -167,11 +167,11 @@ public partial class Gaiden
         Dictionary<string, string> titleMap = new();
         foreach (var langTitle in gaidenTitle.Split(","))
         {
-            if (langTitle.Contains("[JPN]")) titleMap["default"] = titleMap["JPN"] = langTitle.Replace("[JPN]", "").Trim();
-            else if (langTitle.Contains("[ENG]")) titleMap["default"] = titleMap["ENG"] = langTitle.Replace("[ENG]", "").Trim();
-            else if (langTitle.Contains("[CHN]")) titleMap["default"] = titleMap["CHN"] = langTitle.Replace("[CHN]", "").Trim();
-            else if (langTitle.Contains("[KOR]")) titleMap["default"] = titleMap["KOR"] = langTitle.Replace("[KOR]", "").Trim();
-            else if (langTitle.Contains("[CHS]")) titleMap["default"] = titleMap["CHS"] = langTitle.Replace("[CHS]", "").Trim();
+            if (langTitle.Contains("[JPN]=")) titleMap["default"] = titleMap["JPN"] = langTitle.Replace("[JPN]=", "").Trim();
+            else if (langTitle.Contains("[ENG]=")) titleMap["default"] = titleMap["ENG"] = langTitle.Replace("[ENG]=", "").Trim();
+            else if (langTitle.Contains("[CHN]=")) titleMap["default"] = titleMap["CHN"] = langTitle.Replace("[CHN]=", "").Trim();
+            else if (langTitle.Contains("[KOR]=")) titleMap["default"] = titleMap["KOR"] = langTitle.Replace("[KOR]=", "").Trim();
+            else if (langTitle.Contains("[CHS]=")) titleMap["default"] = titleMap["CHS"] = langTitle.Replace("[CHS]=", "").Trim();
             else titleMap["default"] = langTitle;
         }
         if (titleMap.ContainsKey("JPN")) titleMap["default"] = titleMap["JPN"];

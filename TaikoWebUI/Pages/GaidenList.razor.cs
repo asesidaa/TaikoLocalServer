@@ -63,6 +63,20 @@ public partial class GaidenList
         return true;
     }
 
+    private string GetDifficultyText(uint difficulty)
+    {
+        return difficulty switch
+        {
+            0 => "",
+            1 => Localizer["Easy"],
+            2 => Localizer["Normal"],
+            3 => Localizer["Hard"],
+            4 => Localizer["Oni"],
+            5 => Localizer["UraOni"],
+            _ => "",
+        };
+    }
+
     private List<string> GetGaidenTitles(string gaidenTitle)
     {
         List<string> titles = new ();
@@ -83,11 +97,11 @@ public partial class GaidenList
         Dictionary<string, string> titleMap = new (); 
         foreach (var langTitle in gaidenTitle.Split(","))
         {
-            if (langTitle.Contains("[JPN]")) titleMap["default"] = titleMap["JPN"] = langTitle.Replace("[JPN]", "").Trim();
-            else if (langTitle.Contains("[ENG]")) titleMap["default"] = titleMap["ENG"] = langTitle.Replace("[ENG]", "").Trim();
-            else if (langTitle.Contains("[CHN]")) titleMap["default"] = titleMap["CHN"] = langTitle.Replace("[CHN]", "").Trim();
-            else if (langTitle.Contains("[KOR]")) titleMap["default"] = titleMap["KOR"] = langTitle.Replace("[KOR]", "").Trim();
-            else if (langTitle.Contains("[CHS]")) titleMap["default"] = titleMap["CHS"] = langTitle.Replace("[CHS]", "").Trim();
+            if (langTitle.Contains("[JPN]=")) titleMap["default"] = titleMap["JPN"] = langTitle.Replace("[JPN]=", "").Trim();
+            else if (langTitle.Contains("[ENG]=")) titleMap["default"] = titleMap["ENG"] = langTitle.Replace("[ENG]=", "").Trim();
+            else if (langTitle.Contains("[CHN]=")) titleMap["default"] = titleMap["CHN"] = langTitle.Replace("[CHN]=", "").Trim();
+            else if (langTitle.Contains("[KOR]=")) titleMap["default"] = titleMap["KOR"] = langTitle.Replace("[KOR]=", "").Trim();
+            else if (langTitle.Contains("[CHS]=")) titleMap["default"] = titleMap["CHS"] = langTitle.Replace("[CHS]=", "").Trim();
             else titleMap["default"] = langTitle;
         }
         if (titleMap.ContainsKey("JPN")) titleMap["default"] = titleMap["JPN"];

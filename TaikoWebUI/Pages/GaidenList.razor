@@ -51,14 +51,14 @@
                         @for (int i = 1; i <= 3; i++)
                         {
                             <MudTh>
-                                <MudTableSortLabel T="DanData">
-                                    @Localizer["Stage"] + i
-                                </MudTableSortLabel>
+                                <MudText T="DanData">
+                                    @(Localizer["Stage"] + i)
+                                </MudText>
                             </MudTh>
                         }
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTd Style="text-align: initial !important;">
+                        <MudTd Style="text-align: initial !important; padding-left: 20px !important;">
                             <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
                                 <div style="width:400px">
                                     <a href="@($"/Users/{Baid}/Gaiden/{context.DanId}")">
@@ -73,20 +73,25 @@
                         </MudTd>
                         @foreach (var song in context.OdaiSongList)
                         {
-                            <MudStack Style="display: inline-flex !important;" Row="true" Spacing="1" AlignItems="AlignItems.Center">
-                                @if (song.IsHiddenSongName)
-                                {
-                                    <MudText Typo="Typo.body2" Style="font-weight:bold">???</MudText>
-                                }
-                                else
-                                {
-                                    <MudText Typo="Typo.body2" Style="font-weight:bold">
-                                        @GameDataService.GetMusicNameBySongId(musicDetailDictionary, song.SongNo, SongNameLanguage)
-                                    </MudText>
-                                }
-                                <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
-                                <MudText Typo="Typo.caption" Style="line-height:1;margin-top:2px;margin-right:2px;">@GameDataService.GetMusicStarLevel(musicDetailDictionary, song.SongNo, (Difficulty) song.Level)</MudText>
-                            </MudStack>
+                            <MudTd>
+                                <MudStack Style="display: inline-flex !important;" Row="true" Spacing="1" AlignItems="AlignItems.Center">
+                                    <MudText Typo="Typo.body2" Style="font-weight:bold">[@GetDifficultyText(song.Level)]</MudText>
+                                    @if (song.IsHiddenSongName)
+                                    {
+                                        <MudText Typo="Typo.body2" Style="font-weight:bold">???</MudText>
+                                    }
+                                    else
+                                    {
+                                        <a href="@($"/Users/{Baid}/Songs/{song.SongNo}")">
+                                            <MudText Typo="Typo.body2" Style="font-weight:bold">
+                                                @GameDataService.GetMusicNameBySongId(musicDetailDictionary, song.SongNo, SongNameLanguage)
+                                            </MudText>
+                                        </a>
+                                    }
+                                    <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
+                                    <MudText Typo="Typo.caption" Style="line-height:1;margin-top:2px;margin-right:2px;">@GameDataService.GetMusicStarLevel(musicDetailDictionary, song.SongNo, (Difficulty) song.Level)</MudText>
+                                </MudStack>
+                            </MudTd>
                         }
                     </RowTemplate>
                     <PagerContent>
