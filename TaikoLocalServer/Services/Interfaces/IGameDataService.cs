@@ -50,4 +50,6 @@ public interface IGameDataService
     public int GetToneFlagArraySize();
 	
     public ImmutableDictionary<string, uint> GetQRCodeDataDictionary();
+
+    public Dictionary<uint, string> GetGaidenSerialDictionary();
 }

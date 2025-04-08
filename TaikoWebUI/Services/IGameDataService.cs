@@ -16,6 +16,8 @@ public interface IGameDataService
     
     public Task<Dictionary<string, List<uint>>> GetLockedTitleDataDictionary();
 
+    public Task<Dictionary<uint, string>> GetGaidenSerialDictionary();
+
     public string GetMusicNameBySongId(Dictionary<uint, MusicDetail> musicDetails,uint songId, string? language = null);
 
     public string GetMusicArtistBySongId(Dictionary<uint, MusicDetail> musicDetails,uint songId, string? language = null);

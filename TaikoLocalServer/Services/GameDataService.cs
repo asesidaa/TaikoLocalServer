@@ -58,6 +58,8 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
     private Dictionary<string, List<uint>> lockedTitleDataDictionary = new();
 
     private List<int> costumeFlagArraySize = [];
+
+    private Dictionary<uint, string> gaidenSerialDictionary = new();
     
     private int titleFlagArraySize;
 
@@ -177,6 +179,11 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
         return qrCodeDataDictionary;
     }
 
+    public Dictionary<uint, string> GetGaidenSerialDictionary()
+    {
+        return gaidenSerialDictionary;
+    }
+
     public async Task InitializeAsync()
     {
         var dataPath = PathHelper.GetDataPath();
@@ -200,6 +207,9 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
         var neiroPath = Path.Combine(datatablePath, $"{Constants.NeiroBaseName}.json");
         var encryptedNeiro = Path.Combine(datatablePath, $"{Constants.NeiroBaseName}.bin");
 
+        var qrcodeInfoPath = Path.Combine(datatablePath, $"{Constants.QrocdeInfoBaseName}.json");
+        var encryptedQrcodeInfo = Path.Combine(datatablePath, $"{Constants.QrocdeInfoBaseName}.json");
+
         var danDataPath = Path.Combine(dataPath, settings.DanDataFileName);
         var gaidenDataPath = Path.Combine(dataPath, settings.GaidenDataFileName);
         var songIntroDataPath = Path.Combine(dataPath, settings.IntroDataFileName);
@@ -220,7 +230,8 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
             encryptedMusicOrder,
             encryptedDonCosReward,
             encryptedShougou,
-            encryptedNeiro
+            encryptedNeiro,
+            encryptedQrcodeInfo
         };
 
         var outputPaths = new List<string>
@@ -230,7 +241,8 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
             musicOrderPath,
             donCosRewardPath,
             shougouPath,
-            neiroPath
+            neiroPath,
+            qrcodeInfoPath
         };
 
         for (var i = 0; i < encryptedFiles.Count; i++)
@@ -266,6 +278,7 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
         await using var musicOrderFile = File.OpenRead(musicOrderPath);
         await using var lockedCostumeDataFile = File.OpenRead(lockedCostumeDataPath);
         await using var lockedTitleDataFile = File.OpenRead(lockedTitleDataPath);
+        await using var qrcodeInfoFile = File.OpenRead(qrcodeInfoPath);
 
         var musicInfoData = await JsonSerializer.DeserializeAsync<MusicInfos>(musicInfoFile);
         var danData = await JsonSerializer.DeserializeAsync<List<DanData>>(danDataFile);
@@ -283,6 +296,7 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
         var qrCodeData = await JsonSerializer.DeserializeAsync<List<QRCodeData>>(qrCodeDataFile);
         var wordlistData = await JsonSerializer.DeserializeAsync<WordList>(wordlistFile);
         var musicOrderData = await JsonSerializer.DeserializeAsync<MusicOrder>(musicOrderFile);
+        var qrcodeInfoData = await JsonSerializer.DeserializeAsync<QRCodeInfo>(qrcodeInfoFile);
         var lockedCostumeData = await JsonSerializer.DeserializeAsync<Dictionary<string, uint[]>>(lockedCostumeDataFile);
         var lockedTitleData = await JsonSerializer.DeserializeAsync<Dictionary<string, uint[]>>(lockedTitleDataFile);
 
@@ -319,6 +333,8 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
         InitializeToneFlagArraySize(neiroData);
 
         InitializeQrCodeData(qrCodeData);
+
+        InitializeGadienSerialData(qrcodeInfoData, qrCodeData);
     }
 
     private static void DecryptDataTable(string inputFileName, string outputFileName)
@@ -557,5 +573,14 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
     {
         qrCodeData.ThrowIfNull("Shouldn't happen!");
         qrCodeDataDictionary = qrCodeData.ToImmutableDictionary(data => data.Serial, data => data.Id);
+    }
+
+    private void InitializeGadienSerialData(QRCodeInfo? qrCodeInfo, List<QRCodeData>? qrCodeData)
+    {
+        qrCodeInfo.ThrowIfNull("Shouldn't happen!");
+        qrCodeData.ThrowIfNull("Shouldn't happen!");
+
+        Dictionary<uint, string> idDict = qrCodeData.ToDictionary(qr => qr.Id, qr => qr.Serial);
+        gaidenSerialDictionary = qrCodeInfo.QRCodeInfoEntries.FindAll(qr => qr.ModeId == 9).ToDictionary(qr => qr.DaniGaidenOdaiId, qr => idDict.ContainsKey(qr.UniqueId) ? idDict[qr.UniqueId] : "");
     }
 }

@@ -16,6 +16,7 @@ public static class Constants
 	public const string DonCosRewardBaseName = "don_cos_reward";
 	public const string ShougouBaseName = "shougou";
 	public const string NeiroBaseName = "neiro";
+	public const string QrocdeInfoBaseName = "qrcode_info";
 
 	// Verup1
     public const uint ShopVerupMasterType = 104;

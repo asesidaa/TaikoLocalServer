@@ -1,4 +1,6 @@
-﻿namespace TaikoWebUI.Pages;
+﻿using TaikoWebUI.Pages.Dialogs;
+
+namespace TaikoWebUI.Pages;
 
 public partial class GaidenList
 {
@@ -10,7 +12,8 @@ public partial class GaidenList
 
     private SongBestResponse? response;
     private UserSetting? userSetting;
-    
+
+    private Dictionary<uint, string> gaidenSerialDictionary = new();
     private Dictionary<uint, MusicDetail> musicDetailDictionary = new();
     private List<DanData> danDatas = new ();
 
@@ -27,8 +30,10 @@ public partial class GaidenList
         response.ThrowIfNull();
 
         userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
+        gaidenSerialDictionary = await GameDataService.GetGaidenSerialDictionary();
         musicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
-        danDatas = GameDataService.GetGaidenMap().Values.ToList();
+        danDatas = GameDataService.GetGaidenMap().Values.ToList()
+            .FindAll(dan => gaidenSerialDictionary.ContainsKey(dan.DanId));
 
         SongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
 
@@ -92,7 +97,7 @@ public partial class GaidenList
         return titles;
     }
 
-    private string GetGaidenTitle(string gaidenTitle, string? language)
+    private string GetGaidenTitle(string gaidenTitle, string? language = "ja")
     {
         Dictionary<string, string> titleMap = new (); 
         foreach (var langTitle in gaidenTitle.Split(","))
@@ -132,5 +137,18 @@ public partial class GaidenList
         }
 
         return titleMap["default"];
+    }
+
+    private async Task ShowQrCode(uint danId)
+    {
+        var gaidenSerialDict = await GameDataService.GetGaidenSerialDictionary();
+        
+        var parameters = new DialogParameters
+        {
+            ["serial"] = gaidenSerialDict[danId]
+        };
+
+        var options = new DialogOptions { DisableBackdropClick = true };
+        await DialogService.ShowAsync<SerialQrCodeDialog>(Localizer["QR Code"], parameters, options);
     }
 }

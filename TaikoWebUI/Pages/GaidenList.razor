@@ -7,6 +7,7 @@
 @inject ILocalStorageService LocalStorage
 @inject NavigationManager NavigationManager
 @inject BreadcrumbsStateContainer BreadcrumbsStateContainer
+@inject IDialogService DialogService
 
 @page "/Users/{baid:int}/Gaidens"
 
@@ -59,8 +60,14 @@
                         }
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTd Style="text-align: initial !important; padding-left: 20px !important;">
+                        <MudTd Style="text-align: initial !important;">
                             <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                                <div style="margin: 4px;">
+                                    <MudIconButton Variant="Variant.Filled" OnClick="@(async () => await ShowQrCode(context.DanId))"
+                                        Icon="@Icons.Material.Filled.QrCode2" Color="@Color.Primary"
+                                        Size="Size.Small" Title="Gaiden QRCode"
+                                    />
+                                </div>
                                 <div style="width:400px">
                                     <a href="@($"/Users/{Baid}/Gaiden/{context.DanId}")">
                                         <MudText Typo="Typo.body2" Style="font-weight:bold">@GetGaidenTitle(context.Title, SongNameLanguage)</MudText>
@@ -80,20 +87,18 @@
                                     {
                                         <MudText Typo="Typo.body2" Style="font-weight:bold">[@GetDifficultyText(song.Level)]</MudText>
                                         <MudText Typo="Typo.body2">???</MudText>
-                                        <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
-                                        <MudText Typo="Typo.caption" Style="line-height:1;margin-top:2px;margin-right:2px;">@GameDataService.GetMusicStarLevel(musicDetailDictionary, song.SongNo, (Difficulty)song.Level)</MudText>
                                     }
                                     else
                                     {
-                                        <a href="@($"/Users/{Baid}/Songs/{song.SongNo}")">
+                                        <a href="@($"/Users/{Baid}/Songs/{song.SongNo}")" style="display: inline-flex !important;">
                                             <MudText Typo="Typo.body2" Style="font-weight:bold">[@GetDifficultyText(song.Level)]</MudText>
                                             <MudText Typo="Typo.body2">
                                                 @GameDataService.GetMusicNameBySongId(musicDetailDictionary, song.SongNo, SongNameLanguage)
                                             </MudText>
-                                            <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
-                                            <MudText Typo="Typo.caption" Style="line-height:1;margin-top:2px;margin-right:2px;">@GameDataService.GetMusicStarLevel(musicDetailDictionary, song.SongNo, (Difficulty)song.Level)</MudText>
                                         </a>
                                     }
+                                    <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
+                                    <MudText Typo="Typo.caption" Style="line-height:1;margin-top:2px;margin-right:2px;">@GameDataService.GetMusicStarLevel(musicDetailDictionary, song.SongNo, (Difficulty)song.Level)</MudText>
                                 </MudStack>
                             </MudTd>
                         }

@@ -10,10 +10,12 @@ public class GameDataService : IGameDataService
     private Dictionary<uint, MusicDetail>? musicDetailDictionary = new();
     private List<Costume>? costumeList;
     private Dictionary<uint,Title>? titleDictionary = new();
+    private Dictionary<uint, string> gaidenSerialDictionary = new();
     
     private bool musicDetailInitialized;
     private bool costumesInitialized;
     private bool titlesInitialized;
+    private bool gaidenSerialsInitialized;
     
     private Dictionary<string, List<uint>>? lockedCostumeDataDictionary = new();
     private Dictionary<string, List<uint>>? lockedTitleDataDictionary = new();
@@ -82,6 +84,16 @@ public class GameDataService : IGameDataService
         }
         
         return lockedTitleDataDictionary ?? new Dictionary<string, List<uint>>();
+    }
+
+    public async Task<Dictionary<uint, string>> GetGaidenSerialDictionary()
+    {
+        if (!gaidenSerialsInitialized)
+        {
+            await InitializeGaidenSerialAsync();
+        }
+
+        return gaidenSerialDictionary ?? new Dictionary<uint, string>();
     }
 
     public string GetMusicNameBySongId(Dictionary<uint, MusicDetail> musicDetails, uint songId, string? language = "ja")
@@ -235,5 +247,11 @@ public class GameDataService : IGameDataService
         titleDictionary = await client.GetFromJsonAsync<Dictionary<uint, Title>>("api/GameData/Titles");
         lockedTitleDataDictionary = await client.GetFromJsonAsync<Dictionary<string, List<uint>>>("api/GameData/LockedTitles");
         titlesInitialized = true;
+    }
+
+    private async Task InitializeGaidenSerialAsync()
+    {
+        gaidenSerialDictionary = await client.GetFromJsonAsync<Dictionary<uint, string>>("api/GameData/GaidenSerials");
+        gaidenSerialsInitialized = true;
     }
 }

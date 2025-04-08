@@ -90,4 +90,20 @@ public class GameDataController(IGameDataService gameDataService, IAuthService a
 
         return Ok(gameDataService.GetLockedTitleDataDictionary());
     }
+
+    [HttpGet("GaidenSerials")]
+    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
+    public IActionResult GetGaidenSerials()
+    {
+        if (authSettings.AuthenticationRequired)
+        {
+            var tokenInfo = authService.ExtractTokenInfo(HttpContext);
+            if (tokenInfo is null)
+            {
+                return Unauthorized();
+            }
+        }
+
+        return Ok(gameDataService.GetGaidenSerialDictionary());
+    }
 }
