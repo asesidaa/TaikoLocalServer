@@ -208,7 +208,7 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
         var encryptedNeiro = Path.Combine(datatablePath, $"{Constants.NeiroBaseName}.bin");
 
         var qrcodeInfoPath = Path.Combine(datatablePath, $"{Constants.QrocdeInfoBaseName}.json");
-        var encryptedQrcodeInfo = Path.Combine(datatablePath, $"{Constants.QrocdeInfoBaseName}.json");
+        var encryptedQrcodeInfo = Path.Combine(datatablePath, $"{Constants.QrocdeInfoBaseName}.bin");
 
         var danDataPath = Path.Combine(dataPath, settings.DanDataFileName);
         var gaidenDataPath = Path.Combine(dataPath, settings.GaidenDataFileName);
@@ -580,7 +580,12 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
         qrCodeInfo.ThrowIfNull("Shouldn't happen!");
         qrCodeData.ThrowIfNull("Shouldn't happen!");
 
-        Dictionary<uint, string> idDict = qrCodeData.ToDictionary(qr => qr.Id, qr => qr.Serial);
-        gaidenSerialDictionary = qrCodeInfo.QRCodeInfoEntries.FindAll(qr => qr.ModeId == 9).ToDictionary(qr => qr.DaniGaidenOdaiId, qr => idDict.ContainsKey(qr.UniqueId) ? idDict[qr.UniqueId] : "");
+        Dictionary<ulong, string> idDict = qrCodeData
+            .ToLookup(qr => (ulong)qr.Id, qr => qr.Serial)
+            .ToDictionary(qr => qr.Key, qr => qr.Last());
+        gaidenSerialDictionary = qrCodeInfo.QRCodeInfoEntries
+            .FindAll(qr => qr.ModeId == 9 && qr.DaniGaidenOdaiId >= 0)
+            .ToLookup(qr => (uint)qr.DaniGaidenOdaiId, qr => idDict.ContainsKey(qr.UniqueId) ? idDict[qr.UniqueId] : "")
+            .ToDictionary(qr => qr.Key, qr => qr.Last());
     }
 }

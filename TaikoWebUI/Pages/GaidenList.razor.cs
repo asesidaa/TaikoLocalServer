@@ -139,9 +139,10 @@ public partial class GaidenList
         return titleMap["default"];
     }
 
-    private async Task ShowQrCode(uint danId)
+    private async Task ShowQrCode(uint danId, string title)
     {
         var gaidenSerialDict = await GameDataService.GetGaidenSerialDictionary();
+        title = GetGaidenTitle(title, SongNameLanguage);
         
         var parameters = new DialogParameters
         {
@@ -149,6 +150,6 @@ public partial class GaidenList
         };
 
         var options = new DialogOptions { DisableBackdropClick = true };
-        await DialogService.ShowAsync<SerialQrCodeDialog>(Localizer["QR Code"], parameters, options);
+        await DialogService.ShowAsync<SerialQrCodeDialog>(title, parameters, options);
     }
 }

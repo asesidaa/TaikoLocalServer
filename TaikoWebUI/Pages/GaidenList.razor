@@ -63,7 +63,7 @@
                         <MudTd Style="text-align: initial !important;">
                             <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
                                 <div style="margin: 4px;">
-                                    <MudIconButton Variant="Variant.Filled" OnClick="@(async () => await ShowQrCode(context.DanId))"
+                                    <MudIconButton Variant="Variant.Filled" OnClick="@(async () => await ShowQrCode(context.DanId, context.Title))"
                                         Icon="@Icons.Material.Filled.QrCode2" Color="@Color.Primary"
                                         Size="Size.Small" Title="Gaiden QRCode"
                                     />
