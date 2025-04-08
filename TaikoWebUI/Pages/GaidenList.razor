@@ -50,9 +50,10 @@
                         </MudTh>
                         @for (int i = 1; i <= 3; i++)
                         {
+                            int currentStage = i;
                             <MudTh>
                                 <MudText T="DanData">
-                                    @(Localizer["Stage"] + i)
+                                    @Localizer["Stage"]@currentStage
                                 </MudText>
                             </MudTh>
                         }
@@ -75,21 +76,24 @@
                         {
                             <MudTd>
                                 <MudStack Style="display: inline-flex !important;" Row="true" Spacing="1" AlignItems="AlignItems.Center">
-                                    <MudText Typo="Typo.body2" Style="font-weight:bold">[@GetDifficultyText(song.Level)]</MudText>
                                     @if (song.IsHiddenSongName)
                                     {
-                                        <MudText Typo="Typo.body2" Style="font-weight:bold">???</MudText>
+                                        <MudText Typo="Typo.body2" Style="font-weight:bold">[@GetDifficultyText(song.Level)]</MudText>
+                                        <MudText Typo="Typo.body2">???</MudText>
+                                        <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
+                                        <MudText Typo="Typo.caption" Style="line-height:1;margin-top:2px;margin-right:2px;">@GameDataService.GetMusicStarLevel(musicDetailDictionary, song.SongNo, (Difficulty)song.Level)</MudText>
                                     }
                                     else
                                     {
                                         <a href="@($"/Users/{Baid}/Songs/{song.SongNo}")">
-                                            <MudText Typo="Typo.body2" Style="font-weight:bold">
+                                            <MudText Typo="Typo.body2" Style="font-weight:bold">[@GetDifficultyText(song.Level)]</MudText>
+                                            <MudText Typo="Typo.body2">
                                                 @GameDataService.GetMusicNameBySongId(musicDetailDictionary, song.SongNo, SongNameLanguage)
                                             </MudText>
+                                            <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
+                                            <MudText Typo="Typo.caption" Style="line-height:1;margin-top:2px;margin-right:2px;">@GameDataService.GetMusicStarLevel(musicDetailDictionary, song.SongNo, (Difficulty)song.Level)</MudText>
                                         </a>
                                     }
-                                    <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
-                                    <MudText Typo="Typo.caption" Style="line-height:1;margin-top:2px;margin-right:2px;">@GameDataService.GetMusicStarLevel(musicDetailDictionary, song.SongNo, (Difficulty) song.Level)</MudText>
                                 </MudStack>
                             </MudTd>
                         }

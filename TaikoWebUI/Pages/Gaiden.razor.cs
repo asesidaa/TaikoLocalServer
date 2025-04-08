@@ -64,7 +64,8 @@ public partial class Gaiden
         if (AuthService.IsLoggedIn && !AuthService.IsAdmin) BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
         else BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
-        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dani Dojo"], href: $"/Users/{Baid}/DaniDojo", disabled: false));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Gaiden"], href: $"/Users/{Baid}/Gaidens", disabled: true));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(GetDanTitle(danMap[(uint) danId].Title, SongNameLanguage), href: $"/Users/{Baid}/Gaiden/{danMap[(uint)danId].DanId}", disabled: false));
         BreadcrumbsStateContainer.NotifyStateChanged();
     }
 
