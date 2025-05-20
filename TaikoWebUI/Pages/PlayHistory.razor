@@ -95,29 +95,20 @@
                                 </MudTd>
 
                                 @* Song Options *@
-                                <MudTd DataLabel="Song Options" Style="width: 80px;">
+                                <MudTd DataLabel="Song Options" Style="width: 128px;">
                                     <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
                                         <div style="margin: 1px; display: flex;">
                                             <MudIcon Style=@IconStyle Icon="@GetSpeedIcon(songHistoryData.PlaySetting)" />
                                         </div>
-                                        @if (songHistoryData.PlaySetting.IsVanishOn)
-                                        {
-                                            <div style="margin: 1px; display: flex;">
-                                                <MudIcon Style=@IconStyle Icon="@GetVanishIcon(songHistoryData.PlaySetting)" />
-                                            </div>
-                                        }
-                                        @if (songHistoryData.PlaySetting.IsInverseOn)
-                                        {
-                                            <div style="margin: 1px; display: flex;">
-                                                <MudIcon Style=@IconStyle Icon="@GetInverseIcon(songHistoryData.PlaySetting)" />
-                                            </div>
-                                        }
-                                        @if (songHistoryData.PlaySetting.RandomType is not RandomType.None)
-                                        {
-                                            <div style="margin: 1px; display: flex;">
-                                                <MudIcon Style=@IconStyle Icon="@GetRandomIcon(songHistoryData.PlaySetting)" />
-                                            </div>
-                                        }
+                                        <div style="margin: 1px; display: flex;">
+                                            <MudIcon Style=@IconStyle Icon="@GetVanishIcon(songHistoryData.PlaySetting)" />
+                                        </div>
+                                        <div style="margin: 1px; display: flex;">
+                                            <MudIcon Style=@IconStyle Icon="@GetInverseIcon(songHistoryData.PlaySetting)" />
+                                        </div>
+                                        <div style="margin: 1px; display: flex;">
+                                            <MudIcon Style=@IconStyle Icon="@GetRandomIcon(songHistoryData.PlaySetting)" />
+                                        </div>
                                     </MudStack>
                                 </MudTd>
 

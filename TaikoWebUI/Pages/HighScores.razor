@@ -69,6 +69,9 @@
                                                 </MudTableSortLabel>
                                             </MudTh>
                                             <MudTh>
+                                                <MudText Typo="Typo.body2">@Localizer["Song Options"]</MudText>
+                                            </MudTh>
+                                            <MudTh>
                                                 <MudTableSortLabel T="SongBestData" SortBy="x => (int)x.Genre * 1000000 + x.BestScore">
                                                     <MudText Typo="Typo.body2">@Localizer["Genre"]</MudText>
                                                 </MudTableSortLabel>
@@ -141,6 +144,23 @@
                                                             <MudText Typo="Typo.body2" Style="font-weight:bold">@context.MusicName</MudText>
                                                             <MudText Typo="Typo.caption">@context.MusicArtist</MudText>
                                                         </a>
+                                                    </div>
+                                                </MudStack>
+                                            </MudTd>
+                                            @* Song Options *@
+                                            <MudTd DataLabel="Song Options" Style="width: 128px;">
+                                                <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                                    <div style="margin: 1px; display: flex;">
+                                                        <MudIcon Style=@IconStyle Icon="@GetSpeedIcon(@context.PlaySetting)" />
+                                                    </div>
+                                                    <div style="margin: 1px; display: flex;">
+                                                        <MudIcon Style=@IconStyle Icon="@GetVanishIcon(@context.PlaySetting)" />
+                                                    </div>
+                                                    <div style="margin: 1px; display: flex;">
+                                                        <MudIcon Style=@IconStyle Icon="@GetInverseIcon(@context.PlaySetting)" />
+                                                    </div>
+                                                    <div style="margin: 1px; display: flex;">
+                                                        <MudIcon Style=@IconStyle Icon="@GetRandomIcon(@context.PlaySetting)" />
                                                     </div>
                                                 </MudStack>
                                             </MudTd>

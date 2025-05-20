@@ -194,19 +194,19 @@ public partial class PlayHistory
             data.IsFavorite = !data.IsFavorite;
         }
     }
-
     private static string GetSpeedIcon(PlaySetting playSetting)
     {
-        return $"<image href='/images/speed_{playSetting.Speed}.webp' alt='{playSetting.Speed}' width='10' height='10'/>";
+        return $"<image href='/images/Speed/{playSetting.Speed}.png' alt='{playSetting.Speed}' width='25' height='25'/>";
     }
 
     private static string GetVanishIcon(PlaySetting playSetting)
     {
         if (playSetting.IsVanishOn)
         {
-            return $"<image href='/images/vanish.webp' alt='vanish' width='10' height='10'/>";
+            return $"<image href='/images/Doron.png' alt='vanish' width='25' height='25'/>";
         }
-        else {
+        else
+        {
             return "";
         }
     }
@@ -215,7 +215,7 @@ public partial class PlayHistory
     {
         if (playSetting.IsInverseOn)
         {
-            return $"<image href='/images/inverse.webp' alt='inverse' width='10' height='10'/>";
+            return $"<image href='/images/Mirror.png' alt='inverse' width='25' height='25'/>";
         }
         else
         {
@@ -226,7 +226,7 @@ public partial class PlayHistory
     {
         if (playSetting.RandomType != 0)
         {
-            return $"<image href='/images/random_{playSetting.RandomType}.webp' alt='{playSetting.RandomType}' width='10' height='10'/>";
+            return $"<image href='/images/Random_{playSetting.RandomType}.png' alt='{playSetting.RandomType}' width='25' height='25'/>";
         }
         else
         {
