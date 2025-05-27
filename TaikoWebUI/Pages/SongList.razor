@@ -26,7 +26,16 @@
         else
         {
             <MudItem xs="12">
-                <MudTable Items="musicDetailDictionary.Values" Elevation="0" RowsPerPage="25" Outlined="true" Filter="@FilterSongs" Breakpoint=Breakpoint.None>
+                <MudTable Items="musicDetailDictionary.Values"
+                          @ref="_table"
+                          CurrentPage="@currentPage"
+                          RowsPerPage="@rowsPerPage"
+                          CurrentPageChanged="OnCurrentPageChanged"
+                          RowsPerPageChanged="OnRowsPerPageChanged"
+                          Elevation="0"
+                          Outlined="true"
+                          Filter="@FilterSongs"
+                          Breakpoint=Breakpoint.None>
                     <ToolBarContent>
                         <MudGrid Spacing="2">
                             <MudItem xs="12" md="8">
