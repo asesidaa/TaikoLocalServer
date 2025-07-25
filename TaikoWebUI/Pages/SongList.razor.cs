@@ -4,25 +4,29 @@ public partial class SongList
 {
     [Parameter]
     public int Baid { get; set; }
-    
+
     private string Search { get; set; } = string.Empty;
     private string GenreFilter { get; set; } = string.Empty;
     private string? SongNameLanguage { get; set; }
 
     private SongBestResponse? response;
     private UserSetting? userSetting;
-    
+
     private Dictionary<uint, MusicDetail> musicDetailDictionary = new();
+
+    private MudTable<MusicDetail>? _table;
+    private int currentPage = 0;
+    private int rowsPerPage = 25;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        
+
         if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
         {
             await AuthService.LoginWithAuthToken();
         }
-        
+
         response = await Client.GetFromJsonAsync<SongBestResponse>($"api/PlayData/{Baid}");
         response.ThrowIfNull();
 
@@ -44,7 +48,8 @@ public partial class SongList
         else
         {
             BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
-        };
+        }
+        ;
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Song List"], href: $"/Users/{Baid}/Songs", disabled: false));
         BreadcrumbsStateContainer.NotifyStateChanged();
@@ -78,7 +83,7 @@ public partial class SongList
 
         return true;
     }
-    
+
     private async Task OnFavoriteToggled(MusicDetail data)
     {
         var request = new SetFavoriteRequest
@@ -92,5 +97,15 @@ public partial class SongList
         {
             data.IsFavorite = !data.IsFavorite;
         }
+    }
+
+    private void OnCurrentPageChanged(int page)
+    {
+        currentPage = page;
+    }
+
+    private void OnRowsPerPageChanged(int pageSize)
+    {
+        rowsPerPage = pageSize;
     }
 }
