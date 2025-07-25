@@ -247,7 +247,7 @@ public partial class Profile
                                       .CompareTo(GameDataService.GetMusicIndexBySongId(musicDetailDictionary, data2.SongId)));
         }
 
-        for (var i = 0; i < (int)Difficulty.UraOni; i++)
+        for (var i = 0; i <= (int)Difficulty.UraOni; i++)
             if (songBestDataMap.ContainsKey((Difficulty)i) && songBestDataMap[(Difficulty)i].Count > 0)
             {
                 highestDifficulty = (Difficulty)i;
