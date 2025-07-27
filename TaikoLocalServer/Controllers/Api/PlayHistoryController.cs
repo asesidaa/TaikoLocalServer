@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using SharedProject.Models;
 using SharedProject.Models.Responses;
+using SharedProject.Utils;
 using TaikoLocalServer.Filters;
 using TaikoLocalServer.Settings;
 
@@ -52,7 +53,8 @@ public class PlayHistoryController(IUserDatumService userDatumService, ISongPlay
                 DrumrollCount = play.DrumrollCount,
                 ComboCount = play.ComboCount,
                 PlayTime = play.PlayTime,
-                SongNumber = play.SongNumber
+                SongNumber = play.SongNumber,
+                PlaySetting = PlaySettingConverter.ShortToPlaySetting((short)play.OptionSetting)
             })
             .ToList();
 

@@ -5,6 +5,8 @@ public partial class HighScores
     [Parameter]
     public int Baid { get; set; }
 
+    private const string IconStyle = "width:25px; height:25px;";
+
     private SongBestResponse? response;
     private UserSetting? userSetting;
     private Dictionary<Difficulty, List<SongBestData>> songBestDataMap = new();
@@ -17,12 +19,12 @@ public partial class HighScores
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        
+
         if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
         {
             await AuthService.LoginWithAuthToken();
         }
-        
+
         response = await Client.GetFromJsonAsync<SongBestResponse>($"api/PlayData/{Baid}");
         response.ThrowIfNull();
 
@@ -54,7 +56,7 @@ public partial class HighScores
             songBestDataList.Sort((data1, data2) => GameDataService.GetMusicIndexBySongId(musicDetailDictionary, data1.SongId)
                                       .CompareTo(GameDataService.GetMusicIndexBySongId(musicDetailDictionary, data2.SongId)));
         }
-        
+
         // Set last selected tab from local storage
         selectedDifficultyTab = await LocalStorage.GetItemAsync<int>($"highScoresTab");
 
@@ -106,16 +108,31 @@ public partial class HighScores
 
         if (songData.IsFavorite) stringsToCheck.Add("Favorite");
 
-        if (!string.IsNullOrEmpty(Search) && !stringsToCheck.Any(s => s.Contains(Search, StringComparison.OrdinalIgnoreCase)))
-        {
-            return false;
-        }
-
-        if (!string.IsNullOrEmpty(GenreFilter) && songData.Genre != Enum.Parse<SongGenre>(GenreFilter))
-        {
-            return false;
-        }
+        if (!string.IsNullOrEmpty(Search) && !stringsToCheck.Any(s => s.Contains(Search, StringComparison.OrdinalIgnoreCase))) return false;
+        if (!string.IsNullOrEmpty(GenreFilter) && songData.Genre != Enum.Parse<SongGenre>(GenreFilter)) return false;
 
         return true;
+    }
+    private static string GetSpeedIcon(PlaySetting playSetting)
+    {
+        return $"<image href='/images/Speed/{playSetting.Speed}.png' alt='{playSetting.Speed}' width='25' height='25'/>";
+    }
+
+    private static string GetVanishIcon(PlaySetting playSetting)
+    {
+        if (playSetting.IsVanishOn) return $"<image href='/images/Doron.png' alt='vanish' width='25' height='25'/>";
+        return "";
+    }
+
+    private static string GetInverseIcon(PlaySetting playSetting)
+    {
+        if (playSetting.IsInverseOn) return $"<image href='/images/Mirror.png' alt='inverse' width='25' height='25'/>";
+        return "";
+    }
+
+    private static string GetRandomIcon(PlaySetting playSetting)
+    {
+        if (playSetting.RandomType != 0) return $"<image href='/images/Random_{playSetting.RandomType}.png' alt='{playSetting.RandomType}' width='25' height='25'/>";
+        return "";
     }
 }

@@ -19,6 +19,9 @@
                         </MudTableSortLabel>
                     </MudTh>
                     <MudTh>
+                        <MudText Typo="Typo.body2">@Localizer["Song Options"]</MudText>
+                    </MudTh>
+                    <MudTh>
                         <MudTableSortLabel T="SongHistoryData" SortBy="x => (int)x.Difficulty * 1000000 + x.Score">
                             @Localizer["Difficulty"]
                         </MudTableSortLabel>
@@ -66,6 +69,22 @@
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd>@context.PlayTime.ToString(Localizer["DateFormat"])</MudTd>
+                    <MudTd DataLabel="Song Options" Style="width: 128px;">
+                        <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                            <div style="margin: 1px; display: flex;">
+                                <MudIcon Style=@IconStyle Icon="@GetSpeedIcon(@context.PlaySetting)" />
+                            </div>
+                            <div style="margin: 1px; display: flex;">
+                                <MudIcon Style=@IconStyle Icon="@GetVanishIcon(@context.PlaySetting)" />
+                            </div>
+                            <div style="margin: 1px; display: flex;">
+                                <MudIcon Style=@IconStyle Icon="@GetInverseIcon(@context.PlaySetting)" />
+                            </div>
+                            <div style="margin: 1px; display: flex;">
+                                <MudIcon Style=@IconStyle Icon="@GetRandomIcon(@context.PlaySetting)" />
+                            </div>
+                        </MudStack>
+                    </MudTd>
                     <MudTd>
                         <img src="@ScoreUtils.GetDifficultyIcon(context.Difficulty)" alt="@context.Difficulty" title="@context.Difficulty" style="@Constants.ICON_STYLE"/>
                     </MudTd>
@@ -102,8 +121,33 @@
     [Parameter] 
     public List<SongHistoryData> Items { get; set; } = new();
 
+    private const string IconStyle = "width:25px; height:25px;";
+
     private string GetActiveRowClass(SongHistoryData songHistory, int index)
     {
         return Items!.MaxBy(x => x.Score)!.Score == songHistory.Score ? "is-current-user" : "";
+    }
+
+    private static string GetSpeedIcon(PlaySetting playSetting)
+    {
+        return $"<image href='/images/Speed/{playSetting.Speed}.png' alt='{playSetting.Speed}' width='25' height='25'/>";
+    }
+
+    private static string GetVanishIcon(PlaySetting playSetting)
+    {
+        if (playSetting.IsVanishOn) return $"<image href='/images/Doron.png' alt='vanish' width='25' height='25'/>";
+        return "";
+    }
+
+    private static string GetInverseIcon(PlaySetting playSetting)
+    {
+        if (playSetting.IsInverseOn) return $"<image href='/images/Mirror.png' alt='inverse' width='25' height='25'/>";
+        return "";
+    }
+
+    private static string GetRandomIcon(PlaySetting playSetting)
+    {
+        if (playSetting.RandomType != 0) return $"<image href='/images/Random_{playSetting.RandomType}.png' alt='{playSetting.RandomType}' width='25' height='25'/>";
+        return "";
     }
 }

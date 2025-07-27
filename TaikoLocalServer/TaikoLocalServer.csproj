@@ -61,12 +61,12 @@
 
   <ItemGroup>
     <!--Certificates-->
-    <Content Update="Certificates\cert.pfx">
+    <None Update="Certificates\cert.pfx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Certificates\root.pfx">
+    </None>
+    <None Update="Certificates\root.pfx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
 
     
     <!--Configuration-->
