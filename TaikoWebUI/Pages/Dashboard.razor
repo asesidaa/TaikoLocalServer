@@ -35,6 +35,7 @@
 
         try
         {
+            Http.DefaultRequestHeaders.Add("Cache-Control", "no-cache");
             var markdown = await Http.GetStringAsync("Dashboard.md");
 
             if (!string.IsNullOrWhiteSpace(markdown))
