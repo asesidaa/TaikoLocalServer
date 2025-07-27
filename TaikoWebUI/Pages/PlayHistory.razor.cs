@@ -220,7 +220,8 @@ public partial class PlayHistory
         }
         else
         {
-            return "";
+            // Return the darkened image
+            return "<image href='/images/Doron.png' alt='vanish' width='25' height='25' style='filter: brightness(0.2);'/>";
         }
     }
 
@@ -232,9 +233,11 @@ public partial class PlayHistory
         }
         else
         {
-            return "";
+            // Return the darkened image
+            return "<image href='/images/Mirror.png' alt='inverse' width='25' height='25' style='filter: brightness(0.2);'/>";
         }
     }
+
     private static string GetRandomIcon(PlaySetting playSetting)
     {
         if (playSetting.RandomType != 0)
@@ -243,7 +246,8 @@ public partial class PlayHistory
         }
         else
         {
-            return "";
+            // Return the darkened image
+            return "<image href='/images/Random_Whimsical.png' alt='0' width='25' height='25' style='filter: brightness(0.2);'/>";
         }
     }
 
