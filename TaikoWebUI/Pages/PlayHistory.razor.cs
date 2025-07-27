@@ -22,6 +22,8 @@ public partial class PlayHistory
 
     private Dictionary<uint, MusicDetail> musicDetailDictionary = new();
 
+    private int rowsPerPage = 25;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -179,7 +181,7 @@ public partial class PlayHistory
         return false;
     }
     
-    private async Task OnFavoriteToggled(SongHistoryData data)
+    private async Task OnFavoriteToggled(SongHistoryData data, List<List<SongHistoryData>> array)
     {
         var request = new SetFavoriteRequest
         {
@@ -187,11 +189,27 @@ public partial class PlayHistory
             IsFavorite = !data.IsFavorite,
             SongId = data.SongId
         };
+
         var result = await Client.PostAsJsonAsync("api/FavoriteSongs", request);
         if (result.IsSuccessStatusCode)
         {
             data.IsFavorite = !data.IsFavorite;
+            foreach (var songHistoryDataArray in array)
+            {
+                foreach (var songHistoryData in songHistoryDataArray)
+                {
+                    if (songHistoryData.SongId == data.SongId)
+                    {
+                        songHistoryData.IsFavorite = request.IsFavorite;
+                    }
+                }
+            }
         }
+    }
+
+    private void OnRowsPerPageChanged(int pageSize)
+    {
+        rowsPerPage = pageSize;
     }
 }
 
