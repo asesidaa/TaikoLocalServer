@@ -1,4 +1,5 @@
 ﻿@inject IJSRuntime Js
+@inject IGameDataService GameDataService
 
 <MudDialog>
     <DialogContent>
@@ -19,7 +20,7 @@
                     </MudTableSortLabel>
                 </MudTh>
                 <MudTh>
-                    <MudTableSortLabel SortBy="@(new Func<Title, object>(x => x.TitleName))">
+                    <MudTableSortLabel SortBy="@(new Func<Title, object>(x => GameDataService.GetTitle(Titles, x.TitleId, CultureInfo.CurrentCulture.ToString())))">
                         @Localizer["Title"]
                     </MudTableSortLabel>
                 </MudTh>
@@ -30,7 +31,7 @@
 #pragma warning disable CS8602
                 }
                 <MudTd DataLabel="Id" Class="cursor-pointer">@context.TitleId</MudTd>
-                <MudTd DataLabel="Title" Class="cursor-pointer">@context.TitleName</MudTd>
+                <MudTd DataLabel="Title" Class="cursor-pointer">@GameDataService.GetTitle(Titles, context.TitleId, CultureInfo.CurrentCulture.ToString())</MudTd>
                 @{
 #pragma warning restore CS8602
                 }
@@ -40,7 +41,7 @@
             </PagerContent>
         </MudTable>
         <MudText Class="mt-4 d-block" Typo="Typo.caption">
-            <b>@Localizer["Currently Selected:"]</b> @selectedTitle?.TitleName
+            <b>@Localizer["Currently Selected:"]</b> @GameDataService.GetTitle(Titles, selectedTitle?.TitleId ?? 0, CultureInfo.CurrentCulture.ToString())
         </MudText>
     </DialogContent>
     <DialogActions>
@@ -88,14 +89,14 @@
         }
 
         return string.IsNullOrEmpty(searchString) ||
-               title.TitleName.Contains(searchString, StringComparison.InvariantCultureIgnoreCase);
+               GameDataService.GetTitle(Titles, title.TitleId, CultureInfo.CurrentCulture.ToString()).Contains(searchString, StringComparison.InvariantCultureIgnoreCase);
     }
 
     private async Task Submit()
     {
         if (selectedTitle is not null)
         {
-            UserSetting.Title = selectedTitle.TitleName;
+            UserSetting.Title = GameDataService.GetTitle(Titles, selectedTitle.TitleId, CultureInfo.CurrentCulture.ToString());
             UserSetting.TitlePlateId = selectedTitle.TitleRarity;
         }
 

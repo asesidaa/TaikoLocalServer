@@ -33,7 +33,7 @@
         else
         {
             <MudItem xs="12">
-                <MudTable Class="mud-table-outlined" Items="@songHistoryDataMap.Values.ToList()" Elevation="0" Filter=@FilterSongs RowsPerPage="25" Striped="false" Hover="false" Bordered="false" Dense="true"  Breakpoint=Breakpoint.None>
+                <MudTable Class="mud-table-outlined" Items="@songHistoryDataMap.Values.ToList()" Elevation="0" Filter=@FilterSongs RowsPerPage="@rowsPerPage" RowsPerPageChanged="OnRowsPerPageChanged" Striped="false" Hover="false" Bordered="false" Dense="true" Breakpoint=Breakpoint.None>
                     <ToolBarContent>
                         <MudGrid Spacing="2" Justify="Justify.SpaceBetween">
                             <MudItem xs="12" md="4" Style="align-content: center;">
@@ -82,6 +82,15 @@
                                 @* Song title *@
                                 <MudTd DataLabel="Song" Style="text-align: initial !important;">
                                     <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                        <div style="margin: 4px;">
+                                            <MudToggleIconButton Toggled="songHistoryData.IsFavorite"
+                                                                 ToggledChanged="@(async () => await OnFavoriteToggled(songHistoryData, songHistoryDataMap.Values.ToList()))"
+                                                                 Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
+                                                                 ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
+                                                                 Size="Size.Small"
+                                                                 ToggledSize="Size.Small"
+                                                                 Title="Add to favorites" ToggledTitle="Remove from favorites" />
+                                        </div>
                                         <div style="margin: 4px; display: flex;">
                                             <MudIcon Style=@IconStyle Icon="@GetDifficultyIcon(songHistoryData.Difficulty)" />
                                         </div>

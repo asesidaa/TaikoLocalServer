@@ -33,4 +33,5 @@ public interface IGameDataService
     public string GetBodyTitle(IEnumerable<Costume> costumes, uint index, string? language = "ja");
     public string GetFaceTitle(IEnumerable<Costume> costumes, uint index, string? language = "ja");
     public string GetPuchiTitle(IEnumerable<Costume> costumes, uint index, string? language = "ja");
+    public string GetTitle(IEnumerable<Title> titles, uint index, string? language = "ja");
 }
