@@ -261,6 +261,16 @@ public class UpdatePlayResultCommandHandler(TaikoDbContext context, ILogger<Upda
         genericInfo.AddRange(playResultData.GetGenericInfoNoes);
         user.GenericInfoFlgArray = genericInfo.ToArray();
 
+        foreach (var songNo in playResultData.ReleaseSongNoes.Where(songNo => !user.UnlockedSongIdList.Contains(songNo)))
+        {
+            user.UnlockedSongIdList.Add(songNo);
+        }
+
+        foreach (var songNo in playResultData.UraReleaseSongNoes.Where(songNo => !user.UnlockedUraSongIdList.Contains(songNo)))
+        {
+            user.UnlockedUraSongIdList.Add(songNo);
+        }
+
         var difficultyPlayedArray = new List<uint>
         {
             playResultData.DifficultyPlayedCourse,
