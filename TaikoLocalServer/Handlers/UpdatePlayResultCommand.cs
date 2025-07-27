@@ -113,7 +113,8 @@ public class UpdatePlayResultCommandHandler(TaikoDbContext context, ILogger<Upda
                 Skipped = stageData.IsSkipUse,
                 SongId = stageData.SongNo,
                 PlayTime = lastPlayDateTime,
-                Difficulty = (Difficulty)stageData.Level
+                Difficulty = (Difficulty)stageData.Level,
+                OptionSetting = stageData.OptionFlg[0]
             };
             context.SongPlayData.Add(songPlayDatum);
         }

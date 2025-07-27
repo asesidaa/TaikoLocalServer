@@ -66,6 +66,7 @@
                             </ToolBarContent>
                             <HeaderContent>
                                 <MudTh Style="width:300px; background-color: var(--mud-palette-table-striped);">@Localizer["Song Title / Artist"]</MudTh>
+                                <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Song Options"]</MudTh>
                                 <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Genre"]</MudTh>
                                 <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Level"]</MudTh>
                                 <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Score"]</MudTh>
@@ -98,6 +99,24 @@
                                                 <MudText Typo="Typo.body2" Style="font-weight:bold">@songHistoryData.MusicName</MudText>
                                                 <MudText Typo="Typo.caption">@songHistoryData.MusicArtist</MudText>
                                             </a>
+                                        </div>
+                                    </MudStack>
+                                </MudTd>
+
+                                @* Song Options *@
+                                <MudTd DataLabel="Song Options" Style="width: 128px;">
+                                    <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                        <div style="margin: 1px; display: flex;">
+                                            <MudIcon Style=@IconStyle Icon="@GetSpeedIcon(songHistoryData.PlaySetting)" />
+                                        </div>
+                                        <div style="margin: 1px; display: flex;">
+                                            <MudIcon Style=@IconStyle Icon="@GetVanishIcon(songHistoryData.PlaySetting)" />
+                                        </div>
+                                        <div style="margin: 1px; display: flex;">
+                                            <MudIcon Style=@IconStyle Icon="@GetInverseIcon(songHistoryData.PlaySetting)" />
+                                        </div>
+                                        <div style="margin: 1px; display: flex;">
+                                            <MudIcon Style=@IconStyle Icon="@GetRandomIcon(songHistoryData.PlaySetting)" />
                                         </div>
                                     </MudStack>
                                 </MudTd>

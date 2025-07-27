@@ -1,5 +1,6 @@
 ﻿using GameDatabase.Context;
 using SharedProject.Models;
+using SharedProject.Utils;
 using Swan.Mapping;
 using Throw;
 
@@ -45,6 +46,12 @@ public class SongBestDatumService : ISongBestDatumService
                 nameof(SongPlayDatum.DrumrollCount),
                 nameof(SongPlayDatum.ComboCount)
             );
+
+            if(bestLog is not null)
+            {
+                bestData.PlaySetting = PlaySettingConverter.ShortToPlaySetting((short)bestLog.OptionSetting);
+            }
+            
 
             var aiSection = aiSectionBest.FirstOrDefault(datum => datum.Difficulty == bestData.Difficulty &&
                                                          datum.SongId == bestData.SongId);

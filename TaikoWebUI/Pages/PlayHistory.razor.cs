@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using Microsoft.JSInterop;
+using SharedProject.Enums;
 using SharedProject.Models;
 
 namespace TaikoWebUI.Pages;
@@ -205,6 +206,28 @@ public partial class PlayHistory
                 }
             }
         }
+    }
+    private static string GetSpeedIcon(PlaySetting playSetting)
+    {
+        return $"<image href='/images/Speed/{playSetting.Speed}.png' alt='{playSetting.Speed}' width='25' height='25'/>";
+    }
+
+    private static string GetVanishIcon(PlaySetting playSetting)
+    {
+        if (playSetting.IsVanishOn) return $"<image href='/images/Doron.png' alt='vanish' width='25' height='25'/>";
+        return "";
+    }
+
+    private static string GetInverseIcon(PlaySetting playSetting)
+    {
+        if (playSetting.IsInverseOn) return $"<image href='/images/Mirror.png' alt='inverse' width='25' height='25'/>";
+        return "";
+    }
+
+    private static string GetRandomIcon(PlaySetting playSetting)
+    {
+        if (playSetting.RandomType != 0) return $"<image href='/images/Random_{playSetting.RandomType}.png' alt='{playSetting.RandomType}' width='25' height='25'/>";
+        return "";
     }
 
     private void OnRowsPerPageChanged(int pageSize)
