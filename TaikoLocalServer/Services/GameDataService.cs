@@ -523,10 +523,16 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
             var titleId = shougou.UniqueId;
             var titleNameKey = $"syougou_{titleId}";
             var titleName = wordlistData.WordListEntries.First(entry => entry.Key == titleNameKey).JapaneseText;
+            var titleNameEn = wordlistData.WordListEntries.First(entry => entry.Key == titleNameKey).EnglishUsText;
+            var titleNameCn = wordlistData.WordListEntries.First(entry => entry.Key == titleNameKey).ChineseTText;
+            var titleNameKo = wordlistData.WordListEntries.First(entry => entry.Key == titleNameKey).KoreanText;
             var title = new Title
             {
                 TitleId = titleId,
                 TitleName = titleName,
+                TitleNameEN = titleNameEn,
+                TitleNameCN = titleNameCn,
+                TitleNameKO = titleNameKo,
                 TitleRarity = shougou.Rarity
             };
             titleDictionary.TryAdd(titleId, title);

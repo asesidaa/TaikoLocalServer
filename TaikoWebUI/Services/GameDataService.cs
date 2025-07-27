@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using SharedProject.Models;
+using System.Collections.Immutable;
 
 namespace TaikoWebUI.Services;
 
@@ -207,7 +208,21 @@ public class GameDataService : IGameDataService
             _ => costumes.FirstOrDefault(costume => costume.CostumeType == "puchi" && costume.CostumeId == index)?.CostumeName ?? string.Empty
         };
     }
-    
+
+    public string GetTitle(IEnumerable<Title> titles, uint index, string? language = "ja")
+    {
+        return language switch
+        {
+            "jp" => titles.FirstOrDefault(title => title.TitleId == index)?.TitleName ?? string.Empty,
+            "en-US" => titles.FirstOrDefault(title => title.TitleId == index)?.TitleNameEN ?? string.Empty,
+            "fr-FR" => titles.FirstOrDefault(title => title.TitleId == index)?.TitleNameEN ?? string.Empty,
+            "zh-Hans" => titles.FirstOrDefault(title => title.TitleId == index)?.TitleNameCN ?? string.Empty,
+            "zh-Hant" => titles.FirstOrDefault(title => title.TitleId == index)?.TitleNameCN ?? string.Empty,
+            "ko" => titles.FirstOrDefault(title => title.TitleId == index)?.TitleNameKO ?? string.Empty,
+            _ => titles.FirstOrDefault(title => title.TitleId == index)?.TitleName ?? string.Empty,
+        };
+    }
+
     private async Task InitializeMusicDetailAsync()
     {
         musicDetailDictionary = await client.GetFromJsonAsync<Dictionary<uint, MusicDetail>>("api/GameData/MusicDetails");
