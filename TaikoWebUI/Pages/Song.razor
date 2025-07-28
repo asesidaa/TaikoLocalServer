@@ -23,8 +23,22 @@ else
     }
     else
     {
-        <MudText Typo="Typo.h5">@songTitle</MudText>
-        <MudText Typo="Typo.body2">@songArtist</MudText>
+        <MudStack Row="true" Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Style="height: 100%;">
+            <div style="margin: 4px; display: flex; align-items: center;">
+                <MudToggleIconButton Toggled="musicDetail?.IsFavorite ?? false"
+                                     ToggledChanged="@(async () => await OnFavoriteToggled())"
+                                     Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
+                                     ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
+                                     Size="Size.Medium"
+                                     ToggledSize="Size.Medium"
+                                     Title="Add to favorites" ToggledTitle="Remove from favorites" />
+            </div>
+            <div>
+                <MudText Typo="Typo.h5">@songTitle</MudText>
+                <MudText Typo="Typo.body2">@songArtist</MudText>
+            </div>
+        </MudStack>
+
         <MudGrid Class="my-4 pb-10">
             <MudItem xs="12">
                 <SongLeaderboardCard SongId="@SongId" Baid="@Baid" />
