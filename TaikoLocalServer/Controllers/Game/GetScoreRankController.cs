@@ -29,12 +29,12 @@ public class GetScoreRankController(ISongBestDatumService songBestDatumService, 
     
     [HttpPost("/v12r00_cn/chassis/getscorerank.php")]
     [Produces("application/protobuf")]
-    public async Task<IActionResult> GetScoreRank3209([FromBody] Models.v3209.GetScoreRankRequest request)
+    public async Task<IActionResult> GetScoreRankCN00([FromBody] Models.CN00.GetScoreRankRequest request)
     {
         Logger.LogInformation("GetScoreRank request : {Request}", request.Stringify());
        
         var scoreRankData = await Handle((uint)request.Baid);
-        var response = new Models.v3209.GetScoreRankResponse
+        var response = new Models.CN00.GetScoreRankResponse
         {
             Result = 1,
             IkiScoreRankFlg = scoreRankData.IkiScoreRankFlg,

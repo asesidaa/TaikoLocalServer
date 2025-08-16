@@ -17,24 +17,24 @@ public class GetDanOdaiController : BaseController<GetDanOdaiController>
         };
 
         var odaiDataList = await Mediator.Send(new GetDanOdaiQuery(request.DanIds, request.Type));
-        response.AryOdaiDatas.AddRange(odaiDataList.Select(DanDataMappers.To3906OdaiData));
+        response.AryOdaiDatas.AddRange(odaiDataList.Select(DanDataMappers.ToWW08OdaiData));
 
         return Ok(response);
     }
     
     [HttpPost("/v12r00_cn/chassis/getdanodai.php")]
     [Produces("application/protobuf")]
-    public async Task<IActionResult> GetDanOdai3209([FromBody] Models.v3209.GetDanOdaiRequest request)
+    public async Task<IActionResult> GetDanOdaiCN00([FromBody] Models.CN00.GetDanOdaiRequest request)
     {
         Logger.LogInformation("GetDanOdai request : {Request}", request.Stringify());
 
-        var response = new Models.v3209.GetDanOdaiResponse
+        var response = new Models.CN00.GetDanOdaiResponse
         {
             Result = 1
         };
 
         var odaiDataList = await Mediator.Send(new GetDanOdaiQuery(request.DanIds, request.Type));
-        response.AryOdaiDatas.AddRange(odaiDataList.Select(DanDataMappers.To3209OdaiData));
+        response.AryOdaiDatas.AddRange(odaiDataList.Select(DanDataMappers.ToCN00OdaiData));
 
         return Ok(response);
     }

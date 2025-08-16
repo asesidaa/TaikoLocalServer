@@ -5,11 +5,11 @@ namespace TaikoLocalServer.Mappers;
 [Mapper]
 public static partial class BaidResponseMapper
 {
-    public static partial BAIDResponse MapTo3906(CommonBaidResponse commonBaidResponse);
+    public static partial BAIDResponse MapToWW08(CommonBaidResponse commonBaidResponse);
     
-    public static BAIDResponse Map3906WithPostProcess(CommonBaidResponse commonBaidResponse)
+    public static BAIDResponse MapWW08WithPostProcess(CommonBaidResponse commonBaidResponse)
     {
-        var response = MapTo3906(commonBaidResponse);
+        var response = MapToWW08(commonBaidResponse);
         response.AryCostumedata = new BAIDResponse.CostumeData
         {
             Costume1 = commonBaidResponse.CostumeData[0],
@@ -26,12 +26,12 @@ public static partial class BaidResponseMapper
         return response;
     }
     
-    public static partial Models.v3209.BAIDResponse MapTo3209(CommonBaidResponse commonBaidResponse);
+    public static partial Models.CN00.BAIDResponse MapToCN00(CommonBaidResponse commonBaidResponse);
 
-    public static Models.v3209.BAIDResponse Map3209WithPostProcess(CommonBaidResponse commonBaidResponse)
+    public static Models.CN00.BAIDResponse MapCN00WithPostProcess(CommonBaidResponse commonBaidResponse)
     {
-        var response = MapTo3209(commonBaidResponse);
-        response.AryCostumedata = new Models.v3209.BAIDResponse.CostumeData
+        var response = MapToCN00(commonBaidResponse);
+        response.AryCostumedata = new Models.CN00.BAIDResponse.CostumeData
         {
             Costume1 = commonBaidResponse.CostumeData[0],
             Costume2 = commonBaidResponse.CostumeData[1],

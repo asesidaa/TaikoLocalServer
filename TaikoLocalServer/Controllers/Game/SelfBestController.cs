@@ -13,20 +13,20 @@ public class SelfBestController : BaseController<SelfBestController>
 
         var commonResponse =
             await Mediator.Send(new GetSelfBestQuery(request.Baid, request.Level, request.ArySongNoes));
-        var response = SelfBestMappers.MapTo3906(commonResponse);
+        var response = SelfBestMappers.MapToWW08(commonResponse);
 
         return Ok(response);
     }
     
     [HttpPost("/v12r00_cn/chassis/selfbest.php")]
     [Produces("application/protobuf")]
-    public async Task<IActionResult> SelfBest3209([FromBody] Models.v3209.SelfBestRequest request)
+    public async Task<IActionResult> SelfBestCN00([FromBody] Models.CN00.SelfBestRequest request)
     {
-        Logger.LogInformation("SelfBest3209 request : {Request}", request.Stringify());
+        Logger.LogInformation("SelfBestCN00 request : {Request}", request.Stringify());
 
         var commonResponse =
             await Mediator.Send(new GetSelfBestQuery((uint)request.Baid, request.Level, request.ArySongNoes));
-        var response = SelfBestMappers.MapTo3209(commonResponse);
+        var response = SelfBestMappers.MapToCN00(commonResponse);
 
         return Ok(response);
     }

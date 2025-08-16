@@ -15,7 +15,7 @@ public static partial class AiScoreMappers
         return response;
     }
 
-    public static partial GetAiScoreResponse MapTo3906(CommonAiScoreResponse response);
+    public static partial GetAiScoreResponse MapToWW08(CommonAiScoreResponse response);
 
-    public static partial Models.v3209.GetAiScoreResponse MapTo3209(CommonAiScoreResponse response);
+    public static partial Models.CN00.GetAiScoreResponse MapToCN00(CommonAiScoreResponse response);
 }

@@ -11,17 +11,17 @@ public class GetFolderController : BaseController<GetFolderController>
     {
         Logger.LogInformation("GetFolder request : {Request}", request.Stringify());
         var commonResponse = await Mediator.Send(new GetFolderQuery(request.FolderIds));
-        var response = FolderDataMappers.MapTo3906(commonResponse);
+        var response = FolderDataMappers.MapToWW08(commonResponse);
         return Ok(response);
     }
     
     [HttpPost("/v12r00_cn/chassis/getfolder.php")]
     [Produces("application/protobuf")]
-    public async Task<IActionResult> GetFolder([FromBody] Models.v3209.GetfolderRequest request)
+    public async Task<IActionResult> GetFolder([FromBody] Models.CN00.GetfolderRequest request)
     {
-        Logger.LogInformation("GetFolder3209 request : {Request}", request.Stringify());
+        Logger.LogInformation("GetFolderCN00 request : {Request}", request.Stringify());
         var commonResponse = await Mediator.Send(new GetFolderQuery(request.FolderIds));
-        var response = FolderDataMappers.MapTo3209(commonResponse);
+        var response = FolderDataMappers.MapToCN00(commonResponse);
         return Ok(response);
     }
 }

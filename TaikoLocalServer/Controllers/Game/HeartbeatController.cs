@@ -20,10 +20,10 @@ public class HeartbeatController : BaseController<HeartbeatController>
     
     [HttpPost("/v12r00_cn/chassis/heartbeat.php")]
     [Produces("application/protobuf")]
-    public IActionResult HeartBeat3209([FromBody] Models.v3209.HeartBeatRequest request)
+    public IActionResult HeartBeatCN00([FromBody] Models.CN00.HeartBeatRequest request)
     {
         Logger.LogInformation("Heartbeat request: {Request}", request.Stringify());
-        var response = new Models.v3209.HeartBeatResponse
+        var response = new Models.CN00.HeartBeatResponse
         {
             Result = 1,
             GameSvrStat = 1

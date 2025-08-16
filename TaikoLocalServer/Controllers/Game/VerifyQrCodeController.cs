@@ -33,12 +33,12 @@ public class VerifyQrCodeController : BaseController<VerifyQrCodeController>
     
     [HttpPost("/v12r00_cn/chassis/verifyqrcode.php")]
     [Produces("application/protobuf")]
-    public IActionResult VerifyQrCode3209([FromBody] Models.v3209.VerifyQrcodeRequest request)
+    public IActionResult VerifyQrCodeCN00([FromBody] Models.CN00.VerifyQrcodeRequest request)
     {
         Logger.LogInformation("VerifyQrCode request : {Request}", request.Stringify());
 
         var qrCodeId = VerifyQr(request.QrcodeSerial);
-        var response = new Models.v3209.VerifyQrcodeResponse
+        var response = new Models.CN00.VerifyQrcodeResponse
         {
             Result = 1,
             QrcodeId = (uint)qrCodeId

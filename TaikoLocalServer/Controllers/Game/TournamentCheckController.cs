@@ -19,11 +19,11 @@ public class TournamentCheckController : BaseController<TournamentCheckControlle
     
     [HttpPost("/v12r00_cn/chassis/tournamentcheck.php")]
     [Produces("application/protobuf")]
-    public IActionResult TournamentCheck3209([FromBody] Models.v3209.TournamentcheckRequest request)
+    public IActionResult TournamentCheckCN00([FromBody] Models.CN00.TournamentcheckRequest request)
     {
         Logger.LogInformation("TournamentCheck request : {Request}", request.Stringify());
 
-        var response = new Models.v3209.TournamentcheckResponse
+        var response = new Models.CN00.TournamentcheckResponse
         {
             Result = 1,
         };

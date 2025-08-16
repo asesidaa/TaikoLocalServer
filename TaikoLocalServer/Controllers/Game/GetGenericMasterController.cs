@@ -21,11 +21,11 @@ public class GetGenericMasterController : BaseController<GetGenericMasterControl
     
     [HttpPost("/v12r00_cn/chassis/getgenericmaster.php")]
     [Produces("application/protobuf")]
-    public IActionResult GetGenericMaster([FromBody] Models.v3209.GetGenericMasterRequest request)
+    public IActionResult GetGenericMaster([FromBody] Models.CN00.GetGenericMasterRequest request)
     {
-        Logger.LogInformation("GetGenericMaster3209Request: {Request}", request.Stringify());
+        Logger.LogInformation("GetGenericMasterCN00Request: {Request}", request.Stringify());
 
-        var response = new Models.v3209.GetGenericMasterResponse
+        var response = new Models.CN00.GetGenericMasterResponse
         {
             Result = 1,
             VerupNo = 2,

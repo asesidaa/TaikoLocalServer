@@ -12,19 +12,19 @@ public class SongPurchaseController : BaseController<SongPurchaseController>
         Logger.LogInformation("SongPurchase request : {Request}", request.Stringify());
 
         var commonResponse = await Mediator.Send(SongPurchaseMappers.MapToCommand(request));
-        var response = SongPurchaseMappers.MapTo3906(commonResponse);
+        var response = SongPurchaseMappers.MapToWW08(commonResponse);
        
         return Ok(response);
     }
     
     [HttpPost("/v12r00_cn/chassis/songpurchase.php")]
     [Produces("application/protobuf")]
-    public async Task<IActionResult> SongPurchase3209([FromBody] Models.v3209.SongPurchaseRequest request)
+    public async Task<IActionResult> SongPurchaseCN00([FromBody] Models.CN00.SongPurchaseRequest request)
     {
         Logger.LogInformation("SongPurchase request : {Request}", request.Stringify());
 
         var commonResponse = await Mediator.Send(SongPurchaseMappers.MapToCommand(request));
-        var response = SongPurchaseMappers.MapTo3209(commonResponse);
+        var response = SongPurchaseMappers.MapToCN00(commonResponse);
         return Ok(response);
     }
 }

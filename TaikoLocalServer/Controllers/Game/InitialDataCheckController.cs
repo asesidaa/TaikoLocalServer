@@ -12,19 +12,19 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
         Logger.LogInformation("Initial data check request: {Request}", request.Stringify());
 
         var commonResponse = await Mediator.Send(new GetInitialDataQuery());
-        var response = InitialDataMappers.MapTo3906(commonResponse);
+        var response = InitialDataMappers.MapToWW08(commonResponse);
 
         return Ok(response);
     }
     
     [HttpPost("/v12r00_cn/chassis/initialdatacheck.php")]
     [Produces("application/protobuf")]
-    public async Task<IActionResult> InitialDataCheckCN([FromBody] Models.v3209.InitialdatacheckRequest request)
+    public async Task<IActionResult> InitialDataCheckCN([FromBody] Models.CN00.InitialdatacheckRequest request)
     {
         Logger.LogInformation("Initial data check request: {Request}", request.Stringify());
 
         var commonResponse = await Mediator.Send(new GetInitialDataQuery());
-        var response = InitialDataMappers.MapTo3209(commonResponse);
+        var response = InitialDataMappers.MapToCN00(commonResponse);
 
         return Ok(response);
     }

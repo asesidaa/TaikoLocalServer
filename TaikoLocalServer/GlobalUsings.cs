@@ -12,6 +12,6 @@ global using TaikoLocalServer.Common.Utils;
 global using TaikoLocalServer.Handlers;
 global using TaikoLocalServer.Models;
 global using TaikoLocalServer.Models.Application;
-global using TaikoLocalServer.Models.v3906;
+global using TaikoLocalServer.Models.WW08;
 global using TaikoLocalServer.Services;
 global using TaikoLocalServer.Services.Interfaces;

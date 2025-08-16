@@ -19,11 +19,11 @@ public class SetAnyStringController : BaseController<SetAnyStringController>
     
     [HttpPost("/v12r00_cn/chassis/setanystring.php")]
     [Produces("application/protobuf")]
-    public IActionResult SetAnyString3209([FromBody] Models.v3209.SetAnyStringRequest request)
+    public IActionResult SetAnyStringCN00([FromBody] Models.CN00.SetAnyStringRequest request)
     {
         Logger.LogInformation("SetAnyString request : {Request}", request.Stringify());
 
-        var response = new Models.v3209.SetAnyStringResponse
+        var response = new Models.CN00.SetAnyStringResponse
         {
             Result = 1,
         };

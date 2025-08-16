@@ -19,11 +19,11 @@ public class RewardItemController : BaseController<RewardItemController>
     
     [HttpPost("/v12r00_cn/chassis/rewarditem.php")]
     [Produces("application/protobuf")]
-    public IActionResult RewardItem3209([FromBody] Models.v3209.RewardItemRequest request)
+    public IActionResult RewardItemCN00([FromBody] Models.CN00.RewardItemRequest request)
     {
         Logger.LogInformation("RewardItem request : {Request}", request.Stringify());
 
-        var response = new Models.v3209.RewardItemResponse
+        var response = new Models.CN00.RewardItemResponse
         {
             Result = 1
         };
