@@ -12,19 +12,19 @@ public class UserDataController : BaseController<UserDataController>
         Logger.LogInformation("UserData request : {Request}", request.Stringify());
 
         var commonResponse = await Mediator.Send(new UserDataQuery(request.Baid));
-        var response = UserDataMappers.MapTo3906(commonResponse);
+        var response = UserDataMappers.MapToWW08(commonResponse);
 
         return Ok(response);
     }
     
     [HttpPost("/v12r00_cn/chassis/userdata.php")]
     [Produces("application/protobuf")]
-    public async Task<IActionResult> GetUserData3209([FromBody] Models.v3209.UserDataRequest request)
+    public async Task<IActionResult> GetUserDataCN00([FromBody] Models.CN00.UserDataRequest request)
     {
         Logger.LogInformation("UserData request : {Request}", request.Stringify());
 
         var commonResponse = await Mediator.Send(new UserDataQuery((uint)request.Baid));
-        var response = UserDataMappers.MapTo3209(commonResponse);
+        var response = UserDataMappers.MapToCN00(commonResponse);
 
         return Ok(response);
     }

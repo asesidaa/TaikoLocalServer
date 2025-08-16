@@ -12,19 +12,19 @@ public class GetShopFolderController : BaseController<GetShopFolderController>
         Logger.LogInformation("GetShopFolder request : {Request}", request.Stringify());
 
         var commonResponse = await Mediator.Send(new GetShopFolderQuery());
-        var response = ShopFolderDataMappers.MapTo3906(commonResponse);
+        var response = ShopFolderDataMappers.MapToWW08(commonResponse);
 
         return Ok(response);
     }
     
     [HttpPost("/v12r00_cn/chassis/getshopfolder.php")]
     [Produces("application/protobuf")]
-    public async Task<IActionResult> GetShopFolder3209([FromBody] Models.v3209.GetShopFolderRequest request)
+    public async Task<IActionResult> GetShopFolderCN00([FromBody] Models.CN00.GetShopFolderRequest request)
     {
         Logger.LogInformation("GetShopFolder request : {Request}", request.Stringify());
 
         var commonResponse = await Mediator.Send(new GetShopFolderQuery());
-        var response = ShopFolderDataMappers.MapTo3209(commonResponse);
+        var response = ShopFolderDataMappers.MapToCN00(commonResponse);
 
         return Ok(response);
     }

@@ -12,20 +12,20 @@ public class GetAiScoreController : BaseController<GetAiScoreController>
         Logger.LogInformation("GetAiScore request : {Request}", request.Stringify());
 
         var commonResponse = await Mediator.Send(new GetAiScoreQuery(request.Baid, request.SongNo, request.Level));
-        var response = AiScoreMappers.MapTo3906(commonResponse);
+        var response = AiScoreMappers.MapToWW08(commonResponse);
 
         return Ok(response);
     }
 
     [HttpPost("v12r00_cn/chassis/getaiscore.php")]
     [Produces("application/protobuf")]
-    public async Task<IActionResult> GetAiScore3209([FromBody] Models.v3209.GetAiScoreRequest request)
+    public async Task<IActionResult> GetAiScoreCN00([FromBody] Models.CN00.GetAiScoreRequest request)
     {
         Logger.LogInformation("GetAiScore request : {Request}", request.Stringify());
 
         var commonResponse =
             await Mediator.Send(new GetAiScoreQuery((uint)request.Baid, request.SongNo, request.Level));
-        var response = AiScoreMappers.MapTo3209(commonResponse);
+        var response = AiScoreMappers.MapToCN00(commonResponse);
 
         return Ok(response);
     }

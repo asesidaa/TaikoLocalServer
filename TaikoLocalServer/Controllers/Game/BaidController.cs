@@ -24,7 +24,7 @@ public class BaidController : BaseController<BaidController>
             return Ok(response);
         }
 
-        response = Mappers.BaidResponseMapper.Map3906WithPostProcess(commonResponse);
+        response = Mappers.BaidResponseMapper.MapWW08WithPostProcess(commonResponse);
         response.PlayerType = 0;
         
         return Ok(response);
@@ -32,17 +32,17 @@ public class BaidController : BaseController<BaidController>
     
     [HttpPost("/v12r00_cn/chassis/baidcheck.php")]
     [Produces("application/protobuf")]
-    public async Task<IActionResult> GetBaid3209([FromBody] Models.v3209.BAIDRequest request)
+    public async Task<IActionResult> GetBaidCN00([FromBody] Models.CN00.BAIDRequest request)
     {
         Logger.LogInformation("Baid request: {Request}", request.Stringify());
 
         var commonResponse = await Mediator.Send(new BaidQuery(request.WechatQrStr));
-        Models.v3209.BAIDResponse response;
+        Models.CN00.BAIDResponse response;
         if (commonResponse.IsNewUser)
         {
             Logger.LogInformation("New user with access code {AccessCode}", request.WechatQrStr);
 
-            response = new Models.v3209.BAIDResponse
+            response = new Models.CN00.BAIDResponse
             {
                 Result = 1,
                 PlayerType = 1,
@@ -52,7 +52,7 @@ public class BaidController : BaseController<BaidController>
             return Ok(response);
         }
 
-        response = Mappers.BaidResponseMapper.Map3209WithPostProcess(commonResponse);
+        response = Mappers.BaidResponseMapper.MapCN00WithPostProcess(commonResponse);
         response.PlayerType = 0;
         
         return Ok(response);

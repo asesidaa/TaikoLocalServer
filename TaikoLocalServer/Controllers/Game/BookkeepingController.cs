@@ -7,7 +7,7 @@ public class BookkeepingController : BaseController<BookkeepingController>
     [Produces("application/protobuf")]
     public IActionResult StartupAuth([FromBody] BookKeepingRequest request)
     {
-        Logger.LogInformation("[3906] Bookkeeping request: {Request}", request.Stringify());
+        Logger.LogInformation("[WW08] Bookkeeping request: {Request}", request.Stringify());
         var response = new BookKeepingResponse
         {
             Result = 1
@@ -19,9 +19,9 @@ public class BookkeepingController : BaseController<BookkeepingController>
 
     [HttpPost("/v12r00_cn/chassis/bookkeeping.php")]
     [Produces("application/protobuf")]
-    public IActionResult StartupAuth3209([FromBody] Models.v3209.BookKeepingRequest request)
+    public IActionResult StartupAuthCN00([FromBody] Models.CN00.BookKeepingRequest request)
     {
-        Logger.LogInformation("[3209] Bookkeeping request: {Request}", request.Stringify());
+        Logger.LogInformation("[CN00] Bookkeeping request: {Request}", request.Stringify());
         var response = new BookKeepingResponse
         {
             Result = 1

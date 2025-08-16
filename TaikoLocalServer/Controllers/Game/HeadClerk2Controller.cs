@@ -1,4 +1,4 @@
-﻿using TaikoLocalServer.Models.v3209;
+﻿using TaikoLocalServer.Models.CN00;
 
 namespace TaikoLocalServer.Controllers.Game;
 

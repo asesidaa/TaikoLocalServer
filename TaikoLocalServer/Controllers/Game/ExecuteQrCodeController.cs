@@ -20,11 +20,11 @@ public class ExecuteQrCodeController : BaseController<ExecuteQrCodeController>
     
     [HttpPost("/v12r00_cn/chassis/executeqrcode.php")]
     [Produces("application/protobuf")]
-    public IActionResult ExecuteQrCode3209([FromBody] Models.v3209.ExecuteQrcodeRequest request)
+    public IActionResult ExecuteQrCodeCN00([FromBody] Models.CN00.ExecuteQrcodeRequest request)
     {
         Logger.LogInformation("ExecuteQrcode request : {Request}", request.Stringify());
 
-        var response = new Models.v3209.ExecuteQrcodeResponse
+        var response = new Models.CN00.ExecuteQrcodeResponse
         {
             QrcodeId = 1,
             Result = 1

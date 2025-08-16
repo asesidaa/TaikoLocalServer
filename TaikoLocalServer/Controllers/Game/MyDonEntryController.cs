@@ -12,18 +12,18 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
         Logger.LogInformation("MyDonEntry request : {Request}", request.Stringify());
 
         var commonResponse = await Mediator.Send(new AddMyDonEntryCommand(request.AccessCode, request.MydonName, request.MydonNameLanguage));
-        var response = MyDonEntryMappers.MapTo3906(commonResponse);
+        var response = MyDonEntryMappers.MapToWW08(commonResponse);
         return Ok(response);
     }
     
     [HttpPost("/v12r00_cn/chassis/mydonentry.php")]
     [Produces("application/protobuf")]
-    public async Task<IActionResult> GetMyDonEntry3209([FromBody] Models.v3209.MydonEntryRequest request)
+    public async Task<IActionResult> GetMyDonEntryCN00([FromBody] Models.CN00.MydonEntryRequest request)
     {
         Logger.LogInformation("MyDonEntry request : {Request}", request.Stringify());
 
         var commonResponse = await Mediator.Send(new AddMyDonEntryCommand(request.WechatQrStr, request.MydonName, request.MydonNameLanguage));
-        var response = MyDonEntryMappers.MapTo3209(commonResponse);
+        var response = MyDonEntryMappers.MapToCN00(commonResponse);
         return Ok(response);
     }
 }

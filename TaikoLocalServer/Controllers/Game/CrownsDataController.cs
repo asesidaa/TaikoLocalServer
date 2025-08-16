@@ -36,13 +36,13 @@ public class CrownsDataController : BaseController<CrownsDataController>
     
     [HttpPost("/v12r00_cn/chassis/crownsdata.php")]
     [Produces("application/protobuf")]
-    public async Task<IActionResult> CrownsData3209([FromBody] Models.v3209.CrownsDataRequest request)
+    public async Task<IActionResult> CrownsDataCN00([FromBody] Models.CN00.CrownsDataRequest request)
     {
         Logger.LogInformation("CrownsData request : {Request}", request.Stringify());
 
         var crownData = await Handle((uint)request.Baid);
 
-        var response = new Models.v3209.CrownsDataResponse
+        var response = new Models.CN00.CrownsDataResponse
         {
             Result = 1,
             CrownFlg = crownData.CrownFlg,

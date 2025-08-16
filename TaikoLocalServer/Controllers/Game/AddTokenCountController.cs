@@ -9,7 +9,7 @@ public class AddTokenCountController : BaseController<AddTokenCountController>
     [Produces("application/protobuf")]
     public async Task<IActionResult> AddTokenCount([FromBody] AddTokenCountRequest request)
     {
-        Logger.LogInformation("[3906] AddTokenCount request : {Request}", request.Stringify());
+        Logger.LogInformation("[WW08] AddTokenCount request : {Request}", request.Stringify());
 
         var command = new AddTokenCountCommand(AddTokenCountRequestMapper.Map(request));
         await Mediator.Send(command);
@@ -21,12 +21,12 @@ public class AddTokenCountController : BaseController<AddTokenCountController>
 
         return Ok(response);
     }
-    
+
     [HttpPost("/v12r00_cn/chassis/addtokencount.php")]
     [Produces("application/protobuf")]
-    public async Task<IActionResult> AddTokenCount3209([FromBody] Models.v3209.AddTokenCountRequest request)
+    public async Task<IActionResult> AddTokenCountCN00([FromBody] Models.CN00.AddTokenCountRequest request)
     {
-        Logger.LogInformation("[3209] AddTokenCount request : {Request}", request.Stringify());
+        Logger.LogInformation("[CN00] AddTokenCount request : {Request}", request.Stringify());
 
         var command = new AddTokenCountCommand(AddTokenCountRequestMapper.Map(request));
         await Mediator.Send(command);

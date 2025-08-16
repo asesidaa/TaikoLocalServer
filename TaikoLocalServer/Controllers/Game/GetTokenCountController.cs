@@ -12,19 +12,19 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
         Logger.LogInformation("GetTokenCount request : {Request}", request.Stringify());
 
         var commonResponse = await Mediator.Send(new GetTokenCountQuery(request.Baid));
-        var response = TokenCountDataMappers.MapTo3906(commonResponse);
+        var response = TokenCountDataMappers.MapToWW08(commonResponse);
 
         return Ok(response);
     }
     
     [HttpPost("v12r00_cn/chassis/gettokencount.php")]
     [Produces("application/protobuf")]
-    public async Task<IActionResult> GetTokenCount3209([FromBody] Models.v3209.GetTokenCountRequest request)
+    public async Task<IActionResult> GetTokenCountCN00([FromBody] Models.CN00.GetTokenCountRequest request)
     {
         Logger.LogInformation("GetTokenCount request : {Request}", request.Stringify());
 
         var commonResponse = await Mediator.Send(new GetTokenCountQuery((uint)request.Baid));
-        var response = TokenCountDataMappers.MapTo3209(commonResponse);
+        var response = TokenCountDataMappers.MapToCN00(commonResponse);
 
         return Ok(response);
     }

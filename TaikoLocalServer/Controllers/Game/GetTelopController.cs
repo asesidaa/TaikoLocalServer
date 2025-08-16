@@ -17,7 +17,7 @@ public class GetTelopController : BaseController<GetTelopController>
             Result = 1,
             StartDatetime = startDateTime.ToString(Constants.DateTimeFormat),
             EndDatetime = endDateTime.ToString(Constants.DateTimeFormat),
-            Telop = "Hello 3906",
+            Telop = "Hello WW08",
             VerupNo = 1
         };
 
@@ -26,19 +26,19 @@ public class GetTelopController : BaseController<GetTelopController>
     
     [HttpPost("/v12r00_cn/chassis/gettelop.php")]
     [Produces("application/protobuf")]
-    public IActionResult GetTelop3209([FromBody] Models.v3209.GettelopRequest request)
+    public IActionResult GetTelopCN00([FromBody] Models.CN00.GettelopRequest request)
     {
         Logger.LogInformation("GetTelop request : {Request}", request.Stringify());
 
         var startDateTime = DateTime.Now - TimeSpan.FromDays(999.0);
         var endDateTime = DateTime.Now + TimeSpan.FromDays(999.0);
 
-        var response = new Models.v3209.GettelopResponse
+        var response = new Models.CN00.GettelopResponse
         {
             Result = 1,
             StartDatetime = startDateTime.ToString(Constants.DateTimeFormat),
             EndDatetime = endDateTime.ToString(Constants.DateTimeFormat),
-            Telop = "Hello 3209",
+            Telop = "Hello CN00",
             VerupNo = 1
         };
 

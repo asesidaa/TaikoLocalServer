@@ -19,19 +19,19 @@ public class GetSongIntroductionController : BaseController<GetSongIntroductionC
         Logger.LogInformation("GetSongIntroduction request : {Request}", request.Stringify());
 
         var commonResponse = await Mediator.Send(new GetSongIntroductionQuery(request.SetIds));
-        var response = SongIntroductionDataMappers.MapTo3906(commonResponse);
+        var response = SongIntroductionDataMappers.MapToWW08(commonResponse);
         
         return Ok(response);
     }
     
     [HttpPost("/v12r00_cn/chassis/getsongintroduction.php")]
     [Produces("application/protobuf")]
-    public async Task<IActionResult> GetSongIntroduction3209([FromBody] Models.v3209.GetSongIntroductionRequest request)
+    public async Task<IActionResult> GetSongIntroductionCN00([FromBody] Models.CN00.GetSongIntroductionRequest request)
     {
         Logger.LogInformation("GetSongIntroduction request : {Request}", request.Stringify());
 
         var commonResponse = await Mediator.Send(new GetSongIntroductionQuery(request.SetIds));
-        var response = SongIntroductionDataMappers.MapTo3209(commonResponse);
+        var response = SongIntroductionDataMappers.MapToCN00(commonResponse);
         
         return Ok(response);
     }
