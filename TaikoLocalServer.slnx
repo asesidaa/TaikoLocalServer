@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="GameDatabase/GameDatabase.csproj" />
+  <Project Path="LocalSaveModScoreMigrator/LocalSaveModScoreMigrator.csproj" />
+  <Project Path="SharedProject/SharedProject.csproj" />
+  <Project Path="TaikoLocalServer/TaikoLocalServer.csproj" />
+  <Project Path="TaikoWebUI/TaikoWebUI.csproj" />
+</Solution>
