@@ -1,4 +1,4 @@
-﻿using TaikoLocalServer.Mappers;
+using TaikoLocalServer.Mappers;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -10,7 +10,7 @@ public class GetFolderController : BaseController<GetFolderController>
     public async Task<IActionResult> GetFolder([FromBody] GetfolderRequest request)
     {
         Logger.LogInformation("GetFolder request : {Request}", request.Stringify());
-        var commonResponse = await Mediator.Send(new GetFolderQuery(request.FolderIds));
+        var commonResponse = await Mediator.Send(new GetFolderQuery(request.FolderIds), HttpContext.RequestAborted);
         var response = FolderDataMappers.MapToWW08(commonResponse);
         return Ok(response);
     }
@@ -20,7 +20,7 @@ public class GetFolderController : BaseController<GetFolderController>
     public async Task<IActionResult> GetFolder([FromBody] Models.CN00.GetfolderRequest request)
     {
         Logger.LogInformation("GetFolderCN00 request : {Request}", request.Stringify());
-        var commonResponse = await Mediator.Send(new GetFolderQuery(request.FolderIds));
+        var commonResponse = await Mediator.Send(new GetFolderQuery(request.FolderIds), HttpContext.RequestAborted);
         var response = FolderDataMappers.MapToCN00(commonResponse);
         return Ok(response);
     }

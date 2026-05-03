@@ -1,14 +1,14 @@
 ﻿using GameDatabase.Context;
 
 namespace TaikoLocalServer.Handlers;
-public record AddMyDonEntryCommand(string AccessCode, string Name, uint Language) : IRequest<CommonMyDonEntryResponse>;
+public readonly record struct AddMyDonEntryCommand(string AccessCode, string Name, uint Language) : IRequest<CommonMyDonEntryResponse>;
 
 #pragma warning disable CS9113 // Parameter is unread.
 public class AddMyDonEntryCommandHandler(TaikoDbContext context, ILogger<AddMyDonEntryCommandHandler> logger)
 #pragma warning restore CS9113 // Parameter is unread.
     : IRequestHandler<AddMyDonEntryCommand, CommonMyDonEntryResponse>
 {
-    public async Task<CommonMyDonEntryResponse> Handle(AddMyDonEntryCommand request, CancellationToken cancellationToken)
+    public async ValueTask<CommonMyDonEntryResponse> Handle(AddMyDonEntryCommand request, CancellationToken cancellationToken)
     {
         var nextBaid = await context.Cards.Select(card => card.Baid)
             .DefaultIfEmpty()

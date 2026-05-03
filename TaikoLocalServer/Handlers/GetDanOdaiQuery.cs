@@ -3,7 +3,7 @@ using Throw;
 
 namespace TaikoLocalServer.Handlers;
 
-public record GetDanOdaiQuery(uint[] DanIds, uint Type) : IRequest<List<DanData>>;
+public readonly record struct GetDanOdaiQuery(uint[] DanIds, uint Type) : IRequest<List<DanData>>;
 
 public class GetDanOdaiQueryHandler : IRequestHandler<GetDanOdaiQuery, List<DanData>>
 {
@@ -14,7 +14,7 @@ public class GetDanOdaiQueryHandler : IRequestHandler<GetDanOdaiQuery, List<DanD
         this.gameDataService = gameDataService;
     }
 
-    public Task<List<DanData>> Handle(GetDanOdaiQuery request, CancellationToken cancellationToken)
+    public ValueTask<List<DanData>> Handle(GetDanOdaiQuery request, CancellationToken cancellationToken)
     {
         var type = (DanType)request.Type;
         type.Throw().IfOutOfRange();
@@ -47,6 +47,6 @@ public class GetDanOdaiQueryHandler : IRequestHandler<GetDanOdaiQuery, List<DanD
                 throw new ApplicationException("Impossible");
         }
 
-        return Task.FromResult(danDataList);
+        return ValueTask.FromResult(danDataList);
     }
 }

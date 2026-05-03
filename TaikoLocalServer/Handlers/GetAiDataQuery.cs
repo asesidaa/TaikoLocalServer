@@ -3,7 +3,7 @@ using Throw;
 
 namespace TaikoLocalServer.Handlers;
 
-public record GetAiDataQuery(uint Baid) : IRequest<CommonAiDataResponse>;
+public readonly record struct GetAiDataQuery(uint Baid) : IRequest<CommonAiDataResponse>;
 
 public class GetAiDataQueryHandler : IRequestHandler<GetAiDataQuery, CommonAiDataResponse>
 {
@@ -18,9 +18,9 @@ public class GetAiDataQueryHandler : IRequestHandler<GetAiDataQuery, CommonAiDat
         this.logger = logger;
     }
 
-    public async Task<CommonAiDataResponse> Handle(GetAiDataQuery request, CancellationToken cancellationToken)
+    public async ValueTask<CommonAiDataResponse> Handle(GetAiDataQuery request, CancellationToken cancellationToken)
     {
-        var user = await context.UserData.FirstOrDefaultAsync(datum => datum.Baid == request.Baid);
+        var user = await context.UserData.FirstOrDefaultAsync(datum => datum.Baid == request.Baid, cancellationToken);
         user.ThrowIfNull($"User with baid {request.Baid} does not exist!");
         var response = new CommonAiDataResponse
         {

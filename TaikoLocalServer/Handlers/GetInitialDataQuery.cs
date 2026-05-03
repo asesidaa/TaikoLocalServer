@@ -5,7 +5,7 @@ using TaikoLocalServer.Settings;
 
 namespace TaikoLocalServer.Handlers;
 
-public record GetInitialDataQuery : IRequest<CommonInitialDataCheckResponse>;
+public readonly record struct GetInitialDataQuery : IRequest<CommonInitialDataCheckResponse>;
 
 public class GetInitialDataQueryHandler(IGameDataService gameDataService, 
     ILogger<GetInitialDataQueryHandler>                  logger,
@@ -15,7 +15,7 @@ public class GetInitialDataQueryHandler(IGameDataService gameDataService,
 
     private readonly ServerSettings settings = settings.Value;
     
-    public Task<CommonInitialDataCheckResponse> Handle(GetInitialDataQuery request, CancellationToken cancellationToken)
+    public ValueTask<CommonInitialDataCheckResponse> Handle(GetInitialDataQuery request, CancellationToken cancellationToken)
     {
         var songIdMax = settings.EnableMoreSongs ? settings.MoreSongsSize : Constants.MusicIdMax;
 
@@ -85,7 +85,7 @@ public class GetInitialDataQueryHandler(IGameDataService gameDataService,
             Constants.FunctionIdAiBattleAvailable
         ];
 
-        return Task.FromResult(response);
+        return ValueTask.FromResult(response);
     }
 
     private CommonInitialDataCheckResponse.VerupNoData1 GetVerupNoData1(uint masterType, uint verup)

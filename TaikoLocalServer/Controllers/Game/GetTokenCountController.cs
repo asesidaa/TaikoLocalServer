@@ -1,4 +1,4 @@
-﻿using TaikoLocalServer.Mappers;
+using TaikoLocalServer.Mappers;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -11,7 +11,7 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
     {
         Logger.LogInformation("GetTokenCount request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new GetTokenCountQuery(request.Baid));
+        var commonResponse = await Mediator.Send(new GetTokenCountQuery(request.Baid), HttpContext.RequestAborted);
         var response = TokenCountDataMappers.MapToWW08(commonResponse);
 
         return Ok(response);
@@ -23,7 +23,7 @@ public class GetTokenCountController : BaseController<GetTokenCountController>
     {
         Logger.LogInformation("GetTokenCount request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new GetTokenCountQuery((uint)request.Baid));
+        var commonResponse = await Mediator.Send(new GetTokenCountQuery((uint)request.Baid), HttpContext.RequestAborted);
         var response = TokenCountDataMappers.MapToCN00(commonResponse);
 
         return Ok(response);

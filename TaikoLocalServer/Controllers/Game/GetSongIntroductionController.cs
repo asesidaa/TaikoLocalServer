@@ -1,4 +1,4 @@
-﻿using TaikoLocalServer.Mappers;
+using TaikoLocalServer.Mappers;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -18,7 +18,7 @@ public class GetSongIntroductionController : BaseController<GetSongIntroductionC
     {
         Logger.LogInformation("GetSongIntroduction request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new GetSongIntroductionQuery(request.SetIds));
+        var commonResponse = await Mediator.Send(new GetSongIntroductionQuery(request.SetIds), HttpContext.RequestAborted);
         var response = SongIntroductionDataMappers.MapToWW08(commonResponse);
         
         return Ok(response);
@@ -30,7 +30,7 @@ public class GetSongIntroductionController : BaseController<GetSongIntroductionC
     {
         Logger.LogInformation("GetSongIntroduction request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new GetSongIntroductionQuery(request.SetIds));
+        var commonResponse = await Mediator.Send(new GetSongIntroductionQuery(request.SetIds), HttpContext.RequestAborted);
         var response = SongIntroductionDataMappers.MapToCN00(commonResponse);
         
         return Ok(response);

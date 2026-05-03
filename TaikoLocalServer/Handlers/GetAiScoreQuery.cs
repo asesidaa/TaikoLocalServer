@@ -4,14 +4,14 @@ using Throw;
 
 namespace TaikoLocalServer.Handlers;
 
-public record GetAiScoreQuery(uint Baid, uint SongId, uint Level) : IRequest<CommonAiScoreResponse>;
+public readonly record struct GetAiScoreQuery(uint Baid, uint SongId, uint Level) : IRequest<CommonAiScoreResponse>;
 
 #pragma warning disable CS9113 // Parameter is unread.
 public class GetAiScoreQueryHandler(TaikoDbContext context, ILogger<GetAiScoreQueryHandler> logger)
 #pragma warning restore CS9113 // Parameter is unread.
     : IRequestHandler<GetAiScoreQuery, CommonAiScoreResponse>
 {
-    public async Task<CommonAiScoreResponse> Handle(GetAiScoreQuery request, CancellationToken cancellationToken)
+    public async ValueTask<CommonAiScoreResponse> Handle(GetAiScoreQuery request, CancellationToken cancellationToken)
     {
         var difficulty = (Difficulty)request.Level;
         difficulty.Throw().IfOutOfRange();

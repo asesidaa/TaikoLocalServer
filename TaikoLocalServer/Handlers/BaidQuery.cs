@@ -3,7 +3,7 @@ using Throw;
 
 namespace TaikoLocalServer.Handlers;
 
-public record BaidQuery(string AccessCode) : IRequest<CommonBaidResponse>;
+public readonly record struct BaidQuery(string AccessCode) : IRequest<CommonBaidResponse>;
 
 public class BaidQueryHandler(
     TaikoDbContext context,
@@ -11,9 +11,9 @@ public class BaidQueryHandler(
     IGameDataService gameDataService)
     : IRequestHandler<BaidQuery, CommonBaidResponse>
 {
-    public async Task<CommonBaidResponse> Handle(BaidQuery request, CancellationToken cancellationToken)
+    public async ValueTask<CommonBaidResponse> Handle(BaidQuery request, CancellationToken cancellationToken)
     {
-        var card = await context.Cards.FindAsync(request.AccessCode);
+        var card = await context.Cards.FindAsync([request.AccessCode], cancellationToken);
         if (card is null)
         {
             logger.LogInformation("New user with access code {AccessCode}", request.AccessCode);

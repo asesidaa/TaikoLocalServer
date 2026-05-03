@@ -25,7 +25,8 @@
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.7" />
 
     <!-- Server-side dependencies -->
-    <PackageVersion Include="MediatR" Version="12.2.0" />
+    <PackageVersion Include="Mediator.SourceGenerator" Version="3.0.2" />
+    <PackageVersion Include="Mediator.Abstractions" Version="3.0.2" />
     <PackageVersion Include="protobuf-net" Version="3.2.56" />
     <PackageVersion Include="protobuf-net.AspNetCore" Version="3.2.52" />
     <PackageVersion Include="Riok.Mapperly" Version="4.3.1" />

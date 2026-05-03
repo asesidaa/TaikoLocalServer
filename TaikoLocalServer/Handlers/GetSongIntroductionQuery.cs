@@ -1,12 +1,12 @@
 ﻿namespace TaikoLocalServer.Handlers;
 
-public record GetSongIntroductionQuery(uint[] SetIds) : IRequest<CommonGetSongIntroductionResponse>;
+public readonly record struct GetSongIntroductionQuery(uint[] SetIds) : IRequest<CommonGetSongIntroductionResponse>;
 
 public class GetSongIntroductionQueryHandler(IGameDataService gameDataService, ILogger<GetSongIntroductionQueryHandler> logger) 
     : IRequestHandler<GetSongIntroductionQuery, CommonGetSongIntroductionResponse>
 {
 
-    public Task<CommonGetSongIntroductionResponse> Handle(GetSongIntroductionQuery request, CancellationToken cancellationToken)
+    public ValueTask<CommonGetSongIntroductionResponse> Handle(GetSongIntroductionQuery request, CancellationToken cancellationToken)
     {
         var response = new CommonGetSongIntroductionResponse
         {
@@ -24,7 +24,7 @@ public class GetSongIntroductionQueryHandler(IGameDataService gameDataService, I
             response.ArySongIntroductionDatas.Add(introData);
         }
         
-        return Task.FromResult(response);
+        return ValueTask.FromResult(response);
     }
 }
 

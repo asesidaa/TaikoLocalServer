@@ -1,4 +1,4 @@
-﻿using TaikoLocalServer.Mappers;
+using TaikoLocalServer.Mappers;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -11,7 +11,7 @@ public class GetDanScoreController : BaseController<GetDanScoreController>
     {
         Logger.LogInformation("GetDanScore request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new GetDanScoreQuery(request.Baid, request.Type, request.DanIds));
+        var commonResponse = await Mediator.Send(new GetDanScoreQuery(request.Baid, request.Type, request.DanIds), HttpContext.RequestAborted);
         var response = DanScoreMappers.MapToWW08(commonResponse);
 
         return Ok(response);
@@ -23,7 +23,7 @@ public class GetDanScoreController : BaseController<GetDanScoreController>
     {
         Logger.LogInformation("GetDanScoreCN00 request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new GetDanScoreQuery((uint)request.Baid, request.Type, request.DanIds));
+        var commonResponse = await Mediator.Send(new GetDanScoreQuery((uint)request.Baid, request.Type, request.DanIds), HttpContext.RequestAborted);
         var response = DanScoreMappers.MapToCN00(commonResponse);
 
         return Ok(response);

@@ -1,4 +1,4 @@
-﻿using TaikoLocalServer.Mappers;
+using TaikoLocalServer.Mappers;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -11,7 +11,7 @@ public class GetAiScoreController : BaseController<GetAiScoreController>
     {
         Logger.LogInformation("GetAiScore request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new GetAiScoreQuery(request.Baid, request.SongNo, request.Level));
+        var commonResponse = await Mediator.Send(new GetAiScoreQuery(request.Baid, request.SongNo, request.Level), HttpContext.RequestAborted);
         var response = AiScoreMappers.MapToWW08(commonResponse);
 
         return Ok(response);
@@ -24,7 +24,7 @@ public class GetAiScoreController : BaseController<GetAiScoreController>
         Logger.LogInformation("GetAiScore request : {Request}", request.Stringify());
 
         var commonResponse =
-            await Mediator.Send(new GetAiScoreQuery((uint)request.Baid, request.SongNo, request.Level));
+            await Mediator.Send(new GetAiScoreQuery((uint)request.Baid, request.SongNo, request.Level), HttpContext.RequestAborted);
         var response = AiScoreMappers.MapToCN00(commonResponse);
 
         return Ok(response);

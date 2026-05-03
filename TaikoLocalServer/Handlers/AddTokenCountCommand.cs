@@ -3,7 +3,7 @@ using Throw;
 
 namespace TaikoLocalServer.Handlers;
 
-public record AddTokenCountCommand(CommonAddTokenCountRequest Request) : IRequest;
+public readonly record struct AddTokenCountCommand(CommonAddTokenCountRequest Request) : IRequest;
 
 public class AddTokenCountCommandHandler : IRequestHandler<AddTokenCountCommand>
 {
@@ -17,7 +17,7 @@ public class AddTokenCountCommandHandler : IRequestHandler<AddTokenCountCommand>
         this.logger = logger;
     }
 
-    public async Task Handle(AddTokenCountCommand command, CancellationToken cancellationToken)
+    public async ValueTask<Unit> Handle(AddTokenCountCommand command, CancellationToken cancellationToken)
     {
         var request = command.Request;
         var user = await context.UserData
@@ -47,5 +47,6 @@ public class AddTokenCountCommandHandler : IRequestHandler<AddTokenCountCommand>
 
         context.Update(user);
         await context.SaveChangesAsync(cancellationToken);
+        return Unit.Value;
     }
 }
