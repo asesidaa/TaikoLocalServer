@@ -1,4 +1,4 @@
-﻿using TaikoLocalServer.Mappers;
+using TaikoLocalServer.Mappers;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -11,7 +11,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
     {
         Logger.LogInformation("Initial data check request: {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new GetInitialDataQuery());
+        var commonResponse = await Mediator.Send(new GetInitialDataQuery(), HttpContext.RequestAborted);
         var response = InitialDataMappers.MapToWW08(commonResponse);
 
         return Ok(response);
@@ -23,7 +23,7 @@ public class InitialDataCheckController : BaseController<InitialDataCheckControl
     {
         Logger.LogInformation("Initial data check request: {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new GetInitialDataQuery());
+        var commonResponse = await Mediator.Send(new GetInitialDataQuery(), HttpContext.RequestAborted);
         var response = InitialDataMappers.MapToCN00(commonResponse);
 
         return Ok(response);

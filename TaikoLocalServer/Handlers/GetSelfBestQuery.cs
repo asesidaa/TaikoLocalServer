@@ -3,12 +3,12 @@ using Throw;
 
 namespace TaikoLocalServer.Handlers;
 
-public record GetSelfBestQuery(uint Baid, uint Difficulty, uint[] SongIdList) : IRequest<CommonSelfBestResponse>;
+public readonly record struct GetSelfBestQuery(uint Baid, uint Difficulty, uint[] SongIdList) : IRequest<CommonSelfBestResponse>;
 
 public class GetSelfBestQueryHandler(IGameDataService gameDataService, TaikoDbContext context, ILogger<GetSelfBestQueryHandler> logger)
     : IRequestHandler<GetSelfBestQuery, CommonSelfBestResponse>
 {
-    public async Task<CommonSelfBestResponse> Handle(GetSelfBestQuery request, CancellationToken cancellationToken)
+    public async ValueTask<CommonSelfBestResponse> Handle(GetSelfBestQuery request, CancellationToken cancellationToken)
     {
         var requestDifficulty = (Difficulty)request.Difficulty;
         requestDifficulty.Throw().IfOutOfRange();

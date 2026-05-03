@@ -1,4 +1,4 @@
-﻿using TaikoLocalServer.Mappers;
+using TaikoLocalServer.Mappers;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -11,7 +11,7 @@ public class GetShopFolderController : BaseController<GetShopFolderController>
     {
         Logger.LogInformation("GetShopFolder request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new GetShopFolderQuery());
+        var commonResponse = await Mediator.Send(new GetShopFolderQuery(), HttpContext.RequestAborted);
         var response = ShopFolderDataMappers.MapToWW08(commonResponse);
 
         return Ok(response);
@@ -23,7 +23,7 @@ public class GetShopFolderController : BaseController<GetShopFolderController>
     {
         Logger.LogInformation("GetShopFolder request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new GetShopFolderQuery());
+        var commonResponse = await Mediator.Send(new GetShopFolderQuery(), HttpContext.RequestAborted);
         var response = ShopFolderDataMappers.MapToCN00(commonResponse);
 
         return Ok(response);

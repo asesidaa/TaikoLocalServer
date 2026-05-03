@@ -30,7 +30,11 @@
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" />
     <PackageReference Include="DotNetZip" />
-    <PackageReference Include="MediatR" />
+    <PackageReference Include="Mediator.SourceGenerator">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Mediator.Abstractions" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
     <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" />

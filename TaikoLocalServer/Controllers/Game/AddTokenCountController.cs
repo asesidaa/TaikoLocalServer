@@ -1,4 +1,4 @@
-﻿using AddTokenCountRequestMapper = TaikoLocalServer.Mappers.AddTokenCountRequestMapper;
+using AddTokenCountRequestMapper = TaikoLocalServer.Mappers.AddTokenCountRequestMapper;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -12,7 +12,7 @@ public class AddTokenCountController : BaseController<AddTokenCountController>
         Logger.LogInformation("[WW08] AddTokenCount request : {Request}", request.Stringify());
 
         var command = new AddTokenCountCommand(AddTokenCountRequestMapper.Map(request));
-        await Mediator.Send(command);
+        await Mediator.Send(command, HttpContext.RequestAborted);
 
         var response = new AddTokenCountResponse
         {
@@ -29,7 +29,7 @@ public class AddTokenCountController : BaseController<AddTokenCountController>
         Logger.LogInformation("[CN00] AddTokenCount request : {Request}", request.Stringify());
 
         var command = new AddTokenCountCommand(AddTokenCountRequestMapper.Map(request));
-        await Mediator.Send(command);
+        await Mediator.Send(command, HttpContext.RequestAborted);
 
         var response = new AddTokenCountResponse
         {

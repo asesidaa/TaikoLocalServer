@@ -1,4 +1,4 @@
-﻿using TaikoLocalServer.Mappers;
+using TaikoLocalServer.Mappers;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -11,7 +11,7 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
     {
         Logger.LogInformation("MyDonEntry request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new AddMyDonEntryCommand(request.AccessCode, request.MydonName, request.MydonNameLanguage));
+        var commonResponse = await Mediator.Send(new AddMyDonEntryCommand(request.AccessCode, request.MydonName, request.MydonNameLanguage), HttpContext.RequestAborted);
         var response = MyDonEntryMappers.MapToWW08(commonResponse);
         return Ok(response);
     }
@@ -22,7 +22,7 @@ public class MyDonEntryController : BaseController<MyDonEntryController>
     {
         Logger.LogInformation("MyDonEntry request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new AddMyDonEntryCommand(request.WechatQrStr, request.MydonName, request.MydonNameLanguage));
+        var commonResponse = await Mediator.Send(new AddMyDonEntryCommand(request.WechatQrStr, request.MydonName, request.MydonNameLanguage), HttpContext.RequestAborted);
         var response = MyDonEntryMappers.MapToCN00(commonResponse);
         return Ok(response);
     }

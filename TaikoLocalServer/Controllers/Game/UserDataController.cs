@@ -1,4 +1,4 @@
-﻿using TaikoLocalServer.Mappers;
+using TaikoLocalServer.Mappers;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -11,7 +11,7 @@ public class UserDataController : BaseController<UserDataController>
     {
         Logger.LogInformation("UserData request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new UserDataQuery(request.Baid));
+        var commonResponse = await Mediator.Send(new UserDataQuery(request.Baid), HttpContext.RequestAborted);
         var response = UserDataMappers.MapToWW08(commonResponse);
 
         return Ok(response);
@@ -23,7 +23,7 @@ public class UserDataController : BaseController<UserDataController>
     {
         Logger.LogInformation("UserData request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new UserDataQuery((uint)request.Baid));
+        var commonResponse = await Mediator.Send(new UserDataQuery((uint)request.Baid), HttpContext.RequestAborted);
         var response = UserDataMappers.MapToCN00(commonResponse);
 
         return Ok(response);

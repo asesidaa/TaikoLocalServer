@@ -1,11 +1,11 @@
 ﻿namespace TaikoLocalServer.Handlers;
 
-public record GetShopFolderQuery : IRequest<CommonGetShopFolderResponse>;
+public readonly record struct GetShopFolderQuery : IRequest<CommonGetShopFolderResponse>;
 
 public class GetShopFolderHandler(IGameDataService gameDataService)
     : IRequestHandler<GetShopFolderQuery, CommonGetShopFolderResponse>
 {
-    public Task<CommonGetShopFolderResponse> Handle(GetShopFolderQuery request, CancellationToken cancellationToken)
+    public ValueTask<CommonGetShopFolderResponse> Handle(GetShopFolderQuery request, CancellationToken cancellationToken)
     {
         gameDataService.GetTokenDataDictionary().TryGetValue("seasonTokenId", out var seasonTokenId);
 
@@ -19,6 +19,6 @@ public class GetShopFolderHandler(IGameDataService gameDataService)
             AryShopFolderDatas = shopFolderList
         };
 
-        return Task.FromResult(response);
+        return ValueTask.FromResult(response);
     }
 }

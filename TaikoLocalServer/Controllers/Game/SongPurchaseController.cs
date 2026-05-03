@@ -1,4 +1,4 @@
-﻿using TaikoLocalServer.Mappers;
+using TaikoLocalServer.Mappers;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -11,7 +11,7 @@ public class SongPurchaseController : BaseController<SongPurchaseController>
     {
         Logger.LogInformation("SongPurchase request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(SongPurchaseMappers.MapToCommand(request));
+        var commonResponse = await Mediator.Send(SongPurchaseMappers.MapToCommand(request), HttpContext.RequestAborted);
         var response = SongPurchaseMappers.MapToWW08(commonResponse);
        
         return Ok(response);
@@ -23,7 +23,7 @@ public class SongPurchaseController : BaseController<SongPurchaseController>
     {
         Logger.LogInformation("SongPurchase request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(SongPurchaseMappers.MapToCommand(request));
+        var commonResponse = await Mediator.Send(SongPurchaseMappers.MapToCommand(request), HttpContext.RequestAborted);
         var response = SongPurchaseMappers.MapToCN00(commonResponse);
         return Ok(response);
     }

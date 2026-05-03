@@ -2,7 +2,7 @@
 
 namespace TaikoLocalServer.Handlers;
 
-public record GetTokenCountQuery(uint Baid) : IRequest<CommonGetTokenCountResponse>;
+public readonly record struct GetTokenCountQuery(uint Baid) : IRequest<CommonGetTokenCountResponse>;
 
 public class GetTokenCountQueryHandler(IGameDataService gameDataService,
     TaikoDbContext context,
@@ -11,7 +11,7 @@ public class GetTokenCountQueryHandler(IGameDataService gameDataService,
 #pragma warning restore CS9113 // Parameter is unread.
     : IRequestHandler<GetTokenCountQuery, CommonGetTokenCountResponse>
 {
-    public async Task<CommonGetTokenCountResponse> Handle(GetTokenCountQuery request, CancellationToken cancellationToken)
+    public async ValueTask<CommonGetTokenCountResponse> Handle(GetTokenCountQuery request, CancellationToken cancellationToken)
     {
         var response = new CommonGetTokenCountResponse
         {

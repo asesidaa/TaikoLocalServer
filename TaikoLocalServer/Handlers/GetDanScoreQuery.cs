@@ -3,7 +3,7 @@ using Throw;
 
 namespace TaikoLocalServer.Handlers;
 
-public record GetDanScoreQuery(uint Baid, uint Type, uint[] DanIds) : IRequest<CommonDanScoreDataResponse>;
+public readonly record struct GetDanScoreQuery(uint Baid, uint Type, uint[] DanIds) : IRequest<CommonDanScoreDataResponse>;
 
 public class GetDanScoreQueryHandler : IRequestHandler<GetDanScoreQuery, CommonDanScoreDataResponse>
 {
@@ -17,7 +17,7 @@ public class GetDanScoreQueryHandler : IRequestHandler<GetDanScoreQuery, CommonD
         this.context = context;
     }
 
-    public async Task<CommonDanScoreDataResponse> Handle(GetDanScoreQuery request, CancellationToken cancellationToken)
+    public async ValueTask<CommonDanScoreDataResponse> Handle(GetDanScoreQuery request, CancellationToken cancellationToken)
     {
         var danType = (DanType)request.Type;
         danType.Throw().IfOutOfRange();

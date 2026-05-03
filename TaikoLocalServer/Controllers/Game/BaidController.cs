@@ -1,4 +1,4 @@
-﻿namespace TaikoLocalServer.Controllers.Game;
+namespace TaikoLocalServer.Controllers.Game;
 
 [ApiController]
 public class BaidController : BaseController<BaidController>
@@ -8,7 +8,7 @@ public class BaidController : BaseController<BaidController>
     public async Task<IActionResult> GetBaid([FromBody] BAIDRequest request)
     {
         Logger.LogInformation("Baid request: {Request}", request.Stringify());
-        var commonResponse = await Mediator.Send(new BaidQuery(request.AccessCode));
+        var commonResponse = await Mediator.Send(new BaidQuery(request.AccessCode), HttpContext.RequestAborted);
         BAIDResponse response;
         if (commonResponse.IsNewUser)
         {
@@ -36,7 +36,7 @@ public class BaidController : BaseController<BaidController>
     {
         Logger.LogInformation("Baid request: {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new BaidQuery(request.WechatQrStr));
+        var commonResponse = await Mediator.Send(new BaidQuery(request.WechatQrStr), HttpContext.RequestAborted);
         Models.CN00.BAIDResponse response;
         if (commonResponse.IsNewUser)
         {

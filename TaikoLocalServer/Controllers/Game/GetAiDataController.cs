@@ -1,4 +1,4 @@
-﻿namespace TaikoLocalServer.Controllers.Game;
+namespace TaikoLocalServer.Controllers.Game;
 
 [ApiController]
 public class GetAiDataController : BaseController<GetAiDataController>
@@ -9,7 +9,7 @@ public class GetAiDataController : BaseController<GetAiDataController>
     {
         Logger.LogInformation("GetAiData request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new GetAiDataQuery(request.Baid));
+        var commonResponse = await Mediator.Send(new GetAiDataQuery(request.Baid), HttpContext.RequestAborted);
         var response = Mappers.AiDataResponseMapper.MapToWW08(commonResponse);
         return Ok(response);
     }
@@ -20,7 +20,7 @@ public class GetAiDataController : BaseController<GetAiDataController>
     {
         Logger.LogInformation("GetAiData request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new GetAiDataQuery((uint)request.Baid));
+        var commonResponse = await Mediator.Send(new GetAiDataQuery((uint)request.Baid), HttpContext.RequestAborted);
         var response = Mappers.AiDataResponseMapper.MapToCN00(commonResponse);
         return Ok(response);
     }

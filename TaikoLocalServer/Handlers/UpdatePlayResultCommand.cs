@@ -3,12 +3,12 @@ using Throw;
 
 namespace TaikoLocalServer.Handlers;
 
-public record UpdatePlayResultCommand(uint Baid, CommonPlayResultData PlayResultData) : IRequest<uint>;
+public readonly record struct UpdatePlayResultCommand(uint Baid, CommonPlayResultData PlayResultData) : IRequest<uint>;
 
 public class UpdatePlayResultCommandHandler(TaikoDbContext context, ILogger<UpdatePlayResultCommandHandler> logger)
     : IRequestHandler<UpdatePlayResultCommand, uint>
 {
-    public async Task<uint> Handle(UpdatePlayResultCommand request, CancellationToken cancellationToken)
+    public async ValueTask<uint> Handle(UpdatePlayResultCommand request, CancellationToken cancellationToken)
     {
         if (request.Baid == 0)
         {
@@ -66,7 +66,7 @@ public class UpdatePlayResultCommandHandler(TaikoDbContext context, ILogger<Upda
 
             if (playMode == PlayMode.AiBattle)
             {
-                await UpdateAiBattleData(playResultData, stageData);
+                await UpdateAiBattleData(playResultData, stageData, cancellationToken);
             }
 
             var difficulty = (Difficulty)stageData.Level;
@@ -123,7 +123,7 @@ public class UpdatePlayResultCommandHandler(TaikoDbContext context, ILogger<Upda
         return 1;
     }
 
-    private async Task UpdateAiBattleData(CommonPlayResultData playResultData, CommonPlayResultData.StageData stageData)
+    private async Task UpdateAiBattleData(CommonPlayResultData playResultData, CommonPlayResultData.StageData stageData, CancellationToken cancellationToken)
     {
         var difficulty = (Difficulty)stageData.Level;
         difficulty.Throw().IfOutOfRange();
@@ -131,7 +131,7 @@ public class UpdatePlayResultCommandHandler(TaikoDbContext context, ILogger<Upda
             .Include(datum => datum.AiSectionScoreData)
             .FirstOrDefaultAsync(datum => datum.Baid == playResultData.Baid &&
                                           datum.SongId == stageData.SongNo &&
-                                          datum.Difficulty == difficulty)
+                                          datum.Difficulty == difficulty, cancellationToken)
             ?? context.AiScoreData.Local.FirstOrDefault(datum => datum.Baid == playResultData.Baid &&
                                                                              datum.SongId == stageData.SongNo &&
                                                                              datum.Difficulty == difficulty);

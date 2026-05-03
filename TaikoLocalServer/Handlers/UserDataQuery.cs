@@ -6,7 +6,7 @@ using Throw;
 
 namespace TaikoLocalServer.Handlers;
 
-public record UserDataQuery(uint Baid) : IRequest<CommonUserDataResponse>;
+public readonly record struct UserDataQuery(uint Baid) : IRequest<CommonUserDataResponse>;
 
 public class UserDataQueryHandler(TaikoDbContext context, IGameDataService gameDataService, ILogger<UserDataQueryHandler> logger, IOptions<ServerSettings> settings) 
     : IRequestHandler<UserDataQuery, CommonUserDataResponse>
@@ -14,7 +14,7 @@ public class UserDataQueryHandler(TaikoDbContext context, IGameDataService gameD
 
     private readonly ServerSettings settings = settings.Value;
 
-    public async Task<CommonUserDataResponse> Handle(UserDataQuery request, CancellationToken cancellationToken)
+    public async ValueTask<CommonUserDataResponse> Handle(UserDataQuery request, CancellationToken cancellationToken)
     {
         var userData = await context.UserData.FindAsync(request.Baid, cancellationToken);
         userData.ThrowIfNull($"User not found for Baid {request.Baid}!");

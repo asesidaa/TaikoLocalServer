@@ -4,7 +4,7 @@ global using GameDatabase.Entities;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using ProtoBuf;
-global using MediatR;
+global using Mediator;
 global using Swan.Formatters;
 global using SharedProject.Enums;
 global using TaikoLocalServer.Common;

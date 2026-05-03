@@ -3,15 +3,15 @@ using Throw;
 
 namespace TaikoLocalServer.Handlers;
 
-public record PurchaseSongCommand(uint Baid, uint SongNo, uint Type, uint TokenId, uint Price) : IRequest<CommonSongPurchaseResponse>;
+public readonly record struct PurchaseSongCommand(uint Baid, uint SongNo, uint Type, uint TokenId, uint Price) : IRequest<CommonSongPurchaseResponse>;
 
-public record PurchaseSongCommandCN(uint Baid, uint SongNo, uint TokenId, uint Price) : IRequest<CommonSongPurchaseResponse>;
+public readonly record struct PurchaseSongCommandCN(uint Baid, uint SongNo, uint TokenId, uint Price) : IRequest<CommonSongPurchaseResponse>;
 
 public class PurchaseSongCommandHandler(TaikoDbContext context, ILogger<PurchaseSongCommandHandler> logger) 
     : IRequestHandler<PurchaseSongCommand, CommonSongPurchaseResponse>
 {
 
-    public async Task<CommonSongPurchaseResponse> Handle(PurchaseSongCommand request, CancellationToken cancellationToken)
+    public async ValueTask<CommonSongPurchaseResponse> Handle(PurchaseSongCommand request, CancellationToken cancellationToken)
     {
         var user = await context.UserData
             .Include(u => u.Tokens)
@@ -62,7 +62,7 @@ public class PurchaseSongCommandHandlerCN(TaikoDbContext context, ILogger<Purcha
     : IRequestHandler<PurchaseSongCommandCN, CommonSongPurchaseResponse>
 {
 
-    public async Task<CommonSongPurchaseResponse> Handle(PurchaseSongCommandCN request, CancellationToken cancellationToken)
+    public async ValueTask<CommonSongPurchaseResponse> Handle(PurchaseSongCommandCN request, CancellationToken cancellationToken)
     {
         var user = await context.UserData
             .Include(u => u.Tokens)

@@ -1,4 +1,4 @@
-﻿using TaikoLocalServer.Mappers;
+using TaikoLocalServer.Mappers;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -17,7 +17,7 @@ public class PlayResultController : BaseController<PlayResultController>
         Logger.LogInformation("Play result data {Data}", playResultData.Stringify());
 
         var commonRequest = PlayResultMappers.Map(playResultData);
-        var commonResponse = await Mediator.Send(new UpdatePlayResultCommand(request.BaidConf, commonRequest));
+        var commonResponse = await Mediator.Send(new UpdatePlayResultCommand(request.BaidConf, commonRequest), HttpContext.RequestAborted);
         var response = new PlayResultResponse
         {
             Result = commonResponse
@@ -36,7 +36,7 @@ public class PlayResultController : BaseController<PlayResultController>
         Logger.LogInformation("Play result data CN00 {Data}", playResultData.Stringify());
 
         var commonRequest = PlayResultMappers.Map(playResultData);
-        var commonResponse = await Mediator.Send(new UpdatePlayResultCommand((uint) request.BaidConf, commonRequest));
+        var commonResponse = await Mediator.Send(new UpdatePlayResultCommand((uint) request.BaidConf, commonRequest), HttpContext.RequestAborted);
         var response = new Models.CN00.PlayResultResponse
         {
             Result = commonResponse

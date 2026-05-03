@@ -1,11 +1,11 @@
 ﻿namespace TaikoLocalServer.Handlers;
 
-public record GetFolderQuery(uint[] FolderIds) : IRequest<CommonGetFolderResponse>;
+public readonly record struct GetFolderQuery(uint[] FolderIds) : IRequest<CommonGetFolderResponse>;
 
 public class GetFolderQueryHandler(ILogger<GetFolderQueryHandler> logger, IGameDataService gameDataService)
     : IRequestHandler<GetFolderQuery, CommonGetFolderResponse>
 {
-    public Task<CommonGetFolderResponse> Handle(GetFolderQuery request, CancellationToken cancellationToken)
+    public ValueTask<CommonGetFolderResponse> Handle(GetFolderQuery request, CancellationToken cancellationToken)
     {
         var response = new CommonGetFolderResponse
         {
@@ -22,6 +22,6 @@ public class GetFolderQueryHandler(ILogger<GetFolderQueryHandler> logger, IGameD
             }
             response.AryEventfolderDatas.Add(folderData);
         }
-        return Task.FromResult(response);
+        return ValueTask.FromResult(response);
     }
 }

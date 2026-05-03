@@ -1,4 +1,4 @@
-﻿using TaikoLocalServer.Mappers;
+using TaikoLocalServer.Mappers;
 
 namespace TaikoLocalServer.Controllers.Game;
 
@@ -12,7 +12,7 @@ public class SelfBestController : BaseController<SelfBestController>
         Logger.LogInformation("SelfBest request : {Request}", request.Stringify());
 
         var commonResponse =
-            await Mediator.Send(new GetSelfBestQuery(request.Baid, request.Level, request.ArySongNoes));
+            await Mediator.Send(new GetSelfBestQuery(request.Baid, request.Level, request.ArySongNoes), HttpContext.RequestAborted);
         var response = SelfBestMappers.MapToWW08(commonResponse);
 
         return Ok(response);
@@ -25,7 +25,7 @@ public class SelfBestController : BaseController<SelfBestController>
         Logger.LogInformation("SelfBestCN00 request : {Request}", request.Stringify());
 
         var commonResponse =
-            await Mediator.Send(new GetSelfBestQuery((uint)request.Baid, request.Level, request.ArySongNoes));
+            await Mediator.Send(new GetSelfBestQuery((uint)request.Baid, request.Level, request.ArySongNoes), HttpContext.RequestAborted);
         var response = SelfBestMappers.MapToCN00(commonResponse);
 
         return Ok(response);

@@ -4,9 +4,9 @@ public abstract class BaseController<T> : ControllerBase where T : BaseControlle
 {
     private ILogger<T>? logger;
     
-    private ISender? mediator;
+    private IMediator? mediator;
     
-    protected ISender Mediator => (mediator ??= HttpContext.RequestServices.GetService<ISender>()) ?? throw new InvalidOperationException();
+    protected IMediator Mediator => (mediator ??= HttpContext.RequestServices.GetService<IMediator>()) ?? throw new InvalidOperationException();
 
     protected ILogger<T> Logger => (logger ??= HttpContext.RequestServices.GetService<ILogger<T>>()) ?? throw new InvalidOperationException();
 }
