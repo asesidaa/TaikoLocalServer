@@ -1,0 +1,60 @@
+<Project>
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- ASP.NET Core / Blazor (server hosts WASM, so these appear in TaikoLocalServer too) -->
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.4" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.4" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.4" />
+    <PackageVersion Include="Microsoft.AspNetCore.ResponseCompression" Version="2.3.0" />
+
+    <!-- Entity Framework Core -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.4" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.4" />
+    <PackageVersion Include="EntityFrameworkCore.Exceptions.Sqlite" Version="8.1.0" />
+
+    <!-- Microsoft.Extensions -->
+    <PackageVersion Include="Microsoft.Extensions.Localization" Version="8.0.4" />
+    <PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="8.0.4" />
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+
+    <!-- Server-side dependencies -->
+    <PackageVersion Include="MediatR" Version="12.2.0" />
+    <PackageVersion Include="protobuf-net" Version="3.2.30" />
+    <PackageVersion Include="protobuf-net.AspNetCore" Version="3.2.12" />
+    <PackageVersion Include="Riok.Mapperly" Version="3.5.1" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="8.0.2-dev-00334" />
+    <PackageVersion Include="Serilog.Expressions" Version="4.0.0" />
+    <PackageVersion Include="Serilog.Sinks.File.Header" Version="1.0.2" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageVersion Include="Yoh.Text.Json.NamingPolicies" Version="1.1.2" />
+
+    <!-- Cross-project shared -->
+    <PackageVersion Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageVersion Include="DotNetZip" Version="1.16.0" />
+    <PackageVersion Include="Otp.NET" Version="1.4.0" />
+    <PackageVersion Include="SharpZipLib" Version="1.4.2" />
+    <PackageVersion Include="Swan.Core" Version="7.0.0-beta.2" />
+    <PackageVersion Include="Swan.Logging" Version="6.0.2-beta.96" />
+    <PackageVersion Include="Throw" Version="1.4.0" />
+
+    <!-- TaikoWebUI (Blazor WASM) -->
+    <PackageVersion Include="MudBlazor" Version="6.20.0" />
+    <PackageVersion Include="CodeBeam.MudBlazor.Extensions" Version="6.9.2" />
+    <PackageVersion Include="Blazored.LocalStorage" Version="4.5.0" />
+    <PackageVersion Include="Markdig" Version="0.37.0" />
+    <PackageVersion Include="Autocomplete.Clients" Version="1.1.0" />
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="7.7.1" />
+
+    <!-- LocalSaveModScoreMigrator -->
+    <PackageVersion Include="JorgeSerrano.Json.JsonSnakeCaseNamingPolicy" Version="0.9.0" />
+    <PackageVersion Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+  </ItemGroup>
+
+</Project>

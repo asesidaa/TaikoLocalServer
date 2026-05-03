@@ -1,11 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
     <Version>1.1.0</Version>
-    <LangVersion>12</LangVersion>
     <EnableConfigurationBindingGenerator>false</EnableConfigurationBindingGenerator>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
@@ -32,31 +28,31 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
-    <PackageReference Include="DotNetZip" Version="1.16.0" />
-    <PackageReference Include="MediatR" Version="12.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.4" />
-    <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.3.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.4">
+    <PackageReference Include="BCrypt.Net-Next" />
+    <PackageReference Include="DotNetZip" />
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
+    <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Otp.NET" Version="1.4.0" />
-    <PackageReference Include="protobuf-net" Version="3.2.30" />
-    <PackageReference Include="protobuf-net.AspNetCore" Version="3.2.12" />
-    <PackageReference Include="Riok.Mapperly" Version="3.5.1" />
-    <PackageReference Include="Serilog.AspNetCore" Version="8.0.2-dev-00334" />
-    <PackageReference Include="Serilog.Expressions" Version="4.0.0" />
-    <PackageReference Include="Serilog.Sinks.File.Header" Version="1.0.2" />
-    <PackageReference Include="SharpZipLib" Version="1.4.2" />
-    <PackageReference Include="Swan.Core" Version="7.0.0-beta.2" />
-    <PackageReference Include="Swan.Logging" Version="6.0.2-beta.96" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-    <PackageReference Include="Throw" Version="1.4.0" />
-    <PackageReference Include="Yoh.Text.Json.NamingPolicies" Version="1.1.2" />
+    <PackageReference Include="Otp.NET" />
+    <PackageReference Include="protobuf-net" />
+    <PackageReference Include="protobuf-net.AspNetCore" />
+    <PackageReference Include="Riok.Mapperly" />
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Expressions" />
+    <PackageReference Include="Serilog.Sinks.File.Header" />
+    <PackageReference Include="SharpZipLib" />
+    <PackageReference Include="Swan.Core" />
+    <PackageReference Include="Swan.Logging" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+    <PackageReference Include="Throw" />
+    <PackageReference Include="Yoh.Text.Json.NamingPolicies" />
   </ItemGroup>
 
   <ItemGroup>
@@ -68,7 +64,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
 
-    
+
     <!--Configuration-->
     <Content Remove="Configurations\AuthSettings.json" />
     <None Include="Configurations\AuthSettings.json">
@@ -95,7 +91,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
 
-    
+
     <!--Server Datatables-->
     <Content Update="wwwroot\data\locked_songs_data.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -136,7 +132,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
 
-    
+
     <!--Encrypted Game Datatables-->
     <Content Update="wwwroot\data\datatable\wordlist.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -147,7 +143,7 @@
     <Content Update="wwwroot\data\datatable\music_order.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    
+
     <Content Update="wwwroot\data\datatable\neiro.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -158,7 +154,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
 
-    
+
     <!--Decrypted Game Datatables-->
     <Content Update="wwwroot\data\datatable\wordlist.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -169,7 +165,7 @@
     <Content Update="wwwroot\data\datatable\music_order.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    
+
     <Content Update="wwwroot\data\datatable\neiro.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
