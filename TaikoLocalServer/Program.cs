@@ -6,6 +6,7 @@ using GameDatabase.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using TaikoLocalServer.Middlewares;
 using TaikoLocalServer.Services.Extentions;
@@ -133,7 +134,15 @@ try
         }
 
         var path = Path.Combine(PathHelper.GetRootPath(), dbName);
-        option.UseSqlite($"Data Source={path}");
+        option
+            .UseSqlite($"Data Source={path}")
+            // SQLite-only noise: the provider emits internal PRAGMA foreign_keys = 0 around
+            // table rebuilds (dotnet/efcore#35871), and chains rebuilds with subsequent SQL
+            // ops in our older migrations. Both are safe here and we cannot rewrite the
+            // historical migrations without breaking existing user databases.
+            .ConfigureWarnings(warnings => warnings
+                .Ignore(RelationalEventId.NonTransactionalMigrationOperationWarning)
+                .Ignore(SqliteEventId.TableRebuildPendingWarning));
     });
     builder.Services.AddMemoryCache();
     builder.Services.AddCors(options =>
@@ -183,6 +192,20 @@ try
 
     app.UseCors("AllowAllCorsPolicy");
     // For blazor hosting
+    if (app.Environment.IsDevelopment())
+    {
+        // The Blazor WASM boot manifest under /_framework is not content-hashed,
+        // so a cached one will pin mismatched assembly versions across rebuilds.
+        app.Use(async (context, next) =>
+        {
+            if (context.Request.Path.StartsWithSegments("/_framework"))
+            {
+                context.Response.Headers.CacheControl = "no-store, no-cache, must-revalidate";
+                context.Response.Headers.Pragma = "no-cache";
+            }
+            await next();
+        });
+    }
     app.UseBlazorFrameworkFiles();
     app.UseStaticFiles();
     app.UseRouting();

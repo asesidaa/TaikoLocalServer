@@ -13,9 +13,12 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 // Create a temporary HttpClient to fetch the appsettings.json file
 using var httpClient = new HttpClient();
 httpClient.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
-var configurationStream = await httpClient.GetStreamAsync("appsettings.json");
+// Buffer the response into memory: Blazor WASM's HttpClient stream is fetch-API-backed and
+// rejects synchronous reads, which AddJsonStream/Build performs internally.
+var configurationBytes = await httpClient.GetByteArrayAsync("appsettings.json");
 
 // Load the configuration from the stream
+using var configurationStream = new MemoryStream(configurationBytes);
 var configuration = new ConfigurationBuilder()
     .AddJsonStream(configurationStream)
     .Build();

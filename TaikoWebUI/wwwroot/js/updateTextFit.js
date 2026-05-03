@@ -112,7 +112,7 @@ function updateTitleText(elm) {
 }
 
 function updateScoreboardText(elm) {
-    if (init) {
+    if (init && scoreboard) {
         index = 0;
         var row = scoreboard.children;
         for (var i = 0; i < row.length; i++) {
