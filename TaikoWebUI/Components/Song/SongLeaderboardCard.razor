@@ -15,7 +15,7 @@
 
                 <MudItem xs="6">
                     <MudStack Justify="Justify.FlexEnd" Row="true">
-                        <MudToggleGroup T="string" Label="@Localizer["Difficulty"]" Dense="true" ValueChanged="(value) => OnDifficultyChange(value)" Value="SelectedDifficulty" Style="width:300px">
+                        <MudToggleGroup T="string" Size="Size.Small" ValueChanged="(value) => OnDifficultyChange(value)" Value="SelectedDifficulty" Style="width:300px">
                             @foreach (var difficulty in Enum.GetValues(typeof(Difficulty)))
                         {
                             if ((Difficulty)difficulty == Difficulty.None)
@@ -103,7 +103,7 @@
             @if (TotalPages > 1 && isPaginationEnabled)
             {
                 <div class="d-flex flex-column align-center">
-                    <MudPagination Class="pa-4" Rectangular="true" DisableElevation="true" Count="@TotalPages" Selected="currentPage" SelectedChanged="(page) => OnPageChange(page)" BoundaryCount="1" MiddleCount="3" />
+                    <MudPagination Class="pa-4" Rectangular="true" Count="@TotalPages" Selected="currentPage" SelectedChanged="(page) => OnPageChange(page)" BoundaryCount="1" MiddleCount="3" />
                 </div>
             }
         }

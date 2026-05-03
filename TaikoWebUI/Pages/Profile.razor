@@ -283,18 +283,18 @@
                                         @* Title text *@
                                         <MudItem style="position:absolute; top: 5.5%; left:0; right:1.1%; height:38%; width:min(96%, 320px); margin: 0 auto; z-index:2; vertical-align: middle;">
                                             <MudItem Style=@($"position:absolute; height:100%; width:80%; right: 10%;")>
-                                                <MudText Class="profile-image" Id="nameplate-title" Style="height:100%; margin: auto auto; font-family: 'Nijiiro', sans-serif; color:black">@response.Title</MudText>
+                                                <MudText Class="profile-image" id="nameplate-title" Style="height:100%; margin: auto auto; font-family: 'Nijiiro', sans-serif; color:black">@response.Title</MudText>
                                             </MudItem>
                                         </MudItem>
                                         @* Name text *@
                                         <MudItem Style="position:absolute; top: 42.5%; left:0; right:1.1%; height:41%; width:min(96%, 320px); margin: 0 auto; z-index:2">
                                             @* Name textoffset to the right for Dan Rank *@
                                             <MudItem Style=@($"position:absolute; height:100%; right: 10%; {(response.IsDisplayDanOnNamePlate ? "width:46%;" : "width:80%;")}")>
-                                                <MudText Id="nameplate-name-outline" Class="profile-image" Style="height:100%; font-family: 'Nijiiro', sans-serif; -webkit-text-stroke-width: 5px; -webkit-text-stroke-color: black">@response.MyDonName</MudText>
-                                                <MudText Id="nameplate-name" Class="profile-image" Style="height:100%; font-family: 'Nijiiro', sans-serif; color:white">@response.MyDonName</MudText>
+                                                <MudText id="nameplate-name-outline" Class="profile-image" Style="height:100%; font-family: 'Nijiiro', sans-serif; -webkit-text-stroke-width: 5px; -webkit-text-stroke-color: black">@response.MyDonName</MudText>
+                                                <MudText id="nameplate-name" Class="profile-image" Style="height:100%; font-family: 'Nijiiro', sans-serif; color:white">@response.MyDonName</MudText>
                                             </MudItem>
                                         </MudItem>
-                                        <MudImage onload="nameplateLoaded()" Id="nameplate" Fluid="true" Style="position: relative; bottom: 0; left: 0;" Src="images/Nameplates/nameplate.webp" />
+                                        <MudImage onload="nameplateLoaded()" id="nameplate" Fluid="true" Style="position: relative; bottom: 0; left: 0;" Src="images/Nameplates/nameplate.webp" />
                                         @* Check if image does not exist, use nameplate_Wood.webp *@
                                         <MudImage Fluid="true" Style="position:absolute; bottom: 6px; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Nameplates/nameplate_Wood.webp'" Src=@($"images/Nameplates/nameplate_{TitlePlateStrings[response.TitlePlateId].Replace(' ', '_')}.webp") />
                                         @if (response.IsDisplayDanOnNamePlate)
@@ -310,7 +310,7 @@
                                 <MudTabPanel Text="@Localizer["Achievement Panel"]">
                                     <MudItem style="text-align: center; position:relative;">
                                         @* Achievement panel Text *@
-                                        <MudItem Id="scoreboard" Class="profile-image" Style="height:100%; width:min(96%, 320px); margin: 0 auto; z-index:2; vertical-align: middle;">
+                                        <MudItem id="scoreboard" Class="profile-image" Style="height:100%; width:min(96%, 320px); margin: 0 auto; z-index:2; vertical-align: middle;">
                                             @* First row *@
                                             <MudItem Style="position:absolute; height:18%; width:100%; top:11%">
                                                 <MudItem Class="nameplateTextRight">

@@ -89,7 +89,7 @@
                                                                  ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
                                                                  Size="Size.Small"
                                                                  ToggledSize="Size.Small"
-                                                                 Title="Add to favorites" ToggledTitle="Remove from favorites" />
+                                                                 title="Add to/remove from favorites" />
                                         </div>
                                         <div style="margin: 4px; display: flex;">
                                             <MudIcon Style=@IconStyle Icon="@GetDifficultyIcon(songHistoryData.Difficulty)" />
@@ -123,7 +123,7 @@
 
                                 @* Genre display *@
                                 <MudTd DataLabel="Genre" Style="width: 150px;">
-                                    <MudChip Style=@GetGenreStyle(songHistoryData.Genre) Size="Size.Small">@GetGenreTitle(songHistoryData.Genre)</MudChip>
+                                    <MudChip T="string" Style=@GetGenreStyle(songHistoryData.Genre) Size="Size.Small">@GetGenreTitle(songHistoryData.Genre)</MudChip>
                                 </MudTd>
 
                                 @* Star rating *@

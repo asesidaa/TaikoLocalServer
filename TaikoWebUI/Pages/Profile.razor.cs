@@ -464,7 +464,7 @@ public partial class Profile
         {
             //CloseButton = false,
             CloseOnEscapeKey = false,
-            DisableBackdropClick = true,
+            BackdropClick = false,
             MaxWidth = MaxWidth.Medium,
             FullWidth = true
         };
@@ -474,7 +474,7 @@ public partial class Profile
             {x => x.AllowFreeProfileEditing, AuthService.AllowFreeProfileEditing},
             {x => x.Titles, unlockedTitles},
         };
-        var dialog = DialogService.Show<ChooseTitleDialog>(Localizer["Player Titles"], parameters, options);
+        var dialog = await DialogService.ShowAsync<ChooseTitleDialog>(Localizer["Player Titles"], parameters, options);
         var result = await dialog.Result;
         if (!result.Canceled)
         {

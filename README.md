@@ -42,3 +42,5 @@ Shared MSBuild defaults (TFM, Nullable, ImplicitUsings, LangVersion) live in `Di
 The repo pins the .NET SDK band via `global.json`.
 
 This solution targets **.NET 10 LTS**. Install the .NET 10 SDK from <https://dotnet.microsoft.com/download> (or any 10.0.x patch — the `global.json` allows latestFeature roll-forward).
+
+The admin UI uses **MudBlazor 9.x**. If you customize `TaikoWebUI/`, refer to the [MudBlazor v9 docs](https://mudblazor.com/) — components and parameters changed across the 7→8→9 majors compared to older forks.

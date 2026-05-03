@@ -5,7 +5,7 @@ namespace TaikoWebUI.Pages.Dialogs;
 
 public partial class UserDeleteConfirmDialog
 {
-    [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = null!;
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = null!;
 
     [Parameter]
     public User User { get; set; } = new();

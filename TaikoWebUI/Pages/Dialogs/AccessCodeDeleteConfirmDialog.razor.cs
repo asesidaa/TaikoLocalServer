@@ -5,7 +5,7 @@ namespace TaikoWebUI.Pages.Dialogs;
 public partial class AccessCodeDeleteConfirmDialog
 {
 
-    [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = null!;
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = null!;
 
     [Parameter]
     public User User { get; set; } = new();

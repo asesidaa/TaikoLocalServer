@@ -54,7 +54,7 @@
                                     @foreach (var genre in Enum.GetValues(typeof(SongGenre)))
                                     {
                                         var genreValue = (SongGenre)genre;
-                                        <MudSelectItem Value="@genreValue.ToString()" Label="@Localizer[$"Key_{genreValue}"]">
+                                        <MudSelectItem Value="@genreValue.ToString()">
                                             @ScoreUtils.GetGenreTitle(genreValue)
                                         </MudSelectItem>
                                     }
@@ -95,7 +95,7 @@
                                                          ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
                                                          Size="Size.Small"
                                                          ToggledSize="Size.Small"
-                                                         Title="Add to favorites" ToggledTitle="Remove from favorites" />
+                                                         title="Add to/remove from favorites" />
                                 </div>
                                 <div style="width:400px">
                                     <a href="@($"/Users/{Baid}/Songs/{context.SongId}")">
@@ -106,7 +106,7 @@
                             </MudStack>
                         </MudTd>
                         <MudTd>
-                            <MudChip Style="@ScoreUtils.GetGenreStyle(context.Genre)" Size="Size.Small">
+                            <MudChip T="string" Style="@ScoreUtils.GetGenreStyle(context.Genre)" Size="Size.Small">
                                 @ScoreUtils.GetGenreTitle(context.Genre)
                             </MudChip>
                         </MudTd>

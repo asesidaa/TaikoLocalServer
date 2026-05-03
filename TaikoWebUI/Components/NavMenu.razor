@@ -76,7 +76,7 @@
                 ["user"] = user
             };
 
-        var options = new DialogOptions { DisableBackdropClick = true };
+        var options = new DialogOptions { BackdropClick = false };
         await DialogService.ShowAsync<UserQrCodeDialog>(Localizer["QR Code"], parameters, options);
 
         // Prevent the settings menu from closing
@@ -85,7 +85,7 @@
 
     private async Task Logout()
 	{
-		var result = await DialogService.ShowMessageBox(
+		var result = await DialogService.ShowMessageBoxAsync(
 			Localizer["Log Out"],
 			Localizer["Log Out Confirm"],
 			yesText: Localizer["Log Out"],

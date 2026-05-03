@@ -10,13 +10,13 @@
     <MudText Typo="Typo.overline" Align="Align.Left" GutterBottom="true" Style="padding: 0 16px;font-weight: bold;">@Localizer["UI"]</MudText>
     @foreach (var culture in supportedCultures)
     {
-    <MudMenuItem Class="lang-menu-item" IconSize="Size.Small" Icon="@cultureStatuses["UI"][culture.Key]" OnClick="() => RequestUiCultureChange(culture.Key)" OnTouch="() => RequestUiCultureChange(culture.Key)">@culture.Value</MudMenuItem>
+    <MudMenuItem Class="lang-menu-item" Icon="@cultureStatuses["UI"][culture.Key]" OnClick="() => RequestUiCultureChange(culture.Key)">@culture.Value</MudMenuItem>
     }
     <MudDivider />
     <MudText Typo="Typo.overline" Align="Align.Left" GutterBottom="true" Style="padding: 0 16px;font-weight: bold;">@Localizer["Song List"]</MudText>
     @foreach (var culture in supportedCultures)
     {
-    <MudMenuItem Class="lang-menu-item" IconSize="Size.Small" Icon="@cultureStatuses["SongName"][culture.Key]" OnClick="() => RequestSongNameCultureChange(culture.Key)" OnTouch="() => RequestSongNameCultureChange(culture.Key)">@culture.Value</MudMenuItem>
+    <MudMenuItem Class="lang-menu-item" Icon="@cultureStatuses["SongName"][culture.Key]" OnClick="() => RequestSongNameCultureChange(culture.Key)">@culture.Value</MudMenuItem>
     }
 </MudMenu>
 
