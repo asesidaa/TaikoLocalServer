@@ -4,13 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A private server emulator for Taiko no Tatsujin Nijiiro (CHN `v12r00_cn` and 39.06 `v12r08_ww`). The same ASP.NET Core 8 process serves the game's protobuf endpoints **and** hosts the Blazor WebAssembly admin UI on the same Kestrel server, so there is no separate frontend deployment.
+A private server emulator for Taiko no Tatsujin Nijiiro (CHN `v12r00_cn` and 39.06 `v12r08_ww`). The same ASP.NET Core 10 process serves the game's protobuf endpoints **and** hosts the Blazor WebAssembly admin UI on the same Kestrel server, so there is no separate frontend deployment.
 
 ## Solution layout
 
-5 projects, all `net8.0`:
+5 projects, all `net10.0`:
 
-- **TaikoLocalServer** — ASP.NET Core 8 host. Implements game endpoints (protobuf-net) and the admin REST API. Hosts the Blazor UI via `UseBlazorFrameworkFiles()` + `MapFallbackToFile("index.html")`.
+- **TaikoLocalServer** — ASP.NET Core 10 host. Implements game endpoints (protobuf-net) and the admin REST API. Hosts the Blazor UI via `UseBlazorFrameworkFiles()` + `MapFallbackToFile("index.html")`.
 - **TaikoWebUI** — Blazor WebAssembly admin UI (MudBlazor). Referenced as a project by TaikoLocalServer so its build artifacts are bundled.
 - **SharedProject** — DTOs, enums, request/response models, and `PathHelper` shared between server and WebUI. WebUI's `GlobalUsings.cs` re-exports its `Models`/`Enums` namespaces.
 - **GameDatabase** — EF Core 8 + SQLite. Owns `TaikoDbContext`, all entities, and **all migrations**. Migrations are applied automatically on server startup (`db.Database.Migrate()` in `Program.cs`).
@@ -26,7 +26,7 @@ dotnet build
 
 # Publish a self-contained single-file Windows exe (Release config sets PublishSingleFile/SelfContained)
 dotnet publish
-# Output: TaikoLocalServer/bin/Release/net8.0/win-x64/publish/
+# Output: TaikoLocalServer/bin/Release/net10.0/win-x64/publish/
 
 # Run the server in dev (auto-applies migrations)
 dotnet run --project TaikoLocalServer
@@ -76,9 +76,9 @@ Two game versions are supported in parallel and cleanly separated:
 - `Models/ww_r08/` — protobuf models for the 39.06 WW client. Controller routes use `/v12r08_ww/...`.
 - `Models/Application/Common*` — version-agnostic DTOs.
 
-The flow: controller deserializes the version-specific request → **Riok.Mapperly** source-generated mapper in `Mappers/` converts it to a `Common*` DTO → MediatR `Handlers/*Query`/`*Command` operates only on `Common*` types → mapper converts the response back to the requested version's protobuf type. Adding a new game version means adding a new model namespace + mapper overloads; handlers and DB code should not need to change.
+The flow: controller deserializes the version-specific request → **Riok.Mapperly** source-generated mapper in `Mappers/` converts it to a `Common*` DTO → **Mediator** (martinothamar) `Handlers/*Query`/`*Command` operates only on `Common*` types → mapper converts the response back to the requested version's protobuf type. Adding a new game version means adding a new model namespace + mapper overloads; handlers and DB code should not need to change.
 
-Controllers inherit `BaseController<T>` which lazily resolves `Mediator` (`ISender`) and `Logger` from `HttpContext.RequestServices`. Don't inject these via constructor — match the existing pattern.
+Controllers inherit `BaseController<T>` which lazily resolves `Mediator` (`IMediator`) and `Logger` from `HttpContext.RequestServices`. Don't inject these via constructor — match the existing pattern.
 
 Controller folders are organized by audience, not by route prefix:
 
@@ -90,6 +90,11 @@ Controller folders are organized by audience, not by route prefix:
 
 - **Don't add config to `appsettings.json`.** Add a new section to one of the files in `Configurations/`, register it in `Program.cs`, and add a `<None Include="Configurations/Foo.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>` block to `TaikoLocalServer.csproj`.
 - **New persisted field?** Add it to the entity in `GameDatabase/Entities/`, then `dotnet ef migrations add ...` against `GameDatabase` with `TaikoLocalServer` as the startup project. Never edit existing migration files.
-- **New game endpoint?** Implement both `_cn` and `_ww` route variants in the same controller, mapping into the same `Common*` request via Mapperly. Send through MediatR; never query the DbContext directly from a controller.
-- **GlobalUsings.** `TaikoLocalServer/GlobalUsings.cs` re-exports `GameDatabase.Entities`, `MediatR`, `ProtoBuf`, `SharedProject.Enums`, and the project's own `Common`/`Handlers`/`Models`/`Services` namespaces — don't add explicit `using`s for those.
+- **New game endpoint?** Implement both `_cn` and `_ww` route variants in the same controller, mapping into the same `Common*` request via Mapperly. Send through Mediator; never query the DbContext directly from a controller.
+- **GlobalUsings.** `TaikoLocalServer/GlobalUsings.cs` re-exports `GameDatabase.Entities`, `Mediator`, `ProtoBuf`, `SharedProject.Enums`, and the project's own `Common`/`Handlers`/`Models`/`Services` namespaces — don't add explicit `using`s for those.
 - **Auth.** Use `[AuthorizeIfRequired]` (not `[Authorize]`) on admin API endpoints so the operator-controlled `AuthSettings.AuthenticationRequired` toggle works.
+- **Mediator handler conventions** (martinothamar's library, registered with `AddMediator` in `Program.cs`):
+  - Request types are `readonly record struct`, not `record class`.
+  - `IRequestHandler<TRequest, TResponse>.Handle` returns `ValueTask<TResponse>`, not `Task<TResponse>`. For void requests use `IRequestHandler<TRequest>` and return `ValueTask<Unit>` ending with `return Unit.Value;`.
+  - Service lifetime is **scoped** (set by `opt.ServiceLifetime = ServiceLifetime.Scoped`) because handlers inject `TaikoDbContext`. Don't change this without also switching to `IDbContextFactory<TaikoDbContext>`.
+  - Controllers always pass `HttpContext.RequestAborted` as the second argument to `Mediator.Send(...)` for cancellation hygiene.
