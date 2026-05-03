@@ -7,22 +7,22 @@
 
   <ItemGroup>
     <!-- ASP.NET Core / Blazor (server hosts WASM, so these appear in TaikoLocalServer too) -->
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.4" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.4" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.4" />
-    <PackageVersion Include="Microsoft.AspNetCore.ResponseCompression" Version="2.3.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.7" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.7" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.7" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.7" />
+    <PackageVersion Include="Microsoft.AspNetCore.ResponseCompression" Version="2.3.9" />
 
     <!-- Entity Framework Core -->
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.4" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.4" />
-    <PackageVersion Include="EntityFrameworkCore.Exceptions.Sqlite" Version="8.1.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.7" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.7" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.7" />
+    <PackageVersion Include="EntityFrameworkCore.Exceptions.Sqlite" Version="10.0.0" />
 
     <!-- Microsoft.Extensions -->
-    <PackageVersion Include="Microsoft.Extensions.Localization" Version="8.0.4" />
-    <PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="8.0.4" />
-    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Localization" Version="10.0.7" />
+    <PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="10.0.7" />
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.7" />
 
     <!-- Server-side dependencies -->
     <PackageVersion Include="MediatR" Version="12.2.0" />
@@ -50,7 +50,7 @@
     <PackageVersion Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageVersion Include="Markdig" Version="0.37.0" />
     <PackageVersion Include="Autocomplete.Clients" Version="1.1.0" />
-    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="7.7.1" />
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.3.0" />
 
     <!-- LocalSaveModScoreMigrator -->
     <PackageVersion Include="JorgeSerrano.Json.JsonSnakeCaseNamingPolicy" Version="0.9.0" />
