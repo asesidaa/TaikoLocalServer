@@ -40,3 +40,5 @@ This solution uses [Central Package Management](https://learn.microsoft.com/en-u
 Shared MSBuild defaults (TFM, Nullable, ImplicitUsings, LangVersion) live in `Directory.Build.props`.
 
 The repo pins the .NET SDK band via `global.json`.
+
+This solution targets **.NET 10 LTS**. Install the .NET 10 SDK from <https://dotnet.microsoft.com/download> (or any 10.0.x patch — the `global.json` allows latestFeature roll-forward).
