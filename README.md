@@ -32,3 +32,11 @@ Please refer to the [taikolocalserver readme file](./TaikoLocalServer/README.md)
 
 The WebUI has a few settings you can change in [appsettings.json](./TaikoWebUI/wwwroot/appsettings.json)  
 Please refer to the [taikowebui readme file](./TaikoWebUI/README.md) for documentation.
+
+## For developers
+
+This solution uses [Central Package Management](https://learn.microsoft.com/en-us/nuget/consume-packages/central-package-management) — package versions live in `Directory.Packages.props` at the repo root, not in individual `.csproj` files. To add or bump a package, edit `Directory.Packages.props` and add a versionless `<PackageReference Include="…" />` to the project that uses it.
+
+Shared MSBuild defaults (TFM, Nullable, ImplicitUsings, LangVersion) live in `Directory.Build.props`.
+
+The repo pins the .NET SDK band via `global.json`.
