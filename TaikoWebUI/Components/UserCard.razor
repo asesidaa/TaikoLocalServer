@@ -23,7 +23,7 @@
 
                     @if (AuthService.LoginRequired && User?.IsAdmin == true)
                     {
-                        <MudChip Variant="Variant.Outlined" Color="Color.Info" Size="Size.Small" Icon="@Icons.Material.TwoTone.AdminPanelSettings">@Localizer["Admin"]</MudChip>
+                        <MudChip T="string" Variant="Variant.Outlined" Color="Color.Info" Size="Size.Small" Icon="@Icons.Material.TwoTone.AdminPanelSettings">@Localizer["Admin"]</MudChip>
                     }
                 </div>
                 <MudText Typo="Typo.caption">@Localizer["User ID"]: @User?.Baid</MudText>
@@ -33,7 +33,6 @@
                              TransformOrigin="Origin.TopLeft" Size="Size.Small">
                         <MudMenuItem Icon="@Icons.Material.Filled.QrCode"
                                      OnClick="@(_ => ShowQrCode(User))"
-                                     OnTouch="@(_ => ShowQrCode(User))"
                                      IconColor="@Color.Primary">
                             @Localizer["Show QR Code"]
                     </MudMenuItem>
@@ -57,7 +56,6 @@
                     {
                         <MudMenuItem Icon="@Icons.Material.Filled.Password"
                                      OnClick="@(_ => GenerateInviteCode(User.Baid))"
-                                     OnTouch="@(_ => GenerateInviteCode(User.Baid))"
                                      IconColor="@Color.Primary">
                             @Localizer["Generate Invite Code"]
                         </MudMenuItem>
@@ -67,7 +65,6 @@
                     {
                         <MudMenuItem Icon="@Icons.Material.Filled.LockReset"
                                      OnClick="@(_ => ResetPassword(User))"
-                                     OnTouch="@(_ => ResetPassword(User))"
                                      IconColor="@Color.Primary">
                             @Localizer["Unregister"]
                         </MudMenuItem>
@@ -77,7 +74,6 @@
                     {
                         <MudMenuItem Icon="@Icons.Material.Filled.Delete"
                                      OnClick="@(_ => DeleteUser(User))"
-                                     OnTouch="@(_ => DeleteUser(User))"
                                      IconColor="@Color.Error">
                             @Localizer["Delete User"]
                         </MudMenuItem>
@@ -158,18 +154,18 @@
                 ["user"] = user
             };
 
-        var options = new DialogOptions { DisableBackdropClick = true };
-        DialogService.Show<UserQrCodeDialog>(Localizer["QR Code"], parameters, options);
+        var options = new DialogOptions { BackdropClick = false };
+        DialogService.ShowAsync<UserQrCodeDialog>(Localizer["QR Code"], parameters, options);
 
         return Task.CompletedTask;
     }
 
     private async Task ResetPassword(User user)
     {
-        var options = new DialogOptions { DisableBackdropClick = true };
+        var options = new DialogOptions { BackdropClick = false };
         if (AuthService.LoginRequired && !AuthService.IsAdmin)
         {
-            await DialogService.ShowMessageBox(
+            await DialogService.ShowMessageBoxAsync(
                 Localizer["Error"],
                 "Only admin can reset password.",
                 Localizer["Dialog OK"], null, null, options);
@@ -186,10 +182,10 @@
 
     private async Task DeleteUser(User user)
     {
-        var options = new DialogOptions { DisableBackdropClick = true };
+        var options = new DialogOptions { BackdropClick = false };
         if (!AuthService.AllowUserDelete)
         {
-            await DialogService.ShowMessageBox(
+            await DialogService.ShowMessageBoxAsync(
                 Localizer["Error"],
                 "User deletion is disabled by admin.",
                 Localizer["Dialog OK"], null, null, options);
@@ -224,10 +220,10 @@
         
         if (!responseMessage.IsSuccessStatusCode)
         {
-            await DialogService.ShowMessageBox(
+            await DialogService.ShowMessageBoxAsync(
                 Localizer["Error"],
                 Localizer["Unknown Error"],
-                Localizer["Dialog OK"], null, null, new DialogOptions { DisableBackdropClick = true });
+                Localizer["Dialog OK"], null, null, new DialogOptions { BackdropClick = false });
             return;
         }
         
@@ -235,10 +231,10 @@
         var responseJson = JsonSerializer.Deserialize<Dictionary<string, string>>(responseContent);
         if (responseJson == null)
         {
-            await DialogService.ShowMessageBox(
+            await DialogService.ShowMessageBoxAsync(
                 Localizer["Error"],
                 Localizer["Unknown Error"],
-                Localizer["Dialog OK"], null, null, new DialogOptions { DisableBackdropClick = true });
+                Localizer["Dialog OK"], null, null, new DialogOptions { BackdropClick = false });
             return;
         }
         
@@ -249,7 +245,7 @@
             ["otp"] = otp
         };
 
-        var options = new DialogOptions { DisableBackdropClick = true };
+        var options = new DialogOptions { BackdropClick = false };
         await DialogService.ShowAsync<OTPDialog>(Localizer["Invite Code"], parameters, options);
     }
 }

@@ -1,6 +1,11 @@
-﻿<MudDialog Class="dialog-user-qr-code">
+@using QRCoder
+
+<MudDialog Class="dialog-user-qr-code">
     <DialogContent>
-        <MudExtensions.MudBarcode Value="@qrCode" BarcodeFormat="ZXing.BarcodeFormat.QR_CODE" Height="300" Width="300" />
+        @if (!string.IsNullOrEmpty(qrPngBase64))
+        {
+            <img src="data:image/png;base64,@qrPngBase64" width="300" height="300" alt="QR code" />
+        }
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Primary" OnClick="Submit">@Localizer["Dialog OK"]</MudButton>
@@ -10,17 +15,23 @@
 @code {
 
     [CascadingParameter]
-    MudDialogInstance MudDialog { get; set; } = null!;
+    IMudDialogInstance MudDialog { get; set; } = null!;
 
     [Parameter]
     public User User { get; set; } = new();
 
     private string qrCode = string.Empty;
+    private string qrPngBase64 = string.Empty;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
         qrCode = "BNTTCNID" + User.AccessCodes.First();
+
+        using var qrGenerator = new QRCodeGenerator();
+        using var qrCodeData = qrGenerator.CreateQrCode(qrCode, QRCodeGenerator.ECCLevel.Q);
+        using var pngQrCode = new PngByteQRCode(qrCodeData);
+        qrPngBase64 = Convert.ToBase64String(pngQrCode.GetGraphic(20));
     }
 
     private void Submit()

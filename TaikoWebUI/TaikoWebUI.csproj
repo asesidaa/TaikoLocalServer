@@ -19,6 +19,7 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
     <PackageReference Include="MudBlazor" />
     <PackageReference Include="Otp.NET" />
+    <PackageReference Include="QRCoder" />
     <PackageReference Include="SharpZipLib" />
     <PackageReference Include="Swan.Core" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" />

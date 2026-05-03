@@ -28,11 +28,11 @@ public partial class Login
     {
         debounce = true;
         var result = await AuthService.Login(inputAccessCode, inputPassword);
-        var options = new DialogOptions { DisableBackdropClick = true };
+        var options = new DialogOptions { BackdropClick = false };
         switch (result)
         {
             case 0:
-                await DialogService.ShowMessageBox(
+                await DialogService.ShowMessageBoxAsync(
                     Localizer["Error"],
                 (MarkupString)
                 (string)Localizer["Login Only Admin Error"],
@@ -43,28 +43,28 @@ public partial class Login
                 NavigationManager.NavigateTo("/Users");
                 break;
             case 2:
-                await DialogService.ShowMessageBox(
+                await DialogService.ShowMessageBoxAsync(
                     Localizer["Error"],
                     (MarkupString)
                     (string)Localizer["Login Wrong Password Error"],
                     Localizer["Dialog OK"], null, null, options);
                 break;
             case 3:
-                await DialogService.ShowMessageBox(
+                await DialogService.ShowMessageBoxAsync(
                     Localizer["Error"],
                     (MarkupString)
                     (string)Localizer["Unknown Access Code Error"],
                     Localizer["Dialog OK"], null, null, options);
                 break;
             case 4:
-                await DialogService.ShowMessageBox(
+                await DialogService.ShowMessageBoxAsync(
                     Localizer["Error"],
                     (MarkupString)
                     (string)Localizer["Access Code Not Registered Error"],
                     Localizer["Dialog OK"], null, null, options);
                 break;
             case 5:
-                await DialogService.ShowMessageBox(
+                await DialogService.ShowMessageBoxAsync(
                     Localizer["Error"],
                     Localizer["Unknown Error"],
                     Localizer["Dialog OK"], null, null, options);

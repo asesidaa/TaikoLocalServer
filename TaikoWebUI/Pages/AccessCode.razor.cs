@@ -64,14 +64,14 @@ public partial class AccessCode
         switch (result)
         {
             case 0:
-                await DialogService.ShowMessageBox(
+                await DialogService.ShowMessageBoxAsync(
                     Localizer["Error"],
                     (MarkupString)
                     (string)Localizer["Not Logged In Error"],
                     Localizer["Dialog OK"]);
                 break;
             case 1:
-                await DialogService.ShowMessageBox(
+                await DialogService.ShowMessageBoxAsync(
                     Localizer["Success"],
                     (MarkupString)
                     (string)Localizer["Access Code Bound Success"],
@@ -80,28 +80,28 @@ public partial class AccessCode
                 NavigationManager.NavigateTo(NavigationManager.Uri);
                 break;
             case 2:
-                await DialogService.ShowMessageBox(
+                await DialogService.ShowMessageBoxAsync(
                     Localizer["Error"],
                     (MarkupString)
                     (string)Localizer["Access Code Upper Limit Error"],
                     Localizer["Dialog OK"]);
                 break;
             case 3:
-                await DialogService.ShowMessageBox(
+                await DialogService.ShowMessageBoxAsync(
                     Localizer["Error"],
                     (MarkupString)
                     (string)Localizer["Access Code Already Bound Error"],
                     Localizer["Dialog OK"]);
                 break;
             case 4:
-                await DialogService.ShowMessageBox(
+                await DialogService.ShowMessageBoxAsync(
                     Localizer["Error"],
                     (MarkupString)
                     (string)Localizer["Access Code Empty Error"],
                     Localizer["Dialog OK"]);
                 break;
             case 5:
-                await DialogService.ShowMessageBox(
+                await DialogService.ShowMessageBoxAsync(
                     Localizer["Error"],
                     (MarkupString)
                     (string)Localizer["Access Code Not Admin Error"],

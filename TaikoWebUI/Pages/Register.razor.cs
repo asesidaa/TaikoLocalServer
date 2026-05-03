@@ -37,11 +37,11 @@ public partial class Register
         debounce = true;
         var inputDateTime = date!.Value.Date + time!.Value;
         var result = await AuthService.Register(AccessCode, inputDateTime, Password, ConfirmPassword, inviteCode);
-        var options = new DialogOptions { DisableBackdropClick = true };
+        var options = new DialogOptions { BackdropClick = false };
         switch (result)
         {
             case 0:
-                await DialogService.ShowMessageBox(
+                await DialogService.ShowMessageBoxAsync(
                     Localizer["Error"],
                     (MarkupString)
                     (string)Localizer["Register Only Admin Error"],
@@ -49,7 +49,7 @@ public partial class Register
                 NavigationManager.NavigateTo("/");
                 break;
             case 1:
-                await DialogService.ShowMessageBox(
+                await DialogService.ShowMessageBoxAsync(
                     Localizer["Success"],
                     (MarkupString)
                     (string)Localizer["Register Success"],
@@ -57,21 +57,21 @@ public partial class Register
                 NavigationManager.NavigateTo("/Login");
                 break;
             case 2:
-                await DialogService.ShowMessageBox(
+                await DialogService.ShowMessageBoxAsync(
                     Localizer["Error"],
                     (MarkupString)
                     (string)Localizer["Register Different Confirm Password Error"],
                     Localizer["Dialog OK"], null, null, options);
                 break;
             case 3:
-                await DialogService.ShowMessageBox(
+                await DialogService.ShowMessageBoxAsync(
                     Localizer["Error"],
                     (MarkupString)
                     (string)Localizer["Unknown Access Code Error"],
                     Localizer["Dialog OK"], null, null, options);
                 break;
             case 4:
-                await DialogService.ShowMessageBox(
+                await DialogService.ShowMessageBoxAsync(
                     Localizer["Error"],
                     (MarkupString)
                     (string)Localizer["Register Already Registered Error"],
@@ -79,14 +79,14 @@ public partial class Register
                 NavigationManager.NavigateTo("/Login");
                 break;
             case 5:
-                await DialogService.ShowMessageBox(
+                await DialogService.ShowMessageBoxAsync(
                     Localizer["Error"],
                     (MarkupString)
                     (string)Localizer["Register Wrong Last Play Time Error"],
                     Localizer["Dialog OK"], null, null, options);
                 break;
             case 6:
-                await DialogService.ShowMessageBox(
+                await DialogService.ShowMessageBoxAsync(
                     Localizer["Error"],
                     Localizer["Unknown Error"],
                     Localizer["Dialog OK"], null, null, options);
