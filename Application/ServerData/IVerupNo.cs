@@ -1,4 +1,4 @@
-﻿namespace SharedProject.Models;
+﻿namespace TaikoLocalServer.Application.ServerData;
 
 public interface IVerupNo
 {
