@@ -2,7 +2,7 @@
 using System.Text;
 using ICSharpCode.SharpZipLib.GZip;
 
-namespace TaikoLocalServer.Common.Utils;
+namespace TaikoLocalServer.Adapters.GameProtocol.Shared.Compression;
 
 public static class GZipBytesUtil
 {
