@@ -1,6 +1,6 @@
 ﻿using SharedProject.Enums;
 
-namespace GameDatabase.Entities;
+namespace TaikoLocalServer.Domain.Entities;
 
 public partial class SongPlayDatum
 {

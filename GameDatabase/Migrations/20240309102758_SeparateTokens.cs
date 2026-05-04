@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using GameDatabase.Context;
-using GameDatabase.Entities;
+using TaikoLocalServer.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 

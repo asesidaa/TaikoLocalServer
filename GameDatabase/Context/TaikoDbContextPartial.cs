@@ -1,4 +1,4 @@
-﻿using GameDatabase.Entities;
+﻿using TaikoLocalServer.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using SharedProject.Enums;
 

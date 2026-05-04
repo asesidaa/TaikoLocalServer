@@ -20,7 +20,7 @@ namespace GameDatabase.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0-rc.1.23419.6");
 
-            modelBuilder.Entity("GameDatabase.Entities.AiScoreDatum", b =>
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.AiScoreDatum", b =>
                 {
                     b.Property<ulong>("Baid")
                         .HasColumnType("INTEGER");
@@ -39,7 +39,7 @@ namespace GameDatabase.Migrations
                     b.ToTable("AiScoreData");
                 });
 
-            modelBuilder.Entity("GameDatabase.Entities.AiSectionScoreDatum", b =>
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.AiSectionScoreDatum", b =>
                 {
                     b.Property<ulong>("Baid")
                         .HasColumnType("INTEGER");
@@ -79,7 +79,7 @@ namespace GameDatabase.Migrations
                     b.ToTable("AiSectionScoreData");
                 });
 
-            modelBuilder.Entity("GameDatabase.Entities.Card", b =>
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.Card", b =>
                 {
                     b.Property<string>("AccessCode")
                         .HasColumnType("TEXT");
@@ -103,7 +103,7 @@ namespace GameDatabase.Migrations
                     b.ToTable("Card", (string)null);
                 });
 
-            modelBuilder.Entity("GameDatabase.Entities.DanScoreDatum", b =>
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.DanScoreDatum", b =>
                 {
                     b.Property<ulong>("Baid")
                         .HasColumnType("INTEGER");
@@ -135,7 +135,7 @@ namespace GameDatabase.Migrations
                     b.ToTable("DanScoreData");
                 });
 
-            modelBuilder.Entity("GameDatabase.Entities.DanStageScoreDatum", b =>
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.DanStageScoreDatum", b =>
                 {
                     b.Property<ulong>("Baid")
                         .HasColumnType("INTEGER");
@@ -180,7 +180,7 @@ namespace GameDatabase.Migrations
                     b.ToTable("DanStageScoreData");
                 });
 
-            modelBuilder.Entity("GameDatabase.Entities.SongBestDatum", b =>
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.SongBestDatum", b =>
                 {
                     b.Property<ulong>("Baid")
                         .HasColumnType("INTEGER");
@@ -208,7 +208,7 @@ namespace GameDatabase.Migrations
                     b.ToTable("SongBestData");
                 });
 
-            modelBuilder.Entity("GameDatabase.Entities.SongPlayDatum", b =>
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.SongPlayDatum", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -269,7 +269,7 @@ namespace GameDatabase.Migrations
                     b.ToTable("SongPlayData");
                 });
 
-            modelBuilder.Entity("GameDatabase.Entities.UserDatum", b =>
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.UserDatum", b =>
                 {
                     b.Property<ulong>("Baid")
                         .HasColumnType("INTEGER");
@@ -375,9 +375,9 @@ namespace GameDatabase.Migrations
                     b.ToTable("UserData");
                 });
 
-            modelBuilder.Entity("GameDatabase.Entities.AiScoreDatum", b =>
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.AiScoreDatum", b =>
                 {
-                    b.HasOne("GameDatabase.Entities.Card", "Ba")
+                    b.HasOne("TaikoLocalServer.Domain.Entities.Card", "Ba")
                         .WithMany()
                         .HasForeignKey("Baid")
                         .HasPrincipalKey("Baid")
@@ -387,9 +387,9 @@ namespace GameDatabase.Migrations
                     b.Navigation("Ba");
                 });
 
-            modelBuilder.Entity("GameDatabase.Entities.AiSectionScoreDatum", b =>
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.AiSectionScoreDatum", b =>
                 {
-                    b.HasOne("GameDatabase.Entities.AiScoreDatum", "Parent")
+                    b.HasOne("TaikoLocalServer.Domain.Entities.AiScoreDatum", "Parent")
                         .WithMany("AiSectionScoreData")
                         .HasForeignKey("Baid", "SongId", "Difficulty")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -398,9 +398,9 @@ namespace GameDatabase.Migrations
                     b.Navigation("Parent");
                 });
 
-            modelBuilder.Entity("GameDatabase.Entities.DanScoreDatum", b =>
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.DanScoreDatum", b =>
                 {
-                    b.HasOne("GameDatabase.Entities.Card", "Ba")
+                    b.HasOne("TaikoLocalServer.Domain.Entities.Card", "Ba")
                         .WithMany()
                         .HasForeignKey("Baid")
                         .HasPrincipalKey("Baid")
@@ -410,9 +410,9 @@ namespace GameDatabase.Migrations
                     b.Navigation("Ba");
                 });
 
-            modelBuilder.Entity("GameDatabase.Entities.DanStageScoreDatum", b =>
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.DanStageScoreDatum", b =>
                 {
-                    b.HasOne("GameDatabase.Entities.DanScoreDatum", "Parent")
+                    b.HasOne("TaikoLocalServer.Domain.Entities.DanScoreDatum", "Parent")
                         .WithMany("DanStageScoreData")
                         .HasForeignKey("Baid", "DanId", "DanType")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -421,9 +421,9 @@ namespace GameDatabase.Migrations
                     b.Navigation("Parent");
                 });
 
-            modelBuilder.Entity("GameDatabase.Entities.SongBestDatum", b =>
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.SongBestDatum", b =>
                 {
-                    b.HasOne("GameDatabase.Entities.Card", "Ba")
+                    b.HasOne("TaikoLocalServer.Domain.Entities.Card", "Ba")
                         .WithMany()
                         .HasForeignKey("Baid")
                         .HasPrincipalKey("Baid")
@@ -433,9 +433,9 @@ namespace GameDatabase.Migrations
                     b.Navigation("Ba");
                 });
 
-            modelBuilder.Entity("GameDatabase.Entities.SongPlayDatum", b =>
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.SongPlayDatum", b =>
                 {
-                    b.HasOne("GameDatabase.Entities.Card", "Ba")
+                    b.HasOne("TaikoLocalServer.Domain.Entities.Card", "Ba")
                         .WithMany()
                         .HasForeignKey("Baid")
                         .HasPrincipalKey("Baid")
@@ -445,9 +445,9 @@ namespace GameDatabase.Migrations
                     b.Navigation("Ba");
                 });
 
-            modelBuilder.Entity("GameDatabase.Entities.UserDatum", b =>
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.UserDatum", b =>
                 {
-                    b.HasOne("GameDatabase.Entities.Card", "Ba")
+                    b.HasOne("TaikoLocalServer.Domain.Entities.Card", "Ba")
                         .WithMany()
                         .HasForeignKey("Baid")
                         .HasPrincipalKey("Baid")
@@ -457,12 +457,12 @@ namespace GameDatabase.Migrations
                     b.Navigation("Ba");
                 });
 
-            modelBuilder.Entity("GameDatabase.Entities.AiScoreDatum", b =>
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.AiScoreDatum", b =>
                 {
                     b.Navigation("AiSectionScoreData");
                 });
 
-            modelBuilder.Entity("GameDatabase.Entities.DanScoreDatum", b =>
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.DanScoreDatum", b =>
                 {
                     b.Navigation("DanStageScoreData");
                 });
