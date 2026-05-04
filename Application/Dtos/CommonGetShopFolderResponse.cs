@@ -1,4 +1,4 @@
-﻿using TaikoLocalServer.Application.ServerData;
+﻿using SharedProject.Models;
 
 namespace TaikoLocalServer.Application.Dtos;
 
