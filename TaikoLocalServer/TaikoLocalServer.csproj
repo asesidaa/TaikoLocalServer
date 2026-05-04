@@ -181,6 +181,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\GameDatabase\GameDatabase.csproj" />
     <ProjectReference Include="..\SharedProject\SharedProject.csproj" />
     <ProjectReference Include="..\TaikoWebUI\TaikoWebUI.csproj" />

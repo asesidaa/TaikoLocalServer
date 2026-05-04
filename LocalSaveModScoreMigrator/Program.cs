@@ -1,5 +1,5 @@
 ﻿using GameDatabase.Context;
-using GameDatabase.Entities;
+using TaikoLocalServer.Domain.Entities;
 using ICSharpCode.SharpZipLib.GZip;
 using JorgeSerrano.Json;
 using LocalSaveModScoreMigrator;
