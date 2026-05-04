@@ -1,4 +1,4 @@
-﻿using GameDatabase.Context;
+﻿using TaikoLocalServer.Infrastructure.Persistence;
 using Throw;
 
 namespace TaikoLocalServer.Services;
