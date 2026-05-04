@@ -233,6 +233,8 @@ try
         }
     });
     app.MapControllers();
+    var routeCount = app.Services.GetRequiredService<EndpointDataSource>().Endpoints.Count;
+    Log.Information("Mapped {RouteCount} endpoints", routeCount);
     app.MapFallbackToFile("index.html");
 
     app.UseWhen(
