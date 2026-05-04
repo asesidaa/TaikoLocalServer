@@ -177,6 +177,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Adapters.AdminApi\Adapters.AdminApi.csproj" />
     <ProjectReference Include="..\Adapters.AllnetMucha\Adapters.AllnetMucha.csproj" />
     <ProjectReference Include="..\Adapters.GameProtocol.Shared\Adapters.GameProtocol.Shared.csproj" />
     <ProjectReference Include="..\Application\Application.csproj" />

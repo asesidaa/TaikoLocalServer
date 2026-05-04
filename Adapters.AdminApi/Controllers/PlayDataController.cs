@@ -4,18 +4,17 @@ using SharedProject.Models;
 using SharedProject.Models.Responses;
 using SharedProject.Utils;
 using Swan.Mapping;
-using TaikoLocalServer.Filters;
 using TaikoLocalServer.Infrastructure.Identity.Settings;
 using Throw;
 
-namespace TaikoLocalServer.Controllers.Api;
+namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public class PlayDataController(
     ITaikoDbContext context,
     IJwtTokenService jwtTokens,
-    IOptions<AuthSettings> settings) : BaseController<PlayDataController>
+    IOptions<AuthSettings> settings) : BaseAdminController<PlayDataController>
 {
     private readonly AuthSettings authSettings = settings.Value;
 

@@ -2,17 +2,16 @@ using Microsoft.Extensions.Options;
 using SharedProject.Models;
 using SharedProject.Models.Responses;
 using SharedProject.Utils;
-using TaikoLocalServer.Filters;
 using TaikoLocalServer.Infrastructure.Identity.Settings;
 
-namespace TaikoLocalServer.Controllers.Api;
+namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public class PlayHistoryController(
     ITaikoDbContext context,
     IJwtTokenService jwtTokens,
-    IOptions<AuthSettings> settings) : BaseController<PlayHistoryController>
+    IOptions<AuthSettings> settings) : BaseAdminController<PlayHistoryController>
 {
     private readonly AuthSettings authSettings = settings.Value;
 

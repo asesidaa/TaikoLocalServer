@@ -1,10 +1,9 @@
-using TaikoLocalServer.Filters;
 
-namespace TaikoLocalServer.Controllers.Api;
+namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class GameDataController(IGameDataCatalog catalog) : BaseController<GameDataController>
+public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<GameDataController>
 {
     [HttpGet("MusicDetails")]
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]

@@ -1,17 +1,16 @@
 using Microsoft.Extensions.Options;
 using SharedProject.Models;
 using SharedProject.Utils;
-using TaikoLocalServer.Filters;
 using TaikoLocalServer.Infrastructure.Identity.Settings;
 
-namespace TaikoLocalServer.Controllers.Api;
+namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 [ApiController]
 [Route("/api/[controller]")]
 public class UserSettingsController(
     ITaikoDbContext context,
     IJwtTokenService jwtTokens,
-    IOptions<AuthSettings> settings) : BaseController<UserSettingsController>
+    IOptions<AuthSettings> settings) : BaseAdminController<UserSettingsController>
 {
     private readonly AuthSettings authSettings = settings.Value;
 
