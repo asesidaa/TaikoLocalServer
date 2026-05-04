@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace TaikoLocalServer.Models;
+namespace TaikoLocalServer.Application.Catalog;
 
 public class Neiros
 {
