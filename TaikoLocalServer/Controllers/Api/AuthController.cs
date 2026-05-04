@@ -1,51 +1,32 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using TaikoLocalServer.Infrastructure.Identity.Settings;
 using OtpNet;
 using SharedProject.Models.Requests;
 using TaikoLocalServer.Filters;
+using TaikoLocalServer.Infrastructure.Identity.Settings;
 
 namespace TaikoLocalServer.Controllers.Api;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(IAuthService authService, IUserDatumService userDatumService, 
+public class AuthController(
+    ITaikoDbContext context,
+    IJwtTokenService jwtTokens,
     IOptions<AuthSettings> settings) : BaseController<AuthController>
 {
     private readonly AuthSettings authSettings = settings.Value;
-    
-    private string GenerateJwtToken(uint baid, bool isAdmin)
-    {
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.JwtKey));
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-        
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.Name, baid.ToString()),
-            new(ClaimTypes.Role, isAdmin ? "Admin" : "User")
-        };
 
-        var token = new JwtSecurityToken(
-            issuer: authSettings.JwtIssuer,
-            audience: authSettings.JwtAudience,
-            expires: DateTime.UtcNow.AddHours(24),
-            signingCredentials: credentials,
-            claims: claims
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-    
     private static string ComputeHash(string inputPassword, string salt)
     {
         return BCrypt.Net.BCrypt.HashPassword(inputPassword, salt);
     }
-    
+
+    private static string CreateSalt()
+    {
+        return BCrypt.Net.BCrypt.GenerateSalt(10);
+    }
+
     private static Totp MakeTotp(uint baid)
     {
         var secretKey = (baid * 765 + 2023).ToString();
@@ -53,58 +34,52 @@ public class AuthController(IAuthService authService, IUserDatumService userDatu
         var base32Bytes = Base32Encoding.ToBytes(base32String);
         return new Totp(base32Bytes, step: 999999999);
     }
-    
-    private static string CreateSalt()
-    {
-        return BCrypt.Net.BCrypt.GenerateSalt(10);
-    }
-    
+
     private static bool VerifyOtp(string otp, uint baid)
     {
         var totp = MakeTotp(baid);
         return totp.VerifyTotp(otp, out _);
     }
-    
+
     [HttpPost("Login")]
     [AllowAnonymous]
     public async Task<IActionResult> Login(LoginRequest loginRequest)
     {
         var accessCode = loginRequest.AccessCode;
         var password = loginRequest.Password;
-        
-        var card = await authService.GetCardByAccessCode(accessCode);
-        if (card == null) 
+
+        var card = await context.Cards.FindAsync(new object?[] { accessCode }, HttpContext.RequestAborted);
+        if (card == null)
             return Unauthorized(new { message = "Access Code Not Found" });
-         
-        var credential = await authService.GetCredentialByBaid(card.Baid);
+
+        var credential = await context.Credentials.FindAsync(new object?[] { card.Baid }, HttpContext.RequestAborted);
         if (credential == null)
             return Unauthorized(new { message = "Credential Not Found" });
-        
+
         if (credential.Password == "")
             return Unauthorized(new { message = "User Not Registered" });
-        
-        // Hash the password with the salt
+
         var hashedPassword = ComputeHash(password, credential.Salt);
 
-        if (credential.Password != hashedPassword) 
+        if (credential.Password != hashedPassword)
             return Unauthorized(new { message = "Invalid Password" });
-        
-        // Get User information
-        var user = await userDatumService.GetFirstUserDatumOrNull(card.Baid);
+
+        var user = await context.UserData
+            .Include(d => d.Tokens)
+            .FirstOrDefaultAsync(d => d.Baid == card.Baid, HttpContext.RequestAborted);
         if (user == null)
             return Unauthorized(new { message = "User Does Not Exist" });
-        
-        var authToken = GenerateJwtToken(card.Baid, user.IsAdmin);
-        
-        // Return the token with key authToken
+
+        var authToken = jwtTokens.IssueToken(card.Baid, user.IsAdmin);
+
         return Ok(new { authToken });
     }
-    
+
     [HttpPost("LoginWithToken")]
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public IActionResult LoginWithToken()
     {
-        var tokenInfo = authService.ExtractTokenInfo(HttpContext);
+        var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
         if (tokenInfo == null)
         {
             return Unauthorized();
@@ -112,7 +87,7 @@ public class AuthController(IAuthService authService, IUserDatumService userDatu
 
         return Ok();
     }
-    
+
 
     [HttpPost("Register")]
     [AllowAnonymous]
@@ -123,15 +98,15 @@ public class AuthController(IAuthService authService, IUserDatumService userDatu
         var lastPlayDateTime = registerRequest.LastPlayDateTime;
         var registerWithLastPlayTime = registerRequest.RegisterWithLastPlayTime;
         var inviteCode = registerRequest.InviteCode;
-        
-        var card = await authService.GetCardByAccessCode(accessCode);
-        if (card == null) 
+
+        var card = await context.Cards.FindAsync(new object?[] { accessCode }, HttpContext.RequestAborted);
+        if (card == null)
             return Unauthorized(new { message = "Access Code Not Found" });
-        
-        var credential = await authService.GetCredentialByBaid(card.Baid);
+
+        var credential = await context.Credentials.FindAsync(new object?[] { card.Baid }, HttpContext.RequestAborted);
         if (credential == null)
             return Unauthorized(new { message = "Credential Not Found" });
-        
+
         if (credential.Password != "")
             return Unauthorized(new { message = "User Already Registered" });
 
@@ -148,22 +123,25 @@ public class AuthController(IAuthService authService, IUserDatumService userDatu
 
             if (!invited)
             {
-                var user = await userDatumService.GetFirstUserDatumOrNull(card.Baid);
+                var user = await context.UserData
+                    .Include(d => d.Tokens)
+                    .FirstOrDefaultAsync(d => d.Baid == card.Baid, HttpContext.RequestAborted);
                 if (user == null)
                     return Unauthorized(new { message = "User Does Not Exist" });
-                
+
                 var diffMinutes = (lastPlayDateTime - user.LastPlayDatetime).Duration().TotalMinutes;
                 if (diffMinutes > 5)
                     return Unauthorized(new { message = "Wrong Last Play Time" });
             }
         }
-        
-        // Hash the password with the salt
+
         var salt = CreateSalt();
         var hashedPassword = ComputeHash(password, salt);
 
-        var result = await authService.UpdatePassword(card.Baid, hashedPassword, salt);
-        return result ? Ok() : Unauthorized( new { message = "Failed to Update Password" });
+        credential.Password = hashedPassword;
+        credential.Salt = salt;
+        await context.SaveChangesAsync(HttpContext.RequestAborted);
+        return Ok();
     }
 
     [HttpPost("ChangePassword")]
@@ -172,79 +150,81 @@ public class AuthController(IAuthService authService, IUserDatumService userDatu
     {
         if (authSettings.AuthenticationRequired)
         {
-            var tokenInfo = authService.ExtractTokenInfo(HttpContext);
+            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
             if (tokenInfo == null)
             {
                 return Unauthorized();
             }
 
-            if (!tokenInfo.Value.isAdmin)
+            if (!tokenInfo.Value.IsAdmin)
             {
-                var requestBaid = authService.GetCardByAccessCode(changePasswordRequest.AccessCode).Result?.Baid;
-                if (requestBaid != tokenInfo.Value.baid)
+                var requestCard = await context.Cards.FindAsync(new object?[] { changePasswordRequest.AccessCode }, HttpContext.RequestAborted);
+                if (requestCard?.Baid != tokenInfo.Value.Baid)
                 {
                     return Forbid();
                 }
             }
         }
-        
+
         var accessCode = changePasswordRequest.AccessCode;
         var oldPassword = changePasswordRequest.OldPassword;
         var newPassword = changePasswordRequest.NewPassword;
-        
-        var card = await authService.GetCardByAccessCode(accessCode);
-        if (card == null) 
+
+        var card = await context.Cards.FindAsync(new object?[] { accessCode }, HttpContext.RequestAborted);
+        if (card == null)
             return Unauthorized(new { message = "Access Code Not Found" });
-        
-        var credential = await authService.GetCredentialByBaid(card.Baid);
+
+        var credential = await context.Credentials.FindAsync(new object?[] { card.Baid }, HttpContext.RequestAborted);
         if (credential == null)
             return Unauthorized(new { message = "Credential Not Found" });
-        
+
         if (credential.Password == "")
             return Unauthorized(new { message = "User Not Registered" });
-        
-        // Hash the password with the salt
+
         var hashedOldPassword = ComputeHash(oldPassword, credential.Salt);
-        if (credential.Password != hashedOldPassword) 
+        if (credential.Password != hashedOldPassword)
             return Unauthorized(new { message = "Wrong Old Password" });
 
         if (newPassword.Length <= 0)
             return Unauthorized(new { message = "Password Cannot Be Empty !" });
 
-        // Hash the new password with the salt
         var salt = CreateSalt();
         var hashedNewPassword = ComputeHash(newPassword, salt);
-        
-        var result = await authService.UpdatePassword(card.Baid, hashedNewPassword, salt);
-        return result ? Ok() : Unauthorized( new { message = "Failed to Update Password" });
+
+        credential.Password = hashedNewPassword;
+        credential.Salt = salt;
+        await context.SaveChangesAsync(HttpContext.RequestAborted);
+        return Ok();
     }
-    
+
     [HttpPost("ResetPassword")]
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<IActionResult> ResetPassword(ResetPasswordRequest resetPasswordRequest)
     {
         if (authSettings.AuthenticationRequired)
         {
-            var tokenInfo = authService.ExtractTokenInfo(HttpContext);
+            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
             if (tokenInfo == null)
             {
                 return Unauthorized();
             }
 
-            if (!tokenInfo.Value.isAdmin && resetPasswordRequest.Baid != tokenInfo.Value.baid)
+            if (!tokenInfo.Value.IsAdmin && resetPasswordRequest.Baid != tokenInfo.Value.Baid)
             {
                 return Forbid();
             }
         }
-        
+
         var baid = resetPasswordRequest.Baid;
-        
-        var credential = await authService.GetCredentialByBaid(baid);
+
+        var credential = await context.Credentials.FindAsync(new object?[] { baid }, HttpContext.RequestAborted);
         if (credential == null)
             return Unauthorized(new { message = "Credential Not Found" });
-        
-        var result = await authService.UpdatePassword(baid, "", "");
-        return result ? Ok() : Unauthorized( new { message = "Failed to Reset Password" });
+
+        credential.Password = "";
+        credential.Salt = "";
+        await context.SaveChangesAsync(HttpContext.RequestAborted);
+        return Ok();
     }
 
     [HttpPost("GenerateOtp")]
@@ -253,18 +233,18 @@ public class AuthController(IAuthService authService, IUserDatumService userDatu
     {
         if (authSettings.AuthenticationRequired)
         {
-            var tokenInfo = authService.ExtractTokenInfo(HttpContext);
+            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
             if (tokenInfo == null)
             {
                 return Unauthorized();
             }
 
-            if (!tokenInfo.Value.isAdmin)
+            if (!tokenInfo.Value.IsAdmin)
             {
                 return Forbid();
             }
         }
-        
+
         var totp = MakeTotp(generateOtpRequest.Baid);
         return Ok(new { otp = totp.ComputeTotp() });
     }
