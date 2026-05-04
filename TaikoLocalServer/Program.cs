@@ -1,20 +1,14 @@
 using System.Reflection;
-using System.Text;
 using Serilog.Sinks.File.Header;
-using TaikoLocalServer.Logging;
+using TaikoLocalServer.Application;
+using TaikoLocalServer.Infrastructure;
 using TaikoLocalServer.Infrastructure.Persistence;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using TaikoLocalServer.Logging;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.IdentityModel.Tokens;
 using TaikoLocalServer.Middlewares;
-using TaikoLocalServer.Settings;
-using TaikoLocalServer.Infrastructure.Identity.Settings;
 using Throw;
 using Serilog;
-using TaikoLocalServer.Infrastructure.GameDataCatalog;
-using TaikoLocalServer.Infrastructure.GameDataCatalog.Settings;
 using TaikoLocalServer.Controllers.Api;
 using TaikoLocalServer.Filters;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -91,59 +85,13 @@ try
     });
 
     // Add services to the container.
-    builder.Services.AddMediator(opt =>
-    {
-        opt.ServiceLifetime = ServiceLifetime.Scoped;
-        opt.Namespace = "TaikoLocalServer";
-    });
     builder.Services.AddOptions();
-    builder.Services.AddSingleton<IGameDataCatalog, FileGameDataCatalog>();
-    builder.Services.Configure<ServerSettings>(builder.Configuration.GetSection(nameof(ServerSettings)));
-    builder.Services.Configure<DataSettings>(builder.Configuration.GetSection(nameof(DataSettings)));
-    builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection(nameof(AuthSettings)));
+    builder.Services.AddApplication();
+    builder.Services.AddInfrastructure(builder.Configuration);
 
-    // Add Authentication with JWT
-    builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration.GetSection(nameof(AuthSettings))["JwtIssuer"],
-            ValidAudience = builder.Configuration.GetSection(nameof(AuthSettings))["JwtAudience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection(nameof(AuthSettings))["JwtKey"] ?? throw new InvalidOperationException()))
-        };
-    });
-
-    builder.Services.AddScoped<AuthorizeIfRequiredAttribute>(); // Register the custom attribute
+    builder.Services.AddScoped<AuthorizeIfRequiredAttribute>();
 
     builder.Services.AddControllers().AddProtoBufNet();
-    builder.Services.AddDbContext<TaikoDbContext>(option =>
-    {
-        var dbName = builder.Configuration["DbFileName"];
-        if (string.IsNullOrEmpty(dbName))
-        {
-            dbName = PersistenceConstants.DefaultDbName;
-        }
-
-        var path = Path.Combine(PathHelper.GetRootPath(), dbName);
-        option
-            .UseSqlite($"Data Source={path}")
-            // SQLite-only noise: the provider emits internal PRAGMA foreign_keys = 0 around
-            // table rebuilds (dotnet/efcore#35871), and chains rebuilds with subsequent SQL
-            // ops in our older migrations. Both are safe here and we cannot rewrite the
-            // historical migrations without breaking existing user databases.
-            .ConfigureWarnings(warnings => warnings
-                .Ignore(RelationalEventId.NonTransactionalMigrationOperationWarning)
-                .Ignore(SqliteEventId.TableRebuildPendingWarning));
-    });
     builder.Services.AddMemoryCache();
     builder.Services.AddCors(options =>
     {
