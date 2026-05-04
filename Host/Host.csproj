@@ -1,0 +1,122 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <RootNamespace>TaikoLocalServer.Host</RootNamespace>
+    <AssemblyName>TaikoLocalServer</AssemblyName>
+    <Version>1.1.0</Version>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'!='Debug'">
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <BuildTime>$([System.DateTime]::UtcNow.ToString("yyyy-MM-dd HH:mm:ss"))</BuildTime>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>BuildTime</_Parameter1>
+      <_Parameter2>$(BuildTime)</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Adapters.AdminApi\Adapters.AdminApi.csproj" />
+    <ProjectReference Include="..\Adapters.AllnetMucha\Adapters.AllnetMucha.csproj" />
+    <ProjectReference Include="..\Adapters.GameProtocol.CnR00\Adapters.GameProtocol.CnR00.csproj" />
+    <ProjectReference Include="..\Adapters.GameProtocol.Shared\Adapters.GameProtocol.Shared.csproj" />
+    <ProjectReference Include="..\Adapters.GameProtocol.WwR08\Adapters.GameProtocol.WwR08.csproj" />
+    <ProjectReference Include="..\Application\Application.csproj" />
+    <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+    <ProjectReference Include="..\SharedProject\SharedProject.csproj" />
+    <ProjectReference Include="..\TaikoWebUI\TaikoWebUI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Templates\TemplateController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
+    <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" />
+    <PackageReference Include="Mediator.Abstractions" />
+    <PackageReference Include="protobuf-net.AspNetCore" />
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Expressions" />
+    <PackageReference Include="Serilog.Sinks.File.Header" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+    <PackageReference Include="Throw" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--Certificates-->
+    <None Update="Certificates\cert.pfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Certificates\root.pfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+
+    <!--Configuration-->
+    <Content Remove="Configurations\AuthSettings.json" />
+    <None Include="Configurations\AuthSettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Content Remove="Configurations\ServerSettings.json" />
+    <None Include="Configurations\ServerSettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Content Remove="Configurations\Database.json" />
+    <None Include="Configurations\Database.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Content Remove="Configurations\DataSettings.json" />
+    <None Include="Configurations\DataSettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Content Remove="Configurations\Kestrel.json" />
+    <None Include="Configurations\Kestrel.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Content Remove="Configurations\Logging.json" />
+    <None Include="Configurations\Logging.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+
+    <!--Server Datatables (12 files)-->
+    <Content Update="wwwroot\data\locked_songs_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\locked_costume_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\locked_title_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\intro_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\movie_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\shop_folder_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\dan_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\event_folder_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\token_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\gaiden_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\qrcode_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\special_songs_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+
+    <!--Encrypted Game Datatables-->
+    <Content Update="wwwroot\data\datatable\wordlist.bin"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\datatable\musicinfo.bin"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\datatable\music_order.bin"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\datatable\neiro.bin"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\datatable\shougou.bin"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\datatable\don_cos_reward.bin"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+
+    <!--Decrypted Game Datatables-->
+    <Content Update="wwwroot\data\datatable\wordlist.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\datatable\musicinfo.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\datatable\music_order.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\datatable\neiro.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\datatable\shougou.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\datatable\don_cos_reward.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+  </ItemGroup>
+
+</Project>
