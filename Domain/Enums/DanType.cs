@@ -1,4 +1,4 @@
-﻿namespace SharedProject.Enums;
+﻿namespace TaikoLocalServer.Domain.Enums;
 
 public enum DanType
 {

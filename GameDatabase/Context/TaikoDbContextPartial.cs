@@ -1,6 +1,6 @@
 ﻿using TaikoLocalServer.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using SharedProject.Enums;
+using TaikoLocalServer.Domain.Enums;
 
 namespace GameDatabase.Context;
 

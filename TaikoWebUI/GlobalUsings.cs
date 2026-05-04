@@ -10,5 +10,5 @@ global using TaikoWebUI.Shared;
 global using SharedProject.Models;
 global using SharedProject.Models.Requests;
 global using SharedProject.Models.Responses;
-global using SharedProject.Enums;
+global using TaikoLocalServer.Domain.Enums;
 global using Throw;

@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 using Microsoft.JSInterop;
-using SharedProject.Enums;
+using TaikoLocalServer.Domain.Enums;
 using SharedProject.Models;
 
 namespace TaikoWebUI.Pages;

@@ -1,4 +1,4 @@
-﻿using SharedProject.Enums;
+﻿using TaikoLocalServer.Domain.Enums;
 
 namespace TaikoLocalServer.Domain.Entities
 {
