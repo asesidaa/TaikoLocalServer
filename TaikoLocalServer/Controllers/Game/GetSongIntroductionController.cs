@@ -5,9 +5,10 @@ namespace TaikoLocalServer.Controllers.Game;
 [ApiController]
 public class GetSongIntroductionController : BaseController<GetSongIntroductionController>
 {
-    private readonly IGameDataService gameDataService;
+    private readonly IGameDataCatalog gameDataService;
 
-    public GetSongIntroductionController(IGameDataService gameDataService)
+
+    public GetSongIntroductionController(IGameDataCatalog gameDataService)
     {
         this.gameDataService = gameDataService;
     }

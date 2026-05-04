@@ -6,7 +6,7 @@ namespace TaikoLocalServer.Controllers.Api;
 
 [ApiController]
 [Route("api/[controller]")]
-public class GameDataController(IGameDataService gameDataService, IAuthService authService, 
+public class GameDataController(IGameDataCatalog gameDataService, IAuthService authService, 
     IOptions<AuthSettings> settings) : BaseController<UsersController>
 {
     private readonly AuthSettings authSettings = settings.Value;

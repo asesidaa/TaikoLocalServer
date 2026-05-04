@@ -14,7 +14,8 @@ using TaikoLocalServer.Settings;
 using TaikoLocalServer.Infrastructure.Identity.Settings;
 using Throw;
 using Serilog;
-using SharedProject.Utils;
+using TaikoLocalServer.Infrastructure.GameDataCatalog;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Settings;
 using TaikoLocalServer.Controllers.Api;
 using TaikoLocalServer.Filters;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -98,7 +99,7 @@ try
         opt.Namespace = "TaikoLocalServer";
     });
     builder.Services.AddOptions();
-    builder.Services.AddSingleton<IGameDataService, GameDataService>();
+    builder.Services.AddSingleton<IGameDataCatalog, FileGameDataCatalog>();
     builder.Services.AddScoped<ISongLeaderboardService, SongLeaderboardService>();
     builder.Services.Configure<ServerSettings>(builder.Configuration.GetSection(nameof(ServerSettings)));
     builder.Services.Configure<DataSettings>(builder.Configuration.GetSection(nameof(DataSettings)));
@@ -179,9 +180,9 @@ try
         };
     });
 
-    var gameDataService = app.Services.GetService<IGameDataService>();
-    gameDataService.ThrowIfNull();
-    await gameDataService.InitializeAsync();
+    var gameDataCatalog = app.Services.GetService<IGameDataCatalog>();
+    gameDataCatalog.ThrowIfNull();
+    await gameDataCatalog.InitializeAsync();
 
     // Use response compression
     app.UseResponseCompression();

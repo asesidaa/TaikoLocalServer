@@ -3,9 +3,9 @@
 [ApiController]
 public class VerifyQrCodeController : BaseController<VerifyQrCodeController>
 {
-    private readonly IGameDataService gameDataService;
+    private readonly IGameDataCatalog gameDataService;
 
-    public VerifyQrCodeController(IGameDataService gameDataService)
+    public VerifyQrCodeController(IGameDataCatalog gameDataService)
     {
         this.gameDataService = gameDataService;
     }
