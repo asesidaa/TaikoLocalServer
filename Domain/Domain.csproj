@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>TaikoLocalServer.Domain</RootNamespace>
+    <AssemblyName>TaikoLocalServer.Domain</AssemblyName>
+  </PropertyGroup>
+
+</Project>
