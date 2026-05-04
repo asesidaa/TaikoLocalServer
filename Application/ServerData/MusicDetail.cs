@@ -1,6 +1,6 @@
 ﻿using TaikoLocalServer.Domain.Enums;
 
-namespace SharedProject.Models;
+namespace TaikoLocalServer.Application.ServerData;
 
 public class MusicDetail
 {

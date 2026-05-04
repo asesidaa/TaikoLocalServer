@@ -6,6 +6,7 @@ global using Microsoft.Extensions.Logging;
 global using TaikoLocalServer.Application.Abstractions;
 global using TaikoLocalServer.Application.Catalog;
 global using TaikoLocalServer.Application.Dtos;
+global using TaikoLocalServer.Application.ServerData;
 global using TaikoLocalServer.Domain;
 global using TaikoLocalServer.Domain.Entities;
 global using TaikoLocalServer.Domain.Enums;
