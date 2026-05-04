@@ -1,6 +1,6 @@
 ﻿// Global using directives
 
-global using GameDatabase.Entities;
+global using TaikoLocalServer.Domain.Entities;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using ProtoBuf;
