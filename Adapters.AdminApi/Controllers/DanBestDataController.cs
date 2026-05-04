@@ -2,17 +2,16 @@ using Microsoft.Extensions.Options;
 using SharedProject.Models;
 using SharedProject.Models.Responses;
 using Swan.Mapping;
-using TaikoLocalServer.Filters;
 using TaikoLocalServer.Infrastructure.Identity.Settings;
 
-namespace TaikoLocalServer.Controllers.Api;
+namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public class DanBestDataController(
     ITaikoDbContext context,
     IJwtTokenService jwtTokens,
-    IOptions<AuthSettings> settings) : BaseController<DanBestDataController>
+    IOptions<AuthSettings> settings) : BaseAdminController<DanBestDataController>
 {
     private readonly AuthSettings authSettings = settings.Value;
 

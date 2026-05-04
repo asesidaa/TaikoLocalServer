@@ -3,17 +3,16 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using OtpNet;
 using SharedProject.Models.Requests;
-using TaikoLocalServer.Filters;
 using TaikoLocalServer.Infrastructure.Identity.Settings;
 
-namespace TaikoLocalServer.Controllers.Api;
+namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController(
     ITaikoDbContext context,
     IJwtTokenService jwtTokens,
-    IOptions<AuthSettings> settings) : BaseController<AuthController>
+    IOptions<AuthSettings> settings) : BaseAdminController<AuthController>
 {
     private readonly AuthSettings authSettings = settings.Value;
 

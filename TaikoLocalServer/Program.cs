@@ -1,5 +1,7 @@
 using System.Reflection;
 using Serilog.Sinks.File.Header;
+using TaikoLocalServer.Adapters.AdminApi;
+using TaikoLocalServer.Adapters.AdminApi.Controllers;
 using TaikoLocalServer.Adapters.AllnetMucha;
 using TaikoLocalServer.Application;
 using TaikoLocalServer.Infrastructure;
@@ -9,8 +11,6 @@ using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.HttpOverrides;
 using Throw;
 using Serilog;
-using TaikoLocalServer.Controllers.Api;
-using TaikoLocalServer.Filters;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
 
@@ -88,9 +88,8 @@ try
     builder.Services.AddOptions();
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure(builder.Configuration);
+    builder.Services.AddAdminApi(builder.Configuration);
     builder.Services.AddAllnetMucha();
-
-    builder.Services.AddScoped<AuthorizeIfRequiredAttribute>();
 
     builder.Services.AddControllers().AddProtoBufNet();
     builder.Services.AddMemoryCache();

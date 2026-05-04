@@ -1,17 +1,16 @@
 using Microsoft.Extensions.Options;
 using SharedProject.Models;
 using SharedProject.Models.Responses;
-using TaikoLocalServer.Filters;
 using TaikoLocalServer.Infrastructure.Identity.Settings;
 
-namespace TaikoLocalServer.Controllers.Api;
+namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public class SongLeaderboardController(
     ITaikoDbContext context,
     IJwtTokenService jwtTokens,
-    IOptions<AuthSettings> settings) : BaseController<SongLeaderboardController>
+    IOptions<AuthSettings> settings) : BaseAdminController<SongLeaderboardController>
 {
     private readonly AuthSettings authSettings = settings.Value;
 

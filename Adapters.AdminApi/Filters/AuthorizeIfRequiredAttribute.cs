@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
 using TaikoLocalServer.Infrastructure.Identity.Settings;
 
-namespace TaikoLocalServer.Filters
+namespace TaikoLocalServer.Adapters.AdminApi.Filters
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class AuthorizeIfRequiredAttribute(IOptions<AuthSettings> settings) : Attribute, IAsyncAuthorizationFilter

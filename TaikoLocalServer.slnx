@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="Adapters.AdminApi/Adapters.AdminApi.csproj" />
   <Project Path="Adapters.AllnetMucha/Adapters.AllnetMucha.csproj" />
   <Project Path="Adapters.GameProtocol.Shared/Adapters.GameProtocol.Shared.csproj" />
   <Project Path="Application/Application.csproj" />
