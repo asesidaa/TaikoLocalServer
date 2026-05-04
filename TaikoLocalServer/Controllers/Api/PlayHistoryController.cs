@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Options;
 using SharedProject.Models;
 using SharedProject.Models.Responses;
 using SharedProject.Utils;
@@ -9,36 +9,38 @@ namespace TaikoLocalServer.Controllers.Api;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PlayHistoryController(IUserDatumService userDatumService, ISongPlayDatumService songPlayDatumService,
-    IAuthService authService, IOptions<AuthSettings> settings) : BaseController<PlayDataController>
+public class PlayHistoryController(
+    ITaikoDbContext context,
+    IJwtTokenService jwtTokens,
+    IOptions<AuthSettings> settings) : BaseController<PlayHistoryController>
 {
     private readonly AuthSettings authSettings = settings.Value;
-    
+
     [HttpGet("{baid}")]
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<ActionResult<SongHistoryResponse>> GetSongHistory(uint baid)
     {
         if (authSettings.AuthenticationRequired)
         {
-            var tokenInfo = authService.ExtractTokenInfo(HttpContext);
+            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
             if (tokenInfo is null)
             {
                 return Unauthorized();
             }
-            
-            if (tokenInfo.Value.baid != baid && !tokenInfo.Value.isAdmin)
+
+            if (tokenInfo.Value.Baid != baid && !tokenInfo.Value.IsAdmin)
             {
                 return Forbid();
             }
         }
-        
-        var user = await userDatumService.GetFirstUserDatumOrNull(baid);
+
+        var user = await context.UserData.FindAsync(baid);
         if (user is null)
         {
             return NotFound();
         }
 
-        var playLogs = await songPlayDatumService.GetSongPlayDatumByBaid(baid);
+        var playLogs = await context.SongPlayData.Where(d => d.Baid == baid).ToListAsync();
         var songHistory = playLogs.Select(play => new SongHistoryData
             {
                 SongId = play.SongId,
@@ -58,13 +60,12 @@ public class PlayHistoryController(IUserDatumService userDatumService, ISongPlay
             })
             .ToList();
 
-        var favoriteSongs = await userDatumService.GetFavoriteSongIds(baid);
-        var favoriteSet = favoriteSongs.ToHashSet();
+        var favoriteSet = user.FavoriteSongsArray.ToHashSet();
         foreach (var song in songHistory.Where(song => favoriteSet.Contains(song.SongId)))
         {
             song.IsFavorite = true;
         }
 
-        return Ok(new SongHistoryResponse{SongHistoryData = songHistory});
+        return Ok(new SongHistoryResponse { SongHistoryData = songHistory });
     }
 }
