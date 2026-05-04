@@ -17,7 +17,7 @@ public class GetInitialDataQueryHandler(IGameDataService gameDataService,
     
     public ValueTask<CommonInitialDataCheckResponse> Handle(GetInitialDataQuery request, CancellationToken cancellationToken)
     {
-        var songIdMax = settings.EnableMoreSongs ? settings.MoreSongsSize : Constants.MusicIdMax;
+        var songIdMax = settings.EnableMoreSongs ? settings.MoreSongsSize : DomainConstants.MusicIdMax;
 
         var musicList = gameDataService.GetMusicList();
         var lockedSongsList = gameDataService.GetLockedSongsList();
@@ -59,7 +59,7 @@ public class GetInitialDataQueryHandler(IGameDataService gameDataService,
         }).ToList();
         CommonInitialDataCheckResponse.VerupNoData1[] verupNo1List =
         [
-            GetVerupNoData1(Constants.ShopVerupMasterType, gameDataService.GetShopFolderVerup()),
+            GetVerupNoData1(DomainConstants.ShopVerupMasterType, gameDataService.GetShopFolderVerup()),
         ];
         response.AryVerupNoData1s.AddRange(aryVerUp);
         response.AryVerupNoData1s.AddRange(verupNo1List);
@@ -71,18 +71,18 @@ public class GetInitialDataQueryHandler(IGameDataService gameDataService,
 
         CommonInitialDataCheckResponse.VerupNoData2[] verupNo2List =
         [
-            GetVerupNoData2(Constants.DanVerupMasterType, commonDanDataDictionary),
-            GetVerupNoData2(Constants.GaidenVerupMasterType, commonGaidenDataDictionary),
-            GetVerupNoData2(Constants.FolderVerupMasterType, eventFolderDictionary),
-            GetVerupNoData2(Constants.IntroVerupMasterType, songIntroDictionary)
+            GetVerupNoData2(DomainConstants.DanVerupMasterType, commonDanDataDictionary),
+            GetVerupNoData2(DomainConstants.GaidenVerupMasterType, commonGaidenDataDictionary),
+            GetVerupNoData2(DomainConstants.FolderVerupMasterType, eventFolderDictionary),
+            GetVerupNoData2(DomainConstants.IntroVerupMasterType, songIntroDictionary)
         ];
         response.AryVerupNoData2s.AddRange(verupNo2List);
 
         response.AryChassisFunctionIds = 
         [
-            Constants.FunctionIdDaniAvailable,
-            Constants.FunctionIdDaniFolderAvailable,
-            Constants.FunctionIdAiBattleAvailable
+            DomainConstants.FunctionIdDaniAvailable,
+            DomainConstants.FunctionIdDaniFolderAvailable,
+            DomainConstants.FunctionIdAiBattleAvailable
         ];
 
         return ValueTask.FromResult(response);

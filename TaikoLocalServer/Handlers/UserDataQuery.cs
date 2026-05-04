@@ -22,7 +22,7 @@ public class UserDataQueryHandler(TaikoDbContext context, IGameDataService gameD
         var unlockedSongIdList = userData.UnlockedSongIdList;
         var unlockedUraSongIdList = userData.UnlockedUraSongIdList;
 
-        var songIdMax = settings.EnableMoreSongs ? settings.MoreSongsSize : Constants.MusicIdMax;
+        var songIdMax = settings.EnableMoreSongs ? settings.MoreSongsSize : DomainConstants.MusicIdMax;
 
         var musicList = gameDataService.GetMusicList();
         var lockedSongsList = gameDataService.GetLockedSongsList().Except(unlockedSongIdList).ToList();
