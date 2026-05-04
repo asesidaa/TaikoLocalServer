@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using TaikoLocalServer.Middlewares;
 using TaikoLocalServer.Services.Extentions;
 using TaikoLocalServer.Settings;
+using TaikoLocalServer.Infrastructure.Identity.Settings;
 using Throw;
 using Serilog;
 using SharedProject.Utils;

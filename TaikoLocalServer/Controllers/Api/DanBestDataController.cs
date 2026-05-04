@@ -3,7 +3,7 @@ using SharedProject.Models;
 using SharedProject.Models.Responses;
 using Swan.Mapping;
 using TaikoLocalServer.Filters;
-using TaikoLocalServer.Settings;
+using TaikoLocalServer.Infrastructure.Identity.Settings;
 
 namespace TaikoLocalServer.Controllers.Api;
 

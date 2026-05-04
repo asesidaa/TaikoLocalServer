@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
-using TaikoLocalServer.Settings;
+using TaikoLocalServer.Infrastructure.Identity.Settings;
 
 namespace TaikoLocalServer.Filters
 {

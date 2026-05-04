@@ -1,4 +1,4 @@
-﻿namespace TaikoLocalServer.Settings;
+﻿namespace TaikoLocalServer.Infrastructure.Identity.Settings;
 
 public class AuthSettings
 {

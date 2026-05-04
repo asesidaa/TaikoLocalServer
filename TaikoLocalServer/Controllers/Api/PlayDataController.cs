@@ -3,7 +3,7 @@ using Riok.Mapperly.Abstractions;
 using SharedProject.Models.Responses;
 using SharedProject.Models;
 using TaikoLocalServer.Filters;
-using TaikoLocalServer.Settings;
+using TaikoLocalServer.Infrastructure.Identity.Settings;
 
 namespace TaikoLocalServer.Controllers.Api;
 

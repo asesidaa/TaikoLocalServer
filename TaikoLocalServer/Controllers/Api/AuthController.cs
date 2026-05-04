@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using TaikoLocalServer.Settings;
+using TaikoLocalServer.Infrastructure.Identity.Settings;
 using OtpNet;
 using SharedProject.Models.Requests;
 using TaikoLocalServer.Filters;
