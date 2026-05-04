@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using TaikoLocalServer.Middlewares;
-using TaikoLocalServer.Services.Extentions;
 using TaikoLocalServer.Settings;
 using TaikoLocalServer.Infrastructure.Identity.Settings;
 using Throw;
@@ -99,7 +98,6 @@ try
     });
     builder.Services.AddOptions();
     builder.Services.AddSingleton<IGameDataCatalog, FileGameDataCatalog>();
-    builder.Services.AddScoped<ISongLeaderboardService, SongLeaderboardService>();
     builder.Services.Configure<ServerSettings>(builder.Configuration.GetSection(nameof(ServerSettings)));
     builder.Services.Configure<DataSettings>(builder.Configuration.GetSection(nameof(DataSettings)));
     builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection(nameof(AuthSettings)));
@@ -157,7 +155,6 @@ try
                 .AllowAnyHeader();
         });
     });
-    builder.Services.AddTaikoDbServices();
     builder.Services.AddSingleton<SongBestResponseMapper>();
 
     var app = builder.Build();
