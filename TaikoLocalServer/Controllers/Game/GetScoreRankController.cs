@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Options;
 using TaikoLocalServer.Common.Utils;
 using TaikoLocalServer.Settings;
 
 namespace TaikoLocalServer.Controllers.Game;
 
 [ApiController]
-public class GetScoreRankController(ISongBestDatumService songBestDatumService, IOptions<ServerSettings> settings)
+public class GetScoreRankController(ITaikoDbContext context, IOptions<ServerSettings> settings)
     : BaseController<GetScoreRankController>
 {
     private readonly ServerSettings settings = settings.Value;
@@ -15,7 +15,7 @@ public class GetScoreRankController(ISongBestDatumService songBestDatumService, 
     public async Task<IActionResult> GetScoreRank([FromBody] GetScoreRankRequest request)
     {
         Logger.LogInformation("GetScoreRank request : {Request}", request.Stringify());
-       
+
         var scoreRankData = await Handle(request.Baid);
         var response = new GetScoreRankResponse
         {
@@ -27,13 +27,13 @@ public class GetScoreRankController(ISongBestDatumService songBestDatumService, 
 
         return Ok(response);
     }
-    
+
     [HttpPost("/v12r00_cn/chassis/getscorerank.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetScoreRankCN00([FromBody] Models.CN00.GetScoreRankRequest request)
     {
         Logger.LogInformation("GetScoreRank request : {Request}", request.Stringify());
-       
+
         var scoreRankData = await Handle((uint)request.Baid);
         var response = new Models.CN00.GetScoreRankResponse
         {
@@ -45,16 +45,18 @@ public class GetScoreRankController(ISongBestDatumService songBestDatumService, 
 
         return Ok(response);
     }
-    
+
     public record ScoreRankData(byte[] IkiScoreRankFlg, byte[] KiwamiScoreRankFlg, byte[] MiyabiScoreRankFlg);
-    
+
     private async Task<ScoreRankData> Handle(uint baid)
     {
         var songIdMax = settings.EnableMoreSongs ? settings.MoreSongsSize : DomainConstants.MusicIdMax;
         var kiwamiScores = new byte[songIdMax   + 1];
         var miyabiScores = new ushort[songIdMax + 1];
         var ikiScores = new ushort[songIdMax    + 1];
-        var songBestData = await songBestDatumService.GetAllSongBestData(baid);
+        var songBestData = await context.SongBestData
+            .Where(datum => datum.Baid == baid)
+            .ToListAsync(HttpContext.RequestAborted);
 
         for (var songId = 0; songId < songIdMax; songId++)
         {

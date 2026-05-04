@@ -1,21 +1,14 @@
-﻿using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Options;
 using TaikoLocalServer.Common.Utils;
 using TaikoLocalServer.Settings;
 
 namespace TaikoLocalServer.Controllers.Game;
 
 [ApiController]
-public class CrownsDataController : BaseController<CrownsDataController>
+public class CrownsDataController(ITaikoDbContext context, IOptions<ServerSettings> settings)
+    : BaseController<CrownsDataController>
 {
-    private readonly ISongBestDatumService songBestDatumService;
-
-    private readonly ServerSettings settings;
-
-    public CrownsDataController(ISongBestDatumService songBestDatumService, IOptions<ServerSettings> settings)
-    {
-        this.songBestDatumService = songBestDatumService;
-        this.settings = settings.Value;
-    }
+    private readonly ServerSettings settings = settings.Value;
 
     [HttpPost("/v12r08_ww/chassis/crownsdata_oqgqy90s.php")]
     [Produces("application/protobuf")]
@@ -34,7 +27,7 @@ public class CrownsDataController : BaseController<CrownsDataController>
 
         return Ok(response);
     }
-    
+
     [HttpPost("/v12r00_cn/chassis/crownsdata.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> CrownsDataCN00([FromBody] Models.CN00.CrownsDataRequest request)
@@ -52,12 +45,14 @@ public class CrownsDataController : BaseController<CrownsDataController>
 
         return Ok(response);
     }
-    
+
     public record CrownData(byte[] CrownFlg, byte[] DondafulCrownFlg);
 
     private async Task<CrownData> Handle(uint baid)
     {
-        var songBestData = await songBestDatumService.GetAllSongBestData(baid);
+        var songBestData = await context.SongBestData
+            .Where(datum => datum.Baid == baid)
+            .ToListAsync(HttpContext.RequestAborted);
 
         var songIdMax = settings.EnableMoreSongs ? settings.MoreSongsSize : DomainConstants.MusicIdMax;
         var crown = new ushort[songIdMax       + 1];
@@ -67,7 +62,7 @@ public class CrownsDataController : BaseController<CrownsDataController>
         {
             var id = songId;
             dondafulCrown[songId] = songBestData
-                // Select song of this song id with dondaful crown 
+                // Select song of this song id with dondaful crown
                 .Where(datum => datum.SongId    == id &&
                                 datum.BestCrown == CrownType.Dondaful)
                 // Calculate flag according to difficulty
@@ -80,7 +75,7 @@ public class CrownsDataController : BaseController<CrownsDataController>
                 // Calculate flag according to difficulty
                 .Aggregate((ushort)0, (flag, datum) => FlagCalculator.ComputeCrownFlag(flag, datum.BestCrown, datum.Difficulty));
         }
-        
+
         return new CrownData(GZipBytesUtil.GetGZipBytes(crown), GZipBytesUtil.GetGZipBytes(dondafulCrown));
     }
 }

@@ -15,5 +15,3 @@ global using TaikoLocalServer.Domain.Entities;
 global using TaikoLocalServer.Domain.Enums;
 global using TaikoLocalServer.Models;            // pre-PR3 Mucha wire types
 global using TaikoLocalServer.Models.WW08;       // pre-PR3 ww_r08 wire types
-global using TaikoLocalServer.Services;          // pre-T10 wrappers
-global using TaikoLocalServer.Services.Interfaces;
