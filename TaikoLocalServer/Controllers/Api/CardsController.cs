@@ -1,4 +1,3 @@
-﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using SharedProject.Models.Requests;
 using TaikoLocalServer.Filters;
@@ -8,37 +7,46 @@ namespace TaikoLocalServer.Controllers.Api;
 
 [ApiController]
 [Route("api/[controller]")]
-public class CardsController(IAuthService authService, IOptions<AuthSettings> settings) : BaseController<CardsController>
+public class CardsController(
+    ITaikoDbContext context,
+    IJwtTokenService jwtTokens,
+    IOptions<AuthSettings> settings) : BaseController<CardsController>
 {
     private readonly AuthSettings authSettings = settings.Value;
-    
+
     [HttpDelete("{accessCode}")]
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<IActionResult> DeleteAccessCode(string accessCode)
     {
         if (authSettings.AuthenticationRequired)
         {
-            var tokenInfo = authService.ExtractTokenInfo(HttpContext);
+            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
             if (tokenInfo == null)
             {
                 return Unauthorized();
             }
-            
-            var card = await authService.GetCardByAccessCode(accessCode);
-            if (card == null)
+
+            var existingCard = await context.Cards.FindAsync(accessCode);
+            if (existingCard == null)
             {
                 return Unauthorized();
             }
 
-            if (card.Baid != tokenInfo.Value.baid && !tokenInfo.Value.isAdmin)
+            if (existingCard.Baid != tokenInfo.Value.Baid && !tokenInfo.Value.IsAdmin)
             {
                 return Forbid();
             }
         }
-        
-        var result = await authService.DeleteCard(accessCode);
 
-        return result ? NoContent() : NotFound();
+        var card = await context.Cards.FindAsync(accessCode);
+        if (card == null)
+        {
+            return NotFound();
+        }
+
+        context.Cards.Remove(card);
+        await context.SaveChangesAsync(HttpContext.RequestAborted);
+        return NoContent();
     }
 
     [HttpPost("BindAccessCode")]
@@ -47,21 +55,21 @@ public class CardsController(IAuthService authService, IOptions<AuthSettings> se
     {
         if (authSettings.AuthenticationRequired)
         {
-            var tokenInfo = authService.ExtractTokenInfo(HttpContext);
+            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
             if (tokenInfo == null)
             {
                 return Unauthorized();
             }
 
-            if (!tokenInfo.Value.isAdmin && tokenInfo.Value.baid != bindAccessCodeRequest.Baid)
+            if (!tokenInfo.Value.IsAdmin && tokenInfo.Value.Baid != bindAccessCodeRequest.Baid)
             {
                 return Forbid();
             }
         }
-        
+
         var accessCode = bindAccessCodeRequest.AccessCode;
         var baid = bindAccessCodeRequest.Baid;
-        var existingCard = await authService.GetCardByAccessCode(accessCode);
+        var existingCard = await context.Cards.FindAsync(accessCode);
         if (existingCard is not null)
         {
             return BadRequest("Access code already exists");
@@ -72,7 +80,8 @@ public class CardsController(IAuthService authService, IOptions<AuthSettings> se
             Baid = baid,
             AccessCode = accessCode
         };
-        await authService.AddCard(newCard);
+        context.Cards.Add(newCard);
+        await context.SaveChangesAsync(HttpContext.RequestAborted);
         return NoContent();
     }
 }

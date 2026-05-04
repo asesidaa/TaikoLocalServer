@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Options;
 using SharedProject.Models.Requests;
 using TaikoLocalServer.Filters;
 using TaikoLocalServer.Infrastructure.Identity.Settings;
@@ -7,37 +7,49 @@ namespace TaikoLocalServer.Controllers.Api;
 
 [ApiController]
 [Route("api/[controller]")]
-public class FavoriteSongsController(IUserDatumService userDatumService, IAuthService authService, 
+public class FavoriteSongsController(
+    ITaikoDbContext context,
+    IJwtTokenService jwtTokens,
     IOptions<AuthSettings> settings) : BaseController<FavoriteSongsController>
 {
     private readonly AuthSettings authSettings = settings.Value;
-    
+
     [HttpPost]
     [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<IActionResult> UpdateFavoriteSong(SetFavoriteRequest request)
     {
         if (authSettings.AuthenticationRequired)
         {
-            var tokenInfo = authService.ExtractTokenInfo(HttpContext);
+            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
             if (tokenInfo is null)
             {
                 return Unauthorized();
             }
-            
-            if (tokenInfo.Value.baid != request.Baid && !tokenInfo.Value.isAdmin)
+
+            if (tokenInfo.Value.Baid != request.Baid && !tokenInfo.Value.IsAdmin)
             {
                 return Forbid();
             }
         }
-        
-        var user = await userDatumService.GetFirstUserDatumOrNull(request.Baid);
 
+        var user = await context.UserData.FindAsync(request.Baid);
         if (user is null)
         {
             return NotFound();
         }
 
-        await userDatumService.UpdateFavoriteSong(request.Baid, request.SongId, request.IsFavorite);
+        var favoriteSet = new HashSet<uint>(user.FavoriteSongsArray);
+        if (request.IsFavorite)
+        {
+            favoriteSet.Add(request.SongId);
+        }
+        else
+        {
+            favoriteSet.Remove(request.SongId);
+        }
+
+        user.FavoriteSongsArray = favoriteSet.ToList();
+        await context.SaveChangesAsync(HttpContext.RequestAborted);
         return NoContent();
     }
 
@@ -47,20 +59,19 @@ public class FavoriteSongsController(IUserDatumService userDatumService, IAuthSe
     {
         if (authSettings.AuthenticationRequired)
         {
-            var tokenInfo = authService.ExtractTokenInfo(HttpContext);
+            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
             if (tokenInfo is null)
             {
                 return Unauthorized();
             }
-            
-            if (tokenInfo.Value.baid != baid && !tokenInfo.Value.isAdmin)
+
+            if (tokenInfo.Value.Baid != baid && !tokenInfo.Value.IsAdmin)
             {
                 return Forbid();
             }
         }
-        
-        var user = await userDatumService.GetFirstUserDatumOrNull(baid);
 
+        var user = await context.UserData.FindAsync(baid);
         if (user is null)
         {
             return NotFound();
