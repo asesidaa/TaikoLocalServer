@@ -2,7 +2,7 @@ using System.Reflection;
 using System.Text;
 using Serilog.Sinks.File.Header;
 using TaikoLocalServer.Logging;
-using GameDatabase.Context;
+using TaikoLocalServer.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -14,11 +14,11 @@ using TaikoLocalServer.Settings;
 using Throw;
 using Serilog;
 using SharedProject.Utils;
-using TaikoLocalServer.Common;
 using TaikoLocalServer.Controllers.Api;
 using TaikoLocalServer.Filters;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
+using Constants = TaikoLocalServer.Common.Constants;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
