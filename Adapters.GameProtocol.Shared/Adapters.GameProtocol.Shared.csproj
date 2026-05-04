@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>TaikoLocalServer.Adapters.GameProtocol.Shared</RootNamespace>
+    <AssemblyName>TaikoLocalServer.Adapters.GameProtocol.Shared</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Application\Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="protobuf-net" />
+    <PackageReference Include="protobuf-net.AspNetCore" />
+    <PackageReference Include="SharpZipLib" />
+  </ItemGroup>
+
+</Project>

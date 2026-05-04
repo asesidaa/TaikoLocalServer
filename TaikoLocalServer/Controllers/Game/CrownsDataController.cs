@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Options;
-using TaikoLocalServer.Common.Utils;
+using TaikoLocalServer.Adapters.GameProtocol.Shared.Compression;
 using TaikoLocalServer.Settings;
 
 namespace TaikoLocalServer.Controllers.Game;

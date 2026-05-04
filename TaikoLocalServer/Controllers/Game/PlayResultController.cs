@@ -1,4 +1,4 @@
-using TaikoLocalServer.Common.Utils;
+using TaikoLocalServer.Adapters.GameProtocol.Shared.Compression;
 using TaikoLocalServer.Mappers;
 
 namespace TaikoLocalServer.Controllers.Game;
