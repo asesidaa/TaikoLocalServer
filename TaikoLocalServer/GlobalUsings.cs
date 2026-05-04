@@ -1,4 +1,4 @@
-﻿// Global using directives
+// Global using directives
 
 global using TaikoLocalServer.Domain.Entities;
 global using Microsoft.AspNetCore.Mvc;
@@ -7,9 +7,8 @@ global using ProtoBuf;
 global using Mediator;
 global using Swan.Formatters;
 global using TaikoLocalServer.Domain.Enums;
-global using TaikoLocalServer.Common;
-global using TaikoLocalServer.Common.Utils;
 global using TaikoLocalServer.Domain;
+global using TaikoLocalServer.Application.Common;
 global using TaikoLocalServer.Application.Handlers;
 global using TaikoLocalServer.Application.Catalog;
 global using TaikoLocalServer.Models;  // keep until PR3 — still used for Mucha wire types

@@ -1,6 +1,4 @@
-﻿using SharedProject.Utils;
-
-namespace TaikoLocalServer.Common.Utils;
+﻿namespace TaikoLocalServer.Application.Common;
 
 public static class Extensions
 {

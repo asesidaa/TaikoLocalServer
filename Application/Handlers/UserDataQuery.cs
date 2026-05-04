@@ -1,6 +1,6 @@
 ﻿using System.Buffers.Binary;
 using Microsoft.Extensions.Options;
-using TaikoLocalServer.Settings;
+using TaikoLocalServer.Application.Settings;
 using Throw;
 
 namespace TaikoLocalServer.Application.Handlers;

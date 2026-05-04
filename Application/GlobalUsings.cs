@@ -5,6 +5,7 @@ global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Logging;
 global using TaikoLocalServer.Application.Abstractions;
 global using TaikoLocalServer.Application.Catalog;
+global using TaikoLocalServer.Application.Common;
 global using TaikoLocalServer.Application.Dtos;
 global using SharedProject.Models;
 global using TaikoLocalServer.Domain;

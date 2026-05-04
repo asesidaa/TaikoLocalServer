@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using TaikoLocalServer.Common.Utils;
 using TaikoLocalServer.Settings;
 
 namespace TaikoLocalServer.Controllers.AmUpdater;
