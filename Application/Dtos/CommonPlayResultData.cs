@@ -1,5 +1,5 @@
 ﻿// ReSharper disable InconsistentNaming
-namespace TaikoLocalServer.Models.Application;
+namespace TaikoLocalServer.Application.Dtos;
 
 public class CommonPlayResultData
 {
