@@ -1,4 +1,4 @@
-﻿namespace TaikoLocalServer.Models;
+﻿namespace TaikoLocalServer.Adapters.AllnetMucha.Wire;
 
 public class MuchaBoardAuthRequest
 {

@@ -3,7 +3,7 @@ using System.Text;
 
 using System.Text.Json.Serialization;
 
-namespace TaikoLocalServer.Controllers.MuchaActivation;
+namespace TaikoLocalServer.Adapters.AllnetMucha.Controllers.MuchaActivation;
 
 
 public class SignatureResponse
@@ -20,7 +20,7 @@ public class SignatureResponse
 
 [Route("/mucha_activation/signature")]
 [ApiController]
-public class SignatureController : BaseController<SignatureController>
+public class SignatureController : BaseProtocolController<SignatureController>
 {
     [HttpPost]
     public async Task<SignatureResponse> Signature()

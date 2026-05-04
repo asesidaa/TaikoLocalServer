@@ -1,14 +1,13 @@
-﻿using Microsoft.Extensions.Options;
-using TaikoLocalServer.Common.Utils;
-using TaikoLocalServer.Settings;
+﻿using TaikoLocalServer.Adapters.AllnetMucha.Common;
+using TaikoLocalServer.Adapters.AllnetMucha.Wire;
 
-namespace TaikoLocalServer.Controllers.AmUpdater;
+namespace TaikoLocalServer.Adapters.AllnetMucha.Controllers.AmUpdater;
 
-public class MuchaController : BaseController<MuchaController>
+public class MuchaController : BaseProtocolController<MuchaController>
 {
-    private readonly ServerSettings settings;
+    private readonly AllnetSettings settings;
 
-    public MuchaController(IOptions<ServerSettings> settings)
+    public MuchaController(IOptions<AllnetSettings> settings)
     {
         this.settings = settings.Value;
     }

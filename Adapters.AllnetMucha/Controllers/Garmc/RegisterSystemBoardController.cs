@@ -1,10 +1,10 @@
 ﻿using Garm;
 
-namespace TaikoLocalServer.Controllers.Garmc;
+namespace TaikoLocalServer.Adapters.AllnetMucha.Controllers.Garmc;
 
 [Route("/v1/s12-jp-dev/garm.SystemBoard/RegisterSystemBoard")]
 [ApiController]
-public class RegisterSystemBoardController : BaseController<RegisterSystemBoardController>
+public class RegisterSystemBoardController : BaseProtocolController<RegisterSystemBoardController>
 {
     [HttpPost]
     [Produces("application/protobuf")]
