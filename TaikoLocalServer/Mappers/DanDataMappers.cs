@@ -1,5 +1,5 @@
 ﻿using Riok.Mapperly.Abstractions;
-using TaikoLocalServer.Application.ServerData;
+using SharedProject.Models;
 
 namespace TaikoLocalServer.Mappers;
 

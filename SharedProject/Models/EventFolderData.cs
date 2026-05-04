@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace TaikoLocalServer.Application.ServerData;
+namespace SharedProject.Models;
 
 public class EventFolderData : IVerupNo
 {
