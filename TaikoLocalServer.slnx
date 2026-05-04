@@ -6,9 +6,9 @@
   <Project Path="Adapters.GameProtocol.WwR08/Adapters.GameProtocol.WwR08.csproj" />
   <Project Path="Application/Application.csproj" />
   <Project Path="Domain/Domain.csproj" />
+  <Project Path="Host/Host.csproj" />
   <Project Path="Infrastructure/Infrastructure.csproj" />
   <Project Path="LocalSaveModScoreMigrator/LocalSaveModScoreMigrator.csproj" />
   <Project Path="SharedProject/SharedProject.csproj" />
-  <Project Path="TaikoLocalServer/TaikoLocalServer.csproj" />
   <Project Path="TaikoWebUI/TaikoWebUI.csproj" />
 </Solution>
