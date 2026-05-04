@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace TaikoWebUI.Shared.Models;
+namespace TaikoLocalServer.Application.Catalog;
 
 public class MusicOrderEntry
 {
