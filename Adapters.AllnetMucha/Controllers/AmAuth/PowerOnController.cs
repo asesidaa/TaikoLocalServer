@@ -1,16 +1,15 @@
-﻿using Microsoft.Extensions.Options;
-using TaikoLocalServer.Common.Utils;
-using TaikoLocalServer.Settings;
+﻿using TaikoLocalServer.Adapters.AllnetMucha.Common;
+using TaikoLocalServer.Adapters.AllnetMucha.Wire;
 
-namespace TaikoLocalServer.Controllers.AmAuth;
+namespace TaikoLocalServer.Adapters.AllnetMucha.Controllers.AmAuth;
 
 [ApiController]
 [Route("/sys/servlet/PowerOn")]
-public class PowerOnController : BaseController<PowerOnController>
+public class PowerOnController : BaseProtocolController<PowerOnController>
 {
-    private readonly ServerSettings settings;
+    private readonly AllnetSettings settings;
 
-    public PowerOnController(IOptions<ServerSettings> settings)
+    public PowerOnController(IOptions<AllnetSettings> settings)
     {
         this.settings = settings.Value;
     }

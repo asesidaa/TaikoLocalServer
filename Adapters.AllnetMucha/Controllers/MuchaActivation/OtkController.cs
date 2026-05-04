@@ -3,7 +3,7 @@ using System.Text;
 
 using System.Text.Json.Serialization;
 
-namespace TaikoLocalServer.Controllers.MuchaActivation;
+namespace TaikoLocalServer.Adapters.AllnetMucha.Controllers.MuchaActivation;
 
 
 public class OtkResponse
@@ -26,7 +26,7 @@ public class OtkResponse
 
 [Route("/mucha_activation/otk")]
 [ApiController]
-public class OtkController : BaseController<OtkController>
+public class OtkController : BaseProtocolController<OtkController>
 {
     [HttpPost]
     public async Task<OtkResponse> Otk()

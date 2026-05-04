@@ -1,12 +1,12 @@
 using System.Reflection;
 using Serilog.Sinks.File.Header;
+using TaikoLocalServer.Adapters.AllnetMucha;
 using TaikoLocalServer.Application;
 using TaikoLocalServer.Infrastructure;
 using TaikoLocalServer.Infrastructure.Persistence;
 using TaikoLocalServer.Logging;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.HttpOverrides;
-using TaikoLocalServer.Middlewares;
 using Throw;
 using Serilog;
 using TaikoLocalServer.Controllers.Api;
@@ -88,6 +88,7 @@ try
     builder.Services.AddOptions();
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure(builder.Configuration);
+    builder.Services.AddAllnetMucha();
 
     builder.Services.AddScoped<AuthorizeIfRequiredAttribute>();
 
@@ -182,9 +183,7 @@ try
     app.MapControllers();
     app.MapFallbackToFile("index.html");
 
-    app.UseWhen(
-        context => context.Request.Path.StartsWithSegments("/sys/servlet/PowerOn", StringComparison.InvariantCulture),
-        applicationBuilder => applicationBuilder.UseAllNetRequestMiddleware());
+    app.UseAllnetMucha();
 
     app.Run();
 }

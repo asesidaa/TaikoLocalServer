@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace TaikoLocalServer.Common.Utils;
+namespace TaikoLocalServer.Adapters.AllnetMucha.Common;
 
 public static class FormOutputUtil
 {

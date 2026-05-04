@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
-namespace TaikoLocalServer.Middlewares;
+namespace TaikoLocalServer.Adapters.AllnetMucha.Middleware;
 
 public class AllNetRequestMiddleware
 {

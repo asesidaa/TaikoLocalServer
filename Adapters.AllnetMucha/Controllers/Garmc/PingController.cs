@@ -1,11 +1,11 @@
 ﻿using Garm;
 using google.type;
 
-namespace TaikoLocalServer.Controllers.Garmc;
+namespace TaikoLocalServer.Adapters.AllnetMucha.Controllers.Garmc;
 
 [Route("/v1/s12-jp-dev/garm.Monitoring/Ping")]
 [ApiController]
-public class PingController : BaseController<PingController>
+public class PingController : BaseProtocolController<PingController>
 {
     [HttpPost]
     [Produces("application/protobuf")]
