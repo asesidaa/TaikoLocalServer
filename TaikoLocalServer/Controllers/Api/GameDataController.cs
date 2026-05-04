@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using TaikoLocalServer.Filters;
-using TaikoLocalServer.Settings;
+using TaikoLocalServer.Infrastructure.Identity.Settings;
 
 namespace TaikoLocalServer.Controllers.Api;
 

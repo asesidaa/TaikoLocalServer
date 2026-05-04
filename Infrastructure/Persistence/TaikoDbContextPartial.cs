@@ -1,10 +1,11 @@
-﻿using TaikoLocalServer.Domain.Entities;
+﻿using TaikoLocalServer.Application.Abstractions;
+using TaikoLocalServer.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using TaikoLocalServer.Domain.Enums;
 
 namespace TaikoLocalServer.Infrastructure.Persistence;
 
-public partial class TaikoDbContext
+public partial class TaikoDbContext : ITaikoDbContext
 {
     public virtual DbSet<DanScoreDatum> DanScoreData { get; set; } = null!;
     public virtual DbSet<DanStageScoreDatum> DanStageScoreData { get; set; } = null!;
