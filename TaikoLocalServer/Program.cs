@@ -14,6 +14,7 @@ using TaikoLocalServer.Settings;
 using Throw;
 using Serilog;
 using SharedProject.Utils;
+using TaikoLocalServer.Common;
 using TaikoLocalServer.Controllers.Api;
 using TaikoLocalServer.Filters;
 using Microsoft.AspNetCore.ResponseCompression;

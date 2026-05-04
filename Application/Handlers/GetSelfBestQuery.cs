@@ -17,7 +17,7 @@ public class GetSelfBestQueryHandler(IGameDataCatalog gameDataService, ITaikoDbC
         if (!requestSet.IsSubsetOf(allSongSet))
         {
             var invalidSongIds = requestSet.Except(allSongSet);
-            logger.LogWarning("Invalid song IDs: {InvalidSongIds}", invalidSongIds.Stringify());
+            logger.LogWarning("Invalid song IDs: {InvalidSongIds}", string.Join(", ", invalidSongIds));
             requestSet.ExceptWith(invalidSongIds);
         }
 

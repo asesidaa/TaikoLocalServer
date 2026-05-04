@@ -2,8 +2,6 @@ namespace TaikoLocalServer.Common;
 
 public static class Constants
 {
-	public const string DateTimeFormat = "yyyyMMddHHmmss";
-
 	public const string DefaultDbName = "taiko.db3";
 
 	public const string MusicInfoBaseName = "musicinfo";

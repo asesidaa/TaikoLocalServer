@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace TaikoLocalServer.Common;
+namespace TaikoLocalServer.Application.Common;
 
 public class OrderedSet<T> : ICollection<T> where T : notnull
 {

@@ -1,4 +1,4 @@
-﻿namespace SharedProject.Utils;
+﻿namespace TaikoLocalServer.Application.Common;
 
 public static class ValueHelpers
 {
