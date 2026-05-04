@@ -180,7 +180,10 @@ try
         }
     });
     app.MapControllers();
-    var routeCount = app.Services.GetRequiredService<EndpointDataSource>().Endpoints.Count;
+    var routeCount = app.Services
+        .GetRequiredService<IEnumerable<EndpointDataSource>>()
+        .SelectMany(source => source.Endpoints)
+        .Count();
     Log.Information("Mapped {RouteCount} endpoints", routeCount);
     app.MapFallbackToFile("index.html");
 
