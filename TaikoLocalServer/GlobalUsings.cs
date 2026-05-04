@@ -9,6 +9,7 @@ global using Swan.Formatters;
 global using TaikoLocalServer.Domain.Enums;
 global using TaikoLocalServer.Common;
 global using TaikoLocalServer.Common.Utils;
+global using TaikoLocalServer.Domain;
 global using TaikoLocalServer.Handlers;
 global using TaikoLocalServer.Models;
 global using TaikoLocalServer.Models.Application;

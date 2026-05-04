@@ -8,5 +8,5 @@ public class ServerSettings
 
     public bool EnableMoreSongs { get; set; }
 
-    public int MoreSongsSize { get; set; } = Constants.MusicIdMaxExpanded;
+    public int MoreSongsSize { get; set; } = DomainConstants.MusicIdMaxExpanded;
 }
