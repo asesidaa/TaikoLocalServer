@@ -1,17 +1,16 @@
-﻿using GameDatabase.Context;
 using Throw;
 
-namespace TaikoLocalServer.Handlers;
+namespace TaikoLocalServer.Application.Handlers;
 
 public readonly record struct GetDanScoreQuery(uint Baid, uint Type, uint[] DanIds) : IRequest<CommonDanScoreDataResponse>;
 
 public class GetDanScoreQueryHandler : IRequestHandler<GetDanScoreQuery, CommonDanScoreDataResponse>
 {
     private readonly ILogger<GetDanScoreQueryHandler> logger;
-    private readonly TaikoDbContext                   context;
+    private readonly ITaikoDbContext                   context;
 
 
-    public GetDanScoreQueryHandler(ILogger<GetDanScoreQueryHandler> logger, TaikoDbContext context)
+    public GetDanScoreQueryHandler(ILogger<GetDanScoreQueryHandler> logger, ITaikoDbContext context)
     {
         this.logger = logger;
         this.context = context;

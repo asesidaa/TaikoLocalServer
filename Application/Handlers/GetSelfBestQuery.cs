@@ -1,11 +1,10 @@
-﻿using GameDatabase.Context;
 using Throw;
 
-namespace TaikoLocalServer.Handlers;
+namespace TaikoLocalServer.Application.Handlers;
 
 public readonly record struct GetSelfBestQuery(uint Baid, uint Difficulty, uint[] SongIdList) : IRequest<CommonSelfBestResponse>;
 
-public class GetSelfBestQueryHandler(IGameDataService gameDataService, TaikoDbContext context, ILogger<GetSelfBestQueryHandler> logger)
+public class GetSelfBestQueryHandler(IGameDataCatalog gameDataService, ITaikoDbContext context, ILogger<GetSelfBestQueryHandler> logger)
     : IRequestHandler<GetSelfBestQuery, CommonSelfBestResponse>
 {
     public async ValueTask<CommonSelfBestResponse> Handle(GetSelfBestQuery request, CancellationToken cancellationToken)

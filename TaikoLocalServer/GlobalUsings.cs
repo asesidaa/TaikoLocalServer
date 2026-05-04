@@ -10,7 +10,7 @@ global using TaikoLocalServer.Domain.Enums;
 global using TaikoLocalServer.Common;
 global using TaikoLocalServer.Common.Utils;
 global using TaikoLocalServer.Domain;
-global using TaikoLocalServer.Handlers;
+global using TaikoLocalServer.Application.Handlers;
 global using TaikoLocalServer.Models;
 global using TaikoLocalServer.Models.Application;
 global using TaikoLocalServer.Models.WW08;

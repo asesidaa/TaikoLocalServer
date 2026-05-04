@@ -1,17 +1,16 @@
-﻿using GameDatabase.Context;
 using Throw;
 
-namespace TaikoLocalServer.Handlers;
+namespace TaikoLocalServer.Application.Handlers;
 
 public readonly record struct AddTokenCountCommand(CommonAddTokenCountRequest Request) : IRequest;
 
 public class AddTokenCountCommandHandler : IRequestHandler<AddTokenCountCommand>
 {
-    private readonly TaikoDbContext context;
+    private readonly ITaikoDbContext context;
 
     private readonly ILogger<AddTokenCountCommandHandler> logger;
 
-    public AddTokenCountCommandHandler(TaikoDbContext context, ILogger<AddTokenCountCommandHandler> logger)
+    public AddTokenCountCommandHandler(ITaikoDbContext context, ILogger<AddTokenCountCommandHandler> logger)
     {
         this.context = context;
         this.logger = logger;
@@ -45,7 +44,7 @@ public class AddTokenCountCommandHandler : IRequestHandler<AddTokenCountCommand>
             }
         }
 
-        context.Update(user);
+        context.UserData.Update(user);
         await context.SaveChangesAsync(cancellationToken);
         return Unit.Value;
     }

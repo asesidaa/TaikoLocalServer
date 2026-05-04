@@ -1,15 +1,15 @@
 ﻿using SharedProject.Models;
 using Throw;
 
-namespace TaikoLocalServer.Handlers;
+namespace TaikoLocalServer.Application.Handlers;
 
 public readonly record struct GetDanOdaiQuery(uint[] DanIds, uint Type) : IRequest<List<DanData>>;
 
 public class GetDanOdaiQueryHandler : IRequestHandler<GetDanOdaiQuery, List<DanData>>
 {
-    private readonly IGameDataService gameDataService;
+    private readonly IGameDataCatalog gameDataService;
 
-    public GetDanOdaiQueryHandler(IGameDataService gameDataService)
+    public GetDanOdaiQueryHandler(IGameDataCatalog gameDataService)
     {
         this.gameDataService = gameDataService;
     }

@@ -3,11 +3,11 @@ using Microsoft.Extensions.Options;
 using SharedProject.Models;
 using TaikoLocalServer.Settings;
 
-namespace TaikoLocalServer.Handlers;
+namespace TaikoLocalServer.Application.Handlers;
 
 public readonly record struct GetInitialDataQuery : IRequest<CommonInitialDataCheckResponse>;
 
-public class GetInitialDataQueryHandler(IGameDataService gameDataService, 
+public class GetInitialDataQueryHandler(IGameDataCatalog gameDataService, 
     ILogger<GetInitialDataQueryHandler>                  logger,
     IOptions<ServerSettings>                             settings) 
     : IRequestHandler<GetInitialDataQuery, CommonInitialDataCheckResponse>

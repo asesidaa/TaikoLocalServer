@@ -1,8 +1,8 @@
-﻿namespace TaikoLocalServer.Handlers;
+﻿namespace TaikoLocalServer.Application.Handlers;
 
 public readonly record struct GetShopFolderQuery : IRequest<CommonGetShopFolderResponse>;
 
-public class GetShopFolderHandler(IGameDataService gameDataService)
+public class GetShopFolderHandler(IGameDataCatalog gameDataService)
     : IRequestHandler<GetShopFolderQuery, CommonGetShopFolderResponse>
 {
     public ValueTask<CommonGetShopFolderResponse> Handle(GetShopFolderQuery request, CancellationToken cancellationToken)
