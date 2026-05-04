@@ -1,13 +1,12 @@
-﻿using GameDatabase.Context;
 using Throw;
 
-namespace TaikoLocalServer.Handlers;
+namespace TaikoLocalServer.Application.Handlers;
 
 public readonly record struct PurchaseSongCommand(uint Baid, uint SongNo, uint Type, uint TokenId, uint Price) : IRequest<CommonSongPurchaseResponse>;
 
 public readonly record struct PurchaseSongCommandCN(uint Baid, uint SongNo, uint TokenId, uint Price) : IRequest<CommonSongPurchaseResponse>;
 
-public class PurchaseSongCommandHandler(TaikoDbContext context, ILogger<PurchaseSongCommandHandler> logger) 
+public class PurchaseSongCommandHandler(ITaikoDbContext context, ILogger<PurchaseSongCommandHandler> logger) 
     : IRequestHandler<PurchaseSongCommand, CommonSongPurchaseResponse>
 {
 
@@ -58,7 +57,7 @@ public class PurchaseSongCommandHandler(TaikoDbContext context, ILogger<Purchase
 }
 
 
-public class PurchaseSongCommandHandlerCN(TaikoDbContext context, ILogger<PurchaseSongCommandHandlerCN> logger) 
+public class PurchaseSongCommandHandlerCN(ITaikoDbContext context, ILogger<PurchaseSongCommandHandlerCN> logger) 
     : IRequestHandler<PurchaseSongCommandCN, CommonSongPurchaseResponse>
 {
 

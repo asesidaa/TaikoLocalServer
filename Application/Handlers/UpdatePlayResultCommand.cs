@@ -1,11 +1,10 @@
-﻿using GameDatabase.Context;
 using Throw;
 
-namespace TaikoLocalServer.Handlers;
+namespace TaikoLocalServer.Application.Handlers;
 
 public readonly record struct UpdatePlayResultCommand(uint Baid, CommonPlayResultData PlayResultData) : IRequest<uint>;
 
-public class UpdatePlayResultCommandHandler(TaikoDbContext context, ILogger<UpdatePlayResultCommandHandler> logger)
+public class UpdatePlayResultCommandHandler(ITaikoDbContext context, ILogger<UpdatePlayResultCommandHandler> logger)
     : IRequestHandler<UpdatePlayResultCommand, uint>
 {
     public async ValueTask<uint> Handle(UpdatePlayResultCommand request, CancellationToken cancellationToken)

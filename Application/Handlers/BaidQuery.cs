@@ -1,14 +1,13 @@
-﻿using GameDatabase.Context;
 using Throw;
 
-namespace TaikoLocalServer.Handlers;
+namespace TaikoLocalServer.Application.Handlers;
 
 public readonly record struct BaidQuery(string AccessCode) : IRequest<CommonBaidResponse>;
 
 public class BaidQueryHandler(
-    TaikoDbContext context,
+    ITaikoDbContext context,
     ILogger<BaidQueryHandler> logger,
-    IGameDataService gameDataService)
+    IGameDataCatalog gameDataService)
     : IRequestHandler<BaidQuery, CommonBaidResponse>
 {
     public async ValueTask<CommonBaidResponse> Handle(BaidQuery request, CancellationToken cancellationToken)

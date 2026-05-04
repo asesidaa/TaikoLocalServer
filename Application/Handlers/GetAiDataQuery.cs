@@ -1,18 +1,17 @@
-﻿using GameDatabase.Context;
 using Throw;
 
-namespace TaikoLocalServer.Handlers;
+namespace TaikoLocalServer.Application.Handlers;
 
 public readonly record struct GetAiDataQuery(uint Baid) : IRequest<CommonAiDataResponse>;
 
 public class GetAiDataQueryHandler : IRequestHandler<GetAiDataQuery, CommonAiDataResponse>
 {
-    private readonly TaikoDbContext context;
+    private readonly ITaikoDbContext context;
     
     private readonly ILogger<GetAiDataQueryHandler> logger;
 
 
-    public GetAiDataQueryHandler(TaikoDbContext context, ILogger<GetAiDataQueryHandler> logger)
+    public GetAiDataQueryHandler(ITaikoDbContext context, ILogger<GetAiDataQueryHandler> logger)
     {
         this.context = context;
         this.logger = logger;

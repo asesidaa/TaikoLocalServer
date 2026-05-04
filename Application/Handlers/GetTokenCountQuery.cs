@@ -1,11 +1,10 @@
-﻿using GameDatabase.Context;
 
-namespace TaikoLocalServer.Handlers;
+namespace TaikoLocalServer.Application.Handlers;
 
 public readonly record struct GetTokenCountQuery(uint Baid) : IRequest<CommonGetTokenCountResponse>;
 
-public class GetTokenCountQueryHandler(IGameDataService gameDataService,
-    TaikoDbContext context,
+public class GetTokenCountQueryHandler(IGameDataCatalog gameDataService,
+    ITaikoDbContext context,
 #pragma warning disable CS9113 // Parameter is unread.
     ILogger<GetTokenCountQueryHandler> logger)
 #pragma warning restore CS9113 // Parameter is unread.

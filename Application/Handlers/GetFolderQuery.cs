@@ -1,8 +1,8 @@
-﻿namespace TaikoLocalServer.Handlers;
+﻿namespace TaikoLocalServer.Application.Handlers;
 
 public readonly record struct GetFolderQuery(uint[] FolderIds) : IRequest<CommonGetFolderResponse>;
 
-public class GetFolderQueryHandler(ILogger<GetFolderQueryHandler> logger, IGameDataService gameDataService)
+public class GetFolderQueryHandler(ILogger<GetFolderQueryHandler> logger, IGameDataCatalog gameDataService)
     : IRequestHandler<GetFolderQuery, CommonGetFolderResponse>
 {
     public ValueTask<CommonGetFolderResponse> Handle(GetFolderQuery request, CancellationToken cancellationToken)

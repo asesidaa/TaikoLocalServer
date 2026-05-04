@@ -1,14 +1,13 @@
 ﻿using System.Buffers.Binary;
-using GameDatabase.Context;
 using Microsoft.Extensions.Options;
 using TaikoLocalServer.Settings;
 using Throw;
 
-namespace TaikoLocalServer.Handlers;
+namespace TaikoLocalServer.Application.Handlers;
 
 public readonly record struct UserDataQuery(uint Baid) : IRequest<CommonUserDataResponse>;
 
-public class UserDataQueryHandler(TaikoDbContext context, IGameDataService gameDataService, ILogger<UserDataQueryHandler> logger, IOptions<ServerSettings> settings) 
+public class UserDataQueryHandler(ITaikoDbContext context, IGameDataCatalog gameDataService, ILogger<UserDataQueryHandler> logger, IOptions<ServerSettings> settings) 
     : IRequestHandler<UserDataQuery, CommonUserDataResponse>
 {
 
