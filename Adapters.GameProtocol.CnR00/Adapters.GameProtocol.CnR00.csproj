@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>TaikoLocalServer.Adapters.GameProtocol.CnR00</RootNamespace>
+    <AssemblyName>TaikoLocalServer.Adapters.GameProtocol.CnR00</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Adapters.GameProtocol.Shared\Adapters.GameProtocol.Shared.csproj" />
+    <ProjectReference Include="..\Application\Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="protobuf-net" />
+    <PackageReference Include="Riok.Mapperly" />
+    <PackageReference Include="Swan.Core" />
+  </ItemGroup>
+
+</Project>

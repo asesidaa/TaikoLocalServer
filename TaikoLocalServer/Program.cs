@@ -3,6 +3,8 @@ using Serilog.Sinks.File.Header;
 using TaikoLocalServer.Adapters.AdminApi;
 using TaikoLocalServer.Adapters.AdminApi.Controllers;
 using TaikoLocalServer.Adapters.AllnetMucha;
+using TaikoLocalServer.Adapters.GameProtocol.CnR00;
+using TaikoLocalServer.Adapters.GameProtocol.WwR08;
 using TaikoLocalServer.Application;
 using TaikoLocalServer.Infrastructure;
 using TaikoLocalServer.Infrastructure.Persistence;
@@ -90,6 +92,8 @@ try
     builder.Services.AddInfrastructure(builder.Configuration);
     builder.Services.AddAdminApi(builder.Configuration);
     builder.Services.AddAllnetMucha();
+    builder.Services.AddGameProtocolWwR08();
+    builder.Services.AddGameProtocolCnR00();
 
     builder.Services.AddControllers().AddProtoBufNet();
     builder.Services.AddMemoryCache();

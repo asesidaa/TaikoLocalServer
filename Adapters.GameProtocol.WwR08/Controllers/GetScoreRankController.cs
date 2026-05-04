@@ -1,0 +1,66 @@
+using Microsoft.Extensions.Options;
+
+namespace TaikoLocalServer.Adapters.GameProtocol.WwR08.Controllers;
+
+[ApiController]
+public class GetScoreRankController(ITaikoDbContext context, IOptions<ServerSettings> settings)
+    : BaseProtocolController<GetScoreRankController>
+{
+    private readonly ServerSettings settings = settings.Value;
+
+    [HttpPost("/v12r08_ww/chassis/getscorerank_1c8l7y61.php")]
+    [Produces("application/protobuf")]
+    public async Task<IActionResult> GetScoreRank([FromBody] GetScoreRankRequest request)
+    {
+        Logger.LogInformation("GetScoreRank request : {Request}", request.Stringify());
+
+        var scoreRankData = await Handle(request.Baid);
+        var response = new GetScoreRankResponse
+        {
+            Result = 1,
+            IkiScoreRankFlg = scoreRankData.IkiScoreRankFlg,
+            KiwamiScoreRankFlg = scoreRankData.KiwamiScoreRankFlg,
+            MiyabiScoreRankFlg = scoreRankData.MiyabiScoreRankFlg
+        };
+
+        return Ok(response);
+    }
+
+    public record ScoreRankData(byte[] IkiScoreRankFlg, byte[] KiwamiScoreRankFlg, byte[] MiyabiScoreRankFlg);
+
+    private async Task<ScoreRankData> Handle(uint baid)
+    {
+        var songIdMax = settings.EnableMoreSongs ? settings.MoreSongsSize : DomainConstants.MusicIdMax;
+        var kiwamiScores = new byte[songIdMax   + 1];
+        var miyabiScores = new ushort[songIdMax + 1];
+        var ikiScores = new ushort[songIdMax    + 1];
+        var songBestData = await context.SongBestData
+            .Where(datum => datum.Baid == baid)
+            .ToListAsync(HttpContext.RequestAborted);
+
+        for (var songId = 0; songId < songIdMax; songId++)
+        {
+            var id = songId;
+            kiwamiScores[songId] = songBestData
+                .Where(datum => datum.SongId        == id &&
+                                datum.BestScoreRank == ScoreRank.Dondaful)
+                .Aggregate((byte)0, (flag, datum) => FlagCalculator.ComputeKiwamiScoreRankFlag(flag, datum.Difficulty));
+
+            ikiScores[songId] = songBestData
+                .Where(datum => datum.SongId == id &&
+                                datum.BestScoreRank is ScoreRank.White or ScoreRank.Bronze or ScoreRank.Silver)
+                .Aggregate((ushort)0, (flag, datum) => FlagCalculator.ComputeMiyabiOrIkiScoreRank(flag, datum.BestScoreRank, datum.Difficulty));
+
+            miyabiScores[songId] = songBestData
+                .Where(datum => datum.SongId == id &&
+                                datum.BestScoreRank is ScoreRank.Gold or ScoreRank.Purple or ScoreRank.Sakura)
+                .Aggregate((ushort)0, (flag, datum) => FlagCalculator.ComputeMiyabiOrIkiScoreRank(flag, datum.BestScoreRank, datum.Difficulty));
+        }
+
+        return new ScoreRankData(
+            GZipBytesUtil.GetGZipBytes(ikiScores),
+            GZipBytesUtil.GetGZipBytes(kiwamiScores),
+            GZipBytesUtil.GetGZipBytes(miyabiScores)
+        );
+    }
+}
