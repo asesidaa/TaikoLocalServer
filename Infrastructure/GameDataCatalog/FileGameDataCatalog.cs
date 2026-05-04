@@ -1,17 +1,19 @@
 ﻿using Microsoft.Extensions.Options;
 using SharedProject.Models;
-using SharedProject.Utils;
 using System.Collections.Immutable;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text.Json;
-using TaikoLocalServer.Settings;
+using TaikoLocalServer.Application.Abstractions;
+using TaikoLocalServer.Application.Catalog;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Settings;
 using Throw;
-using Constants = TaikoLocalServer.Common.Constants;
 
-namespace TaikoLocalServer.Services;
+namespace TaikoLocalServer.Infrastructure.GameDataCatalog;
 
-public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataService
+// TODO(PR2-followup): extract per-table loaders into Loaders/*.cs (spec §3 calls for
+// 18 standalone loader classes; deferred to keep PR2 scope manageable).
+public class FileGameDataCatalog(IOptions<DataSettings> dataSettings) : IGameDataCatalog
 {
     private ImmutableDictionary<uint, DanData> commonDanDataDictionary =
         ImmutableDictionary<uint, DanData>.Empty;
@@ -182,23 +184,23 @@ public class GameDataService(IOptions<DataSettings> dataSettings) : IGameDataSer
         var dataPath = PathHelper.GetDataPath();
         var datatablePath = PathHelper.GetDatatablePath();
 
-        var musicInfoPath = Path.Combine(datatablePath, $"{Constants.MusicInfoBaseName}.json");
-        var encryptedInfo = Path.Combine(datatablePath, $"{Constants.MusicInfoBaseName}.bin");
+        var musicInfoPath = Path.Combine(datatablePath, $"{CatalogConstants.MusicInfoBaseName}.json");
+        var encryptedInfo = Path.Combine(datatablePath, $"{CatalogConstants.MusicInfoBaseName}.bin");
 
-        var wordlistPath = Path.Combine(datatablePath, $"{Constants.WordlistBaseName}.json");
-        var encryptedWordlist = Path.Combine(datatablePath, $"{Constants.WordlistBaseName}.bin");
+        var wordlistPath = Path.Combine(datatablePath, $"{CatalogConstants.WordlistBaseName}.json");
+        var encryptedWordlist = Path.Combine(datatablePath, $"{CatalogConstants.WordlistBaseName}.bin");
 
-        var musicOrderPath = Path.Combine(datatablePath, $"{Constants.MusicOrderBaseName}.json");
-        var encryptedMusicOrder = Path.Combine(datatablePath, $"{Constants.MusicOrderBaseName}.bin");
+        var musicOrderPath = Path.Combine(datatablePath, $"{CatalogConstants.MusicOrderBaseName}.json");
+        var encryptedMusicOrder = Path.Combine(datatablePath, $"{CatalogConstants.MusicOrderBaseName}.bin");
 
-        var donCosRewardPath = Path.Combine(datatablePath, $"{Constants.DonCosRewardBaseName}.json");
-        var encryptedDonCosReward = Path.Combine(datatablePath, $"{Constants.DonCosRewardBaseName}.bin");
+        var donCosRewardPath = Path.Combine(datatablePath, $"{CatalogConstants.DonCosRewardBaseName}.json");
+        var encryptedDonCosReward = Path.Combine(datatablePath, $"{CatalogConstants.DonCosRewardBaseName}.bin");
 
-        var shougouPath = Path.Combine(datatablePath, $"{Constants.ShougouBaseName}.json");
-        var encryptedShougou = Path.Combine(datatablePath, $"{Constants.ShougouBaseName}.bin");
+        var shougouPath = Path.Combine(datatablePath, $"{CatalogConstants.ShougouBaseName}.json");
+        var encryptedShougou = Path.Combine(datatablePath, $"{CatalogConstants.ShougouBaseName}.bin");
 
-        var neiroPath = Path.Combine(datatablePath, $"{Constants.NeiroBaseName}.json");
-        var encryptedNeiro = Path.Combine(datatablePath, $"{Constants.NeiroBaseName}.bin");
+        var neiroPath = Path.Combine(datatablePath, $"{CatalogConstants.NeiroBaseName}.json");
+        var encryptedNeiro = Path.Combine(datatablePath, $"{CatalogConstants.NeiroBaseName}.bin");
 
         var danDataPath = Path.Combine(dataPath, settings.DanDataFileName);
         var gaidenDataPath = Path.Combine(dataPath, settings.GaidenDataFileName);

@@ -8,6 +8,7 @@ global using Mediator;
 global using Swan.Formatters;
 global using TaikoLocalServer.Domain.Enums;
 global using TaikoLocalServer.Domain;
+global using TaikoLocalServer.Application.Abstractions;
 global using TaikoLocalServer.Application.Common;
 global using TaikoLocalServer.Application.Handlers;
 global using TaikoLocalServer.Application.Catalog;

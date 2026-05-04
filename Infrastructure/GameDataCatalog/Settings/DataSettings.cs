@@ -1,4 +1,4 @@
-﻿namespace TaikoLocalServer.Settings;
+﻿namespace TaikoLocalServer.Infrastructure.GameDataCatalog.Settings;
 
 public class DataSettings
 {

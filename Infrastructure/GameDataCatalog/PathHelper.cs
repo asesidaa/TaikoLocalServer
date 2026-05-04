@@ -1,4 +1,4 @@
-﻿namespace SharedProject.Utils;
+﻿namespace TaikoLocalServer.Infrastructure.GameDataCatalog;
 
 public static class PathHelper
 {

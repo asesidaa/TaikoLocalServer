@@ -1,7 +1,7 @@
 ﻿using EntityFramework.Exceptions.Sqlite;
 using TaikoLocalServer.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using SharedProject.Utils;
+using TaikoLocalServer.Infrastructure.GameDataCatalog;
 
 namespace TaikoLocalServer.Infrastructure.Persistence
 {
