@@ -20,7 +20,6 @@ using TaikoLocalServer.Controllers.Api;
 using TaikoLocalServer.Filters;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
-using Constants = TaikoLocalServer.Common.Constants;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -133,7 +132,7 @@ try
         var dbName = builder.Configuration["DbFileName"];
         if (string.IsNullOrEmpty(dbName))
         {
-            dbName = Constants.DefaultDbName;
+            dbName = PersistenceConstants.DefaultDbName;
         }
 
         var path = Path.Combine(PathHelper.GetRootPath(), dbName);
