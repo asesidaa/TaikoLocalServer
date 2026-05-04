@@ -1,6 +1,6 @@
 ﻿using SharedProject.Models;
 
-namespace TaikoLocalServer.Models.Application;
+namespace TaikoLocalServer.Application.Dtos;
 
 public class CommonGetFolderResponse
 {
