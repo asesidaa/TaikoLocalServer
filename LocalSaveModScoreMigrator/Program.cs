@@ -3,7 +3,7 @@ using TaikoLocalServer.Domain.Entities;
 using ICSharpCode.SharpZipLib.GZip;
 using JorgeSerrano.Json;
 using LocalSaveModScoreMigrator;
-using SharedProject.Enums;
+using TaikoLocalServer.Domain.Enums;
 using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Text;

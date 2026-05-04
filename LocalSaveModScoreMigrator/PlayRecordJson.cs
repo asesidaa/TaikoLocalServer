@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using SharedProject.Enums;
+using TaikoLocalServer.Domain.Enums;
 
 namespace LocalSaveModScoreMigrator;
 

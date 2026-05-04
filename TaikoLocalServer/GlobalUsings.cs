@@ -6,7 +6,7 @@ global using Microsoft.EntityFrameworkCore;
 global using ProtoBuf;
 global using Mediator;
 global using Swan.Formatters;
-global using SharedProject.Enums;
+global using TaikoLocalServer.Domain.Enums;
 global using TaikoLocalServer.Common;
 global using TaikoLocalServer.Common.Utils;
 global using TaikoLocalServer.Handlers;

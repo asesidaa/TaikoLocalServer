@@ -5,8 +5,4 @@
     <AssemblyName>TaikoLocalServer.Domain</AssemblyName>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\SharedProject\SharedProject.csproj" />
-  </ItemGroup>
-
 </Project>
