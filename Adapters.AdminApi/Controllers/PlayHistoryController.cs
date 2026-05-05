@@ -1,7 +1,4 @@
 using Microsoft.Extensions.Options;
-using SharedProject.Models;
-using SharedProject.Models.Responses;
-using SharedProject.Utils;
 using TaikoLocalServer.Infrastructure.Identity.Settings;
 
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
