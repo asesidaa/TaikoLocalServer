@@ -16,9 +16,6 @@ env:
 jobs:
   publish:
     runs-on: windows-latest
-    outputs:
-      publish_path: ${{ steps.locate.outputs.path }}
-      artifact_name: ${{ steps.locate.outputs.name }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v5
@@ -74,20 +71,13 @@ jobs:
           if-no-files-found: error
           include-hidden-files: true
 
-  nightly-release:
-    # Only on push to dev. Dedupes to at most one release per UTC day:
-    # multiple same-day pushes overwrite the same-date release.
-    needs: publish
-    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
-    runs-on: windows-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@v5
+      # ---- Nightly release (dev pushes only) ---------------------------------
+      # Reuses the publish output from the same job — no rebuild.
+      # Deduped to one release per UTC day; same-day pushes overwrite.
 
-      - name: Decide release tag and skip-condition
-        id: check
+      - name: Decide nightly release tag and skip-condition
+        id: nightly
+        if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: pwsh
@@ -95,61 +85,47 @@ jobs:
           $today = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd')
           $tag   = "nightly-$today"
           "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-          $existing = gh release view $tag --json targetCommitish,tagName 2>$null | ConvertFrom-Json
+
+          # `gh release view` exits 1 when the release doesn't exist; treat
+          # that as "no existing release" instead of failing the step.
+          $json = gh release view $tag --json targetCommitish,tagName 2>$null
+          $global:LASTEXITCODE = 0
+          $existing = if ($json) { $json | ConvertFrom-Json } else { $null }
+
           if ($existing -and $existing.targetCommitish -eq '${{ github.sha }}') {
             Write-Host "Today's nightly already points at this commit; nothing to do."
             "skip=true"  | Out-File -FilePath $env:GITHUB_OUTPUT -Append
           } else {
             "skip=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
           }
+          exit 0
 
-      - name: Install .NET
-        if: steps.check.outputs.skip == 'false'
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 10.0.x
-
-      - name: Restore workloads
-        if: steps.check.outputs.skip == 'false'
-        run: dotnet workload restore Host/Host.csproj
-
-      - name: Publish for release
-        if: steps.check.outputs.skip == 'false'
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = 'Stop'
-          for ($i = 1; $i -le 3; $i++) {
-            try {
-              dotnet publish Host/Host.csproj -c Release -r win-x64 --self-contained true --nologo
-              if ($LASTEXITCODE -eq 0) { break }
-              throw "publish exited $LASTEXITCODE"
-            } catch {
-              if ($i -eq 3) { throw }
-              Write-Host "::warning::publish attempt $i failed; retrying in 10s"
-              Start-Sleep -Seconds 10
-            }
-          }
-
-      - name: Zip publish output
+      - name: Zip publish output for release
         id: zip
-        if: steps.check.outputs.skip == 'false'
+        if: steps.nightly.outputs.skip == 'false'
         shell: pwsh
         run: |
-          $tag = "${{ steps.check.outputs.tag }}"
+          $tag = "${{ steps.nightly.outputs.tag }}"
           $zip = "TaikoLocalServer-$tag-win-x64.zip"
-          Compress-Archive -Path Host/bin/Release/net10.0/win-x64/publish/* -DestinationPath $zip
+          Compress-Archive -Path "${{ steps.locate.outputs.path }}/*" -DestinationPath $zip
           "zip=$zip" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
       - name: Create or update nightly release
-        if: steps.check.outputs.skip == 'false'
+        if: steps.nightly.outputs.skip == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: pwsh
         run: |
-          $tag   = "${{ steps.check.outputs.tag }}"
+          $ErrorActionPreference = 'Stop'
+          $tag   = "${{ steps.nightly.outputs.tag }}"
           $zip   = "${{ steps.zip.outputs.zip }}"
           $title = "Nightly $tag"
           $body  = "Automated build of ``dev`` at ${{ github.sha }}.`nNot a stable release."
+
           # Replace if the same-date release already exists for an older commit.
-          gh release delete $tag --yes 2>$null
+          # `gh release delete` exits 1 when the release doesn't exist; that's fine.
+          gh release delete $tag --yes --cleanup-tag 2>$null
+          $global:LASTEXITCODE = 0
+
           gh release create $tag $zip --title $title --notes $body --prerelease --target ${{ github.sha }}
+          if ($LASTEXITCODE -ne 0) { throw "gh release create failed with exit $LASTEXITCODE" }
