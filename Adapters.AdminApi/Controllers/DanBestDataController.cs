@@ -1,6 +1,4 @@
 using Microsoft.Extensions.Options;
-using SharedProject.Models;
-using SharedProject.Models.Responses;
 using Swan.Mapping;
 using TaikoLocalServer.Infrastructure.Identity.Settings;
 
