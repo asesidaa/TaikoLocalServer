@@ -17,6 +17,7 @@ global using TaikoLocalServer.Application.Common;
 global using TaikoLocalServer.Application.Dtos;
 global using TaikoLocalServer.Application.Handlers;
 global using TaikoLocalServer.Application.Settings;
+global using TaikoLocalServer.Contracts.AdminApi.ServerData;
 global using TaikoLocalServer.Domain;
 global using TaikoLocalServer.Domain.Entities;
 global using TaikoLocalServer.Domain.Enums;

@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using SharedProject.Models;
 
 namespace TaikoLocalServer.Application.Abstractions;
 

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace SharedProject.Models;
+namespace TaikoLocalServer.Application.ServerData;
 
 public class SongIntroductionData : IVerupNo
 {
