@@ -10,6 +10,5 @@
   <Project Path="Host/Host.csproj" />
   <Project Path="Infrastructure/Infrastructure.csproj" />
   <Project Path="LocalSaveModScoreMigrator/LocalSaveModScoreMigrator.csproj" />
-  <Project Path="SharedProject/SharedProject.csproj" />
   <Project Path="TaikoWebUI/TaikoWebUI.csproj" />
 </Solution>
