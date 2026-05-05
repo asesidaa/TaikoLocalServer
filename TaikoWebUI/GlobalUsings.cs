@@ -1,4 +1,4 @@
-﻿// Global using directives
+// Global using directives
 global using System.Net.Http;
 global using System.Net.Http.Json;
 global using Microsoft.AspNetCore.Components;
@@ -7,8 +7,10 @@ global using MudBlazor;
 global using TaikoWebUI;
 global using TaikoWebUI.Services;
 global using TaikoWebUI.Shared;
-global using SharedProject.Models;
-global using SharedProject.Models.Requests;
-global using SharedProject.Models.Responses;
+global using TaikoLocalServer.Contracts.AdminApi.ViewModels;
+global using TaikoLocalServer.Contracts.AdminApi.Requests;
+global using TaikoLocalServer.Contracts.AdminApi.Responses;
+global using TaikoLocalServer.Contracts.AdminApi.ServerData;
+global using TaikoLocalServer.Contracts.AdminApi.Converters;
 global using TaikoLocalServer.Domain.Enums;
 global using Throw;
