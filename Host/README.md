@@ -1,7 +1,7 @@
 # Taiko Local Server
 
 This is the solution for server.  
-Server is implemented with ASP.NET Core 8. ORM is Entity Framework Core 8. Database is SQLite for easier setup.  
+Server is implemented with ASP.NET Core 10. ORM is Entity Framework Core 10. Database is SQLite for easier setup.  
 As the game uses protobuf, `protobuf-net` is used for serializing and deserializing the data.  
 
 - [Taiko Local Server](#taiko-local-server)
