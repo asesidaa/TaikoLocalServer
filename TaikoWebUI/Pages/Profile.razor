@@ -1,4 +1,5 @@
 ﻿@page "/Users/{baid:int}/Profile"
+@attribute [Authorize]
 @inject HttpClient Client
 @inject IGameDataService GameDataService
 @inject IDialogService DialogService
@@ -25,7 +26,7 @@
         <MudGrid Class="my-4 pb-10">
             <MudItem xs="12" md="8">
                 <MudPaper Elevation="0" Outlined="true">
-                    <MudTabs MinimumTabWidth="100px" Rounded="true" Border="true" PanelClass="pa-8">
+                    <MudTabs MinimumTabWidth="100px" Rounded="true" Border="true" TabPanelsClass="pa-8">
                         <MudTabPanel Text="@Localizer["Profile"]">
                             <MudStack Spacing="4">
                                 <MudText Typo="Typo.h6">@Localizer["Profile Options"]</MudText>
@@ -249,7 +250,7 @@
             <MudItem md="4" xs="12" Class="py-3 px-3">
                 <MudStack Spacing="4" Class="sticky" Style="top:100px">
                     <MudPaper Elevation="0" Outlined="true">
-                        <MudTabs MinimumTabWidth="100px" Rounded="true" Border="true" PanelClass="pa-8">
+                        <MudTabs MinimumTabWidth="100px" Rounded="true" Border="true" TabPanelsClass="pa-8">
                             <MudTabPanel Text=@Localizer["Player"]>
                                 <MudItem style="height: auto">
                                     @* Player Visualizer *@

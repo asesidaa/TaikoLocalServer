@@ -1,8 +1,13 @@
-﻿{
+{
   "AuthSettings": {
     "JwtKey": "SuperSecretKeyAndHeresItsPadding",
     "JwtIssuer": "http://localhost:5000",
     "JwtAudience": "http://localhost:5000",
-    "AuthenticationRequired": false
+    "AuthenticationRequired": false,
+    "OnlyAdmin": false,
+    "BoundAccessCodeUpperLimit": 3,
+    "RegisterWithLastPlayTime": false,
+    "AllowUserDelete": true,
+    "AllowFreeProfileEditing": true
   }
 }

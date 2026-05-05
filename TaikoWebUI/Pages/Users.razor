@@ -6,6 +6,7 @@
 @using TaikoWebUI.Components;
 
 @page "/Users"
+@attribute [Authorize(Policy = AuthPolicies.Admin)]
 
 <MudGrid Class="my-8">
     @if (!AuthService.LoginRequired || (AuthService.LoginRequired && AuthService.IsAdmin)) {

@@ -3,6 +3,7 @@
   <PropertyGroup>
     <RootNamespace>TaikoLocalServer.Adapters.AdminApi</RootNamespace>
     <AssemblyName>TaikoLocalServer.Adapters.AdminApi</AssemblyName>
+    <NoWarn>$(NoWarn);RMG020;RMG012</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

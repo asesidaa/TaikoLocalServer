@@ -42,7 +42,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
-    <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" />
     <PackageReference Include="Mediator.Abstractions" />
     <PackageReference Include="protobuf-net.AspNetCore" />
     <PackageReference Include="Serilog.AspNetCore" />

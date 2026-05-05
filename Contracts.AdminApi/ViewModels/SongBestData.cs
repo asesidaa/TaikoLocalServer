@@ -45,7 +45,7 @@ public class SongBestData
 
     public List<AiSectionBestData> AiSectionBestData { get; set; } = new();
 
-    public PlaySetting PlaySetting { get; set; }
+    public PlaySetting PlaySetting { get; set; } = new();
 
     public bool ShowAiData { get; set; }
     public List<SongPlayDatumDto> RecentPlayData { get; set; } = new();

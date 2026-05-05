@@ -8,6 +8,7 @@
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 @page "/Users/{baid:int}/HighScores"
+@attribute [Authorize]
 
 <MudGrid Class="my-8" Style="margin-bottom: 0px !important;">
     @if (response is null)

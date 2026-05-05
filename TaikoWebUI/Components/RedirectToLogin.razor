@@ -1,0 +1,12 @@
+@inject NavigationManager Navigation
+@inject ClientAuthConfigResponse AuthConfig
+
+@code {
+    protected override void OnInitialized()
+    {
+        // Local mode: there's nothing to log in to — bounce to home.
+        // Auth-required mode: send the visitor to the login form.
+        var target = AuthConfig.AuthenticationRequired ? "/Login" : "/";
+        Navigation.NavigateTo(target, forceLoad: false, replace: true);
+    }
+}

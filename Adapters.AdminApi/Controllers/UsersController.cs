@@ -5,35 +5,22 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UsersController(
-    ITaikoDbContext context,
-    IJwtTokenService jwtTokens,
-    IOptions<AuthSettings> settings) : BaseAdminController<UsersController>
+[Authorize]
+public class UsersController(ITaikoDbContext context, IOptions<AuthSettings> authOptions) : BaseAdminController<UsersController>
 {
-    private readonly AuthSettings authSettings = settings.Value;
+    private readonly AuthSettings authSettings = authOptions.Value;
+
 
     [HttpGet("{baid}")]
-    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
-    public async Task<User?> GetUser(uint baid)
+    public async Task<ActionResult<User?>> GetUser(uint baid)
     {
-        if (authSettings.AuthenticationRequired)
-        {
-            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
-            if (tokenInfo == null)
-            {
-                return null;
-            }
-
-            if (!tokenInfo.Value.IsAdmin && tokenInfo.Value.Baid != baid)
-            {
-                return null;
-            }
-        }
+        if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
+            return forbid;
 
         var userDatum = await context.UserData.FindAsync(baid);
         if (userDatum == null)
         {
-            return null;
+            return NotFound();
         }
 
         var cardEntries = await context.Cards.Where(card => card.Baid == baid).ToListAsync();
@@ -46,7 +33,7 @@ public class UsersController(
     }
 
     [HttpGet]
-    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
+    [Authorize(Policy = AuthPolicies.Admin)]
     public async Task<ActionResult<UsersResponse>> GetUsers([FromQuery] int page = 1, [FromQuery] int limit = 10, [FromQuery] string? searchTerm = null)
     {
         if (page < 1)
@@ -57,20 +44,6 @@ public class UsersController(
         if (limit > 200)
         {
             return BadRequest(new { Message = "Limit cannot be greater than 200." });
-        }
-
-        if (authSettings.AuthenticationRequired)
-        {
-            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
-            if (tokenInfo == null)
-            {
-                return new UsersResponse();
-            }
-
-            if (!tokenInfo.Value.IsAdmin)
-            {
-                return new UsersResponse();
-            }
         }
 
         var users = new List<User>();
@@ -167,22 +140,13 @@ public class UsersController(
     }
 
     [HttpDelete("{baid}")]
-    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<IActionResult> DeleteUser(uint baid)
     {
-        if (authSettings.AuthenticationRequired)
-        {
-            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
-            if (tokenInfo == null)
-            {
-                return Unauthorized();
-            }
+        if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
+            return forbid;
 
-            if (!tokenInfo.Value.IsAdmin && tokenInfo.Value.Baid != baid)
-            {
-                return Forbid();
-            }
-        }
+        if (authSettings.AuthenticationRequired && !authSettings.AllowUserDelete && !User.IsAdmin())
+            return Forbid();
 
         var userDatum = await context.UserData.FindAsync(baid);
         if (userDatum == null)

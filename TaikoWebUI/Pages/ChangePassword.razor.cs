@@ -11,11 +11,6 @@ public partial class ChangePassword
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        
-        if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
-        {
-            await AuthService.LoginWithAuthToken();
-        }
 
         BreadcrumbsStateContainer.breadcrumbs.Clear();
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Change Password"], href: "/"));

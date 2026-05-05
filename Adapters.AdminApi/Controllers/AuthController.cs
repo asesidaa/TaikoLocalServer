@@ -1,7 +1,9 @@
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using OtpNet;
+using TaikoLocalServer.Adapters.AdminApi.Mapping;
 using TaikoLocalServer.Infrastructure.Identity.Settings;
 
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
@@ -15,6 +17,10 @@ public class AuthController(
 {
     private readonly AuthSettings authSettings = settings.Value;
 
+    private const int OtpStepSeconds = 3600;
+    // 24 prior 1-hour windows = 24h backwards-acceptance for invite codes.
+    private static readonly VerificationWindow OtpWindow = new(previous: 24, future: 0);
+
     private static string ComputeHash(string inputPassword, string salt)
     {
         return BCrypt.Net.BCrypt.HashPassword(inputPassword, salt);
@@ -25,19 +31,29 @@ public class AuthController(
         return BCrypt.Net.BCrypt.GenerateSalt(10);
     }
 
-    private static Totp MakeTotp(uint baid)
+    private Totp MakeTotp(uint baid)
     {
-        var secretKey = (baid * 765 + 2023).ToString();
-        var base32String = Base32Encoding.ToString(Encoding.UTF8.GetBytes(secretKey));
-        var base32Bytes = Base32Encoding.ToBytes(base32String);
-        return new Totp(base32Bytes, step: 999999999);
+        var jwtKey = authSettings.JwtKey;
+        if (string.IsNullOrEmpty(jwtKey))
+        {
+            throw new InvalidOperationException("JwtKey must be configured to derive OTP secrets.");
+        }
+
+        var secret = HMACSHA256.HashData(
+            Encoding.UTF8.GetBytes(jwtKey),
+            Encoding.UTF8.GetBytes(baid.ToString()));
+        return new Totp(secret, step: OtpStepSeconds);
     }
 
-    private static bool VerifyOtp(string otp, uint baid)
+    private bool VerifyOtp(string otp, uint baid)
     {
         var totp = MakeTotp(baid);
-        return totp.VerifyTotp(otp, out _);
+        return totp.VerifyTotp(otp, out _, OtpWindow);
     }
+
+    [HttpGet("Config")]
+    [AllowAnonymous]
+    public ActionResult<ClientAuthConfigResponse> GetConfig() => Ok(authSettings.ToResponse());
 
     [HttpPost("Login")]
     [AllowAnonymous]
@@ -74,27 +90,21 @@ public class AuthController(
     }
 
     [HttpPost("LoginWithToken")]
-    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
-    public IActionResult LoginWithToken()
-    {
-        var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
-        if (tokenInfo == null)
-        {
-            return Unauthorized();
-        }
-
-        return Ok();
-    }
+    [Authorize]
+    public IActionResult LoginWithToken() => Ok();
 
 
     [HttpPost("Register")]
     [AllowAnonymous]
     public async Task<IActionResult> Register(RegisterRequest registerRequest)
     {
+        if (authSettings.AuthenticationRequired && authSettings.OnlyAdmin && !User.IsAdmin())
+            return Forbid();
+
         var accessCode = registerRequest.AccessCode;
         var password = registerRequest.Password;
         var lastPlayDateTime = registerRequest.LastPlayDateTime;
-        var registerWithLastPlayTime = registerRequest.RegisterWithLastPlayTime;
+        var registerWithLastPlayTime = authSettings.RegisterWithLastPlayTime;
         var inviteCode = registerRequest.InviteCode;
 
         var card = await context.Cards.FindAsync(new object?[] { accessCode }, HttpContext.RequestAborted);
@@ -143,26 +153,11 @@ public class AuthController(
     }
 
     [HttpPost("ChangePassword")]
-    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
+    [Authorize]
     public async Task<IActionResult> ChangePassword(ChangePasswordRequest changePasswordRequest)
     {
-        if (authSettings.AuthenticationRequired)
-        {
-            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
-            if (tokenInfo == null)
-            {
-                return Unauthorized();
-            }
-
-            if (!tokenInfo.Value.IsAdmin)
-            {
-                var requestCard = await context.Cards.FindAsync(new object?[] { changePasswordRequest.AccessCode }, HttpContext.RequestAborted);
-                if (requestCard?.Baid != tokenInfo.Value.Baid)
-                {
-                    return Forbid();
-                }
-            }
-        }
+        if (authSettings.AuthenticationRequired && authSettings.OnlyAdmin && !User.IsAdmin())
+            return Forbid();
 
         var accessCode = changePasswordRequest.AccessCode;
         var oldPassword = changePasswordRequest.OldPassword;
@@ -171,6 +166,9 @@ public class AuthController(
         var card = await context.Cards.FindAsync(new object?[] { accessCode }, HttpContext.RequestAborted);
         if (card == null)
             return Unauthorized(new { message = "Access Code Not Found" });
+
+        if (this.AuthorizeOwnerOrAdmin(card.Baid) is { } forbid)
+            return forbid;
 
         var credential = await context.Credentials.FindAsync(new object?[] { card.Baid }, HttpContext.RequestAborted);
         if (credential == null)
@@ -196,26 +194,13 @@ public class AuthController(
     }
 
     [HttpPost("ResetPassword")]
-    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
+    [Authorize]
     public async Task<IActionResult> ResetPassword(ResetPasswordRequest resetPasswordRequest)
     {
-        if (authSettings.AuthenticationRequired)
-        {
-            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
-            if (tokenInfo == null)
-            {
-                return Unauthorized();
-            }
+        if (this.AuthorizeOwnerOrAdmin(resetPasswordRequest.Baid) is { } forbid)
+            return forbid;
 
-            if (!tokenInfo.Value.IsAdmin && resetPasswordRequest.Baid != tokenInfo.Value.Baid)
-            {
-                return Forbid();
-            }
-        }
-
-        var baid = resetPasswordRequest.Baid;
-
-        var credential = await context.Credentials.FindAsync(new object?[] { baid }, HttpContext.RequestAborted);
+        var credential = await context.Credentials.FindAsync(new object?[] { resetPasswordRequest.Baid }, HttpContext.RequestAborted);
         if (credential == null)
             return Unauthorized(new { message = "Credential Not Found" });
 
@@ -226,23 +211,9 @@ public class AuthController(
     }
 
     [HttpPost("GenerateOtp")]
-    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
+    [Authorize(Policy = AuthPolicies.Admin)]
     public IActionResult GenerateOtp(GenerateOtpRequest generateOtpRequest)
     {
-        if (authSettings.AuthenticationRequired)
-        {
-            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
-            if (tokenInfo == null)
-            {
-                return Unauthorized();
-            }
-
-            if (!tokenInfo.Value.IsAdmin)
-            {
-                return Forbid();
-            }
-        }
-
         var totp = MakeTotp(generateOtpRequest.Baid);
         return Ok(new { otp = totp.ComputeTotp() });
     }

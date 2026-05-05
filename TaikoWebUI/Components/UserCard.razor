@@ -199,7 +199,7 @@
         var dialog = await DialogService.ShowAsync<UserDeleteConfirmDialog>((string)Localizer["Delete User"], parameters, options);
         var result = await dialog.Result;
 
-        if (result.Canceled) return;
+        if (result is null || result.Canceled) return;
         
         if (user.Baid == AuthService.GetLoggedInBaid())
         {

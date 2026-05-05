@@ -26,11 +26,6 @@ public partial class DaniDojo
     {
         await base.OnInitializedAsync();
 
-        if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
-        {
-            await AuthService.LoginWithAuthToken();
-        }
-
         response = await Client.GetFromJsonAsync<DanBestDataResponse>($"api/DanBestData/{Baid}");
         response.ThrowIfNull();
         response.DanBestDataList.ForEach(data => data.DanBestStageDataList

@@ -1,34 +1,15 @@
-using Microsoft.Extensions.Options;
-using TaikoLocalServer.Infrastructure.Identity.Settings;
-
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PlayHistoryController(
-    ITaikoDbContext context,
-    IJwtTokenService jwtTokens,
-    IOptions<AuthSettings> settings) : BaseAdminController<PlayHistoryController>
+[Authorize]
+public class PlayHistoryController(ITaikoDbContext context) : BaseAdminController<PlayHistoryController>
 {
-    private readonly AuthSettings authSettings = settings.Value;
-
     [HttpGet("{baid}")]
-    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<ActionResult<SongHistoryResponse>> GetSongHistory(uint baid)
     {
-        if (authSettings.AuthenticationRequired)
-        {
-            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
-            if (tokenInfo is null)
-            {
-                return Unauthorized();
-            }
-
-            if (tokenInfo.Value.Baid != baid && !tokenInfo.Value.IsAdmin)
-            {
-                return Forbid();
-            }
-        }
+        if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
+            return forbid;
 
         var user = await context.UserData.FindAsync(baid);
         if (user is null)

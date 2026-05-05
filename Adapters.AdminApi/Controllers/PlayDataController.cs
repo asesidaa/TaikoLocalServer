@@ -1,37 +1,19 @@
-using Microsoft.Extensions.Options;
 using Riok.Mapperly.Abstractions;
 using Swan.Mapping;
-using TaikoLocalServer.Infrastructure.Identity.Settings;
 using Throw;
 
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PlayDataController(
-    ITaikoDbContext context,
-    IJwtTokenService jwtTokens,
-    IOptions<AuthSettings> settings) : BaseAdminController<PlayDataController>
+[Authorize]
+public class PlayDataController(ITaikoDbContext context) : BaseAdminController<PlayDataController>
 {
-    private readonly AuthSettings authSettings = settings.Value;
-
     [HttpGet("{baid}")]
-    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<ActionResult<SongBestResponse>> GetSongBestRecords(uint baid)
     {
-        if (authSettings.AuthenticationRequired)
-        {
-            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
-            if (tokenInfo is null)
-            {
-                return Unauthorized();
-            }
-
-            if (tokenInfo.Value.Baid != baid && !tokenInfo.Value.IsAdmin)
-            {
-                return Forbid();
-            }
-        }
+        if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
+            return forbid;
 
         var user = await context.UserData.FindAsync(baid);
         if (user is null)

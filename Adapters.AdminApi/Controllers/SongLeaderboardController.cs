@@ -1,19 +1,11 @@
-using Microsoft.Extensions.Options;
-using TaikoLocalServer.Infrastructure.Identity.Settings;
-
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class SongLeaderboardController(
-    ITaikoDbContext context,
-    IJwtTokenService jwtTokens,
-    IOptions<AuthSettings> settings) : BaseAdminController<SongLeaderboardController>
+[Authorize]
+public class SongLeaderboardController(ITaikoDbContext context) : BaseAdminController<SongLeaderboardController>
 {
-    private readonly AuthSettings authSettings = settings.Value;
-
     [HttpGet("{songId}")]
-    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<ActionResult<SongLeaderboardResponse>> GetSongLeaderboard(
         uint songId,
         [FromQuery] uint baid,
@@ -21,23 +13,8 @@ public class SongLeaderboardController(
         [FromQuery] int page = 1,
         [FromQuery] int limit = 10)
     {
-        // if baid is provided, check authentication
-        if (baid != 0)
-        {
-            if (authSettings.AuthenticationRequired)
-            {
-                var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
-                if (tokenInfo is null)
-                {
-                    return Unauthorized();
-                }
-
-                if (tokenInfo.Value.Baid != baid && !tokenInfo.Value.IsAdmin)
-                {
-                    return Forbid();
-                }
-            }
-        }
+        if (baid != 0 && this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
+            return forbid;
 
         if (page < 1)
         {

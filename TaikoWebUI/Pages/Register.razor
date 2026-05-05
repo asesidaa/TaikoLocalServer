@@ -4,10 +4,11 @@
 @inject BreadcrumbsStateContainer BreadcrumbsStateContainer
 
 @page "/Register"
+@attribute [Authorize(Policy = WebUiAuthPolicies.RequireRealAuth)]
 
-@if (AuthService.OnlyAdmin || !AuthService.LoginRequired)
+@* Local-mode redirect is handled by the RequireRealAuth policy (see Program.cs / RedirectToLogin). *@
+@if (AuthService.OnlyAdmin)
 {
-    Console.WriteLine("Registration is disabled. Redirecting to Dashboard...");
     NavigationManager.NavigateTo("/");
 }
 else if (AuthService.IsLoggedIn)

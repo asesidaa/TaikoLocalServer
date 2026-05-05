@@ -23,15 +23,10 @@ public partial class Users
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
-        {
-            await AuthService.LoginWithAuthToken();
-        }
-        
-        if (AuthService.IsAdmin || !AuthService.LoginRequired)
-        {
-            await GetUsersData();
-        }
+
+        // Page is gated by [Authorize(Policy = AuthPolicies.Admin)]; in local mode the policy
+        // passes (synthetic admin) and in auth mode it requires the Admin role.
+        await GetUsersData();
 
         BreadcrumbsStateContainer.breadcrumbs.Clear();
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));

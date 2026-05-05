@@ -8,10 +8,10 @@
   <ItemGroup>
     <!-- ASP.NET Core / Blazor (server hosts WASM, so these appear in TaikoLocalServer too) -->
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.7" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.7" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.7" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.7" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.7" />
-    <PackageVersion Include="Microsoft.AspNetCore.ResponseCompression" Version="2.3.9" />
 
     <!-- Entity Framework Core -->
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.7" />
@@ -51,7 +51,6 @@
     <PackageVersion Include="CodeBeam.MudBlazor.Extensions" Version="9.0.5" />
     <PackageVersion Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageVersion Include="Markdig" Version="0.38.0" />
-    <PackageVersion Include="Autocomplete.Clients" Version="1.1.0" />
     <PackageVersion Include="QRCoder" Version="1.6.0" />
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.3.0" />
 

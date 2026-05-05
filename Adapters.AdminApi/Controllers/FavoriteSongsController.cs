@@ -1,34 +1,15 @@
-using Microsoft.Extensions.Options;
-using TaikoLocalServer.Infrastructure.Identity.Settings;
-
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class FavoriteSongsController(
-    ITaikoDbContext context,
-    IJwtTokenService jwtTokens,
-    IOptions<AuthSettings> settings) : BaseAdminController<FavoriteSongsController>
+[Authorize]
+public class FavoriteSongsController(ITaikoDbContext context) : BaseAdminController<FavoriteSongsController>
 {
-    private readonly AuthSettings authSettings = settings.Value;
-
     [HttpPost]
-    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<IActionResult> UpdateFavoriteSong(SetFavoriteRequest request)
     {
-        if (authSettings.AuthenticationRequired)
-        {
-            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
-            if (tokenInfo is null)
-            {
-                return Unauthorized();
-            }
-
-            if (tokenInfo.Value.Baid != request.Baid && !tokenInfo.Value.IsAdmin)
-            {
-                return Forbid();
-            }
-        }
+        if (this.AuthorizeOwnerOrAdmin(request.Baid) is { } forbid)
+            return forbid;
 
         var user = await context.UserData.FindAsync(request.Baid);
         if (user is null)
@@ -52,22 +33,10 @@ public class FavoriteSongsController(
     }
 
     [HttpGet("{baid}")]
-    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<IActionResult> GetFavoriteSongs(uint baid)
     {
-        if (authSettings.AuthenticationRequired)
-        {
-            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
-            if (tokenInfo is null)
-            {
-                return Unauthorized();
-            }
-
-            if (tokenInfo.Value.Baid != baid && !tokenInfo.Value.IsAdmin)
-            {
-                return Forbid();
-            }
-        }
+        if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
+            return forbid;
 
         var user = await context.UserData.FindAsync(baid);
         if (user is null)

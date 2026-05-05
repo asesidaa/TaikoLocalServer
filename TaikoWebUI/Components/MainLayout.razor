@@ -74,12 +74,6 @@
         {
             isDarkMode = await LocalStorage.GetItemAsync<bool>("isDarkMode");
         }
-
-        if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
-        {
-            // If not logged in, attempt to use JwtToken from local storage to log in
-            await AuthService.LoginWithAuthToken();
-        }
     }
 
     private async Task DrawerToggle()

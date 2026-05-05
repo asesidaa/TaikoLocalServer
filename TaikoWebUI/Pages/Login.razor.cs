@@ -14,11 +14,6 @@ public partial class Login
     {
         await base.OnInitializedAsync();
 
-        if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
-        {
-            await AuthService.LoginWithAuthToken();
-        }
-
         BreadcrumbsStateContainer.breadcrumbs.Clear();
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Log In"], href: "/Login"));
         BreadcrumbsStateContainer.NotifyStateChanged();
@@ -87,7 +82,7 @@ public partial class Login
     {
         if (loginForm != null)
         {
-            await loginForm.Validate();
+            await loginForm.ValidateAsync();
             if (loginForm.IsValid)
             {
                 await OnLogin();
