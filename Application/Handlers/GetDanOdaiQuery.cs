@@ -1,4 +1,3 @@
-﻿using SharedProject.Models;
 using Throw;
 
 namespace TaikoLocalServer.Application.Handlers;

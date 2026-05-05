@@ -1,4 +1,4 @@
-﻿namespace SharedProject.Models;
+﻿namespace TaikoLocalServer.Contracts.AdminApi.ServerData;
 
 public interface IVerupNo
 {

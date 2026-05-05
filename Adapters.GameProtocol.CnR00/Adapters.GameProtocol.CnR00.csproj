@@ -12,6 +12,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Adapters.GameProtocol.Shared\Adapters.GameProtocol.Shared.csproj" />
     <ProjectReference Include="..\Application\Application.csproj" />
+    <ProjectReference Include="..\Contracts.AdminApi\Contracts.AdminApi.csproj" />
   </ItemGroup>
 
   <ItemGroup>

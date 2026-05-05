@@ -11,13 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
-    <!-- TEMPORARY (PR2 deviation): SharedProject hosts ServerData shapes (DanData,
-         MovieData, MusicDetail, etc.) referenced by IGameDataCatalog. They could
-         not move into Application/ServerData because TaikoWebUI (Blazor WASM)
-         consumes them and cannot reference Application (FrameworkReference
-         Microsoft.AspNetCore.App). Remove this ref in PR4 when SharedProject is
-         split into TaikoLocalServer.Contracts.AdminApi + redistributed shapes. -->
-    <ProjectReference Include="..\SharedProject\SharedProject.csproj" />
+    <ProjectReference Include="..\Contracts.AdminApi\Contracts.AdminApi.csproj" />
   </ItemGroup>
 
   <ItemGroup>

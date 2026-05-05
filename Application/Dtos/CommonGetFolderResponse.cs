@@ -1,4 +1,3 @@
-﻿using SharedProject.Models;
 
 namespace TaikoLocalServer.Application.Dtos;
 

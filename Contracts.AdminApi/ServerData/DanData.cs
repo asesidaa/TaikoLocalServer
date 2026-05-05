@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace SharedProject.Models;
+namespace TaikoLocalServer.Contracts.AdminApi.ServerData;
 
 public class DanData : IVerupNo
 {
