@@ -1,9 +1,7 @@
 ﻿using System.Collections.Specialized;
-using TaikoLocalServer.Domain.Enums;
-using SharedProject.Models;
 using Throw;
 
-namespace SharedProject.Utils;
+namespace TaikoLocalServer.Contracts.AdminApi.Converters;
 
 public static class PlaySettingConverter
 {
