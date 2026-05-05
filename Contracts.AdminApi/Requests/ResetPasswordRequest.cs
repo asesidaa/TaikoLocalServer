@@ -1,4 +1,4 @@
-﻿namespace SharedProject.Models.Requests;
+﻿namespace TaikoLocalServer.Contracts.AdminApi.Requests;
 
 public class ResetPasswordRequest
 {
