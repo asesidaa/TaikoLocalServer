@@ -1,45 +1,155 @@
 name: TLS GitHub Actions
 run-name: Publish TLS executable program 🚀
-on: [push]
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write   # required for `gh release create`
+
 env:
   Major_Version_Number: '1'
   Minor_Version_Number: '2'
   Build_Number: ${{ github.run_number }}
+
 jobs:
-  TLS-GitHub-Actions:
+  publish:
     runs-on: windows-latest
+    outputs:
+      publish_path: ${{ steps.locate.outputs.path }}
+      artifact_name: ${{ steps.locate.outputs.name }}
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event. Commiter is ${{ github.actor }}."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      
       - name: Check out repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-        
-      # Install the .NET Core workload
-      - name: Install .NET Core
-        uses: actions/setup-dotnet@v4
+      - name: Install .NET
+        uses: actions/setup-dotnet@v5
         with:
-         dotnet-version: 10.0.x
+          dotnet-version: 10.0.x
 
-      # Restore the application to populate the obj folder with RuntimeIdentifiers
-      - name: Restore the application
-        run: dotnet workload restore   
-        
-      - run: echo "🖥️ The workflow is now ready to publish application on the runner."
-        
-      # Build
-      - name: Publish
-        run: dotnet publish
+      - name: Restore workloads
+        run: dotnet workload restore Host/Host.csproj
 
-      # Upload the TLS package
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+      # Self-contained + single-file + native-libs-bundled are configured in
+      # Host/Host.csproj under the `Configuration != Debug` PropertyGroup.
+      # We do NOT pass -p:PublishSingleFile=true on the CLI because it would
+      # propagate to TaikoWebUI (a Blazor WASM project) and break its publish.
+      #
+      # Retry guards against intermittent wasm-ld file-lock failures on
+      # Windows runners (see run 25282588630).
+      - name: Publish (Release, win-x64, self-contained)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          for ($i = 1; $i -le 3; $i++) {
+            try {
+              dotnet publish Host/Host.csproj -c Release -r win-x64 --self-contained true --nologo
+              if ($LASTEXITCODE -eq 0) { break }
+              throw "publish exited $LASTEXITCODE"
+            } catch {
+              if ($i -eq 3) { throw }
+              Write-Host "::warning::publish attempt $i failed; retrying in 10s"
+              Start-Sleep -Seconds 10
+            }
+          }
+
+      - name: Locate publish output
+        id: locate
+        shell: pwsh
+        run: |
+          $path = "Host/bin/Release/net10.0/win-x64/publish"
+          if (-not (Test-Path $path)) { throw "publish dir missing: $path" }
+          "path=$path" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "name=TLS-${{ env.Major_Version_Number }}.${{ env.Minor_Version_Number }}.${{ env.Build_Number }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Upload build artifact
+        # Build/publish runs on every branch (catches breakage early); the
+        # 90-day-retention artifact is only uploaded for dev pushes.
+        if: github.ref == 'refs/heads/dev'
+        uses: actions/upload-artifact@v7
         with:
-         name: TLS ${{ env.Major_Version_Number }}.${{ env.Minor_Version_Number }}.${{ env.Build_Number }}
-         path: ${{ github.workspace }}\TaikoLocalServer\bin\Release\net10.0\win-x64\publish
-         include-hidden-files: true
-         
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+          name: ${{ steps.locate.outputs.name }}
+          path: ${{ steps.locate.outputs.path }}
+          if-no-files-found: error
+          include-hidden-files: true
+
+  nightly-release:
+    # Only on push to dev. Dedupes to at most one release per UTC day:
+    # multiple same-day pushes overwrite the same-date release.
+    needs: publish
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v5
+
+      - name: Decide release tag and skip-condition
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $today = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd')
+          $tag   = "nightly-$today"
+          "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          $existing = gh release view $tag --json targetCommitish,tagName 2>$null | ConvertFrom-Json
+          if ($existing -and $existing.targetCommitish -eq '${{ github.sha }}') {
+            Write-Host "Today's nightly already points at this commit; nothing to do."
+            "skip=true"  | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          } else {
+            "skip=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          }
+
+      - name: Install .NET
+        if: steps.check.outputs.skip == 'false'
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore workloads
+        if: steps.check.outputs.skip == 'false'
+        run: dotnet workload restore Host/Host.csproj
+
+      - name: Publish for release
+        if: steps.check.outputs.skip == 'false'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          for ($i = 1; $i -le 3; $i++) {
+            try {
+              dotnet publish Host/Host.csproj -c Release -r win-x64 --self-contained true --nologo
+              if ($LASTEXITCODE -eq 0) { break }
+              throw "publish exited $LASTEXITCODE"
+            } catch {
+              if ($i -eq 3) { throw }
+              Write-Host "::warning::publish attempt $i failed; retrying in 10s"
+              Start-Sleep -Seconds 10
+            }
+          }
+
+      - name: Zip publish output
+        id: zip
+        if: steps.check.outputs.skip == 'false'
+        shell: pwsh
+        run: |
+          $tag = "${{ steps.check.outputs.tag }}"
+          $zip = "TaikoLocalServer-$tag-win-x64.zip"
+          Compress-Archive -Path Host/bin/Release/net10.0/win-x64/publish/* -DestinationPath $zip
+          "zip=$zip" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Create or update nightly release
+        if: steps.check.outputs.skip == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $tag   = "${{ steps.check.outputs.tag }}"
+          $zip   = "${{ steps.zip.outputs.zip }}"
+          $title = "Nightly $tag"
+          $body  = "Automated build of ``dev`` at ${{ github.sha }}.`nNot a stable release."
+          # Replace if the same-date release already exists for an older commit.
+          gh release delete $tag --yes 2>$null
+          gh release create $tag $zip --title $title --notes $body --prerelease --target ${{ github.sha }}

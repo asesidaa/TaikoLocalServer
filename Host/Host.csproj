@@ -11,7 +11,22 @@
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <!-- We don't deploy to IIS; suppress the auto-generated web.config -->
+    <IsTransformWebConfigDisabled>true</IsTransformWebConfigDisabled>
   </PropertyGroup>
+
+  <Target Name="CleanPublishOutputForRelease" AfterTargets="Publish" Condition="'$(Configuration)'!='Debug'">
+    <ItemGroup>
+      <_PublishLeftovers Include="$(PublishDir)*.pdb" />
+      <_PublishLeftovers Include="$(PublishDir)*.runtimeconfig.json" />
+      <_PublishLeftovers Include="$(PublishDir)*.staticwebassets.endpoints.json" />
+    </ItemGroup>
+    <Delete Files="@(_PublishLeftovers)" />
+    <RemoveDir Directories="$(PublishDir)BlazorDebugProxy" />
+  </Target>
 
   <PropertyGroup>
     <BuildTime>$([System.DateTime]::UtcNow.ToString("yyyy-MM-dd HH:mm:ss"))</BuildTime>
