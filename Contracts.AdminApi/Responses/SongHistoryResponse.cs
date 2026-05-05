@@ -1,4 +1,4 @@
-﻿namespace SharedProject.Models.Responses;
+﻿namespace TaikoLocalServer.Contracts.AdminApi.Responses;
 
 public class SongHistoryResponse
 {
