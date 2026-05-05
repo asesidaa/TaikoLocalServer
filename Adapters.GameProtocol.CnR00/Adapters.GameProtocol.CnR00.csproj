@@ -3,6 +3,7 @@
   <PropertyGroup>
     <RootNamespace>TaikoLocalServer.Adapters.GameProtocol.CnR00</RootNamespace>
     <AssemblyName>TaikoLocalServer.Adapters.GameProtocol.CnR00</AssemblyName>
+    <NoWarn>$(NoWarn);RMG020;RMG012</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

@@ -28,12 +28,7 @@ public partial class PlayHistory
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        
-        if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
-        {
-            await AuthService.LoginWithAuthToken();
-        }
-        
+
         response = await Client.GetFromJsonAsync<SongHistoryResponse>($"api/PlayHistory/{(uint)Baid}");
         response.ThrowIfNull();
 

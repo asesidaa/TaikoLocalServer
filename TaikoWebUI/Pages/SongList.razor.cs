@@ -22,11 +22,6 @@ public partial class SongList
     {
         await base.OnInitializedAsync();
 
-        if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
-        {
-            await AuthService.LoginWithAuthToken();
-        }
-
         response = await Client.GetFromJsonAsync<SongBestResponse>($"api/PlayData/{Baid}");
         response.ThrowIfNull();
 

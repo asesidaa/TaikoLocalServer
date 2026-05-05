@@ -5,31 +5,15 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 [ApiController]
 [Route("/api/[controller]")]
-public class UserSettingsController(
-    ITaikoDbContext context,
-    IJwtTokenService jwtTokens,
-    IOptions<AuthSettings> settings) : BaseAdminController<UserSettingsController>
+[Authorize]
+public class UserSettingsController(ITaikoDbContext context, IOptions<AuthSettings> authOptions) : BaseAdminController<UserSettingsController>
 {
-    private readonly AuthSettings authSettings = settings.Value;
+    private readonly AuthSettings authSettings = authOptions.Value;
 
     [HttpGet]
-    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
+    [Authorize(Policy = AuthPolicies.Admin)]
     public async Task<ActionResult<List<UserSetting>>> GetAllUserSetting()
     {
-        if (authSettings.AuthenticationRequired)
-        {
-            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
-            if (tokenInfo is null)
-            {
-                return Unauthorized();
-            }
-
-            if (!tokenInfo.Value.IsAdmin)
-            {
-                return Forbid();
-            }
-        }
-
         var users = await context.UserData.Include(d => d.Tokens).ToListAsync();
 
         var response = new List<UserSetting>();
@@ -43,22 +27,10 @@ public class UserSettingsController(
 
 
     [HttpGet("{baid}")]
-    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<ActionResult<UserSetting>> GetUserSetting(uint baid)
     {
-        if (authSettings.AuthenticationRequired)
-        {
-            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
-            if (tokenInfo is null)
-            {
-                return Unauthorized();
-            }
-
-            if (tokenInfo.Value.Baid != baid && !tokenInfo.Value.IsAdmin)
-            {
-                return Forbid();
-            }
-        }
+        if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
+            return forbid;
 
         var user = await context.UserData.Include(d => d.Tokens).FirstOrDefaultAsync(d => d.Baid == baid);
         if (user is null)
@@ -70,28 +42,20 @@ public class UserSettingsController(
     }
 
     [HttpPost("{baid}")]
-    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<IActionResult> SaveUserSetting(uint baid, UserSetting userSetting)
     {
-        if (authSettings.AuthenticationRequired)
-        {
-            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
-            if (tokenInfo is null)
-            {
-                return Unauthorized();
-            }
-
-            if (tokenInfo.Value.Baid != baid && !tokenInfo.Value.IsAdmin)
-            {
-                return Forbid();
-            }
-        }
+        if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
+            return forbid;
 
         var user = await context.UserData.FindAsync(baid);
         if (user is null)
         {
             return NotFound();
         }
+
+        var enforceUnlockedOnly = authSettings.AuthenticationRequired
+                                  && !authSettings.AllowFreeProfileEditing
+                                  && !User.IsAdmin();
 
         user.IsSkipOn = userSetting.IsSkipOn;
         user.IsVoiceOn = userSetting.IsVoiceOn;
@@ -107,16 +71,44 @@ public class UserSettingsController(
         user.OptionSetting = PlaySettingConverter.PlaySettingToShort(userSetting.PlaySetting);
         user.MyDonName = userSetting.MyDonName;
         user.MyDonNameLanguage = userSetting.MyDonNameLanguage;
-        user.Title = userSetting.Title;
-        user.TitlePlateId = userSetting.TitlePlateId;
-        user.ColorBody = userSetting.BodyColor;
-        user.ColorFace = userSetting.FaceColor;
-        user.ColorLimb = userSetting.LimbColor;
-        user.CurrentKigurumi = userSetting.Kigurumi;
-        user.CurrentHead = userSetting.Head;
-        user.CurrentBody = userSetting.Body;
-        user.CurrentFace = userSetting.Face;
-        user.CurrentPuchi = userSetting.Puchi;
+
+        if (enforceUnlockedOnly)
+        {
+            // Costume / title fields can only contain values the user has already unlocked.
+            // Ignore the request payload's *unlocked* lists entirely (those are server-owned),
+            // and clamp equipped IDs + the current title to the persisted unlocked sets.
+            var unlockedKigurumi = user.UnlockedKigurumi.ToHashSet();
+            var unlockedHead = user.UnlockedHead.ToHashSet();
+            var unlockedBody = user.UnlockedBody.ToHashSet();
+            var unlockedFace = user.UnlockedFace.ToHashSet();
+            var unlockedPuchi = user.UnlockedPuchi.ToHashSet();
+            var unlockedTitle = user.TitleFlgArray.ToHashSet();
+
+            user.Title = unlockedTitle.Contains(userSetting.TitlePlateId) ? userSetting.Title : user.Title;
+            user.TitlePlateId = unlockedTitle.Contains(userSetting.TitlePlateId) ? userSetting.TitlePlateId : user.TitlePlateId;
+            user.CurrentKigurumi = unlockedKigurumi.Contains(userSetting.Kigurumi) ? userSetting.Kigurumi : user.CurrentKigurumi;
+            user.CurrentHead = unlockedHead.Contains(userSetting.Head) ? userSetting.Head : user.CurrentHead;
+            user.CurrentBody = unlockedBody.Contains(userSetting.Body) ? userSetting.Body : user.CurrentBody;
+            user.CurrentFace = unlockedFace.Contains(userSetting.Face) ? userSetting.Face : user.CurrentFace;
+            user.CurrentPuchi = unlockedPuchi.Contains(userSetting.Puchi) ? userSetting.Puchi : user.CurrentPuchi;
+            // Body colors are independent of unlock state; users can always pick from the palette.
+            user.ColorBody = userSetting.BodyColor;
+            user.ColorFace = userSetting.FaceColor;
+            user.ColorLimb = userSetting.LimbColor;
+        }
+        else
+        {
+            user.Title = userSetting.Title;
+            user.TitlePlateId = userSetting.TitlePlateId;
+            user.ColorBody = userSetting.BodyColor;
+            user.ColorFace = userSetting.FaceColor;
+            user.ColorLimb = userSetting.LimbColor;
+            user.CurrentKigurumi = userSetting.Kigurumi;
+            user.CurrentHead = userSetting.Head;
+            user.CurrentBody = userSetting.Body;
+            user.CurrentFace = userSetting.Face;
+            user.CurrentPuchi = userSetting.Puchi;
+        }
 
         // If a locked tone is selected, unlock it
         var toneFlg = user.ToneFlgArray;

@@ -1,35 +1,17 @@
-using Microsoft.Extensions.Options;
 using Swan.Mapping;
-using TaikoLocalServer.Infrastructure.Identity.Settings;
 
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class DanBestDataController(
-    ITaikoDbContext context,
-    IJwtTokenService jwtTokens,
-    IOptions<AuthSettings> settings) : BaseAdminController<DanBestDataController>
+[Authorize]
+public class DanBestDataController(ITaikoDbContext context) : BaseAdminController<DanBestDataController>
 {
-    private readonly AuthSettings authSettings = settings.Value;
-
     [HttpGet("{baid}")]
-    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<IActionResult> GetDanBestData(uint baid)
     {
-        if (authSettings.AuthenticationRequired)
-        {
-            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
-            if (tokenInfo == null)
-            {
-                return Unauthorized();
-            }
-
-            if (!tokenInfo.Value.IsAdmin && tokenInfo.Value.Baid != baid)
-            {
-                return Forbid();
-            }
-        }
+        if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
+            return forbid;
 
         // FIXME: Handle gaiden in here and web ui
         var danScores = await context.DanScoreData

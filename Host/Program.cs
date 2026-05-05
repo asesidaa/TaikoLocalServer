@@ -176,7 +176,8 @@ try
                 context.Connection.RemoteIpAddress, context.Request.Method, context.Request.Path, context.Response.StatusCode);
             Log.Error("Request headers: {Headers}", context.Request.Headers);
         }
-        else if (context.Response.StatusCode != StatusCodes.Status200OK)
+        else if (context.Response.StatusCode >= StatusCodes.Status400BadRequest
+                 && context.Response.StatusCode != StatusCodes.Status401Unauthorized)
         {
             Log.Warning("Unsuccessful request from: {RemoteIpAddress} {Method} {Path} {StatusCode}",
                 context.Connection.RemoteIpAddress, context.Request.Method, context.Request.Path, context.Response.StatusCode);

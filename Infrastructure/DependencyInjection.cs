@@ -1,10 +1,14 @@
+using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using TaikoLocalServer.Application.Abstractions;
 using TaikoLocalServer.Application.Settings;
+using TaikoLocalServer.Contracts.AdminApi.Authorization;
 using TaikoLocalServer.Infrastructure.GameDataCatalog;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Settings;
 using TaikoLocalServer.Infrastructure.Identity;
@@ -48,6 +52,7 @@ public static class DependencyInjection
 
         // Identity
         services.AddScoped<IJwtTokenService, JwtTokenService>();
+        services.AddHttpContextAccessor();
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -56,6 +61,10 @@ public static class DependencyInjection
         .AddJwtBearer(options =>
         {
             var authSection = configuration.GetSection(nameof(AuthSettings));
+            // MapInboundClaims = true ensures the JWT short names (unique_name, role)
+            // are mapped to the long-form ClaimTypes URIs on the ClaimsPrincipal so
+            // User.IsInRole("Admin") and User.FindFirstValue(ClaimTypes.Name) work.
+            options.MapInboundClaims = true;
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
@@ -64,9 +73,18 @@ public static class DependencyInjection
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = authSection["JwtIssuer"],
                 ValidAudience = authSection["JwtAudience"],
+                NameClaimType = ClaimTypes.Name,
+                RoleClaimType = ClaimTypes.Role,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSection["JwtKey"] ?? throw new InvalidOperationException()))
             };
         });
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy(AuthPolicies.Admin, policy => policy.RequireRole(AuthPolicies.Admin));
+        });
+        // Transient mirrors the framework's default registration of PolicyEvaluator;
+        // the evaluator caches the IAuthorizationService it received at construction.
+        services.AddTransient<IPolicyEvaluator, AuthAwarePolicyEvaluator>();
 
         // Time
         services.AddSingleton<IClock, SystemClock>();

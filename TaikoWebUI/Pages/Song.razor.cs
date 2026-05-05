@@ -17,16 +17,10 @@ public partial class Song
 
     private string songTitle = string.Empty;
     private string songArtist = string.Empty;
-    private bool isFavorite = false;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-
-        if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
-        {
-            await AuthService.LoginWithAuthToken();
-        }
 
         response = await Client.GetFromJsonAsync<SongHistoryResponse>($"api/PlayHistory/{(uint)Baid}");
         response.ThrowIfNull();

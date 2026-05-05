@@ -109,7 +109,7 @@ public partial class Register
     {
         if (registerForm != null)
         {
-            await registerForm.Validate();
+            await registerForm.ValidateAsync();
             if (registerForm.IsValid)
             {
                 await OnRegister();

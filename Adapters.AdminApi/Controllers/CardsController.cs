@@ -5,42 +5,22 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class CardsController(
-    ITaikoDbContext context,
-    IJwtTokenService jwtTokens,
-    IOptions<AuthSettings> settings) : BaseAdminController<CardsController>
+[Authorize]
+public class CardsController(ITaikoDbContext context, IOptions<AuthSettings> authOptions) : BaseAdminController<CardsController>
 {
-    private readonly AuthSettings authSettings = settings.Value;
+    private readonly AuthSettings authSettings = authOptions.Value;
 
     [HttpDelete("{accessCode}")]
-    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<IActionResult> DeleteAccessCode(string accessCode)
     {
-        if (authSettings.AuthenticationRequired)
-        {
-            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
-            if (tokenInfo == null)
-            {
-                return Unauthorized();
-            }
-
-            var existingCard = await context.Cards.FindAsync(accessCode);
-            if (existingCard == null)
-            {
-                return Unauthorized();
-            }
-
-            if (existingCard.Baid != tokenInfo.Value.Baid && !tokenInfo.Value.IsAdmin)
-            {
-                return Forbid();
-            }
-        }
-
         var card = await context.Cards.FindAsync(accessCode);
         if (card == null)
         {
             return NotFound();
         }
+
+        if (this.AuthorizeOwnerOrAdmin(card.Baid) is { } forbid)
+            return forbid;
 
         context.Cards.Remove(card);
         await context.SaveChangesAsync(HttpContext.RequestAborted);
@@ -48,25 +28,21 @@ public class CardsController(
     }
 
     [HttpPost("BindAccessCode")]
-    [ServiceFilter(typeof(AuthorizeIfRequiredAttribute))]
     public async Task<IActionResult> BindAccessCode(BindAccessCodeRequest bindAccessCodeRequest)
     {
-        if (authSettings.AuthenticationRequired)
-        {
-            var tokenInfo = jwtTokens.ExtractTokenInfo(HttpContext);
-            if (tokenInfo == null)
-            {
-                return Unauthorized();
-            }
-
-            if (!tokenInfo.Value.IsAdmin && tokenInfo.Value.Baid != bindAccessCodeRequest.Baid)
-            {
-                return Forbid();
-            }
-        }
+        if (this.AuthorizeOwnerOrAdmin(bindAccessCodeRequest.Baid) is { } forbid)
+            return forbid;
 
         var accessCode = bindAccessCodeRequest.AccessCode;
         var baid = bindAccessCodeRequest.Baid;
+
+        if (authSettings.AuthenticationRequired && !User.IsAdmin())
+        {
+            var existingCount = await context.Cards.CountAsync(c => c.Baid == baid, HttpContext.RequestAborted);
+            if (existingCount >= authSettings.BoundAccessCodeUpperLimit)
+                return Conflict(new { message = "Access Code Limit Reached" });
+        }
+
         var existingCard = await context.Cards.FindAsync(accessCode);
         if (existingCard is not null)
         {

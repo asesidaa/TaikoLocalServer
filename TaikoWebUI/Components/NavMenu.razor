@@ -1,4 +1,5 @@
-﻿@inject AuthService AuthService
+﻿@implements IDisposable
+@inject AuthService AuthService
 @inject NavigationManager NavigationManager
 @inject IDialogService DialogService
 
@@ -58,12 +59,9 @@
         StateHasChanged();
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    public void Dispose()
     {
-        if (firstRender)
-        {
-            AuthService.LoginStatusChanged += HandleAuthStatusChanged;
-        }
+        AuthService.LoginStatusChanged -= HandleAuthStatusChanged;
     }
 
     private async Task ShowQrCode()

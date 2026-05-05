@@ -5,6 +5,7 @@
 @inject BreadcrumbsStateContainer BreadcrumbsStateContainer
 
 @page "/Login"
+@attribute [Authorize(Policy = WebUiAuthPolicies.RequireRealAuth)]
 @using MudBlazor.Services
 
 

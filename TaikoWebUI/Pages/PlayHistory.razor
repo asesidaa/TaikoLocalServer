@@ -9,6 +9,7 @@
 @inject BreadcrumbsStateContainer BreadcrumbsStateContainer
 
 @page "/Users/{baid:int}/PlayHistory"
+@attribute [Authorize]
 
 <MudGrid Class="my-8">
     @if (response is null)

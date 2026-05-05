@@ -194,12 +194,7 @@ public partial class Profile
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        
-        if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
-        {
-            await AuthService.LoginWithAuthToken();
-        }
-        
+
         isSavingOptions = false;
         response = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
         response.ThrowIfNull();
@@ -476,7 +471,7 @@ public partial class Profile
         };
         var dialog = await DialogService.ShowAsync<ChooseTitleDialog>(Localizer["Player Titles"], parameters, options);
         var result = await dialog.Result;
-        if (!result.Canceled)
+        if (result is { Canceled: false })
         {
             StateHasChanged();
         }
