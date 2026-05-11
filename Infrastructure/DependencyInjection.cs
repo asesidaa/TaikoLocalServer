@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using TaikoLocalServer.Application.Abstractions;
 using TaikoLocalServer.Application.Settings;
 using TaikoLocalServer.Contracts.AdminApi.Authorization;
+using TaikoLocalServer.Domain.Enums;
 using TaikoLocalServer.Infrastructure.GameDataCatalog;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Nijiiro;
@@ -23,7 +24,10 @@ namespace TaikoLocalServer.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        ISet<GameEra> enabledEras)
     {
         // Settings
         services.Configure<AuthSettings>(configuration.GetSection(nameof(AuthSettings)));
@@ -50,13 +54,19 @@ public static class DependencyInjection
         services.AddScoped<ITaikoDbContext>(sp => sp.GetRequiredService<TaikoDbContext>());
 
         // Game data catalog (singleton — initialized once at startup)
-        services.AddSingleton<NijiiroEraGameDataCatalog>();
-        services.AddSingleton<INijiiroCatalog>(sp => sp.GetRequiredService<NijiiroEraGameDataCatalog>());
-        services.AddSingleton<IEraGameDataCatalog>(sp => sp.GetRequiredService<NijiiroEraGameDataCatalog>());
+        if (enabledEras.Contains(GameEra.Nijiiro))
+        {
+            services.AddSingleton<NijiiroEraGameDataCatalog>();
+            services.AddSingleton<INijiiroCatalog>(sp => sp.GetRequiredService<NijiiroEraGameDataCatalog>());
+            services.AddSingleton<IEraGameDataCatalog>(sp => sp.GetRequiredService<NijiiroEraGameDataCatalog>());
+        }
 
-        services.AddSingleton<GreenEraGameDataCatalog>();
-        services.AddSingleton<IGreenCatalog>(sp => sp.GetRequiredService<GreenEraGameDataCatalog>());
-        services.AddSingleton<IEraGameDataCatalog>(sp => sp.GetRequiredService<GreenEraGameDataCatalog>());
+        if (enabledEras.Contains(GameEra.Green))
+        {
+            services.AddSingleton<GreenEraGameDataCatalog>();
+            services.AddSingleton<IGreenCatalog>(sp => sp.GetRequiredService<GreenEraGameDataCatalog>());
+            services.AddSingleton<IEraGameDataCatalog>(sp => sp.GetRequiredService<GreenEraGameDataCatalog>());
+        }
 
         services.AddSingleton<IGameDataCatalog>(sp => new FileGameDataCatalog(
             sp.GetServices<IEraGameDataCatalog>()));

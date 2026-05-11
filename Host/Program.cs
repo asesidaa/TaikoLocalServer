@@ -107,7 +107,7 @@ try
     // Add services to the container.
     builder.Services.AddOptions();
     builder.Services.AddApplication();
-    builder.Services.AddInfrastructure(builder.Configuration);
+    builder.Services.AddInfrastructure(builder.Configuration, enabledEras);
     builder.Services.AddAdminApi(builder.Configuration);
     builder.Services.AddAllnetMucha();
     if (enabledEras.Contains(GameEra.Nijiiro))
