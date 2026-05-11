@@ -6,6 +6,8 @@ As the game uses protobuf, `protobuf-net` is used for serializing and deserializ
 
 - [Taiko Local Server](#taiko-local-server)
   - [Data file layout (per-era)](#data-file-layout-per-era)
+  - [Green AC15 Test Support](#green-ac15-test-support)
+    - [Green Cabinet Smoke Checklist](#green-cabinet-smoke-checklist)
   - [Datatable documentation](#datatable-documentation)
     - [dan\_data.json](#dan_datajson)
     - [event\_folder\_data.json](#event_folder_datajson)
@@ -39,9 +41,10 @@ wwwroot/data/
 |       |-- don_cos_reward.bin
 |       |-- shougou.bin
 |       `-- neiro.bin
-|-- green/                      Green-era AC15 data, stub-only in this iteration
-|   `-- datatable/              Operator-supplied Green binaries for future loaders
-|       `-- musicinfo.bin       Green parser arrives in a later iteration
+|-- green/                      Green-era AC15 data
+|   `-- datatable/              Operator-supplied Green XML datatables
+|       |-- musicinfo.xml
+|       `-- musicmedleyinfo.xml
 `-- shared/                     Cross-era operator-edited tables
     |-- token_data.json
     `-- qrcode_data.json
@@ -49,9 +52,33 @@ wwwroot/data/
 
 Era availability is controlled by `Configurations/ServerSettings.json` under
 `ServerSettings:Eras`. Nijiiro is enabled by default. To allow Green cabinet
-routes, set `ServerSettings:Eras:Green:Enabled` to `true`; in the current
-iteration, Green endpoints return success-shaped empty responses until the real
-Green loaders and handlers are implemented.
+routes, set `ServerSettings:Eras:Green:Enabled` to `true`.
+
+## Green AC15 Test Support
+
+When `ServerSettings:Eras:Green:Enabled` is `true`, the server requires:
+
+- `wwwroot/data/green/datatable/musicinfo.xml`
+- `wwwroot/data/green/datatable/musicmedleyinfo.xml`
+
+The current Green implementation intentionally unlocks a small deterministic song set for cabinet validation:
+
+- no-card/default song flags: first 10 `uniqueid` values from `musicinfo.xml`
+- logged-in user release flags: first 20 `uniqueid` values from `musicinfo.xml`
+
+New Green users also receive deterministic fake best scores/crowns and receive the first fake Dan on their first known-card login after registration. This is test scaffolding for verifying Green bitset, self-best, crown, and Dan response formats.
+
+### Green Cabinet Smoke Checklist
+
+1. Start server with `ServerSettings:Eras:Green:Enabled = true`.
+2. Boot cabinet and reach song select without card. Confirm 10 songs are visible.
+3. Register a card through `mydonentry`.
+4. Log in with that card. Confirm 20 songs are visible.
+5. Confirm fake self-best/crown data appears for the seeded songs.
+6. Log out and log in again. Confirm first fake Dan appears.
+7. Change gameplay options, play a song, and log in again. Confirm option state did not reset.
+8. Play a song and confirm `selfbest` and `crownsdata` reflect the upload.
+9. Enter any ghost/AI-battle-like flow available on the cabinet. Confirm it does not crash and request logs show bounded byte previews.
 
 ## Datatable documentation
 

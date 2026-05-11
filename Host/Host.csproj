@@ -134,6 +134,10 @@
     <Content Update="wwwroot\data\nijiiro\datatable\neiro.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\nijiiro\datatable\shougou.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\nijiiro\datatable\don_cos_reward.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+
+    <!--Green Game Datatables-->
+    <Content Update="wwwroot\data\green\datatable\musicinfo.xml"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\green\datatable\musicmedleyinfo.xml"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
   </ItemGroup>
 
 </Project>
