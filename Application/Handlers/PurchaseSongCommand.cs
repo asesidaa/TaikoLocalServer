@@ -16,6 +16,7 @@ public class PurchaseSongCommandHandler(ITaikoDbContext context, ILogger<Purchas
             .Include(u => u.Tokens)
             .FirstOrDefaultAsync(u => u.Baid == request.Baid, cancellationToken);
         user.ThrowIfNull($"User with baid {request.Baid} does not exist!");
+        var saveData = await context.GetOrCreateNijiiroSaveDataAsync(request.Baid, cancellationToken);
         
         var token = user.Tokens.FirstOrDefault(t => t.Id == request.TokenId);
         
@@ -31,26 +32,25 @@ public class PurchaseSongCommandHandler(ITaikoDbContext context, ILogger<Purchas
 
         if (request.Type == 1)
         {
-            if (user.UnlockedUraSongIdList.Contains(request.SongNo))
+            if (saveData.UnlockedUraSongIdList.Contains(request.SongNo))
             {
                 logger.LogWarning("User with baid {Baid} already has song with id {SongNo} unlocked!", request.Baid, request.SongNo);
                 return new CommonSongPurchaseResponse { Result = 0 };
             }
             
-            user.UnlockedUraSongIdList.Add(request.SongNo);
+            saveData.UnlockedUraSongIdList.Add(request.SongNo);
         }
         else
         {
-            if (user.UnlockedSongIdList.Contains(request.SongNo))
+            if (saveData.UnlockedSongIdList.Contains(request.SongNo))
             {
                 logger.LogWarning("User with baid {Baid} already has song with id {SongNo} unlocked!", request.Baid, request.SongNo);
                 return new CommonSongPurchaseResponse { Result = 0 };
             }
             
-            user.UnlockedSongIdList.Add(request.SongNo);
+            saveData.UnlockedSongIdList.Add(request.SongNo);
         }
         
-        context.UserData.Update(user);
         await context.SaveChangesAsync(cancellationToken);
         return new CommonSongPurchaseResponse { Result = 1, TokenCount = token.Count };
     }
@@ -67,7 +67,8 @@ public class PurchaseSongCommandHandlerCN(ITaikoDbContext context, ILogger<Purch
             .Include(u => u.Tokens)
             .FirstOrDefaultAsync(u => u.Baid == request.Baid, cancellationToken);
         user.ThrowIfNull($"User with baid {request.Baid} does not exist!");
-        if (user.UnlockedSongIdList.Contains(request.SongNo))
+        var saveData = await context.GetOrCreateNijiiroSaveDataAsync(request.Baid, cancellationToken);
+        if (saveData.UnlockedSongIdList.Contains(request.SongNo))
         {
             logger.LogWarning("User with baid {Baid} already has song with id {SongNo} unlocked!", request.Baid, request.SongNo);
             return new CommonSongPurchaseResponse { Result = 0 };
@@ -84,9 +85,8 @@ public class PurchaseSongCommandHandlerCN(ITaikoDbContext context, ILogger<Purch
             return new CommonSongPurchaseResponse { Result = 0 };
         }
         
-        user.UnlockedSongIdList.Add(request.SongNo);
+        saveData.UnlockedSongIdList.Add(request.SongNo);
         
-        context.UserData.Update(user);
         await context.SaveChangesAsync(cancellationToken);
         return new CommonSongPurchaseResponse { Result = 1, TokenCount = token.Count };
     }

@@ -41,11 +41,6 @@ public partial class TaikoDbContext
         modelBuilder.Entity<UserDatum>(entity =>
         {
             entity.HasKey(e => e.Baid);
-
-            entity.Property(e => e.LastPlayDatetime).HasColumnType("datetime");
-
-            entity.Property(e => e.AchievementDisplayDifficulty)
-                .HasConversion<uint>();
         });
 
         modelBuilder.Entity<Token>(entity =>

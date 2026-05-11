@@ -73,10 +73,11 @@ public class UsersController(ITaikoDbContext context, IOptions<AuthSettings> aut
 
         foreach (var user in userEntries)
         {
+            var saveData = await context.GetOrCreateNijiiroSaveDataAsync(user.Baid, HttpContext.RequestAborted);
             List<List<uint>> costumeUnlockData =
-                [user.UnlockedKigurumi, user.UnlockedHead, user.UnlockedBody, user.UnlockedFace, user.UnlockedPuchi];
+                [saveData.UnlockedKigurumi, saveData.UnlockedHead, saveData.UnlockedBody, saveData.UnlockedFace, saveData.UnlockedPuchi];
 
-            var unlockedTitle = user.TitleFlgArray.ToList();
+            var unlockedTitle = saveData.TitleFlgArray.ToList();
 
             for (var i = 0; i < 5; i++)
             {
@@ -89,36 +90,36 @@ public class UsersController(ITaikoDbContext context, IOptions<AuthSettings> aut
             var userSetting = new UserSetting
             {
                 Baid = user.Baid,
-                AchievementDisplayDifficulty = user.AchievementDisplayDifficulty,
-                IsDisplayAchievement = user.DisplayAchievement,
-                IsDisplayDanOnNamePlate = user.DisplayDan,
-                DifficultySettingCourse = user.DifficultySettingCourse,
-                DifficultySettingStar = user.DifficultySettingStar,
-                DifficultySettingSort = user.DifficultySettingSort,
-                IsVoiceOn = user.IsVoiceOn,
-                IsSkipOn = user.IsSkipOn,
-                NotesPosition = user.NotesPosition,
-                PlaySetting = PlaySettingConverter.ShortToPlaySetting(user.OptionSetting),
-                ToneId = user.SelectedToneId,
+                AchievementDisplayDifficulty = saveData.AchievementDisplayDifficulty,
+                IsDisplayAchievement = saveData.DisplayAchievement,
+                IsDisplayDanOnNamePlate = saveData.DisplayDan,
+                DifficultySettingCourse = saveData.DifficultySettingCourse,
+                DifficultySettingStar = saveData.DifficultySettingStar,
+                DifficultySettingSort = saveData.DifficultySettingSort,
+                IsVoiceOn = saveData.IsVoiceOn,
+                IsSkipOn = saveData.IsSkipOn,
+                NotesPosition = saveData.NotesPosition,
+                PlaySetting = PlaySettingConverter.ShortToPlaySetting(saveData.OptionSetting),
+                ToneId = saveData.SelectedToneId,
                 MyDonName = user.MyDonName,
                 MyDonNameLanguage = user.MyDonNameLanguage,
-                Title = user.Title,
-                TitlePlateId = user.TitlePlateId,
-                Kigurumi = user.CurrentKigurumi,
-                Head = user.CurrentHead,
-                Body = user.CurrentBody,
-                Face = user.CurrentFace,
-                Puchi = user.CurrentPuchi,
+                Title = saveData.Title,
+                TitlePlateId = saveData.TitlePlateId,
+                Kigurumi = saveData.CurrentKigurumi,
+                Head = saveData.CurrentHead,
+                Body = saveData.CurrentBody,
+                Face = saveData.CurrentFace,
+                Puchi = saveData.CurrentPuchi,
                 UnlockedKigurumi = costumeUnlockData[0],
                 UnlockedHead = costumeUnlockData[1],
                 UnlockedBody = costumeUnlockData[2],
                 UnlockedFace = costumeUnlockData[3],
                 UnlockedPuchi = costumeUnlockData[4],
                 UnlockedTitle = unlockedTitle,
-                BodyColor = user.ColorBody,
-                FaceColor = user.ColorFace,
-                LimbColor = user.ColorLimb,
-                LastPlayDateTime = user.LastPlayDatetime
+                BodyColor = saveData.ColorBody,
+                FaceColor = saveData.ColorFace,
+                LimbColor = saveData.ColorLimb,
+                LastPlayDateTime = saveData.LastPlayDatetime
             };
 
             users.Add(new User

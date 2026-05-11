@@ -16,6 +16,7 @@ public class PlayHistoryController(ITaikoDbContext context) : BaseAdminControlle
         {
             return NotFound();
         }
+        var saveData = await context.GetOrCreateNijiiroSaveDataAsync(baid, HttpContext.RequestAborted);
 
         var playLogs = await context.SongPlayDataNijiiro.Where(d => d.Baid == baid).ToListAsync();
         var songHistory = playLogs.Select(play => new SongHistoryData
@@ -37,7 +38,7 @@ public class PlayHistoryController(ITaikoDbContext context) : BaseAdminControlle
             })
             .ToList();
 
-        var favoriteSet = user.FavoriteSongsArray.ToHashSet();
+        var favoriteSet = saveData.FavoriteSongsArray.ToHashSet();
         foreach (var song in songHistory.Where(song => favoriteSet.Contains(song.SongId)))
         {
             song.IsFavorite = true;

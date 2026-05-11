@@ -137,7 +137,8 @@ public class AuthController(
                 if (user == null)
                     return Unauthorized(new { message = "User Does Not Exist" });
 
-                var diffMinutes = (lastPlayDateTime - user.LastPlayDatetime).Duration().TotalMinutes;
+                var saveData = await context.GetOrCreateNijiiroSaveDataAsync(card.Baid, HttpContext.RequestAborted);
+                var diffMinutes = (lastPlayDateTime - saveData.LastPlayDatetime).Duration().TotalMinutes;
                 if (diffMinutes > 5)
                     return Unauthorized(new { message = "Wrong Last Play Time" });
             }

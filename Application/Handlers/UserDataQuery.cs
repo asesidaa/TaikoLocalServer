@@ -17,9 +17,10 @@ public class UserDataQueryHandler(ITaikoDbContext context, IGameDataCatalog game
     {
         var userData = await context.UserData.FindAsync(request.Baid, cancellationToken);
         userData.ThrowIfNull($"User not found for Baid {request.Baid}!");
+        var saveData = await context.GetOrCreateNijiiroSaveDataAsync(request.Baid, cancellationToken);
         
-        var unlockedSongIdList = userData.UnlockedSongIdList;
-        var unlockedUraSongIdList = userData.UnlockedUraSongIdList;
+        var unlockedSongIdList = saveData.UnlockedSongIdList;
+        var unlockedUraSongIdList = saveData.UnlockedUraSongIdList;
 
         var songIdMax = settings.EnableMoreSongs ? settings.MoreSongsSize : DomainConstants.MusicIdMax;
 
@@ -35,17 +36,16 @@ public class UserDataQueryHandler(ITaikoDbContext context, IGameDataCatalog game
         var uraSongArray =
             FlagCalculator.GetBitArrayFromIds(enabledUraMusicList, songIdMax, logger);
 
-        if (userData.ToneFlgArray.Count == 0)
+        if (saveData.ToneFlgArray.Count == 0)
         {
-            userData.ToneFlgArray = [0];
-            context.UserData.Update(userData);
+            saveData.ToneFlgArray = [0];
             await context.SaveChangesAsync(cancellationToken);
         }
         
-        //var toneArray = FlagCalculator.GetBitArrayFromIds(userData.ToneFlgArray, gameDataService.GetToneFlagArraySize(), logger);
+        //var toneArray = FlagCalculator.GetBitArrayFromIds(saveData.ToneFlgArray, gameDataService.GetToneFlagArraySize(), logger);
         var toneArray = FlagCalculator.GetBitArrayTrue(gameDataService.GetToneFlagArraySize());
         
-        var titleArray = FlagCalculator.GetBitArrayFromIds(userData.TitleFlgArray, gameDataService.GetTitleFlagArraySize(), logger);
+        var titleArray = FlagCalculator.GetBitArrayFromIds(saveData.TitleFlgArray, gameDataService.GetTitleFlagArraySize(), logger);
 
         var recentSongs = await context.SongPlayDataNijiiro
             .Where(datum => datum.Baid == request.Baid)
@@ -68,9 +68,9 @@ public class UserDataQueryHandler(ITaikoDbContext context, IGameDataCatalog game
         recentSongs = recentSet.ToArray();
         
         var defaultOptions = new byte[2];
-        BinaryPrimitives.WriteInt16LittleEndian(defaultOptions, userData.OptionSetting);
+        BinaryPrimitives.WriteInt16LittleEndian(defaultOptions, saveData.OptionSetting);
 
-        uint[] difficultySettingArray = [userData.DifficultySettingCourse, userData.DifficultySettingStar, userData.DifficultySettingSort];
+        uint[] difficultySettingArray = [saveData.DifficultySettingCourse, saveData.DifficultySettingStar, saveData.DifficultySettingSort];
         for (int i = 0; i < 3; i++)
         {
             if (difficultySettingArray[i] >= 2)
@@ -86,18 +86,18 @@ public class UserDataQueryHandler(ITaikoDbContext context, IGameDataCatalog game
             TitleFlg = titleArray,
             ReleaseSongFlg = releaseSongArray,
             UraReleaseSongFlg = uraSongArray,
-            AryFavoriteSongNoes = userData.FavoriteSongsArray.ToArray(),
+            AryFavoriteSongNoes = saveData.FavoriteSongsArray.ToArray(),
             AryRecentSongNoes = recentSongs,
             DefaultOptionSetting = defaultOptions,
-            NotesPosition = userData.NotesPosition,
-            IsVoiceOn = userData.IsVoiceOn,
-            IsSkipOn = userData.IsSkipOn,
+            NotesPosition = saveData.NotesPosition,
+            IsVoiceOn = saveData.IsVoiceOn,
+            IsSkipOn = saveData.IsSkipOn,
             DifficultySettingCourse = difficultySettingArray[0],
             DifficultySettingStar = difficultySettingArray[1],
             DifficultySettingSort = difficultySettingArray[2],
-            DifficultyPlayedCourse = userData.DifficultyPlayedCourse,
-            DifficultyPlayedStar = userData.DifficultyPlayedStar,
-            DifficultyPlayedSort = userData.DifficultyPlayedSort,
+            DifficultyPlayedCourse = saveData.DifficultyPlayedCourse,
+            DifficultyPlayedStar = saveData.DifficultyPlayedStar,
+            DifficultyPlayedSort = saveData.DifficultyPlayedSort,
             SongRecentCnt = (uint)recentSongs.Length,
             IsChallengecompe = false,
             // TODO: Other fields

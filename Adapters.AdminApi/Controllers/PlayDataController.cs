@@ -20,6 +20,7 @@ public class PlayDataController(ITaikoDbContext context) : BaseAdminController<P
         {
             return NotFound();
         }
+        var saveData = await context.GetOrCreateNijiiroSaveDataAsync(baid, HttpContext.RequestAborted);
 
         var songBestDbData = await context.SongBestDataNijiiro.Where(d => d.Baid == baid).ToListAsync();
         var songBestRecords = songBestDbData.Select(d => d.CopyPropertiesToNew<SongBestData>()).ToList();
@@ -76,7 +77,7 @@ public class PlayDataController(ITaikoDbContext context) : BaseAdminController<P
             songBestData.PerfectCount = songPlayLogs.Count(d => d.Crown >= CrownType.Dondaful);
         }
 
-        var favoriteSet = user.FavoriteSongsArray.ToHashSet();
+        var favoriteSet = saveData.FavoriteSongsArray.ToHashSet();
         foreach (var songBestRecord in songBestRecords.Where(r => favoriteSet.Contains(r.SongId)))
         {
             songBestRecord.IsFavorite = true;

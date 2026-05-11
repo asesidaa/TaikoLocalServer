@@ -21,10 +21,11 @@ public class GetAiDataQueryHandler : IRequestHandler<GetAiDataQuery, CommonAiDat
     {
         var user = await context.UserData.FirstOrDefaultAsync(datum => datum.Baid == request.Baid, cancellationToken);
         user.ThrowIfNull($"User with baid {request.Baid} does not exist!");
+        var saveData = await context.GetOrCreateNijiiroSaveDataAsync(request.Baid, cancellationToken);
         var response = new CommonAiDataResponse
         {
             Result = 1,
-            TotalWinnings = (uint)user.AiWinCount,
+            TotalWinnings = (uint)saveData.AiWinCount,
             InputMedian = "1",
             InputVariance = "0"
         };

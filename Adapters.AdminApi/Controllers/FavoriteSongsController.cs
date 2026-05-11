@@ -17,7 +17,8 @@ public class FavoriteSongsController(ITaikoDbContext context) : BaseAdminControl
             return NotFound();
         }
 
-        var favoriteSet = new HashSet<uint>(user.FavoriteSongsArray);
+        var saveData = await context.GetOrCreateNijiiroSaveDataAsync(request.Baid, HttpContext.RequestAborted);
+        var favoriteSet = new HashSet<uint>(saveData.FavoriteSongsArray);
         if (request.IsFavorite)
         {
             favoriteSet.Add(request.SongId);
@@ -27,7 +28,7 @@ public class FavoriteSongsController(ITaikoDbContext context) : BaseAdminControl
             favoriteSet.Remove(request.SongId);
         }
 
-        user.FavoriteSongsArray = favoriteSet.ToList();
+        saveData.FavoriteSongsArray = favoriteSet.ToList();
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return NoContent();
     }
@@ -44,6 +45,7 @@ public class FavoriteSongsController(ITaikoDbContext context) : BaseAdminControl
             return NotFound();
         }
 
-        return Ok(user.FavoriteSongsArray);
+        var saveData = await context.GetOrCreateNijiiroSaveDataAsync(baid, HttpContext.RequestAborted);
+        return Ok(saveData.FavoriteSongsArray);
     }
 }

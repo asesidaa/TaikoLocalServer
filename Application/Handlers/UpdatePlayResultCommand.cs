@@ -20,10 +20,11 @@ public class UpdatePlayResultCommandHandler(ITaikoDbContext context, ILogger<Upd
             logger.LogWarning("Game uploading a non existing user with baid {Baid}", request.Baid);
             return 1;
         }
+        var saveData = await context.GetOrCreateNijiiroSaveDataAsync(request.Baid, cancellationToken);
 
         var lastPlayDateTime = DateTime.Now;
         var playResultData = request.PlayResultData;
-        UpdateUserData(user, playResultData, lastPlayDateTime);
+        UpdateUserData(saveData, playResultData, lastPlayDateTime);
         
         var playMode = (PlayMode)playResultData.PlayMode;
         if (playMode is PlayMode.DanMode or PlayMode.GaidenMode)
@@ -228,10 +229,10 @@ public class UpdatePlayResultCommandHandler(ITaikoDbContext context, ILogger<Upd
         }
     }
 
-    private void UpdateUserData(UserDatum user, CommonPlayResultData playResultData, DateTime lastPlayDateTime)
+    private void UpdateUserData(UserSaveDataNijiiro saveData, CommonPlayResultData playResultData, DateTime lastPlayDateTime)
     {
-        user.Title = playResultData.Title;
-        user.TitlePlateId = playResultData.TitleplateId;
+        saveData.Title = playResultData.Title;
+        saveData.TitlePlateId = playResultData.TitleplateId;
         var costumeData = new List<uint>
         {
             playResultData.AryCurrentCostume.Costume1,
@@ -241,34 +242,34 @@ public class UpdatePlayResultCommandHandler(ITaikoDbContext context, ILogger<Upd
             playResultData.AryCurrentCostume.Costume5
         };
         //user.CostumeData = JsonSerializer.Serialize(costumeData);
-        user.CurrentKigurumi = playResultData.AryCurrentCostume.Costume1;
-        user.CurrentHead = playResultData.AryCurrentCostume.Costume2;
-        user.CurrentBody = playResultData.AryCurrentCostume.Costume3;
-        user.CurrentFace = playResultData.AryCurrentCostume.Costume4;
-        user.CurrentPuchi = playResultData.AryCurrentCostume.Costume5;
-        user.LastPlayDatetime = lastPlayDateTime;
-        user.LastPlayMode = playResultData.PlayMode;
+        saveData.CurrentKigurumi = playResultData.AryCurrentCostume.Costume1;
+        saveData.CurrentHead = playResultData.AryCurrentCostume.Costume2;
+        saveData.CurrentBody = playResultData.AryCurrentCostume.Costume3;
+        saveData.CurrentFace = playResultData.AryCurrentCostume.Costume4;
+        saveData.CurrentPuchi = playResultData.AryCurrentCostume.Costume5;
+        saveData.LastPlayDatetime = lastPlayDateTime;
+        saveData.LastPlayMode = playResultData.PlayMode;
 
-        user.ToneFlgArray.AddRange(playResultData.GetToneNoes);
-        user.TitleFlgArray.AddRange(playResultData.GetTitleNoes);
+        saveData.ToneFlgArray.AddRange(playResultData.GetToneNoes);
+        saveData.TitleFlgArray.AddRange(playResultData.GetTitleNoes);
 
-        user.UnlockedKigurumi.AddRange(playResultData.GetCostumeNo1s);
-        user.UnlockedHead.AddRange(playResultData.GetCostumeNo2s);
-        user.UnlockedBody.AddRange(playResultData.GetCostumeNo3s);
-        user.UnlockedFace.AddRange(playResultData.GetCostumeNo4s);
-        user.UnlockedPuchi.AddRange(playResultData.GetCostumeNo5s);
-        var genericInfo = user.GenericInfoFlgArray.ToList();
+        saveData.UnlockedKigurumi.AddRange(playResultData.GetCostumeNo1s);
+        saveData.UnlockedHead.AddRange(playResultData.GetCostumeNo2s);
+        saveData.UnlockedBody.AddRange(playResultData.GetCostumeNo3s);
+        saveData.UnlockedFace.AddRange(playResultData.GetCostumeNo4s);
+        saveData.UnlockedPuchi.AddRange(playResultData.GetCostumeNo5s);
+        var genericInfo = saveData.GenericInfoFlgArray.ToList();
         genericInfo.AddRange(playResultData.GetGenericInfoNoes);
-        user.GenericInfoFlgArray = genericInfo.ToArray();
+        saveData.GenericInfoFlgArray = genericInfo.ToArray();
 
-        foreach (var songNo in playResultData.ReleaseSongNoes.Where(songNo => !user.UnlockedSongIdList.Contains(songNo)))
+        foreach (var songNo in playResultData.ReleaseSongNoes.Where(songNo => !saveData.UnlockedSongIdList.Contains(songNo)))
         {
-            user.UnlockedSongIdList.Add(songNo);
+            saveData.UnlockedSongIdList.Add(songNo);
         }
 
-        foreach (var songNo in playResultData.UraReleaseSongNoes.Where(songNo => !user.UnlockedUraSongIdList.Contains(songNo)))
+        foreach (var songNo in playResultData.UraReleaseSongNoes.Where(songNo => !saveData.UnlockedUraSongIdList.Contains(songNo)))
         {
-            user.UnlockedUraSongIdList.Add(songNo);
+            saveData.UnlockedUraSongIdList.Add(songNo);
         }
 
         var difficultyPlayedArray = new List<uint>
@@ -278,11 +279,11 @@ public class UpdatePlayResultCommandHandler(ITaikoDbContext context, ILogger<Upd
             playResultData.DifficultyPlayedSort
         };
         //user.DifficultyPlayedArray = JsonSerializer.Serialize(difficultyPlayedArray);
-        user.DifficultyPlayedCourse = playResultData.DifficultyPlayedCourse;
-        user.DifficultyPlayedStar = playResultData.DifficultyPlayedStar;
-        user.DifficultyPlayedSort = playResultData.DifficultyPlayedSort;
+        saveData.DifficultyPlayedCourse = playResultData.DifficultyPlayedCourse;
+        saveData.DifficultyPlayedStar = playResultData.DifficultyPlayedStar;
+        saveData.DifficultyPlayedSort = playResultData.DifficultyPlayedSort;
 
-        user.AiWinCount += playResultData.AryStageInfoes.Count(data => data.IsWin);
+        saveData.AiWinCount += playResultData.AryStageInfoes.Count(data => data.IsWin);
     }
     
     private static CrownType PlayResultToCrown(uint playResult, uint okCount)

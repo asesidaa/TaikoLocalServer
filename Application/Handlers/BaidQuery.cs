@@ -27,11 +27,12 @@ public class BaidQueryHandler(
         var baid = card.Baid;
         var userData = await context.UserData.FindAsync(baid, cancellationToken);
         userData.ThrowIfNull($"User not found for card with Baid {baid}!");
+        var saveData = await context.GetOrCreateNijiiroSaveDataAsync(baid, cancellationToken);
 
         var timeLimitSongsList = gameDataService.GetTimeLimitedSongsList();
 
         var songBestData = context.SongBestDataNijiiro.Where(datum => datum.Baid == baid).ToList();
-        var achievementDisplayDifficulty = userData.AchievementDisplayDifficulty;
+        var achievementDisplayDifficulty = saveData.AchievementDisplayDifficulty;
         var isDispAchievementTypeSet = true;
         if (achievementDisplayDifficulty == Difficulty.None)
         {
@@ -69,10 +70,10 @@ public class BaidQueryHandler(
             }
         }
         
-        List<uint> costumeData = [userData.CurrentKigurumi, userData.CurrentHead, userData.CurrentBody, userData.CurrentFace, userData.CurrentPuchi];
+        List<uint> costumeData = [saveData.CurrentKigurumi, saveData.CurrentHead, saveData.CurrentBody, saveData.CurrentFace, saveData.CurrentPuchi];
         
         List<List<uint>> costumeArrays = 
-            [userData.UnlockedKigurumi, userData.UnlockedHead, userData.UnlockedBody, userData.UnlockedFace, userData.UnlockedPuchi];
+            [saveData.UnlockedKigurumi, saveData.UnlockedHead, saveData.UnlockedBody, saveData.UnlockedFace, saveData.UnlockedPuchi];
 
         var costumeFlagArrays = gameDataService.GetCostumeFlagArraySizes()
             .Select((size, index) => FlagCalculator.GetBitArrayFromIds(costumeArrays[index], size, logger))
@@ -98,12 +99,12 @@ public class BaidQueryHandler(
         var gaidenIdList = gaidenDataDictionary.Keys.ToList();
         var gotGaidenFlagArray = FlagCalculator.ComputeGotDanFlags(gaidenData, gaidenIdList);
 
-        var genericInfoFlg = userData.GenericInfoFlgArray;
+        var genericInfoFlg = saveData.GenericInfoFlgArray;
 
         var genericInfoFlgLength = genericInfoFlg.Any() ? genericInfoFlg.Max() + 1 : 0;
         var genericInfoFlgArray = FlagCalculator.GetBitArrayFromIds(genericInfoFlg, (int)genericInfoFlgLength, logger);
 
-        var aiRank = (uint)(userData.AiWinCount / 10);
+        var aiRank = (uint)(saveData.AiWinCount / 10);
         if (aiRank > 10)
         {
             aiRank = 10;
@@ -118,26 +119,26 @@ public class BaidQueryHandler(
             MyDonNameLanguage = userData.MyDonNameLanguage,
             AryCrownCounts = crownCount,
             AryScoreRankCounts = scoreRankCount,
-            ColorBody = userData.ColorBody,
-            ColorFace = userData.ColorFace,
-            ColorLimb = userData.ColorLimb,
+            ColorBody = saveData.ColorBody,
+            ColorFace = saveData.ColorFace,
+            ColorLimb = saveData.ColorLimb,
             CostumeData = costumeData,
             CostumeFlagArrays = costumeFlagArrays,
-            DisplayDan = userData.DisplayDan,
-            IsDispSouuchiOn = userData.DisplaySouUchi,
+            DisplayDan = saveData.DisplayDan,
+            IsDispSouuchiOn = saveData.DisplaySouUchi,
             DispAchievementType = (uint)achievementDisplayDifficulty,
             IsDispAchievementTypeSet = isDispAchievementTypeSet,
             GenericInfoFlg = genericInfoFlgArray,
             GotDanFlg = gotDanFlagArray,
             GotDanMax = maxDan,
             GotGaidenFlg = gotGaidenFlagArray,
-            IsDispAchievementOn = userData.DisplayAchievement,
-            LastPlayDatetime = userData.LastPlayDatetime.ToString(Constants.DateTimeFormat),
-            LastPlayMode = userData.LastPlayMode,
-            SelectedToneId = userData.SelectedToneId,
-            Title = userData.Title,
-            TitlePlateId = userData.TitlePlateId,
-            AiTotalWin = (uint)userData.AiWinCount,
+            IsDispAchievementOn = saveData.DisplayAchievement,
+            LastPlayDatetime = saveData.LastPlayDatetime.ToString(Constants.DateTimeFormat),
+            LastPlayMode = saveData.LastPlayMode,
+            SelectedToneId = saveData.SelectedToneId,
+            Title = saveData.Title,
+            TitlePlateId = saveData.TitlePlateId,
+            AiTotalWin = (uint)saveData.AiWinCount,
             AiRank = aiRank
         };
     }
