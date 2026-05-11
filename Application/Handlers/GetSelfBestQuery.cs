@@ -4,62 +4,16 @@ namespace TaikoLocalServer.Application.Handlers;
 
 public readonly record struct GetSelfBestQuery(uint Baid, GameEra Era, uint Difficulty, uint[] SongIdList) : IRequest<CommonSelfBestResponse>;
 
-public class GetSelfBestQueryHandler(IGameDataCatalog gameDataService, ITaikoDbContext context, ILogger<GetSelfBestQueryHandler> logger)
+public partial class GetSelfBestQueryHandler(IGameDataCatalog gameDataService, ITaikoDbContext context, ILogger<GetSelfBestQueryHandler> logger)
     : IRequestHandler<GetSelfBestQuery, CommonSelfBestResponse>
 {
-    public async ValueTask<CommonSelfBestResponse> Handle(GetSelfBestQuery request, CancellationToken cancellationToken)
+    public ValueTask<CommonSelfBestResponse> Handle(GetSelfBestQuery request, CancellationToken cancellationToken) => request.Era switch
     {
-        var requestDifficulty = (Difficulty)request.Difficulty;
-        requestDifficulty.Throw().IfOutOfRange();
+        GameEra.Nijiiro => HandleNijiiro(request, cancellationToken),
+        GameEra.Green => HandleGreen(request, cancellationToken),
+        _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
+    };
 
-        var allSongSet = gameDataService.GetMusicList().ToHashSet();
-        var requestSet = request.SongIdList.ToHashSet();
-        if (!requestSet.IsSubsetOf(allSongSet))
-        {
-            var invalidSongIds = requestSet.Except(allSongSet);
-            logger.LogWarning("Invalid song IDs: {InvalidSongIds}", string.Join(", ", invalidSongIds));
-            requestSet.ExceptWith(invalidSongIds);
-        }
-
-        var selfBestScores = await context.SongBestDataNijiiro
-            .Where(datum => datum.Baid == request.Baid &&
-                            requestSet.Contains(datum.SongId) &&
-                            (datum.Difficulty == requestDifficulty ||
-                             (datum.Difficulty == Difficulty.UraOni && requestDifficulty == Difficulty.Oni)))
-            .ToListAsync(cancellationToken);
-        var selfBestList = new List<CommonSelfBestResponse.SelfBestData>();
-        foreach (var songId in request.SongIdList)
-        {
-            var selfBest = new CommonSelfBestResponse.SelfBestData();
-            var selfBestScore = selfBestScores
-                .FirstOrDefault(datum => datum.SongId == songId &&
-                                         datum.Difficulty == requestDifficulty);
-            var uraSelfBestScore = selfBestScores
-                .FirstOrDefault(datum => datum.SongId == songId &&
-                                         datum.Difficulty == Difficulty.UraOni && requestDifficulty == Difficulty.Oni);
-
-            selfBest.SongNo = songId;
-            if (selfBestScore is not null)
-            {
-                selfBest.SelfBestScore = selfBestScore.BestScore;
-                selfBest.SelfBestScoreRate = selfBestScore.BestRate;
-            }
-            if (uraSelfBestScore is not null)
-            {
-                selfBest.UraBestScore = uraSelfBestScore.BestScore;
-                selfBest.UraBestScoreRate = uraSelfBestScore.BestRate;
-            }
-
-            selfBestList.Add(selfBest);
-        }
-
-        var response = new CommonSelfBestResponse
-        {
-            Result = 1,
-            Level = request.Difficulty,
-            ArySelfbestScores = selfBestList
-        };
-
-        return response;
-    }
+    private partial ValueTask<CommonSelfBestResponse> HandleNijiiro(GetSelfBestQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonSelfBestResponse> HandleGreen(GetSelfBestQuery request, CancellationToken cancellationToken);
 }

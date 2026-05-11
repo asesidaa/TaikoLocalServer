@@ -4,7 +4,7 @@ namespace TaikoLocalServer.Application.Handlers;
 
 public readonly record struct AddTokenCountCommand(GameEra Era, CommonAddTokenCountRequest Request) : IRequest;
 
-public class AddTokenCountCommandHandler : IRequestHandler<AddTokenCountCommand>
+public partial class AddTokenCountCommandHandler : IRequestHandler<AddTokenCountCommand>
 {
     private readonly ITaikoDbContext context;
 
@@ -16,36 +16,13 @@ public class AddTokenCountCommandHandler : IRequestHandler<AddTokenCountCommand>
         this.logger = logger;
     }
 
-    public async ValueTask<Unit> Handle(AddTokenCountCommand command, CancellationToken cancellationToken)
+    public ValueTask<Unit> Handle(AddTokenCountCommand command, CancellationToken cancellationToken) => command.Era switch
     {
-        var request = command.Request;
-        var user = await context.UserData
-            .Include(userDatum => userDatum.Tokens)
-            .FirstOrDefaultAsync(datum => datum.Baid == request.Baid, cancellationToken);
-        user.ThrowIfNull($"User with baid {request.Baid} does not exist!");
+        GameEra.Nijiiro => HandleNijiiro(command, cancellationToken),
+        GameEra.Green => HandleGreen(command, cancellationToken),
+        _ => throw new InvalidOperationException($"Unsupported era: {command.Era}")
+    };
 
-        foreach (var addTokenCountData in request.AryAddTokenCountDatas)
-        {
-            var tokenId = addTokenCountData.TokenId;
-            var addTokenCount = addTokenCountData.AddTokenCount;
-            var token = user.Tokens.FirstOrDefault(t => t.Id == tokenId);
-            if (token is not null)
-            {
-                token.Count += addTokenCount;
-            }
-            else
-            {
-                user.Tokens.Add(new Token
-                {
-                    Baid = user.Baid,
-                    Id = (int)tokenId,
-                    Count = addTokenCount
-                });
-            }
-        }
-
-        context.UserData.Update(user);
-        await context.SaveChangesAsync(cancellationToken);
-        return Unit.Value;
-    }
+    private partial ValueTask<Unit> HandleNijiiro(AddTokenCountCommand command, CancellationToken cancellationToken);
+    private partial ValueTask<Unit> HandleGreen(AddTokenCountCommand command, CancellationToken cancellationToken);
 }

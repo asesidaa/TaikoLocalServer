@@ -2,29 +2,18 @@
 
 public readonly record struct GetSongIntroductionQuery(GameEra Era, uint[] SetIds) : IRequest<CommonGetSongIntroductionResponse>;
 
-public class GetSongIntroductionQueryHandler(IGameDataCatalog gameDataService, ILogger<GetSongIntroductionQueryHandler> logger) 
+public partial class GetSongIntroductionQueryHandler(IGameDataCatalog gameDataService, ILogger<GetSongIntroductionQueryHandler> logger) 
     : IRequestHandler<GetSongIntroductionQuery, CommonGetSongIntroductionResponse>
 {
 
-    public ValueTask<CommonGetSongIntroductionResponse> Handle(GetSongIntroductionQuery request, CancellationToken cancellationToken)
+    public ValueTask<CommonGetSongIntroductionResponse> Handle(GetSongIntroductionQuery request, CancellationToken cancellationToken) => request.Era switch
     {
-        var response = new CommonGetSongIntroductionResponse
-        {
-            Result = 1
-        };
-        foreach (var setId in request.SetIds)
-        {
-            gameDataService.GetSongIntroductionDictionary().TryGetValue(setId, out var introData);
-            if (introData is null)
-            {
-                logger.LogWarning("Requested set id {Id} does not exist!", setId);
-                continue;
-            }
+        GameEra.Nijiiro => HandleNijiiro(request, cancellationToken),
+        GameEra.Green => HandleGreen(request, cancellationToken),
+        _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
+    };
 
-            response.ArySongIntroductionDatas.Add(introData);
-        }
-        
-        return ValueTask.FromResult(response);
-    }
+    private partial ValueTask<CommonGetSongIntroductionResponse> HandleNijiiro(GetSongIntroductionQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonGetSongIntroductionResponse> HandleGreen(GetSongIntroductionQuery request, CancellationToken cancellationToken);
 }
 

@@ -4,7 +4,7 @@ namespace TaikoLocalServer.Application.Handlers;
 
 public readonly record struct GetDanOdaiQuery(GameEra Era, uint[] DanIds, uint Type) : IRequest<List<DanData>>;
 
-public class GetDanOdaiQueryHandler : IRequestHandler<GetDanOdaiQuery, List<DanData>>
+public partial class GetDanOdaiQueryHandler : IRequestHandler<GetDanOdaiQuery, List<DanData>>
 {
     private readonly IGameDataCatalog gameDataService;
 
@@ -13,39 +13,13 @@ public class GetDanOdaiQueryHandler : IRequestHandler<GetDanOdaiQuery, List<DanD
         this.gameDataService = gameDataService;
     }
 
-    public ValueTask<List<DanData>> Handle(GetDanOdaiQuery request, CancellationToken cancellationToken)
+    public ValueTask<List<DanData>> Handle(GetDanOdaiQuery request, CancellationToken cancellationToken) => request.Era switch
     {
-        var type = (DanType)request.Type;
-        type.Throw().IfOutOfRange();
-        var danDataList = new List<DanData>();
-        switch (type)
-        {
-            case DanType.Normal:
-                var danDataDictionary = gameDataService.GetCommonDanDataDictionary();
+        GameEra.Nijiiro => HandleNijiiro(request, cancellationToken),
+        GameEra.Green => HandleGreen(request, cancellationToken),
+        _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
+    };
 
-                foreach (var danId in request.DanIds)
-                {
-                    if (danDataDictionary.TryGetValue(danId, out var danData))
-                    {
-                        danDataList.Add(danData);
-                    }
-                }
-                break;
-            case DanType.Gaiden:
-                var gaidenDataDictionary = gameDataService.GetCommonGaidenDataDictionary();
-                
-                foreach (var danId in request.DanIds)
-                {
-                    if (gaidenDataDictionary.TryGetValue(danId, out var danData))
-                    {
-                        danDataList.Add(danData);
-                    }
-                }
-                break;
-            default:
-                throw new ApplicationException("Impossible");
-        }
-
-        return ValueTask.FromResult(danDataList);
-    }
+    private partial ValueTask<List<DanData>> HandleNijiiro(GetDanOdaiQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<List<DanData>> HandleGreen(GetDanOdaiQuery request, CancellationToken cancellationToken);
 }
