@@ -12,4 +12,5 @@
   <Project Path="Infrastructure/Infrastructure.csproj" />
   <Project Path="LocalSaveModScoreMigrator/LocalSaveModScoreMigrator.csproj" />
   <Project Path="TaikoWebUI/TaikoWebUI.csproj" />
+  <Project Path="Tests/Tests.csproj" />
 </Solution>
