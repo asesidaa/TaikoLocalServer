@@ -1,3 +1,5 @@
+using System.IO.Compression;
+
 namespace TaikoLocalServer.Application.Common;
 
 public static class GreenProtocolBytes
@@ -86,5 +88,55 @@ public static class GreenProtocolBytes
                 buffer[byteIndex] &= (byte)~mask;
             }
         }
+    }
+
+    public static ushort BuildGreenCrownValue(
+        GreenCrownState easy,
+        GreenCrownState normal,
+        GreenCrownState hard,
+        GreenCrownState oni,
+        GreenCrownState uraOni)
+    {
+        return (ushort)(
+            (((ushort)easy & 3) << 0) |
+            (((ushort)normal & 3) << 2) |
+            (((ushort)hard & 3) << 4) |
+            (((ushort)oni & 3) << 6) |
+            (((ushort)uraOni & 3) << 8));
+    }
+
+    public static byte[] PackGreenCrowns(IReadOnlyList<ushort> songValues)
+    {
+        var result = new byte[CrownInflatedBytes];
+
+        for (var songIndex = 0; songIndex < Math.Min(1024, songValues.Count); songIndex++)
+        {
+            var value = songValues[songIndex] & 0x03ff;
+            var bitOffset = songIndex * 10;
+
+            for (var bit = 0; bit < 10; bit++)
+            {
+                if ((value & (1 << bit)) == 0)
+                {
+                    continue;
+                }
+
+                var absoluteBit = bitOffset + bit;
+                result[absoluteBit >> 3] |= (byte)(1 << (absoluteBit & 7));
+            }
+        }
+
+        return result;
+    }
+
+    public static byte[] CompressZlib(byte[] body)
+    {
+        using var output = new MemoryStream();
+        using (var zlib = new ZLibStream(output, CompressionLevel.SmallestSize, leaveOpen: true))
+        {
+            zlib.Write(body, 0, body.Length);
+        }
+
+        return output.ToArray();
     }
 }
