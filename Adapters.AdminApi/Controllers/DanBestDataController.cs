@@ -14,7 +14,7 @@ public class DanBestDataController(ITaikoDbContext context) : BaseAdminControlle
             return forbid;
 
         // FIXME: Handle gaiden in here and web ui
-        var danScores = await context.DanScoreData
+        var danScores = await context.DanScoreDataNijiiro
             .Where(d => d.Baid == baid && d.DanType == DanType.Normal)
             .Include(d => d.DanStageScoreData)
             .ToListAsync();

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 
@@ -69,7 +69,7 @@ public static class FlagCalculator
         return (ushort)(previous | result);
     }
 
-    public static byte[] ComputeGotDanFlags(List<DanScoreDatum> danScoreData, List<uint> danIdList)
+    public static byte[] ComputeGotDanFlags(List<DanScoreDatumNijiiro> danScoreData, List<uint> danIdList)
     {
         var gotDanFlagList = new List<int>();
         var gotDanFlag = new BitVector32();

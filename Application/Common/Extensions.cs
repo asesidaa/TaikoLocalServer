@@ -1,8 +1,8 @@
-﻿namespace TaikoLocalServer.Application.Common;
+namespace TaikoLocalServer.Application.Common;
 
 public static class Extensions
 {
-    public static void UpdateBest(this AiSectionScoreDatum datum,CommonPlayResultData.AiStageSectionData sectionData)
+    public static void UpdateBest(this AiSectionScoreDatumNijiiro datum,CommonPlayResultData.AiStageSectionData sectionData)
     {
         var crown = (CrownType)sectionData.Crown;
         if (crown == CrownType.Gold && sectionData.OkCnt == 0)

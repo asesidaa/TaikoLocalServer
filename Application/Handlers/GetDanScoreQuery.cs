@@ -23,7 +23,7 @@ public class GetDanScoreQueryHandler : IRequestHandler<GetDanScoreQuery, CommonD
 
         var idList = request.DanIds.ToList();
         // Select the dan score data from the database where baid and type matches and danid is in the list of danids
-        var danScoreData = await context.DanScoreData
+        var danScoreData = await context.DanScoreDataNijiiro
             .Where(d => d.Baid == request.Baid && d.DanType == danType &&idList.Contains(d.DanId))
             .Include(d => d.DanStageScoreData)
             .ToListAsync(cancellationToken);
@@ -31,23 +31,23 @@ public class GetDanScoreQueryHandler : IRequestHandler<GetDanScoreQuery, CommonD
         {
             Result = 1
         };
-        foreach (var danScoreDatum in danScoreData)
+        foreach (var DanScoreDatumNijiiro in danScoreData)
         {
             var responseData = new CommonDanScoreDataResponse.DanScoreData
             {
-                DanId = danScoreDatum.DanId,
-                ArrivalSongCnt = danScoreDatum.ArrivalSongCount,
-                ComboCntTotal = danScoreDatum.ComboCountTotal,
-                SoulGaugeTotal = danScoreDatum.SoulGaugeTotal
+                DanId = DanScoreDatumNijiiro.DanId,
+                ArrivalSongCnt = DanScoreDatumNijiiro.ArrivalSongCount,
+                ComboCntTotal = DanScoreDatumNijiiro.ComboCountTotal,
+                SoulGaugeTotal = DanScoreDatumNijiiro.SoulGaugeTotal
             };
-            for (int i = 0; i < danScoreDatum.ArrivalSongCount; i++)
+            for (int i = 0; i < DanScoreDatumNijiiro.ArrivalSongCount; i++)
             {
                 var songNumber = i;
-                var stageScoreDatum = danScoreDatum.DanStageScoreData.FirstOrDefault(d => d.SongNumber == songNumber);
+                var stageScoreDatum = DanScoreDatumNijiiro.DanStageScoreData.FirstOrDefault(d => d.SongNumber == songNumber);
                 if (stageScoreDatum is null)
                 {
-                    logger.LogWarning("Stage score data for dan {DanId} song number {SongNumber} not found", danScoreDatum.DanId, songNumber);
-                    stageScoreDatum = new DanStageScoreDatum();
+                    logger.LogWarning("Stage score data for dan {DanId} song number {SongNumber} not found", DanScoreDatumNijiiro.DanId, songNumber);
+                    stageScoreDatum = new DanStageScoreDatumNijiiro();
                 }
                 responseData.AryDanScoreDataStages.Add(new CommonDanScoreDataResponse.DanScoreDataStage
                 {

@@ -34,21 +34,21 @@ public class UpdatePlayResultCommandHandler(ITaikoDbContext context, ILogger<Upd
             }
             
             var danType = playMode == PlayMode.DanMode ? DanType.Normal : DanType.Gaiden;
-            var danPlayData = await context.DanScoreData
+            var danPlayData = await context.DanScoreDataNijiiro
                 .Include(datum => datum.DanStageScoreData)
                 .FirstOrDefaultAsync(datum => datum.Baid == request.Baid &&
                                               datum.DanId == playResultData.DanId &&
                                               datum.DanType == danType, cancellationToken);
             if (danPlayData is null)
             {
-                danPlayData = new DanScoreDatum
+                danPlayData = new DanScoreDatumNijiiro
                 {
                     Baid = request.Baid,
                     DanId = playResultData.DanId,
                     DanType = danType
                 };
                 UpdateDanPlayData(danPlayData, playResultData);
-                context.DanScoreData.Add(danPlayData);
+                context.DanScoreDataNijiiro.Add(danPlayData);
             }
             else
             {
@@ -70,14 +70,14 @@ public class UpdatePlayResultCommandHandler(ITaikoDbContext context, ILogger<Upd
 
             var difficulty = (Difficulty)stageData.Level;
             difficulty.Throw().IfOutOfRange();
-            var existing = await context.SongBestData.FindAsync([playResultData.Baid, stageData.SongNo, difficulty], cancellationToken);
+            var existing = await context.SongBestDataNijiiro.FindAsync([playResultData.Baid, stageData.SongNo, difficulty], cancellationToken);
 
             // Determine whether it is dondaful crown as this is not reflected by play result
             var crown = PlayResultToCrown(stageData.PlayResult, stageData.OkCnt);
 
             if (existing is null)
             {
-                var datum = new SongBestDatum
+                var datum = new SongBestDatumNijiiro
                 {
                     Baid = playResultData.Baid,
                     SongId = stageData.SongNo,
@@ -88,14 +88,14 @@ public class UpdatePlayResultCommandHandler(ITaikoDbContext context, ILogger<Upd
                     BestScoreRank = (ScoreRank)stageData.ScoreRank
                 };
 
-                context.SongBestData.Add(datum);
+                context.SongBestDataNijiiro.Add(datum);
             }
             else
             {
                 existing.UpdateBestData(crown, stageData.ScoreRank, stageData.PlayScore, stageData.ScoreRate);
             }
 
-            var songPlayDatum = new SongPlayDatum
+            var SongPlayDatumNijiiro = new SongPlayDatumNijiiro
             {
                 Baid = request.Baid,
                 SongNumber = (uint)songNumber,
@@ -115,7 +115,7 @@ public class UpdatePlayResultCommandHandler(ITaikoDbContext context, ILogger<Upd
                 Difficulty = (Difficulty)stageData.Level,
                 OptionSetting = stageData.OptionFlg[0]
             };
-            context.SongPlayData.Add(songPlayDatum);
+            context.SongPlayDataNijiiro.Add(SongPlayDatumNijiiro);
         }
 
         await context.SaveChangesAsync(cancellationToken);
@@ -126,17 +126,17 @@ public class UpdatePlayResultCommandHandler(ITaikoDbContext context, ILogger<Upd
     {
         var difficulty = (Difficulty)stageData.Level;
         difficulty.Throw().IfOutOfRange();
-        var existing = await context.AiScoreData
+        var existing = await context.AiScoreDataNijiiro
             .Include(datum => datum.AiSectionScoreData)
             .FirstOrDefaultAsync(datum => datum.Baid == playResultData.Baid &&
                                           datum.SongId == stageData.SongNo &&
                                           datum.Difficulty == difficulty, cancellationToken)
-            ?? context.AiScoreData.Local.FirstOrDefault(datum => datum.Baid == playResultData.Baid &&
+            ?? context.AiScoreDataNijiiro.Local.FirstOrDefault(datum => datum.Baid == playResultData.Baid &&
                                                                              datum.SongId == stageData.SongNo &&
                                                                              datum.Difficulty == difficulty);
         if (existing is null)
         {
-            existing = new AiScoreDatum
+            existing = new AiScoreDatumNijiiro
             {
                 Baid = playResultData.Baid,
                 SongId = stageData.SongNo,
@@ -145,7 +145,7 @@ public class UpdatePlayResultCommandHandler(ITaikoDbContext context, ILogger<Upd
             };
             var aiSections = stageData.ArySectionDatas.Select((data, i) =>
                 {
-                    var section = new AiSectionScoreDatum
+                    var section = new AiSectionScoreDatumNijiiro
                     {
                         Baid = playResultData.Baid,
                         SongId = stageData.SongNo,
@@ -159,7 +159,7 @@ public class UpdatePlayResultCommandHandler(ITaikoDbContext context, ILogger<Upd
                 }
             );
             existing.AiSectionScoreData.AddRange(aiSections);
-            context.AiScoreData.Add(existing);
+            context.AiScoreDataNijiiro.Add(existing);
             return;
         }
         
@@ -172,7 +172,7 @@ public class UpdatePlayResultCommandHandler(ITaikoDbContext context, ILogger<Upd
             }
             else
             {
-                var aiSectionScoreDatum = new AiSectionScoreDatum
+                var AiSectionScoreDatumNijiiro = new AiSectionScoreDatumNijiiro
                 {
                     Baid = playResultData.Baid,
                     SongId = stageData.SongNo,
@@ -181,13 +181,13 @@ public class UpdatePlayResultCommandHandler(ITaikoDbContext context, ILogger<Upd
                     OkCount = sectionData.OkCnt,
                     MissCount = sectionData.NgCnt
                 };
-                aiSectionScoreDatum.UpdateBest(sectionData);
-                existing.AiSectionScoreData.Add(aiSectionScoreDatum);
+                AiSectionScoreDatumNijiiro.UpdateBest(sectionData);
+                existing.AiSectionScoreData.Add(AiSectionScoreDatumNijiiro);
             }
         }
     }
     
-    private void UpdateDanPlayData(DanScoreDatum danPlayData, CommonPlayResultData playResultData)
+    private void UpdateDanPlayData(DanScoreDatumNijiiro danPlayData, CommonPlayResultData playResultData)
     {
         danPlayData.ClearState =
             (DanClearState)Math.Max(playResultData.DanResult, (uint)danPlayData.ClearState);
@@ -202,7 +202,7 @@ public class UpdatePlayResultCommandHandler(ITaikoDbContext context, ILogger<Upd
 
             var songNumber = i;
             var danStageData = danPlayData.DanStageScoreData.FirstOrDefault(datum => datum.SongNumber == songNumber,
-                new DanStageScoreDatum
+                new DanStageScoreDatumNijiiro
                 {
                     Baid = danPlayData.Baid,
                     DanId = danPlayData.DanId,
@@ -223,7 +223,7 @@ public class UpdatePlayResultCommandHandler(ITaikoDbContext context, ILogger<Upd
             var index = danPlayData.DanStageScoreData.IndexOf(danStageData);
             if (index == -1)
             {
-                context.DanStageScoreData.Add(danStageData);
+                context.DanStageScoreDataNijiiro.Add(danStageData);
             }
         }
     }

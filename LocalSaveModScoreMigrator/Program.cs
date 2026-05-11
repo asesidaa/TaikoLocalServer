@@ -1,4 +1,4 @@
-﻿using TaikoLocalServer.Infrastructure.Persistence;
+using TaikoLocalServer.Infrastructure.Persistence;
 using TaikoLocalServer.Domain.Entities;
 using ICSharpCode.SharpZipLib.GZip;
 using JorgeSerrano.Json;
@@ -144,7 +144,7 @@ void Run(FileSystemInfo saveFile, FileSystemInfo dbFile, FileSystemInfo musicInf
 		Console.WriteLine($"Importing song with id: {songId}");
 		Console.WriteLine($"Song play time: {playRecord.DateTime}");
 		Console.ResetColor();
-		var playLog = new SongPlayDatum
+		var playLog = new SongPlayDatumNijiiro
 		{
 			Baid = user.Baid,
 			Difficulty = playRecord.Difficulty,
@@ -161,10 +161,10 @@ void Run(FileSystemInfo saveFile, FileSystemInfo dbFile, FileSystemInfo musicInf
 			SongNumber = 0,
 			SongId = songId
 		};
-		db.SongPlayData.Add(playLog);
+		db.SongPlayDataNijiiro.Add(playLog);
 
 
-		var best = new SongBestDatum
+		var best = new SongBestDatumNijiiro
 		{
 			Baid = user.Baid,
 			Difficulty = playRecord.Difficulty,
@@ -174,21 +174,21 @@ void Run(FileSystemInfo saveFile, FileSystemInfo dbFile, FileSystemInfo musicInf
 			SongId = songId
 		};
 
-		var existing = db.SongBestData.FirstOrDefault(datum => datum.Baid == user.Baid &&
+		var existing = db.SongBestDataNijiiro.FirstOrDefault(datum => datum.Baid == user.Baid &&
 															   datum.Difficulty == playLog.Difficulty &&
 															   datum.SongId == songId);
 
 
 		if (existing is null)
 		{
-			db.SongBestData.Add(best);
+			db.SongBestDataNijiiro.Add(best);
 		}
 		else
 		{
 			existing.BestCrown = (CrownType)Math.Max((int)existing.BestCrown, (int)playRecord.Crown);
 			existing.BestScoreRank = (ScoreRank)Math.Max((int)existing.BestScoreRank, (int)playRecord.Scorerank);
 			existing.BestScore = Math.Max(existing.BestScore, playRecord.Score);
-			db.SongBestData.Update(existing);
+			db.SongBestDataNijiiro.Update(existing);
 		}
 	}
 

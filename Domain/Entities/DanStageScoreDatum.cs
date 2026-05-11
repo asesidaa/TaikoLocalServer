@@ -1,8 +1,8 @@
-﻿using TaikoLocalServer.Domain.Enums;
+using TaikoLocalServer.Domain.Enums;
 
 namespace TaikoLocalServer.Domain.Entities;
 
-public class DanStageScoreDatum
+public class DanStageScoreDatumNijiiro
 {
     public uint Baid { get; set; }
 
@@ -28,5 +28,5 @@ public class DanStageScoreDatum
 
     public uint HighScore { get; set; }
 
-    public DanScoreDatum Parent { get; set; } = null!;
+    public DanScoreDatumNijiiro Parent { get; set; } = null!;
 }

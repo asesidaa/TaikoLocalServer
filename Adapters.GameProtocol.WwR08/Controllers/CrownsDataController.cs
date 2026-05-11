@@ -30,7 +30,7 @@ public class CrownsDataController(ITaikoDbContext context, IOptions<ServerSettin
 
     private async Task<CrownData> Handle(uint baid)
     {
-        var songBestData = await context.SongBestData
+        var songBestData = await context.SongBestDataNijiiro
             .Where(datum => datum.Baid == baid)
             .ToListAsync(HttpContext.RequestAborted);
 

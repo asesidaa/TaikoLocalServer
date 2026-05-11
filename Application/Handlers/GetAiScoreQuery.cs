@@ -14,7 +14,7 @@ public class GetAiScoreQueryHandler(ITaikoDbContext context, ILogger<GetAiScoreQ
         var difficulty = (Difficulty)request.Level;
         difficulty.Throw().IfOutOfRange();
 
-        var aiData = await context.AiScoreData.Where(datum => datum.Baid == request.Baid &&
+        var aiData = await context.AiScoreDataNijiiro.Where(datum => datum.Baid == request.Baid &&
                                                              datum.SongId == request.SongId &&
                                                              datum.Difficulty == difficulty)
             .Include(datum => datum.AiSectionScoreData)

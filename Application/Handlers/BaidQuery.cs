@@ -30,7 +30,7 @@ public class BaidQueryHandler(
 
         var timeLimitSongsList = gameDataService.GetTimeLimitedSongsList();
 
-        var songBestData = context.SongBestData.Where(datum => datum.Baid == baid).ToList();
+        var songBestData = context.SongBestDataNijiiro.Where(datum => datum.Baid == baid).ToList();
         var achievementDisplayDifficulty = userData.AchievementDisplayDifficulty;
         var isDispAchievementTypeSet = true;
         if (achievementDisplayDifficulty == Difficulty.None)
@@ -78,10 +78,10 @@ public class BaidQueryHandler(
             .Select((size, index) => FlagCalculator.GetBitArrayFromIds(costumeArrays[index], size, logger))
             .ToList();
 
-        var danData = await context.DanScoreData
+        var danData = await context.DanScoreDataNijiiro
             .Where(datum => datum.Baid == baid && datum.DanType == DanType.Normal)
             .Include(datum => datum.DanStageScoreData).ToListAsync(cancellationToken);
-        var gaidenData = await context.DanScoreData
+        var gaidenData = await context.DanScoreDataNijiiro
             .Where(datum => datum.Baid == baid && datum.DanType == DanType.Gaiden)
             .Include(datum => datum.DanStageScoreData).ToListAsync(cancellationToken);
         

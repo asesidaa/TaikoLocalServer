@@ -1,4 +1,4 @@
-﻿using System.Buffers.Binary;
+using System.Buffers.Binary;
 using Microsoft.Extensions.Options;
 using TaikoLocalServer.Application.Settings;
 using Throw;
@@ -47,7 +47,7 @@ public class UserDataQueryHandler(ITaikoDbContext context, IGameDataCatalog game
         
         var titleArray = FlagCalculator.GetBitArrayFromIds(userData.TitleFlgArray, gameDataService.GetTitleFlagArraySize(), logger);
 
-        var recentSongs = await context.SongPlayData
+        var recentSongs = await context.SongPlayDataNijiiro
             .Where(datum => datum.Baid == request.Baid)
             .OrderByDescending(datum => datum.PlayTime)
             .ThenByDescending(datum => datum.SongNumber)

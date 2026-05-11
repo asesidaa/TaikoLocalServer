@@ -6,17 +6,19 @@ namespace TaikoLocalServer.Infrastructure.Persistence;
 
 public partial class TaikoDbContext
 {
-    public virtual DbSet<SongBestDatum> SongBestData { get; set; } = null!;
-    public virtual DbSet<SongPlayDatum> SongPlayData { get; set; } = null!;
-    public virtual DbSet<DanScoreDatum> DanScoreData { get; set; } = null!;
-    public virtual DbSet<DanStageScoreDatum> DanStageScoreData { get; set; } = null!;
-    public virtual DbSet<AiScoreDatum> AiScoreData { get; set; } = null!;
-    public virtual DbSet<AiSectionScoreDatum> AiSectionScoreData { get; set; } = null!;
+    public virtual DbSet<SongBestDatumNijiiro> SongBestDataNijiiro { get; set; } = null!;
+    public virtual DbSet<SongPlayDatumNijiiro> SongPlayDataNijiiro { get; set; } = null!;
+    public virtual DbSet<DanScoreDatumNijiiro> DanScoreDataNijiiro { get; set; } = null!;
+    public virtual DbSet<DanStageScoreDatumNijiiro> DanStageScoreDataNijiiro { get; set; } = null!;
+    public virtual DbSet<AiScoreDatumNijiiro> AiScoreDataNijiiro { get; set; } = null!;
+    public virtual DbSet<AiSectionScoreDatumNijiiro> AiSectionScoreDataNijiiro { get; set; } = null!;
+    public virtual DbSet<UserSaveDataNijiiro> UserSaveDataNijiiro { get; set; } = null!;
 
     partial void OnModelCreatingNijiiro(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<SongBestDatum>(entity =>
+        modelBuilder.Entity<SongBestDatumNijiiro>(entity =>
         {
+            entity.ToTable("SongBestDatum_Nijiiro");
             entity.HasKey(e => new { e.Baid, e.SongId, e.Difficulty });
 
             entity.HasOne(d => d.Ba)
@@ -35,8 +37,9 @@ public partial class TaikoDbContext
                 .HasConversion<uint>();
         });
 
-        modelBuilder.Entity<SongPlayDatum>(entity =>
+        modelBuilder.Entity<SongPlayDatumNijiiro>(entity =>
         {
+            entity.ToTable("SongPlayDatum_Nijiiro");
             entity.HasKey(e => e.Id);
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd();
@@ -59,8 +62,22 @@ public partial class TaikoDbContext
                 .HasConversion<uint>();
         });
 
-        modelBuilder.Entity<DanScoreDatum>(entity =>
+        modelBuilder.Entity<UserSaveDataNijiiro>(entity =>
         {
+            entity.ToTable("UserSaveData_Nijiiro");
+            entity.HasKey(e => e.Baid);
+            entity.Property(e => e.LastPlayDatetime).HasColumnType("datetime");
+            entity.Property(e => e.AchievementDisplayDifficulty).HasConversion<uint>();
+            entity.HasOne(d => d.Ba)
+                .WithMany()
+                .HasPrincipalKey(p => p.Baid)
+                .HasForeignKey(d => d.Baid)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<DanScoreDatumNijiiro>(entity =>
+        {
+            entity.ToTable("DanScoreDatum_Nijiiro");
             entity.HasKey(e => new { e.Baid, e.DanId, e.DanType });
 
             entity.HasOne(d => d.Ba)
@@ -73,8 +90,9 @@ public partial class TaikoDbContext
             entity.Property(e => e.DanType).HasConversion<int>().HasDefaultValue(DanType.Normal).HasSentinel((DanType)0);
         });
 
-        modelBuilder.Entity<DanStageScoreDatum>(entity =>
+        modelBuilder.Entity<DanStageScoreDatumNijiiro>(entity =>
         {
+            entity.ToTable("DanStageScoreDatum_Nijiiro");
             entity.HasKey(e => new { e.Baid, e.DanId, e.DanType, e.SongNumber });
 
             entity.HasOne(d => d.Parent)
@@ -85,8 +103,9 @@ public partial class TaikoDbContext
             entity.Property(e => e.DanType).HasConversion<int>().HasDefaultValue(DanType.Normal).HasSentinel((DanType)0);
         });
 
-        modelBuilder.Entity<AiScoreDatum>(entity =>
+        modelBuilder.Entity<AiScoreDatumNijiiro>(entity =>
         {
+            entity.ToTable("AiScoreDatum_Nijiiro");
             entity.HasKey(e => new { e.Baid, e.SongId, e.Difficulty });
 
             entity.HasOne(d => d.Ba)
@@ -96,8 +115,9 @@ public partial class TaikoDbContext
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<AiSectionScoreDatum>(entity =>
+        modelBuilder.Entity<AiSectionScoreDatumNijiiro>(entity =>
         {
+            entity.ToTable("AiSectionScoreDatum_Nijiiro");
             entity.HasKey(e => new { e.Baid, e.SongId, e.Difficulty, e.SectionIndex });
 
             entity.HasOne(d => d.Parent)

@@ -17,7 +17,7 @@ public class PlayHistoryController(ITaikoDbContext context) : BaseAdminControlle
             return NotFound();
         }
 
-        var playLogs = await context.SongPlayData.Where(d => d.Baid == baid).ToListAsync();
+        var playLogs = await context.SongPlayDataNijiiro.Where(d => d.Baid == baid).ToListAsync();
         var songHistory = playLogs.Select(play => new SongHistoryData
             {
                 SongId = play.SongId,

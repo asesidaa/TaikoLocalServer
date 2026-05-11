@@ -33,7 +33,7 @@ public class SongLeaderboardController(ITaikoDbContext context) : BaseAdminContr
 
         var diff = (Difficulty)difficulty;
 
-        var totalScores = await context.SongBestData
+        var totalScores = await context.SongBestDataNijiiro
             .Where(x => x.SongId == songId && x.Difficulty == diff)
             .CountAsync();
 
@@ -43,7 +43,7 @@ public class SongLeaderboardController(ITaikoDbContext context) : BaseAdminContr
             totalPages++;
         }
 
-        var scores = await context.SongBestData
+        var scores = await context.SongBestDataNijiiro
             .Where(x => x.SongId == songId && x.Difficulty == diff)
             .OrderByDescending(x => x.BestScore)
             .ThenByDescending(x => x.BestRate)
@@ -59,7 +59,7 @@ public class SongLeaderboardController(ITaikoDbContext context) : BaseAdminContr
                 .Where(x => x.Baid == score.Baid)
                 .FirstOrDefaultAsync();
 
-            var rank = await context.SongBestData
+            var rank = await context.SongBestDataNijiiro
                 .Where(x => x.SongId == songId && x.Difficulty == diff && x.BestScore > score.BestScore)
                 .CountAsync();
 
@@ -78,7 +78,7 @@ public class SongLeaderboardController(ITaikoDbContext context) : BaseAdminContr
         SongLeaderboard? userScore = null;
         if (baid != 0)
         {
-            var score = await context.SongBestData
+            var score = await context.SongBestDataNijiiro
                 .Where(x => x.SongId == songId && x.Difficulty == diff && x.Baid == baid)
                 .FirstOrDefaultAsync();
 
@@ -88,7 +88,7 @@ public class SongLeaderboardController(ITaikoDbContext context) : BaseAdminContr
                     .Where(x => x.Baid == baid)
                     .FirstOrDefaultAsync();
 
-                var rank = await context.SongBestData
+                var rank = await context.SongBestDataNijiiro
                     .Where(x => x.SongId == songId && x.Difficulty == diff && x.BestScore > score.BestScore)
                     .CountAsync();
 

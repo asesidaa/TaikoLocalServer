@@ -21,7 +21,7 @@ public class GetSelfBestQueryHandler(IGameDataCatalog gameDataService, ITaikoDbC
             requestSet.ExceptWith(invalidSongIds);
         }
 
-        var selfBestScores = await context.SongBestData
+        var selfBestScores = await context.SongBestDataNijiiro
             .Where(datum => datum.Baid == request.Baid &&
                             requestSet.Contains(datum.SongId) &&
                             (datum.Difficulty == requestDifficulty ||

@@ -2,10 +2,11 @@ namespace TaikoLocalServer.Application.Abstractions;
 
 public partial interface ITaikoDbContext
 {
-    DbSet<SongBestDatum> SongBestData { get; }
-    DbSet<SongPlayDatum> SongPlayData { get; }
-    DbSet<DanScoreDatum> DanScoreData { get; }
-    DbSet<DanStageScoreDatum> DanStageScoreData { get; }
-    DbSet<AiScoreDatum> AiScoreData { get; }
-    DbSet<AiSectionScoreDatum> AiSectionScoreData { get; }
+    DbSet<SongBestDatumNijiiro> SongBestDataNijiiro { get; }
+    DbSet<SongPlayDatumNijiiro> SongPlayDataNijiiro { get; }
+    DbSet<DanScoreDatumNijiiro> DanScoreDataNijiiro { get; }
+    DbSet<DanStageScoreDatumNijiiro> DanStageScoreDataNijiiro { get; }
+    DbSet<AiScoreDatumNijiiro> AiScoreDataNijiiro { get; }
+    DbSet<AiSectionScoreDatumNijiiro> AiSectionScoreDataNijiiro { get; }
+    DbSet<UserSaveDataNijiiro> UserSaveDataNijiiro { get; }
 }

@@ -21,13 +21,13 @@ public class PlayDataController(ITaikoDbContext context) : BaseAdminController<P
             return NotFound();
         }
 
-        var songBestDbData = await context.SongBestData.Where(d => d.Baid == baid).ToListAsync();
+        var songBestDbData = await context.SongBestDataNijiiro.Where(d => d.Baid == baid).ToListAsync();
         var songBestRecords = songBestDbData.Select(d => d.CopyPropertiesToNew<SongBestData>()).ToList();
-        var aiSectionBest = await context.AiScoreData
+        var aiSectionBest = await context.AiScoreDataNijiiro
             .Where(d => d.Baid == baid)
             .Include(d => d.AiSectionScoreData)
             .ToListAsync();
-        var songPlayData = await context.SongPlayData.Where(d => d.Baid == baid).ToListAsync();
+        var songPlayData = await context.SongPlayDataNijiiro.Where(d => d.Baid == baid).ToListAsync();
 
         foreach (var bestData in songBestRecords)
         {
@@ -40,13 +40,13 @@ public class PlayDataController(ITaikoDbContext context) : BaseAdminController<P
 
             var bestLog = songPlayDatums.MaxBy(d => d.Score);
             bestLog.CopyOnlyPropertiesTo(bestData,
-                nameof(SongPlayDatum.PlayTime),
-                nameof(SongPlayDatum.GoodCount),
-                nameof(SongPlayDatum.OkCount),
-                nameof(SongPlayDatum.MissCount),
-                nameof(SongPlayDatum.HitCount),
-                nameof(SongPlayDatum.DrumrollCount),
-                nameof(SongPlayDatum.ComboCount));
+                nameof(SongPlayDatumNijiiro.PlayTime),
+                nameof(SongPlayDatumNijiiro.GoodCount),
+                nameof(SongPlayDatumNijiiro.OkCount),
+                nameof(SongPlayDatumNijiiro.MissCount),
+                nameof(SongPlayDatumNijiiro.HitCount),
+                nameof(SongPlayDatumNijiiro.DrumrollCount),
+                nameof(SongPlayDatumNijiiro.ComboCount));
 
             if (bestLog is not null)
             {
@@ -100,5 +100,5 @@ public class PlayDataController(ITaikoDbContext context) : BaseAdminController<P
 [Mapper(EnumMappingStrategy = EnumMappingStrategy.ByName)]
 public partial class SongBestResponseMapper
 {
-    public static partial SongPlayDatumDto MapToDto(SongPlayDatum entity);
+    public static partial SongPlayDatumDto MapToDto(SongPlayDatumNijiiro entity);
 }

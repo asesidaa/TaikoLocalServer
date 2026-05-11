@@ -1,8 +1,8 @@
-﻿using TaikoLocalServer.Domain.Enums;
+using TaikoLocalServer.Domain.Enums;
 
 namespace TaikoLocalServer.Domain.Entities;
 
-public class AiSectionScoreDatum
+public class AiSectionScoreDatumNijiiro
 {
     public uint Baid { get; set; }
 
@@ -26,5 +26,5 @@ public class AiSectionScoreDatum
 
     public uint DrumrollCount { get; set; }
 
-    public AiScoreDatum Parent { get; set; } = null!;
+    public AiScoreDatumNijiiro Parent { get; set; } = null!;
 }
