@@ -102,35 +102,38 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
 
+    <!-- Legacy root datatable path. Operator binaries now live under wwwroot/data/<era>/datatable/. -->
+    <Content Remove="wwwroot\data\datatable\**" />
+
     <!--Server Datatables (12 files)-->
-    <Content Update="wwwroot\data\locked_songs_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    <Content Update="wwwroot\data\locked_costume_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    <Content Update="wwwroot\data\locked_title_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    <Content Update="wwwroot\data\intro_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    <Content Update="wwwroot\data\movie_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    <Content Update="wwwroot\data\shop_folder_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    <Content Update="wwwroot\data\dan_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    <Content Update="wwwroot\data\event_folder_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    <Content Update="wwwroot\data\token_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    <Content Update="wwwroot\data\gaiden_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    <Content Update="wwwroot\data\qrcode_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    <Content Update="wwwroot\data\special_songs_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\nijiiro\locked_songs_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\nijiiro\locked_costume_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\nijiiro\locked_title_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\nijiiro\intro_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\nijiiro\movie_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\nijiiro\shop_folder_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\nijiiro\dan_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\nijiiro\event_folder_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\shared\token_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\nijiiro\gaiden_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\shared\qrcode_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\nijiiro\special_songs_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
 
     <!--Encrypted Game Datatables-->
-    <Content Update="wwwroot\data\datatable\wordlist.bin"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    <Content Update="wwwroot\data\datatable\musicinfo.bin"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    <Content Update="wwwroot\data\datatable\music_order.bin"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    <Content Update="wwwroot\data\datatable\neiro.bin"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    <Content Update="wwwroot\data\datatable\shougou.bin"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    <Content Update="wwwroot\data\datatable\don_cos_reward.bin"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\nijiiro\datatable\wordlist.bin"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\nijiiro\datatable\musicinfo.bin"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\nijiiro\datatable\music_order.bin"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\nijiiro\datatable\neiro.bin"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\nijiiro\datatable\shougou.bin"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\nijiiro\datatable\don_cos_reward.bin"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
 
     <!--Decrypted Game Datatables-->
-    <Content Update="wwwroot\data\datatable\wordlist.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    <Content Update="wwwroot\data\datatable\musicinfo.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    <Content Update="wwwroot\data\datatable\music_order.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    <Content Update="wwwroot\data\datatable\neiro.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    <Content Update="wwwroot\data\datatable\shougou.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    <Content Update="wwwroot\data\datatable\don_cos_reward.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\nijiiro\datatable\wordlist.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\nijiiro\datatable\musicinfo.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\nijiiro\datatable\music_order.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\nijiiro\datatable\neiro.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\nijiiro\datatable\shougou.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\nijiiro\datatable\don_cos_reward.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
   </ItemGroup>
 
 </Project>

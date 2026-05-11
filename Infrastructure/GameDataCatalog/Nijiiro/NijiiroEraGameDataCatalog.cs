@@ -193,6 +193,7 @@ public sealed class NijiiroEraGameDataCatalog(IOptions<DataSettings> dataSetting
 
         var dataPath = PathHelper.GetDataPath(GameEra.Nijiiro);
         var datatablePath = PathHelper.GetDataTablePath(GameEra.Nijiiro);
+        var sharedDataPath = PathHelper.GetSharedDataPath();
 
         var musicInfoPath = Path.Combine(datatablePath, $"{CatalogConstants.MusicInfoBaseName}.json");
         var encryptedInfo = Path.Combine(datatablePath, $"{CatalogConstants.MusicInfoBaseName}.bin");
@@ -218,10 +219,10 @@ public sealed class NijiiroEraGameDataCatalog(IOptions<DataSettings> dataSetting
         var movieDataPath = Path.Combine(dataPath, settings.MovieDataFileName);
         var eventFolderDataPath = Path.Combine(dataPath, settings.EventFolderDataFileName);
         var shopFolderDataPath = Path.Combine(dataPath, settings.ShopFolderDataFileName);
-        var tokenDataPath = Path.Combine(dataPath, settings.TokenDataFileName);
+        var tokenDataPath = Path.Combine(sharedDataPath, settings.TokenDataFileName);
         var lockedSongsDataPath = Path.Combine(dataPath, settings.LockedSongsDataFileName);
         var specialSongsDataPath = Path.Combine(dataPath, settings.SpecialSongsDataFileName);
-        var qrCodeDataPath = Path.Combine(dataPath, settings.QrCodeDataFileName);
+        var qrCodeDataPath = Path.Combine(sharedDataPath, settings.QrCodeDataFileName);
         var lockedCostumeDataPath = Path.Combine(dataPath, settings.LockedCostumeDataFileName);
         var lockedTitleDataPath = Path.Combine(dataPath, settings.LockedTitleDataFileName);
 
