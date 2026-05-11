@@ -5,6 +5,7 @@ Server is implemented with ASP.NET Core 10. ORM is Entity Framework Core 10. Dat
 As the game uses protobuf, `protobuf-net` is used for serializing and deserializing the data.  
 
 - [Taiko Local Server](#taiko-local-server)
+  - [Data file layout (per-era)](#data-file-layout-per-era)
   - [Datatable documentation](#datatable-documentation)
     - [dan\_data.json](#dan_datajson)
     - [event\_folder\_data.json](#event_folder_datajson)
@@ -16,10 +17,47 @@ As the game uses protobuf, `protobuf-net` is used for serializing and deserializ
     - [shop\_folder\_data.json](#shop_folder_datajson)
     - [token\_data.json](#token_datajson)
 
+## Data file layout (per-era)
+
+`wwwroot/data/` is partitioned by game era:
+
+```text
+wwwroot/data/
+|-- nijiiro/                    Nijiiro-era operator-edited datatables
+|   |-- dan_data.json
+|   |-- event_folder_data.json
+|   |-- movie_data.json
+|   |-- intro_data.json
+|   |-- locked_*_data.json
+|   |-- shop_folder_data.json
+|   |-- special_songs_data.json
+|   |-- gaiden_data.json
+|   `-- datatable/              Operator-supplied Nijiiro game binaries
+|       |-- musicinfo.bin
+|       |-- music_order.bin
+|       |-- wordlist.bin
+|       |-- don_cos_reward.bin
+|       |-- shougou.bin
+|       `-- neiro.bin
+|-- green/                      Green-era AC15 data, stub-only in this iteration
+|   `-- datatable/              Operator-supplied Green binaries for future loaders
+|       `-- musicinfo.bin       Green parser arrives in a later iteration
+`-- shared/                     Cross-era operator-edited tables
+    |-- token_data.json
+    `-- qrcode_data.json
+```
+
+Era availability is controlled by `Configurations/ServerSettings.json` under
+`ServerSettings:Eras`. Nijiiro is enabled by default. To allow Green cabinet
+routes, set `ServerSettings:Eras:Green:Enabled` to `true`; in the current
+iteration, Green endpoints return success-shaped empty responses until the real
+Green loaders and handlers are implemented.
+
 ## Datatable documentation
 
 The server sends a variety of information to the game that you can edit.  
-You'll find a list of all the files bellow!
+You'll find a list of all the files bellow. Nijiiro-specific JSON files live
+under `wwwroot/data/nijiiro/`; shared files live under `wwwroot/data/shared/`.
 
 The documentation is updated to reflect 39.06 files but most of it is similar for CHN.
 
