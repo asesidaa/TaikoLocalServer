@@ -6,6 +6,7 @@ using TaikoLocalServer.Adapters.AllnetMucha;
 using TaikoLocalServer.Adapters.GameProtocol.CnR00;
 using TaikoLocalServer.Adapters.GameProtocol.WwR08;
 using TaikoLocalServer.Application;
+using TaikoLocalServer.Domain.Enums;
 using TaikoLocalServer.Infrastructure;
 using TaikoLocalServer.Infrastructure.Persistence;
 using TaikoLocalServer.Logging;
@@ -72,6 +73,21 @@ try
     {
         Log.Warning("Song limit expanded! Use at your own risk!");
     }
+
+    var serverSettingsConfig = builder.Configuration.GetSection("ServerSettings");
+    var enabledEras = serverSettingsConfig.GetSection("Eras")
+        .GetChildren()
+        .Where(s => s.GetValue<bool>("Enabled"))
+        .Select(s => Enum.Parse<GameEra>(s.Key, ignoreCase: true))
+        .ToHashSet();
+
+    if (enabledEras.Count == 0)
+    {
+        Log.Fatal("ServerSettings.Eras has no enabled era. At least one era (Nijiiro or Green) must be enabled in Host/Configurations/ServerSettings.json. Refusing to start.");
+        throw new InvalidOperationException("No game eras enabled.");
+    }
+
+    Log.Information("Enabled game eras: {Eras}", string.Join(", ", enabledEras));
 
     // Add response compression services
     builder.Services.AddResponseCompression(options =>
