@@ -42,13 +42,6 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    builder.Services.AddHttpLogging(options =>
-    {
-        options.LoggingFields = HttpLoggingFields.All;
-        options.RequestBodyLogLimit = 32768;
-        options.ResponseBodyLogLimit = 32768;
-    });
-
     const string configurationsDirectory = "Configurations";
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/Kestrel.json", optional: true, reloadOnChange: false);
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/Logging.json", optional: false, reloadOnChange: false);
@@ -90,6 +83,13 @@ try
     }
 
     Log.Information("Enabled game eras: {Eras}", string.Join(", ", enabledEras));
+
+    builder.Services.AddHttpLogging(options =>
+    {
+        options.LoggingFields = HttpLoggingFields.All;
+        options.RequestBodyLogLimit = 32768;
+        options.ResponseBodyLogLimit = 32768;
+    });
 
     // Add response compression services
     builder.Services.AddResponseCompression(options =>
