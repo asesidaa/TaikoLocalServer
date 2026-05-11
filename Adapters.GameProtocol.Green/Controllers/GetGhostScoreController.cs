@@ -6,9 +6,12 @@ public class GetGhostScoreController : BaseProtocolController<GetGhostScoreContr
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult GetGhostScore([FromBody] GetghostscoreRequest request)
+    public async Task<IActionResult> GetGhostScore([FromBody] GetghostscoreRequest request)
     {
         Logger.LogInformation("Green GetGhostScore request: {Request}", request.Stringify());
-        return Ok(new GetghostscoreResponse { Result = 1 });
+        var common = await Mediator.Send(
+            new GetGhostScoreQuery(request.Baid, request.SongNo, request.Level),
+            HttpContext.RequestAborted);
+        return Ok(GhostMappers.Map(common));
     }
 }

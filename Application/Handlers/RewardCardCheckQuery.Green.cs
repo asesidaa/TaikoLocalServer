@@ -2,9 +2,16 @@ namespace TaikoLocalServer.Application.Handlers;
 
 public partial class RewardCardCheckQueryHandler
 {
-    public partial ValueTask<CommonRewardCardCheckResponse> Handle(RewardCardCheckQuery request, CancellationToken cancellationToken)
+    public partial async ValueTask<CommonRewardCardCheckResponse> Handle(
+        RewardCardCheckQuery request,
+        CancellationToken cancellationToken)
     {
-        logger.LogInformation("Green RewardCardCheck stub for access code {AccessCode}, returning success", request.AccessCode);
-        return ValueTask.FromResult(new CommonRewardCardCheckResponse());
+        logger.LogDebug("Checking Green reward card for access code {AccessCode}", request.AccessCode);
+        var card = await context.Cards.FindAsync([request.AccessCode], cancellationToken);
+        return new CommonRewardCardCheckResponse
+        {
+            Result = 1,
+            Baid = card?.Baid ?? 0
+        };
     }
 }

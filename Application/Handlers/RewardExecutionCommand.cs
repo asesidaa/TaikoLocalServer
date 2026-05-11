@@ -12,7 +12,9 @@ public readonly record struct RewardExecutionCommand(
     IReadOnlyList<uint> GetTitleNoes
 ) : IRequest<CommonRewardExecutionResponse>;
 
-public partial class RewardExecutionCommandHandler(ILogger<RewardExecutionCommandHandler> logger)
+public partial class RewardExecutionCommandHandler(
+    ITaikoDbContext context,
+    ILogger<RewardExecutionCommandHandler> logger)
     : IRequestHandler<RewardExecutionCommand, CommonRewardExecutionResponse>
 {
     public partial ValueTask<CommonRewardExecutionResponse> Handle(RewardExecutionCommand request, CancellationToken cancellationToken);

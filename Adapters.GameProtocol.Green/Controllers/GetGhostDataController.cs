@@ -6,17 +6,10 @@ public class GetGhostDataController : BaseProtocolController<GetGhostDataControl
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult GetGhostData([FromBody] GetghostdataRequest request)
+    public async Task<IActionResult> GetGhostData([FromBody] GetghostdataRequest request)
     {
         Logger.LogInformation("Green GetGhostData request: {Request}", request.Stringify());
-        return Ok(new GetghostdataResponse
-        {
-            Result = 1,
-            ReleaseInfoFlag = [],
-            PlayedSongFlag = [],
-            TotalWinnings = 0,
-            ghost_perf_data = new GetghostdataResponse.GhostPerfData(),
-            GhostRecordData = new GetghostdataResponse.GhostRankData()
-        });
+        var common = await Mediator.Send(new GetGhostDataQuery(request.Baid), HttpContext.RequestAborted);
+        return Ok(GhostMappers.Map(common));
     }
 }
