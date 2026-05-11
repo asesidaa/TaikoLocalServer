@@ -42,4 +42,49 @@ public static class GreenProtocolBytes
         Array.Copy(source, result, Math.Min(source.Length, result.Length));
         return result;
     }
+
+    public static byte[] PackTwoBitValues(IEnumerable<uint> values, int byteCount)
+    {
+        var result = new byte[byteCount];
+        var index = 0;
+
+        foreach (var value in values)
+        {
+            if (((index * 2) >> 3) >= byteCount)
+            {
+                break;
+            }
+
+            SetTwoBitValue(result, index, value);
+            index++;
+        }
+
+        return result;
+    }
+
+    public static void SetTwoBitValue(byte[] buffer, int index, uint value)
+    {
+        var masked = value & 0b11;
+        var bitOffset = index * 2;
+
+        for (var bit = 0; bit < 2; bit++)
+        {
+            var absoluteBit = bitOffset + bit;
+            var byteIndex = absoluteBit >> 3;
+            if ((uint)byteIndex >= (uint)buffer.Length)
+            {
+                return;
+            }
+
+            var mask = (byte)(1 << (absoluteBit & 7));
+            if ((masked & (1u << bit)) != 0)
+            {
+                buffer[byteIndex] |= mask;
+            }
+            else
+            {
+                buffer[byteIndex] &= (byte)~mask;
+            }
+        }
+    }
 }
