@@ -8,8 +8,11 @@ namespace TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
 
 public sealed class GreenEraGameDataCatalog(ILogger<GreenEraGameDataCatalog> logger) : IGreenCatalog
 {
+    private uint songHashVersion;
+    private IReadOnlyList<GreenMusicInfoEntry> musicInfoFileOrder = [];
     private IReadOnlyDictionary<uint, GreenMusicInfoEntry> musicInfos = new Dictionary<uint, GreenMusicInfoEntry>();
     private IReadOnlyDictionary<uint, IMusicInfoEntry> sharedMusicInfos = new Dictionary<uint, IMusicInfoEntry>();
+    private IReadOnlyList<GreenTaikojukuEntry> taikojukuFileOrder = [];
     private IReadOnlyDictionary<uint, GreenTaikojukuEntry> taikojuku = new Dictionary<uint, GreenTaikojukuEntry>();
     private IReadOnlyDictionary<uint, GreenItemShopEntry> itemShop = new Dictionary<uint, GreenItemShopEntry>();
     private IReadOnlyDictionary<uint, GreenEventFolderEntry> eventFolders = new Dictionary<uint, GreenEventFolderEntry>();
@@ -21,7 +24,13 @@ public sealed class GreenEraGameDataCatalog(ILogger<GreenEraGameDataCatalog> log
 
     public IReadOnlyDictionary<uint, IMusicInfoEntry> MusicInfos => sharedMusicInfos;
 
+    public uint SongHashVersion => songHashVersion;
+
+    public IReadOnlyList<GreenMusicInfoEntry> MusicInfoFileOrder => musicInfoFileOrder;
+
     public IReadOnlyDictionary<uint, GreenMusicInfoEntry> GreenMusicInfos => musicInfos;
+
+    public IReadOnlyList<GreenTaikojukuEntry> TaikojukuFileOrder => taikojukuFileOrder;
 
     public IReadOnlyDictionary<uint, GreenTaikojukuEntry> Taikojuku => taikojuku;
 
@@ -37,24 +46,29 @@ public sealed class GreenEraGameDataCatalog(ILogger<GreenEraGameDataCatalog> log
 
     public async Task InitializeAsync(CancellationToken cancellationToken)
     {
-        var greenDataPath = PathHelper.GetDataPath(GameEra.Green);
-        if (!Directory.Exists(greenDataPath))
-        {
-            logger.LogWarning(
-                "Green data path {Path} does not exist. Green endpoints will return empty data until binaries are dropped in.",
-                greenDataPath);
-            return;
-        }
+        GreenRequiredDataFiles.ThrowIfMissing();
 
-        musicInfos = await new GreenMusicInfoLoader().LoadAsync(cancellationToken);
+        var musicInfo = await new GreenMusicInfoLoader().LoadAsync(cancellationToken);
+        songHashVersion = musicInfo.SongHashVersion;
+        musicInfoFileOrder = musicInfo.Entries;
+        musicInfos = musicInfo.Entries.ToDictionary(entry => entry.SongNo);
         sharedMusicInfos = musicInfos.ToDictionary(
             pair => pair.Key,
             pair => (IMusicInfoEntry)pair.Value);
-        taikojuku = await new GreenTaikojukuLoader().LoadAsync(cancellationToken);
+        taikojukuFileOrder = await new GreenTaikojukuLoader().LoadAsync(cancellationToken);
+        taikojuku = taikojukuFileOrder
+            .GroupBy(entry => entry.UniqueId)
+            .ToDictionary(group => group.Key, group => group.First());
         itemShop = await new GreenItemShopLoader().LoadAsync(cancellationToken);
         eventFolders = await new GreenEventFolderLoader().LoadAsync(cancellationToken);
         telops = await new GreenTelopLoader().LoadAsync(cancellationToken);
         gachas = await new GreenGachaLoader().LoadAsync(cancellationToken);
         tournaments = await new GreenTournamentLoader().LoadAsync(cancellationToken);
+
+        logger.LogInformation(
+            "Loaded Green catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {TaikojukuCount} taikojuku packs",
+            musicInfoFileOrder.Count,
+            songHashVersion,
+            taikojukuFileOrder.Count);
     }
 }

@@ -4,7 +4,13 @@ namespace TaikoLocalServer.Application.Abstractions;
 
 public interface IGreenCatalog : IEraGameDataCatalog
 {
+    IReadOnlyList<GreenMusicInfoEntry> MusicInfoFileOrder { get; }
+
+    uint SongHashVersion { get; }
+
     IReadOnlyDictionary<uint, GreenMusicInfoEntry> GreenMusicInfos { get; }
+
+    IReadOnlyList<GreenTaikojukuEntry> TaikojukuFileOrder { get; }
 
     IReadOnlyDictionary<uint, GreenTaikojukuEntry> Taikojuku { get; }
 
