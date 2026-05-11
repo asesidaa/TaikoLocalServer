@@ -2,14 +2,33 @@ namespace TaikoLocalServer.Application.Handlers;
 
 public partial class GetSelfBestQueryHandler
 {
-    private partial ValueTask<CommonSelfBestResponse> HandleGreen(GetSelfBestQuery request, CancellationToken cancellationToken)
+    private partial async ValueTask<CommonSelfBestResponse> HandleGreen(
+        GetSelfBestQuery request,
+        CancellationToken cancellationToken)
     {
-        logger.LogInformation("Green GetSelfBest stub for baid {Baid}, returning empty", request.Baid);
+        var difficulty = GreenPlayResultMapping.MapDifficulty(request.Difficulty);
+        var requestedSongs = request.SongIdList ?? [];
+        var requestedSet = requestedSongs.ToHashSet();
+        var bestRows = await context.SongBestDataGreen
+            .Where(row => row.Baid == request.Baid
+                && row.Difficulty == difficulty
+                && requestedSet.Contains(row.SongId))
+            .ToDictionaryAsync(row => row.SongId, cancellationToken);
 
-        return ValueTask.FromResult(new CommonSelfBestResponse
+        return new CommonSelfBestResponse
         {
             Result = 1,
-            Level = request.Difficulty
-        });
+            Level = request.Difficulty,
+            ArySelfbestScores = requestedSongs.Select(songNo =>
+            {
+                bestRows.TryGetValue(songNo, out var best);
+                return new CommonSelfBestResponse.SelfBestData
+                {
+                    SongNo = songNo,
+                    SelfBestScore = best?.BestScore ?? 0,
+                    SelfBestScoreRate = best?.BestRate ?? 0
+                };
+            }).ToList()
+        };
     }
 }

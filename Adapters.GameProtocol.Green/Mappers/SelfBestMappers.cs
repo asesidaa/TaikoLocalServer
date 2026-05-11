@@ -7,10 +7,19 @@ public static partial class SelfBestMappers
 {
     public static SelfBestResponse Map(CommonSelfBestResponse common)
     {
-        return new SelfBestResponse
+        var response = new SelfBestResponse
         {
             Result = common.Result,
             Level = common.Level
         };
+
+        response.ArySelfbestScores.AddRange(common.ArySelfbestScores.Select(row => new SelfBestResponse.SelfBestData
+        {
+            SongNo = row.SongNo,
+            SelfBestScore = row.SelfBestScore,
+            UraBestScore = row.UraBestScore
+        }));
+
+        return response;
     }
 }

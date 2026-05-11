@@ -7,7 +7,6 @@ public static partial class PlayResultMappers
 {
     public static CommonPlayResultData Map(PlayResultDataRequest request)
     {
-        // TODO iter 2: map the full Green play-result payload.
         return new CommonPlayResultData
         {
             Baid = request.Baid,
@@ -17,23 +16,150 @@ public static partial class PlayResultMappers
             IsRight = request.IsRight,
             CardType = request.CardType,
             IsTwoPlayers = request.IsTwoPlayers,
+            AryStageInfoes = request.AryStageInfoes.Select(MapStage).ToList(),
+            ReleaseSongNoes = (request.ReleaseSongNoes ?? []).ToList(),
+            GetToneNoes = (request.GetToneNoes ?? []).ToList(),
+            GetCostumeNo1s = (request.GetCostumeNo1s ?? []).ToList(),
+            GetCostumeNo2s = (request.GetCostumeNo2s ?? []).ToList(),
+            GetCostumeNo3s = (request.GetCostumeNo3s ?? []).ToList(),
+            GetCostumeNo4s = (request.GetCostumeNo4s ?? []).ToList(),
+            GetCostumeNo5s = (request.GetCostumeNo5s ?? []).ToList(),
+            GetTitleNoes = (request.GetTitleNoes ?? []).ToList(),
             GetDonmedal = request.GetDonmedal,
             GetKatsumedal = request.GetKatsumedal,
             BonusDailyFlg = request.BonusDailyFlg,
             BonusWeeklyFlg = request.BonusWeeklyFlg,
             BonusMonthlyFlg = request.BonusMonthlyFlg,
+            ItemshopTutorialFlg = request.ItemshopTutorialFlg,
+            IsDevil = request.IsDevil,
+            IsExplain = request.IsExplain,
+            AryPlayCostume = MapCostume(request.AryPlayCostume),
+            AryCurrentCostume = MapCostume(request.AryCurrentCostume),
             GenderType = request.GenderType,
             PlayerAge = request.PlayerAge,
             PlayMode = request.PlayMode,
             AreaCode = request.AreaCode,
             Reserved = request.Reserved ?? [],
+            LowerlimitAge = request.LowerlimitAge,
+            UpperlimitAge = request.UpperlimitAge,
+            AgeScore = request.AgeScore,
+            EstimationCount = request.EstimationCount,
+            DanResult = request.DanResult,
             Accesstoken = request.Accesstoken,
-            ContentInfo = request.ContentInfo ?? []
+            ContentInfo = request.ContentInfo ?? [],
+            DifficultyPlayedCourse = request.DifficultyPlayedCourse,
+            DifficultyPlayedStar = request.DifficultyPlayedStar,
+            WaiwaiTutorialFlg = request.WaiwaiTutorialFlg,
+            GhostReleaseData = MapGhostRelease(request.GhostReleaseData),
+            GhostUpdatePerfData = request.GhostUpdatePerfdata is null ? null : new CommonPlayResultData.UpdateGhostPerfData
+            {
+                InputMedian = request.GhostUpdatePerfdata.InputMedian,
+                InputVariance = request.GhostUpdatePerfdata.InputVariance
+            },
+            GhostUpdateRankData = MapGhostRank(request.GhostUpdateRank)
         };
     }
 
     public static PlayResultResponse Map(uint result)
     {
         return new PlayResultResponse { Result = result };
+    }
+
+    private static CommonPlayResultData.StageData MapStage(PlayResultDataRequest.StageData stage)
+    {
+        return new CommonPlayResultData.StageData
+        {
+            SongNo = stage.SongNo,
+            Level = stage.Level,
+            PlayResult = stage.PlayResult,
+            PlayScore = stage.PlayScore,
+            GoodCnt = stage.GoodCnt,
+            OkCnt = stage.OkCnt,
+            NgCnt = stage.NgCnt,
+            PoundCnt = stage.PoundCnt,
+            ComboCnt = stage.ComboCnt,
+            HitCnt = stage.HitCnt,
+            OptionFlg = stage.OptionFlg ?? [],
+            ToneFlg = stage.ToneFlg ?? [],
+            SupportLevel = stage.SupportLevel,
+            MusicCateg = stage.MusicCateg,
+            IsFavorite = stage.IsFavorite,
+            IsRecent = stage.IsRecent,
+            SelectedFolderId = stage.SelectedFolderId,
+            StarLevel = stage.StarLevel,
+            SoulGauge = stage.SoulGauge,
+            PlayDan = stage.PlayDan,
+            WaiwaiResult = stage.WaiwaiResult,
+            WaiwaiGauge = stage.WaiwaiGauge,
+            GhostStageData = MapGhostStage(stage.GhostStagedata)
+        };
+    }
+
+    private static CommonPlayResultData.CostumeData MapCostume(PlayResultDataRequest.CostumeData? costume)
+    {
+        return costume is null
+            ? new CommonPlayResultData.CostumeData()
+            : new CommonPlayResultData.CostumeData
+            {
+                Costume1 = costume.Costume1,
+                Costume2 = costume.Costume2,
+                Costume3 = costume.Costume3,
+                Costume4 = costume.Costume4,
+                Costume5 = costume.Costume5
+            };
+    }
+
+    private static CommonPlayResultData.UpdateGhostInfoData? MapGhostRelease(
+        PlayResultDataRequest.UpdateGhostInfoData? ghost)
+    {
+        return ghost is null
+            ? null
+            : new CommonPlayResultData.UpdateGhostInfoData
+            {
+                ReleaseInfoId = (ghost.ReleaseInfoIds ?? []).ToList(),
+                AryTokendata = ghost.AryTokendatas.Select(token => new CommonPlayResultData.GhostTokenData
+                {
+                    TokenId = token.TokenId,
+                    TokenValue = token.TokenValue
+                }).ToList()
+            };
+    }
+
+    private static CommonPlayResultData.UpdateGhostRankData? MapGhostRank(
+        PlayResultDataRequest.UpdateGhostRankData? rank)
+    {
+        return rank is null
+            ? null
+            : new CommonPlayResultData.UpdateGhostRankData
+            {
+                RankId = rank.RankId,
+                WinPoint = rank.WinPoint,
+                CertifiedLevelId = rank.CertifiedLevelId,
+                AryWinningsData = rank.AryWinningsDatas.Select(row => new CommonPlayResultData.GhostWinningsData
+                {
+                    LevelId = row.LevelId,
+                    Winnings = row.Winnings
+                }).ToList()
+            };
+    }
+
+    private static CommonPlayResultData.GhostStageData? MapGhostStage(
+        PlayResultDataRequest.StageData.GhostStageData? ghost)
+    {
+        return ghost is null
+            ? null
+            : new CommonPlayResultData.GhostStageData
+            {
+                IsWin = ghost.IsWin,
+                SdCertifiedLevelId = ghost.SdCertifiedLevelId,
+                ArySectionData = ghost.ArySectionDatas.Select(section => new CommonPlayResultData.GhostStageSectionData
+                {
+                    IsWin = section.IsWin,
+                    GoodCnt = section.GoodCnt,
+                    OkCnt = section.OkCnt,
+                    NgCnt = section.NgCnt,
+                    PoundCnt = section.PoundCnt
+                }).ToList()
+            };
     }
 }
