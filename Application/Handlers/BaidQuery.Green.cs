@@ -2,14 +2,67 @@ namespace TaikoLocalServer.Application.Handlers;
 
 public partial class BaidQueryHandler
 {
-    private partial ValueTask<CommonBaidResponse> HandleGreen(BaidQuery request, CancellationToken cancellationToken)
+    private partial async ValueTask<CommonBaidResponse> HandleGreen(
+        BaidQuery request,
+        CancellationToken cancellationToken)
     {
-        logger.LogInformation("Green BaidQuery stub for access code {AccessCode}, returning new-user success", request.AccessCode);
+        var card = await context.Cards.FindAsync([request.AccessCode], cancellationToken);
+        if (card is null)
+        {
+            var nextBaid = await context.Cards.Select(existing => existing.Baid)
+                .DefaultIfEmpty()
+                .MaxAsync(cancellationToken) + 1;
 
-        return ValueTask.FromResult(new CommonBaidResponse
+            return new CommonBaidResponse
+            {
+                Result = 1,
+                IsNewUser = true,
+                Baid = nextBaid
+            };
+        }
+
+        var userData = await context.UserData.FindAsync([card.Baid], cancellationToken)
+            ?? throw new InvalidOperationException($"User not found for Green card baid {card.Baid}.");
+        var saveData = await context.GetOrCreateGreenSaveDataAsync(card.Baid, cancellationToken);
+
+        if (GreenSeedDataService.GrantFirstFakeDanIfNeeded(saveData))
+        {
+            await context.SaveChangesAsync(cancellationToken);
+        }
+
+        return new CommonBaidResponse
         {
             Result = 1,
-            IsNewUser = true
-        });
+            IsNewUser = false,
+            Baid = card.Baid,
+            MyDonName = userData.MyDonName,
+            MyDonNameLanguage = userData.MyDonNameLanguage,
+            Title = saveData.Title,
+            TitlePlateId = saveData.TitleplateId,
+            ColorFace = saveData.ColorFace,
+            ColorBody = saveData.ColorBody,
+            ColorLimb = saveData.ColorLimb,
+            CostumeData = [saveData.Costume1, saveData.Costume2, saveData.Costume3, saveData.Costume4, saveData.Costume5],
+            CostumeFlg1 = GreenProtocolBytes.FixedOrZero(saveData.CostumeFlg1, GreenProtocolBytes.CostumeFlagBytes),
+            CostumeFlg2 = GreenProtocolBytes.FixedOrZero(saveData.CostumeFlg2, GreenProtocolBytes.CostumeFlagBytes),
+            CostumeFlg3 = GreenProtocolBytes.FixedOrZero(saveData.CostumeFlg3, GreenProtocolBytes.CostumeFlagBytes),
+            CostumeFlg4 = GreenProtocolBytes.FixedOrZero(saveData.CostumeFlg4, GreenProtocolBytes.CostumeFlagBytes),
+            CostumeFlg5 = GreenProtocolBytes.FixedOrZero(saveData.CostumeFlg5, GreenProtocolBytes.CostumeFlagBytes),
+            TotalGetDonmedal = saveData.TotalGetDonmedal,
+            TotalUseDonmedal = saveData.TotalUseDonmedal,
+            TotalGetKatsumedal = saveData.TotalGetKatsumedal,
+            TotalUseKatsumedal = saveData.TotalUseKatsumedal,
+            ItemshopTutorialFlg = saveData.ItemshopTutorialFlg,
+            IsAutoCostumeOn = saveData.IsAutoCostumeOn,
+            DispDanType = saveData.DispDanType,
+            GotDanFlg = GreenProtocolBytes.FixedOrZero(saveData.GotDanFlg, GreenProtocolBytes.DanFlagBytes),
+            GotDanMax = saveData.GotDanMax,
+            GotDanExtraFlg = GreenProtocolBytes.FixedOrZero(saveData.GotDanExtraFlg, GreenProtocolBytes.DanExtraFlagBytes),
+            DefaultToneSetting = saveData.DefaultToneSetting,
+            WaiwaiTutorialFlg = saveData.WaiwaiTutorialFlg,
+            LastPlayDatetime = saveData.LastPlayDatetime == DateTime.UnixEpoch
+                ? DateTime.Now.ToString(Constants.DateTimeFormat)
+                : saveData.LastPlayDatetime.ToString(Constants.DateTimeFormat)
+        };
     }
 }

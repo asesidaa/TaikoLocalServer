@@ -22,6 +22,8 @@ public partial class CommonUserDataResponse
     public bool? IsChallengeCompe         { get; set; }
     public bool? IsTojiru                 { get; set; }
     public bool? IsDevilGreen             { get; set; }
+    public byte[] OptionFlg               { get; set; } = [];
+    public uint SongHashVer               { get; set; }
 
     public class FriendInfo
     {

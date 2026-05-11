@@ -6,16 +6,10 @@ public class UserDataController : BaseProtocolController<UserDataController>
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult UserData([FromBody] UserDataRequest request)
+    public async Task<IActionResult> UserData([FromBody] UserDataRequest request)
     {
         Logger.LogInformation("Green UserData request: {Request}", request.Stringify());
-        return Ok(new UserDataResponse
-        {
-            Result = 1,
-            IsExplain = false,
-            IsDevil = false,
-            IsChallengecompe = false,
-            IsTojiru = false
-        });
+        var common = await Mediator.Send(new UserDataQuery(request.Baid, GameEra.Green), HttpContext.RequestAborted);
+        return Ok(UserDataMappers.Map(common));
     }
 }

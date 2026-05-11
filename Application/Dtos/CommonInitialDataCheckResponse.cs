@@ -19,6 +19,24 @@ public class CommonInitialDataCheckResponse
     
     public ulong ServerCurrentDatetime { get; set; } = (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
 
+    public uint SongHashVer { get; set; }
+
+    public bool IsDanplay { get; set; }
+
+    public bool IsClose { get; set; }
+
+    public bool IsItemshop { get; set; }
+
+    public bool IsGhostbattleplay { get; set; }
+
+    public List<InformationData> AryGreenTelopDatas { get; set; } = [];
+
+    public List<InformationData> AryGreenEventFolderDatas { get; set; } = [];
+
+    public List<InformationData> AryGreenTaikojukuDatas { get; set; } = [];
+
+    public List<InformationData> AryGreenItemShopDatas { get; set; } = [];
+
     public class AiEventData
     {
         public uint AiEventId { get; set; }
@@ -41,5 +59,12 @@ public class CommonInitialDataCheckResponse
             public uint InfoId  { get; set; }
             public uint VerupNo { get; set; }
         }
+    }
+
+    public class InformationData
+    {
+        public uint InfoId { get; set; }
+
+        public uint VerupNo { get; set; }
     }
 }

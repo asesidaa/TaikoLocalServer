@@ -7,10 +7,16 @@ public static partial class UserDataMappers
 {
     public static UserDataResponse Map(CommonUserDataResponse common)
     {
-        // TODO iter 2: map Green user-data arrays and category counters.
         return new UserDataResponse
         {
             Result = common.Result,
+            AryFavoriteSongNoes = common.AryFavoriteSongNoes,
+            AryRecentSongNoes = common.AryRecentSongNoes,
+            SongHashVer = common.SongHashVer,
+            HashReleaseSongFlg = common.ReleaseSongFlg,
+            OptionFlg = common.OptionFlg,
+            ToneFlg = common.ToneFlg,
+            TitleFlg = common.TitleFlg,
             CategJpopCnt = common.CategJpopCnt.GetValueOrDefault(),
             CategAnimeCnt = common.CategAnimeCnt.GetValueOrDefault(),
             CategDoyoCnt = common.CategDoyoCnt.GetValueOrDefault(),
@@ -24,8 +30,14 @@ public static partial class UserDataMappers
             PrevAreaCode = common.PrevAreaCode.GetValueOrDefault(),
             ConsecAreaCnt = common.ConsecAreaCnt.GetValueOrDefault(),
             RecommendSong = common.RecommendSong.GetValueOrDefault(),
+            RecommendBestSongs = common.RecommendBestSong.ToArray(),
+            TotalCreditCnt = common.TotalCreditCnt,
+            SongRecentCnt = common.SongRecentCnt,
+            DefaultOptionSetting = common.DefaultOptionSetting,
             DefaultShinSetting = common.DefaultShinSetting.GetValueOrDefault(),
             DispTaikojukuDan = common.DispTaikojukuDan.GetValueOrDefault(),
+            DifficultyPlayedCourse = common.DifficultyPlayedCourse,
+            DifficultyPlayedStar = common.DifficultyPlayedStar,
             IsChallengecompe = common.IsChallengeCompe.GetValueOrDefault(),
             IsTojiru = common.IsTojiru.GetValueOrDefault(),
             IsDevil = common.IsDevilGreen.GetValueOrDefault()

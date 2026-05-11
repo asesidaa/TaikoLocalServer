@@ -7,14 +7,32 @@ public static partial class InitialDataMappers
 {
     public static InitialdatacheckResponse Map(CommonInitialDataCheckResponse common)
     {
-        // TODO iter 2: map Green hash flags and per-catalog verup data.
-        return new InitialdatacheckResponse
+        var response = new InitialdatacheckResponse
         {
             Result = common.Result,
-            IsDanplay = true,
-            IsClose = false,
-            IsItemshop = true,
-            IsGhostbattleplay = true
+            SongHashVer = common.SongHashVer,
+            HashDefaultSongFlg = common.DefaultSongFlg,
+            HashMainichidojoAll = common.AchievementSongBit,
+            HashMainichidojoRare = common.UraReleaseBit,
+            IsDanplay = common.IsDanplay,
+            IsClose = common.IsClose,
+            IsItemshop = common.IsItemshop,
+            IsGhostbattleplay = common.IsGhostbattleplay
         };
+
+        response.AryTelopDatas.AddRange(common.AryGreenTelopDatas.Select(MapInformation));
+        response.AryEventfolderDatas.AddRange(common.AryGreenEventFolderDatas.Select(MapInformation));
+        response.AryTaikojukuDatas.AddRange(common.AryGreenTaikojukuDatas.Select(MapInformation));
+        response.AryItemshopDatas.AddRange(common.AryGreenItemShopDatas.Select(MapInformation));
+
+        return response;
     }
+
+    private static InitialdatacheckResponse.InformationData MapInformation(
+        CommonInitialDataCheckResponse.InformationData common)
+        => new()
+        {
+            InfoId = common.InfoId,
+            VerupNo = common.VerupNo
+        };
 }

@@ -2,9 +2,10 @@
 namespace TaikoLocalServer.Application.Handlers;
 public readonly record struct AddMyDonEntryCommand(GameEra Era, string AccessCode, string Name, uint Language) : IRequest<CommonMyDonEntryResponse>;
 
-#pragma warning disable CS9113 // Parameter is unread.
-public partial class AddMyDonEntryCommandHandler(ITaikoDbContext context, ILogger<AddMyDonEntryCommandHandler> logger)
-#pragma warning restore CS9113 // Parameter is unread.
+public partial class AddMyDonEntryCommandHandler(
+    ITaikoDbContext context,
+    ILogger<AddMyDonEntryCommandHandler> logger,
+    IGameDataCatalog gameDataService)
     : IRequestHandler<AddMyDonEntryCommand, CommonMyDonEntryResponse>
 {
     public ValueTask<CommonMyDonEntryResponse> Handle(AddMyDonEntryCommand request, CancellationToken cancellationToken) => request.Era switch

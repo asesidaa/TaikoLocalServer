@@ -1,6 +1,15 @@
 global using System.IO.Compression;
+global using Microsoft.Data.Sqlite;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Logging.Abstractions;
+global using Microsoft.Extensions.Options;
+global using TaikoLocalServer.Application.Abstractions;
 global using TaikoLocalServer.Application.Common;
 global using TaikoLocalServer.Application.Catalog.Green;
+global using TaikoLocalServer.Application.Handlers;
+global using TaikoLocalServer.Application.Settings;
 global using TaikoLocalServer.Domain.Entities;
 global using TaikoLocalServer.Domain.Enums;
+global using TaikoLocalServer.Infrastructure.GameDataCatalog;
+global using TaikoLocalServer.Infrastructure.Persistence;
 global using Xunit;
