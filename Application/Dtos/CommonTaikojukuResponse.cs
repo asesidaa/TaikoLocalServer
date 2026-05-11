@@ -1,20 +1,24 @@
 namespace TaikoLocalServer.Application.Dtos;
 
-public class CommonTaikojukuResponse
+public sealed class CommonTaikojukuResponse
 {
     public uint Result { get; set; } = 1;
-    public List<JukupackData> AryJukupackData { get; set; } = [];
 
-    public class JukupackData
+    public List<Pack> Packs { get; set; } = [];
+
+    public sealed class Pack
     {
         public uint GetDan { get; set; }
+
         public uint VerupNo { get; set; }
-        public List<JukusongData> AryJukusongData { get; set; } = [];
+
+        public List<Song> Songs { get; set; } = [];
     }
 
-    public class JukusongData
+    public sealed class Song
     {
         public uint SongNo { get; set; }
+
         public uint Level { get; set; }
     }
 }

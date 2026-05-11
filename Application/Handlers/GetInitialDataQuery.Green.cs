@@ -21,7 +21,7 @@ public partial class GetInitialDataQueryHandler
             AryGreenTaikojukuDatas = green.TaikojukuFileOrder.Take(3)
                 .Select(entry => new CommonInitialDataCheckResponse.InformationData
                 {
-                    InfoId = entry.UniqueId,
+                    InfoId = entry.UniqueId != 0 ? entry.UniqueId : entry.ChallengeLevel,
                     VerupNo = entry.VerupNo
                 })
                 .ToList(),
