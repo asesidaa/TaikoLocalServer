@@ -8,6 +8,7 @@ global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.Options;
 global using ProtoBuf;
 global using Swan.Formatters;
+global using TaikoLocalServer.Adapters.GameProtocol.Green.Mappers;
 global using TaikoLocalServer.Adapters.GameProtocol.Green.Wire;
 global using TaikoLocalServer.Adapters.GameProtocol.Shared.Compression;
 global using TaikoLocalServer.Adapters.GameProtocol.Shared.Controllers;
