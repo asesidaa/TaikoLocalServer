@@ -1,0 +1,13 @@
+using TaikoLocalServer.Application.Abstractions;
+using TaikoLocalServer.Domain.Enums;
+
+namespace TaikoLocalServer.Application.Common;
+
+public static class CatalogExtensions
+{
+    public static INijiiroCatalog Nijiiro(this IGameDataCatalog catalog)
+        => (INijiiroCatalog)catalog.For(GameEra.Nijiiro);
+
+    public static IGreenCatalog Green(this IGameDataCatalog catalog)
+        => (IGreenCatalog)catalog.For(GameEra.Green);
+}

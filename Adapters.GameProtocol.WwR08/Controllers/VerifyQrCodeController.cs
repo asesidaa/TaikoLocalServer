@@ -33,7 +33,7 @@ public class VerifyQrCodeController : BaseProtocolController<VerifyQrCodeControl
 
     private int VerifyQr(string serial)
     {
-        var qrCodeDataDictionary = gameDataService.GetQRCodeDataDictionary();
+        var qrCodeDataDictionary = gameDataService.Nijiiro().GetQRCodeDataDictionary();
 
         qrCodeDataDictionary.TryGetValue(serial, out var qrCodeId);
 

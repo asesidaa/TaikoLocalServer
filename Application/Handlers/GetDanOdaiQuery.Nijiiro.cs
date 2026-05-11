@@ -12,7 +12,7 @@ public partial class GetDanOdaiQueryHandler
         switch (type)
         {
             case DanType.Normal:
-                var danDataDictionary = gameDataService.GetCommonDanDataDictionary();
+                var danDataDictionary = gameDataService.Nijiiro().GetCommonDanDataDictionary();
 
                 foreach (var danId in request.DanIds)
                 {
@@ -23,7 +23,7 @@ public partial class GetDanOdaiQueryHandler
                 }
                 break;
             case DanType.Gaiden:
-                var gaidenDataDictionary = gameDataService.GetCommonGaidenDataDictionary();
+                var gaidenDataDictionary = gameDataService.Nijiiro().GetCommonGaidenDataDictionary();
                 
                 foreach (var danId in request.DanIds)
                 {

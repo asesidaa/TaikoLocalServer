@@ -14,7 +14,7 @@ public partial class GetTokenCountQueryHandler
             "Kiyoshi1TokenId", "Kiyoshi2TokenId", "Kiyoshi3TokenId", "Kiyoshi4TokenId", "Amitie1TokenId", "Amitie2TokenId", "Amitie3TokenId",
             "Amitie4TokenId", "Machina1TokenId", "Machina2TokenId", "Machina3TokenId", "Machina4TokenId"];
 
-        var tokenDataDictionary = gameDataService.GetTokenDataDictionary();
+        var tokenDataDictionary = gameDataService.Nijiiro().GetTokenDataDictionary();
         foreach (var tokenName in tokenNames)
         {
             tokenDataDictionary.TryGetValue(tokenName, out var tokenId);

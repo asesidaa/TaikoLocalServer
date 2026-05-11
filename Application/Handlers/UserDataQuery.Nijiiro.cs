@@ -16,14 +16,14 @@ public partial class UserDataQueryHandler
 
         var songIdMax = settings.EnableMoreSongs ? settings.MoreSongsSize : DomainConstants.MusicIdMax;
 
-        var musicList = gameDataService.GetMusicList();
-        var lockedSongsList = gameDataService.GetLockedSongsList().Except(unlockedSongIdList).ToList();
-        var lockedUraSongsList = gameDataService.GetLockedUraSongsList().Except(unlockedUraSongIdList).ToList();
+        var musicList = gameDataService.Nijiiro().GetMusicList();
+        var lockedSongsList = gameDataService.Nijiiro().GetLockedSongsList().Except(unlockedSongIdList).ToList();
+        var lockedUraSongsList = gameDataService.Nijiiro().GetLockedUraSongsList().Except(unlockedUraSongIdList).ToList();
         var enabledMusicList = musicList.Except(lockedSongsList);
         var releaseSongArray =
             FlagCalculator.GetBitArrayFromIds(enabledMusicList, songIdMax, logger);
 
-        var defaultSongWithUraList = gameDataService.GetMusicWithUraList();
+        var defaultSongWithUraList = gameDataService.Nijiiro().GetMusicWithUraList();
         var enabledUraMusicList = defaultSongWithUraList.Except(lockedUraSongsList);
         var uraSongArray =
             FlagCalculator.GetBitArrayFromIds(enabledUraMusicList, songIdMax, logger);
@@ -34,10 +34,10 @@ public partial class UserDataQueryHandler
             await context.SaveChangesAsync(cancellationToken);
         }
         
-        //var toneArray = FlagCalculator.GetBitArrayFromIds(saveData.ToneFlgArray, gameDataService.GetToneFlagArraySize(), logger);
-        var toneArray = FlagCalculator.GetBitArrayTrue(gameDataService.GetToneFlagArraySize());
+        //var toneArray = FlagCalculator.GetBitArrayFromIds(saveData.ToneFlgArray, gameDataService.Nijiiro().GetToneFlagArraySize(), logger);
+        var toneArray = FlagCalculator.GetBitArrayTrue(gameDataService.Nijiiro().GetToneFlagArraySize());
         
-        var titleArray = FlagCalculator.GetBitArrayFromIds(saveData.TitleFlgArray, gameDataService.GetTitleFlagArraySize(), logger);
+        var titleArray = FlagCalculator.GetBitArrayFromIds(saveData.TitleFlgArray, gameDataService.Nijiiro().GetTitleFlagArraySize(), logger);
 
         var recentSongs = await context.SongPlayDataNijiiro
             .Where(datum => datum.Baid == request.Baid)

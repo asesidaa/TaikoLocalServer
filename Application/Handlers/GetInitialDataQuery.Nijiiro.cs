@@ -8,9 +8,9 @@ public partial class GetInitialDataQueryHandler
     {
         var songIdMax = settings.EnableMoreSongs ? settings.MoreSongsSize : DomainConstants.MusicIdMax;
 
-        var musicList = gameDataService.GetMusicList();
-        var lockedSongsList = gameDataService.GetLockedSongsList();
-        var lockedUraSongsList = gameDataService.GetLockedUraSongsList();
+        var musicList = gameDataService.Nijiiro().GetMusicList();
+        var lockedSongsList = gameDataService.Nijiiro().GetLockedSongsList();
+        var lockedUraSongsList = gameDataService.Nijiiro().GetLockedUraSongsList();
 
         var enabledArray =
             FlagCalculator.GetBitArrayFromIds(musicList, songIdMax, logger);
@@ -19,7 +19,7 @@ public partial class GetInitialDataQueryHandler
         var defaultSongFlg =
             FlagCalculator.GetBitArrayFromIds(defaultSongList, songIdMax, logger);
 
-        var defaultSongWithUraList = gameDataService.GetMusicWithUraList().Except(lockedUraSongsList);
+        var defaultSongWithUraList = gameDataService.Nijiiro().GetMusicWithUraList().Except(lockedUraSongsList);
         var uraReleaseBit =
             FlagCalculator.GetBitArrayFromIds(defaultSongWithUraList, songIdMax, logger);
 
@@ -33,7 +33,7 @@ public partial class GetInitialDataQueryHandler
             ServerCurrentDatetime = (ulong)DateTimeOffset.Now.ToUnixTimeSeconds()
         };
 
-        var movieDataDictionary = gameDataService.GetMovieDataDictionary();
+        var movieDataDictionary = gameDataService.Nijiiro().GetMovieDataDictionary();
         foreach (var movieData in movieDataDictionary)
         {
             response.AryMovieInfoes.Add(movieData.Value);
@@ -48,15 +48,15 @@ public partial class GetInitialDataQueryHandler
         }).ToList();
         CommonInitialDataCheckResponse.VerupNoData1[] verupNo1List =
         [
-            GetVerupNoData1(DomainConstants.ShopVerupMasterType, gameDataService.GetShopFolderVerup()),
+            GetVerupNoData1(DomainConstants.ShopVerupMasterType, gameDataService.Nijiiro().GetShopFolderVerup()),
         ];
         response.AryVerupNoData1s.AddRange(aryVerUp);
         response.AryVerupNoData1s.AddRange(verupNo1List);
         
-        var commonDanDataDictionary = gameDataService.GetCommonDanDataDictionary();
-        var commonGaidenDataDictionary = gameDataService.GetCommonGaidenDataDictionary();
-        var eventFolderDictionary = gameDataService.GetEventFolderDictionary();
-        var songIntroDictionary = gameDataService.GetSongIntroductionDictionary();
+        var commonDanDataDictionary = gameDataService.Nijiiro().GetCommonDanDataDictionary();
+        var commonGaidenDataDictionary = gameDataService.Nijiiro().GetCommonGaidenDataDictionary();
+        var eventFolderDictionary = gameDataService.Nijiiro().GetEventFolderDictionary();
+        var songIntroDictionary = gameDataService.Nijiiro().GetSongIntroductionDictionary();
 
         CommonInitialDataCheckResponse.VerupNoData2[] verupNo2List =
         [

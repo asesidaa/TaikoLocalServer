@@ -10,6 +10,8 @@ using TaikoLocalServer.Application.Abstractions;
 using TaikoLocalServer.Application.Settings;
 using TaikoLocalServer.Contracts.AdminApi.Authorization;
 using TaikoLocalServer.Infrastructure.GameDataCatalog;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Nijiiro;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Settings;
 using TaikoLocalServer.Infrastructure.Identity;
 using TaikoLocalServer.Infrastructure.Identity.Settings;
@@ -48,7 +50,16 @@ public static class DependencyInjection
         services.AddScoped<ITaikoDbContext>(sp => sp.GetRequiredService<TaikoDbContext>());
 
         // Game data catalog (singleton — initialized once at startup)
-        services.AddSingleton<IGameDataCatalog, FileGameDataCatalog>();
+        services.AddSingleton<NijiiroEraGameDataCatalog>();
+        services.AddSingleton<INijiiroCatalog>(sp => sp.GetRequiredService<NijiiroEraGameDataCatalog>());
+        services.AddSingleton<IEraGameDataCatalog>(sp => sp.GetRequiredService<NijiiroEraGameDataCatalog>());
+
+        services.AddSingleton<GreenEraGameDataCatalog>();
+        services.AddSingleton<IGreenCatalog>(sp => sp.GetRequiredService<GreenEraGameDataCatalog>());
+        services.AddSingleton<IEraGameDataCatalog>(sp => sp.GetRequiredService<GreenEraGameDataCatalog>());
+
+        services.AddSingleton<IGameDataCatalog>(sp => new FileGameDataCatalog(
+            sp.GetServices<IEraGameDataCatalog>()));
 
         // Identity
         services.AddScoped<IJwtTokenService, JwtTokenService>();

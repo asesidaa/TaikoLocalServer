@@ -23,7 +23,7 @@ public partial class BaidQueryHandler
         userData.ThrowIfNull($"User not found for card with Baid {baid}!");
         var saveData = await context.GetOrCreateNijiiroSaveDataAsync(baid, cancellationToken);
 
-        var timeLimitSongsList = gameDataService.GetTimeLimitedSongsList();
+        var timeLimitSongsList = gameDataService.Nijiiro().GetTimeLimitedSongsList();
 
         var songBestData = context.SongBestDataNijiiro.Where(datum => datum.Baid == baid).ToList();
         var achievementDisplayDifficulty = saveData.AchievementDisplayDifficulty;
@@ -69,7 +69,7 @@ public partial class BaidQueryHandler
         List<List<uint>> costumeArrays = 
             [saveData.UnlockedKigurumi, saveData.UnlockedHead, saveData.UnlockedBody, saveData.UnlockedFace, saveData.UnlockedPuchi];
 
-        var costumeFlagArrays = gameDataService.GetCostumeFlagArraySizes()
+        var costumeFlagArrays = gameDataService.Nijiiro().GetCostumeFlagArraySizes()
             .Select((size, index) => FlagCalculator.GetBitArrayFromIds(costumeArrays[index], size, logger))
             .ToList();
 
@@ -85,11 +85,11 @@ public partial class BaidQueryHandler
             .DefaultIfEmpty()
             .Max();
         
-        var danDataDictionary = gameDataService.GetCommonDanDataDictionary();
+        var danDataDictionary = gameDataService.Nijiiro().GetCommonDanDataDictionary();
         var danIdList = danDataDictionary.Keys.ToList();
         var gotDanFlagArray = FlagCalculator.ComputeGotDanFlags(danData, danIdList);
         
-        var gaidenDataDictionary = gameDataService.GetCommonGaidenDataDictionary();
+        var gaidenDataDictionary = gameDataService.Nijiiro().GetCommonGaidenDataDictionary();
         var gaidenIdList = gaidenDataDictionary.Keys.ToList();
         var gotGaidenFlagArray = FlagCalculator.ComputeGotDanFlags(gaidenData, gaidenIdList);
 

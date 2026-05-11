@@ -10,7 +10,7 @@ public partial class GetSongIntroductionQueryHandler
         };
         foreach (var setId in request.SetIds)
         {
-            gameDataService.GetSongIntroductionDictionary().TryGetValue(setId, out var introData);
+            gameDataService.Nijiiro().GetSongIntroductionDictionary().TryGetValue(setId, out var introData);
             if (introData is null)
             {
                 logger.LogWarning("Requested set id {Id} does not exist!", setId);

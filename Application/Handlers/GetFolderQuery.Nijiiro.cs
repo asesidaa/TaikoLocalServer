@@ -8,7 +8,7 @@ public partial class GetFolderQueryHandler
         {
             Result = 1
         };
-        var eventFolders = gameDataService.GetEventFolderDictionary();
+        var eventFolders = gameDataService.Nijiiro().GetEventFolderDictionary();
         foreach (var folderId in request.FolderIds)
         {
             eventFolders.TryGetValue(folderId, out var folderData);

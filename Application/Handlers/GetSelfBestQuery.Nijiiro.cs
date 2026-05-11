@@ -9,7 +9,7 @@ public partial class GetSelfBestQueryHandler
         var requestDifficulty = (Difficulty)request.Difficulty;
         requestDifficulty.Throw().IfOutOfRange();
 
-        var allSongSet = gameDataService.GetMusicList().ToHashSet();
+        var allSongSet = gameDataService.Nijiiro().GetMusicList().ToHashSet();
         var requestSet = request.SongIdList.ToHashSet();
         if (!requestSet.IsSubsetOf(allSongSet))
         {
