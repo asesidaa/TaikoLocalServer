@@ -42,11 +42,13 @@ namespace TaikoLocalServer.Infrastructure.Persistence
         {
             OnModelCreatingShared(modelBuilder);
             OnModelCreatingNijiiro(modelBuilder);
+            OnModelCreatingGreen(modelBuilder);
             OnModelCreatingPartial(modelBuilder);
         }
 
         partial void OnModelCreatingShared(ModelBuilder modelBuilder);
         partial void OnModelCreatingNijiiro(ModelBuilder modelBuilder);
+        partial void OnModelCreatingGreen(ModelBuilder modelBuilder);
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }
