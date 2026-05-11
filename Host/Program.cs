@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Throw;
 using Serilog;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using System.IO.Compression;
 
 Log.Logger = new LoggerConfiguration()
@@ -119,7 +120,22 @@ try
         builder.Services.AddGameProtocolGreen();
     }
 
-    builder.Services.AddControllers().AddProtoBufNet();
+    builder.Services.AddControllers()
+        .AddProtoBufNet()
+        .ConfigureApplicationPartManager(apm =>
+        {
+            // Adapter assemblies referenced by Host are auto-discovered as ApplicationParts.
+            // Remove disabled-era assemblies so their controllers are not routed.
+            if (!enabledEras.Contains(GameEra.Green))
+            {
+                RemoveApplicationPart(apm, "TaikoLocalServer.Adapters.GameProtocol.Green");
+            }
+            if (!enabledEras.Contains(GameEra.Nijiiro))
+            {
+                RemoveApplicationPart(apm, "TaikoLocalServer.Adapters.GameProtocol.WwR08");
+                RemoveApplicationPart(apm, "TaikoLocalServer.Adapters.GameProtocol.CnR00");
+            }
+        });
     builder.Services.AddMemoryCache();
     builder.Services.AddCors(options =>
     {
@@ -223,4 +239,14 @@ finally
 {
     Log.Information("Shut down complete");
     Log.CloseAndFlush();
+}
+
+static void RemoveApplicationPart(ApplicationPartManager apm, string assemblyName)
+{
+    var part = apm.ApplicationParts.FirstOrDefault(p =>
+        p is AssemblyPart a && a.Assembly.GetName().Name == assemblyName);
+    if (part is not null)
+    {
+        apm.ApplicationParts.Remove(part);
+    }
 }
