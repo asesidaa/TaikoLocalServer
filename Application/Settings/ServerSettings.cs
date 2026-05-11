@@ -1,8 +1,15 @@
 namespace TaikoLocalServer.Application.Settings;
 
-public class ServerSettings
+public sealed class ServerSettings
 {
     public bool EnableMoreSongs { get; set; }
 
     public int MoreSongsSize { get; set; } = TaikoLocalServer.Domain.DomainConstants.MusicIdMaxExpanded;
+
+    public Dictionary<string, EraSettings> Eras { get; set; } = new();
+}
+
+public sealed class EraSettings
+{
+    public bool Enabled { get; set; }
 }

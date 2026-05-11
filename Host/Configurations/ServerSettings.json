@@ -3,6 +3,14 @@
     "MuchaUrl": "https://v402-front.mucha-prd.nbgi-amnet.jp:10122",
     "GameUrl": "vsapi.taiko-p.jp",
     "EnableMoreSongs": false,
-    "MoreSongsSize": 9000
+    "MoreSongsSize": 9000,
+    "Eras": {
+      "Nijiiro": {
+        "Enabled": true
+      },
+      "Green": {
+        "Enabled": false
+      }
+    }
   }
 }
