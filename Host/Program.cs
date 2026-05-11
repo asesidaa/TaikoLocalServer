@@ -175,6 +175,16 @@ try
     // Use response compression
     app.UseResponseCompression();
 
+    app.Use(async (context, next) =>
+    {
+        if (ShouldAssumeProtobufRequest(context.Request))
+        {
+            context.Request.ContentType = "application/protobuf";
+        }
+
+        await next();
+    });
+
     // For reverse proxy
     app.UseForwardedHeaders(new ForwardedHeadersOptions
     {
@@ -249,4 +259,18 @@ static void RemoveApplicationPart(ApplicationPartManager apm, string assemblyNam
     {
         apm.ApplicationParts.Remove(part);
     }
+}
+
+static bool ShouldAssumeProtobufRequest(HttpRequest request)
+{
+    if (!HttpMethods.IsPost(request.Method) || !string.IsNullOrWhiteSpace(request.ContentType))
+    {
+        return false;
+    }
+
+    var path = request.Path;
+    return path.StartsWithSegments("/v11r01/chassis", StringComparison.OrdinalIgnoreCase)
+           || path.StartsWithSegments("/v01r00/chassis", StringComparison.OrdinalIgnoreCase)
+           || path.StartsWithSegments("/v12r08_ww/chassis", StringComparison.OrdinalIgnoreCase)
+           || path.StartsWithSegments("/v12r00_cn/chassis", StringComparison.OrdinalIgnoreCase);
 }
