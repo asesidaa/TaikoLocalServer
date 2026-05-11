@@ -2,7 +2,7 @@ using Throw;
 
 namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct GetAiScoreQuery(uint Baid, uint SongId, uint Level) : IRequest<CommonAiScoreResponse>;
+public readonly record struct GetAiScoreQuery(uint Baid, GameEra Era, uint SongId, uint Level) : IRequest<CommonAiScoreResponse>;
 
 #pragma warning disable CS9113 // Parameter is unread.
 public class GetAiScoreQueryHandler(ITaikoDbContext context, ILogger<GetAiScoreQueryHandler> logger)

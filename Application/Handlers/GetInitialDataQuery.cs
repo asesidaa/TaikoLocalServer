@@ -4,7 +4,7 @@ using TaikoLocalServer.Application.Settings;
 
 namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct GetInitialDataQuery : IRequest<CommonInitialDataCheckResponse>;
+public readonly record struct GetInitialDataQuery(GameEra Era) : IRequest<CommonInitialDataCheckResponse>;
 
 public class GetInitialDataQueryHandler(IGameDataCatalog gameDataService, 
     ILogger<GetInitialDataQueryHandler>                  logger,

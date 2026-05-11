@@ -9,7 +9,7 @@ public class GetShopFolderController : BaseProtocolController<GetShopFolderContr
     {
         Logger.LogInformation("GetShopFolder request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new GetShopFolderQuery(), HttpContext.RequestAborted);
+        var commonResponse = await Mediator.Send(new GetShopFolderQuery(GameEra.Nijiiro), HttpContext.RequestAborted);
         var response = ShopFolderDataMappers.MapToCN00(commonResponse);
 
         return Ok(response);

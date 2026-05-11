@@ -1,6 +1,6 @@
 ﻿namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct GetFolderQuery(uint[] FolderIds) : IRequest<CommonGetFolderResponse>;
+public readonly record struct GetFolderQuery(GameEra Era, uint[] FolderIds) : IRequest<CommonGetFolderResponse>;
 
 public class GetFolderQueryHandler(ILogger<GetFolderQueryHandler> logger, IGameDataCatalog gameDataService)
     : IRequestHandler<GetFolderQuery, CommonGetFolderResponse>

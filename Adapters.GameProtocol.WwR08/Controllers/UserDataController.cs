@@ -9,7 +9,7 @@ public class UserDataController : BaseProtocolController<UserDataController>
     {
         Logger.LogInformation("UserData request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new UserDataQuery(request.Baid), HttpContext.RequestAborted);
+        var commonResponse = await Mediator.Send(new UserDataQuery(request.Baid, GameEra.Nijiiro), HttpContext.RequestAborted);
         var response = UserDataMappers.MapToWW08(commonResponse);
 
         return Ok(response);

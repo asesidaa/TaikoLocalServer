@@ -2,7 +2,7 @@ using Throw;
 
 namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct GetSelfBestQuery(uint Baid, uint Difficulty, uint[] SongIdList) : IRequest<CommonSelfBestResponse>;
+public readonly record struct GetSelfBestQuery(uint Baid, GameEra Era, uint Difficulty, uint[] SongIdList) : IRequest<CommonSelfBestResponse>;
 
 public class GetSelfBestQueryHandler(IGameDataCatalog gameDataService, ITaikoDbContext context, ILogger<GetSelfBestQueryHandler> logger)
     : IRequestHandler<GetSelfBestQuery, CommonSelfBestResponse>

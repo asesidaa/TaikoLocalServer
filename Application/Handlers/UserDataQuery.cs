@@ -5,7 +5,7 @@ using Throw;
 
 namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct UserDataQuery(uint Baid) : IRequest<CommonUserDataResponse>;
+public readonly record struct UserDataQuery(uint Baid, GameEra Era) : IRequest<CommonUserDataResponse>;
 
 public class UserDataQueryHandler(ITaikoDbContext context, IGameDataCatalog gameDataService, ILogger<UserDataQueryHandler> logger, IOptions<ServerSettings> settings) 
     : IRequestHandler<UserDataQuery, CommonUserDataResponse>

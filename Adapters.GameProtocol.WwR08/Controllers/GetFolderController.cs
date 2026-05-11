@@ -8,7 +8,7 @@ public class GetFolderController : BaseProtocolController<GetFolderController>
     public async Task<IActionResult> GetFolder([FromBody] GetfolderRequest request)
     {
         Logger.LogInformation("GetFolder request : {Request}", request.Stringify());
-        var commonResponse = await Mediator.Send(new GetFolderQuery(request.FolderIds), HttpContext.RequestAborted);
+        var commonResponse = await Mediator.Send(new GetFolderQuery(GameEra.Nijiiro, request.FolderIds), HttpContext.RequestAborted);
         var response = FolderDataMappers.MapToWW08(commonResponse);
         return Ok(response);
     }

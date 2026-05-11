@@ -17,7 +17,7 @@ public class GetSongIntroductionController : BaseProtocolController<GetSongIntro
     {
         Logger.LogInformation("GetSongIntroduction request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new GetSongIntroductionQuery(request.SetIds), HttpContext.RequestAborted);
+        var commonResponse = await Mediator.Send(new GetSongIntroductionQuery(GameEra.Nijiiro, request.SetIds), HttpContext.RequestAborted);
         var response = SongIntroductionDataMappers.MapToCN00(commonResponse);
 
         return Ok(response);

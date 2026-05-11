@@ -14,7 +14,7 @@ public class GetDanOdaiController : BaseProtocolController<GetDanOdaiController>
             Result = 1
         };
 
-        var odaiDataList = await Mediator.Send(new GetDanOdaiQuery(request.DanIds, request.Type), HttpContext.RequestAborted);
+        var odaiDataList = await Mediator.Send(new GetDanOdaiQuery(GameEra.Nijiiro, request.DanIds, request.Type), HttpContext.RequestAborted);
         response.AryOdaiDatas.AddRange(odaiDataList.Select(DanDataMappers.ToWW08OdaiData));
 
         return Ok(response);

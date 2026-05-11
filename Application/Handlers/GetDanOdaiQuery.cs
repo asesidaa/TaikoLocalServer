@@ -2,7 +2,7 @@ using Throw;
 
 namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct GetDanOdaiQuery(uint[] DanIds, uint Type) : IRequest<List<DanData>>;
+public readonly record struct GetDanOdaiQuery(GameEra Era, uint[] DanIds, uint Type) : IRequest<List<DanData>>;
 
 public class GetDanOdaiQueryHandler : IRequestHandler<GetDanOdaiQuery, List<DanData>>
 {

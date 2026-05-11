@@ -2,7 +2,7 @@ using Throw;
 
 namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct UpdatePlayResultCommand(uint Baid, CommonPlayResultData PlayResultData) : IRequest<uint>;
+public readonly record struct UpdatePlayResultCommand(uint Baid, GameEra Era, CommonPlayResultData PlayResultData) : IRequest<uint>;
 
 public class UpdatePlayResultCommandHandler(ITaikoDbContext context, ILogger<UpdatePlayResultCommandHandler> logger)
     : IRequestHandler<UpdatePlayResultCommand, uint>

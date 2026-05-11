@@ -9,7 +9,7 @@ public class MyDonEntryController : BaseProtocolController<MyDonEntryController>
     {
         Logger.LogInformation("MyDonEntry request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new AddMyDonEntryCommand(request.WechatQrStr, request.MydonName, request.MydonNameLanguage), HttpContext.RequestAborted);
+        var commonResponse = await Mediator.Send(new AddMyDonEntryCommand(GameEra.Nijiiro, request.WechatQrStr, request.MydonName, request.MydonNameLanguage), HttpContext.RequestAborted);
         var response = MyDonEntryMappers.MapToCN00(commonResponse);
         return Ok(response);
     }

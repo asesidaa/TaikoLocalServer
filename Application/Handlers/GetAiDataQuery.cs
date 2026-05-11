@@ -2,7 +2,7 @@ using Throw;
 
 namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct GetAiDataQuery(uint Baid) : IRequest<CommonAiDataResponse>;
+public readonly record struct GetAiDataQuery(uint Baid, GameEra Era) : IRequest<CommonAiDataResponse>;
 
 public class GetAiDataQueryHandler : IRequestHandler<GetAiDataQuery, CommonAiDataResponse>
 {

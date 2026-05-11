@@ -2,7 +2,7 @@ using Throw;
 
 namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct AddTokenCountCommand(CommonAddTokenCountRequest Request) : IRequest;
+public readonly record struct AddTokenCountCommand(GameEra Era, CommonAddTokenCountRequest Request) : IRequest;
 
 public class AddTokenCountCommandHandler : IRequestHandler<AddTokenCountCommand>
 {

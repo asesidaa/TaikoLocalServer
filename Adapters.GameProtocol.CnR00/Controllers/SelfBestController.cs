@@ -10,7 +10,7 @@ public class SelfBestController : BaseProtocolController<SelfBestController>
         Logger.LogInformation("SelfBestCN00 request : {Request}", request.Stringify());
 
         var commonResponse =
-            await Mediator.Send(new GetSelfBestQuery((uint)request.Baid, request.Level, request.ArySongNoes), HttpContext.RequestAborted);
+            await Mediator.Send(new GetSelfBestQuery((uint)request.Baid, GameEra.Nijiiro, request.Level, request.ArySongNoes), HttpContext.RequestAborted);
         var response = SelfBestMappers.MapToCN00(commonResponse);
 
         return Ok(response);

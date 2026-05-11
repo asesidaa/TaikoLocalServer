@@ -2,7 +2,7 @@ using Throw;
 
 namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct BaidQuery(string AccessCode) : IRequest<CommonBaidResponse>;
+public readonly record struct BaidQuery(GameEra Era, string AccessCode) : IRequest<CommonBaidResponse>;
 
 public class BaidQueryHandler(
     ITaikoDbContext context,

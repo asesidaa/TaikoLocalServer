@@ -2,9 +2,9 @@ using Throw;
 
 namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct PurchaseSongCommand(uint Baid, uint SongNo, uint Type, uint TokenId, uint Price) : IRequest<CommonSongPurchaseResponse>;
+public readonly record struct PurchaseSongCommand(uint Baid, GameEra Era, uint SongNo, uint Type, uint TokenId, uint Price) : IRequest<CommonSongPurchaseResponse>;
 
-public readonly record struct PurchaseSongCommandCN(uint Baid, uint SongNo, uint TokenId, uint Price) : IRequest<CommonSongPurchaseResponse>;
+public readonly record struct PurchaseSongCommandCN(uint Baid, GameEra Era, uint SongNo, uint TokenId, uint Price) : IRequest<CommonSongPurchaseResponse>;
 
 public class PurchaseSongCommandHandler(ITaikoDbContext context, ILogger<PurchaseSongCommandHandler> logger) 
     : IRequestHandler<PurchaseSongCommand, CommonSongPurchaseResponse>

@@ -9,7 +9,7 @@ public class InitialDataCheckController : BaseProtocolController<InitialDataChec
     {
         Logger.LogInformation("Initial data check request: {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new GetInitialDataQuery(), HttpContext.RequestAborted);
+        var commonResponse = await Mediator.Send(new GetInitialDataQuery(GameEra.Nijiiro), HttpContext.RequestAborted);
         var response = InitialDataMappers.MapToWW08(commonResponse);
 
         return Ok(response);

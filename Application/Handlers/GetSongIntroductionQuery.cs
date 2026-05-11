@@ -1,6 +1,6 @@
 ﻿namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct GetSongIntroductionQuery(uint[] SetIds) : IRequest<CommonGetSongIntroductionResponse>;
+public readonly record struct GetSongIntroductionQuery(GameEra Era, uint[] SetIds) : IRequest<CommonGetSongIntroductionResponse>;
 
 public class GetSongIntroductionQueryHandler(IGameDataCatalog gameDataService, ILogger<GetSongIntroductionQueryHandler> logger) 
     : IRequestHandler<GetSongIntroductionQuery, CommonGetSongIntroductionResponse>

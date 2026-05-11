@@ -2,7 +2,7 @@ using Throw;
 
 namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct GetDanScoreQuery(uint Baid, uint Type, uint[] DanIds) : IRequest<CommonDanScoreDataResponse>;
+public readonly record struct GetDanScoreQuery(uint Baid, GameEra Era, uint Type, uint[] DanIds) : IRequest<CommonDanScoreDataResponse>;
 
 public class GetDanScoreQueryHandler : IRequestHandler<GetDanScoreQuery, CommonDanScoreDataResponse>
 {

@@ -9,7 +9,7 @@ public class GetTokenCountController : BaseProtocolController<GetTokenCountContr
     {
         Logger.LogInformation("GetTokenCount request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new GetTokenCountQuery((uint)request.Baid), HttpContext.RequestAborted);
+        var commonResponse = await Mediator.Send(new GetTokenCountQuery((uint)request.Baid, GameEra.Nijiiro), HttpContext.RequestAborted);
         var response = TokenCountDataMappers.MapToCN00(commonResponse);
 
         return Ok(response);

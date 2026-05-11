@@ -9,7 +9,7 @@ public class AddTokenCountController : BaseProtocolController<AddTokenCountContr
     {
         Logger.LogInformation("[CN00] AddTokenCount request : {Request}", request.Stringify());
 
-        var command = new AddTokenCountCommand(AddTokenCountRequestMapper.Map(request));
+        var command = new AddTokenCountCommand(GameEra.Nijiiro, AddTokenCountRequestMapper.Map(request));
         await Mediator.Send(command, HttpContext.RequestAborted);
 
         var response = new AddTokenCountResponse

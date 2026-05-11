@@ -1,7 +1,7 @@
 
 namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct GetTokenCountQuery(uint Baid) : IRequest<CommonGetTokenCountResponse>;
+public readonly record struct GetTokenCountQuery(uint Baid, GameEra Era) : IRequest<CommonGetTokenCountResponse>;
 
 public class GetTokenCountQueryHandler(IGameDataCatalog gameDataService,
     ITaikoDbContext context,

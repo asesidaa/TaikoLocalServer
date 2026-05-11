@@ -9,7 +9,7 @@ public class GetAiDataController : BaseProtocolController<GetAiDataController>
     {
         Logger.LogInformation("GetAiData request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new GetAiDataQuery((uint)request.Baid), HttpContext.RequestAborted);
+        var commonResponse = await Mediator.Send(new GetAiDataQuery((uint)request.Baid, GameEra.Nijiiro), HttpContext.RequestAborted);
         var response = AiDataResponseMapper.MapToCN00(commonResponse);
         return Ok(response);
     }

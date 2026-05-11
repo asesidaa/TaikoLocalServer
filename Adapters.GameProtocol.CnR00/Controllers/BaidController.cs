@@ -9,7 +9,7 @@ public class BaidController : BaseProtocolController<BaidController>
     {
         Logger.LogInformation("Baid request: {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new BaidQuery(request.WechatQrStr), HttpContext.RequestAborted);
+        var commonResponse = await Mediator.Send(new BaidQuery(GameEra.Nijiiro, request.WechatQrStr), HttpContext.RequestAborted);
         BAIDResponse response;
         if (commonResponse.IsNewUser)
         {

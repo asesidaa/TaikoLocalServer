@@ -14,7 +14,7 @@ public class PlayResultController : BaseProtocolController<PlayResultController>
         Logger.LogInformation("Play result data CN00 {Data}", playResultData.Stringify());
 
         var commonRequest = PlayResultMappers.Map(playResultData);
-        var commonResponse = await Mediator.Send(new UpdatePlayResultCommand((uint) request.BaidConf, commonRequest), HttpContext.RequestAborted);
+        var commonResponse = await Mediator.Send(new UpdatePlayResultCommand((uint) request.BaidConf, GameEra.Nijiiro, commonRequest), HttpContext.RequestAborted);
         var response = new PlayResultResponse
         {
             Result = commonResponse

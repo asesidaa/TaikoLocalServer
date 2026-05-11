@@ -9,7 +9,7 @@ public class GetAiScoreController : BaseProtocolController<GetAiScoreController>
     {
         Logger.LogInformation("GetAiScore request : {Request}", request.Stringify());
 
-        var commonResponse = await Mediator.Send(new GetAiScoreQuery(request.Baid, request.SongNo, request.Level), HttpContext.RequestAborted);
+        var commonResponse = await Mediator.Send(new GetAiScoreQuery(request.Baid, GameEra.Nijiiro, request.SongNo, request.Level), HttpContext.RequestAborted);
         var response = AiScoreMappers.MapToWW08(commonResponse);
 
         return Ok(response);
