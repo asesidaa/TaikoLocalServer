@@ -2,4 +2,5 @@
 wwwroot/data/musicinfo.json
 wwwroot/data/wordlist.json
 wwwroot/data/datatable/*
+wwwroot/data/*/datatable/*
 wwwroot/taiko.db3
