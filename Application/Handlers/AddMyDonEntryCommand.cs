@@ -4,8 +4,7 @@ public readonly record struct AddMyDonEntryCommand(GameEra Era, string AccessCod
 
 public partial class AddMyDonEntryCommandHandler(
     ITaikoDbContext context,
-    ILogger<AddMyDonEntryCommandHandler> logger,
-    IGameDataCatalog gameDataService)
+    ILogger<AddMyDonEntryCommandHandler> logger)
     : IRequestHandler<AddMyDonEntryCommand, CommonMyDonEntryResponse>
 {
     public ValueTask<CommonMyDonEntryResponse> Handle(AddMyDonEntryCommand request, CancellationToken cancellationToken) => request.Era switch

@@ -6,36 +6,51 @@ public partial class AddMyDonEntryCommandHandler
         AddMyDonEntryCommand request,
         CancellationToken cancellationToken)
     {
-        var nextBaid = await context.Cards.Select(card => card.Baid)
-            .DefaultIfEmpty()
-            .MaxAsync(cancellationToken) + 1;
+        var existingCard = await context.Cards.FindAsync([request.AccessCode], cancellationToken);
+        var baid = existingCard?.Baid
+            ?? await context.Cards.Select(card => card.Baid)
+                .DefaultIfEmpty()
+                .MaxAsync(cancellationToken) + 1;
 
-        context.UserData.Add(new UserDatum
+        var userData = await context.UserData.FindAsync([baid], cancellationToken);
+        if (userData is null)
         {
-            Baid = nextBaid,
-            MyDonName = request.Name,
-            MyDonNameLanguage = request.Language
-        });
-
-        context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(nextBaid));
-        context.Cards.Add(new Card { AccessCode = request.AccessCode, Baid = nextBaid });
-        context.Credentials.Add(new Credential { Baid = nextBaid, Password = string.Empty, Salt = string.Empty });
-
-        foreach (var seed in GreenSeedDataService.CreateFakeBestSeeds(
-            nextBaid,
-            gameDataService.Green().MusicInfoFileOrder))
+            context.UserData.Add(new UserDatum
+            {
+                Baid = baid,
+                MyDonName = request.Name,
+                MyDonNameLanguage = request.Language
+            });
+        }
+        else
         {
-            context.SongBestDataGreen.Add(seed);
+            userData.MyDonName = request.Name;
+            userData.MyDonNameLanguage = request.Language;
+        }
+
+        if (await context.UserSaveDataGreen.FindAsync([baid], cancellationToken) is null)
+        {
+            context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(baid));
+        }
+
+        if (existingCard is null)
+        {
+            context.Cards.Add(new Card { AccessCode = request.AccessCode, Baid = baid });
+        }
+
+        if (await context.Credentials.FindAsync([baid], cancellationToken) is null)
+        {
+            context.Credentials.Add(new Credential { Baid = baid, Password = string.Empty, Salt = string.Empty });
         }
 
         await context.SaveChangesAsync(cancellationToken);
 
-        logger.LogInformation("Created Green user {Baid} for access code {AccessCode}", nextBaid, request.AccessCode);
+        logger.LogInformation("Created Green user {Baid} for access code {AccessCode}", baid, request.AccessCode);
 
         return new CommonMyDonEntryResponse
         {
             Result = 1,
-            Baid = nextBaid,
+            Baid = baid,
             MydonName = request.Name,
             MydonNameLanguage = request.Language,
             ComSvrResult = 1,

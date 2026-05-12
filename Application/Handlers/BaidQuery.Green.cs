@@ -21,14 +21,19 @@ public partial class BaidQueryHandler
             };
         }
 
+        var saveData = await context.UserSaveDataGreen.FindAsync([card.Baid], cancellationToken);
+        if (saveData is null)
+        {
+            return new CommonBaidResponse
+            {
+                Result = 1,
+                IsNewUser = true,
+                Baid = card.Baid
+            };
+        }
+
         var userData = await context.UserData.FindAsync([card.Baid], cancellationToken)
             ?? throw new InvalidOperationException($"User not found for Green card baid {card.Baid}.");
-        var saveData = await context.GetOrCreateGreenSaveDataAsync(card.Baid, cancellationToken);
-
-        if (GreenSeedDataService.GrantFirstFakeDanIfNeeded(saveData))
-        {
-            await context.SaveChangesAsync(cancellationToken);
-        }
 
         return new CommonBaidResponse
         {

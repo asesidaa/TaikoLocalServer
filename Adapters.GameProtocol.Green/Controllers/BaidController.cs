@@ -11,10 +11,22 @@ public class BaidController : BaseProtocolController<BaidController>
         Logger.LogInformation("Green Baid request: {Request}", request.Stringify());
         var common = await Mediator.Send(new BaidQuery(GameEra.Green, request.AccessCode), HttpContext.RequestAborted);
 
+        if (common.IsNewUser)
+        {
+            Logger.LogInformation("New Green user with access code {AccessCode}", request.AccessCode);
+
+            return Ok(new BAIDResponse
+            {
+                Result = 1,
+                PlayerType = 1,
+                Baid = common.Baid
+            });
+        }
+
         var response = BaidResponseMapper.Map(common);
         response.AccessCode = request.AccessCode;
         response.IsPublish = true;
-        response.PlayerType = common.IsNewUser ? 1u : 0u;
+        response.PlayerType = 0;
 
         return Ok(response);
     }

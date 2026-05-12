@@ -3,13 +3,12 @@ namespace TaikoLocalServer.Tests.Green;
 public sealed class GreenIdentityHandlerTests
 {
     [Fact]
-    public async Task AddMyDonEntry_Green_CreatesIdentitySaveAndSeeds()
+    public async Task AddMyDonEntry_Green_CreatesIdentityAndEmptySaveData()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         var handler = new AddMyDonEntryCommandHandler(
             fixture.Context,
-            NullLogger<AddMyDonEntryCommandHandler>.Instance,
-            fixture.Catalog);
+            NullLogger<AddMyDonEntryCommandHandler>.Instance);
 
         var response = await handler.Handle(
             new AddMyDonEntryCommand(GameEra.Green, "12345678901234567890", "DON", 0),
@@ -19,11 +18,11 @@ public sealed class GreenIdentityHandlerTests
         Assert.Equal((uint)1, response.Baid);
         Assert.NotNull(await fixture.Context.Cards.FindAsync("12345678901234567890"));
         Assert.NotNull(await fixture.Context.UserSaveDataGreen.FindAsync(1u));
-        Assert.NotEmpty(await fixture.Context.SongBestDataGreen.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.SongBestDataGreen.Where(row => row.Baid == 1).ToListAsync());
     }
 
     [Fact]
-    public async Task BaidQuery_Green_KnownCardReturnsSaveDataAndGrantsFirstDan()
+    public async Task BaidQuery_Green_KnownCardReturnsSaveDataWithoutGrantingFakeDan()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 7, MyDonName = "DON" });
@@ -42,7 +41,104 @@ public sealed class GreenIdentityHandlerTests
         Assert.Equal((uint)7, response.Baid);
         Assert.Equal("DON", response.MyDonName);
         Assert.Equal(GreenProtocolBytes.DanFlagBytes, response.GotDanFlg.Length);
-        Assert.Equal(0b0000_0001, response.GotDanFlg[0]);
+        Assert.Equal(0, response.GotDanFlg[0]);
+    }
+
+    [Fact]
+    public async Task BaidQuery_Green_CardWithoutGreenSaveIsNewForGreenRegistration()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 7, MyDonName = "NIIRO" });
+        fixture.Context.Cards.Add(new Card { Baid = 7, AccessCode = "999" });
+        fixture.Context.Credentials.Add(new Credential { Baid = 7, Password = string.Empty, Salt = string.Empty });
+        fixture.Context.UserSaveDataNijiiro.Add(UserSaveDataNijiiroExtensions.CreateDefaultNijiiroSaveData(7));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new BaidQueryHandler(
+            fixture.Context,
+            NullLogger<BaidQueryHandler>.Instance,
+            fixture.Catalog);
+
+        var response = await handler.Handle(new BaidQuery(GameEra.Green, "999"), CancellationToken.None);
+
+        Assert.True(response.IsNewUser);
+        Assert.Equal((uint)7, response.Baid);
+        Assert.Null(await fixture.Context.UserSaveDataGreen.FindAsync(7u));
+    }
+
+    [Fact]
+    public async Task AddMyDonEntry_Green_CompletesExistingSharedIdentityRegistration()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 7, MyDonName = "NIIRO" });
+        fixture.Context.Cards.Add(new Card { Baid = 7, AccessCode = "999" });
+        fixture.Context.Credentials.Add(new Credential { Baid = 7, Password = string.Empty, Salt = string.Empty });
+        fixture.Context.UserSaveDataNijiiro.Add(UserSaveDataNijiiroExtensions.CreateDefaultNijiiroSaveData(7));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new AddMyDonEntryCommandHandler(
+            fixture.Context,
+            NullLogger<AddMyDonEntryCommandHandler>.Instance);
+
+        var response = await handler.Handle(
+            new AddMyDonEntryCommand(GameEra.Green, "999", "GREEN", 0),
+            CancellationToken.None);
+
+        Assert.Equal((uint)1, response.Result);
+        Assert.Equal((uint)7, response.Baid);
+        Assert.NotNull(await fixture.Context.UserSaveDataGreen.FindAsync(7u));
+        Assert.Single(await fixture.Context.Cards.Where(card => card.AccessCode == "999").ToListAsync());
+        Assert.Single(await fixture.Context.UserData.Where(user => user.Baid == 7).ToListAsync());
+        Assert.Single(await fixture.Context.Credentials.Where(credential => credential.Baid == 7).ToListAsync());
+        Assert.Empty(await fixture.Context.SongBestDataGreen.Where(row => row.Baid == 7).ToListAsync());
+    }
+
+    [Fact]
+    public async Task BaidQuery_Nijiiro_CardWithoutNijiiroSaveIsNewForNijiiroRegistration()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 8, MyDonName = "GREEN" });
+        fixture.Context.Cards.Add(new Card { Baid = 8, AccessCode = "888" });
+        fixture.Context.Credentials.Add(new Credential { Baid = 8, Password = string.Empty, Salt = string.Empty });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(8));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new BaidQueryHandler(
+            fixture.Context,
+            NullLogger<BaidQueryHandler>.Instance,
+            fixture.Catalog);
+
+        var response = await handler.Handle(new BaidQuery(GameEra.Nijiiro, "888"), CancellationToken.None);
+
+        Assert.True(response.IsNewUser);
+        Assert.Equal((uint)8, response.Baid);
+        Assert.Null(await fixture.Context.UserSaveDataNijiiro.FindAsync(8u));
+    }
+
+    [Fact]
+    public async Task AddMyDonEntry_Nijiiro_CompletesExistingSharedIdentityRegistration()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 8, MyDonName = "GREEN" });
+        fixture.Context.Cards.Add(new Card { Baid = 8, AccessCode = "888" });
+        fixture.Context.Credentials.Add(new Credential { Baid = 8, Password = string.Empty, Salt = string.Empty });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(8));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new AddMyDonEntryCommandHandler(
+            fixture.Context,
+            NullLogger<AddMyDonEntryCommandHandler>.Instance);
+
+        var response = await handler.Handle(
+            new AddMyDonEntryCommand(GameEra.Nijiiro, "888", "NIIRO", 0),
+            CancellationToken.None);
+
+        Assert.Equal((uint)1, response.Result);
+        Assert.Equal((uint)8, response.Baid);
+        Assert.NotNull(await fixture.Context.UserSaveDataNijiiro.FindAsync(8u));
+        Assert.Single(await fixture.Context.Cards.Where(card => card.AccessCode == "888").ToListAsync());
+        Assert.Single(await fixture.Context.UserData.Where(user => user.Baid == 8).ToListAsync());
+        Assert.Single(await fixture.Context.Credentials.Where(credential => credential.Baid == 8).ToListAsync());
     }
 
     [Fact]

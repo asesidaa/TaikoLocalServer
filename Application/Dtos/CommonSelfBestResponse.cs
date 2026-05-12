@@ -8,6 +8,8 @@ public class CommonSelfBestResponse
 
     public List<SelfBestData> ArySelfbestScores { get; set; } = [];
 
+    public List<SelfBestData> AryShinSelfbestScores { get; set; } = [];
+
     public class SelfBestData
     {
         public uint SongNo        { get; set; }

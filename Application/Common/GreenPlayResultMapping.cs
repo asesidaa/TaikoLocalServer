@@ -24,7 +24,8 @@ public static class GreenPlayResultMapping
     {
         CrownType.Clear => GreenCrownState.Clear,
         CrownType.Gold => GreenCrownState.FullCombo,
-        CrownType.Dondaful => GreenCrownState.Dondaful,
+        // Green presents all-good like full combo; state 3 is not proven safe by the binary notes.
+        CrownType.Dondaful => GreenCrownState.FullCombo,
         _ => GreenCrownState.None
     };
 }

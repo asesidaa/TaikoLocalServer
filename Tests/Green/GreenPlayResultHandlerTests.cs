@@ -1,3 +1,9 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using TaikoLocalServer.Adapters.GameProtocol.Green.Controllers;
+using TaikoLocalServer.Adapters.GameProtocol.Green.Wire;
+
 namespace TaikoLocalServer.Tests.Green;
 
 public sealed class GreenPlayResultHandlerTests
@@ -102,6 +108,48 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
+    public async Task GetSelfBest_Green_ReturnsParallelZeroShinRows()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.SongBestDataGreen.Add(new SongBestDatumGreen
+        {
+            Baid = 1,
+            SongId = 101,
+            Difficulty = Difficulty.Normal,
+            BestScore = 765432,
+            BestCrown = CrownType.Gold
+        });
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new GetSelfBestQueryHandler(
+            fixture.Catalog,
+            fixture.Context,
+            NullLogger<GetSelfBestQueryHandler>.Instance);
+
+        var response = await handler.Handle(new GetSelfBestQuery(1, GameEra.Green, 1, [101, 102]), CancellationToken.None);
+
+        Assert.Equal((uint)1, response.Result);
+        Assert.Equal([101u, 102u], response.ArySelfbestScores.Select(row => row.SongNo).ToArray());
+        Assert.Equal([101u, 102u], response.AryShinSelfbestScores.Select(row => row.SongNo).ToArray());
+        Assert.Contains(response.ArySelfbestScores, row => row.SongNo == 101 && row.SelfBestScore == 765432);
+        Assert.All(response.AryShinSelfbestScores, row =>
+        {
+            Assert.Equal((uint)0, row.SelfBestScore);
+            Assert.Equal((uint)0, row.UraBestScore);
+        });
+    }
+
+    [Fact]
+    public void BuildGreenCrownResponseBody_EmptyRowsProduceAllZeroInflatedBody()
+    {
+        var packed = GreenCrownResponseBuilder.BuildInflatedBody([]);
+
+        Assert.Equal(GreenProtocolBytes.CrownInflatedBytes, packed.Length);
+        Assert.All(packed, value => Assert.Equal(0, value));
+    }
+
+    [Fact]
     public void BuildGreenCrownResponseBody_PacksSavedBestRows()
     {
         var rows = new[]
@@ -114,6 +162,71 @@ public sealed class GreenPlayResultHandlerTests
 
         Assert.Equal(GreenProtocolBytes.CrownInflatedBytes, packed.Length);
         Assert.Equal(0b0000_1001, ReadTenBitValue(packed, 101));
+    }
+
+    [Fact]
+    public void BuildGreenCrownResponseBody_EncodesDondafulAsFullComboForGreen()
+    {
+        var rows = new[]
+        {
+            new SongBestDatumGreen { SongId = 101, Difficulty = Difficulty.Hard, BestCrown = CrownType.Dondaful }
+        };
+
+        var packed = GreenCrownResponseBuilder.BuildInflatedBody(rows);
+
+        Assert.Equal(0b00_00_10_00_00, ReadTenBitValue(packed, 101));
+    }
+
+    [Fact]
+    public void BuildGreenCrownResponseBody_UsesSongIdAsCrownIndex()
+    {
+        var rows = new[]
+        {
+            new SongBestDatumGreen { SongId = 873, Difficulty = Difficulty.Easy, BestCrown = CrownType.Clear }
+        };
+
+        var packed = GreenCrownResponseBuilder.BuildInflatedBody(rows);
+
+        Assert.Equal(0, ReadTenBitValue(packed, 0));
+        Assert.Equal(0b0000_0001, ReadTenBitValue(packed, 873));
+    }
+
+    [Fact]
+    public async Task CrownsData_Green_EmptyBestRowsReturnsAllZeroCrownTable()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var controller = new CrownsDataController(fixture.Context, fixture.Catalog)
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    RequestServices = new ServiceCollection()
+                        .AddLogging()
+                        .BuildServiceProvider()
+                }
+            }
+        };
+
+        var result = await controller.CrownsData(new CrownsDataRequest
+        {
+            Baid = 1,
+            ChassisId = "chassis",
+            ShopId = "shop"
+        });
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var response = Assert.IsType<CrownsDataResponse>(ok.Value);
+        var inflated = InflateZlib(response.HashCrownFlg);
+
+        Assert.Equal((uint)1, response.Result);
+        Assert.Equal((uint)123, response.SongHashVer);
+        Assert.Equal(GreenProtocolBytes.CrownInflatedBytes, inflated.Length);
+        Assert.All(inflated, value => Assert.Equal(0, value));
     }
 
     private static ushort ReadTenBitValue(byte[] packed, int songNo)
@@ -131,5 +244,14 @@ public sealed class GreenPlayResultHandlerTests
         }
 
         return (ushort)value;
+    }
+
+    private static byte[] InflateZlib(byte[] compressed)
+    {
+        using var input = new MemoryStream(compressed);
+        using var zlib = new ZLibStream(input, CompressionMode.Decompress);
+        using var output = new MemoryStream();
+        zlib.CopyTo(output);
+        return output.ToArray();
     }
 }

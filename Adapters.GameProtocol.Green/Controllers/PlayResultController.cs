@@ -9,20 +9,37 @@ public class PlayResultController : BaseProtocolController<PlayResultController>
     public async Task<IActionResult> PlayResult([FromBody] PlayResultRequest request)
     {
         Logger.LogInformation(
-            "Green PlayResult request: baid={Baid} chassis={ChassisId} payload_bytes={PayloadBytes}",
+            "Green PlayResult request: baid={Baid} chassis={ChassisId} payload_bytes={PayloadBytes} payload_hex={PayloadHex}",
             request.BaidConf,
             request.ChassisIdConf,
-            request.PlayresultData?.Length ?? 0);
+            request.PlayresultData?.Length ?? 0,
+            GreenPlayResultPayloadDecoder.HexPreview(request.PlayresultData ?? []));
 
         CommonPlayResultData commonRequest;
         try
         {
-            commonRequest = PlayResultMappers.Map(
-                Serializer.Deserialize<PlayResultDataRequest>(new ReadOnlySpan<byte>(request.PlayresultData ?? [])));
+            var decoded = GreenPlayResultPayloadDecoder.Decode(request.PlayresultData ?? []);
+            Logger.LogInformation(
+                "Green PlayResult payload decoded as {Format}, decoded_bytes={DecodedBytes}",
+                decoded.Format,
+                decoded.DecodedBytes);
+            commonRequest = PlayResultMappers.Map(decoded.Request);
+            Logger.LogInformation(
+                "Green PlayResult received dump:{NewLine}{Dump}",
+                Environment.NewLine,
+                GreenPlayResultPayloadDecoder.BuildReceivedDump(decoded.Request, commonRequest));
+        }
+        catch (GreenPlayResultPayloadDecodeException ex)
+        {
+            Logger.LogError(
+                ex,
+                "Failed to decode gzip-compressed Green PlayResultDataRequest for baid {Baid}",
+                request.BaidConf);
+            return Ok(new PlayResultResponse { Result = 0 });
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Failed to deserialize Green PlayResultDataRequest for baid {Baid}", request.BaidConf);
+            Logger.LogError(ex, "Failed to process Green PlayResultDataRequest for baid {Baid}", request.BaidConf);
             return Ok(new PlayResultResponse { Result = 0 });
         }
 

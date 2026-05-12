@@ -49,7 +49,7 @@ public partial class UserDataQueryHandler
             PrevAreaCode = saveData.PrevAreaCode,
             ConsecAreaCnt = saveData.ConsecAreaCnt,
             DefaultShinSetting = saveData.DefaultShinSetting,
-            DispTaikojukuDan = saveData.DispTaikojukuDan,
+            DispTaikojukuDan = GetValidTaikojukuDanSlot(saveData.DispTaikojukuDan),
             DifficultyPlayedCourse = saveData.DifficultyPlayedCourse,
             DifficultyPlayedStar = saveData.DifficultyPlayedStar,
             IsChallengeCompe = saveData.IsChallengeCompe,
@@ -57,4 +57,7 @@ public partial class UserDataQueryHandler
             IsDevilGreen = saveData.IsDevil
         };
     }
+
+    private static uint? GetValidTaikojukuDanSlot(uint value)
+        => value is >= 1 and <= 25 ? value : null;
 }

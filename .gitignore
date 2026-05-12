@@ -398,3 +398,5 @@ FodyWeavers.xsd
 *.sln.iml
 TaikoLocalServer/wwwroot/data/music_attribute.bin
 /Published
+
+proto/

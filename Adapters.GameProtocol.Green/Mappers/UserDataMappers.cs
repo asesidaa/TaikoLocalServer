@@ -7,7 +7,7 @@ public static partial class UserDataMappers
 {
     public static UserDataResponse Map(CommonUserDataResponse common)
     {
-        return new UserDataResponse
+        var response = new UserDataResponse
         {
             Result = common.Result,
             AryFavoriteSongNoes = common.AryFavoriteSongNoes,
@@ -35,12 +35,18 @@ public static partial class UserDataMappers
             SongRecentCnt = common.SongRecentCnt,
             DefaultOptionSetting = common.DefaultOptionSetting,
             DefaultShinSetting = common.DefaultShinSetting.GetValueOrDefault(),
-            DispTaikojukuDan = common.DispTaikojukuDan.GetValueOrDefault(),
             DifficultyPlayedCourse = common.DifficultyPlayedCourse,
             DifficultyPlayedStar = common.DifficultyPlayedStar,
             IsChallengecompe = common.IsChallengeCompe.GetValueOrDefault(),
             IsTojiru = common.IsTojiru.GetValueOrDefault(),
             IsDevil = common.IsDevilGreen.GetValueOrDefault()
         };
+
+        if (common.DispTaikojukuDan is { } dispTaikojukuDan && dispTaikojukuDan is >= 1 and <= 25)
+        {
+            response.DispTaikojukuDan = dispTaikojukuDan;
+        }
+
+        return response;
     }
 }

@@ -69,7 +69,7 @@
 
   <ItemGroup>
     <!--Certificates-->
-    <None Update="Certificates\cert.pfx">
+    <None Update="Certificates\cert1.pfx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Certificates\root.pfx">

@@ -20,6 +20,13 @@ public static partial class SelfBestMappers
             UraBestScore = row.UraBestScore
         }));
 
+        response.AryShinSelfbestScores.AddRange(common.AryShinSelfbestScores.Select(row => new SelfBestResponse.SelfBestData
+        {
+            SongNo = row.SongNo,
+            SelfBestScore = row.SelfBestScore,
+            UraBestScore = row.UraBestScore
+        }));
+
         return response;
     }
 }

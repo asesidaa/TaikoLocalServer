@@ -19,9 +19,19 @@ public partial class BaidQueryHandler
         }
 
         var baid = card.Baid;
+        var saveData = await context.UserSaveDataNijiiro.FindAsync([baid], cancellationToken);
+        if (saveData is null)
+        {
+            return new CommonBaidResponse
+            {
+                Result = 1,
+                IsNewUser = true,
+                Baid = baid
+            };
+        }
+
         var userData = await context.UserData.FindAsync(baid, cancellationToken);
         userData.ThrowIfNull($"User not found for card with Baid {baid}!");
-        var saveData = await context.GetOrCreateNijiiroSaveDataAsync(baid, cancellationToken);
 
         var timeLimitSongsList = gameDataService.Nijiiro().GetTimeLimitedSongsList();
 
