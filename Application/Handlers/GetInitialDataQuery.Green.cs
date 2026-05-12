@@ -18,10 +18,12 @@ public partial class GetInitialDataQueryHandler
             IsClose = false,
             IsItemshop = true,
             IsGhostbattleplay = true,
-            AryGreenTaikojukuDatas = green.TaikojukuFileOrder.Take(3)
+            AryGreenTaikojukuDatas = green.TaikojukuFileOrder
+                .Where(entry => entry.ChallengeLevel is >= 1 and <= 25)
+                .Take(3)
                 .Select(entry => new CommonInitialDataCheckResponse.InformationData
                 {
-                    InfoId = entry.UniqueId != 0 ? entry.UniqueId : entry.ChallengeLevel,
+                    InfoId = entry.ChallengeLevel,
                     VerupNo = entry.VerupNo
                 })
                 .ToList(),

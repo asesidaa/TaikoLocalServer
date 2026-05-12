@@ -85,6 +85,17 @@ internal sealed class GreenHandlerFixture : IAsyncDisposable
                     new() { SongNo = 102, Level = 0 },
                     new() { SongNo = 103, Level = 0 }
                 ]
+            },
+            new()
+            {
+                UniqueId = 20026,
+                ChallengeLevel = 101,
+                Songs =
+                [
+                    new() { SongNo = 104, Level = 1 },
+                    new() { SongNo = 105, Level = 1 },
+                    new() { SongNo = 106, Level = 1 }
+                ]
             }
         ];
 

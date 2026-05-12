@@ -8,22 +8,26 @@ public partial class GetTaikojukuQueryHandler
     {
         logger.LogDebug("Reading Green Taikojuku packs for {Count} requested dans", request.RequestedDans.Count);
         var green = gameDataService.Green();
-        var requested = request.RequestedDans.ToHashSet();
+        var requestedSlots = GetRequestedSlots(request.RequestedDans);
+        var validPacksBySlot = green.TaikojukuFileOrder
+            .Where(pack => IsValidDanSlot(pack.ChallengeLevel))
+            .GroupBy(pack => pack.ChallengeLevel)
+            .ToDictionary(group => group.Key, group => group.First());
 
-        var packs = green.TaikojukuFileOrder
-            .Where(pack => requested.Count == 0 || requested.Contains(pack.UniqueId))
-            .ToList();
-
-        if (packs.Count == 0)
+        var packs = new List<GreenTaikojukuEntry>();
+        foreach (var slot in requestedSlots)
         {
-            packs = green.TaikojukuFileOrder
-                .Where(pack => requested.Contains(pack.ChallengeLevel))
-                .ToList();
-        }
+            if (validPacksBySlot.TryGetValue(slot, out var pack))
+            {
+                packs.Add(pack);
+                continue;
+            }
 
-        if (packs.Count == 0)
-        {
-            packs = CreateFallbackPacks(green);
+            var fallback = CreateFallbackPack(green, slot, packs.Count);
+            if (fallback is not null)
+            {
+                packs.Add(fallback);
+            }
         }
 
         return ValueTask.FromResult(new CommonTaikojukuResponse
@@ -33,46 +37,63 @@ public partial class GetTaikojukuQueryHandler
         });
     }
 
-    private static List<GreenTaikojukuEntry> CreateFallbackPacks(IGreenCatalog green)
+    private static bool IsValidDanSlot(uint getDan)
+        => getDan is >= 1 and <= 25;
+
+    private static IReadOnlyList<uint> GetRequestedSlots(IReadOnlyList<uint> requestedDans)
     {
-        var songs = green.MusicInfoFileOrder.Take(6).ToArray();
-        if (songs.Length == 0)
+        var requestedSlots = requestedDans
+            .Where(IsValidDanSlot)
+            .Distinct()
+            .ToArray();
+
+        if (requestedSlots.Length > 0 || requestedDans.Count == 0)
         {
-            return [];
+            return requestedSlots;
         }
 
-        return
-        [
-            new GreenTaikojukuEntry
+        return Enumerable.Range(1, Math.Min(requestedDans.Count, 25))
+            .Select(slot => (uint)slot)
+            .ToArray();
+    }
+
+    private static GreenTaikojukuEntry? CreateFallbackPack(
+        IGreenCatalog green,
+        uint slot,
+        int index)
+    {
+        var songs = green.MusicInfoFileOrder
+            .Skip(index * 3)
+            .Take(3)
+            .ToArray();
+        if (songs.Length == 0)
+        {
+            songs = green.MusicInfoFileOrder.Take(3).ToArray();
+        }
+
+        if (songs.Length == 0)
+        {
+            return null;
+        }
+
+        return new GreenTaikojukuEntry
+        {
+            UniqueId = slot,
+            ChallengeLevel = slot,
+            Songs = songs.Select(song => new GreenTaikojukuSong
             {
-                UniqueId = 1,
-                ChallengeLevel = 1,
-                Songs = songs.Take(3).Select(song => new GreenTaikojukuSong
-                {
-                    SongNo = song.SongNo,
-                    Level = 0,
-                    MusicId = song.MusicId
-                }).ToArray()
-            },
-            new GreenTaikojukuEntry
-            {
-                UniqueId = 2,
-                ChallengeLevel = 2,
-                Songs = songs.Skip(3).Take(3).DefaultIfEmpty(songs[0]).Select(song => new GreenTaikojukuSong
-                {
-                    SongNo = song.SongNo,
-                    Level = 1,
-                    MusicId = song.MusicId
-                }).ToArray()
-            }
-        ];
+                SongNo = song.SongNo,
+                Level = (uint)Math.Min(index, 4),
+                MusicId = song.MusicId
+            }).ToArray()
+        };
     }
 
     private static CommonTaikojukuResponse.Pack ToCommonPack(GreenTaikojukuEntry entry)
     {
         return new CommonTaikojukuResponse.Pack
         {
-            GetDan = entry.UniqueId != 0 ? entry.UniqueId : entry.ChallengeLevel,
+            GetDan = entry.ChallengeLevel,
             VerupNo = entry.VerupNo,
             Songs = entry.Songs.Select(song => new CommonTaikojukuResponse.Song
             {
