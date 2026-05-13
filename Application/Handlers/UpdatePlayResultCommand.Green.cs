@@ -5,6 +5,7 @@ namespace TaikoLocalServer.Application.Handlers;
 public partial class UpdatePlayResultCommandHandler
 {
     private const uint MaxGreenCourseLevel = 4;
+    private const uint MaxGreenStageMode = 1;
     private const uint MaxGreenPlayResult = 3;
     private const uint MaxGreenDanSlot = 25;
 
@@ -70,6 +71,7 @@ public partial class UpdatePlayResultCommandHandler
         return stage.SongNo < GreenProtocolBytes.SongFlagBytes * 8
             && green.GreenMusicInfos.ContainsKey(stage.SongNo)
             && stage.Level <= MaxGreenCourseLevel
+            && stage.StageMode <= MaxGreenStageMode
             && stage.PlayResult <= MaxGreenPlayResult
             && stage.PlayDan is null or (>= 1 and <= MaxGreenDanSlot);
     }
@@ -140,6 +142,7 @@ public partial class UpdatePlayResultCommandHandler
     {
         var difficulty = GreenPlayResultMapping.MapDifficulty(stage.Level);
         var crown = GreenPlayResultMapping.MapCrown(stage.PlayResult);
+        var isShin = stage.StageMode == 1;
         var play = new SongPlayDatumGreen
         {
             Baid = baid,
@@ -159,10 +162,13 @@ public partial class UpdatePlayResultCommandHandler
             OptionFlg = stage.OptionFlg,
             ToneFlg = stage.ToneFlg,
             PlayMode = playMode,
+            StageMode = stage.StageMode,
+            IsShin = isShin,
             MusicCategory = stage.MusicCateg,
             SelectedFolderId = stage.SelectedFolderId,
             IsFavorite = stage.IsFavorite,
             IsRecent = stage.IsRecent,
+            IsPapamama = stage.IsPapamama,
             SoulGauge = stage.SoulGauge.GetValueOrDefault(),
             PlayDan = stage.PlayDan.GetValueOrDefault(),
             WaiwaiResult = stage.WaiwaiResult.GetValueOrDefault(),
@@ -190,7 +196,7 @@ public partial class UpdatePlayResultCommandHandler
             }
         }
 
-        await UpsertBestAsync(baid, stage, difficulty, crown, cancellationToken);
+        await UpsertBestAsync(baid, stage, difficulty, crown, isShin, cancellationToken);
         await UpsertFavoriteAndRecentAsync(baid, stage, cancellationToken);
     }
 
@@ -199,9 +205,10 @@ public partial class UpdatePlayResultCommandHandler
         CommonPlayResultData.StageData stage,
         Difficulty difficulty,
         CrownType crown,
+        bool isShin,
         CancellationToken cancellationToken)
     {
-        var existing = await context.SongBestDataGreen.FindAsync([baid, stage.SongNo, difficulty], cancellationToken);
+        var existing = await context.SongBestDataGreen.FindAsync([baid, stage.SongNo, difficulty, isShin], cancellationToken);
         if (existing is null)
         {
             context.SongBestDataGreen.Add(new SongBestDatumGreen
@@ -209,6 +216,7 @@ public partial class UpdatePlayResultCommandHandler
                 Baid = baid,
                 SongId = stage.SongNo,
                 Difficulty = difficulty,
+                IsShin = isShin,
                 BestScore = stage.PlayScore,
                 BestRate = stage.ScoreRate,
                 BestCrown = crown
