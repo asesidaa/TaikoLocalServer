@@ -67,7 +67,7 @@ public sealed class GreenGhostRewardTests
     }
 
     [Fact]
-    public async Task RewardExecution_SetsGreenUnlockBits()
+    public async Task RewardExecution_RejectsUnknownInRangeRewardIds()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -90,10 +90,10 @@ public sealed class GreenGhostRewardTests
             [4]), CancellationToken.None);
 
         var save = await fixture.Context.UserSaveDataGreen.FindAsync(1u);
-        Assert.Equal((uint)1, response.Result);
-        Assert.True((save!.ToneFlg[2 >> 3] & (1 << (2 & 7))) != 0);
-        Assert.True((save.CostumeFlg1[3 >> 3] & (1 << (3 & 7))) != 0);
-        Assert.True((save.TitleFlg[4 >> 3] & (1 << (4 & 7))) != 0);
+        Assert.Equal((uint)0, response.Result);
+        Assert.False((save!.ToneFlg[2 >> 3] & (1 << (2 & 7))) != 0);
+        Assert.False((save.CostumeFlg1[3 >> 3] & (1 << (3 & 7))) != 0);
+        Assert.False((save.TitleFlg[4 >> 3] & (1 << (4 & 7))) != 0);
     }
 
     [Fact]
