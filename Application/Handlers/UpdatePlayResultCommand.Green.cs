@@ -19,7 +19,7 @@ public partial class UpdatePlayResultCommandHandler
         if (!CanAdd(saveData.TotalGetDonmedal, playResultData.GetDonmedal)
             || !CanAdd(saveData.TotalGetKatsumedal, playResultData.GetKatsumedal)
             || playResultData.AryStageInfoes.Any(stage => !IsValidGreenStage(stage, green))
-            || !HasOnlyKnownUnlockRewards(saveData, playResultData)
+            || !HasOnlyInRangeUnlockRewards(playResultData)
             || (playResultData.HasAryCurrentCostume && !IsValidCurrentCostume(saveData, playResultData.AryCurrentCostume)))
         {
             logger.LogWarning("Rejecting invalid Green playresult payload for baid {Baid}", request.Baid);
@@ -90,9 +90,6 @@ public partial class UpdatePlayResultCommandHandler
         return (fixedBytes[id >> 3] & (1 << ((int)id & 7))) != 0;
     }
 
-    private static bool AllAlreadyUnlocked(byte[] source, IEnumerable<uint> ids, int byteCount)
-        => ids.All(id => HasBit(source, id, byteCount));
-
     private static bool IsValidCurrentCostume(UserSaveDataGreen saveData, CommonPlayResultData.CostumeData costume)
     {
         return HasBit(saveData.CostumeFlg1, costume.Costume1, GreenProtocolBytes.CostumeFlagBytes)
@@ -102,15 +99,21 @@ public partial class UpdatePlayResultCommandHandler
             && HasBit(saveData.CostumeFlg5, costume.Costume5, GreenProtocolBytes.CostumeFlagBytes);
     }
 
-    private static bool HasOnlyKnownUnlockRewards(UserSaveDataGreen saveData, CommonPlayResultData playResultData)
+    private static bool HasOnlyInRangeUnlockRewards(CommonPlayResultData playResultData)
     {
-        return AllAlreadyUnlocked(saveData.ToneFlg, playResultData.GetToneNoes, GreenProtocolBytes.ToneFlagBytes)
-            && AllAlreadyUnlocked(saveData.CostumeFlg1, playResultData.GetCostumeNo1s, GreenProtocolBytes.CostumeFlagBytes)
-            && AllAlreadyUnlocked(saveData.CostumeFlg2, playResultData.GetCostumeNo2s, GreenProtocolBytes.CostumeFlagBytes)
-            && AllAlreadyUnlocked(saveData.CostumeFlg3, playResultData.GetCostumeNo3s, GreenProtocolBytes.CostumeFlagBytes)
-            && AllAlreadyUnlocked(saveData.CostumeFlg4, playResultData.GetCostumeNo4s, GreenProtocolBytes.CostumeFlagBytes)
-            && AllAlreadyUnlocked(saveData.CostumeFlg5, playResultData.GetCostumeNo5s, GreenProtocolBytes.CostumeFlagBytes)
-            && AllAlreadyUnlocked(saveData.TitleFlg, playResultData.GetTitleNoes, GreenProtocolBytes.TitleFlagBytes);
+        return AllWithinRange(playResultData.GetToneNoes, GreenProtocolBytes.ToneFlagBytes)
+            && AllWithinRange(playResultData.GetCostumeNo1s, GreenProtocolBytes.CostumeFlagBytes)
+            && AllWithinRange(playResultData.GetCostumeNo2s, GreenProtocolBytes.CostumeFlagBytes)
+            && AllWithinRange(playResultData.GetCostumeNo3s, GreenProtocolBytes.CostumeFlagBytes)
+            && AllWithinRange(playResultData.GetCostumeNo4s, GreenProtocolBytes.CostumeFlagBytes)
+            && AllWithinRange(playResultData.GetCostumeNo5s, GreenProtocolBytes.CostumeFlagBytes)
+            && AllWithinRange(playResultData.GetTitleNoes, GreenProtocolBytes.TitleFlagBytes);
+    }
+
+    private static bool AllWithinRange(IEnumerable<uint> ids, int byteCount)
+    {
+        var maxBits = (uint)(byteCount * 8);
+        return ids.All(id => id < maxBits);
     }
 
     private static void ApplyCostume(UserSaveDataGreen saveData, CommonPlayResultData.CostumeData costume)

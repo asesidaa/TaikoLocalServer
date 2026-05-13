@@ -403,6 +403,99 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
+    public async Task UpdatePlayResult_Green_AcceptsNewlyAwardedRewardIds()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                GetToneNoes = [4],
+                GetCostumeNo1s = [1, 43, 3, 44],
+                GetTitleNoes = [106, 132, 144, 151, 158, 181],
+                AryStageInfoes =
+                [
+                    new CommonPlayResultData.StageData
+                    {
+                        SongNo = 101,
+                        Level = 1,
+                        StageMode = 0,
+                        PlayResult = 1,
+                        PlayScore = 229170,
+                        GoodCnt = 49,
+                        OkCnt = 12,
+                        NgCnt = 1,
+                        PoundCnt = 66,
+                        ComboCnt = 54,
+                        HitCnt = 127,
+                        OptionFlg = [0, 0],
+                        ToneFlg = new byte[16]
+                    }
+                ]
+            }),
+            CancellationToken.None);
+
+        var save = await fixture.Context.UserSaveDataGreen.FindAsync(1u);
+
+        Assert.Equal(1u, result);
+        Assert.True(BitIsSet(save!.ToneFlg, 4));
+        Assert.True(BitIsSet(save.CostumeFlg1, 1));
+        Assert.True(BitIsSet(save.CostumeFlg1, 43));
+        Assert.True(BitIsSet(save.CostumeFlg1, 44));
+        Assert.True(BitIsSet(save.TitleFlg, 106));
+        Assert.True(BitIsSet(save.TitleFlg, 181));
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Green_RejectsOutOfRangeRewardIds()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                GetTitleNoes = [(uint)GreenProtocolBytes.TitleFlagBytes * 8],
+                AryStageInfoes =
+                [
+                    new CommonPlayResultData.StageData
+                    {
+                        SongNo = 101,
+                        Level = 1,
+                        StageMode = 0,
+                        PlayResult = 1,
+                        PlayScore = 1000
+                    }
+                ]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(0u, result);
+        Assert.Empty(await fixture.Context.SongPlayDataGreen.ToListAsync());
+    }
+
+    [Fact]
     public async Task GetSelfBest_Green_ReturnsSavedBest()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
@@ -618,6 +711,11 @@ public sealed class GreenPlayResultHandlerTests
         }
 
         return (ushort)value;
+    }
+
+    private static bool BitIsSet(byte[] source, uint id)
+    {
+        return (source[id >> 3] & (1 << ((int)id & 7))) != 0;
     }
 
     private static byte[] InflateZlib(byte[] compressed)
