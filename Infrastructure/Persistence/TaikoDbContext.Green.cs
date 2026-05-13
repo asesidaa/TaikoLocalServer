@@ -20,7 +20,7 @@ public partial class TaikoDbContext
         modelBuilder.Entity<SongBestDatumGreen>(entity =>
         {
             entity.ToTable("SongBestDatum_Green");
-            entity.HasKey(e => new { e.Baid, e.SongId, e.Difficulty });
+            entity.HasKey(e => new { e.Baid, e.SongId, e.Difficulty, e.IsShin });
             entity.HasOne(d => d.Ba)
                 .WithMany()
                 .HasPrincipalKey(p => p.Baid)

@@ -23,6 +23,7 @@ public partial class SongPlayDatumGreen
     public byte[] ToneFlg { get; set; } = [];
     public uint PlayMode { get; set; }
     public uint StageMode { get; set; }
+    public bool IsShin { get; set; }
     public uint MusicCategory { get; set; }
     public uint SelectedFolderId { get; set; }
     public bool IsFavorite { get; set; }
