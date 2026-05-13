@@ -2,7 +2,10 @@ namespace TaikoLocalServer.Application.Handlers;
 
 public readonly record struct UpdatePlayResultCommand(uint Baid, GameEra Era, CommonPlayResultData PlayResultData) : IRequest<uint>;
 
-public partial class UpdatePlayResultCommandHandler(ITaikoDbContext context, ILogger<UpdatePlayResultCommandHandler> logger)
+public partial class UpdatePlayResultCommandHandler(
+    ITaikoDbContext context,
+    IGameDataCatalog gameDataService,
+    ILogger<UpdatePlayResultCommandHandler> logger)
     : IRequestHandler<UpdatePlayResultCommand, uint>
 {
     public ValueTask<uint> Handle(UpdatePlayResultCommand request, CancellationToken cancellationToken) => request.Era switch

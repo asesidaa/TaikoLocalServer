@@ -35,6 +35,7 @@ public static partial class PlayResultMappers
             IsExplain = request.IsExplain,
             AryPlayCostume = MapCostume(request.AryPlayCostume),
             AryCurrentCostume = MapCostume(request.AryCurrentCostume),
+            HasAryCurrentCostume = request.AryCurrentCostume is not null,
             GenderType = request.GenderType,
             PlayerAge = request.PlayerAge,
             PlayMode = request.PlayMode,
@@ -49,6 +50,8 @@ public static partial class PlayResultMappers
             ContentInfo = request.ContentInfo ?? [],
             DifficultyPlayedCourse = request.DifficultyPlayedCourse,
             DifficultyPlayedStar = request.DifficultyPlayedStar,
+            HasDifficultyPlayedCourse = request.ShouldSerializeDifficultyPlayedCourse(),
+            HasDifficultyPlayedStar = request.ShouldSerializeDifficultyPlayedStar(),
             WaiwaiTutorialFlg = request.WaiwaiTutorialFlg,
             GhostReleaseData = MapGhostRelease(request.GhostReleaseData),
             GhostUpdatePerfData = request.GhostUpdatePerfdata is null ? null : new CommonPlayResultData.UpdateGhostPerfData

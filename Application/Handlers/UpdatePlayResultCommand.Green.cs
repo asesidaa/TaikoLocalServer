@@ -1,13 +1,30 @@
+using TaikoLocalServer.Application.Catalog.Green;
+
 namespace TaikoLocalServer.Application.Handlers;
 
 public partial class UpdatePlayResultCommandHandler
 {
+    private const uint MaxGreenCourseLevel = 4;
+    private const uint MaxGreenPlayResult = 3;
+    private const uint MaxGreenDanSlot = 25;
+
     private partial async ValueTask<uint> HandleGreen(
         UpdatePlayResultCommand request,
         CancellationToken cancellationToken)
     {
         var playResultData = request.PlayResultData;
         var saveData = await context.GetOrCreateGreenSaveDataAsync(request.Baid, cancellationToken);
+        var green = gameDataService.Green();
+        if (!CanAdd(saveData.TotalGetDonmedal, playResultData.GetDonmedal)
+            || !CanAdd(saveData.TotalGetKatsumedal, playResultData.GetKatsumedal)
+            || playResultData.AryStageInfoes.Any(stage => !IsValidGreenStage(stage, green))
+            || !HasOnlyKnownUnlockRewards(saveData, playResultData)
+            || (playResultData.HasAryCurrentCostume && !IsValidCurrentCostume(saveData, playResultData.AryCurrentCostume)))
+        {
+            logger.LogWarning("Rejecting invalid Green playresult payload for baid {Baid}", request.Baid);
+            return 0;
+        }
+
         var playTime = DateTime.TryParse(playResultData.PlayDatetime, out var parsed)
             ? parsed
             : DateTime.Now;
@@ -18,12 +35,24 @@ public partial class UpdatePlayResultCommandHandler
         saveData.IsDevil = playResultData.IsDevil ?? saveData.IsDevil;
         saveData.IsExplain = playResultData.IsExplain ?? saveData.IsExplain;
         saveData.WaiwaiTutorialFlg = playResultData.WaiwaiTutorialFlg ?? saveData.WaiwaiTutorialFlg;
-        saveData.DifficultyPlayedCourse = playResultData.DifficultyPlayedCourse;
-        saveData.DifficultyPlayedStar = playResultData.DifficultyPlayedStar;
+        if (playResultData.HasDifficultyPlayedCourse)
+        {
+            saveData.DifficultyPlayedCourse = playResultData.DifficultyPlayedCourse;
+        }
+
+        if (playResultData.HasDifficultyPlayedStar)
+        {
+            saveData.DifficultyPlayedStar = playResultData.DifficultyPlayedStar;
+        }
+
         saveData.LastPlayDatetime = playTime;
         saveData.PrevAreaCode = playResultData.AreaCode;
 
-        ApplyCostume(saveData, playResultData.AryCurrentCostume);
+        if (playResultData.HasAryCurrentCostume)
+        {
+            ApplyCostume(saveData, playResultData.AryCurrentCostume);
+        }
+
         ApplyUnlockBits(saveData, playResultData);
         ApplyGhostUpdates(saveData, playResultData);
 
@@ -34,6 +63,52 @@ public partial class UpdatePlayResultCommandHandler
 
         await context.SaveChangesAsync(cancellationToken);
         return 1;
+    }
+
+    private static bool IsValidGreenStage(CommonPlayResultData.StageData stage, IGreenCatalog green)
+    {
+        return stage.SongNo < GreenProtocolBytes.SongFlagBytes * 8
+            && green.GreenMusicInfos.ContainsKey(stage.SongNo)
+            && stage.Level <= MaxGreenCourseLevel
+            && stage.PlayResult <= MaxGreenPlayResult
+            && stage.PlayDan is null or (>= 1 and <= MaxGreenDanSlot);
+    }
+
+    private static bool CanAdd(uint current, uint delta)
+        => delta <= uint.MaxValue - current;
+
+    private static bool HasBit(byte[] source, uint id, int byteCount)
+    {
+        if (id >= byteCount * 8)
+        {
+            return false;
+        }
+
+        var fixedBytes = GreenProtocolBytes.FixedOrZero(source, byteCount);
+        return (fixedBytes[id >> 3] & (1 << ((int)id & 7))) != 0;
+    }
+
+    private static bool AllAlreadyUnlocked(byte[] source, IEnumerable<uint> ids, int byteCount)
+        => ids.All(id => HasBit(source, id, byteCount));
+
+    private static bool IsValidCurrentCostume(UserSaveDataGreen saveData, CommonPlayResultData.CostumeData costume)
+    {
+        return HasBit(saveData.CostumeFlg1, costume.Costume1, GreenProtocolBytes.CostumeFlagBytes)
+            && HasBit(saveData.CostumeFlg2, costume.Costume2, GreenProtocolBytes.CostumeFlagBytes)
+            && HasBit(saveData.CostumeFlg3, costume.Costume3, GreenProtocolBytes.CostumeFlagBytes)
+            && HasBit(saveData.CostumeFlg4, costume.Costume4, GreenProtocolBytes.CostumeFlagBytes)
+            && HasBit(saveData.CostumeFlg5, costume.Costume5, GreenProtocolBytes.CostumeFlagBytes);
+    }
+
+    private static bool HasOnlyKnownUnlockRewards(UserSaveDataGreen saveData, CommonPlayResultData playResultData)
+    {
+        return AllAlreadyUnlocked(saveData.ToneFlg, playResultData.GetToneNoes, GreenProtocolBytes.ToneFlagBytes)
+            && AllAlreadyUnlocked(saveData.CostumeFlg1, playResultData.GetCostumeNo1s, GreenProtocolBytes.CostumeFlagBytes)
+            && AllAlreadyUnlocked(saveData.CostumeFlg2, playResultData.GetCostumeNo2s, GreenProtocolBytes.CostumeFlagBytes)
+            && AllAlreadyUnlocked(saveData.CostumeFlg3, playResultData.GetCostumeNo3s, GreenProtocolBytes.CostumeFlagBytes)
+            && AllAlreadyUnlocked(saveData.CostumeFlg4, playResultData.GetCostumeNo4s, GreenProtocolBytes.CostumeFlagBytes)
+            && AllAlreadyUnlocked(saveData.CostumeFlg5, playResultData.GetCostumeNo5s, GreenProtocolBytes.CostumeFlagBytes)
+            && AllAlreadyUnlocked(saveData.TitleFlg, playResultData.GetTitleNoes, GreenProtocolBytes.TitleFlagBytes);
     }
 
     private static void ApplyCostume(UserSaveDataGreen saveData, CommonPlayResultData.CostumeData costume)

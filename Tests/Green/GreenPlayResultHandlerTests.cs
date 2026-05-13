@@ -40,6 +40,7 @@ public sealed class GreenPlayResultHandlerTests
 
         var handler = new UpdatePlayResultCommandHandler(
             fixture.Context,
+            fixture.Catalog,
             NullLogger<UpdatePlayResultCommandHandler>.Instance);
 
         var result = await handler.Handle(new UpdatePlayResultCommand(
@@ -79,6 +80,202 @@ public sealed class GreenPlayResultHandlerTests
         Assert.NotNull(best);
         Assert.Equal((uint)765432, best!.BestScore);
         Assert.Equal(CrownType.Gold, best.BestCrown);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Green_RejectsOutOfCatalogSongNo()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                AryStageInfoes =
+                [
+                    new CommonPlayResultData.StageData
+                    {
+                        SongNo = 1024,
+                        Level = 0,
+                        PlayResult = 1,
+                        PlayScore = 123
+                    }
+                ]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal((uint)0, result);
+        Assert.Empty(await fixture.Context.SongPlayDataGreen.ToListAsync());
+        Assert.Empty(await fixture.Context.SongBestDataGreen.ToListAsync());
+        Assert.Empty(await fixture.Context.GreenFavoriteSongs.ToListAsync());
+        Assert.Empty(await fixture.Context.GreenRecentSongs.ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Green_RejectsStageLevelOutsideZeroThroughFour()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                AryStageInfoes =
+                [
+                    new CommonPlayResultData.StageData
+                    {
+                        SongNo = 101,
+                        Level = 5,
+                        PlayResult = 1,
+                        PlayScore = 123
+                    }
+                ]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal((uint)0, result);
+        Assert.Empty(await fixture.Context.SongBestDataGreen.ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Green_MissingCurrentCostumeDoesNotClearSavedCostume()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.Costume1 = 7;
+        save.Costume2 = 8;
+        save.Costume3 = 9;
+        save.Costume4 = 10;
+        save.Costume5 = 11;
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(save);
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                HasAryCurrentCostume = false,
+                AryStageInfoes =
+                [
+                    new CommonPlayResultData.StageData
+                    {
+                        SongNo = 101,
+                        Level = 0,
+                        PlayResult = 1,
+                        PlayScore = 123
+                    }
+                ]
+            }),
+            CancellationToken.None);
+
+        var reloaded = await fixture.Context.UserSaveDataGreen.FindAsync(1u);
+        Assert.Equal((uint)1, result);
+        Assert.Equal((uint)7, reloaded!.Costume1);
+        Assert.Equal((uint)8, reloaded.Costume2);
+        Assert.Equal((uint)9, reloaded.Costume3);
+        Assert.Equal((uint)10, reloaded.Costume4);
+        Assert.Equal((uint)11, reloaded.Costume5);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Green_OmittedDifficultyPlayedFieldsPreserveExistingValues()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.DifficultyPlayedCourse = 3;
+        save.DifficultyPlayedStar = 4;
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(save);
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                HasDifficultyPlayedCourse = false,
+                HasDifficultyPlayedStar = false,
+                AryStageInfoes =
+                [
+                    new CommonPlayResultData.StageData
+                    {
+                        SongNo = 101,
+                        Level = 0,
+                        PlayResult = 1,
+                        PlayScore = 123
+                    }
+                ]
+            }),
+            CancellationToken.None);
+
+        var reloaded = await fixture.Context.UserSaveDataGreen.FindAsync(1u);
+        Assert.Equal((uint)1, result);
+        Assert.Equal((uint)3, reloaded!.DifficultyPlayedCourse);
+        Assert.Equal((uint)4, reloaded.DifficultyPlayedStar);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Green_DoesNotOverflowMedalTotals()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.TotalGetDonmedal = uint.MaxValue;
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(save);
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                GetDonmedal = 1
+            }),
+            CancellationToken.None);
+
+        var reloaded = await fixture.Context.UserSaveDataGreen.FindAsync(1u);
+        Assert.Equal((uint)0, result);
+        Assert.Equal(uint.MaxValue, reloaded!.TotalGetDonmedal);
     }
 
     [Fact]

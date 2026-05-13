@@ -24,6 +24,15 @@ public class PlayResultController : BaseProtocolController<PlayResultController>
                 decoded.Format,
                 decoded.DecodedBytes);
             commonRequest = PlayResultMappers.Map(decoded.Request);
+            if (commonRequest.Baid != 0 && commonRequest.Baid != request.BaidConf)
+            {
+                Logger.LogWarning(
+                    "Rejecting Green PlayResult baid mismatch: outer={OuterBaid}, inner={InnerBaid}",
+                    request.BaidConf,
+                    commonRequest.Baid);
+                return Ok(new PlayResultResponse { Result = 0 });
+            }
+
             Logger.LogInformation(
                 "Green PlayResult received dump:{NewLine}{Dump}",
                 Environment.NewLine,

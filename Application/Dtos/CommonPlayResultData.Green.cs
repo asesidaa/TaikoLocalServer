@@ -5,6 +5,9 @@ public partial class CommonPlayResultData
 {
     public uint GetDonmedal              { get; set; }
     public uint GetKatsumedal            { get; set; }
+    public bool HasAryCurrentCostume     { get; set; } = true;
+    public bool HasDifficultyPlayedCourse { get; set; } = true;
+    public bool HasDifficultyPlayedStar  { get; set; } = true;
     public bool BonusDailyFlg            { get; set; }
     public bool BonusWeeklyFlg           { get; set; }
     public bool BonusMonthlyFlg          { get; set; }
