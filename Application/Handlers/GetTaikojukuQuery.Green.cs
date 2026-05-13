@@ -4,6 +4,11 @@ namespace TaikoLocalServer.Application.Handlers;
 
 public partial class GetTaikojukuQueryHandler
 {
+    private const int MaxDanSlots = 25;
+    private const int MaxRequestedSlotsPerRequest = 11;
+    private const int MaxSongsPerPack = 10;
+    private const uint MaxGreenCourseLevel = 4;
+
     public partial ValueTask<CommonTaikojukuResponse> Handle(GetTaikojukuQuery request, CancellationToken cancellationToken)
     {
         logger.LogDebug("Reading Green Taikojuku packs for {Count} requested dans", request.RequestedDans.Count);
@@ -33,12 +38,15 @@ public partial class GetTaikojukuQueryHandler
         return ValueTask.FromResult(new CommonTaikojukuResponse
         {
             Result = 1,
-            Packs = packs.Select(ToCommonPack).ToList()
+            Packs = packs
+                .Select(pack => ToCommonPack(pack, green.GreenMusicInfos))
+                .Where(pack => pack.Songs.Count > 0)
+                .ToList()
         });
     }
 
     private static bool IsValidDanSlot(uint getDan)
-        => getDan is >= 1 and <= 25;
+        => getDan is >= 1 and <= MaxDanSlots;
 
     private static IReadOnlyList<uint> GetRequestedSlots(IReadOnlyList<uint> requestedDans)
     {
@@ -52,7 +60,7 @@ public partial class GetTaikojukuQueryHandler
             return requestedSlots;
         }
 
-        return Enumerable.Range(1, Math.Min(requestedDans.Count, 25))
+        return Enumerable.Range(1, Math.Min(requestedDans.Count, MaxRequestedSlotsPerRequest))
             .Select(slot => (uint)slot)
             .ToArray();
     }
@@ -89,17 +97,24 @@ public partial class GetTaikojukuQueryHandler
         };
     }
 
-    private static CommonTaikojukuResponse.Pack ToCommonPack(GreenTaikojukuEntry entry)
+    private static CommonTaikojukuResponse.Pack ToCommonPack(
+        GreenTaikojukuEntry entry,
+        IReadOnlyDictionary<uint, GreenMusicInfoEntry> validSongs)
     {
         return new CommonTaikojukuResponse.Pack
         {
             GetDan = entry.ChallengeLevel,
             VerupNo = entry.VerupNo,
-            Songs = entry.Songs.Select(song => new CommonTaikojukuResponse.Song
-            {
-                SongNo = song.SongNo,
-                Level = song.Level
-            }).ToList()
+            Songs = entry.Songs
+                .Where(song => validSongs.ContainsKey(song.SongNo))
+                .Where(song => song.Level <= MaxGreenCourseLevel)
+                .Take(MaxSongsPerPack)
+                .Select(song => new CommonTaikojukuResponse.Song
+                {
+                    SongNo = song.SongNo,
+                    Level = song.Level
+                })
+                .ToList()
         };
     }
 }
