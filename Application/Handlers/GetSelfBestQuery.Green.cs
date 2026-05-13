@@ -13,11 +13,18 @@ public partial class GetSelfBestQueryHandler
             .Where(row => row.Baid == request.Baid
                 && row.Difficulty == difficulty
                 && requestedSet.Contains(row.SongId))
-            .ToDictionaryAsync(row => row.SongId, cancellationToken);
+            .ToListAsync(cancellationToken);
+
+        var normalRowsBySong = bestRows
+            .Where(row => !row.IsShin)
+            .ToDictionary(row => row.SongId);
+        var shinRowsBySong = bestRows
+            .Where(row => row.IsShin)
+            .ToDictionary(row => row.SongId);
 
         var normalRows = requestedSongs.Select(songNo =>
         {
-            bestRows.TryGetValue(songNo, out var best);
+            normalRowsBySong.TryGetValue(songNo, out var best);
             return new CommonSelfBestResponse.SelfBestData
             {
                 SongNo = songNo,
@@ -26,9 +33,15 @@ public partial class GetSelfBestQueryHandler
             };
         }).ToList();
 
-        var shinRows = requestedSongs.Select(songNo => new CommonSelfBestResponse.SelfBestData
+        var shinRows = requestedSongs.Select(songNo =>
         {
-            SongNo = songNo
+            shinRowsBySong.TryGetValue(songNo, out var best);
+            return new CommonSelfBestResponse.SelfBestData
+            {
+                SongNo = songNo,
+                SelfBestScore = best?.BestScore ?? 0,
+                SelfBestScoreRate = best?.BestRate ?? 0
+            };
         }).ToList();
 
         return new CommonSelfBestResponse

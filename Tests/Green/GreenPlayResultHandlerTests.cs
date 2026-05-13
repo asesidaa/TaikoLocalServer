@@ -429,18 +429,29 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
-    public async Task GetSelfBest_Green_ReturnsParallelZeroShinRows()
+    public async Task GetSelfBest_Green_ReturnsNormalAndShinSavedBests()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
-        fixture.Context.SongBestDataGreen.Add(new SongBestDatumGreen
-        {
-            Baid = 1,
-            SongId = 101,
-            Difficulty = Difficulty.Normal,
-            BestScore = 765432,
-            BestCrown = CrownType.Gold
-        });
+        fixture.Context.SongBestDataGreen.AddRange(
+            new SongBestDatumGreen
+            {
+                Baid = 1,
+                SongId = 101,
+                Difficulty = Difficulty.Normal,
+                IsShin = false,
+                BestScore = 229170,
+                BestCrown = CrownType.Clear
+            },
+            new SongBestDatumGreen
+            {
+                Baid = 1,
+                SongId = 101,
+                Difficulty = Difficulty.Normal,
+                IsShin = true,
+                BestScore = 897650,
+                BestCrown = CrownType.Clear
+            });
         await fixture.Context.SaveChangesAsync();
 
         var handler = new GetSelfBestQueryHandler(
@@ -453,12 +464,10 @@ public sealed class GreenPlayResultHandlerTests
         Assert.Equal((uint)1, response.Result);
         Assert.Equal([101u, 102u], response.ArySelfbestScores.Select(row => row.SongNo).ToArray());
         Assert.Equal([101u, 102u], response.AryShinSelfbestScores.Select(row => row.SongNo).ToArray());
-        Assert.Contains(response.ArySelfbestScores, row => row.SongNo == 101 && row.SelfBestScore == 765432);
-        Assert.All(response.AryShinSelfbestScores, row =>
-        {
-            Assert.Equal((uint)0, row.SelfBestScore);
-            Assert.Equal((uint)0, row.UraBestScore);
-        });
+        Assert.Contains(response.ArySelfbestScores, row => row.SongNo == 101 && row.SelfBestScore == 229170);
+        Assert.Contains(response.AryShinSelfbestScores, row => row.SongNo == 101 && row.SelfBestScore == 897650);
+        Assert.Contains(response.ArySelfbestScores, row => row.SongNo == 102 && row.SelfBestScore == 0);
+        Assert.Contains(response.AryShinSelfbestScores, row => row.SongNo == 102 && row.SelfBestScore == 0);
     }
 
     [Fact]
@@ -548,6 +557,50 @@ public sealed class GreenPlayResultHandlerTests
         Assert.Equal((uint)123, response.SongHashVer);
         Assert.Equal(GreenProtocolBytes.CrownInflatedBytes, inflated.Length);
         Assert.All(inflated, value => Assert.Equal(0, value));
+    }
+
+    [Fact]
+    public async Task CrownsData_Green_IgnoresShinBestRows()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        fixture.Context.SongBestDataGreen.Add(new SongBestDatumGreen
+        {
+            Baid = 1,
+            SongId = 101,
+            Difficulty = Difficulty.Normal,
+            IsShin = true,
+            BestScore = 897650,
+            BestCrown = CrownType.Gold
+        });
+        await fixture.Context.SaveChangesAsync();
+
+        var controller = new CrownsDataController(fixture.Context, fixture.Catalog)
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    RequestServices = new ServiceCollection()
+                        .AddLogging()
+                        .BuildServiceProvider()
+                }
+            }
+        };
+
+        var result = await controller.CrownsData(new CrownsDataRequest
+        {
+            Baid = 1,
+            ChassisId = "chassis",
+            ShopId = "shop"
+        });
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var response = Assert.IsType<CrownsDataResponse>(ok.Value);
+        var inflated = InflateZlib(response.HashCrownFlg);
+
+        Assert.Equal(0, ReadTenBitValue(inflated, 101));
     }
 
     private static ushort ReadTenBitValue(byte[] packed, int songNo)

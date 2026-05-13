@@ -11,7 +11,7 @@ public class CrownsDataController(ITaikoDbContext context, IGameDataCatalog game
     {
         Logger.LogInformation("Green CrownsData request: {Request}", request.Stringify());
         var bestRows = await context.SongBestDataGreen
-            .Where(row => row.Baid == request.Baid)
+            .Where(row => row.Baid == request.Baid && !row.IsShin)
             .ToListAsync(HttpContext.RequestAborted);
         var inflated = GreenCrownResponseBuilder.BuildInflatedBody(bestRows);
 
