@@ -117,6 +117,32 @@ public sealed class GreenGhostRewardTests
     [Fact]
     public async Task ItemPurchase_SpendsDonmedalsWhenAffordable()
     {
+        await using var fixture = await GreenHandlerFixture.CreateAsync(new GreenHandlerFixture.TestGreenCatalog(
+            new Dictionary<uint, GreenItemShopEntry>
+            {
+                [10] = new() { ItemType = 1, ItemId = 2, Price = 40 }
+            }));
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.TotalGetDonmedal = 100;
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(save);
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new ItemPurchaseCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<ItemPurchaseCommandHandler>.Instance);
+
+        var response = await handler.Handle(new ItemPurchaseCommand(1, 10, 1, 2, 40), CancellationToken.None);
+
+        Assert.Equal((uint)1, response.Result);
+        Assert.Equal((uint)100, response.TotalGetDonmedal);
+        Assert.Equal((uint)40, response.TotalUseDonmedal);
+    }
+
+    [Fact]
+    public async Task ItemPurchase_RejectsUnknownGreenShopItem()
+    {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
         save.TotalGetDonmedal = 100;
@@ -126,12 +152,38 @@ public sealed class GreenGhostRewardTests
 
         var handler = new ItemPurchaseCommandHandler(
             fixture.Context,
+            fixture.Catalog,
             NullLogger<ItemPurchaseCommandHandler>.Instance);
 
         var response = await handler.Handle(new ItemPurchaseCommand(1, 10, 1, 2, 40), CancellationToken.None);
 
-        Assert.Equal((uint)1, response.Result);
-        Assert.Equal((uint)100, response.TotalGetDonmedal);
-        Assert.Equal((uint)40, response.TotalUseDonmedal);
+        Assert.Equal((uint)0, response.Result);
+        Assert.Equal((uint)0, response.TotalUseDonmedal);
+    }
+
+    [Fact]
+    public async Task ItemPurchase_RejectsOverflowingGreenMedalBalance()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync(new GreenHandlerFixture.TestGreenCatalog(
+            new Dictionary<uint, GreenItemShopEntry>
+            {
+                [10] = new() { ItemType = 1, ItemId = 2, Price = 40 }
+            }));
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.TotalGetDonmedal = uint.MaxValue;
+        save.TotalUseDonmedal = uint.MaxValue - 10;
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(save);
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new ItemPurchaseCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<ItemPurchaseCommandHandler>.Instance);
+
+        var response = await handler.Handle(new ItemPurchaseCommand(1, 10, 1, 2, 40), CancellationToken.None);
+
+        Assert.Equal((uint)0, response.Result);
+        Assert.Equal(uint.MaxValue - 10, response.TotalUseDonmedal);
     }
 }

@@ -10,6 +10,7 @@ public readonly record struct ItemPurchaseCommand(
 
 public partial class ItemPurchaseCommandHandler(
     ITaikoDbContext context,
+    IGameDataCatalog gameDataService,
     ILogger<ItemPurchaseCommandHandler> logger)
     : IRequestHandler<ItemPurchaseCommand, CommonItemPurchaseResponse>
 {

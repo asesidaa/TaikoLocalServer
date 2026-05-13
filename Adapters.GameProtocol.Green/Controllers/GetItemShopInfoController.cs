@@ -11,10 +11,7 @@ public class GetItemShopInfoController : BaseProtocolController<GetItemShopInfoC
         Logger.LogInformation("Green GetItemShopInfo request: {Request}", request.Stringify());
         return Ok(new GetitemshopinfoResponse
         {
-            Result = 1,
-            Telop = string.Empty,
-            StartDatetime = string.Empty,
-            EndDatetime = string.Empty
+            Result = 1
         });
     }
 }

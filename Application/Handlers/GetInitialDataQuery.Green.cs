@@ -16,7 +16,7 @@ public partial class GetInitialDataQueryHandler
             SongHashVer = green.SongHashVersion,
             IsDanplay = true,
             IsClose = false,
-            IsItemshop = true,
+            IsItemshop = green.ItemShop.Count > 0,
             IsGhostbattleplay = true,
             AryGreenTaikojukuDatas = green.TaikojukuFileOrder
                 .Where(entry => entry.ChallengeLevel is >= 1 and <= 25)

@@ -15,7 +15,7 @@ internal sealed class GreenHandlerFixture : IAsyncDisposable
 
     public IGameDataCatalog Catalog { get; }
 
-    public static async Task<GreenHandlerFixture> CreateAsync()
+    public static async Task<GreenHandlerFixture> CreateAsync(IGreenCatalog? greenCatalog = null)
     {
         var connection = new SqliteConnection("Data Source=:memory:");
         await connection.OpenAsync();
@@ -26,8 +26,7 @@ internal sealed class GreenHandlerFixture : IAsyncDisposable
         var context = new TaikoDbContext(options);
         await context.Database.EnsureCreatedAsync();
 
-        var greenCatalog = new TestGreenCatalog();
-        var catalog = new FileGameDataCatalog([greenCatalog]);
+        var catalog = new FileGameDataCatalog([greenCatalog ?? new TestGreenCatalog()]);
         return new GreenHandlerFixture(connection, context, catalog);
     }
 
@@ -37,8 +36,13 @@ internal sealed class GreenHandlerFixture : IAsyncDisposable
         await connection.DisposeAsync();
     }
 
-    private sealed class TestGreenCatalog : IGreenCatalog
+    internal sealed class TestGreenCatalog : IGreenCatalog
     {
+        public TestGreenCatalog(IReadOnlyDictionary<uint, GreenItemShopEntry>? itemShop = null)
+        {
+            ItemShop = itemShop ?? new Dictionary<uint, GreenItemShopEntry>();
+        }
+
         public GameEra Era => GameEra.Green;
 
         public uint SongHashVersion => 123;
@@ -102,7 +106,7 @@ internal sealed class GreenHandlerFixture : IAsyncDisposable
         public IReadOnlyDictionary<uint, GreenTaikojukuEntry> Taikojuku
             => TaikojukuFileOrder.ToDictionary(pack => pack.UniqueId);
 
-        public IReadOnlyDictionary<uint, GreenItemShopEntry> ItemShop { get; } = new Dictionary<uint, GreenItemShopEntry>();
+        public IReadOnlyDictionary<uint, GreenItemShopEntry> ItemShop { get; }
 
         public IReadOnlyDictionary<uint, GreenEventFolderEntry> EventFolders { get; } = new Dictionary<uint, GreenEventFolderEntry>();
 

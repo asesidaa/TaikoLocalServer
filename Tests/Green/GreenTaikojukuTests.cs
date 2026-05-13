@@ -146,4 +146,18 @@ public sealed class GreenTaikojukuTests
         Assert.DoesNotContain(response.AryGreenTaikojukuDatas, data => data.InfoId == 20001);
         Assert.All(response.AryGreenTaikojukuDatas, data => Assert.InRange(data.InfoId, 1u, 25u));
     }
+
+    [Fact]
+    public async Task InitialData_DoesNotAdvertiseEmptyGreenItemShop()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        var handler = new GetInitialDataQueryHandler(
+            fixture.Catalog,
+            NullLogger<GetInitialDataQueryHandler>.Instance,
+            Options.Create(new ServerSettings()));
+
+        var response = await handler.Handle(new GetInitialDataQuery(GameEra.Green), CancellationToken.None);
+
+        Assert.False(response.IsItemshop);
+    }
 }
