@@ -91,10 +91,12 @@ public static partial class PlayResultMappers
             SelectedFolderId = stage.SelectedFolderId,
             StarLevel = stage.StarLevel,
             SoulGauge = stage.SoulGauge,
-            PlayDan = stage.PlayDan,
+            PlayDan = stage.PlayDan == 0 ? null : stage.PlayDan,
             WaiwaiResult = stage.WaiwaiResult,
             WaiwaiGauge = stage.WaiwaiGauge,
-            GhostStageData = MapGhostStage(stage.GhostStagedata)
+            GhostStageData = MapGhostStage(stage.GhostStagedata),
+            StageMode = stage.StageMode,
+            IsPapamama = stage.IsPapamama
         };
     }
 
