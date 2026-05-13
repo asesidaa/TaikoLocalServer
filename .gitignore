@@ -400,3 +400,6 @@ TaikoLocalServer/wwwroot/data/music_attribute.bin
 /Published
 
 proto/
+
+# Local analysis/tooling artifacts
+.tools/

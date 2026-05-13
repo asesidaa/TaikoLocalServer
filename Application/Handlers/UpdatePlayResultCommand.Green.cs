@@ -4,7 +4,8 @@ namespace TaikoLocalServer.Application.Handlers;
 
 public partial class UpdatePlayResultCommandHandler
 {
-    private const uint MaxGreenCourseLevel = 4;
+    private const uint MinGreenCourseLevel = 1;
+    private const uint MaxGreenCourseLevel = 5;
     private const uint MaxGreenStageMode = 1;
     private const uint MaxGreenPlayResult = 3;
     private const uint MaxGreenDanSlot = 25;
@@ -70,7 +71,7 @@ public partial class UpdatePlayResultCommandHandler
     {
         return stage.SongNo < GreenProtocolBytes.SongFlagBytes * 8
             && green.GreenMusicInfos.ContainsKey(stage.SongNo)
-            && stage.Level <= MaxGreenCourseLevel
+            && stage.Level is >= MinGreenCourseLevel and <= MaxGreenCourseLevel
             && stage.StageMode <= MaxGreenStageMode
             && stage.PlayResult <= MaxGreenPlayResult
             && stage.PlayDan is null or (>= 1 and <= MaxGreenDanSlot);

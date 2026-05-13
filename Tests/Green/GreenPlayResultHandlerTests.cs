@@ -9,14 +9,22 @@ namespace TaikoLocalServer.Tests.Green;
 public sealed class GreenPlayResultHandlerTests
 {
     [Theory]
-    [InlineData(0, Difficulty.Easy)]
-    [InlineData(1, Difficulty.Normal)]
-    [InlineData(2, Difficulty.Hard)]
-    [InlineData(3, Difficulty.Oni)]
-    [InlineData(4, Difficulty.UraOni)]
+    [InlineData(1, Difficulty.Easy)]
+    [InlineData(2, Difficulty.Normal)]
+    [InlineData(3, Difficulty.Hard)]
+    [InlineData(4, Difficulty.Oni)]
+    [InlineData(5, Difficulty.UraOni)]
     public void MapDifficulty_UsesGreenCourseOrder(uint level, Difficulty expected)
     {
         Assert.Equal(expected, GreenPlayResultMapping.MapDifficulty(level));
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(6)]
+    public void MapDifficulty_RejectsGreenCourseOutsideOneThroughFive(uint level)
+    {
+        Assert.Equal(Difficulty.None, GreenPlayResultMapping.MapDifficulty(level));
     }
 
     [Theory]
@@ -56,7 +64,7 @@ public sealed class GreenPlayResultHandlerTests
                     new CommonPlayResultData.StageData
                     {
                         SongNo = 101,
-                        Level = 0,
+                        Level = 1,
                         PlayResult = 2,
                         PlayScore = 765432,
                         GoodCnt = 100,
@@ -147,8 +155,8 @@ public sealed class GreenPlayResultHandlerTests
 
         Assert.Equal(1u, result);
 
-        var normalBest = await fixture.Context.SongBestDataGreen.FindAsync(1u, 101u, Difficulty.Normal, false);
-        var shinBest = await fixture.Context.SongBestDataGreen.FindAsync(1u, 101u, Difficulty.Normal, true);
+        var normalBest = await fixture.Context.SongBestDataGreen.FindAsync(1u, 101u, Difficulty.Easy, false);
+        var shinBest = await fixture.Context.SongBestDataGreen.FindAsync(1u, 101u, Difficulty.Easy, true);
 
         Assert.NotNull(normalBest);
         Assert.NotNull(shinBest);
@@ -230,7 +238,7 @@ public sealed class GreenPlayResultHandlerTests
                     new CommonPlayResultData.StageData
                     {
                         SongNo = 1024,
-                        Level = 0,
+                        Level = 1,
                         PlayResult = 1,
                         PlayScore = 123
                     }
@@ -246,7 +254,7 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
-    public async Task UpdatePlayResult_Green_RejectsStageLevelOutsideZeroThroughFour()
+    public async Task UpdatePlayResult_Green_RejectsStageLevelOutsideOneThroughFive()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -269,7 +277,7 @@ public sealed class GreenPlayResultHandlerTests
                     new CommonPlayResultData.StageData
                     {
                         SongNo = 101,
-                        Level = 5,
+                        Level = 0,
                         PlayResult = 1,
                         PlayScore = 123
                     }
@@ -312,7 +320,7 @@ public sealed class GreenPlayResultHandlerTests
                     new CommonPlayResultData.StageData
                     {
                         SongNo = 101,
-                        Level = 0,
+                        Level = 1,
                         PlayResult = 1,
                         PlayScore = 123
                     }
@@ -358,7 +366,7 @@ public sealed class GreenPlayResultHandlerTests
                     new CommonPlayResultData.StageData
                     {
                         SongNo = 101,
-                        Level = 0,
+                        Level = 1,
                         PlayResult = 1,
                         PlayScore = 123
                     }
@@ -515,7 +523,7 @@ public sealed class GreenPlayResultHandlerTests
             fixture.Context,
             NullLogger<GetSelfBestQueryHandler>.Instance);
 
-        var response = await handler.Handle(new GetSelfBestQuery(1, GameEra.Green, 0, [101]), CancellationToken.None);
+        var response = await handler.Handle(new GetSelfBestQuery(1, GameEra.Green, 1, [101]), CancellationToken.None);
 
         Assert.Equal((uint)1, response.Result);
         Assert.Contains(response.ArySelfbestScores, row => row.SongNo == 101 && row.SelfBestScore == 765432);
@@ -531,7 +539,7 @@ public sealed class GreenPlayResultHandlerTests
             {
                 Baid = 1,
                 SongId = 101,
-                Difficulty = Difficulty.Normal,
+                Difficulty = Difficulty.Easy,
                 IsShin = false,
                 BestScore = 229170,
                 BestCrown = CrownType.Clear
@@ -540,7 +548,7 @@ public sealed class GreenPlayResultHandlerTests
             {
                 Baid = 1,
                 SongId = 101,
-                Difficulty = Difficulty.Normal,
+                Difficulty = Difficulty.Easy,
                 IsShin = true,
                 BestScore = 897650,
                 BestCrown = CrownType.Clear
@@ -566,7 +574,7 @@ public sealed class GreenPlayResultHandlerTests
     [Fact]
     public void BuildGreenCrownResponseBody_EmptyRowsProduceAllZeroInflatedBody()
     {
-        var packed = GreenCrownResponseBuilder.BuildInflatedBody([]);
+        var packed = GreenCrownResponseBuilder.BuildInflatedBody([], new GreenHandlerFixture.TestGreenCatalog());
 
         Assert.Equal(GreenProtocolBytes.CrownInflatedBytes, packed.Length);
         Assert.All(packed, value => Assert.Equal(0, value));
@@ -581,10 +589,11 @@ public sealed class GreenPlayResultHandlerTests
             new SongBestDatumGreen { SongId = 101, Difficulty = Difficulty.Normal, BestCrown = CrownType.Gold }
         };
 
-        var packed = GreenCrownResponseBuilder.BuildInflatedBody(rows);
+        var packed = GreenCrownResponseBuilder.BuildInflatedBody(rows, new GreenHandlerFixture.TestGreenCatalog());
 
         Assert.Equal(GreenProtocolBytes.CrownInflatedBytes, packed.Length);
-        Assert.Equal(0b0000_1001, ReadTenBitValue(packed, 101));
+        Assert.Equal(0b0000_1001, ReadTenBitValue(packed, 0));
+        Assert.Equal(0, ReadTenBitValue(packed, 101));
     }
 
     [Fact]
@@ -595,23 +604,59 @@ public sealed class GreenPlayResultHandlerTests
             new SongBestDatumGreen { SongId = 101, Difficulty = Difficulty.Hard, BestCrown = CrownType.Dondaful }
         };
 
-        var packed = GreenCrownResponseBuilder.BuildInflatedBody(rows);
+        var packed = GreenCrownResponseBuilder.BuildInflatedBody(rows, new GreenHandlerFixture.TestGreenCatalog());
 
-        Assert.Equal(0b00_00_10_00_00, ReadTenBitValue(packed, 101));
+        Assert.Equal(0b00_00_10_00_00, ReadTenBitValue(packed, 0));
     }
 
     [Fact]
-    public void BuildGreenCrownResponseBody_UsesSongIdAsCrownIndex()
+    public async Task CrownsData_Green_UsesGreenCatalogFileOrderAsCrownIndex()
     {
-        var rows = new[]
+        await using var fixture = await GreenHandlerFixture.CreateAsync(new GreenHandlerFixture.TestGreenCatalog(
+            musicInfoFileOrder:
+            [
+            new GreenMusicInfoEntry { SongNo = 463, MusicId = "class-id-729-song", FileOrder = 0 },
+            new GreenMusicInfoEntry { SongNo = 729, MusicId = "lemon", FileOrder = 1 }
+            ]));
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        fixture.Context.SongBestDataGreen.Add(new SongBestDatumGreen
         {
-            new SongBestDatumGreen { SongId = 873, Difficulty = Difficulty.Easy, BestCrown = CrownType.Clear }
+            Baid = 1,
+            SongId = 729,
+            Difficulty = Difficulty.Easy,
+            BestScore = 229170,
+            BestCrown = CrownType.Clear
+        });
+        await fixture.Context.SaveChangesAsync();
+
+        var controller = new CrownsDataController(fixture.Context, fixture.Catalog)
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    RequestServices = new ServiceCollection()
+                        .AddLogging()
+                        .BuildServiceProvider()
+                }
+            }
         };
 
-        var packed = GreenCrownResponseBuilder.BuildInflatedBody(rows);
+        var result = await controller.CrownsData(new CrownsDataRequest
+        {
+            Baid = 1,
+            ChassisId = "chassis",
+            ShopId = "shop"
+        });
 
-        Assert.Equal(0, ReadTenBitValue(packed, 0));
-        Assert.Equal(0b0000_0001, ReadTenBitValue(packed, 873));
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var response = Assert.IsType<CrownsDataResponse>(ok.Value);
+        var inflated = InflateZlib(response.HashCrownFlg);
+
+        Assert.Equal(0, ReadTenBitValue(inflated, 0));
+        Assert.Equal(0b0000_0001, ReadTenBitValue(inflated, 1));
+        Assert.Equal(0, ReadTenBitValue(inflated, 729));
     }
 
     [Fact]
@@ -653,7 +698,7 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
-    public async Task CrownsData_Green_IgnoresShinBestRows()
+    public async Task CrownsData_Green_IncludesShinBestRows()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -693,6 +738,7 @@ public sealed class GreenPlayResultHandlerTests
         var response = Assert.IsType<CrownsDataResponse>(ok.Value);
         var inflated = InflateZlib(response.HashCrownFlg);
 
+        Assert.Equal(0b0000_1000, ReadTenBitValue(inflated, 0));
         Assert.Equal(0, ReadTenBitValue(inflated, 101));
     }
 

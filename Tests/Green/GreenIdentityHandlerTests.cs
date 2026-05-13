@@ -1,3 +1,5 @@
+using TaikoLocalServer.Adapters.GameProtocol.Green.Mappers;
+
 namespace TaikoLocalServer.Tests.Green;
 
 public sealed class GreenIdentityHandlerTests
@@ -142,7 +144,7 @@ public sealed class GreenIdentityHandlerTests
     }
 
     [Fact]
-    public async Task InitialData_Green_UnlocksFirstTenSongs()
+    public async Task InitialData_Green_UnlocksAllCatalogSongs()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         var handler = new GetInitialDataQueryHandler(
@@ -154,13 +156,14 @@ public sealed class GreenIdentityHandlerTests
 
         Assert.Equal((uint)1, response.Result);
         Assert.Equal(128, response.DefaultSongFlg.Length);
-        Assert.True((response.DefaultSongFlg[101 >> 3] & (1 << (101 & 7))) != 0);
-        Assert.True((response.DefaultSongFlg[110 >> 3] & (1 << (110 & 7))) != 0);
-        Assert.False((response.DefaultSongFlg[111 >> 3] & (1 << (111 & 7))) != 0);
+        foreach (var song in fixture.Catalog.Green().MusicInfoFileOrder)
+        {
+            Assert.True(BitIsSet(response.DefaultSongFlg, song.SongNo), $"Expected song {song.SongNo} to be unlocked.");
+        }
     }
 
     [Fact]
-    public async Task UserData_Green_UnlocksFirstTwentySongs()
+    public async Task UserData_Green_UnlocksAllCatalogSongs()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 9, MyDonName = "DON" });
@@ -177,7 +180,37 @@ public sealed class GreenIdentityHandlerTests
 
         Assert.Equal((uint)1, response.Result);
         Assert.Equal(128, response.ReleaseSongFlg.Length);
-        Assert.True((response.ReleaseSongFlg[101 >> 3] & (1 << (101 & 7))) != 0);
-        Assert.True((response.ReleaseSongFlg[120 >> 3] & (1 << (120 & 7))) != 0);
+        foreach (var song in fixture.Catalog.Green().MusicInfoFileOrder)
+        {
+            Assert.True(BitIsSet(response.ReleaseSongFlg, song.SongNo), $"Expected song {song.SongNo} to be unlocked.");
+        }
     }
+
+    // New cards persist DispTaikojukuDan=0, but the wire response must carry
+    // sentinel 1: the Green client reads message+0x31C unconditionally and a
+    // 0 there crashes Taikojuku_GetDanSlotSongRange @ 0x127F98.
+    [Fact]
+    public async Task UserData_Green_NewSaveSendsSentinelOneForDispTaikojukuDan()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 9, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(9));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UserDataQueryHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UserDataQueryHandler>.Instance,
+            Options.Create(new ServerSettings()));
+
+        var response = await handler.Handle(new UserDataQuery(9, GameEra.Green), CancellationToken.None);
+        var wire = UserDataMappers.Map(response);
+
+        Assert.Equal(1u, response.DispTaikojukuDan);
+        Assert.True(wire.ShouldSerializeDispTaikojukuDan());
+        Assert.Equal(1u, wire.DispTaikojukuDan);
+    }
+
+    private static bool BitIsSet(byte[] source, uint id)
+        => (source[id >> 3] & (1 << ((int)id & 7))) != 0;
 }

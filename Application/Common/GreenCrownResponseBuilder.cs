@@ -2,12 +2,20 @@ namespace TaikoLocalServer.Application.Common;
 
 public static class GreenCrownResponseBuilder
 {
-    public static byte[] BuildInflatedBody(IEnumerable<SongBestDatumGreen> bestRows)
+    public static byte[] BuildInflatedBody(IEnumerable<SongBestDatumGreen> bestRows, IGreenCatalog green)
     {
         var values = new ushort[1024];
+        var songFileOrders = green.GreenMusicInfos
+            .Where(pair => pair.Value.FileOrder is >= 0 and < 1024)
+            .ToDictionary(pair => pair.Key, pair => pair.Value.FileOrder);
 
-        foreach (var group in bestRows.GroupBy(row => row.SongId).Where(group => group.Key < 1024))
+        foreach (var group in bestRows.GroupBy(row => row.SongId))
         {
+            if (!songFileOrders.TryGetValue(group.Key, out var fileOrder))
+            {
+                continue;
+            }
+
             var easy = GreenCrownState.None;
             var normal = GreenCrownState.None;
             var hard = GreenCrownState.None;
@@ -37,7 +45,7 @@ public static class GreenCrownResponseBuilder
                 }
             }
 
-            values[group.Key] = GreenProtocolBytes.BuildGreenCrownValue(easy, normal, hard, oni, ura);
+            values[fileOrder] = GreenProtocolBytes.BuildGreenCrownValue(easy, normal, hard, oni, ura);
         }
 
         return GreenProtocolBytes.PackGreenCrowns(values);

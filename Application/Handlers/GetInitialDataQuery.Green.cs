@@ -5,12 +5,12 @@ public partial class GetInitialDataQueryHandler
     private partial ValueTask<CommonInitialDataCheckResponse> HandleGreen(GetInitialDataQuery request, CancellationToken cancellationToken)
     {
         var green = gameDataService.Green();
-        var firstTen = green.MusicInfoFileOrder.Take(10).Select(song => song.SongNo);
+        var allSongs = green.MusicInfoFileOrder.Select(song => song.SongNo);
 
         return ValueTask.FromResult(new CommonInitialDataCheckResponse
         {
             Result = 1,
-            DefaultSongFlg = GreenProtocolBytes.CreateFixedBitset(firstTen, GreenProtocolBytes.SongFlagBytes),
+            DefaultSongFlg = GreenProtocolBytes.CreateFixedBitset(allSongs, GreenProtocolBytes.SongFlagBytes),
             AchievementSongBit = new byte[GreenProtocolBytes.SongFlagBytes],
             UraReleaseBit = new byte[GreenProtocolBytes.SongFlagBytes],
             SongHashVer = green.SongHashVersion,

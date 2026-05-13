@@ -11,14 +11,15 @@ public class CrownsDataController(ITaikoDbContext context, IGameDataCatalog game
     {
         Logger.LogInformation("Green CrownsData request: {Request}", request.Stringify());
         var bestRows = await context.SongBestDataGreen
-            .Where(row => row.Baid == request.Baid && !row.IsShin)
+            .Where(row => row.Baid == request.Baid)
             .ToListAsync(HttpContext.RequestAborted);
-        var inflated = GreenCrownResponseBuilder.BuildInflatedBody(bestRows);
+        var green = gameDataService.Green();
+        var inflated = GreenCrownResponseBuilder.BuildInflatedBody(bestRows, green);
 
         return Ok(new CrownsDataResponse
         {
             Result = 1,
-            SongHashVer = gameDataService.Green().SongHashVersion,
+            SongHashVer = green.SongHashVersion,
             HashCrownFlg = GreenProtocolBytes.CompressZlib(inflated)
         });
     }

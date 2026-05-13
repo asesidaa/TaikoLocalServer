@@ -38,16 +38,23 @@ internal sealed class GreenHandlerFixture : IAsyncDisposable
 
     internal sealed class TestGreenCatalog : IGreenCatalog
     {
-        public TestGreenCatalog(IReadOnlyDictionary<uint, GreenItemShopEntry>? itemShop = null)
+        private readonly IReadOnlyList<GreenMusicInfoEntry> musicInfoFileOrder;
+
+        public TestGreenCatalog(
+            IReadOnlyDictionary<uint, GreenItemShopEntry>? itemShop = null,
+            IReadOnlyList<GreenMusicInfoEntry>? musicInfoFileOrder = null)
         {
             ItemShop = itemShop ?? new Dictionary<uint, GreenItemShopEntry>();
+            this.musicInfoFileOrder = musicInfoFileOrder ?? DefaultMusicInfoFileOrder;
         }
 
         public GameEra Era => GameEra.Green;
 
         public uint SongHashVersion => 123;
 
-        public IReadOnlyList<GreenMusicInfoEntry> MusicInfoFileOrder { get; } =
+        public IReadOnlyList<GreenMusicInfoEntry> MusicInfoFileOrder => musicInfoFileOrder;
+
+        private static IReadOnlyList<GreenMusicInfoEntry> DefaultMusicInfoFileOrder { get; } =
         [
             new() { SongNo = 101, MusicId = "a", FileOrder = 0 },
             new() { SongNo = 102, MusicId = "b", FileOrder = 1 },
@@ -68,7 +75,8 @@ internal sealed class GreenHandlerFixture : IAsyncDisposable
             new() { SongNo = 117, MusicId = "q", FileOrder = 16 },
             new() { SongNo = 118, MusicId = "r", FileOrder = 17 },
             new() { SongNo = 119, MusicId = "s", FileOrder = 18 },
-            new() { SongNo = 120, MusicId = "t", FileOrder = 19 }
+            new() { SongNo = 120, MusicId = "t", FileOrder = 19 },
+            new() { SongNo = 121, MusicId = "u", FileOrder = 20 }
         ];
 
         public IReadOnlyDictionary<uint, IMusicInfoEntry> MusicInfos

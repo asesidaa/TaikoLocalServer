@@ -61,7 +61,7 @@ public sealed class GreenGhostRewardTests
             fixture.Context,
             NullLogger<GetGhostScoreQueryHandler>.Instance);
 
-        var response = await handler.Handle(new GetGhostScoreQuery(1, 101, 0), CancellationToken.None);
+        var response = await handler.Handle(new GetGhostScoreQuery(1, 101, 1), CancellationToken.None);
 
         Assert.Single(response.AryBestSectionData);
     }

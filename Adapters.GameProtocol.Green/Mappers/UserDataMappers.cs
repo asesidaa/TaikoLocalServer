@@ -42,10 +42,17 @@ public static partial class UserDataMappers
             IsDevil = common.IsDevilGreen.GetValueOrDefault()
         };
 
-        if (common.DispTaikojukuDan is { } dispTaikojukuDan && dispTaikojukuDan is >= 1 and <= 25)
-        {
-            response.DispTaikojukuDan = dispTaikojukuDan;
-        }
+        // disp_taikojuku_dan MUST be 1..25 on the wire. Omitting it does not
+        // help: the Green client reads disp_taikojuku_dan_ at message +0x31C
+        // without checking proto2 presence (sub_19CFE0:151, sub_1016F8:506,
+        // sub_24377C:176, sub_7FDFFC:755). Any out-of-range value - including
+        // 0 from an absent tag - underflows Taikojuku_GetDanSlotSongRange's
+        // 84-byte-per-slot table at 0x127F98 and crashes the client at boot.
+        // sub_7FDFFC uses 1 as its baked-in "no data" default; mirror that.
+        response.DispTaikojukuDan = common.DispTaikojukuDan is { } dispTaikojukuDan
+                                    && dispTaikojukuDan is >= 1 and <= 25
+            ? dispTaikojukuDan
+            : 1u;
 
         return response;
     }

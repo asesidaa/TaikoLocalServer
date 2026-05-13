@@ -27,7 +27,7 @@ public partial class UserDataQueryHandler
             Result = 1,
             SongHashVer = green.SongHashVersion,
             ReleaseSongFlg = GreenProtocolBytes.CreateFixedBitset(
-                green.MusicInfoFileOrder.Take(20).Select(song => song.SongNo),
+                green.MusicInfoFileOrder.Select(song => song.SongNo),
                 GreenProtocolBytes.SongFlagBytes),
             ToneFlg = GreenProtocolBytes.FixedOrZero(saveData.ToneFlg, GreenProtocolBytes.ToneFlagBytes),
             TitleFlg = GreenProtocolBytes.FixedOrZero(saveData.TitleFlg, GreenProtocolBytes.TitleFlagBytes),
@@ -49,7 +49,7 @@ public partial class UserDataQueryHandler
             PrevAreaCode = saveData.PrevAreaCode,
             ConsecAreaCnt = saveData.ConsecAreaCnt,
             DefaultShinSetting = saveData.DefaultShinSetting,
-            DispTaikojukuDan = GetValidTaikojukuDanSlot(saveData.DispTaikojukuDan),
+            DispTaikojukuDan = GetSafeTaikojukuDanSlot(saveData.DispTaikojukuDan),
             DifficultyPlayedCourse = saveData.DifficultyPlayedCourse,
             DifficultyPlayedStar = saveData.DifficultyPlayedStar,
             IsChallengeCompe = saveData.IsChallengeCompe,
@@ -58,6 +58,13 @@ public partial class UserDataQueryHandler
         };
     }
 
-    private static uint? GetValidTaikojukuDanSlot(uint value)
-        => value is >= 1 and <= 25 ? value : null;
+    // Green client reads disp_taikojuku_dan_ at message offset +0x31C without
+    // checking proto2 presence (verified at sub_19CFE0, sub_1016F8, sub_24377C,
+    // sub_7FDFFC). Any value outside 1..25 - including 0 and the wire-absent
+    // case decoded as 0 - drives Taikojuku_GetDanSlotSongRange @ 0x127F98 into
+    // a table-underflow read (table + 84*dan - 84) and crashes the client.
+    // sub_7FDFFC itself initialises its local slot to 1 as its "no data" path,
+    // so 1 is the value the client treats as the safe absent sentinel.
+    private static uint GetSafeTaikojukuDanSlot(uint value)
+        => value is >= 1 and <= 25 ? value : 1u;
 }
