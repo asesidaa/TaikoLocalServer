@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TaikoLocalServer.Domain.Entities;
+using TaikoLocalServer.Domain.Enums;
 
 namespace TaikoLocalServer.Infrastructure.Persistence;
 
@@ -7,6 +8,8 @@ public partial class TaikoDbContext
 {
     public virtual DbSet<SongBestDatumGreen> SongBestDataGreen { get; set; } = null!;
     public virtual DbSet<SongPlayDatumGreen> SongPlayDataGreen { get; set; } = null!;
+    public virtual DbSet<DanScoreDatumGreen> DanScoreDataGreen { get; set; } = null!;
+    public virtual DbSet<DanStageScoreDatumGreen> DanStageScoreDataGreen { get; set; } = null!;
     public virtual DbSet<UserSaveDataGreen> UserSaveDataGreen { get; set; } = null!;
     public virtual DbSet<GhostStageSectionDatumGreen> GhostStageSectionDataGreen { get; set; } = null!;
     public virtual DbSet<GreenGhostWinnings> GreenGhostWinnings { get; set; } = null!;
@@ -56,6 +59,33 @@ public partial class TaikoDbContext
                 .WithMany()
                 .HasPrincipalKey(p => p.Baid)
                 .HasForeignKey(d => d.Baid)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<DanScoreDatumGreen>(entity =>
+        {
+            entity.ToTable("DanScoreDatum_Green");
+            entity.HasKey(e => new { e.Baid, e.DanId, e.IsExtra });
+
+            entity.HasOne(d => d.Ba)
+                .WithMany()
+                .HasPrincipalKey(p => p.Baid)
+                .HasForeignKey(d => d.Baid)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.Property(e => e.ClearGrade)
+                .HasConversion<uint>()
+                .HasDefaultValue(GreenDanClearGrade.NotClear);
+        });
+
+        modelBuilder.Entity<DanStageScoreDatumGreen>(entity =>
+        {
+            entity.ToTable("DanStageScoreDatum_Green");
+            entity.HasKey(e => new { e.Baid, e.DanId, e.IsExtra, e.StageIndex });
+
+            entity.HasOne(d => d.Parent)
+                .WithMany(p => p.DanStageScoreData)
+                .HasForeignKey(d => new { d.Baid, d.DanId, d.IsExtra })
                 .OnDelete(DeleteBehavior.Cascade);
         });
 

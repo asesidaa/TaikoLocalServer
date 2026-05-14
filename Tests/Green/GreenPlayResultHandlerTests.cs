@@ -504,6 +504,56 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
+    public async Task GreenDanSchema_CanInsertParentAndStageRows()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        await fixture.Context.SaveChangesAsync();
+
+        fixture.Context.DanScoreDataGreen.Add(new DanScoreDatumGreen
+        {
+            Baid = 1,
+            DanId = 1,
+            IsExtra = false,
+            MedleyUniqueId = 20001,
+            ClearGrade = GreenDanClearGrade.GoldClear,
+            ArrivalSongCount = 1,
+            SoulGaugeTotal = 100,
+            ComboCountTotal = 138,
+            DanStageScoreData =
+            [
+                new DanStageScoreDatumGreen
+                {
+                    Baid = 1,
+                    DanId = 1,
+                    IsExtra = false,
+                    StageIndex = 0,
+                    SongNumber = 790,
+                    PlayScore = 326090,
+                    HighScore = 326090,
+                    GoodCount = 124,
+                    OkCount = 14,
+                    BadCount = 0,
+                    DrumrollCount = 139,
+                    TotalHitCount = 277,
+                    ComboCount = 138
+                }
+            ]
+        });
+
+        await fixture.Context.SaveChangesAsync();
+
+        var saved = await fixture.Context.DanScoreDataGreen
+            .Include(row => row.DanStageScoreData)
+            .SingleAsync(row => row.Baid == 1 && row.DanId == 1 && !row.IsExtra);
+
+        Assert.Equal(GreenDanClearGrade.GoldClear, saved.ClearGrade);
+        var stage = Assert.Single(saved.DanStageScoreData);
+        Assert.Equal(0u, stage.StageIndex);
+        Assert.Equal(790u, stage.SongNumber);
+    }
+
+    [Fact]
     public async Task GetSelfBest_Green_ReturnsSavedBest()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
