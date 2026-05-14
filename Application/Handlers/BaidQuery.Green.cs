@@ -35,6 +35,10 @@ public partial class BaidQueryHandler
         var userData = await context.UserData.FindAsync([card.Baid], cancellationToken)
             ?? throw new InvalidOperationException($"User not found for Green card baid {card.Baid}.");
 
+        var gotDanFlg = GreenProtocolBytes.FixedOrZero(saveData.GotDanFlg, GreenProtocolBytes.DanFlagBytes);
+        var gotDanExtraFlg = GreenProtocolBytes.FixedOrZero(saveData.GotDanExtraFlg, GreenProtocolBytes.DanExtraFlagBytes);
+        var gotDanMax = Math.Min(saveData.GotDanMax, GreenDanHelpers.MaxNormalDanId);
+
         return new CommonBaidResponse
         {
             Result = 1,
@@ -60,9 +64,9 @@ public partial class BaidQueryHandler
             ItemshopTutorialFlg = saveData.ItemshopTutorialFlg,
             IsAutoCostumeOn = saveData.IsAutoCostumeOn,
             DispDanType = saveData.DispDanType,
-            GotDanFlg = GreenProtocolBytes.FixedOrZero(saveData.GotDanFlg, GreenProtocolBytes.DanFlagBytes),
-            GotDanMax = saveData.GotDanMax,
-            GotDanExtraFlg = GreenProtocolBytes.FixedOrZero(saveData.GotDanExtraFlg, GreenProtocolBytes.DanExtraFlagBytes),
+            GotDanFlg = gotDanFlg,
+            GotDanMax = gotDanMax,
+            GotDanExtraFlg = gotDanExtraFlg,
             DefaultToneSetting = saveData.DefaultToneSetting,
             WaiwaiTutorialFlg = saveData.WaiwaiTutorialFlg,
             LastPlayDatetime = saveData.LastPlayDatetime == DateTime.UnixEpoch

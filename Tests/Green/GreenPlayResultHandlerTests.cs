@@ -716,6 +716,103 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
+    public async Task UpdatePlayResult_Green_DaniNormalClearUpdatesFlagsAndDisplayDan()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayMode = 1,
+                DanResult = 1,
+                AryStageInfoes = [new() { SongNo = 101, Level = 1, PlayScore = 100, PlayDan = 1 }]
+            }),
+            CancellationToken.None);
+
+        var save = await fixture.Context.UserSaveDataGreen.FindAsync(1u);
+        Assert.NotNull(save);
+        Assert.Equal(1u, save!.GotDanMax);
+        Assert.Equal(2u, save.DispTaikojukuDan);
+        Assert.Equal(GreenDanClearGrade.NormalClear, GreenDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Green_DaniExtraClearUpdatesExtraFlagsOnly()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayMode = 1,
+                DanResult = 2,
+                AryStageInfoes = [new() { SongNo = 104, Level = 2, PlayScore = 100, PlayDan = 101 }]
+            }),
+            CancellationToken.None);
+
+        var save = await fixture.Context.UserSaveDataGreen.FindAsync(1u);
+        Assert.NotNull(save);
+        Assert.Equal(0u, save!.GotDanMax);
+        Assert.Equal(1u, save.DispTaikojukuDan);
+        Assert.Equal(GreenDanClearGrade.GoldClear, GreenDanHelpers.GetPackedGrade(save.GotDanExtraFlg, 0));
+        Assert.Equal(GreenDanClearGrade.NotClear, GreenDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Green_DaniFailedAttemptDoesNotAdvanceDisplayDan()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayMode = 1,
+                DanResult = 0,
+                AryStageInfoes = [new() { SongNo = 101, Level = 1, PlayScore = 100, PlayDan = 1 }]
+            }),
+            CancellationToken.None);
+
+        var save = await fixture.Context.UserSaveDataGreen.FindAsync(1u);
+        Assert.NotNull(save);
+        Assert.Equal(0u, save!.GotDanMax);
+        Assert.Equal(1u, save.DispTaikojukuDan);
+        Assert.Equal(GreenDanClearGrade.NotClear, GreenDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
+    }
+
+    [Fact]
     public async Task GetSelfBest_Green_ReturnsSavedBest()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();

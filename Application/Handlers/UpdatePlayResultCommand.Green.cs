@@ -318,7 +318,7 @@ public partial class UpdatePlayResultCommandHandler
         }
 
         UpdateGreenDanScore(danScore, playResultData);
-        await UpdateGreenDanSummaryAsync(saveData, cancellationToken);
+        await UpdateGreenDanSummaryAsync(saveData, danScore, cancellationToken);
     }
 
     private static void UpdateGreenDanScore(DanScoreDatumGreen danScore, CommonPlayResultData playResultData)
@@ -359,8 +359,47 @@ public partial class UpdatePlayResultCommandHandler
         }
     }
 
-    private ValueTask UpdateGreenDanSummaryAsync(UserSaveDataGreen saveData, CancellationToken cancellationToken)
-        => ValueTask.CompletedTask;
+    private async ValueTask UpdateGreenDanSummaryAsync(
+        UserSaveDataGreen saveData,
+        DanScoreDatumGreen currentDanScore,
+        CancellationToken cancellationToken)
+    {
+        var rows = await context.DanScoreDataGreen
+            .Where(row => row.Baid == saveData.Baid)
+            .ToListAsync(cancellationToken);
+
+        if (!rows.Any(row => row.DanId == currentDanScore.DanId && row.IsExtra == currentDanScore.IsExtra))
+        {
+            rows.Add(currentDanScore);
+        }
+
+        var normalGrades = rows
+            .Where(row => !row.IsExtra && GreenDanHelpers.IsNormalDanId(row.DanId))
+            .ToDictionary(row => row.DanId, row => row.ClearGrade);
+
+        var normalFlags = new byte[GreenProtocolBytes.DanFlagBytes];
+        foreach (var row in rows.Where(row => !row.IsExtra && GreenDanHelpers.IsNormalDanId(row.DanId)))
+        {
+            normalFlags = GreenDanHelpers.SetPackedGrade(
+                normalFlags,
+                GreenDanHelpers.GetPackedIndex(row.DanId),
+                row.ClearGrade);
+        }
+
+        var extraFlags = new byte[GreenProtocolBytes.DanExtraFlagBytes];
+        foreach (var row in rows.Where(row => row.IsExtra && GreenDanHelpers.IsExtraDanId(row.DanId)))
+        {
+            extraFlags = GreenDanHelpers.SetPackedGrade(
+                extraFlags,
+                GreenDanHelpers.GetPackedIndex(row.DanId),
+                row.ClearGrade);
+        }
+
+        saveData.GotDanFlg = normalFlags;
+        saveData.GotDanExtraFlg = extraFlags;
+        saveData.GotDanMax = GreenDanHelpers.GetGotDanMax(normalGrades);
+        saveData.DispTaikojukuDan = GreenDanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalGrades);
+    }
 
     private void ApplyGhostUpdates(UserSaveDataGreen saveData, CommonPlayResultData playResultData)
     {

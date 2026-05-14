@@ -21,6 +21,10 @@ public partial class UserDataQueryHandler
             .Select(song => song.SongNo)
             .Take(10)
             .ToArrayAsync(cancellationToken);
+        var normalDanGrades = await context.DanScoreDataGreen
+            .Where(row => row.Baid == request.Baid && !row.IsExtra)
+            .ToDictionaryAsync(row => row.DanId, row => row.ClearGrade, cancellationToken);
+        var displayDan = GreenDanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalDanGrades);
 
         return new CommonUserDataResponse
         {
@@ -49,7 +53,7 @@ public partial class UserDataQueryHandler
             PrevAreaCode = saveData.PrevAreaCode,
             ConsecAreaCnt = saveData.ConsecAreaCnt,
             DefaultShinSetting = saveData.DefaultShinSetting,
-            DispTaikojukuDan = GetSafeTaikojukuDanSlot(saveData.DispTaikojukuDan),
+            DispTaikojukuDan = GetSafeTaikojukuDanSlot(displayDan),
             DifficultyPlayedCourse = saveData.DifficultyPlayedCourse,
             DifficultyPlayedStar = saveData.DifficultyPlayedStar,
             IsChallengeCompe = saveData.IsChallengeCompe,
