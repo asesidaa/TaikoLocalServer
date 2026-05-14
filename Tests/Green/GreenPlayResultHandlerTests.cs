@@ -554,6 +554,48 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
+    public void GreenDanHelpers_ClassifiesNormalAndExtraDanIds()
+    {
+        Assert.True(GreenDanHelpers.IsNormalDanId(1));
+        Assert.True(GreenDanHelpers.IsNormalDanId(25));
+        Assert.False(GreenDanHelpers.IsNormalDanId(26));
+
+        Assert.True(GreenDanHelpers.IsExtraDanId(101));
+        Assert.True(GreenDanHelpers.IsExtraDanId(128));
+        Assert.False(GreenDanHelpers.IsExtraDanId(100));
+    }
+
+    [Fact]
+    public void GreenDanHelpers_PacksTwoBitClearGrades()
+    {
+        var flags = GreenDanHelpers.SetPackedGrade(new byte[GreenProtocolBytes.DanFlagBytes], 0, GreenDanClearGrade.NormalClear);
+        flags = GreenDanHelpers.SetPackedGrade(flags, 1, GreenDanClearGrade.GoldClear);
+
+        Assert.Equal(GreenDanClearGrade.NormalClear, GreenDanHelpers.GetPackedGrade(flags, 0));
+        Assert.Equal(GreenDanClearGrade.GoldClear, GreenDanHelpers.GetPackedGrade(flags, 1));
+        Assert.Equal(GreenDanClearGrade.NotClear, GreenDanHelpers.GetPackedGrade(flags, 2));
+    }
+
+    [Fact]
+    public void GreenDanHelpers_ComputesNextUnclearedNormalDan()
+    {
+        var grades = new Dictionary<uint, GreenDanClearGrade>
+        {
+            [1] = GreenDanClearGrade.NormalClear,
+            [2] = GreenDanClearGrade.GoldClear
+        };
+
+        Assert.Equal(3u, GreenDanHelpers.GetNextUnclearedNormalDan(grades));
+
+        for (uint dan = 3; dan <= 25; dan++)
+        {
+            grades[dan] = GreenDanClearGrade.NormalClear;
+        }
+
+        Assert.Equal(25u, GreenDanHelpers.GetNextUnclearedNormalDan(grades));
+    }
+
+    [Fact]
     public async Task GetSelfBest_Green_ReturnsSavedBest()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
