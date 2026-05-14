@@ -1,5 +1,3 @@
-using System.IO.Compression;
-
 namespace TaikoLocalServer.Application.Common;
 
 public static class GreenProtocolBytes
@@ -127,16 +125,5 @@ public static class GreenProtocolBytes
         }
 
         return result;
-    }
-
-    public static byte[] CompressZlib(byte[] body)
-    {
-        using var output = new MemoryStream();
-        using (var zlib = new ZLibStream(output, CompressionLevel.SmallestSize, leaveOpen: true))
-        {
-            zlib.Write(body, 0, body.Length);
-        }
-
-        return output.ToArray();
     }
 }

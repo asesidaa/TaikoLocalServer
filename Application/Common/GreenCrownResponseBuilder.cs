@@ -5,13 +5,14 @@ public static class GreenCrownResponseBuilder
     public static byte[] BuildInflatedBody(IEnumerable<SongBestDatumGreen> bestRows, IGreenCatalog green)
     {
         var values = new ushort[1024];
-        var songFileOrders = green.GreenMusicInfos
-            .Where(pair => pair.Value.FileOrder is >= 0 and < 1024)
-            .ToDictionary(pair => pair.Key, pair => pair.Value.FileOrder);
+        var validSongNoes = green.GreenMusicInfos
+            .Where(pair => pair.Key < 1024)
+            .Select(pair => pair.Key)
+            .ToHashSet();
 
         foreach (var group in bestRows.GroupBy(row => row.SongId))
         {
-            if (!songFileOrders.TryGetValue(group.Key, out var fileOrder))
+            if (!validSongNoes.Contains(group.Key))
             {
                 continue;
             }
@@ -45,7 +46,7 @@ public static class GreenCrownResponseBuilder
                 }
             }
 
-            values[fileOrder] = GreenProtocolBytes.BuildGreenCrownValue(easy, normal, hard, oni, ura);
+            values[group.Key] = GreenProtocolBytes.BuildGreenCrownValue(easy, normal, hard, oni, ura);
         }
 
         return GreenProtocolBytes.PackGreenCrowns(values);

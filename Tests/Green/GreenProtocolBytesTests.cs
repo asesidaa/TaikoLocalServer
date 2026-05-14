@@ -49,11 +49,11 @@ public sealed class GreenProtocolBytesTests
         var value = GreenProtocolBytes.BuildGreenCrownValue(
             GreenCrownState.Clear,
             GreenCrownState.FullCombo,
-            GreenCrownState.Dondaful,
+            GreenCrownState.FullCombo,
             GreenCrownState.None,
             GreenCrownState.Clear);
 
-        Assert.Equal((ushort)0b01_00_11_10_01, value);
+        Assert.Equal((ushort)0b10_00_11_11_10, value);
     }
 
     [Fact]
@@ -71,23 +71,32 @@ public sealed class GreenProtocolBytesTests
         var packed = GreenProtocolBytes.PackGreenCrowns(values);
 
         Assert.Equal(GreenProtocolBytes.CrownInflatedBytes, packed.Length);
-        Assert.Equal(0b0000_0001, packed[0]);
+        Assert.Equal(0b0000_0010, packed[0]);
         Assert.NotEqual(0, packed[^1]);
     }
 
     [Fact]
-    public void CompressZlib_RoundTripsCrownBody()
+    public void PackGreenCrowns_IgnoresBitsOutsideGreenCrownStateRange()
     {
-        var body = new byte[GreenProtocolBytes.CrownInflatedBytes];
-        body[0] = 0x39;
-        body[^1] = 0x7f;
+        var packed = GreenProtocolBytes.PackGreenCrowns([0xffff]);
 
-        var compressed = GreenProtocolBytes.CompressZlib(body);
-        using var input = new MemoryStream(compressed);
-        using var zlib = new ZLibStream(input, CompressionMode.Decompress);
-        using var output = new MemoryStream();
-        zlib.CopyTo(output);
+        Assert.Equal(0x03ff, ReadTenBitValue(packed, 0));
+    }
 
-        Assert.Equal(body, output.ToArray());
+    private static ushort ReadTenBitValue(byte[] packed, int songNo)
+    {
+        var value = 0;
+        var bitOffset = songNo * 10;
+
+        for (var bit = 0; bit < 10; bit++)
+        {
+            var absoluteBit = bitOffset + bit;
+            if ((packed[absoluteBit >> 3] & (1 << (absoluteBit & 7))) != 0)
+            {
+                value |= 1 << bit;
+            }
+        }
+
+        return (ushort)value;
     }
 }

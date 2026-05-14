@@ -20,7 +20,7 @@ public class CrownsDataController(ITaikoDbContext context, IGameDataCatalog game
         {
             Result = 1,
             SongHashVer = green.SongHashVersion,
-            HashCrownFlg = GreenProtocolBytes.CompressZlib(inflated)
+            HashCrownFlg = GZipBytesUtil.GetGZipBytes(inflated)
         });
     }
 }

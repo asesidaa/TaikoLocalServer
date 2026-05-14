@@ -592,8 +592,8 @@ public sealed class GreenPlayResultHandlerTests
         var packed = GreenCrownResponseBuilder.BuildInflatedBody(rows, new GreenHandlerFixture.TestGreenCatalog());
 
         Assert.Equal(GreenProtocolBytes.CrownInflatedBytes, packed.Length);
-        Assert.Equal(0b0000_1001, ReadTenBitValue(packed, 0));
-        Assert.Equal(0, ReadTenBitValue(packed, 101));
+        Assert.Equal(0, ReadTenBitValue(packed, 0));
+        Assert.Equal(0b0000_1110, ReadTenBitValue(packed, 101));
     }
 
     [Fact]
@@ -606,11 +606,11 @@ public sealed class GreenPlayResultHandlerTests
 
         var packed = GreenCrownResponseBuilder.BuildInflatedBody(rows, new GreenHandlerFixture.TestGreenCatalog());
 
-        Assert.Equal(0b00_00_10_00_00, ReadTenBitValue(packed, 0));
+        Assert.Equal(0b00_00_11_00_00, ReadTenBitValue(packed, 101));
     }
 
     [Fact]
-    public async Task CrownsData_Green_UsesGreenCatalogFileOrderAsCrownIndex()
+    public async Task CrownsData_Green_UsesGreenSongNoAsCrownIndex()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync(new GreenHandlerFixture.TestGreenCatalog(
             musicInfoFileOrder:
@@ -652,11 +652,11 @@ public sealed class GreenPlayResultHandlerTests
 
         var ok = Assert.IsType<OkObjectResult>(result);
         var response = Assert.IsType<CrownsDataResponse>(ok.Value);
-        var inflated = InflateZlib(response.HashCrownFlg);
+        var inflated = InflateGzip(response.HashCrownFlg);
 
-        Assert.Equal(0, ReadTenBitValue(inflated, 0));
-        Assert.Equal(0b0000_0001, ReadTenBitValue(inflated, 1));
-        Assert.Equal(0, ReadTenBitValue(inflated, 729));
+        Assert.Equal(0, ReadTenBitValue(inflated, 1));
+        Assert.Equal(0b0000_0010, ReadTenBitValue(inflated, 729));
+        Assert.Equal(0, ReadTenBitValue(inflated, 463));
     }
 
     [Fact]
@@ -689,7 +689,7 @@ public sealed class GreenPlayResultHandlerTests
 
         var ok = Assert.IsType<OkObjectResult>(result);
         var response = Assert.IsType<CrownsDataResponse>(ok.Value);
-        var inflated = InflateZlib(response.HashCrownFlg);
+        var inflated = InflateGzip(response.HashCrownFlg);
 
         Assert.Equal((uint)1, response.Result);
         Assert.Equal((uint)123, response.SongHashVer);
@@ -736,10 +736,10 @@ public sealed class GreenPlayResultHandlerTests
 
         var ok = Assert.IsType<OkObjectResult>(result);
         var response = Assert.IsType<CrownsDataResponse>(ok.Value);
-        var inflated = InflateZlib(response.HashCrownFlg);
+        var inflated = InflateGzip(response.HashCrownFlg);
 
-        Assert.Equal(0b0000_1000, ReadTenBitValue(inflated, 0));
-        Assert.Equal(0, ReadTenBitValue(inflated, 101));
+        Assert.Equal(0, ReadTenBitValue(inflated, 0));
+        Assert.Equal(0b0000_1100, ReadTenBitValue(inflated, 101));
     }
 
     private static ushort ReadTenBitValue(byte[] packed, int songNo)
@@ -764,12 +764,12 @@ public sealed class GreenPlayResultHandlerTests
         return (source[id >> 3] & (1 << ((int)id & 7))) != 0;
     }
 
-    private static byte[] InflateZlib(byte[] compressed)
+    private static byte[] InflateGzip(byte[] compressed)
     {
         using var input = new MemoryStream(compressed);
-        using var zlib = new ZLibStream(input, CompressionMode.Decompress);
+        using var gzip = new GZipStream(input, CompressionMode.Decompress);
         using var output = new MemoryStream();
-        zlib.CopyTo(output);
+        gzip.CopyTo(output);
         return output.ToArray();
     }
 }
