@@ -8,7 +8,6 @@ public partial class UpdatePlayResultCommandHandler
     private const uint MaxGreenCourseLevel = 5;
     private const uint MaxGreenStageMode = 1;
     private const uint MaxGreenPlayResult = 3;
-    private const uint MaxGreenDanSlot = 25;
 
     private partial async ValueTask<uint> HandleGreen(
         UpdatePlayResultCommand request,
@@ -63,6 +62,8 @@ public partial class UpdatePlayResultCommandHandler
             await SaveStageAsync(request.Baid, stage, playResultData.PlayMode, playTime, cancellationToken);
         }
 
+        await SaveGreenDanAsync(saveData, playResultData, green, cancellationToken);
+
         await context.SaveChangesAsync(cancellationToken);
         return 1;
     }
@@ -74,7 +75,7 @@ public partial class UpdatePlayResultCommandHandler
             && stage.Level is >= MinGreenCourseLevel and <= MaxGreenCourseLevel
             && stage.StageMode <= MaxGreenStageMode
             && stage.PlayResult <= MaxGreenPlayResult
-            && stage.PlayDan is null or (>= 1 and <= MaxGreenDanSlot);
+            && (stage.PlayDan is null || GreenDanHelpers.IsKnownGreenDanId(stage.PlayDan.Value));
     }
 
     private static bool CanAdd(uint current, uint delta)
@@ -261,6 +262,105 @@ public partial class UpdatePlayResultCommandHandler
             context.GreenRecentSongs.Add(new GreenRecentSongs { Baid = baid, SongNo = stage.SongNo });
         }
     }
+
+    private async Task SaveGreenDanAsync(
+        UserSaveDataGreen saveData,
+        CommonPlayResultData playResultData,
+        IGreenCatalog green,
+        CancellationToken cancellationToken)
+    {
+        if (playResultData.PlayMode != 1)
+        {
+            return;
+        }
+
+        var danIds = playResultData.AryStageInfoes
+            .Select(stage => stage.PlayDan.GetValueOrDefault())
+            .Where(dan => dan != 0)
+            .Distinct()
+            .ToArray();
+
+        if (danIds.Length != 1)
+        {
+            logger.LogWarning("Skipping Green Dani save for baid {Baid}: expected one PlayDan value, got {Count}", saveData.Baid, danIds.Length);
+            return;
+        }
+
+        if (playResultData.DanResult > (uint)GreenDanClearGrade.GoldClear)
+        {
+            logger.LogWarning("Skipping Green Dani save for baid {Baid}: invalid DanResult {DanResult}", saveData.Baid, playResultData.DanResult);
+            return;
+        }
+
+        var danId = danIds[0];
+        var pack = green.TaikojukuFileOrder.FirstOrDefault(row => row.ChallengeLevel == danId);
+        if (pack is null || !GreenDanHelpers.IsKnownGreenDanId(danId))
+        {
+            logger.LogWarning("Skipping Green Dani save for baid {Baid}: unknown Dan id {DanId}", saveData.Baid, danId);
+            return;
+        }
+
+        var isExtra = GreenDanHelpers.IsExtraDanId(danId);
+        var danScore = await context.DanScoreDataGreen
+            .Include(row => row.DanStageScoreData)
+            .SingleOrDefaultAsync(row => row.Baid == saveData.Baid && row.DanId == danId && row.IsExtra == isExtra, cancellationToken);
+
+        if (danScore is null)
+        {
+            danScore = new DanScoreDatumGreen
+            {
+                Baid = saveData.Baid,
+                DanId = danId,
+                IsExtra = isExtra,
+                MedleyUniqueId = pack.UniqueId
+            };
+            context.DanScoreDataGreen.Add(danScore);
+        }
+
+        UpdateGreenDanScore(danScore, playResultData);
+        await UpdateGreenDanSummaryAsync(saveData, cancellationToken);
+    }
+
+    private static void UpdateGreenDanScore(DanScoreDatumGreen danScore, CommonPlayResultData playResultData)
+    {
+        danScore.ClearGrade = GreenDanHelpers.ClampGrade(Math.Max((uint)danScore.ClearGrade, playResultData.DanResult));
+        danScore.ArrivalSongCount = Math.Max(danScore.ArrivalSongCount, (uint)playResultData.AryStageInfoes.Count);
+        danScore.ComboCountTotal = Math.Max(danScore.ComboCountTotal, playResultData.ComboCntTotal);
+        danScore.SoulGaugeTotal = Math.Max(danScore.SoulGaugeTotal, playResultData.SoulGaugeTotal);
+
+        for (var i = 0; i < playResultData.AryStageInfoes.Count; i++)
+        {
+            var stage = playResultData.AryStageInfoes[i];
+            var stageIndex = (uint)i;
+            var existing = danScore.DanStageScoreData.FirstOrDefault(row => row.StageIndex == stageIndex);
+            if (existing is null)
+            {
+                existing = new DanStageScoreDatumGreen
+                {
+                    Baid = danScore.Baid,
+                    DanId = danScore.DanId,
+                    IsExtra = danScore.IsExtra,
+                    StageIndex = stageIndex,
+                    SongNumber = stage.SongNo,
+                    BadCount = stage.NgCnt
+                };
+                danScore.DanStageScoreData.Add(existing);
+            }
+
+            existing.SongNumber = stage.SongNo;
+            existing.PlayScore = Math.Max(existing.PlayScore, stage.PlayScore);
+            existing.HighScore = Math.Max(existing.HighScore, stage.PlayScore);
+            existing.ComboCount = Math.Max(existing.ComboCount, stage.ComboCnt);
+            existing.DrumrollCount = Math.Max(existing.DrumrollCount, stage.PoundCnt);
+            existing.GoodCount = Math.Max(existing.GoodCount, stage.GoodCnt);
+            existing.OkCount = Math.Max(existing.OkCount, stage.OkCnt);
+            existing.TotalHitCount = Math.Max(existing.TotalHitCount, stage.HitCnt);
+            existing.BadCount = Math.Min(existing.BadCount, stage.NgCnt);
+        }
+    }
+
+    private ValueTask UpdateGreenDanSummaryAsync(UserSaveDataGreen saveData, CancellationToken cancellationToken)
+        => ValueTask.CompletedTask;
 
     private void ApplyGhostUpdates(UserSaveDataGreen saveData, CommonPlayResultData playResultData)
     {

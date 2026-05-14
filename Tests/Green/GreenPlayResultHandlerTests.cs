@@ -596,6 +596,126 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
+    public async Task UpdatePlayResult_Green_DaniPlaySavesDanDataAndNormalBest()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayDatetime = "20260515060858",
+                PlayMode = 1,
+                DanResult = 2,
+                AryStageInfoes =
+                [
+                    new() { SongNo = 101, Level = 1, PlayResult = 0, PlayScore = 326090, GoodCnt = 124, OkCnt = 14, NgCnt = 0, PoundCnt = 139, ComboCnt = 138, HitCnt = 277, PlayDan = 1, SoulGauge = 51 },
+                    new() { SongNo = 102, Level = 1, PlayResult = 0, PlayScore = 593280, GoodCnt = 230, OkCnt = 33, NgCnt = 3, PoundCnt = 287, ComboCnt = 156, HitCnt = 550, PlayDan = 1, SoulGauge = 99 },
+                    new() { SongNo = 103, Level = 1, PlayResult = 0, PlayScore = 818490, GoodCnt = 314, OkCnt = 49, NgCnt = 6, PoundCnt = 342, ComboCnt = 156, HitCnt = 705, PlayDan = 1, SoulGauge = 100 }
+                ]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+
+        var dan = await fixture.Context.DanScoreDataGreen
+            .Include(row => row.DanStageScoreData)
+            .SingleAsync(row => row.Baid == 1 && row.DanId == 1 && !row.IsExtra);
+
+        Assert.Equal(20001u, dan.MedleyUniqueId);
+        Assert.Equal(GreenDanClearGrade.GoldClear, dan.ClearGrade);
+        Assert.Equal(3u, dan.ArrivalSongCount);
+        Assert.Equal(3, dan.DanStageScoreData.Count);
+        Assert.Contains(dan.DanStageScoreData, row => row.StageIndex == 0 && row.SongNumber == 101 && row.HighScore == 326090);
+
+        var normalBest = await fixture.Context.SongBestDataGreen.FindAsync(1u, 101u, Difficulty.Easy, false);
+        Assert.NotNull(normalBest);
+        Assert.Equal(326090u, normalBest!.BestScore);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Green_DaniRejectsInvalidDanResultButKeepsNormalPlaySave()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayMode = 1,
+                DanResult = 3,
+                AryStageInfoes =
+                [
+                    new() { SongNo = 101, Level = 1, PlayScore = 123, PlayDan = 1 }
+                ]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        Assert.Empty(await fixture.Context.DanScoreDataGreen.ToListAsync());
+        Assert.Single(await fixture.Context.SongPlayDataGreen.Where(row => row.Baid == 1).ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Green_DaniDuplicateSongsUseStageIndexRows()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayMode = 1,
+                DanResult = 1,
+                AryStageInfoes =
+                [
+                    new() { SongNo = 101, Level = 1, PlayScore = 100, PlayDan = 1 },
+                    new() { SongNo = 101, Level = 1, PlayScore = 200, PlayDan = 1 }
+                ]
+            }),
+            CancellationToken.None);
+
+        var stages = await fixture.Context.DanStageScoreDataGreen
+            .Where(row => row.Baid == 1 && row.DanId == 1)
+            .OrderBy(row => row.StageIndex)
+            .ToListAsync();
+
+        Assert.Equal(2, stages.Count);
+        Assert.Equal(0u, stages[0].StageIndex);
+        Assert.Equal(1u, stages[1].StageIndex);
+    }
+
+    [Fact]
     public async Task GetSelfBest_Green_ReturnsSavedBest()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
