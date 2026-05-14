@@ -8,12 +8,17 @@ public partial class GetDanScoreQueryHandler : IRequestHandler<GetDanScoreQuery,
 {
     private readonly ILogger<GetDanScoreQueryHandler> logger;
     private readonly ITaikoDbContext                   context;
+    private readonly IGameDataCatalog gameDataService;
 
 
-    public GetDanScoreQueryHandler(ILogger<GetDanScoreQueryHandler> logger, ITaikoDbContext context)
+    public GetDanScoreQueryHandler(
+        ILogger<GetDanScoreQueryHandler> logger,
+        ITaikoDbContext context,
+        IGameDataCatalog gameDataService)
     {
         this.logger = logger;
         this.context = context;
+        this.gameDataService = gameDataService;
     }
 
     public ValueTask<CommonDanScoreDataResponse> Handle(GetDanScoreQuery request, CancellationToken cancellationToken) => request.Era switch

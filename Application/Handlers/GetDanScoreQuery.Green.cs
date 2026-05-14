@@ -2,9 +2,53 @@ namespace TaikoLocalServer.Application.Handlers;
 
 public partial class GetDanScoreQueryHandler
 {
-    private partial ValueTask<CommonDanScoreDataResponse> HandleGreen(GetDanScoreQuery request, CancellationToken cancellationToken)
+    private partial async ValueTask<CommonDanScoreDataResponse> HandleGreen(
+        GetDanScoreQuery request,
+        CancellationToken cancellationToken)
     {
-        logger.LogInformation("Green GetDanScore stub for baid {Baid}, returning empty", request.Baid);
-        return ValueTask.FromResult(new CommonDanScoreDataResponse { Result = 1 });
+        var requestedIds = request.DanIds.ToHashSet();
+        var knownChallengeLevels = gameDataService.Green().TaikojukuFileOrder
+            .Select(pack => pack.ChallengeLevel)
+            .ToHashSet();
+
+        var validRequestedIds = requestedIds
+            .Where(id => knownChallengeLevels.Contains(id))
+            .ToHashSet();
+
+        var rows = await context.DanScoreDataGreen
+            .Where(row => row.Baid == request.Baid && validRequestedIds.Contains(row.DanId))
+            .Include(row => row.DanStageScoreData)
+            .ToListAsync(cancellationToken);
+
+        var response = new CommonDanScoreDataResponse { Result = 1 };
+        foreach (var row in rows.OrderBy(row => row.DanId))
+        {
+            var responseData = new CommonDanScoreDataResponse.DanScoreData
+            {
+                DanId = row.DanId,
+                ArrivalSongCnt = row.ArrivalSongCount,
+                SoulGaugeTotal = row.SoulGaugeTotal,
+                ComboCntTotal = row.ComboCountTotal
+            };
+
+            foreach (var stage in row.DanStageScoreData.OrderBy(stage => stage.StageIndex).Take((int)row.ArrivalSongCount))
+            {
+                responseData.AryDanScoreDataStages.Add(new CommonDanScoreDataResponse.DanScoreDataStage
+                {
+                    PlayScore = stage.PlayScore,
+                    GoodCnt = stage.GoodCount,
+                    OkCnt = stage.OkCount,
+                    NgCnt = stage.BadCount,
+                    PoundCnt = stage.DrumrollCount,
+                    HitCnt = stage.TotalHitCount,
+                    ComboCnt = stage.ComboCount,
+                    HighScore = stage.HighScore
+                });
+            }
+
+            response.AryDanScoreDatas.Add(responseData);
+        }
+
+        return response;
     }
 }
