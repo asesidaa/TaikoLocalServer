@@ -95,6 +95,50 @@ public class GreenAdminApiControllerTests
         Assert.Equal(5, await fixture.Context.GreenFavoriteSongs.CountAsync(row => row.Baid == 1));
     }
 
+    [Fact]
+    public async Task DanBestData_Green_MapsClearGradeSubset()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "don" });
+        fixture.Context.DanScoreDataGreen.Add(new DanScoreDatumGreen
+        {
+            Baid = 1,
+            DanId = 1,
+            IsExtra = false,
+            MedleyUniqueId = 20001,
+            ClearGrade = GreenDanClearGrade.GoldClear,
+            SoulGaugeTotal = 100,
+            ComboCountTotal = 300,
+            DanStageScoreData =
+            [
+                new() { Baid = 1, DanId = 1, IsExtra = false, StageIndex = 0, SongNumber = 101, PlayScore = 1000, HighScore = 1000, GoodCount = 10, OkCount = 2, BadCount = 1, DrumrollCount = 4, TotalHitCount = 13, ComboCount = 12 }
+            ]
+        });
+        await fixture.Context.SaveChangesAsync();
+
+        var controller = CreateDanBestDataController(fixture.Context);
+        var result = await controller.GetDanBestData("Green", 1);
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var response = Assert.IsType<DanBestDataResponse>(ok.Value);
+        var row = Assert.Single(response.DanBestDataList);
+        Assert.Equal(1u, row.DanId);
+        Assert.Equal(DanClearState.GoldNormalClear, row.ClearState);
+        Assert.Single(row.DanBestStageDataList);
+    }
+
+    [Fact]
+    public void GameData_Green_MusicDetailsRouteReturnsCatalog()
+    {
+        var catalog = new FileGameDataCatalog([new GreenHandlerFixture.TestGreenCatalog()]);
+        var controller = new GameDataController(catalog);
+
+        var result = controller.GetMusicDetails("Green");
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        Assert.NotNull(ok.Value);
+    }
+
     private static PlayDataController CreatePlayDataController(ITaikoDbContext context)
     {
         return new PlayDataController(context)
@@ -106,6 +150,14 @@ public class GreenAdminApiControllerTests
     private static FavoriteSongsController CreateFavoriteSongsController(ITaikoDbContext context, IGameDataCatalog catalog)
     {
         return new FavoriteSongsController(context, catalog)
+        {
+            ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
+        };
+    }
+
+    private static DanBestDataController CreateDanBestDataController(ITaikoDbContext context)
+    {
+        return new DanBestDataController(context)
         {
             ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
         };
