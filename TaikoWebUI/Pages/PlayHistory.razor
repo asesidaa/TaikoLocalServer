@@ -1,7 +1,9 @@
 @using Blazored.LocalStorage
+@using TaikoWebUI.Utilities
 
 @inject IGameDataService GameDataService
 @inject HttpClient Client
+@inject IDialogService DialogService
 @inject AuthService AuthService
 @inject IJSRuntime JsRuntime
 @inject NavigationManager NavigationManager
@@ -9,6 +11,7 @@
 @inject BreadcrumbsStateContainer BreadcrumbsStateContainer
 
 @page "/Users/{baid:int}/PlayHistory"
+@page "/Users/{baid:int}/{era}/PlayHistory"
 @attribute [Authorize]
 
 <MudGrid Class="my-8">
@@ -72,7 +75,14 @@
                                 <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Level"]</MudTh>
                                 <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Score"]</MudTh>
                                 <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Crown"]</MudTh>
-                                <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Rank"]</MudTh>
+                                @if (!IsGreen)
+                                {
+                                    <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Rank"]</MudTh>
+                                }
+                                else
+                                {
+                                    @* TODO Green WebUI: enable this control when Green exposes the underlying feature. *@
+                                }
                                 <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Good"]</MudTh>
                                 <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["OK"]</MudTh>
                                 <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Bad"]</MudTh>
@@ -96,7 +106,7 @@
                                             <MudIcon Style=@IconStyle Icon="@GetDifficultyIcon(songHistoryData.Difficulty)" />
                                         </div>
                                         <div style="width:300px; padding-left: 4px;">
-                                            <a href="@($"/Users/{Baid}/Songs/{songHistoryData.SongId}")">
+                                            <a href="@(WebUiEra.UserRoute(Baid, CurrentEra, $"Songs/{songHistoryData.SongId}"))">
                                                 <MudText Typo="Typo.body2" Style="font-weight:bold">@songHistoryData.MusicName</MudText>
                                                 <MudText Typo="Typo.caption">@songHistoryData.MusicArtist</MudText>
                                             </a>
@@ -137,12 +147,15 @@
 
                                 <MudTd>@(songHistoryData.Score)</MudTd>
                                 <MudTd Style="text-align:center"><img src="@($"/images/crown_{songHistoryData.Crown}.webp")" alt="@(GetCrownText(songHistoryData.Crown))" title="@(GetCrownText(songHistoryData.Crown))" style=@IconStyle /></MudTd>
-                                <MudTd Style="text-align:center">
-                                    @if (songHistoryData.ScoreRank is not ScoreRank.None)
-                                    {
-                                        <img src="@($"/images/rank_{songHistoryData.ScoreRank}.webp")" alt="@(GetRankText(songHistoryData.ScoreRank))" title="@(GetRankText(songHistoryData.ScoreRank))" style=@IconStyle />
-                                    }
-                                </MudTd>
+                                @if (!IsGreen)
+                                {
+                                    <MudTd Style="text-align:center">
+                                        @if (songHistoryData.ScoreRank is not ScoreRank.None)
+                                        {
+                                            <img src="@($"/images/rank_{songHistoryData.ScoreRank}.webp")" alt="@(GetRankText(songHistoryData.ScoreRank))" title="@(GetRankText(songHistoryData.ScoreRank))" style=@IconStyle />
+                                        }
+                                    </MudTd>
+                                }
                                 <MudTd>@(songHistoryData.GoodCount)</MudTd>
                                 <MudTd>@(songHistoryData.OkCount)</MudTd>
                                 <MudTd>@(songHistoryData.MissCount)</MudTd>

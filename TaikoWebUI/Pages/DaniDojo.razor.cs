@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+using TaikoWebUI.Utilities;
+using Microsoft.Extensions.Options;
 using System.Collections.Immutable;
 using TaikoWebUI.Settings;
 
@@ -11,6 +12,12 @@ public partial class DaniDojo
 
     [Parameter]
     public int Baid { get; set; }
+
+    [Parameter]
+    public string? Era { get; set; }
+
+    private string CurrentEra => WebUiEra.Normalize(Era);
+    private bool IsGreen => string.Equals(CurrentEra, "Green", StringComparison.OrdinalIgnoreCase);
 
     private string? SongNameLanguage { get; set; }
 
@@ -26,13 +33,13 @@ public partial class DaniDojo
     {
         await base.OnInitializedAsync();
 
-        response = await Client.GetFromJsonAsync<DanBestDataResponse>($"api/DanBestData/{Baid}");
+        response = await Client.GetFromJsonAsync<DanBestDataResponse>(WebUiEra.Api(CurrentEra, $"DanBestData/{Baid}"));
         response.ThrowIfNull();
         response.DanBestDataList.ForEach(data => data.DanBestStageDataList
             .Sort((stageData, otherStageData) => stageData.SongNumber.CompareTo(otherStageData.SongNumber)));
         
         _bestDataMap = response.DanBestDataList.ToDictionary(data => data.DanId);
-        danMap = GameDataService.GetDanMap();
+        danMap = GameDataService.GetDanMap(CurrentEra);
 
         if (!UiSettings.Value.DisplayUnplayedDans)
         {
@@ -49,14 +56,14 @@ public partial class DaniDojo
 
         userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
 
-        musicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
+        musicDetailDictionary = await GameDataService.GetMusicDetailDictionary(CurrentEra);
 
         // Breadcrumbs
         BreadcrumbsStateContainer.breadcrumbs.Clear();
         if (AuthService.IsLoggedIn && !AuthService.IsAdmin) BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
         else BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
-        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dani Dojo"], href: $"/Users/{Baid}/DaniDojo", disabled: false));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dani Dojo"], href: WebUiEra.UserRoute(Baid, CurrentEra, "DaniDojo"), disabled: false));
         BreadcrumbsStateContainer.NotifyStateChanged();
     }
 

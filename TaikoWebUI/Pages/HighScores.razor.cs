@@ -1,9 +1,16 @@
-﻿namespace TaikoWebUI.Pages;
+using TaikoWebUI.Utilities;
+namespace TaikoWebUI.Pages;
 
 public partial class HighScores
 {
     [Parameter]
     public int Baid { get; set; }
+
+    [Parameter]
+    public string? Era { get; set; }
+
+    private string CurrentEra => WebUiEra.Normalize(Era);
+    private bool IsGreen => string.Equals(CurrentEra, "Green", StringComparison.OrdinalIgnoreCase);
 
     private const string IconStyle = "width:25px; height:25px;";
 
@@ -20,13 +27,13 @@ public partial class HighScores
     {
         await base.OnInitializedAsync();
 
-        response = await Client.GetFromJsonAsync<SongBestResponse>($"api/PlayData/{Baid}");
+        response = await Client.GetFromJsonAsync<SongBestResponse>(WebUiEra.Api(CurrentEra, $"PlayData/{Baid}"));
         response.ThrowIfNull();
 
         userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
 
         var songNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
-        musicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
+        musicDetailDictionary = await GameDataService.GetMusicDetailDictionary(CurrentEra);
 
         response.SongBestData.ForEach(data =>
         {
@@ -66,23 +73,37 @@ public partial class HighScores
             BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
         };
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
-        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["High Scores"], href: $"/Users/{Baid}/HighScores", disabled: false));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["High Scores"], href: WebUiEra.UserRoute(Baid, CurrentEra, "HighScores"), disabled: false));
         BreadcrumbsStateContainer.NotifyStateChanged();
     }
 
     private async Task OnFavoriteToggled(SongBestData data)
     {
+        if (IsGreen && !data.IsFavorite && CountCurrentFavorites() >= 5)
+        {
+            await DialogService.ShowMessageBoxAsync(
+                Localizer["Error"],
+                "Green supports at most 5 favorite songs.",
+                Localizer["Dialog OK"]);
+            return;
+        }
+
         var request = new SetFavoriteRequest
         {
             Baid = (uint)Baid,
             IsFavorite = !data.IsFavorite,
             SongId = data.SongId
         };
-        var result = await Client.PostAsJsonAsync("api/FavoriteSongs", request);
+        var result = await Client.PostAsJsonAsync(WebUiEra.Api(CurrentEra, "FavoriteSongs"), request);
         if (result.IsSuccessStatusCode)
         {
             data.IsFavorite = !data.IsFavorite;
         }
+    }
+
+    private int CountCurrentFavorites()
+    {
+        return response?.SongBestData.Where(data => data.IsFavorite).Select(data => data.SongId).Distinct().Count() ?? 0;
     }
 
     private async Task OnTabChanged(int index)

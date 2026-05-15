@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using TaikoWebUI.Utilities;
+using System.Collections.Generic;
 using TaikoWebUI.Pages.Dialogs;
 
 namespace TaikoWebUI.Pages;
@@ -7,6 +8,12 @@ public partial class Profile
 {
     [Parameter]
     public int Baid { get; set; }
+
+    [Parameter]
+    public string? Era { get; set; }
+
+    private string CurrentEra => WebUiEra.Normalize(Era);
+    private bool IsGreen => string.Equals(CurrentEra, "Green", StringComparison.OrdinalIgnoreCase);
 
     private SongBestResponse? songresponse;
 
@@ -196,10 +203,11 @@ public partial class Profile
         await base.OnInitializedAsync();
 
         isSavingOptions = false;
+        // TODO Green WebUI: replace this compatibility settings call when Green settings editing is implemented.
         response = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
         response.ThrowIfNull();
         
-        musicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
+        musicDetailDictionary = await GameDataService.GetMusicDetailDictionary(CurrentEra);
 
         BreadcrumbsStateContainer.breadcrumbs.Clear();
         if (AuthService.IsLoggedIn && !AuthService.IsAdmin)
@@ -211,7 +219,7 @@ public partial class Profile
             BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
         }
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{response.MyDonName}", href: null, disabled: true));
-        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Profile"], href: $"/Users/{Baid}/Profile", disabled: false));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Profile"], href: WebUiEra.UserRoute(Baid, CurrentEra, "Profile"), disabled: false));
         BreadcrumbsStateContainer.NotifyStateChanged();
 
         costumeList = await GameDataService.GetCostumeList();
@@ -222,7 +230,7 @@ public partial class Profile
         InitializeAvailableCostumes();
         InitializeAvailableTitles();
 
-        songresponse = await Client.GetFromJsonAsync<SongBestResponse>($"api/PlayData/{Baid}");
+        songresponse = await Client.GetFromJsonAsync<SongBestResponse>(WebUiEra.Api(CurrentEra, $"PlayData/{Baid}"));
         songresponse.ThrowIfNull();
 
         songresponse.SongBestData.ForEach(data =>
@@ -363,6 +371,7 @@ public partial class Profile
     private async Task SaveOptions()
     {
         isSavingOptions = true;
+        // TODO Green WebUI: replace this compatibility settings call when Green settings editing is implemented.
         await Client.PostAsJsonAsync($"api/UserSettings/{Baid}", response);
         isSavingOptions = false;
 

@@ -1,14 +1,16 @@
-﻿@using Blazored.LocalStorage
+@using Blazored.LocalStorage
 @using TaikoWebUI.Utilities;
 
 @inject IGameDataService GameDataService
 @inject HttpClient Client
+@inject IDialogService DialogService
 @inject AuthService AuthService
 @inject ILocalStorageService LocalStorage
 @inject NavigationManager NavigationManager
 @inject BreadcrumbsStateContainer BreadcrumbsStateContainer
 
 @page "/Users/{baid:int}/Songs"
+@page "/Users/{baid:int}/{era}/Songs"
 @attribute [Authorize]
 
 <MudGrid Class="my-8">
@@ -99,7 +101,7 @@
                                                          title="Add to/remove from favorites" />
                                 </div>
                                 <div style="width:400px">
-                                    <a href="@($"/Users/{Baid}/Songs/{context.SongId}")">
+                                    <a href="@(WebUiEra.UserRoute(Baid, CurrentEra, $"Songs/{context.SongId}"))">
                                         <MudText Typo="Typo.body2" Style="font-weight:bold">@GameDataService.GetMusicNameBySongId(musicDetailDictionary, context.SongId, SongNameLanguage)</MudText>
                                         <MudText Typo="Typo.caption">@GameDataService.GetMusicArtistBySongId(musicDetailDictionary, context.SongId, SongNameLanguage)</MudText>
                                     </a>

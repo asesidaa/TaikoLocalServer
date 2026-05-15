@@ -1,5 +1,6 @@
-﻿@using System.ComponentModel.DataAnnotations
+@using System.ComponentModel.DataAnnotations
 @using Blazored.LocalStorage
+@using TaikoWebUI.Utilities
 
 @inject IGameDataService GameDataService
 @inject HttpClient Client
@@ -9,6 +10,7 @@
 @inject BreadcrumbsStateContainer BreadcrumbsStateContainer
 
 @page "/Users/{baid:int}/DaniDojo"
+@page "/Users/{baid:int}/{era}/DaniDojo"
 @attribute [Authorize]
 
 @if (AuthService.LoginRequired && (!AuthService.IsLoggedIn || (AuthService.GetLoggedInBaid() != Baid && !AuthService.IsAdmin)))
@@ -160,7 +162,7 @@ else
                                                             </MudItem>
 
                                                             <MudItem xs="9" md="4" Style="display:flex;flex-direction:column;" Class="pl-4">
-                                                                <a href="@($"/Users/{Baid}/Songs/{danDataOdaiSong.SongNo}")">
+                                                                <a href="@(WebUiEra.UserRoute(Baid, CurrentEra, $"Songs/{danDataOdaiSong.SongNo}"))">
                                                                     <MudText Typo="Typo.body1" Style="font-weight: bold;">@GameDataService.GetMusicNameBySongId(musicDetailDictionary, danDataOdaiSong.SongNo, SongNameLanguage)</MudText>
                                                                     <MudText Typo="Typo.caption">@GameDataService.GetMusicArtistBySongId(musicDetailDictionary, danDataOdaiSong.SongNo, SongNameLanguage)</MudText>
                                                                 </a>

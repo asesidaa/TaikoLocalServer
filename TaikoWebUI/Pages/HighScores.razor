@@ -1,13 +1,15 @@
-﻿@using TaikoWebUI.Utilities;
+@using TaikoWebUI.Utilities;
 
 @inject IGameDataService GameDataService
 @inject HttpClient Client
+@inject IDialogService DialogService
 @inject AuthService AuthService
 @inject NavigationManager NavigationManager
 @inject BreadcrumbsStateContainer BreadcrumbsStateContainer
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 @page "/Users/{baid:int}/HighScores"
+@page "/Users/{baid:int}/{era}/HighScores"
 @attribute [Authorize]
 
 <MudGrid Class="my-8" Style="margin-bottom: 0px !important;">
@@ -92,11 +94,18 @@
                                                     <MudText Typo="Typo.body2">@Localizer["Best Crown"]</MudText>
                                                 </MudTableSortLabel>
                                             </MudTh>
-                                            <MudTh>
-                                                <MudTableSortLabel T="SongBestData" SortBy="x => (int)x.BestScoreRank * 1000000 + x.BestScore">
-                                                    <MudText Typo="Typo.body2">@Localizer["Best Rank"]</MudText>
-                                                </MudTableSortLabel>
-                                            </MudTh>
+                                            @if (!IsGreen)
+                                            {
+                                                <MudTh>
+                                                    <MudTableSortLabel T="SongBestData" SortBy="x => (int)x.BestScoreRank * 1000000 + x.BestScore">
+                                                        <MudText Typo="Typo.body2">@Localizer["Best Rank"]</MudText>
+                                                    </MudTableSortLabel>
+                                                </MudTh>
+                                            }
+                                            else
+                                            {
+                                                @* TODO Green WebUI: enable this control when Green exposes the underlying feature. *@
+                                            }
                                             @*                                             <MudTh>
                         <MudTableSortLabel T="SongBestData" SortBy="x => x.GoodCount">
                         <MudText Typo="Typo.body2">@Localizer["Good"]</MudText>
@@ -141,7 +150,7 @@
                                                                              title="Add to/remove from favorites" />
                                                     </div>
                                                     <div style="width:300px">
-                                                        <a href="@($"/Users/{Baid}/Songs/{context.SongId}")">
+                                                        <a href="@(WebUiEra.UserRoute(Baid, CurrentEra, $"Songs/{context.SongId}"))">
                                                             <MudText Typo="Typo.body2" Style="font-weight:bold">@context.MusicName</MudText>
                                                             <MudText Typo="Typo.caption">@context.MusicArtist</MudText>
                                                         </a>
@@ -179,16 +188,23 @@
                                             </MudTd>
                                             <MudTd>
                                                 <MudText Typo="Typo.body2">@context.BestScore</MudText>
+                                                @if (context.AlternateScore is not null)
+                                                {
+                                                    <MudText Typo="Typo.caption">@context.AlternateScore.Label: @context.AlternateScore.BestScore</MudText>
+                                                }
                                             </MudTd>
                                             <MudTd>
                                                 <img src="@($"/images/crown_{context.BestCrown}.webp")" alt="@(ScoreUtils.GetCrownText(context.BestCrown))" title="@(ScoreUtils.GetCrownText(context.BestCrown))" style="@Constants.ICON_STYLE" />
                                             </MudTd>
-                                            <MudTd>
-                                                @if (context.BestScoreRank is not ScoreRank.None)
-                                                {
-                                                    <img src="@($"/images/rank_{context.BestScoreRank}.webp")" alt="@(ScoreUtils.GetRankText(context.BestScoreRank))" title="@(ScoreUtils.GetRankText(context.BestScoreRank))" style="@Constants.ICON_STYLE" />
-                                                }
-                                            </MudTd>
+                                            @if (!IsGreen)
+                                            {
+                                                <MudTd>
+                                                    @if (context.BestScoreRank is not ScoreRank.None)
+                                                    {
+                                                        <img src="@($"/images/rank_{context.BestScoreRank}.webp")" alt="@(ScoreUtils.GetRankText(context.BestScoreRank))" title="@(ScoreUtils.GetRankText(context.BestScoreRank))" style="@Constants.ICON_STYLE" />
+                                                    }
+                                                </MudTd>
+                                            }
                                             @*                                             <MudTd>
                         <MudText Typo="Typo.body2">@context.GoodCount</MudText>
                         </MudTd>

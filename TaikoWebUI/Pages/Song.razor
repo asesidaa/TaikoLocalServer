@@ -1,10 +1,13 @@
-﻿@page "/Users/{baid:int}/Songs/{songId:int}"
+@page "/Users/{baid:int}/Songs/{songId:int}"
+@page "/Users/{baid:int}/{era}/Songs/{songId:int}"
 @attribute [Authorize]
 
 @using Blazored.LocalStorage
+@using TaikoWebUI.Utilities
 @using TaikoWebUI.Components.Song
 @inject IGameDataService GameDataService
 @inject HttpClient Client
+@inject IDialogService DialogService
 @inject AuthService AuthService
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService LocalStorage

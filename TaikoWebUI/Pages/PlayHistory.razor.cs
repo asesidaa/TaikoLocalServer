@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+using TaikoWebUI.Utilities;
+using System.Globalization;
 using Microsoft.JSInterop;
 using TaikoLocalServer.Domain.Enums;
 
@@ -8,6 +9,12 @@ public partial class PlayHistory
 {
     [Parameter]
     public int Baid { get; set; }
+
+    [Parameter]
+    public string? Era { get; set; }
+
+    private string CurrentEra => WebUiEra.Normalize(Era);
+    private bool IsGreen => string.Equals(CurrentEra, "Green", StringComparison.OrdinalIgnoreCase);
 
     private const string IconStyle = "width:25px; height:25px;";
 
@@ -29,14 +36,14 @@ public partial class PlayHistory
     {
         await base.OnInitializedAsync();
 
-        response = await Client.GetFromJsonAsync<SongHistoryResponse>($"api/PlayHistory/{(uint)Baid}");
+        response = await Client.GetFromJsonAsync<SongHistoryResponse>(WebUiEra.Api(CurrentEra, $"PlayHistory/{Baid}"));
         response.ThrowIfNull();
 
         userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
 
         songNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
         
-        musicDetailDictionary = await GameDataService.GetMusicDetailDictionary();
+        musicDetailDictionary = await GameDataService.GetMusicDetailDictionary(CurrentEra);
 
         response.SongHistoryData.ForEach(data =>
         {
@@ -63,7 +70,7 @@ public partial class PlayHistory
         if (AuthService.IsLoggedIn && !AuthService.IsAdmin) BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
         else BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
-        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Play History"], href: $"/Users/{Baid}/PlayHistory", disabled: false));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Play History"], href: WebUiEra.UserRoute(Baid, CurrentEra, "PlayHistory"), disabled: false));
         BreadcrumbsStateContainer.NotifyStateChanged();
     }
 
@@ -178,6 +185,15 @@ public partial class PlayHistory
     
     private async Task OnFavoriteToggled(SongHistoryData data, List<List<SongHistoryData>> array)
     {
+        if (IsGreen && !data.IsFavorite && CountCurrentFavorites() >= 5)
+        {
+            await DialogService.ShowMessageBoxAsync(
+                Localizer["Error"],
+                "Green supports at most 5 favorite songs.",
+                Localizer["Dialog OK"]);
+            return;
+        }
+
         var request = new SetFavoriteRequest
         {
             Baid = (uint)Baid,
@@ -185,7 +201,7 @@ public partial class PlayHistory
             SongId = data.SongId
         };
 
-        var result = await Client.PostAsJsonAsync("api/FavoriteSongs", request);
+        var result = await Client.PostAsJsonAsync(WebUiEra.Api(CurrentEra, "FavoriteSongs"), request);
         if (result.IsSuccessStatusCode)
         {
             data.IsFavorite = !data.IsFavorite;
@@ -201,6 +217,12 @@ public partial class PlayHistory
             }
         }
     }
+
+    private int CountCurrentFavorites()
+    {
+        return songHistoryDataMap.Values.SelectMany(value => value).Where(data => data.IsFavorite).Select(data => data.SongId).Distinct().Count();
+    }
+
     private static string GetSpeedIcon(PlaySetting playSetting)
     {
         return $"<image href='/images/Speed/{playSetting.Speed}.png' alt='{playSetting.Speed}' width='25' height='25'/>";

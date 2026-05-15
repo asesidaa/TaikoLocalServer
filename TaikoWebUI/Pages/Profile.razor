@@ -1,4 +1,5 @@
-﻿@page "/Users/{baid:int}/Profile"
+@page "/Users/{baid:int}/Profile"
+@page "/Users/{baid:int}/{era}/Profile"
 @attribute [Authorize]
 @inject HttpClient Client
 @inject IGameDataService GameDataService
@@ -26,6 +27,10 @@
         <MudGrid Class="my-4 pb-10">
             <MudItem xs="12" md="8">
                 <MudPaper Elevation="0" Outlined="true">
+                    @if (IsGreen)
+                    {
+                        @* TODO Green WebUI: add Green costume/settings controls after Green settings persistence is implemented. *@
+                    }
                     <MudTabs MinimumTabWidth="100px" Rounded="true" Border="true" TabPanelsClass="pa-8">
                         <MudTabPanel Text="@Localizer["Profile"]">
                             <MudStack Spacing="4">
@@ -118,6 +123,8 @@
                             </MudStack>
                         </MudTabPanel>
 
+                        @if (!IsGreen)
+                        {
                         <MudTabPanel Text="@Localizer["Costume"]">
                             <MudStack Spacing="4">
                                 <MudText Typo="Typo.h6">@Localizer["Costume Options"]</MudText>
@@ -197,7 +204,14 @@
                                 </MudGrid>
                             </MudStack>
                         </MudTabPanel>
+                        }
+                        else
+                        {
+                            @* TODO Green WebUI: add Green costume/settings controls after Green settings persistence is implemented. *@
+                        }
 
+                        @if (!IsGreen)
+                        {
                         <MudTabPanel Text="@Localizer["Song Options"]">
                             <MudStack Spacing="4">
                                 <MudText Typo="Typo.h6">@Localizer["Song Options"]</MudText>
@@ -243,6 +257,11 @@
                                 </MudGrid>
                             </MudStack>
                         </MudTabPanel>
+                        }
+                        else
+                        {
+                            @* TODO Green WebUI: add Green costume/settings controls after Green settings persistence is implemented. *@
+                        }
                     </MudTabs>
                 </MudPaper>
             </MudItem>
@@ -306,7 +325,7 @@
                                 </MudItem>
                             </MudTabPanel>
 
-                            @if (response.IsDisplayAchievement)
+                            @if (!IsGreen && response.IsDisplayAchievement)
                             {
                                 <MudTabPanel Text="@Localizer["Achievement Panel"]">
                                     <MudItem style="text-align: center; position:relative;">
@@ -369,6 +388,10 @@
                                         <MudImage Fluid="true" style="position: relative; top: 0;" Src=@($"images/rank_panel_{DifficultySettingCourseStrings[response.AchievementDisplayDifficulty != Difficulty.None ? (int)response.AchievementDisplayDifficulty + 1 : (int)highestDifficulty + 1].Replace(' ', '_')}.webp") />
                                     </MudItem>
                                 </MudTabPanel>
+                            }
+                            else if (IsGreen)
+                            {
+                                @* TODO Green WebUI: enable this control when Green exposes the underlying feature. *@
                             }
                         </MudTabs>
 
