@@ -1,16 +1,16 @@
 using System.Collections.Immutable;
+using TaikoWebUI.Utilities;
 
 namespace TaikoWebUI.Services;
 
 public class GameDataService : IGameDataService
 {
     private readonly HttpClient client;
-    private ImmutableDictionary<uint, DanData> danMap = ImmutableDictionary<uint, DanData>.Empty;
-    private Dictionary<uint, MusicDetail>? musicDetailDictionary = new();
+    private readonly Dictionary<string, ImmutableDictionary<uint, DanData>> danMaps = new();
+    private readonly Dictionary<string, Dictionary<uint, MusicDetail>> musicDetailDictionaries = new();
     private List<Costume>? costumeList;
     private Dictionary<uint,Title>? titleDictionary = new();
     
-    private bool musicDetailInitialized;
     private bool costumesInitialized;
     private bool titlesInitialized;
     
@@ -27,17 +27,23 @@ public class GameDataService : IGameDataService
         dataBaseUrl = dataBaseUrl.TrimEnd('/');
         var danData = await client.GetFromJsonAsync<List<DanData>>($"{dataBaseUrl}/data/dan_data.json");
         danData.ThrowIfNull();
-        danMap = danData.ToImmutableDictionary(data => data.DanId);
+        danMaps[WebUiEra.Default] = danData.ToImmutableDictionary(data => data.DanId);
     }
     
     public async Task<Dictionary<uint, MusicDetail>> GetMusicDetailDictionary()
+        => await GetMusicDetailDictionary(WebUiEra.Default);
+
+    public async Task<Dictionary<uint, MusicDetail>> GetMusicDetailDictionary(string? era)
     {
-        if (!musicDetailInitialized)
+        var normalized = WebUiEra.Normalize(era);
+        if (!musicDetailDictionaries.TryGetValue(normalized, out var value))
         {
-            await InitializeMusicDetailAsync();
+            value = await client.GetFromJsonAsync<Dictionary<uint, MusicDetail>>(WebUiEra.Api(normalized, "GameData/MusicDetails"))
+                    ?? new Dictionary<uint, MusicDetail>();
+            musicDetailDictionaries[normalized] = value;
         }
 
-        return musicDetailDictionary ?? new Dictionary<uint, MusicDetail>();
+        return value;
     }
     
     public async Task<List<Costume>> GetCostumeList()
@@ -119,8 +125,12 @@ public class GameDataService : IGameDataService
     }
 
     public ImmutableDictionary<uint, DanData> GetDanMap()
+        => GetDanMap(WebUiEra.Default);
+
+    public ImmutableDictionary<uint, DanData> GetDanMap(string? era)
     {
-        return danMap;
+        var normalized = WebUiEra.Normalize(era);
+        return danMaps.TryGetValue(normalized, out var value) ? value : ImmutableDictionary<uint, DanData>.Empty;
     }
     
     public int GetMusicStarLevel(Dictionary<uint, MusicDetail> musicDetails, uint songId, Difficulty difficulty)
@@ -222,12 +232,6 @@ public class GameDataService : IGameDataService
         };
     }
 
-    private async Task InitializeMusicDetailAsync()
-    {
-        musicDetailDictionary = await client.GetFromJsonAsync<Dictionary<uint, MusicDetail>>("api/GameData/MusicDetails");
-        musicDetailInitialized = true;
-    }
-    
     private async Task InitializeCostumesAsync()
     {
         costumeList = await client.GetFromJsonAsync<List<Costume>>("api/GameData/Costumes");

@@ -7,6 +7,8 @@ public interface IGameDataService
     public Task InitializeAsync(string dataBaseUrl);
 
     public Task<Dictionary<uint, MusicDetail>> GetMusicDetailDictionary();
+
+    public Task<Dictionary<uint, MusicDetail>> GetMusicDetailDictionary(string? era);
     
     public Task<Dictionary<uint, Title>> GetTitleDictionary();
     
@@ -25,6 +27,8 @@ public interface IGameDataService
     public int GetMusicIndexBySongId(Dictionary<uint, MusicDetail> musicDetails,uint songId);
 
     public ImmutableDictionary<uint, DanData> GetDanMap();
+
+    public ImmutableDictionary<uint, DanData> GetDanMap(string? era);
 
     public int GetMusicStarLevel(Dictionary<uint, MusicDetail> musicDetails, uint songId, Difficulty difficulty);
 

@@ -4,6 +4,7 @@
 @inject IDialogService DialogService
 
 @using TaikoWebUI.Pages.Dialogs;
+@using TaikoWebUI.Utilities
 
 <MudNavMenu Rounded="true" Class="pa-2" Margin="Margin.Dense" Color="Color.Primary">
     <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">@Localizer["Dashboard"]</MudNavLink>
@@ -24,12 +25,18 @@
         if (AuthService.IsLoggedIn)
 		{
             <MudDivider />
-			<MudNavLink Href="@($"Users/{baid}/Profile")" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Person">@Localizer["Profile"]</MudNavLink>
+            <MudSelect T="string" @bind-Value="selectedEra" Dense="true" Margin="Margin.Dense" Class="px-4" Label="Era">
+                @foreach (var era in WebUiEra.Supported)
+                {
+                    <MudSelectItem Value="@era">@era</MudSelectItem>
+                }
+            </MudSelect>
+			<MudNavLink Href="@(WebUiEra.UserRoute((uint)baid, selectedEra, "Profile"))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Person">@Localizer["Profile"]</MudNavLink>
             <MudNavGroup Title=@Localizer["Play Data"] Expanded="true" Icon="@Icons.Material.Filled.EmojiEvents">
-			    <MudNavLink Href="@($"Users/{baid}/Songs")" Match="NavLinkMatch.All">@Localizer["Song List"]</MudNavLink>
-			    <MudNavLink Href="@($"Users/{baid}/HighScores")" Match="NavLinkMatch.All">@Localizer["High Scores"]</MudNavLink>
-	            <MudNavLink Href="@($"Users/{baid}/PlayHistory")" Match="NavLinkMatch.All">@Localizer["Play History"]</MudNavLink>
-			    <MudNavLink Href="@($"Users/{baid}/DaniDojo")" Match="NavLinkMatch.All">@Localizer["Dani Dojo"]</MudNavLink>
+			    <MudNavLink Href="@(WebUiEra.UserRoute((uint)baid, selectedEra, "Songs"))" Match="NavLinkMatch.All">@Localizer["Song List"]</MudNavLink>
+			    <MudNavLink Href="@(WebUiEra.UserRoute((uint)baid, selectedEra, "HighScores"))" Match="NavLinkMatch.All">@Localizer["High Scores"]</MudNavLink>
+	            <MudNavLink Href="@(WebUiEra.UserRoute((uint)baid, selectedEra, "PlayHistory"))" Match="NavLinkMatch.All">@Localizer["Play History"]</MudNavLink>
+			    <MudNavLink Href="@(WebUiEra.UserRoute((uint)baid, selectedEra, "DaniDojo"))" Match="NavLinkMatch.All">@Localizer["Dani Dojo"]</MudNavLink>
             </MudNavGroup>
             <MudNavGroup Title=@Localizer["Settings"] Expanded="settingsOpen" Icon="@Icons.Material.Filled.Settings">
                 <MudNavLink OnClick="ShowQrCode">@Localizer["Show QR Code"]</MudNavLink>
@@ -48,6 +55,7 @@
 
 @code {
     private bool settingsOpen = false;
+    private string selectedEra = WebUiEra.Default;
 
     protected override void OnInitialized()
     {
