@@ -3,11 +3,18 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class FavoriteSongsController(ITaikoDbContext context) : BaseAdminController<FavoriteSongsController>
+public class FavoriteSongsController(ITaikoDbContext context, IGameDataCatalog catalog) : BaseAdminController<FavoriteSongsController>
 {
     [HttpPost]
-    public async Task<IActionResult> UpdateFavoriteSong(SetFavoriteRequest request)
+    public Task<IActionResult> UpdateFavoriteSong(SetFavoriteRequest request)
+        => UpdateFavoriteSong(nameof(GameEra.Nijiiro), request);
+
+    [HttpPost("/api/{era}/[controller]")]
+    public async Task<IActionResult> UpdateFavoriteSong(string era, SetFavoriteRequest request)
     {
+        if (!EraRoute.TryParse(era, out var gameEra))
+            return EraRoute.BadEra(era);
+
         if (this.AuthorizeOwnerOrAdmin(request.Baid) is { } forbid)
             return forbid;
 
@@ -17,6 +24,16 @@ public class FavoriteSongsController(ITaikoDbContext context) : BaseAdminControl
             return NotFound();
         }
 
+        return gameEra switch
+        {
+            GameEra.Nijiiro => await UpdateNijiiroFavoriteSong(request),
+            GameEra.Green => await UpdateGreenFavoriteSong(request),
+            _ => EraRoute.BadEra(era)
+        };
+    }
+
+    private async Task<IActionResult> UpdateNijiiroFavoriteSong(SetFavoriteRequest request)
+    {
         var saveData = await context.GetOrCreateNijiiroSaveDataAsync(request.Baid, HttpContext.RequestAborted);
         var favoriteSet = new HashSet<uint>(saveData.FavoriteSongsArray);
         if (request.IsFavorite)
@@ -33,9 +50,40 @@ public class FavoriteSongsController(ITaikoDbContext context) : BaseAdminControl
         return NoContent();
     }
 
-    [HttpGet("{baid}")]
-    public async Task<IActionResult> GetFavoriteSongs(uint baid)
+    private async Task<IActionResult> UpdateGreenFavoriteSong(SetFavoriteRequest request)
     {
+        _ = catalog.For(GameEra.Green);
+        var existing = await context.GreenFavoriteSongs.FindAsync([request.Baid, request.SongId], HttpContext.RequestAborted);
+        if (request.IsFavorite)
+        {
+            if (existing is not null)
+                return NoContent();
+
+            var count = await context.GreenFavoriteSongs.CountAsync(row => row.Baid == request.Baid, HttpContext.RequestAborted);
+            if (count >= 5)
+                return BadRequest("Green supports at most 5 favorite songs.");
+
+            context.GreenFavoriteSongs.Add(new GreenFavoriteSongs { Baid = request.Baid, SongNo = request.SongId });
+        }
+        else if (existing is not null)
+        {
+            context.GreenFavoriteSongs.Remove(existing);
+        }
+
+        await context.SaveChangesAsync(HttpContext.RequestAborted);
+        return NoContent();
+    }
+
+    [HttpGet("{baid}")]
+    public Task<IActionResult> GetFavoriteSongs(uint baid)
+        => GetFavoriteSongs(nameof(GameEra.Nijiiro), baid);
+
+    [HttpGet("/api/{era}/[controller]/{baid}")]
+    public async Task<IActionResult> GetFavoriteSongs(string era, uint baid)
+    {
+        if (!EraRoute.TryParse(era, out var gameEra))
+            return EraRoute.BadEra(era);
+
         if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
             return forbid;
 
@@ -45,7 +93,14 @@ public class FavoriteSongsController(ITaikoDbContext context) : BaseAdminControl
             return NotFound();
         }
 
-        var saveData = await context.GetOrCreateNijiiroSaveDataAsync(baid, HttpContext.RequestAborted);
-        return Ok(saveData.FavoriteSongsArray);
+        return gameEra switch
+        {
+            GameEra.Nijiiro => Ok((await context.GetOrCreateNijiiroSaveDataAsync(baid, HttpContext.RequestAborted)).FavoriteSongsArray),
+            GameEra.Green => Ok(await context.GreenFavoriteSongs
+                .Where(row => row.Baid == baid)
+                .Select(row => row.SongNo)
+                .ToListAsync(HttpContext.RequestAborted)),
+            _ => EraRoute.BadEra(era)
+        };
     }
 }
