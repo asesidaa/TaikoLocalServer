@@ -18,6 +18,7 @@ public sealed class GreenSaveDataTests
         Assert.Equal(2, save.DefaultOptionSetting.Length);
         Assert.Equal(GreenProtocolBytes.DanFlagBytes, save.GotDanFlg.Length);
         Assert.Equal(GreenProtocolBytes.DanExtraFlagBytes, save.GotDanExtraFlg.Length);
+        Assert.Equal(1u, save.DispDanType);
         Assert.Equal((uint)0, save.DispTaikojukuDan);
         Assert.Equal(GreenProtocolBytes.GhostReleaseInfoBytes, save.GhostReleaseInfoFlag.Length);
         Assert.Equal(GreenProtocolBytes.GhostPlayedSongBytes, save.GhostPlayedSongFlag.Length);

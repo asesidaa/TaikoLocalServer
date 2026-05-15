@@ -577,6 +577,15 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
+    public void GreenDanHelpers_EncodesGoldClearAsThreeForClientFlags()
+    {
+        var flags = GreenDanHelpers.SetPackedGrade(new byte[GreenProtocolBytes.DanFlagBytes], 0, GreenDanClearGrade.GoldClear);
+
+        Assert.Equal(0b0000_0011, flags[0] & 0b11);
+        Assert.Equal(GreenDanClearGrade.GoldClear, GreenDanHelpers.GetPackedGrade(flags, 0));
+    }
+
+    [Fact]
     public void GreenDanHelpers_ComputesNextUnclearedNormalDan()
     {
         var grades = new Dictionary<uint, GreenDanClearGrade>

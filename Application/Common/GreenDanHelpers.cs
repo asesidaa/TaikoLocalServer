@@ -44,7 +44,7 @@ public static class GreenDanHelpers
     public static byte[] SetPackedGrade(byte[] source, uint packedIndex, GreenDanClearGrade grade)
     {
         var result = source.ToArray();
-        var value = (uint)ClampGrade((uint)grade);
+        var value = ToPackedValue(ClampGrade((uint)grade));
         var bitOffset = (int)packedIndex * 2;
 
         for (var bit = 0; bit < 2; bit++)
@@ -89,8 +89,25 @@ public static class GreenDanHelpers
             }
         }
 
-        return ClampGrade(value);
+        return FromPackedValue(value);
     }
+
+    private static uint ToPackedValue(GreenDanClearGrade grade)
+        => grade switch
+        {
+            GreenDanClearGrade.NotClear => 0,
+            GreenDanClearGrade.NormalClear => 2,
+            GreenDanClearGrade.GoldClear => 3,
+            _ => 0
+        };
+
+    private static GreenDanClearGrade FromPackedValue(uint value)
+        => value switch
+        {
+            0 => GreenDanClearGrade.NotClear,
+            1 or 2 => GreenDanClearGrade.NormalClear,
+            _ => GreenDanClearGrade.GoldClear
+        };
 
     public static uint GetGotDanMax(IReadOnlyDictionary<uint, GreenDanClearGrade> normalGrades)
     {

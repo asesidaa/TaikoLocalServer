@@ -38,6 +38,7 @@ public partial class BaidQueryHandler
         var gotDanFlg = GreenProtocolBytes.FixedOrZero(saveData.GotDanFlg, GreenProtocolBytes.DanFlagBytes);
         var gotDanExtraFlg = GreenProtocolBytes.FixedOrZero(saveData.GotDanExtraFlg, GreenProtocolBytes.DanExtraFlagBytes);
         var gotDanMax = Math.Min(saveData.GotDanMax, GreenDanHelpers.MaxNormalDanId);
+        var dispDanType = saveData.DispDanType == 0 ? 0u : 1u;
 
         return new CommonBaidResponse
         {
@@ -63,7 +64,7 @@ public partial class BaidQueryHandler
             TotalUseKatsumedal = saveData.TotalUseKatsumedal,
             ItemshopTutorialFlg = saveData.ItemshopTutorialFlg,
             IsAutoCostumeOn = saveData.IsAutoCostumeOn,
-            DispDanType = saveData.DispDanType,
+            DispDanType = dispDanType,
             GotDanFlg = gotDanFlg,
             GotDanMax = gotDanMax,
             GotDanExtraFlg = gotDanExtraFlg,

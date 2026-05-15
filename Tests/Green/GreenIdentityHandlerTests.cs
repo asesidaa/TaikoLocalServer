@@ -46,6 +46,31 @@ public sealed class GreenIdentityHandlerTests
         Assert.Equal(0, response.GotDanFlg[0]);
     }
 
+    [Theory]
+    [InlineData(0, 0)]
+    [InlineData(1, 1)]
+    [InlineData(2, 1)]
+    [InlineData(99, 1)]
+    public async Task BaidQuery_Green_NormalizesDispDanTypeToOffOrOn(uint savedValue, uint expected)
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 7, MyDonName = "DON" });
+        fixture.Context.Cards.Add(new Card { Baid = 7, AccessCode = "999" });
+        var saveData = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(7);
+        saveData.DispDanType = savedValue;
+        fixture.Context.UserSaveDataGreen.Add(saveData);
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new BaidQueryHandler(
+            fixture.Context,
+            NullLogger<BaidQueryHandler>.Instance,
+            fixture.Catalog);
+
+        var response = await handler.Handle(new BaidQuery(GameEra.Green, "999"), CancellationToken.None);
+
+        Assert.Equal(expected, response.DispDanType);
+    }
+
     [Fact]
     public async Task BaidQuery_Green_CardWithoutGreenSaveIsNewForGreenRegistration()
     {

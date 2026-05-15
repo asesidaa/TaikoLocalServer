@@ -42,7 +42,7 @@ public static class UserSaveDataGreenExtensions
         DefaultOptionSetting = new byte[2],
         DefaultShinSetting = false,
         DefaultToneSetting = 0,
-        DispDanType = 0,
+        DispDanType = 1,
         GotDanMax = 0,
         GotDanFlg = new byte[GreenProtocolBytes.DanFlagBytes],
         GotDanExtraFlg = new byte[GreenProtocolBytes.DanExtraFlagBytes],
