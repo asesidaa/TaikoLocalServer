@@ -610,6 +610,134 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
+    public async Task UpdatePlayResult_Green_RecentSongsUpsertsForEveryStage_OrderedByPlayTime()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        await handler.Handle(new UpdatePlayResultCommand(1, GameEra.Green, new CommonPlayResultData
+        {
+            Baid = 1,
+            PlayDatetime = "2026-05-15 09:00:00",
+            AryStageInfoes = [PlainStage(songNo: 101)]
+        }), CancellationToken.None);
+
+        await handler.Handle(new UpdatePlayResultCommand(1, GameEra.Green, new CommonPlayResultData
+        {
+            Baid = 1,
+            PlayDatetime = "2026-05-15 12:00:00",
+            AryStageInfoes = [PlainStage(songNo: 102)]
+        }), CancellationToken.None);
+
+        var recents = await fixture.Context.GreenRecentSongs
+            .Where(s => s.Baid == 1)
+            .OrderByDescending(s => s.LastPlayed)
+            .ToListAsync();
+        Assert.Equal(2, recents.Count);
+        Assert.Equal(102u, recents[0].SongNo);
+        Assert.Equal(101u, recents[1].SongNo);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Green_RecentSongsTrimToTen()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        for (var i = 0; i < 11; i++)
+        {
+            await handler.Handle(new UpdatePlayResultCommand(1, GameEra.Green, new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayDatetime = new DateTime(2026, 5, 15, 9, 0, 0).AddMinutes(i).ToString("yyyy-MM-dd HH:mm:ss"),
+                AryStageInfoes = [PlainStage(songNo: (uint)(101 + i))]
+            }), CancellationToken.None);
+        }
+
+        var recents = await fixture.Context.GreenRecentSongs
+            .Where(s => s.Baid == 1)
+            .OrderByDescending(s => s.LastPlayed)
+            .ToListAsync();
+        Assert.Equal(10, recents.Count);
+        Assert.Equal(111u, recents[0].SongNo);
+        Assert.Equal(102u, recents[9].SongNo);
+        Assert.DoesNotContain(recents, r => r.SongNo == 101u);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Green_FavoritesCapAtFive()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        for (var i = 0; i < 6; i++)
+        {
+            await handler.Handle(new UpdatePlayResultCommand(1, GameEra.Green, new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayDatetime = new DateTime(2026, 5, 15, 9, 0, 0).AddMinutes(i).ToString("yyyy-MM-dd HH:mm:ss"),
+                AryStageInfoes = [PlainStage(songNo: (uint)(101 + i), isFavorite: true)]
+            }), CancellationToken.None);
+        }
+
+        var favorites = await fixture.Context.GreenFavoriteSongs
+            .Where(s => s.Baid == 1)
+            .ToListAsync();
+        Assert.Equal(5, favorites.Count);
+        Assert.DoesNotContain(favorites, f => f.SongNo == 106u);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Green_FavoritesRemovalWorksWhenAtCap()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        for (var i = 0; i < 5; i++)
+        {
+            fixture.Context.GreenFavoriteSongs.Add(new GreenFavoriteSongs { Baid = 1, SongNo = (uint)(101 + i) });
+        }
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        await handler.Handle(new UpdatePlayResultCommand(1, GameEra.Green, new CommonPlayResultData
+        {
+            Baid = 1,
+            PlayDatetime = "2026-05-15 12:00:00",
+            AryStageInfoes = [PlainStage(songNo: 101, isFavorite: false)]
+        }), CancellationToken.None);
+
+        var favorites = await fixture.Context.GreenFavoriteSongs.Where(s => s.Baid == 1).ToListAsync();
+        Assert.Equal(4, favorites.Count);
+        Assert.DoesNotContain(favorites, f => f.SongNo == 101u);
+    }
+
+    [Fact]
     public async Task UpdatePlayResult_Green_RejectsOutOfRangeRewardIds()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
@@ -1331,6 +1459,26 @@ public sealed class GreenPlayResultHandlerTests
     {
         return (source[id >> 3] & (1 << ((int)id & 7))) != 0;
     }
+
+    private static CommonPlayResultData.StageData PlainStage(uint songNo, bool isFavorite = false)
+        => new()
+        {
+            SongNo = songNo,
+            Level = 1,
+            PlayResult = 1,
+            PlayScore = 100000,
+            GoodCnt = 1,
+            OkCnt = 0,
+            NgCnt = 0,
+            PoundCnt = 0,
+            ComboCnt = 1,
+            HitCnt = 1,
+            OptionFlg = [0],
+            ToneFlg = [0],
+            MusicCateg = 0,
+            IsFavorite = isFavorite,
+            IsRecent = false
+        };
 
     private static byte[] InflateGzip(byte[] compressed)
     {

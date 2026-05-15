@@ -205,7 +205,7 @@ public partial class UpdatePlayResultCommandHandler
         }
 
         await UpsertBestAsync(baid, stage, difficulty, crown, isShin, cancellationToken);
-        await UpsertFavoriteAndRecentAsync(baid, stage, cancellationToken);
+        await UpsertFavoriteAndRecentAsync(baid, stage, playTime, cancellationToken);
     }
 
     private async Task UpsertBestAsync(
@@ -247,12 +247,17 @@ public partial class UpdatePlayResultCommandHandler
     private async Task UpsertFavoriteAndRecentAsync(
         uint baid,
         CommonPlayResultData.StageData stage,
+        DateTime playTime,
         CancellationToken cancellationToken)
     {
         var favorite = await context.GreenFavoriteSongs.FindAsync([baid, stage.SongNo], cancellationToken);
         if (stage.IsFavorite && favorite is null)
         {
-            context.GreenFavoriteSongs.Add(new GreenFavoriteSongs { Baid = baid, SongNo = stage.SongNo });
+            var count = await context.GreenFavoriteSongs.CountAsync(s => s.Baid == baid, cancellationToken);
+            if (count < 5)
+            {
+                context.GreenFavoriteSongs.Add(new GreenFavoriteSongs { Baid = baid, SongNo = stage.SongNo });
+            }
         }
         else if (!stage.IsFavorite && favorite is not null)
         {
@@ -260,9 +265,30 @@ public partial class UpdatePlayResultCommandHandler
         }
 
         var recent = await context.GreenRecentSongs.FindAsync([baid, stage.SongNo], cancellationToken);
-        if (stage.IsRecent && recent is null)
+        if (recent is null)
         {
-            context.GreenRecentSongs.Add(new GreenRecentSongs { Baid = baid, SongNo = stage.SongNo });
+            context.GreenRecentSongs.Add(new GreenRecentSongs
+            {
+                Baid = baid,
+                SongNo = stage.SongNo,
+                LastPlayed = playTime
+            });
+        }
+        else
+        {
+            recent.LastPlayed = playTime;
+        }
+
+        await context.SaveChangesAsync(cancellationToken);
+
+        var overage = await context.GreenRecentSongs
+            .Where(s => s.Baid == baid)
+            .OrderByDescending(s => s.LastPlayed)
+            .Skip(10)
+            .ToListAsync(cancellationToken);
+        if (overage.Count > 0)
+        {
+            context.GreenRecentSongs.RemoveRange(overage);
         }
     }
 
