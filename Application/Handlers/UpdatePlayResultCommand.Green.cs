@@ -59,6 +59,7 @@ public partial class UpdatePlayResultCommandHandler
 
         foreach (var stage in playResultData.AryStageInfoes)
         {
+            GreenProfileCounters.ApplyStage(saveData, stage);
             await SaveStageAsync(request.Baid, stage, playResultData.PlayMode, playTime, cancellationToken);
         }
 
@@ -75,6 +76,7 @@ public partial class UpdatePlayResultCommandHandler
             && stage.Level is >= MinGreenCourseLevel and <= MaxGreenCourseLevel
             && stage.StageMode <= MaxGreenStageMode
             && stage.PlayResult <= MaxGreenPlayResult
+            && stage.MusicCateg <= 7
             && (stage.PlayDan is null || GreenDanHelpers.IsKnownGreenDanId(stage.PlayDan.Value));
     }
 
@@ -174,6 +176,7 @@ public partial class UpdatePlayResultCommandHandler
             IsFavorite = stage.IsFavorite,
             IsRecent = stage.IsRecent,
             IsPapamama = stage.IsPapamama,
+            IsPushed = stage.IsPushed,
             SoulGauge = stage.SoulGauge.GetValueOrDefault(),
             PlayDan = stage.PlayDan.GetValueOrDefault(),
             WaiwaiResult = stage.WaiwaiResult.GetValueOrDefault(),

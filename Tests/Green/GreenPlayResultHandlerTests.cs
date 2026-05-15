@@ -466,6 +466,150 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
+    public async Task UpdatePlayResult_Green_IncrementsGenreAndSongCounters()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayDatetime = "2026-05-15 12:00:00",
+                AryStageInfoes =
+                [
+                    new CommonPlayResultData.StageData
+                    {
+                        SongNo = 101,
+                        Level = 1,
+                        PlayResult = 1,
+                        PlayScore = 100000,
+                        GoodCnt = 1, OkCnt = 0, NgCnt = 0, PoundCnt = 0, ComboCnt = 1, HitCnt = 1,
+                        OptionFlg = [0], ToneFlg = [0],
+                        MusicCateg = 0,
+                        IsPushed = true,
+                        IsFavorite = true,
+                        IsRecent = false
+                    },
+                    new CommonPlayResultData.StageData
+                    {
+                        SongNo = 102,
+                        Level = 1,
+                        PlayResult = 1,
+                        PlayScore = 100000,
+                        GoodCnt = 1, OkCnt = 0, NgCnt = 0, PoundCnt = 0, ComboCnt = 1, HitCnt = 1,
+                        OptionFlg = [0], ToneFlg = [0],
+                        MusicCateg = 1,
+                        IsRecent = true
+                    }
+                ]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var save = await fixture.Context.UserSaveDataGreen.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(1u, save.CategJpopCnt);
+        Assert.Equal(1u, save.CategAnimeCnt);
+        Assert.Equal(0u, save.CategGameCnt);
+        Assert.Equal(1u, save.SongPushedCnt);
+        Assert.Equal(1u, save.SongFavoriteCnt);
+        Assert.Equal(1u, save.SongRecentCnt);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Green_RejectsMusicCategOutOfRange()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayDatetime = "2026-05-15 12:00:00",
+                AryStageInfoes =
+                [
+                    new CommonPlayResultData.StageData
+                    {
+                        SongNo = 101,
+                        Level = 1,
+                        PlayResult = 1,
+                        PlayScore = 100000,
+                        GoodCnt = 1, OkCnt = 0, NgCnt = 0, PoundCnt = 0, ComboCnt = 1, HitCnt = 1,
+                        OptionFlg = [0], ToneFlg = [0],
+                        MusicCateg = 8
+                    }
+                ]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(0u, result);
+        Assert.Empty(await fixture.Context.SongPlayDataGreen.ToListAsync());
+        var save = await fixture.Context.UserSaveDataGreen.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(0u, save.CategJpopCnt);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Green_PersistsIsPushedOnPlayLog()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayDatetime = "2026-05-15 12:00:00",
+                AryStageInfoes =
+                [
+                    new CommonPlayResultData.StageData
+                    {
+                        SongNo = 101,
+                        Level = 1,
+                        PlayResult = 1,
+                        PlayScore = 100000,
+                        GoodCnt = 1, OkCnt = 0, NgCnt = 0, PoundCnt = 0, ComboCnt = 1, HitCnt = 1,
+                        OptionFlg = [0], ToneFlg = [0],
+                        MusicCateg = 0,
+                        IsPushed = true
+                    }
+                ]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var play = await fixture.Context.SongPlayDataGreen.SingleAsync(row => row.Baid == 1);
+        Assert.True(play.IsPushed);
+    }
+
+    [Fact]
     public async Task UpdatePlayResult_Green_RejectsOutOfRangeRewardIds()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
