@@ -24,6 +24,8 @@ public class SongBestData
     public CrownType BestCrown { get; set; }
     
     public ScoreRank BestScoreRank { get; set; }
+
+    public ScoreFacet? AlternateScore { get; set; }
     
     public DateTime LastPlayTime { get; set; }
 
