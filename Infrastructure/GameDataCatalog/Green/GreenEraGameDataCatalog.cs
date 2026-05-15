@@ -19,6 +19,7 @@ public sealed class GreenEraGameDataCatalog(ILogger<GreenEraGameDataCatalog> log
     private IReadOnlyDictionary<uint, GreenTelopEntry> telops = new Dictionary<uint, GreenTelopEntry>();
     private IReadOnlyDictionary<uint, GreenGachaEntry> gachas = new Dictionary<uint, GreenGachaEntry>();
     private IReadOnlyDictionary<uint, GreenTournamentEntry> tournaments = new Dictionary<uint, GreenTournamentEntry>();
+    private GreenRecommendEntry recommend = GreenRecommendEntry.Empty;
 
     public GameEra Era => GameEra.Green;
 
@@ -44,6 +45,8 @@ public sealed class GreenEraGameDataCatalog(ILogger<GreenEraGameDataCatalog> log
 
     public IReadOnlyDictionary<uint, GreenTournamentEntry> Tournaments => tournaments;
 
+    public GreenRecommendEntry Recommend => recommend;
+
     public async Task InitializeAsync(CancellationToken cancellationToken)
     {
         GreenRequiredDataFiles.ThrowIfMissing();
@@ -64,6 +67,9 @@ public sealed class GreenEraGameDataCatalog(ILogger<GreenEraGameDataCatalog> log
         telops = await new GreenTelopLoader().LoadAsync(cancellationToken);
         gachas = await new GreenGachaLoader().LoadAsync(cancellationToken);
         tournaments = await new GreenTournamentLoader().LoadAsync(cancellationToken);
+        recommend = await new GreenRecommendLoader().LoadAsync(
+            new HashSet<uint>(musicInfos.Keys),
+            cancellationToken);
 
         logger.LogInformation(
             "Loaded Green catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {TaikojukuCount} taikojuku packs",

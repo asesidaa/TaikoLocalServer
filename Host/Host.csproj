@@ -138,6 +138,7 @@
     <!--Green Game Datatables-->
     <Content Update="wwwroot\data\green\datatable\musicinfo.xml"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\green\datatable\musicmedleyinfo.xml"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\green\recommend_songs.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
   </ItemGroup>
 
 </Project>

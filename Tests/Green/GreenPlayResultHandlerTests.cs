@@ -738,6 +738,32 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
+    public async Task GreenRecommend_ReturnsCatalogValues()
+    {
+        var greenCatalog = new GreenHandlerFixture.TestGreenCatalog
+        {
+            Recommend = new GreenRecommendEntry
+            {
+                RecommendSong = 101,
+                RecommendBestSongs = [101, 102]
+            }
+        };
+        await using var fixture = await GreenHandlerFixture.CreateAsync(greenCatalog);
+
+        var handler = new GetRecommendQueryHandler(
+            NullLogger<GetRecommendQueryHandler>.Instance,
+            fixture.Catalog);
+
+        var response = await handler.Handle(
+            new GetRecommendQuery(GenderType: 0, PlayerAge: 0),
+            CancellationToken.None);
+
+        Assert.Equal(1u, response.Result);
+        Assert.Equal(101u, response.RecommendSong);
+        Assert.Equal(new List<uint> { 101, 102 }, response.RecommendBestSong);
+    }
+
+    [Fact]
     public async Task UpdatePlayResult_Green_RejectsOutOfRangeRewardIds()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();

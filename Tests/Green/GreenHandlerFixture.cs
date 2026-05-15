@@ -124,6 +124,8 @@ internal sealed class GreenHandlerFixture : IAsyncDisposable
 
         public IReadOnlyDictionary<uint, GreenTournamentEntry> Tournaments { get; } = new Dictionary<uint, GreenTournamentEntry>();
 
+        public GreenRecommendEntry Recommend { get; init; } = GreenRecommendEntry.Empty;
+
         public Task InitializeAsync(CancellationToken cancellationToken) => Task.CompletedTask;
     }
 }
