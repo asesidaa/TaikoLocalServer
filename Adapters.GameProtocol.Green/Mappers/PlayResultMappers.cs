@@ -96,7 +96,8 @@ public static partial class PlayResultMappers
             WaiwaiGauge = stage.WaiwaiGauge,
             GhostStageData = MapGhostStage(stage.GhostStagedata),
             StageMode = stage.StageMode,
-            IsPapamama = stage.IsPapamama
+            IsPapamama = stage.IsPapamama,
+            IsPushed = stage.IsPushed
         };
     }
 

@@ -105,6 +105,39 @@ public sealed class GreenPlayResultMapperTests
         Assert.Equal(7u, Assert.Single(common.AryStageInfoes).PlayDan);
     }
 
+    [Fact]
+    public void Map_GreenPlayResult_PreservesIsPushed()
+    {
+        var request = CreateRequest();
+        request.AryStageInfoes.Add(new PlayResultDataRequest.StageData
+        {
+            SongNo = 101,
+            Level = 1,
+            PlayResult = 1,
+            PlayScore = 123456,
+            GoodCnt = 10,
+            OkCnt = 2,
+            NgCnt = 1,
+            PoundCnt = 3,
+            ComboCnt = 12,
+            OptionFlg = [0, 0],
+            ToneFlg = new byte[16],
+            MusicCateg = 0,
+            IsFavorite = false,
+            IsRecent = false,
+            IsPapamama = false,
+            IsPushed = true,
+            StageMode = 0,
+            SelectedFolderId = 0,
+            StarLevel = 3,
+            SupportLevel = 0
+        });
+
+        var common = PlayResultMappers.Map(request);
+
+        Assert.True(Assert.Single(common.AryStageInfoes).IsPushed);
+    }
+
     private static PlayResultDataRequest CreateRequest() => new()
     {
         Baid = 1,

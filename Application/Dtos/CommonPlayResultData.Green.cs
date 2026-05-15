@@ -34,6 +34,7 @@ public partial class CommonPlayResultData
         public uint? HitCount     { get; set; }
         public uint? PlayDan      { get; set; }
         public GhostStageData? GhostStageData { get; set; }
+        public bool IsPushed { get; set; }
     }
 
     public class CollaboData
