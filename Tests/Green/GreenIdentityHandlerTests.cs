@@ -236,6 +236,85 @@ public sealed class GreenIdentityHandlerTests
         Assert.Equal(1u, wire.DispTaikojukuDan);
     }
 
+    [Fact]
+    public async Task UserData_Green_SongCountersComeFromSaveDataColumns()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.SongPushedCnt = 7;
+        save.SongFavoriteCnt = 42;
+        save.SongRecentCnt = 99;
+        save.CategJpopCnt = 12;
+        fixture.Context.UserSaveDataGreen.Add(save);
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UserDataQueryHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UserDataQueryHandler>.Instance,
+            Options.Create(new ServerSettings()));
+
+        var response = await handler.Handle(new UserDataQuery(1, GameEra.Green), CancellationToken.None);
+
+        Assert.Equal(7u, response.SongPushedCnt);
+        Assert.Equal(42u, response.SongFavoriteCnt);
+        Assert.Equal(99u, response.SongRecentCnt);
+        Assert.Equal(12u, response.CategJpopCnt);
+    }
+
+    [Fact]
+    public async Task UserData_Green_RecommendComesFromCatalog()
+    {
+        var greenCatalog = new GreenHandlerFixture.TestGreenCatalog
+        {
+            Recommend = new GreenRecommendEntry
+            {
+                RecommendSong = 102,
+                RecommendBestSongs = [101, 102, 103]
+            }
+        };
+        await using var fixture = await GreenHandlerFixture.CreateAsync(greenCatalog);
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UserDataQueryHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UserDataQueryHandler>.Instance,
+            Options.Create(new ServerSettings()));
+
+        var response = await handler.Handle(new UserDataQuery(1, GameEra.Green), CancellationToken.None);
+
+        Assert.Equal(102u, response.RecommendSong);
+        Assert.Equal(new List<uint> { 101, 102, 103 }, response.RecommendBestSong);
+    }
+
+    [Fact]
+    public async Task UserData_Green_RecentsOrderedByLastPlayed()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+
+        fixture.Context.GreenRecentSongs.AddRange(
+            new GreenRecentSongs { Baid = 1, SongNo = 101, LastPlayed = new DateTime(2026, 5, 15, 9, 0, 0) },
+            new GreenRecentSongs { Baid = 1, SongNo = 102, LastPlayed = new DateTime(2026, 5, 15, 12, 0, 0) },
+            new GreenRecentSongs { Baid = 1, SongNo = 103, LastPlayed = new DateTime(2026, 5, 15, 11, 0, 0) });
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UserDataQueryHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UserDataQueryHandler>.Instance,
+            Options.Create(new ServerSettings()));
+
+        var response = await handler.Handle(new UserDataQuery(1, GameEra.Green), CancellationToken.None);
+
+        Assert.Equal(new uint[] { 102, 103, 101 }, response.AryRecentSongNoes);
+    }
+
     private static bool BitIsSet(byte[] source, uint id)
         => (source[id >> 3] & (1 << ((int)id & 7))) != 0;
 }

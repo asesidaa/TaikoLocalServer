@@ -17,7 +17,7 @@ public partial class UserDataQueryHandler
             .ToArrayAsync(cancellationToken);
         var recent = await context.GreenRecentSongs
             .Where(song => song.Baid == request.Baid)
-            .OrderByDescending(song => song.SongNo)
+            .OrderByDescending(song => song.LastPlayed)
             .Select(song => song.SongNo)
             .Take(10)
             .ToArrayAsync(cancellationToken);
@@ -39,8 +39,6 @@ public partial class UserDataQueryHandler
             OptionFlg = saveData.OptionFlg,
             AryFavoriteSongNoes = favorites,
             AryRecentSongNoes = recent,
-            SongFavoriteCnt = (uint)favorites.Length,
-            SongRecentCnt = (uint)recent.Length,
             CategJpopCnt = saveData.CategJpopCnt,
             CategAnimeCnt = saveData.CategAnimeCnt,
             CategDoyoCnt = saveData.CategDoyoCnt,
@@ -49,6 +47,11 @@ public partial class UserDataQueryHandler
             CategGameCnt = saveData.CategGameCnt,
             CategNamcoCnt = saveData.CategNamcoCnt,
             CategVocaloidCnt = saveData.CategVocaloidCnt,
+            SongPushedCnt = saveData.SongPushedCnt,
+            RecommendSong = green.Recommend.RecommendSong,
+            RecommendBestSong = green.Recommend.RecommendBestSongs.ToList(),
+            SongFavoriteCnt = saveData.SongFavoriteCnt,
+            SongRecentCnt = saveData.SongRecentCnt,
             TotalCreditCnt = saveData.TotalCreditCnt,
             PrevAreaCode = saveData.PrevAreaCode,
             ConsecAreaCnt = saveData.ConsecAreaCnt,
