@@ -29,6 +29,7 @@ public partial class SongPlayDatumGreen
     public bool IsFavorite { get; set; }
     public bool IsRecent { get; set; }
     public bool IsPapamama { get; set; }
+    public bool IsPushed { get; set; }
     public uint SoulGauge { get; set; }
     public uint PlayDan { get; set; }
     public uint WaiwaiResult { get; set; }

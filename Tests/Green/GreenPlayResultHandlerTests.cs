@@ -554,6 +554,72 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
+    public async Task GreenPlayLog_StoresIsPushed()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        await fixture.Context.SaveChangesAsync();
+
+        fixture.Context.SongPlayDataGreen.Add(new SongPlayDatumGreen
+        {
+            Baid = 1,
+            SongId = 101,
+            Difficulty = Difficulty.Easy,
+            Crown = CrownType.Clear,
+            Score = 100000,
+            ScoreRate = 80,
+            GoodCount = 10,
+            OkCount = 2,
+            MissCount = 1,
+            ComboCount = 12,
+            HitCount = 13,
+            PoundCount = 0,
+            StarLevel = 3,
+            SupportLevel = 0,
+            OptionFlg = [0],
+            ToneFlg = [0],
+            PlayMode = 0,
+            StageMode = 0,
+            IsShin = false,
+            MusicCategory = 0,
+            SelectedFolderId = 0,
+            IsFavorite = false,
+            IsRecent = false,
+            IsPapamama = false,
+            IsPushed = true,
+            SoulGauge = 100,
+            PlayDan = 0,
+            WaiwaiResult = 0,
+            WaiwaiGauge = 0,
+            PlayTime = new DateTime(2026, 5, 15, 12, 0, 0)
+        });
+        await fixture.Context.SaveChangesAsync();
+
+        var saved = await fixture.Context.SongPlayDataGreen.SingleAsync(row => row.Baid == 1);
+        Assert.True(saved.IsPushed);
+    }
+
+    [Fact]
+    public async Task GreenRecentSongs_StoresLastPlayed()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        await fixture.Context.SaveChangesAsync();
+
+        var when = new DateTime(2026, 5, 15, 12, 0, 0);
+        fixture.Context.GreenRecentSongs.Add(new GreenRecentSongs
+        {
+            Baid = 1,
+            SongNo = 101,
+            LastPlayed = when
+        });
+        await fixture.Context.SaveChangesAsync();
+
+        var saved = await fixture.Context.GreenRecentSongs.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(when, saved.LastPlayed);
+    }
+
+    [Fact]
     public void GreenDanHelpers_ClassifiesNormalAndExtraDanIds()
     {
         Assert.True(GreenDanHelpers.IsNormalDanId(1));

@@ -147,6 +147,7 @@ public partial class TaikoDbContext
         {
             entity.ToTable("GreenRecentSongs");
             entity.HasKey(e => new { e.Baid, e.SongNo });
+            entity.Property(e => e.LastPlayed).HasColumnType("datetime");
             entity.HasOne(d => d.Ba)
                 .WithMany()
                 .HasPrincipalKey(p => p.Baid)
