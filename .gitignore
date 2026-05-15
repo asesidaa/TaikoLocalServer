@@ -403,3 +403,4 @@ proto/
 
 # Local analysis/tooling artifacts
 .tools/
+.worktrees/
