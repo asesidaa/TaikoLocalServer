@@ -64,11 +64,11 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
                 SongNameCN = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
                 SongNameKO = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
                 Genre = MapGreenGenre(pair.Value.CategoryId),
-                StarEasy = 0,
-                StarNormal = 0,
-                StarHard = 0,
-                StarOni = 0,
-                StarUra = pair.Value.HasExtreme ? 1 : 0
+                StarEasy = (int)pair.Value.StarEasy,
+                StarNormal = (int)pair.Value.StarNormal,
+                StarHard = (int)pair.Value.StarHard,
+                StarOni = (int)pair.Value.StarOni,
+                StarUra = (int)pair.Value.StarUra
             });
     }
 

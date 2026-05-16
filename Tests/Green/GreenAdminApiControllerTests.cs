@@ -6,6 +6,7 @@ using TaikoLocalServer.Adapters.AdminApi.Controllers;
 using TaikoLocalServer.Contracts.AdminApi.Requests;
 using TaikoLocalServer.Contracts.AdminApi.Responses;
 using TaikoLocalServer.Contracts.AdminApi.ViewModels;
+using TaikoLocalServer.Contracts.AdminApi.ServerData;
 using TaikoLocalServer.Infrastructure.Identity.Settings;
 
 namespace TaikoLocalServer.Tests.Green;
@@ -128,15 +129,38 @@ public class GreenAdminApiControllerTests
     }
 
     [Fact]
-    public void GameData_Green_MusicDetailsRouteReturnsCatalog()
+    public void GameData_Green_MusicDetailsRouteReturnsCatalogStarFields()
     {
-        var catalog = new FileGameDataCatalog([new GreenHandlerFixture.TestGreenCatalog()]);
+        var catalog = new FileGameDataCatalog([new GreenHandlerFixture.TestGreenCatalog(
+            musicInfoFileOrder:
+            [
+                new GreenMusicInfoEntry
+                {
+                    SongNo = 105,
+                    MusicId = "tank",
+                    FileOrder = 0,
+                    Title = "Tank!",
+                    CategoryId = (uint)SongGenre.Anime,
+                    HasExtreme = true,
+                    StarEasy = 3,
+                    StarNormal = 5,
+                    StarHard = 6,
+                    StarOni = 6,
+                    StarUra = 9
+                }
+            ])]);
         var controller = new GameDataController(catalog);
 
         var result = controller.GetMusicDetails("Green");
 
         var ok = Assert.IsType<OkObjectResult>(result);
-        Assert.NotNull(ok.Value);
+        var rows = Assert.IsAssignableFrom<Dictionary<uint, MusicDetail>>(ok.Value);
+        var row = rows[105];
+        Assert.Equal(3, row.StarEasy);
+        Assert.Equal(5, row.StarNormal);
+        Assert.Equal(6, row.StarHard);
+        Assert.Equal(6, row.StarOni);
+        Assert.Equal(9, row.StarUra);
     }
 
     private static PlayDataController CreatePlayDataController(ITaikoDbContext context)
