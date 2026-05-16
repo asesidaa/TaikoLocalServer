@@ -298,7 +298,7 @@ public partial class DaniDojo
             "13dan" => Localizer["Chojin"],
             "14dan" => Localizer["Tatsujin"],
             "15dan" => Localizer["Gaiden"],
-            _ => ""
+            _ => title
         };
     }
 

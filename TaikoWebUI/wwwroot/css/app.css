@@ -252,23 +252,30 @@
 .dani-tab-window {
     transform: none !important;
     width: 100% !important;
+    overflow-x: auto;
+    scrollbar-width: thin;
 }
 
 .dani-tab-button {
-    flex: 1 1 100px;
-    min-width: 0;
-    width: auto;
+    flex: 0 0 max-content;
+    min-width: max-content;
+    width: max-content;
+    max-width: none;
+    gap: 6px;
 }
 
 .dani-tab-button.mud-tab-active {
     box-shadow: inset 0 -2px 0 var(--mud-palette-primary);
 }
 
+.dani-tab-button .mud-tab-icon-text {
+    flex: 0 0 24px;
+}
+
 .dani-tab-label {
-    overflow: hidden;
-    text-overflow: ellipsis;
+    overflow: visible;
     white-space: nowrap;
-    min-width: 0;
+    min-width: max-content;
 }
 
 .dani-tab-nav {

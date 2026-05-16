@@ -53,6 +53,10 @@ public sealed class GreenEraGameDataCatalog(ILogger<GreenEraGameDataCatalog> log
 
         var musicInfo = await new GreenMusicInfoLoader().LoadAsync(cancellationToken);
         var stars = await new GreenTuningLoader().LoadAsync(cancellationToken);
+        var loadedTaikojukuFileOrder = await new GreenTaikojukuLoader().LoadAsync(cancellationToken);
+        var taikojukuUniqueIds = loadedTaikojukuFileOrder
+            .Select(entry => entry.UniqueId)
+            .ToHashSet();
         var enrichedEntries = musicInfo.Entries
             .Select(entry => stars.TryGetValue(entry.MusicId, out var set)
                 ? entry with
@@ -67,7 +71,8 @@ public sealed class GreenEraGameDataCatalog(ILogger<GreenEraGameDataCatalog> log
             .ToArray();
 
         var missingTuning = enrichedEntries
-            .Where(entry => !stars.ContainsKey(entry.MusicId))
+            .Where(entry => !stars.ContainsKey(entry.MusicId)
+                && !taikojukuUniqueIds.Contains(entry.SongNo))
             .Select(entry => entry.MusicId)
             .ToList();
         if (missingTuning.Count > 0)
@@ -84,7 +89,7 @@ public sealed class GreenEraGameDataCatalog(ILogger<GreenEraGameDataCatalog> log
         sharedMusicInfos = musicInfos.ToDictionary(
             pair => pair.Key,
             pair => (IMusicInfoEntry)pair.Value);
-        taikojukuFileOrder = await new GreenTaikojukuLoader().LoadAsync(cancellationToken);
+        taikojukuFileOrder = loadedTaikojukuFileOrder;
         taikojuku = taikojukuFileOrder
             .GroupBy(entry => entry.UniqueId)
             .ToDictionary(group => group.Key, group => group.First());

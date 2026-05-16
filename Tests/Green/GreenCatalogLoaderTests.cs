@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
 
 namespace TaikoLocalServer.Tests.Green;
@@ -54,6 +55,21 @@ public sealed class GreenCatalogLoaderTests
         Assert.Equal((byte)1, starSet.Ura);
     }
 
+    [Fact]
+    public async Task CatalogInitialize_DoesNotWarnForMedleyMusicInfoRowsMissingTuning()
+    {
+        CopyGreenCatalogFilesToProcessRoot();
+        var logger = new RecordingLogger<GreenEraGameDataCatalog>();
+        var catalog = new GreenEraGameDataCatalog(logger);
+
+        await catalog.InitializeAsync(CancellationToken.None);
+
+        Assert.DoesNotContain(
+            logger.Events,
+            log => log.Level == LogLevel.Warning
+                && log.Message.Contains("musicinfo entries have no tuning record", StringComparison.Ordinal));
+    }
+
     private static string FindRepoRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
@@ -64,4 +80,63 @@ public sealed class GreenCatalogLoaderTests
 
         return directory?.FullName ?? throw new DirectoryNotFoundException("Could not locate repository root.");
     }
+
+    private static void CopyGreenCatalogFilesToProcessRoot()
+    {
+        var repoRoot = FindRepoRoot();
+        var targetRoot = Path.Combine(
+            Path.GetDirectoryName(Environment.ProcessPath)
+                ?? throw new ApplicationException("Cannot resolve process directory."),
+            "wwwroot",
+            "data",
+            "green");
+
+        Copy(
+            Path.Combine(repoRoot, "Host", "wwwroot", "data", "green", "data", "config", "S11100-1", "musicinfo.xml"),
+            Path.Combine(targetRoot, "data", "config", "S11100-1", "musicinfo.xml"));
+        Copy(
+            Path.Combine(repoRoot, "Host", "wwwroot", "data", "green", "data", "config", "S11100-1", "musicmedleyinfo.xml"),
+            Path.Combine(targetRoot, "data", "config", "S11100-1", "musicmedleyinfo.xml"));
+        Copy(
+            Path.Combine(repoRoot, "Host", "wwwroot", "data", "green", "data", "fumen", "tuning.bin"),
+            Path.Combine(targetRoot, "data", "fumen", "tuning.bin"));
+    }
+
+    private static void Copy(string source, string destination)
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(destination)
+            ?? throw new ApplicationException($"Cannot resolve directory for {destination}."));
+        File.Copy(source, destination, overwrite: true);
+    }
+
+    private sealed class RecordingLogger<T> : ILogger<T>
+    {
+        public List<LogEvent> Events { get; } = [];
+
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull
+            => NullScope.Instance;
+
+        public bool IsEnabled(LogLevel logLevel) => true;
+
+        public void Log<TState>(
+            LogLevel logLevel,
+            EventId eventId,
+            TState state,
+            Exception? exception,
+            Func<TState, Exception?, string> formatter)
+        {
+            Events.Add(new LogEvent(logLevel, formatter(state, exception)));
+        }
+
+        private sealed class NullScope : IDisposable
+        {
+            public static NullScope Instance { get; } = new();
+
+            public void Dispose()
+            {
+            }
+        }
+    }
+
+    private sealed record LogEvent(LogLevel Level, string Message);
 }

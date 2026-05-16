@@ -20,5 +20,6 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
     <ProjectReference Include="..\Adapters.GameProtocol.Green\Adapters.GameProtocol.Green.csproj" />
+    <ProjectReference Include="..\TaikoWebUI\TaikoWebUI.csproj" />
   </ItemGroup>
 </Project>
