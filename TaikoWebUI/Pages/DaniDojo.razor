@@ -29,30 +29,63 @@ else
     <MudGrid Class="my-4 pb-10">
         <MudItem xs="12">
             <MudPaper Elevation="0" Outlined="true">
-                <MudTabs ActivePanelIndex="0" Rounded="true" Border="true" MinimumTabWidth="100px" TabPanelsClass="pa-8">
-                    @if (isLoading)
-                    {
-                        <MudItem xs="12">
-                            <MudText Align="Align.Center" Class="my-8">
-                                Loading...
-                            </MudText>
-                        </MudItem>
-                    }
-                    else if (danMap.Count() == 0)
-                    {
-                        <MudItem xs="12">
-                            <MudText Align="Align.Center" Class="my-8">
-                                @Localizer["No Data"]
-                            </MudText>
-                        </MudItem>
-                    }
-                    else
-                    {
-                        @foreach (var danId in danMap.Keys)
-                        {
-                            var danData = danMap[danId];
+                @if (isLoading)
+                {
+                    <MudItem xs="12">
+                        <MudText Align="Align.Center" Class="my-8">
+                            Loading...
+                        </MudText>
+                    </MudItem>
+                }
+                else if (danMap.Count == 0)
+                {
+                    <MudItem xs="12">
+                        <MudText Align="Align.Center" Class="my-8">
+                            @Localizer["No Data"]
+                        </MudText>
+                    </MudItem>
+                }
+                else if (TryGetSelectedDan(out var danId, out var danData))
+                {
+                    <div class="dani-tab-shell mud-tabs mud-tabs-rounded">
+                        <div class="mud-tabs-tabbar mud-tabs-border-top mud-tabs-rounded">
+                            <div class="mud-tabs-tabbar-inner" role="tablist" aria-label="Dani Dojo">
+                                <div class="mud-tabs-scroll-button">
+                                    <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft"
+                                                   Size="Size.Small"
+                                                   Disabled="@(!CanShowPreviousDanTabs)"
+                                                   OnClick="ShowPreviousDanTabs"
+                                                   Class="dani-tab-nav" />
+                                </div>
+                                <div class="mud-tabs-tabbar-content">
+                                    <div class="mud-tabs-tabbar-wrapper dani-tab-window">
+                                        @foreach (var tabDanId in GetVisibleDanTabIds())
+                                        {
+                                            var tabDanData = danMap[tabDanId];
+                                            var isSelected = tabDanId == danId;
 
-                            <MudTabPanel Text="@GetDanTitle(danData.Title)" Icon="@GetDanResultIcon(danId)">
+                                            <button type="button"
+                                                    class="@GetDanTabButtonClass(tabDanId)"
+                                                    role="tab"
+                                                    aria-selected="@isSelected.ToString().ToLowerInvariant()"
+                                                    @onclick="() => SelectDan(tabDanId)">
+                                                @((MarkupString)GetDanTabIcon(tabDanId))
+                                                <span class="dani-tab-label">@GetDanTitle(tabDanData.Title)</span>
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="mud-tabs-scroll-button">
+                                    <MudIconButton Icon="@Icons.Material.Filled.ChevronRight"
+                                                   Size="Size.Small"
+                                                   Disabled="@(!CanShowNextDanTabs)"
+                                                   OnClick="ShowNextDanTabs"
+                                                   Class="dani-tab-nav" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mud-tabs-panels dani-tab-panel pa-8" role="tabpanel">
                                 <MudText Typo="Typo.h5" Class="mb-4">@Localizer["Details"]</MudText>
                                 <MudGrid Class="d-flex">
                                     <MudItem xs="12" sm="12" md="4" Class="pb-1">
@@ -501,10 +534,9 @@ else
                                         </MudGrid>
                                     </MudItem>
                                 </MudGrid>
-                            </MudTabPanel>
-                        }
-                    }
-                </MudTabs>
+                        </div>
+                    </div>
+                }
             </MudPaper>
         </MudItem>
     </MudGrid>

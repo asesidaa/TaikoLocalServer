@@ -18,6 +18,7 @@ public partial class DaniDojo
 
     private string CurrentEra => WebUiEra.Normalize(Era);
     private bool IsGreen => string.Equals(CurrentEra, "Green", StringComparison.OrdinalIgnoreCase);
+    private const int DanTabWindowSize = 10;
 
     private string? SongNameLanguage { get; set; }
 
@@ -28,6 +29,9 @@ public partial class DaniDojo
     private Dictionary<uint, MusicDetail> musicDetailDictionary = new();
     private ImmutableDictionary<uint, DanData> danMap = ImmutableDictionary<uint, DanData>.Empty;
     private Dictionary<uint, DanData> danMapTemp = new();
+    private List<uint> danIds = new();
+    private uint? selectedDanId;
+    private int danTabWindowStart;
     private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
@@ -53,6 +57,7 @@ public partial class DaniDojo
             danMap = danMapTemp.ToImmutableDictionary();
         }
 
+        InitializeDanSelection();
 
         SongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
 
@@ -68,6 +73,111 @@ public partial class DaniDojo
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dani Dojo"], href: WebUiEra.UserRoute(Baid, CurrentEra, "DaniDojo"), disabled: false));
         BreadcrumbsStateContainer.NotifyStateChanged();
         isLoading = false;
+    }
+
+    private bool CanShowPreviousDanTabs => danTabWindowStart > 0;
+
+    private bool CanShowNextDanTabs => danTabWindowStart + DanTabWindowSize < danIds.Count;
+
+    private IEnumerable<uint> GetVisibleDanTabIds()
+        => danIds.Skip(danTabWindowStart).Take(DanTabWindowSize);
+
+    private void InitializeDanSelection()
+    {
+        danIds = danMap.Keys.ToList();
+        if (danIds.Count == 0)
+        {
+            selectedDanId = null;
+            danTabWindowStart = 0;
+            return;
+        }
+
+        selectedDanId = danIds[0];
+        danTabWindowStart = 0;
+    }
+
+    private bool TryGetSelectedDan(out uint danId, out DanData danData)
+    {
+        danId = selectedDanId ?? 0;
+        if (selectedDanId is { } value && danMap.TryGetValue(value, out danData!))
+        {
+            return true;
+        }
+
+        danData = default!;
+        return false;
+    }
+
+    private void SelectDan(uint danId)
+    {
+        if (!danMap.ContainsKey(danId))
+        {
+            return;
+        }
+
+        selectedDanId = danId;
+        EnsureSelectedDanTabVisible();
+    }
+
+    private void ShowPreviousDanTabs()
+    {
+        if (!CanShowPreviousDanTabs)
+        {
+            return;
+        }
+
+        danTabWindowStart = Math.Max(0, danTabWindowStart - DanTabWindowSize);
+        SelectDan(danIds[danTabWindowStart]);
+    }
+
+    private void ShowNextDanTabs()
+    {
+        if (!CanShowNextDanTabs)
+        {
+            return;
+        }
+
+        danTabWindowStart = Math.Min(danIds.Count - 1, danTabWindowStart + DanTabWindowSize);
+        SelectDan(danIds[danTabWindowStart]);
+    }
+
+    private void EnsureSelectedDanTabVisible()
+    {
+        if (selectedDanId is not { } danId)
+        {
+            return;
+        }
+
+        var selectedIndex = danIds.IndexOf(danId);
+        if (selectedIndex < 0)
+        {
+            return;
+        }
+
+        if (selectedIndex < danTabWindowStart)
+        {
+            danTabWindowStart = selectedIndex;
+        }
+        else if (selectedIndex >= danTabWindowStart + DanTabWindowSize)
+        {
+            danTabWindowStart = Math.Max(0, selectedIndex - DanTabWindowSize + 1);
+        }
+    }
+
+    private string GetDanTabButtonClass(uint danId)
+        => selectedDanId == danId
+            ? "mud-tab mud-ripple mud-tab-active dani-tab-button"
+            : "mud-tab mud-ripple dani-tab-button";
+
+    private static string GetDanTabIcon(uint danId)
+    {
+        var state = GetDanResultState(danId);
+        var filter = state is DanClearState.NotClear ? " style='filter: contrast(0.65)'" : "";
+
+        return
+            "<svg class='mud-icon-root mud-svg-icon mud-icon-size-medium mud-tab-icon-text' focusable='false' viewBox='0 0 24 24' aria-hidden='true'>" +
+            $"<image href='/images/dani_{state}.webp' width='24' height='24'{filter}/>" +
+            "</svg>";
     }
 
     private string GetDanClearStateString(DanClearState danClearState)
@@ -190,23 +300,6 @@ public partial class DaniDojo
             "15dan" => Localizer["Gaiden"],
             _ => ""
         };
-    }
-
-    private static string GetDanResultIcon(uint danId)
-    {
-        string icon;
-        const string notClearIcon = "<image href='/images/dani_NotClear.webp' width='24' height='24' style='filter: contrast(0.65)'/>";
-
-        if (!_bestDataMap.TryGetValue(danId, out DanBestData? value))
-        {
-            return notClearIcon;
-        }
-
-        var state = value.ClearState;
-
-        icon = state is DanClearState.NotClear ? notClearIcon : $"<image href='/images/dani_{state}.webp' width='24' height='24' />";
-
-        return icon;
     }
 
     private static DanClearState GetDanResultState(uint danId)
