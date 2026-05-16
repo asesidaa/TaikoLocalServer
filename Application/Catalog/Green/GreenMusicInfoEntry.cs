@@ -2,7 +2,7 @@ using TaikoLocalServer.Application.Abstractions;
 
 namespace TaikoLocalServer.Application.Catalog.Green;
 
-public sealed class GreenMusicInfoEntry : IMusicInfoEntry
+public sealed record class GreenMusicInfoEntry : IMusicInfoEntry
 {
     public string MusicId { get; init; } = string.Empty;
 
@@ -31,4 +31,14 @@ public sealed class GreenMusicInfoEntry : IMusicInfoEntry
     public IReadOnlyList<uint> Tags { get; init; } = [];
 
     public int FileOrder { get; init; }
+
+    public uint StarEasy { get; init; }
+
+    public uint StarNormal { get; init; }
+
+    public uint StarHard { get; init; }
+
+    public uint StarOni { get; init; }
+
+    public uint StarUra { get; init; }
 }
