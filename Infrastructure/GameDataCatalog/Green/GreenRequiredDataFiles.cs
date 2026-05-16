@@ -11,7 +11,8 @@ internal static class GreenRequiredDataFiles
         return
         [
             Path.Combine(datatablePath, "musicinfo.xml"),
-            Path.Combine(datatablePath, "musicmedleyinfo.xml")
+            Path.Combine(datatablePath, "musicmedleyinfo.xml"),
+            Path.Combine(datatablePath, "fumen", "tuning.bin")
         ];
     }
 
