@@ -1008,6 +1008,7 @@ public sealed class GreenPlayResultHandlerTests
         Assert.Equal(20001u, dan.MedleyUniqueId);
         Assert.Equal(GreenDanClearGrade.GoldClear, dan.ClearGrade);
         Assert.Equal(3u, dan.ArrivalSongCount);
+        Assert.Equal(100u, dan.SoulGaugeTotal);
         Assert.Equal(3, dan.DanStageScoreData.Count);
         Assert.Contains(dan.DanStageScoreData, row => row.StageIndex == 0 && row.SongNumber == 101 && row.HighScore == 326090);
 

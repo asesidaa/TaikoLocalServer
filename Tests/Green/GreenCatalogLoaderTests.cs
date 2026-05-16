@@ -32,6 +32,10 @@ public sealed class GreenCatalogLoaderTests
         Assert.True(entries[0].ChallengeLevel > 0);
         Assert.NotEmpty(entries[0].Songs);
         Assert.True(entries[0].Songs[0].SongNo > 0);
+        Assert.Equal(90u, entries[0].Conditions.SoulGauge);
+        Assert.Equal(420u, entries[0].Conditions.TotalHitCount);
+        Assert.Equal(95u, entries[0].ExcellentConditions.SoulGauge);
+        Assert.Equal(460u, entries[0].ExcellentConditions.TotalHitCount);
     }
 
     [Fact]

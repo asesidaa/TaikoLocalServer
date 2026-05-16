@@ -14,7 +14,32 @@ public sealed class GreenTaikojukuEntry
 
     public uint VerupNo { get; init; }
 
+    public GreenTaikojukuConditions Conditions { get; init; } = GreenTaikojukuConditions.Empty;
+
+    public GreenTaikojukuConditions ExcellentConditions { get; init; } = GreenTaikojukuConditions.Empty;
+
     public IReadOnlyList<GreenTaikojukuSong> Songs { get; init; } = [];
+}
+
+public sealed class GreenTaikojukuConditions
+{
+    public static GreenTaikojukuConditions Empty { get; } = new();
+
+    public uint SoulGauge { get; init; }
+
+    public uint GoodCount { get; init; }
+
+    public uint OkCount { get; init; }
+
+    public uint BadCount { get; init; }
+
+    public uint ComboCount { get; init; }
+
+    public uint TotalHitCount { get; init; }
+
+    public uint Score { get; init; }
+
+    public uint DrumrollCount { get; init; }
 }
 
 public sealed class GreenTaikojukuSong

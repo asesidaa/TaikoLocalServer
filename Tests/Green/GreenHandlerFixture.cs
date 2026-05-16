@@ -91,6 +91,16 @@ internal sealed class GreenHandlerFixture : IAsyncDisposable
             {
                 UniqueId = 20001,
                 ChallengeLevel = 1,
+                Conditions = new GreenTaikojukuConditions
+                {
+                    SoulGauge = 90,
+                    TotalHitCount = 420
+                },
+                ExcellentConditions = new GreenTaikojukuConditions
+                {
+                    SoulGauge = 95,
+                    TotalHitCount = 460
+                },
                 Songs =
                 [
                     new() { SongNo = 101, Level = 0 },

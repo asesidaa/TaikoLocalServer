@@ -360,7 +360,9 @@ public partial class UpdatePlayResultCommandHandler
         danScore.ClearGrade = GreenDanHelpers.ClampGrade(Math.Max((uint)danScore.ClearGrade, playResultData.DanResult));
         danScore.ArrivalSongCount = Math.Max(danScore.ArrivalSongCount, (uint)playResultData.AryStageInfoes.Count);
         danScore.ComboCountTotal = Math.Max(danScore.ComboCountTotal, playResultData.ComboCntTotal);
-        danScore.SoulGaugeTotal = Math.Max(danScore.SoulGaugeTotal, playResultData.SoulGaugeTotal);
+        danScore.SoulGaugeTotal = Math.Max(
+            danScore.SoulGaugeTotal,
+            playResultData.AryStageInfoes.LastOrDefault()?.SoulGauge.GetValueOrDefault() ?? 0);
 
         for (var i = 0; i < playResultData.AryStageInfoes.Count; i++)
         {

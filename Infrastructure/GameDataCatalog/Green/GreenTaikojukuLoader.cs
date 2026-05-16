@@ -26,6 +26,8 @@ public sealed class GreenTaikojukuLoader
                 Name = ReadString(element, "medleyname"),
                 Difficulty = ReadUInt(element, "difficulty"),
                 ChallengeLevel = ReadUInt(element, "challengelv"),
+                Conditions = ReadConditions(element.Element("Conditions")),
+                ExcellentConditions = ReadConditions(element.Element("ExcellentConditions")),
                 Songs = element.Elements("Content")
                     .Select(content => new GreenTaikojukuSong
                     {
@@ -44,4 +46,24 @@ public sealed class GreenTaikojukuLoader
 
     private static uint ReadUInt(XContainer element, string name)
         => uint.TryParse(element.Element(name)?.Value, out var parsed) ? parsed : 0;
+
+    private static GreenTaikojukuConditions ReadConditions(XContainer? element)
+    {
+        if (element is null)
+        {
+            return GreenTaikojukuConditions.Empty;
+        }
+
+        return new GreenTaikojukuConditions
+        {
+            SoulGauge = ReadUInt(element, "tamashii") / 100,
+            GoodCount = ReadUInt(element, "hit_ryo"),
+            OkCount = ReadUInt(element, "hit_ka"),
+            BadCount = ReadUInt(element, "hit_fuka"),
+            ComboCount = ReadUInt(element, "combo"),
+            TotalHitCount = ReadUInt(element, "hits"),
+            Score = ReadUInt(element, "score"),
+            DrumrollCount = ReadUInt(element, "renda")
+        };
+    }
 }

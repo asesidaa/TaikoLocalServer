@@ -84,8 +84,46 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
                 SongNo = song.SongNo,
                 Level = ToWebUiDifficultyLevel(song.Level)
             }).ToList(),
-            OdaiBorderList = []
+            OdaiBorderList = BuildGreenOdaiBorders(entry)
         }).ToList();
+    }
+
+    private static List<DanData.OdaiBorder> BuildGreenOdaiBorders(GreenTaikojukuEntry entry)
+    {
+        var red = entry.Conditions;
+        var gold = entry.ExcellentConditions;
+        var borders = new List<DanData.OdaiBorder>();
+
+        AddGreenOdaiBorder(borders, DanConditionType.SoulGauge, red.SoulGauge, gold.SoulGauge);
+        AddGreenOdaiBorder(borders, DanConditionType.GoodCount, red.GoodCount, gold.GoodCount);
+        AddGreenOdaiBorder(borders, DanConditionType.OkCount, red.OkCount, gold.OkCount);
+        AddGreenOdaiBorder(borders, DanConditionType.BadCount, red.BadCount, gold.BadCount);
+        AddGreenOdaiBorder(borders, DanConditionType.ComboCount, red.ComboCount, gold.ComboCount);
+        AddGreenOdaiBorder(borders, DanConditionType.DrumrollCount, red.DrumrollCount, gold.DrumrollCount);
+        AddGreenOdaiBorder(borders, DanConditionType.Score, red.Score, gold.Score);
+        AddGreenOdaiBorder(borders, DanConditionType.TotalHitCount, red.TotalHitCount, gold.TotalHitCount);
+
+        return borders;
+    }
+
+    private static void AddGreenOdaiBorder(
+        List<DanData.OdaiBorder> borders,
+        DanConditionType type,
+        uint redBorder,
+        uint goldBorder)
+    {
+        if (redBorder == 0 && goldBorder == 0)
+        {
+            return;
+        }
+
+        borders.Add(new DanData.OdaiBorder
+        {
+            OdaiType = (uint)type,
+            BorderType = (uint)DanBorderType.All,
+            RedBorderTotal = redBorder,
+            GoldBorderTotal = goldBorder
+        });
     }
 
     private static uint ToWebUiDifficultyLevel(uint greenCourseLevel)

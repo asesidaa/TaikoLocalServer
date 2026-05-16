@@ -28,10 +28,13 @@ public partial class DaniDojo
     private Dictionary<uint, MusicDetail> musicDetailDictionary = new();
     private ImmutableDictionary<uint, DanData> danMap = ImmutableDictionary<uint, DanData>.Empty;
     private Dictionary<uint, DanData> danMapTemp = new();
+    private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+
+        danMap = GameDataService.GetDanMap(CurrentEra);
 
         response = await Client.GetFromJsonAsync<DanBestDataResponse>(WebUiEra.Api(CurrentEra, $"DanBestData/{Baid}"));
         response.ThrowIfNull();
@@ -39,7 +42,6 @@ public partial class DaniDojo
             .Sort((stageData, otherStageData) => stageData.SongNumber.CompareTo(otherStageData.SongNumber)));
         
         _bestDataMap = response.DanBestDataList.ToDictionary(data => data.DanId);
-        danMap = GameDataService.GetDanMap(CurrentEra);
 
         if (!UiSettings.Value.DisplayUnplayedDans)
         {
@@ -65,6 +67,7 @@ public partial class DaniDojo
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dani Dojo"], href: WebUiEra.UserRoute(Baid, CurrentEra, "DaniDojo"), disabled: false));
         BreadcrumbsStateContainer.NotifyStateChanged();
+        isLoading = false;
     }
 
     private string GetDanClearStateString(DanClearState danClearState)
@@ -215,7 +218,7 @@ public partial class DaniDojo
     {
         var borders = data.OdaiBorderList;
         var soulBorder =
-            borders.FirstOrDefault(border => (DanConditionType)border.BorderType == DanConditionType.SoulGauge,
+            borders.FirstOrDefault(border => (DanConditionType)border.OdaiType == DanConditionType.SoulGauge,
                 new DanData.OdaiBorder());
 
         return isGold ? soulBorder.GoldBorderTotal : soulBorder.RedBorderTotal;

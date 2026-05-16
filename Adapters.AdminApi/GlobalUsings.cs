@@ -8,6 +8,7 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
 global using TaikoLocalServer.Adapters.AdminApi.Authorization;
 global using TaikoLocalServer.Application.Abstractions;
+global using TaikoLocalServer.Application.Catalog.Green;
 global using TaikoLocalServer.Application.Common;
 global using TaikoLocalServer.Contracts.AdminApi.Authorization;
 global using TaikoLocalServer.Contracts.AdminApi.ViewModels;

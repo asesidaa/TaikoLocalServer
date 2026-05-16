@@ -30,7 +30,15 @@ else
         <MudItem xs="12">
             <MudPaper Elevation="0" Outlined="true">
                 <MudTabs ActivePanelIndex="0" Rounded="true" Border="true" MinimumTabWidth="100px" TabPanelsClass="pa-8">
-                    @if (danMap.Count() == 0)
+                    @if (isLoading)
+                    {
+                        <MudItem xs="12">
+                            <MudText Align="Align.Center" Class="my-8">
+                                Loading...
+                            </MudText>
+                        </MudItem>
+                    }
+                    else if (danMap.Count() == 0)
                     {
                         <MudItem xs="12">
                             <MudText Align="Align.Center" Class="my-8">

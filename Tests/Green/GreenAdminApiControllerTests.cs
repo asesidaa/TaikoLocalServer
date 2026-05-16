@@ -177,6 +177,29 @@ public class GreenAdminApiControllerTests
         Assert.All(first.OdaiSongList, song => Assert.Equal((uint)Difficulty.Easy, song.Level));
     }
 
+    [Fact]
+    public void GameData_Green_DanDataRouteReturnsParsedMedleyConditions()
+    {
+        var catalog = new FileGameDataCatalog([new GreenHandlerFixture.TestGreenCatalog()]);
+        var controller = new GameDataController(catalog);
+
+        var result = controller.GetDanData("Green");
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var rows = Assert.IsAssignableFrom<List<DanData>>(ok.Value);
+        var first = Assert.Single(rows, row => row.DanId == 1);
+        Assert.Contains(first.OdaiBorderList, border =>
+            border.OdaiType == (uint)DanConditionType.SoulGauge
+            && border.BorderType == (uint)DanBorderType.All
+            && border.RedBorderTotal == 90
+            && border.GoldBorderTotal == 95);
+        Assert.Contains(first.OdaiBorderList, border =>
+            border.OdaiType == (uint)DanConditionType.TotalHitCount
+            && border.BorderType == (uint)DanBorderType.All
+            && border.RedBorderTotal == 420
+            && border.GoldBorderTotal == 460);
+    }
+
     private static PlayDataController CreatePlayDataController(ITaikoDbContext context)
     {
         return new PlayDataController(context)
