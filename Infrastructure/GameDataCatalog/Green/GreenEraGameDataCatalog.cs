@@ -52,9 +52,35 @@ public sealed class GreenEraGameDataCatalog(ILogger<GreenEraGameDataCatalog> log
         GreenRequiredDataFiles.ThrowIfMissing();
 
         var musicInfo = await new GreenMusicInfoLoader().LoadAsync(cancellationToken);
+        var stars = await new GreenTuningLoader().LoadAsync(cancellationToken);
+        var enrichedEntries = musicInfo.Entries
+            .Select(entry => stars.TryGetValue(entry.MusicId, out var set)
+                ? entry with
+                {
+                    StarEasy = set.Easy,
+                    StarNormal = set.Normal,
+                    StarHard = set.Hard,
+                    StarOni = set.Oni,
+                    StarUra = set.Ura
+                }
+                : entry)
+            .ToArray();
+
+        var missingTuning = enrichedEntries
+            .Where(entry => !stars.ContainsKey(entry.MusicId))
+            .Select(entry => entry.MusicId)
+            .ToList();
+        if (missingTuning.Count > 0)
+        {
+            logger.LogWarning(
+                "Green: {Count} musicinfo entries have no tuning record; using star=0 (examples: {Examples})",
+                missingTuning.Count,
+                string.Join(", ", missingTuning.Take(5)));
+        }
+
         songHashVersion = musicInfo.SongHashVersion;
-        musicInfoFileOrder = musicInfo.Entries;
-        musicInfos = musicInfo.Entries.ToDictionary(entry => entry.SongNo);
+        musicInfoFileOrder = enrichedEntries;
+        musicInfos = enrichedEntries.ToDictionary(entry => entry.SongNo);
         sharedMusicInfos = musicInfos.ToDictionary(
             pair => pair.Key,
             pair => (IMusicInfoEntry)pair.Value);
@@ -72,9 +98,10 @@ public sealed class GreenEraGameDataCatalog(ILogger<GreenEraGameDataCatalog> log
             cancellationToken);
 
         logger.LogInformation(
-            "Loaded Green catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {TaikojukuCount} taikojuku packs",
+            "Loaded Green catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {TaikojukuCount} taikojuku packs, {StarCount} tuning star rows",
             musicInfoFileOrder.Count,
             songHashVersion,
-            taikojukuFileOrder.Count);
+            taikojukuFileOrder.Count,
+            stars.Count);
     }
 }
