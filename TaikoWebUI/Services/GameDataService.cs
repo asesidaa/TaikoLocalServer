@@ -24,10 +24,12 @@ public class GameDataService : IGameDataService
 
     public async Task InitializeAsync(string dataBaseUrl)
     {
-        dataBaseUrl = dataBaseUrl.TrimEnd('/');
-        var danData = await client.GetFromJsonAsync<List<DanData>>($"{dataBaseUrl}/data/dan_data.json");
-        danData.ThrowIfNull();
-        danMaps[WebUiEra.Default] = danData.ToImmutableDictionary(data => data.DanId);
+        foreach (var era in WebUiEra.Supported)
+        {
+            var danData = await client.GetFromJsonAsync<List<DanData>>(WebUiEra.Api(era, "GameData/DanData"))
+                ?? new List<DanData>();
+            danMaps[era] = danData.ToImmutableDictionary(data => data.DanId);
+        }
     }
     
     public async Task<Dictionary<uint, MusicDetail>> GetMusicDetailDictionary()

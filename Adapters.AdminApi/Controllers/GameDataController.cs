@@ -82,11 +82,14 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
             OdaiSongList = entry.Songs.Select(song => new DanData.OdaiSong
             {
                 SongNo = song.SongNo,
-                Level = song.Level
+                Level = ToWebUiDifficultyLevel(song.Level)
             }).ToList(),
             OdaiBorderList = []
         }).ToList();
     }
+
+    private static uint ToWebUiDifficultyLevel(uint greenCourseLevel)
+        => greenCourseLevel <= 4 ? greenCourseLevel + 1 : 0;
 
     private static SongGenre MapGreenGenre(uint categoryId)
     {

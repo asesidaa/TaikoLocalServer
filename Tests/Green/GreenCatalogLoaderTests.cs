@@ -8,7 +8,7 @@ public sealed class GreenCatalogLoaderTests
     public async Task MusicInfoLoader_ReadsVersionAndFileOrderSongs()
     {
         var repoRoot = FindRepoRoot();
-        var file = Path.Combine(repoRoot, "Host", "wwwroot", "data", "green", "datatable", "musicinfo.xml");
+        var file = Path.Combine(repoRoot, "Host", "wwwroot", "data", "green", "data", "config", "S11100-1", "musicinfo.xml");
 
         var result = await GreenMusicInfoLoader.LoadFromFileAsync(file, CancellationToken.None);
 
@@ -23,7 +23,7 @@ public sealed class GreenCatalogLoaderTests
     public async Task TaikojukuLoader_ReadsMedleyPacks()
     {
         var repoRoot = FindRepoRoot();
-        var file = Path.Combine(repoRoot, "Host", "wwwroot", "data", "green", "datatable", "musicmedleyinfo.xml");
+        var file = Path.Combine(repoRoot, "Host", "wwwroot", "data", "green", "data", "config", "S11100-1", "musicmedleyinfo.xml");
 
         var entries = await GreenTaikojukuLoader.LoadFromFileAsync(file, CancellationToken.None);
 
@@ -32,6 +32,22 @@ public sealed class GreenCatalogLoaderTests
         Assert.True(entries[0].ChallengeLevel > 0);
         Assert.NotEmpty(entries[0].Songs);
         Assert.True(entries[0].Songs[0].SongNo > 0);
+    }
+
+    [Fact]
+    public async Task TuningLoader_ReadsExRecordUraStarsWithoutRejectingUnavailableCourses()
+    {
+        var repoRoot = FindRepoRoot();
+        var file = Path.Combine(repoRoot, "Host", "wwwroot", "data", "green", "data", "fumen", "tuning.bin");
+
+        var stars = await GreenTuningLoader.LoadFromFileAsync(file, CancellationToken.None);
+
+        Assert.True(stars.TryGetValue("2ge8ji", out var starSet));
+        Assert.Equal((byte)2, starSet.Easy);
+        Assert.Equal((byte)3, starSet.Normal);
+        Assert.Equal((byte)3, starSet.Hard);
+        Assert.Equal((byte)6, starSet.Oni);
+        Assert.Equal((byte)1, starSet.Ura);
     }
 
     private static string FindRepoRoot()

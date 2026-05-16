@@ -5,8 +5,8 @@ using Microsoft.Extensions.Options;
 using TaikoLocalServer.Adapters.AdminApi.Controllers;
 using TaikoLocalServer.Contracts.AdminApi.Requests;
 using TaikoLocalServer.Contracts.AdminApi.Responses;
-using TaikoLocalServer.Contracts.AdminApi.ViewModels;
 using TaikoLocalServer.Contracts.AdminApi.ServerData;
+using TaikoLocalServer.Contracts.AdminApi.ViewModels;
 using TaikoLocalServer.Infrastructure.Identity.Settings;
 
 namespace TaikoLocalServer.Tests.Green;
@@ -161,6 +161,20 @@ public class GreenAdminApiControllerTests
         Assert.Equal(6, row.StarHard);
         Assert.Equal(6, row.StarOni);
         Assert.Equal(9, row.StarUra);
+    }
+
+    [Fact]
+    public void GameData_Green_DanDataRouteMapsCourseLevelsToSharedDifficultyEnum()
+    {
+        var catalog = new FileGameDataCatalog([new GreenHandlerFixture.TestGreenCatalog()]);
+        var controller = new GameDataController(catalog);
+
+        var result = controller.GetDanData("Green");
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var rows = Assert.IsAssignableFrom<List<DanData>>(ok.Value);
+        var first = Assert.Single(rows, row => row.DanId == 1);
+        Assert.All(first.OdaiSongList, song => Assert.Equal((uint)Difficulty.Easy, song.Level));
     }
 
     private static PlayDataController CreatePlayDataController(ITaikoDbContext context)

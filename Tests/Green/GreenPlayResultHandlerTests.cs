@@ -969,7 +969,7 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
-    public async Task UpdatePlayResult_Green_DaniPlaySavesDanDataAndNormalBest()
+    public async Task UpdatePlayResult_Green_DaniPlaySavesDanDataWithoutNormalBest()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -1012,8 +1012,7 @@ public sealed class GreenPlayResultHandlerTests
         Assert.Contains(dan.DanStageScoreData, row => row.StageIndex == 0 && row.SongNumber == 101 && row.HighScore == 326090);
 
         var normalBest = await fixture.Context.SongBestDataGreen.FindAsync(1u, 101u, Difficulty.Easy, false);
-        Assert.NotNull(normalBest);
-        Assert.Equal(326090u, normalBest!.BestScore);
+        Assert.Null(normalBest);
     }
 
     [Fact]

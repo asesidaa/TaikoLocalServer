@@ -1,8 +1,6 @@
 using System.Buffers.Binary;
 using System.Text;
 using TaikoLocalServer.Application.Catalog.Green;
-using TaikoLocalServer.Domain.Enums;
-using TaikoLocalServer.Infrastructure.GameDataCatalog;
 
 namespace TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
 
@@ -20,8 +18,7 @@ public sealed class GreenTuningLoader
 
     public Task<IReadOnlyDictionary<string, GreenStarSet>> LoadAsync(CancellationToken cancellationToken)
     {
-        var path = Path.Combine(PathHelper.GetDataTablePath(GameEra.Green), "fumen", "tuning.bin");
-        return LoadFromFileAsync(path, cancellationToken);
+        return LoadFromFileAsync(GreenGameDataPaths.TuningBin, cancellationToken);
     }
 
     public static async Task<IReadOnlyDictionary<string, GreenStarSet>> LoadFromFileAsync(
@@ -37,25 +34,25 @@ public sealed class GreenTuningLoader
         ValidateHeader(bytes, path);
 
         var baseRecords = new Dictionary<string, TuningCourseStars>(StringComparer.Ordinal);
-        var exRecords = new Dictionary<string, TuningCourseStars>(StringComparer.Ordinal);
+        var exRecords = new Dictionary<string, byte>(StringComparer.Ordinal);
 
         for (var index = 0; index < RecordCount; index++)
         {
             var recordOffset = HeaderSize + index * RecordSize;
             var musicIdOffset = BinaryPrimitives.ReadUInt32BigEndian(bytes.AsSpan(recordOffset, 4));
             var musicId = ReadMusicId(bytes, musicIdOffset, path, index);
-            var stars = new TuningCourseStars(
-                ReadStar(bytes, recordOffset, 0, path, index),
-                ReadStar(bytes, recordOffset, 1, path, index),
-                ReadStar(bytes, recordOffset, 2, path, index),
-                ReadStar(bytes, recordOffset, 3, path, index));
-
             if (musicId.StartsWith(ExPrefix, StringComparison.Ordinal))
             {
-                exRecords[musicId[ExPrefix.Length..]] = stars;
+                exRecords[musicId[ExPrefix.Length..]] = ReadStar(bytes, recordOffset, 3, path, index);
             }
             else
             {
+                var stars = new TuningCourseStars(
+                    ReadStar(bytes, recordOffset, 0, path, index),
+                    ReadStar(bytes, recordOffset, 1, path, index),
+                    ReadStar(bytes, recordOffset, 2, path, index),
+                    ReadStar(bytes, recordOffset, 3, path, index));
+
                 baseRecords[musicId] = stars;
             }
         }
@@ -69,7 +66,7 @@ public sealed class GreenTuningLoader
                 baseStars.Normal,
                 baseStars.Hard,
                 baseStars.Oni,
-                exRecords.TryGetValue(pair.Key, out var exStars) ? exStars.Oni : (byte)0);
+                exRecords.TryGetValue(pair.Key, out var uraStar) ? uraStar : (byte)0);
         }
 
         return result;

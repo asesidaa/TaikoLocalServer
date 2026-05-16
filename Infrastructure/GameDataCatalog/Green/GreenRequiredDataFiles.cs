@@ -1,18 +1,14 @@
-using TaikoLocalServer.Domain.Enums;
-using TaikoLocalServer.Infrastructure.GameDataCatalog;
-
 namespace TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
 
 internal static class GreenRequiredDataFiles
 {
     public static IReadOnlyList<string> GetRequiredPaths()
     {
-        var datatablePath = PathHelper.GetDataTablePath(GameEra.Green);
         return
         [
-            Path.Combine(datatablePath, "musicinfo.xml"),
-            Path.Combine(datatablePath, "musicmedleyinfo.xml"),
-            Path.Combine(datatablePath, "fumen", "tuning.bin")
+            GreenGameDataPaths.MusicInfoXml,
+            GreenGameDataPaths.MusicMedleyInfoXml,
+            GreenGameDataPaths.TuningBin
         ];
     }
 
@@ -22,7 +18,7 @@ internal static class GreenRequiredDataFiles
         {
             if (!File.Exists(path))
             {
-                throw new FileNotFoundException($"Green required datatable is missing: {path}", path);
+                throw new FileNotFoundException($"Green required game data file is missing: {path}", path);
             }
         }
     }

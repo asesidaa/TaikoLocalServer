@@ -1,7 +1,5 @@
 using System.Xml.Linq;
 using TaikoLocalServer.Application.Catalog.Green;
-using TaikoLocalServer.Domain.Enums;
-using TaikoLocalServer.Infrastructure.GameDataCatalog;
 
 namespace TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
 
@@ -13,8 +11,7 @@ public sealed class GreenMusicInfoLoader
 {
     public Task<GreenMusicInfoLoadResult> LoadAsync(CancellationToken cancellationToken)
     {
-        var path = Path.Combine(PathHelper.GetDataTablePath(GameEra.Green), "musicinfo.xml");
-        return LoadFromFileAsync(path, cancellationToken);
+        return LoadFromFileAsync(GreenGameDataPaths.MusicInfoXml, cancellationToken);
     }
 
     public static async Task<GreenMusicInfoLoadResult> LoadFromFileAsync(

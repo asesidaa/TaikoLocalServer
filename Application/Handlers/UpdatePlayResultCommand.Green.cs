@@ -204,7 +204,12 @@ public partial class UpdatePlayResultCommandHandler
             }
         }
 
-        await UpsertBestAsync(baid, stage, difficulty, crown, isShin, cancellationToken);
+        // Green Dani normal scoring includes cumulative combo effects, so only Shin scores can update self-best rows.
+        if (playMode != (uint)PlayMode.DanMode || isShin)
+        {
+            await UpsertBestAsync(baid, stage, difficulty, crown, isShin, cancellationToken);
+        }
+
         await UpsertFavoriteAndRecentAsync(baid, stage, playTime, cancellationToken);
     }
 

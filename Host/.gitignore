@@ -4,3 +4,4 @@ wwwroot/data/wordlist.json
 wwwroot/data/datatable/*
 wwwroot/data/*/datatable/*
 wwwroot/taiko.db3
+wwwroot/data/*/data/*
