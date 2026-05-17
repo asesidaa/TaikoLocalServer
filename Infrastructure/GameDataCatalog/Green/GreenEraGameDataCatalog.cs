@@ -168,7 +168,7 @@ public sealed class GreenEraGameDataCatalog(
                 new GreenExtractorOptions(gameDataPath, outputDirectory),
                 cancellationToken);
         }
-        catch (Exception ex) when (ex is IOException or InvalidDataException or UnauthorizedAccessException)
+        catch (Exception ex) when (ex is not OperationCanceledException)
         {
             logger.LogWarning(ex, "Green customization catalog extraction failed; continuing with empty or partial customization catalogs.");
         }
