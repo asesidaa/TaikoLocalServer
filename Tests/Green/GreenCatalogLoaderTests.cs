@@ -3,6 +3,7 @@ using TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
 
 namespace TaikoLocalServer.Tests.Green;
 
+[Collection(GreenRuntimeCatalogTestCollection.Name)]
 public sealed class GreenCatalogLoaderTests
 {
     [Fact]

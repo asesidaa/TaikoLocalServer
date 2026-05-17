@@ -8,6 +8,7 @@ using TaikoLocalServer.Infrastructure.GameDataCatalog.Green.Extractor.Output;
 
 namespace TaikoLocalServer.Tests.Green;
 
+[Collection(GreenRuntimeCatalogTestCollection.Name)]
 public sealed class GreenCustomizationCatalogLoaderTests
 {
     [Fact]
