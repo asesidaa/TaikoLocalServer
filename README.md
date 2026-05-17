@@ -16,10 +16,14 @@ It is composed of two major components :
 ### Setup Steps
 
 1. Extract the Server's release anywhere
-2. From the game files (Data/x64/datatable), copy `music_order.bin`, `musicinfo.bin`, `wordlist.bin`, `don_cos_reward.bin`, `shougou.bin`, `neiro.bin` to [Host/wwwroot/data/nijiiro/datatable](./Host/wwwroot/data/nijiiro/datatable/)
-3. (Optional) In `Certificates` folder, import `root.pfx` to trusted root store and `cert.pfx` to personal store. All the other import options can be kept default
-4. Visit [http://localhost](http://localhost). If the WebUI starts without errors, the config is fine
-5. Start your game! (First boot with the server will take a good minute, be patient!)
+2. For Nijiiro, from the game files (`Data/x64/datatable`), copy `music_order.bin`, `musicinfo.bin`, `wordlist.bin`, `don_cos_reward.bin`, `shougou.bin`, `neiro.bin` to [Host/wwwroot/data/nijiiro/datatable](./Host/wwwroot/data/nijiiro/datatable/)
+3. For Green, provide the game's `USRDIR/data` folder at [Host/wwwroot/data/green/data](./Host/wwwroot/data/green/data/). On Windows you can keep it in your RPCS3 install and create a symlink from the repo root:
+   ```powershell
+   New-Item -ItemType SymbolicLink -Target 'H:\RPCS3\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\Host\wwwroot\data\green\data'
+   ```
+4. (Optional) In `Certificates` folder, import `root.pfx` to trusted root store and `cert.pfx` to personal store. All the other import options can be kept default
+5. Visit [http://localhost](http://localhost). If the WebUI starts without errors, the config is fine
+6. Start your game! (First boot with the server will take a good minute, be patient!)
 
 ## Configuration
 

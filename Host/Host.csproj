@@ -142,7 +142,7 @@
   </ItemGroup>
 
 
-  <Target Name="CreateGreenGameDataSymlinkForDebug" AfterTargets="Build" Condition="'$(Configuration)'=='Debug'">
+  <Target Name="CreateGreenGameDataSymlinkForDebug" AfterTargets="Build" Condition="'$(Configuration)'=='Debug' and Exists('$(MSBuildProjectDirectory)\wwwroot\data\green\data')">
     <MakeDir Directories="$(OutDir)wwwroot\data\green" />
     <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -Command &quot;$link = Join-Path '$(OutDir)' 'wwwroot\data\green\data'; $target = Resolve-Path '$(MSBuildProjectDirectory)\wwwroot\data\green\data'; if (Test-Path -LiteralPath $link) { $item = Get-Item -LiteralPath $link -Force; if (($item.LinkType -eq 'SymbolicLink' -or $item.LinkType -eq 'Junction') -and $item.Target -contains $target.Path) { exit 0 }; Remove-Item -LiteralPath $link -Force -Recurse }; New-Item -ItemType Junction -Path $link -Target $target.Path | Out-Null&quot;" />
   </Target>

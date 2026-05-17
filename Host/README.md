@@ -7,6 +7,7 @@ As the game uses protobuf, `protobuf-net` is used for serializing and deserializ
 - [Taiko Local Server](#taiko-local-server)
   - [Data file layout (per-era)](#data-file-layout-per-era)
   - [Green AC15 Test Support](#green-ac15-test-support)
+    - [Green game data symlink](#green-game-data-symlink)
     - [Green Cabinet Smoke Checklist](#green-cabinet-smoke-checklist)
   - [Datatable documentation](#datatable-documentation)
     - [dan\_data.json](#dan_datajson)
@@ -42,9 +43,13 @@ wwwroot/data/
 |       |-- shougou.bin
 |       `-- neiro.bin
 |-- green/                      Green-era AC15 data
-|   `-- datatable/              Operator-supplied Green XML datatables
-|       |-- musicinfo.xml
-|       `-- musicmedleyinfo.xml
+|   |-- recommend_songs.json    Operator-edited Green pushed/recommended songs
+|   `-- data/                   Green game USRDIR/data tree, often symlinked
+|       |-- config/S11100-1/
+|       |   |-- musicinfo.xml
+|       |   `-- musicmedleyinfo.xml
+|       `-- fumen/
+|           `-- tuning.bin
 `-- shared/                     Cross-era operator-edited tables
     |-- token_data.json
     `-- qrcode_data.json
@@ -58,8 +63,21 @@ routes, set `ServerSettings:Eras:Green:Enabled` to `true`.
 
 When `ServerSettings:Eras:Green:Enabled` is `true`, the server requires:
 
-- `wwwroot/data/green/datatable/musicinfo.xml`
-- `wwwroot/data/green/datatable/musicmedleyinfo.xml`
+- `wwwroot/data/green/data/config/S11100-1/musicinfo.xml`
+- `wwwroot/data/green/data/config/S11100-1/musicmedleyinfo.xml`
+- `wwwroot/data/green/data/fumen/tuning.bin`
+
+### Green game data symlink
+
+For Green, the server reads files from the original game `USRDIR/data` layout. Instead of copying that whole folder into the repository, you can symlink it to `wwwroot/data/green/data`.
+
+From the repository root, for an RPCS3 install at `H:\RPCS3\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\`, run:
+
+```powershell
+New-Item -ItemType SymbolicLink -Target 'H:\RPCS3\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\Host\wwwroot\data\green\data'
+```
+
+PowerShell may need to run as Administrator, unless Windows Developer Mode allows unprivileged symlink creation. The symlink target should contain `config\S11100-1\musicinfo.xml`, `config\S11100-1\musicmedleyinfo.xml`, and `fumen\tuning.bin`.
 
 The current Green implementation intentionally unlocks a small deterministic song set for cabinet validation:
 
