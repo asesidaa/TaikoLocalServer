@@ -8,6 +8,7 @@ As the game uses protobuf, `protobuf-net` is used for serializing and deserializ
   - [Data file layout (per-era)](#data-file-layout-per-era)
   - [Green AC15 Test Support](#green-ac15-test-support)
     - [Green game data symlink](#green-game-data-symlink)
+    - [Green customization catalogs](#green-customization-catalogs)
     - [Green Cabinet Smoke Checklist](#green-cabinet-smoke-checklist)
   - [Datatable documentation](#datatable-documentation)
     - [dan\_data.json](#dan_datajson)
@@ -44,6 +45,9 @@ wwwroot/data/
 |       `-- neiro.bin
 |-- green/                      Green-era AC15 data
 |   |-- recommend_songs.json    Operator-edited Green pushed/recommended songs
+|   |-- green_costume_data.json Generated Green customization catalog
+|   |-- green_title_data.json   Generated Green title catalog
+|   |-- green_neiro_data.json   Generated Green tone catalog
 |   `-- data/                   Green game USRDIR/data tree, often symlinked
 |       |-- config/S11100-1/
 |       |   |-- musicinfo.xml
@@ -78,6 +82,18 @@ New-Item -ItemType SymbolicLink -Target 'H:\RPCS3\rpcs3\dev_hdd0\game\SCEEXE001\
 ```
 
 PowerShell may need to run as Administrator, unless Windows Developer Mode allows unprivileged symlink creation. The symlink target should contain `config\S11100-1\musicinfo.xml`, `config\S11100-1\musicmedleyinfo.xml`, and `fumen\tuning.bin`.
+
+### Green customization catalogs
+
+Green costume, title, and tone catalogs are generated from the symlinked or copied `USRDIR/data` tree. With `ServerSettings:Eras:Green:AutoExtractCatalog` enabled, the server runs the Phase 1 extractor on first startup when `green_costume_data.json`, `green_title_data.json`, or `green_neiro_data.json` is missing. To run it manually:
+
+```powershell
+dotnet run --project GreenCatalogExtractor -- extract --game-data Host/wwwroot/data/green/data --out Host/wwwroot/data/green
+```
+
+For slot mapping enrichment, run the IDA-backed stage in `docs/superpowers/plans/2026-05-17-green-customization/07-ida-slot-mapping-enrichment.md` against `.tools/ida-snap/EBOOT.ELF.codex.i64`, then rerun the extractor. The server and WebUI do not need further changes when the generated JSON gains better names or slot types.
+
+The extractor reads the game-data tree and writes only the generated JSON files under `wwwroot/data/green`. It does not modify the operator's game-data tree. Names may be blank on Phase 1 output; the WebUI displays id labels such as `#004` until an enriched catalog is generated.
 
 The current Green implementation intentionally unlocks a small deterministic song set for cabinet validation:
 
