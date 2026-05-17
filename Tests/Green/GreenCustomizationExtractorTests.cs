@@ -148,6 +148,26 @@ public sealed class GreenCustomizationExtractorTests
     }
 
     [Fact]
+    public void CostumeMerger_UsesDon3dDirectorySlotMap()
+    {
+        var ndp = new[]
+        {
+            new NdpEntry(7, "cos_name_007.nut", 0, 1)
+        };
+        var scan = new Don3dScanResult(
+            FullCosModelPairIds: [],
+            DirectoryIds: new Dictionary<string, IReadOnlyList<uint>>
+            {
+                ["don3d/parts/head"] = [7]
+            });
+
+        var items = CostumeMerger.Merge(ndp, scan, new GreenCatalogOverrides());
+
+        var costume = Assert.Single(items);
+        Assert.Equal("head", costume.CostumeType);
+    }
+
+    [Fact]
     public void TitleMerger_AppendsOverridesSourceWhenOverrideContributesData()
     {
         var overrides = new GreenCatalogOverrides
