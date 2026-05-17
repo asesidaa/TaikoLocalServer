@@ -26,8 +26,6 @@ public partial class UserSettingsController
 
         user.MyDonName = userSetting.MyDonName;
         user.MyDonNameLanguage = userSetting.MyDonNameLanguage;
-        saveData.Title = userSetting.Title;
-        saveData.TitleplateId = userSetting.TitlePlateId;
         saveData.ColorBody = userSetting.BodyColor;
         saveData.ColorFace = userSetting.FaceColor;
         saveData.ColorLimb = userSetting.LimbColor;
@@ -40,7 +38,10 @@ public partial class UserSettingsController
             var unlockedFace = BitsetCodec.Decode(saveData.CostumeFlg4, GreenProtocolBytes.CostumeFlagBytes).ToHashSet();
             var unlockedPuchi = BitsetCodec.Decode(saveData.CostumeFlg5, GreenProtocolBytes.CostumeFlagBytes).ToHashSet();
             var unlockedTone = BitsetCodec.Decode(saveData.ToneFlg, GreenProtocolBytes.ToneFlagBytes).ToHashSet();
+            var unlockedTitle = BitsetCodec.Decode(saveData.TitleFlg, GreenProtocolBytes.TitleFlagBytes).ToHashSet();
 
+            saveData.Title = unlockedTitle.Contains(userSetting.TitlePlateId) ? userSetting.Title : saveData.Title;
+            saveData.TitleplateId = unlockedTitle.Contains(userSetting.TitlePlateId) ? userSetting.TitlePlateId : saveData.TitleplateId;
             saveData.Costume1 = unlockedKigurumi.Contains(userSetting.Kigurumi) ? userSetting.Kigurumi : saveData.Costume1;
             saveData.Costume2 = unlockedHead.Contains(userSetting.Head) ? userSetting.Head : saveData.Costume2;
             saveData.Costume3 = unlockedBody.Contains(userSetting.Body) ? userSetting.Body : saveData.Costume3;
@@ -50,6 +51,8 @@ public partial class UserSettingsController
         }
         else
         {
+            saveData.Title = userSetting.Title;
+            saveData.TitleplateId = userSetting.TitlePlateId;
             saveData.Costume1 = userSetting.Kigurumi;
             saveData.Costume2 = userSetting.Head;
             saveData.Costume3 = userSetting.Body;

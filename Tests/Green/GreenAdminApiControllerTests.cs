@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -276,6 +277,73 @@ public class GreenAdminApiControllerTests
     }
 
     [Fact]
+    public async Task UserSettings_Green_PostRestrictedEnforcesPersistedUnlockBitsets()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.Title = "Persisted Title";
+        save.TitleplateId = 10;
+        save.Costume1 = 5;
+        save.Costume2 = 6;
+        save.Costume3 = 7;
+        save.Costume4 = 9;
+        save.Costume5 = 10;
+        save.DefaultToneSetting = 4;
+        save.CostumeFlg1 = BitsetCodec.Encode([0, 5], GreenProtocolBytes.CostumeFlagBytes);
+        save.CostumeFlg2 = BitsetCodec.Encode([0, 6, 8], GreenProtocolBytes.CostumeFlagBytes);
+        save.CostumeFlg3 = BitsetCodec.Encode([0, 7], GreenProtocolBytes.CostumeFlagBytes);
+        save.CostumeFlg4 = BitsetCodec.Encode([0, 9], GreenProtocolBytes.CostumeFlagBytes);
+        save.CostumeFlg5 = BitsetCodec.Encode([0, 10], GreenProtocolBytes.CostumeFlagBytes);
+        save.TitleFlg = BitsetCodec.Encode([10], GreenProtocolBytes.TitleFlagBytes);
+        save.ToneFlg = BitsetCodec.Encode([0, 4, 6], GreenProtocolBytes.ToneFlagBytes);
+        fixture.Context.UserSaveDataGreen.Add(save);
+        await fixture.Context.SaveChangesAsync();
+
+        var controller = CreateUserSettingsController(
+            fixture.Context,
+            new AuthSettings
+            {
+                AuthenticationRequired = true,
+                AllowFreeProfileEditing = false
+            });
+        controller.ControllerContext.HttpContext.User = CreateUserPrincipal(1);
+
+        var result = await controller.SaveUserSetting("Green", 1, new UserSetting
+        {
+            MyDonName = "GREEN",
+            Kigurumi = 25,
+            Head = 8,
+            Body = 26,
+            Face = 27,
+            Puchi = 28,
+            ToneId = 12,
+            Title = "Locked Title",
+            TitlePlateId = 99,
+            UnlockedKigurumi = [0, 5, 25],
+            UnlockedHead = [0, 6, 8],
+            UnlockedBody = [0, 7, 26],
+            UnlockedFace = [0, 9, 27],
+            UnlockedPuchi = [0, 10, 28],
+            UnlockedTitle = [10, 99],
+            UnlockedTone = [0, 4, 6, 12]
+        });
+
+        Assert.IsType<NoContentResult>(result);
+        Assert.Equal("Persisted Title", save.Title);
+        Assert.Equal(10u, save.TitleplateId);
+        Assert.Equal(5u, save.Costume1);
+        Assert.Equal(8u, save.Costume2);
+        Assert.Equal(7u, save.Costume3);
+        Assert.Equal(9u, save.Costume4);
+        Assert.Equal(10u, save.Costume5);
+        Assert.Equal(4u, save.DefaultToneSetting);
+        Assert.Equal(new List<uint> { 0, 5 }, BitsetCodec.Decode(save.CostumeFlg1, GreenProtocolBytes.CostumeFlagBytes));
+        Assert.Equal(new List<uint> { 10 }, BitsetCodec.Decode(save.TitleFlg, GreenProtocolBytes.TitleFlagBytes));
+        Assert.Equal(new List<uint> { 0, 4, 6 }, BitsetCodec.Decode(save.ToneFlg, GreenProtocolBytes.ToneFlagBytes));
+    }
+
+    [Fact]
     public async Task CustomizationCatalog_Green_ReturnsCatalogSlices()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
@@ -340,4 +408,14 @@ public class GreenAdminApiControllerTests
 
         return new DefaultHttpContext { RequestServices = services };
     }
+
+    private static ClaimsPrincipal CreateUserPrincipal(uint baid)
+        => new(new ClaimsIdentity(
+            [
+                new Claim(ClaimTypes.Name, baid.ToString()),
+                new Claim(ClaimTypes.Role, "User")
+            ],
+            "Test",
+            ClaimTypes.Name,
+            ClaimTypes.Role));
 }
