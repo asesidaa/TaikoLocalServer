@@ -1,9 +1,9 @@
 ﻿namespace TaikoLocalServer.Contracts.AdminApi.ViewModels;
 
-public class Costume
+public partial class Costume
 {
     public uint CostumeId { get; set; }
-    
+
     public string CostumeType { get; init; } = string.Empty;
 
     public string CostumeName { get; init; } = string.Empty;

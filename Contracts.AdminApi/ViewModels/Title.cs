@@ -1,6 +1,6 @@
 ﻿namespace TaikoLocalServer.Contracts.AdminApi.ViewModels;
 
-public class Title
+public partial class Title
 {
     public uint TitleId { get; set; }
 

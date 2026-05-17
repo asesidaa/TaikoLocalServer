@@ -58,6 +58,8 @@ public class UserSetting
     
     public List<uint> UnlockedTitle { get; set; } = new();
 
+    public List<uint> UnlockedTone { get; set; } = new();
+
     public uint FaceColor { get; set; }
 
     public uint BodyColor { get; set; }
