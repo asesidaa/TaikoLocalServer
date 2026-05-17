@@ -200,6 +200,96 @@ public class GreenAdminApiControllerTests
             && border.GoldBorderTotal == 460);
     }
 
+    [Fact]
+    public async Task UserSettings_Green_GetDecodesCustomizationBitsets()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.Costume1 = 5;
+        save.CostumeFlg1 = BitsetCodec.Encode([0, 5], GreenProtocolBytes.CostumeFlagBytes);
+        save.TitleFlg = BitsetCodec.Encode([10], GreenProtocolBytes.TitleFlagBytes);
+        save.ToneFlg = BitsetCodec.Encode([0, 4], GreenProtocolBytes.ToneFlagBytes);
+        save.DefaultToneSetting = 4;
+        fixture.Context.UserSaveDataGreen.Add(save);
+        await fixture.Context.SaveChangesAsync();
+
+        var controller = CreateUserSettingsController(fixture.Context);
+        var result = await controller.GetUserSetting("Green", 1);
+
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var setting = Assert.IsType<UserSetting>(ok.Value);
+        Assert.Equal(5u, setting.Kigurumi);
+        Assert.Equal(new List<uint> { 0, 5 }, setting.UnlockedKigurumi);
+        Assert.Equal(new List<uint> { 10 }, setting.UnlockedTitle);
+        Assert.Equal(new List<uint> { 0, 4 }, setting.UnlockedTone);
+        Assert.Equal(4u, setting.ToneId);
+    }
+
+    [Fact]
+    public async Task UserSettings_Green_PostPersistsUnlockBitsetsWhenEditingIsFree()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var controller = CreateUserSettingsController(
+            fixture.Context,
+            new AuthSettings
+            {
+                AuthenticationRequired = false,
+                AllowFreeProfileEditing = true
+            });
+
+        var result = await controller.SaveUserSetting("Green", 1, new UserSetting
+        {
+            MyDonName = "GREEN",
+            Kigurumi = 7,
+            Head = 8,
+            Body = 9,
+            Face = 10,
+            Puchi = 11,
+            UnlockedKigurumi = [0, 7],
+            UnlockedHead = [0, 8],
+            UnlockedBody = [0, 9],
+            UnlockedFace = [0, 10],
+            UnlockedPuchi = [0, 11],
+            UnlockedTitle = [10],
+            UnlockedTone = [0, 4],
+            ToneId = 4,
+            Title = "Green Title",
+            TitlePlateId = 0,
+            BodyColor = 2,
+            FaceColor = 3,
+            LimbColor = 4
+        });
+
+        Assert.IsType<NoContentResult>(result);
+        var save = await fixture.Context.UserSaveDataGreen.FindAsync(1u);
+        Assert.NotNull(save);
+        Assert.Contains(7u, BitsetCodec.Decode(save!.CostumeFlg1, GreenProtocolBytes.CostumeFlagBytes));
+        Assert.Contains(10u, BitsetCodec.Decode(save.TitleFlg, GreenProtocolBytes.TitleFlagBytes));
+        Assert.Contains(4u, BitsetCodec.Decode(save.ToneFlg, GreenProtocolBytes.ToneFlagBytes));
+        Assert.Equal(4u, save.DefaultToneSetting);
+        Assert.Equal("GREEN", (await fixture.Context.UserData.FindAsync(1u))!.MyDonName);
+    }
+
+    [Fact]
+    public async Task CustomizationCatalog_Green_ReturnsCatalogSlices()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        var controller = new CustomizationCatalogController(fixture.Catalog);
+
+        var costumes = Assert.IsType<OkObjectResult>(controller.GetCostumes("Green"));
+        var titles = Assert.IsType<OkObjectResult>(controller.GetTitles("Green"));
+        var neiros = Assert.IsType<OkObjectResult>(controller.GetNeiros("Green"));
+
+        Assert.IsAssignableFrom<IReadOnlyList<Costume>>(costumes.Value);
+        Assert.IsAssignableFrom<IReadOnlyDictionary<uint, Title>>(titles.Value);
+        Assert.IsAssignableFrom<IReadOnlyDictionary<uint, Neiro>>(neiros.Value);
+    }
+
     private static PlayDataController CreatePlayDataController(ITaikoDbContext context)
     {
         return new PlayDataController(context)
@@ -221,6 +311,24 @@ public class GreenAdminApiControllerTests
         return new DanBestDataController(context)
         {
             ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
+        };
+    }
+
+    private static UserSettingsController CreateUserSettingsController(
+        ITaikoDbContext context,
+        AuthSettings? authSettings = null)
+    {
+        var effectiveAuthSettings = authSettings ?? new AuthSettings { AuthenticationRequired = false };
+        var httpContext = CreateHttpContext();
+        httpContext.RequestServices = new ServiceCollection()
+            .AddSingleton(Options.Create(effectiveAuthSettings))
+            .BuildServiceProvider();
+
+        return new UserSettingsController(
+            context,
+            Options.Create(effectiveAuthSettings))
+        {
+            ControllerContext = new ControllerContext { HttpContext = httpContext }
         };
     }
 
