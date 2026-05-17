@@ -7,7 +7,7 @@
                       Value="Value.Title"
                       ValueChanged="SetTitle"
                       Label="@Localizer["Title"]"
-                      ReadOnly="@ReadOnly" />
+                      ReadOnly="@TitleTextReadOnly" />
 
         <MudSelect T="uint"
                    Value="Value.TitlePlateId"
@@ -47,7 +47,10 @@
     [Parameter] public TitlePickerValue Value { get; set; } = new(string.Empty, 0, []);
     [Parameter] public EventCallback<TitlePickerValue> ValueChanged { get; set; }
     [Parameter] public bool ReadOnly { get; set; }
+    [Parameter] public bool ReadOnlyTitleText { get; set; }
     [Parameter] public bool AllowUnlockEditing { get; set; }
+
+    private bool TitleTextReadOnly => ReadOnly || ReadOnlyTitleText;
 
     private IReadOnlyList<Title> OrderedTitles => Catalog.Values.OrderBy(title => title.TitleId).ToArray();
 
@@ -59,7 +62,9 @@
         .ToArray();
 
     private Task SetTitle(string title)
-        => ValueChanged.InvokeAsync(Value with { Title = title });
+        => TitleTextReadOnly
+            ? Task.CompletedTask
+            : ValueChanged.InvokeAsync(Value with { Title = title });
 
     private Task SetPlate(uint plate)
         => ValueChanged.InvokeAsync(Value with { TitlePlateId = plate });
