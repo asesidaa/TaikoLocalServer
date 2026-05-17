@@ -15,7 +15,7 @@
             }
         </MudSelect>
 
-        @if (!ReadOnly)
+        @if (AllowUnlockEditing)
         {
             <MudExpansionPanels Elevation="0" Outlined="true">
                 <MudExpansionPanel Text="@Localizer["Unlocked"]">
@@ -42,6 +42,7 @@
     [Parameter] public CostumePickerValue Value { get; set; } = new(0, []);
     [Parameter] public EventCallback<CostumePickerValue> ValueChanged { get; set; }
     [Parameter] public bool ReadOnly { get; set; }
+    [Parameter] public bool AllowUnlockEditing { get; set; }
 
     private IReadOnlyList<Costume> OrderedCatalog => Catalog
         .OrderBy(costume => costume.CostumeType == "unknown" ? 1 : 0)

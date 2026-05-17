@@ -15,7 +15,7 @@
             }
         </MudSelect>
 
-        @if (!ReadOnly)
+        @if (AllowUnlockEditing)
         {
             <MudExpansionPanels Elevation="0" Outlined="true">
                 <MudExpansionPanel Text="@Localizer["Unlocked"]">
@@ -41,6 +41,7 @@
     [Parameter] public NeiroPickerValue Value { get; set; } = new(0, []);
     [Parameter] public EventCallback<NeiroPickerValue> ValueChanged { get; set; }
     [Parameter] public bool ReadOnly { get; set; }
+    [Parameter] public bool AllowUnlockEditing { get; set; }
 
     private IReadOnlyList<Neiro> OrderedNeiros => Catalog.Values.OrderBy(neiro => neiro.NeiroId).ToArray();
 
@@ -57,7 +58,9 @@
         var ids = enabled
             ? Value.UnlockedIds.Append(id)
             : Value.UnlockedIds.Where(value => value != id);
-        return ValueChanged.InvokeAsync(Value with { UnlockedIds = ids.Append(0u).Distinct().OrderBy(value => value).ToArray() });
+        var normalized = ids.Append(0u).Distinct().OrderBy(value => value).ToArray();
+        var current = normalized.Contains(Value.CurrentId) ? Value.CurrentId : 0;
+        return ValueChanged.InvokeAsync(Value with { CurrentId = current, UnlockedIds = normalized });
     }
 
     private static string DisplayName(Neiro neiro)

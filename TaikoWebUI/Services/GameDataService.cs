@@ -11,10 +11,10 @@ public class GameDataService : IGameDataService
     private readonly Dictionary<string, IReadOnlyList<Costume>> costumeLists = new();
     private readonly Dictionary<string, IReadOnlyDictionary<uint, Title>> titleDictionaries = new();
     private readonly Dictionary<string, IReadOnlyDictionary<uint, Neiro>> neiroDictionaries = new();
-    
+
     private bool lockedCostumesInitialized;
     private bool lockedTitlesInitialized;
-    
+
     private Dictionary<string, List<uint>>? lockedCostumeDataDictionary = new();
     private Dictionary<string, List<uint>>? lockedTitleDataDictionary = new();
 
@@ -61,10 +61,10 @@ public class GameDataService : IGameDataService
 
         return value;
     }
-    
+
     public async Task<List<Costume>> GetCostumeList()
         => (await GetCostumeList(WebUiEra.Default)).ToList();
-    
+
     public async Task<IReadOnlyDictionary<uint, Title>> GetTitleDictionary(string? era)
     {
         var normalized = WebUiEra.Normalize(era);
@@ -74,10 +74,10 @@ public class GameDataService : IGameDataService
                     ?? new Dictionary<uint, Title>();
             titleDictionaries[normalized] = value;
         }
-        
+
         return value;
     }
-    
+
     public async Task<Dictionary<uint, Title>> GetTitleDictionary()
         => (await GetTitleDictionary(WebUiEra.Default)).ToDictionary(pair => pair.Key, pair => pair.Value);
 

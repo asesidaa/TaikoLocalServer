@@ -14,6 +14,7 @@ public partial class Profile
 
     private string CurrentEra => WebUiEra.Normalize(Era);
     private bool IsGreen => string.Equals(CurrentEra, "Green", StringComparison.OrdinalIgnoreCase);
+    private bool CanEditUnlocks => IsGreen && AuthService.AllowFreeProfileEditing;
 
     private SongBestResponse? songresponse;
 
@@ -257,11 +258,13 @@ public partial class Profile
     private void InitializeCustomizationValues()
     {
         response.ThrowIfNull();
-        kigurumiCatalog = BuildCostumeCatalog("kigurumi");
-        headCatalog = BuildCostumeCatalog("head");
-        bodyCatalog = BuildCostumeCatalog("body");
-        faceCatalog = BuildCostumeCatalog("face");
-        puchiCatalog = BuildCostumeCatalog("puchi");
+        kigurumiCatalog = BuildCostumeCatalog("kigurumi", response.Kigurumi, response.UnlockedKigurumi);
+        headCatalog = BuildCostumeCatalog("head", response.Head, response.UnlockedHead);
+        bodyCatalog = BuildCostumeCatalog("body", response.Body, response.UnlockedBody);
+        faceCatalog = BuildCostumeCatalog("face", response.Face, response.UnlockedFace);
+        puchiCatalog = BuildCostumeCatalog("puchi", response.Puchi, response.UnlockedPuchi);
+        titleDictionary = BuildTitleCatalog();
+        neiroDictionary = BuildNeiroCatalog(response.ToneId, response.UnlockedTone);
         kigurumiValue = new CostumePickerValue(response.Kigurumi, response.UnlockedKigurumi);
         headValue = new CostumePickerValue(response.Head, response.UnlockedHead);
         bodyValue = new CostumePickerValue(response.Body, response.UnlockedBody);
@@ -272,36 +275,149 @@ public partial class Profile
         colorValue = new ColorPickerValue(response.BodyColor, response.FaceColor, response.LimbColor);
     }
 
-    private List<Costume> BuildCostumeCatalog(string costumeType)
+    private List<Costume> BuildCostumeCatalog(string costumeType, uint currentId, IReadOnlyCollection<uint> unlockedIds)
     {
-        return costumeList
+        var catalogById = costumeList
+            .Where(costume => costume.CostumeType == costumeType || costume.CostumeType == "unknown")
+            .GroupBy(costume => costume.CostumeId)
+            .ToDictionary(
+                group => group.Key,
+                group => group.OrderBy(costume => costume.CostumeType == "unknown" ? 1 : 0).First());
+
+        var ids = AuthService.AllowFreeProfileEditing
+            ? catalogById.Keys.Concat(unlockedIds)
+            : catalogById.Keys.Intersect(unlockedIds).Append(currentId);
+
+        if (!IsGreen && AuthService.AllowFreeProfileEditing &&
+            lockedCostumeDataDictionary.TryGetValue(costumeType, out var lockedIds))
+        {
+            ids = ids.Except(lockedIds);
+        }
+
+        return ids
+            .Distinct()
+            .OrderBy(id => id)
+            .Select(id => catalogById.TryGetValue(id, out var costume)
+                ? costume
+                : new Costume { CostumeId = id, CostumeType = costumeType })
             .Where(costume => costume.CostumeType == costumeType || costume.CostumeType == "unknown")
             .OrderBy(costume => costume.CostumeType == "unknown" ? 1 : 0)
             .ThenBy(costume => costume.CostumeId)
             .ToList();
     }
 
+    private Dictionary<uint, Title> BuildTitleCatalog()
+    {
+        response.ThrowIfNull();
+
+        var titlesById = titleDictionary;
+        var lockedTitleIds = !IsGreen && lockedTitleDataDictionary.TryGetValue("title", out var titleIds)
+            ? titleIds.ToHashSet()
+            : new HashSet<uint>();
+        var lockedTitlePlateIds = !IsGreen && lockedTitleDataDictionary.TryGetValue("titlePlate", out var titlePlateIds)
+            ? titlePlateIds.ToHashSet()
+            : new HashSet<uint>();
+        var currentTitleIds = titlesById.Values
+            .Where(IsCurrentTitle)
+            .Select(title => title.TitleId)
+            .ToHashSet();
+
+        var ids = AuthService.AllowFreeProfileEditing
+            ? titlesById.Keys.Concat(response.UnlockedTitle)
+            : titlesById.Keys.Intersect(response.UnlockedTitle).Concat(currentTitleIds);
+
+        return ids
+            .Distinct()
+            .Where(id => TitleCanBeShown(id, titlesById, currentTitleIds, lockedTitleIds, lockedTitlePlateIds))
+            .OrderBy(id => id)
+            .ToDictionary(
+                id => id,
+                id => titlesById.TryGetValue(id, out var title)
+                    ? title
+                    : new Title { TitleId = id });
+    }
+
+    private IReadOnlyDictionary<uint, Neiro> BuildNeiroCatalog(uint currentId, IReadOnlyCollection<uint> unlockedIds)
+    {
+        var neirosById = neiroDictionary;
+        var ids = AuthService.AllowFreeProfileEditing
+            ? neirosById.Keys.Concat(unlockedIds)
+            : neirosById.Keys.Intersect(unlockedIds).Append(currentId);
+
+        return ids
+            .Distinct()
+            .OrderBy(id => id)
+            .ToDictionary(
+                id => id,
+                id => neirosById.TryGetValue(id, out var neiro)
+                    ? neiro
+                    : new Neiro { NeiroId = id });
+    }
+
+    private bool TitleCanBeShown(
+        uint id,
+        IReadOnlyDictionary<uint, Title> titlesById,
+        IReadOnlySet<uint> currentTitleIds,
+        IReadOnlySet<uint> lockedTitleIds,
+        IReadOnlySet<uint> lockedTitlePlateIds)
+    {
+        if (IsGreen)
+        {
+            return true;
+        }
+
+        if (!titlesById.TryGetValue(id, out var title))
+        {
+            return !lockedTitleIds.Contains(id);
+        }
+
+        var isCurrentTitle = currentTitleIds.Contains(id);
+        var hasCurrentPlate = title.TitleRarity == response?.TitlePlateId;
+        return (!lockedTitleIds.Contains(id) || isCurrentTitle) &&
+               (!lockedTitlePlateIds.Contains(title.TitleRarity) || hasCurrentPlate);
+    }
+
+    private bool IsCurrentTitle(Title title)
+    {
+        response.ThrowIfNull();
+        return StringMatchesCurrentTitle(title.TitleName) ||
+               StringMatchesCurrentTitle(title.TitleNameEN) ||
+               StringMatchesCurrentTitle(title.TitleNameCN) ||
+               StringMatchesCurrentTitle(title.TitleNameKO);
+    }
+
+    private bool StringMatchesCurrentTitle(string title)
+    {
+        response.ThrowIfNull();
+        return !string.IsNullOrWhiteSpace(response.Title) &&
+               string.Equals(title, response.Title, StringComparison.Ordinal);
+    }
+
     private void ApplyCustomizationValues()
     {
         response.ThrowIfNull();
         response.Kigurumi = kigurumiValue.CurrentId;
-        response.UnlockedKigurumi = kigurumiValue.UnlockedIds.ToList();
         response.Head = headValue.CurrentId;
-        response.UnlockedHead = headValue.UnlockedIds.ToList();
         response.Body = bodyValue.CurrentId;
-        response.UnlockedBody = bodyValue.UnlockedIds.ToList();
         response.Face = faceValue.CurrentId;
-        response.UnlockedFace = faceValue.UnlockedIds.ToList();
         response.Puchi = puchiValue.CurrentId;
-        response.UnlockedPuchi = puchiValue.UnlockedIds.ToList();
         response.Title = titleValue.Title;
         response.TitlePlateId = titleValue.TitlePlateId;
-        response.UnlockedTitle = titleValue.UnlockedTitleIds.ToList();
         response.ToneId = neiroValue.CurrentId;
-        response.UnlockedTone = neiroValue.UnlockedIds.ToList();
         response.BodyColor = colorValue.BodyColor;
         response.FaceColor = colorValue.FaceColor;
         response.LimbColor = colorValue.LimbColor;
+
+        if (CanEditUnlocks)
+        {
+            response.UnlockedKigurumi = kigurumiValue.UnlockedIds.ToList();
+            response.UnlockedHead = headValue.UnlockedIds.ToList();
+            response.UnlockedBody = bodyValue.UnlockedIds.ToList();
+            response.UnlockedFace = faceValue.UnlockedIds.ToList();
+            response.UnlockedPuchi = puchiValue.UnlockedIds.ToList();
+            response.UnlockedTitle = titleValue.UnlockedTitleIds.ToList();
+            response.UnlockedTone = neiroValue.UnlockedIds.ToList();
+        }
     }
     
     private async Task SaveOptions()

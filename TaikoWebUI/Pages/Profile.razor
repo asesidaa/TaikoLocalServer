@@ -102,47 +102,47 @@
                                                    Catalog="@kigurumiCatalog"
                                                    Value="@kigurumiValue"
                                                    ValueChanged="@(value => { kigurumiValue = value; ApplyCustomizationValues(); })"
-                                                   ReadOnly="@(!AuthService.AllowFreeProfileEditing)" />
+                                                   AllowUnlockEditing="@CanEditUnlocks" />
 
                                     <CostumePicker Era="@CurrentEra"
                                                    Label="@Localizer["Head"]"
                                                    Catalog="@headCatalog"
                                                    Value="@headValue"
                                                    ValueChanged="@(value => { headValue = value; ApplyCustomizationValues(); })"
-                                                   ReadOnly="@(!AuthService.AllowFreeProfileEditing)" />
+                                                   AllowUnlockEditing="@CanEditUnlocks" />
 
                                     <CostumePicker Era="@CurrentEra"
                                                    Label="@Localizer["Body"]"
                                                    Catalog="@bodyCatalog"
                                                    Value="@bodyValue"
                                                    ValueChanged="@(value => { bodyValue = value; ApplyCustomizationValues(); })"
-                                                   ReadOnly="@(!AuthService.AllowFreeProfileEditing)" />
+                                                   AllowUnlockEditing="@CanEditUnlocks" />
 
                                     <CostumePicker Era="@CurrentEra"
                                                    Label="@Localizer["Face"]"
                                                    Catalog="@faceCatalog"
                                                    Value="@faceValue"
                                                    ValueChanged="@(value => { faceValue = value; ApplyCustomizationValues(); })"
-                                                   ReadOnly="@(!AuthService.AllowFreeProfileEditing)" />
+                                                   AllowUnlockEditing="@CanEditUnlocks" />
 
                                     <CostumePicker Era="@CurrentEra"
                                                    Label="@Localizer["Puchi"]"
                                                    Catalog="@puchiCatalog"
                                                    Value="@puchiValue"
                                                    ValueChanged="@(value => { puchiValue = value; ApplyCustomizationValues(); })"
-                                                   ReadOnly="@(!AuthService.AllowFreeProfileEditing)" />
+                                                   AllowUnlockEditing="@CanEditUnlocks" />
 
                                     <TitlePicker Era="@CurrentEra"
                                                  Catalog="@titleDictionary"
                                                  Value="@titleValue"
                                                  ValueChanged="@(value => { titleValue = value; ApplyCustomizationValues(); })"
-                                                 ReadOnly="@(!AuthService.AllowFreeProfileEditing)" />
+                                                 AllowUnlockEditing="@CanEditUnlocks" />
 
                                     <NeiroPicker Era="@CurrentEra"
                                                  Catalog="@neiroDictionary"
                                                  Value="@neiroValue"
                                                  ValueChanged="@(value => { neiroValue = value; ApplyCustomizationValues(); })"
-                                                 ReadOnly="@(!AuthService.AllowFreeProfileEditing)" />
+                                                 AllowUnlockEditing="@CanEditUnlocks" />
 
                                     <ColorPicker Colors="@CostumeColors"
                                                  Value="@colorValue"

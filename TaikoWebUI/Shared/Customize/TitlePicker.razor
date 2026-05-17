@@ -1,6 +1,6 @@
 @using System.Linq
 
-@if (Catalog.Count > 0)
+@if (Catalog.Count > 0 || !string.IsNullOrWhiteSpace(Value.Title) || Value.TitlePlateId != 0)
 {
     <MudStack Spacing="3">
         <MudTextField T="string"
@@ -21,7 +21,7 @@
             }
         </MudSelect>
 
-        @if (!ReadOnly)
+        @if (AllowUnlockEditing)
         {
             <MudExpansionPanels Elevation="0" Outlined="true">
                 <MudExpansionPanel Text="@Localizer["Player Titles"]">
@@ -47,6 +47,7 @@
     [Parameter] public TitlePickerValue Value { get; set; } = new(string.Empty, 0, []);
     [Parameter] public EventCallback<TitlePickerValue> ValueChanged { get; set; }
     [Parameter] public bool ReadOnly { get; set; }
+    [Parameter] public bool AllowUnlockEditing { get; set; }
 
     private IReadOnlyList<Title> OrderedTitles => Catalog.Values.OrderBy(title => title.TitleId).ToArray();
 
