@@ -15,6 +15,9 @@ public partial class Profile
     private string CurrentEra => WebUiEra.Normalize(Era);
     private bool IsGreen => string.Equals(CurrentEra, "Green", StringComparison.OrdinalIgnoreCase);
     private bool CanEditUnlocks => IsGreen && AuthService.AllowFreeProfileEditing;
+    private TitleSelectionMode CurrentTitleSelectionMode => IsGreen
+        ? TitleSelectionMode.TitleId
+        : TitleSelectionMode.TitlePlate;
 
     private SongBestResponse? songresponse;
 
@@ -270,7 +273,15 @@ public partial class Profile
         bodyValue = new CostumePickerValue(response.Body, response.UnlockedBody);
         faceValue = new CostumePickerValue(response.Face, response.UnlockedFace);
         puchiValue = new CostumePickerValue(response.Puchi, response.UnlockedPuchi);
-        titleValue = new TitlePickerValue(response.Title, response.TitlePlateId, response.UnlockedTitle);
+        var titleText = IsGreen
+            ? TitlePickerCatalog.ResolveSelectedTitleText(titleDictionary, response.TitlePlateId, response.Title)
+            : response.Title;
+        if (IsGreen)
+        {
+            response.Title = titleText;
+        }
+
+        titleValue = new TitlePickerValue(titleText, response.TitlePlateId, response.UnlockedTitle);
         neiroValue = new NeiroPickerValue(response.ToneId, response.UnlockedTone);
         colorValue = new ColorPickerValue(response.BodyColor, response.FaceColor, response.LimbColor);
     }
@@ -401,7 +412,9 @@ public partial class Profile
         response.Body = bodyValue.CurrentId;
         response.Face = faceValue.CurrentId;
         response.Puchi = puchiValue.CurrentId;
-        response.Title = titleValue.Title;
+        response.Title = IsGreen
+            ? TitlePickerCatalog.ResolveSelectedTitleText(titleDictionary, titleValue.TitlePlateId, titleValue.Title)
+            : titleValue.Title;
         response.TitlePlateId = titleValue.TitlePlateId;
         response.ToneId = neiroValue.CurrentId;
         response.BodyColor = colorValue.BodyColor;
@@ -415,7 +428,12 @@ public partial class Profile
             response.UnlockedBody = bodyValue.UnlockedIds.ToList();
             response.UnlockedFace = faceValue.UnlockedIds.ToList();
             response.UnlockedPuchi = puchiValue.UnlockedIds.ToList();
-            response.UnlockedTitle = titleValue.UnlockedTitleIds.ToList();
+            response.UnlockedTitle = (IsGreen
+                    ? titleValue.UnlockedTitleIds.Append(response.TitlePlateId)
+                    : titleValue.UnlockedTitleIds)
+                .Distinct()
+                .OrderBy(id => id)
+                .ToList();
             response.UnlockedTone = neiroValue.UnlockedIds.ToList();
         }
     }

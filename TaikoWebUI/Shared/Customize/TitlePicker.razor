@@ -49,17 +49,14 @@
     [Parameter] public bool ReadOnly { get; set; }
     [Parameter] public bool ReadOnlyTitleText { get; set; }
     [Parameter] public bool AllowUnlockEditing { get; set; }
+    [Parameter] public TitleSelectionMode SelectionMode { get; set; } = TitleSelectionMode.TitlePlate;
 
     private bool TitleTextReadOnly => ReadOnly || ReadOnlyTitleText;
+    private bool SelectsCatalogTitle => SelectionMode == TitleSelectionMode.TitleId;
 
     private IReadOnlyList<Title> OrderedTitles => Catalog.Values.OrderBy(title => title.TitleId).ToArray();
 
-    private IReadOnlyList<uint> PlateIds => Catalog.Values
-        .Select(title => title.TitleRarity)
-        .Append(Value.TitlePlateId)
-        .Distinct()
-        .OrderBy(id => id)
-        .ToArray();
+    private IReadOnlyList<uint> PlateIds => TitlePickerCatalog.GetSelectableIds(Catalog, Value.TitlePlateId, SelectionMode);
 
     private Task SetTitle(string title)
         => TitleTextReadOnly
@@ -67,7 +64,23 @@
             : ValueChanged.InvokeAsync(Value with { Title = title });
 
     private Task SetPlate(uint plate)
-        => ValueChanged.InvokeAsync(Value with { TitlePlateId = plate });
+    {
+        var next = Value with { TitlePlateId = plate };
+        if (SelectsCatalogTitle)
+        {
+            next = next with
+            {
+                Title = TitlePickerCatalog.ResolveSelectedTitleText(Catalog, plate, Value.Title),
+                UnlockedTitleIds = Value.UnlockedTitleIds
+                    .Append(plate)
+                    .Distinct()
+                    .OrderBy(id => id)
+                    .ToArray()
+            };
+        }
+
+        return ValueChanged.InvokeAsync(next);
+    }
 
     private Task ToggleUnlocked(uint id, bool enabled)
     {
@@ -80,7 +93,7 @@
     private static string DisplayName(Title title)
     {
         var name = string.IsNullOrWhiteSpace(title.TitleName)
-            ? $"#{title.TitleId:D3}"
+            ? TitlePickerCatalog.DisplayTitleText(title)
             : title.TitleName;
         return $"{title.TitleId} - {name}";
     }

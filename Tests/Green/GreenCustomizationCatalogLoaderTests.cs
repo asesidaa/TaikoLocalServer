@@ -1,6 +1,7 @@
 using System.Buffers.Binary;
 using System.Text;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using TaikoLocalServer.Contracts.AdminApi.ViewModels;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Green.Extractor;
@@ -101,7 +102,7 @@ public sealed class GreenCustomizationCatalogLoaderTests
     }
 
     [Fact]
-    public async Task CatalogInitialize_MalformedRewardTitleFilteringXmlPropagatesXmlException()
+    public async Task CatalogInitialize_MalformedRewardTitleFilteringXmlDoesNotStopStartup()
     {
         CopyGreenRuntimeCatalogFilesToProcessRoot();
         DeleteGreenCustomizationFilesFromProcessRoot();
@@ -131,10 +132,18 @@ public sealed class GreenCustomizationCatalogLoaderTests
                     }
                 }
             });
-            var catalog = new GreenEraGameDataCatalog(NullLogger<GreenEraGameDataCatalog>.Instance, settings);
+            var logger = new RecordingLogger<GreenEraGameDataCatalog>();
+            var catalog = new GreenEraGameDataCatalog(logger, settings);
 
-            await Assert.ThrowsAsync<System.Xml.XmlException>(() =>
-                catalog.InitializeAsync(CancellationToken.None));
+            await catalog.InitializeAsync(CancellationToken.None);
+
+            Assert.Empty(catalog.GetCostumeList());
+            Assert.Empty(catalog.GetTitleDictionary());
+            Assert.Empty(catalog.GetNeiroDictionary());
+            Assert.Contains(
+                logger.Events,
+                log => log.Level == LogLevel.Warning
+                    && log.Message.Contains("customization catalog extraction failed", StringComparison.OrdinalIgnoreCase));
         }
         finally
         {
@@ -346,4 +355,35 @@ public sealed class GreenCustomizationCatalogLoaderTests
     }
 
     private static int Align4(int value) => (value + 3) & ~3;
+
+    private sealed class RecordingLogger<T> : ILogger<T>
+    {
+        public List<LogEvent> Events { get; } = [];
+
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull
+            => NullScope.Instance;
+
+        public bool IsEnabled(LogLevel logLevel) => true;
+
+        public void Log<TState>(
+            LogLevel logLevel,
+            EventId eventId,
+            TState state,
+            Exception? exception,
+            Func<TState, Exception?, string> formatter)
+        {
+            Events.Add(new LogEvent(logLevel, formatter(state, exception)));
+        }
+
+        private sealed class NullScope : IDisposable
+        {
+            public static NullScope Instance { get; } = new();
+
+            public void Dispose()
+            {
+            }
+        }
+    }
+
+    private sealed record LogEvent(LogLevel Level, string Message);
 }

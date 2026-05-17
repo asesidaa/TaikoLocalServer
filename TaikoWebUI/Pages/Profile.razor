@@ -136,7 +136,8 @@
                                                  Catalog="@titleDictionary"
                                                  Value="@titleValue"
                                                  ValueChanged="@(value => { titleValue = value; ApplyCustomizationValues(); })"
-                                                 ReadOnlyTitleText="@(!AuthService.AllowFreeProfileEditing)"
+                                                 ReadOnlyTitleText="@(IsGreen || !AuthService.AllowFreeProfileEditing)"
+                                                 SelectionMode="@CurrentTitleSelectionMode"
                                                  AllowUnlockEditing="@CanEditUnlocks" />
 
                                     <NeiroPicker Era="@CurrentEra"

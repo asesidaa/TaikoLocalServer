@@ -40,7 +40,6 @@ public partial class UserSettingsController
             var unlockedTone = BitsetCodec.Decode(saveData.ToneFlg, GreenProtocolBytes.ToneFlagBytes).ToHashSet();
             var unlockedTitle = BitsetCodec.Decode(saveData.TitleFlg, GreenProtocolBytes.TitleFlagBytes).ToHashSet();
 
-            saveData.Title = unlockedTitle.Contains(userSetting.TitlePlateId) ? userSetting.Title : saveData.Title;
             saveData.TitleplateId = unlockedTitle.Contains(userSetting.TitlePlateId) ? userSetting.TitlePlateId : saveData.TitleplateId;
             saveData.Costume1 = unlockedKigurumi.Contains(userSetting.Kigurumi) ? userSetting.Kigurumi : saveData.Costume1;
             saveData.Costume2 = unlockedHead.Contains(userSetting.Head) ? userSetting.Head : saveData.Costume2;
@@ -51,7 +50,6 @@ public partial class UserSettingsController
         }
         else
         {
-            saveData.Title = userSetting.Title;
             saveData.TitleplateId = userSetting.TitlePlateId;
             saveData.Costume1 = userSetting.Kigurumi;
             saveData.Costume2 = userSetting.Head;
@@ -65,7 +63,9 @@ public partial class UserSettingsController
             saveData.CostumeFlg3 = EncodeGreenCostumeUnlocks(userSetting.UnlockedBody, saveData.Costume3);
             saveData.CostumeFlg4 = EncodeGreenCostumeUnlocks(userSetting.UnlockedFace, saveData.Costume4);
             saveData.CostumeFlg5 = EncodeGreenCostumeUnlocks(userSetting.UnlockedPuchi, saveData.Costume5);
-            saveData.TitleFlg = BitsetCodec.Encode(userSetting.UnlockedTitle, GreenProtocolBytes.TitleFlagBytes);
+            saveData.TitleFlg = BitsetCodec.Encode(
+                SortedDistinctWithZero(userSetting.UnlockedTitle).Append(saveData.TitleplateId),
+                GreenProtocolBytes.TitleFlagBytes);
             saveData.ToneFlg = BitsetCodec.Encode(
                 SortedDistinctWithZero(userSetting.UnlockedTone).Append(saveData.DefaultToneSetting),
                 GreenProtocolBytes.ToneFlagBytes);

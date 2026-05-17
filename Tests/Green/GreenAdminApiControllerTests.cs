@@ -277,6 +277,38 @@ public class GreenAdminApiControllerTests
     }
 
     [Fact]
+    public async Task UserSettings_Green_PostFreeEditingUsesTitleIdAndIgnoresFreeTextTitle()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.Title = "Persisted Title";
+        fixture.Context.UserSaveDataGreen.Add(save);
+        await fixture.Context.SaveChangesAsync();
+
+        var controller = CreateUserSettingsController(
+            fixture.Context,
+            new AuthSettings
+            {
+                AuthenticationRequired = false,
+                AllowFreeProfileEditing = true
+            });
+
+        var result = await controller.SaveUserSetting("Green", 1, new UserSetting
+        {
+            MyDonName = "GREEN",
+            Title = "Injected Free Text",
+            TitlePlateId = 10,
+            UnlockedTitle = []
+        });
+
+        Assert.IsType<NoContentResult>(result);
+        Assert.Equal(10u, save.TitleplateId);
+        Assert.Equal("Persisted Title", save.Title);
+        Assert.Contains(10u, BitsetCodec.Decode(save.TitleFlg, GreenProtocolBytes.TitleFlagBytes));
+    }
+
+    [Fact]
     public async Task UserSettings_Green_PostRestrictedEnforcesPersistedUnlockBitsets()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();

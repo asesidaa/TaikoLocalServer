@@ -1,5 +1,6 @@
 using System.Text.Json;
 using TaikoLocalServer.Contracts.AdminApi.ViewModels;
+using TaikoWebUI.Shared.Customize;
 
 namespace TaikoLocalServer.Tests.Green;
 
@@ -45,5 +46,32 @@ public sealed class GreenCustomizationContractTests
         Assert.Contains("ndp", json);
         Assert.Contains("rewardtitlefiltering", json);
         Assert.Contains("\"neiroId\":4", json, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void TitlePickerCatalog_UsesTitleIdsForGreenTitleSelection()
+    {
+        var titles = new Dictionary<uint, Title>
+        {
+            [10] = new() { TitleId = 10, TitleName = "Green Title", TitleRarity = 0 },
+            [11] = new() { TitleId = 11, TitleName = "Other Green Title", TitleRarity = 0 }
+        };
+
+        var ids = TitlePickerCatalog.GetSelectableIds(titles, currentId: 10, TitleSelectionMode.TitleId);
+
+        Assert.Equal(new uint[] { 10, 11 }, ids);
+    }
+
+    [Fact]
+    public void TitlePickerCatalog_ResolvesGreenSelectedTitleTextFromCatalog()
+    {
+        var titles = new Dictionary<uint, Title>
+        {
+            [10] = new() { TitleId = 10, TitleName = "Green Title", TitleRarity = 0 }
+        };
+
+        var title = TitlePickerCatalog.ResolveSelectedTitleText(titles, selectedId: 10, fallback: "Previous");
+
+        Assert.Equal("Green Title", title);
     }
 }
