@@ -69,6 +69,24 @@ public sealed class GreenUserDataMapperTests
         Assert.Equal(7u, response.DispTaikojukuDan);
     }
 
+    [Fact]
+    public void UserData_SerializesToneAndTitleFlagsOnWire()
+    {
+        var response = UserDataMappers.Map(new CommonUserDataResponse
+        {
+            Result = 1,
+            ToneFlg = BitsetCodec.Encode([0, 4], GreenProtocolBytes.ToneFlagBytes),
+            TitleFlg = BitsetCodec.Encode([10, 131], GreenProtocolBytes.TitleFlagBytes)
+        });
+
+        var payload = Serialize(response);
+
+        Assert.True(response.ShouldSerializeToneFlg());
+        Assert.True(response.ShouldSerializeTitleFlg());
+        Assert.True(ContainsField(payload, 13));
+        Assert.True(ContainsField(payload, 14));
+    }
+
     private static byte[] Serialize(UserDataResponse response)
     {
         using var stream = new MemoryStream();

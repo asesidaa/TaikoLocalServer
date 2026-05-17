@@ -264,6 +264,32 @@ public sealed class GreenIdentityHandlerTests
     }
 
     [Fact]
+    public async Task UserData_Green_ReturnsPersistedToneAndTitleUnlockFlags()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.ToneFlg = BitsetCodec.Encode([0, 4], GreenProtocolBytes.ToneFlagBytes);
+        save.TitleFlg = BitsetCodec.Encode([10, 131], GreenProtocolBytes.TitleFlagBytes);
+        fixture.Context.UserSaveDataGreen.Add(save);
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UserDataQueryHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UserDataQueryHandler>.Instance,
+            Options.Create(new ServerSettings()));
+
+        var response = await handler.Handle(new UserDataQuery(1, GameEra.Green), CancellationToken.None);
+
+        Assert.Equal(GreenProtocolBytes.ToneFlagBytes, response.ToneFlg.Length);
+        Assert.Equal(GreenProtocolBytes.TitleFlagBytes, response.TitleFlg.Length);
+        Assert.True(BitIsSet(response.ToneFlg, 4));
+        Assert.True(BitIsSet(response.TitleFlg, 10));
+        Assert.True(BitIsSet(response.TitleFlg, 131));
+    }
+
+    [Fact]
     public async Task UserData_Green_RecommendComesFromCatalog()
     {
         var greenCatalog = new GreenHandlerFixture.TestGreenCatalog
