@@ -71,6 +71,14 @@ public sealed class GreenCustomizationExtractorTests
     }
 
     [Fact]
+    public void NdpReader_ThrowsWhenFixedEntryNameLengthIsZero()
+    {
+        var blob = BuildMalformedFixedNdp(nameLength: 0, payloadBytes: 8);
+
+        Assert.Throws<InvalidDataException>(() => NdpReader.Read(blob));
+    }
+
+    [Fact]
     public async Task BoostXmlReader_ReadsRewardTitleIds()
     {
         var path = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.xml");

@@ -99,16 +99,16 @@ public static partial class NdpReader
 
     private static bool LooksLikeFixedTableFormat(byte[] bytes)
     {
-        var nameLength = BinaryPrimitives.ReadUInt32BigEndian(bytes.AsSpan(EntryTableOffset, 4));
-        if (nameLength == 0)
-        {
-            return false;
-        }
-
         var fixedCountLowWord = BinaryPrimitives.ReadUInt16BigEndian(bytes.AsSpan(EntryCountOffset + 2, 2));
         if (fixedCountLowWord > 0)
         {
             return true;
+        }
+
+        var nameLength = BinaryPrimitives.ReadUInt32BigEndian(bytes.AsSpan(EntryTableOffset, 4));
+        if (nameLength == 0)
+        {
+            return false;
         }
 
         if (nameLength > bytes.Length - EntryTableOffset - 4)
