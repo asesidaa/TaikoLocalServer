@@ -15,18 +15,8 @@ public sealed class GreenTitleLoader
         CancellationToken cancellationToken)
     {
         var items = await GreenCustomizationCatalogLoader.LoadListAsync<Title>(path, cancellationToken);
-        var duplicateIds = items
-            .GroupBy(title => title.TitleId)
-            .Where(group => group.Count() > 1)
-            .Select(group => group.Key)
-            .OrderBy(id => id)
-            .ToArray();
-        if (duplicateIds.Length > 0)
-        {
-            throw new InvalidDataException($"Duplicate Green title IDs in {path}: {string.Join(", ", duplicateIds)}");
-        }
-
         return items
-            .ToDictionary(title => title.TitleId);
+            .GroupBy(title => title.TitleId)
+            .ToDictionary(group => group.Key, group => group.First());
     }
 }

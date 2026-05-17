@@ -52,7 +52,7 @@ public sealed class GreenCustomizationCatalogLoaderTests
     }
 
     [Fact]
-    public async Task TitleLoader_DuplicateIdsThrowInvalidDataException()
+    public async Task TitleLoader_DuplicateIdsUseFirstItem()
     {
         var path = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.json");
         try
@@ -63,11 +63,11 @@ public sealed class GreenCustomizationCatalogLoaderTests
                 new Title { TitleId = 131, TitleName = "B" }
             ]);
 
-            var exception = await Assert.ThrowsAsync<InvalidDataException>(() =>
-                GreenTitleLoader.LoadFromFileAsync(path, CancellationToken.None));
+            var items = await GreenTitleLoader.LoadFromFileAsync(path, CancellationToken.None);
 
-            Assert.Contains("green title", exception.Message, StringComparison.OrdinalIgnoreCase);
-            Assert.Contains("131", exception.Message, StringComparison.Ordinal);
+            var item = Assert.Single(items);
+            Assert.Equal(131u, item.Key);
+            Assert.Equal("A", item.Value.TitleName);
         }
         finally
         {
@@ -76,7 +76,7 @@ public sealed class GreenCustomizationCatalogLoaderTests
     }
 
     [Fact]
-    public async Task NeiroLoader_DuplicateIdsThrowInvalidDataException()
+    public async Task NeiroLoader_DuplicateIdsUseFirstItem()
     {
         var path = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.json");
         try
@@ -87,11 +87,11 @@ public sealed class GreenCustomizationCatalogLoaderTests
                 new Neiro { NeiroId = 4, NeiroName = "Tone B" }
             ]);
 
-            var exception = await Assert.ThrowsAsync<InvalidDataException>(() =>
-                GreenNeiroLoader.LoadFromFileAsync(path, CancellationToken.None));
+            var items = await GreenNeiroLoader.LoadFromFileAsync(path, CancellationToken.None);
 
-            Assert.Contains("green neiro", exception.Message, StringComparison.OrdinalIgnoreCase);
-            Assert.Contains("4", exception.Message, StringComparison.Ordinal);
+            var item = Assert.Single(items);
+            Assert.Equal(4u, item.Key);
+            Assert.Equal("Tone A", item.Value.NeiroName);
         }
         finally
         {
@@ -100,7 +100,7 @@ public sealed class GreenCustomizationCatalogLoaderTests
     }
 
     [Fact]
-    public async Task CatalogInitialize_MalformedRewardTitleFilteringXmlDoesNotThrow()
+    public async Task CatalogInitialize_MalformedRewardTitleFilteringXmlPropagatesXmlException()
     {
         CopyGreenRuntimeCatalogFilesToProcessRoot();
         DeleteGreenCustomizationFilesFromProcessRoot();
@@ -132,12 +132,8 @@ public sealed class GreenCustomizationCatalogLoaderTests
             });
             var catalog = new GreenEraGameDataCatalog(NullLogger<GreenEraGameDataCatalog>.Instance, settings);
 
-            await catalog.InitializeAsync(CancellationToken.None);
-
-            Assert.NotEmpty(catalog.MusicInfoFileOrder);
-            Assert.Empty(catalog.GetCostumeList());
-            Assert.Empty(catalog.GetTitleDictionary());
-            Assert.Empty(catalog.GetNeiroDictionary());
+            await Assert.ThrowsAsync<System.Xml.XmlException>(() =>
+                catalog.InitializeAsync(CancellationToken.None));
         }
         finally
         {
