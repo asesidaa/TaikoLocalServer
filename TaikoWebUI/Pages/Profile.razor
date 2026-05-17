@@ -45,49 +45,52 @@
                                     </MudItem>
                                 </MudGrid>
 
-                                <MudSelect T="Difficulty" ValueChanged=@UpdateScoreboard Value=@response.AchievementDisplayDifficulty Label=@Localizer["Achievement Panel Difficulty"] AnchorOrigin="Origin.BottomCenter">
-                                    @foreach (var item in Enum.GetValues<Difficulty>())
-                                    {
-                                        <MudSelectItem Value="@item">@Localizer[item.ToString()]</MudSelectItem>
-                                    }
-                                </MudSelect>
+                                @if (!IsGreen)
+                                {
+                                    <MudSelect T="Difficulty" ValueChanged=@UpdateScoreboard Value=@response.AchievementDisplayDifficulty Label=@Localizer["Achievement Panel Difficulty"] AnchorOrigin="Origin.BottomCenter">
+                                        @foreach (var item in Enum.GetValues<Difficulty>())
+                                        {
+                                            <MudSelectItem Value="@item">@Localizer[item.ToString()]</MudSelectItem>
+                                        }
+                                    </MudSelect>
 
-                                <MudGrid>
-                                    <MudItem xs="12" md="4">
-                                        <MudStack Spacing="4">
-                                            <MudSwitch @bind-Value="@response.IsDisplayAchievement" Label=@Localizer["Display Achievement Panel"] Color="Color.Primary" />
-                                            <MudSwitch @bind-Value="@response.IsDisplayDanOnNamePlate" Label=@Localizer["Display Dan Rank on Name Plate"] Color="Color.Primary" />
-                                            <MudSwitch @bind-Value="@response.IsDisplaySouUchi" Label=@Localizer["Display SouUchi Songs"] Color="Color.Primary" />
-                                        </MudStack>
-                                    </MudItem>
-                                    <MudItem xs="12" md="8">
-                                        <MudStack Spacing="4">
-                                            <MudSelect @bind-Value="@response.DifficultySettingCourse" Label=@Localizer["Difficulty Setting Course"] AnchorOrigin="Origin.BottomCenter">
-                                                @for (uint i = 0; i < DifficultySettingCourseStrings.Length; i++)
-                                                {
-                                                    var index = i;
-                                                    <MudSelectItem Value="@i">@Localizer[DifficultySettingCourseStrings[index]]</MudSelectItem>
-                                                }
-                                            </MudSelect>
+                                    <MudGrid>
+                                        <MudItem xs="12" md="4">
+                                            <MudStack Spacing="4">
+                                                <MudSwitch @bind-Value="@response.IsDisplayAchievement" Label=@Localizer["Display Achievement Panel"] Color="Color.Primary" />
+                                                <MudSwitch @bind-Value="@response.IsDisplayDanOnNamePlate" Label=@Localizer["Display Dan Rank on Name Plate"] Color="Color.Primary" />
+                                                <MudSwitch @bind-Value="@response.IsDisplaySouUchi" Label=@Localizer["Display SouUchi Songs"] Color="Color.Primary" />
+                                            </MudStack>
+                                        </MudItem>
+                                        <MudItem xs="12" md="8">
+                                            <MudStack Spacing="4">
+                                                <MudSelect @bind-Value="@response.DifficultySettingCourse" Label=@Localizer["Difficulty Setting Course"] AnchorOrigin="Origin.BottomCenter">
+                                                    @for (uint i = 0; i < DifficultySettingCourseStrings.Length; i++)
+                                                    {
+                                                        var index = i;
+                                                        <MudSelectItem Value="@i">@Localizer[DifficultySettingCourseStrings[index]]</MudSelectItem>
+                                                    }
+                                                </MudSelect>
 
-                                            <MudSelect @bind-Value="@response.DifficultySettingStar" Label=@Localizer["Difficulty Setting Star"] AnchorOrigin="Origin.BottomCenter">
-                                                @for (uint i = 0; i < DifficultySettingStarStrings.Length; i++)
-                                                {
-                                                    var index = i;
-                                                    <MudSelectItem Value="@i">@Localizer[DifficultySettingStarStrings[index]]</MudSelectItem>
-                                                }
-                                            </MudSelect>
+                                                <MudSelect @bind-Value="@response.DifficultySettingStar" Label=@Localizer["Difficulty Setting Star"] AnchorOrigin="Origin.BottomCenter">
+                                                    @for (uint i = 0; i < DifficultySettingStarStrings.Length; i++)
+                                                    {
+                                                        var index = i;
+                                                        <MudSelectItem Value="@i">@Localizer[DifficultySettingStarStrings[index]]</MudSelectItem>
+                                                    }
+                                                </MudSelect>
 
-                                            <MudSelect @bind-Value="@response.DifficultySettingSort" Label=@Localizer["Difficulty Setting Sort"] AnchorOrigin="Origin.BottomCenter">
-                                                @for (uint i = 0; i < DifficultySettingSortStrings.Length; i++)
-                                                {
-                                                    var index = i;
-                                                    <MudSelectItem Value="@i">@Localizer[DifficultySettingSortStrings[index]]</MudSelectItem>
-                                                }
-                                            </MudSelect>
-                                        </MudStack>
-                                    </MudItem>
-                                </MudGrid>
+                                                <MudSelect @bind-Value="@response.DifficultySettingSort" Label=@Localizer["Difficulty Setting Sort"] AnchorOrigin="Origin.BottomCenter">
+                                                    @for (uint i = 0; i < DifficultySettingSortStrings.Length; i++)
+                                                    {
+                                                        var index = i;
+                                                        <MudSelectItem Value="@i">@Localizer[DifficultySettingSortStrings[index]]</MudSelectItem>
+                                                    }
+                                                </MudSelect>
+                                            </MudStack>
+                                        </MudItem>
+                                    </MudGrid>
+                                }
                             </MudStack>
                         </MudTabPanel>
 
@@ -147,6 +150,7 @@
                                                  AllowUnlockEditing="@CanEditUnlocks" />
 
                                     <ColorPicker Colors="@CostumeColors"
+                                                 ShowSwatches="@(!IsGreen)"
                                                  Value="@colorValue"
                                                  ValueChanged="@(value => { colorValue = value; ApplyCustomizationValues(); })" />
                                 </MudStack>
@@ -203,30 +207,33 @@
                         <MudTabs MinimumTabWidth="100px" Rounded="true" Border="true" TabPanelsClass="pa-8">
                             <MudTabPanel Text=@Localizer["Player"]>
                                 <MudItem style="height: auto">
-                                    @* Player Visualizer *@
-                                    <MudItem style="text-align: center;">
-                                        <MudItem style="position:relative">
-                                            @if (response.Kigurumi == 0)
-                                            {
-                                                <MudImage Fluid="true" style=@($"position: relative; top: 0; left: 0; filter: {CostumeColorFilters[response.BodyColor]}") Src=@CostumeOrDefault("masks/body-bodymask", response.Body, "masks/body-bodymask-0000") />
-                                                <MudImage Fluid="true" Class="profile-image" style=@($"filter: {CostumeColorFilters[response.FaceColor]}") Src=@CostumeOrDefault("masks/body-facemask", response.Body, "masks/body-facemask-0000") />
-                                                <MudImage Fluid="true" Class="profile-image" onerror="this.src='images/Costumes/body/body-0000.webp'" Src=@($"images/Costumes/body/body-{response.Body.ToString().PadLeft(4, '0')}.webp") />
-                                                <MudImage Fluid="true" Class="profile-image" onerror="this.src='images/Costumes/face/face-0000.webp'" Src=@($"images/Costumes/face/face-{response.Face.ToString().PadLeft(4, '0')}.webp") />
-                                                <MudImage Fluid="true" Class="profile-image" style=@($"filter: {CostumeColorFilters[response.BodyColor]}") Src=@CostumeOrDefault("masks/head-bodymask", response.Head, "head/head-0000") />
-                                                <MudImage Fluid="true" Class="profile-image" style=@($"filter: {CostumeColorFilters[response.FaceColor]}") Src=@CostumeOrDefault("masks/head-facemask", response.Head, "head/head-0000") />
-                                                <MudImage Fluid="true" Class="profile-image" onerror="this.src='images/Costumes/head/head-0000.webp'" Src=@($"images/Costumes/head/head-{response.Head.ToString().PadLeft(4, '0')}.webp") />
-                                            }
-                                            else
-                                            {
-                                                <MudImage Fluid="true" style=@($"position: relative; top: 0; left: 0; filter: {CostumeColorFilters[response.BodyColor]}") Src=@CostumeOrDefault("masks/kigurumi-bodymask", response.Kigurumi, "masks/body-bodymask-0000") />
-                                                <MudImage Fluid="true" Class="profile-image" style=@($"filter: {CostumeColorFilters[response.FaceColor]}") Src=@CostumeOrDefault("masks/kigurumi-facemask", response.Kigurumi, "masks/body-facemask-0000") />
-                                                <MudImage Fluid="true" Class="profile-image" onerror="this.src='images/Costumes/kigurumi/kigurumi-0000.webp'" Src=@($"images/Costumes/kigurumi/kigurumi-{response.Kigurumi.ToString().PadLeft(4, '0')}.webp") />
-                                            }
-                                            <MudItem Class="profile-image">
-                                                <MudImage Fluid="true" Class="puchi-floating" onerror="this.src='images/Costumes/puchi/puchi-9999.webp'" Src=@($"images/Costumes/puchi/puchi-{response.Puchi.ToString().PadLeft(4, '0')}.webp") />
+                                    @if (!IsGreen)
+                                    {
+                                        @* Player Visualizer *@
+                                        <MudItem style="text-align: center;">
+                                            <MudItem style="position:relative">
+                                                @if (response.Kigurumi == 0)
+                                                {
+                                                    <MudImage Fluid="true" style=@($"position: relative; top: 0; left: 0; filter: {CostumeColorFilters[response.BodyColor]}") Src=@CostumeOrDefault("masks/body-bodymask", response.Body, "masks/body-bodymask-0000") />
+                                                    <MudImage Fluid="true" Class="profile-image" style=@($"filter: {CostumeColorFilters[response.FaceColor]}") Src=@CostumeOrDefault("masks/body-facemask", response.Body, "masks/body-facemask-0000") />
+                                                    <MudImage Fluid="true" Class="profile-image" onerror="this.src='images/Costumes/body/body-0000.webp'" Src=@($"images/Costumes/body/body-{response.Body.ToString().PadLeft(4, '0')}.webp") />
+                                                    <MudImage Fluid="true" Class="profile-image" onerror="this.src='images/Costumes/face/face-0000.webp'" Src=@($"images/Costumes/face/face-{response.Face.ToString().PadLeft(4, '0')}.webp") />
+                                                    <MudImage Fluid="true" Class="profile-image" style=@($"filter: {CostumeColorFilters[response.BodyColor]}") Src=@CostumeOrDefault("masks/head-bodymask", response.Head, "head/head-0000") />
+                                                    <MudImage Fluid="true" Class="profile-image" style=@($"filter: {CostumeColorFilters[response.FaceColor]}") Src=@CostumeOrDefault("masks/head-facemask", response.Head, "head/head-0000") />
+                                                    <MudImage Fluid="true" Class="profile-image" onerror="this.src='images/Costumes/head/head-0000.webp'" Src=@($"images/Costumes/head/head-{response.Head.ToString().PadLeft(4, '0')}.webp") />
+                                                }
+                                                else
+                                                {
+                                                    <MudImage Fluid="true" style=@($"position: relative; top: 0; left: 0; filter: {CostumeColorFilters[response.BodyColor]}") Src=@CostumeOrDefault("masks/kigurumi-bodymask", response.Kigurumi, "masks/body-bodymask-0000") />
+                                                    <MudImage Fluid="true" Class="profile-image" style=@($"filter: {CostumeColorFilters[response.FaceColor]}") Src=@CostumeOrDefault("masks/kigurumi-facemask", response.Kigurumi, "masks/body-facemask-0000") />
+                                                    <MudImage Fluid="true" Class="profile-image" onerror="this.src='images/Costumes/kigurumi/kigurumi-0000.webp'" Src=@($"images/Costumes/kigurumi/kigurumi-{response.Kigurumi.ToString().PadLeft(4, '0')}.webp") />
+                                                }
+                                                <MudItem Class="profile-image">
+                                                    <MudImage Fluid="true" Class="puchi-floating" onerror="this.src='images/Costumes/puchi/puchi-9999.webp'" Src=@($"images/Costumes/puchi/puchi-{response.Puchi.ToString().PadLeft(4, '0')}.webp") />
+                                                </MudItem>
                                             </MudItem>
                                         </MudItem>
-                                    </MudItem>
+                                    }
 
 
                                     @* Player Nameplate *@

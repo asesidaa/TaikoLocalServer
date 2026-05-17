@@ -18,7 +18,7 @@ internal static class CostumeSlotMap
 
         foreach (var pair in scan.DirectoryIds)
         {
-            if (!DirectoryToCostumeType.TryGetValue(pair.Key, out var costumeType))
+            if (!TryResolveCostumeType(pair.Key, out var costumeType))
             {
                 continue;
             }
@@ -30,5 +30,22 @@ internal static class CostumeSlotMap
         }
 
         return result;
+    }
+
+    private static bool TryResolveCostumeType(string directory, out string costumeType)
+    {
+        var normalizedDirectory = directory.Replace('\\', '/');
+        foreach (var pair in DirectoryToCostumeType)
+        {
+            if (string.Equals(normalizedDirectory, pair.Key, StringComparison.OrdinalIgnoreCase)
+                || normalizedDirectory.StartsWith($"{pair.Key}/", StringComparison.OrdinalIgnoreCase))
+            {
+                costumeType = pair.Value;
+                return true;
+            }
+        }
+
+        costumeType = string.Empty;
+        return false;
     }
 }

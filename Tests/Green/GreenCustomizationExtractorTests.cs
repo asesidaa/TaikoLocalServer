@@ -129,6 +129,49 @@ public sealed class GreenCustomizationExtractorTests
     }
 
     [Fact]
+    public async Task Don3dDirScanner_UsesRecursiveSlotDirectoriesForCostumeTypes()
+    {
+        var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(Path.Combine(root, "don3d", "full", "cos", "event"));
+        Directory.CreateDirectory(Path.Combine(root, "don3d", "parts", "head", "campaign"));
+        await File.WriteAllTextAsync(Path.Combine(root, "don3d", "full", "cos", "event", "cos_000111.nud"), string.Empty);
+        await File.WriteAllTextAsync(Path.Combine(root, "don3d", "full", "cos", "event", "cos_000111.nut"), string.Empty);
+        await File.WriteAllTextAsync(Path.Combine(root, "don3d", "parts", "head", "campaign", "head_000222.nud"), string.Empty);
+        await File.WriteAllTextAsync(Path.Combine(root, "don3d", "parts", "head", "campaign", "head_000222.nut"), string.Empty);
+
+        var scan = Don3dDirScanner.Scan(root);
+        var costumes = CostumeMerger.Merge(
+            [
+                new NdpEntry(111, "cos_name_111.nut", 0, 1),
+                new NdpEntry(222, "cos_name_222.nut", 0, 1)
+            ],
+            scan,
+            new GreenCatalogOverrides());
+
+        Assert.Equal("kigurumi", Assert.Single(costumes, costume => costume.CostumeId == 111).CostumeType);
+        Assert.Equal("head", Assert.Single(costumes, costume => costume.CostumeId == 222).CostumeType);
+        Directory.Delete(root, recursive: true);
+    }
+
+    [Fact]
+    public async Task Don3dDirScanner_UsesRecursiveDirectoryIdWhenModelNamesAreGeneric()
+    {
+        var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(Path.Combine(root, "don3d", "parts", "body", "body_000333"));
+        await File.WriteAllTextAsync(Path.Combine(root, "don3d", "parts", "body", "body_000333", "model.nud"), string.Empty);
+        await File.WriteAllTextAsync(Path.Combine(root, "don3d", "parts", "body", "body_000333", "model.nut"), string.Empty);
+
+        var scan = Don3dDirScanner.Scan(root);
+        var costumes = CostumeMerger.Merge(
+            [new NdpEntry(333, "cos_name_333.nut", 0, 1)],
+            scan,
+            new GreenCatalogOverrides());
+
+        Assert.Equal("body", Assert.Single(costumes).CostumeType);
+        Directory.Delete(root, recursive: true);
+    }
+
+    [Fact]
     public void CostumeMerger_AppendsOverridesSourceWhenOverrideContributesData()
     {
         var overrides = new GreenCatalogOverrides

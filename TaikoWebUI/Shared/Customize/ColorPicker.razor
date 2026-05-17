@@ -1,6 +1,6 @@
 @using System.Linq
 
-@if (Colors.Count > 0)
+@if (ShowSwatches && Colors.Count > 0)
 {
     <MudStack Row="true">
         <MudSelect T="uint" Value="Value.BodyColor" ValueChanged="SetBody" Label="@Localizer["Body Color"]" AnchorOrigin="Origin.BottomCenter">
@@ -32,9 +32,18 @@
         </MudSelect>
     </MudStack>
 }
+else
+{
+    <MudStack Row="true">
+        <MudNumericField T="uint" Value="Value.BodyColor" ValueChanged="SetBody" Label="@Localizer["Body Color"]" />
+        <MudNumericField T="uint" Value="Value.FaceColor" ValueChanged="SetFace" Label="@Localizer["Face Color"]" />
+        <MudNumericField T="uint" Value="Value.LimbColor" ValueChanged="SetLimb" Label="@Localizer["Limb Color"]" />
+    </MudStack>
+}
 
 @code {
     [Parameter] public IReadOnlyList<string> Colors { get; set; } = [];
+    [Parameter] public bool ShowSwatches { get; set; } = true;
     [Parameter] public ColorPickerValue Value { get; set; } = new(1, 0, 3);
     [Parameter] public EventCallback<ColorPickerValue> ValueChanged { get; set; }
 

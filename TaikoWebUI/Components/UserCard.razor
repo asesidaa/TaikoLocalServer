@@ -115,11 +115,17 @@
         </MudCardContent>
         <MudCardActions>
             <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
-                <MudButton Href="@(WebUiEra.UserRoute(User.Baid, WebUiEra.Default, "Profile"))"
-                           Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Edit"
-                           Color="Color.Primary">
-                    @Localizer["Edit Profile"]
-                </MudButton>
+                <MudMenu Size="Size.Small"
+                         Dense="true"
+                         Color="Color.Primary"
+                         Label="@Localizer["Edit Profile"]"
+                         StartIcon="@Icons.Material.Filled.Edit"
+                         EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
+                         AnchorOrigin="Origin.BottomCenter"
+                         TransformOrigin="Origin.TopCenter">
+                    <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, "Nijiiro", "Profile"))">Nijiiro - @Localizer["Edit Profile"]</MudMenuItem>
+                    <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, "Green", "Profile"))">Green - @Localizer["Edit Profile"]</MudMenuItem>
+                </MudMenu>
                 <MudMenu Size="Size.Small"
                          Dense="true"
                          Color="Color.Primary"
