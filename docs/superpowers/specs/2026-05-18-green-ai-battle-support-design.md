@@ -19,18 +19,25 @@ and `GhostStageSectionDatumGreen` tables. The `ApplyGhostUpdates` method in
 the Green play-result handler is fully written but unreachable because
 validation rejects before it runs.
 
+In AI Battle the player picks two independent settings: the **chart
+difficulty** (Easy / Normal / Hard / Oni / Ura — the `Level` field in the
+play result, same as normal play) and the **AI difficulty** (1–13 on the
+AI Battle level scale, plus Ura — reported per-stage as
+`SdCertifiedLevelId` inside `GhostStageData`). A player can pick a Normal
+chart but fight an AI at level 11, or a Easy chart with AI level 2, etc.
+
 The wiki at
 <https://wikiwiki.jp/taiko-fumen/作品/新AC/AIバトル演奏/グリーン> documents
 two caveats that matter for behavior fidelity:
 
-- AI Battle records **crowns only for `sd_certified_level_id ∈ {1, 5, 9, 13}`**
-  (the 正規 levels — かんたん, ふつう, むずかしい, おに positions in the
-  13-step AI Battle level scale). Intermediate sub-levels (2/3/4, 6/7/8,
-  10/11/12) record score but do not update the crown column. Ura (course
-  Level 5) has no intermediate sub-levels, so any Ura AI Battle play
-  records crown.
+- AI Battle records **crowns only when the AI difficulty is a 正規 level:
+  `sd_certified_level_id ∈ {1, 5, 9, 13}`** (かんたん, ふつう, むずかしい,
+  おに positions). Intermediate AI difficulties (2/3/4, 6/7/8, 10/11/12)
+  record score but do not update the crown column. Ura charts have no
+  intermediate AI difficulties, so any Ura AI Battle play records crown
+  regardless of the reported `SdCertifiedLevelId`.
 - Best score, good/ok/ng/pound, donmedal/katsumedal, play counts, and the
-  per-section territory data are all recorded on every sub-level.
+  per-section territory data are all recorded on every AI difficulty.
 
 ## Goal
 
@@ -49,8 +56,8 @@ single-player server with no leaderboard.
 - No server-side re-derivation of rank-up rules or anti-cheat for winnings.
   The wiki's rank-point progression table (1/9/24/54/99/159/234/324/429/
   549/699 for ranks 1–10+) is reference material only; we trust the client.
-- No reverse-engineering of the AI Battle `Level` field semantics beyond
-  what the existing `MapDifficulty` already does. See "Known caveats".
+- No server-side validation of AI difficulty (`SdCertifiedLevelId`) range
+  or its consistency with the chart difficulty. Trust the client.
 
 ## StageMode encoding
 
@@ -85,10 +92,14 @@ candidate crown, only apply the new crown when **any** of the following
 holds:
 
 1. The stage is not an AI Battle stage (`!IsAiBattle(stage.StageMode)`), or
-2. The course difficulty is Ura (`stage.Level == 5`), or
+2. The player picked the Ura chart (`stage.Level == 5`) — Ura has no
+   intermediate AI difficulties so any AI Battle Ura play counts, or
 3. `GreenAiBattleLevels.IsCertifiedLevel(stage.GhostStageData?.SdCertifiedLevelId ?? 0)`.
 
-The score / rate update logic is unchanged for AI Battle plays.
+The score / rate update logic is unchanged for AI Battle plays — playing
+a Normal chart in AI Battle always updates the Normal best score, even
+when the AI difficulty was intermediate. `Level` is the chart the player
+picked; `SdCertifiedLevelId` is the AI's level, chosen independently.
 
 ## GhostPlayedSongFlag
 
@@ -209,19 +220,20 @@ and best-score upsert runs.
    but with `StageMode = 4`. Assert the `SongBestDatumGreen` row that was
    upserted has `IsShin = true`.
 
-3. **`UpdatePlayResult_Green_AiBattleIntermediateLevelDoesNotUpdateCrown`**
+3. **`UpdatePlayResult_Green_AiBattleIntermediateAiDifficultyDoesNotUpdateCrown`**
    — Pre-seed a `SongBestDatumGreen` row with `BestCrown = CrownType.None`.
-   Submit an AI Battle play with `SdCertifiedLevelId = 11` and
+   Submit an AI Battle play on a Normal chart (`Level = 2`) with
+   `SdCertifiedLevelId = 11` (intermediate AI difficulty) and
    `PlayResult = 2 (Gold)`. Assert the persisted `BestCrown` is still
    `None`; assert score updated.
 
-4. **`UpdatePlayResult_Green_AiBattleCertifiedLevelUpdatesCrown`** — Same
-   as 3 but with `SdCertifiedLevelId = 13`. Assert `BestCrown` is now
-   `Gold`.
+4. **`UpdatePlayResult_Green_AiBattleCertifiedAiDifficultyUpdatesCrown`** —
+   Same as 3 but with `SdCertifiedLevelId = 13` (正規 AI difficulty).
+   Assert `BestCrown` is now `Gold`.
 
 5. **`UpdatePlayResult_Green_AiBattleUraAlwaysUpdatesCrown`** — Submit an
-   AI Battle play with `Level = 5 (UraOni)` and an arbitrary
-   `SdCertifiedLevelId` (e.g., 7). Assert `BestCrown` updates.
+   AI Battle play with `Level = 5 (UraOni)` (Ura chart) and an arbitrary
+   non-正規 `SdCertifiedLevelId` (e.g., 7). Assert `BestCrown` updates.
 
 6. **`UpdatePlayResult_Green_RejectsUnknownStageMode`** — Submit a stage
    with `StageMode = 2`. Assert result is `0` (rejected) and nothing is
@@ -243,15 +255,6 @@ returns `true` for `{1, 5, 9, 13}` and `false` for `{0, 2, 3, 4, 6, 7, 8,
 
 ## Known caveats (documented, not addressed in this iteration)
 
-- **AI Battle `Level` semantics are unresolved.** The two captures show
-  `Level = 2, SdCertifiedLevelId = 11` (stage 0 of credit 1) and
-  `Level = 1, SdCertifiedLevelId = 2` (credit 2). The first does not fit
-  any clean partition of the 13-step sub-level space into the 5 course
-  difficulties. We continue to use the existing
-  `GreenPlayResultMapping.MapDifficulty(stage.Level)` for the
-  `SongBestDatumGreen.Difficulty` key. If a player's Normal best ends up
-  reflecting a Hard-tier AI Battle play, that is acceptable for a private
-  server; flag for follow-up if the user reports best-score corruption.
 - **No server-side rank-up validation.** The client decides
   `RankId / WinPoint`. A modded client could claim arbitrary rank. Not
   in scope.
@@ -260,6 +263,9 @@ returns `true` for `{1, 5, 9, 13}` and `false` for `{0, 2, 3, 4, 6, 7, 8,
   client-supplied cumulative value (existing behavior), so total
   winnings stay consistent. We do not detect intentional cumulative
   inflation.
+- **No `SdCertifiedLevelId` range check.** Values outside `1..13`
+  silently fail `IsCertifiedLevel` and fall through to "do not update
+  crown", which is the safe direction. We do not reject the play.
 
 ## Acceptance
 
