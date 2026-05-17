@@ -1,12 +1,17 @@
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using TaikoLocalServer.Application.Abstractions;
 using TaikoLocalServer.Application.Catalog.Green;
+using TaikoLocalServer.Application.Settings;
 using TaikoLocalServer.Domain.Enums;
 using TaikoLocalServer.Infrastructure.GameDataCatalog;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Green.Extractor;
 
 namespace TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
 
-public sealed class GreenEraGameDataCatalog(ILogger<GreenEraGameDataCatalog> logger) : IGreenCatalog
+public sealed class GreenEraGameDataCatalog(
+    ILogger<GreenEraGameDataCatalog> logger,
+    IOptions<ServerSettings>? serverSettings = null) : IGreenCatalog
 {
     private uint songHashVersion;
     private IReadOnlyList<GreenMusicInfoEntry> musicInfoFileOrder = [];
@@ -20,6 +25,9 @@ public sealed class GreenEraGameDataCatalog(ILogger<GreenEraGameDataCatalog> log
     private IReadOnlyDictionary<uint, GreenGachaEntry> gachas = new Dictionary<uint, GreenGachaEntry>();
     private IReadOnlyDictionary<uint, GreenTournamentEntry> tournaments = new Dictionary<uint, GreenTournamentEntry>();
     private GreenRecommendEntry recommend = GreenRecommendEntry.Empty;
+    private IReadOnlyList<Costume> costumeList = [];
+    private IReadOnlyDictionary<uint, Title> titleDictionary = new Dictionary<uint, Title>();
+    private IReadOnlyDictionary<uint, Neiro> neiroDictionary = new Dictionary<uint, Neiro>();
 
     public GameEra Era => GameEra.Green;
 
@@ -47,9 +55,17 @@ public sealed class GreenEraGameDataCatalog(ILogger<GreenEraGameDataCatalog> log
 
     public GreenRecommendEntry Recommend => recommend;
 
+    public IReadOnlyList<Costume> GetCostumeList() => costumeList;
+
+    public IReadOnlyDictionary<uint, Title> GetTitleDictionary() => titleDictionary;
+
+    public IReadOnlyDictionary<uint, Neiro> GetNeiroDictionary() => neiroDictionary;
+
     public async Task InitializeAsync(CancellationToken cancellationToken)
     {
         GreenRequiredDataFiles.ThrowIfMissing();
+
+        await BootstrapCustomizationCatalogAsync(cancellationToken);
 
         var musicInfo = await new GreenMusicInfoLoader().LoadAsync(cancellationToken);
         var stars = await new GreenTuningLoader().LoadAsync(cancellationToken);
@@ -101,12 +117,79 @@ public sealed class GreenEraGameDataCatalog(ILogger<GreenEraGameDataCatalog> log
         recommend = await new GreenRecommendLoader().LoadAsync(
             new HashSet<uint>(musicInfos.Keys),
             cancellationToken);
+        costumeList = await new GreenCostumeLoader().LoadAsync(cancellationToken);
+        titleDictionary = await new GreenTitleLoader().LoadAsync(cancellationToken);
+        neiroDictionary = await new GreenNeiroLoader().LoadAsync(cancellationToken);
 
         logger.LogInformation(
-            "Loaded Green catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {TaikojukuCount} taikojuku packs, {StarCount} tuning star rows",
+            "Loaded Green catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {TaikojukuCount} taikojuku packs, {StarCount} tuning star rows, {CostumeCount} costumes, {TitleCount} titles, {NeiroCount} tones",
             musicInfoFileOrder.Count,
             songHashVersion,
             taikojukuFileOrder.Count,
-            stars.Count);
+            stars.Count,
+            costumeList.Count,
+            titleDictionary.Count,
+            neiroDictionary.Count);
+    }
+
+    private async Task BootstrapCustomizationCatalogAsync(CancellationToken cancellationToken)
+    {
+        var outputDirectory = PathHelper.GetDataPath(GameEra.Green);
+        var required = new[]
+        {
+            Path.Combine(outputDirectory, GreenCatalogExtractor.CostumeFileName),
+            Path.Combine(outputDirectory, GreenCatalogExtractor.TitleFileName),
+            Path.Combine(outputDirectory, GreenCatalogExtractor.NeiroFileName)
+        };
+
+        if (required.All(File.Exists))
+        {
+            return;
+        }
+
+        var greenSettings = GetGreenSettings();
+        if (!greenSettings.AutoExtractCatalog)
+        {
+            logger.LogInformation("Green customization catalog auto-extract is disabled; continuing with empty or partial customization catalogs.");
+            return;
+        }
+
+        var gameDataPath = ResolveConfiguredPath(greenSettings.GameDataPath);
+        if (!Directory.Exists(gameDataPath))
+        {
+            logger.LogWarning("Green customization catalog JSON is missing and game data path does not exist: {Path}", gameDataPath);
+            return;
+        }
+
+        try
+        {
+            logger.LogInformation("Green customization catalog JSON is missing; running first-run Phase 1 extraction from {Path}", gameDataPath);
+            await GreenCatalogExtractor.ExtractAsync(
+                new GreenExtractorOptions(gameDataPath, outputDirectory),
+                cancellationToken);
+        }
+        catch (Exception ex) when (ex is IOException or InvalidDataException or UnauthorizedAccessException)
+        {
+            logger.LogWarning(ex, "Green customization catalog extraction failed; continuing with empty or partial customization catalogs.");
+        }
+    }
+
+    private EraSettings GetGreenSettings()
+    {
+        return serverSettings?.Value.Eras.TryGetValue(nameof(GameEra.Green), out var settings) == true
+            ? settings
+            : new EraSettings();
+    }
+
+    private static string ResolveConfiguredPath(string configuredPath)
+    {
+        if (Path.IsPathRooted(configuredPath))
+        {
+            return configuredPath;
+        }
+
+        var root = Directory.GetParent(PathHelper.GetRootPath())?.FullName
+                   ?? throw new InvalidOperationException("Could not resolve server root.");
+        return Path.GetFullPath(Path.Combine(root, configuredPath));
     }
 }

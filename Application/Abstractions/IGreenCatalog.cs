@@ -25,4 +25,10 @@ public interface IGreenCatalog : IEraGameDataCatalog
     IReadOnlyDictionary<uint, GreenTournamentEntry> Tournaments { get; }
 
     GreenRecommendEntry Recommend { get; }
+
+    IReadOnlyList<Costume> GetCostumeList();
+
+    IReadOnlyDictionary<uint, Title> GetTitleDictionary();
+
+    IReadOnlyDictionary<uint, Neiro> GetNeiroDictionary();
 }

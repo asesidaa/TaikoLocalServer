@@ -9,7 +9,9 @@
         "Enabled": true
       },
       "Green": {
-        "Enabled": true
+        "Enabled": true,
+        "AutoExtractCatalog": true,
+        "GameDataPath": "wwwroot/data/green/data"
       }
     }
   }

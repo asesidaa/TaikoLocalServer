@@ -59,6 +59,8 @@ public sealed class NijiiroEraGameDataCatalog(IOptions<DataSettings> dataSetting
 
     private readonly Dictionary<uint, Title> titleDictionary = new();
 
+    private readonly Dictionary<uint, Neiro> neiroDictionary = new();
+
     private Dictionary<string, List<uint>> lockedCostumeDataDictionary = new();
 
     private Dictionary<string, List<uint>> lockedTitleDataDictionary = new();
@@ -155,6 +157,11 @@ public sealed class NijiiroEraGameDataCatalog(IOptions<DataSettings> dataSetting
     public Dictionary<uint, Title> GetTitleDictionary()
     {
         return titleDictionary;
+    }
+
+    public Dictionary<uint, Neiro> GetNeiroDictionary()
+    {
+        return neiroDictionary;
     }
 
     public Dictionary<string, List<uint>> GetLockedCostumeDataDictionary()
@@ -573,6 +580,14 @@ public sealed class NijiiroEraGameDataCatalog(IOptions<DataSettings> dataSetting
     {
         neiroData.ThrowIfNull("Shouldn't happen!");
         toneFlagArraySize = (int)neiroData.NeiroEntries.Max(entry => entry.UniqueId) + 1;
+
+        foreach (var entry in neiroData.NeiroEntries.OrderBy(entry => entry.UniqueId))
+        {
+            neiroDictionary[entry.UniqueId] = new Neiro
+            {
+                NeiroId = entry.UniqueId
+            };
+        }
     }
 
     private void InitializeQrCodeData(List<QRCodeData>? qrCodeData)

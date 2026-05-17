@@ -36,6 +36,8 @@ public interface INijiiroCatalog : IEraGameDataCatalog
 
     Dictionary<uint, Title> GetTitleDictionary();
 
+    Dictionary<uint, Neiro> GetNeiroDictionary();
+
     Dictionary<string, List<uint>> GetLockedCostumeDataDictionary();
 
     Dictionary<string, List<uint>> GetLockedTitleDataDictionary();

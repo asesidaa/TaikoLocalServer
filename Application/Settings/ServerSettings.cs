@@ -12,4 +12,8 @@ public sealed class ServerSettings
 public sealed class EraSettings
 {
     public bool Enabled { get; set; }
+
+    public bool AutoExtractCatalog { get; set; } = true;
+
+    public string GameDataPath { get; set; } = "wwwroot/data/green/data";
 }
