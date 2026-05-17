@@ -3,7 +3,6 @@
 @attribute [Authorize]
 @inject HttpClient Client
 @inject IGameDataService GameDataService
-@inject IDialogService DialogService
 @inject AuthService AuthService
 @inject IJSRuntime JsRuntime
 @inject NavigationManager NavigationManager
@@ -27,10 +26,6 @@
         <MudGrid Class="my-4 pb-10">
             <MudItem xs="12" md="8">
                 <MudPaper Elevation="0" Outlined="true">
-                    @if (IsGreen)
-                    {
-                        @* TODO Green WebUI: add Green costume/settings controls after Green settings persistence is implemented. *@
-                    }
                     <MudTabs MinimumTabWidth="100px" Rounded="true" Border="true" TabPanelsClass="pa-8">
                         <MudTabPanel Text="@Localizer["Profile"]">
                             <MudStack Spacing="4">
@@ -48,33 +43,6 @@
                                             }
                                         </MudSelect>
                                     </MudItem>
-                                </MudGrid>
-
-                                <MudGrid>
-                                    <MudItem xs="12" md="8">
-                                        @if (AuthService.AllowFreeProfileEditing)
-                                        {
-                                            <MudTextField TextChanged="UpdateTitle" @bind-Value="@response.Title" Label=@Localizer["Title"] />
-                                        }
-                                        else
-                                        {
-                                            <MudTextField ReadOnly="true" @bind-Value="@response.Title" Label=@Localizer["Title"] />
-                                        }
-                                        <MudButton Color="Color.Primary" Class="mt-1" Size="Size.Small" OnClick="@(_ => OpenChooseTitleDialog())">
-                                            @Localizer["Select a Title"]
-                                        </MudButton>
-                                    </MudItem>
-                                    @if (AuthService.AllowFreeProfileEditing)
-                                    {
-                                        <MudItem xs="12" md="4">
-                                            <MudSelect @bind-Value="@response.TitlePlateId" Label=@Localizer["Title Plate"] AnchorOrigin="Origin.BottomCenter">
-                                                @foreach (var index in titlePlateIdList)
-                                                {
-                                                    <MudSelectItem Value="@index">@TitlePlateStrings[index]</MudSelectItem>
-                                                }
-                                            </MudSelect>
-                                        </MudItem>
-                                    }
                                 </MudGrid>
 
                                 <MudSelect T="Difficulty" ValueChanged=@UpdateScoreboard Value=@response.AchievementDisplayDifficulty Label=@Localizer["Achievement Panel Difficulty"] AnchorOrigin="Origin.BottomCenter">
@@ -123,91 +91,64 @@
                             </MudStack>
                         </MudTabPanel>
 
-                        @if (!IsGreen)
+                        @if (costumeList.Count > 0 || titleDictionary.Count > 0 || neiroDictionary.Count > 0)
                         {
-                        <MudTabPanel Text="@Localizer["Costume"]">
-                            <MudStack Spacing="4">
-                                <MudText Typo="Typo.h6">@Localizer["Costume Options"]</MudText>
-                                <MudGrid>
-                                    <MudItem xs="12">
-                                        <MudStack Spacing="4" Class="mb-8">
-                                            <MudSelect @bind-Value="@response.Head" Label=@Localizer["Head"] AnchorOrigin="Origin.BottomCenter">
-                                                @foreach (var index in headUniqueIdList)
-                                                {
-                                                var costumeTitle = GameDataService.GetHeadTitle(costumeList, index, CultureInfo.CurrentCulture.ToString());
-                                                    <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
-                                                }
-                                            </MudSelect>
-                                            <MudSelect @bind-Value="@response.Body" Label=@Localizer["Body"] AnchorOrigin="Origin.BottomCenter">
-                                                @foreach (var index in bodyUniqueIdList)
-                                                {
-                                                    var costumeTitle = GameDataService.GetBodyTitle(costumeList, index, CultureInfo.CurrentCulture.ToString());
-                                                    <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
-                                                }
-                                            </MudSelect>
-                                            <MudSelect @bind-Value="@response.Face" Label=@Localizer["Face"] AnchorOrigin="Origin.BottomCenter">
-                                                @foreach (var index in faceUniqueIdList)
-                                                {
-                                                    var costumeTitle = GameDataService.GetFaceTitle(costumeList, index, CultureInfo.CurrentCulture.ToString());
-                                                    <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
-                                                }
-                                            </MudSelect>
-                                            <MudSelect @bind-Value="@response.Kigurumi" Label=@Localizer["Kigurumi"] AnchorOrigin="Origin.BottomCenter">
-                                                @foreach (var index in kigurumiUniqueIdList)
-                                                {
-                                                    var costumeTitle = GameDataService.GetKigurumiTitle(costumeList, index, CultureInfo.CurrentCulture.ToString());
-                                                    <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
-                                                }
-                                            </MudSelect>
-                                            <MudSelect @bind-Value="@response.Puchi" Label=@Localizer["Puchi"] AnchorOrigin="Origin.BottomCenter">
-                                                @foreach (var index in puchiUniqueIdList)
-                                                {
-                                                    var costumeTitle = GameDataService.GetPuchiTitle(costumeList, index, CultureInfo.CurrentCulture.ToString());
-                                                    <MudSelectItem Value="@index">@index - @costumeTitle</MudSelectItem>
-                                                }
-                                            </MudSelect>
-                                        </MudStack>
+                            <MudTabPanel Text="@Localizer["Costume"]">
+                                <MudStack Spacing="4">
+                                    <MudText Typo="Typo.h6">@Localizer["Costume Options"]</MudText>
 
-                                        <MudStack Row="true">
-                                            <MudSelect @bind-Value="@response.BodyColor" Label=@Localizer["Body Color"] AnchorOrigin="Origin.BottomCenter">
-                                                @for (uint i = 0; i < Constants.COSTUME_COLOR_MAX; i++)
-                                                {
-                                                    var index = i;
-                                                    <MudSelectItem Value="@index">
-                                                        <div class="color-box" style=@($"background: {CostumeColors[index]}")></div>
-                                                        @index
-                                                    </MudSelectItem>
-                                                }
-                                            </MudSelect>
-                                            <MudSelect @bind-Value="@response.FaceColor" Label=@Localizer["Face Color"] AnchorOrigin="Origin.BottomCenter">
-                                                @for (uint i = 0; i < Constants.COSTUME_COLOR_MAX; i++)
-                                                {
-                                                    var index = i;
-                                                    <MudSelectItem Value="@index">
-                                                        <div class="color-box" style=@($"background: {CostumeColors[index]}")></div>
-                                                        @index
-                                                    </MudSelectItem>
-                                                }
-                                            </MudSelect>
-                                            <MudSelect @bind-Value="@response.LimbColor" Label=@Localizer["Limb Color"] AnchorOrigin="Origin.BottomCenter">
-                                                @for (uint i = 0; i < Constants.COSTUME_COLOR_MAX; i++)
-                                                {
-                                                    var index = i;
-                                                    <MudSelectItem Value="@index">
-                                                        <div class="color-box" style=@($"background: {CostumeColors[index]}")></div>
-                                                        @index
-                                                    </MudSelectItem>
-                                                }
-                                            </MudSelect>
-                                        </MudStack>
-                                    </MudItem>
-                                </MudGrid>
-                            </MudStack>
-                        </MudTabPanel>
-                        }
-                        else
-                        {
-                            @* TODO Green WebUI: add Green costume/settings controls after Green settings persistence is implemented. *@
+                                    <CostumePicker Era="@CurrentEra"
+                                                   Label="@Localizer["Kigurumi"]"
+                                                   Catalog="@kigurumiCatalog"
+                                                   Value="@kigurumiValue"
+                                                   ValueChanged="@(value => { kigurumiValue = value; ApplyCustomizationValues(); })"
+                                                   ReadOnly="@(!AuthService.AllowFreeProfileEditing)" />
+
+                                    <CostumePicker Era="@CurrentEra"
+                                                   Label="@Localizer["Head"]"
+                                                   Catalog="@headCatalog"
+                                                   Value="@headValue"
+                                                   ValueChanged="@(value => { headValue = value; ApplyCustomizationValues(); })"
+                                                   ReadOnly="@(!AuthService.AllowFreeProfileEditing)" />
+
+                                    <CostumePicker Era="@CurrentEra"
+                                                   Label="@Localizer["Body"]"
+                                                   Catalog="@bodyCatalog"
+                                                   Value="@bodyValue"
+                                                   ValueChanged="@(value => { bodyValue = value; ApplyCustomizationValues(); })"
+                                                   ReadOnly="@(!AuthService.AllowFreeProfileEditing)" />
+
+                                    <CostumePicker Era="@CurrentEra"
+                                                   Label="@Localizer["Face"]"
+                                                   Catalog="@faceCatalog"
+                                                   Value="@faceValue"
+                                                   ValueChanged="@(value => { faceValue = value; ApplyCustomizationValues(); })"
+                                                   ReadOnly="@(!AuthService.AllowFreeProfileEditing)" />
+
+                                    <CostumePicker Era="@CurrentEra"
+                                                   Label="@Localizer["Puchi"]"
+                                                   Catalog="@puchiCatalog"
+                                                   Value="@puchiValue"
+                                                   ValueChanged="@(value => { puchiValue = value; ApplyCustomizationValues(); })"
+                                                   ReadOnly="@(!AuthService.AllowFreeProfileEditing)" />
+
+                                    <TitlePicker Era="@CurrentEra"
+                                                 Catalog="@titleDictionary"
+                                                 Value="@titleValue"
+                                                 ValueChanged="@(value => { titleValue = value; ApplyCustomizationValues(); })"
+                                                 ReadOnly="@(!AuthService.AllowFreeProfileEditing)" />
+
+                                    <NeiroPicker Era="@CurrentEra"
+                                                 Catalog="@neiroDictionary"
+                                                 Value="@neiroValue"
+                                                 ValueChanged="@(value => { neiroValue = value; ApplyCustomizationValues(); })"
+                                                 ReadOnly="@(!AuthService.AllowFreeProfileEditing)" />
+
+                                    <ColorPicker Colors="@CostumeColors"
+                                                 Value="@colorValue"
+                                                 ValueChanged="@(value => { colorValue = value; ApplyCustomizationValues(); })" />
+                                </MudStack>
+                            </MudTabPanel>
                         }
 
                         @if (!IsGreen)
@@ -241,14 +182,6 @@
                                                 }
                                             </MudSelect>
 
-                                            <MudSelect @bind-Value="@response.ToneId" Label=@Localizer["Tone"] AnchorOrigin="Origin.BottomCenter">
-                                                @for (uint i = 0; i < ToneStrings.Length; i++)
-                                                {
-                                                    var index = i;
-                                                    <MudSelectItem Value="@i">@Localizer[ToneStrings[index]]</MudSelectItem>
-                                                }
-                                            </MudSelect>
-
                                             <MudSlider Class="mb-8" @bind-Value="@response.NotesPosition" Size="Size.Medium" Min="-5" Max="5" Step="1" TickMarks="true" TickMarkLabels="@NotePositionStrings">
                                                 <MudText Typo="Typo.caption">@Localizer["Notes Position"]</MudText>
                                             </MudSlider>
@@ -257,10 +190,6 @@
                                 </MudGrid>
                             </MudStack>
                         </MudTabPanel>
-                        }
-                        else
-                        {
-                            @* TODO Green WebUI: add Green costume/settings controls after Green settings persistence is implemented. *@
                         }
                     </MudTabs>
                 </MudPaper>
@@ -316,7 +245,7 @@
                                         </MudItem>
                                         <MudImage onload="nameplateLoaded()" id="nameplate" Fluid="true" Style="position: relative; bottom: 0; left: 0;" Src="images/Nameplates/nameplate.webp" />
                                         @* Check if image does not exist, use nameplate_Wood.webp *@
-                                        <MudImage Fluid="true" Style="position:absolute; bottom: 6px; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Nameplates/nameplate_Wood.webp'" Src=@($"images/Nameplates/nameplate_{TitlePlateStrings[response.TitlePlateId].Replace(' ', '_')}.webp") />
+                                        <MudImage Fluid="true" Style="position:absolute; bottom: 6px; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Nameplates/nameplate_Wood.webp'" Src=@($"images/Nameplates/nameplate_{GetTitlePlateName(response.TitlePlateId).Replace(' ', '_')}.webp") />
                                         @if (response.IsDisplayDanOnNamePlate)
                                         {
                                             <MudImage Fluid="true" Class="profile-image" Src="images/Nameplates/nameplate_dan.webp" />
@@ -388,10 +317,6 @@
                                         <MudImage Fluid="true" style="position: relative; top: 0;" Src=@($"images/rank_panel_{DifficultySettingCourseStrings[response.AchievementDisplayDifficulty != Difficulty.None ? (int)response.AchievementDisplayDifficulty + 1 : (int)highestDifficulty + 1].Replace(' ', '_')}.webp") />
                                     </MudItem>
                                 </MudTabPanel>
-                            }
-                            else if (IsGreen)
-                            {
-                                @* TODO Green WebUI: enable this control when Green exposes the underlying feature. *@
                             }
                         </MudTabs>
 

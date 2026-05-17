@@ -1,0 +1,81 @@
+@using System.Linq
+
+@if (Catalog.Count > 0)
+{
+    <MudStack Spacing="3">
+        <MudTextField T="string"
+                      Value="Value.Title"
+                      ValueChanged="SetTitle"
+                      Label="@Localizer["Title"]"
+                      ReadOnly="@ReadOnly" />
+
+        <MudSelect T="uint"
+                   Value="Value.TitlePlateId"
+                   ValueChanged="SetPlate"
+                   Label="@Localizer["Title Plate"]"
+                   Disabled="@ReadOnly"
+                   AnchorOrigin="Origin.BottomCenter">
+            @foreach (var plate in PlateIds)
+            {
+                <MudSelectItem Value="@plate">@plate</MudSelectItem>
+            }
+        </MudSelect>
+
+        @if (!ReadOnly)
+        {
+            <MudExpansionPanels Elevation="0" Outlined="true">
+                <MudExpansionPanel Text="@Localizer["Player Titles"]">
+                    <MudStack Spacing="1">
+                        @foreach (var title in OrderedTitles)
+                        {
+                            var isUnlocked = Value.UnlockedTitleIds.Contains(title.TitleId);
+                            <MudCheckBox T="bool"
+                                         Value="@isUnlocked"
+                                         ValueChanged="@(value => ToggleUnlocked(title.TitleId, value))"
+                                         Label="@DisplayName(title)" />
+                        }
+                    </MudStack>
+                </MudExpansionPanel>
+            </MudExpansionPanels>
+        }
+    </MudStack>
+}
+
+@code {
+    [Parameter] public string Era { get; set; } = string.Empty;
+    [Parameter] public IReadOnlyDictionary<uint, Title> Catalog { get; set; } = new Dictionary<uint, Title>();
+    [Parameter] public TitlePickerValue Value { get; set; } = new(string.Empty, 0, []);
+    [Parameter] public EventCallback<TitlePickerValue> ValueChanged { get; set; }
+    [Parameter] public bool ReadOnly { get; set; }
+
+    private IReadOnlyList<Title> OrderedTitles => Catalog.Values.OrderBy(title => title.TitleId).ToArray();
+
+    private IReadOnlyList<uint> PlateIds => Catalog.Values
+        .Select(title => title.TitleRarity)
+        .Append(Value.TitlePlateId)
+        .Distinct()
+        .OrderBy(id => id)
+        .ToArray();
+
+    private Task SetTitle(string title)
+        => ValueChanged.InvokeAsync(Value with { Title = title });
+
+    private Task SetPlate(uint plate)
+        => ValueChanged.InvokeAsync(Value with { TitlePlateId = plate });
+
+    private Task ToggleUnlocked(uint id, bool enabled)
+    {
+        var ids = enabled
+            ? Value.UnlockedTitleIds.Append(id)
+            : Value.UnlockedTitleIds.Where(value => value != id);
+        return ValueChanged.InvokeAsync(Value with { UnlockedTitleIds = ids.Distinct().OrderBy(value => value).ToArray() });
+    }
+
+    private static string DisplayName(Title title)
+    {
+        var name = string.IsNullOrWhiteSpace(title.TitleName)
+            ? $"#{title.TitleId:D3}"
+            : title.TitleName;
+        return $"{title.TitleId} - {name}";
+    }
+}

@@ -11,8 +11,14 @@ public interface IGameDataService
     public Task<Dictionary<uint, MusicDetail>> GetMusicDetailDictionary(string? era);
     
     public Task<Dictionary<uint, Title>> GetTitleDictionary();
+
+    public Task<IReadOnlyDictionary<uint, Title>> GetTitleDictionary(string? era);
     
     public Task<List<Costume>> GetCostumeList();
+
+    public Task<IReadOnlyList<Costume>> GetCostumeList(string? era);
+
+    public Task<IReadOnlyDictionary<uint, Neiro>> GetNeiroDictionary(string? era);
     
     public Task<Dictionary<string, List<uint>>> GetLockedCostumeDataDictionary();
     

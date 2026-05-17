@@ -8,11 +8,12 @@ public class GameDataService : IGameDataService
     private readonly HttpClient client;
     private readonly Dictionary<string, ImmutableDictionary<uint, DanData>> danMaps = new();
     private readonly Dictionary<string, Dictionary<uint, MusicDetail>> musicDetailDictionaries = new();
-    private List<Costume>? costumeList;
-    private Dictionary<uint,Title>? titleDictionary = new();
+    private readonly Dictionary<string, IReadOnlyList<Costume>> costumeLists = new();
+    private readonly Dictionary<string, IReadOnlyDictionary<uint, Title>> titleDictionaries = new();
+    private readonly Dictionary<string, IReadOnlyDictionary<uint, Neiro>> neiroDictionaries = new();
     
-    private bool costumesInitialized;
-    private bool titlesInitialized;
+    private bool lockedCostumesInitialized;
+    private bool lockedTitlesInitialized;
     
     private Dictionary<string, List<uint>>? lockedCostumeDataDictionary = new();
     private Dictionary<string, List<uint>>? lockedTitleDataDictionary = new();
@@ -48,31 +49,56 @@ public class GameDataService : IGameDataService
         return value;
     }
     
-    public async Task<List<Costume>> GetCostumeList()
+    public async Task<IReadOnlyList<Costume>> GetCostumeList(string? era)
     {
-        if (!costumesInitialized)
+        var normalized = WebUiEra.Normalize(era);
+        if (!costumeLists.TryGetValue(normalized, out var value))
         {
-            await InitializeCostumesAsync();
+            value = await client.GetFromJsonAsync<List<Costume>>(WebUiEra.Api(normalized, "customization/costumes"))
+                    ?? new List<Costume>();
+            costumeLists[normalized] = value;
         }
 
-        return costumeList ?? new List<Costume>();
+        return value;
+    }
+    
+    public async Task<List<Costume>> GetCostumeList()
+        => (await GetCostumeList(WebUiEra.Default)).ToList();
+    
+    public async Task<IReadOnlyDictionary<uint, Title>> GetTitleDictionary(string? era)
+    {
+        var normalized = WebUiEra.Normalize(era);
+        if (!titleDictionaries.TryGetValue(normalized, out var value))
+        {
+            value = await client.GetFromJsonAsync<Dictionary<uint, Title>>(WebUiEra.Api(normalized, "customization/titles"))
+                    ?? new Dictionary<uint, Title>();
+            titleDictionaries[normalized] = value;
+        }
+        
+        return value;
     }
     
     public async Task<Dictionary<uint, Title>> GetTitleDictionary()
+        => (await GetTitleDictionary(WebUiEra.Default)).ToDictionary(pair => pair.Key, pair => pair.Value);
+
+    public async Task<IReadOnlyDictionary<uint, Neiro>> GetNeiroDictionary(string? era)
     {
-        if (!titlesInitialized)
+        var normalized = WebUiEra.Normalize(era);
+        if (!neiroDictionaries.TryGetValue(normalized, out var value))
         {
-            await InitializeTitlesAsync();
+            value = await client.GetFromJsonAsync<Dictionary<uint, Neiro>>(WebUiEra.Api(normalized, "customization/neiros"))
+                    ?? new Dictionary<uint, Neiro>();
+            neiroDictionaries[normalized] = value;
         }
-        
-        return titleDictionary ?? new Dictionary<uint, Title>();
+
+        return value;
     }
     
     public async Task<Dictionary<string, List<uint>>> GetLockedCostumeDataDictionary()
     {
-        if (!costumesInitialized)
+        if (!lockedCostumesInitialized)
         {
-            await InitializeCostumesAsync();
+            await InitializeLockedCostumesAsync();
         }
         
         return lockedCostumeDataDictionary ?? new Dictionary<string, List<uint>>();
@@ -80,9 +106,9 @@ public class GameDataService : IGameDataService
     
     public async Task<Dictionary<string, List<uint>>> GetLockedTitleDataDictionary()
     {
-        if (!titlesInitialized)
+        if (!lockedTitlesInitialized)
         {
-            await InitializeTitlesAsync();
+            await InitializeLockedTitlesAsync();
         }
         
         return lockedTitleDataDictionary ?? new Dictionary<string, List<uint>>();
@@ -234,17 +260,17 @@ public class GameDataService : IGameDataService
         };
     }
 
-    private async Task InitializeCostumesAsync()
+    private async Task InitializeLockedCostumesAsync()
     {
-        costumeList = await client.GetFromJsonAsync<List<Costume>>("api/GameData/Costumes");
-        lockedCostumeDataDictionary = await client.GetFromJsonAsync<Dictionary<string, List<uint>>>("api/GameData/LockedCostumes");
-        costumesInitialized = true;
+        lockedCostumeDataDictionary = await client.GetFromJsonAsync<Dictionary<string, List<uint>>>("api/GameData/LockedCostumes")
+                                      ?? new Dictionary<string, List<uint>>();
+        lockedCostumesInitialized = true;
     }
     
-    private async Task InitializeTitlesAsync()
+    private async Task InitializeLockedTitlesAsync()
     {
-        titleDictionary = await client.GetFromJsonAsync<Dictionary<uint, Title>>("api/GameData/Titles");
-        lockedTitleDataDictionary = await client.GetFromJsonAsync<Dictionary<string, List<uint>>>("api/GameData/LockedTitles");
-        titlesInitialized = true;
+        lockedTitleDataDictionary = await client.GetFromJsonAsync<Dictionary<string, List<uint>>>("api/GameData/LockedTitles")
+                                    ?? new Dictionary<string, List<uint>>();
+        lockedTitlesInitialized = true;
     }
 }

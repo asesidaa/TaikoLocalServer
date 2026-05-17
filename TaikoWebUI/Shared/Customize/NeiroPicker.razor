@@ -1,0 +1,70 @@
+@using System.Linq
+
+@if (Catalog.Count > 0)
+{
+    <MudStack Spacing="2">
+        <MudSelect T="uint"
+                   Value="Value.CurrentId"
+                   ValueChanged="SetCurrent"
+                   Label="@Localizer["Tone"]"
+                   Disabled="@ReadOnly"
+                   AnchorOrigin="Origin.BottomCenter">
+            @foreach (var neiro in OrderedNeiros)
+            {
+                <MudSelectItem Value="@neiro.NeiroId">@DisplayName(neiro)</MudSelectItem>
+            }
+        </MudSelect>
+
+        @if (!ReadOnly)
+        {
+            <MudExpansionPanels Elevation="0" Outlined="true">
+                <MudExpansionPanel Text="@Localizer["Unlocked"]">
+                    <MudStack Spacing="1">
+                        @foreach (var neiro in OrderedNeiros)
+                        {
+                            var isUnlocked = Value.UnlockedIds.Contains(neiro.NeiroId);
+                            <MudCheckBox T="bool"
+                                         Value="@isUnlocked"
+                                         ValueChanged="@(enabled => ToggleUnlocked(neiro.NeiroId, enabled))"
+                                         Label="@DisplayName(neiro)" />
+                        }
+                    </MudStack>
+                </MudExpansionPanel>
+            </MudExpansionPanels>
+        }
+    </MudStack>
+}
+
+@code {
+    [Parameter] public string Era { get; set; } = string.Empty;
+    [Parameter] public IReadOnlyDictionary<uint, Neiro> Catalog { get; set; } = new Dictionary<uint, Neiro>();
+    [Parameter] public NeiroPickerValue Value { get; set; } = new(0, []);
+    [Parameter] public EventCallback<NeiroPickerValue> ValueChanged { get; set; }
+    [Parameter] public bool ReadOnly { get; set; }
+
+    private IReadOnlyList<Neiro> OrderedNeiros => Catalog.Values.OrderBy(neiro => neiro.NeiroId).ToArray();
+
+    private Task SetCurrent(uint id)
+    {
+        var unlocked = Value.UnlockedIds.Contains(id)
+            ? Value.UnlockedIds
+            : Value.UnlockedIds.Append(id).Distinct().OrderBy(value => value).ToArray();
+        return ValueChanged.InvokeAsync(Value with { CurrentId = id, UnlockedIds = unlocked });
+    }
+
+    private Task ToggleUnlocked(uint id, bool enabled)
+    {
+        var ids = enabled
+            ? Value.UnlockedIds.Append(id)
+            : Value.UnlockedIds.Where(value => value != id);
+        return ValueChanged.InvokeAsync(Value with { UnlockedIds = ids.Append(0u).Distinct().OrderBy(value => value).ToArray() });
+    }
+
+    private static string DisplayName(Neiro neiro)
+    {
+        var name = string.IsNullOrWhiteSpace(neiro.NeiroName)
+            ? $"#{neiro.NeiroId:D3}"
+            : neiro.NeiroName;
+        return $"{neiro.NeiroId} - {name}";
+    }
+}

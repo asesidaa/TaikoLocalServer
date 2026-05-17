@@ -1,6 +1,6 @@
 using TaikoWebUI.Utilities;
 using System.Collections.Generic;
-using TaikoWebUI.Pages.Dialogs;
+using TaikoWebUI.Shared.Customize;
 
 namespace TaikoWebUI.Pages;
 
@@ -134,15 +134,6 @@ public partial class Profile
 
     private static readonly string[] NotePositionStrings = { "-5", "-4", "-3", "-2", "-1", "0", "+1", "+2", "+3", "+4", "+5" };
 
-    private static readonly string[] ToneStrings =
-    {
-        "Taiko", "Matsuri", "Inuneko", "Wonderfultaiko",
-        "Drum", "Tambourine", "Wadadon", "Clapping",
-        "Conga", "8bittaiko", "Soya", "Mekadon",
-        "Funassyi", "Wrap", "Isogai", "Akemi",
-        "Synthdrum", "Shuriken", "Puchipuchi", "Electric Guitar"
-    };
-
     private static readonly string[] TitlePlateStrings =
     {
         "Wood", "Rainbow", "Gold", "Purple",
@@ -180,19 +171,25 @@ public partial class Profile
 
     private Difficulty highestDifficulty = Difficulty.Easy;
     
-    private List<uint> kigurumiUniqueIdList = new();
-    private List<uint> headUniqueIdList = new();
-    private List<uint> bodyUniqueIdList = new();
-    private List<uint> faceUniqueIdList = new();
-    private List<uint> puchiUniqueIdList = new();
-    private List<uint> titleUniqueIdList = new();
-    private List<uint> titlePlateIdList = new();
-    
     private List<Costume> costumeList = new();
     private Dictionary<uint, Title> titleDictionary = new();
+    private IReadOnlyDictionary<uint, Neiro> neiroDictionary = new Dictionary<uint, Neiro>();
     private Dictionary<string, List<uint>> lockedCostumeDataDictionary = new();
     private Dictionary<string, List<uint>> lockedTitleDataDictionary = new();
-    private List<Title> unlockedTitles = new();
+    private List<Costume> kigurumiCatalog = new();
+    private List<Costume> headCatalog = new();
+    private List<Costume> bodyCatalog = new();
+    private List<Costume> faceCatalog = new();
+    private List<Costume> puchiCatalog = new();
+
+    private CostumePickerValue kigurumiValue = new(0, []);
+    private CostumePickerValue headValue = new(0, []);
+    private CostumePickerValue bodyValue = new(0, []);
+    private CostumePickerValue faceValue = new(0, []);
+    private CostumePickerValue puchiValue = new(0, []);
+    private TitlePickerValue titleValue = new(string.Empty, 0, []);
+    private NeiroPickerValue neiroValue = new(0, []);
+    private ColorPickerValue colorValue = new(1, 0, 3);
 
     private int[] scoresArray = new int[10];
     
@@ -203,8 +200,7 @@ public partial class Profile
         await base.OnInitializedAsync();
 
         isSavingOptions = false;
-        // TODO Green WebUI: replace this compatibility settings call when Green settings editing is implemented.
-        response = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
+        response = await Client.GetFromJsonAsync<UserSetting>(WebUiEra.Api(CurrentEra, $"UserSettings/{Baid}"));
         response.ThrowIfNull();
         
         musicDetailDictionary = await GameDataService.GetMusicDetailDictionary(CurrentEra);
@@ -222,13 +218,12 @@ public partial class Profile
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Profile"], href: WebUiEra.UserRoute(Baid, CurrentEra, "Profile"), disabled: false));
         BreadcrumbsStateContainer.NotifyStateChanged();
 
-        costumeList = await GameDataService.GetCostumeList();
-        titleDictionary = await GameDataService.GetTitleDictionary();
-        lockedCostumeDataDictionary = await GameDataService.GetLockedCostumeDataDictionary();
-        lockedTitleDataDictionary = await GameDataService.GetLockedTitleDataDictionary();
-        
-        InitializeAvailableCostumes();
-        InitializeAvailableTitles();
+        costumeList = (await GameDataService.GetCostumeList(CurrentEra)).ToList();
+        titleDictionary = (await GameDataService.GetTitleDictionary(CurrentEra)).ToDictionary(pair => pair.Key, pair => pair.Value);
+        neiroDictionary = await GameDataService.GetNeiroDictionary(CurrentEra);
+        lockedCostumeDataDictionary = IsGreen ? new Dictionary<string, List<uint>>() : await GameDataService.GetLockedCostumeDataDictionary();
+        lockedTitleDataDictionary = IsGreen ? new Dictionary<string, List<uint>>() : await GameDataService.GetLockedTitleDataDictionary();
+        InitializeCustomizationValues();
 
         songresponse = await Client.GetFromJsonAsync<SongBestResponse>(WebUiEra.Api(CurrentEra, $"PlayData/{Baid}"));
         songresponse.ThrowIfNull();
@@ -259,120 +254,61 @@ public partial class Profile
         if (response != null) UpdateScores(response.AchievementDisplayDifficulty);
     }
 
-    private void InitializeAvailableCostumes()
+    private void InitializeCustomizationValues()
     {
-        var unlockedKigurumi = response != null ? response.UnlockedKigurumi : new List<uint>();
-        var unlockedHead = response != null ? response.UnlockedHead : new List<uint>();
-        var unlockedBody = response != null ? response.UnlockedBody : new List<uint>();
-        var unlockedFace = response != null ? response.UnlockedFace : new List<uint>();
-        var unlockedPuchi = response != null ? response.UnlockedPuchi : new List<uint>();
-        
-        if (AuthService.AllowFreeProfileEditing)
-        {
-            kigurumiUniqueIdList = costumeList.Where(costume => costume.CostumeType == "kigurumi").Select(costume => costume.CostumeId).ToList();
-            headUniqueIdList = costumeList.Where(costume => costume.CostumeType == "head").Select(costume => costume.CostumeId).ToList();
-            bodyUniqueIdList = costumeList.Where(costume => costume.CostumeType == "body").Select(costume => costume.CostumeId).ToList();
-            faceUniqueIdList = costumeList.Where(costume => costume.CostumeType == "face").Select(costume => costume.CostumeId).ToList();
-            puchiUniqueIdList = costumeList.Where(costume => costume.CostumeType == "puchi").Select(costume => costume.CostumeId).ToList();
-            
-            // Lock costumes in LockedCostumesList but not in UnlockedCostumesList
-            lockedCostumeDataDictionary.TryGetValue("kigurumi", out var lockedKigurumiUniqueIdList);
-            lockedCostumeDataDictionary.TryGetValue("head", out var lockedHeadUniqueIdList);
-            lockedCostumeDataDictionary.TryGetValue("body", out var lockedBodyUniqueIdList);
-            lockedCostumeDataDictionary.TryGetValue("face", out var lockedFaceUniqueIdList);
-            lockedCostumeDataDictionary.TryGetValue("puchi", out var lockedPuchiUniqueIdList);
-            
-            lockedKigurumiUniqueIdList ??= new List<uint>();
-            lockedHeadUniqueIdList ??= new List<uint>();
-            lockedBodyUniqueIdList ??= new List<uint>();
-            lockedFaceUniqueIdList ??= new List<uint>();
-            lockedPuchiUniqueIdList ??= new List<uint>();
-            
-            unlockedKigurumi.ForEach(id => kigurumiUniqueIdList.Add(id));
-            unlockedHead.ForEach(id => headUniqueIdList.Add(id));
-            unlockedBody.ForEach(id => bodyUniqueIdList.Add(id));
-            unlockedFace.ForEach(id => faceUniqueIdList.Add(id));
-            unlockedPuchi.ForEach(id => puchiUniqueIdList.Add(id));
-            
-            lockedKigurumiUniqueIdList.ForEach(id => kigurumiUniqueIdList.Remove(id));
-            lockedHeadUniqueIdList.ForEach(id => headUniqueIdList.Remove(id));
-            lockedBodyUniqueIdList.ForEach(id => bodyUniqueIdList.Remove(id));
-            lockedFaceUniqueIdList.ForEach(id => faceUniqueIdList.Remove(id));
-            lockedPuchiUniqueIdList.ForEach(id => puchiUniqueIdList.Remove(id));
-        }
-        else
-        {
-            // Only unlock costumes that are in both UnlockedCostumesList and CostumeList
-            kigurumiUniqueIdList = costumeList.Where(costume => costume.CostumeType == "kigurumi").Select(costume => costume.CostumeId).Intersect(unlockedKigurumi).ToList();
-            headUniqueIdList = costumeList.Where(costume => costume.CostumeType == "head").Select(costume => costume.CostumeId).Intersect(unlockedHead).ToList();
-            bodyUniqueIdList = costumeList.Where(costume => costume.CostumeType == "body").Select(costume => costume.CostumeId).Intersect(unlockedBody).ToList();
-            faceUniqueIdList = costumeList.Where(costume => costume.CostumeType == "face").Select(costume => costume.CostumeId).Intersect(unlockedFace).ToList();
-            puchiUniqueIdList = costumeList.Where(costume => costume.CostumeType == "puchi").Select(costume => costume.CostumeId).Intersect(unlockedPuchi).ToList();
-        }
-        
-        // Take unique values and sort
-        kigurumiUniqueIdList = kigurumiUniqueIdList.Distinct().OrderBy(id => id).ToList();
-        headUniqueIdList = headUniqueIdList.Distinct().OrderBy(id => id).ToList();
-        bodyUniqueIdList = bodyUniqueIdList.Distinct().OrderBy(id => id).ToList();
-        faceUniqueIdList = faceUniqueIdList.Distinct().OrderBy(id => id).ToList();
-        puchiUniqueIdList = puchiUniqueIdList.Distinct().OrderBy(id => id).ToList();
+        response.ThrowIfNull();
+        kigurumiCatalog = BuildCostumeCatalog("kigurumi");
+        headCatalog = BuildCostumeCatalog("head");
+        bodyCatalog = BuildCostumeCatalog("body");
+        faceCatalog = BuildCostumeCatalog("face");
+        puchiCatalog = BuildCostumeCatalog("puchi");
+        kigurumiValue = new CostumePickerValue(response.Kigurumi, response.UnlockedKigurumi);
+        headValue = new CostumePickerValue(response.Head, response.UnlockedHead);
+        bodyValue = new CostumePickerValue(response.Body, response.UnlockedBody);
+        faceValue = new CostumePickerValue(response.Face, response.UnlockedFace);
+        puchiValue = new CostumePickerValue(response.Puchi, response.UnlockedPuchi);
+        titleValue = new TitlePickerValue(response.Title, response.TitlePlateId, response.UnlockedTitle);
+        neiroValue = new NeiroPickerValue(response.ToneId, response.UnlockedTone);
+        colorValue = new ColorPickerValue(response.BodyColor, response.FaceColor, response.LimbColor);
     }
-    
-    private void InitializeAvailableTitlePlates()
+
+    private List<Costume> BuildCostumeCatalog(string costumeType)
     {
-        titlePlateIdList = titleDictionary.Values.Select(title => title.TitleRarity).ToList();
-        
-        lockedTitleDataDictionary.TryGetValue("titlePlate", out var lockedTitlePlateIdList);
-        lockedTitlePlateIdList ??= new List<uint>();
-        
-        // Cut off ids longer than TitlePlateStrings
-        titlePlateIdList = titlePlateIdList.Where(id => id < TitlePlateStrings.Length).Except(lockedTitlePlateIdList).ToList();
-        
-        // Take unique values and sort
-        titlePlateIdList = titlePlateIdList.Distinct().OrderBy(id => id).ToList();
+        return costumeList
+            .Where(costume => costume.CostumeType == costumeType || costume.CostumeType == "unknown")
+            .OrderBy(costume => costume.CostumeType == "unknown" ? 1 : 0)
+            .ThenBy(costume => costume.CostumeId)
+            .ToList();
     }
-    
-    private void InitializeAvailableTitles()
+
+    private void ApplyCustomizationValues()
     {
-        InitializeAvailableTitlePlates();
-        
-        var unlockedTitle = response != null ? response.UnlockedTitle : new List<uint>();
-        
-        if (AuthService.AllowFreeProfileEditing)
-        {
-            titleUniqueIdList = titleDictionary.Values.Select(title => title.TitleId).ToList();
-            
-            // Lock titles in LockedTitlesList but not in UnlockedTitle
-            lockedTitleDataDictionary.TryGetValue("title", out var lockedTitleUniqueIdList);
-            lockedTitleDataDictionary.TryGetValue("titlePlate", out var lockedTitlePlateIdList);
-            
-            lockedTitleUniqueIdList ??= new List<uint>();
-            lockedTitlePlateIdList ??= new List<uint>();
-            
-            // Unlock titles in UnlockedTitlesList
-            lockedTitleUniqueIdList = lockedTitleUniqueIdList.Except(unlockedTitle).ToList();
-            // Find uniqueIds of titles with rarity in lockedTitlePlateIdList
-            lockedTitleUniqueIdList.AddRange(titleDictionary.Values.Where(title => lockedTitlePlateIdList.Contains(title.TitleRarity)).Select(title => title.TitleId));
-            titleUniqueIdList = titleUniqueIdList.Except(lockedTitleUniqueIdList).ToList();
-        }
-        else
-        {
-            // Only unlock titles that are in both UnlockedTitlesList and TitleList
-            titleUniqueIdList = titleDictionary.Values.Select(title => title.TitleId).ToList();
-            titleUniqueIdList = titleUniqueIdList.Intersect(unlockedTitle).ToList();
-        }
-        
-        unlockedTitles = titleDictionary.Values.Where(title => titleUniqueIdList.Contains(title.TitleId)).ToList();
-        
-        // Take unique values and sort
-        titleUniqueIdList = titleUniqueIdList.Distinct().OrderBy(id => id).ToList();
+        response.ThrowIfNull();
+        response.Kigurumi = kigurumiValue.CurrentId;
+        response.UnlockedKigurumi = kigurumiValue.UnlockedIds.ToList();
+        response.Head = headValue.CurrentId;
+        response.UnlockedHead = headValue.UnlockedIds.ToList();
+        response.Body = bodyValue.CurrentId;
+        response.UnlockedBody = bodyValue.UnlockedIds.ToList();
+        response.Face = faceValue.CurrentId;
+        response.UnlockedFace = faceValue.UnlockedIds.ToList();
+        response.Puchi = puchiValue.CurrentId;
+        response.UnlockedPuchi = puchiValue.UnlockedIds.ToList();
+        response.Title = titleValue.Title;
+        response.TitlePlateId = titleValue.TitlePlateId;
+        response.UnlockedTitle = titleValue.UnlockedTitleIds.ToList();
+        response.ToneId = neiroValue.CurrentId;
+        response.UnlockedTone = neiroValue.UnlockedIds.ToList();
+        response.BodyColor = colorValue.BodyColor;
+        response.FaceColor = colorValue.FaceColor;
+        response.LimbColor = colorValue.LimbColor;
     }
     
     private async Task SaveOptions()
     {
         isSavingOptions = true;
-        // TODO Green WebUI: replace this compatibility settings call when Green settings editing is implemented.
-        await Client.PostAsJsonAsync($"api/UserSettings/{Baid}", response);
+        ApplyCustomizationValues();
+        await Client.PostAsJsonAsync(WebUiEra.Api(CurrentEra, $"UserSettings/{Baid}"), response);
         isSavingOptions = false;
 
         // Adjust breadcrumb if name is changed
@@ -462,27 +398,8 @@ public partial class Profile
         return imageSrc;
     }
 
-    private async Task OpenChooseTitleDialog()
+    private static string GetTitlePlateName(uint id)
     {
-        var options = new DialogOptions
-        {
-            //CloseButton = false,
-            CloseOnEscapeKey = false,
-            BackdropClick = false,
-            MaxWidth = MaxWidth.Medium,
-            FullWidth = true
-        };
-        var parameters = new DialogParameters<ChooseTitleDialog>
-        {
-            {x => x.UserSetting, response},
-            {x => x.AllowFreeProfileEditing, AuthService.AllowFreeProfileEditing},
-            {x => x.Titles, unlockedTitles},
-        };
-        var dialog = await DialogService.ShowAsync<ChooseTitleDialog>(Localizer["Player Titles"], parameters, options);
-        var result = await dialog.Result;
-        if (result is { Canceled: false })
-        {
-            StateHasChanged();
-        }
+        return id < TitlePlateStrings.Length ? TitlePlateStrings[id] : "Wood";
     }
 }
