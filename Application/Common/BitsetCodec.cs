@@ -4,6 +4,8 @@ public static class BitsetCodec
 {
     public static List<uint> Decode(byte[]? source, int byteCount)
     {
+        ArgumentOutOfRangeException.ThrowIfNegative(byteCount);
+
         var bytes = Normalize(source, byteCount);
         var result = new List<uint>();
 
@@ -29,6 +31,8 @@ public static class BitsetCodec
 
     public static byte[] Encode(IEnumerable<uint> ids, int byteCount)
     {
+        ArgumentOutOfRangeException.ThrowIfNegative(byteCount);
+
         var result = new byte[byteCount];
         var maxBits = byteCount * 8;
 
@@ -47,6 +51,8 @@ public static class BitsetCodec
 
     public static byte[] Normalize(byte[]? source, int byteCount)
     {
+        ArgumentOutOfRangeException.ThrowIfNegative(byteCount);
+
         var result = new byte[byteCount];
         if (source is null || source.Length == 0)
         {

@@ -15,32 +15,12 @@ public static class GreenProtocolBytes
 
     public static byte[] CreateFixedBitset(IEnumerable<uint> enabledIds, int byteCount)
     {
-        var result = new byte[byteCount];
-        var maxBits = byteCount * 8;
-
-        foreach (var id in enabledIds)
-        {
-            if (id >= maxBits)
-            {
-                continue;
-            }
-
-            result[id >> 3] |= (byte)(1 << ((int)id & 7));
-        }
-
-        return result;
+        return BitsetCodec.Encode(enabledIds, byteCount);
     }
 
     public static byte[] FixedOrZero(byte[]? source, int byteCount)
     {
-        var result = new byte[byteCount];
-        if (source is null || source.Length == 0)
-        {
-            return result;
-        }
-
-        Array.Copy(source, result, Math.Min(source.Length, result.Length));
-        return result;
+        return BitsetCodec.Normalize(source, byteCount);
     }
 
     public static byte[] PackTwoBitValues(IEnumerable<uint> values, int byteCount)

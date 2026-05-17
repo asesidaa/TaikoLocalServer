@@ -39,4 +39,28 @@ public sealed class BitsetCodecTests
 
         Assert.Equal(new byte[] { 1, 2 }, normalized);
     }
+
+    [Fact]
+    public void Normalize_ReturnsZeroFilledBufferForNullSource()
+    {
+        var normalized = BitsetCodec.Normalize(null, byteCount: 3);
+
+        Assert.Equal(new byte[] { 0, 0, 0 }, normalized);
+    }
+
+    [Fact]
+    public void Normalize_PadsShortSourceWithZeros()
+    {
+        var normalized = BitsetCodec.Normalize([1, 2], byteCount: 4);
+
+        Assert.Equal(new byte[] { 1, 2, 0, 0 }, normalized);
+    }
+
+    [Fact]
+    public void NegativeByteCount_ThrowsArgumentOutOfRangeException()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => BitsetCodec.Decode([], byteCount: -1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => BitsetCodec.Encode([], byteCount: -1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => BitsetCodec.Normalize([], byteCount: -1));
+    }
 }
