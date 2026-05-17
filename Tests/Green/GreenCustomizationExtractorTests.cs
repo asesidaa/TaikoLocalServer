@@ -37,6 +37,18 @@ public sealed class GreenCustomizationExtractorTests
     }
 
     [Fact]
+    public void NdpReader_IgnoresMountedFilenamePatternInsidePayload()
+    {
+        var blob = BuildMountedNdp(
+            ("cos_name_000.nut", 0x05782E6Eu, 0x757400AAu),
+            ("cos_name_001.nut", 0x60u, 0x30u));
+
+        var entries = NdpReader.Read(blob);
+
+        Assert.Equal(new[] { "cos_name_000.nut", "cos_name_001.nut" }, entries.Select(entry => entry.FileName));
+    }
+
+    [Fact]
     public void NdpReader_ThrowsWhenMountedDeclaredCountCannotBeSatisfied()
     {
         var blob = BuildMountedNdp(("cos_name_000.nut", 0x40u, 0x20u));

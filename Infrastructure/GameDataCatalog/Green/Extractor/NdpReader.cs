@@ -91,7 +91,7 @@ public static partial class NdpReader
             var size = BinaryPrimitives.ReadUInt32BigEndian(bytes.AsSpan(payloadStart + 4, 4));
 
             entries.Add(new NdpEntry(ParseId(fileName), fileName, offset, size));
-            cursor = payloadStart;
+            cursor = payloadStart + 8;
         }
 
         return entries.OrderBy(entry => entry.Id).ThenBy(entry => entry.FileName, StringComparer.Ordinal).ToArray();
