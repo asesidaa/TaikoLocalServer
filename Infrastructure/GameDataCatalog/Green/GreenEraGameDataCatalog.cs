@@ -164,13 +164,66 @@ public sealed class GreenEraGameDataCatalog(
         try
         {
             logger.LogInformation("Green customization catalog JSON is missing; running first-run Phase 1 extraction from {Path}", gameDataPath);
-            await GreenCatalogExtractor.ExtractAsync(
-                new GreenExtractorOptions(gameDataPath, outputDirectory),
-                cancellationToken);
+            var stagingDirectory = Path.Combine(
+                Path.GetTempPath(),
+                "TaikoLocalServer-GreenCatalog",
+                Guid.NewGuid().ToString("N"));
+
+            try
+            {
+                await GreenCatalogExtractor.ExtractAsync(
+                    new GreenExtractorOptions(gameDataPath, stagingDirectory),
+                    cancellationToken);
+
+                _ = await GreenCostumeLoader.LoadFromFileAsync(
+                    Path.Combine(stagingDirectory, GreenCatalogExtractor.CostumeFileName),
+                    cancellationToken);
+                _ = await GreenTitleLoader.LoadFromFileAsync(
+                    Path.Combine(stagingDirectory, GreenCatalogExtractor.TitleFileName),
+                    cancellationToken);
+                _ = await GreenNeiroLoader.LoadFromFileAsync(
+                    Path.Combine(stagingDirectory, GreenCatalogExtractor.NeiroFileName),
+                    cancellationToken);
+
+                Directory.CreateDirectory(outputDirectory);
+                foreach (var path in required.Where(path => !File.Exists(path)))
+                {
+                    var sourcePath = Path.Combine(stagingDirectory, Path.GetFileName(path));
+                    PublishStagedFile(sourcePath, path);
+                }
+            }
+            finally
+            {
+                if (Directory.Exists(stagingDirectory))
+                {
+                    Directory.Delete(stagingDirectory, recursive: true);
+                }
+            }
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             logger.LogWarning(ex, "Green customization catalog extraction failed; continuing with empty or partial customization catalogs.");
+        }
+    }
+
+    private static void PublishStagedFile(string sourcePath, string destinationPath)
+    {
+        var tempPath = Path.Combine(
+            Path.GetDirectoryName(destinationPath)
+                ?? throw new InvalidOperationException($"Could not resolve directory for {destinationPath}."),
+            $"{Path.GetFileName(destinationPath)}.{Guid.NewGuid():N}.tmp");
+
+        File.Copy(sourcePath, tempPath, overwrite: false);
+        try
+        {
+            File.Move(tempPath, destinationPath, overwrite: false);
+        }
+        finally
+        {
+            if (File.Exists(tempPath))
+            {
+                File.Delete(tempPath);
+            }
         }
     }
 

@@ -19,11 +19,27 @@ public static class CatalogWriter
     {
         Directory.CreateDirectory(outputDirectory);
         var path = Path.Combine(outputDirectory, fileName);
-        await using var stream = File.Create(path);
+        var tempPath = Path.Combine(outputDirectory, $"{fileName}.{Guid.NewGuid():N}.tmp");
         var envelope = new GreenCatalogEnvelope<T>
         {
             Items = items
         };
-        await JsonSerializer.SerializeAsync(stream, envelope, JsonOptions, cancellationToken);
+
+        try
+        {
+            await using (var stream = File.Create(tempPath))
+            {
+                await JsonSerializer.SerializeAsync(stream, envelope, JsonOptions, cancellationToken);
+            }
+
+            File.Move(tempPath, path, overwrite: true);
+        }
+        finally
+        {
+            if (File.Exists(tempPath))
+            {
+                File.Delete(tempPath);
+            }
+        }
     }
 }

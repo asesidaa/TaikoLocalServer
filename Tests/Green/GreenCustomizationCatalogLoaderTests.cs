@@ -24,14 +24,11 @@ public sealed class GreenCustomizationCatalogLoaderTests
     public async Task TitleLoader_ReadsEnvelopeAsDictionary()
     {
         var path = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.json");
-        await File.WriteAllTextAsync(path, JsonSerializer.Serialize(new GreenCatalogEnvelope<Title>
-        {
-            Items =
-            [
-                new Title { TitleId = 132, TitleName = "B" },
-                new Title { TitleId = 131, TitleName = "A" }
-            ]
-        }, new JsonSerializerOptions(JsonSerializerDefaults.Web)));
+        await WriteEnvelopeAsync(path,
+        [
+            new Title { TitleId = 132, TitleName = "B" },
+            new Title { TitleId = 131, TitleName = "A" }
+        ]);
 
         var items = await GreenTitleLoader.LoadFromFileAsync(path, CancellationToken.None);
 
@@ -43,18 +40,63 @@ public sealed class GreenCustomizationCatalogLoaderTests
     public async Task NeiroLoader_ReadsEnvelopeAsDictionary()
     {
         var path = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.json");
-        await File.WriteAllTextAsync(path, JsonSerializer.Serialize(new GreenCatalogEnvelope<Neiro>
-        {
-            Items =
-            [
-                new Neiro { NeiroId = 4, NeiroName = "Tone" }
-            ]
-        }, new JsonSerializerOptions(JsonSerializerDefaults.Web)));
+        await WriteEnvelopeAsync(path,
+        [
+            new Neiro { NeiroId = 4, NeiroName = "Tone" }
+        ]);
 
         var items = await GreenNeiroLoader.LoadFromFileAsync(path, CancellationToken.None);
 
         Assert.Equal("Tone", items[4].NeiroName);
         File.Delete(path);
+    }
+
+    [Fact]
+    public async Task TitleLoader_DuplicateIdsThrowInvalidDataException()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.json");
+        try
+        {
+            await WriteEnvelopeAsync(path,
+            [
+                new Title { TitleId = 131, TitleName = "A" },
+                new Title { TitleId = 131, TitleName = "B" }
+            ]);
+
+            var exception = await Assert.ThrowsAsync<InvalidDataException>(() =>
+                GreenTitleLoader.LoadFromFileAsync(path, CancellationToken.None));
+
+            Assert.Contains("green title", exception.Message, StringComparison.OrdinalIgnoreCase);
+            Assert.Contains("131", exception.Message, StringComparison.Ordinal);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public async Task NeiroLoader_DuplicateIdsThrowInvalidDataException()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.json");
+        try
+        {
+            await WriteEnvelopeAsync(path,
+            [
+                new Neiro { NeiroId = 4, NeiroName = "Tone A" },
+                new Neiro { NeiroId = 4, NeiroName = "Tone B" }
+            ]);
+
+            var exception = await Assert.ThrowsAsync<InvalidDataException>(() =>
+                GreenNeiroLoader.LoadFromFileAsync(path, CancellationToken.None));
+
+            Assert.Contains("green neiro", exception.Message, StringComparison.OrdinalIgnoreCase);
+            Assert.Contains("4", exception.Message, StringComparison.Ordinal);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
     }
 
     [Fact]
@@ -107,6 +149,131 @@ public sealed class GreenCustomizationCatalogLoaderTests
             DeleteGreenCustomizationFilesFromProcessRoot();
         }
     }
+
+    [Fact]
+    public async Task CatalogInitialize_PublishesOnlyMissingGeneratedCustomizationFiles()
+    {
+        CopyGreenRuntimeCatalogFilesToProcessRoot();
+        DeleteGreenCustomizationFilesFromProcessRoot();
+
+        var existingCostumePath = Path.Combine(GetProcessGreenDataPath(), GreenCatalogExtractor.CostumeFileName);
+        Directory.CreateDirectory(Path.GetDirectoryName(existingCostumePath)
+            ?? throw new ApplicationException("Cannot resolve Green data directory."));
+        await WriteEnvelopeAsync(existingCostumePath,
+        [
+            new Costume { CostumeId = 777, CostumeType = "operator", CostumeName = "Operator Costume" }
+        ]);
+
+        var gameDataRoot = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        try
+        {
+            await CreateGreenExtractionSourceAsync(gameDataRoot, includeRewardTitleFiltering: true);
+
+            var catalog = new GreenEraGameDataCatalog(
+                NullLogger<GreenEraGameDataCatalog>.Instance,
+                CreateGreenSettings(gameDataRoot, autoExtractCatalog: true));
+
+            await catalog.InitializeAsync(CancellationToken.None);
+
+            var costumes = await GreenCostumeLoader.LoadFromFileAsync(existingCostumePath, CancellationToken.None);
+            Assert.Equal(777u, Assert.Single(costumes).CostumeId);
+            Assert.True(File.Exists(Path.Combine(GetProcessGreenDataPath(), GreenCatalogExtractor.TitleFileName)));
+            Assert.True(File.Exists(Path.Combine(GetProcessGreenDataPath(), GreenCatalogExtractor.NeiroFileName)));
+            Assert.True(catalog.GetTitleDictionary().ContainsKey(131));
+            Assert.True(catalog.GetNeiroDictionary().ContainsKey(4));
+        }
+        finally
+        {
+            if (Directory.Exists(gameDataRoot))
+            {
+                Directory.Delete(gameDataRoot, recursive: true);
+            }
+
+            DeleteGreenCustomizationFilesFromProcessRoot();
+        }
+    }
+
+    [Fact]
+    public async Task CatalogInitialize_AutoExtractDisabledDoesNotPublishMissingCustomizationFiles()
+    {
+        CopyGreenRuntimeCatalogFilesToProcessRoot();
+        DeleteGreenCustomizationFilesFromProcessRoot();
+
+        var gameDataRoot = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        try
+        {
+            await CreateGreenExtractionSourceAsync(gameDataRoot, includeRewardTitleFiltering: true);
+
+            var catalog = new GreenEraGameDataCatalog(
+                NullLogger<GreenEraGameDataCatalog>.Instance,
+                CreateGreenSettings(gameDataRoot, autoExtractCatalog: false));
+
+            await catalog.InitializeAsync(CancellationToken.None);
+
+            Assert.False(File.Exists(Path.Combine(GetProcessGreenDataPath(), GreenCatalogExtractor.CostumeFileName)));
+            Assert.False(File.Exists(Path.Combine(GetProcessGreenDataPath(), GreenCatalogExtractor.TitleFileName)));
+            Assert.False(File.Exists(Path.Combine(GetProcessGreenDataPath(), GreenCatalogExtractor.NeiroFileName)));
+            Assert.Empty(catalog.GetCostumeList());
+            Assert.Empty(catalog.GetTitleDictionary());
+            Assert.Empty(catalog.GetNeiroDictionary());
+        }
+        finally
+        {
+            if (Directory.Exists(gameDataRoot))
+            {
+                Directory.Delete(gameDataRoot, recursive: true);
+            }
+
+            DeleteGreenCustomizationFilesFromProcessRoot();
+        }
+    }
+
+    private static async Task CreateGreenExtractionSourceAsync(
+        string gameDataRoot,
+        bool includeRewardTitleFiltering)
+    {
+        Directory.CreateDirectory(Path.Combine(gameDataRoot, "nutdata", "cos_name"));
+        Directory.CreateDirectory(Path.Combine(gameDataRoot, "nutdata", "title_name"));
+        Directory.CreateDirectory(Path.Combine(gameDataRoot, "nutdata", "tone_name"));
+
+        await File.WriteAllBytesAsync(Path.Combine(gameDataRoot, "nutdata", "cos_name", "nutdatapack.ndp"), BuildNdp(("cos_name_001.nut", 0, 1)));
+        await File.WriteAllBytesAsync(Path.Combine(gameDataRoot, "nutdata", "title_name", "nutdatapack.ndp"), BuildNdp(("title_name_131.nut", 0, 1)));
+        await File.WriteAllBytesAsync(Path.Combine(gameDataRoot, "nutdata", "tone_name", "nutdatapack.ndp"), BuildNdp(("tone_name_004.nut", 0, 1)));
+
+        if (includeRewardTitleFiltering)
+        {
+            Directory.CreateDirectory(Path.Combine(gameDataRoot, "config", "S11100-1"));
+            await File.WriteAllTextAsync(Path.Combine(gameDataRoot, "config", "S11100-1", "rewardtitlefiltering.xml"), """
+                <boost_serialization>
+                  <RewardTitleFiltering>
+                    <support>
+                      <rewardtitle>131</rewardtitle>
+                    </support>
+                  </RewardTitleFiltering>
+                </boost_serialization>
+                """);
+        }
+    }
+
+    private static IOptions<ServerSettings> CreateGreenSettings(string gameDataRoot, bool autoExtractCatalog)
+        => Options.Create(new ServerSettings
+        {
+            Eras = new Dictionary<string, EraSettings>
+            {
+                [nameof(GameEra.Green)] = new()
+                {
+                    Enabled = true,
+                    AutoExtractCatalog = autoExtractCatalog,
+                    GameDataPath = gameDataRoot
+                }
+            }
+        });
+
+    private static Task WriteEnvelopeAsync<T>(string path, IReadOnlyList<T> items)
+        => File.WriteAllTextAsync(path, JsonSerializer.Serialize(new GreenCatalogEnvelope<T>
+        {
+            Items = items
+        }, new JsonSerializerOptions(JsonSerializerDefaults.Web)));
 
     private static void CopyGreenRuntimeCatalogFilesToProcessRoot()
     {

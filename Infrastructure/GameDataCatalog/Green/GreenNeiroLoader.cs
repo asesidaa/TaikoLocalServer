@@ -15,8 +15,18 @@ public sealed class GreenNeiroLoader
         CancellationToken cancellationToken)
     {
         var items = await GreenCustomizationCatalogLoader.LoadListAsync<Neiro>(path, cancellationToken);
-        return items
+        var duplicateIds = items
             .GroupBy(neiro => neiro.NeiroId)
-            .ToDictionary(group => group.Key, group => group.First());
+            .Where(group => group.Count() > 1)
+            .Select(group => group.Key)
+            .OrderBy(id => id)
+            .ToArray();
+        if (duplicateIds.Length > 0)
+        {
+            throw new InvalidDataException($"Duplicate Green neiro IDs in {path}: {string.Join(", ", duplicateIds)}");
+        }
+
+        return items
+            .ToDictionary(neiro => neiro.NeiroId);
     }
 }
