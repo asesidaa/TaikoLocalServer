@@ -69,18 +69,21 @@ public static partial class NdpReader
         var cursor = MountedEntryTableOffset;
         var entries = new List<NdpEntry>(count);
 
-        while (entries.Count < count && TryFindMountedEntry(bytes, cursor, out var entryStart))
+        while (entries.Count < count)
         {
+            if (!TryFindMountedEntry(bytes, cursor, out var entryStart))
+            {
+                throw new InvalidDataException(
+                    $"NDP compact entry table ended after {entries.Count} entries, but header declares {count}.");
+            }
+
             var nameLength = bytes[entryStart];
             var nameStart = entryStart + 1;
             var fileName = Encoding.ASCII.GetString(bytes.AsSpan(nameStart, nameLength));
             var payloadStart = nameStart + nameLength + 1;
-            var offset = payloadStart + 4 <= bytes.Length
-                ? BinaryPrimitives.ReadUInt32BigEndian(bytes.AsSpan(payloadStart, 4))
-                : 0;
-            var size = payloadStart + 8 <= bytes.Length
-                ? BinaryPrimitives.ReadUInt32BigEndian(bytes.AsSpan(payloadStart + 4, 4))
-                : 0;
+            EnsureAvailable(bytes, payloadStart, 8);
+            var offset = BinaryPrimitives.ReadUInt32BigEndian(bytes.AsSpan(payloadStart, 4));
+            var size = BinaryPrimitives.ReadUInt32BigEndian(bytes.AsSpan(payloadStart + 4, 4));
 
             entries.Add(new NdpEntry(ParseId(fileName), fileName, offset, size));
             cursor = payloadStart;

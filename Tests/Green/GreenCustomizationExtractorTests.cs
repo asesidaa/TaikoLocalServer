@@ -35,6 +35,23 @@ public sealed class GreenCustomizationExtractorTests
     }
 
     [Fact]
+    public void NdpReader_ThrowsWhenMountedDeclaredCountCannotBeSatisfied()
+    {
+        var blob = BuildMountedNdp(("cos_name_000.nut", 0x40u, 0x20u));
+        BinaryPrimitives.WriteUInt16BigEndian(blob.AsSpan(0x40), 2);
+
+        Assert.Throws<InvalidDataException>(() => NdpReader.Read(blob));
+    }
+
+    [Fact]
+    public void NdpReader_ThrowsWhenMountedEntryPayloadIsTruncated()
+    {
+        var blob = BuildMountedNdpWithTruncatedPayload("cos_name_000.nut", payloadBytes: 7);
+
+        Assert.Throws<InvalidDataException>(() => NdpReader.Read(blob));
+    }
+
+    [Fact]
     public async Task BoostXmlReader_ReadsRewardTitleIds()
     {
         var path = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.xml");
@@ -158,6 +175,29 @@ public sealed class GreenCustomizationExtractorTests
             BinaryPrimitives.WriteUInt32BigEndian(bytes.AsSpan(cursor), entry.Offset);
             BinaryPrimitives.WriteUInt32BigEndian(bytes.AsSpan(cursor + 4), entry.Size);
             cursor += 8;
+        }
+
+        return bytes;
+    }
+
+    private static byte[] BuildMountedNdpWithTruncatedPayload(string name, int payloadBytes)
+    {
+        var nameBytes = Encoding.ASCII.GetBytes(name);
+        var bytes = new byte[0x4E + 1 + nameBytes.Length + 1 + payloadBytes];
+        Encoding.ASCII.GetBytes("NUT_PACK_TYPE1").CopyTo(bytes, 0);
+        BinaryPrimitives.WriteUInt16BigEndian(bytes.AsSpan(0x40), 1);
+
+        var cursor = 0x4E;
+        bytes[cursor] = (byte)nameBytes.Length;
+        cursor += 1;
+        nameBytes.CopyTo(bytes.AsSpan(cursor));
+        cursor += nameBytes.Length;
+        bytes[cursor] = 0;
+        cursor += 1;
+
+        for (var index = 0; index < payloadBytes; index++)
+        {
+            bytes[cursor + index] = 0xAA;
         }
 
         return bytes;
