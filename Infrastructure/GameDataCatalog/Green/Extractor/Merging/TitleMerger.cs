@@ -16,6 +16,8 @@ public static class TitleMerger
             .Select(entry =>
             {
                 overrides.Titles.TryGetValue(entry.Id, out var itemOverride);
+                var hasOverride = !string.IsNullOrWhiteSpace(itemOverride?.Name);
+                var source = rewardSet.Contains(entry.Id) ? "ndp+rewardtitlefiltering" : "ndp";
                 return new Title
                 {
                     TitleId = entry.Id,
@@ -24,7 +26,7 @@ public static class TitleMerger
                     TitleNameCN = itemOverride?.Name ?? string.Empty,
                     TitleNameKO = itemOverride?.Name ?? string.Empty,
                     TitleRarity = 0,
-                    Source = rewardSet.Contains(entry.Id) ? "ndp+rewardtitlefiltering" : "ndp"
+                    Source = hasOverride ? $"{source}+overrides" : source
                 };
             })
             .GroupBy(title => title.TitleId)

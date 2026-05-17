@@ -25,7 +25,7 @@ public static partial class NdpReader
             throw new InvalidDataException($"Unexpected NDP magic '{magic}'.");
         }
 
-        return IsFixedTableFormat(bytes)
+        return LooksLikeFixedTableFormat(bytes)
             ? ReadFixedTable(bytes)
             : ReadMountedStringTable(bytes);
     }
@@ -49,6 +49,11 @@ public static partial class NdpReader
             var rawName = bytes.AsSpan(cursor, checked((int)nameLength));
             var nul = rawName.IndexOf((byte)0);
             var fileName = Encoding.ASCII.GetString(nul >= 0 ? rawName[..nul] : rawName);
+            if (!LooksLikeNutFileName(Encoding.ASCII.GetBytes(fileName)))
+            {
+                throw new InvalidDataException($"NDP fixed entry has malformed filename '{fileName}'.");
+            }
+
             cursor += checked((int)nameLength);
             cursor = Align4(cursor);
 
@@ -92,10 +97,21 @@ public static partial class NdpReader
         return entries.OrderBy(entry => entry.Id).ThenBy(entry => entry.FileName, StringComparer.Ordinal).ToArray();
     }
 
-    private static bool IsFixedTableFormat(byte[] bytes)
+    private static bool LooksLikeFixedTableFormat(byte[] bytes)
     {
         var nameLength = BinaryPrimitives.ReadUInt32BigEndian(bytes.AsSpan(EntryTableOffset, 4));
-        if (nameLength == 0 || nameLength > bytes.Length - EntryTableOffset - 4)
+        if (nameLength == 0)
+        {
+            return false;
+        }
+
+        var fixedCountLowWord = BinaryPrimitives.ReadUInt16BigEndian(bytes.AsSpan(EntryCountOffset + 2, 2));
+        if (fixedCountLowWord > 0)
+        {
+            return true;
+        }
+
+        if (nameLength > bytes.Length - EntryTableOffset - 4)
         {
             return false;
         }

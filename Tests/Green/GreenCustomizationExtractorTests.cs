@@ -1,6 +1,8 @@
 using System.Buffers.Binary;
 using System.Text;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Green.Extractor;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Green.Extractor.Merging;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Green.Extractor.Sources;
 
 namespace TaikoLocalServer.Tests.Green;
 
@@ -52,6 +54,23 @@ public sealed class GreenCustomizationExtractorTests
     }
 
     [Fact]
+    public void NdpReader_ThrowsWhenFixedEntryIsTruncated()
+    {
+        var blob = BuildMalformedFixedNdp(nameLength: 16, payloadBytes: 0);
+
+        Assert.Throws<InvalidDataException>(() => NdpReader.Read(blob));
+    }
+
+    [Fact]
+    public void NdpReader_ThrowsWhenFixedEntryNameIsMalformed()
+    {
+        var blob = BuildMalformedFixedNdp(nameLength: 4, payloadBytes: 8);
+        Encoding.ASCII.GetBytes("bad!").CopyTo(blob.AsSpan(0x54));
+
+        Assert.Throws<InvalidDataException>(() => NdpReader.Read(blob));
+    }
+
+    [Fact]
     public async Task BoostXmlReader_ReadsRewardTitleIds()
     {
         var path = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.xml");
@@ -87,6 +106,57 @@ public sealed class GreenCustomizationExtractorTests
 
         Assert.Equal(new uint[] { 7 }, result.FullCosModelPairIds);
         Directory.Delete(root, recursive: true);
+    }
+
+    [Fact]
+    public void CostumeMerger_AppendsOverridesSourceWhenOverrideContributesData()
+    {
+        var overrides = new GreenCatalogOverrides
+        {
+            Costumes = new Dictionary<uint, GreenCostumeOverride>
+            {
+                [2] = new() { Name = "Override Costume", CostumeType = "body" }
+            }
+        };
+        var don3d = new Don3dScanResult(
+            [2],
+            new Dictionary<string, IReadOnlyList<uint>> { ["don3d/cos"] = [2] });
+
+        var costumes = CostumeMerger.Merge([new NdpEntry(2, "cos_name_002.nut", 0, 1)], don3d, overrides);
+
+        Assert.Equal("ndp+don3d+overrides", costumes.Single().Source);
+    }
+
+    [Fact]
+    public void TitleMerger_AppendsOverridesSourceWhenOverrideContributesData()
+    {
+        var overrides = new GreenCatalogOverrides
+        {
+            Titles = new Dictionary<uint, GreenNamedOverride>
+            {
+                [131] = new() { Name = "Override Title" }
+            }
+        };
+
+        var titles = TitleMerger.Merge([new NdpEntry(131, "title_name_131.nut", 0, 1)], [131u], overrides);
+
+        Assert.Equal("ndp+rewardtitlefiltering+overrides", titles.Single().Source);
+    }
+
+    [Fact]
+    public void NeiroMerger_AppendsOverridesSourceWhenOverrideContributesData()
+    {
+        var overrides = new GreenCatalogOverrides
+        {
+            Neiros = new Dictionary<uint, GreenNamedOverride>
+            {
+                [4] = new() { Name = "Override Neiro" }
+            }
+        };
+
+        var neiros = NeiroMerger.Merge([new NdpEntry(4, "tone_name_004.nut", 0, 1)], overrides);
+
+        Assert.Equal("ndp+overrides", neiros.Single().Source);
     }
 
     [Fact]
@@ -129,6 +199,44 @@ public sealed class GreenCustomizationExtractorTests
         Assert.Contains("\"titleId\": 131", titleJson);
         Assert.Contains("\"source\": \"ndp+rewardtitlefiltering\"", titleJson);
         Assert.Contains("\"neiroId\": 4", neiroJson);
+
+        Directory.Delete(root, recursive: true);
+    }
+
+    [Fact]
+    public async Task GreenCatalogExtractor_ThrowsForMissingGameDataRootWithoutWritingOutput()
+    {
+        var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        var outDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+
+        await Assert.ThrowsAsync<DirectoryNotFoundException>(() =>
+            GreenCatalogExtractor.ExtractAsync(
+                new GreenExtractorOptions(GameDataPath: root, OutputDirectory: outDir),
+                CancellationToken.None));
+
+        Assert.False(Directory.Exists(outDir));
+    }
+
+    [Fact]
+    public async Task GreenCatalogExtractor_ThrowsForMissingRequiredPackWithoutWritingOutput()
+    {
+        var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        var outDir = Path.Combine(root, "out");
+        Directory.CreateDirectory(Path.Combine(root, "nutdata", "cos_name"));
+        Directory.CreateDirectory(Path.Combine(root, "nutdata", "title_name"));
+        Directory.CreateDirectory(Path.Combine(root, "nutdata", "tone_name"));
+
+        await File.WriteAllBytesAsync(Path.Combine(root, "nutdata", "cos_name", "nutdatapack.ndp"), BuildNdp(("cos_name_001.nut", 0, 1)));
+        await File.WriteAllBytesAsync(Path.Combine(root, "nutdata", "title_name", "nutdatapack.ndp"), BuildNdp(("title_name_131.nut", 0, 1)));
+
+        await Assert.ThrowsAsync<FileNotFoundException>(() =>
+            GreenCatalogExtractor.ExtractAsync(
+                new GreenExtractorOptions(GameDataPath: root, OutputDirectory: outDir),
+                CancellationToken.None));
+
+        Assert.False(File.Exists(Path.Combine(outDir, "green_costume_data.json")));
+        Assert.False(File.Exists(Path.Combine(outDir, "green_title_data.json")));
+        Assert.False(File.Exists(Path.Combine(outDir, "green_neiro_data.json")));
 
         Directory.Delete(root, recursive: true);
     }
@@ -200,6 +308,15 @@ public sealed class GreenCustomizationExtractorTests
             bytes[cursor + index] = 0xAA;
         }
 
+        return bytes;
+    }
+
+    private static byte[] BuildMalformedFixedNdp(uint nameLength, int payloadBytes)
+    {
+        var bytes = new byte[0x54 + payloadBytes];
+        Encoding.ASCII.GetBytes("NUT_PACK_TYPE1").CopyTo(bytes, 0);
+        BinaryPrimitives.WriteUInt32BigEndian(bytes.AsSpan(0x40), 1);
+        BinaryPrimitives.WriteUInt32BigEndian(bytes.AsSpan(0x50), nameLength);
         return bytes;
     }
 

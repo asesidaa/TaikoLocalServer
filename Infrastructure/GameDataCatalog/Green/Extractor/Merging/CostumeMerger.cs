@@ -17,6 +17,9 @@ public static class CostumeMerger
             {
                 overrides.Costumes.TryGetValue(entry.Id, out var itemOverride);
                 var hasDon3d = don3dIds.Contains(entry.Id);
+                var hasOverride = !string.IsNullOrWhiteSpace(itemOverride?.Name)
+                                  || !string.IsNullOrWhiteSpace(itemOverride?.CostumeType);
+                var source = hasDon3d ? "ndp+don3d" : "ndp";
                 return new Costume
                 {
                     CostumeId = entry.Id,
@@ -25,7 +28,7 @@ public static class CostumeMerger
                     CostumeNameEN = itemOverride?.Name ?? string.Empty,
                     CostumeNameCN = itemOverride?.Name ?? string.Empty,
                     CostumeNameKO = itemOverride?.Name ?? string.Empty,
-                    Source = hasDon3d ? "ndp+don3d" : "ndp"
+                    Source = hasOverride ? $"{source}+overrides" : source
                 };
             })
             .GroupBy(costume => costume.CostumeId)

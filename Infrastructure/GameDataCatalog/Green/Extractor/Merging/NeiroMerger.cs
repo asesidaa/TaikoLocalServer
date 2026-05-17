@@ -13,6 +13,7 @@ public static class NeiroMerger
             .Select(entry =>
             {
                 overrides.Neiros.TryGetValue(entry.Id, out var itemOverride);
+                var hasOverride = !string.IsNullOrWhiteSpace(itemOverride?.Name);
                 return new Neiro
                 {
                     NeiroId = entry.Id,
@@ -20,7 +21,7 @@ public static class NeiroMerger
                     NeiroNameEN = itemOverride?.Name ?? string.Empty,
                     NeiroNameCN = itemOverride?.Name ?? string.Empty,
                     NeiroNameKO = itemOverride?.Name ?? string.Empty,
-                    Source = "ndp"
+                    Source = hasOverride ? "ndp+overrides" : "ndp"
                 };
             })
             .GroupBy(neiro => neiro.NeiroId)

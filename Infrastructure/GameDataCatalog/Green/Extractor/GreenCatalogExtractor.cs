@@ -21,9 +21,11 @@ public static class GreenCatalogExtractor
         var toneNamePack = Path.Combine(options.GameDataPath, "nutdata", "tone_name", "nutdatapack.ndp");
         var rewardTitleFiltering = Path.Combine(options.GameDataPath, "config", "S11100-1", "rewardtitlefiltering.xml");
 
-        var cosEntries = File.Exists(cosNamePack) ? NdpReader.ReadFile(cosNamePack) : [];
-        var titleEntries = File.Exists(titleNamePack) ? NdpReader.ReadFile(titleNamePack) : [];
-        var toneEntries = File.Exists(toneNamePack) ? NdpReader.ReadFile(toneNamePack) : [];
+        ValidateInputs(options.GameDataPath, [cosNamePack, titleNamePack, toneNamePack]);
+
+        var cosEntries = NdpReader.ReadFile(cosNamePack);
+        var titleEntries = NdpReader.ReadFile(titleNamePack);
+        var toneEntries = NdpReader.ReadFile(toneNamePack);
         var rewardTitleIds = File.Exists(rewardTitleFiltering)
             ? await BoostXmlReader.ReadRewardTitleIdsAsync(rewardTitleFiltering, cancellationToken)
             : [];
@@ -40,5 +42,21 @@ public static class GreenCatalogExtractor
         await CatalogWriter.WriteAsync(options.OutputDirectory, CostumeFileName, costumes, cancellationToken);
         await CatalogWriter.WriteAsync(options.OutputDirectory, TitleFileName, titles, cancellationToken);
         await CatalogWriter.WriteAsync(options.OutputDirectory, NeiroFileName, neiros, cancellationToken);
+    }
+
+    private static void ValidateInputs(string gameDataPath, IEnumerable<string> requiredFiles)
+    {
+        if (!Directory.Exists(gameDataPath))
+        {
+            throw new DirectoryNotFoundException($"Green game-data root does not exist: {gameDataPath}");
+        }
+
+        foreach (var requiredFile in requiredFiles)
+        {
+            if (!File.Exists(requiredFile))
+            {
+                throw new FileNotFoundException($"Required Green catalog source file does not exist: {requiredFile}", requiredFile);
+            }
+        }
     }
 }
