@@ -1,9 +1,10 @@
 [
   {
+    "_comment": "Green telop messages must start with a category prefix. Known prefixes: /S general service notice, /Mp maintenance warning, /M maintenance active, /Cp closing warning, /C closed/current-hours active, /U recognized by client but meaning unknown. The game strips the prefix before display.",
     "telopId": 1,
-    "verupNo": 1,
+    "verupNo": 2,
     "startDatetime": "20240101000000",
-    "endDatetime": "20991231235959",
-    "telop": "Welcome to Taiko AC15"
+    "endDatetime": "20501231235959",
+    "telop": "/S Welcome to Taiko AC15"
   }
 ]

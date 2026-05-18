@@ -28,11 +28,10 @@ public partial class GetInitialDataQueryHandler
                 .ToList(),
             AryGreenTaikojukuDatas = green.TaikojukuFileOrder
                 .Where(entry => entry.ChallengeLevel is >= 1 and <= 25)
-                .Take(3)
                 .Select(entry => new CommonInitialDataCheckResponse.InformationData
                 {
                     InfoId = entry.ChallengeLevel,
-                    VerupNo = entry.VerupNo
+                    VerupNo = entry.VerupNo + 1
                 })
                 .ToList(),
             ServerCurrentDatetime = (ulong)DateTimeOffset.Now.ToUnixTimeSeconds()
