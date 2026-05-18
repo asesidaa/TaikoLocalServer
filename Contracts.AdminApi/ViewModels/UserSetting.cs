@@ -10,6 +10,10 @@ public class UserSetting
 
     public bool IsDisplayDanOnNamePlate { get; set; }
 
+    public uint GreenTaikojukuDan { get; set; }
+
+    public List<uint> GreenSelectableTaikojukuDans { get; set; } = new();
+
     public bool IsDisplaySouUchi { get; set; }
 
     public uint DifficultySettingCourse { get; set; }

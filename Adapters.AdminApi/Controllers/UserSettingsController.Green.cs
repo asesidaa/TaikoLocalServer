@@ -11,7 +11,7 @@ public partial class UserSettingsController
         }
 
         var saveData = await context.GetOrCreateGreenSaveDataAsync(baid, HttpContext.RequestAborted);
-        return Ok(BuildGreenUserSetting(user, saveData));
+        return Ok(await BuildGreenUserSetting(user, saveData));
     }
 
     private async Task<IActionResult> SaveGreenUserSetting(uint baid, UserSetting userSetting)
@@ -29,6 +29,11 @@ public partial class UserSettingsController
         saveData.ColorBody = userSetting.BodyColor;
         saveData.ColorFace = userSetting.FaceColor;
         saveData.ColorLimb = userSetting.LimbColor;
+        saveData.DispDanType = userSetting.IsDisplayDanOnNamePlate ? 1u : 0u;
+        if (userSetting.GreenTaikojukuDan != 0)
+        {
+            saveData.DispTaikojukuDan = await GetGreenTaikojukuFolderDan(baid, userSetting.GreenTaikojukuDan);
+        }
 
         if (ShouldEnforceUnlockedOnly())
         {
@@ -75,8 +80,11 @@ public partial class UserSettingsController
         return NoContent();
     }
 
-    private static UserSetting BuildGreenUserSetting(UserDatum user, UserSaveDataGreen saveData)
+    private async Task<UserSetting> BuildGreenUserSetting(UserDatum user, UserSaveDataGreen saveData)
     {
+        var selectableTaikojukuDans = await GetGreenSelectableTaikojukuFolderDans(user.Baid);
+        var taikojukuDan = SelectGreenTaikojukuFolderDan(selectableTaikojukuDans, saveData.DispTaikojukuDan);
+
         return new UserSetting
         {
             Baid = user.Baid,
@@ -100,8 +108,46 @@ public partial class UserSettingsController
             BodyColor = saveData.ColorBody,
             FaceColor = saveData.ColorFace,
             LimbColor = saveData.ColorLimb,
+            IsDisplayDanOnNamePlate = saveData.DispDanType != 0,
+            GreenTaikojukuDan = taikojukuDan,
+            GreenSelectableTaikojukuDans = selectableTaikojukuDans,
             LastPlayDateTime = saveData.LastPlayDatetime
         };
+    }
+
+    private async Task<uint> GetGreenTaikojukuFolderDan(uint baid, uint requestedDan)
+        => SelectGreenTaikojukuFolderDan(
+            await GetGreenSelectableTaikojukuFolderDans(baid),
+            requestedDan);
+
+    private async Task<List<uint>> GetGreenSelectableTaikojukuFolderDans(uint baid)
+    {
+        var clearGrades = await context.DanScoreDataGreen
+            .Where(row => row.Baid == baid && !row.IsExtra)
+            .Select(row => new { row.DanId, row.ClearGrade })
+            .ToListAsync(HttpContext.RequestAborted);
+        var clearGradeMap = clearGrades.ToDictionary(row => row.DanId, row => row.ClearGrade);
+
+        var selectable = new List<uint>();
+        for (uint danId = GreenDanHelpers.MinNormalDanId; danId <= GreenDanHelpers.MaxNormalDanId; danId++)
+        {
+            if (!clearGradeMap.TryGetValue(danId, out var grade) || !GreenDanHelpers.IsClear(grade))
+            {
+                selectable.Add(danId);
+            }
+        }
+
+        return selectable;
+    }
+
+    private static uint SelectGreenTaikojukuFolderDan(IReadOnlyList<uint> selectableDans, uint requestedDan)
+    {
+        if (selectableDans.Contains(requestedDan))
+        {
+            return requestedDan;
+        }
+
+        return selectableDans.FirstOrDefault(GreenDanHelpers.MinNormalDanId);
     }
 
     private static byte[] EncodeGreenCostumeUnlocks(IEnumerable<uint> requestedUnlocks, uint currentId)

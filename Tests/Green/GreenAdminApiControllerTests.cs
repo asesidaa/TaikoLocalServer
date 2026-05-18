@@ -227,6 +227,97 @@ public class GreenAdminApiControllerTests
         Assert.Equal(4u, setting.ToneId);
     }
 
+    [Theory]
+    [InlineData(0, false)]
+    [InlineData(1, true)]
+    [InlineData(2, true)]
+    public async Task UserSettings_Green_GetMapsDispDanTypeToProfileDisplayDan(uint dispDanType, bool expected)
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.DispDanType = dispDanType;
+        fixture.Context.UserSaveDataGreen.Add(save);
+        await fixture.Context.SaveChangesAsync();
+
+        var controller = CreateUserSettingsController(fixture.Context);
+        var result = await controller.GetUserSetting("Green", 1);
+
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var setting = Assert.IsType<UserSetting>(ok.Value);
+        Assert.Equal(expected, setting.IsDisplayDanOnNamePlate);
+    }
+
+    [Fact]
+    public async Task UserSettings_Green_GetExposesTaikojukuFolderDanSelectionForUnpassedNormalDans()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.DispTaikojukuDan = 2;
+        fixture.Context.UserSaveDataGreen.Add(save);
+        fixture.Context.DanScoreDataGreen.AddRange(
+            new DanScoreDatumGreen
+            {
+                Baid = 1,
+                DanId = 1,
+                IsExtra = false,
+                ClearGrade = GreenDanClearGrade.GoldClear
+            },
+            new DanScoreDatumGreen
+            {
+                Baid = 1,
+                DanId = 101,
+                IsExtra = true,
+                ClearGrade = GreenDanClearGrade.NotClear
+            });
+        await fixture.Context.SaveChangesAsync();
+
+        var controller = CreateUserSettingsController(fixture.Context);
+        var result = await controller.GetUserSetting("Green", 1);
+
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var setting = Assert.IsType<UserSetting>(ok.Value);
+        Assert.Equal(2u, setting.GreenTaikojukuDan);
+        Assert.DoesNotContain(1u, setting.GreenSelectableTaikojukuDans);
+        Assert.Contains(2u, setting.GreenSelectableTaikojukuDans);
+        Assert.DoesNotContain(101u, setting.GreenSelectableTaikojukuDans);
+    }
+
+    [Fact]
+    public async Task UserSettings_Green_PostPersistsOnlyUnpassedNormalTaikojukuFolderDan()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        fixture.Context.DanScoreDataGreen.Add(new DanScoreDatumGreen
+        {
+            Baid = 1,
+            DanId = 1,
+            IsExtra = false,
+            ClearGrade = GreenDanClearGrade.GoldClear
+        });
+        await fixture.Context.SaveChangesAsync();
+
+        var controller = CreateUserSettingsController(fixture.Context);
+
+        await controller.SaveUserSetting("Green", 1, new UserSetting
+        {
+            MyDonName = "GREEN",
+            GreenTaikojukuDan = 1
+        });
+        var save = await fixture.Context.UserSaveDataGreen.FindAsync(1u);
+        Assert.NotNull(save);
+        Assert.Equal(2u, save!.DispTaikojukuDan);
+
+        await controller.SaveUserSetting("Green", 1, new UserSetting
+        {
+            MyDonName = "GREEN",
+            GreenTaikojukuDan = 3
+        });
+        Assert.Equal(3u, save.DispTaikojukuDan);
+    }
+
     [Fact]
     public async Task UserSettings_Green_PostPersistsUnlockBitsetsWhenEditingIsFree()
     {
@@ -263,7 +354,8 @@ public class GreenAdminApiControllerTests
             TitlePlateId = 0,
             BodyColor = 2,
             FaceColor = 3,
-            LimbColor = 4
+            LimbColor = 4,
+            IsDisplayDanOnNamePlate = false
         });
 
         Assert.IsType<NoContentResult>(result);
@@ -273,7 +365,30 @@ public class GreenAdminApiControllerTests
         Assert.Contains(10u, BitsetCodec.Decode(save.TitleFlg, GreenProtocolBytes.TitleFlagBytes));
         Assert.Contains(4u, BitsetCodec.Decode(save.ToneFlg, GreenProtocolBytes.ToneFlagBytes));
         Assert.Equal(4u, save.DefaultToneSetting);
+        Assert.Equal(0u, save.DispDanType);
+        Assert.Equal(0u, save.DispTaikojukuDan);
         Assert.Equal("GREEN", (await fixture.Context.UserData.FindAsync(1u))!.MyDonName);
+    }
+
+    [Fact]
+    public async Task UserSettings_Green_PostLeavesTaikojukuFolderDanUnchangedWhenOmitted()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.DispTaikojukuDan = 4;
+        fixture.Context.UserSaveDataGreen.Add(save);
+        await fixture.Context.SaveChangesAsync();
+
+        var controller = CreateUserSettingsController(fixture.Context);
+
+        await controller.SaveUserSetting("Green", 1, new UserSetting
+        {
+            MyDonName = "GREEN",
+            GreenTaikojukuDan = 0
+        });
+
+        Assert.Equal(4u, save.DispTaikojukuDan);
     }
 
     [Fact]
