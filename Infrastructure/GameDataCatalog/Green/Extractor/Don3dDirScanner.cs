@@ -33,13 +33,14 @@ public static partial class Don3dDirScanner
 
             foreach (var absolute in directories)
             {
-                var ids = ScanDirectoryForPairedIds(absolute);
+                var relativePath = ToDon3dRelativePath(don3dRoot, absolute);
+                var ids = ScanDirectoryForIds(absolute, relativePath);
                 if (ids.Count == 0)
                 {
                     continue;
                 }
 
-                byDirectory[ToDon3dRelativePath(don3dRoot, absolute)] = ids;
+                byDirectory[relativePath] = ids;
             }
         }
 
@@ -57,26 +58,60 @@ public static partial class Don3dDirScanner
         return new Don3dScanResult(fullCosIds, byDirectory);
     }
 
-    private static IReadOnlyList<uint> ScanDirectoryForPairedIds(string directory)
+    private static IReadOnlyList<uint> ScanDirectoryForIds(string directory, string relativePath)
     {
-        var directoryId = ParseLastNumber(Path.GetFileName(directory));
+        var directoryId = ParseGreenCostumeProtocolId(Path.GetFileName(directory))
+                          ?? ParseLastNumber(Path.GetFileName(directory));
+        var greenNutIds = Directory.EnumerateFiles(directory, "*.nut", SearchOption.TopDirectoryOnly)
+            .Select(path => ParseGreenCostumeProtocolId(Path.GetFileNameWithoutExtension(path)))
+            .Where(id => id.HasValue)
+            .Select(id => id!.Value);
         var nudIds = Directory.EnumerateFiles(directory, "*.nud", SearchOption.TopDirectoryOnly)
-            .Select(path => ParseFileOrDirectoryId(path, directoryId))
+            .Select(path => ParseFileOrDirectoryId(path, directoryId, relativePath))
             .Where(id => id.HasValue)
             .Select(id => id!.Value)
             .ToHashSet();
 
         var nutIds = Directory.EnumerateFiles(directory, "*.nut", SearchOption.TopDirectoryOnly)
-            .Select(path => ParseFileOrDirectoryId(path, directoryId))
+            .Select(path => ParseFileOrDirectoryId(path, directoryId, relativePath))
             .Where(id => id.HasValue)
             .Select(id => id!.Value)
             .ToHashSet();
 
-        return nudIds.Intersect(nutIds).OrderBy(id => id).ToArray();
+        return greenNutIds
+            .Concat(nudIds.Intersect(nutIds))
+            .Distinct()
+            .OrderBy(id => id)
+            .ToArray();
     }
 
-    private static uint? ParseFileOrDirectoryId(string path, uint? directoryId)
-        => ParseLastNumber(Path.GetFileNameWithoutExtension(path)) ?? directoryId;
+    private static uint? ParseFileOrDirectoryId(string path, uint? directoryId, string relativePath)
+    {
+        var fileName = Path.GetFileNameWithoutExtension(path);
+        var greenProtocolId = ParseGreenCostumeProtocolId(fileName);
+        if (greenProtocolId.HasValue)
+        {
+            return greenProtocolId;
+        }
+
+        if (IsGreenSlotDirectory(relativePath))
+        {
+            return NumberRegex().IsMatch(fileName) ? null : directoryId;
+        }
+
+        return ParseLastNumber(fileName) ?? directoryId;
+    }
+
+    private static uint? ParseGreenCostumeProtocolId(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+
+        var match = GreenCostumeProtocolIdRegex().Match(value);
+        return match.Success ? uint.Parse(match.Groups[1].Value) : null;
+    }
 
     private static uint? ParseLastNumber(string? value)
     {
@@ -105,6 +140,16 @@ public static partial class Don3dDirScanner
                || normalizedPath.StartsWith($"{normalizedRoot}/", StringComparison.OrdinalIgnoreCase);
     }
 
+    private static bool IsGreenSlotDirectory(string path)
+        => IsUnder(path, "don3d/full/cos")
+           || IsUnder(path, "don3d/parts/head")
+           || IsUnder(path, "don3d/parts/body")
+           || IsUnder(path, "don3d/parts/paint")
+           || IsUnder(path, "don3d/parts/acc");
+
     [GeneratedRegex(@"\d+")]
     private static partial Regex NumberRegex();
+
+    [GeneratedRegex(@"^\w+_(\d+)000$")]
+    private static partial Regex GreenCostumeProtocolIdRegex();
 }

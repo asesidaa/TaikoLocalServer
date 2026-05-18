@@ -134,10 +134,10 @@ public sealed class GreenCustomizationExtractorTests
         var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(Path.Combine(root, "don3d", "full", "cos", "event"));
         Directory.CreateDirectory(Path.Combine(root, "don3d", "parts", "head", "campaign"));
-        await File.WriteAllTextAsync(Path.Combine(root, "don3d", "full", "cos", "event", "cos_000111.nud"), string.Empty);
-        await File.WriteAllTextAsync(Path.Combine(root, "don3d", "full", "cos", "event", "cos_000111.nut"), string.Empty);
-        await File.WriteAllTextAsync(Path.Combine(root, "don3d", "parts", "head", "campaign", "head_000222.nud"), string.Empty);
-        await File.WriteAllTextAsync(Path.Combine(root, "don3d", "parts", "head", "campaign", "head_000222.nut"), string.Empty);
+        await File.WriteAllTextAsync(Path.Combine(root, "don3d", "full", "cos", "event", "cos_111000.nud"), string.Empty);
+        await File.WriteAllTextAsync(Path.Combine(root, "don3d", "full", "cos", "event", "cos_111000.nut"), string.Empty);
+        await File.WriteAllTextAsync(Path.Combine(root, "don3d", "parts", "head", "campaign", "head_222000.nud"), string.Empty);
+        await File.WriteAllTextAsync(Path.Combine(root, "don3d", "parts", "head", "campaign", "head_222000.nut"), string.Empty);
 
         var scan = Don3dDirScanner.Scan(root);
         var costumes = CostumeMerger.Merge(
@@ -154,16 +154,73 @@ public sealed class GreenCustomizationExtractorTests
     }
 
     [Fact]
-    public async Task Don3dDirScanner_UsesRecursiveDirectoryIdWhenModelNamesAreGeneric()
+    public async Task Don3dDirScanner_UsesGreenTrailingThousandsIdsForSlotTypes()
     {
         var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(Path.Combine(root, "don3d", "parts", "body", "body_000333"));
-        await File.WriteAllTextAsync(Path.Combine(root, "don3d", "parts", "body", "body_000333", "model.nud"), string.Empty);
-        await File.WriteAllTextAsync(Path.Combine(root, "don3d", "parts", "body", "body_000333", "model.nut"), string.Empty);
+        Directory.CreateDirectory(Path.Combine(root, "don3d", "full", "cos"));
+        Directory.CreateDirectory(Path.Combine(root, "don3d", "parts", "head"));
+        Directory.CreateDirectory(Path.Combine(root, "don3d", "parts", "body"));
+        Directory.CreateDirectory(Path.Combine(root, "don3d", "parts", "paint"));
+        Directory.CreateDirectory(Path.Combine(root, "don3d", "parts", "acc"));
+
+        await WritePairAsync(root, "don3d", "full", "cos", "cos_001000");
+        await WritePairAsync(root, "don3d", "parts", "head", "head_001000");
+        await WritePairAsync(root, "don3d", "parts", "body", "body_001000");
+        await File.WriteAllTextAsync(Path.Combine(root, "don3d", "parts", "paint", "paint_001000.nut"), string.Empty);
+        await WritePairAsync(root, "don3d", "parts", "acc", "acc_001000");
 
         var scan = Don3dDirScanner.Scan(root);
         var costumes = CostumeMerger.Merge(
-            [new NdpEntry(333, "cos_name_333.nut", 0, 1)],
+            [new NdpEntry(1, "costume_name_001.nut", 0, 1)],
+            scan,
+            new GreenCatalogOverrides());
+
+        Assert.Contains(costumes, costume => costume.CostumeId == 1 && costume.CostumeType == "kigurumi");
+        Assert.Contains(costumes, costume => costume.CostumeId == 1 && costume.CostumeType == "head");
+        Assert.Contains(costumes, costume => costume.CostumeId == 1 && costume.CostumeType == "body");
+        Assert.Contains(costumes, costume => costume.CostumeId == 1 && costume.CostumeType == "face");
+        Assert.Contains(costumes, costume => costume.CostumeId == 1 && costume.CostumeType == "puchi");
+        Directory.Delete(root, recursive: true);
+    }
+
+    [Fact]
+    public async Task Don3dDirScanner_IgnoresGreenPaintVariantTextureIds()
+    {
+        var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(Path.Combine(root, "don3d", "full", "cos"));
+        Directory.CreateDirectory(Path.Combine(root, "don3d", "parts", "paint"));
+
+        await WritePairAsync(root, "don3d", "full", "cos", "cos_036001");
+        await File.WriteAllTextAsync(Path.Combine(root, "don3d", "parts", "paint", "paint_012000.nut"), string.Empty);
+        await File.WriteAllTextAsync(Path.Combine(root, "don3d", "parts", "paint", "paint_012001.nut"), string.Empty);
+
+        var scan = Don3dDirScanner.Scan(root);
+        var costumes = CostumeMerger.Merge(
+            [
+                new NdpEntry(12, "costume_name_012.nut", 0, 1),
+                new NdpEntry(12001, "costume_name_12001.nut", 0, 1),
+                new NdpEntry(36001, "costume_name_36001.nut", 0, 1)
+            ],
+            scan,
+            new GreenCatalogOverrides());
+
+        Assert.Equal("face", Assert.Single(costumes, costume => costume.CostumeId == 12).CostumeType);
+        Assert.Equal("unknown", Assert.Single(costumes, costume => costume.CostumeId == 12001).CostumeType);
+        Assert.Equal("unknown", Assert.Single(costumes, costume => costume.CostumeId == 36001).CostumeType);
+        Directory.Delete(root, recursive: true);
+    }
+
+    [Fact]
+    public async Task Don3dDirScanner_UsesRecursiveDirectoryIdWhenModelNamesAreGeneric()
+    {
+        var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(Path.Combine(root, "don3d", "parts", "body", "body_000033"));
+        await File.WriteAllTextAsync(Path.Combine(root, "don3d", "parts", "body", "body_000033", "model.nud"), string.Empty);
+        await File.WriteAllTextAsync(Path.Combine(root, "don3d", "parts", "body", "body_000033", "model.nut"), string.Empty);
+
+        var scan = Don3dDirScanner.Scan(root);
+        var costumes = CostumeMerger.Merge(
+            [new NdpEntry(33, "cos_name_033.nut", 0, 1)],
             scan,
             new GreenCatalogOverrides());
 
@@ -287,6 +344,47 @@ public sealed class GreenCustomizationExtractorTests
     }
 
     [Fact]
+    public async Task GreenCatalogExtractor_ReadsRecursiveGreenCostumeNamePacks()
+    {
+        var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        var outDir = Path.Combine(root, "out");
+        Directory.CreateDirectory(Path.Combine(root, "nutdata", "cos_name"));
+        Directory.CreateDirectory(Path.Combine(root, "nutdata", "title_name"));
+        Directory.CreateDirectory(Path.Combine(root, "nutdata", "tone_name"));
+        Directory.CreateDirectory(Path.Combine(root, "nutdata", "pack", "ST4100-1", "00", "costume_head_name"));
+        Directory.CreateDirectory(Path.Combine(root, "nutdata", "pack", "ST4100-1", "00", "costume_body_name"));
+        Directory.CreateDirectory(Path.Combine(root, "nutdata", "pack", "ST4100-1", "00", "costume_name"));
+        Directory.CreateDirectory(Path.Combine(root, "don3d", "full", "cos"));
+        Directory.CreateDirectory(Path.Combine(root, "don3d", "parts", "head"));
+        Directory.CreateDirectory(Path.Combine(root, "don3d", "parts", "body"));
+
+        await File.WriteAllBytesAsync(Path.Combine(root, "nutdata", "cos_name", "nutdatapack.ndp"), BuildNdp(("cos_name_001.nut", 0, 1)));
+        await File.WriteAllBytesAsync(Path.Combine(root, "nutdata", "title_name", "nutdatapack.ndp"), BuildNdp(("title_name_131.nut", 0, 1)));
+        await File.WriteAllBytesAsync(Path.Combine(root, "nutdata", "tone_name", "nutdatapack.ndp"), BuildNdp(("tone_name_004.nut", 0, 1)));
+        await File.WriteAllBytesAsync(Path.Combine(root, "nutdata", "pack", "ST4100-1", "00", "costume_head_name", "nutdatapack.ndp"), BuildNdp(("costume_head_name_002.nut", 0, 1)));
+        await File.WriteAllBytesAsync(Path.Combine(root, "nutdata", "pack", "ST4100-1", "00", "costume_body_name", "nutdatapack.ndp"), BuildNdp(("costume_body_name_003.nut", 0, 1)));
+        await File.WriteAllBytesAsync(Path.Combine(root, "nutdata", "pack", "ST4100-1", "00", "costume_name", "nutdatapack.ndp"), BuildNdp(("costume_name_004.nut", 0, 1)));
+        await WritePairAsync(root, "don3d", "full", "cos", "cos_004000");
+        await WritePairAsync(root, "don3d", "parts", "head", "head_002000");
+        await WritePairAsync(root, "don3d", "parts", "body", "body_003000");
+
+        await GreenCatalogExtractor.ExtractAsync(
+            new GreenExtractorOptions(GameDataPath: root, OutputDirectory: outDir),
+            CancellationToken.None);
+
+        var costumeJson = await File.ReadAllTextAsync(Path.Combine(outDir, "green_costume_data.json"));
+
+        Assert.Contains("\"costumeId\": 2", costumeJson);
+        Assert.Contains("\"costumeType\": \"head\"", costumeJson);
+        Assert.Contains("\"costumeId\": 3", costumeJson);
+        Assert.Contains("\"costumeType\": \"body\"", costumeJson);
+        Assert.Contains("\"costumeId\": 4", costumeJson);
+        Assert.Contains("\"costumeType\": \"kigurumi\"", costumeJson);
+
+        Directory.Delete(root, recursive: true);
+    }
+
+    [Fact]
     public async Task GreenCatalogExtractor_ThrowsForMissingGameDataRootWithoutWritingOutput()
     {
         var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
@@ -404,4 +502,11 @@ public sealed class GreenCustomizationExtractorTests
     }
 
     private static int Align4(int value) => (value + 3) & ~3;
+
+    private static async Task WritePairAsync(string root, params string[] pathParts)
+    {
+        var pathWithoutExtension = Path.Combine([root, .. pathParts]);
+        await File.WriteAllTextAsync($"{pathWithoutExtension}.nud", string.Empty);
+        await File.WriteAllTextAsync($"{pathWithoutExtension}.nut", string.Empty);
+    }
 }

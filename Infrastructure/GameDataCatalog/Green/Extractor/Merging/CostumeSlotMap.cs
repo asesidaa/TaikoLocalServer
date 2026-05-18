@@ -12,9 +12,14 @@ internal static class CostumeSlotMap
             ["don3d/parts/acc"] = "puchi"
         };
 
-    public static IReadOnlyDictionary<uint, string> BuildIdMap(Don3dScanResult scan)
+    public static IReadOnlyDictionary<string, IReadOnlyList<uint>> BuildTypeIdMap(Don3dScanResult scan)
     {
-        var result = new Dictionary<uint, string>();
+        var result = DirectoryToCostumeType.Values
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(
+                costumeType => costumeType,
+                _ => new SortedSet<uint>(),
+                StringComparer.OrdinalIgnoreCase);
 
         foreach (var pair in scan.DirectoryIds)
         {
@@ -25,11 +30,14 @@ internal static class CostumeSlotMap
 
             foreach (var id in pair.Value)
             {
-                result.TryAdd(id, costumeType);
+                result[costumeType].Add(id);
             }
         }
 
-        return result;
+        return result.ToDictionary(
+            pair => pair.Key,
+            pair => (IReadOnlyList<uint>)pair.Value.ToArray(),
+            StringComparer.OrdinalIgnoreCase);
     }
 
     private static bool TryResolveCostumeType(string directory, out string costumeType)

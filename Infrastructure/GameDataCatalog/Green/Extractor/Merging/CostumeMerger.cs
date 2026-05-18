@@ -10,46 +10,86 @@ public static class CostumeMerger
         Don3dScanResult don3d,
         GreenCatalogOverrides overrides)
     {
+        var ndpIds = ndpEntries.Select(entry => entry.Id).ToHashSet();
         var don3dIds = don3d.DirectoryIds.Values.SelectMany(ids => ids).ToHashSet();
-        var idToCostumeType = CostumeSlotMap.BuildIdMap(don3d);
+        var typeToIds = CostumeSlotMap.BuildTypeIdMap(don3d);
+        var typedDon3dIds = typeToIds.Values.SelectMany(ids => ids).ToHashSet();
+        var costumes = new List<Costume>();
 
-        return ndpEntries
-            .Select(entry =>
+        foreach (var pair in typeToIds)
+        {
+            foreach (var id in pair.Value)
             {
-                overrides.Costumes.TryGetValue(entry.Id, out var itemOverride);
-                var hasDon3d = don3dIds.Contains(entry.Id);
-                var hasOverride = !string.IsNullOrWhiteSpace(itemOverride?.Name)
-                                  || !string.IsNullOrWhiteSpace(itemOverride?.CostumeType);
-                var source = hasDon3d ? "ndp+don3d" : "ndp";
-                return new Costume
-                {
-                    CostumeId = entry.Id,
-                    CostumeType = ResolveCostumeType(entry.Id, itemOverride, idToCostumeType),
-                    CostumeName = itemOverride?.Name ?? string.Empty,
-                    CostumeNameEN = itemOverride?.Name ?? string.Empty,
-                    CostumeNameCN = itemOverride?.Name ?? string.Empty,
-                    CostumeNameKO = itemOverride?.Name ?? string.Empty,
-                    Source = hasOverride ? $"{source}+overrides" : source
-                };
-            })
-            .GroupBy(costume => costume.CostumeId)
+                costumes.Add(BuildCostume(
+                    id,
+                    pair.Key,
+                    ndpIds.Contains(id) ? "ndp+don3d" : "don3d",
+                    overrides));
+            }
+        }
+
+        foreach (var id in ndpIds.Where(id => !typedDon3dIds.Contains(id)))
+        {
+            costumes.Add(BuildCostume(
+                id,
+                "unknown",
+                don3dIds.Contains(id) ? "ndp+don3d" : "ndp",
+                overrides));
+        }
+
+        return costumes
+            .GroupBy(costume => (costume.CostumeId, costume.CostumeType))
             .Select(group => group.First())
             .OrderBy(costume => costume.CostumeId)
+            .ThenBy(costume => CostumeTypeSortKey(costume.CostumeType))
+            .ThenBy(costume => costume.CostumeType, StringComparer.Ordinal)
             .ToArray();
     }
 
-    private static string ResolveCostumeType(
+    private static Costume BuildCostume(
         uint id,
-        GreenCostumeOverride? itemOverride,
-        IReadOnlyDictionary<uint, string> idToCostumeType)
+        string costumeType,
+        string source,
+        GreenCatalogOverrides overrides)
+    {
+        overrides.Costumes.TryGetValue(id, out var itemOverride);
+        var resolvedType = ResolveCostumeType(costumeType, itemOverride);
+        var hasOverride = !string.IsNullOrWhiteSpace(itemOverride?.Name)
+                          || !string.IsNullOrWhiteSpace(itemOverride?.CostumeType);
+
+        return new Costume
+        {
+            CostumeId = id,
+            CostumeType = resolvedType,
+            CostumeName = itemOverride?.Name ?? string.Empty,
+            CostumeNameEN = itemOverride?.Name ?? string.Empty,
+            CostumeNameCN = itemOverride?.Name ?? string.Empty,
+            CostumeNameKO = itemOverride?.Name ?? string.Empty,
+            Source = hasOverride ? $"{source}+overrides" : source
+        };
+    }
+
+    private static string ResolveCostumeType(
+        string costumeType,
+        GreenCostumeOverride? itemOverride)
     {
         if (!string.IsNullOrWhiteSpace(itemOverride?.CostumeType))
         {
             return itemOverride.CostumeType;
         }
 
-        return idToCostumeType.TryGetValue(id, out var costumeType)
-            ? costumeType
-            : "unknown";
+        return costumeType;
     }
+
+    private static int CostumeTypeSortKey(string costumeType)
+        => costumeType switch
+        {
+            "kigurumi" => 0,
+            "head" => 1,
+            "body" => 2,
+            "face" => 3,
+            "puchi" => 4,
+            "unknown" => 5,
+            _ => 6
+        };
 }

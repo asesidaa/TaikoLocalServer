@@ -23,9 +23,16 @@ public static class GreenCatalogExtractor
 
         ValidateInputs(options.GameDataPath, [cosNamePack, titleNamePack, toneNamePack]);
 
-        var cosEntries = NdpReader.ReadFile(cosNamePack);
-        var titleEntries = NdpReader.ReadFile(titleNamePack);
-        var toneEntries = NdpReader.ReadFile(toneNamePack);
+        var cosEntries = ReadNamedPacks(
+            options.GameDataPath,
+            "cos_name",
+            "costume_name",
+            "costume_head_name",
+            "costume_body_name",
+            "reward_head_name",
+            "reward_body_name");
+        var titleEntries = ReadNamedPacks(options.GameDataPath, "title_name");
+        var toneEntries = ReadNamedPacks(options.GameDataPath, "tone_name");
         var rewardTitleIds = File.Exists(rewardTitleFiltering)
             ? await BoostXmlReader.ReadRewardTitleIdsAsync(rewardTitleFiltering, cancellationToken)
             : [];
@@ -58,5 +65,25 @@ public static class GreenCatalogExtractor
                 throw new FileNotFoundException($"Required Green catalog source file does not exist: {requiredFile}", requiredFile);
             }
         }
+    }
+
+    private static IReadOnlyList<NdpEntry> ReadNamedPacks(string gameDataPath, params string[] catalogDirectoryNames)
+    {
+        var nutdataRoot = Path.Combine(gameDataPath, "nutdata");
+        var names = catalogDirectoryNames.ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        return Directory.EnumerateFiles(nutdataRoot, "nutdatapack.ndp", SearchOption.AllDirectories)
+            .Where(path =>
+            {
+                var directoryName = Path.GetFileName(Path.GetDirectoryName(path));
+                return directoryName is not null && names.Contains(directoryName);
+            })
+            .Order(StringComparer.OrdinalIgnoreCase)
+            .SelectMany(NdpReader.ReadFile)
+            .GroupBy(entry => (entry.Id, entry.FileName))
+            .Select(group => group.First())
+            .OrderBy(entry => entry.Id)
+            .ThenBy(entry => entry.FileName, StringComparer.Ordinal)
+            .ToArray();
     }
 }
