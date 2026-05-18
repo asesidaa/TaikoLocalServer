@@ -130,7 +130,7 @@ internal sealed class GreenHandlerFixture : IAsyncDisposable
 
         public IReadOnlyDictionary<uint, GreenEventFolderEntry> EventFolders { get; } = new Dictionary<uint, GreenEventFolderEntry>();
 
-        public IReadOnlyDictionary<uint, GreenTelopEntry> Telops { get; } = new Dictionary<uint, GreenTelopEntry>();
+        public IReadOnlyDictionary<uint, GreenTelopEntry> Telops { get; init; } = new Dictionary<uint, GreenTelopEntry>();
 
         public IReadOnlyDictionary<uint, GreenGachaEntry> Gachas { get; } = new Dictionary<uint, GreenGachaEntry>();
 

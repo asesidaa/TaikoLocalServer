@@ -94,6 +94,7 @@ These files are copied to the publish output via `<None Include=... CopyToOutput
 - `wwwroot/data/nijiiro/datatable/*.bin` — Nijiiro game-owned binary datatables (`musicinfo.bin`, `music_order.bin`, `wordlist.bin`, `don_cos_reward.bin`, `shougou.bin`, `neiro.bin`) that ship with the game install. Decoded `*.json` siblings may also be present. **Gitignored** under `wwwroot/data/*/datatable/`.
 - `wwwroot/data/green/datatable/{musicinfo,musicmedleyinfo}.xml` — Green AC15 datatables. Required when Green is enabled.
 - `wwwroot/data/green/recommend_songs.json` — Green recommended-song catalog.
+- `wwwroot/data/green/telop_data.json` — Green attract-mode scrolling banners (array of `{telopId, verupNo, startDatetime, endDatetime, telop}`; datetimes are `yyyyMMddHHmmss` passthrough strings; absent file behaves like empty array).
 - `wwwroot/data/shared/*.json` — cross-era operator tables (`token_data.json`, `qrcode_data.json`).
 - `wwwroot/taiko.db3` — SQLite DB (single file, shared across eras).
 

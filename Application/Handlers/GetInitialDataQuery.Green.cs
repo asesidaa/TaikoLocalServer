@@ -18,6 +18,14 @@ public partial class GetInitialDataQueryHandler
             IsClose = false,
             IsItemshop = green.ItemShop.Count > 0,
             IsGhostbattleplay = true,
+            AryGreenTelopDatas = green.Telops.Values
+                .OrderBy(entry => entry.TelopId)
+                .Select(entry => new CommonInitialDataCheckResponse.InformationData
+                {
+                    InfoId = entry.TelopId,
+                    VerupNo = entry.VerupNo
+                })
+                .ToList(),
             AryGreenTaikojukuDatas = green.TaikojukuFileOrder
                 .Where(entry => entry.ChallengeLevel is >= 1 and <= 25)
                 .Take(3)

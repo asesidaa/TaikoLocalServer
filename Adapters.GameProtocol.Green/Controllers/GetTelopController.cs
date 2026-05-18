@@ -1,3 +1,5 @@
+using TaikoLocalServer.Adapters.GameProtocol.Green.Mappers;
+
 namespace TaikoLocalServer.Adapters.GameProtocol.Green.Controllers;
 
 [ApiController]
@@ -6,9 +8,12 @@ public class GetTelopController : BaseProtocolController<GetTelopController>
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult GetTelop([FromBody] GettelopRequest request)
+    public async Task<IActionResult> GetTelop([FromBody] GettelopRequest request)
     {
         Logger.LogInformation("Green GetTelop request: {Request}", request.Stringify());
-        return Ok(new GettelopResponse { Result = 1 });
+        var common = await Mediator.Send(
+            new GetTelopQuery(GameEra.Green, request.TelopId),
+            HttpContext.RequestAborted);
+        return Ok(GetTelopMappers.Map(common));
     }
 }

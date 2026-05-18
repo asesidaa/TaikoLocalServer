@@ -1,0 +1,15 @@
+namespace TaikoLocalServer.Application.Handlers;
+
+public readonly record struct GetTelopQuery(GameEra Era, uint TelopId) : IRequest<CommonGetTelopResponse>;
+
+public partial class GetTelopQueryHandler(IGameDataCatalog gameDataService)
+    : IRequestHandler<GetTelopQuery, CommonGetTelopResponse>
+{
+    public ValueTask<CommonGetTelopResponse> Handle(GetTelopQuery request, CancellationToken cancellationToken) => request.Era switch
+    {
+        GameEra.Green => HandleGreen(request, cancellationToken),
+        _ => throw new InvalidOperationException($"GetTelopQuery is not implemented for era: {request.Era}")
+    };
+
+    private partial ValueTask<CommonGetTelopResponse> HandleGreen(GetTelopQuery request, CancellationToken cancellationToken);
+}
