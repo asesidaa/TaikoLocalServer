@@ -13,6 +13,91 @@ namespace TaikoLocalServer.Tests.Green;
 public sealed class GreenCustomizationCatalogLoaderTests
 {
     [Fact]
+    public void Composer_UsesNijiiroNamesForGreenTitleAndCostumeSlice()
+    {
+        var greenCostumes = new List<Costume>
+        {
+            new() { CostumeId = 1, CostumeType = "body", CostumeName = string.Empty },
+            new() { CostumeId = 1, CostumeType = "unknown", CostumeName = string.Empty },
+            new() { CostumeId = 999, CostumeType = "unknown", CostumeName = "Green Unknown" }
+        };
+        var greenTitles = new Dictionary<uint, Title>
+        {
+            [10] = new() { TitleId = 10, TitleName = string.Empty },
+            [11] = new() { TitleId = 11, TitleName = "Green Fallback" }
+        };
+        var greenNeiros = new Dictionary<uint, Neiro>();
+        var nijiiroCostumes = new List<Costume>
+        {
+            new() { CostumeId = 1, CostumeType = "body", CostumeName = "Nijiiro Body" },
+            new() { CostumeId = 200, CostumeType = "body", CostumeName = "Nijiiro Only Body" }
+        };
+        var nijiiroTitles = new Dictionary<uint, Title>
+        {
+            [10] = new() { TitleId = 10, TitleName = "Nijiiro Title" },
+            [12] = new() { TitleId = 12, TitleName = "Nijiiro Only Title" }
+        };
+        var nijiiroNeiros = new Dictionary<uint, Neiro>();
+
+        var catalog = GreenCustomizationCatalogComposer.Compose(
+            greenCostumes,
+            greenTitles,
+            greenNeiros,
+            nijiiroCostumes,
+            nijiiroTitles,
+            nijiiroNeiros);
+
+        Assert.Equal("Nijiiro Body", Assert.Single(catalog.Costumes, item => item.CostumeType == "body" && item.CostumeId == 1).CostumeName);
+        Assert.DoesNotContain(catalog.Costumes, item => item.CostumeType == "body" && item.CostumeId == 200);
+        Assert.DoesNotContain(catalog.Costumes, item => item.CostumeType == "unknown" && item.CostumeId == 1);
+        Assert.Contains(catalog.Costumes, item => item.CostumeType == "unknown" && item.CostumeId == 999);
+        Assert.Equal("Nijiiro Title", catalog.Titles[10].TitleName);
+        Assert.Equal("Green Fallback", catalog.Titles[11].TitleName);
+        Assert.False(catalog.Titles.ContainsKey(12));
+    }
+
+    [Fact]
+    public void Composer_UsesNijiiroBaseToneRangeWhenGreenToneNamesAreIncomplete()
+    {
+        var greenNeiros = Enumerable.Range(0, 16)
+            .Select(id => new Neiro { NeiroId = (uint)id, NeiroName = $"Green {id}" })
+            .ToDictionary(neiro => neiro.NeiroId);
+        var nijiiroNeiros = Enumerable.Range(0, 20)
+            .Select(id => new Neiro { NeiroId = (uint)id, NeiroName = $"Nijiiro {id}" })
+            .ToDictionary(neiro => neiro.NeiroId);
+
+        var catalog = GreenCustomizationCatalogComposer.Compose(
+            [],
+            new Dictionary<uint, Title>(),
+            greenNeiros,
+            [],
+            new Dictionary<uint, Title>(),
+            nijiiroNeiros);
+
+        Assert.Equal(Enumerable.Range(0, 20).Select(id => (uint)id), catalog.Neiros.Keys.OrderBy(id => id));
+        Assert.Equal("Nijiiro 19", catalog.Neiros[19].NeiroName);
+    }
+
+    [Fact]
+    public async Task FileCatalogInitialize_InitializesNijiiroBeforeGreenSoSharedCatalogIsAvailable()
+    {
+        var nijiiroInitialized = false;
+        var green = new OrderingCatalog(GameEra.Green, () =>
+        {
+            Assert.True(nijiiroInitialized);
+            return Task.CompletedTask;
+        });
+        var nijiiro = new OrderingCatalog(GameEra.Nijiiro, () =>
+        {
+            nijiiroInitialized = true;
+            return Task.CompletedTask;
+        });
+        var catalog = new FileGameDataCatalog([green, nijiiro]);
+
+        await catalog.InitializeAsync(CancellationToken.None);
+    }
+
+    [Fact]
     public async Task CostumeLoader_MissingFileReturnsEmptyList()
     {
         var path = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.json");
@@ -355,6 +440,16 @@ public sealed class GreenCustomizationCatalogLoaderTests
     }
 
     private static int Align4(int value) => (value + 3) & ~3;
+
+    private sealed class OrderingCatalog(GameEra era, Func<Task> initialize) : IEraGameDataCatalog
+    {
+        public GameEra Era => era;
+
+        public IReadOnlyDictionary<uint, IMusicInfoEntry> MusicInfos { get; } =
+            new Dictionary<uint, IMusicInfoEntry>();
+
+        public Task InitializeAsync(CancellationToken cancellationToken) => initialize();
+    }
 
     private sealed class RecordingLogger<T> : ILogger<T>
     {

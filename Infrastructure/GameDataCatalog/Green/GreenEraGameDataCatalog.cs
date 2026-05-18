@@ -11,7 +11,8 @@ namespace TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
 
 public sealed class GreenEraGameDataCatalog(
     ILogger<GreenEraGameDataCatalog> logger,
-    IOptions<ServerSettings>? serverSettings = null) : IGreenCatalog
+    IOptions<ServerSettings>? serverSettings = null,
+    INijiiroCatalog? nijiiroCatalog = null) : IGreenCatalog
 {
     private uint songHashVersion;
     private IReadOnlyList<GreenMusicInfoEntry> musicInfoFileOrder = [];
@@ -117,9 +118,19 @@ public sealed class GreenEraGameDataCatalog(
         recommend = await new GreenRecommendLoader().LoadAsync(
             new HashSet<uint>(musicInfos.Keys),
             cancellationToken);
-        costumeList = await new GreenCostumeLoader().LoadAsync(cancellationToken);
-        titleDictionary = await new GreenTitleLoader().LoadAsync(cancellationToken);
-        neiroDictionary = await new GreenNeiroLoader().LoadAsync(cancellationToken);
+        var greenCostumes = await new GreenCostumeLoader().LoadAsync(cancellationToken);
+        var greenTitles = await new GreenTitleLoader().LoadAsync(cancellationToken);
+        var greenNeiros = await new GreenNeiroLoader().LoadAsync(cancellationToken);
+        var customizationCatalog = GreenCustomizationCatalogComposer.Compose(
+            greenCostumes,
+            greenTitles,
+            greenNeiros,
+            nijiiroCatalog?.GetCostumeList(),
+            nijiiroCatalog?.GetTitleDictionary(),
+            nijiiroCatalog?.GetNeiroDictionary());
+        costumeList = customizationCatalog.Costumes;
+        titleDictionary = customizationCatalog.Titles;
+        neiroDictionary = customizationCatalog.Neiros;
 
         logger.LogInformation(
             "Loaded Green catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {TaikojukuCount} taikojuku packs, {StarCount} tuning star rows, {CostumeCount} costumes, {TitleCount} titles, {NeiroCount} tones",

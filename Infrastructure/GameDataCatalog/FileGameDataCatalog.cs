@@ -22,6 +22,15 @@ public sealed class FileGameDataCatalog : IGameDataCatalog
         return catalog;
     }
 
-    public Task InitializeAsync(CancellationToken cancellationToken = default)
-        => Task.WhenAll(catalogs.Values.Select(catalog => catalog.InitializeAsync(cancellationToken)));
+    public async Task InitializeAsync(CancellationToken cancellationToken = default)
+    {
+        if (catalogs.TryGetValue(GameEra.Nijiiro, out var nijiiroCatalog))
+        {
+            await nijiiroCatalog.InitializeAsync(cancellationToken);
+        }
+
+        await Task.WhenAll(catalogs
+            .Where(pair => pair.Key != GameEra.Nijiiro)
+            .Select(pair => pair.Value.InitializeAsync(cancellationToken)));
+    }
 }
