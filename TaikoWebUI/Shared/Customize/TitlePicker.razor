@@ -1,4 +1,5 @@
 @using System.Linq
+@using Microsoft.AspNetCore.Components.Web.Virtualization
 
 @if (Catalog.Count > 0 || !string.IsNullOrWhiteSpace(Value.Title) || Value.TitlePlateId != 0)
 {
@@ -15,26 +16,27 @@
                    Label="@Localizer["Title Plate"]"
                    Disabled="@ReadOnly"
                    AnchorOrigin="Origin.BottomCenter">
-            @foreach (var plate in PlateIds)
+            @foreach (var plate in plateIds)
             {
-                <MudSelectItem Value="@plate">@plate</MudSelectItem>
+                <MudSelectItem Value="@plate">@FormatPlateOption(plate)</MudSelectItem>
             }
         </MudSelect>
 
         @if (AllowUnlockEditing)
         {
             <MudExpansionPanels Elevation="0" Outlined="true">
-                <MudExpansionPanel Text="@Localizer["Player Titles"]">
-                    <MudStack Spacing="1">
-                        @foreach (var title in OrderedTitles)
-                        {
-                            var isUnlocked = Value.UnlockedTitleIds.Contains(title.TitleId);
-                            <MudCheckBox T="bool"
-                                         Value="@isUnlocked"
-                                         ValueChanged="@(value => ToggleUnlocked(title.TitleId, value))"
-                                         Label="@DisplayName(title)" />
-                        }
-                    </MudStack>
+                <MudExpansionPanel Text="@Localizer["Player Titles"]" Expanded="@unlockPanelExpanded" ExpandedChanged="SetUnlockPanelExpanded">
+                    @if (unlockPanelExpanded)
+                    {
+                        <div class="picker-unlock-list" tabindex="-1">
+                            <Virtualize Items="orderedTitles" Context="title" ItemSize="40">
+                                <MudCheckBox T="bool"
+                                             Value="@unlockedTitleIds.Contains(title.TitleId)"
+                                             ValueChanged="@(value => ToggleUnlocked(title.TitleId, value))"
+                                             Label="@DisplayName(title)" />
+                            </Virtualize>
+                        </div>
+                    }
                 </MudExpansionPanel>
             </MudExpansionPanels>
         }
@@ -54,9 +56,17 @@
     private bool TitleTextReadOnly => ReadOnly || ReadOnlyTitleText;
     private bool SelectsCatalogTitle => SelectionMode == TitleSelectionMode.TitleId;
 
-    private IReadOnlyList<Title> OrderedTitles => Catalog.Values.OrderBy(title => title.TitleId).ToArray();
+    private Title[] orderedTitles = [];
+    private IReadOnlyList<uint> plateIds = [];
+    private HashSet<uint> unlockedTitleIds = [];
+    private bool unlockPanelExpanded;
 
-    private IReadOnlyList<uint> PlateIds => TitlePickerCatalog.GetSelectableIds(Catalog, Value.TitlePlateId, SelectionMode);
+    protected override void OnParametersSet()
+    {
+        orderedTitles = Catalog.Values.OrderBy(title => title.TitleId).ToArray();
+        plateIds = TitlePickerCatalog.GetSelectableIds(Catalog, Value.TitlePlateId, SelectionMode);
+        unlockedTitleIds = Value.UnlockedTitleIds.ToHashSet();
+    }
 
     private Task SetTitle(string title)
         => TitleTextReadOnly
@@ -88,6 +98,22 @@
             ? Value.UnlockedTitleIds.Append(id)
             : Value.UnlockedTitleIds.Where(value => value != id);
         return ValueChanged.InvokeAsync(Value with { UnlockedTitleIds = ids.Distinct().OrderBy(value => value).ToArray() });
+    }
+
+    private Task SetUnlockPanelExpanded(bool expanded)
+    {
+        unlockPanelExpanded = expanded;
+        return Task.CompletedTask;
+    }
+
+    private string FormatPlateOption(uint plate)
+    {
+        if (Catalog.TryGetValue(plate, out var title) && !string.IsNullOrWhiteSpace(title.TitleName))
+        {
+            return $"{plate} - {title.TitleName}";
+        }
+
+        return $"#{plate:D3}";
     }
 
     private static string DisplayName(Title title)

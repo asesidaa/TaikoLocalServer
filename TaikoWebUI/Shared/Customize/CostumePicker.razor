@@ -1,4 +1,5 @@
 @using System.Linq
+@using Microsoft.AspNetCore.Components.Web.Virtualization
 
 @if (Catalog.Count > 0)
 {
@@ -9,7 +10,7 @@
                    Label="@Label"
                    Disabled="@ReadOnly"
                    AnchorOrigin="Origin.BottomCenter">
-            @foreach (var costume in OrderedCatalog)
+            @foreach (var costume in orderedCatalog)
             {
                 <MudSelectItem Value="@costume.CostumeId">@DisplayName(costume)</MudSelectItem>
             }
@@ -18,17 +19,18 @@
         @if (AllowUnlockEditing)
         {
             <MudExpansionPanels Elevation="0" Outlined="true">
-                <MudExpansionPanel Text="@Localizer["Unlocked"]">
-                    <MudStack Spacing="1">
-                        @foreach (var costume in OrderedCatalog)
-                        {
-                            var isUnlocked = IsUnlocked(costume.CostumeId);
-                            <MudCheckBox T="bool"
-                                         Value="@isUnlocked"
-                                         ValueChanged="@(value => ToggleUnlocked(costume.CostumeId, value))"
-                                         Label="@DisplayName(costume)" />
-                        }
-                    </MudStack>
+                <MudExpansionPanel Text="@Localizer["Unlocked"]" Expanded="@unlockPanelExpanded" ExpandedChanged="SetUnlockPanelExpanded">
+                    @if (unlockPanelExpanded)
+                    {
+                        <div class="picker-unlock-list" tabindex="-1">
+                            <Virtualize Items="orderedCatalog" Context="costume" ItemSize="40">
+                                <MudCheckBox T="bool"
+                                             Value="@unlockedIds.Contains(costume.CostumeId)"
+                                             ValueChanged="@(value => ToggleUnlocked(costume.CostumeId, value))"
+                                             Label="@DisplayName(costume)" />
+                            </Virtualize>
+                        </div>
+                    }
                 </MudExpansionPanel>
             </MudExpansionPanels>
         }
@@ -44,16 +46,22 @@
     [Parameter] public bool ReadOnly { get; set; }
     [Parameter] public bool AllowUnlockEditing { get; set; }
 
-    private IReadOnlyList<Costume> OrderedCatalog => Catalog
-        .OrderBy(costume => costume.CostumeType == "unknown" ? 1 : 0)
-        .ThenBy(costume => costume.CostumeId)
-        .ToArray();
+    private Costume[] orderedCatalog = [];
+    private HashSet<uint> unlockedIds = [];
+    private bool unlockPanelExpanded;
 
-    private bool IsUnlocked(uint id) => Value.UnlockedIds.Contains(id);
+    protected override void OnParametersSet()
+    {
+        orderedCatalog = Catalog
+            .OrderBy(costume => costume.CostumeType == "unknown" ? 1 : 0)
+            .ThenBy(costume => costume.CostumeId)
+            .ToArray();
+        unlockedIds = Value.UnlockedIds.ToHashSet();
+    }
 
     private async Task SetCurrent(uint id)
     {
-        var unlocked = Value.UnlockedIds.Contains(id)
+        var unlocked = unlockedIds.Contains(id)
             ? Value.UnlockedIds
             : Value.UnlockedIds.Append(id).Distinct().OrderBy(value => value).ToArray();
         await ValueChanged.InvokeAsync(Value with { CurrentId = id, UnlockedIds = unlocked });
@@ -67,6 +75,12 @@
         var normalized = unlocked.Append(0u).Distinct().OrderBy(value => value).ToArray();
         var current = normalized.Contains(Value.CurrentId) ? Value.CurrentId : 0;
         await ValueChanged.InvokeAsync(Value with { CurrentId = current, UnlockedIds = normalized });
+    }
+
+    private Task SetUnlockPanelExpanded(bool expanded)
+    {
+        unlockPanelExpanded = expanded;
+        return Task.CompletedTask;
     }
 
     private static string DisplayName(Costume costume)

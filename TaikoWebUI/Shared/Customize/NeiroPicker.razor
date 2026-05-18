@@ -9,7 +9,7 @@
                    Label="@Localizer["Tone"]"
                    Disabled="@ReadOnly"
                    AnchorOrigin="Origin.BottomCenter">
-            @foreach (var neiro in OrderedNeiros)
+            @foreach (var neiro in orderedNeiros)
             {
                 <MudSelectItem Value="@neiro.NeiroId">@DisplayName(neiro)</MudSelectItem>
             }
@@ -20,9 +20,9 @@
             <MudExpansionPanels Elevation="0" Outlined="true">
                 <MudExpansionPanel Text="@Localizer["Unlocked"]">
                     <MudStack Spacing="1">
-                        @foreach (var neiro in OrderedNeiros)
+                        @foreach (var neiro in orderedNeiros)
                         {
-                            var isUnlocked = Value.UnlockedIds.Contains(neiro.NeiroId);
+                            var isUnlocked = unlockedIds.Contains(neiro.NeiroId);
                             <MudCheckBox T="bool"
                                          Value="@isUnlocked"
                                          ValueChanged="@(enabled => ToggleUnlocked(neiro.NeiroId, enabled))"
@@ -43,11 +43,18 @@
     [Parameter] public bool ReadOnly { get; set; }
     [Parameter] public bool AllowUnlockEditing { get; set; }
 
-    private IReadOnlyList<Neiro> OrderedNeiros => Catalog.Values.OrderBy(neiro => neiro.NeiroId).ToArray();
+    private Neiro[] orderedNeiros = [];
+    private HashSet<uint> unlockedIds = [];
+
+    protected override void OnParametersSet()
+    {
+        orderedNeiros = Catalog.Values.OrderBy(neiro => neiro.NeiroId).ToArray();
+        unlockedIds = Value.UnlockedIds.ToHashSet();
+    }
 
     private Task SetCurrent(uint id)
     {
-        var unlocked = Value.UnlockedIds.Contains(id)
+        var unlocked = unlockedIds.Contains(id)
             ? Value.UnlockedIds
             : Value.UnlockedIds.Append(id).Distinct().OrderBy(value => value).ToArray();
         return ValueChanged.InvokeAsync(Value with { CurrentId = id, UnlockedIds = unlocked });
