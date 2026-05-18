@@ -153,8 +153,7 @@ public partial class UpdatePlayResultCommandHandler
         var isShin = GreenStageModeInterpreter.IsShin(stage.StageMode);
         var isAiBattle = GreenStageModeInterpreter.IsAiBattle(stage.StageMode);
         var allowCrownUpdate = !isAiBattle
-            || stage.Level == 5
-            || GreenAiBattleLevels.IsCertifiedLevel(stage.GhostStageData?.SdCertifiedLevelId ?? 0);
+            || GreenAiBattleLevels.AllowsCrown(stage.Level, stage.SupportLevel);
         var play = new SongPlayDatumGreen
         {
             Baid = baid,

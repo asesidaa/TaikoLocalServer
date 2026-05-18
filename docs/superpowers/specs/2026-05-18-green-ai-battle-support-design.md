@@ -19,23 +19,25 @@ and `GhostStageSectionDatumGreen` tables. The `ApplyGhostUpdates` method in
 the Green play-result handler is fully written but unreachable because
 validation rejects before it runs.
 
-In AI Battle the player picks two independent settings: the **chart
-difficulty** (Easy / Normal / Hard / Oni / Ura — the `Level` field in the
-play result, same as normal play) and the **AI difficulty** (1–13 on the
-AI Battle level scale, plus Ura — reported per-stage as
-`SdCertifiedLevelId` inside `GhostStageData`). A player can pick a Normal
-chart but fight an AI at level 11, or a Easy chart with AI level 2, etc.
+In AI Battle the play result reports the broad chart course as `Level`
+(Easy / Normal / Hard / Oni / Ura, same as normal play), the displayed stars
+as `StarLevel`, and the AI Battle variant marker as `SupportLevel`.
+
+Comparing `Host/Logs/log-20260518.txt` and `Host/Logs/log-20260519.txt`
+shows that every AI Battle stage includes `SdCertifiedLevelId`, but that
+field is not enough to distinguish usual levels from AI-specific ones. The
+last captured AI-specific play has the same `SongNo`, `Level`, `StarLevel`,
+and `SdCertifiedLevelId` as earlier usual-level plays; the distinguishing
+field is `SupportLevel = 1` instead of `SupportLevel = 0`.
 
 The wiki at
 <https://wikiwiki.jp/taiko-fumen/作品/新AC/AIバトル演奏/グリーン> documents
 two caveats that matter for behavior fidelity:
 
-- AI Battle records **crowns only when the AI difficulty is a 正規 level:
-  `sd_certified_level_id ∈ {1, 5, 9, 13}`** (かんたん, ふつう, むずかしい,
-  おに positions). Intermediate AI difficulties (2/3/4, 6/7/8, 10/11/12)
-  record score but do not update the crown column. Ura charts have no
-  intermediate AI difficulties, so any Ura AI Battle play records crown
-  regardless of the reported `SdCertifiedLevelId`.
+- AI Battle records **crowns only for the usual level** (`SupportLevel = 0`)
+  or Ura. AI-specific levels (`SupportLevel > 0`) record score but do not
+  update the crown column. Ura charts have no intermediate AI difficulties,
+  so any Ura AI Battle play records crown.
 - Best score, good/ok/ng/pound, donmedal/katsumedal, play counts, and the
   per-section territory data are all recorded on every AI difficulty.
 
@@ -56,8 +58,9 @@ single-player server with no leaderboard.
 - No server-side re-derivation of rank-up rules or anti-cheat for winnings.
   The wiki's rank-point progression table (1/9/24/54/99/159/234/324/429/
   549/699 for ranks 1–10+) is reference material only; we trust the client.
-- No server-side validation of AI difficulty (`SdCertifiedLevelId`) range
-  or its consistency with the chart difficulty. Trust the client.
+- No server-side validation of `SdCertifiedLevelId` or `SupportLevel` ranges.
+  These fields are trusted as client evidence; only `SupportLevel` affects
+  the crown gate.
 
 ## StageMode encoding
 
@@ -83,9 +86,9 @@ exposes both. Raw `StageMode` continues to be persisted on
 
 ## Crown gating
 
-`Application/Common/GreenAiBattleLevels.IsCertifiedLevel(uint sdCertifiedLevelId)`
-returns `true` iff `sdCertifiedLevelId is 1 or 5 or 9 or 13`. Used by the
-best-score upsert.
+`Application/Common/GreenAiBattleLevels.AllowsCrown(uint courseLevel,
+uint supportLevel)` returns `true` when `supportLevel == 0` or when the
+course is Ura (`courseLevel == 5`).
 
 In `UpdatePlayResultCommand.Green.cs::UpsertBestAsync`, after computing the
 candidate crown, only apply the new crown when **any** of the following
@@ -94,12 +97,12 @@ holds:
 1. The stage is not an AI Battle stage (`!IsAiBattle(stage.StageMode)`), or
 2. The player picked the Ura chart (`stage.Level == 5`) — Ura has no
    intermediate AI difficulties so any AI Battle Ura play counts, or
-3. `GreenAiBattleLevels.IsCertifiedLevel(stage.GhostStageData?.SdCertifiedLevelId ?? 0)`.
+3. The AI Battle stage is the usual level:
+   `stage.SupportLevel == 0`.
 
 The score / rate update logic is unchanged for AI Battle plays — playing
 a Normal chart in AI Battle always updates the Normal best score, even
-when the AI difficulty was intermediate. `Level` is the chart the player
-picked; `SdCertifiedLevelId` is the AI's level, chosen independently.
+when the selected AI Battle level was AI-specific.
 
 ## GhostPlayedSongFlag
 
@@ -127,10 +130,9 @@ matching for the known set `{0, 1, 3, 4}`:
 All other validation in `IsValidGreenStage` and `HasOnlyInRangeUnlockRewards`
 stays.
 
-`SdCertifiedLevelId` is not validated against a known range. The wiki
-defines a 1–13 + ura sub-level space but we have no need to reject values
-outside it; an out-of-range value just fails the `IsCertifiedLevel` check
-and falls through to "do not update crown", which is the safe direction.
+`SdCertifiedLevelId` is not validated against a known range. It is not used
+for crown gating. `SupportLevel` is trusted as the usual-vs-AI-specific
+marker.
 
 ## Rank, winnings, perf, tokens, release info
 
@@ -186,14 +188,13 @@ and best-score upsert runs.
     small private static using `SetBits`.
 - **Add** `Application/Common/GreenStageModeInterpreter.cs` — `IsShin`
   and `IsAiBattle` static methods.
-- **Add** `Application/Common/GreenAiBattleLevels.cs` — `IsCertifiedLevel`
-  static method, with the 正規 set `{1, 5, 9, 13}` as a constant.
+- **Add** `Application/Common/GreenAiBattleLevels.cs` — `AllowsCrown`
+  static method, allowing usual levels (`SupportLevel = 0`) and Ura.
 - **Add** `Tests/Green/GreenAiBattlePlayResultTests.cs` — see "Test plan".
 - **Add** `Tests/Green/GreenStageModeInterpreterTests.cs` — pure-function
   coverage of the 0/1/3/4 truth tables.
 - **Add** `Tests/Green/GreenAiBattleLevelsTests.cs` — pure-function
-  coverage of `IsCertifiedLevel` for 0..14 and a couple of out-of-range
-  values.
+  coverage of `AllowsCrown` for usual levels, AI-specific levels, and Ura.
 
 ## Test plan
 
@@ -220,15 +221,15 @@ and best-score upsert runs.
    but with `StageMode = 4`. Assert the `SongBestDatumGreen` row that was
    upserted has `IsShin = true`.
 
-3. **`UpdatePlayResult_Green_AiBattleIntermediateAiDifficultyDoesNotUpdateCrown`**
+3. **`UpdatePlayResult_Green_AiSpecificLevelDoesNotUpdateCrownEvenWhenChartStarMatches`**
    — Pre-seed a `SongBestDatumGreen` row with `BestCrown = CrownType.None`.
    Submit an AI Battle play on a Normal chart (`Level = 2`) with
-   `SdCertifiedLevelId = 11` (intermediate AI difficulty) and
-   `PlayResult = 2 (Gold)`. Assert the persisted `BestCrown` is still
-   `None`; assert score updated.
+   `StarLevel` matching the catalog, `SdCertifiedLevelId = 11`, and
+   `SupportLevel = 1`. Assert the persisted `BestCrown` is still `None`;
+   assert score updated.
 
-4. **`UpdatePlayResult_Green_AiBattleCertifiedAiDifficultyUpdatesCrown`** —
-   Same as 3 but with `SdCertifiedLevelId = 13` (正規 AI difficulty).
+4. **`UpdatePlayResult_Green_AiBattleUsualLevelUpdatesCrownWhenSupportLevelZero`** —
+   Same song/course shape as 3, but with `SupportLevel = 0`.
    Assert `BestCrown` is now `Gold`.
 
 5. **`UpdatePlayResult_Green_AiBattleUraAlwaysUpdatesCrown`** — Submit an
@@ -249,9 +250,9 @@ the `(IsShin, IsAiBattle)` truth values for stage modes 0, 1, 2, 3, 4, 5.
 The 2 and 5 cases assert both functions return `false` (consistent with
 "unknown stage mode" failing validation upstream).
 
-`Tests/Green/GreenAiBattleLevelsTests.cs` — asserts `IsCertifiedLevel`
-returns `true` for `{1, 5, 9, 13}` and `false` for `{0, 2, 3, 4, 6, 7, 8,
-10, 11, 12, 14, 100}`.
+`Tests/Green/GreenAiBattleLevelsTests.cs` — asserts `AllowsCrown` returns
+true for usual levels (`SupportLevel = 0`), false for AI-specific levels
+(`SupportLevel > 0`), and true for Ura regardless of support level.
 
 ## Known caveats (documented, not addressed in this iteration)
 
@@ -263,9 +264,8 @@ returns `true` for `{1, 5, 9, 13}` and `false` for `{0, 2, 3, 4, 6, 7, 8,
   client-supplied cumulative value (existing behavior), so total
   winnings stay consistent. We do not detect intentional cumulative
   inflation.
-- **No `SdCertifiedLevelId` range check.** Values outside `1..13`
-  silently fail `IsCertifiedLevel` and fall through to "do not update
-  crown", which is the safe direction. We do not reject the play.
+- **No `SdCertifiedLevelId` / `SupportLevel` range check.** We do not reject
+  the play for out-of-range ghost/rank evidence.
 
 ## Acceptance
 

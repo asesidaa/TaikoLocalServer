@@ -3,24 +3,19 @@ namespace TaikoLocalServer.Tests.Green;
 public sealed class GreenAiBattleLevelsTests
 {
     [Theory]
-    [InlineData(0u, false)]
-    [InlineData(1u, true)]
-    [InlineData(2u, false)]
-    [InlineData(3u, false)]
-    [InlineData(4u, false)]
-    [InlineData(5u, true)]
-    [InlineData(6u, false)]
-    [InlineData(7u, false)]
-    [InlineData(8u, false)]
-    [InlineData(9u, true)]
-    [InlineData(10u, false)]
-    [InlineData(11u, false)]
-    [InlineData(12u, false)]
-    [InlineData(13u, true)]
-    [InlineData(14u, false)]
-    [InlineData(100u, false)]
-    public void IsCertifiedLevel_ReturnsTrueForCanonicalLevels(uint sdCertifiedLevelId, bool expected)
+    [InlineData(1u, 0u, true)]
+    [InlineData(2u, 0u, true)]
+    [InlineData(3u, 0u, true)]
+    [InlineData(4u, 0u, true)]
+    [InlineData(1u, 1u, false)]
+    [InlineData(2u, 1u, false)]
+    [InlineData(3u, 2u, false)]
+    [InlineData(4u, 9u, false)]
+    [InlineData(5u, 0u, true)]
+    [InlineData(5u, 1u, true)]
+    [InlineData(5u, 9u, true)]
+    public void AllowsCrown_ReturnsTrueForUsualLevelsAndAllUra(uint courseLevel, uint supportLevel, bool expected)
     {
-        Assert.Equal(expected, GreenAiBattleLevels.IsCertifiedLevel(sdCertifiedLevelId));
+        Assert.Equal(expected, GreenAiBattleLevels.AllowsCrown(courseLevel, supportLevel));
     }
 }
