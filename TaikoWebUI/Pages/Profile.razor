@@ -91,6 +91,10 @@
                                         </MudItem>
                                     </MudGrid>
                                 }
+                                else
+                                {
+                                    <MudSwitch @bind-Value="@response.IsDisplayDanOnNamePlate" Label=@Localizer["Display Dan Rank on Name Plate"] Color="Color.Primary" />
+                                }
                             </MudStack>
                         </MudTabPanel>
 
@@ -149,10 +153,22 @@
                                                  ValueChanged="@(value => { neiroValue = value; ApplyCustomizationValues(); })"
                                                  AllowUnlockEditing="@CanEditUnlocks" />
 
-                                    <ColorPicker Colors="@CostumeColors"
-                                                 ShowSwatches="@(!IsGreen)"
+                                    <ColorPicker Colors="@TaikoCustomizationVisuals.CostumeColors"
                                                  Value="@colorValue"
                                                  ValueChanged="@(value => { colorValue = value; ApplyCustomizationValues(); })" />
+
+                                    @if (IsGreen && response.GreenSelectableTaikojukuDans.Count > 0)
+                                    {
+                                        <MudSelect T="uint"
+                                                   @bind-Value="@response.GreenTaikojukuDan"
+                                                   Label="@Localizer["Taikojuku Folder Dan"]"
+                                                   AnchorOrigin="Origin.BottomCenter">
+                                            @foreach (var danId in response.GreenSelectableTaikojukuDans)
+                                            {
+                                                <MudSelectItem Value="@danId">@GetDanOptionText(danId)</MudSelectItem>
+                                            }
+                                        </MudSelect>
+                                    }
                                 </MudStack>
                             </MudTabPanel>
                         }
@@ -206,61 +222,7 @@
                     <MudPaper Elevation="0" Outlined="true">
                         <MudTabs MinimumTabWidth="100px" Rounded="true" Border="true" TabPanelsClass="pa-8">
                             <MudTabPanel Text=@Localizer["Player"]>
-                                <MudItem style="height: auto">
-                                    @if (!IsGreen)
-                                    {
-                                        @* Player Visualizer *@
-                                        <MudItem style="text-align: center;">
-                                            <MudItem style="position:relative">
-                                                @if (response.Kigurumi == 0)
-                                                {
-                                                    <MudImage Fluid="true" style=@($"position: relative; top: 0; left: 0; filter: {CostumeColorFilters[response.BodyColor]}") Src=@CostumeOrDefault("masks/body-bodymask", response.Body, "masks/body-bodymask-0000") />
-                                                    <MudImage Fluid="true" Class="profile-image" style=@($"filter: {CostumeColorFilters[response.FaceColor]}") Src=@CostumeOrDefault("masks/body-facemask", response.Body, "masks/body-facemask-0000") />
-                                                    <MudImage Fluid="true" Class="profile-image" onerror="this.src='images/Costumes/body/body-0000.webp'" Src=@($"images/Costumes/body/body-{response.Body.ToString().PadLeft(4, '0')}.webp") />
-                                                    <MudImage Fluid="true" Class="profile-image" onerror="this.src='images/Costumes/face/face-0000.webp'" Src=@($"images/Costumes/face/face-{response.Face.ToString().PadLeft(4, '0')}.webp") />
-                                                    <MudImage Fluid="true" Class="profile-image" style=@($"filter: {CostumeColorFilters[response.BodyColor]}") Src=@CostumeOrDefault("masks/head-bodymask", response.Head, "head/head-0000") />
-                                                    <MudImage Fluid="true" Class="profile-image" style=@($"filter: {CostumeColorFilters[response.FaceColor]}") Src=@CostumeOrDefault("masks/head-facemask", response.Head, "head/head-0000") />
-                                                    <MudImage Fluid="true" Class="profile-image" onerror="this.src='images/Costumes/head/head-0000.webp'" Src=@($"images/Costumes/head/head-{response.Head.ToString().PadLeft(4, '0')}.webp") />
-                                                }
-                                                else
-                                                {
-                                                    <MudImage Fluid="true" style=@($"position: relative; top: 0; left: 0; filter: {CostumeColorFilters[response.BodyColor]}") Src=@CostumeOrDefault("masks/kigurumi-bodymask", response.Kigurumi, "masks/body-bodymask-0000") />
-                                                    <MudImage Fluid="true" Class="profile-image" style=@($"filter: {CostumeColorFilters[response.FaceColor]}") Src=@CostumeOrDefault("masks/kigurumi-facemask", response.Kigurumi, "masks/body-facemask-0000") />
-                                                    <MudImage Fluid="true" Class="profile-image" onerror="this.src='images/Costumes/kigurumi/kigurumi-0000.webp'" Src=@($"images/Costumes/kigurumi/kigurumi-{response.Kigurumi.ToString().PadLeft(4, '0')}.webp") />
-                                                }
-                                                <MudItem Class="profile-image">
-                                                    <MudImage Fluid="true" Class="puchi-floating" onerror="this.src='images/Costumes/puchi/puchi-9999.webp'" Src=@($"images/Costumes/puchi/puchi-{response.Puchi.ToString().PadLeft(4, '0')}.webp") />
-                                                </MudItem>
-                                            </MudItem>
-                                        </MudItem>
-                                    }
-
-
-                                    @* Player Nameplate *@
-                                    <MudItem style="text-align: center; position:relative;">
-                                        @* Title text *@
-                                        <MudItem style="position:absolute; top: 5.5%; left:0; right:1.1%; height:38%; width:min(96%, 320px); margin: 0 auto; z-index:2; vertical-align: middle;">
-                                            <MudItem Style=@($"position:absolute; height:100%; width:80%; right: 10%;")>
-                                                <MudText Class="profile-image" id="nameplate-title" Style="height:100%; margin: auto auto; font-family: 'Nijiiro', sans-serif; color:black">@response.Title</MudText>
-                                            </MudItem>
-                                        </MudItem>
-                                        @* Name text *@
-                                        <MudItem Style="position:absolute; top: 42.5%; left:0; right:1.1%; height:41%; width:min(96%, 320px); margin: 0 auto; z-index:2">
-                                            @* Name textoffset to the right for Dan Rank *@
-                                            <MudItem Style=@($"position:absolute; height:100%; right: 10%; {(response.IsDisplayDanOnNamePlate ? "width:46%;" : "width:80%;")}")>
-                                                <MudText id="nameplate-name-outline" Class="profile-image" Style="height:100%; font-family: 'Nijiiro', sans-serif; -webkit-text-stroke-width: 5px; -webkit-text-stroke-color: black">@response.MyDonName</MudText>
-                                                <MudText id="nameplate-name" Class="profile-image" Style="height:100%; font-family: 'Nijiiro', sans-serif; color:white">@response.MyDonName</MudText>
-                                            </MudItem>
-                                        </MudItem>
-                                        <MudImage onload="nameplateLoaded()" id="nameplate" Fluid="true" Style="position: relative; bottom: 0; left: 0;" Src="images/Nameplates/nameplate.webp" />
-                                        @* Check if image does not exist, use nameplate_Wood.webp *@
-                                        <MudImage Fluid="true" Style="position:absolute; bottom: 6px; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Nameplates/nameplate_Wood.webp'" Src=@($"images/Nameplates/nameplate_{GetTitlePlateName(response.TitlePlateId).Replace(' ', '_')}.webp") />
-                                        @if (response.IsDisplayDanOnNamePlate)
-                                        {
-                                            <MudImage Fluid="true" Class="profile-image" Src="images/Nameplates/nameplate_dan.webp" />
-                                        }
-                                    </MudItem>
-                                </MudItem>
+                                <PlayerPreview Setting="@response" />
                             </MudTabPanel>
 
                             @if (!IsGreen && response.IsDisplayAchievement)
@@ -373,4 +335,66 @@ else
         UpdateScores(difficulty);
         await JsRuntime.InvokeVoidAsync("updateScoreboardText", scoresArray);
     }
+
+    private string GetDanOptionText(uint danId)
+    {
+        if (danDictionary.TryGetValue(danId, out var danData)
+            && !string.IsNullOrWhiteSpace(danData.Title)
+            && !uint.TryParse(danData.Title, out _))
+        {
+            return FormatDanTitle(danData.Title);
+        }
+
+        return FormatDanId(danId);
+    }
+
+    private string FormatDanId(uint danId)
+        => danId switch
+        {
+            1 => Localizer["Fifth Kyuu"],
+            2 => Localizer["Fourth Kyuu"],
+            3 => Localizer["Third Kyuu"],
+            4 => Localizer["Second Kyuu"],
+            5 => Localizer["First Kyuu"],
+            6 => Localizer["First Dan"],
+            7 => Localizer["Second Dan"],
+            8 => Localizer["Third Dan"],
+            9 => Localizer["Fourth Dan"],
+            10 => Localizer["Fifth Dan"],
+            11 => Localizer["Sixth Dan"],
+            12 => Localizer["Seventh Dan"],
+            13 => Localizer["Eighth Dan"],
+            14 => Localizer["Ninth Dan"],
+            15 => Localizer["Tenth Dan"],
+            16 => Localizer["Kuroto"],
+            17 => Localizer["Meijin"],
+            18 => Localizer["Chojin"],
+            19 => Localizer["Tatsujin"],
+            _ => $"Dan {danId}"
+        };
+
+    private string FormatDanTitle(string title)
+        => title switch
+        {
+            "5kyuu" => Localizer["Fifth Kyuu"],
+            "4kyuu" => Localizer["Fourth Kyuu"],
+            "3kyuu" => Localizer["Third Kyuu"],
+            "2kyuu" => Localizer["Second Kyuu"],
+            "1kyuu" => Localizer["First Kyuu"],
+            "1dan" => Localizer["First Dan"],
+            "2dan" => Localizer["Second Dan"],
+            "3dan" => Localizer["Third Dan"],
+            "4dan" => Localizer["Fourth Dan"],
+            "5dan" => Localizer["Fifth Dan"],
+            "6dan" => Localizer["Sixth Dan"],
+            "7dan" => Localizer["Seventh Dan"],
+            "8dan" => Localizer["Eighth Dan"],
+            "9dan" => Localizer["Ninth Dan"],
+            "10dan" => Localizer["Tenth Dan"],
+            "11dan" => Localizer["Kuroto"],
+            "12dan" => Localizer["Meijin"],
+            "13dan" => Localizer["Chojin"],
+            "14dan" => Localizer["Tatsujin"],
+            _ => title
+        };
 }

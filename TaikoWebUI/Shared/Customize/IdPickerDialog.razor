@@ -1,0 +1,97 @@
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+
+<MudDialog>
+    <DialogContent>
+        <MudStack Spacing="2" Class="id-picker-dialog">
+            <MudTextField T="string"
+                          Value="@search"
+                          ValueChanged="OnSearchChanged"
+                          Immediate="true"
+                          Placeholder="@Localizer["Search"]"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search" />
+
+            <MudText Typo="Typo.caption" Class="id-picker-dialog-count">
+                @($"{filteredIds.Length} / {Items.Count}")
+            </MudText>
+
+            @if (filteredIds.Length == 0)
+            {
+                <MudText Typo="Typo.body2" Class="pa-4">@Localizer["No Data"]</MudText>
+            }
+            else
+            {
+                <div class="id-picker-dialog-list" tabindex="-1">
+                    <Virtualize Items="filteredIds" Context="id" ItemSize="48">
+                        <div class="@RowClass(id)" role="button" tabindex="0" @onclick="@(() => Select(id))">
+                            <MudIcon Icon="@(id == SelectedId ? Icons.Material.Filled.RadioButtonChecked : Icons.Material.Outlined.RadioButtonUnchecked)"
+                                     Size="Size.Small"
+                                     Color="@(id == SelectedId ? Color.Primary : Color.Default)"
+                                     Class="id-picker-dialog-row-icon" />
+                            <span class="id-picker-dialog-row-text">@Label(id)</span>
+                            @if (id == SelectedId)
+                            {
+                                <MudIcon Icon="@Icons.Material.Filled.Check"
+                                         Size="Size.Small"
+                                         Color="Color.Primary"
+                                         Class="id-picker-dialog-row-trailing" />
+                            }
+                        </div>
+                    </Virtualize>
+                </div>
+            }
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@Localizer["Cancel"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter] public IReadOnlyList<uint> Items { get; set; } = [];
+    [Parameter] public Func<uint, string> Label { get; set; } = id => id.ToString();
+    [Parameter] public uint SelectedId { get; set; }
+
+    private string search = string.Empty;
+    private uint[] filteredIds = [];
+    private IReadOnlyList<uint> lastItems = [];
+
+    protected override void OnParametersSet()
+    {
+        if (!ReferenceEquals(Items, lastItems))
+        {
+            lastItems = Items;
+            Filter();
+        }
+    }
+
+    private void OnSearchChanged(string? value)
+    {
+        search = value ?? string.Empty;
+        Filter();
+    }
+
+    private void Filter()
+    {
+        if (string.IsNullOrWhiteSpace(search))
+        {
+            filteredIds = Items.ToArray();
+            return;
+        }
+
+        filteredIds = Items
+            .Where(id => Label(id).Contains(search, StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+    }
+
+    private string RowClass(uint id)
+        => id == SelectedId
+            ? "id-picker-dialog-row id-picker-dialog-row-selected"
+            : "id-picker-dialog-row";
+
+    private void Select(uint id) => MudDialog.Close(DialogResult.Ok(id));
+
+    private void Cancel() => MudDialog.Cancel();
+}

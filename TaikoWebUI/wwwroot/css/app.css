@@ -420,3 +420,86 @@ tr.is-current-user p {
     height: 40px;
     align-items: center;
 }
+
+.picker-activator-label {
+    color: var(--mud-palette-text-secondary);
+    font-size: 0.75rem;
+    margin-bottom: 4px;
+    padding-left: 4px;
+}
+
+.picker-activator-button {
+    justify-content: space-between !important;
+    text-transform: none !important;
+    font-weight: 400 !important;
+}
+
+.id-picker-dialog {
+    min-width: 280px;
+}
+
+.id-picker-dialog-count {
+    color: var(--mud-palette-text-secondary);
+}
+
+.id-picker-dialog-list {
+    height: 50vh;
+    overflow-y: auto;
+    border: 1px solid var(--mud-palette-lines-default);
+    border-radius: 4px;
+    background-color: var(--mud-palette-surface);
+}
+
+.id-picker-dialog-row {
+    height: 48px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 16px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--mud-palette-divider);
+    transition: background-color 120ms ease;
+    user-select: none;
+}
+
+.id-picker-dialog-row:last-child {
+    border-bottom: none;
+}
+
+.id-picker-dialog-row:hover {
+    background-color: var(--mud-palette-action-default-hover);
+}
+
+.id-picker-dialog-row:focus-visible {
+    outline: 2px solid var(--mud-palette-primary);
+    outline-offset: -2px;
+}
+
+.id-picker-dialog-row-selected {
+    background-color: var(--mud-palette-primary-hover);
+}
+
+.id-picker-dialog-row-selected:hover {
+    background-color: var(--mud-palette-action-default-hover);
+}
+
+.id-picker-dialog-row-icon {
+    flex-shrink: 0;
+}
+
+.id-picker-dialog-row-text {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 0.9rem;
+}
+
+.id-picker-dialog-row-selected .id-picker-dialog-row-text {
+    color: var(--mud-palette-primary);
+    font-weight: 500;
+}
+
+.id-picker-dialog-row-trailing {
+    flex-shrink: 0;
+}

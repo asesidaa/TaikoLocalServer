@@ -1,5 +1,6 @@
 @using System.Linq
 @using Microsoft.AspNetCore.Components.Web.Virtualization
+@inject IDialogService DialogService
 
 @if (Catalog.Count > 0 || !string.IsNullOrWhiteSpace(Value.Title) || Value.TitlePlateId != 0)
 {
@@ -10,17 +11,17 @@
                       Label="@Localizer["Title"]"
                       ReadOnly="@TitleTextReadOnly" />
 
-        <MudSelect T="uint"
-                   Value="Value.TitlePlateId"
-                   ValueChanged="SetPlate"
-                   Label="@Localizer["Title Plate"]"
-                   Disabled="@ReadOnly"
-                   AnchorOrigin="Origin.BottomCenter">
-            @foreach (var plate in plateIds)
-            {
-                <MudSelectItem Value="@plate">@FormatPlateOption(plate)</MudSelectItem>
-            }
-        </MudSelect>
+        <MudStack Spacing="0">
+            <MudText Typo="Typo.caption" Class="picker-activator-label">@Localizer["Title Plate"]</MudText>
+            <MudButton Variant="Variant.Outlined"
+                       FullWidth="true"
+                       Disabled="@ReadOnly"
+                       OnClick="OpenPlatePicker"
+                       EndIcon="@Icons.Material.Filled.ArrowDropDown"
+                       Class="picker-activator-button">
+                @FormatPlateOption(Value.TitlePlateId)
+            </MudButton>
+        </MudStack>
 
         @if (AllowUnlockEditing)
         {
@@ -72,6 +73,26 @@
         => TitleTextReadOnly
             ? Task.CompletedTask
             : ValueChanged.InvokeAsync(Value with { Title = title });
+
+    private async Task OpenPlatePicker()
+    {
+        var parameters = new DialogParameters
+        {
+            ["Items"] = plateIds,
+            ["Label"] = (Func<uint, string>)FormatPlateOption,
+            ["SelectedId"] = Value.TitlePlateId
+        };
+
+        var options = new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true };
+        var dialog = await DialogService.ShowAsync<IdPickerDialog>(Localizer["Title Plate"], parameters, options);
+        var result = await dialog.Result;
+        if (result is null || result.Canceled || result.Data is not uint id)
+        {
+            return;
+        }
+
+        await SetPlate(id);
+    }
 
     private Task SetPlate(uint plate)
     {

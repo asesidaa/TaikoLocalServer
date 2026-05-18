@@ -133,13 +133,42 @@ public sealed class GreenCustomizationWebUiTests
     }
 
     [Fact]
-    public void TitlePicker_DropdownShowsResolvedTitleNameNotJustNumericId()
+    public void TitlePicker_UsesDialogActivatorInsteadOfMudSelect()
     {
         var markup = ReadWebUiFile("Shared", "Customize", "TitlePicker.razor");
 
-        Assert.DoesNotContain("<MudSelectItem Value=\"@plate\">@plate</MudSelectItem>", markup);
-        Assert.Contains("FormatPlateOption(plate)", markup);
+        Assert.DoesNotContain("<MudSelectItem Value=\"@plate\"", markup);
+        Assert.DoesNotContain("<MudSelect T=\"uint\"", markup);
+        Assert.Contains("ShowAsync<IdPickerDialog>", markup);
+        Assert.Contains("FormatPlateOption(Value.TitlePlateId)", markup);
         Assert.Contains("FormatPlateOption(uint plate)", markup);
+    }
+
+    [Fact]
+    public void CostumePicker_UsesDialogActivatorInsteadOfMudSelect()
+    {
+        var markup = ReadWebUiFile("Shared", "Customize", "CostumePicker.razor");
+
+        Assert.DoesNotContain("<MudSelect T=\"uint\"", markup);
+        Assert.DoesNotContain("<MudSelectItem Value=\"@costume.CostumeId\"", markup);
+        Assert.Contains("ShowAsync<IdPickerDialog>", markup);
+        Assert.Contains("DisplayNameById(Value.CurrentId)", markup);
+        Assert.Contains("orderedIds", markup);
+        Assert.Contains("costumeById", markup);
+    }
+
+    [Fact]
+    public void IdPickerDialog_VirtualizesFilteredIdsWithSearch()
+    {
+        var markup = ReadWebUiFile("Shared", "Customize", "IdPickerDialog.razor");
+
+        Assert.Contains("using Microsoft.AspNetCore.Components.Web.Virtualization", markup);
+        Assert.Contains("<Virtualize Items=\"filteredIds\"", markup);
+        Assert.Contains("ItemSize=\"48\"", markup);
+        Assert.Contains("OnSearchChanged", markup);
+        Assert.Contains("MudDialog.Close(DialogResult.Ok(id))", markup);
+        Assert.Contains("RadioButtonChecked", markup);
+        Assert.Contains("id-picker-dialog-row-selected", markup);
     }
 
     [Fact]

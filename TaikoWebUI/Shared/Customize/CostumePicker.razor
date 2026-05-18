@@ -1,20 +1,21 @@
 @using System.Linq
 @using Microsoft.AspNetCore.Components.Web.Virtualization
+@inject IDialogService DialogService
 
 @if (Catalog.Count > 0)
 {
     <MudStack Spacing="2">
-        <MudSelect T="uint"
-                   Value="Value.CurrentId"
-                   ValueChanged="SetCurrent"
-                   Label="@Label"
-                   Disabled="@ReadOnly"
-                   AnchorOrigin="Origin.BottomCenter">
-            @foreach (var costume in orderedCatalog)
-            {
-                <MudSelectItem Value="@costume.CostumeId">@DisplayName(costume)</MudSelectItem>
-            }
-        </MudSelect>
+        <MudStack Spacing="0">
+            <MudText Typo="Typo.caption" Class="picker-activator-label">@Label</MudText>
+            <MudButton Variant="Variant.Outlined"
+                       FullWidth="true"
+                       Disabled="@ReadOnly"
+                       OnClick="OpenPicker"
+                       EndIcon="@Icons.Material.Filled.ArrowDropDown"
+                       Class="picker-activator-button">
+                @DisplayNameById(Value.CurrentId)
+            </MudButton>
+        </MudStack>
 
         @if (AllowUnlockEditing)
         {
@@ -47,6 +48,8 @@
     [Parameter] public bool AllowUnlockEditing { get; set; }
 
     private Costume[] orderedCatalog = [];
+    private uint[] orderedIds = [];
+    private Dictionary<uint, Costume> costumeById = [];
     private HashSet<uint> unlockedIds = [];
     private bool unlockPanelExpanded;
 
@@ -56,7 +59,29 @@
             .OrderBy(costume => costume.CostumeType == "unknown" ? 1 : 0)
             .ThenBy(costume => costume.CostumeId)
             .ToArray();
+        orderedIds = orderedCatalog.Select(costume => costume.CostumeId).ToArray();
+        costumeById = orderedCatalog.ToDictionary(costume => costume.CostumeId);
         unlockedIds = Value.UnlockedIds.ToHashSet();
+    }
+
+    private async Task OpenPicker()
+    {
+        var parameters = new DialogParameters
+        {
+            ["Items"] = (IReadOnlyList<uint>)orderedIds,
+            ["Label"] = (Func<uint, string>)DisplayNameById,
+            ["SelectedId"] = Value.CurrentId
+        };
+
+        var options = new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true };
+        var dialog = await DialogService.ShowAsync<IdPickerDialog>(Label, parameters, options);
+        var result = await dialog.Result;
+        if (result is null || result.Canceled || result.Data is not uint id)
+        {
+            return;
+        }
+
+        await SetCurrent(id);
     }
 
     private async Task SetCurrent(uint id)
@@ -82,6 +107,9 @@
         unlockPanelExpanded = expanded;
         return Task.CompletedTask;
     }
+
+    private string DisplayNameById(uint id)
+        => costumeById.TryGetValue(id, out var costume) ? DisplayName(costume) : $"#{id:D3}";
 
     private static string DisplayName(Costume costume)
     {

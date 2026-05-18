@@ -1,0 +1,98 @@
+@if (Setting is not null)
+{
+    <MudItem style=@($"height: auto; --taiko-limb-filter: {TaikoCustomizationVisuals.GetCostumeColorFilter(Setting.LimbColor)}")>
+        @* Player Visualizer *@
+        <MudItem style="text-align: center;">
+            <MudItem style="position:relative">
+                @if (Setting.Kigurumi == 0)
+                {
+                    <MudImage Fluid="true" style=@($"position: relative; top: 0; left: 0; filter: {TaikoCustomizationVisuals.GetCostumeColorFilter(Setting.BodyColor)}") Src=@CostumeOrDefault("masks/body-bodymask", Setting.Body, "masks/body-bodymask-0000") />
+                    <MudImage Fluid="true" Class="profile-image" style=@($"filter: {TaikoCustomizationVisuals.GetCostumeColorFilter(Setting.FaceColor)}") Src=@CostumeOrDefault("masks/body-facemask", Setting.Body, "masks/body-facemask-0000") />
+                    <MudImage Fluid="true" Class="profile-image" onerror="this.src='images/Costumes/body/body-0000.webp'" Src=@($"images/Costumes/body/body-{Setting.Body.ToString().PadLeft(4, '0')}.webp") />
+                    <MudImage Fluid="true" Class="profile-image" onerror="this.src='images/Costumes/face/face-0000.webp'" Src=@($"images/Costumes/face/face-{Setting.Face.ToString().PadLeft(4, '0')}.webp") />
+                    <MudImage Fluid="true" Class="profile-image" style=@($"filter: {TaikoCustomizationVisuals.GetCostumeColorFilter(Setting.BodyColor)}") Src=@CostumeOrDefault("masks/head-bodymask", Setting.Head, "head/head-0000") />
+                    <MudImage Fluid="true" Class="profile-image" style=@($"filter: {TaikoCustomizationVisuals.GetCostumeColorFilter(Setting.FaceColor)}") Src=@CostumeOrDefault("masks/head-facemask", Setting.Head, "head/head-0000") />
+                    <MudImage Fluid="true" Class="profile-image" onerror="this.src='images/Costumes/head/head-0000.webp'" Src=@($"images/Costumes/head/head-{Setting.Head.ToString().PadLeft(4, '0')}.webp") />
+                }
+                else
+                {
+                    <MudImage Fluid="true" style=@($"position: relative; top: 0; left: 0; filter: {TaikoCustomizationVisuals.GetCostumeColorFilter(Setting.BodyColor)}") Src=@CostumeOrDefault("masks/kigurumi-bodymask", Setting.Kigurumi, "masks/body-bodymask-0000") />
+                    <MudImage Fluid="true" Class="profile-image" style=@($"filter: {TaikoCustomizationVisuals.GetCostumeColorFilter(Setting.FaceColor)}") Src=@CostumeOrDefault("masks/kigurumi-facemask", Setting.Kigurumi, "masks/body-facemask-0000") />
+                    <MudImage Fluid="true" Class="profile-image" onerror="this.src='images/Costumes/kigurumi/kigurumi-0000.webp'" Src=@($"images/Costumes/kigurumi/kigurumi-{Setting.Kigurumi.ToString().PadLeft(4, '0')}.webp") />
+                }
+                <MudItem Class="profile-image">
+                    <MudImage Fluid="true" Class="puchi-floating" onerror="this.src='images/Costumes/puchi/puchi-9999.webp'" Src=@($"images/Costumes/puchi/puchi-{Setting.Puchi.ToString().PadLeft(4, '0')}.webp") />
+                </MudItem>
+            </MudItem>
+        </MudItem>
+
+        @* Player Nameplate *@
+        <MudItem style="text-align: center; position:relative;">
+            @* Title text *@
+            <MudItem style="position:absolute; top: 5.5%; left:0; right:1.1%; height:38%; width:min(96%, 320px); margin: 0 auto; z-index:2; vertical-align: middle;">
+                <MudItem Style=@($"position:absolute; height:100%; width:80%; right: 10%;")>
+                    <MudText Class="profile-image" id="nameplate-title" Style="height:100%; margin: auto auto; font-family: 'Nijiiro', sans-serif; color:black">@Setting.Title</MudText>
+                </MudItem>
+            </MudItem>
+            @* Name text *@
+            <MudItem Style="position:absolute; top: 42.5%; left:0; right:1.1%; height:41%; width:min(96%, 320px); margin: 0 auto; z-index:2">
+                @* Name text offset to the right for Dan Rank *@
+                <MudItem Style=@($"position:absolute; height:100%; right: 10%; {(Setting.IsDisplayDanOnNamePlate ? "width:46%;" : "width:80%;")}")>
+                    <MudText id="nameplate-name-outline" Class="profile-image" Style="height:100%; font-family: 'Nijiiro', sans-serif; -webkit-text-stroke-width: 5px; -webkit-text-stroke-color: black">@Setting.MyDonName</MudText>
+                    <MudText id="nameplate-name" Class="profile-image" Style="height:100%; font-family: 'Nijiiro', sans-serif; color:white">@Setting.MyDonName</MudText>
+                </MudItem>
+            </MudItem>
+            <MudImage onload="nameplateLoaded()" id="nameplate" Fluid="true" Style="position: relative; bottom: 0; left: 0;" Src="images/Nameplates/nameplate.webp" />
+            <MudImage Fluid="true" Style="position:absolute; bottom: 6px; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Nameplates/nameplate_Wood.webp'" Src=@($"images/Nameplates/nameplate_{GetTitlePlateName(Setting.TitlePlateId).Replace(' ', '_')}.webp") />
+            @if (Setting.IsDisplayDanOnNamePlate)
+            {
+                <MudImage Fluid="true" Class="profile-image" Src="images/Nameplates/nameplate_dan.webp" />
+            }
+        </MudItem>
+    </MudItem>
+}
+
+@code {
+    [Parameter, EditorRequired] public UserSetting Setting { get; set; } = default!;
+
+    private static readonly HashSet<string> Masks =
+    [
+        "masks/body-bodymask-0005", "masks/body-bodymask-0019", "masks/body-bodymask-0030",
+        "masks/body-bodymask-0063", "masks/body-bodymask-0064", "masks/body-bodymask-0065",
+        "masks/body-bodymask-0070", "masks/body-bodymask-0092", "masks/body-bodymask-0121",
+        "masks/body-bodymask-0123", "masks/body-bodymask-0127", "masks/body-bodymask-0136",
+        "masks/body-bodymask-0153",
+        "masks/body-facemask-0005", "masks/body-facemask-0015", "masks/body-facemask-0030",
+        "masks/body-facemask-0064", "masks/body-facemask-0065", "masks/body-facemask-0069",
+        "masks/body-facemask-0090", "masks/body-facemask-0092", "masks/body-facemask-0136",
+        "masks/body-facemask-0151", "masks/body-facemask-0152", "masks/body-facemask-0153",
+        "masks/head-bodymask-0113", "masks/head-bodymask-0138",
+        "masks/head-facemask-0003", "masks/head-facemask-0113", "masks/head-facemask-0137",
+        "masks/head-facemask-0138",
+        "masks/kigurumi-bodymask-0052", "masks/kigurumi-bodymask-0109", "masks/kigurumi-bodymask-0110",
+        "masks/kigurumi-bodymask-0115", "masks/kigurumi-bodymask-0123",
+        "masks/kigurumi-facemask-0052", "masks/kigurumi-facemask-0109", "masks/kigurumi-facemask-0110",
+        "masks/kigurumi-facemask-0115", "masks/kigurumi-facemask-0123"
+    ];
+
+    private static readonly string[] TitlePlateNames =
+    [
+        "Wood", "Rainbow", "Gold", "Purple",
+        "AI 1", "AI 2", "AI 3", "AI 4",
+        "Onp 1", "Toho Y22 QR", "Toho Y22 1", "Toho Y22 2",
+        "Toho Y22 3", "Toho Y22 4", "Toho Y22 5", "AprilFool 1",
+        "AprilFool 2", "AprilFool 3", "AprilFool 4", "AprilFool 5",
+        "AprilFool 6"
+    ];
+
+    public static string CostumeOrDefault(string file, uint id, string defaultfile)
+    {
+        var path = "/images/Costumes/";
+        var filename = file + "-" + id.ToString().PadLeft(4, '0');
+        var imagePath = path + filename + ".webp";
+        return Masks.Contains(filename) ? imagePath : path + defaultfile + ".webp";
+    }
+
+    private static string GetTitlePlateName(uint id)
+        => id < TitlePlateNames.Length ? TitlePlateNames[id] : "Wood";
+}
