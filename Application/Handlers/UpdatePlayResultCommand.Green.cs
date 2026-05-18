@@ -6,7 +6,6 @@ public partial class UpdatePlayResultCommandHandler
 {
     private const uint MinGreenCourseLevel = 1;
     private const uint MaxGreenCourseLevel = 5;
-    private const uint MaxGreenStageMode = 1;
     private const uint MaxGreenPlayResult = 3;
 
     private partial async ValueTask<uint> HandleGreen(
@@ -63,6 +62,8 @@ public partial class UpdatePlayResultCommandHandler
             await SaveStageAsync(request.Baid, stage, playResultData.PlayMode, playTime, cancellationToken);
         }
 
+        ApplyGhostPlayedSongBits(saveData, playResultData);
+
         await SaveGreenDanAsync(saveData, playResultData, green, cancellationToken);
 
         await context.SaveChangesAsync(cancellationToken);
@@ -74,7 +75,7 @@ public partial class UpdatePlayResultCommandHandler
         return stage.SongNo < GreenProtocolBytes.SongFlagBytes * 8
             && green.GreenMusicInfos.ContainsKey(stage.SongNo)
             && stage.Level is >= MinGreenCourseLevel and <= MaxGreenCourseLevel
-            && stage.StageMode <= MaxGreenStageMode
+            && stage.StageMode is 0 or 1 or 3 or 4
             && stage.PlayResult <= MaxGreenPlayResult
             && stage.MusicCateg <= 7
             && (stage.PlayDan is null || GreenDanHelpers.IsKnownGreenDanId(stage.PlayDan.Value));
@@ -149,7 +150,11 @@ public partial class UpdatePlayResultCommandHandler
     {
         var difficulty = GreenPlayResultMapping.MapDifficulty(stage.Level);
         var crown = GreenPlayResultMapping.MapCrown(stage.PlayResult);
-        var isShin = stage.StageMode == 1;
+        var isShin = GreenStageModeInterpreter.IsShin(stage.StageMode);
+        var isAiBattle = GreenStageModeInterpreter.IsAiBattle(stage.StageMode);
+        var allowCrownUpdate = !isAiBattle
+            || stage.Level == 5
+            || GreenAiBattleLevels.IsCertifiedLevel(stage.GhostStageData?.SdCertifiedLevelId ?? 0);
         var play = new SongPlayDatumGreen
         {
             Baid = baid,
@@ -207,7 +212,7 @@ public partial class UpdatePlayResultCommandHandler
         // Green Dani normal scoring includes cumulative combo effects, so only Shin scores can update self-best rows.
         if (playMode != (uint)PlayMode.DanMode || isShin)
         {
-            await UpsertBestAsync(baid, stage, difficulty, crown, isShin, cancellationToken);
+            await UpsertBestAsync(baid, stage, difficulty, crown, isShin, allowCrownUpdate, cancellationToken);
         }
 
         await UpsertFavoriteAndRecentAsync(baid, stage, playTime, cancellationToken);
@@ -219,6 +224,7 @@ public partial class UpdatePlayResultCommandHandler
         Difficulty difficulty,
         CrownType crown,
         bool isShin,
+        bool allowCrownUpdate,
         CancellationToken cancellationToken)
     {
         var existing = await context.SongBestDataGreen.FindAsync([baid, stage.SongNo, difficulty, isShin], cancellationToken);
@@ -232,7 +238,7 @@ public partial class UpdatePlayResultCommandHandler
                 IsShin = isShin,
                 BestScore = stage.PlayScore,
                 BestRate = stage.ScoreRate,
-                BestCrown = crown
+                BestCrown = allowCrownUpdate ? crown : CrownType.None
             });
             return;
         }
@@ -243,7 +249,7 @@ public partial class UpdatePlayResultCommandHandler
             existing.BestRate = stage.ScoreRate;
         }
 
-        if (CrownRank(crown) > CrownRank(existing.BestCrown))
+        if (allowCrownUpdate && CrownRank(crown) > CrownRank(existing.BestCrown))
         {
             existing.BestCrown = crown;
         }
@@ -435,6 +441,18 @@ public partial class UpdatePlayResultCommandHandler
         saveData.GotDanExtraFlg = extraFlags;
         saveData.GotDanMax = GreenDanHelpers.GetGotDanMax(normalGrades);
         saveData.DispTaikojukuDan = GreenDanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalGrades);
+    }
+
+    private static void ApplyGhostPlayedSongBits(UserSaveDataGreen saveData, CommonPlayResultData playResultData)
+    {
+        var aiBattleSongNos = playResultData.AryStageInfoes
+            .Where(stage => GreenStageModeInterpreter.IsAiBattle(stage.StageMode))
+            .Select(stage => stage.SongNo);
+
+        saveData.GhostPlayedSongFlag = SetBits(
+            saveData.GhostPlayedSongFlag,
+            aiBattleSongNos,
+            GreenProtocolBytes.GhostPlayedSongBytes);
     }
 
     private void ApplyGhostUpdates(UserSaveDataGreen saveData, CommonPlayResultData playResultData)
