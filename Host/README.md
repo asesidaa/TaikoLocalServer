@@ -75,10 +75,23 @@ When `ServerSettings:Eras:Green:Enabled` is `true`, the server requires:
 
 For Green, the server reads files from the original game `USRDIR/data` layout. Instead of copying that whole folder into the repository, you can symlink it to `wwwroot/data/green/data`.
 
-From the repository root, for an RPCS3 install at `H:\RPCS3\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\`, run:
+From a source checkout, run this from the repository root:
 
 ```powershell
-New-Item -ItemType SymbolicLink -Target 'H:\RPCS3\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\Host\wwwroot\data\green\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\Host\wwwroot\data\green\data'
+```
+
+From an extracted release folder, run this from the folder containing `TaikoLocalServer.exe`:
+
+```powershell
+New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\wwwroot\data\green\data'
+```
+
+If you prefer copying for a release instead of linking:
+
+```powershell
+New-Item -ItemType Directory -Force -Path '.\wwwroot\data\green' | Out-Null
+Copy-Item -Recurse -Path 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data' -Destination '.\wwwroot\data\green\data'
 ```
 
 PowerShell may need to run as Administrator, unless Windows Developer Mode allows unprivileged symlink creation. The symlink target should contain `config\S11100-1\musicinfo.xml`, `config\S11100-1\musicmedleyinfo.xml`, and `fumen\tuning.bin`.

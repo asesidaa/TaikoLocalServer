@@ -78,83 +78,29 @@ public class MuchaController : BaseProtocolController<MuchaController>
     public ContentResult UpdateCheck(MuchaUpdateCheckRequest request)
     {
         Logger.LogInformation("Request is {Request}", request.Stringify());
-        // EBOOT.ELF sub_4BCF78 parses the response with strict field ordering:
-        //   RESULTS -> [UPDATE_VER_X UPDATE_URL_X UPDATE_SIZE_X UPDATE_CRC_X
-        //               CHECK_URL_X CHECK_SIZE_X CHECK_CRC_X EXE_VER_X
-        //               INFO_SIZE_X COM_SIZE_X COM_TIME_X LAN_INFO_SIZE_X]+
-        //   -> USER_ID -> PASSWORD -> optional EXE_VER.
+        // Empty UPDATE chain (no UPDATE_VER_X blocks) is the only safe "no updates"
+        // shape. Any chain we send is forwarded to the EBOOT's chunk subsystem
+        // (chunk_update_processor_aborts at sub_4C66AC) which inserts one record per
+        // entry into the in-memory chunk_record_table (qword_1498010) with
+        // slot_count derived as (entry[+8] - 0x10) >> 2. With our zero-size fields
+        // every record gets slot_count=0; chunkimg_flush_trigger (sub_4DB494) then
+        // persists them to /dev_hdd0/.../mucha/chunk/chunk.img, and the next boot
+        // crashes when chunk_record_alloc_slot (sub_4CFFBC) asks the hooked
+        // allocator for 0 bytes and dereferences the 0xFFFFFFB0 sentinel.
         //
-        // Sending zero UPDATE_VER blocks hits the parser's LABEL_53 fast path
-        // which leaves three output DWORDs uninitialized -- the PRX state
-        // machine reads them after the parser returns and aborts. So we have
-        // to provide at least one fully-populated update block (LABEL_67 path).
-        //
-        // The chain validator sub_4C5C18 then checks the first 2 bytes of each
-        // 536-byte output record against a sequential slot index (record 0
-        // expects WORD[0]==1, record 1 expects 2, ..., record N-1 expects N).
-        // The parser writes (major<<16)|minor of UPDATE_VER into offset 0 of
-        // each record; on PowerPC big-endian the high WORD -- i.e. the major
-        // value -- is what the validator reads as the slot index.
-        //
-        // So we emit a sequential chain whose majors are 1..N where N matches
-        // the game's own major version. The last entry's full version string
-        // matches the running game (e.g. S1210JPN08.18) so the per-record
-        // install filter at sub_4CDCA8 (compares each record's WORD against
-        // dword_149AAA0, the installed-version threshold) skips every entry
-        // as "already installed" and the global download queue stays empty.
-        // With dword_149ABC8==0, sub_4CDCA8 returns 0, sub_4DC22C returns 0,
-        // and sub_4BCBD4 takes its LABEL_12 early exit -- no downloadstate.do.
-        var gameVersion = request.GameVersion ?? "S1210JPN08.18";
-        var (prefix, major, minor) = ParseGameVersion(gameVersion);
-
+        // No chain -> sub_4BCF78 parser hits LABEL_53 (n2=2) -> sub_4C66AC sees
+        // chunk_record_count==0 -> never calls chunk_table_upsert_record ->
+        // sub_4DB494 early-exits -> no chunk.img write -> no second-boot crash.
         var response = new Dictionary<string, string>
         {
-            { "RESULTS", "001" }
+            { "RESULTS", "001" },
+            { "USER_ID", "NAMCO" },
+            { "PASSWORD", "NAMCO" },
+            { "EXE_VER", request.GameVersion ?? "S1210JPN08.18" }
         };
-        for (var slot = 1; slot <= major; slot++)
-        {
-            var ver = slot == major
-                ? $"{prefix}{major:D2}.{minor:D2}"
-                : $"{prefix}{slot:D2}.00";
-            response[$"UPDATE_VER_{slot}"] = ver;
-            response[$"UPDATE_URL_{slot}"] = $"{settings.MuchaUrl}/updUrl{slot}/";
-            response[$"UPDATE_SIZE_{slot}"] = "0";
-            response[$"UPDATE_CRC_{slot}"] = "00000000";
-            response[$"CHECK_URL_{slot}"] = $"{settings.MuchaUrl}/checkUrl{slot}/";
-            response[$"CHECK_SIZE_{slot}"] = "0";
-            response[$"CHECK_CRC_{slot}"] = "00000000";
-            response[$"EXE_VER_{slot}"] = ver;
-            response[$"INFO_SIZE_{slot}"] = "0";
-            response[$"COM_SIZE_{slot}"] = "0";
-            response[$"COM_TIME_{slot}"] = "0";
-            response[$"LAN_INFO_SIZE_{slot}"] = "0";
-        }
-        response["USER_ID"] = "NAMCO";
-        response["PASSWORD"] = "NAMCO";
-        response["EXE_VER"] = gameVersion;
 
         var formOutput = FormOutputUtil.ToFormOutput(response);
         return Content(formOutput);
-    }
-
-    private static (string Prefix, int Major, int Minor) ParseGameVersion(string gameVersion)
-    {
-        // gameVersion format is SxxxxJPNmm.nn (8-char prefix + "MM.NN"), per the
-        // parser's "%*08s%02d.%02d" scanf pattern in sub_4BCF78.
-        const string fallbackPrefix = "S1210JPN";
-        const int fallbackMajor = 8;
-        const int fallbackMinor = 18;
-
-        if (gameVersion.Length < 8 + 5) return (fallbackPrefix, fallbackMajor, fallbackMinor);
-        var prefix = gameVersion[..8];
-        var majorSpan = gameVersion.AsSpan(8, 2);
-        var minorSpan = gameVersion.AsSpan(11, 2);
-        if (gameVersion[10] != '.') return (fallbackPrefix, fallbackMajor, fallbackMinor);
-        if (!int.TryParse(majorSpan, out var major) || major <= 0 || major > 99)
-            return (fallbackPrefix, fallbackMajor, fallbackMinor);
-        if (!int.TryParse(minorSpan, out var minor) || minor < 0 || minor > 99)
-            return (fallbackPrefix, fallbackMajor, fallbackMinor);
-        return (prefix, major, minor);
     }
 
     [HttpPost("/mucha_front/downloadstate.do")]
