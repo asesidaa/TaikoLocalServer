@@ -8,7 +8,6 @@ public sealed class GreenTuningLoader
 {
     private const uint ExpectedSongCount = 0x4BA;
     private const int RecordCount = (int)ExpectedSongCount;
-    private const int ExpectedFileSize = 2_954_473;
     private const int HeaderSize = 4;
     private const int RecordSize = 2_316;
     private const int StringTableOffset = HeaderSize + RecordCount * RecordSize;
@@ -74,12 +73,6 @@ public sealed class GreenTuningLoader
 
     private static void ValidateHeader(byte[] bytes, string path)
     {
-        if (bytes.Length != ExpectedFileSize)
-        {
-            throw new InvalidDataException(
-                $"Invalid Green tuning.bin size for {path}: expected {ExpectedFileSize} bytes, actual {bytes.Length} bytes.");
-        }
-
         var songCount = BinaryPrimitives.ReadUInt32BigEndian(bytes.AsSpan(0, 4));
         if (songCount != ExpectedSongCount)
         {
