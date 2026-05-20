@@ -6,11 +6,8 @@ namespace TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
 
 public sealed class GreenTuningLoader
 {
-    private const uint ExpectedSongCount = 0x4BA;
-    private const int RecordCount = (int)ExpectedSongCount;
     private const int HeaderSize = 4;
     private const int RecordSize = 2_316;
-    private const int StringTableOffset = HeaderSize + RecordCount * RecordSize;
     private const int Player0CellOffset = 0x10;
     private const int DifficultyCellStride = 0x80;
     private const string ExPrefix = "ex_";
@@ -30,16 +27,17 @@ public sealed class GreenTuningLoader
 
     private static IReadOnlyDictionary<string, GreenStarSet> Parse(byte[] bytes, string path)
     {
-        ValidateHeader(bytes, path);
+        var recordCount = ReadRecordCount(bytes, path);
+        var stringTableOffset = HeaderSize + recordCount * RecordSize;
 
         var baseRecords = new Dictionary<string, TuningCourseStars>(StringComparer.Ordinal);
         var exRecords = new Dictionary<string, byte>(StringComparer.Ordinal);
 
-        for (var index = 0; index < RecordCount; index++)
+        for (var index = 0; index < recordCount; index++)
         {
             var recordOffset = HeaderSize + index * RecordSize;
             var musicIdOffset = BinaryPrimitives.ReadUInt32BigEndian(bytes.AsSpan(recordOffset, 4));
-            var musicId = ReadMusicId(bytes, musicIdOffset, path, index);
+            var musicId = ReadMusicId(bytes, stringTableOffset, musicIdOffset, path, index);
             if (musicId.StartsWith(ExPrefix, StringComparison.Ordinal))
             {
                 exRecords[musicId[ExPrefix.Length..]] = ReadStar(bytes, recordOffset, 3, path, index);
@@ -71,26 +69,35 @@ public sealed class GreenTuningLoader
         return result;
     }
 
-    private static void ValidateHeader(byte[] bytes, string path)
+    private static int ReadRecordCount(byte[] bytes, string path)
     {
-        var songCount = BinaryPrimitives.ReadUInt32BigEndian(bytes.AsSpan(0, 4));
-        if (songCount != ExpectedSongCount)
+        if (bytes.Length < HeaderSize)
         {
             throw new InvalidDataException(
-                $"Invalid Green tuning.bin song_count at 0x0000 in {path}: expected 0x{ExpectedSongCount:X8} ({ExpectedSongCount}), actual 0x{songCount:X8} ({songCount}).");
+                $"Invalid Green tuning.bin size for {path}: expected at least {HeaderSize} bytes for the header, actual {bytes.Length} bytes.");
         }
+
+        var songCount = BinaryPrimitives.ReadUInt32BigEndian(bytes.AsSpan(0, 4));
+        var requiredRecordTableSize = HeaderSize + (long)songCount * RecordSize;
+        if (requiredRecordTableSize > bytes.Length)
+        {
+            throw new InvalidDataException(
+                $"Invalid Green tuning.bin size for {path}: song_count 0x{songCount:X8} ({songCount}) requires at least {requiredRecordTableSize} bytes for the record table, actual {bytes.Length} bytes.");
+        }
+
+        return checked((int)songCount);
     }
 
-    private static string ReadMusicId(byte[] bytes, uint musicIdOffset, string path, int recordIndex)
+    private static string ReadMusicId(byte[] bytes, int stringTableOffset, uint musicIdOffset, string path, int recordIndex)
     {
-        var stringTableLength = bytes.Length - StringTableOffset;
+        var stringTableLength = bytes.Length - stringTableOffset;
         if (musicIdOffset >= (uint)stringTableLength)
         {
             throw new InvalidDataException(
                 $"Invalid Green tuning.bin musicid offset in record {recordIndex} of {path}: string table offset 0x{musicIdOffset:X8} is outside the {stringTableLength}-byte string table.");
         }
 
-        var absoluteOffset = StringTableOffset + (int)musicIdOffset;
+        var absoluteOffset = stringTableOffset + (int)musicIdOffset;
         var end = Array.IndexOf(bytes, (byte)0, absoluteOffset);
         if (end < 0)
         {

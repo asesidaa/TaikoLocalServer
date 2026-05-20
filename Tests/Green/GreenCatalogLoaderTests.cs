@@ -1,4 +1,7 @@
+using System.Buffers.Binary;
+using System.Text;
 using Microsoft.Extensions.Logging;
+using TaikoLocalServer.Application.Catalog.Green;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
 
 namespace TaikoLocalServer.Tests.Green;
@@ -57,6 +60,50 @@ public sealed class GreenCatalogLoaderTests
     }
 
     [Fact]
+    public async Task TuningLoader_ReadsGeneratedFixtureWithNonStockSongCount()
+    {
+        var tempFile = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.bin");
+        await File.WriteAllBytesAsync(
+            tempFile,
+            CreateTuningBin(
+                new TuningTestRecord("modsong", 3, 4, 5, 6),
+                new TuningTestRecord("ex_modsong", 0, 0, 0, 9)),
+            CancellationToken.None);
+
+        try
+        {
+            await AssertNonStockTuningFixtureAsync(
+                tempFile,
+                songCount: 2,
+                baseRecordCount: 1,
+                musicId: "modsong",
+                expectedStars: new GreenStarSet(3, 4, 5, 6, 9));
+        }
+        finally
+        {
+            File.Delete(tempFile);
+        }
+    }
+
+    [Fact]
+    public async Task TuningLoader_ReadsLocalModdedFixtureWhenPresent()
+    {
+        var repoRoot = FindRepoRoot();
+        var file = Path.Combine(repoRoot, ".tools", "tuning.bin");
+        if (!File.Exists(file))
+        {
+            return;
+        }
+
+        await AssertNonStockTuningFixtureAsync(
+            file,
+            songCount: 1_211,
+            baseRecordCount: 1_054,
+            musicId: "kaibu2",
+            expectedStars: new GreenStarSet(0, 0, 0, 10, 0));
+    }
+
+    [Fact]
     public async Task CatalogInitialize_DoesNotWarnForMedleyMusicInfoRowsMissingTuning()
     {
         CopyGreenCatalogFilesToProcessRoot();
@@ -109,6 +156,75 @@ public sealed class GreenCatalogLoaderTests
             ?? throw new ApplicationException($"Cannot resolve directory for {destination}."));
         File.Copy(source, destination, overwrite: true);
     }
+
+    private static async Task AssertNonStockTuningFixtureAsync(
+        string file,
+        uint songCount,
+        int baseRecordCount,
+        string musicId,
+        GreenStarSet expectedStars)
+    {
+        var bytes = await File.ReadAllBytesAsync(file, CancellationToken.None);
+        var actualSongCount = BinaryPrimitives.ReadUInt32BigEndian(bytes.AsSpan(0, 4));
+        Assert.Equal(songCount, actualSongCount);
+        Assert.NotEqual(1_210u, actualSongCount);
+
+        var stars = await GreenTuningLoader.LoadFromFileAsync(file, CancellationToken.None);
+
+        Assert.Equal(baseRecordCount, stars.Count);
+        Assert.True(stars.TryGetValue(musicId, out var starSet));
+        Assert.Equal(expectedStars.Easy, starSet.Easy);
+        Assert.Equal(expectedStars.Normal, starSet.Normal);
+        Assert.Equal(expectedStars.Hard, starSet.Hard);
+        Assert.Equal(expectedStars.Oni, starSet.Oni);
+        Assert.Equal(expectedStars.Ura, starSet.Ura);
+    }
+
+    private static byte[] CreateTuningBin(params TuningTestRecord[] records)
+    {
+        const int headerSize = 4;
+        const int recordSize = 2_316;
+        const int player0CellOffset = 0x10;
+        const int difficultyCellStride = 0x80;
+
+        var stringTableOffset = headerSize + records.Length * recordSize;
+        var stringTableLength = records.Sum(record => Encoding.ASCII.GetByteCount(record.MusicId) + 1);
+        var bytes = new byte[stringTableOffset + stringTableLength];
+
+        BinaryPrimitives.WriteUInt32BigEndian(bytes.AsSpan(0, 4), (uint)records.Length);
+
+        var musicIdOffset = 0;
+        for (var index = 0; index < records.Length; index++)
+        {
+            var record = records[index];
+            var recordOffset = headerSize + index * recordSize;
+            BinaryPrimitives.WriteUInt32BigEndian(bytes.AsSpan(recordOffset, 4), (uint)musicIdOffset);
+            WriteStar(bytes, recordOffset, 0, record.Easy);
+            WriteStar(bytes, recordOffset, 1, record.Normal);
+            WriteStar(bytes, recordOffset, 2, record.Hard);
+            WriteStar(bytes, recordOffset, 3, record.Oni);
+
+            var musicIdBytes = Encoding.ASCII.GetBytes(record.MusicId);
+            musicIdBytes.CopyTo(bytes.AsSpan(stringTableOffset + musicIdOffset));
+            musicIdOffset += musicIdBytes.Length + 1;
+        }
+
+        return bytes;
+
+        static void WriteStar(byte[] bytes, int recordOffset, int difficultyIndex, byte value)
+        {
+            BinaryPrimitives.WriteUInt32BigEndian(
+                bytes.AsSpan(recordOffset + player0CellOffset + difficultyIndex * difficultyCellStride, 4),
+                value);
+        }
+    }
+
+    private sealed record TuningTestRecord(
+        string MusicId,
+        byte Easy,
+        byte Normal,
+        byte Hard,
+        byte Oni);
 
     private sealed class RecordingLogger<T> : ILogger<T>
     {
