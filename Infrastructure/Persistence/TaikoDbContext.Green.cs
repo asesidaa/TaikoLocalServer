@@ -24,6 +24,7 @@ public partial class TaikoDbContext
         {
             entity.ToTable("SongBestDatum_Green");
             entity.HasKey(e => new { e.Baid, e.SongId, e.Difficulty, e.IsShin });
+            entity.HasIndex(e => new { e.SongId, e.Difficulty, e.BestScore });
             entity.HasOne(d => d.Ba)
                 .WithMany()
                 .HasPrincipalKey(p => p.Baid)
@@ -38,6 +39,7 @@ public partial class TaikoDbContext
         {
             entity.ToTable("SongPlayDatum_Green");
             entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.Baid, e.SongId, e.Difficulty, e.PlayTime });
             entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.PlayTime).HasColumnType("datetime");
             entity.HasOne(d => d.Ba)

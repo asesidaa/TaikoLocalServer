@@ -21,6 +21,9 @@ public partial class TaikoDbContext
             entity.ToTable("SongBestDatum_Nijiiro");
             entity.HasKey(e => new { e.Baid, e.SongId, e.Difficulty });
 
+            // Leaderboard queries filter+order on (SongId, Difficulty, BestScore); the PK starts with Baid so it cannot serve them.
+            entity.HasIndex(e => new { e.SongId, e.Difficulty, e.BestScore });
+
             entity.HasOne(d => d.Ba)
                 .WithMany()
                 .HasPrincipalKey(p => p.Baid)
@@ -41,6 +44,9 @@ public partial class TaikoDbContext
         {
             entity.ToTable("SongPlayDatum_Nijiiro");
             entity.HasKey(e => e.Id);
+
+            // Per-song history + ghost lookups filter by (Baid, SongId, Difficulty) and sort by PlayTime; existing index on Baid alone scans whole user history.
+            entity.HasIndex(e => new { e.Baid, e.SongId, e.Difficulty, e.PlayTime });
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
