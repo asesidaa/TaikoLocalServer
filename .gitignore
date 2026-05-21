@@ -405,9 +405,6 @@ proto/
 .tools/
 .worktrees/
 
-# Local TLS certificates. Operators should provide their own.
-/Host/Certificates/*.pfx
-
 # Local Green game data. Operators should symlink or copy their own USRDIR/data
 # folder here; CI cannot resolve machine-local game install paths.
 /Host/wwwroot/data/green/data
