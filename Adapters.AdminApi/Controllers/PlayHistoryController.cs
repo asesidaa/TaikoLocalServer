@@ -36,7 +36,11 @@ public class PlayHistoryController(ITaikoDbContext context) : BaseAdminControlle
     {
         var saveData = await context.GetOrCreateNijiiroSaveDataAsync(baid, HttpContext.RequestAborted);
 
-        var playLogs = await context.SongPlayDataNijiiro.Where(d => d.Baid == baid).ToListAsync();
+        var favoriteSet = saveData.FavoriteSongsArray.ToHashSet();
+        var playLogs = await context.SongPlayDataNijiiro
+            .Where(d => d.Baid == baid)
+            .AsNoTracking()
+            .ToListAsync(HttpContext.RequestAborted);
         var songHistory = playLogs.Select(play => new SongHistoryData
             {
                 SongId = play.SongId,
@@ -52,15 +56,10 @@ public class PlayHistoryController(ITaikoDbContext context) : BaseAdminControlle
                 ComboCount = play.ComboCount,
                 PlayTime = play.PlayTime,
                 SongNumber = play.SongNumber,
-                PlaySetting = PlaySettingConverter.ShortToPlaySetting((short)play.OptionSetting)
+                PlaySetting = PlaySettingConverter.ShortToPlaySetting((short)play.OptionSetting),
+                IsFavorite = favoriteSet.Contains(play.SongId)
             })
             .ToList();
-
-        var favoriteSet = saveData.FavoriteSongsArray.ToHashSet();
-        foreach (var song in songHistory.Where(song => favoriteSet.Contains(song.SongId)))
-        {
-            song.IsFavorite = true;
-        }
 
         return new SongHistoryResponse { SongHistoryData = songHistory };
     }
@@ -69,6 +68,7 @@ public class PlayHistoryController(ITaikoDbContext context) : BaseAdminControlle
     {
         var playLogs = await context.SongPlayDataGreen
             .Where(d => d.Baid == baid)
+            .AsNoTracking()
             .ToListAsync(HttpContext.RequestAborted);
         var favoriteSet = await context.GreenFavoriteSongs
             .Where(d => d.Baid == baid)

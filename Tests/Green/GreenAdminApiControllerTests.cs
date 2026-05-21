@@ -130,6 +130,30 @@ public class GreenAdminApiControllerTests
     }
 
     [Fact]
+    public async Task SongLeaderboard_Nijiiro_KeepsScoreTiesAtSameRank()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.AddRange(
+            new UserDatum { Baid = 1, MyDonName = "DON1" },
+            new UserDatum { Baid = 2, MyDonName = "DON2" },
+            new UserDatum { Baid = 3, MyDonName = "DON3" });
+        fixture.Context.SongBestDataNijiiro.AddRange(
+            new SongBestDatumNijiiro { Baid = 1, SongId = 101, Difficulty = Difficulty.Oni, BestScore = 900000, BestRate = 95, BestCrown = CrownType.Gold },
+            new SongBestDatumNijiiro { Baid = 2, SongId = 101, Difficulty = Difficulty.Oni, BestScore = 900000, BestRate = 90, BestCrown = CrownType.Clear },
+            new SongBestDatumNijiiro { Baid = 3, SongId = 101, Difficulty = Difficulty.Oni, BestScore = 800000, BestRate = 80, BestCrown = CrownType.Clear });
+        await fixture.Context.SaveChangesAsync();
+
+        var controller = CreateSongLeaderboardController(fixture.Context);
+        var result = await controller.GetSongLeaderboard(101, 2, (uint)Difficulty.Oni);
+
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var response = Assert.IsType<SongLeaderboardResponse>(ok.Value);
+        Assert.Equal([1, 1, 3], response.LeaderboardData.Select(row => row.Rank).ToList());
+        Assert.NotNull(response.UserScore);
+        Assert.Equal(1, response.UserScore!.Rank);
+    }
+
+    [Fact]
     public void GameData_Green_MusicDetailsRouteReturnsCatalogStarFields()
     {
         var catalog = new FileGameDataCatalog([new GreenHandlerFixture.TestGreenCatalog(
@@ -392,7 +416,7 @@ public class GreenAdminApiControllerTests
     }
 
     [Fact]
-    public async Task UserSettings_Green_PostFreeEditingUsesTitleIdAndIgnoresFreeTextTitle()
+    public async Task UserSettings_Green_PostPersistsTitleIdAndFreeTextTitle()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -419,12 +443,12 @@ public class GreenAdminApiControllerTests
 
         Assert.IsType<NoContentResult>(result);
         Assert.Equal(10u, save.TitleplateId);
-        Assert.Equal("Persisted Title", save.Title);
+        Assert.Equal("Injected Free Text", save.Title);
         Assert.Contains(10u, BitsetCodec.Decode(save.TitleFlg, GreenProtocolBytes.TitleFlagBytes));
     }
 
     [Fact]
-    public async Task UserSettings_Green_PostRestrictedEnforcesPersistedUnlockBitsets()
+    public async Task UserSettings_Green_PostPersistsCustomizationWithoutUnlockEnforcement()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -477,17 +501,67 @@ public class GreenAdminApiControllerTests
         });
 
         Assert.IsType<NoContentResult>(result);
-        Assert.Equal("Persisted Title", save.Title);
-        Assert.Equal(10u, save.TitleplateId);
-        Assert.Equal(5u, save.Costume1);
+        Assert.Equal("Locked Title", save.Title);
+        Assert.Equal(99u, save.TitleplateId);
+        Assert.Equal(25u, save.Costume1);
         Assert.Equal(8u, save.Costume2);
-        Assert.Equal(7u, save.Costume3);
-        Assert.Equal(9u, save.Costume4);
-        Assert.Equal(10u, save.Costume5);
-        Assert.Equal(4u, save.DefaultToneSetting);
-        Assert.Equal(new List<uint> { 0, 5 }, BitsetCodec.Decode(save.CostumeFlg1, GreenProtocolBytes.CostumeFlagBytes));
-        Assert.Equal(new List<uint> { 10 }, BitsetCodec.Decode(save.TitleFlg, GreenProtocolBytes.TitleFlagBytes));
-        Assert.Equal(new List<uint> { 0, 4, 6 }, BitsetCodec.Decode(save.ToneFlg, GreenProtocolBytes.ToneFlagBytes));
+        Assert.Equal(26u, save.Costume3);
+        Assert.Equal(27u, save.Costume4);
+        Assert.Equal(28u, save.Costume5);
+        Assert.Equal(12u, save.DefaultToneSetting);
+        Assert.Contains(25u, BitsetCodec.Decode(save.CostumeFlg1, GreenProtocolBytes.CostumeFlagBytes));
+        Assert.Contains(99u, BitsetCodec.Decode(save.TitleFlg, GreenProtocolBytes.TitleFlagBytes));
+        Assert.Contains(12u, BitsetCodec.Decode(save.ToneFlg, GreenProtocolBytes.ToneFlagBytes));
+    }
+
+    [Fact]
+    public async Task UserSettings_Nijiiro_PostPersistsCustomizationWithoutUnlockEnforcement()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var save = UserSaveDataNijiiroExtensions.CreateDefaultNijiiroSaveData(1);
+        save.Title = "Persisted Title";
+        save.TitlePlateId = 10;
+        save.CurrentKigurumi = 5;
+        save.CurrentHead = 6;
+        save.CurrentBody = 7;
+        save.CurrentFace = 9;
+        save.CurrentPuchi = 10;
+        save.SelectedToneId = 4;
+        fixture.Context.UserSaveDataNijiiro.Add(save);
+        await fixture.Context.SaveChangesAsync();
+
+        var controller = CreateUserSettingsController(
+            fixture.Context,
+            new AuthSettings
+            {
+                AuthenticationRequired = true,
+                AllowFreeProfileEditing = false
+            });
+        controller.ControllerContext.HttpContext.User = CreateUserPrincipal(1);
+
+        var result = await controller.SaveUserSetting("Nijiiro", 1, new UserSetting
+        {
+            MyDonName = "NIJIIRO",
+            Title = "Edited Title",
+            TitlePlateId = 99,
+            Kigurumi = 25,
+            Head = 8,
+            Body = 26,
+            Face = 27,
+            Puchi = 28,
+            ToneId = 12
+        });
+
+        Assert.IsType<NoContentResult>(result);
+        Assert.Equal("Edited Title", save.Title);
+        Assert.Equal(99u, save.TitlePlateId);
+        Assert.Equal(25u, save.CurrentKigurumi);
+        Assert.Equal(8u, save.CurrentHead);
+        Assert.Equal(26u, save.CurrentBody);
+        Assert.Equal(27u, save.CurrentFace);
+        Assert.Equal(28u, save.CurrentPuchi);
+        Assert.Equal(12u, save.SelectedToneId);
     }
 
     [Fact]
@@ -524,6 +598,14 @@ public class GreenAdminApiControllerTests
     private static DanBestDataController CreateDanBestDataController(ITaikoDbContext context)
     {
         return new DanBestDataController(context)
+        {
+            ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
+        };
+    }
+
+    private static SongLeaderboardController CreateSongLeaderboardController(ITaikoDbContext context)
+    {
+        return new SongLeaderboardController(context)
         {
             ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
         };

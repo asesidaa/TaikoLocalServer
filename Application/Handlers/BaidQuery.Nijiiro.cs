@@ -10,11 +10,14 @@ public partial class BaidQueryHandler
         if (card is null)
         {
             logger.LogInformation("New user with access code {AccessCode}", request.AccessCode);
+            var nextBaid = await context.Cards
+                .Select(c => (uint?)c.Baid)
+                .MaxAsync(cancellationToken) ?? 0;
             return new CommonBaidResponse
             {
                 Result = 1,
                 IsNewUser = true,
-                Baid = context.Cards.Any() ? context.Cards.AsEnumerable().Max(c => c.Baid) + 1 : 1
+                Baid = nextBaid + 1
             };
         }
 
@@ -35,7 +38,10 @@ public partial class BaidQueryHandler
 
         var timeLimitSongsList = gameDataService.Nijiiro().GetTimeLimitedSongsList();
 
-        var songBestData = context.SongBestDataNijiiro.Where(datum => datum.Baid == baid).ToList();
+        var songBestData = await context.SongBestDataNijiiro
+            .Where(datum => datum.Baid == baid)
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
         var achievementDisplayDifficulty = saveData.AchievementDisplayDifficulty;
         var isDispAchievementTypeSet = true;
         if (achievementDisplayDifficulty == Difficulty.None)
@@ -83,12 +89,13 @@ public partial class BaidQueryHandler
             .Select((size, index) => FlagCalculator.GetBitArrayFromIds(costumeArrays[index], size, logger))
             .ToList();
 
-        var danData = await context.DanScoreDataNijiiro
-            .Where(datum => datum.Baid == baid && datum.DanType == DanType.Normal)
-            .Include(datum => datum.DanStageScoreData).ToListAsync(cancellationToken);
-        var gaidenData = await context.DanScoreDataNijiiro
-            .Where(datum => datum.Baid == baid && datum.DanType == DanType.Gaiden)
-            .Include(datum => datum.DanStageScoreData).ToListAsync(cancellationToken);
+        var allDans = await context.DanScoreDataNijiiro
+            .Where(datum => datum.Baid == baid && (datum.DanType == DanType.Normal || datum.DanType == DanType.Gaiden))
+            .Include(datum => datum.DanStageScoreData)
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+        var danData = allDans.Where(datum => datum.DanType == DanType.Normal).ToList();
+        var gaidenData = allDans.Where(datum => datum.DanType == DanType.Gaiden).ToList();
         
         var maxDan = danData.Where(datum => datum.ClearState != DanClearState.NotClear)
             .Select(datum => datum.DanId)

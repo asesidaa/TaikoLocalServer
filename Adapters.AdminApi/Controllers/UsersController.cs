@@ -47,7 +47,6 @@ public class UsersController(ITaikoDbContext context, IOptions<AuthSettings> aut
         }
 
         var users = new List<User>();
-        var cardEntries = await context.Cards.ToListAsync();
         var userEntriesQuery = context.UserData.AsQueryable();
 
         if (!string.IsNullOrEmpty(searchTerm))
@@ -58,7 +57,7 @@ public class UsersController(ITaikoDbContext context, IOptions<AuthSettings> aut
                                                               || context.Cards.Any(card => card.Baid == user.Baid && card.AccessCode.ToLower().Contains(lowerCaseSearchTerm)));
         }
 
-        var totalUsers = await userEntriesQuery.CountAsync();
+        var totalUsers = await userEntriesQuery.CountAsync(HttpContext.RequestAborted);
         var totalPages = totalUsers / limit;
         if (totalUsers % limit > 0)
         {
@@ -69,11 +68,25 @@ public class UsersController(ITaikoDbContext context, IOptions<AuthSettings> aut
             .OrderBy(user => user.Baid)
             .Skip((page - 1) * limit)
             .Take(limit)
-            .ToListAsync();
+            .ToListAsync(HttpContext.RequestAborted);
+
+        // Batch-load cards + save data for the page only; previously this re-pulled every Card row + N FindAsyncs.
+        var pagedBaids = userEntries.Select(u => u.Baid).ToList();
+        var cardEntries = await context.Cards
+            .Where(card => pagedBaids.Contains(card.Baid))
+            .AsNoTracking()
+            .ToListAsync(HttpContext.RequestAborted);
+        var existingSaveData = await context.UserSaveDataNijiiro
+            .Where(s => pagedBaids.Contains(s.Baid))
+            .ToDictionaryAsync(s => s.Baid, HttpContext.RequestAborted);
 
         foreach (var user in userEntries)
         {
-            var saveData = await context.GetOrCreateNijiiroSaveDataAsync(user.Baid, HttpContext.RequestAborted);
+            if (!existingSaveData.TryGetValue(user.Baid, out var saveData))
+            {
+                saveData = await context.GetOrCreateNijiiroSaveDataAsync(user.Baid, HttpContext.RequestAborted);
+                existingSaveData[user.Baid] = saveData;
+            }
             List<List<uint>> costumeUnlockData =
                 [saveData.UnlockedKigurumi, saveData.UnlockedHead, saveData.UnlockedBody, saveData.UnlockedFace, saveData.UnlockedPuchi];
 

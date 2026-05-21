@@ -26,55 +26,34 @@ public partial class UserSettingsController
 
         user.MyDonName = userSetting.MyDonName;
         user.MyDonNameLanguage = userSetting.MyDonNameLanguage;
+        saveData.Title = userSetting.Title;
+        saveData.TitleplateId = userSetting.TitlePlateId;
         saveData.ColorBody = userSetting.BodyColor;
         saveData.ColorFace = userSetting.FaceColor;
         saveData.ColorLimb = userSetting.LimbColor;
+        saveData.Costume1 = userSetting.Kigurumi;
+        saveData.Costume2 = userSetting.Head;
+        saveData.Costume3 = userSetting.Body;
+        saveData.Costume4 = userSetting.Face;
+        saveData.Costume5 = userSetting.Puchi;
+        saveData.DefaultToneSetting = userSetting.ToneId;
         saveData.DispDanType = userSetting.IsDisplayDanOnNamePlate ? 1u : 0u;
         if (userSetting.GreenTaikojukuDan != 0)
         {
             saveData.DispTaikojukuDan = await GetGreenTaikojukuFolderDan(baid, userSetting.GreenTaikojukuDan);
         }
 
-        if (ShouldEnforceUnlockedOnly())
-        {
-            var unlockedKigurumi = BitsetCodec.Decode(saveData.CostumeFlg1, GreenProtocolBytes.CostumeFlagBytes).ToHashSet();
-            var unlockedHead = BitsetCodec.Decode(saveData.CostumeFlg2, GreenProtocolBytes.CostumeFlagBytes).ToHashSet();
-            var unlockedBody = BitsetCodec.Decode(saveData.CostumeFlg3, GreenProtocolBytes.CostumeFlagBytes).ToHashSet();
-            var unlockedFace = BitsetCodec.Decode(saveData.CostumeFlg4, GreenProtocolBytes.CostumeFlagBytes).ToHashSet();
-            var unlockedPuchi = BitsetCodec.Decode(saveData.CostumeFlg5, GreenProtocolBytes.CostumeFlagBytes).ToHashSet();
-            var unlockedTone = BitsetCodec.Decode(saveData.ToneFlg, GreenProtocolBytes.ToneFlagBytes).ToHashSet();
-            var unlockedTitle = BitsetCodec.Decode(saveData.TitleFlg, GreenProtocolBytes.TitleFlagBytes).ToHashSet();
-
-            saveData.TitleplateId = unlockedTitle.Contains(userSetting.TitlePlateId) ? userSetting.TitlePlateId : saveData.TitleplateId;
-            saveData.Costume1 = unlockedKigurumi.Contains(userSetting.Kigurumi) ? userSetting.Kigurumi : saveData.Costume1;
-            saveData.Costume2 = unlockedHead.Contains(userSetting.Head) ? userSetting.Head : saveData.Costume2;
-            saveData.Costume3 = unlockedBody.Contains(userSetting.Body) ? userSetting.Body : saveData.Costume3;
-            saveData.Costume4 = unlockedFace.Contains(userSetting.Face) ? userSetting.Face : saveData.Costume4;
-            saveData.Costume5 = unlockedPuchi.Contains(userSetting.Puchi) ? userSetting.Puchi : saveData.Costume5;
-            saveData.DefaultToneSetting = unlockedTone.Contains(userSetting.ToneId) ? userSetting.ToneId : saveData.DefaultToneSetting;
-        }
-        else
-        {
-            saveData.TitleplateId = userSetting.TitlePlateId;
-            saveData.Costume1 = userSetting.Kigurumi;
-            saveData.Costume2 = userSetting.Head;
-            saveData.Costume3 = userSetting.Body;
-            saveData.Costume4 = userSetting.Face;
-            saveData.Costume5 = userSetting.Puchi;
-            saveData.DefaultToneSetting = userSetting.ToneId;
-
-            saveData.CostumeFlg1 = EncodeGreenCostumeUnlocks(userSetting.UnlockedKigurumi, saveData.Costume1);
-            saveData.CostumeFlg2 = EncodeGreenCostumeUnlocks(userSetting.UnlockedHead, saveData.Costume2);
-            saveData.CostumeFlg3 = EncodeGreenCostumeUnlocks(userSetting.UnlockedBody, saveData.Costume3);
-            saveData.CostumeFlg4 = EncodeGreenCostumeUnlocks(userSetting.UnlockedFace, saveData.Costume4);
-            saveData.CostumeFlg5 = EncodeGreenCostumeUnlocks(userSetting.UnlockedPuchi, saveData.Costume5);
-            saveData.TitleFlg = BitsetCodec.Encode(
-                SortedDistinctWithZero(userSetting.UnlockedTitle).Append(saveData.TitleplateId),
-                GreenProtocolBytes.TitleFlagBytes);
-            saveData.ToneFlg = BitsetCodec.Encode(
-                SortedDistinctWithZero(userSetting.UnlockedTone).Append(saveData.DefaultToneSetting),
-                GreenProtocolBytes.ToneFlagBytes);
-        }
+        saveData.CostumeFlg1 = EncodeGreenCostumeUnlocks(userSetting.UnlockedKigurumi, saveData.Costume1);
+        saveData.CostumeFlg2 = EncodeGreenCostumeUnlocks(userSetting.UnlockedHead, saveData.Costume2);
+        saveData.CostumeFlg3 = EncodeGreenCostumeUnlocks(userSetting.UnlockedBody, saveData.Costume3);
+        saveData.CostumeFlg4 = EncodeGreenCostumeUnlocks(userSetting.UnlockedFace, saveData.Costume4);
+        saveData.CostumeFlg5 = EncodeGreenCostumeUnlocks(userSetting.UnlockedPuchi, saveData.Costume5);
+        saveData.TitleFlg = BitsetCodec.Encode(
+            SortedDistinctWithZero(userSetting.UnlockedTitle).Append(saveData.TitleplateId),
+            GreenProtocolBytes.TitleFlagBytes);
+        saveData.ToneFlg = BitsetCodec.Encode(
+            SortedDistinctWithZero(userSetting.UnlockedTone).Append(saveData.DefaultToneSetting),
+            GreenProtocolBytes.ToneFlagBytes);
 
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return NoContent();

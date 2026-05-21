@@ -34,7 +34,9 @@ public class DanBestDataController(ITaikoDbContext context) : BaseAdminControlle
         var danScores = await context.DanScoreDataNijiiro
             .Where(d => d.Baid == baid && d.DanType == DanType.Normal)
             .Include(d => d.DanStageScoreData)
-            .ToListAsync();
+            .AsNoTracking()
+            .AsSplitQuery()
+            .ToListAsync(HttpContext.RequestAborted);
 
         var danDataList = new List<DanBestData>();
         foreach (var danScore in danScores)
@@ -57,6 +59,8 @@ public class DanBestDataController(ITaikoDbContext context) : BaseAdminControlle
         var rows = await context.DanScoreDataGreen
             .Where(d => d.Baid == baid)
             .Include(d => d.DanStageScoreData)
+            .AsNoTracking()
+            .AsSplitQuery()
             .ToListAsync(HttpContext.RequestAborted);
 
         return new DanBestDataResponse

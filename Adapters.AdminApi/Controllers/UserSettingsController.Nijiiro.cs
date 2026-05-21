@@ -38,42 +38,23 @@ public partial class UserSettingsController
         saveData.OptionSetting = PlaySettingConverter.PlaySettingToShort(userSetting.PlaySetting);
         user.MyDonName = userSetting.MyDonName;
         user.MyDonNameLanguage = userSetting.MyDonNameLanguage;
-
-        if (ShouldEnforceUnlockedOnly())
-        {
-            var unlockedKigurumi = saveData.UnlockedKigurumi.ToHashSet();
-            var unlockedHead = saveData.UnlockedHead.ToHashSet();
-            var unlockedBody = saveData.UnlockedBody.ToHashSet();
-            var unlockedFace = saveData.UnlockedFace.ToHashSet();
-            var unlockedPuchi = saveData.UnlockedPuchi.ToHashSet();
-            var unlockedTitle = saveData.TitleFlgArray.ToHashSet();
-
-            saveData.Title = unlockedTitle.Contains(userSetting.TitlePlateId) ? userSetting.Title : saveData.Title;
-            saveData.TitlePlateId = unlockedTitle.Contains(userSetting.TitlePlateId) ? userSetting.TitlePlateId : saveData.TitlePlateId;
-            saveData.CurrentKigurumi = unlockedKigurumi.Contains(userSetting.Kigurumi) ? userSetting.Kigurumi : saveData.CurrentKigurumi;
-            saveData.CurrentHead = unlockedHead.Contains(userSetting.Head) ? userSetting.Head : saveData.CurrentHead;
-            saveData.CurrentBody = unlockedBody.Contains(userSetting.Body) ? userSetting.Body : saveData.CurrentBody;
-            saveData.CurrentFace = unlockedFace.Contains(userSetting.Face) ? userSetting.Face : saveData.CurrentFace;
-            saveData.CurrentPuchi = unlockedPuchi.Contains(userSetting.Puchi) ? userSetting.Puchi : saveData.CurrentPuchi;
-            saveData.ColorBody = userSetting.BodyColor;
-            saveData.ColorFace = userSetting.FaceColor;
-            saveData.ColorLimb = userSetting.LimbColor;
-        }
-        else
-        {
-            saveData.Title = userSetting.Title;
-            saveData.TitlePlateId = userSetting.TitlePlateId;
-            saveData.ColorBody = userSetting.BodyColor;
-            saveData.ColorFace = userSetting.FaceColor;
-            saveData.ColorLimb = userSetting.LimbColor;
-            saveData.CurrentKigurumi = userSetting.Kigurumi;
-            saveData.CurrentHead = userSetting.Head;
-            saveData.CurrentBody = userSetting.Body;
-            saveData.CurrentFace = userSetting.Face;
-            saveData.CurrentPuchi = userSetting.Puchi;
-        }
+        saveData.Title = userSetting.Title;
+        saveData.TitlePlateId = userSetting.TitlePlateId;
+        saveData.ColorBody = userSetting.BodyColor;
+        saveData.ColorFace = userSetting.FaceColor;
+        saveData.ColorLimb = userSetting.LimbColor;
+        saveData.CurrentKigurumi = userSetting.Kigurumi;
+        saveData.CurrentHead = userSetting.Head;
+        saveData.CurrentBody = userSetting.Body;
+        saveData.CurrentFace = userSetting.Face;
+        saveData.CurrentPuchi = userSetting.Puchi;
 
         saveData.ToneFlgArray = SortedDistinctWithZero(saveData.ToneFlgArray.Append(userSetting.ToneId));
+        saveData.UnlockedKigurumi = SortedDistinctWithZero(saveData.UnlockedKigurumi.Append(saveData.CurrentKigurumi));
+        saveData.UnlockedHead = SortedDistinctWithZero(saveData.UnlockedHead.Append(saveData.CurrentHead));
+        saveData.UnlockedBody = SortedDistinctWithZero(saveData.UnlockedBody.Append(saveData.CurrentBody));
+        saveData.UnlockedFace = SortedDistinctWithZero(saveData.UnlockedFace.Append(saveData.CurrentFace));
+        saveData.UnlockedPuchi = SortedDistinctWithZero(saveData.UnlockedPuchi.Append(saveData.CurrentPuchi));
 
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return NoContent();

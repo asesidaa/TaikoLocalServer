@@ -40,13 +40,21 @@ public class PlayDataController(ITaikoDbContext context) : BaseAdminController<P
     {
         var saveData = await context.GetOrCreateNijiiroSaveDataAsync(baid, HttpContext.RequestAborted);
 
-        var songBestDbData = await context.SongBestDataNijiiro.Where(d => d.Baid == baid).ToListAsync();
+        var songBestDbData = await context.SongBestDataNijiiro
+            .Where(d => d.Baid == baid)
+            .AsNoTracking()
+            .ToListAsync(HttpContext.RequestAborted);
         var songBestRecords = songBestDbData.Select(d => d.CopyPropertiesToNew<SongBestData>()).ToList();
         var aiSectionBest = await context.AiScoreDataNijiiro
             .Where(d => d.Baid == baid)
             .Include(d => d.AiSectionScoreData)
-            .ToListAsync();
-        var songPlayData = await context.SongPlayDataNijiiro.Where(d => d.Baid == baid).ToListAsync();
+            .AsNoTracking()
+            .AsSplitQuery()
+            .ToListAsync(HttpContext.RequestAborted);
+        var songPlayData = await context.SongPlayDataNijiiro
+            .Where(d => d.Baid == baid)
+            .AsNoTracking()
+            .ToListAsync(HttpContext.RequestAborted);
 
         foreach (var bestData in songBestRecords)
         {
@@ -119,9 +127,11 @@ public class PlayDataController(ITaikoDbContext context) : BaseAdminController<P
     {
         var bestRows = await context.SongBestDataGreen
             .Where(d => d.Baid == baid)
+            .AsNoTracking()
             .ToListAsync(HttpContext.RequestAborted);
         var playRows = await context.SongPlayDataGreen
             .Where(d => d.Baid == baid)
+            .AsNoTracking()
             .ToListAsync(HttpContext.RequestAborted);
         var favoriteSet = await context.GreenFavoriteSongs
             .Where(d => d.Baid == baid)
