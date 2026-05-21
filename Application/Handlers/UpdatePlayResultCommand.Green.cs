@@ -6,20 +6,31 @@ public partial class UpdatePlayResultCommandHandler
 {
     private const uint MinGreenCourseLevel = 1;
     private const uint MaxGreenCourseLevel = 5;
-    private const uint MaxGreenPlayResult = 3;
+    private const int GreenMaxRecentSongs = 10;
+    private const int GreenMaxFavoriteSongs = 5;
 
     private partial async ValueTask<uint> HandleGreen(
         UpdatePlayResultCommand request,
         CancellationToken cancellationToken)
     {
+        if (request.Baid == 0)
+        {
+            return 1;
+        }
+
+        var user = await context.UserData.FindAsync([request.Baid], cancellationToken);
+        if (user is null)
+        {
+            logger.LogWarning("Game uploading a non existing Green user with baid {Baid}", request.Baid);
+            return 1;
+        }
+
         var playResultData = request.PlayResultData;
         var saveData = await context.GetOrCreateGreenSaveDataAsync(request.Baid, cancellationToken);
         var green = gameDataService.Green();
         if (!CanAdd(saveData.TotalGetDonmedal, playResultData.GetDonmedal)
             || !CanAdd(saveData.TotalGetKatsumedal, playResultData.GetKatsumedal)
-            || playResultData.AryStageInfoes.Any(stage => !IsValidGreenStage(stage, green))
-            || !HasOnlyInRangeUnlockRewards(playResultData)
-            || (playResultData.HasAryCurrentCostume && !IsValidCurrentCostume(saveData, playResultData.AryCurrentCostume)))
+            || playResultData.AryStageInfoes.Any(stage => !IsValidGreenStage(stage)))
         {
             logger.LogWarning("Rejecting invalid Green playresult payload for baid {Baid}", request.Baid);
             return 0;
@@ -54,7 +65,7 @@ public partial class UpdatePlayResultCommandHandler
         }
 
         ApplyUnlockBits(saveData, playResultData);
-        ApplyGhostUpdates(saveData, playResultData);
+        await ApplyGhostUpdatesAsync(saveData, playResultData, cancellationToken);
 
         foreach (var stage in playResultData.AryStageInfoes)
         {
@@ -67,59 +78,34 @@ public partial class UpdatePlayResultCommandHandler
         await SaveGreenDanAsync(saveData, playResultData, green, cancellationToken);
 
         await context.SaveChangesAsync(cancellationToken);
+        await TrimGreenRecentSongsAsync(request.Baid, cancellationToken);
         return 1;
     }
 
-    private static bool IsValidGreenStage(CommonPlayResultData.StageData stage, IGreenCatalog green)
+    private async Task TrimGreenRecentSongsAsync(uint baid, CancellationToken cancellationToken)
+    {
+        var overage = await context.GreenRecentSongs
+            .Where(s => s.Baid == baid)
+            .OrderByDescending(s => s.LastPlayed)
+            .Skip(GreenMaxRecentSongs)
+            .ToListAsync(cancellationToken);
+        if (overage.Count == 0)
+        {
+            return;
+        }
+        context.GreenRecentSongs.RemoveRange(overage);
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    private static bool IsValidGreenStage(CommonPlayResultData.StageData stage)
     {
         return stage.SongNo < GreenProtocolBytes.SongFlagBytes * 8
-            && green.GreenMusicInfos.ContainsKey(stage.SongNo)
             && stage.Level is >= MinGreenCourseLevel and <= MaxGreenCourseLevel
-            && stage.StageMode is 0 or 1 or 3 or 4
-            && stage.PlayResult <= MaxGreenPlayResult
-            && stage.MusicCateg <= 7
-            && (stage.PlayDan is null || GreenDanHelpers.IsKnownGreenDanId(stage.PlayDan.Value));
+            && stage.StageMode is 0 or 1 or 3 or 4;
     }
 
     private static bool CanAdd(uint current, uint delta)
         => delta <= uint.MaxValue - current;
-
-    private static bool HasBit(byte[] source, uint id, int byteCount)
-    {
-        if (id >= byteCount * 8)
-        {
-            return false;
-        }
-
-        var fixedBytes = GreenProtocolBytes.FixedOrZero(source, byteCount);
-        return (fixedBytes[id >> 3] & (1 << ((int)id & 7))) != 0;
-    }
-
-    private static bool IsValidCurrentCostume(UserSaveDataGreen saveData, CommonPlayResultData.CostumeData costume)
-    {
-        return HasBit(saveData.CostumeFlg1, costume.Costume1, GreenProtocolBytes.CostumeFlagBytes)
-            && HasBit(saveData.CostumeFlg2, costume.Costume2, GreenProtocolBytes.CostumeFlagBytes)
-            && HasBit(saveData.CostumeFlg3, costume.Costume3, GreenProtocolBytes.CostumeFlagBytes)
-            && HasBit(saveData.CostumeFlg4, costume.Costume4, GreenProtocolBytes.CostumeFlagBytes)
-            && HasBit(saveData.CostumeFlg5, costume.Costume5, GreenProtocolBytes.CostumeFlagBytes);
-    }
-
-    private static bool HasOnlyInRangeUnlockRewards(CommonPlayResultData playResultData)
-    {
-        return AllWithinRange(playResultData.GetToneNoes, GreenProtocolBytes.ToneFlagBytes)
-            && AllWithinRange(playResultData.GetCostumeNo1s, GreenProtocolBytes.CostumeFlagBytes)
-            && AllWithinRange(playResultData.GetCostumeNo2s, GreenProtocolBytes.CostumeFlagBytes)
-            && AllWithinRange(playResultData.GetCostumeNo3s, GreenProtocolBytes.CostumeFlagBytes)
-            && AllWithinRange(playResultData.GetCostumeNo4s, GreenProtocolBytes.CostumeFlagBytes)
-            && AllWithinRange(playResultData.GetCostumeNo5s, GreenProtocolBytes.CostumeFlagBytes)
-            && AllWithinRange(playResultData.GetTitleNoes, GreenProtocolBytes.TitleFlagBytes);
-    }
-
-    private static bool AllWithinRange(IEnumerable<uint> ids, int byteCount)
-    {
-        var maxBits = (uint)(byteCount * 8);
-        return ids.All(id => id < maxBits);
-    }
 
     private static void ApplyCostume(UserSaveDataGreen saveData, CommonPlayResultData.CostumeData costume)
     {
@@ -128,6 +114,11 @@ public partial class UpdatePlayResultCommandHandler
         saveData.Costume3 = costume.Costume3;
         saveData.Costume4 = costume.Costume4;
         saveData.Costume5 = costume.Costume5;
+        saveData.CostumeFlg1 = SetBits(saveData.CostumeFlg1, [costume.Costume1], GreenProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg2 = SetBits(saveData.CostumeFlg2, [costume.Costume2], GreenProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg3 = SetBits(saveData.CostumeFlg3, [costume.Costume3], GreenProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg4 = SetBits(saveData.CostumeFlg4, [costume.Costume4], GreenProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg5 = SetBits(saveData.CostumeFlg5, [costume.Costume5], GreenProtocolBytes.CostumeFlagBytes);
     }
 
     private static void ApplyUnlockBits(UserSaveDataGreen saveData, CommonPlayResultData playResultData)
@@ -264,7 +255,7 @@ public partial class UpdatePlayResultCommandHandler
         if (stage.IsFavorite && favorite is null)
         {
             var count = await context.GreenFavoriteSongs.CountAsync(s => s.Baid == baid, cancellationToken);
-            if (count < 5)
+            if (count < GreenMaxFavoriteSongs)
             {
                 context.GreenFavoriteSongs.Add(new GreenFavoriteSongs { Baid = baid, SongNo = stage.SongNo });
             }
@@ -288,18 +279,6 @@ public partial class UpdatePlayResultCommandHandler
         {
             recent.LastPlayed = playTime;
         }
-
-        await context.SaveChangesAsync(cancellationToken);
-
-        var overage = await context.GreenRecentSongs
-            .Where(s => s.Baid == baid)
-            .OrderByDescending(s => s.LastPlayed)
-            .Skip(10)
-            .ToListAsync(cancellationToken);
-        if (overage.Count > 0)
-        {
-            context.GreenRecentSongs.RemoveRange(overage);
-        }
     }
 
     private async Task SaveGreenDanAsync(
@@ -308,7 +287,7 @@ public partial class UpdatePlayResultCommandHandler
         IGreenCatalog green,
         CancellationToken cancellationToken)
     {
-        if (playResultData.PlayMode != 1)
+        if (playResultData.PlayMode != (uint)PlayMode.DanMode)
         {
             return;
         }
@@ -454,7 +433,7 @@ public partial class UpdatePlayResultCommandHandler
             GreenProtocolBytes.GhostPlayedSongBytes);
     }
 
-    private void ApplyGhostUpdates(UserSaveDataGreen saveData, CommonPlayResultData playResultData)
+    private async Task ApplyGhostUpdatesAsync(UserSaveDataGreen saveData, CommonPlayResultData playResultData, CancellationToken cancellationToken)
     {
         if (playResultData.GhostReleaseData is not null)
         {
@@ -465,7 +444,7 @@ public partial class UpdatePlayResultCommandHandler
 
             foreach (var token in playResultData.GhostReleaseData.AryTokendata)
             {
-                var existing = context.GreenGhostTokens.Find(saveData.Baid, token.TokenId);
+                var existing = await context.GreenGhostTokens.FindAsync([saveData.Baid, token.TokenId], cancellationToken);
                 if (existing is null)
                 {
                     context.GreenGhostTokens.Add(new GreenGhostTokens
@@ -502,7 +481,7 @@ public partial class UpdatePlayResultCommandHandler
 
         foreach (var winning in playResultData.GhostUpdateRankData.AryWinningsData)
         {
-            var existing = context.GreenGhostWinnings.Find(saveData.Baid, winning.LevelId);
+            var existing = await context.GreenGhostWinnings.FindAsync([saveData.Baid, winning.LevelId], cancellationToken);
             if (existing is null)
             {
                 context.GreenGhostWinnings.Add(new GreenGhostWinnings

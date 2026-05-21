@@ -10,7 +10,7 @@ public partial class HighScores
     public string? Era { get; set; }
 
     private string CurrentEra => WebUiEra.Normalize(Era);
-    private bool IsGreen => string.Equals(CurrentEra, "Green", StringComparison.OrdinalIgnoreCase);
+    private bool IsGreen => WebUiEra.IsGreen(CurrentEra);
 
     private const string IconStyle = "width:25px; height:25px;";
 
@@ -71,7 +71,7 @@ public partial class HighScores
         else
         {
             BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
-        };
+        }
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["High Scores"], href: WebUiEra.UserRoute(Baid, CurrentEra, "HighScores"), disabled: false));
         BreadcrumbsStateContainer.NotifyStateChanged();

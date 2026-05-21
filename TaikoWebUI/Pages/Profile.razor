@@ -142,8 +142,8 @@
                                     <TitlePicker Era="@CurrentEra"
                                                  Catalog="@titleDictionary"
                                                  Value="@titleValue"
-                                                 ValueChanged="@(value => { titleValue = value; ApplyCustomizationValues(); })"
-                                                 ReadOnlyTitleText="@(IsGreen || !AuthService.AllowFreeProfileEditing)"
+                                                 ValueChanged="HandleTitleChanged"
+                                                 ReadOnlyTitleText="false"
                                                  SelectionMode="@CurrentTitleSelectionMode"
                                                  AllowUnlockEditing="@CanEditUnlocks" />
 

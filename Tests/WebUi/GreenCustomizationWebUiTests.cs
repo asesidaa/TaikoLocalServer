@@ -145,6 +145,43 @@ public sealed class GreenCustomizationWebUiTests
     }
 
     [Fact]
+    public void Profile_DoesNotLockTitleTextEditingForGreen()
+    {
+        var markup = ReadWebUiFile("Pages", "Profile.razor");
+        var code = ReadWebUiFile("Pages", "Profile.razor.cs");
+
+        Assert.DoesNotContain("ReadOnlyTitleText=\"@(IsGreen", markup);
+        Assert.Contains("ReadOnlyTitleText=\"false\"", markup);
+        Assert.Contains("response.Title = titleValue.Title;", code);
+        Assert.DoesNotContain("response.Title = IsGreen", code);
+    }
+
+    [Fact]
+    public void Profile_RefreshesFittedNameplateTitleWhenTitlePickerChanges()
+    {
+        var markup = ReadWebUiFile("Pages", "Profile.razor");
+        var code = ReadWebUiFile("Pages", "Profile.razor.cs");
+
+        Assert.Contains("ValueChanged=\"HandleTitleChanged\"", markup);
+        Assert.Contains("private async Task HandleTitleChanged(TitlePickerValue value)", code);
+        Assert.Contains("titleValue = value;", code);
+        Assert.Contains("ApplyCustomizationValues();", code);
+        Assert.Contains("await UpdateTitle();", code);
+    }
+
+    [Fact]
+    public void Profile_CustomizationCatalogsAreNotUnlockGated()
+    {
+        var code = ReadWebUiFile("Pages", "Profile.razor.cs");
+
+        Assert.DoesNotContain("catalogById.Keys.Intersect(unlockedIds)", code);
+        Assert.DoesNotContain("neirosById.Keys.Intersect(unlockedIds)", code);
+        Assert.DoesNotContain("TitleCanBeShown", code);
+        Assert.DoesNotContain("lockedCostumeDataDictionary", code);
+        Assert.DoesNotContain("lockedTitleDataDictionary", code);
+    }
+
+    [Fact]
     public void CostumePicker_UsesDialogActivatorInsteadOfMudSelect()
     {
         var markup = ReadWebUiFile("Shared", "Customize", "CostumePicker.razor");

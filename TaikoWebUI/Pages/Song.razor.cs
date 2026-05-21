@@ -14,7 +14,7 @@ public partial class Song
     public string? Era { get; set; }
 
     private string CurrentEra => WebUiEra.Normalize(Era);
-    private bool IsGreen => string.Equals(CurrentEra, "Green", StringComparison.OrdinalIgnoreCase);
+    private bool IsGreen => WebUiEra.IsGreen(CurrentEra);
 
     private UserSetting? userSetting;
     private SongHistoryResponse? response;

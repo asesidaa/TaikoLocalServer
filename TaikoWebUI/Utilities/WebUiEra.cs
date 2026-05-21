@@ -3,11 +3,17 @@ namespace TaikoWebUI.Utilities;
 public static class WebUiEra
 {
     public const string Default = "Nijiiro";
-    public static readonly string[] Supported = ["Nijiiro", "Green"];
+    public const string Green = "Green";
+    public static readonly string[] Supported = [Default, Green];
 
     public static bool IsSupported(string? era)
     {
         return Supported.Any(value => string.Equals(value, era, StringComparison.OrdinalIgnoreCase));
+    }
+
+    public static bool IsGreen(string? era)
+    {
+        return string.Equals(era, Green, StringComparison.OrdinalIgnoreCase);
     }
 
     public static string Normalize(string? era)

@@ -230,15 +230,6 @@ public partial class UpdatePlayResultCommandHandler
     {
         saveData.Title = playResultData.Title;
         saveData.TitlePlateId = playResultData.TitleplateId;
-        var costumeData = new List<uint>
-        {
-            playResultData.AryCurrentCostume.Costume1,
-            playResultData.AryCurrentCostume.Costume2,
-            playResultData.AryCurrentCostume.Costume3,
-            playResultData.AryCurrentCostume.Costume4,
-            playResultData.AryCurrentCostume.Costume5
-        };
-        //user.CostumeData = JsonSerializer.Serialize(costumeData);
         saveData.CurrentKigurumi = playResultData.AryCurrentCostume.Costume1;
         saveData.CurrentHead = playResultData.AryCurrentCostume.Costume2;
         saveData.CurrentBody = playResultData.AryCurrentCostume.Costume3;
@@ -269,13 +260,6 @@ public partial class UpdatePlayResultCommandHandler
             saveData.UnlockedUraSongIdList.Add(songNo);
         }
 
-        var difficultyPlayedArray = new List<uint>
-        {
-            playResultData.DifficultyPlayedCourse,
-            playResultData.DifficultyPlayedStar,
-            playResultData.DifficultyPlayedSort
-        };
-        //user.DifficultyPlayedArray = JsonSerializer.Serialize(difficultyPlayedArray);
         saveData.DifficultyPlayedCourse = playResultData.DifficultyPlayedCourse;
         saveData.DifficultyPlayedStar = playResultData.DifficultyPlayedStar;
         saveData.DifficultyPlayedSort = playResultData.DifficultyPlayedSort;

@@ -3,14 +3,14 @@ namespace TaikoLocalServer.Tests.Green;
 public sealed class GreenProfileCountersTests
 {
     [Theory]
-    [InlineData(0u, nameof(UserSaveDataGreen.CategJpopCnt))]
-    [InlineData(1u, nameof(UserSaveDataGreen.CategAnimeCnt))]
-    [InlineData(2u, nameof(UserSaveDataGreen.CategDoyoCnt))]
+    [InlineData(1u, nameof(UserSaveDataGreen.CategJpopCnt))]
+    [InlineData(2u, nameof(UserSaveDataGreen.CategAnimeCnt))]
     [InlineData(3u, nameof(UserSaveDataGreen.CategVocaloidCnt))]
-    [InlineData(4u, nameof(UserSaveDataGreen.CategGameCnt))]
-    [InlineData(5u, nameof(UserSaveDataGreen.CategNamcoCnt))]
-    [InlineData(6u, nameof(UserSaveDataGreen.CategVarietyCnt))]
-    [InlineData(7u, nameof(UserSaveDataGreen.CategClassicCnt))]
+    [InlineData(4u, nameof(UserSaveDataGreen.CategDoyoCnt))]
+    [InlineData(5u, nameof(UserSaveDataGreen.CategVarietyCnt))]
+    [InlineData(6u, nameof(UserSaveDataGreen.CategClassicCnt))]
+    [InlineData(7u, nameof(UserSaveDataGreen.CategGameCnt))]
+    [InlineData(8u, nameof(UserSaveDataGreen.CategNamcoCnt))]
     public void ApplyStage_IncrementsMatchingGenreCounter(uint musicCateg, string expectedProperty)
     {
         var save = new UserSaveDataGreen { Baid = 1 };
@@ -23,10 +23,11 @@ public sealed class GreenProfileCountersTests
     }
 
     [Theory]
-    [InlineData(8u)]
+    [InlineData(0u)]
+    [InlineData(9u)]
     [InlineData(99u)]
     [InlineData(uint.MaxValue)]
-    public void ApplyStage_GenreOutOfRangeDoesNotMoveAnyCounter(uint musicCateg)
+    public void ApplyStage_GenreWithoutProfileCounterDoesNotMoveAnyCounter(uint musicCateg)
     {
         var save = new UserSaveDataGreen { Baid = 1 };
         var stage = new CommonPlayResultData.StageData { MusicCateg = musicCateg };
@@ -102,7 +103,7 @@ public sealed class GreenProfileCountersTests
         };
         var stage = new CommonPlayResultData.StageData
         {
-            MusicCateg = 0,
+            MusicCateg = 1,
             IsPushed = true,
             IsFavorite = true,
             IsRecent = true

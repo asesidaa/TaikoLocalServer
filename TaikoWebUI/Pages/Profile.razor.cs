@@ -13,7 +13,7 @@ public partial class Profile
     public string? Era { get; set; }
 
     private string CurrentEra => WebUiEra.Normalize(Era);
-    private bool IsGreen => string.Equals(CurrentEra, "Green", StringComparison.OrdinalIgnoreCase);
+    private bool IsGreen => WebUiEra.IsGreen(CurrentEra);
     private bool CanEditUnlocks => IsGreen && AuthService.AllowFreeProfileEditing;
     private TitleSelectionMode CurrentTitleSelectionMode => IsGreen
         ? TitleSelectionMode.TitleId
@@ -65,8 +65,6 @@ public partial class Profile
     private List<Costume> costumeList = new();
     private Dictionary<uint, Title> titleDictionary = new();
     private IReadOnlyDictionary<uint, Neiro> neiroDictionary = new Dictionary<uint, Neiro>();
-    private Dictionary<string, List<uint>> lockedCostumeDataDictionary = new();
-    private Dictionary<string, List<uint>> lockedTitleDataDictionary = new();
     private List<Costume> kigurumiCatalog = new();
     private List<Costume> headCatalog = new();
     private List<Costume> bodyCatalog = new();
@@ -113,8 +111,6 @@ public partial class Profile
         costumeList = (await GameDataService.GetCostumeList(CurrentEra)).ToList();
         titleDictionary = (await GameDataService.GetTitleDictionary(CurrentEra)).ToDictionary(pair => pair.Key, pair => pair.Value);
         neiroDictionary = await GameDataService.GetNeiroDictionary(CurrentEra);
-        lockedCostumeDataDictionary = IsGreen ? new Dictionary<string, List<uint>>() : await GameDataService.GetLockedCostumeDataDictionary();
-        lockedTitleDataDictionary = IsGreen ? new Dictionary<string, List<uint>>() : await GameDataService.GetLockedTitleDataDictionary();
         InitializeCustomizationValues();
 
         songresponse = await Client.GetFromJsonAsync<SongBestResponse>(WebUiEra.Api(CurrentEra, $"PlayData/{Baid}"));
@@ -161,7 +157,7 @@ public partial class Profile
         bodyValue = new CostumePickerValue(response.Body, response.UnlockedBody);
         faceValue = new CostumePickerValue(response.Face, response.UnlockedFace);
         puchiValue = new CostumePickerValue(response.Puchi, response.UnlockedPuchi);
-        var titleText = IsGreen
+        var titleText = IsGreen && string.IsNullOrWhiteSpace(response.Title)
             ? TitlePickerCatalog.ResolveSelectedTitleText(titleDictionary, response.TitlePlateId, response.Title)
             : response.Title;
         if (IsGreen)
@@ -183,15 +179,7 @@ public partial class Profile
                 group => group.Key,
                 group => group.OrderBy(costume => costume.CostumeType == "unknown" ? 1 : 0).First());
 
-        var ids = AuthService.AllowFreeProfileEditing
-            ? catalogById.Keys.Concat(unlockedIds)
-            : catalogById.Keys.Intersect(unlockedIds).Append(currentId);
-
-        if (!IsGreen && AuthService.AllowFreeProfileEditing &&
-            lockedCostumeDataDictionary.TryGetValue(costumeType, out var lockedIds))
-        {
-            ids = ids.Except(lockedIds);
-        }
+        var ids = catalogById.Keys.Concat(unlockedIds).Append(currentId);
 
         return ids
             .Distinct()
@@ -210,24 +198,12 @@ public partial class Profile
         response.ThrowIfNull();
 
         var titlesById = titleDictionary;
-        var lockedTitleIds = !IsGreen && lockedTitleDataDictionary.TryGetValue("title", out var titleIds)
-            ? titleIds.ToHashSet()
-            : new HashSet<uint>();
-        var lockedTitlePlateIds = !IsGreen && lockedTitleDataDictionary.TryGetValue("titlePlate", out var titlePlateIds)
-            ? titlePlateIds.ToHashSet()
-            : new HashSet<uint>();
-        var currentTitleIds = titlesById.Values
-            .Where(IsCurrentTitle)
-            .Select(title => title.TitleId)
-            .ToHashSet();
-
-        var ids = AuthService.AllowFreeProfileEditing
-            ? titlesById.Keys.Concat(response.UnlockedTitle)
-            : titlesById.Keys.Intersect(response.UnlockedTitle).Concat(currentTitleIds);
+        var ids = titlesById.Keys
+            .Concat(response.UnlockedTitle)
+            .Append(response.TitlePlateId);
 
         return ids
             .Distinct()
-            .Where(id => TitleCanBeShown(id, titlesById, currentTitleIds, lockedTitleIds, lockedTitlePlateIds))
             .OrderBy(id => id)
             .ToDictionary(
                 id => id,
@@ -239,9 +215,7 @@ public partial class Profile
     private IReadOnlyDictionary<uint, Neiro> BuildNeiroCatalog(uint currentId, IReadOnlyCollection<uint> unlockedIds)
     {
         var neirosById = neiroDictionary;
-        var ids = AuthService.AllowFreeProfileEditing
-            ? neirosById.Keys.Concat(unlockedIds)
-            : neirosById.Keys.Intersect(unlockedIds).Append(currentId);
+        var ids = neirosById.Keys.Concat(unlockedIds).Append(currentId);
 
         return ids
             .Distinct()
@@ -253,45 +227,6 @@ public partial class Profile
                     : new Neiro { NeiroId = id });
     }
 
-    private bool TitleCanBeShown(
-        uint id,
-        IReadOnlyDictionary<uint, Title> titlesById,
-        IReadOnlySet<uint> currentTitleIds,
-        IReadOnlySet<uint> lockedTitleIds,
-        IReadOnlySet<uint> lockedTitlePlateIds)
-    {
-        if (IsGreen)
-        {
-            return true;
-        }
-
-        if (!titlesById.TryGetValue(id, out var title))
-        {
-            return !lockedTitleIds.Contains(id);
-        }
-
-        var isCurrentTitle = currentTitleIds.Contains(id);
-        var hasCurrentPlate = title.TitleRarity == response?.TitlePlateId;
-        return (!lockedTitleIds.Contains(id) || isCurrentTitle) &&
-               (!lockedTitlePlateIds.Contains(title.TitleRarity) || hasCurrentPlate);
-    }
-
-    private bool IsCurrentTitle(Title title)
-    {
-        response.ThrowIfNull();
-        return StringMatchesCurrentTitle(title.TitleName) ||
-               StringMatchesCurrentTitle(title.TitleNameEN) ||
-               StringMatchesCurrentTitle(title.TitleNameCN) ||
-               StringMatchesCurrentTitle(title.TitleNameKO);
-    }
-
-    private bool StringMatchesCurrentTitle(string title)
-    {
-        response.ThrowIfNull();
-        return !string.IsNullOrWhiteSpace(response.Title) &&
-               string.Equals(title, response.Title, StringComparison.Ordinal);
-    }
-
     private void ApplyCustomizationValues()
     {
         response.ThrowIfNull();
@@ -300,9 +235,7 @@ public partial class Profile
         response.Body = bodyValue.CurrentId;
         response.Face = faceValue.CurrentId;
         response.Puchi = puchiValue.CurrentId;
-        response.Title = IsGreen
-            ? TitlePickerCatalog.ResolveSelectedTitleText(titleDictionary, titleValue.TitlePlateId, titleValue.Title)
-            : titleValue.Title;
+        response.Title = titleValue.Title;
         response.TitlePlateId = titleValue.TitlePlateId;
         response.ToneId = neiroValue.CurrentId;
         response.BodyColor = colorValue.BodyColor;
@@ -324,6 +257,13 @@ public partial class Profile
                 .ToList();
             response.UnlockedTone = neiroValue.UnlockedIds.ToList();
         }
+    }
+
+    private async Task HandleTitleChanged(TitlePickerValue value)
+    {
+        titleValue = value;
+        ApplyCustomizationValues();
+        await UpdateTitle();
     }
     
     private async Task SaveOptions()

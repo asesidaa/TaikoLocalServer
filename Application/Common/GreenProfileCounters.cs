@@ -14,14 +14,14 @@ public static class GreenProfileCounters
     {
         switch (musicCateg)
         {
-            case 0: saveData.CategJpopCnt = SafeIncrement(saveData.CategJpopCnt); break;
-            case 1: saveData.CategAnimeCnt = SafeIncrement(saveData.CategAnimeCnt); break;
-            case 2: saveData.CategDoyoCnt = SafeIncrement(saveData.CategDoyoCnt); break;
+            case 1: saveData.CategJpopCnt = SafeIncrement(saveData.CategJpopCnt); break;
+            case 2: saveData.CategAnimeCnt = SafeIncrement(saveData.CategAnimeCnt); break;
             case 3: saveData.CategVocaloidCnt = SafeIncrement(saveData.CategVocaloidCnt); break;
-            case 4: saveData.CategGameCnt = SafeIncrement(saveData.CategGameCnt); break;
-            case 5: saveData.CategNamcoCnt = SafeIncrement(saveData.CategNamcoCnt); break;
-            case 6: saveData.CategVarietyCnt = SafeIncrement(saveData.CategVarietyCnt); break;
-            case 7: saveData.CategClassicCnt = SafeIncrement(saveData.CategClassicCnt); break;
+            case 4: saveData.CategDoyoCnt = SafeIncrement(saveData.CategDoyoCnt); break;
+            case 5: saveData.CategVarietyCnt = SafeIncrement(saveData.CategVarietyCnt); break;
+            case 6: saveData.CategClassicCnt = SafeIncrement(saveData.CategClassicCnt); break;
+            case 7: saveData.CategGameCnt = SafeIncrement(saveData.CategGameCnt); break;
+            case 8: saveData.CategNamcoCnt = SafeIncrement(saveData.CategNamcoCnt); break;
         }
     }
 
