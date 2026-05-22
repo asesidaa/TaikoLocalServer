@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using TaikoLocalServer.Contracts.AdminApi.Authorization;
 using TaikoLocalServer.Contracts.AdminApi.Responses;
+using TaikoWebUI.Utilities;
 
 namespace TaikoWebUI.Services;
 
@@ -30,6 +31,7 @@ public sealed class AuthService : IDisposable
     public bool RegisterWithLastPlayTime => authConfig.RegisterWithLastPlayTime;
     public bool AllowUserDelete => authConfig.AllowUserDelete;
     public bool AllowFreeProfileEditing => authConfig.AllowFreeProfileEditing;
+    public IReadOnlyList<string> EnabledEras => WebUiEra.NormalizeEnabled(authConfig.EnabledEras);
 
     /// <summary>
     /// True when the user holds a valid server-issued bearer token. Stays false in local

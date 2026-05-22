@@ -7,7 +7,18 @@ public sealed class GreenCustomizationWebUiTests
     {
         var markup = ReadWebUiFile("Components", "UserCard.razor");
 
-        Assert.Contains("WebUiEra.UserRoute(User.Baid, \"Green\", \"Profile\")", markup);
+        Assert.Contains("@foreach (var era in AuthService.EnabledEras)", markup);
+        Assert.Contains("WebUiEra.UserRoute(User.Baid, era, \"Profile\")", markup);
+        Assert.DoesNotContain("WebUiEra.UserRoute(User.Baid, \"Nijiiro\"", markup);
+    }
+
+    [Fact]
+    public void NavMenu_UsesServerEnabledEraList()
+    {
+        var markup = ReadWebUiFile("Components", "NavMenu.razor");
+
+        Assert.Contains("@foreach (var era in AuthService.EnabledEras)", markup);
+        Assert.DoesNotContain("foreach (var era in WebUiEra.Supported)", markup);
     }
 
     [Fact]

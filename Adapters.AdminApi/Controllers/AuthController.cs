@@ -13,9 +13,11 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 public class AuthController(
     ITaikoDbContext context,
     IJwtTokenService jwtTokens,
-    IOptions<AuthSettings> settings) : BaseAdminController<AuthController>
+    IOptions<AuthSettings> settings,
+    IOptions<ServerSettings> serverSettings) : BaseAdminController<AuthController>
 {
     private readonly AuthSettings authSettings = settings.Value;
+    private readonly ServerSettings serverSettings = serverSettings.Value;
 
     private const int OtpStepSeconds = 3600;
     // 24 prior 1-hour windows = 24h backwards-acceptance for invite codes.
@@ -53,7 +55,21 @@ public class AuthController(
 
     [HttpGet("Config")]
     [AllowAnonymous]
-    public ActionResult<ClientAuthConfigResponse> GetConfig() => Ok(authSettings.ToResponse());
+    public ActionResult<ClientAuthConfigResponse> GetConfig()
+    {
+        var enabledEras = serverSettings.Eras
+            .Where(pair => pair.Value.Enabled)
+            .Select(pair => pair.Key)
+            .OrderBy(era => era)
+            .ToList();
+
+        var response = authSettings.ToResponse() with
+        {
+            EnabledEras = enabledEras
+        };
+
+        return Ok(response);
+    }
 
     [HttpPost("Login")]
     [AllowAnonymous]

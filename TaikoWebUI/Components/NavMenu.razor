@@ -26,7 +26,7 @@
 		{
             <MudDivider />
             <MudSelect T="string" @bind-Value="selectedEra" Dense="true" Margin="Margin.Dense" Class="px-4" Label="Era">
-                @foreach (var era in WebUiEra.Supported)
+                @foreach (var era in AuthService.EnabledEras)
                 {
                     <MudSelectItem Value="@era">@era</MudSelectItem>
                 }

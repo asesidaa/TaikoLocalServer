@@ -83,7 +83,9 @@ builder.Services.AddBlazoredLocalStorage();
 var host = builder.Build();
 
 var gameDataService = host.Services.GetRequiredService<IGameDataService>();
-await gameDataService.InitializeAsync(builder.HostEnvironment.BaseAddress);
+await gameDataService.InitializeAsync(
+    builder.HostEnvironment.BaseAddress,
+    authConfig.EnabledEras ?? WebUiEra.Supported);
 
 CultureInfo culture;
 var js = host.Services.GetRequiredService<IJSRuntime>();

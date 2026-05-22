@@ -10,6 +10,7 @@ global using TaikoLocalServer.Adapters.AdminApi.Authorization;
 global using TaikoLocalServer.Application.Abstractions;
 global using TaikoLocalServer.Application.Catalog.Green;
 global using TaikoLocalServer.Application.Common;
+global using TaikoLocalServer.Application.Settings;
 global using TaikoLocalServer.Contracts.AdminApi.Authorization;
 global using TaikoLocalServer.Contracts.AdminApi.ViewModels;
 global using TaikoLocalServer.Contracts.AdminApi.Requests;

@@ -6,6 +6,8 @@ public interface IGameDataService
 {
     public Task InitializeAsync(string dataBaseUrl);
 
+    public Task InitializeAsync(string dataBaseUrl, IEnumerable<string> enabledEras);
+
     public Task<Dictionary<uint, MusicDetail>> GetMusicDetailDictionary();
 
     public Task<Dictionary<uint, MusicDetail>> GetMusicDetailDictionary(string? era);

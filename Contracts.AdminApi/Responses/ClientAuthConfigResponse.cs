@@ -6,4 +6,5 @@ public sealed record ClientAuthConfigResponse(
     int BoundAccessCodeUpperLimit,
     bool RegisterWithLastPlayTime,
     bool AllowUserDelete,
-    bool AllowFreeProfileEditing);
+    bool AllowFreeProfileEditing,
+    IReadOnlyList<string>? EnabledEras = null);

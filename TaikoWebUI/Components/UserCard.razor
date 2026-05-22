@@ -123,8 +123,10 @@
                          EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
                          AnchorOrigin="Origin.BottomCenter"
                          TransformOrigin="Origin.TopCenter">
-                    <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, "Nijiiro", "Profile"))">Nijiiro - @Localizer["Edit Profile"]</MudMenuItem>
-                    <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, "Green", "Profile"))">Green - @Localizer["Edit Profile"]</MudMenuItem>
+                    @foreach (var era in AuthService.EnabledEras)
+                    {
+                        <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, era, "Profile"))">@era - @Localizer["Edit Profile"]</MudMenuItem>
+                    }
                 </MudMenu>
                 <MudMenu Size="Size.Small"
                          Dense="true"
@@ -135,14 +137,13 @@
                          FullWidth="true"
                          AnchorOrigin="Origin.BottomCenter"
                          TransformOrigin="Origin.TopCenter">
-                    <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, "Nijiiro", "HighScores"))">Nijiiro - @Localizer["High Scores"]</MudMenuItem>
-                    <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, "Green", "HighScores"))">Green - @Localizer["High Scores"]</MudMenuItem>
-                    <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, "Nijiiro", "PlayHistory"))">Nijiiro - @Localizer["Play History"]</MudMenuItem>
-                    <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, "Green", "PlayHistory"))">Green - @Localizer["Play History"]</MudMenuItem>
-                    <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, "Nijiiro", "Songs"))">Nijiiro - @Localizer["Song List"]</MudMenuItem>
-                    <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, "Green", "Songs"))">Green - @Localizer["Song List"]</MudMenuItem>
-                    <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, "Nijiiro", "DaniDojo"))">Nijiiro - @Localizer["Dani Dojo"]</MudMenuItem>
-                    <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, "Green", "DaniDojo"))">Green - @Localizer["Dani Dojo"]</MudMenuItem>
+                    @foreach (var era in AuthService.EnabledEras)
+                    {
+                        <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, era, "HighScores"))">@era - @Localizer["High Scores"]</MudMenuItem>
+                        <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, era, "PlayHistory"))">@era - @Localizer["Play History"]</MudMenuItem>
+                        <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, era, "Songs"))">@era - @Localizer["Song List"]</MudMenuItem>
+                        <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, era, "DaniDojo"))">@era - @Localizer["Dani Dojo"]</MudMenuItem>
+                    }
                 </MudMenu>
             </MudStack>
         </MudCardActions>

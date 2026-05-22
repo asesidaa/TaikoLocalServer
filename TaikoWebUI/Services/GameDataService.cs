@@ -23,9 +23,12 @@ public class GameDataService : IGameDataService
         this.client = client;
     }
 
-    public async Task InitializeAsync(string dataBaseUrl)
+    public Task InitializeAsync(string dataBaseUrl)
+        => InitializeAsync(dataBaseUrl, WebUiEra.Supported);
+
+    public async Task InitializeAsync(string dataBaseUrl, IEnumerable<string> enabledEras)
     {
-        foreach (var era in WebUiEra.Supported)
+        foreach (var era in WebUiEra.NormalizeEnabled(enabledEras))
         {
             var danData = await client.GetFromJsonAsync<List<DanData>>(WebUiEra.Api(era, "GameData/DanData"))
                 ?? new List<DanData>();

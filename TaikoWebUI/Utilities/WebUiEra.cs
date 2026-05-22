@@ -21,6 +21,17 @@ public static class WebUiEra
         return Supported.FirstOrDefault(value => string.Equals(value, era, StringComparison.OrdinalIgnoreCase)) ?? Default;
     }
 
+    public static IReadOnlyList<string> NormalizeEnabled(IEnumerable<string>? eras)
+    {
+        var normalized = eras?
+            .Select(Normalize)
+            .Where(IsSupported)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList() ?? [];
+
+        return normalized.Count > 0 ? normalized : Supported;
+    }
+
     public static string UserRoute(uint baid, string? era, string page)
     {
         return $"Users/{baid}/{Normalize(era)}/{page.TrimStart('/')}";
