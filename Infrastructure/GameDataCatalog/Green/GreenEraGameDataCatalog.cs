@@ -121,10 +121,14 @@ public sealed class GreenEraGameDataCatalog(
         var greenCostumes = await new GreenCostumeLoader().LoadAsync(cancellationToken);
         var greenTitles = await new GreenTitleLoader().LoadAsync(cancellationToken);
         var greenNeiros = await new GreenNeiroLoader().LoadAsync(cancellationToken);
+        var sharedNames = await LoadCustomizationNamesAsync(cancellationToken);
         var customizationCatalog = GreenCustomizationCatalogComposer.Compose(
             greenCostumes,
             greenTitles,
             greenNeiros,
+            sharedNames.Costumes,
+            sharedNames.Titles,
+            sharedNames.Neiros,
             nijiiroCatalog?.GetCostumeList(),
             nijiiroCatalog?.GetTitleDictionary(),
             nijiiroCatalog?.GetNeiroDictionary());
@@ -245,6 +249,64 @@ public sealed class GreenEraGameDataCatalog(
             : new EraSettings();
     }
 
+    private async Task<GreenCustomizationCatalog> LoadCustomizationNamesAsync(CancellationToken cancellationToken)
+    {
+        var loader = new GreenCustomizationNameCatalogLoader();
+        var sharedNames = await loader.LoadAsync(PathHelper.GetSharedDataPath(), cancellationToken);
+        var greenSettings = GetGreenSettings();
+        if (string.IsNullOrWhiteSpace(greenSettings.CustomizationNameDataPath))
+        {
+            return sharedNames;
+        }
+
+        var overridePath = ResolveConfiguredPath(greenSettings.CustomizationNameDataPath);
+        var overrideNames = await loader.LoadAsync(overridePath, cancellationToken);
+
+        return MergeCustomizationNameCatalogs(sharedNames, overrideNames);
+    }
+
+    private static GreenCustomizationCatalog MergeCustomizationNameCatalogs(
+        GreenCustomizationCatalog sharedNames,
+        GreenCustomizationCatalog overrideNames)
+    {
+        return new GreenCustomizationCatalog(
+            MergeCostumeNameCatalogs(sharedNames.Costumes, overrideNames.Costumes),
+            MergeNameDictionaries(sharedNames.Titles, overrideNames.Titles),
+            MergeNameDictionaries(sharedNames.Neiros, overrideNames.Neiros));
+    }
+
+    private static IReadOnlyList<Costume> MergeCostumeNameCatalogs(
+        IReadOnlyList<Costume> sharedNames,
+        IReadOnlyList<Costume> overrideNames)
+    {
+        var result = sharedNames
+            .GroupBy(costume => new CostumeKey(costume.CostumeType.ToLowerInvariant(), costume.CostumeId))
+            .ToDictionary(group => group.Key, group => group.First());
+
+        foreach (var costume in overrideNames)
+        {
+            result[new CostumeKey(costume.CostumeType.ToLowerInvariant(), costume.CostumeId)] = costume;
+        }
+
+        return result.Values
+            .OrderBy(costume => costume.CostumeType)
+            .ThenBy(costume => costume.CostumeId)
+            .ToList();
+    }
+
+    private static IReadOnlyDictionary<uint, T> MergeNameDictionaries<T>(
+        IReadOnlyDictionary<uint, T> sharedNames,
+        IReadOnlyDictionary<uint, T> overrideNames)
+    {
+        var result = sharedNames.ToDictionary();
+        foreach (var (id, item) in overrideNames)
+        {
+            result[id] = item;
+        }
+
+        return result;
+    }
+
     private static string ResolveConfiguredPath(string configuredPath)
     {
         if (Path.IsPathRooted(configuredPath))
@@ -256,4 +318,6 @@ public sealed class GreenEraGameDataCatalog(
                    ?? throw new InvalidOperationException("Could not resolve server root.");
         return Path.GetFullPath(Path.Combine(root, configuredPath));
     }
+
+    private readonly record struct CostumeKey(string CostumeType, uint CostumeId);
 }

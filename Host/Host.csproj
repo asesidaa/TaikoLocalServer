@@ -111,6 +111,9 @@
     <Content Update="wwwroot\data\shared\token_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\nijiiro\gaiden_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\shared\qrcode_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\shared\costume_name_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\shared\title_name_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\shared\neiro_name_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\nijiiro\special_songs_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
 
     <!--Encrypted Game Datatables-->

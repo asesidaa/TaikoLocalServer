@@ -57,6 +57,143 @@ public sealed class GreenCustomizationCatalogLoaderTests
     }
 
     [Fact]
+    public async Task CatalogInitialize_UsesSharedCustomizationNameCatalogWhenNijiiroIsDisabled()
+    {
+        CopyGreenRuntimeCatalogFilesToProcessRoot();
+        DeleteGreenCustomizationFilesFromProcessRoot();
+        DeleteSharedCustomizationNameFilesFromProcessRoot();
+
+        try
+        {
+            await WriteGreenCustomizationFilesToProcessRoot(
+                [
+                    new Costume { CostumeId = 1, CostumeType = "body", CostumeName = string.Empty },
+                    new Costume { CostumeId = 1, CostumeType = "unknown", CostumeName = string.Empty },
+                    new Costume { CostumeId = 999, CostumeType = "unknown", CostumeName = "Green Unknown" }
+                ],
+                [
+                    new Title { TitleId = 10, TitleName = string.Empty },
+                    new Title { TitleId = 11, TitleName = "Green Fallback" }
+                ],
+                Enumerable.Range(0, 16)
+                    .Select(id => new Neiro { NeiroId = (uint)id, NeiroName = string.Empty })
+                    .ToList());
+            await WriteSharedCustomizationNameFilesToProcessRoot(
+                [
+                    new Costume { CostumeId = 1, CostumeType = "body", CostumeName = "Shared Body" },
+                    new Costume { CostumeId = 200, CostumeType = "body", CostumeName = "Shared Only Body" }
+                ],
+                [
+                    new Title { TitleId = 10, TitleName = "Shared Title", TitleRarity = 9 },
+                    new Title { TitleId = 12, TitleName = "Shared Only Title" }
+                ],
+                Enumerable.Range(0, 20)
+                    .Select(id => new Neiro { NeiroId = (uint)id, NeiroName = $"Shared Tone {id}" })
+                    .ToList());
+
+            var catalog = new GreenEraGameDataCatalog(
+                NullLogger<GreenEraGameDataCatalog>.Instance,
+                CreateGreenSettings("unused", autoExtractCatalog: false));
+
+            await catalog.InitializeAsync(CancellationToken.None);
+
+            Assert.Equal("Shared Body", Assert.Single(catalog.GetCostumeList(), item => item.CostumeType == "body" && item.CostumeId == 1).CostumeName);
+            Assert.DoesNotContain(catalog.GetCostumeList(), item => item.CostumeType == "body" && item.CostumeId == 200);
+            Assert.DoesNotContain(catalog.GetCostumeList(), item => item.CostumeType == "unknown" && item.CostumeId == 1);
+            Assert.Contains(catalog.GetCostumeList(), item => item.CostumeType == "unknown" && item.CostumeId == 999);
+            Assert.Equal("Shared Title", catalog.GetTitleDictionary()[10].TitleName);
+            Assert.Equal(9u, catalog.GetTitleDictionary()[10].TitleRarity);
+            Assert.Equal("Green Fallback", catalog.GetTitleDictionary()[11].TitleName);
+            Assert.False(catalog.GetTitleDictionary().ContainsKey(12));
+            Assert.Equal(Enumerable.Range(0, 20).Select(id => (uint)id), catalog.GetNeiroDictionary().Keys.OrderBy(id => id));
+            Assert.Equal("Shared Tone 19", catalog.GetNeiroDictionary()[19].NeiroName);
+        }
+        finally
+        {
+            DeleteGreenCustomizationFilesFromProcessRoot();
+            DeleteSharedCustomizationNameFilesFromProcessRoot();
+        }
+    }
+
+    [Fact]
+    public async Task CatalogInitialize_UsesConfiguredCustomizationNameOverridesBeforeSharedNames()
+    {
+        CopyGreenRuntimeCatalogFilesToProcessRoot();
+        DeleteGreenCustomizationFilesFromProcessRoot();
+        DeleteSharedCustomizationNameFilesFromProcessRoot();
+
+        var overrideDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        try
+        {
+            await WriteGreenCustomizationFilesToProcessRoot(
+                [
+                    new Costume { CostumeId = 1, CostumeType = "body", CostumeName = string.Empty }
+                ],
+                [
+                    new Title { TitleId = 10, TitleName = string.Empty }
+                ],
+                [
+                    new Neiro { NeiroId = 4, NeiroName = string.Empty }
+                ]);
+            await WriteSharedCustomizationNameFilesToProcessRoot(
+                [
+                    new Costume { CostumeId = 1, CostumeType = "body", CostumeName = "Shared Body" }
+                ],
+                [
+                    new Title { TitleId = 10, TitleName = "Shared Title", TitleRarity = 1 }
+                ],
+                [
+                    new Neiro { NeiroId = 4, NeiroName = "Shared Tone" }
+                ]);
+
+            Directory.CreateDirectory(overrideDirectory);
+            await WriteCustomizationNameFilesAsync(
+                overrideDirectory,
+                [
+                    new Costume { CostumeId = 1, CostumeType = "body", CostumeName = "Mod Body" }
+                ],
+                [
+                    new Title { TitleId = 10, TitleName = "Mod Title", TitleRarity = 8 }
+                ],
+                [
+                    new Neiro { NeiroId = 4, NeiroName = "Mod Tone" }
+                ]);
+
+            var catalog = new GreenEraGameDataCatalog(
+                NullLogger<GreenEraGameDataCatalog>.Instance,
+                Options.Create(new ServerSettings
+                {
+                    Eras = new Dictionary<string, EraSettings>
+                    {
+                        [nameof(GameEra.Green)] = new()
+                        {
+                            Enabled = true,
+                            AutoExtractCatalog = false,
+                            GameDataPath = "unused",
+                            CustomizationNameDataPath = overrideDirectory
+                        }
+                    }
+                }));
+
+            await catalog.InitializeAsync(CancellationToken.None);
+
+            Assert.Equal("Mod Body", Assert.Single(catalog.GetCostumeList()).CostumeName);
+            Assert.Equal("Mod Title", catalog.GetTitleDictionary()[10].TitleName);
+            Assert.Equal(8u, catalog.GetTitleDictionary()[10].TitleRarity);
+            Assert.Equal("Mod Tone", catalog.GetNeiroDictionary()[4].NeiroName);
+        }
+        finally
+        {
+            DeleteGreenCustomizationFilesFromProcessRoot();
+            DeleteSharedCustomizationNameFilesFromProcessRoot();
+            if (Directory.Exists(overrideDirectory))
+            {
+                Directory.Delete(overrideDirectory, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
     public void Composer_UsesNijiiroBaseToneRangeWhenGreenToneNamesAreIncomplete()
     {
         var greenNeiros = Enumerable.Range(0, 16)
@@ -366,6 +503,47 @@ public sealed class GreenCustomizationCatalogLoaderTests
             Items = items
         }, new JsonSerializerOptions(JsonSerializerDefaults.Web)));
 
+    private static Task WriteGreenCustomizationFilesToProcessRoot(
+        IReadOnlyList<Costume> costumes,
+        IReadOnlyList<Title> titles,
+        IReadOnlyList<Neiro> neiros)
+    {
+        var dataPath = GetProcessGreenDataPath();
+        Directory.CreateDirectory(dataPath);
+        return WriteCustomizationNameFilesAsync(
+            dataPath,
+            costumes,
+            titles,
+            neiros,
+            GreenCatalogExtractor.CostumeFileName,
+            GreenCatalogExtractor.TitleFileName,
+            GreenCatalogExtractor.NeiroFileName);
+    }
+
+    private static Task WriteSharedCustomizationNameFilesToProcessRoot(
+        IReadOnlyList<Costume> costumes,
+        IReadOnlyList<Title> titles,
+        IReadOnlyList<Neiro> neiros)
+    {
+        var dataPath = GetProcessSharedDataPath();
+        Directory.CreateDirectory(dataPath);
+        return WriteCustomizationNameFilesAsync(dataPath, costumes, titles, neiros);
+    }
+
+    private static async Task WriteCustomizationNameFilesAsync(
+        string directory,
+        IReadOnlyList<Costume> costumes,
+        IReadOnlyList<Title> titles,
+        IReadOnlyList<Neiro> neiros,
+        string costumeFileName = "costume_name_data.json",
+        string titleFileName = "title_name_data.json",
+        string neiroFileName = "neiro_name_data.json")
+    {
+        await WriteEnvelopeAsync(Path.Combine(directory, costumeFileName), costumes);
+        await WriteEnvelopeAsync(Path.Combine(directory, titleFileName), titles);
+        await WriteEnvelopeAsync(Path.Combine(directory, neiroFileName), neiros);
+    }
+
     private static void CopyGreenRuntimeCatalogFilesToProcessRoot()
     {
         var repoRoot = FindRepoRoot();
@@ -391,11 +569,31 @@ public sealed class GreenCustomizationCatalogLoaderTests
         File.Delete(Path.Combine(dataPath, GreenCatalogExtractor.NeiroFileName));
     }
 
+    private static void DeleteSharedCustomizationNameFilesFromProcessRoot()
+    {
+        var dataPath = GetProcessSharedDataPath();
+        if (!Directory.Exists(dataPath))
+        {
+            return;
+        }
+
+        File.Delete(Path.Combine(dataPath, "costume_name_data.json"));
+        File.Delete(Path.Combine(dataPath, "title_name_data.json"));
+        File.Delete(Path.Combine(dataPath, "neiro_name_data.json"));
+    }
+
     private static string GetProcessGreenDataPath()
     {
         var processDirectory = Path.GetDirectoryName(Environment.ProcessPath)
             ?? throw new ApplicationException("Cannot resolve process directory.");
         return Path.Combine(processDirectory, "wwwroot", "data", "green");
+    }
+
+    private static string GetProcessSharedDataPath()
+    {
+        var processDirectory = Path.GetDirectoryName(Environment.ProcessPath)
+            ?? throw new ApplicationException("Cannot resolve process directory.");
+        return Path.Combine(processDirectory, "wwwroot", "data", "shared");
     }
 
     private static string FindRepoRoot()

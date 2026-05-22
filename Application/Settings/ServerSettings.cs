@@ -16,4 +16,6 @@ public sealed class EraSettings
     public bool AutoExtractCatalog { get; set; } = true;
 
     public string GameDataPath { get; set; } = "wwwroot/data/green/data";
+
+    public string? CustomizationNameDataPath { get; set; }
 }
