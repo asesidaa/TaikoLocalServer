@@ -19,6 +19,8 @@
     <ProjectReference Include="..\Adapters.AdminApi\Adapters.AdminApi.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+    <ProjectReference Include="..\Adapters.GameProtocol.Shared\Adapters.GameProtocol.Shared.csproj" />
+    <ProjectReference Include="..\Adapters.GameProtocol.WwR08\Adapters.GameProtocol.WwR08.csproj" />
     <ProjectReference Include="..\Adapters.GameProtocol.Green\Adapters.GameProtocol.Green.csproj" />
     <ProjectReference Include="..\TaikoWebUI\TaikoWebUI.csproj" />
   </ItemGroup>

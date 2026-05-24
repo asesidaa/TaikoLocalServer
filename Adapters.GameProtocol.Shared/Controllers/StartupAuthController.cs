@@ -1,14 +1,21 @@
-namespace TaikoLocalServer.Adapters.GameProtocol.Green.Controllers;
+using TaikoLocalServer.Adapters.GameProtocol.Shared.Wire;
+
+namespace TaikoLocalServer.Adapters.GameProtocol.Shared.Controllers;
 
 [ApiController]
-[Route("/v11r01/chassis/startupauth.php")]
-public class StartupAuthController : BaseProtocolController<StartupAuthController>
+[Route("/v01r00/chassis/startupauth.php")]
+public sealed class StartupAuthController : BaseProtocolController<StartupAuthController>
 {
     [HttpPost]
     [Produces("application/protobuf")]
     public IActionResult StartupAuth([FromBody] StartupAuthRequest request)
     {
-        Logger.LogInformation("Green StartupAuth request: {Request}", request.Stringify());
+        Logger.LogInformation(
+            "StartupAuth request: chassis={ChassisId} shop={ShopId} operation_count={OperationCount}",
+            request.ChassisId,
+            request.ShopId,
+            request.AryOperationInfoes.Count);
+
         var response = new StartupAuthResponse { Result = 1 };
         response.AryOperationInfoes.AddRange(request.AryOperationInfoes.Select(input =>
             new StartupAuthResponse.OperationData
@@ -16,6 +23,7 @@ public class StartupAuthController : BaseProtocolController<StartupAuthControlle
                 KeyData = input.KeyData,
                 ValueData = input.ValueData
             }));
+
         return Ok(response);
     }
 }
