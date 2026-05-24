@@ -47,7 +47,8 @@ public sealed class GreenCustomizationWebUiTests
         var markup = ReadWebUiFile("Pages", "Profile.razor");
         var normalized = NormalizeLineEndings(markup);
 
-        Assert.Contains("<PlayerPreview Setting=\"@response\" />", markup);
+        Assert.Contains("TitleCatalog=\"@titleDictionary\"", markup);
+        Assert.Contains("ResolveTitlePlateFromCatalog=\"@IsGreen\"", markup);
         Assert.DoesNotContain("@if (!IsGreen)\n                                    {\n                                        <PlayerPreview", normalized);
         Assert.DoesNotContain("ShowSwatches=\"@(!IsGreen)\"", markup);
         Assert.Contains("Colors=\"@TaikoCustomizationVisuals.CostumeColors\"", markup);
@@ -59,7 +60,8 @@ public sealed class GreenCustomizationWebUiTests
         var markup = ReadWebUiFile("Pages", "Profile.razor");
         var code = ReadWebUiFile("Pages", "Profile.razor.cs");
 
-        Assert.Contains("<PlayerPreview Setting=\"@response\" />", markup);
+        Assert.Contains("TitleCatalog=\"@titleDictionary\"", markup);
+        Assert.Contains("ResolveTitlePlateFromCatalog=\"@IsGreen\"", markup);
         Assert.DoesNotContain("response.Kigurumi == 0", markup);
         Assert.DoesNotContain("CostumeOrDefault(", markup);
         Assert.DoesNotContain("private static readonly string[] CostumeColors", code);
@@ -76,6 +78,18 @@ public sealed class GreenCustomizationWebUiTests
         Assert.Contains("Setting.FaceColor", markup);
         Assert.Contains("Setting.LimbColor", markup);
         Assert.Contains("nameplate_dan.webp", markup);
+    }
+
+    [Fact]
+    public void PlayerPreview_ResolvesGreenTitleIdToCatalogTitleRarityForNameplate()
+    {
+        var markup = ReadWebUiFile("Shared", "Customize", "PlayerPreview.razor");
+
+        Assert.Contains("[Parameter] public IReadOnlyDictionary<uint, Title> TitleCatalog", markup);
+        Assert.Contains("[Parameter] public bool ResolveTitlePlateFromCatalog", markup);
+        Assert.Contains("ResolveTitlePlateId()", markup);
+        Assert.Contains("TitleCatalog.TryGetValue(Setting.TitlePlateId", markup);
+        Assert.Contains("TitleNameMatches", markup);
     }
 
     [Fact]

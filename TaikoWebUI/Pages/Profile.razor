@@ -222,7 +222,9 @@
                     <MudPaper Elevation="0" Outlined="true">
                         <MudTabs MinimumTabWidth="100px" Rounded="true" Border="true" TabPanelsClass="pa-8">
                             <MudTabPanel Text=@Localizer["Player"]>
-                                <PlayerPreview Setting="@response" />
+                                <PlayerPreview Setting="@response"
+                                               TitleCatalog="@titleDictionary"
+                                               ResolveTitlePlateFromCatalog="@IsGreen" />
                             </MudTabPanel>
 
                             @if (!IsGreen && response.IsDisplayAchievement)

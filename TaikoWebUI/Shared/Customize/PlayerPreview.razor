@@ -1,3 +1,5 @@
+@using TaikoLocalServer.Contracts.AdminApi.ViewModels
+
 @if (Setting is not null)
 {
     <MudItem style=@($"height: auto; --taiko-limb-filter: {TaikoCustomizationVisuals.GetCostumeColorFilter(Setting.LimbColor)}")>
@@ -43,7 +45,7 @@
                 </MudItem>
             </MudItem>
             <MudImage onload="nameplateLoaded()" id="nameplate" Fluid="true" Style="position: relative; bottom: 0; left: 0;" Src="images/Nameplates/nameplate.webp" />
-            <MudImage Fluid="true" Style="position:absolute; bottom: 6px; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Nameplates/nameplate_Wood.webp'" Src=@($"images/Nameplates/nameplate_{GetTitlePlateName(Setting.TitlePlateId).Replace(' ', '_')}.webp") />
+            <MudImage Fluid="true" Style="position:absolute; bottom: 6px; left: 0; right: 0; margin: 0 auto;" onerror="this.src='images/Nameplates/nameplate_Wood.webp'" Src=@($"images/Nameplates/nameplate_{GetTitlePlateName(ResolveTitlePlateId()).Replace(' ', '_')}.webp") />
             @if (Setting.IsDisplayDanOnNamePlate)
             {
                 <MudImage Fluid="true" Class="profile-image" Src="images/Nameplates/nameplate_dan.webp" />
@@ -54,6 +56,8 @@
 
 @code {
     [Parameter, EditorRequired] public UserSetting Setting { get; set; } = default!;
+    [Parameter] public IReadOnlyDictionary<uint, Title> TitleCatalog { get; set; } = new Dictionary<uint, Title>();
+    [Parameter] public bool ResolveTitlePlateFromCatalog { get; set; }
 
     private static readonly HashSet<string> Masks =
     [
@@ -95,4 +99,26 @@
 
     private static string GetTitlePlateName(uint id)
         => id < TitlePlateNames.Length ? TitlePlateNames[id] : "Wood";
+
+    private uint ResolveTitlePlateId()
+    {
+        return ResolveTitlePlateFromCatalog
+               && TitleCatalog.TryGetValue(Setting.TitlePlateId, out var title)
+               && TitleNameMatches(title, Setting.Title)
+            ? title.TitleRarity
+            : Setting.TitlePlateId;
+    }
+
+    private static bool TitleNameMatches(Title title, string selectedTitle)
+    {
+        if (string.IsNullOrWhiteSpace(selectedTitle))
+        {
+            return false;
+        }
+
+        return string.Equals(title.TitleName, selectedTitle, StringComparison.Ordinal)
+               || string.Equals(title.TitleNameEN, selectedTitle, StringComparison.Ordinal)
+               || string.Equals(title.TitleNameCN, selectedTitle, StringComparison.Ordinal)
+               || string.Equals(title.TitleNameKO, selectedTitle, StringComparison.Ordinal);
+    }
 }
