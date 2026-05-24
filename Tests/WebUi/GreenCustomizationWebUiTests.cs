@@ -81,6 +81,55 @@ public sealed class GreenCustomizationWebUiTests
     }
 
     [Fact]
+    public void PlayerPreview_RendersStandardLimbMaskWithLimbColorOnlyInNormalBranch()
+    {
+        var markup = ReadWebUiFile("Shared", "Customize", "PlayerPreview.razor");
+        var normalized = NormalizeLineEndings(markup);
+
+        Assert.Contains("images/Costumes/masks/standard-limbmask-0000.webp", markup);
+        Assert.Contains("TaikoCustomizationVisuals.GetCostumeColorFilter(Setting.LimbColor)", markup);
+        Assert.DoesNotContain("--taiko-limb-filter", markup);
+
+        var normalBranchStart = normalized.IndexOf("if (Setting.Kigurumi == 0)", StringComparison.Ordinal);
+        Assert.True(normalBranchStart >= 0, "Could not find the standard Don branch.");
+
+        var kigurumiBranchStart = normalized.IndexOf("\n                else\n", normalBranchStart, StringComparison.Ordinal);
+        Assert.True(kigurumiBranchStart > normalBranchStart, "Could not find the kigurumi branch after the standard Don branch.");
+
+        var standardBranch = normalized[normalBranchStart..kigurumiBranchStart];
+        var kigurumiBranch = normalized[kigurumiBranchStart..];
+
+        Assert.Contains("standard-limbmask-0000.webp", standardBranch);
+        Assert.DoesNotContain("standard-limbmask-0000.webp", kigurumiBranch);
+    }
+
+    [Fact]
+    public void StandardLimbMaskAsset_IsCommittedWebP()
+    {
+        var maskPath = Path.Combine(
+            FindRepoRoot(),
+            "TaikoWebUI",
+            "wwwroot",
+            "images",
+            "Costumes",
+            "masks",
+            "standard-limbmask-0000.webp");
+
+        Assert.True(File.Exists(maskPath), $"Missing limb mask asset at {maskPath}.");
+
+        var bytes = File.ReadAllBytes(maskPath);
+        Assert.True(bytes.Length > 12, "The limb mask asset is empty or truncated.");
+        Assert.Equal((byte)'R', bytes[0]);
+        Assert.Equal((byte)'I', bytes[1]);
+        Assert.Equal((byte)'F', bytes[2]);
+        Assert.Equal((byte)'F', bytes[3]);
+        Assert.Equal((byte)'W', bytes[8]);
+        Assert.Equal((byte)'E', bytes[9]);
+        Assert.Equal((byte)'B', bytes[10]);
+        Assert.Equal((byte)'P', bytes[11]);
+    }
+
+    [Fact]
     public void PlayerPreview_ResolvesGreenTitleIdToCatalogTitleRarityForNameplate()
     {
         var markup = ReadWebUiFile("Shared", "Customize", "PlayerPreview.razor");

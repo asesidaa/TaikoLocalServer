@@ -2,7 +2,7 @@
 
 @if (Setting is not null)
 {
-    <MudItem style=@($"height: auto; --taiko-limb-filter: {TaikoCustomizationVisuals.GetCostumeColorFilter(Setting.LimbColor)}")>
+    <MudItem style="height: auto;">
         @* Player Visualizer *@
         <MudItem style="text-align: center;">
             <MudItem style="position:relative">
@@ -10,6 +10,7 @@
                 {
                     <MudImage Fluid="true" style=@($"position: relative; top: 0; left: 0; filter: {TaikoCustomizationVisuals.GetCostumeColorFilter(Setting.BodyColor)}") Src=@CostumeOrDefault("masks/body-bodymask", Setting.Body, "masks/body-bodymask-0000") />
                     <MudImage Fluid="true" Class="profile-image" style=@($"filter: {TaikoCustomizationVisuals.GetCostumeColorFilter(Setting.FaceColor)}") Src=@CostumeOrDefault("masks/body-facemask", Setting.Body, "masks/body-facemask-0000") />
+                    <MudImage Fluid="true" Class="profile-image" style=@($"filter: {TaikoCustomizationVisuals.GetCostumeColorFilter(Setting.LimbColor)}") Src="images/Costumes/masks/standard-limbmask-0000.webp" />
                     <MudImage Fluid="true" Class="profile-image" onerror="this.src='images/Costumes/body/body-0000.webp'" Src=@($"images/Costumes/body/body-{Setting.Body.ToString().PadLeft(4, '0')}.webp") />
                     <MudImage Fluid="true" Class="profile-image" onerror="this.src='images/Costumes/face/face-0000.webp'" Src=@($"images/Costumes/face/face-{Setting.Face.ToString().PadLeft(4, '0')}.webp") />
                     <MudImage Fluid="true" Class="profile-image" style=@($"filter: {TaikoCustomizationVisuals.GetCostumeColorFilter(Setting.BodyColor)}") Src=@CostumeOrDefault("masks/head-bodymask", Setting.Head, "head/head-0000") />
