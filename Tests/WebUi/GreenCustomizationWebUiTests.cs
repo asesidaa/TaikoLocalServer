@@ -130,6 +130,39 @@ public sealed class GreenCustomizationWebUiTests
     }
 
     [Fact]
+    public void LimbMaskTool_DoesNotExcludeFaceMaskOverlapsFromStandardLimbSurface()
+    {
+        var script = ReadRepoFile("tools", "limb-mask", "extract_limb_mask.py");
+
+        Assert.Contains("body_alpha[x, y] > 0", script);
+        Assert.DoesNotContain("or face_alpha[x, y] > 0", script);
+        Assert.DoesNotContain("face_alpha[x, y] > 0", script);
+    }
+
+    [Fact]
+    public void PlayerPreview_RendersStandardLimbMaskAboveOpaqueStandardBodyArt()
+    {
+        var markup = ReadWebUiFile("Shared", "Customize", "PlayerPreview.razor");
+        var normalized = NormalizeLineEndings(markup);
+
+        var normalBranchStart = normalized.IndexOf("if (Setting.Kigurumi == 0)", StringComparison.Ordinal);
+        Assert.True(normalBranchStart >= 0, "Could not find the standard Don branch.");
+
+        var kigurumiBranchStart = normalized.IndexOf("\n                else\n", normalBranchStart, StringComparison.Ordinal);
+        Assert.True(kigurumiBranchStart > normalBranchStart, "Could not find the kigurumi branch after the standard Don branch.");
+
+        var standardBranch = normalized[normalBranchStart..kigurumiBranchStart];
+        var standardBodyIndex = standardBranch.IndexOf("images/Costumes/body/body-", StringComparison.Ordinal);
+        var limbMaskIndex = standardBranch.IndexOf("images/Costumes/masks/standard-limbmask-0000.webp", StringComparison.Ordinal);
+
+        Assert.True(standardBodyIndex >= 0, "Could not find the standard body art layer.");
+        Assert.True(limbMaskIndex >= 0, "Could not find the standard limb mask layer.");
+        Assert.True(
+            limbMaskIndex > standardBodyIndex,
+            "The standard limb mask must render above body art because the standard body art is opaque over limb pixels.");
+    }
+
+    [Fact]
     public void PlayerPreview_ResolvesGreenTitleIdToCatalogTitleRarityForNameplate()
     {
         var markup = ReadWebUiFile("Shared", "Customize", "PlayerPreview.razor");
@@ -314,6 +347,9 @@ public sealed class GreenCustomizationWebUiTests
 
     private static string ReadWebUiFile(params string[] pathParts)
         => File.ReadAllText(Path.Combine([FindRepoRoot(), "TaikoWebUI", .. pathParts]));
+
+    private static string ReadRepoFile(params string[] pathParts)
+        => File.ReadAllText(Path.Combine([FindRepoRoot(), .. pathParts]));
 
     private static string NormalizeLineEndings(string value)
         => value.Replace("\r\n", "\n", StringComparison.Ordinal);

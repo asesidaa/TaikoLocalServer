@@ -28,11 +28,6 @@ def parse_args() -> argparse.Namespace:
         help="Existing standard Don body color mask WebP.",
     )
     parser.add_argument(
-        "--face-mask",
-        default="TaikoWebUI/wwwroot/images/Costumes/masks/body-facemask-0000.webp",
-        help="Existing standard Don face color mask WebP.",
-    )
-    parser.add_argument(
         "--out",
         default="TaikoWebUI/wwwroot/images/Costumes/masks/standard-limbmask-0000.webp",
         help="Output WebP mask path.",
@@ -52,20 +47,20 @@ def is_limb_surface(r: int, g: int, b: int, a: int) -> bool:
         return False
 
     # Standard art limb surfaces are the light cream regions left after the
-    # existing body and face masks are excluded. This avoids recoloring outlines.
+    # existing body mask is excluded. Do not subtract the face mask: its edge
+    # overlaps the cream rim around the face, which is part of the limb color.
     return r >= 180 and g >= 160 and b >= 130 and abs(r - g) <= 45 and abs(g - b) <= 70
 
 
-def derive_mask(standard_art: Image.Image, body_mask: Image.Image, face_mask: Image.Image) -> Image.Image:
+def derive_mask(standard_art: Image.Image, body_mask: Image.Image) -> Image.Image:
     output = Image.new("RGBA", EXPECTED_SIZE, (0, 0, 0, 0))
     out_pixels = output.load()
     standard_pixels = standard_art.load()
     body_alpha = body_mask.getchannel("A").load()
-    face_alpha = face_mask.getchannel("A").load()
 
     for y in range(EXPECTED_SIZE[1]):
         for x in range(EXPECTED_SIZE[0]):
-            if body_alpha[x, y] > 0 or face_alpha[x, y] > 0:
+            if body_alpha[x, y] > 0:
                 continue
 
             r, g, b, a = standard_pixels[x, y]
@@ -79,9 +74,8 @@ def main() -> None:
     args = parse_args()
     standard_art = load_rgba(Path(args.standard_art))
     body_mask = load_rgba(Path(args.body_mask))
-    face_mask = load_rgba(Path(args.face_mask))
 
-    mask = derive_mask(standard_art, body_mask, face_mask)
+    mask = derive_mask(standard_art, body_mask)
     alpha_bbox = mask.getchannel("A").getbbox()
     if alpha_bbox is None:
         raise SystemExit("Derived limb mask is empty.")

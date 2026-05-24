@@ -15,7 +15,9 @@ Smash Forge has MIT-licensed C# readers for big-endian `NDP3` `.nud` models and 
 
 When local Green data is present, the file headers should be `NDP3` and `NTP3`.
 
-The current committed mask is derived from the existing standard WebUI preview art and the existing standard body/face color masks. This is the fallback allowed by the design: it produces the same runtime artifact without adding model parsing to the server or WebUI. If a future parser-derived mask is produced, keep the same output path and rerun the WebUI tests.
+The current committed mask is derived from the existing standard WebUI preview art and the existing standard body color mask. The face mask is not subtracted because its anti-aliased edge overlaps the cream rim around the face, and that rim is part of the limb color. The transparent face interior in the standard body art keeps the actual face surface out of the limb mask.
+
+This is the fallback allowed by the design: it produces the same runtime artifact without adding model parsing to the server or WebUI. If a future parser-derived mask is produced, keep the same output path and rerun the WebUI tests.
 
 ## Regenerate
 
