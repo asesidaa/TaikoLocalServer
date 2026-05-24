@@ -1,3 +1,5 @@
+using TaikoLocalServer.Contracts.AdminApi.ViewModels;
+
 namespace TaikoLocalServer.Application.Handlers;
 
 public partial class BaidQueryHandler
@@ -48,7 +50,7 @@ public partial class BaidQueryHandler
             MyDonName = userData.MyDonName,
             MyDonNameLanguage = userData.MyDonNameLanguage,
             Title = saveData.Title,
-            TitlePlateId = saveData.TitleplateId,
+            TitlePlateId = ResolveGreenTitlePlateId(saveData),
             ColorFace = saveData.ColorFace,
             ColorBody = saveData.ColorBody,
             ColorLimb = saveData.ColorLimb,
@@ -74,5 +76,26 @@ public partial class BaidQueryHandler
                 ? DateTime.Now.ToString(Constants.DateTimeFormat)
                 : saveData.LastPlayDatetime.ToString(Constants.DateTimeFormat)
         };
+    }
+
+    private uint ResolveGreenTitlePlateId(UserSaveDataGreen saveData)
+    {
+        return gameDataService.Green().GetTitleDictionary().TryGetValue(saveData.TitleplateId, out var title)
+               && GreenTitleTextMatches(title, saveData.Title)
+            ? title.TitleRarity
+            : saveData.TitleplateId;
+    }
+
+    private static bool GreenTitleTextMatches(Title title, string selectedTitle)
+    {
+        if (string.IsNullOrWhiteSpace(selectedTitle))
+        {
+            return false;
+        }
+
+        return string.Equals(title.TitleName, selectedTitle, StringComparison.Ordinal)
+               || string.Equals(title.TitleNameEN, selectedTitle, StringComparison.Ordinal)
+               || string.Equals(title.TitleNameCN, selectedTitle, StringComparison.Ordinal)
+               || string.Equals(title.TitleNameKO, selectedTitle, StringComparison.Ordinal);
     }
 }

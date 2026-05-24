@@ -1,4 +1,5 @@
 using TaikoLocalServer.Adapters.GameProtocol.Green.Mappers;
+using TaikoLocalServer.Contracts.AdminApi.ViewModels;
 
 namespace TaikoLocalServer.Tests.Green;
 
@@ -44,6 +45,46 @@ public sealed class GreenIdentityHandlerTests
         Assert.Equal("DON", response.MyDonName);
         Assert.Equal(GreenProtocolBytes.DanFlagBytes, response.GotDanFlg.Length);
         Assert.Equal(0, response.GotDanFlg[0]);
+    }
+
+    [Fact]
+    public async Task BaidQuery_Green_MapsSelectedTitleIdToTitleRarityForTitleplate()
+    {
+        const string titleName = "\u30c4\u30f3\u30c7\u30ecCafe\u306e\u5e38\u9023";
+        var greenCatalog = new GreenHandlerFixture.TestGreenCatalog
+        {
+            TitleDictionary = new Dictionary<uint, Title>
+            {
+                [228] = new()
+                {
+                    TitleId = 228,
+                    TitleName = titleName,
+                    TitleNameEN = titleName,
+                    TitleNameCN = titleName,
+                    TitleNameKO = titleName,
+                    TitleRarity = 2
+                }
+            }
+        };
+        await using var fixture = await GreenHandlerFixture.CreateAsync(greenCatalog);
+        fixture.Context.UserData.Add(new UserDatum { Baid = 7, MyDonName = "DON" });
+        fixture.Context.Cards.Add(new Card { Baid = 7, AccessCode = "999" });
+        var saveData = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(7);
+        saveData.Title = titleName;
+        saveData.TitleplateId = 228;
+        fixture.Context.UserSaveDataGreen.Add(saveData);
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new BaidQueryHandler(
+            fixture.Context,
+            NullLogger<BaidQueryHandler>.Instance,
+            fixture.Catalog);
+
+        var response = await handler.Handle(new BaidQuery(GameEra.Green, "999"), CancellationToken.None);
+        var wire = BaidResponseMapper.Map(response);
+
+        Assert.Equal(2u, response.TitlePlateId);
+        Assert.Equal(2u, wire.TitleplateId);
     }
 
     [Theory]
