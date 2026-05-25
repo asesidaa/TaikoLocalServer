@@ -335,8 +335,9 @@ public partial class UpdatePlayResultCommandHandler
             context.DanScoreDataGreen.Add(danScore);
         }
 
+        var incomingClearGrade = GreenDanHelpers.ClampGrade(playResultData.DanResult);
         UpdateGreenDanScore(danScore, playResultData);
-        await UpdateGreenDanSummaryAsync(saveData, danScore, cancellationToken);
+        await UpdateGreenDanSummaryAsync(saveData, danScore, incomingClearGrade, cancellationToken);
     }
 
     private static void UpdateGreenDanScore(DanScoreDatumGreen danScore, CommonPlayResultData playResultData)
@@ -382,6 +383,7 @@ public partial class UpdatePlayResultCommandHandler
     private async ValueTask UpdateGreenDanSummaryAsync(
         UserSaveDataGreen saveData,
         DanScoreDatumGreen currentDanScore,
+        GreenDanClearGrade incomingClearGrade,
         CancellationToken cancellationToken)
     {
         var rows = await context.DanScoreDataGreen
@@ -418,7 +420,11 @@ public partial class UpdatePlayResultCommandHandler
         saveData.GotDanFlg = normalFlags;
         saveData.GotDanExtraFlg = extraFlags;
         saveData.GotDanMax = GreenDanHelpers.GetGotDanMax(normalGrades);
-        saveData.DispTaikojukuDan = GreenDanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalGrades);
+        saveData.DispTaikojukuDan = !currentDanScore.IsExtra
+                                    && GreenDanHelpers.IsNormalDanId(currentDanScore.DanId)
+                                    && GreenDanHelpers.IsClear(incomingClearGrade)
+            ? GreenDanHelpers.GetDisplayDanAfterNormalClear(currentDanScore.DanId)
+            : GreenDanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalGrades);
     }
 
     private static void ApplyGhostPlayedSongBits(UserSaveDataGreen saveData, CommonPlayResultData playResultData)

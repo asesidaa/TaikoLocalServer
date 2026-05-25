@@ -136,6 +136,16 @@ public static class GreenDanHelpers
         return MaxNormalDanId;
     }
 
+    public static uint GetDisplayDanAfterNormalClear(uint clearedDanId)
+    {
+        if (!IsNormalDanId(clearedDanId))
+        {
+            throw new ArgumentOutOfRangeException(nameof(clearedDanId), clearedDanId, "Green display Dan advancement only accepts normal Dan ids.");
+        }
+
+        return Math.Min(clearedDanId + 1, MaxNormalDanId);
+    }
+
     public static uint NormalizeDisplayDan(uint savedDisplayDan, IReadOnlyDictionary<uint, GreenDanClearGrade> normalGrades)
     {
         if (!IsNormalDanId(savedDisplayDan)

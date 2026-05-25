@@ -1371,6 +1371,133 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
+    public async Task UpdatePlayResult_Green_DaniSkippedNormalClearAdvancesFromClearedDan()
+    {
+        var catalog = new GreenHandlerFixture.TestGreenCatalog(
+            taikojukuFileOrder:
+            [
+                TestDanPack(1),
+                TestDanPack(5)
+            ]);
+        await using var fixture = await GreenHandlerFixture.CreateAsync(catalog);
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayMode = 1,
+                DanResult = 1,
+                AryStageInfoes = [new() { SongNo = 101, Level = 1, PlayScore = 100, PlayDan = 5 }]
+            }),
+            CancellationToken.None);
+
+        var save = await fixture.Context.UserSaveDataGreen.FindAsync(1u);
+        Assert.NotNull(save);
+        Assert.Equal(5u, save!.GotDanMax);
+        Assert.Equal(6u, save.DispTaikojukuDan);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Green_DaniFailedRetryAfterExistingNormalClearDoesNotAdvanceFromClearedDan()
+    {
+        var catalog = new GreenHandlerFixture.TestGreenCatalog(
+            taikojukuFileOrder:
+            [
+                TestDanPack(5)
+            ]);
+        await using var fixture = await GreenHandlerFixture.CreateAsync(catalog);
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayMode = 1,
+                DanResult = 1,
+                AryStageInfoes = [new() { SongNo = 101, Level = 1, PlayScore = 100, PlayDan = 5 }]
+            }),
+            CancellationToken.None);
+
+        var save = await fixture.Context.UserSaveDataGreen.FindAsync(1u);
+        Assert.NotNull(save);
+        Assert.Equal(6u, save!.DispTaikojukuDan);
+
+        save.DispTaikojukuDan = 7;
+        await fixture.Context.SaveChangesAsync();
+
+        await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayMode = 1,
+                DanResult = 0,
+                AryStageInfoes = [new() { SongNo = 101, Level = 1, PlayScore = 100, PlayDan = 5 }]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(5u, save.GotDanMax);
+        Assert.Equal(7u, save.DispTaikojukuDan);
+        Assert.Equal(GreenDanClearGrade.NormalClear, GreenDanHelpers.GetPackedGrade(save.GotDanFlg, 4));
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Green_DaniLastNormalClearCapsDisplayDan()
+    {
+        var catalog = new GreenHandlerFixture.TestGreenCatalog(
+            taikojukuFileOrder:
+            [
+                TestDanPack(25)
+            ]);
+        await using var fixture = await GreenHandlerFixture.CreateAsync(catalog);
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayMode = 1,
+                DanResult = 2,
+                AryStageInfoes = [new() { SongNo = 101, Level = 1, PlayScore = 100, PlayDan = 25 }]
+            }),
+            CancellationToken.None);
+
+        var save = await fixture.Context.UserSaveDataGreen.FindAsync(1u);
+        Assert.NotNull(save);
+        Assert.Equal(25u, save!.GotDanMax);
+        Assert.Equal(25u, save.DispTaikojukuDan);
+    }
+
+    [Fact]
     public async Task UpdatePlayResult_Green_DaniExtraClearUpdatesExtraFlagsOnly()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
@@ -1735,6 +1862,17 @@ public sealed class GreenPlayResultHandlerTests
     {
         return (source[id >> 3] & (1 << ((int)id & 7))) != 0;
     }
+
+    private static GreenTaikojukuEntry TestDanPack(uint danId)
+        => new()
+        {
+            UniqueId = 20000 + danId,
+            ChallengeLevel = danId,
+            Songs =
+            [
+                new() { SongNo = 101, Level = 0 }
+            ]
+        };
 
     private static CommonPlayResultData.StageData PlainStage(uint songNo, bool isFavorite = false)
         => new()
