@@ -26,6 +26,8 @@ public interface IGreenCatalog : IEraGameDataCatalog
 
     GreenRecommendEntry Recommend { get; }
 
+    IReadOnlyList<MovieData> Movies { get; }
+
     IReadOnlyList<Costume> GetCostumeList();
 
     IReadOnlyDictionary<uint, Title> GetTitleDictionary();

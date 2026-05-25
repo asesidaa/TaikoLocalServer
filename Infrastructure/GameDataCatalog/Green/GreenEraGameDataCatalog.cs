@@ -26,6 +26,7 @@ public sealed class GreenEraGameDataCatalog(
     private IReadOnlyDictionary<uint, GreenGachaEntry> gachas = new Dictionary<uint, GreenGachaEntry>();
     private IReadOnlyDictionary<uint, GreenTournamentEntry> tournaments = new Dictionary<uint, GreenTournamentEntry>();
     private GreenRecommendEntry recommend = GreenRecommendEntry.Empty;
+    private IReadOnlyList<MovieData> movies = [];
     private IReadOnlyList<Costume> costumeList = [];
     private IReadOnlyDictionary<uint, Title> titleDictionary = new Dictionary<uint, Title>();
     private IReadOnlyDictionary<uint, Neiro> neiroDictionary = new Dictionary<uint, Neiro>();
@@ -55,6 +56,8 @@ public sealed class GreenEraGameDataCatalog(
     public IReadOnlyDictionary<uint, GreenTournamentEntry> Tournaments => tournaments;
 
     public GreenRecommendEntry Recommend => recommend;
+
+    public IReadOnlyList<MovieData> Movies => movies;
 
     public IReadOnlyList<Costume> GetCostumeList() => costumeList;
 
@@ -118,6 +121,7 @@ public sealed class GreenEraGameDataCatalog(
         recommend = await new GreenRecommendLoader().LoadAsync(
             new HashSet<uint>(musicInfos.Keys),
             cancellationToken);
+        movies = await new GreenMovieLoader().LoadAsync(logger, cancellationToken);
         var greenCostumes = await new GreenCostumeLoader().LoadAsync(cancellationToken);
         var greenTitles = await new GreenTitleLoader().LoadAsync(cancellationToken);
         var greenNeiros = await new GreenNeiroLoader().LoadAsync(cancellationToken);
@@ -137,14 +141,15 @@ public sealed class GreenEraGameDataCatalog(
         neiroDictionary = customizationCatalog.Neiros;
 
         logger.LogInformation(
-            "Loaded Green catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {TaikojukuCount} taikojuku packs, {StarCount} tuning star rows, {CostumeCount} costumes, {TitleCount} titles, {NeiroCount} tones",
+            "Loaded Green catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {TaikojukuCount} taikojuku packs, {StarCount} tuning star rows, {CostumeCount} costumes, {TitleCount} titles, {NeiroCount} tones, {MovieCount} attract movies",
             musicInfoFileOrder.Count,
             songHashVersion,
             taikojukuFileOrder.Count,
             stars.Count,
             costumeList.Count,
             titleDictionary.Count,
-            neiroDictionary.Count);
+            neiroDictionary.Count,
+            movies.Count);
     }
 
     private async Task BootstrapCustomizationCatalogAsync(CancellationToken cancellationToken)

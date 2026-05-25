@@ -1,4 +1,5 @@
 using TaikoLocalServer.Contracts.AdminApi.ViewModels;
+using TaikoLocalServer.Application.ServerData;
 
 namespace TaikoLocalServer.Tests.Green;
 
@@ -137,6 +138,8 @@ internal sealed class GreenHandlerFixture : IAsyncDisposable
         public IReadOnlyDictionary<uint, GreenTournamentEntry> Tournaments { get; } = new Dictionary<uint, GreenTournamentEntry>();
 
         public GreenRecommendEntry Recommend { get; init; } = GreenRecommendEntry.Empty;
+
+        public IReadOnlyList<MovieData> Movies { get; init; } = [];
 
         public IReadOnlyList<Costume> CostumeList { get; init; } =
         [
