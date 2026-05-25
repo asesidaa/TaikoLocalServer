@@ -447,6 +447,118 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
+    public async Task UpdatePlayResult_Green_AutoCostumeOffPreservesCurrentCostumeAndIgnoresCurrentCostumeUnlock()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.IsAutoCostumeOn = false;
+        save.Costume1 = 7;
+        save.Costume2 = 8;
+        save.Costume3 = 9;
+        save.Costume4 = 10;
+        save.Costume5 = 11;
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(save);
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                HasAryCurrentCostume = true,
+                AryCurrentCostume = new CommonPlayResultData.CostumeData
+                {
+                    Costume1 = 108,
+                    Costume2 = 109,
+                    Costume3 = 110,
+                    Costume4 = 111,
+                    Costume5 = 112
+                },
+                AryStageInfoes =
+                [
+                    new CommonPlayResultData.StageData
+                    {
+                        SongNo = 101,
+                        Level = 1,
+                        StageMode = 0,
+                        PlayResult = 1,
+                        PlayScore = 1000
+                    }
+                ]
+            }),
+            CancellationToken.None);
+
+        var reloaded = await fixture.Context.UserSaveDataGreen.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(1u, result);
+        Assert.Equal(7u, reloaded.Costume1);
+        Assert.Equal(8u, reloaded.Costume2);
+        Assert.Equal(9u, reloaded.Costume3);
+        Assert.Equal(10u, reloaded.Costume4);
+        Assert.Equal(11u, reloaded.Costume5);
+        Assert.False(BitIsSet(reloaded.CostumeFlg1, 108));
+        Assert.False(BitIsSet(reloaded.CostumeFlg2, 109));
+        Assert.False(BitIsSet(reloaded.CostumeFlg3, 110));
+        Assert.False(BitIsSet(reloaded.CostumeFlg4, 111));
+        Assert.False(BitIsSet(reloaded.CostumeFlg5, 112));
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Green_AutoCostumeOffStillAppliesExplicitCostumeRewards()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.IsAutoCostumeOn = false;
+        save.Costume1 = 7;
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(save);
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                HasAryCurrentCostume = true,
+                AryCurrentCostume = new CommonPlayResultData.CostumeData
+                {
+                    Costume1 = 109
+                },
+                GetCostumeNo1s = [108],
+                AryStageInfoes =
+                [
+                    new CommonPlayResultData.StageData
+                    {
+                        SongNo = 101,
+                        Level = 1,
+                        StageMode = 0,
+                        PlayResult = 1,
+                        PlayScore = 1000
+                    }
+                ]
+            }),
+            CancellationToken.None);
+
+        var reloaded = await fixture.Context.UserSaveDataGreen.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(1u, result);
+        Assert.Equal(7u, reloaded.Costume1);
+        Assert.True(BitIsSet(reloaded.CostumeFlg1, 108));
+        Assert.False(BitIsSet(reloaded.CostumeFlg1, 109));
+    }
+
+    [Fact]
     public async Task UpdatePlayResult_Green_OmittedDifficultyPlayedFieldsPreserveExistingValues()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();

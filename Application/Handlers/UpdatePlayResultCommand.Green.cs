@@ -59,7 +59,7 @@ public partial class UpdatePlayResultCommandHandler
         saveData.LastPlayDatetime = playTime;
         saveData.PrevAreaCode = playResultData.AreaCode;
 
-        if (playResultData.HasAryCurrentCostume)
+        if (playResultData.HasAryCurrentCostume && saveData.IsAutoCostumeOn)
         {
             ApplyCostume(saveData, playResultData.AryCurrentCostume);
         }
