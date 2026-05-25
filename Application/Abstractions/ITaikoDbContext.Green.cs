@@ -13,4 +13,6 @@ public partial interface ITaikoDbContext
     DbSet<GreenFriends> GreenFriends { get; }
     DbSet<GreenFavoriteSongs> GreenFavoriteSongs { get; }
     DbSet<GreenRecentSongs> GreenRecentSongs { get; }
+    DbSet<GreenShopSeasonState> GreenShopSeasonStates { get; }
+    DbSet<GreenShopItemState> GreenShopItemStates { get; }
 }

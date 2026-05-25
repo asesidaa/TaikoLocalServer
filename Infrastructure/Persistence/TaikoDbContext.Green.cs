@@ -17,6 +17,8 @@ public partial class TaikoDbContext
     public virtual DbSet<GreenFriends> GreenFriends { get; set; } = null!;
     public virtual DbSet<GreenFavoriteSongs> GreenFavoriteSongs { get; set; } = null!;
     public virtual DbSet<GreenRecentSongs> GreenRecentSongs { get; set; } = null!;
+    public virtual DbSet<GreenShopSeasonState> GreenShopSeasonStates { get; set; } = null!;
+    public virtual DbSet<GreenShopItemState> GreenShopItemStates { get; set; } = null!;
 
     partial void OnModelCreatingGreen(ModelBuilder modelBuilder)
     {
@@ -150,6 +152,33 @@ public partial class TaikoDbContext
             entity.ToTable("GreenRecentSongs");
             entity.HasKey(e => new { e.Baid, e.SongNo });
             entity.Property(e => e.LastPlayed).HasColumnType("datetime");
+            entity.HasOne(d => d.Ba)
+                .WithMany()
+                .HasPrincipalKey(p => p.Baid)
+                .HasForeignKey(d => d.Baid)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<GreenShopSeasonState>(entity =>
+        {
+            entity.ToTable("GreenShopSeasonStates");
+            entity.HasKey(e => new { e.Baid, e.SeasonId });
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+            entity.HasOne(d => d.Ba)
+                .WithMany()
+                .HasPrincipalKey(p => p.Baid)
+                .HasForeignKey(d => d.Baid)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<GreenShopItemState>(entity =>
+        {
+            entity.ToTable("GreenShopItemStates");
+            entity.HasKey(e => new { e.Baid, e.SeasonId, e.ItemType, e.ItemId });
+            entity.Property(e => e.Status).HasConversion<uint>();
+            entity.Property(e => e.PurchasedAt).HasColumnType("datetime");
+            entity.Property(e => e.UnlockedAt).HasColumnType("datetime");
             entity.HasOne(d => d.Ba)
                 .WithMany()
                 .HasPrincipalKey(p => p.Baid)
