@@ -11,10 +11,7 @@ public sealed class StartupAuthController : BaseProtocolController<StartupAuthCo
     public IActionResult StartupAuth([FromBody] StartupAuthRequest request)
     {
         Logger.LogInformation(
-            "StartupAuth request: chassis={ChassisId} shop={ShopId} operation_count={OperationCount}",
-            request.ChassisId,
-            request.ShopId,
-            request.AryOperationInfoes.Count);
+            "StartupAuth request: {Request}", request.Stringify());
 
         var response = new StartupAuthResponse { Result = 1 };
         response.AryOperationInfoes.AddRange(request.AryOperationInfoes.Select(input =>

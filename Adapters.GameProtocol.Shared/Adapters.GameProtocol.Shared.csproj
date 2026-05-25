@@ -17,6 +17,7 @@
     <PackageReference Include="protobuf-net" />
     <PackageReference Include="protobuf-net.AspNetCore" />
     <PackageReference Include="SharpZipLib" />
+    <PackageReference Include="Swan.Core" />
   </ItemGroup>
 
 </Project>
