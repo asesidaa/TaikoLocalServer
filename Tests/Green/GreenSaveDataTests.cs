@@ -24,4 +24,12 @@ public sealed class GreenSaveDataTests
         Assert.Equal(GreenProtocolBytes.GhostReleaseInfoBytes, save.GhostReleaseInfoFlag.Length);
         Assert.Equal(GreenProtocolBytes.GhostPlayedSongBytes, save.GhostPlayedSongFlag.Length);
     }
+
+    [Fact]
+    public void CreateDefaultGreenSaveData_DefaultsAutoCostumeOn()
+    {
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(123);
+
+        Assert.True(save.IsAutoCostumeOn);
+    }
 }

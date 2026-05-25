@@ -16,6 +16,8 @@ public class UserSetting
 
     public bool GreenIsTojiru { get; set; }
 
+    public bool GreenIsAutoCostumeOn { get; set; }
+
     public uint GreenDispLevelChassis { get; set; }
 
     public bool IsDisplaySouUchi { get; set; }

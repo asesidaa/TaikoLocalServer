@@ -48,6 +48,31 @@ public sealed class GreenIdentityHandlerTests
     }
 
     [Fact]
+    public async Task BaidQuery_Green_EmitsSavedAutoCostumeOption()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 7, MyDonName = "DON" });
+        fixture.Context.Cards.Add(new Card { Baid = 7, AccessCode = "999" });
+        var saveData = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(7);
+        saveData.IsAutoCostumeOn = false;
+        fixture.Context.UserSaveDataGreen.Add(saveData);
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new BaidQueryHandler(
+            fixture.Context,
+            NullLogger<BaidQueryHandler>.Instance,
+            fixture.Catalog);
+
+        var response = await handler.Handle(new BaidQuery(GameEra.Green, "999"), CancellationToken.None);
+        var wire = BaidResponseMapper.Map(response);
+
+        Assert.True(response.IsAutoCostumeOn.HasValue);
+        Assert.False(response.IsAutoCostumeOn.GetValueOrDefault());
+        Assert.True(wire.ShouldSerializeIsAutoCostumeOn());
+        Assert.False(wire.IsAutoCostumeOn);
+    }
+
+    [Fact]
     public async Task BaidQuery_Green_MapsSelectedTitleIdToTitleRarityForTitleplate()
     {
         const string titleName = "\u30c4\u30f3\u30c7\u30ecCafe\u306e\u5e38\u9023";

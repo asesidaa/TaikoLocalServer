@@ -293,6 +293,24 @@ public class GreenAdminApiControllerTests
     }
 
     [Fact]
+    public async Task UserSettings_Green_GetExposesAutoCostume()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.IsAutoCostumeOn = true;
+        fixture.Context.UserSaveDataGreen.Add(save);
+        await fixture.Context.SaveChangesAsync();
+
+        var controller = CreateUserSettingsController(fixture.Context);
+        var result = await controller.GetUserSetting("Green", 1);
+
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var setting = Assert.IsType<UserSetting>(ok.Value);
+        Assert.True(setting.GreenIsAutoCostumeOn);
+    }
+
+    [Fact]
     public async Task UserSettings_Green_PostPersistsTojiruAndLocalRankingDifficulty()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
@@ -314,6 +332,30 @@ public class GreenAdminApiControllerTests
         Assert.NotNull(save);
         Assert.False(save!.IsTojiru);
         Assert.Equal(4u, save.DispLevelChassis);
+    }
+
+    [Fact]
+    public async Task UserSettings_Green_PostPersistsAutoCostume()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.IsAutoCostumeOn = true;
+        fixture.Context.UserSaveDataGreen.Add(save);
+        await fixture.Context.SaveChangesAsync();
+
+        var controller = CreateUserSettingsController(fixture.Context);
+
+        var result = await controller.SaveUserSetting("Green", 1, new UserSetting
+        {
+            MyDonName = "GREEN",
+            GreenIsTojiru = true,
+            GreenDispLevelChassis = 0,
+            GreenIsAutoCostumeOn = false
+        });
+
+        Assert.IsType<NoContentResult>(result);
+        Assert.False(save.IsAutoCostumeOn);
     }
 
     [Fact]

@@ -43,6 +43,7 @@ public partial class UserSettingsController
         saveData.DefaultToneSetting = userSetting.ToneId;
         saveData.DispDanType = userSetting.IsDisplayDanOnNamePlate ? 1u : 0u;
         saveData.IsTojiru = userSetting.GreenIsTojiru;
+        saveData.IsAutoCostumeOn = userSetting.GreenIsAutoCostumeOn;
         saveData.DispLevelChassis = userSetting.GreenDispLevelChassis;
         if (userSetting.GreenTaikojukuDan != 0)
         {
@@ -97,6 +98,7 @@ public partial class UserSettingsController
             GreenTaikojukuDan = taikojukuDan,
             GreenSelectableTaikojukuDans = selectableTaikojukuDans,
             GreenIsTojiru = saveData.IsTojiru,
+            GreenIsAutoCostumeOn = saveData.IsAutoCostumeOn,
             GreenDispLevelChassis = GetSafeGreenDispLevelChassis(saveData.DispLevelChassis),
             LastPlayDateTime = saveData.LastPlayDatetime
         };

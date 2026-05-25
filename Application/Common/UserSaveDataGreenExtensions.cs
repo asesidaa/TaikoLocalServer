@@ -50,7 +50,7 @@ public static class UserSaveDataGreenExtensions
         LastPlayDatetime = DateTime.UnixEpoch,
         GhostReleaseInfoFlag = new byte[GreenProtocolBytes.GhostReleaseInfoBytes],
         GhostPlayedSongFlag = new byte[GreenProtocolBytes.GhostPlayedSongBytes],
-        IsAutoCostumeOn = false,
+        IsAutoCostumeOn = true,
         IsDevil = false,
         IsExplain = false,
         IsChallengeCompe = false,

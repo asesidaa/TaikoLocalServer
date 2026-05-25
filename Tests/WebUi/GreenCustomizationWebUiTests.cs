@@ -68,6 +68,8 @@ public sealed class GreenCustomizationWebUiTests
 
         Assert.Contains("@bind-Value=\"@response.GreenIsTojiru\"", greenBranch);
         Assert.Contains("Show Folder Close Button", greenBranch);
+        Assert.Contains("@bind-Value=\"@response.GreenIsAutoCostumeOn\"", greenBranch);
+        Assert.Contains("Apply Costume Changes from Play Results", greenBranch);
         Assert.Contains("@bind-Value=\"@response.GreenDispLevelChassis\"", greenBranch);
         Assert.Contains("Local Ranking Difficulty", greenBranch);
         Assert.Contains("GreenLocalRankingDifficultyStrings", code);
