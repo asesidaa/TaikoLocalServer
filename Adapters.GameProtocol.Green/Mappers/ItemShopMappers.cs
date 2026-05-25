@@ -7,7 +7,7 @@ public static partial class ItemShopMappers
 {
     public static GetitemshopinfoResponse Map(CommonItemShopInfoResponse common)
     {
-        return new GetitemshopinfoResponse
+        var response = new GetitemshopinfoResponse
         {
             Result = common.Result,
             VerupNo = common.VerupNo,
@@ -18,6 +18,16 @@ public static partial class ItemShopMappers
             AfterstartDays = common.AfterstartDays,
             BeforecloseDays = common.BeforecloseDays
         };
+
+        response.AryItemshopDatas.AddRange(common.AryItemshopData.Select(item => new GetitemshopinfoResponse.ItemshopData
+        {
+            ItemNo = item.ItemNo,
+            ItemType = item.ItemType,
+            ItemId = item.ItemId,
+            ItemPrice = item.ItemPrice
+        }));
+
+        return response;
     }
 
     public static ItempurchaseResponse Map(CommonItemPurchaseResponse common)
