@@ -8,6 +8,7 @@ public partial class UpdatePlayResultCommandHandler
     private const uint MaxGreenCourseLevel = 5;
     private const int GreenMaxRecentSongs = 10;
     private const int GreenMaxFavoriteSongs = 5;
+    private const uint GreenDanCostumeId = 36;
 
     private partial async ValueTask<uint> HandleGreen(
         UpdatePlayResultCommand request,
@@ -417,12 +418,20 @@ public partial class UpdatePlayResultCommandHandler
                 row.ClearGrade);
         }
 
+        var isIncomingClear = GreenDanHelpers.IsClear(incomingClearGrade);
+
         saveData.GotDanFlg = normalFlags;
         saveData.GotDanExtraFlg = extraFlags;
         saveData.GotDanMax = GreenDanHelpers.GetGotDanMax(normalGrades);
+        if (isIncomingClear && saveData.IsAutoCostumeOn)
+        {
+            saveData.Costume1 = GreenDanCostumeId;
+            saveData.CostumeFlg1 = SetBits(saveData.CostumeFlg1, [GreenDanCostumeId], GreenProtocolBytes.CostumeFlagBytes);
+        }
+
         saveData.DispTaikojukuDan = !currentDanScore.IsExtra
                                     && GreenDanHelpers.IsNormalDanId(currentDanScore.DanId)
-                                    && GreenDanHelpers.IsClear(incomingClearGrade)
+                                    && isIncomingClear
             ? GreenDanHelpers.GetDisplayDanAfterNormalClear(currentDanScore.DanId)
             : GreenDanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalGrades);
     }

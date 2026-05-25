@@ -1482,6 +1482,83 @@ public sealed class GreenPlayResultHandlerTests
         Assert.Equal(GreenDanClearGrade.NormalClear, GreenDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
     }
 
+    [Theory]
+    [InlineData(1u, 101u)]
+    [InlineData(101u, 104u)]
+    public async Task UpdatePlayResult_Green_DaniClearEquipsSpecialDanCostume(uint danId, uint songNo)
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.Costume1 = 7;
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(save);
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayMode = 1,
+                DanResult = 1,
+                AryCurrentCostume = new CommonPlayResultData.CostumeData
+                {
+                    Costume1 = 7
+                },
+                AryStageInfoes = [new() { SongNo = songNo, Level = 1, PlayScore = 100, PlayDan = danId }]
+            }),
+            CancellationToken.None);
+
+        var reloaded = await fixture.Context.UserSaveDataGreen.FindAsync(1u);
+        Assert.NotNull(reloaded);
+        Assert.Equal(36u, reloaded!.Costume1);
+        Assert.True(BitIsSet(reloaded.CostumeFlg1, 36));
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Green_DaniClearKeepsCostumeWhenAutoCostumeOff()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.IsAutoCostumeOn = false;
+        save.Costume1 = 7;
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(save);
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayMode = 1,
+                DanResult = 1,
+                AryCurrentCostume = new CommonPlayResultData.CostumeData
+                {
+                    Costume1 = 36
+                },
+                AryStageInfoes = [new() { SongNo = 101, Level = 1, PlayScore = 100, PlayDan = 1 }]
+            }),
+            CancellationToken.None);
+
+        var reloaded = await fixture.Context.UserSaveDataGreen.FindAsync(1u);
+        Assert.NotNull(reloaded);
+        Assert.Equal(7u, reloaded!.Costume1);
+        Assert.False(BitIsSet(reloaded.CostumeFlg1, 36));
+    }
+
     [Fact]
     public async Task UpdatePlayResult_Green_DaniSkippedNormalClearAdvancesFromClearedDan()
     {
