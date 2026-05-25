@@ -20,6 +20,7 @@ public sealed class GreenEraGameDataCatalog(
     private IReadOnlyDictionary<uint, IMusicInfoEntry> sharedMusicInfos = new Dictionary<uint, IMusicInfoEntry>();
     private IReadOnlyList<GreenTaikojukuEntry> taikojukuFileOrder = [];
     private IReadOnlyDictionary<uint, GreenTaikojukuEntry> taikojuku = new Dictionary<uint, GreenTaikojukuEntry>();
+    private GreenItemShopCatalog itemShopCatalog = GreenItemShopCatalog.Disabled;
     private IReadOnlyDictionary<uint, GreenItemShopEntry> itemShop = new Dictionary<uint, GreenItemShopEntry>();
     private IReadOnlyDictionary<uint, GreenEventFolderEntry> eventFolders = new Dictionary<uint, GreenEventFolderEntry>();
     private IReadOnlyDictionary<uint, GreenTelopEntry> telops = new Dictionary<uint, GreenTelopEntry>();
@@ -44,6 +45,8 @@ public sealed class GreenEraGameDataCatalog(
     public IReadOnlyList<GreenTaikojukuEntry> TaikojukuFileOrder => taikojukuFileOrder;
 
     public IReadOnlyDictionary<uint, GreenTaikojukuEntry> Taikojuku => taikojuku;
+
+    public GreenItemShopCatalog ItemShopCatalog => itemShopCatalog;
 
     public IReadOnlyDictionary<uint, GreenItemShopEntry> ItemShop => itemShop;
 
@@ -113,7 +116,8 @@ public sealed class GreenEraGameDataCatalog(
         taikojuku = taikojukuFileOrder
             .GroupBy(entry => entry.UniqueId)
             .ToDictionary(group => group.Key, group => group.First());
-        itemShop = await new GreenItemShopLoader().LoadAsync(cancellationToken);
+        itemShopCatalog = GreenItemShopCatalog.Disabled;
+        itemShop = itemShopCatalog.ActiveItemsByNo;
         eventFolders = await new GreenEventFolderLoader().LoadAsync(cancellationToken);
         telops = await new GreenTelopLoader().LoadAsync(cancellationToken);
         gachas = await new GreenGachaLoader().LoadAsync(cancellationToken);

@@ -18,4 +18,8 @@ public sealed class EraSettings
     public string GameDataPath { get; set; } = "wwwroot/data/green/data";
 
     public string? CustomizationNameDataPath { get; set; }
+
+    public bool EnableShop { get; set; }
+
+    public uint? ActiveShopSeasonId { get; set; }
 }
