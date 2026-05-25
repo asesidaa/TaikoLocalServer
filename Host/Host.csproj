@@ -137,6 +137,7 @@
     <_ContentIncludedByDefault Remove="wwwroot\data\green\data\**" />
     <Content Update="wwwroot\data\green\recommend_songs.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\green\telop_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\green\movie_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
   </ItemGroup>
 
 

@@ -9,6 +9,7 @@ As the game uses protobuf, `protobuf-net` is used for serializing and deserializ
   - [Green AC15 Test Support](#green-ac15-test-support)
     - [Green game data symlink](#green-game-data-symlink)
     - [Green customization catalogs](#green-customization-catalogs)
+    - [Green attract movies](#green-attract-movies)
     - [Green Cabinet Smoke Checklist](#green-cabinet-smoke-checklist)
   - [Datatable documentation](#datatable-documentation)
     - [dan\_data.json](#dan_datajson)
@@ -45,6 +46,7 @@ wwwroot/data/
 |       `-- neiro.bin
 |-- green/                      Green-era AC15 data
 |   |-- recommend_songs.json    Operator-edited Green pushed/recommended songs
+|   |-- movie_data.json         Green attract movie permissions (default discovery or explicit override)
 |   |-- green_costume_data.json Generated Green customization catalog
 |   |-- green_title_data.json   Generated Green title catalog
 |   |-- green_neiro_data.json   Generated Green tone catalog
@@ -114,6 +116,43 @@ The current Green implementation intentionally unlocks a small deterministic son
 - logged-in user release flags: first 20 `uniqueid` values from `musicinfo.xml`
 
 New Green users also receive deterministic fake best scores/crowns and receive the first fake Dan on their first known-card login after registration. This is test scaffolding for verifying Green bitset, self-best, crown, and Dan response formats.
+
+### Green attract movies
+
+Green startup auth sends attract movie permissions through `ary_movie_info`.
+By default, Green auto-enables every nonzero `attract_cm_###.pam` file found
+under `wwwroot/data/green/data/movie`.
+
+`wwwroot/data/green/movie_data.json` controls whether discovery is used or
+replaced:
+
+```json
+{
+  "override_default": false,
+  "movies": []
+}
+```
+
+When `override_default` is `false`, the server ignores `movies` and sends all
+discovered nonzero movie IDs with `enable_days = 999`. When
+`override_default` is `true`, the server sends only the listed movies. An empty
+`movies` array disables Green attract movies.
+
+Example override:
+
+```json
+{
+  "override_default": true,
+  "movies": [
+    { "movie_id": 100, "enable_days": 999 },
+    { "movie_id": 102, "enable_days": 999 }
+  ]
+}
+```
+
+ID `0` is ignored because Green treats `attract_cm_000.pam` as a fallback
+asset, not a startup permission candidate. Duplicate nonzero IDs are rejected
+at startup.
 
 ### Green Cabinet Smoke Checklist
 
@@ -367,7 +406,9 @@ This is used to customize locked songs.
 
 ### movie_data.json
 
-This is used to control which in-game movie is displayed before entering the game
+For Nijiiro, this array controls which in-game movie is displayed before entering the game.
+Green uses `wwwroot/data/green/movie_data.json` with the `override_default`
+object format documented in [Green attract movies](#green-attract-movies).
 
 ```json
 [
