@@ -70,6 +70,25 @@ public sealed class GreenUserDataMapperTests
     }
 
     [Fact]
+    public void UserData_MapsGreenDisplayLevelFields()
+    {
+        var response = UserDataMappers.Map(new CommonUserDataResponse
+        {
+            Result = 1,
+            DispLevelTotal = 2,
+            DispLevelChassis = 3,
+            DispLevelSelf = 4
+        });
+
+        Assert.True(response.ShouldSerializeDispLevelTotal());
+        Assert.True(response.ShouldSerializeDispLevelChassis());
+        Assert.True(response.ShouldSerializeDispLevelSelf());
+        Assert.Equal(2u, response.DispLevelTotal);
+        Assert.Equal(3u, response.DispLevelChassis);
+        Assert.Equal(4u, response.DispLevelSelf);
+    }
+
+    [Fact]
     public void UserData_SerializesToneAndTitleFlagsOnWire()
     {
         var response = UserDataMappers.Map(new CommonUserDataResponse

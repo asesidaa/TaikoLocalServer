@@ -331,6 +331,33 @@ public sealed class GreenIdentityHandlerTests
     }
 
     [Fact]
+    public async Task UserData_Green_ReturnsPersistedTojiruAndDisplayLevels()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.IsTojiru = false;
+        save.DispLevelTotal = 2;
+        save.DispLevelChassis = 3;
+        save.DispLevelSelf = 4;
+        fixture.Context.UserSaveDataGreen.Add(save);
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UserDataQueryHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UserDataQueryHandler>.Instance,
+            Options.Create(new ServerSettings()));
+
+        var response = await handler.Handle(new UserDataQuery(1, GameEra.Green), CancellationToken.None);
+
+        Assert.False(response.IsTojiru);
+        Assert.Equal(2u, response.DispLevelTotal);
+        Assert.Equal(3u, response.DispLevelChassis);
+        Assert.Equal(4u, response.DispLevelSelf);
+    }
+
+    [Fact]
     public async Task UserData_Green_RecommendComesFromCatalog()
     {
         var greenCatalog = new GreenHandlerFixture.TestGreenCatalog

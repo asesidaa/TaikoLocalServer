@@ -18,6 +18,7 @@ public partial class CommonUserDataResponse
     public uint? RecommendSong            { get; set; }
     public List<uint> RecommendBestSong   { get; set; } = [];
     public bool? DefaultShinSetting       { get; set; }
+    public uint DispLevelTotal            { get; set; }
     public uint? DispTaikojukuDan         { get; set; }
     public bool? IsChallengeCompe         { get; set; }
     public bool? IsTojiru                 { get; set; }

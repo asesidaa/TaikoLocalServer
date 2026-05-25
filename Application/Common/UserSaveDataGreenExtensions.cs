@@ -54,6 +54,6 @@ public static class UserSaveDataGreenExtensions
         IsDevil = false,
         IsExplain = false,
         IsChallengeCompe = false,
-        IsTojiru = false
+        IsTojiru = true
     };
 }
