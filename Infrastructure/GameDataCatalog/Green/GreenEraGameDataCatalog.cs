@@ -116,7 +116,8 @@ public sealed class GreenEraGameDataCatalog(
         taikojuku = taikojukuFileOrder
             .GroupBy(entry => entry.UniqueId)
             .ToDictionary(group => group.Key, group => group.First());
-        itemShopCatalog = GreenItemShopCatalog.Disabled;
+        var greenSettings = GetGreenSettings();
+        itemShopCatalog = await new GreenItemShopLoader().LoadAsync(greenSettings, cancellationToken);
         itemShop = itemShopCatalog.ActiveItemsByNo;
         eventFolders = await new GreenEventFolderLoader().LoadAsync(cancellationToken);
         telops = await new GreenTelopLoader().LoadAsync(cancellationToken);
