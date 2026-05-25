@@ -1,5 +1,12 @@
 using System.Reflection;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using TaikoLocalServer.Adapters.GameProtocol.Shared.Controllers;
+using TaikoLocalServer.Application;
+using TaikoLocalServer.Application.ServerData;
+using TaikoLocalServer.Infrastructure.GameDataCatalog;
+using AppMovieData = TaikoLocalServer.Application.ServerData.MovieData;
 using GreenStartupAuthRequest = TaikoLocalServer.Adapters.GameProtocol.Green.Wire.StartupAuthRequest;
 using GreenStartupAuthResponse = TaikoLocalServer.Adapters.GameProtocol.Green.Wire.StartupAuthResponse;
 using SharedStartupAuthRequest = TaikoLocalServer.Adapters.GameProtocol.Shared.Wire.StartupAuthRequest;
@@ -71,6 +78,11 @@ public sealed class StartupAuthRouteTests
             KeyData = 9,
             ValueData = [4, 5, 6]
         });
+        response.AryMovieInfoes.Add(new SharedStartupAuthResponse.MovieData
+        {
+            MovieId = 100,
+            EnableDays = 999
+        });
 
         var bytes = Serialize(response);
         var green = Deserialize<GreenStartupAuthResponse>(bytes);
@@ -82,6 +94,61 @@ public sealed class StartupAuthRouteTests
         Assert.Equal(9u, Assert.Single(wwR08.AryOperationInfoes).KeyData);
         Assert.Equal([4, 5, 6], Assert.Single(green.AryOperationInfoes).ValueData);
         Assert.Equal([4, 5, 6], Assert.Single(wwR08.AryOperationInfoes).ValueData);
+        Assert.Equal(100u, Assert.Single(green.AryMovieInfoes).MovieId);
+        Assert.Equal(999u, Assert.Single(green.AryMovieInfoes).EnableDays);
+        Assert.Equal(100u, Assert.Single(wwR08.AryMovieInfoes).MovieId);
+        Assert.Equal(999u, Assert.Single(wwR08.AryMovieInfoes).EnableDays);
+    }
+
+    [Fact]
+    public async Task StartupAuthController_UsesHddVersionToPopulateMovieInfo()
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddOptions();
+        services.AddApplication();
+        services.Configure<ServerSettings>(settings =>
+        {
+            settings.Eras = new Dictionary<string, EraSettings>
+            {
+                [nameof(GameEra.Green)] = new() { Enabled = true }
+            };
+        });
+        services.AddSingleton<IGameDataCatalog>(new FileGameDataCatalog(
+        [
+            new GreenHandlerFixture.TestGreenCatalog
+            {
+                Movies =
+                [
+                    new AppMovieData { MovieId = 100, EnableDays = 999 }
+                ]
+            }
+        ]));
+
+        using var provider = services.BuildServiceProvider();
+        var controller = new StartupAuthController
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    RequestServices = provider
+                }
+            }
+        };
+
+        var result = await controller.StartupAuth(new SharedStartupAuthRequest
+        {
+            ChassisId = "chassis",
+            HddVer = 1113,
+            ShopId = "shop"
+        });
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var response = Assert.IsType<SharedStartupAuthResponse>(ok.Value);
+        var movie = Assert.Single(response.AryMovieInfoes);
+        Assert.Equal(100u, movie.MovieId);
+        Assert.Equal(999u, movie.EnableDays);
     }
 
     private static IEnumerable<RouteInfo> FindPostRoutes(params Assembly[] assemblies)
