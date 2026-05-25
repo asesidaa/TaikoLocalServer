@@ -29,7 +29,13 @@ public partial class UpdatePlayResultCommandHandler
         var playResultData = request.PlayResultData;
         var saveData = await context.GetOrCreateGreenSaveDataAsync(request.Baid, cancellationToken);
         var green = gameDataService.Green();
-        if (!CanAdd(saveData.TotalGetDonmedal, playResultData.GetDonmedal)
+        var activeShopSeason = green.ItemShopCatalog.ActiveSeason;
+        var shopSeasonState = activeShopSeason is null
+            ? null
+            : await context.GetOrCreateGreenShopSeasonStateAsync(saveData, activeShopSeason.SeasonId, cancellationToken);
+
+        var currentDonmedal = shopSeasonState?.TotalGetDonmedal ?? saveData.TotalGetDonmedal;
+        if (!CanAdd(currentDonmedal, playResultData.GetDonmedal)
             || !CanAdd(saveData.TotalGetKatsumedal, playResultData.GetKatsumedal)
             || playResultData.AryStageInfoes.Any(stage => !IsValidGreenStage(stage)))
         {
@@ -41,7 +47,16 @@ public partial class UpdatePlayResultCommandHandler
             ? parsed
             : DateTime.Now;
 
-        saveData.TotalGetDonmedal += playResultData.GetDonmedal;
+        if (shopSeasonState is null)
+        {
+            saveData.TotalGetDonmedal += playResultData.GetDonmedal;
+        }
+        else
+        {
+            shopSeasonState.TotalGetDonmedal += playResultData.GetDonmedal;
+            shopSeasonState.UpdatedAt = DateTime.UtcNow;
+        }
+
         saveData.TotalGetKatsumedal += playResultData.GetKatsumedal;
         saveData.ItemshopTutorialFlg = playResultData.ItemshopTutorialFlg ?? saveData.ItemshopTutorialFlg;
         saveData.IsDevil = playResultData.IsDevil ?? saveData.IsDevil;

@@ -41,6 +41,27 @@ public partial class BaidQueryHandler
         var gotDanExtraFlg = GreenProtocolBytes.FixedOrZero(saveData.GotDanExtraFlg, GreenProtocolBytes.DanExtraFlagBytes);
         var gotDanMax = Math.Min(saveData.GotDanMax, GreenDanHelpers.MaxNormalDanId);
         var dispDanType = saveData.DispDanType == 0 ? 0u : 1u;
+        var activeShopSeason = gameDataService.Green().ItemShopCatalog.ActiveSeason;
+        var shopSeasonState = activeShopSeason is null
+            ? null
+            : await context.GetOrCreateGreenShopSeasonStateAsync(saveData, activeShopSeason.SeasonId, cancellationToken);
+        if (activeShopSeason is not null)
+        {
+            await context.SaveChangesAsync(cancellationToken);
+        }
+
+        var unlockedShopItems = activeShopSeason is null
+            ? new HashSet<(uint ItemType, uint ItemId)>()
+            : await context.GreenShopItemStates
+                .Where(row => row.Baid == card.Baid
+                    && row.SeasonId == activeShopSeason.SeasonId
+                    && row.Status == GreenShopItemStatus.Unlocked)
+                .Select(row => new ValueTuple<uint, uint>(row.ItemType, row.ItemId))
+                .ToHashSetAsync(cancellationToken);
+
+        IEnumerable<uint> LockedIds(uint itemType) => activeShopSeason?.Items
+            .Where(item => item.ItemType == itemType && !unlockedShopItems.Contains((item.ItemType, item.ItemId)))
+            .Select(item => item.ItemId) ?? [];
 
         return new CommonBaidResponse
         {
@@ -55,13 +76,13 @@ public partial class BaidQueryHandler
             ColorBody = saveData.ColorBody,
             ColorLimb = saveData.ColorLimb,
             CostumeData = [saveData.Costume1, saveData.Costume2, saveData.Costume3, saveData.Costume4, saveData.Costume5],
-            CostumeFlg1 = GreenProtocolBytes.FixedOrZero(saveData.CostumeFlg1, GreenProtocolBytes.CostumeFlagBytes),
-            CostumeFlg2 = GreenProtocolBytes.FixedOrZero(saveData.CostumeFlg2, GreenProtocolBytes.CostumeFlagBytes),
-            CostumeFlg3 = GreenProtocolBytes.FixedOrZero(saveData.CostumeFlg3, GreenProtocolBytes.CostumeFlagBytes),
-            CostumeFlg4 = GreenProtocolBytes.FixedOrZero(saveData.CostumeFlg4, GreenProtocolBytes.CostumeFlagBytes),
-            CostumeFlg5 = GreenProtocolBytes.FixedOrZero(saveData.CostumeFlg5, GreenProtocolBytes.CostumeFlagBytes),
-            TotalGetDonmedal = saveData.TotalGetDonmedal,
-            TotalUseDonmedal = saveData.TotalUseDonmedal,
+            CostumeFlg1 = GreenShopUnlocks.ClearBits(saveData.CostumeFlg1, LockedIds(3), GreenProtocolBytes.CostumeFlagBytes),
+            CostumeFlg2 = GreenShopUnlocks.ClearBits(saveData.CostumeFlg2, LockedIds(5), GreenProtocolBytes.CostumeFlagBytes),
+            CostumeFlg3 = GreenShopUnlocks.ClearBits(saveData.CostumeFlg3, LockedIds(4), GreenProtocolBytes.CostumeFlagBytes),
+            CostumeFlg4 = GreenShopUnlocks.ClearBits(saveData.CostumeFlg4, LockedIds(6), GreenProtocolBytes.CostumeFlagBytes),
+            CostumeFlg5 = GreenShopUnlocks.ClearBits(saveData.CostumeFlg5, LockedIds(7), GreenProtocolBytes.CostumeFlagBytes),
+            TotalGetDonmedal = shopSeasonState?.TotalGetDonmedal ?? saveData.TotalGetDonmedal,
+            TotalUseDonmedal = shopSeasonState?.TotalUseDonmedal ?? saveData.TotalUseDonmedal,
             TotalGetKatsumedal = saveData.TotalGetKatsumedal,
             TotalUseKatsumedal = saveData.TotalUseKatsumedal,
             ItemshopTutorialFlg = saveData.ItemshopTutorialFlg,

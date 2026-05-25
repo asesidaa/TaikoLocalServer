@@ -10,6 +10,19 @@ public partial class UserDataQueryHandler
             ?? throw new InvalidOperationException($"User not found for Green baid {request.Baid}.");
         var saveData = await context.GetOrCreateGreenSaveDataAsync(request.Baid, cancellationToken);
         var green = gameDataService.Green();
+        var activeShopSeason = green.ItemShopCatalog.ActiveSeason;
+        var unlockedShopItems = activeShopSeason is null
+            ? new HashSet<(uint ItemType, uint ItemId)>()
+            : await context.GreenShopItemStates
+                .Where(row => row.Baid == request.Baid
+                    && row.SeasonId == activeShopSeason.SeasonId
+                    && row.Status == GreenShopItemStatus.Unlocked)
+                .Select(row => new ValueTuple<uint, uint>(row.ItemType, row.ItemId))
+                .ToHashSetAsync(cancellationToken);
+
+        IEnumerable<uint> LockedIds(uint itemType) => activeShopSeason?.Items
+            .Where(item => item.ItemType == itemType && !unlockedShopItems.Contains((item.ItemType, item.ItemId)))
+            .Select(item => item.ItemId) ?? [];
 
         var favorites = await context.GreenFavoriteSongs
             .Where(song => song.Baid == request.Baid)
@@ -30,10 +43,16 @@ public partial class UserDataQueryHandler
         {
             Result = 1,
             SongHashVer = green.SongHashVersion,
-            ReleaseSongFlg = GreenProtocolBytes.CreateFixedBitset(
-                green.MusicInfoFileOrder.Select(song => song.SongNo),
+            ReleaseSongFlg = GreenShopUnlocks.ClearBits(
+                GreenProtocolBytes.CreateFixedBitset(
+                    green.MusicInfoFileOrder.Select(song => song.SongNo),
+                    GreenProtocolBytes.SongFlagBytes),
+                LockedIds(1),
                 GreenProtocolBytes.SongFlagBytes),
-            ToneFlg = GreenProtocolBytes.FixedOrZero(saveData.ToneFlg, GreenProtocolBytes.ToneFlagBytes),
+            ToneFlg = GreenShopUnlocks.ClearBits(
+                saveData.ToneFlg,
+                LockedIds(2),
+                GreenProtocolBytes.ToneFlagBytes),
             TitleFlg = GreenProtocolBytes.FixedOrZero(saveData.TitleFlg, GreenProtocolBytes.TitleFlagBytes),
             DefaultOptionSetting = GreenProtocolBytes.FixedOrZero(saveData.DefaultOptionSetting, 2),
             OptionFlg = saveData.OptionFlg,

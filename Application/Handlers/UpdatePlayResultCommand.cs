@@ -1,3 +1,6 @@
+using Microsoft.Extensions.Options;
+using TaikoLocalServer.Application.Settings;
+
 namespace TaikoLocalServer.Application.Handlers;
 
 public readonly record struct UpdatePlayResultCommand(uint Baid, GameEra Era, CommonPlayResultData PlayResultData) : IRequest<uint>;
@@ -5,9 +8,12 @@ public readonly record struct UpdatePlayResultCommand(uint Baid, GameEra Era, Co
 public partial class UpdatePlayResultCommandHandler(
     ITaikoDbContext context,
     IGameDataCatalog gameDataService,
-    ILogger<UpdatePlayResultCommandHandler> logger)
+    ILogger<UpdatePlayResultCommandHandler> logger,
+    IOptions<ServerSettings>? settings = null)
     : IRequestHandler<UpdatePlayResultCommand, uint>
 {
+    private readonly ServerSettings settings = settings?.Value ?? new ServerSettings();
+
     public ValueTask<uint> Handle(UpdatePlayResultCommand request, CancellationToken cancellationToken) => request.Era switch
     {
         GameEra.Nijiiro => HandleNijiiro(request, cancellationToken),
