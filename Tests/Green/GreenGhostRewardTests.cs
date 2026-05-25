@@ -117,11 +117,7 @@ public sealed class GreenGhostRewardTests
     [Fact]
     public async Task ItemPurchase_SpendsDonmedalsWhenAffordable()
     {
-        await using var fixture = await GreenHandlerFixture.CreateAsync(new GreenHandlerFixture.TestGreenCatalog(
-            new Dictionary<uint, GreenItemShopEntry>
-            {
-                [10] = new() { ItemType = 1, ItemId = 2, Price = 40 }
-            }));
+        await using var fixture = await GreenHandlerFixture.CreateAsync(CreatePurchaseShopCatalog());
         var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
         save.TotalGetDonmedal = 100;
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -164,11 +160,7 @@ public sealed class GreenGhostRewardTests
     [Fact]
     public async Task ItemPurchase_RejectsOverflowingGreenMedalBalance()
     {
-        await using var fixture = await GreenHandlerFixture.CreateAsync(new GreenHandlerFixture.TestGreenCatalog(
-            new Dictionary<uint, GreenItemShopEntry>
-            {
-                [10] = new() { ItemType = 1, ItemId = 2, Price = 40 }
-            }));
+        await using var fixture = await GreenHandlerFixture.CreateAsync(CreatePurchaseShopCatalog());
         var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
         save.TotalGetDonmedal = uint.MaxValue;
         save.TotalUseDonmedal = uint.MaxValue - 10;
@@ -185,5 +177,23 @@ public sealed class GreenGhostRewardTests
 
         Assert.Equal((uint)0, response.Result);
         Assert.Equal(uint.MaxValue - 10, response.TotalUseDonmedal);
+    }
+
+    private static GreenHandlerFixture.TestGreenCatalog CreatePurchaseShopCatalog()
+    {
+        var season = new GreenItemShopSeason
+        {
+            SeasonId = 2,
+            StartDatetime = "20190314000000",
+            EndDatetime = "20190626075959",
+            Items = [new GreenItemShopEntry { ItemNo = 10, ItemType = 1, ItemId = 2, Price = 40 }]
+        };
+
+        return new GreenHandlerFixture.TestGreenCatalog(itemShopCatalog: new GreenItemShopCatalog
+        {
+            IsEnabled = true,
+            ActiveSeasonId = 2,
+            Seasons = new Dictionary<uint, GreenItemShopSeason> { [2] = season }
+        });
     }
 }
