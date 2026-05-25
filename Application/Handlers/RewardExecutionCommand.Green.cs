@@ -8,59 +8,64 @@ public partial class RewardExecutionCommandHandler
     {
         logger.LogDebug("Applying Green rewards for baid {Baid}", request.Baid);
         var saveData = await context.GetOrCreateGreenSaveDataAsync(request.Baid, cancellationToken);
-
-        if (!AllAlreadyUnlocked(saveData.ToneFlg, request.GetToneNoes, GreenProtocolBytes.ToneFlagBytes)
-            || !AllAlreadyUnlocked(saveData.CostumeFlg1, request.GetCostumeNo1s, GreenProtocolBytes.CostumeFlagBytes)
-            || !AllAlreadyUnlocked(saveData.CostumeFlg2, request.GetCostumeNo2s, GreenProtocolBytes.CostumeFlagBytes)
-            || !AllAlreadyUnlocked(saveData.CostumeFlg3, request.GetCostumeNo3s, GreenProtocolBytes.CostumeFlagBytes)
-            || !AllAlreadyUnlocked(saveData.CostumeFlg4, request.GetCostumeNo4s, GreenProtocolBytes.CostumeFlagBytes)
-            || !AllAlreadyUnlocked(saveData.CostumeFlg5, request.GetCostumeNo5s, GreenProtocolBytes.CostumeFlagBytes)
-            || !AllAlreadyUnlocked(saveData.TitleFlg, request.GetTitleNoes, GreenProtocolBytes.TitleFlagBytes))
+        var activeSeason = gameDataService.Green().ItemShopCatalog.ActiveSeason;
+        if (activeSeason is null)
         {
-            logger.LogWarning("Rejecting unknown Green reward ids for baid {Baid}", request.Baid);
             return new CommonRewardExecutionResponse { Result = 0 };
         }
 
-        saveData.ToneFlg = SetBits(saveData.ToneFlg, request.GetToneNoes, GreenProtocolBytes.ToneFlagBytes);
-        saveData.CostumeFlg1 = SetBits(saveData.CostumeFlg1, request.GetCostumeNo1s, GreenProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg2 = SetBits(saveData.CostumeFlg2, request.GetCostumeNo2s, GreenProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg3 = SetBits(saveData.CostumeFlg3, request.GetCostumeNo3s, GreenProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg4 = SetBits(saveData.CostumeFlg4, request.GetCostumeNo4s, GreenProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg5 = SetBits(saveData.CostumeFlg5, request.GetCostumeNo5s, GreenProtocolBytes.CostumeFlagBytes);
-        saveData.TitleFlg = SetBits(saveData.TitleFlg, request.GetTitleNoes, GreenProtocolBytes.TitleFlagBytes);
+        var requested = RequestedShopItems(request).Distinct().ToArray();
+        var activeCatalogKeys = activeSeason.Items
+            .Select(item => (item.ItemType, item.ItemId))
+            .ToHashSet();
+
+        if (requested.Any(item => !activeCatalogKeys.Contains(item)))
+        {
+            logger.LogWarning("Rejecting forged Green shop reward ids for baid {Baid}", request.Baid);
+            return new CommonRewardExecutionResponse { Result = 0 };
+        }
+
+        var states = await context.GreenShopItemStates
+            .Where(row => row.Baid == request.Baid && row.SeasonId == activeSeason.SeasonId)
+            .ToDictionaryAsync(row => new ValueTuple<uint, uint>(row.ItemType, row.ItemId), cancellationToken);
+
+        foreach (var item in requested)
+        {
+            if (!states.TryGetValue(item, out var state)
+                || state.Status is not (GreenShopItemStatus.PendingReward or GreenShopItemStatus.Unlocked))
+            {
+                logger.LogWarning("Rejecting Green shop reward without pending purchase for baid {Baid}", request.Baid);
+                return new CommonRewardExecutionResponse { Result = 0 };
+            }
+        }
+
+        saveData.ToneFlg = GreenShopUnlocks.SetBits(saveData.ToneFlg, request.GetToneNoes, GreenProtocolBytes.ToneFlagBytes);
+        saveData.CostumeFlg1 = GreenShopUnlocks.SetBits(saveData.CostumeFlg1, request.GetCostumeNo1s, GreenProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg2 = GreenShopUnlocks.SetBits(saveData.CostumeFlg2, request.GetCostumeNo2s, GreenProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg3 = GreenShopUnlocks.SetBits(saveData.CostumeFlg3, request.GetCostumeNo3s, GreenProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg4 = GreenShopUnlocks.SetBits(saveData.CostumeFlg4, request.GetCostumeNo4s, GreenProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg5 = GreenShopUnlocks.SetBits(saveData.CostumeFlg5, request.GetCostumeNo5s, GreenProtocolBytes.CostumeFlagBytes);
+
+        var now = DateTime.UtcNow;
+        foreach (var item in requested)
+        {
+            var state = states[item];
+            state.Status = GreenShopItemStatus.Unlocked;
+            state.UnlockedAt ??= now;
+        }
 
         await context.SaveChangesAsync(cancellationToken);
         return new CommonRewardExecutionResponse { Result = 1 };
     }
 
-    private static bool HasBit(byte[] source, uint id, int byteCount)
+    private static IEnumerable<(uint ItemType, uint ItemId)> RequestedShopItems(RewardExecutionCommand request)
     {
-        if (id >= byteCount * 8)
-        {
-            return false;
-        }
-
-        var fixedBytes = GreenProtocolBytes.FixedOrZero(source, byteCount);
-        return (fixedBytes[id >> 3] & (1 << ((int)id & 7))) != 0;
-    }
-
-    private static bool AllAlreadyUnlocked(byte[] source, IEnumerable<uint> ids, int byteCount)
-        => ids.All(id => HasBit(source, id, byteCount));
-
-    private static byte[] SetBits(byte[] source, IEnumerable<uint> ids, int byteCount)
-    {
-        var result = GreenProtocolBytes.FixedOrZero(source, byteCount);
-        var maxBits = byteCount * 8;
-        foreach (var id in ids)
-        {
-            if (id >= maxBits)
-            {
-                continue;
-            }
-
-            result[id >> 3] |= (byte)(1 << ((int)id & 7));
-        }
-
-        return result;
+        foreach (var id in request.ReleaseSongNoes) yield return (1, id);
+        foreach (var id in request.GetToneNoes) yield return (2, id);
+        foreach (var id in request.GetCostumeNo1s) yield return (3, id);
+        foreach (var id in request.GetCostumeNo2s) yield return (5, id);
+        foreach (var id in request.GetCostumeNo3s) yield return (4, id);
+        foreach (var id in request.GetCostumeNo4s) yield return (6, id);
+        foreach (var id in request.GetCostumeNo5s) yield return (7, id);
     }
 }

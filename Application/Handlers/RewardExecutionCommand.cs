@@ -14,6 +14,7 @@ public readonly record struct RewardExecutionCommand(
 
 public partial class RewardExecutionCommandHandler(
     ITaikoDbContext context,
+    IGameDataCatalog gameDataService,
     ILogger<RewardExecutionCommandHandler> logger)
     : IRequestHandler<RewardExecutionCommand, CommonRewardExecutionResponse>
 {

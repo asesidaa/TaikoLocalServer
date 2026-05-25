@@ -76,6 +76,7 @@ public sealed class GreenGhostRewardTests
 
         var handler = new RewardExecutionCommandHandler(
             fixture.Context,
+            fixture.Catalog,
             NullLogger<RewardExecutionCommandHandler>.Instance);
 
         var response = await handler.Handle(new RewardExecutionCommand(
