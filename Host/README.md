@@ -10,6 +10,7 @@ As the game uses protobuf, `protobuf-net` is used for serializing and deserializ
     - [Green game data symlink](#green-game-data-symlink)
     - [Green customization catalogs](#green-customization-catalogs)
     - [Green attract movies](#green-attract-movies)
+    - [Green item shop](#green-item-shop)
     - [Green Cabinet Smoke Checklist](#green-cabinet-smoke-checklist)
   - [Datatable documentation](#datatable-documentation)
     - [dan\_data.json](#dan_datajson)
@@ -47,6 +48,7 @@ wwwroot/data/
 |-- green/                      Green-era AC15 data
 |   |-- recommend_songs.json    Operator-edited Green pushed/recommended songs
 |   |-- movie_data.json         Green attract movie permissions (default discovery or explicit override)
+|   |-- green_item_shop_data.json Green item shop seasons and item rows
 |   |-- green_costume_data.json Generated Green customization catalog
 |   |-- green_title_data.json   Generated Green title catalog
 |   |-- green_neiro_data.json   Generated Green tone catalog
@@ -153,6 +155,53 @@ Example override:
 ID `0` is ignored because Green treats `attract_cm_000.pam` as a fallback
 asset, not a startup permission candidate. Duplicate nonzero IDs are rejected
 at startup.
+
+### Green item shop
+
+Green item shop support is controlled by `Configurations/ServerSettings.json`:
+
+```json
+{
+  "ServerSettings": {
+    "Eras": {
+      "Green": {
+        "EnableShop": true,
+        "ActiveShopSeasonId": 1
+      }
+    }
+  }
+}
+```
+
+When `EnableShop` is `false`, the server keeps the current default unlock
+behavior and does not advertise the shop. When `EnableShop` is `true`,
+`ActiveShopSeasonId` must match a season in
+`wwwroot/data/green/green_item_shop_data.json`.
+
+The shop data file stores protocol data only:
+
+```json
+{
+  "seasons": [
+    {
+      "season_id": 1,
+      "verup_no": 1,
+      "telop": "Spring reward shop",
+      "start_datetime": "20190314000000",
+      "end_datetime": "20190626075959",
+      "afterstart_days": 7,
+      "beforeclose_days": 7,
+      "items": [
+        { "item_type": 4, "item_id": 117, "item_price": 500 }
+      ]
+    }
+  ]
+}
+```
+
+`item_no` is inferred from 1-based row order. Item rows must not contain names
+or source metadata. Official announcement pages list names in images, so
+name-to-id resolution is an offline curation step.
 
 ### Green Cabinet Smoke Checklist
 
