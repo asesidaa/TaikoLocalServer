@@ -45,6 +45,11 @@ public partial class Profile
         "Easy", "Normal", "Hard", "Oni", "Ura Oni"
     };
 
+    private static readonly string[] GreenLocalRankingDifficultyStrings =
+    {
+        "No Fixed Course", "Easy", "Normal", "Hard", "Oni"
+    };
+
     private static readonly string[] DifficultySettingStarStrings =
     {
         "None", "Set Up Each Time",

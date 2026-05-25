@@ -35,10 +35,47 @@ public sealed class GreenCustomizationWebUiTests
     {
         var markup = ReadWebUiFile("Pages", "Profile.razor");
         var normalized = NormalizeLineEndings(markup);
+        var achievementIndex = normalized.IndexOf("Achievement Panel Difficulty", StringComparison.Ordinal);
+        Assert.True(achievementIndex >= 0, "Could not find the Nijiiro profile settings branch.");
+
+        var greenBranchStart = normalized.IndexOf("else\n                                {", achievementIndex, StringComparison.Ordinal);
+        Assert.True(greenBranchStart >= 0, "Could not find the Green profile settings branch.");
+
+        var nextTabStart = normalized.IndexOf("</MudStack>\n                        </MudTabPanel>", greenBranchStart, StringComparison.Ordinal);
+        Assert.True(nextTabStart > greenBranchStart, "Could not find the end of the Green profile settings branch.");
+        var greenBranch = normalized[greenBranchStart..nextTabStart];
 
         Assert.Contains("@if (!IsGreen)", normalized);
-        Assert.Contains("else\n                                {\n                                    <MudSwitch @bind-Value=\"@response.IsDisplayDanOnNamePlate\"", normalized);
+        Assert.Contains("@bind-Value=\"@response.IsDisplayDanOnNamePlate\"", greenBranch);
         AssertLabelGuardedByIfNotGreen(markup, "Display Dan Rank on Name Plate");
+    }
+
+    [Fact]
+    public void Profile_RendersGreenUserdataSettingsOnlyForGreen()
+    {
+        var markup = ReadWebUiFile("Pages", "Profile.razor");
+        var normalized = NormalizeLineEndings(markup);
+        var code = ReadWebUiFile("Pages", "Profile.razor.cs");
+        var achievementIndex = normalized.IndexOf("Achievement Panel Difficulty", StringComparison.Ordinal);
+        Assert.True(achievementIndex >= 0, "Could not find the Nijiiro profile settings branch.");
+
+        var greenBranchStart = normalized.IndexOf("else\n                                {", achievementIndex, StringComparison.Ordinal);
+        Assert.True(greenBranchStart >= 0, "Could not find the Green profile settings branch.");
+
+        var nextTabStart = normalized.IndexOf("</MudStack>\n                        </MudTabPanel>", greenBranchStart, StringComparison.Ordinal);
+        Assert.True(nextTabStart > greenBranchStart, "Could not find the end of the Green profile settings branch.");
+        var greenBranch = normalized[greenBranchStart..nextTabStart];
+
+        Assert.Contains("@bind-Value=\"@response.GreenIsTojiru\"", greenBranch);
+        Assert.Contains("Show Folder Close Button", greenBranch);
+        Assert.Contains("@bind-Value=\"@response.GreenDispLevelChassis\"", greenBranch);
+        Assert.Contains("Local Ranking Difficulty", greenBranch);
+        Assert.Contains("GreenLocalRankingDifficultyStrings", code);
+
+        Assert.DoesNotContain("disp_level_self", markup, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("disp_level_total", markup, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("DifficultyPlayedCourse", markup);
+        Assert.DoesNotContain("DifficultyPlayedStar", markup);
     }
 
     [Fact]

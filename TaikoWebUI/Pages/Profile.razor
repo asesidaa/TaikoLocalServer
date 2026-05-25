@@ -93,7 +93,23 @@
                                 }
                                 else
                                 {
-                                    <MudSwitch @bind-Value="@response.IsDisplayDanOnNamePlate" Label=@Localizer["Display Dan Rank on Name Plate"] Color="Color.Primary" />
+                                    <MudGrid>
+                                        <MudItem xs="12" md="4">
+                                            <MudStack Spacing="4">
+                                                <MudSwitch @bind-Value="@response.IsDisplayDanOnNamePlate" Label=@Localizer["Display Dan Rank on Name Plate"] Color="Color.Primary" />
+                                                <MudSwitch @bind-Value="@response.GreenIsTojiru" Label=@Localizer["Show Folder Close Button"] Color="Color.Primary" />
+                                            </MudStack>
+                                        </MudItem>
+                                        <MudItem xs="12" md="8">
+                                            <MudSelect @bind-Value="@response.GreenDispLevelChassis" Label=@Localizer["Local Ranking Difficulty"] AnchorOrigin="Origin.BottomCenter">
+                                                @for (uint i = 0; i < GreenLocalRankingDifficultyStrings.Length; i++)
+                                                {
+                                                    var index = i;
+                                                    <MudSelectItem Value="@i">@Localizer[GreenLocalRankingDifficultyStrings[index]]</MudSelectItem>
+                                                }
+                                            </MudSelect>
+                                        </MudItem>
+                                    </MudGrid>
                                 }
                             </MudStack>
                         </MudTabPanel>
