@@ -14,6 +14,10 @@ public class UserSetting
 
     public List<uint> GreenSelectableTaikojukuDans { get; set; } = new();
 
+    public bool GreenIsTojiru { get; set; }
+
+    public uint GreenDispLevelChassis { get; set; }
+
     public bool IsDisplaySouUchi { get; set; }
 
     public uint DifficultySettingCourse { get; set; }

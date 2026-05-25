@@ -23,6 +23,10 @@ public partial class UserSettingsController
         }
 
         var saveData = await context.GetOrCreateGreenSaveDataAsync(baid, HttpContext.RequestAborted);
+        if (userSetting.GreenDispLevelChassis > 4)
+        {
+            return BadRequest("GreenDispLevelChassis must be between 0 and 4.");
+        }
 
         user.MyDonName = userSetting.MyDonName;
         user.MyDonNameLanguage = userSetting.MyDonNameLanguage;
@@ -38,6 +42,8 @@ public partial class UserSettingsController
         saveData.Costume5 = userSetting.Puchi;
         saveData.DefaultToneSetting = userSetting.ToneId;
         saveData.DispDanType = userSetting.IsDisplayDanOnNamePlate ? 1u : 0u;
+        saveData.IsTojiru = userSetting.GreenIsTojiru;
+        saveData.DispLevelChassis = userSetting.GreenDispLevelChassis;
         if (userSetting.GreenTaikojukuDan != 0)
         {
             saveData.DispTaikojukuDan = await GetGreenTaikojukuFolderDan(baid, userSetting.GreenTaikojukuDan);
@@ -90,6 +96,8 @@ public partial class UserSettingsController
             IsDisplayDanOnNamePlate = saveData.DispDanType != 0,
             GreenTaikojukuDan = taikojukuDan,
             GreenSelectableTaikojukuDans = selectableTaikojukuDans,
+            GreenIsTojiru = saveData.IsTojiru,
+            GreenDispLevelChassis = GetSafeGreenDispLevelChassis(saveData.DispLevelChassis),
             LastPlayDateTime = saveData.LastPlayDatetime
         };
     }
@@ -128,6 +136,9 @@ public partial class UserSettingsController
 
         return selectableDans.FirstOrDefault(GreenDanHelpers.MinNormalDanId);
     }
+
+    private static uint GetSafeGreenDispLevelChassis(uint value)
+        => value <= 4 ? value : 0u;
 
     private static byte[] EncodeGreenCostumeUnlocks(IEnumerable<uint> requestedUnlocks, uint currentId)
     {
