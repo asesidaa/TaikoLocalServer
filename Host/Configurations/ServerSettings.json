@@ -12,7 +12,9 @@
         "Enabled": true,
         "AutoExtractCatalog": true,
         "GameDataPath": "wwwroot/data/green/data",
-        "CustomizationNameDataPath": ""
+        "CustomizationNameDataPath": "",
+        "EnableShop": true,
+        "ActiveShopSeasonId": 1
       }
     }
   }

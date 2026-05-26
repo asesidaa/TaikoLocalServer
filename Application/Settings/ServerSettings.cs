@@ -19,7 +19,7 @@ public sealed class EraSettings
 
     public string? CustomizationNameDataPath { get; set; }
 
-    public bool EnableShop { get; set; }
+    public bool? EnableShop { get; set; }
 
     public uint? ActiveShopSeasonId { get; set; }
 }

@@ -32,7 +32,10 @@ public static class DependencyInjection
         // Settings
         services.Configure<AuthSettings>(configuration.GetSection(nameof(AuthSettings)));
         services.Configure<DataSettings>(configuration.GetSection(nameof(DataSettings)));
-        services.Configure<ServerSettings>(configuration.GetSection(nameof(ServerSettings)));   // Application's portion (EnableMoreSongs / MoreSongsSize)
+        services.AddOptions<ServerSettings>()
+            .Bind(configuration.GetSection(nameof(ServerSettings)))
+            .ValidateStartupSettings(enabledEras)
+            .ValidateOnStart();
         services.Configure<AllnetSettings>(configuration.GetSection(nameof(ServerSettings)));   // Infrastructure's portion (MuchaUrl / GameUrl) — same JSON section, different POCO
 
         // Persistence

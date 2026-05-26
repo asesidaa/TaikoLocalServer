@@ -173,9 +173,10 @@ Green item shop support is controlled by `Configurations/ServerSettings.json`:
 }
 ```
 
-When `EnableShop` is `false`, the server keeps the current default unlock
-behavior and does not advertise the shop. When `EnableShop` is `true`,
-`ActiveShopSeasonId` must match a season in
+When Green is enabled, `EnableShop` must be present or startup fails options
+validation. When `EnableShop` is `false`, the server keeps the current default
+unlock behavior and does not advertise the shop. When `EnableShop` is `true`,
+`ActiveShopSeasonId` must be present and match a season in
 `wwwroot/data/green/green_item_shop_data.json`.
 
 The shop data file stores protocol data only:

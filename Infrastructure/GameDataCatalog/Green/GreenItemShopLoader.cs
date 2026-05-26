@@ -32,7 +32,7 @@ public sealed class GreenItemShopLoader
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        if (!greenSettings.EnableShop)
+        if (greenSettings.EnableShop != true)
         {
             return GreenItemShopCatalog.Disabled;
         }
