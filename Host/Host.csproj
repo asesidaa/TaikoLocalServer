@@ -42,6 +42,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Adapters.AdminApi\Adapters.AdminApi.csproj" />
     <ProjectReference Include="..\Adapters.AllnetMucha\Adapters.AllnetMucha.csproj" />
+    <ProjectReference Include="..\Adapters.GameProtocol.Blue\Adapters.GameProtocol.Blue.csproj" />
     <ProjectReference Include="..\Adapters.GameProtocol.CnR00\Adapters.GameProtocol.CnR00.csproj" />
     <ProjectReference Include="..\Adapters.GameProtocol.Green\Adapters.GameProtocol.Green.csproj" />
     <ProjectReference Include="..\Adapters.GameProtocol.Shared\Adapters.GameProtocol.Shared.csproj" />

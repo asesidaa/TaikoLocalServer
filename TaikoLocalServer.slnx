@@ -2,6 +2,7 @@
   <Project Path="Adapters.AdminApi/Adapters.AdminApi.csproj" />
   <Project Path="Adapters.AllnetMucha/Adapters.AllnetMucha.csproj" />
   <Project Path="Adapters.GameProtocol.CnR00/Adapters.GameProtocol.CnR00.csproj" />
+  <Project Path="Adapters.GameProtocol.Blue/Adapters.GameProtocol.Blue.csproj" />
   <Project Path="Adapters.GameProtocol.Green/Adapters.GameProtocol.Green.csproj" />
   <Project Path="Adapters.GameProtocol.Shared/Adapters.GameProtocol.Shared.csproj" />
   <Project Path="Adapters.GameProtocol.WwR08/Adapters.GameProtocol.WwR08.csproj" />
