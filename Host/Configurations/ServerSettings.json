@@ -15,6 +15,9 @@
         "CustomizationNameDataPath": "",
         "EnableShop": true,
         "ActiveShopSeasonId": 2
+      },
+      "Blue": {
+        "Enabled": false
       }
     }
   }
