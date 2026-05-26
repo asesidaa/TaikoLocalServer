@@ -60,6 +60,36 @@ public sealed class GreenItemShopLoaderTests
         }
     }
 
+    [Fact]
+    public async Task LoadFromFile_DefaultGreenItemShopDataLoads()
+    {
+        var path = FindDefaultShopDataPath();
+
+        Assert.NotNull(path);
+
+        var expectedCounts = new Dictionary<uint, int>
+        {
+            [1] = 4,
+            [2] = 8,
+            [3] = 8,
+            [4] = 8
+        };
+
+        foreach (var (seasonId, expectedCount) in expectedCounts)
+        {
+            var catalog = await GreenItemShopLoader.LoadFromFileAsync(
+                path,
+                new EraSettings { EnableShop = true, ActiveShopSeasonId = seasonId },
+                CancellationToken.None);
+
+            Assert.True(catalog.IsEnabled);
+            Assert.Equal(4, catalog.Seasons.Count);
+            Assert.NotNull(catalog.ActiveSeason);
+            Assert.Equal(seasonId, catalog.ActiveSeason.SeasonId);
+            Assert.Equal(expectedCount, catalog.ActiveSeason.Items.Count);
+        }
+    }
+
     [Theory]
     [InlineData(null, "active")]
     [InlineData(99u, "active")]
@@ -161,5 +191,28 @@ public sealed class GreenItemShopLoaderTests
         {
             File.Delete(path);
         }
+    }
+
+    private static string? FindDefaultShopDataPath()
+    {
+        for (var directory = new DirectoryInfo(AppContext.BaseDirectory);
+             directory is not null;
+             directory = directory.Parent)
+        {
+            var path = Path.Combine(
+                directory.FullName,
+                "Host",
+                "wwwroot",
+                "data",
+                "green",
+                GreenItemShopLoader.FileName);
+
+            if (File.Exists(path))
+            {
+                return path;
+            }
+        }
+
+        return null;
     }
 }
