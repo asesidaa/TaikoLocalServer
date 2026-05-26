@@ -5,6 +5,16 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Green.Mappers;
 [Mapper]
 public static partial class ItemShopMappers
 {
+    public static ItemPurchaseCommand Map(ItempurchaseRequest request)
+    {
+        return new ItemPurchaseCommand(
+            request.Baid,
+            request.ItemNo,
+            request.ShouldSerializeItemType() ? request.ItemType : null,
+            request.ShouldSerializeItemId() ? request.ItemId : null,
+            request.ShouldSerializeItemPrice() ? request.ItemPrice : null);
+    }
+
     public static GetitemshopinfoResponse Map(CommonItemShopInfoResponse common)
     {
         var response = new GetitemshopinfoResponse

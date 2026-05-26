@@ -9,9 +9,7 @@ public class ItemPurchaseController : BaseProtocolController<ItemPurchaseControl
     public async Task<IActionResult> ItemPurchase([FromBody] ItempurchaseRequest request)
     {
         Logger.LogInformation("Green ItemPurchase request: {Request}", request.Stringify());
-        var common = await Mediator.Send(
-            new ItemPurchaseCommand(request.Baid, request.ItemNo, request.ItemType, request.ItemId, request.ItemPrice),
-            HttpContext.RequestAborted);
+        var common = await Mediator.Send(ItemShopMappers.Map(request), HttpContext.RequestAborted);
         return Ok(ItemShopMappers.Map(common));
     }
 }

@@ -6,7 +6,7 @@
     "MoreSongsSize": 9000,
     "Eras": {
       "Nijiiro": {
-        "Enabled": true
+        "Enabled": false
       },
       "Green": {
         "Enabled": true,
@@ -14,7 +14,7 @@
         "GameDataPath": "wwwroot/data/green/data",
         "CustomizationNameDataPath": "",
         "EnableShop": true,
-        "ActiveShopSeasonId": 1
+        "ActiveShopSeasonId": 2
       }
     }
   }

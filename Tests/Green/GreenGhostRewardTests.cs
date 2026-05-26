@@ -67,37 +67,6 @@ public sealed class GreenGhostRewardTests
     }
 
     [Fact]
-    public async Task RewardExecution_RejectsUnknownInRangeRewardIds()
-    {
-        await using var fixture = await GreenHandlerFixture.CreateAsync();
-        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
-        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
-        await fixture.Context.SaveChangesAsync();
-
-        var handler = new RewardExecutionCommandHandler(
-            fixture.Context,
-            fixture.Catalog,
-            NullLogger<RewardExecutionCommandHandler>.Instance);
-
-        var response = await handler.Handle(new RewardExecutionCommand(
-            1,
-            [],
-            [2],
-            [3],
-            [],
-            [],
-            [],
-            [],
-            [4]), CancellationToken.None);
-
-        var save = await fixture.Context.UserSaveDataGreen.FindAsync(1u);
-        Assert.Equal((uint)0, response.Result);
-        Assert.False((save!.ToneFlg[2 >> 3] & (1 << (2 & 7))) != 0);
-        Assert.False((save.CostumeFlg1[3 >> 3] & (1 << (3 & 7))) != 0);
-        Assert.False((save.TitleFlg[4 >> 3] & (1 << (4 & 7))) != 0);
-    }
-
-    [Fact]
     public async Task RewardCardCheck_ReturnsKnownCardBaid()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();

@@ -1,4 +1,5 @@
 using TaikoLocalServer.Adapters.GameProtocol.Green.Mappers;
+using TaikoLocalServer.Adapters.GameProtocol.Green.Wire;
 
 namespace TaikoLocalServer.Tests.Green;
 
@@ -44,6 +45,26 @@ public sealed class GreenItemShopProtocolTests
         Assert.Equal(4u, wire.AryItemshopDatas[0].ItemType);
         Assert.Equal(117u, wire.AryItemshopDatas[0].ItemId);
         Assert.Equal(500u, wire.AryItemshopDatas[0].ItemPrice);
+    }
+
+    [Fact]
+    public void ItemPurchaseCommandMap_PreservesOmittedOptionalDetails()
+    {
+        var request = new ItempurchaseRequest
+        {
+            ChassisId = "268410000000",
+            ShopId = "JPN0JPN0123",
+            Baid = 1,
+            ItemNo = 0
+        };
+
+        var command = ItemShopMappers.Map(request);
+
+        Assert.Equal(1u, command.Baid);
+        Assert.Equal(0u, command.ItemNo);
+        Assert.Null(command.ItemType);
+        Assert.Null(command.ItemId);
+        Assert.Null(command.ItemPrice);
     }
 
     private static GreenHandlerFixture.TestGreenCatalog CreateShopCatalog()
