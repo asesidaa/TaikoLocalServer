@@ -3,6 +3,7 @@ using Serilog.Sinks.File.Header;
 using TaikoLocalServer.Adapters.AdminApi;
 using TaikoLocalServer.Adapters.AdminApi.Controllers;
 using TaikoLocalServer.Adapters.AllnetMucha;
+using TaikoLocalServer.Adapters.GameProtocol.Blue;
 using TaikoLocalServer.Adapters.GameProtocol.CnR00;
 using TaikoLocalServer.Adapters.GameProtocol.Green;
 using TaikoLocalServer.Adapters.GameProtocol.WwR08;
@@ -78,7 +79,7 @@ try
 
     if (enabledEras.Count == 0)
     {
-        Log.Fatal("ServerSettings.Eras has no enabled era. At least one era (Nijiiro or Green) must be enabled in Host/Configurations/ServerSettings.json. Refusing to start.");
+        Log.Fatal("ServerSettings.Eras has no enabled era. At least one era (Nijiiro, Green, or Blue) must be enabled in Host/Configurations/ServerSettings.json. Refusing to start.");
         throw new InvalidOperationException("No game eras enabled.");
     }
 
@@ -119,6 +120,10 @@ try
     {
         builder.Services.AddGameProtocolGreen();
     }
+    if (enabledEras.Contains(GameEra.Blue))
+    {
+        builder.Services.AddGameProtocolBlue();
+    }
 
     builder.Services.AddControllers()
         .AddProtoBufNet()
@@ -129,6 +134,10 @@ try
             if (!enabledEras.Contains(GameEra.Green))
             {
                 RemoveApplicationPart(apm, "TaikoLocalServer.Adapters.GameProtocol.Green");
+            }
+            if (!enabledEras.Contains(GameEra.Blue))
+            {
+                RemoveApplicationPart(apm, "TaikoLocalServer.Adapters.GameProtocol.Blue");
             }
             if (!enabledEras.Contains(GameEra.Nijiiro))
             {
@@ -270,6 +279,7 @@ static bool ShouldAssumeProtobufRequest(HttpRequest request)
 
     var path = request.Path;
     return path.StartsWithSegments("/v11r01/chassis", StringComparison.OrdinalIgnoreCase)
+           || path.StartsWithSegments("/v10r03/chassis", StringComparison.OrdinalIgnoreCase)
            || path.StartsWithSegments("/v01r00/chassis", StringComparison.OrdinalIgnoreCase)
            || path.StartsWithSegments("/v12r08_ww/chassis", StringComparison.OrdinalIgnoreCase)
            || path.StartsWithSegments("/v12r00_cn/chassis", StringComparison.OrdinalIgnoreCase);
