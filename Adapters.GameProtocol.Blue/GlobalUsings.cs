@@ -2,6 +2,7 @@
 
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.Logging;
 global using ProtoBuf;
 global using Swan.Formatters;
 global using TaikoLocalServer.Adapters.GameProtocol.Blue.Wire;
