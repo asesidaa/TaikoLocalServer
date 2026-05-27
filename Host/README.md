@@ -11,6 +11,7 @@ As the game uses protobuf, `protobuf-net` is used for serializing and deserializ
     - [Green customization catalogs](#green-customization-catalogs)
     - [Green attract movies](#green-attract-movies)
     - [Green item shop](#green-item-shop)
+  - [Blue AC15 Test Support](#blue-ac15-test-support)
     - [Green Cabinet Smoke Checklist](#green-cabinet-smoke-checklist)
   - [Datatable documentation](#datatable-documentation)
     - [dan\_data.json](#dan_datajson)
@@ -58,14 +59,30 @@ wwwroot/data/
 |       |   `-- musicmedleyinfo.xml
 |       `-- fumen/
 |           `-- tuning.bin
+|-- blue/                       Blue-era AC15 data
+|   |-- blue_event_folder_data.json Optional Blue event folders
+|   |-- blue_recommend_songs.json   Optional Blue pushed/recommended songs
+|   |-- blue_telop_data.json        Optional Blue telops
+|   |-- blue_movie_data.json        Blue attract movie permissions
+|   |-- blue_item_shop_data.json    Blue item shop seasons and item rows
+|   |-- blue_costume_data.json      Generated or curated Blue customization catalog
+|   |-- blue_title_data.json        Generated or curated Blue title catalog
+|   |-- blue_neiro_data.json        Generated or curated Blue tone catalog
+|   `-- data/                       Blue game USRDIR/data tree, often symlinked
+|       |-- config/S10100-1/
+|       |   |-- musicinfo.xml
+|       |   |-- musicmedleyinfo.xml
+|       |   `-- battle/             Present but reserved for Track B
+|       `-- fumen/
+|           `-- tuning.bin
 `-- shared/                     Cross-era operator-edited tables
     |-- token_data.json
     `-- qrcode_data.json
 ```
 
 Era availability is controlled by `Configurations/ServerSettings.json` under
-`ServerSettings:Eras`. Nijiiro is enabled by default. To allow Green cabinet
-routes, set `ServerSettings:Eras:Green:Enabled` to `true`.
+`ServerSettings:Eras`. Nijiiro is enabled by default. To allow Green or Blue
+cabinet routes, set the corresponding era's `Enabled` value to `true`.
 
 ## Green AC15 Test Support
 
@@ -203,6 +220,41 @@ The shop data file stores protocol data only:
 `item_no` is inferred from 1-based row order. Item rows must not contain names
 or source metadata. Official announcement pages list names in images, so
 name-to-id resolution is an offline curation step.
+
+## Blue AC15 Test Support
+
+When `ServerSettings:Eras:Blue:Enabled` is `true`, the server requires:
+
+- `wwwroot/data/blue/data/config/S10100-1/musicinfo.xml`
+- `wwwroot/data/blue/data/config/S10100-1/musicmedleyinfo.xml`
+- `wwwroot/data/blue/data/fumen/tuning.bin`
+
+Blue uses the original game `USRDIR/data` layout. From a source checkout:
+
+```powershell
+New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\Host\wwwroot\data\blue\data'
+```
+
+From an extracted release folder:
+
+```powershell
+New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\wwwroot\data\blue\data'
+```
+
+If copying instead of linking:
+
+```powershell
+New-Item -ItemType Directory -Force -Path '.\wwwroot\data\blue' | Out-Null
+Copy-Item -Recurse -Path 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data' -Destination '.\wwwroot\data\blue\data'
+```
+
+Optional Blue JSON files under `wwwroot/data/blue/` default to empty catalog
+data unless a feature setting requires them. `blue_item_shop_data.json` is
+required only when `ServerSettings:Eras:Blue:EnableShop` is `true`; then
+`ActiveShopSeasonId` must match a season in that file.
+
+`config/S10100-1/battle` exists in Blue game data, but battle catalog parsing
+and battle mode behavior are reserved for Track B.
 
 ### Green Cabinet Smoke Checklist
 

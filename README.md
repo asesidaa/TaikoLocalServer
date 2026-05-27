@@ -30,6 +30,15 @@ It is composed of two major components :
    ```powershell
    New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\Host\wwwroot\data\green\data'
    ```
+   For Blue AC15, provide the game's `USRDIR/data` folder under
+   `wwwroot/data/blue/data`. The required normal catalog files are:
+
+   - `wwwroot/data/blue/data/config/S10100-1/musicinfo.xml`
+   - `wwwroot/data/blue/data/config/S10100-1/musicmedleyinfo.xml`
+   - `wwwroot/data/blue/data/fumen/tuning.bin`
+
+   Battle data under `wwwroot/data/blue/data/config/S10100-1/battle` is reserved
+   for the later Blue battle-mode track.
 4. (Optional) In `Certificates` folder, import `root.pfx` to trusted root store and `cert.pfx` to personal store. All the other import options can be kept default
 5. Visit [http://localhost](http://localhost). If the WebUI starts without errors, the config is fine
 6. Start your game! (First boot with the server will take a good minute, be patient!)
