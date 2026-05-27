@@ -2,6 +2,20 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Agent skills
+
+### Issue tracker
+
+Issues and PRDs live as local markdown under `.scratch/<feature-slug>/`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Use the default canonical triage status strings. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Multi-context layout: root project context plus adapter-era and WebUI contexts. See `docs/agents/domain.md`.
+
 ## What this is
 
 A private server emulator for Taiko no Tatsujin, supporting two game eras in parallel: **Nijiiro** (CHN `v12r00_cn` and 39.06 `v12r08_ww`) and **Green** (AC15, `v11r01`). The same ASP.NET Core 10 process serves the game's protobuf endpoints **and** hosts the Blazor WebAssembly admin UI on the same Kestrel server, so there is no separate frontend deployment. The codebase follows a hexagonal/ports-and-adapters layout: a pure `Domain` core, an `Application` orchestration layer that depends only on ports, an `Infrastructure` project that owns the real EF Core context + filesystem catalog + JWT issuer + clock, and one adapter project per inbound surface (admin REST, AllNet/Mucha lifecycle, and one per game protocol version).

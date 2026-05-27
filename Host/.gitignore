@@ -5,3 +5,4 @@ wwwroot/data/datatable/*
 wwwroot/data/*/datatable/*
 wwwroot/taiko.db3
 wwwroot/data/*/data/*
+wwwroot/data/blue/data
