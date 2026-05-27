@@ -1,3 +1,5 @@
+using TaikoLocalServer.Application.Catalog.Blue;
+
 namespace TaikoLocalServer.Application.Handlers;
 
 public partial class UpdatePlayResultCommandHandler
@@ -25,6 +27,7 @@ public partial class UpdatePlayResultCommandHandler
 
         var playResultData = request.PlayResultData;
         var saveData = await context.GetOrCreateBlueSaveDataAsync(request.Baid, cancellationToken);
+        var blue = gameDataService.Blue();
 
         if (!CanAddBlue(saveData.TotalGetDonmedal, playResultData.GetDonmedal)
             || !CanAddBlue(saveData.TotalGetKatsumedal, playResultData.GetKatsumedal))
@@ -91,6 +94,8 @@ public partial class UpdatePlayResultCommandHandler
             BlueProfileCounters.ApplyStage(saveData, stage);
             await SaveBlueStageAsync(request.Baid, stage, playResultData.PlayMode, playTime, cancellationToken);
         }
+
+        await SaveBlueDanAsync(saveData, playResultData, blue, cancellationToken);
 
         await context.SaveChangesAsync(cancellationToken);
         await TrimBlueRecentSongsAsync(request.Baid, cancellationToken);
@@ -295,6 +300,154 @@ public partial class UpdatePlayResultCommandHandler
 
         context.BlueRecentSongs.RemoveRange(overage);
         await context.SaveChangesAsync(cancellationToken);
+    }
+
+    private async Task SaveBlueDanAsync(
+        UserSaveDataBlue saveData,
+        CommonPlayResultData playResultData,
+        IBlueCatalog blue,
+        CancellationToken cancellationToken)
+    {
+        if (playResultData.PlayMode != (uint)PlayMode.DanMode)
+        {
+            return;
+        }
+
+        var danIds = playResultData.AryStageInfoes
+            .Select(stage => stage.PlayDan.GetValueOrDefault())
+            .Where(dan => dan != 0)
+            .Distinct()
+            .ToArray();
+
+        if (danIds.Length != 1)
+        {
+            logger.LogWarning("Skipping Blue Dani save for baid {Baid}: expected one PlayDan value, got {Count}", saveData.Baid, danIds.Length);
+            return;
+        }
+
+        if (playResultData.DanResult > (uint)BlueDanClearGrade.GoldClear)
+        {
+            logger.LogWarning("Skipping Blue Dani save for baid {Baid}: invalid DanResult {DanResult}", saveData.Baid, playResultData.DanResult);
+            return;
+        }
+
+        var danId = danIds[0];
+        var pack = blue.TaikojukuFileOrder.FirstOrDefault(row => row.ChallengeLevel == danId);
+        if (pack is null || !BlueDanHelpers.IsKnownBlueDanId(danId))
+        {
+            logger.LogWarning("Skipping Blue Dani save for baid {Baid}: unknown Dan id {DanId}", saveData.Baid, danId);
+            return;
+        }
+
+        var isExtra = BlueDanHelpers.IsExtraDanId(danId);
+        var danScore = await context.DanScoreDataBlue
+            .Include(row => row.DanStageScoreData)
+            .SingleOrDefaultAsync(row => row.Baid == saveData.Baid && row.DanId == danId && row.IsExtra == isExtra, cancellationToken);
+
+        if (danScore is null)
+        {
+            danScore = new DanScoreDatumBlue
+            {
+                Baid = saveData.Baid,
+                DanId = danId,
+                IsExtra = isExtra,
+                MedleyUniqueId = pack.UniqueId
+            };
+            context.DanScoreDataBlue.Add(danScore);
+        }
+
+        var incomingClearGrade = BlueDanHelpers.ClampGrade(playResultData.DanResult);
+        UpdateBlueDanScore(danScore, playResultData);
+        await UpdateBlueDanSummaryAsync(saveData, danScore, incomingClearGrade, cancellationToken);
+    }
+
+    private static void UpdateBlueDanScore(DanScoreDatumBlue danScore, CommonPlayResultData playResultData)
+    {
+        danScore.ClearGrade = BlueDanHelpers.ClampGrade(Math.Max((uint)danScore.ClearGrade, playResultData.DanResult));
+        danScore.ArrivalSongCount = Math.Max(danScore.ArrivalSongCount, (uint)playResultData.AryStageInfoes.Count);
+        danScore.ComboCountTotal = Math.Max(danScore.ComboCountTotal, playResultData.ComboCntTotal);
+        danScore.SoulGaugeTotal = Math.Max(
+            danScore.SoulGaugeTotal,
+            playResultData.AryStageInfoes.LastOrDefault()?.SoulGauge.GetValueOrDefault() ?? 0);
+
+        for (var i = 0; i < playResultData.AryStageInfoes.Count; i++)
+        {
+            var stage = playResultData.AryStageInfoes[i];
+            var stageIndex = (uint)i;
+            var existing = danScore.DanStageScoreData.FirstOrDefault(row => row.StageIndex == stageIndex);
+            if (existing is null)
+            {
+                existing = new DanStageScoreDatumBlue
+                {
+                    Baid = danScore.Baid,
+                    DanId = danScore.DanId,
+                    IsExtra = danScore.IsExtra,
+                    StageIndex = stageIndex,
+                    SongNumber = stage.SongNo,
+                    BadCount = stage.NgCnt
+                };
+                danScore.DanStageScoreData.Add(existing);
+            }
+
+            existing.SongNumber = stage.SongNo;
+            existing.PlayScore = Math.Max(existing.PlayScore, stage.PlayScore);
+            existing.HighScore = Math.Max(existing.HighScore, stage.PlayScore);
+            existing.ComboCount = Math.Max(existing.ComboCount, stage.ComboCnt);
+            existing.DrumrollCount = Math.Max(existing.DrumrollCount, stage.PoundCnt);
+            existing.GoodCount = Math.Max(existing.GoodCount, stage.GoodCnt);
+            existing.OkCount = Math.Max(existing.OkCount, stage.OkCnt);
+            existing.TotalHitCount = Math.Max(existing.TotalHitCount, stage.HitCnt);
+            existing.BadCount = Math.Min(existing.BadCount, stage.NgCnt);
+        }
+    }
+
+    private async ValueTask UpdateBlueDanSummaryAsync(
+        UserSaveDataBlue saveData,
+        DanScoreDatumBlue currentDanScore,
+        BlueDanClearGrade incomingClearGrade,
+        CancellationToken cancellationToken)
+    {
+        var rows = await context.DanScoreDataBlue
+            .Where(row => row.Baid == saveData.Baid)
+            .ToListAsync(cancellationToken);
+
+        if (!rows.Any(row => row.DanId == currentDanScore.DanId && row.IsExtra == currentDanScore.IsExtra))
+        {
+            rows.Add(currentDanScore);
+        }
+
+        var normalGrades = rows
+            .Where(row => !row.IsExtra && BlueDanHelpers.IsNormalDanId(row.DanId))
+            .ToDictionary(row => row.DanId, row => row.ClearGrade);
+
+        var normalFlags = new byte[BlueProtocolBytes.DanFlagBytes];
+        foreach (var row in rows.Where(row => !row.IsExtra && BlueDanHelpers.IsNormalDanId(row.DanId)))
+        {
+            normalFlags = BlueDanHelpers.SetPackedGrade(
+                normalFlags,
+                BlueDanHelpers.GetPackedIndex(row.DanId),
+                row.ClearGrade);
+        }
+
+        var extraFlags = new byte[BlueProtocolBytes.DanExtraFlagBytes];
+        foreach (var row in rows.Where(row => row.IsExtra && BlueDanHelpers.IsExtraDanId(row.DanId)))
+        {
+            extraFlags = BlueDanHelpers.SetPackedGrade(
+                extraFlags,
+                BlueDanHelpers.GetPackedIndex(row.DanId),
+                row.ClearGrade);
+        }
+
+        var isIncomingClear = BlueDanHelpers.IsClear(incomingClearGrade);
+
+        saveData.GotDanFlg = normalFlags;
+        saveData.GotDanExtraFlg = extraFlags;
+        saveData.GotDanMax = BlueDanHelpers.GetGotDanMax(normalGrades);
+        saveData.DispTaikojukuDan = !currentDanScore.IsExtra
+                                    && BlueDanHelpers.IsNormalDanId(currentDanScore.DanId)
+                                    && isIncomingClear
+            ? BlueDanHelpers.GetDisplayDanAfterNormalClear(currentDanScore.DanId)
+            : BlueDanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalGrades);
     }
 
     private static bool CanAddBlue(uint current, uint delta)

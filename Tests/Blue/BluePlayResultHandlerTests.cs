@@ -1,3 +1,5 @@
+using TaikoLocalServer.Application.Catalog.Blue;
+
 namespace TaikoLocalServer.Tests.Blue;
 
 public sealed class BluePlayResultHandlerTests
@@ -196,6 +198,182 @@ public sealed class BluePlayResultHandlerTests
         Assert.Equal(10, await fixture.Context.BlueRecentSongs.CountAsync(row => row.Baid == 1));
     }
 
+    [Fact]
+    public async Task UpdatePlayResult_Blue_DaniSavesDanRowsAndKeepsNormalStageRows()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataBlue.Add(UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Blue,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayDatetime = "20260528120000",
+                PlayMode = (uint)PlayMode.DanMode,
+                DanResult = 2,
+                ComboCntTotal = 300,
+                AryStageInfoes =
+                [
+                    CreateDanStage(101, 1, 326090, 124, 14, 0, 139, 138, 277, 51),
+                    CreateDanStage(102, 1, 593280, 230, 33, 3, 287, 156, 550, 99),
+                    CreateDanStage(103, 1, 818490, 314, 49, 6, 342, 156, 705, 100)
+                ]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        Assert.Equal(3, await fixture.Context.SongPlayDataBlue.CountAsync(row => row.Baid == 1));
+        var dan = await fixture.Context.DanScoreDataBlue
+            .Include(row => row.DanStageScoreData)
+            .SingleAsync(row => row.Baid == 1 && row.DanId == 1 && !row.IsExtra);
+        Assert.Equal(20001u, dan.MedleyUniqueId);
+        Assert.Equal(BlueDanClearGrade.GoldClear, dan.ClearGrade);
+        Assert.Equal(3u, dan.ArrivalSongCount);
+        Assert.Equal(100u, dan.SoulGaugeTotal);
+        Assert.Equal(300u, dan.ComboCountTotal);
+        Assert.Equal(3, dan.DanStageScoreData.Count);
+        Assert.Equal(326090u, dan.DanStageScoreData.Single(stage => stage.StageIndex == 0).HighScore);
+        var save = await fixture.Context.UserSaveDataBlue.FindAsync(1u);
+        Assert.NotNull(save);
+        Assert.Equal(1u, save!.GotDanMax);
+        Assert.Equal(2u, save.DispTaikojukuDan);
+        Assert.Equal(BlueDanClearGrade.GoldClear, BlueDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Blue_DaniRejectsInvalidDanResultButKeepsNormalPlaySave()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataBlue.Add(UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Blue,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayMode = (uint)PlayMode.DanMode,
+                DanResult = 3,
+                AryStageInfoes = [CreateDanStage(101, 1, 123, 1, 2, 3, 4, 5, 6, 7)]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        Assert.Single(await fixture.Context.SongPlayDataBlue.ToListAsync());
+        Assert.Empty(await fixture.Context.DanScoreDataBlue.ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Blue_DaniUnknownDanSkipsOnlyDanRows()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataBlue.Add(UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Blue,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayMode = (uint)PlayMode.DanMode,
+                DanResult = 1,
+                AryStageInfoes = [CreateDanStage(101, 999, 123, 1, 2, 3, 4, 5, 6, 7)]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        Assert.Single(await fixture.Context.SongPlayDataBlue.ToListAsync());
+        Assert.Empty(await fixture.Context.DanScoreDataBlue.ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Blue_DaniExtraClearUpdatesExtraFlagsOnly()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync(new BlueHandlerFixture.TestBlueCatalog(
+            taikojukuFileOrder:
+            [
+                new BlueTaikojukuEntry
+                {
+                    UniqueId = 20101,
+                    ChallengeLevel = 101,
+                    VerupNo = 0,
+                    Songs = [new BlueTaikojukuSong { SongNo = 101, Level = 1 }]
+                }
+            ]));
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataBlue.Add(UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Blue,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayMode = (uint)PlayMode.DanMode,
+                DanResult = 2,
+                AryStageInfoes = [CreateDanStage(101, 101, 100, 10, 2, 1, 4, 12, 13, 100)]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var save = await fixture.Context.UserSaveDataBlue.FindAsync(1u);
+        Assert.NotNull(save);
+        Assert.Equal(0u, save!.GotDanMax);
+        Assert.Equal(1u, save.DispTaikojukuDan);
+        Assert.Equal(BlueDanClearGrade.GoldClear, BlueDanHelpers.GetPackedGrade(save.GotDanExtraFlg, 0));
+        Assert.Equal(BlueDanClearGrade.NotClear, BlueDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Blue_DaniDuplicateSongsKeepStageIndexRows()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataBlue.Add(UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Blue,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayMode = (uint)PlayMode.DanMode,
+                DanResult = 1,
+                AryStageInfoes =
+                [
+                    CreateDanStage(101, 1, 100, 1, 2, 3, 4, 5, 6, 7),
+                    CreateDanStage(101, 1, 200, 2, 3, 4, 5, 6, 7, 8)
+                ]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var rows = await fixture.Context.DanStageScoreDataBlue
+            .Where(row => row.Baid == 1 && row.DanId == 1)
+            .OrderBy(row => row.StageIndex)
+            .ToListAsync();
+        Assert.Equal(2, rows.Count);
+        Assert.Equal(0u, rows[0].StageIndex);
+        Assert.Equal(1u, rows[1].StageIndex);
+        Assert.Equal(100u, rows[0].HighScore);
+        Assert.Equal(200u, rows[1].HighScore);
+    }
+
     private static UpdatePlayResultCommandHandler CreateHandler(BlueHandlerFixture fixture)
     {
         return new UpdatePlayResultCommandHandler(
@@ -233,6 +411,31 @@ public sealed class BluePlayResultHandlerTests
             SelectedFolderId = 9,
             SoulGauge = 100
         };
+    }
+
+    private static CommonPlayResultData.StageData CreateDanStage(
+        uint songNo,
+        uint danId,
+        uint score,
+        uint good,
+        uint ok,
+        uint bad,
+        uint drumroll,
+        uint combo,
+        uint hits,
+        uint soulGauge)
+    {
+        var stage = CreateStage(songNo, 1, 0, score);
+        stage.PlayDan = danId;
+        stage.PlayResult = 0;
+        stage.GoodCnt = good;
+        stage.OkCnt = ok;
+        stage.NgCnt = bad;
+        stage.PoundCnt = drumroll;
+        stage.ComboCnt = combo;
+        stage.HitCnt = hits;
+        stage.SoulGauge = soulGauge;
+        return stage;
     }
 
     private static bool BitIsSet(byte[] source, uint id)
