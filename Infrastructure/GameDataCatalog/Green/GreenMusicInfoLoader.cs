@@ -1,5 +1,6 @@
-using System.Xml.Linq;
+using TaikoLocalServer.Application.Catalog.Ac15;
 using TaikoLocalServer.Application.Catalog.Green;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Ac15;
 
 namespace TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
 
@@ -18,45 +19,26 @@ public sealed class GreenMusicInfoLoader
         string path,
         CancellationToken cancellationToken)
     {
-        await using var stream = File.OpenRead(path);
-        var document = await XDocument.LoadAsync(stream, LoadOptions.None, cancellationToken);
-        var root = document.Root ?? throw new InvalidDataException($"Missing root element in {path}");
-
-        var musicInfo = root.Element("MusicInfo")
-            ?? throw new InvalidDataException($"Missing MusicInfo in {path}");
-        var header = musicInfo.Element("Header")
-            ?? throw new InvalidDataException($"Missing MusicInfo/Header in {path}");
-        var version = ParseUInt(header.Element("version")?.Value);
-
-        var entries = musicInfo
-            .Elements("Data")
-            .Select((element, index) => new GreenMusicInfoEntry
-            {
-                MusicId = ReadString(element, "musicid"),
-                SongNo = ReadUInt(element, "uniqueid"),
-                NewRelease = ReadUInt(element, "newrelease"),
-                IsSecret = ReadUInt(element, "secret") != 0,
-                IsPapaMama = ReadUInt(element, "papamama") != 0,
-                HasExtreme = ReadUInt(element, "hasextreme") != 0,
-                PartsSet = ReadString(element, "partsset"),
-                WaiwaiPartsSet = ReadString(element, "wai2partsset"),
-                Title = ReadString(element, "musicname"),
-                GenreName = ReadString(element, "genrename"),
-                DemoPlay = ReadUInt(element, "demoplay"),
-                Tags = element.Elements("tag").Select(tag => ParseUInt(tag.Value)).ToArray(),
-                FileOrder = index
-            })
-            .ToArray();
-
-        return new GreenMusicInfoLoadResult(version, entries);
+        var result = await Ac15MusicInfoLoader.LoadFromFileAsync(path, cancellationToken);
+        return new GreenMusicInfoLoadResult(
+            result.SongHashVersion,
+            result.Entries.Select(Map).ToArray());
     }
 
-    private static string ReadString(XContainer element, string name)
-        => element.Element(name)?.Value ?? string.Empty;
-
-    private static uint ReadUInt(XContainer element, string name)
-        => ParseUInt(element.Element(name)?.Value);
-
-    private static uint ParseUInt(string? value)
-        => uint.TryParse(value, out var parsed) ? parsed : 0;
+    private static GreenMusicInfoEntry Map(Ac15MusicInfoEntry entry) => new()
+    {
+        MusicId = entry.MusicId,
+        SongNo = entry.SongNo,
+        NewRelease = entry.NewRelease,
+        IsSecret = entry.IsSecret,
+        IsPapaMama = entry.IsPapaMama,
+        HasExtreme = entry.HasExtreme,
+        PartsSet = entry.PartsSet,
+        WaiwaiPartsSet = entry.WaiwaiPartsSet,
+        Title = entry.Title,
+        GenreName = entry.GenreName,
+        DemoPlay = entry.DemoPlay,
+        Tags = entry.Tags,
+        FileOrder = entry.FileOrder
+    };
 }

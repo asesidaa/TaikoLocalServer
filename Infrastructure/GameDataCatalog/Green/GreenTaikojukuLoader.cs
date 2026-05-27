@@ -1,5 +1,6 @@
-using System.Xml.Linq;
+using TaikoLocalServer.Application.Catalog.Ac15;
 using TaikoLocalServer.Application.Catalog.Green;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Ac15;
 
 namespace TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
 
@@ -14,56 +15,38 @@ public sealed class GreenTaikojukuLoader
         string path,
         CancellationToken cancellationToken)
     {
-        await using var stream = File.OpenRead(path);
-        var document = await XDocument.LoadAsync(stream, LoadOptions.None, cancellationToken);
-        var root = document.Root ?? throw new InvalidDataException($"Missing root element in {path}");
-
-        return root.Elements("MusicMedleyInfoData")
-            .Select(element => new GreenTaikojukuEntry
-            {
-                UniqueId = ReadUInt(element, "uniqueid"),
-                DanLevel = ReadUInt(element, "challengelv"),
-                Name = ReadString(element, "medleyname"),
-                Difficulty = ReadUInt(element, "difficulty"),
-                ChallengeLevel = ReadUInt(element, "challengelv"),
-                Conditions = ReadConditions(element.Element("Conditions")),
-                ExcellentConditions = ReadConditions(element.Element("ExcellentConditions")),
-                Songs = element.Elements("Content")
-                    .Select(content => new GreenTaikojukuSong
-                    {
-                        MusicId = ReadString(content, "musicid"),
-                        SongNo = ReadUInt(content, "uniqueid"),
-                        Level = ReadUInt(content, "difficulty"),
-                        Notes = ReadUInt(content, "notes")
-                    })
-                    .ToArray()
-            })
-            .ToArray();
+        var entries = await Ac15TaikojukuLoader.LoadFromFileAsync(path, cancellationToken);
+        return entries.Select(Map).ToArray();
     }
 
-    private static string ReadString(XContainer element, string name)
-        => element.Element(name)?.Value ?? string.Empty;
-
-    private static uint ReadUInt(XContainer element, string name)
-        => uint.TryParse(element.Element(name)?.Value, out var parsed) ? parsed : 0;
-
-    private static GreenTaikojukuConditions ReadConditions(XContainer? element)
+    private static GreenTaikojukuEntry Map(Ac15TaikojukuEntry entry) => new()
     {
-        if (element is null)
+        UniqueId = entry.UniqueId,
+        DanLevel = entry.DanLevel,
+        ChallengeLevel = entry.ChallengeLevel,
+        Name = entry.Name,
+        Difficulty = entry.Difficulty,
+        VerupNo = entry.VerupNo,
+        Conditions = Map(entry.Conditions),
+        ExcellentConditions = Map(entry.ExcellentConditions),
+        Songs = entry.Songs.Select(song => new GreenTaikojukuSong
         {
-            return GreenTaikojukuConditions.Empty;
-        }
+            MusicId = song.MusicId,
+            SongNo = song.SongNo,
+            Level = song.Level,
+            Notes = song.Notes
+        }).ToArray()
+    };
 
-        return new GreenTaikojukuConditions
-        {
-            SoulGauge = ReadUInt(element, "tamashii") / 100,
-            GoodCount = ReadUInt(element, "hit_ryo"),
-            OkCount = ReadUInt(element, "hit_ka"),
-            BadCount = ReadUInt(element, "hit_fuka"),
-            ComboCount = ReadUInt(element, "combo"),
-            TotalHitCount = ReadUInt(element, "hits"),
-            Score = ReadUInt(element, "score"),
-            DrumrollCount = ReadUInt(element, "renda")
-        };
-    }
+    private static GreenTaikojukuConditions Map(Ac15TaikojukuConditions conditions) => new()
+    {
+        SoulGauge = conditions.SoulGauge,
+        GoodCount = conditions.GoodCount,
+        OkCount = conditions.OkCount,
+        BadCount = conditions.BadCount,
+        ComboCount = conditions.ComboCount,
+        TotalHitCount = conditions.TotalHitCount,
+        Score = conditions.Score,
+        DrumrollCount = conditions.DrumrollCount
+    };
 }
