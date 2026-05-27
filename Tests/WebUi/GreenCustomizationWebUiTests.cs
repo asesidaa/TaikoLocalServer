@@ -73,8 +73,10 @@ public sealed class GreenCustomizationWebUiTests
         Assert.Contains("@bind-Value=\"@response.GreenDispLevelChassis\"", greenBranch);
         Assert.Contains("Local Ranking Difficulty", greenBranch);
         Assert.Contains("GreenLocalRankingDifficultyStrings", code);
+        Assert.Contains("@bind-Value=\"@response.GreenDispLevelSelf\"", greenBranch);
+        Assert.Contains("Default Selected Difficulty", greenBranch);
+        Assert.Contains("GreenDefaultSelectedDifficultyStrings", code);
 
-        Assert.DoesNotContain("disp_level_self", markup, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("disp_level_total", markup, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("DifficultyPlayedCourse", markup);
         Assert.DoesNotContain("DifficultyPlayedStar", markup);

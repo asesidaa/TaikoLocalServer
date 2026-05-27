@@ -50,6 +50,11 @@ public partial class Profile
         "No Fixed Course", "Easy", "Normal", "Hard", "Oni"
     };
 
+    private static readonly string[] GreenDefaultSelectedDifficultyStrings =
+    {
+        "None", "Easy", "Normal", "Hard", "Oni"
+    };
+
     private static readonly string[] DifficultySettingStarStrings =
     {
         "None", "Set Up Each Time",

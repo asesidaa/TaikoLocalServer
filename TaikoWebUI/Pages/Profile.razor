@@ -102,13 +102,23 @@
                                             </MudStack>
                                         </MudItem>
                                         <MudItem xs="12" md="8">
-                                            <MudSelect @bind-Value="@response.GreenDispLevelChassis" Label=@Localizer["Local Ranking Difficulty"] AnchorOrigin="Origin.BottomCenter">
-                                                @for (uint i = 0; i < GreenLocalRankingDifficultyStrings.Length; i++)
-                                                {
-                                                    var index = i;
-                                                    <MudSelectItem Value="@i">@Localizer[GreenLocalRankingDifficultyStrings[index]]</MudSelectItem>
-                                                }
-                                            </MudSelect>
+                                            <MudStack Spacing="4">
+                                                <MudSelect @bind-Value="@response.GreenDispLevelChassis" Label=@Localizer["Local Ranking Difficulty"] AnchorOrigin="Origin.BottomCenter">
+                                                    @for (uint i = 0; i < GreenLocalRankingDifficultyStrings.Length; i++)
+                                                    {
+                                                        var index = i;
+                                                        <MudSelectItem Value="@i">@Localizer[GreenLocalRankingDifficultyStrings[index]]</MudSelectItem>
+                                                    }
+                                                </MudSelect>
+
+                                                <MudSelect @bind-Value="@response.GreenDispLevelSelf" Label=@Localizer["Default Selected Difficulty"] AnchorOrigin="Origin.BottomCenter">
+                                                    @for (uint i = 0; i < GreenDefaultSelectedDifficultyStrings.Length; i++)
+                                                    {
+                                                        var index = i;
+                                                        <MudSelectItem Value="@i">@Localizer[GreenDefaultSelectedDifficultyStrings[index]]</MudSelectItem>
+                                                    }
+                                                </MudSelect>
+                                            </MudStack>
                                         </MudItem>
                                     </MudGrid>
                                 }
