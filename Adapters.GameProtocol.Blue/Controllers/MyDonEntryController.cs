@@ -6,15 +6,23 @@ public class MyDonEntryController : BaseProtocolController<MyDonEntryController>
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult MyDonEntry([FromBody] MydonEntryRequest request)
+    public async Task<IActionResult> MyDonEntry([FromBody] MydonEntryRequest request)
     {
         Logger.LogInformation("Blue MyDonEntry request: {Request}", request.Stringify());
+
+        var common = await Mediator.Send(
+            new AddMyDonEntryCommand(GameEra.Blue, request.AccessCode, request.MydonName, 0),
+            HttpContext.RequestAborted);
+
         return Ok(new MydonEntryResponse
         {
-            Result = 1,
-            AccessCode = request.AccessCode,
+            Result = common.Result,
+            ComSvrResult = common.ComSvrResult,
+            Baid = common.Baid,
+            AccessCode = common.AccessCode,
             IsPublish = true,
-            MydonName = request.MydonName
+            MydonName = common.MydonName,
+            ContentInfo = new byte[BlueProtocolBytes.ContentInfoBytes]
         });
     }
 }

@@ -59,13 +59,25 @@ public sealed class BlueRouteSkeletonTests
     }
 
     [Fact]
-    public void BlueStubControllers_DoNotCallMediator()
+    public void BlueStubControllers_DoNotCallMediatorOutsideA3ProfileEndpoints()
     {
         var root = FindRepoRoot();
         var controllersRoot = Path.Combine(root, "Adapters.GameProtocol.Blue", "Controllers");
+        var mediatorBackedControllers = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "BaidController.cs",
+            "MyDonEntryController.cs",
+            "InitialDataCheckController.cs",
+            "UserDataController.cs"
+        };
 
         foreach (var file in Directory.EnumerateFiles(controllersRoot, "*.cs", SearchOption.AllDirectories))
         {
+            if (mediatorBackedControllers.Contains(Path.GetFileName(file)))
+            {
+                continue;
+            }
+
             var source = File.ReadAllText(file);
             Assert.DoesNotContain("Mediator.Send", source, StringComparison.Ordinal);
         }
