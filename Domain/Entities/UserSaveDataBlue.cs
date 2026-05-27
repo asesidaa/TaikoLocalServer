@@ -20,6 +20,7 @@ public partial class UserSaveDataBlue
     public byte[] CostumeFlg5 { get; set; } = [];
     public byte[] ToneFlg { get; set; } = [];
     public byte[] TitleFlg { get; set; } = [];
+    public byte[] ReleaseSongFlg { get; set; } = [];
     public byte[] OptionFlg { get; set; } = [];
     public byte[] DefaultOptionSetting { get; set; } = [];
     public bool DefaultShinSetting { get; set; }

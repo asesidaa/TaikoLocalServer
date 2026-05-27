@@ -38,6 +38,7 @@ public static class UserSaveDataBlueExtensions
         CostumeFlg5 = BlueProtocolBytes.CreateFixedBitset([0], BlueProtocolBytes.CostumeFlagBytes),
         ToneFlg = BlueProtocolBytes.CreateFixedBitset([0], BlueProtocolBytes.ToneFlagBytes),
         TitleFlg = new byte[BlueProtocolBytes.TitleFlagBytes],
+        ReleaseSongFlg = new byte[BlueProtocolBytes.SongFlagBytes],
         OptionFlg = [],
         DefaultOptionSetting = new byte[2],
         DefaultShinSetting = false,

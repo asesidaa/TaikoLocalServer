@@ -63,6 +63,10 @@ public sealed class GreenAuthConfigTests
         public DbSet<GreenShopSeasonState> GreenShopSeasonStates => throw new NotSupportedException();
         public DbSet<GreenShopItemState> GreenShopItemStates => throw new NotSupportedException();
         public DbSet<UserSaveDataBlue> UserSaveDataBlue => throw new NotSupportedException();
+        public DbSet<SongBestDatumBlue> SongBestDataBlue => throw new NotSupportedException();
+        public DbSet<SongPlayDatumBlue> SongPlayDataBlue => throw new NotSupportedException();
+        public DbSet<BlueFavoriteSongs> BlueFavoriteSongs => throw new NotSupportedException();
+        public DbSet<BlueRecentSongs> BlueRecentSongs => throw new NotSupportedException();
 
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
             => throw new NotSupportedException();

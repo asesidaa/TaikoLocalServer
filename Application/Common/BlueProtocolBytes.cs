@@ -19,4 +19,16 @@ public static class BlueProtocolBytes
     {
         return BitsetCodec.Normalize(source, byteCount);
     }
+
+    public static byte[] OrBitsets(byte[] left, byte[] right, int byteCount)
+    {
+        var result = FixedOrZero(left, byteCount);
+        var normalizedRight = FixedOrZero(right, byteCount);
+        for (var i = 0; i < result.Length; i++)
+        {
+            result[i] |= normalizedRight[i];
+        }
+
+        return result;
+    }
 }

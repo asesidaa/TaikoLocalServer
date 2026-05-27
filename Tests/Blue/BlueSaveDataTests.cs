@@ -41,6 +41,15 @@ public sealed class BlueSaveDataTests
     }
 
     [Fact]
+    public void DefaultBlueSaveData_InitializesReleaseSongFlags()
+    {
+        var save = UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1);
+
+        Assert.Equal(BlueProtocolBytes.SongFlagBytes, save.ReleaseSongFlg.Length);
+        Assert.All(save.ReleaseSongFlg, value => Assert.Equal(0, value));
+    }
+
+    [Fact]
     public async Task TaikoDbContext_CanPersistBlueSaveData()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync();
