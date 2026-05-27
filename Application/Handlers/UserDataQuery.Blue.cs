@@ -10,6 +10,10 @@ public partial class UserDataQueryHandler
             ?? throw new InvalidOperationException($"User not found for Blue baid {request.Baid}.");
         var saveData = await context.GetOrCreateBlueSaveDataAsync(request.Baid, cancellationToken);
         var blue = gameDataService.Blue();
+        var normalDanGrades = await context.DanScoreDataBlue
+            .Where(row => row.Baid == request.Baid && !row.IsExtra && row.DanId >= 1 && row.DanId <= 25)
+            .ToDictionaryAsync(row => row.DanId, row => row.ClearGrade, cancellationToken);
+        var displayDan = BlueDanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalDanGrades);
         var favorites = await context.BlueFavoriteSongs
             .Where(song => song.Baid == request.Baid)
             .Select(song => song.SongNo)
@@ -58,7 +62,7 @@ public partial class UserDataQueryHandler
             DispLevelTotal = saveData.DispLevelTotal,
             DispLevelChassis = saveData.DispLevelChassis,
             DispLevelSelf = saveData.DispLevelSelf,
-            DispTaikojukuDan = GetSafeBlueTaikojukuDanSlot(saveData.DispTaikojukuDan),
+            DispTaikojukuDan = GetSafeBlueTaikojukuDanSlot(displayDan),
             DifficultyPlayedCourse = saveData.DifficultyPlayedCourse,
             DifficultyPlayedStar = saveData.DifficultyPlayedStar,
             IsChallengeCompe = saveData.IsChallengeCompe,

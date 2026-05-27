@@ -76,6 +76,30 @@ public sealed class BlueIdentityHandlerTests
     }
 
     [Fact]
+    public async Task BaidQuery_Blue_ReturnsPersistedDanFlags()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 7, MyDonName = "DON" });
+        fixture.Context.Cards.Add(new Card { Baid = 7, AccessCode = "777" });
+        var save = UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(7);
+        save.GotDanFlg = BlueDanHelpers.SetPackedGrade(save.GotDanFlg, 0, BlueDanClearGrade.GoldClear);
+        save.GotDanExtraFlg = BlueDanHelpers.SetPackedGrade(save.GotDanExtraFlg, 0, BlueDanClearGrade.NormalClear);
+        save.GotDanMax = 30;
+        fixture.Context.UserSaveDataBlue.Add(save);
+        await fixture.Context.SaveChangesAsync();
+        var handler = new BaidQueryHandler(
+            fixture.Context,
+            NullLogger<BaidQueryHandler>.Instance,
+            fixture.Catalog);
+
+        var response = await handler.Handle(new BaidQuery(GameEra.Blue, "777"), CancellationToken.None);
+
+        Assert.Equal(25u, response.GotDanMax);
+        Assert.Equal(BlueDanClearGrade.GoldClear, BlueDanHelpers.GetPackedGrade(response.GotDanFlg, 0));
+        Assert.Equal(BlueDanClearGrade.NormalClear, BlueDanHelpers.GetPackedGrade(response.GotDanExtraFlg!, 0));
+    }
+
+    [Fact]
     public async Task BaidQuery_Blue_SharedIdentityWithoutBlueSaveIsNewForBlueRegistration()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync();

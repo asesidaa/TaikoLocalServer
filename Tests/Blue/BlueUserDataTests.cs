@@ -95,6 +95,33 @@ public sealed class BlueUserDataTests
         Assert.Equal(new List<uint> { 101, 102, 103 }, response.RecommendBestSong);
     }
 
+    [Fact]
+    public async Task UserData_Blue_ComputesSafeDisplayDanFromBlueDanRows()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var save = UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1);
+        save.DispTaikojukuDan = 1;
+        fixture.Context.UserSaveDataBlue.Add(save);
+        fixture.Context.DanScoreDataBlue.Add(new DanScoreDatumBlue
+        {
+            Baid = 1,
+            DanId = 1,
+            IsExtra = false,
+            ClearGrade = BlueDanClearGrade.NormalClear
+        });
+        await fixture.Context.SaveChangesAsync();
+        var handler = new UserDataQueryHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UserDataQueryHandler>.Instance,
+            Options.Create(new ServerSettings()));
+
+        var response = await handler.Handle(new UserDataQuery(1, GameEra.Blue), CancellationToken.None);
+
+        Assert.Equal(2u, response.DispTaikojukuDan);
+    }
+
     private static bool BitIsSet(byte[] source, uint id)
         => (source[id >> 3] & (1 << ((int)id & 7))) != 0;
 }
