@@ -21,6 +21,22 @@ public sealed class GameDataServiceTests
         Assert.Empty(service.GetDanMap("Nijiiro"));
     }
 
+    [Fact]
+    public async Task InitializeAsync_LoadsBlueDanDataWhenEnabled()
+    {
+        var handler = new RecordingHandler();
+        using var client = new HttpClient(handler)
+        {
+            BaseAddress = new Uri("http://localhost/")
+        };
+        var service = new GameDataService(client);
+
+        await service.InitializeAsync("http://localhost/", ["Blue"]);
+
+        Assert.Equal(["api/Blue/GameData/DanData"], handler.RequestPaths);
+        Assert.Empty(service.GetDanMap("Green"));
+    }
+
     private sealed class RecordingHandler : HttpMessageHandler
     {
         public List<string> RequestPaths { get; } = [];

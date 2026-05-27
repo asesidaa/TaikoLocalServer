@@ -4,11 +4,13 @@ public static class WebUiEra
 {
     public const string Default = "Nijiiro";
     public const string Green = "Green";
+    public const string Blue = "Blue";
     public static readonly string[] Supported = [Default, Green];
+    private static readonly string[] Known = [Default, Green, Blue];
 
     public static bool IsSupported(string? era)
     {
-        return Supported.Any(value => string.Equals(value, era, StringComparison.OrdinalIgnoreCase));
+        return Known.Any(value => string.Equals(value, era, StringComparison.OrdinalIgnoreCase));
     }
 
     public static bool IsGreen(string? era)
@@ -18,7 +20,7 @@ public static class WebUiEra
 
     public static string Normalize(string? era)
     {
-        return Supported.FirstOrDefault(value => string.Equals(value, era, StringComparison.OrdinalIgnoreCase)) ?? Default;
+        return Known.FirstOrDefault(value => string.Equals(value, era, StringComparison.OrdinalIgnoreCase)) ?? Default;
     }
 
     public static IReadOnlyList<string> NormalizeEnabled(IEnumerable<string>? eras)
