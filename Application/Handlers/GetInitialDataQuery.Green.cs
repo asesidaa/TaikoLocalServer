@@ -42,6 +42,13 @@ public partial class GetInitialDataQueryHandler
                     VerupNo = entry.VerupNo
                 })
                 .ToList(),
+            AryGreenEventFolderDatas = green.EventFolders.Values
+                .Select(entry => new CommonInitialDataCheckResponse.InformationData
+                {
+                    InfoId = entry.FolderId,
+                    VerupNo = entry.VerupNo
+                })
+                .ToList(),
             AryGreenTaikojukuDatas = green.TaikojukuFileOrder
                 .Where(entry => entry.ChallengeLevel is >= 1 and <= 25)
                 .Select(entry => new CommonInitialDataCheckResponse.InformationData
