@@ -3,11 +3,19 @@ namespace TaikoLocalServer.Tests.Blue;
 public sealed class BlueUserDataTests
 {
     [Fact]
-    public async Task UserData_Blue_UnlocksAllCatalogSongsAndReturnsEmptyFavoriteRecentArrays()
+    public async Task UserData_Blue_UnlocksCatalogAndSavedReleaseSongsAndReturnsFavoriteRecentArrays()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 9, MyDonName = "DON" });
-        fixture.Context.UserSaveDataBlue.Add(UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(9));
+        var save = UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(9);
+        save.ReleaseSongFlg = BlueProtocolBytes.CreateFixedBitset([104], BlueProtocolBytes.SongFlagBytes);
+        fixture.Context.UserSaveDataBlue.Add(save);
+        fixture.Context.BlueFavoriteSongs.AddRange(
+            new BlueFavoriteSongs { Baid = 9, SongNo = 102 },
+            new BlueFavoriteSongs { Baid = 9, SongNo = 101 });
+        fixture.Context.BlueRecentSongs.AddRange(
+            new BlueRecentSongs { Baid = 9, SongNo = 101, LastPlayed = new DateTime(2026, 5, 28, 12, 0, 0) },
+            new BlueRecentSongs { Baid = 9, SongNo = 102, LastPlayed = new DateTime(2026, 5, 28, 13, 0, 0) });
         await fixture.Context.SaveChangesAsync();
         var handler = new UserDataQueryHandler(
             fixture.Context,
@@ -23,9 +31,9 @@ public sealed class BlueUserDataTests
         {
             Assert.True(BitIsSet(response.ReleaseSongFlg, song.SongNo), $"Expected song {song.SongNo} to be unlocked.");
         }
-
-        Assert.Empty(response.AryFavoriteSongNoes);
-        Assert.Empty(response.AryRecentSongNoes);
+        Assert.True(BitIsSet(response.ReleaseSongFlg, 104));
+        Assert.Equal([102u, 101u], response.AryFavoriteSongNoes.OrderByDescending(song => song).ToArray());
+        Assert.Equal([102u, 101u], response.AryRecentSongNoes);
     }
 
     [Fact]

@@ -10,20 +10,34 @@ public partial class UserDataQueryHandler
             ?? throw new InvalidOperationException($"User not found for Blue baid {request.Baid}.");
         var saveData = await context.GetOrCreateBlueSaveDataAsync(request.Baid, cancellationToken);
         var blue = gameDataService.Blue();
+        var favorites = await context.BlueFavoriteSongs
+            .Where(song => song.Baid == request.Baid)
+            .Select(song => song.SongNo)
+            .ToArrayAsync(cancellationToken);
+        var recent = await context.BlueRecentSongs
+            .Where(song => song.Baid == request.Baid)
+            .OrderByDescending(song => song.LastPlayed)
+            .Select(song => song.SongNo)
+            .Take(10)
+            .ToArrayAsync(cancellationToken);
+        var catalogReleaseFlags = BlueProtocolBytes.CreateFixedBitset(
+            blue.MusicInfoFileOrder.Select(song => song.SongNo),
+            BlueProtocolBytes.SongFlagBytes);
 
         return new CommonUserDataResponse
         {
             Result = 1,
             SongHashVer = blue.SongHashVersion,
-            ReleaseSongFlg = BlueProtocolBytes.CreateFixedBitset(
-                blue.MusicInfoFileOrder.Select(song => song.SongNo),
+            ReleaseSongFlg = BlueProtocolBytes.OrBitsets(
+                catalogReleaseFlags,
+                saveData.ReleaseSongFlg,
                 BlueProtocolBytes.SongFlagBytes),
             ToneFlg = BlueProtocolBytes.FixedOrZero(saveData.ToneFlg, BlueProtocolBytes.ToneFlagBytes),
             TitleFlg = BlueProtocolBytes.FixedOrZero(saveData.TitleFlg, BlueProtocolBytes.TitleFlagBytes),
             DefaultOptionSetting = BlueProtocolBytes.FixedOrZero(saveData.DefaultOptionSetting, 2),
             OptionFlg = saveData.OptionFlg,
-            AryFavoriteSongNoes = [],
-            AryRecentSongNoes = [],
+            AryFavoriteSongNoes = favorites,
+            AryRecentSongNoes = recent,
             CategJpopCnt = saveData.CategJpopCnt,
             CategAnimeCnt = saveData.CategAnimeCnt,
             CategDoyoCnt = saveData.CategDoyoCnt,
