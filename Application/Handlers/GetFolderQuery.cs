@@ -12,6 +12,29 @@ public partial class GetFolderQueryHandler(ILogger<GetFolderQueryHandler> logger
         _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
     };
 
+    private CommonGetFolderResponse BuildFolderResponse(
+        IReadOnlyDictionary<uint, EventFolderData> eventFolders,
+        IEnumerable<uint> requestedFolderIds)
+    {
+        var response = new CommonGetFolderResponse
+        {
+            Result = 1
+        };
+
+        foreach (var folderId in requestedFolderIds)
+        {
+            if (!eventFolders.TryGetValue(folderId, out var folderData))
+            {
+                logger.LogWarning("Folder data for folder {FolderId} not found", folderId);
+                continue;
+            }
+
+            response.AryEventfolderDatas.Add(folderData);
+        }
+
+        return response;
+    }
+
     private partial ValueTask<CommonGetFolderResponse> HandleNijiiro(GetFolderQuery request, CancellationToken cancellationToken);
     private partial ValueTask<CommonGetFolderResponse> HandleGreen(GetFolderQuery request, CancellationToken cancellationToken);
 }
