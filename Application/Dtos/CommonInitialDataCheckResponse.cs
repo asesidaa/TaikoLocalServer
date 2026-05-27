@@ -1,7 +1,7 @@
 
 namespace TaikoLocalServer.Application.Dtos;
 
-public class CommonInitialDataCheckResponse
+public partial class CommonInitialDataCheckResponse
 {
     public uint   Result             { get; set; }
     public byte[] DefaultSongFlg     { get; set; } = [];
