@@ -12,7 +12,7 @@ public sealed class GreenTaikojukuTests
             fixture.Catalog,
             NullLogger<GetTaikojukuQueryHandler>.Instance);
 
-        var response = await handler.Handle(new GetTaikojukuQuery([1]), CancellationToken.None);
+        var response = await handler.Handle(new GetTaikojukuQuery(GameEra.Green, [1]), CancellationToken.None);
 
         Assert.Equal((uint)1, response.Result);
         Assert.NotEmpty(response.Packs);
@@ -28,7 +28,7 @@ public sealed class GreenTaikojukuTests
             fixture.Catalog,
             NullLogger<GetTaikojukuQueryHandler>.Instance);
 
-        var response = await handler.Handle(new GetTaikojukuQuery([20001]), CancellationToken.None);
+        var response = await handler.Handle(new GetTaikojukuQuery(GameEra.Green, [20001]), CancellationToken.None);
 
         Assert.Equal((uint)1, response.Result);
         Assert.Single(response.Packs);
@@ -45,7 +45,7 @@ public sealed class GreenTaikojukuTests
             NullLogger<GetTaikojukuQueryHandler>.Instance);
 
         var response = await handler.Handle(
-            new GetTaikojukuQuery(Enumerable.Range(101, 25).Select(value => (uint)value).ToArray()),
+            new GetTaikojukuQuery(GameEra.Green, Enumerable.Range(101, 25).Select(value => (uint)value).ToArray()),
             CancellationToken.None);
 
         Assert.Equal((uint)1, response.Result);
@@ -61,7 +61,7 @@ public sealed class GreenTaikojukuTests
             fixture.Catalog,
             NullLogger<GetTaikojukuQueryHandler>.Instance);
 
-        var response = await handler.Handle(new GetTaikojukuQuery([101]), CancellationToken.None);
+        var response = await handler.Handle(new GetTaikojukuQuery(GameEra.Green, [101]), CancellationToken.None);
         var wire = TaikojukuMappers.Map(response);
 
         Assert.Single(wire.AryJukupackDatas);
@@ -121,7 +121,7 @@ public sealed class GreenTaikojukuTests
             fixture.Catalog,
             NullLogger<GetTaikojukuQueryHandler>.Instance);
 
-        var response = await handler.Handle(new GetTaikojukuQuery([5]), CancellationToken.None);
+        var response = await handler.Handle(new GetTaikojukuQuery(GameEra.Green, [5]), CancellationToken.None);
 
         Assert.Equal((uint)1, response.Result);
         Assert.Single(response.Packs);

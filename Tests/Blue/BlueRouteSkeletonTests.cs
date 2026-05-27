@@ -71,6 +71,7 @@ public sealed class BlueRouteSkeletonTests
             "UserDataController.cs",
             "PlayResultController.cs",
             "SelfBestController.cs",
+            "TaikojukuController.cs",
             "RewardCardCheckController.cs"
         };
 

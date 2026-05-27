@@ -10,7 +10,7 @@ public class TaikojukuController : BaseProtocolController<TaikojukuController>
     {
         Logger.LogInformation("Green Taikojuku request: {Request}", request.Stringify());
         var common = await Mediator.Send(
-            new GetTaikojukuQuery(request.GetDans ?? []),
+            new GetTaikojukuQuery(GameEra.Green, request.GetDans ?? []),
             HttpContext.RequestAborted);
         return Ok(TaikojukuMappers.Map(common));
     }

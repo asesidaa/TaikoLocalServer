@@ -1,25 +1,27 @@
-using TaikoLocalServer.Application.Catalog.Green;
+using TaikoLocalServer.Application.Catalog.Blue;
 
 namespace TaikoLocalServer.Application.Handlers;
 
 public partial class GetTaikojukuQueryHandler
 {
-    private const int MaxDanSlots = 25;
-    private const int MaxRequestedSlotsPerRequest = 11;
-    private const int MaxSongsPerPack = 10;
-    private const uint MaxGreenCourseLevel = 4;
+    private const int MaxBlueDanSlots = 25;
+    private const int MaxBlueRequestedSlotsPerRequest = 11;
+    private const int MaxBlueSongsPerPack = 10;
+    private const uint MaxBlueCourseLevel = 4;
 
-    private partial ValueTask<CommonTaikojukuResponse> HandleGreen(GetTaikojukuQuery request, CancellationToken cancellationToken)
+    private partial ValueTask<CommonTaikojukuResponse> HandleBlue(
+        GetTaikojukuQuery request,
+        CancellationToken cancellationToken)
     {
-        logger.LogDebug("Reading Green Taikojuku packs for {Count} requested dans", request.RequestedDans.Count);
-        var green = gameDataService.Green();
-        var requestedSlots = GetRequestedSlots(request.RequestedDans);
-        var validPacksBySlot = green.TaikojukuFileOrder
-            .Where(pack => IsValidDanSlot(pack.ChallengeLevel))
+        logger.LogDebug("Reading Blue Taikojuku packs for {Count} requested dans", request.RequestedDans.Count);
+        var blue = gameDataService.Blue();
+        var requestedSlots = GetBlueRequestedSlots(request.RequestedDans);
+        var validPacksBySlot = blue.TaikojukuFileOrder
+            .Where(pack => IsValidBlueDanSlot(pack.ChallengeLevel))
             .GroupBy(pack => pack.ChallengeLevel)
             .ToDictionary(group => group.Key, group => group.First());
 
-        var packs = new List<GreenTaikojukuEntry>();
+        var packs = new List<BlueTaikojukuEntry>();
         foreach (var slot in requestedSlots)
         {
             if (validPacksBySlot.TryGetValue(slot, out var pack))
@@ -28,7 +30,7 @@ public partial class GetTaikojukuQueryHandler
                 continue;
             }
 
-            var fallback = CreateFallbackPack(green, slot, packs.Count);
+            var fallback = CreateBlueFallbackPack(blue, slot, packs.Count);
             if (fallback is not null)
             {
                 packs.Add(fallback);
@@ -39,19 +41,19 @@ public partial class GetTaikojukuQueryHandler
         {
             Result = 1,
             Packs = packs
-                .Select(pack => ToCommonPack(pack, green.GreenMusicInfos))
+                .Select(pack => ToCommonBluePack(pack, blue.BlueMusicInfos))
                 .Where(pack => pack.Songs.Count > 0)
                 .ToList()
         });
     }
 
-    private static bool IsValidDanSlot(uint getDan)
-        => getDan is >= 1 and <= MaxDanSlots;
+    private static bool IsValidBlueDanSlot(uint getDan)
+        => getDan is >= 1 and <= MaxBlueDanSlots;
 
-    private static IReadOnlyList<uint> GetRequestedSlots(IReadOnlyList<uint> requestedDans)
+    private static IReadOnlyList<uint> GetBlueRequestedSlots(IReadOnlyList<uint> requestedDans)
     {
         var requestedSlots = requestedDans
-            .Where(IsValidDanSlot)
+            .Where(IsValidBlueDanSlot)
             .Distinct()
             .ToArray();
 
@@ -60,23 +62,23 @@ public partial class GetTaikojukuQueryHandler
             return requestedSlots;
         }
 
-        return Enumerable.Range(1, Math.Min(requestedDans.Count, MaxRequestedSlotsPerRequest))
+        return Enumerable.Range(1, Math.Min(requestedDans.Count, MaxBlueRequestedSlotsPerRequest))
             .Select(slot => (uint)slot)
             .ToArray();
     }
 
-    private static GreenTaikojukuEntry? CreateFallbackPack(
-        IGreenCatalog green,
+    private static BlueTaikojukuEntry? CreateBlueFallbackPack(
+        IBlueCatalog blue,
         uint slot,
         int index)
     {
-        var songs = green.MusicInfoFileOrder
+        var songs = blue.MusicInfoFileOrder
             .Skip(index * 3)
             .Take(3)
             .ToArray();
         if (songs.Length == 0)
         {
-            songs = green.MusicInfoFileOrder.Take(3).ToArray();
+            songs = blue.MusicInfoFileOrder.Take(3).ToArray();
         }
 
         if (songs.Length == 0)
@@ -84,11 +86,11 @@ public partial class GetTaikojukuQueryHandler
             return null;
         }
 
-        return new GreenTaikojukuEntry
+        return new BlueTaikojukuEntry
         {
             UniqueId = slot,
             ChallengeLevel = slot,
-            Songs = songs.Select(song => new GreenTaikojukuSong
+            Songs = songs.Select(song => new BlueTaikojukuSong
             {
                 SongNo = song.SongNo,
                 Level = (uint)Math.Min(index, 4),
@@ -97,9 +99,9 @@ public partial class GetTaikojukuQueryHandler
         };
     }
 
-    private static CommonTaikojukuResponse.Pack ToCommonPack(
-        GreenTaikojukuEntry entry,
-        IReadOnlyDictionary<uint, GreenMusicInfoEntry> validSongs)
+    private static CommonTaikojukuResponse.Pack ToCommonBluePack(
+        BlueTaikojukuEntry entry,
+        IReadOnlyDictionary<uint, BlueMusicInfoEntry> validSongs)
     {
         return new CommonTaikojukuResponse.Pack
         {
@@ -107,8 +109,8 @@ public partial class GetTaikojukuQueryHandler
             VerupNo = entry.VerupNo,
             Songs = entry.Songs
                 .Where(song => validSongs.ContainsKey(song.SongNo))
-                .Where(song => song.Level <= MaxGreenCourseLevel)
-                .Take(MaxSongsPerPack)
+                .Where(song => song.Level <= MaxBlueCourseLevel)
+                .Take(MaxBlueSongsPerPack)
                 .Select(song => new CommonTaikojukuResponse.Song
                 {
                     SongNo = song.SongNo,
