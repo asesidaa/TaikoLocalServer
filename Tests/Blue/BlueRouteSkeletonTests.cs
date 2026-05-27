@@ -59,7 +59,7 @@ public sealed class BlueRouteSkeletonTests
     }
 
     [Fact]
-    public void BlueStubControllers_DoNotCallMediatorOutsideA3ProfileEndpoints()
+    public void BlueControllers_DoNotCallMediatorOutsideImplementedEndpoints()
     {
         var root = FindRepoRoot();
         var controllersRoot = Path.Combine(root, "Adapters.GameProtocol.Blue", "Controllers");
@@ -68,7 +68,10 @@ public sealed class BlueRouteSkeletonTests
             "BaidController.cs",
             "MyDonEntryController.cs",
             "InitialDataCheckController.cs",
-            "UserDataController.cs"
+            "UserDataController.cs",
+            "PlayResultController.cs",
+            "SelfBestController.cs",
+            "RewardCardCheckController.cs"
         };
 
         foreach (var file in Directory.EnumerateFiles(controllersRoot, "*.cs", SearchOption.AllDirectories))
