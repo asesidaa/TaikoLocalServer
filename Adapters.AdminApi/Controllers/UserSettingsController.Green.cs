@@ -28,6 +28,11 @@ public partial class UserSettingsController
             return BadRequest("GreenDispLevelChassis must be between 0 and 4.");
         }
 
+        if (userSetting.GreenDispLevelSelf > 4)
+        {
+            return BadRequest("GreenDispLevelSelf must be between 0 and 4.");
+        }
+
         user.MyDonName = userSetting.MyDonName;
         user.MyDonNameLanguage = userSetting.MyDonNameLanguage;
         saveData.Title = userSetting.Title;
@@ -45,6 +50,7 @@ public partial class UserSettingsController
         saveData.IsTojiru = userSetting.GreenIsTojiru;
         saveData.IsAutoCostumeOn = userSetting.GreenIsAutoCostumeOn;
         saveData.DispLevelChassis = userSetting.GreenDispLevelChassis;
+        saveData.DispLevelSelf = userSetting.GreenDispLevelSelf;
         if (userSetting.GreenTaikojukuDan != 0)
         {
             saveData.DispTaikojukuDan = await GetGreenTaikojukuFolderDan(baid, userSetting.GreenTaikojukuDan);
@@ -100,6 +106,7 @@ public partial class UserSettingsController
             GreenIsTojiru = saveData.IsTojiru,
             GreenIsAutoCostumeOn = saveData.IsAutoCostumeOn,
             GreenDispLevelChassis = GetSafeGreenDispLevelChassis(saveData.DispLevelChassis),
+            GreenDispLevelSelf = GetSafeGreenDispLevelSelf(saveData.DispLevelSelf),
             LastPlayDateTime = saveData.LastPlayDatetime
         };
     }
@@ -140,6 +147,9 @@ public partial class UserSettingsController
     }
 
     private static uint GetSafeGreenDispLevelChassis(uint value)
+        => value <= 4 ? value : 0u;
+
+    private static uint GetSafeGreenDispLevelSelf(uint value)
         => value <= 4 ? value : 0u;
 
     private static byte[] EncodeGreenCostumeUnlocks(IEnumerable<uint> requestedUnlocks, uint currentId)

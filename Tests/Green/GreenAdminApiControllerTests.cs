@@ -273,13 +273,14 @@ public class GreenAdminApiControllerTests
     }
 
     [Fact]
-    public async Task UserSettings_Green_GetExposesTojiruAndLocalRankingDifficulty()
+    public async Task UserSettings_Green_GetExposesTojiruAndDisplayDifficultySettings()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
         var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
         save.IsTojiru = true;
         save.DispLevelChassis = 3;
+        save.DispLevelSelf = 2;
         fixture.Context.UserSaveDataGreen.Add(save);
         await fixture.Context.SaveChangesAsync();
 
@@ -290,6 +291,7 @@ public class GreenAdminApiControllerTests
         var setting = Assert.IsType<UserSetting>(ok.Value);
         Assert.True(setting.GreenIsTojiru);
         Assert.Equal(3u, setting.GreenDispLevelChassis);
+        Assert.Equal(2u, setting.GreenDispLevelSelf);
     }
 
     [Fact]
@@ -311,7 +313,7 @@ public class GreenAdminApiControllerTests
     }
 
     [Fact]
-    public async Task UserSettings_Green_PostPersistsTojiruAndLocalRankingDifficulty()
+    public async Task UserSettings_Green_PostPersistsTojiruAndDisplayDifficultySettings()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -324,7 +326,8 @@ public class GreenAdminApiControllerTests
         {
             MyDonName = "GREEN",
             GreenIsTojiru = false,
-            GreenDispLevelChassis = 4
+            GreenDispLevelChassis = 4,
+            GreenDispLevelSelf = 4
         });
 
         Assert.IsType<NoContentResult>(result);
@@ -332,6 +335,7 @@ public class GreenAdminApiControllerTests
         Assert.NotNull(save);
         Assert.False(save!.IsTojiru);
         Assert.Equal(4u, save.DispLevelChassis);
+        Assert.Equal(4u, save.DispLevelSelf);
     }
 
     [Fact]
@@ -379,6 +383,32 @@ public class GreenAdminApiControllerTests
 
         Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal(2u, save.DispLevelChassis);
+    }
+
+    [Fact]
+    public async Task UserSettings_Green_PostRejectsInvalidDefaultSelectedDifficulty()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.DispLevelChassis = 2;
+        save.DispLevelSelf = 3;
+        fixture.Context.UserSaveDataGreen.Add(save);
+        await fixture.Context.SaveChangesAsync();
+
+        var controller = CreateUserSettingsController(fixture.Context);
+
+        var result = await controller.SaveUserSetting("Green", 1, new UserSetting
+        {
+            MyDonName = "GREEN",
+            GreenIsTojiru = true,
+            GreenDispLevelChassis = 2,
+            GreenDispLevelSelf = 5
+        });
+
+        Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal(2u, save.DispLevelChassis);
+        Assert.Equal(3u, save.DispLevelSelf);
     }
 
     [Fact]

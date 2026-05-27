@@ -20,6 +20,8 @@ public class UserSetting
 
     public uint GreenDispLevelChassis { get; set; }
 
+    public uint GreenDispLevelSelf { get; set; }
+
     public bool IsDisplaySouUchi { get; set; }
 
     public uint DifficultySettingCourse { get; set; }
