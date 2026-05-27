@@ -47,11 +47,13 @@ internal sealed class GreenHandlerFixture : IAsyncDisposable
         public TestGreenCatalog(
             IReadOnlyDictionary<uint, GreenItemShopEntry>? itemShop = null,
             GreenItemShopCatalog? itemShopCatalog = null,
+            IReadOnlyDictionary<uint, EventFolderData>? eventFolders = null,
             IReadOnlyList<GreenMusicInfoEntry>? musicInfoFileOrder = null,
             IReadOnlyList<GreenTaikojukuEntry>? taikojukuFileOrder = null)
         {
             ItemShopCatalog = itemShopCatalog ?? GreenItemShopCatalog.Disabled;
             ItemShop = itemShop ?? ItemShopCatalog.ActiveItemsByNo;
+            EventFolders = eventFolders ?? new Dictionary<uint, EventFolderData>();
             this.musicInfoFileOrder = musicInfoFileOrder ?? DefaultMusicInfoFileOrder;
             this.taikojukuFileOrder = taikojukuFileOrder ?? DefaultTaikojukuFileOrder;
         }
@@ -138,7 +140,7 @@ internal sealed class GreenHandlerFixture : IAsyncDisposable
 
         public IReadOnlyDictionary<uint, GreenItemShopEntry> ItemShop { get; }
 
-        public IReadOnlyDictionary<uint, GreenEventFolderEntry> EventFolders { get; } = new Dictionary<uint, GreenEventFolderEntry>();
+        public IReadOnlyDictionary<uint, EventFolderData> EventFolders { get; }
 
         public IReadOnlyDictionary<uint, GreenTelopEntry> Telops { get; init; } = new Dictionary<uint, GreenTelopEntry>();
 

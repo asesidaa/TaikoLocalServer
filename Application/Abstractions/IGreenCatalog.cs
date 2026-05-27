@@ -18,7 +18,7 @@ public interface IGreenCatalog : IEraGameDataCatalog
 
     IReadOnlyDictionary<uint, GreenItemShopEntry> ItemShop { get; }
 
-    IReadOnlyDictionary<uint, GreenEventFolderEntry> EventFolders { get; }
+    IReadOnlyDictionary<uint, EventFolderData> EventFolders { get; }
 
     IReadOnlyDictionary<uint, GreenTelopEntry> Telops { get; }
 

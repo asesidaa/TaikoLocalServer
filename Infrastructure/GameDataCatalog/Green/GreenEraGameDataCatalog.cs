@@ -22,7 +22,7 @@ public sealed class GreenEraGameDataCatalog(
     private IReadOnlyDictionary<uint, GreenTaikojukuEntry> taikojuku = new Dictionary<uint, GreenTaikojukuEntry>();
     private GreenItemShopCatalog itemShopCatalog = GreenItemShopCatalog.Disabled;
     private IReadOnlyDictionary<uint, GreenItemShopEntry> itemShop = new Dictionary<uint, GreenItemShopEntry>();
-    private IReadOnlyDictionary<uint, GreenEventFolderEntry> eventFolders = new Dictionary<uint, GreenEventFolderEntry>();
+    private IReadOnlyDictionary<uint, EventFolderData> eventFolders = new Dictionary<uint, EventFolderData>();
     private IReadOnlyDictionary<uint, GreenTelopEntry> telops = new Dictionary<uint, GreenTelopEntry>();
     private IReadOnlyDictionary<uint, GreenGachaEntry> gachas = new Dictionary<uint, GreenGachaEntry>();
     private IReadOnlyDictionary<uint, GreenTournamentEntry> tournaments = new Dictionary<uint, GreenTournamentEntry>();
@@ -50,7 +50,7 @@ public sealed class GreenEraGameDataCatalog(
 
     public IReadOnlyDictionary<uint, GreenItemShopEntry> ItemShop => itemShop;
 
-    public IReadOnlyDictionary<uint, GreenEventFolderEntry> EventFolders => eventFolders;
+    public IReadOnlyDictionary<uint, EventFolderData> EventFolders => eventFolders;
 
     public IReadOnlyDictionary<uint, GreenTelopEntry> Telops => telops;
 
@@ -119,7 +119,9 @@ public sealed class GreenEraGameDataCatalog(
         var greenSettings = GetGreenSettings();
         itemShopCatalog = await new GreenItemShopLoader().LoadAsync(greenSettings, cancellationToken);
         itemShop = itemShopCatalog.ActiveItemsByNo;
-        eventFolders = await new GreenEventFolderLoader().LoadAsync(cancellationToken);
+        eventFolders = await new GreenEventFolderLoader().LoadAsync(
+            new HashSet<uint>(musicInfos.Keys),
+            cancellationToken);
         telops = await new GreenTelopLoader().LoadAsync(cancellationToken);
         gachas = await new GreenGachaLoader().LoadAsync(cancellationToken);
         tournaments = await new GreenTournamentLoader().LoadAsync(cancellationToken);
