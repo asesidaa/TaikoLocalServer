@@ -1,7 +1,7 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using TaikoLocalServer.Application.Catalog.Ac15;
 using TaikoLocalServer.Application.Catalog.Green;
-using TaikoLocalServer.Application.Common;
+using TaikoLocalServer.Domain.Enums;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Ac15;
 
 namespace TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
 
@@ -11,7 +11,7 @@ public sealed class GreenRecommendLoader
         IReadOnlySet<uint> catalogSongIds,
         CancellationToken cancellationToken)
     {
-        var path = Path.Combine(PathHelper.GetDataPath(Domain.Enums.GameEra.Green), "recommend_songs.json");
+        var path = Path.Combine(PathHelper.GetDataPath(GameEra.Green), "recommend_songs.json");
         return await LoadFromFileAsync(path, catalogSongIds, cancellationToken);
     }
 
@@ -20,44 +20,13 @@ public sealed class GreenRecommendLoader
         IReadOnlySet<uint> catalogSongIds,
         CancellationToken cancellationToken)
     {
-        if (!File.Exists(path))
-        {
-            return GreenRecommendEntry.Empty;
-        }
-
-        await using var stream = File.OpenRead(path);
-        var raw = await JsonSerializer.DeserializeAsync<RawRecommend>(stream, JsonOptions, cancellationToken)
-                  ?? new RawRecommend();
-
-        var maxBits = (uint)(GreenProtocolBytes.SongFlagBytes * 8);
-        bool IsValid(uint id) => id > 0 && id < maxBits && catalogSongIds.Contains(id);
-
-        var single = IsValid(raw.RecommendSong) ? raw.RecommendSong : 0u;
-        var list = (raw.RecommendBestSongs ?? [])
-            .Where(IsValid)
-            .ToArray();
-
-        return new GreenRecommendEntry
-        {
-            RecommendSong = single,
-            RecommendBestSongs = list
-        };
+        var entry = await Ac15RecommendLoader.LoadFromFileAsync(path, catalogSongIds, cancellationToken);
+        return Map(entry);
     }
 
-    private static readonly JsonSerializerOptions JsonOptions = new()
+    private static GreenRecommendEntry Map(Ac15RecommendEntry entry) => new()
     {
-        PropertyNameCaseInsensitive = true,
-        ReadCommentHandling = JsonCommentHandling.Skip,
-        AllowTrailingCommas = true,
-        Converters = { new JsonStringEnumConverter() }
+        RecommendSong = entry.RecommendSong,
+        RecommendBestSongs = entry.RecommendBestSongs
     };
-
-    private sealed class RawRecommend
-    {
-        [JsonPropertyName("recommendSong")]
-        public uint RecommendSong { get; set; }
-
-        [JsonPropertyName("recommendBestSongs")]
-        public uint[]? RecommendBestSongs { get; set; }
-    }
 }
