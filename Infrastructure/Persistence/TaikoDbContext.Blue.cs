@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TaikoLocalServer.Domain.Entities;
+using TaikoLocalServer.Domain.Enums;
 
 namespace TaikoLocalServer.Infrastructure.Persistence;
 
@@ -10,6 +11,8 @@ public partial class TaikoDbContext
     public virtual DbSet<SongPlayDatumBlue> SongPlayDataBlue { get; set; } = null!;
     public virtual DbSet<BlueFavoriteSongs> BlueFavoriteSongs { get; set; } = null!;
     public virtual DbSet<BlueRecentSongs> BlueRecentSongs { get; set; } = null!;
+    public virtual DbSet<DanScoreDatumBlue> DanScoreDataBlue { get; set; } = null!;
+    public virtual DbSet<DanStageScoreDatumBlue> DanStageScoreDataBlue { get; set; } = null!;
 
     partial void OnModelCreatingBlue(ModelBuilder modelBuilder)
     {
@@ -77,6 +80,31 @@ public partial class TaikoDbContext
                 .WithMany()
                 .HasPrincipalKey(p => p.Baid)
                 .HasForeignKey(d => d.Baid)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<DanScoreDatumBlue>(entity =>
+        {
+            entity.ToTable("DanScoreDatum_Blue");
+            entity.HasKey(e => new { e.Baid, e.DanId, e.IsExtra });
+            entity.HasIndex(e => e.MedleyUniqueId);
+            entity.Property(e => e.ClearGrade)
+                .HasConversion<uint>()
+                .HasDefaultValue(BlueDanClearGrade.NotClear);
+            entity.HasOne(d => d.Ba)
+                .WithMany()
+                .HasPrincipalKey(p => p.Baid)
+                .HasForeignKey(d => d.Baid)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<DanStageScoreDatumBlue>(entity =>
+        {
+            entity.ToTable("DanStageScoreDatum_Blue");
+            entity.HasKey(e => new { e.Baid, e.DanId, e.IsExtra, e.StageIndex });
+            entity.HasOne(d => d.Parent)
+                .WithMany(p => p.DanStageScoreData)
+                .HasForeignKey(d => new { d.Baid, d.DanId, d.IsExtra })
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }

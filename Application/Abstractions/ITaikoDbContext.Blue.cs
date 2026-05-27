@@ -7,4 +7,6 @@ public partial interface ITaikoDbContext
     DbSet<SongPlayDatumBlue> SongPlayDataBlue { get; }
     DbSet<BlueFavoriteSongs> BlueFavoriteSongs { get; }
     DbSet<BlueRecentSongs> BlueRecentSongs { get; }
+    DbSet<DanScoreDatumBlue> DanScoreDataBlue { get; }
+    DbSet<DanStageScoreDatumBlue> DanStageScoreDataBlue { get; }
 }
