@@ -15,9 +15,11 @@ public partial class UserDataQueryHandler(ITaikoDbContext context, IGameDataCata
     {
         GameEra.Nijiiro => HandleNijiiro(request, cancellationToken),
         GameEra.Green => HandleGreen(request, cancellationToken),
+        GameEra.Blue => HandleBlue(request, cancellationToken),
         _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
     };
 
     private partial ValueTask<CommonUserDataResponse> HandleNijiiro(UserDataQuery request, CancellationToken cancellationToken);
     private partial ValueTask<CommonUserDataResponse> HandleGreen(UserDataQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonUserDataResponse> HandleBlue(UserDataQuery request, CancellationToken cancellationToken);
 }
