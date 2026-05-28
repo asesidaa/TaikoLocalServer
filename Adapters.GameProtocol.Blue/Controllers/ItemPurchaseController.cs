@@ -6,9 +6,10 @@ public class ItemPurchaseController : BaseProtocolController<ItemPurchaseControl
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult ItemPurchase([FromBody] ItempurchaseRequest request)
+    public async Task<IActionResult> ItemPurchase([FromBody] ItempurchaseRequest request)
     {
         Logger.LogInformation("Blue ItemPurchase request: {Request}", request.Stringify());
-        return Ok(new ItempurchaseResponse { Result = 1 });
+        var common = await Mediator.Send(ItemShopMappers.Map(request), HttpContext.RequestAborted);
+        return Ok(ItemShopMappers.Map(common));
     }
 }

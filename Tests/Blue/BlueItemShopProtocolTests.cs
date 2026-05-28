@@ -216,6 +216,7 @@ public sealed class BlueItemShopProtocolTests
         var command = ItemShopMappers.Map(request);
 
         Assert.Equal(1u, command.Baid);
+        Assert.Equal(GameEra.Blue, command.Era);
         Assert.Equal(0u, command.ItemNo);
         Assert.Null(command.ItemType);
         Assert.Null(command.ItemId);

@@ -14,6 +14,7 @@ public static partial class ItemShopMappers
     {
         return new ItemPurchaseCommand(
             request.Baid,
+            GameEra.Blue,
             request.ItemNo,
             request.ShouldSerializeItemType() ? request.ItemType : null,
             request.ShouldSerializeItemId() ? request.ItemId : null,

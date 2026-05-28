@@ -2,7 +2,7 @@ namespace TaikoLocalServer.Application.Handlers;
 
 public partial class ItemPurchaseCommandHandler
 {
-    public partial async ValueTask<CommonItemPurchaseResponse> Handle(
+    private partial async ValueTask<CommonItemPurchaseResponse> HandleGreen(
         ItemPurchaseCommand request,
         CancellationToken cancellationToken)
     {
@@ -70,15 +70,6 @@ public partial class ItemPurchaseCommandHandler
         await context.SaveChangesAsync(cancellationToken);
         return Success(seasonState);
     }
-
-    private static bool CanAdd(uint current, uint delta)
-        => delta <= uint.MaxValue - current;
-
-    private static bool IsPreflight(ItemPurchaseCommand request)
-        => request.ItemNo == 0
-           && request.ItemType is null
-           && request.ItemId is null
-           && request.ItemPrice is null;
 
     private static void ApplyUnlock(UserSaveDataGreen saveData, GreenShopItemState item)
     {

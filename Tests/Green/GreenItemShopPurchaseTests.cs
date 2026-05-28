@@ -17,7 +17,7 @@ public sealed class GreenItemShopPurchaseTests
             fixture.Catalog,
             NullLogger<ItemPurchaseCommandHandler>.Instance);
 
-        var response = await handler.Handle(new ItemPurchaseCommand(1, 2, 1, 865, 300), CancellationToken.None);
+        var response = await handler.Handle(new ItemPurchaseCommand(1, GameEra.Green, 2, 1, 865, 300), CancellationToken.None);
 
         var season = await fixture.Context.GreenShopSeasonStates.FindAsync(1u, 2u);
         var item = await fixture.Context.GreenShopItemStates.FindAsync(1u, 2u, 1u, 865u);
@@ -53,7 +53,7 @@ public sealed class GreenItemShopPurchaseTests
             fixture.Catalog,
             NullLogger<ItemPurchaseCommandHandler>.Instance);
 
-        var response = await handler.Handle(new ItemPurchaseCommand(1, 0, null, null, null), CancellationToken.None);
+        var response = await handler.Handle(new ItemPurchaseCommand(1, GameEra.Green, 0, null, null, null), CancellationToken.None);
 
         var season = await fixture.Context.GreenShopSeasonStates.FindAsync(1u, 2u);
         Assert.Equal(1u, response.Result);
@@ -78,7 +78,7 @@ public sealed class GreenItemShopPurchaseTests
             fixture.Catalog,
             NullLogger<ItemPurchaseCommandHandler>.Instance);
 
-        var response = await handler.Handle(new ItemPurchaseCommand(1, 3, 5, 117, 500), CancellationToken.None);
+        var response = await handler.Handle(new ItemPurchaseCommand(1, GameEra.Green, 3, 5, 117, 500), CancellationToken.None);
 
         var reloaded = await fixture.Context.UserSaveDataGreen.FindAsync(1u);
         var item = await fixture.Context.GreenShopItemStates.FindAsync(1u, 2u, 5u, 117u);
@@ -123,7 +123,7 @@ public sealed class GreenItemShopPurchaseTests
             fixture.Catalog,
             NullLogger<ItemPurchaseCommandHandler>.Instance);
 
-        var response = await handler.Handle(new ItemPurchaseCommand(1, 2, 1, 865, 300), CancellationToken.None);
+        var response = await handler.Handle(new ItemPurchaseCommand(1, GameEra.Green, 2, 1, 865, 300), CancellationToken.None);
 
         var season = await fixture.Context.GreenShopSeasonStates.FindAsync(1u, 2u);
         Assert.Equal(0u, response.Result);
@@ -145,7 +145,7 @@ public sealed class GreenItemShopPurchaseTests
             fixture.Catalog,
             NullLogger<ItemPurchaseCommandHandler>.Instance);
 
-        var response = await handler.Handle(new ItemPurchaseCommand(1, 1, 1, 865, 300), CancellationToken.None);
+        var response = await handler.Handle(new ItemPurchaseCommand(1, GameEra.Green, 1, 1, 865, 300), CancellationToken.None);
 
         Assert.Equal(0u, response.Result);
     }

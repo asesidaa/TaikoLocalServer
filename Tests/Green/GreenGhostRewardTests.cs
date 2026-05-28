@@ -99,7 +99,7 @@ public sealed class GreenGhostRewardTests
             fixture.Catalog,
             NullLogger<ItemPurchaseCommandHandler>.Instance);
 
-        var response = await handler.Handle(new ItemPurchaseCommand(1, 10, 1, 2, 40), CancellationToken.None);
+        var response = await handler.Handle(new ItemPurchaseCommand(1, GameEra.Green, 10, 1, 2, 40), CancellationToken.None);
 
         Assert.Equal((uint)1, response.Result);
         Assert.Equal((uint)100, response.TotalGetDonmedal);
@@ -121,7 +121,7 @@ public sealed class GreenGhostRewardTests
             fixture.Catalog,
             NullLogger<ItemPurchaseCommandHandler>.Instance);
 
-        var response = await handler.Handle(new ItemPurchaseCommand(1, 10, 1, 2, 40), CancellationToken.None);
+        var response = await handler.Handle(new ItemPurchaseCommand(1, GameEra.Green, 10, 1, 2, 40), CancellationToken.None);
 
         Assert.Equal((uint)0, response.Result);
         Assert.Equal((uint)0, response.TotalUseDonmedal);
@@ -143,7 +143,7 @@ public sealed class GreenGhostRewardTests
             fixture.Catalog,
             NullLogger<ItemPurchaseCommandHandler>.Instance);
 
-        var response = await handler.Handle(new ItemPurchaseCommand(1, 10, 1, 2, 40), CancellationToken.None);
+        var response = await handler.Handle(new ItemPurchaseCommand(1, GameEra.Green, 10, 1, 2, 40), CancellationToken.None);
 
         Assert.Equal((uint)0, response.Result);
         Assert.Equal(uint.MaxValue - 10, response.TotalUseDonmedal);
