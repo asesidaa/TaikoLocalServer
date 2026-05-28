@@ -13,7 +13,7 @@
 - [ ] **SHOP-04**: Blue item purchases validate `item_no`, `item_type`, `item_id`, and `item_price` against the active Blue catalog before spending medals or changing save state.
 - [x] **SHOP-05**: Blue shop medal totals are stored by BAID and Blue shop season without using Green shop tables or global Green medal state.
 - [ ] **SHOP-06**: Blue purchase and reward execution unlock configured song, tone, costume, title, or related Blue save-state fields without writing Green or Nijiiro state.
-- [ ] **SHOP-07**: Blue userdata readback hides configured locked shop items until the player purchases or receives the matching reward.
+- [x] **SHOP-07**: Blue userdata readback hides configured locked shop items until the player purchases or receives the matching reward.
 - [x] **SHOP-08**: Blue item shop implementation has source guards and regression tests proving it does not reference Green shop state, Green protocol constants, or Green wire models.
 
 ### Blue AdminApi And WebUI Parity
@@ -87,7 +87,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SHOP-04 | Phase 1 | Pending |
 | SHOP-05 | Phase 1 | Complete |
 | SHOP-06 | Phase 1 | Pending |
-| SHOP-07 | Phase 1 | Pending |
+| SHOP-07 | Phase 1 | Complete |
 | SHOP-08 | Phase 1 | Complete |
 | WEB-01 | Phase 2 | Pending |
 | WEB-02 | Phase 2 | Pending |
