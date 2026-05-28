@@ -38,20 +38,30 @@ public sealed class BlueItemShopPurchaseTests
         Assert.False(await fixture.Context.BlueShopItemStates.AnyAsync());
     }
 
-    [Fact]
-    public async Task ItemPurchase_RejectsMismatchedCatalogTupleWithoutMutation()
+    [Theory]
+    [InlineData(2, 3, 12, 1300)]
+    [InlineData(1, 4, 12, 1300)]
+    [InlineData(1, 3, 13, 1300)]
+    [InlineData(1, 3, 12, 1500)]
+    public async Task ItemPurchase_RejectsForgedCatalogTupleWithoutMutation(
+        uint itemNo,
+        uint itemType,
+        uint itemId,
+        uint itemPrice)
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync(CreateShopCatalog(
             new BlueItemShopEntry { ItemNo = 1, ItemType = 3, ItemId = 12, Price = 1300 }));
         await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 2000);
         var handler = CreateHandler(fixture);
 
-        var response = await handler.Handle(new ItemPurchaseCommand(1, GameEra.Blue, 1, 3, 12, 1500), CancellationToken.None);
+        var response = await handler.Handle(new ItemPurchaseCommand(1, GameEra.Blue, itemNo, itemType, itemId, itemPrice), CancellationToken.None);
 
         var season = await fixture.Context.BlueShopSeasonStates.FindAsync(1u, 2u);
+        var save = await fixture.Context.UserSaveDataBlue.FindAsync(1u);
         Assert.Equal(0u, response.Result);
         Assert.Equal(0u, season!.TotalUseDonmedal);
         Assert.False(await fixture.Context.BlueShopItemStates.AnyAsync());
+        Assert.False(HasBit(save!.CostumeFlg1, 12));
     }
 
     [Fact]
@@ -136,6 +146,8 @@ public sealed class BlueItemShopPurchaseTests
         Assert.Equal(1u, item.ItemNo);
         Assert.Equal(1300u, item.ItemPrice);
         Assert.NotNull(item.UnlockedAt);
+        Assert.Equal(0u, save!.TotalGetDonmedal);
+        Assert.Equal(0u, save.TotalUseDonmedal);
         Assert.True(HasBit(save!.CostumeFlg1, 12));
     }
 
