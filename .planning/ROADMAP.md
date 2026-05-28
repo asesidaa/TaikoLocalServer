@@ -52,7 +52,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 01-03-PLAN.md - Blue shop advertisement and protocol mappers
+- [x] 01-03-PLAN.md - Blue shop advertisement and protocol mappers
 - [ ] 01-05-PLAN.md - Blue BAID and userdata locking
 
 **Wave 3** *(blocked on Wave 2 completion)*
@@ -213,7 +213,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Blue A6 Item Shop And Unlocking | 2/6 | In Progress|  |
+| 1. Blue A6 Item Shop And Unlocking | 3/6 | In Progress|  |
 | 2. Blue A7 AdminApi And WebUI Parity | 0/3 | Not started | - |
 | 3. Blue A8 Normal-Mode Cabinet Smoke And Hardening | 0/3 | Not started | - |
 | 4. Blue Battle Evidence And Design | 0/3 | Not started | - |

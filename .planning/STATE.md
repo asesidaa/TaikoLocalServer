@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-05-28T18:24:59.444Z"
+last_updated: "2026-05-28T18:42:47.605Z"
 last_activity: 2026-05-28
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 6
-  completed_plans: 2
+  completed_plans: 3
   percent: 0
 ---
 
@@ -25,11 +25,11 @@ See: .planning/PROJECT.md (updated 2026-05-28)
 ## Current Position
 
 Phase: 01 (Blue A6 Item Shop And Unlocking) — EXECUTING
-Plan: 3 of 6
+Plan: 4 of 6
 Status: Ready to execute
 Last activity: 2026-05-28
 
-Progress: [███░░░░░░░] 33%
+Progress: [█████░░░░░] 50%
 
 ## Performance Metrics
 
@@ -52,6 +52,7 @@ Progress: [███░░░░░░░] 33%
 
 | Phase 01 P01-01 | 16 min | 2 tasks | 4 files |
 | Phase 01-blue-a6-item-shop-and-unlocking P01-02 | 11 min | 2 tasks | 12 files |
+| Phase 01-blue-a6-item-shop-and-unlocking P01-03 | 10 min | 2 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -69,6 +70,9 @@ Recent decisions affecting current work:
 - [Phase 01]: Blue shop season state starts at zero and never seeds from UserSaveDataBlue medal totals.
 - [Phase 01]: Blue item-shop unlock helpers use BlueProtocolBytes fixed widths only.
 - [Phase 01]: Disabled or empty active Blue shop catalogs return no active shop season state instead of creating persisted rows.
+- [Phase 01]: GetItemShopInfoQuery now requires an explicit GameEra and dispatches only Green and Blue item-shop info handlers.
+- [Phase 01]: Blue initialdata shop metadata is advertised only when the Blue shop is enabled, the active season resolves, and that season has rows.
+- [Phase 01]: Blue purchase preflight optional fields are mapped with protobuf ShouldSerialize presence checks so omitted values remain null.
 
 ### Pending Todos
 
@@ -89,6 +93,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-05-28T18:24:37.677Z
-Stopped at: Completed 01-blue-a6-item-shop-and-unlocking-01-02-PLAN.md
+Last session: 2026-05-28T18:42:47.599Z
+Stopped at: Completed 01-blue-a6-item-shop-and-unlocking-01-03-PLAN.md
 Resume file: None
