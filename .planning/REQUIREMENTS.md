@@ -11,7 +11,7 @@
 - [ ] **SHOP-02**: Blue `getitemshopinfo.php` returns the configured active Blue shop season, including season fields and ordered item rows with protocol `item_no` values.
 - [x] **SHOP-03**: Blue item-shop catalog loading uses `blue_item_shop_data.json` and fails fast when shop is enabled but the file, active season, or required season fields are invalid.
 - [ ] **SHOP-04**: Blue item purchases validate `item_no`, `item_type`, `item_id`, and `item_price` against the active Blue catalog before spending medals or changing save state.
-- [ ] **SHOP-05**: Blue shop medal totals are stored by BAID and Blue shop season without using Green shop tables or global Green medal state.
+- [x] **SHOP-05**: Blue shop medal totals are stored by BAID and Blue shop season without using Green shop tables or global Green medal state.
 - [ ] **SHOP-06**: Blue purchase and reward execution unlock configured song, tone, costume, title, or related Blue save-state fields without writing Green or Nijiiro state.
 - [ ] **SHOP-07**: Blue userdata readback hides configured locked shop items until the player purchases or receives the matching reward.
 - [x] **SHOP-08**: Blue item shop implementation has source guards and regression tests proving it does not reference Green shop state, Green protocol constants, or Green wire models.
@@ -85,7 +85,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SHOP-02 | Phase 1 | Pending |
 | SHOP-03 | Phase 1 | Complete |
 | SHOP-04 | Phase 1 | Pending |
-| SHOP-05 | Phase 1 | Pending |
+| SHOP-05 | Phase 1 | Complete |
 | SHOP-06 | Phase 1 | Pending |
 | SHOP-07 | Phase 1 | Pending |
 | SHOP-08 | Phase 1 | Complete |
