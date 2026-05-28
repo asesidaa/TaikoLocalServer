@@ -2,13 +2,16 @@ namespace TaikoLocalServer.Application.Handlers;
 
 public partial class GetItemShopInfoQueryHandler
 {
-    private partial ValueTask<CommonItemShopInfoResponse> HandleGreen(GetItemShopInfoQuery request, CancellationToken cancellationToken)
+    private partial ValueTask<CommonItemShopInfoResponse> HandleBlue(
+        GetItemShopInfoQuery request,
+        CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        var season = gameDataService.Green().ItemShopCatalog.ActiveSeason;
-        if (season is null)
+        var catalog = gameDataService.Blue().ItemShopCatalog;
+        var season = catalog.ActiveSeason;
+        if (!catalog.IsEnabled || season is null)
         {
-            logger.LogInformation("Green GetItemShopInfo returning empty because item shop is disabled");
+            logger.LogInformation("Blue GetItemShopInfo returning empty because item shop is disabled or inactive");
             return ValueTask.FromResult(new CommonItemShopInfoResponse { Result = 1 });
         }
 
@@ -23,6 +26,7 @@ public partial class GetItemShopInfoQueryHandler
             AfterstartDays = season.AfterstartDays,
             BeforecloseDays = season.BeforecloseDays,
             AryItemshopData = season.Items
+                .OrderBy(item => item.ItemNo)
                 .Select(item => new CommonItemShopInfoResponse.ItemShopData
                 {
                     ItemNo = item.ItemNo,

@@ -1,13 +1,13 @@
 using Riok.Mapperly.Abstractions;
 
-namespace TaikoLocalServer.Adapters.GameProtocol.Green.Mappers;
+namespace TaikoLocalServer.Adapters.GameProtocol.Blue.Mappers;
 
 [Mapper]
 public static partial class ItemShopMappers
 {
     public static GetItemShopInfoQuery Map(GetitemshopinfoRequest request)
     {
-        return new GetItemShopInfoQuery(GameEra.Green);
+        return new GetItemShopInfoQuery(GameEra.Blue);
     }
 
     public static ItemPurchaseCommand Map(ItempurchaseRequest request)

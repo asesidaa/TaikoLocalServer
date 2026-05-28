@@ -31,7 +31,7 @@ public sealed class GreenItemShopProtocolTests
             fixture.Catalog,
             NullLogger<GetItemShopInfoQueryHandler>.Instance);
 
-        var response = await handler.Handle(new GetItemShopInfoQuery(), CancellationToken.None);
+        var response = await handler.Handle(new GetItemShopInfoQuery(GameEra.Green), CancellationToken.None);
         var wire = ItemShopMappers.Map(response);
 
         Assert.Equal(1u, wire.Result);
