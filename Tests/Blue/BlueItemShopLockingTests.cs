@@ -51,6 +51,103 @@ public sealed class BlueItemShopLockingTests
         Assert.True(HasBit(response.ToneFlg, 4));
     }
 
+    [Fact]
+    public async Task Baid_LocksActiveShopCostumesUntilUnlocked()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync(CreateShopCatalog());
+        AddBlueUser(fixture);
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new BaidQueryHandler(
+            fixture.Context,
+            NullLogger<BaidQueryHandler>.Instance,
+            fixture.Catalog);
+
+        var response = await handler.Handle(new BaidQuery(GameEra.Blue, "abc"), CancellationToken.None);
+
+        Assert.False(HasBit(response.CostumeFlg1!, 12));
+        Assert.False(HasBit(response.CostumeFlg2!, 117));
+        Assert.False(HasBit(response.CostumeFlg3!, 146));
+        Assert.False(HasBit(response.CostumeFlg4!, 6));
+        Assert.False(HasBit(response.CostumeFlg5!, 7));
+    }
+
+    [Fact]
+    public async Task Baid_RestoresUnlockedActiveShopCostumes()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync(CreateShopCatalog());
+        AddBlueUser(fixture);
+        fixture.Context.BlueShopItemStates.AddRange(
+            Unlocked(1, 2, 3, 12),
+            Unlocked(1, 2, 5, 117),
+            Unlocked(1, 2, 4, 146),
+            Unlocked(1, 2, 6, 6),
+            Unlocked(1, 2, 7, 7));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new BaidQueryHandler(
+            fixture.Context,
+            NullLogger<BaidQueryHandler>.Instance,
+            fixture.Catalog);
+
+        var response = await handler.Handle(new BaidQuery(GameEra.Blue, "abc"), CancellationToken.None);
+
+        Assert.True(HasBit(response.CostumeFlg1!, 12));
+        Assert.True(HasBit(response.CostumeFlg2!, 117));
+        Assert.True(HasBit(response.CostumeFlg3!, 146));
+        Assert.True(HasBit(response.CostumeFlg4!, 6));
+        Assert.True(HasBit(response.CostumeFlg5!, 7));
+    }
+
+    [Fact]
+    public async Task Baid_EnabledShopReportsActiveSeasonTotals()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync(CreateShopCatalog());
+        var save = AddBlueUser(fixture);
+        save.TotalGetDonmedal = 999;
+        save.TotalUseDonmedal = 555;
+        fixture.Context.BlueShopSeasonStates.Add(new BlueShopSeasonState
+        {
+            Baid = 1,
+            SeasonId = 2,
+            TotalGetDonmedal = 80,
+            TotalUseDonmedal = 30,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        });
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new BaidQueryHandler(
+            fixture.Context,
+            NullLogger<BaidQueryHandler>.Instance,
+            fixture.Catalog);
+
+        var response = await handler.Handle(new BaidQuery(GameEra.Blue, "abc"), CancellationToken.None);
+
+        Assert.Equal(80u, response.TotalGetDonmedal);
+        Assert.Equal(30u, response.TotalUseDonmedal);
+    }
+
+    [Fact]
+    public async Task Baid_DisabledShopReportsZeroMedalTotals()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync();
+        var save = AddBlueUser(fixture);
+        save.TotalGetDonmedal = 999;
+        save.TotalUseDonmedal = 555;
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new BaidQueryHandler(
+            fixture.Context,
+            NullLogger<BaidQueryHandler>.Instance,
+            fixture.Catalog);
+
+        var response = await handler.Handle(new BaidQuery(GameEra.Blue, "abc"), CancellationToken.None);
+
+        Assert.Equal(0u, response.TotalGetDonmedal);
+        Assert.Equal(0u, response.TotalUseDonmedal);
+    }
+
     private static BlueHandlerFixture.TestBlueCatalog CreateShopCatalog()
     {
         var season = new BlueItemShopSeason
@@ -65,7 +162,12 @@ public sealed class BlueItemShopLockingTests
             Items =
             [
                 new BlueItemShopEntry { ItemNo = 1, ItemType = 1, ItemId = 101, Price = 1300 },
-                new BlueItemShopEntry { ItemNo = 2, ItemType = 2, ItemId = 4, Price = 500 }
+                new BlueItemShopEntry { ItemNo = 2, ItemType = 2, ItemId = 4, Price = 500 },
+                new BlueItemShopEntry { ItemNo = 3, ItemType = 3, ItemId = 12, Price = 1300 },
+                new BlueItemShopEntry { ItemNo = 4, ItemType = 5, ItemId = 117, Price = 500 },
+                new BlueItemShopEntry { ItemNo = 5, ItemType = 4, ItemId = 146, Price = 500 },
+                new BlueItemShopEntry { ItemNo = 6, ItemType = 6, ItemId = 6, Price = 500 },
+                new BlueItemShopEntry { ItemNo = 7, ItemType = 7, ItemId = 7, Price = 500 }
             ]
         };
 
@@ -75,6 +177,20 @@ public sealed class BlueItemShopLockingTests
             ActiveSeasonId = 2,
             Seasons = new Dictionary<uint, BlueItemShopSeason> { [2] = season }
         });
+    }
+
+    private static UserSaveDataBlue AddBlueUser(BlueHandlerFixture fixture)
+    {
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.Cards.Add(new Card { Baid = 1, AccessCode = "abc" });
+        var save = UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1);
+        save.CostumeFlg1 = BlueProtocolBytes.CreateFixedBitset([0, 12], BlueProtocolBytes.CostumeFlagBytes);
+        save.CostumeFlg2 = BlueProtocolBytes.CreateFixedBitset([0, 117], BlueProtocolBytes.CostumeFlagBytes);
+        save.CostumeFlg3 = BlueProtocolBytes.CreateFixedBitset([0, 146], BlueProtocolBytes.CostumeFlagBytes);
+        save.CostumeFlg4 = BlueProtocolBytes.CreateFixedBitset([0, 6], BlueProtocolBytes.CostumeFlagBytes);
+        save.CostumeFlg5 = BlueProtocolBytes.CreateFixedBitset([0, 7], BlueProtocolBytes.CostumeFlagBytes);
+        fixture.Context.UserSaveDataBlue.Add(save);
+        return save;
     }
 
     private static BlueShopItemState Unlocked(uint baid, uint seasonId, uint itemType, uint itemId)
