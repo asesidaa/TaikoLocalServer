@@ -1,0 +1,26 @@
+using TaikoLocalServer.Domain.Enums;
+
+namespace TaikoLocalServer.Domain.Entities;
+
+public sealed class BlueShopItemState
+{
+    public uint Baid { get; set; }
+
+    public uint SeasonId { get; set; }
+
+    public uint ItemType { get; set; }
+
+    public uint ItemId { get; set; }
+
+    public uint ItemNo { get; set; }
+
+    public uint ItemPrice { get; set; }
+
+    public BlueShopItemStatus Status { get; set; }
+
+    public DateTime PurchasedAt { get; set; }
+
+    public DateTime? UnlockedAt { get; set; }
+
+    public UserDatum? Ba { get; set; }
+}

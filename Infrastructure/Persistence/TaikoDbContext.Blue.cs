@@ -13,6 +13,8 @@ public partial class TaikoDbContext
     public virtual DbSet<BlueRecentSongs> BlueRecentSongs { get; set; } = null!;
     public virtual DbSet<DanScoreDatumBlue> DanScoreDataBlue { get; set; } = null!;
     public virtual DbSet<DanStageScoreDatumBlue> DanStageScoreDataBlue { get; set; } = null!;
+    public virtual DbSet<BlueShopSeasonState> BlueShopSeasonStates { get; set; } = null!;
+    public virtual DbSet<BlueShopItemState> BlueShopItemStates { get; set; } = null!;
 
     partial void OnModelCreatingBlue(ModelBuilder modelBuilder)
     {
@@ -105,6 +107,33 @@ public partial class TaikoDbContext
             entity.HasOne(d => d.Parent)
                 .WithMany(p => p.DanStageScoreData)
                 .HasForeignKey(d => new { d.Baid, d.DanId, d.IsExtra })
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<BlueShopSeasonState>(entity =>
+        {
+            entity.ToTable("BlueShopSeasonStates");
+            entity.HasKey(e => new { e.Baid, e.SeasonId });
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+            entity.HasOne(d => d.Ba)
+                .WithMany()
+                .HasPrincipalKey(p => p.Baid)
+                .HasForeignKey(d => d.Baid)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<BlueShopItemState>(entity =>
+        {
+            entity.ToTable("BlueShopItemStates");
+            entity.HasKey(e => new { e.Baid, e.SeasonId, e.ItemType, e.ItemId });
+            entity.Property(e => e.Status).HasConversion<uint>();
+            entity.Property(e => e.PurchasedAt).HasColumnType("datetime");
+            entity.Property(e => e.UnlockedAt).HasColumnType("datetime");
+            entity.HasOne(d => d.Ba)
+                .WithMany()
+                .HasPrincipalKey(p => p.Baid)
+                .HasForeignKey(d => d.Baid)
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }
