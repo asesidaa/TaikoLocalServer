@@ -8,8 +8,10 @@ public partial class GetTelopQueryHandler(IGameDataCatalog gameDataService)
     public ValueTask<CommonGetTelopResponse> Handle(GetTelopQuery request, CancellationToken cancellationToken) => request.Era switch
     {
         GameEra.Green => HandleGreen(request, cancellationToken),
+        GameEra.Blue => HandleBlue(request, cancellationToken),
         _ => throw new InvalidOperationException($"GetTelopQuery is not implemented for era: {request.Era}")
     };
 
     private partial ValueTask<CommonGetTelopResponse> HandleGreen(GetTelopQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonGetTelopResponse> HandleBlue(GetTelopQuery request, CancellationToken cancellationToken);
 }
