@@ -13,7 +13,7 @@ This roadmap continues Blue support after completed Superpowers stages A0-A5. Th
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Blue A6 Item Shop And Unlocking** - Implement Blue-owned shop advertisement, purchase, medal, rewardexecution no-op, and unlock behavior.
+- [x] **Phase 1: Blue A6 Item Shop And Unlocking** - Implement Blue-owned shop advertisement, purchase, medal, rewardexecution no-op, and unlock behavior. (completed 2026-05-28)
 - [ ] **Phase 2: Blue A7 AdminApi And WebUI Parity** - Expose supported Blue data through AdminApi and WebUI without Green/Nijiiro state leakage.
 - [ ] **Phase 3: Blue A8 Normal-Mode Cabinet Smoke And Hardening** - Prove normal Blue support on cabinet/RPCS3 and harden unresolved normal-mode gaps.
 - [ ] **Phase 4: Blue Battle Evidence And Design** - Gather strict battle evidence and write the implementation design before battle runtime code.
@@ -61,7 +61,7 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 01-06-PLAN.md - Blue item-shop verification, docs, and source guards
+- [x] 01-06-PLAN.md - Blue item-shop verification, docs, and source guards
 
 ### Phase 2: Blue A7 AdminApi And WebUI Parity
 
@@ -213,7 +213,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Blue A6 Item Shop And Unlocking | 5/6 | In Progress|  |
+| 1. Blue A6 Item Shop And Unlocking | 6/6 | Complete   | 2026-05-28 |
 | 2. Blue A7 AdminApi And WebUI Parity | 0/3 | Not started | - |
 | 3. Blue A8 Normal-Mode Cabinet Smoke And Hardening | 0/3 | Not started | - |
 | 4. Blue Battle Evidence And Design | 0/3 | Not started | - |
