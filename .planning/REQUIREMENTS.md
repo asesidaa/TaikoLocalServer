@@ -81,48 +81,48 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SHOP-01 | TBD | Pending |
-| SHOP-02 | TBD | Pending |
-| SHOP-03 | TBD | Pending |
-| SHOP-04 | TBD | Pending |
-| SHOP-05 | TBD | Pending |
-| SHOP-06 | TBD | Pending |
-| SHOP-07 | TBD | Pending |
-| SHOP-08 | TBD | Pending |
-| WEB-01 | TBD | Pending |
-| WEB-02 | TBD | Pending |
-| WEB-03 | TBD | Pending |
-| WEB-04 | TBD | Pending |
-| WEB-05 | TBD | Pending |
-| WEB-06 | TBD | Pending |
-| SMOKE-01 | TBD | Pending |
-| SMOKE-02 | TBD | Pending |
-| SMOKE-03 | TBD | Pending |
-| SMOKE-04 | TBD | Pending |
-| SMOKE-05 | TBD | Pending |
-| BTEV-01 | TBD | Pending |
-| BTEV-02 | TBD | Pending |
-| BTEV-03 | TBD | Pending |
-| BTEV-04 | TBD | Pending |
-| BTEV-05 | TBD | Pending |
-| BTEV-06 | TBD | Pending |
-| BTL-01 | TBD | Pending |
-| BTL-02 | TBD | Pending |
-| BTL-03 | TBD | Pending |
-| BTL-04 | TBD | Pending |
-| BTL-05 | TBD | Pending |
-| BTL-06 | TBD | Pending |
-| FULL-01 | TBD | Pending |
-| FULL-02 | TBD | Pending |
-| FULL-03 | TBD | Pending |
-| FULL-04 | TBD | Pending |
-| FULL-05 | TBD | Pending |
+| SHOP-01 | Phase 1 | Pending |
+| SHOP-02 | Phase 1 | Pending |
+| SHOP-03 | Phase 1 | Pending |
+| SHOP-04 | Phase 1 | Pending |
+| SHOP-05 | Phase 1 | Pending |
+| SHOP-06 | Phase 1 | Pending |
+| SHOP-07 | Phase 1 | Pending |
+| SHOP-08 | Phase 1 | Pending |
+| WEB-01 | Phase 2 | Pending |
+| WEB-02 | Phase 2 | Pending |
+| WEB-03 | Phase 2 | Pending |
+| WEB-04 | Phase 2 | Pending |
+| WEB-05 | Phase 2 | Pending |
+| WEB-06 | Phase 2 | Pending |
+| SMOKE-01 | Phase 3 | Pending |
+| SMOKE-02 | Phase 3 | Pending |
+| SMOKE-03 | Phase 3 | Pending |
+| SMOKE-04 | Phase 3 | Pending |
+| SMOKE-05 | Phase 3 | Pending |
+| BTEV-01 | Phase 4 | Pending |
+| BTEV-02 | Phase 4 | Pending |
+| BTEV-03 | Phase 4 | Pending |
+| BTEV-04 | Phase 4 | Pending |
+| BTEV-05 | Phase 4 | Pending |
+| BTEV-06 | Phase 4 | Pending |
+| BTL-01 | Phase 5 | Pending |
+| BTL-02 | Phase 5 | Pending |
+| BTL-03 | Phase 5 | Pending |
+| BTL-04 | Phase 5 | Pending |
+| BTL-05 | Phase 5 | Pending |
+| BTL-06 | Phase 5 | Pending |
+| FULL-01 | Phase 6 | Pending |
+| FULL-02 | Phase 6 | Pending |
+| FULL-03 | Phase 6 | Pending |
+| FULL-04 | Phase 6 | Pending |
+| FULL-05 | Phase 6 | Pending |
 
 **Coverage:**
 - v1 requirements: 36 total
-- Mapped to phases: 0
-- Unmapped: 36
+- Mapped to phases: 36
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-05-28*
-*Last updated: 2026-05-28 after initial definition*
+*Last updated: 2026-05-28 after roadmap creation*
