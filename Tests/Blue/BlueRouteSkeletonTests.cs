@@ -72,7 +72,9 @@ public sealed class BlueRouteSkeletonTests
             "PlayResultController.cs",
             "SelfBestController.cs",
             "TaikojukuController.cs",
-            "RewardCardCheckController.cs"
+            "RewardCardCheckController.cs",
+            "GetItemShopInfoController.cs",
+            "ItemPurchaseController.cs"
         };
 
         foreach (var file in Directory.EnumerateFiles(controllersRoot, "*.cs", SearchOption.AllDirectories))
