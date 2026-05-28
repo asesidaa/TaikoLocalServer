@@ -8,8 +8,11 @@ public partial class GetInitialDataQueryHandler
     {
         var blue = gameDataService.Blue();
         var activeShop = blue.ItemShopCatalog.ActiveSeason;
-        var shopSongIds = blue.ItemShopCatalog.IsEnabled && activeShop is not null
-            ? activeShop.Items.Where(item => item.ItemType == 1).Select(item => item.ItemId).ToHashSet()
+        var activeShopWithRows = blue.ItemShopCatalog.IsEnabled && activeShop is { Items.Count: > 0 }
+            ? activeShop
+            : null;
+        var shopSongIds = activeShopWithRows is not null
+            ? activeShopWithRows.Items.Where(item => item.ItemType == 1).Select(item => item.ItemId).ToHashSet()
             : [];
         var allSongs = blue.MusicInfoFileOrder
             .Select(song => song.SongNo)
@@ -24,15 +27,15 @@ public partial class GetInitialDataQueryHandler
             SongHashVer = blue.SongHashVersion,
             IsDanplay = true,
             IsClose = false,
-            IsItemshop = blue.ItemShopCatalog.IsEnabled && activeShop is not null && activeShop.Items.Count > 0,
-            AryBlueItemShopDatas = activeShop is null
+            IsItemshop = activeShopWithRows is not null,
+            AryBlueItemShopDatas = activeShopWithRows is null
                 ? []
                 :
                 [
                     new CommonInitialDataCheckResponse.InformationData
                     {
-                        InfoId = activeShop.SeasonId,
-                        VerupNo = activeShop.VerupNo
+                        InfoId = activeShopWithRows.SeasonId,
+                        VerupNo = activeShopWithRows.VerupNo
                     }
                 ],
             AryBlueTelopDatas = blue.Telops.Values

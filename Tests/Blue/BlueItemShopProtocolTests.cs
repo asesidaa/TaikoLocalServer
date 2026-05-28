@@ -7,6 +7,105 @@ namespace TaikoLocalServer.Tests.Blue;
 public sealed class BlueItemShopProtocolTests
 {
     [Fact]
+    public async Task InitialData_DisabledShopDoesNotAdvertiseItemShop()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync();
+        var handler = new GetInitialDataQueryHandler(
+            fixture.Catalog,
+            NullLogger<GetInitialDataQueryHandler>.Instance,
+            Options.Create(new ServerSettings()));
+
+        var response = await handler.Handle(new GetInitialDataQuery(GameEra.Blue), CancellationToken.None);
+        var wire = InitialDataMappers.Map(response);
+
+        Assert.False(response.IsItemshop);
+        Assert.Empty(response.AryBlueItemShopDatas);
+        Assert.False(wire.IsItemshop);
+        Assert.Empty(wire.AryItemshopDatas);
+    }
+
+    [Fact]
+    public async Task InitialData_MissingActiveSeasonDoesNotAdvertiseItemShop()
+    {
+        var catalog = new BlueItemShopCatalog
+        {
+            IsEnabled = true,
+            ActiveSeasonId = 99,
+            Seasons = new Dictionary<uint, BlueItemShopSeason>
+            {
+                [2] = CreateSeason()
+            }
+        };
+        await using var fixture = await BlueHandlerFixture.CreateAsync(
+            new BlueHandlerFixture.TestBlueCatalog(itemShopCatalog: catalog));
+        var handler = new GetInitialDataQueryHandler(
+            fixture.Catalog,
+            NullLogger<GetInitialDataQueryHandler>.Instance,
+            Options.Create(new ServerSettings()));
+
+        var response = await handler.Handle(new GetInitialDataQuery(GameEra.Blue), CancellationToken.None);
+        var wire = InitialDataMappers.Map(response);
+
+        Assert.False(response.IsItemshop);
+        Assert.Empty(response.AryBlueItemShopDatas);
+        Assert.False(wire.IsItemshop);
+        Assert.Empty(wire.AryItemshopDatas);
+    }
+
+    [Fact]
+    public async Task InitialData_EmptyActiveSeasonDoesNotAdvertiseItemShop()
+    {
+        var catalog = new BlueItemShopCatalog
+        {
+            IsEnabled = true,
+            ActiveSeasonId = 2,
+            Seasons = new Dictionary<uint, BlueItemShopSeason>
+            {
+                [2] = new() { SeasonId = 2, VerupNo = 20170404, Items = [] }
+            }
+        };
+        await using var fixture = await BlueHandlerFixture.CreateAsync(
+            new BlueHandlerFixture.TestBlueCatalog(itemShopCatalog: catalog));
+        var handler = new GetInitialDataQueryHandler(
+            fixture.Catalog,
+            NullLogger<GetInitialDataQueryHandler>.Instance,
+            Options.Create(new ServerSettings()));
+
+        var response = await handler.Handle(new GetInitialDataQuery(GameEra.Blue), CancellationToken.None);
+        var wire = InitialDataMappers.Map(response);
+
+        Assert.False(response.IsItemshop);
+        Assert.Empty(response.AryBlueItemShopDatas);
+        Assert.False(wire.IsItemshop);
+        Assert.Empty(wire.AryItemshopDatas);
+    }
+
+    [Fact]
+    public async Task InitialData_EnabledActiveSeasonAdvertisesMetadataAndClearsShopSongs()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync(CreateSongShopCatalog());
+        var handler = new GetInitialDataQueryHandler(
+            fixture.Catalog,
+            NullLogger<GetInitialDataQueryHandler>.Instance,
+            Options.Create(new ServerSettings()));
+
+        var response = await handler.Handle(new GetInitialDataQuery(GameEra.Blue), CancellationToken.None);
+        var wire = InitialDataMappers.Map(response);
+
+        Assert.True(response.IsItemshop);
+        var info = Assert.Single(response.AryBlueItemShopDatas);
+        Assert.Equal(2u, info.InfoId);
+        Assert.Equal(20170404u, info.VerupNo);
+        Assert.True(wire.IsItemshop);
+        var wireInfo = Assert.Single(wire.AryItemshopDatas);
+        Assert.Equal(2u, wireInfo.InfoId);
+        Assert.Equal(20170404u, wireInfo.VerupNo);
+        Assert.False(HasBit(response.DefaultSongFlg, 101));
+        Assert.True(HasBit(response.DefaultSongFlg, 102));
+        Assert.Equal(BlueProtocolBytes.SongFlagBytes, response.DefaultSongFlg.Length);
+    }
+
+    [Fact]
     public async Task GetItemShopInfo_DisabledShopReturnsSuccessWithoutRows()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync();
@@ -103,6 +202,47 @@ public sealed class BlueItemShopProtocolTests
         Assert.Equal(GameEra.Blue, query.Era);
     }
 
+    [Fact]
+    public void ItemPurchaseCommandMap_PreservesOmittedOptionalDetails()
+    {
+        var request = new ItempurchaseRequest
+        {
+            ChassisId = "268410000000",
+            ShopId = "JPN0JPN0123",
+            Baid = 1,
+            ItemNo = 0
+        };
+
+        var command = ItemShopMappers.Map(request);
+
+        Assert.Equal(1u, command.Baid);
+        Assert.Equal(0u, command.ItemNo);
+        Assert.Null(command.ItemType);
+        Assert.Null(command.ItemId);
+        Assert.Null(command.ItemPrice);
+    }
+
+    [Fact]
+    public void ItemPurchaseCommandMap_PreservesExplicitZeroOptionalDetails()
+    {
+        var request = new ItempurchaseRequest
+        {
+            ChassisId = "268410000000",
+            ShopId = "JPN0JPN0123",
+            Baid = 1,
+            ItemNo = 0,
+            ItemType = 0,
+            ItemId = 0,
+            ItemPrice = 0
+        };
+
+        var command = ItemShopMappers.Map(request);
+
+        Assert.Equal(0u, command.ItemType);
+        Assert.Equal(0u, command.ItemId);
+        Assert.Equal(0u, command.ItemPrice);
+    }
+
     private static BlueHandlerFixture.TestBlueCatalog CreateShopCatalog()
     {
         return new BlueHandlerFixture.TestBlueCatalog(itemShopCatalog: new BlueItemShopCatalog
@@ -112,6 +252,28 @@ public sealed class BlueItemShopProtocolTests
             Seasons = new Dictionary<uint, BlueItemShopSeason>
             {
                 [2] = CreateSeason()
+            }
+        });
+    }
+
+    private static BlueHandlerFixture.TestBlueCatalog CreateSongShopCatalog()
+    {
+        return new BlueHandlerFixture.TestBlueCatalog(itemShopCatalog: new BlueItemShopCatalog
+        {
+            IsEnabled = true,
+            ActiveSeasonId = 2,
+            Seasons = new Dictionary<uint, BlueItemShopSeason>
+            {
+                [2] = new()
+                {
+                    SeasonId = 2,
+                    VerupNo = 20170404,
+                    Items =
+                    [
+                        new BlueItemShopEntry { ItemNo = 1, ItemType = 1, ItemId = 101, Price = 1300 },
+                        new BlueItemShopEntry { ItemNo = 2, ItemType = 3, ItemId = 12, Price = 1300 }
+                    ]
+                }
             }
         });
     }
@@ -132,4 +294,7 @@ public sealed class BlueItemShopProtocolTests
                 new BlueItemShopEntry { ItemNo = 1, ItemType = 3, ItemId = 12, Price = 1300 }
             ]
         };
+
+    private static bool HasBit(byte[] source, uint id)
+        => (source[id >> 3] & (1 << ((int)id & 7))) != 0;
 }
