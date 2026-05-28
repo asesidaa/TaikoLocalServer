@@ -47,7 +47,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 **Wave 1**
 
-- [ ] 01-01-PLAN.md - Parser-proven Blue shop default data
+- [x] 01-01-PLAN.md - Parser-proven Blue shop default data
 - [ ] 01-02-PLAN.md - Blue shop persistence and state helpers
 
 **Wave 2** *(blocked on Wave 1 completion)*
@@ -213,7 +213,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Blue A6 Item Shop And Unlocking | 0/6 | Not started | - |
+| 1. Blue A6 Item Shop And Unlocking | 1/6 | In Progress|  |
 | 2. Blue A7 AdminApi And WebUI Parity | 0/3 | Not started | - |
 | 3. Blue A8 Normal-Mode Cabinet Smoke And Hardening | 0/3 | Not started | - |
 | 4. Blue Battle Evidence And Design | 0/3 | Not started | - |
