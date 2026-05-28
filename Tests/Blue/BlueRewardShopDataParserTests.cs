@@ -1,3 +1,4 @@
+using System.Text.Json;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Blue;
 
 namespace TaikoLocalServer.Tests.Blue;
@@ -49,6 +50,39 @@ public sealed class BlueRewardShopDataParserTests
     }
 
     [Fact]
+    public async Task CommittedDefaultJsonMatchesOfficialCache()
+    {
+        Assert.True(File.Exists(OfficialCachePath), $"Missing local Blue reward shop cache: {OfficialCachePath}");
+
+        var parsed = await new BlueRewardShopDataParser().ParseFromFileAsync(
+            OfficialCachePath,
+            CancellationToken.None);
+        var parsedSeason = Assert.Single(parsed.Seasons);
+
+        using var document = JsonDocument.Parse(await File.ReadAllTextAsync(
+            FindDefaultShopDataPath(),
+            CancellationToken.None));
+        var season = Assert.Single(document.RootElement.GetProperty("seasons").EnumerateArray());
+
+        Assert.Equal(parsedSeason.SeasonId, season.GetProperty("season_id").GetUInt32());
+        Assert.Equal(parsedSeason.VerupNo, season.GetProperty("verup_no").GetUInt32());
+        Assert.Equal(parsedSeason.Telop, season.GetProperty("telop").GetString());
+        Assert.Equal(parsedSeason.StartDatetime, season.GetProperty("start_datetime").GetString());
+        Assert.Equal(parsedSeason.EndDatetime, season.GetProperty("end_datetime").GetString());
+        Assert.Equal(parsedSeason.AfterstartDays, season.GetProperty("afterstart_days").GetUInt32());
+        Assert.Equal(parsedSeason.BeforecloseDays, season.GetProperty("beforeclose_days").GetUInt32());
+
+        var jsonItems = season.GetProperty("items").EnumerateArray().ToArray();
+        Assert.Equal(parsedSeason.Items.Count, jsonItems.Length);
+        for (var index = 0; index < jsonItems.Length; index++)
+        {
+            Assert.Equal(parsedSeason.Items[index].ItemType, jsonItems[index].GetProperty("item_type").GetUInt32());
+            Assert.Equal(parsedSeason.Items[index].ItemId, jsonItems[index].GetProperty("item_id").GetUInt32());
+            Assert.Equal(parsedSeason.Items[index].Price, jsonItems[index].GetProperty("item_price").GetUInt32());
+        }
+    }
+
+    [Fact]
     public void Parse_RejectsInvalidBoostSignature()
     {
         var bytes = ReadOfficialBytes();
@@ -90,6 +124,29 @@ public sealed class BlueRewardShopDataParserTests
     {
         Assert.True(File.Exists(OfficialCachePath), $"Missing local Blue reward shop cache: {OfficialCachePath}");
         return File.ReadAllBytes(OfficialCachePath);
+    }
+
+    private static string FindDefaultShopDataPath()
+    {
+        for (var directory = new DirectoryInfo(AppContext.BaseDirectory);
+             directory is not null;
+             directory = directory.Parent)
+        {
+            var path = Path.Combine(
+                directory.FullName,
+                "Host",
+                "wwwroot",
+                "data",
+                "blue",
+                BlueItemShopLoader.FileName);
+
+            if (File.Exists(path))
+            {
+                return path;
+            }
+        }
+
+        throw new FileNotFoundException("Could not find committed Blue item shop data.");
     }
 
     private static void AssertItem(
