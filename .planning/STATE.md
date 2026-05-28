@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-05-28T18:58:21.131Z"
+last_updated: "2026-05-28T19:18:41.965Z"
 last_activity: 2026-05-28
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 6
-  completed_plans: 4
+  completed_plans: 5
   percent: 0
 ---
 
@@ -25,11 +25,11 @@ See: .planning/PROJECT.md (updated 2026-05-28)
 ## Current Position
 
 Phase: 01 (Blue A6 Item Shop And Unlocking) — EXECUTING
-Plan: 4 of 6
+Plan: 6 of 6
 Status: Ready to execute
 Last activity: 2026-05-28
 
-Progress: [███████░░░] 67%
+Progress: [████████░░] 83%
 
 ## Performance Metrics
 
@@ -54,6 +54,7 @@ Progress: [███████░░░] 67%
 | Phase 01-blue-a6-item-shop-and-unlocking P01-02 | 11 min | 2 tasks | 12 files |
 | Phase 01-blue-a6-item-shop-and-unlocking P01-03 | 10 min | 2 tasks | 10 files |
 | Phase 01-blue-a6-item-shop-and-unlocking P01-05 | 7 min | 2 tasks | 3 files |
+| Phase 01-blue-a6-item-shop-and-unlocking P01-04 | 14 min | 2 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -77,6 +78,10 @@ Recent decisions affecting current work:
 - [Phase 01]: Blue userdata hides active-season shop songs and tones until matching unlocked BlueShopItemState rows exist.
 - [Phase 01]: Blue BAID hides active-season costume item types 3..7 with the D-18 save-field mapping and BlueProtocolBytes.CostumeFlagBytes.
 - [Phase 01]: Blue BAID reports active-season BlueShopSeasonState Don medal totals when the shop is enabled and 0/0 when disabled.
+- [Phase 01]: ItemPurchaseCommand now carries an explicit GameEra and dispatches to Green or Blue partial handlers - Plan 01-04 made item purchase era-aware while preserving Green and adding Blue purchase behavior.
+- [Phase 01]: Blue itempurchase validates active-season catalog tuples before spending medals, persisting purchases, or applying D-18 save-bit unlocks - mitigates forged cabinet purchase tuples and keeps Blue shop mutation server-authoritative.
+- [Phase 01]: Blue rewardexecution remains a Phase 1 log-and-success no-op with no Mediator call or state mutation - D-02 separates rewardexecution from the purchase path until stronger evidence requires runtime behavior.
+- [Phase 01]: Enabled-shop Blue playresult Don medals accrue to BlueShopSeasonState; disabled or inactive shops retain non-shop Blue save behavior - D-10 through D-12 require active-season shop accounting without creating shop state when no shop is active.
 
 ### Pending Todos
 
@@ -97,6 +102,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-05-28T18:56:59.606Z
-Stopped at: Completed 01-blue-a6-item-shop-and-unlocking-01-05-PLAN.md
+Last session: 2026-05-28T19:18:20.499Z
+Stopped at: Completed 01-blue-a6-item-shop-and-unlocking-01-04-PLAN.md
 Resume file: None
