@@ -40,10 +40,10 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 4 plans
 
 Plans:
-- [ ] 01-01: Blue shop persistence and state helpers
-- [ ] 01-02: Blue shop advertisement and protocol mappers
-- [ ] 01-03: Blue purchase, reward execution, and userdata locking
-- [ ] 01-04: Blue item-shop verification, docs, and source guards
+- [ ] 01-01-PLAN.md - Blue shop persistence and state helpers
+- [ ] 01-02-PLAN.md - Blue shop advertisement and protocol mappers
+- [ ] 01-03-PLAN.md - Blue purchase, reward execution, and userdata locking
+- [ ] 01-04-PLAN.md - Blue item-shop verification, docs, and source guards
 
 ### Phase 2: Blue A7 AdminApi And WebUI Parity
 **Goal**: Blue users can be inspected and managed through the same basic AdminApi/WebUI surfaces as Green where Blue data exists, while unsafe write/edit surfaces stay hidden or read-only.
@@ -171,4 +171,3 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 4. Blue Battle Evidence And Design | 0/3 | Not started | - |
 | 5. Blue Battle Runtime Support | 0/4 | Not started | - |
 | 6. Full Blue Verification And Release Hardening | 0/3 | Not started | - |
-
