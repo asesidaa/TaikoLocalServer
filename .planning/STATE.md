@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-05-28)
 Phase: 2 of 6 (Blue A7 AdminApi And WebUI Parity)
 Plan: Not started
 Status: Phase 01 complete; ready for Phase 2 planning
-Last activity: 2026-05-28 -- Phase 01 marked complete
+Last activity: 2026-05-28 - Completed quick task 260529-6ow: Add event_folder, movie_data and telop data support to Blue
 
 Progress: [##--------] 17%
 
@@ -93,6 +93,12 @@ None yet.
 
 - Track B battle runtime work is intentionally blocked until Phase 4 evidence/design completes.
 - Cabinet/RPCS3 smoke evidence is required for full done, beyond automated server tests.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260529-6ow | Add event_folder, movie_data and telop data support to Blue | 2026-05-28 | d47efb09 | [260529-6ow-add-event-folder-movie-data-and-telop-da](./quick/260529-6ow-add-event-folder-movie-data-and-telop-da/) |
 
 ## Deferred Items
 
