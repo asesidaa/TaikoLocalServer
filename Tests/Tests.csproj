@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
     <ProjectReference Include="..\Adapters.AdminApi\Adapters.AdminApi.csproj" />
+    <ProjectReference Include="..\Adapters.AllnetMucha\Adapters.AllnetMucha.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
     <ProjectReference Include="..\Adapters.GameProtocol.Shared\Adapters.GameProtocol.Shared.csproj" />

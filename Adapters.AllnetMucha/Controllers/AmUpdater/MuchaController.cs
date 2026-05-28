@@ -104,16 +104,13 @@ public class MuchaController : BaseProtocolController<MuchaController>
     }
 
     [HttpPost("/mucha_front/downloadstate.do")]
-    public ContentResult DownloadState()
+    public IActionResult DownloadState()
     {
-        // The game's downloadstate task (EBOOT.ELF sub_4BCBD4) polls this endpoint as
-        // part of the network state machine. The response is parsed by sub_4B70BC which
-        // only extracts the RESULTS code. Acknowledging with 001 keeps the poller happy.
-        var response = new Dictionary<string, string>
-        {
-            { "RESULTS", "001" }
-        };
-        return Content(FormOutputUtil.ToFormOutput(response));
+        // Real cabinets may call this from stale persisted Mucha chunk state. A
+        // successful RESULTS=001 response can continue the updater path and crash, while
+        // the observed HTTP 405 failure lets the game continue with an updater error
+        // visible only in test mode.
+        return StatusCode(405);
     }
 
     [HttpPost("/mucha_front/downloaderror.do")]
