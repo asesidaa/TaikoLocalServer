@@ -21,10 +21,10 @@ A Blue cabinet can use TaikoLocalServer for normal and battle play with repeatab
 - [x] Blue A3 identity/profile/userdata: Blue card registration, login, default save state, initial data, and stable profile/userdata readback are implemented through Blue-owned state.
 - [x] Blue A4 normal enso play result, self-best, crowns, and rewards: Blue normal song results persist and read back through Blue-specific handlers, mappers, byte helpers, and save state.
 - [x] Blue A5 Dani Dojo: Blue taikojuku catalog responses, Dan result persistence, Dan readback, AdminApi support, and WebUI Dani behavior are implemented without reusing Green Dan state.
+- [x] Blue A6 item shop and unlocking: Blue shop seasons, active shop selection, season-scoped medal state, purchases, rewardexecution no-op, configured item unlocks, and locked-item readback are implemented using Blue data and Blue save state.
 
 ### Active
 
-- [ ] Blue A6 item shop and unlocking: support Blue shop seasons, active shop selection, season-scoped medal state, purchases, reward execution, and configured item unlocks using Blue data and Blue save state.
 - [ ] Blue A7 basic AdminApi and WebUI parity: expose Blue profile, score history, favorites, Dani, customization, item-shop-relevant surfaces, and safe edit/readback behavior without writing Green state.
 - [ ] Blue A8 normal-mode cabinet smoke and hardening: produce repeatable cabinet/RPCS3 evidence for boot, new card registration, known card login, song list, normal play, playresult save, self-best/crown readback, Dani, item shop purchase/reward unlock, and WebUI readback.
 - [ ] Blue battle evidence and design: define Track B from proto, local logs, IDA/client evidence, cabinet/RPCS3 traces, and explicit field-width/default-state findings before implementing runtime battle behavior.
@@ -92,4 +92,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-28 after initialization*
+*Last updated: 2026-05-28 after Phase 1 completion*
