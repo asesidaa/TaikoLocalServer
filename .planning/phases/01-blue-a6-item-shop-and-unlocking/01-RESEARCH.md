@@ -79,7 +79,7 @@ The existing codebase already has most catalog infrastructure: `BlueItemShopLoad
 
 The official local cache `H:\taiko\blue\rewardshopdata.bin` exists and is 179 bytes, with a Boost serialization header and an apparent four-row reward-shop payload. [VERIFIED: Get-Item H:\taiko\blue\rewardshopdata.bin; Format-Hex H:\taiko\blue\rewardshopdata.bin] The row interpretation is not yet a locked truth: it appears to contain four item rows that may decode as `item_type=3`, item ids `12, 7, 9, 10`, and prices `1300, 1500, 1500, 1500`, but the planner must require parser tests that fully decode season metadata and catalog ID resolution before committing derived JSON. [ASSUMED]
 
-**Primary recommendation:** Plan four implementation waves: parser/default JSON gate, Blue persistence/state helpers, Blue protocol purchase/shop-info wiring, then locking/source-guard/regression verification. [VERIFIED: .planning/ROADMAP.md; .planning/phases/01-blue-a6-item-shop-and-unlocking/01-CONTEXT.md]
+**Primary recommendation:** Plan six implementation waves: parser/default JSON gate, Blue persistence/state helpers, Blue advertisement/protocol mappers, Blue purchase/reward/playresult medals, BAID/userdata locking, then source-guard/regression verification. Runtime plans must depend on the parser/default JSON gate so the official-cache open question is blocked by execution proof instead of assumed. [VERIFIED: .planning/ROADMAP.md; .planning/phases/01-blue-a6-item-shop-and-unlocking/01-CONTEXT.md]
 
 ## Architectural Responsibility Map
 
@@ -483,11 +483,13 @@ Guard files should include new Blue shop handlers, helpers, mappers, controllers
 1. **Official cache season envelope and ID resolution**
    - What we know: `H:\taiko\blue\rewardshopdata.bin` exists, is 179 bytes, includes `serialization::archive`, and has a compact payload with apparent item rows. [VERIFIED: Get-Item H:\taiko\blue\rewardshopdata.bin; Format-Hex H:\taiko\blue\rewardshopdata.bin]
    - What's unclear: The exact season metadata fields and catalog ID resolution were not fully decoded in this research pass. [ASSUMED]
-   - Recommendation: Plan Wave 0 parser/test work before committing `blue_item_shop_data.json`; stop to discuss if full parse or ID resolution fails. [VERIFIED: .planning/phases/01-blue-a6-item-shop-and-unlocking/01-CONTEXT.md]
+   - Status: Gated by plan 01-01. The question remains unresolved until execution proves the parser/default JSON; runtime plans 01-03 through 01-05 depend on that gate. [VERIFIED: .planning/phases/01-blue-a6-item-shop-and-unlocking/01-01-PLAN.md]
+   - Recommendation: Execute parser/test work before committing runtime behavior that relies on `blue_item_shop_data.json`; stop to discuss if full parse or ID resolution fails. [VERIFIED: .planning/phases/01-blue-a6-item-shop-and-unlocking/01-CONTEXT.md]
 
 2. **SHOP-06 wording versus D-02**
    - What we know: SHOP-06 mentions purchase and reward execution unlocks, while D-02 says Blue `rewardexecution.php` must log success and make no shop/save mutations in Phase 1. [VERIFIED: .planning/REQUIREMENTS.md; .planning/phases/01-blue-a6-item-shop-and-unlocking/01-CONTEXT.md]
    - What's unclear: A later plan checker may treat the broader requirement wording as binding unless the plan explicitly cites the context override. [ASSUMED]
+   - Status: Resolved for Phase 1 by D-02 in plan 01-04 and final verification in plan 01-06: purchase unlocks immediately, while `rewardexecution.php` is tested and documented as success no-op. [VERIFIED: .planning/phases/01-blue-a6-item-shop-and-unlocking/01-CONTEXT.md]
    - Recommendation: Satisfy SHOP-06 through immediate purchase unlocks and document rewardexecution no-op as the locked Phase 1 interpretation. [VERIFIED: .planning/phases/01-blue-a6-item-shop-and-unlocking/01-CONTEXT.md]
 
 ## Environment Availability

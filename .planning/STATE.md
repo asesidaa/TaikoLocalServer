@@ -8,7 +8,7 @@ last_activity: 2026-05-28 - initialized GSD roadmap from existing Blue Superpowe
 progress:
   total_phases: 6
   completed_phases: 0
-  total_plans: 20
+  total_plans: 22
   completed_plans: 0
   percent: 0
 ---
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-05-28)
 ## Current Position
 
 Phase: 1 of 6 (Blue A6 Item Shop And Unlocking)
-Plan: 0 of 4 in current phase
+Plan: 0 of 6 in current phase
 Status: Ready to plan
 Last activity: 2026-05-28 - initialized GSD roadmap from existing Blue Superpowers A0-A5 work.
 

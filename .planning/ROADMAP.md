@@ -12,7 +12,7 @@ This roadmap continues Blue support after completed Superpowers stages A0-A5. Th
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Blue A6 Item Shop And Unlocking** - Implement Blue-owned shop advertisement, purchase, medal, reward, and unlock behavior.
+- [ ] **Phase 1: Blue A6 Item Shop And Unlocking** - Implement Blue-owned shop advertisement, purchase, medal, rewardexecution no-op, and unlock behavior.
 - [ ] **Phase 2: Blue A7 AdminApi And WebUI Parity** - Expose supported Blue data through AdminApi and WebUI without Green/Nijiiro state leakage.
 - [ ] **Phase 3: Blue A8 Normal-Mode Cabinet Smoke And Hardening** - Prove normal Blue support on cabinet/RPCS3 and harden unresolved normal-mode gaps.
 - [ ] **Phase 4: Blue Battle Evidence And Design** - Gather strict battle evidence and write the implementation design before battle runtime code.
@@ -22,7 +22,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 ## Phase Details
 
 ### Phase 1: Blue A6 Item Shop And Unlocking
-**Goal**: Blue item shop uses Blue catalog data, Blue season-scoped medal state, and Blue save-state unlocks for shop advertisement, purchase, reward execution, and userdata locking.
+**Goal**: Blue item shop uses Blue catalog data, Blue season-scoped medal state, and Blue save-state unlocks for shop advertisement, purchase, Phase 1 rewardexecution no-op handling, and userdata locking.
 **Depends on**: Completed prior Blue A0-A5 work
 **Requirements**: [SHOP-01, SHOP-02, SHOP-03, SHOP-04, SHOP-05, SHOP-06, SHOP-07, SHOP-08]
 **Canonical refs**:
@@ -34,16 +34,18 @@ Decimal phases appear between their surrounding integers in numeric order.
 - `Infrastructure/GameDataCatalog/Blue/BlueItemShopLoader.cs`
 **Success Criteria** (what must be TRUE):
   1. Blue shop endpoints advertise and return only the configured active Blue shop season.
-  2. Blue purchase and reward flows update Blue-owned medal, shop, and unlock state.
-  3. Blue userdata hides configured locked shop items until purchased or rewarded.
+  2. Blue purchase updates Blue-owned medal, shop, and unlock state, while `rewardexecution.php` remains success no-op for Phase 1 per D-02.
+  3. Blue userdata hides configured locked shop items until purchased.
   4. Tests and source guards prove Blue item shop does not use Green shop state or Green protocol constants.
-**Plans**: 4 plans
+**Plans**: 6 plans
 
 Plans:
-- [ ] 01-01-PLAN.md - Blue shop persistence and state helpers
-- [ ] 01-02-PLAN.md - Blue shop advertisement and protocol mappers
-- [ ] 01-03-PLAN.md - Blue purchase, reward execution, and userdata locking
-- [ ] 01-04-PLAN.md - Blue item-shop verification, docs, and source guards
+- [ ] 01-01-PLAN.md - Parser-proven Blue shop default data
+- [ ] 01-02-PLAN.md - Blue shop persistence and state helpers
+- [ ] 01-03-PLAN.md - Blue shop advertisement and protocol mappers
+- [ ] 01-04-PLAN.md - Blue purchase, rewardexecution no-op, and playresult medals
+- [ ] 01-05-PLAN.md - Blue BAID and userdata locking
+- [ ] 01-06-PLAN.md - Blue item-shop verification, docs, and source guards
 
 ### Phase 2: Blue A7 AdminApi And WebUI Parity
 **Goal**: Blue users can be inspected and managed through the same basic AdminApi/WebUI surfaces as Green where Blue data exists, while unsafe write/edit surfaces stay hidden or read-only.
@@ -165,7 +167,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Blue A6 Item Shop And Unlocking | 0/4 | Not started | - |
+| 1. Blue A6 Item Shop And Unlocking | 0/6 | Not started | - |
 | 2. Blue A7 AdminApi And WebUI Parity | 0/3 | Not started | - |
 | 3. Blue A8 Normal-Mode Cabinet Smoke And Hardening | 0/3 | Not started | - |
 | 4. Blue Battle Evidence And Design | 0/3 | Not started | - |
