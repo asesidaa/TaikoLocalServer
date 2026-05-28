@@ -10,6 +10,20 @@ public partial class UserDataQueryHandler
             ?? throw new InvalidOperationException($"User not found for Blue baid {request.Baid}.");
         var saveData = await context.GetOrCreateBlueSaveDataAsync(request.Baid, cancellationToken);
         var blue = gameDataService.Blue();
+        var activeShopSeason = blue.ItemShopCatalog.ActiveSeason;
+        var unlockedShopItems = activeShopSeason is null
+            ? new HashSet<(uint ItemType, uint ItemId)>()
+            : await context.BlueShopItemStates
+                .Where(row => row.Baid == request.Baid
+                    && row.SeasonId == activeShopSeason.SeasonId
+                    && row.Status == BlueShopItemStatus.Unlocked)
+                .Select(row => new ValueTuple<uint, uint>(row.ItemType, row.ItemId))
+                .ToHashSetAsync(cancellationToken);
+
+        IEnumerable<uint> LockedIds(uint itemType) => activeShopSeason?.Items
+            .Where(item => item.ItemType == itemType && !unlockedShopItems.Contains((item.ItemType, item.ItemId)))
+            .Select(item => item.ItemId) ?? [];
+
         var normalDanGrades = await context.DanScoreDataBlue
             .Where(row => row.Baid == request.Baid && !row.IsExtra && row.DanId >= 1 && row.DanId <= 25)
             .ToDictionaryAsync(row => row.DanId, row => row.ClearGrade, cancellationToken);
@@ -32,11 +46,17 @@ public partial class UserDataQueryHandler
         {
             Result = 1,
             SongHashVer = blue.SongHashVersion,
-            ReleaseSongFlg = BlueProtocolBytes.OrBitsets(
-                catalogReleaseFlags,
-                saveData.ReleaseSongFlg,
+            ReleaseSongFlg = BlueShopUnlocks.ClearBits(
+                BlueProtocolBytes.OrBitsets(
+                    catalogReleaseFlags,
+                    saveData.ReleaseSongFlg,
+                    BlueProtocolBytes.SongFlagBytes),
+                LockedIds(1),
                 BlueProtocolBytes.SongFlagBytes),
-            ToneFlg = BlueProtocolBytes.FixedOrZero(saveData.ToneFlg, BlueProtocolBytes.ToneFlagBytes),
+            ToneFlg = BlueShopUnlocks.ClearBits(
+                saveData.ToneFlg,
+                LockedIds(2),
+                BlueProtocolBytes.ToneFlagBytes),
             TitleFlg = BlueProtocolBytes.FixedOrZero(saveData.TitleFlg, BlueProtocolBytes.TitleFlagBytes),
             DefaultOptionSetting = BlueProtocolBytes.FixedOrZero(saveData.DefaultOptionSetting, 2),
             OptionFlg = saveData.OptionFlg,
