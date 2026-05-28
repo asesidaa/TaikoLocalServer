@@ -117,6 +117,86 @@ public sealed class BlueItemShopStateTests
         Assert.Equal(BlueProtocolBytes.CostumeFlagBytes, cleared.Length);
     }
 
+    [Fact]
+    public async Task UpdatePlayResult_WhenShopEnabled_AddsDonMedalsToActiveSeasonState()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync(CreateSingleSongShopCatalog());
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataBlue.Add(UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreatePlayResultHandler(fixture);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Blue,
+            CreatePlayResult(getDonmedal: 25, getKatsumedal: 7)),
+            CancellationToken.None);
+
+        var state = await fixture.Context.BlueShopSeasonStates.FindAsync(1u, 2u);
+        var save = await fixture.Context.UserSaveDataBlue.FindAsync(1u);
+        Assert.Equal(1u, result);
+        Assert.Equal(25u, state!.TotalGetDonmedal);
+        Assert.Equal(0u, state.TotalUseDonmedal);
+        Assert.Equal(0u, save!.TotalGetDonmedal);
+        Assert.Equal(7u, save.TotalGetKatsumedal);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_WhenShopDisabled_DoesNotCreateShopSeasonState()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataBlue.Add(UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreatePlayResultHandler(fixture);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Blue,
+            CreatePlayResult(getDonmedal: 25)),
+            CancellationToken.None);
+
+        var save = await fixture.Context.UserSaveDataBlue.FindAsync(1u);
+        Assert.Equal(1u, result);
+        Assert.False(await fixture.Context.BlueShopSeasonStates.AnyAsync());
+        Assert.Equal(25u, save!.TotalGetDonmedal);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_WhenShopHasNoActiveSeason_DoesNotCreateShopSeasonState()
+    {
+        var catalog = new BlueItemShopCatalog
+        {
+            IsEnabled = true,
+            ActiveSeasonId = 99,
+            Seasons = new Dictionary<uint, BlueItemShopSeason>
+            {
+                [2] = new()
+                {
+                    SeasonId = 2,
+                    Items = [new BlueItemShopEntry { ItemNo = 1, ItemType = 1, ItemId = 101, Price = 1300 }]
+                }
+            }
+        };
+        await using var fixture = await BlueHandlerFixture.CreateAsync(
+            new BlueHandlerFixture.TestBlueCatalog(itemShopCatalog: catalog));
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataBlue.Add(UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreatePlayResultHandler(fixture);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Blue,
+            CreatePlayResult(getDonmedal: 25)),
+            CancellationToken.None);
+
+        var save = await fixture.Context.UserSaveDataBlue.FindAsync(1u);
+        Assert.Equal(1u, result);
+        Assert.False(await fixture.Context.BlueShopSeasonStates.AnyAsync());
+        Assert.Equal(25u, save!.TotalGetDonmedal);
+    }
+
     private static BlueShopItemState Unlocked(uint baid, uint seasonId, uint itemType, uint itemId) => new()
     {
         Baid = baid,
@@ -129,4 +209,49 @@ public sealed class BlueItemShopStateTests
         PurchasedAt = DateTime.UtcNow,
         UnlockedAt = DateTime.UtcNow
     };
+
+    private static UpdatePlayResultCommandHandler CreatePlayResultHandler(BlueHandlerFixture fixture)
+        => new(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance,
+            Options.Create(new ServerSettings()));
+
+    private static CommonPlayResultData CreatePlayResult(uint getDonmedal, uint getKatsumedal = 0)
+        => new()
+        {
+            Baid = 1,
+            GetDonmedal = getDonmedal,
+            GetKatsumedal = getKatsumedal,
+            PlayDatetime = "2019-01-01T00:00:00Z",
+            AryStageInfoes =
+            [
+                new CommonPlayResultData.StageData
+                {
+                    SongNo = 101,
+                    Level = 1,
+                    StageMode = 0,
+                    PlayResult = 1,
+                    PlayScore = 1000
+                }
+            ]
+        };
+
+    private static BlueHandlerFixture.TestBlueCatalog CreateSingleSongShopCatalog()
+    {
+        var season = new BlueItemShopSeason
+        {
+            SeasonId = 2,
+            StartDatetime = "20181219070000",
+            EndDatetime = "20190314020000",
+            Items = [new BlueItemShopEntry { ItemNo = 1, ItemType = 1, ItemId = 101, Price = 1300 }]
+        };
+
+        return new BlueHandlerFixture.TestBlueCatalog(itemShopCatalog: new BlueItemShopCatalog
+        {
+            IsEnabled = true,
+            ActiveSeasonId = 2,
+            Seasons = new Dictionary<uint, BlueItemShopSeason> { [2] = season }
+        });
+    }
 }

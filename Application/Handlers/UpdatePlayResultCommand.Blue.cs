@@ -28,8 +28,13 @@ public partial class UpdatePlayResultCommandHandler
         var playResultData = request.PlayResultData;
         var saveData = await context.GetOrCreateBlueSaveDataAsync(request.Baid, cancellationToken);
         var blue = gameDataService.Blue();
+        var shopSeasonState = await context.GetOrCreateActiveBlueShopSeasonStateAsync(
+            saveData,
+            blue.ItemShopCatalog,
+            cancellationToken);
+        var currentDonmedal = shopSeasonState?.TotalGetDonmedal ?? saveData.TotalGetDonmedal;
 
-        if (!CanAddBlue(saveData.TotalGetDonmedal, playResultData.GetDonmedal)
+        if (!CanAddBlue(currentDonmedal, playResultData.GetDonmedal)
             || !CanAddBlue(saveData.TotalGetKatsumedal, playResultData.GetKatsumedal))
         {
             logger.LogWarning("Rejecting invalid Blue medal totals for baid {Baid}", request.Baid);
@@ -58,7 +63,16 @@ public partial class UpdatePlayResultCommandHandler
                 playResultData.HasTokkunStageInfo);
         }
 
-        saveData.TotalGetDonmedal += playResultData.GetDonmedal;
+        if (shopSeasonState is null)
+        {
+            saveData.TotalGetDonmedal += playResultData.GetDonmedal;
+        }
+        else
+        {
+            shopSeasonState.TotalGetDonmedal += playResultData.GetDonmedal;
+            shopSeasonState.UpdatedAt = DateTime.UtcNow;
+        }
+
         saveData.TotalGetKatsumedal += playResultData.GetKatsumedal;
         saveData.ItemshopTutorialFlg = playResultData.ItemshopTutorialFlg ?? saveData.ItemshopTutorialFlg;
         saveData.IsDevil = playResultData.IsDevil ?? saveData.IsDevil;

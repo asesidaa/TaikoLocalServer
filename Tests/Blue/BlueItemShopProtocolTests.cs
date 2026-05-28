@@ -1,6 +1,10 @@
 using TaikoLocalServer.Adapters.GameProtocol.Blue.Mappers;
+using TaikoLocalServer.Adapters.GameProtocol.Blue.Controllers;
 using TaikoLocalServer.Adapters.GameProtocol.Blue.Wire;
 using TaikoLocalServer.Application.Catalog.Blue;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace TaikoLocalServer.Tests.Blue;
 
@@ -244,6 +248,68 @@ public sealed class BlueItemShopProtocolTests
         Assert.Equal(0u, command.ItemPrice);
     }
 
+    [Fact]
+    public async Task BlueRewardExecution_ReturnsSuccessWithoutMutatingShopOrSaveState()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync(CreateShopCatalog());
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var save = UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1);
+        save.ToneFlg = BlueShopUnlocks.SetBits(save.ToneFlg, [4], BlueProtocolBytes.ToneFlagBytes);
+        save.CostumeFlg1 = BlueShopUnlocks.SetBits(save.CostumeFlg1, [12], BlueProtocolBytes.CostumeFlagBytes);
+        fixture.Context.UserSaveDataBlue.Add(save);
+        fixture.Context.BlueShopSeasonStates.Add(new BlueShopSeasonState
+        {
+            Baid = 1,
+            SeasonId = 2,
+            TotalGetDonmedal = 700,
+            TotalUseDonmedal = 200,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        });
+        fixture.Context.BlueShopItemStates.Add(new BlueShopItemState
+        {
+            Baid = 1,
+            SeasonId = 2,
+            ItemType = 3,
+            ItemId = 12,
+            ItemNo = 1,
+            ItemPrice = 1300,
+            Status = BlueShopItemStatus.Unlocked,
+            PurchasedAt = DateTime.UtcNow,
+            UnlockedAt = DateTime.UtcNow
+        });
+        await fixture.Context.SaveChangesAsync();
+        var unlockFieldsBefore = SnapshotUnlockFields(save);
+        var controller = new RewardExecutionController
+        {
+            ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
+        };
+
+        var result = controller.RewardExecution(new RewardexecutionRequest
+        {
+            Baid = 1,
+            ChassisId = "268410000000",
+            ShopId = "JPN0JPN0123",
+            ReleaseSongNoes = [101],
+            GetToneNoes = [5],
+            GetCostumeNo1s = [13]
+        });
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var response = Assert.IsType<RewardexecutionResponse>(ok.Value);
+        var season = await fixture.Context.BlueShopSeasonStates.FindAsync(1u, 2u);
+        var reloaded = await fixture.Context.UserSaveDataBlue.FindAsync(1u);
+        Assert.Equal(1u, response.Result);
+        Assert.Equal(700u, season!.TotalGetDonmedal);
+        Assert.Equal(200u, season.TotalUseDonmedal);
+        foreach (var (field, bytes) in unlockFieldsBefore)
+        {
+            Assert.Equal(bytes, GetUnlockField(reloaded!, field));
+        }
+
+        Assert.Single(await fixture.Context.BlueShopItemStates.ToListAsync());
+    }
+
     private static BlueHandlerFixture.TestBlueCatalog CreateShopCatalog()
     {
         return new BlueHandlerFixture.TestBlueCatalog(itemShopCatalog: new BlueItemShopCatalog
@@ -298,4 +364,39 @@ public sealed class BlueItemShopProtocolTests
 
     private static bool HasBit(byte[] source, uint id)
         => (source[id >> 3] & (1 << ((int)id & 7))) != 0;
+
+    private static Dictionary<string, byte[]> SnapshotUnlockFields(UserSaveDataBlue saveData)
+        => new()
+        {
+            [nameof(UserSaveDataBlue.ReleaseSongFlg)] = saveData.ReleaseSongFlg.ToArray(),
+            [nameof(UserSaveDataBlue.ToneFlg)] = saveData.ToneFlg.ToArray(),
+            [nameof(UserSaveDataBlue.CostumeFlg1)] = saveData.CostumeFlg1.ToArray(),
+            [nameof(UserSaveDataBlue.CostumeFlg2)] = saveData.CostumeFlg2.ToArray(),
+            [nameof(UserSaveDataBlue.CostumeFlg3)] = saveData.CostumeFlg3.ToArray(),
+            [nameof(UserSaveDataBlue.CostumeFlg4)] = saveData.CostumeFlg4.ToArray(),
+            [nameof(UserSaveDataBlue.CostumeFlg5)] = saveData.CostumeFlg5.ToArray(),
+            [nameof(UserSaveDataBlue.TitleFlg)] = saveData.TitleFlg.ToArray()
+        };
+
+    private static byte[] GetUnlockField(UserSaveDataBlue saveData, string field)
+        => field switch
+        {
+            nameof(UserSaveDataBlue.ReleaseSongFlg) => saveData.ReleaseSongFlg,
+            nameof(UserSaveDataBlue.ToneFlg) => saveData.ToneFlg,
+            nameof(UserSaveDataBlue.CostumeFlg1) => saveData.CostumeFlg1,
+            nameof(UserSaveDataBlue.CostumeFlg2) => saveData.CostumeFlg2,
+            nameof(UserSaveDataBlue.CostumeFlg3) => saveData.CostumeFlg3,
+            nameof(UserSaveDataBlue.CostumeFlg4) => saveData.CostumeFlg4,
+            nameof(UserSaveDataBlue.CostumeFlg5) => saveData.CostumeFlg5,
+            nameof(UserSaveDataBlue.TitleFlg) => saveData.TitleFlg,
+            _ => throw new InvalidOperationException($"Unsupported Blue unlock field {field}.")
+        };
+
+    private static DefaultHttpContext CreateHttpContext()
+    {
+        var services = new ServiceCollection()
+            .AddLogging()
+            .BuildServiceProvider();
+        return new DefaultHttpContext { RequestServices = services };
+    }
 }
