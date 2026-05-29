@@ -1,11 +1,14 @@
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using TaikoLocalServer.Contracts.AdminApi.ViewModels;
 using TaikoLocalServer.Application.Settings;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Blue;
+using TaikoLocalServer.Tests.Green;
 
 namespace TaikoLocalServer.Tests.Blue;
 
-[Collection("Blue runtime catalog tests")]
+[Collection(GreenRuntimeCatalogTestCollection.Name)]
 public sealed class BlueCatalogLoaderTests
 {
     [Fact]
@@ -113,6 +116,69 @@ public sealed class BlueCatalogLoaderTests
         Assert.Contains(logger.Events, log => log.Message.Contains("Loaded Blue catalog", StringComparison.Ordinal));
     }
 
+    [Fact]
+    public async Task CatalogInitialize_ParsesBlueCustomizationSourcesAndUsesSharedNames()
+    {
+        if (FindRepoFileOrSkip("Host", "wwwroot", "data", "blue", "data", "config", "S10100-1", "musicinfo.xml") is null
+            || FindRepoFileOrSkip("Host", "wwwroot", "data", "blue", "data", "config", "S10100-1", "musicmedleyinfo.xml") is null
+            || FindRepoFileOrSkip("Host", "wwwroot", "data", "blue", "data", "fumen", "tuning.bin") is null)
+        {
+            return;
+        }
+
+        CopyBlueCatalogFilesToProcessRoot();
+        DeleteBlueCustomizationFilesFromProcessRoot();
+        var sharedSnapshot = SnapshotSharedCustomizationFiles();
+        var gameDataRoot = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+
+        try
+        {
+            await CreateBlueCustomizationSourceAsync(gameDataRoot);
+            await WriteSharedCustomizationNameFilesToProcessRoot(
+                [new Costume { CostumeId = 1, CostumeType = "kigurumi", CostumeName = "Shared Kigurumi" }],
+                [new Title { TitleId = 131, TitleName = "Shared Title", TitleRarity = 7 }],
+                Enumerable.Range(0, 20)
+                    .Select(id => new Neiro { NeiroId = (uint)id, NeiroName = $"Shared Tone {id}" })
+                    .ToList());
+
+            var catalog = new BlueEraGameDataCatalog(
+                NullLogger<BlueEraGameDataCatalog>.Instance,
+                Options.Create(new ServerSettings
+                {
+                    Eras = new Dictionary<string, EraSettings>
+                    {
+                        [nameof(GameEra.Blue)] = new()
+                        {
+                            Enabled = true,
+                            AutoExtractCatalog = true,
+                            EnableShop = false,
+                            GameDataPath = gameDataRoot
+                        }
+                    }
+                }));
+
+            await catalog.InitializeAsync(CancellationToken.None);
+
+            Assert.Equal(
+                "Shared Kigurumi",
+                Assert.Single(catalog.GetCostumeList(), costume => costume.CostumeType == "kigurumi" && costume.CostumeId == 1).CostumeName);
+            Assert.Equal("Shared Title", catalog.GetTitleDictionary()[131].TitleName);
+            Assert.Equal(7u, catalog.GetTitleDictionary()[131].TitleRarity);
+            Assert.Equal(Enumerable.Range(0, 20).Select(id => (uint)id), catalog.GetNeiroDictionary().Keys.OrderBy(id => id));
+            Assert.Equal("Shared Tone 19", catalog.GetNeiroDictionary()[19].NeiroName);
+        }
+        finally
+        {
+            if (Directory.Exists(gameDataRoot))
+            {
+                Directory.Delete(gameDataRoot, recursive: true);
+            }
+
+            DeleteBlueCustomizationFilesFromProcessRoot();
+            RestoreSharedCustomizationFiles(sharedSnapshot);
+        }
+    }
+
     private static string? FindRepoFileOrSkip(params string[] pathParts)
     {
         for (var directory = new DirectoryInfo(AppContext.BaseDirectory);
@@ -152,6 +218,96 @@ public sealed class BlueCatalogLoaderTests
             File.Copy(source, destination, overwrite: true);
         }
     }
+
+    private static async Task CreateBlueCustomizationSourceAsync(string gameDataRoot)
+    {
+        var fullCosDirectory = Path.Combine(gameDataRoot, "don3d", "full", "cos");
+        Directory.CreateDirectory(fullCosDirectory);
+        await File.WriteAllBytesAsync(Path.Combine(fullCosDirectory, "cos_001000.nud"), [0]);
+        await File.WriteAllBytesAsync(Path.Combine(fullCosDirectory, "cos_001000.nut"), [0]);
+
+        var titleDirectory = Path.Combine(gameDataRoot, "nutdata", "S10100-1", "appendable", "00", "title_name");
+        Directory.CreateDirectory(titleDirectory);
+        await File.WriteAllBytesAsync(Path.Combine(titleDirectory, "title_name_00131_00131.nut"), [0]);
+    }
+
+    private static void DeleteBlueCustomizationFilesFromProcessRoot()
+    {
+        var dataPath = GetProcessBlueDataPath();
+        File.Delete(Path.Combine(dataPath, BlueCostumeLoader.FileName));
+        File.Delete(Path.Combine(dataPath, BlueTitleLoader.FileName));
+        File.Delete(Path.Combine(dataPath, BlueNeiroLoader.FileName));
+    }
+
+    private static Task WriteSharedCustomizationNameFilesToProcessRoot(
+        IReadOnlyList<Costume> costumes,
+        IReadOnlyList<Title> titles,
+        IReadOnlyList<Neiro> neiros)
+    {
+        var dataPath = GetProcessSharedDataPath();
+        Directory.CreateDirectory(dataPath);
+        return Task.WhenAll(
+            WriteEnvelopeAsync(Path.Combine(dataPath, "costume_name_data.json"), costumes),
+            WriteEnvelopeAsync(Path.Combine(dataPath, "title_name_data.json"), titles),
+            WriteEnvelopeAsync(Path.Combine(dataPath, "neiro_name_data.json"), neiros));
+    }
+
+    private static Task WriteEnvelopeAsync<T>(string path, IReadOnlyList<T> items)
+        => File.WriteAllTextAsync(path, JsonSerializer.Serialize(new
+        {
+            schemaVersion = 1,
+            items
+        }, new JsonSerializerOptions(JsonSerializerDefaults.Web)));
+
+    private static IReadOnlyDictionary<string, byte[]?> SnapshotSharedCustomizationFiles()
+    {
+        var dataPath = GetProcessSharedDataPath();
+        var result = new Dictionary<string, byte[]?>();
+        foreach (var fileName in SharedCustomizationFileNames)
+        {
+            var path = Path.Combine(dataPath, fileName);
+            result[path] = File.Exists(path) ? File.ReadAllBytes(path) : null;
+        }
+
+        return result;
+    }
+
+    private static void RestoreSharedCustomizationFiles(IReadOnlyDictionary<string, byte[]?> snapshot)
+    {
+        foreach (var (path, bytes) in snapshot)
+        {
+            if (bytes is null)
+            {
+                File.Delete(path);
+                continue;
+            }
+
+            Directory.CreateDirectory(Path.GetDirectoryName(path)
+                ?? throw new ApplicationException($"Cannot resolve directory for {path}."));
+            File.WriteAllBytes(path, bytes);
+        }
+    }
+
+    private static string GetProcessBlueDataPath()
+    {
+        var processDirectory = Path.GetDirectoryName(Environment.ProcessPath)
+            ?? throw new ApplicationException("Cannot resolve process directory.");
+        return Path.Combine(processDirectory, "wwwroot", "data", "blue");
+    }
+
+    private static string GetProcessSharedDataPath()
+    {
+        var processDirectory = Path.GetDirectoryName(Environment.ProcessPath)
+            ?? throw new ApplicationException("Cannot resolve process directory.");
+        return Path.Combine(processDirectory, "wwwroot", "data", "shared");
+    }
+
+    private static readonly string[] SharedCustomizationFileNames =
+    [
+        "costume_name_data.json",
+        "title_name_data.json",
+        "neiro_name_data.json"
+    ];
 
     private sealed class RecordingLogger<T> : ILogger<T>
     {
