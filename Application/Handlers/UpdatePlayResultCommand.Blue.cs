@@ -195,7 +195,11 @@ public partial class UpdatePlayResultCommandHandler
             PlayTime = playTime
         });
 
-        await UpsertBestAsync(baid, stage, difficulty, crown, isShin, cancellationToken);
+        if (playMode != (uint)PlayMode.DanMode || isShin)
+        {
+            await UpsertBestAsync(baid, stage, difficulty, crown, isShin, cancellationToken);
+        }
+
         await UpsertBlueFavoriteAndRecentAsync(baid, stage, playTime, cancellationToken);
     }
 

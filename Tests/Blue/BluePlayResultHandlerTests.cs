@@ -267,6 +267,8 @@ public sealed class BluePlayResultHandlerTests
         Assert.Equal(300u, dan.ComboCountTotal);
         Assert.Equal(3, dan.DanStageScoreData.Count);
         Assert.Equal(326090u, dan.DanStageScoreData.Single(stage => stage.StageIndex == 0).HighScore);
+        var normalBest = await fixture.Context.SongBestDataBlue.FindAsync(1u, 101u, Difficulty.Easy, false);
+        Assert.Null(normalBest);
         var save = await fixture.Context.UserSaveDataBlue.FindAsync(1u);
         Assert.NotNull(save);
         Assert.Equal(1u, save!.GotDanMax);

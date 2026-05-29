@@ -132,7 +132,7 @@
     {
         if (plate == 0)
         {
-            return "#000";
+            return Localizer["None"];
         }
 
         if (Catalog.TryGetValue(plate, out var title) && !string.IsNullOrWhiteSpace(title.TitleName))

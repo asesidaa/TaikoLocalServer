@@ -343,6 +343,8 @@ public sealed class GreenCustomizationWebUiTests
         var markup = ReadWebUiFile("Shared", "Customize", "TitlePicker.razor");
 
         Assert.Contains("if (plate == 0)", markup);
+        Assert.Contains("return Localizer[\"None\"];", markup);
+        Assert.DoesNotContain("return \"#000\";", markup);
         Assert.True(
             markup.IndexOf("if (plate == 0)", StringComparison.Ordinal)
             < markup.IndexOf("Catalog.TryGetValue(plate", StringComparison.Ordinal),
