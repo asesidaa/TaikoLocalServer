@@ -52,10 +52,7 @@ public static partial class PlayResultMappers
             DifficultyPlayedStar = request.DifficultyPlayedStar,
             HasDifficultyPlayedCourse = request.ShouldSerializeDifficultyPlayedCourse(),
             HasDifficultyPlayedStar = request.ShouldSerializeDifficultyPlayedStar(),
-            WaiwaiTutorialFlg = request.ShouldSerializeWaiwaiTutorialFlg() ? request.WaiwaiTutorialFlg : null,
-            HasTokkunStageInfo = request.AryTokkunstageInfo is not null || request.ShouldSerializeTokkunTutorialFlg(),
-            HasReleaseBattleData = request.AryReleaseBattledata is not null,
-            HasBattleStageData = request.AryStageInfoes.Any(stage => stage.AryBattlestagedata is not null)
+            WaiwaiTutorialFlg = request.ShouldSerializeWaiwaiTutorialFlg() ? request.WaiwaiTutorialFlg : null
         };
     }
 

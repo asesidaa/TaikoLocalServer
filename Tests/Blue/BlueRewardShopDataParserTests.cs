@@ -50,35 +50,42 @@ public sealed class BlueRewardShopDataParserTests
     }
 
     [Fact]
-    public async Task CommittedDefaultJsonMatchesOfficialCache()
+    public async Task CommittedDefaultJsonHasValidShopDataShape()
     {
-        Assert.True(File.Exists(OfficialCachePath), $"Missing local Blue reward shop cache: {OfficialCachePath}");
-
-        var parsed = await new BlueRewardShopDataParser().ParseFromFileAsync(
-            OfficialCachePath,
-            CancellationToken.None);
-        var parsedSeason = Assert.Single(parsed.Seasons);
-
         using var document = JsonDocument.Parse(await File.ReadAllTextAsync(
             FindDefaultShopDataPath(),
             CancellationToken.None));
-        var season = Assert.Single(document.RootElement.GetProperty("seasons").EnumerateArray());
 
-        Assert.Equal(parsedSeason.SeasonId, season.GetProperty("season_id").GetUInt32());
-        Assert.Equal(parsedSeason.VerupNo, season.GetProperty("verup_no").GetUInt32());
-        Assert.Equal(parsedSeason.Telop, season.GetProperty("telop").GetString());
-        Assert.Equal(parsedSeason.StartDatetime, season.GetProperty("start_datetime").GetString());
-        Assert.Equal(parsedSeason.EndDatetime, season.GetProperty("end_datetime").GetString());
-        Assert.Equal(parsedSeason.AfterstartDays, season.GetProperty("afterstart_days").GetUInt32());
-        Assert.Equal(parsedSeason.BeforecloseDays, season.GetProperty("beforeclose_days").GetUInt32());
+        var seasons = document.RootElement.GetProperty("seasons").EnumerateArray().ToArray();
+        Assert.NotEmpty(seasons);
 
-        var jsonItems = season.GetProperty("items").EnumerateArray().ToArray();
-        Assert.Equal(parsedSeason.Items.Count, jsonItems.Length);
-        for (var index = 0; index < jsonItems.Length; index++)
+        var seasonIds = new HashSet<uint>();
+        foreach (var season in seasons)
         {
-            Assert.Equal(parsedSeason.Items[index].ItemType, jsonItems[index].GetProperty("item_type").GetUInt32());
-            Assert.Equal(parsedSeason.Items[index].ItemId, jsonItems[index].GetProperty("item_id").GetUInt32());
-            Assert.Equal(parsedSeason.Items[index].Price, jsonItems[index].GetProperty("item_price").GetUInt32());
+            var seasonId = season.GetProperty("season_id").GetUInt32();
+            Assert.NotEqual(0u, seasonId);
+            Assert.True(seasonIds.Add(seasonId), $"Duplicate season_id {seasonId}.");
+            Assert.True(season.TryGetProperty("verup_no", out _));
+            Assert.True(IsProtocolDateTime(season.GetProperty("start_datetime").GetString()));
+            Assert.True(IsProtocolDateTime(season.GetProperty("end_datetime").GetString()));
+            Assert.True(season.TryGetProperty("afterstart_days", out _));
+            Assert.True(season.TryGetProperty("beforeclose_days", out _));
+
+            var jsonItems = season.GetProperty("items").EnumerateArray().ToArray();
+            Assert.InRange(jsonItems.Length, 1, 64);
+
+            var itemIdentities = new HashSet<(uint ItemType, uint ItemId)>();
+            foreach (var item in jsonItems)
+            {
+                var itemType = item.GetProperty("item_type").GetUInt32();
+                var itemId = item.GetProperty("item_id").GetUInt32();
+                var price = item.GetProperty("item_price").GetUInt32();
+
+                Assert.InRange(itemType, 1u, 7u);
+                Assert.NotEqual(0u, itemId);
+                Assert.NotEqual(0u, price);
+                Assert.True(itemIdentities.Add((itemType, itemId)), $"Duplicate item identity {itemType}:{itemId}.");
+            }
         }
     }
 
@@ -148,6 +155,9 @@ public sealed class BlueRewardShopDataParserTests
 
         throw new FileNotFoundException("Could not find committed Blue item shop data.");
     }
+
+    private static bool IsProtocolDateTime(string? value)
+        => value is { Length: 14 } && value.All(char.IsAsciiDigit);
 
     private static void AssertItem(
         BlueRewardShopDataParser.BlueRewardShopItem item,

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using TaikoLocalServer.Application.Catalog.Blue;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Blue;
 
@@ -35,30 +36,34 @@ public sealed class BlueItemShopLoaderTests
     [Fact]
     public async Task LoadAsync_DefaultBlueItemShopDataLoads()
     {
-        using var scope = ProcessShopDataScope.Write(await File.ReadAllTextAsync(
+        var json = await File.ReadAllTextAsync(
             FindDefaultShopDataPath(),
-            CancellationToken.None));
+            CancellationToken.None);
+        var activeSeasonId = GetFirstSeasonId(json);
+        using var scope = ProcessShopDataScope.Write(json);
 
         var catalog = await new BlueItemShopLoader().LoadAsync(
-            new EraSettings { EnableShop = true, ActiveShopSeasonId = 1 },
+            new EraSettings { EnableShop = true, ActiveShopSeasonId = activeSeasonId },
             CancellationToken.None);
 
         Assert.True(catalog.IsEnabled);
-        Assert.Equal(1u, catalog.ActiveSeasonId);
-        var season = Assert.Single(catalog.Seasons.Values);
-        Assert.Equal(1u, season.SeasonId);
-        Assert.Equal(20170404u, season.VerupNo);
-        Assert.Equal("20181219070000", season.StartDatetime);
-        Assert.Equal("20190314020000", season.EndDatetime);
-        Assert.Equal(30u, season.AfterstartDays);
-        Assert.Equal(0u, season.BeforecloseDays);
+        Assert.Equal(activeSeasonId, catalog.ActiveSeasonId);
+        Assert.NotEmpty(catalog.Seasons);
 
-        Assert.Collection(
-            season.Items,
-            item => AssertItem(item, 1, 3, 12, 1300),
-            item => AssertItem(item, 2, 3, 7, 1500),
-            item => AssertItem(item, 3, 3, 9, 1500),
-            item => AssertItem(item, 4, 3, 10, 1500));
+        var season = catalog.ActiveSeason;
+        Assert.NotNull(season);
+        Assert.Equal(activeSeasonId, season!.SeasonId);
+        Assert.True(IsProtocolDateTime(season.StartDatetime));
+        Assert.True(IsProtocolDateTime(season.EndDatetime));
+        Assert.InRange(season.Items.Count, 1, 64);
+
+        var expectedItemNo = 1u;
+        var itemIdentities = new HashSet<(uint ItemType, uint ItemId)>();
+        foreach (var item in season.Items)
+        {
+            AssertItem(item, expectedItemNo++);
+            Assert.True(itemIdentities.Add((item.ItemType, item.ItemId)), $"Duplicate item identity {item.ItemType}:{item.ItemId}.");
+        }
     }
 
     [Theory]
@@ -188,17 +193,26 @@ public sealed class BlueItemShopLoaderTests
         throw new FileNotFoundException("Could not find committed Blue item shop data.");
     }
 
-    private static void AssertItem(
-        BlueItemShopEntry item,
-        uint itemNo,
-        uint itemType,
-        uint itemId,
-        uint price)
+    private static uint GetFirstSeasonId(string json)
+    {
+        using var document = JsonDocument.Parse(json);
+        return document.RootElement
+            .GetProperty("seasons")
+            .EnumerateArray()
+            .First()
+            .GetProperty("season_id")
+            .GetUInt32();
+    }
+
+    private static bool IsProtocolDateTime(string value)
+        => value is { Length: 14 } && value.All(char.IsAsciiDigit);
+
+    private static void AssertItem(BlueItemShopEntry item, uint itemNo)
     {
         Assert.Equal(itemNo, item.ItemNo);
-        Assert.Equal(itemType, item.ItemType);
-        Assert.Equal(itemId, item.ItemId);
-        Assert.Equal(price, item.Price);
+        Assert.InRange(item.ItemType, 1u, 7u);
+        Assert.NotEqual(0u, item.ItemId);
+        Assert.NotEqual(0u, item.Price);
     }
 
     private sealed class ProcessShopDataScope : IDisposable

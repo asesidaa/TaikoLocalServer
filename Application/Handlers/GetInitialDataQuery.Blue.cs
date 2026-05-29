@@ -58,7 +58,7 @@ public partial class GetInitialDataQueryHandler
                 .Select(entry => new CommonInitialDataCheckResponse.InformationData
                 {
                     InfoId = entry.ChallengeLevel,
-                    VerupNo = entry.VerupNo + 1
+                    VerupNo = 3
                 })
                 .ToList(),
             AryBlueLegaltermsDatas = [],

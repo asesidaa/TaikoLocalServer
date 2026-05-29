@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using TaikoLocalServer.Application.Catalog.Blue;
 
 namespace TaikoLocalServer.Tests.Blue;
@@ -106,6 +107,34 @@ public sealed class BluePlayResultHandlerTests
         Assert.Equal(1u, save.Costume1);
         Assert.Equal(1u, save.CategJpopCnt);
         Assert.Equal(1u, save.SongPushedCnt);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Blue_StoresCompactProtocolPlayDatetimeWithoutWarning()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataBlue.Add(UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+        var logger = new RecordingLogger<UpdatePlayResultCommandHandler>();
+        var handler = CreateHandler(fixture, logger);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Blue,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayDatetime = "20260528120000",
+                AryStageInfoes = [CreateStage(101, 1, 0)]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var save = await fixture.Context.UserSaveDataBlue.FindAsync(1u);
+        Assert.NotNull(save);
+        Assert.Equal(new DateTime(2026, 5, 28, 12, 0, 0), save!.LastPlayDatetime);
+        Assert.DoesNotContain(logger.Events, log => log.Level >= LogLevel.Warning);
     }
 
     [Fact]
@@ -337,6 +366,45 @@ public sealed class BluePlayResultHandlerTests
         Assert.Equal(BlueDanClearGrade.NotClear, BlueDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
     }
 
+    [Theory]
+    [InlineData(true, 36u, true)]
+    [InlineData(false, 7u, false)]
+    public async Task UpdatePlayResult_Blue_DaniClearAppliesSpecialDanCostumeOnlyWhenAutoCostumeOn(
+        bool isAutoCostumeOn,
+        uint expectedCostume,
+        bool shouldUnlockDanCostume)
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync();
+        var save = UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1);
+        save.IsAutoCostumeOn = isAutoCostumeOn;
+        save.Costume1 = 7;
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataBlue.Add(save);
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Blue,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayMode = (uint)PlayMode.DanMode,
+                DanResult = 1,
+                AryCurrentCostume = new CommonPlayResultData.CostumeData
+                {
+                    Costume1 = 7
+                },
+                AryStageInfoes = [CreateDanStage(101, 1, 100, 1, 2, 3, 4, 5, 6, 100)]
+            }),
+            CancellationToken.None);
+
+        var reloaded = await fixture.Context.UserSaveDataBlue.FindAsync(1u);
+        Assert.NotNull(reloaded);
+        Assert.Equal(expectedCostume, reloaded!.Costume1);
+        Assert.Equal(shouldUnlockDanCostume, BitIsSet(reloaded.CostumeFlg1, 36));
+    }
+
     [Fact]
     public async Task UpdatePlayResult_Blue_DaniDuplicateSongsKeepStageIndexRows()
     {
@@ -374,12 +442,14 @@ public sealed class BluePlayResultHandlerTests
         Assert.Equal(200u, rows[1].HighScore);
     }
 
-    private static UpdatePlayResultCommandHandler CreateHandler(BlueHandlerFixture fixture)
+    private static UpdatePlayResultCommandHandler CreateHandler(
+        BlueHandlerFixture fixture,
+        ILogger<UpdatePlayResultCommandHandler>? logger = null)
     {
         return new UpdatePlayResultCommandHandler(
             fixture.Context,
             fixture.Catalog,
-            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+            logger ?? NullLogger<UpdatePlayResultCommandHandler>.Instance);
     }
 
     private static CommonPlayResultData.StageData CreateStage(
@@ -440,4 +510,27 @@ public sealed class BluePlayResultHandlerTests
 
     private static bool BitIsSet(byte[] source, uint id)
         => (source[id >> 3] & (1 << ((int)id & 7))) != 0;
+
+    private sealed class RecordingLogger<T> : ILogger<T>
+    {
+        public List<LogEvent> Events { get; } = [];
+
+        public IDisposable? BeginScope<TState>(TState state)
+            where TState : notnull
+            => null;
+
+        public bool IsEnabled(LogLevel logLevel) => true;
+
+        public void Log<TState>(
+            LogLevel logLevel,
+            EventId eventId,
+            TState state,
+            Exception? exception,
+            Func<TState, Exception?, string> formatter)
+        {
+            Events.Add(new LogEvent(logLevel, formatter(state, exception)));
+        }
+    }
+
+    private sealed record LogEvent(LogLevel Level, string Message);
 }

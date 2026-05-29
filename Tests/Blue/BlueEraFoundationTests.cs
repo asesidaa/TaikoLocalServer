@@ -13,7 +13,7 @@ public sealed class BlueEraFoundationTests
     }
 
     [Fact]
-    public void ShippedServerSettings_DeclaresBlueDisabledByDefault()
+    public void ShippedServerSettings_DeclaresBlueEnabledSetting()
     {
         var path = FindServerSettingsPath();
         Assert.NotNull(path);
@@ -23,10 +23,11 @@ public sealed class BlueEraFoundationTests
             .Build();
 
         var blue = configuration.GetSection("ServerSettings:Eras:Blue");
+        var enabled = blue.GetSection("Enabled").Value;
 
         Assert.True(blue.Exists());
         Assert.True(blue.GetSection("Enabled").Exists());
-        Assert.False(blue.GetValue<bool>("Enabled"));
+        Assert.True(bool.TryParse(enabled, out _));
     }
 
     private static string? FindServerSettingsPath()

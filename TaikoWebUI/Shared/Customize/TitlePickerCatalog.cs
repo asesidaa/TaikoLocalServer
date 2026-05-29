@@ -16,7 +16,7 @@ public static class TitlePickerCatalog
         TitleSelectionMode selectionMode)
     {
         var ids = selectionMode == TitleSelectionMode.TitleId
-            ? catalog.Values.Select(title => title.TitleId)
+            ? catalog.Values.Select(title => title.TitleId).Append(0u)
             : catalog.Values.Select(title => title.TitleRarity);
 
         return ids
@@ -31,13 +31,20 @@ public static class TitlePickerCatalog
         uint selectedId,
         string fallback)
     {
+        if (selectedId == 0)
+        {
+            return string.Empty;
+        }
+
         return catalog.TryGetValue(selectedId, out var title)
             ? DisplayTitleText(title)
             : fallback;
     }
 
     public static string DisplayTitleText(Title title)
-        => string.IsNullOrWhiteSpace(title.TitleName)
+        => title.TitleId == 0
+            ? string.Empty
+            : string.IsNullOrWhiteSpace(title.TitleName)
             ? $"#{title.TitleId:D3}"
             : title.TitleName;
 }

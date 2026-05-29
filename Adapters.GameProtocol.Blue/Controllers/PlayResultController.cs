@@ -8,17 +8,8 @@ public class PlayResultController : BaseProtocolController<PlayResultController>
     [Produces("application/protobuf")]
     public async Task<IActionResult> PlayResult([FromBody] PlayResultRequest request)
     {
+        Logger.LogInformation("Blue PlayResult request: {Request}", request.Stringify());
         var common = PlayResultMappers.Map(request);
-        Logger.LogInformation(
-            "Blue PlayResult request: baid={Baid} chassis={ChassisId} shop={ShopId} play_datetime={PlayDatetime} stages={StageCount} battle_stage={BattleStage} release_battle={ReleaseBattle} tokkun={Tokkun}",
-            request.Baid,
-            request.ChassisId,
-            request.ShopId,
-            request.PlayDatetime,
-            request.AryStageInfoes.Count,
-            common.HasBattleStageData,
-            common.HasReleaseBattleData,
-            common.HasTokkunStageInfo);
 
         var result = await Mediator.Send(
             new UpdatePlayResultCommand(request.Baid, GameEra.Blue, common),

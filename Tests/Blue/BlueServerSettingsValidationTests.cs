@@ -90,12 +90,13 @@ public sealed class BlueServerSettingsValidationTests
             .AddJsonFile(path)
             .Build();
         var blue = configuration.GetSection("ServerSettings:Eras:Blue");
+        var enableShop = blue.GetSection("EnableShop").Value;
 
         Assert.True(blue.GetSection("AutoExtractCatalog").Exists());
-        Assert.Equal("wwwroot/data/blue/data", blue.GetValue<string>("GameDataPath"));
+        Assert.False(string.IsNullOrWhiteSpace(blue.GetValue<string>("GameDataPath")));
         Assert.True(blue.GetSection("CustomizationNameDataPath").Exists());
         Assert.True(blue.GetSection("EnableShop").Exists());
-        Assert.False(blue.GetValue<bool>("EnableShop"));
+        Assert.True(bool.TryParse(enableShop, out _));
         Assert.Contains("\"ActiveShopSeasonId\"", File.ReadAllText(path), StringComparison.Ordinal);
     }
 

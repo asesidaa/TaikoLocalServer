@@ -59,7 +59,7 @@ public sealed class GreenCustomizationContractTests
 
         var ids = TitlePickerCatalog.GetSelectableIds(titles, currentId: 10, TitleSelectionMode.TitleId);
 
-        Assert.Equal(new uint[] { 10, 11 }, ids);
+        Assert.Equal(new uint[] { 0, 10, 11 }, ids);
     }
 
     [Fact]
@@ -73,5 +73,36 @@ public sealed class GreenCustomizationContractTests
         var title = TitlePickerCatalog.ResolveSelectedTitleText(titles, selectedId: 10, fallback: "Previous");
 
         Assert.Equal("Green Title", title);
+    }
+
+    [Fact]
+    public void TitlePickerCatalog_TreatsZeroTitleIdAsEmptyTitle()
+    {
+        var titles = new Dictionary<uint, Title>
+        {
+            [0] = new() { TitleId = 0, TitleName = "Not a real title", TitleRarity = 0 },
+            [10] = new() { TitleId = 10, TitleName = "Green Title", TitleRarity = 0 }
+        };
+
+        var title = TitlePickerCatalog.ResolveSelectedTitleText(titles, selectedId: 0, fallback: "Previous");
+
+        Assert.Equal(string.Empty, title);
+        Assert.Equal(string.Empty, TitlePickerCatalog.DisplayTitleText(titles[0]));
+    }
+
+    [Fact]
+    public void TitlePickerCatalog_IncludesZeroTitleIdAsEmptyTitleSelection()
+    {
+        var titles = new Dictionary<uint, Title>
+        {
+            [0] = new() { TitleId = 0, TitleName = "Not a real title", TitleRarity = 0 },
+            [10] = new() { TitleId = 10, TitleName = "Green Title", TitleRarity = 0 }
+        };
+
+        var selectedTitleIds = TitlePickerCatalog.GetSelectableIds(titles, currentId: 10, TitleSelectionMode.TitleId);
+        var emptyTitleIds = TitlePickerCatalog.GetSelectableIds(titles, currentId: 0, TitleSelectionMode.TitleId);
+
+        Assert.Equal(new uint[] { 0, 10 }, selectedTitleIds);
+        Assert.Equal(new uint[] { 0, 10 }, emptyTitleIds);
     }
 }

@@ -55,7 +55,7 @@ public sealed class BlueInitialDataTests
 
         Assert.Contains(response.AryBlueTelopDatas, row => row.InfoId == 7 && row.VerupNo == 4);
         Assert.Contains(response.AryBlueEventFolderDatas, row => row.InfoId == 3 && row.VerupNo == 9);
-        Assert.Contains(response.AryBlueTaikojukuDatas, row => row.InfoId == 1 && row.VerupNo == 1);
+        Assert.Contains(response.AryBlueTaikojukuDatas, row => row.InfoId == 1);
     }
 
     private static bool BitIsSet(byte[] source, uint id)

@@ -210,7 +210,8 @@ public partial class Profile
         var titlesById = titleDictionary;
         var ids = titlesById.Keys
             .Concat(response.UnlockedTitle)
-            .Append(response.TitlePlateId);
+            .Append(response.TitlePlateId)
+            .Where(id => id != 0);
 
         return ids
             .Distinct()
@@ -262,6 +263,7 @@ public partial class Profile
             response.UnlockedTitle = (IsAc15
                     ? titleValue.UnlockedTitleIds.Append(response.TitlePlateId)
                     : titleValue.UnlockedTitleIds)
+                .Where(id => id != 0)
                 .Distinct()
                 .OrderBy(id => id)
                 .ToList();

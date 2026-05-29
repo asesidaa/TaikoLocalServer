@@ -17,6 +17,19 @@ public sealed class BlueA4ControllerSourceTests
     }
 
     [Fact]
+    public void BluePlayResultController_LogsFullRequestDump()
+    {
+        var source = File.ReadAllText(Path.Combine(
+            FindRepoRoot(),
+            "Adapters.GameProtocol.Blue",
+            "Controllers",
+            "PlayResultController.cs"));
+
+        Assert.Contains("request.Stringify()", source, StringComparison.Ordinal);
+        Assert.DoesNotContain("play_datetime={PlayDatetime}", source, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void BlueRewardCardCheckController_UsesSharedCardLookup()
     {
         var source = File.ReadAllText(Path.Combine(

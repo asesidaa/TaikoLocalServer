@@ -64,9 +64,9 @@
 
     protected override void OnParametersSet()
     {
-        orderedTitles = Catalog.Values.OrderBy(title => title.TitleId).ToArray();
+        orderedTitles = Catalog.Values.Where(title => title.TitleId != 0).OrderBy(title => title.TitleId).ToArray();
         plateIds = TitlePickerCatalog.GetSelectableIds(Catalog, Value.TitlePlateId, SelectionMode);
-        unlockedTitleIds = Value.UnlockedTitleIds.ToHashSet();
+        unlockedTitleIds = Value.UnlockedTitleIds.Where(id => id != 0).ToHashSet();
     }
 
     private Task SetTitle(string title)
@@ -104,6 +104,7 @@
                 Title = TitlePickerCatalog.ResolveSelectedTitleText(Catalog, plate, Value.Title),
                 UnlockedTitleIds = Value.UnlockedTitleIds
                     .Append(plate)
+                    .Where(id => id != 0)
                     .Distinct()
                     .OrderBy(id => id)
                     .ToArray()
@@ -129,6 +130,11 @@
 
     private string FormatPlateOption(uint plate)
     {
+        if (plate == 0)
+        {
+            return "#000";
+        }
+
         if (Catalog.TryGetValue(plate, out var title) && !string.IsNullOrWhiteSpace(title.TitleName))
         {
             return $"{plate} - {title.TitleName}";

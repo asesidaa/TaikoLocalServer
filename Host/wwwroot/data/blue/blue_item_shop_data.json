@@ -2,10 +2,10 @@
   "seasons": [
     {
       "season_id": 1,
-      "verup_no": 20170404,
+      "verup_no": 2,
       "telop": "",
       "start_datetime": "20181219070000",
-      "end_datetime": "20190314020000",
+      "end_datetime": "20500314020000",
       "afterstart_days": 30,
       "beforeclose_days": 0,
       "items": [

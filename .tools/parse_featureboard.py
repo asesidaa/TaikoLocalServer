@@ -6,10 +6,15 @@ import struct
 from pathlib import Path
 
 
+EMPTY_COLLECTION_MARKER_OFFSET = 0x2C
+
+
 def parse_featureboard(path: Path, offset: int, verup_no: int) -> list[dict[str, object]]:
     data = path.read_bytes()
     if len(data) < offset:
-        raise ValueError(f"{path} is shorter than parse offset 0x{offset:x}")
+        if not is_empty_featureboard_cache(data):
+            raise ValueError(f"{path} is shorter than parse offset 0x{offset:x}")
+        offset = len(data)
 
     rows: list[dict[str, object]] = []
     position = offset
@@ -43,9 +48,17 @@ def parse_featureboard(path: Path, offset: int, verup_no: int) -> list[dict[str,
     return rows
 
 
+def is_empty_featureboard_cache(data: bytes) -> bool:
+    return (
+        len(data) == EMPTY_COLLECTION_MARKER_OFFSET + 1
+        and data.startswith(b"\x00\x00\x00\x16serialization::archive")
+        and data[EMPTY_COLLECTION_MARKER_OFFSET] == 0
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Convert a Green featureboard.bin cache into runtime event-folder JSON."
+        description="Convert an AC15 featureboard.bin cache into runtime event-folder JSON."
     )
     parser.add_argument("--input", default=".tools/featureboard.bin")
     parser.add_argument("--output", default="Host/wwwroot/data/green/green_event_folder_data.json")

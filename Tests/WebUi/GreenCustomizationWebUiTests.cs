@@ -328,6 +328,28 @@ public sealed class GreenCustomizationWebUiTests
     }
 
     [Fact]
+    public void TitlePicker_OffersZeroAsEmptyTitleSelection()
+    {
+        var code = ReadWebUiFile("Shared", "Customize", "TitlePickerCatalog.cs");
+
+        Assert.Contains(".Append(0u)", code);
+        Assert.Contains("selectedId == 0", code);
+        Assert.DoesNotContain("Where(title => title.TitleId != 0)", code);
+    }
+
+    [Fact]
+    public void TitlePicker_DoesNotFormatZeroTitleIdAsCatalogTitle()
+    {
+        var markup = ReadWebUiFile("Shared", "Customize", "TitlePicker.razor");
+
+        Assert.Contains("if (plate == 0)", markup);
+        Assert.True(
+            markup.IndexOf("if (plate == 0)", StringComparison.Ordinal)
+            < markup.IndexOf("Catalog.TryGetValue(plate", StringComparison.Ordinal),
+            "The empty title option must be handled before catalog title lookup.");
+    }
+
+    [Fact]
     public void Profile_DoesNotLockTitleTextEditingForGreen()
     {
         var markup = ReadWebUiFile("Pages", "Profile.razor");

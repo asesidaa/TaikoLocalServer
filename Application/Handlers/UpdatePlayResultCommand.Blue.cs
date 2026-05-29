@@ -1,3 +1,4 @@
+using System.Globalization;
 using TaikoLocalServer.Application.Catalog.Blue;
 
 namespace TaikoLocalServer.Application.Handlers;
@@ -8,6 +9,7 @@ public partial class UpdatePlayResultCommandHandler
     private const uint MaxBlueCourseLevel = 5;
     private const int BlueMaxRecentSongs = 10;
     private const int BlueMaxFavoriteSongs = 5;
+    private const uint BlueDanCostumeId = 36;
 
     private partial async ValueTask<uint> HandleBlue(
         UpdatePlayResultCommand request,
@@ -41,27 +43,7 @@ public partial class UpdatePlayResultCommandHandler
             return 1;
         }
 
-        var playTime = DateTime.TryParse(playResultData.PlayDatetime, out var parsed)
-            ? parsed
-            : DateTime.Now;
-
-        if (!DateTime.TryParse(playResultData.PlayDatetime, out _))
-        {
-            logger.LogWarning(
-                "Blue playresult for baid {Baid} had invalid play_datetime {PlayDatetime}; using server time",
-                request.Baid,
-                playResultData.PlayDatetime);
-        }
-
-        if (playResultData.HasBattleStageData || playResultData.HasReleaseBattleData || playResultData.HasTokkunStageInfo)
-        {
-            logger.LogWarning(
-                "Blue playresult for baid {Baid} contained deferred fields: battle_stage={BattleStage} release_battle={ReleaseBattle} tokkun={Tokkun}",
-                request.Baid,
-                playResultData.HasBattleStageData,
-                playResultData.HasReleaseBattleData,
-                playResultData.HasTokkunStageInfo);
-        }
+        var playTime = ParseBluePlayDatetimeOrNow(playResultData.PlayDatetime);
 
         if (shopSeasonState is null)
         {
@@ -457,6 +439,12 @@ public partial class UpdatePlayResultCommandHandler
         saveData.GotDanFlg = normalFlags;
         saveData.GotDanExtraFlg = extraFlags;
         saveData.GotDanMax = BlueDanHelpers.GetGotDanMax(normalGrades);
+        if (isIncomingClear && saveData.IsAutoCostumeOn)
+        {
+            saveData.Costume1 = BlueDanCostumeId;
+            saveData.CostumeFlg1 = SetBlueBits(saveData.CostumeFlg1, [BlueDanCostumeId], BlueProtocolBytes.CostumeFlagBytes);
+        }
+
         saveData.DispTaikojukuDan = !currentDanScore.IsExtra
                                     && BlueDanHelpers.IsNormalDanId(currentDanScore.DanId)
                                     && isIncomingClear
@@ -466,6 +454,19 @@ public partial class UpdatePlayResultCommandHandler
 
     private static bool CanAddBlue(uint current, uint delta)
         => delta <= uint.MaxValue - current;
+
+    private static DateTime ParseBluePlayDatetimeOrNow(string playDatetime)
+    {
+        var formats = new[] { Constants.DateTimeFormat, "yyyy-MM-dd HH:mm:ss" };
+        return DateTime.TryParseExact(
+            playDatetime,
+            formats,
+            CultureInfo.InvariantCulture,
+            DateTimeStyles.None,
+            out var parsed)
+            ? parsed
+            : DateTime.Now;
+    }
 
     private static byte[] SetBlueBits(byte[] source, IEnumerable<uint> ids, int byteCount)
     {

@@ -58,7 +58,7 @@ public sealed class BluePlayResultMapperTests
     }
 
     [Fact]
-    public void Map_BluePlayResult_DetectsDeferredFieldsWithoutPersistingThem()
+    public void Map_BluePlayResult_DoesNotInferRuntimeSemanticsFromUnimplementedOptionalSections()
     {
         var request = CreateRequest();
         request.AryTokkunstageInfo = new PlayResultRequest.TokkunstageData
@@ -78,9 +78,9 @@ public sealed class BluePlayResultMapperTests
 
         var common = PlayResultMappers.Map(request);
 
-        Assert.True(common.HasTokkunStageInfo);
-        Assert.True(common.HasReleaseBattleData);
-        Assert.True(common.HasBattleStageData);
+        Assert.Equal(1u, common.Baid);
+        Assert.Single(common.AryStageInfoes);
+        Assert.Equal(101u, common.AryStageInfoes[0].SongNo);
     }
 
     [Fact]
