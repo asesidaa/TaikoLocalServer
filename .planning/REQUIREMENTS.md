@@ -35,8 +35,8 @@
 
 ### Blue Battle Evidence And Design
 
-- [ ] **BTEV-01**: Battle menu entry and at least one attempted battle flow have cabinet/RPCS3 logs or equivalent client evidence.
-- [ ] **BTEV-02**: Blue battle-related proto messages are mapped to generated Blue wire types and documented with request/response ownership.
+- [x] **BTEV-01**: Battle menu entry and at least one attempted battle flow have cabinet/RPCS3 logs or equivalent client evidence.
+- [x] **BTEV-02**: Blue battle-related proto messages are mapped to generated Blue wire types and documented with request/response ownership.
 - [ ] **BTEV-03**: Local Blue `config/S10100-1/battle` files are inventoried and classified as required, optional, or unknown for battle menu entry.
 - [ ] **BTEV-04**: Battle release flag byte widths, NPC state defaults, costume/special defaults, token defaults, stage assignment defaults, and boss/last-stage defaults are confirmed from proto, data, IDA/client evidence, or cabinet traces.
 - [ ] **BTEV-05**: The battle design decides whether battle playresults affect normal Blue scores/crowns based on client evidence.
@@ -100,8 +100,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SMOKE-03 | Phase 3 | Complete |
 | SMOKE-04 | Phase 3 | Complete |
 | SMOKE-05 | Phase 3 | Complete |
-| BTEV-01 | Phase 4 | Pending |
-| BTEV-02 | Phase 4 | Pending |
+| BTEV-01 | Phase 4 | Complete |
+| BTEV-02 | Phase 4 | Complete |
 | BTEV-03 | Phase 4 | Pending |
 | BTEV-04 | Phase 4 | Pending |
 | BTEV-05 | Phase 4 | Pending |
@@ -119,6 +119,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FULL-05 | Phase 6 | Pending |
 
 **Coverage:**
+
 - v1 requirements: 36 total
 - Mapped to phases: 36
 - Unmapped: 0
