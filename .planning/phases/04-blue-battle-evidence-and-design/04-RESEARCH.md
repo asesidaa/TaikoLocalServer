@@ -237,16 +237,20 @@ Phase 4 should produce these concrete inputs before Phase 5 planning starts:
 
 ## Open Questions/Unknowns
 
-1. What exact static client/IDA evidence satisfies BTEV-01 without cabinet/RPCS3 logs in Phase 4? [VERIFIED: 04-CONTEXT.md]
-2. Which endpoint sequence and request/response fields are required for battle menu entry? [VERIFIED: .planning/REQUIREMENTS.md]
-3. What are the exact byte widths for `release_info_flg`, `release_battle_stage_flg`, `release_battle_special_flg`, `npc_costume_flg`, and `release_special_flg`? [VERIFIED: proto/blue/taiko.proto; 04-CONTEXT.md]
-4. Should new-user battleuserdata omit optional fields, send explicit zeros, or send first-stage defaults? [VERIFIED: proto/blue/taiko.proto; 04-CONTEXT.md]
-5. How many `npc_data` and `ary_token_data` rows must be returned for safe client behavior? [VERIFIED: proto/blue/taiko.proto; local XML inventory]
-6. How does stage id `33` in `battlestageinfo.xml` relate to the normal `1..10` stage chain? [VERIFIED: local XML inventory]
-7. Does `battle_bonds_lv_cap` need to be sent as `65`, omitted, or calculated from local data/client state? [CITED: https://wikiwiki.jp/taiko-fumen/%E4%BD%9C%E5%93%81/%E6%96%B0AC/%E6%BC%94%E5%A5%8F%E3%83%90%E3%83%88%E3%83%AB; VERIFIED: local XML inventory]
-8. What battle stage mode or play mode discriminates battle playresult from normal playresult in the Blue client, if any? [VERIFIED: proto/blue/taiko.proto; Application/Common/BluePlayResultMapping.cs]
-9. Which `ReleaseBattleData` release IDs mirror to normal Blue unlock arrays, and which remain battle-owned only? [VERIFIED: proto/blue/taiko.proto; 04-CONTEXT.md]
-10. What do `battletokeninfo.xml` reward `type` values `0` and `1` mean in Blue battle reward handling? [VERIFIED: local XML inventory]
+These items are `RESOLVED FOR PLANNING`: the underlying evidence is not claimed as known, but each unknown is routed to a concrete Phase 4 plan output and gate/approval path.
+
+| # | Unknown | Planning Status | Routed Plan | Gate / Approval Path |
+|---|---------|-----------------|-------------|----------------------|
+| 1 | What exact static client/IDA evidence satisfies BTEV-01 without cabinet/RPCS3 logs in Phase 4? [VERIFIED: 04-CONTEXT.md] | RESOLVED FOR PLANNING | `04-01` | `04-01-BATTLE-EVIDENCE.md` must record the equivalent client evidence source or mark the route claim `UNKNOWN - requires case-by-case user approval before Phase 5 relies on it`; `04-03` blocks or records a named exception before Phase 5. |
+| 2 | Which endpoint sequence and request/response fields are required for battle menu entry? [VERIFIED: .planning/REQUIREMENTS.md] | RESOLVED FOR PLANNING | `04-01` | `04-01` route sequence must cover `initialdatacheck.php`, `battleuserdata.php`, and `playresult.php` with required/unknown status; `04-03` gate cannot approve Phase 5 unless BTEV-01/BTEV-02 are complete or user-approved. |
+| 3 | What are the exact byte widths for `release_info_flg`, `release_battle_stage_flg`, `release_battle_special_flg`, `npc_costume_flg`, and `release_special_flg`? [VERIFIED: proto/blue/taiko.proto; 04-CONTEXT.md] | RESOLVED FOR PLANNING | `04-02` | `04-02` default/width matrix must prove each width or mark the row `UNKNOWN - requires case-by-case user approval before Phase 5 relies on it`; `04-03` requires one exception row per unproven required width. |
+| 4 | Should new-user battleuserdata omit optional fields, send explicit zeros, or send first-stage defaults? [VERIFIED: proto/blue/taiko.proto; 04-CONTEXT.md] | RESOLVED FOR PLANNING | `04-02` | `04-02` records omission/default proof using generated presence semantics and client/IDA evidence where available; unproven optional defaults stay omission candidates until `04-03` approval. |
+| 5 | How many `npc_data` and `ary_token_data` rows must be returned for safe client behavior? [VERIFIED: proto/blue/taiko.proto; local XML inventory] | RESOLVED FOR PLANNING | `04-02` | `04-02` records minimum safe row-count proof or an `UNKNOWN` row; `04-03` blocks Phase 5 or records per-row-count user approval. |
+| 6 | How does stage id `33` in `battlestageinfo.xml` relate to the normal `1..10` stage chain? [VERIFIED: local XML inventory] | RESOLVED FOR PLANNING | `04-02` | `04-02` classifies stage id `33` as proven/candidate/unknown with source; `04-03` keeps Phase 5 blocked for any design that depends on id `33` without evidence or named approval. |
+| 7 | Does `battle_bonds_lv_cap` need to be sent as `65`, omitted, or calculated from local data/client state? [CITED: https://wikiwiki.jp/taiko-fumen/%E4%BD%9C%E5%93%81/%E6%96%B0AC/%E6%BC%94%E5%A5%8F%E3%83%90%E3%83%88%E3%83%AB; VERIFIED: local XML inventory] | RESOLVED FOR PLANNING | `04-02` | `04-02` must not infer `65`; it records proof or `UNKNOWN`, and `04-03` approves only proven behavior or a named exception. |
+| 8 | What battle stage mode or play mode discriminates battle playresult from normal playresult in the Blue client, if any? [VERIFIED: proto/blue/taiko.proto; Application/Common/BluePlayResultMapping.cs] | RESOLVED FOR PLANNING | `04-03` | `04-03` design records how battle playresults are identified from 04-01/04-02 evidence; if unresolved, the gate status is `BLOCKED` or `APPROVED_WITH_USER_EXCEPTIONS` with a specific Phase 5 constraint. |
+| 9 | Which `ReleaseBattleData` release IDs mirror to normal Blue unlock arrays, and which remain battle-owned only? [VERIFIED: proto/blue/taiko.proto; 04-CONTEXT.md] | RESOLVED FOR PLANNING | `04-03` | `04-03` Battle Playresult Effects and Phase 5 Ownership Map must list approved mirror paths; unresolved release IDs require individual exception rows before Phase 5 relies on them. |
+| 10 | What do `battletokeninfo.xml` reward `type` values `0` and `1` mean in Blue battle reward handling? [VERIFIED: local XML inventory] | RESOLVED FOR PLANNING | `04-02` | `04-02` records candidate meaning/proof status for token reward types; `04-03` blocks token reward behavior or records named user approval for each unproven interpretation. |
 
 ## Environment Availability
 
