@@ -37,8 +37,8 @@
 
 - [x] **BTEV-01**: Battle menu entry and at least one attempted battle flow have cabinet/RPCS3 logs or equivalent client evidence.
 - [x] **BTEV-02**: Blue battle-related proto messages are mapped to generated Blue wire types and documented with request/response ownership.
-- [ ] **BTEV-03**: Local Blue `config/S10100-1/battle` files are inventoried and classified as required, optional, or unknown for battle menu entry.
-- [ ] **BTEV-04**: Battle release flag byte widths, NPC state defaults, costume/special defaults, token defaults, stage assignment defaults, and boss/last-stage defaults are confirmed from proto, data, IDA/client evidence, or cabinet traces.
+- [x] **BTEV-03**: Local Blue `config/S10100-1/battle` files are inventoried and classified as required, optional, or unknown for battle menu entry.
+- [x] **BTEV-04**: Battle release flag byte widths, NPC state defaults, costume/special defaults, token defaults, stage assignment defaults, and boss/last-stage defaults are confirmed from proto, data, IDA/client evidence, or cabinet traces.
 - [ ] **BTEV-05**: The battle design decides whether battle playresults affect normal Blue scores/crowns based on client evidence.
 - [ ] **BTEV-06**: Battle implementation is blocked until BTEV-01 through BTEV-05 are satisfied or explicitly revised with user approval.
 
@@ -102,8 +102,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SMOKE-05 | Phase 3 | Complete |
 | BTEV-01 | Phase 4 | Complete |
 | BTEV-02 | Phase 4 | Complete |
-| BTEV-03 | Phase 4 | Pending |
-| BTEV-04 | Phase 4 | Pending |
+| BTEV-03 | Phase 4 | Complete |
+| BTEV-04 | Phase 4 | Complete |
 | BTEV-05 | Phase 4 | Pending |
 | BTEV-06 | Phase 4 | Pending |
 | BTL-01 | Phase 5 | Pending |
