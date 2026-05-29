@@ -14,8 +14,8 @@ This roadmap continues Blue support after completed Superpowers stages A0-A5. Th
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Blue A6 Item Shop And Unlocking** - Implement Blue-owned shop advertisement, purchase, medal, rewardexecution no-op, and unlock behavior. (completed 2026-05-28)
-- [ ] **Phase 2: Blue A7 AdminApi And WebUI Parity** - Expose supported Blue data through AdminApi and WebUI without Green/Nijiiro state leakage.
-- [ ] **Phase 3: Blue A8 Normal-Mode Cabinet Smoke And Hardening** - Prove normal Blue support on cabinet/RPCS3 and harden unresolved normal-mode gaps.
+- [x] **Phase 2: Blue A7 AdminApi And WebUI Parity** - Expose supported Blue data through AdminApi and WebUI without Green/Nijiiro state leakage. (completed 2026-05-30)
+- [x] **Phase 3: Blue A8 Normal-Mode Cabinet Smoke And Hardening** - Prove normal Blue support on cabinet/RPCS3 and harden unresolved normal-mode gaps. (completed 2026-05-30)
 - [ ] **Phase 4: Blue Battle Evidence And Design** - Gather strict battle evidence and write the implementation design before battle runtime code.
 - [ ] **Phase 5: Blue Battle Runtime Support** - Implement Blue-owned battle persistence, protocol behavior, playresult handling, rewards, and tests.
 - [ ] **Phase 6: Full Blue Verification And Release Hardening** - Prove full Blue support with repeatable normal and battle smoke evidence, docs, and final guardrails.
@@ -84,13 +84,13 @@ Plans:
   3. Unsupported Blue edit surfaces are hidden or read-only instead of writing unproven state.
   4. Tests prove Blue WebUI/AdminApi readback does not query or mutate Green state.
 
-**Plans**: 3 plans
+**Plans**: 3/3 plans complete
 
 Plans:
 
-- [ ] 02-01: Blue AdminApi projection coverage
-- [ ] 02-02: Blue WebUI routing and readback surfaces
-- [ ] 02-03: WebUI/AdminApi regression tests and unsafe-edit guardrails
+- [x] 02-01: Blue AdminApi projection coverage
+- [x] 02-02: Blue WebUI routing and readback surfaces
+- [x] 02-03: WebUI/AdminApi regression tests and unsafe-edit guardrails
 
 ### Phase 3: Blue A8 Normal-Mode Cabinet Smoke And Hardening
 
@@ -112,13 +112,13 @@ Plans:
   3. Unexpected Blue endpoint calls are bounded in logs and routed to Track B, a follow-up, or an explicit non-goal.
   4. Full server tests and a temp-output Host build pass after hardening.
 
-**Plans**: 3 plans
+**Plans**: 3/3 plans complete
 
 Plans:
 
-- [ ] 03-01: Normal-mode smoke checklist and log capture setup
-- [ ] 03-02: Cabinet/RPCS3 smoke execution and hardening fixes
-- [ ] 03-03: Normal-mode regression verification and unresolved-item triage
+- [x] 03-01: Normal-mode smoke checklist and log capture setup
+- [x] 03-02: Cabinet/RPCS3 smoke execution and hardening fixes
+- [x] 03-03: Normal-mode regression verification and unresolved-item triage
 
 ### Phase 4: Blue Battle Evidence And Design
 
@@ -214,8 +214,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Blue A6 Item Shop And Unlocking | 6/6 | Complete   | 2026-05-28 |
-| 2. Blue A7 AdminApi And WebUI Parity | 0/3 | Not started | - |
-| 3. Blue A8 Normal-Mode Cabinet Smoke And Hardening | 0/3 | Not started | - |
+| 2. Blue A7 AdminApi And WebUI Parity | 3/3 | Complete    | 2026-05-30 |
+| 3. Blue A8 Normal-Mode Cabinet Smoke And Hardening | 3/3 | Complete    | 2026-05-30 |
 | 4. Blue Battle Evidence And Design | 0/3 | Not started | - |
 | 5. Blue Battle Runtime Support | 0/4 | Not started | - |
 | 6. Full Blue Verification And Release Hardening | 0/3 | Not started | - |

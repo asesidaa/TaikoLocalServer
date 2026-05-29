@@ -18,20 +18,20 @@
 
 ### Blue AdminApi And WebUI Parity
 
-- [ ] **WEB-01**: AdminApi supports Blue profile/readback surfaces for the same shared card/user flows already available for supported eras.
-- [ ] **WEB-02**: AdminApi exposes Blue score, play history, favorites, Dani, customization catalog, and item-shop-relevant readback where Blue data exists.
-- [ ] **WEB-03**: WebUI era routing and API URL generation treat Blue as an explicit era and never fall back silently to Green or Nijiiro.
-- [ ] **WEB-04**: WebUI Blue pages display supported Blue profile, song, score, Dani, favorite, customization, and shop state using Blue catalog and persistence data.
-- [ ] **WEB-05**: WebUI hides or makes read-only any Blue edit surface whose write semantics are not implemented for Blue.
-- [ ] **WEB-06**: Blue AdminApi/WebUI tests prove basic readback does not mutate Green save state or query Green era tables for Blue user data.
+- [x] **WEB-01**: AdminApi supports Blue profile/readback surfaces for the same shared card/user flows already available for supported eras.
+- [x] **WEB-02**: AdminApi exposes Blue score, play history, favorites, Dani, customization catalog, and item-shop-relevant readback where Blue data exists.
+- [x] **WEB-03**: WebUI era routing and API URL generation treat Blue as an explicit era and never fall back silently to Green or Nijiiro.
+- [x] **WEB-04**: WebUI Blue pages display supported Blue profile, song, score, Dani, favorite, customization, and shop state using Blue catalog and persistence data.
+- [x] **WEB-05**: WebUI hides or makes read-only any Blue edit surface whose write semantics are not implemented for Blue.
+- [x] **WEB-06**: Blue AdminApi/WebUI tests prove basic readback does not mutate Green save state or query Green era tables for Blue user data.
 
 ### Normal-Mode Cabinet Smoke And Hardening
 
-- [ ] **SMOKE-01**: A documented Blue normal-mode smoke checklist covers boot, new card registration, known card login, song list, normal play, playresult save, self-best/crown readback, Dani, item shop purchase/reward unlock, and WebUI readback.
-- [ ] **SMOKE-02**: A Blue cabinet/RPCS3 run with Blue enabled and other game-protocol eras disabled can boot and reach the expected normal-mode flows.
-- [ ] **SMOKE-03**: Blue playresult, self-best, crowns, Dani, reward, and item-shop behavior have captured pass/fail evidence from cabinet/RPCS3 smoke testing.
-- [ ] **SMOKE-04**: Unexpected Blue endpoint calls are logged with bounded request context and triaged into Track B, a focused follow-up, or an explicit non-goal.
-- [ ] **SMOKE-05**: Full server regression tests and a temp-output Host build pass after normal-mode Blue hardening.
+- [x] **SMOKE-01**: A documented Blue normal-mode smoke checklist covers boot, new card registration, known card login, song list, normal play, playresult save, self-best/crown readback, Dani, item shop purchase/reward unlock, and WebUI readback.
+- [x] **SMOKE-02**: A Blue cabinet/RPCS3 run with Blue enabled and other game-protocol eras disabled can boot and reach the expected normal-mode flows.
+- [x] **SMOKE-03**: Blue playresult, self-best, crowns, Dani, reward, and item-shop behavior have captured pass/fail evidence from cabinet/RPCS3 smoke testing.
+- [x] **SMOKE-04**: Unexpected Blue endpoint calls are logged with bounded request context and triaged into Track B, a focused follow-up, or an explicit non-goal.
+- [x] **SMOKE-05**: Full server regression tests and a temp-output Host build pass after normal-mode Blue hardening.
 
 ### Blue Battle Evidence And Design
 
@@ -89,17 +89,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SHOP-06 | Phase 1 | Complete |
 | SHOP-07 | Phase 1 | Complete |
 | SHOP-08 | Phase 1 | Complete |
-| WEB-01 | Phase 2 | Pending |
-| WEB-02 | Phase 2 | Pending |
-| WEB-03 | Phase 2 | Pending |
-| WEB-04 | Phase 2 | Pending |
-| WEB-05 | Phase 2 | Pending |
-| WEB-06 | Phase 2 | Pending |
-| SMOKE-01 | Phase 3 | Pending |
-| SMOKE-02 | Phase 3 | Pending |
-| SMOKE-03 | Phase 3 | Pending |
-| SMOKE-04 | Phase 3 | Pending |
-| SMOKE-05 | Phase 3 | Pending |
+| WEB-01 | Phase 2 | Complete |
+| WEB-02 | Phase 2 | Complete |
+| WEB-03 | Phase 2 | Complete |
+| WEB-04 | Phase 2 | Complete |
+| WEB-05 | Phase 2 | Complete |
+| WEB-06 | Phase 2 | Complete |
+| SMOKE-01 | Phase 3 | Complete |
+| SMOKE-02 | Phase 3 | Complete |
+| SMOKE-03 | Phase 3 | Complete |
+| SMOKE-04 | Phase 3 | Complete |
+| SMOKE-05 | Phase 3 | Complete |
 | BTEV-01 | Phase 4 | Pending |
 | BTEV-02 | Phase 4 | Pending |
 | BTEV-03 | Phase 4 | Pending |
