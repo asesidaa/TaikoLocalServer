@@ -141,11 +141,14 @@ Plans:
   4. Battle implementation remains blocked until the evidence checklist is satisfied or explicitly revised.
 
 **Plans**: 3 plans
-
 Plans:
+**Wave 1**
 
 - [ ] 04-01: Battle endpoint, proto, and cabinet-log evidence capture
 - [ ] 04-02: Battle data-file inventory and byte/default-state analysis
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 04-03: Blue battle design spec and implementation gate review
 
 ### Phase 5: Blue Battle Runtime Support
