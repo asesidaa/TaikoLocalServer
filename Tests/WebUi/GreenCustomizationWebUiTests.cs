@@ -1,7 +1,42 @@
+using TaikoWebUI.Utilities;
+
 namespace TaikoLocalServer.Tests.WebUi;
 
 public sealed class GreenCustomizationWebUiTests
 {
+    [Fact]
+    public void WebUiEra_TreatsBlueAsSupportedAc15Era()
+    {
+        Assert.Contains(WebUiEra.Blue, WebUiEra.Supported);
+        Assert.True(WebUiEra.IsAc15(WebUiEra.Green));
+        Assert.True(WebUiEra.IsAc15(WebUiEra.Blue));
+        Assert.False(WebUiEra.IsAc15(WebUiEra.Default));
+    }
+
+    [Fact]
+    public void EraUserPages_LoadUserSettingsThroughCurrentEra()
+    {
+        foreach (var fileName in new[] { "DaniDojo.razor.cs", "HighScores.razor.cs", "PlayHistory.razor.cs", "Song.razor.cs", "SongList.razor.cs" })
+        {
+            var code = ReadWebUiFile("Pages", fileName);
+
+            Assert.Contains("Client.GetFromJsonAsync<UserSetting>(WebUiEra.Api(CurrentEra, $\"UserSettings/{Baid}\"))", code);
+            Assert.DoesNotContain("$\"api/UserSettings/{Baid}\"", code);
+        }
+    }
+
+    [Fact]
+    public void SongLeaderboardCard_UsesEraAwareAdminApiAndUserRoute()
+    {
+        var code = ReadWebUiFile("Components", "Song", "SongLeaderboardCard.razor.cs");
+        var songPage = ReadWebUiFile("Pages", "Song.razor");
+
+        Assert.Contains("var leaderboardPath = WebUiEra.Api(CurrentEra, $\"SongLeaderboard/{(uint)SongId}\")", code);
+        Assert.Contains("WebUiEra.UserRoute(leaderboard.Baid, CurrentEra, $\"Songs/{SongId}\")", code);
+        Assert.Contains("<SongLeaderboardCard SongId=\"@SongId\" Baid=\"@Baid\" Era=\"@CurrentEra\" />", songPage);
+        Assert.DoesNotContain("\"api/SongLeaderboard/", code);
+    }
+
     [Fact]
     public void UserCard_OffersGreenProfileCustomizationRoute()
     {
@@ -26,8 +61,8 @@ public sealed class GreenCustomizationWebUiTests
     {
         var markup = ReadWebUiFile("Pages", "Profile.razor");
 
-        AssertLabelGuardedByIfNotGreen(markup, "Achievement Panel Difficulty");
-        AssertLabelGuardedByIfNotGreen(markup, "Display Achievement Panel");
+        AssertLabelGuardedByIfNotAc15(markup, "Achievement Panel Difficulty");
+        AssertLabelGuardedByIfNotAc15(markup, "Display Achievement Panel");
     }
 
     [Fact]
@@ -45,9 +80,9 @@ public sealed class GreenCustomizationWebUiTests
         Assert.True(nextTabStart > greenBranchStart, "Could not find the end of the Green profile settings branch.");
         var greenBranch = normalized[greenBranchStart..nextTabStart];
 
-        Assert.Contains("@if (!IsGreen)", normalized);
+        Assert.Contains("@if (!IsAc15)", normalized);
         Assert.Contains("@bind-Value=\"@response.IsDisplayDanOnNamePlate\"", greenBranch);
-        AssertLabelGuardedByIfNotGreen(markup, "Display Dan Rank on Name Plate");
+        AssertLabelGuardedByIfNotAc15(markup, "Display Dan Rank on Name Plate");
     }
 
     [Fact]
@@ -89,9 +124,9 @@ public sealed class GreenCustomizationWebUiTests
         var normalized = NormalizeLineEndings(markup);
 
         Assert.Contains("TitleCatalog=\"@titleDictionary\"", markup);
-        Assert.Contains("ResolveTitlePlateFromCatalog=\"@IsGreen\"", markup);
-        Assert.DoesNotContain("@if (!IsGreen)\n                                    {\n                                        <PlayerPreview", normalized);
-        Assert.DoesNotContain("ShowSwatches=\"@(!IsGreen)\"", markup);
+        Assert.Contains("ResolveTitlePlateFromCatalog=\"@IsAc15\"", markup);
+        Assert.DoesNotContain("@if (!IsAc15)\n                                    {\n                                        <PlayerPreview", normalized);
+        Assert.DoesNotContain("ShowSwatches=\"@(!IsAc15)\"", markup);
         Assert.Contains("Colors=\"@TaikoCustomizationVisuals.CostumeColors\"", markup);
     }
 
@@ -102,7 +137,7 @@ public sealed class GreenCustomizationWebUiTests
         var code = ReadWebUiFile("Pages", "Profile.razor.cs");
 
         Assert.Contains("TitleCatalog=\"@titleDictionary\"", markup);
-        Assert.Contains("ResolveTitlePlateFromCatalog=\"@IsGreen\"", markup);
+        Assert.Contains("ResolveTitlePlateFromCatalog=\"@IsAc15\"", markup);
         Assert.DoesNotContain("response.Kigurumi == 0", markup);
         Assert.DoesNotContain("CostumeOrDefault(", markup);
         Assert.DoesNotContain("private static readonly string[] CostumeColors", code);
@@ -229,7 +264,7 @@ public sealed class GreenCustomizationWebUiTests
     {
         var markup = ReadWebUiFile("Pages", "Profile.razor");
 
-        Assert.Contains("@if (IsGreen && response.GreenSelectableTaikojukuDans.Count > 0)", markup);
+        Assert.Contains("@if (IsAc15 && response.GreenSelectableTaikojukuDans.Count > 0)", markup);
         Assert.Contains("@bind-Value=\"@response.GreenTaikojukuDan\"", markup);
         Assert.Contains("GreenSelectableTaikojukuDans", markup);
     }
@@ -298,10 +333,10 @@ public sealed class GreenCustomizationWebUiTests
         var markup = ReadWebUiFile("Pages", "Profile.razor");
         var code = ReadWebUiFile("Pages", "Profile.razor.cs");
 
-        Assert.DoesNotContain("ReadOnlyTitleText=\"@(IsGreen", markup);
+        Assert.DoesNotContain("ReadOnlyTitleText=\"@(IsAc15", markup);
         Assert.Contains("ReadOnlyTitleText=\"false\"", markup);
         Assert.Contains("response.Title = titleValue.Title;", code);
-        Assert.DoesNotContain("response.Title = IsGreen", code);
+        Assert.DoesNotContain("response.Title = IsAc15", code);
     }
 
     [Fact]
@@ -366,24 +401,24 @@ public sealed class GreenCustomizationWebUiTests
         Assert.Contains("orderedNeiros =", markup);
     }
 
-    private static void AssertLabelGuardedByIfNotGreen(string markup, string label)
+    private static void AssertLabelGuardedByIfNotAc15(string markup, string label)
     {
         var index = markup.IndexOf(label, StringComparison.Ordinal);
         Assert.True(index >= 0, $"Could not find '{label}' in Profile.razor.");
 
         var prefixStart = Math.Max(0, index - 2000);
         var prefix = markup[prefixStart..index];
-        Assert.Contains("@if (!IsGreen)", prefix);
+        Assert.Contains("@if (!IsAc15)", prefix);
     }
 
-    private static void AssertLabelNotGuardedByIfNotGreen(string markup, string label)
+    private static void AssertLabelNotGuardedByIfNotAc15(string markup, string label)
     {
         var index = markup.IndexOf(label, StringComparison.Ordinal);
         Assert.True(index >= 0, $"Could not find '{label}' in Profile.razor.");
 
         var prefixStart = Math.Max(0, index - 2000);
         var prefix = markup[prefixStart..index];
-        Assert.DoesNotContain("@if (!IsGreen)", prefix);
+        Assert.DoesNotContain("@if (!IsAc15)", prefix);
     }
 
     private static string ReadWebUiFile(params string[] pathParts)

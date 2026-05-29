@@ -17,7 +17,6 @@ public partial class DaniDojo
     public string? Era { get; set; }
 
     private string CurrentEra => WebUiEra.Normalize(Era);
-    private bool IsGreen => WebUiEra.IsGreen(CurrentEra);
     private const int DanTabWindowSize = 10;
 
     private string? SongNameLanguage { get; set; }
@@ -61,7 +60,7 @@ public partial class DaniDojo
 
         SongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
 
-        userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
+        userSetting = await Client.GetFromJsonAsync<UserSetting>(WebUiEra.Api(CurrentEra, $"UserSettings/{Baid}"));
 
         musicDetailDictionary = await GameDataService.GetMusicDetailDictionary(CurrentEra);
 

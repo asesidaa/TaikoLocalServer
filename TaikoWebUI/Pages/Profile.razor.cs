@@ -13,9 +13,9 @@ public partial class Profile
     public string? Era { get; set; }
 
     private string CurrentEra => WebUiEra.Normalize(Era);
-    private bool IsGreen => WebUiEra.IsGreen(CurrentEra);
-    private bool CanEditUnlocks => IsGreen && AuthService.AllowFreeProfileEditing;
-    private TitleSelectionMode CurrentTitleSelectionMode => IsGreen
+    private bool IsAc15 => WebUiEra.IsAc15(CurrentEra);
+    private bool CanEditUnlocks => IsAc15 && AuthService.AllowFreeProfileEditing;
+    private TitleSelectionMode CurrentTitleSelectionMode => IsAc15
         ? TitleSelectionMode.TitleId
         : TitleSelectionMode.TitlePlate;
 
@@ -167,10 +167,10 @@ public partial class Profile
         bodyValue = new CostumePickerValue(response.Body, response.UnlockedBody);
         faceValue = new CostumePickerValue(response.Face, response.UnlockedFace);
         puchiValue = new CostumePickerValue(response.Puchi, response.UnlockedPuchi);
-        var titleText = IsGreen && string.IsNullOrWhiteSpace(response.Title)
+        var titleText = IsAc15 && string.IsNullOrWhiteSpace(response.Title)
             ? TitlePickerCatalog.ResolveSelectedTitleText(titleDictionary, response.TitlePlateId, response.Title)
             : response.Title;
-        if (IsGreen)
+        if (IsAc15)
         {
             response.Title = titleText;
         }
@@ -259,7 +259,7 @@ public partial class Profile
             response.UnlockedBody = bodyValue.UnlockedIds.ToList();
             response.UnlockedFace = faceValue.UnlockedIds.ToList();
             response.UnlockedPuchi = puchiValue.UnlockedIds.ToList();
-            response.UnlockedTitle = (IsGreen
+            response.UnlockedTitle = (IsAc15
                     ? titleValue.UnlockedTitleIds.Append(response.TitlePlateId)
                     : titleValue.UnlockedTitleIds)
                 .Distinct()

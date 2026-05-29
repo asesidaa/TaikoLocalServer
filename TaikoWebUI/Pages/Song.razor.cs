@@ -14,7 +14,7 @@ public partial class Song
     public string? Era { get; set; }
 
     private string CurrentEra => WebUiEra.Normalize(Era);
-    private bool IsGreen => WebUiEra.IsGreen(CurrentEra);
+    private bool IsAc15 => WebUiEra.IsAc15(CurrentEra);
 
     private UserSetting? userSetting;
     private SongHistoryResponse? response;
@@ -36,7 +36,7 @@ public partial class Song
 
 
         // Get user settings
-        userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
+        userSetting = await Client.GetFromJsonAsync<UserSetting>(WebUiEra.Api(CurrentEra, $"UserSettings/{Baid}"));
         musicDetailDictionary = await GameDataService.GetMusicDetailDictionary(CurrentEra);
 
         // Get song title and artist
@@ -72,11 +72,11 @@ public partial class Song
     {
         musicDetail.ThrowIfNull();
 
-        if (IsGreen && !musicDetail.IsFavorite && CountCurrentFavorites() >= 5)
+        if (IsAc15 && !musicDetail.IsFavorite && CountCurrentFavorites() >= 5)
         {
             await DialogService.ShowMessageBoxAsync(
                 Localizer["Error"],
-                "Green supports at most 5 favorite songs.",
+                "AC15 eras support at most 5 favorite songs.",
                 Localizer["Dialog OK"]);
             return;
         }

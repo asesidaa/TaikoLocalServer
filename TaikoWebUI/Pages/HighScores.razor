@@ -94,7 +94,7 @@
                                                     <MudText Typo="Typo.body2">@Localizer["Best Crown"]</MudText>
                                                 </MudTableSortLabel>
                                             </MudTh>
-                                            @if (!IsGreen)
+                                            @if (!IsAc15)
                                             {
                                                 <MudTh>
                                                     <MudTableSortLabel T="SongBestData" SortBy="x => (int)x.BestScoreRank * 1000000 + x.BestScore">
@@ -196,7 +196,7 @@
                                             <MudTd>
                                                 <img src="@($"/images/crown_{context.BestCrown}.webp")" alt="@(ScoreUtils.GetCrownText(context.BestCrown))" title="@(ScoreUtils.GetCrownText(context.BestCrown))" style="@Constants.ICON_STYLE" />
                                             </MudTd>
-                                            @if (!IsGreen)
+                                            @if (!IsAc15)
                                             {
                                                 <MudTd>
                                                     @if (context.BestScoreRank is not ScoreRank.None)

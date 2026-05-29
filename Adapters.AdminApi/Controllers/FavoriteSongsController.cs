@@ -5,6 +5,8 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [Authorize]
 public class FavoriteSongsController(ITaikoDbContext context, IGameDataCatalog catalog) : BaseAdminController<FavoriteSongsController>
 {
+    private const int Ac15MaxFavoriteSongs = 5;
+
     [HttpPost]
     public Task<IActionResult> UpdateFavoriteSong(SetFavoriteRequest request)
         => UpdateFavoriteSong(nameof(GameEra.Nijiiro), request);
@@ -28,6 +30,7 @@ public class FavoriteSongsController(ITaikoDbContext context, IGameDataCatalog c
         {
             GameEra.Nijiiro => await UpdateNijiiroFavoriteSong(request),
             GameEra.Green => await UpdateGreenFavoriteSong(request),
+            GameEra.Blue => await UpdateBlueFavoriteSong(request),
             _ => EraRoute.BadEra(era)
         };
     }
@@ -60,7 +63,7 @@ public class FavoriteSongsController(ITaikoDbContext context, IGameDataCatalog c
                 return NoContent();
 
             var count = await context.GreenFavoriteSongs.CountAsync(row => row.Baid == request.Baid, HttpContext.RequestAborted);
-            if (count >= 5)
+            if (count >= Ac15MaxFavoriteSongs)
                 return BadRequest("Green supports at most 5 favorite songs.");
 
             context.GreenFavoriteSongs.Add(new GreenFavoriteSongs { Baid = request.Baid, SongNo = request.SongId });
@@ -68,6 +71,30 @@ public class FavoriteSongsController(ITaikoDbContext context, IGameDataCatalog c
         else if (existing is not null)
         {
             context.GreenFavoriteSongs.Remove(existing);
+        }
+
+        await context.SaveChangesAsync(HttpContext.RequestAborted);
+        return NoContent();
+    }
+
+    private async Task<IActionResult> UpdateBlueFavoriteSong(SetFavoriteRequest request)
+    {
+        _ = catalog.For(GameEra.Blue);
+        var existing = await context.BlueFavoriteSongs.FindAsync([request.Baid, request.SongId], HttpContext.RequestAborted);
+        if (request.IsFavorite)
+        {
+            if (existing is not null)
+                return NoContent();
+
+            var count = await context.BlueFavoriteSongs.CountAsync(row => row.Baid == request.Baid, HttpContext.RequestAborted);
+            if (count >= Ac15MaxFavoriteSongs)
+                return BadRequest("Blue supports at most 5 favorite songs.");
+
+            context.BlueFavoriteSongs.Add(new BlueFavoriteSongs { Baid = request.Baid, SongNo = request.SongId });
+        }
+        else if (existing is not null)
+        {
+            context.BlueFavoriteSongs.Remove(existing);
         }
 
         await context.SaveChangesAsync(HttpContext.RequestAborted);
@@ -97,6 +124,10 @@ public class FavoriteSongsController(ITaikoDbContext context, IGameDataCatalog c
         {
             GameEra.Nijiiro => Ok((await context.GetOrCreateNijiiroSaveDataAsync(baid, HttpContext.RequestAborted)).FavoriteSongsArray),
             GameEra.Green => Ok(await context.GreenFavoriteSongs
+                .Where(row => row.Baid == baid)
+                .Select(row => row.SongNo)
+                .ToListAsync(HttpContext.RequestAborted)),
+            GameEra.Blue => Ok(await context.BlueFavoriteSongs
                 .Where(row => row.Baid == baid)
                 .Select(row => row.SongNo)
                 .ToListAsync(HttpContext.RequestAborted)),

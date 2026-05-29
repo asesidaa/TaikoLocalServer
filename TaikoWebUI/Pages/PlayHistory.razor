@@ -75,7 +75,7 @@
                                 <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Level"]</MudTh>
                                 <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Score"]</MudTh>
                                 <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Crown"]</MudTh>
-                                @if (!IsGreen)
+                                @if (!IsAc15)
                                 {
                                     <MudTh Style="background-color: var(--mud-palette-table-striped);">@Localizer["Rank"]</MudTh>
                                 }
@@ -147,7 +147,7 @@
 
                                 <MudTd>@(songHistoryData.Score)</MudTd>
                                 <MudTd Style="text-align:center"><img src="@($"/images/crown_{songHistoryData.Crown}.webp")" alt="@(GetCrownText(songHistoryData.Crown))" title="@(GetCrownText(songHistoryData.Crown))" style=@IconStyle /></MudTd>
-                                @if (!IsGreen)
+                                @if (!IsAc15)
                                 {
                                     <MudTd Style="text-align:center">
                                         @if (songHistoryData.ScoreRank is not ScoreRank.None)

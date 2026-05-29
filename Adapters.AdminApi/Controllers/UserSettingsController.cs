@@ -46,6 +46,7 @@ public partial class UserSettingsController(
         {
             GameEra.Nijiiro => await GetNijiiroUserSetting(baid),
             GameEra.Green => await GetGreenUserSetting(baid),
+            GameEra.Blue => await GetBlueUserSetting(baid),
             _ => EraRoute.BadEra(era)
         };
     }
@@ -67,6 +68,7 @@ public partial class UserSettingsController(
         {
             GameEra.Nijiiro => await SaveNijiiroUserSetting(baid, userSetting),
             GameEra.Green => await SaveGreenUserSetting(baid, userSetting),
+            GameEra.Blue => await SaveBlueUserSetting(baid, userSetting),
             _ => EraRoute.BadEra(era)
         };
     }

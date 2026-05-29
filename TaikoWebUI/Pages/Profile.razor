@@ -45,7 +45,7 @@
                                     </MudItem>
                                 </MudGrid>
 
-                                @if (!IsGreen)
+                                @if (!IsAc15)
                                 {
                                     <MudSelect T="Difficulty" ValueChanged=@UpdateScoreboard Value=@response.AchievementDisplayDifficulty Label=@Localizer["Achievement Panel Difficulty"] AnchorOrigin="Origin.BottomCenter">
                                         @foreach (var item in Enum.GetValues<Difficulty>())
@@ -184,7 +184,7 @@
                                                  Value="@colorValue"
                                                  ValueChanged="@(value => { colorValue = value; ApplyCustomizationValues(); })" />
 
-                                    @if (IsGreen && response.GreenSelectableTaikojukuDans.Count > 0)
+                                    @if (IsAc15 && response.GreenSelectableTaikojukuDans.Count > 0)
                                     {
                                         <MudSelect T="uint"
                                                    @bind-Value="@response.GreenTaikojukuDan"
@@ -200,7 +200,7 @@
                             </MudTabPanel>
                         }
 
-                        @if (!IsGreen)
+                        @if (!IsAc15)
                         {
                         <MudTabPanel Text="@Localizer["Song Options"]">
                             <MudStack Spacing="4">
@@ -251,10 +251,10 @@
                             <MudTabPanel Text=@Localizer["Player"]>
                                 <PlayerPreview Setting="@response"
                                                TitleCatalog="@titleDictionary"
-                                               ResolveTitlePlateFromCatalog="@IsGreen" />
+                                               ResolveTitlePlateFromCatalog="@IsAc15" />
                             </MudTabPanel>
 
-                            @if (!IsGreen && response.IsDisplayAchievement)
+                            @if (!IsAc15 && response.IsDisplayAchievement)
                             {
                                 <MudTabPanel Text="@Localizer["Achievement Panel"]">
                                     <MudItem style="text-align: center; position:relative;">

@@ -2,6 +2,7 @@
 
 using Microsoft.Extensions.Options;
 using TaikoWebUI.Settings;
+using TaikoWebUI.Utilities;
 
 namespace TaikoWebUI.Components.Song;
 
@@ -16,6 +17,9 @@ public partial class SongLeaderboardCard
     [Parameter]
     public int Baid { get; set; }
 
+    [Parameter]
+    public string? Era { get; set; }
+
     [Parameter] 
     public Difficulty Difficulty { get; set; } = Difficulty.None;
     
@@ -28,6 +32,7 @@ public partial class SongLeaderboardCard
     private bool isLoading = true;
     private int currentPage = 1;
     private int pageSize = 10;
+    private string CurrentEra => WebUiEra.Normalize(Era);
     
     protected override void OnInitialized()
     {
@@ -53,7 +58,9 @@ public partial class SongLeaderboardCard
     private async Task GetLeaderboardData()
     {
         isLoading = true;
-        response = await Client.GetFromJsonAsync<SongLeaderboardResponse>($"api/SongLeaderboard/{(uint)SongId}?baid={(uint)Baid}&difficulty={(uint)Difficulty}&page={currentPage}&limit={pageSize}");
+        var leaderboardPath = WebUiEra.Api(CurrentEra, $"SongLeaderboard/{(uint)SongId}");
+        response = await Client.GetFromJsonAsync<SongLeaderboardResponse>(
+            $"{leaderboardPath}?baid={(uint)Baid}&difficulty={(uint)Difficulty}&page={currentPage}&limit={pageSize}");
         response.ThrowIfNull();
         
         LeaderboardScores.Clear();
@@ -120,7 +127,7 @@ public partial class SongLeaderboardCard
 
     private Task UserChanged(SongLeaderboard leaderboard)
     {
-        NavigationManager.NavigateTo($"/Users/{leaderboard.Baid}/Songs/{SongId}", forceLoad: true);
+        NavigationManager.NavigateTo(WebUiEra.UserRoute(leaderboard.Baid, CurrentEra, $"Songs/{SongId}"), forceLoad: true);
         return Task.CompletedTask;
     }
 

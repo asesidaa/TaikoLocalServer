@@ -10,7 +10,7 @@ public partial class HighScores
     public string? Era { get; set; }
 
     private string CurrentEra => WebUiEra.Normalize(Era);
-    private bool IsGreen => WebUiEra.IsGreen(CurrentEra);
+    private bool IsAc15 => WebUiEra.IsAc15(CurrentEra);
 
     private const string IconStyle = "width:25px; height:25px;";
 
@@ -30,7 +30,7 @@ public partial class HighScores
         response = await Client.GetFromJsonAsync<SongBestResponse>(WebUiEra.Api(CurrentEra, $"PlayData/{Baid}"));
         response.ThrowIfNull();
 
-        userSetting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
+        userSetting = await Client.GetFromJsonAsync<UserSetting>(WebUiEra.Api(CurrentEra, $"UserSettings/{Baid}"));
 
         var songNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
         musicDetailDictionary = await GameDataService.GetMusicDetailDictionary(CurrentEra);
@@ -79,11 +79,11 @@ public partial class HighScores
 
     private async Task OnFavoriteToggled(SongBestData data)
     {
-        if (IsGreen && !data.IsFavorite && CountCurrentFavorites() >= 5)
+        if (IsAc15 && !data.IsFavorite && CountCurrentFavorites() >= 5)
         {
             await DialogService.ShowMessageBoxAsync(
                 Localizer["Error"],
-                "Green supports at most 5 favorite songs.",
+                "AC15 eras support at most 5 favorite songs.",
                 Localizer["Dialog OK"]);
             return;
         }

@@ -15,6 +15,7 @@ public class CustomizationCatalogController(IGameDataCatalog catalog) : BaseAdmi
         {
             GameEra.Nijiiro => Ok(catalog.Nijiiro().GetCostumeList()),
             GameEra.Green => Ok(catalog.Green().GetCostumeList()),
+            GameEra.Blue => Ok(catalog.Blue().GetCostumeList()),
             _ => EraRoute.BadEra(era)
         };
     }
@@ -29,6 +30,7 @@ public class CustomizationCatalogController(IGameDataCatalog catalog) : BaseAdmi
         {
             GameEra.Nijiiro => Ok(catalog.Nijiiro().GetTitleDictionary()),
             GameEra.Green => Ok(catalog.Green().GetTitleDictionary()),
+            GameEra.Blue => Ok(catalog.Blue().GetTitleDictionary()),
             _ => EraRoute.BadEra(era)
         };
     }
@@ -43,6 +45,7 @@ public class CustomizationCatalogController(IGameDataCatalog catalog) : BaseAdmi
         {
             GameEra.Nijiiro => Ok(catalog.Nijiiro().GetNeiroDictionary()),
             GameEra.Green => Ok(catalog.Green().GetNeiroDictionary()),
+            GameEra.Blue => Ok(catalog.Blue().GetNeiroDictionary()),
             _ => EraRoute.BadEra(era)
         };
     }

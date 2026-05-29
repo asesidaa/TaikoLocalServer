@@ -28,6 +28,7 @@ public class PlayHistoryController(ITaikoDbContext context) : BaseAdminControlle
         {
             GameEra.Nijiiro => Ok(await BuildNijiiroSongHistory(baid)),
             GameEra.Green => Ok(await BuildGreenSongHistory(baid)),
+            GameEra.Blue => Ok(await BuildBlueSongHistory(baid)),
             _ => EraRoute.BadEra(era)
         };
     }
@@ -71,6 +72,39 @@ public class PlayHistoryController(ITaikoDbContext context) : BaseAdminControlle
             .AsNoTracking()
             .ToListAsync(HttpContext.RequestAborted);
         var favoriteSet = await context.GreenFavoriteSongs
+            .Where(d => d.Baid == baid)
+            .Select(d => d.SongNo)
+            .ToHashSetAsync(HttpContext.RequestAborted);
+
+        var songHistory = playLogs.Select(play => new SongHistoryData
+            {
+                SongId = play.SongId,
+                Difficulty = play.Difficulty,
+                Score = play.Score,
+                ScoreRank = ScoreRank.None,
+                Crown = play.Crown,
+                GoodCount = play.GoodCount,
+                OkCount = play.OkCount,
+                MissCount = play.MissCount,
+                HitCount = play.HitCount,
+                DrumrollCount = play.PoundCount,
+                ComboCount = play.ComboCount,
+                PlayTime = play.PlayTime,
+                SongNumber = play.SongId,
+                IsFavorite = favoriteSet.Contains(play.SongId)
+            })
+            .ToList();
+
+        return new SongHistoryResponse { SongHistoryData = songHistory };
+    }
+
+    private async Task<SongHistoryResponse> BuildBlueSongHistory(uint baid)
+    {
+        var playLogs = await context.SongPlayDataBlue
+            .Where(d => d.Baid == baid)
+            .AsNoTracking()
+            .ToListAsync(HttpContext.RequestAborted);
+        var favoriteSet = await context.BlueFavoriteSongs
             .Where(d => d.Baid == baid)
             .Select(d => d.SongNo)
             .ToHashSetAsync(HttpContext.RequestAborted);
