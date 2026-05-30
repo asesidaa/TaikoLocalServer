@@ -6,9 +6,10 @@ public class BattleUserDataController : BaseProtocolController<BattleUserDataCon
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult BattleUserData([FromBody] BattleUserDataRequest request)
+    public async Task<IActionResult> BattleUserData([FromBody] BattleUserDataRequest request)
     {
         Logger.LogInformation("Blue BattleUserData request: {Request}", request.Stringify());
-        return Ok(new BattleUserDataResponse { Result = 1 });
+        var common = await Mediator.Send(new GetBattleUserDataQuery(request.Baid), HttpContext.RequestAborted);
+        return Ok(BattleUserDataMappers.Map(common));
     }
 }
