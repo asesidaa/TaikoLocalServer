@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 05-03-PLAN.md
-last_updated: "2026-05-30T18:48:58.007Z"
+stopped_at: Completed 05-05-PLAN.md
+last_updated: "2026-05-30T19:05:44.282Z"
 last_activity: 2026-05-30 -- Phase 05 execution started
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 20
-  completed_plans: 15
-  percent: 75
+  completed_plans: 16
+  percent: 80
 ---
 
 # Project State
@@ -26,19 +26,19 @@ See: .planning/PROJECT.md (updated 2026-05-28)
 ## Current Position
 
 Phase: 05 (blue-battle-runtime-support) — EXECUTING
-Plan: 7 of 11
+Plan: 8 of 11
 Status: Ready to execute
 Last activity: 2026-05-30 -- Phase 05 execution started
 
-Progress: [########--] 75%
+Progress: [########--] 80%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 15
+- Total plans completed: 16
 - Average duration: 10 min
-- Total execution time: 93 min
+- Total execution time: 103 min
 
 **By Phase:**
 
@@ -63,6 +63,7 @@ Progress: [########--] 75%
 | Phase 05 P04 | 18 min | 1 tasks | 10 files |
 | Phase 05 P06 | 10 min | 1 tasks | 8 files |
 | Phase 05 P09 | 10 min | 1 tasks | 4 files |
+| Phase 05 P05-05 | 10 min | 1 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -112,6 +113,9 @@ Recent decisions affecting current work:
 - [Phase 05]: Battle release info, stage, NPC costume, and NPC special IDs update battle-owned bitsets from client-reported 0-to-1 diffs; `release_npc_id` remains raw-only pending mapping.
 - [Phase 05]: Token values, boss life, last-stage state, and `assign_next_stage_id` are stored and returned without server-side token reward, boss completion, or stage graph logic.
 - [Phase 05]: Stage `33` is recorded as a likely Stage EX special-event candidate with implementation deferred.
+- [Phase 05]: AddBlueBattleState creates only BlueBattle tables plus BAID foreign keys to UserData. — Plan 05-05 verifies migration operations and persistence isolation for BTL-01/BTL-06.
+- [Phase 05]: BlueBattle persistence tests assert nullable unresolved fields and no writes to normal Blue, shop, Dani, recent/favorite, or Green AI Battle state. — The test suite guards the 05-05 migration/persistence boundary against cross-era and normal Blue state leakage.
+- [Phase 05]: Focused runtime persistence tests use EnsureCreated because the historical migration chain cannot migrate a blank in-memory SQLite database. — The old SeparateTokens migration is unrelated to 05-05; migration correctness is covered by EF migration listing and a migration-operation guard.
 
 ### Pending Todos
 
@@ -140,6 +144,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-05-30T18:48:57.783Z
-Stopped at: Completed 05-03-PLAN.md
+Last session: 2026-05-30T19:04:09.921Z
+Stopped at: Completed 05-05-PLAN.md
 Resume file: None

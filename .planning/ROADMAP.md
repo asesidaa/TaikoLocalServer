@@ -189,7 +189,7 @@ Plans:
 **Wave 3** *(blocked on Wave 2 dependencies)*
 
 - [x] 05-03-PLAN.md - Reward and progression row checkpoint
-- [ ] 05-05-PLAN.md - Blue battle migration and persistence tests
+- [x] 05-05-PLAN.md - Blue battle migration and persistence tests
 
 **Wave 4** *(blocked on Wave 3 dependencies)*
 
@@ -244,5 +244,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 2. Blue A7 AdminApi And WebUI Parity | 3/3 | Complete    | 2026-05-30 |
 | 3. Blue A8 Normal-Mode Cabinet Smoke And Hardening | 3/3 | Complete    | 2026-05-30 |
 | 4. Blue Battle Evidence And Design | 3/3 | Complete    | 2026-05-30 |
-| 5. Blue Battle Runtime Support | 6/11 | In Progress|  |
+| 5. Blue Battle Runtime Support | 7/11 | In Progress|  |
 | 6. Full Blue Verification And Release Hardening | 0/3 | Not started | - |
