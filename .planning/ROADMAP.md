@@ -184,7 +184,7 @@ Plans:
 - [x] 05-02-PLAN.md - Battleuserdata and initialdata row checkpoint
 - [x] 05-04-PLAN.md - Blue battle entity and DbContext shape
 - [x] 05-06-PLAN.md - Raw battle catalog/data boundary
-- [ ] 05-09-PLAN.md - Battle playresult DTO mapping
+- [x] 05-09-PLAN.md - Battle playresult DTO mapping
 
 **Wave 3** *(blocked on Wave 2 dependencies)*
 
@@ -244,5 +244,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 2. Blue A7 AdminApi And WebUI Parity | 3/3 | Complete    | 2026-05-30 |
 | 3. Blue A8 Normal-Mode Cabinet Smoke And Hardening | 3/3 | Complete    | 2026-05-30 |
 | 4. Blue Battle Evidence And Design | 3/3 | Complete    | 2026-05-30 |
-| 5. Blue Battle Runtime Support | 4/11 | In Progress|  |
+| 5. Blue Battle Runtime Support | 5/11 | In Progress|  |
 | 6. Full Blue Verification And Release Hardening | 0/3 | Not started | - |
