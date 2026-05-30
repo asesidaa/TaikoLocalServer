@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Blue A6 Item Shop And Unlocking** - Implement Blue-owned shop advertisement, purchase, medal, rewardexecution no-op, and unlock behavior. (completed 2026-05-28)
 - [x] **Phase 2: Blue A7 AdminApi And WebUI Parity** - Expose supported Blue data through AdminApi and WebUI without Green/Nijiiro state leakage. (completed 2026-05-30)
 - [x] **Phase 3: Blue A8 Normal-Mode Cabinet Smoke And Hardening** - Prove normal Blue support on cabinet/RPCS3 and harden unresolved normal-mode gaps. (completed 2026-05-30)
-- [ ] **Phase 4: Blue Battle Evidence And Design** - Gather strict battle evidence and write the implementation design before battle runtime code.
+- [x] **Phase 4: Blue Battle Evidence And Design** - Gather strict battle evidence and write the implementation design before battle runtime code. (completed 2026-05-30)
 - [ ] **Phase 5: Blue Battle Runtime Support** - Implement Blue-owned battle persistence, protocol behavior, playresult handling, rewards, and tests.
 - [ ] **Phase 6: Full Blue Verification And Release Hardening** - Prove full Blue support with repeatable normal and battle smoke evidence, docs, and final guardrails.
 
@@ -149,7 +149,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 04-03: Blue battle design spec and implementation gate review
+- [x] 04-03: Blue battle design spec and implementation gate review
 
 ### Phase 5: Blue Battle Runtime Support
 
@@ -219,6 +219,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 1. Blue A6 Item Shop And Unlocking | 6/6 | Complete   | 2026-05-28 |
 | 2. Blue A7 AdminApi And WebUI Parity | 3/3 | Complete    | 2026-05-30 |
 | 3. Blue A8 Normal-Mode Cabinet Smoke And Hardening | 3/3 | Complete    | 2026-05-30 |
-| 4. Blue Battle Evidence And Design | 2/3 | In Progress|  |
+| 4. Blue Battle Evidence And Design | 3/3 | Complete   | 2026-05-30 |
 | 5. Blue Battle Runtime Support | 0/4 | Not started | - |
 | 6. Full Blue Verification And Release Hardening | 0/3 | Not started | - |
