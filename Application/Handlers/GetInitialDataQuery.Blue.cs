@@ -17,6 +17,7 @@ public partial class GetInitialDataQueryHandler
         var allSongs = blue.MusicInfoFileOrder
             .Select(song => song.SongNo)
             .Where(songNo => !shopSongIds.Contains(songNo));
+        var battle = blue.BattleCatalog;
 
         return ValueTask.FromResult(new CommonInitialDataCheckResponse
         {
@@ -28,6 +29,20 @@ public partial class GetInitialDataQueryHandler
             IsDanplay = true,
             IsClose = false,
             IsItemshop = activeShopWithRows is not null,
+            IsBattleplay = battle.EnablesBattleAdvertisement,
+            ReleaseBattleStageFlg = battle.EnablesBattleAdvertisement
+                ? BlueProtocolBytes.CreateFixedBitset(
+                    battle.ReleaseBattleStageIds,
+                    BlueProtocolBytes.BattleStageFlagBytes)
+                : new byte[BlueProtocolBytes.BattleStageFlagBytes],
+            ReleaseBattleSpecialFlg = battle.EnablesBattleAdvertisement
+                ? BlueProtocolBytes.CreateFixedBitset(
+                    battle.ReleaseBattleSpecialIds,
+                    BlueProtocolBytes.BattleSpecialFlagBytes)
+                : new byte[BlueProtocolBytes.BattleSpecialFlagBytes],
+            BattleBondsLvCap = battle.EnablesBattleAdvertisement
+                ? battle.BattleBondsLvCap ?? 0
+                : 0,
             AryBlueItemShopDatas = activeShopWithRows is null
                 ? []
                 :

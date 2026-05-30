@@ -13,6 +13,12 @@ public sealed class BlueBattleCatalog
 
     public bool EnablesBattleAdvertisement { get; init; }
 
+    public IReadOnlyList<uint> ReleaseBattleStageIds { get; init; } = [];
+
+    public IReadOnlyList<uint> ReleaseBattleSpecialIds { get; init; } = [];
+
+    public uint? BattleBondsLvCap { get; init; }
+
     public IReadOnlyList<BlueBattleCatalogFile> Files { get; init; } = [];
 }
 

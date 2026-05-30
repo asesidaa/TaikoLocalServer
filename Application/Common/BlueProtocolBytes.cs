@@ -9,6 +9,8 @@ public static class BlueProtocolBytes
     public const int DanFlagBytes = 18;
     public const int DanExtraFlagBytes = 36;
     public const int ContentInfoBytes = 32;
+    public const int BattleStageFlagBytes = 8;
+    public const int BattleSpecialFlagBytes = 16;
     public const int CrownInflatedBytes = 1280;
 
     public static byte[] CreateFixedBitset(IEnumerable<uint> enabledIds, int byteCount)

@@ -141,7 +141,7 @@ public sealed class BlueBattleCatalogLoaderTests
                 File.WriteAllText(Path.Combine(BattleRoot, "battlenpcinfo.xml"), "<root><npcinfo><id>1</id><requred_exp>10</requred_exp><requred_exp>20</requred_exp><requred_exp>30</requred_exp></npcinfo></root>");
                 File.WriteAllText(Path.Combine(BattleRoot, "battlestageinfo.xml"), "<root><stageinfo id=\"1\" /><stageinfo id=\"33\" /></root>");
                 File.WriteAllText(Path.Combine(BattleRoot, "battlesupportinfo.xml"), "<root><supportinfo musicid=\"a\" /></root>");
-                File.WriteAllText(Path.Combine(BattleRoot, "battletokeninfo.xml"), "<root><tokeninfo><id>1</id><rewardtbl><reward><id>1</id></reward><reward><id>10</id></reward></rewardtbl></tokeninfo></root>");
+                File.WriteAllText(Path.Combine(BattleRoot, "battletokeninfo.xml"), "<root><tokeninfo><id>1</id><rewardtbl><reward><id>1</id></reward><reward><id>10</id></reward></rewardtbl></tokeninfo><tokeninfo><id>17</id><rewardtbl /></tokeninfo></root>");
             }
         }
 
