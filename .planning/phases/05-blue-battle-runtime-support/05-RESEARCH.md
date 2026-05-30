@@ -416,22 +416,24 @@ All claims in this research are tagged as verified or cited from project/context
 |---|-------|---------|---------------|
 | N/A | No `[ASSUMED]` claims. | All sections | N/A |
 
-## Open Questions
+## Open Questions - RESOLVED To Row-Gated Execution
 
-1. **Which exact `battleuserdata.php` response fields are required for a new user?** [VERIFIED: Phase 5 Missing-Evidence Resolution Matrix]
-   - What we know: route/request pipeline exists and current server route is a stub. [VERIFIED: IDA .tools/blue/EBOOT.ELF.i64 via ida-cli; VERIFIED: Adapters.GameProtocol.Blue/Controllers/BattleUserDataController.cs]
-   - What's unclear: response field widths/defaults, required NPC/token rows, assignment, boss life, and last-stage defaults. [VERIFIED: Phase 5 Missing-Evidence Resolution Matrix]
-   - Recommendation: run another IDA pass focused on `BattleUserDataResponse` parser/use sites or capture cabinet/RPCS3 logs before 05-02 runtime response planning. [VERIFIED: Phase 5 Missing-Evidence Resolution Matrix]
+**RESOLVED marker:** The questions below are not evidence-resolved. They are resolved for Phase 5 planning by concrete ownership and row-gated execution. Exact unresolved rows stay blocked in `.planning/phases/05-blue-battle-runtime-support/05-RESOLUTION.md`; 05-02 owns battleuserdata/initialdata row checkpoints; 05-03 owns reward/progression row checkpoints. No runtime emission, advertisement, reward, progression, token effect, stage assignment, boss-life update, or unlock mirror may ship before row-specific proof or named user approval is recorded. [VERIFIED: .planning/phases/05-blue-battle-runtime-support/05-CONTEXT.md]
 
-2. **What should `battle_bonds_lv_cap` emit?** [VERIFIED: Phase 5 Missing-Evidence Resolution Matrix]
-   - What we know: the client stores the supplied value and debug config can ignore the cap. [VERIFIED: IDA .tools/blue/EBOOT.ELF.i64 via ida-cli]
-   - What's unclear: whether server should omit, send `65`, or compute from data. [VERIFIED: .planning/phases/05-blue-battle-runtime-support/05-CONTEXT.md]
-   - Recommendation: ask for explicit approval to emit `65` or keep omitted until trace evidence. [VERIFIED: Phase 5 Missing-Evidence Resolution Matrix]
+1. **RESOLVED_FOR_PLANNING_ROW_GATED: Which exact `battleuserdata.php` response fields are required for a new user?** [VERIFIED: Phase 5 Missing-Evidence Resolution Matrix]
+   - Evidence state: route/request pipeline exists and current server route is success-shaped, but response field widths/defaults, required NPC/token rows, assignment, boss life, and last-stage defaults remain unresolved. [VERIFIED: IDA .tools/blue/EBOOT.ELF.i64 via ida-cli; VERIFIED: Adapters.GameProtocol.Blue/Controllers/BattleUserDataController.cs; VERIFIED: Phase 5 Missing-Evidence Resolution Matrix]
+   - Planning resolution: rows 7-16 and row 25 stay blocked in `05-RESOLUTION.md` unless 05-02 records exact proof or named approval with exact emitted behavior and approval source. [VERIFIED: .planning/phases/05-blue-battle-runtime-support/05-CONTEXT.md]
+   - Runtime rule: 05-07 must return `Result = 1` plus only row-approved persisted fields; unresolved optional fields and repeated rows remain un-emitted. [VERIFIED: Phase 5 plan split]
 
-3. **How do battle rewards, tokens, stage `33`, and boss-life transitions work?** [VERIFIED: Phase 5 Missing-Evidence Resolution Matrix]
-   - What we know: proto/wire fields and XML inputs exist; IDA proves XML file loading. [VERIFIED: proto/blue/taiko.proto; VERIFIED: Adapters.GameProtocol.Blue/Wire/Game.cs; VERIFIED: IDA .tools/blue/EBOOT.ELF.i64 via ida-cli]
-   - What's unclear: reward type meanings, token effects, assignment transitions, and stage `33` role. [VERIFIED: Phase 5 Missing-Evidence Resolution Matrix]
-   - Recommendation: defer runtime effects and only raw-capture observed values until proof or approval. [VERIFIED: .planning/phases/05-blue-battle-runtime-support/05-CONTEXT.md]
+2. **RESOLVED_FOR_PLANNING_ROW_GATED: What should `battle_bonds_lv_cap` emit?** [VERIFIED: Phase 5 Missing-Evidence Resolution Matrix]
+   - Evidence state: the client stores the supplied value and debug config can ignore the cap, but whether the server should omit, send `65`, or compute from data remains unresolved as wire behavior. [VERIFIED: IDA .tools/blue/EBOOT.ELF.i64 via ida-cli; VERIFIED: .planning/phases/05-blue-battle-runtime-support/05-CONTEXT.md]
+   - Planning resolution: row 6 stays `NEEDS_USER_APPROVAL` or blocked in `05-RESOLUTION.md` unless 05-02 records explicit approval to emit an exact value, including `65`, or concrete trace evidence proves the value. [VERIFIED: Phase 5 Missing-Evidence Resolution Matrix]
+   - Runtime rule: 05-08 must keep `BattleBondsLvCap` omitted unless 05-02 records exact proof or named approval. [VERIFIED: Phase 5 plan split]
+
+3. **RESOLVED_FOR_PLANNING_ROW_GATED: How do battle rewards, tokens, stage `33`, and boss-life transitions work?** [VERIFIED: Phase 5 Missing-Evidence Resolution Matrix]
+   - Evidence state: proto/wire fields and XML inputs exist, and IDA proves XML file loading, but reward type meanings, token effects, assignment transitions, stage `33` role, and boss-life/last-stage completion remain unresolved. [VERIFIED: proto/blue/taiko.proto; VERIFIED: Adapters.GameProtocol.Blue/Wire/Game.cs; VERIFIED: IDA .tools/blue/EBOOT.ELF.i64 via ida-cli]
+   - Planning resolution: rows 18-24 and row 26 stay blocked in `05-RESOLUTION.md` unless 05-03 records exact proof or named approval for the specific effect. [VERIFIED: .planning/phases/05-blue-battle-runtime-support/05-CONTEXT.md]
+   - Runtime rule: 05-10 may raw-capture observed battle stage and release data in BlueBattle* tables, but it must not apply rewards, token effects, stage assignment, stage `33`, boss-life completion, last-stage updates, or normal unlock mirrors without a 05-03 row-specific clearance. [VERIFIED: Phase 5 plan split]
 
 ## Environment Availability
 

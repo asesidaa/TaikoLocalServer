@@ -171,14 +171,38 @@ Plans:
   3. Blue battle playresults and rewards update only the state approved by the battle design.
   4. Tests and source guards prove battle code does not treat Green AI Battle as protocol truth.
 
-**Plans**: 4 plans
+**Plans**: 11 plans
 
 Plans:
 
-- [ ] 05-01: Blue battle persistence and catalog/data foundations
-- [ ] 05-02: Battle userdata and initial-data protocol behavior
-- [ ] 05-03: Battle playresult, progression, rewards, and unlocks
-- [ ] 05-04: Battle regression tests, source guards, and verification
+**Wave 1**
+
+- [ ] 05-01-PLAN.md - Phase 5 row-resolution gate
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 05-02-PLAN.md - Battleuserdata and initialdata row checkpoint
+- [ ] 05-04-PLAN.md - Blue battle entity and DbContext shape
+- [ ] 05-06-PLAN.md - Raw battle catalog/data boundary
+- [ ] 05-09-PLAN.md - Battle playresult DTO mapping
+
+**Wave 3** *(blocked on Wave 2 dependencies)*
+
+- [ ] 05-03-PLAN.md - Reward and progression row checkpoint
+- [ ] 05-05-PLAN.md - Blue battle migration and persistence tests
+
+**Wave 4** *(blocked on Wave 3 dependencies)*
+
+- [ ] 05-07-PLAN.md - Battleuserdata protocol behavior
+- [ ] 05-10-PLAN.md - Battle playresult raw persistence and normal-state protection
+
+**Wave 5** *(blocked on 05-07 completion)*
+
+- [ ] 05-08-PLAN.md - Initialdata battle field gating
+
+**Wave 6** *(blocked on 05-06, 05-08, and 05-10 completion)*
+
+- [ ] 05-11-PLAN.md - Battle regression tests, source guards, and verification
 
 ### Phase 6: Full Blue Verification And Release Hardening
 
@@ -220,5 +244,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 2. Blue A7 AdminApi And WebUI Parity | 3/3 | Complete    | 2026-05-30 |
 | 3. Blue A8 Normal-Mode Cabinet Smoke And Hardening | 3/3 | Complete    | 2026-05-30 |
 | 4. Blue Battle Evidence And Design | 3/3 | Complete    | 2026-05-30 |
-| 5. Blue Battle Runtime Support | 0/4 | Not started | - |
+| 5. Blue Battle Runtime Support | 0/11 | Not started | - |
 | 6. Full Blue Verification And Release Hardening | 0/3 | Not started | - |
