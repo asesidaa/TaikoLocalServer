@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Blue A7 AdminApi And WebUI Parity** - Expose supported Blue data through AdminApi and WebUI without Green/Nijiiro state leakage. (completed 2026-05-30)
 - [x] **Phase 3: Blue A8 Normal-Mode Cabinet Smoke And Hardening** - Prove normal Blue support on cabinet/RPCS3 and harden unresolved normal-mode gaps. (completed 2026-05-30)
 - [x] **Phase 4: Blue Battle Evidence And Design** - Gather strict battle evidence and write the implementation design before battle runtime code. (completed 2026-05-30)
-- [ ] **Phase 5: Blue Battle Runtime Support** - Implement Blue-owned battle persistence, protocol behavior, playresult handling, rewards, and tests.
+- [x] **Phase 5: Blue Battle Runtime Support** - Implement Blue-owned battle persistence, protocol behavior, playresult handling, rewards, and tests. (completed 2026-05-31)
 - [ ] **Phase 6: Full Blue Verification And Release Hardening** - Prove full Blue support with repeatable normal and battle smoke evidence, docs, and final guardrails.
 
 ## Phase Details
@@ -202,7 +202,7 @@ Plans:
 
 **Wave 6** *(blocked on 05-06, 05-08, and 05-10 completion)*
 
-- [ ] 05-11-PLAN.md - Battle regression tests, source guards, and verification
+- [x] 05-11-PLAN.md - Battle regression tests, source guards, and verification
 
 ### Phase 6: Full Blue Verification And Release Hardening
 
@@ -244,5 +244,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 2. Blue A7 AdminApi And WebUI Parity | 3/3 | Complete    | 2026-05-30 |
 | 3. Blue A8 Normal-Mode Cabinet Smoke And Hardening | 3/3 | Complete    | 2026-05-30 |
 | 4. Blue Battle Evidence And Design | 3/3 | Complete    | 2026-05-30 |
-| 5. Blue Battle Runtime Support | 10/11 | In Progress|  |
+| 5. Blue Battle Runtime Support | 11/11 | Complete   | 2026-05-31 |
 | 6. Full Blue Verification And Release Hardening | 0/3 | Not started | - |
