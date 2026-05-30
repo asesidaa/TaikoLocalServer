@@ -25,10 +25,10 @@ A Blue cabinet can use TaikoLocalServer for normal and battle play with repeatab
 - [x] Blue A7 basic AdminApi and WebUI parity: Blue profile, score history, favorites, Dani, customization, item-shop-relevant surfaces, and safe edit/readback behavior are exposed without writing Green state.
 - [x] Blue A8 normal-mode cabinet smoke and hardening: normal Blue support has been user-confirmed complete before Track B battle evidence/design work.
 - [x] Blue battle evidence and design: Phase 4 defined Track B from proto, local Blue battle XML inventory, IDA/client-equivalent evidence, and explicit field-width/default-state gates before runtime battle behavior.
+- [x] Blue battle runtime support: Phase 5 added Blue-owned battle persistence, battleuserdata readback, data-derived initialdata battle advertisement, battle playresult persistence, reward/unlock store-echo behavior, source guards, and server-side verification without Green AI Battle dependencies.
 
 ### Active
 
-- [ ] Blue battle mode implementation: support battle userdata, battle entry state, battle playresult data, progression/unlocks, rewards, and readback only after the strict evidence gate is satisfied.
 - [ ] Full Blue verification: normal and battle flows have repeatable cabinet/RPCS3 smoke evidence, server-side regression tests, source guardrails, and documented unresolved items.
 
 ### Out of Scope
@@ -49,7 +49,7 @@ A Blue cabinet can use TaikoLocalServer for normal and battle play with repeatab
 - `Domain/Enums/GameEra.cs`, `Application/Handlers/*.Blue.cs`, `Adapters.GameProtocol.Blue/`, `Infrastructure/GameDataCatalog/Blue/`, and `TaikoWebUI/Utilities/WebUiEra.cs` are key Blue support touch points.
 - The Superpowers Blue roadmap split the effort into Track A normal support and Track B battle mode. A0-A5 are treated as completed prior work for this GSD project.
 - Track A stages A6 item shop/unlocking, A7 AdminApi/WebUI parity, and A8 normal-mode cabinet smoke/hardening are complete.
-- Track B battle mode is part of the full Blue project scope. Phase 4 produced a fail-closed battle design gate, and Phase 5 runtime planning remains blocked by 26 missing-evidence rows until proof or named user approvals are recorded.
+- Track B battle mode is part of the full Blue project scope. Phase 4 produced strict battle design gates, and Phase 5 completed server-side runtime support using row-specific proof plus named user approvals where exact client defaults were not otherwise provable.
 - The evidence hierarchy is repo code, proto files, SQLite state, cabinet/RPCS3 logs, IDA/client evidence, and only then public wiki pages for gameplay scoping.
 
 ## Constraints
@@ -73,7 +73,7 @@ A Blue cabinet can use TaikoLocalServer for normal and battle play with repeatab
 | Finish normal Track A before battle runtime implementation | Existing roadmap says battle starts after Track A is stable enough for normal cabinet smoke testing | Pending |
 | Use strict battle evidence gates | The user selected strict evidence before battle implementation | Pending |
 | Define done as cabinet/RPCS3-proven normal and battle flows | The user selected repeatable cabinet evidence as the full-support done condition | Pending |
-| Keep Phase 5 battle runtime blocked after Phase 4 | Phase 4 found 26 required battle evidence gaps and no user exception approvals | `04-03-BLUE-BATTLE-DESIGN-GATE.md` records `Final Gate Status: BLOCKED` |
+| Complete Phase 5 battle runtime with data-derived defaults and bounded store/echo behavior | Phase 5 resolved required runtime rows through IDA/proto/local-data evidence plus named user approval for parsed-data battle initialdata unlocks | `05-VERIFICATION.md` records `status: passed`; cabinet/RPCS3 battle smoke remains Phase 6/FULL-01 |
 
 ## Evolution
 
@@ -93,4 +93,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-30 after Phase 4 completion*
+*Last updated: 2026-05-30 after Phase 5 completion*

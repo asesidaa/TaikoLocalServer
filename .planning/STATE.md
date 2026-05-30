@@ -119,7 +119,7 @@ Recent decisions affecting current work:
 - [Phase 05]: Focused runtime persistence tests use EnsureCreated because the historical migration chain cannot migrate a blank in-memory SQLite database. — The old SeparateTokens migration is unrelated to 05-05; migration correctness is covered by EF migration listing and a migration-operation guard.
 - [Phase 05]: Blue battleuserdata.php now uses a Blue-owned Mediator query and mapper instead of local controller success construction.
 - [Phase 05]: Optional BattleUserDataResponse fields are set only when the common DTO value is non-null, preserving generated protobuf presence semantics.
-- [Phase 05]: The query emits persisted scalar values and complete token rows, while leaving NPC rows empty until a complete row is explicitly available.
+- [Phase 05]: The query emits persisted scalar, complete NPC, and complete token rows; incomplete NPC rows stay omitted until required values are available.
 - [Phase 05]: Battle-classified Blue playresults branch immediately after Blue user validation and before normal save, shop, unlock, stage, profile, recent/favorite, and Dani writes.
 - [Phase 05]: Battle playresults persist only client-reported stage, release, NPC, token, boss-life, last-stage, and assignment state into BlueBattle tables.
 - [Phase 05]: Release NPC IDs remain raw BlueBattleReleaseState observations; NPC state is updated only from BattleStageData NPC values until later mapping evidence exists.
@@ -134,7 +134,7 @@ None yet.
 
 ### Blockers/Concerns
 
-- Phase 5 Blue battle runtime still has row-gated unknowns from 04-03/05-RESOLUTION; 05-03 resolved reward/progression rows as store/echo only, not derived server effects.
+- Phase 5 Blue battle runtime is server-verified; remaining battle gameplay effects are intentionally evidence-gated as store/echo or Phase 6/hardening concerns.
 - Cabinet/RPCS3 smoke evidence is required for full done, beyond automated server tests.
 
 ### Quick Tasks Completed
