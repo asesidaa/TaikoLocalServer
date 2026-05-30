@@ -86,7 +86,7 @@ Phase 5 tests must prove:
 | BTEV-03 | `04-02-BATTLE-DATA-INVENTORY.md` inventories `battleadjsetting.xml`, `battlenpcinfo.xml`, `battlestageinfo.xml`, `battlesupportinfo.xml`, and `battletokeninfo.xml`. | Complete for local file presence, hashes, row counts, and candidate roles. | XML roles remain candidate-only until IDA/client proof or approval. |
 | BTEV-04 | `04-02-BATTLE-DATA-INVENTORY.md` lists default/width/row-count risks for battle flags, NPC state, token state, stage assignment, boss life, and last-stage behavior. | Incomplete for implementation because many rows remain `UNKNOWN - requires case-by-case user approval before Phase 5 relies on it`. | Phase 5 is blocked unless every listed unknown is proven or approved as a separate exception. |
 | BTEV-05 | This document records D-14 through D-17 battle playresult effects and normal Blue state protection. | Complete for design decision. | Phase 5 tests must prove no battle write reaches normal scores, normal crowns, normal Blue play history, recent/favorites, profile play counters, normal self-best, or Dani. |
-| BTEV-06 | This document defines fail-closed status rules and stops at the human gate. | Pending human decision. | No Phase 5 runtime plan may start until one final decision line is recorded in Task 04-03-T3. |
+| BTEV-06 | This document defines fail-closed status rules and records the human gate decision. | Complete with `BLOCKED` decision. | Phase 5 runtime planning remains blocked until the missing evidence below is proven or separately approved. |
 
 ### Research Recommendation Coverage
 
@@ -94,7 +94,7 @@ Phase 5 tests must prove:
 |---|---|---|
 | 04-01 route/proto evidence capture | `04-01-BATTLE-EVIDENCE.md` records route sequence, current owners, proto/wire fields, and unknowns for route requirements. | Input present; route-default unknowns still need approval before use. |
 | 04-02 XML/default-width analysis | `04-02-BATTLE-DATA-INVENTORY.md` records file hashes, row counts, candidate relationships, and the default/width proof matrix. | Input present; byte widths, defaults, and repeated row counts remain blocked where marked unknown. |
-| 04-03 gate integration | This document maps evidence to design boundaries, test obligations, unresolved cases, and gate choices. | Ready for Task 04-03-T3 human decision. |
+| 04-03 gate integration | This document maps evidence to design boundaries, test obligations, unresolved cases, and gate choices. | Task 04-03-T3 recorded a `BLOCKED` decision with one missing-evidence row per unresolved case. |
 
 ### CONTEXT Decision Coverage
 
@@ -137,7 +137,7 @@ The gate fails closed. A missing prerequisite or unresolved `UNKNOWN` without a 
 | BTEV-05 battle playresult effects | D-14 through D-17 design decision | PASS | Phase 5 must preserve normal Blue score/crown/history separation. |
 | User approval coverage | One named approval per unresolved field/default/row count | FAIL_CLOSED | No blanket approval exists. |
 | No runtime writes in Phase 4 | Forbidden target categories unchanged | PASS | This plan remains docs-only. |
-| Final gate decision | Exactly one Task 04-03-T3 decision line | PENDING | Do not create `04-03-SUMMARY.md` or start Phase 5 until recorded. |
+| Final gate decision | Exactly one Task 04-03-T3 decision line | BLOCKED | Phase 5 remains blocked until every `MISSING_EVIDENCE` row below is proven or separately approved. |
 
 ## Unresolved Cases And User Approvals
 
@@ -179,6 +179,39 @@ Final decision vocabulary is exactly `APPROVED`, `BLOCKED`, or `APPROVED_WITH_US
 Recommended Gate Status: BLOCKED
 
 Rationale: BTEV-05 is now covered by the battle playresult effects design, but BTEV-06 cannot approve Phase 5 runtime planning while 26 required field/default/row-count/menu-entry cases remain `REQUIRED_UNKNOWN` and no named user approvals exist. `APPROVED` is invalid with the current document contents. `APPROVED_WITH_USER_EXCEPTIONS` is available only if the user approves each unresolved row separately and records the approved behavior, approval source, and Phase 5 constraint for every exception.
+
+Final Gate Status: BLOCKED
+
+## Missing Evidence Blocking Phase 5
+
+| # | Missing Evidence Item | Missing Proof | Gate State | Phase 5 Constraint |
+|---:|---|---|---|---|
+| 1 | Battle menu entry sequence and required `initialdatacheck.php` fields | Exact client requirement for battle menu entry and safe advertisement values. | MISSING_EVIDENCE | Phase 5 cannot advertise battle menu entry until client/IDA/log proof or one explicit user approval exists. |
+| 2 | `battleuserdata.php` call timing and requirement | Whether the route is called before menu entry, after entry, or only during attempted flow. | MISSING_EVIDENCE | Phase 5 cannot replace the stub based on assumed call timing. |
+| 3 | `InitialdatacheckResponse.is_battleplay` | Whether omission, explicit false, or explicit true is safe. | MISSING_EVIDENCE | Phase 5 cannot emit the field without exact emitted-behavior proof or approval. |
+| 4 | `InitialdatacheckResponse.release_battle_stage_flg` | Exact byte width and default bits. | MISSING_EVIDENCE | Phase 5 cannot set battle stage release flags without width/default proof or approval. |
+| 5 | `InitialdatacheckResponse.release_battle_special_flg` | Exact byte width and relation to NPC special flags. | MISSING_EVIDENCE | Phase 5 cannot set battle special release flags without width/default proof or approval. |
+| 6 | `InitialdatacheckResponse.battle_bonds_lv_cap` | Whether to omit, send `65`, or compute another value. | MISSING_EVIDENCE | Phase 5 cannot infer a bonds cap from XML counts alone. |
+| 7 | `BattleUserDataResponse.release_info_flg` | Exact byte width and default. | MISSING_EVIDENCE | Phase 5 cannot emit release info flags without width/default proof or approval. |
+| 8 | `BattleUserDataResponse.release_battle_stage_flg` | Exact byte width/default and relation to initial data. | MISSING_EVIDENCE | Phase 5 cannot emit battleuserdata stage flags without proof of width/default and relationship. |
+| 9 | `BattleUserDataResponse.last_battle_stage_id` | New-user default, persisted value, and last-stage behavior. | MISSING_EVIDENCE | Phase 5 cannot set or persist last battle stage state from guessed defaults. |
+| 10 | `BattleUserDataResponse.last_boss_life` | New-user boss-life default and persistence source. | MISSING_EVIDENCE | Phase 5 cannot initialize or persist boss life without default/progression proof. |
+| 11 | `BattleUserDataResponse.last_npc_id` | First/last NPC default semantics. | MISSING_EVIDENCE | Phase 5 cannot set NPC identity defaults without proof or approval. |
+| 12 | `BattleUserDataResponse.npc_data` | Minimum safe repeated row count. | MISSING_EVIDENCE | Phase 5 cannot emit NPC rows or rely on an empty list until row-count evidence exists. |
+| 13 | `BattleUserNpcData.npc_costume_flg` | Exact byte width and default for each emitted NPC row. | MISSING_EVIDENCE | Phase 5 cannot serialize NPC rows until costume flag width/default is proven or approved. |
+| 14 | `BattleUserNpcData.release_special_flg` | Exact byte width and default. | MISSING_EVIDENCE | Phase 5 cannot emit nested special release flags without width/default proof or approval. |
+| 15 | `BattleUserDataResponse.ary_token_data` | Minimum safe repeated token row count. | MISSING_EVIDENCE | Phase 5 cannot emit token rows or rely on an empty list until row-count evidence exists. |
+| 16 | `BattleUserDataResponse.assign_stage_id` | First-stage assignment default and source. | MISSING_EVIDENCE | Phase 5 cannot assign a starting stage from XML graph assumptions alone. |
+| 17 | `PlayResultRequest.StageData.BattleStageData` | How Blue identifies battle stages and prevents normal-stage persistence. | MISSING_EVIDENCE | Phase 5 cannot route battle playresults until battle-stage identification and normal-state protection are proven. |
+| 18 | `BattleStageData.npc_data` result fields | Persistence semantics for acquired exp, total exp, DPN, costume, specials, and bonds. | MISSING_EVIDENCE | Phase 5 cannot persist NPC progress from battle playresults without client/log proof or approval. |
+| 19 | `ReleaseBattleData.release_info_id` | Whether and how it mirrors normal Blue unlock handling. | MISSING_EVIDENCE | Phase 5 must treat release info as battle-owned unless a specific mirror is proven or approved. |
+| 20 | `ReleaseBattleData` stage/NPC/costume/special release arrays | Which releases are battle-owned and which may mirror normal unlocks. | MISSING_EVIDENCE | Phase 5 needs one evidence-backed decision per release path before applying unlock effects. |
+| 21 | `ReleaseBattleData.ary_battletokendata` | Token row semantics and token value handling. | MISSING_EVIDENCE | Phase 5 cannot persist or grant token rewards without token semantics proof. |
+| 22 | `ReleaseBattleData.assign_next_stage_id` | How next-stage assignment updates persisted state. | MISSING_EVIDENCE | Phase 5 cannot update assignment/progression state from this field without transition proof. |
+| 23 | `battlestageinfo.xml` stage id `33` | Runtime role, menu visibility, and last-stage behavior. | MISSING_EVIDENCE | Phase 5 cannot route progression through stage `33` without client/IDA proof or approval. |
+| 24 | `battletokeninfo.xml` reward `type` values `0` and `1` | Meaning of reward types and whether they apply unlock mirrors. | MISSING_EVIDENCE | Phase 5 cannot use reward type values for unlock or token behavior without semantic proof. |
+| 25 | Battle XML file menu-entry requirements | Which of the five XML files are required, optional, or unused for menu entry. | MISSING_EVIDENCE | Phase 5 cannot treat any battle XML file as required or optional for menu entry without proof per file. |
+| 26 | Boss-life and last-stage completion behavior | How boss-life zero/non-zero rows and last-stage state should be initialized and persisted. | MISSING_EVIDENCE | Phase 5 cannot implement completion or last-stage persistence without client/log proof or approval. |
 
 ## No Runtime Write Targets
 
