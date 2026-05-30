@@ -59,6 +59,18 @@ public sealed class BlueRouteSkeletonTests
     }
 
     [Fact]
+    public void BlueAdapter_OnlyOwnsImplementedDedicatedBattleRoutes()
+    {
+        var routes = ProtocolRouteTestHelper.FindPostRoutes(typeof(TaikoLocalServer.Adapters.GameProtocol.Blue.DependencyInjection).Assembly)
+            .Where(route => route.Template.Contains("battle", StringComparison.OrdinalIgnoreCase))
+            .Select(route => route.Template)
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.Equal(["/v10r03/chassis/battleuserdata.php"], routes);
+    }
+
+    [Fact]
     public void BlueControllers_DoNotCallMediatorOutsideImplementedEndpoints()
     {
         var root = FindRepoRoot();
