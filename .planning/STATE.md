@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 05-02-PLAN.md
-last_updated: "2026-05-30T13:15:41.021Z"
+stopped_at: Completed 05-04-PLAN.md
+last_updated: "2026-05-30T13:28:34.104Z"
 last_activity: 2026-05-30 -- Phase 05 execution started
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 20
-  completed_plans: 11
-  percent: 33
+  completed_plans: 12
+  percent: 60
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-05-28)
 ## Current Position
 
 Phase: 05 (blue-battle-runtime-support) — EXECUTING
-Plan: 3 of 11
+Plan: 4 of 11
 Status: Ready to execute
 Last activity: 2026-05-30 -- Phase 05 execution started
 
-Progress: [#######---] 67%
+Progress: [######----] 60%
 
 ## Performance Metrics
 
@@ -60,6 +60,7 @@ Progress: [#######---] 67%
 | Phase 04-blue-battle-evidence-and-design P04-03 | 3 min | 3 tasks | 2 files |
 | Phase 05 P01 | 18 min | 1 tasks | 3 files |
 | Phase 05 P02 | 38 min | 1 tasks | 3 files |
+| Phase 05 P04 | 18 min | 1 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -101,6 +102,8 @@ Recent decisions affecting current work:
 - [Phase 04-blue-battle-evidence-and-design]: Blue battle playresult effects are battle-owned and must not update normal Blue score, crown, play history, recent/favorite, profile counter, normal self-best, or Dani state.
 - [Phase 04-blue-battle-evidence-and-design]: Phase 5 Blue battle runtime planning remains BLOCKED because required field/default/row-count/menu-entry evidence is still missing.
 - [Phase 04-blue-battle-evidence-and-design]: No APPROVED_WITH_USER_EXCEPTIONS rows were recorded for 04-03; no user approvals were invented.
+- [Phase 05]: Blue battle persistence shape starts as BlueBattle* nullable/raw state, not zero-filled defaults or XML-derived rows.
+- [Phase 05]: Stage-result and release battle observations are append-style raw captures; progression, reward, token, and normal-save effects remain row-gated.
 
 ### Pending Todos
 
@@ -129,6 +132,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-05-30T13:15:41.016Z
-Stopped at: Completed 05-02-PLAN.md
+Last session: 2026-05-30T13:28:34.089Z
+Stopped at: Completed 05-04-PLAN.md
 Resume file: None
