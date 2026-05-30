@@ -15,6 +15,11 @@ public partial class TaikoDbContext
     public virtual DbSet<DanStageScoreDatumBlue> DanStageScoreDataBlue { get; set; } = null!;
     public virtual DbSet<BlueShopSeasonState> BlueShopSeasonStates { get; set; } = null!;
     public virtual DbSet<BlueShopItemState> BlueShopItemStates { get; set; } = null!;
+    public virtual DbSet<BlueBattleUserState> BlueBattleUserStates { get; set; } = null!;
+    public virtual DbSet<BlueBattleNpcState> BlueBattleNpcStates { get; set; } = null!;
+    public virtual DbSet<BlueBattleTokenState> BlueBattleTokenStates { get; set; } = null!;
+    public virtual DbSet<BlueBattleStageResult> BlueBattleStageResults { get; set; } = null!;
+    public virtual DbSet<BlueBattleReleaseState> BlueBattleReleaseStates { get; set; } = null!;
 
     partial void OnModelCreatingBlue(ModelBuilder modelBuilder)
     {
@@ -130,6 +135,74 @@ public partial class TaikoDbContext
             entity.Property(e => e.Status).HasConversion<uint>();
             entity.Property(e => e.PurchasedAt).HasColumnType("datetime");
             entity.Property(e => e.UnlockedAt).HasColumnType("datetime");
+            entity.HasOne(d => d.Ba)
+                .WithMany()
+                .HasPrincipalKey(p => p.Baid)
+                .HasForeignKey(d => d.Baid)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<BlueBattleUserState>(entity =>
+        {
+            entity.ToTable("BlueBattleUserStates");
+            entity.HasKey(e => e.Baid);
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+            entity.HasOne(d => d.Ba)
+                .WithMany()
+                .HasPrincipalKey(p => p.Baid)
+                .HasForeignKey(d => d.Baid)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<BlueBattleNpcState>(entity =>
+        {
+            entity.ToTable("BlueBattleNpcStates");
+            entity.HasKey(e => new { e.Baid, e.NpcId });
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+            entity.HasOne(d => d.Ba)
+                .WithMany()
+                .HasPrincipalKey(p => p.Baid)
+                .HasForeignKey(d => d.Baid)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<BlueBattleTokenState>(entity =>
+        {
+            entity.ToTable("BlueBattleTokenStates");
+            entity.HasKey(e => new { e.Baid, e.TokenId });
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+            entity.HasOne(d => d.Ba)
+                .WithMany()
+                .HasPrincipalKey(p => p.Baid)
+                .HasForeignKey(d => d.Baid)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<BlueBattleStageResult>(entity =>
+        {
+            entity.ToTable("BlueBattleStageResults");
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.Baid, e.PlayDatetime });
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.PlayDatetime).HasColumnType("datetime");
+            entity.HasOne(d => d.Ba)
+                .WithMany()
+                .HasPrincipalKey(p => p.Baid)
+                .HasForeignKey(d => d.Baid)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<BlueBattleReleaseState>(entity =>
+        {
+            entity.ToTable("BlueBattleReleaseStates");
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.Baid, e.CreatedAt });
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
             entity.HasOne(d => d.Ba)
                 .WithMany()
                 .HasPrincipalKey(p => p.Baid)
