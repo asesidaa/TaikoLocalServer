@@ -1,7 +1,7 @@
 ---
 phase: 05
 slug: blue-battle-runtime-support
-status: in-progress
+status: server-verified
 created: 2026-05-31
 updated: 2026-05-31
 cabinet_rpcs3_smoke: not-performed
@@ -36,8 +36,8 @@ This decision does not approve hardcoded current IDs, hardcoded byte arrays, har
 | 2 | `dotnet test Tests/Tests.csproj --filter FullyQualifiedName~BlueRouteSkeletonTests` | PASS | 8 passed | 2026-05-31 |
 | 3 | `dotnet test Tests/Tests.csproj --filter FullyQualifiedName~BlueBattleRequirementTests` | PASS | 4 passed | 2026-05-31 |
 | 4 | `dotnet test Tests/Tests.csproj --filter BlueBattle` | PASS | 34 passed | 2026-05-31 |
-| 5 | `dotnet test Tests/Tests.csproj` | PENDING | pending Task 3 final gate | 2026-05-31 |
-| 6 | `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build-phase05"` | PENDING | pending Task 3 final gate | 2026-05-31 |
+| 5 | `dotnet test Tests/Tests.csproj` | PASS | 608 passed | 2026-05-31 |
+| 6 | `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build-phase05"` | PASS | build succeeded, 0 warnings, 0 errors | 2026-05-31 |
 
 Note: an initial parallel focused test attempt hit a build-output lock on `Domain/obj/Debug/net10.0/TaikoLocalServer.Domain.dll`; the affected source-guard filter was rerun sequentially and passed.
 
