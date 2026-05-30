@@ -2,10 +2,46 @@ namespace TaikoLocalServer.Tests.Blue;
 
 public sealed class BlueBattlePersistenceTests
 {
+    private static readonly string[] ExpectedBattleTables =
+    [
+        "BlueBattleNpcStates",
+        "BlueBattleReleaseStates",
+        "BlueBattleStageResults",
+        "BlueBattleTokenStates",
+        "BlueBattleUserStates"
+    ];
+
     [Fact]
-    public async Task MigratedSqlite_PersistsAndReloadsRepresentativeBlueBattleState()
+    public async Task AddBlueBattleStateMigration_CreatesOnlyBlueBattleTablesAndUserRelationships()
     {
-        await using var database = await CreateMigratedDatabaseAsync();
+        var migrationSource = File.ReadAllText(FindAddBlueBattleStateMigration());
+
+        foreach (var table in ExpectedBattleTables)
+        {
+            Assert.Contains($"name: \"{table}\"", migrationSource, StringComparison.Ordinal);
+            Assert.Contains($"FK_{table}_UserData_Baid", migrationSource, StringComparison.Ordinal);
+        }
+
+        Assert.DoesNotContain("migrationBuilder.Alter", migrationSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("migrationBuilder.AddColumn", migrationSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("migrationBuilder.DropColumn", migrationSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("SongPlayDatum_Blue", migrationSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("SongBestDatum_Blue", migrationSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("DanScoreDatum_Blue", migrationSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("DanStageScoreDatum_Blue", migrationSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("BlueFavoriteSongs", migrationSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("BlueRecentSongs", migrationSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("BlueShopSeasonStates", migrationSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("BlueShopItemStates", migrationSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("GreenGhostTokens", migrationSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("GreenGhostWinnings", migrationSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("GhostStageSectionDatum_Green", migrationSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task SqliteSchema_PersistsAndReloadsRepresentativeBlueBattleState()
+    {
+        await using var database = await CreateSchemaDatabaseAsync();
         var context = database.Context;
         var now = new DateTime(2026, 5, 31, 10, 0, 0, DateTimeKind.Utc);
         await AddUserAsync(context, 101);
@@ -118,7 +154,7 @@ public sealed class BlueBattlePersistenceTests
     [Fact]
     public async Task CreatingBlueBattleState_DoesNotCreateNormalBlueOrGreenAiBattleRows()
     {
-        await using var database = await CreateMigratedDatabaseAsync();
+        await using var database = await CreateSchemaDatabaseAsync();
         var context = database.Context;
         var now = new DateTime(2026, 5, 31, 11, 0, 0, DateTimeKind.Utc);
         await AddUserAsync(context, 102);
@@ -171,7 +207,7 @@ public sealed class BlueBattlePersistenceTests
     [Fact]
     public async Task UnresolvedBlueBattleFields_RemainNullOrAbsentUntilClientValuesAreStored()
     {
-        await using var database = await CreateMigratedDatabaseAsync();
+        await using var database = await CreateSchemaDatabaseAsync();
         var context = database.Context;
         var now = new DateTime(2026, 5, 31, 12, 0, 0, DateTimeKind.Utc);
         await AddUserAsync(context, 103);
@@ -247,21 +283,46 @@ public sealed class BlueBattlePersistenceTests
         Assert.Empty(await context.GreenGhostTokens.ToListAsync());
     }
 
-    private static async Task<MigratedDatabase> CreateMigratedDatabaseAsync()
+    private static string FindAddBlueBattleStateMigration()
+    {
+        var root = FindRepoRoot();
+        var migrationFiles = Directory.GetFiles(
+            Path.Combine(root, "Infrastructure", "Persistence", "Migrations"),
+            "*_AddBlueBattleState.cs");
+
+        return Assert.Single(migrationFiles, path => !path.EndsWith(".Designer.cs", StringComparison.Ordinal));
+    }
+
+    private static string FindRepoRoot()
+    {
+        for (var directory = new DirectoryInfo(AppContext.BaseDirectory);
+             directory is not null;
+             directory = directory.Parent)
+        {
+            if (File.Exists(Path.Combine(directory.FullName, "TaikoLocalServer.slnx")))
+            {
+                return directory.FullName;
+            }
+        }
+
+        throw new InvalidOperationException("Could not find TaikoLocalServer.slnx.");
+    }
+
+    private static async Task<SchemaDatabase> CreateSchemaDatabaseAsync()
     {
         var connection = new SqliteConnection("Data Source=:memory:");
         await connection.OpenAsync();
 
-        var database = new MigratedDatabase(connection);
-        await database.Context.Database.MigrateAsync();
+        var database = new SchemaDatabase(connection);
+        await database.Context.Database.EnsureCreatedAsync();
         return database;
     }
 
-    private sealed class MigratedDatabase : IAsyncDisposable
+    private sealed class SchemaDatabase : IAsyncDisposable
     {
         private readonly SqliteConnection connection;
 
-        public MigratedDatabase(SqliteConnection connection)
+        public SchemaDatabase(SqliteConnection connection)
         {
             this.connection = connection;
             Context = CreateContext();
