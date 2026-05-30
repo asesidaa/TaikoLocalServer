@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 05-09-PLAN.md
-last_updated: "2026-05-30T13:50:12.481Z"
+stopped_at: Completed 05-03-PLAN.md
+last_updated: "2026-05-30T18:48:58.007Z"
 last_activity: 2026-05-30 -- Phase 05 execution started
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 20
-  completed_plans: 14
-  percent: 70
+  completed_plans: 15
+  percent: 75
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-05-28)
 ## Current Position
 
 Phase: 05 (blue-battle-runtime-support) — EXECUTING
-Plan: 6 of 11
+Plan: 7 of 11
 Status: Ready to execute
 Last activity: 2026-05-30 -- Phase 05 execution started
 
-Progress: [#######---] 70%
+Progress: [########--] 75%
 
 ## Performance Metrics
 
@@ -108,6 +108,10 @@ Recent decisions affecting current work:
 - [Phase 05]: Stage-result and release battle observations are append-style raw captures; progression, reward, token, and normal-save effects remain row-gated.
 - [Phase 05]: Blue battle XML is available only as bounded raw inventory; file presence and row counts do not enable battle advertisement or runtime defaults.
 - [Phase 05]: Blue battle playresult classification is based on `AryReleaseBattledata` or `AryBattlestagedata` presence, while mode values remain raw observations.
+- [Phase 05]: Battle playresult reward/progression rows 18-24 and 26 resolve to client-state store/echo, not server-side battle effect calculation.
+- [Phase 05]: Battle release info, stage, NPC costume, and NPC special IDs update battle-owned bitsets from client-reported 0-to-1 diffs; `release_npc_id` remains raw-only pending mapping.
+- [Phase 05]: Token values, boss life, last-stage state, and `assign_next_stage_id` are stored and returned without server-side token reward, boss completion, or stage graph logic.
+- [Phase 05]: Stage `33` is recorded as a likely Stage EX special-event candidate with implementation deferred.
 
 ### Pending Todos
 
@@ -115,7 +119,7 @@ None yet.
 
 ### Blockers/Concerns
 
-- Phase 5 Blue battle runtime remains blocked by the 26 MISSING_EVIDENCE rows recorded in 04-03-BLUE-BATTLE-DESIGN-GATE.md.
+- Phase 5 Blue battle runtime still has row-gated unknowns from 04-03/05-RESOLUTION; 05-03 resolved reward/progression rows as store/echo only, not derived server effects.
 - Cabinet/RPCS3 smoke evidence is required for full done, beyond automated server tests.
 
 ### Quick Tasks Completed
@@ -136,6 +140,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-05-30T13:50:12.476Z
-Stopped at: Completed 05-09-PLAN.md
+Last session: 2026-05-30T18:48:57.783Z
+Stopped at: Completed 05-03-PLAN.md
 Resume file: None
