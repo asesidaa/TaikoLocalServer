@@ -22,12 +22,12 @@ A Blue cabinet can use TaikoLocalServer for normal and battle play with repeatab
 - [x] Blue A4 normal enso play result, self-best, crowns, and rewards: Blue normal song results persist and read back through Blue-specific handlers, mappers, byte helpers, and save state.
 - [x] Blue A5 Dani Dojo: Blue taikojuku catalog responses, Dan result persistence, Dan readback, AdminApi support, and WebUI Dani behavior are implemented without reusing Green Dan state.
 - [x] Blue A6 item shop and unlocking: Blue shop seasons, active shop selection, season-scoped medal state, purchases, rewardexecution no-op, configured item unlocks, and locked-item readback are implemented using Blue data and Blue save state.
+- [x] Blue A7 basic AdminApi and WebUI parity: Blue profile, score history, favorites, Dani, customization, item-shop-relevant surfaces, and safe edit/readback behavior are exposed without writing Green state.
+- [x] Blue A8 normal-mode cabinet smoke and hardening: normal Blue support has been user-confirmed complete before Track B battle evidence/design work.
+- [x] Blue battle evidence and design: Phase 4 defined Track B from proto, local Blue battle XML inventory, IDA/client-equivalent evidence, and explicit field-width/default-state gates before runtime battle behavior.
 
 ### Active
 
-- [ ] Blue A7 basic AdminApi and WebUI parity: expose Blue profile, score history, favorites, Dani, customization, item-shop-relevant surfaces, and safe edit/readback behavior without writing Green state.
-- [ ] Blue A8 normal-mode cabinet smoke and hardening: produce repeatable cabinet/RPCS3 evidence for boot, new card registration, known card login, song list, normal play, playresult save, self-best/crown readback, Dani, item shop purchase/reward unlock, and WebUI readback.
-- [ ] Blue battle evidence and design: define Track B from proto, local logs, IDA/client evidence, cabinet/RPCS3 traces, and explicit field-width/default-state findings before implementing runtime battle behavior.
 - [ ] Blue battle mode implementation: support battle userdata, battle entry state, battle playresult data, progression/unlocks, rewards, and readback only after the strict evidence gate is satisfied.
 - [ ] Full Blue verification: normal and battle flows have repeatable cabinet/RPCS3 smoke evidence, server-side regression tests, source guardrails, and documented unresolved items.
 
@@ -48,8 +48,8 @@ A Blue cabinet can use TaikoLocalServer for normal and battle play with repeatab
 - `Host/Program.cs` composes enabled era adapters and gates controller application parts so disabled-era routes are absent.
 - `Domain/Enums/GameEra.cs`, `Application/Handlers/*.Blue.cs`, `Adapters.GameProtocol.Blue/`, `Infrastructure/GameDataCatalog/Blue/`, and `TaikoWebUI/Utilities/WebUiEra.cs` are key Blue support touch points.
 - The Superpowers Blue roadmap split the effort into Track A normal support and Track B battle mode. A0-A5 are treated as completed prior work for this GSD project.
-- Track A remaining stages are A6 item shop/unlocking, A7 AdminApi/WebUI parity, and A8 normal-mode cabinet smoke/hardening.
-- Track B battle mode is part of the full Blue project scope, but starts after Track A is stable enough for normal cabinet smoke testing.
+- Track A stages A6 item shop/unlocking, A7 AdminApi/WebUI parity, and A8 normal-mode cabinet smoke/hardening are complete.
+- Track B battle mode is part of the full Blue project scope. Phase 4 produced a fail-closed battle design gate, and Phase 5 runtime planning remains blocked by 26 missing-evidence rows until proof or named user approvals are recorded.
 - The evidence hierarchy is repo code, proto files, SQLite state, cabinet/RPCS3 logs, IDA/client evidence, and only then public wiki pages for gameplay scoping.
 
 ## Constraints
@@ -73,6 +73,7 @@ A Blue cabinet can use TaikoLocalServer for normal and battle play with repeatab
 | Finish normal Track A before battle runtime implementation | Existing roadmap says battle starts after Track A is stable enough for normal cabinet smoke testing | Pending |
 | Use strict battle evidence gates | The user selected strict evidence before battle implementation | Pending |
 | Define done as cabinet/RPCS3-proven normal and battle flows | The user selected repeatable cabinet evidence as the full-support done condition | Pending |
+| Keep Phase 5 battle runtime blocked after Phase 4 | Phase 4 found 26 required battle evidence gaps and no user exception approvals | `04-03-BLUE-BATTLE-DESIGN-GATE.md` records `Final Gate Status: BLOCKED` |
 
 ## Evolution
 
@@ -92,4 +93,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-28 after Phase 1 completion*
+*Last updated: 2026-05-30 after Phase 4 completion*
