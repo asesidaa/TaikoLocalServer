@@ -28,6 +28,11 @@ public partial class UpdatePlayResultCommandHandler
         }
 
         var playResultData = request.PlayResultData;
+        if (playResultData.IsBattlePlayResult)
+        {
+            return await HandleBlueBattle(request.Baid, playResultData, cancellationToken);
+        }
+
         var saveData = await context.GetOrCreateBlueSaveDataAsync(request.Baid, cancellationToken);
         var blue = gameDataService.Blue();
         var shopSeasonState = await context.GetOrCreateActiveBlueShopSeasonStateAsync(
