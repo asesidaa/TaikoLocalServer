@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 05-05-PLAN.md
-last_updated: "2026-05-30T19:05:44.282Z"
+stopped_at: Completed 05-blue-battle-runtime-support-05-07-PLAN.md
+last_updated: "2026-05-30T19:23:46.479Z"
 last_activity: 2026-05-30 -- Phase 05 execution started
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 20
-  completed_plans: 16
-  percent: 80
+  completed_plans: 17
+  percent: 85
 ---
 
 # Project State
@@ -26,19 +26,19 @@ See: .planning/PROJECT.md (updated 2026-05-28)
 ## Current Position
 
 Phase: 05 (blue-battle-runtime-support) — EXECUTING
-Plan: 8 of 11
+Plan: 9 of 11
 Status: Ready to execute
 Last activity: 2026-05-30 -- Phase 05 execution started
 
-Progress: [########--] 80%
+Progress: [#########-] 85%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 16
+- Total plans completed: 17
 - Average duration: 10 min
-- Total execution time: 103 min
+- Total execution time: 114 min
 
 **By Phase:**
 
@@ -49,10 +49,6 @@ Progress: [########--] 80%
 
 **Recent Trend:**
 
-| Phase 01 P01-01 | 16 min | 2 tasks | 4 files |
-| Phase 01-blue-a6-item-shop-and-unlocking P01-02 | 11 min | 2 tasks | 12 files |
-| Phase 01-blue-a6-item-shop-and-unlocking P01-03 | 10 min | 2 tasks | 10 files |
-| Phase 01-blue-a6-item-shop-and-unlocking P01-05 | 7 min | 2 tasks | 3 files |
 | Phase 01-blue-a6-item-shop-and-unlocking P01-04 | 14 min | 2 tasks | 12 files |
 | Phase 01-blue-a6-item-shop-and-unlocking P01-06 | 12 min | 3 tasks | 5 files |
 | Phase 04-blue-battle-evidence-and-design P04-01 | 10 min | 2 tasks | 2 files |
@@ -64,6 +60,7 @@ Progress: [########--] 80%
 | Phase 05 P06 | 10 min | 1 tasks | 8 files |
 | Phase 05 P09 | 10 min | 1 tasks | 4 files |
 | Phase 05 P05-05 | 10 min | 1 tasks | 6 files |
+| Phase 05 P05-07 | 11 min | 1 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -116,6 +113,9 @@ Recent decisions affecting current work:
 - [Phase 05]: AddBlueBattleState creates only BlueBattle tables plus BAID foreign keys to UserData. — Plan 05-05 verifies migration operations and persistence isolation for BTL-01/BTL-06.
 - [Phase 05]: BlueBattle persistence tests assert nullable unresolved fields and no writes to normal Blue, shop, Dani, recent/favorite, or Green AI Battle state. — The test suite guards the 05-05 migration/persistence boundary against cross-era and normal Blue state leakage.
 - [Phase 05]: Focused runtime persistence tests use EnsureCreated because the historical migration chain cannot migrate a blank in-memory SQLite database. — The old SeparateTokens migration is unrelated to 05-05; migration correctness is covered by EF migration listing and a migration-operation guard.
+- [Phase 05]: Blue battleuserdata.php now uses a Blue-owned Mediator query and mapper instead of local controller success construction.
+- [Phase 05]: Optional BattleUserDataResponse fields are set only when the common DTO value is non-null, preserving generated protobuf presence semantics.
+- [Phase 05]: The query emits persisted scalar values and complete token rows, while leaving NPC rows empty until a complete row is explicitly available.
 
 ### Pending Todos
 
@@ -144,6 +144,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-05-30T19:04:09.921Z
-Stopped at: Completed 05-05-PLAN.md
+Last session: 2026-05-30T19:23:46.471Z
+Stopped at: Completed 05-blue-battle-runtime-support-05-07-PLAN.md
 Resume file: None
