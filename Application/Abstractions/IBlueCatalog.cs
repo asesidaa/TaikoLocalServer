@@ -18,6 +18,8 @@ public interface IBlueCatalog : IEraGameDataCatalog
 
     IReadOnlyDictionary<uint, BlueItemShopEntry> ItemShop { get; }
 
+    BlueBattleCatalog BattleCatalog { get; }
+
     IReadOnlyDictionary<uint, EventFolderData> EventFolders { get; }
 
     IReadOnlyDictionary<uint, BlueTelopEntry> Telops { get; }

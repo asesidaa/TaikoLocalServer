@@ -21,6 +21,7 @@ public sealed class BlueEraGameDataCatalog(
     private IReadOnlyDictionary<uint, BlueTaikojukuEntry> taikojuku = new Dictionary<uint, BlueTaikojukuEntry>();
     private BlueItemShopCatalog itemShopCatalog = BlueItemShopCatalog.Disabled;
     private IReadOnlyDictionary<uint, BlueItemShopEntry> itemShop = new Dictionary<uint, BlueItemShopEntry>();
+    private BlueBattleCatalog battleCatalog = BlueBattleCatalog.Unavailable;
     private IReadOnlyDictionary<uint, EventFolderData> eventFolders = new Dictionary<uint, EventFolderData>();
     private IReadOnlyDictionary<uint, BlueTelopEntry> telops = new Dictionary<uint, BlueTelopEntry>();
     private IReadOnlyDictionary<uint, BlueGachaEntry> gachas = new Dictionary<uint, BlueGachaEntry>();
@@ -48,6 +49,8 @@ public sealed class BlueEraGameDataCatalog(
     public BlueItemShopCatalog ItemShopCatalog => itemShopCatalog;
 
     public IReadOnlyDictionary<uint, BlueItemShopEntry> ItemShop => itemShop;
+
+    public BlueBattleCatalog BattleCatalog => battleCatalog;
 
     public IReadOnlyDictionary<uint, EventFolderData> EventFolders => eventFolders;
 
@@ -119,6 +122,7 @@ public sealed class BlueEraGameDataCatalog(
         var blueSettings = GetBlueSettings();
         itemShopCatalog = await new BlueItemShopLoader().LoadAsync(blueSettings, cancellationToken);
         itemShop = itemShopCatalog.ActiveItemsByNo;
+        battleCatalog = await new BlueBattleDataLoader().LoadAsync(cancellationToken);
         eventFolders = await new BlueEventFolderLoader().LoadAsync(new HashSet<uint>(musicInfos.Keys), cancellationToken);
         telops = await new BlueTelopLoader().LoadAsync(cancellationToken);
         gachas = await new BlueGachaLoader().LoadAsync(cancellationToken);
@@ -144,7 +148,7 @@ public sealed class BlueEraGameDataCatalog(
         neiroDictionary = customizationCatalog.Neiros;
 
         logger.LogInformation(
-            "Loaded Blue catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {TaikojukuCount} taikojuku packs, {StarCount} tuning star rows, {CostumeCount} costumes, {TitleCount} titles, {NeiroCount} tones, {MovieCount} attract movies, item_shop_enabled={ItemShopEnabled}",
+            "Loaded Blue catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {TaikojukuCount} taikojuku packs, {StarCount} tuning star rows, {CostumeCount} costumes, {TitleCount} titles, {NeiroCount} tones, {MovieCount} attract movies, item_shop_enabled={ItemShopEnabled}, battle_raw_files={BattleRawFileCount}",
             musicInfoFileOrder.Count,
             songHashVersion,
             taikojukuFileOrder.Count,
@@ -153,7 +157,8 @@ public sealed class BlueEraGameDataCatalog(
             titleDictionary.Count,
             neiroDictionary.Count,
             movies.Count,
-            itemShopCatalog.IsEnabled);
+            itemShopCatalog.IsEnabled,
+            battleCatalog.Files.Count(file => file.IsPresent && file.IsXmlParsed));
     }
 
     private EraSettings GetBlueSettings()

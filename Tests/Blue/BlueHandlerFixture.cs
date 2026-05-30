@@ -51,6 +51,7 @@ internal sealed class BlueHandlerFixture : IAsyncDisposable
             IReadOnlyList<BlueMusicInfoEntry>? musicInfoFileOrder = null,
             IReadOnlyList<BlueTaikojukuEntry>? taikojukuFileOrder = null,
             BlueItemShopCatalog? itemShopCatalog = null,
+            BlueBattleCatalog? battleCatalog = null,
             BlueRecommendEntry? recommend = null)
         {
             EventFolders = eventFolders ?? new Dictionary<uint, EventFolderData>();
@@ -59,6 +60,7 @@ internal sealed class BlueHandlerFixture : IAsyncDisposable
             this.taikojukuFileOrder = taikojukuFileOrder ?? DefaultTaikojukuFileOrder;
             ItemShopCatalog = itemShopCatalog ?? BlueItemShopCatalog.Disabled;
             ItemShop = ItemShopCatalog.ActiveItemsByNo;
+            BattleCatalog = battleCatalog ?? BlueBattleCatalog.Unavailable;
             Recommend = recommend ?? BlueRecommendEntry.Empty;
         }
 
@@ -82,6 +84,8 @@ internal sealed class BlueHandlerFixture : IAsyncDisposable
         public BlueItemShopCatalog ItemShopCatalog { get; }
 
         public IReadOnlyDictionary<uint, BlueItemShopEntry> ItemShop { get; }
+
+        public BlueBattleCatalog BattleCatalog { get; }
 
         public IReadOnlyDictionary<uint, EventFolderData> EventFolders { get; }
 
