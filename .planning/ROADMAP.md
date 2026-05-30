@@ -177,7 +177,7 @@ Plans:
 
 **Wave 1**
 
-- [ ] 05-01-PLAN.md - Phase 5 row-resolution gate
+- [x] 05-01-PLAN.md - Phase 5 row-resolution gate
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -244,5 +244,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 2. Blue A7 AdminApi And WebUI Parity | 3/3 | Complete    | 2026-05-30 |
 | 3. Blue A8 Normal-Mode Cabinet Smoke And Hardening | 3/3 | Complete    | 2026-05-30 |
 | 4. Blue Battle Evidence And Design | 3/3 | Complete    | 2026-05-30 |
-| 5. Blue Battle Runtime Support | 0/11 | Not started | - |
+| 5. Blue Battle Runtime Support | 1/11 | In Progress|  |
 | 6. Full Blue Verification And Release Hardening | 0/3 | Not started | - |
