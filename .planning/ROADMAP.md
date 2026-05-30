@@ -244,5 +244,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 2. Blue A7 AdminApi And WebUI Parity | 3/3 | Complete    | 2026-05-30 |
 | 3. Blue A8 Normal-Mode Cabinet Smoke And Hardening | 3/3 | Complete    | 2026-05-30 |
 | 4. Blue Battle Evidence And Design | 3/3 | Complete    | 2026-05-30 |
-| 5. Blue Battle Runtime Support | 11/11 | Complete   | 2026-05-31 |
+| 5. Blue Battle Runtime Support | 11/11 | Complete    | 2026-05-30 |
 | 6. Full Blue Verification And Release Hardening | 0/3 | Not started | - |

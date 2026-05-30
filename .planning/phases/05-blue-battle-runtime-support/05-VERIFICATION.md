@@ -5,7 +5,7 @@ status: passed
 score: 6/6 must-haves verified
 overrides_applied: 0
 re_verification:
-  previous_status: gaps_found
+  previous_verification_result: gaps_found
   previous_score: 4/6
   gaps_closed:
     - "BTL-01/BTL-02 selected battle specials now persist and read back through battleuserdata."
