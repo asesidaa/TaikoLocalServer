@@ -23,7 +23,7 @@ public sealed class BlueBattleCatalogLoaderTests
         var catalog = await BlueBattleDataLoader.LoadFromDirectoryAsync(scope.BattleRoot, CancellationToken.None);
 
         Assert.True(catalog.IsRawDataAvailable);
-        Assert.False(catalog.EnablesBattleAdvertisement);
+        Assert.True(catalog.EnablesBattleAdvertisement);
         Assert.Equal(ExpectedFileNames, catalog.Files.Select(file => file.FileName).Order(StringComparer.Ordinal));
         Assert.All(catalog.Files, file =>
         {
@@ -34,6 +34,9 @@ public sealed class BlueBattleCatalogLoaderTests
         });
         Assert.Equal(2, catalog.Files.Single(file => file.FileName == "battlestageinfo.xml").RowCount);
         Assert.Equal(2, catalog.Files.Single(file => file.FileName == "battletokeninfo.xml").RowCount);
+        Assert.Equal([1u, 33u], catalog.ReleaseBattleStageIds);
+        Assert.Equal([1u, 10u], catalog.ReleaseBattleSpecialIds);
+        Assert.Equal(3u, catalog.BattleBondsLvCap);
     }
 
     [Fact]
@@ -79,14 +82,15 @@ public sealed class BlueBattleCatalogLoaderTests
         };
         var forbidden = new[]
         {
-            "IsBattleplay",
             "AssignStageId",
             "LastBossLife",
-            "BattleBondsLvCap",
-            "ReleaseBattleStageFlg",
-            "ReleaseBattleSpecialFlg",
             "LastBattleStageId",
-            "AssignNextStageId"
+            "AssignNextStageId",
+            "battlestageinfo",
+            "battletokeninfo",
+            "battlenpcinfo",
+            "0xFE",
+            "0x07"
         };
 
         foreach (var file in files.Where(File.Exists))
@@ -134,10 +138,10 @@ public sealed class BlueBattleCatalogLoaderTests
             {
                 Directory.CreateDirectory(BattleRoot);
                 File.WriteAllText(Path.Combine(BattleRoot, "battleadjsetting.xml"), "<root><adjustedsetting id=\"1\" /></root>");
-                File.WriteAllText(Path.Combine(BattleRoot, "battlenpcinfo.xml"), "<root><npcinfo id=\"1\" /></root>");
+                File.WriteAllText(Path.Combine(BattleRoot, "battlenpcinfo.xml"), "<root><npcinfo><id>1</id><requred_exp>10</requred_exp><requred_exp>20</requred_exp><requred_exp>30</requred_exp></npcinfo></root>");
                 File.WriteAllText(Path.Combine(BattleRoot, "battlestageinfo.xml"), "<root><stageinfo id=\"1\" /><stageinfo id=\"33\" /></root>");
                 File.WriteAllText(Path.Combine(BattleRoot, "battlesupportinfo.xml"), "<root><supportinfo musicid=\"a\" /></root>");
-                File.WriteAllText(Path.Combine(BattleRoot, "battletokeninfo.xml"), "<root><tokeninfo id=\"1\" /><tokeninfo id=\"17\" /></root>");
+                File.WriteAllText(Path.Combine(BattleRoot, "battletokeninfo.xml"), "<root><tokeninfo><id>1</id><rewardtbl><reward><id>1</id></reward><reward><id>10</id></reward></rewardtbl></tokeninfo></root>");
             }
         }
 

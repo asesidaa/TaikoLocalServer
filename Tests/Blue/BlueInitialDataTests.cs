@@ -27,10 +27,18 @@ public sealed class BlueInitialDataTests
 
         Assert.Empty(response.AryBlueLegaltermsDatas);
         Assert.Empty(wire.AryLegaltermsDatas);
-        Assert.False(wire.ShouldSerializeIsBattleplay());
-        Assert.False(wire.ShouldSerializeReleaseBattleStageFlg());
-        Assert.False(wire.ShouldSerializeReleaseBattleSpecialFlg());
-        Assert.False(wire.ShouldSerializeBattleBondsLvCap());
+        Assert.False(response.IsBattleplay);
+        Assert.Equal(new byte[BlueProtocolBytes.BattleStageFlagBytes], response.ReleaseBattleStageFlg);
+        Assert.Equal(new byte[BlueProtocolBytes.BattleSpecialFlagBytes], response.ReleaseBattleSpecialFlg);
+        Assert.Equal(0u, response.BattleBondsLvCap);
+        Assert.True(wire.ShouldSerializeIsBattleplay());
+        Assert.False(wire.IsBattleplay);
+        Assert.True(wire.ShouldSerializeReleaseBattleStageFlg());
+        Assert.Equal(new byte[BlueProtocolBytes.BattleStageFlagBytes], wire.ReleaseBattleStageFlg);
+        Assert.True(wire.ShouldSerializeReleaseBattleSpecialFlg());
+        Assert.Equal(new byte[BlueProtocolBytes.BattleSpecialFlagBytes], wire.ReleaseBattleSpecialFlg);
+        Assert.True(wire.ShouldSerializeBattleBondsLvCap());
+        Assert.Equal(0u, wire.BattleBondsLvCap);
     }
 
     [Fact]
@@ -56,6 +64,46 @@ public sealed class BlueInitialDataTests
         Assert.Contains(response.AryBlueTelopDatas, row => row.InfoId == 7 && row.VerupNo == 4);
         Assert.Contains(response.AryBlueEventFolderDatas, row => row.InfoId == 3 && row.VerupNo == 9);
         Assert.Contains(response.AryBlueTaikojukuDatas, row => row.InfoId == 1);
+    }
+
+    [Fact]
+    public async Task InitialData_Blue_AdvertisesParsedBattleCatalogValues()
+    {
+        var battleCatalog = new BlueBattleCatalog
+        {
+            IsRawDataAvailable = true,
+            EnablesBattleAdvertisement = true,
+            ReleaseBattleStageIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 33],
+            ReleaseBattleSpecialIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            BattleBondsLvCap = 65,
+            Files = []
+        };
+        var blueCatalog = new BlueHandlerFixture.TestBlueCatalog(battleCatalog: battleCatalog);
+        await using var fixture = await BlueHandlerFixture.CreateAsync(blueCatalog);
+        var handler = new GetInitialDataQueryHandler(
+            fixture.Catalog,
+            NullLogger<GetInitialDataQueryHandler>.Instance,
+            Options.Create(new ServerSettings()));
+
+        var response = await handler.Handle(new GetInitialDataQuery(GameEra.Blue), CancellationToken.None);
+        var wire = InitialDataMappers.Map(response);
+
+        Assert.True(response.IsBattleplay);
+        Assert.Equal(
+            [0xFE, 0x07, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00],
+            response.ReleaseBattleStageFlg);
+        Assert.Equal(
+            [0xFE, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            response.ReleaseBattleSpecialFlg);
+        Assert.Equal(65u, response.BattleBondsLvCap);
+        Assert.True(wire.ShouldSerializeIsBattleplay());
+        Assert.True(wire.IsBattleplay);
+        Assert.True(wire.ShouldSerializeReleaseBattleStageFlg());
+        Assert.Equal(response.ReleaseBattleStageFlg, wire.ReleaseBattleStageFlg);
+        Assert.True(wire.ShouldSerializeReleaseBattleSpecialFlg());
+        Assert.Equal(response.ReleaseBattleSpecialFlg, wire.ReleaseBattleSpecialFlg);
+        Assert.True(wire.ShouldSerializeBattleBondsLvCap());
+        Assert.Equal(65u, wire.BattleBondsLvCap);
     }
 
     private static bool BitIsSet(byte[] source, uint id)
