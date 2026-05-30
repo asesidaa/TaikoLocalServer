@@ -49,6 +49,10 @@ public sealed class BlueBattlePlayResultHandlerTests
         Assert.Equal(888u, npc.TotalExp);
         Assert.Equal(456u, npc.MaxDaniPower);
         Assert.Equal(6u, npc.BondsLevel);
+        Assert.Equal(30u, npc.NpcCostumeId);
+        Assert.Equal(21u, npc.SelectedSpecialId1);
+        Assert.Equal(22u, npc.SelectedSpecialId2);
+        Assert.Equal(23u, npc.SelectedSpecialId3);
         Assert.True(BitIsSet(npc.NpcCostumeFlg!, 30));
         Assert.True(BitIsSet(npc.ReleaseSpecialFlg!, 21));
         Assert.True(BitIsSet(npc.ReleaseSpecialFlg!, 22));
@@ -69,6 +73,49 @@ public sealed class BlueBattlePlayResultHandlerTests
 
         await AssertNormalBlueStateEmptyAsync(fixture.Context);
         Assert.Empty(await fixture.Context.UserSaveDataBlue.ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Blue_BattlePayloadEchoesNpcSelectedSpecialsThroughBattleUserData()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        await fixture.Context.SaveChangesAsync();
+        var playResultHandler = CreateHandler(fixture);
+
+        var result = await playResultHandler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Blue,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayDatetime = "20260528120000",
+                PlayMode = 6,
+                IsBattlePlayResult = true,
+                AryStageInfoes = [CreateBattleStage(9999, 99, 99, battleStageId: 33)]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+
+        var battleUserDataHandler = new GetBattleUserDataQueryHandler(
+            fixture.Context,
+            NullLogger<GetBattleUserDataQueryHandler>.Instance);
+        var common = await battleUserDataHandler.Handle(new GetBattleUserDataQuery(1), CancellationToken.None);
+
+        var npc = Assert.Single(common.NpcDatas);
+        Assert.Equal(9u, npc.NpcId);
+        Assert.Equal("888", npc.TotalExp);
+        Assert.Equal(456u, npc.MaxDpn);
+        Assert.Equal(30u, npc.NpcCostumeId);
+        Assert.Equal([0, 0, 0, 64], npc.NpcCostumeFlg);
+        Assert.Equal(21u, npc.LastSelectSpecial1);
+        Assert.Equal(22u, npc.LastSelectSpecial2);
+        Assert.Equal(23u, npc.LastSelectSpecial3);
+        Assert.NotNull(npc.ReleaseSpecialFlg);
+        Assert.True(BitIsSet(npc.ReleaseSpecialFlg!, 21));
+        Assert.True(BitIsSet(npc.ReleaseSpecialFlg!, 22));
+        Assert.True(BitIsSet(npc.ReleaseSpecialFlg!, 23));
     }
 
     [Fact]

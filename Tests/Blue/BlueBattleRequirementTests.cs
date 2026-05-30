@@ -33,13 +33,18 @@ public sealed class BlueBattleRequirementTests
             root,
             Path.Combine("Tests", "Blue", "BlueBattlePersistenceTests.cs"),
             "BlueBattleUserStates",
+            "SelectedSpecialId1",
+            "SelectedSpecialId2",
+            "SelectedSpecialId3",
             "CreatingBlueBattleState_DoesNotCreateNormalBlueOrGreenAiBattleRows",
             "UnresolvedBlueBattleFields_RemainNullOrAbsentUntilClientValuesAreStored");
         AssertFileContains(
             root,
             Path.Combine("Tests", "Blue", "BlueBattleUserDataTests.cs"),
+            "Handle_PersistedCompleteNpcRows_EmitsNpcDatasWithSelectedSpecials",
             "BattleUserDataController_UsesMediatorQueryAndMapperInsteadOfLocalSuccessConstruction",
             "ShouldSerializeReleaseBattleStageFlg",
+            "NpcDatas",
             "AryTokenDatas");
         AssertFileContains(
             root,
@@ -55,6 +60,7 @@ public sealed class BlueBattleRequirementTests
         AssertFileContains(
             root,
             Path.Combine("Tests", "Blue", "BlueBattlePlayResultHandlerTests.cs"),
+            "UpdatePlayResult_Blue_BattlePayloadEchoesNpcSelectedSpecialsThroughBattleUserData",
             "UpdatePlayResult_Blue_BattlePayloadLeavesExistingNormalStateUnchanged",
             "UpdatePlayResult_Blue_ReleaseBattleDataStoresClientStateWithoutDerivedEffects",
             "AssertNormalBlueStateEmptyAsync");

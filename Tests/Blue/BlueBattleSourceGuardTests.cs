@@ -30,7 +30,8 @@ public sealed class BlueBattleSourceGuardTests
         Path.Combine("Infrastructure", "GameDataCatalog", "Blue", "BlueEraGameDataCatalog.cs"),
         Path.Combine("Infrastructure", "GameDataCatalog", "Blue", "BlueGameDataPaths.cs"),
         Path.Combine("Infrastructure", "Persistence", "TaikoDbContext.Blue.cs"),
-        Path.Combine("Infrastructure", "Persistence", "Migrations", "20260530185853_AddBlueBattleState.cs")
+        Path.Combine("Infrastructure", "Persistence", "Migrations", "20260530185853_AddBlueBattleState.cs"),
+        Path.Combine("Infrastructure", "Persistence", "Migrations", "20260530213652_AddBlueBattleNpcSelectedSpecials.cs")
     ];
 
     private static readonly string[] BattleStateMutationFiles =

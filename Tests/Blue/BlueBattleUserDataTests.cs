@@ -83,6 +83,58 @@ public sealed class BlueBattleUserDataTests
     }
 
     [Fact]
+    public async Task Handle_PersistedCompleteNpcRows_EmitsNpcDatasWithSelectedSpecials()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync();
+        await AddUserAsync(fixture.Context, 503);
+        var now = new DateTime(2026, 5, 31, 14, 0, 0, DateTimeKind.Utc);
+        fixture.Context.BlueBattleNpcStates.Add(new BlueBattleNpcState
+        {
+            Baid = 503,
+            NpcId = 9,
+            TotalExp = 888,
+            MaxDaniPower = 456,
+            NpcCostumeId = 30,
+            NpcCostumeFlg = [0, 0, 0, 64],
+            SelectedSpecialId1 = 21,
+            SelectedSpecialId2 = 22,
+            SelectedSpecialId3 = 23,
+            ReleaseSpecialFlg = [0, 0, 224],
+            CreatedAt = now,
+            UpdatedAt = now
+        });
+        fixture.Context.BlueBattleNpcStates.Add(new BlueBattleNpcState
+        {
+            Baid = 503,
+            NpcId = 10,
+            SelectedSpecialId1 = 24,
+            SelectedSpecialId2 = 25,
+            SelectedSpecialId3 = 26,
+            CreatedAt = now,
+            UpdatedAt = now
+        });
+        await fixture.Context.SaveChangesAsync();
+        var handler = new GetBattleUserDataQueryHandler(
+            fixture.Context,
+            NullLogger<GetBattleUserDataQueryHandler>.Instance);
+
+        var common = await handler.Handle(new GetBattleUserDataQuery(503), CancellationToken.None);
+        var wire = BattleUserDataMappers.Map(common);
+
+        var npc = Assert.Single(wire.NpcDatas);
+        Assert.Equal(9u, npc.NpcId);
+        Assert.Equal("888", npc.TotalExp);
+        Assert.Equal(456u, npc.MaxDpn);
+        Assert.Equal(30u, npc.NpcCostumeId);
+        Assert.Equal([0, 0, 0, 64], npc.NpcCostumeFlg);
+        Assert.Equal(21u, npc.LastSelectSpecial1);
+        Assert.Equal(22u, npc.LastSelectSpecial2);
+        Assert.Equal(23u, npc.LastSelectSpecial3);
+        Assert.True(npc.ShouldSerializeReleaseSpecialFlg());
+        Assert.Equal([0, 0, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], npc.ReleaseSpecialFlg);
+    }
+
+    [Fact]
     public void Map_OnlySetsOptionalWireFieldsAndRowsPresentInCommonDto()
     {
         var common = new CommonBattleUserDataResponse

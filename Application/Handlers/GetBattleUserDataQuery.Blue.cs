@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace TaikoLocalServer.Application.Handlers;
 
 public readonly record struct GetBattleUserDataQuery(uint Baid) : IRequest<CommonBattleUserDataResponse>;
@@ -7,6 +9,9 @@ public sealed class GetBattleUserDataQueryHandler(
     ILogger<GetBattleUserDataQueryHandler> logger)
     : IRequestHandler<GetBattleUserDataQuery, CommonBattleUserDataResponse>
 {
+    private const int BattleNpcCostumeBytes = 4;
+    private const int BattleNpcSpecialBytes = 16;
+
     public async ValueTask<CommonBattleUserDataResponse> Handle(
         GetBattleUserDataQuery request,
         CancellationToken cancellationToken)
@@ -28,6 +33,34 @@ public sealed class GetBattleUserDataQueryHandler(
                 TokenValue = row.TokenValue!.Value
             })
             .ToListAsync(cancellationToken);
+        var npcStates = await context.BlueBattleNpcStates
+            .AsNoTracking()
+            .Where(row => row.Baid == request.Baid
+                          && row.TotalExp != null
+                          && row.MaxDaniPower != null
+                          && row.NpcCostumeId != null
+                          && row.NpcCostumeFlg != null
+                          && row.SelectedSpecialId1 != null
+                          && row.SelectedSpecialId2 != null
+                          && row.SelectedSpecialId3 != null)
+            .OrderBy(row => row.NpcId)
+            .ToListAsync(cancellationToken);
+        var npcs = npcStates
+            .Select(row => new CommonBattleUserDataResponse.BattleUserNpcData
+            {
+                NpcId = row.NpcId,
+                TotalExp = row.TotalExp!.Value.ToString(CultureInfo.InvariantCulture),
+                MaxDpn = row.MaxDaniPower!.Value,
+                NpcCostumeId = row.NpcCostumeId!.Value,
+                NpcCostumeFlg = BlueProtocolBytes.FixedOrZero(row.NpcCostumeFlg, BattleNpcCostumeBytes),
+                LastSelectSpecial1 = row.SelectedSpecialId1!.Value,
+                LastSelectSpecial2 = row.SelectedSpecialId2!.Value,
+                LastSelectSpecial3 = row.SelectedSpecialId3!.Value,
+                ReleaseSpecialFlg = row.ReleaseSpecialFlg is null
+                    ? null
+                    : BlueProtocolBytes.FixedOrZero(row.ReleaseSpecialFlg, BattleNpcSpecialBytes)
+            })
+            .ToList();
 
         return new CommonBattleUserDataResponse
         {
@@ -37,6 +70,7 @@ public sealed class GetBattleUserDataQueryHandler(
             LastBattleStageId = userState?.LastBattleStageId,
             LastBossLife = userState?.LastBossLife,
             LastNpcId = userState?.LastNpcId,
+            NpcDatas = npcs,
             AryTokenDatas = tokens,
             AssignStageId = userState?.AssignStageId
         };

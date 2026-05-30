@@ -75,10 +75,17 @@ public sealed class BlueBattlePersistenceShapeTests
             "public uint NpcId { get; set; }",
             "public uint? TotalExp { get; set; }",
             "public uint? MaxDaniPower { get; set; }",
+            "public uint? NpcCostumeId { get; set; }",
             "public byte[]? NpcCostumeFlg { get; set; }",
-            "public uint? SelectedSpecialId { get; set; }",
+            "public uint? SelectedSpecialId1 { get; set; }",
+            "public uint? SelectedSpecialId2 { get; set; }",
+            "public uint? SelectedSpecialId3 { get; set; }",
             "public byte[]? ReleaseSpecialFlg { get; set; }",
             "public uint? BondsLevel { get; set; }");
+        Assert.DoesNotContain(
+            "public uint? SelectedSpecialId { get; set; }",
+            File.ReadAllText(Path.Combine(root, "Domain", "Entities", "BlueBattleNpcState.cs")),
+            StringComparison.Ordinal);
 
         AssertEntityContains(root, "BlueBattleTokenState.cs",
             "public uint TokenId { get; set; }",

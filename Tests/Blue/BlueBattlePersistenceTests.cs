@@ -39,6 +39,20 @@ public sealed class BlueBattlePersistenceTests
     }
 
     [Fact]
+    public void AddBlueBattleNpcSelectedSpecialsMigration_PreservesExistingSelectedSpecialAsSlot1()
+    {
+        var migrationSource = File.ReadAllText(FindMigration("AddBlueBattleNpcSelectedSpecials"));
+
+        Assert.Contains("migrationBuilder.RenameColumn(", migrationSource, StringComparison.Ordinal);
+        Assert.Contains("name: \"SelectedSpecialId\"", migrationSource, StringComparison.Ordinal);
+        Assert.Contains("newName: \"SelectedSpecialId1\"", migrationSource, StringComparison.Ordinal);
+        Assert.Contains("name: \"NpcCostumeId\"", migrationSource, StringComparison.Ordinal);
+        Assert.Contains("name: \"SelectedSpecialId2\"", migrationSource, StringComparison.Ordinal);
+        Assert.Contains("name: \"SelectedSpecialId3\"", migrationSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("newName: \"SelectedSpecialId3\"", migrationSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task SqliteSchema_PersistsAndReloadsRepresentativeBlueBattleState()
     {
         await using var database = await CreateSchemaDatabaseAsync();
@@ -65,10 +79,13 @@ public sealed class BlueBattlePersistenceTests
             NpcId = 201,
             TotalExp = 300,
             MaxDaniPower = 400,
+            NpcCostumeId = 401,
             NpcCostumeFlg = [6, 7],
-            SelectedSpecialId = 12,
+            SelectedSpecialId1 = 12,
+            SelectedSpecialId2 = 13,
+            SelectedSpecialId3 = 14,
             ReleaseSpecialFlg = [8, 9, 10],
-            BondsLevel = 13,
+            BondsLevel = 15,
             CreatedAt = now,
             UpdatedAt = now
         });
@@ -130,10 +147,13 @@ public sealed class BlueBattlePersistenceTests
         var npc = await reloaded.BlueBattleNpcStates.AsNoTracking().SingleAsync(row => row.Baid == 101 && row.NpcId == 201);
         Assert.Equal(300u, npc.TotalExp);
         Assert.Equal(400u, npc.MaxDaniPower);
+        Assert.Equal(401u, npc.NpcCostumeId);
         Assert.Equal([6, 7], npc.NpcCostumeFlg);
-        Assert.Equal(12u, npc.SelectedSpecialId);
+        Assert.Equal(12u, npc.SelectedSpecialId1);
+        Assert.Equal(13u, npc.SelectedSpecialId2);
+        Assert.Equal(14u, npc.SelectedSpecialId3);
         Assert.Equal([8, 9, 10], npc.ReleaseSpecialFlg);
-        Assert.Equal(13u, npc.BondsLevel);
+        Assert.Equal(15u, npc.BondsLevel);
 
         var token = await reloaded.BlueBattleTokenStates.AsNoTracking().SingleAsync(row => row.Baid == 101 && row.TokenId == 301);
         Assert.Equal(302u, token.TokenValue);
@@ -247,8 +267,11 @@ public sealed class BlueBattlePersistenceTests
         var npc = await context.BlueBattleNpcStates.AsNoTracking().SingleAsync(row => row.Baid == 103 && row.NpcId == 203);
         Assert.Null(npc.TotalExp);
         Assert.Null(npc.MaxDaniPower);
+        Assert.Null(npc.NpcCostumeId);
         Assert.Null(npc.NpcCostumeFlg);
-        Assert.Null(npc.SelectedSpecialId);
+        Assert.Null(npc.SelectedSpecialId1);
+        Assert.Null(npc.SelectedSpecialId2);
+        Assert.Null(npc.SelectedSpecialId3);
         Assert.Null(npc.ReleaseSpecialFlg);
         Assert.Null(npc.BondsLevel);
 
@@ -284,11 +307,14 @@ public sealed class BlueBattlePersistenceTests
     }
 
     private static string FindAddBlueBattleStateMigration()
+        => FindMigration("AddBlueBattleState");
+
+    private static string FindMigration(string migrationName)
     {
         var root = FindRepoRoot();
         var migrationFiles = Directory.GetFiles(
             Path.Combine(root, "Infrastructure", "Persistence", "Migrations"),
-            "*_AddBlueBattleState.cs");
+            $"*_{migrationName}.cs");
 
         return Assert.Single(migrationFiles, path => !path.EndsWith(".Designer.cs", StringComparison.Ordinal));
     }

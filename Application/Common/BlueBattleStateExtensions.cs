@@ -166,11 +166,14 @@ public static class BlueBattleStateExtensions
 
         npcState.TotalExp = ParseOptionalUInt32(npc.TotalExp);
         npcState.MaxDaniPower = npc.Dpn;
+        npcState.NpcCostumeId = npc.NpcCostumeId;
         npcState.NpcCostumeFlg = SetBattleBits(
             npcState.NpcCostumeFlg,
             [npc.NpcCostumeId],
             BattleNpcCostumeBytes);
-        npcState.SelectedSpecialId = npc.SpecialId1;
+        npcState.SelectedSpecialId1 = npc.SpecialId1;
+        npcState.SelectedSpecialId2 = npc.SpecialId2;
+        npcState.SelectedSpecialId3 = npc.SpecialId3;
         npcState.ReleaseSpecialFlg = SetBattleBits(
             npcState.ReleaseSpecialFlg,
             [npc.SpecialId1, npc.SpecialId2, npc.SpecialId3],

@@ -10,9 +10,15 @@ public sealed class BlueBattleNpcState
 
     public uint? MaxDaniPower { get; set; }
 
+    public uint? NpcCostumeId { get; set; }
+
     public byte[]? NpcCostumeFlg { get; set; }
 
-    public uint? SelectedSpecialId { get; set; }
+    public uint? SelectedSpecialId1 { get; set; }
+
+    public uint? SelectedSpecialId2 { get; set; }
+
+    public uint? SelectedSpecialId3 { get; set; }
 
     public byte[]? ReleaseSpecialFlg { get; set; }
 
