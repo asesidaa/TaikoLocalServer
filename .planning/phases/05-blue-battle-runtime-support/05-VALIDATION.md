@@ -46,6 +46,18 @@ Per-phase validation contract for feedback sampling during Blue battle runtime e
 
 Status values: pending, green, red, flaky.
 
+## Gap-Close Verification Addendum
+
+The verifier-reported BTL-01/BTL-02 selected-special gap was closed after the original Phase 05 validation pass. Added coverage:
+
+| Behavior | Command | Result | Date |
+|----------|---------|--------|------|
+| Focused selected-special persistence/readback tests | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~BlueBattlePersistenceShapeTests\|FullyQualifiedName~BlueBattlePlayResultHandlerTests\|FullyQualifiedName~BlueBattleUserDataTests\|FullyQualifiedName~BlueBattlePersistenceTests" --no-restore` | 17 passed | 2026-05-31 |
+| Full Blue battle focused suite | `dotnet test Tests/Tests.csproj --filter BlueBattle --no-restore` | 37 passed | 2026-05-31 |
+| EF migration listing | `dotnet ef migrations list --project Infrastructure --startup-project Host` | `20260530213652_AddBlueBattleNpcSelectedSpecials` listed | 2026-05-31 |
+
+The original full-suite and Host temp-output build rows were not rerun during this gap-close pass. Cabinet/RPCS3 smoke remains Phase 6 FULL-01.
+
 ## Wave 0 Requirements
 
 - [x] Add or extend Blue battle focused tests before runtime tasks emit new battle values.

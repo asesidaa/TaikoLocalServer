@@ -15,8 +15,8 @@ This record closes the server-side Phase 05 battle runtime work with requirement
 
 | Requirement | Phase 05 coverage | Evidence |
 |-------------|-------------------|----------|
-| BTL-01 | Blue-owned battle persistence stores user, NPC, token, stage, and release state without Green or normal Blue battle storage. | `Tests/Blue/BlueBattlePersistenceTests.cs`, `Tests/Blue/BlueBattlePersistenceShapeTests.cs` |
-| BTL-02 | `battleuserdata.php` is Mediator-backed and emits only persisted or row-approved fields. | `Tests/Blue/BlueBattleUserDataTests.cs` |
+| BTL-01 | Blue-owned battle persistence stores user, NPC, selected special 1/2/3, token, stage, and release state without Green or normal Blue battle storage. | `Tests/Blue/BlueBattlePersistenceTests.cs`, `Tests/Blue/BlueBattlePersistenceShapeTests.cs`, `Tests/Blue/BlueBattlePlayResultHandlerTests.cs` |
+| BTL-02 | `battleuserdata.php` is Mediator-backed and emits only persisted or row-approved fields, including complete persisted NPC rows through `NpcDatas`. | `Tests/Blue/BlueBattleUserDataTests.cs`, `Tests/Blue/BlueBattlePlayResultHandlerTests.cs` |
 | BTL-03 | `initialdatacheck.php` advertises battle from parsed Blue battle catalog data and emits explicit false/zero defaults when unavailable. | `Tests/Blue/BlueInitialDataTests.cs`, `Tests/Blue/BlueBattleSourceGuardTests.cs` |
 | BTL-04 | Blue battle playresults map battle sections and bypass normal Blue score, crown, history, favorite/recent, shop, and Dani state. | `Tests/Blue/BlueBattlePlayResultMapperTests.cs`, `Tests/Blue/BlueBattlePlayResultHandlerTests.cs` |
 | BTL-05 | Battle rewards/progression stay store/echo only unless a row has exact proof or named approval; unresolved stage 33 and effect semantics remain blocked. | `Tests/Blue/BlueBattlePlayResultHandlerTests.cs`, `.planning/phases/05-blue-battle-runtime-support/05-RESOLUTION.md` rows 18-24 and 26 |
@@ -35,11 +35,15 @@ This decision does not approve hardcoded current IDs, hardcoded byte arrays, har
 | 1 | `dotnet test Tests/Tests.csproj --filter FullyQualifiedName~BlueBattleSourceGuardTests` | PASS | 4 passed | 2026-05-31 |
 | 2 | `dotnet test Tests/Tests.csproj --filter FullyQualifiedName~BlueRouteSkeletonTests` | PASS | 8 passed | 2026-05-31 |
 | 3 | `dotnet test Tests/Tests.csproj --filter FullyQualifiedName~BlueBattleRequirementTests` | PASS | 4 passed | 2026-05-31 |
-| 4 | `dotnet test Tests/Tests.csproj --filter BlueBattle` | PASS | 34 passed | 2026-05-31 |
+| 4 | `dotnet test Tests/Tests.csproj --filter BlueBattle` | PASS | 37 passed | 2026-05-31 |
+| 4a | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~BlueBattlePersistenceShapeTests\|FullyQualifiedName~BlueBattlePlayResultHandlerTests\|FullyQualifiedName~BlueBattleUserDataTests\|FullyQualifiedName~BlueBattlePersistenceTests" --no-restore` | PASS | 17 passed | 2026-05-31 gap close |
+| 4b | `dotnet ef migrations list --project Infrastructure --startup-project Host` | PASS | `20260530213652_AddBlueBattleNpcSelectedSpecials` listed | 2026-05-31 gap close |
 | 5 | `dotnet test Tests/Tests.csproj` | PASS | 608 passed | 2026-05-31 |
 | 6 | `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build-phase05"` | PASS | build succeeded, 0 warnings, 0 errors | 2026-05-31 |
 
 Note: an initial parallel focused test attempt hit a build-output lock on `Domain/obj/Debug/net10.0/TaikoLocalServer.Domain.dll`; the affected source-guard filter was rerun sequentially and passed.
+
+Rows 4a and 4b are the selected-special gap-close verification added after the verifier reported BTL-01/BTL-02 gaps. Rows 5 and 6 remain the original Phase 05 closeout gates and were not rerun during this gap-close pass.
 
 ## Cabinet/RPCS3 Smoke Handoff
 
