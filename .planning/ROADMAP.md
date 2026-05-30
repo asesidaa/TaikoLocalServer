@@ -194,7 +194,7 @@ Plans:
 **Wave 4** *(blocked on Wave 3 dependencies)*
 
 - [x] 05-07-PLAN.md - Battleuserdata protocol behavior
-- [ ] 05-10-PLAN.md - Battle playresult raw persistence and normal-state protection
+- [x] 05-10-PLAN.md - Battle playresult raw persistence and normal-state protection
 
 **Wave 5** *(blocked on 05-07 completion)*
 
@@ -244,5 +244,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 2. Blue A7 AdminApi And WebUI Parity | 3/3 | Complete    | 2026-05-30 |
 | 3. Blue A8 Normal-Mode Cabinet Smoke And Hardening | 3/3 | Complete    | 2026-05-30 |
 | 4. Blue Battle Evidence And Design | 3/3 | Complete    | 2026-05-30 |
-| 5. Blue Battle Runtime Support | 8/11 | In Progress|  |
+| 5. Blue Battle Runtime Support | 9/11 | In Progress|  |
 | 6. Full Blue Verification And Release Hardening | 0/3 | Not started | - |

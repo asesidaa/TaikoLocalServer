@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 05-blue-battle-runtime-support-05-07-PLAN.md
-last_updated: "2026-05-30T19:23:46.479Z"
+stopped_at: Completed 05-blue-battle-runtime-support-05-10-PLAN.md
+last_updated: "2026-05-30T19:45:13.957Z"
 last_activity: 2026-05-30 -- Phase 05 execution started
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 20
-  completed_plans: 17
-  percent: 85
+  completed_plans: 18
+  percent: 90
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-05-28)
 ## Current Position
 
 Phase: 05 (blue-battle-runtime-support) — EXECUTING
-Plan: 9 of 11
+Plan: 10 of 11
 Status: Ready to execute
 Last activity: 2026-05-30 -- Phase 05 execution started
 
-Progress: [#########-] 85%
+Progress: [█████████░] 90%
 
 ## Performance Metrics
 
@@ -61,6 +61,7 @@ Progress: [#########-] 85%
 | Phase 05 P09 | 10 min | 1 tasks | 4 files |
 | Phase 05 P05-05 | 10 min | 1 tasks | 6 files |
 | Phase 05 P05-07 | 11 min | 1 tasks | 7 files |
+| Phase 05 P05-10 | 12 min | 1 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -116,6 +117,9 @@ Recent decisions affecting current work:
 - [Phase 05]: Blue battleuserdata.php now uses a Blue-owned Mediator query and mapper instead of local controller success construction.
 - [Phase 05]: Optional BattleUserDataResponse fields are set only when the common DTO value is non-null, preserving generated protobuf presence semantics.
 - [Phase 05]: The query emits persisted scalar values and complete token rows, while leaving NPC rows empty until a complete row is explicitly available.
+- [Phase 05]: Battle-classified Blue playresults branch immediately after Blue user validation and before normal save, shop, unlock, stage, profile, recent/favorite, and Dani writes.
+- [Phase 05]: Battle playresults persist only client-reported stage, release, NPC, token, boss-life, last-stage, and assignment state into BlueBattle tables.
+- [Phase 05]: Release NPC IDs remain raw BlueBattleReleaseState observations; NPC state is updated only from BattleStageData NPC values until later mapping evidence exists.
 
 ### Pending Todos
 
@@ -144,6 +148,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-05-30T19:23:46.471Z
-Stopped at: Completed 05-blue-battle-runtime-support-05-07-PLAN.md
+Last session: 2026-05-30T19:44:26.720Z
+Stopped at: Completed 05-blue-battle-runtime-support-05-10-PLAN.md
 Resume file: None
