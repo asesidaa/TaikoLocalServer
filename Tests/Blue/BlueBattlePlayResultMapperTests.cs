@@ -49,7 +49,8 @@ public sealed class BlueBattlePlayResultMapperTests
 
         var stage = Assert.Single(common.AryStageInfoes);
         Assert.Equal(8u, stage.StageMode);
-        var battleStage = Assert.NotNull(stage.BattleStageData);
+        var battleStage = stage.BattleStageData;
+        Assert.NotNull(battleStage);
         Assert.Equal(3u, battleStage.SupportLv);
         Assert.Equal(12u, battleStage.BattleStageId);
         Assert.Equal(5u, battleStage.KillCnt);
@@ -58,7 +59,8 @@ public sealed class BlueBattlePlayResultMapperTests
         Assert.Equal(7u, battleStage.CriticalCnt);
         Assert.Equal(2u, battleStage.SpecialMoveCnt);
 
-        var npc = Assert.NotNull(battleStage.NpcData);
+        var npc = battleStage.NpcData;
+        Assert.NotNull(npc);
         Assert.Equal(9u, npc.NpcId);
         Assert.Equal("77", npc.AcquiredExp);
         Assert.Equal("888", npc.TotalExp);
@@ -69,7 +71,8 @@ public sealed class BlueBattlePlayResultMapperTests
         Assert.Equal(23u, npc.SpecialId3);
         Assert.Equal(6u, npc.BondsLv);
 
-        var release = Assert.NotNull(common.BattleReleaseData);
+        var release = common.BattleReleaseData;
+        Assert.NotNull(release);
         Assert.Equal([101u, 102u], release.ReleaseInfoIds);
         Assert.Equal([2u, 3u], release.ReleaseBattleStageIds);
         Assert.Equal([4u], release.ReleaseNpcIds);
@@ -82,7 +85,7 @@ public sealed class BlueBattlePlayResultMapperTests
     }
 
     [Fact]
-    public void MapperSources_DoNotReferenceGreenAiBattleTruth()
+    public void MapperSources_DoNotReferenceCrossEraBattleTruth()
     {
         var root = FindRepoRoot();
         var files = new[]
@@ -93,14 +96,14 @@ public sealed class BlueBattlePlayResultMapperTests
         };
         var forbidden = new[]
         {
-            "GreenAiBattle",
-            "GreenStageModeInterpreter",
-            "GreenGhost",
-            "GreenGhostTokens",
-            "GreenGhostWinnings",
-            "Adapters.GameProtocol.Green",
-            "StageMode == 3",
-            "StageMode == 4"
+            "Green" + "AiBattle",
+            "Green" + "StageModeInterpreter",
+            "Green" + "Ghost",
+            "Green" + "GhostTokens",
+            "Green" + "GhostWinnings",
+            "Adapters.GameProtocol." + "Green",
+            "StageMode" + " == 3",
+            "StageMode" + " == 4"
         };
 
         foreach (var file in files)

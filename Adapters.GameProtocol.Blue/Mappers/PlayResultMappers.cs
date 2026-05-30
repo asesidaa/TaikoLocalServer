@@ -39,6 +39,9 @@ public static partial class PlayResultMappers
             GenderType = request.GenderType,
             PlayerAge = request.PlayerAge,
             PlayMode = request.PlayMode,
+            IsBattlePlayResult = request.AryReleaseBattledata is not null
+                || request.AryStageInfoes.Any(stage => stage.AryBattlestagedata is not null),
+            BattleReleaseData = MapBattleReleaseData(request.AryReleaseBattledata),
             AreaCode = request.AreaCode,
             Reserved = request.Reserved ?? [],
             LowerlimitAge = request.ShouldSerializeLowerlimitAge() ? request.LowerlimitAge : null,
@@ -88,11 +91,68 @@ public static partial class PlayResultMappers
             PlayDan = stage.ShouldSerializePlayDan() && stage.PlayDan != 0 ? stage.PlayDan : null,
             SoulGauge = stage.ShouldSerializeSoulGauge() ? stage.SoulGauge : null,
             StageMode = stage.StageMode,
+            BattleStageData = MapBattleStageData(stage.AryBattlestagedata),
             SelectedFolderId = stage.SelectedFolderId,
             WaiwaiResult = stage.ShouldSerializeWaiwaiResult() ? stage.WaiwaiResult : null,
             WaiwaiGauge = stage.ShouldSerializeWaiwaiGauge() ? stage.WaiwaiGauge : null
         };
     }
+
+    private static CommonPlayResultData.BattleStageData? MapBattleStageData(
+        PlayResultRequest.StageData.BattleStageData? data)
+        => data is null
+            ? null
+            : new CommonPlayResultData.BattleStageData
+            {
+                SupportLv = data.SupportLv,
+                BattleStageId = data.BattleStageId,
+                NpcData = MapBattleNpcData(data.NpcData),
+                KillCnt = data.KillCnt,
+                BossLife = data.BossLife,
+                TotalDamage = data.TotalDamage,
+                CriticalCnt = data.CriticalCnt,
+                SpecialMoveCnt = data.SpecialMoveCnt
+            };
+
+    private static CommonPlayResultData.BattleNpcData? MapBattleNpcData(
+        PlayResultRequest.StageData.BattleStageData.BattleNpcData? data)
+        => data is null
+            ? null
+            : new CommonPlayResultData.BattleNpcData
+            {
+                NpcId = data.NpcId,
+                AcquiredExp = data.AcquiredExp ?? string.Empty,
+                TotalExp = data.TotalExp ?? string.Empty,
+                Dpn = data.Dpn,
+                NpcCostumeId = data.NpcCostumeId,
+                SpecialId1 = data.SpecialId1,
+                SpecialId2 = data.SpecialId2,
+                SpecialId3 = data.SpecialId3,
+                BondsLv = data.BondsLv
+            };
+
+    private static CommonPlayResultData.BattleReleaseDataDto? MapBattleReleaseData(
+        PlayResultRequest.ReleaseBattleData? data)
+        => data is null
+            ? null
+            : new CommonPlayResultData.BattleReleaseDataDto
+            {
+                ReleaseInfoIds = (data.ReleaseInfoIds ?? []).ToList(),
+                ReleaseBattleStageIds = (data.ReleaseBattleStageIds ?? []).ToList(),
+                ReleaseNpcIds = (data.ReleaseNpcIds ?? []).ToList(),
+                ReleaseNpcCostumeIds = (data.ReleaseNpcCostumeIds ?? []).ToList(),
+                ReleaseNpcSpecialIds = (data.ReleaseNpcSpecialIds ?? []).ToList(),
+                BattleTokenData = data.AryBattletokendatas.Select(MapBattleTokenData).ToList(),
+                AssignNextStageId = data.AssignNextStageId
+            };
+
+    private static CommonPlayResultData.BattleTokenData MapBattleTokenData(
+        PlayResultRequest.ReleaseBattleData.BattleTokenData data)
+        => new()
+        {
+            TokenId = data.TokenId,
+            TokenValue = data.TokenValue
+        };
 
     private static CommonPlayResultData.ResultcompeData MapCompe(PlayResultRequest.StageData.ResultcompeData data)
     {
