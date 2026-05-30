@@ -76,7 +76,8 @@ public sealed class BlueRouteSkeletonTests
             "GetItemShopInfoController.cs",
             "ItemPurchaseController.cs",
             "GetFolderController.cs",
-            "GetTelopController.cs"
+            "GetTelopController.cs",
+            "BattleUserDataController.cs"
         };
 
         foreach (var file in Directory.EnumerateFiles(controllersRoot, "*.cs", SearchOption.AllDirectories))
