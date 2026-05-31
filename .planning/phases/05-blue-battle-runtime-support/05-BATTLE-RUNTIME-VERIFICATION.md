@@ -16,7 +16,7 @@ This record closes the server-side Phase 05 battle runtime work with requirement
 | Requirement | Phase 05 coverage | Evidence |
 |-------------|-------------------|----------|
 | BTL-01 | Blue-owned battle persistence stores user, NPC, selected special 1/2/3, token, stage, and release state without Green or normal Blue battle storage. | `Tests/Blue/BlueBattlePersistenceTests.cs`, `Tests/Blue/BlueBattlePersistenceShapeTests.cs`, `Tests/Blue/BlueBattlePlayResultHandlerTests.cs` |
-| BTL-02 | `battleuserdata.php` is Mediator-backed and emits only persisted or row-approved fields, including complete persisted NPC rows through `NpcDatas`. | `Tests/Blue/BlueBattleUserDataTests.cs`, `Tests/Blue/BlueBattlePlayResultHandlerTests.cs` |
+| BTL-02 | `battleuserdata.php` is Mediator-backed and emits only persisted or row-approved fields, including complete persisted NPC rows through `NpcDatas` and a catalog-derived first-time `last_npc_id` when battle XML advertises battle. | `Tests/Blue/BlueBattleUserDataTests.cs`, `Tests/Blue/BlueBattlePlayResultHandlerTests.cs`, `.planning/phases/05-blue-battle-runtime-support/05-UAT.md` |
 | BTL-03 | `initialdatacheck.php` advertises battle from parsed Blue battle catalog data and emits explicit false/zero defaults when unavailable. | `Tests/Blue/BlueInitialDataTests.cs`, `Tests/Blue/BlueBattleSourceGuardTests.cs` |
 | BTL-04 | Blue battle playresults map battle sections and bypass normal Blue score, crown, history, favorite/recent, shop, and Dani state. | `Tests/Blue/BlueBattlePlayResultMapperTests.cs`, `Tests/Blue/BlueBattlePlayResultHandlerTests.cs` |
 | BTL-05 | Battle rewards/progression stay store/echo only unless a row has exact proof or named approval; unresolved stage 33 and effect semantics remain blocked. | `Tests/Blue/BlueBattlePlayResultHandlerTests.cs`, `.planning/phases/05-blue-battle-runtime-support/05-RESOLUTION.md` rows 18-24 and 26 |
@@ -41,12 +41,20 @@ This decision does not approve hardcoded current IDs, hardcoded byte arrays, har
 | 4c | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~BlueBattlePlayResultHandlerTests\|FullyQualifiedName~BlueBattlePersistenceShapeTests\|FullyQualifiedName~BlueBattleSourceGuardTests\|FullyQualifiedName~BlueBattlePersistenceTests\|FullyQualifiedName~BlueBattleUserDataTests" --no-restore` | PASS | 23 passed | 2026-05-31 DPN/special-name fix |
 | 4d | `dotnet test Tests/Tests.csproj --filter BlueBattle --no-restore` | PASS | 39 passed | 2026-05-31 DPN/special-name fix |
 | 4e | `dotnet ef migrations list --project Infrastructure --startup-project Host` | PASS | `20260531090513_RenameBlueBattleNpcMaxDpn` listed | 2026-05-31 DPN/special-name fix |
+| 4f | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~BlueBattleUserDataTests|FullyQualifiedName~BlueBattleCatalogLoaderTests" --no-restore` | PASS | 10 passed | 2026-05-31 first-time battle crash fix |
+| 4g | `dotnet test Tests/Tests.csproj --filter BlueBattle --no-restore` | PASS | 40 passed | 2026-05-31 first-time battle crash fix |
 | 5 | `dotnet test Tests/Tests.csproj --no-restore` | PASS | 613 passed | 2026-05-31 |
+| 5a | `dotnet test Tests/Tests.csproj --no-restore` | PASS | 614 passed | 2026-05-31 first-time battle crash fix |
 | 6 | `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build-dpn-special-fix" --no-restore` | PASS | build succeeded, 0 warnings, 0 errors | 2026-05-31 |
+| 6a | `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build-blue-battle-crash-fix" --no-restore` | PASS | build succeeded, 0 warnings, 0 errors | 2026-05-31 first-time battle crash fix |
 
 Note: an initial parallel focused test attempt hit a build-output lock on `Domain/obj/Debug/net10.0/TaikoLocalServer.Domain.dll`; the affected source-guard filter was rerun sequentially and passed.
 
-Rows 4a and 4b are the selected-special gap-close verification added after the verifier reported BTL-01/BTL-02 gaps. Rows 4c through 4e record the DPN naming/maximum and `release_battle_special_flg` wording fix before RPCS3 smoke. Rows 5 and 6 were rerun after the DPN/special-name fix.
+Rows 4a and 4b are the selected-special gap-close verification added after the verifier reported BTL-01/BTL-02 gaps. Rows 4c through 4e record the DPN naming/maximum and `release_battle_special_flg` wording fix before RPCS3 smoke. Rows 4f through 6a record the first-time battle crash server fix: parsed NPC ids are exposed from the battle catalog, and first-time `battleuserdata.php` returns a catalog-derived `last_npc_id` when battle XML advertises battle.
+
+## UAT Crash Fix Record
+
+`05-UAT.md` recorded a blocker where RPCS3 crashed after a first-time battle user request. The diagnosed root cause was a success-shaped `battleuserdata.php` response with omitted `last_npc_id`, which the client defaults to `0`, while local `battlenpcinfo.xml` contains NPC id `1`. The server fix now emits the first parsed battle NPC id for new users when battle data is advertised and no persisted last NPC exists. RPCS3 smoke has not been rerun yet; the UAT is partial until that retest confirms the crash is gone.
 
 ## Cabinet/RPCS3 Smoke Handoff
 

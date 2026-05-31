@@ -13,6 +13,8 @@ public sealed class BlueBattleCatalog
 
     public bool EnablesBattleAdvertisement { get; init; }
 
+    public IReadOnlyList<uint> BattleNpcIds { get; init; } = [];
+
     public IReadOnlyList<uint> ReleaseBattleStageIds { get; init; } = [];
 
     public IReadOnlyList<uint> ReleaseBattleSpecialIds { get; init; } = [];

@@ -1,5 +1,6 @@
 using TaikoLocalServer.Adapters.GameProtocol.Blue.Mappers;
 using TaikoLocalServer.Adapters.GameProtocol.Blue.Wire;
+using TaikoLocalServer.Application.Catalog.Blue;
 
 namespace TaikoLocalServer.Tests.Blue;
 
@@ -12,6 +13,7 @@ public sealed class BlueBattleUserDataTests
         await AddUserAsync(fixture.Context, 501);
         var handler = new GetBattleUserDataQueryHandler(
             fixture.Context,
+            fixture.Catalog,
             NullLogger<GetBattleUserDataQueryHandler>.Instance);
 
         var common = await handler.Handle(new GetBattleUserDataQuery(501), CancellationToken.None);
@@ -27,6 +29,33 @@ public sealed class BlueBattleUserDataTests
         Assert.False(wire.ShouldSerializeAssignStageId());
         Assert.Empty(wire.NpcDatas);
         Assert.Empty(wire.AryTokenDatas);
+    }
+
+    [Fact]
+    public async Task Handle_NewUserWithBattleCatalog_EmitsCatalogDerivedFirstNpcId()
+    {
+        var battleCatalog = new BlueBattleCatalog
+        {
+            IsRawDataAvailable = true,
+            EnablesBattleAdvertisement = true,
+            BattleNpcIds = [7, 9],
+            Files = []
+        };
+        var blueCatalog = new BlueHandlerFixture.TestBlueCatalog(battleCatalog: battleCatalog);
+        await using var fixture = await BlueHandlerFixture.CreateAsync(blueCatalog);
+        await AddUserAsync(fixture.Context, 504);
+        var handler = new GetBattleUserDataQueryHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<GetBattleUserDataQueryHandler>.Instance);
+
+        var common = await handler.Handle(new GetBattleUserDataQuery(504), CancellationToken.None);
+        var wire = BattleUserDataMappers.Map(common);
+
+        Assert.Equal(7u, common.LastNpcId);
+        Assert.True(wire.ShouldSerializeLastNpcId());
+        Assert.Equal(7u, wire.LastNpcId);
+        Assert.Empty(wire.NpcDatas);
     }
 
     [Fact]
@@ -65,6 +94,7 @@ public sealed class BlueBattleUserDataTests
         await fixture.Context.SaveChangesAsync();
         var handler = new GetBattleUserDataQueryHandler(
             fixture.Context,
+            fixture.Catalog,
             NullLogger<GetBattleUserDataQueryHandler>.Instance);
 
         var common = await handler.Handle(new GetBattleUserDataQuery(502), CancellationToken.None);
@@ -116,6 +146,7 @@ public sealed class BlueBattleUserDataTests
         await fixture.Context.SaveChangesAsync();
         var handler = new GetBattleUserDataQueryHandler(
             fixture.Context,
+            fixture.Catalog,
             NullLogger<GetBattleUserDataQueryHandler>.Instance);
 
         var common = await handler.Handle(new GetBattleUserDataQuery(503), CancellationToken.None);

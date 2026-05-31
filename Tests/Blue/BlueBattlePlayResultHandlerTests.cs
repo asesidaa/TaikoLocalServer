@@ -100,6 +100,7 @@ public sealed class BlueBattlePlayResultHandlerTests
 
         var battleUserDataHandler = new GetBattleUserDataQueryHandler(
             fixture.Context,
+            fixture.Catalog,
             NullLogger<GetBattleUserDataQueryHandler>.Instance);
         var common = await battleUserDataHandler.Handle(new GetBattleUserDataQuery(1), CancellationToken.None);
 
@@ -156,6 +157,7 @@ public sealed class BlueBattlePlayResultHandlerTests
 
         var battleUserDataHandler = new GetBattleUserDataQueryHandler(
             fixture.Context,
+            fixture.Catalog,
             NullLogger<GetBattleUserDataQueryHandler>.Instance);
         var common = await battleUserDataHandler.Handle(new GetBattleUserDataQuery(1), CancellationToken.None);
         Assert.Equal(456u, Assert.Single(common.NpcDatas).MaxDpn);

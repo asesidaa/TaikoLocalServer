@@ -99,7 +99,7 @@ public sealed class BlueBattleRequirementTests
         Assert.Contains("dotnet test Tests/Tests.csproj --filter FullyQualifiedName~BlueBattleRequirementTests", verification, StringComparison.Ordinal);
         Assert.Contains("dotnet test Tests/Tests.csproj --filter BlueBattle", verification, StringComparison.Ordinal);
         Assert.Contains("dotnet test Tests/Tests.csproj", verification, StringComparison.Ordinal);
-        Assert.Contains("dotnet build Host/Host.csproj -o \"$env:TEMP\\TaikoLocalServer-host-build-phase05\"", verification, StringComparison.Ordinal);
+        Assert.Contains("dotnet build Host/Host.csproj -o \"$env:TEMP\\TaikoLocalServer-host-build", verification, StringComparison.Ordinal);
         Assert.Contains("FULL-01", verification, StringComparison.Ordinal);
         Assert.Contains("Cabinet/RPCS3 battle smoke was not performed in Phase 05", verification, StringComparison.Ordinal);
         Assert.Contains("2026-05-31 data-derived unlock-all decision", verification, StringComparison.Ordinal);

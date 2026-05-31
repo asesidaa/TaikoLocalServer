@@ -34,6 +34,7 @@ public sealed class BlueBattleCatalogLoaderTests
         });
         Assert.Equal(2, catalog.Files.Single(file => file.FileName == "battlestageinfo.xml").RowCount);
         Assert.Equal(2, catalog.Files.Single(file => file.FileName == "battletokeninfo.xml").RowCount);
+        Assert.Equal([1u], catalog.BattleNpcIds);
         Assert.Equal([1u, 33u], catalog.ReleaseBattleStageIds);
         Assert.Equal([1u, 10u], catalog.ReleaseBattleSpecialIds);
         Assert.Equal(3u, catalog.BattleBondsLvCap);

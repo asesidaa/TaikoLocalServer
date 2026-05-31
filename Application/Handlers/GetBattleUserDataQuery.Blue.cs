@@ -6,6 +6,7 @@ public readonly record struct GetBattleUserDataQuery(uint Baid) : IRequest<Commo
 
 public sealed class GetBattleUserDataQueryHandler(
     ITaikoDbContext context,
+    IGameDataCatalog gameDataService,
     ILogger<GetBattleUserDataQueryHandler> logger)
     : IRequestHandler<GetBattleUserDataQuery, CommonBattleUserDataResponse>
 {
@@ -61,6 +62,10 @@ public sealed class GetBattleUserDataQueryHandler(
                     : BlueProtocolBytes.FixedOrZero(row.ReleaseSpecialFlg, BattleNpcSpecialBytes)
             })
             .ToList();
+        var battle = gameDataService.Blue().BattleCatalog;
+        var catalogFirstNpcId = battle.EnablesBattleAdvertisement && battle.BattleNpcIds.Count > 0
+            ? battle.BattleNpcIds[0]
+            : (uint?)null;
 
         return new CommonBattleUserDataResponse
         {
@@ -69,7 +74,7 @@ public sealed class GetBattleUserDataQueryHandler(
             ReleaseBattleStageFlg = userState?.ReleaseBattleStageFlg,
             LastBattleStageId = userState?.LastBattleStageId,
             LastBossLife = userState?.LastBossLife,
-            LastNpcId = userState?.LastNpcId,
+            LastNpcId = userState?.LastNpcId ?? catalogFirstNpcId,
             NpcDatas = npcs,
             AryTokenDatas = tokens,
             AssignStageId = userState?.AssignStageId

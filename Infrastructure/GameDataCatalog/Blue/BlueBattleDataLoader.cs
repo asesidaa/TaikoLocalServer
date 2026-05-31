@@ -35,6 +35,11 @@ public sealed class BlueBattleDataLoader
         {
             IsRawDataAvailable = isRawDataAvailable,
             EnablesBattleAdvertisement = isRawDataAvailable,
+            BattleNpcIds = loadedFiles
+                .SelectMany(file => file.BattleNpcIds)
+                .Distinct()
+                .Order()
+                .ToList(),
             ReleaseBattleStageIds = loadedFiles
                 .SelectMany(file => file.ReleaseBattleStageIds)
                 .Distinct()
@@ -71,6 +76,7 @@ public sealed class BlueBattleDataLoader
                 },
                 [],
                 [],
+                [],
                 null);
         }
 
@@ -88,6 +94,7 @@ public sealed class BlueBattleDataLoader
                     RowCount = document.Descendants()
                         .Count(element => element.Name.LocalName == definition.RowElementName)
                 },
+                definition.FileName == "battlenpcinfo.xml" ? ReadNpcIds(document) : [],
                 definition.FileName == "battlestageinfo.xml" ? ReadStageIds(document) : [],
                 definition.FileName == "battletokeninfo.xml" ? ReadSpecialIds(document) : [],
                 definition.FileName == "battlenpcinfo.xml" ? ReadBattleBondsLvCap(document) : null);
@@ -106,6 +113,7 @@ public sealed class BlueBattleDataLoader
                 },
                 [],
                 [],
+                [],
                 null);
         }
     }
@@ -114,6 +122,12 @@ public sealed class BlueBattleDataLoader
         => document.Descendants()
             .Where(element => element.Name.LocalName == "stageinfo")
             .Select(element => ReadRequiredId(element, "stageinfo"))
+            .ToList();
+
+    private static IReadOnlyList<uint> ReadNpcIds(XDocument document)
+        => document.Descendants()
+            .Where(element => element.Name.LocalName == "npcinfo")
+            .Select(element => ReadRequiredId(element, "npcinfo"))
             .ToList();
 
     private static IReadOnlyList<uint> ReadSpecialIds(XDocument document)
@@ -145,6 +159,7 @@ public sealed class BlueBattleDataLoader
 
     private sealed record LoadedBattleFile(
         BlueBattleCatalogFile File,
+        IReadOnlyList<uint> BattleNpcIds,
         IReadOnlyList<uint> ReleaseBattleStageIds,
         IReadOnlyList<uint> ReleaseBattleSpecialIds,
         uint? BattleBondsLvCap);
