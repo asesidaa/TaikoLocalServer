@@ -8,7 +8,7 @@ public sealed class BlueBattleNpcState
 
     public uint? TotalExp { get; set; }
 
-    public uint? MaxDaniPower { get; set; }
+    public uint? MaxDpn { get; set; }
 
     public uint? NpcCostumeId { get; set; }
 

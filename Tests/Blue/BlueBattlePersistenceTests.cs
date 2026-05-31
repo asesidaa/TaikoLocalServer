@@ -53,6 +53,22 @@ public sealed class BlueBattlePersistenceTests
     }
 
     [Fact]
+    public void RenameBlueBattleNpcMaxDpnMigration_RenamesDpnColumnsWithoutDroppingData()
+    {
+        var migrationSource = File.ReadAllText(FindMigration("RenameBlueBattleNpcMaxDpn"));
+
+        Assert.Contains("migrationBuilder.RenameColumn(", migrationSource, StringComparison.Ordinal);
+        Assert.Contains("name: \"MaxDaniPower\"", migrationSource, StringComparison.Ordinal);
+        Assert.Contains("table: \"BlueBattleNpcStates\"", migrationSource, StringComparison.Ordinal);
+        Assert.Contains("newName: \"MaxDpn\"", migrationSource, StringComparison.Ordinal);
+        Assert.Contains("name: \"DaniPower\"", migrationSource, StringComparison.Ordinal);
+        Assert.Contains("table: \"BlueBattleStageResults\"", migrationSource, StringComparison.Ordinal);
+        Assert.Contains("newName: \"Dpn\"", migrationSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("migrationBuilder.DropColumn", migrationSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("migrationBuilder.AddColumn", migrationSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task SqliteSchema_PersistsAndReloadsRepresentativeBlueBattleState()
     {
         await using var database = await CreateSchemaDatabaseAsync();
@@ -78,7 +94,7 @@ public sealed class BlueBattlePersistenceTests
             Baid = 101,
             NpcId = 201,
             TotalExp = 300,
-            MaxDaniPower = 400,
+            MaxDpn = 400,
             NpcCostumeId = 401,
             NpcCostumeFlg = [6, 7],
             SelectedSpecialId1 = 12,
@@ -114,7 +130,7 @@ public sealed class BlueBattlePersistenceTests
             BossLife = 77,
             TotalExp = 500,
             AcquiredExp = 25,
-            DaniPower = 600,
+            Dpn = 600,
             TokenId = 301,
             TokenValue = 302
         });
@@ -146,7 +162,7 @@ public sealed class BlueBattlePersistenceTests
 
         var npc = await reloaded.BlueBattleNpcStates.AsNoTracking().SingleAsync(row => row.Baid == 101 && row.NpcId == 201);
         Assert.Equal(300u, npc.TotalExp);
-        Assert.Equal(400u, npc.MaxDaniPower);
+        Assert.Equal(400u, npc.MaxDpn);
         Assert.Equal(401u, npc.NpcCostumeId);
         Assert.Equal([6, 7], npc.NpcCostumeFlg);
         Assert.Equal(12u, npc.SelectedSpecialId1);
@@ -163,6 +179,7 @@ public sealed class BlueBattlePersistenceTests
         Assert.Equal(102u, stage.SongNo);
         Assert.Equal(201u, stage.NpcId);
         Assert.Equal(77u, stage.BossLife);
+        Assert.Equal(600u, stage.Dpn);
 
         var release = await reloaded.BlueBattleReleaseStates.AsNoTracking().SingleAsync(row => row.Baid == 101);
         Assert.True(release.Id > 0);
@@ -266,7 +283,7 @@ public sealed class BlueBattlePersistenceTests
 
         var npc = await context.BlueBattleNpcStates.AsNoTracking().SingleAsync(row => row.Baid == 103 && row.NpcId == 203);
         Assert.Null(npc.TotalExp);
-        Assert.Null(npc.MaxDaniPower);
+        Assert.Null(npc.MaxDpn);
         Assert.Null(npc.NpcCostumeId);
         Assert.Null(npc.NpcCostumeFlg);
         Assert.Null(npc.SelectedSpecialId1);

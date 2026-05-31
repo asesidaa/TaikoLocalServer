@@ -93,7 +93,7 @@ public sealed class BlueBattleUserDataTests
             Baid = 503,
             NpcId = 9,
             TotalExp = 888,
-            MaxDaniPower = 456,
+            MaxDpn = 456,
             NpcCostumeId = 30,
             NpcCostumeFlg = [0, 0, 0, 64],
             SelectedSpecialId1 = 21,

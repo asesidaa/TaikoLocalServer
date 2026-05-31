@@ -24,7 +24,7 @@ This record closes the server-side Phase 05 battle runtime work with requirement
 
 ## Row-Resolution Summary
 
-The 2026-05-31 data-derived unlock-all decision is recorded in `05-RESOLUTION.md` rows 1, 3, 4, 5, 6, and 25. The approved behavior is exact: parse the required five-file Blue battle XML set, advertise battle only when that set exists and parses, unlock all parsed battle stage IDs into the 8-byte initial stage bitset, unlock all parsed battle token reward IDs into the 16-byte initial special bitset, derive `battle_bonds_lv_cap` from parsed NPC progression data, and emit explicit false/zero defaults when the set is unavailable.
+The 2026-05-31 data-derived unlock-all decision is recorded in `05-RESOLUTION.md` rows 1, 3, 4, 5, 6, and 25. The approved behavior is exact: parse the required five-file Blue battle XML set, advertise battle only when that set exists and parses, unlock all parsed battle stage IDs into the 8-byte initial stage bitset, unlock all parsed battle special move (`必殺技`) reward IDs into the 16-byte initial special bitset, derive `battle_bonds_lv_cap` from parsed NPC progression data, and emit explicit false/zero defaults when the set is unavailable.
 
 This decision does not approve hardcoded current IDs, hardcoded byte arrays, hardcoded cap constants, token reward calculation, stage graph calculation, boss completion, stage `33` progression, or normal Blue unlock mirrors. Rows 18, 21, 22, 24, and 26 are approved only for client-state store/echo behavior; row 23 remains deferred except catalog/raw observation.
 
@@ -38,12 +38,15 @@ This decision does not approve hardcoded current IDs, hardcoded byte arrays, har
 | 4 | `dotnet test Tests/Tests.csproj --filter BlueBattle` | PASS | 37 passed | 2026-05-31 |
 | 4a | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~BlueBattlePersistenceShapeTests\|FullyQualifiedName~BlueBattlePlayResultHandlerTests\|FullyQualifiedName~BlueBattleUserDataTests\|FullyQualifiedName~BlueBattlePersistenceTests" --no-restore` | PASS | 17 passed | 2026-05-31 gap close |
 | 4b | `dotnet ef migrations list --project Infrastructure --startup-project Host` | PASS | `20260530213652_AddBlueBattleNpcSelectedSpecials` listed | 2026-05-31 gap close |
-| 5 | `dotnet test Tests/Tests.csproj` | PASS | 608 passed | 2026-05-31 |
-| 6 | `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build-phase05"` | PASS | build succeeded, 0 warnings, 0 errors | 2026-05-31 |
+| 4c | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~BlueBattlePlayResultHandlerTests\|FullyQualifiedName~BlueBattlePersistenceShapeTests\|FullyQualifiedName~BlueBattleSourceGuardTests\|FullyQualifiedName~BlueBattlePersistenceTests\|FullyQualifiedName~BlueBattleUserDataTests" --no-restore` | PASS | 23 passed | 2026-05-31 DPN/special-name fix |
+| 4d | `dotnet test Tests/Tests.csproj --filter BlueBattle --no-restore` | PASS | 39 passed | 2026-05-31 DPN/special-name fix |
+| 4e | `dotnet ef migrations list --project Infrastructure --startup-project Host` | PASS | `20260531090513_RenameBlueBattleNpcMaxDpn` listed | 2026-05-31 DPN/special-name fix |
+| 5 | `dotnet test Tests/Tests.csproj --no-restore` | PASS | 613 passed | 2026-05-31 |
+| 6 | `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build-dpn-special-fix" --no-restore` | PASS | build succeeded, 0 warnings, 0 errors | 2026-05-31 |
 
 Note: an initial parallel focused test attempt hit a build-output lock on `Domain/obj/Debug/net10.0/TaikoLocalServer.Domain.dll`; the affected source-guard filter was rerun sequentially and passed.
 
-Rows 4a and 4b are the selected-special gap-close verification added after the verifier reported BTL-01/BTL-02 gaps. Rows 5 and 6 remain the original Phase 05 closeout gates and were not rerun during this gap-close pass.
+Rows 4a and 4b are the selected-special gap-close verification added after the verifier reported BTL-01/BTL-02 gaps. Rows 4c through 4e record the DPN naming/maximum and `release_battle_special_flg` wording fix before RPCS3 smoke. Rows 5 and 6 were rerun after the DPN/special-name fix.
 
 ## Cabinet/RPCS3 Smoke Handoff
 

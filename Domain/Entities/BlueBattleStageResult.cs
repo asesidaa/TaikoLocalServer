@@ -34,7 +34,7 @@ public sealed class BlueBattleStageResult
 
     public uint? AcquiredExp { get; set; }
 
-    public uint? DaniPower { get; set; }
+    public uint? Dpn { get; set; }
 
     public uint? TokenId { get; set; }
 

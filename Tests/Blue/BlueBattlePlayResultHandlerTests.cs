@@ -35,7 +35,7 @@ public sealed class BlueBattlePlayResultHandlerTests
         Assert.Equal(12345u, stage.BossLife);
         Assert.Equal(888u, stage.TotalExp);
         Assert.Equal(77u, stage.AcquiredExp);
-        Assert.Equal(456u, stage.DaniPower);
+        Assert.Equal(456u, stage.Dpn);
 
         var userState = await fixture.Context.BlueBattleUserStates.SingleAsync(row => row.Baid == 1);
         Assert.True(BitIsSet(userState.ReleaseInfoFlg!, 101));
@@ -47,7 +47,7 @@ public sealed class BlueBattlePlayResultHandlerTests
 
         var npc = await fixture.Context.BlueBattleNpcStates.SingleAsync(row => row.Baid == 1 && row.NpcId == 9);
         Assert.Equal(888u, npc.TotalExp);
-        Assert.Equal(456u, npc.MaxDaniPower);
+        Assert.Equal(456u, npc.MaxDpn);
         Assert.Equal(6u, npc.BondsLevel);
         Assert.Equal(30u, npc.NpcCostumeId);
         Assert.Equal(21u, npc.SelectedSpecialId1);
@@ -116,6 +116,49 @@ public sealed class BlueBattlePlayResultHandlerTests
         Assert.True(BitIsSet(npc.ReleaseSpecialFlg!, 21));
         Assert.True(BitIsSet(npc.ReleaseSpecialFlg!, 22));
         Assert.True(BitIsSet(npc.ReleaseSpecialFlg!, 23));
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Blue_BattlePayloadKeepsMaximumObservedDpn()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        await handler.Handle(new UpdatePlayResultCommand(
+                1,
+                GameEra.Blue,
+                new CommonPlayResultData
+                {
+                    Baid = 1,
+                    PlayDatetime = "20260528120000",
+                    PlayMode = 6,
+                    IsBattlePlayResult = true,
+                    AryStageInfoes = [CreateBattleStage(9999, 99, 99, battleStageId: 33, dpn: 456)]
+                }),
+            CancellationToken.None);
+        await handler.Handle(new UpdatePlayResultCommand(
+                1,
+                GameEra.Blue,
+                new CommonPlayResultData
+                {
+                    Baid = 1,
+                    PlayDatetime = "20260528130000",
+                    PlayMode = 6,
+                    IsBattlePlayResult = true,
+                    AryStageInfoes = [CreateBattleStage(9999, 99, 99, battleStageId: 33, dpn: 123)]
+                }),
+            CancellationToken.None);
+
+        var npc = await fixture.Context.BlueBattleNpcStates.SingleAsync(row => row.Baid == 1 && row.NpcId == 9);
+        Assert.Equal(456u, npc.MaxDpn);
+
+        var battleUserDataHandler = new GetBattleUserDataQueryHandler(
+            fixture.Context,
+            NullLogger<GetBattleUserDataQueryHandler>.Instance);
+        var common = await battleUserDataHandler.Handle(new GetBattleUserDataQuery(1), CancellationToken.None);
+        Assert.Equal(456u, Assert.Single(common.NpcDatas).MaxDpn);
     }
 
     [Fact]
@@ -239,7 +282,8 @@ public sealed class BlueBattlePlayResultHandlerTests
         uint songNo,
         uint level,
         uint stageMode,
-        uint battleStageId)
+        uint battleStageId,
+        uint dpn = 456)
         => new()
         {
             SongNo = songNo,
@@ -269,7 +313,7 @@ public sealed class BlueBattlePlayResultHandlerTests
                     NpcId = 9,
                     AcquiredExp = "77",
                     TotalExp = "888",
-                    Dpn = 456,
+                    Dpn = dpn,
                     NpcCostumeId = 30,
                     SpecialId1 = 21,
                     SpecialId2 = 22,

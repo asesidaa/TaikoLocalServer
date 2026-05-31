@@ -37,7 +37,7 @@ public sealed class GetBattleUserDataQueryHandler(
             .AsNoTracking()
             .Where(row => row.Baid == request.Baid
                           && row.TotalExp != null
-                          && row.MaxDaniPower != null
+                          && row.MaxDpn != null
                           && row.NpcCostumeId != null
                           && row.NpcCostumeFlg != null
                           && row.SelectedSpecialId1 != null
@@ -50,7 +50,7 @@ public sealed class GetBattleUserDataQueryHandler(
             {
                 NpcId = row.NpcId,
                 TotalExp = row.TotalExp!.Value.ToString(CultureInfo.InvariantCulture),
-                MaxDpn = row.MaxDaniPower!.Value,
+                MaxDpn = row.MaxDpn!.Value,
                 NpcCostumeId = row.NpcCostumeId!.Value,
                 NpcCostumeFlg = BlueProtocolBytes.FixedOrZero(row.NpcCostumeFlg, BattleNpcCostumeBytes),
                 LastSelectSpecial1 = row.SelectedSpecialId1!.Value,

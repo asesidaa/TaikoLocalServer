@@ -44,7 +44,7 @@ public static class BlueBattleStateExtensions
                 BossLife = battleStage.BossLife,
                 TotalExp = ParseOptionalUInt32(npc?.TotalExp),
                 AcquiredExp = ParseOptionalUInt32(npc?.AcquiredExp),
-                DaniPower = npc?.Dpn
+                Dpn = npc?.Dpn
             });
 
             userState ??= await context.GetOrCreateBlueBattleUserStateAsync(baid, now, cancellationToken);
@@ -165,7 +165,7 @@ public static class BlueBattleStateExtensions
         }
 
         npcState.TotalExp = ParseOptionalUInt32(npc.TotalExp);
-        npcState.MaxDaniPower = npc.Dpn;
+        npcState.MaxDpn = Math.Max(npcState.MaxDpn ?? 0, npc.Dpn);
         npcState.NpcCostumeId = npc.NpcCostumeId;
         npcState.NpcCostumeFlg = SetBattleBits(
             npcState.NpcCostumeFlg,

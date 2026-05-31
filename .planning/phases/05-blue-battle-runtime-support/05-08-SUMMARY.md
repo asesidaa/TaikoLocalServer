@@ -34,7 +34,7 @@ key-files:
 key-decisions:
   - "The 2026-05-31 user decision supersedes prior fail-closed initialdata rows for this stage: emit data-derived Blue battle initialdata when required local battle XML exists and parses."
   - "Blue initialdata emits explicit false/zero battle defaults when the required battle XML set is unavailable instead of relying on omitted optional fields."
-  - "Battle stage IDs, special reward IDs, and bonds level cap are parsed through the Blue battle catalog boundary; handlers and mappers do not hardcode the current values."
+  - "Battle stage IDs, special move reward IDs, and bonds level cap are parsed through the Blue battle catalog boundary; handlers and mappers do not hardcode the current values."
 
 patterns-established:
   - "BlueBattleCatalog carries parsed initialdata inputs from battle XML while the handler only converts catalog values into protocol-width bitsets."
@@ -61,7 +61,7 @@ completed: 2026-05-30
 ## Accomplishments
 
 - Added RED tests proving Blue initialdata now emits concrete false/zero battle defaults and advertises parsed battle catalog values.
-- Extended `BlueBattleDataLoader` and `BlueBattleCatalog` to parse stage IDs from `battlestageinfo.xml`, special reward IDs from `battletokeninfo.xml`, and bonds cap from `battlenpcinfo.xml` `requred_exp` entries.
+- Extended `BlueBattleDataLoader` and `BlueBattleCatalog` to parse stage IDs from `battlestageinfo.xml`, special move reward IDs from `battletokeninfo.xml`, and bonds cap from `battlenpcinfo.xml` `requred_exp` entries.
 - Wired `GetInitialDataQuery.Blue.cs` to set `is_battleplay`, `release_battle_stage_flg`, `release_battle_special_flg`, and `battle_bonds_lv_cap` from the Blue battle catalog only.
 - Updated `05-RESOLUTION.md` and `05-08-PLAN.md` to record the 2026-05-31 user approval that supersedes the older fail-closed initialdata rows.
 
@@ -73,7 +73,7 @@ completed: 2026-05-30
 ## Files Created/Modified
 
 - `Tests/Blue/BlueInitialDataTests.cs` - RED/GREEN coverage for concrete defaults and parsed battle initialdata values.
-- `Tests/Blue/BlueBattleCatalogLoaderTests.cs` - Loader expectations for parsed stage IDs, special reward IDs, bonds cap, and source guard updates.
+- `Tests/Blue/BlueBattleCatalogLoaderTests.cs` - Loader expectations for parsed stage IDs, special move reward IDs, bonds cap, and source guard updates.
 - `Application/Catalog/Blue/BlueBattleCatalog.cs` - Carries parsed initialdata battle inputs from the catalog layer.
 - `Application/Common/BlueProtocolBytes.cs` - Adds Blue battle protocol byte-width constants for stage and special flags.
 - `Infrastructure/GameDataCatalog/Blue/BlueBattleDataLoader.cs` - Parses the required battle XML set and exposes catalog-derived initialdata values.
@@ -116,7 +116,7 @@ completed: 2026-05-30
 - Final: `dotnet test Tests/Tests.csproj --filter FullyQualifiedName~BlueInitialDataTests` passed with 3 tests.
 - Final: `dotnet test Tests/Tests.csproj --filter BlueBattle` passed with 26 tests.
 - Final: `dotnet build Host/Host.csproj -o $env:TEMP\TaikoLocalServer-host-build-05-08-...` passed with 0 warnings and 0 errors.
-- Local XML evidence check parsed stage IDs `1..10,33` into `FE 07 00 00 02 00 00 00`, special reward IDs `1..10` into `FE 07 00 00 00 00 00 00 00 00 00 00 00 00 00 00`, and `battle_bonds_lv_cap=65`.
+- Local XML evidence check parsed stage IDs `1..10,33` into `FE 07 00 00 02 00 00 00`, special move reward IDs `1..10` into `FE 07 00 00 00 00 00 00 00 00 00 00 00 00 00 00`, and `battle_bonds_lv_cap=65`.
 
 ## Known Stubs
 

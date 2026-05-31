@@ -125,7 +125,7 @@ Recent decisions affecting current work:
 - [Phase 05]: Release NPC IDs remain raw BlueBattleReleaseState observations; NPC state is updated only from BattleStageData NPC values until later mapping evidence exists.
 - [Phase 05]: Blue battle initialdata derives from parsed battle XML — The 2026-05-31 user decision approved data-derived unlock-all initialdata and rejected fail-closed omission for this stage.
 - [Phase 05]: Phase 05 automated server verification passed; cabinet/RPCS3 battle smoke remains Phase 6 FULL-01. — 05-11 ran focused BlueBattle tests, full test suite, and temp-output Host build; no cabinet/RPCS3 run was performed.
-- [Phase 05]: Blue battle initialdata closeout requires parsed catalog data for unlock-all behavior. — 05-11 source guards enforce the 2026-05-31 decision: no hardcoded battle stage IDs, token reward IDs, byte arrays, or bonds cap constants.
+- [Phase 05]: Blue battle initialdata closeout requires parsed catalog data for unlock-all behavior. — 05-11 source guards enforce the 2026-05-31 decision: no hardcoded battle stage IDs, battle special move reward IDs, byte arrays, or bonds cap constants.
 - [Phase 05]: BTL-05 remains store/echo-only for approved rows after Phase 05. — 05-11 requirement tests keep stage 33, reward effects, token thresholds, boss completion, and normal unlock mirrors tied to explicit blocked or approved row statuses.
 
 ### Pending Todos
