@@ -1,17 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: Blue Support
-status: complete
-stopped_at: Milestone v1.0 archived
-last_updated: "2026-06-03T04:11:19.4160436+08:00"
+milestone: v1.1
+milestone_name: Blue Tokkun Mode Support
+status: planning
+last_updated: "2026-06-03T04:21:58.794+08:00"
 last_activity: 2026-06-03
 progress:
-  total_phases: 6
-  completed_phases: 6
-  total_plans: 30
-  completed_plans: 30
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -20,21 +19,15 @@ progress:
 
 See: `.planning/PROJECT.md` (updated 2026-06-03)
 
-**Core value:** A Blue cabinet can use TaikoLocalServer for normal and battle play with repeatable cabinet/RPCS3 evidence, without corrupting or conflating Green, Nijiiro, or shared identity state.
-**Current focus:** Awaiting next milestone.
+**Core value:** A Blue cabinet can use TaikoLocalServer for normal, battle, and Tokkun play with repeatable cabinet/RPCS3 evidence, without corrupting or conflating Green, Nijiiro, or shared identity state.
+**Current focus:** Defining Blue Tokkun mode support requirements.
 
 ## Current Position
 
-Milestone v1.0 Blue Support is complete and archived.
-
-Archived records:
-
-- `.planning/milestones/v1.0-ROADMAP.md`
-- `.planning/milestones/v1.0-REQUIREMENTS.md`
-- `.planning/milestones/v1.0-phases/`
-- `.planning/MILESTONES.md`
-
-The live roadmap is intentionally compact. A fresh `.planning/REQUIREMENTS.md` should be created by the next milestone workflow.
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-06-03 — Milestone v1.1 started
 
 ## Accumulated Context
 
@@ -44,12 +37,12 @@ The v1.0 milestone closed with no open artifact-audit items. The stale Phase 05 
 
 ## Blockers/Concerns
 
-None recorded for the next milestone.
+None recorded for v1.1.
 
 ## Deferred Items
 
-None recorded at v1.0 close.
+None recorded at v1.1 start.
 
 ## Operator Next Steps
 
-- Start the next milestone with `$gsd-new-milestone`.
+- Continue v1.1 by defining requirements, then creating the roadmap.
