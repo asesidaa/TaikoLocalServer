@@ -1,50 +1,43 @@
-# Taiko Web UI
+# TaikoWebUI
 
-This is the solution for the front end part.
-It is implemented with Blazor Webassembly (also in C#).
+TaikoWebUI is the Blazor WebAssembly admin interface hosted by `Host`. It uses MudBlazor and consumes `Contracts.AdminApi` DTOs over the server's `/api/...` routes.
 
-## TaikoWebUI appsettings.json config
+## Role
 
-This section is for configuring the TaikoWebUI [appsettings.json](./wwwroot/appsettings.json) file.
-This file holds **WebUI-only** presentation settings. Authentication / authorization knobs
-(`AuthenticationRequired`, `OnlyAdmin`, `BoundAccessCodeUpperLimit`, `RegisterWithLastPlayTime`,
-`AllowUserDelete`, `AllowFreeProfileEditing`) live in the server's
-[Host/Configurations/AuthSettings.json](../Host/Configurations/AuthSettings.json) and are
-fetched at startup via `GET /api/Auth/Config`. The server is the source of truth — the WebUI
-never needs to be restarted for an auth-policy change there.
+The WebUI provides browser access to profiles, score/history views, Dani data, favorites, customization catalogs, game data, and server administration surfaces. It is built into the Host publish output and does not run as a separate deployment.
+
+Era routing is handled through `TaikoWebUI.Utilities.WebUiEra`. Use that helper for user URLs and API URLs instead of composing era paths by hand.
+
+## Configuration
+
+Presentation settings live in [wwwroot/appsettings.json](./wwwroot/appsettings.json):
 
 ```json
 {
   "WebUiSettings": {
     "Title": "TaikoWebUI",
-    "DisplayUnplayedDans": "false", //Display all Dans, even ones that haven't been played yet.
-    "MaxWidth": "3", //0:Large, 1:Medium, 2:Small, 3:ExtraLarge, 4:ExtraExtraLarge
+    "DisplayUnplayedDans": "false",
+    "MaxWidth": "3",
     "SongLeaderboardSettings": {
       "DisablePagination": "false",
       "PageSize": "10"
-    },
-    "SupportedLanguages": [
-      {
-        "CultureCode": "en-US",
-        "DisplayName": "English"
-      },
-      {
-        "CultureCode": "fr-FR",
-        "DisplayName": "Français"
-      },
-      {
-        "CultureCode": "zh-Hans",
-        "DisplayName": "简体中文"
-      },
-      {
-        "CultureCode": "zh-Hant",
-        "DisplayName": "繁體中文"
-      },
-      {
-        "CultureCode": "ja",
-        "DisplayName": "日本語"
-      }
-    ]
+    }
   }
 }
 ```
+
+Authentication and account-policy settings live on the server in [../Host/Configurations/AuthSettings.json](../Host/Configurations/AuthSettings.json). The WebUI fetches that policy from `GET /api/Auth/Config`.
+
+## Blue Notes
+
+Blue is a supported WebUI era. Blue routes should use Blue AdminApi endpoints and Blue catalog data for customization, Dani, history, favorites, and profile settings.
+
+Treat title id `0` as the empty/default title in UI surfaces.
+
+## When To Add Code Here
+
+- Add browser UI for an AdminApi feature.
+- Add client-side presentation state.
+- Add WebUI route helpers or services that consume `Contracts.AdminApi`.
+
+Keep server behavior, persistence, and game-protocol logic outside this project.

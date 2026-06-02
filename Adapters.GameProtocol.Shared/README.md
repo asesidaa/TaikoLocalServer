@@ -1,38 +1,26 @@
 # Adapters.GameProtocol.Shared
 
-Common scaffolding shared by the per-version game-protocol adapters
-(`Adapters.GameProtocol.WwR08`, `Adapters.GameProtocol.CnR00`).
+Shared game-protocol scaffolding used by the per-era adapters.
 
 ## Role
 
-Hosts the bits that are identical across game versions: the
-`BaseProtocolController` controllers inherit from, gzip/header-strip
-helpers, protobuf-net configuration, and any other game-protocol-wide
-plumbing.
+This project contains controller base types, protobuf helpers, compression helpers, header handling, and shared startup/version controllers used by cabinet protocol adapters.
 
-## Dependencies
+## Key Folders
 
-- Inbound: `Adapters.AllnetMucha`, `Adapters.GameProtocol.WwR08`,
-  `Adapters.GameProtocol.CnR00`.
-- Outbound: `Application` only.
-- Notable packages: `protobuf-net`, `protobuf-net.AspNetCore`,
-  `SharpZipLib`.
+- `Controllers/` - `BaseProtocolController` and shared AC15 startup/version surfaces.
+- `Compression/` - gzip, decompression, and header-strip helpers.
 
-## Key folders
+## Adapter Boundary
 
-- `Controllers/` — `BaseProtocolController` (shared base for both
-  per-version adapters' controllers).
-- `Compression/` — gzip / 32-byte-header strip / decompression helpers.
+Use this project only for behavior that genuinely applies across protocol adapters. Per-era wire types, mappers, controllers, and runtime semantics belong in their own adapter or Application era partials.
 
-## When to add code here
+Blue and Green AC15 share `/v01r00/chassis/*` startup/version behavior, while their game endpoints remain separate under `/v10r03/chassis/*` and `/v11r01/chassis/*`.
 
-- A helper or base class that genuinely applies to **both** game-protocol
-  versions identically.
-- Shared protobuf-net configuration.
+## When To Add Code Here
 
-Do **not** add: per-version wire types or mappers (→
-`Adapters.GameProtocol.WwR08/Wire/`,
-`Adapters.GameProtocol.CnR00/Wire/`), per-version controllers (→ same),
-admin-API code (→ `Adapters.AdminApi`).
+- Add shared controller plumbing.
+- Add shared compression or protobuf request handling.
+- Add behavior that is identical across the relevant cabinet adapters.
 
-See the root `CLAUDE.md` for the full hexagonal layout.
+Do not add per-era wire models, mappers, or game endpoint behavior here.

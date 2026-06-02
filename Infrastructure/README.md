@@ -1,54 +1,35 @@
 # Infrastructure
 
-Concrete implementations of every port defined in
-`Application/Abstractions/`. Owns EF Core, SQLite, the filesystem catalog,
-JWT issuance, and the system clock.
+Infrastructure implements the ports defined in `Application/Abstractions`. It owns EF Core SQLite persistence, migrations, filesystem catalogs, JWT issuance, and the system clock.
 
 ## Role
 
-The outer ring of the hexagonal architecture. Talks to the world (database,
-filesystem, time, crypto) on behalf of `Application`. Also owns **all** EF
-Core migrations under `Persistence/Migrations/`; the server applies them
-automatically on startup.
+Application handlers depend on interfaces. This project provides the concrete database, catalog, identity, and time implementations used by the host process.
 
-## Dependencies
+The filesystem catalog is era-aware. `FileGameDataCatalog` creates enabled-era catalogs for Nijiiro, Green, and Blue according to `Host/Configurations/ServerSettings.json`.
 
-- Inbound: `Adapters.AdminApi`, `Adapters.AllnetMucha`, `Host`,
-  `LocalSaveModScoreMigrator`.
-- Outbound: `Domain`, `Contracts.AdminApi`, `Application`.
-- Notable packages: `Microsoft.EntityFrameworkCore.Sqlite`,
-  `Microsoft.EntityFrameworkCore.Tools`, `BCrypt.Net-Next`,
-  `EntityFrameworkCore.Exceptions.Sqlite`, `SharpZipLib`,
-  `System.IdentityModel.Tokens.Jwt`,
-  `Microsoft.AspNetCore.Authentication.JwtBearer`,
-  `Yoh.Text.Json.NamingPolicies`.
+## Key Folders
 
-## Key folders
+- `Persistence/` - `TaikoDbContext`, entity configuration, and migrations.
+- `GameDataCatalog/` - era catalog loaders, `FileGameDataCatalog`, `PathHelper`, and catalog constants.
+- `Identity/` - JWT and credential-related implementations.
+- `Time/` - system clock implementation.
+- `Settings/` - Infrastructure settings types.
+- `DependencyInjection.cs` - registers Infrastructure services and enabled-era catalogs.
 
-- `Persistence/` — `TaikoDbContext` (implements `ITaikoDbContext`) +
-  EF Core configurations + **all migrations** under
-  `Persistence/Migrations/`.
-- `GameDataCatalog/` — `FileGameDataCatalog` (implements
-  `IGameDataCatalog`), `PathHelper` (resolves `wwwroot` next to the
-  exe), `CatalogConstants`.
-- `Identity/` — `JwtTokenService` (implements `IJwtTokenService`) +
-  helpers.
-- `Time/` — `SystemClock` (implements `IClock`).
-- `Settings/` — `IOptions`-bound settings types specific to
-  Infrastructure concerns (file paths, JWT, etc.).
-- `DependencyInjection.cs` — `AddInfrastructure(IConfiguration)`
-  extension that wires up `TaikoDbContext`, the catalog, the JWT
-  service, the clock, and Infrastructure-owned settings.
+## Blue Notes
 
-## When to add code here
+- Blue game data is read from the configured `GameDataPath`, normally `wwwroot/data/blue/data`.
+- `BlueEraGameDataCatalog` loads normal catalog data, optional JSON catalogs, item-shop data, customization data, and battle catalog data.
+- Blue battle availability is enabled only when the five battle XML files under `config/S10100-1/battle` are present and parseable.
+- Blue customization catalogs can be generated from Blue AC15 data when `AutoExtractCatalog` is enabled.
+- Blue battle persistence belongs to BlueBattle entities and migrations; do not reuse Green AI Battle state.
 
-- A new implementation of a port defined in `Application/Abstractions/`.
-- A new EF Core entity configuration.
-- A new EF Core migration: from the repo root,
-  `dotnet ef migrations add <Name> --project Infrastructure --startup-project Host`.
+## When To Add Code Here
 
-Do **not** add: port **interfaces** (→ `Application/Abstractions/`), HTTP
-controllers (→ `Adapters.*`), domain entities (→ `Domain`), or admin-API
-DTOs (→ `Contracts.AdminApi`).
+- Add a concrete implementation for an Application port.
+- Add EF Core entity configuration or a migration.
+- Add a filesystem loader for operator or game data.
+- Add settings implementation code tied to persistence, identity, or catalog I/O.
 
-See the root `CLAUDE.md` for the full hexagonal layout.
+Do not add port interfaces, HTTP controllers, AdminApi DTOs, or domain-only entities here.

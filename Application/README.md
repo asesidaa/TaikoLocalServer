@@ -1,60 +1,36 @@
 # Application
 
-Orchestration layer. Owns the Mediator request/handler pipeline, port
-interfaces, and version-agnostic Common* DTOs. Knows about the Domain but
-not about EF Core, the filesystem, JWT, or HTTP wire types.
+Application is the use-case layer. It owns Mediator requests and handlers, port interfaces, version-agnostic `Common*` DTOs, server data shapes, settings, and protocol byte helpers.
 
 ## Role
 
-The "use case" layer of the hexagonal architecture. Handlers receive
-`Common*` DTOs (mapped from version-specific protobuf in the
-`Adapters.GameProtocol.*` projects) and orchestrate calls to ports
-(`ITaikoDbContext`, `IGameDataCatalog`, `IJwtTokenService`, `IClock`).
-Concrete implementations of those ports live in `Infrastructure`.
+Protocol adapters map their wire DTOs into `Common*` DTOs, then send Mediator requests into this project. Handlers orchestrate ports such as `ITaikoDbContext`, `IGameDataCatalog`, `IJwtTokenService`, and `IClock`. Concrete implementations live in `Infrastructure`.
 
-## Dependencies
+Blue, Green, and Nijiiro behavior uses the repo's partial-file pattern: shared dispatch in the unsuffixed file and era-specific behavior in `.Blue.cs`, `.Green.cs`, or `.Nijiiro.cs`.
 
-- Inbound: `Infrastructure`, `Adapters.AdminApi`, `Adapters.AllnetMucha`,
-  `Adapters.GameProtocol.Shared`, `Adapters.GameProtocol.WwR08`,
-  `Adapters.GameProtocol.CnR00`, `Host`.
-- Outbound: `Domain`, `Contracts.AdminApi`. Plus `Microsoft.AspNetCore.App`
-  framework reference (for `IFormFile` on a few admin handlers — not for
-  routing / hosting).
-- Mediator namespace: set to `TaikoLocalServer.Application` in
-  `DependencyInjection.cs`.
+## Key Folders
 
-## Key folders
+- `Abstractions/` - port interfaces and era catalog contracts.
+- `Handlers/` - Mediator request and handler types.
+- `Common/` - shared handler utilities and protocol byte helpers such as `BlueProtocolBytes` and `GreenProtocolBytes`.
+- `Dtos/` - version-agnostic request/response DTOs passed between adapters and handlers.
+- `Catalog/` - immutable in-memory catalog models consumed by handlers.
+- `ServerData/` - server-only JSON shapes loaded by the filesystem catalog.
+- `Settings/` - `IOptions`-bound settings such as `ServerSettings`.
+- `DependencyInjection.cs` - registers Mediator and application settings.
 
-- `Abstractions/` — port interfaces (`ITaikoDbContext`,
-  `IGameDataCatalog`, `IJwtTokenService`, `IClock`).
-- `Handlers/` — Mediator request/handler types. Convention:
-  `readonly record struct *Query : IRequest<TResponse>` +
-  `*QueryHandler : IRequestHandler<*Query, TResponse>` returning
-  `ValueTask<TResponse>`.
-- `Common/` — common helper utilities used by handlers.
-- `Dtos/` — version-agnostic Common* DTOs (`CommonBaidResponse`,
-  `CommonScoreData`, ...).
-- `Catalog/` — types describing in-memory catalog content used by
-  `IGameDataCatalog` consumers.
-- `ServerData/` — server-only JSON shapes (loaded by `FileGameDataCatalog`
-  but never sent to the WebUI: `EventFolderData`, `MovieData`,
-  `QRCodeData`, `ShopFolderData`, `SongIntroductionData`, ...).
-- `Settings/` — `IOptions`-bound settings types (`ServerSettings`,
-  `DataSettings`).
-- `DependencyInjection.cs` — `AddApplication()` extension that registers
-  Mediator + handlers + settings.
+## Blue Notes
 
-## When to add code here
+- Keep Blue normal and battle behavior in Blue partial handlers.
+- Keep battle state store-and-echo unless a field has concrete client, log, proto, or IDA evidence.
+- Do not let battle-classified playresults fall through to normal Blue score, crown, Dani, profile, favorite, or normal unlock writes.
+- Use Blue-owned DTO fields and byte helpers for fixed-width Blue payloads.
 
-- New use case → add a `*Query`/`*Command` + `*Handler` under `Handlers/`.
-- New port interface → add to `Abstractions/`, register implementation in
-  `Infrastructure/DependencyInjection.cs`'s `AddInfrastructure(...)`.
-- Server-only `ServerData` JSON shape (not consumed by the WebUI).
-- New version-agnostic Common* DTO.
+## When To Add Code Here
 
-Do **not** add: EF Core context or migrations (→ `Infrastructure`),
-admin-API DTOs the WebUI binds (→ `Contracts.AdminApi`), HTTP controllers
-(→ `Adapters.*`), JWT issuance / SQLite / catalog file I/O
-(→ `Infrastructure`).
+- Add a new `*Query` or `*Command` and handler for a use case.
+- Add a port interface before implementing it in `Infrastructure`.
+- Add a server-only data shape that is not consumed directly by the WebUI.
+- Add or extend a `Common*` DTO used by protocol mappers.
 
-See the root `CLAUDE.md` for the full hexagonal layout.
+Do not add EF Core context code, migrations, HTTP controllers, JWT issuance, or filesystem I/O here.

@@ -6,13 +6,12 @@ As the game uses protobuf, `protobuf-net` is used for serializing and deserializ
 
 - [Taiko Local Server](#taiko-local-server)
   - [Data file layout (per-era)](#data-file-layout-per-era)
-  - [Green AC15 Test Support](#green-ac15-test-support)
+  - [Green AC15 Setup](#green-ac15-setup)
     - [Green game data symlink](#green-game-data-symlink)
     - [Green customization catalogs](#green-customization-catalogs)
     - [Green attract movies](#green-attract-movies)
     - [Green item shop](#green-item-shop)
-  - [Blue AC15 Test Support](#blue-ac15-test-support)
-    - [Green Cabinet Smoke Checklist](#green-cabinet-smoke-checklist)
+  - [Blue AC15 Setup](#blue-ac15-setup)
   - [Datatable documentation](#datatable-documentation)
     - [dan\_data.json](#dan_datajson)
     - [event\_folder\_data.json](#event_folder_datajson)
@@ -72,7 +71,7 @@ wwwroot/data/
 |       |-- config/S10100-1/
 |       |   |-- musicinfo.xml
 |       |   |-- musicmedleyinfo.xml
-|       |   `-- battle/             Present but reserved for Track B
+|       |   `-- battle/             Blue battle XML files
 |       `-- fumen/
 |           `-- tuning.bin
 `-- shared/                     Cross-era operator-edited tables
@@ -84,7 +83,7 @@ Era availability is controlled by `Configurations/ServerSettings.json` under
 `ServerSettings:Eras`. Nijiiro is enabled by default. To allow Green or Blue
 cabinet routes, set the corresponding era's `Enabled` value to `true`.
 
-## Green AC15 Test Support
+## Green AC15 Setup
 
 When `ServerSettings:Eras:Green:Enabled` is `true`, the server requires:
 
@@ -129,12 +128,12 @@ For slot mapping enrichment, run the IDA-backed stage in `docs/superpowers/plans
 
 The extractor reads the game-data tree and writes only the generated JSON files under `wwwroot/data/green`. It does not modify the operator's game-data tree. Names may be blank on Phase 1 output; the WebUI displays id labels such as `#004` until an enriched catalog is generated.
 
-The current Green implementation intentionally unlocks a small deterministic song set for cabinet validation:
+The current Green implementation unlocks a small deterministic starter song set:
 
 - no-card/default song flags: first 10 `uniqueid` values from `musicinfo.xml`
 - logged-in user release flags: first 20 `uniqueid` values from `musicinfo.xml`
 
-New Green users also receive deterministic fake best scores/crowns and receive the first fake Dan on their first known-card login after registration. This is test scaffolding for verifying Green bitset, self-best, crown, and Dan response formats.
+New Green users also receive deterministic starter best scores, crowns, and the first Dan on their first known-card login after registration.
 
 ### Green attract movies
 
@@ -221,7 +220,7 @@ The shop data file stores protocol data only:
 or source metadata. Official announcement pages list names in images, so
 name-to-id resolution is an offline curation step.
 
-## Blue AC15 Test Support
+## Blue AC15 Setup
 
 When `ServerSettings:Eras:Blue:Enabled` is `true`, the server requires:
 
@@ -253,20 +252,20 @@ data unless a feature setting requires them. `blue_item_shop_data.json` is
 required only when `ServerSettings:Eras:Blue:EnableShop` is `true`; then
 `ActiveShopSeasonId` must match a season in that file.
 
-`config/S10100-1/battle` exists in Blue game data, but battle catalog parsing
-and battle mode behavior are reserved for Track B.
+Blue battle availability is data-driven. Keep the complete battle XML folder at
+`wwwroot/data/blue/data/config/S10100-1/battle`:
 
-### Green Cabinet Smoke Checklist
+- `battleadjsetting.xml`
+- `battlenpcinfo.xml`
+- `battlestageinfo.xml`
+- `battlesupportinfo.xml`
+- `battletokeninfo.xml`
 
-1. Start server with `ServerSettings:Eras:Green:Enabled = true`.
-2. Boot cabinet and reach song select without card. Confirm 10 songs are visible.
-3. Register a card through `mydonentry`.
-4. Log in with that card. Confirm 20 songs are visible.
-5. Confirm fake self-best/crown data appears for the seeded songs.
-6. Log out and log in again. Confirm first fake Dan appears.
-7. Change gameplay options, play a song, and log in again. Confirm option state did not reset.
-8. Play a song and confirm `selfbest` and `crownsdata` reflect the upload.
-9. Enter any ghost/AI-battle-like flow available on the cabinet. Confirm it does not crash and request logs show bounded byte previews.
+If the battle XML set is missing or malformed, normal Blue data can still load
+but battle availability remains off. Blue battle state is persisted in
+Blue-owned database tables and read back through `battleuserdata.php`;
+unresolved battle reward, token, boss, and stage-graph semantics remain
+store-and-echo rather than server-calculated behavior.
 
 ## Datatable documentation
 

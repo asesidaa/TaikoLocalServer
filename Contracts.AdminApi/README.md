@@ -1,41 +1,28 @@
 # Contracts.AdminApi
 
-DTO-only project shared between the admin REST API and the Blazor
-WebAssembly UI. No business logic, no EF Core, no I/O.
+Contracts.AdminApi is the DTO project shared by `Adapters.AdminApi` and `TaikoWebUI`. It contains JSON shapes, view models, shared server-data contracts, and converters used on both sides of the admin API.
 
 ## Role
 
-Defines the exact JSON shapes that cross the wire between
-`Adapters.AdminApi` (server) and `TaikoWebUI` (client) so both can
-serialize/deserialize the same types without duplication. Also hosts the
-WebUI-shared `ServerData` JSON shapes (`DanData`, `MusicDetail`,
-`IVerupNo`) and the `PlaySettingConverter` used by both sides.
+This project keeps browser and server serialization in sync without depending on Application or Infrastructure. It may reference Domain for enums, but it should not contain runtime behavior.
 
-## Dependencies
+## Key Folders
 
-- Inbound: `Application`, `Infrastructure`, `Adapters.AdminApi`,
-  `Adapters.GameProtocol.WwR08`, `Adapters.GameProtocol.CnR00`,
-  `TaikoWebUI`.
-- Outbound: `Domain` only (for enums).
+- `Requests/` - DTOs accepted by AdminApi controllers.
+- `Responses/` - DTOs returned by AdminApi controllers.
+- `ViewModels/` - UI-facing shapes bound by WebUI components and pages.
+- `ServerData/` - JSON shapes that the WebUI also needs to read.
+- `Converters/` - shared JSON converters.
+- `Authorization/` - admin authorization contract helpers.
 
-## Key folders
+## Era Notes
 
-- `Requests/` — request DTOs accepted by `Adapters.AdminApi/Controllers/`.
-- `Responses/` — response DTOs returned by the same.
-- `ViewModels/` — UI-facing view models bound by MudBlazor pages.
-- `ServerData/` — operator-edited JSON shapes that the WebUI displays
-  (`DanData`, `MusicDetail`, `IVerupNo`).
-- `Converters/` — `JsonConverter` types used in both server and client
-  serialization (`PlaySettingConverter`).
+Admin contracts may carry era values or era-scoped fields when the WebUI needs them. Keep Blue-specific contract data explicit; do not overload Green fields for Blue behavior.
 
-## When to add code here
+## When To Add Code Here
 
-- New admin-API request, response, or view model that the WebUI binds to.
-- A `ServerData` JSON shape that the WebUI **also** needs to read.
-- A `JsonConverter` that both server and WebUI must apply identically.
+- Add a request, response, or view model consumed by TaikoWebUI.
+- Add a shared JSON shape used by both server and WebUI.
+- Add a converter required by both sides of admin serialization.
 
-Do **not** add: business logic, EF Core entities (→ `Domain`), server-only
-JSON shapes (→ `Application/ServerData/`), or anything depending on
-`Application`/`Infrastructure`.
-
-See the root `CLAUDE.md` for the full hexagonal layout.
+Do not add EF entities, Application handlers, Infrastructure services, or game protocol wire models here.

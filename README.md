@@ -1,68 +1,109 @@
 # Taiko Local Server
 
-This is a server for Taiko no Tatsujin Nijiiro ver CHN and 39.06  
-It is composed of two major components :
+TaikoLocalServer is a local ASP.NET Core server for Taiko no Tatsujin cabinet protocols. It serves game endpoints, AllNet/Mucha lifecycle endpoints, SQLite persistence, era-specific filesystem catalogs, and the Blazor WebAssembly admin UI from one process.
 
-- [TaikoLocalServer](./Host/): The server handling the game's requests
-- [TaikoWebUI](./TaikoWebUI/): The frontend handling user profiles.
+Supported eras:
+
+- Nijiiro CHN and WW
+- Green AC15
+- Blue AC15, including normal play and Blue battle runtime support
+
+## Project Readmes
+
+- [Host](./Host/README.md) - server runtime, data layout, era setup, and operator JSON files
+- [TaikoWebUI](./TaikoWebUI/README.md) - WebUI presentation settings
+- [Application](./Application/README.md) - Mediator handlers, ports, common DTOs, and use-case layer
+- [Infrastructure](./Infrastructure/README.md) - SQLite, migrations, filesystem catalogs, identity, and time
+- [Domain](./Domain/README.md) - entities, enums, and constants
+- [Contracts.AdminApi](./Contracts.AdminApi/README.md) - DTOs shared by AdminApi and WebUI
+- [Adapters.AdminApi](./Adapters.AdminApi/README.md) - admin REST API routes
+- [Adapters.AllnetMucha](./Adapters.AllnetMucha/README.md) - AllNet/Mucha lifecycle routes
+- [Adapters.GameProtocol.Shared](./Adapters.GameProtocol.Shared/README.md) - shared game-protocol helpers
+- [Adapters.GameProtocol.WwR08](./Adapters.GameProtocol.WwR08/README.md) - Nijiiro WW adapter
+- [Adapters.GameProtocol.CnR00](./Adapters.GameProtocol.CnR00/README.md) - Nijiiro CN adapter
+- [Adapters.GameProtocol.Green](./Adapters.GameProtocol.Green/README.md) - Green AC15 adapter
+- [Adapters.GameProtocol.Blue](./Adapters.GameProtocol.Blue/README.md) - Blue AC15 adapter
+- [GreenCatalogExtractor](./GreenCatalogExtractor/README.md) - Green AC15 catalog extraction utility
+- [LocalSaveModScoreMigrator](./LocalSaveModScoreMigrator/README.md) - local-save import utility
 
 ## Installation
 
-### Prerequisite
+### Prerequisites
 
-- You need a working game install, with dongle and QR reader emulation.  
-  You can use [TaikoArcadeLoader](https://github.com/esuo1198/TaikoArcadeLoader) to have these working (Teknoparrot will NOT work).
+- Install the .NET 10 SDK when running from source.
+- Use a working game install with dongle and QR reader emulation. [TaikoArcadeLoader](https://github.com/esuo1198/TaikoArcadeLoader) can provide these pieces; Teknoparrot is not suitable for this server.
 
 ### Setup Steps
 
-1. Extract the Server's release anywhere
-2. For Nijiiro, from the game files (`Data/x64/datatable`), copy `music_order.bin`, `musicinfo.bin`, `wordlist.bin`, `don_cos_reward.bin`, `shougou.bin`, `neiro.bin` to [Host/wwwroot/data/nijiiro/datatable](./Host/wwwroot/data/nijiiro/datatable/)
-3. For Green, provide the game's `USRDIR/data` folder under `wwwroot/data/green/data`. In an extracted release folder, either link it from your RPCS3 install:
-   ```powershell
-   New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\wwwroot\data\green\data'
-   ```
-   or copy it into the release folder:
-   ```powershell
-   New-Item -ItemType Directory -Force -Path '.\wwwroot\data\green' | Out-Null
-   Copy-Item -Recurse -Path 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data' -Destination '.\wwwroot\data\green\data'
-   ```
-   If you run from a source checkout instead of a release folder, use the `Host` path:
-   ```powershell
-   New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\Host\wwwroot\data\green\data'
-   ```
-   For Blue AC15, provide the game's `USRDIR/data` folder under
-   `wwwroot/data/blue/data`. The required normal catalog files are:
+1. Extract a release anywhere, or use a source checkout.
+2. Configure enabled eras in [Host/Configurations/ServerSettings.json](./Host/Configurations/ServerSettings.json). At least one of `Nijiiro`, `Green`, or `Blue` must be enabled.
+3. For Nijiiro, copy the game datatable files from `Data/x64/datatable` into `wwwroot/data/nijiiro/datatable` in a release folder, or `Host/wwwroot/data/nijiiro/datatable` in a source checkout:
+   - `music_order.bin`
+   - `musicinfo.bin`
+   - `wordlist.bin`
+   - `don_cos_reward.bin`
+   - `shougou.bin`
+   - `neiro.bin`
+4. For Green AC15, provide the game's `USRDIR/data` folder at `wwwroot/data/green/data` in a release folder, or `Host/wwwroot/data/green/data` in a source checkout.
+5. For Blue AC15, provide the game's `USRDIR/data` folder at `wwwroot/data/blue/data` in a release folder, or `Host/wwwroot/data/blue/data` in a source checkout. Normal Blue startup requires:
+   - `config/S10100-1/musicinfo.xml`
+   - `config/S10100-1/musicmedleyinfo.xml`
+   - `fumen/tuning.bin`
+6. For Blue battle availability, keep the complete battle XML folder under `wwwroot/data/blue/data/config/S10100-1/battle`:
+   - `battleadjsetting.xml`
+   - `battlenpcinfo.xml`
+   - `battlestageinfo.xml`
+   - `battlesupportinfo.xml`
+   - `battletokeninfo.xml`
+7. Optionally import `root.pfx` into the trusted root store and `cert.pfx` into the personal store from the `Certificates` folder.
+8. Start the server and visit [http://localhost](http://localhost). If the WebUI loads, the server and UI are being served from the same host.
 
-   - `wwwroot/data/blue/data/config/S10100-1/musicinfo.xml`
-   - `wwwroot/data/blue/data/config/S10100-1/musicmedleyinfo.xml`
-   - `wwwroot/data/blue/data/fumen/tuning.bin`
+### AC15 Data Symlink Example
 
-   Battle data under `wwwroot/data/blue/data/config/S10100-1/battle` is reserved
-   for the later Blue battle-mode track.
-4. (Optional) In `Certificates` folder, import `root.pfx` to trusted root store and `cert.pfx` to personal store. All the other import options can be kept default
-5. Visit [http://localhost](http://localhost). If the WebUI starts without errors, the config is fine
-6. Start your game! (First boot with the server will take a good minute, be patient!)
+From a source checkout:
+
+```powershell
+New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\Host\wwwroot\data\green\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\Host\wwwroot\data\blue\data'
+```
+
+From an extracted release folder:
+
+```powershell
+New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\wwwroot\data\green\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\wwwroot\data\blue\data'
+```
+
+PowerShell may need Administrator privileges unless Windows Developer Mode allows unprivileged symlink creation.
 
 ## Configuration
 
-### TaikoLocalServer configuration
+Server configuration lives under [Host/Configurations](./Host/Configurations/). Runtime data lives under [Host/wwwroot/data](./Host/wwwroot/data/) in a source checkout and under `wwwroot/data` next to a published executable.
 
-There are various json files under [Host/wwwroot/data](./Host/wwwroot/data/) that can be customized. Nijiiro files live under `nijiiro/`, cross-era files live under `shared/`, and Green support is controlled by `ServerSettings:Eras` in [ServerSettings.json](./Host/Configurations/ServerSettings.json).  
-Please refer to the [Host README file](./Host/README.md) for documentation.
+The most important server settings are:
 
-### TaikoWebUI configuration
+- `ServerSettings:Eras:<Era>:Enabled` - registers or removes era routes.
+- `ServerSettings:Eras:<Era>:GameDataPath` - AC15 source data path for Green and Blue.
+- `ServerSettings:Eras:<Era>:AutoExtractCatalog` - allows first-run AC15 customization catalog extraction.
+- `ServerSettings:Eras:<Era>:EnableShop` and `ActiveShopSeasonId` - controls Green and Blue item-shop availability.
 
-The WebUI has a few settings you can change in [appsettings.json](./TaikoWebUI/wwwroot/appsettings.json)  
-Please refer to the [taikowebui readme file](./TaikoWebUI/README.md) for documentation.
+See [Host/README.md](./Host/README.md) for data file details.
 
-## For developers
+The WebUI reads presentation settings from [TaikoWebUI/wwwroot/appsettings.json](./TaikoWebUI/wwwroot/appsettings.json). See [TaikoWebUI/README.md](./TaikoWebUI/README.md).
 
-This solution uses [Central Package Management](https://learn.microsoft.com/en-us/nuget/consume-packages/central-package-management) — package versions live in `Directory.Packages.props` at the repo root, not in individual `.csproj` files. To add or bump a package, edit `Directory.Packages.props` and add a versionless `<PackageReference Include="…" />` to the project that uses it.
+## For Developers
 
-Shared MSBuild defaults (TFM, Nullable, ImplicitUsings, LangVersion) live in `Directory.Build.props`.
+This solution uses Central Package Management. Package versions live in `Directory.Packages.props`; individual project files use versionless package references.
 
-The repo pins the .NET SDK band via `global.json`.
+Shared MSBuild defaults live in `Directory.Build.props`, and the SDK band is pinned by `global.json`.
 
-This solution targets **.NET 10 LTS**. Install the .NET 10 SDK from <https://dotnet.microsoft.com/download> (or any 10.0.x patch — the `global.json` allows latestFeature roll-forward).
+Useful commands from the repo root:
 
-The admin UI uses **MudBlazor 9.x**. If you customize `TaikoWebUI/`, refer to the [MudBlazor v9 docs](https://mudblazor.com/) — components and parameters changed across the 7→8→9 majors compared to older forks.
+```powershell
+dotnet build TaikoLocalServer.slnx
+dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build"
+dotnet run --project Host
+dotnet publish Host/Host.csproj
+```
+
+Use the temp-output Host build when a running server locks `Host/bin/Debug/net10.0`.

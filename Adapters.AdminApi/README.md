@@ -1,44 +1,29 @@
 # Adapters.AdminApi
 
-The inbound adapter for the admin REST API consumed by `TaikoWebUI`.
-Routes are under `/api/...`.
+Adapters.AdminApi is the inbound REST adapter consumed by `TaikoWebUI`. Routes are under `/api/...`.
 
 ## Role
 
-HTTP-facing translation layer between the WebUI and the `Application`
-handlers. Each controller deserializes a `Contracts.AdminApi` request
-type, sends it through `IMediator`, then returns a `Contracts.AdminApi`
-response type. Auth is opt-in via `[AuthorizeIfRequired]`, which short-
-circuits when `AuthSettings.AuthenticationRequired` is false.
+Controllers translate HTTP requests into Application requests or admin DTO operations, then return `Contracts.AdminApi` response shapes. Authentication is opt-in through `[AuthorizeIfRequired]`, which follows `Host/Configurations/AuthSettings.json`.
 
-## Dependencies
+## Key Folders
 
-- Inbound: `Host` only.
-- Outbound: `Application`, `Infrastructure`, `Contracts.AdminApi`.
-- Notable packages: `Microsoft.AspNetCore.Authentication.JwtBearer`,
-  `Riok.Mapperly`, `Otp.NET`, `Swan.Core`, `Throw`.
+- `Controllers/` - admin REST controllers.
+- `Filters/` - authorization filter helpers.
+- `Mapping/` - mapper helpers for admin contract shapes.
+- `BaseAdminController.cs` - shared controller base with lazy service access.
+- `DependencyInjection.cs` - registers auth, OTP/QR services, and controllers.
 
-## Key folders
+## Era Routing
 
-- `Controllers/` — REST controllers. Inherit `BaseAdminController` (which
-  lazily resolves `IMediator` and `Logger` from request services).
-- `Filters/` — `AuthorizeIfRequiredAttribute` (the toggleable auth
-  filter).
-- `BaseAdminController.cs` — base class for all admin controllers.
-- `DependencyInjection.cs` — `AddAdminApi(IConfiguration)` extension that
-  registers JWT bearer auth, the OTP/QR services, and the admin
-  controllers.
+Era-aware admin routes should support `/api/{era}/...` with `EraRoute.TryParse`. Preserve existing legacy routes where a controller already exposes them.
 
-## When to add code here
+Blue WebUI/AdminApi parity is present for profile, history, favorites, Dani, customization data, and user settings surfaces. Keep Blue routes backed by Blue state and catalogs rather than Green state.
 
-- New admin API endpoint → add a controller under `Controllers/`,
-  inheriting `BaseAdminController`, with `[AuthorizeIfRequired]` if it
-  needs auth.
-- The request/response DTO it accepts/returns lives in
-  `Contracts.AdminApi/{Requests,Responses,ViewModels}` so the WebUI can
-  consume it.
+## When To Add Code Here
 
-Do **not** query `ITaikoDbContext` directly from a controller — that's a
-handler's job. Send through `IMediator` instead.
+- Add an admin endpoint used by the WebUI.
+- Add route-level validation for admin inputs.
+- Add an adapter mapper for admin contract shapes.
 
-See the root `CLAUDE.md` for the full hexagonal layout.
+Put request and response DTOs in `Contracts.AdminApi`. Put runtime behavior in Application handlers when the operation belongs to a game use case.
