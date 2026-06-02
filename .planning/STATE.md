@@ -144,7 +144,7 @@ None yet.
 | 260529-6ow | Add event_folder, movie_data and telop data support to Blue | 2026-05-28 | d47efb09 | [260529-6ow-add-event-folder-movie-data-and-telop-da](./quick/260529-6ow-add-event-folder-movie-data-and-telop-da/) |
 | 260529-sk1 | Implement Phase 2 in a quick way with Blue AdminApi and WebUI parity using existing Green/Nijiiro mirrors limited to Blue data | 2026-05-29 | faa2117c | [260529-sk1-implement-phase-2-in-a-quick-way-with-bl](./quick/260529-sk1-implement-phase-2-in-a-quick-way-with-bl/) |
 | 260530-2ps | Complete Blue WebUI game-data support by parsing Blue customization data and loading shared names | 2026-05-30 | 55939226 | [260530-2ps-complete-blue-webui-game-data-support-by](./quick/260530-2ps-complete-blue-webui-game-data-support-by/) |
-| 260603-20d | Simplify BlueBattleReleaseStates design using latest battleuserdata byte-array evidence | 2026-06-02 | pending | [260603-20d-simplify-bluebattlereleasestates-design-](./quick/260603-20d-simplify-bluebattlereleasestates-design-/) |
+| 260603-20d | Simplify BlueBattleReleaseStates design using latest battleuserdata byte-array evidence | 2026-06-02 | 679aacea | [260603-20d-simplify-bluebattlereleasestates-design-](./quick/260603-20d-simplify-bluebattlereleasestates-design-/) |
 
 ## Deferred Items
 
