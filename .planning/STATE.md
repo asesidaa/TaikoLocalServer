@@ -4,7 +4,7 @@ milestone: v1.0
 milestone_name: milestone
 status: verifying
 stopped_at: Completed 05-11-PLAN.md
-last_updated: "2026-06-02T17:32:43.000Z"
+last_updated: "2026-06-02T18:58:17.329Z"
 last_activity: 2026-06-02
 progress:
   total_phases: 6
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-05-28)
 Phase: 6
 Plan: Not started
 Status: Phase complete - ready for verification
-Last activity: 2026-05-30
+Last activity: 2026-06-02 - Completed quick task 260603-44k: Store Blue battle shop rewards and recent songs
 
 Progress: [##########] 100%
 
@@ -103,7 +103,7 @@ Recent decisions affecting current work:
 - [Phase 04-blue-battle-evidence-and-design]: All five local Blue battle XML files remain candidate data only until IDA/client proof establishes runtime role. — Plan 04-02 inventory found local XML shape but no direct client proof for battle menu entry or runtime defaults.
 - [Phase 04-blue-battle-evidence-and-design]: Unproven battle widths, defaults, row counts, stage assignments, token and NPC semantics, boss-life defaults, and last-stage behavior are routed to 04-03 case-by-case approval. — The proof matrix found proto/wire presence and local XML counts, but not enough evidence to rely on specific runtime defaults in Phase 5.
 - [Phase 04-blue-battle-evidence-and-design]: Optional battle protobuf fields with unproven defaults stay omitted by default using generated presence semantics. — Generated Blue wire types expose ShouldSerialize helpers, and D-11 requires omission rather than zero-filled defaults when proof is missing.
-- [Phase 04-blue-battle-evidence-and-design]: Blue battle playresult effects are battle-owned and must not update normal Blue score, crown, play history, recent/favorite, profile counter, normal self-best, or Dani state.
+- [Phase 04-blue-battle-evidence-and-design]: Blue battle playresult effects remain battle-owned and must not update normal Blue score, crown, normal play history, favorite, profile counter, normal self-best, unlock, or Dani state; quick task 260603-44k explicitly allows active-shop Don medal accrual and `BlueRecentSongs` updates from battle playresults.
 - [Phase 04-blue-battle-evidence-and-design]: Phase 5 Blue battle runtime planning remains BLOCKED because required field/default/row-count/menu-entry evidence is still missing.
 - [Phase 04-blue-battle-evidence-and-design]: No APPROVED_WITH_USER_EXCEPTIONS rows were recorded for 04-03; no user approvals were invented.
 - [Phase 05]: Blue battle persistence shape starts as BlueBattle* nullable/raw state, not zero-filled defaults or XML-derived rows.
@@ -115,18 +115,18 @@ Recent decisions affecting current work:
 - [Phase 05]: Token values, boss life, last-stage state, and `assign_next_stage_id` are stored and returned without server-side token reward, boss completion, or stage graph logic.
 - [Phase 05]: Stage `33` is recorded as a likely Stage EX special-event candidate with implementation deferred.
 - [Phase 05]: AddBlueBattleState creates only BlueBattle tables plus BAID foreign keys to UserData. — Plan 05-05 verifies migration operations and persistence isolation for BTL-01/BTL-06.
-- [Phase 05]: BlueBattle persistence tests assert nullable unresolved fields and no writes to normal Blue, shop, Dani, recent/favorite, or Green AI Battle state. — The test suite guards the 05-05 migration/persistence boundary against cross-era and normal Blue state leakage.
+- [Phase 05]: BlueBattle persistence tests assert nullable unresolved fields and no writes to forbidden normal Blue score/best/Dani/favorite/item/unlock/profile state or Green AI Battle state. — Quick task 260603-44k adds explicit coverage for the allowed active-shop Don medal and `BlueRecentSongs` battle side effects.
 - [Phase 05]: Focused runtime persistence tests use EnsureCreated because the historical migration chain cannot migrate a blank in-memory SQLite database. — The old SeparateTokens migration is unrelated to 05-05; migration correctness is covered by EF migration listing and a migration-operation guard.
 - [Phase 05]: Blue battleuserdata.php now uses a Blue-owned Mediator query and mapper instead of local controller success construction.
 - [Phase 05]: 2026-06-01 battle crash reanalysis supersedes the catalog-derived/persisted battleuserdata default assumptions. IDA daemon evidence shows the client consumes fixed slices only: 16-byte release info, 8-byte battle stage flags, 4-byte NPC costume flags, and 16-byte NPC special flags; optional zero scalars behave like omitted defaults in `OnBattleUserDataResponse`.
 - [Phase 05]: Blue battleuserdata now uses a safe starter only when no persisted battle state exists, then echoes client-reported Blue battle state from persistence. The 2026-06-01 played session proves runtime NPC id 0 for the first NPC, selected special 1, release info id 1, last/assign stage 1, and persisted readback after playresult; XML `battlenpcinfo` ids are normalized from one-based catalog ids to zero-based runtime ids.
-- [Phase 05]: Battle-classified Blue playresults branch immediately after Blue user validation and before normal save, shop, unlock, stage, profile, recent/favorite, and Dani writes.
-- [Phase 05]: Battle playresults persist only client-reported stage, release, NPC, token, boss-life, last-stage, and assignment state into BlueBattle tables.
+- [Phase 05]: Battle-classified Blue playresults branch immediately after Blue user validation and before forbidden normal save, unlock, score/crown, profile, favorite, and Dani writes; quick task 260603-44k adds active-shop Don medal and recent-song writes as explicit allowed side effects.
+- [Phase 05]: Battle playresults persist client-reported stage, release, NPC, token, boss-life, last-stage, and assignment state into BlueBattle tables, plus active-shop Don medals and recent songs from playresult summary/stage fields.
 - [Phase 05]: Release NPC IDs are not persisted as a separate observation row; NPC state is updated from BattleStageData NPC values and release costume/special bit diffs only when a persisted current NPC row identifies the owner.
 - [Phase 05]: Blue battle initialdata derives global battle availability from parsed battle XML. — The 2026-06-02 daemon-backed IDA correction proves initialdata stage flags are the global stage availability bitset, not the battleuserdata user/progression mask.
 - [Phase 05]: Phase 05 automated server verification passed; cabinet/RPCS3 battle smoke remains Phase 6 FULL-01. — 05-11 ran focused BlueBattle tests, full test suite, and temp-output Host build; no cabinet/RPCS3 run was performed.
 - [Phase 05]: Blue battle initialdata closeout requires parsed catalog data and distinct stage-flag ownership. — 05-11 source guards enforce parsed battle stage availability, battle special rewards, and bonds cap; 2026-06-02 tracing keeps initialdata and battleuserdata stage masks separate.
-- [Phase 05]: BTL-05 remains store/echo-only for approved rows after Phase 05. — 05-11 requirement tests keep stage 33, reward effects, token thresholds, boss completion, and normal unlock mirrors tied to explicit blocked or approved row statuses.
+- [Phase 05]: BTL-05 battle token state remains store/echo-only for approved rows after Phase 05. — 05-11 requirement tests keep stage 33, reward effects, token thresholds, boss completion, and normal unlock mirrors tied to explicit blocked or approved row statuses.
 
 ### Pending Todos
 
@@ -145,6 +145,7 @@ None yet.
 | 260529-sk1 | Implement Phase 2 in a quick way with Blue AdminApi and WebUI parity using existing Green/Nijiiro mirrors limited to Blue data | 2026-05-29 | faa2117c | [260529-sk1-implement-phase-2-in-a-quick-way-with-bl](./quick/260529-sk1-implement-phase-2-in-a-quick-way-with-bl/) |
 | 260530-2ps | Complete Blue WebUI game-data support by parsing Blue customization data and loading shared names | 2026-05-30 | 55939226 | [260530-2ps-complete-blue-webui-game-data-support-by](./quick/260530-2ps-complete-blue-webui-game-data-support-by/) |
 | 260603-20d | Simplify BlueBattleReleaseStates design using latest battleuserdata byte-array evidence | 2026-06-02 | 679aacea | [260603-20d-simplify-bluebattlereleasestates-design-](./quick/260603-20d-simplify-bluebattlereleasestates-design-/) |
+| 260603-44k | Store Blue battle shop rewards and recent songs | 2026-06-02 | c2d471a9 | [260603-44k-now-let-s-make-some-changes-to-how-we-ha](./quick/260603-44k-now-let-s-make-some-changes-to-how-we-ha/) |
 
 ## Deferred Items
 
