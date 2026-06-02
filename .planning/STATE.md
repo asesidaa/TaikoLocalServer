@@ -146,6 +146,7 @@ None yet.
 | 260530-2ps | Complete Blue WebUI game-data support by parsing Blue customization data and loading shared names | 2026-05-30 | 55939226 | [260530-2ps-complete-blue-webui-game-data-support-by](./quick/260530-2ps-complete-blue-webui-game-data-support-by/) |
 | 260603-20d | Simplify BlueBattleReleaseStates design using latest battleuserdata byte-array evidence | 2026-06-02 | 679aacea | [260603-20d-simplify-bluebattlereleasestates-design-](./quick/260603-20d-simplify-bluebattlereleasestates-design-/) |
 | 260603-44k | Store Blue battle shop rewards and recent songs | 2026-06-02 | c2d471a9 | [260603-44k-now-let-s-make-some-changes-to-how-we-ha](./quick/260603-44k-now-let-s-make-some-changes-to-how-we-ha/) |
+| 260603-docs | Update Blue support README and agent docs | 2026-06-03 | 5e79a815 | - |
 
 ## Deferred Items
 
