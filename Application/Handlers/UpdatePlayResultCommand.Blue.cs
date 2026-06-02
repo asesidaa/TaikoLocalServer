@@ -275,13 +275,22 @@ public partial class UpdatePlayResultCommandHandler
             context.BlueFavoriteSongs.Remove(favorite);
         }
 
-        var recent = await context.BlueRecentSongs.FindAsync([baid, stage.SongNo], cancellationToken);
+        await UpsertBlueRecentAsync(baid, stage.SongNo, playTime, cancellationToken);
+    }
+
+    private async Task UpsertBlueRecentAsync(
+        uint baid,
+        uint songNo,
+        DateTime playTime,
+        CancellationToken cancellationToken)
+    {
+        var recent = await context.BlueRecentSongs.FindAsync([baid, songNo], cancellationToken);
         if (recent is null)
         {
             context.BlueRecentSongs.Add(new BlueRecentSongs
             {
                 Baid = baid,
-                SongNo = stage.SongNo,
+                SongNo = songNo,
                 LastPlayed = playTime
             });
         }

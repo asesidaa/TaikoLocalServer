@@ -1,9 +1,11 @@
+using TaikoLocalServer.Application.Catalog.Blue;
+
 namespace TaikoLocalServer.Tests.Blue;
 
 public sealed class BlueBattlePlayResultHandlerTests
 {
     [Fact]
-    public async Task UpdatePlayResult_Blue_BattlePayloadPersistsBlueBattleRowsOnly()
+    public async Task UpdatePlayResult_Blue_BattlePayloadPersistsBattleRowsAndAllowedPlaySummary()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -63,8 +65,99 @@ public sealed class BlueBattlePlayResultHandlerTests
         var token = await fixture.Context.BlueBattleTokenStates.SingleAsync(row => row.Baid == 1 && row.TokenId == 17);
         Assert.Equal(765u, token.TokenValue);
 
-        await AssertNormalBlueStateEmptyAsync(fixture.Context);
+        await AssertBattleForbiddenNormalBlueStateEmptyAsync(fixture.Context);
         Assert.Empty(await fixture.Context.UserSaveDataBlue.ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Blue_BattlePayloadAddsShopDonmedalsToActiveSeason()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync(CreateShopCatalog());
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Blue,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayDatetime = "20260528120000",
+                GetDonmedal = 50,
+                GetKatsumedal = 60,
+                IsBattlePlayResult = true,
+                BattleReleaseData = CreateReleaseData(assignNextStageId: 12),
+                AryStageInfoes = []
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+
+        var shopState = await fixture.Context.BlueShopSeasonStates.SingleAsync(row => row.Baid == 1 && row.SeasonId == 2);
+        Assert.Equal(50u, shopState.TotalGetDonmedal);
+        Assert.Equal(0u, shopState.TotalUseDonmedal);
+
+        Assert.Empty(await fixture.Context.UserSaveDataBlue.ToListAsync());
+        Assert.Empty(await fixture.Context.SongPlayDataBlue.ToListAsync());
+        Assert.Empty(await fixture.Context.SongBestDataBlue.ToListAsync());
+        Assert.Empty(await fixture.Context.BlueRecentSongs.ToListAsync());
+        Assert.Empty(await fixture.Context.BlueFavoriteSongs.ToListAsync());
+        Assert.Empty(await fixture.Context.DanScoreDataBlue.ToListAsync());
+        Assert.Empty(await fixture.Context.DanStageScoreDataBlue.ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Blue_BattlePayloadStoresRecentSongsWithoutFavoriteOrScoreRows()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Blue,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayDatetime = "20260528120000",
+                IsBattlePlayResult = true,
+                AryStageInfoes =
+                [
+                    CreateBattleStage(201, 99, 99, battleStageId: 33),
+                    CreateBattleStage(202, 99, 99, battleStageId: 33)
+                ]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+
+        var recents = await fixture.Context.BlueRecentSongs
+            .Where(row => row.Baid == 1)
+            .OrderBy(row => row.SongNo)
+            .ToListAsync();
+        Assert.Collection(
+            recents,
+            recent =>
+            {
+                Assert.Equal(201u, recent.SongNo);
+                Assert.Equal(new DateTime(2026, 5, 28, 12, 0, 0), recent.LastPlayed);
+            },
+            recent =>
+            {
+                Assert.Equal(202u, recent.SongNo);
+                Assert.Equal(new DateTime(2026, 5, 28, 12, 0, 0), recent.LastPlayed);
+            });
+
+        Assert.Empty(await fixture.Context.UserSaveDataBlue.ToListAsync());
+        Assert.Empty(await fixture.Context.SongPlayDataBlue.ToListAsync());
+        Assert.Empty(await fixture.Context.SongBestDataBlue.ToListAsync());
+        Assert.Empty(await fixture.Context.BlueFavoriteSongs.ToListAsync());
+        Assert.Empty(await fixture.Context.DanScoreDataBlue.ToListAsync());
+        Assert.Empty(await fixture.Context.DanStageScoreDataBlue.ToListAsync());
+        Assert.Empty(await fixture.Context.BlueShopSeasonStates.ToListAsync());
+        Assert.Empty(await fixture.Context.BlueShopItemStates.ToListAsync());
     }
 
     [Fact]
@@ -218,7 +311,7 @@ public sealed class BlueBattlePlayResultHandlerTests
         Assert.False(BitIsSet(reloaded.CostumeFlg1, 1));
         Assert.False(BitIsSet(reloaded.TitleFlg, 10));
 
-        await AssertNormalBlueStateEmptyAsync(fixture.Context);
+        await AssertBattleForbiddenNormalBlueStateEmptyAsync(fixture.Context);
     }
 
     [Fact]
@@ -273,9 +366,34 @@ public sealed class BlueBattlePlayResultHandlerTests
 
         Assert.Empty(await fixture.Context.BlueBattleNpcStates.ToListAsync());
         Assert.Empty(await fixture.Context.BlueBattleStageResults.ToListAsync());
-        await AssertNormalBlueStateEmptyAsync(fixture.Context);
+        await AssertBattleForbiddenNormalBlueStateEmptyAsync(fixture.Context);
         Assert.Empty(await fixture.Context.UserSaveDataBlue.ToListAsync());
     }
+
+    private static BlueHandlerFixture.TestBlueCatalog CreateShopCatalog()
+        => new(itemShopCatalog: new BlueItemShopCatalog
+        {
+            IsEnabled = true,
+            ActiveSeasonId = 2,
+            Seasons = new Dictionary<uint, BlueItemShopSeason>
+            {
+                [2] = new()
+                {
+                    SeasonId = 2,
+                    VerupNo = 7,
+                    Items =
+                    [
+                        new BlueItemShopEntry
+                        {
+                            ItemNo = 1,
+                            ItemType = 1,
+                            ItemId = 101,
+                            Price = 1300
+                        }
+                    ]
+                }
+            }
+        });
 
     private static UpdatePlayResultCommandHandler CreateHandler(BlueHandlerFixture fixture)
         => new(
@@ -356,15 +474,13 @@ public sealed class BlueBattlePlayResultHandlerTests
             AssignNextStageId = assignNextStageId
         };
 
-    private static async Task AssertNormalBlueStateEmptyAsync(TaikoDbContext context)
+    private static async Task AssertBattleForbiddenNormalBlueStateEmptyAsync(TaikoDbContext context)
     {
         Assert.Empty(await context.SongPlayDataBlue.ToListAsync());
         Assert.Empty(await context.SongBestDataBlue.ToListAsync());
-        Assert.Empty(await context.BlueRecentSongs.ToListAsync());
         Assert.Empty(await context.BlueFavoriteSongs.ToListAsync());
         Assert.Empty(await context.DanScoreDataBlue.ToListAsync());
         Assert.Empty(await context.DanStageScoreDataBlue.ToListAsync());
-        Assert.Empty(await context.BlueShopSeasonStates.ToListAsync());
         Assert.Empty(await context.BlueShopItemStates.ToListAsync());
     }
 

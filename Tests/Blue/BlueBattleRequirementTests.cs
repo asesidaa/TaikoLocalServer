@@ -61,9 +61,11 @@ public sealed class BlueBattleRequirementTests
             root,
             Path.Combine("Tests", "Blue", "BlueBattlePlayResultHandlerTests.cs"),
             "UpdatePlayResult_Blue_BattlePayloadReadsBackPersistedNpcState",
+            "UpdatePlayResult_Blue_BattlePayloadAddsShopDonmedalsToActiveSeason",
+            "UpdatePlayResult_Blue_BattlePayloadStoresRecentSongsWithoutFavoriteOrScoreRows",
             "UpdatePlayResult_Blue_BattlePayloadLeavesExistingNormalStateUnchanged",
             "UpdatePlayResult_Blue_ReleaseBattleDataStoresClientStateWithoutDerivedEffects",
-            "AssertNormalBlueStateEmptyAsync");
+            "AssertBattleForbiddenNormalBlueStateEmptyAsync");
         AssertFileContains(
             root,
             Path.Combine("Tests", "Blue", "BlueBattleSourceGuardTests.cs"),

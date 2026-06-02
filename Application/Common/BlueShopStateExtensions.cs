@@ -9,8 +9,15 @@ public static class BlueShopStateExtensions
         UserSaveDataBlue saveData,
         uint seasonId,
         CancellationToken cancellationToken = default)
+        => await context.GetOrCreateBlueShopSeasonStateAsync(saveData.Baid, seasonId, cancellationToken);
+
+    public static async ValueTask<BlueShopSeasonState> GetOrCreateBlueShopSeasonStateAsync(
+        this ITaikoDbContext context,
+        uint baid,
+        uint seasonId,
+        CancellationToken cancellationToken = default)
     {
-        var existing = await context.BlueShopSeasonStates.FindAsync([saveData.Baid, seasonId], cancellationToken);
+        var existing = await context.BlueShopSeasonStates.FindAsync([baid, seasonId], cancellationToken);
         if (existing is not null)
         {
             return existing;
@@ -19,7 +26,7 @@ public static class BlueShopStateExtensions
         var now = DateTime.UtcNow;
         var state = new BlueShopSeasonState
         {
-            Baid = saveData.Baid,
+            Baid = baid,
             SeasonId = seasonId,
             TotalGetDonmedal = 0,
             TotalUseDonmedal = 0,
@@ -36,13 +43,20 @@ public static class BlueShopStateExtensions
         UserSaveDataBlue saveData,
         BlueItemShopCatalog itemShopCatalog,
         CancellationToken cancellationToken = default)
+        => await context.GetOrCreateActiveBlueShopSeasonStateAsync(saveData.Baid, itemShopCatalog, cancellationToken);
+
+    public static async ValueTask<BlueShopSeasonState?> GetOrCreateActiveBlueShopSeasonStateAsync(
+        this ITaikoDbContext context,
+        uint baid,
+        BlueItemShopCatalog itemShopCatalog,
+        CancellationToken cancellationToken = default)
     {
         if (!itemShopCatalog.IsEnabled || itemShopCatalog.ActiveSeason is not { Items.Count: > 0 } activeSeason)
         {
             return null;
         }
 
-        return await context.GetOrCreateBlueShopSeasonStateAsync(saveData, activeSeason.SeasonId, cancellationToken);
+        return await context.GetOrCreateBlueShopSeasonStateAsync(baid, activeSeason.SeasonId, cancellationToken);
     }
 
     public static ValueTask<BlueShopSeasonState?> FindBlueShopSeasonStateAsync(

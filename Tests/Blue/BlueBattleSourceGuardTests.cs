@@ -91,13 +91,11 @@ public sealed class BlueBattleSourceGuardTests
         "GetToneNoes",
         "GetCostumeNo",
         "GetTitleNoes",
-        "BlueShopSeasonStates",
         "BlueShopItemStates",
         "SongPlayDataBlue",
         "SongBestDataBlue",
         "DanScoreDataBlue",
         "DanStageScoreDataBlue",
-        "BlueRecentSongs",
         "BlueFavoriteSongs"
     ];
 
@@ -117,7 +115,7 @@ public sealed class BlueBattleSourceGuardTests
     }
 
     [Fact]
-    public void BlueBattleStateMutationCode_DoesNotWriteNormalBlueScoreShopDaniOrUnlockState()
+    public void BlueBattleStateMutationCode_DoesNotWriteForbiddenNormalBlueState()
     {
         var root = FindRepoRoot();
 
