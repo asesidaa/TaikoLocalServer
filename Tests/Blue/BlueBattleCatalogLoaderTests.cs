@@ -34,9 +34,13 @@ public sealed class BlueBattleCatalogLoaderTests
         });
         Assert.Equal(2, catalog.Files.Single(file => file.FileName == "battlestageinfo.xml").RowCount);
         Assert.Equal(2, catalog.Files.Single(file => file.FileName == "battletokeninfo.xml").RowCount);
-        Assert.Equal([1u], catalog.BattleNpcIds);
+        Assert.Equal([0u], catalog.BattleNpcIds);
+        var npc = Assert.Single(catalog.BattleNpcs);
+        Assert.Equal(0u, npc.NpcId);
+        Assert.Equal(5u, npc.StartExp);
+        Assert.Equal(30u, npc.InitialDpn);
         Assert.Equal([1u, 33u], catalog.ReleaseBattleStageIds);
-        Assert.Equal([1u, 10u], catalog.ReleaseBattleSpecialIds);
+        Assert.Equal([1u, 10u, 11u, 15u], catalog.ReleaseBattleSpecialIds);
         Assert.Equal(3u, catalog.BattleBondsLvCap);
     }
 
@@ -139,9 +143,9 @@ public sealed class BlueBattleCatalogLoaderTests
             {
                 Directory.CreateDirectory(BattleRoot);
                 File.WriteAllText(Path.Combine(BattleRoot, "battleadjsetting.xml"), "<root><adjustedsetting id=\"1\" /></root>");
-                File.WriteAllText(Path.Combine(BattleRoot, "battlenpcinfo.xml"), "<root><npcinfo><id>1</id><requred_exp>10</requred_exp><requred_exp>20</requred_exp><requred_exp>30</requred_exp></npcinfo></root>");
+                File.WriteAllText(Path.Combine(BattleRoot, "battlenpcinfo.xml"), "<root><npcinfo><id>1</id><start_exp>5</start_exp><atk>30</atk><requred_exp>10</requred_exp><requred_exp>20</requred_exp><requred_exp>30</requred_exp></npcinfo></root>");
                 File.WriteAllText(Path.Combine(BattleRoot, "battlestageinfo.xml"), "<root><stageinfo id=\"1\" /><stageinfo id=\"33\" /></root>");
-                File.WriteAllText(Path.Combine(BattleRoot, "battlesupportinfo.xml"), "<root><supportinfo musicid=\"a\" /></root>");
+                File.WriteAllText(Path.Combine(BattleRoot, "battlesupportinfo.xml"), "<root><supportinfo musicid=\"a\"><coursepatterns><coursepattern><items><item>11</item><item>15</item></items></coursepattern></coursepatterns></supportinfo></root>");
                 File.WriteAllText(Path.Combine(BattleRoot, "battletokeninfo.xml"), "<root><tokeninfo><id>1</id><rewardtbl><reward><id>1</id></reward><reward><id>10</id></reward></rewardtbl></tokeninfo><tokeninfo><id>17</id><rewardtbl /></tokeninfo></root>");
             }
         }

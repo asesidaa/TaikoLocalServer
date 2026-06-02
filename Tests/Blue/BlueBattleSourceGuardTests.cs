@@ -25,14 +25,14 @@ public sealed class BlueBattleSourceGuardTests
         Path.Combine("Domain", "Entities", "BlueBattleNpcState.cs"),
         Path.Combine("Domain", "Entities", "BlueBattleTokenState.cs"),
         Path.Combine("Domain", "Entities", "BlueBattleStageResult.cs"),
-        Path.Combine("Domain", "Entities", "BlueBattleReleaseState.cs"),
         Path.Combine("Infrastructure", "GameDataCatalog", "Blue", "BlueBattleDataLoader.cs"),
         Path.Combine("Infrastructure", "GameDataCatalog", "Blue", "BlueEraGameDataCatalog.cs"),
         Path.Combine("Infrastructure", "GameDataCatalog", "Blue", "BlueGameDataPaths.cs"),
         Path.Combine("Infrastructure", "Persistence", "TaikoDbContext.Blue.cs"),
         Path.Combine("Infrastructure", "Persistence", "Migrations", "20260530185853_AddBlueBattleState.cs"),
         Path.Combine("Infrastructure", "Persistence", "Migrations", "20260530213652_AddBlueBattleNpcSelectedSpecials.cs"),
-        Path.Combine("Infrastructure", "Persistence", "Migrations", "20260531090513_RenameBlueBattleNpcMaxDpn.cs")
+        Path.Combine("Infrastructure", "Persistence", "Migrations", "20260531090513_RenameBlueBattleNpcMaxDpn.cs"),
+        Path.Combine("Infrastructure", "Persistence", "Migrations", "20260602173243_RemoveBlueBattleReleaseState.cs")
     ];
 
     private static readonly string[] BattleStateMutationFiles =
@@ -167,15 +167,19 @@ public sealed class BlueBattleSourceGuardTests
     }
 
     [Fact]
-    public void DataDerivedInitialDataFields_AreBackedByExactResolutionApprovals()
+    public void InitialDataFields_AreBackedByExactResolutionApprovals()
     {
         var root = FindRepoRoot();
         var rows = ReadResolutionRows(root);
-        AssertResolutionApproves(
-            rows,
-            "InitialdatacheckResponse.release_battle_stage_flg",
-            "APPROVED_BY_USER_DATA_DERIVED_INITIALDATA",
-            "parsed `battlestageinfo.xml` stage IDs");
+
+        var stageRow = Assert.Single(rows, candidate =>
+            candidate["Phase 4 Missing-Evidence Row"].Contains(
+                "InitialdatacheckResponse.release_battle_stage_flg",
+                StringComparison.Ordinal));
+        Assert.Contains("PROVEN_GLOBAL_STAGE_AVAILABILITY_BITSET", stageRow["Phase 5 Status"], StringComparison.Ordinal);
+        Assert.Contains("global stage availability bitset", stageRow["Runtime Use"], StringComparison.Ordinal);
+        Assert.Contains("2026-06-02 daemon-backed IDA", stageRow["Evidence Source"], StringComparison.Ordinal);
+
         AssertResolutionApproves(
             rows,
             "InitialdatacheckResponse.release_battle_special_flg",

@@ -19,6 +19,11 @@ public partial class GetInitialDataQueryHandler
             .Where(songNo => !shopSongIds.Contains(songNo));
         var battle = blue.BattleCatalog;
 
+        var releaseBattleStageFlg = battle.EnablesBattleAdvertisement
+            ? BlueProtocolBytes.CreateFixedBitset(
+                battle.ReleaseBattleStageIds,
+                BlueProtocolBytes.BattleStageFlagBytes)
+            : new byte[BlueProtocolBytes.BattleStageFlagBytes];
         return ValueTask.FromResult(new CommonInitialDataCheckResponse
         {
             Result = 1,
@@ -30,15 +35,9 @@ public partial class GetInitialDataQueryHandler
             IsClose = false,
             IsItemshop = activeShopWithRows is not null,
             IsBattleplay = battle.EnablesBattleAdvertisement,
-            ReleaseBattleStageFlg = battle.EnablesBattleAdvertisement
-                ? BlueProtocolBytes.CreateFixedBitset(
-                    battle.ReleaseBattleStageIds,
-                    BlueProtocolBytes.BattleStageFlagBytes)
-                : new byte[BlueProtocolBytes.BattleStageFlagBytes],
+            ReleaseBattleStageFlg = releaseBattleStageFlg,
             ReleaseBattleSpecialFlg = battle.EnablesBattleAdvertisement
-                ? BlueProtocolBytes.CreateFixedBitset(
-                    battle.ReleaseBattleSpecialIds,
-                    BlueProtocolBytes.BattleSpecialFlagBytes)
+                ? BlueProtocolBytes.CreateBattleSpecialBitset(battle.ReleaseBattleSpecialIds)
                 : new byte[BlueProtocolBytes.BattleSpecialFlagBytes],
             BattleBondsLvCap = battle.EnablesBattleAdvertisement
                 ? battle.BattleBondsLvCap ?? 0

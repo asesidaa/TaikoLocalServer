@@ -19,7 +19,6 @@ public partial class TaikoDbContext
     public virtual DbSet<BlueBattleNpcState> BlueBattleNpcStates { get; set; } = null!;
     public virtual DbSet<BlueBattleTokenState> BlueBattleTokenStates { get; set; } = null!;
     public virtual DbSet<BlueBattleStageResult> BlueBattleStageResults { get; set; } = null!;
-    public virtual DbSet<BlueBattleReleaseState> BlueBattleReleaseStates { get; set; } = null!;
 
     partial void OnModelCreatingBlue(ModelBuilder modelBuilder)
     {
@@ -196,18 +195,5 @@ public partial class TaikoDbContext
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<BlueBattleReleaseState>(entity =>
-        {
-            entity.ToTable("BlueBattleReleaseStates");
-            entity.HasKey(e => e.Id);
-            entity.HasIndex(e => new { e.Baid, e.CreatedAt });
-            entity.Property(e => e.Id).ValueGeneratedOnAdd();
-            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
-            entity.HasOne(d => d.Ba)
-                .WithMany()
-                .HasPrincipalKey(p => p.Baid)
-                .HasForeignKey(d => d.Baid)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
     }
 }

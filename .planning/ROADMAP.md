@@ -167,7 +167,7 @@ Plans:
 **Success Criteria** (what must be TRUE):
 
   1. Blue battle state is persisted in Blue-owned tables with evidence-backed defaults.
-  2. `battleuserdata.php` and `initialdatacheck.php` return safe persisted battle state.
+  2. `battleuserdata.php` returns an IDA-backed first-use starter and persisted battle readback, and `initialdatacheck.php` returns approved battle availability data.
   3. Blue battle playresults and rewards update only the state approved by the battle design.
   4. Tests and source guards prove battle code does not treat Green AI Battle as protocol truth.
 

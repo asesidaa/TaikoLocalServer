@@ -7,8 +7,7 @@ public sealed class BlueBattlePersistenceShapeTests
         ("BlueBattleUserState", "BlueBattleUserState.cs"),
         ("BlueBattleNpcState", "BlueBattleNpcState.cs"),
         ("BlueBattleTokenState", "BlueBattleTokenState.cs"),
-        ("BlueBattleStageResult", "BlueBattleStageResult.cs"),
-        ("BlueBattleReleaseState", "BlueBattleReleaseState.cs")
+        ("BlueBattleStageResult", "BlueBattleStageResult.cs")
     ];
 
     private static readonly (string TypeName, string DbSetName, string TableName, string KeySnippet)[] BattleMappings =
@@ -16,8 +15,7 @@ public sealed class BlueBattlePersistenceShapeTests
         ("BlueBattleUserState", "BlueBattleUserStates", "BlueBattleUserStates", "entity.HasKey(e => e.Baid);"),
         ("BlueBattleNpcState", "BlueBattleNpcStates", "BlueBattleNpcStates", "entity.HasKey(e => new { e.Baid, e.NpcId });"),
         ("BlueBattleTokenState", "BlueBattleTokenStates", "BlueBattleTokenStates", "entity.HasKey(e => new { e.Baid, e.TokenId });"),
-        ("BlueBattleStageResult", "BlueBattleStageResults", "BlueBattleStageResults", "entity.HasKey(e => e.Id);"),
-        ("BlueBattleReleaseState", "BlueBattleReleaseStates", "BlueBattleReleaseStates", "entity.HasKey(e => e.Id);")
+        ("BlueBattleStageResult", "BlueBattleStageResults", "BlueBattleStageResults", "entity.HasKey(e => e.Id);")
     ];
 
     private static readonly string[] ForbiddenGreenBattleReferences =
@@ -106,11 +104,9 @@ public sealed class BlueBattlePersistenceShapeTests
             File.ReadAllText(Path.Combine(root, "Domain", "Entities", "BlueBattleStageResult.cs")),
             StringComparison.Ordinal);
 
-        AssertEntityContains(root, "BlueBattleReleaseState.cs",
-            "public long Id { get; set; }",
-            "public uint? AssignNextStageId { get; set; }",
-            "public uint? TokenId { get; set; }",
-            "public uint? TokenValue { get; set; }");
+        Assert.False(
+            File.Exists(Path.Combine(root, "Domain", "Entities", "BlueBattleReleaseState.cs")),
+            "BlueBattleReleaseState should not exist because release deltas update the byte-array state rows directly.");
     }
 
     [Fact]
@@ -132,6 +128,11 @@ public sealed class BlueBattlePersistenceShapeTests
             Assert.Contains(".HasForeignKey(d => d.Baid)", mapping, StringComparison.Ordinal);
             Assert.Contains(".OnDelete(DeleteBehavior.Cascade)", mapping, StringComparison.Ordinal);
         }
+
+        Assert.DoesNotContain("BlueBattleReleaseState", interfaceSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("BlueBattleReleaseStates", interfaceSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("BlueBattleReleaseState", dbContextSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("BlueBattleReleaseStates", dbContextSource, StringComparison.Ordinal);
     }
 
     [Fact]

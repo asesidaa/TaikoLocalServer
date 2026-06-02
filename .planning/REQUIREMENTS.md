@@ -45,7 +45,7 @@
 ### Blue Battle Runtime
 
 - [x] **BTL-01**: Blue battle persistence stores battle user state, NPC state, unlock flags, selected specials, stage assignment, tokens, boss life, and last-stage state in Blue-owned tables.
-- [x] **BTL-02**: Blue `battleuserdata.php` returns evidence-backed default and persisted battle state without unsafe zero-default fields.
+- [x] **BTL-02**: Blue `battleuserdata.php` returns an IDA-backed safe starter for first-use users, then reads back persisted Blue battle user, NPC, selected-special, token, and assignment state from client-reported playresults.
 - [x] **BTL-03**: Blue `initialdatacheck.php` advertises battle availability and release flags according to the approved battle design.
 - [x] **BTL-04**: Blue `playresult.php` safely maps and persists `BattleStageData` without corrupting normal Blue playresult, self-best, crown, Dani, or shop state.
 - [x] **BTL-05**: Blue battle rewards and unlocks update Blue battle and normal save state only where the approved design says they should.

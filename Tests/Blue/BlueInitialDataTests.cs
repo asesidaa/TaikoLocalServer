@@ -67,14 +67,14 @@ public sealed class BlueInitialDataTests
     }
 
     [Fact]
-    public async Task InitialData_Blue_AdvertisesParsedBattleCatalogValues()
+    public async Task InitialData_Blue_AdvertisesParsedBattleStageAvailabilityAndSpecials()
     {
         var battleCatalog = new BlueBattleCatalog
         {
             IsRawDataAvailable = true,
             EnablesBattleAdvertisement = true,
             ReleaseBattleStageIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 33],
-            ReleaseBattleSpecialIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            ReleaseBattleSpecialIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
             BattleBondsLvCap = 65,
             Files = []
         };
@@ -93,7 +93,7 @@ public sealed class BlueInitialDataTests
             [0xFE, 0x07, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00],
             response.ReleaseBattleStageFlg);
         Assert.Equal(
-            [0xFE, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            [0xFE, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01],
             response.ReleaseBattleSpecialFlg);
         Assert.Equal(65u, response.BattleBondsLvCap);
         Assert.True(wire.ShouldSerializeIsBattleplay());

@@ -36,9 +36,15 @@ public sealed class BlueBattleDataLoader
             IsRawDataAvailable = isRawDataAvailable,
             EnablesBattleAdvertisement = isRawDataAvailable,
             BattleNpcIds = loadedFiles
-                .SelectMany(file => file.BattleNpcIds)
+                .SelectMany(file => file.BattleNpcs.Select(npc => npc.NpcId))
                 .Distinct()
                 .Order()
+                .ToList(),
+            BattleNpcs = loadedFiles
+                .SelectMany(file => file.BattleNpcs)
+                .GroupBy(npc => npc.NpcId)
+                .Select(group => group.First())
+                .OrderBy(npc => npc.NpcId)
                 .ToList(),
             ReleaseBattleStageIds = loadedFiles
                 .SelectMany(file => file.ReleaseBattleStageIds)
@@ -94,9 +100,14 @@ public sealed class BlueBattleDataLoader
                     RowCount = document.Descendants()
                         .Count(element => element.Name.LocalName == definition.RowElementName)
                 },
-                definition.FileName == "battlenpcinfo.xml" ? ReadNpcIds(document) : [],
+                definition.FileName == "battlenpcinfo.xml" ? ReadNpcRows(document) : [],
                 definition.FileName == "battlestageinfo.xml" ? ReadStageIds(document) : [],
-                definition.FileName == "battletokeninfo.xml" ? ReadSpecialIds(document) : [],
+                definition.FileName switch
+                {
+                    "battletokeninfo.xml" => ReadTokenRewardSpecialIds(document),
+                    "battlesupportinfo.xml" => ReadSupportSpecialIds(document),
+                    _ => []
+                },
                 definition.FileName == "battlenpcinfo.xml" ? ReadBattleBondsLvCap(document) : null);
         }
         catch (Exception ex) when (ex is XmlException or InvalidDataException)
@@ -124,16 +135,32 @@ public sealed class BlueBattleDataLoader
             .Select(element => ReadRequiredId(element, "stageinfo"))
             .ToList();
 
-    private static IReadOnlyList<uint> ReadNpcIds(XDocument document)
+    private static IReadOnlyList<BlueBattleNpcCatalogEntry> ReadNpcRows(XDocument document)
         => document.Descendants()
             .Where(element => element.Name.LocalName == "npcinfo")
-            .Select(element => ReadRequiredId(element, "npcinfo"))
+            .Select(element => new BlueBattleNpcCatalogEntry
+            {
+                NpcId = ToRuntimeNpcId(ReadRequiredId(element, "npcinfo")),
+                StartExp = ReadOptionalUInt32(element, "start_exp") ?? 0,
+                InitialDpn = ReadOptionalUInt32(element, "atk") ?? 0
+            })
             .ToList();
 
-    private static IReadOnlyList<uint> ReadSpecialIds(XDocument document)
+    private static IReadOnlyList<uint> ReadTokenRewardSpecialIds(XDocument document)
         => document.Descendants()
             .Where(element => element.Name.LocalName == "reward")
             .Select(element => ReadRequiredId(element, "reward"))
+            .ToList();
+
+    private static IReadOnlyList<uint> ReadSupportSpecialIds(XDocument document)
+        => document.Descendants()
+            .Where(element => element.Name.LocalName == "supportinfo")
+            .Descendants()
+            .Where(element => element.Name.LocalName == "item" && !element.HasElements)
+            .Select(element => element.Value)
+            .Select(value => uint.TryParse(value, out var parsed) ? parsed : 0)
+            .Where(id => id > 0)
+            .Distinct()
             .ToList();
 
     private static uint ReadBattleBondsLvCap(XDocument document)
@@ -157,9 +184,28 @@ public sealed class BlueBattleDataLoader
         return id;
     }
 
+    private static uint ToRuntimeNpcId(uint xmlNpcId)
+        => xmlNpcId == 0 ? 0 : xmlNpcId - 1;
+
+    private static uint? ReadOptionalUInt32(XElement element, string childName)
+    {
+        var value = element.Elements().FirstOrDefault(child => child.Name.LocalName == childName)?.Value;
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+
+        if (!uint.TryParse(value, out var parsed))
+        {
+            throw new InvalidDataException($"Blue battle npcinfo row has invalid {childName} '{value}'.");
+        }
+
+        return parsed;
+    }
+
     private sealed record LoadedBattleFile(
         BlueBattleCatalogFile File,
-        IReadOnlyList<uint> BattleNpcIds,
+        IReadOnlyList<BlueBattleNpcCatalogEntry> BattleNpcs,
         IReadOnlyList<uint> ReleaseBattleStageIds,
         IReadOnlyList<uint> ReleaseBattleSpecialIds,
         uint? BattleBondsLvCap);

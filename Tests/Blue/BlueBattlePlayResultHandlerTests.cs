@@ -53,7 +53,9 @@ public sealed class BlueBattlePlayResultHandlerTests
         Assert.Equal(21u, npc.SelectedSpecialId1);
         Assert.Equal(22u, npc.SelectedSpecialId2);
         Assert.Equal(23u, npc.SelectedSpecialId3);
-        Assert.True(BitIsSet(npc.NpcCostumeFlg!, 30));
+        Assert.False(BitIsSet(npc.NpcCostumeFlg!, 30));
+        Assert.True(BitIsSet(npc.NpcCostumeFlg!, 5));
+        Assert.True(BitIsSet(npc.ReleaseSpecialFlg!, 6));
         Assert.True(BitIsSet(npc.ReleaseSpecialFlg!, 21));
         Assert.True(BitIsSet(npc.ReleaseSpecialFlg!, 22));
         Assert.True(BitIsSet(npc.ReleaseSpecialFlg!, 23));
@@ -61,22 +63,12 @@ public sealed class BlueBattlePlayResultHandlerTests
         var token = await fixture.Context.BlueBattleTokenStates.SingleAsync(row => row.Baid == 1 && row.TokenId == 17);
         Assert.Equal(765u, token.TokenValue);
 
-        var release = await fixture.Context.BlueBattleReleaseStates.SingleAsync(row => row.Baid == 1);
-        Assert.Equal(101u, release.ReleaseInfoId);
-        Assert.Equal(2u, release.ReleaseBattleStageId);
-        Assert.Equal(4u, release.ReleaseNpcId);
-        Assert.Equal(5u, release.ReleaseNpcCostumeId);
-        Assert.Equal(6u, release.ReleaseNpcSpecialId);
-        Assert.Equal(44u, release.AssignNextStageId);
-        Assert.Equal(17u, release.TokenId);
-        Assert.Equal(765u, release.TokenValue);
-
         await AssertNormalBlueStateEmptyAsync(fixture.Context);
         Assert.Empty(await fixture.Context.UserSaveDataBlue.ToListAsync());
     }
 
     [Fact]
-    public async Task UpdatePlayResult_Blue_BattlePayloadEchoesNpcSelectedSpecialsThroughBattleUserData()
+    public async Task UpdatePlayResult_Blue_BattlePayloadReadsBackPersistedNpcState()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -92,7 +84,19 @@ public sealed class BlueBattlePlayResultHandlerTests
                 PlayDatetime = "20260528120000",
                 PlayMode = 6,
                 IsBattlePlayResult = true,
-                AryStageInfoes = [CreateBattleStage(9999, 99, 99, battleStageId: 33)]
+                AryStageInfoes =
+                [
+                    CreateBattleStage(
+                        9999,
+                        99,
+                        99,
+                        battleStageId: 33,
+                        dpn: 34,
+                        npcId: 0,
+                        specialId1: 1,
+                        specialId2: 1,
+                        specialId3: 1)
+                ]
             }),
             CancellationToken.None);
 
@@ -105,18 +109,17 @@ public sealed class BlueBattlePlayResultHandlerTests
         var common = await battleUserDataHandler.Handle(new GetBattleUserDataQuery(1), CancellationToken.None);
 
         var npc = Assert.Single(common.NpcDatas);
-        Assert.Equal(9u, npc.NpcId);
+        Assert.Equal(0u, npc.NpcId);
         Assert.Equal("888", npc.TotalExp);
-        Assert.Equal(456u, npc.MaxDpn);
+        Assert.Equal(34u, npc.MaxDpn);
         Assert.Equal(30u, npc.NpcCostumeId);
-        Assert.Equal([0, 0, 0, 64], npc.NpcCostumeFlg);
-        Assert.Equal(21u, npc.LastSelectSpecial1);
-        Assert.Equal(22u, npc.LastSelectSpecial2);
-        Assert.Equal(23u, npc.LastSelectSpecial3);
+        Assert.True(BitIsSet(npc.NpcCostumeFlg, 30));
+        Assert.Equal(1u, npc.LastSelectSpecial1);
+        Assert.Equal(1u, npc.LastSelectSpecial2);
+        Assert.Equal(1u, npc.LastSelectSpecial3);
         Assert.NotNull(npc.ReleaseSpecialFlg);
-        Assert.True(BitIsSet(npc.ReleaseSpecialFlg!, 21));
-        Assert.True(BitIsSet(npc.ReleaseSpecialFlg!, 22));
-        Assert.True(BitIsSet(npc.ReleaseSpecialFlg!, 23));
+        Assert.True(BitIsSet(npc.ReleaseSpecialFlg!, 1));
+        Assert.True(BitIsSet(npc.ReleaseSpecialFlg!, BlueProtocolBytes.BattleNpcSpecialRowGateId));
     }
 
     [Fact]
@@ -160,7 +163,9 @@ public sealed class BlueBattlePlayResultHandlerTests
             fixture.Catalog,
             NullLogger<GetBattleUserDataQueryHandler>.Instance);
         var common = await battleUserDataHandler.Handle(new GetBattleUserDataQuery(1), CancellationToken.None);
-        Assert.Equal(456u, Assert.Single(common.NpcDatas).MaxDpn);
+        var persistedNpc = Assert.Single(common.NpcDatas);
+        Assert.Equal(9u, persistedNpc.NpcId);
+        Assert.Equal(456u, persistedNpc.MaxDpn);
     }
 
     [Fact]
@@ -265,10 +270,8 @@ public sealed class BlueBattlePlayResultHandlerTests
 
         var token = await fixture.Context.BlueBattleTokenStates.SingleAsync(row => row.Baid == 1 && row.TokenId == 3);
         Assert.Equal(999u, token.TokenValue);
-        var release = await fixture.Context.BlueBattleReleaseStates.SingleAsync(row => row.Baid == 1);
-        Assert.Equal(99u, release.ReleaseNpcId);
-        Assert.Equal(999u, release.TokenValue);
 
+        Assert.Empty(await fixture.Context.BlueBattleNpcStates.ToListAsync());
         Assert.Empty(await fixture.Context.BlueBattleStageResults.ToListAsync());
         await AssertNormalBlueStateEmptyAsync(fixture.Context);
         Assert.Empty(await fixture.Context.UserSaveDataBlue.ToListAsync());
@@ -285,7 +288,11 @@ public sealed class BlueBattlePlayResultHandlerTests
         uint level,
         uint stageMode,
         uint battleStageId,
-        uint dpn = 456)
+        uint dpn = 456,
+        uint npcId = 9,
+        uint specialId1 = 21,
+        uint specialId2 = 22,
+        uint specialId3 = 23)
         => new()
         {
             SongNo = songNo,
@@ -312,14 +319,14 @@ public sealed class BlueBattlePlayResultHandlerTests
                 BattleStageId = battleStageId,
                 NpcData = new CommonPlayResultData.BattleNpcData
                 {
-                    NpcId = 9,
+                    NpcId = npcId,
                     AcquiredExp = "77",
                     TotalExp = "888",
                     Dpn = dpn,
                     NpcCostumeId = 30,
-                    SpecialId1 = 21,
-                    SpecialId2 = 22,
-                    SpecialId3 = 23,
+                    SpecialId1 = specialId1,
+                    SpecialId2 = specialId2,
+                    SpecialId3 = specialId3,
                     BondsLv = 6
                 },
                 KillCnt = 5,

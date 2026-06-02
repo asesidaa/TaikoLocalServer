@@ -1,5 +1,5 @@
 ---
-status: partial
+status: fixed-pending-rpcs3-retest
 phase: 05-blue-battle-runtime-support
 source:
   - .planning/phases/05-blue-battle-runtime-support/05-02-SUMMARY.md
@@ -7,8 +7,10 @@ source:
   - .planning/phases/05-blue-battle-runtime-support/05-08-SUMMARY.md
   - .planning/phases/05-blue-battle-runtime-support/05-11-SUMMARY.md
   - .tools/crash1.txt
+  - .tools/RPCS3.log
+  - .tools/blue/EBOOT.ELF.i64
 started: 2026-05-31T17:36:33+08:00
-updated: 2026-05-31T17:52:56+08:00
+updated: 2026-06-01T01:51:40+08:00
 ---
 
 ## Current Test
@@ -17,7 +19,7 @@ number: 1
 name: First-Time Blue Battle User Request
 expected: |
   A new Blue user can enter the first battle flow; `battleuserdata.php` returns client-safe first-use battle state, and RPCS3 does not freeze or crash after the battle user request.
-awaiting: RPCS3 retest after server fix
+awaiting: RPCS3 retest after the client-proven `npc_costume_flg` contract fix
 
 ## Tests
 
@@ -25,7 +27,10 @@ awaiting: RPCS3 retest after server fix
 expected: A new Blue user can enter the first battle flow; `battleuserdata.php` returns client-safe first-use battle state, and RPCS3 does not freeze or crash after the battle user request.
 result: [pending]
 previous_issue: "Now the game crashes on first time battle user request. The crash log from RPCS3 is in .tools/crash1.txt."
-fix: "Server fix implemented: first-time `battleuserdata.php` now emits a catalog-derived `last_npc_id` when parsed battle XML advertises battle and no persisted value exists."
+latest_issue: "RPCS3 retest still crashes after the explicit first-stage assignment fix. Latest crash log is .tools/RPCS3.log."
+latest_diagnosis: "2026-06-01 reanalysis used the known-working screenshot as the first-use source of truth and treated prior server assumptions as suspect. Fresh IDA daemon/subagent evidence shows the byte-array lengths were not the direct issue: `OnBattleUserDataResponse` consumes only 16/8/4/16-byte slices and optional zero scalars behave like omitted defaults. The later played session proves persistence/readback is required after battle and proves the first runtime NPC id is 0 even though `battlenpcinfo.xml` stores `<id>1</id>`. The special-attack note is also confirmed by IDA: selected specials are zeroed unless their bit survives the nested special mask AND initialdata special mask."
+fix: "Superseding server fix implemented: `battleuserdata.php` now returns an IDA-backed safe starter only when no persisted state exists, and after playresult reads back persisted Blue battle state: runtime NPC id 0, total exp/max DPN, selected specials, release info/stage assignment, tokens, and selected-special masks with raw bit 120."
+latest_fix: "Initialdata `release_battle_special_flg` also uses the shared battle special bitset builder, so special bit 1 and bit 120 are present when battle is advertised. This keeps `LastSelectSpecial1=1` backed by an unlocked special and preserves the row-retention bit."
 severity: blocker
 
 ## Summary
@@ -40,28 +45,60 @@ blocked: 0
 ## Gaps
 
 - truth: "A new Blue user can enter the first battle flow; battleuserdata.php returns client-safe first-use battle state, and RPCS3 does not freeze or crash after the battle user request."
-  status: fixed-pending-retest
-  reason: "User reported: Now the game crashes on first time battle user request. The crash log from RPCS3 is in .tools/crash1.txt."
+  status: fixed-pending-rpcs3-retest
+  reason: "User reported: The crash remains and provided a known-working response screenshot plus the special-attack note. Fresh IDA evidence points away from raw 128-byte lengths and toward unproven catalog/persisted battleuserdata semantics plus missing selected-special availability. Server-side starter output now follows the safe screenshot baseline while selecting and unlocking special 1."
   severity: blocker
   test: 1
-  root_cause: "Phase 05 advertises battle from parsed XML, but first-time battleuserdata still returns result=1 with omitted last_npc_id and empty npc_data. IDA shows omitted last_npc_id defaults to 0, while local battlenpcinfo.xml contains npc id 1. The RPCS3 crash later occurs in the skin NUD draw request path with freed-memory sentinel values, consistent with invalid battle NPC/model state after a success-shaped response."
+  root_cause: "Fresh 2026-06-01 evidence shows the previous catalog-derived/persisted starter contract was not proven safe. `sub_7497C` copies fixed byte slices only and validates selected specials against the effective 16-byte special mask after ANDing nested `release_special_flg` with initialdata `release_battle_special_flg`. If the selected special is missing from either mask, the client clears it; all-zero specials are therefore menu-safe at best and can crash when a special attack is used. Nonzero catalog NPC/stage/special values are also unproven because the known-working response uses default NPC/stage state."
   artifacts:
     - path: ".tools/crash1.txt"
       issue: "RPCS3 access violation in NU::Draw::RequestManager at 0x005997b0 reading 0xddddde09."
+    - path: ".tools/RPCS3.log"
+      issue: "Latest crash log has no nearby protobuf parse, HTTP status, or missing battle asset error; after `battle/battlesupportinfo.xml` opens and the final HTTP worker closes, the client faults in `PPU[0x100000a] Thread (NU::Draw::RequestManager)` at `0x005997b0`, reading `0xddddde09`."
     - path: ".tools/blue/EBOOT.ELF.i64"
-      issue: "IDA proves sub_5997B0 is nuRequestNud20DrawSkinPs3 draw request and sub_7497C copies default-zero last_npc_id on successful battleuserdata."
+      issue: "IDA proves `sub_5997B0` is the NUD skin draw request; `sub_7497C` copies battleuserdata release info, stage, NPC costume, and NPC special bytes; `sub_799224` consumes a 20-bit LSB-first NPC costume availability mask from the retained NPC row path used by battle support/model setup."
+    - path: ".planning/debug/phase-05-blue-battle-crash.md"
+      issue: "Crash-trace agent found the prior bit-120 mechanism remains valid but is not confirmed as the current served response bug; remaining suspects need downstream IDA proof before server behavior changes."
+    - path: ".planning/debug/blue-battle-byte-arrays.md"
+      issue: "Byte-array downstream agent mapped each battle byte array to server writer, proto tag, width, parser, and consumer; highest proven gate remains initialdata and nested NPC special bit 120, while NPC costume flag semantics are not mapped."
     - path: "Application/Handlers/GetBattleUserDataQuery.Blue.cs"
-      issue: "New users return success without persisted LastNpcId or NPC rows."
+      issue: "Battleuserdata now emits the safe starter contract only for no-state users, then reads back persisted BlueBattle user/NPC/token rows after playresult while preserving selected special bits and raw bit 120."
+    - path: "Tests/Blue/BlueBattleUserDataTests.cs"
+      issue: "Regression coverage asserts first-use starter response and persisted runtime NPC id 0 readback with release info bit 1, last/assign stage 1, selected specials 1/1/1, and token fallback."
     - path: "Host/wwwroot/data/blue/data/config/S10100-1/battle/battlenpcinfo.xml"
-      issue: "Local parsed battle NPC id is 1, not 0."
+      issue: "Local parsed battle NPC id is 1 with start_exp 0 and first atk 30."
+    - path: "Host/wwwroot/data/blue/data/config/S10100-1/battle/battlestageinfo.xml"
+      issue: "Local parsed first battle stage is 1; this matches the IDA-observed omitted/zero assignment fallback."
+    - path: "Host/wwwroot/data/blue/data/config/S10100-1/battle/battletokeninfo.xml"
+      issue: "Local parsed special reward ids provide the release-special bitset and first valid default selected specials."
   missing:
-    - "Repeat RPCS3 first-time battle smoke after the server fix."
+    - "Rerun the same first-time RPCS3 battle flow and inspect whether the crash advances past the `battlesupportinfo.xml`/draw-thread failure point."
+    - "If RPCS3 still crashes, confirm the actual served first-use NPC row contains zero costume flags and selected special 1, then confirm the next `battleuserdata.php` after playresult echoes persisted NPC id 0 and progress instead of resetting to the starter."
   fix:
-    summary: "Exposed parsed Blue battle NPC ids through `BlueBattleCatalog`; `GetBattleUserDataQueryHandler` now falls back to the first catalog NPC id for new users only when battle data is advertised."
+    summary: "First-time battleuserdata emits the IDA-safe starter response, while later battleuserdata echoes persisted client-reported BlueBattle state. Initialdata keeps special bit 1 and bit 120 when battle is advertised, and `battlenpcinfo.xml` NPC ids are normalized from one-based XML ids to zero-based runtime ids."
     tests:
+      - "dotnet test Tests/Tests.csproj --filter \"FullyQualifiedName~BlueBattleUserDataTests|FullyQualifiedName~BlueInitialDataTests\" --no-restore"
+      - "dotnet test Tests/Tests.csproj --filter BlueBattle --no-restore"
+      - "dotnet test Tests/Tests.csproj --no-restore"
+      - "dotnet build Host/Host.csproj -o \"$env:TEMP\\TaikoLocalServer-host-build-blue-battle-special-gate-fix\" --no-restore"
+      - "git diff --check"
+      - "dotnet test Tests/Tests.csproj --filter \"FullyQualifiedName~BlueBattleUserDataTests\" --no-restore"
       - "dotnet test Tests/Tests.csproj --filter \"FullyQualifiedName~BlueBattleUserDataTests|FullyQualifiedName~BlueBattleCatalogLoaderTests\" --no-restore"
       - "dotnet test Tests/Tests.csproj --filter BlueBattle --no-restore"
       - "dotnet test Tests/Tests.csproj --no-restore"
-      - "dotnet build Host/Host.csproj -o \"$env:TEMP\\TaikoLocalServer-host-build-blue-battle-crash-fix\" --no-restore"
-  retest_needed: "Run the same first-time RPCS3 battle flow. If `last_npc_id` alone still crashes, the next hypothesis is a conservative starter `npc_data` row for the same parsed NPC id."
+      - "dotnet build Host/Host.csproj -o \"$env:TEMP\\TaikoLocalServer-host-build-blue-battle-assign-stage-fix\" --no-restore"
+      - "git diff --check"
+      - "dotnet test Tests/Tests.csproj --filter \"FullyQualifiedName~BlueBattleUserDataTests|FullyQualifiedName~BlueBattleCatalogLoaderTests\" --no-restore"
+      - "dotnet test Tests/Tests.csproj --filter \"FullyQualifiedName~BlueBattleUserDataTests\" --no-restore"
+      - "dotnet test Tests/Tests.csproj --filter BlueBattle --no-restore"
+      - "dotnet test Tests/Tests.csproj --no-restore"
+      - "dotnet build Host/Host.csproj -o \"$env:TEMP\\TaikoLocalServer-host-build-blue-battle-costume-flag-fix\" --no-restore"
+      - "dotnet test Tests/Tests.csproj --filter BlueBattle --no-restore"
+      - "dotnet test Tests/Tests.csproj --no-restore"
+      - "dotnet build Host/Host.csproj -o \"$env:TEMP\\TaikoLocalServer-host-build-blue-battle-persisted-readback\" --no-restore"
+      - "git diff --check"
+  retest_needed: "Run the same first-time RPCS3 battle flow with the updated Host. Confirm the first served battleuserdata response matches the safe starter state, then play one battle and confirm the next battleuserdata response echoes persisted NPC id 0 progress with selected special 1 represented in both special masks and bit 120 preserved."
   debug_session: ".planning/debug/blue-battle-first-time-user-crash.md"
+  latest_debug_sessions:
+    - ".planning/debug/phase-05-blue-battle-crash.md"
+    - ".planning/debug/blue-battle-byte-arrays.md"

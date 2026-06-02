@@ -41,7 +41,7 @@ public sealed class BlueBattleRequirementTests
         AssertFileContains(
             root,
             Path.Combine("Tests", "Blue", "BlueBattleUserDataTests.cs"),
-            "Handle_PersistedCompleteNpcRows_EmitsNpcDatasWithSelectedSpecials",
+            "Handle_PersistedBattleState_ReadsBackClientReportedProgress",
             "BattleUserDataController_UsesMediatorQueryAndMapperInsteadOfLocalSuccessConstruction",
             "ShouldSerializeReleaseBattleStageFlg",
             "NpcDatas",
@@ -49,7 +49,7 @@ public sealed class BlueBattleRequirementTests
         AssertFileContains(
             root,
             Path.Combine("Tests", "Blue", "BlueInitialDataTests.cs"),
-            "InitialData_Blue_AdvertisesParsedBattleCatalogValues",
+            "InitialData_Blue_AdvertisesParsedBattleStageAvailabilityAndSpecials",
             "ReleaseBattleStageFlg",
             "BattleBondsLvCap");
         AssertFileContains(
@@ -60,7 +60,7 @@ public sealed class BlueBattleRequirementTests
         AssertFileContains(
             root,
             Path.Combine("Tests", "Blue", "BlueBattlePlayResultHandlerTests.cs"),
-            "UpdatePlayResult_Blue_BattlePayloadEchoesNpcSelectedSpecialsThroughBattleUserData",
+            "UpdatePlayResult_Blue_BattlePayloadReadsBackPersistedNpcState",
             "UpdatePlayResult_Blue_BattlePayloadLeavesExistingNormalStateUnchanged",
             "UpdatePlayResult_Blue_ReleaseBattleDataStoresClientStateWithoutDerivedEffects",
             "AssertNormalBlueStateEmptyAsync");
@@ -68,7 +68,7 @@ public sealed class BlueBattleRequirementTests
             root,
             Path.Combine("Tests", "Blue", "BlueBattleSourceGuardTests.cs"),
             "BlueBattleProductionCode_DoesNotDependOnGreenAiBattleOrOtherEraTruth",
-            "DataDerivedInitialDataFields_AreBackedByExactResolutionApprovals");
+            "InitialDataFields_AreBackedByExactResolutionApprovals");
     }
 
     [Fact]
@@ -102,7 +102,7 @@ public sealed class BlueBattleRequirementTests
         Assert.Contains("dotnet build Host/Host.csproj -o \"$env:TEMP\\TaikoLocalServer-host-build", verification, StringComparison.Ordinal);
         Assert.Contains("FULL-01", verification, StringComparison.Ordinal);
         Assert.Contains("Cabinet/RPCS3 battle smoke was not performed in Phase 05", verification, StringComparison.Ordinal);
-        Assert.Contains("2026-05-31 data-derived unlock-all decision", verification, StringComparison.Ordinal);
+        Assert.Contains("2026-06-02 stage flag role correction", verification, StringComparison.Ordinal);
     }
 
     private static void AssertFileContains(string root, string relativePath, params string[] snippets)

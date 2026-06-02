@@ -15,6 +15,8 @@ public sealed class BlueBattleCatalog
 
     public IReadOnlyList<uint> BattleNpcIds { get; init; } = [];
 
+    public IReadOnlyList<BlueBattleNpcCatalogEntry> BattleNpcs { get; init; } = [];
+
     public IReadOnlyList<uint> ReleaseBattleStageIds { get; init; } = [];
 
     public IReadOnlyList<uint> ReleaseBattleSpecialIds { get; init; } = [];
@@ -22,6 +24,15 @@ public sealed class BlueBattleCatalog
     public uint? BattleBondsLvCap { get; init; }
 
     public IReadOnlyList<BlueBattleCatalogFile> Files { get; init; } = [];
+}
+
+public sealed class BlueBattleNpcCatalogEntry
+{
+    public uint NpcId { get; init; }
+
+    public uint StartExp { get; init; }
+
+    public uint InitialDpn { get; init; }
 }
 
 public sealed class BlueBattleCatalogFile

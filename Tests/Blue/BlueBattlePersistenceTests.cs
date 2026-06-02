@@ -5,7 +5,6 @@ public sealed class BlueBattlePersistenceTests
     private static readonly string[] ExpectedBattleTables =
     [
         "BlueBattleNpcStates",
-        "BlueBattleReleaseStates",
         "BlueBattleStageResults",
         "BlueBattleTokenStates",
         "BlueBattleUserStates"
@@ -66,6 +65,19 @@ public sealed class BlueBattlePersistenceTests
         Assert.Contains("newName: \"Dpn\"", migrationSource, StringComparison.Ordinal);
         Assert.DoesNotContain("migrationBuilder.DropColumn", migrationSource, StringComparison.Ordinal);
         Assert.DoesNotContain("migrationBuilder.AddColumn", migrationSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void RemoveBlueBattleReleaseStateMigration_DropsOnlyRedundantReleaseObservationTable()
+    {
+        var migrationSource = File.ReadAllText(FindMigration("RemoveBlueBattleReleaseState"));
+
+        Assert.Contains("migrationBuilder.DropTable(", migrationSource, StringComparison.Ordinal);
+        Assert.Contains("name: \"BlueBattleReleaseStates\"", migrationSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("name: \"BlueBattleUserStates\"", migrationSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("name: \"BlueBattleNpcStates\"", migrationSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("name: \"BlueBattleTokenStates\"", migrationSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("name: \"BlueBattleStageResults\"", migrationSource, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -134,20 +146,6 @@ public sealed class BlueBattlePersistenceTests
             TokenId = 301,
             TokenValue = 302
         });
-        context.BlueBattleReleaseStates.Add(new BlueBattleReleaseState
-        {
-            Baid = 101,
-            ReleaseInfoId = 12,
-            ReleaseBattleStageId = 13,
-            ReleaseNpcId = 14,
-            ReleaseNpcCostumeId = 15,
-            ReleaseNpcSpecialId = 16,
-            AssignNextStageId = 17,
-            TokenId = 301,
-            TokenValue = 303,
-            CreatedAt = now
-        });
-
         await context.SaveChangesAsync();
 
         await using var reloaded = database.CreateContext();
@@ -180,12 +178,14 @@ public sealed class BlueBattlePersistenceTests
         Assert.Equal(201u, stage.NpcId);
         Assert.Equal(77u, stage.BossLife);
         Assert.Equal(600u, stage.Dpn);
+    }
 
-        var release = await reloaded.BlueBattleReleaseStates.AsNoTracking().SingleAsync(row => row.Baid == 101);
-        Assert.True(release.Id > 0);
-        Assert.Equal(12u, release.ReleaseInfoId);
-        Assert.Equal(17u, release.AssignNextStageId);
-        Assert.Equal(303u, release.TokenValue);
+    [Fact]
+    public async Task SqliteSchema_DoesNotCreateRedundantBlueBattleReleaseStatesTable()
+    {
+        await using var database = await CreateSchemaDatabaseAsync();
+
+        await AssertTableAbsentAsync(database.Context, "BlueBattleReleaseStates");
     }
 
     [Fact]
@@ -226,15 +226,6 @@ public sealed class BlueBattlePersistenceTests
             BattleStageId = 3,
             NpcId = 202
         });
-        context.BlueBattleReleaseStates.Add(new BlueBattleReleaseState
-        {
-            Baid = 102,
-            ReleaseInfoId = 4,
-            TokenId = 302,
-            TokenValue = 9,
-            CreatedAt = now
-        });
-
         await context.SaveChangesAsync();
 
         Assert.Equal(1, await context.BlueBattleUserStates.CountAsync(row => row.Baid == 102));
@@ -295,7 +286,6 @@ public sealed class BlueBattlePersistenceTests
         var token = await context.BlueBattleTokenStates.AsNoTracking().SingleAsync(row => row.Baid == 103 && row.TokenId == 303);
         Assert.Null(token.TokenValue);
         Assert.Empty(await context.BlueBattleStageResults.Where(row => row.Baid == 103).ToListAsync());
-        Assert.Empty(await context.BlueBattleReleaseStates.Where(row => row.Baid == 103).ToListAsync());
     }
 
     private static async Task AddUserAsync(TaikoDbContext context, uint baid)
@@ -321,6 +311,19 @@ public sealed class BlueBattlePersistenceTests
         Assert.Empty(await context.GhostStageSectionDataGreen.ToListAsync());
         Assert.Empty(await context.GreenGhostWinnings.ToListAsync());
         Assert.Empty(await context.GreenGhostTokens.ToListAsync());
+    }
+
+    private static async Task AssertTableAbsentAsync(TaikoDbContext context, string tableName)
+    {
+        await using var command = context.Database.GetDbConnection().CreateCommand();
+        command.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = $tableName";
+        var parameter = command.CreateParameter();
+        parameter.ParameterName = "$tableName";
+        parameter.Value = tableName;
+        command.Parameters.Add(parameter);
+
+        var count = (long)(await command.ExecuteScalarAsync() ?? 0L);
+        Assert.Equal(0L, count);
     }
 
     private static string FindAddBlueBattleStateMigration()

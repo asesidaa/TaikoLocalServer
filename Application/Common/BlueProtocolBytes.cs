@@ -9,13 +9,32 @@ public static class BlueProtocolBytes
     public const int DanFlagBytes = 18;
     public const int DanExtraFlagBytes = 36;
     public const int ContentInfoBytes = 32;
+    public const int BattleInfoFlagBytes = 16;
     public const int BattleStageFlagBytes = 8;
     public const int BattleSpecialFlagBytes = 16;
+    public const int BattleNpcCostumeFlagBytes = 4;
+    public const uint BattleDefaultStageId = 0;
+    public const uint BattleDefaultSpecialId = 1;
+    public const uint BattleNpcSpecialRowGateId = 120;
+
+    // The battle-intro storyboard selector (EBOOT sub_EEF48) does an unguarded flat_map::at(0) on
+    // the battle-token map; the response must always carry a token_id 0 row or the game crashes when
+    // entering battle. See .tools/blue/battleuserdata-response-xrefs.md.
+    public const uint BattleIntroTokenId = 0;
     public const int CrownInflatedBytes = 1280;
 
     public static byte[] CreateFixedBitset(IEnumerable<uint> enabledIds, int byteCount)
     {
         return BitsetCodec.Encode(enabledIds, byteCount);
+    }
+
+    public static byte[] CreateBattleSpecialBitset(IEnumerable<uint> enabledIds)
+    {
+        return CreateFixedBitset(
+            enabledIds
+                .Append(BattleDefaultSpecialId)
+                .Append(BattleNpcSpecialRowGateId),
+            BattleSpecialFlagBytes);
     }
 
     public static byte[] FixedOrZero(byte[]? source, int byteCount)

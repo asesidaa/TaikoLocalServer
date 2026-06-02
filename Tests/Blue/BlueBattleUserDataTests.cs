@@ -7,7 +7,7 @@ namespace TaikoLocalServer.Tests.Blue;
 public sealed class BlueBattleUserDataTests
 {
     [Fact]
-    public async Task Handle_NewUser_ReturnsResultAndLeavesUnresolvedFieldsUnemitted()
+    public async Task Handle_NewUser_ReturnsIdaSafeStarterState()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync();
         await AddUserAsync(fixture.Context, 501);
@@ -19,26 +19,24 @@ public sealed class BlueBattleUserDataTests
         var common = await handler.Handle(new GetBattleUserDataQuery(501), CancellationToken.None);
         var wire = BattleUserDataMappers.Map(common);
 
-        Assert.Equal(1u, common.Result);
-        Assert.Equal(1u, wire.Result);
-        Assert.False(wire.ShouldSerializeReleaseInfoFlg());
-        Assert.False(wire.ShouldSerializeReleaseBattleStageFlg());
-        Assert.False(wire.ShouldSerializeLastBattleStageId());
-        Assert.False(wire.ShouldSerializeLastBossLife());
-        Assert.False(wire.ShouldSerializeLastNpcId());
-        Assert.False(wire.ShouldSerializeAssignStageId());
-        Assert.Empty(wire.NpcDatas);
-        Assert.Empty(wire.AryTokenDatas);
+        AssertSafeDefaultBattleUserData(wire);
     }
 
     [Fact]
-    public async Task Handle_NewUserWithBattleCatalog_EmitsCatalogDerivedFirstNpcId()
+    public async Task Handle_NewUserWithBattleCatalog_DoesNotDeriveBattleUserDataRuntimeState()
     {
         var battleCatalog = new BlueBattleCatalog
         {
             IsRawDataAvailable = true,
             EnablesBattleAdvertisement = true,
+            BattleNpcs =
+            [
+                new() { NpcId = 7, StartExp = 12, InitialDpn = 30 },
+                new() { NpcId = 9, StartExp = 99, InitialDpn = 40 }
+            ],
             BattleNpcIds = [7, 9],
+            ReleaseBattleStageIds = [1, 2],
+            ReleaseBattleSpecialIds = [1, 2, 3, 7],
             Files = []
         };
         var blueCatalog = new BlueHandlerFixture.TestBlueCatalog(battleCatalog: battleCatalog);
@@ -52,42 +50,47 @@ public sealed class BlueBattleUserDataTests
         var common = await handler.Handle(new GetBattleUserDataQuery(504), CancellationToken.None);
         var wire = BattleUserDataMappers.Map(common);
 
-        Assert.Equal(7u, common.LastNpcId);
-        Assert.True(wire.ShouldSerializeLastNpcId());
-        Assert.Equal(7u, wire.LastNpcId);
-        Assert.Empty(wire.NpcDatas);
+        AssertSafeDefaultBattleUserData(wire);
     }
 
     [Fact]
-    public async Task Handle_PersistedApprovedState_EmitsOnlyPersistedScalarsAndCompleteTokenRows()
+    public async Task Handle_PersistedBattleState_ReadsBackClientReportedProgress()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync();
-        await AddUserAsync(fixture.Context, 502);
-        var now = new DateTime(2026, 5, 31, 13, 0, 0, DateTimeKind.Utc);
+        await AddUserAsync(fixture.Context, 505);
+        var now = new DateTime(2026, 5, 31, 15, 0, 0, DateTimeKind.Utc);
         fixture.Context.BlueBattleUserStates.Add(new BlueBattleUserState
         {
-            Baid = 502,
-            ReleaseInfoFlg = [1, 2, 3],
-            ReleaseBattleStageFlg = [4, 5],
-            LastBattleStageId = 6,
-            LastBossLife = 7,
-            AssignStageId = 8,
+            Baid = 505,
+            ReleaseInfoFlg = BlueProtocolBytes.CreateFixedBitset([1], BlueProtocolBytes.BattleInfoFlagBytes),
+            ReleaseBattleStageFlg = new byte[BlueProtocolBytes.BattleStageFlagBytes],
+            LastBattleStageId = 1,
+            LastBossLife = 0,
+            LastNpcId = 0,
+            AssignStageId = 1,
             CreatedAt = now,
             UpdatedAt = now
         });
         fixture.Context.BlueBattleNpcStates.Add(new BlueBattleNpcState
         {
-            Baid = 502,
-            NpcId = 9,
-            TotalExp = 10,
+            Baid = 505,
+            NpcId = 0,
+            TotalExp = 175,
+            MaxDpn = 34,
+            NpcCostumeId = 0,
+            NpcCostumeFlg = [1, 0, 0, 0],
+            SelectedSpecialId1 = 1,
+            SelectedSpecialId2 = 1,
+            SelectedSpecialId3 = 1,
+            ReleaseSpecialFlg = BlueProtocolBytes.CreateFixedBitset([1], BlueProtocolBytes.BattleSpecialFlagBytes),
             CreatedAt = now,
             UpdatedAt = now
         });
         fixture.Context.BlueBattleTokenStates.Add(new BlueBattleTokenState
         {
-            Baid = 502,
-            TokenId = 11,
-            TokenValue = 12,
+            Baid = 505,
+            TokenId = 1,
+            TokenValue = 9,
             CreatedAt = now,
             UpdatedAt = now
         });
@@ -97,72 +100,44 @@ public sealed class BlueBattleUserDataTests
             fixture.Catalog,
             NullLogger<GetBattleUserDataQueryHandler>.Instance);
 
-        var common = await handler.Handle(new GetBattleUserDataQuery(502), CancellationToken.None);
+        var common = await handler.Handle(new GetBattleUserDataQuery(505), CancellationToken.None);
         var wire = BattleUserDataMappers.Map(common);
 
-        Assert.Equal([1, 2, 3], wire.ReleaseInfoFlg);
-        Assert.Equal([4, 5], wire.ReleaseBattleStageFlg);
-        Assert.Equal(6u, wire.LastBattleStageId);
-        Assert.Equal(7u, wire.LastBossLife);
-        Assert.Equal(8u, wire.AssignStageId);
-        Assert.False(wire.ShouldSerializeLastNpcId());
-        Assert.Empty(wire.NpcDatas);
-        var token = Assert.Single(wire.AryTokenDatas);
-        Assert.Equal(11u, token.TokenId);
-        Assert.Equal(12u, token.TokenValue);
-    }
-
-    [Fact]
-    public async Task Handle_PersistedCompleteNpcRows_EmitsNpcDatasWithSelectedSpecials()
-    {
-        await using var fixture = await BlueHandlerFixture.CreateAsync();
-        await AddUserAsync(fixture.Context, 503);
-        var now = new DateTime(2026, 5, 31, 14, 0, 0, DateTimeKind.Utc);
-        fixture.Context.BlueBattleNpcStates.Add(new BlueBattleNpcState
-        {
-            Baid = 503,
-            NpcId = 9,
-            TotalExp = 888,
-            MaxDpn = 456,
-            NpcCostumeId = 30,
-            NpcCostumeFlg = [0, 0, 0, 64],
-            SelectedSpecialId1 = 21,
-            SelectedSpecialId2 = 22,
-            SelectedSpecialId3 = 23,
-            ReleaseSpecialFlg = [0, 0, 224],
-            CreatedAt = now,
-            UpdatedAt = now
-        });
-        fixture.Context.BlueBattleNpcStates.Add(new BlueBattleNpcState
-        {
-            Baid = 503,
-            NpcId = 10,
-            SelectedSpecialId1 = 24,
-            SelectedSpecialId2 = 25,
-            SelectedSpecialId3 = 26,
-            CreatedAt = now,
-            UpdatedAt = now
-        });
-        await fixture.Context.SaveChangesAsync();
-        var handler = new GetBattleUserDataQueryHandler(
-            fixture.Context,
-            fixture.Catalog,
-            NullLogger<GetBattleUserDataQueryHandler>.Instance);
-
-        var common = await handler.Handle(new GetBattleUserDataQuery(503), CancellationToken.None);
-        var wire = BattleUserDataMappers.Map(common);
+        Assert.Equal(1u, wire.Result);
+        Assert.True(wire.ShouldSerializeReleaseInfoFlg());
+        Assert.True(BitIsSet(wire.ReleaseInfoFlg, 1));
+        Assert.True(wire.ShouldSerializeReleaseBattleStageFlg());
+        Assert.True(BitIsSet(wire.ReleaseBattleStageFlg, 1));
+        Assert.True(wire.ShouldSerializeLastBattleStageId());
+        Assert.Equal(1u, wire.LastBattleStageId);
+        Assert.True(wire.ShouldSerializeLastBossLife());
+        Assert.Equal(0u, wire.LastBossLife);
+        Assert.True(wire.ShouldSerializeLastNpcId());
+        Assert.Equal(0u, wire.LastNpcId);
+        Assert.True(wire.ShouldSerializeAssignStageId());
+        Assert.Equal(1u, wire.AssignStageId);
 
         var npc = Assert.Single(wire.NpcDatas);
-        Assert.Equal(9u, npc.NpcId);
-        Assert.Equal("888", npc.TotalExp);
-        Assert.Equal(456u, npc.MaxDpn);
-        Assert.Equal(30u, npc.NpcCostumeId);
-        Assert.Equal([0, 0, 0, 64], npc.NpcCostumeFlg);
-        Assert.Equal(21u, npc.LastSelectSpecial1);
-        Assert.Equal(22u, npc.LastSelectSpecial2);
-        Assert.Equal(23u, npc.LastSelectSpecial3);
+        Assert.Equal(0u, npc.NpcId);
+        Assert.Equal("175", npc.TotalExp);
+        Assert.Equal(34u, npc.MaxDpn);
+        Assert.Equal(0u, npc.NpcCostumeId);
+        Assert.True(BitIsSet(npc.NpcCostumeFlg, 0));
+        Assert.Equal(1u, npc.LastSelectSpecial1);
+        Assert.Equal(1u, npc.LastSelectSpecial2);
+        Assert.Equal(1u, npc.LastSelectSpecial3);
         Assert.True(npc.ShouldSerializeReleaseSpecialFlg());
-        Assert.Equal([0, 0, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], npc.ReleaseSpecialFlg);
+        Assert.True(BitIsSet(npc.ReleaseSpecialFlg, 1));
+        Assert.True(BitIsSet(npc.ReleaseSpecialFlg, BlueProtocolBytes.BattleNpcSpecialRowGateId));
+
+        // The battle-intro selector (EBOOT sub_EEF48) does an unguarded flat_map::at(0) on the token
+        // map, so a token_id 0 row must always be present or the game crashes entering battle. The
+        // client-reported normal token (id 1, value 9) is echoed at its real id so song-select reflects it.
+        Assert.Equal(2, wire.AryTokenDatas.Count);
+        var introToken = wire.AryTokenDatas.Single(t => t.TokenId == 0);
+        Assert.Equal(0u, introToken.TokenValue);
+        var normalToken = wire.AryTokenDatas.Single(t => t.TokenId == 1);
+        Assert.Equal(9u, normalToken.TokenValue);
     }
 
     [Fact]
@@ -240,6 +215,45 @@ public sealed class BlueBattleUserDataTests
         Assert.DoesNotContain("new BattleUserDataResponse { Result = 1 }", source, StringComparison.Ordinal);
     }
 
+    private static void AssertSafeDefaultBattleUserData(BattleUserDataResponse wire)
+    {
+        Assert.Equal(1u, wire.Result);
+        // release_info_flg is the "clip already seen" suppression mask (EBOOT sub_EEF48 plays a clip
+        // only while its clip-id bit is CLEAR). A brand-new user has seen nothing, so every bit must
+        // be clear — in particular clip-id 1 (intro/01 + JINGLE_BTLPROLOG, the battle tutorial).
+        Assert.True(wire.ShouldSerializeReleaseInfoFlg());
+        Assert.All(wire.ReleaseInfoFlg, b => Assert.Equal(0, b));
+        // release_battle_stage_flg is an unlock mask: stage 1 must be unlocked so its substage intro resolves.
+        Assert.True(wire.ShouldSerializeReleaseBattleStageFlg());
+        Assert.True(BitIsSet(wire.ReleaseBattleStageFlg, 1));
+        Assert.True(wire.ShouldSerializeLastBattleStageId());
+        Assert.Equal(BlueProtocolBytes.BattleDefaultStageId, wire.LastBattleStageId);
+        Assert.True(wire.ShouldSerializeLastBossLife());
+        Assert.Equal(0u, wire.LastBossLife);
+        Assert.True(wire.ShouldSerializeLastNpcId());
+        Assert.Equal(0u, wire.LastNpcId);
+        Assert.True(wire.ShouldSerializeAssignStageId());
+        Assert.Equal(1u, wire.AssignStageId);
+
+        var npc = Assert.Single(wire.NpcDatas);
+        Assert.Equal(0u, npc.NpcId);
+        Assert.Equal("0", npc.TotalExp);
+        Assert.Equal(0u, npc.MaxDpn);
+        Assert.Equal(0u, npc.NpcCostumeId);
+        Assert.True(BitIsSet(npc.NpcCostumeFlg, 0));
+        Assert.Equal(BlueProtocolBytes.BattleDefaultSpecialId, npc.LastSelectSpecial1);
+        Assert.Equal(0u, npc.LastSelectSpecial2);
+        Assert.Equal(0u, npc.LastSelectSpecial3);
+        Assert.True(npc.ShouldSerializeReleaseSpecialFlg());
+        Assert.Equal(
+            BlueProtocolBytes.CreateBattleSpecialBitset([BlueProtocolBytes.BattleDefaultSpecialId]),
+            npc.ReleaseSpecialFlg);
+
+        var token = Assert.Single(wire.AryTokenDatas);
+        Assert.Equal(0u, token.TokenId);
+        Assert.Equal(0u, token.TokenValue);
+    }
+
     private static async Task AddUserAsync(TaikoDbContext context, uint baid)
     {
         context.UserData.Add(new UserDatum
@@ -249,6 +263,9 @@ public sealed class BlueBattleUserDataTests
         });
         await context.SaveChangesAsync();
     }
+
+    private static bool BitIsSet(byte[] source, uint id)
+        => (source[id >> 3] & (1 << ((int)id & 7))) != 0;
 
     private static string FindRepoRoot()
     {

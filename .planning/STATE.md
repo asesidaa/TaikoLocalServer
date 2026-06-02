@@ -4,8 +4,8 @@ milestone: v1.0
 milestone_name: milestone
 status: verifying
 stopped_at: Completed 05-11-PLAN.md
-last_updated: "2026-05-30T22:00:35.454Z"
-last_activity: 2026-05-30
+last_updated: "2026-06-02T17:32:43.000Z"
+last_activity: 2026-06-02
 progress:
   total_phases: 6
   completed_phases: 3
@@ -107,7 +107,7 @@ Recent decisions affecting current work:
 - [Phase 04-blue-battle-evidence-and-design]: Phase 5 Blue battle runtime planning remains BLOCKED because required field/default/row-count/menu-entry evidence is still missing.
 - [Phase 04-blue-battle-evidence-and-design]: No APPROVED_WITH_USER_EXCEPTIONS rows were recorded for 04-03; no user approvals were invented.
 - [Phase 05]: Blue battle persistence shape starts as BlueBattle* nullable/raw state, not zero-filled defaults or XML-derived rows.
-- [Phase 05]: Stage-result and release battle observations are append-style raw captures; progression, reward, token, and normal-save effects remain row-gated.
+- [Phase 05]: Stage results remain append-style captures, while release battle deltas update the per-user/per-NPC/per-token BlueBattle state rows directly; progression, reward, token, and normal-save effects remain row-gated.
 - [Phase 05]: Blue battle XML is available only as bounded raw inventory; file presence and row counts do not enable battle advertisement or runtime defaults.
 - [Phase 05]: Blue battle playresult classification is based on `AryReleaseBattledata` or `AryBattlestagedata` presence, while mode values remain raw observations.
 - [Phase 05]: Battle playresult reward/progression rows 18-24 and 26 resolve to client-state store/echo, not server-side battle effect calculation.
@@ -118,14 +118,14 @@ Recent decisions affecting current work:
 - [Phase 05]: BlueBattle persistence tests assert nullable unresolved fields and no writes to normal Blue, shop, Dani, recent/favorite, or Green AI Battle state. — The test suite guards the 05-05 migration/persistence boundary against cross-era and normal Blue state leakage.
 - [Phase 05]: Focused runtime persistence tests use EnsureCreated because the historical migration chain cannot migrate a blank in-memory SQLite database. — The old SeparateTokens migration is unrelated to 05-05; migration correctness is covered by EF migration listing and a migration-operation guard.
 - [Phase 05]: Blue battleuserdata.php now uses a Blue-owned Mediator query and mapper instead of local controller success construction.
-- [Phase 05]: Optional BattleUserDataResponse fields are set only when the common DTO value is non-null, preserving generated protobuf presence semantics.
-- [Phase 05]: The query emits persisted scalar, complete NPC, and complete token rows; incomplete NPC rows stay omitted until required values are available.
+- [Phase 05]: 2026-06-01 battle crash reanalysis supersedes the catalog-derived/persisted battleuserdata default assumptions. IDA daemon evidence shows the client consumes fixed slices only: 16-byte release info, 8-byte battle stage flags, 4-byte NPC costume flags, and 16-byte NPC special flags; optional zero scalars behave like omitted defaults in `OnBattleUserDataResponse`.
+- [Phase 05]: Blue battleuserdata now uses a safe starter only when no persisted battle state exists, then echoes client-reported Blue battle state from persistence. The 2026-06-01 played session proves runtime NPC id 0 for the first NPC, selected special 1, release info id 1, last/assign stage 1, and persisted readback after playresult; XML `battlenpcinfo` ids are normalized from one-based catalog ids to zero-based runtime ids.
 - [Phase 05]: Battle-classified Blue playresults branch immediately after Blue user validation and before normal save, shop, unlock, stage, profile, recent/favorite, and Dani writes.
 - [Phase 05]: Battle playresults persist only client-reported stage, release, NPC, token, boss-life, last-stage, and assignment state into BlueBattle tables.
-- [Phase 05]: Release NPC IDs remain raw BlueBattleReleaseState observations; NPC state is updated only from BattleStageData NPC values until later mapping evidence exists.
-- [Phase 05]: Blue battle initialdata derives from parsed battle XML — The 2026-05-31 user decision approved data-derived unlock-all initialdata and rejected fail-closed omission for this stage.
+- [Phase 05]: Release NPC IDs are not persisted as a separate observation row; NPC state is updated from BattleStageData NPC values and release costume/special bit diffs only when a persisted current NPC row identifies the owner.
+- [Phase 05]: Blue battle initialdata derives global battle availability from parsed battle XML. — The 2026-06-02 daemon-backed IDA correction proves initialdata stage flags are the global stage availability bitset, not the battleuserdata user/progression mask.
 - [Phase 05]: Phase 05 automated server verification passed; cabinet/RPCS3 battle smoke remains Phase 6 FULL-01. — 05-11 ran focused BlueBattle tests, full test suite, and temp-output Host build; no cabinet/RPCS3 run was performed.
-- [Phase 05]: Blue battle initialdata closeout requires parsed catalog data for unlock-all behavior. — 05-11 source guards enforce the 2026-05-31 decision: no hardcoded battle stage IDs, battle special move reward IDs, byte arrays, or bonds cap constants.
+- [Phase 05]: Blue battle initialdata closeout requires parsed catalog data and distinct stage-flag ownership. — 05-11 source guards enforce parsed battle stage availability, battle special rewards, and bonds cap; 2026-06-02 tracing keeps initialdata and battleuserdata stage masks separate.
 - [Phase 05]: BTL-05 remains store/echo-only for approved rows after Phase 05. — 05-11 requirement tests keep stage 33, reward effects, token thresholds, boss completion, and normal unlock mirrors tied to explicit blocked or approved row statuses.
 
 ### Pending Todos
@@ -144,6 +144,7 @@ None yet.
 | 260529-6ow | Add event_folder, movie_data and telop data support to Blue | 2026-05-28 | d47efb09 | [260529-6ow-add-event-folder-movie-data-and-telop-da](./quick/260529-6ow-add-event-folder-movie-data-and-telop-da/) |
 | 260529-sk1 | Implement Phase 2 in a quick way with Blue AdminApi and WebUI parity using existing Green/Nijiiro mirrors limited to Blue data | 2026-05-29 | faa2117c | [260529-sk1-implement-phase-2-in-a-quick-way-with-bl](./quick/260529-sk1-implement-phase-2-in-a-quick-way-with-bl/) |
 | 260530-2ps | Complete Blue WebUI game-data support by parsing Blue customization data and loading shared names | 2026-05-30 | 55939226 | [260530-2ps-complete-blue-webui-game-data-support-by](./quick/260530-2ps-complete-blue-webui-game-data-support-by/) |
+| 260603-20d | Simplify BlueBattleReleaseStates design using latest battleuserdata byte-array evidence | 2026-06-02 | pending | [260603-20d-simplify-bluebattlereleasestates-design-](./quick/260603-20d-simplify-bluebattlereleasestates-design-/) |
 
 ## Deferred Items
 

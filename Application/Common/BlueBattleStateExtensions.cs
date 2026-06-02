@@ -80,47 +80,26 @@ public static class BlueBattleStateExtensions
             releaseData.ReleaseBattleStageIds,
             BattleReleaseStageBytes);
         userState.AssignStageId = releaseData.AssignNextStageId;
+        if (userState.LastNpcId is { } lastNpcId)
+        {
+            var npcState = await context.BlueBattleNpcStates.FindAsync([baid, lastNpcId], cancellationToken);
+            if (npcState is not null)
+            {
+                npcState.NpcCostumeFlg = SetBattleBits(
+                    npcState.NpcCostumeFlg,
+                    releaseData.ReleaseNpcCostumeIds.Where(id => id > 0),
+                    BattleNpcCostumeBytes);
+                npcState.ReleaseSpecialFlg = SetBattleBits(
+                    npcState.ReleaseSpecialFlg,
+                    releaseData.ReleaseNpcSpecialIds.Where(id => id > 0),
+                    BattleNpcSpecialBytes);
+                npcState.UpdatedAt = now;
+            }
+        }
 
         foreach (var token in releaseData.BattleTokenData)
         {
             await context.UpsertBlueBattleTokenStateAsync(baid, token, now, cancellationToken);
-        }
-
-        var rowCount = MaxCount(
-            releaseData.ReleaseInfoIds.Count,
-            releaseData.ReleaseBattleStageIds.Count,
-            releaseData.ReleaseNpcIds.Count,
-            releaseData.ReleaseNpcCostumeIds.Count,
-            releaseData.ReleaseNpcSpecialIds.Count,
-            releaseData.BattleTokenData.Count);
-
-        if (rowCount == 0)
-        {
-            context.BlueBattleReleaseStates.Add(new BlueBattleReleaseState
-            {
-                Baid = baid,
-                AssignNextStageId = releaseData.AssignNextStageId,
-                CreatedAt = now
-            });
-            return;
-        }
-
-        for (var index = 0; index < rowCount; index++)
-        {
-            var token = GetOrNull(releaseData.BattleTokenData, index);
-            context.BlueBattleReleaseStates.Add(new BlueBattleReleaseState
-            {
-                Baid = baid,
-                ReleaseInfoId = GetOrNull(releaseData.ReleaseInfoIds, index),
-                ReleaseBattleStageId = GetOrNull(releaseData.ReleaseBattleStageIds, index),
-                ReleaseNpcId = GetOrNull(releaseData.ReleaseNpcIds, index),
-                ReleaseNpcCostumeId = GetOrNull(releaseData.ReleaseNpcCostumeIds, index),
-                ReleaseNpcSpecialId = GetOrNull(releaseData.ReleaseNpcSpecialIds, index),
-                AssignNextStageId = releaseData.AssignNextStageId,
-                TokenId = token?.TokenId,
-                TokenValue = token?.TokenValue,
-                CreatedAt = now
-            });
         }
     }
 
@@ -167,10 +146,7 @@ public static class BlueBattleStateExtensions
         npcState.TotalExp = ParseOptionalUInt32(npc.TotalExp);
         npcState.MaxDpn = Math.Max(npcState.MaxDpn ?? 0, npc.Dpn);
         npcState.NpcCostumeId = npc.NpcCostumeId;
-        npcState.NpcCostumeFlg = SetBattleBits(
-            npcState.NpcCostumeFlg,
-            [npc.NpcCostumeId],
-            BattleNpcCostumeBytes);
+        npcState.NpcCostumeFlg = BlueProtocolBytes.FixedOrZero(npcState.NpcCostumeFlg, BattleNpcCostumeBytes);
         npcState.SelectedSpecialId1 = npc.SpecialId1;
         npcState.SelectedSpecialId2 = npc.SpecialId2;
         npcState.SelectedSpecialId3 = npc.SpecialId3;
@@ -226,14 +202,4 @@ public static class BlueBattleStateExtensions
         return result;
     }
 
-    private static int MaxCount(params int[] counts)
-        => counts.Length == 0 ? 0 : counts.Max();
-
-    private static uint? GetOrNull(IReadOnlyList<uint> values, int index)
-        => index < values.Count ? values[index] : null;
-
-    private static CommonPlayResultData.BattleTokenData? GetOrNull(
-        IReadOnlyList<CommonPlayResultData.BattleTokenData> values,
-        int index)
-        => index < values.Count ? values[index] : null;
 }
