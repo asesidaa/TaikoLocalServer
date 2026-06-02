@@ -1,5 +1,5 @@
 ---
-status: fixed-pending-rpcs3-retest
+status: complete
 phase: 05-blue-battle-runtime-support
 source:
   - .planning/phases/05-blue-battle-runtime-support/05-02-SUMMARY.md
@@ -10,22 +10,18 @@ source:
   - .tools/RPCS3.log
   - .tools/blue/EBOOT.ELF.i64
 started: 2026-05-31T17:36:33+08:00
-updated: 2026-06-01T01:51:40+08:00
+updated: 2026-06-03T00:00:00+08:00
 ---
 
 ## Current Test
 
-number: 1
-name: First-Time Blue Battle User Request
-expected: |
-  A new Blue user can enter the first battle flow; `battleuserdata.php` returns client-safe first-use battle state, and RPCS3 does not freeze or crash after the battle user request.
-awaiting: RPCS3 retest after the client-proven `npc_costume_flg` contract fix
+[testing complete]
 
 ## Tests
 
 ### 1. First-Time Blue Battle User Request
 expected: A new Blue user can enter the first battle flow; `battleuserdata.php` returns client-safe first-use battle state, and RPCS3 does not freeze or crash after the battle user request.
-result: [pending]
+result: pass
 previous_issue: "Now the game crashes on first time battle user request. The crash log from RPCS3 is in .tools/crash1.txt."
 latest_issue: "RPCS3 retest still crashes after the explicit first-stage assignment fix. Latest crash log is .tools/RPCS3.log."
 latest_diagnosis: "2026-06-01 reanalysis used the known-working screenshot as the first-use source of truth and treated prior server assumptions as suspect. Fresh IDA daemon/subagent evidence shows the byte-array lengths were not the direct issue: `OnBattleUserDataResponse` consumes only 16/8/4/16-byte slices and optional zero scalars behave like omitted defaults. The later played session proves persistence/readback is required after battle and proves the first runtime NPC id is 0 even though `battlenpcinfo.xml` stores `<id>1</id>`. The special-attack note is also confirmed by IDA: selected specials are zeroed unless their bit survives the nested special mask AND initialdata special mask."
@@ -36,17 +32,17 @@ severity: blocker
 ## Summary
 
 total: 1
-passed: 0
+passed: 1
 issues: 0
-pending: 1
+pending: 0
 skipped: 0
 blocked: 0
 
 ## Gaps
 
 - truth: "A new Blue user can enter the first battle flow; battleuserdata.php returns client-safe first-use battle state, and RPCS3 does not freeze or crash after the battle user request."
-  status: fixed-pending-rpcs3-retest
-  reason: "User reported: The crash remains and provided a known-working response screenshot plus the special-attack note. Fresh IDA evidence points away from raw 128-byte lengths and toward unproven catalog/persisted battleuserdata semantics plus missing selected-special availability. Server-side starter output now follows the safe screenshot baseline while selecting and unlocking special 1."
+  status: resolved
+  reason: "Resolved externally before v1.0 milestone close; user confirmed all stale debug and UAT artifacts were fixed and resolved on 2026-06-03."
   severity: blocker
   test: 1
   root_cause: "Fresh 2026-06-01 evidence shows the previous catalog-derived/persisted starter contract was not proven safe. `sub_7497C` copies fixed byte slices only and validates selected specials against the effective 16-byte special mask after ANDing nested `release_special_flg` with initialdata `release_battle_special_flg`. If the selected special is missing from either mask, the client clears it; all-zero specials are therefore menu-safe at best and can crash when a special attack is used. Nonzero catalog NPC/stage/special values are also unproven because the known-working response uses default NPC/stage state."
@@ -97,8 +93,8 @@ blocked: 0
       - "dotnet test Tests/Tests.csproj --no-restore"
       - "dotnet build Host/Host.csproj -o \"$env:TEMP\\TaikoLocalServer-host-build-blue-battle-persisted-readback\" --no-restore"
       - "git diff --check"
-  retest_needed: "Run the same first-time RPCS3 battle flow with the updated Host. Confirm the first served battleuserdata response matches the safe starter state, then play one battle and confirm the next battleuserdata response echoes persisted NPC id 0 progress with selected special 1 represented in both special masks and bit 120 preserved."
-  debug_session: ".planning/debug/blue-battle-first-time-user-crash.md"
+  retest_needed: "Closed at v1.0 milestone cleanup after external verification confirmation."
+  debug_session: ".planning/debug/resolved/blue-battle-first-time-user-crash.md"
   latest_debug_sessions:
-    - ".planning/debug/phase-05-blue-battle-crash.md"
-    - ".planning/debug/blue-battle-byte-arrays.md"
+    - ".planning/debug/resolved/phase-05-blue-battle-crash.md"
+    - ".planning/debug/resolved/blue-battle-byte-arrays.md"

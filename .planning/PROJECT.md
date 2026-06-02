@@ -26,10 +26,11 @@ A Blue cabinet can use TaikoLocalServer for normal and battle play with repeatab
 - [x] Blue A8 normal-mode cabinet smoke and hardening: normal Blue support has been user-confirmed complete before Track B battle evidence/design work.
 - [x] Blue battle evidence and design: Phase 4 defined Track B from proto, local Blue battle XML inventory, IDA/client-equivalent evidence, and explicit field-width/default-state gates before runtime battle behavior.
 - [x] Blue battle runtime support: Phase 5 added Blue-owned battle persistence, battleuserdata readback, data-derived initialdata battle advertisement, battle playresult persistence, reward/unlock store-echo behavior, source guards, and server-side verification without Green AI Battle dependencies.
+- [x] Full Blue verification and release hardening: v1.0 closes with repeatable normal and battle smoke evidence externally confirmed by the user, full automated Blue/server verification, source guardrails, and updated operator/developer documentation.
 
 ### Active
 
-- [ ] Full Blue verification: normal and battle flows have repeatable cabinet/RPCS3 smoke evidence, server-side regression tests, source guardrails, and documented unresolved items.
+- No active Blue support requirements remain in this milestone. Start the next milestone with fresh requirements.
 
 ### Out of Scope
 
@@ -50,7 +51,20 @@ A Blue cabinet can use TaikoLocalServer for normal and battle play with repeatab
 - The Superpowers Blue roadmap split the effort into Track A normal support and Track B battle mode. A0-A5 are treated as completed prior work for this GSD project.
 - Track A stages A6 item shop/unlocking, A7 AdminApi/WebUI parity, and A8 normal-mode cabinet smoke/hardening are complete.
 - Track B battle mode is part of the full Blue project scope. Phase 4 produced strict battle design gates, and Phase 5 completed server-side runtime support using row-specific proof plus named user approvals where exact client defaults were not otherwise provable.
+- v1.0 Blue support is shipped as of 2026-06-03. The user confirmed the remaining stale debug/UAT artifacts were externally fixed and resolved before milestone close.
 - The evidence hierarchy is repo code, proto files, SQLite state, cabinet/RPCS3 logs, IDA/client evidence, and only then public wiki pages for gameplay scoping.
+
+## Current State
+
+v1.0 Blue Support is complete. Blue is a first-class supported era with normal play, Dani, item shop/unlocking, AdminApi/WebUI readback, battle evidence/design, battle runtime persistence/protocol handling, final guardrails, and operator documentation.
+
+The planning state is now archived for the completed milestone. New work should start from fresh milestone requirements instead of extending the closed Blue support plan.
+
+## Next Milestone Goals
+
+- Define the next product or support objective with `$gsd-new-milestone`.
+- Keep new requirements separate from the archived v1.0 Blue support requirements.
+- Preserve the Blue/Green/Nijiiro state separation and evidence-first battle rules as baseline project constraints.
 
 ## Constraints
 
@@ -67,13 +81,14 @@ A Blue cabinet can use TaikoLocalServer for normal and battle play with repeatab
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Use GSD to finish full Blue support from the existing Superpowers roadmap | The roadmap already captures staged Blue support and evidence references; GSD should continue rather than restart discovery | Pending |
-| Treat A0-A5 as validated prior work | The user stated the previous Superpowers work completed through A5 | Pending |
-| Include Track B battle mode in current project scope | The user selected full Blue scope, not Track A only | Pending |
-| Finish normal Track A before battle runtime implementation | Existing roadmap says battle starts after Track A is stable enough for normal cabinet smoke testing | Pending |
-| Use strict battle evidence gates | The user selected strict evidence before battle implementation | Pending |
-| Define done as cabinet/RPCS3-proven normal and battle flows | The user selected repeatable cabinet evidence as the full-support done condition | Pending |
-| Complete Phase 5 battle runtime with data-derived defaults and bounded store/echo behavior | Phase 5 resolved required runtime rows through IDA/proto/local-data evidence plus named user approval for parsed-data battle initialdata unlocks | `05-VERIFICATION.md` records `status: passed`; cabinet/RPCS3 battle smoke remains Phase 6/FULL-01 |
+| Use GSD to finish full Blue support from the existing Superpowers roadmap | The roadmap already captures staged Blue support and evidence references; GSD should continue rather than restart discovery | Validated in v1.0 |
+| Treat A0-A5 as validated prior work | The user stated the previous Superpowers work completed through A5 | Validated in v1.0 |
+| Include Track B battle mode in current project scope | The user selected full Blue scope, not Track A only | Validated in v1.0 |
+| Finish normal Track A before battle runtime implementation | Existing roadmap says battle starts after Track A is stable enough for normal cabinet smoke testing | Validated in v1.0 |
+| Use strict battle evidence gates | The user selected strict evidence before battle implementation | Validated in v1.0 |
+| Define done as cabinet/RPCS3-proven normal and battle flows | The user selected repeatable cabinet evidence as the full-support done condition | Validated in v1.0 |
+| Complete Phase 5 battle runtime with data-derived defaults and bounded store/echo behavior | Phase 5 resolved required runtime rows through IDA/proto/local-data evidence plus named user approval for parsed-data battle initialdata unlocks | Validated by Phase 5 server verification and closed by v1.0 full Blue verification |
+| Close stale Phase 05 debug/UAT artifacts at milestone completion | User confirmed the remaining audit-open records were stale and had been externally fixed and resolved before close | Resolved in v1.0 closeout |
 
 ## Evolution
 
@@ -93,4 +108,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-30 after Phase 5 completion*
+*Last updated: 2026-06-03 after v1.0 milestone completion*
