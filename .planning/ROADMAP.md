@@ -130,7 +130,7 @@ Phases execute in numeric order: 7 -> 8 -> 9 -> 10 -> 11.
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 7. Tokkun Evidence Contract and Guardrail Reset | v1.1 | 1/1 | Complete   | 2026-06-03 |
+| 7. Tokkun Evidence Contract and Guardrail Reset | v1.1 | 1/1 | Complete    | 2026-06-03 |
 | 8. Stateless Banacoin Compatibility and Availability | v1.1 | 0/TBD | Not started | - |
 | 9. Tokkun Mapper and Safe Playresult Acceptance | v1.1 | 0/TBD | Not started | - |
 | 10. Evidence-Backed Tokkun State Persistence and Readback | v1.1 | 0/TBD | Not started | - |

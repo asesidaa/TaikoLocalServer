@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
-status: verifying
-stopped_at: Completed 07-01-PLAN.md
-last_updated: "2026-06-03T18:52:14.423Z"
-last_activity: 2026-06-03 -- Phase 07 execution started
+status: planning
+stopped_at: Phase 7 complete; ready for Phase 8 planning
+last_updated: "2026-06-03T19:03:48.200Z"
+last_activity: 2026-06-03 - Phase 7 verified complete; Phase 8 next
 progress:
   total_phases: 5
   completed_phases: 1
@@ -21,38 +21,36 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-03)
 
 **Core value:** A Blue cabinet can use TaikoLocalServer for normal, battle, and Tokkun play with repeatable cabinet/RPCS3 evidence, without corrupting or conflating Green, Nijiiro, or shared identity state.
-**Current focus:** Phase 07 — tokkun-evidence-contract-and-guardrail-reset
+**Current focus:** Phase 8 - Stateless Banacoin Compatibility and Availability is next.
 
 ## Current Position
 
-Phase: 07 (tokkun-evidence-contract-and-guardrail-reset) — EXECUTING
-Plan: 1 of 1
-Status: Phase complete — ready for verification
-Last activity: 2026-06-03 -- Phase 07 execution started
+Phase: 8 of 11 overall (2 of 5 active)
+Plan: Not started
+Status: Phase 7 complete; Phase 8 ready for discussion/planning
+Last activity: 2026-06-03 - Phase 7 verified complete
 
-Progress: [----------] 0%
+Progress: [##--------] 20%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 0 in v1.1
-- Average duration: Not available
-- Total execution time: 0.0 hours
+- Total plans completed: 1 in v1.1
+- Average duration: 10 min
+- Total execution time: 10 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 7 | 0/1 complete | - | - |
+| 7 | 1/1 complete | 10 min | 10 min |
 | 8-11 | TBD | - | - |
 
 **Recent Trend:**
 
-- Last 5 plans: None
+- Last 5 plans: 07-01 completed in 10 min
 - Trend: Not available
-
-| Phase 07 P01 | 10 min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -66,6 +64,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - Protocol-backed Tokkun tutorial and summary/progress persistence is in scope for v1.1.
 - `PlayMode.Tokkun` must not receive a guessed numeric value.
 - Cabinet/RPCS3 smoke evidence is required before v1.1 can be called done.
+- Phase 7 established the Tokkun evidence contract and removed the stale Tokkun source-scan guard without adding runtime Tokkun behavior.
 
 ### Pending Todos
 
@@ -73,7 +72,7 @@ None recorded.
 
 ### Blockers/Concerns
 
-None recorded for roadmap creation. Phase 7 should close the current Tokkun protocol unknowns ledger before runtime behavior changes.
+None recorded. Phase 8 should decide Banacoin-adjacent route availability from evidence while keeping real Banacoin state out of scope.
 
 ## Deferred Items
 
@@ -83,6 +82,6 @@ None recorded for roadmap creation. Phase 7 should close the current Tokkun prot
 
 ## Session Continuity
 
-Last session: 2026-06-03T18:52:14.417Z
-Stopped at: Completed 07-01-PLAN.md
+Last session: 2026-06-03T19:03:48.200Z
+Stopped at: Phase 7 complete; ready for Phase 8 planning
 Resume file: None
