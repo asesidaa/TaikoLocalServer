@@ -10,9 +10,9 @@ Requirements for the current milestone. Each maps to roadmap phases.
 
 ### Tokkun Evidence Contract
 
-- [ ] **TKEV-01**: Operator/developer can review an evidence-tagged Blue Tokkun protocol contract covering proven, observed, and deliberately ignored fields.
-- [ ] **TKEV-02**: Blue Tokkun classification does not depend on a guessed numeric `play_mode`; the numeric value remains unknown until proven by RPCS3/cabinet logs or deeper IDA evidence.
-- [ ] **TKEV-03**: The old source guard that banned Tokkun terms is replaced by bounded guards that allow only named Blue Tokkun support paths and still block invented reward, score, Banacoin, or battle semantics.
+- [x] **TKEV-01**: Operator/developer can review an evidence-tagged Blue Tokkun protocol contract covering proven, observed, and deliberately ignored fields.
+- [x] **TKEV-02**: Blue Tokkun classification does not depend on a guessed numeric `play_mode`; the numeric value remains unknown until proven by RPCS3/cabinet logs or deeper IDA evidence.
+- [x] **TKEV-03**: The old source guard that banned Tokkun terms is replaced by bounded guards that allow only named Blue Tokkun support paths and still block invented reward, score, Banacoin, or battle semantics.
 
 ### Banacoin Compatibility
 
@@ -65,9 +65,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TKEV-01 | Phase 7 | Pending |
-| TKEV-02 | Phase 7 | Pending |
-| TKEV-03 | Phase 7 | Pending |
+| TKEV-01 | Phase 7 | Complete |
+| TKEV-02 | Phase 7 | Complete |
+| TKEV-03 | Phase 7 | Complete |
 | TKBC-01 | Phase 8 | Pending |
 | TKBC-02 | Phase 8 | Pending |
 | TKBC-03 | Phase 8 | Pending |
@@ -83,6 +83,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TKVF-03 | Phase 11 | Pending |
 
 **Coverage:**
+
 - v1.1 requirements: 16 total
 - Mapped to phases: 16
 - Unmapped: 0
