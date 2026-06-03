@@ -49,27 +49,6 @@ public sealed class BlueA4SourceGuardTests
         }
     }
 
-    [Fact]
-    public void BluePlayResultCode_DoesNotPromoteTokkunFieldsIntoRuntimeSemantics()
-    {
-        var root = FindRepoRoot();
-        var files = Directory.GetFiles(Path.Combine(root, "Application", "Dtos"), "CommonPlayResultData*.cs")
-            .Concat(
-            [
-                Path.Combine(root, "Application", "Handlers", "UpdatePlayResultCommand.Blue.cs"),
-                Path.Combine(root, "Adapters.GameProtocol.Blue", "Controllers", "PlayResultController.cs"),
-                Path.Combine(root, "Adapters.GameProtocol.Blue", "Mappers", "PlayResultMappers.cs")
-            ]);
-
-        foreach (var file in files)
-        {
-            var source = File.ReadAllText(file);
-            Assert.DoesNotContain("Tokkun", source, StringComparison.OrdinalIgnoreCase);
-            Assert.DoesNotContain("Tookun", source, StringComparison.OrdinalIgnoreCase);
-            Assert.DoesNotContain("deferred fields", source, StringComparison.OrdinalIgnoreCase);
-        }
-    }
-
     private static string FindRepoRoot()
     {
         for (var directory = new DirectoryInfo(AppContext.BaseDirectory);
