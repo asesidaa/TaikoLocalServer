@@ -340,27 +340,27 @@ Source: no-normal/battle-write policy from Phase 7 decisions and Phase 9 success
 |---|-------|---------|---------------|
 | - | No `[ASSUMED]` claims are used; recommendations are sourced to current planning docs, codebase grep, or local command probes. | All | - |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Numeric Tokkun `play_mode`**
    - What we know: `Domain/Enums/PlayMode.cs` has `Normal = 0`, `DanMode = 1`, `GaidenMode = 4`, and `AiBattle = 6`. [VERIFIED: codebase grep]
    - What's unclear: the Tokkun numeric value is not proven. [CITED: .planning/REQUIREMENTS.md]
-   - Recommendation: keep `PlayMode.Tokkun` out of Phase 7 and out of Phase 9 until RPCS3/cabinet logs or deeper IDA prove the value. [CITED: .planning/phases/07-tokkun-evidence-contract-and-guardrail-reset/07-CONTEXT.md]
+   - Phase 7 resolution: unknown/blocked handoff. Phase 7 must document that `PlayMode.Tokkun` is not added and no numeric value is assigned. Phase 9 must classify Tokkun from protocol-backed fields without depending on a numeric Tokkun play mode. Phase 11 owns final cabinet/RPCS3 or deeper-IDA proof before any numeric `PlayMode.Tokkun` value can be introduced. [CITED: .planning/phases/07-tokkun-evidence-contract-and-guardrail-reset/07-CONTEXT.md] [CITED: .planning/ROADMAP.md]
 
 2. **`getbanacoininfo.php` route surface**
    - What we know: generated `Getbanacoininfo*` wire types exist and `BlueRouteSkeletonTests` excludes `/v10r03/chassis/getbanacoininfo.php`. [VERIFIED: codebase grep]
    - What's unclear: whether Tokkun traffic calls that route and whether absence blocks play. [CITED: .planning/REQUIREMENTS.md]
-   - Recommendation: document as Phase 8 unknown and do not add the route in Phase 7. [CITED: .planning/ROADMAP.md]
+   - Phase 7 resolution: unknown/blocked handoff to Phase 8. Phase 7 must document the route as unresolved and must not add route semantics. Phase 8 owns evidence-backed availability decisions for `getbanacoininfo.php`, and the route is added only if cabinet/RPCS3 logs or IDA route evidence proves Blue Tokkun calls it and current absence blocks play. [CITED: .planning/ROADMAP.md] [CITED: .planning/REQUIREMENTS.md]
 
 3. **Tokkun tutorial readback**
    - What we know: `UserDataResponse.tokkun_tutorial_flg` and `PlayResultRequest.tokkun_tutorial_flg` exist in proto/wire, and current userdata mapper omits the userdata field. [VERIFIED: codebase grep]
    - What's unclear: whether the Blue client requires readback after first Tokkun use. [CITED: .planning/REQUIREMENTS.md]
-   - Recommendation: mark as Phase 10 persistence/readback candidate only. [CITED: .planning/phases/07-tokkun-evidence-contract-and-guardrail-reset/07-CONTEXT.md]
+   - Phase 7 resolution: unknown/blocked handoff to Phase 10. Phase 7 must document `tokkun_tutorial_flg` as tutorial/readback evidence, not a standalone classifier. Phase 10 owns any Blue-owned tutorial persistence/readback implementation if the Phase 7 contract and later runtime evidence continue to support it. Phase 11 owns final cabinet/RPCS3 confirmation. [CITED: .planning/phases/07-tokkun-evidence-contract-and-guardrail-reset/07-CONTEXT.md] [CITED: .planning/ROADMAP.md]
 
 4. **Tokkun summary persistence**
    - What we know: `TokkunstageData` carries `banacoin_datetime`, song count/list, speed-change count, autoplay count, and jump count fields. [VERIFIED: codebase grep]
    - What's unclear: whether those fields require server persistence or readback. [CITED: .planning/REQUIREMENTS.md]
-   - Recommendation: mark as protocol-backed candidate state for Phase 10 and block reward, score, payment, or practice-time semantics. [CITED: .planning/phases/07-tokkun-evidence-contract-and-guardrail-reset/07-CONTEXT.md]
+   - Phase 7 resolution: unknown/blocked handoff to Phase 10. Phase 7 must document these as protocol-backed Tokkun summary candidates only. Phase 10 owns any persistence/readback design and must store raw/protocol-backed facts without reward, score, payment, practice-time, ranking, unlock, or progression semantics unless later concrete Blue evidence proves a bounded behavior. [CITED: .planning/phases/07-tokkun-evidence-contract-and-guardrail-reset/07-CONTEXT.md] [CITED: .planning/REQUIREMENTS.md]
 
 ## Environment Availability
 
