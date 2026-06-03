@@ -35,7 +35,9 @@ Real Banacoin wallet, payment, balance, coupon, receipt, deduction, BNID result,
   2. Blue Tokkun classification policy is documented without assigning a guessed numeric `PlayMode.Tokkun` value.
   3. Source guardrails allow only named Blue Tokkun support paths while still blocking invented reward, score, Banacoin, battle, and normal-progression semantics.
   4. Follow-on phase planners can see the accepted classifier inputs, logging boundaries, persistence boundaries, and route-surface unknowns.
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 07-01-PLAN.md — Create the Tokkun evidence contract and remove the stale Tokkun source guard
 
 ### Phase 8: Stateless Banacoin Compatibility and Availability
 **Goal**: Blue Tokkun entry is not blocked by Banacoin-adjacent endpoints, and no Banacoin state is stored.
