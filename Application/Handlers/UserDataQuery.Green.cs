@@ -1,3 +1,5 @@
+using TaikoLocalServer.Domain.Enums;
+
 namespace TaikoLocalServer.Application.Handlers;
 
 public partial class UserDataQueryHandler
@@ -20,8 +22,8 @@ public partial class UserDataQueryHandler
                 .Select(row => new ValueTuple<uint, uint>(row.ItemType, row.ItemId))
                 .ToHashSetAsync(cancellationToken);
 
-        IEnumerable<uint> LockedIds(uint itemType) => activeShopSeason?.Items
-            .Where(item => item.ItemType == itemType && !unlockedShopItems.Contains((item.ItemType, item.ItemId)))
+        IEnumerable<uint> LockedIds(Ac15ShopItemType itemType) => activeShopSeason?.Items
+            .Where(item => item.ItemType == itemType && !unlockedShopItems.Contains((item.ItemType.ToProtocolValue(), item.ItemId)))
             .Select(item => item.ItemId) ?? [];
 
         var favorites = await context.GreenFavoriteSongs
@@ -47,11 +49,11 @@ public partial class UserDataQueryHandler
                 GreenProtocolBytes.CreateFixedBitset(
                     green.MusicInfoFileOrder.Select(song => song.SongNo),
                     GreenProtocolBytes.SongFlagBytes),
-                LockedIds(1),
+                LockedIds(Ac15ShopItemType.Song),
                 GreenProtocolBytes.SongFlagBytes),
             ToneFlg = GreenShopUnlocks.ClearBits(
                 saveData.ToneFlg,
-                LockedIds(2),
+                LockedIds(Ac15ShopItemType.Tone),
                 GreenProtocolBytes.ToneFlagBytes),
             TitleFlg = GreenProtocolBytes.FixedOrZero(saveData.TitleFlg, GreenProtocolBytes.TitleFlagBytes),
             DefaultOptionSetting = GreenProtocolBytes.FixedOrZero(saveData.DefaultOptionSetting, 2),

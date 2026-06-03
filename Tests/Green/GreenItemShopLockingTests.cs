@@ -109,10 +109,10 @@ public sealed class GreenItemShopLockingTests
             EndDatetime = "20190626075959",
             Items =
             [
-                new GreenItemShopEntry { ItemNo = 1, ItemType = 1, ItemId = 101, Price = 1300 },
-                new GreenItemShopEntry { ItemNo = 2, ItemType = 2, ItemId = 4, Price = 500 },
-                new GreenItemShopEntry { ItemNo = 3, ItemType = 5, ItemId = 117, Price = 500 },
-                new GreenItemShopEntry { ItemNo = 4, ItemType = 4, ItemId = 146, Price = 500 }
+                new GreenItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 101, Price = 1300 },
+                new GreenItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Tone, ItemId = 4, Price = 500 },
+                new GreenItemShopEntry { ItemNo = 3, ItemType = Ac15ShopItemType.Head, ItemId = 117, Price = 500 },
+                new GreenItemShopEntry { ItemNo = 4, ItemType = Ac15ShopItemType.Body, ItemId = 146, Price = 500 }
             ]
         };
 

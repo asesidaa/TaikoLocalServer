@@ -9,10 +9,10 @@
       "afterstart_days": 7,
       "beforeclose_days": 7,
       "items": [
-        { "item_type": 1, "item_id": 799, "item_price": 1300 },
-        { "item_type": 1, "item_id": 797, "item_price": 1500 },
-        { "item_type": 1, "item_id": 800, "item_price": 1500 },
-        { "item_type": 1, "item_id": 798, "item_price": 1500 }
+        { "item_type": "song", "item_id": 799, "item_price": 1300 },
+        { "item_type": "song", "item_id": 797, "item_price": 1500 },
+        { "item_type": "song", "item_id": 800, "item_price": 1500 },
+        { "item_type": "song", "item_id": 798, "item_price": 1500 }
       ]
     },
     {
@@ -24,14 +24,14 @@
       "afterstart_days": 7,
       "beforeclose_days": 7,
       "items": [
-        { "item_type": 5, "item_id": 71, "item_price": 500 },
-        { "item_type": 4, "item_id": 116, "item_price": 500 },
-        { "item_type": 5, "item_id": 139, "item_price": 500 },
-        { "item_type": 4, "item_id": 150, "item_price": 500 },
-        { "item_type": 1, "item_id": 822, "item_price": 1500 },
-        { "item_type": 1, "item_id": 821, "item_price": 1300 },
-        { "item_type": 1, "item_id": 823, "item_price": 1300 },
-        { "item_type": 1, "item_id": 820, "item_price": 1500 }
+        { "item_type": "head", "item_id": 71, "item_price": 500 },
+        { "item_type": "body", "item_id": 116, "item_price": 500 },
+        { "item_type": "head", "item_id": 139, "item_price": 500 },
+        { "item_type": "body", "item_id": 150, "item_price": 500 },
+        { "item_type": "song", "item_id": 822, "item_price": 1500 },
+        { "item_type": "song", "item_id": 821, "item_price": 1300 },
+        { "item_type": "song", "item_id": 823, "item_price": 1300 },
+        { "item_type": "song", "item_id": 820, "item_price": 1500 }
       ]
     },
     {
@@ -43,14 +43,14 @@
       "afterstart_days": 7,
       "beforeclose_days": 7,
       "items": [
-        { "item_type": 5, "item_id": 53, "item_price": 500 },
-        { "item_type": 4, "item_id": 132, "item_price": 500 },
-        { "item_type": 5, "item_id": 51, "item_price": 500 },
-        { "item_type": 4, "item_id": 101, "item_price": 500 },
-        { "item_type": 1, "item_id": 855, "item_price": 1300 },
-        { "item_type": 1, "item_id": 852, "item_price": 1300 },
-        { "item_type": 1, "item_id": 851, "item_price": 1500 },
-        { "item_type": 1, "item_id": 850, "item_price": 1500 }
+        { "item_type": "head", "item_id": 53, "item_price": 500 },
+        { "item_type": "body", "item_id": 132, "item_price": 500 },
+        { "item_type": "head", "item_id": 51, "item_price": 500 },
+        { "item_type": "body", "item_id": 101, "item_price": 500 },
+        { "item_type": "song", "item_id": 855, "item_price": 1300 },
+        { "item_type": "song", "item_id": 852, "item_price": 1300 },
+        { "item_type": "song", "item_id": 851, "item_price": 1500 },
+        { "item_type": "song", "item_id": 850, "item_price": 1500 }
       ]
     },
     {
@@ -62,14 +62,14 @@
       "afterstart_days": 7,
       "beforeclose_days": 7,
       "items": [
-        { "item_type": 5, "item_id": 117, "item_price": 500 },
-        { "item_type": 4, "item_id": 117, "item_price": 500 },
-        { "item_type": 5, "item_id": 135, "item_price": 500 },
-        { "item_type": 4, "item_id": 146, "item_price": 500 },
-        { "item_type": 1, "item_id": 865, "item_price": 1300 },
-        { "item_type": 1, "item_id": 864, "item_price": 1300 },
-        { "item_type": 1, "item_id": 858, "item_price": 1500 },
-        { "item_type": 1, "item_id": 866, "item_price": 1500 }
+        { "item_type": "head", "item_id": 117, "item_price": 500 },
+        { "item_type": "body", "item_id": 117, "item_price": 500 },
+        { "item_type": "head", "item_id": 135, "item_price": 500 },
+        { "item_type": "body", "item_id": 146, "item_price": 500 },
+        { "item_type": "song", "item_id": 865, "item_price": 1300 },
+        { "item_type": "song", "item_id": 864, "item_price": 1300 },
+        { "item_type": "song", "item_id": 858, "item_price": 1500 },
+        { "item_type": "song", "item_id": 866, "item_price": 1500 }
       ]
     }
   ]

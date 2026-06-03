@@ -97,7 +97,7 @@ public sealed class GreenItemShopStateTests
             SeasonId = 2,
             StartDatetime = "20190314000000",
             EndDatetime = "20190626075959",
-            Items = [new GreenItemShopEntry { ItemNo = 1, ItemType = 1, ItemId = 101, Price = 1300 }]
+            Items = [new GreenItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 101, Price = 1300 }]
         };
 
         return new GreenHandlerFixture.TestGreenCatalog(itemShopCatalog: new GreenItemShopCatalog

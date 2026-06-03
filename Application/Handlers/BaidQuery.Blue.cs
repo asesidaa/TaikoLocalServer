@@ -1,4 +1,5 @@
 using TaikoLocalServer.Contracts.AdminApi.ViewModels;
+using TaikoLocalServer.Domain.Enums;
 
 namespace TaikoLocalServer.Application.Handlers;
 
@@ -59,8 +60,8 @@ public partial class BaidQueryHandler
                 .Select(row => new ValueTuple<uint, uint>(row.ItemType, row.ItemId))
                 .ToHashSetAsync(cancellationToken);
 
-        IEnumerable<uint> LockedIds(uint itemType) => activeShopSeason?.Items
-            .Where(item => item.ItemType == itemType && !unlockedShopItems.Contains((item.ItemType, item.ItemId)))
+        IEnumerable<uint> LockedIds(Ac15ShopItemType itemType) => activeShopSeason?.Items
+            .Where(item => item.ItemType == itemType && !unlockedShopItems.Contains((item.ItemType.ToProtocolValue(), item.ItemId)))
             .Select(item => item.ItemId) ?? [];
 
         return new CommonBaidResponse
@@ -76,11 +77,11 @@ public partial class BaidQueryHandler
             ColorBody = saveData.ColorBody,
             ColorLimb = saveData.ColorLimb,
             CostumeData = [saveData.Costume1, saveData.Costume2, saveData.Costume3, saveData.Costume4, saveData.Costume5],
-            CostumeFlg1 = BlueShopUnlocks.ClearBits(saveData.CostumeFlg1, LockedIds(3), BlueProtocolBytes.CostumeFlagBytes),
-            CostumeFlg2 = BlueShopUnlocks.ClearBits(saveData.CostumeFlg2, LockedIds(5), BlueProtocolBytes.CostumeFlagBytes),
-            CostumeFlg3 = BlueShopUnlocks.ClearBits(saveData.CostumeFlg3, LockedIds(4), BlueProtocolBytes.CostumeFlagBytes),
-            CostumeFlg4 = BlueShopUnlocks.ClearBits(saveData.CostumeFlg4, LockedIds(6), BlueProtocolBytes.CostumeFlagBytes),
-            CostumeFlg5 = BlueShopUnlocks.ClearBits(saveData.CostumeFlg5, LockedIds(7), BlueProtocolBytes.CostumeFlagBytes),
+            CostumeFlg1 = BlueShopUnlocks.ClearBits(saveData.CostumeFlg1, LockedIds(Ac15ShopItemType.Kigurumi), BlueProtocolBytes.CostumeFlagBytes),
+            CostumeFlg2 = BlueShopUnlocks.ClearBits(saveData.CostumeFlg2, LockedIds(Ac15ShopItemType.Head), BlueProtocolBytes.CostumeFlagBytes),
+            CostumeFlg3 = BlueShopUnlocks.ClearBits(saveData.CostumeFlg3, LockedIds(Ac15ShopItemType.Body), BlueProtocolBytes.CostumeFlagBytes),
+            CostumeFlg4 = BlueShopUnlocks.ClearBits(saveData.CostumeFlg4, LockedIds(Ac15ShopItemType.Face), BlueProtocolBytes.CostumeFlagBytes),
+            CostumeFlg5 = BlueShopUnlocks.ClearBits(saveData.CostumeFlg5, LockedIds(Ac15ShopItemType.Puchi), BlueProtocolBytes.CostumeFlagBytes),
             TotalGetDonmedal = shopSeasonState?.TotalGetDonmedal ?? 0,
             TotalUseDonmedal = shopSeasonState?.TotalUseDonmedal ?? 0,
             TotalGetKatsumedal = saveData.TotalGetKatsumedal,

@@ -156,7 +156,7 @@ public sealed class GreenGhostRewardTests
             SeasonId = 2,
             StartDatetime = "20190314000000",
             EndDatetime = "20190626075959",
-            Items = [new GreenItemShopEntry { ItemNo = 10, ItemType = 1, ItemId = 2, Price = 40 }]
+            Items = [new GreenItemShopEntry { ItemNo = 10, ItemType = Ac15ShopItemType.Song, ItemId = 2, Price = 40 }]
         };
 
         return new GreenHandlerFixture.TestGreenCatalog(itemShopCatalog: new GreenItemShopCatalog

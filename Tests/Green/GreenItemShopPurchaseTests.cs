@@ -159,9 +159,9 @@ public sealed class GreenItemShopPurchaseTests
             EndDatetime = "20190626075959",
             Items =
             [
-                new GreenItemShopEntry { ItemNo = 1, ItemType = 4, ItemId = 117, Price = 500 },
-                new GreenItemShopEntry { ItemNo = 2, ItemType = 1, ItemId = 865, Price = 300 },
-                new GreenItemShopEntry { ItemNo = 3, ItemType = 5, ItemId = 117, Price = 500 }
+                new GreenItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Body, ItemId = 117, Price = 500 },
+                new GreenItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Song, ItemId = 865, Price = 300 },
+                new GreenItemShopEntry { ItemNo = 3, ItemType = Ac15ShopItemType.Head, ItemId = 117, Price = 500 }
             ]
         };
 

@@ -1,3 +1,5 @@
+using TaikoLocalServer.Domain.Enums;
+
 namespace TaikoLocalServer.Application.Handlers;
 
 public partial class ItemPurchaseCommandHandler
@@ -23,7 +25,7 @@ public partial class ItemPurchaseCommandHandler
         }
 
         if (!activeSeason.ItemsByNo.TryGetValue(request.ItemNo, out var item)
-            || request.ItemType != item.ItemType
+            || request.ItemType != item.ItemType.ToProtocolValue()
             || request.ItemId != item.ItemId
             || request.ItemPrice != item.Price
             || item.Price == 0)
@@ -36,7 +38,7 @@ public partial class ItemPurchaseCommandHandler
             : 0;
 
         var existingItem = await context.BlueShopItemStates.FindAsync(
-            [request.Baid, activeSeason.SeasonId, item.ItemType, item.ItemId],
+            [request.Baid, activeSeason.SeasonId, item.ItemType.ToProtocolValue(), item.ItemId],
             cancellationToken);
 
         if (existingItem is not null)
@@ -56,7 +58,7 @@ public partial class ItemPurchaseCommandHandler
         {
             Baid = request.Baid,
             SeasonId = activeSeason.SeasonId,
-            ItemType = item.ItemType,
+            ItemType = item.ItemType.ToProtocolValue(),
             ItemId = item.ItemId,
             ItemNo = item.ItemNo,
             ItemPrice = item.Price,
@@ -73,27 +75,27 @@ public partial class ItemPurchaseCommandHandler
 
     private static void ApplyUnlock(UserSaveDataBlue saveData, BlueShopItemState item)
     {
-        switch (item.ItemType)
+        switch ((Ac15ShopItemType)item.ItemType)
         {
-            case 1:
+            case Ac15ShopItemType.Song:
                 saveData.ReleaseSongFlg = BlueShopUnlocks.SetBits(saveData.ReleaseSongFlg, [item.ItemId], BlueProtocolBytes.SongFlagBytes);
                 return;
-            case 2:
+            case Ac15ShopItemType.Tone:
                 saveData.ToneFlg = BlueShopUnlocks.SetBits(saveData.ToneFlg, [item.ItemId], BlueProtocolBytes.ToneFlagBytes);
                 return;
-            case 3:
+            case Ac15ShopItemType.Kigurumi:
                 saveData.CostumeFlg1 = BlueShopUnlocks.SetBits(saveData.CostumeFlg1, [item.ItemId], BlueProtocolBytes.CostumeFlagBytes);
                 return;
-            case 4:
+            case Ac15ShopItemType.Body:
                 saveData.CostumeFlg3 = BlueShopUnlocks.SetBits(saveData.CostumeFlg3, [item.ItemId], BlueProtocolBytes.CostumeFlagBytes);
                 return;
-            case 5:
+            case Ac15ShopItemType.Head:
                 saveData.CostumeFlg2 = BlueShopUnlocks.SetBits(saveData.CostumeFlg2, [item.ItemId], BlueProtocolBytes.CostumeFlagBytes);
                 return;
-            case 6:
+            case Ac15ShopItemType.Face:
                 saveData.CostumeFlg4 = BlueShopUnlocks.SetBits(saveData.CostumeFlg4, [item.ItemId], BlueProtocolBytes.CostumeFlagBytes);
                 return;
-            case 7:
+            case Ac15ShopItemType.Puchi:
                 saveData.CostumeFlg5 = BlueShopUnlocks.SetBits(saveData.CostumeFlg5, [item.ItemId], BlueProtocolBytes.CostumeFlagBytes);
                 return;
             default:

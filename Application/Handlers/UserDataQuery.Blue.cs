@@ -1,3 +1,5 @@
+using TaikoLocalServer.Domain.Enums;
+
 namespace TaikoLocalServer.Application.Handlers;
 
 public partial class UserDataQueryHandler
@@ -20,8 +22,8 @@ public partial class UserDataQueryHandler
                 .Select(row => new ValueTuple<uint, uint>(row.ItemType, row.ItemId))
                 .ToHashSetAsync(cancellationToken);
 
-        IEnumerable<uint> LockedIds(uint itemType) => activeShopSeason?.Items
-            .Where(item => item.ItemType == itemType && !unlockedShopItems.Contains((item.ItemType, item.ItemId)))
+        IEnumerable<uint> LockedIds(Ac15ShopItemType itemType) => activeShopSeason?.Items
+            .Where(item => item.ItemType == itemType && !unlockedShopItems.Contains((item.ItemType.ToProtocolValue(), item.ItemId)))
             .Select(item => item.ItemId) ?? [];
 
         var normalDanGrades = await context.DanScoreDataBlue
@@ -51,11 +53,11 @@ public partial class UserDataQueryHandler
                     catalogReleaseFlags,
                     saveData.ReleaseSongFlg,
                     BlueProtocolBytes.SongFlagBytes),
-                LockedIds(1),
+                LockedIds(Ac15ShopItemType.Song),
                 BlueProtocolBytes.SongFlagBytes),
             ToneFlg = BlueShopUnlocks.ClearBits(
                 saveData.ToneFlg,
-                LockedIds(2),
+                LockedIds(Ac15ShopItemType.Tone),
                 BlueProtocolBytes.ToneFlagBytes),
             TitleFlg = BlueProtocolBytes.FixedOrZero(saveData.TitleFlg, BlueProtocolBytes.TitleFlagBytes),
             DefaultOptionSetting = BlueProtocolBytes.FixedOrZero(saveData.DefaultOptionSetting, 2),

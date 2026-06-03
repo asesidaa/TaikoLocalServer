@@ -9,10 +9,10 @@
       "afterstart_days": 30,
       "beforeclose_days": 0,
       "items": [
-        { "item_type": 3, "item_id": 12, "item_price": 1300 },
-        { "item_type": 3, "item_id": 7, "item_price": 1500 },
-        { "item_type": 3, "item_id": 9, "item_price": 1500 },
-        { "item_type": 3, "item_id": 10, "item_price": 1500 }
+        { "item_type": "3", "item_id": 12, "item_price": 1300 },
+        { "item_type": "kigurumi", "item_id": 7, "item_price": 1500 },
+        { "item_type": "kigurumi", "item_id": 9, "item_price": 1500 },
+        { "item_type": "kigurumi", "item_id": 10, "item_price": 1500 }
       ]
     }
   ]

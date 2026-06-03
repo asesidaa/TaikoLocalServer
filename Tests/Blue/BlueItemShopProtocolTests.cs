@@ -337,8 +337,8 @@ public sealed class BlueItemShopProtocolTests
                     VerupNo = 20170404,
                     Items =
                     [
-                        new BlueItemShopEntry { ItemNo = 1, ItemType = 1, ItemId = 101, Price = 1300 },
-                        new BlueItemShopEntry { ItemNo = 2, ItemType = 3, ItemId = 12, Price = 1300 }
+                        new BlueItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 101, Price = 1300 },
+                        new BlueItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }
                     ]
                 }
             }
@@ -357,8 +357,8 @@ public sealed class BlueItemShopProtocolTests
             BeforecloseDays = 0,
             Items =
             [
-                new BlueItemShopEntry { ItemNo = 2, ItemType = 3, ItemId = 7, Price = 1500 },
-                new BlueItemShopEntry { ItemNo = 1, ItemType = 3, ItemId = 12, Price = 1300 }
+                new BlueItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 7, Price = 1500 },
+                new BlueItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }
             ]
         };
 

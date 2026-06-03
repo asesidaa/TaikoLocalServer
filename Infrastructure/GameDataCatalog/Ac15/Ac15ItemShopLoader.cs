@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using TaikoLocalServer.Application.Catalog.Ac15;
+using TaikoLocalServer.Domain.Enums;
 
 namespace TaikoLocalServer.Infrastructure.GameDataCatalog.Ac15;
 
@@ -10,7 +11,11 @@ public static class Ac15ItemShopLoader
     {
         PropertyNameCaseInsensitive = true,
         ReadCommentHandling = JsonCommentHandling.Skip,
-        AllowTrailingCommas = true
+        AllowTrailingCommas = true,
+        Converters =
+        {
+            new JsonStringEnumConverter<Ac15ShopItemType>(JsonNamingPolicy.SnakeCaseLower, allowIntegerValues: true)
+        }
     };
 
     public static async Task<Ac15ItemShopCatalog> LoadFromFileAsync(
@@ -104,7 +109,7 @@ public static class Ac15ItemShopLoader
         var duplicateItems = items
             .GroupBy(item => new { item.ItemType, item.ItemId })
             .Where(group => group.Count() > 1)
-            .Select(group => $"{group.Key.ItemType}:{group.Key.ItemId}")
+            .Select(group => $"{group.Key.ItemType.ToString().ToLowerInvariant()}:{group.Key.ItemId}")
             .ToArray();
         if (duplicateItems.Length > 0)
         {
@@ -126,7 +131,7 @@ public static class Ac15ItemShopLoader
 
     private static Ac15ItemShopEntry MapItem(uint seasonId, RawItem raw, uint itemNo, string eraName)
     {
-        if (raw.ItemType is < 1 or > 7)
+        if (!raw.ItemType.IsSupported())
         {
             throw new InvalidDataException($"{eraName} item shop season {seasonId} item {itemNo} has unsupported item_type {raw.ItemType}.");
         }
@@ -189,7 +194,7 @@ public static class Ac15ItemShopLoader
     private sealed class RawItem
     {
         [JsonPropertyName("item_type")]
-        public uint ItemType { get; set; }
+        public Ac15ShopItemType ItemType { get; set; }
 
         [JsonPropertyName("item_id")]
         public uint ItemId { get; set; }

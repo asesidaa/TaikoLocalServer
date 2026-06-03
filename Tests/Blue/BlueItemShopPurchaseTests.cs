@@ -8,7 +8,7 @@ public sealed class BlueItemShopPurchaseTests
     public async Task ItemPurchase_PreflightReturnsSeasonBalanceWithoutSpending()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync(CreateShopCatalog(
-            new BlueItemShopEntry { ItemNo = 1, ItemType = 3, ItemId = 12, Price = 1300 }));
+            new BlueItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
         await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 700, totalUseDonmedal: 200);
         var handler = CreateHandler(fixture);
 
@@ -50,7 +50,7 @@ public sealed class BlueItemShopPurchaseTests
         uint itemPrice)
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync(CreateShopCatalog(
-            new BlueItemShopEntry { ItemNo = 1, ItemType = 3, ItemId = 12, Price = 1300 }));
+            new BlueItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
         await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 2000);
         var handler = CreateHandler(fixture);
 
@@ -68,7 +68,7 @@ public sealed class BlueItemShopPurchaseTests
     public async Task ItemPurchase_RejectsZeroPriceRowsWithoutMutation()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync(CreateShopCatalog(
-            new BlueItemShopEntry { ItemNo = 1, ItemType = 3, ItemId = 12, Price = 0 }));
+            new BlueItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 0 }));
         await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 2000);
         var handler = CreateHandler(fixture);
 
@@ -84,7 +84,7 @@ public sealed class BlueItemShopPurchaseTests
     public async Task ItemPurchase_RejectsInsufficientMedalsWithoutMutation()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync(CreateShopCatalog(
-            new BlueItemShopEntry { ItemNo = 1, ItemType = 3, ItemId = 12, Price = 1300 }));
+            new BlueItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
         await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 1200);
         var handler = CreateHandler(fixture);
 
@@ -100,7 +100,7 @@ public sealed class BlueItemShopPurchaseTests
     public async Task ItemPurchase_RejectsDuplicateUnlockedWithoutDoubleSpend()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync(CreateShopCatalog(
-            new BlueItemShopEntry { ItemNo = 1, ItemType = 3, ItemId = 12, Price = 1300 }));
+            new BlueItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
         await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 2000, totalUseDonmedal: 1300);
         fixture.Context.BlueShopItemStates.Add(new BlueShopItemState
         {
@@ -129,7 +129,7 @@ public sealed class BlueItemShopPurchaseTests
     public async Task ItemPurchase_ActiveSeasonSpendsDonmedalsAndPersistsUnlockedItem()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync(CreateShopCatalog(
-            new BlueItemShopEntry { ItemNo = 1, ItemType = 3, ItemId = 12, Price = 1300 }));
+            new BlueItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
         await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 2000);
         var handler = CreateHandler(fixture);
 
@@ -152,15 +152,15 @@ public sealed class BlueItemShopPurchaseTests
     }
 
     [Theory]
-    [InlineData(1, 101, nameof(UserSaveDataBlue.ReleaseSongFlg))]
-    [InlineData(2, 4, nameof(UserSaveDataBlue.ToneFlg))]
-    [InlineData(3, 12, nameof(UserSaveDataBlue.CostumeFlg1))]
-    [InlineData(4, 13, nameof(UserSaveDataBlue.CostumeFlg3))]
-    [InlineData(5, 14, nameof(UserSaveDataBlue.CostumeFlg2))]
-    [InlineData(6, 15, nameof(UserSaveDataBlue.CostumeFlg4))]
-    [InlineData(7, 16, nameof(UserSaveDataBlue.CostumeFlg5))]
+    [InlineData(Ac15ShopItemType.Song, 101, nameof(UserSaveDataBlue.ReleaseSongFlg))]
+    [InlineData(Ac15ShopItemType.Tone, 4, nameof(UserSaveDataBlue.ToneFlg))]
+    [InlineData(Ac15ShopItemType.Kigurumi, 12, nameof(UserSaveDataBlue.CostumeFlg1))]
+    [InlineData(Ac15ShopItemType.Body, 13, nameof(UserSaveDataBlue.CostumeFlg3))]
+    [InlineData(Ac15ShopItemType.Head, 14, nameof(UserSaveDataBlue.CostumeFlg2))]
+    [InlineData(Ac15ShopItemType.Face, 15, nameof(UserSaveDataBlue.CostumeFlg4))]
+    [InlineData(Ac15ShopItemType.Puchi, 16, nameof(UserSaveDataBlue.CostumeFlg5))]
     public async Task ItemPurchase_UnlocksSupportedItemTypesInExactBlueSaveField(
-        uint itemType,
+        Ac15ShopItemType itemType,
         uint itemId,
         string expectedField)
     {
@@ -170,7 +170,7 @@ public sealed class BlueItemShopPurchaseTests
         var before = SnapshotUnlockFields(save);
         var handler = CreateHandler(fixture);
 
-        var response = await handler.Handle(new ItemPurchaseCommand(1, GameEra.Blue, 1, itemType, itemId, 100), CancellationToken.None);
+        var response = await handler.Handle(new ItemPurchaseCommand(1, GameEra.Blue, 1, itemType.ToProtocolValue(), itemId, 100), CancellationToken.None);
 
         var reloaded = await fixture.Context.UserSaveDataBlue.FindAsync(1u);
         Assert.Equal(1u, response.Result);

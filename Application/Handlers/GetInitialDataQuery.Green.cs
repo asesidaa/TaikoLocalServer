@@ -1,3 +1,5 @@
+using TaikoLocalServer.Domain.Enums;
+
 namespace TaikoLocalServer.Application.Handlers;
 
 public partial class GetInitialDataQueryHandler
@@ -7,7 +9,7 @@ public partial class GetInitialDataQueryHandler
         var green = gameDataService.Green();
         var activeShop = green.ItemShopCatalog.ActiveSeason;
         var shopSongIds = green.ItemShopCatalog.IsEnabled && activeShop is not null
-            ? activeShop.Items.Where(item => item.ItemType == 1).Select(item => item.ItemId).ToHashSet()
+            ? activeShop.Items.Where(item => item.ItemType == Ac15ShopItemType.Song).Select(item => item.ItemId).ToHashSet()
             : [];
         var allSongs = green.MusicInfoFileOrder
             .Select(song => song.SongNo)

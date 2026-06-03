@@ -1,3 +1,5 @@
+using TaikoLocalServer.Domain.Enums;
+
 namespace TaikoLocalServer.Application.Handlers;
 
 public partial class GetItemShopInfoQueryHandler
@@ -30,7 +32,7 @@ public partial class GetItemShopInfoQueryHandler
                 .Select(item => new CommonItemShopInfoResponse.ItemShopData
                 {
                     ItemNo = item.ItemNo,
-                    ItemType = item.ItemType,
+                    ItemType = item.ItemType.ToProtocolValue(),
                     ItemId = item.ItemId,
                     ItemPrice = item.Price
                 })

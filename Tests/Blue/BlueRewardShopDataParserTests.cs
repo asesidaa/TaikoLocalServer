@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Blue;
 
 namespace TaikoLocalServer.Tests.Blue;
@@ -7,6 +8,13 @@ public sealed class BlueRewardShopDataParserTests
 {
     private const string OfficialCachePath = @"H:\taiko\blue\rewardshopdata.bin";
     private const int FirstItemOffset = 0x73;
+    private static readonly JsonSerializerOptions ShopJsonOptions = new()
+    {
+        Converters =
+        {
+            new JsonStringEnumConverter<Ac15ShopItemType>(JsonNamingPolicy.SnakeCaseLower, allowIntegerValues: true)
+        }
+    };
 
     [Fact]
     public async Task ParseFromFile_ReadsOfficialCacheSeasonEnvelope()
@@ -74,14 +82,14 @@ public sealed class BlueRewardShopDataParserTests
             var jsonItems = season.GetProperty("items").EnumerateArray().ToArray();
             Assert.InRange(jsonItems.Length, 1, 64);
 
-            var itemIdentities = new HashSet<(uint ItemType, uint ItemId)>();
+            var itemIdentities = new HashSet<(Ac15ShopItemType ItemType, uint ItemId)>();
             foreach (var item in jsonItems)
             {
-                var itemType = item.GetProperty("item_type").GetUInt32();
+                var itemType = item.GetProperty("item_type").Deserialize<Ac15ShopItemType>(ShopJsonOptions);
                 var itemId = item.GetProperty("item_id").GetUInt32();
                 var price = item.GetProperty("item_price").GetUInt32();
 
-                Assert.InRange(itemType, 1u, 7u);
+                Assert.True(itemType.IsSupported());
                 Assert.NotEqual(0u, itemId);
                 Assert.NotEqual(0u, price);
                 Assert.True(itemIdentities.Add((itemType, itemId)), $"Duplicate item identity {itemType}:{itemId}.");

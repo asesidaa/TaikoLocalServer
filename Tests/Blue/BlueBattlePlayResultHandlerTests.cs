@@ -386,7 +386,7 @@ public sealed class BlueBattlePlayResultHandlerTests
                         new BlueItemShopEntry
                         {
                             ItemNo = 1,
-                            ItemType = 1,
+                            ItemType = Ac15ShopItemType.Song,
                             ItemId = 101,
                             Price = 1300
                         }

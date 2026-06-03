@@ -58,7 +58,7 @@ public sealed class BlueItemShopLoaderTests
         Assert.InRange(season.Items.Count, 1, 64);
 
         var expectedItemNo = 1u;
-        var itemIdentities = new HashSet<(uint ItemType, uint ItemId)>();
+        var itemIdentities = new HashSet<(Ac15ShopItemType ItemType, uint ItemId)>();
         foreach (var item in season.Items)
         {
             AssertItem(item, expectedItemNo++);
@@ -210,7 +210,7 @@ public sealed class BlueItemShopLoaderTests
     private static void AssertItem(BlueItemShopEntry item, uint itemNo)
     {
         Assert.Equal(itemNo, item.ItemNo);
-        Assert.InRange(item.ItemType, 1u, 7u);
+        Assert.True(item.ItemType.IsSupported());
         Assert.NotEqual(0u, item.ItemId);
         Assert.NotEqual(0u, item.Price);
     }

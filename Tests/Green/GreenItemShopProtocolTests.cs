@@ -80,8 +80,8 @@ public sealed class GreenItemShopProtocolTests
             BeforecloseDays = 4,
             Items =
             [
-                new GreenItemShopEntry { ItemNo = 1, ItemType = 4, ItemId = 117, Price = 500 },
-                new GreenItemShopEntry { ItemNo = 2, ItemType = 1, ItemId = 101, Price = 1300 }
+                new GreenItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Body, ItemId = 117, Price = 500 },
+                new GreenItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Song, ItemId = 101, Price = 1300 }
             ]
         };
 

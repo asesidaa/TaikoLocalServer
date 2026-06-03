@@ -174,7 +174,7 @@ public sealed class BlueItemShopStateTests
                 [2] = new()
                 {
                     SeasonId = 2,
-                    Items = [new BlueItemShopEntry { ItemNo = 1, ItemType = 1, ItemId = 101, Price = 1300 }]
+                    Items = [new BlueItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 101, Price = 1300 }]
                 }
             }
         };
@@ -244,7 +244,7 @@ public sealed class BlueItemShopStateTests
             SeasonId = 2,
             StartDatetime = "20181219070000",
             EndDatetime = "20190314020000",
-            Items = [new BlueItemShopEntry { ItemNo = 1, ItemType = 1, ItemId = 101, Price = 1300 }]
+            Items = [new BlueItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 101, Price = 1300 }]
         };
 
         return new BlueHandlerFixture.TestBlueCatalog(itemShopCatalog: new BlueItemShopCatalog
