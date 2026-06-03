@@ -15,7 +15,7 @@ public sealed class BlueBattleRequirementTests
     [Fact]
     public void BlueBattleRuntimeRequirements_AreMarkedCompleteAndTraceableToPhase05()
     {
-        var requirements = File.ReadAllText(FindRepoFile(".planning", "REQUIREMENTS.md"));
+        var requirements = File.ReadAllText(FindRepoFile(".planning", "milestones", "v1.0-REQUIREMENTS.md"));
 
         foreach (var requirement in RuntimeRequirements)
         {
@@ -93,7 +93,8 @@ public sealed class BlueBattleRequirementTests
     {
         var verification = File.ReadAllText(FindRepoFile(
             ".planning",
-            "phases",
+            "milestones",
+            "v1.0-phases",
             "05-blue-battle-runtime-support",
             "05-BATTLE-RUNTIME-VERIFICATION.md"));
 
@@ -132,7 +133,7 @@ public sealed class BlueBattleRequirementTests
 
     private static IReadOnlyList<Dictionary<string, string>> ReadResolutionRows()
     {
-        var path = FindRepoFile(".planning", "phases", "05-blue-battle-runtime-support", "05-RESOLUTION.md");
+        var path = FindRepoFile(".planning", "milestones", "v1.0-phases", "05-blue-battle-runtime-support", "05-RESOLUTION.md");
         var lines = File.ReadAllLines(path);
         for (var i = 0; i < lines.Length - 1; i++)
         {

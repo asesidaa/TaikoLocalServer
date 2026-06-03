@@ -229,7 +229,7 @@ public sealed class BlueBattleSourceGuardTests
 
     private static IReadOnlyList<Dictionary<string, string>> ReadResolutionRows(string root)
     {
-        var path = Path.Combine(root, ".planning", "phases", "05-blue-battle-runtime-support", "05-RESOLUTION.md");
+        var path = Path.Combine(root, ".planning", "milestones", "v1.0-phases", "05-blue-battle-runtime-support", "05-RESOLUTION.md");
         var lines = File.ReadAllLines(path);
         for (var i = 0; i < lines.Length - 1; i++)
         {

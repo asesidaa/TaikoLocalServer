@@ -13,7 +13,7 @@ public sealed class BlueBattleEvidenceGateTests
     public void ResolutionMatrix_CopiesAllPhase4MissingEvidenceRows()
     {
         var phase4Rows = ReadTable(
-            FindRepoFile(".planning", "phases", "04-blue-battle-evidence-and-design", "04-03-BLUE-BATTLE-DESIGN-GATE.md"),
+            FindRepoFile(".planning", "milestones", "v1.0-phases", "04-blue-battle-evidence-and-design", "04-03-BLUE-BATTLE-DESIGN-GATE.md"),
             "Missing Evidence Item");
         var resolutionRows = ReadResolutionRows();
 
@@ -60,7 +60,7 @@ public sealed class BlueBattleEvidenceGateTests
     [Fact]
     public void ResolutionMatrix_DoesNotContainBlanketApprovals()
     {
-        var source = File.ReadAllText(FindRepoFile(".planning", "phases", "05-blue-battle-runtime-support", "05-RESOLUTION.md"));
+        var source = File.ReadAllText(FindRepoFile(".planning", "milestones", "v1.0-phases", "05-blue-battle-runtime-support", "05-RESOLUTION.md"));
         var forbiddenApprovalPatterns = new[]
         {
             "APPROVED_ALL",
@@ -77,7 +77,7 @@ public sealed class BlueBattleEvidenceGateTests
 
     private static IReadOnlyList<Dictionary<string, string>> ReadResolutionRows() =>
         ReadTable(
-            FindRepoFile(".planning", "phases", "05-blue-battle-runtime-support", "05-RESOLUTION.md"),
+            FindRepoFile(".planning", "milestones", "v1.0-phases", "05-blue-battle-runtime-support", "05-RESOLUTION.md"),
             "Phase 4 Missing-Evidence Row");
 
     private static IReadOnlyList<Dictionary<string, string>> ReadTable(string path, string markerHeader)
