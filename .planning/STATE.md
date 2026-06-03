@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Blue Tokkun Mode Support
 status: planning
-last_updated: "2026-06-03T04:21:58.794+08:00"
+last_updated: "2026-06-03T04:40:00+08:00"
 last_activity: 2026-06-03
 progress:
-  total_phases: 0
+  total_phases: 5
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -20,29 +20,63 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-03)
 
 **Core value:** A Blue cabinet can use TaikoLocalServer for normal, battle, and Tokkun play with repeatable cabinet/RPCS3 evidence, without corrupting or conflating Green, Nijiiro, or shared identity state.
-**Current focus:** Defining Blue Tokkun mode support requirements.
+**Current focus:** Phase 7 - Tokkun Evidence Contract and Guardrail Reset.
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-06-03 — Milestone v1.1 started
+Phase: 7 of 11 overall (1 of 5 active)
+Plan: Not planned yet
+Status: Roadmap created; ready to plan Phase 7
+Last activity: 2026-06-03 - Created v1.1 roadmap and requirement traceability
+
+Progress: [----------] 0%
+
+## Performance Metrics
+
+**Velocity:**
+- Total plans completed: 0 in v1.1
+- Average duration: Not available
+- Total execution time: 0.0 hours
+
+**By Phase:**
+
+| Phase | Plans | Total | Avg/Plan |
+|-------|-------|-------|----------|
+| 7-11 | TBD | - | - |
+
+**Recent Trend:**
+- Last 5 plans: None
+- Trend: Not available
 
 ## Accumulated Context
 
-Key decisions and shipped-state context live in `.planning/PROJECT.md`.
+### Decisions
 
-The v1.0 milestone closed with no open artifact-audit items. The stale Phase 05 debug/UAT records were externally resolved by user confirmation on 2026-06-03 and moved or marked as resolved.
+Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecting current work:
 
-## Blockers/Concerns
+- v1.1 starts at Phase 7 because v1.0 completed Phases 1-6.
+- Real Banacoin wallet/payment behavior is out of scope for this repo, not deferred.
+- Banacoin compatibility is stateless and permissive only so Tokkun can remain playable.
+- Protocol-backed Tokkun tutorial and summary/progress persistence is in scope for v1.1.
+- `PlayMode.Tokkun` must not receive a guessed numeric value.
+- Cabinet/RPCS3 smoke evidence is required before v1.1 can be called done.
 
-None recorded for v1.1.
+### Pending Todos
+
+None recorded.
+
+### Blockers/Concerns
+
+None recorded for roadmap creation. Phase 7 should close the current Tokkun protocol unknowns ledger before runtime behavior changes.
 
 ## Deferred Items
 
-None recorded at v1.1 start.
+| Category | Item | Status | Deferred At |
+|----------|------|--------|-------------|
+| Admin/developer UI | TKUI-01: inspect Blue Tokkun history or debug state through AdminApi/WebUI | Future requirement, not mapped to v1.1 roadmap | v1.1 requirements |
 
-## Operator Next Steps
+## Session Continuity
 
-- Continue v1.1 by defining requirements, then creating the roadmap.
+Last session: 2026-06-03 04:40
+Stopped at: v1.1 roadmap created; next action is `$gsd-plan-phase 7`
+Resume file: None

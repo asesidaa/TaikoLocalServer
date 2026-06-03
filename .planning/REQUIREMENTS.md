@@ -65,28 +65,29 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TKEV-01 | TBD | Pending |
-| TKEV-02 | TBD | Pending |
-| TKEV-03 | TBD | Pending |
-| TKBC-01 | TBD | Pending |
-| TKBC-02 | TBD | Pending |
-| TKBC-03 | TBD | Pending |
-| TKPR-01 | TBD | Pending |
-| TKPR-02 | TBD | Pending |
-| TKPR-03 | TBD | Pending |
-| TKST-01 | TBD | Pending |
-| TKST-02 | TBD | Pending |
-| TKST-03 | TBD | Pending |
-| TKST-04 | TBD | Pending |
-| TKVF-01 | TBD | Pending |
-| TKVF-02 | TBD | Pending |
-| TKVF-03 | TBD | Pending |
+| TKEV-01 | Phase 7 | Pending |
+| TKEV-02 | Phase 7 | Pending |
+| TKEV-03 | Phase 7 | Pending |
+| TKBC-01 | Phase 8 | Pending |
+| TKBC-02 | Phase 8 | Pending |
+| TKBC-03 | Phase 8 | Pending |
+| TKPR-01 | Phase 9 | Pending |
+| TKPR-02 | Phase 9 | Pending |
+| TKPR-03 | Phase 9 | Pending |
+| TKST-01 | Phase 10 | Pending |
+| TKST-02 | Phase 10 | Pending |
+| TKST-03 | Phase 10 | Pending |
+| TKST-04 | Phase 10 | Pending |
+| TKVF-01 | Phase 11 | Pending |
+| TKVF-02 | Phase 11 | Pending |
+| TKVF-03 | Phase 11 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 16 total
-- Mapped to phases: 0
-- Unmapped: 16
+- Mapped to phases: 16
+- Unmapped: 0
+- Future requirement TKUI-01 is intentionally not mapped to this roadmap.
 
 ---
 *Requirements defined: 2026-06-03*
-*Last updated: 2026-06-03 after initial definition*
+*Last updated: 2026-06-03 after roadmap creation*
