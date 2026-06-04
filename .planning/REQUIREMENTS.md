@@ -81,6 +81,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TKVF-01 | Phase 11 | Pending |
 | TKVF-02 | Phase 11 | Pending |
 | TKVF-03 | Phase 11 | Pending |
+| TKUI-01 | Future milestone | Deferred |
 
 **Coverage:**
 
