@@ -15,6 +15,7 @@ public sealed class BlueRouteSkeletonTests
         "/v10r03/chassis/headclerk2.php",
         "/v10r03/chassis/playresult.php",
         "/v10r03/chassis/banacoinerrorlog.php",
+        "/v10r03/chassis/getbanacoininfo.php",
         "/v10r03/chassis/baidcheck.php",
         "/v10r03/chassis/mydonentry.php",
         "/v10r03/chassis/userdata.php",
@@ -45,7 +46,6 @@ public sealed class BlueRouteSkeletonTests
 
     [Theory]
     [InlineData("/v10r03/chassis/getreitai.php")]
-    [InlineData("/v10r03/chassis/getbanacoininfo.php")]
     [InlineData("/v10r03/chassis/startupauth.php")]
     [InlineData("/v10r03/chassis/verupauth.php")]
     [InlineData("/v10r03/chassis/verupcomplete.php")]
