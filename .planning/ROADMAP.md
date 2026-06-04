@@ -70,7 +70,10 @@ Plans:
   3. Unknown or mixed Tokkun-shaped uploads are logged with bounded request context and still return success unless concrete client evidence proves a failure response is required.
   4. Mapper DTOs preserve protocol-backed Tokkun fields and optional-field presence for downstream Tokkun handling.
 
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+
+- [ ] 09-01-PLAN.md - Preserve Tokkun mapper facts and accept Tokkun playresults without state contamination
 
 ### Phase 10: Evidence-Backed Tokkun State Persistence and Readback
 
@@ -132,6 +135,6 @@ Phases execute in numeric order: 7 -> 8 -> 9 -> 10 -> 11.
 |-------|-----------|----------------|--------|-----------|
 | 7. Tokkun Evidence Contract and Guardrail Reset | v1.1 | 1/1 | Complete    | 2026-06-03 |
 | 8. Stateless Banacoin Compatibility and Availability | v1.1 | 1/1 | Complete    | 2026-06-04 |
-| 9. Tokkun Mapper and Safe Playresult Acceptance | v1.1 | 0/TBD | Not started | - |
+| 9. Tokkun Mapper and Safe Playresult Acceptance | v1.1 | 0/1 | Not started | - |
 | 10. Evidence-Backed Tokkun State Persistence and Readback | v1.1 | 0/TBD | Not started | - |
 | 11. Cabinet/RPCS3 Smoke and Contract Tightening | v1.1 | 0/TBD | Not started | - |
