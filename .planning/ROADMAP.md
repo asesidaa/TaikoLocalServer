@@ -20,7 +20,7 @@ Real Banacoin wallet, payment, balance, coupon, receipt, deduction, BNID result,
 - Decimal phases are reserved for urgent insertions after planning.
 
 - [x] **Phase 7: Tokkun Evidence Contract and Guardrail Reset** - Establish evidence-tagged Tokkun protocol boundaries and replace stale no-Tokkun guards. (completed 2026-06-03)
-- [ ] **Phase 8: Stateless Banacoin Compatibility and Availability** - Keep required Banacoin-adjacent endpoints permissive and stateless so Tokkun entry is not blocked.
+- [x] **Phase 8: Stateless Banacoin Compatibility and Availability** - Keep required Banacoin-adjacent endpoints permissive and stateless so Tokkun entry is not blocked. (completed 2026-06-04)
 - [ ] **Phase 9: Tokkun Mapper and Safe Playresult Acceptance** - Accept and classify Tokkun playresults safely without gameplay-state contamination.
 - [ ] **Phase 10: Evidence-Backed Tokkun State Persistence and Readback** - Persist and read back protocol-backed Blue Tokkun tutorial and summary facts.
 - [ ] **Phase 11: Cabinet/RPCS3 Smoke and Contract Tightening** - Prove Tokkun on cabinet/RPCS3 and lock tests/docs around the final contract.
@@ -131,7 +131,7 @@ Phases execute in numeric order: 7 -> 8 -> 9 -> 10 -> 11.
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 7. Tokkun Evidence Contract and Guardrail Reset | v1.1 | 1/1 | Complete    | 2026-06-03 |
-| 8. Stateless Banacoin Compatibility and Availability | v1.1 | 0/TBD | Not started | - |
+| 8. Stateless Banacoin Compatibility and Availability | v1.1 | 1/1 | Complete   | 2026-06-04 |
 | 9. Tokkun Mapper and Safe Playresult Acceptance | v1.1 | 0/TBD | Not started | - |
 | 10. Evidence-Backed Tokkun State Persistence and Readback | v1.1 | 0/TBD | Not started | - |
 | 11. Cabinet/RPCS3 Smoke and Contract Tightening | v1.1 | 0/TBD | Not started | - |

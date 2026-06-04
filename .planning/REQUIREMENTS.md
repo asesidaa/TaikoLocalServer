@@ -16,9 +16,9 @@ Requirements for the current milestone. Each maps to roadmap phases.
 
 ### Banacoin Compatibility
 
-- [ ] **TKBC-01**: Blue Banacoin-adjacent endpoints needed for Tokkun entry return stateless, permissive success-shaped responses sufficient for Tokkun to remain playable.
-- [ ] **TKBC-02**: Blue Banacoin compatibility does not persist balance, coupons, payments, deductions, transaction history, `chid`, BNID result state, or wallet-like state.
-- [ ] **TKBC-03**: `getbanacoininfo.php` is added only if cabinet/RPCS3 logs or IDA route evidence proves Blue Tokkun calls it and current absence blocks play.
+- [x] **TKBC-01**: Blue Banacoin-adjacent endpoints needed for Tokkun entry return stateless, permissive success-shaped responses sufficient for Tokkun to remain playable.
+- [x] **TKBC-02**: Blue Banacoin compatibility does not persist balance, coupons, payments, deductions, transaction history, `chid`, BNID result state, or wallet-like state.
+- [x] **TKBC-03**: `getbanacoininfo.php` is added only if cabinet/RPCS3 logs or IDA route evidence proves Blue Tokkun calls it and current absence blocks play.
 
 ### Tokkun Playresult Acceptance
 
@@ -68,9 +68,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TKEV-01 | Phase 7 | Complete |
 | TKEV-02 | Phase 7 | Complete |
 | TKEV-03 | Phase 7 | Complete |
-| TKBC-01 | Phase 8 | Pending |
-| TKBC-02 | Phase 8 | Pending |
-| TKBC-03 | Phase 8 | Pending |
+| TKBC-01 | Phase 8 | Complete |
+| TKBC-02 | Phase 8 | Complete |
+| TKBC-03 | Phase 8 | Complete |
 | TKPR-01 | Phase 9 | Pending |
 | TKPR-02 | Phase 9 | Pending |
 | TKPR-03 | Phase 9 | Pending |

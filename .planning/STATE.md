@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
-status: executing
-stopped_at: Phase 8 context gathered
-last_updated: "2026-06-03T21:07:41.256Z"
-last_activity: 2026-06-03 - Phase 7 verified complete
+status: verifying
+stopped_at: Completed 08-01-PLAN.md
+last_updated: "2026-06-04T16:23:09.023Z"
+last_activity: 2026-06-04 -- Phase 08 execution started
 progress:
   total_phases: 5
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 2
-  completed_plans: 1
-  percent: 20
+  completed_plans: 2
+  percent: 40
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-03)
 
 **Core value:** A Blue cabinet can use TaikoLocalServer for normal, battle, and Tokkun play with repeatable cabinet/RPCS3 evidence, without corrupting or conflating Green, Nijiiro, or shared identity state.
-**Current focus:** Phase 8 - Stateless Banacoin Compatibility and Availability is next.
+**Current focus:** Phase 08 — stateless-banacoin-compatibility-and-availability
 
 ## Current Position
 
-Phase: 8 of 11 overall (2 of 5 active)
-Plan: Not started
-Status: Ready to execute
-Last activity: 2026-06-03 - Phase 7 verified complete
+Phase: 08 (stateless-banacoin-compatibility-and-availability) — EXECUTING
+Plan: 1 of 1
+Status: Phase complete — ready for verification
+Last activity: 2026-06-04 -- Phase 08 execution started
 
 Progress: [##--------] 20%
 
@@ -52,6 +52,8 @@ Progress: [##--------] 20%
 - Last 5 plans: 07-01 completed in 10 min
 - Trend: Not available
 
+| Phase 08 P01 | 5 min | 3 tasks | 2 files |
+
 ## Accumulated Context
 
 ### Decisions
@@ -65,6 +67,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - `PlayMode.Tokkun` must not receive a guessed numeric value.
 - Cabinet/RPCS3 smoke evidence is required before v1.1 can be called done.
 - Phase 7 established the Tokkun evidence contract and removed the stale Tokkun source-scan guard without adding runtime Tokkun behavior.
+- Phase 8 adds Blue `getbanacoininfo.php` as a stateless direct-protobuf route that returns only `Result = 1`.
+- Optional `GetbanacoininfoResponse` identity/account fields remain unset because Phase 8 evidence found only descriptor-level support.
+- Phase 8 verification is source/test/build evidence only; cabinet/RPCS3 and live Tokkun proof remain Phase 11 scope.
 
 ### Pending Todos
 
@@ -82,6 +87,6 @@ None recorded. Phase 8 should decide Banacoin-adjacent route availability from e
 
 ## Session Continuity
 
-Last session: 2026-06-03T20:34:52.264Z
-Stopped at: Phase 8 context gathered
-Resume file: .planning/phases/08-stateless-banacoin-compatibility-and-availability/08-CONTEXT.md
+Last session: 2026-06-04T16:23:09.016Z
+Stopped at: Completed 08-01-PLAN.md
+Resume file: None
