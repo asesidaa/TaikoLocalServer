@@ -38,6 +38,7 @@ A Blue cabinet can use TaikoLocalServer for normal, battle, and Tokkun play with
 - [x] Blue battle runtime support: Phase 5 added Blue-owned battle persistence, battleuserdata readback, data-derived initialdata battle advertisement, battle playresult persistence, reward/unlock store-echo behavior, source guards, and server-side verification without Green AI Battle dependencies.
 - [x] Full Blue verification and release hardening: v1.0 closes with repeatable normal and battle smoke evidence externally confirmed by the user, full automated Blue/server verification, source guardrails, and updated operator/developer documentation.
 - [x] Blue Tokkun evidence contract: Phase 7 defines evidence-tagged Tokkun protocol rows, classifier boundaries, no-runtime-write targets, and Phase 8-11 handoff gates before runtime Tokkun behavior changes.
+- [x] Blue stateless Banacoin compatibility: Phase 8 adds Blue `getbanacoininfo.php` as a direct-protobuf, no-state compatibility route and verifies Banacoin-adjacent routes remain stateless and free of wallet/payment persistence.
 
 ### Active
 
@@ -48,7 +49,7 @@ A Blue cabinet can use TaikoLocalServer for normal, battle, and Tokkun play with
 
 ### Out of Scope
 
-- Banacoin balance, payment, error, and info behavior, unless new cabinet evidence proves a non-payment stub is required for Blue progression.
+- Real Banacoin balance, payment, settlement, receipt, coupon, deduction, BNID result, or transaction-history behavior beyond stateless compatibility routes needed for Blue Tokkun availability.
 - Yellow or earlier era support.
 - Green AI Battle changes while implementing Blue battle mode; Green AI Battle is contrast material, not the Blue design source.
 - Invented Tokkun rewards, score/crown persistence, paid-coin behavior, practice-time accounting, jump-point behavior, autoplay behavior, speed-change behavior, or song unlock side effects without concrete Blue evidence.
@@ -73,13 +74,13 @@ A Blue cabinet can use TaikoLocalServer for normal, battle, and Tokkun play with
 
 v1.0 Blue Support is complete. Blue is a first-class supported era with normal play, Dani, item shop/unlocking, AdminApi/WebUI readback, battle evidence/design, battle runtime persistence/protocol handling, final guardrails, and operator documentation.
 
-v1.1 Blue Tokkun Mode Support is the active milestone. Phase 7 is complete: the Tokkun evidence contract is in place, `PlayMode.Tokkun` remains numerically unknown, and the stale Tokkun source-scan guard was removed without adding runtime Tokkun behavior. Phase 8 is next and should keep Banacoin-adjacent compatibility stateless and evidence-backed.
+v1.1 Blue Tokkun Mode Support is the active milestone. Phases 7 and 8 are complete: the Tokkun evidence contract is in place, `PlayMode.Tokkun` remains numerically unknown, the stale Tokkun source-scan guard was removed, and Banacoin-adjacent compatibility remains stateless with Blue `getbanacoininfo.php` available as a no-state route. Phase 9 is next and should implement Tokkun mapper/classifier acceptance without contaminating normal, battle, or Banacoin state.
 
 ## Next Milestone Goals
 
-- Plan and execute Phase 8: stateless Banacoin compatibility and availability.
-- Add `getbanacoininfo.php` only if cabinet/RPCS3 logs or IDA route evidence proves Blue Tokkun calls it and current absence blocks play.
-- Preserve Blue/Green/Nijiiro state separation and the Phase 7 no-runtime-write boundaries.
+- Discuss, plan, and execute Phase 9: Tokkun mapper and safe playresult acceptance.
+- Classify Tokkun uploads from protocol-backed fields such as `ary_tokkunstage_info` and preserve raw Tokkun facts without assigning a guessed `PlayMode.Tokkun` numeric value.
+- Prove Tokkun-classified uploads return success without writing normal, battle, Dani, favorite, recent-song, profile, unlock, medal, customization, shop, or Banacoin state.
 
 ## Constraints
 
@@ -106,6 +107,7 @@ v1.1 Blue Tokkun Mode Support is the active milestone. Phase 7 is complete: the 
 | Close stale Phase 05 debug/UAT artifacts at milestone completion | User confirmed the remaining audit-open records were stale and had been externally fixed and resolved before close | Resolved in v1.0 closeout |
 | Reopen Blue Tokkun mode as v1.1 scope | Public wiki context says Tokkun ended before Blue, but user-provided Blue binary/protobuf evidence indicates the mode still exists and should be supported | Pending v1.1 verification |
 | Establish a Tokkun contract before runtime changes | Phase 7 created the evidence matrix, classifier policy, side-effect blocks, and Phase 8-11 gates before any Tokkun runtime implementation | Validated in Phase 7 |
+| Keep Banacoin compatibility stateless | TaikoLocalServer is not a Banacoin authority, but Blue Tokkun availability needs permissive route compatibility | Validated in Phase 8 |
 
 ## Evolution
 
@@ -125,4 +127,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-03 after Phase 7 completion*
+*Last updated: 2026-06-04 after Phase 8 completion*
