@@ -415,19 +415,19 @@ if (playResultData.IsTokkunPlayResult)
 
 **No user confirmation is needed before planning Phase 9, provided the plan stays inside the locked decisions above and the A1 validity estimate is treated as a planning hygiene note rather than a product decision.** [VERIFIED: 09-CONTEXT.md]
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Exact numeric Tokkun `play_mode` remains unknown.** [VERIFIED: 07-01-TOKKUN-EVIDENCE-CONTRACT.md]
+1. **RESOLVED / routed to Phase 11: Exact numeric Tokkun `play_mode` remains unknown.** [VERIFIED: 07-01-TOKKUN-EVIDENCE-CONTRACT.md]
    What we know: current enum has no Tokkun member and Phase 9 forbids guessing. [VERIFIED: Domain/Enums/PlayMode.cs; VERIFIED: 09-CONTEXT.md]
    What is unclear: the real client numeric value. [VERIFIED: local docs]
    Recommendation: do not block Phase 9; preserve/log raw `PlayMode` only and leave proof to Phase 11. [VERIFIED: 09-CONTEXT.md]
 
-2. **Whether Tokkun tutorial/readback must be persisted is not a Phase 9 question.** [VERIFIED: ROADMAP.md]
+2. **RESOLVED / routed to Phase 10: Whether Tokkun tutorial/readback must be persisted is not a Phase 9 question.** [VERIFIED: ROADMAP.md]
    What we know: `tokkun_tutorial_flg` exists on request and userdata response wire surfaces. [VERIFIED: proto/blue/taiko.proto:316; VERIFIED: proto/blue/taiko.proto:442]
    What is unclear: real first-run/readback timing. [VERIFIED: 07-01-TOKKUN-EVIDENCE-CONTRACT.md]
    Recommendation: map optional presence/value now; Phase 10 decides persistence/readback. [VERIFIED: 09-CONTEXT.md]
 
-3. **Cabinet/RPCS3 Tokkun proof remains open.** [VERIFIED: ROADMAP.md]
+3. **RESOLVED / routed to Phase 11: Cabinet/RPCS3 Tokkun proof remains open.** [VERIFIED: ROADMAP.md]
    What we know: Phase 9 accepts only automated source/test/build evidence. [VERIFIED: 09-CONTEXT.md]
    What is unclear: live route sequence, retry behavior, and post-upload userdata behavior. [VERIFIED: ROADMAP.md]
    Recommendation: do not include live proof tasks in Phase 9; reserve for Phase 11. [VERIFIED: ROADMAP.md]
