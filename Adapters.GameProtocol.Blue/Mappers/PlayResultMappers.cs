@@ -39,6 +39,9 @@ public static partial class PlayResultMappers
             GenderType = request.GenderType,
             PlayerAge = request.PlayerAge,
             PlayMode = request.PlayMode,
+            IsTokkunPlayResult = request.AryTokkunstageInfo is not null,
+            TokkunTutorialFlg = request.ShouldSerializeTokkunTutorialFlg() ? request.TokkunTutorialFlg : null,
+            TokkunStageData = MapTokkunStageData(request.AryTokkunstageInfo),
             IsBattlePlayResult = request.AryReleaseBattledata is not null
                 || request.AryStageInfoes.Any(stage => stage.AryBattlestagedata is not null),
             BattleReleaseData = MapBattleReleaseData(request.AryReleaseBattledata),
@@ -144,6 +147,20 @@ public static partial class PlayResultMappers
                 ReleaseNpcSpecialIds = (data.ReleaseNpcSpecialIds ?? []).ToList(),
                 BattleTokenData = data.AryBattletokendatas.Select(MapBattleTokenData).ToList(),
                 AssignNextStageId = data.AssignNextStageId
+            };
+
+    private static CommonPlayResultData.TokkunStageDataDto? MapTokkunStageData(
+        PlayResultRequest.TokkunstageData? data)
+        => data is null
+            ? null
+            : new CommonPlayResultData.TokkunStageDataDto
+            {
+                BanacoinDatetime = data.BanacoinDatetime ?? string.Empty,
+                TokkunSongCnt = data.TokkunSongCnt,
+                TookunSongnoes = (data.TookunSongnoes ?? []).ToList(),
+                TokkunSpeedchangeCnt = data.TokkunSpeedchangeCnt,
+                TokkunAutoplayCnt = data.TokkunAutoplayCnt,
+                TokkunJumpCnt = data.TokkunJumpCnt
             };
 
     private static CommonPlayResultData.BattleTokenData MapBattleTokenData(
