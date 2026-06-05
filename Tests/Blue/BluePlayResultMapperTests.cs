@@ -58,7 +58,48 @@ public sealed class BluePlayResultMapperTests
     }
 
     [Fact]
-    public void Map_BluePlayResult_DoesNotInferRuntimeSemanticsFromUnimplementedOptionalSections()
+    public void Map_TokkunStageInfo_ClassifiesTokkunAndPreservesRawFacts()
+    {
+        var request = CreateRequest();
+        request.TokkunTutorialFlg = 1;
+        request.AryTokkunstageInfo = new PlayResultRequest.TokkunstageData
+        {
+            BanacoinDatetime = "20260528120000",
+            TokkunSongCnt = 3,
+            TookunSongnoes = [101, 102, 103],
+            TokkunSpeedchangeCnt = 4,
+            TokkunAutoplayCnt = 5,
+            TokkunJumpCnt = 6
+        };
+
+        var common = PlayResultMappers.Map(request);
+
+        Assert.True(common.IsTokkunPlayResult);
+        Assert.Equal(1u, common.TokkunTutorialFlg);
+        Assert.NotNull(common.TokkunStageData);
+        Assert.Equal("20260528120000", common.TokkunStageData.BanacoinDatetime);
+        Assert.Equal(3u, common.TokkunStageData.TokkunSongCnt);
+        Assert.Equal([101u, 102u, 103u], common.TokkunStageData.TookunSongnoes);
+        Assert.Equal(4u, common.TokkunStageData.TokkunSpeedchangeCnt);
+        Assert.Equal(5u, common.TokkunStageData.TokkunAutoplayCnt);
+        Assert.Equal(6u, common.TokkunStageData.TokkunJumpCnt);
+    }
+
+    [Fact]
+    public void Map_TutorialOnly_PreservesTutorialButDoesNotClassifyTokkun()
+    {
+        var request = CreateRequest();
+        request.TokkunTutorialFlg = 1;
+
+        var common = PlayResultMappers.Map(request);
+
+        Assert.False(common.IsTokkunPlayResult);
+        Assert.Equal(1u, common.TokkunTutorialFlg);
+        Assert.Null(common.TokkunStageData);
+    }
+
+    [Fact]
+    public void Map_MixedTokkunAndBattleSections_PreservesBothClassifierStates()
     {
         var request = CreateRequest();
         request.AryTokkunstageInfo = new PlayResultRequest.TokkunstageData
@@ -78,7 +119,10 @@ public sealed class BluePlayResultMapperTests
 
         var common = PlayResultMappers.Map(request);
 
-        Assert.Equal(1u, common.Baid);
+        Assert.True(common.IsTokkunPlayResult);
+        Assert.True(common.IsBattlePlayResult);
+        Assert.NotNull(common.TokkunStageData);
+        Assert.Equal([101u], common.TokkunStageData.TookunSongnoes);
         Assert.Single(common.AryStageInfoes);
         Assert.Equal(101u, common.AryStageInfoes[0].SongNo);
     }
