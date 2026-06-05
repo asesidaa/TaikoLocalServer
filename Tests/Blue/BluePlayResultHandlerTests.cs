@@ -1,4 +1,6 @@
 using Microsoft.Extensions.Logging;
+using TaikoLocalServer.Adapters.GameProtocol.Blue.Mappers;
+using TaikoLocalServer.Adapters.GameProtocol.Blue.Wire;
 using TaikoLocalServer.Application.Catalog.Blue;
 
 namespace TaikoLocalServer.Tests.Blue;
@@ -45,6 +47,111 @@ public sealed class BluePlayResultHandlerTests
         Assert.Equal(1u, result);
         Assert.Empty(await fixture.Context.SongPlayDataBlue.ToListAsync());
         Assert.Empty(await fixture.Context.SongBestDataBlue.ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Blue_TokkunExistingUserReturnsSuccessWithoutStateWrites()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync();
+        var saveData = UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1);
+        saveData.TotalGetDonmedal = 5;
+        saveData.TotalGetKatsumedal = 7;
+        saveData.CategJpopCnt = 3;
+        saveData.SongPushedCnt = 4;
+        saveData.LastPlayDatetime = new DateTime(2026, 5, 1, 8, 0, 0);
+        saveData.Title = "Stable Title";
+        saveData.TitleplateId = 10;
+        saveData.Costume1 = 6;
+        saveData.CostumeFlg1 = BlueProtocolBytes.CreateFixedBitset([0, 6], BlueProtocolBytes.CostumeFlagBytes);
+        saveData.ReleaseSongFlg = BlueProtocolBytes.CreateFixedBitset([99], BlueProtocolBytes.SongFlagBytes);
+        saveData.ToneFlg = BlueProtocolBytes.CreateFixedBitset([4], BlueProtocolBytes.ToneFlagBytes);
+        saveData.TitleFlg = BlueProtocolBytes.CreateFixedBitset([10], BlueProtocolBytes.TitleFlagBytes);
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataBlue.Add(saveData);
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var request = CreateTokkunRequest(1);
+        request.GetDonmedal = 50;
+        request.GetKatsumedal = 60;
+        request.ReleaseSongNoes = [104];
+        request.GetToneNoes = [8];
+        request.GetCostumeNo1s = [1];
+        request.GetTitleNoes = [11];
+        request.AryCurrentCostume = new PlayResultRequest.CostumeData { Costume1 = 1 };
+        request.AryStageInfoes.Add(CreateWireStage(101, 1, 0));
+
+        var result = await handler.Handle(CreateBlueCommand(request), CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var reloaded = await fixture.Context.UserSaveDataBlue.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(5u, reloaded.TotalGetDonmedal);
+        Assert.Equal(7u, reloaded.TotalGetKatsumedal);
+        Assert.Equal(3u, reloaded.CategJpopCnt);
+        Assert.Equal(4u, reloaded.SongPushedCnt);
+        Assert.Equal(new DateTime(2026, 5, 1, 8, 0, 0), reloaded.LastPlayDatetime);
+        Assert.Equal("Stable Title", reloaded.Title);
+        Assert.Equal(10u, reloaded.TitleplateId);
+        Assert.Equal(6u, reloaded.Costume1);
+        Assert.True(BitIsSet(reloaded.CostumeFlg1, 6));
+        Assert.False(BitIsSet(reloaded.CostumeFlg1, 1));
+        Assert.True(BitIsSet(reloaded.ReleaseSongFlg, 99));
+        Assert.False(BitIsSet(reloaded.ReleaseSongFlg, 104));
+        Assert.True(BitIsSet(reloaded.ToneFlg, 4));
+        Assert.False(BitIsSet(reloaded.ToneFlg, 8));
+        Assert.True(BitIsSet(reloaded.TitleFlg, 10));
+        Assert.False(BitIsSet(reloaded.TitleFlg, 11));
+        await AssertTokkunForbiddenBlueStateEmptyAsync(fixture.Context);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Blue_TokkunUnknownUserReturnsSuccessWithoutCreatingRows()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync();
+        var handler = CreateHandler(fixture);
+        var request = CreateTokkunRequest(99);
+        request.AryStageInfoes.Add(CreateWireStage(101, 1, 0));
+
+        var result = await handler.Handle(CreateBlueCommand(request), CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        Assert.Empty(await fixture.Context.UserSaveDataBlue.ToListAsync());
+        await AssertTokkunForbiddenBlueStateEmptyAsync(fixture.Context);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Blue_MixedTokkunPayloadReturnsSuccessBeforeBattleOrNormalWrites()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync(CreateShopCatalog());
+        var saveData = UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1);
+        saveData.TotalGetDonmedal = 5;
+        saveData.TotalGetKatsumedal = 7;
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataBlue.Add(saveData);
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var request = CreateTokkunRequest(1);
+        request.GetDonmedal = 50;
+        request.GetKatsumedal = 60;
+        request.ReleaseSongNoes = [104];
+        request.GetToneNoes = [8];
+        request.GetCostumeNo1s = [1];
+        request.GetTitleNoes = [11];
+        request.AryReleaseBattledata = CreateReleaseBattleData(assignNextStageId: 12);
+        request.AryStageInfoes.Add(CreateWireStage(101, 1, 0, includeBattle: true));
+
+        var result = await handler.Handle(CreateBlueCommand(request), CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var reloaded = await fixture.Context.UserSaveDataBlue.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(5u, reloaded.TotalGetDonmedal);
+        Assert.Equal(7u, reloaded.TotalGetKatsumedal);
+        Assert.False(BitIsSet(reloaded.ReleaseSongFlg, 104));
+        Assert.False(BitIsSet(reloaded.ToneFlg, 8));
+        Assert.False(BitIsSet(reloaded.CostumeFlg1, 1));
+        Assert.False(BitIsSet(reloaded.TitleFlg, 11));
+        await AssertTokkunForbiddenBlueStateEmptyAsync(fixture.Context);
     }
 
     [Fact]
@@ -454,6 +561,144 @@ public sealed class BluePlayResultHandlerTests
             logger ?? NullLogger<UpdatePlayResultCommandHandler>.Instance);
     }
 
+    private static BlueHandlerFixture.TestBlueCatalog CreateShopCatalog()
+        => new(itemShopCatalog: new BlueItemShopCatalog
+        {
+            IsEnabled = true,
+            ActiveSeasonId = 2,
+            Seasons = new Dictionary<uint, BlueItemShopSeason>
+            {
+                [2] = new()
+                {
+                    SeasonId = 2,
+                    VerupNo = 7,
+                    Items =
+                    [
+                        new BlueItemShopEntry
+                        {
+                            ItemNo = 1,
+                            ItemType = Ac15ShopItemType.Song,
+                            ItemId = 101,
+                            Price = 1300
+                        }
+                    ]
+                }
+            }
+        });
+
+    private static UpdatePlayResultCommand CreateBlueCommand(PlayResultRequest request)
+        => new(request.Baid, GameEra.Blue, PlayResultMappers.Map(request));
+
+    private static PlayResultRequest CreateTokkunRequest(uint baid) => new()
+    {
+        Baid = baid,
+        ChassisId = "268410000000",
+        ShopId = "JPN0JPN0123",
+        PlayDatetime = "20260528120000",
+        IsRight = false,
+        CardType = 1,
+        IsTwoPlayers = false,
+        BonusDailyFlg = false,
+        BonusWeeklyFlg = false,
+        BonusMonthlyFlg = false,
+        GetDonmedal = 0,
+        GetKatsumedal = 0,
+        GenderType = 0,
+        PlayerAge = 0,
+        PlayMode = 0,
+        AreaCode = 1,
+        Reserved = new byte[16],
+        TokkunTutorialFlg = 1,
+        AryTokkunstageInfo = new PlayResultRequest.TokkunstageData
+        {
+            BanacoinDatetime = "20260528120000",
+            TokkunSongCnt = 1,
+            TookunSongnoes = [101],
+            TokkunSpeedchangeCnt = 2,
+            TokkunAutoplayCnt = 3,
+            TokkunJumpCnt = 4
+        }
+    };
+
+    private static PlayResultRequest.StageData CreateWireStage(
+        uint songNo,
+        uint level,
+        uint stageMode,
+        bool includeBattle = false)
+    {
+        var stage = new PlayResultRequest.StageData
+        {
+            SongNo = songNo,
+            Level = level,
+            StageMode = stageMode,
+            PlayResult = 2,
+            PlayScore = 765432,
+            GoodCnt = 100,
+            OkCnt = 20,
+            NgCnt = 3,
+            PoundCnt = 4,
+            ComboCnt = 120,
+            HitCnt = 123,
+            OptionFlg = [1, 2, 3],
+            ToneFlg = [4],
+            MusicCateg = 1,
+            IsPushed = true,
+            IsFavorite = true,
+            IsRecent = true,
+            IsPapamama = false,
+            SelectedFolderId = 9,
+            SoulGauge = 100
+        };
+
+        if (includeBattle)
+        {
+            stage.AryBattlestagedata = new PlayResultRequest.StageData.BattleStageData
+            {
+                SupportLv = 3,
+                BattleStageId = 12,
+                NpcData = new PlayResultRequest.StageData.BattleStageData.BattleNpcData
+                {
+                    NpcId = 9,
+                    AcquiredExp = "77",
+                    TotalExp = "888",
+                    Dpn = 456,
+                    NpcCostumeId = 30,
+                    SpecialId1 = 21,
+                    SpecialId2 = 22,
+                    SpecialId3 = 23,
+                    BondsLv = 6
+                },
+                KillCnt = 5,
+                BossLife = 12345,
+                TotalDamage = 54321,
+                CriticalCnt = 7,
+                SpecialMoveCnt = 2
+            };
+        }
+
+        return stage;
+    }
+
+    private static PlayResultRequest.ReleaseBattleData CreateReleaseBattleData(uint assignNextStageId)
+    {
+        var release = new PlayResultRequest.ReleaseBattleData
+        {
+            ReleaseInfoIds = [101],
+            ReleaseBattleStageIds = [2],
+            ReleaseNpcIds = [4],
+            ReleaseNpcCostumeIds = [5],
+            ReleaseNpcSpecialIds = [6],
+            AssignNextStageId = assignNextStageId
+        };
+        release.AryBattletokendatas.Add(new PlayResultRequest.ReleaseBattleData.BattleTokenData
+        {
+            TokenId = 17,
+            TokenValue = 765
+        });
+
+        return release;
+    }
+
     private static CommonPlayResultData.StageData CreateStage(
         uint songNo,
         uint level,
@@ -508,6 +753,22 @@ public sealed class BluePlayResultHandlerTests
         stage.HitCnt = hits;
         stage.SoulGauge = soulGauge;
         return stage;
+    }
+
+    private static async Task AssertTokkunForbiddenBlueStateEmptyAsync(TaikoDbContext context)
+    {
+        Assert.Empty(await context.SongPlayDataBlue.ToListAsync());
+        Assert.Empty(await context.SongBestDataBlue.ToListAsync());
+        Assert.Empty(await context.BlueBattleStageResults.ToListAsync());
+        Assert.Empty(await context.BlueBattleUserStates.ToListAsync());
+        Assert.Empty(await context.BlueBattleNpcStates.ToListAsync());
+        Assert.Empty(await context.BlueBattleTokenStates.ToListAsync());
+        Assert.Empty(await context.BlueFavoriteSongs.ToListAsync());
+        Assert.Empty(await context.BlueRecentSongs.ToListAsync());
+        Assert.Empty(await context.DanScoreDataBlue.ToListAsync());
+        Assert.Empty(await context.DanStageScoreDataBlue.ToListAsync());
+        Assert.Empty(await context.BlueShopSeasonStates.ToListAsync());
+        Assert.Empty(await context.BlueShopItemStates.ToListAsync());
     }
 
     private static bool BitIsSet(byte[] source, uint id)
