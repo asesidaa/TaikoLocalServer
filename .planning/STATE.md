@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
-status: verifying
-stopped_at: Completed 09-01-PLAN.md
-last_updated: "2026-06-05T14:05:33.555Z"
-last_activity: 2026-06-05 -- Phase 09 execution started
+status: planning
+stopped_at: Phase 9 complete
+last_updated: "2026-06-05T14:08:56.935Z"
+last_activity: 2026-06-05 - Phase 9 completed
 progress:
   total_phases: 5
   completed_phases: 3
@@ -21,24 +21,24 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-03)
 
 **Core value:** A Blue cabinet can use TaikoLocalServer for normal, battle, and Tokkun play with repeatable cabinet/RPCS3 evidence, without corrupting or conflating Green, Nijiiro, or shared identity state.
-**Current focus:** Phase 09 — tokkun-mapper-and-safe-playresult-acceptance
+**Current focus:** Phase 10 - Evidence-Backed Tokkun State Persistence and Readback
 
 ## Current Position
 
-Phase: 09 (tokkun-mapper-and-safe-playresult-acceptance) — EXECUTING
-Plan: 1 of 1
-Status: Phase complete — ready for verification
-Last activity: 2026-06-05 -- Phase 09 execution started
+Phase: 10 of 11 overall (4 of 5 active)
+Plan: Not planned
+Status: Ready to discuss/plan
+Last activity: 2026-06-05 - Phase 9 completed
 
-Progress: [####------] 40%
+Progress: [######----] 60%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 2 in v1.1
-- Average duration: 10 min
-- Total execution time: 10 min
+- Total plans completed: 3 in v1.1
+- Average duration: 13.7 min
+- Total execution time: 41 min
 
 **By Phase:**
 
@@ -46,12 +46,13 @@ Progress: [####------] 40%
 |-------|-------|-------|----------|
 | 7 | 1/1 complete | 10 min | 10 min |
 | 8 | 1/1 complete | 5 min | 5 min |
-| 9-11 | TBD | - | - |
+| 9 | 1/1 complete | 26 min | 26 min |
+| 10-11 | TBD | - | - |
 
 **Recent Trend:**
 
-- Last 5 plans: 07-01 completed in 10 min; 08-01 completed in 5 min
-- Trend: Not available
+- Last 5 plans: 07-01 completed in 10 min; 08-01 completed in 5 min; 09-01 completed in 26 min
+- Trend: Tokkun runtime slices are slower than stateless route work due to TDD and SQLite no-write coverage
 
 | Phase 08 P01 | 5 min | 3 tasks | 2 files |
 | Phase 09 P01 | 26 min | 2 tasks | 5 files |
@@ -72,6 +73,8 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - Phase 8 adds Blue `getbanacoininfo.php` as a stateless direct-protobuf route that returns only `Result = 1`.
 - Optional `GetbanacoininfoResponse` identity/account fields remain unset because Phase 8 evidence found only descriptor-level support.
 - Phase 8 verification is source/test/build evidence only; cabinet/RPCS3 and live Tokkun proof remain Phase 11 scope.
+- Phase 9 adds Blue Tokkun playresult mapper/classifier fields and accepts Tokkun uploads before battle/normal write paths.
+- Phase 9 verification is source/test/build evidence only; cabinet/RPCS3 and live Tokkun proof remain Phase 11 scope.
 
 ### Pending Todos
 
@@ -79,7 +82,7 @@ None recorded.
 
 ### Blockers/Concerns
 
-None recorded. Phase 8 should decide Banacoin-adjacent route availability from evidence while keeping real Banacoin state out of scope.
+None recorded. Phase 10 should persist/read back only protocol-backed Tokkun tutorial and summary facts while preserving Phase 9 no-write guarantees.
 
 ## Deferred Items
 
@@ -89,6 +92,6 @@ None recorded. Phase 8 should decide Banacoin-adjacent route availability from e
 
 ## Session Continuity
 
-Last session: 2026-06-05T14:05:33.550Z
-Stopped at: Completed 09-01-PLAN.md
+Last session: 2026-06-05T14:08:56.935Z
+Stopped at: Phase 9 complete
 Resume file: None
