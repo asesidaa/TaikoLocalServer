@@ -22,9 +22,9 @@ Requirements for the current milestone. Each maps to roadmap phases.
 
 ### Tokkun Playresult Acceptance
 
-- [ ] **TKPR-01**: Blue `playresult.php` accepts and classifies Tokkun uploads from proven Tokkun fields such as `ary_tokkunstage_info` and `tokkun_tutorial_flg`.
-- [ ] **TKPR-02**: Blue Tokkun uploads return success without writing normal score, crown, Dani, battle, favorite, recent-song, profile, unlock, medal, customization, title, or shop state.
-- [ ] **TKPR-03**: Unknown or mixed Tokkun shapes are logged with bounded request context and return success unless concrete client evidence proves a failure response is required.
+- [x] **TKPR-01**: Blue `playresult.php` accepts and classifies Tokkun uploads from proven Tokkun fields such as `ary_tokkunstage_info` and `tokkun_tutorial_flg`.
+- [x] **TKPR-02**: Blue Tokkun uploads return success without writing normal score, crown, Dani, battle, favorite, recent-song, profile, unlock, medal, customization, title, or shop state.
+- [x] **TKPR-03**: Unknown or mixed Tokkun shapes are logged with bounded request context and return success unless concrete client evidence proves a failure response is required.
 
 ### Tokkun State
 
@@ -71,9 +71,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TKBC-01 | Phase 8 | Complete |
 | TKBC-02 | Phase 8 | Complete |
 | TKBC-03 | Phase 8 | Complete |
-| TKPR-01 | Phase 9 | Pending |
-| TKPR-02 | Phase 9 | Pending |
-| TKPR-03 | Phase 9 | Pending |
+| TKPR-01 | Phase 9 | Complete |
+| TKPR-02 | Phase 9 | Complete |
+| TKPR-03 | Phase 9 | Complete |
 | TKST-01 | Phase 10 | Pending |
 | TKST-02 | Phase 10 | Pending |
 | TKST-03 | Phase 10 | Pending |
