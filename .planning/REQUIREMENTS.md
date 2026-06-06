@@ -35,9 +35,9 @@ Requirements for the current milestone. Each maps to roadmap phases.
 
 ### Verification
 
-- [ ] **TKVF-01**: Automated tests cover Tokkun classification, mapper DTO fields, safe playresult acceptance, no-cross-write behavior, Banacoin statelessness, Tokkun persistence, and replacement source guards.
-- [ ] **TKVF-02**: Cabinet/RPCS3 smoke evidence covers Tokkun selection, Banacoin request sequence, gameplay entry, final upload, post-upload userdata behavior, and any unexpected endpoint calls.
-- [ ] **TKVF-03**: Final docs record confirmed Tokkun constants/routes, persisted Tokkun fields, unresolved research flags, and the exact boundary between supported Tokkun behavior and out-of-scope Banacoin/payment semantics.
+- [x] **TKVF-01**: Automated tests cover Tokkun classification, mapper DTO fields, safe playresult acceptance, no-cross-write behavior, Banacoin statelessness, Tokkun persistence, and replacement source guards.
+- [x] **TKVF-02**: Cabinet/RPCS3 smoke evidence covers Tokkun selection, Banacoin request sequence, gameplay entry, final upload, post-upload userdata behavior, and any unexpected endpoint calls.
+- [x] **TKVF-03**: Final docs record confirmed Tokkun constants/routes, persisted Tokkun fields, unresolved research flags, and the exact boundary between supported Tokkun behavior and out-of-scope Banacoin/payment semantics.
 
 ## Future Requirements
 
@@ -78,9 +78,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TKST-02 | Phase 10 | Complete |
 | TKST-03 | Phase 10 | Complete |
 | TKST-04 | Phase 10 | Complete |
-| TKVF-01 | Phase 11 | Pending |
-| TKVF-02 | Phase 11 | Pending |
-| TKVF-03 | Phase 11 | Pending |
+| TKVF-01 | Phase 11 | Complete |
+| TKVF-02 | Phase 11 | Complete |
+| TKVF-03 | Phase 11 | Complete |
 | TKUI-01 | Future milestone | Deferred |
 
 **Coverage:**
@@ -92,4 +92,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-06-03*
-*Last updated: 2026-06-03 after roadmap creation*
+*Last updated: 2026-06-07 after Phase 11 runtime verification*

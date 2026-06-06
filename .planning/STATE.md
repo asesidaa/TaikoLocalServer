@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
-status: planning
-stopped_at: Phase 10 complete; Phase 11 ready for planning
-last_updated: "2026-06-06T16:00:48.180Z"
-last_activity: 2026-06-06
+status: ready_for_milestone_close
+stopped_at: Phase 11 runtime verification recorded; v1.1 ready for milestone close
+last_updated: "2026-06-06T16:32:56.694Z"
+last_activity: 2026-06-07
 progress:
   total_phases: 5
-  completed_phases: 4
-  total_plans: 6
-  completed_plans: 6
-  percent: 80
+  completed_phases: 5
+  total_plans: 7
+  completed_plans: 7
+  percent: 100
 ---
 
 # Project State
@@ -21,24 +21,24 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-03)
 
 **Core value:** A Blue cabinet can use TaikoLocalServer for normal, battle, and Tokkun play with repeatable cabinet/RPCS3 evidence, without corrupting or conflating Green, Nijiiro, or shared identity state.
-**Current focus:** Phase 11 - Cabinet/RPCS3 Smoke and Contract Tightening
+**Current focus:** v1.1 milestone closeout
 
 ## Current Position
 
 Phase: 11 of 11 (cabinet/rpcs3 smoke and contract tightening)
-Plan: Not started
-Status: Ready for planning
-Last activity: 2026-06-06
+Plan: 1/1 complete
+Status: Ready for milestone close
+Last activity: 2026-06-07
 
-Progress: [########--] 80%
+Progress: [##########] 100%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 6 in v1.1
-- Average duration: 12.3 min
-- Total execution time: 74 min
+- Total plans completed: 7 in v1.1
+- Average duration: 11.0 min
+- Total execution time: 77 min
 
 **By Phase:**
 
@@ -48,11 +48,11 @@ Progress: [########--] 80%
 | 8 | 1/1 complete | 5 min | 5 min |
 | 9 | 1/1 complete | 26 min | 26 min |
 | 10 | 3/3 complete | 33 min | 11 min |
-| 11 | TBD | - | - |
+| 11 | 1/1 complete | 3 min | 3 min |
 
 **Recent Trend:**
 
-- Last 5 plans: 08-01 completed in 5 min; 09-01 completed in 26 min; 10-01 completed in 18 min; 10-02 completed in 8 min; 10-03 completed in 7 min
+- Last 5 plans: 09-01 completed in 26 min; 10-01 completed in 18 min; 10-02 completed in 8 min; 10-03 completed in 7 min; 11-01 completed in 3 min
 - Trend: Tokkun runtime slices are slower than stateless route work due to TDD and SQLite no-write coverage
 
 | Phase 08 P01 | 5 min | 3 tasks | 2 files |
@@ -60,6 +60,7 @@ Progress: [########--] 80%
 | Phase 10 P01 | 18 min | 2 tasks | 13 files |
 | Phase 10 P02 | 8 min | 2 tasks | 3 files |
 | Phase 10 P03 | 7 min | 2 tasks | 5 files |
+| Phase 11 P01 | 3 min | 4 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -83,6 +84,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - Phase 10 Plan 01 added `PlayMode.Tokkun = 3`, mode-based Tokkun classification, nullable Blue tutorial storage, and append-only `BlueTokkunStageResults`.
 - Phase 10 Plan 02 persists classified Tokkun uploads into nullable tutorial state and append-only raw history rows while preserving no-cross-write boundaries.
 - Phase 10 Plan 03 reads back nullable raw Tokkun tutorial state through Blue userdata only; summary/history remains server-side.
+- Phase 11 records user-confirmed cabinet/RPCS3 runtime verification, full automated test/build evidence, and the final Blue Tokkun contract.
 
 ### Pending Todos
 
@@ -90,7 +92,7 @@ None recorded.
 
 ### Blockers/Concerns
 
-None recorded. Phase 11 still needs planning and owns the final cabinet/RPCS3 smoke proof plus final contract documentation.
+None recorded. v1.1 is ready for milestone completion and archival.
 
 ## Deferred Items
 
@@ -100,6 +102,6 @@ None recorded. Phase 11 still needs planning and owns the final cabinet/RPCS3 sm
 
 ## Session Continuity
 
-Last session: 2026-06-06T16:00:48.180Z
-Stopped at: Phase 10 verified and completed; Phase 11 ready for planning
-Resume file: .planning/ROADMAP.md
+Last session: 2026-06-06T16:32:56.694Z
+Stopped at: Phase 11 runtime verification recorded; v1.1 ready for milestone close
+Resume file: .planning/phases/11-cabinet-rpcs3-smoke-and-contract-tightening/11-01-SUMMARY.md

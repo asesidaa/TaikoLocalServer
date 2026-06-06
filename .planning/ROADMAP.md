@@ -23,7 +23,7 @@ Real Banacoin wallet, payment, balance, coupon, receipt, deduction, BNID result,
 - [x] **Phase 8: Stateless Banacoin Compatibility and Availability** - Keep required Banacoin-adjacent endpoints permissive and stateless so Tokkun entry is not blocked. (completed 2026-06-04)
 - [x] **Phase 9: Tokkun Mapper and Safe Playresult Acceptance** - Accept and classify Tokkun playresults safely without gameplay-state contamination. (completed 2026-06-05)
 - [x] **Phase 10: Evidence-Backed Tokkun State Persistence and Readback** - Persist and read back protocol-backed Blue Tokkun tutorial and summary facts. (completed 2026-06-06)
-- [ ] **Phase 11: Cabinet/RPCS3 Smoke and Contract Tightening** - Prove Tokkun on cabinet/RPCS3 and lock tests/docs around the final contract.
+- [x] **Phase 11: Cabinet/RPCS3 Smoke and Contract Tightening** - Prove Tokkun on cabinet/RPCS3 and lock tests/docs around the final contract. (completed 2026-06-07)
 
 ## Phase Details
 
@@ -117,7 +117,11 @@ Plans:
   3. Final docs record confirmed Tokkun constants/routes, persisted Tokkun fields, unresolved research flags, and the boundary between supported Tokkun behavior and out-of-scope Banacoin/payment semantics.
   4. Done remains blocked until automated tests and cabinet/RPCS3 evidence confirm Tokkun does not contaminate normal, battle, Dani, profile, favorite, recent-song, unlock, shop, or Banacoin state.
 
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+
+- [x] 11-01-PLAN.md - Record cabinet/RPCS3 runtime verification and final Tokkun contract
 
 ## Requirement Coverage
 
@@ -153,4 +157,4 @@ Phases execute in numeric order: 7 -> 8 -> 9 -> 10 -> 11.
 | 8. Stateless Banacoin Compatibility and Availability | v1.1 | 1/1 | Complete    | 2026-06-04 |
 | 9. Tokkun Mapper and Safe Playresult Acceptance | v1.1 | 1/1 | Complete    | 2026-06-05 |
 | 10. Evidence-Backed Tokkun State Persistence and Readback | v1.1 | 3/3 | Complete    | 2026-06-06 |
-| 11. Cabinet/RPCS3 Smoke and Contract Tightening | v1.1 | 0/TBD | Not started | - |
+| 11. Cabinet/RPCS3 Smoke and Contract Tightening | v1.1 | 1/1 | Complete    | 2026-06-07 |
