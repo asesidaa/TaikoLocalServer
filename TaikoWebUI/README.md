@@ -30,7 +30,9 @@ Authentication and account-policy settings live on the server in [../Host/Config
 
 ## Blue Notes
 
-Blue is a supported WebUI era. Blue routes should use Blue AdminApi endpoints and Blue catalog data for customization, Dani, history, favorites, and profile settings.
+Blue is a supported WebUI era. Blue routes should use Blue AdminApi endpoints and Blue catalog data for customization, Dani, normal play history, favorites, and profile settings.
+
+Blue Tokkun history is not currently a WebUI surface.
 
 Treat title id `0` as the empty/default title in UI surfaces.
 

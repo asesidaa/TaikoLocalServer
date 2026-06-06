@@ -6,7 +6,7 @@ Supported eras:
 
 - Nijiiro CHN and WW
 - Green AC15
-- Blue AC15, including normal play and Blue battle runtime support
+- Blue AC15, including normal play, battle runtime support, and Tokkun practice mode
 
 ## Project Readmes
 
@@ -44,11 +44,12 @@ Supported eras:
    - `don_cos_reward.bin`
    - `shougou.bin`
    - `neiro.bin`
-4. For Green AC15, provide the game's `USRDIR/data` folder at `wwwroot/data/green/data` in a release folder, or `Host/wwwroot/data/green/data` in a source checkout.
-5. For Blue AC15, provide the game's `USRDIR/data` folder at `wwwroot/data/blue/data` in a release folder, or `Host/wwwroot/data/blue/data` in a source checkout. Normal Blue startup requires:
-   - `config/S10100-1/musicinfo.xml`
-   - `config/S10100-1/musicmedleyinfo.xml`
-   - `fumen/tuning.bin`
+4. For Green and Blue AC15, provide each enabled era's original `USRDIR/data` folder under the matching era data root:
+   - Green: `wwwroot/data/green/data` in a release folder, or `Host/wwwroot/data/green/data` in a source checkout.
+   - Blue: `wwwroot/data/blue/data` in a release folder, or `Host/wwwroot/data/blue/data` in a source checkout.
+5. Verify the AC15 catalog inputs for each enabled era:
+   - Green requires `config/S11100-1/musicinfo.xml`, `config/S11100-1/musicmedleyinfo.xml`, and `fumen/tuning.bin`.
+   - For Blue AC15, normal startup requires `config/S10100-1/musicinfo.xml`, `config/S10100-1/musicmedleyinfo.xml`, and `fumen/tuning.bin`.
 6. For Blue battle availability, keep the complete battle XML folder under `wwwroot/data/blue/data/config/S10100-1/battle`:
    - `battleadjsetting.xml`
    - `battlenpcinfo.xml`
@@ -85,6 +86,7 @@ The most important server settings are:
 - `ServerSettings:Eras:<Era>:Enabled` - registers or removes era routes.
 - `ServerSettings:Eras:<Era>:GameDataPath` - AC15 source data path for Green and Blue.
 - `ServerSettings:Eras:<Era>:AutoExtractCatalog` - allows first-run AC15 customization catalog extraction.
+- `ServerSettings:Eras:<Era>:CustomizationNameDataPath` - optional override directory for AC15 customization display names.
 - `ServerSettings:Eras:<Era>:EnableShop` and `ActiveShopSeasonId` - controls Green and Blue item-shop availability.
 
 See [Host/README.md](./Host/README.md) for data file details.

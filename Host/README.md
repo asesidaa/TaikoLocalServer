@@ -6,12 +6,13 @@ As the game uses protobuf, `protobuf-net` is used for serializing and deserializ
 
 - [Taiko Local Server](#taiko-local-server)
   - [Data file layout (per-era)](#data-file-layout-per-era)
-  - [Green AC15 Setup](#green-ac15-setup)
-    - [Green game data symlink](#green-game-data-symlink)
-    - [Green customization catalogs](#green-customization-catalogs)
-    - [Green attract movies](#green-attract-movies)
-    - [Green item shop](#green-item-shop)
-  - [Blue AC15 Setup](#blue-ac15-setup)
+  - [AC15 Green and Blue Setup](#ac15-green-and-blue-setup)
+    - [Required files](#required-files)
+    - [Symlink or copy AC15 game data](#symlink-or-copy-ac15-game-data)
+    - [Customization catalogs](#customization-catalogs)
+    - [AC15 optional JSON](#ac15-optional-json)
+    - [AC15 item shop](#ac15-item-shop)
+    - [Blue AC15 Setup](#blue-ac15-setup)
   - [Datatable documentation](#datatable-documentation)
     - [dan\_data.json](#dan_datajson)
     - [event\_folder\_data.json](#event_folder_datajson)
@@ -25,7 +26,9 @@ As the game uses protobuf, `protobuf-net` is used for serializing and deserializ
 
 ## Data file layout (per-era)
 
-`wwwroot/data/` is partitioned by game era:
+`wwwroot/data/` is partitioned by game era. In a source checkout this tree
+lives under `Host/wwwroot/data/`; in a published release it lives next to the
+server executable under `wwwroot/data/`.
 
 ```text
 wwwroot/data/
@@ -45,20 +48,22 @@ wwwroot/data/
 |       |-- don_cos_reward.bin
 |       |-- shougou.bin
 |       `-- neiro.bin
-|-- green/                      Green-era AC15 data
-|   |-- recommend_songs.json    Operator-edited Green pushed/recommended songs
-|   |-- movie_data.json         Green attract movie permissions (default discovery or explicit override)
-|   |-- green_item_shop_data.json Green item shop seasons and item rows
-|   |-- green_costume_data.json Generated Green customization catalog
-|   |-- green_title_data.json   Generated Green title catalog
-|   |-- green_neiro_data.json   Generated Green tone catalog
-|   `-- data/                   Green game USRDIR/data tree, often symlinked
+|-- green/                      Green AC15 server-owned JSON plus game data link/copy
+|   |-- recommend_songs.json    Optional Green pushed/recommended songs
+|   |-- telop_data.json         Optional Green telops
+|   |-- movie_data.json         Green attract movie permissions
+|   |-- green_item_shop_data.json Green item-shop seasons and item rows
+|   |-- green_event_folder_data.json Optional Green event folders
+|   |-- green_costume_data.json Generated or curated Green customization catalog
+|   |-- green_title_data.json   Generated or curated Green title catalog
+|   |-- green_neiro_data.json   Generated or curated Green tone catalog
+|   `-- data/                   Green game USRDIR/data tree, usually symlinked
 |       |-- config/S11100-1/
 |       |   |-- musicinfo.xml
 |       |   `-- musicmedleyinfo.xml
 |       `-- fumen/
 |           `-- tuning.bin
-|-- blue/                       Blue-era AC15 data
+|-- blue/                       Blue AC15 server-owned JSON plus game data link/copy
 |   |-- blue_event_folder_data.json Optional Blue event folders
 |   |-- blue_recommend_songs.json   Optional Blue pushed/recommended songs
 |   |-- blue_telop_data.json        Optional Blue telops
@@ -67,82 +72,136 @@ wwwroot/data/
 |   |-- blue_costume_data.json      Generated or curated Blue customization catalog
 |   |-- blue_title_data.json        Generated or curated Blue title catalog
 |   |-- blue_neiro_data.json        Generated or curated Blue tone catalog
-|   `-- data/                       Blue game USRDIR/data tree, often symlinked
+|   `-- data/                       Blue game USRDIR/data tree, usually symlinked
 |       |-- config/S10100-1/
 |       |   |-- musicinfo.xml
 |       |   |-- musicmedleyinfo.xml
 |       |   `-- battle/             Blue battle XML files
 |       `-- fumen/
 |           `-- tuning.bin
-`-- shared/                     Cross-era operator-edited tables
+`-- shared/                     Cross-era operator-edited tables and AC15 name overrides
     |-- token_data.json
-    `-- qrcode_data.json
+    |-- qrcode_data.json
+    |-- costume_name_data.json
+    |-- title_name_data.json
+    `-- neiro_name_data.json
 ```
 
 Era availability is controlled by `Configurations/ServerSettings.json` under
-`ServerSettings:Eras`. Nijiiro is enabled by default. To allow Green or Blue
-cabinet routes, set the corresponding era's `Enabled` value to `true`.
+`ServerSettings:Eras`. At least one of `Nijiiro`, `Green`, or `Blue` must be
+enabled or the host refuses to start. Disabled-era controller assemblies are
+removed from ASP.NET Core routing at startup.
 
-## Green AC15 Setup
+## AC15 Green and Blue Setup
 
-When `ServerSettings:Eras:Green:Enabled` is `true`, the server requires:
+Green and Blue AC15 now use the same setup shape:
+
+- Enable the era in `Configurations/ServerSettings.json`.
+- Point `ServerSettings:Eras:<Era>:GameDataPath` at that era's `USRDIR/data`
+  tree. The default values are `wwwroot/data/green/data` and
+  `wwwroot/data/blue/data`.
+- Provide the server-owned JSON files under `wwwroot/data/<era>/`.
+- Keep the game-owned `USRDIR/data` tree local, either copied or linked under
+  `wwwroot/data/<era>/data`.
+
+### Required files
+
+When `ServerSettings:Eras:Green:Enabled` is `true`, Green startup requires:
 
 - `wwwroot/data/green/data/config/S11100-1/musicinfo.xml`
 - `wwwroot/data/green/data/config/S11100-1/musicmedleyinfo.xml`
 - `wwwroot/data/green/data/fumen/tuning.bin`
 
-### Green game data symlink
+When `ServerSettings:Eras:Blue:Enabled` is `true`, normal Blue startup requires:
 
-For Green, the server reads files from the original game `USRDIR/data` layout. Instead of copying that whole folder into the repository, you can symlink it to `wwwroot/data/green/data`.
+- `wwwroot/data/blue/data/config/S10100-1/musicinfo.xml`
+- `wwwroot/data/blue/data/config/S10100-1/musicmedleyinfo.xml`
+- `wwwroot/data/blue/data/fumen/tuning.bin`
 
-From a source checkout, run this from the repository root:
+The build excludes `wwwroot/data/green/data/**` and
+`wwwroot/data/blue/data/**` from publish output. Operator game data should not
+be committed or shipped by the project.
+
+### Symlink or copy AC15 game data
+
+From a source checkout, run these from the repository root and point each link
+at the matching AC15 dump:
+
 
 ```powershell
-New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\Host\wwwroot\data\green\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\green\USRDIR\data\' -Path '.\Host\wwwroot\data\green\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\blue\USRDIR\data\' -Path '.\Host\wwwroot\data\blue\data'
 ```
 
-From an extracted release folder, run this from the folder containing `TaikoLocalServer.exe`:
+From an extracted release folder, run these from the folder containing
+`TaikoLocalServer.exe`:
 
 ```powershell
-New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\wwwroot\data\green\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\green\USRDIR\data\' -Path '.\wwwroot\data\green\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\blue\USRDIR\data\' -Path '.\wwwroot\data\blue\data'
 ```
 
 If you prefer copying for a release instead of linking:
 
 ```powershell
 New-Item -ItemType Directory -Force -Path '.\wwwroot\data\green' | Out-Null
-Copy-Item -Recurse -Path 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data' -Destination '.\wwwroot\data\green\data'
+Copy-Item -Recurse -Path 'path\to\green\USRDIR\data' -Destination '.\wwwroot\data\green\data'
+New-Item -ItemType Directory -Force -Path '.\wwwroot\data\blue' | Out-Null
+Copy-Item -Recurse -Path 'path\to\blue\USRDIR\data' -Destination '.\wwwroot\data\blue\data'
 ```
 
-PowerShell may need to run as Administrator, unless Windows Developer Mode allows unprivileged symlink creation. The symlink target should contain `config\S11100-1\musicinfo.xml`, `config\S11100-1\musicmedleyinfo.xml`, and `fumen\tuning.bin`.
+PowerShell may need to run as Administrator, unless Windows Developer Mode
+allows unprivileged symlink creation.
 
-### Green customization catalogs
+In Debug builds, if `Host/wwwroot/data/green/data` or
+`Host/wwwroot/data/blue/data` exists, MSBuild creates matching output
+junctions under `Host/bin/Debug/net10.0/wwwroot/data/<era>/data` so
+`dotnet run --project Host` can use the source checkout data layout.
 
-Green costume, title, and tone catalogs are generated from the symlinked or copied `USRDIR/data` tree. With `ServerSettings:Eras:Green:AutoExtractCatalog` enabled, the server runs the Phase 1 extractor on first startup when `green_costume_data.json`, `green_title_data.json`, or `green_neiro_data.json` is missing. To run it manually:
+### Customization catalogs
+
+Green and Blue compose customization names from generated era catalogs plus
+shared or override name JSON. The shared name files live under
+`wwwroot/data/shared/`:
+
+- `costume_name_data.json`
+- `title_name_data.json`
+- `neiro_name_data.json`
+
+Set `ServerSettings:Eras:<Era>:CustomizationNameDataPath` to an override
+directory when an era needs different display names. If the setting is blank,
+the shared name files are used.
+
+With `ServerSettings:Eras:<Era>:AutoExtractCatalog` enabled, the server can
+bootstrap missing generated AC15 customization catalogs from the configured
+game-data path on first startup.
+
+Green can also be extracted manually:
 
 ```powershell
 dotnet run --project GreenCatalogExtractor -- extract --game-data Host/wwwroot/data/green/data --out Host/wwwroot/data/green
 ```
 
-For slot mapping enrichment, run the IDA-backed stage in `docs/superpowers/plans/2026-05-17-green-customization/07-ida-slot-mapping-enrichment.md` against `.tools/ida-snap/EBOOT.ELF.codex.i64`, then rerun the extractor. The server and WebUI do not need further changes when the generated JSON gains better names or slot types.
+The extractor reads the game-data tree and writes only generated JSON files
+under `wwwroot/data/green`. It does not modify the operator's game-data tree.
+The server and WebUI do not need further changes when generated JSON gains
+better names or slot types.
 
-The extractor reads the game-data tree and writes only the generated JSON files under `wwwroot/data/green`. It does not modify the operator's game-data tree. Names may be blank on Phase 1 output; the WebUI displays id labels such as `#004` until an enriched catalog is generated.
+### AC15 optional JSON
 
-The current Green implementation unlocks a small deterministic starter song set:
+Green and Blue use the same optional-data pattern, but file names are
+era-specific:
 
-- no-card/default song flags: first 10 `uniqueid` values from `musicinfo.xml`
-- logged-in user release flags: first 20 `uniqueid` values from `musicinfo.xml`
+| Feature | Green file | Blue file | Missing-file behavior |
+|---------|------------|-----------|-----------------------|
+| Recommendations | `recommend_songs.json` | `blue_recommend_songs.json` | Empty recommendation |
+| Telops | `telop_data.json` | `blue_telop_data.json` | No telops |
+| Attract movies | `movie_data.json` | `blue_movie_data.json` | Auto-discover nonzero `attract_cm_###.pam` files |
+| Event folders | `green_event_folder_data.json` | `blue_event_folder_data.json` | No event folders |
+| Item shop | `green_item_shop_data.json` | `blue_item_shop_data.json` | Required only when shop is enabled |
 
-New Green users also receive deterministic starter best scores, crowns, and the first Dan on their first known-card login after registration.
+Green and Blue movie files use the same object shape:
 
-### Green attract movies
-
-Green startup auth sends attract movie permissions through `ary_movie_info`.
-By default, Green auto-enables every nonzero `attract_cm_###.pam` file found
-under `wwwroot/data/green/data/movie`.
-
-`wwwroot/data/green/movie_data.json` controls whether discovery is used or
-replaced:
 
 ```json
 {
@@ -154,7 +213,7 @@ replaced:
 When `override_default` is `false`, the server ignores `movies` and sends all
 discovered nonzero movie IDs with `enable_days = 999`. When
 `override_default` is `true`, the server sends only the listed movies. An empty
-`movies` array disables Green attract movies.
+`movies` array disables attract movies for that era.
 
 Example override:
 
@@ -168,19 +227,23 @@ Example override:
 }
 ```
 
-ID `0` is ignored because Green treats `attract_cm_000.pam` as a fallback
-asset, not a startup permission candidate. Duplicate nonzero IDs are rejected
-at startup.
+ID `0` is ignored because `attract_cm_000.pam` is a fallback asset, not a
+startup permission candidate. Duplicate nonzero IDs are rejected at startup.
 
-### Green item shop
+### AC15 item shop
 
-Green item shop support is controlled by `Configurations/ServerSettings.json`:
+Green and Blue item-shop support is controlled by
+`Configurations/ServerSettings.json`:
 
 ```json
 {
   "ServerSettings": {
     "Eras": {
       "Green": {
+        "EnableShop": true,
+        "ActiveShopSeasonId": 2
+      },
+      "Blue": {
         "EnableShop": true,
         "ActiveShopSeasonId": 1
       }
@@ -189,11 +252,11 @@ Green item shop support is controlled by `Configurations/ServerSettings.json`:
 }
 ```
 
-When Green is enabled, `EnableShop` must be present or startup fails options
-validation. When `EnableShop` is `false`, the server keeps the current default
-unlock behavior and does not advertise the shop. When `EnableShop` is `true`,
-`ActiveShopSeasonId` must be present and match a season in
-`wwwroot/data/green/green_item_shop_data.json`.
+When Green or Blue is enabled, `EnableShop` must be present or startup fails
+options validation. When `EnableShop` is `false`, the server does not
+advertise the item shop for that era. When `EnableShop` is `true`,
+`ActiveShopSeasonId` must be present and match a season in the era's item-shop
+JSON file.
 
 The shop data file stores protocol data only:
 
@@ -216,41 +279,29 @@ The shop data file stores protocol data only:
 }
 ```
 
-`item_no` is inferred from 1-based row order. Item rows must not contain names
-or source metadata. Official announcement pages list names in images, so
-name-to-id resolution is an offline curation step.
+`item_no` is inferred from 1-based row order. `item_type` accepts the shared
+AC15 string enum form and numeric compatibility values at the loader edge.
+Item rows must not contain names or source metadata.
 
-## Blue AC15 Setup
+The current Green implementation still provides a small deterministic starter
+state for new users. New Green users receive starter song flags, best scores,
+crowns, and the first Dan on first known-card login after registration.
 
-When `ServerSettings:Eras:Blue:Enabled` is `true`, the server requires:
+### Blue AC15 Setup
 
-- `wwwroot/data/blue/data/config/S10100-1/musicinfo.xml`
-- `wwwroot/data/blue/data/config/S10100-1/musicmedleyinfo.xml`
-- `wwwroot/data/blue/data/fumen/tuning.bin`
+Blue adds these setup notes on top of the shared AC15 flow:
 
-Blue uses the original game `USRDIR/data` layout. From a source checkout:
-
-```powershell
-New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\Host\wwwroot\data\blue\data'
-```
-
-From an extracted release folder:
-
-```powershell
-New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\wwwroot\data\blue\data'
-```
-
-If copying instead of linking:
-
-```powershell
-New-Item -ItemType Directory -Force -Path '.\wwwroot\data\blue' | Out-Null
-Copy-Item -Recurse -Path 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data' -Destination '.\wwwroot\data\blue\data'
-```
-
-Optional Blue JSON files under `wwwroot/data/blue/` default to empty catalog
-data unless a feature setting requires them. `blue_item_shop_data.json` is
-required only when `ServerSettings:Eras:Blue:EnableShop` is `true`; then
-`ActiveShopSeasonId` must match a season in that file.
+- Blue game endpoints are direct protobuf under `/v10r03/chassis/*`.
+- Shared AC15 startup/version endpoints remain under `/v01r00/chassis/*`.
+- `getbanacoininfo.php`, `banacoinpayment.php`, and `banacoinerrorlog.php`
+  are stateless compatibility routes. They do not model real Banacoin wallet
+  or payment state.
+- Tokkun uploads are accepted through Blue `playresult.php` using
+  `PlayMode.Tokkun = 3`. The server persists only protocol-backed Tokkun
+  tutorial/history facts and reads back `tokkun_tutorial_flg` through
+  `userdata.php`.
+- Tokkun playresults must not write normal Blue score, crown, Dani, profile,
+  favorite, recent, normal unlock, battle, or shop state.
 
 Blue battle availability is data-driven. Keep the complete battle XML folder at
 `wwwroot/data/blue/data/config/S10100-1/battle`:

@@ -9,8 +9,11 @@ TaikoLocalServer is an ASP.NET Core 10 host for Taiko cabinet protocol endpoints
 - Blue request bodies are direct protobuf for game endpoints; preserve that transport unless current client evidence proves otherwise.
 - Blue normal play supports profile/login, userdata, initial data, self-best, crowns, recent/favorite songs, Dani Dojo, item shop purchase/unlock state, event folders, telops, movies, recommendations, tournaments, gacha data, and WebUI/AdminApi era routing.
 - Blue battle support uses Blue-owned persistence and handlers for `battleuserdata.php`, `initialdatacheck.php`, and battle-classified `playresult.php` payloads.
+- Blue Tokkun support uses `PlayMode.Tokkun = 3`, accepts Tokkun-classified `playresult.php` uploads before battle or normal handling, persists nullable `tokkun_tutorial_flg` on `UserSaveDataBlue`, appends raw protocol-backed history rows in `BlueTokkunStageResults`, and reads back only the tutorial flag through `userdata.php`.
+- Blue Banacoin-adjacent support is stateless compatibility for Tokkun availability. `getbanacoininfo.php` returns minimal success, and Banacoin payment/error routes log and return success without wallet, balance, payment, coupon, or transaction persistence.
 - Blue battle runtime state is store-and-echo where semantics are not proven. Do not invent token rewards, boss completion, stage graph behavior, stage 33 behavior, or normal unlock mirrors without concrete client/log/proto/IDA evidence.
 - Battle playresults must not write normal Blue score, crown, Dani, profile, favorite, or normal unlock state. Active shop Don medals and recent songs are allowed Blue side effects.
+- Tokkun playresults must not write normal Blue score, crown, Dani, profile, favorite, recent, normal unlock, battle, or shop state.
 - Preserve known battle ID contracts: runtime token ids and NPC ids are zero-based; response-side persisted token rows use the `TokenId - 1` mapping with `0` guarded.
 - New users receive the IDA-backed starter battle state only when no persisted Blue battle state exists; after playresult, `battleuserdata.php` reads back persisted BlueBattle rows.
 
@@ -46,10 +49,11 @@ TaikoLocalServer is an ASP.NET Core 10 host for Taiko cabinet protocol endpoints
 
 ## Data Caveats
 
-- Blue and Green AC15 game data is operator-supplied under `Host/wwwroot/data/<era>/data` in source checkouts, or `wwwroot/data/<era>/data` in published folders.
+- Blue and Green AC15 game data share the same setup shape: operator-supplied `USRDIR/data` lives under `Host/wwwroot/data/<era>/data` in source checkouts, or `wwwroot/data/<era>/data` in published folders. Debug builds create output junctions for both eras when those source paths exist.
+- Green required startup data comes from `config/S11100-1/musicinfo.xml`, `config/S11100-1/musicmedleyinfo.xml`, and `fumen/tuning.bin`.
 - Blue normal catalog data comes from `config/S10100-1/musicinfo.xml`, `config/S10100-1/musicmedleyinfo.xml`, and `fumen/tuning.bin`.
 - Blue battle availability requires the five parsed files under `config/S10100-1/battle`: `battleadjsetting.xml`, `battlenpcinfo.xml`, `battlestageinfo.xml`, `battlesupportinfo.xml`, and `battletokeninfo.xml`.
-- Blue item shop data is committed JSON under `Host/wwwroot/data/blue/blue_item_shop_data.json`; `rewardshopdata.bin` remains local provenance and is not a runtime dependency.
+- Green and Blue item shop data is committed JSON under `Host/wwwroot/data/<era>/`; `rewardshopdata.bin` remains local provenance and is not a runtime dependency.
 - Blue customization JSON can be bootstrapped from Blue AC15 data when `AutoExtractCatalog` is enabled, with display names composed from shared and optional override name data.
 - Treat title id `0` as the explicit empty/default title state.
 - `rewardexecution.php` is log-and-success for Blue item-shop flow unless newer evidence proves a state-changing role.

@@ -21,9 +21,11 @@ Blue, Green, and Nijiiro behavior uses the repo's partial-file pattern: shared d
 
 ## Blue Notes
 
-- Keep Blue normal and battle behavior in Blue partial handlers.
+- Keep Blue normal, Tokkun, and battle behavior in Blue partial handlers.
+- Handle Blue Tokkun playresults before battle or normal save logic. Tokkun persistence is limited to nullable tutorial state and append-only raw protocol history rows.
 - Keep battle state store-and-echo unless a field has concrete client, log, proto, or IDA evidence.
 - Do not let battle-classified playresults fall through to normal Blue score, crown, Dani, profile, favorite, or normal unlock writes.
+- Do not let Tokkun-classified playresults fall through to normal, battle, Dani, profile, favorite, recent, unlock, or shop writes.
 - Use Blue-owned DTO fields and byte helpers for fixed-width Blue payloads.
 
 ## When To Add Code Here

@@ -18,7 +18,9 @@ Controllers translate HTTP requests into Application requests or admin DTO opera
 
 Era-aware admin routes should support `/api/{era}/...` with `EraRoute.TryParse`. Preserve existing legacy routes where a controller already exposes them.
 
-Blue WebUI/AdminApi parity is present for profile, history, favorites, Dani, customization data, and user settings surfaces. Keep Blue routes backed by Blue state and catalogs rather than Green state.
+Blue WebUI/AdminApi parity is present for profile, normal play history, favorites, Dani, customization data, and user settings surfaces. Keep Blue routes backed by Blue state and catalogs rather than Green state.
+
+Blue Tokkun history is persisted for protocol support but is not currently exposed through AdminApi/WebUI routes.
 
 ## When To Add Code Here
 

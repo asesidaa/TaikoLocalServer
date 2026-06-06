@@ -18,9 +18,11 @@ Blue is not a Green flag. Keep Blue controller routing, wire mappings, and proto
 ## Blue Caveats
 
 - Preserve direct-protobuf request handling for Blue game endpoints.
-- `playresult.php` can carry normal or battle payloads; battle classification is based on battle release/stage sections.
+- `playresult.php` can carry normal, Tokkun, or battle payloads. Tokkun is handled before battle or normal writes, and battle classification is based on battle release/stage sections.
 - `battleuserdata.php` uses the Blue-owned Mediator query and reads persisted BlueBattle state after first-use starter state.
 - `initialdatacheck.php` advertises battle availability from parsed Blue battle catalog data.
+- `getbanacoininfo.php`, `banacoinpayment.php`, and `banacoinerrorlog.php` are stateless compatibility endpoints for Tokkun availability; do not add real Banacoin wallet or payment persistence here.
+- Tokkun uploads persist only protocol-backed Tokkun tutorial/history facts and must not write normal, battle, Dani, profile, favorite, recent, unlock, or shop state.
 - Do not invent server-side battle rewards, token thresholds, boss completion, or stage graph behavior without concrete evidence.
 
 ## When To Add Code Here
