@@ -2,17 +2,70 @@
   "seasons": [
     {
       "season_id": 1,
-      "verup_no": 2,
+      "verup_no": 3,
       "telop": "",
-      "start_datetime": "20181219070000",
-      "end_datetime": "20500314020000",
+      "start_datetime": "20171211070000",
+      "end_datetime": "20180601020000",
       "afterstart_days": 30,
       "beforeclose_days": 0,
       "items": [
-        { "item_type": "3", "item_id": 12, "item_price": 1300 },
-        { "item_type": "kigurumi", "item_id": 7, "item_price": 1500 },
-        { "item_type": "kigurumi", "item_id": 9, "item_price": 1500 },
-        { "item_type": "kigurumi", "item_id": 10, "item_price": 1500 }
+        { "item_type": 4, "item_id": 61, "item_price": 500 },
+        { "item_type": 4, "item_id": 87, "item_price": 500 },
+        { "item_type": 4, "item_id": 142, "item_price": 500 },
+        { "item_type": 5, "item_id": 118, "item_price": 500 },
+        { "item_type": 5, "item_id": 50, "item_price": 500 },
+        { "item_type": 5, "item_id": 46, "item_price": 500 },
+        { "item_type": 1, "item_id": 706, "item_price": 800 },
+        { "item_type": 1, "item_id": 705, "item_price": 800 },
+        { "item_type": 1, "item_id": 713, "item_price": 1500 },
+        { "item_type": 1, "item_id": 714, "item_price": 1500 },
+        { "item_type": 1, "item_id": 715, "item_price": 1500 },
+        { "item_type": 1, "item_id": 716, "item_price": 1500 }
+      ]
+    },
+    {
+      "season_id": 2,
+      "verup_no": 3,
+      "telop": "",
+      "start_datetime": "20180601070000",
+      "end_datetime": "20180913020000",
+      "afterstart_days": 30,
+      "beforeclose_days": 0,
+      "items": [
+        { "item_type": 1, "item_id": 724, "item_price": 1500 },
+        { "item_type": 1, "item_id": 719, "item_price": 1500 },
+        { "item_type": 1, "item_id": 723, "item_price": 1500 },
+        { "item_type": 1, "item_id": 722, "item_price": 1500 }
+      ]
+    },
+    {
+      "season_id": 3,
+      "verup_no": 3,
+      "telop": "",
+      "start_datetime": "20180913070000",
+      "end_datetime": "20181219020000",
+      "afterstart_days": 30,
+      "beforeclose_days": 0,
+      "items": [
+        { "item_type": 1, "item_id": 746, "item_price": 1300 },
+        { "item_type": 1, "item_id": 747, "item_price": 1300 },
+        { "item_type": 1, "item_id": 745, "item_price": 1500 },
+        { "item_type": 1, "item_id": 748, "item_price": 1500 }
+      ]
+    },
+    {
+      "season_id": 4,
+      "verup_no": 3,
+      "telop": "",
+      "start_datetime": "20181219070000",
+      "end_datetime": "20190314020000",
+      "afterstart_days": 30,
+      "beforeclose_days": 0,
+      "items": [
+        { "item_type": 1, "item_id": 780, "item_price": 1300 },
+        { "item_type": 1, "item_id": 775, "item_price": 1500 },
+        { "item_type": 1, "item_id": 777, "item_price": 1500 },
+        { "item_type": 1, "item_id": 778, "item_price": 1500 }
       ]
     }
   ]
