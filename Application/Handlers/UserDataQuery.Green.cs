@@ -1,4 +1,4 @@
-using TaikoLocalServer.Domain.Enums;
+using TaikoLocalServer.Application.Ac15;
 
 namespace TaikoLocalServer.Application.Handlers;
 
@@ -22,10 +22,6 @@ public partial class UserDataQueryHandler
                 .Select(row => new ValueTuple<uint, uint>(row.ItemType, row.ItemId))
                 .ToHashSetAsync(cancellationToken);
 
-        IEnumerable<uint> LockedIds(Ac15ShopItemType itemType) => activeShopSeason?.Items
-            .Where(item => item.ItemType == itemType && !unlockedShopItems.Contains((item.ItemType.ToProtocolValue(), item.ItemId)))
-            .Select(item => item.ItemId) ?? [];
-
         var favorites = await context.GreenFavoriteSongs
             .Where(song => song.Baid == request.Baid)
             .Select(song => song.SongNo)
@@ -41,52 +37,17 @@ public partial class UserDataQueryHandler
             .ToDictionaryAsync(row => row.DanId, row => row.ClearGrade, cancellationToken);
         var displayDan = GreenDanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalDanGrades);
 
-        return new CommonUserDataResponse
-        {
-            Result = 1,
-            SongHashVer = green.SongHashVersion,
-            ReleaseSongFlg = GreenShopUnlocks.ClearBits(
-                GreenProtocolBytes.CreateFixedBitset(
-                    green.MusicInfoFileOrder.Select(song => song.SongNo),
-                    GreenProtocolBytes.SongFlagBytes),
-                LockedIds(Ac15ShopItemType.Song),
-                GreenProtocolBytes.SongFlagBytes),
-            ToneFlg = GreenShopUnlocks.ClearBits(
-                saveData.ToneFlg,
-                LockedIds(Ac15ShopItemType.Tone),
-                GreenProtocolBytes.ToneFlagBytes),
-            TitleFlg = GreenProtocolBytes.FixedOrZero(saveData.TitleFlg, GreenProtocolBytes.TitleFlagBytes),
-            DefaultOptionSetting = GreenProtocolBytes.FixedOrZero(saveData.DefaultOptionSetting, 2),
-            OptionFlg = saveData.OptionFlg,
-            AryFavoriteSongNoes = favorites,
-            AryRecentSongNoes = recent,
-            CategJpopCnt = saveData.CategJpopCnt,
-            CategAnimeCnt = saveData.CategAnimeCnt,
-            CategDoyoCnt = saveData.CategDoyoCnt,
-            CategVarietyCnt = saveData.CategVarietyCnt,
-            CategClassicCnt = saveData.CategClassicCnt,
-            CategGameCnt = saveData.CategGameCnt,
-            CategNamcoCnt = saveData.CategNamcoCnt,
-            CategVocaloidCnt = saveData.CategVocaloidCnt,
-            SongPushedCnt = saveData.SongPushedCnt,
-            RecommendSong = green.Recommend.RecommendSong,
-            RecommendBestSong = green.Recommend.RecommendBestSongs.ToList(),
-            SongFavoriteCnt = saveData.SongFavoriteCnt,
-            SongRecentCnt = saveData.SongRecentCnt,
-            TotalCreditCnt = saveData.TotalCreditCnt,
-            PrevAreaCode = saveData.PrevAreaCode,
-            ConsecAreaCnt = saveData.ConsecAreaCnt,
-            DefaultShinSetting = saveData.DefaultShinSetting,
-            DispLevelTotal = saveData.DispLevelTotal,
-            DispLevelChassis = saveData.DispLevelChassis,
-            DispLevelSelf = saveData.DispLevelSelf,
-            DispTaikojukuDan = GetSafeTaikojukuDanSlot(displayDan),
-            DifficultyPlayedCourse = saveData.DifficultyPlayedCourse,
-            DifficultyPlayedStar = saveData.DifficultyPlayedStar,
-            IsChallengeCompe = saveData.IsChallengeCompe,
-            IsTojiru = saveData.IsTojiru,
-            IsDevilGreen = saveData.IsDevil
-        };
+        var snapshot = Ac15CatalogSnapshotFactory.FromGreen(green);
+        var userdata = GreenAc15UserDataAdapter.CreateSnapshot(
+            saveData,
+            snapshot,
+            favorites,
+            recent,
+            unlockedShopItems);
+        var response = Ac15UserDataService.BuildResponse(userdata, Ac15EraProfiles.Green);
+        response.DispTaikojukuDan = GetSafeTaikojukuDanSlot(displayDan);
+        response.IsDevilGreen = saveData.IsDevil;
+        return response;
     }
 
     // Green client reads disp_taikojuku_dan_ at message offset +0x31C without

@@ -1,4 +1,4 @@
-using TaikoLocalServer.Domain.Enums;
+using TaikoLocalServer.Application.Ac15;
 
 namespace TaikoLocalServer.Application.Handlers;
 
@@ -22,10 +22,6 @@ public partial class UserDataQueryHandler
                 .Select(row => new ValueTuple<uint, uint>(row.ItemType, row.ItemId))
                 .ToHashSetAsync(cancellationToken);
 
-        IEnumerable<uint> LockedIds(Ac15ShopItemType itemType) => activeShopSeason?.Items
-            .Where(item => item.ItemType == itemType && !unlockedShopItems.Contains((item.ItemType.ToProtocolValue(), item.ItemId)))
-            .Select(item => item.ItemId) ?? [];
-
         var normalDanGrades = await context.DanScoreDataBlue
             .Where(row => row.Baid == request.Baid && !row.IsExtra && row.DanId >= 1 && row.DanId <= 25)
             .ToDictionaryAsync(row => row.DanId, row => row.ClearGrade, cancellationToken);
@@ -40,58 +36,18 @@ public partial class UserDataQueryHandler
             .Select(song => song.SongNo)
             .Take(10)
             .ToArrayAsync(cancellationToken);
-        var catalogReleaseFlags = BlueProtocolBytes.CreateFixedBitset(
-            blue.MusicInfoFileOrder.Select(song => song.SongNo),
-            BlueProtocolBytes.SongFlagBytes);
 
-        return new CommonUserDataResponse
-        {
-            Result = 1,
-            SongHashVer = blue.SongHashVersion,
-            ReleaseSongFlg = BlueShopUnlocks.ClearBits(
-                BlueProtocolBytes.OrBitsets(
-                    catalogReleaseFlags,
-                    saveData.ReleaseSongFlg,
-                    BlueProtocolBytes.SongFlagBytes),
-                LockedIds(Ac15ShopItemType.Song),
-                BlueProtocolBytes.SongFlagBytes),
-            ToneFlg = BlueShopUnlocks.ClearBits(
-                saveData.ToneFlg,
-                LockedIds(Ac15ShopItemType.Tone),
-                BlueProtocolBytes.ToneFlagBytes),
-            TitleFlg = BlueProtocolBytes.FixedOrZero(saveData.TitleFlg, BlueProtocolBytes.TitleFlagBytes),
-            DefaultOptionSetting = BlueProtocolBytes.FixedOrZero(saveData.DefaultOptionSetting, 2),
-            OptionFlg = saveData.OptionFlg,
-            AryFavoriteSongNoes = favorites,
-            AryRecentSongNoes = recent,
-            CategJpopCnt = saveData.CategJpopCnt,
-            CategAnimeCnt = saveData.CategAnimeCnt,
-            CategDoyoCnt = saveData.CategDoyoCnt,
-            CategVarietyCnt = saveData.CategVarietyCnt,
-            CategClassicCnt = saveData.CategClassicCnt,
-            CategGameCnt = saveData.CategGameCnt,
-            CategNamcoCnt = saveData.CategNamcoCnt,
-            CategVocaloidCnt = saveData.CategVocaloidCnt,
-            SongPushedCnt = saveData.SongPushedCnt,
-            RecommendSong = blue.Recommend.RecommendSong,
-            RecommendBestSong = blue.Recommend.RecommendBestSongs.ToList(),
-            SongFavoriteCnt = saveData.SongFavoriteCnt,
-            SongRecentCnt = saveData.SongRecentCnt,
-            TotalCreditCnt = saveData.TotalCreditCnt,
-            PrevAreaCode = saveData.PrevAreaCode,
-            ConsecAreaCnt = saveData.ConsecAreaCnt,
-            DefaultShinSetting = saveData.DefaultShinSetting,
-            DispLevelTotal = saveData.DispLevelTotal,
-            DispLevelChassis = saveData.DispLevelChassis,
-            DispLevelSelf = saveData.DispLevelSelf,
-            DispTaikojukuDan = GetSafeBlueTaikojukuDanSlot(displayDan),
-            DifficultyPlayedCourse = saveData.DifficultyPlayedCourse,
-            DifficultyPlayedStar = saveData.DifficultyPlayedStar,
-            TokkunTutorialFlg = saveData.TokkunTutorialFlg,
-            IsChallengeCompe = saveData.IsChallengeCompe,
-            IsTojiru = saveData.IsTojiru,
-            IsDevilBlue = saveData.IsDevil
-        };
+        var snapshot = Ac15CatalogSnapshotFactory.FromBlue(blue);
+        var userdata = BlueAc15UserDataAdapter.CreateSnapshot(
+            saveData,
+            snapshot,
+            favorites,
+            recent,
+            unlockedShopItems);
+        var response = Ac15UserDataService.BuildResponse(userdata, Ac15EraProfiles.Blue);
+        response.DispTaikojukuDan = GetSafeBlueTaikojukuDanSlot(displayDan);
+        response.IsDevilBlue = saveData.IsDevil;
+        return response;
     }
 
     private static uint GetSafeBlueTaikojukuDanSlot(uint value)
