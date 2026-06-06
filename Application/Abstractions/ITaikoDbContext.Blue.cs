@@ -15,4 +15,5 @@ public partial interface ITaikoDbContext
     DbSet<BlueBattleNpcState> BlueBattleNpcStates { get; }
     DbSet<BlueBattleTokenState> BlueBattleTokenStates { get; }
     DbSet<BlueBattleStageResult> BlueBattleStageResults { get; }
+    DbSet<BlueTokkunStageResult> BlueTokkunStageResults { get; }
 }

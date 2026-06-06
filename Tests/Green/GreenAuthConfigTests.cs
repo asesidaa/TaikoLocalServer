@@ -75,6 +75,7 @@ public sealed class GreenAuthConfigTests
         public DbSet<BlueBattleNpcState> BlueBattleNpcStates => throw new NotSupportedException();
         public DbSet<BlueBattleTokenState> BlueBattleTokenStates => throw new NotSupportedException();
         public DbSet<BlueBattleStageResult> BlueBattleStageResults => throw new NotSupportedException();
+        public DbSet<BlueTokkunStageResult> BlueTokkunStageResults => throw new NotSupportedException();
 
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
             => throw new NotSupportedException();

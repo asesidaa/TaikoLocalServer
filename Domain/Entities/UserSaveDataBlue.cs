@@ -57,6 +57,7 @@ public partial class UserSaveDataBlue
     public uint DispScoreType { get; set; }
     public uint DifficultyPlayedCourse { get; set; }
     public uint DifficultyPlayedStar { get; set; }
+    public uint? TokkunTutorialFlg { get; set; }
     public uint WaiwaiTutorialFlg { get; set; }
     public bool IsChallengeCompe { get; set; }
     public bool IsTojiru { get; set; }

@@ -19,6 +19,7 @@ public partial class TaikoDbContext
     public virtual DbSet<BlueBattleNpcState> BlueBattleNpcStates { get; set; } = null!;
     public virtual DbSet<BlueBattleTokenState> BlueBattleTokenStates { get; set; } = null!;
     public virtual DbSet<BlueBattleStageResult> BlueBattleStageResults { get; set; } = null!;
+    public virtual DbSet<BlueTokkunStageResult> BlueTokkunStageResults { get; set; } = null!;
 
     partial void OnModelCreatingBlue(ModelBuilder modelBuilder)
     {
@@ -188,6 +189,22 @@ public partial class TaikoDbContext
             entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
             entity.Property(e => e.PlayDatetime).HasColumnType("datetime");
+            entity.HasOne(d => d.Ba)
+                .WithMany()
+                .HasPrincipalKey(p => p.Baid)
+                .HasForeignKey(d => d.Baid)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<BlueTokkunStageResult>(entity =>
+        {
+            entity.ToTable("BlueTokkunStageResults");
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.Baid, e.PlayDatetime });
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            entity.Property(e => e.PlayDatetime).IsRequired();
+            entity.Property(e => e.BanacoinDatetime).IsRequired();
+            entity.Property(e => e.TookunSongnoesJson).IsRequired();
             entity.HasOne(d => d.Ba)
                 .WithMany()
                 .HasPrincipalKey(p => p.Baid)
