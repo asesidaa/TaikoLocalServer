@@ -28,10 +28,10 @@ Requirements for the current milestone. Each maps to roadmap phases.
 
 ### Tokkun State
 
-- [ ] **TKST-01**: Blue persists Tokkun tutorial state from `tokkun_tutorial_flg` and reads it back through Blue userdata when Tokkun first-run/readback behavior requires it.
-- [ ] **TKST-02**: Blue persists Tokkun summary/progress facts carried by the Tokkun payload, including `banacoin_datetime`, song count/list, speed-change count, autoplay count, jump count, and upload time, as Blue-owned Tokkun data.
-- [ ] **TKST-03**: Blue Tokkun persisted data remains separate from Green, Nijiiro, normal score, Dani, battle, item shop, and Banacoin storage.
-- [ ] **TKST-04**: Tokkun persistence stores raw/protocol-backed Tokkun facts only; it does not infer rankings, rewards, score progression, payment history, or practice-time rules without concrete Blue evidence.
+- [x] **TKST-01**: Blue persists Tokkun tutorial state from `tokkun_tutorial_flg` and reads it back through Blue userdata when Tokkun first-run/readback behavior requires it.
+- [x] **TKST-02**: Blue persists Tokkun summary/progress facts carried by the Tokkun payload, including `banacoin_datetime`, song count/list, speed-change count, autoplay count, jump count, and upload time, as Blue-owned Tokkun data.
+- [x] **TKST-03**: Blue Tokkun persisted data remains separate from Green, Nijiiro, normal score, Dani, battle, item shop, and Banacoin storage.
+- [x] **TKST-04**: Tokkun persistence stores raw/protocol-backed Tokkun facts only; it does not infer rankings, rewards, score progression, payment history, or practice-time rules without concrete Blue evidence.
 
 ### Verification
 
@@ -74,10 +74,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TKPR-01 | Phase 9 | Complete |
 | TKPR-02 | Phase 9 | Complete |
 | TKPR-03 | Phase 9 | Complete |
-| TKST-01 | Phase 10 | Pending |
-| TKST-02 | Phase 10 | Pending |
-| TKST-03 | Phase 10 | Pending |
-| TKST-04 | Phase 10 | Pending |
+| TKST-01 | Phase 10 | Complete |
+| TKST-02 | Phase 10 | Complete |
+| TKST-03 | Phase 10 | Complete |
+| TKST-04 | Phase 10 | Complete |
 | TKVF-01 | Phase 11 | Pending |
 | TKVF-02 | Phase 11 | Pending |
 | TKVF-03 | Phase 11 | Pending |
