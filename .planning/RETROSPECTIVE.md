@@ -45,6 +45,52 @@
 
 ---
 
+## Milestone: v1.1 Blue Tokkun Mode Support
+
+**Shipped:** 2026-06-07
+**Phases:** 5 | **Plans:** 7 | **Sessions:** not measured
+
+### What Was Built
+
+- Blue Tokkun evidence contract with explicit proven, observed, deliberately ignored, and unknown/blocked rows.
+- Stateless Banacoin-adjacent compatibility routes and Mucha token settings sufficient for Tokkun availability without wallet/payment persistence.
+- Blue Tokkun playresult acceptance before battle/normal writes, preserving raw Tokkun facts without contaminating existing Blue state.
+- Blue-owned Tokkun persistence for nullable tutorial state and append-only raw summary/history facts.
+- Userdata readback for the nullable Tokkun tutorial flag only.
+- Final Tokkun contract and user-confirmed cabinet/RPCS3 runtime verification.
+
+### What Worked
+
+- Keeping Phase 8/9 build-only proof separate from Phase 11 runtime proof prevented premature live-smoke claims.
+- SQLite no-write tests made the Tokkun/normal/battle boundary concrete instead of relying on source-word bans.
+- Small, evidence-scoped phases made it possible to add persistence and readback without reopening real Banacoin or reward semantics.
+
+### What Was Inefficient
+
+- The final milestone-close helper used UTC dates in generated archive metadata, requiring manual local-date normalization.
+- Phase 11 was runtime-verified externally and then represented as a verification-only closeout phase, which required a small manual artifact bridge for the archive workflow.
+- Some older planning text still referenced Phase 10 as next work, so PROJECT.md needed a full pass at closeout.
+
+### Patterns Established
+
+- Tokkun persistence stores only raw protocol-backed facts and keeps protocol readback limited to proven fields.
+- Banacoin-adjacent routes can be permissive and stateless without modeling real wallet/payment state.
+- Runtime evidence that happens outside the repo should be recorded explicitly as user-confirmed external verification, not implied by automated tests.
+
+### Key Lessons
+
+1. For legacy-client behavior, deterministic runtime evidence should outrank speculative mixed-payload branches.
+2. Full request dumps and behavior tests are better Tokkun guardrails than source-word scans.
+3. Milestone close should normalize generated archive metadata before the safety commit, especially when local time and UTC dates differ.
+
+### Cost Observations
+
+- Model mix: not measured.
+- Sessions: not measured.
+- Notable: Phase 10 carried most of the implementation cost because it combined EF schema, handler writes, and readback tests.
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -52,14 +98,17 @@
 | Milestone | Sessions | Phases | Key Change |
 |-----------|----------|--------|------------|
 | v1.0 | not measured | 6 | Blue support moved from staged normal support into evidence-gated battle runtime and final closeout. |
+| v1.1 | not measured | 5 | Tokkun support used evidence-scoped phases with runtime proof deferred until final closeout. |
 
 ### Cumulative Quality
 
 | Milestone | Tests | Coverage | Zero-Dep Additions |
 |-----------|-------|----------|-------------------|
 | v1.0 | Full server suite plus focused Blue/BlueBattle/source-guard tests | not measured | Blue-owned battle/source-guard patterns |
+| v1.1 | Full server suite: 638 passed at close | not measured | Blue-owned Tokkun persistence/readback and stateless Banacoin compatibility |
 
 ### Top Lessons (Verified Across Milestones)
 
 1. Keep Blue-specific runtime behavior isolated from Green unless a contract is truly shared.
 2. Prefer evidence-backed protocol contracts over inferred catalog/default behavior.
+3. Treat runtime smoke proof as a separate closeout gate when earlier phases are intentionally source/test/build scoped.

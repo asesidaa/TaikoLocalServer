@@ -3,158 +3,44 @@
 ## Milestones
 
 - [x] **v1.0 Blue Support** - Phases 1-6 shipped on 2026-06-03. See [v1.0 roadmap archive](milestones/v1.0-ROADMAP.md), [v1.0 requirements archive](milestones/v1.0-REQUIREMENTS.md), and [v1.0 phase artifacts](milestones/v1.0-phases/).
-- [ ] **v1.1 Blue Tokkun Mode Support** - Phases 7-11 active.
+- [x] **v1.1 Blue Tokkun Mode Support** - Phases 7-11 shipped on 2026-06-07. See [v1.1 roadmap archive](milestones/v1.1-ROADMAP.md), [v1.1 requirements archive](milestones/v1.1-REQUIREMENTS.md), and [v1.1 phase artifacts](milestones/v1.1-phases/).
 
-## Overview
+## Current Planning State
 
-v1.1 adds evidence-backed Blue Tokkun support after the shipped v1.0 normal and battle work. The milestone keeps Blue Tokkun behavior Blue-owned, accepts and persists only protocol-backed Tokkun facts, keeps Banacoin compatibility stateless and permissive, and finishes only when automated verification and cabinet/RPCS3 smoke evidence agree.
+No active milestone is open. Start the next milestone with `$gsd-new-milestone`.
 
-Real Banacoin wallet, payment, balance, coupon, receipt, deduction, BNID result, or transaction-history behavior is out of scope for this repo. It is not planned as a future phase in this roadmap.
+## Archived Phases
 
-## Phases
+<details>
+<summary>v1.0 Blue Support (Phases 1-6) - shipped 2026-06-03</summary>
 
-**Phase Numbering:**
+- [x] Phase 1: Blue A6 item shop and unlocking
+- [x] Phase 2: Blue A7 AdminApi and WebUI parity
+- [x] Phase 3: Blue A8 normal-mode cabinet smoke and hardening
+- [x] Phase 4: Blue battle evidence and design
+- [x] Phase 5: Blue battle runtime support
+- [x] Phase 6: Full Blue verification and release hardening
 
-- Phases 1-6 are historical v1.0 work and remain archived.
-- v1.1 continues numbering from Phase 7.
-- Decimal phases are reserved for urgent insertions after planning.
+See `.planning/milestones/v1.0-ROADMAP.md` and `.planning/milestones/v1.0-phases/`.
 
-- [x] **Phase 7: Tokkun Evidence Contract and Guardrail Reset** - Establish evidence-tagged Tokkun protocol boundaries and replace stale no-Tokkun guards. (completed 2026-06-03)
-- [x] **Phase 8: Stateless Banacoin Compatibility and Availability** - Keep required Banacoin-adjacent endpoints permissive and stateless so Tokkun entry is not blocked. (completed 2026-06-04)
-- [x] **Phase 9: Tokkun Mapper and Safe Playresult Acceptance** - Accept and classify Tokkun playresults safely without gameplay-state contamination. (completed 2026-06-05)
-- [x] **Phase 10: Evidence-Backed Tokkun State Persistence and Readback** - Persist and read back protocol-backed Blue Tokkun tutorial and summary facts. (completed 2026-06-06)
-- [x] **Phase 11: Cabinet/RPCS3 Smoke and Contract Tightening** - Prove Tokkun on cabinet/RPCS3 and lock tests/docs around the final contract. (completed 2026-06-07)
+</details>
 
-## Phase Details
+<details>
+<summary>v1.1 Blue Tokkun Mode Support (Phases 7-11) - shipped 2026-06-07</summary>
 
-### Phase 7: Tokkun Evidence Contract and Guardrail Reset
+- [x] Phase 7: Tokkun Evidence Contract and Guardrail Reset (1/1 plan, completed 2026-06-03)
+- [x] Phase 8: Stateless Banacoin Compatibility and Availability (1/1 plan, completed 2026-06-04)
+- [x] Phase 9: Tokkun Mapper and Safe Playresult Acceptance (1/1 plan, completed 2026-06-05)
+- [x] Phase 10: Evidence-Backed Tokkun State Persistence and Readback (3/3 plans, completed 2026-06-06)
+- [x] Phase 11: Cabinet/RPCS3 Smoke and Contract Tightening (1/1 plan, completed 2026-06-07)
 
-**Goal**: Operator/developer has a bounded Blue Tokkun protocol contract before runtime behavior changes.
-**Depends on**: Phase 6 / v1.0 Blue Support shipped
-**Requirements**: TKEV-01, TKEV-02, TKEV-03
-**Success Criteria** (what must be TRUE):
+See `.planning/milestones/v1.1-ROADMAP.md` and `.planning/milestones/v1.1-phases/`.
 
-  1. Operator/developer can inspect an evidence-tagged Blue Tokkun contract that separates proven, observed, deliberately ignored, and unknown protocol fields.
-  2. Blue Tokkun classification policy is documented without assigning a guessed numeric `PlayMode.Tokkun` value.
-  3. Source guardrails allow only named Blue Tokkun support paths while still blocking invented reward, score, Banacoin, battle, and normal-progression semantics.
-  4. Follow-on phase planners can see the accepted classifier inputs, logging boundaries, persistence boundaries, and route-surface unknowns.
-
-**Plans**: 1 plan
-Plans:
-
-- [x] 07-01-PLAN.md - Create the Tokkun evidence contract and remove the stale Tokkun source guard
-
-### Phase 8: Stateless Banacoin Compatibility and Availability
-
-**Goal**: Blue Tokkun entry is not blocked by Banacoin-adjacent endpoints, and no Banacoin state is stored.
-**Depends on**: Phase 7
-**Requirements**: TKBC-01, TKBC-02, TKBC-03
-**Success Criteria** (what must be TRUE):
-
-  1. Cabinet/RPCS3 Tokkun entry receives permissive success-shaped responses from every proven required Banacoin-adjacent endpoint.
-  2. Repeated Banacoin-adjacent requests leave no Blue, Green, Nijiiro, or shared wallet-like balance, payment, coupon, deduction, `chid`, BNID, or transaction state behind.
-  3. `getbanacoininfo.php` exists only if cabinet/RPCS3 logs or IDA route evidence proves Blue Tokkun calls it and current absence blocks play.
-  4. Operator/developer can inspect logs that show the Banacoin request sequence without any real payment model side effects.
-
-**Plans**: 1 plan
-Plans:
-
-- [x] 08-01-PLAN.md - Add stateless Blue getbanacoininfo compatibility and preserve Banacoin route boundaries
-
-### Phase 9: Tokkun Mapper and Safe Playresult Acceptance
-
-**Goal**: Blue Tokkun playresult uploads are accepted from proven Tokkun fields without contaminating existing Blue gameplay state.
-**Depends on**: Phase 8
-**Requirements**: TKPR-01, TKPR-02, TKPR-03
-**Success Criteria** (what must be TRUE):
-
-  1. Blue `playresult.php` returns success for Tokkun uploads classified from proven Tokkun fields such as `ary_tokkunstage_info` and `tokkun_tutorial_flg`.
-  2. Tokkun uploads do not write normal score, crown, Dani, battle, favorite, recent-song, profile, unlock, medal, customization, title, or shop state.
-  3. Unknown or mixed Tokkun-shaped uploads are logged with bounded request context and still return success unless concrete client evidence proves a failure response is required.
-  4. Mapper DTOs preserve protocol-backed Tokkun fields and optional-field presence for downstream Tokkun handling.
-
-**Plans**: 1 plan
-Plans:
-
-- [x] 09-01-PLAN.md - Preserve Tokkun mapper facts and accept Tokkun playresults without state contamination
-
-### Phase 10: Evidence-Backed Tokkun State Persistence and Readback
-
-**Goal**: Blue stores and reads back protocol-backed Tokkun tutorial and summary state without inventing progression, reward, or payment semantics.
-**Depends on**: Phase 9
-**Requirements**: TKST-01, TKST-02, TKST-03, TKST-04
-**Success Criteria** (what must be TRUE):
-
-  1. Blue Tokkun tutorial state from `tokkun_tutorial_flg` is persisted in Blue-owned state and read back through Blue userdata according to the Tokkun protocol contract.
-  2. Blue Tokkun summary/progress facts from the payload are stored as Blue-owned Tokkun records, including `banacoin_datetime`, song count/list, speed-change count, autoplay count, jump count, and upload time.
-  3. Tokkun persistence remains separate from Green, Nijiiro, normal score, Dani, battle, item shop, and Banacoin storage.
-  4. Stored Tokkun records contain raw/protocol-backed Tokkun facts only and do not infer rankings, rewards, score progression, payment history, practice-time rules, or unlocks.
-
-**Plans**: 3 plans
-Plans:
-
-**Wave 1**
-
-- [x] 10-01-PLAN.md - Define the proven Tokkun mode classifier and Blue-owned storage schema
-
-**Wave 2** *(blocked on Wave 1 completion)*
-
-- [x] 10-02-PLAN.md - Persist allowed Tokkun tutorial and summary state without cross-mode writes
-
-**Wave 3** *(blocked on Wave 2 completion)*
-
-- [x] 10-03-PLAN.md - Read back nullable Tokkun tutorial state through Blue userdata
-
-### Phase 11: Cabinet/RPCS3 Smoke and Contract Tightening
-
-**Goal**: Blue Tokkun support is proven end to end and documented with final verified boundaries.
-**Depends on**: Phase 10
-**Requirements**: TKVF-01, TKVF-02, TKVF-03
-**Success Criteria** (what must be TRUE):
-
-  1. Automated tests cover Tokkun classification, mapper fields, safe playresult acceptance, no-cross-write behavior, Banacoin statelessness, Tokkun persistence, and replacement source guards.
-  2. Cabinet/RPCS3 smoke evidence covers Tokkun selection, Banacoin request sequence, gameplay entry, final upload, post-upload userdata behavior, and unexpected endpoint calls.
-  3. Final docs record confirmed Tokkun constants/routes, persisted Tokkun fields, unresolved research flags, and the boundary between supported Tokkun behavior and out-of-scope Banacoin/payment semantics.
-  4. Done remains blocked until automated tests and cabinet/RPCS3 evidence confirm Tokkun does not contaminate normal, battle, Dani, profile, favorite, recent-song, unlock, shop, or Banacoin state.
-
-**Plans**: 1 plan
-
-Plans:
-
-- [x] 11-01-PLAN.md - Record cabinet/RPCS3 runtime verification and final Tokkun contract
-
-## Requirement Coverage
-
-| Requirement | Phase |
-|-------------|-------|
-| TKEV-01 | Phase 7 |
-| TKEV-02 | Phase 7 |
-| TKEV-03 | Phase 7 |
-| TKBC-01 | Phase 8 |
-| TKBC-02 | Phase 8 |
-| TKBC-03 | Phase 8 |
-| TKPR-01 | Phase 9 |
-| TKPR-02 | Phase 9 |
-| TKPR-03 | Phase 9 |
-| TKST-01 | Phase 10 |
-| TKST-02 | Phase 10 |
-| TKST-03 | Phase 10 |
-| TKST-04 | Phase 10 |
-| TKVF-01 | Phase 11 |
-| TKVF-02 | Phase 11 |
-| TKVF-03 | Phase 11 |
-
-**Coverage:** 16/16 v1.1 requirements mapped. No orphaned requirements. Future requirement TKUI-01 is intentionally not mapped.
+</details>
 
 ## Progress
 
-**Execution Order:**
-Phases execute in numeric order: 7 -> 8 -> 9 -> 10 -> 11.
-
-| Phase | Milestone | Plans Complete | Status | Completed |
-|-------|-----------|----------------|--------|-----------|
-| 7. Tokkun Evidence Contract and Guardrail Reset | v1.1 | 1/1 | Complete    | 2026-06-03 |
-| 8. Stateless Banacoin Compatibility and Availability | v1.1 | 1/1 | Complete    | 2026-06-04 |
-| 9. Tokkun Mapper and Safe Playresult Acceptance | v1.1 | 1/1 | Complete    | 2026-06-05 |
-| 10. Evidence-Backed Tokkun State Persistence and Readback | v1.1 | 3/3 | Complete    | 2026-06-06 |
-| 11. Cabinet/RPCS3 Smoke and Contract Tightening | v1.1 | 1/1 | Complete    | 2026-06-07 |
+| Milestone | Phases | Plans | Status | Shipped |
+|-----------|--------|-------|--------|---------|
+| v1.0 Blue Support | 1-6 | 30 roadmap plans | Shipped | 2026-06-03 |
+| v1.1 Blue Tokkun Mode Support | 7-11 | 7 GSD plans | Shipped | 2026-06-07 |
