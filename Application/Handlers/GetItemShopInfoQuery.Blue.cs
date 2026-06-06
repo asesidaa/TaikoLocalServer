@@ -1,4 +1,4 @@
-using TaikoLocalServer.Domain.Enums;
+using TaikoLocalServer.Application.Ac15;
 
 namespace TaikoLocalServer.Application.Handlers;
 
@@ -9,34 +9,12 @@ public partial class GetItemShopInfoQueryHandler
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        var catalog = gameDataService.Blue().ItemShopCatalog;
-        var season = catalog.ActiveSeason;
-        if (!catalog.IsEnabled || season is null)
+        var snapshot = Ac15CatalogSnapshotFactory.FromBlue(gameDataService.Blue());
+        if (!snapshot.ItemShopCatalog.IsEnabled || snapshot.ItemShopCatalog.ActiveSeason is null)
         {
             logger.LogInformation("Blue GetItemShopInfo returning empty because item shop is disabled or inactive");
-            return ValueTask.FromResult(new CommonItemShopInfoResponse { Result = 1 });
         }
 
-        return ValueTask.FromResult(new CommonItemShopInfoResponse
-        {
-            Result = 1,
-            VerupNo = season.VerupNo,
-            SeasonId = season.SeasonId,
-            Telop = season.Telop,
-            StartDatetime = season.StartDatetime,
-            EndDatetime = season.EndDatetime,
-            AfterstartDays = season.AfterstartDays,
-            BeforecloseDays = season.BeforecloseDays,
-            AryItemshopData = season.Items
-                .OrderBy(item => item.ItemNo)
-                .Select(item => new CommonItemShopInfoResponse.ItemShopData
-                {
-                    ItemNo = item.ItemNo,
-                    ItemType = item.ItemType.ToProtocolValue(),
-                    ItemId = item.ItemId,
-                    ItemPrice = item.Price
-                })
-                .ToList()
-        });
+        return ValueTask.FromResult(Ac15CatalogReadbackService.BuildItemShopInfo(snapshot));
     }
 }
