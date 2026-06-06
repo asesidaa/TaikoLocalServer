@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
-status: planning
-stopped_at: Phase 9 complete
-last_updated: "2026-06-05T14:08:56.935Z"
+status: Ready to discuss/plan
+stopped_at: Phase 10 context gathered
+last_updated: "2026-06-06T10:57:27.454Z"
 last_activity: 2026-06-05 - Phase 9 completed
 progress:
   total_phases: 5
@@ -92,6 +92,6 @@ None recorded. Phase 10 should persist/read back only protocol-backed Tokkun tut
 
 ## Session Continuity
 
-Last session: 2026-06-05T14:08:56.935Z
-Stopped at: Phase 9 complete
-Resume file: None
+Last session: 2026-06-06T10:57:27.447Z
+Stopped at: Phase 10 context gathered
+Resume file: .planning/phases/10-evidence-backed-tokkun-state-persistence-and-readback/10-CONTEXT.md
