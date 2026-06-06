@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using TaikoLocalServer.Adapters.GameProtocol.Blue.Mappers;
 using TaikoLocalServer.Adapters.GameProtocol.Blue.Wire;
@@ -50,7 +51,7 @@ public sealed class BluePlayResultHandlerTests
     }
 
     [Fact]
-    public async Task UpdatePlayResult_Blue_TokkunExistingUserReturnsSuccessWithoutStateWrites()
+    public async Task UpdatePlayResult_Blue_TokkunExistingUserPersistsAllowedStateOnly()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync();
         var saveData = UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1);
@@ -72,6 +73,7 @@ public sealed class BluePlayResultHandlerTests
         var handler = CreateHandler(fixture);
 
         var request = CreateTokkunRequest(1);
+        request.TokkunTutorialFlg = 7;
         request.GetDonmedal = 50;
         request.GetKatsumedal = 60;
         request.ReleaseSongNoes = [104];
@@ -101,6 +103,9 @@ public sealed class BluePlayResultHandlerTests
         Assert.False(BitIsSet(reloaded.ToneFlg, 8));
         Assert.True(BitIsSet(reloaded.TitleFlg, 10));
         Assert.False(BitIsSet(reloaded.TitleFlg, 11));
+        Assert.Equal(7u, reloaded.TokkunTutorialFlg);
+        var tokkunStage = await fixture.Context.BlueTokkunStageResults.SingleAsync(row => row.Baid == 1);
+        AssertTokkunHistoryRow(tokkunStage, "20260528120000", "20260528120000", [101]);
         await AssertTokkunForbiddenBlueStateEmptyAsync(fixture.Context);
     }
 
@@ -116,6 +121,7 @@ public sealed class BluePlayResultHandlerTests
 
         Assert.Equal(1u, result);
         Assert.Empty(await fixture.Context.UserSaveDataBlue.ToListAsync());
+        Assert.Empty(await fixture.Context.BlueTokkunStageResults.ToListAsync());
         await AssertTokkunForbiddenBlueStateEmptyAsync(fixture.Context);
     }
 
@@ -132,6 +138,7 @@ public sealed class BluePlayResultHandlerTests
         var handler = CreateHandler(fixture);
 
         var request = CreateTokkunRequest(1);
+        request.TokkunTutorialFlg = 7;
         request.GetDonmedal = 50;
         request.GetKatsumedal = 60;
         request.ReleaseSongNoes = [104];
@@ -151,7 +158,67 @@ public sealed class BluePlayResultHandlerTests
         Assert.False(BitIsSet(reloaded.ToneFlg, 8));
         Assert.False(BitIsSet(reloaded.CostumeFlg1, 1));
         Assert.False(BitIsSet(reloaded.TitleFlg, 11));
+        Assert.Equal(7u, reloaded.TokkunTutorialFlg);
+        var tokkunStage = await fixture.Context.BlueTokkunStageResults.SingleAsync(row => row.Baid == 1);
+        AssertTokkunHistoryRow(tokkunStage, "20260528120000", "20260528120000", [101]);
         await AssertTokkunForbiddenBlueStateEmptyAsync(fixture.Context);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Blue_TokkunRepeatedUploadsAppendHistoryRows()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataBlue.Add(UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+        var first = CreateTokkunRequest(1);
+        first.TokkunTutorialFlg = 7;
+        first.AryTokkunstageInfo!.TookunSongnoes = [101, 102, 101];
+        first.AryTokkunstageInfo.TokkunSongCnt = 3;
+        var second = CreateTokkunRequest(1);
+        second.TokkunTutorialFlg = 1;
+        second.AryTokkunstageInfo!.TookunSongnoes = [101, 102, 101];
+        second.AryTokkunstageInfo.TokkunSongCnt = 3;
+
+        var firstResult = await handler.Handle(CreateBlueCommand(first), CancellationToken.None);
+        var secondResult = await handler.Handle(CreateBlueCommand(second), CancellationToken.None);
+
+        Assert.Equal(1u, firstResult);
+        Assert.Equal(1u, secondResult);
+        var reloaded = await fixture.Context.UserSaveDataBlue.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(1u, reloaded.TokkunTutorialFlg);
+        var rows = await fixture.Context.BlueTokkunStageResults
+            .Where(row => row.Baid == 1)
+            .OrderBy(row => row.Id)
+            .ToListAsync();
+        Assert.Equal(2, rows.Count);
+        AssertTokkunHistoryRow(rows[0], "20260528120000", "20260528120000", [101, 102, 101], songCount: 3);
+        AssertTokkunHistoryRow(rows[1], "20260528120000", "20260528120000", [101, 102, 101], songCount: 3);
+        await AssertTokkunForbiddenBlueStateEmptyAsync(fixture.Context);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Blue_NonTokkunTutorialFlagDoesNotUpdateTokkunState()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync();
+        var saveData = UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1);
+        saveData.TokkunTutorialFlg = 5;
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataBlue.Add(saveData);
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+        var request = CreateTokkunRequest(1);
+        request.PlayMode = (uint)PlayMode.Normal;
+        request.TokkunTutorialFlg = 7;
+        request.AryTokkunstageInfo = null;
+
+        var result = await handler.Handle(CreateBlueCommand(request), CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var reloaded = await fixture.Context.UserSaveDataBlue.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(5u, reloaded.TokkunTutorialFlg);
+        Assert.Empty(await fixture.Context.BlueTokkunStageResults.ToListAsync());
     }
 
     [Fact]
@@ -605,7 +672,7 @@ public sealed class BluePlayResultHandlerTests
         GetKatsumedal = 0,
         GenderType = 0,
         PlayerAge = 0,
-        PlayMode = 0,
+        PlayMode = (uint)PlayMode.Tokkun,
         AreaCode = 1,
         Reserved = new byte[16],
         TokkunTutorialFlg = 1,
@@ -769,6 +836,26 @@ public sealed class BluePlayResultHandlerTests
         Assert.Empty(await context.DanStageScoreDataBlue.ToListAsync());
         Assert.Empty(await context.BlueShopSeasonStates.ToListAsync());
         Assert.Empty(await context.BlueShopItemStates.ToListAsync());
+    }
+
+    private static void AssertTokkunHistoryRow(
+        BlueTokkunStageResult row,
+        string playDatetime,
+        string banacoinDatetime,
+        uint[] tookunSongnoes,
+        uint songCount = 1)
+    {
+        Assert.True(row.Id > 0);
+        Assert.Equal(playDatetime, row.PlayDatetime);
+        Assert.Equal((uint)PlayMode.Tokkun, row.PlayMode);
+        Assert.Equal(banacoinDatetime, row.BanacoinDatetime);
+        Assert.Equal(songCount, row.TokkunSongCnt);
+        var reloadedSongs = JsonSerializer.Deserialize<uint[]>(row.TookunSongnoesJson);
+        Assert.NotNull(reloadedSongs);
+        Assert.Equal(tookunSongnoes, reloadedSongs);
+        Assert.Equal(2u, row.TokkunSpeedchangeCnt);
+        Assert.Equal(3u, row.TokkunAutoplayCnt);
+        Assert.Equal(4u, row.TokkunJumpCnt);
     }
 
     private static bool BitIsSet(byte[] source, uint id)

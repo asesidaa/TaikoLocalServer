@@ -30,11 +30,7 @@ public partial class UpdatePlayResultCommandHandler
         var playResultData = request.PlayResultData;
         if (playResultData.IsTokkunPlayResult)
         {
-            logger.LogInformation(
-                "Accepted Blue Tokkun playresult for baid {Baid}: play_mode={PlayMode}",
-                request.Baid,
-                playResultData.PlayMode);
-            return 1;
+            return await HandleBlueTokkun(request.Baid, playResultData, cancellationToken);
         }
 
         if (playResultData.IsBattlePlayResult)
