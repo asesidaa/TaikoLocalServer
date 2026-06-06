@@ -99,7 +99,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 10-02-PLAN.md - Persist allowed Tokkun tutorial and summary state without cross-mode writes
+- [x] 10-02-PLAN.md - Persist allowed Tokkun tutorial and summary state without cross-mode writes
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -152,5 +152,5 @@ Phases execute in numeric order: 7 -> 8 -> 9 -> 10 -> 11.
 | 7. Tokkun Evidence Contract and Guardrail Reset | v1.1 | 1/1 | Complete    | 2026-06-03 |
 | 8. Stateless Banacoin Compatibility and Availability | v1.1 | 1/1 | Complete    | 2026-06-04 |
 | 9. Tokkun Mapper and Safe Playresult Acceptance | v1.1 | 1/1 | Complete    | 2026-06-05 |
-| 10. Evidence-Backed Tokkun State Persistence and Readback | v1.1 | 1/3 | In Progress|  |
+| 10. Evidence-Backed Tokkun State Persistence and Readback | v1.1 | 2/3 | In Progress|  |
 | 11. Cabinet/RPCS3 Smoke and Contract Tightening | v1.1 | 0/TBD | Not started | - |
