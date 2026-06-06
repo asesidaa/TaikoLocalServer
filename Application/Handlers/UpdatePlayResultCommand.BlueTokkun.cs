@@ -9,6 +9,15 @@ public partial class UpdatePlayResultCommandHandler
         CommonPlayResultData playResultData,
         CancellationToken cancellationToken)
     {
+        await SaveBlueTokkun(baid, playResultData, cancellationToken);
+        return 1;
+    }
+
+    private async ValueTask SaveBlueTokkun(
+        uint baid,
+        CommonPlayResultData playResultData,
+        CancellationToken cancellationToken)
+    {
         var saveData = await context.GetOrCreateBlueSaveDataAsync(baid, cancellationToken);
         if (playResultData.TokkunTutorialFlg is { } tokkunTutorialFlg)
         {
@@ -32,6 +41,5 @@ public partial class UpdatePlayResultCommandHandler
         }
 
         await context.SaveChangesAsync(cancellationToken);
-        return 1;
     }
 }
