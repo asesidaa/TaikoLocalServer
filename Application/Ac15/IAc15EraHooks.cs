@@ -39,6 +39,8 @@ public interface IAc15EraHooks
 
     Ac15StageSupportDecision IsSupportedStage(CommonPlayResultData.StageData stage);
 
+    Ac15BestUpdatePolicy GetBestUpdatePolicy(CommonPlayResultData.StageData stage, CrownType crown);
+
     ValueTask BeforeNormalSaveAsync(Ac15NormalSaveContext context, CancellationToken cancellationToken);
 
     ValueTask AfterNormalSaveAsync(Ac15NormalSaveContext context, CancellationToken cancellationToken);

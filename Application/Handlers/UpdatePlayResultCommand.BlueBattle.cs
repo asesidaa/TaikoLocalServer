@@ -1,3 +1,5 @@
+using TaikoLocalServer.Application.Ac15;
+
 namespace TaikoLocalServer.Application.Handlers;
 
 public partial class UpdatePlayResultCommandHandler
@@ -9,6 +11,7 @@ public partial class UpdatePlayResultCommandHandler
     {
         var now = DateTime.UtcNow;
         var playTime = ParseBluePlayDatetimeOrNow(playResultData.PlayDatetime);
+        var blueNormalPlayPersistence = new BlueAc15NormalPlayAdapter(context);
 
         await context.AddBlueBattleStageResultsAsync(
             baid,
@@ -22,10 +25,18 @@ public partial class UpdatePlayResultCommandHandler
             now,
             cancellationToken);
         await AddBlueBattleShopDonmedalsAsync(baid, playResultData.GetDonmedal, now, cancellationToken);
-        await UpsertBlueBattleRecentSongsAsync(baid, playResultData, playTime, cancellationToken);
+        await UpsertBlueBattleRecentSongsAsync(
+            blueNormalPlayPersistence,
+            baid,
+            playResultData,
+            playTime,
+            cancellationToken);
 
         await context.SaveChangesAsync(cancellationToken);
-        await TrimBlueRecentSongsAsync(baid, cancellationToken);
+        await blueNormalPlayPersistence.TrimRecentAsync(
+            baid,
+            Ac15EraProfiles.Blue.Limits.MaxRecentSongs,
+            cancellationToken);
         return 1;
     }
 
@@ -60,6 +71,7 @@ public partial class UpdatePlayResultCommandHandler
     }
 
     private async Task UpsertBlueBattleRecentSongsAsync(
+        BlueAc15NormalPlayAdapter blueNormalPlayPersistence,
         uint baid,
         CommonPlayResultData playResultData,
         DateTime playTime,
@@ -67,7 +79,7 @@ public partial class UpdatePlayResultCommandHandler
     {
         foreach (var stage in playResultData.AryStageInfoes)
         {
-            await UpsertBlueRecentAsync(baid, stage.SongNo, playTime, cancellationToken);
+            await blueNormalPlayPersistence.UpsertRecentAsync(baid, stage.SongNo, playTime, cancellationToken);
         }
     }
 }

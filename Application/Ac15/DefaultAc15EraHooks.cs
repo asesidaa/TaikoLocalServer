@@ -22,6 +22,9 @@ public sealed class DefaultAc15EraHooks : IAc15EraHooks
             ? Ac15StageSupportDecision.Supported
             : Ac15StageSupportDecision.Unsupported($"stage_mode {stage.StageMode} is not a normal AC15 stage");
 
+    public Ac15BestUpdatePolicy GetBestUpdatePolicy(CommonPlayResultData.StageData stage, CrownType crown)
+        => new(AllowScoreUpdate: true, AllowCrownUpdate: true);
+
     public ValueTask BeforeNormalSaveAsync(Ac15NormalSaveContext context, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();

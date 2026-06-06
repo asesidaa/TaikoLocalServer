@@ -1,4 +1,5 @@
 using System.Globalization;
+using TaikoLocalServer.Application.Ac15;
 using TaikoLocalServer.Application.Catalog.Blue;
 
 namespace TaikoLocalServer.Application.Handlers;
@@ -7,8 +8,6 @@ public partial class UpdatePlayResultCommandHandler
 {
     private const uint MinBlueCourseLevel = 1;
     private const uint MaxBlueCourseLevel = 5;
-    private const int BlueMaxRecentSongs = 10;
-    private const int BlueMaxFavoriteSongs = 5;
     private const uint BlueDanCostumeId = 36;
 
     private partial async ValueTask<uint> HandleBlue(
@@ -98,14 +97,17 @@ public partial class UpdatePlayResultCommandHandler
             }
 
             BlueProfileCounters.ApplyStage(saveData, stage);
-            await SaveBlueStageAsync(request.Baid, stage, playResultData.PlayMode, playTime, cancellationToken);
         }
 
         await SaveBlueDanAsync(saveData, playResultData, blue, cancellationToken);
 
-        await context.SaveChangesAsync(cancellationToken);
-        await TrimBlueRecentSongsAsync(request.Baid, cancellationToken);
-        return 1;
+        return await Ac15NormalPlayService.SaveAsync(
+            request.Baid,
+            playResultData,
+            Ac15EraProfiles.Blue,
+            new BlueAc15NormalPlayAdapter(context),
+            DefaultAc15EraHooks.Instance,
+            cancellationToken);
     }
 
     private bool IsSupportedBlueStage(uint baid, CommonPlayResultData.StageData stage)
@@ -159,166 +161,6 @@ public partial class UpdatePlayResultCommandHandler
         saveData.CostumeFlg4 = SetBlueBits(saveData.CostumeFlg4, playResultData.GetCostumeNo4s, BlueProtocolBytes.CostumeFlagBytes);
         saveData.CostumeFlg5 = SetBlueBits(saveData.CostumeFlg5, playResultData.GetCostumeNo5s, BlueProtocolBytes.CostumeFlagBytes);
         saveData.TitleFlg = SetBlueBits(saveData.TitleFlg, playResultData.GetTitleNoes, BlueProtocolBytes.TitleFlagBytes);
-    }
-
-    private async Task SaveBlueStageAsync(
-        uint baid,
-        CommonPlayResultData.StageData stage,
-        uint playMode,
-        DateTime playTime,
-        CancellationToken cancellationToken)
-    {
-        var difficulty = BluePlayResultMapping.MapDifficulty(stage.Level);
-        var crown = BluePlayResultMapping.MapCrown(stage.PlayResult);
-        var isShin = BluePlayResultMapping.IsShin(stage.StageMode);
-
-        context.SongPlayDataBlue.Add(new SongPlayDatumBlue
-        {
-            Baid = baid,
-            SongId = stage.SongNo,
-            Difficulty = difficulty,
-            Crown = crown,
-            Score = stage.PlayScore,
-            ScoreRate = stage.ScoreRate,
-            GoodCount = stage.GoodCnt,
-            OkCount = stage.OkCnt,
-            MissCount = stage.NgCnt,
-            ComboCount = stage.ComboCnt,
-            HitCount = stage.HitCnt,
-            PoundCount = stage.PoundCnt,
-            StarLevel = stage.StarLevel,
-            OptionFlg = stage.OptionFlg,
-            ToneFlg = stage.ToneFlg,
-            PlayMode = playMode,
-            StageMode = stage.StageMode,
-            IsShin = isShin,
-            MusicCategory = stage.MusicCateg,
-            SelectedFolderId = stage.SelectedFolderId,
-            IsFavorite = stage.IsFavorite,
-            IsRecent = stage.IsRecent,
-            IsPapamama = stage.IsPapamama,
-            IsPushed = stage.IsPushed,
-            SoulGauge = stage.SoulGauge.GetValueOrDefault(),
-            PlayDan = stage.PlayDan.GetValueOrDefault(),
-            WaiwaiResult = stage.WaiwaiResult.GetValueOrDefault(),
-            WaiwaiGauge = stage.WaiwaiGauge.GetValueOrDefault(),
-            PlayTime = playTime
-        });
-
-        if (playMode != (uint)PlayMode.DanMode || isShin)
-        {
-            await UpsertBestAsync(baid, stage, difficulty, crown, isShin, cancellationToken);
-        }
-
-        await UpsertBlueFavoriteAndRecentAsync(baid, stage, playTime, cancellationToken);
-    }
-
-    private async Task UpsertBestAsync(
-        uint baid,
-        CommonPlayResultData.StageData stage,
-        Difficulty difficulty,
-        CrownType crown,
-        bool isShin,
-        CancellationToken cancellationToken)
-    {
-        var existing = await context.SongBestDataBlue.FindAsync([baid, stage.SongNo, difficulty, isShin], cancellationToken);
-        if (existing is null)
-        {
-            context.SongBestDataBlue.Add(new SongBestDatumBlue
-            {
-                Baid = baid,
-                SongId = stage.SongNo,
-                Difficulty = difficulty,
-                IsShin = isShin,
-                BestScore = stage.PlayScore,
-                BestRate = stage.ScoreRate,
-                BestCrown = crown
-            });
-            return;
-        }
-
-        if (stage.PlayScore > existing.BestScore)
-        {
-            existing.BestScore = stage.PlayScore;
-            existing.BestRate = stage.ScoreRate;
-        }
-
-        if (BluePlayResultMapping.CrownRank(crown) > BluePlayResultMapping.CrownRank(existing.BestCrown))
-        {
-            existing.BestCrown = crown;
-        }
-    }
-
-    private async Task UpsertBlueFavoriteAndRecentAsync(
-        uint baid,
-        CommonPlayResultData.StageData stage,
-        DateTime playTime,
-        CancellationToken cancellationToken)
-    {
-        var favorite = await context.BlueFavoriteSongs.FindAsync([baid, stage.SongNo], cancellationToken);
-        if (stage.IsFavorite && favorite is null)
-        {
-            var persistedFavoriteSongNoes = await context.BlueFavoriteSongs
-                .Where(s => s.Baid == baid)
-                .Select(s => s.SongNo)
-                .ToArrayAsync(cancellationToken);
-            var trackedFavoriteSongNoes = context.BlueFavoriteSongs.Local
-                .Where(s => s.Baid == baid)
-                .Select(s => s.SongNo);
-            var favoriteCount = persistedFavoriteSongNoes
-                .Concat(trackedFavoriteSongNoes)
-                .Distinct()
-                .Count();
-
-            if (favoriteCount < BlueMaxFavoriteSongs)
-            {
-                context.BlueFavoriteSongs.Add(new BlueFavoriteSongs { Baid = baid, SongNo = stage.SongNo });
-            }
-        }
-        else if (!stage.IsFavorite && favorite is not null)
-        {
-            context.BlueFavoriteSongs.Remove(favorite);
-        }
-
-        await UpsertBlueRecentAsync(baid, stage.SongNo, playTime, cancellationToken);
-    }
-
-    private async Task UpsertBlueRecentAsync(
-        uint baid,
-        uint songNo,
-        DateTime playTime,
-        CancellationToken cancellationToken)
-    {
-        var recent = await context.BlueRecentSongs.FindAsync([baid, songNo], cancellationToken);
-        if (recent is null)
-        {
-            context.BlueRecentSongs.Add(new BlueRecentSongs
-            {
-                Baid = baid,
-                SongNo = songNo,
-                LastPlayed = playTime
-            });
-        }
-        else
-        {
-            recent.LastPlayed = playTime;
-        }
-    }
-
-    private async Task TrimBlueRecentSongsAsync(uint baid, CancellationToken cancellationToken)
-    {
-        var overage = await context.BlueRecentSongs
-            .Where(s => s.Baid == baid)
-            .OrderByDescending(s => s.LastPlayed)
-            .Skip(BlueMaxRecentSongs)
-            .ToListAsync(cancellationToken);
-        if (overage.Count == 0)
-        {
-            return;
-        }
-
-        context.BlueRecentSongs.RemoveRange(overage);
-        await context.SaveChangesAsync(cancellationToken);
     }
 
     private async Task SaveBlueDanAsync(

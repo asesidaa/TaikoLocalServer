@@ -1,3 +1,4 @@
+using TaikoLocalServer.Application.Ac15;
 using TaikoLocalServer.Application.Catalog.Green;
 
 namespace TaikoLocalServer.Application.Handlers;
@@ -6,8 +7,6 @@ public partial class UpdatePlayResultCommandHandler
 {
     private const uint MinGreenCourseLevel = 1;
     private const uint MaxGreenCourseLevel = 5;
-    private const int GreenMaxRecentSongs = 10;
-    private const int GreenMaxFavoriteSongs = 5;
     private const uint GreenDanCostumeId = 36;
 
     private partial async ValueTask<uint> HandleGreen(
@@ -86,31 +85,19 @@ public partial class UpdatePlayResultCommandHandler
         foreach (var stage in playResultData.AryStageInfoes)
         {
             GreenProfileCounters.ApplyStage(saveData, stage);
-            await SaveStageAsync(request.Baid, stage, playResultData.PlayMode, playTime, cancellationToken);
         }
 
         ApplyGhostPlayedSongBits(saveData, playResultData);
 
         await SaveGreenDanAsync(saveData, playResultData, green, cancellationToken);
 
-        await context.SaveChangesAsync(cancellationToken);
-        await TrimGreenRecentSongsAsync(request.Baid, cancellationToken);
-        return 1;
-    }
-
-    private async Task TrimGreenRecentSongsAsync(uint baid, CancellationToken cancellationToken)
-    {
-        var overage = await context.GreenRecentSongs
-            .Where(s => s.Baid == baid)
-            .OrderByDescending(s => s.LastPlayed)
-            .Skip(GreenMaxRecentSongs)
-            .ToListAsync(cancellationToken);
-        if (overage.Count == 0)
-        {
-            return;
-        }
-        context.GreenRecentSongs.RemoveRange(overage);
-        await context.SaveChangesAsync(cancellationToken);
+        return await Ac15NormalPlayService.SaveAsync(
+            request.Baid,
+            playResultData,
+            Ac15EraProfiles.Green,
+            new GreenAc15NormalPlayAdapter(context),
+            new GreenAc15NormalPlayHooks(),
+            cancellationToken);
     }
 
     private static bool IsValidGreenStage(CommonPlayResultData.StageData stage)
@@ -146,155 +133,6 @@ public partial class UpdatePlayResultCommandHandler
         saveData.CostumeFlg4 = SetBits(saveData.CostumeFlg4, playResultData.GetCostumeNo4s, GreenProtocolBytes.CostumeFlagBytes);
         saveData.CostumeFlg5 = SetBits(saveData.CostumeFlg5, playResultData.GetCostumeNo5s, GreenProtocolBytes.CostumeFlagBytes);
         saveData.TitleFlg = SetBits(saveData.TitleFlg, playResultData.GetTitleNoes, GreenProtocolBytes.TitleFlagBytes);
-    }
-
-    private async Task SaveStageAsync(
-        uint baid,
-        CommonPlayResultData.StageData stage,
-        uint playMode,
-        DateTime playTime,
-        CancellationToken cancellationToken)
-    {
-        var difficulty = GreenPlayResultMapping.MapDifficulty(stage.Level);
-        var crown = GreenPlayResultMapping.MapCrown(stage.PlayResult);
-        var isShin = GreenStageModeInterpreter.IsShin(stage.StageMode);
-        var isAiBattle = GreenStageModeInterpreter.IsAiBattle(stage.StageMode);
-        var allowCrownUpdate = !isAiBattle
-            || GreenAiBattleLevels.AllowsCrown(stage.Level, stage.SupportLevel);
-        var play = new SongPlayDatumGreen
-        {
-            Baid = baid,
-            SongId = stage.SongNo,
-            Difficulty = difficulty,
-            Crown = crown,
-            Score = stage.PlayScore,
-            ScoreRate = stage.ScoreRate,
-            GoodCount = stage.GoodCnt,
-            OkCount = stage.OkCnt,
-            MissCount = stage.NgCnt,
-            ComboCount = stage.ComboCnt,
-            HitCount = stage.HitCnt,
-            PoundCount = stage.PoundCnt,
-            StarLevel = stage.StarLevel,
-            SupportLevel = stage.SupportLevel,
-            OptionFlg = stage.OptionFlg,
-            ToneFlg = stage.ToneFlg,
-            PlayMode = playMode,
-            StageMode = stage.StageMode,
-            IsShin = isShin,
-            MusicCategory = stage.MusicCateg,
-            SelectedFolderId = stage.SelectedFolderId,
-            IsFavorite = stage.IsFavorite,
-            IsRecent = stage.IsRecent,
-            IsPapamama = stage.IsPapamama,
-            IsPushed = stage.IsPushed,
-            SoulGauge = stage.SoulGauge.GetValueOrDefault(),
-            PlayDan = stage.PlayDan.GetValueOrDefault(),
-            WaiwaiResult = stage.WaiwaiResult.GetValueOrDefault(),
-            WaiwaiGauge = stage.WaiwaiGauge.GetValueOrDefault(),
-            PlayTime = playTime
-        };
-
-        context.SongPlayDataGreen.Add(play);
-
-        if (stage.GhostStageData is not null)
-        {
-            uint sectionNo = 0;
-            foreach (var section in stage.GhostStageData.ArySectionData)
-            {
-                context.GhostStageSectionDataGreen.Add(new GhostStageSectionDatumGreen
-                {
-                    Parent = play,
-                    SectionNo = sectionNo++,
-                    IsWin = section.IsWin,
-                    GoodCount = section.GoodCnt,
-                    OkCount = section.OkCnt,
-                    NgCount = section.NgCnt,
-                    PoundCount = section.PoundCnt
-                });
-            }
-        }
-
-        // Green Dani normal scoring includes cumulative combo effects, so only Shin scores can update self-best rows.
-        if (playMode != (uint)PlayMode.DanMode || isShin)
-        {
-            await UpsertBestAsync(baid, stage, difficulty, crown, isShin, allowCrownUpdate, cancellationToken);
-        }
-
-        await UpsertFavoriteAndRecentAsync(baid, stage, playTime, cancellationToken);
-    }
-
-    private async Task UpsertBestAsync(
-        uint baid,
-        CommonPlayResultData.StageData stage,
-        Difficulty difficulty,
-        CrownType crown,
-        bool isShin,
-        bool allowCrownUpdate,
-        CancellationToken cancellationToken)
-    {
-        var existing = await context.SongBestDataGreen.FindAsync([baid, stage.SongNo, difficulty, isShin], cancellationToken);
-        if (existing is null)
-        {
-            context.SongBestDataGreen.Add(new SongBestDatumGreen
-            {
-                Baid = baid,
-                SongId = stage.SongNo,
-                Difficulty = difficulty,
-                IsShin = isShin,
-                BestScore = stage.PlayScore,
-                BestRate = stage.ScoreRate,
-                BestCrown = allowCrownUpdate ? crown : CrownType.None
-            });
-            return;
-        }
-
-        if (stage.PlayScore > existing.BestScore)
-        {
-            existing.BestScore = stage.PlayScore;
-            existing.BestRate = stage.ScoreRate;
-        }
-
-        if (allowCrownUpdate && CrownRank(crown) > CrownRank(existing.BestCrown))
-        {
-            existing.BestCrown = crown;
-        }
-    }
-
-    private async Task UpsertFavoriteAndRecentAsync(
-        uint baid,
-        CommonPlayResultData.StageData stage,
-        DateTime playTime,
-        CancellationToken cancellationToken)
-    {
-        var favorite = await context.GreenFavoriteSongs.FindAsync([baid, stage.SongNo], cancellationToken);
-        if (stage.IsFavorite && favorite is null)
-        {
-            var count = await context.GreenFavoriteSongs.CountAsync(s => s.Baid == baid, cancellationToken);
-            if (count < GreenMaxFavoriteSongs)
-            {
-                context.GreenFavoriteSongs.Add(new GreenFavoriteSongs { Baid = baid, SongNo = stage.SongNo });
-            }
-        }
-        else if (!stage.IsFavorite && favorite is not null)
-        {
-            context.GreenFavoriteSongs.Remove(favorite);
-        }
-
-        var recent = await context.GreenRecentSongs.FindAsync([baid, stage.SongNo], cancellationToken);
-        if (recent is null)
-        {
-            context.GreenRecentSongs.Add(new GreenRecentSongs
-            {
-                Baid = baid,
-                SongNo = stage.SongNo,
-                LastPlayed = playTime
-            });
-        }
-        else
-        {
-            recent.LastPlayed = playTime;
-        }
     }
 
     private async Task SaveGreenDanAsync(
@@ -545,11 +383,4 @@ public partial class UpdatePlayResultCommandHandler
         return result;
     }
 
-    private static int CrownRank(CrownType crown) => crown switch
-    {
-        CrownType.Clear => 1,
-        CrownType.Gold => 2,
-        CrownType.Dondaful => 3,
-        _ => 0
-    };
 }
