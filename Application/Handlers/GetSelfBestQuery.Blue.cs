@@ -1,3 +1,5 @@
+using TaikoLocalServer.Application.Ac15;
+
 namespace TaikoLocalServer.Application.Handlers;
 
 public partial class GetSelfBestQueryHandler
@@ -15,37 +17,14 @@ public partial class GetSelfBestQueryHandler
                 && requestedSet.Contains(row.SongId))
             .ToListAsync(cancellationToken);
 
-        var normalRowsBySong = bestRows
-            .Where(row => !row.IsShin)
-            .ToDictionary(row => row.SongId);
-        var shinRowsBySong = bestRows
-            .Where(row => row.IsShin)
-            .ToDictionary(row => row.SongId);
+        var canonicalRows = bestRows.Select(row => new Ac15BestRow(
+            row.SongId,
+            row.Difficulty,
+            row.IsShin,
+            row.BestScore,
+            row.BestRate,
+            row.BestCrown));
 
-        return new CommonSelfBestResponse
-        {
-            Result = 1,
-            Level = request.Difficulty,
-            ArySelfbestScores = requestedSongs.Select(songNo =>
-            {
-                normalRowsBySong.TryGetValue(songNo, out var best);
-                return new CommonSelfBestResponse.SelfBestData
-                {
-                    SongNo = songNo,
-                    SelfBestScore = best?.BestScore ?? 0,
-                    SelfBestScoreRate = best?.BestRate ?? 0
-                };
-            }).ToList(),
-            AryShinSelfbestScores = requestedSongs.Select(songNo =>
-            {
-                shinRowsBySong.TryGetValue(songNo, out var best);
-                return new CommonSelfBestResponse.SelfBestData
-                {
-                    SongNo = songNo,
-                    SelfBestScore = best?.BestScore ?? 0,
-                    SelfBestScoreRate = best?.BestRate ?? 0
-                };
-            }).ToList()
-        };
+        return Ac15SelfBestService.BuildResponse(request.Difficulty, requestedSongs, canonicalRows);
     }
 }

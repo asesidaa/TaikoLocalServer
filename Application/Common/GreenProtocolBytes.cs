@@ -1,3 +1,5 @@
+using TaikoLocalServer.Application.Ac15;
+
 namespace TaikoLocalServer.Application.Common;
 
 public static class GreenProtocolBytes
@@ -15,57 +17,22 @@ public static class GreenProtocolBytes
 
     public static byte[] CreateFixedBitset(IEnumerable<uint> enabledIds, int byteCount)
     {
-        return BitsetCodec.Encode(enabledIds, byteCount);
+        return Ac15ProtocolBytes.CreateFixedBitset(enabledIds, byteCount);
     }
 
     public static byte[] FixedOrZero(byte[]? source, int byteCount)
     {
-        return BitsetCodec.Normalize(source, byteCount);
+        return Ac15ProtocolBytes.FixedOrZero(source, byteCount);
     }
 
     public static byte[] PackTwoBitValues(IEnumerable<uint> values, int byteCount)
     {
-        var result = new byte[byteCount];
-        var index = 0;
-
-        foreach (var value in values)
-        {
-            if (((index * 2) >> 3) >= byteCount)
-            {
-                break;
-            }
-
-            SetTwoBitValue(result, index, value);
-            index++;
-        }
-
-        return result;
+        return Ac15ProtocolBytes.PackTwoBitValues(values, byteCount);
     }
 
     public static void SetTwoBitValue(byte[] buffer, int index, uint value)
     {
-        var masked = value & 0b11;
-        var bitOffset = index * 2;
-
-        for (var bit = 0; bit < 2; bit++)
-        {
-            var absoluteBit = bitOffset + bit;
-            var byteIndex = absoluteBit >> 3;
-            if ((uint)byteIndex >= (uint)buffer.Length)
-            {
-                return;
-            }
-
-            var mask = (byte)(1 << (absoluteBit & 7));
-            if ((masked & (1u << bit)) != 0)
-            {
-                buffer[byteIndex] |= mask;
-            }
-            else
-            {
-                buffer[byteIndex] &= (byte)~mask;
-            }
-        }
+        Ac15ProtocolBytes.SetTwoBitValue(buffer, index, value);
     }
 
     public static ushort BuildGreenCrownValue(
@@ -75,35 +42,16 @@ public static class GreenProtocolBytes
         GreenCrownState oni,
         GreenCrownState uraOni)
     {
-        return (ushort)(
-            (((ushort)easy & 3) << 0) |
-            (((ushort)normal & 3) << 2) |
-            (((ushort)hard & 3) << 4) |
-            (((ushort)oni & 3) << 6) |
-            (((ushort)uraOni & 3) << 8));
+        return Ac15ProtocolBytes.BuildCrownValue(
+            (Ac15CrownState)easy,
+            (Ac15CrownState)normal,
+            (Ac15CrownState)hard,
+            (Ac15CrownState)oni,
+            (Ac15CrownState)uraOni);
     }
 
     public static byte[] PackGreenCrowns(IReadOnlyList<ushort> songValues)
     {
-        var result = new byte[CrownInflatedBytes];
-
-        for (var songIndex = 0; songIndex < Math.Min(1024, songValues.Count); songIndex++)
-        {
-            var value = songValues[songIndex] & 0x03ff;
-            var bitOffset = songIndex * 10;
-
-            for (var bit = 0; bit < 10; bit++)
-            {
-                if ((value & (1 << bit)) == 0)
-                {
-                    continue;
-                }
-
-                var absoluteBit = bitOffset + bit;
-                result[absoluteBit >> 3] |= (byte)(1 << (absoluteBit & 7));
-            }
-        }
-
-        return result;
+        return Ac15ProtocolBytes.PackTenBitValues(songValues, CrownInflatedBytes, 1024);
     }
 }

@@ -1,3 +1,5 @@
+using TaikoLocalServer.Application.Ac15;
+
 namespace TaikoLocalServer.Application.Common;
 
 public static class BlueProtocolBytes
@@ -25,7 +27,7 @@ public static class BlueProtocolBytes
 
     public static byte[] CreateFixedBitset(IEnumerable<uint> enabledIds, int byteCount)
     {
-        return BitsetCodec.Encode(enabledIds, byteCount);
+        return Ac15ProtocolBytes.CreateFixedBitset(enabledIds, byteCount);
     }
 
     public static byte[] CreateBattleSpecialBitset(IEnumerable<uint> enabledIds)
@@ -39,19 +41,12 @@ public static class BlueProtocolBytes
 
     public static byte[] FixedOrZero(byte[]? source, int byteCount)
     {
-        return BitsetCodec.Normalize(source, byteCount);
+        return Ac15ProtocolBytes.FixedOrZero(source, byteCount);
     }
 
     public static byte[] OrBitsets(byte[] left, byte[] right, int byteCount)
     {
-        var result = FixedOrZero(left, byteCount);
-        var normalizedRight = FixedOrZero(right, byteCount);
-        for (var i = 0; i < result.Length; i++)
-        {
-            result[i] |= normalizedRight[i];
-        }
-
-        return result;
+        return Ac15ProtocolBytes.OrBitsets(left, right, byteCount);
     }
 
     public static ushort BuildBlueCrownValue(
@@ -61,35 +56,16 @@ public static class BlueProtocolBytes
         BlueCrownState oni,
         BlueCrownState uraOni)
     {
-        return (ushort)(
-            (((ushort)easy & 3) << 0) |
-            (((ushort)normal & 3) << 2) |
-            (((ushort)hard & 3) << 4) |
-            (((ushort)oni & 3) << 6) |
-            (((ushort)uraOni & 3) << 8));
+        return Ac15ProtocolBytes.BuildCrownValue(
+            (Ac15CrownState)easy,
+            (Ac15CrownState)normal,
+            (Ac15CrownState)hard,
+            (Ac15CrownState)oni,
+            (Ac15CrownState)uraOni);
     }
 
     public static byte[] PackBlueCrowns(IReadOnlyList<ushort> songValues)
     {
-        var result = new byte[CrownInflatedBytes];
-
-        for (var songIndex = 0; songIndex < Math.Min(1024, songValues.Count); songIndex++)
-        {
-            var value = songValues[songIndex] & 0x03ff;
-            var bitOffset = songIndex * 10;
-
-            for (var bit = 0; bit < 10; bit++)
-            {
-                if ((value & (1 << bit)) == 0)
-                {
-                    continue;
-                }
-
-                var absoluteBit = bitOffset + bit;
-                result[absoluteBit >> 3] |= (byte)(1 << (absoluteBit & 7));
-            }
-        }
-
-        return result;
+        return Ac15ProtocolBytes.PackTenBitValues(songValues, CrownInflatedBytes, 1024);
     }
 }
