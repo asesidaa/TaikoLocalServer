@@ -51,6 +51,11 @@ public static partial class UserDataMappers
             ? dispTaikojukuDan
             : 1u;
 
+        if (common.TokkunTutorialFlg is { } tokkunTutorialFlg)
+        {
+            response.TokkunTutorialFlg = tokkunTutorialFlg;
+        }
+
         return response;
     }
 }

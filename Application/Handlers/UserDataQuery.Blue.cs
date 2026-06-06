@@ -87,6 +87,7 @@ public partial class UserDataQueryHandler
             DispTaikojukuDan = GetSafeBlueTaikojukuDanSlot(displayDan),
             DifficultyPlayedCourse = saveData.DifficultyPlayedCourse,
             DifficultyPlayedStar = saveData.DifficultyPlayedStar,
+            TokkunTutorialFlg = saveData.TokkunTutorialFlg,
             IsChallengeCompe = saveData.IsChallengeCompe,
             IsTojiru = saveData.IsTojiru,
             IsDevilBlue = saveData.IsDevil
