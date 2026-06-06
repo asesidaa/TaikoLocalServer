@@ -22,7 +22,7 @@ Real Banacoin wallet, payment, balance, coupon, receipt, deduction, BNID result,
 - [x] **Phase 7: Tokkun Evidence Contract and Guardrail Reset** - Establish evidence-tagged Tokkun protocol boundaries and replace stale no-Tokkun guards. (completed 2026-06-03)
 - [x] **Phase 8: Stateless Banacoin Compatibility and Availability** - Keep required Banacoin-adjacent endpoints permissive and stateless so Tokkun entry is not blocked. (completed 2026-06-04)
 - [x] **Phase 9: Tokkun Mapper and Safe Playresult Acceptance** - Accept and classify Tokkun playresults safely without gameplay-state contamination. (completed 2026-06-05)
-- [ ] **Phase 10: Evidence-Backed Tokkun State Persistence and Readback** - Persist and read back protocol-backed Blue Tokkun tutorial and summary facts.
+- [x] **Phase 10: Evidence-Backed Tokkun State Persistence and Readback** - Persist and read back protocol-backed Blue Tokkun tutorial and summary facts. (completed 2026-06-06)
 - [ ] **Phase 11: Cabinet/RPCS3 Smoke and Contract Tightening** - Prove Tokkun on cabinet/RPCS3 and lock tests/docs around the final contract.
 
 ## Phase Details
@@ -103,7 +103,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 10-03-PLAN.md - Read back nullable Tokkun tutorial state through Blue userdata
+- [x] 10-03-PLAN.md - Read back nullable Tokkun tutorial state through Blue userdata
 
 ### Phase 11: Cabinet/RPCS3 Smoke and Contract Tightening
 
@@ -152,5 +152,5 @@ Phases execute in numeric order: 7 -> 8 -> 9 -> 10 -> 11.
 | 7. Tokkun Evidence Contract and Guardrail Reset | v1.1 | 1/1 | Complete    | 2026-06-03 |
 | 8. Stateless Banacoin Compatibility and Availability | v1.1 | 1/1 | Complete    | 2026-06-04 |
 | 9. Tokkun Mapper and Safe Playresult Acceptance | v1.1 | 1/1 | Complete    | 2026-06-05 |
-| 10. Evidence-Backed Tokkun State Persistence and Readback | v1.1 | 2/3 | In Progress|  |
+| 10. Evidence-Backed Tokkun State Persistence and Readback | v1.1 | 3/3 | Complete   | 2026-06-06 |
 | 11. Cabinet/RPCS3 Smoke and Contract Tightening | v1.1 | 0/TBD | Not started | - |
