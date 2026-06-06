@@ -1,10 +1,13 @@
 using TaikoLocalServer.Adapters.GameProtocol.Blue.Mappers;
 using TaikoLocalServer.Adapters.GameProtocol.Blue.Wire;
+using TaikoLocalServer.Domain.Enums;
 
 namespace TaikoLocalServer.Tests.Blue;
 
 public sealed class BluePlayResultMapperTests
 {
+    private const uint TokkunPlayMode = (uint)PlayMode.Tokkun;
+
     [Fact]
     public void Map_BluePlayResult_PreservesDirectRequestFields()
     {
@@ -61,6 +64,7 @@ public sealed class BluePlayResultMapperTests
     public void Map_TokkunStageInfo_ClassifiesTokkunAndPreservesRawFacts()
     {
         var request = CreateRequest();
+        request.PlayMode = TokkunPlayMode;
         request.TokkunTutorialFlg = 1;
         request.AryTokkunstageInfo = new PlayResultRequest.TokkunstageData
         {
@@ -86,6 +90,45 @@ public sealed class BluePlayResultMapperTests
     }
 
     [Fact]
+    public void Map_TokkunPlayModeWithoutStageInfo_ClassifiesTokkun()
+    {
+        var request = CreateRequest();
+        request.PlayMode = TokkunPlayMode;
+
+        var common = PlayResultMappers.Map(request);
+
+        Assert.True(common.IsTokkunPlayResult);
+        Assert.Null(common.TokkunStageData);
+    }
+
+    [Fact]
+    public void Map_TokkunStageInfoWithNonTokkunMode_PreservesRawFactsButDoesNotClassifyTokkun()
+    {
+        var request = CreateRequest();
+        request.PlayMode = 0;
+        request.AryTokkunstageInfo = new PlayResultRequest.TokkunstageData
+        {
+            BanacoinDatetime = "20260528120000",
+            TokkunSongCnt = 3,
+            TookunSongnoes = [101, 102, 101],
+            TokkunSpeedchangeCnt = 4,
+            TokkunAutoplayCnt = 5,
+            TokkunJumpCnt = 6
+        };
+
+        var common = PlayResultMappers.Map(request);
+
+        Assert.False(common.IsTokkunPlayResult);
+        Assert.NotNull(common.TokkunStageData);
+        Assert.Equal("20260528120000", common.TokkunStageData.BanacoinDatetime);
+        Assert.Equal(3u, common.TokkunStageData.TokkunSongCnt);
+        Assert.Equal([101u, 102u, 101u], common.TokkunStageData.TookunSongnoes);
+        Assert.Equal(4u, common.TokkunStageData.TokkunSpeedchangeCnt);
+        Assert.Equal(5u, common.TokkunStageData.TokkunAutoplayCnt);
+        Assert.Equal(6u, common.TokkunStageData.TokkunJumpCnt);
+    }
+
+    [Fact]
     public void Map_TutorialOnly_PreservesTutorialButDoesNotClassifyTokkun()
     {
         var request = CreateRequest();
@@ -102,6 +145,7 @@ public sealed class BluePlayResultMapperTests
     public void Map_MixedTokkunAndBattleSections_PreservesBothClassifierStates()
     {
         var request = CreateRequest();
+        request.PlayMode = TokkunPlayMode;
         request.AryTokkunstageInfo = new PlayResultRequest.TokkunstageData
         {
             BanacoinDatetime = "20260528120000",

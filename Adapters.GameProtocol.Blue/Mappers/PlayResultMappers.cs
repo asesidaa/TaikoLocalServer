@@ -1,4 +1,5 @@
 using Riok.Mapperly.Abstractions;
+using TaikoLocalServer.Domain.Enums;
 
 namespace TaikoLocalServer.Adapters.GameProtocol.Blue.Mappers;
 
@@ -39,7 +40,7 @@ public static partial class PlayResultMappers
             GenderType = request.GenderType,
             PlayerAge = request.PlayerAge,
             PlayMode = request.PlayMode,
-            IsTokkunPlayResult = request.AryTokkunstageInfo is not null,
+            IsTokkunPlayResult = request.PlayMode == (uint)PlayMode.Tokkun,
             TokkunTutorialFlg = request.ShouldSerializeTokkunTutorialFlg() ? request.TokkunTutorialFlg : null,
             TokkunStageData = MapTokkunStageData(request.AryTokkunstageInfo),
             IsBattlePlayResult = request.AryReleaseBattledata is not null
