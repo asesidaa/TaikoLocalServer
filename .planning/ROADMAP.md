@@ -56,7 +56,10 @@ Plans:
   3. `getbanacoininfo.php` exists only if cabinet/RPCS3 logs or IDA route evidence proves Blue Tokkun calls it and current absence blocks play.
   4. Operator/developer can inspect logs that show the Banacoin request sequence without any real payment model side effects.
 
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+
+- [x] 08-01-PLAN.md - Add stateless Blue getbanacoininfo compatibility and preserve Banacoin route boundaries
 
 ### Phase 9: Tokkun Mapper and Safe Playresult Acceptance
 
@@ -87,7 +90,20 @@ Plans:
   3. Tokkun persistence remains separate from Green, Nijiiro, normal score, Dani, battle, item shop, and Banacoin storage.
   4. Stored Tokkun records contain raw/protocol-backed Tokkun facts only and do not infer rankings, rewards, score progression, payment history, practice-time rules, or unlocks.
 
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+
+**Wave 1**
+
+- [ ] 10-01-PLAN.md - Define the proven Tokkun mode classifier and Blue-owned storage schema
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 10-02-PLAN.md - Persist allowed Tokkun tutorial and summary state without cross-mode writes
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 10-03-PLAN.md - Read back nullable Tokkun tutorial state through Blue userdata
 
 ### Phase 11: Cabinet/RPCS3 Smoke and Contract Tightening
 
@@ -136,5 +152,5 @@ Phases execute in numeric order: 7 -> 8 -> 9 -> 10 -> 11.
 | 7. Tokkun Evidence Contract and Guardrail Reset | v1.1 | 1/1 | Complete    | 2026-06-03 |
 | 8. Stateless Banacoin Compatibility and Availability | v1.1 | 1/1 | Complete    | 2026-06-04 |
 | 9. Tokkun Mapper and Safe Playresult Acceptance | v1.1 | 1/1 | Complete    | 2026-06-05 |
-| 10. Evidence-Backed Tokkun State Persistence and Readback | v1.1 | 0/TBD | Not started | - |
+| 10. Evidence-Backed Tokkun State Persistence and Readback | v1.1 | 0/3 | Ready to execute | - |
 | 11. Cabinet/RPCS3 Smoke and Contract Tightening | v1.1 | 0/TBD | Not started | - |

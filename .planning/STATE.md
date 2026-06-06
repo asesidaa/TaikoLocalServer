@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
-status: Ready to discuss/plan
-stopped_at: Phase 10 context gathered
-last_updated: "2026-06-06T10:57:27.454Z"
-last_activity: 2026-06-05 - Phase 9 completed
+status: Ready to execute
+stopped_at: Phase 10 planned
+last_updated: "2026-06-06T11:30:00.000Z"
+last_activity: 2026-06-06 - Phase 10 planned
 progress:
   total_phases: 5
   completed_phases: 3
-  total_plans: 3
+  total_plans: 6
   completed_plans: 3
   percent: 60
 ---
@@ -26,9 +26,9 @@ See: `.planning/PROJECT.md` (updated 2026-06-03)
 ## Current Position
 
 Phase: 10 of 11 overall (4 of 5 active)
-Plan: Not planned
-Status: Ready to discuss/plan
-Last activity: 2026-06-05 - Phase 9 completed
+Plan: 3 plans ready
+Status: Ready to execute
+Last activity: 2026-06-06 - Phase 10 planned
 
 Progress: [######----] 60%
 
@@ -47,7 +47,8 @@ Progress: [######----] 60%
 | 7 | 1/1 complete | 10 min | 10 min |
 | 8 | 1/1 complete | 5 min | 5 min |
 | 9 | 1/1 complete | 26 min | 26 min |
-| 10-11 | TBD | - | - |
+| 10 | 0/3 ready | - | - |
+| 11 | TBD | - | - |
 
 **Recent Trend:**
 
@@ -67,7 +68,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - Real Banacoin wallet/payment behavior is out of scope for this repo, not deferred.
 - Banacoin compatibility is stateless and permissive only so Tokkun can remain playable.
 - Protocol-backed Tokkun tutorial and summary/progress persistence is in scope for v1.1.
-- `PlayMode.Tokkun` must not receive a guessed numeric value.
+- `PlayMode.Tokkun = 3` is planned from user-reported live Tokkun session evidence, not a guessed value.
 - Cabinet/RPCS3 smoke evidence is required before v1.1 can be called done.
 - Phase 7 established the Tokkun evidence contract and removed the stale Tokkun source-scan guard without adding runtime Tokkun behavior.
 - Phase 8 adds Blue `getbanacoininfo.php` as a stateless direct-protobuf route that returns only `Result = 1`.
@@ -75,6 +76,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - Phase 8 verification is source/test/build evidence only; cabinet/RPCS3 and live Tokkun proof remain Phase 11 scope.
 - Phase 9 adds Blue Tokkun playresult mapper/classifier fields and accepts Tokkun uploads before battle/normal write paths.
 - Phase 9 verification is source/test/build evidence only; cabinet/RPCS3 and live Tokkun proof remain Phase 11 scope.
+- Phase 10 planning splits Tokkun persistence/readback into three waves: classifier/schema, handler persistence, and userdata readback.
 
 ### Pending Todos
 
@@ -82,7 +84,7 @@ None recorded.
 
 ### Blockers/Concerns
 
-None recorded. Phase 10 should persist/read back only protocol-backed Tokkun tutorial and summary facts while preserving Phase 9 no-write guarantees.
+None recorded. Phase 10 plans should persist/read back only protocol-backed Tokkun tutorial and summary facts while preserving Phase 9 no-write guarantees.
 
 ## Deferred Items
 
@@ -92,6 +94,6 @@ None recorded. Phase 10 should persist/read back only protocol-backed Tokkun tut
 
 ## Session Continuity
 
-Last session: 2026-06-06T10:57:27.447Z
-Stopped at: Phase 10 context gathered
-Resume file: .planning/phases/10-evidence-backed-tokkun-state-persistence-and-readback/10-CONTEXT.md
+Last session: 2026-06-06T11:30:00.000Z
+Stopped at: Phase 10 planned
+Resume file: .planning/phases/10-evidence-backed-tokkun-state-persistence-and-readback/10-01-PLAN.md
