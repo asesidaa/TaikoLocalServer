@@ -27,6 +27,12 @@ public class BaidController : BaseProtocolController<BaidController>
         response.AccessCode = request.AccessCode;
         response.IsPublish = true;
         response.PlayerType = 0;
+        response.ComSvrResult = 1;
+        response.Personid = "1";
+        response.RegCountryId = "JPN";
+        response.MbId = 1;
+        response.PurposeId = 1;
+        response.RegionId = 1;
 
         return Ok(response);
     }

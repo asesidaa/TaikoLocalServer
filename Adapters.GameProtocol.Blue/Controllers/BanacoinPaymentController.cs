@@ -13,8 +13,8 @@ public class BanacoinPaymentController : BaseProtocolController<BanacoinPaymentC
         {
             Result = 1,
             Personid = request.Personid,
-            BnidResult = string.Empty,
-            Chid = string.Empty
+            BnidResult = "Ok",
+            Chid = "1"
         });
     }
 }

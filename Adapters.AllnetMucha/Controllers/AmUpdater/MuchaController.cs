@@ -51,7 +51,7 @@ public class MuchaController : BaseProtocolController<MuchaController>
             { "AREA_FULL_3_EN", "" },
             { "AUTH_INTERVAL", "86400" },
             { "CHARGE_URL", $"{settings.MuchaUrl}/charge/" },
-            { "CONSUME_TOKEN", "0" },
+            { "CONSUME_TOKEN", "1" },
             { "COUNTRY_CD", "JPN" },
             { "DONGLE_FLG", "1" },
             { "EXPIRATION_DATE", "null" },
@@ -68,7 +68,7 @@ public class MuchaController : BaseProtocolController<MuchaController>
             { "URL_1", $"{settings.MuchaUrl}/url1/" },
             { "URL_2", $"{settings.MuchaUrl}/url2/" },
             { "URL_3", $"{settings.MuchaUrl}/url3/" },
-            { "USE_TOKEN", "0" }
+            { "USE_TOKEN", "1" }
         };
         var formOutput = FormOutputUtil.ToFormOutput(response);
         return Content(formOutput);
