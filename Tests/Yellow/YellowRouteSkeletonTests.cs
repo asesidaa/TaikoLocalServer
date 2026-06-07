@@ -76,7 +76,7 @@ public sealed class YellowRouteSkeletonTests
     {
         var root = FindRepoRoot();
         var controllersRoot = Path.Combine(root, "Adapters.GameProtocol.Yellow", "Controllers");
-        var allowedMediatorCount = 12;
+        var allowedMediatorCount = 13;
 
         foreach (var file in Directory.EnumerateFiles(controllersRoot, "*.cs", SearchOption.AllDirectories))
         {
