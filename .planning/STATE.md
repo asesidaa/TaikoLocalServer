@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
 status: Ready to discuss or plan
-stopped_at: Phase 13 completed
-last_updated: "2026-06-07T20:47:00.000Z"
+stopped_at: Phase 14 context gathered
+last_updated: "2026-06-07T21:34:25.321Z"
 last_activity: 2026-06-08 -- Phase 13 verified; ready for Phase 14
 progress:
   total_phases: 6
@@ -109,9 +109,9 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-07T20:47:00.000Z
-Stopped at: Phase 13 completed
-Resume file: None
+Last session: 2026-06-07T21:34:25.314Z
+Stopped at: Phase 14 context gathered
+Resume file: .planning/phases/14-yellow-identity-userdata-crowns-self-best-and-normal-play/14-CONTEXT.md
 
 ## Operator Next Steps
 
