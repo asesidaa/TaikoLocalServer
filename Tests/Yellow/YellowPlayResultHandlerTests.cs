@@ -1,10 +1,323 @@
 using TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
 using TaikoLocalServer.Adapters.GameProtocol.Yellow.Wire;
+using TaikoLocalServer.Application.Ac15;
 
 namespace TaikoLocalServer.Tests.Yellow;
 
 public sealed class YellowPlayResultHandlerTests
 {
+    [Fact]
+    public async Task UpdatePlayResult_Yellow_GuestBaidDoesNotSave()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            0,
+            GameEra.Yellow,
+            new CommonPlayResultData
+            {
+                Baid = 0,
+                AryStageInfoes = [CreateStage(101, 1, 0)]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        Assert.Empty(await fixture.Context.UserSaveDataYellow.ToListAsync());
+        Assert.Empty(await fixture.Context.SongPlayDataYellow.ToListAsync());
+        Assert.Empty(await fixture.Context.SongBestDataYellow.ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Yellow_UnknownUserDoesNotSave()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            99,
+            GameEra.Yellow,
+            new CommonPlayResultData
+            {
+                Baid = 99,
+                AryStageInfoes = [CreateStage(101, 1, 0)]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        Assert.Empty(await fixture.Context.UserSaveDataYellow.ToListAsync());
+        Assert.Empty(await fixture.Context.SongPlayDataYellow.ToListAsync());
+        Assert.Empty(await fixture.Context.SongBestDataYellow.ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Yellow_SavesNormalPlayBestCountersUnlocksFavoritesAndRecentOnlyInYellowTables()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataYellow.Add(UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(1));
+        fixture.Context.UserSaveDataBlue.Add(UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1));
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        fixture.Context.UserSaveDataNijiiro.Add(UserSaveDataNijiiroExtensions.CreateDefaultNijiiroSaveData(1));
+        fixture.Context.SongBestDataBlue.Add(new SongBestDatumBlue
+        {
+            Baid = 1,
+            SongId = 101,
+            Difficulty = Difficulty.Easy,
+            BestScore = 111,
+            BestCrown = CrownType.Clear
+        });
+        fixture.Context.SongBestDataGreen.Add(new SongBestDatumGreen
+        {
+            Baid = 1,
+            SongId = 101,
+            Difficulty = Difficulty.Easy,
+            BestScore = 222,
+            BestCrown = CrownType.Clear
+        });
+        fixture.Context.SongBestDataNijiiro.Add(new SongBestDatumNijiiro
+        {
+            Baid = 1,
+            SongId = 101,
+            Difficulty = Difficulty.Easy,
+            BestScore = 333,
+            BestCrown = CrownType.Clear
+        });
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Yellow,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayDatetime = "20260608120000",
+                GetDonmedal = 10,
+                GetKatsumedal = 2,
+                ItemshopTutorialFlg = 7,
+                IsDevil = true,
+                IsExplain = true,
+                WaiwaiTutorialFlg = 3,
+                DifficultyPlayedCourse = 4,
+                DifficultyPlayedStar = 8,
+                HasDifficultyPlayedCourse = true,
+                HasDifficultyPlayedStar = true,
+                ReleaseSongNoes = [104],
+                GetToneNoes = [4],
+                GetCostumeNo1s = [1],
+                GetCostumeNo2s = [2],
+                GetCostumeNo3s = [3],
+                GetCostumeNo4s = [4],
+                GetCostumeNo5s = [5],
+                GetTitleNoes = [10],
+                HasAryCurrentCostume = true,
+                AryCurrentCostume = new CommonPlayResultData.CostumeData
+                {
+                    Costume1 = 1,
+                    Costume2 = 2,
+                    Costume3 = 3,
+                    Costume4 = 4,
+                    Costume5 = 5
+                },
+                AreaCode = 12,
+                AryStageInfoes = [CreateStage(101, 1, 0)]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var play = Assert.Single(await fixture.Context.SongPlayDataYellow.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Equal(101u, play.SongId);
+        Assert.Equal(Difficulty.Easy, play.Difficulty);
+        Assert.Equal(CrownType.Gold, play.Crown);
+        Assert.Equal(765432u, play.Score);
+        Assert.Equal(95u, play.ScoreRate);
+        Assert.Equal(0u, play.StageMode);
+        Assert.False(play.IsShin);
+        Assert.True(play.IsFavorite);
+        Assert.True(play.IsRecent);
+        Assert.True(play.IsPushed);
+        Assert.Equal(9u, play.SelectedFolderId);
+        Assert.Equal(new DateTime(2026, 6, 8, 12, 0, 0), play.PlayTime);
+
+        var best = await fixture.Context.SongBestDataYellow.FindAsync(1u, 101u, Difficulty.Easy, false);
+        Assert.NotNull(best);
+        Assert.Equal(765432u, best!.BestScore);
+        Assert.Equal(95u, best.BestRate);
+        Assert.Equal(CrownType.Gold, best.BestCrown);
+        Assert.Single(await fixture.Context.YellowFavoriteSongs.Where(row => row.Baid == 1 && row.SongNo == 101).ToListAsync());
+        Assert.Single(await fixture.Context.YellowRecentSongs.Where(row => row.Baid == 1 && row.SongNo == 101).ToListAsync());
+
+        var save = await fixture.Context.UserSaveDataYellow.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(10u, save.TotalGetDonmedal);
+        Assert.Equal(2u, save.TotalGetKatsumedal);
+        Assert.Equal(7u, save.ItemshopTutorialFlg);
+        Assert.True(save.IsDevil);
+        Assert.True(save.IsExplain);
+        Assert.Equal(3u, save.WaiwaiTutorialFlg);
+        Assert.Equal(4u, save.DifficultyPlayedCourse);
+        Assert.Equal(8u, save.DifficultyPlayedStar);
+        Assert.Equal(new DateTime(2026, 6, 8, 12, 0, 0), save.LastPlayDatetime);
+        Assert.Equal(12u, save.PrevAreaCode);
+        Assert.Equal(1u, save.Costume1);
+        Assert.True(BitIsSet(save.ReleaseSongFlg, 104));
+        Assert.True(BitIsSet(save.ToneFlg, 4));
+        Assert.True(BitIsSet(save.CostumeFlg1, 1));
+        Assert.True(BitIsSet(save.CostumeFlg2, 2));
+        Assert.True(BitIsSet(save.CostumeFlg3, 3));
+        Assert.True(BitIsSet(save.CostumeFlg4, 4));
+        Assert.True(BitIsSet(save.CostumeFlg5, 5));
+        Assert.True(BitIsSet(save.TitleFlg, 10));
+        Assert.Equal(1u, save.CategJpopCnt);
+        Assert.Equal(1u, save.SongPushedCnt);
+        Assert.Equal(1u, save.SongFavoriteCnt);
+        Assert.Equal(1u, save.SongRecentCnt);
+
+        var blueBest = await fixture.Context.SongBestDataBlue.FindAsync(1u, 101u, Difficulty.Easy, false);
+        var greenBest = await fixture.Context.SongBestDataGreen.FindAsync(1u, 101u, Difficulty.Easy, false);
+        var nijiiroBest = await fixture.Context.SongBestDataNijiiro.FindAsync(1u, 101u, Difficulty.Easy);
+        Assert.Equal(111u, blueBest!.BestScore);
+        Assert.Equal(222u, greenBest!.BestScore);
+        Assert.Equal(333u, nijiiroBest!.BestScore);
+        Assert.Empty(await fixture.Context.SongPlayDataBlue.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.SongPlayDataGreen.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.SongPlayDataNijiiro.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.BlueFavoriteSongs.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.GreenFavoriteSongs.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.DanScoreDataBlue.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.DanScoreDataGreen.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.DanScoreDataNijiiro.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.BlueShopSeasonStates.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.BlueShopItemStates.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.GreenShopSeasonStates.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.GreenShopItemStates.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.BlueBattleUserStates.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.BlueBattleNpcStates.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.BlueBattleTokenStates.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.BlueBattleStageResults.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.BlueTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Yellow_SavesNormalAndShinBestSeparately()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataYellow.Add(UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Yellow,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                AryStageInfoes =
+                [
+                    CreateStage(101, 1, 0, score: 100000),
+                    CreateStage(101, 1, 1, score: 200000)
+                ]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var normal = await fixture.Context.SongBestDataYellow.FindAsync(1u, 101u, Difficulty.Easy, false);
+        var shin = await fixture.Context.SongBestDataYellow.FindAsync(1u, 101u, Difficulty.Easy, true);
+        Assert.NotNull(normal);
+        Assert.NotNull(shin);
+        Assert.Equal(100000u, normal!.BestScore);
+        Assert.Equal(200000u, shin!.BestScore);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Yellow_FavoriteAndRecentUseYellowLimits()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataYellow.Add(UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+        var stages = Enumerable.Range(101, 12)
+            .Select(song => CreateStage((uint)song, 1, 0))
+            .ToList();
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Yellow,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayDatetime = "20260608120000",
+                AryStageInfoes = stages
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        Assert.Equal(Ac15EraProfiles.Yellow.Limits.MaxFavoriteSongs, await fixture.Context.YellowFavoriteSongs.CountAsync(row => row.Baid == 1));
+        Assert.Equal(Ac15EraProfiles.Yellow.Limits.MaxRecentSongs, await fixture.Context.YellowRecentSongs.CountAsync(row => row.Baid == 1));
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Yellow_TokkunShapedPayloadReturnsSuccessWithoutNormalOrProfileWrites()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var saveData = UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(1);
+        saveData.TotalGetDonmedal = 5;
+        saveData.TotalGetKatsumedal = 7;
+        saveData.CategJpopCnt = 3;
+        saveData.SongPushedCnt = 4;
+        saveData.LastPlayDatetime = new DateTime(2026, 6, 1, 8, 0, 0);
+        fixture.Context.UserSaveDataYellow.Add(saveData);
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var request = new CommonPlayResultData
+        {
+            Baid = 1,
+            PlayMode = (uint)PlayMode.Tokkun,
+            IsTokkunPlayResult = true,
+            TokkunTutorialFlg = 7,
+            TokkunStageData = new CommonPlayResultData.TokkunStageDataDto
+            {
+                BanacoinDatetime = "20260608120000",
+                TokkunSongCnt = 1,
+                TookunSongnoes = [101],
+                TokkunSpeedchangeCnt = 2,
+                TokkunAutoplayCnt = 3,
+                TokkunJumpCnt = 4
+            },
+            GetDonmedal = 50,
+            GetKatsumedal = 60,
+            ReleaseSongNoes = [104],
+            GetToneNoes = [8],
+            GetCostumeNo1s = [1],
+            GetTitleNoes = [11],
+            AryCurrentCostume = new CommonPlayResultData.CostumeData { Costume1 = 1 },
+            AryStageInfoes = [CreateStage(101, 1, 0)]
+        };
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(1, GameEra.Yellow, request), CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var reloaded = await fixture.Context.UserSaveDataYellow.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(5u, reloaded.TotalGetDonmedal);
+        Assert.Equal(7u, reloaded.TotalGetKatsumedal);
+        Assert.Equal(3u, reloaded.CategJpopCnt);
+        Assert.Equal(4u, reloaded.SongPushedCnt);
+        Assert.Equal(new DateTime(2026, 6, 1, 8, 0, 0), reloaded.LastPlayDatetime);
+        Assert.False(BitIsSet(reloaded.ReleaseSongFlg, 104));
+        Assert.False(BitIsSet(reloaded.ToneFlg, 8));
+        Assert.False(BitIsSet(reloaded.CostumeFlg1, 1));
+        Assert.False(BitIsSet(reloaded.TitleFlg, 11));
+        Assert.Null(reloaded.TokkunTutorialFlg);
+        Assert.Empty(await fixture.Context.SongPlayDataYellow.ToListAsync());
+        Assert.Empty(await fixture.Context.SongBestDataYellow.ToListAsync());
+        Assert.Empty(await fixture.Context.YellowFavoriteSongs.ToListAsync());
+        Assert.Empty(await fixture.Context.YellowRecentSongs.ToListAsync());
+    }
+
     [Fact]
     public void PlayResultMapper_Yellow_MapsNormalWirePayloadIntoCommonData()
     {
@@ -132,6 +445,46 @@ public sealed class YellowPlayResultHandlerTests
 
         Assert.Equal(1u, response.Result);
     }
+
+    private static UpdatePlayResultCommandHandler CreateHandler(YellowHandlerFixture fixture)
+        => new(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+    private static CommonPlayResultData.StageData CreateStage(
+        uint songNo,
+        uint level,
+        uint stageMode,
+        uint score = 765432)
+    {
+        return new CommonPlayResultData.StageData
+        {
+            SongNo = songNo,
+            Level = level,
+            StageMode = stageMode,
+            PlayResult = 2,
+            PlayScore = score,
+            ScoreRate = 95,
+            GoodCnt = 100,
+            OkCnt = 20,
+            NgCnt = 3,
+            PoundCnt = 4,
+            ComboCnt = 120,
+            HitCnt = 123,
+            OptionFlg = [1, 2, 3],
+            ToneFlg = [4],
+            MusicCateg = 1,
+            IsPushed = true,
+            IsFavorite = true,
+            IsRecent = true,
+            SelectedFolderId = 9,
+            SoulGauge = 100
+        };
+    }
+
+    private static bool BitIsSet(byte[] source, uint id)
+        => (source[id >> 3] & (1 << ((int)id & 7))) != 0;
 
     private static PlayResultRequest CreateWireRequest(uint baid)
         => new()
