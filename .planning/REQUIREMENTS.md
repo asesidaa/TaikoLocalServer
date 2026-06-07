@@ -89,12 +89,39 @@ Roadmap phase mapping is created during `$gsd-new-milestone` roadmap generation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
+| YFND-01 | Phase 12 | Pending |
+| YFND-02 | Phase 12 | Pending |
+| YFND-03 | Phase 12 | Pending |
+| YFND-04 | Phase 12 | Pending |
+| YCAT-01 | Phase 13 | Pending |
+| YCAT-02 | Phase 13 | Pending |
+| YCAT-03 | Phase 13 | Pending |
+| YCAT-04 | Phase 13 | Pending |
+| YUSR-01 | Phase 14 | Pending |
+| YUSR-02 | Phase 14 | Pending |
+| YPLY-01 | Phase 14 | Pending |
+| YPLY-02 | Phase 14 | Pending |
+| YCRN-01 | Phase 14 | Pending |
+| YDAN-01 | Phase 15 | Pending |
+| YSHOP-01 | Phase 15 | Pending |
+| YSHOP-02 | Phase 15 | Pending |
+| YMED-01 | Phase 15 | Pending |
+| YWAI-01 | Phase 15 | Pending |
+| YUI-01 | Phase 15 | Pending |
+| YTOK-01 | Phase 16 | Pending |
+| YTOK-02 | Phase 16 | Pending |
+| YTOK-03 | Phase 16 | Pending |
+| YBAN-01 | Phase 16 | Pending |
+| YVER-01 | Phase 17 | Pending |
+| YVER-02 | Phase 17 | Pending |
+| YVER-03 | Phase 17 | Pending |
+| YDOC-01 | Phase 17 | Pending |
 
 **Coverage:**
-- v1.2 requirements: 25 total
-- Mapped to phases: 0
-- Unmapped: 25
+- v1.2 requirements: 27 total
+- Mapped to phases: 27
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-06-07*
-*Last updated: 2026-06-07 after initial v1.2 definition*
+*Last updated: 2026-06-07 after v1.2 roadmap traceability mapping*

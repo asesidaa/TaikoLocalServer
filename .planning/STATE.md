@@ -2,11 +2,11 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Yellow AC15 Support
-status: planning
-last_updated: "2026-06-07T11:32:45.308Z"
-last_activity: 2026-06-07
+status: Roadmap approved - ready for Phase 12
+last_updated: "2026-06-07T13:28:16.744Z"
+last_activity: 2026-06-07 - v1.2 roadmap approved; next Phase 12
 progress:
-  total_phases: 0
+  total_phases: 6
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -20,14 +20,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-07)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Defining requirements for Yellow AC15 Support
+**Current focus:** Phase 12 - Yellow Evidence and Era Foundation
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 12 - Yellow Evidence and Era Foundation
 Plan: -
-Status: Defining requirements
-Last activity: 2026-06-07 - Milestone v1.2 started
+Status: Roadmap approved - ready for Phase 12
+Last activity: 2026-06-07 - v1.2 roadmap approved; next Phase 12
 
 ## Performance Metrics
 
@@ -99,4 +99,4 @@ Resume file: .planning/MILESTONES.md
 
 ## Operator Next Steps
 
-- Finish defining v1.2 requirements, then create and approve the Yellow roadmap.
+- Start Phase 12 with `$gsd-discuss-phase 12` or `$gsd-plan-phase 12`.
