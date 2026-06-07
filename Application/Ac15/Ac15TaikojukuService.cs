@@ -9,8 +9,7 @@ public static class Ac15TaikojukuService
         IReadOnlyList<Ac15TaikojukuEntry> packs,
         IReadOnlyList<Ac15MusicInfoEntry> musicFileOrder,
         IReadOnlyCollection<uint> validSongNoes,
-        Ac15ProtocolLimits limits,
-        uint taikojukuVerupOffset)
+        Ac15ProtocolLimits limits)
     {
         var requestedSlots = GetRequestedSlots(requestedDans, limits);
         var validPacksBySlot = packs
@@ -38,7 +37,7 @@ public static class Ac15TaikojukuService
         {
             Result = 1,
             Packs = selectedPacks
-                .Select(pack => ToCommonPack(pack, validSongNoes, limits, taikojukuVerupOffset))
+                .Select(pack => ToCommonPack(pack, validSongNoes, limits))
                 .Where(pack => pack.Songs.Count > 0)
                 .ToList()
         };
@@ -100,13 +99,12 @@ public static class Ac15TaikojukuService
     private static CommonTaikojukuResponse.Pack ToCommonPack(
         Ac15TaikojukuEntry entry,
         IReadOnlyCollection<uint> validSongNoes,
-        Ac15ProtocolLimits limits,
-        uint taikojukuVerupOffset)
+        Ac15ProtocolLimits limits)
     {
         return new CommonTaikojukuResponse.Pack
         {
             GetDan = entry.ChallengeLevel,
-            VerupNo = entry.VerupNo + taikojukuVerupOffset,
+            VerupNo = entry.VerupNo,
             Songs = entry.Songs
                 .Where(song => validSongNoes.Contains(song.SongNo))
                 .Where(song => song.Level <= limits.MaxCourseLevel - 1)

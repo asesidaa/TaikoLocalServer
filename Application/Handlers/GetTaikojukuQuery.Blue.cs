@@ -22,8 +22,7 @@ public partial class GetTaikojukuQueryHandler
             blue.TaikojukuFileOrder.Select(MapBlueTaikojuku).ToArray(),
             blue.MusicInfoFileOrder.Select(MapBlueMusic).ToArray(),
             blue.BlueMusicInfos.Keys.ToArray(),
-            Ac15EraProfiles.Blue.Limits,
-            taikojukuVerupOffset: 0));
+            Ac15EraProfiles.Blue.Limits));
     }
 
     private static Ac15TaikojukuEntry MapBlueTaikojuku(BlueTaikojukuEntry entry) => new()

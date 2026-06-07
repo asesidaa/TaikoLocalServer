@@ -12,7 +12,7 @@ public partial class GetShopFolderHandler
         {
             Result = 1,
             TokenId = seasonTokenId > 0 ? (uint)seasonTokenId : 1,
-            VerupNo = gameDataService.Nijiiro().GetShopFolderVerup() + (seasonTokenId > 0 ? (uint)seasonTokenId : 1),
+            VerupNo = gameDataService.Nijiiro().GetShopFolderVerup(),
             AryShopFolderDatas = shopFolderList
         };
 

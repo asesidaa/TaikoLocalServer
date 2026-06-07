@@ -39,18 +39,10 @@ public partial class GetInitialDataQueryHandler
             response.AryMovieInfoes.Add(movieData.Value);
         }
 
-        // TODO: Figure out what they are individually
-        var verupNo1 = new uint[] { 2, 3, 4, 5, 6, 7, 8, 13, 15, 24, 25, 26, 27, 28, 29, 30, 31 };
-        var aryVerUp = verupNo1.Select(i => new CommonInitialDataCheckResponse.VerupNoData1
-        {
-            MasterType = i,
-            VerupNo = 1
-        }).ToList();
         CommonInitialDataCheckResponse.VerupNoData1[] verupNo1List =
         [
             GetVerupNoData1(DomainConstants.ShopVerupMasterType, gameDataService.Nijiiro().GetShopFolderVerup()),
         ];
-        response.AryVerupNoData1s.AddRange(aryVerUp);
         response.AryVerupNoData1s.AddRange(verupNo1List);
         
         var commonDanDataDictionary = gameDataService.Nijiiro().GetCommonDanDataDictionary();

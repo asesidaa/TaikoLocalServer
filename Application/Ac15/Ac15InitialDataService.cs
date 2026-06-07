@@ -68,15 +68,14 @@ public static class Ac15InitialDataService
 
     public static List<CommonInitialDataCheckResponse.InformationData> BuildTaikojukuInfoRows(
         Ac15CatalogSnapshot snapshot,
-        Ac15EraProfile profile,
-        Func<uint, uint, uint> verupSelector)
+        Ac15EraProfile profile)
         => snapshot.TaikojukuPacks
             .Where(entry => entry.ChallengeLevel >= profile.Limits.MinNormalDanId
                 && entry.ChallengeLevel <= profile.Limits.MaxNormalDanId)
             .Select(entry => new CommonInitialDataCheckResponse.InformationData
             {
                 InfoId = entry.ChallengeLevel,
-                VerupNo = verupSelector(entry.ChallengeLevel, entry.VerupNo)
+                VerupNo = entry.VerupNo
             })
             .ToList();
 }

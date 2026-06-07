@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using TaikoLocalServer.Application.ServerData;
 using TaikoLocalServer.Contracts.AdminApi.ServerData;
 using TaikoLocalServer.Contracts.AdminApi.ViewModels;
+using TaikoLocalServer.Domain;
 
 namespace TaikoLocalServer.Tests.Green;
 
@@ -49,7 +50,47 @@ public sealed class EventFolderLookupSharedTests
             });
     }
 
-    private sealed class TestNijiiroCatalog(ImmutableDictionary<uint, EventFolderData> eventFolders) : INijiiroCatalog
+    [Fact]
+    public async Task GetShopFolder_NijiiroVerupNoUsesCatalogValueWithoutSeasonTokenOffset()
+    {
+        var catalog = new FileGameDataCatalog([
+            new TestNijiiroCatalog(
+                ImmutableDictionary<uint, EventFolderData>.Empty,
+                shopFolderVerup: 11,
+                tokenData: new Dictionary<string, int> { ["seasonTokenId"] = 5 })
+        ]);
+        var handler = new GetShopFolderHandler(catalog);
+
+        var response = await handler.Handle(new GetShopFolderQuery(GameEra.Nijiiro), CancellationToken.None);
+
+        Assert.Equal(5u, response.TokenId);
+        Assert.Equal(11u, response.VerupNo);
+    }
+
+    [Fact]
+    public async Task InitialData_NijiiroVerupNoRowsUseCatalogValuesOnly()
+    {
+        var catalog = new FileGameDataCatalog([
+            new TestNijiiroCatalog(
+                ImmutableDictionary<uint, EventFolderData>.Empty,
+                shopFolderVerup: 11)
+        ]);
+        var handler = new GetInitialDataQueryHandler(
+            catalog,
+            NullLogger<GetInitialDataQueryHandler>.Instance,
+            Options.Create(new ServerSettings()));
+
+        var response = await handler.Handle(new GetInitialDataQuery(GameEra.Nijiiro), CancellationToken.None);
+
+        var row = Assert.Single(response.AryVerupNoData1s);
+        Assert.Equal(DomainConstants.ShopVerupMasterType, row.MasterType);
+        Assert.Equal(11u, row.VerupNo);
+    }
+
+    private sealed class TestNijiiroCatalog(
+        ImmutableDictionary<uint, EventFolderData> eventFolders,
+        uint shopFolderVerup = 1,
+        Dictionary<string, int>? tokenData = null) : INijiiroCatalog
     {
         public GameEra Era => GameEra.Nijiiro;
 
@@ -76,9 +117,9 @@ public sealed class EventFolderLookupSharedTests
 
         public List<ShopFolderData> GetShopFolderList() => [];
 
-        public uint GetShopFolderVerup() => 1;
+        public uint GetShopFolderVerup() => shopFolderVerup;
 
-        public Dictionary<string, int> GetTokenDataDictionary() => [];
+        public Dictionary<string, int> GetTokenDataDictionary() => tokenData ?? [];
 
         public List<uint> GetLockedSongsList() => [];
 

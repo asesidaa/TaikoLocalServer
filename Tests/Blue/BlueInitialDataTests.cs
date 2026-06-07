@@ -67,6 +67,31 @@ public sealed class BlueInitialDataTests
     }
 
     [Fact]
+    public async Task InitialData_BlueTaikojukuVerupNoUsesCatalogValue()
+    {
+        var blueCatalog = new BlueHandlerFixture.TestBlueCatalog(
+            taikojukuFileOrder:
+            [
+                new BlueTaikojukuEntry
+                {
+                    UniqueId = 20001,
+                    ChallengeLevel = 1,
+                    VerupNo = 7
+                }
+            ]);
+        await using var fixture = await BlueHandlerFixture.CreateAsync(blueCatalog);
+        var handler = new GetInitialDataQueryHandler(
+            fixture.Catalog,
+            NullLogger<GetInitialDataQueryHandler>.Instance,
+            Options.Create(new ServerSettings()));
+
+        var response = await handler.Handle(new GetInitialDataQuery(GameEra.Blue), CancellationToken.None);
+
+        var row = Assert.Single(response.AryBlueTaikojukuDatas, data => data.InfoId == 1);
+        Assert.Equal(7u, row.VerupNo);
+    }
+
+    [Fact]
     public async Task InitialData_Blue_AdvertisesParsedBattleStageAvailabilityAndSpecials()
     {
         var battleCatalog = new BlueBattleCatalog

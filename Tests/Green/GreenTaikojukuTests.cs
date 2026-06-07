@@ -148,6 +148,31 @@ public sealed class GreenTaikojukuTests
     }
 
     [Fact]
+    public async Task InitialData_GreenTaikojukuVerupNoUsesCatalogValue()
+    {
+        var greenCatalog = new GreenHandlerFixture.TestGreenCatalog(
+            taikojukuFileOrder:
+            [
+                new GreenTaikojukuEntry
+                {
+                    UniqueId = 20001,
+                    ChallengeLevel = 1,
+                    VerupNo = 7
+                }
+            ]);
+        await using var fixture = await GreenHandlerFixture.CreateAsync(greenCatalog);
+        var handler = new GetInitialDataQueryHandler(
+            fixture.Catalog,
+            NullLogger<GetInitialDataQueryHandler>.Instance,
+            Options.Create(new ServerSettings()));
+
+        var response = await handler.Handle(new GetInitialDataQuery(GameEra.Green), CancellationToken.None);
+
+        var row = Assert.Single(response.AryGreenTaikojukuDatas, data => data.InfoId == 1);
+        Assert.Equal(7u, row.VerupNo);
+    }
+
+    [Fact]
     public async Task InitialData_DoesNotAdvertiseEmptyGreenItemShop()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();

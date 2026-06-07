@@ -16,8 +16,7 @@ public sealed class Ac15TaikojukuServiceTests
             ],
             musicFileOrder: [Music(101), Music(102), Music(103)],
             validSongNoes: [101, 102, 103],
-            Ac15EraProfiles.Green.Limits,
-            taikojukuVerupOffset: 0);
+            Ac15EraProfiles.Green.Limits);
 
         var pack = Assert.Single(response.Packs);
         Assert.Equal(1u, pack.GetDan);
@@ -33,8 +32,7 @@ public sealed class Ac15TaikojukuServiceTests
             packs: [],
             musicFileOrder: [Music(101), Music(102), Music(103), Music(104)],
             validSongNoes: [101, 102, 103, 104],
-            Ac15EraProfiles.Green.Limits,
-            taikojukuVerupOffset: 0);
+            Ac15EraProfiles.Green.Limits);
 
         Assert.Equal(11, response.Packs.Count);
         Assert.All(response.Packs, pack => Assert.InRange(pack.GetDan, 1u, 25u));

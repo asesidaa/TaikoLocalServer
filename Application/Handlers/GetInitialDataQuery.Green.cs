@@ -14,10 +14,7 @@ public partial class GetInitialDataQueryHandler
         response.AryGreenItemShopDatas = Ac15InitialDataService.BuildItemShopInfoRows(snapshot);
         response.AryGreenTelopDatas = Ac15InitialDataService.BuildTelopInfoRows(snapshot);
         response.AryGreenEventFolderDatas = Ac15InitialDataService.BuildEventFolderInfoRows(snapshot);
-        response.AryGreenTaikojukuDatas = Ac15InitialDataService.BuildTaikojukuInfoRows(
-            snapshot,
-            Ac15EraProfiles.Green,
-            (_, verupNo) => verupNo + 1);
+        response.AryGreenTaikojukuDatas = Ac15InitialDataService.BuildTaikojukuInfoRows(snapshot, Ac15EraProfiles.Green);
 
         return ValueTask.FromResult(response);
     }
