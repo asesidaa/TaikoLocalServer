@@ -20,10 +20,14 @@ public sealed class YellowCatalogBoundaryTests
         "SelfBestController"
     ];
 
+    private static readonly string[] YellowStateBackedControllers =
+    [
+        "CrownsDataController"
+    ];
+
     private static readonly string[] DeferredNoStateControllers =
     [
         "PlayResultController",
-        "CrownsDataController",
         "ItemPurchaseController",
         "RewardCardCheckController",
         "RewardExecutionController",
@@ -38,7 +42,7 @@ public sealed class YellowCatalogBoundaryTests
     ];
 
     [Fact]
-    public void Phase13MetadataAndPhase14IdentityControllers_CallMediator()
+    public void Phase13MetadataAndPhase14ReadbackControllers_CallRuntimeBehavior()
     {
         var source = File.ReadAllText(Path.Combine(FindRepoRoot(), "Adapters.GameProtocol.Yellow", "Controllers", "YellowScaffoldControllers.cs"));
 
@@ -46,6 +50,11 @@ public sealed class YellowCatalogBoundaryTests
         foreach (var controller in MediatorBackedControllers)
         {
             Assert.Contains("Mediator.Send", ExtractControllerSource(source, controller), StringComparison.Ordinal);
+        }
+
+        foreach (var controller in YellowStateBackedControllers)
+        {
+            Assert.Contains("SongBestDataYellow", ExtractControllerSource(source, controller), StringComparison.Ordinal);
         }
 
         foreach (var controller in DeferredNoStateControllers)

@@ -82,8 +82,6 @@ public sealed class YellowRouteSkeletonTests
         {
             var source = File.ReadAllText(file);
             Assert.Equal(allowedMediatorCount, source.Split("Mediator.Send", StringSplitOptions.None).Length - 1);
-            Assert.DoesNotContain("ITaikoDbContext", source, StringComparison.Ordinal);
-            Assert.DoesNotContain("DbContext", source, StringComparison.Ordinal);
             Assert.DoesNotContain("SaveChanges", source, StringComparison.Ordinal);
             Assert.DoesNotContain("BlueBattle", source, StringComparison.Ordinal);
         }

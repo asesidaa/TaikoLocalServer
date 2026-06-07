@@ -1,6 +1,8 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.Yellow.Controllers;
 
+using Microsoft.EntityFrameworkCore;
 using TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
+using TaikoLocalServer.Application.Abstractions;
 using TaikoLocalServer.Application.Ac15;
 
 [ApiController]
@@ -297,14 +299,26 @@ public class GetBanacoinInfoController : BaseProtocolController<GetBanacoinInfoC
 
 [ApiController]
 [Route("/v09r00/chassis/crownsdata.php")]
-public class CrownsDataController : BaseProtocolController<CrownsDataController>
+public class CrownsDataController(ITaikoDbContext context, IGameDataCatalog gameDataService)
+    : BaseProtocolController<CrownsDataController>
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult CrownsData([FromBody] CrownsDataRequest request)
+    public async Task<IActionResult> CrownsData([FromBody] CrownsDataRequest request)
     {
-        Logger.LogInformation("Yellow CrownsData request from {ChassisId}", request.ChassisId);
-        return Ok(new CrownsDataResponse { Result = 1 });
+        Logger.LogInformation("Yellow CrownsData request: {@Request}", request);
+        var bestRows = await context.SongBestDataYellow
+            .Where(row => row.Baid == request.Baid)
+            .ToListAsync(HttpContext.RequestAborted);
+        var yellow = gameDataService.Yellow();
+        var inflated = CrownsDataMappers.BuildRawInflatedBody(bestRows, yellow);
+
+        return Ok(new CrownsDataResponse
+        {
+            Result = 1,
+            SongHashVer = yellow.SongHashVersion,
+            HashCrownFlg = inflated
+        });
     }
 }
 
