@@ -44,6 +44,7 @@
 
     <!-- Cross-project shared -->
     <PackageVersion Include="BCrypt.Net-Next" Version="4.1.0" />
+    <PackageVersion Include="BouncyCastle.Cryptography" Version="2.6.2" />
     <PackageVersion Include="DotNetZip" Version="1.16.0" />
     <PackageVersion Include="Otp.NET" Version="1.4.1" />
     <PackageVersion Include="SharpZipLib" Version="1.4.2" />

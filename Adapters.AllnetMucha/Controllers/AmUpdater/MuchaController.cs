@@ -124,4 +124,53 @@ public class MuchaController : BaseProtocolController<MuchaController>
         };
         return Content(FormOutputUtil.ToFormOutput(response));
     }
+
+    [HttpPost("/mucha_front/regiauth.do")]
+    public ContentResult RegiAuth([FromForm] MuchaRegiAuthRequest request)
+    {
+        // International Mucha token registration compatibility. Keep this
+        // stateless: no wallet, balance, registration, or token persistence.
+        if (!MuchaCrypto.HasUsableSendDate(request.SendDate))
+        {
+            return Content(FormOutputUtil.ToFormOutput(new Dictionary<string, string>
+            {
+                { "RESULTS", "000" }
+            }));
+        }
+
+        var encryptedToken = MuchaCrypto.EncryptTokenValue("999", request.SendDate);
+        var response = new Dictionary<string, string>
+        {
+            { "RESULTS", "001" },
+            { "ALL_TOKEN", encryptedToken },
+            { "ADD_TOKEN", encryptedToken }
+        };
+        return Content(FormOutputUtil.ToFormOutput(response));
+    }
+
+    [HttpPost("/mucha_front/tokenstate.do")]
+    public ContentResult TokenState()
+    {
+        var response = new Dictionary<string, string>
+        {
+            { "RESULTS", "001" }
+        };
+        return Content(FormOutputUtil.ToFormOutput(response));
+    }
+
+    [HttpPost("/mucha_front/tokenmarginstate.do")]
+    public ContentResult TokenMarginState()
+    {
+        var response = new Dictionary<string, string>
+        {
+            { "RESULTS", "001" },
+            { "LIMIT_LOWER_TOKEN", "0" },
+            { "LIMIT_UPPER_TOKEN", "0" },
+            { "LAST_SETTLEMENT_MONTH", "0" },
+            { "LAST_LIMIT_LOWER_TOKEN", "0" },
+            { "LAST_LIMIT_UPPER_TOKEN", "0" },
+            { "SETTLEMENT_MONTH", "0" }
+        };
+        return Content(FormOutputUtil.ToFormOutput(response));
+    }
 }
