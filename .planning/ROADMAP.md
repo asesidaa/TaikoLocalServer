@@ -47,7 +47,7 @@ Plans:
 
 **Wave 1**
 
-- [ ] 12-01-PLAN.md - Create Yellow evidence, first-class era enum, adapter project, and generated wire foundation
+- [x] 12-01-PLAN.md - Create Yellow evidence, first-class era enum, adapter project, and generated wire foundation
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
