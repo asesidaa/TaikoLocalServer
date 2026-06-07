@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
-status: verifying
-stopped_at: Completed 13-03-PLAN.md
-last_updated: "2026-06-07T20:37:36.333Z"
-last_activity: 2026-06-08 -- Phase 13 execution completed; ready for verification
+status: Ready to discuss or plan
+stopped_at: Phase 13 completed
+last_updated: "2026-06-07T20:47:00.000Z"
+last_activity: 2026-06-08 -- Phase 13 verified; ready for Phase 14
 progress:
   total_phases: 6
   completed_phases: 2
@@ -21,22 +21,22 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-07)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Phase 13 — Yellow Catalog and AC15 Core Foundation
+**Current focus:** Phase 14 - Yellow Identity, Userdata, Crowns, Self-Best, and Normal Play
 
 ## Current Position
 
-Phase: 13 (Yellow Catalog and AC15 Core Foundation) — VERIFYING
-Plan: 3 of 3
-Status: Phase complete — ready for verification
-Last activity: 2026-06-08 -- Phase 13 execution completed; ready for verification
+Phase: 14 (Yellow Identity, Userdata, Crowns, Self-Best, and Normal Play)
+Plan: Not started
+Status: Ready to discuss or plan
+Last activity: 2026-06-08 -- Phase 13 verified; ready for Phase 14
 
 ## Performance Metrics
 
 **Velocity:**
 
 - Total plans completed: 6 in v1.2
-- Average duration: 11.0 min
-- Total execution time: 77 min
+- Average duration: 13.3 min
+- Total execution time: 80 min
 
 **By Phase:**
 
@@ -47,12 +47,13 @@ Last activity: 2026-06-08 -- Phase 13 execution completed; ready for verificatio
 | 9 | 1/1 complete | 26 min | 26 min |
 | 10 | 3/3 complete | 33 min | 11 min |
 | 11 | 1/1 complete | 3 min | 3 min |
-| 12 | 3 | - | - |
+| 12 | 3/3 complete | 25 min | 8 min |
+| 13 | 3/3 complete | 80 min | 27 min |
 
 **Recent Trend:**
 
-- Last 5 plans: 10-02 completed in 8 min; 10-03 completed in 7 min; 11-01 completed in 3 min; 12-01 completed in 12 min; 12-02 completed in 9 min; 12-03 completed in 4 min
-- Trend: Phase 12 foundation scaffold work was faster than Tokkun runtime slices because it was route/evidence/test guardrail work without runtime persistence.
+- Last 6 plans: 12-01 completed in 12 min; 12-02 completed in 9 min; 12-03 completed in 4 min; 13-01 completed in 45 min; 13-02 completed in 15 min; 13-03 completed in 20 min.
+- Trend: Phase 13 catalog/core work was heavier than Phase 12 scaffolding because it added runtime catalog loading, shared AC15 profile bridges, adapter mappers, and metadata route tests.
 
 | Phase 08 P01 | 5 min | 3 tasks | 2 files |
 | Phase 09 P01 | 26 min | 2 tasks | 5 files |
@@ -84,10 +85,12 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - Phase 9 added Blue Tokkun playresult mapper/classifier fields and accepted Tokkun uploads before battle/normal write paths.
 - Phase 10 added Blue Tokkun persistence/readback for nullable tutorial state and append-only raw history rows.
 - Phase 11 recorded user-confirmed cabinet/RPCS3 runtime verification, full automated test/build evidence, and the final Blue Tokkun contract.
-- [Phase 12]: Yellow concrete game routes use the user-approved /v09r00/chassis prefix from 12-YELLOW-EVIDENCE.md. — Recorded during Plan 12-02 route and Host scaffold execution.
-- [Phase 12]: Phase 12 Yellow controllers are no-state success scaffolds only; runtime persistence, catalog behavior, shop semantics, and battle behavior remain absent. — Plan 12-02 route controllers intentionally avoid Mediator, EF, catalog, and persistence behavior.
-- [Phase 12]: Yellow battle remains an absence contract in Phase 12: no battle route, BattleUserData surface, Blue battle fields, Yellow battle persistence, or Blue battle fallback. — Verified by YellowNoBattleSourceGuardTests during Plan 12-03.
-- [Phase 12]: Yellow startup/version ownership remains shared under /v01r00/chassis; Yellow must not duplicate those routes under /v09r00/chassis. — Verified by YellowSharedVersionRouteTests during Plan 12-03.
+- [Phase 12]: Yellow concrete game routes use the user-approved `/v09r00/chassis` prefix from `12-YELLOW-EVIDENCE.md`.
+- [Phase 12]: Phase 12 Yellow controllers are no-state success scaffolds only; runtime persistence, catalog behavior, shop semantics, and battle behavior remain absent.
+- [Phase 12]: Yellow battle remains an absence contract: no battle route, BattleUserData surface, Blue battle fields, Yellow battle persistence, or Blue battle fallback.
+- [Phase 12]: Yellow startup/version ownership remains shared under `/v01r00/chassis`; Yellow must not duplicate those routes under `/v09r00/chassis`.
+- [Phase 13]: Yellow catalog/core support is catalog-only: no Yellow EF entities, migrations, gameplay writes, AdminApi/WebUI, Tokkun, Banacoin wallet/payment, or battle behavior were introduced.
+- [Phase 13]: Yellow metadata routes are Mediator/catalog-backed only for the eight Phase 13-owned endpoints; deferred runtime routes remain no-state scaffolds.
 
 ### Pending Todos
 
@@ -102,13 +105,14 @@ None recorded.
 | Category | Item | Status | Deferred At |
 |----------|------|--------|-------------|
 | Admin/developer UI | TKUI-01: inspect Blue Tokkun history or debug state through AdminApi/WebUI | Future requirement, not mapped to v1.1 roadmap | v1.1 requirements |
+| Runtime verification | Yellow normal and Tokkun RPCS3/cabinet smoke | Deferred to Phase 17/end-of-range per user orchestration | Phase 13 verification |
 
 ## Session Continuity
 
-Last session: 2026-06-07T20:37:36.333Z
-Stopped at: Completed 13-03-PLAN.md
+Last session: 2026-06-07T20:47:00.000Z
+Stopped at: Phase 13 completed
 Resume file: None
 
 ## Operator Next Steps
 
-- Verify Phase 13, then run code review before advancing to Phase 14.
+- Start Phase 14 with `$gsd-discuss-phase 14`.
