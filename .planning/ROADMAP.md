@@ -110,6 +110,22 @@ Plans:
 4. Yellow self-best returns correct rows for requested songs/difficulties.
 5. Yellow crown tests prove both shared crown packing and exact Yellow response placement/encoding.
 
+**Plans:** 1/3 plans complete
+
+Plans:
+
+**Wave 1**
+
+- [x] 14-01-PLAN.md - Add Yellow-owned persistence and identity/default-save route behavior
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 14-02-PLAN.md - Add Yellow userdata, self-best, and crown readback
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 14-03-PLAN.md - Add Yellow normal playresult persistence and route behavior
+
 ### Phase 15: Yellow Dani, Shop, Medals, WaiWai, and Admin
 
 **Goal:** Implement Yellow Dani, metadata, shop/medals, WaiWai tutorial/logging, and admin readback.

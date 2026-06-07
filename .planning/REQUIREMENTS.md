@@ -22,7 +22,7 @@
 
 ### Yellow Identity And Normal Play
 
-- [ ] **YUSR-01**: Yellow cabinet can register or find a card, obtain BAID/profile data, and create default Yellow-owned save state without writing Blue, Green, or Nijiiro save tables.
+- [x] **YUSR-01**: Yellow cabinet can register or find a card, obtain BAID/profile data, and create default Yellow-owned save state without writing Blue, Green, or Nijiiro save tables.
 - [ ] **YUSR-02**: Yellow cabinet can read userdata with profile fields, settings, unlock flags, favorite songs, recent songs, tutorial flags, and supported Yellow readback fields from Yellow-owned state.
 - [ ] **YPLY-01**: Yellow normal playresult uploads persist Yellow-owned play history, best scores, profile counters, unlocks, favorites, and recent songs without touching Blue, Green, or Nijiiro gameplay state.
 - [ ] **YPLY-02**: Yellow self-best requests return Yellow-owned best score rows for requested songs and difficulties with the correct normal/Ura/Shin support for Yellow.
@@ -97,7 +97,7 @@ Roadmap phase mapping is created during `$gsd-new-milestone` roadmap generation.
 | YCAT-02 | Phase 13 | Complete |
 | YCAT-03 | Phase 13 | Complete |
 | YCAT-04 | Phase 13 | Complete |
-| YUSR-01 | Phase 14 | Pending |
+| YUSR-01 | Phase 14 | Complete |
 | YUSR-02 | Phase 14 | Pending |
 | YPLY-01 | Phase 14 | Pending |
 | YPLY-02 | Phase 14 | Pending |
