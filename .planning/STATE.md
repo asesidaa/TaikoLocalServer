@@ -1,17 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: Blue Tokkun Mode Support
-status: Awaiting next milestone
-stopped_at: Milestone v1.1 completed and archived
-last_updated: "2026-06-06T16:36:51.174Z"
-last_activity: 2026-06-07 - Milestone v1.1 completed and archived
+milestone: v1.2
+milestone_name: Yellow AC15 Support
+status: planning
+last_updated: "2026-06-07T11:32:45.308Z"
+last_activity: 2026-06-07
 progress:
-  total_phases: 5
-  completed_phases: 5
-  total_plans: 7
-  completed_plans: 7
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -20,15 +19,15 @@ progress:
 
 See: `.planning/PROJECT.md` (updated 2026-06-07)
 
-**Core value:** A Blue cabinet can use TaikoLocalServer for normal, battle, and Tokkun play with repeatable cabinet/RPCS3 evidence, without corrupting or conflating Green, Nijiiro, or shared identity state.
-**Current focus:** Awaiting next milestone
+**Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
+**Current focus:** Defining requirements for Yellow AC15 Support
 
 ## Current Position
 
-Phase: Milestone v1.1 complete
+Phase: Not started (defining requirements)
 Plan: -
-Status: Awaiting next milestone
-Last activity: 2026-06-07 - Milestone v1.1 completed and archived
+Status: Defining requirements
+Last activity: 2026-06-07 - Milestone v1.2 started
 
 ## Performance Metrics
 
@@ -84,7 +83,7 @@ None recorded.
 
 ### Blockers/Concerns
 
-None recorded. v1.1 is complete and archived.
+None recorded.
 
 ## Deferred Items
 
@@ -100,4 +99,4 @@ Resume file: .planning/MILESTONES.md
 
 ## Operator Next Steps
 
-- Start the next milestone with `$gsd-new-milestone`.
+- Finish defining v1.2 requirements, then create and approve the Yellow roadmap.

@@ -1,20 +1,22 @@
-# TaikoLocalServer Blue Support
+# TaikoLocalServer AC15 Era Support
 
 ## What This Is
 
 TaikoLocalServer is a local ASP.NET Core server for Taiko no Tatsujin cabinet protocols, local SQLite persistence, era-specific game data catalogs, and a Blazor WebAssembly admin UI. This project continues the existing Blue-era support effort from the Superpowers roadmap in `docs/superpowers/specs/2026-05-27-blue-support-roadmap-design.md`, starting after completed stages A0-A5 and carrying the work through full Blue support.
 
-Full Blue support means normal Blue cabinet flows, Blue battle mode, and Blue Tokkun mode are complete. Blue must remain a first-class era with Blue-owned persistence, handlers, mappers, catalogs, tests, and AdminApi/WebUI routing rather than being treated as a Green flag.
+Full Blue support is complete. The next milestone expands the same era-first AC15 architecture to Yellow: a Yellow cabinet should get the Blue-equivalent normal/Tokkun server surface where Yellow proto and data support it, while Yellow remains a first-class era with its own routes, wire DTOs, persistence, handlers, mappers, catalogs, tests, and AdminApi/WebUI routing.
 
 ## Core Value
 
-A Blue cabinet can use TaikoLocalServer for normal, battle, and Tokkun play with repeatable cabinet/RPCS3 evidence, without corrupting or conflating Green, Nijiiro, or shared identity state.
+AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
 
 ## Current State
 
-v1.1 Blue Tokkun Mode Support shipped on 2026-06-07. The project currently has no active milestone; start the next planning cycle with `$gsd-new-milestone`.
+v1.2 Yellow AC15 Support started on 2026-06-07. The milestone targets Yellow as a first-class AC15 era using `proto/yellow/yellow.proto` and `Host/wwwroot/data/yellow/data`.
 
 Blue now supports normal, battle, and Tokkun play in the same process. Tokkun support is bounded to evidence-backed Blue protocol behavior: stateless Banacoin-adjacent compatibility, Tokkun playresult acceptance, Blue-owned raw Tokkun persistence, nullable tutorial readback, final contract documentation, and user-confirmed cabinet/RPCS3 runtime verification.
+
+Yellow support should reuse the existing AC15 shared-core extraction design where it directly reduces duplicated normal-play, catalog, score, crown, Dani, shop, Tokkun, and admin behavior without merging era state or inventing unsupported routes.
 
 ## Requirements
 
@@ -41,12 +43,19 @@ Blue now supports normal, battle, and Tokkun play in the same process. Tokkun su
 
 ### Active
 
-No active requirements. Define the next milestone with `$gsd-new-milestone`.
+- [ ] Yellow is an enableable first-class era with generated wire types, route ownership, host settings, direct-protobuf game transport, and shared AC15 startup/version routing where current client evidence supports it.
+- [ ] Yellow runtime catalogs load from `Host/wwwroot/data/yellow/data`, including `config/ST9100-1/musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, and supporting AC15 data through shared loaders where the formats match.
+- [ ] Yellow supports Blue-equivalent normal cabinet flows: profile/login, BAID, mydon entry, userdata, initial data, self-best, crowns, recent/favorite songs, Dani Dojo, challenge/tournament/gacha surfaces, recommendations, telops, event folders, movies, and AdminApi/WebUI era routing where Yellow proto/data supports them.
+- [ ] Yellow item shop and medal behavior is implemented with Yellow-owned state, including Don/Katsu medal accounting and Yellow shop response shape differences.
+- [ ] Yellow Tokkun is treated as a real mode, with Yellow-owned Tokkun playresult classification, no-cross-mode write boundaries, nullable tutorial readback, and append-only raw protocol-backed history.
+- [ ] Yellow Banacoin-adjacent routes are compatibility surfaces only unless concrete client/proto/runtime evidence proves wallet or payment authority belongs in this repo.
+- [ ] Blue-only battle behavior is absent from Yellow: no Yellow battle routes, fields, persistence, source guards, or inferred runtime behavior without concrete Yellow evidence.
 
 ### Out of Scope
 
 - Real Banacoin balance, payment, settlement, receipt, coupon, deduction, BNID result, or transaction-history behavior beyond stateless compatibility routes needed for Blue Tokkun availability.
-- Yellow or earlier era support.
+- Red or earlier era support unless started by a later milestone.
+- Yellow battle mode or Blue battle behavior mirrored into Yellow without concrete Yellow proto/log/client evidence.
 - Green AI Battle changes while implementing Blue battle mode; Green AI Battle is contrast material, not the Blue design source.
 - Invented Tokkun rewards, score/crown persistence, paid-coin behavior, practice-time accounting, jump-point behavior, autoplay behavior, speed-change behavior, or song unlock side effects without concrete Blue evidence.
 - Runtime scraping of wiki or official pages.
@@ -65,6 +74,10 @@ No active requirements. Define the next milestone with `$gsd-new-milestone`.
 - v1.0 Blue support is shipped as of 2026-06-03. The user confirmed the remaining stale debug/UAT artifacts were externally fixed and resolved before milestone close.
 - v1.1 Blue Tokkun support shipped on 2026-06-07. The user confirmed cabinet/RPCS3 runtime verification for Tokkun selection, Banacoin request sequence, gameplay entry, final upload, post-upload userdata behavior, and no unexpected blocking endpoint calls.
 - The evidence hierarchy is repo code, proto files, SQLite state, cabinet/RPCS3 logs, IDA/client evidence, and only then public wiki pages for gameplay scoping.
+- Yellow local protocol input is `proto/yellow/yellow.proto`; local game data is under `Host/wwwroot/data/yellow/data`, with the observed versioned config root `config/ST9100-1`.
+- Yellow proto evidence includes Tokkun tutorial and stage-result fields, item shop and Banacoin-adjacent routes, Don/Katsu medal upload fields, and no Blue battle userdata or initialdata battle fields.
+- Public wiki context says Yellow started on 2017-03-15, introduced Don/Katsu medals, and later added "Issho ni Wai Wai Ensou"; this is scoping context only and does not outrank local protocol or runtime evidence.
+- `docs/superpowers/specs/2026-06-07-ac15-core-extraction-design.md` and `docs/superpowers/plans/2026-06-07-ac15-core-extraction/` describe the approved capability-driven AC15 sharing direction for Blue, Green, and future Yellow/Red support. Use that plan where it directly enables Yellow, but keep era routes, wire DTOs, and persistence separate.
 
 ## Shipped Milestones
 
@@ -72,20 +85,26 @@ v1.0 Blue Support is complete. Blue is a first-class supported era with normal p
 
 v1.1 Blue Tokkun Mode Support is complete. Phases 7-11 established the Tokkun evidence contract, stateless Banacoin-adjacent compatibility, Tokkun playresult acceptance, Blue-owned Tokkun persistence/readback, final contract documentation, and runtime verification.
 
+v1.2 Yellow AC15 Support is active. This milestone adds Yellow as a first-class older AC15 era, using the local Yellow proto/data and Blue-equivalent behavior where Yellow supports it.
+
 ## Next Milestone Goals
 
-- No next milestone has been defined yet.
-- Start a fresh requirements and roadmap cycle with `$gsd-new-milestone`.
+- Add Yellow as an enableable first-class era with generated wire DTOs, adapter project, route tests, host settings, and era-aware AdminApi/WebUI routing.
+- Load Yellow normal catalog data from `Host/wwwroot/data/yellow/data`, especially `config/ST9100-1`, through shared AC15 loaders where the file formats match.
+- Implement Yellow-owned persistence and handler/mapping slices for normal play, score/crown readback, Dani, shop/medals, Tokkun, Banacoin-adjacent compatibility, and supported metadata routes.
+- Use AC15 shared-core extraction as an implementation tool where it directly enables Yellow and preserves era-specific hooks, profiles, wire placement, and persistence adapters.
+- Exclude Blue battle behavior from Yellow unless current Yellow evidence proves an equivalent surface exists.
 
 ## Constraints
 
-- **Evidence**: Battle and Tokkun mode semantics must be specified from proto, logs, IDA/client evidence, or cabinet/RPCS3 traces before runtime implementation.
-- **Architecture**: Treat Blue as its own era with Blue-owned partial handlers, DTO fields, mappers, persistence, catalog data, tests, and routes.
-- **State separation**: Keep Blue, Green, and Nijiiro persistent state separate unless the data is truly shared identity state.
-- **Transport safety**: Preserve known Blue direct-protobuf and startup/verup assumptions unless newer client evidence contradicts them.
-- **Scope order**: Finish normal Track A A6-A8 before battle implementation; battle evidence/spec work may prepare Track B, but runtime battle behavior should not jump ahead of normal hardening.
-- **Verification**: Done requires repeatable cabinet/RPCS3 smoke evidence for normal, battle, and Tokkun flows, not only passing server tests.
+- **Evidence**: Yellow mode semantics must be specified from proto, local data, logs, IDA/client evidence, or cabinet/RPCS3 traces before runtime implementation.
+- **Architecture**: Treat each AC15 era as its own adapter/profile with era-owned wire DTOs, routes, persistence, catalog data, tests, and hooks.
+- **State separation**: Keep Blue, Green, Yellow, and Nijiiro persistent state separate unless the data is truly shared identity state.
+- **Transport safety**: Preserve known AC15 direct-protobuf and startup/verup assumptions only where current Yellow client/proto evidence supports them.
+- **Scope order**: Build Yellow foundation, catalog, normal play, shop/medals, and Tokkun before claiming full Yellow support.
+- **Verification**: Done requires automated route/handler/catalog/persistence proof and repeatable cabinet/RPCS3 smoke evidence for Yellow normal and Tokkun flows, not only passing server tests.
 - **Local data**: Blue runtime data under `Host/wwwroot/data/blue/data` is local/operator-supplied and may be gitignored.
+- **Local data**: Yellow runtime data under `Host/wwwroot/data/yellow/data` is local/operator-supplied and may be gitignored.
 - **Build environment**: If `Host/bin/Debug/net10.0` is locked by a running server, verify Host builds with a temp output path.
 
 ## Key Decisions
@@ -106,6 +125,9 @@ v1.1 Blue Tokkun Mode Support is complete. Phases 7-11 established the Tokkun ev
 | Accept Tokkun playresults before battle or normal persistence | Tokkun-shaped payloads can include normal-looking or battle-looking material; Phase 9 proves Tokkun wins and leaves existing Blue state unchanged | Validated in Phase 9 |
 | Persist only protocol-backed Tokkun state | Phase 10 stores nullable tutorial state and raw append-only history while preserving song order/duplicates and client protocol timestamps | Validated in Phase 10 |
 | Close Tokkun only after runtime proof | Phase 11 records user-confirmed cabinet/RPCS3 Tokkun verification plus full automated test/build evidence | Validated in v1.1 |
+| Start Yellow support as v1.2 | Yellow is the next older AC15 era and should build on the completed Blue/Green support rather than reset project numbering | Pending in v1.2 |
+| Include AC15 shared-core extraction in Yellow work where it directly helps | The prior approved AC15 core plan was created specifically to avoid duplicating Blue/Green logic while adding Yellow/Red, but it must preserve separate era routes, wire DTOs, and persistence | Pending in v1.2 |
+| Treat Yellow Tokkun as real and Yellow battle as absent | Yellow proto has Tokkun fields and lacks Blue battle fields/routes; runtime implementation should follow that evidence instead of copying Blue-only behavior | Pending in v1.2 |
 
 ## Evolution
 
@@ -125,4 +147,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-07 after v1.1 milestone completion*
+*Last updated: 2026-06-07 after v1.2 milestone start*
