@@ -41,7 +41,7 @@ Active milestone: **v1.2 Yellow AC15 Support**
 4. Route tests prove Yellow-supported routes exist and disabled Yellow routes are absent.
 5. Source/route/proto tests prove Blue battle behavior is absent from Yellow.
 
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans executed
 
 Plans:
 
@@ -55,7 +55,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 12-03-PLAN.md - Prove shared startup/version ownership and Yellow no-battle guardrails
+- [x] 12-03-PLAN.md - Prove shared startup/version ownership and Yellow no-battle guardrails
 
 ### Phase 13: Yellow Catalog and AC15 Core Foundation
 

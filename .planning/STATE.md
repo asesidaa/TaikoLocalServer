@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
-status: executing
-stopped_at: Completed 12-02-PLAN.md
-last_updated: "2026-06-07T16:23:11.325Z"
+status: verifying
+stopped_at: Completed 12-03-PLAN.md
+last_updated: "2026-06-07T16:40:26.106Z"
 last_activity: 2026-06-07 -- Phase 12 execution started
 progress:
   total_phases: 6
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 2
-  percent: 0
+  completed_plans: 3
+  percent: 17
 ---
 
 # Project State
@@ -27,7 +27,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-07)
 
 Phase: 12 (yellow-evidence-and-era-foundation) — EXECUTING
 Plan: 3 of 3
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-06-07 -- Phase 12 execution started
 
 ## Performance Metrics
@@ -61,6 +61,7 @@ Last activity: 2026-06-07 -- Phase 12 execution started
 | Phase 11 P01 | 3 min | 4 tasks | 4 files |
 | Phase 12 P01 | 12 min | 2 tasks | 13 files |
 | Phase 12 P02 | 9min | 3 tasks | 7 files |
+| Phase 12 P03 | 4min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -81,6 +82,8 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - Phase 11 recorded user-confirmed cabinet/RPCS3 runtime verification, full automated test/build evidence, and the final Blue Tokkun contract.
 - [Phase 12]: Yellow concrete game routes use the user-approved /v09r00/chassis prefix from 12-YELLOW-EVIDENCE.md. — Recorded during Plan 12-02 route and Host scaffold execution.
 - [Phase 12]: Phase 12 Yellow controllers are no-state success scaffolds only; runtime persistence, catalog behavior, shop semantics, and battle behavior remain absent. — Plan 12-02 route controllers intentionally avoid Mediator, EF, catalog, and persistence behavior.
+- [Phase 12]: Yellow battle remains an absence contract in Phase 12: no battle route, BattleUserData surface, Blue battle fields, Yellow battle persistence, or Blue battle fallback. — Verified by YellowNoBattleSourceGuardTests during Plan 12-03.
+- [Phase 12]: Yellow startup/version ownership remains shared under /v01r00/chassis; Yellow must not duplicate those routes under /v09r00/chassis. — Verified by YellowSharedVersionRouteTests during Plan 12-03.
 
 ### Pending Todos
 
@@ -98,8 +101,8 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-07T16:21:17.453Z
-Stopped at: Completed 12-02-PLAN.md
+Last session: 2026-06-07T16:39:08.897Z
+Stopped at: Completed 12-03-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
