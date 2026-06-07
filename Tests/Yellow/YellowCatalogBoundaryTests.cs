@@ -17,6 +17,7 @@ public sealed class YellowCatalogBoundaryTests
         "BaidController",
         "MyDonEntryController",
         "UserDataController",
+        "PlayResultController",
         "SelfBestController"
     ];
 
@@ -27,7 +28,6 @@ public sealed class YellowCatalogBoundaryTests
 
     private static readonly string[] DeferredNoStateControllers =
     [
-        "PlayResultController",
         "ItemPurchaseController",
         "RewardCardCheckController",
         "RewardExecutionController",
@@ -89,7 +89,8 @@ public sealed class YellowCatalogBoundaryTests
         var forbiddenTokens = new[]
         {
             "YellowBattle",
-            "YellowTokkun",
+            "YellowTokkunStageResult",
+            "YellowTokkunStageResults",
             "BanacoinWallet",
             "ItemPurchaseCommand.Yellow"
         };
