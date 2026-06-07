@@ -23,6 +23,12 @@
         "CustomizationNameDataPath": "",
         "EnableShop": true,
         "ActiveShopSeasonId": 1
+      },
+      "Yellow": {
+        "Enabled": false,
+        "AutoExtractCatalog": true,
+        "GameDataPath": "wwwroot/data/yellow/data",
+        "CustomizationNameDataPath": ""
       }
     }
   }
