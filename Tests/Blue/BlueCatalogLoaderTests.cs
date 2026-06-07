@@ -33,16 +33,18 @@ public sealed class BlueCatalogLoaderTests
     public async Task TaikojukuLoader_ReadsLocalBlueDataWhenPresent()
     {
         var file = FindRepoFileOrSkip("Host", "wwwroot", "data", "blue", "data", "config", "S10100-1", "musicmedleyinfo.xml");
-        if (file is null)
+        var verupFile = FindRepoFileOrSkip("Host", "wwwroot", "data", "blue", BlueTaikojukuLoader.VerupFileName);
+        if (file is null || verupFile is null)
         {
             return;
         }
 
-        var entries = await BlueTaikojukuLoader.LoadFromFileAsync(file, CancellationToken.None);
+        var entries = await BlueTaikojukuLoader.LoadFromFileAsync(file, verupFile, CancellationToken.None);
 
         Assert.NotEmpty(entries);
         Assert.True(entries[0].UniqueId > 0);
         Assert.True(entries[0].ChallengeLevel > 0);
+        Assert.Equal(1u, entries[0].VerupNo);
         Assert.NotEmpty(entries[0].Songs);
     }
 

@@ -118,6 +118,69 @@ public sealed class Ac15CatalogLoaderTests
     }
 
     [Fact]
+    public async Task TaikojukuLoader_AppliesVerupSidecarByChallengeLevel()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.xml");
+        var verupPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.json");
+        await File.WriteAllTextAsync(path, """
+            <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+            <boost_serialization signature="serialization::archive" version="8">
+              <MusicMedleyInfoData>
+                <uniqueid>20001</uniqueid>
+                <medleyname>First Dan</medleyname>
+                <difficulty>3</difficulty>
+                <challengelv>1</challengelv>
+                <Content>
+                  <musicid>song_a</musicid>
+                  <uniqueid>100</uniqueid>
+                  <difficulty>0</difficulty>
+                  <notes>74</notes>
+                </Content>
+              </MusicMedleyInfoData>
+              <MusicMedleyInfoData>
+                <uniqueid>20002</uniqueid>
+                <medleyname>Second Dan</medleyname>
+                <difficulty>4</difficulty>
+                <challengelv>2</challengelv>
+                <Content>
+                  <musicid>song_b</musicid>
+                  <uniqueid>101</uniqueid>
+                  <difficulty>1</difficulty>
+                  <notes>80</notes>
+                </Content>
+              </MusicMedleyInfoData>
+            </boost_serialization>
+            """);
+        await File.WriteAllTextAsync(verupPath, """
+            {
+              "defaultVerupNo": 5,
+              "packs": [
+                { "challengeLevel": 2, "verupNo": 7 }
+              ]
+            }
+            """);
+
+        try
+        {
+            var entries = await Ac15TaikojukuLoader.LoadFromFileAsync(
+                path,
+                verupPath,
+                "Test",
+                CancellationToken.None);
+
+            Assert.Collection(
+                entries,
+                entry => Assert.Equal(5u, entry.VerupNo),
+                entry => Assert.Equal(7u, entry.VerupNo));
+        }
+        finally
+        {
+            File.Delete(path);
+            File.Delete(verupPath);
+        }
+    }
+
+    [Fact]
     public async Task TuningLoader_ReadsHeaderCountAndExRecords()
     {
         var path = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.bin");

@@ -1,14 +1,20 @@
 using TaikoLocalServer.Application.Catalog.Ac15;
 using TaikoLocalServer.Application.Catalog.Green;
+using TaikoLocalServer.Domain.Enums;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Ac15;
 
 namespace TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
 
 public sealed class GreenTaikojukuLoader
 {
+    public const string VerupFileName = "green_taikojuku_verup_data.json";
+
     public Task<IReadOnlyList<GreenTaikojukuEntry>> LoadAsync(CancellationToken cancellationToken)
     {
-        return LoadFromFileAsync(GreenGameDataPaths.MusicMedleyInfoXml, cancellationToken);
+        return LoadFromFileAsync(
+            GreenGameDataPaths.MusicMedleyInfoXml,
+            Path.Combine(PathHelper.GetDataPath(GameEra.Green), VerupFileName),
+            cancellationToken);
     }
 
     public static async Task<IReadOnlyList<GreenTaikojukuEntry>> LoadFromFileAsync(
@@ -16,6 +22,19 @@ public sealed class GreenTaikojukuLoader
         CancellationToken cancellationToken)
     {
         var entries = await Ac15TaikojukuLoader.LoadFromFileAsync(path, cancellationToken);
+        return entries.Select(Map).ToArray();
+    }
+
+    public static async Task<IReadOnlyList<GreenTaikojukuEntry>> LoadFromFileAsync(
+        string path,
+        string verupPath,
+        CancellationToken cancellationToken)
+    {
+        var entries = await Ac15TaikojukuLoader.LoadFromFileAsync(
+            path,
+            verupPath,
+            nameof(GameEra.Green),
+            cancellationToken);
         return entries.Select(Map).ToArray();
     }
 

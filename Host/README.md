@@ -54,6 +54,7 @@ wwwroot/data/
 |   |-- movie_data.json         Green attract movie permissions
 |   |-- green_item_shop_data.json Green item-shop seasons and item rows
 |   |-- green_event_folder_data.json Optional Green event folders
+|   |-- green_taikojuku_verup_data.json Green Taikojuku verup metadata
 |   |-- green_costume_data.json Generated or curated Green customization catalog
 |   |-- green_title_data.json   Generated or curated Green title catalog
 |   |-- green_neiro_data.json   Generated or curated Green tone catalog
@@ -69,6 +70,7 @@ wwwroot/data/
 |   |-- blue_telop_data.json        Optional Blue telops
 |   |-- blue_movie_data.json        Blue attract movie permissions
 |   |-- blue_item_shop_data.json    Blue item shop seasons and item rows
+|   |-- blue_taikojuku_verup_data.json Blue Taikojuku verup metadata
 |   |-- blue_costume_data.json      Generated or curated Blue customization catalog
 |   |-- blue_title_data.json        Generated or curated Blue title catalog
 |   |-- blue_neiro_data.json        Generated or curated Blue tone catalog
@@ -198,7 +200,21 @@ era-specific:
 | Telops | `telop_data.json` | `blue_telop_data.json` | No telops |
 | Attract movies | `movie_data.json` | `blue_movie_data.json` | Auto-discover nonzero `attract_cm_###.pam` files |
 | Event folders | `green_event_folder_data.json` | `blue_event_folder_data.json` | No event folders |
+| Taikojuku verup | `green_taikojuku_verup_data.json` | `blue_taikojuku_verup_data.json` | XML-loaded Taikojuku packs keep `verup_no = 0` |
 | Item shop | `green_item_shop_data.json` | `blue_item_shop_data.json` | Required only when shop is enabled |
+
+Taikojuku packs come from `musicmedleyinfo.xml`, but that original AC15 file
+does not carry the protocol `verup_no`. Use the era sidecar to set one default
+for all packs and optional overrides by Taikojuku `challengeLevel`:
+
+```json
+{
+  "defaultVerupNo": 1,
+  "packs": [
+    { "challengeLevel": 21, "verupNo": 2 }
+  ]
+}
+```
 
 Green and Blue movie files use the same object shape:
 

@@ -141,6 +141,7 @@
     <Content Update="wwwroot\data\green\movie_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\green\green_item_shop_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\green\green_event_folder_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\green\green_taikojuku_verup_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
 
     <!--Blue Game Data-->
     <Content Remove="wwwroot\data\blue\data\**" />
@@ -150,6 +151,7 @@
     <Content Update="wwwroot\data\blue\blue_movie_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\blue\blue_item_shop_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\blue\blue_event_folder_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\blue\blue_taikojuku_verup_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
   </ItemGroup>
 
 

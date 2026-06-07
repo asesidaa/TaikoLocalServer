@@ -29,12 +29,14 @@ public sealed class GreenCatalogLoaderTests
     {
         var repoRoot = FindRepoRoot();
         var file = Path.Combine(repoRoot, "Host", "wwwroot", "data", "green", "data", "config", "S11100-1", "musicmedleyinfo.xml");
+        var verupFile = Path.Combine(repoRoot, "Host", "wwwroot", "data", "green", GreenTaikojukuLoader.VerupFileName);
 
-        var entries = await GreenTaikojukuLoader.LoadFromFileAsync(file, CancellationToken.None);
+        var entries = await GreenTaikojukuLoader.LoadFromFileAsync(file, verupFile, CancellationToken.None);
 
         Assert.NotEmpty(entries);
         Assert.True(entries[0].UniqueId > 0);
         Assert.True(entries[0].ChallengeLevel > 0);
+        Assert.Equal(1u, entries[0].VerupNo);
         Assert.NotEmpty(entries[0].Songs);
         Assert.True(entries[0].Songs[0].SongNo > 0);
         Assert.Equal(90u, entries[0].Conditions.SoulGauge);
