@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
 status: In progress
-stopped_at: Completed 14-01-PLAN.md
-last_updated: "2026-06-07T22:33:50Z"
-last_activity: 2026-06-08 -- completed Phase 14 Plan 01 Yellow identity/default save
+stopped_at: Completed 14-02-PLAN.md
+last_updated: "2026-06-07T23:15:54Z"
+last_activity: 2026-06-08 -- completed Phase 14 Plan 02 Yellow userdata/self-best/crown readback
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 9
-  completed_plans: 7
-  percent: 78
+  completed_plans: 8
+  percent: 89
 ---
 
 # Project State
@@ -26,9 +26,9 @@ See: `.planning/PROJECT.md` (updated 2026-06-07)
 ## Current Position
 
 Phase: 14 (Yellow Identity, Userdata, Crowns, Self-Best, and Normal Play)
-Plan: 14-02
+Plan: 14-03
 Status: In progress
-Last activity: 2026-06-08 -- completed Phase 14 Plan 01 Yellow identity/default save
+Last activity: 2026-06-08 -- completed Phase 14 Plan 02 Yellow userdata/self-best/crown readback
 
 ## Performance Metrics
 
@@ -52,7 +52,7 @@ Last activity: 2026-06-08 -- completed Phase 14 Plan 01 Yellow identity/default 
 
 **Recent Trend:**
 
-- Last 6 plans: 12-02 completed in 9 min; 12-03 completed in 4 min; 13-01 completed in 45 min; 13-02 completed in 15 min; 13-03 completed in 20 min; 14-01 completed in 72 min.
+- Last 6 plans: 12-03 completed in 4 min; 13-01 completed in 45 min; 13-02 completed in 15 min; 13-03 completed in 20 min; 14-01 completed in 72 min; 14-02 completed in 27 min.
 - Trend: Phase 13 catalog/core work was heavier than Phase 12 scaffolding because it added runtime catalog loading, shared AC15 profile bridges, adapter mappers, and metadata route tests.
 
 | Phase 08 P01 | 5 min | 3 tasks | 2 files |
@@ -68,6 +68,7 @@ Last activity: 2026-06-08 -- completed Phase 14 Plan 01 Yellow identity/default 
 | Phase 13 P02 | 15 min | 2 tasks | 10 files |
 | Phase 13 P03 | 20 min | 2 tasks | 27 files |
 | Phase 14 P01 | 72 min | 2 tasks | 24 files |
+| Phase 14 P02 | 27 min | 3 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -93,6 +94,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 13]: Yellow catalog/core support is catalog-only: no Yellow EF entities, migrations, gameplay writes, AdminApi/WebUI, Tokkun, Banacoin wallet/payment, or battle behavior were introduced.
 - [Phase 13]: Yellow metadata routes are Mediator/catalog-backed only for the eight Phase 13-owned endpoints; deferred runtime routes remain no-state scaffolds.
 - [Phase 14]: Plan 01 added Yellow-owned save, best, play-history, favorite, and recent-song tables plus Mediator-backed Yellow BAID/mydon routes for identity/default save behavior.
+- [Phase 14]: Plan 02 added Yellow userdata and self-best readback plus raw Yellow crown field-3 proof/readback from Yellow-owned state.
 
 ### Pending Todos
 
@@ -112,9 +114,9 @@ None recorded.
 ## Session Continuity
 
 Last session: 2026-06-07T21:34:25.314Z
-Stopped at: Completed 14-01-PLAN.md
-Resume file: .planning/phases/14-yellow-identity-userdata-crowns-self-best-and-normal-play/14-02-PLAN.md
+Stopped at: Completed 14-02-PLAN.md
+Resume file: .planning/phases/14-yellow-identity-userdata-crowns-self-best-and-normal-play/14-03-PLAN.md
 
 ## Operator Next Steps
 
-- Continue Phase 14 with `14-02-PLAN.md`.
+- Continue Phase 14 with `14-03-PLAN.md`.

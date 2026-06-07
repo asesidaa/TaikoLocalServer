@@ -23,10 +23,10 @@
 ### Yellow Identity And Normal Play
 
 - [x] **YUSR-01**: Yellow cabinet can register or find a card, obtain BAID/profile data, and create default Yellow-owned save state without writing Blue, Green, or Nijiiro save tables.
-- [ ] **YUSR-02**: Yellow cabinet can read userdata with profile fields, settings, unlock flags, favorite songs, recent songs, tutorial flags, and supported Yellow readback fields from Yellow-owned state.
+- [x] **YUSR-02**: Yellow cabinet can read userdata with profile fields, settings, unlock flags, favorite songs, recent songs, tutorial flags, and supported Yellow readback fields from Yellow-owned state.
 - [ ] **YPLY-01**: Yellow normal playresult uploads persist Yellow-owned play history, best scores, profile counters, unlocks, favorites, and recent songs without touching Blue, Green, or Nijiiro gameplay state.
-- [ ] **YPLY-02**: Yellow self-best requests return Yellow-owned best score rows for requested songs and difficulties with the correct normal/Ura/Shin support for Yellow.
-- [ ] **YCRN-01**: Yellow crown readback uses proven Yellow crown placement and response encoding, including an explicit compression/raw-byte test instead of assuming Blue/Green gzip behavior.
+- [x] **YPLY-02**: Yellow self-best requests return Yellow-owned best score rows for requested songs and difficulties with the correct normal/Ura/Shin support for Yellow.
+- [x] **YCRN-01**: Yellow crown readback uses proven Yellow crown placement and response encoding, including an explicit compression/raw-byte test instead of assuming Blue/Green gzip behavior.
 - [ ] **YDAN-01**: Yellow Taikojuku/Dani requests and Dan playresults persist and read back Yellow-owned Dan state with Yellow profile limits and no Green/Blue Dan table writes.
 
 ### Yellow Shop, Medals, WaiWai, And Admin
@@ -98,10 +98,10 @@ Roadmap phase mapping is created during `$gsd-new-milestone` roadmap generation.
 | YCAT-03 | Phase 13 | Complete |
 | YCAT-04 | Phase 13 | Complete |
 | YUSR-01 | Phase 14 | Complete |
-| YUSR-02 | Phase 14 | Pending |
+| YUSR-02 | Phase 14 | Complete |
 | YPLY-01 | Phase 14 | Pending |
-| YPLY-02 | Phase 14 | Pending |
-| YCRN-01 | Phase 14 | Pending |
+| YPLY-02 | Phase 14 | Complete |
+| YCRN-01 | Phase 14 | Complete |
 | YDAN-01 | Phase 15 | Pending |
 | YSHOP-01 | Phase 15 | Pending |
 | YSHOP-02 | Phase 15 | Pending |
@@ -125,4 +125,4 @@ Roadmap phase mapping is created during `$gsd-new-milestone` roadmap generation.
 
 ---
 *Requirements defined: 2026-06-07*
-*Last updated: 2026-06-07 after v1.2 roadmap traceability mapping*
+*Last updated: 2026-06-08 after Phase 14 Plan 02 readback closeout*

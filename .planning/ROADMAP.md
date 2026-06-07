@@ -110,7 +110,7 @@ Plans:
 4. Yellow self-best returns correct rows for requested songs/difficulties.
 5. Yellow crown tests prove both shared crown packing and exact Yellow response placement/encoding.
 
-**Plans:** 1/3 plans complete
+**Plans:** 2/3 plans complete
 
 Plans:
 
@@ -120,7 +120,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 14-02-PLAN.md - Add Yellow userdata, self-best, and crown readback
+- [x] 14-02-PLAN.md - Add Yellow userdata, self-best, and crown readback
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -203,4 +203,4 @@ See `.planning/milestones/v1.1-ROADMAP.md` and `.planning/milestones/v1.1-phases
 |-----------|--------|-------|--------|---------|
 | v1.0 Blue Support | 1-6 | 30 roadmap plans | Shipped | 2026-06-03 |
 | v1.1 Blue Tokkun Mode Support | 7-11 | 7 GSD plans | Shipped | 2026-06-07 |
-| v1.2 Yellow AC15 Support | 12-17 | 6 GSD plans complete | Active, Phase 13 complete | - |
+| v1.2 Yellow AC15 Support | 12-17 | 8 GSD plans complete | Active, Phase 14 Plan 02 complete | - |
