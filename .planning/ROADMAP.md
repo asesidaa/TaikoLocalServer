@@ -28,7 +28,7 @@ Active milestone: **v1.2 Yellow AC15 Support**
 ### v1.2 Execution Checklist
 
 - [x] **Phase 12: Yellow Evidence and Era Foundation** - Prove Yellow route/version/transport boundaries and add first-class Yellow adapter scaffolding. (completed 2026-06-07)
-- [ ] **Phase 13: Yellow Catalog and AC15 Core Foundation** - Load Yellow `ST9100-1` catalog data and establish Yellow AC15 profile/core contracts.
+- [ ] **Phase 13: Yellow Catalog and AC15 Core Foundation** - Load Yellow `ST9100-1` catalog data and establish Yellow AC15 profile/core contracts. (verification pending)
 - [ ] **Phase 14: Yellow Identity, Userdata, Crowns, Self-Best, and Normal Play** - Implement Yellow-owned profile/userdata/normal play loop, including crown encoding proof.
 - [ ] **Phase 15: Yellow Dani, Shop, Medals, WaiWai, and Admin** - Implement Yellow Dani, metadata, shop/medals, WaiWai tutorial/logging, and admin readback.
 - [ ] **Phase 16: Yellow Tokkun and Banacoin Compatibility** - Add Yellow Tokkun acceptance/persistence/readback and stateless Banacoin-adjacent compatibility.
@@ -80,7 +80,7 @@ Plans:
 4. Initial-data availability is catalog-backed and omits unsupported feature advertisements.
 5. Metadata routes use Yellow catalog-backed data and pass route/mapping tests.
 
-**Plans:** 2/3 plans complete
+**Plans:** 3/3 plans complete
 
 Plans:
 
@@ -94,7 +94,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 13-03-PLAN.md - Replace Phase 12 no-state Yellow metadata scaffolds with catalog-backed Mediator routes where Phase 13 owns behavior
+- [x] 13-03-PLAN.md - Replace Phase 12 no-state Yellow metadata scaffolds with catalog-backed Mediator routes where Phase 13 owns behavior
 
 ### Phase 14: Yellow Identity, Userdata, Crowns, Self-Best, and Normal Play
 
@@ -187,4 +187,4 @@ See `.planning/milestones/v1.1-ROADMAP.md` and `.planning/milestones/v1.1-phases
 |-----------|--------|-------|--------|---------|
 | v1.0 Blue Support | 1-6 | 30 roadmap plans | Shipped | 2026-06-03 |
 | v1.1 Blue Tokkun Mode Support | 7-11 | 7 GSD plans | Shipped | 2026-06-07 |
-| v1.2 Yellow AC15 Support | 12-17 | 3 GSD plans complete | Active, Phase 12 complete | - |
+| v1.2 Yellow AC15 Support | 12-17 | 6 GSD plans complete | Active, Phase 13 verification pending | - |
