@@ -15,10 +15,12 @@ public partial class BaidQueryHandler(
         GameEra.Nijiiro => HandleNijiiro(request, cancellationToken),
         GameEra.Green => HandleGreen(request, cancellationToken),
         GameEra.Blue => HandleBlue(request, cancellationToken),
+        GameEra.Yellow => HandleYellow(request, cancellationToken),
         _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
     };
 
     private partial ValueTask<CommonBaidResponse> HandleNijiiro(BaidQuery request, CancellationToken cancellationToken);
     private partial ValueTask<CommonBaidResponse> HandleGreen(BaidQuery request, CancellationToken cancellationToken);
     private partial ValueTask<CommonBaidResponse> HandleBlue(BaidQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonBaidResponse> HandleYellow(BaidQuery request, CancellationToken cancellationToken);
 }

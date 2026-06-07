@@ -1,6 +1,7 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.Yellow.Controllers;
 
 using TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
+using TaikoLocalServer.Application.Ac15;
 
 [ApiController]
 [Route("/v09r00/chassis/initialdatacheck.php")]
@@ -152,10 +153,35 @@ public class BaidController : BaseProtocolController<BaidController>
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult Baid([FromBody] BAIDRequest request)
+    public async Task<IActionResult> Baid([FromBody] BAIDRequest request)
     {
-        Logger.LogInformation("Yellow BAID request from {ChassisId}", request.ChassisId);
-        return Ok(new BAIDResponse { Result = 1 });
+        Logger.LogInformation("Yellow BAID request: {@Request}", request);
+        var common = await Mediator.Send(new BaidQuery(GameEra.Yellow, request.AccessCode), HttpContext.RequestAborted);
+
+        if (common.IsNewUser)
+        {
+            Logger.LogInformation("New Yellow user with access code {AccessCode}", request.AccessCode);
+
+            return Ok(new BAIDResponse
+            {
+                Result = 1,
+                PlayerType = 1,
+                Baid = common.Baid
+            });
+        }
+
+        var response = BaidResponseMapper.Map(common);
+        response.AccessCode = request.AccessCode;
+        response.IsPublish = true;
+        response.PlayerType = 0;
+        response.ComSvrResult = 1;
+        response.Personid = "1";
+        response.RegCountryId = "JPN";
+        response.MbId = 1;
+        response.PurposeId = 1;
+        response.RegionId = 1;
+
+        return Ok(response);
     }
 }
 
@@ -165,10 +191,25 @@ public class MyDonEntryController : BaseProtocolController<MyDonEntryController>
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult MyDonEntry([FromBody] MydonEntryRequest request)
+    public async Task<IActionResult> MyDonEntry([FromBody] MydonEntryRequest request)
     {
-        Logger.LogInformation("Yellow MyDonEntry request from {ChassisId}", request.ChassisId);
-        return Ok(new MydonEntryResponse { Result = 1 });
+        Logger.LogInformation("Yellow MyDonEntry request: {@Request}", request);
+
+        var common = await Mediator.Send(
+            new AddMyDonEntryCommand(GameEra.Yellow, request.AccessCode, request.MydonName, 0),
+            HttpContext.RequestAborted);
+
+        return Ok(new MydonEntryResponse
+        {
+            Result = common.Result,
+            ComSvrResult = common.ComSvrResult,
+            Baid = common.Baid,
+            AccessCode = common.AccessCode,
+            IsPublish = true,
+            MydonName = common.MydonName,
+            ContentInfo = new byte[Ac15EraProfiles.Yellow.Limits.ContentInfoBytes],
+            Personid = "1"
+        });
     }
 }
 
