@@ -34,11 +34,28 @@ Active milestone: **v1.2 Yellow AC15 Support**
 **Requirements:** YFND-01, YFND-02, YFND-03, YFND-04
 
 **Success criteria:**
+
 1. Yellow route/version evidence records supported endpoints, startup/version ownership, direct-protobuf expectations, and unresolved gaps.
 2. Yellow adapter project compiles generated Yellow wire DTOs from `proto/yellow/yellow.proto` and `proto/yellow/vsinterface.proto`.
 3. Host settings and application-part registration enable Yellow routes only when Yellow is configured.
 4. Route tests prove Yellow-supported routes exist and disabled Yellow routes are absent.
 5. Source/route/proto tests prove Blue battle behavior is absent from Yellow.
+
+**Plans:** 0/3 plans executed
+
+Plans:
+
+**Wave 1**
+
+- [ ] 12-01-PLAN.md - Create Yellow evidence, first-class era enum, adapter project, and generated wire foundation
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 12-02-PLAN.md - Wire Yellow no-state route scaffolding and Host enablement after route-prefix evidence is supplied
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 12-03-PLAN.md - Prove shared startup/version ownership and Yellow no-battle guardrails
 
 ### Phase 13: Yellow Catalog and AC15 Core Foundation
 
@@ -47,6 +64,7 @@ Active milestone: **v1.2 Yellow AC15 Support**
 **Requirements:** YCAT-01, YCAT-02, YCAT-03, YCAT-04
 
 **Success criteria:**
+
 1. Yellow runtime catalog resolves data paths through `PathHelper` and era data helpers.
 2. Yellow catalog tests load `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, and relevant `ST9100-1` supporting files.
 3. AC15 profile/limits/wire-placement contracts describe Yellow capabilities without shared EF tables or shared wire DTOs.
@@ -60,6 +78,7 @@ Active milestone: **v1.2 Yellow AC15 Support**
 **Requirements:** YUSR-01, YUSR-02, YPLY-01, YPLY-02, YCRN-01
 
 **Success criteria:**
+
 1. Yellow BAID/profile/default save flow creates and reads Yellow-owned state without Blue/Green/Nijiiro gameplay writes.
 2. Yellow userdata readback includes supported profile, settings, unlock, tutorial, favorite, recent, and normal readback fields.
 3. Yellow normal playresult persists play history, best rows, profile counters, unlocks, favorites, and recent songs through Yellow-owned tables.
@@ -73,6 +92,7 @@ Active milestone: **v1.2 Yellow AC15 Support**
 **Requirements:** YDAN-01, YSHOP-01, YSHOP-02, YMED-01, YWAI-01, YUI-01
 
 **Success criteria:**
+
 1. Yellow Taikojuku/Dani requests and Dan playresults persist/read back Yellow-owned Dan state.
 2. Yellow item-shop info and purchase flows use Yellow response shape, active shop data, duplicate prevention, and Yellow-only unlock writes.
 3. Yellow Don/Katsu medal state is updated from playresult/shop flows and remains separate from Banacoin compatibility state.
@@ -86,6 +106,7 @@ Active milestone: **v1.2 Yellow AC15 Support**
 **Requirements:** YTOK-01, YTOK-02, YTOK-03, YBAN-01
 
 **Success criteria:**
+
 1. Yellow Tokkun uploads are classified before normal play handling.
 2. Tokkun no-cross-write tests prove no normal, crown, Dani, favorite, recent, shop, medal, profile, battle, or unlock writes.
 3. Yellow Tokkun persistence stores nullable tutorial state and append-only raw stage history with raw order, duplicates, and protocol timestamps preserved.
@@ -99,6 +120,7 @@ Active milestone: **v1.2 Yellow AC15 Support**
 **Requirements:** YVER-01, YVER-02, YVER-03, YDOC-01
 
 **Success criteria:**
+
 1. Focused Yellow and shared AC15 tests cover route, mapper, catalog, handler, EF, no-cross-era-write, no-battle, Tokkun, WaiWai, crown encoding, and AdminApi/WebUI behavior.
 2. Full `dotnet test Tests/Tests.csproj` passes.
 3. Temp-output Host build passes.
