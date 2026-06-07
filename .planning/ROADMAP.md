@@ -80,6 +80,22 @@ Plans:
 4. Initial-data availability is catalog-backed and omits unsupported feature advertisements.
 5. Metadata routes use Yellow catalog-backed data and pass route/mapping tests.
 
+**Plans:** 1/3 plans complete
+
+Plans:
+
+**Wave 1**
+
+- [x] 13-01-PLAN.md - Add the Yellow catalog foundation and DI registration
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 13-02-PLAN.md - Add the Yellow AC15 profile, catalog snapshot bridge, and initial-data/Taikojuku application handlers
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 13-03-PLAN.md - Replace Phase 12 no-state Yellow metadata scaffolds with catalog-backed Mediator routes where Phase 13 owns behavior
+
 ### Phase 14: Yellow Identity, Userdata, Crowns, Self-Best, and Normal Play
 
 **Goal:** Implement Yellow-owned profile/userdata/normal play loop, including crown encoding proof.

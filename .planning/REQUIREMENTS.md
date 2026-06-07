@@ -15,8 +15,8 @@
 
 ### Yellow Catalog And AC15 Core
 
-- [ ] **YCAT-01**: Yellow catalog initialization loads required local data from `Host/wwwroot/data/yellow/data/config/ST9100-1` and related Yellow data roots through `PathHelper` and era catalog helpers.
-- [ ] **YCAT-02**: Yellow uses AC15 shared catalog/loaders/services only where formats and behavior match, while preserving Yellow-owned catalog contracts and feature capability flags.
+- [x] **YCAT-01**: Yellow catalog initialization loads required local data from `Host/wwwroot/data/yellow/data/config/ST9100-1` and related Yellow data roots through `PathHelper` and era catalog helpers.
+- [x] **YCAT-02**: Yellow uses AC15 shared catalog/loaders/services only where formats and behavior match, while preserving Yellow-owned catalog contracts and feature capability flags.
 - [ ] **YCAT-03**: Yellow initial data advertises only protocol-supported Yellow telop, folder, Taikojuku/Dani, item shop, legal terms, and metadata availability.
 - [ ] **YCAT-04**: Yellow folder, telop, recommendation, tournament, gacha, challenge, movie, and other metadata routes return Yellow catalog-backed responses where the Yellow proto/data supports them.
 
@@ -93,8 +93,8 @@ Roadmap phase mapping is created during `$gsd-new-milestone` roadmap generation.
 | YFND-02 | Phase 12 | Complete |
 | YFND-03 | Phase 12 | Complete |
 | YFND-04 | Phase 12 | Complete |
-| YCAT-01 | Phase 13 | Pending |
-| YCAT-02 | Phase 13 | Pending |
+| YCAT-01 | Phase 13 | Complete |
+| YCAT-02 | Phase 13 | Complete |
 | YCAT-03 | Phase 13 | Pending |
 | YCAT-04 | Phase 13 | Pending |
 | YUSR-01 | Phase 14 | Pending |
