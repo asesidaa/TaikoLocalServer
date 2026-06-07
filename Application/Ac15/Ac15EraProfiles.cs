@@ -37,6 +37,17 @@ public static class Ac15EraProfiles
             HasTokkunTutorialFlagInUserData: false),
         DefaultAc15EraHooks.Instance);
 
+    public static Ac15EraProfile Yellow { get; } = new(
+        GameEra.Yellow,
+        BlueGreenFeatures,
+        CreateCommonLimits(),
+        new Ac15WirePlacement(
+            CrownPlacement: Ac15CrownWirePlacement.DedicatedEndpoint,
+            HasInitialDataItemShopRows: true,
+            HasInitialDataLegalTermsRows: true,
+            HasTokkunTutorialFlagInUserData: false),
+        DefaultAc15EraHooks.Instance);
+
     private static Ac15ProtocolLimits CreateCommonLimits() => new(
         SongFlagBytes: BlueProtocolBytes.SongFlagBytes,
         ToneFlagBytes: BlueProtocolBytes.ToneFlagBytes,

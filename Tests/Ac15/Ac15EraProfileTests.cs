@@ -61,6 +61,35 @@ public sealed class Ac15EraProfileTests
     }
 
     [Fact]
+    public void YellowProfile_DeclaresCatalogAc15ModulesWithoutDeferredRuntimeExtras()
+    {
+        var profile = Ac15EraProfiles.Yellow;
+
+        Assert.Equal(GameEra.Yellow, profile.Era);
+        Assert.True(profile.Features.InitialData);
+        Assert.True(profile.Features.Folders);
+        Assert.True(profile.Features.Telops);
+        Assert.True(profile.Features.Taikojuku);
+        Assert.True(profile.Features.Dani);
+        Assert.True(profile.Features.ItemShop);
+        Assert.True(profile.Features.Recommendations);
+        Assert.True(profile.Features.NormalPlay);
+        Assert.True(profile.Features.UserData);
+        Assert.True(profile.Features.SelfBest);
+        Assert.True(profile.Features.Crowns);
+
+        Assert.Equal(128, profile.Limits.SongFlagBytes);
+        Assert.Equal(1280, profile.Limits.CrownPackedBytes);
+        Assert.Equal(5u, profile.Limits.MaxCourseLevel);
+        Assert.Equal(5, profile.Limits.MaxFavoriteSongs);
+        Assert.Equal(10, profile.Limits.MaxRecentSongs);
+        Assert.Equal(Ac15CrownWirePlacement.DedicatedEndpoint, profile.WirePlacement.CrownPlacement);
+        Assert.True(profile.WirePlacement.HasInitialDataItemShopRows);
+        Assert.True(profile.WirePlacement.HasInitialDataLegalTermsRows);
+        Assert.False(profile.WirePlacement.HasTokkunTutorialFlagInUserData);
+    }
+
+    [Fact]
     public async Task DefaultHooks_DoNotHandleSpecialModes()
     {
         var result = await Ac15EraProfiles.Blue.Hooks.TryHandleSpecialPlayModeAsync(
