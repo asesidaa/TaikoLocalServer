@@ -1,3 +1,7 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using TaikoLocalServer.Adapters.GameProtocol.Yellow.Controllers;
 using TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
 using TaikoLocalServer.Adapters.GameProtocol.Yellow.Wire;
 using TaikoLocalServer.Application.Ac15;
@@ -319,6 +323,100 @@ public sealed class YellowPlayResultHandlerTests
     }
 
     [Fact]
+    public async Task UpdatePlayResult_Yellow_NormalUploadFeedsUserdataSelfBestAndCrownsReadback()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataYellow.Add(UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Yellow,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayDatetime = "20260608120000",
+                GetDonmedal = 10,
+                GetKatsumedal = 2,
+                ReleaseSongNoes = [104],
+                GetToneNoes = [4],
+                GetTitleNoes = [10],
+                HasDifficultyPlayedCourse = true,
+                DifficultyPlayedCourse = 4,
+                HasDifficultyPlayedStar = true,
+                DifficultyPlayedStar = 8,
+                AreaCode = 12,
+                AryStageInfoes = [CreateStage(101, 1, 0)]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+
+        var userdataHandler = new UserDataQueryHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UserDataQueryHandler>.Instance,
+            Options.Create(new ServerSettings()));
+        var userdata = await userdataHandler.Handle(new UserDataQuery(1, GameEra.Yellow), CancellationToken.None);
+
+        Assert.Equal(1u, userdata.Result);
+        Assert.Contains(101u, userdata.AryFavoriteSongNoes);
+        Assert.Equal([101u], userdata.AryRecentSongNoes);
+        Assert.True(BitIsSet(userdata.ReleaseSongFlg, 104));
+        Assert.True(BitIsSet(userdata.ToneFlg, 4));
+        Assert.True(BitIsSet(userdata.TitleFlg, 10));
+        Assert.Equal(1u, userdata.CategJpopCnt);
+        Assert.Equal(1u, userdata.SongPushedCnt);
+        Assert.Equal(1u, userdata.SongFavoriteCnt);
+        Assert.Equal(1u, userdata.SongRecentCnt);
+        Assert.Equal(12u, userdata.PrevAreaCode);
+        Assert.Equal(4u, userdata.DifficultyPlayedCourse);
+        Assert.Equal(8u, userdata.DifficultyPlayedStar);
+
+        var selfBestHandler = new GetSelfBestQueryHandler(
+            fixture.Catalog,
+            fixture.Context,
+            NullLogger<GetSelfBestQueryHandler>.Instance);
+        var selfBest = await selfBestHandler.Handle(new GetSelfBestQuery(1, GameEra.Yellow, 1, [101]), CancellationToken.None);
+
+        var selfBestRow = Assert.Single(selfBest.ArySelfbestScores);
+        Assert.Equal(101u, selfBestRow.SongNo);
+        Assert.Equal(765432u, selfBestRow.SelfBestScore);
+
+        using var provider = new ServiceCollection()
+            .AddLogging()
+            .BuildServiceProvider();
+        var crownsController = new CrownsDataController(fixture.Context, fixture.Catalog)
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { RequestServices = provider }
+            }
+        };
+        var crownsResult = await crownsController.CrownsData(new CrownsDataRequest
+        {
+            Baid = 1,
+            ChassisId = "268410000000",
+            ShopId = "JPN0JPN0123"
+        });
+
+        var ok = Assert.IsType<OkObjectResult>(crownsResult);
+        var crowns = Assert.IsType<CrownsDataResponse>(ok.Value);
+        Assert.Equal(1u, crowns.Result);
+        Assert.Equal(789u, crowns.SongHashVer);
+        Assert.Equal(Ac15EraProfiles.Yellow.Limits.CrownPackedBytes, crowns.HashCrownFlg.Length);
+        Assert.Equal((ushort)0b0000000011, ReadTenBitValue(crowns.HashCrownFlg, 101));
+
+        Assert.Empty(await fixture.Context.DanScoreDataBlue.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.BlueTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.BlueBattleStageResults.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.BlueShopSeasonStates.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.GreenShopSeasonStates.Where(row => row.Baid == 1).ToListAsync());
+    }
+
+    [Fact]
     public void PlayResultMapper_Yellow_MapsNormalWirePayloadIntoCommonData()
     {
         var request = CreateWireRequest(1);
@@ -485,6 +583,22 @@ public sealed class YellowPlayResultHandlerTests
 
     private static bool BitIsSet(byte[] source, uint id)
         => (source[id >> 3] & (1 << ((int)id & 7))) != 0;
+
+    private static ushort ReadTenBitValue(byte[] packed, int songIndex)
+    {
+        ushort value = 0;
+        var bitOffset = songIndex * 10;
+        for (var bit = 0; bit < 10; bit++)
+        {
+            var absoluteBit = bitOffset + bit;
+            if ((packed[absoluteBit >> 3] & (1 << (absoluteBit & 7))) != 0)
+            {
+                value |= (ushort)(1 << bit);
+            }
+        }
+
+        return value;
+    }
 
     private static PlayResultRequest CreateWireRequest(uint baid)
         => new()
