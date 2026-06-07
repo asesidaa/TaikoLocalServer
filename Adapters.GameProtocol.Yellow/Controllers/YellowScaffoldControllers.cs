@@ -330,10 +330,13 @@ public class SelfBestController : BaseProtocolController<SelfBestController>
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult SelfBest([FromBody] SelfBestRequest request)
+    public async Task<IActionResult> SelfBest([FromBody] SelfBestRequest request)
     {
-        Logger.LogInformation("Yellow SelfBest request from {ChassisId}", request.ChassisId);
-        return Ok(new SelfBestResponse { Result = 1 });
+        Logger.LogInformation("Yellow SelfBest request: {@Request}", request);
+        var common = await Mediator.Send(
+            new GetSelfBestQuery(request.Baid, GameEra.Yellow, request.Level, request.ArySongNoes ?? []),
+            HttpContext.RequestAborted);
+        return Ok(SelfBestMappers.Map(common));
     }
 }
 
