@@ -13,13 +13,13 @@ public sealed class YellowCatalogBoundaryTests
         "GetItemShopInfoController",
         "RecommendController",
         "TournamentCheckController",
-        "ChallengeCompeController"
+        "ChallengeCompeController",
+        "BaidController",
+        "MyDonEntryController"
     ];
 
     private static readonly string[] DeferredNoStateControllers =
     [
-        "BaidController",
-        "MyDonEntryController",
         "UserDataController",
         "PlayResultController",
         "SelfBestController",
@@ -38,7 +38,7 @@ public sealed class YellowCatalogBoundaryTests
     ];
 
     [Fact]
-    public void OnlyPhase13MetadataControllers_CallMediator()
+    public void Phase13MetadataAndPhase14IdentityControllers_CallMediator()
     {
         var source = File.ReadAllText(Path.Combine(FindRepoRoot(), "Adapters.GameProtocol.Yellow", "Controllers", "YellowScaffoldControllers.cs"));
 
@@ -55,15 +55,15 @@ public sealed class YellowCatalogBoundaryTests
     }
 
     [Fact]
-    public void Phase13_DoesNotIntroduceYellowPersistenceGameplayOrBattleFiles()
+    public void YellowImplementation_DoesNotIntroduceDeferredPhase15Or16OrBattleFiles()
     {
         var root = FindRepoRoot();
         var forbiddenFiles = new[]
         {
-            Path.Combine(root, "Application", "Handlers", "UpdatePlayResultCommand.Yellow.cs"),
-            Path.Combine(root, "Application", "Handlers", "UserDataQuery.Yellow.cs"),
             Path.Combine(root, "Application", "Handlers", "ItemPurchaseCommand.Yellow.cs"),
-            Path.Combine(root, "Domain", "Entities", "UserSaveDataYellow.cs")
+            Path.Combine(root, "Domain", "Entities", "YellowShopSeasonState.cs"),
+            Path.Combine(root, "Domain", "Entities", "YellowShopItemState.cs"),
+            Path.Combine(root, "Domain", "Entities", "YellowTokkunStageResult.cs")
         };
 
         foreach (var file in forbiddenFiles)
@@ -82,9 +82,7 @@ public sealed class YellowCatalogBoundaryTests
             "YellowBattle",
             "YellowTokkun",
             "BanacoinWallet",
-            "UserSaveDataYellow",
-            "ItemPurchaseCommand.Yellow",
-            "UpdatePlayResultCommand.Yellow"
+            "ItemPurchaseCommand.Yellow"
         };
 
         foreach (var file in searchedRoots.SelectMany(path => Directory.EnumerateFiles(path, "*.cs", SearchOption.AllDirectories)))
