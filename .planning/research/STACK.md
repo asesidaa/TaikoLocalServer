@@ -42,7 +42,8 @@
 - Yellow `GetitemshopinfoResponse` differs from Blue by omitting Blue shop timing fields in the observed proto.
 - Yellow `PlayResultRequest` includes `get_donmedal` and `get_katsumedal`; purchase response exposes Don-medal totals only in the observed proto.
 - Yellow has `tokkun_tutorial_flg` and `ary_tokkunstage_info`; it does not have Blue battle userdata messages.
-- Wiki context says Yellow later added "Issho ni Wai Wai Ensou", but the local Yellow proto examined here does not expose Blue `waiwai_*` fields. Treat Wai Wai as an evidence gap until route/proto/log evidence appears.
+- Blue/Green wire output exposes `waiwai_tutorial_flg`, `waiwai_result`, and `waiwai_gauge`. For Yellow, verify the current generated/local wire surface before implementation; WaiWai should not be modeled as a special mode.
+- Crown readback compression is era-sensitive. Blue/Green currently gzip `hash_crown_flg`; Yellow must prove whether older-version crown bytes are compressed or raw before mapping responses.
 
 ## Sources
 

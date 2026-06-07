@@ -22,13 +22,13 @@
 
 ### Pitfall 2: Treating Wiki Gameplay Notes As Protocol Contract
 
-**What goes wrong:** Server implements Wai Wai or medal behavior from wiki prose without matching local route/proto/log evidence.
+**What goes wrong:** Server implements WaiWai or medal behavior from wiki prose without matching local route/proto/log evidence, or treats WaiWai as a special mode.
 
 **Why it happens:** Public history pages are useful and current enough for gameplay scoping, but they are not wire contracts.
 
-**How to avoid:** Record wiki-derived items as scope leads. Promote them to requirements only when local proto, client logs, IDA, or cabinet/RPCS3 evidence supports a server behavior.
+**How to avoid:** Record wiki-derived items as scope leads. For WaiWai, support only tutorial flag persistence/readback and playresult extra logging where Yellow evidence exposes fields.
 
-**Warning signs:** Requirements mention a feature not visible in Yellow proto or logs, with no explicit evidence-gap label.
+**Warning signs:** Requirements mention a feature not visible in Yellow proto or logs, or route normal/Tokkun handling through a WaiWai mode branch.
 
 **Phase to address:** Evidence/catalog phase and requirements review.
 
@@ -74,12 +74,28 @@
 
 **Phase to address:** Item shop/medal phase.
 
+---
+
+### Pitfall 6: Crown Compression Assumption
+
+**What goes wrong:** Yellow `crownsdata.php` returns gzip-wrapped crown bytes only because Blue/Green currently do.
+
+**Why it happens:** Crown packing is shared AC15 behavior, but transport encoding may have changed between versions.
+
+**How to avoid:** Add a crown response evidence task before Yellow crown mapping. Tests should assert both inflated crown packing and exact wire response encoding.
+
+**Warning signs:** Yellow crown tests only inspect uncompressed helper output, or the controller blindly calls `GZipBytesUtil.GetGZipBytes` with no Yellow evidence.
+
+**Phase to address:** Userdata/crowns/normal play phase.
+
 ## Looks Done But Is Not Checklist
 
 - [ ] Yellow route tests prove only Yellow-supported endpoints exist.
 - [ ] Yellow wire generation is adapter-local and generated files are not manually edited.
 - [ ] Yellow catalog tests load `ST9100-1` data through path helpers.
 - [ ] Yellow userdata, crowns, self-best, Dani, shop, and Tokkun tests assert Yellow-owned tables.
+- [ ] Yellow crown tests verify response compression/placement, not just shared crown packing.
+- [ ] WaiWai tests, if wire fields exist, prove tutorial flag persistence/readback and playresult extra logging without special-mode branching.
 - [ ] Tokkun tests prove no normal, shop, battle, favorite, recent, Dani, or crown writes.
 - [ ] Banacoin-adjacent routes are no-state unless new evidence proves otherwise.
 - [ ] Final closeout includes cabinet/RPCS3 smoke evidence for Yellow normal and Tokkun flows.
@@ -89,10 +105,11 @@
 | Pitfall | Prevention Phase | Verification |
 |---------|------------------|--------------|
 | Blue battle copied into Yellow | Foundation/evidence | Route absence and proto inventory tests. |
-| Wiki treated as protocol contract | Evidence/catalog | Evidence matrix labels wiki-only items as unimplemented gaps. |
+| Wiki treated as protocol contract | Evidence/catalog | Evidence matrix labels wiki-only items as scope leads or evidence-backed behavior. |
 | Over-generic AC15 core | AC15 core foundation | Profile/adapter contract tests and no shared EF table. |
 | Tokkun cross-writes | Tokkun runtime | SQLite no-write assertions and tutorial/history readback tests. |
 | Medal semantics drift | Shop/medal | Yellow medal persistence tests and purchase response shape tests. |
+| Crown compression assumption | Userdata/crowns | Exact Yellow crown response encoding tests. |
 
 ## Sources
 

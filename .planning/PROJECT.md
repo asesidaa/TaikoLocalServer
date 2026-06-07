@@ -47,6 +47,7 @@ Yellow support should reuse the existing AC15 shared-core extraction design wher
 - [ ] Yellow runtime catalogs load from `Host/wwwroot/data/yellow/data`, including `config/ST9100-1/musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, and supporting AC15 data through shared loaders where the formats match.
 - [ ] Yellow supports Blue-equivalent normal cabinet flows: profile/login, BAID, mydon entry, userdata, initial data, self-best, crowns, recent/favorite songs, Dani Dojo, challenge/tournament/gacha surfaces, recommendations, telops, event folders, movies, and AdminApi/WebUI era routing where Yellow proto/data supports them.
 - [ ] Yellow item shop and medal behavior is implemented with Yellow-owned state, including Don/Katsu medal accounting and Yellow shop response shape differences.
+- [ ] Yellow WaiWai handling, if exposed by current Yellow wire/runtime evidence, is limited to tutorial flag write/readback and logging additional playresult fields; WaiWai is not treated as a special play mode.
 - [ ] Yellow Tokkun is treated as a real mode, with Yellow-owned Tokkun playresult classification, no-cross-mode write boundaries, nullable tutorial readback, and append-only raw protocol-backed history.
 - [ ] Yellow Banacoin-adjacent routes are compatibility surfaces only unless concrete client/proto/runtime evidence proves wallet or payment authority belongs in this repo.
 - [ ] Blue-only battle behavior is absent from Yellow: no Yellow battle routes, fields, persistence, source guards, or inferred runtime behavior without concrete Yellow evidence.
@@ -76,6 +77,8 @@ Yellow support should reuse the existing AC15 shared-core extraction design wher
 - The evidence hierarchy is repo code, proto files, SQLite state, cabinet/RPCS3 logs, IDA/client evidence, and only then public wiki pages for gameplay scoping.
 - Yellow local protocol input is `proto/yellow/yellow.proto`; local game data is under `Host/wwwroot/data/yellow/data`, with the observed versioned config root `config/ST9100-1`.
 - Yellow proto evidence includes Tokkun tutorial and stage-result fields, item shop and Banacoin-adjacent routes, Don/Katsu medal upload fields, and no Blue battle userdata or initialdata battle fields.
+- Blue and Green wire surfaces include WaiWai tutorial and playresult fields. For Yellow, verify the current generated/local wire evidence before implementing; the intended behavior is tutorial flag persistence/readback plus playresult logging only, not a new mode.
+- Crown readback compression must be proven per era. Blue/Green currently gzip `hash_crown_flg`, but older-version crown transport may differ.
 - Public wiki context says Yellow started on 2017-03-15, introduced Don/Katsu medals, and later added "Issho ni Wai Wai Ensou"; this is scoping context only and does not outrank local protocol or runtime evidence.
 - `docs/superpowers/specs/2026-06-07-ac15-core-extraction-design.md` and `docs/superpowers/plans/2026-06-07-ac15-core-extraction/` describe the approved capability-driven AC15 sharing direction for Blue, Green, and future Yellow/Red support. Use that plan where it directly enables Yellow, but keep era routes, wire DTOs, and persistence separate.
 
@@ -92,6 +95,7 @@ v1.2 Yellow AC15 Support is active. This milestone adds Yellow as a first-class 
 - Add Yellow as an enableable first-class era with generated wire DTOs, adapter project, route tests, host settings, and era-aware AdminApi/WebUI routing.
 - Load Yellow normal catalog data from `Host/wwwroot/data/yellow/data`, especially `config/ST9100-1`, through shared AC15 loaders where the file formats match.
 - Implement Yellow-owned persistence and handler/mapping slices for normal play, score/crown readback, Dani, shop/medals, Tokkun, Banacoin-adjacent compatibility, and supported metadata routes.
+- Verify Yellow crown response compression and WaiWai tutorial/logging behavior from current wire/runtime evidence instead of assuming Blue/Green placement.
 - Use AC15 shared-core extraction as an implementation tool where it directly enables Yellow and preserves era-specific hooks, profiles, wire placement, and persistence adapters.
 - Exclude Blue battle behavior from Yellow unless current Yellow evidence proves an equivalent surface exists.
 
