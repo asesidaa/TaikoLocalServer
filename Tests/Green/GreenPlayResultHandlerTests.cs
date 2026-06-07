@@ -1034,7 +1034,7 @@ public sealed class GreenPlayResultHandlerTests
             fixture.Catalog);
 
         var response = await handler.Handle(
-            new GetRecommendQuery(GenderType: 0, PlayerAge: 0),
+            new GetRecommendQuery(GameEra.Green, GenderType: 0, PlayerAge: 0),
             CancellationToken.None);
 
         Assert.Equal(1u, response.Result);

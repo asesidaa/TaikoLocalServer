@@ -9,9 +9,11 @@ public partial class TournamentCheckQueryHandler(ILogger<TournamentCheckQueryHan
     {
         GameEra.Nijiiro => HandleNijiiro(request, cancellationToken),
         GameEra.Green => HandleGreen(request, cancellationToken),
+        GameEra.Yellow => HandleYellow(request, cancellationToken),
         _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
     };
 
     private partial ValueTask<CommonTournamentCheckResponse> HandleNijiiro(TournamentCheckQuery request, CancellationToken cancellationToken);
     private partial ValueTask<CommonTournamentCheckResponse> HandleGreen(TournamentCheckQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonTournamentCheckResponse> HandleYellow(TournamentCheckQuery request, CancellationToken cancellationToken);
 }

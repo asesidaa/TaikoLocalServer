@@ -72,15 +72,16 @@ public sealed class YellowRouteSkeletonTests
     }
 
     [Fact]
-    public void YellowControllers_DoNotCallRuntimeBusinessBehavior()
+    public void YellowControllers_OnlyCatalogMetadataRoutesCallRuntimeBusinessBehavior()
     {
         var root = FindRepoRoot();
         var controllersRoot = Path.Combine(root, "Adapters.GameProtocol.Yellow", "Controllers");
+        var allowedMediatorCount = 8;
 
         foreach (var file in Directory.EnumerateFiles(controllersRoot, "*.cs", SearchOption.AllDirectories))
         {
             var source = File.ReadAllText(file);
-            Assert.DoesNotContain("Mediator.Send", source, StringComparison.Ordinal);
+            Assert.Equal(allowedMediatorCount, source.Split("Mediator.Send", StringSplitOptions.None).Length - 1);
             Assert.DoesNotContain("ITaikoDbContext", source, StringComparison.Ordinal);
             Assert.DoesNotContain("DbContext", source, StringComparison.Ordinal);
             Assert.DoesNotContain("SaveChanges", source, StringComparison.Ordinal);

@@ -1,15 +1,18 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.Yellow.Controllers;
 
+using TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
+
 [ApiController]
 [Route("/v09r00/chassis/initialdatacheck.php")]
 public class InitialDataCheckController : BaseProtocolController<InitialDataCheckController>
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult InitialDataCheck([FromBody] InitialdatacheckRequest request)
+    public async Task<IActionResult> InitialDataCheck([FromBody] InitialdatacheckRequest request)
     {
-        Logger.LogInformation("Yellow InitialDataCheck request from {ChassisId}", request.ChassisId);
-        return Ok(new InitialdatacheckResponse { Result = 1 });
+        Logger.LogInformation("Yellow InitialDataCheck request: {@Request}", request);
+        var common = await Mediator.Send(new GetInitialDataQuery(GameEra.Yellow), HttpContext.RequestAborted);
+        return Ok(InitialDataMappers.Map(common));
     }
 }
 
@@ -19,10 +22,13 @@ public class TournamentCheckController : BaseProtocolController<TournamentCheckC
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult TournamentCheck([FromBody] TournamentcheckRequest request)
+    public async Task<IActionResult> TournamentCheck([FromBody] TournamentcheckRequest request)
     {
-        Logger.LogInformation("Yellow TournamentCheck request from {ChassisId}", request.ChassisId);
-        return Ok(new TournamentcheckResponse { Result = 1 });
+        Logger.LogInformation("Yellow TournamentCheck request: {@Request}", request);
+        var common = await Mediator.Send(
+            new TournamentCheckQuery(GameEra.Yellow, request.KitId),
+            HttpContext.RequestAborted);
+        return Ok(TournamentMappers.Map(common));
     }
 }
 
@@ -58,10 +64,13 @@ public class GetTelopController : BaseProtocolController<GetTelopController>
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult GetTelop([FromBody] GettelopRequest request)
+    public async Task<IActionResult> GetTelop([FromBody] GettelopRequest request)
     {
-        Logger.LogInformation("Yellow GetTelop request from {ChassisId}", request.ChassisId);
-        return Ok(new GettelopResponse { Result = 1 });
+        Logger.LogInformation("Yellow GetTelop request: {@Request}", request);
+        var common = await Mediator.Send(
+            new GetTelopQuery(GameEra.Yellow, request.TelopId),
+            HttpContext.RequestAborted);
+        return Ok(GetTelopMappers.Map(common));
     }
 }
 
@@ -71,10 +80,13 @@ public class GetFolderController : BaseProtocolController<GetFolderController>
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult GetFolder([FromBody] GetfolderRequest request)
+    public async Task<IActionResult> GetFolder([FromBody] GetfolderRequest request)
     {
-        Logger.LogInformation("Yellow GetFolder request from {ChassisId}", request.ChassisId);
-        return Ok(new GetfolderResponse { Result = 1 });
+        Logger.LogInformation("Yellow GetFolder request: {@Request}", request);
+        var common = await Mediator.Send(
+            new GetFolderQuery(GameEra.Yellow, request.FolderIds ?? []),
+            HttpContext.RequestAborted);
+        return Ok(FolderDataMappers.Map(common));
     }
 }
 
@@ -84,10 +96,13 @@ public class TaikojukuController : BaseProtocolController<TaikojukuController>
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult Taikojuku([FromBody] TaikojukuRequest request)
+    public async Task<IActionResult> Taikojuku([FromBody] TaikojukuRequest request)
     {
-        Logger.LogInformation("Yellow Taikojuku request from {ChassisId}", request.ChassisId);
-        return Ok(new TaikojukuResponse { Result = 1 });
+        Logger.LogInformation("Yellow Taikojuku request: {@Request}", request);
+        var common = await Mediator.Send(
+            new GetTaikojukuQuery(GameEra.Yellow, request.GetDans ?? []),
+            HttpContext.RequestAborted);
+        return Ok(TaikojukuMappers.Map(common));
     }
 }
 
@@ -97,10 +112,11 @@ public class GetItemShopInfoController : BaseProtocolController<GetItemShopInfoC
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult GetItemShopInfo([FromBody] GetitemshopinfoRequest request)
+    public async Task<IActionResult> GetItemShopInfo([FromBody] GetitemshopinfoRequest request)
     {
-        Logger.LogInformation("Yellow GetItemShopInfo request from {ChassisId}", request.ChassisId);
-        return Ok(new GetitemshopinfoResponse { Result = 1 });
+        Logger.LogInformation("Yellow GetItemShopInfo request: {@Request}", request);
+        var common = await Mediator.Send(ItemShopMappers.Map(request), HttpContext.RequestAborted);
+        return Ok(ItemShopMappers.Map(common));
     }
 }
 
@@ -175,10 +191,13 @@ public class ChallengeCompeController : BaseProtocolController<ChallengeCompeCon
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult ChallengeCompe([FromBody] ChallengeCompeRequest request)
+    public async Task<IActionResult> ChallengeCompe([FromBody] ChallengeCompeRequest request)
     {
-        Logger.LogInformation("Yellow ChallengeCompe request from {ChassisId}", request.ChassisId);
-        return Ok(new ChallengeCompeResponse { Result = 1 });
+        Logger.LogInformation("Yellow ChallengeCompe request: {@Request}", request);
+        var common = await Mediator.Send(
+            new GetChallengeCompeQuery(GameEra.Yellow, request.Baid),
+            HttpContext.RequestAborted);
+        return Ok(ChallengeCompeMappers.Map(common));
     }
 }
 
@@ -253,10 +272,13 @@ public class RecommendController : BaseProtocolController<RecommendController>
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult Recommend([FromBody] RecommendRequest request)
+    public async Task<IActionResult> Recommend([FromBody] RecommendRequest request)
     {
-        Logger.LogInformation("Yellow Recommend request from {ChassisId}", request.ChassisId);
-        return Ok(new RecommendResponse { Result = 1 });
+        Logger.LogInformation("Yellow Recommend request: {@Request}", request);
+        var common = await Mediator.Send(
+            new GetRecommendQuery(GameEra.Yellow, request.GenderType, request.PlayerAge),
+            HttpContext.RequestAborted);
+        return Ok(RecommendMappers.Map(common));
     }
 }
 
