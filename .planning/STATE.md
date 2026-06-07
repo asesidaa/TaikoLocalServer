@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
 status: executing
-stopped_at: Completed 12-01-PLAN.md
-last_updated: "2026-06-07T16:02:11.704Z"
+stopped_at: Completed 12-02-PLAN.md
+last_updated: "2026-06-07T16:23:11.325Z"
 last_activity: 2026-06-07 -- Phase 12 execution started
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -26,7 +26,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-07)
 ## Current Position
 
 Phase: 12 (yellow-evidence-and-era-foundation) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-06-07 -- Phase 12 execution started
 
@@ -60,6 +60,7 @@ Last activity: 2026-06-07 -- Phase 12 execution started
 | Phase 10 P03 | 7 min | 2 tasks | 5 files |
 | Phase 11 P01 | 3 min | 4 tasks | 4 files |
 | Phase 12 P01 | 12 min | 2 tasks | 13 files |
+| Phase 12 P02 | 9min | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -78,6 +79,8 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - Phase 9 added Blue Tokkun playresult mapper/classifier fields and accepted Tokkun uploads before battle/normal write paths.
 - Phase 10 added Blue Tokkun persistence/readback for nullable tutorial state and append-only raw history rows.
 - Phase 11 recorded user-confirmed cabinet/RPCS3 runtime verification, full automated test/build evidence, and the final Blue Tokkun contract.
+- [Phase 12]: Yellow concrete game routes use the user-approved /v09r00/chassis prefix from 12-YELLOW-EVIDENCE.md. — Recorded during Plan 12-02 route and Host scaffold execution.
+- [Phase 12]: Phase 12 Yellow controllers are no-state success scaffolds only; runtime persistence, catalog behavior, shop semantics, and battle behavior remain absent. — Plan 12-02 route controllers intentionally avoid Mediator, EF, catalog, and persistence behavior.
 
 ### Pending Todos
 
@@ -95,8 +98,8 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-07T16:02:11.696Z
-Stopped at: Completed 12-01-PLAN.md
+Last session: 2026-06-07T16:21:17.453Z
+Stopped at: Completed 12-02-PLAN.md
 Resume file: None
 
 ## Operator Next Steps

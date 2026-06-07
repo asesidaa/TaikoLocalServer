@@ -10,7 +10,7 @@
 
 - [x] **YFND-01**: Developer can review a Yellow route/version evidence record that identifies supported endpoints, startup/version routing, direct-protobuf transport expectations, and unresolved client-evidence gaps.
 - [x] **YFND-02**: Yellow cabinet routes are served by a first-class Yellow adapter with generated Yellow wire DTOs, era settings, host registration, and route ownership tests.
-- [ ] **YFND-03**: Yellow game routes are present only when Yellow is enabled, and disabled Yellow routes remain absent from the host.
+- [x] **YFND-03**: Yellow game routes are present only when Yellow is enabled, and disabled Yellow routes remain absent from the host.
 - [x] **YFND-04**: Yellow battle behavior is proven absent by proto/route tests; no Yellow battleuserdata route, battle fields, battle persistence, or Blue battle fallback is exposed.
 
 ### Yellow Catalog And AC15 Core
@@ -91,7 +91,7 @@ Roadmap phase mapping is created during `$gsd-new-milestone` roadmap generation.
 |-------------|-------|--------|
 | YFND-01 | Phase 12 | Complete |
 | YFND-02 | Phase 12 | Complete |
-| YFND-03 | Phase 12 | Pending |
+| YFND-03 | Phase 12 | Complete |
 | YFND-04 | Phase 12 | Complete |
 | YCAT-01 | Phase 13 | Pending |
 | YCAT-02 | Phase 13 | Pending |

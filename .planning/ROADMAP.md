@@ -41,7 +41,7 @@ Active milestone: **v1.2 Yellow AC15 Support**
 4. Route tests prove Yellow-supported routes exist and disabled Yellow routes are absent.
 5. Source/route/proto tests prove Blue battle behavior is absent from Yellow.
 
-**Plans:** 0/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
 
@@ -51,7 +51,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 12-02-PLAN.md - Wire Yellow no-state route scaffolding and Host enablement after route-prefix evidence is supplied
+- [x] 12-02-PLAN.md - Wire Yellow no-state route scaffolding and Host enablement after route-prefix evidence is supplied
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
