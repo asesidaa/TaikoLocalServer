@@ -80,7 +80,7 @@ Plans:
 4. Initial-data availability is catalog-backed and omits unsupported feature advertisements.
 5. Metadata routes use Yellow catalog-backed data and pass route/mapping tests.
 
-**Plans:** 1/3 plans complete
+**Plans:** 2/3 plans complete
 
 Plans:
 
@@ -90,7 +90,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 13-02-PLAN.md - Add the Yellow AC15 profile, catalog snapshot bridge, and initial-data/Taikojuku application handlers
+- [x] 13-02-PLAN.md - Add the Yellow AC15 profile, catalog snapshot bridge, and initial-data/Taikojuku application handlers
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
