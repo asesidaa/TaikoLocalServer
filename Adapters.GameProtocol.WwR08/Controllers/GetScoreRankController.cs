@@ -12,7 +12,7 @@ public class GetScoreRankController(ITaikoDbContext context, IOptions<ServerSett
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetScoreRank([FromBody] GetScoreRankRequest request)
     {
-        Logger.LogInformation("GetScoreRank request : {Request}", request.Stringify());
+        Logger.LogInformation("GetScoreRank request : {@Request}", request);
 
         var scoreRankData = await Handle(request.Baid);
         var response = new GetScoreRankResponse

@@ -8,7 +8,7 @@ public class VerupCompleteController : BaseProtocolController<VerupCompleteContr
     [Produces("application/protobuf")]
     public IActionResult VerupComplete([FromBody] VerupCompleteRequest request)
     {
-        Logger.LogInformation("Green VerupComplete request: {Request}", request.Stringify());
+        Logger.LogInformation("Green VerupComplete request: {@Request}", request);
         return Ok(new VerupCompleteResponse { Result = 1 });
     }
 }

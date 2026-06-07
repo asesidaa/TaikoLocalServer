@@ -8,7 +8,7 @@ public class RewardCardCheckController : BaseProtocolController<RewardCardCheckC
     [Produces("application/protobuf")]
     public async Task<IActionResult> RewardCardCheck([FromBody] RewardcardcheckRequest request)
     {
-        Logger.LogInformation("Blue RewardCardCheck request: {Request}", request.Stringify());
+        Logger.LogInformation("Blue RewardCardCheck request: {@Request}", request);
         var common = await Mediator.Send(new RewardCardCheckQuery(request.AccessCode), HttpContext.RequestAborted);
         return Ok(new RewardcardcheckResponse
         {

@@ -7,7 +7,7 @@ public class TournamentCheckController : BaseProtocolController<TournamentCheckC
     [Produces("application/protobuf")]
     public IActionResult TournamentCheck([FromBody] TournamentcheckRequest request)
     {
-        Logger.LogInformation("TournamentCheck request : {Request}", request.Stringify());
+        Logger.LogInformation("TournamentCheck request : {@Request}", request);
 
         var response = new TournamentcheckResponse
         {

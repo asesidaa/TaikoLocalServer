@@ -8,7 +8,7 @@ public class MyDonEntryController : BaseProtocolController<MyDonEntryController>
     [Produces("application/protobuf")]
     public async Task<IActionResult> MyDonEntry([FromBody] MydonEntryRequest request)
     {
-        Logger.LogInformation("Green MyDonEntry request: {Request}", request.Stringify());
+        Logger.LogInformation("Green MyDonEntry request: {@Request}", request);
 
         var common = await Mediator.Send(
             new AddMyDonEntryCommand(GameEra.Green, request.AccessCode, request.MydonName, 0),

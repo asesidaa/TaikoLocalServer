@@ -1,4 +1,4 @@
-using Swan.Mapping;
+using TaikoLocalServer.Adapters.AdminApi.Mapping;
 
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
@@ -42,9 +42,9 @@ public class DanBestDataController(ITaikoDbContext context) : BaseAdminControlle
         var danDataList = new List<DanBestData>();
         foreach (var danScore in danScores)
         {
-            var danData = danScore.CopyPropertiesToNew<DanBestData>();
+            var danData = danScore.ToDanBestData();
             danData.DanBestStageDataList = danScore.DanStageScoreData
-                .Select(datum => datum.CopyPropertiesToNew<DanBestStageData>())
+                .Select(datum => datum.ToDanBestStageData())
                 .ToList();
             danDataList.Add(danData);
         }

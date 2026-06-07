@@ -10,7 +10,7 @@ public sealed class VerupAuthController : BaseProtocolController<VerupAuthContro
     [Produces("application/protobuf")]
     public IActionResult VerupAuth([FromBody] VerupAuthRequest request)
     {
-        Logger.LogInformation("VerupAuth request: {Request}", request.Stringify());
+        Logger.LogInformation("VerupAuth request: {@Request}", request);
         return Ok(new VerupAuthResponse { Result = 1 });
     }
 }

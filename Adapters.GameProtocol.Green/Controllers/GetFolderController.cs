@@ -8,7 +8,7 @@ public class GetFolderController : BaseProtocolController<GetFolderController>
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetFolder([FromBody] GetfolderRequest request)
     {
-        Logger.LogInformation("Green GetFolder request: {Request}", request.Stringify());
+        Logger.LogInformation("Green GetFolder request: {@Request}", request);
         var common = await Mediator.Send(
             new GetFolderQuery(GameEra.Green, request.FolderIds ?? []),
             HttpContext.RequestAborted);

@@ -7,7 +7,7 @@ public class BookkeepingController : BaseProtocolController<BookkeepingControlle
     [Produces("application/protobuf")]
     public IActionResult StartupAuthCN00([FromBody] BookKeepingRequest request)
     {
-        Logger.LogInformation("[CN00] Bookkeeping request: {Request}", request.Stringify());
+        Logger.LogInformation("[CN00] Bookkeeping request: {@Request}", request);
         var response = new BookKeepingResponse
         {
             Result = 1

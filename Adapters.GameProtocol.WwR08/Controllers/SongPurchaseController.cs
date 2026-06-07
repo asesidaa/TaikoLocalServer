@@ -7,7 +7,7 @@ public class SongPurchaseController : BaseProtocolController<SongPurchaseControl
     [Produces("application/protobuf")]
     public async Task<IActionResult> SongPurchase([FromBody] SongPurchaseRequest request)
     {
-        Logger.LogInformation("SongPurchase request : {Request}", request.Stringify());
+        Logger.LogInformation("SongPurchase request : {@Request}", request);
 
         var commonResponse = await Mediator.Send(SongPurchaseMappers.MapToCommand(request), HttpContext.RequestAborted);
         var response = SongPurchaseMappers.MapToWW08(commonResponse);

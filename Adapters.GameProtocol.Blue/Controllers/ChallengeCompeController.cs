@@ -8,7 +8,7 @@ public class ChallengeCompeController : BaseProtocolController<ChallengeCompeCon
     [Produces("application/protobuf")]
     public IActionResult ChallengeCompe([FromBody] ChallengeCompeRequest request)
     {
-        Logger.LogInformation("Blue ChallengeCompe request: {Request}", request.Stringify());
+        Logger.LogInformation("Blue ChallengeCompe request: {@Request}", request);
         return Ok(new ChallengeCompeResponse { Result = 1 });
     }
 }

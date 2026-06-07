@@ -7,7 +7,7 @@ public class BaidController : BaseProtocolController<BaidController>
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetBaidCN00([FromBody] BAIDRequest request)
     {
-        Logger.LogInformation("Baid request: {Request}", request.Stringify());
+        Logger.LogInformation("Baid request: {@Request}", request);
 
         var commonResponse = await Mediator.Send(new BaidQuery(GameEra.Nijiiro, request.WechatQrStr), HttpContext.RequestAborted);
         BAIDResponse response;

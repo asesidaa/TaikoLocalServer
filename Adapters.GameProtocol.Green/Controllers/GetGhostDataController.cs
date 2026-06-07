@@ -8,7 +8,7 @@ public class GetGhostDataController : BaseProtocolController<GetGhostDataControl
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetGhostData([FromBody] GetghostdataRequest request)
     {
-        Logger.LogInformation("Green GetGhostData request: {Request}", request.Stringify());
+        Logger.LogInformation("Green GetGhostData request: {@Request}", request);
         var common = await Mediator.Send(new GetGhostDataQuery(request.Baid), HttpContext.RequestAborted);
         return Ok(GhostMappers.Map(common));
     }

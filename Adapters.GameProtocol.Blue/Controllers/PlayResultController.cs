@@ -8,7 +8,7 @@ public class PlayResultController : BaseProtocolController<PlayResultController>
     [Produces("application/protobuf")]
     public async Task<IActionResult> PlayResult([FromBody] PlayResultRequest request)
     {
-        Logger.LogInformation("Blue PlayResult request: {Request}", request.Stringify());
+        Logger.LogInformation("Blue PlayResult request: {@Request}", request);
         var common = PlayResultMappers.Map(request);
 
         var result = await Mediator.Send(

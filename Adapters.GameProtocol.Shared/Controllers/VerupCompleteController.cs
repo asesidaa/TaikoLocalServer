@@ -10,7 +10,7 @@ public sealed class VerupCompleteController : BaseProtocolController<VerupComple
     [Produces("application/protobuf")]
     public IActionResult VerupComplete([FromBody] VerupCompleteRequest request)
     {
-        Logger.LogInformation("VerupComplete request: {Request}", request.Stringify());
+        Logger.LogInformation("VerupComplete request: {@Request}", request);
         return Ok(new VerupCompleteResponse { Result = 1 });
     }
 }

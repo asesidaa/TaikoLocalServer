@@ -26,17 +26,16 @@ public sealed class GreenPlayResultPayloadDecoderTests
     }
 
     [Fact]
-    public void BuildReceivedDump_IncludesRawWireAndMappedCommonData()
+    public void PlayResultController_LogsDecodedWireAndMappedCommonDataAsDestructuredObjects()
     {
-        var request = CreatePlayResultDataRequest();
-        var common = PlayResultMappers.Map(request);
+        var source = File.ReadAllText(Path.Combine(
+            FindRepoRoot(),
+            "Adapters.GameProtocol.Green",
+            "Controllers",
+            "PlayResultController.cs"));
 
-        var dump = GreenPlayResultPayloadDecoder.BuildReceivedDump(request, common);
-
-        Assert.Contains("Green PlayResultDataRequest", dump);
-        Assert.Contains("CommonPlayResultData", dump);
-        Assert.Contains("765432", dump);
-        Assert.Contains("JPN0JPN0123", dump);
+        Assert.Contains("Green PlayResult received dump: wire={@Request} mapped_common={@Common}", source, StringComparison.Ordinal);
+        Assert.DoesNotContain("BuildReceivedDump", source, StringComparison.Ordinal);
     }
 
     private static PlayResultDataRequest CreatePlayResultDataRequest()
@@ -97,5 +96,20 @@ public sealed class GreenPlayResultPayloadDecoderTests
         }
 
         return output.ToArray();
+    }
+
+    private static string FindRepoRoot()
+    {
+        for (var directory = new DirectoryInfo(AppContext.BaseDirectory);
+             directory is not null;
+             directory = directory.Parent)
+        {
+            if (File.Exists(Path.Combine(directory.FullName, "TaikoLocalServer.slnx")))
+            {
+                return directory.FullName;
+            }
+        }
+
+        throw new InvalidOperationException("Could not find TaikoLocalServer.slnx.");
     }
 }

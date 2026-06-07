@@ -15,7 +15,7 @@ public class GetSongIntroductionController : BaseProtocolController<GetSongIntro
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetSongIntroduction([FromBody] GetSongIntroductionRequest request)
     {
-        Logger.LogInformation("GetSongIntroduction request : {Request}", request.Stringify());
+        Logger.LogInformation("GetSongIntroduction request : {@Request}", request);
 
         var commonResponse = await Mediator.Send(new GetSongIntroductionQuery(GameEra.Nijiiro, request.SetIds), HttpContext.RequestAborted);
         var response = SongIntroductionDataMappers.MapToWW08(commonResponse);

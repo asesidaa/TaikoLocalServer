@@ -8,7 +8,7 @@ public class RewardExecutionController : BaseProtocolController<RewardExecutionC
     [Produces("application/protobuf")]
     public IActionResult RewardExecution([FromBody] RewardexecutionRequest request)
     {
-        Logger.LogInformation("Blue RewardExecution request: {Request}", request.Stringify());
+        Logger.LogInformation("Blue RewardExecution request: {@Request}", request);
         return Ok(new RewardexecutionResponse { Result = 1 });
     }
 }

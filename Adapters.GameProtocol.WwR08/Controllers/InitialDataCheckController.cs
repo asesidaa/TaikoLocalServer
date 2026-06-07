@@ -7,7 +7,7 @@ public class InitialDataCheckController : BaseProtocolController<InitialDataChec
     [Produces("application/protobuf")]
     public async Task<IActionResult> InitialDataCheck([FromBody] InitialdatacheckRequest request)
     {
-        Logger.LogInformation("Initial data check request: {Request}", request.Stringify());
+        Logger.LogInformation("Initial data check request: {@Request}", request);
 
         var commonResponse = await Mediator.Send(new GetInitialDataQuery(GameEra.Nijiiro), HttpContext.RequestAborted);
         var response = InitialDataMappers.MapToWW08(commonResponse);

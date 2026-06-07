@@ -19,7 +19,6 @@
   <ItemGroup>
     <PackageReference Include="protobuf-net" />
     <PackageReference Include="Riok.Mapperly" />
-    <PackageReference Include="Swan.Core" />
   </ItemGroup>
 
 </Project>

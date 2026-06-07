@@ -1,4 +1,4 @@
-﻿using Garm;
+using Garm;
 using google.type;
 
 namespace TaikoLocalServer.Adapters.AllnetMucha.Controllers.Garmc;
@@ -14,7 +14,7 @@ public class PingController : BaseProtocolController<PingController>
         HttpContext.Request.EnableBuffering();
         var body = await HttpContext.Request.BodyReader.ReadAsync();
         var request = Serializer.Deserialize<PingRequest>(body.Buffer);
-        Logger.LogInformation("Ping request: {Request}", request.Stringify());
+        Logger.LogInformation("Ping request: {@Request}", request);
         var response = new PingResponse
         {
             ServerRecvTime = DateTime.UtcNow - TimeSpan.FromMilliseconds(50),

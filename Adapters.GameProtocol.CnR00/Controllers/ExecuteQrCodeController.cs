@@ -7,7 +7,7 @@ public class ExecuteQrCodeController : BaseProtocolController<ExecuteQrCodeContr
     [Produces("application/protobuf")]
     public IActionResult ExecuteQrCodeCN00([FromBody] ExecuteQrcodeRequest request)
     {
-        Logger.LogInformation("ExecuteQrcode request : {Request}", request.Stringify());
+        Logger.LogInformation("ExecuteQrcode request : {@Request}", request);
 
         var response = new ExecuteQrcodeResponse
         {

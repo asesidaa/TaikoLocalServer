@@ -8,7 +8,7 @@ public class ItemPurchaseController : BaseProtocolController<ItemPurchaseControl
     [Produces("application/protobuf")]
     public async Task<IActionResult> ItemPurchase([FromBody] ItempurchaseRequest request)
     {
-        Logger.LogInformation("Blue ItemPurchase request: {Request}", request.Stringify());
+        Logger.LogInformation("Blue ItemPurchase request: {@Request}", request);
         var common = await Mediator.Send(ItemShopMappers.Map(request), HttpContext.RequestAborted);
         return Ok(ItemShopMappers.Map(common));
     }

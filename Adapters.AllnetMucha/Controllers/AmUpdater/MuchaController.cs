@@ -1,4 +1,4 @@
-﻿using TaikoLocalServer.Adapters.AllnetMucha.Common;
+using TaikoLocalServer.Adapters.AllnetMucha.Common;
 using TaikoLocalServer.Adapters.AllnetMucha.Wire;
 
 namespace TaikoLocalServer.Adapters.AllnetMucha.Controllers.AmUpdater;
@@ -16,7 +16,7 @@ public class MuchaController : BaseProtocolController<MuchaController>
 
     public ContentResult BoardAuth([FromForm] MuchaBoardAuthRequest request)
     {
-        Logger.LogInformation("Mucha request: {Request}", request.Stringify());
+        Logger.LogInformation("Mucha request: {@Request}", request);
         // The dongle PRX parser only recognizes keys present in the table at
         // EBOOT.ELF 0x0103D188 — slot 1 is "SERVER_TIME" and slot 2 is
         // "SERVER_TIME_UTC" (NOT "UTC_SERVER_TIME"). Unrecognized keys are
@@ -77,7 +77,7 @@ public class MuchaController : BaseProtocolController<MuchaController>
     [HttpPost("/mucha_front/updatacheck.do")]
     public ContentResult UpdateCheck(MuchaUpdateCheckRequest request)
     {
-        Logger.LogInformation("Request is {Request}", request.Stringify());
+        Logger.LogInformation("Request is {@Request}", request);
         // Empty UPDATE chain (no UPDATE_VER_X blocks) is the only safe "no updates"
         // shape. Any chain we send is forwarded to the EBOOT's chunk subsystem
         // (chunk_update_processor_aborts at sub_4C66AC) which inserts one record per

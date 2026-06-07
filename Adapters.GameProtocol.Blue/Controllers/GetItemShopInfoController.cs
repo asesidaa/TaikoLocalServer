@@ -8,7 +8,7 @@ public class GetItemShopInfoController : BaseProtocolController<GetItemShopInfoC
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetItemShopInfo([FromBody] GetitemshopinfoRequest request)
     {
-        Logger.LogInformation("Blue GetItemShopInfo request: {Request}", request.Stringify());
+        Logger.LogInformation("Blue GetItemShopInfo request: {@Request}", request);
         var common = await Mediator.Send(ItemShopMappers.Map(request), HttpContext.RequestAborted);
         return Ok(ItemShopMappers.Map(common));
     }

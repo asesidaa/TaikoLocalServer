@@ -7,7 +7,7 @@ public class GetDanOdaiController : BaseProtocolController<GetDanOdaiController>
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetDanOdai([FromBody] GetDanOdaiRequest request)
     {
-        Logger.LogInformation("GetDanOdai request : {Request}", request.Stringify());
+        Logger.LogInformation("GetDanOdai request : {@Request}", request);
 
         var response = new GetDanOdaiResponse
         {

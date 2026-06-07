@@ -156,8 +156,6 @@ try
                 .AllowAnyHeader();
         });
     });
-    builder.Services.AddSingleton<SongBestResponseMapper>();
-
     var app = builder.Build();
 
     // Migrate db

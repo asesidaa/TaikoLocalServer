@@ -8,7 +8,7 @@ public class VerupAuthController : BaseProtocolController<VerupAuthController>
     [Produces("application/protobuf")]
     public IActionResult VerupAuth([FromBody] VerupAuthRequest request)
     {
-        Logger.LogInformation("Green VerupAuth request: {Request}", request.Stringify());
+        Logger.LogInformation("Green VerupAuth request: {@Request}", request);
         return Ok(new VerupAuthResponse { Result = 1 });
     }
 }

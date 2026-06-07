@@ -8,7 +8,7 @@ public class InitialDataCheckController : BaseProtocolController<InitialDataChec
     [Produces("application/protobuf")]
     public async Task<IActionResult> InitialDataCheck([FromBody] InitialdatacheckRequest request)
     {
-        Logger.LogInformation("Green InitialDataCheck request: {Request}", request.Stringify());
+        Logger.LogInformation("Green InitialDataCheck request: {@Request}", request);
         var common = await Mediator.Send(new GetInitialDataQuery(GameEra.Green), HttpContext.RequestAborted);
         return Ok(InitialDataMappers.Map(common));
     }

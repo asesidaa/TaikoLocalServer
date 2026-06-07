@@ -7,7 +7,7 @@ public class AddTokenCountController : BaseProtocolController<AddTokenCountContr
     [Produces("application/protobuf")]
     public async Task<IActionResult> AddTokenCountCN00([FromBody] AddTokenCountRequest request)
     {
-        Logger.LogInformation("[CN00] AddTokenCount request : {Request}", request.Stringify());
+        Logger.LogInformation("[CN00] AddTokenCount request : {@Request}", request);
 
         var command = new AddTokenCountCommand(GameEra.Nijiiro, AddTokenCountRequestMapper.Map(request));
         await Mediator.Send(command, HttpContext.RequestAborted);

@@ -7,7 +7,7 @@ public class GetTelopController : BaseProtocolController<GetTelopController>
     [Produces("application/protobuf")]
     public IActionResult GetTelopCN00([FromBody] GettelopRequest request)
     {
-        Logger.LogInformation("GetTelop request : {Request}", request.Stringify());
+        Logger.LogInformation("GetTelop request : {@Request}", request);
 
         var startDateTime = DateTime.Now - TimeSpan.FromDays(999.0);
         var endDateTime = DateTime.Now + TimeSpan.FromDays(999.0);

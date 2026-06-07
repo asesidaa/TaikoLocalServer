@@ -8,7 +8,7 @@ public class RecommendController : BaseProtocolController<RecommendController>
     [Produces("application/protobuf")]
     public IActionResult Recommend([FromBody] RecommendRequest request)
     {
-        Logger.LogInformation("Blue Recommend request: {Request}", request.Stringify());
+        Logger.LogInformation("Blue Recommend request: {@Request}", request);
         return Ok(new RecommendResponse { Result = 1 });
     }
 }

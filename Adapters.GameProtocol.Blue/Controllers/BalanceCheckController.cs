@@ -8,7 +8,7 @@ public class BalanceCheckController : BaseProtocolController<BalanceCheckControl
     [Produces("application/protobuf")]
     public IActionResult BalanceCheck([FromBody] BalancecheckRequest request)
     {
-        Logger.LogInformation("Blue BalanceCheck request: {Request}", request.Stringify());
+        Logger.LogInformation("Blue BalanceCheck request: {@Request}", request);
         return Ok(new BalancecheckResponse
         {
             Result = 1,

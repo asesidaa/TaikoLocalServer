@@ -1,4 +1,4 @@
-﻿using Garm;
+using Garm;
 
 namespace TaikoLocalServer.Adapters.AllnetMucha.Controllers.Garmc;
 
@@ -13,7 +13,7 @@ public class RegisterSystemBoardBillingController : BaseProtocolController<Regis
         HttpContext.Request.EnableBuffering();
         var body = await HttpContext.Request.BodyReader.ReadAsync();
         var request = Serializer.Deserialize<RegisterSystemBoardBillingRequest>(body.Buffer);
-        Logger.LogInformation("RegisterSystemBoardBilling request: {Request}", request.Stringify());
+        Logger.LogInformation("RegisterSystemBoardBilling request: {@Request}", request);
         var response = new RegisterSystemBoardBillingResponse
         {
             TooMany = false

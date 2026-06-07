@@ -7,7 +7,7 @@ public class GetDanScoreController : BaseProtocolController<GetDanScoreControlle
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetDanScoreCN00([FromBody] GetDanScoreRequest request)
     {
-        Logger.LogInformation("GetDanScoreCN00 request : {Request}", request.Stringify());
+        Logger.LogInformation("GetDanScoreCN00 request : {@Request}", request);
 
         var commonResponse = await Mediator.Send(new GetDanScoreQuery((uint)request.Baid, GameEra.Nijiiro, request.Type, request.DanIds), HttpContext.RequestAborted);
         var response = DanScoreMappers.MapToCN00(commonResponse);

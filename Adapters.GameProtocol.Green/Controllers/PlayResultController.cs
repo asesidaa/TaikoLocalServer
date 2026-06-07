@@ -34,9 +34,9 @@ public class PlayResultController : BaseProtocolController<PlayResultController>
             }
 
             Logger.LogInformation(
-                "Green PlayResult received dump:{NewLine}{Dump}",
-                Environment.NewLine,
-                GreenPlayResultPayloadDecoder.BuildReceivedDump(decoded.Request, commonRequest));
+                "Green PlayResult received dump: wire={@Request} mapped_common={@Common}",
+                decoded.Request,
+                commonRequest);
         }
         catch (GreenPlayResultPayloadDecodeException ex)
         {

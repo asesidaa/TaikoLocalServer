@@ -25,7 +25,9 @@ public sealed class BlueA4ControllerSourceTests
             "Controllers",
             "PlayResultController.cs"));
 
-        Assert.Contains("request.Stringify()", source, StringComparison.Ordinal);
+        Assert.Contains("Blue PlayResult request: {@Request}", source, StringComparison.Ordinal);
+        Assert.Contains("Logger.LogInformation(\"Blue PlayResult request: {@Request}\", request)", source, StringComparison.Ordinal);
+        Assert.DoesNotContain("request.Stringify()", source, StringComparison.Ordinal);
         Assert.DoesNotContain("play_datetime={PlayDatetime}", source, StringComparison.Ordinal);
     }
 

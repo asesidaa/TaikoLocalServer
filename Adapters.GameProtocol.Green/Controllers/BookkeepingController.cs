@@ -8,7 +8,7 @@ public class BookkeepingController : BaseProtocolController<BookkeepingControlle
     [Produces("application/protobuf")]
     public IActionResult Bookkeeping([FromBody] BookKeepingRequest request)
     {
-        Logger.LogInformation("Green Bookkeeping request: {Request}", request.Stringify());
+        Logger.LogInformation("Green Bookkeeping request: {@Request}", request);
         return Ok(new BookKeepingResponse { Result = 1 });
     }
 }

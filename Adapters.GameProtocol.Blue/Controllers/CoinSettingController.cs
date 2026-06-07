@@ -8,7 +8,7 @@ public class CoinSettingController : BaseProtocolController<CoinSettingControlle
     [Produces("application/protobuf")]
     public IActionResult CoinSetting([FromBody] CoinsettingRequest request)
     {
-        Logger.LogInformation("Blue CoinSetting request: {Request}", request.Stringify());
+        Logger.LogInformation("Blue CoinSetting request: {@Request}", request);
         return Ok(new CoinsettingResponse { Result = 1 });
     }
 }

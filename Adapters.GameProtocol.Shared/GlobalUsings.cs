@@ -8,4 +8,3 @@ global using ProtoBuf;
 global using TaikoLocalServer.Application.Abstractions;
 global using TaikoLocalServer.Application.Dtos;
 global using TaikoLocalServer.Application.Handlers;
-global using Swan.Formatters;

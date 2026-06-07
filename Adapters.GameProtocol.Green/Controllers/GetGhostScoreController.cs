@@ -8,7 +8,7 @@ public class GetGhostScoreController : BaseProtocolController<GetGhostScoreContr
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetGhostScore([FromBody] GetghostscoreRequest request)
     {
-        Logger.LogInformation("Green GetGhostScore request: {Request}", request.Stringify());
+        Logger.LogInformation("Green GetGhostScore request: {@Request}", request);
         var common = await Mediator.Send(
             new GetGhostScoreQuery(request.Baid, request.SongNo, request.Level),
             HttpContext.RequestAborted);

@@ -7,7 +7,7 @@ public class GetShopFolderController : BaseProtocolController<GetShopFolderContr
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetShopFolderCN00([FromBody] GetShopFolderRequest request)
     {
-        Logger.LogInformation("GetShopFolder request : {Request}", request.Stringify());
+        Logger.LogInformation("GetShopFolder request : {@Request}", request);
 
         var commonResponse = await Mediator.Send(new GetShopFolderQuery(GameEra.Nijiiro), HttpContext.RequestAborted);
         var response = ShopFolderDataMappers.MapToCN00(commonResponse);

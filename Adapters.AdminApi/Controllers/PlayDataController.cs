@@ -1,5 +1,4 @@
-using Riok.Mapperly.Abstractions;
-using Swan.Mapping;
+using TaikoLocalServer.Adapters.AdminApi.Mapping;
 using Throw;
 
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
@@ -45,7 +44,7 @@ public class PlayDataController(ITaikoDbContext context) : BaseAdminController<P
             .Where(d => d.Baid == baid)
             .AsNoTracking()
             .ToListAsync(HttpContext.RequestAborted);
-        var songBestRecords = songBestDbData.Select(d => d.CopyPropertiesToNew<SongBestData>()).ToList();
+        var songBestRecords = songBestDbData.Select(d => d.ToSongBestData()).ToList();
         var aiSectionBest = await context.AiScoreDataNijiiro
             .Where(d => d.Baid == baid)
             .Include(d => d.AiSectionScoreData)
@@ -67,14 +66,7 @@ public class PlayDataController(ITaikoDbContext context) : BaseAdminController<P
             bestData.LastPlayTime = songPlayDatums.MaxBy(d => d.PlayTime)!.PlayTime;
 
             var bestLog = songPlayDatums.MaxBy(d => d.Score);
-            bestLog.CopyOnlyPropertiesTo(bestData,
-                nameof(SongPlayDatumNijiiro.PlayTime),
-                nameof(SongPlayDatumNijiiro.GoodCount),
-                nameof(SongPlayDatumNijiiro.OkCount),
-                nameof(SongPlayDatumNijiiro.MissCount),
-                nameof(SongPlayDatumNijiiro.HitCount),
-                nameof(SongPlayDatumNijiiro.DrumrollCount),
-                nameof(SongPlayDatumNijiiro.ComboCount));
+            bestLog!.ApplyBestLogTo(bestData);
 
             if (bestLog is not null)
             {
@@ -89,7 +81,7 @@ public class PlayDataController(ITaikoDbContext context) : BaseAdminController<P
             }
 
             bestData.AiSectionBestData = aiSection.AiSectionScoreData
-                .Select(d => d.CopyPropertiesToNew<AiSectionBestData>())
+                .Select(d => d.ToAiSectionBestData())
                 .ToList();
         }
 
@@ -114,7 +106,7 @@ public class PlayDataController(ITaikoDbContext context) : BaseAdminController<P
         {
             songBestRecord.RecentPlayData = songPlayData
                 .Where(d => d.SongId == songBestRecord.SongId && d.Difficulty == songBestRecord.Difficulty)
-                .Select(SongBestResponseMapper.MapToDto)
+                .Select(d => d.ToSongPlayDatumDto())
                 .ToList();
         }
 
@@ -335,10 +327,4 @@ public class PlayDataController(ITaikoDbContext context) : BaseAdminController<P
             PlayTime = play.PlayTime
         };
     }
-}
-
-[Mapper(EnumMappingStrategy = EnumMappingStrategy.ByName)]
-public partial class SongBestResponseMapper
-{
-    public static partial SongPlayDatumDto MapToDto(SongPlayDatumNijiiro entity);
 }

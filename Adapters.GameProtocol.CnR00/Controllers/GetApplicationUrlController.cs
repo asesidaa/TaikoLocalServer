@@ -8,7 +8,7 @@ public class GetApplicationUrlController : BaseProtocolController<GetApplication
     [Produces("application/protobuf")]
     public IActionResult GetApplicationUrlCN00([FromBody] GetApplicationUrlRequest request)
     {
-        Logger.LogInformation("GetApplicationUrl request : {Request}", request.Stringify());
+        Logger.LogInformation("GetApplicationUrl request : {@Request}", request);
 
         var response = new GetApplicationUrlResponse
         {

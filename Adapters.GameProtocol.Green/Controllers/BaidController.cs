@@ -8,7 +8,7 @@ public class BaidController : BaseProtocolController<BaidController>
     [Produces("application/protobuf")]
     public async Task<IActionResult> Baid([FromBody] BAIDRequest request)
     {
-        Logger.LogInformation("Green Baid request: {Request}", request.Stringify());
+        Logger.LogInformation("Green Baid request: {@Request}", request);
         var common = await Mediator.Send(new BaidQuery(GameEra.Green, request.AccessCode), HttpContext.RequestAborted);
 
         if (common.IsNewUser)

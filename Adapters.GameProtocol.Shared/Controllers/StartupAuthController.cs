@@ -11,7 +11,7 @@ public sealed class StartupAuthController : BaseProtocolController<StartupAuthCo
     public async Task<IActionResult> StartupAuth([FromBody] StartupAuthRequest request)
     {
         Logger.LogInformation(
-            "StartupAuth request: {Request}", request.Stringify());
+            "StartupAuth request: {@Request}", request);
 
         var response = new StartupAuthResponse { Result = 1 };
         var movieData = await Mediator.Send(

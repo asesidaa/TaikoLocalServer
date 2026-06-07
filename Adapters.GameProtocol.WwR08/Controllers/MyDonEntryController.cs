@@ -7,7 +7,7 @@ public class MyDonEntryController : BaseProtocolController<MyDonEntryController>
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetMyDonEntry([FromBody] MydonEntryRequest request)
     {
-        Logger.LogInformation("MyDonEntry request : {Request}", request.Stringify());
+        Logger.LogInformation("MyDonEntry request : {@Request}", request);
 
         var commonResponse = await Mediator.Send(new AddMyDonEntryCommand(GameEra.Nijiiro, request.AccessCode, request.MydonName, request.MydonNameLanguage), HttpContext.RequestAborted);
         var response = MyDonEntryMappers.MapToWW08(commonResponse);

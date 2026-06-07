@@ -8,7 +8,7 @@ public class SelfBestController : BaseProtocolController<SelfBestController>
     [Produces("application/protobuf")]
     public async Task<IActionResult> SelfBest([FromBody] SelfBestRequest request)
     {
-        Logger.LogInformation("Green SelfBest request: {Request}", request.Stringify());
+        Logger.LogInformation("Green SelfBest request: {@Request}", request);
         var common = await Mediator.Send(
             new GetSelfBestQuery(request.Baid, GameEra.Green, request.Level, request.ArySongNoes ?? []),
             HttpContext.RequestAborted);

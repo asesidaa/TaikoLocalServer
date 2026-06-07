@@ -1,4 +1,4 @@
-﻿using TaikoLocalServer.Adapters.AllnetMucha.Common;
+using TaikoLocalServer.Adapters.AllnetMucha.Common;
 using TaikoLocalServer.Adapters.AllnetMucha.Wire;
 
 namespace TaikoLocalServer.Adapters.AllnetMucha.Controllers.AmAuth;
@@ -17,7 +17,7 @@ public class PowerOnController : BaseProtocolController<PowerOnController>
     [HttpPost]
     public ContentResult PowerOn([FromForm] PowerOnRequest request)
     {
-        Logger.LogInformation("Power on request: {Request}",request.Stringify());
+        Logger.LogInformation("Power on request: {@Request}", request);
         var now = DateTime.Now;
         var response = new Dictionary<string, string>
         {

@@ -8,7 +8,7 @@ public class GetBanacoinInfoController : BaseProtocolController<GetBanacoinInfoC
     [Produces("application/protobuf")]
     public IActionResult GetBanacoinInfo([FromBody] GetbanacoininfoRequest request)
     {
-        Logger.LogInformation("Blue GetBanacoinInfo request: {Request}", request.Stringify());
+        Logger.LogInformation("Blue GetBanacoinInfo request: {@Request}", request);
         return Ok(new GetbanacoininfoResponse { Result = 1 });
     }
 }

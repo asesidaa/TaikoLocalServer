@@ -12,7 +12,7 @@ public class CrownsDataController(ITaikoDbContext context, IOptions<ServerSettin
     [Produces("application/protobuf")]
     public async Task<IActionResult> CrownsDataCN00([FromBody] CrownsDataRequest request)
     {
-        Logger.LogInformation("CrownsData request : {Request}", request.Stringify());
+        Logger.LogInformation("CrownsData request : {@Request}", request);
 
         var crownData = await Handle((uint)request.Baid);
 

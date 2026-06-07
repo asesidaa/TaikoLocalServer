@@ -7,11 +7,11 @@ public class PlayResultController : BaseProtocolController<PlayResultController>
     [Produces("application/protobuf")]
     public async Task<IActionResult> UploadPlayResultCN00([FromBody] PlayResultRequest request)
     {
-        Logger.LogInformation("PlayResultCN00 request : {Request}", request.Stringify());
+        Logger.LogInformation("PlayResultCN00 request : {@Request}", request);
         var decompressed = GZipBytesUtil.DecompressGZipBytes(request.PlayresultData);
         var playResultData =
             Serializer.Deserialize<PlayResultDataRequest>(new ReadOnlySpan<byte>(decompressed));
-        Logger.LogInformation("Play result data CN00 {Data}", playResultData.Stringify());
+        Logger.LogInformation("Play result data CN00 {@Data}", playResultData);
 
         var commonRequest = PlayResultMappers.Map(playResultData);
         var commonResponse = await Mediator.Send(new UpdatePlayResultCommand((uint) request.BaidConf, GameEra.Nijiiro, commonRequest), HttpContext.RequestAborted);

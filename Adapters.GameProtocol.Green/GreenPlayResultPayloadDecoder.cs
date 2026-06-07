@@ -29,16 +29,6 @@ public static class GreenPlayResultPayloadDecoder
         return Convert.ToHexString(preview);
     }
 
-    public static string BuildReceivedDump(PlayResultDataRequest request, CommonPlayResultData common)
-    {
-        return string.Join(
-            Environment.NewLine,
-            "Green PlayResultDataRequest:",
-            request.Stringify(),
-            "CommonPlayResultData:",
-            common.Stringify());
-    }
-
     private static byte[] InflateGzip(byte[] payload)
     {
         using var input = new MemoryStream(payload);

@@ -8,7 +8,7 @@ public class GetTelopController : BaseProtocolController<GetTelopController>
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetTelop([FromBody] GettelopRequest request)
     {
-        Logger.LogInformation("Blue GetTelop request: {Request}", request.Stringify());
+        Logger.LogInformation("Blue GetTelop request: {@Request}", request);
         var common = await Mediator.Send(
             new GetTelopQuery(GameEra.Blue, request.TelopId),
             HttpContext.RequestAborted);

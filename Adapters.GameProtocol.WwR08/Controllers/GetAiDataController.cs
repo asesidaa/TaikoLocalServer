@@ -7,7 +7,7 @@ public class GetAiDataController : BaseProtocolController<GetAiDataController>
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetAiData([FromBody] GetAiDataRequest request)
     {
-        Logger.LogInformation("GetAiData request : {Request}", request.Stringify());
+        Logger.LogInformation("GetAiData request : {@Request}", request);
 
         var commonResponse = await Mediator.Send(new GetAiDataQuery(request.Baid, GameEra.Nijiiro), HttpContext.RequestAborted);
         var response = AiDataResponseMapper.MapToWW08(commonResponse);

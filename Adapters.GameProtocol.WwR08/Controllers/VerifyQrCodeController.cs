@@ -14,7 +14,7 @@ public class VerifyQrCodeController : BaseProtocolController<VerifyQrCodeControl
     [Produces("application/protobuf")]
     public IActionResult VerifyQrCode([FromBody] VerifyQrcodeRequest request)
     {
-        Logger.LogInformation("VerifyQrCode request : {Request}", request.Stringify());
+        Logger.LogInformation("VerifyQrCode request : {@Request}", request);
 
         var qrCodeId = VerifyQr(request.QrcodeSerial);
         var response = new VerifyQrcodeResponse

@@ -13,7 +13,7 @@ public class CrownsDataController(ITaikoDbContext context, IGameDataCatalog game
     [Produces("application/protobuf")]
     public async Task<IActionResult> CrownsData([FromBody] CrownsDataRequest request)
     {
-        Logger.LogInformation("Blue CrownsData request: {Request}", request.Stringify());
+        Logger.LogInformation("Blue CrownsData request: {@Request}", request);
         var bestRows = await context.SongBestDataBlue
             .Where(row => row.Baid == request.Baid)
             .ToListAsync(HttpContext.RequestAborted);

@@ -7,7 +7,7 @@ public class UserDataController : BaseProtocolController<UserDataController>
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetUserDataCN00([FromBody] UserDataRequest request)
     {
-        Logger.LogInformation("UserData request : {Request}", request.Stringify());
+        Logger.LogInformation("UserData request : {@Request}", request);
 
         var commonResponse = await Mediator.Send(new UserDataQuery((uint)request.Baid, GameEra.Nijiiro), HttpContext.RequestAborted);
         var response = UserDataMappers.MapToCN00(commonResponse);

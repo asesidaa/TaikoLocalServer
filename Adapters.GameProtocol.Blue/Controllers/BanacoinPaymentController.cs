@@ -8,7 +8,7 @@ public class BanacoinPaymentController : BaseProtocolController<BanacoinPaymentC
     [Produces("application/protobuf")]
     public IActionResult BanacoinPayment([FromBody] BanacoinpaymentRequest request)
     {
-        Logger.LogInformation("Blue BanacoinPayment request: {Request}", request.Stringify());
+        Logger.LogInformation("Blue BanacoinPayment request: {@Request}", request);
         return Ok(new BanacoinpaymentResponse
         {
             Result = 1,

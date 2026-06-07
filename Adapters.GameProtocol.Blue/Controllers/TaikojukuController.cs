@@ -8,7 +8,7 @@ public class TaikojukuController : BaseProtocolController<TaikojukuController>
     [Produces("application/protobuf")]
     public async Task<IActionResult> Taikojuku([FromBody] TaikojukuRequest request)
     {
-        Logger.LogInformation("Blue Taikojuku request: {Request}", request.Stringify());
+        Logger.LogInformation("Blue Taikojuku request: {@Request}", request);
         var common = await Mediator.Send(
             new GetTaikojukuQuery(GameEra.Blue, request.GetDans ?? []),
             HttpContext.RequestAborted);

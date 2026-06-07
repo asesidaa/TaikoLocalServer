@@ -8,7 +8,7 @@ public class HeartbeatController : BaseProtocolController<HeartbeatController>
     [Produces("application/protobuf")]
     public IActionResult Heartbeat([FromBody] HeartBeatRequest request)
     {
-        Logger.LogInformation("Blue Heartbeat request: {Request}", request.Stringify());
+        Logger.LogInformation("Blue Heartbeat request: {@Request}", request);
         return Ok(new HeartBeatResponse
         {
             Result = 1,

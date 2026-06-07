@@ -8,7 +8,7 @@ public class HeadClerk2Controller : BaseProtocolController<HeadClerk2Controller>
     [Produces("application/protobuf")]
     public IActionResult HeadClerk2([FromBody] HeadClerk2Request request)
     {
-        Logger.LogInformation("Green HeadClerk2 request: {Request}", request.Stringify());
+        Logger.LogInformation("Green HeadClerk2 request: {@Request}", request);
         return Ok(new HeadClerk2Response { Result = 1 });
     }
 }

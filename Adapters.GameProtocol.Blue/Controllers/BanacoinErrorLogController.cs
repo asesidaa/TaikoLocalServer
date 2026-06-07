@@ -8,7 +8,7 @@ public class BanacoinErrorLogController : BaseProtocolController<BanacoinErrorLo
     [Produces("application/protobuf")]
     public IActionResult BanacoinErrorLog([FromBody] BanacoinerrorlogRequest request)
     {
-        Logger.LogInformation("Blue BanacoinErrorLog request: {Request}", request.Stringify());
+        Logger.LogInformation("Blue BanacoinErrorLog request: {@Request}", request);
         return Ok(new BanacoinerrorlogResponse { Result = 1 });
     }
 }
