@@ -219,10 +219,11 @@ public class UserDataController : BaseProtocolController<UserDataController>
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult UserData([FromBody] UserDataRequest request)
+    public async Task<IActionResult> UserData([FromBody] UserDataRequest request)
     {
-        Logger.LogInformation("Yellow UserData request from {ChassisId}", request.ChassisId);
-        return Ok(new UserDataResponse { Result = 1 });
+        Logger.LogInformation("Yellow UserData request: {@Request}", request);
+        var common = await Mediator.Send(new UserDataQuery(request.Baid, GameEra.Yellow), HttpContext.RequestAborted);
+        return Ok(UserDataMappers.Map(common));
     }
 }
 

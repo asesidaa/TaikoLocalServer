@@ -15,12 +15,12 @@ public sealed class YellowCatalogBoundaryTests
         "TournamentCheckController",
         "ChallengeCompeController",
         "BaidController",
-        "MyDonEntryController"
+        "MyDonEntryController",
+        "UserDataController"
     ];
 
     private static readonly string[] DeferredNoStateControllers =
     [
-        "UserDataController",
         "PlayResultController",
         "SelfBestController",
         "CrownsDataController",
