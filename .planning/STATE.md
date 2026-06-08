@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
 status: executing
-stopped_at: Completed 15-02-PLAN.md
-last_updated: "2026-06-08T03:01:04.653Z"
-last_activity: 2026-06-08 -- completed Phase 15 Plan 02 Yellow Dani runtime/readback
+stopped_at: Completed 15-03-PLAN.md
+last_updated: "2026-06-08T03:22:34.960Z"
+last_activity: 2026-06-08 -- completed Phase 15 Plan 03 Yellow shop state schema
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 18
-  completed_plans: 11
-  percent: 61
+  completed_plans: 12
+  percent: 67
 ---
 
 # Project State
@@ -26,17 +26,17 @@ See: `.planning/PROJECT.md` (updated 2026-06-07)
 ## Current Position
 
 Phase: 15
-Plan: 03
+Plan: 04
 Status: Executing
-Last activity: 2026-06-08 -- completed Phase 15 Plan 02 Yellow Dani runtime/readback
+Last activity: 2026-06-08 -- completed Phase 15 Plan 03 Yellow shop state schema
 
 ## Performance Metrics
 
 **Velocity:**
 
 - Total plans completed: 12 in v1.2
-- Average duration: 25.3 min
-- Total execution time: 228 min
+- Average duration: 25.8 min
+- Total execution time: 259 min
 
 **By Phase:**
 
@@ -73,6 +73,7 @@ Last activity: 2026-06-08 -- completed Phase 15 Plan 02 Yellow Dani runtime/read
 | Phase 14 P03 | 24 min | 3 tasks | 8 files |
 | Phase 15 P01 | 25 min | 2 tasks | 12 files |
 | Phase 15 P02 | 29 min | 2 tasks | 6 files |
+| Phase 15 P03 | 31 min | 2 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -102,6 +103,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 14]: Plan 03 added Mediator-backed Yellow playresult routing and Yellow-owned normal play persistence that feeds userdata, self-best, and crown readback while leaving Tokkun-shaped uploads as success/no-write for Phase 16.
 - [Phase 15]: Plan 01 added Yellow-owned Dan score/stage score tables plus Yellow-specific packed-grade helper rules without Blue/Green Dan table/helper reuse.
 - [Phase 15]: Plan 02 added Yellow Dan playresult persistence, Yellow-owned Dan score readback, and Yellow userdata display-Dan normalization from Yellow Dan rows.
+- [Phase 15]: Plan 03 added Yellow-owned shop season/item tables plus active-season helpers that seed from Yellow save Don medal totals and ignore Blue/Green shop rows.
 
 ### Pending Todos
 
@@ -120,11 +122,11 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-08T02:29:36.737Z
-Stopped at: Completed 15-02-PLAN.md
-Resume file: .planning/phases/15-yellow-dani-shop-medals-waiwai-and-admin/15-03-PLAN.md
+Last session: 2026-06-08T03:22:34.960Z
+Stopped at: Completed 15-03-PLAN.md
+Resume file: .planning/phases/15-yellow-dani-shop-medals-waiwai-and-admin/15-04-PLAN.md
 
 ## Operator Next Steps
 
-- Continue Phase 15 with 15-03-PLAN.md.
+- Continue Phase 15 with 15-04-PLAN.md.
 - Do not run phase verification/review or start Phase 16 from implementation-stage execution.
