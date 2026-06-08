@@ -259,7 +259,7 @@ public class BalanceCheckController : BaseProtocolController<BalanceCheckControl
     [Produces("application/protobuf")]
     public IActionResult BalanceCheck([FromBody] BalancecheckRequest request)
     {
-        Logger.LogInformation("Yellow BalanceCheck request from {ChassisId}", request.ChassisId);
+        Logger.LogInformation("Yellow BalanceCheck request: {@Request}", request);
         return Ok(new BalancecheckResponse { Result = 1, Personid = request.Personid });
     }
 }
@@ -272,7 +272,7 @@ public class BanacoinPaymentController : BaseProtocolController<BanacoinPaymentC
     [Produces("application/protobuf")]
     public IActionResult BanacoinPayment([FromBody] BanacoinpaymentRequest request)
     {
-        Logger.LogInformation("Yellow BanacoinPayment request from {ChassisId}", request.ChassisId);
+        Logger.LogInformation("Yellow BanacoinPayment request: {@Request}", request);
         return Ok(new BanacoinpaymentResponse { Result = 1, Personid = request.Personid });
     }
 }
@@ -285,7 +285,7 @@ public class BanacoinErrorLogController : BaseProtocolController<BanacoinErrorLo
     [Produces("application/protobuf")]
     public IActionResult BanacoinErrorLog([FromBody] BanacoinerrorlogRequest request)
     {
-        Logger.LogInformation("Yellow BanacoinErrorLog request from {ChassisId}", request.ChassisId);
+        Logger.LogInformation("Yellow BanacoinErrorLog request: {@Request}", request);
         return Ok(new BanacoinerrorlogResponse { Result = 1 });
     }
 }
@@ -298,7 +298,7 @@ public class GetBanacoinInfoController : BaseProtocolController<GetBanacoinInfoC
     [Produces("application/protobuf")]
     public IActionResult GetBanacoinInfo([FromBody] GetbanacoininfoRequest request)
     {
-        Logger.LogInformation("Yellow GetBanacoinInfo request from {ChassisId}", request.ChassisId);
+        Logger.LogInformation("Yellow GetBanacoinInfo request: {@Request}", request);
         return Ok(new GetbanacoininfoResponse { Result = 1 });
     }
 }
