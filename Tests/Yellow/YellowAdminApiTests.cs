@@ -199,6 +199,87 @@ public sealed class YellowAdminApiTests
         Assert.Single(await fixture.Context.GreenFavoriteSongs.Where(row => row.Baid == 1).ToListAsync());
     }
 
+    [Fact]
+    public async Task SongLeaderboard_Yellow_UsesYellowBestRowsOnly()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync();
+        fixture.Context.UserData.AddRange(
+            new UserDatum { Baid = 1, MyDonName = "YELLOW1" },
+            new UserDatum { Baid = 2, MyDonName = "YELLOW2" });
+        fixture.Context.SongBestDataYellow.AddRange(
+            new SongBestDatumYellow { Baid = 1, SongId = 101, Difficulty = Difficulty.Oni, IsShin = false, BestScore = 800000, BestRate = 80, BestCrown = CrownType.Clear },
+            new SongBestDatumYellow { Baid = 2, SongId = 101, Difficulty = Difficulty.Oni, IsShin = false, BestScore = 900000, BestRate = 90, BestCrown = CrownType.Gold },
+            new SongBestDatumYellow { Baid = 2, SongId = 101, Difficulty = Difficulty.Oni, IsShin = true, BestScore = 950000, BestRate = 95, BestCrown = CrownType.Dondaful });
+        fixture.Context.SongBestDataBlue.Add(new SongBestDatumBlue { Baid = 1, SongId = 101, Difficulty = Difficulty.Oni, IsShin = false, BestScore = 999999, BestRate = 99, BestCrown = CrownType.Dondaful });
+        fixture.Context.SongBestDataGreen.Add(new SongBestDatumGreen { Baid = 2, SongId = 101, Difficulty = Difficulty.Oni, IsShin = false, BestScore = 777777, BestRate = 77, BestCrown = CrownType.Clear });
+        await fixture.Context.SaveChangesAsync();
+        var controller = CreateSongLeaderboardController(fixture.Context);
+
+        var result = await controller.GetSongLeaderboard("Yellow", 101, 1, (uint)Difficulty.Oni);
+
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var response = Assert.IsType<SongLeaderboardResponse>(ok.Value);
+        Assert.Equal([2u, 1u], response.LeaderboardData.Select(row => row.Baid).ToList());
+        Assert.Equal([900000u, 800000u], response.LeaderboardData.Select(row => row.BestScore).ToList());
+        Assert.All(response.LeaderboardData, row => Assert.Equal(ScoreRank.None, row.BestScoreRank));
+        Assert.NotNull(response.UserScore);
+        Assert.Equal(2, response.UserScore!.Rank);
+    }
+
+    [Fact]
+    public async Task DanBestData_Yellow_UsesYellowDanRowsOnly()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "don" });
+        fixture.Context.DanScoreDataYellow.Add(new DanScoreDatumYellow
+        {
+            Baid = 1,
+            DanId = 1,
+            IsExtra = false,
+            MedleyUniqueId = 20001,
+            ClearGrade = YellowDanClearGrade.GoldClear,
+            SoulGaugeTotal = 100,
+            ComboCountTotal = 300,
+            DanStageScoreData =
+            [
+                new() { Baid = 1, DanId = 1, IsExtra = false, StageIndex = 0, SongNumber = 101, PlayScore = 1000, HighScore = 1000, GoodCount = 10, OkCount = 2, BadCount = 1, DrumrollCount = 4, TotalHitCount = 13, ComboCount = 12 }
+            ]
+        });
+        fixture.Context.DanScoreDataBlue.Add(new DanScoreDatumBlue
+        {
+            Baid = 1,
+            DanId = 2,
+            IsExtra = false,
+            MedleyUniqueId = 20002,
+            ClearGrade = BlueDanClearGrade.GoldClear,
+            SoulGaugeTotal = 200,
+            ComboCountTotal = 600
+        });
+        fixture.Context.DanScoreDataGreen.Add(new DanScoreDatumGreen
+        {
+            Baid = 1,
+            DanId = 3,
+            IsExtra = false,
+            MedleyUniqueId = 20003,
+            ClearGrade = GreenDanClearGrade.GoldClear,
+            SoulGaugeTotal = 300,
+            ComboCountTotal = 900
+        });
+        await fixture.Context.SaveChangesAsync();
+        var controller = CreateDanBestDataController(fixture.Context);
+
+        var result = await controller.GetDanBestData("Yellow", 1);
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var response = Assert.IsType<DanBestDataResponse>(ok.Value);
+        var row = Assert.Single(response.DanBestDataList);
+        Assert.Equal(1u, row.DanId);
+        Assert.Equal(DanClearState.GoldNormalClear, row.ClearState);
+        Assert.Equal(100u, row.SoulGaugeTotal);
+        Assert.Single(row.DanBestStageDataList);
+        Assert.Equal(101u, row.DanBestStageDataList[0].SongNumber);
+    }
+
     private static PlayDataController CreatePlayDataController(ITaikoDbContext context)
         => new(context)
         {
@@ -213,6 +294,18 @@ public sealed class YellowAdminApiTests
 
     private static FavoriteSongsController CreateFavoriteSongsController(ITaikoDbContext context, IGameDataCatalog catalog)
         => new(context, catalog)
+        {
+            ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
+        };
+
+    private static SongLeaderboardController CreateSongLeaderboardController(ITaikoDbContext context)
+        => new(context)
+        {
+            ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
+        };
+
+    private static DanBestDataController CreateDanBestDataController(ITaikoDbContext context)
+        => new(context)
         {
             ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
         };

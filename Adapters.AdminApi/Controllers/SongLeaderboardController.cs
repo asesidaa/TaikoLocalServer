@@ -3,8 +3,10 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class SongLeaderboardController(ITaikoDbContext context) : BaseAdminController<SongLeaderboardController>
+public partial class SongLeaderboardController(ITaikoDbContext context) : BaseAdminController<SongLeaderboardController>
 {
+    private readonly ITaikoDbContext context = context;
+
     [HttpGet("{songId}")]
     public Task<ActionResult<SongLeaderboardResponse>> GetSongLeaderboard(
         uint songId,
@@ -51,6 +53,7 @@ public class SongLeaderboardController(ITaikoDbContext context) : BaseAdminContr
             GameEra.Nijiiro => await GetNijiiroLeaderboardRows(songId, diff),
             GameEra.Green => await GetGreenLeaderboardRows(songId, diff),
             GameEra.Blue => await GetBlueLeaderboardRows(songId, diff),
+            GameEra.Yellow => await GetYellowLeaderboardRows(songId, diff),
             _ => null
         };
 

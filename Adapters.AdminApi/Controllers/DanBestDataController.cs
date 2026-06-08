@@ -25,6 +25,7 @@ public class DanBestDataController(ITaikoDbContext context) : BaseAdminControlle
             GameEra.Nijiiro => Ok(await BuildNijiiroDanBestData(baid)),
             GameEra.Green => Ok(await BuildGreenDanBestData(baid)),
             GameEra.Blue => Ok(await BuildBlueDanBestData(baid)),
+            GameEra.Yellow => Ok(await BuildYellowDanBestData(baid)),
             _ => EraRoute.BadEra(era)
         };
     }
@@ -145,6 +146,53 @@ public class DanBestDataController(ITaikoDbContext context) : BaseAdminControlle
             BlueDanClearGrade.NotClear => DanClearState.NotClear,
             BlueDanClearGrade.NormalClear => DanClearState.RedNormalClear,
             BlueDanClearGrade.GoldClear => DanClearState.GoldNormalClear,
+            _ => DanClearState.NotClear
+        };
+    }
+
+    private async Task<DanBestDataResponse> BuildYellowDanBestData(uint baid)
+    {
+        var rows = await context.DanScoreDataYellow
+            .Where(d => d.Baid == baid)
+            .Include(d => d.DanStageScoreData)
+            .AsNoTracking()
+            .AsSplitQuery()
+            .ToListAsync(HttpContext.RequestAborted);
+
+        return new DanBestDataResponse
+        {
+            DanBestDataList = rows.Select(row => new DanBestData
+            {
+                DanId = row.DanId,
+                ClearState = MapYellowClearGrade(row.ClearGrade),
+                SoulGaugeTotal = row.SoulGaugeTotal,
+                ComboCountTotal = row.ComboCountTotal,
+                DanBestStageDataList = row.DanStageScoreData
+                    .OrderBy(stage => stage.StageIndex)
+                    .Select(stage => new DanBestStageData
+                    {
+                        SongNumber = stage.SongNumber,
+                        PlayScore = stage.PlayScore,
+                        GoodCount = stage.GoodCount,
+                        OkCount = stage.OkCount,
+                        BadCount = stage.BadCount,
+                        DrumrollCount = stage.DrumrollCount,
+                        TotalHitCount = stage.TotalHitCount,
+                        ComboCount = stage.ComboCount,
+                        HighScore = stage.HighScore
+                    })
+                    .ToList()
+            }).ToList()
+        };
+    }
+
+    private static DanClearState MapYellowClearGrade(YellowDanClearGrade grade)
+    {
+        return grade switch
+        {
+            YellowDanClearGrade.NotClear => DanClearState.NotClear,
+            YellowDanClearGrade.NormalClear => DanClearState.RedNormalClear,
+            YellowDanClearGrade.GoldClear => DanClearState.GoldNormalClear,
             _ => DanClearState.NotClear
         };
     }
