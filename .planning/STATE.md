@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
-status: executing
-stopped_at: Completed 16-03-PLAN.md
-last_updated: "2026-06-08T07:50:28.008Z"
-last_activity: 2026-06-08 -- completed Phase 16 Plan 03 Yellow Tokkun userdata readback
+status: Ready to discuss or plan
+stopped_at: Phase 16 verified complete
+last_updated: "2026-06-08T08:49:25.000Z"
+last_activity: 2026-06-08 -- completed Phase 16 verification and routed to Phase 17
 progress:
   total_phases: 6
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 22
-  completed_plans: 21
-  percent: 95
+  completed_plans: 22
+  percent: 83
 ---
 
 # Project State
@@ -21,22 +21,22 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-07)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Phase 16 - Yellow Tokkun and Banacoin Compatibility
+**Current focus:** Phase 17 - Yellow Runtime Verification and Contract Closeout
 
 ## Current Position
 
-Phase: 16
-Plan: 16-04 next
-Status: Executing Phase 16
-Last activity: 2026-06-08 -- completed Phase 16 Plan 03 Yellow Tokkun userdata readback
+Phase: 17
+Plan: Not started
+Status: Phase 16 complete; Phase 17 not started
+Last activity: 2026-06-08 -- completed Phase 16 verification and routed to Phase 17
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 19 in v1.2
-- Average duration: 23.7 min
-- Total execution time: 426 min
+- Total plans completed: 22 in v1.2
+- Average duration: 20.3 min
+- Total execution time: 446 min
 
 **By Phase:**
 
@@ -51,17 +51,13 @@ Last activity: 2026-06-08 -- completed Phase 16 Plan 03 Yellow Tokkun userdata r
 | 13 | 3/3 complete | 80 min | 27 min |
 | 14 | 3/3 complete | 123 min | 41 min |
 | 15 | 9/9 complete | 198 min | 22 min |
+| 16 | 4/4 complete | 71 min | 18 min |
 
 **Recent Trend:**
 
-- Last 6 plans: 15-07 completed in 23 min; 15-08 completed in 18 min; 15-09 completed in 19 min; 16-01 completed in 20 min; 16-02 completed in 19 min; 16-03 completed in 12 min.
-- Trend: Phase 16 implementation is in progress; Plan 03 completed Yellow Tokkun tutorial userdata readback.
+- Last 6 plans: 15-08 completed in 18 min; 15-09 completed in 19 min; 16-01 completed in 20 min; 16-02 completed in 19 min; 16-03 completed in 12 min; 16-04 completed in 20 min.
+- Trend: Phase 16 implementation and verification completed; Phase 17 is pending and not started.
 
-| Phase 08 P01 | 5 min | 3 tasks | 2 files |
-| Phase 09 P01 | 26 min | 2 tasks | 5 files |
-| Phase 10 P01 | 18 min | 2 tasks | 13 files |
-| Phase 10 P02 | 8 min | 2 tasks | 3 files |
-| Phase 10 P03 | 7 min | 2 tasks | 5 files |
 | Phase 11 P01 | 3 min | 4 tasks | 4 files |
 | Phase 12 P01 | 12 min | 2 tasks | 13 files |
 | Phase 12 P02 | 9 min | 3 tasks | 7 files |
@@ -84,6 +80,7 @@ Last activity: 2026-06-08 -- completed Phase 16 Plan 03 Yellow Tokkun userdata r
 | Phase 16 P01 | 20 min | 2 tasks | 11 files |
 | Phase 16 P02 | 19 min | 2 tasks | 3 files |
 | Phase 16 P03 | 12 min | 2 tasks | 5 files |
+| Phase 16 P04 | 20 min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -123,6 +120,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 16]: Plan 01 added Yellow Tokkun mapper contract tests plus a Yellow-owned append-only raw history table/schema proof without handler writes or userdata readback.
 - [Phase 16]: Plan 02 replaced the Yellow Tokkun playresult placeholder with an early Yellow-only helper that writes only nullable tutorial state and append-only raw history, with behavior tests for unknown-user no rows, mixed-payload no-cross-write, and tutorial-only non-classification.
 - [Phase 16]: Plan 03 enabled Yellow userdata readback for only optional `tokkun_tutorial_flg`, preserving Blue/Green placement behavior and keeping Tokkun history/server-side facts out of userdata.
+- [Phase 16]: Plan 04 tightened Yellow Banacoin-adjacent compatibility to full request logging plus stateless success-only routes, with tests proving no wallet/payment/coupon/transaction authority surfaces.
 
 ### Pending Todos
 
@@ -141,11 +139,11 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-08T07:50:28.008Z
-Stopped at: Completed 16-03-PLAN.md
-Resume file: .planning/phases/16-yellow-tokkun-and-banacoin-compatibility/16-04-PLAN.md
+Last session: 2026-06-08T08:49:25.000Z
+Stopped at: Phase 16 verified complete, ready to discuss or plan Phase 17
+Resume file: None
 
 ## Operator Next Steps
 
-- Phase 16 Plan 03 is complete and summarized.
-- Continue with Phase 16 Plan 04; do not start phase verification/review or Phase 17 during implementation-stage work.
+- Phase 16 verification is complete and passed.
+- Next coordinator-owned step: Phase 17 discussion/planning/runtime verification closeout; do not mark Phase 17 or the milestone complete until its runtime smoke and documentation gates are satisfied.

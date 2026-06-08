@@ -31,7 +31,7 @@ Active milestone: **v1.2 Yellow AC15 Support**
 - [x] **Phase 13: Yellow Catalog and AC15 Core Foundation** - Load Yellow `ST9100-1` catalog data and establish Yellow AC15 profile/core contracts. (completed 2026-06-08)
 - [x] **Phase 14: Yellow Identity, Userdata, Crowns, Self-Best, and Normal Play** - Implement Yellow-owned profile/userdata/normal play loop, including crown encoding proof. (completed 2026-06-08)
 - [x] **Phase 15: Yellow Dani, Shop, Medals, WaiWai, and Admin** - Implement Yellow Dani, metadata, shop/medals, WaiWai tutorial/logging, and admin readback. (completed 2026-06-08)
-- [ ] **Phase 16: Yellow Tokkun and Banacoin Compatibility** - Add Yellow Tokkun acceptance/persistence/readback and stateless Banacoin-adjacent compatibility.
+- [x] **Phase 16: Yellow Tokkun and Banacoin Compatibility** - Add Yellow Tokkun acceptance/persistence/readback and stateless Banacoin-adjacent compatibility. (completed 2026-06-08)
 - [ ] **Phase 17: Yellow Runtime Verification and Contract Closeout** - Prove the full Yellow contract with focused tests, full build/test, runtime smoke, and docs.
 
 ## Phase Details
@@ -191,14 +191,14 @@ Plans:
 4. Yellow userdata reads back only the proven Tokkun tutorial flag.
 5. Yellow Banacoin-adjacent routes log and return compatibility success without wallet/payment/transaction persistence.
 
-**Plans:** 3/4 plans complete
+**Plans:** 4/4 plans complete
 
 Plans:
 
 **Wave 1**
 
 - [x] 16-01-PLAN.md - Define the Yellow Tokkun classifier contract and Yellow-owned raw history schema
-- [ ] 16-04-PLAN.md - Tighten Yellow Banacoin-adjacent compatibility as stateless log/success routes
+- [x] 16-04-PLAN.md - Tighten Yellow Banacoin-adjacent compatibility as stateless log/success routes
 
 **Wave 2** *(blocked on 16-01 completion)*
 
@@ -257,4 +257,4 @@ See `.planning/milestones/v1.1-ROADMAP.md` and `.planning/milestones/v1.1-phases
 |-----------|--------|-------|--------|---------|
 | v1.0 Blue Support | 1-6 | 30 roadmap plans | Shipped | 2026-06-03 |
 | v1.1 Blue Tokkun Mode Support | 7-11 | 7 GSD plans | Shipped | 2026-06-07 |
-| v1.2 Yellow AC15 Support | 12-17 | 21 GSD plans complete | Active, Phase 16 in progress | - |
+| v1.2 Yellow AC15 Support | 12-17 | 22 GSD plans complete | Active, Phase 16 verified complete; Phase 17 pending | - |

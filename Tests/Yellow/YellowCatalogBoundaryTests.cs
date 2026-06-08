@@ -64,19 +64,9 @@ public sealed class YellowCatalogBoundaryTests
     }
 
     [Fact]
-    public void YellowImplementation_DoesNotIntroduceDeferredPhase16OrBattleFiles()
+    public void YellowImplementation_DoesNotIntroduceBattleOrBanacoinAuthorityFiles()
     {
         var root = FindRepoRoot();
-        var forbiddenFiles = new[]
-        {
-            Path.Combine(root, "Domain", "Entities", "YellowTokkunStageResult.cs")
-        };
-
-        foreach (var file in forbiddenFiles)
-        {
-            Assert.False(File.Exists(file), $"Deferred Phase 14-16 file exists: {file}");
-        }
-
         var searchedRoots = new[]
         {
             Path.Combine(root, "Application"),
@@ -86,8 +76,6 @@ public sealed class YellowCatalogBoundaryTests
         var forbiddenTokens = new[]
         {
             "YellowBattle",
-            "YellowTokkunStageResult",
-            "YellowTokkunStageResults",
             "BanacoinWallet"
         };
 
