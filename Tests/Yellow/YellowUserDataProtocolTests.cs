@@ -71,6 +71,15 @@ public sealed class YellowUserDataProtocolTests
         save.DispLevelChassis = 9;
         save.DispLevelSelf = 10;
         save.DispTaikojukuDan = 0;
+        save.GotDanMax = 3;
+        save.GotDanFlg = YellowDanHelpers.SetPackedGrade(
+            save.GotDanFlg,
+            YellowDanHelpers.GetPackedIndex(3),
+            YellowDanClearGrade.GoldClear);
+        save.GotDanExtraFlg = YellowDanHelpers.SetPackedGrade(
+            save.GotDanExtraFlg,
+            YellowDanHelpers.GetPackedIndex(101),
+            YellowDanClearGrade.NormalClear);
         save.DifficultyPlayedCourse = 11;
         save.DifficultyPlayedStar = 12;
         save.IsChallengeCompe = true;
@@ -122,6 +131,10 @@ public sealed class YellowUserDataProtocolTests
         Assert.True(response.IsDevilYellow);
         Assert.True(response.IsExplainYellow);
         Assert.Null(response.TokkunTutorialFlg);
+
+        var wire = UserDataMappers.Map(response);
+        Assert.True(wire.ShouldSerializeDispTaikojukuDan());
+        Assert.Equal(1u, wire.DispTaikojukuDan);
     }
 
     [Fact]
@@ -188,6 +201,49 @@ public sealed class YellowUserDataProtocolTests
         Assert.True(response.IsDevil);
         Assert.True(response.IsExplain);
         Assert.False(response.ShouldSerializeTokkunTutorialFlg());
+    }
+
+    [Fact]
+    public async Task UserData_Yellow_NormalizesDisplayDanFromYellowDanRows()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 5, MyDonName = "DON" });
+        var save = UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(5);
+        save.DispTaikojukuDan = 1;
+        fixture.Context.UserSaveDataYellow.Add(save);
+        fixture.Context.DanScoreDataYellow.Add(new DanScoreDatumYellow
+        {
+            Baid = 5,
+            DanId = 1,
+            IsExtra = false,
+            MedleyUniqueId = 20001,
+            ClearGrade = YellowDanClearGrade.GoldClear
+        });
+        fixture.Context.DanScoreDataBlue.Add(new DanScoreDatumBlue
+        {
+            Baid = 5,
+            DanId = 2,
+            IsExtra = false,
+            MedleyUniqueId = 90001,
+            ClearGrade = BlueDanClearGrade.GoldClear
+        });
+        fixture.Context.DanScoreDataGreen.Add(new DanScoreDatumGreen
+        {
+            Baid = 5,
+            DanId = 3,
+            IsExtra = false,
+            MedleyUniqueId = 90002,
+            ClearGrade = GreenDanClearGrade.GoldClear
+        });
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateUserDataHandler(fixture);
+
+        var response = await handler.Handle(new UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
+        var wire = UserDataMappers.Map(response);
+
+        Assert.Equal(2u, response.DispTaikojukuDan);
+        Assert.True(wire.ShouldSerializeDispTaikojukuDan());
+        Assert.Equal(2u, wire.DispTaikojukuDan);
     }
 
     private static bool BitIsSet(byte[] source, uint id)

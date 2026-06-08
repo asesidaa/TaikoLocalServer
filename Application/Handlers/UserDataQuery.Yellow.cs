@@ -22,6 +22,10 @@ public partial class UserDataQueryHandler
             .Select(song => song.SongNo)
             .Take(Ac15EraProfiles.Yellow.Limits.MaxRecentSongs)
             .ToArrayAsync(cancellationToken);
+        var normalDanGrades = await context.DanScoreDataYellow
+            .Where(row => row.Baid == request.Baid && !row.IsExtra)
+            .ToDictionaryAsync(row => row.DanId, row => row.ClearGrade, cancellationToken);
+        var displayDan = YellowDanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalDanGrades);
 
         var snapshot = Ac15CatalogSnapshotFactory.FromYellow(yellow);
         var userdata = YellowAc15UserDataAdapter.CreateSnapshot(
@@ -31,8 +35,12 @@ public partial class UserDataQueryHandler
             recent,
             unlockedShopItems: []);
         var response = Ac15UserDataService.BuildResponse(userdata, Ac15EraProfiles.Yellow);
+        response.DispTaikojukuDan = GetSafeYellowTaikojukuDanSlot(displayDan);
         response.IsDevilYellow = saveData.IsDevil;
         response.IsExplainYellow = saveData.IsExplain;
         return response;
     }
+
+    private static uint GetSafeYellowTaikojukuDanSlot(uint value)
+        => value is >= YellowDanHelpers.MinNormalDanId and <= YellowDanHelpers.MaxNormalDanId ? value : 1u;
 }

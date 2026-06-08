@@ -26,12 +26,14 @@ public partial class GetDanScoreQueryHandler : IRequestHandler<GetDanScoreQuery,
         GameEra.Nijiiro => HandleNijiiro(request, cancellationToken),
         GameEra.Green => HandleGreen(request, cancellationToken),
         GameEra.Blue => HandleBlue(request, cancellationToken),
+        GameEra.Yellow => HandleYellow(request, cancellationToken),
         _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
     };
 
     private partial ValueTask<CommonDanScoreDataResponse> HandleNijiiro(GetDanScoreQuery request, CancellationToken cancellationToken);
     private partial ValueTask<CommonDanScoreDataResponse> HandleGreen(GetDanScoreQuery request, CancellationToken cancellationToken);
     private partial ValueTask<CommonDanScoreDataResponse> HandleBlue(GetDanScoreQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonDanScoreDataResponse> HandleYellow(GetDanScoreQuery request, CancellationToken cancellationToken);
 }
 
 
