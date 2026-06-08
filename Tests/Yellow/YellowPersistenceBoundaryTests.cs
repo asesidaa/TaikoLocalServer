@@ -5,7 +5,7 @@ namespace TaikoLocalServer.Tests.Yellow;
 public sealed class YellowPersistenceBoundaryTests
 {
     [Fact]
-    public async Task YellowSchema_CreatesPhase15DaniAndShopYellowTables()
+    public async Task YellowSchema_CreatesPhase16TokkunAlongsideDaniAndShopYellowTables()
     {
         await using var fixture = await YellowHandlerFixture.CreateAsync();
 
@@ -22,6 +22,7 @@ public sealed class YellowPersistenceBoundaryTests
                 "DanStageScoreDatum_Yellow",
                 "YellowShopItemStates",
                 "YellowShopSeasonStates",
+                "YellowTokkunStageResults",
                 "YellowFavoriteSongs",
                 "YellowRecentSongs"
         }.Order(StringComparer.Ordinal);
@@ -71,7 +72,7 @@ public sealed class YellowPersistenceBoundaryTests
     }
 
     [Fact]
-    public void YellowDbContextContract_ExposesPhase15DaniAndShopDbSets()
+    public void YellowDbContextContract_ExposesPhase16TokkunAlongsideDaniAndShopDbSets()
     {
         var propertyNames = typeof(ITaikoDbContext).GetProperties()
             .Where(property => property.Name.Contains("Yellow", StringComparison.Ordinal))
@@ -88,6 +89,7 @@ public sealed class YellowPersistenceBoundaryTests
                 "DanStageScoreDataYellow",
                 "YellowShopSeasonStates",
                 "YellowShopItemStates",
+                "YellowTokkunStageResults",
                 "YellowFavoriteSongs",
                 "YellowRecentSongs"
         }.Order(StringComparer.Ordinal);
@@ -114,7 +116,7 @@ public sealed class YellowPersistenceBoundaryTests
     }
 
     [Fact]
-    public void YellowPersistenceSources_DoNotAddDeferredTokkunBattleOrBanacoinTables()
+    public void YellowPersistenceSources_AllowOnlyYellowTokkunHistoryAndNoBattleOrBanacoinTables()
     {
         var root = FindRepoRoot();
         var sources = Directory.EnumerateFiles(Path.Combine(root, "Domain", "Entities"), "*Yellow*.cs")
@@ -124,8 +126,13 @@ public sealed class YellowPersistenceBoundaryTests
             .Aggregate(string.Empty, string.Concat);
 
         Assert.DoesNotContain("YellowBattle", sources, StringComparison.Ordinal);
-        Assert.DoesNotContain("YellowTokkunStage", sources, StringComparison.Ordinal);
-        Assert.DoesNotContain("Banacoin", sources, StringComparison.Ordinal);
+        Assert.Contains("YellowTokkunStageResult", sources, StringComparison.Ordinal);
+        Assert.Contains("YellowTokkunStageResults", sources, StringComparison.Ordinal);
+        Assert.DoesNotContain("BanacoinPayment", sources, StringComparison.Ordinal);
+        Assert.DoesNotContain("Balance", sources, StringComparison.Ordinal);
+        Assert.DoesNotContain("Coupon", sources, StringComparison.Ordinal);
+        Assert.DoesNotContain("Receipt", sources, StringComparison.Ordinal);
+        Assert.DoesNotContain("Transaction", sources, StringComparison.Ordinal);
         Assert.DoesNotContain("AdminApi", sources, StringComparison.Ordinal);
         Assert.DoesNotContain("Ac15ShopSeasonStateEntity", sources, StringComparison.Ordinal);
         Assert.DoesNotContain("SharedShopSeasonState", sources, StringComparison.Ordinal);

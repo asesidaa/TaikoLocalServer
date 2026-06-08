@@ -85,6 +85,7 @@ public sealed class GreenAuthConfigTests
         public DbSet<DanStageScoreDatumYellow> DanStageScoreDataYellow => throw new NotSupportedException();
         public DbSet<YellowShopSeasonState> YellowShopSeasonStates => throw new NotSupportedException();
         public DbSet<YellowShopItemState> YellowShopItemStates => throw new NotSupportedException();
+        public DbSet<YellowTokkunStageResult> YellowTokkunStageResults => throw new NotSupportedException();
 
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
             => throw new NotSupportedException();

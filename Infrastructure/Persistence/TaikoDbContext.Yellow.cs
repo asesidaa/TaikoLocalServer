@@ -15,6 +15,7 @@ public partial class TaikoDbContext
     public virtual DbSet<DanStageScoreDatumYellow> DanStageScoreDataYellow { get; set; } = null!;
     public virtual DbSet<YellowShopSeasonState> YellowShopSeasonStates { get; set; } = null!;
     public virtual DbSet<YellowShopItemState> YellowShopItemStates { get; set; } = null!;
+    public virtual DbSet<YellowTokkunStageResult> YellowTokkunStageResults { get; set; } = null!;
 
     partial void OnModelCreatingYellow(ModelBuilder modelBuilder)
     {
@@ -130,6 +131,22 @@ public partial class TaikoDbContext
             entity.Property(e => e.Status).HasConversion<uint>();
             entity.Property(e => e.PurchasedAt).HasColumnType("datetime");
             entity.Property(e => e.UnlockedAt).HasColumnType("datetime");
+            entity.HasOne(d => d.Ba)
+                .WithMany()
+                .HasPrincipalKey(p => p.Baid)
+                .HasForeignKey(d => d.Baid)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<YellowTokkunStageResult>(entity =>
+        {
+            entity.ToTable("YellowTokkunStageResults");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            entity.HasIndex(e => new { e.Baid, e.PlayDatetime });
+            entity.Property(e => e.PlayDatetime).IsRequired();
+            entity.Property(e => e.BanacoinDatetime).IsRequired();
+            entity.Property(e => e.TookunSongnoesJson).IsRequired();
             entity.HasOne(d => d.Ba)
                 .WithMany()
                 .HasPrincipalKey(p => p.Baid)
