@@ -1,3 +1,4 @@
+using TaikoLocalServer.Application.Ac15;
 using TaikoLocalServer.Application.Catalog.Yellow;
 
 namespace TaikoLocalServer.Tests.Yellow;
@@ -129,6 +130,164 @@ public sealed class YellowItemShopPurchaseTests
         Assert.DoesNotContain((3u, 100u), items);
     }
 
+    [Fact]
+    public async Task ItemPurchase_PreflightReturnsYellowActiveSeasonBalanceWithoutSpending()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
+            new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
+        await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 700, totalUseDonmedal: 200);
+        var handler = CreateHandler(fixture);
+
+        var response = await handler.Handle(new ItemPurchaseCommand(1, GameEra.Yellow, 0, null, null, null), CancellationToken.None);
+
+        var season = await fixture.Context.YellowShopSeasonStates.FindAsync(1u, 2u);
+        Assert.Equal(1u, response.Result);
+        Assert.Equal(700u, response.TotalGetDonmedal);
+        Assert.Equal(200u, response.TotalUseDonmedal);
+        Assert.Equal(200u, season!.TotalUseDonmedal);
+        Assert.False(await fixture.Context.YellowShopItemStates.AnyAsync());
+    }
+
+    [Fact]
+    public async Task ItemPurchase_ValidYellowPurchaseSpendsDonmedalsAndPersistsUnlockedItem()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
+            new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
+        await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 2000);
+        var handler = CreateHandler(fixture);
+
+        var response = await handler.Handle(new ItemPurchaseCommand(1, GameEra.Yellow, 1, 3, 12, 1300), CancellationToken.None);
+
+        var season = await fixture.Context.YellowShopSeasonStates.FindAsync(1u, 2u);
+        var item = await fixture.Context.YellowShopItemStates.FindAsync(1u, 2u, 3u, 12u);
+        var save = await fixture.Context.UserSaveDataYellow.FindAsync(1u);
+        Assert.Equal(1u, response.Result);
+        Assert.Equal(2000u, response.TotalGetDonmedal);
+        Assert.Equal(1300u, response.TotalUseDonmedal);
+        Assert.Equal(1300u, season!.TotalUseDonmedal);
+        Assert.Equal(YellowShopItemStatus.Unlocked, item!.Status);
+        Assert.Equal(1u, item.ItemNo);
+        Assert.Equal(1300u, item.ItemPrice);
+        Assert.NotNull(item.UnlockedAt);
+        Assert.Equal(0u, save!.TotalGetDonmedal);
+        Assert.Equal(0u, save.TotalUseDonmedal);
+        Assert.True(HasBit(save.CostumeFlg1, 12));
+    }
+
+    [Theory]
+    [InlineData(2, 3, 12, 1300)]
+    [InlineData(1, 4, 12, 1300)]
+    [InlineData(1, 3, 13, 1300)]
+    [InlineData(1, 3, 12, 1500)]
+    public async Task ItemPurchase_RejectsForgedYellowCatalogTupleWithoutMutation(
+        uint itemNo,
+        uint itemType,
+        uint itemId,
+        uint itemPrice)
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
+            new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
+        await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 2000);
+        var handler = CreateHandler(fixture);
+
+        var response = await handler.Handle(new ItemPurchaseCommand(1, GameEra.Yellow, itemNo, itemType, itemId, itemPrice), CancellationToken.None);
+
+        var season = await fixture.Context.YellowShopSeasonStates.FindAsync(1u, 2u);
+        var save = await fixture.Context.UserSaveDataYellow.FindAsync(1u);
+        Assert.Equal(0u, response.Result);
+        Assert.Equal(0u, season!.TotalUseDonmedal);
+        Assert.False(await fixture.Context.YellowShopItemStates.AnyAsync());
+        Assert.False(HasBit(save!.CostumeFlg1, 12));
+    }
+
+    [Fact]
+    public async Task ItemPurchase_RejectsZeroPriceYellowRowsWithoutMutation()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
+            new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 0 }));
+        await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 2000);
+        var handler = CreateHandler(fixture);
+
+        var response = await handler.Handle(new ItemPurchaseCommand(1, GameEra.Yellow, 1, 3, 12, 0), CancellationToken.None);
+
+        var season = await fixture.Context.YellowShopSeasonStates.FindAsync(1u, 2u);
+        Assert.Equal(0u, response.Result);
+        Assert.Equal(0u, season!.TotalUseDonmedal);
+        Assert.False(await fixture.Context.YellowShopItemStates.AnyAsync());
+    }
+
+    [Fact]
+    public async Task ItemPurchase_RejectsInsufficientYellowDonmedalsWithoutMutation()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
+            new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
+        await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 1200);
+        var handler = CreateHandler(fixture);
+
+        var response = await handler.Handle(new ItemPurchaseCommand(1, GameEra.Yellow, 1, 3, 12, 1300), CancellationToken.None);
+
+        var season = await fixture.Context.YellowShopSeasonStates.FindAsync(1u, 2u);
+        Assert.Equal(0u, response.Result);
+        Assert.Equal(0u, season!.TotalUseDonmedal);
+        Assert.False(await fixture.Context.YellowShopItemStates.AnyAsync());
+    }
+
+    [Fact]
+    public async Task ItemPurchase_RejectsDuplicateYellowUnlockedWithoutDoubleSpend()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
+            new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
+        await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 2000, totalUseDonmedal: 1300);
+        fixture.Context.YellowShopItemStates.Add(Unlocked(1, 2, 3, 12));
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var response = await handler.Handle(new ItemPurchaseCommand(1, GameEra.Yellow, 1, 3, 12, 1300), CancellationToken.None);
+
+        var season = await fixture.Context.YellowShopSeasonStates.FindAsync(1u, 2u);
+        Assert.Equal(0u, response.Result);
+        Assert.Equal(1300u, season!.TotalUseDonmedal);
+        Assert.Single(await fixture.Context.YellowShopItemStates.ToListAsync());
+    }
+
+    [Theory]
+    [InlineData(Ac15ShopItemType.Song, 101, nameof(UserSaveDataYellow.ReleaseSongFlg))]
+    [InlineData(Ac15ShopItemType.Tone, 4, nameof(UserSaveDataYellow.ToneFlg))]
+    [InlineData(Ac15ShopItemType.Kigurumi, 12, nameof(UserSaveDataYellow.CostumeFlg1))]
+    [InlineData(Ac15ShopItemType.Body, 13, nameof(UserSaveDataYellow.CostumeFlg3))]
+    [InlineData(Ac15ShopItemType.Head, 14, nameof(UserSaveDataYellow.CostumeFlg2))]
+    [InlineData(Ac15ShopItemType.Face, 15, nameof(UserSaveDataYellow.CostumeFlg4))]
+    [InlineData(Ac15ShopItemType.Puchi, 16, nameof(UserSaveDataYellow.CostumeFlg5))]
+    public async Task ItemPurchase_UnlocksSupportedItemTypesInExactYellowSaveField(
+        Ac15ShopItemType itemType,
+        uint itemId,
+        string expectedField)
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
+            new YellowItemShopEntry { ItemNo = 1, ItemType = itemType, ItemId = itemId, Price = 100 }));
+        var save = await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 2000);
+        var before = SnapshotUnlockFields(save);
+        var handler = CreateHandler(fixture);
+
+        var response = await handler.Handle(new ItemPurchaseCommand(1, GameEra.Yellow, 1, itemType.ToProtocolValue(), itemId, 100), CancellationToken.None);
+
+        var reloaded = await fixture.Context.UserSaveDataYellow.FindAsync(1u);
+        Assert.Equal(1u, response.Result);
+        foreach (var (field, bytes) in before)
+        {
+            var current = GetUnlockField(reloaded!, field);
+            if (field == expectedField)
+            {
+                Assert.True(HasBit(current, itemId));
+                Assert.NotEqual(bytes, current);
+            }
+            else
+            {
+                Assert.Equal(bytes, current);
+            }
+        }
+    }
+
     private static YellowShopItemState Unlocked(uint baid, uint seasonId, uint itemType, uint itemId) => new()
     {
         Baid = baid,
@@ -141,6 +300,51 @@ public sealed class YellowItemShopPurchaseTests
         PurchasedAt = DateTime.UtcNow,
         UnlockedAt = DateTime.UtcNow
     };
+
+    private static ItemPurchaseCommandHandler CreateHandler(YellowHandlerFixture fixture)
+        => new(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<ItemPurchaseCommandHandler>.Instance);
+
+    private static async Task<UserSaveDataYellow> AddUserWithSeasonAsync(
+        YellowHandlerFixture fixture,
+        uint totalGetDonmedal,
+        uint totalUseDonmedal = 0)
+    {
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var save = UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(1);
+        fixture.Context.UserSaveDataYellow.Add(save);
+        fixture.Context.YellowShopSeasonStates.Add(new YellowShopSeasonState
+        {
+            Baid = 1,
+            SeasonId = 2,
+            TotalGetDonmedal = totalGetDonmedal,
+            TotalUseDonmedal = totalUseDonmedal,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        });
+        await fixture.Context.SaveChangesAsync();
+        return save;
+    }
+
+    private static YellowHandlerFixture.TestYellowCatalog CreateShopCatalog(params YellowItemShopEntry[] items)
+        => new(itemShopCatalog: new YellowItemShopCatalog
+        {
+            IsEnabled = true,
+            ActiveSeasonId = 2,
+            Seasons = new Dictionary<uint, YellowItemShopSeason>
+            {
+                [2] = new()
+                {
+                    SeasonId = 2,
+                    VerupNo = 20110301,
+                    StartDatetime = "20110301070000",
+                    EndDatetime = "20110630020000",
+                    Items = items
+                }
+            }
+        });
 
     private static YellowItemShopCatalog CreateSingleItemShopCatalog()
     {
@@ -157,4 +361,32 @@ public sealed class YellowItemShopPurchaseTests
             Seasons = new Dictionary<uint, YellowItemShopSeason> { [2] = season }
         };
     }
+
+    private static Dictionary<string, byte[]> SnapshotUnlockFields(UserSaveDataYellow saveData)
+        => new()
+        {
+            [nameof(UserSaveDataYellow.ReleaseSongFlg)] = saveData.ReleaseSongFlg.ToArray(),
+            [nameof(UserSaveDataYellow.ToneFlg)] = saveData.ToneFlg.ToArray(),
+            [nameof(UserSaveDataYellow.CostumeFlg1)] = saveData.CostumeFlg1.ToArray(),
+            [nameof(UserSaveDataYellow.CostumeFlg2)] = saveData.CostumeFlg2.ToArray(),
+            [nameof(UserSaveDataYellow.CostumeFlg3)] = saveData.CostumeFlg3.ToArray(),
+            [nameof(UserSaveDataYellow.CostumeFlg4)] = saveData.CostumeFlg4.ToArray(),
+            [nameof(UserSaveDataYellow.CostumeFlg5)] = saveData.CostumeFlg5.ToArray()
+        };
+
+    private static byte[] GetUnlockField(UserSaveDataYellow saveData, string field)
+        => field switch
+        {
+            nameof(UserSaveDataYellow.ReleaseSongFlg) => saveData.ReleaseSongFlg,
+            nameof(UserSaveDataYellow.ToneFlg) => saveData.ToneFlg,
+            nameof(UserSaveDataYellow.CostumeFlg1) => saveData.CostumeFlg1,
+            nameof(UserSaveDataYellow.CostumeFlg2) => saveData.CostumeFlg2,
+            nameof(UserSaveDataYellow.CostumeFlg3) => saveData.CostumeFlg3,
+            nameof(UserSaveDataYellow.CostumeFlg4) => saveData.CostumeFlg4,
+            nameof(UserSaveDataYellow.CostumeFlg5) => saveData.CostumeFlg5,
+            _ => throw new InvalidOperationException($"Unsupported Yellow unlock field {field}.")
+        };
+
+    private static bool HasBit(byte[] source, uint id)
+        => (source[id >> 3] & (1 << ((int)id & 7))) != 0;
 }
