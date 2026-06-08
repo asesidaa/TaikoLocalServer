@@ -35,7 +35,7 @@
 - [x] **YSHOP-02**: Yellow item purchases validate active shop rows, prevent duplicate purchases, spend/update Yellow-owned shop state, and apply supported item unlocks only to Yellow save data.
 - [x] **YMED-01**: Yellow Don/Katsu medal totals from playresults and shop flows persist in Yellow-owned state and remain separate from Banacoin compatibility state.
 - [x] **YWAI-01**: Yellow WaiWai handling, where current Yellow wire/runtime evidence exposes fields, persists and reads back only the tutorial flag and logs additional playresult fields without treating WaiWai as a special play mode.
-- [ ] **YUI-01**: AdminApi and WebUI can route to Yellow-era profile, score, favorites/recent, Dani, shop-relevant, Tokkun, and supported catalog readback without reading or writing Blue/Green tables.
+- [x] **YUI-01**: AdminApi and WebUI can route to Yellow-era profile, score, favorites/recent, Dani, shop-relevant, Tokkun, and supported catalog readback without reading or writing Blue/Green tables.
 
 ### Yellow Tokkun And Banacoin Compatibility
 
@@ -107,7 +107,7 @@ Roadmap phase mapping is created during `$gsd-new-milestone` roadmap generation.
 | YSHOP-02 | Phase 15 | Complete |
 | YMED-01 | Phase 15 | Complete |
 | YWAI-01 | Phase 15 | Complete |
-| YUI-01 | Phase 15 | Pending |
+| YUI-01 | Phase 15 | Complete |
 | YTOK-01 | Phase 16 | Pending |
 | YTOK-02 | Phase 16 | Pending |
 | YTOK-03 | Phase 16 | Pending |

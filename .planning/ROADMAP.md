@@ -140,7 +140,7 @@ Plans:
 4. WaiWai tutorial flag persistence/readback and playresult extra logging work where Yellow evidence exposes fields, without special-mode branching.
 5. AdminApi/WebUI routes can inspect supported Yellow profile, score, recent/favorite, Dani, shop, Tokkun, and catalog state without cross-era reads/writes.
 
-**Plans:** 8/9 plans complete
+**Plans:** 9/9 plans complete
 
 Plans:
 
@@ -175,7 +175,7 @@ Plans:
 
 **Wave 8** *(blocked on 15-08 completion)*
 
-- [ ] 15-09-PLAN.md - Enable Yellow in the existing WebUI readback workflows
+- [x] 15-09-PLAN.md - Enable Yellow in the existing WebUI readback workflows
 
 ### Phase 16: Yellow Tokkun and Banacoin Compatibility
 
@@ -240,4 +240,4 @@ See `.planning/milestones/v1.1-ROADMAP.md` and `.planning/milestones/v1.1-phases
 |-----------|--------|-------|--------|---------|
 | v1.0 Blue Support | 1-6 | 30 roadmap plans | Shipped | 2026-06-03 |
 | v1.1 Blue Tokkun Mode Support | 7-11 | 7 GSD plans | Shipped | 2026-06-07 |
-| v1.2 Yellow AC15 Support | 12-17 | 17 GSD plans complete | Active, Phase 15 in progress; verification pending | - |
+| v1.2 Yellow AC15 Support | 12-17 | 18 GSD plans complete | Active, Phase 15 implementation complete; verification pending | - |
