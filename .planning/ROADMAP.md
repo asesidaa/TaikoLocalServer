@@ -191,13 +191,13 @@ Plans:
 4. Yellow userdata reads back only the proven Tokkun tutorial flag.
 5. Yellow Banacoin-adjacent routes log and return compatibility success without wallet/payment/transaction persistence.
 
-**Plans:** 4 plans
+**Plans:** 1/4 plans complete
 
 Plans:
 
 **Wave 1**
 
-- [ ] 16-01-PLAN.md - Define the Yellow Tokkun classifier contract and Yellow-owned raw history schema
+- [x] 16-01-PLAN.md - Define the Yellow Tokkun classifier contract and Yellow-owned raw history schema
 - [ ] 16-04-PLAN.md - Tighten Yellow Banacoin-adjacent compatibility as stateless log/success routes
 
 **Wave 2** *(blocked on 16-01 completion)*
@@ -257,4 +257,4 @@ See `.planning/milestones/v1.1-ROADMAP.md` and `.planning/milestones/v1.1-phases
 |-----------|--------|-------|--------|---------|
 | v1.0 Blue Support | 1-6 | 30 roadmap plans | Shipped | 2026-06-03 |
 | v1.1 Blue Tokkun Mode Support | 7-11 | 7 GSD plans | Shipped | 2026-06-07 |
-| v1.2 Yellow AC15 Support | 12-17 | 18 GSD plans complete | Active, Phase 15 verified complete; Phase 16 pending | - |
+| v1.2 Yellow AC15 Support | 12-17 | 19 GSD plans complete | Active, Phase 16 in progress | - |

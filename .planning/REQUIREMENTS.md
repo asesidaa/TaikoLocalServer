@@ -39,8 +39,8 @@
 
 ### Yellow Tokkun And Banacoin Compatibility
 
-- [ ] **YTOK-01**: Yellow Tokkun playresults are classified before normal handling and return success without normal score, crown, Dani, favorite, recent, shop, medal, profile, battle, or unlock writes.
-- [ ] **YTOK-02**: Yellow Tokkun persists only protocol-backed nullable tutorial state and append-only raw stage history while preserving raw song order, duplicates, and client-protocol timestamp fields.
+- [x] **YTOK-01**: Yellow Tokkun playresults are classified before normal handling and return success without normal score, crown, Dani, favorite, recent, shop, medal, profile, battle, or unlock writes.
+- [x] **YTOK-02**: Yellow Tokkun persists only protocol-backed nullable tutorial state and append-only raw stage history while preserving raw song order, duplicates, and client-protocol timestamp fields.
 - [ ] **YTOK-03**: Yellow userdata reads back only the Tokkun tutorial flag through proven Yellow protocol fields and does not invent Tokkun summary/history response surfaces.
 - [ ] **YBAN-01**: Yellow Banacoin-adjacent routes log requests and return compatibility success without wallet, balance, payment, coupon, settlement, receipt, or transaction persistence unless new Yellow evidence proves a stateful role.
 
@@ -108,8 +108,8 @@ Roadmap phase mapping is created during `$gsd-new-milestone` roadmap generation.
 | YMED-01 | Phase 15 | Complete |
 | YWAI-01 | Phase 15 | Complete |
 | YUI-01 | Phase 15 | Complete |
-| YTOK-01 | Phase 16 | Pending |
-| YTOK-02 | Phase 16 | Pending |
+| YTOK-01 | Phase 16 | Complete |
+| YTOK-02 | Phase 16 | Complete |
 | YTOK-03 | Phase 16 | Pending |
 | YBAN-01 | Phase 16 | Pending |
 | YVER-01 | Phase 17 | Pending |
