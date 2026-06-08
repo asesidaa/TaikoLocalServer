@@ -112,6 +112,7 @@ public sealed class YellowPersistenceBoundaryTests
         var root = FindRepoRoot();
         var yellowSources = new[]
             {
+                Path.Combine(root, "Application", "Common", "YellowDanHelpers.cs"),
                 Path.Combine(root, "Domain", "Entities", "DanScoreDatumYellow.cs"),
                 Path.Combine(root, "Domain", "Entities", "DanStageScoreDatumYellow.cs"),
                 Path.Combine(root, "Infrastructure", "Persistence", "TaikoDbContext.Yellow.cs"),
@@ -128,6 +129,8 @@ public sealed class YellowPersistenceBoundaryTests
         Assert.DoesNotContain("DanScoreDataGreen", yellowSources, StringComparison.Ordinal);
         Assert.DoesNotContain("DanStageScoreDataBlue", yellowSources, StringComparison.Ordinal);
         Assert.DoesNotContain("DanStageScoreDataGreen", yellowSources, StringComparison.Ordinal);
+        Assert.DoesNotContain("BlueDanHelpers", yellowSources, StringComparison.Ordinal);
+        Assert.DoesNotContain("GreenDanHelpers", yellowSources, StringComparison.Ordinal);
     }
 
     private static string FindRepoRoot()
