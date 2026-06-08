@@ -5,7 +5,7 @@ namespace TaikoLocalServer.Tests.Yellow;
 public sealed class YellowPersistenceBoundaryTests
 {
     [Fact]
-    public async Task YellowSchema_CreatesOnlyPhase14YellowTables()
+    public async Task YellowSchema_CreatesOnlyPhase15DaniYellowTables()
     {
         await using var fixture = await YellowHandlerFixture.CreateAsync();
 
@@ -13,15 +13,23 @@ public sealed class YellowPersistenceBoundaryTests
                 "SELECT name AS Value FROM sqlite_master WHERE type = 'table' AND name LIKE '%Yellow%' ORDER BY name")
             .ToArrayAsync();
 
-        Assert.Equal(
-            [
+        var expectedTables = new[]
+        {
                 "SongBestDatum_Yellow",
                 "SongPlayDatum_Yellow",
                 "UserSaveData_Yellow",
+                "DanScoreDatum_Yellow",
+                "DanStageScoreDatum_Yellow",
                 "YellowFavoriteSongs",
                 "YellowRecentSongs"
-            ],
-            tables);
+        }.Order(StringComparer.Ordinal);
+
+        Assert.Equal(expectedTables, tables);
+
+        Assert.DoesNotContain("DanScoreDatum_Blue", tables);
+        Assert.DoesNotContain("DanScoreDatum_Green", tables);
+        Assert.DoesNotContain("DanStageScoreDatum_Blue", tables);
+        Assert.DoesNotContain("DanStageScoreDatum_Green", tables);
     }
 
     [Fact]
@@ -58,7 +66,7 @@ public sealed class YellowPersistenceBoundaryTests
     }
 
     [Fact]
-    public void YellowDbContextContract_ExposesOnlyPhase14DbSets()
+    public void YellowDbContextContract_ExposesPhase15DaniDbSets()
     {
         var propertyNames = typeof(ITaikoDbContext).GetProperties()
             .Where(property => property.Name.Contains("Yellow", StringComparison.Ordinal))
@@ -66,19 +74,22 @@ public sealed class YellowPersistenceBoundaryTests
             .Order(StringComparer.Ordinal)
             .ToArray();
 
-        Assert.Equal(
-            [
+        var expectedProperties = new[]
+        {
                 "SongBestDataYellow",
                 "SongPlayDataYellow",
                 "UserSaveDataYellow",
+                "DanScoreDataYellow",
+                "DanStageScoreDataYellow",
                 "YellowFavoriteSongs",
                 "YellowRecentSongs"
-            ],
-            propertyNames);
+        }.Order(StringComparer.Ordinal);
+
+        Assert.Equal(expectedProperties, propertyNames);
     }
 
     [Fact]
-    public void YellowPersistenceSources_DoNotAddDeferredPhase15Or16Tables()
+    public void YellowPersistenceSources_DoNotAddDeferredShopTokkunOrBattleTables()
     {
         var root = FindRepoRoot();
         var sources = Directory.EnumerateFiles(Path.Combine(root, "Domain", "Entities"), "*Yellow*.cs")
@@ -93,6 +104,30 @@ public sealed class YellowPersistenceBoundaryTests
         Assert.DoesNotContain("YellowShopItem", sources, StringComparison.Ordinal);
         Assert.DoesNotContain("Banacoin", sources, StringComparison.Ordinal);
         Assert.DoesNotContain("AdminApi", sources, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void YellowDaniPersistenceSources_DoNotReuseBlueOrGreenDanEntities()
+    {
+        var root = FindRepoRoot();
+        var yellowSources = new[]
+            {
+                Path.Combine(root, "Domain", "Entities", "DanScoreDatumYellow.cs"),
+                Path.Combine(root, "Domain", "Entities", "DanStageScoreDatumYellow.cs"),
+                Path.Combine(root, "Infrastructure", "Persistence", "TaikoDbContext.Yellow.cs"),
+                Path.Combine(root, "Application", "Abstractions", "ITaikoDbContext.Yellow.cs")
+            }
+            .Select(File.ReadAllText)
+            .Aggregate(string.Empty, string.Concat);
+
+        Assert.Contains("DanScoreDatumYellow", yellowSources, StringComparison.Ordinal);
+        Assert.Contains("DanStageScoreDatumYellow", yellowSources, StringComparison.Ordinal);
+        Assert.Contains("DanScoreDatum_Yellow", yellowSources, StringComparison.Ordinal);
+        Assert.Contains("DanStageScoreDatum_Yellow", yellowSources, StringComparison.Ordinal);
+        Assert.DoesNotContain("DanScoreDataBlue", yellowSources, StringComparison.Ordinal);
+        Assert.DoesNotContain("DanScoreDataGreen", yellowSources, StringComparison.Ordinal);
+        Assert.DoesNotContain("DanStageScoreDataBlue", yellowSources, StringComparison.Ordinal);
+        Assert.DoesNotContain("DanStageScoreDataGreen", yellowSources, StringComparison.Ordinal);
     }
 
     private static string FindRepoRoot()
