@@ -6,8 +6,10 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class PlayDataController(ITaikoDbContext context) : BaseAdminController<PlayDataController>
+public partial class PlayDataController(ITaikoDbContext context) : BaseAdminController<PlayDataController>
 {
+    private readonly ITaikoDbContext context = context;
+
     [HttpGet("{baid}")]
     public Task<ActionResult<SongBestResponse>> GetSongBestRecords(uint baid)
         => GetSongBestRecords(nameof(GameEra.Nijiiro), baid);
@@ -32,6 +34,7 @@ public class PlayDataController(ITaikoDbContext context) : BaseAdminController<P
             GameEra.Nijiiro => Ok(await BuildNijiiroSongBestResponse(baid)),
             GameEra.Green => Ok(await BuildGreenSongBestResponse(baid)),
             GameEra.Blue => Ok(await BuildBlueSongBestResponse(baid)),
+            GameEra.Yellow => Ok(await BuildYellowSongBestResponse(baid)),
             _ => EraRoute.BadEra(era)
         };
     }
