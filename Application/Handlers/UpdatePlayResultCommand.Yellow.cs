@@ -72,7 +72,6 @@ public partial class UpdatePlayResultCommandHandler
         saveData.ItemshopTutorialFlg = playResultData.ItemshopTutorialFlg ?? saveData.ItemshopTutorialFlg;
         saveData.IsDevil = playResultData.IsDevil ?? saveData.IsDevil;
         saveData.IsExplain = playResultData.IsExplain ?? saveData.IsExplain;
-        saveData.WaiwaiTutorialFlg = playResultData.WaiwaiTutorialFlg ?? saveData.WaiwaiTutorialFlg;
         if (playResultData.HasDifficultyPlayedCourse)
         {
             saveData.DifficultyPlayedCourse = playResultData.DifficultyPlayedCourse;
@@ -99,6 +98,7 @@ public partial class UpdatePlayResultCommandHandler
         }
 
         await SaveYellowDanAsync(saveData, playResultData, yellow, cancellationToken);
+        LogYellowWaiWaiStageFacts(request.Baid, playResultData);
 
         return await Ac15NormalPlayService.SaveAsync(
             request.Baid,
@@ -143,6 +143,20 @@ public partial class UpdatePlayResultCommandHandler
         }
 
         return true;
+    }
+
+    private void LogYellowWaiWaiStageFacts(uint baid, CommonPlayResultData playResultData)
+    {
+        foreach (var stage in playResultData.AryStageInfoes.Where(stage => stage.WaiwaiResult.HasValue || stage.WaiwaiGauge.HasValue))
+        {
+            logger.LogInformation(
+                "Yellow WaiWai stage fact for baid {Baid}: song={SongNo} level={Level} result={WaiwaiResult} gauge={WaiwaiGauge}",
+                baid,
+                stage.SongNo,
+                stage.Level,
+                stage.WaiwaiResult,
+                stage.WaiwaiGauge);
+        }
     }
 
     private async Task SaveYellowDanAsync(

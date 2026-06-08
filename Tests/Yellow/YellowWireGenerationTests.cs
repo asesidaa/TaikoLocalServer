@@ -50,4 +50,18 @@ public sealed class YellowWireGenerationTests
     {
         Assert.Null(typeof(YellowWire.PlayResultRequest).GetProperty(propertyName));
     }
+
+    [Theory]
+    [InlineData("WaiwaiTutorialFlg")]
+    public void YellowPlayResult_DoesNotContainWaiWaiTutorialField(string propertyName)
+    {
+        Assert.Null(typeof(YellowWire.PlayResultRequest).GetProperty(propertyName));
+    }
+
+    [Theory]
+    [InlineData("WaiwaiTutorialFlg")]
+    public void YellowUserData_DoesNotContainWaiWaiTutorialField(string propertyName)
+    {
+        Assert.Null(typeof(YellowWire.UserDataResponse).GetProperty(propertyName));
+    }
 }
