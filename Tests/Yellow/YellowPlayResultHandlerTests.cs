@@ -839,7 +839,21 @@ public sealed class YellowPlayResultHandlerTests
     }
 
     [Fact]
-    public void PlayResultMapper_Yellow_UsesTokkunFieldsOnlyForNoWriteDetection()
+    public void PlayResultMapper_Yellow_PlayModeTokkunClassifiesWithoutStageData()
+    {
+        var request = CreateWireRequest(1);
+        request.PlayMode = (uint)PlayMode.Tokkun;
+
+        var common = PlayResultMappers.Map(request);
+
+        Assert.True(common.IsTokkunPlayResult);
+        Assert.Equal((uint)PlayMode.Tokkun, common.PlayMode);
+        Assert.Null(common.TokkunTutorialFlg);
+        Assert.Null(common.TokkunStageData);
+    }
+
+    [Fact]
+    public void PlayResultMapper_Yellow_StageDataClassifiesAndPreservesRawTokkunFacts()
     {
         var request = CreateWireRequest(1);
         request.PlayMode = (uint)PlayMode.Normal;
@@ -847,8 +861,8 @@ public sealed class YellowPlayResultHandlerTests
         request.AryTokkunstageInfo = new PlayResultRequest.TokkunstageData
         {
             BanacoinDatetime = "20260608120100",
-            TokkunSongCnt = 2,
-            TookunSongnoes = [101, 102],
+            TokkunSongCnt = 3,
+            TookunSongnoes = [101, 102, 101],
             TokkunSpeedchangeCnt = 3,
             TokkunAutoplayCnt = 4,
             TokkunJumpCnt = 5
@@ -860,7 +874,25 @@ public sealed class YellowPlayResultHandlerTests
         Assert.Equal(9u, common.TokkunTutorialFlg);
         Assert.NotNull(common.TokkunStageData);
         Assert.Equal("20260608120100", common.TokkunStageData!.BanacoinDatetime);
-        Assert.Equal([101u, 102u], common.TokkunStageData.TookunSongnoes);
+        Assert.Equal(3u, common.TokkunStageData.TokkunSongCnt);
+        Assert.Equal([101u, 102u, 101u], common.TokkunStageData.TookunSongnoes);
+        Assert.Equal(3u, common.TokkunStageData.TokkunSpeedchangeCnt);
+        Assert.Equal(4u, common.TokkunStageData.TokkunAutoplayCnt);
+        Assert.Equal(5u, common.TokkunStageData.TokkunJumpCnt);
+    }
+
+    [Fact]
+    public void PlayResultMapper_Yellow_TutorialOnlyDoesNotClassifyTokkun()
+    {
+        var request = CreateWireRequest(1);
+        request.PlayMode = (uint)PlayMode.Normal;
+        request.TokkunTutorialFlg = 7;
+
+        var common = PlayResultMappers.Map(request);
+
+        Assert.False(common.IsTokkunPlayResult);
+        Assert.Equal(7u, common.TokkunTutorialFlg);
+        Assert.Null(common.TokkunStageData);
     }
 
     [Fact]
