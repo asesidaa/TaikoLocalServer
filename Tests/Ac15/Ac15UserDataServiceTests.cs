@@ -43,9 +43,11 @@ public sealed class Ac15UserDataServiceTests
         var snapshot = MinimalSnapshot() with { TokkunTutorialFlg = 9 };
 
         var blue = Ac15UserDataService.BuildResponse(snapshot, Ac15EraProfiles.Blue);
+        var yellow = Ac15UserDataService.BuildResponse(snapshot, Ac15EraProfiles.Yellow);
         var green = Ac15UserDataService.BuildResponse(snapshot, Ac15EraProfiles.Green);
 
         Assert.Equal(9u, blue.TokkunTutorialFlg);
+        Assert.Equal(9u, yellow.TokkunTutorialFlg);
         Assert.Null(green.TokkunTutorialFlg);
     }
 

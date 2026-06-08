@@ -138,7 +138,7 @@ public sealed class YellowUserDataProtocolTests
     }
 
     [Fact]
-    public void UserDataMapper_Yellow_MapsSupportedFieldsAndOmitsTokkunTutorial()
+    public void UserDataMapper_Yellow_MapsSupportedFieldsAndOmitsAbsentTokkunTutorial()
     {
         var common = new CommonUserDataResponse
         {
@@ -168,8 +168,7 @@ public sealed class YellowUserDataProtocolTests
             IsChallengeCompe = true,
             IsTojiru = true,
             IsDevilYellow = true,
-            IsExplainYellow = true,
-            TokkunTutorialFlg = 99
+            IsExplainYellow = true
         };
 
         var response = UserDataMappers.Map(common);
@@ -201,6 +200,27 @@ public sealed class YellowUserDataProtocolTests
         Assert.True(response.IsDevil);
         Assert.True(response.IsExplain);
         Assert.False(response.ShouldSerializeTokkunTutorialFlg());
+    }
+
+    [Theory]
+    [InlineData(0u)]
+    [InlineData(1u)]
+    [InlineData(7u)]
+    public void UserDataMapper_Yellow_MapsRawTokkunTutorialFlagWhenPresent(uint tokkunTutorialFlg)
+    {
+        var response = UserDataMappers.Map(new CommonUserDataResponse
+        {
+            Result = 1,
+            ReleaseSongFlg = new byte[Ac15EraProfiles.Yellow.Limits.SongFlagBytes],
+            ToneFlg = new byte[Ac15EraProfiles.Yellow.Limits.ToneFlagBytes],
+            TitleFlg = new byte[Ac15EraProfiles.Yellow.Limits.TitleFlagBytes],
+            DefaultOptionSetting = new byte[2],
+            DispTaikojukuDan = 1,
+            TokkunTutorialFlg = tokkunTutorialFlg
+        });
+
+        Assert.True(response.ShouldSerializeTokkunTutorialFlg());
+        Assert.Equal(tokkunTutorialFlg, response.TokkunTutorialFlg);
     }
 
     [Fact]

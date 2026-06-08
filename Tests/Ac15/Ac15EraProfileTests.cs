@@ -61,7 +61,7 @@ public sealed class Ac15EraProfileTests
     }
 
     [Fact]
-    public void YellowProfile_DeclaresCatalogAc15ModulesWithoutDeferredRuntimeExtras()
+    public void YellowProfile_DeclaresCatalogAc15ModulesWithTokkunTutorialReadback()
     {
         var profile = Ac15EraProfiles.Yellow;
 
@@ -86,7 +86,7 @@ public sealed class Ac15EraProfileTests
         Assert.Equal(Ac15CrownWirePlacement.DedicatedEndpoint, profile.WirePlacement.CrownPlacement);
         Assert.True(profile.WirePlacement.HasInitialDataItemShopRows);
         Assert.True(profile.WirePlacement.HasInitialDataLegalTermsRows);
-        Assert.False(profile.WirePlacement.HasTokkunTutorialFlagInUserData);
+        Assert.True(profile.WirePlacement.HasTokkunTutorialFlagInUserData);
     }
 
     [Fact]
