@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
 status: executing
-stopped_at: Phase 15 context gathered
-last_updated: "2026-06-08T02:29:36.803Z"
-last_activity: 2026-06-08 -- completed Phase 15 Plan 01 Yellow Dani schema/helper foundation
+stopped_at: Completed 15-02-PLAN.md
+last_updated: "2026-06-08T03:01:04.653Z"
+last_activity: 2026-06-08 -- completed Phase 15 Plan 02 Yellow Dani runtime/readback
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 18
-  completed_plans: 10
-  percent: 56
+  completed_plans: 11
+  percent: 61
 ---
 
 # Project State
@@ -26,9 +26,9 @@ See: `.planning/PROJECT.md` (updated 2026-06-07)
 ## Current Position
 
 Phase: 15
-Plan: 02
+Plan: 03
 Status: Executing
-Last activity: 2026-06-08 -- completed Phase 15 Plan 01 Yellow Dani schema/helper foundation
+Last activity: 2026-06-08 -- completed Phase 15 Plan 02 Yellow Dani runtime/readback
 
 ## Performance Metrics
 
@@ -72,6 +72,7 @@ Last activity: 2026-06-08 -- completed Phase 15 Plan 01 Yellow Dani schema/helpe
 | Phase 14 P02 | 27 min | 3 tasks | 12 files |
 | Phase 14 P03 | 24 min | 3 tasks | 8 files |
 | Phase 15 P01 | 25 min | 2 tasks | 12 files |
+| Phase 15 P02 | 29 min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -100,6 +101,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 14]: Plan 02 added Yellow userdata and self-best readback plus raw Yellow crown field-3 proof/readback from Yellow-owned state.
 - [Phase 14]: Plan 03 added Mediator-backed Yellow playresult routing and Yellow-owned normal play persistence that feeds userdata, self-best, and crown readback while leaving Tokkun-shaped uploads as success/no-write for Phase 16.
 - [Phase 15]: Plan 01 added Yellow-owned Dan score/stage score tables plus Yellow-specific packed-grade helper rules without Blue/Green Dan table/helper reuse.
+- [Phase 15]: Plan 02 added Yellow Dan playresult persistence, Yellow-owned Dan score readback, and Yellow userdata display-Dan normalization from Yellow Dan rows.
 
 ### Pending Todos
 
@@ -119,10 +121,10 @@ None recorded.
 ## Session Continuity
 
 Last session: 2026-06-08T02:29:36.737Z
-Stopped at: Completed 15-01-PLAN.md
-Resume file: .planning/phases/15-yellow-dani-shop-medals-waiwai-and-admin/15-02-PLAN.md
+Stopped at: Completed 15-02-PLAN.md
+Resume file: .planning/phases/15-yellow-dani-shop-medals-waiwai-and-admin/15-03-PLAN.md
 
 ## Operator Next Steps
 
-- Continue Phase 15 with 15-02-PLAN.md.
+- Continue Phase 15 with 15-03-PLAN.md.
 - Do not run phase verification/review or start Phase 16 from implementation-stage execution.

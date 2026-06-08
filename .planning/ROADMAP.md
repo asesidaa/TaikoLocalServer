@@ -140,7 +140,7 @@ Plans:
 4. WaiWai tutorial flag persistence/readback and playresult extra logging work where Yellow evidence exposes fields, without special-mode branching.
 5. AdminApi/WebUI routes can inspect supported Yellow profile, score, recent/favorite, Dani, shop, Tokkun, and catalog state without cross-era reads/writes.
 
-**Plans:** 1/9 plans complete
+**Plans:** 2/9 plans complete
 
 Plans:
 
@@ -150,7 +150,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 15-02-PLAN.md - Persist and read back Yellow Dani results
+- [x] 15-02-PLAN.md - Persist and read back Yellow Dani results
 - [ ] 15-03-PLAN.md - Add Yellow-owned shop state schema
 
 **Wave 3** *(blocked on 15-03 completion)*
