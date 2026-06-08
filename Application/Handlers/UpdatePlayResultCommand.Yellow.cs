@@ -27,6 +27,17 @@ public partial class UpdatePlayResultCommandHandler
             return 1;
         }
 
+        var validStages = playResultData.AryStageInfoes
+            .Where(stage => IsSupportedYellowNormalStage(request.Baid, stage))
+            .ToList();
+        if (validStages.Count == 0)
+        {
+            logger.LogWarning("Skipping Yellow playresult with no valid normal stages for baid {Baid}", request.Baid);
+            return 1;
+        }
+
+        playResultData.AryStageInfoes = validStages;
+
         var saveData = await context.GetOrCreateYellowSaveDataAsync(request.Baid, cancellationToken);
         if (!CanAddYellow(saveData.TotalGetDonmedal, playResultData.GetDonmedal)
             || !CanAddYellow(saveData.TotalGetKatsumedal, playResultData.GetKatsumedal))
@@ -81,6 +92,37 @@ public partial class UpdatePlayResultCommandHandler
         => playResultData.IsTokkunPlayResult
            || playResultData.PlayMode == (uint)PlayMode.Tokkun
            || playResultData.TokkunStageData is not null;
+
+    private bool IsSupportedYellowNormalStage(uint baid, CommonPlayResultData.StageData stage)
+    {
+        var limits = Ac15EraProfiles.Yellow.Limits;
+        if (stage.SongNo >= limits.SongFlagBytes * 8
+            || stage.Level < limits.MinCourseLevel
+            || stage.Level > limits.MaxCourseLevel)
+        {
+            logger.LogWarning(
+                "Skipping invalid Yellow stage for baid {Baid}: song={SongNo} level={Level} stage_mode={StageMode}",
+                baid,
+                stage.SongNo,
+                stage.Level,
+                stage.StageMode);
+            return false;
+        }
+
+        var hookDecision = DefaultAc15EraHooks.Instance.IsSupportedStage(stage);
+        if (!hookDecision.IsSupported)
+        {
+            logger.LogWarning(
+                "Skipping unsupported Yellow stage for baid {Baid}: song={SongNo} level={Level} stage_mode={StageMode}",
+                baid,
+                stage.SongNo,
+                stage.Level,
+                stage.StageMode);
+            return false;
+        }
+
+        return true;
+    }
 
     private static void ApplyYellowCostume(UserSaveDataYellow saveData, CommonPlayResultData.CostumeData costume)
     {

@@ -42,7 +42,8 @@ public static partial class UserDataMappers
             DifficultyPlayedStar = common.DifficultyPlayedStar,
             IsChallengecompe = common.IsChallengeCompe.GetValueOrDefault(),
             IsTojiru = common.IsTojiru.GetValueOrDefault(),
-            IsDevil = common.IsDevilYellow.GetValueOrDefault()
+            IsDevil = common.IsDevilYellow.GetValueOrDefault(),
+            IsExplain = common.IsExplainYellow.GetValueOrDefault()
         };
 
         response.DispTaikojukuDan = common.DispTaikojukuDan is { } dispTaikojukuDan

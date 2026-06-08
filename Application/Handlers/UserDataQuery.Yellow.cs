@@ -32,6 +32,7 @@ public partial class UserDataQueryHandler
             unlockedShopItems: []);
         var response = Ac15UserDataService.BuildResponse(userdata, Ac15EraProfiles.Yellow);
         response.IsDevilYellow = saveData.IsDevil;
+        response.IsExplainYellow = saveData.IsExplain;
         return response;
     }
 }

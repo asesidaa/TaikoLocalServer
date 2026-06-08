@@ -76,6 +76,7 @@ public sealed class YellowUserDataProtocolTests
         save.IsChallengeCompe = true;
         save.IsTojiru = false;
         save.IsDevil = true;
+        save.IsExplain = true;
         save.TokkunTutorialFlg = 77;
         fixture.Context.UserSaveDataYellow.Add(save);
         fixture.Context.YellowFavoriteSongs.AddRange(
@@ -119,6 +120,7 @@ public sealed class YellowUserDataProtocolTests
         Assert.True(response.IsChallengeCompe);
         Assert.False(response.IsTojiru);
         Assert.True(response.IsDevilYellow);
+        Assert.True(response.IsExplainYellow);
         Assert.Null(response.TokkunTutorialFlg);
     }
 
@@ -153,6 +155,7 @@ public sealed class YellowUserDataProtocolTests
             IsChallengeCompe = true,
             IsTojiru = true,
             IsDevilYellow = true,
+            IsExplainYellow = true,
             TokkunTutorialFlg = 99
         };
 
@@ -183,6 +186,7 @@ public sealed class YellowUserDataProtocolTests
         Assert.True(response.IsChallengecompe);
         Assert.True(response.IsTojiru);
         Assert.True(response.IsDevil);
+        Assert.True(response.IsExplain);
         Assert.False(response.ShouldSerializeTokkunTutorialFlg());
     }
 

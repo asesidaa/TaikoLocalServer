@@ -125,7 +125,11 @@ public sealed class YellowPlayResultHandlerTests
                     Costume5 = 5
                 },
                 AreaCode = 12,
-                AryStageInfoes = [CreateStage(101, 1, 0)]
+                AryStageInfoes =
+                [
+                    CreateStage(101, 1, 0),
+                    CreateStage((uint)(Ac15EraProfiles.Yellow.Limits.SongFlagBytes * 8), 1, 0)
+                ]
             }),
             CancellationToken.None);
 
@@ -260,6 +264,81 @@ public sealed class YellowPlayResultHandlerTests
         Assert.Equal(1u, result);
         Assert.Equal(Ac15EraProfiles.Yellow.Limits.MaxFavoriteSongs, await fixture.Context.YellowFavoriteSongs.CountAsync(row => row.Baid == 1));
         Assert.Equal(Ac15EraProfiles.Yellow.Limits.MaxRecentSongs, await fixture.Context.YellowRecentSongs.CountAsync(row => row.Baid == 1));
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Yellow_InvalidStagesDoNotUpdateSaveMetadataProfileOrNormalRows()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var saveData = UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(1);
+        saveData.TotalGetDonmedal = 5;
+        saveData.TotalGetKatsumedal = 7;
+        saveData.ItemshopTutorialFlg = 2;
+        saveData.IsDevil = false;
+        saveData.IsExplain = false;
+        saveData.WaiwaiTutorialFlg = 3;
+        saveData.DifficultyPlayedCourse = 1;
+        saveData.DifficultyPlayedStar = 2;
+        saveData.LastPlayDatetime = new DateTime(2026, 6, 1, 8, 0, 0);
+        saveData.PrevAreaCode = 4;
+        saveData.CategJpopCnt = 6;
+        saveData.SongPushedCnt = 8;
+        saveData.SongFavoriteCnt = 9;
+        saveData.SongRecentCnt = 10;
+        fixture.Context.UserSaveDataYellow.Add(saveData);
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var invalidStage = CreateStage((uint)(Ac15EraProfiles.Yellow.Limits.SongFlagBytes * 8), 1, 0);
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Yellow,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayDatetime = "20260608120000",
+                GetDonmedal = 50,
+                GetKatsumedal = 60,
+                ItemshopTutorialFlg = 7,
+                IsDevil = true,
+                IsExplain = true,
+                WaiwaiTutorialFlg = 11,
+                HasDifficultyPlayedCourse = true,
+                DifficultyPlayedCourse = 4,
+                HasDifficultyPlayedStar = true,
+                DifficultyPlayedStar = 8,
+                ReleaseSongNoes = [104],
+                GetToneNoes = [4],
+                GetTitleNoes = [10],
+                AreaCode = 12,
+                AryStageInfoes = [invalidStage]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var reloaded = await fixture.Context.UserSaveDataYellow.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(5u, reloaded.TotalGetDonmedal);
+        Assert.Equal(7u, reloaded.TotalGetKatsumedal);
+        Assert.Equal(2u, reloaded.ItemshopTutorialFlg);
+        Assert.False(reloaded.IsDevil);
+        Assert.False(reloaded.IsExplain);
+        Assert.Equal(3u, reloaded.WaiwaiTutorialFlg);
+        Assert.Equal(1u, reloaded.DifficultyPlayedCourse);
+        Assert.Equal(2u, reloaded.DifficultyPlayedStar);
+        Assert.Equal(new DateTime(2026, 6, 1, 8, 0, 0), reloaded.LastPlayDatetime);
+        Assert.Equal(4u, reloaded.PrevAreaCode);
+        Assert.Equal(6u, reloaded.CategJpopCnt);
+        Assert.Equal(8u, reloaded.SongPushedCnt);
+        Assert.Equal(9u, reloaded.SongFavoriteCnt);
+        Assert.Equal(10u, reloaded.SongRecentCnt);
+        Assert.False(BitIsSet(reloaded.ReleaseSongFlg, 104));
+        Assert.False(BitIsSet(reloaded.ToneFlg, 4));
+        Assert.False(BitIsSet(reloaded.TitleFlg, 10));
+        Assert.Empty(await fixture.Context.SongPlayDataYellow.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.SongBestDataYellow.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.YellowFavoriteSongs.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.YellowRecentSongs.Where(row => row.Baid == 1).ToListAsync());
     }
 
     [Fact]
