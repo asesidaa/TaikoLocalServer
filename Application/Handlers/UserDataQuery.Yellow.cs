@@ -28,12 +28,18 @@ public partial class UserDataQueryHandler
         var displayDan = YellowDanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalDanGrades);
 
         var snapshot = Ac15CatalogSnapshotFactory.FromYellow(yellow);
+        var unlockedShopItems = snapshot.ItemShopCatalog.ActiveSeason is null
+            ? []
+            : await context.GetUnlockedYellowShopItemsAsync(
+                request.Baid,
+                snapshot.ItemShopCatalog.ActiveSeason.SeasonId,
+                cancellationToken);
         var userdata = YellowAc15UserDataAdapter.CreateSnapshot(
             saveData,
             snapshot,
             favorites,
             recent,
-            unlockedShopItems: []);
+            unlockedShopItems);
         var response = Ac15UserDataService.BuildResponse(userdata, Ac15EraProfiles.Yellow);
         response.DispTaikojukuDan = GetSafeYellowTaikojukuDanSlot(displayDan);
         response.IsDevilYellow = saveData.IsDevil;

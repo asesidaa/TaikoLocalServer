@@ -246,6 +246,103 @@ public sealed class YellowUserDataProtocolTests
         Assert.Equal(2u, wire.DispTaikojukuDan);
     }
 
+    [Fact]
+    public async Task UserData_Yellow_UsesOnlyYellowPurchasedShopRowsForSongAndToneLocks()
+    {
+        var catalog = new YellowHandlerFixture.TestYellowCatalog(
+            musicInfoFileOrder:
+            [
+                new YellowMusicInfoEntry { SongNo = 101, MusicId = "a", FileOrder = 0 },
+                new YellowMusicInfoEntry { SongNo = 103, MusicId = "c", FileOrder = 1 }
+            ],
+            itemShopCatalog: new YellowItemShopCatalog
+            {
+                IsEnabled = true,
+                ActiveSeasonId = 2,
+                Seasons = new Dictionary<uint, YellowItemShopSeason>
+                {
+                    [2] = new()
+                    {
+                        SeasonId = 2,
+                        Items =
+                        [
+                            new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 103, Price = 10 },
+                            new YellowItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Tone, ItemId = 4, Price = 20 }
+                        ]
+                    }
+                }
+            });
+        await using var fixture = await YellowHandlerFixture.CreateAsync(catalog);
+        fixture.Context.UserData.Add(new UserDatum { Baid = 5, MyDonName = "DON" });
+        var save = UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(5);
+        save.ReleaseSongFlg = Ac15ProtocolBytes.CreateFixedBitset([103], Ac15EraProfiles.Yellow.Limits.SongFlagBytes);
+        save.ToneFlg = Ac15ProtocolBytes.CreateFixedBitset([0, 4], Ac15EraProfiles.Yellow.Limits.ToneFlagBytes);
+        fixture.Context.UserSaveDataYellow.Add(save);
+        fixture.Context.BlueShopItemStates.Add(new BlueShopItemState
+        {
+            Baid = 5,
+            SeasonId = 2,
+            ItemType = Ac15ShopItemType.Song.ToProtocolValue(),
+            ItemId = 103,
+            ItemNo = 1,
+            ItemPrice = 10,
+            Status = BlueShopItemStatus.Unlocked,
+            PurchasedAt = DateTime.UtcNow,
+            UnlockedAt = DateTime.UtcNow
+        });
+        fixture.Context.GreenShopItemStates.Add(new GreenShopItemState
+        {
+            Baid = 5,
+            SeasonId = 2,
+            ItemType = Ac15ShopItemType.Tone.ToProtocolValue(),
+            ItemId = 4,
+            ItemNo = 2,
+            ItemPrice = 20,
+            Status = GreenShopItemStatus.Unlocked,
+            PurchasedAt = DateTime.UtcNow,
+            UnlockedAt = DateTime.UtcNow
+        });
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateUserDataHandler(fixture);
+
+        var crossEraOnly = await handler.Handle(new UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
+
+        Assert.False(BitIsSet(crossEraOnly.ReleaseSongFlg, 103));
+        Assert.False(BitIsSet(crossEraOnly.ToneFlg, 4));
+
+        fixture.Context.YellowShopItemStates.AddRange(
+            new YellowShopItemState
+            {
+                Baid = 5,
+                SeasonId = 2,
+                ItemType = Ac15ShopItemType.Song.ToProtocolValue(),
+                ItemId = 103,
+                ItemNo = 1,
+                ItemPrice = 10,
+                Status = YellowShopItemStatus.Unlocked,
+                PurchasedAt = DateTime.UtcNow,
+                UnlockedAt = DateTime.UtcNow
+            },
+            new YellowShopItemState
+            {
+                Baid = 5,
+                SeasonId = 2,
+                ItemType = Ac15ShopItemType.Tone.ToProtocolValue(),
+                ItemId = 4,
+                ItemNo = 2,
+                ItemPrice = 20,
+                Status = YellowShopItemStatus.Unlocked,
+                PurchasedAt = DateTime.UtcNow,
+                UnlockedAt = DateTime.UtcNow
+            });
+        await fixture.Context.SaveChangesAsync();
+
+        var yellowPurchased = await handler.Handle(new UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
+
+        Assert.True(BitIsSet(yellowPurchased.ReleaseSongFlg, 103));
+        Assert.True(BitIsSet(yellowPurchased.ToneFlg, 4));
+    }
+
     private static bool BitIsSet(byte[] source, uint id)
         => (source[id >> 3] & (1 << ((int)id & 7))) != 0;
 
