@@ -191,6 +191,23 @@ Plans:
 4. Yellow userdata reads back only the proven Tokkun tutorial flag.
 5. Yellow Banacoin-adjacent routes log and return compatibility success without wallet/payment/transaction persistence.
 
+**Plans:** 4 plans
+
+Plans:
+
+**Wave 1**
+
+- [ ] 16-01-PLAN.md - Define the Yellow Tokkun classifier contract and Yellow-owned raw history schema
+- [ ] 16-04-PLAN.md - Tighten Yellow Banacoin-adjacent compatibility as stateless log/success routes
+
+**Wave 2** *(blocked on 16-01 completion)*
+
+- [ ] 16-02-PLAN.md - Persist allowed Yellow Tokkun state from classified `playresult.php` uploads
+
+**Wave 3** *(blocked on 16-02 completion)*
+
+- [ ] 16-03-PLAN.md - Read back Yellow Tokkun tutorial state through the proven Yellow userdata field only
+
 ### Phase 17: Yellow Runtime Verification and Contract Closeout
 
 **Goal:** Prove the full Yellow contract with focused tests, full build/test, runtime smoke, and docs.
