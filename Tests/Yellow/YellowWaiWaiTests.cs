@@ -169,6 +169,24 @@ public sealed class YellowWaiWaiTests
         Assert.DoesNotContain("IsYellowWaiwai", yellowSources, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void YellowWaiWaiSourceGuards_KeepStageFactsDiagnosticAndNonAuthoritative()
+    {
+        var root = FindRepoRoot();
+        var handler = File.ReadAllText(Path.Combine(root, "Application", "Handlers", "UpdatePlayResultCommand.Yellow.cs"));
+        var adapter = File.ReadAllText(Path.Combine(root, "Application", "Ac15", "YellowAc15NormalPlayAdapter.cs"));
+        var loggerMethod = ExtractMethodSource(handler, "LogYellowWaiWaiStageFacts");
+
+        Assert.DoesNotContain("saveData.WaiwaiTutorialFlg =", handler, StringComparison.Ordinal);
+        Assert.Contains("LogInformation", loggerMethod, StringComparison.Ordinal);
+        Assert.DoesNotContain("SaveChanges", loggerMethod, StringComparison.Ordinal);
+        Assert.DoesNotContain("context.", loggerMethod, StringComparison.Ordinal);
+        Assert.DoesNotContain("DanScoreDataYellow", loggerMethod, StringComparison.Ordinal);
+        Assert.DoesNotContain("YellowShop", loggerMethod, StringComparison.Ordinal);
+        Assert.Contains("WaiwaiResult = row.WaiwaiResult", adapter, StringComparison.Ordinal);
+        Assert.Contains("WaiwaiGauge = row.WaiwaiGauge", adapter, StringComparison.Ordinal);
+    }
+
     private static UpdatePlayResultCommandHandler CreateHandler(YellowHandlerFixture fixture)
         => new(
             fixture.Context,
@@ -240,5 +258,34 @@ public sealed class YellowWaiWaiTests
         }
 
         throw new InvalidOperationException("Could not find TaikoLocalServer.slnx.");
+    }
+
+    private static string ExtractMethodSource(string source, string methodName)
+    {
+        var start = source.IndexOf($"private void {methodName}(", StringComparison.Ordinal);
+        if (start < 0)
+        {
+            throw new InvalidOperationException($"Could not find method {methodName}.");
+        }
+
+        var brace = source.IndexOf('{', start);
+        var depth = 0;
+        for (var i = brace; i < source.Length; i++)
+        {
+            if (source[i] == '{')
+            {
+                depth++;
+            }
+            else if (source[i] == '}')
+            {
+                depth--;
+                if (depth == 0)
+                {
+                    return source[start..(i + 1)];
+                }
+            }
+        }
+
+        throw new InvalidOperationException($"Could not extract method {methodName}.");
     }
 }
