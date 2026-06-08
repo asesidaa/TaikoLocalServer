@@ -27,7 +27,7 @@
 - [x] **YPLY-01**: Yellow normal playresult uploads persist Yellow-owned play history, best scores, profile counters, unlocks, favorites, and recent songs without touching Blue, Green, or Nijiiro gameplay state.
 - [x] **YPLY-02**: Yellow self-best requests return Yellow-owned best score rows for requested songs and difficulties with the correct normal/Ura/Shin support for Yellow.
 - [x] **YCRN-01**: Yellow crown readback uses proven Yellow crown placement and response encoding, including an explicit compression/raw-byte test instead of assuming Blue/Green gzip behavior.
-- [ ] **YDAN-01**: Yellow Taikojuku/Dani requests and Dan playresults persist and read back Yellow-owned Dan state with Yellow profile limits and no Green/Blue Dan table writes.
+- [x] **YDAN-01**: Yellow Taikojuku/Dani requests and Dan playresults persist and read back Yellow-owned Dan state with Yellow profile limits and no Green/Blue Dan table writes.
 
 ### Yellow Shop, Medals, WaiWai, And Admin
 
@@ -102,7 +102,7 @@ Roadmap phase mapping is created during `$gsd-new-milestone` roadmap generation.
 | YPLY-01 | Phase 14 | Complete |
 | YPLY-02 | Phase 14 | Complete |
 | YCRN-01 | Phase 14 | Complete |
-| YDAN-01 | Phase 15 | Pending |
+| YDAN-01 | Phase 15 | Complete |
 | YSHOP-01 | Phase 15 | Pending |
 | YSHOP-02 | Phase 15 | Pending |
 | YMED-01 | Phase 15 | Pending |

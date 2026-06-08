@@ -140,6 +140,43 @@ Plans:
 4. WaiWai tutorial flag persistence/readback and playresult extra logging work where Yellow evidence exposes fields, without special-mode branching.
 5. AdminApi/WebUI routes can inspect supported Yellow profile, score, recent/favorite, Dani, shop, Tokkun, and catalog state without cross-era reads/writes.
 
+**Plans:** 1/9 plans complete
+
+Plans:
+
+**Wave 1**
+
+- [x] 15-01-PLAN.md - Add the Yellow-owned Dani schema and helper layer
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 15-02-PLAN.md - Persist and read back Yellow Dani results
+- [ ] 15-03-PLAN.md - Add Yellow-owned shop state schema
+
+**Wave 3** *(blocked on 15-03 completion)*
+
+- [ ] 15-04-PLAN.md - Make Yellow itempurchase stateful and catalog-validated
+
+**Wave 4** *(blocked on 15-02 and 15-04 completion)*
+
+- [ ] 15-05-PLAN.md - Route Yellow playresult medals and userdata shop locks through Yellow state
+
+**Wave 5** *(blocked on 15-05 completion)*
+
+- [ ] 15-06-PLAN.md - Constrain Yellow WaiWai handling to current protocol evidence
+
+**Wave 6** *(blocked on 15-06 completion)*
+
+- [ ] 15-07-PLAN.md - Add Yellow AdminApi profile, score, history, and favorite routes
+
+**Wave 7** *(blocked on 15-07 completion)*
+
+- [ ] 15-08-PLAN.md - Add Yellow AdminApi Dani, leaderboard, and catalog readback
+
+**Wave 8** *(blocked on 15-08 completion)*
+
+- [ ] 15-09-PLAN.md - Enable Yellow in the existing WebUI readback workflows
+
 ### Phase 16: Yellow Tokkun and Banacoin Compatibility
 
 **Goal:** Add Yellow Tokkun acceptance/persistence/readback and stateless Banacoin-adjacent compatibility.
