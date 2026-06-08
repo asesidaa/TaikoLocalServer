@@ -506,8 +506,100 @@ public sealed class YellowPlayResultHandlerTests
         Assert.Empty(await fixture.Context.SongPlayDataYellow.ToListAsync());
         Assert.Empty(await fixture.Context.SongBestDataYellow.ToListAsync());
         Assert.Empty(await fixture.Context.DanScoreDataYellow.ToListAsync());
+        Assert.Empty(await fixture.Context.DanStageScoreDataYellow.ToListAsync());
         Assert.Empty(await fixture.Context.YellowFavoriteSongs.ToListAsync());
         Assert.Empty(await fixture.Context.YellowRecentSongs.ToListAsync());
+        Assert.Empty(await fixture.Context.YellowShopSeasonStates.ToListAsync());
+        Assert.Empty(await fixture.Context.YellowShopItemStates.ToListAsync());
+        Assert.Empty(await fixture.Context.SongPlayDataBlue.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.SongBestDataBlue.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.SongPlayDataGreen.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.SongBestDataGreen.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.SongPlayDataNijiiro.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.SongBestDataNijiiro.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.DanScoreDataBlue.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.DanScoreDataGreen.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.DanScoreDataNijiiro.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.BlueShopSeasonStates.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.BlueShopItemStates.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.GreenShopSeasonStates.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.GreenShopItemStates.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.BlueBattleUserStates.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.BlueBattleNpcStates.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.BlueBattleTokenStates.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.BlueBattleStageResults.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.BlueTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Yellow_UnknownUserTokkunUploadReturnsSuccessWithoutRows()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            99,
+            GameEra.Yellow,
+            new CommonPlayResultData
+            {
+                Baid = 99,
+                PlayDatetime = "20260608120000",
+                PlayMode = (uint)PlayMode.Tokkun,
+                IsTokkunPlayResult = true,
+                TokkunTutorialFlg = 7,
+                TokkunStageData = new CommonPlayResultData.TokkunStageDataDto
+                {
+                    BanacoinDatetime = "20260608120100",
+                    TokkunSongCnt = 3,
+                    TookunSongnoes = [101, 102, 101],
+                    TokkunSpeedchangeCnt = 2,
+                    TokkunAutoplayCnt = 3,
+                    TokkunJumpCnt = 4
+                },
+                AryStageInfoes = [CreateStage(101, 1, 0)]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        Assert.Empty(await fixture.Context.UserSaveDataYellow.ToListAsync());
+        Assert.Empty(await fixture.Context.YellowTokkunStageResults.ToListAsync());
+        Assert.Empty(await fixture.Context.SongPlayDataYellow.ToListAsync());
+        Assert.Empty(await fixture.Context.SongBestDataYellow.ToListAsync());
+        Assert.Empty(await fixture.Context.DanScoreDataYellow.ToListAsync());
+        Assert.Empty(await fixture.Context.YellowShopSeasonStates.ToListAsync());
+        Assert.Empty(await fixture.Context.YellowShopItemStates.ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Yellow_TutorialOnlyNormalUploadDoesNotMutateTokkunState()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var saveData = UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(1);
+        saveData.TokkunTutorialFlg = 5;
+        fixture.Context.UserSaveDataYellow.Add(saveData);
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Yellow,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayDatetime = "20260608120000",
+                PlayMode = (uint)PlayMode.Normal,
+                IsTokkunPlayResult = false,
+                TokkunTutorialFlg = 7,
+                AryStageInfoes = [CreateStage(101, 1, 0)]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var reloaded = await fixture.Context.UserSaveDataYellow.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(5u, reloaded.TokkunTutorialFlg);
+        Assert.Empty(await fixture.Context.YellowTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Single(await fixture.Context.SongPlayDataYellow.Where(row => row.Baid == 1).ToListAsync());
     }
 
     [Fact]
