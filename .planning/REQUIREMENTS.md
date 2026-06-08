@@ -125,4 +125,4 @@ Roadmap phase mapping is created during `$gsd-new-milestone` roadmap generation.
 
 ---
 *Requirements defined: 2026-06-07*
-*Last updated: 2026-06-08 after Phase 14 verification closeout*
+*Last updated: 2026-06-08 after Phase 15 verification closeout*

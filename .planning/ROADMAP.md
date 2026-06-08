@@ -30,7 +30,7 @@ Active milestone: **v1.2 Yellow AC15 Support**
 - [x] **Phase 12: Yellow Evidence and Era Foundation** - Prove Yellow route/version/transport boundaries and add first-class Yellow adapter scaffolding. (completed 2026-06-07)
 - [x] **Phase 13: Yellow Catalog and AC15 Core Foundation** - Load Yellow `ST9100-1` catalog data and establish Yellow AC15 profile/core contracts. (completed 2026-06-08)
 - [x] **Phase 14: Yellow Identity, Userdata, Crowns, Self-Best, and Normal Play** - Implement Yellow-owned profile/userdata/normal play loop, including crown encoding proof. (completed 2026-06-08)
-- [ ] **Phase 15: Yellow Dani, Shop, Medals, WaiWai, and Admin** - Implement Yellow Dani, metadata, shop/medals, WaiWai tutorial/logging, and admin readback.
+- [x] **Phase 15: Yellow Dani, Shop, Medals, WaiWai, and Admin** - Implement Yellow Dani, metadata, shop/medals, WaiWai tutorial/logging, and admin readback. (completed 2026-06-08)
 - [ ] **Phase 16: Yellow Tokkun and Banacoin Compatibility** - Add Yellow Tokkun acceptance/persistence/readback and stateless Banacoin-adjacent compatibility.
 - [ ] **Phase 17: Yellow Runtime Verification and Contract Closeout** - Prove the full Yellow contract with focused tests, full build/test, runtime smoke, and docs.
 
@@ -240,4 +240,4 @@ See `.planning/milestones/v1.1-ROADMAP.md` and `.planning/milestones/v1.1-phases
 |-----------|--------|-------|--------|---------|
 | v1.0 Blue Support | 1-6 | 30 roadmap plans | Shipped | 2026-06-03 |
 | v1.1 Blue Tokkun Mode Support | 7-11 | 7 GSD plans | Shipped | 2026-06-07 |
-| v1.2 Yellow AC15 Support | 12-17 | 18 GSD plans complete | Active, Phase 15 implementation complete; verification pending | - |
+| v1.2 Yellow AC15 Support | 12-17 | 18 GSD plans complete | Active, Phase 15 verified complete; Phase 16 pending | - |
