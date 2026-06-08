@@ -27,7 +27,7 @@ public partial class UpdatePlayResultCommandHandler
         var playResultData = request.PlayResultData;
         if (IsYellowTokkunShaped(playResultData))
         {
-            return 1;
+            return await HandleYellowTokkun(request.Baid, playResultData, cancellationToken);
         }
 
         var validStages = playResultData.AryStageInfoes

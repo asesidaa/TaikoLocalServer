@@ -450,6 +450,7 @@ public sealed class YellowPlayResultHandlerTests
         var request = new CommonPlayResultData
         {
             Baid = 1,
+            PlayDatetime = "20260608120000",
             PlayMode = (uint)PlayMode.Tokkun,
             IsTokkunPlayResult = true,
             TokkunTutorialFlg = 7,
