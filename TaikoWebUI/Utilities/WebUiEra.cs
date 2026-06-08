@@ -5,8 +5,9 @@ public static class WebUiEra
     public const string Default = "Nijiiro";
     public const string Green = "Green";
     public const string Blue = "Blue";
-    public static readonly string[] Supported = [Default, Green, Blue];
-    private static readonly string[] Known = [Default, Green, Blue];
+    public const string Yellow = "Yellow";
+    public static readonly string[] Supported = [Default, Green, Blue, Yellow];
+    private static readonly string[] Known = [Default, Green, Blue, Yellow];
 
     public static bool IsSupported(string? era)
     {
@@ -20,7 +21,9 @@ public static class WebUiEra
 
     public static bool IsAc15(string? era)
     {
-        return IsGreen(era) || string.Equals(era, Blue, StringComparison.OrdinalIgnoreCase);
+        return IsGreen(era)
+            || string.Equals(era, Blue, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(era, Yellow, StringComparison.OrdinalIgnoreCase);
     }
 
     public static string Normalize(string? era)
