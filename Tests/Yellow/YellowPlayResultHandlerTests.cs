@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -455,8 +456,8 @@ public sealed class YellowPlayResultHandlerTests
             TokkunStageData = new CommonPlayResultData.TokkunStageDataDto
             {
                 BanacoinDatetime = "20260608120000",
-                TokkunSongCnt = 1,
-                TookunSongnoes = [101],
+                TokkunSongCnt = 3,
+                TookunSongnoes = [101, 102, 101],
                 TokkunSpeedchangeCnt = 2,
                 TokkunAutoplayCnt = 3,
                 TokkunJumpCnt = 4
@@ -484,7 +485,23 @@ public sealed class YellowPlayResultHandlerTests
         Assert.False(BitIsSet(reloaded.ToneFlg, 8));
         Assert.False(BitIsSet(reloaded.CostumeFlg1, 1));
         Assert.False(BitIsSet(reloaded.TitleFlg, 11));
-        Assert.Null(reloaded.TokkunTutorialFlg);
+        Assert.Equal(7u, reloaded.TokkunTutorialFlg);
+
+        var history = Assert.Single(await fixture.Context.YellowTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Equal("20260608120000", history.PlayDatetime);
+        Assert.Equal((uint)PlayMode.Tokkun, history.PlayMode);
+        Assert.Equal("20260608120000", history.BanacoinDatetime);
+        Assert.Equal(3u, history.TokkunSongCnt);
+        var tookunSongnoes = JsonSerializer.Deserialize<uint[]>(history.TookunSongnoesJson);
+        Assert.NotNull(tookunSongnoes);
+        Assert.Equal([101u, 102u, 101u], tookunSongnoes);
+        Assert.Equal(2u, history.TokkunSpeedchangeCnt);
+        Assert.Equal(3u, history.TokkunAutoplayCnt);
+        Assert.Equal(4u, history.TokkunJumpCnt);
+
+        var repeatResult = await handler.Handle(new UpdatePlayResultCommand(1, GameEra.Yellow, request), CancellationToken.None);
+        Assert.Equal(1u, repeatResult);
+        Assert.Equal(2, await fixture.Context.YellowTokkunStageResults.CountAsync(row => row.Baid == 1));
         Assert.Empty(await fixture.Context.SongPlayDataYellow.ToListAsync());
         Assert.Empty(await fixture.Context.SongBestDataYellow.ToListAsync());
         Assert.Empty(await fixture.Context.DanScoreDataYellow.ToListAsync());
