@@ -19,11 +19,13 @@ public partial class ItemPurchaseCommandHandler(
     {
         GameEra.Green => HandleGreen(request, cancellationToken),
         GameEra.Blue => HandleBlue(request, cancellationToken),
+        GameEra.Yellow => HandleYellow(request, cancellationToken),
         _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
     };
 
     private partial ValueTask<CommonItemPurchaseResponse> HandleGreen(ItemPurchaseCommand request, CancellationToken cancellationToken);
     private partial ValueTask<CommonItemPurchaseResponse> HandleBlue(ItemPurchaseCommand request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonItemPurchaseResponse> HandleYellow(ItemPurchaseCommand request, CancellationToken cancellationToken);
 
     private static bool CanAdd(uint current, uint delta)
         => delta <= uint.MaxValue - current;
