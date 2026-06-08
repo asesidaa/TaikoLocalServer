@@ -45,7 +45,7 @@ public static class Ac15EraProfiles
             CrownPlacement: Ac15CrownWirePlacement.DedicatedEndpoint,
             HasInitialDataItemShopRows: true,
             HasInitialDataLegalTermsRows: true,
-            HasTokkunTutorialFlagInUserData: false),
+            HasTokkunTutorialFlagInUserData: true),
         DefaultAc15EraHooks.Instance);
 
     private static Ac15ProtocolLimits CreateCommonLimits() => new(

@@ -130,11 +130,13 @@ public sealed class YellowUserDataProtocolTests
         Assert.False(response.IsTojiru);
         Assert.True(response.IsDevilYellow);
         Assert.True(response.IsExplainYellow);
-        Assert.Null(response.TokkunTutorialFlg);
+        Assert.Equal(77u, response.TokkunTutorialFlg);
 
         var wire = UserDataMappers.Map(response);
         Assert.True(wire.ShouldSerializeDispTaikojukuDan());
         Assert.Equal(1u, wire.DispTaikojukuDan);
+        Assert.True(wire.ShouldSerializeTokkunTutorialFlg());
+        Assert.Equal(77u, wire.TokkunTutorialFlg);
     }
 
     [Fact]
