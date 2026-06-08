@@ -84,6 +84,23 @@ No orphaned Phase 14 requirement IDs were found in `.planning/REQUIREMENTS.md` o
 | Phase 14 anti-pattern scan | Phase 14 file set searched for TODO/FIXME/XXX/HACK/placeholder/coming soon/not implemented | No matches in Phase 14-owned files | PASS |
 | Phase 14 disabled-test scan | Phase 14 requirement test files searched for skipped/pending/todo markers | No disabled requirement tests found | PASS |
 
+## Post-Fix Verification
+
+**Verified:** 2026-06-08T08:56:09+08:00
+**Scope:** commit `3f77dee5 Fix Yellow phase 14 review warnings`.
+**Code review status:** still pending; no re-review was performed in this verification stage.
+
+| Review Finding | Post-Fix Evidence | Status |
+|----------------|-------------------|--------|
+| WR-01: Yellow `IsExplain` saved state reads back through userdata response. | Source inspection of `3f77dee5` confirmed `UserDataQuery.Yellow.cs` copies `saveData.IsExplain` into `CommonUserDataResponse.IsExplainYellow`, and `UserDataMappers.cs` maps it to Yellow `UserDataResponse.IsExplain`. `YellowUserDataProtocolTests` now assert common and wire readback. | VERIFIED |
+| WR-02: invalid Yellow stages do not mutate save/profile counters before validation skips them. | Source inspection of `3f77dee5` confirmed `UpdatePlayResultCommand.Yellow.cs` filters supported normal stages before loading/mutating Yellow save data. `YellowPlayResultHandlerTests.UpdatePlayResult_Yellow_InvalidStagesDoNotUpdateSaveMetadataProfileOrNormalRows` asserts save metadata, profile counters, unlock flags, play history, best rows, favorites, and recent songs remain unchanged. | VERIFIED |
+
+| Check | Command | Result | Status |
+|-------|---------|--------|--------|
+| Focused review-fix tests | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~YellowUserData|FullyQualifiedName~YellowPlayResult"` | Passed: 15 tests, 0 failed, 0 skipped | PASS |
+| Broader Yellow regression | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~Yellow"` | Passed: 106 tests, 0 failed, 0 skipped | PASS |
+| Temp-output Host build | `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build-phase14-yellow"` | Build succeeded, 0 warnings, 0 errors | PASS |
+
 ## Decision Coverage
 
 All 20 trackable `14-CONTEXT.md` decisions are honored by shipped artifacts. The workflow decision coverage gate returned `blocking: false`, `honored: 20`, `total: 20`.
