@@ -42,7 +42,14 @@ public partial class UpdatePlayResultCommandHandler
         playResultData.AryStageInfoes = validStages;
 
         var saveData = await context.GetOrCreateYellowSaveDataAsync(request.Baid, cancellationToken);
-        if (!CanAddYellow(saveData.TotalGetDonmedal, playResultData.GetDonmedal)
+        var yellow = gameDataService.Yellow();
+        var shopSeasonState = await context.GetOrCreateActiveYellowShopSeasonStateAsync(
+            saveData,
+            yellow.ItemShopCatalog,
+            cancellationToken);
+        var currentDonmedal = shopSeasonState?.TotalGetDonmedal ?? saveData.TotalGetDonmedal;
+
+        if (!CanAddYellow(currentDonmedal, playResultData.GetDonmedal)
             || !CanAddYellow(saveData.TotalGetKatsumedal, playResultData.GetKatsumedal))
         {
             logger.LogWarning("Rejecting invalid Yellow medal totals for baid {Baid}", request.Baid);
@@ -51,7 +58,16 @@ public partial class UpdatePlayResultCommandHandler
 
         var playTime = ParseYellowPlayDatetimeOrNow(playResultData.PlayDatetime);
 
-        saveData.TotalGetDonmedal += playResultData.GetDonmedal;
+        if (shopSeasonState is null)
+        {
+            saveData.TotalGetDonmedal += playResultData.GetDonmedal;
+        }
+        else
+        {
+            shopSeasonState.TotalGetDonmedal += playResultData.GetDonmedal;
+            shopSeasonState.UpdatedAt = DateTime.UtcNow;
+        }
+
         saveData.TotalGetKatsumedal += playResultData.GetKatsumedal;
         saveData.ItemshopTutorialFlg = playResultData.ItemshopTutorialFlg ?? saveData.ItemshopTutorialFlg;
         saveData.IsDevil = playResultData.IsDevil ?? saveData.IsDevil;
@@ -82,7 +98,7 @@ public partial class UpdatePlayResultCommandHandler
             ApplyYellowProfileStage(saveData, stage);
         }
 
-        await SaveYellowDanAsync(saveData, playResultData, gameDataService.Yellow(), cancellationToken);
+        await SaveYellowDanAsync(saveData, playResultData, yellow, cancellationToken);
 
         return await Ac15NormalPlayService.SaveAsync(
             request.Baid,

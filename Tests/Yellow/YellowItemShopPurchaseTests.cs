@@ -239,6 +239,26 @@ public sealed class YellowItemShopPurchaseTests
     }
 
     [Fact]
+    public async Task ItemPurchase_DoesNotUseYellowKatsumedalsAsPurchaseCurrency()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
+            new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
+        var save = await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 1200);
+        save.TotalGetKatsumedal = 9999;
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var response = await handler.Handle(new ItemPurchaseCommand(1, GameEra.Yellow, 1, 3, 12, 1300), CancellationToken.None);
+
+        var season = await fixture.Context.YellowShopSeasonStates.FindAsync(1u, 2u);
+        var reloaded = await fixture.Context.UserSaveDataYellow.FindAsync(1u);
+        Assert.Equal(0u, response.Result);
+        Assert.Equal(0u, season!.TotalUseDonmedal);
+        Assert.Equal(9999u, reloaded!.TotalGetKatsumedal);
+        Assert.False(await fixture.Context.YellowShopItemStates.AnyAsync());
+    }
+
+    [Fact]
     public async Task ItemPurchase_RejectsUnsupportedYellowItemTypeWithoutMutation()
     {
         var unsupportedItemType = (Ac15ShopItemType)99;

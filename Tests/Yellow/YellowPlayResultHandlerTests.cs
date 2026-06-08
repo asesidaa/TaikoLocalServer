@@ -240,6 +240,94 @@ public sealed class YellowPlayResultHandlerTests
     }
 
     [Fact]
+    public async Task UpdatePlayResult_Yellow_ActiveShopSeasonReceivesDonmedalsAndBaidReadbackUsesSeasonTotals()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog());
+        fixture.Context.Cards.Add(new Card { Baid = 1, AccessCode = "999" });
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var saveData = UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(1);
+        saveData.TotalGetDonmedal = 100;
+        saveData.TotalUseDonmedal = 20;
+        saveData.TotalGetKatsumedal = 5;
+        fixture.Context.UserSaveDataYellow.Add(saveData);
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Yellow,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                GetDonmedal = 30,
+                GetKatsumedal = 7,
+                AryStageInfoes = [CreateStage(101, 1, 0)]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var season = await fixture.Context.YellowShopSeasonStates.FindAsync(1u, 2u);
+        var save = await fixture.Context.UserSaveDataYellow.FindAsync(1u);
+        Assert.Equal(130u, season!.TotalGetDonmedal);
+        Assert.Equal(20u, season.TotalUseDonmedal);
+        Assert.Equal(100u, save!.TotalGetDonmedal);
+        Assert.Equal(12u, save.TotalGetKatsumedal);
+
+        var baidHandler = new BaidQueryHandler(
+            fixture.Context,
+            NullLogger<BaidQueryHandler>.Instance,
+            fixture.Catalog);
+        var baid = await baidHandler.Handle(new BaidQuery(GameEra.Yellow, "999"), CancellationToken.None);
+
+        Assert.Equal(130u, baid.TotalGetDonmedal);
+        Assert.Equal(20u, baid.TotalUseDonmedal);
+        Assert.Equal(12u, baid.TotalGetKatsumedal);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Yellow_ActiveShopOverflowRejectsWithoutPartialMutation()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog());
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var saveData = UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(1);
+        saveData.TotalGetKatsumedal = 5;
+        fixture.Context.UserSaveDataYellow.Add(saveData);
+        fixture.Context.YellowShopSeasonStates.Add(new YellowShopSeasonState
+        {
+            Baid = 1,
+            SeasonId = 2,
+            TotalGetDonmedal = uint.MaxValue,
+            TotalUseDonmedal = 10,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        });
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Yellow,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                GetDonmedal = 1,
+                GetKatsumedal = 7,
+                AryStageInfoes = [CreateStage(101, 1, 0)]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var season = await fixture.Context.YellowShopSeasonStates.FindAsync(1u, 2u);
+        var save = await fixture.Context.UserSaveDataYellow.FindAsync(1u);
+        Assert.Equal(uint.MaxValue, season!.TotalGetDonmedal);
+        Assert.Equal(10u, season.TotalUseDonmedal);
+        Assert.Equal(0u, save!.TotalGetDonmedal);
+        Assert.Equal(5u, save.TotalGetKatsumedal);
+        Assert.Empty(await fixture.Context.SongPlayDataYellow.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.SongBestDataYellow.Where(row => row.Baid == 1).ToListAsync());
+    }
+
+    [Fact]
     public async Task UpdatePlayResult_Yellow_FavoriteAndRecentUseYellowLimits()
     {
         await using var fixture = await YellowHandlerFixture.CreateAsync();
@@ -842,6 +930,24 @@ public sealed class YellowPlayResultHandlerTests
                 ]
             })
             .ToArray());
+
+    private static YellowHandlerFixture.TestYellowCatalog CreateShopCatalog()
+        => new(itemShopCatalog: new YellowItemShopCatalog
+        {
+            IsEnabled = true,
+            ActiveSeasonId = 2,
+            Seasons = new Dictionary<uint, YellowItemShopSeason>
+            {
+                [2] = new()
+                {
+                    SeasonId = 2,
+                    Items =
+                    [
+                        new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 103, Price = 10 }
+                    ]
+                }
+            }
+        });
 
     private static bool BitIsSet(byte[] source, uint id)
         => (source[id >> 3] & (1 << ((int)id & 7))) != 0;

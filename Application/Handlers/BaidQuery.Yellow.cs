@@ -38,6 +38,16 @@ public partial class BaidQueryHandler
         var userData = await context.UserData.FindAsync([card.Baid], cancellationToken)
             ?? throw new InvalidOperationException($"User not found for Yellow card baid {card.Baid}.");
 
+        var yellow = gameDataService.Yellow();
+        var shopSeasonState = await context.GetOrCreateActiveYellowShopSeasonStateAsync(
+            saveData,
+            yellow.ItemShopCatalog,
+            cancellationToken);
+        if (shopSeasonState is not null)
+        {
+            await context.SaveChangesAsync(cancellationToken);
+        }
+
         var limits = Ac15EraProfiles.Yellow.Limits;
         return new CommonBaidResponse
         {
@@ -57,8 +67,8 @@ public partial class BaidQueryHandler
             CostumeFlg3 = Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg3, limits.CostumeFlagBytes),
             CostumeFlg4 = Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg4, limits.CostumeFlagBytes),
             CostumeFlg5 = Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg5, limits.CostumeFlagBytes),
-            TotalGetDonmedal = saveData.TotalGetDonmedal,
-            TotalUseDonmedal = saveData.TotalUseDonmedal,
+            TotalGetDonmedal = shopSeasonState?.TotalGetDonmedal ?? saveData.TotalGetDonmedal,
+            TotalUseDonmedal = shopSeasonState?.TotalUseDonmedal ?? saveData.TotalUseDonmedal,
             TotalGetKatsumedal = saveData.TotalGetKatsumedal,
             TotalUseKatsumedal = saveData.TotalUseKatsumedal,
             ItemshopTutorialFlg = saveData.ItemshopTutorialFlg,
