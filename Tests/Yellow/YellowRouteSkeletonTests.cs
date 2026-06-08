@@ -72,11 +72,11 @@ public sealed class YellowRouteSkeletonTests
     }
 
     [Fact]
-    public void YellowControllers_OnlyCatalogMetadataRoutesCallRuntimeBusinessBehavior()
+    public void YellowControllers_OnlyImplementedRoutesCallRuntimeBusinessBehavior()
     {
         var root = FindRepoRoot();
         var controllersRoot = Path.Combine(root, "Adapters.GameProtocol.Yellow", "Controllers");
-        var allowedMediatorCount = 13;
+        var allowedMediatorCount = 14;
 
         foreach (var file in Directory.EnumerateFiles(controllersRoot, "*.cs", SearchOption.AllDirectories))
         {

@@ -7,6 +7,17 @@ public static class ItemShopMappers
         return new GetItemShopInfoQuery(GameEra.Yellow);
     }
 
+    public static ItemPurchaseCommand Map(ItempurchaseRequest request)
+    {
+        return new ItemPurchaseCommand(
+            request.Baid,
+            GameEra.Yellow,
+            request.ItemNo,
+            request.ShouldSerializeItemType() ? request.ItemType : null,
+            request.ShouldSerializeItemId() ? request.ItemId : null,
+            request.ShouldSerializeItemPrice() ? request.ItemPrice : null);
+    }
+
     public static GetitemshopinfoResponse Map(CommonItemShopInfoResponse common)
     {
         var response = new GetitemshopinfoResponse
@@ -26,5 +37,15 @@ public static class ItemShopMappers
         }));
 
         return response;
+    }
+
+    public static ItempurchaseResponse Map(CommonItemPurchaseResponse common)
+    {
+        return new ItempurchaseResponse
+        {
+            Result = common.Result,
+            TotalGetDonmedal = common.TotalGetDonmedal,
+            TotalUseDonmedal = common.TotalUseDonmedal
+        };
     }
 }

@@ -1,5 +1,11 @@
 using TaikoLocalServer.Application.Ac15;
 using TaikoLocalServer.Application.Catalog.Yellow;
+using TaikoLocalServer.Adapters.GameProtocol.Yellow.Controllers;
+using TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using YellowWire = TaikoLocalServer.Adapters.GameProtocol.Yellow.Wire;
 
 namespace TaikoLocalServer.Tests.Yellow;
 
@@ -307,6 +313,161 @@ public sealed class YellowItemShopPurchaseTests
         }
     }
 
+    [Fact]
+    public void ItemPurchaseCommandMap_PreservesOmittedOptionalDetailsAndYellowEra()
+    {
+        var request = new YellowWire.ItempurchaseRequest
+        {
+            ChassisId = "268410000000",
+            ShopId = "JPN0JPN0123",
+            Baid = 1,
+            ItemNo = 0
+        };
+
+        var command = ItemShopMappers.Map(request);
+
+        Assert.Equal(1u, command.Baid);
+        Assert.Equal(GameEra.Yellow, command.Era);
+        Assert.Equal(0u, command.ItemNo);
+        Assert.Null(command.ItemType);
+        Assert.Null(command.ItemId);
+        Assert.Null(command.ItemPrice);
+    }
+
+    [Fact]
+    public void ItemPurchaseCommandMap_PreservesExplicitZeroOptionalDetails()
+    {
+        var request = new YellowWire.ItempurchaseRequest
+        {
+            ChassisId = "268410000000",
+            ShopId = "JPN0JPN0123",
+            Baid = 1,
+            ItemNo = 0,
+            ItemType = 0,
+            ItemId = 0,
+            ItemPrice = 0
+        };
+
+        var command = ItemShopMappers.Map(request);
+
+        Assert.Equal(0u, command.ItemType);
+        Assert.Equal(0u, command.ItemId);
+        Assert.Equal(0u, command.ItemPrice);
+    }
+
+    [Fact]
+    public void ItemPurchaseResponseMap_MapsYellowTotals()
+    {
+        var response = ItemShopMappers.Map(new CommonItemPurchaseResponse
+        {
+            Result = 1,
+            TotalGetDonmedal = 700,
+            TotalUseDonmedal = 200
+        });
+
+        Assert.Equal(1u, response.Result);
+        Assert.Equal(700u, response.TotalGetDonmedal);
+        Assert.Equal(200u, response.TotalUseDonmedal);
+    }
+
+    [Fact]
+    public void YellowItemPurchaseController_UsesMediatorCommandAndResponseMapper()
+    {
+        var source = File.ReadAllText(Path.Combine(
+            FindRepoRoot(),
+            "Adapters.GameProtocol.Yellow",
+            "Controllers",
+            "YellowScaffoldControllers.cs"));
+        var controller = ExtractControllerSource(source, "ItemPurchaseController");
+
+        Assert.Contains("Task<IActionResult> ItemPurchase", controller, StringComparison.Ordinal);
+        Assert.Contains("Mediator.Send(ItemShopMappers.Map(request)", controller, StringComparison.Ordinal);
+        Assert.Contains("return Ok(ItemShopMappers.Map(common));", controller, StringComparison.Ordinal);
+        Assert.DoesNotContain("new ItempurchaseResponse { Result = 1 }", controller, StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("rewardcardcheck")]
+    [InlineData("rewardexecution")]
+    public async Task YellowRewardCompatibilityRoutes_ReturnSuccessWithoutMutatingShopOrSaveState(string route)
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
+            new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var save = UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(1);
+        save.ToneFlg = Ac15ProtocolBytes.SetBits(save.ToneFlg, [4], Ac15EraProfiles.Yellow.Limits.ToneFlagBytes);
+        save.CostumeFlg1 = Ac15ProtocolBytes.SetBits(save.CostumeFlg1, [12], Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes);
+        fixture.Context.UserSaveDataYellow.Add(save);
+        fixture.Context.YellowShopSeasonStates.Add(new YellowShopSeasonState
+        {
+            Baid = 1,
+            SeasonId = 2,
+            TotalGetDonmedal = 700,
+            TotalUseDonmedal = 200,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        });
+        fixture.Context.YellowShopItemStates.Add(Unlocked(1, 2, 3, 12));
+        await fixture.Context.SaveChangesAsync();
+        var unlockFieldsBefore = SnapshotUnlockFields(save);
+
+        var response = route == "rewardcardcheck"
+            ? InvokeRewardCardCheck()
+            : InvokeRewardExecution();
+
+        var season = await fixture.Context.YellowShopSeasonStates.FindAsync(1u, 2u);
+        var reloaded = await fixture.Context.UserSaveDataYellow.FindAsync(1u);
+        Assert.Equal(1u, response);
+        Assert.Equal(700u, season!.TotalGetDonmedal);
+        Assert.Equal(200u, season.TotalUseDonmedal);
+        foreach (var (field, bytes) in unlockFieldsBefore)
+        {
+            Assert.Equal(bytes, GetUnlockField(reloaded!, field));
+        }
+
+        Assert.Single(await fixture.Context.YellowShopItemStates.ToListAsync());
+
+        uint InvokeRewardCardCheck()
+        {
+            var controller = new RewardCardCheckController
+            {
+                ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
+            };
+
+            var result = controller.RewardCardCheck(new YellowWire.RewardcardcheckRequest
+            {
+                DeviceType = 1,
+                AccessCode = "12345678901234567890",
+                ChipId = "chip",
+                ChassisId = "268410000000",
+                ShopId = "JPN0JPN0123",
+                CountryId = "JPN"
+            });
+            var ok = Assert.IsType<OkObjectResult>(result);
+            return Assert.IsType<YellowWire.RewardcardcheckResponse>(ok.Value).Result;
+        }
+
+        uint InvokeRewardExecution()
+        {
+            var controller = new RewardExecutionController
+            {
+                ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
+            };
+
+            var result = controller.RewardExecution(new YellowWire.RewardexecutionRequest
+            {
+                Baid = 1,
+                ChassisId = "268410000000",
+                ShopId = "JPN0JPN0123",
+                ReleaseSongNoes = [101],
+                GetToneNoes = [5],
+                GetCostumeNo1s = [13]
+            });
+            var ok = Assert.IsType<OkObjectResult>(result);
+            return Assert.IsType<YellowWire.RewardexecutionResponse>(ok.Value).Result;
+        }
+    }
+
     private static YellowShopItemState Unlocked(uint baid, uint seasonId, uint itemType, uint itemId) => new()
     {
         Baid = baid,
@@ -408,4 +569,35 @@ public sealed class YellowItemShopPurchaseTests
 
     private static bool HasBit(byte[] source, uint id)
         => (source[id >> 3] & (1 << ((int)id & 7))) != 0;
+
+    private static string ExtractControllerSource(string source, string controllerName)
+    {
+        var start = source.IndexOf($"class {controllerName}", StringComparison.Ordinal);
+        Assert.True(start >= 0, $"Controller {controllerName} not found.");
+        var next = source.IndexOf("\n[ApiController]", start, StringComparison.Ordinal);
+        return next >= 0 ? source[start..next] : source[start..];
+    }
+
+    private static string FindRepoRoot()
+    {
+        for (var directory = new DirectoryInfo(AppContext.BaseDirectory);
+             directory is not null;
+             directory = directory.Parent)
+        {
+            if (File.Exists(Path.Combine(directory.FullName, "TaikoLocalServer.slnx")))
+            {
+                return directory.FullName;
+            }
+        }
+
+        throw new InvalidOperationException("Could not find TaikoLocalServer.slnx.");
+    }
+
+    private static DefaultHttpContext CreateHttpContext()
+    {
+        var services = new ServiceCollection()
+            .AddLogging()
+            .BuildServiceProvider();
+        return new DefaultHttpContext { RequestServices = services };
+    }
 }

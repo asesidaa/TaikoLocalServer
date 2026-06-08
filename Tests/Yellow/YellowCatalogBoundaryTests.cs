@@ -18,7 +18,8 @@ public sealed class YellowCatalogBoundaryTests
         "MyDonEntryController",
         "UserDataController",
         "PlayResultController",
-        "SelfBestController"
+        "SelfBestController",
+        "ItemPurchaseController"
     ];
 
     private static readonly string[] YellowStateBackedControllers =
@@ -28,7 +29,6 @@ public sealed class YellowCatalogBoundaryTests
 
     private static readonly string[] DeferredNoStateControllers =
     [
-        "ItemPurchaseController",
         "RewardCardCheckController",
         "RewardExecutionController",
         "BookkeepingController",
@@ -42,7 +42,7 @@ public sealed class YellowCatalogBoundaryTests
     ];
 
     [Fact]
-    public void Phase13MetadataAndPhase14ReadbackControllers_CallRuntimeBehavior()
+    public void Phase13To15ImplementedControllers_CallRuntimeBehavior()
     {
         var source = File.ReadAllText(Path.Combine(FindRepoRoot(), "Adapters.GameProtocol.Yellow", "Controllers", "YellowScaffoldControllers.cs"));
 
@@ -64,14 +64,11 @@ public sealed class YellowCatalogBoundaryTests
     }
 
     [Fact]
-    public void YellowImplementation_DoesNotIntroduceDeferredPhase15Or16OrBattleFiles()
+    public void YellowImplementation_DoesNotIntroduceDeferredPhase16OrBattleFiles()
     {
         var root = FindRepoRoot();
         var forbiddenFiles = new[]
         {
-            Path.Combine(root, "Application", "Handlers", "ItemPurchaseCommand.Yellow.cs"),
-            Path.Combine(root, "Domain", "Entities", "YellowShopSeasonState.cs"),
-            Path.Combine(root, "Domain", "Entities", "YellowShopItemState.cs"),
             Path.Combine(root, "Domain", "Entities", "YellowTokkunStageResult.cs")
         };
 
@@ -91,8 +88,7 @@ public sealed class YellowCatalogBoundaryTests
             "YellowBattle",
             "YellowTokkunStageResult",
             "YellowTokkunStageResults",
-            "BanacoinWallet",
-            "ItemPurchaseCommand.Yellow"
+            "BanacoinWallet"
         };
 
         foreach (var file in searchedRoots.SelectMany(path => Directory.EnumerateFiles(path, "*.cs", SearchOption.AllDirectories)))
