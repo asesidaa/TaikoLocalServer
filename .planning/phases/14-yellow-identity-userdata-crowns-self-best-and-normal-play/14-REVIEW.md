@@ -1,15 +1,16 @@
 ---
 phase: 14-yellow-identity-userdata-crowns-self-best-and-normal-play
 reviewed: 2026-06-08T08:32:23+08:00
+re_reviewed: 2026-06-08T09:04:08+08:00
 depth: standard
-files_reviewed: 41
-scope_source: "14-01-SUMMARY.md, 14-02-SUMMARY.md, 14-03-SUMMARY.md, phase commit diff cross-check"
+files_reviewed: 6
+scope_source: "post-fix commit 3f77dee5 plus prior WR-01/WR-02 re-review"
 findings:
   critical: 0
-  warning: 2
+  warning: 0
   info: 0
-  total: 2
-status: findings
+  total: 0
+status: clean
 reviewer: codex-inline-gsd-code-reviewer-fallback
 ---
 
@@ -17,100 +18,53 @@ reviewer: codex-inline-gsd-code-reviewer-fallback
 
 ## Scope
 
-Reviewed the Phase 14 Yellow identity, userdata, self-best, crowns, normal-play persistence, EF mappings, migration, protocol mappers/controllers, and focused tests at standard depth.
+Re-reviewed Phase 14 after fix commit `3f77dee5 Fix Yellow phase 14 review warnings`, scoped to the two prior warnings and the fix diff. No fixes were applied in this re-review stage.
 
-Files reviewed:
+Files re-reviewed:
 
-- `Adapters.GameProtocol.Yellow/Controllers/YellowScaffoldControllers.cs`
-- `Adapters.GameProtocol.Yellow/Mappers/BaidResponseMapper.cs`
-- `Adapters.GameProtocol.Yellow/Mappers/CrownsDataMappers.cs`
-- `Adapters.GameProtocol.Yellow/Mappers/PlayResultMappers.cs`
-- `Adapters.GameProtocol.Yellow/Mappers/SelfBestMappers.cs`
 - `Adapters.GameProtocol.Yellow/Mappers/UserDataMappers.cs`
-- `Application/Abstractions/ITaikoDbContext.Yellow.cs`
-- `Application/Ac15/YellowAc15NormalPlayAdapter.cs`
-- `Application/Ac15/YellowAc15UserDataAdapter.cs`
-- `Application/Common/UserSaveDataYellowExtensions.cs`
 - `Application/Dtos/CommonUserDataResponse.Yellow.cs`
-- `Application/Handlers/AddMyDonEntryCommand.Yellow.cs`
-- `Application/Handlers/AddMyDonEntryCommand.cs`
-- `Application/Handlers/BaidQuery.Yellow.cs`
-- `Application/Handlers/BaidQuery.cs`
-- `Application/Handlers/GetSelfBestQuery.Yellow.cs`
-- `Application/Handlers/GetSelfBestQuery.cs`
 - `Application/Handlers/UpdatePlayResultCommand.Yellow.cs`
-- `Application/Handlers/UpdatePlayResultCommand.cs`
 - `Application/Handlers/UserDataQuery.Yellow.cs`
-- `Application/Handlers/UserDataQuery.cs`
-- `Domain/Entities/SongBestDatumYellow.cs`
-- `Domain/Entities/SongPlayDatumYellow.cs`
-- `Domain/Entities/UserSaveDataYellow.cs`
-- `Domain/Entities/YellowFavoriteSongs.cs`
-- `Domain/Entities/YellowRecentSongs.cs`
-- `Infrastructure/Persistence/Migrations/20260607222143_AddYellowPhase14State.Designer.cs`
-- `Infrastructure/Persistence/Migrations/20260607222143_AddYellowPhase14State.cs`
-- `Infrastructure/Persistence/Migrations/TaikoDbContextModelSnapshot.cs`
-- `Infrastructure/Persistence/TaikoDbContext.Yellow.cs`
-- `Infrastructure/Persistence/TaikoDbContext.cs`
-- `Tests/Green/GreenAuthConfigTests.cs`
-- `Tests/Yellow/YellowCatalogBoundaryTests.cs`
-- `Tests/Yellow/YellowCrownsDataTests.cs`
-- `Tests/Yellow/YellowHandlerFixture.cs`
-- `Tests/Yellow/YellowIdentityHandlerTests.cs`
-- `Tests/Yellow/YellowPersistenceBoundaryTests.cs`
 - `Tests/Yellow/YellowPlayResultHandlerTests.cs`
-- `Tests/Yellow/YellowRouteSkeletonTests.cs`
-- `Tests/Yellow/YellowSelfBestTests.cs`
 - `Tests/Yellow/YellowUserDataProtocolTests.cs`
 
 ## Findings
 
+No active findings.
+
+## Prior Finding Resolution
+
 ### WR-01: Yellow userdata drops the persisted `is_explain` flag
 
 **Severity:** Warning
+**Re-review status:** Resolved
 
-**Location:** `Adapters.GameProtocol.Yellow/Mappers/UserDataMappers.cs:10`
-
-`UpdatePlayResultCommand.Yellow` persists `playResultData.IsExplain` into `UserSaveDataYellow.IsExplain`, and Yellow proto exposes `UserDataResponse.is_explain` as field 2. The userdata mapper never assigns `UserDataResponse.IsExplain`, and the common userdata snapshot/response currently has no Yellow path for this value. As a result, a normal Yellow playresult can store the explanation/tutorial completion flag, but the next `userdata.php` response omits it and the client sees the protobuf default instead of saved state.
-
-This is covered neither by `YellowUserDataProtocolTests.UserData_Yellow_ComposesSaveCatalogFavoritesRecentAndSupportedFlags` nor by `UserDataMapper_Yellow_MapsSupportedFieldsAndOmitsTokkunTutorial`; the mapper test sets `IsDevilYellow` and asserts `IsDevil`, but has no assertion for `IsExplain`.
-
-Relevant evidence:
-
-- `proto/yellow/yellow.proto:264-267` defines `UserDataResponse.is_explain`.
-- `Application/Handlers/UpdatePlayResultCommand.Yellow.cs:42-45` saves the uploaded flag.
-- `Adapters.GameProtocol.Yellow/Mappers/UserDataMappers.cs:10-45` maps adjacent userdata fields but not `IsExplain`.
+Fix commit `3f77dee5` adds `CommonUserDataResponse.IsExplainYellow`, assigns it from `UserSaveDataYellow.IsExplain` in `UserDataQuery.Yellow.cs`, and maps it to Yellow wire `UserDataResponse.IsExplain` in `UserDataMappers.cs`. `YellowUserDataProtocolTests` now asserts both common response and wire mapper readback.
 
 ### WR-02: Invalid Yellow stages can still mutate profile counters before normal-play validation skips them
 
 **Severity:** Warning
+**Re-review status:** Resolved
 
-**Location:** `Application/Handlers/UpdatePlayResultCommand.Yellow.cs:40`
-
-The Yellow handler mutates save-level state before delegating to `Ac15NormalPlayService.SaveAsync`: medal totals, tutorial flags, `LastPlayDatetime`, unlock bits, and per-stage profile counters are updated at lines 40-68. The shared normal-play service only validates stages later and skips invalid or unsupported stages at `Ac15NormalPlayService.cs:40-48` before adding play rows, best rows, favorites, or recent songs.
-
-That creates an inconsistent accepted upload path: a payload whose stage has an out-of-range song number or invalid course level can still increment Yellow profile counters and update save metadata, while producing no Yellow play-history row, best row, favorite row, recent row, self-best result, or crown state for that stage. Blue and Green avoid this mismatch by validating or filtering stages before applying profile counters. Phase 14's normal-play readback tests only use valid `CreateStage(...)` data, so this inconsistency is not covered.
-
-Relevant evidence:
-
-- `Application/Handlers/UpdatePlayResultCommand.Yellow.cs:40-68` applies save/profile mutations before shared validation.
-- `Application/Ac15/Ac15NormalPlayService.cs:38-48` skips invalid/unsupported stages during persistence.
-- `Tests/Yellow/YellowPlayResultHandlerTests.cs:553-575` only constructs valid stage helper data.
+Fix commit `3f77dee5` filters Yellow normal stages with the same song/course/stage-mode support rules before loading or mutating Yellow save data. If no valid normal stages remain, the handler returns success without profile/save/normal-row side effects. Mixed valid/invalid uploads persist and count only valid stages. `YellowPlayResultHandlerTests.UpdatePlayResult_Yellow_InvalidStagesDoNotUpdateSaveMetadataProfileOrNormalRows` covers the all-invalid path, and the existing normal-play test now includes one invalid stage beside a valid stage.
 
 ## Review Notes
 
-No code fixes were applied in this review stage. `14-VERIFICATION.md` was intentionally left with `code_review: pending` because findings exist.
+No regressions were found in the Phase 14 scope. The fixes do not add Yellow battle, Tokkun persistence, shop writes, AdminApi/WebUI, or cross-era state coupling.
 
 Lightweight checks performed:
 
-- Phase 14 source scope cross-checked against `git diff --name-only b12a24aa^..HEAD -- . ':!.planning' ':!Host/.gitignore'`.
-- `git diff --check -- Application Infrastructure Domain Adapters.GameProtocol.Yellow Tests` returned no whitespace errors.
-- Focused source scans found no production Yellow references to Blue battle persistence, deferred Yellow shop/Tokkun storage, AdminApi/WebUI implementation, or TODO/FIXME/HACK markers in Phase 14-owned files.
+- Source inspection of `3f77dee5` and the current fix files.
+- Cross-check against shared `Ac15NormalPlayService`, `DefaultAc15EraHooks`, and existing Blue/Green handler validation patterns.
+- `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~YellowUserData|FullyQualifiedName~YellowPlayResult"` passed: 15 tests, 0 failed, 0 skipped.
+- `git diff --check -- .planning\phases\14-yellow-identity-userdata-crowns-self-best-and-normal-play Application\Handlers\UpdatePlayResultCommand.Yellow.cs Application\Handlers\UserDataQuery.Yellow.cs Application\Dtos\CommonUserDataResponse.Yellow.cs Adapters.GameProtocol.Yellow\Mappers\UserDataMappers.cs Tests\Yellow\YellowPlayResultHandlerTests.cs Tests\Yellow\YellowUserDataProtocolTests.cs` returned no whitespace errors.
+- Focused scan confirmed the `IsExplain` readback path and invalid-stage guard are present.
 
-No full verification or phase implementation commands were run.
+No full phase verification, fixes, broad implementation work, subagents, or Phase 15 work were run.
 
 ---
 
-_Reviewed: 2026-06-08T08:32:23+08:00_
+_Reviewed: 2026-06-08T08:32:23+08:00; re-reviewed: 2026-06-08T09:04:08+08:00_
 _Reviewer: codex inline gsd-code-reviewer fallback_
 _Depth: standard_
