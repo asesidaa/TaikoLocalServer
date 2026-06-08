@@ -139,6 +139,45 @@ public sealed class YellowPersistenceBoundaryTests
     }
 
     [Fact]
+    public void YellowBanacoinAuthoritySources_DoNotExistOutsideStatelessRoutes()
+    {
+        var root = FindRepoRoot();
+        var files = new[]
+            {
+                Path.Combine(root, "Domain", "Entities"),
+                Path.Combine(root, "Application", "Abstractions"),
+                Path.Combine(root, "Infrastructure", "Persistence"),
+                Path.Combine(root, "Adapters.AdminApi"),
+                Path.Combine(root, "TaikoWebUI"),
+                Path.Combine(root, "Host", "Configurations")
+            }
+            .Where(Directory.Exists)
+            .SelectMany(path => Directory.EnumerateFiles(path, "*.*", SearchOption.AllDirectories))
+            .Where(path => path.EndsWith(".cs", StringComparison.OrdinalIgnoreCase)
+                || path.EndsWith(".razor", StringComparison.OrdinalIgnoreCase)
+                || path.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+
+        foreach (var file in files)
+        {
+            var source = File.ReadAllText(file);
+
+            Assert.DoesNotContain("BanacoinWallet", source, StringComparison.Ordinal);
+            Assert.DoesNotContain("BanacoinPaymentState", source, StringComparison.Ordinal);
+            Assert.DoesNotContain("BanacoinCoupon", source, StringComparison.Ordinal);
+            Assert.DoesNotContain("BanacoinReceipt", source, StringComparison.Ordinal);
+            Assert.DoesNotContain("BanacoinTransaction", source, StringComparison.Ordinal);
+            Assert.DoesNotContain("YellowBanacoin", source, StringComparison.Ordinal);
+            Assert.DoesNotContain("YellowPayment", source, StringComparison.Ordinal);
+            Assert.DoesNotContain("YellowCoupon", source, StringComparison.Ordinal);
+            Assert.DoesNotContain("YellowReceipt", source, StringComparison.Ordinal);
+            Assert.DoesNotContain("YellowTransaction", source, StringComparison.Ordinal);
+            Assert.DoesNotContain("BnidResult", source, StringComparison.Ordinal);
+            Assert.DoesNotContain("Chid", source, StringComparison.Ordinal);
+        }
+    }
+
+    [Fact]
     public void YellowDaniPersistenceSources_DoNotReuseBlueOrGreenDanEntities()
     {
         var root = FindRepoRoot();

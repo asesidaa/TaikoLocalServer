@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using TaikoLocalServer.Adapters.GameProtocol.Yellow.Controllers;
 using TaikoLocalServer.Adapters.GameProtocol.Yellow.Wire;
+using TaikoLocalServer.Tests.Blue;
 
 namespace TaikoLocalServer.Tests.Yellow;
 
@@ -103,6 +104,76 @@ public sealed class YellowBanacoinCompatibilityTests
         Assert.False(info.ShouldSerializePurposeId());
         Assert.False(info.ShouldSerializeRegionId());
         Assert.False(info.ShouldSerializePersonid());
+    }
+
+    [Fact]
+    public void YellowBanacoinRoutes_AreOwnedByYellowAdapter()
+    {
+        var routes = ProtocolRouteTestHelper.FindPostRoutes(typeof(TaikoLocalServer.Adapters.GameProtocol.Yellow.DependencyInjection).Assembly)
+            .Where(route => route.Template.Contains("banacoin", StringComparison.OrdinalIgnoreCase)
+                || route.Template.EndsWith("/balancecheck.php", StringComparison.OrdinalIgnoreCase))
+            .Select(route => route.Template)
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.Equal(
+            [
+                "/v09r00/chassis/balancecheck.php",
+                "/v09r00/chassis/banacoinerrorlog.php",
+                "/v09r00/chassis/banacoinpayment.php",
+                "/v09r00/chassis/getbanacoininfo.php"
+            ],
+            routes);
+    }
+
+    [Theory]
+    [InlineData("BalanceCheckController")]
+    [InlineData("BanacoinPaymentController")]
+    [InlineData("BanacoinErrorLogController")]
+    [InlineData("GetBanacoinInfoController")]
+    public void YellowBanacoinControllers_DoNotCallMediatorOrPersistence(string controllerName)
+    {
+        var controller = ExtractControllerSource(controllerName);
+
+        Assert.DoesNotContain("Mediator.Send", controller, StringComparison.Ordinal);
+        Assert.DoesNotContain("ITaikoDbContext", controller, StringComparison.Ordinal);
+        Assert.DoesNotContain("DbContext", controller, StringComparison.Ordinal);
+        Assert.DoesNotContain("SaveChanges", controller, StringComparison.Ordinal);
+        Assert.DoesNotContain("Wallet", controller, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("Settlement", controller, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("Receipt", controller, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("Transaction", controller, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("Bnid", controller, StringComparison.Ordinal);
+        Assert.DoesNotContain("Chid", controller, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void YellowBanacoinControllers_DoNotPopulateOptionalPaymentOrIdentityFields()
+    {
+        foreach (var controllerName in new[]
+        {
+            "BalanceCheckController",
+            "BanacoinPaymentController",
+            "BanacoinErrorLogController",
+            "GetBanacoinInfoController"
+        })
+        {
+            var controller = ExtractControllerSource(controllerName);
+
+            Assert.DoesNotContain("BnidResult =", controller, StringComparison.Ordinal);
+            Assert.DoesNotContain("Chid =", controller, StringComparison.Ordinal);
+            Assert.DoesNotContain("CoinCoupon =", controller, StringComparison.Ordinal);
+            Assert.DoesNotContain("PlayerType =", controller, StringComparison.Ordinal);
+            Assert.DoesNotContain("ComSvrResult =", controller, StringComparison.Ordinal);
+            Assert.DoesNotContain("MbId =", controller, StringComparison.Ordinal);
+            Assert.DoesNotContain("Baid =", controller, StringComparison.Ordinal);
+            Assert.DoesNotContain("AccessCode =", controller, StringComparison.Ordinal);
+            Assert.DoesNotContain("IsPublish =", controller, StringComparison.Ordinal);
+            Assert.DoesNotContain("CardOwnNum =", controller, StringComparison.Ordinal);
+            Assert.DoesNotContain("RegCountryId =", controller, StringComparison.Ordinal);
+            Assert.DoesNotContain("PurposeId =", controller, StringComparison.Ordinal);
+            Assert.DoesNotContain("RegionId =", controller, StringComparison.Ordinal);
+        }
     }
 
     private static TController CreateController<TController>() where TController : ControllerBase, new()
