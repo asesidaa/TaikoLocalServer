@@ -226,6 +226,70 @@ public sealed class YellowUserDataProtocolTests
     }
 
     [Fact]
+    public async Task UserData_Yellow_OmitsAbsentTokkunTutorialFlag()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 5, MyDonName = "DON" });
+        fixture.Context.UserSaveDataYellow.Add(UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(5));
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateUserDataHandler(fixture);
+
+        var response = await handler.Handle(new UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
+        var wire = UserDataMappers.Map(response);
+
+        Assert.Null(response.TokkunTutorialFlg);
+        Assert.False(wire.ShouldSerializeTokkunTutorialFlg());
+    }
+
+    [Fact]
+    public async Task UserData_Yellow_ReturnsPersistedRawTokkunTutorialFlag()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 5, MyDonName = "DON" });
+        var save = UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(5);
+        save.TokkunTutorialFlg = 7;
+        fixture.Context.UserSaveDataYellow.Add(save);
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateUserDataHandler(fixture);
+
+        var response = await handler.Handle(new UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
+        var wire = UserDataMappers.Map(response);
+
+        Assert.Equal(7u, response.TokkunTutorialFlg);
+        Assert.True(wire.ShouldSerializeTokkunTutorialFlg());
+        Assert.Equal(7u, wire.TokkunTutorialFlg);
+        AssertNoTokkunHistorySurface(response);
+        AssertNoTokkunHistorySurface(wire);
+    }
+
+    [Fact]
+    public async Task UserData_Yellow_ReadsBackTokkunTutorialFlagPersistedByPlayResultOnly()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 5, MyDonName = "DON" });
+        fixture.Context.UserSaveDataYellow.Add(UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(5));
+        await fixture.Context.SaveChangesAsync();
+        var playResultHandler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+        var userDataHandler = CreateUserDataHandler(fixture);
+
+        var playResult = await playResultHandler.Handle(
+            new UpdatePlayResultCommand(5, GameEra.Yellow, CreateTokkunPlayResult(5)),
+            CancellationToken.None);
+        var response = await userDataHandler.Handle(new UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
+        var wire = UserDataMappers.Map(response);
+
+        Assert.Equal(1u, playResult);
+        Assert.Equal(7u, response.TokkunTutorialFlg);
+        Assert.True(wire.ShouldSerializeTokkunTutorialFlg());
+        Assert.Equal(7u, wire.TokkunTutorialFlg);
+        AssertNoTokkunHistorySurface(response);
+        AssertNoTokkunHistorySurface(wire);
+    }
+
+    [Fact]
     public async Task UserData_Yellow_NormalizesDisplayDanFromYellowDanRows()
     {
         await using var fixture = await YellowHandlerFixture.CreateAsync();
@@ -374,4 +438,38 @@ public sealed class YellowUserDataProtocolTests
             fixture.Catalog,
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
+
+    private static CommonPlayResultData CreateTokkunPlayResult(uint baid) => new()
+    {
+        Baid = baid,
+        PlayDatetime = "20260608120000",
+        PlayMode = (uint)PlayMode.Tokkun,
+        IsTokkunPlayResult = true,
+        TokkunTutorialFlg = 7,
+        TokkunStageData = new CommonPlayResultData.TokkunStageDataDto
+        {
+            BanacoinDatetime = "20260608120100",
+            TokkunSongCnt = 3,
+            TookunSongnoes = [101, 102, 101],
+            TokkunSpeedchangeCnt = 2,
+            TokkunAutoplayCnt = 3,
+            TokkunJumpCnt = 4
+        }
+    };
+
+    private static void AssertNoTokkunHistorySurface(object response)
+    {
+        var propertyNames = response.GetType()
+            .GetProperties()
+            .Select(property => property.Name)
+            .ToArray();
+
+        Assert.DoesNotContain(propertyNames, name => name.Contains("TokkunStage", StringComparison.Ordinal));
+        Assert.DoesNotContain(propertyNames, name => name.Contains("BanacoinDatetime", StringComparison.Ordinal));
+        Assert.DoesNotContain(propertyNames, name => name.Contains("TookunSongno", StringComparison.Ordinal));
+        Assert.DoesNotContain(propertyNames, name => name.Contains("TokkunSongCnt", StringComparison.Ordinal));
+        Assert.DoesNotContain(propertyNames, name => name.Contains("TokkunSpeedchange", StringComparison.Ordinal));
+        Assert.DoesNotContain(propertyNames, name => name.Contains("TokkunAutoplay", StringComparison.Ordinal));
+        Assert.DoesNotContain(propertyNames, name => name.Contains("TokkunJump", StringComparison.Ordinal));
+    }
 }
