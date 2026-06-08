@@ -82,6 +82,10 @@ public sealed class YellowMetadataRouteTests
             VerupNo = 55,
             SeasonId = 6,
             Telop = "Shop",
+            StartDatetime = "20170315070000",
+            EndDatetime = "20170630020000",
+            AfterstartDays = 30,
+            BeforecloseDays = 4,
             AryItemshopData =
             [
                 new CommonItemShopInfoResponse.ItemShopData
@@ -104,6 +108,10 @@ public sealed class YellowMetadataRouteTests
         Assert.Equal(101u, Assert.Single(pack.AryJukusongDatas).SongNo);
         Assert.Equal(55u, itemShop.VerupNo);
         Assert.Equal(6u, itemShop.SeasonId);
+        Assert.Equal("20170315070000", itemShop.StartDatetime);
+        Assert.Equal("20170630020000", itemShop.EndDatetime);
+        Assert.Equal(30u, itemShop.AfterstartDays);
+        Assert.Equal(4u, itemShop.BeforecloseDays);
         Assert.Equal(1u, Assert.Single(itemShop.AryItemshopDatas).ItemNo);
     }
 

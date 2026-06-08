@@ -287,7 +287,7 @@ static bool ShouldAssumeProtobufRequest(HttpRequest request)
     var path = request.Path;
     return path.StartsWithSegments("/v11r01/chassis", StringComparison.OrdinalIgnoreCase)
            || path.StartsWithSegments("/v10r03/chassis", StringComparison.OrdinalIgnoreCase)
-           || path.StartsWithSegments("/v09r00/chassis", StringComparison.OrdinalIgnoreCase)
+           || path.StartsWithSegments("/v09r02/chassis", StringComparison.OrdinalIgnoreCase)
            || path.StartsWithSegments("/v01r00/chassis", StringComparison.OrdinalIgnoreCase)
            || path.StartsWithSegments("/v12r08_ww/chassis", StringComparison.OrdinalIgnoreCase)
            || path.StartsWithSegments("/v12r00_cn/chassis", StringComparison.OrdinalIgnoreCase);

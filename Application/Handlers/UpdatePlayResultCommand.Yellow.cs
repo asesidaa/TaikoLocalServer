@@ -70,6 +70,7 @@ public partial class UpdatePlayResultCommandHandler
 
         saveData.TotalGetKatsumedal += playResultData.GetKatsumedal;
         saveData.ItemshopTutorialFlg = playResultData.ItemshopTutorialFlg ?? saveData.ItemshopTutorialFlg;
+        saveData.WaiwaiTutorialFlg = playResultData.WaiwaiTutorialFlg ?? saveData.WaiwaiTutorialFlg;
         saveData.IsDevil = playResultData.IsDevil ?? saveData.IsDevil;
         saveData.IsExplain = playResultData.IsExplain ?? saveData.IsExplain;
         if (playResultData.HasDifficultyPlayedCourse)

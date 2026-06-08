@@ -25,7 +25,11 @@ public static class ItemShopMappers
             Result = common.Result,
             VerupNo = common.VerupNo,
             SeasonId = common.SeasonId,
-            Telop = common.Telop
+            Telop = common.Telop,
+            StartDatetime = common.StartDatetime,
+            EndDatetime = common.EndDatetime,
+            AfterstartDays = common.AfterstartDays,
+            BeforecloseDays = common.BeforecloseDays
         };
 
         response.AryItemshopDatas.AddRange(common.AryItemshopData.Select(item => new GetitemshopinfoResponse.ItemshopData

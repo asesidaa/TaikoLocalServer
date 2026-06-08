@@ -164,7 +164,7 @@ public sealed class YellowPlayResultHandlerTests
         Assert.Equal(7u, save.ItemshopTutorialFlg);
         Assert.True(save.IsDevil);
         Assert.True(save.IsExplain);
-        Assert.Equal(0u, save.WaiwaiTutorialFlg);
+        Assert.Equal(3u, save.WaiwaiTutorialFlg);
         Assert.Equal(4u, save.DifficultyPlayedCourse);
         Assert.Equal(8u, save.DifficultyPlayedStar);
         Assert.Equal(new DateTime(2026, 6, 8, 12, 0, 0), save.LastPlayDatetime);

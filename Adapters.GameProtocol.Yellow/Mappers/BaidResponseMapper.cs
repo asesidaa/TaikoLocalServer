@@ -45,7 +45,8 @@ public static partial class BaidResponseMapper
             GotDanextraFlg = Ac15ProtocolBytes.FixedOrZero(common.GotDanExtraFlg, limits.DanExtraFlagBytes),
             ContentInfo = new byte[limits.ContentInfoBytes],
             DefaultToneSetting = common.DefaultToneSetting.GetValueOrDefault(),
-            Personid = common.PersonId ?? string.Empty
+            Personid = common.PersonId ?? string.Empty,
+            WaiwaiTutorialFlg = common.WaiwaiTutorialFlg.GetValueOrDefault()
         };
     }
 }

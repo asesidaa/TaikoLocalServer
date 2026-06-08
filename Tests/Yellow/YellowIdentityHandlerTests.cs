@@ -60,6 +60,7 @@ public sealed class YellowIdentityHandlerTests
         save.Title = "Yellow Title";
         save.TitleplateId = 10;
         save.ToneFlg = Ac15ProtocolBytes.CreateFixedBitset([0, 4], Ac15EraProfiles.Yellow.Limits.ToneFlagBytes);
+        save.WaiwaiTutorialFlg = 6;
         fixture.Context.UserSaveDataYellow.Add(save);
         await fixture.Context.SaveChangesAsync();
         var handler = new BaidQueryHandler(
@@ -78,8 +79,10 @@ public sealed class YellowIdentityHandlerTests
         Assert.Equal(Ac15EraProfiles.Yellow.Limits.DanFlagBytes, response.GotDanFlg.Length);
         Assert.Equal(Ac15EraProfiles.Yellow.Limits.DanExtraFlagBytes, response.GotDanExtraFlg!.Length);
         Assert.True(response.IsAutoCostumeOn.GetValueOrDefault());
+        Assert.Equal(6u, response.WaiwaiTutorialFlg);
         Assert.Equal(Ac15EraProfiles.Yellow.Limits.ContentInfoBytes, wire.ContentInfo.Length);
         Assert.Equal(Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes, wire.CostumeFlg1.Length);
+        Assert.Equal(6u, wire.WaiwaiTutorialFlg);
     }
 
     [Fact]

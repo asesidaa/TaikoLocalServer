@@ -51,11 +51,13 @@ public sealed class YellowWireGenerationTests
         Assert.Null(typeof(YellowWire.PlayResultRequest).GetProperty(propertyName));
     }
 
-    [Theory]
-    [InlineData("WaiwaiTutorialFlg")]
-    public void YellowPlayResult_DoesNotContainWaiWaiTutorialField(string propertyName)
+    [Fact]
+    public void YellowFinalWire_ContainsWaiWaiUploadAndBaidReadbackFields()
     {
-        Assert.Null(typeof(YellowWire.PlayResultRequest).GetProperty(propertyName));
+        Assert.NotNull(typeof(YellowWire.PlayResultRequest).GetProperty(nameof(YellowWire.PlayResultRequest.WaiwaiTutorialFlg)));
+        Assert.NotNull(typeof(YellowWire.BAIDResponse).GetProperty(nameof(YellowWire.BAIDResponse.WaiwaiTutorialFlg)));
+        Assert.NotNull(typeof(YellowWire.PlayResultRequest.StageData).GetProperty(nameof(YellowWire.PlayResultRequest.StageData.WaiwaiResult)));
+        Assert.NotNull(typeof(YellowWire.PlayResultRequest.StageData).GetProperty(nameof(YellowWire.PlayResultRequest.StageData.WaiwaiGauge)));
     }
 
     [Theory]

@@ -57,7 +57,8 @@ public static partial class PlayResultMappers
             DifficultyPlayedCourse = request.DifficultyPlayedCourse,
             DifficultyPlayedStar = request.DifficultyPlayedStar,
             HasDifficultyPlayedCourse = request.ShouldSerializeDifficultyPlayedCourse(),
-            HasDifficultyPlayedStar = request.ShouldSerializeDifficultyPlayedStar()
+            HasDifficultyPlayedStar = request.ShouldSerializeDifficultyPlayedStar(),
+            WaiwaiTutorialFlg = request.ShouldSerializeWaiwaiTutorialFlg() ? request.WaiwaiTutorialFlg : null
         };
     }
 
@@ -91,7 +92,9 @@ public static partial class PlayResultMappers
             PlayDan = stage.PlayDan == 0 ? null : stage.PlayDan,
             SoulGauge = stage.ShouldSerializeSoulGauge() ? stage.SoulGauge : null,
             StageMode = stage.StageMode,
-            SelectedFolderId = stage.SelectedFolderId
+            SelectedFolderId = stage.SelectedFolderId,
+            WaiwaiResult = stage.WaiwaiResult,
+            WaiwaiGauge = stage.WaiwaiGauge
         };
     }
 
