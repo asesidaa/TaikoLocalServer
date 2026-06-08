@@ -3,9 +3,11 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class FavoriteSongsController(ITaikoDbContext context, IGameDataCatalog catalog) : BaseAdminController<FavoriteSongsController>
+public partial class FavoriteSongsController(ITaikoDbContext context, IGameDataCatalog catalog) : BaseAdminController<FavoriteSongsController>
 {
     private const int Ac15MaxFavoriteSongs = 5;
+    private readonly ITaikoDbContext context = context;
+    private readonly IGameDataCatalog catalog = catalog;
 
     [HttpPost]
     public Task<IActionResult> UpdateFavoriteSong(SetFavoriteRequest request)
@@ -31,6 +33,7 @@ public class FavoriteSongsController(ITaikoDbContext context, IGameDataCatalog c
             GameEra.Nijiiro => await UpdateNijiiroFavoriteSong(request),
             GameEra.Green => await UpdateGreenFavoriteSong(request),
             GameEra.Blue => await UpdateBlueFavoriteSong(request),
+            GameEra.Yellow => await UpdateYellowFavoriteSong(request),
             _ => EraRoute.BadEra(era)
         };
     }
@@ -131,6 +134,7 @@ public class FavoriteSongsController(ITaikoDbContext context, IGameDataCatalog c
                 .Where(row => row.Baid == baid)
                 .Select(row => row.SongNo)
                 .ToListAsync(HttpContext.RequestAborted)),
+            GameEra.Yellow => Ok(await GetYellowFavoriteSongs(baid)),
             _ => EraRoute.BadEra(era)
         };
     }

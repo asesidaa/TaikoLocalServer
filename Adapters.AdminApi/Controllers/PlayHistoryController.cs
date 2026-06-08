@@ -3,8 +3,10 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class PlayHistoryController(ITaikoDbContext context) : BaseAdminController<PlayHistoryController>
+public partial class PlayHistoryController(ITaikoDbContext context) : BaseAdminController<PlayHistoryController>
 {
+    private readonly ITaikoDbContext context = context;
+
     [HttpGet("{baid}")]
     public Task<ActionResult<SongHistoryResponse>> GetSongHistory(uint baid)
         => GetSongHistory(nameof(GameEra.Nijiiro), baid);
@@ -29,6 +31,7 @@ public class PlayHistoryController(ITaikoDbContext context) : BaseAdminControlle
             GameEra.Nijiiro => Ok(await BuildNijiiroSongHistory(baid)),
             GameEra.Green => Ok(await BuildGreenSongHistory(baid)),
             GameEra.Blue => Ok(await BuildBlueSongHistory(baid)),
+            GameEra.Yellow => Ok(await BuildYellowSongHistory(baid)),
             _ => EraRoute.BadEra(era)
         };
     }
