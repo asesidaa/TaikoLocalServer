@@ -110,7 +110,7 @@ Plans:
 4. Yellow self-best returns correct rows for requested songs/difficulties.
 5. Yellow crown tests prove both shared crown packing and exact Yellow response placement/encoding.
 
-**Plans:** 2/3 plans complete
+**Plans:** 3/3 plans complete
 
 Plans:
 
@@ -124,7 +124,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 14-03-PLAN.md - Add Yellow normal playresult persistence and route behavior
+- [x] 14-03-PLAN.md - Add Yellow normal playresult persistence and route behavior
 
 ### Phase 15: Yellow Dani, Shop, Medals, WaiWai, and Admin
 
@@ -203,4 +203,4 @@ See `.planning/milestones/v1.1-ROADMAP.md` and `.planning/milestones/v1.1-phases
 |-----------|--------|-------|--------|---------|
 | v1.0 Blue Support | 1-6 | 30 roadmap plans | Shipped | 2026-06-03 |
 | v1.1 Blue Tokkun Mode Support | 7-11 | 7 GSD plans | Shipped | 2026-06-07 |
-| v1.2 Yellow AC15 Support | 12-17 | 8 GSD plans complete | Active, Phase 14 Plan 02 complete | - |
+| v1.2 Yellow AC15 Support | 12-17 | 9 GSD plans complete | Active, Phase 14 plans complete; verification pending | - |
