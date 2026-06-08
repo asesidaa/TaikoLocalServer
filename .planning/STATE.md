@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
 status: executing
-stopped_at: Completed 15-06-PLAN.md
-last_updated: "2026-06-08T04:37:38.000Z"
-last_activity: 2026-06-08 -- completed Phase 15 Plan 06 Yellow WaiWai evidence boundary
+stopped_at: Completed 15-07-PLAN.md
+last_updated: "2026-06-08T05:00:04.000Z"
+last_activity: 2026-06-08 -- completed Phase 15 Plan 07 Yellow AdminApi core user routes
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 18
-  completed_plans: 15
-  percent: 83
+  completed_plans: 16
+  percent: 89
 ---
 
 # Project State
@@ -26,17 +26,17 @@ See: `.planning/PROJECT.md` (updated 2026-06-07)
 ## Current Position
 
 Phase: 15
-Plan: 07
+Plan: 08
 Status: Executing
-Last activity: 2026-06-08 -- completed Phase 15 Plan 06 Yellow WaiWai evidence boundary
+Last activity: 2026-06-08 -- completed Phase 15 Plan 07 Yellow AdminApi core user routes
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 12 in v1.2
-- Average duration: 25.8 min
-- Total execution time: 259 min
+- Total plans completed: 13 in v1.2
+- Average duration: 25.6 min
+- Total execution time: 282 min
 
 **By Phase:**
 
@@ -77,6 +77,7 @@ Last activity: 2026-06-08 -- completed Phase 15 Plan 06 Yellow WaiWai evidence b
 | Phase 15 P04 | 25 min | 2 tasks | 8 files |
 | Phase 15 P05 | 16 min | 2 tasks | 6 files |
 | Phase 15 P06 | 16 min | 2 tasks | 4 files |
+| Phase 15 P07 | 23 min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -110,6 +111,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 15]: Plan 04 replaced Yellow itempurchase scaffolding with a Mediator-backed AC15 purchase flow using Yellow-owned shop state and kept reward routes stateless.
 - [Phase 15]: Plan 05 routed Yellow playresult Don medals into active Yellow shop seasons and fed Yellow purchased shop rows into userdata lock readback.
 - [Phase 15]: Plan 06 constrained Yellow WaiWai to current protocol evidence, removed unbacked tutorial mutation, and kept stage WaiWai facts diagnostic/play-history-only.
+- [Phase 15]: Plan 07 added Yellow AdminApi profile, score, history, and favorite routes over Yellow-owned rows only.
 
 ### Pending Todos
 
@@ -128,11 +130,11 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-08T04:37:38.000Z
-Stopped at: Completed 15-06-PLAN.md
-Resume file: .planning/phases/15-yellow-dani-shop-medals-waiwai-and-admin/15-07-PLAN.md
+Last session: 2026-06-08T05:00:04.000Z
+Stopped at: Completed 15-07-PLAN.md
+Resume file: .planning/phases/15-yellow-dani-shop-medals-waiwai-and-admin/15-08-PLAN.md
 
 ## Operator Next Steps
 
-- Continue Phase 15 with 15-07-PLAN.md.
+- Continue Phase 15 with 15-08-PLAN.md.
 - Do not run phase verification/review or start Phase 16 from implementation-stage execution.
