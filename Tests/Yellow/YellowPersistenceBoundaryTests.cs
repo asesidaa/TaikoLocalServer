@@ -5,7 +5,7 @@ namespace TaikoLocalServer.Tests.Yellow;
 public sealed class YellowPersistenceBoundaryTests
 {
     [Fact]
-    public async Task YellowSchema_CreatesOnlyPhase15DaniYellowTables()
+    public async Task YellowSchema_CreatesPhase15DaniAndShopYellowTables()
     {
         await using var fixture = await YellowHandlerFixture.CreateAsync();
 
@@ -20,6 +20,8 @@ public sealed class YellowPersistenceBoundaryTests
                 "UserSaveData_Yellow",
                 "DanScoreDatum_Yellow",
                 "DanStageScoreDatum_Yellow",
+                "YellowShopItemStates",
+                "YellowShopSeasonStates",
                 "YellowFavoriteSongs",
                 "YellowRecentSongs"
         }.Order(StringComparer.Ordinal);
@@ -30,6 +32,9 @@ public sealed class YellowPersistenceBoundaryTests
         Assert.DoesNotContain("DanScoreDatum_Green", tables);
         Assert.DoesNotContain("DanStageScoreDatum_Blue", tables);
         Assert.DoesNotContain("DanStageScoreDatum_Green", tables);
+        Assert.DoesNotContain("BlueShopSeasonStates", tables);
+        Assert.DoesNotContain("GreenShopSeasonStates", tables);
+        Assert.DoesNotContain("Ac15ShopSeasonStates", tables);
     }
 
     [Fact]
@@ -66,7 +71,7 @@ public sealed class YellowPersistenceBoundaryTests
     }
 
     [Fact]
-    public void YellowDbContextContract_ExposesPhase15DaniDbSets()
+    public void YellowDbContextContract_ExposesPhase15DaniAndShopDbSets()
     {
         var propertyNames = typeof(ITaikoDbContext).GetProperties()
             .Where(property => property.Name.Contains("Yellow", StringComparison.Ordinal))
@@ -81,6 +86,8 @@ public sealed class YellowPersistenceBoundaryTests
                 "UserSaveDataYellow",
                 "DanScoreDataYellow",
                 "DanStageScoreDataYellow",
+                "YellowShopSeasonStates",
+                "YellowShopItemStates",
                 "YellowFavoriteSongs",
                 "YellowRecentSongs"
         }.Order(StringComparer.Ordinal);
@@ -89,7 +96,25 @@ public sealed class YellowPersistenceBoundaryTests
     }
 
     [Fact]
-    public void YellowPersistenceSources_DoNotAddDeferredShopTokkunOrBattleTables()
+    public void YellowShopModel_UsesYellowOwnedCompositeKeys()
+    {
+        using var context = new TaikoDbContext(new DbContextOptionsBuilder<TaikoDbContext>()
+            .UseSqlite("Data Source=:memory:")
+            .Options);
+
+        var season = context.Model.FindEntityType("TaikoLocalServer.Domain.Entities.YellowShopSeasonState");
+        var item = context.Model.FindEntityType("TaikoLocalServer.Domain.Entities.YellowShopItemState");
+
+        Assert.NotNull(season);
+        Assert.NotNull(item);
+        Assert.Equal(["Baid", "SeasonId"], season!.FindPrimaryKey()!.Properties.Select(property => property.Name));
+        Assert.Equal(["Baid", "SeasonId", "ItemType", "ItemId"], item!.FindPrimaryKey()!.Properties.Select(property => property.Name));
+        Assert.Equal("YellowShopSeasonStates", season.GetTableName());
+        Assert.Equal("YellowShopItemStates", item.GetTableName());
+    }
+
+    [Fact]
+    public void YellowPersistenceSources_DoNotAddDeferredTokkunBattleOrBanacoinTables()
     {
         var root = FindRepoRoot();
         var sources = Directory.EnumerateFiles(Path.Combine(root, "Domain", "Entities"), "*Yellow*.cs")
@@ -100,10 +125,10 @@ public sealed class YellowPersistenceBoundaryTests
 
         Assert.DoesNotContain("YellowBattle", sources, StringComparison.Ordinal);
         Assert.DoesNotContain("YellowTokkunStage", sources, StringComparison.Ordinal);
-        Assert.DoesNotContain("YellowShopSeason", sources, StringComparison.Ordinal);
-        Assert.DoesNotContain("YellowShopItem", sources, StringComparison.Ordinal);
         Assert.DoesNotContain("Banacoin", sources, StringComparison.Ordinal);
         Assert.DoesNotContain("AdminApi", sources, StringComparison.Ordinal);
+        Assert.DoesNotContain("Ac15ShopSeasonStateEntity", sources, StringComparison.Ordinal);
+        Assert.DoesNotContain("SharedShopSeasonState", sources, StringComparison.Ordinal);
     }
 
     [Fact]

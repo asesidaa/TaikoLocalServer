@@ -13,6 +13,8 @@ public partial class TaikoDbContext
     public virtual DbSet<YellowRecentSongs> YellowRecentSongs { get; set; } = null!;
     public virtual DbSet<DanScoreDatumYellow> DanScoreDataYellow { get; set; } = null!;
     public virtual DbSet<DanStageScoreDatumYellow> DanStageScoreDataYellow { get; set; } = null!;
+    public virtual DbSet<YellowShopSeasonState> YellowShopSeasonStates { get; set; } = null!;
+    public virtual DbSet<YellowShopItemState> YellowShopItemStates { get; set; } = null!;
 
     partial void OnModelCreatingYellow(ModelBuilder modelBuilder)
     {
@@ -105,6 +107,33 @@ public partial class TaikoDbContext
             entity.HasOne(d => d.Parent)
                 .WithMany(p => p.DanStageScoreData)
                 .HasForeignKey(d => new { d.Baid, d.DanId, d.IsExtra })
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<YellowShopSeasonState>(entity =>
+        {
+            entity.ToTable("YellowShopSeasonStates");
+            entity.HasKey(e => new { e.Baid, e.SeasonId });
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+            entity.HasOne(d => d.Ba)
+                .WithMany()
+                .HasPrincipalKey(p => p.Baid)
+                .HasForeignKey(d => d.Baid)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<YellowShopItemState>(entity =>
+        {
+            entity.ToTable("YellowShopItemStates");
+            entity.HasKey(e => new { e.Baid, e.SeasonId, e.ItemType, e.ItemId });
+            entity.Property(e => e.Status).HasConversion<uint>();
+            entity.Property(e => e.PurchasedAt).HasColumnType("datetime");
+            entity.Property(e => e.UnlockedAt).HasColumnType("datetime");
+            entity.HasOne(d => d.Ba)
+                .WithMany()
+                .HasPrincipalKey(p => p.Baid)
+                .HasForeignKey(d => d.Baid)
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }
