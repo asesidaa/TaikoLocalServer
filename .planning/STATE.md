@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
 status: executing
-stopped_at: Completed 15-03-PLAN.md
-last_updated: "2026-06-08T03:22:34.960Z"
-last_activity: 2026-06-08 -- completed Phase 15 Plan 03 Yellow shop state schema
+stopped_at: Completed 15-04-PLAN.md
+last_updated: "2026-06-08T04:00:40.415Z"
+last_activity: 2026-06-08 -- completed Phase 15 Plan 04 stateful Yellow itempurchase
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 18
-  completed_plans: 12
-  percent: 67
+  completed_plans: 13
+  percent: 72
 ---
 
 # Project State
@@ -26,9 +26,9 @@ See: `.planning/PROJECT.md` (updated 2026-06-07)
 ## Current Position
 
 Phase: 15
-Plan: 04
+Plan: 05
 Status: Executing
-Last activity: 2026-06-08 -- completed Phase 15 Plan 03 Yellow shop state schema
+Last activity: 2026-06-08 -- completed Phase 15 Plan 04 stateful Yellow itempurchase
 
 ## Performance Metrics
 
@@ -74,6 +74,7 @@ Last activity: 2026-06-08 -- completed Phase 15 Plan 03 Yellow shop state schema
 | Phase 15 P01 | 25 min | 2 tasks | 12 files |
 | Phase 15 P02 | 29 min | 2 tasks | 6 files |
 | Phase 15 P03 | 31 min | 2 tasks | 12 files |
+| Phase 15 P04 | 25 min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -104,6 +105,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 15]: Plan 01 added Yellow-owned Dan score/stage score tables plus Yellow-specific packed-grade helper rules without Blue/Green Dan table/helper reuse.
 - [Phase 15]: Plan 02 added Yellow Dan playresult persistence, Yellow-owned Dan score readback, and Yellow userdata display-Dan normalization from Yellow Dan rows.
 - [Phase 15]: Plan 03 added Yellow-owned shop season/item tables plus active-season helpers that seed from Yellow save Don medal totals and ignore Blue/Green shop rows.
+- [Phase 15]: Plan 04 replaced Yellow itempurchase scaffolding with a Mediator-backed AC15 purchase flow using Yellow-owned shop state and kept reward routes stateless.
 
 ### Pending Todos
 
@@ -122,11 +124,11 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-08T03:22:34.960Z
-Stopped at: Completed 15-03-PLAN.md
-Resume file: .planning/phases/15-yellow-dani-shop-medals-waiwai-and-admin/15-04-PLAN.md
+Last session: 2026-06-08T04:00:40.191Z
+Stopped at: Completed 15-04-PLAN.md
+Resume file: .planning/phases/15-yellow-dani-shop-medals-waiwai-and-admin/15-05-PLAN.md
 
 ## Operator Next Steps
 
-- Continue Phase 15 with 15-04-PLAN.md.
+- Continue Phase 15 with 15-05-PLAN.md.
 - Do not run phase verification/review or start Phase 16 from implementation-stage execution.

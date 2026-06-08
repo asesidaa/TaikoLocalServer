@@ -31,7 +31,7 @@
 
 ### Yellow Shop, Medals, WaiWai, And Admin
 
-- [ ] **YSHOP-01**: Yellow item-shop info returns Yellow catalog seasons/items with the Yellow proto response shape and without Blue-only shop timing fields unless Yellow evidence proves them.
+- [x] **YSHOP-01**: Yellow item-shop info returns Yellow catalog seasons/items with the Yellow proto response shape and without Blue-only shop timing fields unless Yellow evidence proves them.
 - [x] **YSHOP-02**: Yellow item purchases validate active shop rows, prevent duplicate purchases, spend/update Yellow-owned shop state, and apply supported item unlocks only to Yellow save data.
 - [x] **YMED-01**: Yellow Don/Katsu medal totals from playresults and shop flows persist in Yellow-owned state and remain separate from Banacoin compatibility state.
 - [ ] **YWAI-01**: Yellow WaiWai handling, where current Yellow wire/runtime evidence exposes fields, persists and reads back only the tutorial flag and logs additional playresult fields without treating WaiWai as a special play mode.
@@ -103,7 +103,7 @@ Roadmap phase mapping is created during `$gsd-new-milestone` roadmap generation.
 | YPLY-02 | Phase 14 | Complete |
 | YCRN-01 | Phase 14 | Complete |
 | YDAN-01 | Phase 15 | Complete |
-| YSHOP-01 | Phase 15 | Pending |
+| YSHOP-01 | Phase 15 | Complete |
 | YSHOP-02 | Phase 15 | Complete |
 | YMED-01 | Phase 15 | Complete |
 | YWAI-01 | Phase 15 | Pending |
