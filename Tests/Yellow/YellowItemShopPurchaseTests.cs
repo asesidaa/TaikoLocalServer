@@ -233,6 +233,25 @@ public sealed class YellowItemShopPurchaseTests
     }
 
     [Fact]
+    public async Task ItemPurchase_RejectsUnsupportedYellowItemTypeWithoutMutation()
+    {
+        var unsupportedItemType = (Ac15ShopItemType)99;
+        await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
+            new YellowItemShopEntry { ItemNo = 1, ItemType = unsupportedItemType, ItemId = 12, Price = 1300 }));
+        await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 2000);
+        var handler = CreateHandler(fixture);
+
+        var response = await handler.Handle(new ItemPurchaseCommand(1, GameEra.Yellow, 1, 99, 12, 1300), CancellationToken.None);
+
+        var season = await fixture.Context.YellowShopSeasonStates.FindAsync(1u, 2u);
+        var save = await fixture.Context.UserSaveDataYellow.FindAsync(1u);
+        Assert.Equal(0u, response.Result);
+        Assert.Equal(0u, season!.TotalUseDonmedal);
+        Assert.False(await fixture.Context.YellowShopItemStates.AnyAsync());
+        Assert.False(HasBit(save!.CostumeFlg1, 12));
+    }
+
+    [Fact]
     public async Task ItemPurchase_RejectsDuplicateYellowUnlockedWithoutDoubleSpend()
     {
         await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
