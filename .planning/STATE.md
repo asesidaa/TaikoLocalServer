@@ -4,8 +4,8 @@ milestone: v1.2
 milestone_name: Phase Summary
 status: Ready to discuss or plan
 stopped_at: Phase 16 verified and reviewed complete
-last_updated: "2026-06-08T09:28:00.000Z"
-last_activity: 2026-06-08 -- completed Phase 16 verification and clean code review, routed to Phase 17
+last_updated: "2026-06-08T21:35:00.000Z"
+last_activity: 2026-06-08 -- completed quick task 260609-7gk: Yellow final protocol route support
 progress:
   total_phases: 6
   completed_phases: 5
@@ -28,7 +28,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-07)
 Phase: 17
 Plan: Not started
 Status: Phase 16 complete after verification and clean code review; Phase 17 not started
-Last activity: 2026-06-08 -- completed Phase 16 verification and clean code review, routed to Phase 17
+Last activity: 2026-06-08 -- completed quick task 260609-7gk: Yellow final protocol route support
 
 ## Performance Metrics
 
@@ -129,6 +129,12 @@ None recorded.
 ### Blockers/Concerns
 
 None recorded.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260609-7gk | Regenerate Yellow final wire support, add final-version field handling, and move Yellow game routes to `/v09r02` | 2026-06-08 | 39e49294 | [260609-7gk-now-let-s-execute-a-quick-task-we-have-c](./quick/260609-7gk-now-let-s-execute-a-quick-task-we-have-c/) |
 
 ## Deferred Items
 
