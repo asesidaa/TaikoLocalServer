@@ -1,4 +1,5 @@
 using TaikoLocalServer.Application.Catalog.Blue;
+using TaikoLocalServer.Application.Catalog.Yellow;
 
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
@@ -21,6 +22,7 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
             GameEra.Nijiiro => Ok(catalog.Nijiiro().GetMusicDetailDictionary()),
             GameEra.Green => Ok(BuildGreenMusicDetails()),
             GameEra.Blue => Ok(BuildBlueMusicDetails()),
+            GameEra.Yellow => Ok(BuildYellowMusicDetails()),
             _ => EraRoute.BadEra(era)
         };
     }
@@ -39,6 +41,7 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
             GameEra.Nijiiro => Ok(catalog.Nijiiro().GetCommonDanDataDictionary().Values.ToList()),
             GameEra.Green => Ok(BuildGreenDanData()),
             GameEra.Blue => Ok(BuildBlueDanData()),
+            GameEra.Yellow => Ok(BuildYellowDanData()),
             _ => EraRoute.BadEra(era)
         };
     }
@@ -129,6 +132,43 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
         }).ToList();
     }
 
+    private Dictionary<uint, MusicDetail> BuildYellowMusicDetails()
+    {
+        return catalog.Yellow().YellowMusicInfos.ToDictionary(
+            pair => pair.Key,
+            pair => new MusicDetail
+            {
+                SongId = pair.Value.SongNo,
+                Index = pair.Value.FileOrder,
+                SongName = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
+                SongNameEN = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
+                SongNameCN = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
+                SongNameKO = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
+                Genre = MapGreenGenre(pair.Value.CategoryId),
+                StarEasy = (int)pair.Value.StarEasy,
+                StarNormal = (int)pair.Value.StarNormal,
+                StarHard = (int)pair.Value.StarHard,
+                StarOni = (int)pair.Value.StarOni,
+                StarUra = (int)pair.Value.StarUra
+            });
+    }
+
+    private List<DanData> BuildYellowDanData()
+    {
+        return catalog.Yellow().TaikojukuFileOrder.Select(entry => new DanData
+        {
+            DanId = entry.ChallengeLevel,
+            Title = string.IsNullOrWhiteSpace(entry.Name) ? entry.UniqueId.ToString() : entry.Name,
+            VerupNo = entry.VerupNo,
+            OdaiSongList = entry.Songs.Select(song => new DanData.OdaiSong
+            {
+                SongNo = song.SongNo,
+                Level = ToWebUiDifficultyLevel(song.Level)
+            }).ToList(),
+            OdaiBorderList = BuildYellowOdaiBorders(entry)
+        }).ToList();
+    }
+
     private static List<DanData.OdaiBorder> BuildGreenOdaiBorders(GreenTaikojukuEntry entry)
     {
         var red = entry.Conditions;
@@ -186,6 +226,44 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
     }
 
     private static void AddBlueOdaiBorder(
+        List<DanData.OdaiBorder> borders,
+        DanConditionType type,
+        uint redBorder,
+        uint goldBorder)
+    {
+        if (redBorder == 0 && goldBorder == 0)
+        {
+            return;
+        }
+
+        borders.Add(new DanData.OdaiBorder
+        {
+            OdaiType = (uint)type,
+            BorderType = (uint)DanBorderType.All,
+            RedBorderTotal = redBorder,
+            GoldBorderTotal = goldBorder
+        });
+    }
+
+    private static List<DanData.OdaiBorder> BuildYellowOdaiBorders(YellowTaikojukuEntry entry)
+    {
+        var red = entry.Conditions;
+        var gold = entry.ExcellentConditions;
+        var borders = new List<DanData.OdaiBorder>();
+
+        AddYellowOdaiBorder(borders, DanConditionType.SoulGauge, red.SoulGauge, gold.SoulGauge);
+        AddYellowOdaiBorder(borders, DanConditionType.GoodCount, red.GoodCount, gold.GoodCount);
+        AddYellowOdaiBorder(borders, DanConditionType.OkCount, red.OkCount, gold.OkCount);
+        AddYellowOdaiBorder(borders, DanConditionType.BadCount, red.BadCount, gold.BadCount);
+        AddYellowOdaiBorder(borders, DanConditionType.ComboCount, red.ComboCount, gold.ComboCount);
+        AddYellowOdaiBorder(borders, DanConditionType.DrumrollCount, red.DrumrollCount, gold.DrumrollCount);
+        AddYellowOdaiBorder(borders, DanConditionType.Score, red.Score, gold.Score);
+        AddYellowOdaiBorder(borders, DanConditionType.TotalHitCount, red.TotalHitCount, gold.TotalHitCount);
+
+        return borders;
+    }
+
+    private static void AddYellowOdaiBorder(
         List<DanData.OdaiBorder> borders,
         DanConditionType type,
         uint redBorder,
