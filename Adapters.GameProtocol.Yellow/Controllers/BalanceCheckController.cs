@@ -9,6 +9,12 @@ public class BalanceCheckController : BaseProtocolController<BalanceCheckControl
     public IActionResult BalanceCheck([FromBody] BalancecheckRequest request)
     {
         Logger.LogInformation("Yellow BalanceCheck request: {@Request}", request);
-        return Ok(new BalancecheckResponse { Result = 1, Personid = request.Personid });
+        return Ok(new BalancecheckResponse
+        {
+            Result = 1,
+            Personid = request.Personid,
+            BnidResult = "Ok",
+            CoinCoupon = 9999
+        });
     }
 }

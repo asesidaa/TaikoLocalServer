@@ -1,5 +1,6 @@
 using TaikoLocalServer.Application.Ac15;
 using TaikoLocalServer.Application.Catalog.Yellow;
+using TaikoLocalServer.Application;
 using TaikoLocalServer.Adapters.GameProtocol.Yellow.Controllers;
 using TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
 using Microsoft.AspNetCore.Http;
@@ -416,7 +417,7 @@ public sealed class YellowItemShopPurchaseTests
         var unlockFieldsBefore = SnapshotUnlockFields(save);
 
         var response = route == "rewardcardcheck"
-            ? InvokeRewardCardCheck()
+            ? await InvokeRewardCardCheck()
             : InvokeRewardExecution();
 
         var season = await fixture.Context.YellowShopSeasonStates.FindAsync(1u, 2u);
@@ -431,14 +432,14 @@ public sealed class YellowItemShopPurchaseTests
 
         Assert.Single(await fixture.Context.YellowShopItemStates.ToListAsync());
 
-        uint InvokeRewardCardCheck()
+        async Task<uint> InvokeRewardCardCheck()
         {
             var controller = new RewardCardCheckController
             {
-                ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
+                ControllerContext = new ControllerContext { HttpContext = CreateHttpContext(fixture.Context) }
             };
 
-            var result = controller.RewardCardCheck(new YellowWire.RewardcardcheckRequest
+            var result = await controller.RewardCardCheck(new YellowWire.RewardcardcheckRequest
             {
                 DeviceType = 1,
                 AccessCode = "12345678901234567890",
@@ -448,7 +449,10 @@ public sealed class YellowItemShopPurchaseTests
                 CountryId = "JPN"
             });
             var ok = Assert.IsType<OkObjectResult>(result);
-            return Assert.IsType<YellowWire.RewardcardcheckResponse>(ok.Value).Result;
+            var response = Assert.IsType<YellowWire.RewardcardcheckResponse>(ok.Value);
+            Assert.True(response.ShouldSerializeBaid());
+            Assert.Equal(0u, response.Baid);
+            return response.Result;
         }
 
         uint InvokeRewardExecution()
@@ -574,11 +578,19 @@ public sealed class YellowItemShopPurchaseTests
     private static bool HasBit(byte[] source, uint id)
         => (source[id >> 3] & (1 << ((int)id & 7))) != 0;
 
-    private static DefaultHttpContext CreateHttpContext()
+    private static DefaultHttpContext CreateHttpContext(ITaikoDbContext? context = null)
     {
-        var services = new ServiceCollection()
-            .AddLogging()
-            .BuildServiceProvider();
+        var serviceCollection = new ServiceCollection()
+            .AddLogging();
+
+        if (context is not null)
+        {
+            serviceCollection
+                .AddApplication()
+                .AddSingleton(context);
+        }
+
+        var services = serviceCollection.BuildServiceProvider();
         return new DefaultHttpContext { RequestServices = services };
     }
 }

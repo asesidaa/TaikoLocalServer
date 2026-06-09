@@ -963,7 +963,7 @@ public sealed class YellowPlayResultHandlerTests
     }
 
     [Fact]
-    public void PlayResultMapper_Yellow_StageDataClassifiesAndPreservesRawTokkunFacts()
+    public void PlayResultMapper_Yellow_StageDataPreservesRawFactsButDoesNotClassifyWithoutTokkunPlayMode()
     {
         var request = CreateWireRequest(1);
         request.PlayMode = (uint)PlayMode.Normal;
@@ -980,7 +980,7 @@ public sealed class YellowPlayResultHandlerTests
 
         var common = PlayResultMappers.Map(request);
 
-        Assert.True(common.IsTokkunPlayResult);
+        Assert.False(common.IsTokkunPlayResult);
         Assert.Equal(9u, common.TokkunTutorialFlg);
         Assert.NotNull(common.TokkunStageData);
         Assert.Equal("20260608120100", common.TokkunStageData!.BanacoinDatetime);

@@ -40,7 +40,7 @@ public static partial class PlayResultMappers
             GenderType = request.GenderType,
             PlayerAge = request.PlayerAge,
             PlayMode = request.PlayMode,
-            IsTokkunPlayResult = request.PlayMode == (uint)PlayMode.Tokkun || request.AryTokkunstageInfo is not null,
+            IsTokkunPlayResult = request.PlayMode == (uint)PlayMode.Tokkun,
             TokkunTutorialFlg = request.ShouldSerializeTokkunTutorialFlg() ? request.TokkunTutorialFlg : null,
             TokkunStageData = MapTokkunStageData(request.AryTokkunstageInfo),
             AreaCode = request.AreaCode,

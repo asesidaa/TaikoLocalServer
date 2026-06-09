@@ -9,6 +9,12 @@ public class BanacoinPaymentController : BaseProtocolController<BanacoinPaymentC
     public IActionResult BanacoinPayment([FromBody] BanacoinpaymentRequest request)
     {
         Logger.LogInformation("Yellow BanacoinPayment request: {@Request}", request);
-        return Ok(new BanacoinpaymentResponse { Result = 1, Personid = request.Personid });
+        return Ok(new BanacoinpaymentResponse
+        {
+            Result = 1,
+            Personid = request.Personid,
+            BnidResult = "Ok",
+            Chid = "1"
+        });
     }
 }
