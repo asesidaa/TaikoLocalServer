@@ -40,6 +40,7 @@ Yellow support should reuse the existing AC15 shared-core extraction design wher
 - [x] Blue Tokkun playresult acceptance: Phase 9 classifies Tokkun uploads from `ary_tokkunstage_info`, preserves raw Tokkun stage facts, and returns success before normal, battle, Dani, favorite/recent, profile, unlock, medal, customization/title, or shop writes.
 - [x] Blue Tokkun persistence and readback: Phase 10 adds `PlayMode.Tokkun = 3`, nullable raw `UserSaveDataBlue.TokkunTutorialFlg`, append-only `BlueTokkunStageResults`, Tokkun playresult persistence, and userdata tutorial readback without cross-mode state writes.
 - [x] Blue Tokkun runtime verification and final contract: Phase 11 records full automated verification, user-confirmed cabinet/RPCS3 runtime proof, and the final route/state/semantic contract.
+- [x] AC15 nullable wire generation and Mapperly projection: Phase 16.1 regenerates Green, Blue, and Yellow AC15 wire DTOs with nullable optional primitives where `protogen` supports them, and protocol mapping uses Mapperly for mechanical DTO projection with manual mapper code only for explicit protocol/domain transforms.
 
 ### Active
 
@@ -88,7 +89,7 @@ v1.0 Blue Support is complete. Blue is a first-class supported era with normal p
 
 v1.1 Blue Tokkun Mode Support is complete. Phases 7-11 established the Tokkun evidence contract, stateless Banacoin-adjacent compatibility, Tokkun playresult acceptance, Blue-owned Tokkun persistence/readback, final contract documentation, and runtime verification.
 
-v1.2 Yellow AC15 Support is active. This milestone adds Yellow as a first-class older AC15 era, using the local Yellow proto/data and Blue-equivalent behavior where Yellow supports it.
+v1.2 Yellow AC15 Support is active. This milestone adds Yellow as a first-class older AC15 era, using the local Yellow proto/data and Blue-equivalent behavior where Yellow supports it. Phase 16.1 was inserted before final Yellow closeout to regenerate AC15 wire DTOs with nullable optional primitives, then rewrite AC15 protocol mappers around real Mapperly generation.
 
 ## Next Milestone Goals
 
@@ -132,6 +133,7 @@ v1.2 Yellow AC15 Support is active. This milestone adds Yellow as a first-class 
 | Start Yellow support as v1.2 | Yellow is the next older AC15 era and should build on the completed Blue/Green support rather than reset project numbering | Pending in v1.2 |
 | Include AC15 shared-core extraction in Yellow work where it directly helps | The prior approved AC15 core plan was created specifically to avoid duplicating Blue/Green logic while adding Yellow/Red, but it must preserve separate era routes, wire DTOs, and persistence | Pending in v1.2 |
 | Treat Yellow Tokkun as real and Yellow battle as absent | Yellow proto has Tokkun fields and lacks Blue battle fields/routes; runtime implementation should follow that evidence instead of copying Blue-only behavior | Pending in v1.2 |
+| Insert AC15 mapper rewrite before Yellow closeout | Green/Blue/Yellow protocol mappers relied on hand-written projection and scattered protobuf presence helper calls despite Mapperly being introduced; repo-local `protogen` supports nullable optional primitives via `+nullablevaluetype=yes` | Completed in Phase 16.1 |
 
 ## Evolution
 
@@ -151,4 +153,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-07 after v1.2 milestone start*
+*Last updated: 2026-06-10 after Phase 16.1 nullable wire and mapper rewrite completion*

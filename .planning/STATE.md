@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
 status: Ready to discuss or plan
-stopped_at: Phase 16 verified and reviewed complete
-last_updated: "2026-06-08T21:35:00.000Z"
-last_activity: 2026-06-08 -- completed quick task 260609-7gk: Yellow final protocol route support
+stopped_at: Phase 16.1 verified complete; Phase 17 pending runtime verification and contract closeout
+last_updated: "2026-06-10T03:17:13.133+08:00"
+last_activity: 2026-06-10 -- completed Phase 16.1 AC15 nullable wire and Mapperly mapper rewrite
 progress:
-  total_phases: 6
-  completed_phases: 5
-  total_plans: 22
-  completed_plans: 22
-  percent: 83
+  total_phases: 7
+  completed_phases: 6
+  total_plans: 23
+  completed_plans: 23
+  percent: 86
 ---
 
 # Project State
@@ -27,16 +27,16 @@ See: `.planning/PROJECT.md` (updated 2026-06-07)
 
 Phase: 17
 Plan: Not started
-Status: Phase 16 complete after verification and clean code review; Phase 17 not started
-Last activity: 2026-06-08 -- completed quick task 260609-7gk: Yellow final protocol route support
+Status: Phase 16.1 complete after verification; Phase 17 not started
+Last activity: 2026-06-10 -- completed Phase 16.1 AC15 nullable wire and Mapperly mapper rewrite
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 22 in v1.2
-- Average duration: 20.3 min
-- Total execution time: 446 min
+- Total plans completed: 23 in v1.2
+- Average duration: 23.5 min
+- Total execution time: 541 min
 
 **By Phase:**
 
@@ -52,11 +52,12 @@ Last activity: 2026-06-08 -- completed quick task 260609-7gk: Yellow final proto
 | 14 | 3/3 complete | 123 min | 41 min |
 | 15 | 9/9 complete | 198 min | 22 min |
 | 16 | 4/4 complete | 71 min | 18 min |
+| 16.1 | 1/1 complete | 95 min | 95 min |
 
 **Recent Trend:**
 
-- Last 6 plans: 15-08 completed in 18 min; 15-09 completed in 19 min; 16-01 completed in 20 min; 16-02 completed in 19 min; 16-03 completed in 12 min; 16-04 completed in 20 min.
-- Trend: Phase 16 implementation and verification completed; Phase 17 is pending and not started.
+- Last 6 plans: 15-09 completed in 19 min; 16-01 completed in 20 min; 16-02 completed in 19 min; 16-03 completed in 12 min; 16-04 completed in 20 min; 16.1-01 completed in 95 min.
+- Trend: Phase 16.1 mapper architecture rewrite completed after review feedback; Phase 17 runtime verification and contract closeout is pending.
 
 | Phase 11 P01 | 3 min | 4 tasks | 4 files |
 | Phase 12 P01 | 12 min | 2 tasks | 13 files |
@@ -83,6 +84,10 @@ Last activity: 2026-06-08 -- completed quick task 260609-7gk: Yellow final proto
 | Phase 16 P04 | 20 min | 2 tasks | 3 files |
 
 ## Accumulated Context
+
+### Roadmap Evolution
+
+- Phase 16.1 inserted after Phase 16 and completed before Phase 17: AC15 Mapperly Mapper Rewrite and Presence Semantics; includes `protogen +nullablevaluetype=yes` wire regeneration as a first-class refactor point.
 
 ### Decisions
 
@@ -141,15 +146,15 @@ None recorded.
 | Category | Item | Status | Deferred At |
 |----------|------|--------|-------------|
 | Admin/developer UI | TKUI-01: inspect Blue Tokkun history or debug state through AdminApi/WebUI | Future requirement, not mapped to v1.1 roadmap | v1.1 requirements |
-| Runtime verification | Yellow normal and Tokkun RPCS3/cabinet smoke | Deferred to Phase 17/end-of-range per user orchestration | Phase 13 verification |
+| Runtime verification | Yellow normal and Tokkun RPCS3/cabinet smoke | Deferred to Phase 17/end-of-range after Phase 16.1 mapper rewrite | Phase 13 verification |
 
 ## Session Continuity
 
 Last session: 2026-06-08T08:49:25.000Z
-Stopped at: Phase 16 verified complete, ready to discuss or plan Phase 17
+Stopped at: Phase 16.1 verified complete; Phase 17 ready to discuss or plan
 Resume file: None
 
 ## Operator Next Steps
 
-- Phase 16 verification is complete and passed; Phase 16 code review is complete and clean.
+- Phase 16.1 verification is complete and passed; Green/Blue/Yellow AC15 wire DTOs now use nullable optional primitives and protocol mappers use real Mapperly generation for mechanical projection.
 - Next coordinator-owned step: Phase 17 discussion/planning/runtime verification closeout; do not mark Phase 17 or the milestone complete until its runtime smoke and documentation gates are satisfied.

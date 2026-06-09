@@ -44,9 +44,15 @@
 - [x] **YTOK-03**: Yellow userdata reads back only the Tokkun tutorial flag through proven Yellow protocol fields and does not invent Tokkun summary/history response surfaces.
 - [x] **YBAN-01**: Yellow Banacoin-adjacent routes log requests and return compatibility success without wallet, balance, payment, coupon, settlement, receipt, or transaction persistence unless new Yellow evidence proves a stateful role.
 
+### AC15 Mapper Architecture
+
+- [x] **YMAPP-01**: Green, Blue, and Yellow AC15 protocol DTO mappers use real Mapperly-generated mappings for mechanical projection, with manual code limited to documented protocol/domain transforms and no body-only `[Mapper]` methods pretending to be generated mappings.
+- [x] **YMAPP-02**: AC15 optional-field presence is represented through explicit adapter-boundary contracts that preserve zero-vs-absent behavior without scattering generated protobuf `ShouldSerialize*` helper calls through production mapper bodies.
+- [x] **YMAPP-03**: Green, Blue, and Yellow AC15 generated wire DTOs are regenerated from immutable local proto inputs with repo-local `protogen` nullable optional primitive support, such as `+nullablevaluetype=yes`, so optional primitive fields expose nullable value types where possible.
+
 ### Verification And Contract
 
-- [ ] **YVER-01**: Yellow support has focused route, mapper, catalog, handler, EF persistence, no-cross-era-write, no-battle, Tokkun, WaiWai, crown-encoding, AdminApi/WebUI, and AC15 shared-core regression tests.
+- [ ] **YVER-01**: Yellow support has focused route, nullable generated wire DTO, Mapperly-backed mapper, optional-field presence, catalog, handler, EF persistence, no-cross-era-write, no-battle, Tokkun, WaiWai, crown-encoding, AdminApi/WebUI, and AC15 shared-core regression tests.
 - [ ] **YVER-02**: Full server verification passes with `dotnet test Tests/Tests.csproj` and a temp-output Host build.
 - [ ] **YVER-03**: Yellow normal and Tokkun cabinet/RPCS3 smoke evidence is recorded before v1.2 is closed.
 - [ ] **YDOC-01**: Final Yellow route/state/semantic contract documentation records supported features, explicit non-goals, evidence gaps, and operator data expectations.
@@ -112,6 +118,9 @@ Roadmap phase mapping is created during `$gsd-new-milestone` roadmap generation.
 | YTOK-02 | Phase 16 | Complete |
 | YTOK-03 | Phase 16 | Complete |
 | YBAN-01 | Phase 16 | Complete |
+| YMAPP-01 | Phase 16.1 | Complete |
+| YMAPP-02 | Phase 16.1 | Complete |
+| YMAPP-03 | Phase 16.1 | Complete |
 | YVER-01 | Phase 17 | Pending |
 | YVER-02 | Phase 17 | Pending |
 | YVER-03 | Phase 17 | Pending |
@@ -119,10 +128,10 @@ Roadmap phase mapping is created during `$gsd-new-milestone` roadmap generation.
 
 **Coverage:**
 
-- v1.2 requirements: 27 total
-- Mapped to phases: 27
+- v1.2 requirements: 30 total
+- Mapped to phases: 30
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-06-07*
-*Last updated: 2026-06-08 after Phase 15 verification closeout*
+*Last updated: 2026-06-10 after Phase 16.1 mapper rewrite insertion*
