@@ -2,84 +2,6 @@ namespace TaikoLocalServer.Tests.Blue;
 
 public sealed class BlueBattlePersistenceTests
 {
-    private static readonly string[] ExpectedBattleTables =
-    [
-        "BlueBattleNpcStates",
-        "BlueBattleStageResults",
-        "BlueBattleTokenStates",
-        "BlueBattleUserStates"
-    ];
-
-    [Fact]
-    public async Task AddBlueBattleStateMigration_CreatesOnlyBlueBattleTablesAndUserRelationships()
-    {
-        var migrationSource = File.ReadAllText(FindAddBlueBattleStateMigration());
-
-        foreach (var table in ExpectedBattleTables)
-        {
-            Assert.Contains($"name: \"{table}\"", migrationSource, StringComparison.Ordinal);
-            Assert.Contains($"FK_{table}_UserData_Baid", migrationSource, StringComparison.Ordinal);
-        }
-
-        Assert.DoesNotContain("migrationBuilder.Alter", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("migrationBuilder.AddColumn", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("migrationBuilder.DropColumn", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("SongPlayDatum_Blue", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("SongBestDatum_Blue", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("DanScoreDatum_Blue", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("DanStageScoreDatum_Blue", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("BlueFavoriteSongs", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("BlueRecentSongs", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("BlueShopSeasonStates", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("BlueShopItemStates", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("GreenGhostTokens", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("GreenGhostWinnings", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("GhostStageSectionDatum_Green", migrationSource, StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public void AddBlueBattleNpcSelectedSpecialsMigration_PreservesExistingSelectedSpecialAsSlot1()
-    {
-        var migrationSource = File.ReadAllText(FindMigration("AddBlueBattleNpcSelectedSpecials"));
-
-        Assert.Contains("migrationBuilder.RenameColumn(", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("name: \"SelectedSpecialId\"", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("newName: \"SelectedSpecialId1\"", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("name: \"NpcCostumeId\"", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("name: \"SelectedSpecialId2\"", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("name: \"SelectedSpecialId3\"", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("newName: \"SelectedSpecialId3\"", migrationSource, StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public void RenameBlueBattleNpcMaxDpnMigration_RenamesDpnColumnsWithoutDroppingData()
-    {
-        var migrationSource = File.ReadAllText(FindMigration("RenameBlueBattleNpcMaxDpn"));
-
-        Assert.Contains("migrationBuilder.RenameColumn(", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("name: \"MaxDaniPower\"", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("table: \"BlueBattleNpcStates\"", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("newName: \"MaxDpn\"", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("name: \"DaniPower\"", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("table: \"BlueBattleStageResults\"", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("newName: \"Dpn\"", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("migrationBuilder.DropColumn", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("migrationBuilder.AddColumn", migrationSource, StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public void RemoveBlueBattleReleaseStateMigration_DropsOnlyRedundantReleaseObservationTable()
-    {
-        var migrationSource = File.ReadAllText(FindMigration("RemoveBlueBattleReleaseState"));
-
-        Assert.Contains("migrationBuilder.DropTable(", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("name: \"BlueBattleReleaseStates\"", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("name: \"BlueBattleUserStates\"", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("name: \"BlueBattleNpcStates\"", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("name: \"BlueBattleTokenStates\"", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("name: \"BlueBattleStageResults\"", migrationSource, StringComparison.Ordinal);
-    }
-
     [Fact]
     public async Task SqliteSchema_PersistsAndReloadsRepresentativeBlueBattleState()
     {
@@ -178,14 +100,6 @@ public sealed class BlueBattlePersistenceTests
         Assert.Equal(201u, stage.NpcId);
         Assert.Equal(77u, stage.BossLife);
         Assert.Equal(600u, stage.Dpn);
-    }
-
-    [Fact]
-    public async Task SqliteSchema_DoesNotCreateRedundantBlueBattleReleaseStatesTable()
-    {
-        await using var database = await CreateSchemaDatabaseAsync();
-
-        await AssertTableAbsentAsync(database.Context, "BlueBattleReleaseStates");
     }
 
     [Fact]
@@ -311,47 +225,6 @@ public sealed class BlueBattlePersistenceTests
         Assert.Empty(await context.GhostStageSectionDataGreen.ToListAsync());
         Assert.Empty(await context.GreenGhostWinnings.ToListAsync());
         Assert.Empty(await context.GreenGhostTokens.ToListAsync());
-    }
-
-    private static async Task AssertTableAbsentAsync(TaikoDbContext context, string tableName)
-    {
-        await using var command = context.Database.GetDbConnection().CreateCommand();
-        command.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = $tableName";
-        var parameter = command.CreateParameter();
-        parameter.ParameterName = "$tableName";
-        parameter.Value = tableName;
-        command.Parameters.Add(parameter);
-
-        var count = (long)(await command.ExecuteScalarAsync() ?? 0L);
-        Assert.Equal(0L, count);
-    }
-
-    private static string FindAddBlueBattleStateMigration()
-        => FindMigration("AddBlueBattleState");
-
-    private static string FindMigration(string migrationName)
-    {
-        var root = FindRepoRoot();
-        var migrationFiles = Directory.GetFiles(
-            Path.Combine(root, "Infrastructure", "Persistence", "Migrations"),
-            $"*_{migrationName}.cs");
-
-        return Assert.Single(migrationFiles, path => !path.EndsWith(".Designer.cs", StringComparison.Ordinal));
-    }
-
-    private static string FindRepoRoot()
-    {
-        for (var directory = new DirectoryInfo(AppContext.BaseDirectory);
-             directory is not null;
-             directory = directory.Parent)
-        {
-            if (File.Exists(Path.Combine(directory.FullName, "TaikoLocalServer.slnx")))
-            {
-                return directory.FullName;
-            }
-        }
-
-        throw new InvalidOperationException("Could not find TaikoLocalServer.slnx.");
     }
 
     private static async Task<SchemaDatabase> CreateSchemaDatabaseAsync()

@@ -390,22 +390,6 @@ public sealed class YellowItemShopPurchaseTests
         Assert.Equal(200u, response.TotalUseDonmedal);
     }
 
-    [Fact]
-    public void YellowItemPurchaseController_UsesMediatorCommandAndResponseMapper()
-    {
-        var source = File.ReadAllText(Path.Combine(
-            FindRepoRoot(),
-            "Adapters.GameProtocol.Yellow",
-            "Controllers",
-            "YellowScaffoldControllers.cs"));
-        var controller = ExtractControllerSource(source, "ItemPurchaseController");
-
-        Assert.Contains("Task<IActionResult> ItemPurchase", controller, StringComparison.Ordinal);
-        Assert.Contains("Mediator.Send(ItemShopMappers.Map(request)", controller, StringComparison.Ordinal);
-        Assert.Contains("return Ok(ItemShopMappers.Map(common));", controller, StringComparison.Ordinal);
-        Assert.DoesNotContain("new ItempurchaseResponse { Result = 1 }", controller, StringComparison.Ordinal);
-    }
-
     [Theory]
     [InlineData("rewardcardcheck")]
     [InlineData("rewardexecution")]
@@ -589,29 +573,6 @@ public sealed class YellowItemShopPurchaseTests
 
     private static bool HasBit(byte[] source, uint id)
         => (source[id >> 3] & (1 << ((int)id & 7))) != 0;
-
-    private static string ExtractControllerSource(string source, string controllerName)
-    {
-        var start = source.IndexOf($"class {controllerName}", StringComparison.Ordinal);
-        Assert.True(start >= 0, $"Controller {controllerName} not found.");
-        var next = source.IndexOf("\n[ApiController]", start, StringComparison.Ordinal);
-        return next >= 0 ? source[start..next] : source[start..];
-    }
-
-    private static string FindRepoRoot()
-    {
-        for (var directory = new DirectoryInfo(AppContext.BaseDirectory);
-             directory is not null;
-             directory = directory.Parent)
-        {
-            if (File.Exists(Path.Combine(directory.FullName, "TaikoLocalServer.slnx")))
-            {
-                return directory.FullName;
-            }
-        }
-
-        throw new InvalidOperationException("Could not find TaikoLocalServer.slnx.");
-    }
 
     private static DefaultHttpContext CreateHttpContext()
     {

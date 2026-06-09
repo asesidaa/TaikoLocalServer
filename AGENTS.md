@@ -47,6 +47,15 @@ TaikoLocalServer is an ASP.NET Core 10 host for Taiko cabinet protocol endpoints
 - For AdminApi era routes, preserve both legacy routes where they exist and `/api/{era}/...` routes validated by `EraRoute.TryParse`.
 - Keep generated `Wire/` files out of manual cleanup unless regenerating protocol output.
 
+## Testing Rules
+
+- Do not add tests just to satisfy a TDD checkbox. Every new test must protect a specific evidence-backed cabinet behavior, runtime state transition, parser/packing rule, AdminApi/WebUI workflow, or no-cross-era/no-cross-mode persistence boundary.
+- Game-facing tests are regression guards after evidence, not proof of client compatibility. Cabinet/RPCS3/client acceptance remains the compatibility gate.
+- Do not test generated protobuf output, generated `Wire/` type/property existence, route inventory, controller attribute lists, DI registration shape, enum numeric values, static config key presence, source text, project files, migrations, private methods, or "returns `Result = 1`" stateless echoes unless there is a demonstrated runtime failure that only that assertion can catch.
+- Avoid assertions over `.cs`, `.csproj`, `Program.cs`, migrations, controller method bodies, class/file names, `Mediator.Send`, `SaveChanges`, reflection-only metadata, or other implementation strings.
+- Useful tests exercise observable behavior: handler/service state changes, SQLite persistence and no-write boundaries, catalog/parser behavior, byte/bit packing owned by this repo, protocol payload classification backed by real captures/proto evidence, build/publish output when it affects deployed runtime files, API responses that drive WebUI behavior, and readback paths consumed by the cabinet.
+- Mapper tests are allowed only when they protect nontrivial classification, omission, packing, or evidence-backed field placement. Do not write one-to-one copy/echo mapper tests.
+
 ## Data Caveats
 
 - Blue and Green AC15 game data share the same setup shape: operator-supplied `USRDIR/data` lives under `Host/wwwroot/data/<era>/data` in source checkouts, or `wwwroot/data/<era>/data` in published folders. Debug builds create output junctions for both eras when those source paths exist.
@@ -54,6 +63,7 @@ TaikoLocalServer is an ASP.NET Core 10 host for Taiko cabinet protocol endpoints
 - Blue normal catalog data comes from `config/S10100-1/musicinfo.xml`, `config/S10100-1/musicmedleyinfo.xml`, and `fumen/tuning.bin`.
 - Blue battle availability requires the five parsed files under `config/S10100-1/battle`: `battleadjsetting.xml`, `battlenpcinfo.xml`, `battlestageinfo.xml`, `battlesupportinfo.xml`, and `battletokeninfo.xml`.
 - Green and Blue item shop data is committed JSON under `Host/wwwroot/data/<era>/`; `rewardshopdata.bin` remains local provenance and is not a runtime dependency.
+- For every era, if a feature exists and expects committed server-authored data outside raw operator game data, the corresponding `Host/wwwroot/data/<era>/...` JSON should exist and be copied even when its data is intentionally empty.
 - Blue customization JSON can be bootstrapped from Blue AC15 data when `AutoExtractCatalog` is enabled, with display names composed from shared and optional override name data.
 - Treat title id `0` as the explicit empty/default title state.
 - `rewardexecution.php` is log-and-success for Blue item-shop flow unless newer evidence proves a state-changing role.

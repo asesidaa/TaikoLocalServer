@@ -4,7 +4,6 @@ using Microsoft.Extensions.Options;
 using TaikoLocalServer.Adapters.AllnetMucha.Controllers.AmUpdater;
 using TaikoLocalServer.Adapters.AllnetMucha.Wire;
 using TaikoLocalServer.Infrastructure.Settings;
-using System.Reflection;
 
 namespace TaikoLocalServer.Tests.AllnetMucha;
 
@@ -67,19 +66,6 @@ public sealed class MuchaControllerTests
         Assert.Equal("0", fields["LAST_LIMIT_LOWER_TOKEN"]);
         Assert.Equal("0", fields["LAST_LIMIT_UPPER_TOKEN"]);
         Assert.Equal("0", fields["SETTLEMENT_MONTH"]);
-    }
-
-    [Theory]
-    [InlineData(nameof(MuchaController.RegiAuth), "/mucha_front/regiauth.do")]
-    [InlineData(nameof(MuchaController.TokenState), "/mucha_front/tokenstate.do")]
-    [InlineData(nameof(MuchaController.TokenMarginState), "/mucha_front/tokenmarginstate.do")]
-    public void InternationalMuchaTokenEndpoints_UseExpectedRoutes(string actionName, string expectedRoute)
-    {
-        var method = typeof(MuchaController).GetMethod(actionName, BindingFlags.Instance | BindingFlags.Public);
-        Assert.NotNull(method);
-
-        var attribute = Assert.Single(method.GetCustomAttributes<HttpPostAttribute>());
-        Assert.Equal(expectedRoute, attribute.Template);
     }
 
     private static Dictionary<string, string> ParseFormOutput(ContentResult result)

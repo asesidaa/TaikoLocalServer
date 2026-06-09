@@ -5,33 +5,6 @@ namespace TaikoLocalServer.Tests.Blue;
 public sealed class BlueTokkunPersistenceTests
 {
     [Fact]
-    public void AddBlueTokkunStateMigration_AddsOnlyBlueTokkunState()
-    {
-        var migrationSource = File.ReadAllText(FindMigration("AddBlueTokkunState"));
-
-        Assert.Contains("migrationBuilder.AddColumn<uint>(", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("name: \"TokkunTutorialFlg\"", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("table: \"UserSaveData_Blue\"", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("migrationBuilder.CreateTable(", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("name: \"BlueTokkunStageResults\"", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("TookunSongnoesJson = table.Column<string>", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("FK_BlueTokkunStageResults_UserData_Baid", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("IX_BlueTokkunStageResults_Baid_PlayDatetime", migrationSource, StringComparison.Ordinal);
-
-        Assert.DoesNotContain("migrationBuilder.Alter", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("SongPlayDatum_Blue", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("SongBestDatum_Blue", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("DanScoreDatum_Blue", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("DanStageScoreDatum_Blue", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("BlueBattle", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("BlueShop", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("Green", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("Nijiiro", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("UploadedAtUtc", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("CreatedAt", migrationSource, StringComparison.Ordinal);
-    }
-
-    [Fact]
     public async Task SqliteSchema_PersistsAndReloadsRepresentativeBlueTokkunState()
     {
         await using var database = await CreateSchemaDatabaseAsync();
@@ -142,31 +115,6 @@ public sealed class BlueTokkunPersistenceTests
             MyDonName = $"Baid {baid}"
         });
         await context.SaveChangesAsync();
-    }
-
-    private static string FindMigration(string migrationName)
-    {
-        var root = FindRepoRoot();
-        var migrationFiles = Directory.GetFiles(
-            Path.Combine(root, "Infrastructure", "Persistence", "Migrations"),
-            $"*_{migrationName}.cs");
-
-        return Assert.Single(migrationFiles, path => !path.EndsWith(".Designer.cs", StringComparison.Ordinal));
-    }
-
-    private static string FindRepoRoot()
-    {
-        for (var directory = new DirectoryInfo(AppContext.BaseDirectory);
-             directory is not null;
-             directory = directory.Parent)
-        {
-            if (File.Exists(Path.Combine(directory.FullName, "TaikoLocalServer.slnx")))
-            {
-                return directory.FullName;
-            }
-        }
-
-        throw new InvalidOperationException("Could not find TaikoLocalServer.slnx.");
     }
 
     private static async Task<SchemaDatabase> CreateSchemaDatabaseAsync()

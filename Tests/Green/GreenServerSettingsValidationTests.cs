@@ -79,22 +79,6 @@ public sealed class GreenServerSettingsValidationTests
         Assert.False(settings.Eras[nameof(GameEra.Green)].EnableShop == true);
     }
 
-    [Fact]
-    public void ShippedServerSettings_DeclaresGreenShopSettings()
-    {
-        var path = FindServerSettingsPath();
-
-        Assert.NotNull(path);
-
-        var configuration = new ConfigurationBuilder()
-            .AddJsonFile(path)
-            .Build();
-        var green = configuration.GetSection("ServerSettings:Eras:Green");
-
-        Assert.True(green.GetSection("EnableShop").Exists());
-        Assert.True(green.GetSection("ActiveShopSeasonId").Exists());
-    }
-
     private static IConfigurationRoot BuildConfiguration(string json)
     {
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));
@@ -117,24 +101,4 @@ public sealed class GreenServerSettingsValidationTests
     private static ISet<GameEra> GreenEnabledEras()
         => new HashSet<GameEra> { GameEra.Green };
 
-    private static string? FindServerSettingsPath()
-    {
-        for (var directory = new DirectoryInfo(AppContext.BaseDirectory);
-             directory is not null;
-             directory = directory.Parent)
-        {
-            var path = Path.Combine(
-                directory.FullName,
-                "Host",
-                "Configurations",
-                "ServerSettings.json");
-
-            if (File.Exists(path))
-            {
-                return path;
-            }
-        }
-
-        return null;
-    }
 }

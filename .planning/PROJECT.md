@@ -33,8 +33,8 @@ Yellow support should reuse the existing AC15 shared-core extraction design wher
 - [x] Blue A7 basic AdminApi and WebUI parity: Blue profile, score history, favorites, Dani, customization, item-shop-relevant surfaces, and safe edit/readback behavior are exposed without writing Green state.
 - [x] Blue A8 normal-mode cabinet smoke and hardening: normal Blue support has been user-confirmed complete before Track B battle evidence/design work.
 - [x] Blue battle evidence and design: Phase 4 defined Track B from proto, local Blue battle XML inventory, IDA/client-equivalent evidence, and explicit field-width/default-state gates before runtime battle behavior.
-- [x] Blue battle runtime support: Phase 5 added Blue-owned battle persistence, battleuserdata readback, data-derived initialdata battle advertisement, battle playresult persistence, reward/unlock store-echo behavior, source guards, and server-side verification without Green AI Battle dependencies.
-- [x] Full Blue verification and release hardening: v1.0 closes with repeatable normal and battle smoke evidence externally confirmed by the user, full automated Blue/server verification, source guardrails, and updated operator/developer documentation.
+- [x] Blue battle runtime support: Phase 5 added Blue-owned battle persistence, battleuserdata readback, data-derived initialdata battle advertisement, battle playresult persistence, reward/unlock store-echo behavior, and server-side verification without Green AI Battle dependencies.
+- [x] Full Blue verification and release hardening: v1.0 closes with repeatable normal and battle smoke evidence externally confirmed by the user, full automated Blue/server verification, and updated operator/developer documentation.
 - [x] Blue Tokkun evidence contract: Phase 7 defines evidence-tagged Tokkun protocol rows, classifier boundaries, no-runtime-write targets, and Phase 8-11 handoff gates before runtime Tokkun behavior changes.
 - [x] Blue stateless Banacoin compatibility: Phase 8 adds Blue `getbanacoininfo.php` as a direct-protobuf, no-state compatibility route and verifies Banacoin-adjacent routes remain stateless and free of wallet/payment persistence.
 - [x] Blue Tokkun playresult acceptance: Phase 9 classifies Tokkun uploads from `ary_tokkunstage_info`, preserves raw Tokkun stage facts, and returns success before normal, battle, Dani, favorite/recent, profile, unlock, medal, customization/title, or shop writes.
@@ -50,7 +50,7 @@ Yellow support should reuse the existing AC15 shared-core extraction design wher
 - [ ] Yellow WaiWai handling, if exposed by current Yellow wire/runtime evidence, is limited to tutorial flag write/readback and logging additional playresult fields; WaiWai is not treated as a special play mode.
 - [ ] Yellow Tokkun is treated as a real mode, with Yellow-owned Tokkun playresult classification, no-cross-mode write boundaries, nullable tutorial readback, and append-only raw protocol-backed history.
 - [ ] Yellow Banacoin-adjacent routes are compatibility surfaces only unless concrete client/proto/runtime evidence proves wallet or payment authority belongs in this repo.
-- [ ] Blue-only battle behavior is absent from Yellow: no Yellow battle routes, fields, persistence, source guards, or inferred runtime behavior without concrete Yellow evidence.
+- [ ] Blue-only battle behavior is absent from Yellow: no Yellow battle routes, fields, persistence, or inferred runtime behavior without concrete Yellow evidence.
 
 ### Out of Scope
 
@@ -92,7 +92,7 @@ v1.2 Yellow AC15 Support is active. This milestone adds Yellow as a first-class 
 
 ## Next Milestone Goals
 
-- Add Yellow as an enableable first-class era with generated wire DTOs, adapter project, route tests, host settings, and era-aware AdminApi/WebUI routing.
+- Add Yellow as an enableable first-class era with generated wire DTOs, adapter project, host settings, evidence-backed behavior tests, and era-aware AdminApi/WebUI routing.
 - Load Yellow normal catalog data from `Host/wwwroot/data/yellow/data`, especially `config/ST9100-1`, through shared AC15 loaders where the file formats match.
 - Implement Yellow-owned persistence and handler/mapping slices for normal play, score/crown readback, Dani, shop/medals, Tokkun, Banacoin-adjacent compatibility, and supported metadata routes.
 - Verify Yellow crown response compression and WaiWai tutorial/logging behavior from current wire/runtime evidence instead of assuming Blue/Green placement.

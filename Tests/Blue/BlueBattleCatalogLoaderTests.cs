@@ -73,64 +73,6 @@ public sealed class BlueBattleCatalogLoaderTests
         Assert.False(catalog.BattleCatalog.EnablesBattleAdvertisement);
     }
 
-    [Fact]
-    public void ProductionBattleCatalogConsumers_DoNotDeriveRuntimeSemantics()
-    {
-        var root = FindRepoRoot();
-        var files = new[]
-        {
-            Path.Combine(root, "Application", "Handlers", "GetInitialDataQuery.Blue.cs"),
-            Path.Combine(root, "Adapters.GameProtocol.Blue", "Mappers", "BattleUserDataMappers.cs"),
-            Path.Combine(root, "Adapters.GameProtocol.Blue", "Controllers", "BattleUserDataController.cs"),
-            Path.Combine(root, "Adapters.GameProtocol.Blue", "Mappers", "PlayResultMappers.cs"),
-            Path.Combine(root, "Application", "Handlers", "UpdatePlayResultCommand.Blue.cs")
-        };
-        var forbidden = new[]
-        {
-            "AssignStageId",
-            "LastBossLife",
-            "LastBattleStageId",
-            "AssignNextStageId",
-            "battlestageinfo",
-            "battletokeninfo",
-            "battlenpcinfo",
-            "0xFE",
-            "0x07"
-        };
-
-        foreach (var file in files.Where(File.Exists))
-        {
-            var source = File.ReadAllText(file);
-            if (!source.Contains("BattleCatalog", StringComparison.Ordinal))
-            {
-                continue;
-            }
-
-            foreach (var token in forbidden)
-            {
-                Assert.DoesNotContain(token, source, StringComparison.Ordinal);
-            }
-
-            Assert.DoesNotContain("stage 33", source, StringComparison.OrdinalIgnoreCase);
-            Assert.DoesNotContain("reward", source, StringComparison.OrdinalIgnoreCase);
-        }
-    }
-
-    private static string FindRepoRoot()
-    {
-        for (var directory = new DirectoryInfo(AppContext.BaseDirectory);
-             directory is not null;
-             directory = directory.Parent)
-        {
-            if (File.Exists(Path.Combine(directory.FullName, "TaikoLocalServer.slnx")))
-            {
-                return directory.FullName;
-            }
-        }
-
-        throw new InvalidOperationException("Could not find TaikoLocalServer.slnx.");
-    }
-
     private sealed class BattleDataScope : IDisposable
     {
         private readonly string root;

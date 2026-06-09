@@ -1,8 +1,3 @@
-using System.Reflection;
-using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
-using TaikoLocalServer.Infrastructure.Persistence.Migrations;
-
 namespace TaikoLocalServer.Tests.Green;
 
 public sealed class GreenSaveDataTests
@@ -38,18 +33,4 @@ public sealed class GreenSaveDataTests
         Assert.True(save.IsAutoCostumeOn);
     }
 
-    [Fact]
-    public void BackfillGreenIsAutoCostumeOnDefault_EnablesExistingRows()
-    {
-        var migration = new BackfillGreenIsAutoCostumeOnDefault();
-        var builder = new MigrationBuilder("Microsoft.EntityFrameworkCore.Sqlite");
-        typeof(BackfillGreenIsAutoCostumeOnDefault)
-            .GetMethod("Up", BindingFlags.Instance | BindingFlags.NonPublic)!
-            .Invoke(migration, [builder]);
-
-        var operation = Assert.Single(builder.Operations);
-        var sql = Assert.IsType<SqlOperation>(operation).Sql;
-        Assert.Contains("UPDATE \"UserSaveData_Green\"", sql);
-        Assert.Contains("SET \"IsAutoCostumeOn\" = 1", sql);
-    }
 }

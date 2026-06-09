@@ -18,8 +18,7 @@ public sealed class GreenProfileCountersTests
 
         GreenProfileCounters.ApplyStage(save, stage);
 
-        var property = typeof(UserSaveDataGreen).GetProperty(expectedProperty)!;
-        Assert.Equal(1u, (uint)property.GetValue(save)!);
+        Assert.Equal(1u, CounterValue(save, expectedProperty));
     }
 
     [Theory]
@@ -116,4 +115,18 @@ public sealed class GreenProfileCountersTests
         Assert.Equal(uint.MaxValue, save.SongFavoriteCnt);
         Assert.Equal(uint.MaxValue, save.SongRecentCnt);
     }
+
+    private static uint CounterValue(UserSaveDataGreen save, string propertyName)
+        => propertyName switch
+        {
+            nameof(UserSaveDataGreen.CategJpopCnt) => save.CategJpopCnt,
+            nameof(UserSaveDataGreen.CategAnimeCnt) => save.CategAnimeCnt,
+            nameof(UserSaveDataGreen.CategVocaloidCnt) => save.CategVocaloidCnt,
+            nameof(UserSaveDataGreen.CategDoyoCnt) => save.CategDoyoCnt,
+            nameof(UserSaveDataGreen.CategVarietyCnt) => save.CategVarietyCnt,
+            nameof(UserSaveDataGreen.CategClassicCnt) => save.CategClassicCnt,
+            nameof(UserSaveDataGreen.CategGameCnt) => save.CategGameCnt,
+            nameof(UserSaveDataGreen.CategNamcoCnt) => save.CategNamcoCnt,
+            _ => throw new ArgumentOutOfRangeException(nameof(propertyName), propertyName, "Unsupported counter.")
+        };
 }

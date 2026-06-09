@@ -79,27 +79,6 @@ public sealed class BlueServerSettingsValidationTests
         Assert.False(settings.Eras[nameof(GameEra.Blue)].EnableShop == true);
     }
 
-    [Fact]
-    public void ShippedServerSettings_DeclaresBlueCatalogSettings()
-    {
-        var path = FindServerSettingsPath();
-
-        Assert.NotNull(path);
-
-        var configuration = new ConfigurationBuilder()
-            .AddJsonFile(path)
-            .Build();
-        var blue = configuration.GetSection("ServerSettings:Eras:Blue");
-        var enableShop = blue.GetSection("EnableShop").Value;
-
-        Assert.True(blue.GetSection("AutoExtractCatalog").Exists());
-        Assert.False(string.IsNullOrWhiteSpace(blue.GetValue<string>("GameDataPath")));
-        Assert.True(blue.GetSection("CustomizationNameDataPath").Exists());
-        Assert.True(blue.GetSection("EnableShop").Exists());
-        Assert.True(bool.TryParse(enableShop, out _));
-        Assert.Contains("\"ActiveShopSeasonId\"", File.ReadAllText(path), StringComparison.Ordinal);
-    }
-
     private static IConfigurationRoot BuildConfiguration(string json)
     {
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));
@@ -119,19 +98,4 @@ public sealed class BlueServerSettingsValidationTests
         return services.BuildServiceProvider();
     }
 
-    private static string? FindServerSettingsPath()
-    {
-        for (var directory = new DirectoryInfo(AppContext.BaseDirectory);
-             directory is not null;
-             directory = directory.Parent)
-        {
-            var path = Path.Combine(directory.FullName, "Host", "Configurations", "ServerSettings.json");
-            if (File.Exists(path))
-            {
-                return path;
-            }
-        }
-
-        return null;
-    }
 }

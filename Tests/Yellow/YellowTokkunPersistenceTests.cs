@@ -5,43 +5,6 @@ namespace TaikoLocalServer.Tests.Yellow;
 public sealed class YellowTokkunPersistenceTests
 {
     [Fact]
-    public void AddYellowTokkunStateMigration_AddsOnlyYellowTokkunHistory()
-    {
-        var migrationSource = File.ReadAllText(FindMigration("AddYellowTokkunState"));
-
-        Assert.Contains("migrationBuilder.CreateTable(", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("name: \"YellowTokkunStageResults\"", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("PlayDatetime = table.Column<string>", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("PlayMode = table.Column<uint>", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("BanacoinDatetime = table.Column<string>", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("TokkunSongCnt = table.Column<uint>", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("TookunSongnoesJson = table.Column<string>", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("TokkunSpeedchangeCnt = table.Column<uint>", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("TokkunAutoplayCnt = table.Column<uint>", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("TokkunJumpCnt = table.Column<uint>", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("FK_YellowTokkunStageResults_UserData_Baid", migrationSource, StringComparison.Ordinal);
-        Assert.Contains("IX_YellowTokkunStageResults_Baid_PlayDatetime", migrationSource, StringComparison.Ordinal);
-
-        Assert.DoesNotContain("migrationBuilder.AddColumn<uint>(", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("UserSaveData_Blue", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("UserSaveData_Green", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("SongPlayDatum_Yellow", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("SongBestDatum_Yellow", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("DanScoreDatum_Yellow", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("DanStageScoreDatum_Yellow", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("YellowShop", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("BlueTokkun", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("BlueBattle", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("BanacoinPayment", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("Balance", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("Coupon", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("Receipt", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("Transaction", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("UploadedAtUtc", migrationSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("CreatedAt", migrationSource, StringComparison.Ordinal);
-    }
-
-    [Fact]
     public async Task SqliteSchema_PersistsAndReloadsRepresentativeYellowTokkunState()
     {
         await using var database = await CreateSchemaDatabaseAsync();
@@ -151,31 +114,6 @@ public sealed class YellowTokkunPersistenceTests
             MyDonName = $"Baid {baid}"
         });
         await context.SaveChangesAsync();
-    }
-
-    private static string FindMigration(string migrationName)
-    {
-        var root = FindRepoRoot();
-        var migrationFiles = Directory.GetFiles(
-            Path.Combine(root, "Infrastructure", "Persistence", "Migrations"),
-            $"*_{migrationName}.cs");
-
-        return Assert.Single(migrationFiles, path => !path.EndsWith(".Designer.cs", StringComparison.Ordinal));
-    }
-
-    private static string FindRepoRoot()
-    {
-        for (var directory = new DirectoryInfo(AppContext.BaseDirectory);
-             directory is not null;
-             directory = directory.Parent)
-        {
-            if (File.Exists(Path.Combine(directory.FullName, "TaikoLocalServer.slnx")))
-            {
-                return directory.FullName;
-            }
-        }
-
-        throw new InvalidOperationException("Could not find TaikoLocalServer.slnx.");
     }
 
     private static async Task<SchemaDatabase> CreateSchemaDatabaseAsync()

@@ -200,21 +200,6 @@ public sealed class BlueBattleUserDataTests
         Assert.Equal(37u, token.TokenValue);
     }
 
-    [Fact]
-    public void BattleUserDataController_UsesMediatorQueryAndMapperInsteadOfLocalSuccessConstruction()
-    {
-        var root = FindRepoRoot();
-        var source = File.ReadAllText(Path.Combine(
-            root,
-            "Adapters.GameProtocol.Blue",
-            "Controllers",
-            "BattleUserDataController.cs"));
-
-        Assert.Contains("Mediator.Send(new GetBattleUserDataQuery", source, StringComparison.Ordinal);
-        Assert.Contains("BattleUserDataMappers.Map", source, StringComparison.Ordinal);
-        Assert.DoesNotContain("new BattleUserDataResponse { Result = 1 }", source, StringComparison.Ordinal);
-    }
-
     private static void AssertSafeDefaultBattleUserData(BattleUserDataResponse wire)
     {
         Assert.Equal(1u, wire.Result);
@@ -267,18 +252,4 @@ public sealed class BlueBattleUserDataTests
     private static bool BitIsSet(byte[] source, uint id)
         => (source[id >> 3] & (1 << ((int)id & 7))) != 0;
 
-    private static string FindRepoRoot()
-    {
-        for (var directory = new DirectoryInfo(AppContext.BaseDirectory);
-             directory is not null;
-             directory = directory.Parent)
-        {
-            if (File.Exists(Path.Combine(directory.FullName, "TaikoLocalServer.slnx")))
-            {
-                return directory.FullName;
-            }
-        }
-
-        throw new InvalidOperationException("Could not find TaikoLocalServer.slnx.");
-    }
 }

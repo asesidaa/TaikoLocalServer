@@ -8,12 +8,12 @@
 - Issue: Several Green application handlers and Blue protocol controllers return successful empty/default responses without persistence or catalog validation.
 - Files: `Application/Handlers/AddTokenCountCommand.Green.cs`, `Application/Handlers/GetAiDataQuery.Green.cs`, `Application/Handlers/GetAiScoreQuery.Green.cs`, `Application/Handlers/GetChallengeCompeQuery.Green.cs`, `Application/Handlers/GetSongIntroductionQuery.Green.cs`, `Application/Handlers/GetTokenCountQuery.Green.cs`, `Application/Handlers/PurchaseSongCommand.Green.cs`, `Application/Handlers/TournamentCheckQuery.Green.cs`, `Adapters.GameProtocol.Blue/Controllers/BattleUserDataController.cs`, `Adapters.GameProtocol.Blue/Controllers/BanacoinPaymentController.cs`, `Adapters.GameProtocol.Blue/Controllers/BalanceCheckController.cs`, `Adapters.GameProtocol.Blue/Controllers/GetItemShopInfoController.cs`, `Adapters.GameProtocol.Blue/Controllers/ItemPurchaseController.cs`, `Adapters.GameProtocol.Blue/Controllers/RecommendController.cs`, `Adapters.GameProtocol.Blue/Controllers/TournamentCheckController.cs`
 - Impact: Clients receive success for unsupported economy, payment, battle, tournament, recommendation, and token flows. This can hide missing persistence and make client behavior appear valid when nothing changed.
-- Fix approach: For each stub, either implement the matching mediator-backed behavior or make unsupported behavior explicit with a non-success protocol response and route-level/source-guard tests that prevent accidental wiring.
+- Fix approach: For each stub, either implement the matching mediator-backed behavior or make unsupported behavior explicit with a non-success protocol response and behavior tests that prove meaningful mutation or no-mutation contracts.
 
 **AC15 Green and Blue logic is duplicated across large partial handlers:**
 - Issue: Blue and Green playresult, identity, userdata, taikojuku, initial-data, and profile flag logic follow similar shapes but live in separate partial files with repeated bitset, favorite/recent, Dan, and catalog projection patterns.
 - Files: `Application/Handlers/UpdatePlayResultCommand.Green.cs`, `Application/Handlers/UpdatePlayResultCommand.Blue.cs`, `Application/Handlers/BaidQuery.Green.cs`, `Application/Handlers/BaidQuery.Blue.cs`, `Application/Handlers/UserDataQuery.Green.cs`, `Application/Handlers/UserDataQuery.Blue.cs`, `Application/Handlers/GetTaikojukuQuery.Green.cs`, `Application/Handlers/GetTaikojukuQuery.Blue.cs`
-- Impact: Fixes in one AC15 era can be missed in the other. The parallel source-guard tests reduce cross-era leakage but do not remove the duplicated decision logic.
+- Impact: Fixes in one AC15 era can be missed in the other. Persistence-boundary and no-cross-era behavior tests reduce leakage risk but do not remove the duplicated decision logic.
 - Fix approach: Extract era-neutral AC15 helpers for stage validation, favorite/recent trimming, flag packing, and catalog-backed Dan projections while keeping era-owned persistence entities and protocol byte widths.
 
 **Nijiiro catalog remains a single loader/object with many responsibilities:**
@@ -80,7 +80,7 @@
 - Symptoms: Token-count and song-purchase flows can appear successful but do not debit tokens or unlock songs.
 - Files: `Application/Handlers/AddTokenCountCommand.Green.cs`, `Application/Handlers/GetTokenCountQuery.Green.cs`, `Application/Handlers/PurchaseSongCommand.Green.cs`
 - Trigger: Any internal or future route wiring to these Green handlers.
-- Workaround: Existing protocol audit documentation treats these as not safely exposed; source guards should remain in place.
+- Workaround: Existing protocol audit documentation treats these as not safely exposed; keep routes unexposed until behavior is implemented.
 - Fix approach: Keep routes unexposed until catalog/token validation exists, then implement state changes with regression tests.
 
 ## Security Considerations
@@ -158,8 +158,8 @@
 **Era enablement spans configuration, DI, MVC application parts, WebUI routing, and catalog loading:**
 - Files: `Host/Program.cs`, `Infrastructure/DependencyInjection.cs`, `Infrastructure/GameDataCatalog/FileGameDataCatalog.cs`, `TaikoWebUI/Utilities/WebUiEra.cs`, `TaikoWebUI/Services/GameDataService.cs`, `Adapters.AdminApi/Controllers/GameDataController.cs`
 - Why fragile: Adding an era requires consistent support across server settings, enabled-era service registration, controller routing, AdminApi projections, and WebUI navigation.
-- Safe modification: Update route/controller support and WebUI menus together, then add source tests like `Tests/Blue/BlueHostProgramSourceTests.cs` plus behavior tests for AdminApi/WebUI endpoints.
-- Test coverage: Blue source guards exist, but broad WebUI navigation compatibility for partially supported eras is not covered.
+- Safe modification: Update route/controller support and WebUI menus together, then add behavior tests for AdminApi/WebUI endpoints that exercise real routes and response data.
+- Test coverage: Broad WebUI navigation compatibility for partially supported eras is not covered.
 
 **Generated wire files are large, hand-present code surfaces:**
 - Files: `Adapters.GameProtocol.Blue/Wire/Game.cs`, `Adapters.GameProtocol.Green/Wire/Game.cs`, `Adapters.GameProtocol.WwR08/Wire/Game.cs`, `Adapters.GameProtocol.CnR00/Wire/Game.cs`, `.gitignore`
@@ -202,7 +202,7 @@
 - Files: `Directory.Packages.props`, `LocalSaveModScoreMigrator/LocalSaveModScoreMigrator.csproj`
 
 **Nightly CI publishes without running tests:**
-- Risk: A release artifact can be created even when unit/source tests fail.
+- Risk: A release artifact can be created even when automated tests fail.
 - Impact: Broken protocol, AdminApi, or WebUI behavior can ship if `dotnet publish` succeeds.
 - Migration plan: Add a CI step for `dotnet test Tests/Tests.csproj --no-restore` after restore/build and before upload/release creation.
 - Files: `.github/workflows/publishTLS.yml`, `Tests/Tests.csproj`

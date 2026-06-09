@@ -5,40 +5,6 @@ namespace TaikoLocalServer.Tests.Yellow;
 public sealed class YellowPersistenceBoundaryTests
 {
     [Fact]
-    public async Task YellowSchema_CreatesPhase16TokkunAlongsideDaniAndShopYellowTables()
-    {
-        await using var fixture = await YellowHandlerFixture.CreateAsync();
-
-        var tables = await fixture.Context.Database.SqlQueryRaw<string>(
-                "SELECT name AS Value FROM sqlite_master WHERE type = 'table' AND name LIKE '%Yellow%' ORDER BY name")
-            .ToArrayAsync();
-
-        var expectedTables = new[]
-        {
-                "SongBestDatum_Yellow",
-                "SongPlayDatum_Yellow",
-                "UserSaveData_Yellow",
-                "DanScoreDatum_Yellow",
-                "DanStageScoreDatum_Yellow",
-                "YellowShopItemStates",
-                "YellowShopSeasonStates",
-                "YellowTokkunStageResults",
-                "YellowFavoriteSongs",
-                "YellowRecentSongs"
-        }.Order(StringComparer.Ordinal);
-
-        Assert.Equal(expectedTables, tables);
-
-        Assert.DoesNotContain("DanScoreDatum_Blue", tables);
-        Assert.DoesNotContain("DanScoreDatum_Green", tables);
-        Assert.DoesNotContain("DanStageScoreDatum_Blue", tables);
-        Assert.DoesNotContain("DanStageScoreDatum_Green", tables);
-        Assert.DoesNotContain("BlueShopSeasonStates", tables);
-        Assert.DoesNotContain("GreenShopSeasonStates", tables);
-        Assert.DoesNotContain("Ac15ShopSeasonStates", tables);
-    }
-
-    [Fact]
     public async Task GetOrCreateYellowSaveData_CreatesDefaultYellowStateWithAc15Lengths()
     {
         await using var fixture = await YellowHandlerFixture.CreateAsync();
@@ -72,32 +38,6 @@ public sealed class YellowPersistenceBoundaryTests
     }
 
     [Fact]
-    public void YellowDbContextContract_ExposesPhase16TokkunAlongsideDaniAndShopDbSets()
-    {
-        var propertyNames = typeof(ITaikoDbContext).GetProperties()
-            .Where(property => property.Name.Contains("Yellow", StringComparison.Ordinal))
-            .Select(property => property.Name)
-            .Order(StringComparer.Ordinal)
-            .ToArray();
-
-        var expectedProperties = new[]
-        {
-                "SongBestDataYellow",
-                "SongPlayDataYellow",
-                "UserSaveDataYellow",
-                "DanScoreDataYellow",
-                "DanStageScoreDataYellow",
-                "YellowShopSeasonStates",
-                "YellowShopItemStates",
-                "YellowTokkunStageResults",
-                "YellowFavoriteSongs",
-                "YellowRecentSongs"
-        }.Order(StringComparer.Ordinal);
-
-        Assert.Equal(expectedProperties, propertyNames);
-    }
-
-    [Fact]
     public void YellowShopModel_UsesYellowOwnedCompositeKeys()
     {
         using var context = new TaikoDbContext(new DbContextOptionsBuilder<TaikoDbContext>()
@@ -115,107 +55,4 @@ public sealed class YellowPersistenceBoundaryTests
         Assert.Equal("YellowShopItemStates", item.GetTableName());
     }
 
-    [Fact]
-    public void YellowPersistenceSources_AllowOnlyYellowTokkunHistoryAndNoBattleOrBanacoinTables()
-    {
-        var root = FindRepoRoot();
-        var sources = Directory.EnumerateFiles(Path.Combine(root, "Domain", "Entities"), "*Yellow*.cs")
-            .Concat(Directory.EnumerateFiles(Path.Combine(root, "Infrastructure", "Persistence"), "*Yellow*.cs"))
-            .Concat(Directory.EnumerateFiles(Path.Combine(root, "Application", "Abstractions"), "*Yellow*.cs"))
-            .Select(File.ReadAllText)
-            .Aggregate(string.Empty, string.Concat);
-
-        Assert.DoesNotContain("YellowBattle", sources, StringComparison.Ordinal);
-        Assert.Contains("YellowTokkunStageResult", sources, StringComparison.Ordinal);
-        Assert.Contains("YellowTokkunStageResults", sources, StringComparison.Ordinal);
-        Assert.DoesNotContain("BanacoinPayment", sources, StringComparison.Ordinal);
-        Assert.DoesNotContain("Balance", sources, StringComparison.Ordinal);
-        Assert.DoesNotContain("Coupon", sources, StringComparison.Ordinal);
-        Assert.DoesNotContain("Receipt", sources, StringComparison.Ordinal);
-        Assert.DoesNotContain("Transaction", sources, StringComparison.Ordinal);
-        Assert.DoesNotContain("AdminApi", sources, StringComparison.Ordinal);
-        Assert.DoesNotContain("Ac15ShopSeasonStateEntity", sources, StringComparison.Ordinal);
-        Assert.DoesNotContain("SharedShopSeasonState", sources, StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public void YellowBanacoinAuthoritySources_DoNotExistOutsideStatelessRoutes()
-    {
-        var root = FindRepoRoot();
-        var files = new[]
-            {
-                Path.Combine(root, "Domain", "Entities"),
-                Path.Combine(root, "Application", "Abstractions"),
-                Path.Combine(root, "Infrastructure", "Persistence"),
-                Path.Combine(root, "Adapters.AdminApi"),
-                Path.Combine(root, "TaikoWebUI"),
-                Path.Combine(root, "Host", "Configurations")
-            }
-            .Where(Directory.Exists)
-            .SelectMany(path => Directory.EnumerateFiles(path, "*.*", SearchOption.AllDirectories))
-            .Where(path => path.EndsWith(".cs", StringComparison.OrdinalIgnoreCase)
-                || path.EndsWith(".razor", StringComparison.OrdinalIgnoreCase)
-                || path.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
-            .ToArray();
-
-        foreach (var file in files)
-        {
-            var source = File.ReadAllText(file);
-
-            Assert.DoesNotContain("BanacoinWallet", source, StringComparison.Ordinal);
-            Assert.DoesNotContain("BanacoinPaymentState", source, StringComparison.Ordinal);
-            Assert.DoesNotContain("BanacoinCoupon", source, StringComparison.Ordinal);
-            Assert.DoesNotContain("BanacoinReceipt", source, StringComparison.Ordinal);
-            Assert.DoesNotContain("BanacoinTransaction", source, StringComparison.Ordinal);
-            Assert.DoesNotContain("YellowBanacoin", source, StringComparison.Ordinal);
-            Assert.DoesNotContain("YellowPayment", source, StringComparison.Ordinal);
-            Assert.DoesNotContain("YellowCoupon", source, StringComparison.Ordinal);
-            Assert.DoesNotContain("YellowReceipt", source, StringComparison.Ordinal);
-            Assert.DoesNotContain("YellowTransaction", source, StringComparison.Ordinal);
-            Assert.DoesNotContain("BnidResult", source, StringComparison.Ordinal);
-            Assert.DoesNotContain("Chid", source, StringComparison.Ordinal);
-        }
-    }
-
-    [Fact]
-    public void YellowDaniPersistenceSources_DoNotReuseBlueOrGreenDanEntities()
-    {
-        var root = FindRepoRoot();
-        var yellowSources = new[]
-            {
-                Path.Combine(root, "Application", "Common", "YellowDanHelpers.cs"),
-                Path.Combine(root, "Domain", "Entities", "DanScoreDatumYellow.cs"),
-                Path.Combine(root, "Domain", "Entities", "DanStageScoreDatumYellow.cs"),
-                Path.Combine(root, "Infrastructure", "Persistence", "TaikoDbContext.Yellow.cs"),
-                Path.Combine(root, "Application", "Abstractions", "ITaikoDbContext.Yellow.cs")
-            }
-            .Select(File.ReadAllText)
-            .Aggregate(string.Empty, string.Concat);
-
-        Assert.Contains("DanScoreDatumYellow", yellowSources, StringComparison.Ordinal);
-        Assert.Contains("DanStageScoreDatumYellow", yellowSources, StringComparison.Ordinal);
-        Assert.Contains("DanScoreDatum_Yellow", yellowSources, StringComparison.Ordinal);
-        Assert.Contains("DanStageScoreDatum_Yellow", yellowSources, StringComparison.Ordinal);
-        Assert.DoesNotContain("DanScoreDataBlue", yellowSources, StringComparison.Ordinal);
-        Assert.DoesNotContain("DanScoreDataGreen", yellowSources, StringComparison.Ordinal);
-        Assert.DoesNotContain("DanStageScoreDataBlue", yellowSources, StringComparison.Ordinal);
-        Assert.DoesNotContain("DanStageScoreDataGreen", yellowSources, StringComparison.Ordinal);
-        Assert.DoesNotContain("BlueDanHelpers", yellowSources, StringComparison.Ordinal);
-        Assert.DoesNotContain("GreenDanHelpers", yellowSources, StringComparison.Ordinal);
-    }
-
-    private static string FindRepoRoot()
-    {
-        for (var directory = new DirectoryInfo(AppContext.BaseDirectory);
-             directory is not null;
-             directory = directory.Parent)
-        {
-            if (File.Exists(Path.Combine(directory.FullName, "TaikoLocalServer.slnx")))
-            {
-                return directory.FullName;
-            }
-        }
-
-        throw new InvalidOperationException("Could not find TaikoLocalServer.slnx.");
-    }
 }

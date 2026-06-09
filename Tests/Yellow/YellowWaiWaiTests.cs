@@ -6,25 +6,6 @@ namespace TaikoLocalServer.Tests.Yellow;
 public sealed class YellowWaiWaiTests
 {
     [Fact]
-    public void YellowFinalGeneratedWire_RecordsWaiWaiUploadAndBaidReadbackSurface()
-    {
-        Assert.NotNull(typeof(PlayResultRequest).GetProperty(nameof(PlayResultRequest.WaiwaiTutorialFlg)));
-        Assert.NotNull(typeof(BAIDResponse).GetProperty(nameof(BAIDResponse.WaiwaiTutorialFlg)));
-        Assert.NotNull(typeof(PlayResultRequest.StageData).GetProperty(nameof(PlayResultRequest.StageData.WaiwaiResult)));
-        Assert.NotNull(typeof(PlayResultRequest.StageData).GetProperty(nameof(PlayResultRequest.StageData.WaiwaiGauge)));
-        Assert.Null(typeof(UserDataResponse).GetProperty("WaiwaiTutorialFlg"));
-    }
-
-    [Fact]
-    public void YellowUserDataMapper_DoesNotInventWaiWaiTutorialReadback()
-    {
-        var response = UserDataMappers.Map(new CommonUserDataResponse { Result = 1 });
-
-        Assert.Null(typeof(UserDataResponse).GetProperty("WaiwaiTutorialFlg"));
-        Assert.Equal(1u, response.Result);
-    }
-
-    [Fact]
     public void YellowPlayResultMapper_MapsOnlyProtocolBackedWaiWaiStageFacts()
     {
         var request = CreateWireRequest(1);

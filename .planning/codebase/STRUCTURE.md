@@ -159,8 +159,8 @@ TaikoLocalServer/
 
 **Testing:**
 - `Tests/Tests.csproj`: test project references all runtime layers.
-- `Tests/Green/`: Green protocol, catalog, mapper, handler, and route tests.
-- `Tests/Blue/`: Blue route, catalog, mapper, handler, and source-guard tests.
+- `Tests/Green/`: Green protocol-byte, catalog/parser, mapper-classification, handler, and persistence-boundary tests.
+- `Tests/Blue/`: Blue catalog/parser, mapper-classification, handler, and persistence-boundary tests.
 - `Tests/WebUi/`: WebUI services and page behavior tests.
 - `Tests/AllnetMucha/`: AllNet/Mucha controller tests.
 - `Tests/Ac15/`: shared AC15 catalog loader tests.

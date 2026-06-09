@@ -47,8 +47,8 @@ Active milestone: **v1.2 Yellow AC15 Support**
 1. Yellow route/version evidence records supported endpoints, startup/version ownership, direct-protobuf expectations, and unresolved gaps.
 2. Yellow adapter project compiles generated Yellow wire DTOs from `proto/yellow/yellow.proto` and `proto/yellow/vsinterface.proto`.
 3. Host settings and application-part registration enable Yellow routes only when Yellow is configured.
-4. Route tests prove Yellow-supported routes exist and disabled Yellow routes are absent.
-5. Source/route/proto tests prove Blue battle behavior is absent from Yellow.
+4. Runtime behavior checks prove Yellow-supported endpoints are gated by enabled-era configuration.
+5. Behavior and persistence-boundary tests prove Blue battle behavior is absent from Yellow without source, route-inventory, or generated-protobuf assertions.
 
 **Plans:** 3/3 plans complete
 
@@ -216,7 +216,7 @@ Plans:
 
 **Success criteria:**
 
-1. Focused Yellow and shared AC15 tests cover route, mapper, catalog, handler, EF, no-cross-era-write, no-battle, Tokkun, WaiWai, crown encoding, and AdminApi/WebUI behavior.
+1. Focused Yellow and shared AC15 tests cover evidence-backed mapper classification, catalog/parser behavior, handler persistence, SQLite readback, no-cross-era/no-battle boundaries, Tokkun, WaiWai, crown encoding, and AdminApi/WebUI behavior.
 2. Full `dotnet test Tests/Tests.csproj` passes.
 3. Temp-output Host build passes.
 4. Yellow normal and Tokkun cabinet/RPCS3 smoke evidence is recorded.

@@ -84,38 +84,6 @@ public sealed class BlueBattlePlayResultMapperTests
         Assert.Equal(765u, token.TokenValue);
     }
 
-    [Fact]
-    public void MapperSources_DoNotReferenceCrossEraBattleTruth()
-    {
-        var root = FindRepoRoot();
-        var files = new[]
-        {
-            Path.Combine(root, "Application", "Dtos", "CommonPlayResultData.BlueBattle.cs"),
-            Path.Combine(root, "Adapters.GameProtocol.Blue", "Mappers", "PlayResultMappers.cs"),
-            Path.Combine(root, "Tests", "Blue", "BlueBattlePlayResultMapperTests.cs")
-        };
-        var forbidden = new[]
-        {
-            "Green" + "AiBattle",
-            "Green" + "StageModeInterpreter",
-            "Green" + "Ghost",
-            "Green" + "GhostTokens",
-            "Green" + "GhostWinnings",
-            "Adapters.GameProtocol." + "Green",
-            "StageMode" + " == 3",
-            "StageMode" + " == 4"
-        };
-
-        foreach (var file in files)
-        {
-            var source = File.ReadAllText(file);
-            foreach (var token in forbidden)
-            {
-                Assert.DoesNotContain(token, source, StringComparison.Ordinal);
-            }
-        }
-    }
-
     private static PlayResultRequest CreateRequest() => new()
     {
         Baid = 1,
@@ -212,18 +180,4 @@ public sealed class BlueBattlePlayResultMapperTests
         return release;
     }
 
-    private static string FindRepoRoot()
-    {
-        for (var directory = new DirectoryInfo(AppContext.BaseDirectory);
-             directory is not null;
-             directory = directory.Parent)
-        {
-            if (File.Exists(Path.Combine(directory.FullName, "TaikoLocalServer.slnx")))
-            {
-                return directory.FullName;
-            }
-        }
-
-        throw new InvalidOperationException("Could not find TaikoLocalServer.slnx.");
-    }
 }

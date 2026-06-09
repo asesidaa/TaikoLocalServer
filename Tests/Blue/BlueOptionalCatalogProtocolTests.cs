@@ -120,18 +120,6 @@ public sealed class BlueOptionalCatalogProtocolTests
         Assert.NotNull(movies);
     }
 
-    [Fact]
-    public void HostProject_CopiesBlueOptionalDataFilesByBlueFileName()
-    {
-        var project = File.ReadAllText(Path.Combine(FindRepoRoot(), "Host", "Host.csproj"));
-
-        Assert.Contains(@"wwwroot\data\blue\blue_event_folder_data.json", project, StringComparison.Ordinal);
-        Assert.Contains(@"wwwroot\data\blue\blue_telop_data.json", project, StringComparison.Ordinal);
-        Assert.Contains(@"wwwroot\data\blue\blue_movie_data.json", project, StringComparison.Ordinal);
-        Assert.DoesNotContain(@"wwwroot\data\blue\telop_data.json", project, StringComparison.Ordinal);
-        Assert.DoesNotContain(@"wwwroot\data\blue\movie_data.json", project, StringComparison.Ordinal);
-    }
-
     private static BlueHandlerFixture.TestBlueCatalog CreateCatalogWithFolders()
         => new(eventFolders: new Dictionary<uint, EventFolderData>
         {
