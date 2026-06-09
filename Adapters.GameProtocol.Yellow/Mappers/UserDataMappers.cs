@@ -5,57 +5,33 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
 [Mapper]
 public static partial class UserDataMappers
 {
-    public static UserDataResponse Map(CommonUserDataResponse common)
-    {
-        var response = new UserDataResponse
-        {
-            Result = common.Result,
-            AryFavoriteSongNoes = common.AryFavoriteSongNoes,
-            AryRecentSongNoes = common.AryRecentSongNoes,
-            SongHashVer = common.SongHashVer,
-            HashReleaseSongFlg = common.ReleaseSongFlg,
-            OptionFlg = common.OptionFlg,
-            ToneFlg = common.ToneFlg,
-            TitleFlg = common.TitleFlg,
-            CategJpopCnt = common.CategJpopCnt.GetValueOrDefault(),
-            CategAnimeCnt = common.CategAnimeCnt.GetValueOrDefault(),
-            CategDoyoCnt = common.CategDoyoCnt.GetValueOrDefault(),
-            CategVarietyCnt = common.CategVarietyCnt.GetValueOrDefault(),
-            CategClassicCnt = common.CategClassicCnt.GetValueOrDefault(),
-            CategGameCnt = common.CategGameCnt.GetValueOrDefault(),
-            CategNamcoCnt = common.CategNamcoCnt.GetValueOrDefault(),
-            CategVocaloidCnt = common.CategVocaloidCnt.GetValueOrDefault(),
-            SongPushedCnt = common.SongPushedCnt.GetValueOrDefault(),
-            SongFavoriteCnt = common.SongFavoriteCnt.GetValueOrDefault(),
-            SongRecentCnt = common.SongRecentCnt,
-            TotalCreditCnt = common.TotalCreditCnt,
-            PrevAreaCode = common.PrevAreaCode.GetValueOrDefault(),
-            ConsecAreaCnt = common.ConsecAreaCnt.GetValueOrDefault(),
-            RecommendSong = common.RecommendSong.GetValueOrDefault(),
-            RecommendBestSongs = common.RecommendBestSong.ToArray(),
-            DispLevelTotal = common.DispLevelTotal,
-            DispLevelChassis = common.DispLevelChassis,
-            DispLevelSelf = common.DispLevelSelf,
-            DefaultOptionSetting = common.DefaultOptionSetting,
-            DefaultShinSetting = common.DefaultShinSetting.GetValueOrDefault(),
-            DifficultyPlayedCourse = common.DifficultyPlayedCourse,
-            DifficultyPlayedStar = common.DifficultyPlayedStar,
-            IsChallengecompe = common.IsChallengeCompe.GetValueOrDefault(),
-            IsTojiru = common.IsTojiru.GetValueOrDefault(),
-            IsDevil = common.IsDevilYellow.GetValueOrDefault(),
-            IsExplain = common.IsExplainYellow.GetValueOrDefault()
-        };
+    [MapProperty(nameof(CommonUserDataResponse.ReleaseSongFlg), nameof(UserDataResponse.HashReleaseSongFlg))]
+    [MapProperty(nameof(CommonUserDataResponse.RecommendBestSong), nameof(UserDataResponse.RecommendBestSongs))]
+    [MapProperty(nameof(CommonUserDataResponse.CategJpopCnt), nameof(UserDataResponse.CategJpopCnt), Use = nameof(MapPresentUInt32))]
+    [MapProperty(nameof(CommonUserDataResponse.CategAnimeCnt), nameof(UserDataResponse.CategAnimeCnt), Use = nameof(MapPresentUInt32))]
+    [MapProperty(nameof(CommonUserDataResponse.CategDoyoCnt), nameof(UserDataResponse.CategDoyoCnt), Use = nameof(MapPresentUInt32))]
+    [MapProperty(nameof(CommonUserDataResponse.CategVarietyCnt), nameof(UserDataResponse.CategVarietyCnt), Use = nameof(MapPresentUInt32))]
+    [MapProperty(nameof(CommonUserDataResponse.CategClassicCnt), nameof(UserDataResponse.CategClassicCnt), Use = nameof(MapPresentUInt32))]
+    [MapProperty(nameof(CommonUserDataResponse.CategGameCnt), nameof(UserDataResponse.CategGameCnt), Use = nameof(MapPresentUInt32))]
+    [MapProperty(nameof(CommonUserDataResponse.CategNamcoCnt), nameof(UserDataResponse.CategNamcoCnt), Use = nameof(MapPresentUInt32))]
+    [MapProperty(nameof(CommonUserDataResponse.CategVocaloidCnt), nameof(UserDataResponse.CategVocaloidCnt), Use = nameof(MapPresentUInt32))]
+    [MapProperty(nameof(CommonUserDataResponse.SongPushedCnt), nameof(UserDataResponse.SongPushedCnt), Use = nameof(MapPresentUInt32))]
+    [MapProperty(nameof(CommonUserDataResponse.SongFavoriteCnt), nameof(UserDataResponse.SongFavoriteCnt), Use = nameof(MapPresentUInt32))]
+    [MapProperty(nameof(CommonUserDataResponse.PrevAreaCode), nameof(UserDataResponse.PrevAreaCode), Use = nameof(MapPresentUInt32))]
+    [MapProperty(nameof(CommonUserDataResponse.ConsecAreaCnt), nameof(UserDataResponse.ConsecAreaCnt), Use = nameof(MapPresentUInt32))]
+    [MapProperty(nameof(CommonUserDataResponse.RecommendSong), nameof(UserDataResponse.RecommendSong), Use = nameof(MapPresentUInt32))]
+    [MapProperty(nameof(CommonUserDataResponse.DefaultShinSetting), nameof(UserDataResponse.DefaultShinSetting), Use = nameof(MapPresentBoolean))]
+    [MapProperty(nameof(CommonUserDataResponse.DispTaikojukuDan), nameof(UserDataResponse.DispTaikojukuDan), Use = nameof(MapDispTaikojukuDan))]
+    [MapProperty(nameof(CommonUserDataResponse.IsChallengeCompe), nameof(UserDataResponse.IsChallengecompe), Use = nameof(MapPresentBoolean))]
+    [MapProperty(nameof(CommonUserDataResponse.IsTojiru), nameof(UserDataResponse.IsTojiru), Use = nameof(MapPresentBoolean))]
+    [MapProperty(nameof(CommonUserDataResponse.IsDevilYellow), nameof(UserDataResponse.IsDevil), Use = nameof(MapPresentBoolean))]
+    [MapProperty(nameof(CommonUserDataResponse.IsExplainYellow), nameof(UserDataResponse.IsExplain), Use = nameof(MapPresentBoolean))]
+    [MapperIgnoreTarget(nameof(UserDataResponse.AryFriendInfoes))]
+    public static partial UserDataResponse Map(CommonUserDataResponse common);
 
-        response.DispTaikojukuDan = common.DispTaikojukuDan is { } dispTaikojukuDan
-                                    && dispTaikojukuDan is >= 1 and <= 25
-            ? dispTaikojukuDan
-            : 1u;
+    private static uint? MapPresentUInt32(uint? value) => value.GetValueOrDefault();
 
-        if (common.TokkunTutorialFlg is { } tokkunTutorialFlg)
-        {
-            response.TokkunTutorialFlg = tokkunTutorialFlg;
-        }
+    private static bool? MapPresentBoolean(bool? value) => value.GetValueOrDefault();
 
-        return response;
-    }
+    private static uint? MapDispTaikojukuDan(uint? value) => value is >= 1 and <= 25 ? value : 1u;
 }

@@ -1,6 +1,9 @@
+using Riok.Mapperly.Abstractions;
+
 namespace TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
 
-public static class TournamentMappers
+[Mapper]
+public static partial class TournamentMappers
 {
     public static TournamentcheckResponse Map(CommonTournamentCheckResponse common)
     {
@@ -23,11 +26,6 @@ public static class TournamentMappers
         return response;
     }
 
-    private static TournamentcheckResponse.GachainfoData MapGacha(
-        CommonTournamentCheckResponse.GachainfoData common)
-        => new()
-        {
-            NormalGachaFlg = common.NormalGachaFlg,
-            RareGachaFlg = common.RareGachaFlg
-        };
+    private static partial TournamentcheckResponse.GachainfoData MapGacha(
+        CommonTournamentCheckResponse.GachainfoData common);
 }

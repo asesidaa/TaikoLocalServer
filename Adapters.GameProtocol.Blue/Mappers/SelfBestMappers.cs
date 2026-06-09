@@ -13,20 +13,13 @@ public static partial class SelfBestMappers
             Level = common.Level
         };
 
-        response.ArySelfbestScores.AddRange(common.ArySelfbestScores.Select(row => new SelfBestResponse.SelfBestData
-        {
-            SongNo = row.SongNo,
-            SelfBestScore = row.SelfBestScore,
-            UraBestScore = row.UraBestScore
-        }));
+        response.ArySelfbestScores.AddRange(common.ArySelfbestScores.Select(MapSelfBestData));
 
-        response.AryShinSelfbestScores.AddRange(common.AryShinSelfbestScores.Select(row => new SelfBestResponse.SelfBestData
-        {
-            SongNo = row.SongNo,
-            SelfBestScore = row.SelfBestScore,
-            UraBestScore = row.UraBestScore
-        }));
+        response.AryShinSelfbestScores.AddRange(common.AryShinSelfbestScores.Select(MapSelfBestData));
 
         return response;
     }
+
+    [MapperRequiredMapping(RequiredMappingStrategy.Target)]
+    private static partial SelfBestResponse.SelfBestData MapSelfBestData(CommonSelfBestResponse.SelfBestData row);
 }

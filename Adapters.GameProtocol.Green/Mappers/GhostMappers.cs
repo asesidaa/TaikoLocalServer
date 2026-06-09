@@ -13,30 +13,13 @@ public static partial class GhostMappers
             ReleaseInfoFlag = common.ReleaseInfoFlag,
             PlayedSongFlag = common.PlayedSongFlag,
             TotalWinnings = common.TotalWinnings,
-            ghost_perf_data = new GetghostdataResponse.GhostPerfData
-            {
-                InputMedian = common.GhostPerfData.InputMedian,
-                InputVariance = common.GhostPerfData.InputVariance
-            },
-            GhostRecordData = new GetghostdataResponse.GhostRankData
-            {
-                RankId = common.GhostRecordData.RankId,
-                WinPoint = common.GhostRecordData.WinPoint,
-                CertifiedLevelId = common.GhostRecordData.CertifiedLevelId
-            }
+            ghost_perf_data = MapPerfData(common.GhostPerfData),
+            GhostRecordData = MapRankDataCore(common.GhostRecordData)
         };
 
         response.GhostRecordData.AryWinningsDatas.AddRange(common.GhostRecordData.AryWinningsData
-            .Select(row => new GetghostdataResponse.GhostRankData.GhostWinningsData
-            {
-                LevelId = row.LevelId,
-                Winnings = row.Winnings
-            }));
-        response.AryTokenDatas.AddRange(common.AryTokenData.Select(row => new GetghostdataResponse.GhostTokenData
-        {
-            TokenId = row.TokenId,
-            TokenValue = row.TokenValue
-        }));
+            .Select(MapWinningsData));
+        response.AryTokenDatas.AddRange(common.AryTokenData.Select(MapTokenData));
 
         return response;
     }
@@ -44,15 +27,24 @@ public static partial class GhostMappers
     public static GetghostscoreResponse Map(CommonGhostScoreResponse common)
     {
         var response = new GetghostscoreResponse { Result = common.Result };
-        response.AryBestSectionDatas.AddRange(common.AryBestSectionData.Select(row => new GetghostscoreResponse.GhostBestSectionData
-        {
-            SectionNo = row.SectionNo,
-            GoodCnt = row.GoodCnt,
-            OkCnt = row.OkCnt,
-            NgCnt = row.NgCnt,
-            PoundCnt = row.PoundCnt
-        }));
+        response.AryBestSectionDatas.AddRange(common.AryBestSectionData.Select(MapBestSectionData));
 
         return response;
     }
+
+    private static partial GetghostdataResponse.GhostPerfData MapPerfData(
+        CommonGhostDataResponse.GhostPerfDataInfo common);
+
+    [MapperRequiredMapping(RequiredMappingStrategy.Target)]
+    private static partial GetghostdataResponse.GhostRankData MapRankDataCore(
+        CommonGhostDataResponse.GhostRankData common);
+
+    private static partial GetghostdataResponse.GhostRankData.GhostWinningsData MapWinningsData(
+        CommonGhostDataResponse.GhostWinningsData common);
+
+    private static partial GetghostdataResponse.GhostTokenData MapTokenData(
+        CommonGhostDataResponse.GhostTokenData common);
+
+    private static partial GetghostscoreResponse.GhostBestSectionData MapBestSectionData(
+        CommonGhostScoreResponse.GhostBestSectionData common);
 }

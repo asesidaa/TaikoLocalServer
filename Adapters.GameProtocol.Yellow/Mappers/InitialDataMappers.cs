@@ -1,6 +1,9 @@
+using Riok.Mapperly.Abstractions;
+
 namespace TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
 
-public static class InitialDataMappers
+[Mapper]
+public static partial class InitialDataMappers
 {
     public static InitialdatacheckResponse Map(CommonInitialDataCheckResponse common)
     {
@@ -25,11 +28,6 @@ public static class InitialDataMappers
         return response;
     }
 
-    private static InitialdatacheckResponse.InformationData MapInformation(
-        CommonInitialDataCheckResponse.InformationData common)
-        => new()
-        {
-            InfoId = common.InfoId,
-            VerupNo = common.VerupNo
-        };
+    private static partial InitialdatacheckResponse.InformationData MapInformation(
+        CommonInitialDataCheckResponse.InformationData common);
 }

@@ -1,6 +1,9 @@
+using Riok.Mapperly.Abstractions;
+
 namespace TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
 
-public static class TaikojukuMappers
+[Mapper]
+public static partial class TaikojukuMappers
 {
     private const int MaxSongsPerPack = 10;
     private const uint MaxYellowSongNo = BlueProtocolBytes.SongFlagBytes * 8 - 1;
@@ -32,14 +35,7 @@ public static class TaikojukuMappers
                 VerupNo = pack.VerupNo
             };
 
-            foreach (var song in songs)
-            {
-                wirePack.AryJukusongDatas.Add(new TaikojukuResponse.JukupackData.JukusongData
-                {
-                    SongNo = song.SongNo,
-                    Level = song.Level
-                });
-            }
+            wirePack.AryJukusongDatas.AddRange(songs.Select(MapSong));
 
             response.AryJukupackDatas.Add(wirePack);
         }
@@ -51,4 +47,7 @@ public static class TaikojukuMappers
         => song.SongNo is > 0
             && song.SongNo <= MaxYellowSongNo
             && song.Level <= MaxYellowCourseLevel;
+
+    private static partial TaikojukuResponse.JukupackData.JukusongData MapSong(
+        CommonTaikojukuResponse.Song song);
 }

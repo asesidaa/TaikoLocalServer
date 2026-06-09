@@ -37,14 +37,7 @@ public static partial class TaikojukuMappers
                 VerupNo = pack.VerupNo
             };
 
-            foreach (var song in songs)
-            {
-                wirePack.AryJukusongDatas.Add(new TaikojukuResponse.JukupackData.JukusongData
-                {
-                    SongNo = song.SongNo,
-                    Level = song.Level
-                });
-            }
+            wirePack.AryJukusongDatas.AddRange(songs.Select(MapSong));
 
             response.AryJukupackDatas.Add(wirePack);
         }
@@ -59,4 +52,7 @@ public static partial class TaikojukuMappers
         => song.SongNo is > 0
             && song.SongNo <= MaxBlueSongNo
             && song.Level <= MaxBlueCourseLevel;
+
+    private static partial TaikojukuResponse.JukupackData.JukusongData MapSong(
+        CommonTaikojukuResponse.Song song);
 }

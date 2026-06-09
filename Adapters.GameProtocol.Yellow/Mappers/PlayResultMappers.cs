@@ -31,9 +31,9 @@ public static partial class PlayResultMappers
             BonusDailyFlg = request.BonusDailyFlg,
             BonusWeeklyFlg = request.BonusWeeklyFlg,
             BonusMonthlyFlg = request.BonusMonthlyFlg,
-            ItemshopTutorialFlg = request.ShouldSerializeItemshopTutorialFlg() ? request.ItemshopTutorialFlg : null,
-            IsDevil = request.ShouldSerializeIsDevil() ? request.IsDevil : null,
-            IsExplain = request.ShouldSerializeIsExplain() ? request.IsExplain : null,
+            ItemshopTutorialFlg = request.ItemshopTutorialFlg,
+            IsDevil = request.IsDevil,
+            IsExplain = request.IsExplain,
             AryPlayCostume = MapCostume(request.AryPlayCostume),
             AryCurrentCostume = MapCostume(request.AryCurrentCostume),
             HasAryCurrentCostume = request.AryCurrentCostume is not null,
@@ -41,24 +41,24 @@ public static partial class PlayResultMappers
             PlayerAge = request.PlayerAge,
             PlayMode = request.PlayMode,
             IsTokkunPlayResult = request.PlayMode == (uint)PlayMode.Tokkun,
-            TokkunTutorialFlg = request.ShouldSerializeTokkunTutorialFlg() ? request.TokkunTutorialFlg : null,
+            TokkunTutorialFlg = request.TokkunTutorialFlg,
             TokkunStageData = MapTokkunStageData(request.AryTokkunstageInfo),
             AreaCode = request.AreaCode,
             Reserved = request.Reserved ?? [],
-            LowerlimitAge = request.ShouldSerializeLowerlimitAge() ? request.LowerlimitAge : null,
-            UpperlimitAge = request.ShouldSerializeUpperlimitAge() ? request.UpperlimitAge : null,
-            AgeScore = request.ShouldSerializeAgeScore() ? request.AgeScore : null,
-            EstimationCount = request.ShouldSerializeEstimationCount() ? request.EstimationCount : null,
-            DanResult = request.ShouldSerializeDanResult() ? request.DanResult : 0,
+            LowerlimitAge = request.LowerlimitAge,
+            UpperlimitAge = request.UpperlimitAge,
+            AgeScore = request.AgeScore,
+            EstimationCount = request.EstimationCount,
+            DanResult = request.DanResult.GetValueOrDefault(),
             AryCollaboInfo = request.AryCollaboInfoes.Select(MapCollabo).ToList(),
-            TournamentMode = request.ShouldSerializeTournamentMode() ? request.TournamentMode : 0,
-            Accesstoken = request.ShouldSerializeAccesstoken() ? request.Accesstoken : string.Empty,
+            TournamentMode = request.TournamentMode.GetValueOrDefault(),
+            Accesstoken = request.Accesstoken ?? string.Empty,
             ContentInfo = request.ContentInfo ?? [],
-            DifficultyPlayedCourse = request.DifficultyPlayedCourse,
-            DifficultyPlayedStar = request.DifficultyPlayedStar,
-            HasDifficultyPlayedCourse = request.ShouldSerializeDifficultyPlayedCourse(),
-            HasDifficultyPlayedStar = request.ShouldSerializeDifficultyPlayedStar(),
-            WaiwaiTutorialFlg = request.ShouldSerializeWaiwaiTutorialFlg() ? request.WaiwaiTutorialFlg : null
+            DifficultyPlayedCourse = request.DifficultyPlayedCourse.GetValueOrDefault(),
+            DifficultyPlayedStar = request.DifficultyPlayedStar.GetValueOrDefault(),
+            HasDifficultyPlayedCourse = request.DifficultyPlayedCourse is not null,
+            HasDifficultyPlayedStar = request.DifficultyPlayedStar is not null,
+            WaiwaiTutorialFlg = request.WaiwaiTutorialFlg
         };
     }
 
@@ -78,7 +78,7 @@ public static partial class PlayResultMappers
             NgCnt = stage.NgCnt,
             PoundCnt = stage.PoundCnt,
             ComboCnt = stage.ComboCnt,
-            HitCnt = stage.ShouldSerializeHitCnt() ? stage.HitCnt : 0,
+            HitCnt = stage.HitCnt.GetValueOrDefault(),
             OptionFlg = stage.OptionFlg ?? [],
             ToneFlg = stage.ToneFlg ?? [],
             AryChallengeIds = stage.AryChallengeIds.Select(MapCompe).ToList(),
@@ -89,8 +89,8 @@ public static partial class PlayResultMappers
             IsFavorite = stage.IsFavorite,
             IsRecent = stage.IsRecent,
             IsPapamama = stage.IsPapamama,
-            PlayDan = stage.PlayDan == 0 ? null : stage.PlayDan,
-            SoulGauge = stage.ShouldSerializeSoulGauge() ? stage.SoulGauge : null,
+            PlayDan = stage.PlayDan is > 0 ? stage.PlayDan : null,
+            SoulGauge = stage.SoulGauge,
             StageMode = stage.StageMode,
             SelectedFolderId = stage.SelectedFolderId,
             WaiwaiResult = stage.WaiwaiResult,
@@ -98,38 +98,19 @@ public static partial class PlayResultMappers
         };
     }
 
-    private static CommonPlayResultData.ResultcompeData MapCompe(PlayResultRequest.StageData.ResultcompeData data)
-    {
-        return new CommonPlayResultData.ResultcompeData
-        {
-            CompeId = data.CompeId,
-            TrackNo = data.TrackNo
-        };
-    }
+    private static partial CommonPlayResultData.ResultcompeData MapCompe(
+        PlayResultRequest.StageData.ResultcompeData data);
 
     private static CommonPlayResultData.CostumeData MapCostume(PlayResultRequest.CostumeData? costume)
     {
         return costume is null
             ? new CommonPlayResultData.CostumeData()
-            : new CommonPlayResultData.CostumeData
-            {
-                Costume1 = costume.Costume1,
-                Costume2 = costume.Costume2,
-                Costume3 = costume.Costume3,
-                Costume4 = costume.Costume4,
-                Costume5 = costume.Costume5
-            };
+            : MapCostumeData(costume);
     }
 
-    private static CommonPlayResultData.CollaboData MapCollabo(PlayResultRequest.CollaboData collabo)
-    {
-        return new CommonPlayResultData.CollaboData
-        {
-            CollaboSelect = collabo.CollaboSelect,
-            CollaboId = collabo.ShouldSerializeCollaboId() ? collabo.CollaboId : null,
-            CollaboResult = collabo.ShouldSerializeCollaboResult() ? collabo.CollaboResult : null
-        };
-    }
+    private static partial CommonPlayResultData.CostumeData MapCostumeData(PlayResultRequest.CostumeData costume);
+
+    private static partial CommonPlayResultData.CollaboData MapCollabo(PlayResultRequest.CollaboData collabo);
 
     private static CommonPlayResultData.TokkunStageDataDto? MapTokkunStageData(
         PlayResultRequest.TokkunstageData? data)

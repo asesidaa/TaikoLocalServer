@@ -51,17 +51,7 @@ public static partial class BattleUserDataMappers
     private static BattleUserDataResponse.BattleUserNpcData MapNpcData(
         CommonBattleUserDataResponse.BattleUserNpcData common)
     {
-        var response = new BattleUserDataResponse.BattleUserNpcData
-        {
-            NpcId = common.NpcId,
-            TotalExp = common.TotalExp,
-            MaxDpn = common.MaxDpn,
-            NpcCostumeId = common.NpcCostumeId,
-            NpcCostumeFlg = common.NpcCostumeFlg,
-            LastSelectSpecial1 = common.LastSelectSpecial1,
-            LastSelectSpecial2 = common.LastSelectSpecial2,
-            LastSelectSpecial3 = common.LastSelectSpecial3
-        };
+        var response = MapNpcDataCore(common);
 
         if (common.ReleaseSpecialFlg is not null)
         {
@@ -71,11 +61,9 @@ public static partial class BattleUserDataMappers
         return response;
     }
 
-    private static BattleUserDataResponse.BattleUserTokenData MapTokenData(
-        CommonBattleUserDataResponse.BattleUserTokenData common)
-        => new()
-        {
-            TokenId = common.TokenId,
-            TokenValue = common.TokenValue
-        };
+    private static partial BattleUserDataResponse.BattleUserNpcData MapNpcDataCore(
+        CommonBattleUserDataResponse.BattleUserNpcData common);
+
+    private static partial BattleUserDataResponse.BattleUserTokenData MapTokenData(
+        CommonBattleUserDataResponse.BattleUserTokenData common);
 }

@@ -5,8 +5,6 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Green.Mappers;
 [Mapper]
 public static partial class ChallengeCompeMappers
 {
-    public static ChallengeCompeResponse Map(CommonChallengeCompeResponse common)
-    {
-        return new ChallengeCompeResponse { Result = common.Result };
-    }
+    [MapperRequiredMapping(RequiredMappingStrategy.Target)]
+    public static partial ChallengeCompeResponse Map(CommonChallengeCompeResponse common);
 }

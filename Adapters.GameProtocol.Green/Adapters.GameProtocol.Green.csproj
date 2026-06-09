@@ -3,7 +3,6 @@
   <PropertyGroup>
     <RootNamespace>TaikoLocalServer.Adapters.GameProtocol.Green</RootNamespace>
     <AssemblyName>TaikoLocalServer.Adapters.GameProtocol.Green</AssemblyName>
-    <NoWarn>$(NoWarn);RMG020;RMG012</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

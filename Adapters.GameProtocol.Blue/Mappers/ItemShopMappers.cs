@@ -16,9 +16,9 @@ public static partial class ItemShopMappers
             request.Baid,
             GameEra.Blue,
             request.ItemNo,
-            request.ShouldSerializeItemType() ? request.ItemType : null,
-            request.ShouldSerializeItemId() ? request.ItemId : null,
-            request.ShouldSerializeItemPrice() ? request.ItemPrice : null);
+            request.ItemType,
+            request.ItemId,
+            request.ItemPrice);
     }
 
     public static GetitemshopinfoResponse Map(CommonItemShopInfoResponse common)
@@ -35,24 +35,13 @@ public static partial class ItemShopMappers
             BeforecloseDays = common.BeforecloseDays
         };
 
-        response.AryItemshopDatas.AddRange(common.AryItemshopData.Select(item => new GetitemshopinfoResponse.ItemshopData
-        {
-            ItemNo = item.ItemNo,
-            ItemType = item.ItemType,
-            ItemId = item.ItemId,
-            ItemPrice = item.ItemPrice
-        }));
+        response.AryItemshopDatas.AddRange(common.AryItemshopData.Select(MapItemShopData));
 
         return response;
     }
 
-    public static ItempurchaseResponse Map(CommonItemPurchaseResponse common)
-    {
-        return new ItempurchaseResponse
-        {
-            Result = common.Result,
-            TotalGetDonmedal = common.TotalGetDonmedal,
-            TotalUseDonmedal = common.TotalUseDonmedal
-        };
-    }
+    public static partial ItempurchaseResponse Map(CommonItemPurchaseResponse common);
+
+    private static partial GetitemshopinfoResponse.ItemshopData MapItemShopData(
+        CommonItemShopInfoResponse.ItemShopData item);
 }

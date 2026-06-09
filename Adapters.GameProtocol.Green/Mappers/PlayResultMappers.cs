@@ -45,13 +45,13 @@ public static partial class PlayResultMappers
             UpperlimitAge = request.UpperlimitAge,
             AgeScore = request.AgeScore,
             EstimationCount = request.EstimationCount,
-            DanResult = request.DanResult,
+            DanResult = request.DanResult.GetValueOrDefault(),
             Accesstoken = request.Accesstoken,
             ContentInfo = request.ContentInfo ?? [],
-            DifficultyPlayedCourse = request.DifficultyPlayedCourse,
-            DifficultyPlayedStar = request.DifficultyPlayedStar,
-            HasDifficultyPlayedCourse = request.ShouldSerializeDifficultyPlayedCourse(),
-            HasDifficultyPlayedStar = request.ShouldSerializeDifficultyPlayedStar(),
+            DifficultyPlayedCourse = request.DifficultyPlayedCourse.GetValueOrDefault(),
+            DifficultyPlayedStar = request.DifficultyPlayedStar.GetValueOrDefault(),
+            HasDifficultyPlayedCourse = request.DifficultyPlayedCourse is not null,
+            HasDifficultyPlayedStar = request.DifficultyPlayedStar is not null,
             WaiwaiTutorialFlg = request.WaiwaiTutorialFlg,
             GhostReleaseData = MapGhostRelease(request.GhostReleaseData),
             GhostUpdatePerfData = request.GhostUpdatePerfdata is null ? null : new CommonPlayResultData.UpdateGhostPerfData
@@ -74,14 +74,14 @@ public static partial class PlayResultMappers
         {
             SongNo = stage.SongNo,
             Level = stage.Level,
-            PlayResult = stage.PlayResult,
-            PlayScore = stage.PlayScore,
+            PlayResult = stage.PlayResult.GetValueOrDefault(),
+            PlayScore = stage.PlayScore.GetValueOrDefault(),
             GoodCnt = stage.GoodCnt,
             OkCnt = stage.OkCnt,
             NgCnt = stage.NgCnt,
             PoundCnt = stage.PoundCnt,
             ComboCnt = stage.ComboCnt,
-            HitCnt = stage.HitCnt,
+            HitCnt = stage.HitCnt.GetValueOrDefault(),
             OptionFlg = stage.OptionFlg ?? [],
             ToneFlg = stage.ToneFlg ?? [],
             SupportLevel = stage.SupportLevel,
@@ -91,11 +91,11 @@ public static partial class PlayResultMappers
             SelectedFolderId = stage.SelectedFolderId,
             StarLevel = stage.StarLevel,
             SoulGauge = stage.SoulGauge,
-            PlayDan = stage.PlayDan == 0 ? null : stage.PlayDan,
+            PlayDan = stage.PlayDan is > 0 ? stage.PlayDan : null,
             WaiwaiResult = stage.WaiwaiResult,
             WaiwaiGauge = stage.WaiwaiGauge,
             GhostStageData = MapGhostStage(stage.GhostStagedata),
-            StageMode = stage.StageMode,
+            StageMode = stage.StageMode.GetValueOrDefault(),
             IsPapamama = stage.IsPapamama,
             IsPushed = stage.IsPushed
         };
@@ -105,14 +105,7 @@ public static partial class PlayResultMappers
     {
         return costume is null
             ? new CommonPlayResultData.CostumeData()
-            : new CommonPlayResultData.CostumeData
-            {
-                Costume1 = costume.Costume1,
-                Costume2 = costume.Costume2,
-                Costume3 = costume.Costume3,
-                Costume4 = costume.Costume4,
-                Costume5 = costume.Costume5
-            };
+            : MapCostumeData(costume);
     }
 
     private static CommonPlayResultData.UpdateGhostInfoData? MapGhostRelease(
@@ -123,11 +116,7 @@ public static partial class PlayResultMappers
             : new CommonPlayResultData.UpdateGhostInfoData
             {
                 ReleaseInfoId = (ghost.ReleaseInfoIds ?? []).ToList(),
-                AryTokendata = ghost.AryTokendatas.Select(token => new CommonPlayResultData.GhostTokenData
-                {
-                    TokenId = token.TokenId,
-                    TokenValue = token.TokenValue
-                }).ToList()
+                AryTokendata = ghost.AryTokendatas.Select(MapGhostTokenData).ToList()
             };
     }
 
@@ -141,11 +130,7 @@ public static partial class PlayResultMappers
                 RankId = rank.RankId,
                 WinPoint = rank.WinPoint,
                 CertifiedLevelId = rank.CertifiedLevelId,
-                AryWinningsData = rank.AryWinningsDatas.Select(row => new CommonPlayResultData.GhostWinningsData
-                {
-                    LevelId = row.LevelId,
-                    Winnings = row.Winnings
-                }).ToList()
+                AryWinningsData = rank.AryWinningsDatas.Select(MapGhostWinningsData).ToList()
             };
     }
 
@@ -158,14 +143,19 @@ public static partial class PlayResultMappers
             {
                 IsWin = ghost.IsWin,
                 SdCertifiedLevelId = ghost.SdCertifiedLevelId,
-                ArySectionData = ghost.ArySectionDatas.Select(section => new CommonPlayResultData.GhostStageSectionData
-                {
-                    IsWin = section.IsWin,
-                    GoodCnt = section.GoodCnt,
-                    OkCnt = section.OkCnt,
-                    NgCnt = section.NgCnt,
-                    PoundCnt = section.PoundCnt
-                }).ToList()
+                ArySectionData = ghost.ArySectionDatas.Select(MapGhostStageSectionData).ToList()
             };
     }
+
+    private static partial CommonPlayResultData.CostumeData MapCostumeData(
+        PlayResultDataRequest.CostumeData costume);
+
+    private static partial CommonPlayResultData.GhostTokenData MapGhostTokenData(
+        PlayResultDataRequest.UpdateGhostInfoData.GhostTokenData token);
+
+    private static partial CommonPlayResultData.GhostWinningsData MapGhostWinningsData(
+        PlayResultDataRequest.UpdateGhostRankData.UpdateGhostWinningsData row);
+
+    private static partial CommonPlayResultData.GhostStageSectionData MapGhostStageSectionData(
+        PlayResultDataRequest.StageData.GhostStageData.GhostStageSectionData section);
 }

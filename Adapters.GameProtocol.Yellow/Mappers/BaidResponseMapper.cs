@@ -19,14 +19,7 @@ public static partial class BaidResponseMapper
             ColorFace = common.ColorFace,
             ColorBody = common.ColorBody,
             ColorLimb = common.ColorLimb,
-            AryCostumedata = new BAIDResponse.CostumeData
-            {
-                Costume1 = common.CostumeData.ElementAtOrDefault(0),
-                Costume2 = common.CostumeData.ElementAtOrDefault(1),
-                Costume3 = common.CostumeData.ElementAtOrDefault(2),
-                Costume4 = common.CostumeData.ElementAtOrDefault(3),
-                Costume5 = common.CostumeData.ElementAtOrDefault(4)
-            },
+            AryCostumedata = MapCostumeData(CostumeProjection.From(common.CostumeData)),
             CostumeFlg1 = Ac15ProtocolBytes.FixedOrZero(common.CostumeFlg1, limits.CostumeFlagBytes),
             CostumeFlg2 = Ac15ProtocolBytes.FixedOrZero(common.CostumeFlg2, limits.CostumeFlagBytes),
             CostumeFlg3 = Ac15ProtocolBytes.FixedOrZero(common.CostumeFlg3, limits.CostumeFlagBytes),
@@ -48,5 +41,23 @@ public static partial class BaidResponseMapper
             Personid = common.PersonId ?? string.Empty,
             WaiwaiTutorialFlg = common.WaiwaiTutorialFlg.GetValueOrDefault()
         };
+    }
+
+    private static partial BAIDResponse.CostumeData MapCostumeData(CostumeProjection projection);
+
+    private readonly record struct CostumeProjection(
+        uint Costume1,
+        uint Costume2,
+        uint Costume3,
+        uint Costume4,
+        uint Costume5)
+    {
+        public static CostumeProjection From(IReadOnlyList<uint> values)
+            => new(
+                values.ElementAtOrDefault(0),
+                values.ElementAtOrDefault(1),
+                values.ElementAtOrDefault(2),
+                values.ElementAtOrDefault(3),
+                values.ElementAtOrDefault(4));
     }
 }

@@ -5,13 +5,6 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Green.Mappers;
 [Mapper]
 public static partial class TournamentMappers
 {
-    public static TournamentcheckResponse Map(CommonTournamentCheckResponse common)
-    {
-        return new TournamentcheckResponse
-        {
-            Result = common.Result,
-            RareRate = common.RareRate,
-            SongHashVer = common.SongHashVer
-        };
-    }
+    [MapperRequiredMapping(RequiredMappingStrategy.Target)]
+    public static partial TournamentcheckResponse Map(CommonTournamentCheckResponse common);
 }

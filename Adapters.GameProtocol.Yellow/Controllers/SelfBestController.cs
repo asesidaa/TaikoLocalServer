@@ -10,7 +10,7 @@ public class SelfBestController : BaseProtocolController<SelfBestController>
     {
         Logger.LogInformation("Yellow SelfBest request: {@Request}", request);
         var common = await Mediator.Send(
-            new GetSelfBestQuery(request.Baid, GameEra.Yellow, request.Level, request.ArySongNoes ?? []),
+            new GetSelfBestQuery(request.Baid, GameEra.Yellow, request.Level.GetValueOrDefault(), request.ArySongNoes ?? []),
             HttpContext.RequestAborted);
         return Ok(SelfBestMappers.Map(common));
     }

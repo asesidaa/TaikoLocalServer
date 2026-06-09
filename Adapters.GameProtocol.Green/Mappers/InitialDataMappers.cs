@@ -28,11 +28,6 @@ public static partial class InitialDataMappers
         return response;
     }
 
-    private static InitialdatacheckResponse.InformationData MapInformation(
-        CommonInitialDataCheckResponse.InformationData common)
-        => new()
-        {
-            InfoId = common.InfoId,
-            VerupNo = common.VerupNo
-        };
+    private static partial InitialdatacheckResponse.InformationData MapInformation(
+        CommonInitialDataCheckResponse.InformationData common);
 }

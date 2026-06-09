@@ -1,6 +1,9 @@
+using Riok.Mapperly.Abstractions;
+
 namespace TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
 
-public static class ChallengeCompeMappers
+[Mapper]
+public static partial class ChallengeCompeMappers
 {
     public static ChallengeCompeResponse Map(CommonChallengeCompeResponse common)
     {
@@ -13,21 +16,15 @@ public static class ChallengeCompeMappers
 
     private static ChallengeCompeResponse.CompeData MapCompe(CommonChallengeCompeResponse.CompeData common)
     {
-        var response = new ChallengeCompeResponse.CompeData
-        {
-            CompeId = common.CompeId
-        };
+        var response = MapCompeCore(common);
         response.AryTrackStats.AddRange(common.AryTrackStat.Select(MapTrack));
         return response;
     }
 
-    private static ChallengeCompeResponse.CompeData.TracksData MapTrack(CommonChallengeCompeResponse.TracksData common)
-        => new()
-        {
-            SongNo = common.SongNo,
-            Level = common.Level,
-            OptionFlg = common.OptionFlg,
-            StageMode = common.StageMode,
-            HighScore = common.HighScore
-        };
+    [MapperRequiredMapping(RequiredMappingStrategy.Target)]
+    private static partial ChallengeCompeResponse.CompeData MapCompeCore(
+        CommonChallengeCompeResponse.CompeData common);
+
+    private static partial ChallengeCompeResponse.CompeData.TracksData MapTrack(
+        CommonChallengeCompeResponse.TracksData common);
 }
