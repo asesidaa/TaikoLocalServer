@@ -38,6 +38,43 @@ public sealed class Ac15TaikojukuServiceTests
         Assert.All(response.Packs, pack => Assert.InRange(pack.GetDan, 1u, 25u));
     }
 
+    [Fact]
+    public void BuildResponse_DropsInvalidPackSlotsAndCapsSongsAtTen()
+    {
+        var response = Ac15TaikojukuService.BuildResponse(
+            requestedDans: [0, 1],
+            packs:
+            [
+                Pack(0, 0, [Song(101, 0)]),
+                Pack(1, 9,
+                [
+                    Song(0, 0),
+                    Song(1024, 0),
+                    Song(101, 5),
+                    Song(101, 0),
+                    Song(102, 1),
+                    Song(103, 2),
+                    Song(104, 3),
+                    Song(105, 4),
+                    Song(106, 0),
+                    Song(107, 1),
+                    Song(108, 2),
+                    Song(109, 3),
+                    Song(110, 4),
+                    Song(111, 0)
+                ])
+            ],
+            musicFileOrder: [Music(101), Music(102), Music(103)],
+            validSongNoes: [101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111],
+            Ac15EraProfiles.Green.Limits);
+
+        var pack = Assert.Single(response.Packs);
+        Assert.Equal(1u, pack.GetDan);
+        Assert.Equal(10, pack.Songs.Count);
+        Assert.DoesNotContain(pack.Songs, song => song.SongNo is 0 or 1024);
+        Assert.All(pack.Songs, song => Assert.InRange(song.Level, 0u, 4u));
+    }
+
     private static Ac15TaikojukuEntry Pack(uint challengeLevel, uint verupNo, IReadOnlyList<Ac15TaikojukuSong> songs) => new()
     {
         UniqueId = 20000 + challengeLevel,

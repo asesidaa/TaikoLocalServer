@@ -5,27 +5,13 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
 [Mapper]
 public static partial class TournamentMappers
 {
-    public static TournamentcheckResponse Map(CommonTournamentCheckResponse common)
-    {
-        var response = new TournamentcheckResponse
-        {
-            Result = common.Result,
-            RareRate = common.RareRate,
-            SongHashVer = common.SongHashVer
-        };
-
-        response.AryGachaSongDatas.AddRange(common.AryGachaSongData.Select(MapGacha));
-        response.AryGachaToneDatas.AddRange(common.AryGachaToneData.Select(MapGacha));
-        response.AryGachaCostume1Datas.AddRange(common.AryGachaCostume1Data.Select(MapGacha));
-        response.AryGachaCostume2Datas.AddRange(common.AryGachaCostume2Data.Select(MapGacha));
-        response.AryGachaCostume3Datas.AddRange(common.AryGachaCostume3Data.Select(MapGacha));
-        response.AryGachaCostume4Datas.AddRange(common.AryGachaCostume4Data.Select(MapGacha));
-        response.AryGachaCostume5Datas.AddRange(common.AryGachaCostume5Data.Select(MapGacha));
-        response.AryGachaTitleDatas.AddRange(common.AryGachaTitleData.Select(MapGacha));
-
-        return response;
-    }
-
-    private static partial TournamentcheckResponse.GachainfoData MapGacha(
-        CommonTournamentCheckResponse.GachainfoData common);
+    [MapProperty(nameof(CommonTournamentCheckResponse.AryGachaSongData), nameof(TournamentcheckResponse.AryGachaSongDatas))]
+    [MapProperty(nameof(CommonTournamentCheckResponse.AryGachaToneData), nameof(TournamentcheckResponse.AryGachaToneDatas))]
+    [MapProperty(nameof(CommonTournamentCheckResponse.AryGachaCostume1Data), nameof(TournamentcheckResponse.AryGachaCostume1Datas))]
+    [MapProperty(nameof(CommonTournamentCheckResponse.AryGachaCostume2Data), nameof(TournamentcheckResponse.AryGachaCostume2Datas))]
+    [MapProperty(nameof(CommonTournamentCheckResponse.AryGachaCostume3Data), nameof(TournamentcheckResponse.AryGachaCostume3Datas))]
+    [MapProperty(nameof(CommonTournamentCheckResponse.AryGachaCostume4Data), nameof(TournamentcheckResponse.AryGachaCostume4Datas))]
+    [MapProperty(nameof(CommonTournamentCheckResponse.AryGachaCostume5Data), nameof(TournamentcheckResponse.AryGachaCostume5Datas))]
+    [MapProperty(nameof(CommonTournamentCheckResponse.AryGachaTitleData), nameof(TournamentcheckResponse.AryGachaTitleDatas))]
+    public static partial TournamentcheckResponse Map(CommonTournamentCheckResponse common);
 }

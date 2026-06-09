@@ -70,50 +70,6 @@ public sealed class GreenTaikojukuTests
     }
 
     [Fact]
-    public void TaikojukuMapper_DropsInvalidPackSlotsAndCapsSongsAtTen()
-    {
-        var response = TaikojukuMappers.Map(new CommonTaikojukuResponse
-        {
-            Result = 1,
-            Packs =
-            [
-                new CommonTaikojukuResponse.Pack
-                {
-                    GetDan = 0,
-                    Songs = [new CommonTaikojukuResponse.Song { SongNo = 101, Level = 0 }]
-                },
-                new CommonTaikojukuResponse.Pack
-                {
-                    GetDan = 1,
-                    Songs =
-                    [
-                        new CommonTaikojukuResponse.Song { SongNo = 0, Level = 0 },
-                        new CommonTaikojukuResponse.Song { SongNo = 1024, Level = 0 },
-                        new CommonTaikojukuResponse.Song { SongNo = 101, Level = 5 },
-                        new CommonTaikojukuResponse.Song { SongNo = 101, Level = 0 },
-                        new CommonTaikojukuResponse.Song { SongNo = 102, Level = 1 },
-                        new CommonTaikojukuResponse.Song { SongNo = 103, Level = 2 },
-                        new CommonTaikojukuResponse.Song { SongNo = 104, Level = 3 },
-                        new CommonTaikojukuResponse.Song { SongNo = 105, Level = 4 },
-                        new CommonTaikojukuResponse.Song { SongNo = 106, Level = 0 },
-                        new CommonTaikojukuResponse.Song { SongNo = 107, Level = 1 },
-                        new CommonTaikojukuResponse.Song { SongNo = 108, Level = 2 },
-                        new CommonTaikojukuResponse.Song { SongNo = 109, Level = 3 },
-                        new CommonTaikojukuResponse.Song { SongNo = 110, Level = 4 },
-                        new CommonTaikojukuResponse.Song { SongNo = 111, Level = 0 }
-                    ]
-                }
-            ]
-        });
-
-        var pack = Assert.Single(response.AryJukupackDatas);
-        Assert.Equal((uint)1, pack.GetDan);
-        Assert.Equal(10, pack.AryJukusongDatas.Count);
-        Assert.DoesNotContain(pack.AryJukusongDatas, song => song.SongNo is 0 or 1024);
-        Assert.All(pack.AryJukusongDatas, song => Assert.InRange(song.Level, 0u, 4u));
-    }
-
-    [Fact]
     public async Task GetTaikojuku_ReturnsDeterministicFallbackWhenNoPackMatches()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();

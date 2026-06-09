@@ -5,28 +5,14 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Green.Mappers;
 [Mapper]
 public static partial class InitialDataMappers
 {
-    public static InitialdatacheckResponse Map(CommonInitialDataCheckResponse common)
-    {
-        var response = new InitialdatacheckResponse
-        {
-            Result = common.Result,
-            SongHashVer = common.SongHashVer,
-            HashDefaultSongFlg = common.DefaultSongFlg,
-            HashMainichidojoAll = common.AchievementSongBit,
-            HashMainichidojoRare = common.UraReleaseBit,
-            IsDanplay = common.IsDanplay,
-            IsClose = common.IsClose,
-            IsItemshop = common.IsItemshop,
-            IsGhostbattleplay = common.IsGhostbattleplay
-        };
-
-        response.AryTelopDatas.AddRange(common.AryGreenTelopDatas.Select(MapInformation));
-        response.AryEventfolderDatas.AddRange(common.AryGreenEventFolderDatas.Select(MapInformation));
-        response.AryTaikojukuDatas.AddRange(common.AryGreenTaikojukuDatas.Select(MapInformation));
-        response.AryItemshopDatas.AddRange(common.AryGreenItemShopDatas.Select(MapInformation));
-
-        return response;
-    }
+    [MapProperty(nameof(CommonInitialDataCheckResponse.DefaultSongFlg), nameof(InitialdatacheckResponse.HashDefaultSongFlg))]
+    [MapProperty(nameof(CommonInitialDataCheckResponse.AchievementSongBit), nameof(InitialdatacheckResponse.HashMainichidojoAll))]
+    [MapProperty(nameof(CommonInitialDataCheckResponse.UraReleaseBit), nameof(InitialdatacheckResponse.HashMainichidojoRare))]
+    [MapProperty(nameof(CommonInitialDataCheckResponse.AryGreenTelopDatas), nameof(InitialdatacheckResponse.AryTelopDatas))]
+    [MapProperty(nameof(CommonInitialDataCheckResponse.AryGreenEventFolderDatas), nameof(InitialdatacheckResponse.AryEventfolderDatas))]
+    [MapProperty(nameof(CommonInitialDataCheckResponse.AryGreenTaikojukuDatas), nameof(InitialdatacheckResponse.AryTaikojukuDatas))]
+    [MapProperty(nameof(CommonInitialDataCheckResponse.AryGreenItemShopDatas), nameof(InitialdatacheckResponse.AryItemshopDatas))]
+    public static partial InitialdatacheckResponse Map(CommonInitialDataCheckResponse common);
 
     private static partial InitialdatacheckResponse.InformationData MapInformation(
         CommonInitialDataCheckResponse.InformationData common);

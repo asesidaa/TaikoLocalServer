@@ -5,15 +5,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Green.Mappers;
 [Mapper]
 public static partial class FolderDataMappers
 {
-    public static GetfolderResponse Map(CommonGetFolderResponse common)
-    {
-        var response = new GetfolderResponse { Result = common.Result };
-        response.AryEventfolderDatas.AddRange(common.AryEventfolderDatas.Select(MapEventFolderData));
+    [MapProperty(nameof(CommonGetFolderResponse.AryEventfolderDatas), nameof(GetfolderResponse.AryEventfolderDatas))]
+    public static partial GetfolderResponse Map(CommonGetFolderResponse common);
 
-        return response;
-    }
-
-    [MapperRequiredMapping(RequiredMappingStrategy.Target)]
     private static partial GetfolderResponse.EventfolderData MapEventFolderData(
         TaikoLocalServer.Application.ServerData.EventFolderData folder);
 }

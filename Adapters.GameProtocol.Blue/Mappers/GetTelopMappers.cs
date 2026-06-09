@@ -1,31 +1,14 @@
+using Riok.Mapperly.Abstractions;
+
 namespace TaikoLocalServer.Adapters.GameProtocol.Blue.Mappers;
 
-public static class GetTelopMappers
+[Mapper]
+public static partial class GetTelopMappers
 {
-    public static GettelopResponse Map(CommonGetTelopResponse common)
-    {
-        var response = new GettelopResponse { Result = common.Result };
+    [MapProperty(nameof(CommonGetTelopResponse.StartDatetime), nameof(GettelopResponse.StartDatetime), Use = nameof(MapPresentString))]
+    [MapProperty(nameof(CommonGetTelopResponse.EndDatetime), nameof(GettelopResponse.EndDatetime), Use = nameof(MapPresentString))]
+    [MapProperty(nameof(CommonGetTelopResponse.Telop), nameof(GettelopResponse.Telop), Use = nameof(MapPresentString))]
+    public static partial GettelopResponse Map(CommonGetTelopResponse common);
 
-        if (common.VerupNo is { } verup)
-        {
-            response.VerupNo = verup;
-        }
-
-        if (!string.IsNullOrEmpty(common.StartDatetime))
-        {
-            response.StartDatetime = common.StartDatetime;
-        }
-
-        if (!string.IsNullOrEmpty(common.EndDatetime))
-        {
-            response.EndDatetime = common.EndDatetime;
-        }
-
-        if (!string.IsNullOrEmpty(common.Telop))
-        {
-            response.Telop = common.Telop;
-        }
-
-        return response;
-    }
+    private static string MapPresentString(string? value) => string.IsNullOrEmpty(value) ? null! : value;
 }

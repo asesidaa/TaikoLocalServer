@@ -21,24 +21,8 @@ public static partial class ItemShopMappers
             request.ItemPrice);
     }
 
-    public static GetitemshopinfoResponse Map(CommonItemShopInfoResponse common)
-    {
-        var response = new GetitemshopinfoResponse
-        {
-            Result = common.Result,
-            VerupNo = common.VerupNo,
-            SeasonId = common.SeasonId,
-            Telop = common.Telop,
-            StartDatetime = common.StartDatetime,
-            EndDatetime = common.EndDatetime,
-            AfterstartDays = common.AfterstartDays,
-            BeforecloseDays = common.BeforecloseDays
-        };
-
-        response.AryItemshopDatas.AddRange(common.AryItemshopData.Select(MapItemShopData));
-
-        return response;
-    }
+    [MapProperty(nameof(CommonItemShopInfoResponse.AryItemshopData), nameof(GetitemshopinfoResponse.AryItemshopDatas))]
+    public static partial GetitemshopinfoResponse Map(CommonItemShopInfoResponse common);
 
     public static partial ItempurchaseResponse Map(CommonItemPurchaseResponse common);
 
