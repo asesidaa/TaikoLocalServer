@@ -25,10 +25,12 @@
         "ActiveShopSeasonId": 1
       },
       "Yellow": {
-        "Enabled": false,
+        "Enabled": true,
         "AutoExtractCatalog": true,
         "GameDataPath": "wwwroot/data/yellow/data",
-        "CustomizationNameDataPath": ""
+        "CustomizationNameDataPath": "",
+        "EnableShop": true,
+        "ActiveShopSeasonId": 4
       }
     }
   }

@@ -1,4 +1,7 @@
 using Microsoft.Extensions.Logging;
+using System.Runtime.CompilerServices;
+using System.Text.Json;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Ac15;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Yellow;
 using TaikoLocalServer.Tests.Green;
 
@@ -99,6 +102,47 @@ public sealed class YellowCatalogLoaderTests
     }
 
     [Fact]
+    public async Task DefaultYellowSidecarFiles_ExistAndLoadAsDataContracts()
+    {
+        var eventFolderPath = FindRequiredRepoFile("Host", "wwwroot", "data", "yellow", YellowEventFolderLoader.FileName);
+        var telopPath = FindRequiredRepoFile("Host", "wwwroot", "data", "yellow", YellowTelopLoader.FileName);
+        var recommendPath = FindRequiredRepoFile("Host", "wwwroot", "data", "yellow", YellowRecommendLoader.FileName);
+        var moviePath = FindRequiredRepoFile("Host", "wwwroot", "data", "yellow", YellowMovieLoader.FileName);
+        var itemShopPath = FindRequiredRepoFile("Host", "wwwroot", "data", "yellow", YellowItemShopLoader.FileName);
+        var taikojukuVerupPath = FindRequiredRepoFile("Host", "wwwroot", "data", "yellow", YellowTaikojukuLoader.VerupFileName);
+
+        var eventFolders = await YellowEventFolderLoader.LoadFromFileAsync(
+            eventFolderPath,
+            new HashSet<uint>(),
+            CancellationToken.None);
+        var telops = await YellowTelopLoader.LoadFromFileAsync(telopPath, CancellationToken.None);
+        var recommend = await Ac15RecommendLoader.LoadFromFileAsync(
+            recommendPath,
+            new HashSet<uint>(),
+            CancellationToken.None);
+        var movies = await Ac15MovieLoader.LoadFromFileAsync(
+            moviePath,
+            Path.Combine(Path.GetTempPath(), "missing-yellow-movie-directory"),
+            nameof(GameEra.Yellow),
+            NullLogger.Instance,
+            CancellationToken.None);
+        var itemShop = await YellowItemShopLoader.LoadFromFileAsync(
+            itemShopPath,
+            new EraSettings { EnableShop = false },
+            CancellationToken.None);
+
+        Assert.NotNull(eventFolders);
+        Assert.NotNull(telops);
+        Assert.NotNull(recommend.RecommendBestSongs);
+        Assert.NotNull(movies);
+        Assert.False(itemShop.IsEnabled);
+        using var itemShopJson = JsonDocument.Parse(await File.ReadAllTextAsync(itemShopPath, CancellationToken.None));
+        using var taikojukuJson = JsonDocument.Parse(await File.ReadAllTextAsync(taikojukuVerupPath, CancellationToken.None));
+        Assert.True(itemShopJson.RootElement.TryGetProperty("seasons", out _));
+        Assert.True(taikojukuJson.RootElement.TryGetProperty("packs", out _));
+    }
+
+    [Fact]
     public async Task CatalogInitialize_LoadsRequiredAndOptionalDefaultsWhenLocalDataPresent()
     {
         if (FindRepoFileOrSkip("Host", "wwwroot", "data", "yellow", "data", "config", "ST9100-1", "musicinfo.xml") is null
@@ -147,19 +191,31 @@ public sealed class YellowCatalogLoaderTests
 
     private static string? FindRepoFileOrSkip(params string[] pathParts)
     {
-        for (var directory = new DirectoryInfo(AppContext.BaseDirectory);
-             directory is not null;
-             directory = directory.Parent)
+        foreach (var searchRoot in new[] { AppContext.BaseDirectory, Directory.GetCurrentDirectory(), GetSourceDirectory() }
+            .Distinct(StringComparer.OrdinalIgnoreCase))
         {
-            var candidate = Path.Combine(new[] { directory.FullName }.Concat(pathParts).ToArray());
-            if (File.Exists(candidate))
+            for (var directory = new DirectoryInfo(searchRoot);
+                 directory is not null;
+                 directory = directory.Parent)
             {
-                return candidate;
+                var candidate = Path.Combine(new[] { directory.FullName }.Concat(pathParts).ToArray());
+                if (File.Exists(candidate))
+                {
+                    return candidate;
+                }
             }
         }
 
         return null;
     }
+
+    private static string GetSourceDirectory([CallerFilePath] string sourceFilePath = "")
+        => Path.GetDirectoryName(sourceFilePath)
+           ?? throw new ApplicationException("Cannot resolve source directory.");
+
+    private static string FindRequiredRepoFile(params string[] pathParts)
+        => FindRepoFileOrSkip(pathParts)
+           ?? throw new FileNotFoundException($"Could not find {Path.Combine(pathParts)}.");
 
     private static void CopyYellowCatalogFilesToProcessRoot()
     {

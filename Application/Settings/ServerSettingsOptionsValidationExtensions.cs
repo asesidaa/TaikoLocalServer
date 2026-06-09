@@ -8,7 +8,8 @@ public static class ServerSettingsOptionsValidationExtensions
     private static readonly GameEra[] Ac15ShopEras =
     [
         GameEra.Green,
-        GameEra.Blue
+        GameEra.Blue,
+        GameEra.Yellow
     ];
 
     public static OptionsBuilder<ServerSettings> ValidateStartupSettings(

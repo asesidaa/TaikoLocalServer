@@ -1,0 +1,27 @@
+{
+  "seasons": [
+    {
+      "season_id": 4,
+      "verup_no": 2,
+      "telop": "",
+      "start_datetime": "20171211070000",
+      "end_datetime": "20180601020000",
+      "afterstart_days": 30,
+      "beforeclose_days": 0,
+      "items": [
+        { "item_type": 4, "item_id": 61, "item_price": 500 },
+        { "item_type": 4, "item_id": 87, "item_price": 500 },
+        { "item_type": 4, "item_id": 142, "item_price": 500 },
+        { "item_type": 5, "item_id": 118, "item_price": 500 },
+        { "item_type": 5, "item_id": 50, "item_price": 500 },
+        { "item_type": 5, "item_id": 46, "item_price": 500 },
+        { "item_type": 1, "item_id": 706, "item_price": 800 },
+        { "item_type": 1, "item_id": 705, "item_price": 800 },
+        { "item_type": 1, "item_id": 713, "item_price": 1500 },
+        { "item_type": 1, "item_id": 714, "item_price": 1500 },
+        { "item_type": 1, "item_id": 715, "item_price": 1500 },
+        { "item_type": 1, "item_id": 716, "item_price": 1500 }
+      ]
+    }
+  ]
+}

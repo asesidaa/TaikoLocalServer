@@ -157,6 +157,12 @@
     <!--Yellow Game Data-->
     <Content Remove="wwwroot\data\yellow\data\**" />
     <_ContentIncludedByDefault Remove="wwwroot\data\yellow\data\**" />
+    <Content Update="wwwroot\data\yellow\yellow_recommend_songs.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\yellow\yellow_telop_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\yellow\yellow_movie_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\yellow\yellow_item_shop_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\yellow\yellow_event_folder_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\yellow\yellow_taikojuku_verup_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
   </ItemGroup>
 
 
