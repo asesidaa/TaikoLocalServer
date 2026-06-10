@@ -50,6 +50,13 @@
 - [x] **YMAPP-02**: AC15 optional-field presence is represented through explicit adapter-boundary contracts that preserve zero-vs-absent behavior without scattering generated protobuf `ShouldSerialize*` helper calls through production mapper bodies.
 - [x] **YMAPP-03**: Green, Blue, and Yellow AC15 generated wire DTOs are regenerated from immutable local proto inputs with repo-local `protogen` nullable optional primitive support, such as `+nullablevaluetype=yes`, so optional primitive fields expose nullable value types where possible.
 
+### AC15 Shared Core Reuse Cleanup
+
+- [ ] **AC15REUSE-01**: Canonical Dan/shop/crown/counter helpers preserve packed flags, clear grades, statuses, and userdata/profile counters.
+- [ ] **AC15REUSE-02**: Shop season seed policy and purchase/unlock behavior stay era-correct with no Banacoin authority state.
+- [ ] **AC15REUSE-03**: Dani save/readback uses shared behavior without cross-era table writes.
+- [ ] **AC15REUSE-04**: Normal play and special-mode boundaries remain intact after playresult/adapters cleanup.
+
 ### Verification And Contract
 
 - [ ] **YVER-01**: Yellow support has focused route, nullable generated wire DTO, Mapperly-backed mapper, optional-field presence, catalog, handler, EF persistence, no-cross-era-write, no-battle, Tokkun, WaiWai, crown-encoding, AdminApi/WebUI, and AC15 shared-core regression tests.
@@ -121,6 +128,10 @@ Roadmap phase mapping is created during `$gsd-new-milestone` roadmap generation.
 | YMAPP-01 | Phase 16.1 | Complete |
 | YMAPP-02 | Phase 16.1 | Complete |
 | YMAPP-03 | Phase 16.1 | Complete |
+| AC15REUSE-01 | Phase 16.2 | Pending |
+| AC15REUSE-02 | Phase 16.2 | Pending |
+| AC15REUSE-03 | Phase 16.2 | Pending |
+| AC15REUSE-04 | Phase 16.2 | Pending |
 | YVER-01 | Phase 17 | Pending |
 | YVER-02 | Phase 17 | Pending |
 | YVER-03 | Phase 17 | Pending |
@@ -128,10 +139,10 @@ Roadmap phase mapping is created during `$gsd-new-milestone` roadmap generation.
 
 **Coverage:**
 
-- v1.2 requirements: 30 total
-- Mapped to phases: 30
+- v1.2 requirements: 34 total
+- Mapped to phases: 34
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-06-07*
-*Last updated: 2026-06-10 after Phase 16.1 mapper rewrite insertion*
+*Last updated: 2026-06-10 after Phase 16.2 shared-core reuse planning*
