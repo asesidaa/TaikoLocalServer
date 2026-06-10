@@ -7,11 +7,13 @@ public sealed class Ac15NormalPlayServiceTests
     [Fact]
     public async Task SaveAsync_ReturnsSuccessWhenBaidIsZero()
     {
+        await using var database = await SchemaDatabase.CreateAsync();
+
         var result = await Ac15NormalPlayService.SaveAsync(
+            database.Context,
             baid: 0,
             new CommonPlayResultData(),
             Ac15EraProfiles.Blue,
-            new FakePersistence(userExists: false),
             DefaultAc15EraHooks.Instance,
             CancellationToken.None);
 
@@ -21,24 +23,35 @@ public sealed class Ac15NormalPlayServiceTests
     [Fact]
     public async Task SaveAsync_SkipsMissingUserWithSuccess()
     {
-        var persistence = new FakePersistence(userExists: false);
+        await using var database = await SchemaDatabase.CreateAsync();
 
         var result = await Ac15NormalPlayService.SaveAsync(
+            database.Context,
             baid: 1,
             new CommonPlayResultData(),
             Ac15EraProfiles.Blue,
-            persistence,
             DefaultAc15EraHooks.Instance,
             CancellationToken.None);
 
         Assert.Equal(1u, result);
-        Assert.False(persistence.SaveWasCalled);
+        Assert.Empty(await database.Context.SongPlayDataBlue.ToListAsync());
     }
 
     [Fact]
     public async Task SaveAsync_AddsStageRowsAndTrimsRecentSongs()
     {
-        var persistence = new FakePersistence(userExists: true);
+        await using var database = await SchemaDatabase.CreateAsync();
+        database.Context.UserData.Add(new UserDatum { Baid = 1 });
+        database.Context.BlueRecentSongs.AddRange(
+            Enumerable.Range(0, Ac15EraProfiles.Blue.Limits.MaxRecentSongs - 1)
+                .Select(index => new BlueRecentSongs
+                {
+                    Baid = 1,
+                    SongNo = (uint)(900 + index),
+                    LastPlayed = DateTime.UtcNow.AddMinutes(-index - 1)
+                }));
+        await database.Context.SaveChangesAsync();
+
         var playResult = new CommonPlayResultData
         {
             PlayDatetime = "20260607010101",
@@ -60,75 +73,45 @@ public sealed class Ac15NormalPlayServiceTests
         };
 
         var result = await Ac15NormalPlayService.SaveAsync(
+            database.Context,
             baid: 1,
             playResult,
             Ac15EraProfiles.Blue,
-            persistence,
             DefaultAc15EraHooks.Instance,
             CancellationToken.None);
 
         Assert.Equal(1u, result);
-        Assert.Single(persistence.PlayRows);
-        Assert.Single(persistence.BestRows);
-        Assert.Equal([(1u, 101u)], persistence.Favorites);
-        Assert.Equal([(1u, 101u)], persistence.Recent);
-        Assert.True(persistence.TrimRecentWasCalled);
-        Assert.True(persistence.SaveWasCalled);
+        Assert.Single(await database.Context.SongPlayDataBlue.Where(row => row.Baid == 1 && row.SongId == 101).ToListAsync());
+        Assert.Single(await database.Context.SongBestDataBlue.Where(row => row.Baid == 1 && row.SongId == 101).ToListAsync());
+        Assert.Single(await database.Context.BlueFavoriteSongs.Where(row => row.Baid == 1 && row.SongNo == 101).ToListAsync());
+        Assert.Single(await database.Context.BlueRecentSongs.Where(row => row.Baid == 1 && row.SongNo == 101).ToListAsync());
+        Assert.Equal(
+            Ac15EraProfiles.Blue.Limits.MaxRecentSongs,
+            await database.Context.BlueRecentSongs.CountAsync(row => row.Baid == 1));
     }
 
-    private sealed class FakePersistence(bool userExists) : IAc15NormalPlayPersistence
+    private sealed class SchemaDatabase(SqliteConnection connection) : IAsyncDisposable
     {
-        public bool SaveWasCalled { get; private set; }
-        public bool TrimRecentWasCalled { get; private set; }
-        public List<Ac15PlayRow> PlayRows { get; } = [];
-        public List<Ac15BestRow> BestRows { get; } = [];
-        public List<(uint Baid, uint SongNo)> Favorites { get; } = [];
-        public List<(uint Baid, uint SongNo)> Recent { get; } = [];
+        public TaikoDbContext Context { get; } = CreateContext(connection);
 
-        public ValueTask<bool> UserExistsAsync(uint baid, CancellationToken cancellationToken)
-            => ValueTask.FromResult(userExists);
-
-        public ValueTask<Ac15SaveSnapshot> GetOrCreateSaveAsync(uint baid, CancellationToken cancellationToken)
-            => ValueTask.FromResult(new Ac15SaveSnapshot(baid));
-
-        public ValueTask AddPlayRowAsync(Ac15PlayRow row, CancellationToken cancellationToken)
+        public static async Task<SchemaDatabase> CreateAsync()
         {
-            PlayRows.Add(row);
-            return ValueTask.CompletedTask;
+            var connection = new SqliteConnection("Data Source=:memory:");
+            await connection.OpenAsync();
+            var database = new SchemaDatabase(connection);
+            await database.Context.Database.EnsureCreatedAsync();
+            return database;
         }
 
-        public ValueTask UpsertBestAsync(uint baid, Ac15BestRow row, Ac15BestUpdatePolicy policy, CancellationToken cancellationToken)
+        public async ValueTask DisposeAsync()
         {
-            BestRows.Add(row);
-            return ValueTask.CompletedTask;
+            await Context.DisposeAsync();
+            await connection.DisposeAsync();
         }
 
-        public ValueTask SetFavoriteAsync(uint baid, uint songNo, bool isFavorite, int maxFavorites, CancellationToken cancellationToken)
-        {
-            if (isFavorite)
-            {
-                Favorites.Add((baid, songNo));
-            }
-
-            return ValueTask.CompletedTask;
-        }
-
-        public ValueTask UpsertRecentAsync(uint baid, uint songNo, DateTime playTime, CancellationToken cancellationToken)
-        {
-            Recent.Add((baid, songNo));
-            return ValueTask.CompletedTask;
-        }
-
-        public ValueTask TrimRecentAsync(uint baid, int maxRecent, CancellationToken cancellationToken)
-        {
-            TrimRecentWasCalled = true;
-            return ValueTask.CompletedTask;
-        }
-
-        public ValueTask SaveChangesAsync(CancellationToken cancellationToken)
-        {
-            SaveWasCalled = true;
-            return ValueTask.CompletedTask;
-        }
+        private static TaikoDbContext CreateContext(SqliteConnection connection)
+            => new(new DbContextOptionsBuilder<TaikoDbContext>()
+                .UseSqlite(connection)
+                .Options);
     }
 }

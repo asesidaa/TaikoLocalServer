@@ -25,13 +25,12 @@ public partial class ItemPurchaseCommandHandler
         }
 
         var snapshot = Ac15CatalogSnapshotFactory.FromGreen(green);
-        var adapter = new GreenAc15ItemShopAdapter(context, saveData);
 
-        return await Ac15ItemShopService.PurchaseAsync(
+        return await Ac15ItemShopService.PurchaseGreenAsync(
+            context,
             new Ac15ItemShopPurchaseRequest(request.Baid, request.ItemNo, request.ItemType, request.ItemId, request.ItemPrice),
             snapshot.ItemShopCatalog,
-            adapter,
-            adapter,
+            saveData,
             cancellationToken);
     }
 

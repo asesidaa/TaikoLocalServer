@@ -11,7 +11,6 @@ public partial class UpdatePlayResultCommandHandler
     {
         var now = DateTime.UtcNow;
         var playTime = ParseBluePlayDatetimeOrNow(playResultData.PlayDatetime);
-        var blueNormalPlayPersistence = new BlueAc15NormalPlayAdapter(context);
 
         await context.AddBlueBattleStageResultsAsync(
             baid,
@@ -26,14 +25,15 @@ public partial class UpdatePlayResultCommandHandler
             cancellationToken);
         await AddBlueBattleShopDonmedalsAsync(baid, playResultData.GetDonmedal, now, cancellationToken);
         await UpsertBlueBattleRecentSongsAsync(
-            blueNormalPlayPersistence,
             baid,
             playResultData,
             playTime,
             cancellationToken);
 
         await context.SaveChangesAsync(cancellationToken);
-        await blueNormalPlayPersistence.TrimRecentAsync(
+        await Ac15NormalPlayService.TrimRecentAsync(
+            context,
+            Ac15EraProfiles.Blue,
             baid,
             Ac15EraProfiles.Blue.Limits.MaxRecentSongs,
             cancellationToken);
@@ -71,7 +71,6 @@ public partial class UpdatePlayResultCommandHandler
     }
 
     private async Task UpsertBlueBattleRecentSongsAsync(
-        BlueAc15NormalPlayAdapter blueNormalPlayPersistence,
         uint baid,
         CommonPlayResultData playResultData,
         DateTime playTime,
@@ -79,7 +78,13 @@ public partial class UpdatePlayResultCommandHandler
     {
         foreach (var stage in playResultData.AryStageInfoes)
         {
-            await blueNormalPlayPersistence.UpsertRecentAsync(baid, stage.SongNo, playTime, cancellationToken);
+            await Ac15NormalPlayService.UpsertRecentAsync(
+                context,
+                Ac15EraProfiles.Blue,
+                baid,
+                stage.SongNo,
+                playTime,
+                cancellationToken);
         }
     }
 }

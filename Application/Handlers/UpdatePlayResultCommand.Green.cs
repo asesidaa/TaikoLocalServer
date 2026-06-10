@@ -89,10 +89,10 @@ public partial class UpdatePlayResultCommandHandler
         ApplyGhostPlayedSongBits(saveData, playResultData);
 
         await Ac15DaniService.SaveAsync(
+            context,
             playResultData,
             Ac15EraProfiles.Green,
             green.TaikojukuFileOrder.Select(row => new Ac15DaniChallenge(row.ChallengeLevel, row.UniqueId)),
-            new GreenAc15DaniAdapter(context, green.TaikojukuFileOrder.Select(row => row.ChallengeLevel)),
             new Ac15DaniSaveState(saveData.Baid, saveData.DispTaikojukuDan, saveData.IsAutoCostumeOn, GreenDanCostumeId),
             update =>
             {
@@ -110,10 +110,10 @@ public partial class UpdatePlayResultCommandHandler
             cancellationToken);
 
         return await Ac15NormalPlayService.SaveAsync(
+            context,
             request.Baid,
             playResultData,
             Ac15EraProfiles.Green,
-            new GreenAc15NormalPlayAdapter(context),
             new GreenAc15NormalPlayHooks(),
             cancellationToken);
     }

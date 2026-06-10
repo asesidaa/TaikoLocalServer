@@ -20,12 +20,11 @@ public partial class ItemPurchaseCommandHandler
                 : new CommonItemPurchaseResponse { Result = 0, TotalGetDonmedal = saveData.TotalGetDonmedal, TotalUseDonmedal = saveData.TotalUseDonmedal };
         }
 
-        var adapter = new YellowAc15ItemShopAdapter(context, saveData);
-        return await Ac15ItemShopService.PurchaseAsync(
+        return await Ac15ItemShopService.PurchaseYellowAsync(
+            context,
             new Ac15ItemShopPurchaseRequest(request.Baid, request.ItemNo, request.ItemType, request.ItemId, request.ItemPrice),
             snapshot.ItemShopCatalog,
-            adapter,
-            adapter,
+            saveData,
             cancellationToken);
 
         bool TryGetUnsupportedRequestedItem(

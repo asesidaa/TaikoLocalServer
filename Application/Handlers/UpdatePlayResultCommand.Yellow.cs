@@ -98,10 +98,10 @@ public partial class UpdatePlayResultCommandHandler
         }
 
         await Ac15DaniService.SaveAsync(
+            context,
             playResultData,
             Ac15EraProfiles.Yellow,
             yellow.TaikojukuFileOrder.Select(row => new Ac15DaniChallenge(row.ChallengeLevel, row.UniqueId)),
-            new YellowAc15DaniAdapter(context, yellow.TaikojukuFileOrder.Select(row => row.ChallengeLevel)),
             new Ac15DaniSaveState(saveData.Baid, saveData.DispTaikojukuDan, saveData.IsAutoCostumeOn, YellowDanCostumeId),
             update =>
             {
@@ -123,10 +123,10 @@ public partial class UpdatePlayResultCommandHandler
         LogYellowWaiWaiStageFacts(request.Baid, playResultData);
 
         return await Ac15NormalPlayService.SaveAsync(
+            context,
             request.Baid,
             playResultData,
             Ac15EraProfiles.Yellow,
-            new YellowAc15NormalPlayAdapter(context),
             DefaultAc15EraHooks.Instance,
             cancellationToken);
     }

@@ -3,10 +3,10 @@ namespace TaikoLocalServer.Application.Ac15;
 public static class Ac15DaniService
 {
     public static async ValueTask SaveAsync(
+        ITaikoDbContext context,
         CommonPlayResultData playResultData,
         Ac15EraProfile profile,
         IEnumerable<Ac15DaniChallenge> challenges,
-        IAc15DaniPersistence persistence,
         Ac15DaniSaveState saveState,
         Action<Ac15DaniSaveUpdate> applySaveUpdate,
         ILogger logger,
@@ -45,10 +45,11 @@ public static class Ac15DaniService
 
         var danId = danIds[0];
         var limits = profile.Limits;
+        var knownChallengeLevels = challenges.Select(row => row.DanId).ToHashSet();
         var challenge = challenges.FirstOrDefault(row => row.DanId == danId);
         if (challenge is null
             || !Ac15DanHelpers.IsKnownDanId(danId, limits)
-            || !persistence.KnownChallengeLevels.Contains(danId))
+            || !knownChallengeLevels.Contains(danId))
         {
             logger.LogWarning(
                 "Skipping {Era} Dani save for baid {Baid}: unknown Dan id {DanId}",
@@ -60,16 +61,257 @@ public static class Ac15DaniService
 
         var isExtra = Ac15DanHelpers.IsExtraDanId(danId, limits);
         var key = new Ac15DaniScoreKey(saveState.Baid, danId, isExtra);
-        var existing = await persistence.GetScoreAsync(key, cancellationToken);
+        var existing = await GetScoreAsync(context, profile, key, cancellationToken);
         var updatedScore = BuildUpdatedScore(saveState.Baid, existing, danId, isExtra, challenge.MedleyUniqueId, playResultData);
-        var summaries = (await persistence.GetScoreSummariesAsync(saveState.Baid, cancellationToken)).ToList();
+        var summaries = (await GetScoreSummariesAsync(context, profile, saveState.Baid, cancellationToken)).ToList();
 
-        await persistence.UpsertScoreAsync(updatedScore, cancellationToken);
+        await UpsertScoreAsync(context, profile, updatedScore, cancellationToken);
 
         summaries.RemoveAll(row => row.DanId == updatedScore.DanId && row.IsExtra == updatedScore.IsExtra);
         summaries.Add(new Ac15DaniScoreSummary(updatedScore.DanId, updatedScore.IsExtra, updatedScore.ClearGrade));
 
         applySaveUpdate(BuildSaveUpdate(updatedScore, summaries, saveState, limits, Ac15DanHelpers.ClampGrade(playResultData.DanResult)));
+    }
+
+    public static async ValueTask<IReadOnlyList<Ac15DaniScore>> GetScoresAsync(
+        ITaikoDbContext context,
+        Ac15EraProfile profile,
+        uint baid,
+        IReadOnlySet<uint> requestedDanIds,
+        IReadOnlySet<uint> knownChallengeLevels,
+        CancellationToken cancellationToken)
+    {
+        var validRequestedIds = requestedDanIds
+            .Where(knownChallengeLevels.Contains)
+            .ToHashSet();
+
+        return profile.Era switch
+        {
+            GameEra.Blue => (await context.DanScoreDataBlue
+                    .Where(row => row.Baid == baid && validRequestedIds.Contains(row.DanId))
+                    .Include(row => row.DanStageScoreData)
+                    .ToListAsync(cancellationToken))
+                .OrderBy(row => row.DanId)
+                .Select(Ac15DaniMapper.ToAc15DaniScore)
+                .ToArray(),
+            GameEra.Green => (await context.DanScoreDataGreen
+                    .Where(row => row.Baid == baid && validRequestedIds.Contains(row.DanId))
+                    .Include(row => row.DanStageScoreData)
+                    .ToListAsync(cancellationToken))
+                .OrderBy(row => row.DanId)
+                .Select(Ac15DaniMapper.ToAc15DaniScore)
+                .ToArray(),
+            GameEra.Yellow => (await context.DanScoreDataYellow
+                    .Where(row => row.Baid == baid && validRequestedIds.Contains(row.DanId))
+                    .Include(row => row.DanStageScoreData)
+                    .ToListAsync(cancellationToken))
+                .OrderBy(row => row.DanId)
+                .Select(Ac15DaniMapper.ToAc15DaniScore)
+                .ToArray(),
+            _ => []
+        };
+    }
+
+    private static async ValueTask<Ac15DaniScore?> GetScoreAsync(
+        ITaikoDbContext context,
+        Ac15EraProfile profile,
+        Ac15DaniScoreKey key,
+        CancellationToken cancellationToken)
+        => profile.Era switch
+        {
+            GameEra.Blue => await context.DanScoreDataBlue
+                .Include(score => score.DanStageScoreData)
+                .SingleOrDefaultAsync(
+                    score => score.Baid == key.Baid
+                             && score.DanId == key.DanId
+                             && score.IsExtra == key.IsExtra,
+                    cancellationToken) is { } row
+                ? Ac15DaniMapper.ToAc15DaniScore(row)
+                : null,
+            GameEra.Green => await context.DanScoreDataGreen
+                .Include(score => score.DanStageScoreData)
+                .SingleOrDefaultAsync(
+                    score => score.Baid == key.Baid
+                             && score.DanId == key.DanId
+                             && score.IsExtra == key.IsExtra,
+                    cancellationToken) is { } row
+                ? Ac15DaniMapper.ToAc15DaniScore(row)
+                : null,
+            GameEra.Yellow => await context.DanScoreDataYellow
+                .Include(score => score.DanStageScoreData)
+                .SingleOrDefaultAsync(
+                    score => score.Baid == key.Baid
+                             && score.DanId == key.DanId
+                             && score.IsExtra == key.IsExtra,
+                    cancellationToken) is { } row
+                ? Ac15DaniMapper.ToAc15DaniScore(row)
+                : null,
+            _ => null
+        };
+
+    private static async ValueTask<IReadOnlyList<Ac15DaniScoreSummary>> GetScoreSummariesAsync(
+        ITaikoDbContext context,
+        Ac15EraProfile profile,
+        uint baid,
+        CancellationToken cancellationToken)
+        => profile.Era switch
+        {
+            GameEra.Blue => (await context.DanScoreDataBlue
+                    .Where(row => row.Baid == baid)
+                    .ToListAsync(cancellationToken))
+                .Select(Ac15DaniMapper.ToAc15DaniScoreSummary)
+                .ToArray(),
+            GameEra.Green => (await context.DanScoreDataGreen
+                    .Where(row => row.Baid == baid)
+                    .ToListAsync(cancellationToken))
+                .Select(Ac15DaniMapper.ToAc15DaniScoreSummary)
+                .ToArray(),
+            GameEra.Yellow => (await context.DanScoreDataYellow
+                    .Where(row => row.Baid == baid)
+                    .ToListAsync(cancellationToken))
+                .Select(Ac15DaniMapper.ToAc15DaniScoreSummary)
+                .ToArray(),
+            _ => []
+        };
+
+    private static async ValueTask UpsertScoreAsync(
+        ITaikoDbContext context,
+        Ac15EraProfile profile,
+        Ac15DaniScore score,
+        CancellationToken cancellationToken)
+    {
+        switch (profile.Era)
+        {
+            case GameEra.Blue:
+                await UpsertBlueScoreAsync(context, score, cancellationToken);
+                return;
+            case GameEra.Green:
+                await UpsertGreenScoreAsync(context, score, cancellationToken);
+                return;
+            case GameEra.Yellow:
+                await UpsertYellowScoreAsync(context, score, cancellationToken);
+                return;
+        }
+    }
+
+    private static async ValueTask UpsertBlueScoreAsync(
+        ITaikoDbContext context,
+        Ac15DaniScore score,
+        CancellationToken cancellationToken)
+    {
+        var row = await context.DanScoreDataBlue
+            .Include(existing => existing.DanStageScoreData)
+            .SingleOrDefaultAsync(
+                existing => existing.Baid == score.Baid
+                            && existing.DanId == score.DanId
+                            && existing.IsExtra == score.IsExtra,
+                cancellationToken);
+
+        if (row is null)
+        {
+            row = Ac15DaniMapper.ToBlueDanScoreDatum(score);
+            UpsertBlueStages(row, score);
+            context.DanScoreDataBlue.Add(row);
+            return;
+        }
+
+        Ac15DaniMapper.ApplyToBlueDanScoreDatum(score, row);
+        UpsertBlueStages(row, score);
+    }
+
+    private static async ValueTask UpsertGreenScoreAsync(
+        ITaikoDbContext context,
+        Ac15DaniScore score,
+        CancellationToken cancellationToken)
+    {
+        var row = await context.DanScoreDataGreen
+            .Include(existing => existing.DanStageScoreData)
+            .SingleOrDefaultAsync(
+                existing => existing.Baid == score.Baid
+                            && existing.DanId == score.DanId
+                            && existing.IsExtra == score.IsExtra,
+                cancellationToken);
+
+        if (row is null)
+        {
+            row = Ac15DaniMapper.ToGreenDanScoreDatum(score);
+            UpsertGreenStages(row, score);
+            context.DanScoreDataGreen.Add(row);
+            return;
+        }
+
+        Ac15DaniMapper.ApplyToGreenDanScoreDatum(score, row);
+        UpsertGreenStages(row, score);
+    }
+
+    private static async ValueTask UpsertYellowScoreAsync(
+        ITaikoDbContext context,
+        Ac15DaniScore score,
+        CancellationToken cancellationToken)
+    {
+        var row = await context.DanScoreDataYellow
+            .Include(existing => existing.DanStageScoreData)
+            .SingleOrDefaultAsync(
+                existing => existing.Baid == score.Baid
+                            && existing.DanId == score.DanId
+                            && existing.IsExtra == score.IsExtra,
+                cancellationToken);
+
+        if (row is null)
+        {
+            row = Ac15DaniMapper.ToYellowDanScoreDatum(score);
+            UpsertYellowStages(row, score);
+            context.DanScoreDataYellow.Add(row);
+            return;
+        }
+
+        Ac15DaniMapper.ApplyToYellowDanScoreDatum(score, row);
+        UpsertYellowStages(row, score);
+    }
+
+    private static void UpsertBlueStages(DanScoreDatumBlue row, Ac15DaniScore score)
+    {
+        foreach (var stage in score.Stages)
+        {
+            var stageRow = row.DanStageScoreData.FirstOrDefault(existing => existing.StageIndex == stage.StageIndex);
+            if (stageRow is null)
+            {
+                row.DanStageScoreData.Add(Ac15DaniMapper.ToBlueDanStageScoreDatum(stage, score));
+                continue;
+            }
+
+            Ac15DaniMapper.ApplyToBlueDanStageScoreDatum(stage, stageRow);
+        }
+    }
+
+    private static void UpsertGreenStages(DanScoreDatumGreen row, Ac15DaniScore score)
+    {
+        foreach (var stage in score.Stages)
+        {
+            var stageRow = row.DanStageScoreData.FirstOrDefault(existing => existing.StageIndex == stage.StageIndex);
+            if (stageRow is null)
+            {
+                row.DanStageScoreData.Add(Ac15DaniMapper.ToGreenDanStageScoreDatum(stage, score));
+                continue;
+            }
+
+            Ac15DaniMapper.ApplyToGreenDanStageScoreDatum(stage, stageRow);
+        }
+    }
+
+    private static void UpsertYellowStages(DanScoreDatumYellow row, Ac15DaniScore score)
+    {
+        foreach (var stage in score.Stages)
+        {
+            var stageRow = row.DanStageScoreData.FirstOrDefault(existing => existing.StageIndex == stage.StageIndex);
+            if (stageRow is null)
+            {
+                row.DanStageScoreData.Add(Ac15DaniMapper.ToYellowDanStageScoreDatum(stage, score));
+                continue;
+            }
+
+            Ac15DaniMapper.ApplyToYellowDanStageScoreDatum(stage, stageRow);
+        }
     }
 
     private static Ac15DaniScore BuildUpdatedScore(

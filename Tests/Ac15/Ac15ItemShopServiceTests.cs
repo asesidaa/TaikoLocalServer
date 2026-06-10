@@ -8,52 +8,96 @@ public sealed class Ac15ItemShopServiceTests
     [Fact]
     public async Task Purchase_PreflightCreatesSeasonStateAndReturnsCurrentTotals()
     {
-        var persistence = new FakePersistence(totalGet: 300, totalUse: 100);
-        var response = await Ac15ItemShopService.PurchaseAsync(
+        await using var database = await SchemaDatabase.CreateAsync();
+        database.Context.UserData.Add(new UserDatum { Baid = 1 });
+        var saveData = UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1);
+        database.Context.UserSaveDataBlue.Add(saveData);
+        database.Context.BlueShopSeasonStates.Add(new BlueShopSeasonState
+        {
+            Baid = 1,
+            SeasonId = 7,
+            TotalGetDonmedal = 300,
+            TotalUseDonmedal = 100,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        });
+        await database.Context.SaveChangesAsync();
+
+        var response = await Ac15ItemShopService.PurchaseBlueAsync(
+            database.Context,
             new Ac15ItemShopPurchaseRequest(1, 0, null, null, null),
             Catalog(),
-            persistence,
-            FakeUnlockPolicy.Instance,
+            saveData,
             CancellationToken.None);
 
         Assert.Equal(1u, response.Result);
         Assert.Equal(300u, response.TotalGetDonmedal);
         Assert.Equal(100u, response.TotalUseDonmedal);
-        Assert.True(persistence.SaveWasCalled);
     }
 
     [Fact]
     public async Task Purchase_RejectsMismatchedTupleWithoutSpending()
     {
-        var persistence = new FakePersistence(totalGet: 300, totalUse: 0);
-        var response = await Ac15ItemShopService.PurchaseAsync(
+        await using var database = await SchemaDatabase.CreateAsync();
+        database.Context.UserData.Add(new UserDatum { Baid = 1 });
+        var saveData = UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1);
+        database.Context.UserSaveDataBlue.Add(saveData);
+        database.Context.BlueShopSeasonStates.Add(new BlueShopSeasonState
+        {
+            Baid = 1,
+            SeasonId = 7,
+            TotalGetDonmedal = 300,
+            TotalUseDonmedal = 0,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        });
+        await database.Context.SaveChangesAsync();
+
+        var response = await Ac15ItemShopService.PurchaseBlueAsync(
+            database.Context,
             new Ac15ItemShopPurchaseRequest(1, 1, 2, 999, 200),
             Catalog(),
-            persistence,
-            FakeUnlockPolicy.Instance,
+            saveData,
             CancellationToken.None);
 
         Assert.Equal(0u, response.Result);
         Assert.Equal(0u, response.TotalUseDonmedal);
-        Assert.Empty(persistence.PurchasedItems);
+        Assert.Empty(await database.Context.BlueShopItemStates.ToListAsync());
     }
 
     [Fact]
     public async Task Purchase_ValidItemSpendsAndAppliesUnlock()
     {
-        var persistence = new FakePersistence(totalGet: 300, totalUse: 0);
-        var unlocks = new FakeUnlockPolicy();
-        var response = await Ac15ItemShopService.PurchaseAsync(
+        await using var database = await SchemaDatabase.CreateAsync();
+        database.Context.UserData.Add(new UserDatum { Baid = 1 });
+        var saveData = UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1);
+        database.Context.UserSaveDataBlue.Add(saveData);
+        database.Context.BlueShopSeasonStates.Add(new BlueShopSeasonState
+        {
+            Baid = 1,
+            SeasonId = 7,
+            TotalGetDonmedal = 300,
+            TotalUseDonmedal = 0,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        });
+        await database.Context.SaveChangesAsync();
+
+        var response = await Ac15ItemShopService.PurchaseBlueAsync(
+            database.Context,
             new Ac15ItemShopPurchaseRequest(1, 1, Ac15ShopItemType.Tone.ToProtocolValue(), 44, 200),
             Catalog(),
-            persistence,
-            unlocks,
+            saveData,
             CancellationToken.None);
 
         Assert.Equal(1u, response.Result);
         Assert.Equal(200u, response.TotalUseDonmedal);
-        Assert.Contains(new Ac15PurchasedShopItem(1, 7, Ac15ShopItemType.Tone.ToProtocolValue(), 44, 1, 200), persistence.PurchasedItems);
-        Assert.Equal([(Ac15ShopItemType.Tone, 44u)], unlocks.Applied);
+        var item = await database.Context.BlueShopItemStates.SingleAsync();
+        Assert.Equal(44u, item.ItemId);
+        Assert.Equal(1u, item.ItemNo);
+        Assert.Equal(200u, item.ItemPrice);
+        Assert.Equal(Ac15ShopItemStatus.Unlocked, item.Status);
+        Assert.NotEqual(0, saveData.ToneFlg[44 >> 3] & (1 << (44 & 7)));
     }
 
     private static Ac15ItemShopCatalog Catalog() => new()
@@ -73,39 +117,28 @@ public sealed class Ac15ItemShopServiceTests
         }
     };
 
-    private sealed class FakePersistence(uint totalGet, uint totalUse) : IAc15ItemShopPersistence
+    private sealed class SchemaDatabase(SqliteConnection connection) : IAsyncDisposable
     {
-        public bool SaveWasCalled { get; private set; }
-        public List<Ac15PurchasedShopItem> PurchasedItems { get; } = [];
-        private Ac15ShopSeasonState State { get; } = new(1, 7, totalGet, totalUse);
+        public TaikoDbContext Context { get; } = CreateContext(connection);
 
-        public ValueTask<Ac15ShopSeasonState?> GetOrCreateActiveSeasonStateAsync(uint baid, uint seasonId, CancellationToken cancellationToken)
-            => ValueTask.FromResult<Ac15ShopSeasonState?>(State);
-
-        public ValueTask<bool> HasPurchasedItemAsync(uint baid, uint seasonId, uint itemType, uint itemId, CancellationToken cancellationToken)
-            => ValueTask.FromResult(PurchasedItems.Any(item => item.Baid == baid && item.SeasonId == seasonId && item.ItemType == itemType && item.ItemId == itemId));
-
-        public ValueTask AddPurchasedItemAsync(Ac15PurchasedShopItem item, CancellationToken cancellationToken)
+        public static async Task<SchemaDatabase> CreateAsync()
         {
-            PurchasedItems.Add(item);
-            return ValueTask.CompletedTask;
+            var connection = new SqliteConnection("Data Source=:memory:");
+            await connection.OpenAsync();
+            var database = new SchemaDatabase(connection);
+            await database.Context.Database.EnsureCreatedAsync();
+            return database;
         }
 
-        public ValueTask SaveChangesAsync(CancellationToken cancellationToken)
+        public async ValueTask DisposeAsync()
         {
-            SaveWasCalled = true;
-            return ValueTask.CompletedTask;
+            await Context.DisposeAsync();
+            await connection.DisposeAsync();
         }
-    }
 
-    private sealed class FakeUnlockPolicy : IAc15ItemShopUnlockPolicy
-    {
-        public static FakeUnlockPolicy Instance { get; } = new();
-        public List<(Ac15ShopItemType ItemType, uint ItemId)> Applied { get; } = [];
-
-        public void ApplyUnlock(Ac15ShopItemType itemType, uint itemId)
-        {
-            Applied.Add((itemType, itemId));
-        }
+        private static TaikoDbContext CreateContext(SqliteConnection connection)
+            => new(new DbContextOptionsBuilder<TaikoDbContext>()
+                .UseSqlite(connection)
+                .Options);
     }
 }
