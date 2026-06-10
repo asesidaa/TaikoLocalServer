@@ -96,7 +96,7 @@ public partial class UpdatePlayResultCommandHandler
                 continue;
             }
 
-            BlueProfileCounters.ApplyStage(saveData, stage);
+            Ac15ProfileCounterUpdater.ApplyBlueStage(saveData, stage);
         }
 
         await SaveBlueDanAsync(saveData, playResultData, blue, cancellationToken);

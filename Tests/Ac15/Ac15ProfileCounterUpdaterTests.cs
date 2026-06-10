@@ -1,6 +1,6 @@
-namespace TaikoLocalServer.Tests.Green;
+namespace TaikoLocalServer.Tests.Ac15;
 
-public sealed class GreenProfileCountersTests
+public sealed class Ac15ProfileCounterUpdaterTests
 {
     [Theory]
     [InlineData(1u, nameof(UserSaveDataGreen.CategJpopCnt))]
@@ -16,9 +16,9 @@ public sealed class GreenProfileCountersTests
         var save = new UserSaveDataGreen { Baid = 1 };
         var stage = new CommonPlayResultData.StageData { MusicCateg = musicCateg };
 
-        GreenProfileCounters.ApplyStage(save, stage);
+        Ac15ProfileCounterUpdater.ApplyGreenStage(save, stage);
 
-        Assert.Equal(1u, CounterValue(save, expectedProperty));
+        Assert.Equal(1u, GreenCounterValue(save, expectedProperty));
     }
 
     [Theory]
@@ -31,7 +31,7 @@ public sealed class GreenProfileCountersTests
         var save = new UserSaveDataGreen { Baid = 1 };
         var stage = new CommonPlayResultData.StageData { MusicCateg = musicCateg };
 
-        GreenProfileCounters.ApplyStage(save, stage);
+        Ac15ProfileCounterUpdater.ApplyGreenStage(save, stage);
 
         Assert.Equal(0u, save.CategJpopCnt);
         Assert.Equal(0u, save.CategAnimeCnt);
@@ -44,35 +44,21 @@ public sealed class GreenProfileCountersTests
     }
 
     [Fact]
-    public void ApplyStage_IsPushedTrue_IncrementsSongPushedCnt()
+    public void ApplyStage_StageFlagsIncrementSongCounters()
     {
         var save = new UserSaveDataGreen { Baid = 1 };
-        var stage = new CommonPlayResultData.StageData { MusicCateg = 0, IsPushed = true };
+        var stage = new CommonPlayResultData.StageData
+        {
+            MusicCateg = 0,
+            IsPushed = true,
+            IsFavorite = true,
+            IsRecent = true
+        };
 
-        GreenProfileCounters.ApplyStage(save, stage);
+        Ac15ProfileCounterUpdater.ApplyGreenStage(save, stage);
 
         Assert.Equal(1u, save.SongPushedCnt);
-    }
-
-    [Fact]
-    public void ApplyStage_IsFavoriteTrue_IncrementsSongFavoriteCnt()
-    {
-        var save = new UserSaveDataGreen { Baid = 1 };
-        var stage = new CommonPlayResultData.StageData { MusicCateg = 0, IsFavorite = true };
-
-        GreenProfileCounters.ApplyStage(save, stage);
-
         Assert.Equal(1u, save.SongFavoriteCnt);
-    }
-
-    [Fact]
-    public void ApplyStage_IsRecentTrue_IncrementsSongRecentCnt()
-    {
-        var save = new UserSaveDataGreen { Baid = 1 };
-        var stage = new CommonPlayResultData.StageData { MusicCateg = 0, IsRecent = true };
-
-        GreenProfileCounters.ApplyStage(save, stage);
-
         Assert.Equal(1u, save.SongRecentCnt);
     }
 
@@ -82,7 +68,7 @@ public sealed class GreenProfileCountersTests
         var save = new UserSaveDataGreen { Baid = 1 };
         var stage = new CommonPlayResultData.StageData { MusicCateg = 0 };
 
-        GreenProfileCounters.ApplyStage(save, stage);
+        Ac15ProfileCounterUpdater.ApplyGreenStage(save, stage);
 
         Assert.Equal(0u, save.SongPushedCnt);
         Assert.Equal(0u, save.SongFavoriteCnt);
@@ -108,7 +94,7 @@ public sealed class GreenProfileCountersTests
             IsRecent = true
         };
 
-        GreenProfileCounters.ApplyStage(save, stage);
+        Ac15ProfileCounterUpdater.ApplyGreenStage(save, stage);
 
         Assert.Equal(uint.MaxValue, save.CategJpopCnt);
         Assert.Equal(uint.MaxValue, save.SongPushedCnt);
@@ -116,7 +102,47 @@ public sealed class GreenProfileCountersTests
         Assert.Equal(uint.MaxValue, save.SongRecentCnt);
     }
 
-    private static uint CounterValue(UserSaveDataGreen save, string propertyName)
+    [Fact]
+    public void ApplyBlueStage_UsesBlueSaveCounterAccess()
+    {
+        var save = new UserSaveDataBlue { Baid = 1 };
+        var stage = new CommonPlayResultData.StageData
+        {
+            MusicCateg = 8,
+            IsPushed = true,
+            IsFavorite = true,
+            IsRecent = true
+        };
+
+        Ac15ProfileCounterUpdater.ApplyBlueStage(save, stage);
+
+        Assert.Equal(1u, save.CategNamcoCnt);
+        Assert.Equal(1u, save.SongPushedCnt);
+        Assert.Equal(1u, save.SongFavoriteCnt);
+        Assert.Equal(1u, save.SongRecentCnt);
+    }
+
+    [Fact]
+    public void ApplyYellowStage_UsesYellowSaveCounterAccess()
+    {
+        var save = new UserSaveDataYellow { Baid = 1 };
+        var stage = new CommonPlayResultData.StageData
+        {
+            MusicCateg = 3,
+            IsPushed = true,
+            IsFavorite = true,
+            IsRecent = true
+        };
+
+        Ac15ProfileCounterUpdater.ApplyYellowStage(save, stage);
+
+        Assert.Equal(1u, save.CategVocaloidCnt);
+        Assert.Equal(1u, save.SongPushedCnt);
+        Assert.Equal(1u, save.SongFavoriteCnt);
+        Assert.Equal(1u, save.SongRecentCnt);
+    }
+
+    private static uint GreenCounterValue(UserSaveDataGreen save, string propertyName)
         => propertyName switch
         {
             nameof(UserSaveDataGreen.CategJpopCnt) => save.CategJpopCnt,

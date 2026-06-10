@@ -95,7 +95,7 @@ public partial class UpdatePlayResultCommandHandler
 
         foreach (var stage in playResultData.AryStageInfoes)
         {
-            ApplyYellowProfileStage(saveData, stage);
+            Ac15ProfileCounterUpdater.ApplyYellowStage(saveData, stage);
         }
 
         await SaveYellowDanAsync(saveData, playResultData, yellow, cancellationToken);
@@ -345,32 +345,6 @@ public partial class UpdatePlayResultCommandHandler
         saveData.CostumeFlg5 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg5, playResultData.GetCostumeNo5s, limits.CostumeFlagBytes);
         saveData.TitleFlg = Ac15ProtocolBytes.SetBits(saveData.TitleFlg, playResultData.GetTitleNoes, limits.TitleFlagBytes);
     }
-
-    private static void ApplyYellowProfileStage(UserSaveDataYellow saveData, CommonPlayResultData.StageData stage)
-    {
-        IncrementYellowGenreCounter(saveData, stage.MusicCateg);
-        if (stage.IsPushed) saveData.SongPushedCnt = SafeYellowIncrement(saveData.SongPushedCnt);
-        if (stage.IsFavorite) saveData.SongFavoriteCnt = SafeYellowIncrement(saveData.SongFavoriteCnt);
-        if (stage.IsRecent) saveData.SongRecentCnt = SafeYellowIncrement(saveData.SongRecentCnt);
-    }
-
-    private static void IncrementYellowGenreCounter(UserSaveDataYellow saveData, uint musicCateg)
-    {
-        switch (musicCateg)
-        {
-            case 1: saveData.CategJpopCnt = SafeYellowIncrement(saveData.CategJpopCnt); break;
-            case 2: saveData.CategAnimeCnt = SafeYellowIncrement(saveData.CategAnimeCnt); break;
-            case 3: saveData.CategVocaloidCnt = SafeYellowIncrement(saveData.CategVocaloidCnt); break;
-            case 4: saveData.CategDoyoCnt = SafeYellowIncrement(saveData.CategDoyoCnt); break;
-            case 5: saveData.CategVarietyCnt = SafeYellowIncrement(saveData.CategVarietyCnt); break;
-            case 6: saveData.CategClassicCnt = SafeYellowIncrement(saveData.CategClassicCnt); break;
-            case 7: saveData.CategGameCnt = SafeYellowIncrement(saveData.CategGameCnt); break;
-            case 8: saveData.CategNamcoCnt = SafeYellowIncrement(saveData.CategNamcoCnt); break;
-        }
-    }
-
-    private static uint SafeYellowIncrement(uint current)
-        => current == uint.MaxValue ? current : current + 1;
 
     private static bool CanAddYellow(uint current, uint delta)
         => delta <= uint.MaxValue - current;

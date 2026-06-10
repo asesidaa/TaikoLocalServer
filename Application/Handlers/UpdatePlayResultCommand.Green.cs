@@ -84,7 +84,7 @@ public partial class UpdatePlayResultCommandHandler
 
         foreach (var stage in playResultData.AryStageInfoes)
         {
-            GreenProfileCounters.ApplyStage(saveData, stage);
+            Ac15ProfileCounterUpdater.ApplyGreenStage(saveData, stage);
         }
 
         ApplyGhostPlayedSongBits(saveData, playResultData);
