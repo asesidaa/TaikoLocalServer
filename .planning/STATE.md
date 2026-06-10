@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
 status: executing
-stopped_at: Completed 16.2-00-PLAN.md
-last_updated: "2026-06-10T20:38:18.094Z"
-last_activity: 2026-06-10
+stopped_at: Phase 16.2 post-review architecture decision captured
+last_updated: "2026-06-11T05:05:25.6950887+08:00"
+last_activity: 2026-06-11
 progress:
   total_phases: 8
   completed_phases: 6
@@ -28,7 +28,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-07)
 Phase: 16.2 (ac15-shared-core-simplification-and-reuse-cleanup) — EXECUTING
 Plan: 8 of 13
 Status: Ready to execute
-Last activity: 2026-06-10
+Last activity: 2026-06-11
 
 ## Performance Metrics
 
@@ -152,10 +152,11 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 16.2]: Dani save uses typed era adapters plus canonical Ac15DaniChallenge records instead of depending on era catalog classes or shared Dan EF tables. — The service consumes canonical challenge facts and IAc15DaniPersistence, so Blue, Green, and Yellow Dan entity construction stays inside typed adapters.
 - [Phase 16.2]: Dan costume application remains an explicit handler-provided save update so era-specific costume flag writes stay typed. — Ac15DaniService emits Ac15DaniSaveUpdate, and each handler applies the update to its own save row and protocol byte helper.
 - [Phase 16.2]: Phase 16.2 architecture correction removed AC15 repository-shaped persistence interfaces/adapters and kept ITaikoDbContext as the traceable persistence boundary while Mapperly owns Application/Ac15 projections. — Phase 16.2 architecture correction removed AC15 repository-shaped persistence interfaces/adapters and kept ITaikoDbContext as the traceable persistence boundary while Mapperly owns Application/Ac15 projections.
+- [Phase 16.2]: Post-review AC15 storage reuse will use narrow Domain entity-shape interfaces plus generic EF helpers, with Mapperly as the only source-generation layer. — Direct `ITaikoDbContext` remains the persistence boundary; future AC15 eras should implement row-shape contracts instead of copying algorithms or adding repository/adapter wrappers.
 
 ### Pending Todos
 
-- Redesign AC15 shared core without repository duplication (architecture) - `.planning/todos/pending/2026-06-10-redesign-ac15-shared-core-without-repository-duplication.md`
+None recorded.
 
 ### Blockers/Concerns
 
@@ -176,11 +177,11 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-10T20:36:51.117Z
-Stopped at: Completed 16.2-00-PLAN.md
-Resume file: None
+Last session: 2026-06-11T05:05:25.6950887+08:00
+Stopped at: Phase 16.2 post-review architecture decision captured
+Resume file: `.planning/phases/16.2-ac15-shared-core-simplification-and-reuse-cleanup/.continue-here.md`
 
 ## Operator Next Steps
 
 - Phase 16.1 verification is complete and passed; Green/Blue/Yellow AC15 wire DTOs now use nullable optional primitives and protocol mappers use real Mapperly generation for mechanical projection.
-- Next coordinator-owned step: execute Phase 16.2 AC15 shared-core simplification; do not start Phase 17 runtime verification closeout until Phase 16.2 is executed or explicitly skipped.
+- Next coordinator-owned step: execute Phase 16.2 starting with revised `16.2-08-PLAN.md`; do not start Phase 17 runtime verification closeout until Phase 16.2 is executed or explicitly skipped.

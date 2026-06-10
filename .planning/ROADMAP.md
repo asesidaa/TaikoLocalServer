@@ -272,14 +272,14 @@ Plans:
 - [x] 16.2-07-PLAN.md - Move AC15 Dan playresult save behavior into `Ac15DaniService`
 - [ ] 16.2-11-PLAN.md - Canonicalize shared AC15 Common DTO fields while preserving adapter-local wire placement
 
-**Wave 5** *(blocked on Dani save, normal adapter prerequisites, and DTO canonicalization)*
+**Wave 5** *(blocked on Dani save, post-review row-shape contracts, and DTO canonicalization)*
 
-- [ ] 16.2-08-PLAN.md - Move Dan score readback assembly into the shared AC15 Dani service
-- [ ] 16.2-09-PLAN.md - Factor repeated AC15 normal-play adapter internals while preserving typed DbSet ownership
+- [ ] 16.2-08-PLAN.md - Lock AC15 row-shape interfaces and generic EF helper architecture
+- [ ] 16.2-09-PLAN.md - Factor repeated AC15 normal-play internals through generic EF helpers while preserving typed DbSet ownership
 - [ ] 16.2-12-PLAN.md - Clean up AC15 folder and telop catalog helper duplication without adding routes
 - [ ] 16.2-13-PLAN.md - Clean up remaining AC15 recommend, item-shop info, userdata, and initial-data helper duplication
 
-**Wave 6** *(blocked on Dani readback and normal adapter helper cleanup)*
+**Wave 6** *(blocked on row-shape architecture and normal-play helper cleanup)*
 
 - [ ] 16.2-10-PLAN.md - Clean up AC15 playresult prelude orchestration without moving special-mode gates
 

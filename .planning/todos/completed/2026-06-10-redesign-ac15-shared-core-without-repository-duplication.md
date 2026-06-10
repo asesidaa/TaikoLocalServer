@@ -1,13 +1,16 @@
+completed: 2026-06-10
 ---
 created: 2026-06-10T20:46:16.298Z
 title: Redesign AC15 shared core without repository duplication
 area: architecture
 files:
+
   - Application/Ac15
   - Application/Handlers
   - Infrastructure
   - Domain/Entities
   - .planning/phases/16.2-ac15-shared-core-simplification-and-reuse-cleanup
+
 ---
 
 ## Problem
