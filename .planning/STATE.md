@@ -155,7 +155,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ### Pending Todos
 
-None recorded.
+- Redesign AC15 shared core without repository duplication (architecture) - `.planning/todos/pending/2026-06-10-redesign-ac15-shared-core-without-repository-duplication.md`
 
 ### Blockers/Concerns
 
