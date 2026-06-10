@@ -54,7 +54,7 @@
 
 - [x] **AC15REUSE-01**: Canonical Dan/shop/crown/counter helpers preserve packed flags, clear grades, statuses, and userdata/profile counters.
 - [x] **AC15REUSE-02**: Shop season seed policy and purchase/unlock behavior stay era-correct with no Banacoin authority state.
-- [ ] **AC15REUSE-03**: Dani save/readback uses shared behavior without cross-era table writes.
+- [x] **AC15REUSE-03**: Dani save/readback uses shared behavior without cross-era table writes.
 - [ ] **AC15REUSE-04**: Normal play and special-mode boundaries remain intact after playresult/adapters cleanup.
 
 ### Verification And Contract
@@ -130,7 +130,7 @@ Roadmap phase mapping is created during `$gsd-new-milestone` roadmap generation.
 | YMAPP-03 | Phase 16.1 | Complete |
 | AC15REUSE-01 | Phase 16.2 | Complete |
 | AC15REUSE-02 | Phase 16.2 | Complete |
-| AC15REUSE-03 | Phase 16.2 | Pending |
+| AC15REUSE-03 | Phase 16.2 | Complete |
 | AC15REUSE-04 | Phase 16.2 | Pending |
 | YVER-01 | Phase 17 | Pending |
 | YVER-02 | Phase 17 | Pending |

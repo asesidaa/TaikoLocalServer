@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
 status: executing
-stopped_at: Completed 16.2-04-PLAN.md
-last_updated: "2026-06-10T17:00:52.636Z"
+stopped_at: Completed 16.2-06-PLAN.md
+last_updated: "2026-06-10T17:14:29.767Z"
 last_activity: 2026-06-10 -- Phase 16.2 execution started
 progress:
   total_phases: 8
   completed_phases: 6
   total_plans: 36
-  completed_plans: 26
-  percent: 72
+  completed_plans: 27
+  percent: 75
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-07)
 ## Current Position
 
 Phase: 16.2 (ac15-shared-core-simplification-and-reuse-cleanup) — EXECUTING
-Plan: 3 of 13
+Plan: 4 of 13
 Status: Ready to execute
 Last activity: 2026-06-10 -- Phase 16.2 execution started
 
@@ -85,6 +85,7 @@ Last activity: 2026-06-10 -- Phase 16.2 execution started
 | Phase 16.2 P01 | 7 min | 2 tasks | 50 files |
 | Phase 16.2 P02 | 13 min | 2 tasks | 35 files |
 | Phase 16.2 P04 | 5 min | 1 tasks | 4 files |
+| Phase 16.2 P06 | 12 min | 1 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -136,6 +137,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 16.2]: Blue battle and Green ghost protocol constants stayed era-local while shared Dan/crown behavior moved to Application/Ac15. — The cleanup removed duplicated helper wrappers without widening protocol placement semantics across eras.
 - [Phase 16.2]: Duplicate helper-only tests were replaced by canonical AC15 helper behavior tests; era tests continue to verify handler and protocol behavior. — Repository test rules prefer observable behavior and no-cross-era boundaries over implementation-string or wrapper-existence assertions.
 - [Phase 16.2]: Shop season seed behavior now uses explicit Ac15ShopSeasonPolicy. — Plan 16.2-04 encoded Blue zero-seed and Green/Yellow first-season save-seed behavior while preserving separate era shop tables and Banacoin non-authority boundaries.
+- [Phase 16.2]: Shared Dani behavior now has a contract-first adapter boundary. — Plan 16.2-06 added canonical AC15 Dani records and `IAc15DaniPersistence` without creating a shared Dan EF table.
+- [Phase 16.2]: Blue, Green, and Yellow Dani adapters target only typed era-owned Dan DbSets. — The new adapters preserve separate Dan score and stage-score persistence for each era.
+- [Phase 16.2]: Known Dan challenge levels are part of the Dani persistence contract. — Later shared readback can preserve the existing era catalog filter, including Yellow filtering, while using canonical records.
 
 ### Pending Todos
 
@@ -160,8 +164,8 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-10T17:00:52.490Z
-Stopped at: Completed 16.2-04-PLAN.md
+Last session: 2026-06-10T17:14:29.757Z
+Stopped at: Completed 16.2-06-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
