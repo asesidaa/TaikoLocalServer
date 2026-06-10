@@ -20,12 +20,4 @@ public static class GreenPlayResultMapping
         _ => CrownType.None
     };
 
-    public static GreenCrownState MapGreenCrownState(CrownType crown) => crown switch
-    {
-        CrownType.Clear => GreenCrownState.Clear,
-        CrownType.Gold => GreenCrownState.FullCombo,
-        // Green presents all-good like full combo; state 3 is not proven safe by the binary notes.
-        CrownType.Dondaful => GreenCrownState.FullCombo,
-        _ => GreenCrownState.None
-    };
 }

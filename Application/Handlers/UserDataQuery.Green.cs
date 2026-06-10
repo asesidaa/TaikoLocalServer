@@ -35,7 +35,7 @@ public partial class UserDataQueryHandler
         var normalDanGrades = await context.DanScoreDataGreen
             .Where(row => row.Baid == request.Baid && !row.IsExtra)
             .ToDictionaryAsync(row => row.DanId, row => row.ClearGrade, cancellationToken);
-        var displayDan = GreenDanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalDanGrades);
+        var displayDan = Ac15DanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalDanGrades, Ac15EraProfiles.Green.Limits);
 
         var snapshot = Ac15CatalogSnapshotFactory.FromGreen(green);
         var userdata = GreenAc15UserDataAdapter.CreateSnapshot(
@@ -58,5 +58,7 @@ public partial class UserDataQueryHandler
     // sub_7FDFFC itself initialises its local slot to 1 as its "no data" path,
     // so 1 is the value the client treats as the safe absent sentinel.
     private static uint GetSafeTaikojukuDanSlot(uint value)
-        => value is >= 1 and <= 25 ? value : 1u;
+        => Ac15DanHelpers.IsNormalDanId(value, Ac15EraProfiles.Green.Limits)
+            ? value
+            : Ac15EraProfiles.Green.Limits.SafeDisplayDanFallback;
 }

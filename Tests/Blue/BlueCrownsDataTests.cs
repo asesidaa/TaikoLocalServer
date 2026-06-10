@@ -44,11 +44,11 @@ public sealed class BlueCrownsDataTests
 
         var value = ReadTenBitValue(packed, 101);
         Assert.Equal(BlueProtocolBytes.BuildBlueCrownValue(
-            BlueCrownState.FullCombo,
-            BlueCrownState.None,
-            BlueCrownState.None,
-            BlueCrownState.None,
-            BlueCrownState.None), value);
+            Ac15CrownState.FullCombo,
+            Ac15CrownState.None,
+            Ac15CrownState.None,
+            Ac15CrownState.None,
+            Ac15CrownState.None), value);
     }
 
     [Fact]

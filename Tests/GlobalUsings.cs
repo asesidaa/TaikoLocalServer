@@ -4,6 +4,7 @@ global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Logging.Abstractions;
 global using Microsoft.Extensions.Options;
 global using TaikoLocalServer.Application.Abstractions;
+global using TaikoLocalServer.Application.Ac15;
 global using TaikoLocalServer.Application.Common;
 global using TaikoLocalServer.Application.Catalog.Green;
 global using TaikoLocalServer.Application.Dtos;

@@ -447,7 +447,7 @@ public sealed class BluePlayResultHandlerTests
         Assert.NotNull(save);
         Assert.Equal(1u, save!.GotDanMax);
         Assert.Equal(2u, save.DispTaikojukuDan);
-        Assert.Equal(Ac15DanClearGrade.GoldClear, BlueDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
+        Assert.Equal(Ac15DanClearGrade.GoldClear, Ac15DanHelpers.GetPackedGrade(save.GotDanFlg, 0));
     }
 
     [Fact]
@@ -538,8 +538,8 @@ public sealed class BluePlayResultHandlerTests
         Assert.NotNull(save);
         Assert.Equal(0u, save!.GotDanMax);
         Assert.Equal(1u, save.DispTaikojukuDan);
-        Assert.Equal(Ac15DanClearGrade.GoldClear, BlueDanHelpers.GetPackedGrade(save.GotDanExtraFlg, 0));
-        Assert.Equal(Ac15DanClearGrade.NotClear, BlueDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
+        Assert.Equal(Ac15DanClearGrade.GoldClear, Ac15DanHelpers.GetPackedGrade(save.GotDanExtraFlg, 0));
+        Assert.Equal(Ac15DanClearGrade.NotClear, Ac15DanHelpers.GetPackedGrade(save.GotDanFlg, 0));
     }
 
     [Theory]

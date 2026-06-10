@@ -25,7 +25,7 @@ public partial class UserDataQueryHandler
         var normalDanGrades = await context.DanScoreDataBlue
             .Where(row => row.Baid == request.Baid && !row.IsExtra && row.DanId >= 1 && row.DanId <= 25)
             .ToDictionaryAsync(row => row.DanId, row => row.ClearGrade, cancellationToken);
-        var displayDan = BlueDanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalDanGrades);
+        var displayDan = Ac15DanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalDanGrades, Ac15EraProfiles.Blue.Limits);
         var favorites = await context.BlueFavoriteSongs
             .Where(song => song.Baid == request.Baid)
             .Select(song => song.SongNo)
@@ -51,5 +51,7 @@ public partial class UserDataQueryHandler
     }
 
     private static uint GetSafeBlueTaikojukuDanSlot(uint value)
-        => value is >= 1 and <= 25 ? value : 1u;
+        => Ac15DanHelpers.IsNormalDanId(value, Ac15EraProfiles.Blue.Limits)
+            ? value
+            : Ac15EraProfiles.Blue.Limits.SafeDisplayDanFallback;
 }

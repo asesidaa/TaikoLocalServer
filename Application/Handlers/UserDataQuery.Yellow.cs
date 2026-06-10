@@ -25,7 +25,7 @@ public partial class UserDataQueryHandler
         var normalDanGrades = await context.DanScoreDataYellow
             .Where(row => row.Baid == request.Baid && !row.IsExtra)
             .ToDictionaryAsync(row => row.DanId, row => row.ClearGrade, cancellationToken);
-        var displayDan = YellowDanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalDanGrades);
+        var displayDan = Ac15DanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalDanGrades, Ac15EraProfiles.Yellow.Limits);
 
         var snapshot = Ac15CatalogSnapshotFactory.FromYellow(yellow);
         var unlockedShopItems = snapshot.ItemShopCatalog.ActiveSeason is null
@@ -48,5 +48,7 @@ public partial class UserDataQueryHandler
     }
 
     private static uint GetSafeYellowTaikojukuDanSlot(uint value)
-        => value is >= YellowDanHelpers.MinNormalDanId and <= YellowDanHelpers.MaxNormalDanId ? value : 1u;
+        => Ac15DanHelpers.IsNormalDanId(value, Ac15EraProfiles.Yellow.Limits)
+            ? value
+            : Ac15EraProfiles.Yellow.Limits.SafeDisplayDanFallback;
 }

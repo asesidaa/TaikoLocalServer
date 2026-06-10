@@ -127,11 +127,12 @@ public partial class UserSettingsController
             .Select(row => new { row.DanId, row.ClearGrade })
             .ToListAsync(HttpContext.RequestAborted);
         var clearGradeMap = clearGrades.ToDictionary(row => row.DanId, row => row.ClearGrade);
+        var limits = Ac15EraProfiles.Yellow.Limits;
 
         var selectable = new List<uint>();
-        for (uint danId = YellowDanHelpers.MinNormalDanId; danId <= YellowDanHelpers.MaxNormalDanId; danId++)
+        for (var danId = limits.MinNormalDanId; danId <= limits.MaxNormalDanId; danId++)
         {
-            if (!clearGradeMap.TryGetValue(danId, out var grade) || !YellowDanHelpers.IsClear(grade))
+            if (!clearGradeMap.TryGetValue(danId, out var grade) || !Ac15DanHelpers.IsClear(grade))
             {
                 selectable.Add(danId);
             }
@@ -147,7 +148,7 @@ public partial class UserSettingsController
             return requestedDan;
         }
 
-        return selectableDans.FirstOrDefault(YellowDanHelpers.MinNormalDanId);
+        return selectableDans.FirstOrDefault(Ac15EraProfiles.Yellow.Limits.MinNormalDanId);
     }
 
     private static uint GetSafeYellowDispLevelChassis(uint value)

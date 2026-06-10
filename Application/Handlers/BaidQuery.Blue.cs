@@ -1,5 +1,6 @@
 using TaikoLocalServer.Contracts.AdminApi.ViewModels;
 using TaikoLocalServer.Domain.Enums;
+using TaikoLocalServer.Application.Ac15;
 
 namespace TaikoLocalServer.Application.Handlers;
 
@@ -90,7 +91,7 @@ public partial class BaidQueryHandler
             IsAutoCostumeOn = saveData.IsAutoCostumeOn,
             DispDanType = saveData.DispDanType == 0 ? 0u : 1u,
             GotDanFlg = BlueProtocolBytes.FixedOrZero(saveData.GotDanFlg, BlueProtocolBytes.DanFlagBytes),
-            GotDanMax = Math.Min(saveData.GotDanMax, 25u),
+            GotDanMax = Math.Min(saveData.GotDanMax, Ac15EraProfiles.Blue.Limits.MaxNormalDanId),
             GotDanExtraFlg = BlueProtocolBytes.FixedOrZero(saveData.GotDanExtraFlg, BlueProtocolBytes.DanExtraFlagBytes),
             DefaultToneSetting = saveData.DefaultToneSetting,
             WaiwaiTutorialFlg = saveData.WaiwaiTutorialFlg,

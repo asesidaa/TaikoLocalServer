@@ -1247,57 +1247,6 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
-    public void GreenDanHelpers_ClassifiesNormalAndExtraDanIds()
-    {
-        Assert.True(GreenDanHelpers.IsNormalDanId(1));
-        Assert.True(GreenDanHelpers.IsNormalDanId(25));
-        Assert.False(GreenDanHelpers.IsNormalDanId(26));
-
-        Assert.True(GreenDanHelpers.IsExtraDanId(101));
-        Assert.True(GreenDanHelpers.IsExtraDanId(128));
-        Assert.False(GreenDanHelpers.IsExtraDanId(100));
-    }
-
-    [Fact]
-    public void GreenDanHelpers_PacksTwoBitClearGrades()
-    {
-        var flags = GreenDanHelpers.SetPackedGrade(new byte[GreenProtocolBytes.DanFlagBytes], 0, Ac15DanClearGrade.NormalClear);
-        flags = GreenDanHelpers.SetPackedGrade(flags, 1, Ac15DanClearGrade.GoldClear);
-
-        Assert.Equal(Ac15DanClearGrade.NormalClear, GreenDanHelpers.GetPackedGrade(flags, 0));
-        Assert.Equal(Ac15DanClearGrade.GoldClear, GreenDanHelpers.GetPackedGrade(flags, 1));
-        Assert.Equal(Ac15DanClearGrade.NotClear, GreenDanHelpers.GetPackedGrade(flags, 2));
-    }
-
-    [Fact]
-    public void GreenDanHelpers_EncodesGoldClearAsThreeForClientFlags()
-    {
-        var flags = GreenDanHelpers.SetPackedGrade(new byte[GreenProtocolBytes.DanFlagBytes], 0, Ac15DanClearGrade.GoldClear);
-
-        Assert.Equal(0b0000_0011, flags[0] & 0b11);
-        Assert.Equal(Ac15DanClearGrade.GoldClear, GreenDanHelpers.GetPackedGrade(flags, 0));
-    }
-
-    [Fact]
-    public void GreenDanHelpers_ComputesNextUnclearedNormalDan()
-    {
-        var grades = new Dictionary<uint, Ac15DanClearGrade>
-        {
-            [1] = Ac15DanClearGrade.NormalClear,
-            [2] = Ac15DanClearGrade.GoldClear
-        };
-
-        Assert.Equal(3u, GreenDanHelpers.GetNextUnclearedNormalDan(grades));
-
-        for (uint dan = 3; dan <= 25; dan++)
-        {
-            grades[dan] = Ac15DanClearGrade.NormalClear;
-        }
-
-        Assert.Equal(25u, GreenDanHelpers.GetNextUnclearedNormalDan(grades));
-    }
-
-    [Fact]
     public async Task UpdatePlayResult_Green_DaniPlaySavesDanDataWithoutNormalBest()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
@@ -1479,7 +1428,7 @@ public sealed class GreenPlayResultHandlerTests
         Assert.NotNull(save);
         Assert.Equal(1u, save!.GotDanMax);
         Assert.Equal(2u, save.DispTaikojukuDan);
-        Assert.Equal(Ac15DanClearGrade.NormalClear, GreenDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
+        Assert.Equal(Ac15DanClearGrade.NormalClear, Ac15DanHelpers.GetPackedGrade(save.GotDanFlg, 0));
     }
 
     [Theory]
@@ -1647,7 +1596,7 @@ public sealed class GreenPlayResultHandlerTests
 
         Assert.Equal(5u, save.GotDanMax);
         Assert.Equal(7u, save.DispTaikojukuDan);
-        Assert.Equal(Ac15DanClearGrade.NormalClear, GreenDanHelpers.GetPackedGrade(save.GotDanFlg, 4));
+        Assert.Equal(Ac15DanClearGrade.NormalClear, Ac15DanHelpers.GetPackedGrade(save.GotDanFlg, 4));
     }
 
     [Fact]
@@ -1715,8 +1664,8 @@ public sealed class GreenPlayResultHandlerTests
         Assert.NotNull(save);
         Assert.Equal(0u, save!.GotDanMax);
         Assert.Equal(1u, save.DispTaikojukuDan);
-        Assert.Equal(Ac15DanClearGrade.GoldClear, GreenDanHelpers.GetPackedGrade(save.GotDanExtraFlg, 0));
-        Assert.Equal(Ac15DanClearGrade.NotClear, GreenDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
+        Assert.Equal(Ac15DanClearGrade.GoldClear, Ac15DanHelpers.GetPackedGrade(save.GotDanExtraFlg, 0));
+        Assert.Equal(Ac15DanClearGrade.NotClear, Ac15DanHelpers.GetPackedGrade(save.GotDanFlg, 0));
     }
 
     [Fact]
@@ -1748,7 +1697,7 @@ public sealed class GreenPlayResultHandlerTests
         Assert.NotNull(save);
         Assert.Equal(0u, save!.GotDanMax);
         Assert.Equal(1u, save.DispTaikojukuDan);
-        Assert.Equal(Ac15DanClearGrade.NotClear, GreenDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
+        Assert.Equal(Ac15DanClearGrade.NotClear, Ac15DanHelpers.GetPackedGrade(save.GotDanFlg, 0));
     }
 
     [Fact]

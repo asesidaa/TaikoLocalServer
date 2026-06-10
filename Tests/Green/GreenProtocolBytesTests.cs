@@ -47,11 +47,11 @@ public sealed class GreenProtocolBytesTests
     public void BuildGreenCrownValue_PacksFiveCourseStates()
     {
         var value = GreenProtocolBytes.BuildGreenCrownValue(
-            GreenCrownState.Clear,
-            GreenCrownState.FullCombo,
-            GreenCrownState.FullCombo,
-            GreenCrownState.None,
-            GreenCrownState.Clear);
+            Ac15CrownState.Clear,
+            Ac15CrownState.FullCombo,
+            Ac15CrownState.FullCombo,
+            Ac15CrownState.None,
+            Ac15CrownState.Clear);
 
         Assert.Equal((ushort)0b10_00_11_11_10, value);
     }
@@ -61,11 +61,11 @@ public sealed class GreenProtocolBytesTests
     {
         var values = new ushort[1024];
         values[0] = GreenProtocolBytes.BuildGreenCrownValue(
-            GreenCrownState.Clear,
-            GreenCrownState.None,
-            GreenCrownState.None,
-            GreenCrownState.None,
-            GreenCrownState.None);
+            Ac15CrownState.Clear,
+            Ac15CrownState.None,
+            Ac15CrownState.None,
+            Ac15CrownState.None,
+            Ac15CrownState.None);
         values[1023] = 0x03ff;
 
         var packed = GreenProtocolBytes.PackGreenCrowns(values);
@@ -76,7 +76,7 @@ public sealed class GreenProtocolBytesTests
     }
 
     [Fact]
-    public void PackGreenCrowns_IgnoresBitsOutsideGreenCrownStateRange()
+    public void PackGreenCrowns_IgnoresBitsOutsideAc15CrownStateRange()
     {
         var packed = GreenProtocolBytes.PackGreenCrowns([0xffff]);
 

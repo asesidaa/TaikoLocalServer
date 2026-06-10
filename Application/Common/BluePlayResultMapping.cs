@@ -32,11 +32,4 @@ public static class BluePlayResultMapping
         _ => 0
     };
 
-    public static BlueCrownState MapBlueCrownState(CrownType crown) => crown switch
-    {
-        CrownType.Clear => BlueCrownState.Clear,
-        CrownType.Gold => BlueCrownState.FullCombo,
-        CrownType.Dondaful => BlueCrownState.FullCombo,
-        _ => BlueCrownState.None
-    };
 }

@@ -748,7 +748,7 @@ public sealed class YellowPlayResultHandlerTests
         var save = await fixture.Context.UserSaveDataYellow.SingleAsync(row => row.Baid == 1);
         Assert.Equal(1u, save.GotDanMax);
         Assert.Equal(2u, save.DispTaikojukuDan);
-        Assert.Equal(Ac15DanClearGrade.GoldClear, YellowDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
+        Assert.Equal(Ac15DanClearGrade.GoldClear, Ac15DanHelpers.GetPackedGrade(save.GotDanFlg, 0));
         Assert.True(BitIsSet(save.CostumeFlg1, 36));
         Assert.Equal(36u, save.Costume1);
         Assert.Equal(2, await fixture.Context.SongPlayDataYellow.CountAsync(row => row.Baid == 1));

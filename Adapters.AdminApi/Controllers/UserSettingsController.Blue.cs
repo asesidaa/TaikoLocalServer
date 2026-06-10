@@ -1,3 +1,5 @@
+using TaikoLocalServer.Application.Ac15;
+
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 public partial class UserSettingsController
@@ -123,11 +125,12 @@ public partial class UserSettingsController
             .Select(row => new { row.DanId, row.ClearGrade })
             .ToListAsync(HttpContext.RequestAborted);
         var clearGradeMap = clearGrades.ToDictionary(row => row.DanId, row => row.ClearGrade);
+        var limits = Ac15EraProfiles.Blue.Limits;
 
         var selectable = new List<uint>();
-        for (uint danId = BlueDanHelpers.MinNormalDanId; danId <= BlueDanHelpers.MaxNormalDanId; danId++)
+        for (var danId = limits.MinNormalDanId; danId <= limits.MaxNormalDanId; danId++)
         {
-            if (!clearGradeMap.TryGetValue(danId, out var grade) || !BlueDanHelpers.IsClear(grade))
+            if (!clearGradeMap.TryGetValue(danId, out var grade) || !Ac15DanHelpers.IsClear(grade))
             {
                 selectable.Add(danId);
             }
@@ -143,7 +146,7 @@ public partial class UserSettingsController
             return requestedDan;
         }
 
-        return selectableDans.FirstOrDefault(BlueDanHelpers.MinNormalDanId);
+        return selectableDans.FirstOrDefault(Ac15EraProfiles.Blue.Limits.MinNormalDanId);
     }
 
     private static uint GetSafeBlueDispLevelChassis(uint value)

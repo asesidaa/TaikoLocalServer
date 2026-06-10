@@ -1,3 +1,4 @@
+using TaikoLocalServer.Application.Ac15;
 using TaikoLocalServer.Contracts.AdminApi.ViewModels;
 using TaikoLocalServer.Domain.Enums;
 
@@ -40,7 +41,7 @@ public partial class BaidQueryHandler
 
         var gotDanFlg = GreenProtocolBytes.FixedOrZero(saveData.GotDanFlg, GreenProtocolBytes.DanFlagBytes);
         var gotDanExtraFlg = GreenProtocolBytes.FixedOrZero(saveData.GotDanExtraFlg, GreenProtocolBytes.DanExtraFlagBytes);
-        var gotDanMax = Math.Min(saveData.GotDanMax, GreenDanHelpers.MaxNormalDanId);
+        var gotDanMax = Math.Min(saveData.GotDanMax, Ac15EraProfiles.Green.Limits.MaxNormalDanId);
         var dispDanType = saveData.DispDanType == 0 ? 0u : 1u;
         var activeShopSeason = gameDataService.Green().ItemShopCatalog.ActiveSeason;
         var shopSeasonState = activeShopSeason is null

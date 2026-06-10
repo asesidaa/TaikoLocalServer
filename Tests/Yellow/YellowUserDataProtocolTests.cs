@@ -72,14 +72,17 @@ public sealed class YellowUserDataProtocolTests
         save.DispLevelSelf = 10;
         save.DispTaikojukuDan = 0;
         save.GotDanMax = 3;
-        save.GotDanFlg = YellowDanHelpers.SetPackedGrade(
+        var limits = Ac15EraProfiles.Yellow.Limits;
+        save.GotDanFlg = Ac15DanHelpers.SetPackedGrade(
             save.GotDanFlg,
-            YellowDanHelpers.GetPackedIndex(3),
-            Ac15DanClearGrade.GoldClear);
-        save.GotDanExtraFlg = YellowDanHelpers.SetPackedGrade(
+            Ac15DanHelpers.GetPackedIndex(3, limits),
+            Ac15DanClearGrade.GoldClear,
+            limits.DanFlagBytes);
+        save.GotDanExtraFlg = Ac15DanHelpers.SetPackedGrade(
             save.GotDanExtraFlg,
-            YellowDanHelpers.GetPackedIndex(101),
-            Ac15DanClearGrade.NormalClear);
+            Ac15DanHelpers.GetPackedIndex(101, limits),
+            Ac15DanClearGrade.NormalClear,
+            limits.DanExtraFlagBytes);
         save.DifficultyPlayedCourse = 11;
         save.DifficultyPlayedStar = 12;
         save.IsChallengeCompe = true;

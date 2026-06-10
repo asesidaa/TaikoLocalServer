@@ -166,13 +166,14 @@ public partial class UpdatePlayResultCommandHandler
 
         var danId = danIds[0];
         var pack = green.TaikojukuFileOrder.FirstOrDefault(row => row.ChallengeLevel == danId);
-        if (pack is null || !GreenDanHelpers.IsKnownGreenDanId(danId))
+        var limits = Ac15EraProfiles.Green.Limits;
+        if (pack is null || !Ac15DanHelpers.IsKnownDanId(danId, limits))
         {
             logger.LogWarning("Skipping Green Dani save for baid {Baid}: unknown Dan id {DanId}", saveData.Baid, danId);
             return;
         }
 
-        var isExtra = GreenDanHelpers.IsExtraDanId(danId);
+        var isExtra = Ac15DanHelpers.IsExtraDanId(danId, limits);
         var danScore = await context.DanScoreDataGreen
             .Include(row => row.DanStageScoreData)
             .SingleOrDefaultAsync(row => row.Baid == saveData.Baid && row.DanId == danId && row.IsExtra == isExtra, cancellationToken);
@@ -189,14 +190,14 @@ public partial class UpdatePlayResultCommandHandler
             context.DanScoreDataGreen.Add(danScore);
         }
 
-        var incomingClearGrade = GreenDanHelpers.ClampGrade(playResultData.DanResult);
+        var incomingClearGrade = Ac15DanHelpers.ClampGrade(playResultData.DanResult);
         UpdateGreenDanScore(danScore, playResultData);
         await UpdateGreenDanSummaryAsync(saveData, danScore, incomingClearGrade, cancellationToken);
     }
 
     private static void UpdateGreenDanScore(DanScoreDatumGreen danScore, CommonPlayResultData playResultData)
     {
-        danScore.ClearGrade = GreenDanHelpers.ClampGrade(Math.Max((uint)danScore.ClearGrade, playResultData.DanResult));
+        danScore.ClearGrade = Ac15DanHelpers.ClampGrade(Math.Max((uint)danScore.ClearGrade, playResultData.DanResult));
         danScore.ArrivalSongCount = Math.Max(danScore.ArrivalSongCount, (uint)playResultData.AryStageInfoes.Count);
         danScore.ComboCountTotal = Math.Max(danScore.ComboCountTotal, playResultData.ComboCntTotal);
         danScore.SoulGaugeTotal = Math.Max(
@@ -249,33 +250,36 @@ public partial class UpdatePlayResultCommandHandler
             rows.Add(currentDanScore);
         }
 
+        var limits = Ac15EraProfiles.Green.Limits;
         var normalGrades = rows
-            .Where(row => !row.IsExtra && GreenDanHelpers.IsNormalDanId(row.DanId))
+            .Where(row => !row.IsExtra && Ac15DanHelpers.IsNormalDanId(row.DanId, limits))
             .ToDictionary(row => row.DanId, row => row.ClearGrade);
 
-        var normalFlags = new byte[GreenProtocolBytes.DanFlagBytes];
-        foreach (var row in rows.Where(row => !row.IsExtra && GreenDanHelpers.IsNormalDanId(row.DanId)))
+        var normalFlags = new byte[limits.DanFlagBytes];
+        foreach (var row in rows.Where(row => !row.IsExtra && Ac15DanHelpers.IsNormalDanId(row.DanId, limits)))
         {
-            normalFlags = GreenDanHelpers.SetPackedGrade(
+            normalFlags = Ac15DanHelpers.SetPackedGrade(
                 normalFlags,
-                GreenDanHelpers.GetPackedIndex(row.DanId),
-                row.ClearGrade);
+                Ac15DanHelpers.GetPackedIndex(row.DanId, limits),
+                row.ClearGrade,
+                limits.DanFlagBytes);
         }
 
-        var extraFlags = new byte[GreenProtocolBytes.DanExtraFlagBytes];
-        foreach (var row in rows.Where(row => row.IsExtra && GreenDanHelpers.IsExtraDanId(row.DanId)))
+        var extraFlags = new byte[limits.DanExtraFlagBytes];
+        foreach (var row in rows.Where(row => row.IsExtra && Ac15DanHelpers.IsExtraDanId(row.DanId, limits)))
         {
-            extraFlags = GreenDanHelpers.SetPackedGrade(
+            extraFlags = Ac15DanHelpers.SetPackedGrade(
                 extraFlags,
-                GreenDanHelpers.GetPackedIndex(row.DanId),
-                row.ClearGrade);
+                Ac15DanHelpers.GetPackedIndex(row.DanId, limits),
+                row.ClearGrade,
+                limits.DanExtraFlagBytes);
         }
 
-        var isIncomingClear = GreenDanHelpers.IsClear(incomingClearGrade);
+        var isIncomingClear = Ac15DanHelpers.IsClear(incomingClearGrade);
 
         saveData.GotDanFlg = normalFlags;
         saveData.GotDanExtraFlg = extraFlags;
-        saveData.GotDanMax = GreenDanHelpers.GetGotDanMax(normalGrades);
+        saveData.GotDanMax = Ac15DanHelpers.GetGotDanMax(normalGrades, limits);
         if (isIncomingClear && saveData.IsAutoCostumeOn)
         {
             saveData.Costume1 = GreenDanCostumeId;
@@ -283,10 +287,10 @@ public partial class UpdatePlayResultCommandHandler
         }
 
         saveData.DispTaikojukuDan = !currentDanScore.IsExtra
-                                    && GreenDanHelpers.IsNormalDanId(currentDanScore.DanId)
+                                    && Ac15DanHelpers.IsNormalDanId(currentDanScore.DanId, limits)
                                     && isIncomingClear
-            ? GreenDanHelpers.GetDisplayDanAfterNormalClear(currentDanScore.DanId)
-            : GreenDanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalGrades);
+            ? Ac15DanHelpers.GetDisplayDanAfterNormalClear(currentDanScore.DanId, limits)
+            : Ac15DanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalGrades, limits);
     }
 
     private static void ApplyGhostPlayedSongBits(UserSaveDataGreen saveData, CommonPlayResultData playResultData)

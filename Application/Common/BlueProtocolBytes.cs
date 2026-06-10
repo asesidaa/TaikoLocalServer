@@ -50,18 +50,13 @@ public static class BlueProtocolBytes
     }
 
     public static ushort BuildBlueCrownValue(
-        BlueCrownState easy,
-        BlueCrownState normal,
-        BlueCrownState hard,
-        BlueCrownState oni,
-        BlueCrownState uraOni)
+        Ac15CrownState easy,
+        Ac15CrownState normal,
+        Ac15CrownState hard,
+        Ac15CrownState oni,
+        Ac15CrownState uraOni)
     {
-        return Ac15ProtocolBytes.BuildCrownValue(
-            (Ac15CrownState)easy,
-            (Ac15CrownState)normal,
-            (Ac15CrownState)hard,
-            (Ac15CrownState)oni,
-            (Ac15CrownState)uraOni);
+        return Ac15ProtocolBytes.BuildCrownValue(easy, normal, hard, oni, uraOni);
     }
 
     public static byte[] PackBlueCrowns(IReadOnlyList<ushort> songValues)

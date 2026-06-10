@@ -191,13 +191,14 @@ public partial class UpdatePlayResultCommandHandler
 
         var danId = danIds[0];
         var pack = yellow.TaikojukuFileOrder.FirstOrDefault(row => row.ChallengeLevel == danId);
-        if (pack is null || !YellowDanHelpers.IsKnownYellowDanId(danId))
+        var limits = Ac15EraProfiles.Yellow.Limits;
+        if (pack is null || !Ac15DanHelpers.IsKnownDanId(danId, limits))
         {
             logger.LogWarning("Skipping Yellow Dani save for baid {Baid}: unknown Dan id {DanId}", saveData.Baid, danId);
             return;
         }
 
-        var isExtra = YellowDanHelpers.IsExtraDanId(danId);
+        var isExtra = Ac15DanHelpers.IsExtraDanId(danId, limits);
         var danScore = await context.DanScoreDataYellow
             .Include(row => row.DanStageScoreData)
             .SingleOrDefaultAsync(row => row.Baid == saveData.Baid && row.DanId == danId && row.IsExtra == isExtra, cancellationToken);
@@ -214,14 +215,14 @@ public partial class UpdatePlayResultCommandHandler
             context.DanScoreDataYellow.Add(danScore);
         }
 
-        var incomingClearGrade = YellowDanHelpers.ClampGrade(playResultData.DanResult);
+        var incomingClearGrade = Ac15DanHelpers.ClampGrade(playResultData.DanResult);
         UpdateYellowDanScore(danScore, playResultData);
         await UpdateYellowDanSummaryAsync(saveData, danScore, incomingClearGrade, cancellationToken);
     }
 
     private static void UpdateYellowDanScore(DanScoreDatumYellow danScore, CommonPlayResultData playResultData)
     {
-        danScore.ClearGrade = YellowDanHelpers.ClampGrade(Math.Max((uint)danScore.ClearGrade, playResultData.DanResult));
+        danScore.ClearGrade = Ac15DanHelpers.ClampGrade(Math.Max((uint)danScore.ClearGrade, playResultData.DanResult));
         danScore.ArrivalSongCount = Math.Max(danScore.ArrivalSongCount, (uint)playResultData.AryStageInfoes.Count);
         danScore.ComboCountTotal = Math.Max(danScore.ComboCountTotal, playResultData.ComboCntTotal);
         danScore.SoulGaugeTotal = Math.Max(
@@ -274,34 +275,36 @@ public partial class UpdatePlayResultCommandHandler
             rows.Add(currentDanScore);
         }
 
+        var limits = Ac15EraProfiles.Yellow.Limits;
         var normalGrades = rows
-            .Where(row => !row.IsExtra && YellowDanHelpers.IsNormalDanId(row.DanId))
+            .Where(row => !row.IsExtra && Ac15DanHelpers.IsNormalDanId(row.DanId, limits))
             .ToDictionary(row => row.DanId, row => row.ClearGrade);
 
-        var limits = Ac15EraProfiles.Yellow.Limits;
         var normalFlags = new byte[limits.DanFlagBytes];
-        foreach (var row in rows.Where(row => !row.IsExtra && YellowDanHelpers.IsNormalDanId(row.DanId)))
+        foreach (var row in rows.Where(row => !row.IsExtra && Ac15DanHelpers.IsNormalDanId(row.DanId, limits)))
         {
-            normalFlags = YellowDanHelpers.SetPackedGrade(
+            normalFlags = Ac15DanHelpers.SetPackedGrade(
                 normalFlags,
-                YellowDanHelpers.GetPackedIndex(row.DanId),
-                row.ClearGrade);
+                Ac15DanHelpers.GetPackedIndex(row.DanId, limits),
+                row.ClearGrade,
+                limits.DanFlagBytes);
         }
 
         var extraFlags = new byte[limits.DanExtraFlagBytes];
-        foreach (var row in rows.Where(row => row.IsExtra && YellowDanHelpers.IsExtraDanId(row.DanId)))
+        foreach (var row in rows.Where(row => row.IsExtra && Ac15DanHelpers.IsExtraDanId(row.DanId, limits)))
         {
-            extraFlags = YellowDanHelpers.SetPackedGrade(
+            extraFlags = Ac15DanHelpers.SetPackedGrade(
                 extraFlags,
-                YellowDanHelpers.GetPackedIndex(row.DanId),
-                row.ClearGrade);
+                Ac15DanHelpers.GetPackedIndex(row.DanId, limits),
+                row.ClearGrade,
+                limits.DanExtraFlagBytes);
         }
 
-        var isIncomingClear = YellowDanHelpers.IsClear(incomingClearGrade);
+        var isIncomingClear = Ac15DanHelpers.IsClear(incomingClearGrade);
 
         saveData.GotDanFlg = normalFlags;
         saveData.GotDanExtraFlg = extraFlags;
-        saveData.GotDanMax = YellowDanHelpers.GetGotDanMax(normalGrades);
+        saveData.GotDanMax = Ac15DanHelpers.GetGotDanMax(normalGrades, limits);
         if (isIncomingClear && saveData.IsAutoCostumeOn)
         {
             saveData.Costume1 = YellowDanCostumeId;
@@ -309,10 +312,10 @@ public partial class UpdatePlayResultCommandHandler
         }
 
         saveData.DispTaikojukuDan = !currentDanScore.IsExtra
-                                    && YellowDanHelpers.IsNormalDanId(currentDanScore.DanId)
+                                    && Ac15DanHelpers.IsNormalDanId(currentDanScore.DanId, limits)
                                     && isIncomingClear
-            ? YellowDanHelpers.GetDisplayDanAfterNormalClear(currentDanScore.DanId)
-            : YellowDanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalGrades);
+            ? Ac15DanHelpers.GetDisplayDanAfterNormalClear(currentDanScore.DanId, limits)
+            : Ac15DanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalGrades, limits);
     }
 
     private static void ApplyYellowCostume(UserSaveDataYellow saveData, CommonPlayResultData.CostumeData costume)
