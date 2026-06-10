@@ -1,6 +1,5 @@
 using System.Globalization;
 using TaikoLocalServer.Application.Ac15;
-using TaikoLocalServer.Application.Catalog.Blue;
 
 namespace TaikoLocalServer.Application.Handlers;
 
@@ -99,7 +98,26 @@ public partial class UpdatePlayResultCommandHandler
             Ac15ProfileCounterUpdater.ApplyBlueStage(saveData, stage);
         }
 
-        await SaveBlueDanAsync(saveData, playResultData, blue, cancellationToken);
+        await Ac15DaniService.SaveAsync(
+            playResultData,
+            Ac15EraProfiles.Blue,
+            blue.TaikojukuFileOrder.Select(row => new Ac15DaniChallenge(row.ChallengeLevel, row.UniqueId)),
+            new BlueAc15DaniAdapter(context, blue.TaikojukuFileOrder.Select(row => row.ChallengeLevel)),
+            new Ac15DaniSaveState(saveData.Baid, saveData.DispTaikojukuDan, saveData.IsAutoCostumeOn, BlueDanCostumeId),
+            update =>
+            {
+                saveData.GotDanFlg = update.GotDanFlg;
+                saveData.GotDanExtraFlg = update.GotDanExtraFlg;
+                saveData.GotDanMax = update.GotDanMax;
+                saveData.DispTaikojukuDan = update.DisplayDan;
+                if (update.ApplyDanCostume)
+                {
+                    saveData.Costume1 = update.DanCostumeId;
+                    saveData.CostumeFlg1 = SetBlueBits(saveData.CostumeFlg1, [update.DanCostumeId], BlueProtocolBytes.CostumeFlagBytes);
+                }
+            },
+            logger,
+            cancellationToken);
 
         return await Ac15NormalPlayService.SaveAsync(
             request.Baid,
@@ -161,164 +179,6 @@ public partial class UpdatePlayResultCommandHandler
         saveData.CostumeFlg4 = SetBlueBits(saveData.CostumeFlg4, playResultData.GetCostumeNo4s, BlueProtocolBytes.CostumeFlagBytes);
         saveData.CostumeFlg5 = SetBlueBits(saveData.CostumeFlg5, playResultData.GetCostumeNo5s, BlueProtocolBytes.CostumeFlagBytes);
         saveData.TitleFlg = SetBlueBits(saveData.TitleFlg, playResultData.GetTitleNoes, BlueProtocolBytes.TitleFlagBytes);
-    }
-
-    private async Task SaveBlueDanAsync(
-        UserSaveDataBlue saveData,
-        CommonPlayResultData playResultData,
-        IBlueCatalog blue,
-        CancellationToken cancellationToken)
-    {
-        if (playResultData.PlayMode != (uint)PlayMode.DanMode)
-        {
-            return;
-        }
-
-        var danIds = playResultData.AryStageInfoes
-            .Select(stage => stage.PlayDan.GetValueOrDefault())
-            .Where(dan => dan != 0)
-            .Distinct()
-            .ToArray();
-
-        if (danIds.Length != 1)
-        {
-            logger.LogWarning("Skipping Blue Dani save for baid {Baid}: expected one PlayDan value, got {Count}", saveData.Baid, danIds.Length);
-            return;
-        }
-
-        if (playResultData.DanResult > (uint)Ac15DanClearGrade.GoldClear)
-        {
-            logger.LogWarning("Skipping Blue Dani save for baid {Baid}: invalid DanResult {DanResult}", saveData.Baid, playResultData.DanResult);
-            return;
-        }
-
-        var danId = danIds[0];
-        var pack = blue.TaikojukuFileOrder.FirstOrDefault(row => row.ChallengeLevel == danId);
-        var limits = Ac15EraProfiles.Blue.Limits;
-        if (pack is null || !Ac15DanHelpers.IsKnownDanId(danId, limits))
-        {
-            logger.LogWarning("Skipping Blue Dani save for baid {Baid}: unknown Dan id {DanId}", saveData.Baid, danId);
-            return;
-        }
-
-        var isExtra = Ac15DanHelpers.IsExtraDanId(danId, limits);
-        var danScore = await context.DanScoreDataBlue
-            .Include(row => row.DanStageScoreData)
-            .SingleOrDefaultAsync(row => row.Baid == saveData.Baid && row.DanId == danId && row.IsExtra == isExtra, cancellationToken);
-
-        if (danScore is null)
-        {
-            danScore = new DanScoreDatumBlue
-            {
-                Baid = saveData.Baid,
-                DanId = danId,
-                IsExtra = isExtra,
-                MedleyUniqueId = pack.UniqueId
-            };
-            context.DanScoreDataBlue.Add(danScore);
-        }
-
-        var incomingClearGrade = Ac15DanHelpers.ClampGrade(playResultData.DanResult);
-        UpdateBlueDanScore(danScore, playResultData);
-        await UpdateBlueDanSummaryAsync(saveData, danScore, incomingClearGrade, cancellationToken);
-    }
-
-    private static void UpdateBlueDanScore(DanScoreDatumBlue danScore, CommonPlayResultData playResultData)
-    {
-        danScore.ClearGrade = Ac15DanHelpers.ClampGrade(Math.Max((uint)danScore.ClearGrade, playResultData.DanResult));
-        danScore.ArrivalSongCount = Math.Max(danScore.ArrivalSongCount, (uint)playResultData.AryStageInfoes.Count);
-        danScore.ComboCountTotal = Math.Max(danScore.ComboCountTotal, playResultData.ComboCntTotal);
-        danScore.SoulGaugeTotal = Math.Max(
-            danScore.SoulGaugeTotal,
-            playResultData.AryStageInfoes.LastOrDefault()?.SoulGauge.GetValueOrDefault() ?? 0);
-
-        for (var i = 0; i < playResultData.AryStageInfoes.Count; i++)
-        {
-            var stage = playResultData.AryStageInfoes[i];
-            var stageIndex = (uint)i;
-            var existing = danScore.DanStageScoreData.FirstOrDefault(row => row.StageIndex == stageIndex);
-            if (existing is null)
-            {
-                existing = new DanStageScoreDatumBlue
-                {
-                    Baid = danScore.Baid,
-                    DanId = danScore.DanId,
-                    IsExtra = danScore.IsExtra,
-                    StageIndex = stageIndex,
-                    SongNumber = stage.SongNo,
-                    BadCount = stage.NgCnt
-                };
-                danScore.DanStageScoreData.Add(existing);
-            }
-
-            existing.SongNumber = stage.SongNo;
-            existing.PlayScore = Math.Max(existing.PlayScore, stage.PlayScore);
-            existing.HighScore = Math.Max(existing.HighScore, stage.PlayScore);
-            existing.ComboCount = Math.Max(existing.ComboCount, stage.ComboCnt);
-            existing.DrumrollCount = Math.Max(existing.DrumrollCount, stage.PoundCnt);
-            existing.GoodCount = Math.Max(existing.GoodCount, stage.GoodCnt);
-            existing.OkCount = Math.Max(existing.OkCount, stage.OkCnt);
-            existing.TotalHitCount = Math.Max(existing.TotalHitCount, stage.HitCnt);
-            existing.BadCount = Math.Min(existing.BadCount, stage.NgCnt);
-        }
-    }
-
-    private async ValueTask UpdateBlueDanSummaryAsync(
-        UserSaveDataBlue saveData,
-        DanScoreDatumBlue currentDanScore,
-        Ac15DanClearGrade incomingClearGrade,
-        CancellationToken cancellationToken)
-    {
-        var rows = await context.DanScoreDataBlue
-            .Where(row => row.Baid == saveData.Baid)
-            .ToListAsync(cancellationToken);
-
-        if (!rows.Any(row => row.DanId == currentDanScore.DanId && row.IsExtra == currentDanScore.IsExtra))
-        {
-            rows.Add(currentDanScore);
-        }
-
-        var limits = Ac15EraProfiles.Blue.Limits;
-        var normalGrades = rows
-            .Where(row => !row.IsExtra && Ac15DanHelpers.IsNormalDanId(row.DanId, limits))
-            .ToDictionary(row => row.DanId, row => row.ClearGrade);
-
-        var normalFlags = new byte[limits.DanFlagBytes];
-        foreach (var row in rows.Where(row => !row.IsExtra && Ac15DanHelpers.IsNormalDanId(row.DanId, limits)))
-        {
-            normalFlags = Ac15DanHelpers.SetPackedGrade(
-                normalFlags,
-                Ac15DanHelpers.GetPackedIndex(row.DanId, limits),
-                row.ClearGrade,
-                limits.DanFlagBytes);
-        }
-
-        var extraFlags = new byte[limits.DanExtraFlagBytes];
-        foreach (var row in rows.Where(row => row.IsExtra && Ac15DanHelpers.IsExtraDanId(row.DanId, limits)))
-        {
-            extraFlags = Ac15DanHelpers.SetPackedGrade(
-                extraFlags,
-                Ac15DanHelpers.GetPackedIndex(row.DanId, limits),
-                row.ClearGrade,
-                limits.DanExtraFlagBytes);
-        }
-
-        var isIncomingClear = Ac15DanHelpers.IsClear(incomingClearGrade);
-
-        saveData.GotDanFlg = normalFlags;
-        saveData.GotDanExtraFlg = extraFlags;
-        saveData.GotDanMax = Ac15DanHelpers.GetGotDanMax(normalGrades, limits);
-        if (isIncomingClear && saveData.IsAutoCostumeOn)
-        {
-            saveData.Costume1 = BlueDanCostumeId;
-            saveData.CostumeFlg1 = SetBlueBits(saveData.CostumeFlg1, [BlueDanCostumeId], BlueProtocolBytes.CostumeFlagBytes);
-        }
-
-        saveData.DispTaikojukuDan = !currentDanScore.IsExtra
-                                    && Ac15DanHelpers.IsNormalDanId(currentDanScore.DanId, limits)
-                                    && isIncomingClear
-            ? Ac15DanHelpers.GetDisplayDanAfterNormalClear(currentDanScore.DanId, limits)
-            : Ac15DanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalGrades, limits);
     }
 
     private static bool CanAddBlue(uint current, uint delta)

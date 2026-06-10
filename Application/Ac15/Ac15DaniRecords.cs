@@ -21,6 +21,10 @@ public sealed record Ac15DaniScoreSummary(
     bool IsExtra,
     Ac15DanClearGrade ClearGrade);
 
+public sealed record Ac15DaniChallenge(
+    uint DanId,
+    uint MedleyUniqueId);
+
 public sealed record Ac15DaniStageScore(
     uint StageIndex,
     uint SongNumber,
