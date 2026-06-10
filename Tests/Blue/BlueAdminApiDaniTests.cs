@@ -22,7 +22,7 @@ public sealed class BlueAdminApiDaniTests
             DanId = 1,
             IsExtra = false,
             MedleyUniqueId = 20001,
-            ClearGrade = BlueDanClearGrade.GoldClear,
+            ClearGrade = Ac15DanClearGrade.GoldClear,
             SoulGaugeTotal = 100,
             ComboCountTotal = 300,
             DanStageScoreData =

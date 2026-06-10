@@ -713,7 +713,7 @@ public sealed class YellowPlayResultHandlerTests
             {
                 Baid = 1,
                 PlayMode = (uint)PlayMode.DanMode,
-                DanResult = (uint)YellowDanClearGrade.GoldClear,
+                DanResult = (uint)Ac15DanClearGrade.GoldClear,
                 ComboCntTotal = 320,
                 AryStageInfoes =
                 [
@@ -731,7 +731,7 @@ public sealed class YellowPlayResultHandlerTests
         Assert.Equal(1u, dan.DanId);
         Assert.False(dan.IsExtra);
         Assert.Equal(20001u, dan.MedleyUniqueId);
-        Assert.Equal(YellowDanClearGrade.GoldClear, dan.ClearGrade);
+        Assert.Equal(Ac15DanClearGrade.GoldClear, dan.ClearGrade);
         Assert.Equal(2u, dan.ArrivalSongCount);
         Assert.Equal(88u, dan.SoulGaugeTotal);
         Assert.Equal(320u, dan.ComboCountTotal);
@@ -748,7 +748,7 @@ public sealed class YellowPlayResultHandlerTests
         var save = await fixture.Context.UserSaveDataYellow.SingleAsync(row => row.Baid == 1);
         Assert.Equal(1u, save.GotDanMax);
         Assert.Equal(2u, save.DispTaikojukuDan);
-        Assert.Equal(YellowDanClearGrade.GoldClear, YellowDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
+        Assert.Equal(Ac15DanClearGrade.GoldClear, YellowDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
         Assert.True(BitIsSet(save.CostumeFlg1, 36));
         Assert.Equal(36u, save.Costume1);
         Assert.Equal(2, await fixture.Context.SongPlayDataYellow.CountAsync(row => row.Baid == 1));
@@ -773,7 +773,7 @@ public sealed class YellowPlayResultHandlerTests
             {
                 Baid = 1,
                 PlayMode = (uint)PlayMode.DanMode,
-                DanResult = (uint)YellowDanClearGrade.GoldClear,
+                DanResult = (uint)Ac15DanClearGrade.GoldClear,
                 ComboCntTotal = 500,
                 AryStageInfoes =
                 [
@@ -789,7 +789,7 @@ public sealed class YellowPlayResultHandlerTests
             {
                 Baid = 1,
                 PlayMode = (uint)PlayMode.DanMode,
-                DanResult = (uint)YellowDanClearGrade.NormalClear,
+                DanResult = (uint)Ac15DanClearGrade.NormalClear,
                 ComboCntTotal = 100,
                 AryStageInfoes =
                 [
@@ -801,7 +801,7 @@ public sealed class YellowPlayResultHandlerTests
         var dan = await fixture.Context.DanScoreDataYellow
             .Include(row => row.DanStageScoreData)
             .SingleAsync(row => row.Baid == 1 && row.DanId == 1);
-        Assert.Equal(YellowDanClearGrade.GoldClear, dan.ClearGrade);
+        Assert.Equal(Ac15DanClearGrade.GoldClear, dan.ClearGrade);
         Assert.Equal(500u, dan.ComboCountTotal);
         Assert.Equal(80u, dan.SoulGaugeTotal);
         var stage = Assert.Single(dan.DanStageScoreData);
@@ -812,11 +812,11 @@ public sealed class YellowPlayResultHandlerTests
     }
 
     [Theory]
-    [InlineData((uint)PlayMode.Normal, (uint)YellowDanClearGrade.GoldClear, 1, 0)]
+    [InlineData((uint)PlayMode.Normal, (uint)Ac15DanClearGrade.GoldClear, 1, 0)]
     [InlineData((uint)PlayMode.DanMode, 3, 1, 0)]
-    [InlineData((uint)PlayMode.DanMode, (uint)YellowDanClearGrade.NormalClear, 0, 0)]
-    [InlineData((uint)PlayMode.DanMode, (uint)YellowDanClearGrade.NormalClear, 999, 0)]
-    [InlineData((uint)PlayMode.DanMode, (uint)YellowDanClearGrade.NormalClear, 1, 2)]
+    [InlineData((uint)PlayMode.DanMode, (uint)Ac15DanClearGrade.NormalClear, 0, 0)]
+    [InlineData((uint)PlayMode.DanMode, (uint)Ac15DanClearGrade.NormalClear, 999, 0)]
+    [InlineData((uint)PlayMode.DanMode, (uint)Ac15DanClearGrade.NormalClear, 1, 2)]
     public async Task UpdatePlayResult_Yellow_InvalidDaniInputsDoNotCreateYellowDanRows(
         uint playMode,
         uint danResult,

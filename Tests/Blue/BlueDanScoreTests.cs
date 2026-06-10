@@ -13,7 +13,7 @@ public sealed class BlueDanScoreTests
             DanId = 1,
             IsExtra = false,
             MedleyUniqueId = 20001,
-            ClearGrade = BlueDanClearGrade.GoldClear,
+            ClearGrade = Ac15DanClearGrade.GoldClear,
             ArrivalSongCount = 2,
             SoulGaugeTotal = 150,
             ComboCountTotal = 300,

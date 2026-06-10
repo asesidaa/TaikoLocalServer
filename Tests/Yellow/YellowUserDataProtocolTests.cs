@@ -75,11 +75,11 @@ public sealed class YellowUserDataProtocolTests
         save.GotDanFlg = YellowDanHelpers.SetPackedGrade(
             save.GotDanFlg,
             YellowDanHelpers.GetPackedIndex(3),
-            YellowDanClearGrade.GoldClear);
+            Ac15DanClearGrade.GoldClear);
         save.GotDanExtraFlg = YellowDanHelpers.SetPackedGrade(
             save.GotDanExtraFlg,
             YellowDanHelpers.GetPackedIndex(101),
-            YellowDanClearGrade.NormalClear);
+            Ac15DanClearGrade.NormalClear);
         save.DifficultyPlayedCourse = 11;
         save.DifficultyPlayedStar = 12;
         save.IsChallengeCompe = true;
@@ -303,7 +303,7 @@ public sealed class YellowUserDataProtocolTests
             DanId = 1,
             IsExtra = false,
             MedleyUniqueId = 20001,
-            ClearGrade = YellowDanClearGrade.GoldClear
+            ClearGrade = Ac15DanClearGrade.GoldClear
         });
         fixture.Context.DanScoreDataBlue.Add(new DanScoreDatumBlue
         {
@@ -311,7 +311,7 @@ public sealed class YellowUserDataProtocolTests
             DanId = 2,
             IsExtra = false,
             MedleyUniqueId = 90001,
-            ClearGrade = BlueDanClearGrade.GoldClear
+            ClearGrade = Ac15DanClearGrade.GoldClear
         });
         fixture.Context.DanScoreDataGreen.Add(new DanScoreDatumGreen
         {
@@ -319,7 +319,7 @@ public sealed class YellowUserDataProtocolTests
             DanId = 3,
             IsExtra = false,
             MedleyUniqueId = 90002,
-            ClearGrade = GreenDanClearGrade.GoldClear
+            ClearGrade = Ac15DanClearGrade.GoldClear
         });
         await fixture.Context.SaveChangesAsync();
         var handler = CreateUserDataHandler(fixture);

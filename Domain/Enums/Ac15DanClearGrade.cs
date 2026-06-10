@@ -1,6 +1,6 @@
 namespace TaikoLocalServer.Domain.Enums;
 
-public enum BlueDanClearGrade : uint
+public enum Ac15DanClearGrade : uint
 {
     NotClear = 0,
     NormalClear = 1,

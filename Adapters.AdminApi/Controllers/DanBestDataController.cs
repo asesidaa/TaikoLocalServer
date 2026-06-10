@@ -92,13 +92,13 @@ public class DanBestDataController(ITaikoDbContext context) : BaseAdminControlle
         };
     }
 
-    private static DanClearState MapGreenClearGrade(GreenDanClearGrade grade)
+    private static DanClearState MapGreenClearGrade(Ac15DanClearGrade grade)
     {
         return grade switch
         {
-            GreenDanClearGrade.NotClear => DanClearState.NotClear,
-            GreenDanClearGrade.NormalClear => DanClearState.RedNormalClear,
-            GreenDanClearGrade.GoldClear => DanClearState.GoldNormalClear,
+            Ac15DanClearGrade.NotClear => DanClearState.NotClear,
+            Ac15DanClearGrade.NormalClear => DanClearState.RedNormalClear,
+            Ac15DanClearGrade.GoldClear => DanClearState.GoldNormalClear,
             _ => DanClearState.NotClear
         };
     }
@@ -139,13 +139,13 @@ public class DanBestDataController(ITaikoDbContext context) : BaseAdminControlle
         };
     }
 
-    private static DanClearState MapBlueClearGrade(BlueDanClearGrade grade)
+    private static DanClearState MapBlueClearGrade(Ac15DanClearGrade grade)
     {
         return grade switch
         {
-            BlueDanClearGrade.NotClear => DanClearState.NotClear,
-            BlueDanClearGrade.NormalClear => DanClearState.RedNormalClear,
-            BlueDanClearGrade.GoldClear => DanClearState.GoldNormalClear,
+            Ac15DanClearGrade.NotClear => DanClearState.NotClear,
+            Ac15DanClearGrade.NormalClear => DanClearState.RedNormalClear,
+            Ac15DanClearGrade.GoldClear => DanClearState.GoldNormalClear,
             _ => DanClearState.NotClear
         };
     }
@@ -186,13 +186,13 @@ public class DanBestDataController(ITaikoDbContext context) : BaseAdminControlle
         };
     }
 
-    private static DanClearState MapYellowClearGrade(YellowDanClearGrade grade)
+    private static DanClearState MapYellowClearGrade(Ac15DanClearGrade grade)
     {
         return grade switch
         {
-            YellowDanClearGrade.NotClear => DanClearState.NotClear,
-            YellowDanClearGrade.NormalClear => DanClearState.RedNormalClear,
-            YellowDanClearGrade.GoldClear => DanClearState.GoldNormalClear,
+            Ac15DanClearGrade.NotClear => DanClearState.NotClear,
+            Ac15DanClearGrade.NormalClear => DanClearState.RedNormalClear,
+            Ac15DanClearGrade.GoldClear => DanClearState.GoldNormalClear,
             _ => DanClearState.NotClear
         };
     }

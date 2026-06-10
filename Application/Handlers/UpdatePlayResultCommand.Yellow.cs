@@ -183,7 +183,7 @@ public partial class UpdatePlayResultCommandHandler
             return;
         }
 
-        if (playResultData.DanResult > (uint)YellowDanClearGrade.GoldClear)
+        if (playResultData.DanResult > (uint)Ac15DanClearGrade.GoldClear)
         {
             logger.LogWarning("Skipping Yellow Dani save for baid {Baid}: invalid DanResult {DanResult}", saveData.Baid, playResultData.DanResult);
             return;
@@ -262,7 +262,7 @@ public partial class UpdatePlayResultCommandHandler
     private async ValueTask UpdateYellowDanSummaryAsync(
         UserSaveDataYellow saveData,
         DanScoreDatumYellow currentDanScore,
-        YellowDanClearGrade incomingClearGrade,
+        Ac15DanClearGrade incomingClearGrade,
         CancellationToken cancellationToken)
     {
         var rows = await context.DanScoreDataYellow

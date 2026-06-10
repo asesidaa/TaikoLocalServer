@@ -21,12 +21,12 @@ public sealed class BlueDanHelperTests
     {
         var flags = new byte[BlueProtocolBytes.DanFlagBytes];
 
-        flags = BlueDanHelpers.SetPackedGrade(flags, 0, BlueDanClearGrade.NormalClear);
-        flags = BlueDanHelpers.SetPackedGrade(flags, 1, BlueDanClearGrade.GoldClear);
+        flags = BlueDanHelpers.SetPackedGrade(flags, 0, Ac15DanClearGrade.NormalClear);
+        flags = BlueDanHelpers.SetPackedGrade(flags, 1, Ac15DanClearGrade.GoldClear);
 
-        Assert.Equal(BlueDanClearGrade.NormalClear, BlueDanHelpers.GetPackedGrade(flags, 0));
-        Assert.Equal(BlueDanClearGrade.GoldClear, BlueDanHelpers.GetPackedGrade(flags, 1));
-        Assert.Equal(BlueDanClearGrade.NotClear, BlueDanHelpers.GetPackedGrade(flags, 2));
+        Assert.Equal(Ac15DanClearGrade.NormalClear, BlueDanHelpers.GetPackedGrade(flags, 0));
+        Assert.Equal(Ac15DanClearGrade.GoldClear, BlueDanHelpers.GetPackedGrade(flags, 1));
+        Assert.Equal(Ac15DanClearGrade.NotClear, BlueDanHelpers.GetPackedGrade(flags, 2));
     }
 
     [Fact]
@@ -41,12 +41,12 @@ public sealed class BlueDanHelperTests
     [Fact]
     public void BlueDanHelpers_ComputesGotDanMaxFromClearedNormalDans()
     {
-        var grades = new Dictionary<uint, BlueDanClearGrade>
+        var grades = new Dictionary<uint, Ac15DanClearGrade>
         {
-            [1] = BlueDanClearGrade.NormalClear,
-            [2] = BlueDanClearGrade.NotClear,
-            [5] = BlueDanClearGrade.GoldClear,
-            [101] = BlueDanClearGrade.GoldClear
+            [1] = Ac15DanClearGrade.NormalClear,
+            [2] = Ac15DanClearGrade.NotClear,
+            [5] = Ac15DanClearGrade.GoldClear,
+            [101] = Ac15DanClearGrade.GoldClear
         };
 
         Assert.Equal(5u, BlueDanHelpers.GetGotDanMax(grades));
@@ -55,11 +55,11 @@ public sealed class BlueDanHelperTests
     [Fact]
     public void BlueDanHelpers_NormalizesInvalidOrClearedDisplayDan()
     {
-        var grades = new Dictionary<uint, BlueDanClearGrade>
+        var grades = new Dictionary<uint, Ac15DanClearGrade>
         {
-            [1] = BlueDanClearGrade.NormalClear,
-            [2] = BlueDanClearGrade.GoldClear,
-            [3] = BlueDanClearGrade.NotClear
+            [1] = Ac15DanClearGrade.NormalClear,
+            [2] = Ac15DanClearGrade.GoldClear,
+            [3] = Ac15DanClearGrade.NotClear
         };
 
         Assert.Equal(3u, BlueDanHelpers.NormalizeDisplayDan(0, grades));

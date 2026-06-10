@@ -18,13 +18,13 @@ public static class BlueDanHelpers
     public static bool IsKnownBlueDanId(uint danId)
         => IsNormalDanId(danId) || IsExtraDanId(danId);
 
-    public static bool IsClear(BlueDanClearGrade grade)
-        => grade is BlueDanClearGrade.NormalClear or BlueDanClearGrade.GoldClear;
+    public static bool IsClear(Ac15DanClearGrade grade)
+        => grade is Ac15DanClearGrade.NormalClear or Ac15DanClearGrade.GoldClear;
 
-    public static BlueDanClearGrade ClampGrade(uint value)
-        => value >= (uint)BlueDanClearGrade.GoldClear
-            ? BlueDanClearGrade.GoldClear
-            : (BlueDanClearGrade)value;
+    public static Ac15DanClearGrade ClampGrade(uint value)
+        => value >= (uint)Ac15DanClearGrade.GoldClear
+            ? Ac15DanClearGrade.GoldClear
+            : (Ac15DanClearGrade)value;
 
     public static uint GetPackedIndex(uint danId)
     {
@@ -41,7 +41,7 @@ public static class BlueDanHelpers
         throw new ArgumentOutOfRangeException(nameof(danId), danId, "Blue Dan id must be normal 1..25 or extra 101..128.");
     }
 
-    public static byte[] SetPackedGrade(byte[] source, uint packedIndex, BlueDanClearGrade grade)
+    public static byte[] SetPackedGrade(byte[] source, uint packedIndex, Ac15DanClearGrade grade)
     {
         var result = source.ToArray();
         var value = ToPackedValue(ClampGrade((uint)grade));
@@ -70,7 +70,7 @@ public static class BlueDanHelpers
         return result;
     }
 
-    public static BlueDanClearGrade GetPackedGrade(byte[] source, uint packedIndex)
+    public static Ac15DanClearGrade GetPackedGrade(byte[] source, uint packedIndex)
     {
         uint value = 0;
         var bitOffset = (int)packedIndex * 2;
@@ -92,7 +92,7 @@ public static class BlueDanHelpers
         return FromPackedValue(value);
     }
 
-    public static uint GetGotDanMax(IReadOnlyDictionary<uint, BlueDanClearGrade> normalGrades)
+    public static uint GetGotDanMax(IReadOnlyDictionary<uint, Ac15DanClearGrade> normalGrades)
     {
         uint max = 0;
         foreach (var row in normalGrades)
@@ -106,7 +106,7 @@ public static class BlueDanHelpers
         return max;
     }
 
-    public static uint GetNextUnclearedNormalDan(IReadOnlyDictionary<uint, BlueDanClearGrade> normalGrades)
+    public static uint GetNextUnclearedNormalDan(IReadOnlyDictionary<uint, Ac15DanClearGrade> normalGrades)
     {
         for (uint dan = MinNormalDanId; dan <= MaxNormalDanId; dan++)
         {
@@ -129,7 +129,7 @@ public static class BlueDanHelpers
         return Math.Min(clearedDanId + 1, MaxNormalDanId);
     }
 
-    public static uint NormalizeDisplayDan(uint savedDisplayDan, IReadOnlyDictionary<uint, BlueDanClearGrade> normalGrades)
+    public static uint NormalizeDisplayDan(uint savedDisplayDan, IReadOnlyDictionary<uint, Ac15DanClearGrade> normalGrades)
     {
         if (!IsNormalDanId(savedDisplayDan)
             || (normalGrades.TryGetValue(savedDisplayDan, out var grade) && IsClear(grade)))
@@ -140,20 +140,20 @@ public static class BlueDanHelpers
         return savedDisplayDan;
     }
 
-    private static uint ToPackedValue(BlueDanClearGrade grade)
+    private static uint ToPackedValue(Ac15DanClearGrade grade)
         => grade switch
         {
-            BlueDanClearGrade.NotClear => 0,
-            BlueDanClearGrade.NormalClear => 2,
-            BlueDanClearGrade.GoldClear => 3,
+            Ac15DanClearGrade.NotClear => 0,
+            Ac15DanClearGrade.NormalClear => 2,
+            Ac15DanClearGrade.GoldClear => 3,
             _ => 0
         };
 
-    private static BlueDanClearGrade FromPackedValue(uint value)
+    private static Ac15DanClearGrade FromPackedValue(uint value)
         => value switch
         {
-            0 => BlueDanClearGrade.NotClear,
-            1 or 2 => BlueDanClearGrade.NormalClear,
-            _ => BlueDanClearGrade.GoldClear
+            0 => Ac15DanClearGrade.NotClear,
+            1 or 2 => Ac15DanClearGrade.NormalClear,
+            _ => Ac15DanClearGrade.GoldClear
         };
 }

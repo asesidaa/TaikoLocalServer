@@ -38,25 +38,25 @@ public sealed class YellowDaniTests
     {
         var flags = new byte[Ac15EraProfiles.Yellow.Limits.DanFlagBytes];
 
-        flags = YellowDanHelpers.SetPackedGrade(flags, 0, YellowDanClearGrade.NormalClear);
-        flags = YellowDanHelpers.SetPackedGrade(flags, 1, YellowDanClearGrade.GoldClear);
+        flags = YellowDanHelpers.SetPackedGrade(flags, 0, Ac15DanClearGrade.NormalClear);
+        flags = YellowDanHelpers.SetPackedGrade(flags, 1, Ac15DanClearGrade.GoldClear);
         flags = YellowDanHelpers.SetPackedGrade(flags, 2, YellowDanHelpers.ClampGrade(9));
 
-        Assert.Equal(YellowDanClearGrade.NormalClear, YellowDanHelpers.GetPackedGrade(flags, 0));
-        Assert.Equal(YellowDanClearGrade.GoldClear, YellowDanHelpers.GetPackedGrade(flags, 1));
-        Assert.Equal(YellowDanClearGrade.GoldClear, YellowDanHelpers.GetPackedGrade(flags, 2));
-        Assert.Equal(YellowDanClearGrade.NotClear, YellowDanHelpers.GetPackedGrade(flags, 3));
+        Assert.Equal(Ac15DanClearGrade.NormalClear, YellowDanHelpers.GetPackedGrade(flags, 0));
+        Assert.Equal(Ac15DanClearGrade.GoldClear, YellowDanHelpers.GetPackedGrade(flags, 1));
+        Assert.Equal(Ac15DanClearGrade.GoldClear, YellowDanHelpers.GetPackedGrade(flags, 2));
+        Assert.Equal(Ac15DanClearGrade.NotClear, YellowDanHelpers.GetPackedGrade(flags, 3));
     }
 
     [Fact]
     public void YellowDanHelpers_DerivesMaxClearAndDisplayFallback()
     {
-        var grades = new Dictionary<uint, YellowDanClearGrade>
+        var grades = new Dictionary<uint, Ac15DanClearGrade>
         {
-            [1] = YellowDanClearGrade.GoldClear,
-            [2] = YellowDanClearGrade.NotClear,
-            [3] = YellowDanClearGrade.NormalClear,
-            [101] = YellowDanClearGrade.GoldClear
+            [1] = Ac15DanClearGrade.GoldClear,
+            [2] = Ac15DanClearGrade.NotClear,
+            [3] = Ac15DanClearGrade.NormalClear,
+            [101] = Ac15DanClearGrade.GoldClear
         };
 
         Assert.Equal(3u, YellowDanHelpers.GetGotDanMax(grades));
@@ -71,7 +71,7 @@ public sealed class YellowDaniTests
     public void YellowDanHelpers_DisplayDanCapsAtFinalNormalDan()
     {
         var allCleared = Enumerable.Range((int)YellowDanHelpers.MinNormalDanId, (int)YellowDanHelpers.MaxNormalDanId)
-            .ToDictionary(dan => (uint)dan, _ => YellowDanClearGrade.GoldClear);
+            .ToDictionary(dan => (uint)dan, _ => Ac15DanClearGrade.GoldClear);
 
         Assert.Equal(25u, YellowDanHelpers.GetDisplayDanAfterNormalClear(25));
         Assert.Equal(25u, YellowDanHelpers.GetNextUnclearedNormalDan(allCleared));
@@ -89,7 +89,7 @@ public sealed class YellowDaniTests
             DanId = 1,
             IsExtra = false,
             MedleyUniqueId = 20001,
-            ClearGrade = YellowDanClearGrade.GoldClear,
+            ClearGrade = Ac15DanClearGrade.GoldClear,
             ArrivalSongCount = 2,
             SoulGaugeTotal = 150,
             ComboCountTotal = 300,
@@ -105,7 +105,7 @@ public sealed class YellowDaniTests
             DanId = 1,
             IsExtra = false,
             MedleyUniqueId = 90001,
-            ClearGrade = BlueDanClearGrade.GoldClear,
+            ClearGrade = Ac15DanClearGrade.GoldClear,
             ArrivalSongCount = 1,
             SoulGaugeTotal = 1,
             ComboCountTotal = 1
@@ -116,7 +116,7 @@ public sealed class YellowDaniTests
             DanId = 1,
             IsExtra = false,
             MedleyUniqueId = 90002,
-            ClearGrade = GreenDanClearGrade.GoldClear,
+            ClearGrade = Ac15DanClearGrade.GoldClear,
             ArrivalSongCount = 1,
             SoulGaugeTotal = 2,
             ComboCountTotal = 2

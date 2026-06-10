@@ -111,7 +111,7 @@ public sealed class BlueUserDataTests
             Baid = 1,
             DanId = 1,
             IsExtra = false,
-            ClearGrade = BlueDanClearGrade.NormalClear
+            ClearGrade = Ac15DanClearGrade.NormalClear
         });
         await fixture.Context.SaveChangesAsync();
         var handler = new UserDataQueryHandler(

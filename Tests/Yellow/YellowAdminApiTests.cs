@@ -239,7 +239,7 @@ public sealed class YellowAdminApiTests
             DanId = 1,
             IsExtra = false,
             MedleyUniqueId = 20001,
-            ClearGrade = YellowDanClearGrade.GoldClear,
+            ClearGrade = Ac15DanClearGrade.GoldClear,
             SoulGaugeTotal = 100,
             ComboCountTotal = 300,
             DanStageScoreData =
@@ -253,7 +253,7 @@ public sealed class YellowAdminApiTests
             DanId = 2,
             IsExtra = false,
             MedleyUniqueId = 20002,
-            ClearGrade = BlueDanClearGrade.GoldClear,
+            ClearGrade = Ac15DanClearGrade.GoldClear,
             SoulGaugeTotal = 200,
             ComboCountTotal = 600
         });
@@ -263,7 +263,7 @@ public sealed class YellowAdminApiTests
             DanId = 3,
             IsExtra = false,
             MedleyUniqueId = 20003,
-            ClearGrade = GreenDanClearGrade.GoldClear,
+            ClearGrade = Ac15DanClearGrade.GoldClear,
             SoulGaugeTotal = 300,
             ComboCountTotal = 900
         });

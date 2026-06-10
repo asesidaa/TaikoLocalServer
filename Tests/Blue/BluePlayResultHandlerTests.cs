@@ -435,7 +435,7 @@ public sealed class BluePlayResultHandlerTests
             .Include(row => row.DanStageScoreData)
             .SingleAsync(row => row.Baid == 1 && row.DanId == 1 && !row.IsExtra);
         Assert.Equal(20001u, dan.MedleyUniqueId);
-        Assert.Equal(BlueDanClearGrade.GoldClear, dan.ClearGrade);
+        Assert.Equal(Ac15DanClearGrade.GoldClear, dan.ClearGrade);
         Assert.Equal(3u, dan.ArrivalSongCount);
         Assert.Equal(100u, dan.SoulGaugeTotal);
         Assert.Equal(300u, dan.ComboCountTotal);
@@ -447,7 +447,7 @@ public sealed class BluePlayResultHandlerTests
         Assert.NotNull(save);
         Assert.Equal(1u, save!.GotDanMax);
         Assert.Equal(2u, save.DispTaikojukuDan);
-        Assert.Equal(BlueDanClearGrade.GoldClear, BlueDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
+        Assert.Equal(Ac15DanClearGrade.GoldClear, BlueDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
     }
 
     [Fact]
@@ -538,8 +538,8 @@ public sealed class BluePlayResultHandlerTests
         Assert.NotNull(save);
         Assert.Equal(0u, save!.GotDanMax);
         Assert.Equal(1u, save.DispTaikojukuDan);
-        Assert.Equal(BlueDanClearGrade.GoldClear, BlueDanHelpers.GetPackedGrade(save.GotDanExtraFlg, 0));
-        Assert.Equal(BlueDanClearGrade.NotClear, BlueDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
+        Assert.Equal(Ac15DanClearGrade.GoldClear, BlueDanHelpers.GetPackedGrade(save.GotDanExtraFlg, 0));
+        Assert.Equal(Ac15DanClearGrade.NotClear, BlueDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
     }
 
     [Theory]

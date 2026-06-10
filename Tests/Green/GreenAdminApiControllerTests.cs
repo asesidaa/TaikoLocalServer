@@ -108,7 +108,7 @@ public class GreenAdminApiControllerTests
             DanId = 1,
             IsExtra = false,
             MedleyUniqueId = 20001,
-            ClearGrade = GreenDanClearGrade.GoldClear,
+            ClearGrade = Ac15DanClearGrade.GoldClear,
             SoulGaugeTotal = 100,
             ComboCountTotal = 300,
             DanStageScoreData =
@@ -425,14 +425,14 @@ public class GreenAdminApiControllerTests
                 Baid = 1,
                 DanId = 1,
                 IsExtra = false,
-                ClearGrade = GreenDanClearGrade.GoldClear
+                ClearGrade = Ac15DanClearGrade.GoldClear
             },
             new DanScoreDatumGreen
             {
                 Baid = 1,
                 DanId = 101,
                 IsExtra = true,
-                ClearGrade = GreenDanClearGrade.NotClear
+                ClearGrade = Ac15DanClearGrade.NotClear
             });
         await fixture.Context.SaveChangesAsync();
 
@@ -458,7 +458,7 @@ public class GreenAdminApiControllerTests
             Baid = 1,
             DanId = 1,
             IsExtra = false,
-            ClearGrade = GreenDanClearGrade.GoldClear
+            ClearGrade = Ac15DanClearGrade.GoldClear
         });
         await fixture.Context.SaveChangesAsync();
 

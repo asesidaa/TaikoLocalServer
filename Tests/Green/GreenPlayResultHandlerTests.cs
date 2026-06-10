@@ -1143,7 +1143,7 @@ public sealed class GreenPlayResultHandlerTests
             DanId = 1,
             IsExtra = false,
             MedleyUniqueId = 20001,
-            ClearGrade = GreenDanClearGrade.GoldClear,
+            ClearGrade = Ac15DanClearGrade.GoldClear,
             ArrivalSongCount = 1,
             SoulGaugeTotal = 100,
             ComboCountTotal = 138,
@@ -1174,7 +1174,7 @@ public sealed class GreenPlayResultHandlerTests
             .Include(row => row.DanStageScoreData)
             .SingleAsync(row => row.Baid == 1 && row.DanId == 1 && !row.IsExtra);
 
-        Assert.Equal(GreenDanClearGrade.GoldClear, saved.ClearGrade);
+        Assert.Equal(Ac15DanClearGrade.GoldClear, saved.ClearGrade);
         var stage = Assert.Single(saved.DanStageScoreData);
         Assert.Equal(0u, stage.StageIndex);
         Assert.Equal(790u, stage.SongNumber);
@@ -1261,37 +1261,37 @@ public sealed class GreenPlayResultHandlerTests
     [Fact]
     public void GreenDanHelpers_PacksTwoBitClearGrades()
     {
-        var flags = GreenDanHelpers.SetPackedGrade(new byte[GreenProtocolBytes.DanFlagBytes], 0, GreenDanClearGrade.NormalClear);
-        flags = GreenDanHelpers.SetPackedGrade(flags, 1, GreenDanClearGrade.GoldClear);
+        var flags = GreenDanHelpers.SetPackedGrade(new byte[GreenProtocolBytes.DanFlagBytes], 0, Ac15DanClearGrade.NormalClear);
+        flags = GreenDanHelpers.SetPackedGrade(flags, 1, Ac15DanClearGrade.GoldClear);
 
-        Assert.Equal(GreenDanClearGrade.NormalClear, GreenDanHelpers.GetPackedGrade(flags, 0));
-        Assert.Equal(GreenDanClearGrade.GoldClear, GreenDanHelpers.GetPackedGrade(flags, 1));
-        Assert.Equal(GreenDanClearGrade.NotClear, GreenDanHelpers.GetPackedGrade(flags, 2));
+        Assert.Equal(Ac15DanClearGrade.NormalClear, GreenDanHelpers.GetPackedGrade(flags, 0));
+        Assert.Equal(Ac15DanClearGrade.GoldClear, GreenDanHelpers.GetPackedGrade(flags, 1));
+        Assert.Equal(Ac15DanClearGrade.NotClear, GreenDanHelpers.GetPackedGrade(flags, 2));
     }
 
     [Fact]
     public void GreenDanHelpers_EncodesGoldClearAsThreeForClientFlags()
     {
-        var flags = GreenDanHelpers.SetPackedGrade(new byte[GreenProtocolBytes.DanFlagBytes], 0, GreenDanClearGrade.GoldClear);
+        var flags = GreenDanHelpers.SetPackedGrade(new byte[GreenProtocolBytes.DanFlagBytes], 0, Ac15DanClearGrade.GoldClear);
 
         Assert.Equal(0b0000_0011, flags[0] & 0b11);
-        Assert.Equal(GreenDanClearGrade.GoldClear, GreenDanHelpers.GetPackedGrade(flags, 0));
+        Assert.Equal(Ac15DanClearGrade.GoldClear, GreenDanHelpers.GetPackedGrade(flags, 0));
     }
 
     [Fact]
     public void GreenDanHelpers_ComputesNextUnclearedNormalDan()
     {
-        var grades = new Dictionary<uint, GreenDanClearGrade>
+        var grades = new Dictionary<uint, Ac15DanClearGrade>
         {
-            [1] = GreenDanClearGrade.NormalClear,
-            [2] = GreenDanClearGrade.GoldClear
+            [1] = Ac15DanClearGrade.NormalClear,
+            [2] = Ac15DanClearGrade.GoldClear
         };
 
         Assert.Equal(3u, GreenDanHelpers.GetNextUnclearedNormalDan(grades));
 
         for (uint dan = 3; dan <= 25; dan++)
         {
-            grades[dan] = GreenDanClearGrade.NormalClear;
+            grades[dan] = Ac15DanClearGrade.NormalClear;
         }
 
         Assert.Equal(25u, GreenDanHelpers.GetNextUnclearedNormalDan(grades));
@@ -1335,7 +1335,7 @@ public sealed class GreenPlayResultHandlerTests
             .SingleAsync(row => row.Baid == 1 && row.DanId == 1 && !row.IsExtra);
 
         Assert.Equal(20001u, dan.MedleyUniqueId);
-        Assert.Equal(GreenDanClearGrade.GoldClear, dan.ClearGrade);
+        Assert.Equal(Ac15DanClearGrade.GoldClear, dan.ClearGrade);
         Assert.Equal(3u, dan.ArrivalSongCount);
         Assert.Equal(100u, dan.SoulGaugeTotal);
         Assert.Equal(3, dan.DanStageScoreData.Count);
@@ -1479,7 +1479,7 @@ public sealed class GreenPlayResultHandlerTests
         Assert.NotNull(save);
         Assert.Equal(1u, save!.GotDanMax);
         Assert.Equal(2u, save.DispTaikojukuDan);
-        Assert.Equal(GreenDanClearGrade.NormalClear, GreenDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
+        Assert.Equal(Ac15DanClearGrade.NormalClear, GreenDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
     }
 
     [Theory]
@@ -1647,7 +1647,7 @@ public sealed class GreenPlayResultHandlerTests
 
         Assert.Equal(5u, save.GotDanMax);
         Assert.Equal(7u, save.DispTaikojukuDan);
-        Assert.Equal(GreenDanClearGrade.NormalClear, GreenDanHelpers.GetPackedGrade(save.GotDanFlg, 4));
+        Assert.Equal(Ac15DanClearGrade.NormalClear, GreenDanHelpers.GetPackedGrade(save.GotDanFlg, 4));
     }
 
     [Fact]
@@ -1715,8 +1715,8 @@ public sealed class GreenPlayResultHandlerTests
         Assert.NotNull(save);
         Assert.Equal(0u, save!.GotDanMax);
         Assert.Equal(1u, save.DispTaikojukuDan);
-        Assert.Equal(GreenDanClearGrade.GoldClear, GreenDanHelpers.GetPackedGrade(save.GotDanExtraFlg, 0));
-        Assert.Equal(GreenDanClearGrade.NotClear, GreenDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
+        Assert.Equal(Ac15DanClearGrade.GoldClear, GreenDanHelpers.GetPackedGrade(save.GotDanExtraFlg, 0));
+        Assert.Equal(Ac15DanClearGrade.NotClear, GreenDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
     }
 
     [Fact]
@@ -1748,7 +1748,7 @@ public sealed class GreenPlayResultHandlerTests
         Assert.NotNull(save);
         Assert.Equal(0u, save!.GotDanMax);
         Assert.Equal(1u, save.DispTaikojukuDan);
-        Assert.Equal(GreenDanClearGrade.NotClear, GreenDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
+        Assert.Equal(Ac15DanClearGrade.NotClear, GreenDanHelpers.GetPackedGrade(save.GotDanFlg, 0));
     }
 
     [Fact]
@@ -1762,7 +1762,7 @@ public sealed class GreenPlayResultHandlerTests
             DanId = 1,
             IsExtra = false,
             MedleyUniqueId = 20001,
-            ClearGrade = GreenDanClearGrade.NormalClear,
+            ClearGrade = Ac15DanClearGrade.NormalClear,
             ArrivalSongCount = 2,
             SoulGaugeTotal = 150,
             ComboCountTotal = 300,

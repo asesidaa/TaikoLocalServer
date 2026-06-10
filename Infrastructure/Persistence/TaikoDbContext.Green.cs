@@ -79,7 +79,7 @@ public partial class TaikoDbContext
 
             entity.Property(e => e.ClearGrade)
                 .HasConversion<uint>()
-                .HasDefaultValue(GreenDanClearGrade.NotClear);
+                .HasDefaultValue(Ac15DanClearGrade.NotClear);
         });
 
         modelBuilder.Entity<DanStageScoreDatumGreen>(entity =>

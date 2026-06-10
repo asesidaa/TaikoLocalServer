@@ -93,7 +93,7 @@ public partial class TaikoDbContext
             entity.HasIndex(e => e.MedleyUniqueId);
             entity.Property(e => e.ClearGrade)
                 .HasConversion<uint>()
-                .HasDefaultValue(YellowDanClearGrade.NotClear);
+                .HasDefaultValue(Ac15DanClearGrade.NotClear);
             entity.HasOne(d => d.Ba)
                 .WithMany()
                 .HasPrincipalKey(p => p.Baid)

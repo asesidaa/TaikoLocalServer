@@ -11,7 +11,7 @@ public class DanScoreDatumYellow
     public uint ArrivalSongCount { get; set; }
     public uint SoulGaugeTotal { get; set; }
     public uint ComboCountTotal { get; set; }
-    public YellowDanClearGrade ClearGrade { get; set; }
+    public Ac15DanClearGrade ClearGrade { get; set; }
     public List<DanStageScoreDatumYellow> DanStageScoreData { get; set; } = [];
 
     public virtual UserDatum? Ba { get; set; }

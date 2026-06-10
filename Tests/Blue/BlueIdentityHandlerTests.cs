@@ -82,8 +82,8 @@ public sealed class BlueIdentityHandlerTests
         fixture.Context.UserData.Add(new UserDatum { Baid = 7, MyDonName = "DON" });
         fixture.Context.Cards.Add(new Card { Baid = 7, AccessCode = "777" });
         var save = UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(7);
-        save.GotDanFlg = BlueDanHelpers.SetPackedGrade(save.GotDanFlg, 0, BlueDanClearGrade.GoldClear);
-        save.GotDanExtraFlg = BlueDanHelpers.SetPackedGrade(save.GotDanExtraFlg, 0, BlueDanClearGrade.NormalClear);
+        save.GotDanFlg = BlueDanHelpers.SetPackedGrade(save.GotDanFlg, 0, Ac15DanClearGrade.GoldClear);
+        save.GotDanExtraFlg = BlueDanHelpers.SetPackedGrade(save.GotDanExtraFlg, 0, Ac15DanClearGrade.NormalClear);
         save.GotDanMax = 30;
         fixture.Context.UserSaveDataBlue.Add(save);
         await fixture.Context.SaveChangesAsync();
@@ -95,8 +95,8 @@ public sealed class BlueIdentityHandlerTests
         var response = await handler.Handle(new BaidQuery(GameEra.Blue, "777"), CancellationToken.None);
 
         Assert.Equal(25u, response.GotDanMax);
-        Assert.Equal(BlueDanClearGrade.GoldClear, BlueDanHelpers.GetPackedGrade(response.GotDanFlg, 0));
-        Assert.Equal(BlueDanClearGrade.NormalClear, BlueDanHelpers.GetPackedGrade(response.GotDanExtraFlg!, 0));
+        Assert.Equal(Ac15DanClearGrade.GoldClear, BlueDanHelpers.GetPackedGrade(response.GotDanFlg, 0));
+        Assert.Equal(Ac15DanClearGrade.NormalClear, BlueDanHelpers.GetPackedGrade(response.GotDanExtraFlg!, 0));
     }
 
     [Fact]
