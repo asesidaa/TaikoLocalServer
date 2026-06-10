@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
 status: executing
-stopped_at: Completed 16.2-01-PLAN.md
-last_updated: "2026-06-10T16:26:44.519Z"
+stopped_at: Completed 16.2-02-PLAN.md
+last_updated: "2026-06-10T16:50:09.137Z"
 last_activity: 2026-06-10 -- Phase 16.2 execution started
 progress:
   total_phases: 8
   completed_phases: 6
   total_plans: 36
-  completed_plans: 24
-  percent: 67
+  completed_plans: 25
+  percent: 69
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-07)
 ## Current Position
 
 Phase: 16.2 (ac15-shared-core-simplification-and-reuse-cleanup) — EXECUTING
-Plan: 2 of 13
+Plan: 3 of 13
 Status: Ready to execute
 Last activity: 2026-06-10 -- Phase 16.2 execution started
 
@@ -83,6 +83,7 @@ Last activity: 2026-06-10 -- Phase 16.2 execution started
 | Phase 16 P03 | 12 min | 2 tasks | 5 files |
 | Phase 16 P04 | 20 min | 2 tasks | 3 files |
 | Phase 16.2 P01 | 7 min | 2 tasks | 50 files |
+| Phase 16.2 P02 | 13 min | 2 tasks | 35 files |
 
 ## Accumulated Context
 
@@ -130,6 +131,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 16]: Plan 04 tightened Yellow Banacoin-adjacent compatibility to full request logging plus stateless success-only routes, with tests proving no wallet/payment/coupon/transaction authority surfaces.
 - [Phase 16.2]: Canonicalized only value-identical AC15 Dan clear-grade and shop item-status enum types. — Blue, Green, and Yellow protocol values matched exactly, while EF entities and DbSets remain era-owned.
 - [Phase 16.2]: Kept existing era Dan helper and shop adapter behavior in place for later Phase 16.2 extraction plans. — Plan 01 only canonicalizes domain enum values; wider helper, Dani, shop, and playresult extraction remains owned by subsequent scoped plans.
+- [Phase 16.2]: Dan id ranges, packed two-bit flags, GotDanMax, display-Dan normalization, and readback filtering now use Ac15DanHelpers with Ac15ProtocolLimits. — Plan 16.2-02 centralized duplicate Blue, Green, and Yellow Dan helper behavior behind profile-driven protocol limits.
+- [Phase 16.2]: Blue battle and Green ghost protocol constants stayed era-local while shared Dan/crown behavior moved to Application/Ac15. — The cleanup removed duplicated helper wrappers without widening protocol placement semantics across eras.
+- [Phase 16.2]: Duplicate helper-only tests were replaced by canonical AC15 helper behavior tests; era tests continue to verify handler and protocol behavior. — Repository test rules prefer observable behavior and no-cross-era boundaries over implementation-string or wrapper-existence assertions.
 
 ### Pending Todos
 
@@ -154,8 +158,8 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-10T16:25:35.470Z
-Stopped at: Completed 16.2-01-PLAN.md
+Last session: 2026-06-10T16:50:09.131Z
+Stopped at: Completed 16.2-02-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
