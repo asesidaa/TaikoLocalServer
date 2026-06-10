@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
 status: executing
-stopped_at: Completed 16.2-03-PLAN.md
-last_updated: "2026-06-10T18:57:21.427Z"
-last_activity: 2026-06-10 -- Phase 16.2 execution started
+stopped_at: Completed 16.2-05-PLAN.md
+last_updated: "2026-06-10T19:14:22.612Z"
+last_activity: 2026-06-10
 progress:
   total_phases: 8
   completed_phases: 6
   total_plans: 36
-  completed_plans: 28
+  completed_plans: 29
   percent: 75
 ---
 
@@ -26,9 +26,9 @@ See: `.planning/PROJECT.md` (updated 2026-06-07)
 ## Current Position
 
 Phase: 16.2 (ac15-shared-core-simplification-and-reuse-cleanup) — EXECUTING
-Plan: 5 of 13
+Plan: 6 of 13
 Status: Ready to execute
-Last activity: 2026-06-10 -- Phase 16.2 execution started
+Last activity: 2026-06-10
 
 ## Performance Metrics
 
@@ -87,6 +87,7 @@ Last activity: 2026-06-10 -- Phase 16.2 execution started
 | Phase 16.2 P04 | 5 min | 1 tasks | 4 files |
 | Phase 16.2 P06 | 12 min | 1 tasks | 5 files |
 | Phase 16.2 P03 | 10 min | 1 tasks | 7 files |
+| Phase 16.2 P05 | 6 min | 1 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -144,6 +145,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 16.2]: Profile counter updates now use Ac15ProfileCounterUpdater with explicit typed save-field delegates for Blue, Green, and Yellow. — Plan 16.2-03 centralized duplicated Blue/Green helper and Yellow inline logic while preserving observable counter behavior.
 - [Phase 16.2]: Blue, Green, and Yellow profile save rows remain era-owned; the refactor adds no shared EF table, reflection adapter, route, or wire change. — D-20 and D-24 require typed save ownership and forbid broad generic EF adapters or shared gameplay tables.
 - [Phase 16.2]: Existing Green helper coverage was moved to canonical AC15 counter updater tests, with additional Blue and Yellow typed-access checks. — Repository test rules prefer observable behavior coverage over source-shape tests for reuse cleanup.
+- [Phase 16.2]: Factored AC15 item-shop purchased item plumbing through typed era DbSets. — Plan 16.2-05 shares duplicate lookup, row creation, and save shape while keeping Blue, Green, and Yellow shop item tables and unlock policies explicit.
 
 ### Pending Todos
 
@@ -168,8 +170,8 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-10T18:56:30.235Z
-Stopped at: Completed 16.2-03-PLAN.md
+Last session: 2026-06-10T19:12:47.481Z
+Stopped at: Completed 16.2-05-PLAN.md
 Resume file: None
 
 ## Operator Next Steps

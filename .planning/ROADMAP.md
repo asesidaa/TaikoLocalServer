@@ -22,7 +22,7 @@ Active milestone: **v1.2 Yellow AC15 Support**
 | 15 | Yellow Dani, Shop, Medals, WaiWai, and Admin | Implement Yellow Dani, metadata, shop/medals, WaiWai tutorial/logging, and admin readback. | YDAN-01, YSHOP-01, YSHOP-02, YMED-01, YWAI-01, YUI-01 | 5 |
 | 16 | Yellow Tokkun and Banacoin Compatibility | Add Yellow Tokkun acceptance/persistence/readback and stateless Banacoin-adjacent compatibility. | YTOK-01, YTOK-02, YTOK-03, YBAN-01 | 5 |
 | 16.1 | AC15 Mapperly Mapper Rewrite and Presence Semantics | Regenerate AC15 wire DTOs with nullable optional primitives and move Green/Blue/Yellow protocol projection to real Mapperly generation. | YMAPP-01, YMAPP-02, YMAPP-03 | 6 |
-| 16.2 | AC15 Shared Core Simplification and Reuse Cleanup | 5/13 | In Progress|  |
+| 16.2 | AC15 Shared Core Simplification and Reuse Cleanup | 6/13 | In Progress|  |
 | 17 | Yellow Runtime Verification and Contract Closeout | Prove the full Yellow contract with focused tests, full build/test, runtime smoke, and docs. | YVER-01, YVER-02, YVER-03, YDOC-01 | 5 |
 
 **Coverage:** 34/34 v1.2 requirements mapped exactly once.
@@ -265,7 +265,7 @@ Plans:
 **Wave 3** *(blocked on wave 2 helper/shop slices)*
 
 - [x] 16.2-03-PLAN.md - Replace duplicated AC15 profile counter updates with a typed counter updater
-- [ ] 16.2-05-PLAN.md - Factor typed AC15 item-shop adapter plumbing without changing unlock policy
+- [x] 16.2-05-PLAN.md - Factor typed AC15 item-shop adapter plumbing without changing unlock policy
 
 **Wave 4** *(blocked on profile counters, item-shop plumbing, and Dani contracts)*
 
