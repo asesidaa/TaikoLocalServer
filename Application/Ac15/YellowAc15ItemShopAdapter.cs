@@ -18,7 +18,13 @@ public sealed class YellowAc15ItemShopAdapter(ITaikoDbContext context, UserSaveD
         uint itemType,
         uint itemId,
         CancellationToken cancellationToken)
-        => await context.YellowShopItemStates.FindAsync([baid, seasonId, itemType, itemId], cancellationToken) is not null;
+        => await Ac15PurchasedShopItemStates.ContainsAsync(
+            context.YellowShopItemStates,
+            baid,
+            seasonId,
+            itemType,
+            itemId,
+            cancellationToken);
 
     public async ValueTask AddPurchasedItemAsync(Ac15PurchasedShopItem item, CancellationToken cancellationToken)
     {
@@ -26,22 +32,11 @@ public sealed class YellowAc15ItemShopAdapter(ITaikoDbContext context, UserSaveD
         var state = await context.GetOrCreateYellowShopSeasonStateAsync(saveData, item.SeasonId, cancellationToken);
         state.TotalUseDonmedal += item.ItemPrice;
         state.UpdatedAt = now;
-        context.YellowShopItemStates.Add(new YellowShopItemState
-        {
-            Baid = item.Baid,
-            SeasonId = item.SeasonId,
-            ItemType = item.ItemType,
-            ItemId = item.ItemId,
-            ItemNo = item.ItemNo,
-            ItemPrice = item.ItemPrice,
-            Status = Ac15ShopItemStatus.Unlocked,
-            PurchasedAt = now,
-            UnlockedAt = now
-        });
+        context.YellowShopItemStates.Add(Ac15PurchasedShopItemStates.Create<YellowShopItemState>(item, now));
     }
 
     public ValueTask SaveChangesAsync(CancellationToken cancellationToken)
-        => new(context.SaveChangesAsync(cancellationToken));
+        => Ac15PurchasedShopItemStates.SaveAsync(context, cancellationToken);
 
     public void ApplyUnlock(Ac15ShopItemType itemType, uint itemId)
     {

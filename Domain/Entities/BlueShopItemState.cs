@@ -2,7 +2,7 @@ using TaikoLocalServer.Domain.Enums;
 
 namespace TaikoLocalServer.Domain.Entities;
 
-public sealed class BlueShopItemState
+public sealed class BlueShopItemState : IAc15ShopItemState
 {
     public uint Baid { get; set; }
 

@@ -18,7 +18,13 @@ public sealed class GreenAc15ItemShopAdapter(ITaikoDbContext context, UserSaveDa
         uint itemType,
         uint itemId,
         CancellationToken cancellationToken)
-        => await context.GreenShopItemStates.FindAsync([baid, seasonId, itemType, itemId], cancellationToken) is not null;
+        => await Ac15PurchasedShopItemStates.ContainsAsync(
+            context.GreenShopItemStates,
+            baid,
+            seasonId,
+            itemType,
+            itemId,
+            cancellationToken);
 
     public async ValueTask AddPurchasedItemAsync(Ac15PurchasedShopItem item, CancellationToken cancellationToken)
     {
@@ -26,22 +32,11 @@ public sealed class GreenAc15ItemShopAdapter(ITaikoDbContext context, UserSaveDa
         var state = await context.GetOrCreateGreenShopSeasonStateAsync(saveData, item.SeasonId, cancellationToken);
         state.TotalUseDonmedal += item.ItemPrice;
         state.UpdatedAt = now;
-        context.GreenShopItemStates.Add(new GreenShopItemState
-        {
-            Baid = item.Baid,
-            SeasonId = item.SeasonId,
-            ItemType = item.ItemType,
-            ItemId = item.ItemId,
-            ItemNo = item.ItemNo,
-            ItemPrice = item.ItemPrice,
-            Status = Ac15ShopItemStatus.Unlocked,
-            PurchasedAt = now,
-            UnlockedAt = now
-        });
+        context.GreenShopItemStates.Add(Ac15PurchasedShopItemStates.Create<GreenShopItemState>(item, now));
     }
 
     public ValueTask SaveChangesAsync(CancellationToken cancellationToken)
-        => new(context.SaveChangesAsync(cancellationToken));
+        => Ac15PurchasedShopItemStates.SaveAsync(context, cancellationToken);
 
     public void ApplyUnlock(Ac15ShopItemType itemType, uint itemId)
     {
