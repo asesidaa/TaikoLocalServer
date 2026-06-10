@@ -1,3 +1,4 @@
+using TaikoLocalServer.Application.Ac15;
 using TaikoLocalServer.Application.Catalog.Blue;
 
 namespace TaikoLocalServer.Application.Common;
@@ -23,13 +24,14 @@ public static class BlueShopStateExtensions
             return existing;
         }
 
+        var seed = Ac15ShopSeasonPolicy.BlueNewSeasonSeed();
         var now = DateTime.UtcNow;
         var state = new BlueShopSeasonState
         {
             Baid = baid,
             SeasonId = seasonId,
-            TotalGetDonmedal = 0,
-            TotalUseDonmedal = 0,
+            TotalGetDonmedal = seed.TotalGetDonmedal,
+            TotalUseDonmedal = seed.TotalUseDonmedal,
             CreatedAt = now,
             UpdatedAt = now
         };

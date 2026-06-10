@@ -1,3 +1,4 @@
+using TaikoLocalServer.Application.Ac15;
 using TaikoLocalServer.Application.Catalog.Yellow;
 
 namespace TaikoLocalServer.Application.Common;
@@ -18,13 +19,17 @@ public static class YellowShopStateExtensions
 
         var hasAnyShopState = await context.YellowShopSeasonStates
             .AnyAsync(row => row.Baid == saveData.Baid, cancellationToken);
+        var seed = Ac15ShopSeasonPolicy.FirstSeasonFromSaveSeed(
+            hasAnyShopState,
+            saveData.TotalGetDonmedal,
+            saveData.TotalUseDonmedal);
         var now = DateTime.UtcNow;
         var state = new YellowShopSeasonState
         {
             Baid = saveData.Baid,
             SeasonId = seasonId,
-            TotalGetDonmedal = hasAnyShopState ? 0 : saveData.TotalGetDonmedal,
-            TotalUseDonmedal = hasAnyShopState ? 0 : saveData.TotalUseDonmedal,
+            TotalGetDonmedal = seed.TotalGetDonmedal,
+            TotalUseDonmedal = seed.TotalUseDonmedal,
             CreatedAt = now,
             UpdatedAt = now
         };

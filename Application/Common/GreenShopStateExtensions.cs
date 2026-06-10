@@ -1,3 +1,5 @@
+using TaikoLocalServer.Application.Ac15;
+
 namespace TaikoLocalServer.Application.Common;
 
 public static class GreenShopStateExtensions
@@ -16,13 +18,17 @@ public static class GreenShopStateExtensions
 
         var hasAnyShopState = await context.GreenShopSeasonStates
             .AnyAsync(row => row.Baid == saveData.Baid, cancellationToken);
+        var seed = Ac15ShopSeasonPolicy.FirstSeasonFromSaveSeed(
+            hasAnyShopState,
+            saveData.TotalGetDonmedal,
+            saveData.TotalUseDonmedal);
         var now = DateTime.UtcNow;
         var state = new GreenShopSeasonState
         {
             Baid = saveData.Baid,
             SeasonId = seasonId,
-            TotalGetDonmedal = hasAnyShopState ? 0 : saveData.TotalGetDonmedal,
-            TotalUseDonmedal = hasAnyShopState ? 0 : saveData.TotalUseDonmedal,
+            TotalGetDonmedal = seed.TotalGetDonmedal,
+            TotalUseDonmedal = seed.TotalUseDonmedal,
             CreatedAt = now,
             UpdatedAt = now
         };
