@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
-status: Phase 16.2 planned; ready to execute
-stopped_at: Phase 16.2 plan-phase complete
-last_updated: "2026-06-10T16:07:52.170Z"
-last_activity: 2026-06-10 -- planned Phase 16.2 AC15 shared core simplification into 13 scoped plans after checker revision
+status: executing
+stopped_at: Completed 16.2-01-PLAN.md
+last_updated: "2026-06-10T16:26:44.519Z"
+last_activity: 2026-06-10 -- Phase 16.2 execution started
 progress:
   total_phases: 8
   completed_phases: 6
-  total_plans: 23
-  completed_plans: 23
-  percent: 75
+  total_plans: 36
+  completed_plans: 24
+  percent: 67
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-07)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Phase 16.2 - AC15 Shared Core Simplification and Reuse Cleanup
+**Current focus:** Phase 16.2 — ac15-shared-core-simplification-and-reuse-cleanup
 
 ## Current Position
 
-Phase: 16.2
-Plan: 13 plans ready
-Status: Phase 16.2 planned; ready to execute
-Last activity: 2026-06-10 -- planned Phase 16.2 AC15 shared core simplification into 13 scoped plans after checker revision
+Phase: 16.2 (ac15-shared-core-simplification-and-reuse-cleanup) — EXECUTING
+Plan: 2 of 13
+Status: Ready to execute
+Last activity: 2026-06-10 -- Phase 16.2 execution started
 
 ## Performance Metrics
 
@@ -82,6 +82,7 @@ Last activity: 2026-06-10 -- planned Phase 16.2 AC15 shared core simplification 
 | Phase 16 P02 | 19 min | 2 tasks | 3 files |
 | Phase 16 P03 | 12 min | 2 tasks | 5 files |
 | Phase 16 P04 | 20 min | 2 tasks | 3 files |
+| Phase 16.2 P01 | 7 min | 2 tasks | 50 files |
 
 ## Accumulated Context
 
@@ -127,6 +128,8 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 16]: Plan 02 replaced the Yellow Tokkun playresult placeholder with an early Yellow-only helper that writes only nullable tutorial state and append-only raw history, with behavior tests for unknown-user no rows, mixed-payload no-cross-write, and tutorial-only non-classification.
 - [Phase 16]: Plan 03 enabled Yellow userdata readback for only optional `tokkun_tutorial_flg`, preserving Blue/Green placement behavior and keeping Tokkun history/server-side facts out of userdata.
 - [Phase 16]: Plan 04 tightened Yellow Banacoin-adjacent compatibility to full request logging plus stateless success-only routes, with tests proving no wallet/payment/coupon/transaction authority surfaces.
+- [Phase 16.2]: Canonicalized only value-identical AC15 Dan clear-grade and shop item-status enum types. — Blue, Green, and Yellow protocol values matched exactly, while EF entities and DbSets remain era-owned.
+- [Phase 16.2]: Kept existing era Dan helper and shop adapter behavior in place for later Phase 16.2 extraction plans. — Plan 01 only canonicalizes domain enum values; wider helper, Dani, shop, and playresult extraction remains owned by subsequent scoped plans.
 
 ### Pending Todos
 
@@ -151,9 +154,9 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-10T14:55:52.711Z
-Stopped at: Phase 16.2 context gathered
-Resume file: .planning/phases/16.2-ac15-shared-core-simplification-and-reuse-cleanup/16.2-CONTEXT.md
+Last session: 2026-06-10T16:25:35.470Z
+Stopped at: Completed 16.2-01-PLAN.md
+Resume file: None
 
 ## Operator Next Steps
 
