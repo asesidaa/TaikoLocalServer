@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
 status: executing
-stopped_at: Completed 16.2-07-PLAN.md
-last_updated: "2026-06-10T19:33:48.468Z"
+stopped_at: Completed 16.2-00-PLAN.md
+last_updated: "2026-06-10T20:38:18.094Z"
 last_activity: 2026-06-10
 progress:
   total_phases: 8
   completed_phases: 6
-  total_plans: 36
-  completed_plans: 30
-  percent: 83
+  total_plans: 37
+  completed_plans: 31
+  percent: 84
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-07)
 ## Current Position
 
 Phase: 16.2 (ac15-shared-core-simplification-and-reuse-cleanup) — EXECUTING
-Plan: 7 of 13
+Plan: 8 of 13
 Status: Ready to execute
 Last activity: 2026-06-10
 
@@ -89,6 +89,7 @@ Last activity: 2026-06-10
 | Phase 16.2 P03 | 10 min | 1 tasks | 7 files |
 | Phase 16.2 P05 | 6 min | 1 tasks | 8 files |
 | Phase 16.2 P07 | 13 min | 1 tasks | 5 files |
+| Phase 16.2 P00 | 16 min | 2 tasks | 31 files |
 
 ## Accumulated Context
 
@@ -150,6 +151,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 16.2]: Ac15DaniService now owns common Dan-mode save mutation while Blue, Green, and Yellow handlers retain mode classification and save-field ownership. — Plan 16.2-07 moved duplicated Dan validation, score/stage aggregation, packed flags, GotDanMax, display Dan, and Dan costume decisions into a shared service without moving special-mode gates.
 - [Phase 16.2]: Dani save uses typed era adapters plus canonical Ac15DaniChallenge records instead of depending on era catalog classes or shared Dan EF tables. — The service consumes canonical challenge facts and IAc15DaniPersistence, so Blue, Green, and Yellow Dan entity construction stays inside typed adapters.
 - [Phase 16.2]: Dan costume application remains an explicit handler-provided save update so era-specific costume flag writes stay typed. — Ac15DaniService emits Ac15DaniSaveUpdate, and each handler applies the update to its own save row and protocol byte helper.
+- [Phase 16.2]: Phase 16.2 architecture correction removed AC15 repository-shaped persistence interfaces/adapters and kept ITaikoDbContext as the traceable persistence boundary while Mapperly owns Application/Ac15 projections. — Phase 16.2 architecture correction removed AC15 repository-shaped persistence interfaces/adapters and kept ITaikoDbContext as the traceable persistence boundary while Mapperly owns Application/Ac15 projections.
 
 ### Pending Todos
 
@@ -174,8 +176,8 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-10T19:32:07.215Z
-Stopped at: Completed 16.2-07-PLAN.md
+Last session: 2026-06-10T20:36:51.117Z
+Stopped at: Completed 16.2-00-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
