@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
 status: executing
-stopped_at: Completed 16.2-06-PLAN.md
-last_updated: "2026-06-10T17:14:29.767Z"
+stopped_at: Completed 16.2-03-PLAN.md
+last_updated: "2026-06-10T18:57:21.427Z"
 last_activity: 2026-06-10 -- Phase 16.2 execution started
 progress:
   total_phases: 8
   completed_phases: 6
   total_plans: 36
-  completed_plans: 27
+  completed_plans: 28
   percent: 75
 ---
 
@@ -26,7 +26,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-07)
 ## Current Position
 
 Phase: 16.2 (ac15-shared-core-simplification-and-reuse-cleanup) — EXECUTING
-Plan: 4 of 13
+Plan: 5 of 13
 Status: Ready to execute
 Last activity: 2026-06-10 -- Phase 16.2 execution started
 
@@ -86,6 +86,7 @@ Last activity: 2026-06-10 -- Phase 16.2 execution started
 | Phase 16.2 P02 | 13 min | 2 tasks | 35 files |
 | Phase 16.2 P04 | 5 min | 1 tasks | 4 files |
 | Phase 16.2 P06 | 12 min | 1 tasks | 5 files |
+| Phase 16.2 P03 | 10 min | 1 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -140,6 +141,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 16.2]: Shared Dani behavior now has a contract-first adapter boundary. — Plan 16.2-06 added canonical AC15 Dani records and `IAc15DaniPersistence` without creating a shared Dan EF table.
 - [Phase 16.2]: Blue, Green, and Yellow Dani adapters target only typed era-owned Dan DbSets. — The new adapters preserve separate Dan score and stage-score persistence for each era.
 - [Phase 16.2]: Known Dan challenge levels are part of the Dani persistence contract. — Later shared readback can preserve the existing era catalog filter, including Yellow filtering, while using canonical records.
+- [Phase 16.2]: Profile counter updates now use Ac15ProfileCounterUpdater with explicit typed save-field delegates for Blue, Green, and Yellow. — Plan 16.2-03 centralized duplicated Blue/Green helper and Yellow inline logic while preserving observable counter behavior.
+- [Phase 16.2]: Blue, Green, and Yellow profile save rows remain era-owned; the refactor adds no shared EF table, reflection adapter, route, or wire change. — D-20 and D-24 require typed save ownership and forbid broad generic EF adapters or shared gameplay tables.
+- [Phase 16.2]: Existing Green helper coverage was moved to canonical AC15 counter updater tests, with additional Blue and Yellow typed-access checks. — Repository test rules prefer observable behavior coverage over source-shape tests for reuse cleanup.
 
 ### Pending Todos
 
@@ -164,8 +168,8 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-10T17:14:29.757Z
-Stopped at: Completed 16.2-06-PLAN.md
+Last session: 2026-06-10T18:56:30.235Z
+Stopped at: Completed 16.2-03-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
