@@ -1,3 +1,5 @@
+using TaikoLocalServer.Application.Ac15;
+
 namespace TaikoLocalServer.Application.Handlers;
 
 public partial class GetDanScoreQueryHandler
@@ -7,9 +9,10 @@ public partial class GetDanScoreQueryHandler
         CancellationToken cancellationToken)
     {
         var requestedIds = request.DanIds.ToHashSet();
+        var limits = Ac15EraProfiles.Yellow.Limits;
         var knownChallengeLevels = gameDataService.Yellow().TaikojukuFileOrder
             .Select(pack => pack.ChallengeLevel)
-            .Where(YellowDanHelpers.IsKnownYellowDanId)
+            .Where(id => Ac15DanHelpers.IsKnownDanId(id, limits))
             .ToHashSet();
 
         var validRequestedIds = requestedIds
