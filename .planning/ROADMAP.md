@@ -248,22 +248,40 @@ Plans:
 4. Normal play and special-mode boundaries remain intact after playresult, adapter, catalog, and Common DTO cleanup.
 5. Focused regression slices, full `dotnet test Tests/Tests.csproj`, and temp-output Host build pass before Phase 17 starts.
 
-**Plans:** 4 plans
+**Plans:** 13 plans
 
 Plans:
 
 **Wave 1**
 
-- [ ] 16.2-01-PLAN.md - Canonicalize AC15 Dan/shop/crown/counter types and pure helpers
+- [ ] 16.2-01-PLAN.md - Canonicalize AC15 Dan clear-grade and shop item-status domain values
 
 **Wave 2** *(blocked on 16.2-01 completion)*
 
-- [ ] 16.2-02-PLAN.md - Consolidate AC15 shop season policy and typed item-shop adapter plumbing
-- [ ] 16.2-03-PLAN.md - Extract shared AC15 Dani save/readback behavior behind typed adapters
+- [ ] 16.2-02-PLAN.md - Collapse duplicate AC15 Dan helper logic and misleading crown aliases
+- [ ] 16.2-04-PLAN.md - Make AC15 shop season seed behavior explicit while keeping typed shop state tables
+- [ ] 16.2-06-PLAN.md - Define AC15 Dani service contracts and typed era adapters
 
-**Wave 3** *(blocked on 16.2-02 and 16.2-03 completion)*
+**Wave 3** *(blocked on wave 2 helper/shop slices)*
 
-- [ ] 16.2-04-PLAN.md - Clean up normal-play, catalog helper, and Common DTO duplication
+- [ ] 16.2-03-PLAN.md - Replace duplicated AC15 profile counter updates with a typed counter updater
+- [ ] 16.2-05-PLAN.md - Factor typed AC15 item-shop adapter plumbing without changing unlock policy
+
+**Wave 4** *(blocked on profile counters, item-shop plumbing, and Dani contracts)*
+
+- [ ] 16.2-07-PLAN.md - Move AC15 Dan playresult save behavior into `Ac15DaniService`
+- [ ] 16.2-11-PLAN.md - Canonicalize shared AC15 Common DTO fields while preserving adapter-local wire placement
+
+**Wave 5** *(blocked on Dani save, normal adapter prerequisites, and DTO canonicalization)*
+
+- [ ] 16.2-08-PLAN.md - Move Dan score readback assembly into the shared AC15 Dani service
+- [ ] 16.2-09-PLAN.md - Factor repeated AC15 normal-play adapter internals while preserving typed DbSet ownership
+- [ ] 16.2-12-PLAN.md - Clean up AC15 folder and telop catalog helper duplication without adding routes
+- [ ] 16.2-13-PLAN.md - Clean up remaining AC15 recommend, item-shop info, userdata, and initial-data helper duplication
+
+**Wave 6** *(blocked on Dani readback and normal adapter helper cleanup)*
+
+- [ ] 16.2-10-PLAN.md - Clean up AC15 playresult prelude orchestration without moving special-mode gates
 
 ### Phase 17: Yellow Runtime Verification and Contract Closeout
 
@@ -315,4 +333,4 @@ See `.planning/milestones/v1.1-ROADMAP.md` and `.planning/milestones/v1.1-phases
 |-----------|--------|-------|--------|---------|
 | v1.0 Blue Support | 1-6 | 30 roadmap plans | Shipped | 2026-06-03 |
 | v1.1 Blue Tokkun Mode Support | 7-11 | 7 GSD plans | Shipped | 2026-06-07 |
-| v1.2 Yellow AC15 Support | 12-17 plus 16.1 and 16.2 | 23 GSD plans complete; 4 Phase 16.2 plans pending | Active, Phase 16.2 planned before Phase 17 | - |
+| v1.2 Yellow AC15 Support | 12-17 plus 16.1 and 16.2 | 23 GSD plans complete; 13 Phase 16.2 plans pending | Active, Phase 16.2 planned before Phase 17 | - |
