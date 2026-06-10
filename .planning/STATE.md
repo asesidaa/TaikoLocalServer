@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
-status: Ready to discuss or plan
-stopped_at: Phase 16.1 verified complete; Phase 17 pending runtime verification and contract closeout
-last_updated: "2026-06-10T03:17:13.133+08:00"
-last_activity: 2026-06-10 -- completed Phase 16.1 AC15 nullable wire and Mapperly mapper rewrite
+status: Phase 16.2 inserted before Phase 17; not planned yet
+stopped_at: Phase 16.2 context gathered
+last_updated: "2026-06-10T14:55:52.719Z"
+last_activity: 2026-06-10 -- inserted Phase 16.2 AC15 shared core simplification before final runtime verification
 progress:
-  total_phases: 7
+  total_phases: 8
   completed_phases: 6
   total_plans: 23
   completed_plans: 23
-  percent: 86
+  percent: 75
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-07)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Phase 17 - Yellow Runtime Verification and Contract Closeout
+**Current focus:** Phase 16.2 - AC15 Shared Core Simplification and Reuse Cleanup
 
 ## Current Position
 
-Phase: 17
+Phase: 16.2
 Plan: Not started
-Status: Phase 16.1 complete after verification; Phase 17 not started
-Last activity: 2026-06-10 -- completed Phase 16.1 AC15 nullable wire and Mapperly mapper rewrite
+Status: Phase 16.2 inserted before Phase 17; not planned yet
+Last activity: 2026-06-10 -- inserted Phase 16.2 AC15 shared core simplification before final runtime verification
 
 ## Performance Metrics
 
@@ -57,7 +57,7 @@ Last activity: 2026-06-10 -- completed Phase 16.1 AC15 nullable wire and Mapperl
 **Recent Trend:**
 
 - Last 6 plans: 15-09 completed in 19 min; 16-01 completed in 20 min; 16-02 completed in 19 min; 16-03 completed in 12 min; 16-04 completed in 20 min; 16.1-01 completed in 95 min.
-- Trend: Phase 16.1 mapper architecture rewrite completed after review feedback; Phase 17 runtime verification and contract closeout is pending.
+- Trend: Phase 16.1 mapper architecture rewrite completed after review feedback; Phase 16.2 shared-core simplification is now pending before Phase 17 runtime verification and contract closeout.
 
 | Phase 11 P01 | 3 min | 4 tasks | 4 files |
 | Phase 12 P01 | 12 min | 2 tasks | 13 files |
@@ -88,6 +88,7 @@ Last activity: 2026-06-10 -- completed Phase 16.1 AC15 nullable wire and Mapperl
 ### Roadmap Evolution
 
 - Phase 16.1 inserted after Phase 16 and completed before Phase 17: AC15 Mapperly Mapper Rewrite and Presence Semantics; includes `protogen +nullablevaluetype=yes` wire regeneration as a first-class refactor point.
+- Phase 16.2 inserted after Phase 16.1 and before Phase 17: AC15 Shared Core Simplification and Reuse Cleanup (URGENT)
 
 ### Decisions
 
@@ -146,15 +147,15 @@ None recorded.
 | Category | Item | Status | Deferred At |
 |----------|------|--------|-------------|
 | Admin/developer UI | TKUI-01: inspect Blue Tokkun history or debug state through AdminApi/WebUI | Future requirement, not mapped to v1.1 roadmap | v1.1 requirements |
-| Runtime verification | Yellow normal and Tokkun RPCS3/cabinet smoke | Deferred to Phase 17/end-of-range after Phase 16.1 mapper rewrite | Phase 13 verification |
+| Runtime verification | Yellow normal and Tokkun RPCS3/cabinet smoke | Deferred to Phase 17/end-of-range after Phase 16.1 mapper rewrite and Phase 16.2 shared-core simplification | Phase 13 verification |
 
 ## Session Continuity
 
-Last session: 2026-06-08T08:49:25.000Z
-Stopped at: Phase 16.1 verified complete; Phase 17 ready to discuss or plan
-Resume file: None
+Last session: 2026-06-10T14:55:52.711Z
+Stopped at: Phase 16.2 context gathered
+Resume file: .planning/phases/16.2-ac15-shared-core-simplification-and-reuse-cleanup/16.2-CONTEXT.md
 
 ## Operator Next Steps
 
 - Phase 16.1 verification is complete and passed; Green/Blue/Yellow AC15 wire DTOs now use nullable optional primitives and protocol mappers use real Mapperly generation for mechanical projection.
-- Next coordinator-owned step: Phase 17 discussion/planning/runtime verification closeout; do not mark Phase 17 or the milestone complete until its runtime smoke and documentation gates are satisfied.
+- Next coordinator-owned step: Phase 16.2 discussion/planning for AC15 shared-core simplification; do not start Phase 17 runtime verification closeout until Phase 16.2 is planned and executed or explicitly skipped.
