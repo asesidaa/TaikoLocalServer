@@ -56,7 +56,7 @@ public partial class BaidQueryHandler
             : await context.BlueShopItemStates
                 .Where(row => row.Baid == card.Baid
                     && row.SeasonId == activeShopSeason.SeasonId
-                    && row.Status == BlueShopItemStatus.Unlocked)
+                    && row.Status == Ac15ShopItemStatus.Unlocked)
                 .Select(row => new ValueTuple<uint, uint>(row.ItemType, row.ItemId))
                 .ToHashSetAsync(cancellationToken);
 

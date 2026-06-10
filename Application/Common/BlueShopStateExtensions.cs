@@ -75,7 +75,7 @@ public static class BlueShopStateExtensions
         var rows = await context.BlueShopItemStates
             .Where(row => row.Baid == baid
                 && row.SeasonId == seasonId
-                && row.Status == BlueShopItemStatus.Unlocked)
+                && row.Status == Ac15ShopItemStatus.Unlocked)
             .Select(row => new ValueTuple<uint, uint>(row.ItemType, row.ItemId))
             .ToListAsync(cancellationToken);
 

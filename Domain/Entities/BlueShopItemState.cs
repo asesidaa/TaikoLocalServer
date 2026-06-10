@@ -16,7 +16,7 @@ public sealed class BlueShopItemState
 
     public uint ItemPrice { get; set; }
 
-    public BlueShopItemStatus Status { get; set; }
+    public Ac15ShopItemStatus Status { get; set; }
 
     public DateTime PurchasedAt { get; set; }
 

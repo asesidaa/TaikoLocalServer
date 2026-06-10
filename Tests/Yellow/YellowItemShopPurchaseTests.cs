@@ -101,7 +101,7 @@ public sealed class YellowItemShopPurchaseTests
                 ItemId = 10,
                 ItemNo = 3,
                 ItemPrice = 1500,
-                Status = (YellowShopItemStatus)0,
+                Status = (Ac15ShopItemStatus)0,
                 PurchasedAt = DateTime.UtcNow
             });
         fixture.Context.BlueShopItemStates.Add(new BlueShopItemState
@@ -112,7 +112,7 @@ public sealed class YellowItemShopPurchaseTests
             ItemId = 99,
             ItemNo = 99,
             ItemPrice = 1500,
-            Status = BlueShopItemStatus.Unlocked,
+            Status = Ac15ShopItemStatus.Unlocked,
             PurchasedAt = DateTime.UtcNow
         });
         fixture.Context.GreenShopItemStates.Add(new GreenShopItemState
@@ -123,7 +123,7 @@ public sealed class YellowItemShopPurchaseTests
             ItemId = 100,
             ItemNo = 100,
             ItemPrice = 1500,
-            Status = GreenShopItemStatus.Unlocked,
+            Status = Ac15ShopItemStatus.Unlocked,
             PurchasedAt = DateTime.UtcNow
         });
         await fixture.Context.SaveChangesAsync();
@@ -172,7 +172,7 @@ public sealed class YellowItemShopPurchaseTests
         Assert.Equal(2000u, response.TotalGetDonmedal);
         Assert.Equal(1300u, response.TotalUseDonmedal);
         Assert.Equal(1300u, season!.TotalUseDonmedal);
-        Assert.Equal(YellowShopItemStatus.Unlocked, item!.Status);
+        Assert.Equal(Ac15ShopItemStatus.Unlocked, item!.Status);
         Assert.Equal(1u, item.ItemNo);
         Assert.Equal(1300u, item.ItemPrice);
         Assert.NotNull(item.UnlockedAt);
@@ -484,7 +484,7 @@ public sealed class YellowItemShopPurchaseTests
         ItemId = itemId,
         ItemNo = itemId,
         ItemPrice = 1500,
-        Status = YellowShopItemStatus.Unlocked,
+        Status = Ac15ShopItemStatus.Unlocked,
         PurchasedAt = DateTime.UtcNow,
         UnlockedAt = DateTime.UtcNow
     };

@@ -372,7 +372,7 @@ public sealed class YellowUserDataProtocolTests
             ItemId = 103,
             ItemNo = 1,
             ItemPrice = 10,
-            Status = BlueShopItemStatus.Unlocked,
+            Status = Ac15ShopItemStatus.Unlocked,
             PurchasedAt = DateTime.UtcNow,
             UnlockedAt = DateTime.UtcNow
         });
@@ -384,7 +384,7 @@ public sealed class YellowUserDataProtocolTests
             ItemId = 4,
             ItemNo = 2,
             ItemPrice = 20,
-            Status = GreenShopItemStatus.Unlocked,
+            Status = Ac15ShopItemStatus.Unlocked,
             PurchasedAt = DateTime.UtcNow,
             UnlockedAt = DateTime.UtcNow
         });
@@ -405,7 +405,7 @@ public sealed class YellowUserDataProtocolTests
                 ItemId = 103,
                 ItemNo = 1,
                 ItemPrice = 10,
-                Status = YellowShopItemStatus.Unlocked,
+                Status = Ac15ShopItemStatus.Unlocked,
                 PurchasedAt = DateTime.UtcNow,
                 UnlockedAt = DateTime.UtcNow
             },
@@ -417,7 +417,7 @@ public sealed class YellowUserDataProtocolTests
                 ItemId = 4,
                 ItemNo = 2,
                 ItemPrice = 20,
-                Status = YellowShopItemStatus.Unlocked,
+                Status = Ac15ShopItemStatus.Unlocked,
                 PurchasedAt = DateTime.UtcNow,
                 UnlockedAt = DateTime.UtcNow
             });

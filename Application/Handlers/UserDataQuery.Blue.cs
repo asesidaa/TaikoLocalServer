@@ -18,7 +18,7 @@ public partial class UserDataQueryHandler
             : await context.BlueShopItemStates
                 .Where(row => row.Baid == request.Baid
                     && row.SeasonId == activeShopSeason.SeasonId
-                    && row.Status == BlueShopItemStatus.Unlocked)
+                    && row.Status == Ac15ShopItemStatus.Unlocked)
                 .Select(row => new ValueTuple<uint, uint>(row.ItemType, row.ItemId))
                 .ToHashSetAsync(cancellationToken);
 

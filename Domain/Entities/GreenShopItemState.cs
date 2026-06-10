@@ -16,7 +16,7 @@ public sealed class GreenShopItemState
 
     public uint ItemPrice { get; set; }
 
-    public GreenShopItemStatus Status { get; set; }
+    public Ac15ShopItemStatus Status { get; set; }
 
     public DateTime PurchasedAt { get; set; }
 

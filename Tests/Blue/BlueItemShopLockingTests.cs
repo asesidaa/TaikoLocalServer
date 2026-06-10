@@ -256,7 +256,7 @@ public sealed class BlueItemShopLockingTests
             ItemId = itemId,
             ItemNo = itemId,
             ItemPrice = 1,
-            Status = BlueShopItemStatus.Unlocked,
+            Status = Ac15ShopItemStatus.Unlocked,
             PurchasedAt = DateTime.UtcNow,
             UnlockedAt = DateTime.UtcNow
         };

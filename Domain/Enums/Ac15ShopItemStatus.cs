@@ -1,6 +1,6 @@
 namespace TaikoLocalServer.Domain.Enums;
 
-public enum GreenShopItemStatus : uint
+public enum Ac15ShopItemStatus : uint
 {
     Unlocked = 2
 }

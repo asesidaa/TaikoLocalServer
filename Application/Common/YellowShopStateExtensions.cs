@@ -63,7 +63,7 @@ public static class YellowShopStateExtensions
         var rows = await context.YellowShopItemStates
             .Where(row => row.Baid == baid
                 && row.SeasonId == seasonId
-                && row.Status == YellowShopItemStatus.Unlocked)
+                && row.Status == Ac15ShopItemStatus.Unlocked)
             .Select(row => new ValueTuple<uint, uint>(row.ItemType, row.ItemId))
             .ToListAsync(cancellationToken);
 

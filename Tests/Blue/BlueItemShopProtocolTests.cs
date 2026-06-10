@@ -274,7 +274,7 @@ public sealed class BlueItemShopProtocolTests
             ItemId = 12,
             ItemNo = 1,
             ItemPrice = 1300,
-            Status = BlueShopItemStatus.Unlocked,
+            Status = Ac15ShopItemStatus.Unlocked,
             PurchasedAt = DateTime.UtcNow,
             UnlockedAt = DateTime.UtcNow
         });

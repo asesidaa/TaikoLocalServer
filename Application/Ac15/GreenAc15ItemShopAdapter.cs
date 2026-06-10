@@ -34,7 +34,7 @@ public sealed class GreenAc15ItemShopAdapter(ITaikoDbContext context, UserSaveDa
             ItemId = item.ItemId,
             ItemNo = item.ItemNo,
             ItemPrice = item.ItemPrice,
-            Status = GreenShopItemStatus.Unlocked,
+            Status = Ac15ShopItemStatus.Unlocked,
             PurchasedAt = now,
             UnlockedAt = now
         });

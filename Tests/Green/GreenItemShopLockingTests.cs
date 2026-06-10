@@ -133,7 +133,7 @@ public sealed class GreenItemShopLockingTests
             ItemId = itemId,
             ItemNo = 1,
             ItemPrice = 1,
-            Status = GreenShopItemStatus.Unlocked,
+            Status = Ac15ShopItemStatus.Unlocked,
             PurchasedAt = DateTime.UtcNow,
             UnlockedAt = DateTime.UtcNow
         };

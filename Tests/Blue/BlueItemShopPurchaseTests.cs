@@ -110,7 +110,7 @@ public sealed class BlueItemShopPurchaseTests
             ItemId = 12,
             ItemNo = 1,
             ItemPrice = 1300,
-            Status = BlueShopItemStatus.Unlocked,
+            Status = Ac15ShopItemStatus.Unlocked,
             PurchasedAt = DateTime.UtcNow,
             UnlockedAt = DateTime.UtcNow
         });
@@ -142,7 +142,7 @@ public sealed class BlueItemShopPurchaseTests
         Assert.Equal(2000u, response.TotalGetDonmedal);
         Assert.Equal(1300u, response.TotalUseDonmedal);
         Assert.Equal(1300u, season!.TotalUseDonmedal);
-        Assert.Equal(BlueShopItemStatus.Unlocked, item!.Status);
+        Assert.Equal(Ac15ShopItemStatus.Unlocked, item!.Status);
         Assert.Equal(1u, item.ItemNo);
         Assert.Equal(1300u, item.ItemPrice);
         Assert.NotNull(item.UnlockedAt);

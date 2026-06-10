@@ -34,7 +34,7 @@ public sealed class BlueAc15ItemShopAdapter(ITaikoDbContext context, UserSaveDat
             ItemId = item.ItemId,
             ItemNo = item.ItemNo,
             ItemPrice = item.ItemPrice,
-            Status = BlueShopItemStatus.Unlocked,
+            Status = Ac15ShopItemStatus.Unlocked,
             PurchasedAt = now,
             UnlockedAt = now
         });

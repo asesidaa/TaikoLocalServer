@@ -89,7 +89,7 @@ public sealed class BlueItemShopStateTests
                 ItemId = 10,
                 ItemNo = 3,
                 ItemPrice = 1500,
-                Status = (BlueShopItemStatus)0,
+                Status = (Ac15ShopItemStatus)0,
                 PurchasedAt = DateTime.UtcNow
             });
         await fixture.Context.SaveChangesAsync();
@@ -205,7 +205,7 @@ public sealed class BlueItemShopStateTests
         ItemId = itemId,
         ItemNo = itemId,
         ItemPrice = 1500,
-        Status = BlueShopItemStatus.Unlocked,
+        Status = Ac15ShopItemStatus.Unlocked,
         PurchasedAt = DateTime.UtcNow,
         UnlockedAt = DateTime.UtcNow
     };

@@ -25,7 +25,7 @@ public sealed class GreenItemShopPurchaseTests
         Assert.Equal(1000u, response.TotalGetDonmedal);
         Assert.Equal(300u, response.TotalUseDonmedal);
         Assert.Equal(300u, season!.TotalUseDonmedal);
-        Assert.Equal(GreenShopItemStatus.Unlocked, item!.Status);
+        Assert.Equal(Ac15ShopItemStatus.Unlocked, item!.Status);
         Assert.NotNull(item.UnlockedAt);
     }
 
@@ -84,7 +84,7 @@ public sealed class GreenItemShopPurchaseTests
         var item = await fixture.Context.GreenShopItemStates.FindAsync(1u, 2u, 5u, 117u);
         Assert.Equal(1u, response.Result);
         Assert.True(HasBit(reloaded!.CostumeFlg2, 117));
-        Assert.Equal(GreenShopItemStatus.Unlocked, item!.Status);
+        Assert.Equal(Ac15ShopItemStatus.Unlocked, item!.Status);
     }
 
     [Fact]
@@ -112,7 +112,7 @@ public sealed class GreenItemShopPurchaseTests
             ItemId = 865,
             ItemNo = 2,
             ItemPrice = 300,
-            Status = GreenShopItemStatus.Unlocked,
+            Status = Ac15ShopItemStatus.Unlocked,
             PurchasedAt = DateTime.UtcNow,
             UnlockedAt = DateTime.UtcNow
         });
