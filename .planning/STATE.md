@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
 status: executing
-stopped_at: Completed 16.2-05-PLAN.md
-last_updated: "2026-06-10T19:14:22.612Z"
+stopped_at: Completed 16.2-07-PLAN.md
+last_updated: "2026-06-10T19:33:48.468Z"
 last_activity: 2026-06-10
 progress:
   total_phases: 8
   completed_phases: 6
   total_plans: 36
-  completed_plans: 29
-  percent: 75
+  completed_plans: 30
+  percent: 83
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-07)
 ## Current Position
 
 Phase: 16.2 (ac15-shared-core-simplification-and-reuse-cleanup) — EXECUTING
-Plan: 6 of 13
+Plan: 7 of 13
 Status: Ready to execute
 Last activity: 2026-06-10
 
@@ -88,6 +88,7 @@ Last activity: 2026-06-10
 | Phase 16.2 P06 | 12 min | 1 tasks | 5 files |
 | Phase 16.2 P03 | 10 min | 1 tasks | 7 files |
 | Phase 16.2 P05 | 6 min | 1 tasks | 8 files |
+| Phase 16.2 P07 | 13 min | 1 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -146,6 +147,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 16.2]: Blue, Green, and Yellow profile save rows remain era-owned; the refactor adds no shared EF table, reflection adapter, route, or wire change. — D-20 and D-24 require typed save ownership and forbid broad generic EF adapters or shared gameplay tables.
 - [Phase 16.2]: Existing Green helper coverage was moved to canonical AC15 counter updater tests, with additional Blue and Yellow typed-access checks. — Repository test rules prefer observable behavior coverage over source-shape tests for reuse cleanup.
 - [Phase 16.2]: Factored AC15 item-shop purchased item plumbing through typed era DbSets. — Plan 16.2-05 shares duplicate lookup, row creation, and save shape while keeping Blue, Green, and Yellow shop item tables and unlock policies explicit.
+- [Phase 16.2]: Ac15DaniService now owns common Dan-mode save mutation while Blue, Green, and Yellow handlers retain mode classification and save-field ownership. — Plan 16.2-07 moved duplicated Dan validation, score/stage aggregation, packed flags, GotDanMax, display Dan, and Dan costume decisions into a shared service without moving special-mode gates.
+- [Phase 16.2]: Dani save uses typed era adapters plus canonical Ac15DaniChallenge records instead of depending on era catalog classes or shared Dan EF tables. — The service consumes canonical challenge facts and IAc15DaniPersistence, so Blue, Green, and Yellow Dan entity construction stays inside typed adapters.
+- [Phase 16.2]: Dan costume application remains an explicit handler-provided save update so era-specific costume flag writes stay typed. — Ac15DaniService emits Ac15DaniSaveUpdate, and each handler applies the update to its own save row and protocol byte helper.
 
 ### Pending Todos
 
@@ -170,8 +174,8 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-10T19:12:47.481Z
-Stopped at: Completed 16.2-05-PLAN.md
+Last session: 2026-06-10T19:32:07.215Z
+Stopped at: Completed 16.2-07-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
