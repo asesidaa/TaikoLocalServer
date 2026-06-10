@@ -38,9 +38,21 @@ public static partial class Ac15ItemShopMapper
         return row;
     }
 
+    [MapperIgnoreTarget(nameof(BlueShopItemState.Status))]
+    [MapperIgnoreTarget(nameof(BlueShopItemState.PurchasedAt))]
+    [MapperIgnoreTarget(nameof(BlueShopItemState.UnlockedAt))]
+    [MapperIgnoreTarget(nameof(BlueShopItemState.Ba))]
     private static partial BlueShopItemState ToBlueShopItemState(Ac15PurchasedShopItem item);
 
+    [MapperIgnoreTarget(nameof(GreenShopItemState.Status))]
+    [MapperIgnoreTarget(nameof(GreenShopItemState.PurchasedAt))]
+    [MapperIgnoreTarget(nameof(GreenShopItemState.UnlockedAt))]
+    [MapperIgnoreTarget(nameof(GreenShopItemState.Ba))]
     private static partial GreenShopItemState ToGreenShopItemState(Ac15PurchasedShopItem item);
 
+    [MapperIgnoreTarget(nameof(YellowShopItemState.Status))]
+    [MapperIgnoreTarget(nameof(YellowShopItemState.PurchasedAt))]
+    [MapperIgnoreTarget(nameof(YellowShopItemState.UnlockedAt))]
+    [MapperIgnoreTarget(nameof(YellowShopItemState.Ba))]
     private static partial YellowShopItemState ToYellowShopItemState(Ac15PurchasedShopItem item);
 }

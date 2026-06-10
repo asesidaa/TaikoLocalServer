@@ -5,10 +5,16 @@ namespace TaikoLocalServer.Application.Ac15;
 [Mapper]
 public static partial class Ac15NormalPlayMapper
 {
+    [MapperIgnoreTarget(nameof(SongPlayDatumBlue.Id))]
+    [MapperIgnoreTarget(nameof(SongPlayDatumBlue.Ba))]
     public static partial SongPlayDatumBlue ToBlueSongPlayDatum(Ac15PlayRow row);
 
+    [MapperIgnoreTarget(nameof(SongPlayDatumGreen.Id))]
+    [MapperIgnoreTarget(nameof(SongPlayDatumGreen.Ba))]
     public static partial SongPlayDatumGreen ToGreenSongPlayDatum(Ac15PlayRow row);
 
+    [MapperIgnoreTarget(nameof(SongPlayDatumYellow.Id))]
+    [MapperIgnoreTarget(nameof(SongPlayDatumYellow.Ba))]
     public static partial SongPlayDatumYellow ToYellowSongPlayDatum(Ac15PlayRow row);
 
     public static SongBestDatumBlue ToBlueSongBestDatum(uint baid, Ac15BestRow row, bool allowCrownUpdate)
@@ -47,9 +53,15 @@ public static partial class Ac15NormalPlayMapper
         return best;
     }
 
+    [MapperIgnoreTarget(nameof(SongBestDatumBlue.Baid))]
+    [MapperIgnoreTarget(nameof(SongBestDatumBlue.Ba))]
     private static partial SongBestDatumBlue ToBlueSongBestDatum(Ac15BestRow row);
 
+    [MapperIgnoreTarget(nameof(SongBestDatumGreen.Baid))]
+    [MapperIgnoreTarget(nameof(SongBestDatumGreen.Ba))]
     private static partial SongBestDatumGreen ToGreenSongBestDatum(Ac15BestRow row);
 
+    [MapperIgnoreTarget(nameof(SongBestDatumYellow.Baid))]
+    [MapperIgnoreTarget(nameof(SongBestDatumYellow.Ba))]
     private static partial SongBestDatumYellow ToYellowSongBestDatum(Ac15BestRow row);
 }
