@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
-status: Phase 16.2 inserted before Phase 17; not planned yet
-stopped_at: Phase 16.2 context gathered
-last_updated: "2026-06-10T14:55:52.719Z"
-last_activity: 2026-06-10 -- inserted Phase 16.2 AC15 shared core simplification before final runtime verification
+status: Phase 16.2 planned; ready to execute
+stopped_at: Phase 16.2 plan-phase complete
+last_updated: "2026-06-10T16:07:52.170Z"
+last_activity: 2026-06-10 -- planned Phase 16.2 AC15 shared core simplification into 13 scoped plans after checker revision
 progress:
   total_phases: 8
   completed_phases: 6
@@ -26,9 +26,9 @@ See: `.planning/PROJECT.md` (updated 2026-06-07)
 ## Current Position
 
 Phase: 16.2
-Plan: Not started
-Status: Phase 16.2 inserted before Phase 17; not planned yet
-Last activity: 2026-06-10 -- inserted Phase 16.2 AC15 shared core simplification before final runtime verification
+Plan: 13 plans ready
+Status: Phase 16.2 planned; ready to execute
+Last activity: 2026-06-10 -- planned Phase 16.2 AC15 shared core simplification into 13 scoped plans after checker revision
 
 ## Performance Metrics
 
@@ -57,7 +57,7 @@ Last activity: 2026-06-10 -- inserted Phase 16.2 AC15 shared core simplification
 **Recent Trend:**
 
 - Last 6 plans: 15-09 completed in 19 min; 16-01 completed in 20 min; 16-02 completed in 19 min; 16-03 completed in 12 min; 16-04 completed in 20 min; 16.1-01 completed in 95 min.
-- Trend: Phase 16.1 mapper architecture rewrite completed after review feedback; Phase 16.2 shared-core simplification is now pending before Phase 17 runtime verification and contract closeout.
+- Trend: Phase 16.1 mapper architecture rewrite completed after review feedback; Phase 16.2 shared-core simplification is now planned in 13 scoped plans before Phase 17 runtime verification and contract closeout.
 
 | Phase 11 P01 | 3 min | 4 tasks | 4 files |
 | Phase 12 P01 | 12 min | 2 tasks | 13 files |
@@ -158,4 +158,4 @@ Resume file: .planning/phases/16.2-ac15-shared-core-simplification-and-reuse-cle
 ## Operator Next Steps
 
 - Phase 16.1 verification is complete and passed; Green/Blue/Yellow AC15 wire DTOs now use nullable optional primitives and protocol mappers use real Mapperly generation for mechanical projection.
-- Next coordinator-owned step: Phase 16.2 discussion/planning for AC15 shared-core simplification; do not start Phase 17 runtime verification closeout until Phase 16.2 is planned and executed or explicitly skipped.
+- Next coordinator-owned step: execute Phase 16.2 AC15 shared-core simplification; do not start Phase 17 runtime verification closeout until Phase 16.2 is executed or explicitly skipped.
