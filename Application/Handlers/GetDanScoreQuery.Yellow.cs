@@ -8,51 +8,31 @@ public partial class GetDanScoreQueryHandler
         GetDanScoreQuery request,
         CancellationToken cancellationToken)
     {
-        var requestedIds = request.DanIds.ToHashSet();
         var limits = Ac15EraProfiles.Yellow.Limits;
         var knownChallengeLevels = gameDataService.Yellow().TaikojukuFileOrder
             .Select(pack => pack.ChallengeLevel)
             .Where(id => Ac15DanHelpers.IsKnownDanId(id, limits))
             .ToHashSet();
 
-        var validRequestedIds = requestedIds
-            .Where(id => knownChallengeLevels.Contains(id))
-            .ToHashSet();
+        var rows = await Ac15DaniReadback.GetScoresAsync(
+            YellowDaniTables(),
+            request.Baid,
+            request.DanIds.ToHashSet(),
+            knownChallengeLevels,
+            cancellationToken);
 
-        var rows = await context.DanScoreDataYellow
-            .Where(row => row.Baid == request.Baid && validRequestedIds.Contains(row.DanId))
-            .Include(row => row.DanStageScoreData)
-            .ToListAsync(cancellationToken);
-
-        var response = new CommonDanScoreDataResponse { Result = 1 };
-        foreach (var row in rows.OrderBy(row => row.DanId))
-        {
-            var responseData = new CommonDanScoreDataResponse.DanScoreData
-            {
-                DanId = row.DanId,
-                ArrivalSongCnt = row.ArrivalSongCount,
-                SoulGaugeTotal = row.SoulGaugeTotal,
-                ComboCntTotal = row.ComboCountTotal
-            };
-
-            foreach (var stage in row.DanStageScoreData.OrderBy(stage => stage.StageIndex).Take((int)row.ArrivalSongCount))
-            {
-                responseData.AryDanScoreDataStages.Add(new CommonDanScoreDataResponse.DanScoreDataStage
-                {
-                    PlayScore = stage.PlayScore,
-                    GoodCnt = stage.GoodCount,
-                    OkCnt = stage.OkCount,
-                    NgCnt = stage.BadCount,
-                    PoundCnt = stage.DrumrollCount,
-                    HitCnt = stage.TotalHitCount,
-                    ComboCnt = stage.ComboCount,
-                    HighScore = stage.HighScore
-                });
-            }
-
-            response.AryDanScoreDatas.Add(responseData);
-        }
-
-        return response;
+        return Ac15DaniReadback.BuildResponse(rows);
     }
+
+    private Ac15DaniTables<DanScoreDatumYellow, DanStageScoreDatumYellow> YellowDaniTables()
+        => new(
+            context.DanScoreDataYellow,
+            context.DanScoreDataYellow.Include(score => score.DanStageScoreData),
+            score => score.DanStageScoreData,
+            Ac15DaniMapper.ToAc15DaniScore,
+            Ac15DaniMapper.ToAc15DaniScoreSummary,
+            Ac15DaniMapper.ToYellowDanScoreDatum,
+            Ac15DaniMapper.ApplyToYellowDanScoreDatum,
+            Ac15DaniMapper.ToYellowDanStageScoreDatum,
+            Ac15DaniMapper.ApplyToYellowDanStageScoreDatum);
 }

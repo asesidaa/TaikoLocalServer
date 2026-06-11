@@ -62,10 +62,10 @@ public partial class UpdatePlayResultCommandHandler
             return 1;
         }
 
-        await Ac15DaniService.SaveAsync(
-            context,
+        await Ac15DaniWriter.SaveAsync(
+            YellowDaniTables(),
             playResultData,
-            Ac15EraProfiles.Yellow,
+            Ac15EraProfiles.Yellow.Limits,
             yellow.TaikojukuFileOrder.Select(row => new Ac15DaniChallenge(row.ChallengeLevel, row.UniqueId)),
             new Ac15DaniSaveState(saveData.Baid, saveData.DispTaikojukuDan, saveData.IsAutoCostumeOn, YellowDanCostumeId),
             update =>
@@ -104,6 +104,18 @@ public partial class UpdatePlayResultCommandHandler
             context.YellowRecentSongs,
             Ac15NormalPlayMapper.ToYellowSongPlayDatum,
             Ac15NormalPlayMapper.ToYellowSongBestDatum);
+
+    private Ac15DaniTables<DanScoreDatumYellow, DanStageScoreDatumYellow> YellowDaniTables()
+        => new(
+            context.DanScoreDataYellow,
+            context.DanScoreDataYellow.Include(score => score.DanStageScoreData),
+            score => score.DanStageScoreData,
+            Ac15DaniMapper.ToAc15DaniScore,
+            Ac15DaniMapper.ToAc15DaniScoreSummary,
+            Ac15DaniMapper.ToYellowDanScoreDatum,
+            Ac15DaniMapper.ApplyToYellowDanScoreDatum,
+            Ac15DaniMapper.ToYellowDanStageScoreDatum,
+            Ac15DaniMapper.ApplyToYellowDanStageScoreDatum);
 
     private static bool IsYellowTokkunShaped(CommonPlayResultData playResultData)
         => playResultData.IsTokkunPlayResult

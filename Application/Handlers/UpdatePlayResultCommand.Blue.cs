@@ -69,10 +69,10 @@ public partial class UpdatePlayResultCommandHandler
             return 1;
         }
 
-        await Ac15DaniService.SaveAsync(
-            context,
+        await Ac15DaniWriter.SaveAsync(
+            BlueDaniTables(),
             playResultData,
-            Ac15EraProfiles.Blue,
+            Ac15EraProfiles.Blue.Limits,
             blue.TaikojukuFileOrder.Select(row => new Ac15DaniChallenge(row.ChallengeLevel, row.UniqueId)),
             new Ac15DaniSaveState(saveData.Baid, saveData.DispTaikojukuDan, saveData.IsAutoCostumeOn, BlueDanCostumeId),
             update =>
@@ -110,6 +110,18 @@ public partial class UpdatePlayResultCommandHandler
             context.BlueRecentSongs,
             Ac15NormalPlayMapper.ToBlueSongPlayDatum,
             Ac15NormalPlayMapper.ToBlueSongBestDatum);
+
+    private Ac15DaniTables<DanScoreDatumBlue, DanStageScoreDatumBlue> BlueDaniTables()
+        => new(
+            context.DanScoreDataBlue,
+            context.DanScoreDataBlue.Include(score => score.DanStageScoreData),
+            score => score.DanStageScoreData,
+            Ac15DaniMapper.ToAc15DaniScore,
+            Ac15DaniMapper.ToAc15DaniScoreSummary,
+            Ac15DaniMapper.ToBlueDanScoreDatum,
+            Ac15DaniMapper.ApplyToBlueDanScoreDatum,
+            Ac15DaniMapper.ToBlueDanStageScoreDatum,
+            Ac15DaniMapper.ApplyToBlueDanStageScoreDatum);
 
     private static void ApplyCostume(UserSaveDataBlue saveData, CommonPlayResultData.CostumeData costume)
     {

@@ -62,10 +62,10 @@ public partial class UpdatePlayResultCommandHandler
         await ApplyGhostUpdatesAsync(saveData, playResultData, cancellationToken);
         ApplyGhostPlayedSongBits(saveData, playResultData);
 
-        await Ac15DaniService.SaveAsync(
-            context,
+        await Ac15DaniWriter.SaveAsync(
+            GreenDaniTables(),
             playResultData,
-            Ac15EraProfiles.Green,
+            Ac15EraProfiles.Green.Limits,
             green.TaikojukuFileOrder.Select(row => new Ac15DaniChallenge(row.ChallengeLevel, row.UniqueId)),
             new Ac15DaniSaveState(saveData.Baid, saveData.DispTaikojukuDan, saveData.IsAutoCostumeOn, GreenDanCostumeId),
             update =>
@@ -104,6 +104,18 @@ public partial class UpdatePlayResultCommandHandler
             Ac15NormalPlayMapper.ToGreenSongPlayDatum,
             Ac15NormalPlayMapper.ToGreenSongBestDatum,
             AfterAddPlayRow: AddGreenGhostStageSections);
+
+    private Ac15DaniTables<DanScoreDatumGreen, DanStageScoreDatumGreen> GreenDaniTables()
+        => new(
+            context.DanScoreDataGreen,
+            context.DanScoreDataGreen.Include(score => score.DanStageScoreData),
+            score => score.DanStageScoreData,
+            Ac15DaniMapper.ToAc15DaniScore,
+            Ac15DaniMapper.ToAc15DaniScoreSummary,
+            Ac15DaniMapper.ToGreenDanScoreDatum,
+            Ac15DaniMapper.ApplyToGreenDanScoreDatum,
+            Ac15DaniMapper.ToGreenDanStageScoreDatum,
+            Ac15DaniMapper.ApplyToGreenDanStageScoreDatum);
 
     private void AddGreenGhostStageSections(SongPlayDatumGreen play, Ac15PlayRow row)
     {
