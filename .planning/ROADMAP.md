@@ -22,7 +22,7 @@ Active milestone: **v1.2 Yellow AC15 Support**
 | 15 | Yellow Dani, Shop, Medals, WaiWai, and Admin | Implement Yellow Dani, metadata, shop/medals, WaiWai tutorial/logging, and admin readback. | YDAN-01, YSHOP-01, YSHOP-02, YMED-01, YWAI-01, YUI-01 | 5 |
 | 16 | Yellow Tokkun and Banacoin Compatibility | Add Yellow Tokkun acceptance/persistence/readback and stateless Banacoin-adjacent compatibility. | YTOK-01, YTOK-02, YTOK-03, YBAN-01 | 5 |
 | 16.1 | AC15 Mapperly Mapper Rewrite and Presence Semantics | Regenerate AC15 wire DTOs with nullable optional primitives and move Green/Blue/Yellow protocol projection to real Mapperly generation. | YMAPP-01, YMAPP-02, YMAPP-03 | 6 |
-| 16.2 | AC15 Shared Core Simplification and Reuse Cleanup | 13/14 | In Progress|  |
+| 16.2 | AC15 Shared Core Simplification and Reuse Cleanup | 14/14 | Complete   | 2026-06-11 |
 | 17 | Yellow Runtime Verification and Contract Closeout | Prove the full Yellow contract with focused tests, full build/test, runtime smoke, and docs. | YVER-01, YVER-02, YVER-03, YDOC-01 | 5 |
 
 **Coverage:** 34/34 v1.2 requirements mapped exactly once.
@@ -281,7 +281,7 @@ Plans:
 
 **Wave 6** *(blocked on row-shape architecture and normal-play helper cleanup)*
 
-- [ ] 16.2-10-PLAN.md - Clean up AC15 playresult prelude orchestration without moving special-mode gates
+- [x] 16.2-10-PLAN.md - Clean up AC15 playresult prelude orchestration without moving special-mode gates
 
 ### Phase 17: Yellow Runtime Verification and Contract Closeout
 
