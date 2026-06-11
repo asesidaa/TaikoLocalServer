@@ -125,15 +125,28 @@ public static class Ac15ItemShopService
     {
         return era switch
         {
-            GameEra.Blue when saveRows.Blue is not null => Ac15ItemShopMapper.ToAc15ShopSeasonState(
-                await context.GetOrCreateBlueShopSeasonStateAsync(saveRows.Blue, seasonId, cancellationToken)),
-            GameEra.Green when saveRows.Green is not null => Ac15ItemShopMapper.ToAc15ShopSeasonState(
-                await context.GetOrCreateGreenShopSeasonStateAsync(saveRows.Green, seasonId, cancellationToken)),
-            GameEra.Yellow when saveRows.Yellow is not null => Ac15ItemShopMapper.ToAc15ShopSeasonState(
-                await context.GetOrCreateYellowShopSeasonStateAsync(saveRows.Yellow, seasonId, cancellationToken)),
+            GameEra.Blue when saveRows.Blue is not null => await GetOrCreateSeasonStateAsync(
+                token => context.GetOrCreateBlueShopSeasonStateAsync(saveRows.Blue, seasonId, token),
+                Ac15ItemShopMapper.ToAc15ShopSeasonState,
+                cancellationToken),
+            GameEra.Green when saveRows.Green is not null => await GetOrCreateSeasonStateAsync(
+                token => context.GetOrCreateGreenShopSeasonStateAsync(saveRows.Green, seasonId, token),
+                Ac15ItemShopMapper.ToAc15ShopSeasonState,
+                cancellationToken),
+            GameEra.Yellow when saveRows.Yellow is not null => await GetOrCreateSeasonStateAsync(
+                token => context.GetOrCreateYellowShopSeasonStateAsync(saveRows.Yellow, seasonId, token),
+                Ac15ItemShopMapper.ToAc15ShopSeasonState,
+                cancellationToken),
             _ => null
         };
     }
+
+    private static async ValueTask<Ac15ShopSeasonState> GetOrCreateSeasonStateAsync<TSeasonState>(
+        Func<CancellationToken, ValueTask<TSeasonState>> getOrCreate,
+        Func<TSeasonState, Ac15ShopSeasonState> map,
+        CancellationToken cancellationToken)
+        where TSeasonState : class, IAc15ShopSeasonState
+        => map(await getOrCreate(cancellationToken));
 
     private static async ValueTask<bool> HasPurchasedItemAsync(
         ITaikoDbContext context,
@@ -145,9 +158,27 @@ public static class Ac15ItemShopService
         CancellationToken cancellationToken)
         => era switch
         {
-            GameEra.Blue => await context.BlueShopItemStates.FindAsync([baid, seasonId, itemType, itemId], cancellationToken) is not null,
-            GameEra.Green => await context.GreenShopItemStates.FindAsync([baid, seasonId, itemType, itemId], cancellationToken) is not null,
-            GameEra.Yellow => await context.YellowShopItemStates.FindAsync([baid, seasonId, itemType, itemId], cancellationToken) is not null,
+            GameEra.Blue => await Ac15PurchasedShopItemStates.ContainsAsync(
+                context.BlueShopItemStates,
+                baid,
+                seasonId,
+                itemType,
+                itemId,
+                cancellationToken),
+            GameEra.Green => await Ac15PurchasedShopItemStates.ContainsAsync(
+                context.GreenShopItemStates,
+                baid,
+                seasonId,
+                itemType,
+                itemId,
+                cancellationToken),
+            GameEra.Yellow => await Ac15PurchasedShopItemStates.ContainsAsync(
+                context.YellowShopItemStates,
+                baid,
+                seasonId,
+                itemType,
+                itemId,
+                cancellationToken),
             _ => false
         };
 
@@ -162,30 +193,49 @@ public static class Ac15ItemShopService
         switch (era)
         {
             case GameEra.Blue when saveRows.Blue is not null:
-            {
-                var state = await context.GetOrCreateBlueShopSeasonStateAsync(saveRows.Blue, item.SeasonId, cancellationToken);
-                state.TotalUseDonmedal += item.ItemPrice;
-                state.UpdatedAt = now;
-                context.BlueShopItemStates.Add(Ac15ItemShopMapper.ToBlueShopItemState(item, now));
+                await AddPurchasedItemAsync(
+                    context.BlueShopItemStates,
+                    token => context.GetOrCreateBlueShopSeasonStateAsync(saveRows.Blue, item.SeasonId, token),
+                    Ac15ItemShopMapper.ToBlueShopItemState,
+                    item,
+                    now,
+                    cancellationToken);
                 return;
-            }
             case GameEra.Green when saveRows.Green is not null:
-            {
-                var state = await context.GetOrCreateGreenShopSeasonStateAsync(saveRows.Green, item.SeasonId, cancellationToken);
-                state.TotalUseDonmedal += item.ItemPrice;
-                state.UpdatedAt = now;
-                context.GreenShopItemStates.Add(Ac15ItemShopMapper.ToGreenShopItemState(item, now));
+                await AddPurchasedItemAsync(
+                    context.GreenShopItemStates,
+                    token => context.GetOrCreateGreenShopSeasonStateAsync(saveRows.Green, item.SeasonId, token),
+                    Ac15ItemShopMapper.ToGreenShopItemState,
+                    item,
+                    now,
+                    cancellationToken);
                 return;
-            }
             case GameEra.Yellow when saveRows.Yellow is not null:
-            {
-                var state = await context.GetOrCreateYellowShopSeasonStateAsync(saveRows.Yellow, item.SeasonId, cancellationToken);
-                state.TotalUseDonmedal += item.ItemPrice;
-                state.UpdatedAt = now;
-                context.YellowShopItemStates.Add(Ac15ItemShopMapper.ToYellowShopItemState(item, now));
+                await AddPurchasedItemAsync(
+                    context.YellowShopItemStates,
+                    token => context.GetOrCreateYellowShopSeasonStateAsync(saveRows.Yellow, item.SeasonId, token),
+                    Ac15ItemShopMapper.ToYellowShopItemState,
+                    item,
+                    now,
+                    cancellationToken);
                 return;
-            }
         }
+    }
+
+    private static async ValueTask AddPurchasedItemAsync<TSeasonState, TShopItemState>(
+        DbSet<TShopItemState> itemStates,
+        Func<CancellationToken, ValueTask<TSeasonState>> getOrCreateSeason,
+        Func<Ac15PurchasedShopItem, DateTime, TShopItemState> createItem,
+        Ac15PurchasedShopItem item,
+        DateTime now,
+        CancellationToken cancellationToken)
+        where TSeasonState : class, IAc15ShopSeasonState
+        where TShopItemState : class, IAc15ShopItemState
+    {
+        var state = await getOrCreateSeason(cancellationToken);
+        state.TotalUseDonmedal += item.ItemPrice;
+        state.UpdatedAt = now;
+        itemStates.Add(createItem(item, now));
     }
 
     private static void ApplyUnlock(

@@ -87,47 +87,14 @@ public static class Ac15NormalPlayService
         switch (profile.Era)
         {
             case GameEra.Blue:
-            {
-                var recent = await context.BlueRecentSongs.FindAsync([baid, songNo], cancellationToken);
-                if (recent is null)
-                {
-                    context.BlueRecentSongs.Add(new BlueRecentSongs { Baid = baid, SongNo = songNo, LastPlayed = playTime });
-                }
-                else
-                {
-                    recent.LastPlayed = playTime;
-                }
-
+                await UpsertRecentAsync<BlueRecentSongs>(context.BlueRecentSongs, baid, songNo, playTime, cancellationToken);
                 return;
-            }
             case GameEra.Green:
-            {
-                var recent = await context.GreenRecentSongs.FindAsync([baid, songNo], cancellationToken);
-                if (recent is null)
-                {
-                    context.GreenRecentSongs.Add(new GreenRecentSongs { Baid = baid, SongNo = songNo, LastPlayed = playTime });
-                }
-                else
-                {
-                    recent.LastPlayed = playTime;
-                }
-
+                await UpsertRecentAsync<GreenRecentSongs>(context.GreenRecentSongs, baid, songNo, playTime, cancellationToken);
                 return;
-            }
             case GameEra.Yellow:
-            {
-                var recent = await context.YellowRecentSongs.FindAsync([baid, songNo], cancellationToken);
-                if (recent is null)
-                {
-                    context.YellowRecentSongs.Add(new YellowRecentSongs { Baid = baid, SongNo = songNo, LastPlayed = playTime });
-                }
-                else
-                {
-                    recent.LastPlayed = playTime;
-                }
-
+                await UpsertRecentAsync<YellowRecentSongs>(context.YellowRecentSongs, baid, songNo, playTime, cancellationToken);
                 return;
-            }
         }
     }
 
@@ -141,53 +108,14 @@ public static class Ac15NormalPlayService
         switch (profile.Era)
         {
             case GameEra.Blue:
-            {
-                var overage = await context.BlueRecentSongs
-                    .Where(song => song.Baid == baid)
-                    .OrderByDescending(song => song.LastPlayed)
-                    .Skip(maxRecent)
-                    .ToListAsync(cancellationToken);
-                if (overage.Count == 0)
-                {
-                    return;
-                }
-
-                context.BlueRecentSongs.RemoveRange(overage);
-                await context.SaveChangesAsync(cancellationToken);
+                await TrimRecentAsync(context.BlueRecentSongs, context.SaveChangesAsync, baid, maxRecent, cancellationToken);
                 return;
-            }
             case GameEra.Green:
-            {
-                var overage = await context.GreenRecentSongs
-                    .Where(song => song.Baid == baid)
-                    .OrderByDescending(song => song.LastPlayed)
-                    .Skip(maxRecent)
-                    .ToListAsync(cancellationToken);
-                if (overage.Count == 0)
-                {
-                    return;
-                }
-
-                context.GreenRecentSongs.RemoveRange(overage);
-                await context.SaveChangesAsync(cancellationToken);
+                await TrimRecentAsync(context.GreenRecentSongs, context.SaveChangesAsync, baid, maxRecent, cancellationToken);
                 return;
-            }
             case GameEra.Yellow:
-            {
-                var overage = await context.YellowRecentSongs
-                    .Where(song => song.Baid == baid)
-                    .OrderByDescending(song => song.LastPlayed)
-                    .Skip(maxRecent)
-                    .ToListAsync(cancellationToken);
-                if (overage.Count == 0)
-                {
-                    return;
-                }
-
-                context.YellowRecentSongs.RemoveRange(overage);
-                await context.SaveChangesAsync(cancellationToken);
+                await TrimRecentAsync(context.YellowRecentSongs, context.SaveChangesAsync, baid, maxRecent, cancellationToken);
                 return;
-            }
         }
     }
 
@@ -262,73 +190,56 @@ public static class Ac15NormalPlayService
         switch (profile.Era)
         {
             case GameEra.Blue:
-            {
-                var existing = await context.SongBestDataBlue.FindAsync([baid, row.SongId, row.Difficulty, row.IsShin], cancellationToken);
-                if (existing is null)
-                {
-                    context.SongBestDataBlue.Add(Ac15NormalPlayMapper.ToBlueSongBestDatum(baid, row, policy.AllowCrownUpdate));
-                    return;
-                }
-
-                ApplyBestUpdate(existing, row, policy);
+                await UpsertBestAsync(
+                    context.SongBestDataBlue,
+                    baid,
+                    row,
+                    policy,
+                    Ac15NormalPlayMapper.ToBlueSongBestDatum,
+                    cancellationToken);
                 return;
-            }
             case GameEra.Green:
-            {
-                var existing = await context.SongBestDataGreen.FindAsync([baid, row.SongId, row.Difficulty, row.IsShin], cancellationToken);
-                if (existing is null)
-                {
-                    context.SongBestDataGreen.Add(Ac15NormalPlayMapper.ToGreenSongBestDatum(baid, row, policy.AllowCrownUpdate));
-                    return;
-                }
-
-                ApplyBestUpdate(existing, row, policy);
+                await UpsertBestAsync(
+                    context.SongBestDataGreen,
+                    baid,
+                    row,
+                    policy,
+                    Ac15NormalPlayMapper.ToGreenSongBestDatum,
+                    cancellationToken);
                 return;
-            }
             case GameEra.Yellow:
-            {
-                var existing = await context.SongBestDataYellow.FindAsync([baid, row.SongId, row.Difficulty, row.IsShin], cancellationToken);
-                if (existing is null)
-                {
-                    context.SongBestDataYellow.Add(Ac15NormalPlayMapper.ToYellowSongBestDatum(baid, row, policy.AllowCrownUpdate));
-                    return;
-                }
-
-                ApplyBestUpdate(existing, row, policy);
+                await UpsertBestAsync(
+                    context.SongBestDataYellow,
+                    baid,
+                    row,
+                    policy,
+                    Ac15NormalPlayMapper.ToYellowSongBestDatum,
+                    cancellationToken);
                 return;
-            }
         }
     }
 
-    private static void ApplyBestUpdate(SongBestDatumBlue existing, Ac15BestRow row, Ac15BestUpdatePolicy policy)
+    private static async ValueTask UpsertBestAsync<TBest>(
+        DbSet<TBest> bestRows,
+        uint baid,
+        Ac15BestRow row,
+        Ac15BestUpdatePolicy policy,
+        Func<uint, Ac15BestRow, bool, TBest> create,
+        CancellationToken cancellationToken)
+        where TBest : class, IAc15SongBestDatum
     {
-        if (policy.AllowScoreUpdate && row.BestScore > existing.BestScore)
+        var existing = await bestRows.FindAsync([baid, row.SongId, row.Difficulty, row.IsShin], cancellationToken);
+        if (existing is null)
         {
-            existing.BestScore = row.BestScore;
-            existing.BestRate = row.BestRate;
+            bestRows.Add(create(baid, row, policy.AllowCrownUpdate));
+            return;
         }
 
-        if (policy.AllowCrownUpdate && CrownRank(row.BestCrown) > CrownRank(existing.BestCrown))
-        {
-            existing.BestCrown = row.BestCrown;
-        }
+        ApplyBestUpdate(existing, row, policy);
     }
 
-    private static void ApplyBestUpdate(SongBestDatumGreen existing, Ac15BestRow row, Ac15BestUpdatePolicy policy)
-    {
-        if (policy.AllowScoreUpdate && row.BestScore > existing.BestScore)
-        {
-            existing.BestScore = row.BestScore;
-            existing.BestRate = row.BestRate;
-        }
-
-        if (policy.AllowCrownUpdate && CrownRank(row.BestCrown) > CrownRank(existing.BestCrown))
-        {
-            existing.BestCrown = row.BestCrown;
-        }
-    }
-
-    private static void ApplyBestUpdate(SongBestDatumYellow existing, Ac15BestRow row, Ac15BestUpdatePolicy policy)
+    private static void ApplyBestUpdate<TBest>(TBest existing, Ac15BestRow row, Ac15BestUpdatePolicy policy)
+        where TBest : IAc15SongBestDatum
     {
         if (policy.AllowScoreUpdate && row.BestScore > existing.BestScore)
         {
@@ -354,95 +265,84 @@ public static class Ac15NormalPlayService
         switch (profile.Era)
         {
             case GameEra.Blue:
-                await SetBlueFavoriteAsync(context, baid, songNo, isFavorite, maxFavorites, cancellationToken);
+                await SetFavoriteAsync<BlueFavoriteSongs>(context.BlueFavoriteSongs, baid, songNo, isFavorite, maxFavorites, cancellationToken);
                 return;
             case GameEra.Green:
-                await SetGreenFavoriteAsync(context, baid, songNo, isFavorite, maxFavorites, cancellationToken);
+                await SetFavoriteAsync<GreenFavoriteSongs>(context.GreenFavoriteSongs, baid, songNo, isFavorite, maxFavorites, cancellationToken);
                 return;
             case GameEra.Yellow:
-                await SetYellowFavoriteAsync(context, baid, songNo, isFavorite, maxFavorites, cancellationToken);
+                await SetFavoriteAsync<YellowFavoriteSongs>(context.YellowFavoriteSongs, baid, songNo, isFavorite, maxFavorites, cancellationToken);
                 return;
         }
     }
 
-    private static async ValueTask SetBlueFavoriteAsync(
-        ITaikoDbContext context,
+    private static async ValueTask UpsertRecentAsync<TRecent>(
+        DbSet<TRecent> recents,
+        uint baid,
+        uint songNo,
+        DateTime playTime,
+        CancellationToken cancellationToken)
+        where TRecent : class, IAc15RecentSong, new()
+    {
+        var recent = await recents.FindAsync([baid, songNo], cancellationToken);
+        if (recent is null)
+        {
+            recents.Add(new TRecent { Baid = baid, SongNo = songNo, LastPlayed = playTime });
+            return;
+        }
+
+        recent.LastPlayed = playTime;
+    }
+
+    private static async ValueTask TrimRecentAsync<TRecent>(
+        DbSet<TRecent> recents,
+        Func<CancellationToken, Task<int>> saveChanges,
+        uint baid,
+        int maxRecent,
+        CancellationToken cancellationToken)
+        where TRecent : class, IAc15RecentSong
+    {
+        var overage = await recents
+            .Where(song => song.Baid == baid)
+            .OrderByDescending(song => song.LastPlayed)
+            .Skip(maxRecent)
+            .ToListAsync(cancellationToken);
+        if (overage.Count == 0)
+        {
+            return;
+        }
+
+        recents.RemoveRange(overage);
+        await saveChanges(cancellationToken);
+    }
+
+    private static async ValueTask SetFavoriteAsync<TFavorite>(
+        DbSet<TFavorite> favorites,
         uint baid,
         uint songNo,
         bool isFavorite,
         int maxFavorites,
         CancellationToken cancellationToken)
+        where TFavorite : class, IAc15FavoriteSong, new()
     {
-        var favorite = await context.BlueFavoriteSongs.FindAsync([baid, songNo], cancellationToken);
+        var favorite = await favorites.FindAsync([baid, songNo], cancellationToken);
         if (isFavorite && favorite is null)
         {
-            var persisted = await context.BlueFavoriteSongs
+            var persisted = await favorites
                 .Where(song => song.Baid == baid)
                 .Select(song => song.SongNo)
                 .ToArrayAsync(cancellationToken);
-            var tracked = context.BlueFavoriteSongs.Local
+            var tracked = favorites.Local
                 .Where(song => song.Baid == baid)
                 .Select(song => song.SongNo);
             if (persisted.Concat(tracked).Distinct().Count() < maxFavorites)
             {
-                context.BlueFavoriteSongs.Add(new BlueFavoriteSongs { Baid = baid, SongNo = songNo });
+                favorites.Add(new TFavorite { Baid = baid, SongNo = songNo });
             }
         }
         else if (!isFavorite && favorite is not null)
         {
-            context.BlueFavoriteSongs.Remove(favorite);
-        }
-    }
-
-    private static async ValueTask SetGreenFavoriteAsync(
-        ITaikoDbContext context,
-        uint baid,
-        uint songNo,
-        bool isFavorite,
-        int maxFavorites,
-        CancellationToken cancellationToken)
-    {
-        var favorite = await context.GreenFavoriteSongs.FindAsync([baid, songNo], cancellationToken);
-        if (isFavorite && favorite is null)
-        {
-            var count = await context.GreenFavoriteSongs.CountAsync(song => song.Baid == baid, cancellationToken);
-            if (count < maxFavorites)
-            {
-                context.GreenFavoriteSongs.Add(new GreenFavoriteSongs { Baid = baid, SongNo = songNo });
-            }
-        }
-        else if (!isFavorite && favorite is not null)
-        {
-            context.GreenFavoriteSongs.Remove(favorite);
-        }
-    }
-
-    private static async ValueTask SetYellowFavoriteAsync(
-        ITaikoDbContext context,
-        uint baid,
-        uint songNo,
-        bool isFavorite,
-        int maxFavorites,
-        CancellationToken cancellationToken)
-    {
-        var favorite = await context.YellowFavoriteSongs.FindAsync([baid, songNo], cancellationToken);
-        if (isFavorite && favorite is null)
-        {
-            var persisted = await context.YellowFavoriteSongs
-                .Where(song => song.Baid == baid)
-                .Select(song => song.SongNo)
-                .ToArrayAsync(cancellationToken);
-            var tracked = context.YellowFavoriteSongs.Local
-                .Where(song => song.Baid == baid)
-                .Select(song => song.SongNo);
-            if (persisted.Concat(tracked).Distinct().Count() < maxFavorites)
-            {
-                context.YellowFavoriteSongs.Add(new YellowFavoriteSongs { Baid = baid, SongNo = songNo });
-            }
-        }
-        else if (!isFavorite && favorite is not null)
-        {
-            context.YellowFavoriteSongs.Remove(favorite);
+            favorites.Remove(favorite);
         }
     }
 
