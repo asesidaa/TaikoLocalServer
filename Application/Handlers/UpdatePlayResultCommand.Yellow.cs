@@ -45,45 +45,21 @@ public partial class UpdatePlayResultCommandHandler
             saveData,
             yellow.ItemShopCatalog,
             cancellationToken);
-        var currentDonmedal = shopSeasonState?.TotalGetDonmedal ?? saveData.TotalGetDonmedal;
 
-        if (HasInvalidAc15MedalTotals(currentDonmedal, saveData.TotalGetKatsumedal, playResultData))
+        var playTime = ParseAc15PlayDatetimeOrNow(playResultData.PlayDatetime);
+        if (!Ac15CommonProfileMutation.TryApply(
+                saveData,
+                shopSeasonState,
+                playResultData,
+                validStages,
+                Ac15ProfileCounterUpdater.Yellow,
+                Ac15UnlockFlagAccess.Yellow,
+                Ac15EraProfiles.Yellow.Limits,
+                playTime,
+                ApplyYellowCostume))
         {
             logger.LogWarning("Rejecting invalid Yellow medal totals for baid {Baid}", request.Baid);
             return 1;
-        }
-
-        var playTime = ParseAc15PlayDatetimeOrNow(playResultData.PlayDatetime);
-        AddAc15Donmedals(shopSeasonState, delta => saveData.TotalGetDonmedal += delta, playResultData.GetDonmedal);
-
-        saveData.TotalGetKatsumedal += playResultData.GetKatsumedal;
-        saveData.ItemshopTutorialFlg = playResultData.ItemshopTutorialFlg ?? saveData.ItemshopTutorialFlg;
-        saveData.WaiwaiTutorialFlg = playResultData.WaiwaiTutorialFlg ?? saveData.WaiwaiTutorialFlg;
-        saveData.IsDevil = playResultData.IsDevil ?? saveData.IsDevil;
-        saveData.IsExplain = playResultData.IsExplain ?? saveData.IsExplain;
-        if (playResultData.HasDifficultyPlayedCourse)
-        {
-            saveData.DifficultyPlayedCourse = playResultData.DifficultyPlayedCourse;
-        }
-
-        if (playResultData.HasDifficultyPlayedStar)
-        {
-            saveData.DifficultyPlayedStar = playResultData.DifficultyPlayedStar;
-        }
-
-        saveData.LastPlayDatetime = playTime;
-        saveData.PrevAreaCode = playResultData.AreaCode;
-
-        if (playResultData.HasAryCurrentCostume && saveData.IsAutoCostumeOn)
-        {
-            ApplyYellowCostume(saveData, playResultData.AryCurrentCostume);
-        }
-
-        ApplyYellowUnlockBits(saveData, playResultData);
-
-        foreach (var stage in playResultData.AryStageInfoes)
-        {
-            Ac15ProfileCounterUpdater.ApplyYellowStage(saveData, stage);
         }
 
         await Ac15DaniService.SaveAsync(
@@ -111,14 +87,23 @@ public partial class UpdatePlayResultCommandHandler
             cancellationToken);
         LogYellowWaiWaiStageFacts(request.Baid, playResultData);
 
-        return await Ac15NormalPlayService.SaveAsync(
+        await Ac15NormalPlayWriter.SaveAsync(
             context,
-            request.Baid,
-            playResultData,
-            Ac15EraProfiles.Yellow,
-            DefaultAc15EraHooks.Instance,
+            YellowNormalPlayTables(),
+            new Ac15NormalPlayWriteRequest(request.Baid, playResultData.PlayMode, validStages, Ac15EraProfiles.Yellow.Limits, playTime),
+            Ac15NormalStagePolicies.Standard,
             cancellationToken);
+        return 1;
     }
+
+    private Ac15NormalPlayTables<SongPlayDatumYellow, SongBestDatumYellow, YellowFavoriteSongs, YellowRecentSongs> YellowNormalPlayTables()
+        => new(
+            context.SongPlayDataYellow,
+            context.SongBestDataYellow,
+            context.YellowFavoriteSongs,
+            context.YellowRecentSongs,
+            Ac15NormalPlayMapper.ToYellowSongPlayDatum,
+            Ac15NormalPlayMapper.ToYellowSongBestDatum);
 
     private static bool IsYellowTokkunShaped(CommonPlayResultData playResultData)
         => playResultData.IsTokkunPlayResult
@@ -163,19 +148,6 @@ public partial class UpdatePlayResultCommandHandler
         saveData.CostumeFlg3 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg3, [costume.Costume3], limits.CostumeFlagBytes);
         saveData.CostumeFlg4 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg4, [costume.Costume4], limits.CostumeFlagBytes);
         saveData.CostumeFlg5 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg5, [costume.Costume5], limits.CostumeFlagBytes);
-    }
-
-    private static void ApplyYellowUnlockBits(UserSaveDataYellow saveData, CommonPlayResultData playResultData)
-    {
-        var limits = Ac15EraProfiles.Yellow.Limits;
-        saveData.ReleaseSongFlg = Ac15ProtocolBytes.SetBits(saveData.ReleaseSongFlg, playResultData.ReleaseSongNoes, limits.SongFlagBytes);
-        saveData.ToneFlg = Ac15ProtocolBytes.SetBits(saveData.ToneFlg, playResultData.GetToneNoes, limits.ToneFlagBytes);
-        saveData.CostumeFlg1 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg1, playResultData.GetCostumeNo1s, limits.CostumeFlagBytes);
-        saveData.CostumeFlg2 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg2, playResultData.GetCostumeNo2s, limits.CostumeFlagBytes);
-        saveData.CostumeFlg3 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg3, playResultData.GetCostumeNo3s, limits.CostumeFlagBytes);
-        saveData.CostumeFlg4 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg4, playResultData.GetCostumeNo4s, limits.CostumeFlagBytes);
-        saveData.CostumeFlg5 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg5, playResultData.GetCostumeNo5s, limits.CostumeFlagBytes);
-        saveData.TitleFlg = Ac15ProtocolBytes.SetBits(saveData.TitleFlg, playResultData.GetTitleNoes, limits.TitleFlagBytes);
     }
 
     private static DateTime ParseYellowPlayDatetimeOrNow(string playDatetime)

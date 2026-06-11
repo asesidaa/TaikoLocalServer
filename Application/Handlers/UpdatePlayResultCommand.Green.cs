@@ -30,13 +30,6 @@ public partial class UpdatePlayResultCommandHandler
             ? null
             : await context.GetOrCreateGreenShopSeasonStateAsync(saveData, activeShopSeason.SeasonId, cancellationToken);
 
-        var currentDonmedal = shopSeasonState?.TotalGetDonmedal ?? saveData.TotalGetDonmedal;
-        if (HasInvalidAc15MedalTotals(currentDonmedal, saveData.TotalGetKatsumedal, playResultData))
-        {
-            logger.LogWarning("Rejecting invalid Green medal totals for baid {Baid}", request.Baid);
-            return 1;
-        }
-
         var validStages = Ac15NormalStageFilter.Filter(
             request.Baid,
             playResultData.AryStageInfoes,
@@ -50,42 +43,23 @@ public partial class UpdatePlayResultCommandHandler
         }
 
         playResultData.AryStageInfoes = validStages.ToList();
-
         var playTime = ParseAc15PlayDatetimeOrNow(playResultData.PlayDatetime);
-
-        AddAc15Donmedals(shopSeasonState, delta => saveData.TotalGetDonmedal += delta, playResultData.GetDonmedal);
-
-        saveData.TotalGetKatsumedal += playResultData.GetKatsumedal;
-        saveData.ItemshopTutorialFlg = playResultData.ItemshopTutorialFlg ?? saveData.ItemshopTutorialFlg;
-        saveData.IsDevil = playResultData.IsDevil ?? saveData.IsDevil;
-        saveData.IsExplain = playResultData.IsExplain ?? saveData.IsExplain;
-        saveData.WaiwaiTutorialFlg = playResultData.WaiwaiTutorialFlg ?? saveData.WaiwaiTutorialFlg;
-        if (playResultData.HasDifficultyPlayedCourse)
+        if (!Ac15CommonProfileMutation.TryApply(
+                saveData,
+                shopSeasonState,
+                playResultData,
+                validStages,
+                Ac15ProfileCounterUpdater.Green,
+                Ac15UnlockFlagAccess.Green,
+                Ac15EraProfiles.Green.Limits,
+                playTime,
+                ApplyCostume))
         {
-            saveData.DifficultyPlayedCourse = playResultData.DifficultyPlayedCourse;
+            logger.LogWarning("Rejecting invalid Green medal totals for baid {Baid}", request.Baid);
+            return 1;
         }
 
-        if (playResultData.HasDifficultyPlayedStar)
-        {
-            saveData.DifficultyPlayedStar = playResultData.DifficultyPlayedStar;
-        }
-
-        saveData.LastPlayDatetime = playTime;
-        saveData.PrevAreaCode = playResultData.AreaCode;
-
-        if (playResultData.HasAryCurrentCostume && saveData.IsAutoCostumeOn)
-        {
-            ApplyCostume(saveData, playResultData.AryCurrentCostume);
-        }
-
-        ApplyUnlockBits(saveData, playResultData);
         await ApplyGhostUpdatesAsync(saveData, playResultData, cancellationToken);
-
-        foreach (var stage in playResultData.AryStageInfoes)
-        {
-            Ac15ProfileCounterUpdater.ApplyGreenStage(saveData, stage);
-        }
-
         ApplyGhostPlayedSongBits(saveData, playResultData);
 
         await Ac15DaniService.SaveAsync(
@@ -112,13 +86,46 @@ public partial class UpdatePlayResultCommandHandler
             logger,
             cancellationToken);
 
-        return await Ac15NormalPlayService.SaveAsync(
+        await Ac15NormalPlayWriter.SaveAsync(
             context,
-            request.Baid,
-            playResultData,
-            Ac15EraProfiles.Green,
-            new GreenAc15NormalPlayHooks(),
+            GreenNormalPlayTables(),
+            new Ac15NormalPlayWriteRequest(request.Baid, playResultData.PlayMode, validStages, Ac15EraProfiles.Green.Limits, playTime),
+            Ac15NormalStagePolicies.Green,
             cancellationToken);
+        return 1;
+    }
+
+    private Ac15NormalPlayTables<SongPlayDatumGreen, SongBestDatumGreen, GreenFavoriteSongs, GreenRecentSongs> GreenNormalPlayTables()
+        => new(
+            context.SongPlayDataGreen,
+            context.SongBestDataGreen,
+            context.GreenFavoriteSongs,
+            context.GreenRecentSongs,
+            Ac15NormalPlayMapper.ToGreenSongPlayDatum,
+            Ac15NormalPlayMapper.ToGreenSongBestDatum,
+            AfterAddPlayRow: AddGreenGhostStageSections);
+
+    private void AddGreenGhostStageSections(SongPlayDatumGreen play, Ac15PlayRow row)
+    {
+        if (row.GhostStageData is null)
+        {
+            return;
+        }
+
+        uint sectionNo = 0;
+        foreach (var section in row.GhostStageData.ArySectionData)
+        {
+            context.GhostStageSectionDataGreen.Add(new GhostStageSectionDatumGreen
+            {
+                Parent = play,
+                SectionNo = sectionNo++,
+                IsWin = section.IsWin,
+                GoodCount = section.GoodCnt,
+                OkCount = section.OkCnt,
+                NgCount = section.NgCnt,
+                PoundCount = section.PoundCnt
+            });
+        }
     }
 
     private static void ApplyCostume(UserSaveDataGreen saveData, CommonPlayResultData.CostumeData costume)
@@ -133,17 +140,6 @@ public partial class UpdatePlayResultCommandHandler
         saveData.CostumeFlg3 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg3, [costume.Costume3], GreenProtocolBytes.CostumeFlagBytes);
         saveData.CostumeFlg4 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg4, [costume.Costume4], GreenProtocolBytes.CostumeFlagBytes);
         saveData.CostumeFlg5 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg5, [costume.Costume5], GreenProtocolBytes.CostumeFlagBytes);
-    }
-
-    private static void ApplyUnlockBits(UserSaveDataGreen saveData, CommonPlayResultData playResultData)
-    {
-        saveData.ToneFlg = Ac15ProtocolBytes.SetBits(saveData.ToneFlg, playResultData.GetToneNoes, GreenProtocolBytes.ToneFlagBytes);
-        saveData.CostumeFlg1 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg1, playResultData.GetCostumeNo1s, GreenProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg2 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg2, playResultData.GetCostumeNo2s, GreenProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg3 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg3, playResultData.GetCostumeNo3s, GreenProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg4 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg4, playResultData.GetCostumeNo4s, GreenProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg5 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg5, playResultData.GetCostumeNo5s, GreenProtocolBytes.CostumeFlagBytes);
-        saveData.TitleFlg = Ac15ProtocolBytes.SetBits(saveData.TitleFlg, playResultData.GetTitleNoes, GreenProtocolBytes.TitleFlagBytes);
     }
 
     private static void ApplyGhostPlayedSongBits(UserSaveDataGreen saveData, CommonPlayResultData playResultData)

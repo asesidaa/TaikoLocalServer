@@ -23,8 +23,7 @@ public static class Ac15EraProfiles
             CrownPlacement: Ac15CrownWirePlacement.DedicatedEndpoint,
             HasInitialDataItemShopRows: true,
             HasInitialDataLegalTermsRows: true,
-            HasTokkunTutorialFlagInUserData: true),
-        DefaultAc15EraHooks.Instance);
+            HasTokkunTutorialFlagInUserData: true));
 
     public static Ac15EraProfile Green { get; } = new(
         GameEra.Green,
@@ -34,8 +33,7 @@ public static class Ac15EraProfiles
             CrownPlacement: Ac15CrownWirePlacement.DedicatedEndpoint,
             HasInitialDataItemShopRows: true,
             HasInitialDataLegalTermsRows: false,
-            HasTokkunTutorialFlagInUserData: false),
-        DefaultAc15EraHooks.Instance);
+            HasTokkunTutorialFlagInUserData: false));
 
     public static Ac15EraProfile Yellow { get; } = new(
         GameEra.Yellow,
@@ -45,8 +43,7 @@ public static class Ac15EraProfiles
             CrownPlacement: Ac15CrownWirePlacement.DedicatedEndpoint,
             HasInitialDataItemShopRows: true,
             HasInitialDataLegalTermsRows: true,
-            HasTokkunTutorialFlagInUserData: true),
-        DefaultAc15EraHooks.Instance);
+            HasTokkunTutorialFlagInUserData: true));
 
     private static Ac15ProtocolLimits CreateCommonLimits() => new(
         SongFlagBytes: BlueProtocolBytes.SongFlagBytes,

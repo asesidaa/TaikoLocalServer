@@ -31,9 +31,9 @@ public partial class UpdatePlayResultCommandHandler
             cancellationToken);
 
         await context.SaveChangesAsync(cancellationToken);
-        await Ac15NormalPlayService.TrimRecentAsync(
-            context,
-            Ac15EraProfiles.Blue,
+        await Ac15NormalPlayWriter.TrimRecentAsync(
+            context.BlueRecentSongs,
+            context.SaveChangesAsync,
             baid,
             Ac15EraProfiles.Blue.Limits.MaxRecentSongs,
             cancellationToken);
@@ -78,9 +78,8 @@ public partial class UpdatePlayResultCommandHandler
     {
         foreach (var stage in playResultData.AryStageInfoes)
         {
-            await Ac15NormalPlayService.UpsertRecentAsync(
-                context,
-                Ac15EraProfiles.Blue,
+            await Ac15NormalPlayWriter.UpsertRecentAsync(
+                context.BlueRecentSongs,
                 baid,
                 stage.SongNo,
                 playTime,

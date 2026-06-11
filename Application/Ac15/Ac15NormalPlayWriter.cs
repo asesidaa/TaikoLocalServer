@@ -116,7 +116,7 @@ public static class Ac15NormalPlayWriter
         }
     }
 
-    private static async ValueTask UpsertRecentAsync<TRecent>(
+    public static async ValueTask UpsertRecentAsync<TRecent>(
         DbSet<TRecent> recents,
         uint baid,
         uint songNo,
@@ -134,7 +134,7 @@ public static class Ac15NormalPlayWriter
         recent.LastPlayed = playTime;
     }
 
-    private static async ValueTask TrimRecentAsync<TRecent>(
+    public static async ValueTask TrimRecentAsync<TRecent>(
         DbSet<TRecent> recents,
         Func<CancellationToken, Task<int>> saveChanges,
         uint baid,

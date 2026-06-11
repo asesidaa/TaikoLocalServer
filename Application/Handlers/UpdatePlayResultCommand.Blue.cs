@@ -39,50 +39,34 @@ public partial class UpdatePlayResultCommandHandler
             saveData,
             blue.ItemShopCatalog,
             cancellationToken);
-        var currentDonmedal = shopSeasonState?.TotalGetDonmedal ?? saveData.TotalGetDonmedal;
 
-        if (HasInvalidAc15MedalTotals(currentDonmedal, saveData.TotalGetKatsumedal, playResultData))
+        var validStages = Ac15NormalStageFilter.Filter(
+            request.Baid,
+            playResultData.AryStageInfoes,
+            Ac15EraProfiles.Blue.Limits,
+            Ac15NormalStagePolicies.Standard,
+            logger);
+        if (validStages.Count == 0)
         {
-            logger.LogWarning("Rejecting invalid Blue medal totals for baid {Baid}", request.Baid);
+            logger.LogWarning("Skipping Blue playresult with no valid normal stages for baid {Baid}", request.Baid);
             return 1;
         }
 
+        playResultData.AryStageInfoes = validStages.ToList();
         var playTime = ParseAc15PlayDatetimeOrNow(playResultData.PlayDatetime);
-        AddAc15Donmedals(shopSeasonState, delta => saveData.TotalGetDonmedal += delta, playResultData.GetDonmedal);
-
-        saveData.TotalGetKatsumedal += playResultData.GetKatsumedal;
-        saveData.ItemshopTutorialFlg = playResultData.ItemshopTutorialFlg ?? saveData.ItemshopTutorialFlg;
-        saveData.IsDevil = playResultData.IsDevil ?? saveData.IsDevil;
-        saveData.IsExplain = playResultData.IsExplain ?? saveData.IsExplain;
-        saveData.WaiwaiTutorialFlg = playResultData.WaiwaiTutorialFlg ?? saveData.WaiwaiTutorialFlg;
-        if (playResultData.HasDifficultyPlayedCourse)
+        if (!Ac15CommonProfileMutation.TryApply(
+                saveData,
+                shopSeasonState,
+                playResultData,
+                validStages,
+                Ac15ProfileCounterUpdater.Blue,
+                Ac15UnlockFlagAccess.Blue,
+                Ac15EraProfiles.Blue.Limits,
+                playTime,
+                ApplyCostume))
         {
-            saveData.DifficultyPlayedCourse = playResultData.DifficultyPlayedCourse;
-        }
-
-        if (playResultData.HasDifficultyPlayedStar)
-        {
-            saveData.DifficultyPlayedStar = playResultData.DifficultyPlayedStar;
-        }
-
-        saveData.LastPlayDatetime = playTime;
-        saveData.PrevAreaCode = playResultData.AreaCode;
-
-        if (playResultData.HasAryCurrentCostume && saveData.IsAutoCostumeOn)
-        {
-            ApplyCostume(saveData, playResultData.AryCurrentCostume);
-        }
-
-        ApplyUnlockBits(saveData, playResultData);
-
-        foreach (var stage in playResultData.AryStageInfoes)
-        {
-            if (!IsSupportedBlueStage(request.Baid, stage))
-            {
-                continue;
-            }
-
-            Ac15ProfileCounterUpdater.ApplyBlueStage(saveData, stage);
+            logger.LogWarning("Rejecting invalid Blue medal totals for baid {Baid}", request.Baid);
+            return 1;
         }
 
         await Ac15DaniService.SaveAsync(
@@ -109,25 +93,23 @@ public partial class UpdatePlayResultCommandHandler
             logger,
             cancellationToken);
 
-        return await Ac15NormalPlayService.SaveAsync(
+        await Ac15NormalPlayWriter.SaveAsync(
             context,
-            request.Baid,
-            playResultData,
-            Ac15EraProfiles.Blue,
-            DefaultAc15EraHooks.Instance,
+            BlueNormalPlayTables(),
+            new Ac15NormalPlayWriteRequest(request.Baid, playResultData.PlayMode, validStages, Ac15EraProfiles.Blue.Limits, playTime),
+            Ac15NormalStagePolicies.Standard,
             cancellationToken);
+        return 1;
     }
 
-    private bool IsSupportedBlueStage(uint baid, CommonPlayResultData.StageData stage)
-    {
-        var accepted = Ac15NormalStageFilter.Filter(
-            baid,
-            [stage],
-            Ac15EraProfiles.Blue.Limits,
-            Ac15NormalStagePolicies.Standard,
-            logger);
-        return accepted.Count == 1;
-    }
+    private Ac15NormalPlayTables<SongPlayDatumBlue, SongBestDatumBlue, BlueFavoriteSongs, BlueRecentSongs> BlueNormalPlayTables()
+        => new(
+            context.SongPlayDataBlue,
+            context.SongBestDataBlue,
+            context.BlueFavoriteSongs,
+            context.BlueRecentSongs,
+            Ac15NormalPlayMapper.ToBlueSongPlayDatum,
+            Ac15NormalPlayMapper.ToBlueSongBestDatum);
 
     private static void ApplyCostume(UserSaveDataBlue saveData, CommonPlayResultData.CostumeData costume)
     {
@@ -141,18 +123,6 @@ public partial class UpdatePlayResultCommandHandler
         saveData.CostumeFlg3 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg3, [costume.Costume3], BlueProtocolBytes.CostumeFlagBytes);
         saveData.CostumeFlg4 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg4, [costume.Costume4], BlueProtocolBytes.CostumeFlagBytes);
         saveData.CostumeFlg5 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg5, [costume.Costume5], BlueProtocolBytes.CostumeFlagBytes);
-    }
-
-    private static void ApplyUnlockBits(UserSaveDataBlue saveData, CommonPlayResultData playResultData)
-    {
-        saveData.ReleaseSongFlg = Ac15ProtocolBytes.SetBits(saveData.ReleaseSongFlg, playResultData.ReleaseSongNoes, BlueProtocolBytes.SongFlagBytes);
-        saveData.ToneFlg = Ac15ProtocolBytes.SetBits(saveData.ToneFlg, playResultData.GetToneNoes, BlueProtocolBytes.ToneFlagBytes);
-        saveData.CostumeFlg1 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg1, playResultData.GetCostumeNo1s, BlueProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg2 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg2, playResultData.GetCostumeNo2s, BlueProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg3 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg3, playResultData.GetCostumeNo3s, BlueProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg4 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg4, playResultData.GetCostumeNo4s, BlueProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg5 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg5, playResultData.GetCostumeNo5s, BlueProtocolBytes.CostumeFlagBytes);
-        saveData.TitleFlg = Ac15ProtocolBytes.SetBits(saveData.TitleFlg, playResultData.GetTitleNoes, BlueProtocolBytes.TitleFlagBytes);
     }
 
     private static bool CanAddBlue(uint current, uint delta)
