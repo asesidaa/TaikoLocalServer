@@ -91,6 +91,53 @@
 
 ---
 
+## Milestone: v1.2 Yellow AC15 Support
+
+**Shipped:** 2026-06-12
+**Phases:** 8 | **Plans:** 38 | **Sessions:** not measured
+
+### What Was Built
+
+- Yellow first-class AC15 adapter, `/v09r02/chassis/*` game routes, shared startup/version behavior, generated wire DTOs, and enabled-era route gating.
+- Yellow-owned catalog, identity, userdata, self-best, crown, normal play, Dani, shop, medal, favorite, recent, AdminApi, and WebUI readback behavior.
+- Yellow WaiWai and Tokkun support bounded to local wire/runtime evidence, including Tokkun no-cross-mode writes and nullable tutorial readback.
+- Stateless Yellow Banacoin-adjacent compatibility without wallet, balance, payment, coupon, settlement, receipt, or transaction authority.
+- AC15 nullable wire generation, Mapperly protocol projection, and shared-core cleanup across Green, Blue, and Yellow while preserving era-owned state.
+- Final Yellow contract documentation plus user-confirmed RPCS3 smoke and full automated verification.
+
+### What Worked
+
+- Keeping Yellow battle absent avoided fake support and kept Blue battle behavior isolated.
+- Mapperly and nullable wire work before runtime closeout made optional-field presence explicit at adapter boundaries.
+- Moving repeated AC15 behavior into shared services and capability bindings reduced duplication without introducing shared gameplay tables.
+- Treating RPCS3 smoke as a final closeout gate kept earlier implementation phases focused on automated regression and persistence boundaries.
+
+### What Was Inefficient
+
+- Phase 16.2 grew into a large refactor wave after review feedback, including a follow-up capability-composition cleanup.
+- The milestone helper generated UTC dates and an overly long MILESTONES entry, requiring manual normalization.
+- Phase 17 had to be represented as a closeout artifact after external runtime verification rather than a normal implementation phase.
+
+### Patterns Established
+
+- New AC15 eras should stay first-class at routes, wire DTOs, persistence, catalogs, handlers, mappers, tests, and UI routing.
+- Shared AC15 behavior should be extracted through explicit contracts and typed bindings, not repository-shaped persistence adapters or shared EF gameplay tables.
+- Unsupported cabinet surfaces should be absent, not stubbed, until proto/log/client evidence proves a server contract.
+
+### Key Lessons
+
+1. Optional protobuf presence should be represented in generated wire shape and mapper contracts, not scattered through production `ShouldSerialize*` checks.
+2. Shared AC15 code is useful only when era-specific gates remain visible at the handler/profile boundary.
+3. Runtime verification that happens outside the repo needs a small closeout artifact immediately, or planning state drifts behind user-confirmed reality.
+
+### Cost Observations
+
+- Model mix: not measured.
+- Sessions: not measured.
+- Notable: Phase 16.2 carried the most coordination cost because it combined architecture correction, review fixes, and broader shared-core cleanup before final Yellow smoke.
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -99,6 +146,7 @@
 |-----------|----------|--------|------------|
 | v1.0 | not measured | 6 | Blue support moved from staged normal support into evidence-gated battle runtime and final closeout. |
 | v1.1 | not measured | 5 | Tokkun support used evidence-scoped phases with runtime proof deferred until final closeout. |
+| v1.2 | not measured | 8 | Yellow support reused AC15 shared core where behavior matched while preserving era-owned state and closing with RPCS3 smoke. |
 
 ### Cumulative Quality
 
@@ -106,9 +154,11 @@
 |-----------|-------|----------|-------------------|
 | v1.0 | Full server suite plus focused Blue/BlueBattle/source-guard tests | not measured | Blue-owned battle/source-guard patterns |
 | v1.1 | Full server suite: 638 passed at close | not measured | Blue-owned Tokkun persistence/readback and stateless Banacoin compatibility |
+| v1.2 | Full server suite: 683 passed at close | not measured | Yellow-owned AC15 support plus shared AC15 Mapperly/core patterns |
 
 ### Top Lessons (Verified Across Milestones)
 
 1. Keep Blue-specific runtime behavior isolated from Green unless a contract is truly shared.
 2. Prefer evidence-backed protocol contracts over inferred catalog/default behavior.
 3. Treat runtime smoke proof as a separate closeout gate when earlier phases are intentionally source/test/build scoped.
+4. Preserve era-owned persistence and route ownership even when extracting shared AC15 algorithms.

@@ -1,5 +1,37 @@
 # Milestones
 
+## v1.2 Yellow AC15 Support (Shipped: 2026-06-12)
+
+**Delivered:** Yellow is a first-class AC15 era with Yellow-owned protocol routes, catalog loading, normal play, Dani, shop/medals, WaiWai logging/readback, Tokkun, stateless Banacoin-adjacent compatibility, AdminApi/WebUI readback, runtime verification, and final contract documentation.
+
+**Phases completed:** 8 phases, 38 plans, 69 tasks
+
+**Key accomplishments:**
+
+- Added Yellow as an enableable adapter with generated Yellow wire DTOs, `/v09r02/chassis/*` game routes, shared `/v01r00/chassis/*` startup/version ownership, and no-battle absence guardrails.
+- Loaded Yellow `ST9100-1` catalog data and implemented Yellow-owned identity, userdata, self-best, crown, normal play, Dani, shop, medal, favorite, recent, AdminApi, and WebUI readback paths.
+- Implemented evidence-bounded Yellow WaiWai and Tokkun behavior, including Tokkun classification before normal play, nullable tutorial readback, append-only raw Tokkun history, and no-cross-mode writes.
+- Kept Yellow Banacoin-adjacent routes stateless and non-authoritative while logging compatibility requests.
+- Regenerated AC15 wire DTOs with nullable optional primitives, moved AC15 protocol projection to Mapperly, and simplified shared AC15 core behavior without merging era-owned persistence.
+- Closed the milestone with full `dotnet test Tests/Tests.csproj` verification (683 passed), temp-output Host build (0 warnings/errors), and user-confirmed RPCS3 Yellow smoke.
+
+**Stats:**
+
+- 8 phases complete
+- 38 GSD plans complete
+- 69 tracked summary tasks
+- Full verification at close: `dotnet test Tests/Tests.csproj` passed 683/683 and Host temp-output build passed with 0 warnings/errors
+- GSD range before archive: `2f33a6af` -> `4ff19868`
+
+**Archived:**
+
+- `.planning/milestones/v1.2-ROADMAP.md`
+- `.planning/milestones/v1.2-REQUIREMENTS.md`
+- `.planning/milestones/v1.2-phases/`
+
+**What's next:** Start a fresh milestone with `$gsd-new-milestone`.
+
+---
 ## v1.1 Blue Tokkun Mode Support (Shipped: 2026-06-07)
 
 **Delivered:** Evidence-backed Blue Tokkun support with stateless Banacoin-adjacent compatibility, Tokkun playresult handling, Blue-owned Tokkun persistence/readback, runtime verification, and final contract documentation.

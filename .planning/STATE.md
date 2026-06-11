@@ -1,40 +1,40 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.2
-milestone_name: Phase Summary
-status: ready
-stopped_at: Phase 16.2 complete and verified
-last_updated: "2026-06-11T06:34:37.124Z"
-last_activity: 2026-06-11
+milestone_name: Yellow AC15 Support
+status: Awaiting next milestone
+stopped_at: v1.2 Yellow AC15 Support complete
+last_updated: "2026-06-12T03:04:26+08:00"
+last_activity: 2026-06-12 - Milestone v1.2 completed and archived
 progress:
   total_phases: 8
-  completed_phases: 7
-  total_plans: 37
-  completed_plans: 37
-  percent: 88
+  completed_phases: 8
+  total_plans: 38
+  completed_plans: 38
+  percent: 100
 ---
 
 # Project State
 
 ## Project Reference
 
-See: `.planning/PROJECT.md` (updated 2026-06-07)
+See: `.planning/PROJECT.md` (updated 2026-06-12)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Phase 17 — yellow-runtime-verification-and-contract-closeout
+**Current focus:** Planning the next milestone after shipped v1.2 Yellow AC15 Support.
 
 ## Current Position
 
-Phase: 17
-Plan: Not started
-Status: Phase 16.2 complete and verified; Phase 17 not started
-Last activity: 2026-06-11
+Phase: Milestone v1.2 complete
+Plan: none
+Status: Awaiting next milestone
+Last activity: 2026-06-12 - Milestone v1.2 completed and archived
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 37 in v1.2
+- Total plans completed: 38 in v1.2
 - Average duration: 23.5 min
 - Total execution time: 541 min
 
@@ -54,11 +54,12 @@ Last activity: 2026-06-11
 | 16 | 4/4 complete | 71 min | 18 min |
 | 16.1 | 1/1 complete | 95 min | 95 min |
 | 16.2 | 14 | - | - |
+| 17 | 1/1 complete | closeout | closeout |
 
 **Recent Trend:**
 
-- Last 6 plans: 15-09 completed in 19 min; 16-01 completed in 20 min; 16-02 completed in 19 min; 16-03 completed in 12 min; 16-04 completed in 20 min; 16.1-01 completed in 95 min.
-- Trend: Phase 16.1 mapper architecture rewrite completed after review feedback; Phase 16.2 shared-core simplification completed and verified across 14 scoped plans before Phase 17 runtime verification and contract closeout.
+- Last 6 implementation plans before closeout: 16.2-08, 16.2-09, 16.2-10, 16.2-11, 16.2-12, and 16.2-13 completed; Phase 17 recorded runtime verification and final contract closeout.
+- Trend: Phase 16.1 mapper architecture rewrite and Phase 16.2 shared-core simplification were completed before final Yellow runtime verification and contract closeout.
 
 | Phase 11 P01 | 3 min | 4 tasks | 4 files |
 | Phase 12 P01 | 12 min | 2 tasks | 13 files |
@@ -97,6 +98,7 @@ Last activity: 2026-06-11
 | Phase 16.2 P13 | 8 min | 1 tasks | 4 files |
 | Phase 16.2 P09 | 9 min | 1 tasks | 5 files |
 | Phase 16.2 P10 | 22 min | 1 tasks | 4 files |
+| Phase 17 P01 | closeout | 4 requirements | planning artifacts |
 
 ## Accumulated Context
 
@@ -104,6 +106,7 @@ Last activity: 2026-06-11
 
 - Phase 16.1 inserted after Phase 16 and completed before Phase 17: AC15 Mapperly Mapper Rewrite and Presence Semantics; includes `protogen +nullablevaluetype=yes` wire regeneration as a first-class refactor point.
 - Phase 16.2 inserted after Phase 16.1 and before Phase 17: AC15 Shared Core Simplification and Reuse Cleanup (URGENT)
+- Phase 17 completed v1.2 Yellow runtime verification and contract closeout from full automated verification plus user-confirmed RPCS3 smoke.
 
 ### Decisions
 
@@ -166,6 +169,8 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 16.2]: Plan 12 kept folder/telop route ownership unchanged and collapsed identical Blue/Green/Yellow telop snapshot projection behind a shared helper in `Ac15CatalogSnapshotFactory`.
 - [Phase 16.2]: Plan 13 moved shared AC15 initial-data list population into `Ac15InitialDataService`, leaving Blue battle and Green ghost advertisement as explicit era-local handler fields.
 - [Phase 16.2]: Plan 09 added `IAc15SongPlayDatum` and shared AC15 normal-play row insertion through a generic helper over concrete era DbSets, while Green `SupportLevel` and ghost section persistence remain era-local.
+- [Phase 17]: Yellow runtime closeout accepted user-confirmed RPCS3 smoke evidence, full `dotnet test Tests/Tests.csproj` (683 passed), and temp-output Host build (0 warnings/errors) as the v1.2 completion gate.
+- [Phase 17]: Final Yellow contract records `/v09r02/chassis/*` game routes, shared `/v01r00/chassis/*` startup/version ownership, Yellow-owned state, no Yellow battle, and no Banacoin authority.
 
 ### Pending Todos
 
@@ -186,15 +191,13 @@ None recorded.
 | Category | Item | Status | Deferred At |
 |----------|------|--------|-------------|
 | Admin/developer UI | TKUI-01: inspect Blue Tokkun history or debug state through AdminApi/WebUI | Future requirement, not mapped to v1.1 roadmap | v1.1 requirements |
-| Runtime verification | Yellow normal and Tokkun RPCS3/cabinet smoke | Deferred to Phase 17/end-of-range after Phase 16.1 mapper rewrite and Phase 16.2 shared-core simplification | Phase 13 verification |
 
 ## Session Continuity
 
-Last session: 2026-06-11T06:24:16.968Z
-Stopped at: Completed 16.2-10-PLAN.md
+Last session: 2026-06-12T02:58:38+08:00
+Stopped at: v1.2 Yellow AC15 Support complete
 Resume file: None
 
 ## Operator Next Steps
 
-- Phase 16.1 verification is complete and passed; Green/Blue/Yellow AC15 wire DTOs now use nullable optional primitives and protocol mappers use real Mapperly generation for mechanical projection.
-- Next coordinator-owned step: begin Phase 17 Yellow runtime verification and contract closeout.
+- Start the next milestone with `$gsd-new-milestone`.
