@@ -1,6 +1,10 @@
 namespace TaikoLocalServer.Domain.Entities;
 
-public partial class UserSaveDataGreen
+public partial class UserSaveDataGreen :
+    IAc15MedalSaveData,
+    IAc15TutorialSaveData,
+    IAc15PlayProfileSaveData,
+    IAc15CustomizationSaveData
 {
     public uint Baid { get; set; }
     public string Title { get; set; } = string.Empty;
