@@ -11,10 +11,6 @@ public partial class GetInitialDataQueryHandler
         var response = Ac15InitialDataService.BuildCommonInitialData(snapshot, Ac15EraProfiles.Green);
 
         response.IsGhostbattleplay = true;
-        response.AryItemShopDatas = Ac15InitialDataService.BuildItemShopInfoRows(snapshot);
-        response.AryTelopDatas = Ac15InitialDataService.BuildTelopInfoRows(snapshot);
-        response.AryEventFolderDatas = Ac15InitialDataService.BuildEventFolderInfoRows(snapshot);
-        response.AryTaikojukuDatas = Ac15InitialDataService.BuildTaikojukuInfoRows(snapshot, Ac15EraProfiles.Green);
 
         return ValueTask.FromResult(response);
     }

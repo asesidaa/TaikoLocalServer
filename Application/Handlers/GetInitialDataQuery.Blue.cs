@@ -25,11 +25,6 @@ public partial class GetInitialDataQueryHandler
         response.BattleBondsLvCap = battle.EnablesBattleAdvertisement
             ? battle.BattleBondsLvCap ?? 0
             : 0;
-        response.AryItemShopDatas = Ac15InitialDataService.BuildItemShopInfoRows(snapshot);
-        response.AryTelopDatas = Ac15InitialDataService.BuildTelopInfoRows(snapshot);
-        response.AryEventFolderDatas = Ac15InitialDataService.BuildEventFolderInfoRows(snapshot);
-        response.AryTaikojukuDatas = Ac15InitialDataService.BuildTaikojukuInfoRows(snapshot, Ac15EraProfiles.Blue);
-        response.AryLegaltermsDatas = [];
 
         return ValueTask.FromResult(response);
     }

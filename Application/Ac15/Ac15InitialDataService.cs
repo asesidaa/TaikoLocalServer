@@ -28,7 +28,12 @@ public static class Ac15InitialDataService
             IsDanplay = profile.Features.Dani,
             IsClose = false,
             IsItemshop = profile.Features.ItemShop && activeShopWithRows is not null,
-            ServerCurrentDatetime = (ulong)DateTimeOffset.Now.ToUnixTimeSeconds()
+            ServerCurrentDatetime = (ulong)DateTimeOffset.Now.ToUnixTimeSeconds(),
+            AryItemShopDatas = BuildItemShopInfoRows(snapshot),
+            AryTelopDatas = BuildTelopInfoRows(snapshot),
+            AryEventFolderDatas = BuildEventFolderInfoRows(snapshot),
+            AryTaikojukuDatas = BuildTaikojukuInfoRows(snapshot, profile),
+            AryLegaltermsDatas = []
         };
     }
 

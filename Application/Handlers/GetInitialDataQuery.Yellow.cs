@@ -12,12 +12,6 @@ public partial class GetInitialDataQueryHandler
         var snapshot = Ac15CatalogSnapshotFactory.FromYellow(yellow);
         var response = Ac15InitialDataService.BuildCommonInitialData(snapshot, Ac15EraProfiles.Yellow);
 
-        response.AryItemShopDatas = Ac15InitialDataService.BuildItemShopInfoRows(snapshot);
-        response.AryTelopDatas = Ac15InitialDataService.BuildTelopInfoRows(snapshot);
-        response.AryEventFolderDatas = Ac15InitialDataService.BuildEventFolderInfoRows(snapshot);
-        response.AryTaikojukuDatas = Ac15InitialDataService.BuildTaikojukuInfoRows(snapshot, Ac15EraProfiles.Yellow);
-        response.AryLegaltermsDatas = [];
-
         return ValueTask.FromResult(response);
     }
 }
