@@ -22,7 +22,7 @@ Active milestone: **v1.2 Yellow AC15 Support**
 | 15 | Yellow Dani, Shop, Medals, WaiWai, and Admin | Implement Yellow Dani, metadata, shop/medals, WaiWai tutorial/logging, and admin readback. | YDAN-01, YSHOP-01, YSHOP-02, YMED-01, YWAI-01, YUI-01 | 5 |
 | 16 | Yellow Tokkun and Banacoin Compatibility | Add Yellow Tokkun acceptance/persistence/readback and stateless Banacoin-adjacent compatibility. | YTOK-01, YTOK-02, YTOK-03, YBAN-01 | 5 |
 | 16.1 | AC15 Mapperly Mapper Rewrite and Presence Semantics | Regenerate AC15 wire DTOs with nullable optional primitives and move Green/Blue/Yellow protocol projection to real Mapperly generation. | YMAPP-01, YMAPP-02, YMAPP-03 | 6 |
-| 16.2 | AC15 Shared Core Simplification and Reuse Cleanup | 14/14 | Complete   | 2026-06-11 |
+| 16.2 | AC15 Shared Core Simplification and Reuse Cleanup | 14/14 | Complete | 2026-06-11 |
 | 17 | Yellow Runtime Verification and Contract Closeout | Prove the full Yellow contract with focused tests, full build/test, runtime smoke, and docs. | YVER-01, YVER-02, YVER-03, YDOC-01 | 5 |
 
 **Coverage:** 34/34 v1.2 requirements mapped exactly once.
@@ -35,7 +35,7 @@ Active milestone: **v1.2 Yellow AC15 Support**
 - [x] **Phase 15: Yellow Dani, Shop, Medals, WaiWai, and Admin** - Implement Yellow Dani, metadata, shop/medals, WaiWai tutorial/logging, and admin readback. (completed 2026-06-08)
 - [x] **Phase 16: Yellow Tokkun and Banacoin Compatibility** - Add Yellow Tokkun acceptance/persistence/readback and stateless Banacoin-adjacent compatibility. (completed 2026-06-08)
 - [x] **Phase 16.1: AC15 Mapperly Mapper Rewrite and Presence Semantics** - Regenerate AC15 wire DTOs with nullable optional primitives, then rewrite Green/Blue/Yellow protocol mapping around real Mapperly generation and explicit optional-field presence boundaries. (inserted 2026-06-10) (completed 2026-06-10)
-- [ ] **Phase 16.2: AC15 Shared Core Simplification and Reuse Cleanup** - Simplify duplicated AC15 Green/Blue/Yellow code by extracting evidence-backed shared core behavior while preserving era-owned persistence, routes, and wire DTOs. (inserted 2026-06-10)
+- [x] **Phase 16.2: AC15 Shared Core Simplification and Reuse Cleanup** - Simplify duplicated AC15 Green/Blue/Yellow code by extracting evidence-backed shared core behavior while preserving era-owned persistence, routes, and wire DTOs. (inserted 2026-06-10) (completed 2026-06-11)
 - [ ] **Phase 17: Yellow Runtime Verification and Contract Closeout** - Prove the full Yellow contract with focused tests, full build/test, runtime smoke, and docs.
 
 ## Phase Details
@@ -248,7 +248,7 @@ Plans:
 4. Normal play and special-mode boundaries remain intact after playresult, adapter, catalog, and Common DTO cleanup.
 5. Focused regression slices, full `dotnet test Tests/Tests.csproj`, and temp-output Host build pass before Phase 17 starts.
 
-**Plans:** 13 plans
+**Plans:** 14/14 plans complete
 
 Plans:
 
@@ -333,4 +333,4 @@ See `.planning/milestones/v1.1-ROADMAP.md` and `.planning/milestones/v1.1-phases
 |-----------|--------|-------|--------|---------|
 | v1.0 Blue Support | 1-6 | 30 roadmap plans | Shipped | 2026-06-03 |
 | v1.1 Blue Tokkun Mode Support | 7-11 | 7 GSD plans | Shipped | 2026-06-07 |
-| v1.2 Yellow AC15 Support | 12-17 plus 16.1 and 16.2 | 36 GSD plans complete; 1 Phase 16.2 plan pending | Active, Phase 16.2 planned before Phase 17 | - |
+| v1.2 Yellow AC15 Support | 12-17 plus 16.1 and 16.2 | 37 GSD plans complete; Phase 17 pending | Active, Phase 17 ready to start | - |
