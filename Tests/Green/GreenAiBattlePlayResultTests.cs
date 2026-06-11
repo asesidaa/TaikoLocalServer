@@ -508,7 +508,7 @@ public sealed class GreenAiBattlePlayResultTests
     [Theory]
     [InlineData(2u)]
     [InlineData(5u)]
-    public async Task UpdatePlayResult_Green_RejectsAiBattleStageModeTwoAndFive(uint stageMode)
+    public async Task UpdatePlayResult_Green_SkipsAiBattleStageModeTwoAndFiveWithoutMutation(uint stageMode)
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -542,7 +542,7 @@ public sealed class GreenAiBattlePlayResultTests
             }),
             CancellationToken.None);
 
-        Assert.Equal(0u, result);
+        Assert.Equal(1u, result);
         Assert.Empty(await fixture.Context.SongPlayDataGreen.ToListAsync());
         Assert.Empty(await fixture.Context.SongBestDataGreen.ToListAsync());
     }

@@ -91,6 +91,52 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
+    public async Task UpdatePlayResult_Green_CompactTimestampMatchesSavePlayAndRecentRows()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayDatetime = "20260514032442",
+                AryStageInfoes =
+                [
+                    new CommonPlayResultData.StageData
+                    {
+                        SongNo = 101,
+                        Level = 1,
+                        StageMode = 0,
+                        PlayResult = 1,
+                        PlayScore = 1000,
+                        IsRecent = true
+                    }
+                ]
+            }),
+            CancellationToken.None);
+
+        var expected = new DateTime(2026, 5, 14, 3, 24, 42);
+        var save = await fixture.Context.UserSaveDataGreen.SingleAsync(row => row.Baid == 1);
+        var play = await fixture.Context.SongPlayDataGreen.SingleAsync(row => row.Baid == 1 && row.SongId == 101);
+        var recent = await fixture.Context.GreenRecentSongs.SingleAsync(row => row.Baid == 1 && row.SongNo == 101);
+
+        Assert.Equal(1u, result);
+        Assert.Equal(expected, save.LastPlayDatetime);
+        Assert.Equal(expected, play.PlayTime);
+        Assert.Equal(expected, recent.LastPlayed);
+    }
+
+    [Fact]
     public async Task UpdatePlayResult_Green_GuestBaidDoesNotSave()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
@@ -210,7 +256,102 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
-    public async Task UpdatePlayResult_Green_RejectsUnknownStageMode()
+    public async Task UpdatePlayResult_Green_SkipsUnsupportedNormalStagesAndPersistsValidStages()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayDatetime = "20260514032442",
+                AryStageInfoes =
+                [
+                    new CommonPlayResultData.StageData
+                    {
+                        SongNo = 101,
+                        Level = 1,
+                        StageMode = 0,
+                        PlayResult = 1,
+                        PlayScore = 1000
+                    },
+                    new CommonPlayResultData.StageData
+                    {
+                        SongNo = 102,
+                        Level = 1,
+                        StageMode = 2,
+                        PlayResult = 1,
+                        PlayScore = 9000
+                    }
+                ]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var play = Assert.Single(await fixture.Context.SongPlayDataGreen.ToListAsync());
+        Assert.Equal(101u, play.SongId);
+        Assert.Empty(await fixture.Context.SongBestDataGreen.Where(row => row.SongId == 102).ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Green_AllUnsupportedNormalStagesReturnSuccessWithoutMutation()
+    {
+        await using var fixture = await GreenHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var handler = new UpdatePlayResultCommandHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Green,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                AryStageInfoes =
+                [
+                    new CommonPlayResultData.StageData
+                    {
+                        SongNo = 1024,
+                        Level = 1,
+                        StageMode = 0,
+                        PlayResult = 1,
+                        PlayScore = 9000
+                    },
+                    new CommonPlayResultData.StageData
+                    {
+                        SongNo = 101,
+                        Level = 1,
+                        StageMode = 2,
+                        PlayResult = 1,
+                        PlayScore = 9000
+                    }
+                ]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        Assert.Empty(await fixture.Context.SongPlayDataGreen.ToListAsync());
+        Assert.Empty(await fixture.Context.SongBestDataGreen.ToListAsync());
+        Assert.Empty(await fixture.Context.GreenRecentSongs.ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Green_SkipsUnknownStageModeWithoutMutation()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -242,13 +383,13 @@ public sealed class GreenPlayResultHandlerTests
             }),
             CancellationToken.None);
 
-        Assert.Equal(0u, result);
+        Assert.Equal(1u, result);
         Assert.Empty(await fixture.Context.SongPlayDataGreen.ToListAsync());
         Assert.Empty(await fixture.Context.SongBestDataGreen.ToListAsync());
     }
 
     [Fact]
-    public async Task UpdatePlayResult_Green_RejectsOutOfPackedSongNo()
+    public async Task UpdatePlayResult_Green_SkipsOutOfPackedSongNoWithoutMutation()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -279,7 +420,7 @@ public sealed class GreenPlayResultHandlerTests
             }),
             CancellationToken.None);
 
-        Assert.Equal((uint)0, result);
+        Assert.Equal(1u, result);
         Assert.Empty(await fixture.Context.SongPlayDataGreen.ToListAsync());
         Assert.Empty(await fixture.Context.SongBestDataGreen.ToListAsync());
         Assert.Empty(await fixture.Context.GreenFavoriteSongs.ToListAsync());
@@ -363,7 +504,7 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
-    public async Task UpdatePlayResult_Green_RejectsStageLevelOutsideOneThroughFive()
+    public async Task UpdatePlayResult_Green_SkipsStageLevelOutsideOneThroughFiveWithoutMutation()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -394,7 +535,8 @@ public sealed class GreenPlayResultHandlerTests
             }),
             CancellationToken.None);
 
-        Assert.Equal((uint)0, result);
+        Assert.Equal(1u, result);
+        Assert.Empty(await fixture.Context.SongPlayDataGreen.ToListAsync());
         Assert.Empty(await fixture.Context.SongBestDataGreen.ToListAsync());
     }
 
@@ -627,7 +769,7 @@ public sealed class GreenPlayResultHandlerTests
             CancellationToken.None);
 
         var reloaded = await fixture.Context.UserSaveDataGreen.FindAsync(1u);
-        Assert.Equal((uint)0, result);
+        Assert.Equal(1u, result);
         Assert.Equal(uint.MaxValue, reloaded!.TotalGetDonmedal);
     }
 

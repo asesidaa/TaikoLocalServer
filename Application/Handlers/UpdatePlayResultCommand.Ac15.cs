@@ -1,4 +1,3 @@
-using System.Globalization;
 using TaikoLocalServer.Application.Ac15;
 
 namespace TaikoLocalServer.Application.Handlers;
@@ -32,15 +31,5 @@ public partial class UpdatePlayResultCommandHandler
         => delta <= uint.MaxValue - current;
 
     private static DateTime ParseAc15PlayDatetimeOrNow(string playDatetime)
-    {
-        var formats = new[] { Constants.DateTimeFormat, "yyyy-MM-dd HH:mm:ss" };
-        return DateTime.TryParseExact(
-            playDatetime,
-            formats,
-            CultureInfo.InvariantCulture,
-            DateTimeStyles.None,
-            out var parsed)
-            ? parsed
-            : DateTime.Now;
-    }
+        => Ac15PlayDatetime.ParseOrNow(playDatetime);
 }

@@ -127,33 +127,13 @@ public partial class UpdatePlayResultCommandHandler
 
     private bool IsSupportedYellowNormalStage(uint baid, CommonPlayResultData.StageData stage)
     {
-        var limits = Ac15EraProfiles.Yellow.Limits;
-        if (stage.SongNo >= limits.SongFlagBytes * 8
-            || stage.Level < limits.MinCourseLevel
-            || stage.Level > limits.MaxCourseLevel)
-        {
-            logger.LogWarning(
-                "Skipping invalid Yellow stage for baid {Baid}: song={SongNo} level={Level} stage_mode={StageMode}",
-                baid,
-                stage.SongNo,
-                stage.Level,
-                stage.StageMode);
-            return false;
-        }
-
-        var hookDecision = DefaultAc15EraHooks.Instance.IsSupportedStage(stage);
-        if (!hookDecision.IsSupported)
-        {
-            logger.LogWarning(
-                "Skipping unsupported Yellow stage for baid {Baid}: song={SongNo} level={Level} stage_mode={StageMode}",
-                baid,
-                stage.SongNo,
-                stage.Level,
-                stage.StageMode);
-            return false;
-        }
-
-        return true;
+        var accepted = Ac15NormalStageFilter.Filter(
+            baid,
+            [stage],
+            Ac15EraProfiles.Yellow.Limits,
+            Ac15NormalStagePolicies.Standard,
+            logger);
+        return accepted.Count == 1;
     }
 
     private void LogYellowWaiWaiStageFacts(uint baid, CommonPlayResultData playResultData)

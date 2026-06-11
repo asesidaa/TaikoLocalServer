@@ -1,4 +1,4 @@
-using System.Globalization;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace TaikoLocalServer.Application.Ac15;
 
@@ -34,24 +34,17 @@ public static class Ac15NormalPlayService
         await GetOrCreateSaveAsync(context, profile, baid, cancellationToken);
         await hooks.BeforeNormalSaveAsync(new Ac15NormalSaveContext(baid, profile.Era, playResultData), cancellationToken);
 
+        var policy = profile.Era == GameEra.Green
+            ? Ac15NormalStagePolicies.Green
+            : Ac15NormalStagePolicies.Standard;
+
         var playTime = ParsePlayDatetimeOrNow(playResultData.PlayDatetime);
-        foreach (var stage in playResultData.AryStageInfoes)
+        foreach (var stage in Ac15NormalStageFilter.Filter(baid, playResultData.AryStageInfoes, profile.Limits, policy, NullLogger.Instance))
         {
-            if (!IsValidStage(stage, profile))
-            {
-                continue;
-            }
-
-            var hookDecision = hooks.IsSupportedStage(stage);
-            if (!hookDecision.IsSupported)
-            {
-                continue;
-            }
-
             var difficulty = MapDifficulty(stage.Level);
             var crown = MapCrown(stage.PlayResult);
             var isShin = stage.StageMode == 1 || stage.StageMode == 4;
-            var bestPolicy = hooks.GetBestUpdatePolicy(stage, crown);
+            var bestPolicy = policy.GetBestUpdatePolicy(stage, crown);
             var row = ToPlayRow(baid, playResultData.PlayMode, stage, difficulty, crown, isShin, playTime);
             AddPlayRow(context, profile, row, cancellationToken);
 
@@ -356,11 +349,6 @@ public static class Ac15NormalPlayService
         }
     }
 
-    private static bool IsValidStage(CommonPlayResultData.StageData stage, Ac15EraProfile profile)
-        => stage.SongNo < profile.Limits.SongFlagBytes * 8
-           && stage.Level >= profile.Limits.MinCourseLevel
-           && stage.Level <= profile.Limits.MaxCourseLevel;
-
     private static Difficulty MapDifficulty(uint level) => level switch
     {
         1 => Difficulty.Easy,
@@ -421,17 +409,7 @@ public static class Ac15NormalPlayService
             playTime);
 
     private static DateTime ParsePlayDatetimeOrNow(string playDatetime)
-    {
-        var formats = new[] { Constants.DateTimeFormat, "yyyy-MM-dd HH:mm:ss" };
-        return DateTime.TryParseExact(
-            playDatetime,
-            formats,
-            CultureInfo.InvariantCulture,
-            DateTimeStyles.None,
-            out var parsed)
-            ? parsed
-            : DateTime.Now;
-    }
+        => Ac15PlayDatetime.ParseOrNow(playDatetime);
 
     private static int CrownRank(CrownType crown) => crown switch
     {

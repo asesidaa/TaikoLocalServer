@@ -4,8 +4,6 @@ namespace TaikoLocalServer.Application.Handlers;
 
 public partial class UpdatePlayResultCommandHandler
 {
-    private const uint MinBlueCourseLevel = 1;
-    private const uint MaxBlueCourseLevel = 5;
     private const uint BlueDanCostumeId = 36;
 
     private partial async ValueTask<uint> HandleBlue(
@@ -122,29 +120,13 @@ public partial class UpdatePlayResultCommandHandler
 
     private bool IsSupportedBlueStage(uint baid, CommonPlayResultData.StageData stage)
     {
-        if (!BluePlayResultMapping.IsSupportedNormalStageMode(stage.StageMode))
-        {
-            logger.LogWarning(
-                "Skipping unsupported Blue stage mode for baid {Baid}: song={SongNo} level={Level} stage_mode={StageMode}",
-                baid,
-                stage.SongNo,
-                stage.Level,
-                stage.StageMode);
-            return false;
-        }
-
-        if (stage.SongNo >= BlueProtocolBytes.SongFlagBytes * 8 || stage.Level is < MinBlueCourseLevel or > MaxBlueCourseLevel)
-        {
-            logger.LogWarning(
-                "Skipping invalid Blue stage for baid {Baid}: song={SongNo} level={Level} stage_mode={StageMode}",
-                baid,
-                stage.SongNo,
-                stage.Level,
-                stage.StageMode);
-            return false;
-        }
-
-        return true;
+        var accepted = Ac15NormalStageFilter.Filter(
+            baid,
+            [stage],
+            Ac15EraProfiles.Blue.Limits,
+            Ac15NormalStagePolicies.Standard,
+            logger);
+        return accepted.Count == 1;
     }
 
     private static void ApplyCostume(UserSaveDataBlue saveData, CommonPlayResultData.CostumeData costume)

@@ -4,8 +4,6 @@ namespace TaikoLocalServer.Application.Handlers;
 
 public partial class UpdatePlayResultCommandHandler
 {
-    private const uint MinGreenCourseLevel = 1;
-    private const uint MaxGreenCourseLevel = 5;
     private const uint GreenDanCostumeId = 36;
 
     private partial async ValueTask<uint> HandleGreen(
@@ -33,16 +31,27 @@ public partial class UpdatePlayResultCommandHandler
             : await context.GetOrCreateGreenShopSeasonStateAsync(saveData, activeShopSeason.SeasonId, cancellationToken);
 
         var currentDonmedal = shopSeasonState?.TotalGetDonmedal ?? saveData.TotalGetDonmedal;
-        if (HasInvalidAc15MedalTotals(currentDonmedal, saveData.TotalGetKatsumedal, playResultData)
-            || playResultData.AryStageInfoes.Any(stage => !IsValidGreenStage(stage)))
+        if (HasInvalidAc15MedalTotals(currentDonmedal, saveData.TotalGetKatsumedal, playResultData))
         {
-            logger.LogWarning("Rejecting invalid Green playresult payload for baid {Baid}", request.Baid);
-            return 0;
+            logger.LogWarning("Rejecting invalid Green medal totals for baid {Baid}", request.Baid);
+            return 1;
         }
 
-        var playTime = DateTime.TryParse(playResultData.PlayDatetime, out var parsed)
-            ? parsed
-            : DateTime.Now;
+        var validStages = Ac15NormalStageFilter.Filter(
+            request.Baid,
+            playResultData.AryStageInfoes,
+            Ac15EraProfiles.Green.Limits,
+            Ac15NormalStagePolicies.Green,
+            logger);
+        if (validStages.Count == 0)
+        {
+            logger.LogWarning("Skipping Green playresult with no valid normal stages for baid {Baid}", request.Baid);
+            return 1;
+        }
+
+        playResultData.AryStageInfoes = validStages.ToList();
+
+        var playTime = ParseAc15PlayDatetimeOrNow(playResultData.PlayDatetime);
 
         AddAc15Donmedals(shopSeasonState, delta => saveData.TotalGetDonmedal += delta, playResultData.GetDonmedal);
 
@@ -110,13 +119,6 @@ public partial class UpdatePlayResultCommandHandler
             Ac15EraProfiles.Green,
             new GreenAc15NormalPlayHooks(),
             cancellationToken);
-    }
-
-    private static bool IsValidGreenStage(CommonPlayResultData.StageData stage)
-    {
-        return stage.SongNo < GreenProtocolBytes.SongFlagBytes * 8
-            && stage.Level is >= MinGreenCourseLevel and <= MaxGreenCourseLevel
-            && stage.StageMode is 0 or 1 or 3 or 4;
     }
 
     private static void ApplyCostume(UserSaveDataGreen saveData, CommonPlayResultData.CostumeData costume)
