@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
 status: executing
-stopped_at: Phase 16.2 post-review architecture decision captured
-last_updated: "2026-06-11T05:05:25.6950887+08:00"
+stopped_at: Completed 16.2-08-PLAN.md
+last_updated: "2026-06-11T05:32:22.917Z"
 last_activity: 2026-06-11
 progress:
   total_phases: 8
   completed_phases: 6
   total_plans: 37
-  completed_plans: 31
-  percent: 84
+  completed_plans: 32
+  percent: 86
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-07)
 ## Current Position
 
 Phase: 16.2 (ac15-shared-core-simplification-and-reuse-cleanup) — EXECUTING
-Plan: 8 of 13
+Plan: 9 of 13
 Status: Ready to execute
 Last activity: 2026-06-11
 
@@ -90,6 +90,7 @@ Last activity: 2026-06-11
 | Phase 16.2 P05 | 6 min | 1 tasks | 8 files |
 | Phase 16.2 P07 | 13 min | 1 tasks | 5 files |
 | Phase 16.2 P00 | 16 min | 2 tasks | 31 files |
+| Phase 16.2 P08 | 9 min | 2 tasks | 27 files |
 
 ## Accumulated Context
 
@@ -154,6 +155,8 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 16.2]: Phase 16.2 architecture correction removed AC15 repository-shaped persistence interfaces/adapters and kept ITaikoDbContext as the traceable persistence boundary while Mapperly owns Application/Ac15 projections. — Phase 16.2 architecture correction removed AC15 repository-shaped persistence interfaces/adapters and kept ITaikoDbContext as the traceable persistence boundary while Mapperly owns Application/Ac15 projections.
 - [Phase 16.2]: Post-review AC15 storage reuse will use narrow Domain entity-shape interfaces plus generic EF helpers, with Mapperly as the only source-generation layer. — Direct `ITaikoDbContext` remains the persistence boundary; future AC15 eras should implement row-shape contracts instead of copying algorithms or adding repository/adapter wrappers.
 
+- [Phase 16.2]: Plan 08 locked the hybrid AC15 persistence architecture in code. Narrow Domain row-shape interfaces plus generic EF helpers now remove duplicated Dani, normal-play, and item-shop storage algorithms while direct `ITaikoDbContext`/concrete `DbSet` selection and Mapperly projections remain explicit.
+
 ### Pending Todos
 
 None recorded.
@@ -177,11 +180,11 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-11T05:05:25.6950887+08:00
-Stopped at: Phase 16.2 post-review architecture decision captured
-Resume file: `.planning/phases/16.2-ac15-shared-core-simplification-and-reuse-cleanup/.continue-here.md`
+Last session: 2026-06-11T05:32:22.837Z
+Stopped at: Completed 16.2-08-PLAN.md
+Resume file: None
 
 ## Operator Next Steps
 
 - Phase 16.1 verification is complete and passed; Green/Blue/Yellow AC15 wire DTOs now use nullable optional primitives and protocol mappers use real Mapperly generation for mechanical projection.
-- Next coordinator-owned step: execute Phase 16.2 starting with revised `16.2-08-PLAN.md`; do not start Phase 17 runtime verification closeout until Phase 16.2 is executed or explicitly skipped.
+- Next coordinator-owned step: execute remaining Phase 16.2 plans starting with `16.2-09-PLAN.md`; do not start Phase 17 runtime verification closeout until Phase 16.2 is executed or explicitly skipped.
