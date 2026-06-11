@@ -386,17 +386,3 @@ public static class Ac15DaniService
             saveState.DanCostumeId);
     }
 }
-
-public sealed record Ac15DaniSaveState(
-    uint Baid,
-    uint DisplayDan,
-    bool IsAutoCostumeOn,
-    uint DanCostumeId);
-
-public sealed record Ac15DaniSaveUpdate(
-    byte[] GotDanFlg,
-    byte[] GotDanExtraFlg,
-    uint GotDanMax,
-    uint DisplayDan,
-    bool ApplyDanCostume,
-    uint DanCostumeId);

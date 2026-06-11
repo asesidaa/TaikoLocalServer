@@ -36,3 +36,30 @@ public sealed record Ac15DaniStageScore(
     uint TotalHitCount,
     uint ComboCount,
     uint HighScore);
+
+public sealed record Ac15DaniTables<TScore, TStage>(
+    DbSet<TScore> Scores,
+    IQueryable<TScore> ScoresWithStages,
+    Func<TScore, ICollection<TStage>> GetStages,
+    Func<TScore, Ac15DaniScore> ToScore,
+    Func<TScore, Ac15DaniScoreSummary> ToSummary,
+    Func<Ac15DaniScore, TScore> CreateScore,
+    Action<Ac15DaniScore, TScore> ApplyScore,
+    Func<Ac15DaniStageScore, Ac15DaniScore, TStage> CreateStage,
+    Action<Ac15DaniStageScore, TStage> ApplyStage)
+    where TScore : class, IAc15DanScoreDatum
+    where TStage : class, IAc15DanStageScoreDatum;
+
+public sealed record Ac15DaniSaveState(
+    uint Baid,
+    uint DisplayDan,
+    bool IsAutoCostumeOn,
+    uint DanCostumeId);
+
+public sealed record Ac15DaniSaveUpdate(
+    byte[] GotDanFlg,
+    byte[] GotDanExtraFlg,
+    uint GotDanMax,
+    uint DisplayDan,
+    bool ApplyDanCostume,
+    uint DanCostumeId);
