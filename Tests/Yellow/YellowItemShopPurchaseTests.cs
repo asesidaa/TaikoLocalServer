@@ -335,6 +335,64 @@ public sealed class YellowItemShopPurchaseTests
     }
 
     [Fact]
+    public async Task BaidQuery_UsesOnlyYellowPurchasedShopRowsForCostumeLocks()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
+            new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 },
+            new YellowItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Head, ItemId = 14, Price = 500 }));
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.Cards.Add(new Card { Baid = 1, AccessCode = "abc" });
+        var save = UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(1);
+        save.CostumeFlg1 = Ac15ProtocolBytes.SetBits(save.CostumeFlg1, [0, 12], Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes);
+        save.CostumeFlg2 = Ac15ProtocolBytes.SetBits(save.CostumeFlg2, [0, 14], Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes);
+        fixture.Context.UserSaveDataYellow.Add(save);
+        fixture.Context.BlueShopItemStates.Add(new BlueShopItemState
+        {
+            Baid = 1,
+            SeasonId = 2,
+            ItemType = Ac15ShopItemType.Kigurumi.ToProtocolValue(),
+            ItemId = 12,
+            ItemNo = 1,
+            ItemPrice = 1300,
+            Status = Ac15ShopItemStatus.Unlocked,
+            PurchasedAt = DateTime.UtcNow,
+            UnlockedAt = DateTime.UtcNow
+        });
+        fixture.Context.GreenShopItemStates.Add(new GreenShopItemState
+        {
+            Baid = 1,
+            SeasonId = 2,
+            ItemType = Ac15ShopItemType.Head.ToProtocolValue(),
+            ItemId = 14,
+            ItemNo = 2,
+            ItemPrice = 500,
+            Status = Ac15ShopItemStatus.Unlocked,
+            PurchasedAt = DateTime.UtcNow,
+            UnlockedAt = DateTime.UtcNow
+        });
+        await fixture.Context.SaveChangesAsync();
+        var handler = new BaidQueryHandler(
+            fixture.Context,
+            NullLogger<BaidQueryHandler>.Instance,
+            fixture.Catalog);
+
+        var crossEraOnly = await handler.Handle(new BaidQuery(GameEra.Yellow, "abc"), CancellationToken.None);
+
+        Assert.False(HasBit(crossEraOnly.CostumeFlg1!, 12));
+        Assert.False(HasBit(crossEraOnly.CostumeFlg2!, 14));
+
+        fixture.Context.YellowShopItemStates.AddRange(
+            Unlocked(1, 2, Ac15ShopItemType.Kigurumi.ToProtocolValue(), 12),
+            Unlocked(1, 2, Ac15ShopItemType.Head.ToProtocolValue(), 14));
+        await fixture.Context.SaveChangesAsync();
+
+        var yellowPurchased = await handler.Handle(new BaidQuery(GameEra.Yellow, "abc"), CancellationToken.None);
+
+        Assert.True(HasBit(yellowPurchased.CostumeFlg1!, 12));
+        Assert.True(HasBit(yellowPurchased.CostumeFlg2!, 14));
+    }
+
+    [Fact]
     public void ItemPurchaseCommandMap_PreservesOmittedOptionalDetailsAndYellowEra()
     {
         var request = new YellowWire.ItempurchaseRequest

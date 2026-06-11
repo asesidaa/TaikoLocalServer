@@ -254,8 +254,8 @@ public sealed class BlueItemShopProtocolTests
         await using var fixture = await BlueHandlerFixture.CreateAsync(CreateShopCatalog());
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
         var save = UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1);
-        save.ToneFlg = BlueShopUnlocks.SetBits(save.ToneFlg, [4], BlueProtocolBytes.ToneFlagBytes);
-        save.CostumeFlg1 = BlueShopUnlocks.SetBits(save.CostumeFlg1, [12], BlueProtocolBytes.CostumeFlagBytes);
+        save.ToneFlg = Ac15ProtocolBytes.SetBits(save.ToneFlg, [4], BlueProtocolBytes.ToneFlagBytes);
+        save.CostumeFlg1 = Ac15ProtocolBytes.SetBits(save.CostumeFlg1, [12], BlueProtocolBytes.CostumeFlagBytes);
         fixture.Context.UserSaveDataBlue.Add(save);
         fixture.Context.BlueShopSeasonStates.Add(new BlueShopSeasonState
         {

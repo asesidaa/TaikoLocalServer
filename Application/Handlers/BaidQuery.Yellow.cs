@@ -39,6 +39,8 @@ public partial class BaidQueryHandler
             ?? throw new InvalidOperationException($"User not found for Yellow card baid {card.Baid}.");
 
         var yellow = gameDataService.Yellow();
+        var snapshot = Ac15CatalogSnapshotFactory.FromYellow(yellow);
+        var activeShopSeason = snapshot.ItemShopCatalog.ActiveSeason;
         var shopSeasonState = await context.GetOrCreateActiveYellowShopSeasonStateAsync(
             saveData,
             yellow.ItemShopCatalog,
@@ -49,6 +51,15 @@ public partial class BaidQueryHandler
         }
 
         var limits = Ac15EraProfiles.Yellow.Limits;
+        var unlockedShopItems = activeShopSeason is null
+            ? new HashSet<(uint ItemType, uint ItemId)>()
+            : await context.GetUnlockedYellowShopItemsAsync(card.Baid, activeShopSeason.SeasonId, cancellationToken);
+        var costumeFlags = Ac15CustomizationMutation.ApplyActiveShopCostumeLocks(
+            saveData,
+            activeShopSeason,
+            unlockedShopItems,
+            Ac15EraProfiles.Yellow.Limits);
+
         return new CommonBaidResponse
         {
             Result = 1,
@@ -62,11 +73,11 @@ public partial class BaidQueryHandler
             ColorBody = saveData.ColorBody,
             ColorLimb = saveData.ColorLimb,
             CostumeData = [saveData.Costume1, saveData.Costume2, saveData.Costume3, saveData.Costume4, saveData.Costume5],
-            CostumeFlg1 = Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg1, limits.CostumeFlagBytes),
-            CostumeFlg2 = Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg2, limits.CostumeFlagBytes),
-            CostumeFlg3 = Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg3, limits.CostumeFlagBytes),
-            CostumeFlg4 = Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg4, limits.CostumeFlagBytes),
-            CostumeFlg5 = Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg5, limits.CostumeFlagBytes),
+            CostumeFlg1 = costumeFlags.CostumeFlg1,
+            CostumeFlg2 = costumeFlags.CostumeFlg2,
+            CostumeFlg3 = costumeFlags.CostumeFlg3,
+            CostumeFlg4 = costumeFlags.CostumeFlg4,
+            CostumeFlg5 = costumeFlags.CostumeFlg5,
             TotalGetDonmedal = shopSeasonState?.TotalGetDonmedal ?? saveData.TotalGetDonmedal,
             TotalUseDonmedal = shopSeasonState?.TotalUseDonmedal ?? saveData.TotalUseDonmedal,
             TotalGetKatsumedal = saveData.TotalGetKatsumedal,

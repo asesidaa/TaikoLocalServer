@@ -43,7 +43,9 @@ public partial class BaidQueryHandler
         var gotDanExtraFlg = GreenProtocolBytes.FixedOrZero(saveData.GotDanExtraFlg, GreenProtocolBytes.DanExtraFlagBytes);
         var gotDanMax = Math.Min(saveData.GotDanMax, Ac15EraProfiles.Green.Limits.MaxNormalDanId);
         var dispDanType = saveData.DispDanType == 0 ? 0u : 1u;
-        var activeShopSeason = gameDataService.Green().ItemShopCatalog.ActiveSeason;
+        var green = gameDataService.Green();
+        var snapshot = Ac15CatalogSnapshotFactory.FromGreen(green);
+        var activeShopSeason = snapshot.ItemShopCatalog.ActiveSeason;
         var shopSeasonState = activeShopSeason is null
             ? null
             : await context.GetOrCreateGreenShopSeasonStateAsync(saveData, activeShopSeason.SeasonId, cancellationToken);
@@ -60,10 +62,11 @@ public partial class BaidQueryHandler
                     && row.Status == Ac15ShopItemStatus.Unlocked)
                 .Select(row => new ValueTuple<uint, uint>(row.ItemType, row.ItemId))
                 .ToHashSetAsync(cancellationToken);
-
-        IEnumerable<uint> LockedIds(Ac15ShopItemType itemType) => activeShopSeason?.Items
-            .Where(item => item.ItemType == itemType && !unlockedShopItems.Contains((item.ItemType.ToProtocolValue(), item.ItemId)))
-            .Select(item => item.ItemId) ?? [];
+        var costumeFlags = Ac15CustomizationMutation.ApplyActiveShopCostumeLocks(
+            saveData,
+            activeShopSeason,
+            unlockedShopItems,
+            Ac15EraProfiles.Green.Limits);
 
         return new CommonBaidResponse
         {
@@ -78,11 +81,11 @@ public partial class BaidQueryHandler
             ColorBody = saveData.ColorBody,
             ColorLimb = saveData.ColorLimb,
             CostumeData = [saveData.Costume1, saveData.Costume2, saveData.Costume3, saveData.Costume4, saveData.Costume5],
-            CostumeFlg1 = GreenShopUnlocks.ClearBits(saveData.CostumeFlg1, LockedIds(Ac15ShopItemType.Kigurumi), GreenProtocolBytes.CostumeFlagBytes),
-            CostumeFlg2 = GreenShopUnlocks.ClearBits(saveData.CostumeFlg2, LockedIds(Ac15ShopItemType.Head), GreenProtocolBytes.CostumeFlagBytes),
-            CostumeFlg3 = GreenShopUnlocks.ClearBits(saveData.CostumeFlg3, LockedIds(Ac15ShopItemType.Body), GreenProtocolBytes.CostumeFlagBytes),
-            CostumeFlg4 = GreenShopUnlocks.ClearBits(saveData.CostumeFlg4, LockedIds(Ac15ShopItemType.Face), GreenProtocolBytes.CostumeFlagBytes),
-            CostumeFlg5 = GreenShopUnlocks.ClearBits(saveData.CostumeFlg5, LockedIds(Ac15ShopItemType.Puchi), GreenProtocolBytes.CostumeFlagBytes),
+            CostumeFlg1 = costumeFlags.CostumeFlg1,
+            CostumeFlg2 = costumeFlags.CostumeFlg2,
+            CostumeFlg3 = costumeFlags.CostumeFlg3,
+            CostumeFlg4 = costumeFlags.CostumeFlg4,
+            CostumeFlg5 = costumeFlags.CostumeFlg5,
             TotalGetDonmedal = shopSeasonState?.TotalGetDonmedal ?? saveData.TotalGetDonmedal,
             TotalUseDonmedal = shopSeasonState?.TotalUseDonmedal ?? saveData.TotalUseDonmedal,
             TotalGetKatsumedal = saveData.TotalGetKatsumedal,

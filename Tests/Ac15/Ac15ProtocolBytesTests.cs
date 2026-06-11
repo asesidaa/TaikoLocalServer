@@ -24,6 +24,14 @@ public sealed class Ac15ProtocolBytesTests
     }
 
     [Fact]
+    public void ClearBits_NormalizesExistingBufferAndSkipsOutOfRangeIds()
+    {
+        var bytes = Ac15ProtocolBytes.ClearBits([0b0000_1111], [0, 2, 8], 1);
+
+        Assert.Equal([0b0000_1010], bytes);
+    }
+
+    [Fact]
     public void PackTwoBitValues_PacksValuesLittleEndian()
     {
         var bytes = Ac15ProtocolBytes.PackTwoBitValues([1, 2, 3, 0, 1], 18);

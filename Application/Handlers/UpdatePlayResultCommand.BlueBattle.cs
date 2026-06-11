@@ -10,7 +10,7 @@ public partial class UpdatePlayResultCommandHandler
         CancellationToken cancellationToken)
     {
         var now = DateTime.UtcNow;
-        var playTime = ParseBluePlayDatetimeOrNow(playResultData.PlayDatetime);
+        var playTime = ParseAc15PlayDatetimeOrNow(playResultData.PlayDatetime);
 
         await context.AddBlueBattleStageResultsAsync(
             baid,

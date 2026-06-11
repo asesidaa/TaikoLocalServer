@@ -37,6 +37,23 @@ public static class Ac15ProtocolBytes
         return result;
     }
 
+    public static byte[] ClearBits(byte[]? source, IEnumerable<uint> ids, int byteCount)
+    {
+        var result = FixedOrZero(source, byteCount);
+        var maxBits = byteCount * 8;
+        foreach (var id in ids)
+        {
+            if (id >= maxBits)
+            {
+                continue;
+            }
+
+            result[id >> 3] &= (byte)~(1 << ((int)id & 7));
+        }
+
+        return result;
+    }
+
     public static byte[] PackTwoBitValues(IEnumerable<uint> values, int byteCount)
     {
         var result = new byte[byteCount];

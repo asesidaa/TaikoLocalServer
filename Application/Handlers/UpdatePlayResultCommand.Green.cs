@@ -52,8 +52,7 @@ public partial class UpdatePlayResultCommandHandler
                 Ac15ProfileCounterUpdater.Green,
                 Ac15UnlockFlagAccess.Green,
                 Ac15EraProfiles.Green.Limits,
-                playTime,
-                ApplyCostume))
+                playTime))
         {
             logger.LogWarning("Rejecting invalid Green medal totals for baid {Baid}", request.Baid);
             return 1;
@@ -76,11 +75,7 @@ public partial class UpdatePlayResultCommandHandler
                 saveData.DispTaikojukuDan = update.DisplayDan;
                 if (update.ApplyDanCostume)
                 {
-                    saveData.Costume1 = update.DanCostumeId;
-                    saveData.CostumeFlg1 = Ac15ProtocolBytes.SetBits(
-                        saveData.CostumeFlg1,
-                        [update.DanCostumeId],
-                        GreenProtocolBytes.CostumeFlagBytes);
+                    Ac15CustomizationMutation.ApplyDanCostume(saveData, update.DanCostumeId, Ac15EraProfiles.Green.Limits);
                 }
             },
             logger,
@@ -138,20 +133,6 @@ public partial class UpdatePlayResultCommandHandler
                 PoundCount = section.PoundCnt
             });
         }
-    }
-
-    private static void ApplyCostume(UserSaveDataGreen saveData, CommonPlayResultData.CostumeData costume)
-    {
-        saveData.Costume1 = costume.Costume1;
-        saveData.Costume2 = costume.Costume2;
-        saveData.Costume3 = costume.Costume3;
-        saveData.Costume4 = costume.Costume4;
-        saveData.Costume5 = costume.Costume5;
-        saveData.CostumeFlg1 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg1, [costume.Costume1], GreenProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg2 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg2, [costume.Costume2], GreenProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg3 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg3, [costume.Costume3], GreenProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg4 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg4, [costume.Costume4], GreenProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg5 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg5, [costume.Costume5], GreenProtocolBytes.CostumeFlagBytes);
     }
 
     private static void ApplyGhostPlayedSongBits(UserSaveDataGreen saveData, CommonPlayResultData playResultData)

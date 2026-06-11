@@ -62,8 +62,7 @@ public partial class UpdatePlayResultCommandHandler
                 Ac15ProfileCounterUpdater.Blue,
                 Ac15UnlockFlagAccess.Blue,
                 Ac15EraProfiles.Blue.Limits,
-                playTime,
-                ApplyCostume))
+                playTime))
         {
             logger.LogWarning("Rejecting invalid Blue medal totals for baid {Baid}", request.Baid);
             return 1;
@@ -83,11 +82,7 @@ public partial class UpdatePlayResultCommandHandler
                 saveData.DispTaikojukuDan = update.DisplayDan;
                 if (update.ApplyDanCostume)
                 {
-                    saveData.Costume1 = update.DanCostumeId;
-                    saveData.CostumeFlg1 = Ac15ProtocolBytes.SetBits(
-                        saveData.CostumeFlg1,
-                        [update.DanCostumeId],
-                        BlueProtocolBytes.CostumeFlagBytes);
+                    Ac15CustomizationMutation.ApplyDanCostume(saveData, update.DanCostumeId, Ac15EraProfiles.Blue.Limits);
                 }
             },
             logger,
@@ -123,24 +118,6 @@ public partial class UpdatePlayResultCommandHandler
             Ac15DaniMapper.ToBlueDanStageScoreDatum,
             Ac15DaniMapper.ApplyToBlueDanStageScoreDatum);
 
-    private static void ApplyCostume(UserSaveDataBlue saveData, CommonPlayResultData.CostumeData costume)
-    {
-        saveData.Costume1 = costume.Costume1;
-        saveData.Costume2 = costume.Costume2;
-        saveData.Costume3 = costume.Costume3;
-        saveData.Costume4 = costume.Costume4;
-        saveData.Costume5 = costume.Costume5;
-        saveData.CostumeFlg1 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg1, [costume.Costume1], BlueProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg2 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg2, [costume.Costume2], BlueProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg3 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg3, [costume.Costume3], BlueProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg4 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg4, [costume.Costume4], BlueProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg5 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg5, [costume.Costume5], BlueProtocolBytes.CostumeFlagBytes);
-    }
-
     private static bool CanAddBlue(uint current, uint delta)
         => CanAddAc15(current, delta);
-
-    private static DateTime ParseBluePlayDatetimeOrNow(string playDatetime)
-        => ParseAc15PlayDatetimeOrNow(playDatetime);
-
 }

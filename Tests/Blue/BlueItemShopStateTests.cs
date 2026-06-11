@@ -102,22 +102,6 @@ public sealed class BlueItemShopStateTests
     }
 
     [Fact]
-    public void BlueShopUnlocks_SetAndClearBitsUseBlueFixedWidths()
-    {
-        var set = BlueShopUnlocks.SetBits([], [4, 255, 256], BlueProtocolBytes.CostumeFlagBytes);
-
-        Assert.True(BlueShopUnlocks.HasBit(set, 4, BlueProtocolBytes.CostumeFlagBytes));
-        Assert.True(BlueShopUnlocks.HasBit(set, 255, BlueProtocolBytes.CostumeFlagBytes));
-        Assert.False(BlueShopUnlocks.HasBit(set, 256, BlueProtocolBytes.CostumeFlagBytes));
-
-        var cleared = BlueShopUnlocks.ClearBits(set, [4], BlueProtocolBytes.CostumeFlagBytes);
-
-        Assert.False(BlueShopUnlocks.HasBit(cleared, 4, BlueProtocolBytes.CostumeFlagBytes));
-        Assert.True(BlueShopUnlocks.HasBit(cleared, 255, BlueProtocolBytes.CostumeFlagBytes));
-        Assert.Equal(BlueProtocolBytes.CostumeFlagBytes, cleared.Length);
-    }
-
-    [Fact]
     public async Task UpdatePlayResult_WhenShopEnabled_AddsDonMedalsToActiveSeasonState()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync(CreateSingleSongShopCatalog());

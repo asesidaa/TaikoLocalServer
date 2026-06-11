@@ -10,8 +10,7 @@ public static class Ac15CommonProfileMutation
         Ac15ProfileCounterAccess<TSave> counterAccess,
         Ac15UnlockFlagAccess<TSave> unlockAccess,
         Ac15ProtocolLimits limits,
-        DateTime playTime,
-        Action<TSave, CommonPlayResultData.CostumeData> applyCurrentCostume)
+        DateTime playTime)
         where TSave :
             IAc15MedalSaveData,
             IAc15TutorialSaveData,
@@ -55,7 +54,7 @@ public static class Ac15CommonProfileMutation
 
         if (playResultData.HasAryCurrentCostume && saveData.IsAutoCostumeOn)
         {
-            applyCurrentCostume(saveData, playResultData.AryCurrentCostume);
+            Ac15CustomizationMutation.ApplyCurrentCostume(saveData, playResultData.AryCurrentCostume, limits);
         }
 
         unlockAccess.ReleaseSongs?.Invoke(saveData, playResultData.ReleaseSongNoes.Where(id => id < (uint)limits.SongFlagBytes * 8));

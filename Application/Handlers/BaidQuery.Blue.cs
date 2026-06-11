@@ -40,8 +40,9 @@ public partial class BaidQueryHandler
             ?? throw new InvalidOperationException($"User not found for Blue card baid {card.Baid}.");
 
         var blue = gameDataService.Blue();
+        var snapshot = Ac15CatalogSnapshotFactory.FromBlue(blue);
         var activeShopSeason = blue.ItemShopCatalog.IsEnabled
-            ? blue.ItemShopCatalog.ActiveSeason
+            ? snapshot.ItemShopCatalog.ActiveSeason
             : null;
         var shopSeasonState = await context.GetOrCreateActiveBlueShopSeasonStateAsync(
             saveData,
@@ -54,16 +55,12 @@ public partial class BaidQueryHandler
 
         var unlockedShopItems = activeShopSeason is null
             ? new HashSet<(uint ItemType, uint ItemId)>()
-            : await context.BlueShopItemStates
-                .Where(row => row.Baid == card.Baid
-                    && row.SeasonId == activeShopSeason.SeasonId
-                    && row.Status == Ac15ShopItemStatus.Unlocked)
-                .Select(row => new ValueTuple<uint, uint>(row.ItemType, row.ItemId))
-                .ToHashSetAsync(cancellationToken);
-
-        IEnumerable<uint> LockedIds(Ac15ShopItemType itemType) => activeShopSeason?.Items
-            .Where(item => item.ItemType == itemType && !unlockedShopItems.Contains((item.ItemType.ToProtocolValue(), item.ItemId)))
-            .Select(item => item.ItemId) ?? [];
+            : await context.GetUnlockedBlueShopItemsAsync(card.Baid, activeShopSeason.SeasonId, cancellationToken);
+        var costumeFlags = Ac15CustomizationMutation.ApplyActiveShopCostumeLocks(
+            saveData,
+            activeShopSeason,
+            unlockedShopItems,
+            Ac15EraProfiles.Blue.Limits);
 
         return new CommonBaidResponse
         {
@@ -78,11 +75,11 @@ public partial class BaidQueryHandler
             ColorBody = saveData.ColorBody,
             ColorLimb = saveData.ColorLimb,
             CostumeData = [saveData.Costume1, saveData.Costume2, saveData.Costume3, saveData.Costume4, saveData.Costume5],
-            CostumeFlg1 = BlueShopUnlocks.ClearBits(saveData.CostumeFlg1, LockedIds(Ac15ShopItemType.Kigurumi), BlueProtocolBytes.CostumeFlagBytes),
-            CostumeFlg2 = BlueShopUnlocks.ClearBits(saveData.CostumeFlg2, LockedIds(Ac15ShopItemType.Head), BlueProtocolBytes.CostumeFlagBytes),
-            CostumeFlg3 = BlueShopUnlocks.ClearBits(saveData.CostumeFlg3, LockedIds(Ac15ShopItemType.Body), BlueProtocolBytes.CostumeFlagBytes),
-            CostumeFlg4 = BlueShopUnlocks.ClearBits(saveData.CostumeFlg4, LockedIds(Ac15ShopItemType.Face), BlueProtocolBytes.CostumeFlagBytes),
-            CostumeFlg5 = BlueShopUnlocks.ClearBits(saveData.CostumeFlg5, LockedIds(Ac15ShopItemType.Puchi), BlueProtocolBytes.CostumeFlagBytes),
+            CostumeFlg1 = costumeFlags.CostumeFlg1,
+            CostumeFlg2 = costumeFlags.CostumeFlg2,
+            CostumeFlg3 = costumeFlags.CostumeFlg3,
+            CostumeFlg4 = costumeFlags.CostumeFlg4,
+            CostumeFlg5 = costumeFlags.CostumeFlg5,
             TotalGetDonmedal = shopSeasonState?.TotalGetDonmedal ?? 0,
             TotalUseDonmedal = shopSeasonState?.TotalUseDonmedal ?? 0,
             TotalGetKatsumedal = saveData.TotalGetKatsumedal,

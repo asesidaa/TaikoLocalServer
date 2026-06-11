@@ -26,8 +26,7 @@ public sealed class Ac15CommonProfileMutationTests
             Ac15ProfileCounterUpdater.Blue,
             Ac15UnlockFlagAccess.Blue,
             Ac15EraProfiles.Blue.Limits,
-            new DateTime(2026, 5, 14, 3, 24, 42),
-            ApplyBlueCostume);
+            new DateTime(2026, 5, 14, 3, 24, 42));
 
         Assert.True(applied);
         Assert.Equal(125u, season.TotalGetDonmedal);
@@ -51,8 +50,7 @@ public sealed class Ac15CommonProfileMutationTests
             Ac15ProfileCounterUpdater.Blue,
             Ac15UnlockFlagAccess.Blue,
             Ac15EraProfiles.Blue.Limits,
-            DateTime.UnixEpoch,
-            ApplyBlueCostume);
+            DateTime.UnixEpoch);
 
         Assert.False(applied);
         Assert.Equal(uint.MaxValue, save.TotalGetDonmedal);
@@ -77,8 +75,7 @@ public sealed class Ac15CommonProfileMutationTests
             Ac15ProfileCounterUpdater.Green,
             Ac15UnlockFlagAccess.Green,
             Ac15EraProfiles.Green.Limits,
-            DateTime.UnixEpoch,
-            ApplyGreenCostume);
+            DateTime.UnixEpoch);
 
         Assert.True(applied);
         Assert.True(BitIsSet(save.ToneFlg, 5));
@@ -110,24 +107,6 @@ public sealed class Ac15CommonProfileMutationTests
             IsFavorite = isFavorite,
             IsRecent = true
         };
-
-    private static void ApplyBlueCostume(UserSaveDataBlue save, CommonPlayResultData.CostumeData costume)
-    {
-        save.Costume1 = costume.Costume1;
-        save.Costume2 = costume.Costume2;
-        save.Costume3 = costume.Costume3;
-        save.Costume4 = costume.Costume4;
-        save.Costume5 = costume.Costume5;
-    }
-
-    private static void ApplyGreenCostume(UserSaveDataGreen save, CommonPlayResultData.CostumeData costume)
-    {
-        save.Costume1 = costume.Costume1;
-        save.Costume2 = costume.Costume2;
-        save.Costume3 = costume.Costume3;
-        save.Costume4 = costume.Costume4;
-        save.Costume5 = costume.Costume5;
-    }
 
     private static bool BitIsSet(byte[] source, uint id)
         => (source[id >> 3] & (1 << ((int)id & 7))) != 0;
