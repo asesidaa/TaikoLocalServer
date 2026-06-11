@@ -149,11 +149,10 @@ public static class Ac15NormalPlayService
         switch (profile.Era)
         {
             case GameEra.Blue:
-                context.SongPlayDataBlue.Add(Ac15NormalPlayMapper.ToBlueSongPlayDatum(row));
+                AddPlayRow(context.SongPlayDataBlue, row, Ac15NormalPlayMapper.ToBlueSongPlayDatum);
                 return;
             case GameEra.Green:
-                var play = Ac15NormalPlayMapper.ToGreenSongPlayDatum(row);
-                context.SongPlayDataGreen.Add(play);
+                var play = AddPlayRow(context.SongPlayDataGreen, row, Ac15NormalPlayMapper.ToGreenSongPlayDatum);
                 if (row.GhostStageData is not null)
                 {
                     uint sectionNo = 0;
@@ -174,9 +173,20 @@ public static class Ac15NormalPlayService
 
                 return;
             case GameEra.Yellow:
-                context.SongPlayDataYellow.Add(Ac15NormalPlayMapper.ToYellowSongPlayDatum(row));
+                AddPlayRow(context.SongPlayDataYellow, row, Ac15NormalPlayMapper.ToYellowSongPlayDatum);
                 return;
         }
+    }
+
+    private static TPlay AddPlayRow<TPlay>(
+        DbSet<TPlay> playRows,
+        Ac15PlayRow row,
+        Func<Ac15PlayRow, TPlay> create)
+        where TPlay : class, IAc15SongPlayDatum
+    {
+        var play = create(row);
+        playRows.Add(play);
+        return play;
     }
 
     private static async ValueTask UpsertBestAsync(
