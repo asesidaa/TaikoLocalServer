@@ -12,7 +12,13 @@ public static class Ac15CatalogSnapshotFactory
         blue.SongHashVersion,
         blue.MusicInfoFileOrder.Select(song => song.SongNo).ToArray(),
         blue.EventFolders,
-        blue.Telops.ToDictionary(pair => pair.Key, pair => MapTelop(pair.Value)),
+        MapTelops(
+            blue.Telops,
+            entry => entry.TelopId,
+            entry => entry.VerupNo,
+            entry => entry.StartDatetime,
+            entry => entry.EndDatetime,
+            entry => entry.Message),
         blue.Recommend.RecommendSong,
         blue.Recommend.RecommendBestSongs.ToArray(),
         MapItemShop(blue.ItemShopCatalog),
@@ -22,7 +28,13 @@ public static class Ac15CatalogSnapshotFactory
         green.SongHashVersion,
         green.MusicInfoFileOrder.Select(song => song.SongNo).ToArray(),
         green.EventFolders,
-        green.Telops.ToDictionary(pair => pair.Key, pair => MapTelop(pair.Value)),
+        MapTelops(
+            green.Telops,
+            entry => entry.TelopId,
+            entry => entry.VerupNo,
+            entry => entry.StartDatetime,
+            entry => entry.EndDatetime,
+            entry => entry.Message),
         green.Recommend.RecommendSong,
         green.Recommend.RecommendBestSongs.ToArray(),
         MapItemShop(green.ItemShopCatalog),
@@ -32,38 +44,35 @@ public static class Ac15CatalogSnapshotFactory
         yellow.SongHashVersion,
         yellow.MusicInfoFileOrder.Select(song => song.SongNo).ToArray(),
         yellow.EventFolders,
-        yellow.Telops.ToDictionary(pair => pair.Key, pair => MapTelop(pair.Value)),
+        MapTelops(
+            yellow.Telops,
+            entry => entry.TelopId,
+            entry => entry.VerupNo,
+            entry => entry.StartDatetime,
+            entry => entry.EndDatetime,
+            entry => entry.Message),
         yellow.Recommend.RecommendSong,
         yellow.Recommend.RecommendBestSongs.ToArray(),
         MapItemShop(yellow.ItemShopCatalog),
         yellow.TaikojukuFileOrder.Select(MapTaikojuku).ToArray());
 
-    private static Ac15TelopEntry MapTelop(BlueTelopEntry entry) => new()
-    {
-        TelopId = entry.TelopId,
-        VerupNo = entry.VerupNo,
-        StartDatetime = entry.StartDatetime,
-        EndDatetime = entry.EndDatetime,
-        Message = entry.Message
-    };
-
-    private static Ac15TelopEntry MapTelop(GreenTelopEntry entry) => new()
-    {
-        TelopId = entry.TelopId,
-        VerupNo = entry.VerupNo,
-        StartDatetime = entry.StartDatetime,
-        EndDatetime = entry.EndDatetime,
-        Message = entry.Message
-    };
-
-    private static Ac15TelopEntry MapTelop(YellowTelopEntry entry) => new()
-    {
-        TelopId = entry.TelopId,
-        VerupNo = entry.VerupNo,
-        StartDatetime = entry.StartDatetime,
-        EndDatetime = entry.EndDatetime,
-        Message = entry.Message
-    };
+    private static Dictionary<uint, Ac15TelopEntry> MapTelops<TEntry>(
+        IReadOnlyDictionary<uint, TEntry> telops,
+        Func<TEntry, uint> telopId,
+        Func<TEntry, uint> verupNo,
+        Func<TEntry, string> startDatetime,
+        Func<TEntry, string> endDatetime,
+        Func<TEntry, string> message)
+        => telops.ToDictionary(
+            pair => pair.Key,
+            pair => new Ac15TelopEntry
+            {
+                TelopId = telopId(pair.Value),
+                VerupNo = verupNo(pair.Value),
+                StartDatetime = startDatetime(pair.Value),
+                EndDatetime = endDatetime(pair.Value),
+                Message = message(pair.Value)
+            });
 
     private static Ac15ItemShopCatalog MapItemShop(BlueItemShopCatalog catalog)
         => catalog.IsEnabled
