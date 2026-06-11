@@ -1,6 +1,6 @@
 namespace TaikoLocalServer.Domain.Entities;
 
-public partial class YellowFavoriteSongs
+public partial class YellowFavoriteSongs : IAc15FavoriteSong
 {
     public uint Baid { get; set; }
     public uint SongNo { get; set; }

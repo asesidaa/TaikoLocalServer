@@ -1,6 +1,6 @@
 namespace TaikoLocalServer.Domain.Entities;
 
-public class GreenFavoriteSongs
+public class GreenFavoriteSongs : IAc15FavoriteSong
 {
     public uint Baid { get; set; }
     public uint SongNo { get; set; }

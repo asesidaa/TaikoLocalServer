@@ -1,6 +1,6 @@
 namespace TaikoLocalServer.Domain.Entities;
 
-public class DanStageScoreDatumGreen
+public class DanStageScoreDatumGreen : IAc15DanStageScoreDatum
 {
     public uint Baid { get; set; }
     public uint DanId { get; set; }

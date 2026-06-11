@@ -1,6 +1,6 @@
 namespace TaikoLocalServer.Domain.Entities;
 
-public sealed class GreenShopSeasonState
+public sealed class GreenShopSeasonState : IAc15ShopSeasonState
 {
     public uint Baid { get; set; }
 

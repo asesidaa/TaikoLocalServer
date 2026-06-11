@@ -2,7 +2,7 @@ using TaikoLocalServer.Domain.Enums;
 
 namespace TaikoLocalServer.Domain.Entities;
 
-public class DanScoreDatumGreen
+public class DanScoreDatumGreen : IAc15DanScoreDatum
 {
     public uint Baid { get; set; }
     public uint DanId { get; set; }

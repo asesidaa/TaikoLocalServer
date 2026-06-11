@@ -2,7 +2,7 @@ using TaikoLocalServer.Domain.Enums;
 
 namespace TaikoLocalServer.Domain.Entities;
 
-public partial class SongBestDatumGreen
+public partial class SongBestDatumGreen : IAc15SongBestDatum
 {
     public uint Baid { get; set; }
     public uint SongId { get; set; }

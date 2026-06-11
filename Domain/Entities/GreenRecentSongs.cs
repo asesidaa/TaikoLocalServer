@@ -1,6 +1,6 @@
 namespace TaikoLocalServer.Domain.Entities;
 
-public class GreenRecentSongs
+public class GreenRecentSongs : IAc15RecentSong
 {
     public uint Baid { get; set; }
     public uint SongNo { get; set; }
