@@ -25,7 +25,7 @@ public sealed class BlueInitialDataTests
             Assert.True(BitIsSet(response.DefaultSongFlg, song.SongNo), $"Expected song {song.SongNo} to be unlocked.");
         }
 
-        Assert.Empty(response.AryBlueLegaltermsDatas);
+        Assert.Empty(response.AryLegaltermsDatas);
         Assert.Empty(wire.AryLegaltermsDatas);
         Assert.False(response.IsBattleplay);
         Assert.Equal(new byte[BlueProtocolBytes.BattleStageFlagBytes], response.ReleaseBattleStageFlg);
@@ -61,9 +61,9 @@ public sealed class BlueInitialDataTests
 
         var response = await handler.Handle(new GetInitialDataQuery(GameEra.Blue), CancellationToken.None);
 
-        Assert.Contains(response.AryBlueTelopDatas, row => row.InfoId == 7 && row.VerupNo == 4);
-        Assert.Contains(response.AryBlueEventFolderDatas, row => row.InfoId == 3 && row.VerupNo == 9);
-        Assert.Contains(response.AryBlueTaikojukuDatas, row => row.InfoId == 1);
+        Assert.Contains(response.AryTelopDatas, row => row.InfoId == 7 && row.VerupNo == 4);
+        Assert.Contains(response.AryEventFolderDatas, row => row.InfoId == 3 && row.VerupNo == 9);
+        Assert.Contains(response.AryTaikojukuDatas, row => row.InfoId == 1);
     }
 
     [Fact]
@@ -87,7 +87,7 @@ public sealed class BlueInitialDataTests
 
         var response = await handler.Handle(new GetInitialDataQuery(GameEra.Blue), CancellationToken.None);
 
-        var row = Assert.Single(response.AryBlueTaikojukuDatas, data => data.InfoId == 1);
+        var row = Assert.Single(response.AryTaikojukuDatas, data => data.InfoId == 1);
         Assert.Equal(7u, row.VerupNo);
     }
 

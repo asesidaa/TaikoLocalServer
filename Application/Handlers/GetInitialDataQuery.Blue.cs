@@ -25,11 +25,11 @@ public partial class GetInitialDataQueryHandler
         response.BattleBondsLvCap = battle.EnablesBattleAdvertisement
             ? battle.BattleBondsLvCap ?? 0
             : 0;
-        response.AryBlueItemShopDatas = Ac15InitialDataService.BuildItemShopInfoRows(snapshot);
-        response.AryBlueTelopDatas = Ac15InitialDataService.BuildTelopInfoRows(snapshot);
-        response.AryBlueEventFolderDatas = Ac15InitialDataService.BuildEventFolderInfoRows(snapshot);
-        response.AryBlueTaikojukuDatas = Ac15InitialDataService.BuildTaikojukuInfoRows(snapshot, Ac15EraProfiles.Blue);
-        response.AryBlueLegaltermsDatas = [];
+        response.AryItemShopDatas = Ac15InitialDataService.BuildItemShopInfoRows(snapshot);
+        response.AryTelopDatas = Ac15InitialDataService.BuildTelopInfoRows(snapshot);
+        response.AryEventFolderDatas = Ac15InitialDataService.BuildEventFolderInfoRows(snapshot);
+        response.AryTaikojukuDatas = Ac15InitialDataService.BuildTaikojukuInfoRows(snapshot, Ac15EraProfiles.Blue);
+        response.AryLegaltermsDatas = [];
 
         return ValueTask.FromResult(response);
     }

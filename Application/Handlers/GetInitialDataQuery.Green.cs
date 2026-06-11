@@ -11,10 +11,10 @@ public partial class GetInitialDataQueryHandler
         var response = Ac15InitialDataService.BuildCommonInitialData(snapshot, Ac15EraProfiles.Green);
 
         response.IsGhostbattleplay = true;
-        response.AryGreenItemShopDatas = Ac15InitialDataService.BuildItemShopInfoRows(snapshot);
-        response.AryGreenTelopDatas = Ac15InitialDataService.BuildTelopInfoRows(snapshot);
-        response.AryGreenEventFolderDatas = Ac15InitialDataService.BuildEventFolderInfoRows(snapshot);
-        response.AryGreenTaikojukuDatas = Ac15InitialDataService.BuildTaikojukuInfoRows(snapshot, Ac15EraProfiles.Green);
+        response.AryItemShopDatas = Ac15InitialDataService.BuildItemShopInfoRows(snapshot);
+        response.AryTelopDatas = Ac15InitialDataService.BuildTelopInfoRows(snapshot);
+        response.AryEventFolderDatas = Ac15InitialDataService.BuildEventFolderInfoRows(snapshot);
+        response.AryTaikojukuDatas = Ac15InitialDataService.BuildTaikojukuInfoRows(snapshot, Ac15EraProfiles.Green);
 
         return ValueTask.FromResult(response);
     }

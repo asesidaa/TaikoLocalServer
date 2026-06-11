@@ -97,10 +97,10 @@ public sealed class GreenTaikojukuTests
 
         var response = await handler.Handle(new GetInitialDataQuery(GameEra.Green), CancellationToken.None);
 
-        Assert.NotEmpty(response.AryGreenTaikojukuDatas);
-        Assert.Contains(response.AryGreenTaikojukuDatas, data => data.InfoId == 1);
-        Assert.DoesNotContain(response.AryGreenTaikojukuDatas, data => data.InfoId == 20001);
-        Assert.All(response.AryGreenTaikojukuDatas, data => Assert.InRange(data.InfoId, 1u, 25u));
+        Assert.NotEmpty(response.AryTaikojukuDatas);
+        Assert.Contains(response.AryTaikojukuDatas, data => data.InfoId == 1);
+        Assert.DoesNotContain(response.AryTaikojukuDatas, data => data.InfoId == 20001);
+        Assert.All(response.AryTaikojukuDatas, data => Assert.InRange(data.InfoId, 1u, 25u));
     }
 
     [Fact]
@@ -124,7 +124,7 @@ public sealed class GreenTaikojukuTests
 
         var response = await handler.Handle(new GetInitialDataQuery(GameEra.Green), CancellationToken.None);
 
-        var row = Assert.Single(response.AryGreenTaikojukuDatas, data => data.InfoId == 1);
+        var row = Assert.Single(response.AryTaikojukuDatas, data => data.InfoId == 1);
         Assert.Equal(7u, row.VerupNo);
     }
 

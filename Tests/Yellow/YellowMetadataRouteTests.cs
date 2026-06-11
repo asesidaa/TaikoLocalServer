@@ -20,11 +20,11 @@ public sealed class YellowMetadataRouteTests
             IsDanplay = true,
             IsClose = false,
             IsItemshop = true,
-            AryYellowTelopDatas = [Info(10, 20)],
-            AryYellowEventFolderDatas = [Info(11, 21)],
-            AryYellowTaikojukuDatas = [Info(12, 22)],
-            AryYellowItemShopDatas = [Info(13, 23)],
-            AryYellowLegaltermsDatas = [Info(14, 24)]
+            AryTelopDatas = [Info(10, 20)],
+            AryEventFolderDatas = [Info(11, 21)],
+            AryTaikojukuDatas = [Info(12, 22)],
+            AryItemShopDatas = [Info(13, 23)],
+            AryLegaltermsDatas = [Info(14, 24)]
         };
 
         var response = InitialDataMappers.Map(common);

@@ -46,13 +46,11 @@ public sealed class YellowInitialDataProtocolTests
         Assert.True(response.IsItemshop);
         Assert.True((response.DefaultSongFlg[101 >> 3] & (1 << (101 & 7))) != 0);
         Assert.True((response.DefaultSongFlg[102 >> 3] & (1 << (102 & 7))) == 0);
-        Assert.Equal(31u, Assert.Single(response.AryYellowTelopDatas).InfoId);
-        Assert.Equal(44u, Assert.Single(response.AryYellowEventFolderDatas).InfoId);
-        Assert.Equal(1u, Assert.Single(response.AryYellowTaikojukuDatas).InfoId);
-        Assert.Equal(7u, Assert.Single(response.AryYellowItemShopDatas).InfoId);
-        Assert.Empty(response.AryYellowLegaltermsDatas);
-        Assert.Empty(response.AryGreenTelopDatas);
-        Assert.Empty(response.AryBlueTelopDatas);
+        Assert.Equal(31u, Assert.Single(response.AryTelopDatas).InfoId);
+        Assert.Equal(44u, Assert.Single(response.AryEventFolderDatas).InfoId);
+        Assert.Equal(1u, Assert.Single(response.AryTaikojukuDatas).InfoId);
+        Assert.Equal(7u, Assert.Single(response.AryItemShopDatas).InfoId);
+        Assert.Empty(response.AryLegaltermsDatas);
         Assert.Null(response.IsBattleplay);
         Assert.Null(response.ReleaseBattleStageFlg);
         Assert.Null(response.ReleaseBattleSpecialFlg);
@@ -70,10 +68,10 @@ public sealed class YellowInitialDataProtocolTests
 
         Assert.Equal(1u, response.Result);
         Assert.False(response.IsItemshop);
-        Assert.Empty(response.AryYellowTelopDatas);
-        Assert.Empty(response.AryYellowEventFolderDatas);
-        Assert.Empty(response.AryYellowItemShopDatas);
-        Assert.Empty(response.AryYellowLegaltermsDatas);
+        Assert.Empty(response.AryTelopDatas);
+        Assert.Empty(response.AryEventFolderDatas);
+        Assert.Empty(response.AryItemShopDatas);
+        Assert.Empty(response.AryLegaltermsDatas);
     }
 
     private static FakeYellowCatalog YellowCatalogWithOptionalRows() => new()

@@ -71,7 +71,7 @@ public sealed class GreenTelopTests
         var response = await handler.Handle(new GetInitialDataQuery(GameEra.Green), CancellationToken.None);
 
         Assert.Collection(
-            response.AryGreenTelopDatas,
+            response.AryTelopDatas,
             row => { Assert.Equal(1u, row.InfoId); Assert.Equal(3u, row.VerupNo); },
             row => { Assert.Equal(2u, row.InfoId); Assert.Equal(5u, row.VerupNo); });
     }
@@ -88,7 +88,7 @@ public sealed class GreenTelopTests
 
         var response = await handler.Handle(new GetInitialDataQuery(GameEra.Green), CancellationToken.None);
 
-        Assert.Empty(response.AryGreenTelopDatas);
+        Assert.Empty(response.AryTelopDatas);
     }
 
     [Fact]

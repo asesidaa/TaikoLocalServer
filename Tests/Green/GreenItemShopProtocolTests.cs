@@ -17,7 +17,7 @@ public sealed class GreenItemShopProtocolTests
         var response = await handler.Handle(new GetInitialDataQuery(GameEra.Green), CancellationToken.None);
 
         Assert.True(response.IsItemshop);
-        var info = Assert.Single(response.AryGreenItemShopDatas);
+        var info = Assert.Single(response.AryItemShopDatas);
         Assert.Equal(2u, info.InfoId);
         Assert.Equal(9u, info.VerupNo);
         Assert.False(HasBit(response.DefaultSongFlg, 101));

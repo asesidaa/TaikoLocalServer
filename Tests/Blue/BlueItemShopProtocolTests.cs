@@ -23,7 +23,7 @@ public sealed class BlueItemShopProtocolTests
         var wire = InitialDataMappers.Map(response);
 
         Assert.False(response.IsItemshop);
-        Assert.Empty(response.AryBlueItemShopDatas);
+        Assert.Empty(response.AryItemShopDatas);
         Assert.False(wire.IsItemshop);
         Assert.Empty(wire.AryItemshopDatas);
     }
@@ -51,7 +51,7 @@ public sealed class BlueItemShopProtocolTests
         var wire = InitialDataMappers.Map(response);
 
         Assert.False(response.IsItemshop);
-        Assert.Empty(response.AryBlueItemShopDatas);
+        Assert.Empty(response.AryItemShopDatas);
         Assert.False(wire.IsItemshop);
         Assert.Empty(wire.AryItemshopDatas);
     }
@@ -79,7 +79,7 @@ public sealed class BlueItemShopProtocolTests
         var wire = InitialDataMappers.Map(response);
 
         Assert.False(response.IsItemshop);
-        Assert.Empty(response.AryBlueItemShopDatas);
+        Assert.Empty(response.AryItemShopDatas);
         Assert.False(wire.IsItemshop);
         Assert.Empty(wire.AryItemshopDatas);
     }
@@ -97,7 +97,7 @@ public sealed class BlueItemShopProtocolTests
         var wire = InitialDataMappers.Map(response);
 
         Assert.True(response.IsItemshop);
-        var info = Assert.Single(response.AryBlueItemShopDatas);
+        var info = Assert.Single(response.AryItemShopDatas);
         Assert.Equal(2u, info.InfoId);
         Assert.Equal(20170404u, info.VerupNo);
         Assert.True(wire.IsItemshop);

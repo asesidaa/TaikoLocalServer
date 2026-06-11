@@ -16,9 +16,9 @@ public sealed class GreenEventFolderProtocolTests
 
         var response = await handler.Handle(new GetInitialDataQuery(GameEra.Green), CancellationToken.None);
 
-        Assert.Contains(response.AryGreenEventFolderDatas, row => row.InfoId == 1 && row.VerupNo == 0);
-        Assert.Contains(response.AryGreenEventFolderDatas, row => row.InfoId == 11 && row.VerupNo == 3);
-        Assert.Equal(2, response.AryGreenEventFolderDatas.Count);
+        Assert.Contains(response.AryEventFolderDatas, row => row.InfoId == 1 && row.VerupNo == 0);
+        Assert.Contains(response.AryEventFolderDatas, row => row.InfoId == 11 && row.VerupNo == 3);
+        Assert.Equal(2, response.AryEventFolderDatas.Count);
     }
 
     [Fact]
@@ -32,7 +32,7 @@ public sealed class GreenEventFolderProtocolTests
 
         var response = await handler.Handle(new GetInitialDataQuery(GameEra.Green), CancellationToken.None);
 
-        Assert.Empty(response.AryGreenEventFolderDatas);
+        Assert.Empty(response.AryEventFolderDatas);
     }
 
     [Fact]

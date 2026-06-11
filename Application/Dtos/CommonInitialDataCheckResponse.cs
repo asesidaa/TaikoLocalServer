@@ -29,13 +29,15 @@ public partial class CommonInitialDataCheckResponse
 
     public bool IsGhostbattleplay { get; set; }
 
-    public List<InformationData> AryGreenTelopDatas { get; set; } = [];
+    public List<InformationData> AryTelopDatas { get; set; } = [];
 
-    public List<InformationData> AryGreenEventFolderDatas { get; set; } = [];
+    public List<InformationData> AryEventFolderDatas { get; set; } = [];
 
-    public List<InformationData> AryGreenTaikojukuDatas { get; set; } = [];
+    public List<InformationData> AryTaikojukuDatas { get; set; } = [];
 
-    public List<InformationData> AryGreenItemShopDatas { get; set; } = [];
+    public List<InformationData> AryItemShopDatas { get; set; } = [];
+
+    public List<InformationData> AryLegaltermsDatas { get; set; } = [];
 
     public class AiEventData
     {
