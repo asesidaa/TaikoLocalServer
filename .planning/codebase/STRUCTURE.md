@@ -1,303 +1,379 @@
 # Codebase Structure
 
-**Analysis Date:** 2026-05-28
+**Analysis Date:** 2026-06-11
 
 ## Directory Layout
 
 ```text
 TaikoLocalServer/
 |-- Adapters.AdminApi/              # Admin REST API consumed by Blazor WebUI
-|-- Adapters.AllnetMucha/           # AllNet, Mucha, activation, and Garmc HTTP surfaces
-|-- Adapters.GameProtocol.Shared/   # Shared game-protocol base controllers, startup auth, compression
-|-- Adapters.GameProtocol.WwR08/    # Nijiiro 39.06 WW protobuf routes under /v12r08_ww
-|-- Adapters.GameProtocol.CnR00/    # Nijiiro CHN protobuf routes under /v12r00_cn
-|-- Adapters.GameProtocol.Green/    # Green AC15 protobuf routes under /v11r01
-|-- Adapters.GameProtocol.Blue/     # Blue AC15 protobuf routes under /v10r03
-|-- Application/                    # Use cases, ports, Common* DTOs, catalog contracts, settings
-|-- Contracts.AdminApi/             # Admin/WebUI DTO contracts and auth helpers
-|-- Domain/                         # Entities, enums, constants; no outbound project references
-|-- Infrastructure/                 # EF Core, SQLite, filesystem catalog, JWT, time, migrations
-|-- Host/                           # ASP.NET Core host, config, certificates, wwwroot runtime data
+|-- Adapters.AllnetMucha/           # AllNet, Mucha, activation, updater, and GARM endpoints
+|-- Adapters.GameProtocol.Shared/   # Shared game-protocol base controllers, startup/version routes, compression
+|-- Adapters.GameProtocol.WwR08/    # Nijiiro WW protobuf routes under /v12r08_ww
+|-- Adapters.GameProtocol.CnR00/    # Nijiiro CN protobuf routes under /v12r00_cn
+|-- Adapters.GameProtocol.Green/    # Green AC15 routes, wire DTOs, mappers under /v11r01
+|-- Adapters.GameProtocol.Blue/     # Blue AC15 routes, wire DTOs, mappers under /v10r03
+|-- Adapters.GameProtocol.Yellow/   # Yellow AC15 routes, wire DTOs, mappers under /v09r02
+|-- Application/                    # Mediator use cases, ports, Common DTOs, AC15 shared core
+|   |-- Ac15/                       # Shared AC15 services, profiles, records, Mapperly projections
+|   |-- Handlers/                   # Use-case dispatchers and era partial implementations
+|   |-- Dtos/                       # Common protocol DTOs between adapters and handlers
+|   |-- Catalog/                    # Catalog contracts and typed catalog DTOs
+|   `-- Abstractions/               # Ports such as ITaikoDbContext and IGameDataCatalog
+|-- Contracts.AdminApi/             # DTO contracts shared by AdminApi and WebUI
+|-- Domain/                         # Persistent entities, enums, constants, AC15 row-shape interfaces
+|-- Infrastructure/                 # EF Core, filesystem catalogs, settings, identity, clock, migrations
+|   |-- Persistence/                # TaikoDbContext partials and EF migrations
+|   `-- GameDataCatalog/            # Era catalogs plus shared AC15 loaders
+|-- Host/                           # ASP.NET Core host, runtime config, certificates, wwwroot data
 |-- TaikoWebUI/                     # Blazor WebAssembly admin UI
-|-- Tests/                          # xUnit tests grouped by feature/era
-|-- GreenCatalogExtractor/          # CLI for deriving Green customization/catalog files
-|-- LocalSaveModScoreMigrator/      # CLI for importing local-save-mod JSON into SQLite
-|-- docs/                           # Agent docs, evidence, specs, plans
-|-- tools/                          # Small checked-in helper tools
+|-- Tests/                          # xUnit tests grouped by AC15 shared behavior and era/subsystem
+|-- GreenCatalogExtractor/          # Green catalog extraction CLI
+|-- LocalSaveModScoreMigrator/      # Local-save-mod score import CLI
+|-- proto/                          # Protocol schema inputs for generated Wire models
+|-- docs/                           # Agent docs, specs, evidence, plans
+|-- tools/                          # Checked-in helper tools
+|-- .tools/                         # Local reverse-engineering material and analysis output
 |-- .planning/codebase/             # Generated codebase maps
 |-- Directory.Build.props           # Shared .NET build defaults
-|-- Directory.Packages.props        # Central package versions
-|-- global.json                     # Pinned .NET SDK band
+|-- Directory.Packages.props        # Central NuGet package versions
+|-- global.json                     # .NET SDK pin/roll-forward policy
 `-- TaikoLocalServer.slnx           # Solution project list
 ```
 
 ## Directory Purposes
 
+**`Application/Ac15/`:**
+- Purpose: Put reusable AC15 behavior here only when Green, Blue, and Yellow semantics match.
+- Contains: Shared services (`Ac15NormalPlayWriter`, `Ac15DaniWriter`, `Ac15UserDataService`, `Ac15InitialDataService`), profile records, table records, Mapperly projections, and era user-data adapters.
+- Key files: `Application/Ac15/Ac15EraProfiles.cs`, `Application/Ac15/Ac15NormalPlayWriter.cs`, `Application/Ac15/Ac15DaniWriter.cs`, `Application/Ac15/Ac15ItemShopPurchase.cs`, `Application/Ac15/Ac15CatalogSnapshotFactory.cs`
+
+**`Application/Handlers/`:**
+- Purpose: Put Mediator requests, use-case dispatch, and era partial behavior here.
+- Contains: Unsuffixed dispatch files such as `Application/Handlers/UpdatePlayResultCommand.cs` plus `.Green.cs`, `.Blue.cs`, `.Yellow.cs`, and `.Nijiiro.cs` partial files.
+- Key files: `Application/Handlers/UserDataQuery.cs`, `Application/Handlers/UpdatePlayResultCommand.Blue.cs`, `Application/Handlers/UpdatePlayResultCommand.Green.cs`, `Application/Handlers/UpdatePlayResultCommand.Yellow.cs`
+
+**`Application/Dtos/`:**
+- Purpose: Put adapter-neutral `Common*` DTOs that protocol mappers pass into handlers.
+- Contains: Common request/response models and partial extensions for era-specific facts.
+- Key files: `Application/Dtos/CommonPlayResultData.cs`, `Application/Dtos/CommonUserDataResponse.cs`, `Application/Dtos/CommonInitialDataCheckResponse.cs`
+
+**`Application/Abstractions/`:**
+- Purpose: Put application ports for persistence, catalogs, identity, and time.
+- Contains: `ITaikoDbContext` partials, catalog interfaces, `IGameDataCatalog`, `IClock`, `IJwtTokenService`.
+- Key files: `Application/Abstractions/ITaikoDbContext.Green.cs`, `Application/Abstractions/ITaikoDbContext.Blue.cs`, `Application/Abstractions/ITaikoDbContext.Yellow.cs`, `Application/Abstractions/IGameDataCatalog.cs`
+
+**`Application/Catalog/`:**
+- Purpose: Put typed catalog DTOs used by application handlers and AdminApi.
+- Contains: Shared AC15 catalog DTOs under `Application/Catalog/Ac15/`, plus typed Green, Blue, Yellow, Nijiiro catalog DTOs.
+- Key files: `Application/Catalog/Ac15/Ac15ItemShopCatalog.cs`, `Application/Catalog/Blue/BlueBattleCatalog.cs`, `Application/Catalog/Yellow/YellowMusicInfoEntry.cs`
+
 **`Domain/`:**
-- Purpose: Put persistent entities, enums, and domain constants here.
-- Contains: `Domain/Entities/`, `Domain/Enums/`, `Domain/DomainConstants.cs`, `Domain/Domain.csproj`
-- Key files: `Domain/Enums/GameEra.cs`, `Domain/Entities/UserDatum.cs`, `Domain/Entities/UserSaveDataGreen.cs`, `Domain/Entities/UserSaveDataBlue.cs`
+- Purpose: Put persistent entities, canonical enum values, and entity shape contracts here.
+- Contains: `Domain/Entities/`, `Domain/Enums/`, `Domain/DomainConstants.cs`
+- Key files: `Domain/Entities/UserSaveDataGreen.cs`, `Domain/Entities/UserSaveDataBlue.cs`, `Domain/Entities/UserSaveDataYellow.cs`, `Domain/Entities/IAc15SongPlayDatum.cs`, `Domain/Enums/GameEra.cs`
 
-**`Contracts.AdminApi/`:**
-- Purpose: Put DTOs shared by admin API and WebUI here.
-- Contains: `Contracts.AdminApi/Requests/`, `Contracts.AdminApi/Responses/`, `Contracts.AdminApi/ViewModels/`, `Contracts.AdminApi/ServerData/`, `Contracts.AdminApi/Converters/`, `Contracts.AdminApi/Authorization/`
-- Key files: `Contracts.AdminApi/Contracts.AdminApi.csproj`, `Contracts.AdminApi/Authorization/AuthPolicies.cs`, `Contracts.AdminApi/Converters/PlaySettingConverter.cs`
+**`Infrastructure/Persistence/`:**
+- Purpose: Put EF Core context, mappings, and migrations here.
+- Contains: `TaikoDbContext` partials split by shared identity, Nijiiro, Green, Blue, Yellow, and EF migrations.
+- Key files: `Infrastructure/Persistence/TaikoDbContext.cs`, `Infrastructure/Persistence/TaikoDbContext.Green.cs`, `Infrastructure/Persistence/TaikoDbContext.Blue.cs`, `Infrastructure/Persistence/TaikoDbContext.Yellow.cs`
 
-**`Application/`:**
-- Purpose: Put use-case handlers, application ports, common protocol DTOs, catalog interfaces, application settings, and server-only JSON shapes here.
-- Contains: `Application/Handlers/`, `Application/Abstractions/`, `Application/Dtos/`, `Application/Common/`, `Application/Catalog/`, `Application/ServerData/`, `Application/Settings/`
-- Key files: `Application/DependencyInjection.cs`, `Application/Handlers/BaidQuery.cs`, `Application/Abstractions/ITaikoDbContext.cs`, `Application/Abstractions/IGameDataCatalog.cs`, `Application/Common/CatalogExtensions.cs`
+**`Infrastructure/GameDataCatalog/Ac15/`:**
+- Purpose: Put reusable filesystem parsers/loaders for AC15-compatible catalog files.
+- Contains: AC15 loaders for musicinfo, tuning, Taikojuku, item shop, event folders, telops, recommendations, movies, and customization composition.
+- Key files: `Infrastructure/GameDataCatalog/Ac15/Ac15MusicInfoLoader.cs`, `Infrastructure/GameDataCatalog/Ac15/Ac15ItemShopLoader.cs`, `Infrastructure/GameDataCatalog/Ac15/Ac15TaikojukuLoader.cs`, `Infrastructure/GameDataCatalog/Ac15/Ac15EventFolderLoader.cs`
 
-**`Infrastructure/`:**
-- Purpose: Put concrete implementations of application ports and all durable I/O here.
-- Contains: `Infrastructure/Persistence/`, `Infrastructure/Persistence/Migrations/`, `Infrastructure/GameDataCatalog/`, `Infrastructure/Identity/`, `Infrastructure/Time/`, `Infrastructure/Settings/`
-- Key files: `Infrastructure/DependencyInjection.cs`, `Infrastructure/Persistence/TaikoDbContext.cs`, `Infrastructure/GameDataCatalog/FileGameDataCatalog.cs`, `Infrastructure/GameDataCatalog/PathHelper.cs`, `Infrastructure/Identity/JwtTokenService.cs`
+**`Infrastructure/GameDataCatalog/Green/`:**
+- Purpose: Put Green catalog orchestration, Green path resolution, required-file checks, and Green-only loaders/extractors here.
+- Contains: `GreenEraGameDataCatalog`, Green loaders, Green extractor code, Green path helpers.
+- Key files: `Infrastructure/GameDataCatalog/Green/GreenEraGameDataCatalog.cs`, `Infrastructure/GameDataCatalog/Green/GreenRequiredDataFiles.cs`, `Infrastructure/GameDataCatalog/Green/GreenGameDataPaths.cs`
 
-**`Adapters.AdminApi/`:**
-- Purpose: Put `/api/...` admin HTTP endpoints and admin-specific mapping here.
-- Contains: `Adapters.AdminApi/Controllers/`, `Adapters.AdminApi/Authorization/`, `Adapters.AdminApi/Mapping/`, `Adapters.AdminApi/BaseAdminController.cs`
-- Key files: `Adapters.AdminApi/Controllers/AuthController.cs`, `Adapters.AdminApi/Controllers/GameDataController.cs`, `Adapters.AdminApi/Controllers/UsersController.cs`, `Adapters.AdminApi/Controllers/EraRoute.cs`
+**`Infrastructure/GameDataCatalog/Blue/`:**
+- Purpose: Put Blue catalog orchestration, Blue path resolution, Blue battle data loading, and Blue customization bootstrap here.
+- Contains: `BlueEraGameDataCatalog`, Blue loaders, Blue battle parser/loader, Blue path helpers.
+- Key files: `Infrastructure/GameDataCatalog/Blue/BlueEraGameDataCatalog.cs`, `Infrastructure/GameDataCatalog/Blue/BlueBattleDataLoader.cs`, `Infrastructure/GameDataCatalog/Blue/BlueRequiredDataFiles.cs`
+
+**`Infrastructure/GameDataCatalog/Yellow/`:**
+- Purpose: Put Yellow catalog orchestration, Yellow path resolution, and Yellow AC15 loader wrappers here.
+- Contains: `YellowEraGameDataCatalog`, Yellow loaders, Yellow required-file checks, Yellow path helpers.
+- Key files: `Infrastructure/GameDataCatalog/Yellow/YellowEraGameDataCatalog.cs`, `Infrastructure/GameDataCatalog/Yellow/YellowRequiredDataFiles.cs`, `Infrastructure/GameDataCatalog/Yellow/YellowGameDataPaths.cs`
 
 **`Adapters.GameProtocol.Shared/`:**
-- Purpose: Put game-protocol code that is genuinely shared across game adapters.
-- Contains: `Adapters.GameProtocol.Shared/Controllers/`, `Adapters.GameProtocol.Shared/Compression/`, `Adapters.GameProtocol.Shared/Wire/`
-- Key files: `Adapters.GameProtocol.Shared/Controllers/BaseProtocolController.cs`, `Adapters.GameProtocol.Shared/Controllers/StartupAuthController.cs`, `Adapters.GameProtocol.Shared/Compression/GZipBytesUtil.cs`
-
-**`Adapters.GameProtocol.WwR08/`:**
-- Purpose: Put Nijiiro 39.06 WW wire types, controllers, and mappers here.
-- Contains: `Adapters.GameProtocol.WwR08/Controllers/`, `Adapters.GameProtocol.WwR08/Mappers/`, `Adapters.GameProtocol.WwR08/Wire/`
-- Key files: `Adapters.GameProtocol.WwR08/Controllers/BaidController.cs`, `Adapters.GameProtocol.WwR08/Mappers/BaidResponseMapper.cs`, `Adapters.GameProtocol.WwR08/Wire/Game.cs`
-
-**`Adapters.GameProtocol.CnR00/`:**
-- Purpose: Put Nijiiro CHN wire types, controllers, and mappers here.
-- Contains: `Adapters.GameProtocol.CnR00/Controllers/`, `Adapters.GameProtocol.CnR00/Mappers/`, `Adapters.GameProtocol.CnR00/Wire/`
-- Key files: `Adapters.GameProtocol.CnR00/Controllers/BaidController.cs`, `Adapters.GameProtocol.CnR00/Mappers/BaidResponseMapper.cs`, `Adapters.GameProtocol.CnR00/Wire/Game.cs`
+- Purpose: Put protocol code genuinely shared across game adapters.
+- Contains: `/v01r00/chassis/*` controllers, protocol controller base class, compression helpers, shared startup wire models.
+- Key files: `Adapters.GameProtocol.Shared/Controllers/StartupAuthController.cs`, `Adapters.GameProtocol.Shared/Controllers/VerupAuthController.cs`, `Adapters.GameProtocol.Shared/Controllers/BaseProtocolController.cs`
 
 **`Adapters.GameProtocol.Green/`:**
-- Purpose: Put Green AC15 wire types, controllers, mappers, and Green-specific protocol decoding here.
-- Contains: `Adapters.GameProtocol.Green/Controllers/`, `Adapters.GameProtocol.Green/Mappers/`, `Adapters.GameProtocol.Green/Wire/`
-- Key files: `Adapters.GameProtocol.Green/Controllers/BaidController.cs`, `Adapters.GameProtocol.Green/Controllers/PlayResultController.cs`, `Adapters.GameProtocol.Green/GreenPlayResultPayloadDecoder.cs`
+- Purpose: Put Green AC15 transport code here.
+- Contains: Green controllers, Green generated `Wire/Game.cs`, Green mapper classes, Green compressed playresult decoder.
+- Key files: `Adapters.GameProtocol.Green/Controllers/PlayResultController.cs`, `Adapters.GameProtocol.Green/GreenPlayResultPayloadDecoder.cs`, `Adapters.GameProtocol.Green/Mappers/PlayResultMappers.cs`
 
 **`Adapters.GameProtocol.Blue/`:**
-- Purpose: Put Blue AC15 wire types, controllers, and mappers here.
-- Contains: `Adapters.GameProtocol.Blue/Controllers/`, `Adapters.GameProtocol.Blue/Mappers/`, `Adapters.GameProtocol.Blue/Wire/`
-- Key files: `Adapters.GameProtocol.Blue/Controllers/BaidController.cs`, `Adapters.GameProtocol.Blue/Controllers/PlayResultController.cs`, `Adapters.GameProtocol.Blue/Wire/Game.cs`
+- Purpose: Put Blue AC15 transport code here.
+- Contains: Blue controllers, Blue generated `Wire/Game.cs`, Blue mapper classes, Blue battle/Banacoin/Tokkun route surface.
+- Key files: `Adapters.GameProtocol.Blue/Controllers/PlayResultController.cs`, `Adapters.GameProtocol.Blue/Controllers/BattleUserDataController.cs`, `Adapters.GameProtocol.Blue/Mappers/BattleUserDataMappers.cs`
 
-**`Adapters.AllnetMucha/`:**
-- Purpose: Put AllNet/Mucha/Garmc lifecycle endpoints and middleware here.
-- Contains: `Adapters.AllnetMucha/Controllers/AmAuth/`, `Adapters.AllnetMucha/Controllers/AmUpdater/`, `Adapters.AllnetMucha/Controllers/Garmc/`, `Adapters.AllnetMucha/Controllers/MuchaActivation/`, `Adapters.AllnetMucha/Middleware/`, `Adapters.AllnetMucha/Wire/`
-- Key files: `Adapters.AllnetMucha/DependencyInjection.cs`, `Adapters.AllnetMucha/Middleware/AllNetRequestMiddleware.cs`, `Adapters.AllnetMucha/Controllers/AmAuth/PowerOnController.cs`
+**`Adapters.GameProtocol.Yellow/`:**
+- Purpose: Put Yellow AC15 transport code here.
+- Contains: Yellow controllers, Yellow generated `Wire/Game.cs`, Yellow mapper classes, Yellow stateless Banacoin-adjacent route surface.
+- Key files: `Adapters.GameProtocol.Yellow/Controllers/PlayResultController.cs`, `Adapters.GameProtocol.Yellow/Controllers/UserDataController.cs`, `Adapters.GameProtocol.Yellow/Mappers/PlayResultMappers.cs`
+
+**`Adapters.AdminApi/`:**
+- Purpose: Put WebUI/admin HTTP endpoints and admin-specific mapping here.
+- Contains: Controllers, authorization helpers, Mapperly admin mapping, `EraRoute`.
+- Key files: `Adapters.AdminApi/Controllers/EraRoute.cs`, `Adapters.AdminApi/Controllers/UserSettingsController.cs`, `Adapters.AdminApi/Controllers/GameDataController.cs`
+
+**`Contracts.AdminApi/`:**
+- Purpose: Put DTOs shared by AdminApi and WebUI.
+- Contains: `Requests/`, `Responses/`, `ViewModels/`, `ServerData/`, `Converters/`, `Authorization/`.
+- Key files: `Contracts.AdminApi/Contracts.AdminApi.csproj`, `Contracts.AdminApi/ViewModels/UserSetting.cs`, `Contracts.AdminApi/Authorization/AuthPolicies.cs`
 
 **`Host/`:**
-- Purpose: Put the runnable ASP.NET Core process, runtime configuration, certificates, static data, and publish content rules here.
-- Contains: `Host/Program.cs`, `Host/Configurations/`, `Host/Certificates/`, `Host/Logging/`, `Host/wwwroot/`, `Host/Properties/`
-- Key files: `Host/Host.csproj`, `Host/Program.cs`, `Host/Configurations/ServerSettings.json`, `Host/Configurations/AuthSettings.json`, `Host/wwwroot/data/`
+- Purpose: Put the runnable ASP.NET Core process, runtime configuration, certificates, static data, and publish rules here.
+- Contains: `Host/Program.cs`, `Host/Configurations/`, `Host/wwwroot/`, `Host/Certificates/`, `Host/Logging/`.
+- Key files: `Host/Host.csproj`, `Host/Program.cs`, `Host/Configurations/ServerSettings.json`, `Host/wwwroot/data/`
 
 **`TaikoWebUI/`:**
-- Purpose: Put Blazor WASM pages, components, services, localization, WebUI settings, utilities, and static assets here.
-- Contains: `TaikoWebUI/Pages/`, `TaikoWebUI/Pages/Dialogs/`, `TaikoWebUI/Components/`, `TaikoWebUI/Shared/`, `TaikoWebUI/Services/`, `TaikoWebUI/Authorization/`, `TaikoWebUI/Utilities/`, `TaikoWebUI/Localization/`, `TaikoWebUI/wwwroot/`
-- Key files: `TaikoWebUI/Program.cs`, `TaikoWebUI/App.razor`, `TaikoWebUI/Services/GameDataService.cs`, `TaikoWebUI/Utilities/WebUiEra.cs`
+- Purpose: Put Blazor WebAssembly pages, components, services, localization, utilities, and static assets here.
+- Contains: `Pages/`, `Components/`, `Shared/`, `Services/`, `Authorization/`, `Utilities/`, `Localization/`, `wwwroot/`.
+- Key files: `TaikoWebUI/Program.cs`, `TaikoWebUI/Utilities/WebUiEra.cs`, `TaikoWebUI/Services/GameDataService.cs`
 
 **`Tests/`:**
-- Purpose: Put xUnit tests here, grouped by era or subsystem.
-- Contains: `Tests/Green/`, `Tests/Blue/`, `Tests/WebUi/`, `Tests/AllnetMucha/`, `Tests/Ac15/`
-- Key files: `Tests/Tests.csproj`, `Tests/Green/GreenHandlerFixture.cs`, `Tests/Blue/BlueHandlerFixture.cs`, `Tests/WebUi/GameDataServiceTests.cs`
+- Purpose: Put xUnit tests here, grouped by shared AC15 behavior, era, or subsystem.
+- Contains: `Tests/Ac15/`, `Tests/Green/`, `Tests/Blue/`, `Tests/Yellow/`, `Tests/WebUi/`, `Tests/AllnetMucha/`, `Tests/Architecture/`.
+- Key files: `Tests/Ac15/Ac15NormalPlayWriterTests.cs`, `Tests/Ac15/Ac15DaniCapabilityTests.cs`, `Tests/Blue/BlueHandlerFixture.cs`, `Tests/Yellow/YellowHandlerFixture.cs`
 
-**`GreenCatalogExtractor/`:**
-- Purpose: Put the Green catalog extraction CLI here.
-- Contains: `GreenCatalogExtractor/Program.cs`, `GreenCatalogExtractor/GreenCatalogExtractor.csproj`
-- Key files: `GreenCatalogExtractor/Program.cs`
+**`proto/`:**
+- Purpose: Put protocol schema inputs used to generate adapter `Wire/` models.
+- Contains: Protobuf schema evidence and generation inputs.
+- Key files: `proto/`, `Adapters.GameProtocol.Green/Wire/Game.cs`, `Adapters.GameProtocol.Blue/Wire/Game.cs`, `Adapters.GameProtocol.Yellow/Wire/Game.cs`
 
-**`LocalSaveModScoreMigrator/`:**
-- Purpose: Put the local-save-mod score import CLI here.
-- Contains: `LocalSaveModScoreMigrator/Program.cs`, `LocalSaveModScoreMigrator/LocalSaveModScoreMigrator.csproj`
-- Key files: `LocalSaveModScoreMigrator/Program.cs`
-
-**`docs/`:**
-- Purpose: Put agent setup docs, evidence, specs, and plans here.
-- Contains: `docs/agents/`, `docs/green-client-evidence/`, `docs/superpowers/specs/`, `docs/superpowers/plans/`
-- Key files: `docs/agents/domain.md`, `docs/superpowers/plans/`, `docs/superpowers/specs/`
-
-**`.tools/`, `.worktrees/`, `artifacts/`, `runs/`:**
-- Purpose: Keep local analysis output, local worktrees, smoke/debug artifacts, and run output out of production code.
-- Contains: Machine-local reverse-engineering/tool state and generated artifacts.
-- Key files: `.gitignore` ignores `.tools/`, `.worktrees/`, and `artifacts/`; do not add implementation code here.
+**`.tools/`:**
+- Purpose: Keep local reverse-engineering and analysis material outside runtime code.
+- Contains: Local Blue/Yellow evidence and one-off analysis output.
+- Key files: `.tools/blue/`, `.tools/yellow/`
 
 ## Key File Locations
 
 **Entry Points:**
 - `Host/Program.cs`: ASP.NET Core composition root and runtime entry point.
-- `TaikoWebUI/Program.cs`: Blazor WASM client startup.
-- `GreenCatalogExtractor/Program.cs`: Green extraction CLI entry point.
-- `LocalSaveModScoreMigrator/Program.cs`: score migration CLI entry point.
+- `TaikoWebUI/Program.cs`: Blazor WebAssembly startup.
+- `GreenCatalogExtractor/Program.cs`: Green catalog extraction CLI.
+- `LocalSaveModScoreMigrator/Program.cs`: local-save-mod import CLI.
 
 **Configuration:**
-- `Directory.Build.props`: shared target framework, nullable, implicit using, and language version defaults.
+- `Directory.Build.props`: shared target framework, nullable, implicit using, and language-version defaults.
 - `Directory.Packages.props`: central NuGet package versions.
-- `global.json`: .NET SDK roll-forward/pin configuration.
-- `Host/Configurations/Kestrel.json`: host binding configuration; existence only, do not quote local values into generated docs.
-- `Host/Configurations/Database.json`: database file configuration; existence only, do not quote local values into generated docs.
-- `Host/Configurations/ServerSettings.json`: runtime feature/era settings; existence only, do not quote local values into generated docs.
-- `Host/Configurations/DataSettings.json`: data filename settings; existence only, do not quote local values into generated docs.
+- `global.json`: .NET SDK pin/roll-forward configuration.
+- `Host/Configurations/Kestrel.json`: host binding configuration; note existence only.
+- `Host/Configurations/Database.json`: database file configuration; note existence only.
+- `Host/Configurations/ServerSettings.json`: era enablement and runtime settings; note existence only.
+- `Host/Configurations/DataSettings.json`: runtime data filename settings; note existence only.
 - `Host/Configurations/AuthSettings.json`: auth/JWT settings; secret-bearing, note existence only.
-- `Host/Configurations/Logging.json`: Serilog settings; existence only.
-- `TaikoWebUI/wwwroot/appsettings.json`: WebUI client settings fetched by `TaikoWebUI/Program.cs`.
+- `Host/Configurations/Logging.json`: Serilog settings; note existence only.
+- `TaikoWebUI/wwwroot/appsettings.json`: WebUI client settings.
 
-**Core Logic:**
-- `Application/Handlers/`: game protocol use cases.
-- `Application/Abstractions/`: application ports and catalog interfaces.
-- `Application/Dtos/`: `Common*` DTOs shared between adapters and handlers.
-- `Application/Common/`: era helpers, byte codecs, catalog extensions, save-data defaults, and protocol utilities.
-- `Infrastructure/Persistence/TaikoDbContext.cs`: EF Core context implementation.
-- `Infrastructure/Persistence/Migrations/`: EF Core migrations.
-- `Infrastructure/GameDataCatalog/`: filesystem catalog loaders and era catalog implementations.
-- `Adapters.GameProtocol.*/Controllers/`: game client endpoint controllers.
-- `Adapters.GameProtocol.*/Mappers/`: wire-to-common and common-to-wire mapping.
-- `Adapters.AdminApi/Controllers/`: WebUI/admin REST endpoints.
-- `TaikoWebUI/Pages/`: page route components and code-behind files.
-- `TaikoWebUI/Services/`: WebUI API/auth/data services.
+**AC15 Shared Core:**
+- `Application/Ac15/Ac15EraProfiles.cs`: AC15 feature, limit, and wire-placement profiles for Green, Blue, Yellow.
+- `Application/Ac15/Ac15NormalPlayWriter.cs`: generic normal play, best, favorite, recent write behavior over era rows.
+- `Application/Ac15/Ac15DaniWriter.cs`: generic Dani score/stage persistence and save-row update calculation.
+- `Application/Ac15/Ac15ItemShopPurchase.cs`: generic AC15 item shop purchase flow.
+- `Application/Ac15/Ac15CatalogSnapshotFactory.cs`: projections from typed Green/Blue/Yellow catalogs to shared `Ac15CatalogSnapshot`.
+- `Application/Ac15/Ac15UserDataService.cs`: common AC15 userdata response assembly.
+- `Application/Ac15/Ac15NormalPlayMapper.cs`, `Application/Ac15/Ac15DaniMapper.cs`, `Application/Ac15/Ac15ItemShopMapper.cs`: Mapperly projections to era-owned entities.
+
+**Era Behavior:**
+- `Application/Handlers/UpdatePlayResultCommand.Green.cs`: Green normal play, Dani, ghost side effects, Green stage policy.
+- `Application/Handlers/UpdatePlayResultCommand.Blue.cs`: Blue normal play, Tokkun gate, battle gate, Dani, shop side effects.
+- `Application/Handlers/UpdatePlayResultCommand.Yellow.cs`: Yellow normal play, Tokkun-shaped gate, WaiWai fact logging, Dani.
+- `Application/Handlers/UpdatePlayResultCommand.BlueBattle.cs`: Blue battle playresult behavior.
+- `Application/Handlers/UpdatePlayResultCommand.BlueTokkun.cs`: Blue Tokkun persistence behavior.
+- `Application/Handlers/UpdatePlayResultCommand.YellowTokkun.cs`: Yellow Tokkun persistence behavior.
+
+**Persistence:**
+- `Application/Abstractions/ITaikoDbContext.Shared.cs`: shared identity tables.
+- `Application/Abstractions/ITaikoDbContext.Green.cs`: Green-owned gameplay tables.
+- `Application/Abstractions/ITaikoDbContext.Blue.cs`: Blue-owned gameplay, battle, and Tokkun tables.
+- `Application/Abstractions/ITaikoDbContext.Yellow.cs`: Yellow-owned gameplay and Tokkun tables.
+- `Infrastructure/Persistence/TaikoDbContext.Green.cs`: Green EF table mappings.
+- `Infrastructure/Persistence/TaikoDbContext.Blue.cs`: Blue EF table mappings.
+- `Infrastructure/Persistence/TaikoDbContext.Yellow.cs`: Yellow EF table mappings.
+- `Infrastructure/Persistence/Migrations/`: EF Core migration history.
+
+**Protocol Adapters:**
+- `Adapters.GameProtocol.Shared/Controllers/StartupAuthController.cs`: shared `/v01r00/chassis/startupauth.php` route.
+- `Adapters.GameProtocol.Green/Controllers/`: Green `/v11r01/chassis/*` routes.
+- `Adapters.GameProtocol.Blue/Controllers/`: Blue `/v10r03/chassis/*` routes.
+- `Adapters.GameProtocol.Yellow/Controllers/`: Yellow `/v09r02/chassis/*` routes.
+- `Adapters.GameProtocol.Green/Mappers/`, `Adapters.GameProtocol.Blue/Mappers/`, `Adapters.GameProtocol.Yellow/Mappers/`: adapter-local wire/Common DTO mapping.
+- `Adapters.GameProtocol.Green/Wire/Game.cs`, `Adapters.GameProtocol.Blue/Wire/Game.cs`, `Adapters.GameProtocol.Yellow/Wire/Game.cs`: generated protocol models.
+
+**Catalogs and Data:**
+- `Application/Abstractions/IGreenCatalog.cs`, `Application/Abstractions/IBlueCatalog.cs`, `Application/Abstractions/IYellowCatalog.cs`: typed era catalog contracts.
+- `Infrastructure/GameDataCatalog/FileGameDataCatalog.cs`: enabled-era catalog multiplexer.
+- `Infrastructure/GameDataCatalog/Ac15/`: shared AC15 parsers and loaders.
+- `Infrastructure/GameDataCatalog/Green/GreenEraGameDataCatalog.cs`: Green catalog orchestration.
+- `Infrastructure/GameDataCatalog/Blue/BlueEraGameDataCatalog.cs`: Blue catalog orchestration.
+- `Infrastructure/GameDataCatalog/Yellow/YellowEraGameDataCatalog.cs`: Yellow catalog orchestration.
+- `Host/wwwroot/data/green/`, `Host/wwwroot/data/blue/`, `Host/wwwroot/data/yellow/`: era runtime data roots.
+
+**Admin and WebUI:**
+- `Adapters.AdminApi/Controllers/EraRoute.cs`: `/api/{era}/...` route validation.
+- `Adapters.AdminApi/Controllers/UserSettingsController.cs`: user settings legacy and era route dispatcher.
+- `Adapters.AdminApi/Controllers/GameDataController.cs`: era catalog readback for WebUI.
+- `TaikoWebUI/Utilities/WebUiEra.cs`: WebUI era normalization and URL construction.
+- `Contracts.AdminApi/ViewModels/`, `Contracts.AdminApi/Responses/`, `Contracts.AdminApi/Requests/`: shared AdminApi/WebUI DTOs.
 
 **Testing:**
-- `Tests/Tests.csproj`: test project references all runtime layers.
-- `Tests/Green/`: Green protocol-byte, catalog/parser, mapper-classification, handler, and persistence-boundary tests.
-- `Tests/Blue/`: Blue catalog/parser, mapper-classification, handler, and persistence-boundary tests.
-- `Tests/WebUi/`: WebUI services and page behavior tests.
-- `Tests/AllnetMucha/`: AllNet/Mucha controller tests.
-- `Tests/Ac15/`: shared AC15 catalog loader tests.
+- `Tests/Ac15/`: shared AC15 behavior tests.
+- `Tests/Green/`: Green adapter, handler, catalog, ghost, and protocol tests.
+- `Tests/Blue/`: Blue adapter, handler, battle, Tokkun, catalog, and protocol tests.
+- `Tests/Yellow/`: Yellow adapter, handler, Tokkun, catalog, AdminApi, and protocol tests.
+- `Tests/WebUi/`: WebUI service/page behavior tests.
 
 ## Naming Conventions
 
 **Files:**
-- Use one public type per `.cs` file where practical: `Application/Handlers/BaidQuery.cs`, `Domain/Entities/Card.cs`, `Adapters.AdminApi/Controllers/UsersController.cs`.
-- Use era suffixes for era-specific types and partials: `Application/Handlers/BaidQuery.Green.cs`, `Application/Handlers/BaidQuery.Blue.cs`, `Application/Abstractions/ITaikoDbContext.Nijiiro.cs`, `Infrastructure/Persistence/TaikoDbContext.Green.cs`.
-- Use `Common*` for adapter-neutral application DTOs: `Application/Dtos/CommonBaidResponse.cs`, `Application/Dtos/CommonPlayResultData.Green.cs`.
-- Use `*Controller.cs` under adapter `Controllers/`: `Adapters.GameProtocol.Green/Controllers/BaidController.cs`, `Adapters.AdminApi/Controllers/GameDataController.cs`.
-- Use `*Mapper.cs` under adapter `Mappers/` or `Mapping/`: `Adapters.GameProtocol.WwR08/Mappers/BaidResponseMapper.cs`, `Adapters.AdminApi/Mapping/AuthConfigMapper.cs`.
-- Use `*Loader.cs` for filesystem catalog loaders: `Infrastructure/GameDataCatalog/Green/GreenMusicInfoLoader.cs`, `Infrastructure/GameDataCatalog/Blue/BlueMusicInfoLoader.cs`.
+- Use one public type per `.cs` file where practical: `Application/Ac15/Ac15DaniWriter.cs`, `Domain/Entities/UserSaveDataYellow.cs`, `Adapters.GameProtocol.Yellow/Controllers/UserDataController.cs`.
+- Use unsuffixed dispatcher files plus era partials: `Application/Handlers/UserDataQuery.cs`, `Application/Handlers/UserDataQuery.Green.cs`, `Application/Handlers/UserDataQuery.Blue.cs`, `Application/Handlers/UserDataQuery.Yellow.cs`.
+- Use `Ac15*` for shared AC15 services, records, helpers, profiles, and projections: `Application/Ac15/Ac15NormalPlayWriter.cs`.
+- Use `IAc15*` for narrow Domain row-shape interfaces: `Domain/Entities/IAc15SongBestDatum.cs`.
+- Use `Common*` for application DTOs crossing adapter/handler boundaries: `Application/Dtos/CommonPlayResultData.cs`.
+- Use `*Mappers.cs` or `*Mapper.cs` for Mapperly/manual projections: `Adapters.GameProtocol.Yellow/Mappers/UserDataMappers.cs`, `Application/Ac15/Ac15DaniMapper.cs`.
+- Use `*Loader.cs` under `Infrastructure/GameDataCatalog/` for filesystem catalog loaders.
 - Use timestamped EF migration names under `Infrastructure/Persistence/Migrations/`.
 
 **Directories:**
-- Use project-per-layer directories at the repo root: `Domain/`, `Application/`, `Infrastructure/`, `Host/`, `TaikoWebUI/`, `Adapters.*`.
-- Use adapter directory names of the form `Adapters.<Surface>` or `Adapters.GameProtocol.<Version>`.
+- Use project-per-layer directories at repo root: `Domain/`, `Application/`, `Infrastructure/`, `Host/`, `TaikoWebUI/`, `Adapters.*`.
+- Use adapter directory names of the form `Adapters.GameProtocol.<EraOrVersion>/`.
 - Use `Controllers/`, `Mappers/`, and `Wire/` inside protocol adapters.
-- Use `Requests/`, `Responses/`, `ViewModels/`, and `ServerData/` inside `Contracts.AdminApi/`.
-- Use era subdirectories for catalog implementation code: `Infrastructure/GameDataCatalog/Nijiiro/`, `Infrastructure/GameDataCatalog/Green/`, `Infrastructure/GameDataCatalog/Blue/`, `Infrastructure/GameDataCatalog/Ac15/`.
-- Use test subdirectories by era/subsystem: `Tests/Green/`, `Tests/Blue/`, `Tests/WebUi/`.
+- Use era subdirectories for catalog orchestration: `Infrastructure/GameDataCatalog/Green/`, `Infrastructure/GameDataCatalog/Blue/`, `Infrastructure/GameDataCatalog/Yellow/`.
+- Use `Infrastructure/GameDataCatalog/Ac15/` for shared AC15 loader code, not for era orchestration.
+- Use test subdirectories by behavior or era: `Tests/Ac15/`, `Tests/Green/`, `Tests/Blue/`, `Tests/Yellow/`.
 
 ## Where to Add New Code
 
-**New Game Protocol Endpoint:**
-- Controller: `Adapters.GameProtocol.<EraOrVersion>/Controllers/`
-- Wire request/response: `Adapters.GameProtocol.<EraOrVersion>/Wire/`
-- Mapper: `Adapters.GameProtocol.<EraOrVersion>/Mappers/`
+**New AC15 Shared Behavior:**
+- Primary code: `Application/Ac15/`
+- Inputs/contracts: `Application/Dtos/Common*.cs`, `Application/Catalog/Ac15/`, `Domain/Entities/IAc15*.cs`
+- Handler integration: `Application/Handlers/<UseCase>.Green.cs`, `Application/Handlers/<UseCase>.Blue.cs`, `Application/Handlers/<UseCase>.Yellow.cs`
+- Tests: `Tests/Ac15/`
+
+**New Era-Specific AC15 Behavior:**
+- Dispatch declaration: `Application/Handlers/<UseCase>.cs`
+- Era implementation: `Application/Handlers/<UseCase>.Green.cs`, `Application/Handlers/<UseCase>.Blue.cs`, or `Application/Handlers/<UseCase>.Yellow.cs`
+- Era-only DTO fields: `Application/Dtos/<CommonDto>.<Era>.cs` when the application must preserve era-only facts.
+- Tests: `Tests/Green/`, `Tests/Blue/`, or `Tests/Yellow/`
+
+**New AC15 Protocol Endpoint:**
+- Controller: `Adapters.GameProtocol.Green/Controllers/`, `Adapters.GameProtocol.Blue/Controllers/`, or `Adapters.GameProtocol.Yellow/Controllers/`
+- Wire request/response: generated `Adapters.GameProtocol.<Era>/Wire/Game.cs` from `proto/`
+- Mapper: `Adapters.GameProtocol.<Era>/Mappers/`
 - Application request/handler: `Application/Handlers/`
-- Common DTO: `Application/Dtos/`
-- Tests: matching folder under `Tests/Green/`, `Tests/Blue/`, or Nijiiro-focused tests in `Tests/`
+- Common DTO: `Application/Dtos/` when shared handler logic needs a transport-neutral shape.
 
-**New Era-Specific Handler Behavior:**
-- Central dispatch: `Application/Handlers/<UseCase>.cs`
-- Era implementation: `Application/Handlers/<UseCase>.Nijiiro.cs`, `Application/Handlers/<UseCase>.Green.cs`, or `Application/Handlers/<UseCase>.Blue.cs`
-- Era-only DTO fields: `Application/Dtos/<CommonDto>.<Era>.cs`
-- Era persistence port: `Application/Abstractions/ITaikoDbContext.<Era>.cs`
-- EF implementation: `Infrastructure/Persistence/TaikoDbContext.<Era>.cs`
-
-**New Admin API Endpoint:**
-- Controller: `Adapters.AdminApi/Controllers/`
-- Request/response/view model DTOs: `Contracts.AdminApi/Requests/`, `Contracts.AdminApi/Responses/`, `Contracts.AdminApi/ViewModels/`
-- WebUI caller: `TaikoWebUI/Services/` or page code-behind in `TaikoWebUI/Pages/`
-- Tests: `Tests/WebUi/` for client behavior or era/subsystem folders for server behavior
-
-**New WebUI Page or Component:**
-- Page markup/code-behind: `TaikoWebUI/Pages/`
-- Dialogs: `TaikoWebUI/Pages/Dialogs/`
-- Reusable visual components: `TaikoWebUI/Components/` or `TaikoWebUI/Shared/`
-- Client service/API cache: `TaikoWebUI/Services/`
-- Era URL logic: `TaikoWebUI/Utilities/WebUiEra.cs`
-
-**New Domain Entity or Persisted Field:**
-- Entity: `Domain/Entities/`
-- Enum: `Domain/Enums/`
-- DbContext port: `Application/Abstractions/ITaikoDbContext*.cs`
-- EF model configuration: `Infrastructure/Persistence/TaikoDbContext*.cs`
+**New AC15 Persistence State:**
+- Entity: `Domain/Entities/<Era><State>.cs`
+- Row-shape interface: `Domain/Entities/IAc15*.cs` only when a shared algorithm needs the shape.
+- DbContext port: `Application/Abstractions/ITaikoDbContext.<Era>.cs`
+- EF mapping: `Infrastructure/Persistence/TaikoDbContext.<Era>.cs`
 - Migration: `Infrastructure/Persistence/Migrations/`
+- Tests: era folder plus `Tests/Ac15/` only for shared behavior.
 
-**New Filesystem Catalog Data:**
-- Interface/contract: `Application/Abstractions/` and `Application/Catalog/`
-- Server-only data shape: `Application/ServerData/`
-- WebUI-consumed data shape: `Contracts.AdminApi/ServerData/`
-- Loader and path code: `Infrastructure/GameDataCatalog/<Era>/`
-- Static data files: `Host/wwwroot/data/<era>/` or `Host/wwwroot/data/shared/`
+**New AC15 Mapperly Projection:**
+- Shared canonical-to-entity projection: `Application/Ac15/*Mapper.cs`
+- Adapter wire-to-common projection: `Adapters.GameProtocol.<Era>/Mappers/*Mappers.cs`
+- Mapper defaults: `Adapters.GameProtocol.<Era>/MapperlyDefaults.cs` for adapter-wide Mapperly policy.
+- Do not put wire DTO persistence mapping into `Infrastructure/Persistence/`.
 
-**New Port/External Implementation:**
-- Port interface: `Application/Abstractions/`
-- Implementation: `Infrastructure/`
-- Registration: `Infrastructure/DependencyInjection.cs`
-- Settings type: `Application/Settings/` or `Infrastructure/Settings/`
-- Runtime config file/copy rule: `Host/Configurations/` and `Host/Host.csproj`
+**New AC15 Catalog Data or Parser:**
+- Shared parser/data shape: `Infrastructure/GameDataCatalog/Ac15/` and `Application/Catalog/Ac15/`
+- Era wrapper/contract: `Infrastructure/GameDataCatalog/<Era>/`, `Application/Catalog/<Era>/`, `Application/Abstractions/I<Era>Catalog.cs`
+- Runtime data files: `Host/wwwroot/data/<era>/`
+- Required-file checks: `Infrastructure/GameDataCatalog/<Era>/<Era>RequiredDataFiles.cs`
+
+**New Admin API Surface:**
+- Controller: `Adapters.AdminApi/Controllers/`
+- Era route parsing: `Adapters.AdminApi/Controllers/EraRoute.cs`
+- DTOs: `Contracts.AdminApi/Requests/`, `Contracts.AdminApi/Responses/`, `Contracts.AdminApi/ViewModels/`
+- WebUI caller: `TaikoWebUI/Services/` or page code-behind under `TaikoWebUI/Pages/`
+- Tests: `Tests/WebUi/` for client behavior and era folders for server data behavior.
+
+**New WebUI Era-Aware Page or Component:**
+- Page: `TaikoWebUI/Pages/`
+- Reusable component: `TaikoWebUI/Components/` or `TaikoWebUI/Shared/`
+- URL helper usage: `TaikoWebUI/Utilities/WebUiEra.cs`
+- API service: `TaikoWebUI/Services/`
+- Shared DTOs: `Contracts.AdminApi/`
 
 **New Shared Protocol Helper:**
-- Shared across multiple game adapters: `Adapters.GameProtocol.Shared/`
-- Shared across handlers/application logic: `Application/Common/`
-- Era-specific protocol byte helper: `Application/Common/GreenProtocolBytes.cs` or `Application/Common/BlueProtocolBytes.cs`
+- Cross-adapter HTTP/protobuf helper: `Adapters.GameProtocol.Shared/`
+- Cross-handler/application helper: `Application/Common/` or `Application/Ac15/`
+- Era-specific protocol byte helper: keep in era-aware code such as `Application/Common/GreenProtocolBytes.cs`, `Application/Common/BlueProtocolBytes.cs`, or an explicit AC15 helper when values match.
 
 **New CLI Utility:**
 - Green catalog extraction additions: `GreenCatalogExtractor/`
 - Score import additions: `LocalSaveModScoreMigrator/`
-- General small checked-in scripts: `tools/`
-- Local one-off reverse-engineering artifacts: `.tools/` only when intentionally untracked
+- General checked-in scripts: `tools/`
+- Local one-off reverse-engineering artifacts: `.tools/`
 
 ## Special Directories
 
 **`Host/Configurations/`:**
 - Purpose: Runtime JSON configuration loaded explicitly by `Host/Program.cs`.
 - Generated: No.
-- Committed: Yes, but `AuthSettings.json` is secret-bearing and should not be quoted in documentation.
+- Committed: Yes. Treat `Host/Configurations/AuthSettings.json` as secret-bearing and do not quote contents.
+
+**`Host/wwwroot/data/`:**
+- Purpose: Runtime game data, committed sidecars, shared data, and SQLite database location.
+- Generated: Mixed.
+- Committed: Mixed. Era folders include `Host/wwwroot/data/green/`, `Host/wwwroot/data/blue/`, `Host/wwwroot/data/yellow/`, `Host/wwwroot/data/nijiiro/`, and `Host/wwwroot/data/shared/`.
 
 **`Host/Certificates/`:**
 - Purpose: Local certificate files used by configured Kestrel endpoints.
 - Generated: No.
-- Committed: Present in the tree; treat `.pfx` contents as secret-bearing and do not quote.
-
-**`Host/wwwroot/data/`:**
-- Purpose: Runtime game data, shared data, and SQLite DB location.
-- Generated: Mixed; source-controlled JSON exists alongside operator-provided and generated files.
-- Committed: Mixed. `.gitignore` excludes `Host/wwwroot/data/green/data` and generated Green customization JSON files.
+- Committed: Present in tree. Treat certificate/private-key material as secret-bearing.
 
 **`Infrastructure/Persistence/Migrations/`:**
 - Purpose: EF Core migration history for `TaikoDbContext`.
-- Generated: Yes, by EF tooling.
+- Generated: Yes by EF tooling.
 - Committed: Yes.
+
+**`Adapters.GameProtocol.*/Wire/`:**
+- Purpose: Generated protocol DTO models for each game adapter.
+- Generated: Yes from `proto/`.
+- Committed: Yes.
+
+**`proto/`:**
+- Purpose: Protocol schema inputs and local wire-generation source material.
+- Generated: Mixed; schema inputs are source material, generated C# belongs in adapter `Wire/` folders.
+- Committed: Yes when schema evidence is part of the repo.
 
 **`TaikoWebUI/wwwroot/`:**
 - Purpose: Blazor client static assets, appsettings, CSS, images, JavaScript, and client data assets.
 - Generated: Mixed; build output is not committed, source static assets are committed.
 - Committed: Yes for source assets.
 
+**`.planning/codebase/`:**
+- Purpose: Generated codebase maps consumed by GSD planning/execution commands.
+- Generated: Yes by codebase mapping.
+- Committed: Yes when map refreshes are part of project history.
+
 **`.tools/`:**
 - Purpose: Local reverse-engineering and analysis helper state.
 - Generated: Yes/local.
-- Committed: No, ignored by `.gitignore`.
+- Committed: No by default. Treat contents as evidence, not runtime code.
 
 **`.worktrees/`:**
 - Purpose: Local git worktrees for isolated feature work.
 - Generated: Yes/local.
-- Committed: No, ignored by `.gitignore`.
+- Committed: No.
 
-**`artifacts/`:**
-- Purpose: Local debug/smoke/review artifacts.
+**`artifacts/` and `runs/`:**
+- Purpose: Local debug, smoke, review, and run artifacts.
 - Generated: Yes/local.
-- Committed: No, ignored by `.gitignore`.
-
-**`proto/`:**
-- Purpose: Generated or local protobuf-related artifacts.
-- Generated: Yes/local.
-- Committed: No, ignored by `.gitignore`.
-
-**`docs/superpowers/`:**
-- Purpose: Planning and specification artifacts used by workflow agents.
-- Generated: Yes by planning workflows.
-- Committed: Yes when workflow artifacts are part of project history.
+- Committed: No by default.
 
 ---
 
-*Structure analysis: 2026-05-28*
+*Structure analysis: 2026-06-11*
