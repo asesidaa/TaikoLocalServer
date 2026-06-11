@@ -1,4 +1,3 @@
-using System.Globalization;
 using TaikoLocalServer.Application.Ac15;
 
 namespace TaikoLocalServer.Application.Handlers;
@@ -48,24 +47,14 @@ public partial class UpdatePlayResultCommandHandler
             cancellationToken);
         var currentDonmedal = shopSeasonState?.TotalGetDonmedal ?? saveData.TotalGetDonmedal;
 
-        if (!CanAddYellow(currentDonmedal, playResultData.GetDonmedal)
-            || !CanAddYellow(saveData.TotalGetKatsumedal, playResultData.GetKatsumedal))
+        if (HasInvalidAc15MedalTotals(currentDonmedal, saveData.TotalGetKatsumedal, playResultData))
         {
             logger.LogWarning("Rejecting invalid Yellow medal totals for baid {Baid}", request.Baid);
             return 1;
         }
 
-        var playTime = ParseYellowPlayDatetimeOrNow(playResultData.PlayDatetime);
-
-        if (shopSeasonState is null)
-        {
-            saveData.TotalGetDonmedal += playResultData.GetDonmedal;
-        }
-        else
-        {
-            shopSeasonState.TotalGetDonmedal += playResultData.GetDonmedal;
-            shopSeasonState.UpdatedAt = DateTime.UtcNow;
-        }
+        var playTime = ParseAc15PlayDatetimeOrNow(playResultData.PlayDatetime);
+        AddAc15Donmedals(shopSeasonState, delta => saveData.TotalGetDonmedal += delta, playResultData.GetDonmedal);
 
         saveData.TotalGetKatsumedal += playResultData.GetKatsumedal;
         saveData.ItemshopTutorialFlg = playResultData.ItemshopTutorialFlg ?? saveData.ItemshopTutorialFlg;
@@ -209,19 +198,6 @@ public partial class UpdatePlayResultCommandHandler
         saveData.TitleFlg = Ac15ProtocolBytes.SetBits(saveData.TitleFlg, playResultData.GetTitleNoes, limits.TitleFlagBytes);
     }
 
-    private static bool CanAddYellow(uint current, uint delta)
-        => delta <= uint.MaxValue - current;
-
     private static DateTime ParseYellowPlayDatetimeOrNow(string playDatetime)
-    {
-        var formats = new[] { Constants.DateTimeFormat, "yyyy-MM-dd HH:mm:ss" };
-        return DateTime.TryParseExact(
-            playDatetime,
-            formats,
-            CultureInfo.InvariantCulture,
-            DateTimeStyles.None,
-            out var parsed)
-            ? parsed
-            : DateTime.Now;
-    }
+        => ParseAc15PlayDatetimeOrNow(playDatetime);
 }

@@ -33,8 +33,7 @@ public partial class UpdatePlayResultCommandHandler
             : await context.GetOrCreateGreenShopSeasonStateAsync(saveData, activeShopSeason.SeasonId, cancellationToken);
 
         var currentDonmedal = shopSeasonState?.TotalGetDonmedal ?? saveData.TotalGetDonmedal;
-        if (!CanAdd(currentDonmedal, playResultData.GetDonmedal)
-            || !CanAdd(saveData.TotalGetKatsumedal, playResultData.GetKatsumedal)
+        if (HasInvalidAc15MedalTotals(currentDonmedal, saveData.TotalGetKatsumedal, playResultData)
             || playResultData.AryStageInfoes.Any(stage => !IsValidGreenStage(stage)))
         {
             logger.LogWarning("Rejecting invalid Green playresult payload for baid {Baid}", request.Baid);
@@ -45,15 +44,7 @@ public partial class UpdatePlayResultCommandHandler
             ? parsed
             : DateTime.Now;
 
-        if (shopSeasonState is null)
-        {
-            saveData.TotalGetDonmedal += playResultData.GetDonmedal;
-        }
-        else
-        {
-            shopSeasonState.TotalGetDonmedal += playResultData.GetDonmedal;
-            shopSeasonState.UpdatedAt = DateTime.UtcNow;
-        }
+        AddAc15Donmedals(shopSeasonState, delta => saveData.TotalGetDonmedal += delta, playResultData.GetDonmedal);
 
         saveData.TotalGetKatsumedal += playResultData.GetKatsumedal;
         saveData.ItemshopTutorialFlg = playResultData.ItemshopTutorialFlg ?? saveData.ItemshopTutorialFlg;
@@ -103,7 +94,10 @@ public partial class UpdatePlayResultCommandHandler
                 if (update.ApplyDanCostume)
                 {
                     saveData.Costume1 = update.DanCostumeId;
-                    saveData.CostumeFlg1 = SetBits(saveData.CostumeFlg1, [update.DanCostumeId], GreenProtocolBytes.CostumeFlagBytes);
+                    saveData.CostumeFlg1 = Ac15ProtocolBytes.SetBits(
+                        saveData.CostumeFlg1,
+                        [update.DanCostumeId],
+                        GreenProtocolBytes.CostumeFlagBytes);
                 }
             },
             logger,
@@ -125,9 +119,6 @@ public partial class UpdatePlayResultCommandHandler
             && stage.StageMode is 0 or 1 or 3 or 4;
     }
 
-    private static bool CanAdd(uint current, uint delta)
-        => delta <= uint.MaxValue - current;
-
     private static void ApplyCostume(UserSaveDataGreen saveData, CommonPlayResultData.CostumeData costume)
     {
         saveData.Costume1 = costume.Costume1;
@@ -135,22 +126,22 @@ public partial class UpdatePlayResultCommandHandler
         saveData.Costume3 = costume.Costume3;
         saveData.Costume4 = costume.Costume4;
         saveData.Costume5 = costume.Costume5;
-        saveData.CostumeFlg1 = SetBits(saveData.CostumeFlg1, [costume.Costume1], GreenProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg2 = SetBits(saveData.CostumeFlg2, [costume.Costume2], GreenProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg3 = SetBits(saveData.CostumeFlg3, [costume.Costume3], GreenProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg4 = SetBits(saveData.CostumeFlg4, [costume.Costume4], GreenProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg5 = SetBits(saveData.CostumeFlg5, [costume.Costume5], GreenProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg1 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg1, [costume.Costume1], GreenProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg2 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg2, [costume.Costume2], GreenProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg3 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg3, [costume.Costume3], GreenProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg4 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg4, [costume.Costume4], GreenProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg5 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg5, [costume.Costume5], GreenProtocolBytes.CostumeFlagBytes);
     }
 
     private static void ApplyUnlockBits(UserSaveDataGreen saveData, CommonPlayResultData playResultData)
     {
-        saveData.ToneFlg = SetBits(saveData.ToneFlg, playResultData.GetToneNoes, GreenProtocolBytes.ToneFlagBytes);
-        saveData.CostumeFlg1 = SetBits(saveData.CostumeFlg1, playResultData.GetCostumeNo1s, GreenProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg2 = SetBits(saveData.CostumeFlg2, playResultData.GetCostumeNo2s, GreenProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg3 = SetBits(saveData.CostumeFlg3, playResultData.GetCostumeNo3s, GreenProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg4 = SetBits(saveData.CostumeFlg4, playResultData.GetCostumeNo4s, GreenProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg5 = SetBits(saveData.CostumeFlg5, playResultData.GetCostumeNo5s, GreenProtocolBytes.CostumeFlagBytes);
-        saveData.TitleFlg = SetBits(saveData.TitleFlg, playResultData.GetTitleNoes, GreenProtocolBytes.TitleFlagBytes);
+        saveData.ToneFlg = Ac15ProtocolBytes.SetBits(saveData.ToneFlg, playResultData.GetToneNoes, GreenProtocolBytes.ToneFlagBytes);
+        saveData.CostumeFlg1 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg1, playResultData.GetCostumeNo1s, GreenProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg2 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg2, playResultData.GetCostumeNo2s, GreenProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg3 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg3, playResultData.GetCostumeNo3s, GreenProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg4 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg4, playResultData.GetCostumeNo4s, GreenProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg5 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg5, playResultData.GetCostumeNo5s, GreenProtocolBytes.CostumeFlagBytes);
+        saveData.TitleFlg = Ac15ProtocolBytes.SetBits(saveData.TitleFlg, playResultData.GetTitleNoes, GreenProtocolBytes.TitleFlagBytes);
     }
 
     private static void ApplyGhostPlayedSongBits(UserSaveDataGreen saveData, CommonPlayResultData playResultData)
@@ -159,7 +150,7 @@ public partial class UpdatePlayResultCommandHandler
             .Where(stage => GreenStageModeInterpreter.IsAiBattle(stage.StageMode))
             .Select(stage => stage.SongNo);
 
-        saveData.GhostPlayedSongFlag = SetBits(
+        saveData.GhostPlayedSongFlag = Ac15ProtocolBytes.SetBits(
             saveData.GhostPlayedSongFlag,
             aiBattleSongNos,
             GreenProtocolBytes.GhostPlayedSongBytes);
@@ -169,7 +160,7 @@ public partial class UpdatePlayResultCommandHandler
     {
         if (playResultData.GhostReleaseData is not null)
         {
-            saveData.GhostReleaseInfoFlag = SetBits(
+            saveData.GhostReleaseInfoFlag = Ac15ProtocolBytes.SetBits(
                 saveData.GhostReleaseInfoFlag,
                 playResultData.GhostReleaseData.ReleaseInfoId,
                 GreenProtocolBytes.GhostReleaseInfoBytes);
@@ -228,23 +219,6 @@ public partial class UpdatePlayResultCommandHandler
                 existing.Winnings = winning.Winnings;
             }
         }
-    }
-
-    private static byte[] SetBits(byte[] source, IEnumerable<uint> ids, int byteCount)
-    {
-        var result = GreenProtocolBytes.FixedOrZero(source, byteCount);
-        var maxBits = byteCount * 8;
-        foreach (var id in ids)
-        {
-            if (id >= maxBits)
-            {
-                continue;
-            }
-
-            result[id >> 3] |= (byte)(1 << ((int)id & 7));
-        }
-
-        return result;
     }
 
 }

@@ -1,4 +1,3 @@
-using System.Globalization;
 using TaikoLocalServer.Application.Ac15;
 
 namespace TaikoLocalServer.Application.Handlers;
@@ -44,24 +43,14 @@ public partial class UpdatePlayResultCommandHandler
             cancellationToken);
         var currentDonmedal = shopSeasonState?.TotalGetDonmedal ?? saveData.TotalGetDonmedal;
 
-        if (!CanAddBlue(currentDonmedal, playResultData.GetDonmedal)
-            || !CanAddBlue(saveData.TotalGetKatsumedal, playResultData.GetKatsumedal))
+        if (HasInvalidAc15MedalTotals(currentDonmedal, saveData.TotalGetKatsumedal, playResultData))
         {
             logger.LogWarning("Rejecting invalid Blue medal totals for baid {Baid}", request.Baid);
             return 1;
         }
 
-        var playTime = ParseBluePlayDatetimeOrNow(playResultData.PlayDatetime);
-
-        if (shopSeasonState is null)
-        {
-            saveData.TotalGetDonmedal += playResultData.GetDonmedal;
-        }
-        else
-        {
-            shopSeasonState.TotalGetDonmedal += playResultData.GetDonmedal;
-            shopSeasonState.UpdatedAt = DateTime.UtcNow;
-        }
+        var playTime = ParseAc15PlayDatetimeOrNow(playResultData.PlayDatetime);
+        AddAc15Donmedals(shopSeasonState, delta => saveData.TotalGetDonmedal += delta, playResultData.GetDonmedal);
 
         saveData.TotalGetKatsumedal += playResultData.GetKatsumedal;
         saveData.ItemshopTutorialFlg = playResultData.ItemshopTutorialFlg ?? saveData.ItemshopTutorialFlg;
@@ -113,7 +102,10 @@ public partial class UpdatePlayResultCommandHandler
                 if (update.ApplyDanCostume)
                 {
                     saveData.Costume1 = update.DanCostumeId;
-                    saveData.CostumeFlg1 = SetBlueBits(saveData.CostumeFlg1, [update.DanCostumeId], BlueProtocolBytes.CostumeFlagBytes);
+                    saveData.CostumeFlg1 = Ac15ProtocolBytes.SetBits(
+                        saveData.CostumeFlg1,
+                        [update.DanCostumeId],
+                        BlueProtocolBytes.CostumeFlagBytes);
                 }
             },
             logger,
@@ -162,55 +154,29 @@ public partial class UpdatePlayResultCommandHandler
         saveData.Costume3 = costume.Costume3;
         saveData.Costume4 = costume.Costume4;
         saveData.Costume5 = costume.Costume5;
-        saveData.CostumeFlg1 = SetBlueBits(saveData.CostumeFlg1, [costume.Costume1], BlueProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg2 = SetBlueBits(saveData.CostumeFlg2, [costume.Costume2], BlueProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg3 = SetBlueBits(saveData.CostumeFlg3, [costume.Costume3], BlueProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg4 = SetBlueBits(saveData.CostumeFlg4, [costume.Costume4], BlueProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg5 = SetBlueBits(saveData.CostumeFlg5, [costume.Costume5], BlueProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg1 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg1, [costume.Costume1], BlueProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg2 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg2, [costume.Costume2], BlueProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg3 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg3, [costume.Costume3], BlueProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg4 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg4, [costume.Costume4], BlueProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg5 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg5, [costume.Costume5], BlueProtocolBytes.CostumeFlagBytes);
     }
 
     private static void ApplyUnlockBits(UserSaveDataBlue saveData, CommonPlayResultData playResultData)
     {
-        saveData.ReleaseSongFlg = SetBlueBits(saveData.ReleaseSongFlg, playResultData.ReleaseSongNoes, BlueProtocolBytes.SongFlagBytes);
-        saveData.ToneFlg = SetBlueBits(saveData.ToneFlg, playResultData.GetToneNoes, BlueProtocolBytes.ToneFlagBytes);
-        saveData.CostumeFlg1 = SetBlueBits(saveData.CostumeFlg1, playResultData.GetCostumeNo1s, BlueProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg2 = SetBlueBits(saveData.CostumeFlg2, playResultData.GetCostumeNo2s, BlueProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg3 = SetBlueBits(saveData.CostumeFlg3, playResultData.GetCostumeNo3s, BlueProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg4 = SetBlueBits(saveData.CostumeFlg4, playResultData.GetCostumeNo4s, BlueProtocolBytes.CostumeFlagBytes);
-        saveData.CostumeFlg5 = SetBlueBits(saveData.CostumeFlg5, playResultData.GetCostumeNo5s, BlueProtocolBytes.CostumeFlagBytes);
-        saveData.TitleFlg = SetBlueBits(saveData.TitleFlg, playResultData.GetTitleNoes, BlueProtocolBytes.TitleFlagBytes);
+        saveData.ReleaseSongFlg = Ac15ProtocolBytes.SetBits(saveData.ReleaseSongFlg, playResultData.ReleaseSongNoes, BlueProtocolBytes.SongFlagBytes);
+        saveData.ToneFlg = Ac15ProtocolBytes.SetBits(saveData.ToneFlg, playResultData.GetToneNoes, BlueProtocolBytes.ToneFlagBytes);
+        saveData.CostumeFlg1 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg1, playResultData.GetCostumeNo1s, BlueProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg2 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg2, playResultData.GetCostumeNo2s, BlueProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg3 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg3, playResultData.GetCostumeNo3s, BlueProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg4 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg4, playResultData.GetCostumeNo4s, BlueProtocolBytes.CostumeFlagBytes);
+        saveData.CostumeFlg5 = Ac15ProtocolBytes.SetBits(saveData.CostumeFlg5, playResultData.GetCostumeNo5s, BlueProtocolBytes.CostumeFlagBytes);
+        saveData.TitleFlg = Ac15ProtocolBytes.SetBits(saveData.TitleFlg, playResultData.GetTitleNoes, BlueProtocolBytes.TitleFlagBytes);
     }
 
     private static bool CanAddBlue(uint current, uint delta)
-        => delta <= uint.MaxValue - current;
+        => CanAddAc15(current, delta);
 
     private static DateTime ParseBluePlayDatetimeOrNow(string playDatetime)
-    {
-        var formats = new[] { Constants.DateTimeFormat, "yyyy-MM-dd HH:mm:ss" };
-        return DateTime.TryParseExact(
-            playDatetime,
-            formats,
-            CultureInfo.InvariantCulture,
-            DateTimeStyles.None,
-            out var parsed)
-            ? parsed
-            : DateTime.Now;
-    }
+        => ParseAc15PlayDatetimeOrNow(playDatetime);
 
-    private static byte[] SetBlueBits(byte[] source, IEnumerable<uint> ids, int byteCount)
-    {
-        var result = BlueProtocolBytes.FixedOrZero(source, byteCount);
-        var maxBits = byteCount * 8;
-        foreach (var id in ids)
-        {
-            if (id >= maxBits)
-            {
-                continue;
-            }
-
-            result[id >> 3] |= (byte)(1 << ((int)id & 7));
-        }
-
-        return result;
-    }
 }
