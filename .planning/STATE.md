@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Phase Summary
 status: executing
-stopped_at: Completed 16.2-11-PLAN.md
-last_updated: "2026-06-11T05:48:09.340Z"
+stopped_at: Completed 16.2-12-PLAN.md
+last_updated: "2026-06-11T05:57:00.000Z"
 last_activity: 2026-06-11
 progress:
   total_phases: 8
   completed_phases: 6
   total_plans: 37
-  completed_plans: 33
-  percent: 89
+  completed_plans: 34
+  percent: 92
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-07)
 ## Current Position
 
 Phase: 16.2 (ac15-shared-core-simplification-and-reuse-cleanup) — EXECUTING
-Plan: 11 of 14
+Plan: 12 of 14
 Status: Ready to execute
 Last activity: 2026-06-11
 
@@ -92,6 +92,7 @@ Last activity: 2026-06-11
 | Phase 16.2 P00 | 16 min | 2 tasks | 31 files |
 | Phase 16.2 P08 | 9 min | 2 tasks | 27 files |
 | Phase 16.2 P11 | 12 min | 2 tasks | 19 files |
+| Phase 16.2 P12 | 7 min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -158,6 +159,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 - [Phase 16.2]: Plan 08 locked the hybrid AC15 persistence architecture in code. Narrow Domain row-shape interfaces plus generic EF helpers now remove duplicated Dani, normal-play, and item-shop storage algorithms while direct `ITaikoDbContext`/concrete `DbSet` selection and Mapperly projections remain explicit.
 - [Phase 16.2]: Plan 11 canonicalized shared AC15 Common DTO fields. Userdata and initial-data shared fields now live on canonical application DTO members, while Blue/Green/Yellow Mapperly mappers keep adapter-local wire placement and Blue battle/userdata era-only fields stay in partials.
+- [Phase 16.2]: Plan 12 kept folder/telop route ownership unchanged and collapsed identical Blue/Green/Yellow telop snapshot projection behind a shared helper in `Ac15CatalogSnapshotFactory`.
 
 ### Pending Todos
 
@@ -182,11 +184,11 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-11T05:48:09.340Z
-Stopped at: Completed 16.2-11-PLAN.md
+Last session: 2026-06-11T05:57:00.000Z
+Stopped at: Completed 16.2-12-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
 
 - Phase 16.1 verification is complete and passed; Green/Blue/Yellow AC15 wire DTOs now use nullable optional primitives and protocol mappers use real Mapperly generation for mechanical projection.
-- Next coordinator-owned step: execute remaining Phase 16.2 plans starting with `16.2-12-PLAN.md`, `16.2-13-PLAN.md`, then `16.2-09-PLAN.md` and `16.2-10-PLAN.md`; do not start Phase 17 runtime verification closeout until Phase 16.2 is executed or explicitly skipped.
+- Next coordinator-owned step: execute remaining Phase 16.2 plans starting with `16.2-13-PLAN.md`, then `16.2-09-PLAN.md` and `16.2-10-PLAN.md`; do not start Phase 17 runtime verification closeout until Phase 16.2 is executed or explicitly skipped.
