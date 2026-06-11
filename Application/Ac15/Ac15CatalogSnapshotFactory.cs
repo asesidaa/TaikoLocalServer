@@ -8,53 +8,67 @@ namespace TaikoLocalServer.Application.Ac15;
 
 public static class Ac15CatalogSnapshotFactory
 {
-    public static Ac15CatalogSnapshot FromBlue(IBlueCatalog blue) => new(
-        blue.SongHashVersion,
-        blue.MusicInfoFileOrder.Select(song => song.SongNo).ToArray(),
-        blue.EventFolders,
-        MapTelops(
-            blue.Telops,
-            entry => entry.TelopId,
-            entry => entry.VerupNo,
-            entry => entry.StartDatetime,
-            entry => entry.EndDatetime,
-            entry => entry.Message),
-        blue.Recommend.RecommendSong,
-        blue.Recommend.RecommendBestSongs.ToArray(),
-        MapItemShop(blue.ItemShopCatalog),
-        blue.TaikojukuFileOrder.Select(MapTaikojuku).ToArray());
+    public static Ac15CatalogSnapshot FromSource(Ac15CatalogProjectionSource source)
+        => new(
+            source.SongHashVersion,
+            source.SongNoesInFileOrder,
+            source.EventFolders,
+            source.Telops,
+            source.RecommendSong,
+            source.RecommendBestSongs,
+            source.ItemShopCatalog,
+            source.TaikojukuPacks);
 
-    public static Ac15CatalogSnapshot FromGreen(IGreenCatalog green) => new(
-        green.SongHashVersion,
-        green.MusicInfoFileOrder.Select(song => song.SongNo).ToArray(),
-        green.EventFolders,
-        MapTelops(
-            green.Telops,
-            entry => entry.TelopId,
-            entry => entry.VerupNo,
-            entry => entry.StartDatetime,
-            entry => entry.EndDatetime,
-            entry => entry.Message),
-        green.Recommend.RecommendSong,
-        green.Recommend.RecommendBestSongs.ToArray(),
-        MapItemShop(green.ItemShopCatalog),
-        green.TaikojukuFileOrder.Select(MapTaikojuku).ToArray());
+    public static Ac15CatalogSnapshot FromBlue(IBlueCatalog blue)
+        => FromSource(new Ac15CatalogProjectionSource(
+            blue.SongHashVersion,
+            blue.MusicInfoFileOrder.Select(song => song.SongNo).ToArray(),
+            blue.EventFolders,
+            MapTelops(
+                blue.Telops,
+                entry => entry.TelopId,
+                entry => entry.VerupNo,
+                entry => entry.StartDatetime,
+                entry => entry.EndDatetime,
+                entry => entry.Message),
+            blue.Recommend.RecommendSong,
+            blue.Recommend.RecommendBestSongs.ToArray(),
+            MapItemShop(blue.ItemShopCatalog),
+            blue.TaikojukuFileOrder.Select(MapTaikojuku).ToArray()));
 
-    public static Ac15CatalogSnapshot FromYellow(IYellowCatalog yellow) => new(
-        yellow.SongHashVersion,
-        yellow.MusicInfoFileOrder.Select(song => song.SongNo).ToArray(),
-        yellow.EventFolders,
-        MapTelops(
-            yellow.Telops,
-            entry => entry.TelopId,
-            entry => entry.VerupNo,
-            entry => entry.StartDatetime,
-            entry => entry.EndDatetime,
-            entry => entry.Message),
-        yellow.Recommend.RecommendSong,
-        yellow.Recommend.RecommendBestSongs.ToArray(),
-        MapItemShop(yellow.ItemShopCatalog),
-        yellow.TaikojukuFileOrder.Select(MapTaikojuku).ToArray());
+    public static Ac15CatalogSnapshot FromGreen(IGreenCatalog green)
+        => FromSource(new Ac15CatalogProjectionSource(
+            green.SongHashVersion,
+            green.MusicInfoFileOrder.Select(song => song.SongNo).ToArray(),
+            green.EventFolders,
+            MapTelops(
+                green.Telops,
+                entry => entry.TelopId,
+                entry => entry.VerupNo,
+                entry => entry.StartDatetime,
+                entry => entry.EndDatetime,
+                entry => entry.Message),
+            green.Recommend.RecommendSong,
+            green.Recommend.RecommendBestSongs.ToArray(),
+            MapItemShop(green.ItemShopCatalog),
+            green.TaikojukuFileOrder.Select(MapTaikojuku).ToArray()));
+
+    public static Ac15CatalogSnapshot FromYellow(IYellowCatalog yellow)
+        => FromSource(new Ac15CatalogProjectionSource(
+            yellow.SongHashVersion,
+            yellow.MusicInfoFileOrder.Select(song => song.SongNo).ToArray(),
+            yellow.EventFolders,
+            MapTelops(
+                yellow.Telops,
+                entry => entry.TelopId,
+                entry => entry.VerupNo,
+                entry => entry.StartDatetime,
+                entry => entry.EndDatetime,
+                entry => entry.Message),
+            yellow.Recommend.RecommendSong,
+            yellow.Recommend.RecommendBestSongs.ToArray(),
+            MapItemShop(yellow.ItemShopCatalog),
+            yellow.TaikojukuFileOrder.Select(MapTaikojuku).ToArray()));
 
     private static Dictionary<uint, Ac15TelopEntry> MapTelops<TEntry>(
         IReadOnlyDictionary<uint, TEntry> telops,
