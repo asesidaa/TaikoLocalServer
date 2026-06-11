@@ -22,7 +22,7 @@ Active milestone: **v1.2 Yellow AC15 Support**
 | 15 | Yellow Dani, Shop, Medals, WaiWai, and Admin | Implement Yellow Dani, metadata, shop/medals, WaiWai tutorial/logging, and admin readback. | YDAN-01, YSHOP-01, YSHOP-02, YMED-01, YWAI-01, YUI-01 | 5 |
 | 16 | Yellow Tokkun and Banacoin Compatibility | Add Yellow Tokkun acceptance/persistence/readback and stateless Banacoin-adjacent compatibility. | YTOK-01, YTOK-02, YTOK-03, YBAN-01 | 5 |
 | 16.1 | AC15 Mapperly Mapper Rewrite and Presence Semantics | Regenerate AC15 wire DTOs with nullable optional primitives and move Green/Blue/Yellow protocol projection to real Mapperly generation. | YMAPP-01, YMAPP-02, YMAPP-03 | 6 |
-| 16.2 | AC15 Shared Core Simplification and Reuse Cleanup | 9/14 | In Progress|  |
+| 16.2 | AC15 Shared Core Simplification and Reuse Cleanup | 10/14 | In Progress|  |
 | 17 | Yellow Runtime Verification and Contract Closeout | Prove the full Yellow contract with focused tests, full build/test, runtime smoke, and docs. | YVER-01, YVER-02, YVER-03, YDOC-01 | 5 |
 
 **Coverage:** 34/34 v1.2 requirements mapped exactly once.
@@ -270,7 +270,7 @@ Plans:
 **Wave 4** *(blocked on profile counters, item-shop plumbing, and Dani contracts)*
 
 - [x] 16.2-07-PLAN.md - Move AC15 Dan playresult save behavior into `Ac15DaniService`
-- [ ] 16.2-11-PLAN.md - Canonicalize shared AC15 Common DTO fields while preserving adapter-local wire placement
+- [x] 16.2-11-PLAN.md - Canonicalize shared AC15 Common DTO fields while preserving adapter-local wire placement
 
 **Wave 5** *(blocked on Dani save, post-review row-shape contracts, and DTO canonicalization)*
 
@@ -333,4 +333,4 @@ See `.planning/milestones/v1.1-ROADMAP.md` and `.planning/milestones/v1.1-phases
 |-----------|--------|-------|--------|---------|
 | v1.0 Blue Support | 1-6 | 30 roadmap plans | Shipped | 2026-06-03 |
 | v1.1 Blue Tokkun Mode Support | 7-11 | 7 GSD plans | Shipped | 2026-06-07 |
-| v1.2 Yellow AC15 Support | 12-17 plus 16.1 and 16.2 | 23 GSD plans complete; 13 Phase 16.2 plans pending | Active, Phase 16.2 planned before Phase 17 | - |
+| v1.2 Yellow AC15 Support | 12-17 plus 16.1 and 16.2 | 33 GSD plans complete; 4 Phase 16.2 plans pending | Active, Phase 16.2 planned before Phase 17 | - |
