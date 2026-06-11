@@ -26,13 +26,4 @@ public partial class ItemPurchaseCommandHandler(
     private partial ValueTask<CommonItemPurchaseResponse> HandleGreen(ItemPurchaseCommand request, CancellationToken cancellationToken);
     private partial ValueTask<CommonItemPurchaseResponse> HandleBlue(ItemPurchaseCommand request, CancellationToken cancellationToken);
     private partial ValueTask<CommonItemPurchaseResponse> HandleYellow(ItemPurchaseCommand request, CancellationToken cancellationToken);
-
-    private static bool CanAdd(uint current, uint delta)
-        => delta <= uint.MaxValue - current;
-
-    private static bool IsPreflight(ItemPurchaseCommand request)
-        => request.ItemNo == 0
-           && request.ItemType is null
-           && request.ItemId is null
-           && request.ItemPrice is null;
 }

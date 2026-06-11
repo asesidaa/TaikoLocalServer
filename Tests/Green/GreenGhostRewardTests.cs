@@ -107,7 +107,7 @@ public sealed class GreenGhostRewardTests
     }
 
     [Fact]
-    public async Task ItemPurchase_RejectsUnknownGreenShopItem()
+    public async Task ItemPurchase_DisabledShopReturnsZeroTotalsWithoutCreatingState()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
@@ -123,8 +123,11 @@ public sealed class GreenGhostRewardTests
 
         var response = await handler.Handle(new ItemPurchaseCommand(1, GameEra.Green, 10, 1, 2, 40), CancellationToken.None);
 
-        Assert.Equal((uint)0, response.Result);
+        Assert.Equal((uint)1, response.Result);
+        Assert.Equal((uint)0, response.TotalGetDonmedal);
         Assert.Equal((uint)0, response.TotalUseDonmedal);
+        Assert.Empty(await fixture.Context.GreenShopSeasonStates.ToListAsync());
+        Assert.Empty(await fixture.Context.GreenShopItemStates.ToListAsync());
     }
 
     [Fact]

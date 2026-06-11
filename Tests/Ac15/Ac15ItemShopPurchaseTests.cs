@@ -1,9 +1,8 @@
-using TaikoLocalServer.Application.Ac15;
 using TaikoLocalServer.Application.Catalog.Ac15;
 
 namespace TaikoLocalServer.Tests.Ac15;
 
-public sealed class Ac15ItemShopServiceTests
+public sealed class Ac15ItemShopPurchaseTests
 {
     [Fact]
     public async Task Purchase_PreflightCreatesSeasonStateAndReturnsCurrentTotals()
@@ -23,12 +22,11 @@ public sealed class Ac15ItemShopServiceTests
         });
         await database.Context.SaveChangesAsync();
 
-        var response = await Ac15ItemShopService.PurchaseBlueAsync(
+        var response = await PurchaseBlueAsync(
             database.Context,
             new Ac15ItemShopPurchaseRequest(1, 0, null, null, null),
             Catalog(),
-            saveData,
-            CancellationToken.None);
+            saveData);
 
         Assert.Equal(1u, response.Result);
         Assert.Equal(300u, response.TotalGetDonmedal);
@@ -53,12 +51,11 @@ public sealed class Ac15ItemShopServiceTests
         });
         await database.Context.SaveChangesAsync();
 
-        var response = await Ac15ItemShopService.PurchaseBlueAsync(
+        var response = await PurchaseBlueAsync(
             database.Context,
             new Ac15ItemShopPurchaseRequest(1, 1, 2, 999, 200),
             Catalog(),
-            saveData,
-            CancellationToken.None);
+            saveData);
 
         Assert.Equal(0u, response.Result);
         Assert.Equal(0u, response.TotalUseDonmedal);
@@ -83,12 +80,11 @@ public sealed class Ac15ItemShopServiceTests
         });
         await database.Context.SaveChangesAsync();
 
-        var response = await Ac15ItemShopService.PurchaseBlueAsync(
+        var response = await PurchaseBlueAsync(
             database.Context,
             new Ac15ItemShopPurchaseRequest(1, 1, Ac15ShopItemType.Tone.ToProtocolValue(), 44, 200),
             Catalog(),
-            saveData,
-            CancellationToken.None);
+            saveData);
 
         Assert.Equal(1u, response.Result);
         Assert.Equal(200u, response.TotalUseDonmedal);
@@ -100,7 +96,59 @@ public sealed class Ac15ItemShopServiceTests
         Assert.NotEqual(0, saveData.ToneFlg[44 >> 3] & (1 << (44 & 7)));
     }
 
-    private static Ac15ItemShopCatalog Catalog() => new()
+    [Fact]
+    public async Task Purchase_UnsupportedItemTypeFailsBeforeSpending()
+    {
+        await using var database = await SchemaDatabase.CreateAsync();
+        database.Context.UserData.Add(new UserDatum { Baid = 1 });
+        var saveData = UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(1);
+        database.Context.UserSaveDataYellow.Add(saveData);
+        database.Context.YellowShopSeasonStates.Add(new YellowShopSeasonState
+        {
+            Baid = 1,
+            SeasonId = 7,
+            TotalGetDonmedal = 300,
+            TotalUseDonmedal = 0,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        });
+        await database.Context.SaveChangesAsync();
+
+        var response = await Ac15ItemShopPurchase.PurchaseAsync(
+            database.Context,
+            new Ac15ItemShopPurchaseRequest(1, 1, 99, 44, 200),
+            Catalog((Ac15ShopItemType)99),
+            saveData,
+            new Ac15ItemShopPurchaseTables<YellowShopSeasonState, YellowShopItemState>(
+                database.Context.YellowShopItemStates,
+                async (seasonId, token) => await database.Context.GetOrCreateYellowShopSeasonStateAsync(saveData, seasonId, token),
+                Ac15ItemShopMapper.ToYellowShopItemState),
+            Ac15ItemShopUnlockPolicies.Yellow,
+            CancellationToken.None);
+
+        Assert.Equal(0u, response.Result);
+        Assert.Equal(0u, response.TotalUseDonmedal);
+        Assert.Empty(await database.Context.YellowShopItemStates.ToListAsync());
+    }
+
+    private static ValueTask<CommonItemPurchaseResponse> PurchaseBlueAsync(
+        TaikoDbContext context,
+        Ac15ItemShopPurchaseRequest request,
+        Ac15ItemShopCatalog catalog,
+        UserSaveDataBlue saveData)
+        => Ac15ItemShopPurchase.PurchaseAsync(
+            context,
+            request,
+            catalog,
+            saveData,
+            new Ac15ItemShopPurchaseTables<BlueShopSeasonState, BlueShopItemState>(
+                context.BlueShopItemStates,
+                async (seasonId, token) => await context.GetOrCreateBlueShopSeasonStateAsync(saveData, seasonId, token),
+                Ac15ItemShopMapper.ToBlueShopItemState),
+            Ac15ItemShopUnlockPolicies.Blue,
+            CancellationToken.None);
+
+    private static Ac15ItemShopCatalog Catalog(Ac15ShopItemType itemType = Ac15ShopItemType.Tone) => new()
     {
         IsEnabled = true,
         ActiveSeasonId = 7,
@@ -111,7 +159,7 @@ public sealed class Ac15ItemShopServiceTests
                 SeasonId = 7,
                 Items =
                 [
-                    new() { ItemNo = 1, ItemType = Ac15ShopItemType.Tone, ItemId = 44, Price = 200 }
+                    new() { ItemNo = 1, ItemType = itemType, ItemId = 44, Price = 200 }
                 ]
             }
         }

@@ -5,12 +5,6 @@ namespace TaikoLocalServer.Application.Ac15;
 [Mapper]
 public static partial class Ac15ItemShopMapper
 {
-    public static partial Ac15ShopSeasonState ToAc15ShopSeasonState(BlueShopSeasonState state);
-
-    public static partial Ac15ShopSeasonState ToAc15ShopSeasonState(GreenShopSeasonState state);
-
-    public static partial Ac15ShopSeasonState ToAc15ShopSeasonState(YellowShopSeasonState state);
-
     public static BlueShopItemState ToBlueShopItemState(Ac15PurchasedShopItem item, DateTime now)
     {
         var row = ToBlueShopItemState(item);

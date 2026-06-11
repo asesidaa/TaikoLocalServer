@@ -13,53 +13,16 @@ public partial class ItemPurchaseCommandHandler
         var yellow = gameDataService.Yellow();
         var snapshot = Ac15CatalogSnapshotFactory.FromYellow(yellow);
 
-        if (TryGetUnsupportedRequestedItem(request, snapshot.ItemShopCatalog, out var seasonState))
-        {
-            return seasonState is not null
-                ? Failure(seasonState)
-                : new CommonItemPurchaseResponse { Result = 0, TotalGetDonmedal = saveData.TotalGetDonmedal, TotalUseDonmedal = saveData.TotalUseDonmedal };
-        }
-
-        return await Ac15ItemShopService.PurchaseYellowAsync(
+        return await Ac15ItemShopPurchase.PurchaseAsync(
             context,
             new Ac15ItemShopPurchaseRequest(request.Baid, request.ItemNo, request.ItemType, request.ItemId, request.ItemPrice),
             snapshot.ItemShopCatalog,
             saveData,
+            new Ac15ItemShopPurchaseTables<YellowShopSeasonState, YellowShopItemState>(
+                context.YellowShopItemStates,
+                async (seasonId, token) => await context.GetOrCreateYellowShopSeasonStateAsync(saveData, seasonId, token),
+                Ac15ItemShopMapper.ToYellowShopItemState),
+            Ac15ItemShopUnlockPolicies.Yellow,
             cancellationToken);
-
-        bool TryGetUnsupportedRequestedItem(
-            ItemPurchaseCommand purchase,
-            Application.Catalog.Ac15.Ac15ItemShopCatalog itemShopCatalog,
-            out YellowShopSeasonState? currentSeasonState)
-        {
-            currentSeasonState = null;
-            if (IsPreflight(purchase)
-                || !itemShopCatalog.IsEnabled
-                || itemShopCatalog.ActiveSeason is not { } activeSeason
-                || !activeSeason.ItemsByNo.TryGetValue(purchase.ItemNo, out var item)
-                || item.ItemType.IsSupported())
-            {
-                return false;
-            }
-
-            currentSeasonState = context.YellowShopSeasonStates
-                .Local
-                .FirstOrDefault(row => row.Baid == saveData.Baid && row.SeasonId == activeSeason.SeasonId);
-            if (currentSeasonState is null)
-            {
-                currentSeasonState = context.YellowShopSeasonStates
-                    .FirstOrDefault(row => row.Baid == saveData.Baid && row.SeasonId == activeSeason.SeasonId);
-            }
-
-            return true;
-        }
     }
-
-    private static CommonItemPurchaseResponse Failure(YellowShopSeasonState state)
-        => new()
-        {
-            Result = 0,
-            TotalGetDonmedal = state.TotalGetDonmedal,
-            TotalUseDonmedal = state.TotalUseDonmedal
-        };
 }

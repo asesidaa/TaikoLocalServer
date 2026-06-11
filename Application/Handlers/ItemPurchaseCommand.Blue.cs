@@ -12,11 +12,16 @@ public partial class ItemPurchaseCommandHandler
         var saveData = await context.GetOrCreateBlueSaveDataAsync(request.Baid, cancellationToken);
         var snapshot = Ac15CatalogSnapshotFactory.FromBlue(gameDataService.Blue());
 
-        return await Ac15ItemShopService.PurchaseBlueAsync(
+        return await Ac15ItemShopPurchase.PurchaseAsync(
             context,
             new Ac15ItemShopPurchaseRequest(request.Baid, request.ItemNo, request.ItemType, request.ItemId, request.ItemPrice),
             snapshot.ItemShopCatalog,
             saveData,
+            new Ac15ItemShopPurchaseTables<BlueShopSeasonState, BlueShopItemState>(
+                context.BlueShopItemStates,
+                async (seasonId, token) => await context.GetOrCreateBlueShopSeasonStateAsync(saveData, seasonId, token),
+                Ac15ItemShopMapper.ToBlueShopItemState),
+            Ac15ItemShopUnlockPolicies.Blue,
             cancellationToken);
     }
 }
