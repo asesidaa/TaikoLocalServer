@@ -14,6 +14,7 @@ TaikoLocalServer/
 |-- Adapters.GameProtocol.Green/    # Green AC15 routes, wire DTOs, mappers under /v11r01
 |-- Adapters.GameProtocol.Blue/     # Blue AC15 routes, wire DTOs, mappers under /v10r03
 |-- Adapters.GameProtocol.Yellow/   # Yellow AC15 routes, wire DTOs, mappers under /v09r02
+|-- Adapters.GameProtocol.Red/      # Red AC15 adapter shell and generated wire DTOs
 |-- Application/                    # Mediator use cases, ports, Common DTOs, AC15 shared core
 |   |-- Ac15/                       # Shared AC15 services, profiles, records, Mapperly projections
 |   |-- Handlers/                   # Use-case dispatchers and era partial implementations
@@ -118,6 +119,11 @@ TaikoLocalServer/
 - Contains: Yellow controllers, Yellow generated `Wire/Game.cs`, Yellow mapper classes, Yellow stateless Banacoin-adjacent route surface.
 - Key files: `Adapters.GameProtocol.Yellow/Controllers/PlayResultController.cs`, `Adapters.GameProtocol.Yellow/Controllers/UserDataController.cs`, `Adapters.GameProtocol.Yellow/Mappers/PlayResultMappers.cs`
 
+**`Adapters.GameProtocol.Red/`:**
+- Purpose: Put Red AC15 transport code here as it is added.
+- Contains: Red adapter project shell and generated Red `Wire/Game.cs` / `Wire/VsInterface.cs` from `proto/red`; Host binding and route controllers are intentionally deferred from the initial shell.
+- Key files: `Adapters.GameProtocol.Red/Adapters.GameProtocol.Red.csproj`, `Adapters.GameProtocol.Red/Wire/Game.cs`, `Adapters.GameProtocol.Red/Wire/VsInterface.cs`
+
 **`Adapters.AdminApi/`:**
 - Purpose: Put WebUI/admin HTTP endpoints and admin-specific mapping here.
 - Contains: Controllers, authorization helpers, Mapperly admin mapping, `EraRoute`.
@@ -205,6 +211,7 @@ TaikoLocalServer/
 - `Adapters.GameProtocol.Green/Controllers/`: Green `/v11r01/chassis/*` routes.
 - `Adapters.GameProtocol.Blue/Controllers/`: Blue `/v10r03/chassis/*` routes.
 - `Adapters.GameProtocol.Yellow/Controllers/`: Yellow `/v09r02/chassis/*` routes.
+- `Adapters.GameProtocol.Red/Wire/Game.cs`, `Adapters.GameProtocol.Red/Wire/VsInterface.cs`: generated Red protocol models; Red route controllers are not added until Host binding/probe plans.
 - `Adapters.GameProtocol.Green/Mappers/`, `Adapters.GameProtocol.Blue/Mappers/`, `Adapters.GameProtocol.Yellow/Mappers/`: adapter-local wire/Common DTO mapping.
 - `Adapters.GameProtocol.Green/Wire/Game.cs`, `Adapters.GameProtocol.Blue/Wire/Game.cs`, `Adapters.GameProtocol.Yellow/Wire/Game.cs`: generated protocol models.
 
@@ -266,7 +273,7 @@ TaikoLocalServer/
 - Tests: `Tests/Green/`, `Tests/Blue/`, or `Tests/Yellow/`
 
 **New AC15 Protocol Endpoint:**
-- Controller: `Adapters.GameProtocol.Green/Controllers/`, `Adapters.GameProtocol.Blue/Controllers/`, or `Adapters.GameProtocol.Yellow/Controllers/`
+- Controller: `Adapters.GameProtocol.Green/Controllers/`, `Adapters.GameProtocol.Blue/Controllers/`, `Adapters.GameProtocol.Yellow/Controllers/`, or `Adapters.GameProtocol.Red/Controllers/` once Red route probes/runtime endpoints are in scope.
 - Wire request/response: generated `Adapters.GameProtocol.<Era>/Wire/Game.cs` from `proto/`
 - Mapper: `Adapters.GameProtocol.<Era>/Mappers/`
 - Application request/handler: `Application/Handlers/`

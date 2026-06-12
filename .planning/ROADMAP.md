@@ -73,7 +73,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 18-02-PLAN.md - Red enum, adapter project, and generated wire foundation
+- [x] 18-02-PLAN.md - Red enum, adapter project, and generated wire foundation
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -182,7 +182,7 @@ Plans:
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | RFND-01 | Phase 18 | Complete |
-| RFND-02 | Phase 18 | Pending |
+| RFND-02 | Phase 18 | Complete |
 | RFND-03 | Phase 18 | Complete |
 | RCAT-01 | Phase 19 | Pending |
 | RCAT-02 | Phase 19 | Pending |
@@ -257,7 +257,7 @@ See `.planning/milestones/v1.2-ROADMAP.md` and `.planning/milestones/v1.2-phases
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 18. Red Evidence and Capability Foundation | 1/4 | In Progress | - |
+| 18. Red Evidence and Capability Foundation | 2/4 | In Progress | - |
 | 19. Red Capability Profile and Catalog Binding | 0/TBD | Not started | - |
 | 20. Red Runtime Capability Binding and Simple Compatibility | 0/TBD | Not started | - |
 | 21. Older-AC15 ChallengeCompe Capability and Red Binding | 0/TBD | Not started | - |

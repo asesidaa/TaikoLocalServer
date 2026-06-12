@@ -9,7 +9,7 @@
 
 **Secondary:**
 - Razor - Blazor WebAssembly pages and components live under `TaikoWebUI/Pages`, `TaikoWebUI/Components`, and files such as `TaikoWebUI/App.razor`.
-- Protocol Buffers schema files - Wire-contract inputs live under `proto/green/green.proto`, `proto/green/vsinterface.proto`, `proto/blue/taiko.proto`, `proto/blue/vsinterface.proto`, `proto/yellow/yellow-final.proto`, `proto/yellow/yellow-00.proto`, `proto/yellow/vsinterface.proto`, and `proto/3906/Source/App/NetWork/**`; generated or committed C# wire models live in `Adapters.GameProtocol.Green/Wire/**`, `Adapters.GameProtocol.Blue/Wire/**`, `Adapters.GameProtocol.Yellow/Wire/**`, and `Adapters.AllnetMucha/Wire/**`.
+- Protocol Buffers schema files - Wire-contract inputs live under `proto/green/green.proto`, `proto/green/vsinterface.proto`, `proto/blue/taiko.proto`, `proto/blue/vsinterface.proto`, `proto/yellow/yellow-final.proto`, `proto/yellow/yellow-00.proto`, `proto/yellow/vsinterface.proto`, `proto/red/taiko.proto`, `proto/red/vsinterface.proto`, and `proto/3906/Source/App/NetWork/**`; generated or committed C# wire models live in `Adapters.GameProtocol.Green/Wire/**`, `Adapters.GameProtocol.Blue/Wire/**`, `Adapters.GameProtocol.Yellow/Wire/**`, `Adapters.GameProtocol.Red/Wire/**`, and `Adapters.AllnetMucha/Wire/**`.
 - JSON - Host configuration and server-authored catalog data live in `Host/Configurations/*.json`, `TaikoWebUI/wwwroot/appsettings.json`, and `Host/wwwroot/data/**`.
 - XML/BIN game data - AC15 operator-supplied data is loaded from era data roots such as `Host/wwwroot/data/green/data`, `Host/wwwroot/data/blue/data`, and `Host/wwwroot/data/yellow/data`.
 - YAML - GitHub Actions workflow configuration lives in `.github/workflows/publishTLS.yml`.
@@ -96,7 +96,7 @@
 - Shared MSBuild defaults: `Directory.Build.props`.
 - Central package versions: `Directory.Packages.props`.
 - Solution: `TaikoLocalServer.slnx`.
-- Project list includes era adapters `Adapters.GameProtocol.Green/Adapters.GameProtocol.Green.csproj`, `Adapters.GameProtocol.Blue/Adapters.GameProtocol.Blue.csproj`, and `Adapters.GameProtocol.Yellow/Adapters.GameProtocol.Yellow.csproj`.
+- Project list includes era adapters `Adapters.GameProtocol.Green/Adapters.GameProtocol.Green.csproj`, `Adapters.GameProtocol.Blue/Adapters.GameProtocol.Blue.csproj`, `Adapters.GameProtocol.Yellow/Adapters.GameProtocol.Yellow.csproj`, and `Adapters.GameProtocol.Red/Adapters.GameProtocol.Red.csproj`.
 - Host publish settings: `Host/Host.csproj` publishes non-Debug builds as self-contained single-file output and excludes operator AC15 `wwwroot/data/<era>/data/**` trees from publish.
 - CI publish workflow: `.github/workflows/publishTLS.yml`.
 - Launch profiles: `Host/Properties/launchSettings.json` and `TaikoWebUI/Properties/launchSettings.json`.
