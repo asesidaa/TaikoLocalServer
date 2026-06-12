@@ -6,13 +6,12 @@ public class RecommendController : BaseProtocolController<RecommendController>
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult Recommend([FromBody] RecommendRequest request)
+    public async Task<IActionResult> Recommend([FromBody] RecommendRequest request)
     {
-        Logger.LogInformation("Red route probe recommend.php request: {@Request}", request);
-        return Ok(new RecommendResponse
-        {
-            Result = 1,
-            RecommendBestSongs = []
-        });
+        Logger.LogInformation("Red Recommend request: {@Request}", request);
+        var common = await Mediator.Send(
+            new GetRecommendQuery(GameEra.Red, request.GenderType, request.PlayerAge),
+            HttpContext.RequestAborted);
+        return Ok(RecommendMappers.Map(common));
     }
 }

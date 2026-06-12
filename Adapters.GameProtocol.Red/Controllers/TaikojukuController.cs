@@ -6,9 +6,12 @@ public class TaikojukuController : BaseProtocolController<TaikojukuController>
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult Taikojuku([FromBody] TaikojukuRequest request)
+    public async Task<IActionResult> Taikojuku([FromBody] TaikojukuRequest request)
     {
-        Logger.LogInformation("Red route probe taikojuku.php request: {@Request}", request);
-        return Ok(new TaikojukuResponse { Result = 1 });
+        Logger.LogInformation("Red Taikojuku request: {@Request}", request);
+        var common = await Mediator.Send(
+            new GetTaikojukuQuery(GameEra.Red, request.GetDans ?? []),
+            HttpContext.RequestAborted);
+        return Ok(TaikojukuMappers.Map(common));
     }
 }

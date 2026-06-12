@@ -15,6 +15,11 @@ public static class Ac15EraProfiles
         Dani: true,
         ItemShop: true);
 
+    private static readonly Ac15FeatureSet RedFeatures = BlueGreenFeatures with
+    {
+        ItemShop = false
+    };
+
     public static Ac15EraProfile Blue { get; } = new(
         GameEra.Blue,
         BlueGreenFeatures,
@@ -42,6 +47,16 @@ public static class Ac15EraProfiles
         new Ac15WirePlacement(
             CrownPlacement: Ac15CrownWirePlacement.DedicatedEndpoint,
             HasInitialDataItemShopRows: true,
+            HasInitialDataLegalTermsRows: true,
+            HasTokkunTutorialFlagInUserData: true));
+
+    public static Ac15EraProfile Red { get; } = new(
+        GameEra.Red,
+        RedFeatures,
+        CreateCommonLimits(),
+        new Ac15WirePlacement(
+            CrownPlacement: Ac15CrownWirePlacement.DedicatedEndpoint,
+            HasInitialDataItemShopRows: false,
             HasInitialDataLegalTermsRows: true,
             HasTokkunTutorialFlagInUserData: true));
 

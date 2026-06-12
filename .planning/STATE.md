@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Phase Summary
 status: phase-complete
-stopped_at: Phase 18 complete; ready for Phase 19 planning
-last_updated: "2026-06-12T23:04:15.041Z"
-last_activity: 2026-06-12
+stopped_at: Phase 19 complete; ready for Phase 20 planning
+last_updated: "2026-06-13T00:00:00.000Z"
+last_activity: 2026-06-13
 progress:
   total_phases: 5
-  completed_phases: 1
-  total_plans: 4
-  completed_plans: 4
-  percent: 20
+  completed_phases: 2
+  total_plans: 7
+  completed_plans: 7
+  percent: 40
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-13)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Phase 19 - Red Capability Profile and Catalog Binding
+**Current focus:** Phase 20 - Red Runtime Capability Binding and Simple Compatibility
 
 ## Current Position
 
-Phase: 19
+Phase: 20
 Plan: Not started
-Status: Phase 18 complete; ready for Phase 19 planning
-Last activity: 2026-06-12
+Status: Phase 19 complete; ready for Phase 20 planning
+Last activity: 2026-06-13
 
 ## Performance Metrics
 
@@ -187,6 +187,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 18]: Plan 18-03 wires Red Host support through enabled-era gating only. Red adapter DI registration occurs only when `GameEra.Red` is enabled, and the Red application part is removed when disabled.
 - [Phase 18]: Plan 18-03 keeps Red outside AC15 shop validation. Red settings intentionally omit `EnableShop` and `ActiveShopSeasonId`; Green, Blue, and Yellow remain the only eras requiring shop settings.
 - [Phase 18]: Plan 18-03 scopes Red direct-protobuf fallback to `/v08r01/chassis`. The fallback does not broaden to all `/v08r01` paths.
+- [Phase 19]: Red catalog/profile binding composes shared AC15 loaders, profiles, projection services, and Mapperly route mappers instead of adding Red copies of Green/Blue/Yellow mechanisms.
+- [Phase 19]: Red uses active `ST8100-1` game data through `PathHelper`, AC15 catalog sidecars under `Host/wwwroot/data/red`, and `Ac15EraProfiles.Red` with item shop disabled.
+- [Phase 19]: Only Red metadata probes for initial data, folders, telops, recommendations, and Taikojuku were made catalog-backed; Red gameplay/profile state remains absent until Phase 20.
 
 ### Pending Todos
 
@@ -210,10 +213,10 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-12T23:04:15.041Z
-Stopped at: Phase 18 complete; ready for Phase 19 planning
+Last session: 2026-06-13T00:00:00.000Z
+Stopped at: Phase 19 complete; ready for Phase 20 planning
 Resume file: None
 
 ## Operator Next Steps
 
-- Start Phase 19 planning for Red capability profile and catalog binding.
+- Start Phase 20 planning for Red runtime capability binding and simple compatibility.

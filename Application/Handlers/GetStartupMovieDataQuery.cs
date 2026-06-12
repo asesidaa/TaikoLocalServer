@@ -25,6 +25,7 @@ public sealed class GetStartupMovieDataQueryHandler(
 
         var movies = era.Value switch
         {
+            GameEra.Red => gameDataService.Red().Movies,
             GameEra.Blue => gameDataService.Blue().Movies,
             GameEra.Green => gameDataService.Green().Movies,
             GameEra.Yellow => gameDataService.Yellow().Movies,
@@ -43,6 +44,7 @@ public sealed class GetStartupMovieDataQueryHandler(
     {
         var requestedEra = (hddVer / 100) switch
         {
+            8 => GameEra.Red,
             9 => GameEra.Yellow,
             10 => GameEra.Blue,
             11 => GameEra.Green,

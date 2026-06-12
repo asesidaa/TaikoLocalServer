@@ -11,6 +11,7 @@ public partial class GetFolderQueryHandler(ILogger<GetFolderQueryHandler> logger
         GameEra.Green => HandleGreen(request, cancellationToken),
         GameEra.Blue => HandleBlue(request, cancellationToken),
         GameEra.Yellow => HandleYellow(request, cancellationToken),
+        GameEra.Red => HandleRed(request, cancellationToken),
         _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
     };
 
@@ -41,4 +42,5 @@ public partial class GetFolderQueryHandler(ILogger<GetFolderQueryHandler> logger
     private partial ValueTask<CommonGetFolderResponse> HandleGreen(GetFolderQuery request, CancellationToken cancellationToken);
     private partial ValueTask<CommonGetFolderResponse> HandleBlue(GetFolderQuery request, CancellationToken cancellationToken);
     private partial ValueTask<CommonGetFolderResponse> HandleYellow(GetFolderQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonGetFolderResponse> HandleRed(GetFolderQuery request, CancellationToken cancellationToken);
 }

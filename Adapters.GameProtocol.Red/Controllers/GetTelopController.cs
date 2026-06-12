@@ -6,9 +6,12 @@ public class GetTelopController : BaseProtocolController<GetTelopController>
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult GetTelop([FromBody] GettelopRequest request)
+    public async Task<IActionResult> GetTelop([FromBody] GettelopRequest request)
     {
-        Logger.LogInformation("Red route probe gettelop.php request: {@Request}", request);
-        return Ok(new GettelopResponse { Result = 1 });
+        Logger.LogInformation("Red GetTelop request: {@Request}", request);
+        var common = await Mediator.Send(
+            new GetTelopQuery(GameEra.Red, request.TelopId),
+            HttpContext.RequestAborted);
+        return Ok(GetTelopMappers.Map(common));
     }
 }

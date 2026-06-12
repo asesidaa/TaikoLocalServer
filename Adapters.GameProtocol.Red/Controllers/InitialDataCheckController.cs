@@ -6,9 +6,10 @@ public class InitialDataCheckController : BaseProtocolController<InitialDataChec
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult InitialDataCheck([FromBody] InitialdatacheckRequest request)
+    public async Task<IActionResult> InitialDataCheck([FromBody] InitialdatacheckRequest request)
     {
-        Logger.LogInformation("Red route probe initialdatacheck.php request: {@Request}", request);
-        return Ok(new InitialdatacheckResponse { Result = 1 });
+        Logger.LogInformation("Red InitialDataCheck request: {@Request}", request);
+        var common = await Mediator.Send(new GetInitialDataQuery(GameEra.Red), HttpContext.RequestAborted);
+        return Ok(InitialDataMappers.Map(common));
     }
 }

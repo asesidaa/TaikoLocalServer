@@ -70,6 +70,17 @@ public static class Ac15CatalogSnapshotFactory
             MapItemShop(yellow.ItemShopCatalog),
             yellow.TaikojukuFileOrder.Select(MapTaikojuku).ToArray()));
 
+    public static Ac15CatalogSnapshot FromRed(IRedCatalog red)
+        => FromSource(new Ac15CatalogProjectionSource(
+            red.SongHashVersion,
+            red.MusicInfoFileOrder.Select(song => song.SongNo).ToArray(),
+            red.EventFolders,
+            red.Telops,
+            red.Recommend.RecommendSong,
+            red.Recommend.RecommendBestSongs.ToArray(),
+            Ac15ItemShopCatalog.Disabled,
+            red.TaikojukuFileOrder));
+
     private static Dictionary<uint, Ac15TelopEntry> MapTelops<TEntry>(
         IReadOnlyDictionary<uint, TEntry> telops,
         Func<TEntry, uint> telopId,

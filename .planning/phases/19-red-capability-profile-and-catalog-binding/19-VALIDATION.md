@@ -1,7 +1,7 @@
 ---
 phase: 19
 slug: red-capability-profile-and-catalog-binding
-status: draft
+status: passed
 nyquist_compliant: true
 created: 2026-06-13
 ---
@@ -33,7 +33,7 @@ None required for Phase 19 close. Cabinet/RPCS3 acceptance for implemented Red r
 
 ## Sign-Off
 
-- [ ] Red catalog/profile behavior is tested through public loader/service/handler outputs.
-- [ ] Shared AC15 changes have focused regression coverage.
-- [ ] Temp-output Host build passes.
-- [ ] No unsupported Red item-shop, medal, battle, WaiWai, payment, ChallengeCompe, AdminApi, or WebUI surfaces were introduced.
+- [x] Red catalog/profile behavior is tested through public loader/service/handler outputs.
+- [x] Shared AC15 changes have focused regression coverage.
+- [x] Temp-output Host build passes.
+- [x] No unsupported Red item-shop, medal, battle, WaiWai, payment, ChallengeCompe, AdminApi, or WebUI surfaces were introduced.

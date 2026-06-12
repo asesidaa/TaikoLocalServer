@@ -27,7 +27,7 @@ Active milestone: **v1.3 Red AC15 Support**
 | Phase | Name | Goal | Requirements | Success Criteria |
 |-------|------|------|--------------|------------------|
 | 18 | Red Evidence and Capability Foundation | 4/4 | Complete    | 2026-06-12 |
-| 19 | Red Capability Profile and Catalog Binding | Bind Red catalog/config data into shared AC15 catalog capabilities and define Red capability/profile boundaries. | RCAT-01, RCAT-02 | 5 |
+| 19 | Red Capability Profile and Catalog Binding | 3/3 | Complete | 2026-06-13 |
 | 20 | Red Runtime Capability Binding and Simple Compatibility | Bind shared identity, userdata, normal-play, Dani, tutorial-only Tokkun, and simple compatibility capabilities to Red-owned state. | RSTATE-01, RSTATE-02, RSTATE-03, RSTATE-04, RSTATE-05, RCOMP-01 | 5 |
 | 21 | Older-AC15 ChallengeCompe Capability and Red Binding | Define the shared older-AC15 ChallengeCompe capability and bind/prove it through Red evidence, with stateful behavior only after client/runtime proof defines the contract. | RCOMP-02, RCHAL-01, RCHAL-02 | 5 |
 | 22 | Red AdminApi/WebUI and Runtime Closeout | Expose implemented Red-owned readback surfaces and close v1.3 with automated plus cabinet/RPCS3 verification. | RVER-01, RVER-02, RVER-03 | 5 |
@@ -37,7 +37,7 @@ Active milestone: **v1.3 Red AC15 Support**
 ## Phases
 
 - [x] **Phase 18: Red Evidence and Capability Foundation** - Prove Red route/version/transport boundaries, inventory Red-supported capabilities, and add first-class Red adapter scaffolding. (completed 2026-06-12)
-- [ ] **Phase 19: Red Capability Profile and Catalog Binding** - Bind Red catalog/config data into shared AC15 catalog capabilities and define Red capability/profile boundaries.
+- [x] **Phase 19: Red Capability Profile and Catalog Binding** - Bind Red catalog/config data into shared AC15 catalog capabilities and define Red capability/profile boundaries. (completed 2026-06-13)
 - [ ] **Phase 20: Red Runtime Capability Binding and Simple Compatibility** - Bind shared identity, userdata, normal-play, Dani, tutorial-only Tokkun, and simple compatibility capabilities to Red-owned state.
 - [ ] **Phase 21: Older-AC15 ChallengeCompe Capability and Red Binding** - Define the shared older-AC15 ChallengeCompe capability and bind/prove it through Red evidence, with stateful behavior only after client/runtime proof defines the contract.
 - [ ] **Phase 22: Red AdminApi/WebUI and Runtime Closeout** - Expose implemented Red-owned readback surfaces and close v1.3 with automated plus cabinet/RPCS3 verification.
@@ -104,7 +104,19 @@ Plans:
 4. Catalog-backed metadata routes resolve Red folders, telops, recommendations, movies, customization, and Taikojuku data through shared capability modules where supported.
 5. Tests prove Red catalog/profile binding through parser and catalog outputs rather than source-shape assertions.
 
-**Plans:** TBD
+**Plans:** 3/3 plans complete
+Plans:
+**Wave 1**
+
+- [x] 19-01-PLAN.md - Red catalog/profile foundation
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [x] 19-02-PLAN.md - Red catalog-backed metadata routes
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [x] 19-03-PLAN.md - Phase 19 verification and closeout
 
 ### Phase 20: Red Runtime Capability Binding and Simple Compatibility
 
@@ -184,8 +196,8 @@ Plans:
 | RFND-01 | Phase 18 | Complete |
 | RFND-02 | Phase 18 | Complete |
 | RFND-03 | Phase 18 | Complete |
-| RCAT-01 | Phase 19 | Pending |
-| RCAT-02 | Phase 19 | Pending |
+| RCAT-01 | Phase 19 | Complete |
+| RCAT-02 | Phase 19 | Complete |
 | RSTATE-01 | Phase 20 | Pending |
 | RSTATE-02 | Phase 20 | Pending |
 | RSTATE-03 | Phase 20 | Pending |
@@ -251,14 +263,14 @@ See `.planning/milestones/v1.2-ROADMAP.md` and `.planning/milestones/v1.2-phases
 | v1.0 Blue Support | 1-6 | 30 roadmap plans | Shipped | 2026-06-03 |
 | v1.1 Blue Tokkun Mode Support | 7-11 | 7 GSD plans | Shipped | 2026-06-07 |
 | v1.2 Yellow AC15 Support | 12-17 plus 16.1 and 16.2 | 38 GSD plans | Shipped | 2026-06-12 |
-| v1.3 Red AC15 Support | 18-22 | 0 plans | Planning | - |
+| v1.3 Red AC15 Support | 18-22 | 7 GSD plans | Planning | - |
 
 ## Phase Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 18. Red Evidence and Capability Foundation | 4/4 | Complete | 2026-06-12 |
-| 19. Red Capability Profile and Catalog Binding | 0/TBD | Not started | - |
+| 19. Red Capability Profile and Catalog Binding | 3/3 | Complete | 2026-06-13 |
 | 20. Red Runtime Capability Binding and Simple Compatibility | 0/TBD | Not started | - |
 | 21. Older-AC15 ChallengeCompe Capability and Red Binding | 0/TBD | Not started | - |
 | 22. Red AdminApi/WebUI and Runtime Closeout | 0/TBD | Not started | - |

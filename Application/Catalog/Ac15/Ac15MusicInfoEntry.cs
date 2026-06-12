@@ -1,6 +1,8 @@
+using TaikoLocalServer.Application.Abstractions;
+
 namespace TaikoLocalServer.Application.Catalog.Ac15;
 
-public sealed record class Ac15MusicInfoEntry
+public sealed record class Ac15MusicInfoEntry : IMusicInfoEntry
 {
     public string MusicId { get; init; } = string.Empty;
 
@@ -27,4 +29,14 @@ public sealed record class Ac15MusicInfoEntry
     public IReadOnlyList<uint> Tags { get; init; } = [];
 
     public int FileOrder { get; init; }
+
+    public byte StarEasy { get; init; }
+
+    public byte StarNormal { get; init; }
+
+    public byte StarHard { get; init; }
+
+    public byte StarOni { get; init; }
+
+    public byte StarUra { get; init; }
 }
