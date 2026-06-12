@@ -4,6 +4,10 @@
 **Researched:** 2026-06-12
 **Overall confidence:** HIGH for brownfield integration points; MEDIUM for exact Red route/version/config-root and challenge competition semantics until runtime/log/IDA evidence closes them.
 
+## Correction Note
+
+The requirements review narrowed the architectural guidance. Keep Red integration simple: Red adapter/wire/Host registration, one shared-AC15 catalog/profile integration, Red-owned state over existing shared services, narrow Tokkun, reward/progression compatibility, and Don Challenge evidence/compatibility. Do not implement stateful challenge tables or `challengecompe.php` semantics until runtime/client evidence proves that contract. Do not touch previous eras except to preserve shared-code behavior.
+
 ## Recommendation
 
 Add Red as a first-class AC15 era with the same outer architecture as Yellow, but do not treat Red as a Yellow clone. Red should reuse the existing `Application/Ac15` core for normal scores, crowns, self-best, Dani, catalog readback, user-data composition, and typed EF helpers where the Red proto/data shape matches. Red must own its adapter, wire DTOs, routes, catalog, persistence tables, mappers, tests, and AdminApi/WebUI switches.

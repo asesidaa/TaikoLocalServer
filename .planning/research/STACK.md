@@ -4,6 +4,10 @@
 **Researched:** 2026-06-12
 **Confidence:** HIGH for repo stack/tooling reuse, MEDIUM for exact Red route prefix and challenge semantics until runtime/client evidence lands
 
+## Correction Note
+
+The requirements review corrected the first-pass interpretation. Red should reuse the existing stack and shared AC15 code. Do not turn absent Red proto surfaces into requirements. Do not change Blue, Green, Yellow, or Nijiiro behavior for Red work except where shared code must preserve existing behavior. Don Challenge is Red product scope from wiki, but local Red data/proto names are not enough to specify stateful challenge behavior; endpoint/schema semantics remain runtime evidence questions.
+
 ## Recommendation
 
 Do not add a new platform stack for Red. Implement Red as another first-class AC15 era inside the existing .NET 10 / ASP.NET Core host, with adapter-local protobuf wire DTOs, Mapperly mappers, Mediator handlers, EF Core SQLite tables, AC15 catalog loaders, and AdminApi/WebUI era routing where needed.

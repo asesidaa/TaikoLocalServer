@@ -4,6 +4,10 @@
 **Researched:** 2026-06-12
 **Confidence:** HIGH for repo/proto/codebase pitfalls; MEDIUM for Red runtime semantics until Red cabinet/RPCS3 traces confirm route cadence and Don Challenge behavior
 
+## Correction Note
+
+The requirements review removed several over-broad pitfalls. The current guidance is: absence in Red proto is not a requirement; previous eras should remain untouched; Don Challenge product behavior comes from wiki, while implementation details require runtime/proto/client proof; local Red challenge assets/field names are not enough to require stateful challenge support.
+
 ## Critical Context
 
 Blue, Green, and Yellow contain challenge competition proto fields and some controller/mapper surfaces, but those newer eras do not meaningfully call the feature. Do not treat their presence as active behavior. For this milestone, Don Challenge / challenge competition is meaningful only for Red and older AC15 versions.

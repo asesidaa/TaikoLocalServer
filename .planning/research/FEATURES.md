@@ -5,6 +5,10 @@
 **Researched:** 2026-06-12
 **Confidence:** HIGH for local proto/data/code-backed feature inventory; MEDIUM for full Don Challenge semantics until Red runtime traces prove call order and state meaning
 
+## Correction Note
+
+The requirements review corrected this file's first-pass challenge framing. Treat wiki Don Challenge behavior as product scope, but do not claim local Red data already proves challenge catalog/state semantics. Requirements should not list absent Red proto surfaces as features or exclusions. Red catalog should be one shared-AC15 integration unless actual Red parser/runtime deltas are found. Previous supported eras are no-touch boundaries for this milestone.
+
 ## Feature Landscape
 
 ### Evidence Summary

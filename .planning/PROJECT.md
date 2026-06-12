@@ -28,9 +28,9 @@ Yellow support reuses AC15 shared core behavior where it directly reduces duplic
 
 **Target features:**
 - Red adapter, generated wire DTOs, route ownership, host settings, startup/version integration, and catalog foundation from local Red proto/data.
-- Red normal cabinet flow comparable to Yellow where protocol and data evidence match: identity, userdata, initial data, self-best, crowns, recent/favorite songs, Dani Dojo, shop/rewards, Tokkun, Banacoin-adjacent stateless compatibility, AdminApi/WebUI routing, and runtime verification.
-- Red Don Challenge / challenge competition behavior from Red `ChallengeCompe*` proto fields, playresult challenge fields, and local data evidence, modeled for reuse by older AC15 eras where the behavior matches.
-- Explicit Red absence boundaries: no WaiWai surface, no Blue battle behavior, no shared Red/Yellow/Blue persistence tables, and no wallet/payment/challenge semantics invented without local evidence.
+- Red normal cabinet flow comparable to Yellow where protocol and data evidence match: identity, userdata, initial data, self-best, crowns, recent/favorite songs, Dani Dojo, reward/progression compatibility, Tokkun, Banacoin-adjacent stateless compatibility, AdminApi/WebUI routing, and runtime verification.
+- Red Don Challenge / challenge competition evidence and compatibility. Wiki context defines product scope; runtime/proto/client evidence must define endpoint, schema, state, and reward implementation.
+- No Red WaiWai surface, Blue battle mirroring, shared gameplay persistence tables, wallet/payment authority, or invented challenge semantics.
 
 ## Requirements
 
@@ -70,7 +70,7 @@ Yellow support reuses AC15 shared core behavior where it directly reduces duplic
 - [ ] Define Red route, transport, wire, catalog, and state boundaries from local proto/data/runtime evidence before implementation.
 - [ ] Add Red as an enableable first-class AC15 era without merging Red, Yellow, Blue, Green, or Nijiiro gameplay state.
 - [ ] Reuse Yellow-compatible AC15 shared core behavior only where Red local evidence matches.
-- [ ] Support evidence-backed Red Don Challenge / challenge competition behavior as older-AC15 shared behavior.
+- [ ] Resolve Red Don Challenge / challenge competition through wiki product scope plus runtime/proto/client evidence before implementing stateful behavior.
 - [ ] Close Red support only after automated verification plus repeatable cabinet/RPCS3 runtime smoke evidence.
 
 ### Out of Scope
