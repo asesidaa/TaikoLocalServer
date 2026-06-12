@@ -26,7 +26,7 @@ Active milestone: **v1.3 Red AC15 Support**
 
 | Phase | Name | Goal | Requirements | Success Criteria |
 |-------|------|------|--------------|------------------|
-| 18 | Red Evidence and Capability Foundation | Prove Red route/version/transport boundaries, inventory Red-supported capabilities, and add first-class Red adapter scaffolding. | RFND-01, RFND-02, RFND-03 | 5 |
+| 18 | Red Evidence and Capability Foundation | 4/4 | Complete   | 2026-06-12 |
 | 19 | Red Capability Profile and Catalog Binding | Bind Red catalog/config data into shared AC15 catalog capabilities and define Red capability/profile boundaries. | RCAT-01, RCAT-02 | 5 |
 | 20 | Red Runtime Capability Binding and Simple Compatibility | Bind shared identity, userdata, normal-play, Dani, tutorial-only Tokkun, and simple compatibility capabilities to Red-owned state. | RSTATE-01, RSTATE-02, RSTATE-03, RSTATE-04, RSTATE-05, RCOMP-01 | 5 |
 | 21 | Older-AC15 ChallengeCompe Capability and Red Binding | Define the shared older-AC15 ChallengeCompe capability and bind/prove it through Red evidence, with stateful behavior only after client/runtime proof defines the contract. | RCOMP-02, RCHAL-01, RCHAL-02 | 5 |
@@ -81,7 +81,7 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 18-04-PLAN.md - Red no-state route probes and runtime smoke gate
+- [x] 18-04-PLAN.md - Red no-state route probes and runtime smoke gate
 
 ### Phase 19: Red Capability Profile and Catalog Binding
 

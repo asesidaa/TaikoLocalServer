@@ -1,7 +1,7 @@
 # Phase 18 Red Runtime Smoke
 
 **Created:** 2026-06-13
-**Status:** pending/human_needed
+**Status:** passed/user-confirmed-basic-connection
 **Scope:** Red request-routing smoke for Phase 18 no-state probes only.
 
 ## Purpose
@@ -14,15 +14,15 @@ The Phase 18 probes are not Red gameplay support. They only prove that the clien
 
 | Field | Value |
 |-------|-------|
-| Runtime smoke status | `pending/human_needed` |
-| Runtime smoke date | Not run in current local artifacts |
-| Verified by | Pending user RPCS3/cabinet confirmation |
-| Server commit under test | Pending fill during smoke |
+| Runtime smoke status | `passed/user-confirmed-basic-connection` |
+| Runtime smoke date | 2026-06-13 |
+| Verified by | User RPCS3/cabinet confirmation in Codex session |
+| Server commit under test | Split Red route-probe controller working tree after `dcbad846` and `4a79d6cf` |
 | Red enabled setting | `Host/Configurations/ServerSettings.json` has `ServerSettings:Eras:Red:Enabled = true` |
 | Game route prefix under test | `/v08r01/chassis/*` |
 | Shared startup/version prefix under test | `/v01r00/chassis/*` |
 
-Do not change this status to passed until the user supplies concrete runtime observations.
+User confirmed that after splitting Red route probes into per-route controllers and rebuilding from this repository, the Red client connects successfully. Card scan was intentionally not performed because it requires later gameplay/profile support outside Phase 18.
 
 ## Server Setup
 
@@ -64,7 +64,7 @@ Fill this table from the RPCS3/cabinet run. Use exact timestamps if available, o
 
 | Order | Observed | Route | Expected owner | Notes |
 |-------|----------|-------|----------------|-------|
-| 1 | pending | `/v01r00/chassis/startupauth.php` | Shared startup/version | Record whether request appeared and response allowed progress. |
+| 1 | observed | `/v01r00/chassis/startupauth.php` | Shared startup/version | `Host/Logs/log-20260613.txt` shows HTTP 200 before the Red route-probe fix. |
 | 2 | pending | `/v01r00/chassis/verupauth.php` | Shared startup/version | Record whether request appeared and response allowed progress. |
 | 3 | pending | `/v01r00/chassis/verupcomplete.php` | Shared startup/version | Record whether request appeared and response allowed progress. |
 | 4 | pending | `/v08r01/chassis/playresult.php` | Red route probe | Record whether generated binding/logging worked if reached. |
@@ -81,8 +81,8 @@ Fill this table from the RPCS3/cabinet run. Use exact timestamps if available, o
 | 15 | pending | `/v08r01/chassis/heartbeat.php` | Red route probe | Expected minimal status fields set to `1`. |
 | 16 | pending | `/v08r01/chassis/rewardcardcheck.php` | Red route probe | Probe only; no unlock, shop, medal, or payment semantics. |
 | 17 | pending | `/v08r01/chassis/rewardexecution.php` | Red route probe | Probe only; no reward state. |
-| 18 | pending | `/v08r01/chassis/initialdatacheck.php` | Red route probe | Probe only; no feature advertisement semantics. |
-| 19 | pending | `/v08r01/chassis/tournamentcheck.php` | Red route probe | Probe only; no tournament/gacha state. |
+| 18 | observed after fix | `/v08r01/chassis/initialdatacheck.php` | Red route probe | Previously returned 405 with the single-file controller shape; user confirmed the basic connection succeeds after split/rebuild. |
+| 19 | observed after fix | `/v08r01/chassis/tournamentcheck.php` | Red route probe | Previously returned 405 with the single-file controller shape; user confirmed the basic connection succeeds after split/rebuild. |
 | 20 | pending | `/v08r01/chassis/bookkeeping.php` | Red route probe | Log-and-success probe only. |
 | 21 | pending | `/v08r01/chassis/coinsetting.php` | Red route probe | Log-and-success probe only. |
 | 22 | pending | `/v08r01/chassis/gettelop.php` | Red route probe | Probe only; telop binding belongs later. |
@@ -98,25 +98,26 @@ Record any route that returned 404 or appeared in Host unknown-request logs.
 
 | Timestamp/order | Route | Method | Status | Headers/content-type notes | Follow-up needed |
 |-----------------|-------|--------|--------|----------------------------|------------------|
-| pending | pending | pending | pending | pending | pending |
+| 2026-06-13 before fix | `/v08r01/chassis/initialdatacheck.php` | POST | 405 | `Content-Type: application/protobuf`; fixed by splitting Red route probes and rebuilding Host metadata. | resolved |
+| 2026-06-13 before fix | `/v08r01/chassis/tournamentcheck.php` | POST | 405 | `Content-Type: application/protobuf`; fixed by splitting Red route probes and rebuilding Host metadata. | resolved |
 
 ## Missing Content-Type / Direct Protobuf Check
 
 | Question | Result | Evidence |
 |----------|--------|----------|
-| Did Red game requests omit `Content-Type`? | pending | pending |
-| Did Host assign `application/protobuf` for `/v08r01/chassis/*` requests? | pending | pending |
-| Did generated Red `[FromBody]` request DTO binding succeed? | pending | pending |
-| Did any request fail before reaching the controller? | pending | pending |
+| Did Red game requests omit `Content-Type`? | not observed | The captured Red requests included `Content-Type: application/protobuf`. Missing-content-type fallback remains configured for `/v08r01/chassis/*`. |
+| Did Host assign `application/protobuf` for `/v08r01/chassis/*` requests? | not exercised by captured run | Captured requests already supplied protobuf content type. |
+| Did generated Red `[FromBody]` request DTO binding succeed? | passed for basic connection | User confirmed basic Red connection succeeds after split/rebuild. |
+| Did any request fail before reaching the controller? | resolved | Pre-fix 405s on `initialdatacheck.php` and `tournamentcheck.php` were resolved by the split/rebuild. |
 
 ## Minimal Response Shape Check
 
 | Question | Result | Evidence |
 |----------|--------|----------|
-| Did heartbeat status fields allow the client to continue? | pending | pending |
-| Did Banacoin-adjacent required `personid` echoes serialize correctly where reached? | pending | pending |
-| Did any empty list/minimal success response block further routing evidence? | pending | pending |
-| Did any route require additional fields before enough evidence was captured? | pending | pending |
+| Did heartbeat status fields allow the client to continue? | not reached in recorded evidence | Basic connection passed; full gameplay/card flow remains out of Phase 18 scope. |
+| Did Banacoin-adjacent required `personid` echoes serialize correctly where reached? | not reached in recorded evidence | Basic connection passed; payment semantics remain absent by design. |
+| Did any empty list/minimal success response block further routing evidence? | no basic-connection blocker reported | User confirmed basic connection succeeds. |
+| Did any route require additional fields before enough evidence was captured? | no Phase 18 blocker reported | Card scan/gameplay progression intentionally not tested because later support is required. |
 
 ## User Confirmation
 
@@ -124,15 +125,15 @@ Fill this section only from user-provided runtime evidence.
 
 | Field | Value |
 |-------|-------|
-| Confirmed by user | pending |
-| Confirmation date | pending |
-| RPCS3/cabinet build | pending |
-| Startup/version observations | pending |
-| Red game-route observations | pending |
-| Unknown routes | pending |
-| Binding/content-type result | pending |
-| Response-shape blockers | pending |
-| Phase 18 runtime-smoke disposition | pending |
+| Confirmed by user | yes |
+| Confirmation date | 2026-06-13 |
+| RPCS3/cabinet build | Red AC15 client under local RPCS3/cabinet smoke |
+| Startup/version observations | Shared startup/auth route reached and returned 200 in `Host/Logs/log-20260613.txt`; user later confirmed basic connection succeeds after fix. |
+| Red game-route observations | `initialdatacheck.php` and `tournamentcheck.php` were the initial Red route probes; pre-fix 405s resolved after split/rebuild. |
+| Unknown routes | none reported for the successful basic-connection smoke |
+| Binding/content-type result | generated Red route binding sufficient for basic connection; captured requests used `application/protobuf` |
+| Response-shape blockers | none for Phase 18 basic connection; card scan intentionally not tested |
+| Phase 18 runtime-smoke disposition | sufficient for Phase 18 close |
 
 ## Close Criteria
 
@@ -141,4 +142,4 @@ Phase 18 runtime smoke can be marked sufficient only when the user confirms one 
 - Red route-probe logging is sufficient for Phase 18 close, with observed startup/version and game-route sequence recorded.
 - Concrete routing or response-shape issues are identified, with enough detail to plan a narrow follow-up fix before close.
 
-Until then, the runtime smoke remains `pending/human_needed`.
+This criterion is now satisfied for Phase 18's basic connection scope. Deeper card scan, profile, and gameplay progression remain future-phase work.
