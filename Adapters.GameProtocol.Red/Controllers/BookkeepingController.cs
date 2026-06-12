@@ -1,0 +1,14 @@
+namespace TaikoLocalServer.Adapters.GameProtocol.Red.Controllers;
+
+[ApiController]
+[Route("/v08r01/chassis/bookkeeping.php")]
+public class BookkeepingController : BaseProtocolController<BookkeepingController>
+{
+    [HttpPost]
+    [Produces("application/protobuf")]
+    public IActionResult Bookkeeping([FromBody] BookKeepingRequest request)
+    {
+        Logger.LogInformation("Red route probe bookkeeping.php request: {@Request}", request);
+        return Ok(new BookKeepingResponse { Result = 1 });
+    }
+}
