@@ -534,27 +534,31 @@ For Red, use this shape only for Phase 18 route probes and simple compatibility 
 | A1 | ASVS applicability mapping is based on the phase technology surface and project config, not an external ASVS lookup in this session. [ASSUMED] | Security Domain | Security checklist may need refinement during plan review if a stricter project security interpretation is required. |
 | A2 | Minimal route-probe responses are assumed safe when they populate all generated required response fields and write no state. [ASSUMED] | Architecture Patterns / Validation Architecture | A specific Red route may require more fields for the client to continue routing smoke; manual RPCS3/cabinet logs must decide. |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Which Red routes are actually called in the first runtime smoke?**
    - What we know: IDA route strings identify the route suffix inventory. [VERIFIED: ida-cli IDA backend]
    - What's unclear: actual ordering, retry behavior, content-type behavior, and whether proto-only routes appear. [VERIFIED: 18-CONTEXT.md]
    - Recommendation: Route probes should log every full request object and unknown routes; manual RPCS3/cabinet smoke closes this gap. [VERIFIED: 18-CONTEXT.md]
+   - RESOLVED disposition: Plan 18-04 owns this closure through IDB-known no-state route probes, useful unknown-route/request logging, and a manual RPCS3/cabinet routing smoke checkpoint. Phase 18 does not assume a final runtime sequence before that smoke evidence exists.
 
 2. **What are the Red protocol byte widths and packing rules?**
    - What we know: Red proto has flag and byte fields, and current Blue/Green/Yellow profiles share common limits. [VERIFIED: proto/red/taiko.proto] [VERIFIED: Application/Ac15/Ac15EraProfiles.cs]
    - What's unclear: whether Red's runtime byte widths and crown packing match later AC15 eras. [VERIFIED: 18-CONTEXT.md]
    - Recommendation: Leave `Ac15EraProfiles.Red` out of Phase 18 and capture this as a Phase 19 proof task. [VERIFIED: 18-CONTEXT.md]
+   - RESOLVED disposition: Deferred to Phase 19. Phase 18 must not add `Ac15EraProfiles.Red`, Red gameplay packing, or Red profile/catalog binding.
 
 3. **Should `getbanacoininfo.php` and `getreitai.php` become Red routes?**
    - What we know: Red proto contains these messages, but the IDA route string inventory did not find matching suffixes. [VERIFIED: proto/red/taiko.proto] [VERIFIED: ida-cli IDA backend]
    - What's unclear: whether runtime flow reaches them through computed strings or alternate code paths not captured by the string inventory. [VERIFIED: ida-cli IDA backend]
    - Recommendation: Do not add them in the initial route-probe list unless runtime logs or deeper IDA proof requires them. [VERIFIED: 18-CONTEXT.md]
+   - RESOLVED disposition: Exclude proto-only routes from the initial Phase 18 route-probe list unless manual runtime logs or additional IDA proof shows the client reaches them. Do not infer Banacoin/payment or Reitai behavior from proto presence alone.
 
 4. **Where should the canonical Red evidence live?**
    - What we know: Phase context allows one evidence document or split IDB findings and capability matrix as long as both are canonical Phase 18 outputs. [VERIFIED: 18-CONTEXT.md]
    - What's unclear: exact filenames and whether the planner wants docs under `.planning/phases/18...` only or an additional docs artifact. [VERIFIED: 18-CONTEXT.md]
    - Recommendation: Plan a single `.planning/phases/18-red-evidence-and-capability-foundation/18-RED-EVIDENCE.md` unless planner chooses a split. [ASSUMED]
+   - RESOLVED disposition: Use `.planning/phases/18-red-evidence-and-capability-foundation/18-RED-EVIDENCE.md` as the canonical Phase 18 evidence artifact. Plan 18-01 may include both the route/version evidence and the capability matrix in that single file.
 
 ## Environment Availability
 
