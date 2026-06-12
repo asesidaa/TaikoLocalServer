@@ -77,7 +77,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 18-03-PLAN.md - Host Red settings, enabled-era gating, and validation guard
+- [x] 18-03-PLAN.md - Host Red settings, enabled-era gating, and validation guard
 
 **Wave 4** *(blocked on Wave 3 completion)*
 

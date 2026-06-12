@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Phase Summary
 status: executing
-stopped_at: Completed 18-02-PLAN.md
-last_updated: "2026-06-12T21:45:28.571Z"
-last_activity: 2026-06-13 -- Plan 18-02 completed
+stopped_at: Completed 18-03-PLAN.md
+last_updated: "2026-06-12T22:00:57.803Z"
+last_activity: 2026-06-13 -- Plan 18-03 completed
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 4
-  completed_plans: 2
-  percent: 50
+  completed_plans: 3
+  percent: 75
 ---
 
 # Project State
@@ -26,9 +26,9 @@ See: `.planning/PROJECT.md` (updated 2026-06-13)
 ## Current Position
 
 Phase: 18 (Red Evidence and Capability Foundation) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 Status: Ready to execute
-Last activity: 2026-06-13 -- Plan 18-02 completed
+Last activity: 2026-06-13 -- Plan 18-03 completed
 
 ## Performance Metrics
 
@@ -101,6 +101,7 @@ Last activity: 2026-06-13 -- Plan 18-02 completed
 | Phase 17 P01 | closeout | 4 requirements | planning artifacts |
 | Phase 18 P01 | 7 min | 2 tasks | 1 files |
 | Phase 18 P02 | 24 min | 1 tasks | 9 files |
+| Phase 18 P03 | 8 min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -181,6 +182,10 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 18]: Red is introduced as a first-class adapter and enum identity only. — Host runtime binding, route probes, catalog/profile binding, gameplay state, tests, AdminApi, and WebUI remain deferred to their planned follow-up work.
 - [Phase 18]: Generated Red wire uses protogen default package routing for the adapter namespace. — The dumped Red proto inputs have no package declarations; using --package preserved proto immutability while producing TaikoLocalServer.Adapters.GameProtocol.Red.Wire DTOs.
 
+- [Phase 18]: Plan 18-03 wires Red Host support through enabled-era gating only. Red adapter DI registration occurs only when `GameEra.Red` is enabled, and the Red application part is removed when disabled.
+- [Phase 18]: Plan 18-03 keeps Red outside AC15 shop validation. Red settings intentionally omit `EnableShop` and `ActiveShopSeasonId`; Green, Blue, and Yellow remain the only eras requiring shop settings.
+- [Phase 18]: Plan 18-03 scopes Red direct-protobuf fallback to `/v08r01/chassis`. The fallback does not broaden to all `/v08r01` paths.
+
 ### Pending Todos
 
 None recorded.
@@ -203,10 +208,10 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-12T21:45:28.564Z
-Stopped at: Completed 18-02-PLAN.md
+Last session: 2026-06-12T22:00:12.087Z
+Stopped at: Completed 18-03-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
 
-- Start the next milestone with `$gsd-new-milestone`.
+- Execute Phase 18 Plan 04 for Red no-state route probes and the runtime smoke gate.
