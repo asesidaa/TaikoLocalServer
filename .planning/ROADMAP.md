@@ -69,7 +69,7 @@ Active milestone: **v1.3 Red AC15 Support**
 Plans:
 **Wave 1**
 
-- [ ] 18-01-PLAN.md - Red evidence artifact and capability matrix
+- [x] 18-01-PLAN.md - Red evidence artifact and capability matrix
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -181,9 +181,9 @@ Plans:
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| RFND-01 | Phase 18 | Pending |
+| RFND-01 | Phase 18 | Complete |
 | RFND-02 | Phase 18 | Pending |
-| RFND-03 | Phase 18 | Pending |
+| RFND-03 | Phase 18 | Complete |
 | RCAT-01 | Phase 19 | Pending |
 | RCAT-02 | Phase 19 | Pending |
 | RSTATE-01 | Phase 20 | Pending |
@@ -257,7 +257,7 @@ See `.planning/milestones/v1.2-ROADMAP.md` and `.planning/milestones/v1.2-phases
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 18. Red Evidence and Capability Foundation | 0/TBD | Not started | - |
+| 18. Red Evidence and Capability Foundation | 1/4 | In Progress | - |
 | 19. Red Capability Profile and Catalog Binding | 0/TBD | Not started | - |
 | 20. Red Runtime Capability Binding and Simple Compatibility | 0/TBD | Not started | - |
 | 21. Older-AC15 ChallengeCompe Capability and Red Binding | 0/TBD | Not started | - |

@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Phase Summary
-status: Roadmap corrected
-stopped_at: Phase 18 context gathered
-last_updated: "2026-06-12T19:19:52.586Z"
-last_activity: 2026-06-13 - v1.3 roadmap corrected
+status: executing
+stopped_at: Completed 18-01-PLAN.md
+last_updated: "2026-06-12T21:12:38.628Z"
+last_activity: 2026-06-12 -- Plan 18-01 completed
 progress:
   total_phases: 5
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  total_plans: 4
+  completed_plans: 1
+  percent: 25
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-13)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** v1.3 Red AC15 Support roadmap is corrected around capability composition; next step is Phase 18 planning.
+**Current focus:** Phase 18 — Red Evidence and Capability Foundation
 
 ## Current Position
 
-Phase: 18 - Red Evidence and Capability Foundation
-Plan: Not started
-Status: Roadmap corrected
-Last activity: 2026-06-13 - v1.3 roadmap corrected
+Phase: 18 (Red Evidence and Capability Foundation) — EXECUTING
+Plan: 2 of 4
+Status: Ready to execute
+Last activity: 2026-06-12 -- Plan 18-01 completed
 
 ## Performance Metrics
 
@@ -99,6 +99,7 @@ Last activity: 2026-06-13 - v1.3 roadmap corrected
 | Phase 16.2 P09 | 9 min | 1 tasks | 5 files |
 | Phase 16.2 P10 | 22 min | 1 tasks | 4 files |
 | Phase 17 P01 | closeout | 4 requirements | planning artifacts |
+| Phase 18 P01 | 7 min | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -172,6 +173,10 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 16.2]: Plan 09 added `IAc15SongPlayDatum` and shared AC15 normal-play row insertion through a generic helper over concrete era DbSets, while Green `SupportLevel` and ghost section persistence remain era-local.
 - [Phase 17]: Yellow runtime closeout accepted user-confirmed RPCS3 smoke evidence, full `dotnet test Tests/Tests.csproj` (683 passed), and temp-output Host build (0 warnings/errors) as the v1.2 completion gate.
 - [Phase 17]: Final Yellow contract records `/v09r02/chassis/*` game routes, shared `/v01r00/chassis/*` startup/version ownership, Yellow-owned state, no Yellow battle, and no Banacoin authority.
+- [Phase 18]: Plan 18-01 records Red game routes as /v08r01 while shared startup/version remains /v01r00. — IDA-backed route strings prove separate game and startup/version prefixes.
+- [Phase 18]: Plan 18-01 records ST8100-1 as the active Red runtime root and ST5100-* / ST7100-1 as inactive or historical. — IDA root strings identify ST8100-1; local data contains older roots that must not be selected by filename guessing.
+- [Phase 18]: Plan 18-01 classifies ChallengeCompe as a shared older-AC15 candidate rather than Red-only stateful behavior. — Red route/proto evidence proves a candidate surface, while Phase 21 owns the shared contract and semantics.
+- [Phase 18]: Plan 18-01 leaves Red gameplay persistence, EF migrations, Ac15EraProfiles.Red, AdminApi, and WebUI out of scope. — Later phases own runtime state, profile binding, admin, and UI only after evidence-backed contracts exist.
 
 ### Pending Todos
 
@@ -195,9 +200,9 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-12T19:19:52.576Z
-Stopped at: Phase 18 context gathered
-Resume file: .planning/phases/18-red-evidence-and-capability-foundation/18-CONTEXT.md
+Last session: 2026-06-12T21:12:38.621Z
+Stopped at: Completed 18-01-PLAN.md
+Resume file: None
 
 ## Operator Next Steps
 

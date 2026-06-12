@@ -8,9 +8,9 @@
 
 ### Red Foundation
 
-- [ ] **RFND-01**: Developer can review a Red route/version evidence record that identifies supported route prefix, direct-protobuf transport expectations, shared startup/version ownership, HDD/version mapping, active data root, and unresolved client-evidence gaps before routes are finalized.
+- [x] **RFND-01**: Developer can review a Red route/version evidence record that identifies supported route prefix, direct-protobuf transport expectations, shared startup/version ownership, HDD/version mapping, active data root, and unresolved client-evidence gaps before routes are finalized.
 - [ ] **RFND-02**: Red is served by a first-class enableable `GameEra.Red` adapter with generated Red wire DTOs from `proto/red`, era settings, Host/DI registration, route ownership, and enabled-era gating.
-- [ ] **RFND-03**: Red work preserves current supported-era behavior except where shared code changes are required and existing behavior remains covered.
+- [x] **RFND-03**: Red work preserves current supported-era behavior except where shared code changes are required and existing behavior remains covered.
 
 ### Red Capability Profile And Catalog Binding
 
@@ -70,9 +70,9 @@ Roadmap phase mapping for v1.3 Red AC15 Support.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| RFND-01 | Phase 18 | Pending |
+| RFND-01 | Phase 18 | Complete |
 | RFND-02 | Phase 18 | Pending |
-| RFND-03 | Phase 18 | Pending |
+| RFND-03 | Phase 18 | Complete |
 | RCAT-01 | Phase 19 | Pending |
 | RCAT-02 | Phase 19 | Pending |
 | RSTATE-01 | Phase 20 | Pending |
