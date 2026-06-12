@@ -14,7 +14,7 @@ AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, pe
 
 v1.2 Yellow AC15 Support shipped on 2026-06-12. Yellow is a first-class AC15 era using `proto/yellow/yellow.proto`, generated Yellow wire DTOs, Yellow-owned persistence, and `Host/wwwroot/data/yellow/data`.
 
-v1.3 Red AC15 Support started on 2026-06-12. Red planning uses `proto/red/taiko.proto`, `proto/red/vsinterface.proto`, and the local Red game-data symlink at `Host/wwwroot/data/red/data` as source evidence. Red is expected to compose shared AC15 capabilities where local evidence matches, omit WaiWai, and bind/prove ChallengeCompe as a shared older-AC15 capability.
+v1.3 Red AC15 Support started on 2026-06-12. Red planning uses `proto/red/taiko.proto`, `proto/red/vsinterface.proto`, and the local Red game-data symlink at `Host/wwwroot/data/red/data` as source evidence. Phase 18 completed the Red evidence/foundation slice: `/v08r01` game routes, shared `/v01r00` startup/version ownership, active `ST8100-1` root evidence, first-class Red enum/adapter/wire/Host gating, and no-state route probes with user-confirmed basic connection. Card scan, profile, gameplay, catalog binding, and ChallengeCompe semantics remain later-phase scope. Red is expected to compose shared AC15 capabilities where local evidence matches, omit WaiWai, and bind/prove ChallengeCompe as a shared older-AC15 capability.
 
 Although Blue, Green, and Yellow wire surfaces contain challenge competition proto definitions and some compatibility routes, those newer versions do not meaningfully call the feature; do not treat their stubs as runtime behavior evidence. Challenge competition is meaningful scope only for Red and older AC15 versions.
 
@@ -64,11 +64,12 @@ Yellow support reuses AC15 shared core behavior where it directly reduces duplic
 - [x] Yellow stateless Banacoin compatibility: Yellow Banacoin-adjacent routes are compatibility surfaces only and do not create wallet or payment authority.
 - [x] Yellow no-battle absence contract: Blue-only battle behavior remains absent from Yellow; no Yellow battle routes, fields, persistence, or inferred runtime behavior are exposed without concrete Yellow evidence.
 - [x] Yellow runtime verification and final contract: Phase 17 records full automated verification, user-confirmed RPCS3 runtime proof, and final route/state/semantic contract documentation.
+- [x] Red evidence and first-class foundation: Phase 18 records Red `/v08r01` game route evidence, shared `/v01r00` startup/version ownership, active `ST8100-1` root evidence, Red enum/adapter/generated wire/Host gating, and no-state route probes with user-confirmed basic connection only.
 
 ### Active
 
-- [ ] Define Red route, transport, wire, catalog, and state boundaries from local proto/data/runtime evidence before implementation.
-- [ ] Add Red as an enableable first-class AC15 era without merging Red, Yellow, Blue, Green, or Nijiiro gameplay state.
+- [ ] Define Red catalog and state boundaries from local proto/data/runtime evidence before implementation.
+- [ ] Extend Red from first-class foundation into catalog/profile/runtime/admin support without merging Red, Yellow, Blue, Green, or Nijiiro gameplay state.
 - [ ] Compose Red from shared AC15 capabilities only where Red local evidence matches, using Red config/limits/wire placement and Red-owned typed persistence.
 - [ ] Resolve shared older-AC15 ChallengeCompe through wiki product scope plus Red runtime/proto/client evidence before implementing stateful behavior.
 - [ ] Close Red support only after automated verification plus repeatable cabinet/RPCS3 runtime smoke evidence.
