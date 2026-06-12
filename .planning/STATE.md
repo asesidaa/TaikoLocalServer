@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Red AC15 Support
 status: planning
-last_updated: "2026-06-12T14:45:07.878Z"
+last_updated: "2026-06-12"
 last_activity: 2026-06-12
 progress:
-  total_phases: 0
+  total_phases: 6
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -20,14 +20,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-12)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Planning the next milestone after shipped v1.2 Yellow AC15 Support.
+**Current focus:** v1.3 Red AC15 Support roadmap is drafted; next step is Phase 18 planning.
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-06-12 — Milestone v1.3 started
+Phase: 18 - Red Evidence and Era Foundation
+Plan: Not started
+Status: Roadmap drafted
+Last activity: 2026-06-12 - v1.3 roadmap created
 
 ## Performance Metrics
 
@@ -103,6 +103,7 @@ Last activity: 2026-06-12 — Milestone v1.3 started
 
 ### Roadmap Evolution
 
+- v1.3 Red AC15 Support roadmap drafted as Phases 18-23: evidence/foundation, catalog/profile, identity/normal/Dani, reward/Tokkun/compatibility, Don Challenge evidence/compatibility, and AdminApi/WebUI/runtime closeout.
 - Phase 16.1 inserted after Phase 16 and completed before Phase 17: AC15 Mapperly Mapper Rewrite and Presence Semantics; includes `protogen +nullablevaluetype=yes` wire regeneration as a first-class refactor point.
 - Phase 16.2 inserted after Phase 16.1 and before Phase 17: AC15 Shared Core Simplification and Reuse Cleanup (URGENT)
 - Phase 17 completed v1.2 Yellow runtime verification and contract closeout from full automated verification plus user-confirmed RPCS3 smoke.

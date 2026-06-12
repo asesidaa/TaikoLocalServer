@@ -10,12 +10,12 @@
 
 - [ ] **RFND-01**: Developer can review a Red route/version evidence record that identifies supported route prefix, direct-protobuf transport expectations, shared startup/version ownership, HDD/version mapping, active data root, and unresolved client-evidence gaps before routes are finalized.
 - [ ] **RFND-02**: Red is served by a first-class enableable `GameEra.Red` adapter with generated Red wire DTOs from `proto/red`, era settings, Host/DI registration, route ownership, and enabled-era gating.
-- [ ] **RFND-03**: Red work preserves current Blue, Green, Yellow, and Nijiiro behavior except where shared code changes are required and existing behavior remains covered.
+- [ ] **RFND-03**: Red work preserves current supported-era behavior except where shared code changes are required and existing behavior remains covered.
 
 ### Red Catalog And Shared AC15 Profile
 
 - [ ] **RCAT-01**: Red catalog initialization uses shared AC15 catalog loaders and services for matching music, tuning, Taikojuku/Dani, folder, telop, recommendation, movie, and customization data, with Red-specific parser work only where Red local data proves a delta.
-- [ ] **RCAT-02**: Red has an explicit AC15 capability/profile model that matches Red proto-supported surfaces and shared AC15 behavior without inheriting unsupported Yellow-only behavior.
+- [ ] **RCAT-02**: Red has an explicit AC15 capability/profile model that matches Red proto-supported surfaces and shared AC15 behavior without inheriting unsupported later-era behavior.
 
 ### Red Identity, Normal Play, And Dani
 
@@ -57,43 +57,43 @@
 |---------|--------|
 | Stateful Don Challenge behavior without runtime/proto/client proof | Wiki establishes product scope, not endpoint, schema, database, or response semantics. |
 | Red WaiWai, battle, item-shop, medal, AI/ghost, token-count, or shop-folder behavior without Red evidence | These are not Red requirements just because other eras or later versions have nearby surfaces. |
-| Blue, Green, Yellow, or Nijiiro gameplay behavior changes for Red | v1.3 adds Red while preserving existing supported era contracts. |
-| Shared Red/Yellow/Blue gameplay persistence tables | Shared AC15 behavior must still use era-owned rows and explicit typed boundaries. |
+| Existing supported-era gameplay behavior changes for Red | v1.3 adds Red while preserving existing supported era contracts. |
+| Shared cross-era gameplay persistence tables | Shared AC15 behavior must still use era-owned rows and explicit typed boundaries. |
 | Real Banacoin balance, payment, settlement, receipt, coupon, deduction, BNID result, or transaction-history behavior | TaikoLocalServer is not a Banacoin authority for this milestone. |
 | Invented Tokkun rewards, score/crown writes, paid-coin behavior, practice-time accounting, jump-point behavior, autoplay behavior, speed-change behavior, or unlock side effects | Tokkun state remains protocol-backed and separated from normal progression unless Red evidence proves otherwise. |
 | Runtime scraping of wiki or official pages | Public pages are scoping context only; local protocol, binary, logs, IDA, and cabinet/RPCS3 evidence decide server behavior. |
 
 ## Traceability
 
-Roadmap phase mapping is created during `$gsd-new-milestone` roadmap generation.
+Roadmap phase mapping for v1.3 Red AC15 Support.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| RFND-01 | TBD | Pending |
-| RFND-02 | TBD | Pending |
-| RFND-03 | TBD | Pending |
-| RCAT-01 | TBD | Pending |
-| RCAT-02 | TBD | Pending |
-| RSTATE-01 | TBD | Pending |
-| RSTATE-02 | TBD | Pending |
-| RSTATE-03 | TBD | Pending |
-| RSTATE-04 | TBD | Pending |
-| RSTATE-05 | TBD | Pending |
-| RCOMP-01 | TBD | Pending |
-| RCOMP-02 | TBD | Pending |
-| RCHAL-01 | TBD | Pending |
-| RCHAL-02 | TBD | Pending |
-| RVER-01 | TBD | Pending |
-| RVER-02 | TBD | Pending |
-| RVER-03 | TBD | Pending |
+| RFND-01 | Phase 18 | Pending |
+| RFND-02 | Phase 18 | Pending |
+| RFND-03 | Phase 18 | Pending |
+| RCAT-01 | Phase 19 | Pending |
+| RCAT-02 | Phase 19 | Pending |
+| RSTATE-01 | Phase 20 | Pending |
+| RSTATE-02 | Phase 20 | Pending |
+| RSTATE-03 | Phase 20 | Pending |
+| RSTATE-04 | Phase 21 | Pending |
+| RSTATE-05 | Phase 21 | Pending |
+| RCOMP-01 | Phase 21 | Pending |
+| RCOMP-02 | Phase 22 | Pending |
+| RCHAL-01 | Phase 22 | Pending |
+| RCHAL-02 | Phase 22 | Pending |
+| RVER-01 | Phase 23 | Pending |
+| RVER-02 | Phase 23 | Pending |
+| RVER-03 | Phase 23 | Pending |
 | OLDAC15-01 | Future milestone | Deferred |
 | RCHAL-03 | Future milestone | Deferred |
 
 **Coverage:**
 
 - v1.3 requirements: 17 total
-- Mapped to phases: 0
-- Unmapped: 17
+- Mapped to phases: 17
+- Unmapped: 0
 - Future requirements: 2 deferred
 
 ---
