@@ -149,3 +149,83 @@ Red protocol limits, flag-array widths, packing rules, crown byte layout, and re
 - Red protocol limits, flag-array widths, packing, crown byte layout, and response byte formats are not yet IDB-proven enough for `Ac15EraProfiles.Red`.
 - Route probes can prove routing and logging, but they do not prove profile, catalog, userdata, normal-play, Dani, Tokkun, ChallengeCompe, reward, payment, AdminApi, or WebUI semantics.
 - Shared startup/version ownership is proven by IDB route strings, but Red HDD mapping and startup movie readback still need later implementation and verification.
+
+## Capability Matrix
+
+This matrix groups Red surfaces by phase owner. It is a planning and preservation artifact, not a runtime implementation contract. "Candidate" means the local proto, IDB, or data evidence justifies later investigation; it does not mean Phase 18 implements behavior.
+
+### Phase 18 foundation
+
+| Surface | Classification | Evidence | Phase 18 Bound |
+|---------|----------------|----------|----------------|
+| Red evidence artifact | Supported foundation work | Plan 18-01 plus IDA/proto/data evidence. | This document is canonical for route/version/root and capability inventory until later evidence updates it. |
+| Red adapter and generated wire | Supported foundation work | `proto/red/taiko.proto` and `proto/red/vsinterface.proto`; research verified repo-local `protogen` generation. | Plan 18-02 may add adapter-local wire from immutable proto inputs. |
+| Red route probes for IDB-known suffixes | Supported foundation work | IDB-known suffixes listed above from `18-RESEARCH.md` lines 171-192. | Probes are routing/logging only and must not call gameplay services or write state. |
+| Host enabled-era gating | Supported foundation work | Existing Host application-part gating pattern. | Plan 18-03 owns Red enablement; disabled Red routes must stay absent. |
+| Shared startup/version ownership | Supported foundation work | `/v01r00` at `0xDA76A0`; startup/version suffixes at `0xDA8330`, `0xDA8348`, and `0xDA8360`. | Keep shared `/v01r00/chassis/*`; Red must not duplicate these routes under `/v08r01`. |
+
+### Phase 19 catalog/profile
+
+| Surface | Classification | Evidence | Later-Phase Bound |
+|---------|----------------|----------|-------------------|
+| Active Red catalog root | Candidate | `ST8100-1` IDB root strings and local `config/ST8100-1` files. | Phase 19 binds catalog loaders only after parser/profile proof. |
+| Music and medley catalog | Candidate | `musicinfo.xml` and `musicmedleyinfo.xml` exist under active `ST8100-1`. | Candidate catalog binding, not Phase 18 runtime support. |
+| Tuning and default music data | Candidate | `fumen/tuning.bin` and `defmusic.bin` exist locally. | Candidate catalog binding, not a protocol-limit claim. |
+| Telop, folder, recommendation, movie, and customization data | Candidate | Proto/route surfaces exist for telop/folder/recommend, and local data has `movie/` plus `nutdata/`. | Phase 19 must prove sidecar/data shape before responses are treated as supported. |
+| Red `Ac15EraProfile` | Later-phase only | D-05 and D-09 require IDB-backed limits before profile binding. | Do not add `Ac15EraProfiles.Red` in Phase 18. |
+
+### Phase 20 runtime/simple compatibility
+
+| Surface | Classification | Evidence | Later-Phase Bound |
+|---------|----------------|----------|-------------------|
+| Identity/profile via `baidcheck.php` and `mydonentry.php` | Candidate | IDB routes `0xDAA710` and `0xDAA728`; `BAIDRequest`, `BAIDResponse`, `MydonEntryRequest`, and `MydonEntryResponse`. | Phase 20 owns Red-owned identity/profile behavior. |
+| Userdata via `userdata.php` | Candidate | IDB route `0xDAA740`; `UserDataRequest` / `UserDataResponse`. | Phase 20 owns Red-owned userdata readback. |
+| Normal play via `playresult.php` | Candidate | IDB route `0xDA96F8`; `PlayResultRequest` / `PlayResultResponse`. | Phase 20 owns normal score/crown/profile writes after no-cross-mode proof. |
+| Self-best via `selfbest.php` | Candidate | IDB route `0xDAA7E8`; `SelfBestRequest` / `SelfBestResponse`. | Phase 20 owns Red self-best state. |
+| Crowns via `crownsdata.php` | Candidate | IDB route `0xDAA7B8`; `CrownsDataRequest` / `CrownsDataResponse`. | Crown byte format and width remain unresolved before profile binding. |
+| Dani/Taikojuku via `taikojuku.php` | Candidate | IDB route `0xDAAE88`; `TaikojukuRequest` / `TaikojukuResponse`. | Phase 20 owns Red Dani state after Phase 19 catalog/profile binding. |
+| Tokkun tutorial | Candidate | `tokkun_tutorial_flg` exists in `UserDataResponse` and `PlayResultRequest`; `ary_tokkunstage_info` exists in `PlayResultRequest`. | Phase 20 may persist/read back tutorial state only; no raw Tokkun history, rewards, score, crown, challenge, or unlock writes are implied. |
+| Reward card via `rewardcardcheck.php` | Compatibility/probe-only candidate | IDB route `0xDAA818`; `RewardcardcheckRequest` / `RewardcardcheckResponse`. | No item shop, medal, unlock, wallet, payment, coupon, settlement, receipt, or transaction authority. |
+| Reward execution via `rewardexecution.php` | Compatibility/probe-only candidate | IDB route `0xDAA838`; `RewardexecutionRequest` / `RewardexecutionResponse`. | No reward unlock state or later-era shop behavior is implied. |
+| Don point and reward fields | Compatibility/probe-only candidate | Red proto fields include `reward_ptn`, `reward_progress`, `get_donpoint`, `total_get_donpoint`, and `total_use_donpoint`. | Treat as simple profile/protocol compatibility only when runtime evidence requires it. |
+| Banacoin error via `banacoinerrorlog.php` | Compatibility/probe-only candidate | IDB route `0xDA9710`; `BanacoinerrorlogRequest` / `BanacoinerrorlogResponse`. | Log/probe only; no wallet, balance, payment, coupon, settlement, receipt, or transaction authority. |
+| Balance check via `balancecheck.php` | Compatibility/probe-only candidate | IDB route `0xDAA778`; `BalancecheckRequest` / `BalancecheckResponse`. | No balance authority or persisted wallet state. |
+| Banacoin payment via `banacoinpayment.php` | Compatibility/probe-only candidate | IDB route `0xDAA798`; `BanacoinpaymentRequest` / `BanacoinpaymentResponse`. | No payment authority, deduction, receipt, settlement, coupon, or transaction persistence. |
+| `getbanacoininfo.php` | Proto-only candidate | `GetbanacoininfoRequest` / `GetbanacoininfoResponse` exist, but no captured IDB route suffix. | Not a planned Phase 18 route; add only if runtime or deeper IDA proof requires it. |
+| `getreitai.php` | Proto-only candidate | `GetreitaiRequest` / `GetreitaiResponse` exist, but no captured IDB route suffix. | Not a planned Phase 18 route; add only if runtime or deeper IDA proof requires it. |
+
+### Phase 21 ChallengeCompe
+
+| Surface | Classification | Evidence | Later-Phase Bound |
+|---------|----------------|----------|-------------------|
+| `challengecompe.php` | Shared older-AC15 candidate | IDB route `0xDAA758`; `ChallengeCompeRequest` / `ChallengeCompeResponse`. | Shared older-AC15 candidate, not a Red-only stateful feature. Phase 21 owns contract and stateful semantics. |
+| Playresult challenge arrays | Shared older-AC15 candidate | `ary_challenge_id`, `ary_user_compe_id`, and `ary_bng_compe_id` exist on Red `PlayResultRequest.StageData`. | Preserve as evidence for Phase 21; do not write challenge state in Phase 18. |
+| Userdata challenge flag | Shared older-AC15 candidate | `is_challengecompe` exists on Red `UserDataResponse`. | Readback semantics are unproven until Phase 21. |
+
+### Explicit absent surfaces
+
+| Surface | Classification | Evidence | Phase 18 Bound |
+|---------|----------------|----------|----------------|
+| Red item shop | Explicit absent | No Red item-shop request/response messages or IDB route suffixes found. | Do not add item-shop routes, state, settings requirements, or unlock mirrors. |
+| Blue battle | Explicit absent | No Red battle userdata messages or `battleuserdata.php` route suffix. | Do not mirror Blue battle state, stage graph behavior, boss behavior, token behavior, or battle readback. |
+| WaiWai | Explicit absent | No Red WaiWai proto fields; roadmap excludes Red WaiWai work. | Do not add a Red WaiWai mode or tutorial behavior. |
+| AI/ghost | Explicit absent | No current Red proto/IDA evidence. | Do not add ghost state, ghost routes, or Green AI Battle behavior. |
+| Token-count and shop-folder behavior | Explicit absent | No current Red proto/IDA evidence and later-era shop behavior is out of scope. | Do not add token-count, shop-folder, or medal/shop compatibility. |
+| Later-era medal/shop behavior | Explicit absent | Red proto has Don point/reward fields, not Yellow/Blue/Green shop medal semantics. | Do not map Red reward fields to medal or item-shop systems. |
+| Wallet/payment/coupon/transaction authority | Explicit absent | Banacoin-adjacent proto/routes are compatibility candidates only. | Do not add wallet, balance authority, payment deduction, coupon, settlement, receipt, or transaction persistence. |
+| Red `Ac15EraProfile` | Explicitly deferred | D-05 and D-09 defer profile binding. | Do not add `Ac15EraProfiles.Red` in Phase 18. |
+| Red EF migrations | Explicit absent | Phase 18 forbids gameplay persistence. | Do not add Red EF migrations. |
+| Red gameplay tables | Explicit absent | Runtime state belongs to Phase 20/21 only after evidence. | Do not add Red save, score, crown, Dan, Tokkun, ChallengeCompe, shop, medal, wallet, payment, coupon, or transaction tables. |
+| AdminApi | Explicit absent | Phase 22 owns admin readback after runtime surfaces exist. | Do not add Red AdminApi routes in Phase 18. |
+| WebUI | Explicit absent | Phase 22 owns UI readback after runtime surfaces exist. | Do not add Red WebUI flows in Phase 18. |
+
+## Preservation Guardrails
+
+- Existing supported-era preservation is a Phase 18 requirement: Green, Blue, Yellow, Nijiiro, shared `/v01r00`, and shared `Application/Ac15` behavior must remain unchanged except for narrowly scoped Red foundation work in later Plan 18 tasks.
+- Do not add Red gameplay persistence: Phase 18 must not write Red or existing-era save, score, crown, Dan, Tokkun, ChallengeCompe, shop, medal, wallet, payment, coupon, or transaction state.
+- Do not add Red EF migrations: Red tables and migrations belong only to later runtime phases after evidence proves state shape.
+- Do not add Ac15EraProfiles.Red: Red protocol limits, flag-array widths, packing, crown bytes, and response byte formats remain unresolved.
+- Do not add AdminApi/WebUI Red: Red admin and WebUI surfaces belong to Phase 22 after implemented Red-owned runtime readback exists.
+- Do not treat `challengecompe.php` as Red-only or stateful in Phase 18; it is a shared older-AC15 candidate whose contract belongs to Phase 21.
+- Do not treat `rewardcardcheck.php`, `rewardexecution.php`, `balancecheck.php`, `banacoinpayment.php`, or `banacoinerrorlog.php` as wallet, payment, coupon, receipt, settlement, transaction, item-shop, medal, or unlock authority.
+- Do not add proto-only `getbanacoininfo.php` or `getreitai.php` as Phase 18 planned routes unless runtime logs or deeper IDA proof show the Red client reaches them.
