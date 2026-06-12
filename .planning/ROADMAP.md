@@ -65,7 +65,13 @@ Active milestone: **v1.3 Red AC15 Support**
 4. Shared startup/version and capability-composition boundaries are explicitly proven or left as unresolved gaps before dependent phases assume them.
 5. Regression checks cover existing era preservation for any shared-code changes made during foundation work.
 
-**Plans:** TBD
+**Plans:** 4 plans
+
+Plans:
+- [ ] 18-01-PLAN.md - Red evidence artifact and capability matrix
+- [ ] 18-02-PLAN.md - Red enum, adapter project, and generated wire foundation
+- [ ] 18-03-PLAN.md - Host Red settings, enabled-era gating, and validation guard
+- [ ] 18-04-PLAN.md - Red no-state route probes and runtime smoke gate
 
 ### Phase 19: Red Capability Profile and Catalog Binding
 
