@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Red AC15 Support
 status: planning
-last_updated: "2026-06-12"
-last_activity: 2026-06-12
+last_updated: "2026-06-13"
+last_activity: 2026-06-13
 progress:
-  total_phases: 6
+  total_phases: 5
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -17,17 +17,17 @@ progress:
 
 ## Project Reference
 
-See: `.planning/PROJECT.md` (updated 2026-06-12)
+See: `.planning/PROJECT.md` (updated 2026-06-13)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** v1.3 Red AC15 Support roadmap is drafted; next step is Phase 18 planning.
+**Current focus:** v1.3 Red AC15 Support roadmap is corrected around capability composition; next step is Phase 18 planning.
 
 ## Current Position
 
-Phase: 18 - Red Evidence and Era Foundation
+Phase: 18 - Red Evidence and Capability Foundation
 Plan: Not started
-Status: Roadmap drafted
-Last activity: 2026-06-12 - v1.3 roadmap created
+Status: Roadmap corrected
+Last activity: 2026-06-13 - v1.3 roadmap corrected
 
 ## Performance Metrics
 
@@ -103,7 +103,7 @@ Last activity: 2026-06-12 - v1.3 roadmap created
 
 ### Roadmap Evolution
 
-- v1.3 Red AC15 Support roadmap drafted as Phases 18-23: evidence/foundation, catalog/profile, identity/normal/Dani, reward/Tokkun/compatibility, Don Challenge evidence/compatibility, and AdminApi/WebUI/runtime closeout.
+- v1.3 Red AC15 Support roadmap corrected as Phases 18-22 around capability composition: Red evidence/capability foundation, Red capability profile/catalog binding, Red runtime capability binding/simple compatibility, shared older-AC15 ChallengeCompe capability with Red binding, and AdminApi/WebUI/runtime closeout.
 - Phase 16.1 inserted after Phase 16 and completed before Phase 17: AC15 Mapperly Mapper Rewrite and Presence Semantics; includes `protogen +nullablevaluetype=yes` wire regeneration as a first-class refactor point.
 - Phase 16.2 inserted after Phase 16.1 and before Phase 17: AC15 Shared Core Simplification and Reuse Cleanup (URGENT)
 - Phase 17 completed v1.2 Yellow runtime verification and contract closeout from full automated verification plus user-confirmed RPCS3 smoke.
