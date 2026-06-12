@@ -31,6 +31,12 @@
         "CustomizationNameDataPath": "",
         "EnableShop": true,
         "ActiveShopSeasonId": 4
+      },
+      "Red": {
+        "Enabled": true,
+        "AutoExtractCatalog": true,
+        "GameDataPath": "wwwroot/data/red/data",
+        "CustomizationNameDataPath": ""
       }
     }
   }
