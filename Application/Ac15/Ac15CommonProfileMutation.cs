@@ -118,7 +118,7 @@ public static class Ac15CommonProfileMutation
 
         if (profile.HasAryCurrentCostume && saveData.IsAutoCostumeOn)
         {
-            Ac15CustomizationMutation.ApplyCurrentCostume(saveData, ToCommonCostume(profile.AryCurrentCostume), limits);
+            Ac15CustomizationMutation.ApplyCurrentCostume(saveData, profile.AryCurrentCostume, limits);
         }
 
         unlockAccess.ReleaseSongs?.Invoke(saveData, profile.ReleaseSongNoes.Where(id => id < (uint)limits.SongFlagBytes * 8));
@@ -139,13 +139,4 @@ public static class Ac15CommonProfileMutation
     private static bool CanAdd(uint current, uint delta)
         => delta <= uint.MaxValue - current;
 
-    private static CommonPlayResultData.CostumeData ToCommonCostume(Ac15CostumeFacts costume)
-        => new()
-        {
-            Costume1 = costume.Costume1,
-            Costume2 = costume.Costume2,
-            Costume3 = costume.Costume3,
-            Costume4 = costume.Costume4,
-            Costume5 = costume.Costume5
-        };
 }

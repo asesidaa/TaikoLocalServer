@@ -1,4 +1,5 @@
 using TaikoLocalServer.Application.Catalog.Ac15;
+using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Application.Ac15;
 
@@ -13,7 +14,7 @@ public static class Ac15CustomizationMutation
 {
     public static void ApplyCurrentCostume<TSave>(
         TSave saveData,
-        CommonPlayResultData.CostumeData costume,
+        Ac15CostumeFacts costume,
         Ac15ProtocolLimits limits)
         where TSave : IAc15CustomizationSaveData
     {
