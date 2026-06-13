@@ -1,3 +1,5 @@
+using TaikoLocalServer.Application.Dtos.Ac15;
+
 namespace TaikoLocalServer.Application.Ac15;
 
 public static class Ac15CommonProfileMutation
@@ -5,8 +7,8 @@ public static class Ac15CommonProfileMutation
     public static bool TryApply<TSave>(
         TSave saveData,
         IAc15ShopSeasonState? shopSeasonState,
-        CommonPlayResultData playResultData,
-        IReadOnlyList<CommonPlayResultData.StageData> countedStages,
+        Ac15ProfileMutationFacts profile,
+        IReadOnlyList<Ac15StageResult> countedStages,
         Ac15ProfileCounterAccess<TSave> counterAccess,
         Ac15UnlockFlagAccess<TSave> unlockAccess,
         Ac15ProtocolLimits limits,
@@ -18,29 +20,29 @@ public static class Ac15CommonProfileMutation
             IAc15CustomizationSaveData
     {
         var currentDonmedal = shopSeasonState?.TotalGetDonmedal ?? saveData.TotalGetDonmedal;
-        if (!CanAdd(currentDonmedal, playResultData.GetDonmedal)
-            || !CanAdd(saveData.TotalGetKatsumedal, playResultData.GetKatsumedal))
+        if (!CanAdd(currentDonmedal, profile.GetDonmedal)
+            || !CanAdd(saveData.TotalGetKatsumedal, profile.GetKatsumedal))
         {
             return false;
         }
 
         if (shopSeasonState is null)
         {
-            saveData.TotalGetDonmedal += playResultData.GetDonmedal;
+            saveData.TotalGetDonmedal += profile.GetDonmedal;
         }
         else
         {
-            shopSeasonState.TotalGetDonmedal += playResultData.GetDonmedal;
+            shopSeasonState.TotalGetDonmedal += profile.GetDonmedal;
             shopSeasonState.UpdatedAt = DateTime.UtcNow;
         }
 
-        saveData.TotalGetKatsumedal += playResultData.GetKatsumedal;
-        saveData.ItemshopTutorialFlg = playResultData.ItemshopTutorialFlg ?? saveData.ItemshopTutorialFlg;
-        saveData.WaiwaiTutorialFlg = playResultData.WaiwaiTutorialFlg ?? saveData.WaiwaiTutorialFlg;
+        saveData.TotalGetKatsumedal += profile.GetKatsumedal;
+        saveData.ItemshopTutorialFlg = profile.ItemshopTutorialFlg ?? saveData.ItemshopTutorialFlg;
+        saveData.WaiwaiTutorialFlg = profile.WaiwaiTutorialFlg ?? saveData.WaiwaiTutorialFlg;
 
         ApplyShared(
             saveData,
-            playResultData,
+            profile,
             countedStages,
             counterAccess,
             unlockAccess,
@@ -52,8 +54,8 @@ public static class Ac15CommonProfileMutation
 
     public static bool TryApplyDonPoints<TSave>(
         TSave saveData,
-        CommonPlayResultData playResultData,
-        IReadOnlyList<CommonPlayResultData.StageData> countedStages,
+        Ac15ProfileMutationFacts profile,
+        IReadOnlyList<Ac15StageResult> countedStages,
         Ac15ProfileCounterAccess<TSave> counterAccess,
         Ac15UnlockFlagAccess<TSave> unlockAccess,
         Ac15ProtocolLimits limits,
@@ -64,19 +66,19 @@ public static class Ac15CommonProfileMutation
             IAc15PlayProfileSaveData,
             IAc15CustomizationSaveData
     {
-        if (!CanAdd(saveData.TotalGetDonpoint, playResultData.GetDonpoint))
+        if (!CanAdd(saveData.TotalGetDonpoint, profile.GetDonpoint))
         {
             return false;
         }
 
-        saveData.TotalGetDonpoint += playResultData.GetDonpoint;
-        saveData.RewardPtn = playResultData.RewardPtn ?? saveData.RewardPtn;
-        saveData.RewardProgress = playResultData.RewardProgress ?? saveData.RewardProgress;
-        saveData.DifficultyTutorialFlg = playResultData.DifficultyTutorialFlg ?? saveData.DifficultyTutorialFlg;
+        saveData.TotalGetDonpoint += profile.GetDonpoint;
+        saveData.RewardPtn = profile.RewardPtn ?? saveData.RewardPtn;
+        saveData.RewardProgress = profile.RewardProgress ?? saveData.RewardProgress;
+        saveData.DifficultyTutorialFlg = profile.DifficultyTutorialFlg ?? saveData.DifficultyTutorialFlg;
 
         ApplyShared(
             saveData,
-            playResultData,
+            profile,
             countedStages,
             counterAccess,
             unlockAccess,
@@ -88,8 +90,8 @@ public static class Ac15CommonProfileMutation
 
     private static void ApplyShared<TSave>(
         TSave saveData,
-        CommonPlayResultData playResultData,
-        IReadOnlyList<CommonPlayResultData.StageData> countedStages,
+        Ac15ProfileMutationFacts profile,
+        IReadOnlyList<Ac15StageResult> countedStages,
         Ac15ProfileCounterAccess<TSave> counterAccess,
         Ac15UnlockFlagAccess<TSave> unlockAccess,
         Ac15ProtocolLimits limits,
@@ -99,34 +101,34 @@ public static class Ac15CommonProfileMutation
             IAc15PlayProfileSaveData,
             IAc15CustomizationSaveData
     {
-        saveData.IsDevil = playResultData.IsDevil ?? saveData.IsDevil;
-        saveData.IsExplain = playResultData.IsExplain ?? saveData.IsExplain;
-        if (playResultData.HasDifficultyPlayedCourse)
+        saveData.IsDevil = profile.IsDevil ?? saveData.IsDevil;
+        saveData.IsExplain = profile.IsExplain ?? saveData.IsExplain;
+        if (profile.HasDifficultyPlayedCourse)
         {
-            saveData.DifficultyPlayedCourse = playResultData.DifficultyPlayedCourse;
+            saveData.DifficultyPlayedCourse = profile.DifficultyPlayedCourse;
         }
 
-        if (playResultData.HasDifficultyPlayedStar)
+        if (profile.HasDifficultyPlayedStar)
         {
-            saveData.DifficultyPlayedStar = playResultData.DifficultyPlayedStar;
+            saveData.DifficultyPlayedStar = profile.DifficultyPlayedStar;
         }
 
         saveData.LastPlayDatetime = playTime;
-        saveData.PrevAreaCode = playResultData.AreaCode;
+        saveData.PrevAreaCode = profile.AreaCode;
 
-        if (playResultData.HasAryCurrentCostume && saveData.IsAutoCostumeOn)
+        if (profile.HasAryCurrentCostume && saveData.IsAutoCostumeOn)
         {
-            Ac15CustomizationMutation.ApplyCurrentCostume(saveData, playResultData.AryCurrentCostume, limits);
+            Ac15CustomizationMutation.ApplyCurrentCostume(saveData, ToCommonCostume(profile.AryCurrentCostume), limits);
         }
 
-        unlockAccess.ReleaseSongs?.Invoke(saveData, playResultData.ReleaseSongNoes.Where(id => id < (uint)limits.SongFlagBytes * 8));
-        unlockAccess.Tones(saveData, playResultData.GetToneNoes.Where(id => id < (uint)limits.ToneFlagBytes * 8));
-        unlockAccess.Titles(saveData, playResultData.GetTitleNoes.Where(id => id < (uint)limits.TitleFlagBytes * 8));
-        unlockAccess.Costume1(saveData, playResultData.GetCostumeNo1s.Where(id => id < (uint)limits.CostumeFlagBytes * 8));
-        unlockAccess.Costume2(saveData, playResultData.GetCostumeNo2s.Where(id => id < (uint)limits.CostumeFlagBytes * 8));
-        unlockAccess.Costume3(saveData, playResultData.GetCostumeNo3s.Where(id => id < (uint)limits.CostumeFlagBytes * 8));
-        unlockAccess.Costume4(saveData, playResultData.GetCostumeNo4s.Where(id => id < (uint)limits.CostumeFlagBytes * 8));
-        unlockAccess.Costume5(saveData, playResultData.GetCostumeNo5s.Where(id => id < (uint)limits.CostumeFlagBytes * 8));
+        unlockAccess.ReleaseSongs?.Invoke(saveData, profile.ReleaseSongNoes.Where(id => id < (uint)limits.SongFlagBytes * 8));
+        unlockAccess.Tones(saveData, profile.GetToneNoes.Where(id => id < (uint)limits.ToneFlagBytes * 8));
+        unlockAccess.Titles(saveData, profile.GetTitleNoes.Where(id => id < (uint)limits.TitleFlagBytes * 8));
+        unlockAccess.Costume1(saveData, profile.GetCostumeNo1s.Where(id => id < (uint)limits.CostumeFlagBytes * 8));
+        unlockAccess.Costume2(saveData, profile.GetCostumeNo2s.Where(id => id < (uint)limits.CostumeFlagBytes * 8));
+        unlockAccess.Costume3(saveData, profile.GetCostumeNo3s.Where(id => id < (uint)limits.CostumeFlagBytes * 8));
+        unlockAccess.Costume4(saveData, profile.GetCostumeNo4s.Where(id => id < (uint)limits.CostumeFlagBytes * 8));
+        unlockAccess.Costume5(saveData, profile.GetCostumeNo5s.Where(id => id < (uint)limits.CostumeFlagBytes * 8));
 
         foreach (var stage in countedStages)
         {
@@ -136,4 +138,14 @@ public static class Ac15CommonProfileMutation
 
     private static bool CanAdd(uint current, uint delta)
         => delta <= uint.MaxValue - current;
+
+    private static CommonPlayResultData.CostumeData ToCommonCostume(Ac15CostumeFacts costume)
+        => new()
+        {
+            Costume1 = costume.Costume1,
+            Costume2 = costume.Costume2,
+            Costume3 = costume.Costume3,
+            Costume4 = costume.Costume4,
+            Costume5 = costume.Costume5
+        };
 }

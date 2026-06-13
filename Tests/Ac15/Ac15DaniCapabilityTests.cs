@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using TaikoLocalServer.Application.Ac15;
+using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Tests.Ac15;
 
@@ -131,15 +132,13 @@ public sealed class Ac15DaniCapabilityTests
             ComboCount = 12
         };
 
-    private static CommonPlayResultData PlayResultDanClear(uint danId)
-        => new()
-        {
-            PlayMode = (uint)PlayMode.DanMode,
-            DanResult = (uint)Ac15DanClearGrade.NormalClear,
-            ComboCntTotal = 300,
-            AryStageInfoes =
+    private static Ac15DaniPlayResult PlayResultDanClear(uint danId)
+        => new(
+            DanResult: (uint)Ac15DanClearGrade.NormalClear,
+            ComboCntTotal: 300,
+            Stages:
             [
-                new()
+                new Ac15StageResult
                 {
                     SongNo = 101,
                     Level = 1,
@@ -153,8 +152,7 @@ public sealed class Ac15DaniCapabilityTests
                     SoulGauge = 150,
                     PlayDan = danId
                 }
-            ]
-        };
+            ]);
 
     private sealed class SchemaDatabase(SqliteConnection connection) : IAsyncDisposable
     {

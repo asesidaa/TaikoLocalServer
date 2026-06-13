@@ -1,10 +1,12 @@
+using TaikoLocalServer.Application.Dtos.Ac15;
+
 namespace TaikoLocalServer.Application.Ac15;
 
 public static class Ac15DaniWriter
 {
     public static async ValueTask SaveAsync<TScore, TStage>(
         Ac15DaniTables<TScore, TStage> tables,
-        CommonPlayResultData playResultData,
+        Ac15DaniPlayResult? playResultData,
         Ac15ProtocolLimits limits,
         IEnumerable<Ac15DaniChallenge> challenges,
         Ac15DaniSaveState saveState,
@@ -14,12 +16,12 @@ public static class Ac15DaniWriter
         where TScore : class, IAc15DanScoreDatum
         where TStage : class, IAc15DanStageScoreDatum
     {
-        if (playResultData.PlayMode != (uint)PlayMode.DanMode)
+        if (playResultData is null)
         {
             return;
         }
 
-        var danIds = playResultData.AryStageInfoes
+        var danIds = playResultData.Stages
             .Select(stage => stage.PlayDan.GetValueOrDefault())
             .Where(dan => dan != 0)
             .Distinct()
@@ -132,10 +134,10 @@ public static class Ac15DaniWriter
         uint danId,
         bool isExtra,
         uint medleyUniqueId,
-        CommonPlayResultData playResultData)
+        Ac15DaniPlayResult playResultData)
     {
         var existingStages = existing?.Stages.ToDictionary(stage => stage.StageIndex) ?? [];
-        var stages = playResultData.AryStageInfoes
+        var stages = playResultData.Stages
             .Select((stage, index) =>
             {
                 var stageIndex = (uint)index;
@@ -149,8 +151,8 @@ public static class Ac15DaniWriter
             danId,
             isExtra,
             existing?.MedleyUniqueId ?? medleyUniqueId,
-            Math.Max(existing?.ArrivalSongCount ?? 0, (uint)playResultData.AryStageInfoes.Count),
-            Math.Max(existing?.SoulGaugeTotal ?? 0, playResultData.AryStageInfoes.LastOrDefault()?.SoulGauge.GetValueOrDefault() ?? 0),
+            Math.Max(existing?.ArrivalSongCount ?? 0, (uint)playResultData.Stages.Count),
+            Math.Max(existing?.SoulGaugeTotal ?? 0, playResultData.Stages.LastOrDefault()?.SoulGauge.GetValueOrDefault() ?? 0),
             Math.Max(existing?.ComboCountTotal ?? 0, playResultData.ComboCntTotal),
             Ac15DanHelpers.ClampGrade(Math.Max((uint)(existing?.ClearGrade ?? Ac15DanClearGrade.NotClear), playResultData.DanResult)),
             stages);
@@ -159,7 +161,7 @@ public static class Ac15DaniWriter
     private static Ac15DaniStageScore BuildUpdatedStage(
         uint stageIndex,
         Ac15DaniStageScore? existing,
-        CommonPlayResultData.StageData stage)
+        Ac15StageResult stage)
     {
         var existingBadCount = existing?.BadCount ?? stage.NgCnt;
         return new Ac15DaniStageScore(

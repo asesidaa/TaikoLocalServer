@@ -1,3 +1,5 @@
+using TaikoLocalServer.Application.Dtos.Ac15;
+
 namespace TaikoLocalServer.Application.Ac15;
 
 public static class Ac15ProfileCounterUpdater
@@ -54,21 +56,21 @@ public static class Ac15ProfileCounterUpdater
         Favorite: new(save => save.SongFavoriteCnt, (save, value) => save.SongFavoriteCnt = value),
         Recent: new(save => save.SongRecentCnt, (save, value) => save.SongRecentCnt = value));
 
-    public static void ApplyBlueStage(UserSaveDataBlue saveData, CommonPlayResultData.StageData stage)
+    public static void ApplyBlueStage(UserSaveDataBlue saveData, Ac15StageResult stage)
         => ApplyStage(saveData, stage, Blue);
 
-    public static void ApplyGreenStage(UserSaveDataGreen saveData, CommonPlayResultData.StageData stage)
+    public static void ApplyGreenStage(UserSaveDataGreen saveData, Ac15StageResult stage)
         => ApplyStage(saveData, stage, Green);
 
-    public static void ApplyYellowStage(UserSaveDataYellow saveData, CommonPlayResultData.StageData stage)
+    public static void ApplyYellowStage(UserSaveDataYellow saveData, Ac15StageResult stage)
         => ApplyStage(saveData, stage, Yellow);
 
-    public static void ApplyRedStage(UserSaveDataRed saveData, CommonPlayResultData.StageData stage)
+    public static void ApplyRedStage(UserSaveDataRed saveData, Ac15StageResult stage)
         => ApplyStage(saveData, stage, Red);
 
     public static void ApplyStage<TSave>(
         TSave saveData,
-        CommonPlayResultData.StageData stage,
+        Ac15StageResult stage,
         Ac15ProfileCounterAccess<TSave> counters)
     {
         if (GenreCounter(counters, stage.MusicCateg) is { } genre)

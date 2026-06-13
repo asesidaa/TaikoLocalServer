@@ -23,22 +23,25 @@ public partial class UpdatePlayResultCommandHandler
             return 1;
         }
 
-        var playResultData = Ac15PlayResultCommonBridge.ToCommon(request.PlayResultData);
+        var playResultData = request.PlayResultData;
+        var normal = playResultData.Normal;
+        IReadOnlyList<Ac15StageResult> stages = normal?.Stages ?? [];
         if (IsYellowTokkunShaped(playResultData))
         {
-            return await HandleYellowTokkun(request.Baid, playResultData, cancellationToken);
+            return await HandleYellowTokkun(request.Baid, Ac15PlayResultCommonBridge.ToCommon(playResultData), cancellationToken);
         }
 
-        var validStages = playResultData.AryStageInfoes
-            .Where(stage => IsSupportedYellowNormalStage(request.Baid, stage))
-            .ToList();
+        var validStages = Ac15NormalStageFilter.Filter(
+            request.Baid,
+            stages,
+            Ac15EraProfiles.Yellow.Limits,
+            Ac15NormalStagePolicies.Standard,
+            logger);
         if (validStages.Count == 0)
         {
             logger.LogWarning("Skipping Yellow playresult with no valid normal stages for baid {Baid}", request.Baid);
             return 1;
         }
-
-        playResultData.AryStageInfoes = validStages;
 
         var saveData = await context.GetOrCreateYellowSaveDataAsync(request.Baid, cancellationToken);
         var yellow = gameDataService.Yellow();
@@ -47,11 +50,11 @@ public partial class UpdatePlayResultCommandHandler
             yellow.ItemShopCatalog,
             cancellationToken);
 
-        var playTime = ParseAc15PlayDatetimeOrNow(playResultData.PlayDatetime);
+        var playTime = ParseAc15PlayDatetimeOrNow(playResultData.Metadata.PlayDatetime);
         if (!Ac15CommonProfileMutation.TryApply(
                 saveData,
                 shopSeasonState,
-                playResultData,
+                playResultData.Profile,
                 validStages,
                 Ac15ProfileCounterUpdater.Yellow,
                 Ac15UnlockFlagAccess.Yellow,
@@ -62,9 +65,13 @@ public partial class UpdatePlayResultCommandHandler
             return 1;
         }
 
+        var dani = playResultData.Metadata.PlayMode == (uint)PlayMode.DanMode && playResultData.Dani is { } inputDani
+            ? inputDani with { Stages = validStages.ToList() }
+            : null;
+
         await Ac15DaniWriter.SaveAsync(
             YellowDaniTables(),
-            playResultData,
+            dani,
             Ac15EraProfiles.Yellow.Limits,
             yellow.TaikojukuFileOrder.Select(row => new Ac15DaniChallenge(row.ChallengeLevel, row.UniqueId)),
             new Ac15DaniSaveState(saveData.Baid, saveData.DispTaikojukuDan, saveData.IsAutoCostumeOn, YellowDanCostumeId),
@@ -81,12 +88,12 @@ public partial class UpdatePlayResultCommandHandler
             },
             logger,
             cancellationToken);
-        LogYellowWaiWaiStageFacts(request.Baid, playResultData);
+        LogYellowWaiWaiStageFacts(request.Baid, validStages);
 
         await Ac15NormalPlayWriter.SaveAsync(
             context,
             YellowNormalPlayTables(),
-            new Ac15NormalPlayWriteRequest(request.Baid, playResultData.PlayMode, validStages, Ac15EraProfiles.Yellow.Limits, playTime),
+            new Ac15NormalPlayWriteRequest(request.Baid, playResultData.Metadata.PlayMode, validStages, Ac15EraProfiles.Yellow.Limits, playTime),
             Ac15NormalStagePolicies.Standard,
             cancellationToken);
         return 1;
@@ -113,25 +120,13 @@ public partial class UpdatePlayResultCommandHandler
             Ac15DaniMapper.ToYellowDanStageScoreDatum,
             Ac15DaniMapper.ApplyToYellowDanStageScoreDatum);
 
-    private static bool IsYellowTokkunShaped(CommonPlayResultData playResultData)
-        => playResultData.IsTokkunPlayResult
-           || playResultData.PlayMode == (uint)PlayMode.Tokkun
-           || playResultData.TokkunStageData is not null;
+    private static bool IsYellowTokkunShaped(Ac15PlayResultEnvelope playResultData)
+        => playResultData.Metadata.PlayMode == (uint)PlayMode.Tokkun
+           || playResultData.Tokkun is not null;
 
-    private bool IsSupportedYellowNormalStage(uint baid, CommonPlayResultData.StageData stage)
+    private void LogYellowWaiWaiStageFacts(uint baid, IEnumerable<Ac15StageResult> stages)
     {
-        var accepted = Ac15NormalStageFilter.Filter(
-            baid,
-            [stage],
-            Ac15EraProfiles.Yellow.Limits,
-            Ac15NormalStagePolicies.Standard,
-            logger);
-        return accepted.Count == 1;
-    }
-
-    private void LogYellowWaiWaiStageFacts(uint baid, CommonPlayResultData playResultData)
-    {
-        foreach (var stage in playResultData.AryStageInfoes.Where(stage => stage.WaiwaiResult.HasValue || stage.WaiwaiGauge.HasValue))
+        foreach (var stage in stages.Where(stage => stage.WaiwaiResult.HasValue || stage.WaiwaiGauge.HasValue))
         {
             logger.LogInformation(
                 "Yellow WaiWai stage fact for baid {Baid}: song={SongNo} level={Level} result={WaiwaiResult} gauge={WaiwaiGauge}",

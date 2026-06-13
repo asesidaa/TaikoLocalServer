@@ -1,4 +1,5 @@
 using TaikoLocalServer.Application.Ac15;
+using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Tests.Ac15;
 
@@ -65,11 +66,10 @@ public sealed class Ac15CommonProfileMutationTests
         var applied = Ac15CommonProfileMutation.TryApply(
             save,
             shopSeasonState: null,
-            new CommonPlayResultData
+            Ac15ProfileMutationFacts.Empty with
             {
                 ReleaseSongNoes = [101],
-                GetToneNoes = [5],
-                AryStageInfoes = [Stage(101)]
+                GetToneNoes = [5]
             },
             countedStages: [Stage(101)],
             Ac15ProfileCounterUpdater.Green,
@@ -81,8 +81,8 @@ public sealed class Ac15CommonProfileMutationTests
         Assert.True(BitIsSet(save.ToneFlg, 5));
     }
 
-    private static CommonPlayResultData PlayResult(uint getDonmedal, uint getKatsumedal)
-        => new()
+    private static Ac15ProfileMutationFacts PlayResult(uint getDonmedal, uint getKatsumedal)
+        => Ac15ProfileMutationFacts.Empty with
         {
             GetDonmedal = getDonmedal,
             GetKatsumedal = getKatsumedal,
@@ -93,11 +93,10 @@ public sealed class Ac15CommonProfileMutationTests
             HasDifficultyPlayedCourse = true,
             DifficultyPlayedCourse = 3,
             HasDifficultyPlayedStar = true,
-            DifficultyPlayedStar = 4,
-            AryStageInfoes = [Stage(101)]
+            DifficultyPlayedStar = 4
         };
 
-    private static CommonPlayResultData.StageData Stage(uint songNo, bool isFavorite = false)
+    private static Ac15StageResult Stage(uint songNo, bool isFavorite = false)
         => new()
         {
             SongNo = songNo,

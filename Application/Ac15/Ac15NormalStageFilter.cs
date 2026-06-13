@@ -1,19 +1,21 @@
+using TaikoLocalServer.Application.Dtos.Ac15;
+
 namespace TaikoLocalServer.Application.Ac15;
 
 public sealed record Ac15NormalStagePolicy(
-    Func<CommonPlayResultData.StageData, Ac15StageSupportDecision> IsSupported,
-    Func<CommonPlayResultData.StageData, CrownType, Ac15BestUpdatePolicy> GetBestUpdatePolicy);
+    Func<Ac15StageResult, Ac15StageSupportDecision> IsSupported,
+    Func<Ac15StageResult, CrownType, Ac15BestUpdatePolicy> GetBestUpdatePolicy);
 
 public static class Ac15NormalStageFilter
 {
-    public static IReadOnlyList<CommonPlayResultData.StageData> Filter(
+    public static IReadOnlyList<Ac15StageResult> Filter(
         uint baid,
-        IEnumerable<CommonPlayResultData.StageData> stages,
+        IEnumerable<Ac15StageResult> stages,
         Ac15ProtocolLimits limits,
         Ac15NormalStagePolicy policy,
         ILogger logger)
     {
-        var accepted = new List<CommonPlayResultData.StageData>();
+        var accepted = new List<Ac15StageResult>();
         foreach (var stage in stages)
         {
             if (stage.SongNo >= limits.SongFlagBytes * 8

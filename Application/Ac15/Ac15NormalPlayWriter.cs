@@ -1,3 +1,5 @@
+using TaikoLocalServer.Application.Dtos.Ac15;
+
 namespace TaikoLocalServer.Application.Ac15;
 
 public sealed record Ac15NormalPlayTables<TPlay, TBest, TFavorite, TRecent>(
@@ -16,7 +18,7 @@ public sealed record Ac15NormalPlayTables<TPlay, TBest, TFavorite, TRecent>(
 public sealed record Ac15NormalPlayWriteRequest(
     uint Baid,
     uint PlayMode,
-    IReadOnlyList<CommonPlayResultData.StageData> Stages,
+    IReadOnlyList<Ac15StageResult> Stages,
     Ac15ProtocolLimits Limits,
     DateTime PlayTime);
 
@@ -177,7 +179,7 @@ public static class Ac15NormalPlayWriter
     private static Ac15PlayRow ToPlayRow(
         uint baid,
         uint playMode,
-        CommonPlayResultData.StageData stage,
+        Ac15StageResult stage,
         Difficulty difficulty,
         CrownType crown,
         bool isShin,
@@ -212,7 +214,7 @@ public static class Ac15NormalPlayWriter
             stage.PlayDan.GetValueOrDefault(),
             stage.WaiwaiResult.GetValueOrDefault(),
             stage.WaiwaiGauge.GetValueOrDefault(),
-            stage.GhostStageData,
+            stage.GreenGhostStage,
             playTime);
 
     private static int CrownRank(CrownType crown) => crown switch

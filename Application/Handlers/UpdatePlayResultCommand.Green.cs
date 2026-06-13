@@ -23,7 +23,9 @@ public partial class UpdatePlayResultCommandHandler
             return 1;
         }
 
-        var playResultData = Ac15PlayResultCommonBridge.ToCommon(request.PlayResultData);
+        var playResultData = request.PlayResultData;
+        var normal = playResultData.Normal;
+        IReadOnlyList<Ac15StageResult> stages = normal?.Stages ?? [];
         var saveData = await context.GetOrCreateGreenSaveDataAsync(request.Baid, cancellationToken);
         var green = gameDataService.Green();
         var activeShopSeason = green.ItemShopCatalog.ActiveSeason;
@@ -33,7 +35,7 @@ public partial class UpdatePlayResultCommandHandler
 
         var validStages = Ac15NormalStageFilter.Filter(
             request.Baid,
-            playResultData.AryStageInfoes,
+            stages,
             Ac15EraProfiles.Green.Limits,
             Ac15NormalStagePolicies.Green,
             logger);
@@ -43,12 +45,11 @@ public partial class UpdatePlayResultCommandHandler
             return 1;
         }
 
-        playResultData.AryStageInfoes = validStages.ToList();
-        var playTime = ParseAc15PlayDatetimeOrNow(playResultData.PlayDatetime);
+        var playTime = ParseAc15PlayDatetimeOrNow(playResultData.Metadata.PlayDatetime);
         if (!Ac15CommonProfileMutation.TryApply(
                 saveData,
                 shopSeasonState,
-                playResultData,
+                playResultData.Profile,
                 validStages,
                 Ac15ProfileCounterUpdater.Green,
                 Ac15UnlockFlagAccess.Green,
@@ -59,12 +60,16 @@ public partial class UpdatePlayResultCommandHandler
             return 1;
         }
 
-        await ApplyGhostUpdatesAsync(saveData, playResultData, cancellationToken);
-        ApplyGhostPlayedSongBits(saveData, playResultData);
+        await ApplyGhostUpdatesAsync(saveData, playResultData.GreenGhost, cancellationToken);
+        ApplyGhostPlayedSongBits(saveData, validStages);
+
+        var dani = playResultData.Metadata.PlayMode == (uint)PlayMode.DanMode && playResultData.Dani is { } inputDani
+            ? inputDani with { Stages = validStages.ToList() }
+            : null;
 
         await Ac15DaniWriter.SaveAsync(
             GreenDaniTables(),
-            playResultData,
+            dani,
             Ac15EraProfiles.Green.Limits,
             green.TaikojukuFileOrder.Select(row => new Ac15DaniChallenge(row.ChallengeLevel, row.UniqueId)),
             new Ac15DaniSaveState(saveData.Baid, saveData.DispTaikojukuDan, saveData.IsAutoCostumeOn, GreenDanCostumeId),
@@ -85,7 +90,7 @@ public partial class UpdatePlayResultCommandHandler
         await Ac15NormalPlayWriter.SaveAsync(
             context,
             GreenNormalPlayTables(),
-            new Ac15NormalPlayWriteRequest(request.Baid, playResultData.PlayMode, validStages, Ac15EraProfiles.Green.Limits, playTime),
+            new Ac15NormalPlayWriteRequest(request.Baid, playResultData.Metadata.PlayMode, validStages, Ac15EraProfiles.Green.Limits, playTime),
             Ac15NormalStagePolicies.Green,
             cancellationToken);
         return 1;
@@ -136,9 +141,9 @@ public partial class UpdatePlayResultCommandHandler
         }
     }
 
-    private static void ApplyGhostPlayedSongBits(UserSaveDataGreen saveData, CommonPlayResultData playResultData)
+    private static void ApplyGhostPlayedSongBits(UserSaveDataGreen saveData, IReadOnlyList<Ac15StageResult> stages)
     {
-        var aiBattleSongNos = playResultData.AryStageInfoes
+        var aiBattleSongNos = stages
             .Where(stage => GreenStageModeInterpreter.IsAiBattle(stage.StageMode))
             .Select(stage => stage.SongNo);
 
@@ -148,16 +153,24 @@ public partial class UpdatePlayResultCommandHandler
             GreenProtocolBytes.GhostPlayedSongBytes);
     }
 
-    private async Task ApplyGhostUpdatesAsync(UserSaveDataGreen saveData, CommonPlayResultData playResultData, CancellationToken cancellationToken)
+    private async Task ApplyGhostUpdatesAsync(
+        UserSaveDataGreen saveData,
+        Ac15GreenGhostPlayResult? ghost,
+        CancellationToken cancellationToken)
     {
-        if (playResultData.GhostReleaseData is not null)
+        if (ghost is null)
+        {
+            return;
+        }
+
+        if (ghost.ReleaseData is not null)
         {
             saveData.GhostReleaseInfoFlag = Ac15ProtocolBytes.SetBits(
                 saveData.GhostReleaseInfoFlag,
-                playResultData.GhostReleaseData.ReleaseInfoId,
+                ghost.ReleaseData.ReleaseInfoId,
                 GreenProtocolBytes.GhostReleaseInfoBytes);
 
-            foreach (var token in playResultData.GhostReleaseData.AryTokendata)
+            foreach (var token in ghost.ReleaseData.AryTokendata)
             {
                 var existing = await context.GreenGhostTokens.FindAsync([saveData.Baid, token.TokenId], cancellationToken);
                 if (existing is null)
@@ -176,25 +189,25 @@ public partial class UpdatePlayResultCommandHandler
             }
         }
 
-        if (playResultData.GhostUpdatePerfData is not null)
+        if (ghost.PerfData is not null)
         {
-            saveData.GhostInputMedian = playResultData.GhostUpdatePerfData.InputMedian;
-            saveData.GhostInputVariance = playResultData.GhostUpdatePerfData.InputVariance;
+            saveData.GhostInputMedian = ghost.PerfData.InputMedian;
+            saveData.GhostInputVariance = ghost.PerfData.InputVariance;
         }
 
-        if (playResultData.GhostUpdateRankData is null)
+        if (ghost.RankData is null)
         {
             return;
         }
 
-        saveData.GhostRankId = playResultData.GhostUpdateRankData.RankId;
-        saveData.GhostWinPoint = playResultData.GhostUpdateRankData.WinPoint;
-        saveData.GhostCertifiedLevelId = playResultData.GhostUpdateRankData.CertifiedLevelId;
+        saveData.GhostRankId = ghost.RankData.RankId;
+        saveData.GhostWinPoint = ghost.RankData.WinPoint;
+        saveData.GhostCertifiedLevelId = ghost.RankData.CertifiedLevelId;
         saveData.GhostTotalWinnings = (uint)Math.Min(
             uint.MaxValue,
-            playResultData.GhostUpdateRankData.AryWinningsData.Sum(row => (long)row.Winnings));
+            ghost.RankData.AryWinningsData.Sum(row => (long)row.Winnings));
 
-        foreach (var winning in playResultData.GhostUpdateRankData.AryWinningsData)
+        foreach (var winning in ghost.RankData.AryWinningsData)
         {
             var existing = await context.GreenGhostWinnings.FindAsync([saveData.Baid, winning.LevelId], cancellationToken);
             if (existing is null)

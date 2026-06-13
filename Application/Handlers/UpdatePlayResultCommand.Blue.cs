@@ -23,15 +23,17 @@ public partial class UpdatePlayResultCommandHandler
             return 1;
         }
 
-        var playResultData = Ac15PlayResultCommonBridge.ToCommon(request.PlayResultData);
+        var playResultData = request.PlayResultData;
+        var normal = playResultData.Normal;
+        IReadOnlyList<Ac15StageResult> stages = normal?.Stages ?? [];
         if (IsBlueTokkunShaped(playResultData))
         {
-            return await HandleBlueTokkun(request.Baid, playResultData, cancellationToken);
+            return await HandleBlueTokkun(request.Baid, Ac15PlayResultCommonBridge.ToCommon(playResultData), cancellationToken);
         }
 
         if (IsBlueBattleShaped(playResultData))
         {
-            return await HandleBlueBattle(request.Baid, playResultData, cancellationToken);
+            return await HandleBlueBattle(request.Baid, Ac15PlayResultCommonBridge.ToCommon(playResultData), cancellationToken);
         }
 
         var saveData = await context.GetOrCreateBlueSaveDataAsync(request.Baid, cancellationToken);
@@ -43,7 +45,7 @@ public partial class UpdatePlayResultCommandHandler
 
         var validStages = Ac15NormalStageFilter.Filter(
             request.Baid,
-            playResultData.AryStageInfoes,
+            stages,
             Ac15EraProfiles.Blue.Limits,
             Ac15NormalStagePolicies.Standard,
             logger);
@@ -53,12 +55,11 @@ public partial class UpdatePlayResultCommandHandler
             return 1;
         }
 
-        playResultData.AryStageInfoes = validStages.ToList();
-        var playTime = ParseAc15PlayDatetimeOrNow(playResultData.PlayDatetime);
+        var playTime = ParseAc15PlayDatetimeOrNow(playResultData.Metadata.PlayDatetime);
         if (!Ac15CommonProfileMutation.TryApply(
                 saveData,
                 shopSeasonState,
-                playResultData,
+                playResultData.Profile,
                 validStages,
                 Ac15ProfileCounterUpdater.Blue,
                 Ac15UnlockFlagAccess.Blue,
@@ -69,9 +70,13 @@ public partial class UpdatePlayResultCommandHandler
             return 1;
         }
 
+        var dani = playResultData.Metadata.PlayMode == (uint)PlayMode.DanMode && playResultData.Dani is { } inputDani
+            ? inputDani with { Stages = validStages.ToList() }
+            : null;
+
         await Ac15DaniWriter.SaveAsync(
             BlueDaniTables(),
-            playResultData,
+            dani,
             Ac15EraProfiles.Blue.Limits,
             blue.TaikojukuFileOrder.Select(row => new Ac15DaniChallenge(row.ChallengeLevel, row.UniqueId)),
             new Ac15DaniSaveState(saveData.Baid, saveData.DispTaikojukuDan, saveData.IsAutoCostumeOn, BlueDanCostumeId),
@@ -92,7 +97,7 @@ public partial class UpdatePlayResultCommandHandler
         await Ac15NormalPlayWriter.SaveAsync(
             context,
             BlueNormalPlayTables(),
-            new Ac15NormalPlayWriteRequest(request.Baid, playResultData.PlayMode, validStages, Ac15EraProfiles.Blue.Limits, playTime),
+            new Ac15NormalPlayWriteRequest(request.Baid, playResultData.Metadata.PlayMode, validStages, Ac15EraProfiles.Blue.Limits, playTime),
             Ac15NormalStagePolicies.Standard,
             cancellationToken);
         return 1;
@@ -122,14 +127,10 @@ public partial class UpdatePlayResultCommandHandler
     private static bool CanAddBlue(uint current, uint delta)
         => CanAddAc15(current, delta);
 
-    private static bool IsBlueTokkunShaped(CommonPlayResultData playResultData)
-        => playResultData.IsTokkunPlayResult
-           || playResultData.PlayMode == (uint)PlayMode.Tokkun
-           || playResultData.TokkunTutorialFlg is not null
-           || playResultData.TokkunStageData is not null;
+    private static bool IsBlueTokkunShaped(Ac15PlayResultEnvelope playResultData)
+        => playResultData.Metadata.PlayMode == (uint)PlayMode.Tokkun
+           || playResultData.Tokkun is not null;
 
-    private static bool IsBlueBattleShaped(CommonPlayResultData playResultData)
-        => playResultData.IsBattlePlayResult
-           || playResultData.BattleReleaseData is not null
-           || playResultData.AryStageInfoes.Any(stage => stage.BattleStageData is not null);
+    private static bool IsBlueBattleShaped(Ac15PlayResultEnvelope playResultData)
+        => playResultData.BlueBattle is not null;
 }

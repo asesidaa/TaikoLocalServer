@@ -1,3 +1,5 @@
+using TaikoLocalServer.Application.Dtos.Ac15;
+
 namespace TaikoLocalServer.Application.Ac15;
 
 public sealed record Ac15SaveSnapshot(uint Baid);
@@ -32,7 +34,7 @@ public sealed record Ac15PlayRow(
     uint PlayDan,
     uint WaiwaiResult,
     uint WaiwaiGauge,
-    CommonPlayResultData.GhostStageData? GhostStageData,
+    Ac15GreenGhostStageData? GhostStageData,
     DateTime PlayTime);
 
 public sealed record Ac15BestUpdatePolicy(bool AllowScoreUpdate, bool AllowCrownUpdate);

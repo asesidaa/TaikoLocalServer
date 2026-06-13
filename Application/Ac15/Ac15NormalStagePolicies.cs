@@ -1,3 +1,5 @@
+using TaikoLocalServer.Application.Dtos.Ac15;
+
 namespace TaikoLocalServer.Application.Ac15;
 
 public static class Ac15NormalStagePolicies

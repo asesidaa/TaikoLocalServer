@@ -1,3 +1,5 @@
+using TaikoLocalServer.Application.Dtos.Ac15;
+
 namespace TaikoLocalServer.Tests.Ac15;
 
 public sealed class Ac15ProfileCounterUpdaterTests
@@ -14,7 +16,7 @@ public sealed class Ac15ProfileCounterUpdaterTests
     public void ApplyStage_IncrementsMatchingGenreCounter(uint musicCateg, string expectedProperty)
     {
         var save = new UserSaveDataGreen { Baid = 1 };
-        var stage = new CommonPlayResultData.StageData { MusicCateg = musicCateg };
+        var stage = new Ac15StageResult { MusicCateg = musicCateg };
 
         Ac15ProfileCounterUpdater.ApplyGreenStage(save, stage);
 
@@ -29,7 +31,7 @@ public sealed class Ac15ProfileCounterUpdaterTests
     public void ApplyStage_GenreWithoutProfileCounterDoesNotMoveAnyCounter(uint musicCateg)
     {
         var save = new UserSaveDataGreen { Baid = 1 };
-        var stage = new CommonPlayResultData.StageData { MusicCateg = musicCateg };
+        var stage = new Ac15StageResult { MusicCateg = musicCateg };
 
         Ac15ProfileCounterUpdater.ApplyGreenStage(save, stage);
 
@@ -47,7 +49,7 @@ public sealed class Ac15ProfileCounterUpdaterTests
     public void ApplyStage_StageFlagsIncrementSongCounters()
     {
         var save = new UserSaveDataGreen { Baid = 1 };
-        var stage = new CommonPlayResultData.StageData
+        var stage = new Ac15StageResult
         {
             MusicCateg = 0,
             IsPushed = true,
@@ -66,7 +68,7 @@ public sealed class Ac15ProfileCounterUpdaterTests
     public void ApplyStage_AllFlagsFalse_LeavesSongCountersAtZero()
     {
         var save = new UserSaveDataGreen { Baid = 1 };
-        var stage = new CommonPlayResultData.StageData { MusicCateg = 0 };
+        var stage = new Ac15StageResult { MusicCateg = 0 };
 
         Ac15ProfileCounterUpdater.ApplyGreenStage(save, stage);
 
@@ -86,7 +88,7 @@ public sealed class Ac15ProfileCounterUpdaterTests
             SongFavoriteCnt = uint.MaxValue,
             SongRecentCnt = uint.MaxValue
         };
-        var stage = new CommonPlayResultData.StageData
+        var stage = new Ac15StageResult
         {
             MusicCateg = 1,
             IsPushed = true,
@@ -106,7 +108,7 @@ public sealed class Ac15ProfileCounterUpdaterTests
     public void ApplyBlueStage_UsesBlueSaveCounterAccess()
     {
         var save = new UserSaveDataBlue { Baid = 1 };
-        var stage = new CommonPlayResultData.StageData
+        var stage = new Ac15StageResult
         {
             MusicCateg = 8,
             IsPushed = true,
@@ -126,7 +128,7 @@ public sealed class Ac15ProfileCounterUpdaterTests
     public void ApplyYellowStage_UsesYellowSaveCounterAccess()
     {
         var save = new UserSaveDataYellow { Baid = 1 };
-        var stage = new CommonPlayResultData.StageData
+        var stage = new Ac15StageResult
         {
             MusicCateg = 3,
             IsPushed = true,

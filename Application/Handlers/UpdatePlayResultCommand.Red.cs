@@ -23,15 +23,17 @@ public partial class UpdatePlayResultCommandHandler
             return 1;
         }
 
-        var playResultData = Ac15PlayResultCommonBridge.ToCommon(request.PlayResultData);
+        var playResultData = request.PlayResultData;
+        var normal = playResultData.Normal;
+        IReadOnlyList<Ac15StageResult> stages = normal?.Stages ?? [];
         if (IsRedTokkunShaped(playResultData))
         {
-            return await HandleRedTokkun(request.Baid, playResultData, cancellationToken);
+            return await HandleRedTokkun(request.Baid, Ac15PlayResultCommonBridge.ToCommon(playResultData), cancellationToken);
         }
 
         var validStages = Ac15NormalStageFilter.Filter(
             request.Baid,
-            playResultData.AryStageInfoes,
+            stages,
             Ac15EraProfiles.Red.Limits,
             Ac15NormalStagePolicies.Standard,
             logger);
@@ -41,14 +43,12 @@ public partial class UpdatePlayResultCommandHandler
             return 1;
         }
 
-        playResultData.AryStageInfoes = validStages.ToList();
-
         var saveData = await context.GetOrCreateRedSaveDataAsync(request.Baid, cancellationToken);
         var red = gameDataService.Red();
-        var playTime = ParseAc15PlayDatetimeOrNow(playResultData.PlayDatetime);
+        var playTime = ParseAc15PlayDatetimeOrNow(playResultData.Metadata.PlayDatetime);
         if (!Ac15CommonProfileMutation.TryApplyDonPoints(
                 saveData,
-                playResultData,
+                playResultData.Profile,
                 validStages,
                 Ac15ProfileCounterUpdater.Red,
                 Ac15UnlockFlagAccess.Red,
@@ -59,9 +59,13 @@ public partial class UpdatePlayResultCommandHandler
             return 1;
         }
 
+        var dani = playResultData.Metadata.PlayMode == (uint)PlayMode.DanMode && playResultData.Dani is { } inputDani
+            ? inputDani with { Stages = validStages.ToList() }
+            : null;
+
         await Ac15DaniWriter.SaveAsync(
             RedDaniTables(),
-            playResultData,
+            dani,
             Ac15EraProfiles.Red.Limits,
             red.TaikojukuFileOrder.Select(row => new Ac15DaniChallenge(row.ChallengeLevel, row.UniqueId)),
             new Ac15DaniSaveState(saveData.Baid, saveData.DispTaikojukuDan, saveData.IsAutoCostumeOn, RedDanCostumeId),
@@ -82,7 +86,7 @@ public partial class UpdatePlayResultCommandHandler
         await Ac15NormalPlayWriter.SaveAsync(
             context,
             RedNormalPlayTables(),
-            new Ac15NormalPlayWriteRequest(request.Baid, playResultData.PlayMode, validStages, Ac15EraProfiles.Red.Limits, playTime),
+            new Ac15NormalPlayWriteRequest(request.Baid, playResultData.Metadata.PlayMode, validStages, Ac15EraProfiles.Red.Limits, playTime),
             Ac15NormalStagePolicies.Standard,
             cancellationToken);
         return 1;
@@ -124,9 +128,7 @@ public partial class UpdatePlayResultCommandHandler
             Ac15DaniMapper.ToRedDanStageScoreDatum,
             Ac15DaniMapper.ApplyToRedDanStageScoreDatum);
 
-    private static bool IsRedTokkunShaped(CommonPlayResultData playResultData)
-        => playResultData.IsTokkunPlayResult
-           || playResultData.PlayMode == (uint)PlayMode.Tokkun
-           || playResultData.TokkunTutorialFlg is not null
-           || playResultData.TokkunStageData is not null;
+    private static bool IsRedTokkunShaped(Ac15PlayResultEnvelope playResultData)
+        => playResultData.Metadata.PlayMode == (uint)PlayMode.Tokkun
+           || playResultData.Tokkun is not null;
 }

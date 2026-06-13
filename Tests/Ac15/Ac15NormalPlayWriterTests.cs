@@ -1,4 +1,5 @@
 using TaikoLocalServer.Application.Ac15;
+using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Tests.Ac15;
 
@@ -48,11 +49,11 @@ public sealed class Ac15NormalPlayWriterTests
                 PlayMode: 0,
                 Stages:
                 [
-                    Stage(101, ghostStageData: new CommonPlayResultData.GhostStageData
+                    Stage(101, ghostStageData: new Ac15GreenGhostStageData
                     {
                         ArySectionData =
                         [
-                            new() { IsWin = true, GoodCnt = 10, OkCnt = 2, NgCnt = 1, PoundCnt = 4 }
+                            new(IsWin: true, GoodCnt: 10, OkCnt: 2, NgCnt: 1, PoundCnt: 4)
                         ]
                     })
                 ],
@@ -107,11 +108,11 @@ public sealed class Ac15NormalPlayWriterTests
                 }
             });
 
-    private static CommonPlayResultData.StageData Stage(
+    private static Ac15StageResult Stage(
         uint songNo,
         bool isFavorite = false,
         bool isRecent = false,
-        CommonPlayResultData.GhostStageData? ghostStageData = null)
+        Ac15GreenGhostStageData? ghostStageData = null)
         => new()
         {
             SongNo = songNo,
@@ -122,7 +123,7 @@ public sealed class Ac15NormalPlayWriterTests
             ScoreRate = 87,
             IsFavorite = isFavorite,
             IsRecent = isRecent,
-            GhostStageData = ghostStageData
+            GreenGhostStage = ghostStageData
         };
 
     private sealed class SchemaDatabase(SqliteConnection connection) : IAsyncDisposable
