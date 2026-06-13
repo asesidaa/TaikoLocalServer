@@ -1,8 +1,10 @@
+using TaikoLocalServer.Application.Dtos.Ac15;
+
 namespace TaikoLocalServer.Application.Ac15;
 
 public static class Ac15UserDataService
 {
-    public static CommonUserDataResponse BuildResponse(
+    public static Ac15UserDataResponse BuildResponse(
         Ac15UserDataSnapshot snapshot,
         Ac15EraProfile profile)
     {
@@ -12,50 +14,58 @@ public static class Ac15UserDataService
             profile.Limits.SongFlagBytes);
         release = ClearBits(release, snapshot.LockedSongIds, profile.Limits.SongFlagBytes);
 
-        var response = new CommonUserDataResponse
+        return new Ac15UserDataResponse
         {
             Result = 1,
-            SongHashVer = snapshot.SongHashVersion,
-            ReleaseSongFlg = release,
-            ToneFlg = ClearBits(snapshot.ToneFlg, snapshot.LockedToneIds, profile.Limits.ToneFlagBytes),
-            TitleFlg = Ac15ProtocolBytes.FixedOrZero(snapshot.TitleFlg, profile.Limits.TitleFlagBytes),
-            DefaultOptionSetting = Ac15ProtocolBytes.FixedOrZero(snapshot.DefaultOptionSetting, 2),
-            OptionFlg = snapshot.OptionFlg,
-            AryFavoriteSongNoes = snapshot.Favorites.ToArray(),
-            AryRecentSongNoes = snapshot.Recent.ToArray(),
-            RecommendSong = snapshot.RecommendSong,
-            RecommendBestSong = snapshot.RecommendBestSongs.ToList(),
-            CategJpopCnt = snapshot.Counters.CategJpopCnt,
-            CategAnimeCnt = snapshot.Counters.CategAnimeCnt,
-            CategDoyoCnt = snapshot.Counters.CategDoyoCnt,
-            CategVarietyCnt = snapshot.Counters.CategVarietyCnt,
-            CategClassicCnt = snapshot.Counters.CategClassicCnt,
-            CategGameCnt = snapshot.Counters.CategGameCnt,
-            CategNamcoCnt = snapshot.Counters.CategNamcoCnt,
-            CategVocaloidCnt = snapshot.Counters.CategVocaloidCnt,
-            SongPushedCnt = snapshot.Counters.SongPushedCnt,
-            SongFavoriteCnt = snapshot.Counters.SongFavoriteCnt,
-            SongRecentCnt = snapshot.Counters.SongRecentCnt,
-            TotalCreditCnt = snapshot.Counters.TotalCreditCnt,
-            PrevAreaCode = snapshot.Counters.PrevAreaCode,
-            ConsecAreaCnt = snapshot.Counters.ConsecAreaCnt,
-            DefaultShinSetting = snapshot.Counters.DefaultShinSetting,
-            DispLevelTotal = snapshot.Counters.DispLevelTotal,
-            DispLevelChassis = snapshot.Counters.DispLevelChassis,
-            DispLevelSelf = snapshot.Counters.DispLevelSelf,
-            DispTaikojukuDan = GetSafeDisplayDan(snapshot.DisplayDan, profile),
-            DifficultyPlayedCourse = snapshot.Counters.DifficultyPlayedCourse,
-            DifficultyPlayedStar = snapshot.Counters.DifficultyPlayedStar,
-            IsChallengeCompe = snapshot.Counters.IsChallengeCompe,
-            IsTojiru = snapshot.Counters.IsTojiru
+            SongFlags = new Ac15UserDataSongFlags
+            {
+                SongHashVer = snapshot.SongHashVersion,
+                ReleaseSongFlg = release,
+                ToneFlg = ClearBits(snapshot.ToneFlg, snapshot.LockedToneIds, profile.Limits.ToneFlagBytes),
+                TitleFlg = Ac15ProtocolBytes.FixedOrZero(snapshot.TitleFlg, profile.Limits.TitleFlagBytes),
+                OptionFlg = snapshot.OptionFlg
+            },
+            SongLists = new Ac15UserDataSongLists
+            {
+                AryFavoriteSongNoes = snapshot.Favorites.ToArray(),
+                AryRecentSongNoes = snapshot.Recent.ToArray()
+            },
+            Recommendations = new Ac15UserDataRecommendations
+            {
+                RecommendSong = snapshot.RecommendSong,
+                RecommendBestSong = snapshot.RecommendBestSongs.ToList()
+            },
+            Counters = new Ac15UserDataProfileCounters
+            {
+                CategJpopCnt = snapshot.Counters.CategJpopCnt,
+                CategAnimeCnt = snapshot.Counters.CategAnimeCnt,
+                CategDoyoCnt = snapshot.Counters.CategDoyoCnt,
+                CategVarietyCnt = snapshot.Counters.CategVarietyCnt,
+                CategClassicCnt = snapshot.Counters.CategClassicCnt,
+                CategGameCnt = snapshot.Counters.CategGameCnt,
+                CategNamcoCnt = snapshot.Counters.CategNamcoCnt,
+                CategVocaloidCnt = snapshot.Counters.CategVocaloidCnt,
+                SongPushedCnt = snapshot.Counters.SongPushedCnt,
+                SongFavoriteCnt = snapshot.Counters.SongFavoriteCnt,
+                SongRecentCnt = snapshot.Counters.SongRecentCnt,
+                TotalCreditCnt = snapshot.Counters.TotalCreditCnt,
+                PrevAreaCode = snapshot.Counters.PrevAreaCode,
+                ConsecAreaCnt = snapshot.Counters.ConsecAreaCnt
+            },
+            Display = new Ac15UserDataDisplaySettings
+            {
+                DefaultOptionSetting = Ac15ProtocolBytes.FixedOrZero(snapshot.DefaultOptionSetting, 2),
+                DefaultShinSetting = snapshot.Counters.DefaultShinSetting,
+                DispLevelTotal = snapshot.Counters.DispLevelTotal,
+                DispLevelChassis = snapshot.Counters.DispLevelChassis,
+                DispLevelSelf = snapshot.Counters.DispLevelSelf,
+                DispTaikojukuDan = GetSafeDisplayDan(snapshot.DisplayDan, profile),
+                DifficultyPlayedCourse = snapshot.Counters.DifficultyPlayedCourse,
+                DifficultyPlayedStar = snapshot.Counters.DifficultyPlayedStar,
+                IsChallengeCompe = snapshot.Counters.IsChallengeCompe,
+                IsTojiru = snapshot.Counters.IsTojiru
+            }
         };
-
-        if (profile.WirePlacement.HasTokkunTutorialFlagInUserData)
-        {
-            response.TokkunTutorialFlg = snapshot.TokkunTutorialFlg;
-        }
-
-        return response;
     }
 
     private static byte[] ClearBits(byte[] source, IEnumerable<uint> ids, int byteCount)

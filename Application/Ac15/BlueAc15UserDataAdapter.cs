@@ -27,9 +27,7 @@ public static class BlueAc15UserDataAdapter
             Counters(saveData),
             saveData.DispTaikojukuDan,
             lockedSongIds,
-            lockedToneIds,
-            saveData.TokkunTutorialFlg,
-            saveData.IsDevil);
+            lockedToneIds);
     }
 
     private static IEnumerable<uint> LockedIds(

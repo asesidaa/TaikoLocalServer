@@ -1,11 +1,12 @@
 using TaikoLocalServer.Application.Ac15;
+using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Application.Handlers;
 
 public partial class UserDataQueryHandler
 {
-    private partial async ValueTask<CommonUserDataResponse> HandleYellow(
-        UserDataQuery request,
+    private partial async ValueTask<Ac15UserDataResponse> HandleYellow(
+        Ac15UserDataQuery request,
         CancellationToken cancellationToken)
     {
         _ = await context.UserData.FindAsync([request.Baid], cancellationToken)
@@ -41,10 +42,12 @@ public partial class UserDataQueryHandler
             recent,
             unlockedShopItems);
         var response = Ac15UserDataService.BuildResponse(userdata, Ac15EraProfiles.Yellow);
-        response.DispTaikojukuDan = GetSafeYellowTaikojukuDanSlot(displayDan);
-        response.IsDevilYellow = saveData.IsDevil;
-        response.IsExplainYellow = saveData.IsExplain;
-        return response;
+        return response with
+        {
+            Display = response.Display with { DispTaikojukuDan = GetSafeYellowTaikojukuDanSlot(displayDan) },
+            ModeFlags = new Ac15UserDataModeFlags(saveData.IsDevil, saveData.IsExplain),
+            Tutorial = new Ac15UserDataTutorial(saveData.TokkunTutorialFlg, DifficultyTutorialFlg: null)
+        };
     }
 
     private static uint GetSafeYellowTaikojukuDanSlot(uint value)

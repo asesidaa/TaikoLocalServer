@@ -1,11 +1,12 @@
 using TaikoLocalServer.Application.Ac15;
+using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Application.Handlers;
 
 public partial class UserDataQueryHandler
 {
-    private partial async ValueTask<CommonUserDataResponse> HandleRed(
-        UserDataQuery request,
+    private partial async ValueTask<Ac15UserDataResponse> HandleRed(
+        Ac15UserDataQuery request,
         CancellationToken cancellationToken)
     {
         _ = await context.UserData.FindAsync([request.Baid], cancellationToken)
@@ -30,14 +31,16 @@ public partial class UserDataQueryHandler
         var snapshot = Ac15CatalogSnapshotFactory.FromRed(red);
         var userdata = RedAc15UserDataAdapter.CreateSnapshot(saveData, snapshot, favorites, recent);
         var response = Ac15UserDataService.BuildResponse(userdata, Ac15EraProfiles.Red);
-        response.DispTaikojukuDan = GetSafeRedTaikojukuDanSlot(displayDan);
-        response.IsDevilRed = saveData.IsDevil;
-        response.IsExplainRed = saveData.IsExplain;
-        response.TotalGetDonpoint = saveData.TotalGetDonpoint;
-        response.TotalUseDonpoint = saveData.TotalUseDonpoint;
-        response.RewardProgress = saveData.RewardProgress;
-        response.DifficultyTutorialFlg = saveData.DifficultyTutorialFlg;
-        return response;
+        return response with
+        {
+            Display = response.Display with { DispTaikojukuDan = GetSafeRedTaikojukuDanSlot(displayDan) },
+            ModeFlags = new Ac15UserDataModeFlags(saveData.IsDevil, saveData.IsExplain),
+            Tutorial = new Ac15UserDataTutorial(saveData.TokkunTutorialFlg, saveData.DifficultyTutorialFlg),
+            Reward = new Ac15UserDataReward(
+                saveData.TotalGetDonpoint,
+                saveData.TotalUseDonpoint,
+                saveData.RewardProgress)
+        };
     }
 
     private static uint GetSafeRedTaikojukuDanSlot(uint value)

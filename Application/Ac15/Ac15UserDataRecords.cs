@@ -15,9 +15,7 @@ public sealed record Ac15UserDataSnapshot(
     Ac15ProfileCounters Counters,
     uint DisplayDan,
     IReadOnlyList<uint> LockedSongIds,
-    IReadOnlyList<uint> LockedToneIds,
-    uint? TokkunTutorialFlg,
-    bool IsDevil);
+    IReadOnlyList<uint> LockedToneIds);
 
 public sealed class Ac15ProfileCounters
 {

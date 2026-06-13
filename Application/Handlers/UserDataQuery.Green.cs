@@ -1,11 +1,12 @@
 using TaikoLocalServer.Application.Ac15;
+using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Application.Handlers;
 
 public partial class UserDataQueryHandler
 {
-    private partial async ValueTask<CommonUserDataResponse> HandleGreen(
-        UserDataQuery request,
+    private partial async ValueTask<Ac15UserDataResponse> HandleGreen(
+        Ac15UserDataQuery request,
         CancellationToken cancellationToken)
     {
         _ = await context.UserData.FindAsync([request.Baid], cancellationToken)
@@ -45,9 +46,11 @@ public partial class UserDataQueryHandler
             recent,
             unlockedShopItems);
         var response = Ac15UserDataService.BuildResponse(userdata, Ac15EraProfiles.Green);
-        response.DispTaikojukuDan = GetSafeTaikojukuDanSlot(displayDan);
-        response.IsDevilGreen = saveData.IsDevil;
-        return response;
+        return response with
+        {
+            Display = response.Display with { DispTaikojukuDan = GetSafeTaikojukuDanSlot(displayDan) },
+            ModeFlags = new Ac15UserDataModeFlags(saveData.IsDevil, IsExplain: null)
+        };
     }
 
     // Green client reads disp_taikojuku_dan_ at message offset +0x31C without

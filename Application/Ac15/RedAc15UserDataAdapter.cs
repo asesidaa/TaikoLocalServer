@@ -22,9 +22,7 @@ public static class RedAc15UserDataAdapter
             Counters(saveData),
             saveData.DispTaikojukuDan,
             LockedSongIds: [],
-            LockedToneIds: [],
-            saveData.TokkunTutorialFlg,
-            saveData.IsDevil);
+            LockedToneIds: []);
 
     private static Ac15ProfileCounters Counters(UserSaveDataRed saveData) => new()
     {

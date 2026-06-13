@@ -27,9 +27,7 @@ public static class GreenAc15UserDataAdapter
             Counters(saveData),
             saveData.DispTaikojukuDan,
             lockedSongIds,
-            lockedToneIds,
-            TokkunTutorialFlg: null,
-            saveData.IsDevil);
+            lockedToneIds);
     }
 
     private static IEnumerable<uint> LockedIds(
