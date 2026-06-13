@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Phase Summary
 status: executing
-stopped_at: Phase 20.1 complete; ready for Phase 21 planning
-last_updated: "2026-06-13T16:38:40.651Z"
-last_activity: 2026-06-14 -- Phase 20.1 completed with full verification
+stopped_at: Phase 20.1 corrected context gathered; ready for gsd-plan-phase
+last_updated: "2026-06-13T20:40:32.379Z"
+last_activity: 2026-06-14 -- Corrected Phase 20.1 context approved through gsd-discuss-phase
 progress:
   total_phases: 6
-  completed_phases: 3
-  total_plans: 14
+  completed_phases: 2
+  total_plans: 15
   completed_plans: 11
-  percent: 50
+  percent: 33
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-13)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Phase 20.1 — AC15 Capability DTO and Mapper Boundary Refactor
+**Current focus:** Phase 20.1 corrective planning - sectioned BAID/userdata responses with controller-owned wire assembly
 
 ## Current Position
 
-Phase: 20.1 (AC15 Capability DTO and Mapper Boundary Refactor) — COMPLETE
-Plan: 3 of 3 complete
-Status: Ready for Phase 21 planning
-Last activity: 2026-06-14 -- Phase 20.1 completed with full verification
+Phase: 20.1 (AC15 Capability DTO and Mapper Boundary Refactor) - CORRECTED CONTEXT READY FOR PLANNING
+Plan: pending corrected gsd-plan-phase
+Status: executing
+Last activity: 2026-06-14 -- Corrected Phase 20.1 context approved through gsd-discuss-phase
 
 ## Performance Metrics
 
@@ -198,9 +198,8 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 20]: Red Don points are Red profile fields, not shop medals, shop-season balances, wallet balances, coupons, payments, receipts, or transactions.
 - [Phase 20]: Red Tokkun playresults classify before normal/Dani/Challenge handling and write back only nullable `TokkunTutorialFlg`; no raw Tokkun history, reward, unlock, normal-play, or Dani writes are made from Tokkun uploads.
 - [Phase 20]: Red ChallengeCompe arrays are mapped as playresult facts for Phase 21, but no ChallengeCompe state or readback contract was implemented.
-- [Phase 20.1]: Plan 01 split AC15 BAID readback into `Ac15BaidResponse` capability records and kept `CommonBaidResponse` on the Nijiiro path only.
-- [Phase 20.1]: Plan 02 split AC15 userdata readback into `Ac15UserDataResponse` capability records with optional ModeFlags, Tutorial, and Reward segments; AC15 controllers now send `Ac15UserDataQuery`.
-- [Phase 20.1]: Plan 03 removed obsolete AC15 common BAID/userdata fields, audited nearby DTO/mappers, and verified focused mapper/handler coverage, shared AC15 regression, full tests, generated Mapperly source, and temp-output Host build.
+- [Phase 20.1]: Previous Plans 01-04 are superseded by corrected context because the architecture was rejected. Their verification proves only that behavior did not regress, not that the mapper boundary was accepted.
+- [Phase 20.1]: Corrected context requires sectioned BAID/userdata responses, handler-owned semantic sections, controller-owned wire assembly, generated Mapperly existing-target/derived-type mappings, and no handwritten response aggregation in mapper classes.
 
 ### Pending Todos
 
@@ -225,10 +224,11 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-13T14:35:48.752Z
-Stopped at: Phase 20.1 planning complete; ready to execute
+Last session: 2026-06-13T20:39:32.162Z
+Stopped at: Phase 20.1 corrected context gathered; ready for gsd-plan-phase
 Resume file: .planning/phases/20.1-ac15-capability-dto-and-mapper-boundary-refactor/20.1-CONTEXT.md
 
 ## Operator Next Steps
 
-- Start Phase 21 planning for older-AC15 ChallengeCompe evidence and Red binding.
+- Run `$gsd-plan-phase 20.1` from corrected `.planning/phases/20.1-ac15-capability-dto-and-mapper-boundary-refactor/20.1-CONTEXT.md`.
+- Do not start Phase 21 until Phase 20.1 corrective rewrite has fresh verification and closeout.
