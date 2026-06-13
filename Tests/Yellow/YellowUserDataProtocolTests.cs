@@ -1,6 +1,7 @@
 using TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
 using TaikoLocalServer.Application.Ac15;
 using TaikoLocalServer.Application.Catalog.Yellow;
+using TaikoLocalServer.Tests.Ac15;
 
 namespace TaikoLocalServer.Tests.Yellow;
 
@@ -279,7 +280,7 @@ public sealed class YellowUserDataProtocolTests
         var userDataHandler = CreateUserDataHandler(fixture);
 
         var playResult = await playResultHandler.Handle(
-            new UpdatePlayResultCommand(5, GameEra.Yellow, CreateTokkunPlayResult(5)),
+            CreateTokkunPlayResult(5),
             CancellationToken.None);
         var response = await userDataHandler.Handle(new UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
         var wire = UserDataMappers.Map(response);
@@ -442,23 +443,21 @@ public sealed class YellowUserDataProtocolTests
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
 
-    private static CommonPlayResultData CreateTokkunPlayResult(uint baid) => new()
-    {
-        Baid = baid,
-        PlayDatetime = "20260608120000",
-        PlayMode = (uint)PlayMode.Tokkun,
-        IsTokkunPlayResult = true,
-        TokkunTutorialFlg = 7,
-        TokkunStageData = new CommonPlayResultData.TokkunStageDataDto
-        {
-            BanacoinDatetime = "20260608120100",
-            TokkunSongCnt = 3,
-            TookunSongnoes = [101, 102, 101],
-            TokkunSpeedchangeCnt = 2,
-            TokkunAutoplayCnt = 3,
-            TokkunJumpCnt = 4
-        }
-    };
+    private static UpdateAc15PlayResultCommand CreateTokkunPlayResult(uint baid)
+        => Ac15PlayResultTestFactory.Command(
+            baid,
+            GameEra.Yellow,
+            playDatetime: "20260608120000",
+            playMode: (uint)PlayMode.Tokkun,
+            tokkun: new Ac15TokkunPlayResult(
+                TutorialFlg: 7,
+                StageData: new Ac15TokkunStageData(
+                    BanacoinDatetime: "20260608120100",
+                    TokkunSongCnt: 3,
+                    TookunSongnoes: [101, 102, 101],
+                    TokkunSpeedchangeCnt: 2,
+                    TokkunAutoplayCnt: 3,
+                    TokkunJumpCnt: 4)));
 
     private static void AssertNoTokkunHistorySurface(object response)
     {

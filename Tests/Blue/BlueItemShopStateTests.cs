@@ -110,7 +110,7 @@ public sealed class BlueItemShopStateTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreatePlayResultHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.FromCommon(
             1,
             GameEra.Blue,
             CreatePlayResult(getDonmedal: 25, getKatsumedal: 7)),
@@ -134,7 +134,7 @@ public sealed class BlueItemShopStateTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreatePlayResultHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.FromCommon(
             1,
             GameEra.Blue,
             CreatePlayResult(getDonmedal: 25)),
@@ -169,7 +169,7 @@ public sealed class BlueItemShopStateTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreatePlayResultHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.FromCommon(
             1,
             GameEra.Blue,
             CreatePlayResult(getDonmedal: 25)),

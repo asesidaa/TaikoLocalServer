@@ -28,7 +28,7 @@ public partial class UpdatePlayResultCommandHandler
         IReadOnlyList<Ac15StageResult> stages = normal?.Stages ?? [];
         if (IsYellowTokkunShaped(playResultData))
         {
-            return await HandleYellowTokkun(request.Baid, Ac15PlayResultCommonBridge.ToCommon(playResultData), cancellationToken);
+            return await HandleYellowTokkun(request.Baid, playResultData, cancellationToken);
         }
 
         var validStages = Ac15NormalStageFilter.Filter(

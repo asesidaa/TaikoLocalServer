@@ -1,4 +1,5 @@
 using System.Globalization;
+using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Application.Common;
 
@@ -12,16 +13,17 @@ public static class BlueBattleStateExtensions
     public static async Task AddBlueBattleStageResultsAsync(
         this ITaikoDbContext context,
         uint baid,
-        CommonPlayResultData playResultData,
+        IReadOnlyList<Ac15StageResult> stages,
+        uint playMode,
         DateTime playTime,
         DateTime now,
         CancellationToken cancellationToken)
     {
         BlueBattleUserState? userState = null;
-        for (var index = 0; index < playResultData.AryStageInfoes.Count; index++)
+        for (var index = 0; index < stages.Count; index++)
         {
-            var stage = playResultData.AryStageInfoes[index];
-            var battleStage = stage.BattleStageData;
+            var stage = stages[index];
+            var battleStage = stage.BlueBattleStage;
             if (battleStage is null)
             {
                 continue;
@@ -33,7 +35,7 @@ public static class BlueBattleStateExtensions
                 Baid = baid,
                 CreatedAt = now,
                 PlayDatetime = playTime,
-                PlayMode = playResultData.PlayMode,
+                PlayMode = playMode,
                 StageMode = stage.StageMode,
                 StageIndex = (uint)index,
                 SongNo = stage.SongNo,
@@ -61,7 +63,7 @@ public static class BlueBattleStateExtensions
     public static async Task ApplyBlueBattleReleaseDataAsync(
         this ITaikoDbContext context,
         uint baid,
-        CommonPlayResultData.BattleReleaseDataDto? releaseData,
+        Ac15BlueBattleReleaseData? releaseData,
         DateTime now,
         CancellationToken cancellationToken)
     {
@@ -127,7 +129,7 @@ public static class BlueBattleStateExtensions
     private static async Task UpsertBlueBattleNpcStateAsync(
         this ITaikoDbContext context,
         uint baid,
-        CommonPlayResultData.BattleNpcData npc,
+        Ac15BlueBattleNpcData npc,
         DateTime now,
         CancellationToken cancellationToken)
     {
@@ -161,7 +163,7 @@ public static class BlueBattleStateExtensions
     private static async Task UpsertBlueBattleTokenStateAsync(
         this ITaikoDbContext context,
         uint baid,
-        CommonPlayResultData.BattleTokenData token,
+        Ac15BlueBattleTokenData token,
         DateTime now,
         CancellationToken cancellationToken)
     {

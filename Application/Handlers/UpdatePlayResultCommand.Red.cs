@@ -28,7 +28,7 @@ public partial class UpdatePlayResultCommandHandler
         IReadOnlyList<Ac15StageResult> stages = normal?.Stages ?? [];
         if (IsRedTokkunShaped(playResultData))
         {
-            return await HandleRedTokkun(request.Baid, Ac15PlayResultCommonBridge.ToCommon(playResultData), cancellationToken);
+            return await HandleRedTokkun(request.Baid, playResultData, cancellationToken);
         }
 
         var validStages = Ac15NormalStageFilter.Filter(
@@ -94,11 +94,11 @@ public partial class UpdatePlayResultCommandHandler
 
     private async ValueTask<uint> HandleRedTokkun(
         uint baid,
-        CommonPlayResultData playResultData,
+        Ac15PlayResultEnvelope playResultData,
         CancellationToken cancellationToken)
     {
         var saveData = await context.GetOrCreateRedSaveDataAsync(baid, cancellationToken);
-        if (playResultData.TokkunTutorialFlg is { } tokkunTutorialFlg)
+        if (playResultData.Tokkun?.TutorialFlg is { } tokkunTutorialFlg)
         {
             saveData.TokkunTutorialFlg = tokkunTutorialFlg;
         }

@@ -62,7 +62,7 @@ public sealed class GreenItemShopStateTests
             NullLogger<UpdatePlayResultCommandHandler>.Instance,
             Options.Create(new ServerSettings()));
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.FromCommon(
             1,
             GameEra.Green,
             new CommonPlayResultData

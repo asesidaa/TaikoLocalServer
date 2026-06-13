@@ -1,5 +1,6 @@
 using TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
 using TaikoLocalServer.Adapters.GameProtocol.Yellow.Wire;
+using TaikoLocalServer.Tests.Ac15;
 
 namespace TaikoLocalServer.Tests.Yellow;
 
@@ -55,15 +56,11 @@ public sealed class YellowWaiWaiTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
             1,
             GameEra.Yellow,
-            new CommonPlayResultData
-            {
-                Baid = 1,
-                WaiwaiTutorialFlg = 11,
-                AryStageInfoes = [CreateStage(101, 1, 0)]
-            }),
+            profile: Ac15ProfileMutationFacts.Empty with { WaiwaiTutorialFlg = 11 },
+            stages: [CreateStage(101, 1, 0)]),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -80,17 +77,13 @@ public sealed class YellowWaiWaiTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
             1,
             GameEra.Yellow,
-            new CommonPlayResultData
-            {
-                Baid = 1,
-                AryStageInfoes =
-                [
-                    CreateStage(101, 1, 0, waiwaiResult: 4, waiwaiGauge: 88)
-                ]
-            }),
+            stages:
+            [
+                CreateStage(101, 1, 0, waiwaiResult: 4, waiwaiGauge: 88)
+            ]),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -117,7 +110,7 @@ public sealed class YellowWaiWaiTests
             fixture.Catalog,
             NullLogger<UpdatePlayResultCommandHandler>.Instance);
 
-    private static CommonPlayResultData.StageData CreateStage(
+    private static Ac15StageResult CreateStage(
         uint songNo,
         uint level,
         uint stageMode,

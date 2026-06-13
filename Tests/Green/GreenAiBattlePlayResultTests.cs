@@ -15,7 +15,7 @@ public sealed class GreenAiBattlePlayResultTests
             fixture.Catalog,
             NullLogger<UpdatePlayResultCommandHandler>.Instance);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.FromCommon(
             1,
             GameEra.Green,
             new CommonPlayResultData
@@ -123,7 +123,7 @@ public sealed class GreenAiBattlePlayResultTests
             fixture.Catalog,
             NullLogger<UpdatePlayResultCommandHandler>.Instance);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.FromCommon(
             1,
             GameEra.Green,
             new CommonPlayResultData
@@ -187,7 +187,7 @@ public sealed class GreenAiBattlePlayResultTests
             fixture.Catalog,
             NullLogger<UpdatePlayResultCommandHandler>.Instance);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.FromCommon(
             1,
             GameEra.Green,
             new CommonPlayResultData
@@ -246,7 +246,7 @@ public sealed class GreenAiBattlePlayResultTests
             fixture.Catalog,
             NullLogger<UpdatePlayResultCommandHandler>.Instance);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.FromCommon(
             1,
             GameEra.Green,
             new CommonPlayResultData
@@ -304,7 +304,7 @@ public sealed class GreenAiBattlePlayResultTests
             fixture.Catalog,
             NullLogger<UpdatePlayResultCommandHandler>.Instance);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.FromCommon(
             1,
             GameEra.Green,
             new CommonPlayResultData
@@ -362,7 +362,7 @@ public sealed class GreenAiBattlePlayResultTests
             fixture.Catalog,
             NullLogger<UpdatePlayResultCommandHandler>.Instance);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.FromCommon(
             1,
             GameEra.Green,
             new CommonPlayResultData
@@ -420,7 +420,7 @@ public sealed class GreenAiBattlePlayResultTests
             fixture.Catalog,
             NullLogger<UpdatePlayResultCommandHandler>.Instance);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.FromCommon(
             1,
             GameEra.Green,
             new CommonPlayResultData
@@ -470,7 +470,7 @@ public sealed class GreenAiBattlePlayResultTests
             fixture.Catalog,
             NullLogger<UpdatePlayResultCommandHandler>.Instance);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.FromCommon(
             1,
             GameEra.Green,
             new CommonPlayResultData
@@ -520,7 +520,7 @@ public sealed class GreenAiBattlePlayResultTests
             fixture.Catalog,
             NullLogger<UpdatePlayResultCommandHandler>.Instance);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.FromCommon(
             1,
             GameEra.Green,
             new CommonPlayResultData
@@ -560,7 +560,7 @@ public sealed class GreenAiBattlePlayResultTests
             fixture.Catalog,
             NullLogger<UpdatePlayResultCommandHandler>.Instance);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.FromCommon(
             1,
             GameEra.Green,
             new CommonPlayResultData

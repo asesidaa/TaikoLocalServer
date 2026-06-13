@@ -1,4 +1,5 @@
 using TaikoLocalServer.Application.Catalog.Ac15;
+using TaikoLocalServer.Tests.Ac15;
 
 namespace TaikoLocalServer.Tests.Red;
 
@@ -16,32 +17,32 @@ public sealed class RedPlayResultHandlerTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var profile = Ac15ProfileMutationFacts.Empty with
+        {
+            GetDonpoint = 25,
+            RewardPtn = 4,
+            RewardProgress = 9,
+            DifficultyTutorialFlg = 2,
+            IsDevil = true,
+            IsExplain = true,
+            DifficultyPlayedCourse = 4,
+            DifficultyPlayedStar = 8,
+            HasDifficultyPlayedCourse = true,
+            HasDifficultyPlayedStar = true,
+            ReleaseSongNoes = [104],
+            GetToneNoes = [4],
+            GetCostumeNo1s = [1],
+            GetTitleNoes = [10],
+            HasAryCurrentCostume = true,
+            AryCurrentCostume = new Ac15CostumeFacts(1, 0, 0, 0, 0),
+            AreaCode = 12
+        };
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
             1,
             GameEra.Red,
-            new CommonPlayResultData
-            {
-                Baid = 1,
-                PlayDatetime = "20260608120000",
-                GetDonpoint = 25,
-                RewardPtn = 4,
-                RewardProgress = 9,
-                DifficultyTutorialFlg = 2,
-                IsDevil = true,
-                IsExplain = true,
-                DifficultyPlayedCourse = 4,
-                DifficultyPlayedStar = 8,
-                HasDifficultyPlayedCourse = true,
-                HasDifficultyPlayedStar = true,
-                ReleaseSongNoes = [104],
-                GetToneNoes = [4],
-                GetCostumeNo1s = [1],
-                GetTitleNoes = [10],
-                HasAryCurrentCostume = true,
-                AryCurrentCostume = new CommonPlayResultData.CostumeData { Costume1 = 1 },
-                AreaCode = 12,
-                AryStageInfoes = [CreateStage(101, 1, 0)]
-            }),
+            playDatetime: "20260608120000",
+            profile: profile,
+            stages: [CreateStage(101, 1, 0)]),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -94,21 +95,21 @@ public sealed class RedPlayResultHandlerTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var danStages = new List<Ac15StageResult>
+        {
+            CreateStage(101, 1, 0, score: 100000, playDan: 1, soulGauge: 55, comboCnt: 120, goodCnt: 100, okCnt: 20, ngCnt: 4),
+            CreateStage(102, 1, 0, score: 200000, playDan: 1, soulGauge: 88, comboCnt: 220, goodCnt: 180, okCnt: 30, ngCnt: 2)
+        };
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
             1,
             GameEra.Red,
-            new CommonPlayResultData
-            {
-                Baid = 1,
-                PlayMode = (uint)PlayMode.DanMode,
-                DanResult = (uint)Ac15DanClearGrade.GoldClear,
-                PlayDatetime = "20260608120000",
-                AryStageInfoes =
-                [
-                    CreateStage(101, 1, 0, score: 100000, playDan: 1, soulGauge: 55, comboCnt: 120, goodCnt: 100, okCnt: 20, ngCnt: 4),
-                    CreateStage(102, 1, 0, score: 200000, playDan: 1, soulGauge: 88, comboCnt: 220, goodCnt: 180, okCnt: 30, ngCnt: 2)
-                ]
-            }),
+            playMode: (uint)PlayMode.DanMode,
+            playDatetime: "20260608120000",
+            stages: danStages,
+            dani: new Ac15DaniPlayResult(
+                DanResult: (uint)Ac15DanClearGrade.GoldClear,
+                ComboCntTotal: 0,
+                Stages: danStages)),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -141,28 +142,26 @@ public sealed class RedPlayResultHandlerTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
             1,
             GameEra.Red,
-            new CommonPlayResultData
+            playMode: (uint)PlayMode.Normal,
+            tokkun: new Ac15TokkunPlayResult(
+                TutorialFlg: 7,
+                StageData: new Ac15TokkunStageData(
+                    BanacoinDatetime: "20260608120100",
+                    TokkunSongCnt: 2,
+                    TookunSongnoes: [101, 101],
+                    TokkunSpeedchangeCnt: 3,
+                    TokkunAutoplayCnt: 4,
+                    TokkunJumpCnt: 5)),
+            profile: Ac15ProfileMutationFacts.Empty with
             {
-                Baid = 1,
-                PlayMode = (uint)PlayMode.Normal,
-                TokkunTutorialFlg = 7,
-                TokkunStageData = new CommonPlayResultData.TokkunStageDataDto
-                {
-                    BanacoinDatetime = "20260608120100",
-                    TokkunSongCnt = 2,
-                    TookunSongnoes = [101, 101],
-                    TokkunSpeedchangeCnt = 3,
-                    TokkunAutoplayCnt = 4,
-                    TokkunJumpCnt = 5
-                },
                 GetDonpoint = 50,
                 ReleaseSongNoes = [104],
-                GetToneNoes = [4],
-                AryStageInfoes = [CreateStage(101, 1, 0)]
-            }),
+                GetToneNoes = [4]
+            },
+            stages: [CreateStage(101, 1, 0)]),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -186,7 +185,7 @@ public sealed class RedPlayResultHandlerTests
             fixture.Catalog,
             NullLogger<UpdatePlayResultCommandHandler>.Instance);
 
-    private static CommonPlayResultData.StageData CreateStage(
+    private static Ac15StageResult CreateStage(
         uint songNo,
         uint level,
         uint stageMode,

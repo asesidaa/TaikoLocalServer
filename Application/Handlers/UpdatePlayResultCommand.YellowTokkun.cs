@@ -1,4 +1,5 @@
 using System.Text.Json;
+using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Application.Handlers;
 
@@ -6,22 +7,22 @@ public partial class UpdatePlayResultCommandHandler
 {
     private async ValueTask<uint> HandleYellowTokkun(
         uint baid,
-        CommonPlayResultData playResultData,
+        Ac15PlayResultEnvelope playResultData,
         CancellationToken cancellationToken)
     {
         var saveData = await context.GetOrCreateYellowSaveDataAsync(baid, cancellationToken);
-        if (playResultData.TokkunTutorialFlg is { } tokkunTutorialFlg)
+        if (playResultData.Tokkun?.TutorialFlg is { } tokkunTutorialFlg)
         {
             saveData.TokkunTutorialFlg = tokkunTutorialFlg;
         }
 
-        if (playResultData.TokkunStageData is { } tokkunStageData)
+        if (playResultData.Tokkun?.StageData is { } tokkunStageData)
         {
             context.YellowTokkunStageResults.Add(new YellowTokkunStageResult
             {
                 Baid = baid,
-                PlayDatetime = playResultData.PlayDatetime,
-                PlayMode = playResultData.PlayMode,
+                PlayDatetime = playResultData.Metadata.PlayDatetime,
+                PlayMode = playResultData.Metadata.PlayMode,
                 BanacoinDatetime = tokkunStageData.BanacoinDatetime,
                 TokkunSongCnt = tokkunStageData.TokkunSongCnt,
                 TookunSongnoesJson = JsonSerializer.Serialize(tokkunStageData.TookunSongnoes),

@@ -28,12 +28,12 @@ public partial class UpdatePlayResultCommandHandler
         IReadOnlyList<Ac15StageResult> stages = normal?.Stages ?? [];
         if (IsBlueTokkunShaped(playResultData))
         {
-            return await HandleBlueTokkun(request.Baid, Ac15PlayResultCommonBridge.ToCommon(playResultData), cancellationToken);
+            return await HandleBlueTokkun(request.Baid, playResultData, cancellationToken);
         }
 
-        if (IsBlueBattleShaped(playResultData))
+        if (playResultData.BlueBattle is { } battle)
         {
-            return await HandleBlueBattle(request.Baid, Ac15PlayResultCommonBridge.ToCommon(playResultData), cancellationToken);
+            return await HandleBlueBattle(request.Baid, battle, playResultData.Metadata, cancellationToken);
         }
 
         var saveData = await context.GetOrCreateBlueSaveDataAsync(request.Baid, cancellationToken);
@@ -131,6 +131,4 @@ public partial class UpdatePlayResultCommandHandler
         => playResultData.Metadata.PlayMode == (uint)PlayMode.Tokkun
            || playResultData.Tokkun is not null;
 
-    private static bool IsBlueBattleShaped(Ac15PlayResultEnvelope playResultData)
-        => playResultData.BlueBattle is not null;
 }

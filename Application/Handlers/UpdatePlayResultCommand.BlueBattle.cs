@@ -1,4 +1,5 @@
 using TaikoLocalServer.Application.Ac15;
+using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Application.Handlers;
 
@@ -6,27 +7,29 @@ public partial class UpdatePlayResultCommandHandler
 {
     private async ValueTask<uint> HandleBlueBattle(
         uint baid,
-        CommonPlayResultData playResultData,
+        Ac15BlueBattlePlayResult battle,
+        Ac15PlayResultMetadata metadata,
         CancellationToken cancellationToken)
     {
         var now = DateTime.UtcNow;
-        var playTime = ParseAc15PlayDatetimeOrNow(playResultData.PlayDatetime);
+        var playTime = ParseAc15PlayDatetimeOrNow(metadata.PlayDatetime);
 
         await context.AddBlueBattleStageResultsAsync(
             baid,
-            playResultData,
+            battle.Stages,
+            metadata.PlayMode,
             playTime,
             now,
             cancellationToken);
         await context.ApplyBlueBattleReleaseDataAsync(
             baid,
-            playResultData.BattleReleaseData,
+            battle.ReleaseData,
             now,
             cancellationToken);
-        await AddBlueBattleShopDonmedalsAsync(baid, playResultData.GetDonmedal, now, cancellationToken);
+        await AddBlueBattleShopDonmedalsAsync(baid, battle.GetDonmedal, now, cancellationToken);
         await UpsertBlueBattleRecentSongsAsync(
             baid,
-            playResultData,
+            battle.Stages,
             playTime,
             cancellationToken);
 
@@ -72,11 +75,11 @@ public partial class UpdatePlayResultCommandHandler
 
     private async Task UpsertBlueBattleRecentSongsAsync(
         uint baid,
-        CommonPlayResultData playResultData,
+        IReadOnlyList<Ac15StageResult> stages,
         DateTime playTime,
         CancellationToken cancellationToken)
     {
-        foreach (var stage in playResultData.AryStageInfoes)
+        foreach (var stage in stages)
         {
             await Ac15NormalPlayWriter.UpsertRecentAsync(
                 context.BlueRecentSongs,

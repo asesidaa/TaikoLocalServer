@@ -1,4 +1,5 @@
 using TaikoLocalServer.Application.Catalog.Blue;
+using TaikoLocalServer.Tests.Ac15;
 
 namespace TaikoLocalServer.Tests.Blue;
 
@@ -12,18 +13,12 @@ public sealed class BlueBattlePlayResultHandlerTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(BattleCommand(
             1,
-            GameEra.Blue,
-            new CommonPlayResultData
-            {
-                Baid = 1,
-                PlayDatetime = "20260528120000",
-                PlayMode = 6,
-                IsBattlePlayResult = true,
-                BattleReleaseData = CreateReleaseData(assignNextStageId: 44),
-                AryStageInfoes = [CreateBattleStage(9999, 99, 99, battleStageId: 33)]
-            }),
+            playDatetime: "20260528120000",
+            playMode: 6,
+            release: CreateReleaseData(assignNextStageId: 44),
+            stages: [CreateBattleStage(9999, 99, 99, battleStageId: 33)]),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -77,19 +72,11 @@ public sealed class BlueBattlePlayResultHandlerTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(BattleCommand(
             1,
-            GameEra.Blue,
-            new CommonPlayResultData
-            {
-                Baid = 1,
-                PlayDatetime = "20260528120000",
-                GetDonmedal = 50,
-                GetKatsumedal = 60,
-                IsBattlePlayResult = true,
-                BattleReleaseData = CreateReleaseData(assignNextStageId: 12),
-                AryStageInfoes = []
-            }),
+            playDatetime: "20260528120000",
+            getDonmedal: 50,
+            release: CreateReleaseData(assignNextStageId: 12)),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -115,20 +102,14 @@ public sealed class BlueBattlePlayResultHandlerTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(BattleCommand(
             1,
-            GameEra.Blue,
-            new CommonPlayResultData
-            {
-                Baid = 1,
-                PlayDatetime = "20260528120000",
-                IsBattlePlayResult = true,
-                AryStageInfoes =
-                [
-                    CreateBattleStage(201, 99, 99, battleStageId: 33),
-                    CreateBattleStage(202, 99, 99, battleStageId: 33)
-                ]
-            }),
+            playDatetime: "20260528120000",
+            stages:
+            [
+                CreateBattleStage(201, 99, 99, battleStageId: 33),
+                CreateBattleStage(202, 99, 99, battleStageId: 33)
+            ]),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -168,29 +149,23 @@ public sealed class BlueBattlePlayResultHandlerTests
         await fixture.Context.SaveChangesAsync();
         var playResultHandler = CreateHandler(fixture);
 
-        var result = await playResultHandler.Handle(new UpdatePlayResultCommand(
+        var result = await playResultHandler.Handle(BattleCommand(
             1,
-            GameEra.Blue,
-            new CommonPlayResultData
-            {
-                Baid = 1,
-                PlayDatetime = "20260528120000",
-                PlayMode = 6,
-                IsBattlePlayResult = true,
-                AryStageInfoes =
-                [
-                    CreateBattleStage(
-                        9999,
-                        99,
-                        99,
-                        battleStageId: 33,
-                        dpn: 34,
-                        npcId: 0,
-                        specialId1: 1,
-                        specialId2: 1,
-                        specialId3: 1)
-                ]
-            }),
+            playDatetime: "20260528120000",
+            playMode: 6,
+            stages:
+            [
+                CreateBattleStage(
+                    9999,
+                    99,
+                    99,
+                    battleStageId: 33,
+                    dpn: 34,
+                    npcId: 0,
+                    specialId1: 1,
+                    specialId2: 1,
+                    specialId3: 1)
+            ]),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -223,29 +198,17 @@ public sealed class BlueBattlePlayResultHandlerTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateHandler(fixture);
 
-        await handler.Handle(new UpdatePlayResultCommand(
+        await handler.Handle(BattleCommand(
                 1,
-                GameEra.Blue,
-                new CommonPlayResultData
-                {
-                    Baid = 1,
-                    PlayDatetime = "20260528120000",
-                    PlayMode = 6,
-                    IsBattlePlayResult = true,
-                    AryStageInfoes = [CreateBattleStage(9999, 99, 99, battleStageId: 33, dpn: 456)]
-                }),
+                playDatetime: "20260528120000",
+                playMode: 6,
+                stages: [CreateBattleStage(9999, 99, 99, battleStageId: 33, dpn: 456)]),
             CancellationToken.None);
-        await handler.Handle(new UpdatePlayResultCommand(
+        await handler.Handle(BattleCommand(
                 1,
-                GameEra.Blue,
-                new CommonPlayResultData
-                {
-                    Baid = 1,
-                    PlayDatetime = "20260528130000",
-                    PlayMode = 6,
-                    IsBattlePlayResult = true,
-                    AryStageInfoes = [CreateBattleStage(9999, 99, 99, battleStageId: 33, dpn: 123)]
-                }),
+                playDatetime: "20260528130000",
+                playMode: 6,
+                stages: [CreateBattleStage(9999, 99, 99, battleStageId: 33, dpn: 123)]),
             CancellationToken.None);
 
         var npc = await fixture.Context.BlueBattleNpcStates.SingleAsync(row => row.Baid == 1 && row.NpcId == 9);
@@ -276,26 +239,17 @@ public sealed class BlueBattlePlayResultHandlerTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var stages = new List<Ac15StageResult>
+        {
+            CreateBattleStage(101, 1, 0, battleStageId: 7)
+        };
+        var result = await handler.Handle(BattleCommand(
             1,
-            GameEra.Blue,
-            new CommonPlayResultData
-            {
-                Baid = 1,
-                PlayDatetime = "20260528120000",
-                PlayMode = (uint)PlayMode.DanMode,
-                GetDonmedal = 50,
-                GetKatsumedal = 60,
-                ReleaseSongNoes = [104],
-                GetToneNoes = [4],
-                GetCostumeNo1s = [1],
-                GetTitleNoes = [10],
-                DanResult = 2,
-                ComboCntTotal = 300,
-                IsBattlePlayResult = true,
-                BattleReleaseData = CreateReleaseData(assignNextStageId: 12),
-                AryStageInfoes = [CreateBattleStage(101, 1, 0, battleStageId: 7)]
-            }),
+            playDatetime: "20260528120000",
+            playMode: (uint)PlayMode.DanMode,
+            getDonmedal: 50,
+            release: CreateReleaseData(assignNextStageId: 12),
+            stages: stages),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -322,32 +276,18 @@ public sealed class BlueBattlePlayResultHandlerTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(BattleCommand(
             1,
-            GameEra.Blue,
-            new CommonPlayResultData
+            playDatetime: "20260528120000",
+            release: new Ac15BlueBattleReleaseData
             {
-                Baid = 1,
-                PlayDatetime = "20260528120000",
-                IsBattlePlayResult = true,
-                BattleReleaseData = new CommonPlayResultData.BattleReleaseDataDto
-                {
-                    ReleaseInfoIds = [12],
-                    ReleaseBattleStageIds = [33],
-                    ReleaseNpcIds = [99],
-                    ReleaseNpcCostumeIds = [34],
-                    ReleaseNpcSpecialIds = [35],
-                    BattleTokenData =
-                    [
-                        new CommonPlayResultData.BattleTokenData
-                        {
-                            TokenId = 3,
-                            TokenValue = 999
-                        }
-                    ],
-                    AssignNextStageId = 33
-                },
-                AryStageInfoes = []
+                ReleaseInfoIds = [12],
+                ReleaseBattleStageIds = [33],
+                ReleaseNpcIds = [99],
+                ReleaseNpcCostumeIds = [34],
+                ReleaseNpcSpecialIds = [35],
+                BattleTokenData = [new(TokenId: 3, TokenValue: 999)],
+                AssignNextStageId = 33
             }),
             CancellationToken.None);
 
@@ -401,7 +341,25 @@ public sealed class BlueBattlePlayResultHandlerTests
             fixture.Catalog,
             NullLogger<UpdatePlayResultCommandHandler>.Instance);
 
-    private static CommonPlayResultData.StageData CreateBattleStage(
+    private static UpdateAc15PlayResultCommand BattleCommand(
+        uint baid,
+        string playDatetime,
+        uint playMode = 0,
+        uint getDonmedal = 0,
+        List<Ac15StageResult>? stages = null,
+        Ac15BlueBattleReleaseData? release = null)
+    {
+        var battleStages = stages ?? [];
+        return Ac15PlayResultTestFactory.Command(
+            baid,
+            GameEra.Blue,
+            playMode: playMode,
+            playDatetime: playDatetime,
+            stages: battleStages,
+            battle: new Ac15BlueBattlePlayResult(release, battleStages, getDonmedal));
+    }
+
+    private static Ac15StageResult CreateBattleStage(
         uint songNo,
         uint level,
         uint stageMode,
@@ -431,11 +389,11 @@ public sealed class BlueBattlePlayResultHandlerTests
             IsFavorite = true,
             IsRecent = true,
             SoulGauge = 100,
-            BattleStageData = new CommonPlayResultData.BattleStageData
+            BlueBattleStage = new Ac15BlueBattleStageData
             {
                 SupportLv = 3,
                 BattleStageId = battleStageId,
-                NpcData = new CommonPlayResultData.BattleNpcData
+                NpcData = new Ac15BlueBattleNpcData
                 {
                     NpcId = npcId,
                     AcquiredExp = "77",
@@ -455,7 +413,7 @@ public sealed class BlueBattlePlayResultHandlerTests
             }
         };
 
-    private static CommonPlayResultData.BattleReleaseDataDto CreateReleaseData(uint assignNextStageId)
+    private static Ac15BlueBattleReleaseData CreateReleaseData(uint assignNextStageId)
         => new()
         {
             ReleaseInfoIds = [101],
@@ -465,11 +423,7 @@ public sealed class BlueBattlePlayResultHandlerTests
             ReleaseNpcSpecialIds = [6],
             BattleTokenData =
             [
-                new CommonPlayResultData.BattleTokenData
-                {
-                    TokenId = 17,
-                    TokenValue = 765
-                }
+                new(TokenId: 17, TokenValue: 765)
             ],
             AssignNextStageId = assignNextStageId
         };

@@ -7,6 +7,7 @@ using TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
 using TaikoLocalServer.Adapters.GameProtocol.Yellow.Wire;
 using TaikoLocalServer.Application.Ac15;
 using TaikoLocalServer.Application.Catalog.Yellow;
+using TaikoLocalServer.Tests.Ac15;
 
 namespace TaikoLocalServer.Tests.Yellow;
 
@@ -18,14 +19,10 @@ public sealed class YellowPlayResultHandlerTests
         await using var fixture = await YellowHandlerFixture.CreateAsync();
         var handler = CreateHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
             0,
             GameEra.Yellow,
-            new CommonPlayResultData
-            {
-                Baid = 0,
-                AryStageInfoes = [CreateStage(101, 1, 0)]
-            }),
+            stages: [CreateStage(101, 1, 0)]),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -40,14 +37,10 @@ public sealed class YellowPlayResultHandlerTests
         await using var fixture = await YellowHandlerFixture.CreateAsync();
         var handler = CreateHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
             99,
             GameEra.Yellow,
-            new CommonPlayResultData
-            {
-                Baid = 99,
-                AryStageInfoes = [CreateStage(101, 1, 0)]
-            }),
+            stages: [CreateStage(101, 1, 0)]),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -92,47 +85,40 @@ public sealed class YellowPlayResultHandlerTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var profile = Ac15ProfileMutationFacts.Empty with
+        {
+            GetDonmedal = 10,
+            GetKatsumedal = 2,
+            ItemshopTutorialFlg = 7,
+            IsDevil = true,
+            IsExplain = true,
+            WaiwaiTutorialFlg = 3,
+            DifficultyPlayedCourse = 4,
+            DifficultyPlayedStar = 8,
+            HasDifficultyPlayedCourse = true,
+            HasDifficultyPlayedStar = true,
+            ReleaseSongNoes = [104],
+            GetToneNoes = [4],
+            GetCostumeNo1s = [1],
+            GetCostumeNo2s = [2],
+            GetCostumeNo3s = [3],
+            GetCostumeNo4s = [4],
+            GetCostumeNo5s = [5],
+            GetTitleNoes = [10],
+            HasAryCurrentCostume = true,
+            AryCurrentCostume = new Ac15CostumeFacts(1, 2, 3, 4, 5),
+            AreaCode = 12
+        };
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
             1,
             GameEra.Yellow,
-            new CommonPlayResultData
-            {
-                Baid = 1,
-                PlayDatetime = "20260608120000",
-                GetDonmedal = 10,
-                GetKatsumedal = 2,
-                ItemshopTutorialFlg = 7,
-                IsDevil = true,
-                IsExplain = true,
-                WaiwaiTutorialFlg = 3,
-                DifficultyPlayedCourse = 4,
-                DifficultyPlayedStar = 8,
-                HasDifficultyPlayedCourse = true,
-                HasDifficultyPlayedStar = true,
-                ReleaseSongNoes = [104],
-                GetToneNoes = [4],
-                GetCostumeNo1s = [1],
-                GetCostumeNo2s = [2],
-                GetCostumeNo3s = [3],
-                GetCostumeNo4s = [4],
-                GetCostumeNo5s = [5],
-                GetTitleNoes = [10],
-                HasAryCurrentCostume = true,
-                AryCurrentCostume = new CommonPlayResultData.CostumeData
-                {
-                    Costume1 = 1,
-                    Costume2 = 2,
-                    Costume3 = 3,
-                    Costume4 = 4,
-                    Costume5 = 5
-                },
-                AreaCode = 12,
-                AryStageInfoes =
-                [
-                    CreateStage(101, 1, 0),
-                    CreateStage((uint)(Ac15EraProfiles.Yellow.Limits.SongFlagBytes * 8), 1, 0)
-                ]
-            }),
+            playDatetime: "20260608120000",
+            profile: profile,
+            stages:
+            [
+                CreateStage(101, 1, 0),
+                CreateStage((uint)(Ac15EraProfiles.Yellow.Limits.SongFlagBytes * 8), 1, 0)
+            ]),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -217,18 +203,14 @@ public sealed class YellowPlayResultHandlerTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
             1,
             GameEra.Yellow,
-            new CommonPlayResultData
-            {
-                Baid = 1,
-                AryStageInfoes =
-                [
-                    CreateStage(101, 1, 0, score: 100000),
-                    CreateStage(101, 1, 1, score: 200000)
-                ]
-            }),
+            stages:
+            [
+                CreateStage(101, 1, 0, score: 100000),
+                CreateStage(101, 1, 1, score: 200000)
+            ]),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -254,16 +236,15 @@ public sealed class YellowPlayResultHandlerTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
             1,
             GameEra.Yellow,
-            new CommonPlayResultData
+            profile: Ac15ProfileMutationFacts.Empty with
             {
-                Baid = 1,
                 GetDonmedal = 30,
-                GetKatsumedal = 7,
-                AryStageInfoes = [CreateStage(101, 1, 0)]
-            }),
+                GetKatsumedal = 7
+            },
+            stages: [CreateStage(101, 1, 0)]),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -305,16 +286,15 @@ public sealed class YellowPlayResultHandlerTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
             1,
             GameEra.Yellow,
-            new CommonPlayResultData
+            profile: Ac15ProfileMutationFacts.Empty with
             {
-                Baid = 1,
                 GetDonmedal = 1,
-                GetKatsumedal = 7,
-                AryStageInfoes = [CreateStage(101, 1, 0)]
-            }),
+                GetKatsumedal = 7
+            },
+            stages: [CreateStage(101, 1, 0)]),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -340,15 +320,11 @@ public sealed class YellowPlayResultHandlerTests
             .Select(song => CreateStage((uint)song, 1, 0))
             .ToList();
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
             1,
             GameEra.Yellow,
-            new CommonPlayResultData
-            {
-                Baid = 1,
-                PlayDatetime = "20260608120000",
-                AryStageInfoes = stages
-            }),
+            playDatetime: "20260608120000",
+            stages: stages),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -381,29 +357,29 @@ public sealed class YellowPlayResultHandlerTests
         var handler = CreateHandler(fixture);
 
         var invalidStage = CreateStage((uint)(Ac15EraProfiles.Yellow.Limits.SongFlagBytes * 8), 1, 0);
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var invalidProfile = Ac15ProfileMutationFacts.Empty with
+        {
+            GetDonmedal = 50,
+            GetKatsumedal = 60,
+            ItemshopTutorialFlg = 7,
+            IsDevil = true,
+            IsExplain = true,
+            WaiwaiTutorialFlg = 11,
+            HasDifficultyPlayedCourse = true,
+            DifficultyPlayedCourse = 4,
+            HasDifficultyPlayedStar = true,
+            DifficultyPlayedStar = 8,
+            ReleaseSongNoes = [104],
+            GetToneNoes = [4],
+            GetTitleNoes = [10],
+            AreaCode = 12
+        };
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
             1,
             GameEra.Yellow,
-            new CommonPlayResultData
-            {
-                Baid = 1,
-                PlayDatetime = "20260608120000",
-                GetDonmedal = 50,
-                GetKatsumedal = 60,
-                ItemshopTutorialFlg = 7,
-                IsDevil = true,
-                IsExplain = true,
-                WaiwaiTutorialFlg = 11,
-                HasDifficultyPlayedCourse = true,
-                DifficultyPlayedCourse = 4,
-                HasDifficultyPlayedStar = true,
-                DifficultyPlayedStar = 8,
-                ReleaseSongNoes = [104],
-                GetToneNoes = [4],
-                GetTitleNoes = [10],
-                AreaCode = 12,
-                AryStageInfoes = [invalidStage]
-            }),
+            playDatetime: "20260608120000",
+            profile: invalidProfile,
+            stages: [invalidStage]),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -447,33 +423,33 @@ public sealed class YellowPlayResultHandlerTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateHandler(fixture);
 
-        var request = new CommonPlayResultData
-        {
-            Baid = 1,
-            PlayDatetime = "20260608120000",
-            PlayMode = (uint)PlayMode.Tokkun,
-            IsTokkunPlayResult = true,
-            TokkunTutorialFlg = 7,
-            TokkunStageData = new CommonPlayResultData.TokkunStageDataDto
+        var request = Ac15PlayResultTestFactory.Command(
+            1,
+            GameEra.Yellow,
+            playDatetime: "20260608120000",
+            playMode: (uint)PlayMode.Tokkun,
+            tokkun: new Ac15TokkunPlayResult(
+                TutorialFlg: 7,
+                StageData: new Ac15TokkunStageData(
+                    BanacoinDatetime: "20260608120000",
+                    TokkunSongCnt: 3,
+                    TookunSongnoes: [101, 102, 101],
+                    TokkunSpeedchangeCnt: 2,
+                    TokkunAutoplayCnt: 3,
+                    TokkunJumpCnt: 4)),
+            profile: Ac15ProfileMutationFacts.Empty with
             {
-                BanacoinDatetime = "20260608120000",
-                TokkunSongCnt = 3,
-                TookunSongnoes = [101, 102, 101],
-                TokkunSpeedchangeCnt = 2,
-                TokkunAutoplayCnt = 3,
-                TokkunJumpCnt = 4
+                GetDonmedal = 50,
+                GetKatsumedal = 60,
+                ReleaseSongNoes = [104],
+                GetToneNoes = [8],
+                GetCostumeNo1s = [1],
+                GetTitleNoes = [11],
+                AryCurrentCostume = new Ac15CostumeFacts(1, 0, 0, 0, 0)
             },
-            GetDonmedal = 50,
-            GetKatsumedal = 60,
-            ReleaseSongNoes = [104],
-            GetToneNoes = [8],
-            GetCostumeNo1s = [1],
-            GetTitleNoes = [11],
-            AryCurrentCostume = new CommonPlayResultData.CostumeData { Costume1 = 1 },
-            AryStageInfoes = [CreateStage(101, 1, 0)]
-        };
+            stages: [CreateStage(101, 1, 0)]);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(1, GameEra.Yellow, request), CancellationToken.None);
+        var result = await handler.Handle(request, CancellationToken.None);
 
         Assert.Equal(1u, result);
         var reloaded = await fixture.Context.UserSaveDataYellow.SingleAsync(row => row.Baid == 1);
@@ -500,7 +476,7 @@ public sealed class YellowPlayResultHandlerTests
         Assert.Equal(3u, history.TokkunAutoplayCnt);
         Assert.Equal(4u, history.TokkunJumpCnt);
 
-        var repeatResult = await handler.Handle(new UpdatePlayResultCommand(1, GameEra.Yellow, request), CancellationToken.None);
+        var repeatResult = await handler.Handle(request, CancellationToken.None);
         Assert.Equal(1u, repeatResult);
         Assert.Equal(2, await fixture.Context.YellowTokkunStageResults.CountAsync(row => row.Baid == 1));
         Assert.Empty(await fixture.Context.SongPlayDataYellow.ToListAsync());
@@ -537,27 +513,21 @@ public sealed class YellowPlayResultHandlerTests
         await using var fixture = await YellowHandlerFixture.CreateAsync();
         var handler = CreateHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
             99,
             GameEra.Yellow,
-            new CommonPlayResultData
-            {
-                Baid = 99,
-                PlayDatetime = "20260608120000",
-                PlayMode = (uint)PlayMode.Tokkun,
-                IsTokkunPlayResult = true,
-                TokkunTutorialFlg = 7,
-                TokkunStageData = new CommonPlayResultData.TokkunStageDataDto
-                {
-                    BanacoinDatetime = "20260608120100",
-                    TokkunSongCnt = 3,
-                    TookunSongnoes = [101, 102, 101],
-                    TokkunSpeedchangeCnt = 2,
-                    TokkunAutoplayCnt = 3,
-                    TokkunJumpCnt = 4
-                },
-                AryStageInfoes = [CreateStage(101, 1, 0)]
-            }),
+            playDatetime: "20260608120000",
+            playMode: (uint)PlayMode.Tokkun,
+            tokkun: new Ac15TokkunPlayResult(
+                TutorialFlg: 7,
+                StageData: new Ac15TokkunStageData(
+                    BanacoinDatetime: "20260608120100",
+                    TokkunSongCnt: 3,
+                    TookunSongnoes: [101, 102, 101],
+                    TokkunSpeedchangeCnt: 2,
+                    TokkunAutoplayCnt: 3,
+                    TokkunJumpCnt: 4)),
+            stages: [CreateStage(101, 1, 0)]),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -571,7 +541,7 @@ public sealed class YellowPlayResultHandlerTests
     }
 
     [Fact]
-    public async Task UpdatePlayResult_Yellow_TutorialOnlyNormalUploadDoesNotMutateTokkunState()
+    public async Task UpdatePlayResult_Yellow_TutorialOnlyTokkunFactUpdatesFlagWithoutHistory()
     {
         await using var fixture = await YellowHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -581,25 +551,20 @@ public sealed class YellowPlayResultHandlerTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
             1,
             GameEra.Yellow,
-            new CommonPlayResultData
-            {
-                Baid = 1,
-                PlayDatetime = "20260608120000",
-                PlayMode = (uint)PlayMode.Normal,
-                IsTokkunPlayResult = false,
-                TokkunTutorialFlg = 7,
-                AryStageInfoes = [CreateStage(101, 1, 0)]
-            }),
+            playDatetime: "20260608120000",
+            playMode: (uint)PlayMode.Normal,
+            tokkun: new Ac15TokkunPlayResult(TutorialFlg: 7, StageData: null),
+            stages: [CreateStage(101, 1, 0)]),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
         var reloaded = await fixture.Context.UserSaveDataYellow.SingleAsync(row => row.Baid == 1);
-        Assert.Equal(5u, reloaded.TokkunTutorialFlg);
+        Assert.Equal(7u, reloaded.TokkunTutorialFlg);
         Assert.Empty(await fixture.Context.YellowTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
-        Assert.Single(await fixture.Context.SongPlayDataYellow.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.SongPlayDataYellow.Where(row => row.Baid == 1).ToListAsync());
     }
 
     [Fact]
@@ -611,13 +576,12 @@ public sealed class YellowPlayResultHandlerTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
             1,
             GameEra.Yellow,
-            new CommonPlayResultData
+            playDatetime: "20260608120000",
+            profile: Ac15ProfileMutationFacts.Empty with
             {
-                Baid = 1,
-                PlayDatetime = "20260608120000",
                 GetDonmedal = 10,
                 GetKatsumedal = 2,
                 ReleaseSongNoes = [104],
@@ -627,9 +591,9 @@ public sealed class YellowPlayResultHandlerTests
                 DifficultyPlayedCourse = 4,
                 HasDifficultyPlayedStar = true,
                 DifficultyPlayedStar = 8,
-                AreaCode = 12,
-                AryStageInfoes = [CreateStage(101, 1, 0)]
-            }),
+                AreaCode = 12
+            },
+            stages: [CreateStage(101, 1, 0)]),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -706,21 +670,20 @@ public sealed class YellowPlayResultHandlerTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateHandler(fixture);
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var danStages = new List<Ac15StageResult>
+        {
+            CreateStage(101, 1, 0, score: 100000, playDan: 1, soulGauge: 55, comboCnt: 120, goodCnt: 100, okCnt: 20, ngCnt: 4),
+            CreateStage(102, 1, 0, score: 200000, playDan: 1, soulGauge: 88, comboCnt: 220, goodCnt: 180, okCnt: 30, ngCnt: 2)
+        };
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
             1,
             GameEra.Yellow,
-            new CommonPlayResultData
-            {
-                Baid = 1,
-                PlayMode = (uint)PlayMode.DanMode,
-                DanResult = (uint)Ac15DanClearGrade.GoldClear,
-                ComboCntTotal = 320,
-                AryStageInfoes =
-                [
-                    CreateStage(101, 1, 0, score: 100000, playDan: 1, soulGauge: 55, comboCnt: 120, goodCnt: 100, okCnt: 20, ngCnt: 4),
-                    CreateStage(102, 1, 0, score: 200000, playDan: 1, soulGauge: 88, comboCnt: 220, goodCnt: 180, okCnt: 30, ngCnt: 2)
-                ]
-            }),
+            playMode: (uint)PlayMode.DanMode,
+            stages: danStages,
+            dani: new Ac15DaniPlayResult(
+                DanResult: (uint)Ac15DanClearGrade.GoldClear,
+                ComboCntTotal: 320,
+                Stages: danStages)),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -766,36 +729,34 @@ public sealed class YellowPlayResultHandlerTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateHandler(fixture);
 
-        await handler.Handle(new UpdatePlayResultCommand(
+        var firstStages = new List<Ac15StageResult>
+        {
+            CreateStage(101, 1, 0, score: 400000, playDan: 1, soulGauge: 80, comboCnt: 300, goodCnt: 200, okCnt: 20, ngCnt: 1)
+        };
+        await handler.Handle(Ac15PlayResultTestFactory.Command(
             1,
             GameEra.Yellow,
-            new CommonPlayResultData
-            {
-                Baid = 1,
-                PlayMode = (uint)PlayMode.DanMode,
-                DanResult = (uint)Ac15DanClearGrade.GoldClear,
-                ComboCntTotal = 500,
-                AryStageInfoes =
-                [
-                    CreateStage(101, 1, 0, score: 400000, playDan: 1, soulGauge: 80, comboCnt: 300, goodCnt: 200, okCnt: 20, ngCnt: 1)
-                ]
-            }),
+            playMode: (uint)PlayMode.DanMode,
+            stages: firstStages,
+            dani: new Ac15DaniPlayResult(
+                DanResult: (uint)Ac15DanClearGrade.GoldClear,
+                ComboCntTotal: 500,
+                Stages: firstStages)),
             CancellationToken.None);
 
-        await handler.Handle(new UpdatePlayResultCommand(
+        var secondStages = new List<Ac15StageResult>
+        {
+            CreateStage(101, 1, 0, score: 100000, playDan: 1, soulGauge: 30, comboCnt: 50, goodCnt: 80, okCnt: 10, ngCnt: 9)
+        };
+        await handler.Handle(Ac15PlayResultTestFactory.Command(
             1,
             GameEra.Yellow,
-            new CommonPlayResultData
-            {
-                Baid = 1,
-                PlayMode = (uint)PlayMode.DanMode,
-                DanResult = (uint)Ac15DanClearGrade.NormalClear,
-                ComboCntTotal = 100,
-                AryStageInfoes =
-                [
-                    CreateStage(101, 1, 0, score: 100000, playDan: 1, soulGauge: 30, comboCnt: 50, goodCnt: 80, okCnt: 10, ngCnt: 9)
-                ]
-            }),
+            playMode: (uint)PlayMode.DanMode,
+            stages: secondStages,
+            dani: new Ac15DaniPlayResult(
+                DanResult: (uint)Ac15DanClearGrade.NormalClear,
+                ComboCntTotal: 100,
+                Stages: secondStages)),
             CancellationToken.None);
 
         var dan = await fixture.Context.DanScoreDataYellow
@@ -829,7 +790,7 @@ public sealed class YellowPlayResultHandlerTests
         fixture.Context.UserSaveDataYellow.Add(UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(1));
         await fixture.Context.SaveChangesAsync();
         var handler = CreateHandler(fixture);
-        List<CommonPlayResultData.StageData> stages = secondPlayDan == 0
+        List<Ac15StageResult> stages = secondPlayDan == 0
             ? [CreateStage(101, 1, 0, playDan: playDan)]
             :
             [
@@ -837,16 +798,15 @@ public sealed class YellowPlayResultHandlerTests
                 CreateStage(102, 1, 0, playDan: secondPlayDan)
             ];
 
-        var result = await handler.Handle(new UpdatePlayResultCommand(
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
             1,
             GameEra.Yellow,
-            new CommonPlayResultData
-            {
-                Baid = 1,
-                PlayMode = playMode,
-                DanResult = danResult,
-                AryStageInfoes = stages
-            }),
+            playMode: playMode,
+            stages: stages,
+            dani: new Ac15DaniPlayResult(
+                DanResult: danResult,
+                ComboCntTotal: 0,
+                Stages: stages)),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -1018,7 +978,7 @@ public sealed class YellowPlayResultHandlerTests
             fixture.Catalog,
             NullLogger<UpdatePlayResultCommandHandler>.Instance);
 
-    private static CommonPlayResultData.StageData CreateStage(
+    private static Ac15StageResult CreateStage(
         uint songNo,
         uint level,
         uint stageMode,
@@ -1030,7 +990,7 @@ public sealed class YellowPlayResultHandlerTests
         uint okCnt = 20,
         uint ngCnt = 3)
     {
-        return new CommonPlayResultData.StageData
+        return new Ac15StageResult
         {
             SongNo = songNo,
             Level = level,
