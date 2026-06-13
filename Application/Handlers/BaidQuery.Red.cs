@@ -1,12 +1,13 @@
 using TaikoLocalServer.Application.Ac15;
+using TaikoLocalServer.Application.Dtos.Ac15;
 using TaikoLocalServer.Contracts.AdminApi.ViewModels;
 
 namespace TaikoLocalServer.Application.Handlers;
 
 public partial class BaidQueryHandler
 {
-    private partial async ValueTask<CommonBaidResponse> HandleRed(
-        BaidQuery request,
+    private partial async ValueTask<Ac15BaidResponse> HandleRed(
+        Ac15BaidQuery request,
         CancellationToken cancellationToken)
     {
         var card = await context.Cards.FindAsync([request.AccessCode], cancellationToken);
@@ -16,7 +17,7 @@ public partial class BaidQueryHandler
                 .DefaultIfEmpty()
                 .MaxAsync(cancellationToken) + 1;
 
-            return new CommonBaidResponse
+            return new Ac15BaidResponse
             {
                 Result = 1,
                 IsNewUser = true,
@@ -27,7 +28,7 @@ public partial class BaidQueryHandler
         var saveData = await context.UserSaveDataRed.FindAsync([card.Baid], cancellationToken);
         if (saveData is null)
         {
-            return new CommonBaidResponse
+            return new Ac15BaidResponse
             {
                 Result = 1,
                 IsNewUser = true,
@@ -39,34 +40,44 @@ public partial class BaidQueryHandler
             ?? throw new InvalidOperationException($"User not found for Red card baid {card.Baid}.");
 
         var limits = Ac15EraProfiles.Red.Limits;
-        return new CommonBaidResponse
+        return new Ac15BaidResponse
         {
             Result = 1,
             IsNewUser = false,
             Baid = card.Baid,
-            MyDonName = userData.MyDonName,
-            MyDonNameLanguage = userData.MyDonNameLanguage,
-            Title = saveData.Title,
-            TitlePlateId = ResolveRedTitlePlateId(saveData),
-            ColorFace = saveData.ColorFace,
-            ColorBody = saveData.ColorBody,
-            ColorLimb = saveData.ColorLimb,
-            CostumeData = [saveData.Costume1, saveData.Costume2, saveData.Costume3, saveData.Costume4, saveData.Costume5],
-            CostumeFlg1 = Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg1, limits.CostumeFlagBytes),
-            CostumeFlg2 = Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg2, limits.CostumeFlagBytes),
-            CostumeFlg3 = Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg3, limits.CostumeFlagBytes),
-            CostumeFlg4 = Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg4, limits.CostumeFlagBytes),
-            CostumeFlg5 = Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg5, limits.CostumeFlagBytes),
-            RewardPtn = saveData.RewardPtn,
-            IsAutoCostumeOn = saveData.IsAutoCostumeOn,
-            DispDanType = saveData.DispDanType == 0 ? 0u : 1u,
-            GotDanFlg = Ac15ProtocolBytes.FixedOrZero(saveData.GotDanFlg, limits.DanFlagBytes),
-            GotDanMax = Math.Min(saveData.GotDanMax, limits.MaxNormalDanId),
-            GotDanExtraFlg = Ac15ProtocolBytes.FixedOrZero(saveData.GotDanExtraFlg, limits.DanExtraFlagBytes),
-            DefaultToneSetting = saveData.DefaultToneSetting,
-            LastPlayDatetime = saveData.LastPlayDatetime == DateTime.UnixEpoch
-                ? DateTime.Now.ToString(Constants.DateTimeFormat)
-                : saveData.LastPlayDatetime.ToString(Constants.DateTimeFormat)
+            Identity = new Ac15BaidIdentity(userData.MyDonName, userData.MyDonNameLanguage),
+            Profile = new Ac15BaidProfile
+            {
+                Title = saveData.Title,
+                TitlePlateId = ResolveRedTitlePlateId(saveData),
+                ColorFace = saveData.ColorFace,
+                ColorBody = saveData.ColorBody,
+                ColorLimb = saveData.ColorLimb,
+                SelectedCostume = new Ac15CostumeFacts(
+                    saveData.Costume1,
+                    saveData.Costume2,
+                    saveData.Costume3,
+                    saveData.Costume4,
+                    saveData.Costume5),
+                IsAutoCostumeOn = saveData.IsAutoCostumeOn,
+                DefaultToneSetting = saveData.DefaultToneSetting,
+                LastPlayDatetime = saveData.LastPlayDatetime == DateTime.UnixEpoch
+                    ? DateTime.Now.ToString(Constants.DateTimeFormat)
+                    : saveData.LastPlayDatetime.ToString(Constants.DateTimeFormat)
+            },
+            CostumeFlags = new Ac15BaidCostumeFlags(
+                Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg1, limits.CostumeFlagBytes),
+                Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg2, limits.CostumeFlagBytes),
+                Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg3, limits.CostumeFlagBytes),
+                Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg4, limits.CostumeFlagBytes),
+                Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg5, limits.CostumeFlagBytes)),
+            Dan = new Ac15BaidDan(
+                saveData.DispDanType == 0 ? 0u : 1u,
+                Math.Min(saveData.GotDanMax, limits.MaxNormalDanId),
+                Ac15ProtocolBytes.FixedOrZero(saveData.GotDanFlg, limits.DanFlagBytes),
+                Ac15ProtocolBytes.FixedOrZero(saveData.GotDanExtraFlg, limits.DanExtraFlagBytes)),
+            Compatibility = new Ac15BaidCompatibility(null, null),
+            Reward = new Ac15BaidReward(saveData.RewardPtn)
         };
     }
 

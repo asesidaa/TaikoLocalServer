@@ -1,18 +1,26 @@
 using Throw;
+using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Application.Handlers;
 
 public readonly record struct BaidQuery(GameEra Era, string AccessCode) : IRequest<CommonBaidResponse>;
+public readonly record struct Ac15BaidQuery(GameEra Era, string AccessCode) : IRequest<Ac15BaidResponse>;
 
 public partial class BaidQueryHandler(
     ITaikoDbContext context,
     ILogger<BaidQueryHandler> logger,
     IGameDataCatalog gameDataService)
-    : IRequestHandler<BaidQuery, CommonBaidResponse>
+    : IRequestHandler<BaidQuery, CommonBaidResponse>,
+      IRequestHandler<Ac15BaidQuery, Ac15BaidResponse>
 {
     public ValueTask<CommonBaidResponse> Handle(BaidQuery request, CancellationToken cancellationToken) => request.Era switch
     {
         GameEra.Nijiiro => HandleNijiiro(request, cancellationToken),
+        _ => throw new InvalidOperationException($"Use {nameof(Ac15BaidQuery)} for AC15 era: {request.Era}")
+    };
+
+    public ValueTask<Ac15BaidResponse> Handle(Ac15BaidQuery request, CancellationToken cancellationToken) => request.Era switch
+    {
         GameEra.Green => HandleGreen(request, cancellationToken),
         GameEra.Blue => HandleBlue(request, cancellationToken),
         GameEra.Yellow => HandleYellow(request, cancellationToken),
@@ -21,8 +29,8 @@ public partial class BaidQueryHandler(
     };
 
     private partial ValueTask<CommonBaidResponse> HandleNijiiro(BaidQuery request, CancellationToken cancellationToken);
-    private partial ValueTask<CommonBaidResponse> HandleGreen(BaidQuery request, CancellationToken cancellationToken);
-    private partial ValueTask<CommonBaidResponse> HandleBlue(BaidQuery request, CancellationToken cancellationToken);
-    private partial ValueTask<CommonBaidResponse> HandleYellow(BaidQuery request, CancellationToken cancellationToken);
-    private partial ValueTask<CommonBaidResponse> HandleRed(BaidQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<Ac15BaidResponse> HandleGreen(Ac15BaidQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<Ac15BaidResponse> HandleBlue(Ac15BaidQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<Ac15BaidResponse> HandleYellow(Ac15BaidQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<Ac15BaidResponse> HandleRed(Ac15BaidQuery request, CancellationToken cancellationToken);
 }
