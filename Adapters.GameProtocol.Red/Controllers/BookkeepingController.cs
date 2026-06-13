@@ -1,6 +1,7 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.Red.Controllers;
 
 [ApiController]
+[Route("/v08r00/chassis/bookkeeping.php")]
 [Route("/v08r01/chassis/bookkeeping.php")]
 public class BookkeepingController : BaseProtocolController<BookkeepingController>
 {

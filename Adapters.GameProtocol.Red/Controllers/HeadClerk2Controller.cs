@@ -1,6 +1,7 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.Red.Controllers;
 
 [ApiController]
+[Route("/v08r00/chassis/headclerk2.php")]
 [Route("/v08r01/chassis/headclerk2.php")]
 public class HeadClerk2Controller : BaseProtocolController<HeadClerk2Controller>
 {

@@ -1,6 +1,7 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.Red.Controllers;
 
 [ApiController]
+[Route("/v08r00/chassis/rewardcardcheck.php")]
 [Route("/v08r01/chassis/rewardcardcheck.php")]
 public class RewardCardCheckController : BaseProtocolController<RewardCardCheckController>
 {

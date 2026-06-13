@@ -1,6 +1,7 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.Red.Controllers;
 
 [ApiController]
+[Route("/v08r00/chassis/userdata.php")]
 [Route("/v08r01/chassis/userdata.php")]
 public class UserDataController : BaseProtocolController<UserDataController>
 {

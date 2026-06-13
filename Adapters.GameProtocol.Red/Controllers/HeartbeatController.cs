@@ -1,6 +1,7 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.Red.Controllers;
 
 [ApiController]
+[Route("/v08r00/chassis/heartbeat.php")]
 [Route("/v08r01/chassis/heartbeat.php")]
 public class HeartbeatController : BaseProtocolController<HeartbeatController>
 {
