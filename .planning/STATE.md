@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Phase Summary
 status: phase-complete
-stopped_at: Phase 19 complete; ready for Phase 20 planning
+stopped_at: Phase 20 complete; ready for Phase 21 planning
 last_updated: "2026-06-13T00:00:00.000Z"
 last_activity: 2026-06-13
 progress:
   total_phases: 5
-  completed_phases: 2
-  total_plans: 7
-  completed_plans: 7
-  percent: 40
+  completed_phases: 3
+  total_plans: 11
+  completed_plans: 11
+  percent: 60
 ---
 
 # Project State
@@ -21,13 +21,13 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-13)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Phase 20 - Red Runtime Capability Binding and Simple Compatibility
+**Current focus:** Phase 21 - Older-AC15 ChallengeCompe Capability and Red Binding
 
 ## Current Position
 
-Phase: 20
+Phase: 21
 Plan: Not started
-Status: Phase 19 complete; ready for Phase 20 planning
+Status: Phase 20 complete; ready for Phase 21 planning
 Last activity: 2026-06-13
 
 ## Performance Metrics
@@ -190,6 +190,10 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 19]: Red catalog/profile binding composes shared AC15 loaders, profiles, projection services, and Mapperly route mappers instead of adding Red copies of Green/Blue/Yellow mechanisms.
 - [Phase 19]: Red uses active `ST8100-1` game data through `PathHelper`, AC15 catalog sidecars under `Host/wwwroot/data/red`, and `Ac15EraProfiles.Red` with item shop disabled.
 - [Phase 19]: Only Red metadata probes for initial data, folders, telops, recommendations, and Taikojuku were made catalog-backed; Red gameplay/profile state remains absent until Phase 20.
+- [Phase 20]: Red runtime state is Red-owned and bound through shared AC15 mechanisms for identity, userdata, normal play, self-best, crowns, favorites, recent songs, and Dani.
+- [Phase 20]: Red Don points are Red profile fields, not shop medals, shop-season balances, wallet balances, coupons, payments, receipts, or transactions.
+- [Phase 20]: Red Tokkun playresults classify before normal/Dani/Challenge handling and write back only nullable `TokkunTutorialFlg`; no raw Tokkun history, reward, unlock, normal-play, or Dani writes are made from Tokkun uploads.
+- [Phase 20]: Red ChallengeCompe arrays are mapped as playresult facts for Phase 21, but no ChallengeCompe state or readback contract was implemented.
 
 ### Pending Todos
 
@@ -214,9 +218,9 @@ None recorded.
 ## Session Continuity
 
 Last session: 2026-06-13T00:00:00.000Z
-Stopped at: Phase 19 complete; ready for Phase 20 planning
+Stopped at: Phase 20 complete; ready for Phase 21 planning
 Resume file: None
 
 ## Operator Next Steps
 
-- Start Phase 20 planning for Red runtime capability binding and simple compatibility.
+- Start Phase 21 planning for older-AC15 ChallengeCompe evidence and Red binding.

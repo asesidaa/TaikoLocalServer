@@ -36,9 +36,71 @@ public static class Ac15CommonProfileMutation
 
         saveData.TotalGetKatsumedal += playResultData.GetKatsumedal;
         saveData.ItemshopTutorialFlg = playResultData.ItemshopTutorialFlg ?? saveData.ItemshopTutorialFlg;
+        saveData.WaiwaiTutorialFlg = playResultData.WaiwaiTutorialFlg ?? saveData.WaiwaiTutorialFlg;
+
+        ApplyShared(
+            saveData,
+            playResultData,
+            countedStages,
+            counterAccess,
+            unlockAccess,
+            limits,
+            playTime);
+
+        return true;
+    }
+
+    public static bool TryApplyDonPoints<TSave>(
+        TSave saveData,
+        CommonPlayResultData playResultData,
+        IReadOnlyList<CommonPlayResultData.StageData> countedStages,
+        Ac15ProfileCounterAccess<TSave> counterAccess,
+        Ac15UnlockFlagAccess<TSave> unlockAccess,
+        Ac15ProtocolLimits limits,
+        DateTime playTime)
+        where TSave :
+            IAc15DonPointSaveData,
+            IAc15PlayTutorialSaveData,
+            IAc15PlayProfileSaveData,
+            IAc15CustomizationSaveData
+    {
+        if (!CanAdd(saveData.TotalGetDonpoint, playResultData.GetDonpoint))
+        {
+            return false;
+        }
+
+        saveData.TotalGetDonpoint += playResultData.GetDonpoint;
+        saveData.RewardPtn = playResultData.RewardPtn ?? saveData.RewardPtn;
+        saveData.RewardProgress = playResultData.RewardProgress ?? saveData.RewardProgress;
+        saveData.DifficultyTutorialFlg = playResultData.DifficultyTutorialFlg ?? saveData.DifficultyTutorialFlg;
+
+        ApplyShared(
+            saveData,
+            playResultData,
+            countedStages,
+            counterAccess,
+            unlockAccess,
+            limits,
+            playTime);
+
+        return true;
+    }
+
+    private static void ApplyShared<TSave>(
+        TSave saveData,
+        CommonPlayResultData playResultData,
+        IReadOnlyList<CommonPlayResultData.StageData> countedStages,
+        Ac15ProfileCounterAccess<TSave> counterAccess,
+        Ac15UnlockFlagAccess<TSave> unlockAccess,
+        Ac15ProtocolLimits limits,
+        DateTime playTime)
+        where TSave :
+            IAc15PlayTutorialSaveData,
+            IAc15PlayProfileSaveData,
+            IAc15CustomizationSaveData
+    {
         saveData.IsDevil = playResultData.IsDevil ?? saveData.IsDevil;
         saveData.IsExplain = playResultData.IsExplain ?? saveData.IsExplain;
-        saveData.WaiwaiTutorialFlg = playResultData.WaiwaiTutorialFlg ?? saveData.WaiwaiTutorialFlg;
         if (playResultData.HasDifficultyPlayedCourse)
         {
             saveData.DifficultyPlayedCourse = playResultData.DifficultyPlayedCourse;
@@ -70,8 +132,6 @@ public static class Ac15CommonProfileMutation
         {
             Ac15ProfileCounterUpdater.ApplyStage(saveData, stage, counterAccess);
         }
-
-        return true;
     }
 
     private static bool CanAdd(uint current, uint delta)

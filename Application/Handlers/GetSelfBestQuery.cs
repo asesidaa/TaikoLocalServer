@@ -13,6 +13,7 @@ public partial class GetSelfBestQueryHandler(IGameDataCatalog gameDataService, I
         GameEra.Green => HandleGreen(request, cancellationToken),
         GameEra.Blue => HandleBlue(request, cancellationToken),
         GameEra.Yellow => HandleYellow(request, cancellationToken),
+        GameEra.Red => HandleRed(request, cancellationToken),
         _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
     };
 
@@ -20,4 +21,5 @@ public partial class GetSelfBestQueryHandler(IGameDataCatalog gameDataService, I
     private partial ValueTask<CommonSelfBestResponse> HandleGreen(GetSelfBestQuery request, CancellationToken cancellationToken);
     private partial ValueTask<CommonSelfBestResponse> HandleBlue(GetSelfBestQuery request, CancellationToken cancellationToken);
     private partial ValueTask<CommonSelfBestResponse> HandleYellow(GetSelfBestQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonSelfBestResponse> HandleRed(GetSelfBestQuery request, CancellationToken cancellationToken);
 }

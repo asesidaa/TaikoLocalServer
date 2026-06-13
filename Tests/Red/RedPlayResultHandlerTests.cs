@@ -1,0 +1,243 @@
+using TaikoLocalServer.Application.Catalog.Ac15;
+
+namespace TaikoLocalServer.Tests.Red;
+
+public sealed class RedPlayResultHandlerTests
+{
+    [Fact]
+    public async Task UpdatePlayResult_Red_SavesNormalPlayDonPointsAndOnlyRedRows()
+    {
+        await using var fixture = await RedHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataRed.Add(UserSaveDataRedExtensions.CreateDefaultRedSaveData(1));
+        fixture.Context.UserSaveDataBlue.Add(UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1));
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        fixture.Context.UserSaveDataYellow.Add(UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Red,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayDatetime = "20260608120000",
+                GetDonpoint = 25,
+                RewardPtn = 4,
+                RewardProgress = 9,
+                DifficultyTutorialFlg = 2,
+                IsDevil = true,
+                IsExplain = true,
+                DifficultyPlayedCourse = 4,
+                DifficultyPlayedStar = 8,
+                HasDifficultyPlayedCourse = true,
+                HasDifficultyPlayedStar = true,
+                ReleaseSongNoes = [104],
+                GetToneNoes = [4],
+                GetCostumeNo1s = [1],
+                GetTitleNoes = [10],
+                HasAryCurrentCostume = true,
+                AryCurrentCostume = new CommonPlayResultData.CostumeData { Costume1 = 1 },
+                AreaCode = 12,
+                AryStageInfoes = [CreateStage(101, 1, 0)]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var play = Assert.Single(await fixture.Context.SongPlayDataRed.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Equal(101u, play.SongId);
+        Assert.Equal(Difficulty.Easy, play.Difficulty);
+        Assert.Equal(CrownType.Gold, play.Crown);
+        Assert.True(play.IsFavorite);
+        Assert.True(play.IsRecent);
+
+        var best = await fixture.Context.SongBestDataRed.FindAsync(1u, 101u, Difficulty.Easy, false);
+        Assert.NotNull(best);
+        Assert.Equal(765432u, best!.BestScore);
+        Assert.Single(await fixture.Context.RedFavoriteSongs.Where(row => row.Baid == 1 && row.SongNo == 101).ToListAsync());
+        Assert.Single(await fixture.Context.RedRecentSongs.Where(row => row.Baid == 1 && row.SongNo == 101).ToListAsync());
+
+        var save = await fixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(25u, save.TotalGetDonpoint);
+        Assert.Equal(0u, save.TotalUseDonpoint);
+        Assert.Equal(4u, save.RewardPtn);
+        Assert.Equal(9u, save.RewardProgress);
+        Assert.Equal(2u, save.DifficultyTutorialFlg);
+        Assert.True(save.IsDevil);
+        Assert.True(save.IsExplain);
+        Assert.Equal(4u, save.DifficultyPlayedCourse);
+        Assert.Equal(8u, save.DifficultyPlayedStar);
+        Assert.Equal(new DateTime(2026, 6, 8, 12, 0, 0), save.LastPlayDatetime);
+        Assert.Equal(12u, save.PrevAreaCode);
+        Assert.True(BitIsSet(save.ReleaseSongFlg, 104));
+        Assert.True(BitIsSet(save.ToneFlg, 4));
+        Assert.True(BitIsSet(save.CostumeFlg1, 1));
+        Assert.True(BitIsSet(save.TitleFlg, 10));
+
+        Assert.Empty(await fixture.Context.SongPlayDataBlue.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.SongPlayDataGreen.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.SongPlayDataYellow.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.BlueShopSeasonStates.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.GreenShopSeasonStates.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.YellowShopSeasonStates.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.BlueTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.YellowTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Red_DaniCreatesRedBestAndStageRows()
+    {
+        await using var fixture = await RedHandlerFixture.CreateAsync(CreateDanCatalog(1));
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataRed.Add(UserSaveDataRedExtensions.CreateDefaultRedSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Red,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayMode = (uint)PlayMode.DanMode,
+                DanResult = (uint)Ac15DanClearGrade.GoldClear,
+                PlayDatetime = "20260608120000",
+                AryStageInfoes =
+                [
+                    CreateStage(101, 1, 0, score: 100000, playDan: 1, soulGauge: 55, comboCnt: 120, goodCnt: 100, okCnt: 20, ngCnt: 4),
+                    CreateStage(102, 1, 0, score: 200000, playDan: 1, soulGauge: 88, comboCnt: 220, goodCnt: 180, okCnt: 30, ngCnt: 2)
+                ]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var dan = Assert.Single(await fixture.Context.DanScoreDataRed
+            .Include(row => row.DanStageScoreData)
+            .Where(row => row.Baid == 1)
+            .ToListAsync());
+        Assert.Equal(1u, dan.DanId);
+        Assert.Equal(Ac15DanClearGrade.GoldClear, dan.ClearGrade);
+        Assert.Equal(2u, dan.ArrivalSongCount);
+        Assert.Equal(88u, dan.SoulGaugeTotal);
+
+        var stages = dan.DanStageScoreData.OrderBy(row => row.StageIndex).ToArray();
+        Assert.Equal([101u, 102u], stages.Select(stage => stage.SongNumber).ToArray());
+        var save = await fixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(1u, save.GotDanMax);
+        Assert.Equal(2u, save.DispTaikojukuDan);
+        Assert.Equal(Ac15DanClearGrade.GoldClear, Ac15DanHelpers.GetPackedGrade(save.GotDanFlg, 0));
+        Assert.True(BitIsSet(save.CostumeFlg1, 36));
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Red_TokkunUpdatesOnlyTutorialState()
+    {
+        await using var fixture = await RedHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var saveData = UserSaveDataRedExtensions.CreateDefaultRedSaveData(1);
+        saveData.TotalGetDonpoint = 5;
+        fixture.Context.UserSaveDataRed.Add(saveData);
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(new UpdatePlayResultCommand(
+            1,
+            GameEra.Red,
+            new CommonPlayResultData
+            {
+                Baid = 1,
+                PlayMode = (uint)PlayMode.Normal,
+                TokkunTutorialFlg = 7,
+                TokkunStageData = new CommonPlayResultData.TokkunStageDataDto
+                {
+                    BanacoinDatetime = "20260608120100",
+                    TokkunSongCnt = 2,
+                    TookunSongnoes = [101, 101],
+                    TokkunSpeedchangeCnt = 3,
+                    TokkunAutoplayCnt = 4,
+                    TokkunJumpCnt = 5
+                },
+                GetDonpoint = 50,
+                ReleaseSongNoes = [104],
+                GetToneNoes = [4],
+                AryStageInfoes = [CreateStage(101, 1, 0)]
+            }),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var reloaded = await fixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(5u, reloaded.TotalGetDonpoint);
+        Assert.Equal(7u, reloaded.TokkunTutorialFlg);
+        Assert.False(BitIsSet(reloaded.ReleaseSongFlg, 104));
+        Assert.False(BitIsSet(reloaded.ToneFlg, 4));
+        Assert.Empty(await fixture.Context.SongPlayDataRed.ToListAsync());
+        Assert.Empty(await fixture.Context.SongBestDataRed.ToListAsync());
+        Assert.Empty(await fixture.Context.RedFavoriteSongs.ToListAsync());
+        Assert.Empty(await fixture.Context.RedRecentSongs.ToListAsync());
+        Assert.Empty(await fixture.Context.DanScoreDataRed.ToListAsync());
+        Assert.Empty(await fixture.Context.BlueTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.YellowTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
+    }
+
+    private static UpdatePlayResultCommandHandler CreateHandler(RedHandlerFixture fixture)
+        => new(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+    private static CommonPlayResultData.StageData CreateStage(
+        uint songNo,
+        uint level,
+        uint stageMode,
+        uint score = 765432,
+        uint playDan = 0,
+        uint soulGauge = 100,
+        uint comboCnt = 120,
+        uint goodCnt = 100,
+        uint okCnt = 20,
+        uint ngCnt = 3)
+        => new()
+        {
+            SongNo = songNo,
+            Level = level,
+            StageMode = stageMode,
+            PlayResult = 2,
+            PlayScore = score,
+            ScoreRate = 95,
+            GoodCnt = goodCnt,
+            OkCnt = okCnt,
+            NgCnt = ngCnt,
+            PoundCnt = 4,
+            ComboCnt = comboCnt,
+            HitCnt = 123,
+            OptionFlg = [1, 2, 3],
+            ToneFlg = [4],
+            MusicCateg = 1,
+            IsPushed = true,
+            IsFavorite = true,
+            IsRecent = true,
+            SelectedFolderId = 9,
+            PlayDan = playDan == 0 ? null : playDan,
+            SoulGauge = soulGauge
+        };
+
+    private static RedHandlerFixture.TestRedCatalog CreateDanCatalog(params uint[] challengeLevels)
+        => new(taikojukuFileOrder: challengeLevels
+            .Select((dan, index) => new Ac15TaikojukuEntry
+            {
+                UniqueId = 20001u + (uint)index,
+                ChallengeLevel = dan,
+                DanLevel = dan,
+                Name = $"Dan {dan}",
+                Songs =
+                [
+                    new Ac15TaikojukuSong { SongNo = 101, Level = 1 },
+                    new Ac15TaikojukuSong { SongNo = 102, Level = 1 }
+                ]
+            })
+            .ToArray());
+
+    private static bool BitIsSet(byte[] source, uint id)
+        => (source[id >> 3] & (1 << ((int)id & 7))) != 0;
+}

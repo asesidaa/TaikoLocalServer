@@ -6,9 +6,12 @@ public class SelfBestController : BaseProtocolController<SelfBestController>
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult SelfBest([FromBody] SelfBestRequest request)
+    public async Task<IActionResult> SelfBest([FromBody] SelfBestRequest request)
     {
-        Logger.LogInformation("Red route probe selfbest.php request: {@Request}", request);
-        return Ok(new SelfBestResponse { Result = 1 });
+        Logger.LogInformation("Red SelfBest request: {@Request}", request);
+        var common = await Mediator.Send(
+            new GetSelfBestQuery(request.Baid, GameEra.Red, request.Level.GetValueOrDefault(), request.ArySongNoes ?? []),
+            HttpContext.RequestAborted);
+        return Ok(SelfBestMappers.Map(common));
     }
 }

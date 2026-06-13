@@ -41,4 +41,14 @@ public static class Ac15UnlockFlagAccess
         (save, ids) => save.CostumeFlg3 = Ac15ProtocolBytes.SetBits(save.CostumeFlg3, ids, Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes),
         (save, ids) => save.CostumeFlg4 = Ac15ProtocolBytes.SetBits(save.CostumeFlg4, ids, Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes),
         (save, ids) => save.CostumeFlg5 = Ac15ProtocolBytes.SetBits(save.CostumeFlg5, ids, Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes));
+
+    public static Ac15UnlockFlagAccess<UserSaveDataRed> Red { get; } = new(
+        (save, ids) => save.ReleaseSongFlg = Ac15ProtocolBytes.SetBits(save.ReleaseSongFlg, ids, Ac15EraProfiles.Red.Limits.SongFlagBytes),
+        (save, ids) => save.ToneFlg = Ac15ProtocolBytes.SetBits(save.ToneFlg, ids, Ac15EraProfiles.Red.Limits.ToneFlagBytes),
+        (save, ids) => save.TitleFlg = Ac15ProtocolBytes.SetBits(save.TitleFlg, ids, Ac15EraProfiles.Red.Limits.TitleFlagBytes),
+        (save, ids) => save.CostumeFlg1 = Ac15ProtocolBytes.SetBits(save.CostumeFlg1, ids, Ac15EraProfiles.Red.Limits.CostumeFlagBytes),
+        (save, ids) => save.CostumeFlg2 = Ac15ProtocolBytes.SetBits(save.CostumeFlg2, ids, Ac15EraProfiles.Red.Limits.CostumeFlagBytes),
+        (save, ids) => save.CostumeFlg3 = Ac15ProtocolBytes.SetBits(save.CostumeFlg3, ids, Ac15EraProfiles.Red.Limits.CostumeFlagBytes),
+        (save, ids) => save.CostumeFlg4 = Ac15ProtocolBytes.SetBits(save.CostumeFlg4, ids, Ac15EraProfiles.Red.Limits.CostumeFlagBytes),
+        (save, ids) => save.CostumeFlg5 = Ac15ProtocolBytes.SetBits(save.CostumeFlg5, ids, Ac15EraProfiles.Red.Limits.CostumeFlagBytes));
 }

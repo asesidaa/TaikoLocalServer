@@ -20,6 +20,7 @@ public partial class UpdatePlayResultCommandHandler(
         GameEra.Green => HandleGreen(request, cancellationToken),
         GameEra.Blue => HandleBlue(request, cancellationToken),
         GameEra.Yellow => HandleYellow(request, cancellationToken),
+        GameEra.Red => HandleRed(request, cancellationToken),
         _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
     };
 
@@ -27,4 +28,5 @@ public partial class UpdatePlayResultCommandHandler(
     private partial ValueTask<uint> HandleGreen(UpdatePlayResultCommand request, CancellationToken cancellationToken);
     private partial ValueTask<uint> HandleBlue(UpdatePlayResultCommand request, CancellationToken cancellationToken);
     private partial ValueTask<uint> HandleYellow(UpdatePlayResultCommand request, CancellationToken cancellationToken);
+    private partial ValueTask<uint> HandleRed(UpdatePlayResultCommand request, CancellationToken cancellationToken);
 }

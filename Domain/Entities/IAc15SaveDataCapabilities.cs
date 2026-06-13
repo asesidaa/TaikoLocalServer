@@ -1,5 +1,16 @@
 namespace TaikoLocalServer.Domain.Entities;
 
+public interface IAc15PlayTutorialSaveData
+{
+    bool IsDevil { get; set; }
+
+    bool IsExplain { get; set; }
+
+    uint DifficultyPlayedCourse { get; set; }
+
+    uint DifficultyPlayedStar { get; set; }
+}
+
 public interface IAc15MedalSaveData
 {
     uint TotalGetDonmedal { get; set; }
@@ -11,19 +22,24 @@ public interface IAc15MedalSaveData
     uint TotalUseKatsumedal { get; set; }
 }
 
-public interface IAc15TutorialSaveData
+public interface IAc15TutorialSaveData : IAc15PlayTutorialSaveData
 {
     uint ItemshopTutorialFlg { get; set; }
 
-    bool IsDevil { get; set; }
-
-    bool IsExplain { get; set; }
-
     uint WaiwaiTutorialFlg { get; set; }
+}
 
-    uint DifficultyPlayedCourse { get; set; }
+public interface IAc15DonPointSaveData
+{
+    uint TotalGetDonpoint { get; set; }
 
-    uint DifficultyPlayedStar { get; set; }
+    uint TotalUseDonpoint { get; set; }
+
+    uint RewardPtn { get; set; }
+
+    uint RewardProgress { get; set; }
+
+    uint DifficultyTutorialFlg { get; set; }
 }
 
 public interface IAc15PlayProfileSaveData
