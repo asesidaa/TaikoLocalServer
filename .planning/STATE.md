@@ -4,13 +4,13 @@ milestone: v1.3
 milestone_name: Phase Summary
 status: executing
 stopped_at: Phase 20.1 planning complete; ready to execute
-last_updated: "2026-06-13T14:56:19.739Z"
-last_activity: 2026-06-13 -- Phase 20.1 planning complete
+last_updated: "2026-06-13T16:00:26.540Z"
+last_activity: 2026-06-13 -- Phase 20.1 execution started
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 14
-  completed_plans: 8
+  completed_plans: 9
   percent: 33
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-13)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Phase 20.1 - AC15 Capability DTO and Mapper Boundary Refactor
+**Current focus:** Phase 20.1 — AC15 Capability DTO and Mapper Boundary Refactor
 
 ## Current Position
 
-Phase: 20.1 (AC15 Capability DTO and Mapper Boundary Refactor) - READY TO EXECUTE
-Plan: 3 plans ready
+Phase: 20.1 (AC15 Capability DTO and Mapper Boundary Refactor) — EXECUTING
+Plan: 2 of 3
 Status: Ready to execute
-Last activity: 2026-06-13 -- Phase 20.1 planning complete
+Last activity: 2026-06-13 -- Phase 20.1 execution started
 
 ## Performance Metrics
 
@@ -104,6 +104,7 @@ Last activity: 2026-06-13 -- Phase 20.1 planning complete
 | Phase 18 P02 | 24 min | 1 tasks | 9 files |
 | Phase 18 P03 | 8 min | 2 tasks | 4 files |
 | Phase 18 P04 | 49 | 3 tasks | 27 files |
+| Phase 20.1 P01 | 35 | 3 tasks | 25 files |
 
 ## Accumulated Context
 

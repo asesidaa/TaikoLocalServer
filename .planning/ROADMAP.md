@@ -164,7 +164,7 @@ Plans:
 
 **Wave 1**
 
-- [ ] 20.1-01-PLAN.md - AC15 BAID capability response boundary
+- [x] 20.1-01-PLAN.md - AC15 BAID capability response boundary
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
