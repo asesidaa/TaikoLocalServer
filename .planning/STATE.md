@@ -28,7 +28,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-13)
 Phase: 21
 Plan: Not started
 Status: Phase 20 complete; ready for Phase 21 planning
-Last activity: 2026-06-13
+Last activity: 2026-06-13 - Completed quick task 260613-ny9: Support older Red /v08r00 compatibility with old BAID wire shape
 
 ## Performance Metrics
 
@@ -207,6 +207,7 @@ None recorded.
 
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
+| 260613-ny9 | Support older Red `/v08r00` compatibility with old BAID wire shape | 2026-06-13 | d7032433 | [260613-ny9-before-we-continue-to-next-phase-support](./quick/260613-ny9-before-we-continue-to-next-phase-support/) |
 | 260609-7gk | Regenerate Yellow final wire support, add final-version field handling, and move Yellow game routes to `/v09r02` | 2026-06-08 | 39e49294 | [260609-7gk-now-let-s-execute-a-quick-task-we-have-c](./quick/260609-7gk-now-let-s-execute-a-quick-task-we-have-c/) |
 
 ## Deferred Items
