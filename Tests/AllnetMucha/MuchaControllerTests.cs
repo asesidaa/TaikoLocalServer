@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using TaikoLocalServer.Adapters.AllnetMucha.Controllers.AmUpdater;
 using TaikoLocalServer.Adapters.AllnetMucha.Wire;
@@ -12,7 +13,7 @@ public sealed class MuchaControllerTests
     [Fact]
     public void DownloadState_ReturnsMethodNotAllowedInsteadOfAcknowledgingStaleChunkState()
     {
-        var controller = new MuchaController(Options.Create(new AllnetSettings()));
+        var controller = CreateController();
 
         var result = controller.DownloadState();
 
@@ -23,7 +24,7 @@ public sealed class MuchaControllerTests
     [Fact]
     public void RegiAuth_ReturnsInternationalMuchaSuccessWithEncryptedNonZeroTokens()
     {
-        var controller = new MuchaController(Options.Create(new AllnetSettings()));
+        var controller = CreateController();
 
         var result = controller.RegiAuth(new MuchaRegiAuthRequest
         {
@@ -32,8 +33,8 @@ public sealed class MuchaControllerTests
 
         var fields = ParseFormOutput(result);
         Assert.Equal("001", fields["RESULTS"]);
-        Assert.Equal("54AAA330BABF5AAF", fields["ALL_TOKEN"]);
-        Assert.Equal("54AAA330BABF5AAF", fields["ADD_TOKEN"]);
+        Assert.Equal("4C49D33559D5F7AF", fields["ALL_TOKEN"]);
+        Assert.Equal("4C49D33559D5F7AF", fields["ADD_TOKEN"]);
         Assert.NotEqual("0", fields["ALL_TOKEN"]);
         Assert.NotEqual("0", fields["ADD_TOKEN"]);
         Assert.NotEqual("999", fields["ALL_TOKEN"]);
@@ -43,7 +44,7 @@ public sealed class MuchaControllerTests
     [Fact]
     public void TokenState_ReturnsInternationalMuchaSuccess()
     {
-        var controller = new MuchaController(Options.Create(new AllnetSettings()));
+        var controller = CreateController();
 
         var result = controller.TokenState();
 
@@ -54,7 +55,7 @@ public sealed class MuchaControllerTests
     [Fact]
     public void TokenMarginState_ReturnsInternationalMuchaSuccessWithZeroMargins()
     {
-        var controller = new MuchaController(Options.Create(new AllnetSettings()));
+        var controller = CreateController();
 
         var result = controller.TokenMarginState();
 
@@ -74,5 +75,21 @@ public sealed class MuchaControllerTests
         return result.Content.Split('&')
             .Select(pair => pair.Split('=', 2))
             .ToDictionary(pair => pair[0], pair => pair.Length == 2 ? pair[1] : string.Empty);
+    }
+
+    private static MuchaController CreateController()
+    {
+        return new MuchaController(Options.Create(new AllnetSettings()))
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    RequestServices = new ServiceCollection()
+                        .AddLogging()
+                        .BuildServiceProvider()
+                }
+            }
+        };
     }
 }

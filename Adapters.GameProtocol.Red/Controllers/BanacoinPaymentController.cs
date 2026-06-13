@@ -1,7 +1,7 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.Red.Controllers;
 
 [ApiController]
-[Route("/v08r00/chassis/banacoinpayment.php")]
+[Route("/v08r00_tw/chassis/banacoinpayment.php")]
 [Route("/v08r01/chassis/banacoinpayment.php")]
 public class BanacoinPaymentController : BaseProtocolController<BanacoinPaymentController>
 {

@@ -1,7 +1,7 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.Red.Controllers;
 
 [ApiController]
-[Route("/v08r00/chassis/tournamentcheck.php")]
+[Route("/v08r00_tw/chassis/tournamentcheck.php")]
 [Route("/v08r01/chassis/tournamentcheck.php")]
 public class TournamentCheckController : BaseProtocolController<TournamentCheckController>
 {

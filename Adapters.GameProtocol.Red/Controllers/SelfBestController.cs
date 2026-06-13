@@ -1,7 +1,7 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.Red.Controllers;
 
 [ApiController]
-[Route("/v08r00/chassis/selfbest.php")]
+[Route("/v08r00_tw/chassis/selfbest.php")]
 [Route("/v08r01/chassis/selfbest.php")]
 public class SelfBestController : BaseProtocolController<SelfBestController>
 {

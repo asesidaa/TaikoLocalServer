@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Modes;
+using Org.BouncyCastle.Crypto.Paddings;
 using Org.BouncyCastle.Crypto.Parameters;
 
 namespace TaikoLocalServer.Adapters.AllnetMucha.Common;
@@ -13,18 +14,16 @@ internal static class MuchaCrypto
     public static string EncryptTokenValue(string tokenValue, string sendDate)
     {
         var key = DeriveSendDateKey(sendDate);
-        var plaintext = PadToBlockSize(Encoding.ASCII.GetBytes(tokenValue));
-        var ciphertext = new byte[plaintext.Length];
+        var plaintext = Encoding.ASCII.GetBytes(tokenValue);
 
-        var cipher = new CbcBlockCipher(new BlowfishEngine());
+        var cipher = new PaddedBufferedBlockCipher(new CbcBlockCipher(new BlowfishEngine()), new Pkcs7Padding());
         cipher.Init(true, new ParametersWithIV(new KeyParameter(key), key));
 
-        for (var offset = 0; offset < plaintext.Length; offset += BlowfishBlockSize)
-        {
-            cipher.ProcessBlock(plaintext, offset, ciphertext, offset);
-        }
+        var ciphertext = new byte[cipher.GetOutputSize(plaintext.Length)];
+        var outputLength = cipher.ProcessBytes(plaintext, 0, plaintext.Length, ciphertext, 0);
+        outputLength += cipher.DoFinal(ciphertext, outputLength);
 
-        return Convert.ToHexString(ciphertext);
+        return Convert.ToHexString(ciphertext.AsSpan(0, outputLength));
     }
 
     public static bool HasUsableSendDate([NotNullWhen(true)] string? sendDate) => sendDate is { Length: >= BlowfishBlockSize };
@@ -40,11 +39,4 @@ internal static class MuchaCrypto
         return key;
     }
 
-    private static byte[] PadToBlockSize(byte[] plaintext)
-    {
-        var paddedLength = Math.Max(BlowfishBlockSize, ((plaintext.Length + BlowfishBlockSize - 1) / BlowfishBlockSize) * BlowfishBlockSize);
-        var padded = new byte[paddedLength];
-        plaintext.CopyTo(padded, 0);
-        return padded;
-    }
 }

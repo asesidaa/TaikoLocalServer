@@ -1,7 +1,7 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.Red.Controllers;
 
 [ApiController]
-[Route("/v08r00/chassis/banacoinerrorlog.php")]
+[Route("/v08r00_tw/chassis/banacoinerrorlog.php")]
 [Route("/v08r01/chassis/banacoinerrorlog.php")]
 public class BanacoinErrorLogController : BaseProtocolController<BanacoinErrorLogController>
 {

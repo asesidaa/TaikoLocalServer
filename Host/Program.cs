@@ -298,7 +298,9 @@ static bool ShouldAssumeProtobufRequest(HttpRequest request)
            || path.StartsWithSegments("/v10r03/chassis", StringComparison.OrdinalIgnoreCase)
            || path.StartsWithSegments("/v09r02/chassis", StringComparison.OrdinalIgnoreCase)
            || path.StartsWithSegments("/v08r01/chassis", StringComparison.OrdinalIgnoreCase)
+           || path.StartsWithSegments("/v08r00_tw/chassis", StringComparison.OrdinalIgnoreCase)
            || path.StartsWithSegments("/v01r00/chassis", StringComparison.OrdinalIgnoreCase)
+           || path.StartsWithSegments("/v01r00_tw/chassis", StringComparison.OrdinalIgnoreCase)
            || path.StartsWithSegments("/v12r08_ww/chassis", StringComparison.OrdinalIgnoreCase)
            || path.StartsWithSegments("/v12r00_cn/chassis", StringComparison.OrdinalIgnoreCase);
 }

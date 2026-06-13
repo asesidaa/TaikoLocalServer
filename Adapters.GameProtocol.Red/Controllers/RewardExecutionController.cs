@@ -1,7 +1,7 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.Red.Controllers;
 
 [ApiController]
-[Route("/v08r00/chassis/rewardexecution.php")]
+[Route("/v08r00_tw/chassis/rewardexecution.php")]
 [Route("/v08r01/chassis/rewardexecution.php")]
 public class RewardExecutionController : BaseProtocolController<RewardExecutionController>
 {

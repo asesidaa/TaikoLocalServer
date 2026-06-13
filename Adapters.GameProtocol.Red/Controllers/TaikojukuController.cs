@@ -1,7 +1,7 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.Red.Controllers;
 
 [ApiController]
-[Route("/v08r00/chassis/taikojuku.php")]
+[Route("/v08r00_tw/chassis/taikojuku.php")]
 [Route("/v08r01/chassis/taikojuku.php")]
 public class TaikojukuController : BaseProtocolController<TaikojukuController>
 {

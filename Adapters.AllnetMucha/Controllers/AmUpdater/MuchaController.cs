@@ -34,13 +34,13 @@ public class MuchaController : BaseProtocolController<MuchaController>
         {
             { "RESULTS", "001" },
             { "AREA_0", "008" },
-            { "AREA_0_EN", "" },
+            { "AREA_0_EN", "008" },
             { "AREA_1", "009" },
-            { "AREA_1_EN", "" },
+            { "AREA_1_EN", "009" },
             { "AREA_2", "010" },
-            { "AREA_2_EN", "" },
+            { "AREA_2_EN", "010" },
             { "AREA_3", "011" },
-            { "AREA_3_EN", "" },
+            { "AREA_3_EN", "011" },
             { "AREA_FULL_0", "" },
             { "AREA_FULL_0_EN", "" },
             { "AREA_FULL_1", "" },
@@ -50,12 +50,12 @@ public class MuchaController : BaseProtocolController<MuchaController>
             { "AREA_FULL_3", "" },
             { "AREA_FULL_3_EN", "" },
             { "AUTH_INTERVAL", "86400" },
-            { "CHARGE_URL", $"{settings.MuchaUrl}/charge/" },
+            { "CHARGE_URL", $"localhost:54430" },
             { "CONSUME_TOKEN", "1" },
             { "COUNTRY_CD", "JPN" },
             { "DONGLE_FLG", "1" },
-            { "EXPIRATION_DATE", "null" },
-            { "FILE_URL", $"{settings.MuchaUrl}/file/" },
+            { "EXPIRATION_DATE", "20500613" },
+            { "FILE_URL", $"localhost:54430" },
             { "FORCE_BOOT", "0" },
             { "PLACE_ID", request.PlaceId ?? "" },
             { "PREFECTURE_ID", "14" },
@@ -65,9 +65,9 @@ public class MuchaController : BaseProtocolController<MuchaController>
             { "SHOP_NAME_EN", "NAMCO" },
             { "SHOP_NICKNAME", "W" },
             { "SHOP_NICKNAME_EN", "W" },
-            { "URL_1", $"{settings.MuchaUrl}/url1/" },
-            { "URL_2", $"{settings.MuchaUrl}/url2/" },
-            { "URL_3", $"{settings.MuchaUrl}/url3/" },
+            { "URL_1", $"localhost:54430" },
+            { "URL_2", $"localhost:54430" },
+            { "URL_3", $"localhost:54430" },
             { "USE_TOKEN", "1" }
         };
         var formOutput = FormOutputUtil.ToFormOutput(response);
@@ -128,10 +128,12 @@ public class MuchaController : BaseProtocolController<MuchaController>
     [HttpPost("/mucha_front/regiauth.do")]
     public ContentResult RegiAuth([FromForm] MuchaRegiAuthRequest request)
     {
+        Logger.LogInformation("Regiauth request: {@Request}", request);
         // International Mucha token registration compatibility. Keep this
         // stateless: no wallet, balance, registration, or token persistence.
         if (!MuchaCrypto.HasUsableSendDate(request.SendDate))
         {
+            Logger.LogWarning("No usable send date");
             return Content(FormOutputUtil.ToFormOutput(new Dictionary<string, string>
             {
                 { "RESULTS", "000" }
@@ -145,6 +147,7 @@ public class MuchaController : BaseProtocolController<MuchaController>
             { "ALL_TOKEN", encryptedToken },
             { "ADD_TOKEN", encryptedToken }
         };
+        Logger.LogInformation("Regiauth response: {@Response}", response);
         return Content(FormOutputUtil.ToFormOutput(response));
     }
 

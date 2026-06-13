@@ -4,6 +4,7 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Shared.Controllers;
 
 [ApiController]
 [Route("/v01r00/chassis/verupcomplete.php")]
+[Route("/v01r00_tw/chassis/verupcomplete.php")]
 public sealed class VerupCompleteController : BaseProtocolController<VerupCompleteController>
 {
     [HttpPost]

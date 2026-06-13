@@ -1,7 +1,7 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.Red.Controllers;
 
 [ApiController]
-[Route("/v08r00/chassis/challengecompe.php")]
+[Route("/v08r00_tw/chassis/challengecompe.php")]
 [Route("/v08r01/chassis/challengecompe.php")]
 public class ChallengeCompeController : BaseProtocolController<ChallengeCompeController>
 {

@@ -4,6 +4,7 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Shared.Controllers;
 
 [ApiController]
 [Route("/v01r00/chassis/startupauth.php")]
+[Route("/v01r00_tw/chassis/startupauth.php")]
 public sealed class StartupAuthController : BaseProtocolController<StartupAuthController>
 {
     [HttpPost]

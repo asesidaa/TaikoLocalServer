@@ -1,7 +1,7 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.Red.Controllers;
 
 [ApiController]
-[Route("/v08r00/chassis/recommend.php")]
+[Route("/v08r00_tw/chassis/recommend.php")]
 [Route("/v08r01/chassis/recommend.php")]
 public class RecommendController : BaseProtocolController<RecommendController>
 {

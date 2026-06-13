@@ -39,7 +39,7 @@ public class BaidController : BaseProtocolController<BaidController>
         return Ok(response);
     }
 
-    [HttpPost("/v08r00/chassis/baidcheck.php")]
+    [HttpPost("/v08r00_tw/chassis/baidcheck.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> BaidCheckV08R00([FromBody] RedV08R00.BAIDRequest request)
     {

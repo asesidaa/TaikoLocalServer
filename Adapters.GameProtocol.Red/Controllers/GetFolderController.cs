@@ -1,7 +1,7 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.Red.Controllers;
 
 [ApiController]
-[Route("/v08r00/chassis/getfolder.php")]
+[Route("/v08r00_tw/chassis/getfolder.php")]
 [Route("/v08r01/chassis/getfolder.php")]
 public class GetFolderController : BaseProtocolController<GetFolderController>
 {
