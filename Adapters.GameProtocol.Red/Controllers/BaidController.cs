@@ -11,7 +11,7 @@ public class BaidController : BaseProtocolController<BaidController>
     public async Task<IActionResult> BaidCheck([FromBody] BAIDRequest request)
     {
         Logger.LogInformation("Red BAID request: {@Request}", request);
-        var common = await Mediator.Send(new BaidQuery(GameEra.Red, request.AccessCode), HttpContext.RequestAborted);
+        var common = await Mediator.Send(new Ac15BaidQuery(GameEra.Red, request.AccessCode), HttpContext.RequestAborted);
 
         if (common.IsNewUser)
         {
@@ -44,7 +44,7 @@ public class BaidController : BaseProtocolController<BaidController>
     public async Task<IActionResult> BaidCheckV08R00([FromBody] RedV08R00.BAIDRequest request)
     {
         Logger.LogInformation("Red v08r00 BAID request: {@Request}", request);
-        var common = await Mediator.Send(new BaidQuery(GameEra.Red, request.AccessCode), HttpContext.RequestAborted);
+        var common = await Mediator.Send(new Ac15BaidQuery(GameEra.Red, request.AccessCode), HttpContext.RequestAborted);
 
         if (common.IsNewUser)
         {

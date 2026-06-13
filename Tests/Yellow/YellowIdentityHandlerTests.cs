@@ -14,7 +14,7 @@ public sealed class YellowIdentityHandlerTests
             NullLogger<BaidQueryHandler>.Instance,
             fixture.Catalog);
 
-        var response = await handler.Handle(new BaidQuery(GameEra.Yellow, "12345678901234567890"), CancellationToken.None);
+        var response = await handler.Handle(new Ac15BaidQuery(GameEra.Yellow, "12345678901234567890"), CancellationToken.None);
 
         Assert.Equal(1u, response.Result);
         Assert.True(response.IsNewUser);
@@ -68,18 +68,18 @@ public sealed class YellowIdentityHandlerTests
             NullLogger<BaidQueryHandler>.Instance,
             fixture.Catalog);
 
-        var response = await handler.Handle(new BaidQuery(GameEra.Yellow, "999"), CancellationToken.None);
+        var response = await handler.Handle(new Ac15BaidQuery(GameEra.Yellow, "999"), CancellationToken.None);
         var wire = BaidResponseMapper.Map(response);
 
         Assert.False(response.IsNewUser);
         Assert.Equal(7u, response.Baid);
-        Assert.Equal("DON", response.MyDonName);
-        Assert.Equal("Yellow Title", response.Title);
-        Assert.Equal(0u, response.TitlePlateId);
-        Assert.Equal(Ac15EraProfiles.Yellow.Limits.DanFlagBytes, response.GotDanFlg.Length);
-        Assert.Equal(Ac15EraProfiles.Yellow.Limits.DanExtraFlagBytes, response.GotDanExtraFlg!.Length);
-        Assert.True(response.IsAutoCostumeOn.GetValueOrDefault());
-        Assert.Equal(6u, response.WaiwaiTutorialFlg);
+        Assert.Equal("DON", response.Identity!.MyDonName);
+        Assert.Equal("Yellow Title", response.Profile!.Title);
+        Assert.Equal(0u, response.Profile.TitlePlateId);
+        Assert.Equal(Ac15EraProfiles.Yellow.Limits.DanFlagBytes, response.Dan!.GotDanFlg.Length);
+        Assert.Equal(Ac15EraProfiles.Yellow.Limits.DanExtraFlagBytes, response.Dan.GotDanExtraFlg.Length);
+        Assert.True(response.Profile.IsAutoCostumeOn.GetValueOrDefault());
+        Assert.Equal(6u, response.Compatibility!.WaiwaiTutorialFlg);
         Assert.Equal(Ac15EraProfiles.Yellow.Limits.ContentInfoBytes, wire.ContentInfo.Length);
         Assert.Equal(Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes, wire.CostumeFlg1.Length);
         Assert.Equal(6u, wire.WaiwaiTutorialFlg);
@@ -100,7 +100,7 @@ public sealed class YellowIdentityHandlerTests
             NullLogger<BaidQueryHandler>.Instance,
             fixture.Catalog);
 
-        var response = await handler.Handle(new BaidQuery(GameEra.Yellow, "888"), CancellationToken.None);
+        var response = await handler.Handle(new Ac15BaidQuery(GameEra.Yellow, "888"), CancellationToken.None);
 
         Assert.True(response.IsNewUser);
         Assert.Equal(8u, response.Baid);

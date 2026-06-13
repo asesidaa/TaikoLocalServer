@@ -11,7 +11,7 @@ public sealed class BlueIdentityHandlerTests
             NullLogger<BaidQueryHandler>.Instance,
             fixture.Catalog);
 
-        var response = await handler.Handle(new BaidQuery(GameEra.Blue, "12345678901234567890"), CancellationToken.None);
+        var response = await handler.Handle(new Ac15BaidQuery(GameEra.Blue, "12345678901234567890"), CancellationToken.None);
 
         Assert.Equal(1u, response.Result);
         Assert.True(response.IsNewUser);
@@ -63,16 +63,16 @@ public sealed class BlueIdentityHandlerTests
             NullLogger<BaidQueryHandler>.Instance,
             fixture.Catalog);
 
-        var response = await handler.Handle(new BaidQuery(GameEra.Blue, "999"), CancellationToken.None);
+        var response = await handler.Handle(new Ac15BaidQuery(GameEra.Blue, "999"), CancellationToken.None);
 
         Assert.False(response.IsNewUser);
         Assert.Equal(7u, response.Baid);
-        Assert.Equal("DON", response.MyDonName);
-        Assert.Equal("Blue Title", response.Title);
-        Assert.Equal(0u, response.TitlePlateId);
-        Assert.Equal(BlueProtocolBytes.DanFlagBytes, response.GotDanFlg.Length);
-        Assert.Equal(BlueProtocolBytes.DanExtraFlagBytes, response.GotDanExtraFlg!.Length);
-        Assert.True(response.IsAutoCostumeOn.GetValueOrDefault());
+        Assert.Equal("DON", response.Identity!.MyDonName);
+        Assert.Equal("Blue Title", response.Profile!.Title);
+        Assert.Equal(0u, response.Profile.TitlePlateId);
+        Assert.Equal(BlueProtocolBytes.DanFlagBytes, response.Dan!.GotDanFlg.Length);
+        Assert.Equal(BlueProtocolBytes.DanExtraFlagBytes, response.Dan.GotDanExtraFlg.Length);
+        Assert.True(response.Profile.IsAutoCostumeOn.GetValueOrDefault());
     }
 
     [Fact]
@@ -93,11 +93,11 @@ public sealed class BlueIdentityHandlerTests
             NullLogger<BaidQueryHandler>.Instance,
             fixture.Catalog);
 
-        var response = await handler.Handle(new BaidQuery(GameEra.Blue, "777"), CancellationToken.None);
+        var response = await handler.Handle(new Ac15BaidQuery(GameEra.Blue, "777"), CancellationToken.None);
 
-        Assert.Equal(25u, response.GotDanMax);
-        Assert.Equal(Ac15DanClearGrade.GoldClear, Ac15DanHelpers.GetPackedGrade(response.GotDanFlg, 0));
-        Assert.Equal(Ac15DanClearGrade.NormalClear, Ac15DanHelpers.GetPackedGrade(response.GotDanExtraFlg!, 0));
+        Assert.Equal(25u, response.Dan!.GotDanMax);
+        Assert.Equal(Ac15DanClearGrade.GoldClear, Ac15DanHelpers.GetPackedGrade(response.Dan.GotDanFlg, 0));
+        Assert.Equal(Ac15DanClearGrade.NormalClear, Ac15DanHelpers.GetPackedGrade(response.Dan.GotDanExtraFlg, 0));
     }
 
     [Fact]
@@ -114,7 +114,7 @@ public sealed class BlueIdentityHandlerTests
             NullLogger<BaidQueryHandler>.Instance,
             fixture.Catalog);
 
-        var response = await handler.Handle(new BaidQuery(GameEra.Blue, "888"), CancellationToken.None);
+        var response = await handler.Handle(new Ac15BaidQuery(GameEra.Blue, "888"), CancellationToken.None);
 
         Assert.True(response.IsNewUser);
         Assert.Equal(8u, response.Baid);

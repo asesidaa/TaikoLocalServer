@@ -38,13 +38,13 @@ public sealed class GreenIdentityHandlerTests
             NullLogger<BaidQueryHandler>.Instance,
             fixture.Catalog);
 
-        var response = await handler.Handle(new BaidQuery(GameEra.Green, "999"), CancellationToken.None);
+        var response = await handler.Handle(new Ac15BaidQuery(GameEra.Green, "999"), CancellationToken.None);
 
         Assert.False(response.IsNewUser);
         Assert.Equal((uint)7, response.Baid);
-        Assert.Equal("DON", response.MyDonName);
-        Assert.Equal(GreenProtocolBytes.DanFlagBytes, response.GotDanFlg.Length);
-        Assert.Equal(0, response.GotDanFlg[0]);
+        Assert.Equal("DON", response.Identity!.MyDonName);
+        Assert.Equal(GreenProtocolBytes.DanFlagBytes, response.Dan!.GotDanFlg.Length);
+        Assert.Equal(0, response.Dan.GotDanFlg[0]);
     }
 
     [Fact]
@@ -63,11 +63,11 @@ public sealed class GreenIdentityHandlerTests
             NullLogger<BaidQueryHandler>.Instance,
             fixture.Catalog);
 
-        var response = await handler.Handle(new BaidQuery(GameEra.Green, "999"), CancellationToken.None);
+        var response = await handler.Handle(new Ac15BaidQuery(GameEra.Green, "999"), CancellationToken.None);
         var wire = BaidResponseMapper.Map(response);
 
-        Assert.True(response.IsAutoCostumeOn.HasValue);
-        Assert.False(response.IsAutoCostumeOn.GetValueOrDefault());
+        Assert.True(response.Profile!.IsAutoCostumeOn.HasValue);
+        Assert.False(response.Profile.IsAutoCostumeOn.GetValueOrDefault());
         Assert.True(wire.ShouldSerializeIsAutoCostumeOn());
         Assert.False(wire.IsAutoCostumeOn);
     }
@@ -105,10 +105,10 @@ public sealed class GreenIdentityHandlerTests
             NullLogger<BaidQueryHandler>.Instance,
             fixture.Catalog);
 
-        var response = await handler.Handle(new BaidQuery(GameEra.Green, "999"), CancellationToken.None);
+        var response = await handler.Handle(new Ac15BaidQuery(GameEra.Green, "999"), CancellationToken.None);
         var wire = BaidResponseMapper.Map(response);
 
-        Assert.Equal(2u, response.TitlePlateId);
+        Assert.Equal(2u, response.Profile!.TitlePlateId);
         Assert.Equal(2u, wire.TitleplateId);
     }
 
@@ -132,9 +132,9 @@ public sealed class GreenIdentityHandlerTests
             NullLogger<BaidQueryHandler>.Instance,
             fixture.Catalog);
 
-        var response = await handler.Handle(new BaidQuery(GameEra.Green, "999"), CancellationToken.None);
+        var response = await handler.Handle(new Ac15BaidQuery(GameEra.Green, "999"), CancellationToken.None);
 
-        Assert.Equal(expected, response.DispDanType);
+        Assert.Equal(expected, response.Dan!.DispDanType);
     }
 
     [Fact]
@@ -152,7 +152,7 @@ public sealed class GreenIdentityHandlerTests
             NullLogger<BaidQueryHandler>.Instance,
             fixture.Catalog);
 
-        var response = await handler.Handle(new BaidQuery(GameEra.Green, "999"), CancellationToken.None);
+        var response = await handler.Handle(new Ac15BaidQuery(GameEra.Green, "999"), CancellationToken.None);
 
         Assert.True(response.IsNewUser);
         Assert.Equal((uint)7, response.Baid);

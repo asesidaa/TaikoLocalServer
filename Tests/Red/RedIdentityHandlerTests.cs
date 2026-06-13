@@ -13,7 +13,7 @@ public sealed class RedIdentityHandlerTests
             NullLogger<BaidQueryHandler>.Instance,
             fixture.Catalog);
 
-        var response = await handler.Handle(new BaidQuery(GameEra.Red, "12345678901234567890"), CancellationToken.None);
+        var response = await handler.Handle(new Ac15BaidQuery(GameEra.Red, "12345678901234567890"), CancellationToken.None);
 
         Assert.Equal(1u, response.Result);
         Assert.True(response.IsNewUser);
@@ -64,17 +64,17 @@ public sealed class RedIdentityHandlerTests
             NullLogger<BaidQueryHandler>.Instance,
             fixture.Catalog);
 
-        var response = await handler.Handle(new BaidQuery(GameEra.Red, "999"), CancellationToken.None);
+        var response = await handler.Handle(new Ac15BaidQuery(GameEra.Red, "999"), CancellationToken.None);
         var wire = BaidResponseMapper.Map(response);
 
         Assert.False(response.IsNewUser);
         Assert.Equal(7u, response.Baid);
-        Assert.Equal("DON", response.MyDonName);
-        Assert.Equal("Red Title", response.Title);
-        Assert.Equal(0u, response.TitlePlateId);
-        Assert.Equal(4u, response.RewardPtn);
-        Assert.Equal(Ac15EraProfiles.Red.Limits.DanFlagBytes, response.GotDanFlg.Length);
-        Assert.Equal(Ac15EraProfiles.Red.Limits.DanExtraFlagBytes, response.GotDanExtraFlg!.Length);
+        Assert.Equal("DON", response.Identity!.MyDonName);
+        Assert.Equal("Red Title", response.Profile!.Title);
+        Assert.Equal(0u, response.Profile.TitlePlateId);
+        Assert.Equal(4u, response.Reward!.RewardPtn);
+        Assert.Equal(Ac15EraProfiles.Red.Limits.DanFlagBytes, response.Dan!.GotDanFlg.Length);
+        Assert.Equal(Ac15EraProfiles.Red.Limits.DanExtraFlagBytes, response.Dan.GotDanExtraFlg.Length);
         Assert.Equal(Ac15EraProfiles.Red.Limits.ContentInfoBytes, wire.ContentInfo.Length);
         Assert.Equal(Ac15EraProfiles.Red.Limits.CostumeFlagBytes, wire.CostumeFlg1.Length);
         Assert.Equal(4u, wire.RewardPtn);

@@ -155,30 +155,37 @@ public sealed class YellowCompatibilityResponseShapeTests
         };
     }
 
-    private static CommonBaidResponse CreateRepresentativeBaidResponse()
+    private static Ac15BaidResponse CreateRepresentativeBaidResponse()
         => new()
         {
             Result = 1,
             Baid = 42,
-            MyDonName = "DON",
-            Title = "Title",
-            TitlePlateId = 3,
-            ColorFace = 4,
-            ColorBody = 5,
-            ColorLimb = 6,
-            CostumeData = [1, 2, 3, 4, 5],
-            TotalGetDonmedal = 7,
-            TotalUseDonmedal = 8,
-            TotalGetKatsumedal = 9,
-            TotalUseKatsumedal = 10,
-            ItemshopTutorialFlg = 11,
-            IsAutoCostumeOn = true,
-            LastPlayDatetime = "20260608120000",
-            DispDanType = 1,
-            GotDanMax = 12,
-            DefaultToneSetting = 13,
-            PersonId = "1",
-            WaiwaiTutorialFlg = 14
+            Identity = new Ac15BaidIdentity("DON", 0),
+            Profile = new Ac15BaidProfile
+            {
+                Title = "Title",
+                TitlePlateId = 3,
+                ColorFace = 4,
+                ColorBody = 5,
+                ColorLimb = 6,
+                SelectedCostume = new Ac15CostumeFacts(1, 2, 3, 4, 5),
+                IsAutoCostumeOn = true,
+                LastPlayDatetime = "20260608120000",
+                DefaultToneSetting = 13
+            },
+            CostumeFlags = new Ac15BaidCostumeFlags(
+                new byte[Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes],
+                new byte[Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes],
+                new byte[Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes],
+                new byte[Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes],
+                new byte[Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes]),
+            ShopMedals = new Ac15BaidShopMedals(7, 8, 9, 10, 11),
+            Dan = new Ac15BaidDan(
+                1,
+                12,
+                new byte[Ac15EraProfiles.Yellow.Limits.DanFlagBytes],
+                new byte[Ac15EraProfiles.Yellow.Limits.DanExtraFlagBytes]),
+            Compatibility = new Ac15BaidCompatibility("1", 14)
         };
 
     private static CommonUserDataResponse CreateRepresentativeTokkunUserDataResponse()

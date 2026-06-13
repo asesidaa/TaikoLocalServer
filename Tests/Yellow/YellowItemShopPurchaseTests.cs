@@ -376,20 +376,20 @@ public sealed class YellowItemShopPurchaseTests
             NullLogger<BaidQueryHandler>.Instance,
             fixture.Catalog);
 
-        var crossEraOnly = await handler.Handle(new BaidQuery(GameEra.Yellow, "abc"), CancellationToken.None);
+        var crossEraOnly = await handler.Handle(new Ac15BaidQuery(GameEra.Yellow, "abc"), CancellationToken.None);
 
-        Assert.False(HasBit(crossEraOnly.CostumeFlg1!, 12));
-        Assert.False(HasBit(crossEraOnly.CostumeFlg2!, 14));
+        Assert.False(HasBit(crossEraOnly.CostumeFlags!.CostumeFlg1, 12));
+        Assert.False(HasBit(crossEraOnly.CostumeFlags.CostumeFlg2, 14));
 
         fixture.Context.YellowShopItemStates.AddRange(
             Unlocked(1, 2, Ac15ShopItemType.Kigurumi.ToProtocolValue(), 12),
             Unlocked(1, 2, Ac15ShopItemType.Head.ToProtocolValue(), 14));
         await fixture.Context.SaveChangesAsync();
 
-        var yellowPurchased = await handler.Handle(new BaidQuery(GameEra.Yellow, "abc"), CancellationToken.None);
+        var yellowPurchased = await handler.Handle(new Ac15BaidQuery(GameEra.Yellow, "abc"), CancellationToken.None);
 
-        Assert.True(HasBit(yellowPurchased.CostumeFlg1!, 12));
-        Assert.True(HasBit(yellowPurchased.CostumeFlg2!, 14));
+        Assert.True(HasBit(yellowPurchased.CostumeFlags!.CostumeFlg1, 12));
+        Assert.True(HasBit(yellowPurchased.CostumeFlags.CostumeFlg2, 14));
     }
 
     [Fact]

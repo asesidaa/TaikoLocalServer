@@ -9,7 +9,7 @@ public class BaidController : BaseProtocolController<BaidController>
     public async Task<IActionResult> Baid([FromBody] BAIDRequest request)
     {
         Logger.LogInformation("Blue BAID request: {@Request}", request);
-        var common = await Mediator.Send(new BaidQuery(GameEra.Blue, request.AccessCode), HttpContext.RequestAborted);
+        var common = await Mediator.Send(new Ac15BaidQuery(GameEra.Blue, request.AccessCode), HttpContext.RequestAborted);
 
         if (common.IsNewUser)
         {

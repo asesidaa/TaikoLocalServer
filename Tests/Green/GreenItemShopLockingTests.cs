@@ -66,10 +66,10 @@ public sealed class GreenItemShopLockingTests
             NullLogger<BaidQueryHandler>.Instance,
             fixture.Catalog);
 
-        var response = await handler.Handle(new BaidQuery(GameEra.Green, "abc"), CancellationToken.None);
+        var response = await handler.Handle(new Ac15BaidQuery(GameEra.Green, "abc"), CancellationToken.None);
 
-        Assert.False(HasBit(response.CostumeFlg2!, 117));
-        Assert.False(HasBit(response.CostumeFlg3!, 146));
+        Assert.False(HasBit(response.CostumeFlags!.CostumeFlg2, 117));
+        Assert.False(HasBit(response.CostumeFlags.CostumeFlg3, 146));
     }
 
     [Fact]
@@ -92,10 +92,10 @@ public sealed class GreenItemShopLockingTests
             NullLogger<BaidQueryHandler>.Instance,
             fixture.Catalog);
 
-        var response = await handler.Handle(new BaidQuery(GameEra.Green, "abc"), CancellationToken.None);
+        var response = await handler.Handle(new Ac15BaidQuery(GameEra.Green, "abc"), CancellationToken.None);
 
-        Assert.True(HasBit(response.CostumeFlg2!, 117));
-        Assert.True(HasBit(response.CostumeFlg3!, 146));
+        Assert.True(HasBit(response.CostumeFlags!.CostumeFlg2, 117));
+        Assert.True(HasBit(response.CostumeFlags.CostumeFlg3, 146));
     }
 
     private static GreenHandlerFixture.TestGreenCatalog CreateShopCatalog()

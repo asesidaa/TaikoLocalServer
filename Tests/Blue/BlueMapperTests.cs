@@ -60,11 +60,11 @@ public sealed class BlueMapperTests
     [Fact]
     public void BaidMapper_Blue_UsesBlueFixedWidthFallbacks()
     {
-        var response = BaidResponseMapper.Map(new CommonBaidResponse
+        var response = BaidResponseMapper.Map(new Ac15BaidResponse
         {
             Result = 1,
             Baid = 3,
-            MyDonName = "DON"
+            Identity = new Ac15BaidIdentity("DON", 0)
         });
 
         Assert.Equal(BlueProtocolBytes.CostumeFlagBytes, response.CostumeFlg1.Length);

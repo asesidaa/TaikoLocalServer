@@ -10,22 +10,27 @@ public sealed class RedProtocolMapperTests
     [Fact]
     public void BaidMapper_RedV08R00_UsesOlderBaidFieldNumbers()
     {
-        var common = new CommonBaidResponse
+        var common = new Ac15BaidResponse
         {
             Result = 1,
             Baid = 42,
-            MyDonName = "DON",
-            Title = "Title",
-            TitlePlateId = 3,
-            ColorFace = 4,
-            ColorBody = 5,
-            ColorLimb = 6,
-            CostumeData = [1, 2, 3, 4, 5],
-            GotDanMax = 12,
-            GotDanFlg = new byte[Ac15EraProfiles.Red.Limits.DanFlagBytes],
-            GotDanExtraFlg = new byte[Ac15EraProfiles.Red.Limits.DanExtraFlagBytes],
-            DefaultToneSetting = 13,
-            PersonId = "1"
+            Identity = new Ac15BaidIdentity("DON", 0),
+            Profile = new Ac15BaidProfile
+            {
+                Title = "Title",
+                TitlePlateId = 3,
+                ColorFace = 4,
+                ColorBody = 5,
+                ColorLimb = 6,
+                SelectedCostume = new Ac15CostumeFacts(1, 2, 3, 4, 5),
+                DefaultToneSetting = 13
+            },
+            Dan = new Ac15BaidDan(
+                0,
+                12,
+                new byte[Ac15EraProfiles.Red.Limits.DanFlagBytes],
+                new byte[Ac15EraProfiles.Red.Limits.DanExtraFlagBytes]),
+            Compatibility = new Ac15BaidCompatibility("1", null)
         };
 
         var current = ApplyBaidControllerShape(BaidResponseMapper.Map(common));
