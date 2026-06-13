@@ -156,14 +156,23 @@ Plans:
 
 ### Phase 20.1: AC15 Capability DTO and Mapper Boundary Refactor (INSERTED)
 
-**Goal:** [Urgent work - to be planned]
-**Requirements**: TBD
+**Goal:** Refactor AC15 BAID and userdata response DTO boundaries into behavior/capability-shaped records so Mapperly mappers remain mechanical wire placement and nearby AC15 DTO/mappers are audited without broad churn.
+**Requirements**: Phase 20.1 context decisions D-01 through D-14
 **Depends on:** Phase 20
-**Plans:** 0 plans
-
+**Plans:** 3 plans across 3 waves
 Plans:
 
-- [ ] TBD (run /gsd-plan-phase 20.1 to break down)
+**Wave 1**
+
+- [ ] 20.1-01-PLAN.md - AC15 BAID capability response boundary
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 20.1-02-PLAN.md - AC15 userdata capability response boundary
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 20.1-03-PLAN.md - AC15 DTO mapper audit, union cleanup, and verification
 
 ### Phase 21: Older-AC15 ChallengeCompe Capability and Red Binding
 
