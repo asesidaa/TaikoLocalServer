@@ -12,7 +12,7 @@ public partial class Profile
     [Parameter]
     public string? Era { get; set; }
 
-    private string CurrentEra => WebUiEra.Normalize(Era);
+    private string CurrentEra => WebUiEra.NormalizeOrDefault(Era, AuthService.DefaultEra);
     private bool IsAc15 => WebUiEra.IsAc15(CurrentEra);
     private bool CanEditUnlocks => IsAc15 && AuthService.AllowFreeProfileEditing;
     private TitleSelectionMode CurrentTitleSelectionMode => IsAc15

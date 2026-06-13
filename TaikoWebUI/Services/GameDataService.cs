@@ -17,6 +17,7 @@ public class GameDataService : IGameDataService
 
     private Dictionary<string, List<uint>>? lockedCostumeDataDictionary = new();
     private Dictionary<string, List<uint>>? lockedTitleDataDictionary = new();
+    private string defaultEra = WebUiEra.Default;
 
     public GameDataService(HttpClient client)
     {
@@ -28,7 +29,10 @@ public class GameDataService : IGameDataService
 
     public async Task InitializeAsync(string dataBaseUrl, IEnumerable<string> enabledEras)
     {
-        foreach (var era in WebUiEra.NormalizeEnabled(enabledEras))
+        var normalizedEras = WebUiEra.NormalizeEnabled(enabledEras);
+        defaultEra = normalizedEras.FirstOrDefault() ?? WebUiEra.Default;
+
+        foreach (var era in normalizedEras)
         {
             var danData = await client.GetFromJsonAsync<List<DanData>>(WebUiEra.Api(era, "GameData/DanData"))
                 ?? new List<DanData>();
@@ -37,7 +41,7 @@ public class GameDataService : IGameDataService
     }
     
     public async Task<Dictionary<uint, MusicDetail>> GetMusicDetailDictionary()
-        => await GetMusicDetailDictionary(WebUiEra.Default);
+        => await GetMusicDetailDictionary(defaultEra);
 
     public async Task<Dictionary<uint, MusicDetail>> GetMusicDetailDictionary(string? era)
     {
@@ -66,7 +70,7 @@ public class GameDataService : IGameDataService
     }
 
     public async Task<List<Costume>> GetCostumeList()
-        => (await GetCostumeList(WebUiEra.Default)).ToList();
+        => (await GetCostumeList(defaultEra)).ToList();
 
     public async Task<IReadOnlyDictionary<uint, Title>> GetTitleDictionary(string? era)
     {
@@ -82,7 +86,7 @@ public class GameDataService : IGameDataService
     }
 
     public async Task<Dictionary<uint, Title>> GetTitleDictionary()
-        => (await GetTitleDictionary(WebUiEra.Default)).ToDictionary(pair => pair.Key, pair => pair.Value);
+        => (await GetTitleDictionary(defaultEra)).ToDictionary(pair => pair.Key, pair => pair.Value);
 
     public async Task<IReadOnlyDictionary<uint, Neiro>> GetNeiroDictionary(string? era)
     {
@@ -156,7 +160,7 @@ public class GameDataService : IGameDataService
     }
 
     public ImmutableDictionary<uint, DanData> GetDanMap()
-        => GetDanMap(WebUiEra.Default);
+        => GetDanMap(defaultEra);
 
     public ImmutableDictionary<uint, DanData> GetDanMap(string? era)
     {

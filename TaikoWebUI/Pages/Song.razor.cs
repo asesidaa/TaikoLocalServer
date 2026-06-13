@@ -13,7 +13,7 @@ public partial class Song
     [Parameter]
     public string? Era { get; set; }
 
-    private string CurrentEra => WebUiEra.Normalize(Era);
+    private string CurrentEra => WebUiEra.NormalizeOrDefault(Era, AuthService.DefaultEra);
     private bool IsAc15 => WebUiEra.IsAc15(CurrentEra);
 
     private UserSetting? userSetting;

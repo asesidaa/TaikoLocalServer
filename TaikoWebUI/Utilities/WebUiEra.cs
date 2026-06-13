@@ -11,7 +11,7 @@ public static class WebUiEra
 
     public static bool IsSupported(string? era)
     {
-        return Known.Any(value => string.Equals(value, era, StringComparison.OrdinalIgnoreCase));
+        return TryNormalize(era, out _);
     }
 
     public static bool IsGreen(string? era)
@@ -28,18 +28,42 @@ public static class WebUiEra
 
     public static string Normalize(string? era)
     {
-        return Known.FirstOrDefault(value => string.Equals(value, era, StringComparison.OrdinalIgnoreCase)) ?? Default;
+        return TryNormalize(era, out var normalized) ? normalized : Default;
+    }
+
+    public static string NormalizeOrDefault(string? era, string? defaultEra)
+    {
+        if (TryNormalize(era, out var normalized))
+        {
+            return normalized;
+        }
+
+        return TryNormalize(defaultEra, out var normalizedDefault)
+            ? normalizedDefault
+            : Default;
     }
 
     public static IReadOnlyList<string> NormalizeEnabled(IEnumerable<string>? eras)
     {
-        var normalized = eras?
-            .Select(Normalize)
-            .Where(IsSupported)
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToList() ?? [];
+        if (eras is null)
+        {
+            return Supported;
+        }
 
-        return normalized.Count > 0 ? normalized : Supported;
+        var normalized = eras
+            .Select(era => TryNormalize(era, out var value) ? value : null)
+            .OfType<string>()
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        return normalized;
+    }
+
+    public static bool TryNormalize(string? era, out string normalized)
+    {
+        normalized = Known.FirstOrDefault(value => string.Equals(value, era, StringComparison.OrdinalIgnoreCase))
+                     ?? string.Empty;
+        return normalized.Length > 0;
     }
 
     public static string UserRoute(uint baid, string? era, string page)

@@ -4,13 +4,19 @@ using TaikoLocalServer.Application.Abstractions;
 using TaikoLocalServer.Application.Catalog.Yellow;
 using TaikoLocalServer.Application.Settings;
 using TaikoLocalServer.Domain.Enums;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Ac15;
 
 namespace TaikoLocalServer.Infrastructure.GameDataCatalog.Yellow;
 
 public sealed class YellowEraGameDataCatalog(
     ILogger<YellowEraGameDataCatalog> logger,
-    IOptions<ServerSettings>? serverSettings = null) : IYellowCatalog
+    IOptions<ServerSettings>? serverSettings = null,
+    INijiiroCatalog? nijiiroCatalog = null) : IYellowCatalog
 {
+    public const string CostumeFileName = "yellow_costume_data.json";
+    public const string TitleFileName = "yellow_title_data.json";
+    public const string NeiroFileName = "yellow_neiro_data.json";
+
     private uint songHashVersion;
     private IReadOnlyList<YellowMusicInfoEntry> musicInfoFileOrder = [];
     private IReadOnlyDictionary<uint, YellowMusicInfoEntry> musicInfos = new Dictionary<uint, YellowMusicInfoEntry>();
@@ -25,9 +31,9 @@ public sealed class YellowEraGameDataCatalog(
     private IReadOnlyDictionary<uint, YellowTournamentEntry> tournaments = new Dictionary<uint, YellowTournamentEntry>();
     private YellowRecommendEntry recommend = YellowRecommendEntry.Empty;
     private IReadOnlyList<MovieData> movies = [];
-    private readonly IReadOnlyList<Costume> costumeList = [];
-    private readonly IReadOnlyDictionary<uint, Title> titleDictionary = new Dictionary<uint, Title>();
-    private readonly IReadOnlyDictionary<uint, Neiro> neiroDictionary = new Dictionary<uint, Neiro>();
+    private IReadOnlyList<Costume> costumeList = [];
+    private IReadOnlyDictionary<uint, Title> titleDictionary = new Dictionary<uint, Title>();
+    private IReadOnlyDictionary<uint, Neiro> neiroDictionary = new Dictionary<uint, Neiro>();
 
     public GameEra Era => GameEra.Yellow;
 
@@ -68,6 +74,16 @@ public sealed class YellowEraGameDataCatalog(
     public async Task InitializeAsync(CancellationToken cancellationToken)
     {
         YellowRequiredDataFiles.ThrowIfMissing();
+        var yellowSettings = GetYellowSettings();
+
+        await Ac15CustomizationCatalogSupport.EnsureExtractedAsync(
+            GameEra.Yellow,
+            yellowSettings,
+            CostumeFileName,
+            TitleFileName,
+            NeiroFileName,
+            logger,
+            cancellationToken);
 
         var musicInfo = await new YellowMusicInfoLoader().LoadAsync(cancellationToken);
         var stars = await new YellowTuningLoader().LoadAsync(cancellationToken);
@@ -112,7 +128,6 @@ public sealed class YellowEraGameDataCatalog(
             .GroupBy(entry => entry.UniqueId)
             .ToDictionary(group => group.Key, group => group.First());
 
-        var yellowSettings = GetYellowSettings();
         itemShopCatalog = await new YellowItemShopLoader().LoadAsync(yellowSettings, cancellationToken);
         itemShop = itemShopCatalog.ActiveItemsByNo;
         eventFolders = await new YellowEventFolderLoader().LoadAsync(
@@ -125,13 +140,38 @@ public sealed class YellowEraGameDataCatalog(
             new HashSet<uint>(musicInfos.Keys),
             cancellationToken);
         movies = await new YellowMovieLoader().LoadAsync(logger, cancellationToken);
+        var yellowCustomization = await Ac15CustomizationCatalogSupport.LoadEraCatalogAsync(
+            GameEra.Yellow,
+            CostumeFileName,
+            TitleFileName,
+            NeiroFileName,
+            cancellationToken);
+        var sharedNames = await Ac15CustomizationCatalogSupport.LoadCustomizationNamesAsync(
+            yellowSettings,
+            cancellationToken);
+        var customizationCatalog = Ac15CustomizationCatalogComposer.Compose(
+            yellowCustomization.Costumes,
+            yellowCustomization.Titles,
+            yellowCustomization.Neiros,
+            sharedNames.Costumes,
+            sharedNames.Titles,
+            sharedNames.Neiros,
+            nijiiroCatalog?.GetCostumeList(),
+            nijiiroCatalog?.GetTitleDictionary(),
+            nijiiroCatalog?.GetNeiroDictionary());
+        costumeList = customizationCatalog.Costumes;
+        titleDictionary = customizationCatalog.Titles;
+        neiroDictionary = customizationCatalog.Neiros;
 
         logger.LogInformation(
-            "Loaded Yellow catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {TaikojukuCount} taikojuku packs, {StarCount} tuning star rows, {MovieCount} attract movies, item_shop_enabled={ItemShopEnabled}",
+            "Loaded Yellow catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {TaikojukuCount} taikojuku packs, {StarCount} tuning star rows, {CostumeCount} costumes, {TitleCount} titles, {NeiroCount} tones, {MovieCount} attract movies, item_shop_enabled={ItemShopEnabled}",
             musicInfoFileOrder.Count,
             songHashVersion,
             taikojukuFileOrder.Count,
             stars.Count,
+            costumeList.Count,
+            titleDictionary.Count,
+            neiroDictionary.Count,
             movies.Count,
             itemShopCatalog.IsEnabled);
     }

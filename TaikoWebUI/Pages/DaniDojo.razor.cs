@@ -16,7 +16,7 @@ public partial class DaniDojo
     [Parameter]
     public string? Era { get; set; }
 
-    private string CurrentEra => WebUiEra.Normalize(Era);
+    private string CurrentEra => WebUiEra.NormalizeOrDefault(Era, AuthService.DefaultEra);
     private const int DanTabWindowSize = 10;
 
     private string? SongNameLanguage { get; set; }

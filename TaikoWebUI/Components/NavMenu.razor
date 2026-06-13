@@ -59,12 +59,22 @@
 
     protected override void OnInitialized()
     {
+        SyncSelectedEra();
         AuthService.LoginStatusChanged += HandleAuthStatusChanged;
     }
 
     private void HandleAuthStatusChanged(object? sender, EventArgs e)
     {
+        SyncSelectedEra();
         StateHasChanged();
+    }
+
+    private void SyncSelectedEra()
+    {
+        if (!AuthService.EnabledEras.Contains(selectedEra, StringComparer.OrdinalIgnoreCase))
+        {
+            selectedEra = AuthService.DefaultEra;
+        }
     }
 
     public void Dispose()

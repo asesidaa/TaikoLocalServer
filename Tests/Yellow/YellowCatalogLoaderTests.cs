@@ -189,6 +189,52 @@ public sealed class YellowCatalogLoaderTests
         Assert.Contains(logger.Events, log => log.Message.Contains("Loaded Yellow catalog", StringComparison.Ordinal));
     }
 
+    [Fact]
+    public async Task CatalogInitialize_AutoExtractsAndLoadsCustomizationWhenLocalDataPresent()
+    {
+        var musicInfoFile = FindRepoFileOrSkip("Host", "wwwroot", "data", "yellow", "data", "config", "ST9100-1", "musicinfo.xml");
+        if (musicInfoFile is null
+            || FindRepoFileOrSkip("Host", "wwwroot", "data", "yellow", "data", "config", "ST9100-1", "musicmedleyinfo.xml") is null
+            || FindRepoFileOrSkip("Host", "wwwroot", "data", "yellow", "data", "config", "ST9100-1", "defmusic.bin") is null
+            || FindRepoFileOrSkip("Host", "wwwroot", "data", "yellow", "data", "fumen", "tuning.bin") is null)
+        {
+            return;
+        }
+
+        CopyYellowCatalogFilesToProcessRoot();
+        DeleteYellowOptionalSidecarsFromProcessRoot();
+        DeleteYellowCustomizationSidecarsFromProcessRoot();
+        var yellowDataRoot = Path.GetFullPath(Path.Combine(
+            Path.GetDirectoryName(musicInfoFile)
+                ?? throw new ApplicationException($"Cannot resolve directory for {musicInfoFile}."),
+            "..",
+            ".."));
+        var sharedDataRoot = Path.GetDirectoryName(FindRequiredRepoFile("Host", "wwwroot", "data", "shared", "neiro_name_data.json"))
+                             ?? throw new ApplicationException("Cannot resolve shared data directory.");
+        var logger = new RecordingLogger<YellowEraGameDataCatalog>();
+        var settings = Options.Create(new ServerSettings
+        {
+            Eras = new Dictionary<string, EraSettings>
+            {
+                [nameof(GameEra.Yellow)] = new()
+                {
+                    Enabled = true,
+                    EnableShop = false,
+                    AutoExtractCatalog = true,
+                    GameDataPath = yellowDataRoot,
+                    CustomizationNameDataPath = sharedDataRoot
+                }
+            }
+        });
+        var catalog = new YellowEraGameDataCatalog(logger, settings);
+
+        await catalog.InitializeAsync(CancellationToken.None);
+
+        Assert.NotEmpty(catalog.GetCostumeList());
+        Assert.NotEmpty(catalog.GetTitleDictionary());
+        Assert.NotEmpty(catalog.GetNeiroDictionary());
+    }
+
     private static string? FindRepoFileOrSkip(params string[] pathParts)
     {
         foreach (var searchRoot in new[] { AppContext.BaseDirectory, Directory.GetCurrentDirectory(), GetSourceDirectory() }
@@ -264,8 +310,24 @@ public sealed class YellowCatalogLoaderTests
         YellowTelopLoader.FileName,
         YellowRecommendLoader.FileName,
         YellowItemShopLoader.FileName,
-        YellowMovieLoader.FileName,
-        YellowTaikojukuLoader.VerupFileName
+            YellowMovieLoader.FileName,
+            YellowTaikojukuLoader.VerupFileName
+    ];
+
+    private static void DeleteYellowCustomizationSidecarsFromProcessRoot()
+    {
+        var dataPath = GetProcessYellowDataPath();
+        foreach (var fileName in YellowCustomizationSidecarFileNames)
+        {
+            File.Delete(Path.Combine(dataPath, fileName));
+        }
+    }
+
+    private static readonly string[] YellowCustomizationSidecarFileNames =
+    [
+        "yellow_costume_data.json",
+        "yellow_title_data.json",
+        "yellow_neiro_data.json"
     ];
 
     private sealed class RecordingLogger<T> : ILogger<T>

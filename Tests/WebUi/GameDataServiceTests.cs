@@ -1,5 +1,6 @@
 using System.Net;
 using TaikoWebUI.Services;
+using TaikoWebUI.Utilities;
 
 namespace TaikoLocalServer.Tests.WebUi;
 
@@ -80,6 +81,40 @@ public sealed class GameDataServiceTests
             handler.RequestPaths);
     }
 
+    [Fact]
+    public async Task LegacyCatalogLookups_UseFirstEnabledEra()
+    {
+        var handler = new RecordingHandler();
+        using var client = new HttpClient(handler)
+        {
+            BaseAddress = new Uri("http://localhost/")
+        };
+        var service = new GameDataService(client);
+
+        await service.InitializeAsync("http://localhost/", ["Yellow"]);
+        await service.GetMusicDetailDictionary();
+        await service.GetCostumeList();
+        await service.GetTitleDictionary();
+
+        Assert.Equal(
+            [
+                "api/Yellow/GameData/DanData",
+                "api/Yellow/GameData/MusicDetails",
+                "api/Yellow/customization/costumes",
+                "api/Yellow/customization/titles"
+            ],
+            handler.RequestPaths);
+        Assert.Contains(900u, service.GetDanMap().Keys);
+    }
+
+    [Fact]
+    public void NormalizeEnabled_IgnoresUnsupportedEras()
+    {
+        var enabled = WebUiEra.NormalizeEnabled(["Yellow", "Red", "Unknown"]);
+
+        Assert.Equal(["Yellow"], enabled);
+    }
+
     private sealed class RecordingHandler : HttpMessageHandler
     {
         public List<string> RequestPaths { get; } = [];
@@ -90,11 +125,14 @@ public sealed class GameDataServiceTests
         {
             var path = request.RequestUri?.PathAndQuery.TrimStart('/') ?? string.Empty;
             RequestPaths.Add(path);
-            var content = path.Contains("MusicDetails", StringComparison.Ordinal)
-                || path.Contains("customization/titles", StringComparison.Ordinal)
-                || path.Contains("customization/neiros", StringComparison.Ordinal)
-                    ? "{}"
-                    : "[]";
+            var content = path switch
+            {
+                "api/Yellow/GameData/DanData" => """[{"danId":900,"title":"yellow"}]""",
+                _ when path.Contains("MusicDetails", StringComparison.Ordinal)
+                    || path.Contains("customization/titles", StringComparison.Ordinal)
+                    || path.Contains("customization/neiros", StringComparison.Ordinal) => "{}",
+                _ => "[]"
+            };
 
             return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
             {

@@ -9,7 +9,7 @@ public partial class HighScores
     [Parameter]
     public string? Era { get; set; }
 
-    private string CurrentEra => WebUiEra.Normalize(Era);
+    private string CurrentEra => WebUiEra.NormalizeOrDefault(Era, AuthService.DefaultEra);
     private bool IsAc15 => WebUiEra.IsAc15(CurrentEra);
 
     private const string IconStyle = "width:25px; height:25px;";
