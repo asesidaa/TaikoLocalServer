@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Phase Summary
 status: executing
-stopped_at: Phase 20.1 corrected context gathered; ready for gsd-plan-phase
-last_updated: "2026-06-13T20:40:32.379Z"
-last_activity: 2026-06-14 -- Corrected Phase 20.1 context approved through gsd-discuss-phase
+stopped_at: Phase 20.1 corrected 9-plan set ready; awaiting explicit user approval before execution
+last_updated: "2026-06-14T06:47:49.6353683+08:00"
+last_activity: 2026-06-14 -- Corrected Phase 20.1 plan set prepared with controller-owned final assembly design
 progress:
   total_phases: 6
   completed_phases: 2
@@ -21,14 +21,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-13)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Phase 20.1 corrective planning - sectioned BAID/userdata responses with controller-owned wire assembly
+**Current focus:** Phase 20.1 corrective planning - sectioned BAID/userdata responses with controller-owned final assembly
 
 ## Current Position
 
-Phase: 20.1 (AC15 Capability DTO and Mapper Boundary Refactor) - CORRECTED CONTEXT READY FOR PLANNING
-Plan: pending corrected gsd-plan-phase
+Phase: 20.1 (AC15 Capability DTO and Mapper Boundary Refactor) - CORRECTED PLAN READY FOR APPROVAL
+Plan: 9 corrected plans prepared; awaiting user approval before execution
 Status: executing
-Last activity: 2026-06-14 -- Corrected Phase 20.1 context approved through gsd-discuss-phase
+Last activity: 2026-06-14 -- Corrected Phase 20.1 plan set prepared with controller-owned final assembly design
 
 ## Performance Metrics
 
@@ -104,9 +104,9 @@ Last activity: 2026-06-14 -- Corrected Phase 20.1 context approved through gsd-d
 | Phase 18 P02 | 24 min | 1 tasks | 9 files |
 | Phase 18 P03 | 8 min | 2 tasks | 4 files |
 | Phase 18 P04 | 49 | 3 tasks | 27 files |
-| Phase 20.1 P01 | 35 | 3 tasks | 25 files |
-| Phase 20.1 P02 | 26 | 3 tasks | 25 files |
-| Phase 20.1 P03 | 13 | 3 tasks | 13 files |
+| Phase 20.1 rejected P01 | 35 | 3 tasks | 25 files |
+| Phase 20.1 rejected P02 | 26 | 3 tasks | 25 files |
+| Phase 20.1 rejected P03 | 13 | 3 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -199,7 +199,8 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 20]: Red Tokkun playresults classify before normal/Dani/Challenge handling and write back only nullable `TokkunTutorialFlg`; no raw Tokkun history, reward, unlock, normal-play, or Dani writes are made from Tokkun uploads.
 - [Phase 20]: Red ChallengeCompe arrays are mapped as playresult facts for Phase 21, but no ChallengeCompe state or readback contract was implemented.
 - [Phase 20.1]: Previous Plans 01-04 are superseded by corrected context because the architecture was rejected. Their verification proves only that behavior did not regress, not that the mapper boundary was accepted.
-- [Phase 20.1]: Corrected context requires sectioned BAID/userdata responses, handler-owned semantic sections, controller-owned wire assembly, generated Mapperly existing-target/derived-type mappings, and no handwritten response aggregation in mapper classes.
+- [Phase 20.1]: Corrected context requires sectioned BAID/userdata responses, handler-owned semantic sections, controller-owned final assembly, generated Mapperly existing-target apply mappings, and no handwritten response aggregation in mapper classes.
+- [Phase 20.1]: Compact design contract is `.planning/phases/20.1-ac15-capability-dto-and-mapper-boundary-refactor/20.1-DESIGN-CONTRACT.md`; controllers control final assembly, handlers return semantic sections, and mappers stay mechanical.
 
 ### Pending Todos
 
@@ -224,11 +225,12 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-13T20:39:32.162Z
-Stopped at: Phase 20.1 corrected context gathered; ready for gsd-plan-phase
-Resume file: .planning/phases/20.1-ac15-capability-dto-and-mapper-boundary-refactor/20.1-CONTEXT.md
+Last session: 2026-06-14T06:47:49.6353683+08:00
+Stopped at: Phase 20.1 corrected 9-plan set ready; awaiting explicit user approval before execution
+Resume file: .planning/phases/20.1-ac15-capability-dto-and-mapper-boundary-refactor/20.1-DESIGN-CONTRACT.md
 
 ## Operator Next Steps
 
-- Run `$gsd-plan-phase 20.1` from corrected `.planning/phases/20.1-ac15-capability-dto-and-mapper-boundary-refactor/20.1-CONTEXT.md`.
+- Review and approve or revise the corrected Phase 20.1 plan set.
+- Do not run `$gsd-execute-phase 20.1` until the user explicitly approves the plan.
 - Do not start Phase 21 until Phase 20.1 corrective rewrite has fresh verification and closeout.

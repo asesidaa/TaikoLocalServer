@@ -29,6 +29,7 @@ Active milestone: **v1.3 Red AC15 Support**
 | 18 | Red Evidence and Capability Foundation | 4/4 | Complete    | 2026-06-12 |
 | 19 | Red Capability Profile and Catalog Binding | 3/3 | Complete | 2026-06-13 |
 | 20 | Red Runtime Capability Binding and Simple Compatibility | 4/4 | Complete | 2026-06-13 |
+| 20.1 | AC15 Capability DTO and Mapper Boundary Refactor | Refactor BAID/userdata response boundaries so handlers return semantic sections, controllers control final wire assembly, and Mapperly remains mechanical. | Phase 20.1 D-01 through D-21 | 9 |
 | 21 | Older-AC15 ChallengeCompe Capability and Red Binding | Define the shared older-AC15 ChallengeCompe capability and bind/prove it through Red evidence, with stateful behavior only after client/runtime proof defines the contract. | RCOMP-02, RCHAL-01, RCHAL-02 | 5 |
 | 22 | Red AdminApi/WebUI and Runtime Closeout | Expose implemented Red-owned readback surfaces and close v1.3 with automated plus cabinet/RPCS3 verification. | RVER-01, RVER-02, RVER-03 | 5 |
 
@@ -156,23 +157,48 @@ Plans:
 
 ### Phase 20.1: AC15 Capability DTO and Mapper Boundary Refactor (INSERTED)
 
-**Goal:** Refactor AC15 BAID and userdata response DTO boundaries into behavior/capability-shaped records so Mapperly mappers remain mechanical wire placement and nearby AC15 DTO/mappers are audited without broad churn.
-**Requirements**: Phase 20.1 context decisions D-01 through D-14
+**Goal:** Refactor AC15 BAID and userdata response boundaries into semantic application sections, controller-owned final wire assembly, and Mapperly-generated mechanical section apply methods.
+**Status:** Replanning from corrected context. Previous Plans 01-03 and rejected corrective attempts are superseded by the controller-owned assembly design.
+**Requirements**: Phase 20.1 context decisions D-01 through D-21
 **Depends on:** Phase 20
-**Plans:** 3 plans across 3 waves
+**Plans:** 9/9 planned. Awaiting explicit user approval before execution.
 Plans:
 
 **Wave 1**
 
-- [x] 20.1-01-PLAN.md - AC15 BAID capability response boundary
+- [ ] 20.1-01-PLAN.md - Blue/Green BAID semantic sections
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [x] 20.1-02-PLAN.md - AC15 userdata capability response boundary
+- [ ] 20.1-02-PLAN.md - Blue/Green BAID controller assembly
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [x] 20.1-03-PLAN.md - AC15 DTO mapper audit, union cleanup, and verification
+- [ ] 20.1-03-PLAN.md - Yellow/Red BAID migration
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 20.1-04-PLAN.md - BAID compatibility removal
+
+**Wave 5** *(blocked on Wave 4 completion)*
+
+- [ ] 20.1-05-PLAN.md - Blue/Green userdata semantic sections
+
+**Wave 6** *(blocked on Wave 5 completion)*
+
+- [ ] 20.1-06-PLAN.md - Blue/Green userdata controller assembly
+
+**Wave 7** *(blocked on Wave 6 completion)*
+
+- [ ] 20.1-07-PLAN.md - Yellow/Red userdata migration
+
+**Wave 8** *(blocked on Wave 7 completion)*
+
+- [ ] 20.1-08-PLAN.md - userdata compatibility removal
+
+**Wave 9** *(blocked on Wave 8 completion)*
+
+- [ ] 20.1-09-PLAN.md - mapper boundary cleanup, playresult audit, generated-source verification
 
 ### Phase 21: Older-AC15 ChallengeCompe Capability and Red Binding
 
@@ -305,5 +331,6 @@ See `.planning/milestones/v1.2-ROADMAP.md` and `.planning/milestones/v1.2-phases
 | 18. Red Evidence and Capability Foundation | 4/4 | Complete | 2026-06-12 |
 | 19. Red Capability Profile and Catalog Binding | 3/3 | Complete | 2026-06-13 |
 | 20. Red Runtime Capability Binding and Simple Compatibility | 4/4 | Complete | 2026-06-13 |
+| 20.1. AC15 Capability DTO and Mapper Boundary Refactor | 0/9 | Planned, awaiting approval | - |
 | 21. Older-AC15 ChallengeCompe Capability and Red Binding | 0/TBD | Not started | - |
 | 22. Red AdminApi/WebUI and Runtime Closeout | 0/TBD | Not started | - |
