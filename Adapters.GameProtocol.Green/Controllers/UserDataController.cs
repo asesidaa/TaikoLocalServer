@@ -9,7 +9,7 @@ public class UserDataController : BaseProtocolController<UserDataController>
     public async Task<IActionResult> UserData([FromBody] UserDataRequest request)
     {
         Logger.LogInformation("Green UserData request: {@Request}", request);
-        var common = await Mediator.Send(new UserDataQuery(request.Baid, GameEra.Green), HttpContext.RequestAborted);
+        var common = await Mediator.Send(new Ac15UserDataQuery(request.Baid, GameEra.Green), HttpContext.RequestAborted);
         return Ok(UserDataMappers.Map(common));
     }
 }

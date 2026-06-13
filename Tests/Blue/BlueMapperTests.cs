@@ -7,14 +7,20 @@ public sealed class BlueMapperTests
     [Fact]
     public void UserDataMapper_Blue_OmitsTokkunTutorialFlag()
     {
-        var response = UserDataMappers.Map(new CommonUserDataResponse
+        var response = UserDataMappers.Map(new Ac15UserDataResponse
         {
             Result = 1,
-            ReleaseSongFlg = new byte[BlueProtocolBytes.SongFlagBytes],
-            ToneFlg = new byte[BlueProtocolBytes.ToneFlagBytes],
-            TitleFlg = new byte[BlueProtocolBytes.TitleFlagBytes],
-            DefaultOptionSetting = new byte[2],
-            DispTaikojukuDan = 1
+            SongFlags = new Ac15UserDataSongFlags
+            {
+                ReleaseSongFlg = new byte[BlueProtocolBytes.SongFlagBytes],
+                ToneFlg = new byte[BlueProtocolBytes.ToneFlagBytes],
+                TitleFlg = new byte[BlueProtocolBytes.TitleFlagBytes]
+            },
+            Display = new Ac15UserDataDisplaySettings
+            {
+                DefaultOptionSetting = new byte[2],
+                DispTaikojukuDan = 1
+            }
         });
 
         Assert.False(response.ShouldSerializeTokkunTutorialFlg());
@@ -26,15 +32,21 @@ public sealed class BlueMapperTests
     [InlineData(7u)]
     public void UserDataMapper_Blue_MapsRawTokkunTutorialFlagWhenPresent(uint tokkunTutorialFlg)
     {
-        var response = UserDataMappers.Map(new CommonUserDataResponse
+        var response = UserDataMappers.Map(new Ac15UserDataResponse
         {
             Result = 1,
-            ReleaseSongFlg = new byte[BlueProtocolBytes.SongFlagBytes],
-            ToneFlg = new byte[BlueProtocolBytes.ToneFlagBytes],
-            TitleFlg = new byte[BlueProtocolBytes.TitleFlagBytes],
-            DefaultOptionSetting = new byte[2],
-            DispTaikojukuDan = 1,
-            TokkunTutorialFlg = tokkunTutorialFlg
+            SongFlags = new Ac15UserDataSongFlags
+            {
+                ReleaseSongFlg = new byte[BlueProtocolBytes.SongFlagBytes],
+                ToneFlg = new byte[BlueProtocolBytes.ToneFlagBytes],
+                TitleFlg = new byte[BlueProtocolBytes.TitleFlagBytes]
+            },
+            Display = new Ac15UserDataDisplaySettings
+            {
+                DefaultOptionSetting = new byte[2],
+                DispTaikojukuDan = 1
+            },
+            Tutorial = new Ac15UserDataTutorial(tokkunTutorialFlg, DifficultyTutorialFlg: null)
         });
 
         Assert.True(response.ShouldSerializeTokkunTutorialFlg());
@@ -47,10 +59,10 @@ public sealed class BlueMapperTests
     [InlineData(20001u)]
     public void UserDataMapper_Blue_FallsBackToSentinelOneForInvalidDispTaikojukuDan(uint dispTaikojukuDan)
     {
-        var response = UserDataMappers.Map(new CommonUserDataResponse
+        var response = UserDataMappers.Map(new Ac15UserDataResponse
         {
             Result = 1,
-            DispTaikojukuDan = dispTaikojukuDan
+            Display = new Ac15UserDataDisplaySettings { DispTaikojukuDan = dispTaikojukuDan }
         });
 
         Assert.True(response.ShouldSerializeDispTaikojukuDan());

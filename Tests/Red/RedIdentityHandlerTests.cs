@@ -101,17 +101,19 @@ public sealed class RedIdentityHandlerTests
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
 
-        var response = await handler.Handle(new UserDataQuery(3, GameEra.Red), CancellationToken.None);
+        var response = await handler.Handle(new Ac15UserDataQuery(3, GameEra.Red), CancellationToken.None);
         var wire = UserDataMappers.Map(response);
 
         Assert.Equal(1u, response.Result);
-        Assert.Equal(120u, response.TotalGetDonpoint);
-        Assert.Equal(30u, response.TotalUseDonpoint);
-        Assert.Equal(8u, response.RewardProgress);
-        Assert.Equal(2u, response.DifficultyTutorialFlg);
-        Assert.Equal(7u, response.TokkunTutorialFlg);
-        Assert.Equal([101u], response.AryFavoriteSongNoes);
-        Assert.Equal([102u], response.AryRecentSongNoes);
+        Assert.NotNull(response.Reward);
+        Assert.Equal(120u, response.Reward.TotalGetDonpoint);
+        Assert.Equal(30u, response.Reward.TotalUseDonpoint);
+        Assert.Equal(8u, response.Reward.RewardProgress);
+        Assert.NotNull(response.Tutorial);
+        Assert.Equal(2u, response.Tutorial.DifficultyTutorialFlg);
+        Assert.Equal(7u, response.Tutorial.TokkunTutorialFlg);
+        Assert.Equal([101u], response.SongLists.AryFavoriteSongNoes);
+        Assert.Equal([102u], response.SongLists.AryRecentSongNoes);
         Assert.Equal(120u, wire.TotalGetDonpoint);
         Assert.Equal(30u, wire.TotalUseDonpoint);
         Assert.Equal(8u, wire.RewardProgress);

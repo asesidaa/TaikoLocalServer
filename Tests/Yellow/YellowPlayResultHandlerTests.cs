@@ -603,21 +603,21 @@ public sealed class YellowPlayResultHandlerTests
             fixture.Catalog,
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
-        var userdata = await userdataHandler.Handle(new UserDataQuery(1, GameEra.Yellow), CancellationToken.None);
+        var userdata = await userdataHandler.Handle(new Ac15UserDataQuery(1, GameEra.Yellow), CancellationToken.None);
 
         Assert.Equal(1u, userdata.Result);
-        Assert.Contains(101u, userdata.AryFavoriteSongNoes);
-        Assert.Equal([101u], userdata.AryRecentSongNoes);
-        Assert.True(BitIsSet(userdata.ReleaseSongFlg, 104));
-        Assert.True(BitIsSet(userdata.ToneFlg, 4));
-        Assert.True(BitIsSet(userdata.TitleFlg, 10));
-        Assert.Equal(1u, userdata.CategJpopCnt);
-        Assert.Equal(1u, userdata.SongPushedCnt);
-        Assert.Equal(1u, userdata.SongFavoriteCnt);
-        Assert.Equal(1u, userdata.SongRecentCnt);
-        Assert.Equal(12u, userdata.PrevAreaCode);
-        Assert.Equal(4u, userdata.DifficultyPlayedCourse);
-        Assert.Equal(8u, userdata.DifficultyPlayedStar);
+        Assert.Contains(101u, userdata.SongLists.AryFavoriteSongNoes);
+        Assert.Equal([101u], userdata.SongLists.AryRecentSongNoes);
+        Assert.True(BitIsSet(userdata.SongFlags.ReleaseSongFlg, 104));
+        Assert.True(BitIsSet(userdata.SongFlags.ToneFlg, 4));
+        Assert.True(BitIsSet(userdata.SongFlags.TitleFlg, 10));
+        Assert.Equal(1u, userdata.Counters.CategJpopCnt);
+        Assert.Equal(1u, userdata.Counters.SongPushedCnt);
+        Assert.Equal(1u, userdata.Counters.SongFavoriteCnt);
+        Assert.Equal(1u, userdata.Counters.SongRecentCnt);
+        Assert.Equal(12u, userdata.Counters.PrevAreaCode);
+        Assert.Equal(4u, userdata.Display.DifficultyPlayedCourse);
+        Assert.Equal(8u, userdata.Display.DifficultyPlayedStar);
 
         var selfBestHandler = new GetSelfBestQueryHandler(
             fixture.Catalog,

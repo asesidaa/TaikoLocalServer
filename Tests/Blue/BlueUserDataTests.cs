@@ -26,17 +26,17 @@ public sealed class BlueUserDataTests
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
 
-        var response = await handler.Handle(new UserDataQuery(9, GameEra.Blue), CancellationToken.None);
+        var response = await handler.Handle(new Ac15UserDataQuery(9, GameEra.Blue), CancellationToken.None);
 
         Assert.Equal(1u, response.Result);
-        Assert.Equal(BlueProtocolBytes.SongFlagBytes, response.ReleaseSongFlg.Length);
+        Assert.Equal(BlueProtocolBytes.SongFlagBytes, response.SongFlags.ReleaseSongFlg.Length);
         foreach (var song in fixture.Catalog.Blue().MusicInfoFileOrder)
         {
-            Assert.True(BitIsSet(response.ReleaseSongFlg, song.SongNo), $"Expected song {song.SongNo} to be unlocked.");
+            Assert.True(BitIsSet(response.SongFlags.ReleaseSongFlg, song.SongNo), $"Expected song {song.SongNo} to be unlocked.");
         }
-        Assert.True(BitIsSet(response.ReleaseSongFlg, 104));
-        Assert.Equal([102u, 101u], response.AryFavoriteSongNoes.OrderByDescending(song => song).ToArray());
-        Assert.Equal([102u, 101u], response.AryRecentSongNoes);
+        Assert.True(BitIsSet(response.SongFlags.ReleaseSongFlg, 104));
+        Assert.Equal([102u, 101u], response.SongLists.AryFavoriteSongNoes.OrderByDescending(song => song).ToArray());
+        Assert.Equal([102u, 101u], response.SongLists.AryRecentSongNoes);
     }
 
     [Fact]
@@ -60,17 +60,17 @@ public sealed class BlueUserDataTests
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
 
-        var response = await handler.Handle(new UserDataQuery(1, GameEra.Blue), CancellationToken.None);
+        var response = await handler.Handle(new Ac15UserDataQuery(1, GameEra.Blue), CancellationToken.None);
 
-        Assert.Equal(BlueProtocolBytes.ToneFlagBytes, response.ToneFlg.Length);
-        Assert.Equal(BlueProtocolBytes.TitleFlagBytes, response.TitleFlg.Length);
-        Assert.True(BitIsSet(response.ToneFlg, 4));
-        Assert.True(BitIsSet(response.TitleFlg, 10));
-        Assert.False(response.IsTojiru);
-        Assert.Equal(2u, response.DispLevelTotal);
-        Assert.Equal(3u, response.DispLevelChassis);
-        Assert.Equal(4u, response.DispLevelSelf);
-        Assert.True(response.IsDevilBlue);
+        Assert.Equal(BlueProtocolBytes.ToneFlagBytes, response.SongFlags.ToneFlg.Length);
+        Assert.Equal(BlueProtocolBytes.TitleFlagBytes, response.SongFlags.TitleFlg.Length);
+        Assert.True(BitIsSet(response.SongFlags.ToneFlg, 4));
+        Assert.True(BitIsSet(response.SongFlags.TitleFlg, 10));
+        Assert.False(response.Display.IsTojiru);
+        Assert.Equal(2u, response.Display.DispLevelTotal);
+        Assert.Equal(3u, response.Display.DispLevelChassis);
+        Assert.Equal(4u, response.Display.DispLevelSelf);
+        Assert.True(response.ModeFlags!.IsDevil);
     }
 
     [Fact]
@@ -92,10 +92,10 @@ public sealed class BlueUserDataTests
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
 
-        var response = await handler.Handle(new UserDataQuery(1, GameEra.Blue), CancellationToken.None);
+        var response = await handler.Handle(new Ac15UserDataQuery(1, GameEra.Blue), CancellationToken.None);
 
-        Assert.Equal(102u, response.RecommendSong);
-        Assert.Equal(new List<uint> { 101, 102, 103 }, response.RecommendBestSong);
+        Assert.Equal(102u, response.Recommendations.RecommendSong);
+        Assert.Equal(new List<uint> { 101, 102, 103 }, response.Recommendations.RecommendBestSong);
     }
 
     [Fact]
@@ -120,9 +120,9 @@ public sealed class BlueUserDataTests
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
 
-        var response = await handler.Handle(new UserDataQuery(1, GameEra.Blue), CancellationToken.None);
+        var response = await handler.Handle(new Ac15UserDataQuery(1, GameEra.Blue), CancellationToken.None);
 
-        Assert.Equal(2u, response.DispTaikojukuDan);
+        Assert.Equal(2u, response.Display.DispTaikojukuDan);
     }
 
     [Fact]
@@ -134,10 +134,10 @@ public sealed class BlueUserDataTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateUserDataHandler(fixture);
 
-        var response = await handler.Handle(new UserDataQuery(1, GameEra.Blue), CancellationToken.None);
+        var response = await handler.Handle(new Ac15UserDataQuery(1, GameEra.Blue), CancellationToken.None);
         var wire = UserDataMappers.Map(response);
 
-        Assert.Null(response.TokkunTutorialFlg);
+        Assert.Null(response.Tutorial!.TokkunTutorialFlg);
         Assert.False(wire.ShouldSerializeTokkunTutorialFlg());
     }
 
@@ -152,10 +152,10 @@ public sealed class BlueUserDataTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateUserDataHandler(fixture);
 
-        var response = await handler.Handle(new UserDataQuery(1, GameEra.Blue), CancellationToken.None);
+        var response = await handler.Handle(new Ac15UserDataQuery(1, GameEra.Blue), CancellationToken.None);
         var wire = UserDataMappers.Map(response);
 
-        Assert.Equal(7u, response.TokkunTutorialFlg);
+        Assert.Equal(7u, response.Tutorial!.TokkunTutorialFlg);
         Assert.True(wire.ShouldSerializeTokkunTutorialFlg());
         Assert.Equal(7u, wire.TokkunTutorialFlg);
     }
@@ -178,11 +178,11 @@ public sealed class BlueUserDataTests
         var playResult = await playResultHandler.Handle(
             new UpdateAc15PlayResultCommand(request.Baid, GameEra.Blue, PlayResultMappers.Map(request)),
             CancellationToken.None);
-        var response = await userDataHandler.Handle(new UserDataQuery(1, GameEra.Blue), CancellationToken.None);
+        var response = await userDataHandler.Handle(new Ac15UserDataQuery(1, GameEra.Blue), CancellationToken.None);
         var wire = UserDataMappers.Map(response);
 
         Assert.Equal(1u, playResult);
-        Assert.Equal(7u, response.TokkunTutorialFlg);
+        Assert.Equal(7u, response.Tutorial!.TokkunTutorialFlg);
         Assert.True(wire.ShouldSerializeTokkunTutorialFlg());
         Assert.Equal(7u, wire.TokkunTutorialFlg);
     }

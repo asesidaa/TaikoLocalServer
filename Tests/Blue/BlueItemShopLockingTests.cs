@@ -20,10 +20,10 @@ public sealed class BlueItemShopLockingTests
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
 
-        var response = await handler.Handle(new UserDataQuery(1, GameEra.Blue), CancellationToken.None);
+        var response = await handler.Handle(new Ac15UserDataQuery(1, GameEra.Blue), CancellationToken.None);
 
-        Assert.False(HasBit(response.ReleaseSongFlg, 101));
-        Assert.False(HasBit(response.ToneFlg, 4));
+        Assert.False(HasBit(response.SongFlags.ReleaseSongFlg, 101));
+        Assert.False(HasBit(response.SongFlags.ToneFlg, 4));
     }
 
     [Fact]
@@ -45,10 +45,10 @@ public sealed class BlueItemShopLockingTests
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
 
-        var response = await handler.Handle(new UserDataQuery(1, GameEra.Blue), CancellationToken.None);
+        var response = await handler.Handle(new Ac15UserDataQuery(1, GameEra.Blue), CancellationToken.None);
 
-        Assert.True(HasBit(response.ReleaseSongFlg, 101));
-        Assert.True(HasBit(response.ToneFlg, 4));
+        Assert.True(HasBit(response.SongFlags.ReleaseSongFlg, 101));
+        Assert.True(HasBit(response.SongFlags.ToneFlg, 4));
     }
 
     [Fact]
@@ -177,11 +177,11 @@ public sealed class BlueItemShopLockingTests
             fixture.Catalog,
             NullLogger<ItemPurchaseCommandHandler>.Instance);
 
-        var lockedUserData = await userDataHandler.Handle(new UserDataQuery(1, GameEra.Blue), CancellationToken.None);
+        var lockedUserData = await userDataHandler.Handle(new Ac15UserDataQuery(1, GameEra.Blue), CancellationToken.None);
         var lockedBaid = await baidHandler.Handle(new Ac15BaidQuery(GameEra.Blue, "abc"), CancellationToken.None);
 
-        Assert.False(HasBit(lockedUserData.ReleaseSongFlg, 101));
-        Assert.False(HasBit(lockedUserData.ToneFlg, 4));
+        Assert.False(HasBit(lockedUserData.SongFlags.ReleaseSongFlg, 101));
+        Assert.False(HasBit(lockedUserData.SongFlags.ToneFlg, 4));
         Assert.False(HasBit(lockedBaid.CostumeFlags!.CostumeFlg1, 12));
 
         Assert.Equal(1u, (await purchaseHandler.Handle(
@@ -194,11 +194,11 @@ public sealed class BlueItemShopLockingTests
             new ItemPurchaseCommand(1, GameEra.Blue, 3, 3, 12, 1300),
             CancellationToken.None)).Result);
 
-        var unlockedUserData = await userDataHandler.Handle(new UserDataQuery(1, GameEra.Blue), CancellationToken.None);
+        var unlockedUserData = await userDataHandler.Handle(new Ac15UserDataQuery(1, GameEra.Blue), CancellationToken.None);
         var unlockedBaid = await baidHandler.Handle(new Ac15BaidQuery(GameEra.Blue, "abc"), CancellationToken.None);
 
-        Assert.True(HasBit(unlockedUserData.ReleaseSongFlg, 101));
-        Assert.True(HasBit(unlockedUserData.ToneFlg, 4));
+        Assert.True(HasBit(unlockedUserData.SongFlags.ReleaseSongFlg, 101));
+        Assert.True(HasBit(unlockedUserData.SongFlags.ToneFlg, 4));
         Assert.True(HasBit(unlockedBaid.CostumeFlags!.CostumeFlg1, 12));
     }
 

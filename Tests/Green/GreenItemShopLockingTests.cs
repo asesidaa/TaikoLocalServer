@@ -18,10 +18,10 @@ public sealed class GreenItemShopLockingTests
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
 
-        var response = await handler.Handle(new UserDataQuery(1, GameEra.Green), CancellationToken.None);
+        var response = await handler.Handle(new Ac15UserDataQuery(1, GameEra.Green), CancellationToken.None);
 
-        Assert.False(HasBit(response.ReleaseSongFlg, 101));
-        Assert.False(HasBit(response.ToneFlg, 4));
+        Assert.False(HasBit(response.SongFlags.ReleaseSongFlg, 101));
+        Assert.False(HasBit(response.SongFlags.ToneFlg, 4));
     }
 
     [Fact]
@@ -43,10 +43,10 @@ public sealed class GreenItemShopLockingTests
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
 
-        var response = await handler.Handle(new UserDataQuery(1, GameEra.Green), CancellationToken.None);
+        var response = await handler.Handle(new Ac15UserDataQuery(1, GameEra.Green), CancellationToken.None);
 
-        Assert.True(HasBit(response.ReleaseSongFlg, 101));
-        Assert.True(HasBit(response.ToneFlg, 4));
+        Assert.True(HasBit(response.SongFlags.ReleaseSongFlg, 101));
+        Assert.True(HasBit(response.SongFlags.ToneFlg, 4));
     }
 
     [Fact]

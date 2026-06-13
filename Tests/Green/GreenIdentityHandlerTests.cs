@@ -267,13 +267,13 @@ public sealed class GreenIdentityHandlerTests
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
 
-        var response = await handler.Handle(new UserDataQuery(9, GameEra.Green), CancellationToken.None);
+        var response = await handler.Handle(new Ac15UserDataQuery(9, GameEra.Green), CancellationToken.None);
 
         Assert.Equal((uint)1, response.Result);
-        Assert.Equal(128, response.ReleaseSongFlg.Length);
+        Assert.Equal(128, response.SongFlags.ReleaseSongFlg.Length);
         foreach (var song in fixture.Catalog.Green().MusicInfoFileOrder)
         {
-            Assert.True(BitIsSet(response.ReleaseSongFlg, song.SongNo), $"Expected song {song.SongNo} to be unlocked.");
+            Assert.True(BitIsSet(response.SongFlags.ReleaseSongFlg, song.SongNo), $"Expected song {song.SongNo} to be unlocked.");
         }
     }
 
@@ -294,10 +294,10 @@ public sealed class GreenIdentityHandlerTests
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
 
-        var response = await handler.Handle(new UserDataQuery(9, GameEra.Green), CancellationToken.None);
+        var response = await handler.Handle(new Ac15UserDataQuery(9, GameEra.Green), CancellationToken.None);
         var wire = UserDataMappers.Map(response);
 
-        Assert.Equal(1u, response.DispTaikojukuDan);
+        Assert.Equal(1u, response.Display.DispTaikojukuDan);
         Assert.True(wire.ShouldSerializeDispTaikojukuDan());
         Assert.Equal(1u, wire.DispTaikojukuDan);
     }
@@ -321,12 +321,12 @@ public sealed class GreenIdentityHandlerTests
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
 
-        var response = await handler.Handle(new UserDataQuery(1, GameEra.Green), CancellationToken.None);
+        var response = await handler.Handle(new Ac15UserDataQuery(1, GameEra.Green), CancellationToken.None);
 
-        Assert.Equal(7u, response.SongPushedCnt);
-        Assert.Equal(42u, response.SongFavoriteCnt);
-        Assert.Equal(99u, response.SongRecentCnt);
-        Assert.Equal(12u, response.CategJpopCnt);
+        Assert.Equal(7u, response.Counters.SongPushedCnt);
+        Assert.Equal(42u, response.Counters.SongFavoriteCnt);
+        Assert.Equal(99u, response.Counters.SongRecentCnt);
+        Assert.Equal(12u, response.Counters.CategJpopCnt);
     }
 
     [Fact]
@@ -346,13 +346,13 @@ public sealed class GreenIdentityHandlerTests
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
 
-        var response = await handler.Handle(new UserDataQuery(1, GameEra.Green), CancellationToken.None);
+        var response = await handler.Handle(new Ac15UserDataQuery(1, GameEra.Green), CancellationToken.None);
 
-        Assert.Equal(GreenProtocolBytes.ToneFlagBytes, response.ToneFlg.Length);
-        Assert.Equal(GreenProtocolBytes.TitleFlagBytes, response.TitleFlg.Length);
-        Assert.True(BitIsSet(response.ToneFlg, 4));
-        Assert.True(BitIsSet(response.TitleFlg, 10));
-        Assert.True(BitIsSet(response.TitleFlg, 131));
+        Assert.Equal(GreenProtocolBytes.ToneFlagBytes, response.SongFlags.ToneFlg.Length);
+        Assert.Equal(GreenProtocolBytes.TitleFlagBytes, response.SongFlags.TitleFlg.Length);
+        Assert.True(BitIsSet(response.SongFlags.ToneFlg, 4));
+        Assert.True(BitIsSet(response.SongFlags.TitleFlg, 10));
+        Assert.True(BitIsSet(response.SongFlags.TitleFlg, 131));
     }
 
     [Fact]
@@ -374,12 +374,12 @@ public sealed class GreenIdentityHandlerTests
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
 
-        var response = await handler.Handle(new UserDataQuery(1, GameEra.Green), CancellationToken.None);
+        var response = await handler.Handle(new Ac15UserDataQuery(1, GameEra.Green), CancellationToken.None);
 
-        Assert.False(response.IsTojiru);
-        Assert.Equal(2u, response.DispLevelTotal);
-        Assert.Equal(3u, response.DispLevelChassis);
-        Assert.Equal(4u, response.DispLevelSelf);
+        Assert.False(response.Display.IsTojiru);
+        Assert.Equal(2u, response.Display.DispLevelTotal);
+        Assert.Equal(3u, response.Display.DispLevelChassis);
+        Assert.Equal(4u, response.Display.DispLevelSelf);
     }
 
     [Fact]
@@ -404,10 +404,10 @@ public sealed class GreenIdentityHandlerTests
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
 
-        var response = await handler.Handle(new UserDataQuery(1, GameEra.Green), CancellationToken.None);
+        var response = await handler.Handle(new Ac15UserDataQuery(1, GameEra.Green), CancellationToken.None);
 
-        Assert.Equal(102u, response.RecommendSong);
-        Assert.Equal(new List<uint> { 101, 102, 103 }, response.RecommendBestSong);
+        Assert.Equal(102u, response.Recommendations.RecommendSong);
+        Assert.Equal(new List<uint> { 101, 102, 103 }, response.Recommendations.RecommendBestSong);
     }
 
     [Fact]
@@ -429,9 +429,9 @@ public sealed class GreenIdentityHandlerTests
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
 
-        var response = await handler.Handle(new UserDataQuery(1, GameEra.Green), CancellationToken.None);
+        var response = await handler.Handle(new Ac15UserDataQuery(1, GameEra.Green), CancellationToken.None);
 
-        Assert.Equal(new uint[] { 102, 103, 101 }, response.AryRecentSongNoes);
+        Assert.Equal(new uint[] { 102, 103, 101 }, response.SongLists.AryRecentSongNoes);
     }
 
     private static bool BitIsSet(byte[] source, uint id)

@@ -101,40 +101,40 @@ public sealed class YellowUserDataProtocolTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateUserDataHandler(fixture);
 
-        var response = await handler.Handle(new UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
+        var response = await handler.Handle(new Ac15UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
 
         Assert.Equal(1u, response.Result);
-        Assert.Equal(789u, response.SongHashVer);
-        Assert.Equal(Ac15EraProfiles.Yellow.Limits.SongFlagBytes, response.ReleaseSongFlg.Length);
-        Assert.True(BitIsSet(response.ReleaseSongFlg, 101));
-        Assert.True(BitIsSet(response.ReleaseSongFlg, 102));
-        Assert.False(BitIsSet(response.ReleaseSongFlg, 103));
-        Assert.True(BitIsSet(response.ReleaseSongFlg, 104));
-        Assert.True(BitIsSet(response.ToneFlg, 0));
-        Assert.False(BitIsSet(response.ToneFlg, 4));
-        Assert.True(BitIsSet(response.TitleFlg, 10));
-        Assert.Equal([101u, 102u], response.AryFavoriteSongNoes.Order().ToArray());
-        Assert.Equal([102u, 101u], response.AryRecentSongNoes);
-        Assert.Equal(102u, response.RecommendSong);
-        Assert.Equal(new List<uint> { 101, 102 }, response.RecommendBestSong);
-        Assert.Equal(2u, response.CategJpopCnt);
-        Assert.Equal(3u, response.SongFavoriteCnt);
-        Assert.Equal(4u, response.SongRecentCnt);
-        Assert.Equal(5u, response.TotalCreditCnt);
-        Assert.Equal(6u, response.PrevAreaCode);
-        Assert.Equal(7u, response.ConsecAreaCnt);
-        Assert.True(response.DefaultShinSetting);
-        Assert.Equal(8u, response.DispLevelTotal);
-        Assert.Equal(9u, response.DispLevelChassis);
-        Assert.Equal(10u, response.DispLevelSelf);
-        Assert.Equal(1u, response.DispTaikojukuDan);
-        Assert.Equal(11u, response.DifficultyPlayedCourse);
-        Assert.Equal(12u, response.DifficultyPlayedStar);
-        Assert.True(response.IsChallengeCompe);
-        Assert.False(response.IsTojiru);
-        Assert.True(response.IsDevilYellow);
-        Assert.True(response.IsExplainYellow);
-        Assert.Equal(77u, response.TokkunTutorialFlg);
+        Assert.Equal(789u, response.SongFlags.SongHashVer);
+        Assert.Equal(Ac15EraProfiles.Yellow.Limits.SongFlagBytes, response.SongFlags.ReleaseSongFlg.Length);
+        Assert.True(BitIsSet(response.SongFlags.ReleaseSongFlg, 101));
+        Assert.True(BitIsSet(response.SongFlags.ReleaseSongFlg, 102));
+        Assert.False(BitIsSet(response.SongFlags.ReleaseSongFlg, 103));
+        Assert.True(BitIsSet(response.SongFlags.ReleaseSongFlg, 104));
+        Assert.True(BitIsSet(response.SongFlags.ToneFlg, 0));
+        Assert.False(BitIsSet(response.SongFlags.ToneFlg, 4));
+        Assert.True(BitIsSet(response.SongFlags.TitleFlg, 10));
+        Assert.Equal([101u, 102u], response.SongLists.AryFavoriteSongNoes.Order().ToArray());
+        Assert.Equal([102u, 101u], response.SongLists.AryRecentSongNoes);
+        Assert.Equal(102u, response.Recommendations.RecommendSong);
+        Assert.Equal(new List<uint> { 101, 102 }, response.Recommendations.RecommendBestSong);
+        Assert.Equal(2u, response.Counters.CategJpopCnt);
+        Assert.Equal(3u, response.Counters.SongFavoriteCnt);
+        Assert.Equal(4u, response.Counters.SongRecentCnt);
+        Assert.Equal(5u, response.Counters.TotalCreditCnt);
+        Assert.Equal(6u, response.Counters.PrevAreaCode);
+        Assert.Equal(7u, response.Counters.ConsecAreaCnt);
+        Assert.True(response.Display.DefaultShinSetting);
+        Assert.Equal(8u, response.Display.DispLevelTotal);
+        Assert.Equal(9u, response.Display.DispLevelChassis);
+        Assert.Equal(10u, response.Display.DispLevelSelf);
+        Assert.Equal(1u, response.Display.DispTaikojukuDan);
+        Assert.Equal(11u, response.Display.DifficultyPlayedCourse);
+        Assert.Equal(12u, response.Display.DifficultyPlayedStar);
+        Assert.True(response.Display.IsChallengeCompe);
+        Assert.False(response.Display.IsTojiru);
+        Assert.True(response.ModeFlags!.IsDevil);
+        Assert.True(response.ModeFlags.IsExplain);
+        Assert.Equal(77u, response.Tutorial!.TokkunTutorialFlg);
 
         var wire = UserDataMappers.Map(response);
         Assert.True(wire.ShouldSerializeDispTaikojukuDan());
@@ -146,35 +146,49 @@ public sealed class YellowUserDataProtocolTests
     [Fact]
     public void UserDataMapper_Yellow_MapsSupportedFieldsAndOmitsAbsentTokkunTutorial()
     {
-        var common = new CommonUserDataResponse
+        var common = new Ac15UserDataResponse
         {
             Result = 1,
-            AryFavoriteSongNoes = [101, 102],
-            AryRecentSongNoes = [103],
-            SongHashVer = 789,
-            ReleaseSongFlg = new byte[Ac15EraProfiles.Yellow.Limits.SongFlagBytes],
-            OptionFlg = [1],
-            ToneFlg = new byte[Ac15EraProfiles.Yellow.Limits.ToneFlagBytes],
-            TitleFlg = new byte[Ac15EraProfiles.Yellow.Limits.TitleFlagBytes],
-            CategJpopCnt = 2,
-            SongFavoriteCnt = 3,
-            PrevAreaCode = 4,
-            RecommendSong = 5,
-            RecommendBestSong = [6, 7],
-            TotalCreditCnt = 8,
-            SongRecentCnt = 9,
-            DefaultOptionSetting = [10, 11],
-            DefaultShinSetting = true,
-            DispLevelTotal = 12,
-            DispLevelChassis = 13,
-            DispLevelSelf = 14,
-            DispTaikojukuDan = 0,
-            DifficultyPlayedCourse = 15,
-            DifficultyPlayedStar = 16,
-            IsChallengeCompe = true,
-            IsTojiru = true,
-            IsDevilYellow = true,
-            IsExplainYellow = true
+            SongLists = new Ac15UserDataSongLists
+            {
+                AryFavoriteSongNoes = [101, 102],
+                AryRecentSongNoes = [103]
+            },
+            SongFlags = new Ac15UserDataSongFlags
+            {
+                SongHashVer = 789,
+                ReleaseSongFlg = new byte[Ac15EraProfiles.Yellow.Limits.SongFlagBytes],
+                OptionFlg = [1],
+                ToneFlg = new byte[Ac15EraProfiles.Yellow.Limits.ToneFlagBytes],
+                TitleFlg = new byte[Ac15EraProfiles.Yellow.Limits.TitleFlagBytes]
+            },
+            Counters = new Ac15UserDataProfileCounters
+            {
+                CategJpopCnt = 2,
+                SongFavoriteCnt = 3,
+                PrevAreaCode = 4,
+                TotalCreditCnt = 8,
+                SongRecentCnt = 9
+            },
+            Recommendations = new Ac15UserDataRecommendations
+            {
+                RecommendSong = 5,
+                RecommendBestSong = [6, 7]
+            },
+            Display = new Ac15UserDataDisplaySettings
+            {
+                DefaultOptionSetting = [10, 11],
+                DefaultShinSetting = true,
+                DispLevelTotal = 12,
+                DispLevelChassis = 13,
+                DispLevelSelf = 14,
+                DispTaikojukuDan = 0,
+                DifficultyPlayedCourse = 15,
+                DifficultyPlayedStar = 16,
+                IsChallengeCompe = true,
+                IsTojiru = true
+            },
+            ModeFlags = new Ac15UserDataModeFlags(true, true)
         };
 
         var response = UserDataMappers.Map(common);
@@ -183,9 +197,9 @@ public sealed class YellowUserDataProtocolTests
         Assert.Equal([101u, 102u], response.AryFavoriteSongNoes);
         Assert.Equal([103u], response.AryRecentSongNoes);
         Assert.Equal(789u, response.SongHashVer);
-        Assert.Same(common.ReleaseSongFlg, response.HashReleaseSongFlg);
-        Assert.Same(common.ToneFlg, response.ToneFlg);
-        Assert.Same(common.TitleFlg, response.TitleFlg);
+        Assert.Same(common.SongFlags.ReleaseSongFlg, response.HashReleaseSongFlg);
+        Assert.Same(common.SongFlags.ToneFlg, response.ToneFlg);
+        Assert.Same(common.SongFlags.TitleFlg, response.TitleFlg);
         Assert.Equal(2u, response.CategJpopCnt);
         Assert.Equal(3u, response.SongFavoriteCnt);
         Assert.Equal(4u, response.PrevAreaCode);
@@ -214,15 +228,21 @@ public sealed class YellowUserDataProtocolTests
     [InlineData(7u)]
     public void UserDataMapper_Yellow_MapsRawTokkunTutorialFlagWhenPresent(uint tokkunTutorialFlg)
     {
-        var response = UserDataMappers.Map(new CommonUserDataResponse
+        var response = UserDataMappers.Map(new Ac15UserDataResponse
         {
             Result = 1,
-            ReleaseSongFlg = new byte[Ac15EraProfiles.Yellow.Limits.SongFlagBytes],
-            ToneFlg = new byte[Ac15EraProfiles.Yellow.Limits.ToneFlagBytes],
-            TitleFlg = new byte[Ac15EraProfiles.Yellow.Limits.TitleFlagBytes],
-            DefaultOptionSetting = new byte[2],
-            DispTaikojukuDan = 1,
-            TokkunTutorialFlg = tokkunTutorialFlg
+            SongFlags = new Ac15UserDataSongFlags
+            {
+                ReleaseSongFlg = new byte[Ac15EraProfiles.Yellow.Limits.SongFlagBytes],
+                ToneFlg = new byte[Ac15EraProfiles.Yellow.Limits.ToneFlagBytes],
+                TitleFlg = new byte[Ac15EraProfiles.Yellow.Limits.TitleFlagBytes]
+            },
+            Display = new Ac15UserDataDisplaySettings
+            {
+                DefaultOptionSetting = new byte[2],
+                DispTaikojukuDan = 1
+            },
+            Tutorial = new Ac15UserDataTutorial(tokkunTutorialFlg, DifficultyTutorialFlg: null)
         });
 
         Assert.True(response.ShouldSerializeTokkunTutorialFlg());
@@ -238,10 +258,10 @@ public sealed class YellowUserDataProtocolTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateUserDataHandler(fixture);
 
-        var response = await handler.Handle(new UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
+        var response = await handler.Handle(new Ac15UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
         var wire = UserDataMappers.Map(response);
 
-        Assert.Null(response.TokkunTutorialFlg);
+        Assert.Null(response.Tutorial!.TokkunTutorialFlg);
         Assert.False(wire.ShouldSerializeTokkunTutorialFlg());
     }
 
@@ -256,10 +276,10 @@ public sealed class YellowUserDataProtocolTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateUserDataHandler(fixture);
 
-        var response = await handler.Handle(new UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
+        var response = await handler.Handle(new Ac15UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
         var wire = UserDataMappers.Map(response);
 
-        Assert.Equal(7u, response.TokkunTutorialFlg);
+        Assert.Equal(7u, response.Tutorial!.TokkunTutorialFlg);
         Assert.True(wire.ShouldSerializeTokkunTutorialFlg());
         Assert.Equal(7u, wire.TokkunTutorialFlg);
         AssertNoTokkunHistorySurface(response);
@@ -282,11 +302,11 @@ public sealed class YellowUserDataProtocolTests
         var playResult = await playResultHandler.Handle(
             CreateTokkunPlayResult(5),
             CancellationToken.None);
-        var response = await userDataHandler.Handle(new UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
+        var response = await userDataHandler.Handle(new Ac15UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
         var wire = UserDataMappers.Map(response);
 
         Assert.Equal(1u, playResult);
-        Assert.Equal(7u, response.TokkunTutorialFlg);
+        Assert.Equal(7u, response.Tutorial!.TokkunTutorialFlg);
         Assert.True(wire.ShouldSerializeTokkunTutorialFlg());
         Assert.Equal(7u, wire.TokkunTutorialFlg);
         AssertNoTokkunHistorySurface(response);
@@ -328,10 +348,10 @@ public sealed class YellowUserDataProtocolTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateUserDataHandler(fixture);
 
-        var response = await handler.Handle(new UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
+        var response = await handler.Handle(new Ac15UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
         var wire = UserDataMappers.Map(response);
 
-        Assert.Equal(2u, response.DispTaikojukuDan);
+        Assert.Equal(2u, response.Display.DispTaikojukuDan);
         Assert.True(wire.ShouldSerializeDispTaikojukuDan());
         Assert.Equal(2u, wire.DispTaikojukuDan);
     }
@@ -395,10 +415,10 @@ public sealed class YellowUserDataProtocolTests
         await fixture.Context.SaveChangesAsync();
         var handler = CreateUserDataHandler(fixture);
 
-        var crossEraOnly = await handler.Handle(new UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
+        var crossEraOnly = await handler.Handle(new Ac15UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
 
-        Assert.False(BitIsSet(crossEraOnly.ReleaseSongFlg, 103));
-        Assert.False(BitIsSet(crossEraOnly.ToneFlg, 4));
+        Assert.False(BitIsSet(crossEraOnly.SongFlags.ReleaseSongFlg, 103));
+        Assert.False(BitIsSet(crossEraOnly.SongFlags.ToneFlg, 4));
 
         fixture.Context.YellowShopItemStates.AddRange(
             new YellowShopItemState
@@ -427,10 +447,10 @@ public sealed class YellowUserDataProtocolTests
             });
         await fixture.Context.SaveChangesAsync();
 
-        var yellowPurchased = await handler.Handle(new UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
+        var yellowPurchased = await handler.Handle(new Ac15UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
 
-        Assert.True(BitIsSet(yellowPurchased.ReleaseSongFlg, 103));
-        Assert.True(BitIsSet(yellowPurchased.ToneFlg, 4));
+        Assert.True(BitIsSet(yellowPurchased.SongFlags.ReleaseSongFlg, 103));
+        Assert.True(BitIsSet(yellowPurchased.SongFlags.ToneFlg, 4));
     }
 
     private static bool BitIsSet(byte[] source, uint id)

@@ -16,10 +16,10 @@ public sealed class GreenUserDataMapperTests
     [InlineData(20001u)]
     public void UserData_FallsBackToSentinelOneForInvalidDispTaikojukuDan(uint dispTaikojukuDan)
     {
-        var response = UserDataMappers.Map(new CommonUserDataResponse
+        var response = UserDataMappers.Map(new Ac15UserDataResponse
         {
             Result = 1,
-            DispTaikojukuDan = dispTaikojukuDan
+            Display = new Ac15UserDataDisplaySettings { DispTaikojukuDan = dispTaikojukuDan }
         });
 
         Assert.True(response.ShouldSerializeDispTaikojukuDan());
@@ -32,10 +32,10 @@ public sealed class GreenUserDataMapperTests
     [InlineData(20001u)]
     public void UserData_SerializesSentinelOneOnWireForInvalidDispTaikojukuDan(uint dispTaikojukuDan)
     {
-        var response = UserDataMappers.Map(new CommonUserDataResponse
+        var response = UserDataMappers.Map(new Ac15UserDataResponse
         {
             Result = 1,
-            DispTaikojukuDan = dispTaikojukuDan
+            Display = new Ac15UserDataDisplaySettings { DispTaikojukuDan = dispTaikojukuDan }
         });
 
         var payload = Serialize(response);
@@ -46,10 +46,10 @@ public sealed class GreenUserDataMapperTests
     [Fact]
     public void UserData_FallsBackToSentinelOneWhenDispTaikojukuDanAbsent()
     {
-        var response = UserDataMappers.Map(new CommonUserDataResponse
+        var response = UserDataMappers.Map(new Ac15UserDataResponse
         {
             Result = 1,
-            DispTaikojukuDan = null
+            Display = new Ac15UserDataDisplaySettings()
         });
 
         Assert.True(response.ShouldSerializeDispTaikojukuDan());
@@ -59,10 +59,10 @@ public sealed class GreenUserDataMapperTests
     [Fact]
     public void UserData_SerializesValidDispTaikojukuDanSlot()
     {
-        var response = UserDataMappers.Map(new CommonUserDataResponse
+        var response = UserDataMappers.Map(new Ac15UserDataResponse
         {
             Result = 1,
-            DispTaikojukuDan = 7
+            Display = new Ac15UserDataDisplaySettings { DispTaikojukuDan = 7 }
         });
 
         Assert.True(response.ShouldSerializeDispTaikojukuDan());
@@ -72,12 +72,15 @@ public sealed class GreenUserDataMapperTests
     [Fact]
     public void UserData_MapsGreenDisplayLevelFields()
     {
-        var response = UserDataMappers.Map(new CommonUserDataResponse
+        var response = UserDataMappers.Map(new Ac15UserDataResponse
         {
             Result = 1,
-            DispLevelTotal = 2,
-            DispLevelChassis = 3,
-            DispLevelSelf = 4
+            Display = new Ac15UserDataDisplaySettings
+            {
+                DispLevelTotal = 2,
+                DispLevelChassis = 3,
+                DispLevelSelf = 4
+            }
         });
 
         Assert.True(response.ShouldSerializeDispLevelTotal());
@@ -91,11 +94,14 @@ public sealed class GreenUserDataMapperTests
     [Fact]
     public void UserData_SerializesToneAndTitleFlagsOnWire()
     {
-        var response = UserDataMappers.Map(new CommonUserDataResponse
+        var response = UserDataMappers.Map(new Ac15UserDataResponse
         {
             Result = 1,
-            ToneFlg = BitsetCodec.Encode([0, 4], GreenProtocolBytes.ToneFlagBytes),
-            TitleFlg = BitsetCodec.Encode([10, 131], GreenProtocolBytes.TitleFlagBytes)
+            SongFlags = new Ac15UserDataSongFlags
+            {
+                ToneFlg = BitsetCodec.Encode([0, 4], GreenProtocolBytes.ToneFlagBytes),
+                TitleFlg = BitsetCodec.Encode([10, 131], GreenProtocolBytes.TitleFlagBytes)
+            }
         });
 
         var payload = Serialize(response);

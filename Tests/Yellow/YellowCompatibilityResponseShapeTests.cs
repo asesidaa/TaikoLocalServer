@@ -188,46 +188,60 @@ public sealed class YellowCompatibilityResponseShapeTests
             Compatibility = new Ac15BaidCompatibility("1", 14)
         };
 
-    private static CommonUserDataResponse CreateRepresentativeTokkunUserDataResponse()
+    private static Ac15UserDataResponse CreateRepresentativeTokkunUserDataResponse()
         => new()
         {
             Result = 1,
-            AryFavoriteSongNoes = [101, 102],
-            AryRecentSongNoes = [103],
-            SongHashVer = 789,
-            ReleaseSongFlg = new byte[32],
-            OptionFlg = [1],
-            ToneFlg = new byte[32],
-            TitleFlg = new byte[32],
-            CategJpopCnt = 2,
-            CategAnimeCnt = 3,
-            CategDoyoCnt = 4,
-            CategVarietyCnt = 5,
-            CategClassicCnt = 6,
-            CategGameCnt = 7,
-            CategNamcoCnt = 8,
-            CategVocaloidCnt = 9,
-            SongPushedCnt = 10,
-            SongFavoriteCnt = 11,
-            SongRecentCnt = 12,
-            TotalCreditCnt = 13,
-            PrevAreaCode = 14,
-            ConsecAreaCnt = 15,
-            RecommendSong = 16,
-            RecommendBestSong = [17, 18],
-            DispLevelTotal = 19,
-            DispLevelChassis = 20,
-            DispLevelSelf = 21,
-            DefaultOptionSetting = [22, 23],
-            DefaultShinSetting = true,
-            DispTaikojukuDan = 2,
-            DifficultyPlayedCourse = 24,
-            DifficultyPlayedStar = 25,
-            IsChallengeCompe = true,
-            IsTojiru = true,
-            IsDevilBlue = true,
-            IsDevilYellow = true,
-            TokkunTutorialFlg = 7
+            SongLists = new Ac15UserDataSongLists
+            {
+                AryFavoriteSongNoes = [101, 102],
+                AryRecentSongNoes = [103]
+            },
+            SongFlags = new Ac15UserDataSongFlags
+            {
+                SongHashVer = 789,
+                ReleaseSongFlg = new byte[32],
+                OptionFlg = [1],
+                ToneFlg = new byte[32],
+                TitleFlg = new byte[32]
+            },
+            Counters = new Ac15UserDataProfileCounters
+            {
+                CategJpopCnt = 2,
+                CategAnimeCnt = 3,
+                CategDoyoCnt = 4,
+                CategVarietyCnt = 5,
+                CategClassicCnt = 6,
+                CategGameCnt = 7,
+                CategNamcoCnt = 8,
+                CategVocaloidCnt = 9,
+                SongPushedCnt = 10,
+                SongFavoriteCnt = 11,
+                SongRecentCnt = 12,
+                TotalCreditCnt = 13,
+                PrevAreaCode = 14,
+                ConsecAreaCnt = 15
+            },
+            Recommendations = new Ac15UserDataRecommendations
+            {
+                RecommendSong = 16,
+                RecommendBestSong = [17, 18]
+            },
+            Display = new Ac15UserDataDisplaySettings
+            {
+                DispLevelTotal = 19,
+                DispLevelChassis = 20,
+                DispLevelSelf = 21,
+                DefaultOptionSetting = [22, 23],
+                DefaultShinSetting = true,
+                DispTaikojukuDan = 2,
+                DifficultyPlayedCourse = 24,
+                DifficultyPlayedStar = 25,
+                IsChallengeCompe = true,
+                IsTojiru = true
+            },
+            ModeFlags = new Ac15UserDataModeFlags(true, true),
+            Tutorial = new Ac15UserDataTutorial(7, null)
         };
 
     private static BlueWire.BAIDResponse ApplyBlueBaidControllerShape(BlueWire.BAIDResponse response)

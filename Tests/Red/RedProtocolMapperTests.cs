@@ -117,23 +117,25 @@ public sealed class RedProtocolMapperTests
     [Fact]
     public void UserDataMapper_Red_MapsDonPointFieldsToRedWire()
     {
-        var response = UserDataMappers.Map(new CommonUserDataResponse
+        var response = UserDataMappers.Map(new Ac15UserDataResponse
         {
             Result = 1,
-            ReleaseSongFlg = [1, 2],
-            ToneFlg = [3],
-            TitleFlg = [4],
-            AryFavoriteSongNoes = [101],
-            AryRecentSongNoes = [102],
-            TotalGetDonpoint = 120,
-            TotalUseDonpoint = 30,
-            RewardProgress = 8,
-            DifficultyTutorialFlg = 2,
-            TokkunTutorialFlg = 7,
-            IsDevilRed = true,
-            IsExplainRed = true,
-            DispTaikojukuDan = 1,
-            RecommendBestSong = [103]
+            SongFlags = new Ac15UserDataSongFlags
+            {
+                ReleaseSongFlg = [1, 2],
+                ToneFlg = [3],
+                TitleFlg = [4]
+            },
+            SongLists = new Ac15UserDataSongLists
+            {
+                AryFavoriteSongNoes = [101],
+                AryRecentSongNoes = [102]
+            },
+            Reward = new Ac15UserDataReward(120, 30, 8),
+            Tutorial = new Ac15UserDataTutorial(7, 2),
+            ModeFlags = new Ac15UserDataModeFlags(true, true),
+            Display = new Ac15UserDataDisplaySettings { DispTaikojukuDan = 1 },
+            Recommendations = new Ac15UserDataRecommendations { RecommendBestSong = [103] }
         });
 
         Assert.Equal(120u, response.TotalGetDonpoint);
