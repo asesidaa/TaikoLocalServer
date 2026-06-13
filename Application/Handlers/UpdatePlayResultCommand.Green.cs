@@ -1,4 +1,5 @@
 using TaikoLocalServer.Application.Ac15;
+using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Application.Handlers;
 
@@ -7,7 +8,7 @@ public partial class UpdatePlayResultCommandHandler
     private const uint GreenDanCostumeId = 36;
 
     private partial async ValueTask<uint> HandleGreen(
-        UpdatePlayResultCommand request,
+        UpdateAc15PlayResultCommand request,
         CancellationToken cancellationToken)
     {
         if (request.Baid == 0)
@@ -22,7 +23,7 @@ public partial class UpdatePlayResultCommandHandler
             return 1;
         }
 
-        var playResultData = request.PlayResultData;
+        var playResultData = Ac15PlayResultCommonBridge.ToCommon(request.PlayResultData);
         var saveData = await context.GetOrCreateGreenSaveDataAsync(request.Baid, cancellationToken);
         var green = gameDataService.Green();
         var activeShopSeason = green.ItemShopCatalog.ActiveSeason;

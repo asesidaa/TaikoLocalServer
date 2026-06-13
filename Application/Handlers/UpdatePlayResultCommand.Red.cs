@@ -1,4 +1,5 @@
 using TaikoLocalServer.Application.Ac15;
+using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Application.Handlers;
 
@@ -7,7 +8,7 @@ public partial class UpdatePlayResultCommandHandler
     private const uint RedDanCostumeId = 36;
 
     private partial async ValueTask<uint> HandleRed(
-        UpdatePlayResultCommand request,
+        UpdateAc15PlayResultCommand request,
         CancellationToken cancellationToken)
     {
         if (request.Baid == 0)
@@ -22,7 +23,7 @@ public partial class UpdatePlayResultCommandHandler
             return 1;
         }
 
-        var playResultData = request.PlayResultData;
+        var playResultData = Ac15PlayResultCommonBridge.ToCommon(request.PlayResultData);
         if (IsRedTokkunShaped(playResultData))
         {
             return await HandleRedTokkun(request.Baid, playResultData, cancellationToken);
