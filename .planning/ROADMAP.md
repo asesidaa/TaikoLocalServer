@@ -154,6 +154,17 @@ Plans:
 
 - [x] 20-04-PLAN.md - Phase 20 verification review and closeout
 
+### Phase 20.1: AC15 Capability DTO and Mapper Boundary Refactor (INSERTED)
+
+**Goal:** [Urgent work - to be planned]
+**Requirements**: TBD
+**Depends on:** Phase 20
+**Plans:** 0 plans
+
+Plans:
+
+- [ ] TBD (run /gsd-plan-phase 20.1 to break down)
+
 ### Phase 21: Older-AC15 ChallengeCompe Capability and Red Binding
 
 **Goal:** Define the shared older-AC15 ChallengeCompe capability and bind/prove it through Red evidence, with stateful behavior only after client/runtime proof defines the contract.

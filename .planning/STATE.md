@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Phase Summary
-status: phase-complete
-stopped_at: Phase 20 complete; ready for Phase 21 planning
-last_updated: "2026-06-13T00:00:00.000Z"
-last_activity: 2026-06-13
+status: planning
+stopped_at: Phase 20.1 context gathered; ready for planning
+last_updated: "2026-06-13T14:36:53.471Z"
+last_activity: 2026-06-13 -- Phase 20.1 context gathered
 progress:
-  total_phases: 5
-  completed_phases: 3
+  total_phases: 6
+  completed_phases: 2
   total_plans: 11
-  completed_plans: 11
-  percent: 60
+  completed_plans: 8
+  percent: 33
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-13)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Phase 21 - Older-AC15 ChallengeCompe Capability and Red Binding
+**Current focus:** Phase 20.1 - AC15 Capability DTO and Mapper Boundary Refactor
 
 ## Current Position
 
-Phase: 21
-Plan: Not started
-Status: Phase 20 complete; ready for Phase 21 planning
-Last activity: 2026-06-13 - Completed quick task 260613-ny9: Support older Red /v08r00 compatibility with old BAID wire shape
+Phase: 20.1 (AC15 Capability DTO and Mapper Boundary Refactor) - CONTEXT READY
+Plan: Not planned yet
+Status: Context gathered; ready for planning
+Last activity: 2026-06-13 -- Phase 20.1 context gathered
 
 ## Performance Metrics
 
@@ -113,6 +113,7 @@ Last activity: 2026-06-13 - Completed quick task 260613-ny9: Support older Red /
 - Phase 16.1 inserted after Phase 16 and completed before Phase 17: AC15 Mapperly Mapper Rewrite and Presence Semantics; includes `protogen +nullablevaluetype=yes` wire regeneration as a first-class refactor point.
 - Phase 16.2 inserted after Phase 16.1 and before Phase 17: AC15 Shared Core Simplification and Reuse Cleanup (URGENT)
 - Phase 17 completed v1.2 Yellow runtime verification and contract closeout from full automated verification plus user-confirmed RPCS3 smoke.
+- Phase 20.1 inserted after Phase 20: AC15 Capability DTO and Mapper Boundary Refactor (URGENT)
 
 ### Decisions
 
@@ -218,9 +219,9 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-13T00:00:00.000Z
-Stopped at: Phase 20 complete; ready for Phase 21 planning
-Resume file: None
+Last session: 2026-06-13T14:35:48.752Z
+Stopped at: Phase 20.1 context gathered; ready for planning
+Resume file: .planning/phases/20.1-ac15-capability-dto-and-mapper-boundary-refactor/20.1-CONTEXT.md
 
 ## Operator Next Steps
 
