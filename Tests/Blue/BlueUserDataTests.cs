@@ -176,7 +176,7 @@ public sealed class BlueUserDataTests
         request.TokkunTutorialFlg = 7;
 
         var playResult = await playResultHandler.Handle(
-            new UpdatePlayResultCommand(request.Baid, GameEra.Blue, PlayResultMappers.Map(request)),
+            new UpdateAc15PlayResultCommand(request.Baid, GameEra.Blue, PlayResultMappers.Map(request)),
             CancellationToken.None);
         var response = await userDataHandler.Handle(new UserDataQuery(1, GameEra.Blue), CancellationToken.None);
         var wire = UserDataMappers.Map(response);

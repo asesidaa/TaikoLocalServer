@@ -11,5 +11,6 @@ global using TaikoLocalServer.Adapters.GameProtocol.Yellow.Wire;
 global using TaikoLocalServer.Application.Ac15;
 global using TaikoLocalServer.Application.Common;
 global using TaikoLocalServer.Application.Dtos;
+global using TaikoLocalServer.Application.Dtos.Ac15;
 global using TaikoLocalServer.Application.Handlers;
 global using TaikoLocalServer.Domain.Enums;

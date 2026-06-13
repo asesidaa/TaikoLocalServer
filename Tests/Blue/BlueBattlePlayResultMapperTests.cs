@@ -12,11 +12,11 @@ public sealed class BlueBattlePlayResultMapperTests
         request.AryReleaseBattledata = CreateReleaseBattleData();
         request.AryStageInfoes.Add(CreateStage(101, 1, 0));
 
-        var common = PlayResultMappers.Map(request);
+        var envelope = PlayResultMappers.Map(request);
 
-        Assert.True(common.IsBattlePlayResult);
-        Assert.NotNull(common.BattleReleaseData);
-        Assert.Equal(19u, common.BattleReleaseData.AssignNextStageId);
+        Assert.NotNull(envelope.BlueBattle);
+        Assert.NotNull(envelope.BlueBattle!.ReleaseData);
+        Assert.Equal(19u, envelope.BlueBattle.ReleaseData!.AssignNextStageId);
     }
 
     [Fact]
@@ -25,13 +25,13 @@ public sealed class BlueBattlePlayResultMapperTests
         var request = CreateRequest();
         request.AryStageInfoes.Add(CreateStage(101, 1, 7, CreateBattleStageData()));
 
-        var common = PlayResultMappers.Map(request);
+        var envelope = PlayResultMappers.Map(request);
 
-        Assert.True(common.IsBattlePlayResult);
-        var stage = Assert.Single(common.AryStageInfoes);
-        Assert.NotNull(stage.BattleStageData);
+        Assert.NotNull(envelope.BlueBattle);
+        var stage = Assert.Single(envelope.BlueBattle!.Stages);
+        Assert.NotNull(stage.BlueBattleStage);
         Assert.Equal(7u, stage.StageMode);
-        Assert.Equal(12u, stage.BattleStageData.BattleStageId);
+        Assert.Equal(12u, stage.BlueBattleStage!.BattleStageId);
     }
 
     [Fact]
@@ -42,14 +42,14 @@ public sealed class BlueBattlePlayResultMapperTests
         request.AryReleaseBattledata = CreateReleaseBattleData();
         request.AryStageInfoes.Add(CreateStage(101, 4, 8, CreateBattleStageData()));
 
-        var common = PlayResultMappers.Map(request);
+        var envelope = PlayResultMappers.Map(request);
 
-        Assert.True(common.IsBattlePlayResult);
-        Assert.Equal(6u, common.PlayMode);
+        Assert.NotNull(envelope.BlueBattle);
+        Assert.Equal(6u, envelope.Metadata.PlayMode);
 
-        var stage = Assert.Single(common.AryStageInfoes);
+        var stage = Assert.Single(envelope.BlueBattle!.Stages);
         Assert.Equal(8u, stage.StageMode);
-        var battleStage = stage.BattleStageData;
+        var battleStage = stage.BlueBattleStage;
         Assert.NotNull(battleStage);
         Assert.Equal(3u, battleStage.SupportLv);
         Assert.Equal(12u, battleStage.BattleStageId);
@@ -71,7 +71,7 @@ public sealed class BlueBattlePlayResultMapperTests
         Assert.Equal(23u, npc.SpecialId3);
         Assert.Equal(6u, npc.BondsLv);
 
-        var release = common.BattleReleaseData;
+        var release = envelope.BlueBattle.ReleaseData;
         Assert.NotNull(release);
         Assert.Equal([101u, 102u], release.ReleaseInfoIds);
         Assert.Equal([2u, 3u], release.ReleaseBattleStageIds);

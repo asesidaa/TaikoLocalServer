@@ -36,10 +36,10 @@ public sealed class YellowWaiWaiTests
         };
         request.AryStageInfoes.Add(wireStage);
 
-        var common = PlayResultMappers.Map(request);
+        var envelope = PlayResultMappers.Map(request);
 
-        Assert.Equal(11u, common.WaiwaiTutorialFlg);
-        var stage = Assert.Single(common.AryStageInfoes);
+        Assert.Equal(11u, envelope.Profile.WaiwaiTutorialFlg);
+        var stage = Assert.Single(envelope.Normal!.Stages);
         Assert.Equal(4u, stage.WaiwaiResult);
         Assert.Equal(88u, stage.WaiwaiGauge);
     }

@@ -88,21 +88,25 @@ public sealed class RedProtocolMapperTests
         stage.AryChallengeIds.Add(new PlayResultRequest.StageData.ResultcompeData { CompeId = 42, TrackNo = 2 });
         request.AryStageInfoes.Add(stage);
 
-        var common = PlayResultMappers.Map(request);
+        var envelope = PlayResultMappers.Map(request);
 
-        Assert.Equal(25u, common.GetDonpoint);
-        Assert.Equal(4u, common.RewardPtn);
-        Assert.Equal(9u, common.RewardProgress);
-        Assert.Equal(2u, common.DifficultyTutorialFlg);
-        Assert.Equal(3u, common.DifficultyPlayedCourse);
-        Assert.Equal(8u, common.DifficultyPlayedStar);
-        Assert.Equal(7u, common.TokkunTutorialFlg);
-        Assert.NotNull(common.TokkunStageData);
-        Assert.Equal([101u, 102u, 101u], common.TokkunStageData!.TookunSongnoes);
-        var commonStage = Assert.Single(common.AryStageInfoes);
-        Assert.Equal(42u, Assert.Single(commonStage.AryChallengeIds).CompeId);
-        Assert.Equal(1u, commonStage.PlayDan);
-        Assert.Equal(80u, commonStage.SoulGauge);
+        Assert.Equal(25u, envelope.Profile.GetDonpoint);
+        Assert.Equal(4u, envelope.Profile.RewardPtn);
+        Assert.Equal(9u, envelope.Profile.RewardProgress);
+        Assert.Equal(2u, envelope.Profile.DifficultyTutorialFlg);
+        Assert.True(envelope.Profile.HasDifficultyPlayedCourse);
+        Assert.True(envelope.Profile.HasDifficultyPlayedStar);
+        Assert.Equal(3u, envelope.Profile.DifficultyPlayedCourse);
+        Assert.Equal(8u, envelope.Profile.DifficultyPlayedStar);
+        Assert.NotNull(envelope.Tokkun);
+        Assert.Equal(7u, envelope.Tokkun!.TutorialFlg);
+        Assert.NotNull(envelope.Tokkun.StageData);
+        Assert.Equal([101u, 102u, 101u], envelope.Tokkun.StageData!.TookunSongnoes);
+        var stageResult = Assert.Single(envelope.Normal!.Stages);
+        Assert.Equal(42u, Assert.Single(stageResult.ChallengeIds).CompeId);
+        Assert.Equal(1u, stageResult.PlayDan);
+        Assert.Equal(80u, stageResult.SoulGauge);
+        Assert.NotNull(envelope.ChallengeCompe);
     }
 
     [Fact]

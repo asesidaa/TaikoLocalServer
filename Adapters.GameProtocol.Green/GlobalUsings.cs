@@ -14,6 +14,7 @@ global using TaikoLocalServer.Adapters.GameProtocol.Shared.Controllers;
 global using TaikoLocalServer.Application.Abstractions;
 global using TaikoLocalServer.Application.Common;
 global using TaikoLocalServer.Application.Dtos;
+global using TaikoLocalServer.Application.Dtos.Ac15;
 global using TaikoLocalServer.Application.Handlers;
 global using TaikoLocalServer.Application.Settings;
 global using TaikoLocalServer.Contracts.AdminApi.ServerData;

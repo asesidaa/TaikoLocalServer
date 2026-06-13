@@ -653,7 +653,7 @@ public sealed class BluePlayResultHandlerTests
             }
         });
 
-    private static UpdatePlayResultCommand CreateBlueCommand(PlayResultRequest request)
+    private static UpdateAc15PlayResultCommand CreateBlueCommand(PlayResultRequest request)
         => new(request.Baid, GameEra.Blue, PlayResultMappers.Map(request));
 
     private static PlayResultRequest CreateTokkunRequest(uint baid) => new()

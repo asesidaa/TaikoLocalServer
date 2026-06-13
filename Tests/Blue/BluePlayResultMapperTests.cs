@@ -35,26 +35,26 @@ public sealed class BluePlayResultMapperTests
         };
         request.AryStageInfoes.Add(CreateStage(101, 1, 0));
 
-        var common = PlayResultMappers.Map(request);
+        var envelope = PlayResultMappers.Map(request);
 
-        Assert.Equal(1u, common.Baid);
-        Assert.Equal("20260528120000", common.PlayDatetime);
-        Assert.Equal([104u], common.ReleaseSongNoes);
-        Assert.Equal([4u], common.GetToneNoes);
-        Assert.Equal([1u], common.GetCostumeNo1s);
-        Assert.Equal([2u], common.GetCostumeNo2s);
-        Assert.Equal([3u], common.GetCostumeNo3s);
-        Assert.Equal([4u], common.GetCostumeNo4s);
-        Assert.Equal([5u], common.GetCostumeNo5s);
-        Assert.Equal([10u], common.GetTitleNoes);
-        Assert.Equal(1u, common.ItemshopTutorialFlg);
-        Assert.True(common.IsDevil);
-        Assert.True(common.IsExplain);
-        Assert.True(common.HasDifficultyPlayedCourse);
-        Assert.True(common.HasDifficultyPlayedStar);
-        Assert.True(common.HasAryCurrentCostume);
-        Assert.Equal(11u, common.AryCurrentCostume.Costume1);
-        var stage = Assert.Single(common.AryStageInfoes);
+        Assert.Equal(1u, envelope.Metadata.Baid);
+        Assert.Equal("20260528120000", envelope.Metadata.PlayDatetime);
+        Assert.Equal([104u], envelope.Profile.ReleaseSongNoes);
+        Assert.Equal([4u], envelope.Profile.GetToneNoes);
+        Assert.Equal([1u], envelope.Profile.GetCostumeNo1s);
+        Assert.Equal([2u], envelope.Profile.GetCostumeNo2s);
+        Assert.Equal([3u], envelope.Profile.GetCostumeNo3s);
+        Assert.Equal([4u], envelope.Profile.GetCostumeNo4s);
+        Assert.Equal([5u], envelope.Profile.GetCostumeNo5s);
+        Assert.Equal([10u], envelope.Profile.GetTitleNoes);
+        Assert.Equal(1u, envelope.Profile.ItemshopTutorialFlg);
+        Assert.True(envelope.Profile.IsDevil);
+        Assert.True(envelope.Profile.IsExplain);
+        Assert.True(envelope.Profile.HasDifficultyPlayedCourse);
+        Assert.True(envelope.Profile.HasDifficultyPlayedStar);
+        Assert.True(envelope.Profile.HasAryCurrentCostume);
+        Assert.Equal(11u, envelope.Profile.AryCurrentCostume.Costume1);
+        var stage = Assert.Single(envelope.Normal!.Stages);
         Assert.Equal(101u, stage.SongNo);
         Assert.Equal(0u, stage.StageMode);
         Assert.True(stage.IsPushed);
@@ -76,17 +76,18 @@ public sealed class BluePlayResultMapperTests
             TokkunJumpCnt = 6
         };
 
-        var common = PlayResultMappers.Map(request);
+        var envelope = PlayResultMappers.Map(request);
 
-        Assert.True(common.IsTokkunPlayResult);
-        Assert.Equal(1u, common.TokkunTutorialFlg);
-        Assert.NotNull(common.TokkunStageData);
-        Assert.Equal("20260528120000", common.TokkunStageData.BanacoinDatetime);
-        Assert.Equal(3u, common.TokkunStageData.TokkunSongCnt);
-        Assert.Equal([101u, 102u, 103u], common.TokkunStageData.TookunSongnoes);
-        Assert.Equal(4u, common.TokkunStageData.TokkunSpeedchangeCnt);
-        Assert.Equal(5u, common.TokkunStageData.TokkunAutoplayCnt);
-        Assert.Equal(6u, common.TokkunStageData.TokkunJumpCnt);
+        Assert.Equal(TokkunPlayMode, envelope.Metadata.PlayMode);
+        Assert.NotNull(envelope.Tokkun);
+        Assert.Equal(1u, envelope.Tokkun!.TutorialFlg);
+        Assert.NotNull(envelope.Tokkun.StageData);
+        Assert.Equal("20260528120000", envelope.Tokkun.StageData!.BanacoinDatetime);
+        Assert.Equal(3u, envelope.Tokkun.StageData.TokkunSongCnt);
+        Assert.Equal([101u, 102u, 103u], envelope.Tokkun.StageData.TookunSongnoes);
+        Assert.Equal(4u, envelope.Tokkun.StageData.TokkunSpeedchangeCnt);
+        Assert.Equal(5u, envelope.Tokkun.StageData.TokkunAutoplayCnt);
+        Assert.Equal(6u, envelope.Tokkun.StageData.TokkunJumpCnt);
     }
 
     [Fact]
@@ -95,10 +96,10 @@ public sealed class BluePlayResultMapperTests
         var request = CreateRequest();
         request.PlayMode = TokkunPlayMode;
 
-        var common = PlayResultMappers.Map(request);
+        var envelope = PlayResultMappers.Map(request);
 
-        Assert.True(common.IsTokkunPlayResult);
-        Assert.Null(common.TokkunStageData);
+        Assert.Equal(TokkunPlayMode, envelope.Metadata.PlayMode);
+        Assert.Null(envelope.Tokkun);
     }
 
     [Fact]
@@ -116,16 +117,16 @@ public sealed class BluePlayResultMapperTests
             TokkunJumpCnt = 6
         };
 
-        var common = PlayResultMappers.Map(request);
+        var envelope = PlayResultMappers.Map(request);
 
-        Assert.False(common.IsTokkunPlayResult);
-        Assert.NotNull(common.TokkunStageData);
-        Assert.Equal("20260528120000", common.TokkunStageData.BanacoinDatetime);
-        Assert.Equal(3u, common.TokkunStageData.TokkunSongCnt);
-        Assert.Equal([101u, 102u, 101u], common.TokkunStageData.TookunSongnoes);
-        Assert.Equal(4u, common.TokkunStageData.TokkunSpeedchangeCnt);
-        Assert.Equal(5u, common.TokkunStageData.TokkunAutoplayCnt);
-        Assert.Equal(6u, common.TokkunStageData.TokkunJumpCnt);
+        Assert.Equal(0u, envelope.Metadata.PlayMode);
+        Assert.NotNull(envelope.Tokkun);
+        Assert.Equal("20260528120000", envelope.Tokkun!.StageData!.BanacoinDatetime);
+        Assert.Equal(3u, envelope.Tokkun.StageData.TokkunSongCnt);
+        Assert.Equal([101u, 102u, 101u], envelope.Tokkun.StageData.TookunSongnoes);
+        Assert.Equal(4u, envelope.Tokkun.StageData.TokkunSpeedchangeCnt);
+        Assert.Equal(5u, envelope.Tokkun.StageData.TokkunAutoplayCnt);
+        Assert.Equal(6u, envelope.Tokkun.StageData.TokkunJumpCnt);
     }
 
     [Fact]
@@ -134,11 +135,11 @@ public sealed class BluePlayResultMapperTests
         var request = CreateRequest();
         request.TokkunTutorialFlg = 1;
 
-        var common = PlayResultMappers.Map(request);
+        var envelope = PlayResultMappers.Map(request);
 
-        Assert.False(common.IsTokkunPlayResult);
-        Assert.Equal(1u, common.TokkunTutorialFlg);
-        Assert.Null(common.TokkunStageData);
+        Assert.NotNull(envelope.Tokkun);
+        Assert.Equal(1u, envelope.Tokkun!.TutorialFlg);
+        Assert.Null(envelope.Tokkun.StageData);
     }
 
     [Fact]
@@ -161,14 +162,13 @@ public sealed class BluePlayResultMapperTests
         };
         request.AryStageInfoes.Add(CreateStage(101, 1, 0, includeBattle: true));
 
-        var common = PlayResultMappers.Map(request);
+        var envelope = PlayResultMappers.Map(request);
 
-        Assert.True(common.IsTokkunPlayResult);
-        Assert.True(common.IsBattlePlayResult);
-        Assert.NotNull(common.TokkunStageData);
-        Assert.Equal([101u], common.TokkunStageData.TookunSongnoes);
-        Assert.Single(common.AryStageInfoes);
-        Assert.Equal(101u, common.AryStageInfoes[0].SongNo);
+        Assert.NotNull(envelope.Tokkun);
+        Assert.NotNull(envelope.BlueBattle);
+        Assert.Equal([101u], envelope.Tokkun!.StageData!.TookunSongnoes);
+        Assert.Single(envelope.BlueBattle!.Stages);
+        Assert.Equal(101u, envelope.BlueBattle.Stages[0].SongNo);
     }
 
     [Fact]

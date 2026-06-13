@@ -32,9 +32,9 @@ public sealed class GreenPlayResultMapperTests
             SupportLevel = 0
         });
 
-        var common = PlayResultMappers.Map(request);
+        var envelope = PlayResultMappers.Map(request);
 
-        var stage = Assert.Single(common.AryStageInfoes);
+        var stage = Assert.Single(envelope.Normal!.Stages);
         Assert.Equal(1u, stage.StageMode);
         Assert.True(stage.IsPapamama);
     }
@@ -67,9 +67,9 @@ public sealed class GreenPlayResultMapperTests
             SupportLevel = 0
         });
 
-        var common = PlayResultMappers.Map(request);
+        var envelope = PlayResultMappers.Map(request);
 
-        Assert.Null(Assert.Single(common.AryStageInfoes).PlayDan);
+        Assert.Null(Assert.Single(envelope.Normal!.Stages).PlayDan);
     }
 
     [Fact]
@@ -100,9 +100,9 @@ public sealed class GreenPlayResultMapperTests
             SupportLevel = 0
         });
 
-        var common = PlayResultMappers.Map(request);
+        var envelope = PlayResultMappers.Map(request);
 
-        Assert.Equal(7u, Assert.Single(common.AryStageInfoes).PlayDan);
+        Assert.Equal(7u, Assert.Single(envelope.Normal!.Stages).PlayDan);
     }
 
     [Fact]
@@ -133,9 +133,9 @@ public sealed class GreenPlayResultMapperTests
             SupportLevel = 0
         });
 
-        var common = PlayResultMappers.Map(request);
+        var envelope = PlayResultMappers.Map(request);
 
-        Assert.True(Assert.Single(common.AryStageInfoes).IsPushed);
+        Assert.True(Assert.Single(envelope.Normal!.Stages).IsPushed);
     }
 
     private static PlayResultDataRequest CreateRequest() => new()

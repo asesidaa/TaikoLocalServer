@@ -9,10 +9,10 @@ public class PlayResultController : BaseProtocolController<PlayResultController>
     public async Task<IActionResult> PlayResult([FromBody] PlayResultRequest request)
     {
         Logger.LogInformation("Blue PlayResult request: {@Request}", request);
-        var common = PlayResultMappers.Map(request);
+        var ac15 = PlayResultMappers.Map(request);
 
         var result = await Mediator.Send(
-            new UpdatePlayResultCommand(request.Baid, GameEra.Blue, common),
+            new UpdateAc15PlayResultCommand(request.Baid, GameEra.Blue, ac15),
             HttpContext.RequestAborted);
 
         return Ok(PlayResultMappers.Map(result));

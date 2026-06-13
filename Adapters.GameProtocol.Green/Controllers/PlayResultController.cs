@@ -15,7 +15,7 @@ public class PlayResultController : BaseProtocolController<PlayResultController>
             request.PlayresultData?.Length ?? 0,
             GreenPlayResultPayloadDecoder.HexPreview(request.PlayresultData ?? []));
 
-        CommonPlayResultData commonRequest;
+        Ac15PlayResultEnvelope ac15Request;
         try
         {
             var decoded = GreenPlayResultPayloadDecoder.Decode(request.PlayresultData ?? []);
@@ -23,20 +23,20 @@ public class PlayResultController : BaseProtocolController<PlayResultController>
                 "Green PlayResult payload decoded as {Format}, decoded_bytes={DecodedBytes}",
                 decoded.Format,
                 decoded.DecodedBytes);
-            commonRequest = PlayResultMappers.Map(decoded.Request);
-            if (commonRequest.Baid != 0 && commonRequest.Baid != request.BaidConf)
+            ac15Request = PlayResultMappers.Map(decoded.Request);
+            if (ac15Request.Metadata.Baid != 0 && ac15Request.Metadata.Baid != request.BaidConf)
             {
                 Logger.LogWarning(
                     "Rejecting Green PlayResult baid mismatch: outer={OuterBaid}, inner={InnerBaid}",
                     request.BaidConf,
-                    commonRequest.Baid);
+                    ac15Request.Metadata.Baid);
                 return Ok(new PlayResultResponse { Result = 0 });
             }
 
             Logger.LogInformation(
-                "Green PlayResult received dump: wire={@Request} mapped_common={@Common}",
+                "Green PlayResult received dump: wire={@Request} mapped_ac15={@Ac15}",
                 decoded.Request,
-                commonRequest);
+                ac15Request);
         }
         catch (GreenPlayResultPayloadDecodeException ex)
         {
@@ -53,7 +53,7 @@ public class PlayResultController : BaseProtocolController<PlayResultController>
         }
 
         var result = await Mediator.Send(
-            new UpdatePlayResultCommand(request.BaidConf, GameEra.Green, commonRequest),
+            new UpdateAc15PlayResultCommand(request.BaidConf, GameEra.Green, ac15Request),
             HttpContext.RequestAborted);
 
         return Ok(PlayResultMappers.Map(result));

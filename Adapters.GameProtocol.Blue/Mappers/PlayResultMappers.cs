@@ -5,110 +5,180 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Blue.Mappers;
 [Mapper]
 public static partial class PlayResultMappers
 {
-    [MapPropertyFromSource(nameof(CommonPlayResultData.HasAryCurrentCostume), Use = nameof(HasAryCurrentCostume))]
-    [MapPropertyFromSource(nameof(CommonPlayResultData.HasDifficultyPlayedCourse), Use = nameof(HasDifficultyPlayedCourse))]
-    [MapPropertyFromSource(nameof(CommonPlayResultData.HasDifficultyPlayedStar), Use = nameof(HasDifficultyPlayedStar))]
-    [MapProperty(nameof(PlayResultRequest.Reserved), nameof(CommonPlayResultData.Reserved), Use = nameof(MapBytes))]
-    [MapProperty(nameof(PlayResultRequest.ContentInfo), nameof(CommonPlayResultData.ContentInfo), Use = nameof(MapBytes))]
-    [MapProperty(nameof(PlayResultRequest.AryCollaboInfoes), nameof(CommonPlayResultData.AryCollaboInfo))]
-    [MapProperty(nameof(PlayResultRequest.AryTokkunstageInfo), nameof(CommonPlayResultData.TokkunStageData), Use = nameof(MapTokkunStageData))]
-    [MapProperty(nameof(PlayResultRequest.AryReleaseBattledata), nameof(CommonPlayResultData.BattleReleaseData), Use = nameof(MapBattleReleaseData))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.Title))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.TitleplateId))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.CollaborationId))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.DanId))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.SoulGaugeTotal))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.ComboCntTotal))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.IsNotRecordedDan))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.UraReleaseSongNoes))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.GetGenericInfoNoes))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.DifficultyPlayedSort))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.IsRandomUsePlay))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.InputMedian))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.InputVariance))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.IsTokkunPlayResult))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.GhostReleaseData))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.GhostUpdatePerfData))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.GhostUpdateRankData))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.IsBattlePlayResult))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.GetDonpoint))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.RewardPtn))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.RewardProgress))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.DifficultyTutorialFlg))]
-    public static partial CommonPlayResultData Map(PlayResultRequest request);
+    public static Ac15PlayResultEnvelope Map(PlayResultRequest request)
+    {
+        var stages = request.AryStageInfoes.Select(MapStage).ToList();
+        return new Ac15PlayResultEnvelope(
+            Metadata: MapMetadata(request),
+            Profile: MapProfile(request),
+            Normal: stages.Count == 0 ? null : new Ac15NormalPlayResult(stages),
+            Dani: new Ac15DaniPlayResult(request.DanResult.GetValueOrDefault(), ComboCntTotal: 0, stages),
+            Tokkun: MapTokkun(request),
+            BlueBattle: MapBlueBattle(request, stages),
+            GreenGhost: null,
+            ChallengeCompe: MapChallengeCompe(stages));
+    }
 
     public static PlayResultResponse Map(uint result)
         => new() { Result = result };
 
-    [MapProperty(nameof(PlayResultRequest.StageData.OptionFlg), nameof(CommonPlayResultData.StageData.OptionFlg), Use = nameof(MapBytes))]
-    [MapProperty(nameof(PlayResultRequest.StageData.ToneFlg), nameof(CommonPlayResultData.StageData.ToneFlg), Use = nameof(MapBytes))]
-    [MapProperty(nameof(PlayResultRequest.StageData.PlayDan), nameof(CommonPlayResultData.StageData.PlayDan), Use = nameof(MapPlayDan))]
-    [MapProperty(nameof(PlayResultRequest.StageData.AryBattlestagedata), nameof(CommonPlayResultData.StageData.BattleStageData), Use = nameof(MapBattleStageData))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.StageData.ScoreRate))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.StageData.ScoreRank))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.StageData.SupportLevel))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.StageData.StarLevel))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.StageData.IsWin))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.StageData.ArySectionDatas))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.StageData.HitCount))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.StageData.GhostStageData))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.StageData.NotesPosition))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.StageData.IsVoiceOn))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.StageData.IsSkipOn))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.StageData.IsSkipUse))]
-    [MapperIgnoreTarget(nameof(CommonPlayResultData.StageData.IsRandomUseStage))]
-    private static partial CommonPlayResultData.StageData MapStage(PlayResultRequest.StageData stage);
+    private static Ac15PlayResultMetadata MapMetadata(PlayResultRequest request)
+        => new(
+            request.Baid,
+            request.ChassisId ?? string.Empty,
+            request.ShopId ?? string.Empty,
+            request.PlayDatetime ?? string.Empty,
+            request.IsRight,
+            request.CardType,
+            request.IsTwoPlayers,
+            request.PlayMode,
+            request.AreaCode,
+            MapBytes(request.Reserved),
+            request.Accesstoken ?? string.Empty,
+            MapBytes(request.ContentInfo));
 
-    [MapProperty(nameof(PlayResultRequest.CostumeData.Costume1), nameof(CommonPlayResultData.CostumeData.Costume1))]
-    [MapProperty(nameof(PlayResultRequest.CostumeData.Costume2), nameof(CommonPlayResultData.CostumeData.Costume2))]
-    [MapProperty(nameof(PlayResultRequest.CostumeData.Costume3), nameof(CommonPlayResultData.CostumeData.Costume3))]
-    [MapProperty(nameof(PlayResultRequest.CostumeData.Costume4), nameof(CommonPlayResultData.CostumeData.Costume4))]
-    [MapProperty(nameof(PlayResultRequest.CostumeData.Costume5), nameof(CommonPlayResultData.CostumeData.Costume5))]
-    private static partial CommonPlayResultData.CostumeData MapCostumeData(PlayResultRequest.CostumeData costume);
+    private static Ac15ProfileMutationFacts MapProfile(PlayResultRequest request)
+        => Ac15ProfileMutationFacts.Empty with
+        {
+            AreaCode = request.AreaCode,
+            GetDonmedal = request.GetDonmedal,
+            GetKatsumedal = request.GetKatsumedal,
+            ItemshopTutorialFlg = request.ItemshopTutorialFlg,
+            WaiwaiTutorialFlg = request.WaiwaiTutorialFlg,
+            IsDevil = request.IsDevil,
+            IsExplain = request.IsExplain,
+            HasDifficultyPlayedCourse = request.DifficultyPlayedCourse is not null,
+            DifficultyPlayedCourse = request.DifficultyPlayedCourse.GetValueOrDefault(),
+            HasDifficultyPlayedStar = request.DifficultyPlayedStar is not null,
+            DifficultyPlayedStar = request.DifficultyPlayedStar.GetValueOrDefault(),
+            HasAryCurrentCostume = request.AryCurrentCostume is not null,
+            AryCurrentCostume = MapCostume(request.AryCurrentCostume),
+            ReleaseSongNoes = MapUIntList(request.ReleaseSongNoes),
+            GetToneNoes = MapUIntList(request.GetToneNoes),
+            GetCostumeNo1s = MapUIntList(request.GetCostumeNo1s),
+            GetCostumeNo2s = MapUIntList(request.GetCostumeNo2s),
+            GetCostumeNo3s = MapUIntList(request.GetCostumeNo3s),
+            GetCostumeNo4s = MapUIntList(request.GetCostumeNo4s),
+            GetCostumeNo5s = MapUIntList(request.GetCostumeNo5s),
+            GetTitleNoes = MapUIntList(request.GetTitleNoes)
+        };
 
-    [MapProperty(nameof(PlayResultRequest.TokkunstageData.BanacoinDatetime), nameof(CommonPlayResultData.TokkunStageDataDto.BanacoinDatetime), Use = nameof(MapString))]
-    private static partial CommonPlayResultData.TokkunStageDataDto MapTokkunStageDataCore(
-        PlayResultRequest.TokkunstageData data);
+    private static Ac15StageResult MapStage(PlayResultRequest.StageData stage)
+        => new()
+        {
+            SongNo = stage.SongNo,
+            Level = stage.Level,
+            PlayResult = stage.PlayResult.GetValueOrDefault(),
+            PlayScore = stage.PlayScore.GetValueOrDefault(),
+            GoodCnt = stage.GoodCnt,
+            OkCnt = stage.OkCnt,
+            NgCnt = stage.NgCnt,
+            PoundCnt = stage.PoundCnt,
+            ComboCnt = stage.ComboCnt,
+            HitCnt = stage.HitCnt.GetValueOrDefault(),
+            OptionFlg = MapBytes(stage.OptionFlg),
+            ToneFlg = MapBytes(stage.ToneFlg),
+            MusicCateg = stage.MusicCateg,
+            IsFavorite = stage.IsFavorite,
+            IsRecent = stage.IsRecent,
+            SelectedFolderId = stage.SelectedFolderId,
+            StageMode = stage.StageMode.GetValueOrDefault(),
+            IsPapamama = stage.IsPapamama,
+            IsPushed = stage.IsPushed,
+            SoulGauge = stage.SoulGauge,
+            PlayDan = MapPlayDan(stage.PlayDan),
+            WaiwaiResult = stage.WaiwaiResult,
+            WaiwaiGauge = stage.WaiwaiGauge,
+            BlueBattleStage = MapBattleStageData(stage.AryBattlestagedata),
+            ChallengeIds = MapCompeList(stage.AryChallengeIds),
+            UserCompeIds = MapCompeList(stage.AryUserCompeIds),
+            BngCompeIds = MapCompeList(stage.AryBngCompeIds)
+        };
 
-    [MapProperty(nameof(PlayResultRequest.StageData.BattleStageData.NpcData), nameof(CommonPlayResultData.BattleStageData.NpcData), Use = nameof(MapBattleNpcData))]
-    private static partial CommonPlayResultData.BattleStageData MapBattleStageDataCore(
-        PlayResultRequest.StageData.BattleStageData data);
+    private static partial Ac15CostumeFacts MapCostumeData(PlayResultRequest.CostumeData costume);
 
-    [MapProperty(nameof(PlayResultRequest.StageData.BattleStageData.BattleNpcData.AcquiredExp), nameof(CommonPlayResultData.BattleNpcData.AcquiredExp), Use = nameof(MapString))]
-    [MapProperty(nameof(PlayResultRequest.StageData.BattleStageData.BattleNpcData.TotalExp), nameof(CommonPlayResultData.BattleNpcData.TotalExp), Use = nameof(MapString))]
-    private static partial CommonPlayResultData.BattleNpcData MapBattleNpcDataCore(
-        PlayResultRequest.StageData.BattleStageData.BattleNpcData data);
+    [MapProperty(nameof(PlayResultRequest.TokkunstageData.BanacoinDatetime), nameof(Ac15TokkunStageData.BanacoinDatetime), Use = nameof(MapString))]
+    private static partial Ac15TokkunStageData MapTokkunStageDataCore(PlayResultRequest.TokkunstageData data);
 
-    [MapProperty(nameof(PlayResultRequest.ReleaseBattleData.AryBattletokendatas), nameof(CommonPlayResultData.BattleReleaseDataDto.BattleTokenData))]
-    private static partial CommonPlayResultData.BattleReleaseDataDto MapBattleReleaseDataCore(
-        PlayResultRequest.ReleaseBattleData data);
+    private static Ac15CostumeFacts MapCostume(PlayResultRequest.CostumeData? costume)
+        => costume is null ? Ac15CostumeFacts.Empty : MapCostumeData(costume);
 
-    private static partial CommonPlayResultData.BattleTokenData MapBattleTokenData(
-        PlayResultRequest.ReleaseBattleData.BattleTokenData data);
+    private static Ac15TokkunPlayResult? MapTokkun(PlayResultRequest request)
+        => request.TokkunTutorialFlg is null && request.AryTokkunstageInfo is null
+            ? null
+            : new Ac15TokkunPlayResult(request.TokkunTutorialFlg, MapTokkunStageData(request.AryTokkunstageInfo));
 
-    private static partial CommonPlayResultData.ResultcompeData MapCompe(
-        PlayResultRequest.StageData.ResultcompeData data);
+    private static Ac15BlueBattlePlayResult? MapBlueBattle(PlayResultRequest request, List<Ac15StageResult> stages)
+        => request.AryReleaseBattledata is null && stages.All(stage => stage.BlueBattleStage is null)
+            ? null
+            : new Ac15BlueBattlePlayResult(MapBattleReleaseData(request.AryReleaseBattledata), stages, request.GetDonmedal);
 
-    private static partial CommonPlayResultData.CollaboData MapCollabo(PlayResultRequest.CollaboData data);
+    private static Ac15RedChallengeCompeFacts? MapChallengeCompe(List<Ac15StageResult> stages)
+    {
+        var facts = stages
+            .Where(stage => stage.ChallengeIds.Count != 0 || stage.UserCompeIds.Count != 0 || stage.BngCompeIds.Count != 0)
+            .Select(stage => new Ac15RedChallengeCompeStageFacts(
+                stage.SongNo,
+                stage.ChallengeIds,
+                stage.UserCompeIds,
+                stage.BngCompeIds))
+            .ToList();
+        return facts.Count == 0 ? null : new Ac15RedChallengeCompeFacts(facts);
+    }
 
-    private static CommonPlayResultData.CostumeData MapCostume(PlayResultRequest.CostumeData costume)
-        => costume is null ? new CommonPlayResultData.CostumeData() : MapCostumeData(costume);
-
-    private static CommonPlayResultData.TokkunStageDataDto? MapTokkunStageData(
-        PlayResultRequest.TokkunstageData data)
+    private static Ac15TokkunStageData? MapTokkunStageData(PlayResultRequest.TokkunstageData data)
         => data is null ? null : MapTokkunStageDataCore(data);
 
-    private static CommonPlayResultData.BattleStageData? MapBattleStageData(
-        PlayResultRequest.StageData.BattleStageData data)
-        => data is null ? null : MapBattleStageDataCore(data);
+    private static Ac15BlueBattleStageData? MapBattleStageData(PlayResultRequest.StageData.BattleStageData? data)
+        => data is null
+            ? null
+            : new Ac15BlueBattleStageData
+            {
+                SupportLv = data.SupportLv,
+                BattleStageId = data.BattleStageId,
+                NpcData = MapBattleNpcData(data.NpcData),
+                KillCnt = data.KillCnt,
+                BossLife = data.BossLife,
+                TotalDamage = data.TotalDamage,
+                CriticalCnt = data.CriticalCnt,
+                SpecialMoveCnt = data.SpecialMoveCnt
+            };
 
-    private static CommonPlayResultData.BattleNpcData? MapBattleNpcData(
-        PlayResultRequest.StageData.BattleStageData.BattleNpcData data)
-        => data is null ? null : MapBattleNpcDataCore(data);
+    private static Ac15BlueBattleNpcData? MapBattleNpcData(PlayResultRequest.StageData.BattleStageData.BattleNpcData? data)
+        => data is null
+            ? null
+            : new Ac15BlueBattleNpcData
+            {
+                NpcId = data.NpcId,
+                AcquiredExp = MapString(data.AcquiredExp),
+                TotalExp = MapString(data.TotalExp),
+                Dpn = data.Dpn,
+                NpcCostumeId = data.NpcCostumeId,
+                SpecialId1 = data.SpecialId1,
+                SpecialId2 = data.SpecialId2,
+                SpecialId3 = data.SpecialId3,
+                BondsLv = data.BondsLv
+            };
 
-    private static CommonPlayResultData.BattleReleaseDataDto? MapBattleReleaseData(
-        PlayResultRequest.ReleaseBattleData data)
-        => data is null ? null : MapBattleReleaseDataCore(data);
+    private static Ac15BlueBattleReleaseData? MapBattleReleaseData(PlayResultRequest.ReleaseBattleData? data)
+        => data is null
+            ? null
+            : new Ac15BlueBattleReleaseData
+            {
+                ReleaseInfoIds = MapUIntList(data.ReleaseInfoIds),
+                ReleaseBattleStageIds = MapUIntList(data.ReleaseBattleStageIds),
+                ReleaseNpcIds = MapUIntList(data.ReleaseNpcIds),
+                ReleaseNpcCostumeIds = MapUIntList(data.ReleaseNpcCostumeIds),
+                ReleaseNpcSpecialIds = MapUIntList(data.ReleaseNpcSpecialIds),
+                BattleTokenData = data.AryBattletokendatas?.Select(MapBattleTokenData).ToList() ?? [],
+                AssignNextStageId = data.AssignNextStageId
+            };
+
+    private static Ac15BlueBattleTokenData MapBattleTokenData(PlayResultRequest.ReleaseBattleData.BattleTokenData data)
+        => new(data.TokenId, data.TokenValue);
+
+    private static List<Ac15CompeIdFact> MapCompeList(IEnumerable<PlayResultRequest.StageData.ResultcompeData>? values)
+        => values?.Select(data => new Ac15CompeIdFact(data.CompeId, data.TrackNo)).ToList() ?? [];
 
     [UserMapping(Default = true)]
     private static List<uint> MapUIntList(uint[] values)
@@ -118,21 +188,12 @@ public static partial class PlayResultMappers
     private static uint MapNullableUInt(uint? value)
         => value.GetValueOrDefault();
 
-    private static byte[] MapBytes(byte[] values)
+    private static byte[] MapBytes(byte[]? values)
         => values is null ? [] : values;
 
-    private static string MapString(string value)
+    private static string MapString(string? value)
         => value ?? string.Empty;
 
     private static uint? MapPlayDan(uint? value)
         => value is > 0 ? value : null;
-
-    private static bool HasAryCurrentCostume(PlayResultRequest request)
-        => request.AryCurrentCostume is not null;
-
-    private static bool HasDifficultyPlayedCourse(PlayResultRequest request)
-        => request.DifficultyPlayedCourse is not null;
-
-    private static bool HasDifficultyPlayedStar(PlayResultRequest request)
-        => request.DifficultyPlayedStar is not null;
 }
