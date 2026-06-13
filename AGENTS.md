@@ -41,6 +41,9 @@ TaikoLocalServer is an ASP.NET Core 10 host for Taiko cabinet protocol endpoints
 - Keep era state separate. Blue, Green, and Nijiiro persistence must remain separate unless the state is truly shared identity data such as card/user identity.
 - Use the existing partial-file pattern for era behavior: shared dispatcher in the unsuffixed file, era implementation in `.Nijiiro.cs`, `.Green.cs`, or `.Blue.cs`.
 - Map generated protobuf DTOs through `Application/Dtos/Common*` shapes before handler logic. Do not persist wire DTOs directly.
+- For Mapperly-specific behavior, do not rely on memory or prior agent summaries. Check the current official Mapperly documentation online, especially null-value behavior at `https://mapperly.riok.app/docs/configuration/mapper/#null-values`, constant/generated values at `https://mapperly.riok.app/docs/configuration/constant-generated-values/`, and generated-source inspection at `https://mapperly.riok.app/docs/configuration/generated-source/`.
+- Mapperly mappers must remain source-generator driven. Do not replace Mapperly projections with hand-written mapper bodies; handwritten code in mapper classes is limited to helper conversions that are configured for Mapperly or discovered by Mapperly.
+- When verifying Mapperly mapper implementation, inspect generated source, not only the handwritten partial declarations. Use `dotnet build /p:EmitCompilerGeneratedFiles=true` and review the emitted `.g.cs` files under the project `obj/.../generated/.../Riok.Mapperly/` path.
 - Controllers should deserialize, map, call Mediator, and map back. Put business behavior in `Application/Handlers`.
 - Use `IGameDataCatalog.For(GameEra)` and era catalog interfaces instead of hardcoded filesystem access from handlers.
 - Resolve runtime data roots through `PathHelper` and era data path helpers. Do not hardcode `wwwroot/data/<era>` in new runtime code.

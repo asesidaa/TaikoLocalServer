@@ -101,9 +101,13 @@ public sealed record Ac15StageResult
     public List<Ac15AiStageSectionData> AiSectionData { get; init; } = [];
 }
 
-public sealed record Ac15CostumeFacts(uint Costume1, uint Costume2, uint Costume3, uint Costume4, uint Costume5)
+public sealed record Ac15CostumeFacts(uint Costume1 = 0, uint Costume2 = 0, uint Costume3 = 0, uint Costume4 = 0, uint Costume5 = 0)
 {
-    public static Ac15CostumeFacts Empty { get; } = new(0, 0, 0, 0, 0);
+    public static Ac15CostumeFacts Empty { get; } = new();
+
+    public Ac15CostumeFacts() : this(0, 0, 0, 0, 0)
+    {
+    }
 }
 
 public sealed record Ac15CompeIdFact(uint CompeId, uint TrackNo);

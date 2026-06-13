@@ -1,182 +1,174 @@
+using Riok.Mapperly.Abstractions;
+
 namespace TaikoLocalServer.Adapters.GameProtocol.Green.Mappers;
 
-public static class PlayResultMappers
+[Mapper(
+    AllowNullPropertyAssignment = false,
+    ThrowOnMappingNullMismatch = false,
+    ThrowOnPropertyMappingNullMismatch = false)]
+public static partial class PlayResultMappers
 {
-    public static Ac15PlayResultEnvelope Map(PlayResultDataRequest request)
-    {
-        var stages = request.AryStageInfoes.Select(MapStage).ToList();
-        return new Ac15PlayResultEnvelope(
-            Metadata: MapMetadata(request),
-            Profile: MapProfile(request),
-            Normal: stages.Count == 0 ? null : new Ac15NormalPlayResult(stages),
-            Dani: new Ac15DaniPlayResult(request.DanResult.GetValueOrDefault(), ComboCntTotal: 0, stages),
-            Tokkun: null,
-            BlueBattle: null,
-            GreenGhost: MapGreenGhost(request),
-            ChallengeCompe: MapChallengeCompe(stages));
-    }
+    [MapPropertyFromSource(nameof(Ac15PlayResultEnvelope.Metadata), Use = nameof(MapMetadata))]
+    [MapPropertyFromSource(nameof(Ac15PlayResultEnvelope.Profile), Use = nameof(MapProfile))]
+    [MapPropertyFromSource(nameof(Ac15PlayResultEnvelope.Normal), Use = nameof(MapNormal))]
+    [MapPropertyFromSource(nameof(Ac15PlayResultEnvelope.Dani), Use = nameof(MapDani))]
+    [MapValue(nameof(Ac15PlayResultEnvelope.Tokkun), null)]
+    [MapValue(nameof(Ac15PlayResultEnvelope.BlueBattle), null)]
+    [MapPropertyFromSource(nameof(Ac15PlayResultEnvelope.GreenGhost), Use = nameof(MapGreenGhost))]
+    [MapPropertyFromSource(nameof(Ac15PlayResultEnvelope.ChallengeCompe), Use = nameof(MapChallengeCompe))]
+    public static partial Ac15PlayResultEnvelope Map(PlayResultDataRequest request);
 
-    public static PlayResultResponse Map(uint result)
-        => new() { Result = result };
+    [MapPropertyFromSource(nameof(PlayResultResponse.Result))]
+    public static partial PlayResultResponse Map(uint result);
 
-    private static Ac15PlayResultMetadata MapMetadata(PlayResultDataRequest request)
-        => new(
-            request.Baid,
-            request.ChassisId ?? string.Empty,
-            request.ShopId ?? string.Empty,
-            request.PlayDatetime ?? string.Empty,
-            request.IsRight,
-            request.CardType,
-            request.IsTwoPlayers,
-            request.PlayMode,
-            request.AreaCode,
-            MapBytes(request.Reserved),
-            request.Accesstoken ?? string.Empty,
-            MapBytes(request.ContentInfo));
+    [MapProperty(nameof(PlayResultDataRequest.ChassisId), nameof(Ac15PlayResultMetadata.ChassisId), Use = nameof(MapString))]
+    [MapProperty(nameof(PlayResultDataRequest.ShopId), nameof(Ac15PlayResultMetadata.ShopId), Use = nameof(MapString))]
+    [MapProperty(nameof(PlayResultDataRequest.PlayDatetime), nameof(Ac15PlayResultMetadata.PlayDatetime), Use = nameof(MapString))]
+    [MapProperty(nameof(PlayResultDataRequest.Reserved), nameof(Ac15PlayResultMetadata.Reserved), Use = nameof(MapBytes))]
+    [MapProperty(nameof(PlayResultDataRequest.Accesstoken), nameof(Ac15PlayResultMetadata.Accesstoken), Use = nameof(MapString))]
+    [MapProperty(nameof(PlayResultDataRequest.ContentInfo), nameof(Ac15PlayResultMetadata.ContentInfo), Use = nameof(MapBytes))]
+    private static partial Ac15PlayResultMetadata MapMetadata(PlayResultDataRequest request);
 
-    private static Ac15ProfileMutationFacts MapProfile(PlayResultDataRequest request)
-        => Ac15ProfileMutationFacts.Empty with
-        {
-            AreaCode = request.AreaCode,
-            GetDonmedal = request.GetDonmedal,
-            GetKatsumedal = request.GetKatsumedal,
-            ItemshopTutorialFlg = request.ItemshopTutorialFlg,
-            WaiwaiTutorialFlg = request.WaiwaiTutorialFlg,
-            IsDevil = request.IsDevil,
-            IsExplain = request.IsExplain,
-            HasDifficultyPlayedCourse = request.DifficultyPlayedCourse is not null,
-            DifficultyPlayedCourse = request.DifficultyPlayedCourse.GetValueOrDefault(),
-            HasDifficultyPlayedStar = request.DifficultyPlayedStar is not null,
-            DifficultyPlayedStar = request.DifficultyPlayedStar.GetValueOrDefault(),
-            HasAryCurrentCostume = request.AryCurrentCostume is not null,
-            AryCurrentCostume = MapCostume(request.AryCurrentCostume),
-            ReleaseSongNoes = MapUIntList(request.ReleaseSongNoes),
-            GetToneNoes = MapUIntList(request.GetToneNoes),
-            GetCostumeNo1s = MapUIntList(request.GetCostumeNo1s),
-            GetCostumeNo2s = MapUIntList(request.GetCostumeNo2s),
-            GetCostumeNo3s = MapUIntList(request.GetCostumeNo3s),
-            GetCostumeNo4s = MapUIntList(request.GetCostumeNo4s),
-            GetCostumeNo5s = MapUIntList(request.GetCostumeNo5s),
-            GetTitleNoes = MapUIntList(request.GetTitleNoes)
-        };
+    [MapPropertyFromSource(nameof(Ac15ProfileMutationFacts.HasAryCurrentCostume), Use = nameof(HasCurrentCostume))]
+    [MapProperty(nameof(PlayResultDataRequest.DifficultyPlayedCourse), nameof(Ac15ProfileMutationFacts.DifficultyPlayedCourse), Use = nameof(MapNullableUInt))]
+    [MapPropertyFromSource(nameof(Ac15ProfileMutationFacts.HasDifficultyPlayedCourse), Use = nameof(HasDifficultyPlayedCourse))]
+    [MapProperty(nameof(PlayResultDataRequest.DifficultyPlayedStar), nameof(Ac15ProfileMutationFacts.DifficultyPlayedStar), Use = nameof(MapNullableUInt))]
+    [MapPropertyFromSource(nameof(Ac15ProfileMutationFacts.HasDifficultyPlayedStar), Use = nameof(HasDifficultyPlayedStar))]
+    [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.GetDonpoint))]
+    [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.RewardPtn))]
+    [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.RewardProgress))]
+    [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.DifficultyTutorialFlg))]
+    private static partial Ac15ProfileMutationFacts MapProfile(PlayResultDataRequest request);
 
-    private static Ac15StageResult MapStage(PlayResultDataRequest.StageData stage)
-        => new()
-        {
-            SongNo = stage.SongNo,
-            Level = stage.Level,
-            PlayResult = stage.PlayResult.GetValueOrDefault(),
-            PlayScore = stage.PlayScore.GetValueOrDefault(),
-            GoodCnt = stage.GoodCnt,
-            OkCnt = stage.OkCnt,
-            NgCnt = stage.NgCnt,
-            PoundCnt = stage.PoundCnt,
-            ComboCnt = stage.ComboCnt,
-            HitCnt = stage.HitCnt.GetValueOrDefault(),
-            OptionFlg = MapBytes(stage.OptionFlg),
-            ToneFlg = MapBytes(stage.ToneFlg),
-            SupportLevel = stage.SupportLevel,
-            MusicCateg = stage.MusicCateg,
-            IsFavorite = stage.IsFavorite,
-            IsRecent = stage.IsRecent,
-            SelectedFolderId = stage.SelectedFolderId,
-            StarLevel = stage.StarLevel,
-            StageMode = stage.StageMode.GetValueOrDefault(),
-            IsPapamama = stage.IsPapamama,
-            IsPushed = stage.IsPushed,
-            SoulGauge = stage.SoulGauge,
-            PlayDan = MapPlayDan(stage.PlayDan),
-            WaiwaiResult = stage.WaiwaiResult,
-            WaiwaiGauge = stage.WaiwaiGauge,
-            GreenGhostStage = MapGhostStage(stage.GhostStagedata),
-            ChallengeIds = MapCompeList(stage.AryChallengeIds),
-            UserCompeIds = MapCompeList(stage.AryUserCompeIds),
-            BngCompeIds = MapCompeList(stage.AryBngCompeIds)
-        };
+    [MapProperty(nameof(PlayResultDataRequest.AryStageInfoes), nameof(Ac15NormalPlayResult.Stages), Use = nameof(MapStages))]
+    private static partial Ac15NormalPlayResult MapNormalCore(PlayResultDataRequest request);
+
+    [MapProperty(nameof(PlayResultDataRequest.DanResult), nameof(Ac15DaniPlayResult.DanResult), Use = nameof(MapNullableUInt))]
+    [MapValue(nameof(Ac15DaniPlayResult.ComboCntTotal), 0u)]
+    [MapProperty(nameof(PlayResultDataRequest.AryStageInfoes), nameof(Ac15DaniPlayResult.Stages), Use = nameof(MapStages))]
+    private static partial Ac15DaniPlayResult MapDani(PlayResultDataRequest request);
+
+    [MapProperty(nameof(PlayResultDataRequest.GhostReleaseData), nameof(Ac15GreenGhostPlayResult.ReleaseData))]
+    [MapProperty(nameof(PlayResultDataRequest.GhostUpdatePerfdata), nameof(Ac15GreenGhostPlayResult.PerfData))]
+    [MapProperty(nameof(PlayResultDataRequest.GhostUpdateRank), nameof(Ac15GreenGhostPlayResult.RankData))]
+    private static partial Ac15GreenGhostPlayResult MapGreenGhostCore(PlayResultDataRequest request);
+
+    [MapProperty(nameof(PlayResultDataRequest.AryStageInfoes), nameof(Ac15RedChallengeCompeFacts.Stages), Use = nameof(MapChallengeCompeStages))]
+    private static partial Ac15RedChallengeCompeFacts MapChallengeCompeCore(PlayResultDataRequest request);
+
+    [MapProperty(nameof(PlayResultDataRequest.StageData.PlayResult), nameof(Ac15StageResult.PlayResult), Use = nameof(MapNullableUInt))]
+    [MapProperty(nameof(PlayResultDataRequest.StageData.PlayScore), nameof(Ac15StageResult.PlayScore), Use = nameof(MapNullableUInt))]
+    [MapProperty(nameof(PlayResultDataRequest.StageData.HitCnt), nameof(Ac15StageResult.HitCnt), Use = nameof(MapNullableUInt))]
+    [MapProperty(nameof(PlayResultDataRequest.StageData.OptionFlg), nameof(Ac15StageResult.OptionFlg), Use = nameof(MapBytes))]
+    [MapProperty(nameof(PlayResultDataRequest.StageData.ToneFlg), nameof(Ac15StageResult.ToneFlg), Use = nameof(MapBytes))]
+    [MapProperty(nameof(PlayResultDataRequest.StageData.StageMode), nameof(Ac15StageResult.StageMode), Use = nameof(MapNullableUInt))]
+    [MapProperty(nameof(PlayResultDataRequest.StageData.PlayDan), nameof(Ac15StageResult.PlayDan), Use = nameof(MapPlayDan))]
+    [MapProperty(nameof(PlayResultDataRequest.StageData.GhostStagedata), nameof(Ac15StageResult.GreenGhostStage))]
+    [MapProperty(nameof(PlayResultDataRequest.StageData.AryChallengeIds), nameof(Ac15StageResult.ChallengeIds), Use = nameof(MapCompeList))]
+    [MapProperty(nameof(PlayResultDataRequest.StageData.AryUserCompeIds), nameof(Ac15StageResult.UserCompeIds), Use = nameof(MapCompeList))]
+    [MapProperty(nameof(PlayResultDataRequest.StageData.AryBngCompeIds), nameof(Ac15StageResult.BngCompeIds), Use = nameof(MapCompeList))]
+    [MapperIgnoreTarget(nameof(Ac15StageResult.ScoreRate))]
+    [MapperIgnoreTarget(nameof(Ac15StageResult.ScoreRank))]
+    [MapperIgnoreTarget(nameof(Ac15StageResult.IsWin))]
+    [MapperIgnoreTarget(nameof(Ac15StageResult.HitCount))]
+    [MapperIgnoreTarget(nameof(Ac15StageResult.BlueBattleStage))]
+    [MapperIgnoreTarget(nameof(Ac15StageResult.AiSectionData))]
+    [UserMapping(Default = true)]
+    private static partial Ac15StageResult MapStage(PlayResultDataRequest.StageData stage);
+
+    [UserMapping(Default = true)]
+    private static partial Ac15CostumeFacts MapCostumeData(PlayResultDataRequest.CostumeData costume);
+
+    [MapProperty(nameof(PlayResultDataRequest.StageData.GhostStageData.ArySectionDatas), nameof(Ac15GreenGhostStageData.ArySectionData), Use = nameof(MapGhostStageSections))]
+    [UserMapping(Default = true)]
+    private static partial Ac15GreenGhostStageData? MapGhostStageData(PlayResultDataRequest.StageData.GhostStageData? data);
+
+    [UserMapping(Default = true)]
+    private static partial Ac15GreenGhostStageSectionData MapGhostStageSectionData(
+        PlayResultDataRequest.StageData.GhostStageData.GhostStageSectionData data);
+
+    [MapProperty(nameof(PlayResultDataRequest.UpdateGhostInfoData.ReleaseInfoIds), nameof(Ac15GreenGhostReleaseData.ReleaseInfoId), Use = nameof(MapUIntList))]
+    [MapProperty(nameof(PlayResultDataRequest.UpdateGhostInfoData.AryTokendatas), nameof(Ac15GreenGhostReleaseData.AryTokendata), Use = nameof(MapGhostTokenDataList))]
+    [UserMapping(Default = true)]
+    private static partial Ac15GreenGhostReleaseData? MapGhostReleaseData(PlayResultDataRequest.UpdateGhostInfoData? data);
+
+    [UserMapping(Default = true)]
+    private static partial Ac15GreenGhostTokenData MapGhostTokenData(PlayResultDataRequest.UpdateGhostInfoData.GhostTokenData data);
+
+    [UserMapping(Default = true)]
+    private static partial Ac15GreenGhostPerfData? MapGhostPerfData(PlayResultDataRequest.UpdateGhostPerfData? data);
+
+    [MapProperty(nameof(PlayResultDataRequest.UpdateGhostRankData.AryWinningsDatas), nameof(Ac15GreenGhostRankData.AryWinningsData), Use = nameof(MapGhostWinningsDataList))]
+    [UserMapping(Default = true)]
+    private static partial Ac15GreenGhostRankData? MapGhostRankData(PlayResultDataRequest.UpdateGhostRankData? data);
+
+    [UserMapping(Default = true)]
+    private static partial Ac15GreenGhostWinningsData MapGhostWinningsData(
+        PlayResultDataRequest.UpdateGhostRankData.UpdateGhostWinningsData data);
+
+    [UserMapping(Default = true)]
+    private static partial Ac15CompeIdFact MapCompe(PlayResultDataRequest.StageData.ResultcompeData data);
+
+    [MapProperty(nameof(PlayResultDataRequest.StageData.AryChallengeIds), nameof(Ac15RedChallengeCompeStageFacts.ChallengeIds), Use = nameof(MapCompeList))]
+    [MapProperty(nameof(PlayResultDataRequest.StageData.AryUserCompeIds), nameof(Ac15RedChallengeCompeStageFacts.UserCompeIds), Use = nameof(MapCompeList))]
+    [MapProperty(nameof(PlayResultDataRequest.StageData.AryBngCompeIds), nameof(Ac15RedChallengeCompeStageFacts.BngCompeIds), Use = nameof(MapCompeList))]
+    [UserMapping(Default = true)]
+    private static partial Ac15RedChallengeCompeStageFacts MapChallengeCompeStage(PlayResultDataRequest.StageData stage);
+
+    private static Ac15NormalPlayResult? MapNormal(PlayResultDataRequest request)
+        => request.AryStageInfoes.Count == 0 ? null : MapNormalCore(request);
 
     private static Ac15GreenGhostPlayResult? MapGreenGhost(PlayResultDataRequest request)
         => request.GhostReleaseData is null && request.GhostUpdatePerfdata is null && request.GhostUpdateRank is null
             ? null
-            : new Ac15GreenGhostPlayResult(
-                MapGhostRelease(request.GhostReleaseData),
-                MapGhostPerf(request.GhostUpdatePerfdata),
-                MapGhostRank(request.GhostUpdateRank));
+            : MapGreenGhostCore(request);
 
-    private static Ac15GreenGhostStageData? MapGhostStage(PlayResultDataRequest.StageData.GhostStageData? data)
-        => data is null
-            ? null
-            : new Ac15GreenGhostStageData
-            {
-                IsWin = data.IsWin,
-                SdCertifiedLevelId = data.SdCertifiedLevelId,
-                ArySectionData = data.ArySectionDatas.Select(MapGhostStageSection).ToList()
-            };
+    private static Ac15RedChallengeCompeFacts? MapChallengeCompe(PlayResultDataRequest request)
+        => request.AryStageInfoes.Any(HasChallengeCompeFacts) ? MapChallengeCompeCore(request) : null;
 
-    private static Ac15GreenGhostStageSectionData MapGhostStageSection(
-        PlayResultDataRequest.StageData.GhostStageData.GhostStageSectionData data)
-        => new(data.IsWin, data.GoodCnt, data.OkCnt, data.NgCnt, data.PoundCnt);
+    private static List<Ac15RedChallengeCompeStageFacts> MapChallengeCompeStages(List<PlayResultDataRequest.StageData> stages)
+        => stages.Where(HasChallengeCompeFacts).Select(MapChallengeCompeStage).ToList();
 
-    private static Ac15GreenGhostReleaseData? MapGhostRelease(PlayResultDataRequest.UpdateGhostInfoData? data)
-        => data is null
-            ? null
-            : new Ac15GreenGhostReleaseData
-            {
-                ReleaseInfoId = MapUIntList(data.ReleaseInfoIds),
-                AryTokendata = data.AryTokendatas.Select(MapGhostToken).ToList()
-            };
+    private static List<Ac15StageResult> MapStages(List<PlayResultDataRequest.StageData> stages)
+        => stages.Select(MapStage).ToList();
 
-    private static Ac15GreenGhostTokenData MapGhostToken(PlayResultDataRequest.UpdateGhostInfoData.GhostTokenData data)
-        => new(data.TokenId, data.TokenValue);
+    private static List<Ac15CompeIdFact> MapCompeList(List<PlayResultDataRequest.StageData.ResultcompeData> values)
+        => values.Select(MapCompe).ToList();
 
-    private static Ac15GreenGhostPerfData? MapGhostPerf(PlayResultDataRequest.UpdateGhostPerfData? data)
-        => data is null ? null : new Ac15GreenGhostPerfData(data.InputMedian, data.InputVariance);
+    private static List<Ac15GreenGhostStageSectionData> MapGhostStageSections(
+        List<PlayResultDataRequest.StageData.GhostStageData.GhostStageSectionData> values)
+        => values.Select(MapGhostStageSectionData).ToList();
 
-    private static Ac15GreenGhostRankData? MapGhostRank(PlayResultDataRequest.UpdateGhostRankData? data)
-        => data is null
-            ? null
-            : new Ac15GreenGhostRankData
-            {
-                RankId = data.RankId,
-                WinPoint = data.WinPoint,
-                CertifiedLevelId = data.CertifiedLevelId,
-                AryWinningsData = data.AryWinningsDatas.Select(MapGhostWinnings).ToList()
-            };
+    private static List<Ac15GreenGhostTokenData> MapGhostTokenDataList(
+        List<PlayResultDataRequest.UpdateGhostInfoData.GhostTokenData> values)
+        => values.Select(MapGhostTokenData).ToList();
 
-    private static Ac15GreenGhostWinningsData MapGhostWinnings(
-        PlayResultDataRequest.UpdateGhostRankData.UpdateGhostWinningsData data)
-        => new(data.LevelId, data.Winnings);
+    private static List<Ac15GreenGhostWinningsData> MapGhostWinningsDataList(
+        List<PlayResultDataRequest.UpdateGhostRankData.UpdateGhostWinningsData> values)
+        => values.Select(MapGhostWinningsData).ToList();
 
-    private static Ac15RedChallengeCompeFacts? MapChallengeCompe(List<Ac15StageResult> stages)
-    {
-        var facts = stages
-            .Where(stage => stage.ChallengeIds.Count != 0 || stage.UserCompeIds.Count != 0 || stage.BngCompeIds.Count != 0)
-            .Select(stage => new Ac15RedChallengeCompeStageFacts(
-                stage.SongNo,
-                stage.ChallengeIds,
-                stage.UserCompeIds,
-                stage.BngCompeIds))
-            .ToList();
-        return facts.Count == 0 ? null : new Ac15RedChallengeCompeFacts(facts);
-    }
+    private static bool HasChallengeCompeFacts(PlayResultDataRequest.StageData stage)
+        => stage.AryChallengeIds.Count != 0 || stage.AryUserCompeIds.Count != 0 || stage.AryBngCompeIds.Count != 0;
 
-    private static Ac15CostumeFacts MapCostume(PlayResultDataRequest.CostumeData? costume)
-        => costume is null
-            ? Ac15CostumeFacts.Empty
-            : new Ac15CostumeFacts(
-                costume.Costume1.GetValueOrDefault(),
-                costume.Costume2.GetValueOrDefault(),
-                costume.Costume3.GetValueOrDefault(),
-                costume.Costume4.GetValueOrDefault(),
-                costume.Costume5.GetValueOrDefault());
+    private static bool HasCurrentCostume(PlayResultDataRequest request) => request.AryCurrentCostume is not null;
 
-    private static List<Ac15CompeIdFact> MapCompeList(IEnumerable<PlayResultDataRequest.StageData.ResultcompeData>? values)
-        => values?.Select(data => new Ac15CompeIdFact(data.CompeId, data.TrackNo)).ToList() ?? [];
+    private static bool HasDifficultyPlayedCourse(PlayResultDataRequest request) => request.DifficultyPlayedCourse is not null;
 
-    private static List<uint> MapUIntList(IEnumerable<uint>? values)
+    private static bool HasDifficultyPlayedStar(PlayResultDataRequest request) => request.DifficultyPlayedStar is not null;
+
+    [UserMapping(Default = true)]
+    private static List<uint> MapUIntList(uint[]? values)
         => values?.ToList() ?? [];
 
+    [UserMapping(Default = true)]
+    private static uint MapNullableUInt(uint? value)
+        => value.GetValueOrDefault();
+
     private static byte[] MapBytes(byte[]? values)
-        => values is null ? [] : values;
+        => values ?? [];
+
+    private static string MapString(string? value)
+        => value ?? string.Empty;
 
     private static uint? MapPlayDan(uint? value)
         => value is > 0 ? value : null;
