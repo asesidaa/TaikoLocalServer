@@ -23,12 +23,12 @@ public partial class UpdatePlayResultCommandHandler
         }
 
         var playResultData = request.PlayResultData;
-        if (playResultData.IsTokkunPlayResult)
+        if (IsBlueTokkunShaped(playResultData))
         {
             return await HandleBlueTokkun(request.Baid, playResultData, cancellationToken);
         }
 
-        if (playResultData.IsBattlePlayResult)
+        if (IsBlueBattleShaped(playResultData))
         {
             return await HandleBlueBattle(request.Baid, playResultData, cancellationToken);
         }
@@ -120,4 +120,15 @@ public partial class UpdatePlayResultCommandHandler
 
     private static bool CanAddBlue(uint current, uint delta)
         => CanAddAc15(current, delta);
+
+    private static bool IsBlueTokkunShaped(CommonPlayResultData playResultData)
+        => playResultData.IsTokkunPlayResult
+           || playResultData.PlayMode == (uint)PlayMode.Tokkun
+           || playResultData.TokkunTutorialFlg is not null
+           || playResultData.TokkunStageData is not null;
+
+    private static bool IsBlueBattleShaped(CommonPlayResultData playResultData)
+        => playResultData.IsBattlePlayResult
+           || playResultData.BattleReleaseData is not null
+           || playResultData.AryStageInfoes.Any(stage => stage.BattleStageData is not null);
 }
