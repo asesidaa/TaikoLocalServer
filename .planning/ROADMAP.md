@@ -168,7 +168,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 20.1-02-PLAN.md - AC15 userdata capability response boundary
+- [x] 20.1-02-PLAN.md - AC15 userdata capability response boundary
 
 **Wave 3** *(blocked on Wave 2 completion)*
 

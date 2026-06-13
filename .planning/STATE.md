@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Phase Summary
 status: executing
-stopped_at: Phase 20.1 planning complete; ready to execute
-last_updated: "2026-06-13T16:00:26.540Z"
-last_activity: 2026-06-13 -- Phase 20.1 execution started
+stopped_at: Phase 20.1 Plan 02 complete; Plan 03 ready to execute
+last_updated: "2026-06-13T16:25:09.674Z"
+last_activity: 2026-06-14 -- Phase 20.1 Plan 02 completed; Plan 03 cleanup and audit ready
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 14
-  completed_plans: 9
+  completed_plans: 10
   percent: 33
 ---
 
@@ -26,9 +26,9 @@ See: `.planning/PROJECT.md` (updated 2026-06-13)
 ## Current Position
 
 Phase: 20.1 (AC15 Capability DTO and Mapper Boundary Refactor) — EXECUTING
-Plan: 2 of 3
-Status: Ready to execute
-Last activity: 2026-06-13 -- Phase 20.1 execution started
+Plan: 3 of 3
+Status: Ready to execute plan 20.1-03
+Last activity: 2026-06-14 -- Phase 20.1 Plan 02 completed; Plan 03 cleanup and audit ready
 
 ## Performance Metrics
 
@@ -105,6 +105,7 @@ Last activity: 2026-06-13 -- Phase 20.1 execution started
 | Phase 18 P03 | 8 min | 2 tasks | 4 files |
 | Phase 18 P04 | 49 | 3 tasks | 27 files |
 | Phase 20.1 P01 | 35 | 3 tasks | 25 files |
+| Phase 20.1 P02 | 26 | 3 tasks | 25 files |
 
 ## Accumulated Context
 
@@ -196,6 +197,8 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 20]: Red Don points are Red profile fields, not shop medals, shop-season balances, wallet balances, coupons, payments, receipts, or transactions.
 - [Phase 20]: Red Tokkun playresults classify before normal/Dani/Challenge handling and write back only nullable `TokkunTutorialFlg`; no raw Tokkun history, reward, unlock, normal-play, or Dani writes are made from Tokkun uploads.
 - [Phase 20]: Red ChallengeCompe arrays are mapped as playresult facts for Phase 21, but no ChallengeCompe state or readback contract was implemented.
+- [Phase 20.1]: Plan 01 split AC15 BAID readback into `Ac15BaidResponse` capability records and kept `CommonBaidResponse` on the Nijiiro path only.
+- [Phase 20.1]: Plan 02 split AC15 userdata readback into `Ac15UserDataResponse` capability records with optional ModeFlags, Tutorial, and Reward segments; AC15 controllers now send `Ac15UserDataQuery`.
 
 ### Pending Todos
 
