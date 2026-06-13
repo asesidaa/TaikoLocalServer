@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Phase Summary
 status: executing
-stopped_at: Phase 20.1 Plan 02 complete; Plan 03 ready to execute
-last_updated: "2026-06-13T16:25:09.674Z"
-last_activity: 2026-06-14 -- Phase 20.1 Plan 02 completed; Plan 03 cleanup and audit ready
+stopped_at: Phase 20.1 complete; ready for Phase 21 planning
+last_updated: "2026-06-13T16:38:40.651Z"
+last_activity: 2026-06-14 -- Phase 20.1 completed with full verification
 progress:
   total_phases: 6
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 14
-  completed_plans: 10
-  percent: 33
+  completed_plans: 11
+  percent: 50
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: `.planning/PROJECT.md` (updated 2026-06-13)
 
 ## Current Position
 
-Phase: 20.1 (AC15 Capability DTO and Mapper Boundary Refactor) — EXECUTING
-Plan: 3 of 3
-Status: Ready to execute plan 20.1-03
-Last activity: 2026-06-14 -- Phase 20.1 Plan 02 completed; Plan 03 cleanup and audit ready
+Phase: 20.1 (AC15 Capability DTO and Mapper Boundary Refactor) — COMPLETE
+Plan: 3 of 3 complete
+Status: Ready for Phase 21 planning
+Last activity: 2026-06-14 -- Phase 20.1 completed with full verification
 
 ## Performance Metrics
 
@@ -106,6 +106,7 @@ Last activity: 2026-06-14 -- Phase 20.1 Plan 02 completed; Plan 03 cleanup and a
 | Phase 18 P04 | 49 | 3 tasks | 27 files |
 | Phase 20.1 P01 | 35 | 3 tasks | 25 files |
 | Phase 20.1 P02 | 26 | 3 tasks | 25 files |
+| Phase 20.1 P03 | 13 | 3 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -199,6 +200,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 20]: Red ChallengeCompe arrays are mapped as playresult facts for Phase 21, but no ChallengeCompe state or readback contract was implemented.
 - [Phase 20.1]: Plan 01 split AC15 BAID readback into `Ac15BaidResponse` capability records and kept `CommonBaidResponse` on the Nijiiro path only.
 - [Phase 20.1]: Plan 02 split AC15 userdata readback into `Ac15UserDataResponse` capability records with optional ModeFlags, Tutorial, and Reward segments; AC15 controllers now send `Ac15UserDataQuery`.
+- [Phase 20.1]: Plan 03 removed obsolete AC15 common BAID/userdata fields, audited nearby DTO/mappers, and verified focused mapper/handler coverage, shared AC15 regression, full tests, generated Mapperly source, and temp-output Host build.
 
 ### Pending Todos
 

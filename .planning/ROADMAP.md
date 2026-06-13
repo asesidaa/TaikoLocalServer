@@ -172,7 +172,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 20.1-03-PLAN.md - AC15 DTO mapper audit, union cleanup, and verification
+- [x] 20.1-03-PLAN.md - AC15 DTO mapper audit, union cleanup, and verification
 
 ### Phase 21: Older-AC15 ChallengeCompe Capability and Red Binding
 
