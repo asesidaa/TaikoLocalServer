@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Phase Summary
 status: executing
-stopped_at: Completed 21-03-PLAN.md
-last_updated: "2026-06-14T14:42:38.098Z"
+stopped_at: Completed 21-04-PLAN.md
+last_updated: "2026-06-14T15:04:11.820Z"
 last_activity: 2026-06-14 -- Phase 21 execution started
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 25
-  completed_plans: 20
-  percent: 80
+  completed_plans: 21
+  percent: 84
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-13)
 ## Current Position
 
 Phase: 21 (older-ac15-challengecompe-capability-and-red-binding) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 Status: Ready to execute
 Last activity: 2026-06-14 -- Phase 21 execution started
 
@@ -120,6 +120,7 @@ Last activity: 2026-06-14 -- Phase 21 execution started
 | Phase 21 P01 | 14 min | 3 tasks | 10 files |
 | Phase 21 P02 | 14 min | 3 tasks | 12 files |
 | Phase 21 P03 | 16 min | 2 tasks | 5 files |
+| Phase 21 P04 | 13 min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -223,6 +224,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 21]: Configured ChallengeCompe rewards grant immediately from active completed-task thresholds and mutate only Red release-song/title flags. — D-18/D-20/D-21: Phase 21 plan 03 applies configured rewards through Red-owned save flags only.
 - [Phase 21]: ChallengeCompe reward-song locks are derived from active configured reward songs for opted-in Red users and cleared by the existing AC15 userdata locked-song path. — D-11/D-19: Plan 21-03 keeps locks in shared userdata behavior instead of Red wire/controller code.
 - [Phase 21]: Red rewardcardcheck.php and rewardexecution.php remain compatibility-only and do not participate in ChallengeCompe reward grants. — D-22: Plan 21-03 covers reward behavior through playresult/userdata only.
+- [Phase 21]: Red ChallengeCompe readback is read-only: it does not opt users in, grant rewards, or echo raw upload facts. — Phase 21 Plan 04 must satisfy D-04, D-15, D-16, and D-17 by exposing saved progress without mutating enrollment or reward state.
+- [Phase 21]: Phase 21 readback populates only ary_challenge_stat from active saved progress; user and BNG buckets remain empty. — D-13 and D-14 keep user-created and BNG/official competition behavior evidence-gated.
+- [Phase 21]: Red wire projection is Mapperly-generated and mechanical, with business behavior kept in the application query. — AGENTS.md and D-23/D-26 require transport-agnostic behavior in Application and Red-owned wire mapping in the adapter.
 
 ### Pending Todos
 
@@ -247,8 +251,8 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-14T14:42:38.091Z
-Stopped at: Completed 21-03-PLAN.md
+Last session: 2026-06-14T15:03:23.253Z
+Stopped at: Completed 21-04-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
