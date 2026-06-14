@@ -2,6 +2,7 @@ using TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
 using TaikoLocalServer.Application.Ac15;
 using TaikoLocalServer.Application.Catalog.Yellow;
 using TaikoLocalServer.Tests.Ac15;
+using YellowUserDataResponse = TaikoLocalServer.Adapters.GameProtocol.Yellow.Wire.UserDataResponse;
 
 namespace TaikoLocalServer.Tests.Yellow;
 
@@ -136,7 +137,7 @@ public sealed class YellowUserDataProtocolTests
         Assert.True(response.ModeFlags.IsExplain);
         Assert.Equal(77u, response.Tutorial!.TokkunTutorialFlg);
 
-        var wire = UserDataMappers.Map(response);
+        var wire = AssembleYellowUserDataResponse(response);
         Assert.True(wire.ShouldSerializeDispTaikojukuDan());
         Assert.Equal(1u, wire.DispTaikojukuDan);
         Assert.True(wire.ShouldSerializeTokkunTutorialFlg());
@@ -191,7 +192,7 @@ public sealed class YellowUserDataProtocolTests
             ModeFlags = new Ac15UserDataModeFlags(true, true)
         };
 
-        var response = UserDataMappers.Map(common);
+        var response = AssembleYellowUserDataResponse(common);
 
         Assert.Equal(1u, response.Result);
         Assert.Equal([101u, 102u], response.AryFavoriteSongNoes);
@@ -228,7 +229,7 @@ public sealed class YellowUserDataProtocolTests
     [InlineData(7u)]
     public void UserDataMapper_Yellow_MapsRawTokkunTutorialFlagWhenPresent(uint tokkunTutorialFlg)
     {
-        var response = UserDataMappers.Map(new Ac15UserDataResponse
+        var response = AssembleYellowUserDataResponse(new Ac15UserDataResponse
         {
             Result = 1,
             SongFlags = new Ac15UserDataSongFlags
@@ -259,7 +260,7 @@ public sealed class YellowUserDataProtocolTests
         var handler = CreateUserDataHandler(fixture);
 
         var response = await handler.Handle(new Ac15UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
-        var wire = UserDataMappers.Map(response);
+        var wire = AssembleYellowUserDataResponse(response);
 
         Assert.Null(response.Tutorial!.TokkunTutorialFlg);
         Assert.False(wire.ShouldSerializeTokkunTutorialFlg());
@@ -277,7 +278,7 @@ public sealed class YellowUserDataProtocolTests
         var handler = CreateUserDataHandler(fixture);
 
         var response = await handler.Handle(new Ac15UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
-        var wire = UserDataMappers.Map(response);
+        var wire = AssembleYellowUserDataResponse(response);
 
         Assert.Equal(7u, response.Tutorial!.TokkunTutorialFlg);
         Assert.True(wire.ShouldSerializeTokkunTutorialFlg());
@@ -303,7 +304,7 @@ public sealed class YellowUserDataProtocolTests
             CreateTokkunPlayResult(5),
             CancellationToken.None);
         var response = await userDataHandler.Handle(new Ac15UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
-        var wire = UserDataMappers.Map(response);
+        var wire = AssembleYellowUserDataResponse(response);
 
         Assert.Equal(1u, playResult);
         Assert.Equal(7u, response.Tutorial!.TokkunTutorialFlg);
@@ -349,7 +350,7 @@ public sealed class YellowUserDataProtocolTests
         var handler = CreateUserDataHandler(fixture);
 
         var response = await handler.Handle(new Ac15UserDataQuery(5, GameEra.Yellow), CancellationToken.None);
-        var wire = UserDataMappers.Map(response);
+        var wire = AssembleYellowUserDataResponse(response);
 
         Assert.Equal(2u, response.Display.DispTaikojukuDan);
         Assert.True(wire.ShouldSerializeDispTaikojukuDan());
@@ -462,6 +463,32 @@ public sealed class YellowUserDataProtocolTests
             fixture.Catalog,
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
+
+    private static YellowUserDataResponse AssembleYellowUserDataResponse(Ac15UserDataResponse common)
+    {
+        var response = new YellowUserDataResponse
+        {
+            Result = common.Result
+        };
+
+        UserDataMappers.Apply(common.SongFlags, response);
+        UserDataMappers.Apply(common.SongLists, response);
+        UserDataMappers.Apply(common.Recommendations, response);
+        UserDataMappers.Apply(common.Counters, response);
+        UserDataMappers.Apply(common.Display, response);
+
+        if (common.ModeFlags is { } modeFlags)
+        {
+            UserDataMappers.Apply(modeFlags, response);
+        }
+
+        if (common.Tutorial is { } tutorial)
+        {
+            UserDataMappers.Apply(tutorial, response);
+        }
+
+        return response;
+    }
 
     private static UpdateAc15PlayResultCommand CreateTokkunPlayResult(uint baid)
         => Ac15PlayResultTestFactory.Command(

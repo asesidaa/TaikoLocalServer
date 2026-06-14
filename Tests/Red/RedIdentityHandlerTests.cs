@@ -1,4 +1,5 @@
 using TaikoLocalServer.Adapters.GameProtocol.Red.Mappers;
+using RedUserDataResponse = TaikoLocalServer.Adapters.GameProtocol.Red.Wire.UserDataResponse;
 
 namespace TaikoLocalServer.Tests.Red;
 
@@ -99,7 +100,7 @@ public sealed class RedIdentityHandlerTests
             Options.Create(new ServerSettings()));
 
         var response = await handler.Handle(new Ac15UserDataQuery(3, GameEra.Red), CancellationToken.None);
-        var wire = UserDataMappers.Map(response);
+        var wire = AssembleRedUserDataResponse(response);
 
         Assert.Equal(1u, response.Result);
         Assert.NotNull(response.Reward);
@@ -116,5 +117,36 @@ public sealed class RedIdentityHandlerTests
         Assert.Equal(8u, wire.RewardProgress);
         Assert.Equal(2u, wire.DifficultyTutorialFlg);
         Assert.Equal(7u, wire.TokkunTutorialFlg);
+    }
+
+    private static RedUserDataResponse AssembleRedUserDataResponse(Ac15UserDataResponse common)
+    {
+        var response = new RedUserDataResponse
+        {
+            Result = common.Result
+        };
+
+        UserDataMappers.Apply(common.SongFlags, response);
+        UserDataMappers.Apply(common.SongLists, response);
+        UserDataMappers.Apply(common.Recommendations, response);
+        UserDataMappers.Apply(common.Counters, response);
+        UserDataMappers.Apply(common.Display, response);
+
+        if (common.ModeFlags is { } modeFlags)
+        {
+            UserDataMappers.Apply(modeFlags, response);
+        }
+
+        if (common.Tutorial is { } tutorial)
+        {
+            UserDataMappers.Apply(tutorial, response);
+        }
+
+        if (common.Reward is { } reward)
+        {
+            UserDataMappers.Apply(reward, response);
+        }
+
+        return response;
     }
 }

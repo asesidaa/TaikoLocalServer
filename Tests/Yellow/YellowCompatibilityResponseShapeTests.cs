@@ -116,7 +116,7 @@ public sealed class YellowCompatibilityResponseShapeTests
     {
         var common = CreateRepresentativeTokkunUserDataResponse();
         var blue = AssembleBlueUserDataControllerShape(common);
-        var yellow = YellowUserDataMappers.Map(common);
+        var yellow = AssembleYellowUserDataControllerShape(common);
 
         AssertYellowIncludesBlueSerializedFields(blue, yellow);
         Assert.True(yellow.ShouldSerializeTokkunTutorialFlg());
@@ -273,6 +273,32 @@ public sealed class YellowCompatibilityResponseShapeTests
         if (common.Tutorial is { } tutorial)
         {
             BlueUserDataMappers.Apply(tutorial, response);
+        }
+
+        return response;
+    }
+
+    private static YellowWire.UserDataResponse AssembleYellowUserDataControllerShape(Ac15UserDataResponse common)
+    {
+        var response = new YellowWire.UserDataResponse
+        {
+            Result = common.Result
+        };
+
+        YellowUserDataMappers.Apply(common.SongFlags, response);
+        YellowUserDataMappers.Apply(common.SongLists, response);
+        YellowUserDataMappers.Apply(common.Recommendations, response);
+        YellowUserDataMappers.Apply(common.Counters, response);
+        YellowUserDataMappers.Apply(common.Display, response);
+
+        if (common.ModeFlags is { } modeFlags)
+        {
+            YellowUserDataMappers.Apply(modeFlags, response);
+        }
+
+        if (common.Tutorial is { } tutorial)
+        {
+            YellowUserDataMappers.Apply(tutorial, response);
         }
 
         return response;

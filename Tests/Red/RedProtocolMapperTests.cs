@@ -117,7 +117,7 @@ public sealed class RedProtocolMapperTests
     [Fact]
     public void UserDataMapper_Red_MapsDonPointFieldsToRedWire()
     {
-        var response = UserDataMappers.Map(new Ac15UserDataResponse
+        var response = AssembleRedUserDataResponse(new Ac15UserDataResponse
         {
             Result = 1,
             SongFlags = new Ac15UserDataSongFlags
@@ -148,6 +148,37 @@ public sealed class RedProtocolMapperTests
         Assert.Equal([101u], response.AryFavoriteSongNoes);
         Assert.Equal([102u], response.AryRecentSongNoes);
         Assert.Equal([103u], response.RecommendBestSongs);
+    }
+
+    private static UserDataResponse AssembleRedUserDataResponse(Ac15UserDataResponse common)
+    {
+        var response = new UserDataResponse
+        {
+            Result = common.Result
+        };
+
+        UserDataMappers.Apply(common.SongFlags, response);
+        UserDataMappers.Apply(common.SongLists, response);
+        UserDataMappers.Apply(common.Recommendations, response);
+        UserDataMappers.Apply(common.Counters, response);
+        UserDataMappers.Apply(common.Display, response);
+
+        if (common.ModeFlags is { } modeFlags)
+        {
+            UserDataMappers.Apply(modeFlags, response);
+        }
+
+        if (common.Tutorial is { } tutorial)
+        {
+            UserDataMappers.Apply(tutorial, response);
+        }
+
+        if (common.Reward is { } reward)
+        {
+            UserDataMappers.Apply(reward, response);
+        }
+
+        return response;
     }
 
     private static PlayResultRequest CreateWireRequest(uint baid)
