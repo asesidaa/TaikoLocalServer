@@ -65,11 +65,11 @@ public sealed class BlueItemShopLockingTests
 
         var response = await handler.Handle(new Ac15BaidQuery(GameEra.Blue, "abc"), CancellationToken.None);
 
-        Assert.False(HasBit(response.CostumeFlags!.CostumeFlg1, 12));
-        Assert.False(HasBit(response.CostumeFlags.CostumeFlg2, 117));
-        Assert.False(HasBit(response.CostumeFlags.CostumeFlg3, 146));
-        Assert.False(HasBit(response.CostumeFlags.CostumeFlg4, 6));
-        Assert.False(HasBit(response.CostumeFlags.CostumeFlg5, 7));
+        Assert.False(HasBit(response.CustomizationInventory!.CostumeFlg1, 12));
+        Assert.False(HasBit(response.CustomizationInventory.CostumeFlg2, 117));
+        Assert.False(HasBit(response.CustomizationInventory.CostumeFlg3, 146));
+        Assert.False(HasBit(response.CustomizationInventory.CostumeFlg4, 6));
+        Assert.False(HasBit(response.CustomizationInventory.CostumeFlg5, 7));
     }
 
     [Fact]
@@ -92,11 +92,11 @@ public sealed class BlueItemShopLockingTests
 
         var response = await handler.Handle(new Ac15BaidQuery(GameEra.Blue, "abc"), CancellationToken.None);
 
-        Assert.True(HasBit(response.CostumeFlags!.CostumeFlg1, 12));
-        Assert.True(HasBit(response.CostumeFlags.CostumeFlg2, 117));
-        Assert.True(HasBit(response.CostumeFlags.CostumeFlg3, 146));
-        Assert.True(HasBit(response.CostumeFlags.CostumeFlg4, 6));
-        Assert.True(HasBit(response.CostumeFlags.CostumeFlg5, 7));
+        Assert.True(HasBit(response.CustomizationInventory!.CostumeFlg1, 12));
+        Assert.True(HasBit(response.CustomizationInventory.CostumeFlg2, 117));
+        Assert.True(HasBit(response.CustomizationInventory.CostumeFlg3, 146));
+        Assert.True(HasBit(response.CustomizationInventory.CostumeFlg4, 6));
+        Assert.True(HasBit(response.CustomizationInventory.CostumeFlg5, 7));
     }
 
     [Fact]
@@ -124,8 +124,8 @@ public sealed class BlueItemShopLockingTests
 
         var response = await handler.Handle(new Ac15BaidQuery(GameEra.Blue, "abc"), CancellationToken.None);
 
-        Assert.Equal(80u, response.ShopMedals!.TotalGetDonmedal);
-        Assert.Equal(30u, response.ShopMedals.TotalUseDonmedal);
+        Assert.Equal(80u, response.ShopMedalBalance!.TotalGetDonmedal);
+        Assert.Equal(30u, response.ShopMedalBalance.TotalUseDonmedal);
     }
 
     [Fact]
@@ -144,8 +144,8 @@ public sealed class BlueItemShopLockingTests
 
         var response = await handler.Handle(new Ac15BaidQuery(GameEra.Blue, "abc"), CancellationToken.None);
 
-        Assert.Equal(0u, response.ShopMedals!.TotalGetDonmedal);
-        Assert.Equal(0u, response.ShopMedals.TotalUseDonmedal);
+        Assert.Equal(0u, response.ShopMedalBalance!.TotalGetDonmedal);
+        Assert.Equal(0u, response.ShopMedalBalance.TotalUseDonmedal);
     }
 
     [Fact]
@@ -182,7 +182,7 @@ public sealed class BlueItemShopLockingTests
 
         Assert.False(HasBit(lockedUserData.SongFlags.ReleaseSongFlg, 101));
         Assert.False(HasBit(lockedUserData.SongFlags.ToneFlg, 4));
-        Assert.False(HasBit(lockedBaid.CostumeFlags!.CostumeFlg1, 12));
+        Assert.False(HasBit(lockedBaid.CustomizationInventory!.CostumeFlg1, 12));
 
         Assert.Equal(1u, (await purchaseHandler.Handle(
             new ItemPurchaseCommand(1, GameEra.Blue, 1, 1, 101, 1300),
@@ -199,7 +199,7 @@ public sealed class BlueItemShopLockingTests
 
         Assert.True(HasBit(unlockedUserData.SongFlags.ReleaseSongFlg, 101));
         Assert.True(HasBit(unlockedUserData.SongFlags.ToneFlg, 4));
-        Assert.True(HasBit(unlockedBaid.CostumeFlags!.CostumeFlg1, 12));
+        Assert.True(HasBit(unlockedBaid.CustomizationInventory!.CostumeFlg1, 12));
     }
 
     private static BlueHandlerFixture.TestBlueCatalog CreateShopCatalog()

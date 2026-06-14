@@ -68,11 +68,11 @@ public sealed class BlueIdentityHandlerTests
         Assert.False(response.IsNewUser);
         Assert.Equal(7u, response.Baid);
         Assert.Equal("DON", response.Identity!.MyDonName);
-        Assert.Equal("Blue Title", response.Profile!.Title);
-        Assert.Equal(0u, response.Profile.TitlePlateId);
-        Assert.Equal(BlueProtocolBytes.DanFlagBytes, response.Dan!.GotDanFlg.Length);
-        Assert.Equal(BlueProtocolBytes.DanExtraFlagBytes, response.Dan.GotDanExtraFlg.Length);
-        Assert.True(response.Profile.IsAutoCostumeOn.GetValueOrDefault());
+        Assert.Equal("Blue Title", response.MydonProfile!.Title);
+        Assert.Equal(0u, response.MydonProfile.TitlePlateId);
+        Assert.Equal(BlueProtocolBytes.DanFlagBytes, response.DanStatus!.GotDanFlg.Length);
+        Assert.Equal(BlueProtocolBytes.DanExtraFlagBytes, response.DanStatus.GotDanExtraFlg.Length);
+        Assert.True(response.MydonProfile.IsAutoCostumeOn.GetValueOrDefault());
     }
 
     [Fact]
@@ -95,9 +95,9 @@ public sealed class BlueIdentityHandlerTests
 
         var response = await handler.Handle(new Ac15BaidQuery(GameEra.Blue, "777"), CancellationToken.None);
 
-        Assert.Equal(25u, response.Dan!.GotDanMax);
-        Assert.Equal(Ac15DanClearGrade.GoldClear, Ac15DanHelpers.GetPackedGrade(response.Dan.GotDanFlg, 0));
-        Assert.Equal(Ac15DanClearGrade.NormalClear, Ac15DanHelpers.GetPackedGrade(response.Dan.GotDanExtraFlg, 0));
+        Assert.Equal(25u, response.DanStatus!.GotDanMax);
+        Assert.Equal(Ac15DanClearGrade.GoldClear, Ac15DanHelpers.GetPackedGrade(response.DanStatus.GotDanFlg, 0));
+        Assert.Equal(Ac15DanClearGrade.NormalClear, Ac15DanHelpers.GetPackedGrade(response.DanStatus.GotDanExtraFlg, 0));
     }
 
     [Fact]

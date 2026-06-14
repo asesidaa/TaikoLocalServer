@@ -43,8 +43,8 @@ public sealed class GreenIdentityHandlerTests
         Assert.False(response.IsNewUser);
         Assert.Equal((uint)7, response.Baid);
         Assert.Equal("DON", response.Identity!.MyDonName);
-        Assert.Equal(GreenProtocolBytes.DanFlagBytes, response.Dan!.GotDanFlg.Length);
-        Assert.Equal(0, response.Dan.GotDanFlg[0]);
+        Assert.Equal(GreenProtocolBytes.DanFlagBytes, response.DanStatus!.GotDanFlg.Length);
+        Assert.Equal(0, response.DanStatus.GotDanFlg[0]);
     }
 
     [Fact]
@@ -66,8 +66,8 @@ public sealed class GreenIdentityHandlerTests
         var response = await handler.Handle(new Ac15BaidQuery(GameEra.Green, "999"), CancellationToken.None);
         var wire = BaidResponseMapper.Map(response);
 
-        Assert.True(response.Profile!.IsAutoCostumeOn.HasValue);
-        Assert.False(response.Profile.IsAutoCostumeOn.GetValueOrDefault());
+        Assert.True(response.MydonProfile!.IsAutoCostumeOn.HasValue);
+        Assert.False(response.MydonProfile.IsAutoCostumeOn.GetValueOrDefault());
         Assert.True(wire.ShouldSerializeIsAutoCostumeOn());
         Assert.False(wire.IsAutoCostumeOn);
     }
@@ -108,7 +108,7 @@ public sealed class GreenIdentityHandlerTests
         var response = await handler.Handle(new Ac15BaidQuery(GameEra.Green, "999"), CancellationToken.None);
         var wire = BaidResponseMapper.Map(response);
 
-        Assert.Equal(2u, response.Profile!.TitlePlateId);
+        Assert.Equal(2u, response.MydonProfile!.TitlePlateId);
         Assert.Equal(2u, wire.TitleplateId);
     }
 
@@ -134,7 +134,7 @@ public sealed class GreenIdentityHandlerTests
 
         var response = await handler.Handle(new Ac15BaidQuery(GameEra.Green, "999"), CancellationToken.None);
 
-        Assert.Equal(expected, response.Dan!.DispDanType);
+        Assert.Equal(expected, response.DanStatus!.DispDanType);
     }
 
     [Fact]
