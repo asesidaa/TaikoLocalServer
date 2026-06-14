@@ -12,7 +12,7 @@
 | `Adapters.GameProtocol.Red/Controllers/ChallengeCompeController.cs` | Current implementation evidence | Shows the route is currently log-and-empty-success compatibility only. |
 | `Adapters.GameProtocol.Red/Mappers/PlayResultMappers.cs` | Current fact-preservation evidence | Maps Red playresult challenge arrays into application ChallengeCompe fact records without state mutation. |
 | Phase 21 decisions D-01 through D-26 | Approved implementation constraints | Define opt-in, typed task data, Red-owned sidecar/state, Tokkun exclusion, DonChare bucket scope, and public-source limitations. |
-| Public DonChare wiki/blog pages | Product context only | Describe feature scope and user-visible concepts. They are not endpoint, payload, table, state, or response authority. |
+| Public DonChare wiki/blog pages | Product context and sidecar authoring source only | Describe monthly task text, counts, clear/full-combo condition, difficulty notes, community task context, and reward thresholds. They are not endpoint, payload, table, state, or response authority. |
 
 ## Product Context Only
 
@@ -22,11 +22,12 @@ Public DonChare material is useful only for naming the gameplay surface and docu
 - Product descriptions mention 10 personal tasks plus 1 community task.
 - Product descriptions distinguish personal progress from community progress.
 - Product descriptions associate normal song play with task completion.
+- The Red wiki page structures tasks with separate columns for task text, count, achievement condition, and difficulty/notes. Some Red tasks explicitly require `むずかしい以上`, so difficulty is a first-class rule constraint, not prose-only metadata.
 - Product descriptions exclude Tokkun/practice play.
 - Product descriptions mention reward song and title thresholds/timing.
 - Donder Hiroba tournaments and challenge letters are separate feature families, not DonChare task-progress authority.
 
-Per D-25, these public facts do not authorize server endpoint behavior, payload fields, response rows, persistence tables, reward timing, or client acceptance semantics.
+Per D-25, these public facts do not authorize server endpoint behavior, payload fields, response rows, persistence tables, reward timing, or client acceptance semantics. They do authorize the operator-maintained Red sidecar to use readable fields matching the wiki concepts, including `minimum_score`, `required_song_count`, `required_community_count`, `minimum_level`, and `eligible_song_noes`; the generic `threshold` field is intentionally not part of the authoring contract.
 
 ## Local Red Proto Evidence
 
@@ -120,7 +121,9 @@ If stateful implementation proceeds, the accepted Phase 21 surface is restricted
 
 Phase 21 implemented stateful ChallengeCompe only inside the accepted surface above:
 
-- Red sidecar loading uses `Host/wwwroot/data/red/red_challenge_compe_data.json`, which is disabled by default and parsed into shared transport-agnostic ChallengeCompe catalog records.
+- Red sidecar loading uses `Host/wwwroot/data/red/red_challenge_compe_data.json`, parsed into shared transport-agnostic ChallengeCompe catalog records. Disabled/no-active configuration is a safe no-op, but meaningful Red ChallengeCompe verification requires populated enabled bundles.
+- The sidecar authoring contract is enforced by standalone JSON Schema `Infrastructure/GameDataCatalog/Ac15/Schemas/ac15-challenge-compe-catalog.schema.json`; the schema is embedded for runtime validation and copied to Host build output under `schemas/ac15-challenge-compe-catalog.schema.json`, with project metadata also marking it for publish output.
+- Historical bundle selection is explicit era configuration via `ActiveChallengeCompeBundleId`, not current wall-clock time.
 - Red-owned SQLite state stores matched raw DonChare facts and derived progress rows in `RedChallengeCompeRawFacts` and `RedChallengeCompeProgress`.
 - Non-Tokkun Red playresults update ChallengeCompe state only for users opted in through `UserSaveDataRed.IsChallengeCompe`, active configured personal tasks, and matched `ary_challenge_id` facts.
 - Tokkun playresults return through the Tokkun branch before ChallengeCompe mutation and do not create ChallengeCompe, normal, Dani, or reward state.
@@ -135,7 +138,7 @@ Phase 21 still does not implement user-created challenge letters, BNG/official c
 
 Current local evidence still does not prove:
 
-- Real operator-authored Red task schedule data.
+- Finalized populated Red task schedule data merged from the parallel sidecar-authoring work.
 - The exact accepted non-empty `ary_challenge_stat` row set on cabinet/RPCS3.
 - Whether the client expects rows for all active tasks, only completed tasks, or latest uploaded facts.
 - Community/global count semantics.
@@ -143,11 +146,11 @@ Current local evidence still does not prove:
 - Exact production reward timing.
 - Cabinet/RPCS3 acceptance of configured task data beyond empty success.
 
-These gaps do not block creating a disabled-safe catalog contract, but they limit any stateful implementation to the local Red proto route, playresult fact shape, Red sidecar data, and approved Phase 21 decisions.
+These gaps do not block the typed catalog/evaluator contract, but they limit any stateful implementation to the local Red proto route, playresult fact shape, Red sidecar data, and approved Phase 21 decisions.
 
 ## Stateful Execution Verdict
 
-**Verdict: PROCEED WITH DISABLED-SAFE CATALOG CONTRACT AND EVIDENCE-GATED STATEFUL PLANS.**
+**Verdict: PROCEED WITH POPULATED ENABLED SIDECAR CONTRACT AND EVIDENCE-GATED STATEFUL PLANS.**
 
 Plans 02-04 may proceed only within the accepted surface above: Red-owned data/state, DonChare `ary_challenge_*` only, typed local sidecar rules, Tokkun exclusion, no user/BNG buckets, and no public-source schema authority. If implementation cannot cite Red proto/runtime/client/local data evidence for endpoint, payload, state shape, and accepted response contract, it must record the gap and leave that stateful behavior absent per RCHAL-02.
 

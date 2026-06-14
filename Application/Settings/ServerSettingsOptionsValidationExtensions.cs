@@ -27,7 +27,9 @@ public static class ServerSettingsOptionsValidationExtensions
                     $"ServerSettings:Eras:{era}:ActiveShopSeasonId must be a nonzero season id when {era} EnableShop is true.");
         }
 
-        return builder;
+        return builder.Validate(
+            settings => HasActiveChallengeCompeBundle(settings, enabledEras, GameEra.Red),
+            $"ServerSettings:Eras:{GameEra.Red}:ActiveChallengeCompeBundleId is required when {GameEra.Red} EnableChallengeCompe is true.");
     }
 
     private static bool HasExplicitShopSetting(ServerSettings settings, ISet<GameEra> enabledEras, GameEra era)
@@ -45,5 +47,17 @@ public static class ServerSettingsOptionsValidationExtensions
         }
 
         return eraSettings.ActiveShopSeasonId is > 0;
+    }
+
+    private static bool HasActiveChallengeCompeBundle(ServerSettings settings, ISet<GameEra> enabledEras, GameEra era)
+    {
+        if (!enabledEras.Contains(era)
+            || !settings.Eras.TryGetValue(era.ToString(), out var eraSettings)
+            || eraSettings.EnableChallengeCompe != true)
+        {
+            return true;
+        }
+
+        return !string.IsNullOrWhiteSpace(eraSettings.ActiveChallengeCompeBundleId);
     }
 }

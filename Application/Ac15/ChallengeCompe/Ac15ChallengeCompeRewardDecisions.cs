@@ -8,13 +8,12 @@ public static class Ac15ChallengeCompeRewardDecisions
 {
     public static Ac15ChallengeCompeRewardGrant GetEarnedRewards(
         Ac15ChallengeCompeCatalog catalog,
-        DateTimeOffset activeAt,
         IReadOnlyDictionary<string, uint> completedTaskCountsByBundle)
     {
         var songNoes = new SortedSet<uint>();
         var titleIds = new SortedSet<uint>();
 
-        foreach (var bundle in catalog.GetActiveBundles(activeAt))
+        foreach (var bundle in catalog.GetActiveBundles())
         {
             completedTaskCountsByBundle.TryGetValue(bundle.BundleId, out var completedTasks);
             foreach (var reward in bundle.Rewards.Where(reward =>
@@ -30,7 +29,6 @@ public static class Ac15ChallengeCompeRewardDecisions
 
     public static IReadOnlyList<uint> GetLockedRewardSongIds(
         Ac15ChallengeCompeCatalog catalog,
-        DateTimeOffset activeAt,
         bool isEnrolled,
         byte[] releaseSongFlags,
         int songFlagBytes)
@@ -41,7 +39,7 @@ public static class Ac15ChallengeCompeRewardDecisions
         }
 
         var releaseFlags = Ac15ProtocolBytes.FixedOrZero(releaseSongFlags, songFlagBytes);
-        return catalog.GetActiveBundles(activeAt)
+        return catalog.GetActiveBundles()
             .SelectMany(bundle => bundle.Rewards)
             .Where(reward => reward.RequiredCompletedTasks > 0)
             .SelectMany(reward => reward.RewardSongNoes)

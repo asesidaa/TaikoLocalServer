@@ -6,7 +6,7 @@ tags: [red, ac15, challengecompe, sqlite, playresult]
 
 requires:
   - phase: 21-01
-    provides: ChallengeCompe evidence gate, disabled-safe Red sidecar catalog, and shared task/rule records
+    provides: ChallengeCompe evidence gate, Red sidecar catalog, and shared task/rule records
   - phase: 20
     provides: Red runtime state, Red playresult handler, and preserved challenge fact mapping
 provides:

@@ -21,7 +21,7 @@ public partial class GetChallengeCompeQueryHandler
         }
 
         var activeTasks = gameDataService.Red().ChallengeCompe
-            .GetActiveBundles(DateTimeOffset.UtcNow)
+            .GetActiveBundles()
             .SelectMany(bundle => bundle.PersonalTasks.Select(task => new ActiveChallengeTask(bundle.BundleId, task.TaskId, task.TrackNo)))
             .ToArray();
         if (activeTasks.Length == 0)

@@ -32,7 +32,6 @@ public partial class UserDataQueryHandler
         var snapshot = Ac15CatalogSnapshotFactory.FromRed(red);
         var challengeLockedSongIds = Ac15ChallengeCompeRewardDecisions.GetLockedRewardSongIds(
             red.ChallengeCompe,
-            DateTimeOffset.UtcNow,
             saveData.IsChallengeCompe,
             saveData.ReleaseSongFlg,
             Ac15EraProfiles.Red.Limits.SongFlagBytes);

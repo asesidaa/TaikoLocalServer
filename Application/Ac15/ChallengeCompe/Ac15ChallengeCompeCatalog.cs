@@ -1,17 +1,38 @@
+using TaikoLocalServer.Application.Dtos.Ac15;
+
 namespace TaikoLocalServer.Application.Ac15.ChallengeCompe;
 
-public sealed record Ac15ChallengeCompeCatalog(
-    bool Enabled,
-    IReadOnlyList<Ac15ChallengeCompeMonthlyBundle> MonthlyBundles)
+public sealed record Ac15ChallengeCompeCatalog
 {
-    public static Ac15ChallengeCompeCatalog Disabled { get; } = new(false, []);
+    public Ac15ChallengeCompeCatalog()
+    {
+    }
 
-    public IReadOnlyList<Ac15ChallengeCompeMonthlyBundle> GetActiveBundles(DateTimeOffset now)
-        => !Enabled
-            ? []
-            : MonthlyBundles
-                .Where(bundle => bundle.IsActiveAt(now))
-                .ToArray();
+    public Ac15ChallengeCompeCatalog(
+        bool enabled,
+        string? activeBundleId,
+        IReadOnlyList<Ac15ChallengeCompeMonthlyBundle> monthlyBundles)
+    {
+        Enabled = enabled;
+        ActiveBundleId = activeBundleId;
+        MonthlyBundles = monthlyBundles;
+    }
+
+    public static Ac15ChallengeCompeCatalog Disabled { get; } = new(false, null, []);
+
+    public bool Enabled { get; init; }
+
+    public string? ActiveBundleId { get; init; }
+
+    public IReadOnlyList<Ac15ChallengeCompeMonthlyBundle> MonthlyBundles { get; init; } = [];
+
+    public Ac15ChallengeCompeMonthlyBundle? ActiveBundle
+        => Enabled && ActiveBundleId is { } id
+            ? MonthlyBundles.FirstOrDefault(bundle => string.Equals(bundle.BundleId, id, StringComparison.OrdinalIgnoreCase))
+            : null;
+
+    public IReadOnlyList<Ac15ChallengeCompeMonthlyBundle> GetActiveBundles()
+        => ActiveBundle is { } activeBundle ? [activeBundle] : [];
 }
 
 public sealed record Ac15ChallengeCompeMonthlyBundle(
@@ -26,9 +47,7 @@ public sealed record Ac15ChallengeCompeMonthlyBundle(
 
     public bool HasExpectedPersonalTaskCount => PersonalTasks.Count == ExpectedPersonalTaskCount;
 
-    public bool IsActiveAt(DateTimeOffset now)
-        => (StartsAt is null || StartsAt <= now)
-            && (EndsAt is null || now < EndsAt);
+    public bool HasConfiguredWindow => StartsAt is not null || EndsAt is not null;
 }
 
 public sealed record Ac15ChallengeCompeTask(
@@ -50,23 +69,36 @@ public sealed record Ac15ChallengeCompeCommunityTask(
 
 public sealed record Ac15ChallengeCompeRule(
     Ac15ChallengeCompeRuleKind Kind,
-    uint? Threshold,
-    IReadOnlyList<uint> SongNoes)
+    uint? MinimumScore = null,
+    uint? RequiredSongCount = null,
+    uint? RequiredCommunityCount = null,
+    uint? MinimumLevel = null,
+    IReadOnlyList<uint>? EligibleSongNoes = null)
 {
     public static Ac15ChallengeCompeRule Unsupported { get; } = new(
-        Ac15ChallengeCompeRuleKind.Unsupported,
-        null,
-        []);
+        Ac15ChallengeCompeRuleKind.Unsupported);
+
+    public IReadOnlyList<uint> EligibleSongNoes { get; init; } = EligibleSongNoes ?? [];
 
     public bool CanExecute => Kind switch
     {
-        Ac15ChallengeCompeRuleKind.Clear => true,
-        Ac15ChallengeCompeRuleKind.FullCombo => true,
-        Ac15ChallengeCompeRuleKind.ScoreThreshold => Threshold > 0,
-        Ac15ChallengeCompeRuleKind.SongSetCount => Threshold > 0 && SongNoes.Count > 0,
-        Ac15ChallengeCompeRuleKind.CommunityCount => Threshold > 0,
+        Ac15ChallengeCompeRuleKind.Clear => RequiredSongCount is null or > 0,
+        Ac15ChallengeCompeRuleKind.FullCombo => RequiredSongCount is null or > 0,
+        Ac15ChallengeCompeRuleKind.ScoreThreshold => MinimumScore > 0,
+        Ac15ChallengeCompeRuleKind.CommunityCount => RequiredCommunityCount > 0,
         _ => false
     };
+
+    public uint RequiredStageCount => RequiredSongCount.GetValueOrDefault(1);
+
+    public bool RequiresDistinctSongProgress
+        => (Kind is Ac15ChallengeCompeRuleKind.Clear
+               or Ac15ChallengeCompeRuleKind.FullCombo)
+           && RequiredStageCount > 1;
+
+    public bool AllowsStage(Ac15StageResult stage)
+        => (MinimumLevel is null || stage.Level >= MinimumLevel)
+           && (EligibleSongNoes.Count == 0 || EligibleSongNoes.Contains(stage.SongNo));
 }
 
 public enum Ac15ChallengeCompeRuleKind
@@ -75,7 +107,6 @@ public enum Ac15ChallengeCompeRuleKind
     Clear,
     FullCombo,
     ScoreThreshold,
-    SongSetCount,
     CommunityCount
 }
 

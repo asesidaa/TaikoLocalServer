@@ -114,8 +114,7 @@ public partial class UpdatePlayResultCommandHandler
             return;
         }
 
-        var activeAt = new DateTimeOffset(DateTime.SpecifyKind(playTime, DateTimeKind.Utc));
-        var evaluations = Ac15ChallengeCompeProgressEvaluator.Evaluate(catalog, activeAt, stages);
+        var evaluations = Ac15ChallengeCompeProgressEvaluator.Evaluate(catalog, stages);
         if (evaluations.Count == 0)
         {
             return;
@@ -201,7 +200,6 @@ public partial class UpdatePlayResultCommandHandler
         await ApplyRedChallengeCompeRewardsAsync(
             baid,
             catalog,
-            activeAt,
             saveData,
             cancellationToken);
     }
@@ -209,11 +207,10 @@ public partial class UpdatePlayResultCommandHandler
     private async ValueTask ApplyRedChallengeCompeRewardsAsync(
         uint baid,
         Ac15ChallengeCompeCatalog catalog,
-        DateTimeOffset activeAt,
         UserSaveDataRed saveData,
         CancellationToken cancellationToken)
     {
-        var activeBundleIds = catalog.GetActiveBundles(activeAt)
+        var activeBundleIds = catalog.GetActiveBundles()
             .Select(bundle => bundle.BundleId)
             .ToArray();
         if (activeBundleIds.Length == 0)
@@ -240,7 +237,7 @@ public partial class UpdatePlayResultCommandHandler
         var completedCounts = completedTasks
             .GroupBy(key => key.BundleId)
             .ToDictionary(group => group.Key, group => (uint)group.Select(key => key.TaskId).Distinct().Count());
-        var grant = Ac15ChallengeCompeRewardDecisions.GetEarnedRewards(catalog, activeAt, completedCounts);
+        var grant = Ac15ChallengeCompeRewardDecisions.GetEarnedRewards(catalog, completedCounts);
 
         Ac15UnlockFlagAccess.Red.ReleaseSongs?.Invoke(saveData, grant.RewardSongNoes);
         Ac15UnlockFlagAccess.Red.Titles(saveData, grant.RewardTitleIds);
@@ -252,7 +249,7 @@ public partial class UpdatePlayResultCommandHandler
         IReadOnlyList<Ac15ChallengeCompeStageEvaluation> evaluations,
         CancellationToken cancellationToken)
     {
-        if (task.Rule.Kind != Ac15ChallengeCompeRuleKind.SongSetCount)
+        if (!task.Rule.RequiresDistinctSongProgress)
         {
             return evaluations.Max(evaluation => evaluation.ProgressValue);
         }
@@ -278,8 +275,8 @@ public partial class UpdatePlayResultCommandHandler
         Ac15ChallengeCompeRule rule,
         uint progressValue,
         IEnumerable<Ac15ChallengeCompeStageEvaluation> evaluations)
-        => rule.Kind == Ac15ChallengeCompeRuleKind.SongSetCount
-            ? rule.Threshold is { } threshold && progressValue >= threshold
+        => rule.RequiresDistinctSongProgress
+            ? progressValue >= rule.RequiredStageCount
             : evaluations.Any(evaluation => evaluation.Completed);
 
     private async ValueTask<uint> HandleRedTokkun(

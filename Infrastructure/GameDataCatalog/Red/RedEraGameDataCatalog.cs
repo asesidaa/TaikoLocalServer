@@ -153,6 +153,8 @@ public sealed class RedEraGameDataCatalog(
             cancellationToken);
         challengeCompe = await Ac15ChallengeCompeLoader.LoadFromFileAsync(
             Path.Combine(PathHelper.GetDataPath(GameEra.Red), ChallengeCompeFileName),
+            redSettings.EnableChallengeCompe == true,
+            redSettings.ActiveChallengeCompeBundleId,
             nameof(GameEra.Red),
             cancellationToken);
         var redCustomization = await Ac15CustomizationCatalogSupport.LoadEraCatalogAsync(

@@ -6,9 +6,10 @@
 ## Implemented
 
 - Recorded the ChallengeCompe evidence gate separating public DonChare product context from local protocol, route, data, state, and client authority.
-- Added a shared transport-agnostic ChallengeCompe catalog model and disabled-safe Red sidecar loading from `Host/wwwroot/data/red/red_challenge_compe_data.json`.
+- Added a shared transport-agnostic ChallengeCompe catalog model and Red sidecar loading from `Host/wwwroot/data/red/red_challenge_compe_data.json`.
+- Added a standalone AC15 ChallengeCompe JSON Schema that is used by the loader and copied to Host build output under `schemas/ac15-challenge-compe-catalog.schema.json`; project metadata also marks it for publish output.
 - Added Red-owned raw fact and derived progress persistence for matched DonChare `ary_challenge_id` facts from opted-in, non-Tokkun Red playresults.
-- Added shared typed predicate evaluation for clear, full-combo, score-threshold, song-set-count, and unsupported rule handling.
+- Added shared typed predicate evaluation for clear, full-combo, score, song-count, community-count metadata, difficulty-gated tasks, eligible-song tasks, and unsupported rule handling.
 - Added configured ChallengeCompe song/title reward grants through Red release/title flags, plus active unearned reward-song locks through existing AC15 userdata behavior.
 - Replaced Red empty-success-only `challengecompe.php` with Mediator-backed, read-only `ary_challenge_stat` readback from saved active progress.
 - Added focused observable tests for catalog parsing, SQLite state/no-write behavior, Tokkun exclusion, reward grants, userdata locks, readback, Mapperly projection, and unsupported bucket boundaries.
@@ -30,8 +31,11 @@ Final closeout commands passed:
 
 - `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~RedChallengeCompe|FullyQualifiedName~RedPlayResultHandlerTests|FullyQualifiedName~RedProtocolMapperTests|FullyQualifiedName~Ac15UserDataService"` - 30 passed.
 - `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~Red"` - 83 passed after the scoped Red sidecar contract test fix.
-- `dotnet test Tests/Tests.csproj` - 731 passed.
+- `dotnet test Tests/Tests.csproj` - 735 passed.
 - `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build"` - passed with 0 warnings and 0 errors.
+- `Test-Path "$env:TEMP\TaikoLocalServer-host-build\schemas\ac15-challenge-compe-catalog.schema.json"` - passed.
+- `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~RedChallengeCompeTests"` - 18 passed after the rule-schema correction.
+- `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~RedChallengeCompeCatalogTests|FullyQualifiedName~UpdatePlayResult_Red_ClearRequiredSongCountAccumulatesDistinctMatchedSongs|FullyQualifiedName~RedChallengeCompeEnabledRequiresActiveBundleId"` - 8 passed after the rule-schema correction.
 
 ## Phase 22 Handoff
 

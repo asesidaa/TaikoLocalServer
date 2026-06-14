@@ -94,7 +94,7 @@ completed: 2026-06-14
 - **Issue:** `RedCatalogLoaderTests.DefaultRedSidecarFiles_ExistAndLoadAsDataContracts` failed because the known pre-existing dirty `Host/wwwroot/data/red/red_telop_data.json` contained one valid telop entry while the test asserted the telop sidecar must be empty.
 - **Fix:** Updated the test to assert loaded sidecar collections are non-null, matching the Yellow-era data-contract test pattern, without touching the dirty telop data.
 - **Files modified:** `Tests/Red/RedCatalogLoaderTests.cs`
-- **Verification:** Red regression rerun passed with 83 tests; full suite passed with 731 tests.
+- **Verification:** Red regression rerun passed with 83 tests; full suite passed with 735 tests after the follow-up schema correction.
 - **Committed in:** `3600abea`
 
 **Total deviations:** 1 auto-fixed (Rule 3 blocking)
@@ -111,12 +111,12 @@ completed: 2026-06-14
 | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~RedChallengeCompe|FullyQualifiedName~RedPlayResultHandlerTests|FullyQualifiedName~RedProtocolMapperTests|FullyQualifiedName~Ac15UserDataService"` | Passed: 30 passed, 0 failed |
 | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~Red"` | Initial failure: 82 passed, 1 failed due the dirty Red telop sidecar plus hardcoded emptiness assertion |
 | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~Red"` | Passed after fix: 83 passed, 0 failed |
-| `dotnet test Tests/Tests.csproj` | Passed: 731 passed, 0 failed |
+| `dotnet test Tests/Tests.csproj` | Passed: 735 passed, 0 failed |
 | `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build"` | Passed: 0 warnings, 0 errors |
 
 ## Known Stubs
 
-None. The committed `red_challenge_compe_data.json` is intentionally disabled starter data and is documented as the disabled-safe operator/server-authored sidecar contract.
+The populated `red_challenge_compe_data.json` now uses the explicit JSON Schema-backed authoring fields. Meaningful verification should use populated enabled bundles plus `ActiveChallengeCompeBundleId`, not a disabled placeholder.
 
 ## Threat Flags
 

@@ -12,15 +12,15 @@ requires:
 provides:
   - ChallengeCompe evidence gate separating product context from local protocol authority
   - Transport-agnostic shared older-AC15 ChallengeCompe catalog and rule records
-  - Disabled-safe Red ChallengeCompe sidecar loading through IRedCatalog
-  - Red server-authored sidecar output copy support and parser coverage
+  - Red ChallengeCompe sidecar loading through IRedCatalog
+  - Red server-authored sidecar output copy support and schema/parser coverage
 affects: [phase-21, red, challengecompe, older-ac15-catalog]
 
 tech-stack:
   added: []
   patterns:
     - Red-owned JSON sidecar parsed into shared transport-agnostic AC15 records
-    - Unknown ChallengeCompe rule kinds map to unsupported non-executable predicates
+    - Unknown ChallengeCompe rule kinds fail schema validation instead of entering runtime evaluation
 
 key-files:
   created:
@@ -38,8 +38,8 @@ key-files:
 
 key-decisions:
   - "ChallengeCompe public wiki/blog facts are product context only; local Red proto, route, mapper, data, runtime, and client evidence are implementation authority."
-  - "Plan 21-01 proceeds only with a disabled-safe catalog contract; empty success remains compatibility, not stateful ChallengeCompe support."
-  - "Unknown ChallengeCompe rule types load as unsupported predicates and cannot execute progress behavior."
+  - "Plan 21-01 established the typed Red sidecar catalog contract; empty success remains compatibility, not stateful ChallengeCompe support."
+  - "Unknown ChallengeCompe rule types fail schema validation and cannot enter progress behavior."
 
 patterns-established:
   - "Shared ChallengeCompe catalog records contain no Red route, Red wire, Red table, or transport vocabulary."
@@ -53,7 +53,7 @@ completed: 2026-06-14
 
 # Phase 21 Plan 01: ChallengeCompe Evidence Gate and Red Catalog Contract Summary
 
-**Evidence-gated older-AC15 ChallengeCompe catalog contract with disabled-safe Red sidecar loading.**
+**Evidence-gated older-AC15 ChallengeCompe catalog contract with Red sidecar loading.**
 
 ## Performance
 
@@ -66,8 +66,8 @@ completed: 2026-06-14
 ## Accomplishments
 
 - Recorded the ChallengeCompe evidence gate and stateful execution verdict in `21-CHALLENGECOMPE-EVIDENCE.md`.
-- Added shared AC15 ChallengeCompe catalog records for disabled config, monthly bundles, 10 personal tasks, optional community metadata, typed predicates, and reward thresholds.
-- Bound Red to a committed disabled starter sidecar through `IRedCatalog`, with Host output copy support and focused parser tests for disabled, active, and unsupported rule configs.
+- Added shared AC15 ChallengeCompe catalog records for disabled/no-active config, monthly bundles, 10 personal tasks, optional community metadata, typed predicates, and reward thresholds.
+- Bound Red to the committed sidecar through `IRedCatalog`, with Host output copy support and focused parser/schema tests for disabled, active, legacy-field, and invalid-rule configs.
 
 ## Task Commits
 
@@ -81,20 +81,20 @@ completed: 2026-06-14
 
 - `.planning/phases/21-older-ac15-challengecompe-capability-and-red-binding/21-CHALLENGECOMPE-EVIDENCE.md` - Evidence authority split and stateful implementation gate.
 - `Application/Ac15/ChallengeCompe/Ac15ChallengeCompeCatalog.cs` - Shared transport-agnostic ChallengeCompe catalog, task, rule, and reward records.
-- `Infrastructure/GameDataCatalog/Ac15/Ac15ChallengeCompeLoader.cs` - JSON sidecar parser with disabled-safe and unsupported-rule behavior.
+- `Infrastructure/GameDataCatalog/Ac15/Ac15ChallengeCompeLoader.cs` - JSON sidecar parser with JSON Schema validation plus disabled/no-active behavior.
 - `Application/Abstractions/IRedCatalog.cs` - Red catalog exposes `ChallengeCompe`.
 - `Infrastructure/GameDataCatalog/Red/RedEraGameDataCatalog.cs` - Loads `red_challenge_compe_data.json` through `PathHelper.GetDataPath(GameEra.Red)`.
-- `Host/wwwroot/data/red/red_challenge_compe_data.json` - Disabled starter Red sidecar.
+- `Host/wwwroot/data/red/red_challenge_compe_data.json` - Red ChallengeCompe sidecar.
 - `Host/Host.csproj` - Copies Red server-authored sidecars, including the ChallengeCompe sidecar, to build output.
-- `Tests/Red/RedChallengeCompeCatalogTests.cs` - Parser coverage for disabled, valid active, committed default, and unknown rule configs.
+- `Tests/Red/RedChallengeCompeCatalogTests.cs` - Parser/schema coverage for disabled, valid active, committed sidecar, legacy field rejection, and unknown rule configs.
 - `Tests/Red/RedHandlerFixture.cs` - Test Red catalog default ChallengeCompe property.
 - `Tests/Red/RedInitialDataProtocolTests.cs` - Fake Red catalog default ChallengeCompe property.
 
 ## Decisions Made
 
 - Public DonChare pages remain product context only; endpoint, payload, response, state, and reward behavior require local evidence.
-- The Plan 01 sidecar is intentionally disabled. Stateful progress/reward/readback behavior remains owned by later Phase 21 plans and must stay within the evidence gate.
-- Unknown rule kinds are accepted into the catalog as `Unsupported` and `CanExecute == false`, preventing accidental progress execution.
+- ChallengeCompe remains config-gated; stateful progress/reward/readback behavior is owned by later Phase 21 plans and must stay within the evidence gate.
+- Unknown rule kinds and legacy ambiguous rule fields fail JSON Schema validation, preventing accidental progress execution.
 
 ## Deviations from Plan
 
@@ -126,11 +126,11 @@ completed: 2026-06-14
 
 ## Known Stubs
 
-None. `red_challenge_compe_data.json` is intentionally disabled starter data and does not claim active ChallengeCompe support.
+None. `red_challenge_compe_data.json` is the Red sidecar data contract; active execution remains controlled by era config and the evidence-gated runtime plans.
 
 ## Threat Flags
 
-None. The planned sidecar JSON trust boundary is mitigated by typed parsing and unsupported-rule handling.
+None. The planned sidecar JSON trust boundary is mitigated by JSON Schema validation and typed parsing.
 
 ## User Setup Required
 

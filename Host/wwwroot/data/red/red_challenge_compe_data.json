@@ -1,4 +1,956 @@
 {
-  "enabled": false,
-  "monthly_bundles": []
+  "enabled": true,
+  "monthly_bundles": [
+    {
+      "bundle_id": "red-2016-08",
+      "personal_tasks": [
+        {
+          "task_id": 20160801,
+          "slot": 1,
+          "name": "レッドVer.最初のドンチャレ、はっじまるドーンっ！まずは「SstTAarR*」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              574
+            ]
+          }
+        },
+        {
+          "task_id": 20160802,
+          "slot": 2,
+          "name": "次は「M.S.S.Planet」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              297
+            ]
+          }
+        },
+        {
+          "task_id": 20160803,
+          "slot": 3,
+          "name": "「Star!!」を難易度「むずかしい」以上でフルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              200
+            ],
+            "minimum_level": 3
+          }
+        },
+        {
+          "task_id": 20160804,
+          "slot": 4,
+          "name": "「super star shooter」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              396
+            ]
+          }
+        },
+        {
+          "task_id": 20160805,
+          "slot": 5,
+          "name": "ジャンル「アニメ」から、「マクロス」シリーズの曲をどれか2曲、フルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 2
+          }
+        },
+        {
+          "task_id": 20160806,
+          "slot": 6,
+          "name": "「夢色コースター」をフルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              196
+            ]
+          }
+        },
+        {
+          "task_id": 20160807,
+          "slot": 7,
+          "name": "レッドVer.で追加された曲のうち、ジャンル「J-POP」からどれか2曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 2
+          }
+        },
+        {
+          "task_id": 20160808,
+          "slot": 8,
+          "name": "レッドVer.で追加された曲のうち、ジャンル「アニメ」からどれか2曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 2
+          }
+        },
+        {
+          "task_id": 20160809,
+          "slot": 9,
+          "name": "レッドVer.で追加された曲のうち、ジャンル「ボーカロイド曲」、「バラエティ」、「ゲームミュージック」からどれか3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20160810,
+          "slot": 10,
+          "name": "レッドVer.で追加された曲のうち、ジャンル「ナムコオリジナル」からどれか3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        }
+      ],
+      "community_task": {
+        "task_id": 20160890,
+        "name": "「君のプラネット」を、みんなで合わせて「5000回」以上クリアするドーン！",
+        "description": "2016-08 wiki row: achieved 8/29 13:50頃, 178.57回/日ペース.",
+        "rule": {
+          "kind": "community_count",
+          "required_community_count": 5000,
+          "eligible_song_noes": [
+            618
+          ]
+        }
+      },
+      "rewards": [
+        {
+          "required_completed_tasks": 8,
+          "reward_song_noes": [
+            618
+          ],
+          "reward_title_ids": []
+        },
+        {
+          "required_completed_tasks": 10,
+          "reward_song_noes": [],
+          "reward_title_ids": [
+            484
+          ]
+        }
+      ]
+    },
+    {
+      "bundle_id": "red-2016-09",
+      "personal_tasks": [
+        {
+          "task_id": 20160901,
+          "slot": 1,
+          "name": "9月のドンチャレ、はっじまるドーンっ！まずは「ケロ⑨destiny」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              419
+            ]
+          }
+        },
+        {
+          "task_id": 20160902,
+          "slot": 2,
+          "name": "今月は敬老の日があるドン。次は「Thank You!」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              479
+            ]
+          }
+        },
+        {
+          "task_id": 20160903,
+          "slot": 3,
+          "name": "ジャンル「J-POP」と「アニメ」のうち、曲名に大文字の「K」が入る曲をどれか1曲、フルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1
+          }
+        },
+        {
+          "task_id": 20160904,
+          "slot": 4,
+          "name": "曲名にカタカナの「ロウ」が入る曲を2曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 2
+          }
+        },
+        {
+          "task_id": 20160905,
+          "slot": 5,
+          "name": "ジャンル「ゲームミュージック」のうち、曲名にローマ字の「k」が入る曲を2曲、フルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 2
+          }
+        },
+        {
+          "task_id": 20160906,
+          "slot": 6,
+          "name": "「雪だるまつくろう」を、難易度「むずかしい」以上でフルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              35
+            ],
+            "minimum_level": 3
+          }
+        },
+        {
+          "task_id": 20160907,
+          "slot": 7,
+          "name": "ジャンル「J-POP」と「アニメ」のうち、曲名に小文字の「k」が入る曲を2曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 2
+          }
+        },
+        {
+          "task_id": 20160908,
+          "slot": 8,
+          "name": "曲名に「row」または「low」が入る曲を3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20160909,
+          "slot": 9,
+          "name": "レッドVer.で追加された曲のうち、ジャンル「J-POP」、「アニメ」、「ボーカロイド曲」からどれか3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20160910,
+          "slot": 10,
+          "name": "レッドVer.で追加された曲のうち、ジャンル「ナムコオリジナル」からどれか3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        }
+      ],
+      "community_task": {
+        "task_id": 20160990,
+        "name": "「シャイニング65」を、みんなで合わせて「5555回」以上クリアするドーン！",
+        "description": "2016-09 wiki row: failed, record 1578回, 54.41回/日ペース.",
+        "rule": {
+          "kind": "community_count",
+          "required_community_count": 5555,
+          "eligible_song_noes": [
+            631
+          ]
+        }
+      },
+      "rewards": [
+        {
+          "required_completed_tasks": 8,
+          "reward_song_noes": [
+            631
+          ],
+          "reward_title_ids": []
+        },
+        {
+          "required_completed_tasks": 10,
+          "reward_song_noes": [],
+          "reward_title_ids": [
+            485
+          ]
+        }
+      ]
+    },
+    {
+      "bundle_id": "red-2016-10",
+      "personal_tasks": [
+        {
+          "task_id": 20161001,
+          "slot": 1,
+          "name": "10月だドン！まずは「秋竜 ～Shiuryu～」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              519
+            ]
+          }
+        },
+        {
+          "task_id": 20161002,
+          "slot": 2,
+          "name": "次は「筋肉のような僕ら ～マッスル愛のテーマ～」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              296
+            ]
+          }
+        },
+        {
+          "task_id": 20161003,
+          "slot": 3,
+          "name": "次は「天国と地獄 序曲」をフルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              79
+            ]
+          }
+        },
+        {
+          "task_id": 20161004,
+          "slot": 4,
+          "name": "次は「隼」をフルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              180
+            ]
+          }
+        },
+        {
+          "task_id": 20161005,
+          "slot": 5,
+          "name": "ジャンル「J-POP」のうち、曲名にひらがなの「た」「い」「く」のいずれかが入る曲を2曲、フルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 2
+          }
+        },
+        {
+          "task_id": 20161006,
+          "slot": 6,
+          "name": "ジャンル「アニメ」のうち、曲名にひらがなの「た」「い」「く」のいずれかが入る曲を2曲、フルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 2
+          }
+        },
+        {
+          "task_id": 20161007,
+          "slot": 7,
+          "name": "レッドVer.で追加された曲のうち、ジャンル「J-POP」からどれか3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20161008,
+          "slot": 8,
+          "name": "レッドVer.で追加された曲のうち、ジャンル「アニメ」からどれか3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20161009,
+          "slot": 9,
+          "name": "レッドVer.で追加された曲のうち、「ボーカロイド曲」「バラエティ」「ゲームミュージック」からどれか3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20161010,
+          "slot": 10,
+          "name": "レッドVer.で追加された曲のうち、ジャンル「ナムコオリジナル」からどれか3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        }
+      ],
+      "community_task": {
+        "task_id": 20161090,
+        "name": "「太鼓のマーチ」をみんなで「5000回」以上クリアするドン！",
+        "description": "2016-10 wiki row: failed, record 2026回, 67.53回/日ペース.",
+        "rule": {
+          "kind": "community_count",
+          "required_community_count": 5000,
+          "eligible_song_noes": [
+            632
+          ]
+        }
+      },
+      "rewards": [
+        {
+          "required_completed_tasks": 8,
+          "reward_song_noes": [
+            632
+          ],
+          "reward_title_ids": []
+        },
+        {
+          "required_completed_tasks": 10,
+          "reward_song_noes": [],
+          "reward_title_ids": [
+            486
+          ]
+        }
+      ]
+    },
+    {
+      "bundle_id": "red-2016-11",
+      "personal_tasks": [
+        {
+          "task_id": 20161101,
+          "slot": 1,
+          "name": "11月だドン！「Shiny Kung-fu Revival」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              375
+            ]
+          }
+        },
+        {
+          "task_id": 20161102,
+          "slot": 2,
+          "name": "「君のプラネット」と「夢色コースター」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 2,
+            "eligible_song_noes": [
+              618,
+              196
+            ]
+          }
+        },
+        {
+          "task_id": 20161103,
+          "slot": 3,
+          "name": "「はたラク2000」をクリアするドン！！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              179
+            ]
+          }
+        },
+        {
+          "task_id": 20161104,
+          "slot": 4,
+          "name": "次は曲名に漢字で「太鼓」がつく曲を3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20161105,
+          "slot": 5,
+          "name": "ジャンル「ナムコオリジナル」から、曲名にひらがなの「ら」が入る曲を2曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 2
+          }
+        },
+        {
+          "task_id": 20161106,
+          "slot": 6,
+          "name": "ジャンル「ナムコオリジナル」から、曲名にひらがなの「ん」が入る曲を3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20161107,
+          "slot": 7,
+          "name": "次は曲名にひらがなの「ぶ」が入る曲をどれか1曲、フルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1
+          }
+        },
+        {
+          "task_id": 20161108,
+          "slot": 8,
+          "name": "レッドVer.で追加された曲のうち、ジャンル「アニメ」からどれか2曲、難易度「むずかしい」以上でクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 2,
+            "minimum_level": 3
+          }
+        },
+        {
+          "task_id": 20161109,
+          "slot": 9,
+          "name": "レッドVer.で追加された曲のうち、「J-POP」「ボーカロイド曲」「バラエティ」からどれか3曲、フルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20161110,
+          "slot": 10,
+          "name": "レッドVer.で追加された曲のうち、ジャンル「ナムコオリジナル」からどれか3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        }
+      ],
+      "community_task": {
+        "task_id": 20161190,
+        "name": "「太鼓乱舞 皆伝」を、みんなで合わせて「3000回」以上クリアするドーン！",
+        "description": "2016-11 wiki row: achieved 11/7 13:00頃, 500回/日ペース.",
+        "rule": {
+          "kind": "community_count",
+          "required_community_count": 3000,
+          "eligible_song_noes": [
+            650
+          ]
+        }
+      },
+      "rewards": [
+        {
+          "required_completed_tasks": 8,
+          "reward_song_noes": [
+            650
+          ],
+          "reward_title_ids": []
+        },
+        {
+          "required_completed_tasks": 10,
+          "reward_song_noes": [],
+          "reward_title_ids": [
+            499
+          ]
+        }
+      ]
+    },
+    {
+      "bundle_id": "red-2016-12",
+      "personal_tasks": [
+        {
+          "task_id": 20161201,
+          "slot": 1,
+          "name": "曲名に「＠」が入る曲を3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20161202,
+          "slot": 2,
+          "name": "曲名にひらがなの「し」が入る曲を3曲クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20161203,
+          "slot": 3,
+          "name": "曲名にひらがなの「わ」が入る曲を3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20161204,
+          "slot": 4,
+          "name": "曲名にひらがなの「す」がつく曲を3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20161205,
+          "slot": 5,
+          "name": "「画竜点睛」を3回、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3,
+            "eligible_song_noes": [
+              64
+            ]
+          }
+        },
+        {
+          "task_id": 20161206,
+          "slot": 6,
+          "name": "「真・画竜点睛」を3回、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3,
+            "eligible_song_noes": [
+              579
+            ]
+          }
+        },
+        {
+          "task_id": 20161207,
+          "slot": 7,
+          "name": "「黒船来航」を3回、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3,
+            "eligible_song_noes": [
+              554
+            ]
+          }
+        },
+        {
+          "task_id": 20161208,
+          "slot": 8,
+          "name": "「百花繚乱」を3回、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3,
+            "eligible_song_noes": [
+              66
+            ]
+          }
+        },
+        {
+          "task_id": 20161209,
+          "slot": 9,
+          "name": "期間限定で遊べる「月下美人」を3回、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3,
+            "eligible_song_noes": [
+              65
+            ]
+          }
+        },
+        {
+          "task_id": 20161210,
+          "slot": 10,
+          "name": "「画竜点睛」「真・画竜点睛」「黒船来航」「百花繚乱」「月下美人」の中から、好きな曲・難易度で3回フルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 3,
+            "eligible_song_noes": [
+              64,
+              579,
+              554,
+              66,
+              65
+            ]
+          }
+        }
+      ],
+      "community_task": {
+        "task_id": 20161290,
+        "name": "「戦国三弦」を、みんなで合わせて「3333回」以上クリアするドーン！",
+        "description": "2016-12 wiki row: achieved 12/28 20:10頃, 123.4回/日ペース.",
+        "rule": {
+          "kind": "community_count",
+          "required_community_count": 3333,
+          "eligible_song_noes": [
+            653
+          ]
+        }
+      },
+      "rewards": [
+        {
+          "required_completed_tasks": 8,
+          "reward_song_noes": [
+            653
+          ],
+          "reward_title_ids": []
+        },
+        {
+          "required_completed_tasks": 10,
+          "reward_song_noes": [],
+          "reward_title_ids": [
+            502
+          ]
+        }
+      ]
+    },
+    {
+      "bundle_id": "red-2017-01",
+      "personal_tasks": [
+        {
+          "task_id": 20170101,
+          "slot": 1,
+          "name": "曲名に「2」が入る曲を3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20170102,
+          "slot": 2,
+          "name": "次は曲名に「0」が入る曲を3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20170103,
+          "slot": 3,
+          "name": "次は曲名に「1」が入る曲を3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20170104,
+          "slot": 4,
+          "name": "次は曲名に「7」か「七」がつく曲をどれか1曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1
+          }
+        },
+        {
+          "task_id": 20170105,
+          "slot": 5,
+          "name": "「季曲」と「蓄勢」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 2,
+            "eligible_song_noes": [
+              273,
+              274
+            ]
+          }
+        },
+        {
+          "task_id": 20170106,
+          "slot": 6,
+          "name": "「蛻変」と「春遊」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 2,
+            "eligible_song_noes": [
+              275,
+              276
+            ]
+          }
+        },
+        {
+          "task_id": 20170107,
+          "slot": 7,
+          "name": "「花漾」と「蝶戀」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 2,
+            "eligible_song_noes": [
+              278,
+              551
+            ]
+          }
+        },
+        {
+          "task_id": 20170108,
+          "slot": 8,
+          "name": "「綻放」をフルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              277
+            ]
+          }
+        },
+        {
+          "task_id": 20170109,
+          "slot": 9,
+          "name": "曲名が「漢字二文字」の曲をどれか3曲、フルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20170110,
+          "slot": 10,
+          "name": "レッドVer.で追加された曲のうち、ジャンル「ナムコオリジナル」からどれか3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        }
+      ],
+      "community_task": {
+        "task_id": 20170190,
+        "name": "「曙光」を、みんなで合わせて「2017回」以上クリアするドーン！",
+        "description": "2017-01 wiki row: achieved 1/9 10:50頃, 252.1回/日ペース.",
+        "rule": {
+          "kind": "community_count",
+          "required_community_count": 2017,
+          "eligible_song_noes": [
+            652
+          ]
+        }
+      },
+      "rewards": [
+        {
+          "required_completed_tasks": 8,
+          "reward_song_noes": [
+            652
+          ],
+          "reward_title_ids": []
+        },
+        {
+          "required_completed_tasks": 10,
+          "reward_song_noes": [],
+          "reward_title_ids": [
+            503
+          ]
+        }
+      ]
+    },
+    {
+      "bundle_id": "red-2017-02",
+      "personal_tasks": [
+        {
+          "task_id": 20170201,
+          "slot": 1,
+          "name": "曲名に「2」が入る曲を2曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 2
+          }
+        },
+        {
+          "task_id": 20170202,
+          "slot": 2,
+          "name": "曲名に「チョコ」が入る曲を1曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1
+          }
+        },
+        {
+          "task_id": 20170203,
+          "slot": 3,
+          "name": "レッドVer.で追加された楽曲のうち、ジャンル「J-POP」から3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20170204,
+          "slot": 4,
+          "name": "レッドVer.で追加された楽曲のうち、ジャンル「アニメ」から3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20170205,
+          "slot": 5,
+          "name": "レッドVer.で追加された楽曲のうち、ジャンル「ボーカロイド曲」から2曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 2
+          }
+        },
+        {
+          "task_id": 20170206,
+          "slot": 6,
+          "name": "レッドVer.で追加された楽曲のうち、ジャンル「バラエティ」から2曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 2
+          }
+        },
+        {
+          "task_id": 20170207,
+          "slot": 7,
+          "name": "レッドVer.で追加された楽曲のうち、ジャンル「クラシック」を1曲、フルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1
+          }
+        },
+        {
+          "task_id": 20170208,
+          "slot": 8,
+          "name": "レッドVer.で追加された楽曲のうち、ジャンル「ゲームミュージック」から3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20170209,
+          "slot": 9,
+          "name": "レッドVer.で追加された曲のうち、ジャンル「ナムコオリジナル」からどれか3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20170210,
+          "slot": 10,
+          "name": "「そつおめしき」と「そつおめしき2ばん」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 2,
+            "eligible_song_noes": [
+              388,
+              677
+            ]
+          }
+        }
+      ],
+      "community_task": {
+        "task_id": 20170290,
+        "name": "「どん子のファーストデート」を、みんなで合わせて「3470回」以上クリアするドーン！",
+        "description": "2017-02 wiki row: achieved 2/14 16:35頃, 266.9回/日ペース.",
+        "rule": {
+          "kind": "community_count",
+          "required_community_count": 3470,
+          "eligible_song_noes": [
+            664
+          ]
+        }
+      },
+      "rewards": [
+        {
+          "required_completed_tasks": 8,
+          "reward_song_noes": [
+            664
+          ],
+          "reward_title_ids": []
+        },
+        {
+          "required_completed_tasks": 10,
+          "reward_song_noes": [],
+          "reward_title_ids": [
+            521
+          ]
+        }
+      ]
+    }
+  ]
 }

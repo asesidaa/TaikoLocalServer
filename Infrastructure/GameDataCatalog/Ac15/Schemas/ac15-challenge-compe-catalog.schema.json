@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://taikolocalserver.local/schemas/ac15-challenge-compe-catalog.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [ "enabled", "monthly_bundles" ],
+  "properties": {
+    "enabled": { "type": "boolean" },
+    "monthly_bundles": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/monthly_bundle" }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "enabled": { "const": true } },
+        "required": [ "enabled" ]
+      },
+      "then": {
+        "properties": {
+          "monthly_bundles": { "minItems": 1 }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "uint": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+    },
+    "positive_uint": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4294967295
+    },
+    "difficulty": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "id_array": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/positive_uint" },
+      "uniqueItems": true
+    },
+    "monthly_bundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [ "bundle_id", "personal_tasks", "rewards" ],
+      "properties": {
+        "bundle_id": { "type": "string", "minLength": 1 },
+        "starts_at": { "type": [ "string", "null" ], "format": "date-time" },
+        "ends_at": { "type": [ "string", "null" ], "format": "date-time" },
+        "personal_tasks": {
+          "type": "array",
+          "minItems": 10,
+          "maxItems": 10,
+          "items": { "$ref": "#/$defs/personal_task" }
+        },
+        "community_task": {
+          "anyOf": [
+            { "$ref": "#/$defs/community_task" },
+            { "type": "null" }
+          ]
+        },
+        "rewards": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/reward" }
+        }
+      }
+    },
+    "personal_task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [ "task_id", "slot", "name", "rule" ],
+      "properties": {
+        "task_id": { "$ref": "#/$defs/positive_uint" },
+        "slot": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "name": { "type": "string", "minLength": 1 },
+        "rule": { "$ref": "#/$defs/rule" }
+      }
+    },
+    "community_task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [ "task_id", "name", "rule" ],
+      "properties": {
+        "task_id": { "$ref": "#/$defs/positive_uint" },
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "type": [ "string", "null" ] },
+        "rule": { "$ref": "#/$defs/rule" }
+      }
+    },
+    "rule": {
+      "oneOf": [
+        { "$ref": "#/$defs/clear_rule" },
+        { "$ref": "#/$defs/full_combo_rule" },
+        { "$ref": "#/$defs/score_threshold_rule" },
+        { "$ref": "#/$defs/community_count_rule" }
+      ]
+    },
+    "clear_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [ "kind" ],
+      "properties": {
+        "kind": { "const": "clear" },
+        "required_song_count": { "$ref": "#/$defs/positive_uint" },
+        "minimum_level": { "$ref": "#/$defs/difficulty" },
+        "eligible_song_noes": { "$ref": "#/$defs/id_array" }
+      }
+    },
+    "full_combo_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [ "kind" ],
+      "properties": {
+        "kind": { "const": "full_combo" },
+        "required_song_count": { "$ref": "#/$defs/positive_uint" },
+        "minimum_level": { "$ref": "#/$defs/difficulty" },
+        "eligible_song_noes": { "$ref": "#/$defs/id_array" }
+      }
+    },
+    "score_threshold_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [ "kind", "minimum_score" ],
+      "properties": {
+        "kind": { "const": "score_threshold" },
+        "minimum_score": { "$ref": "#/$defs/positive_uint" },
+        "minimum_level": { "$ref": "#/$defs/difficulty" },
+        "eligible_song_noes": { "$ref": "#/$defs/id_array" }
+      }
+    },
+    "community_count_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [ "kind", "required_community_count" ],
+      "properties": {
+        "kind": { "const": "community_count" },
+        "required_community_count": { "$ref": "#/$defs/positive_uint" },
+        "eligible_song_noes": { "$ref": "#/$defs/id_array" }
+      }
+    },
+    "reward": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [ "required_completed_tasks", "reward_song_noes", "reward_title_ids" ],
+      "properties": {
+        "required_completed_tasks": { "$ref": "#/$defs/positive_uint" },
+        "reward_song_noes": { "$ref": "#/$defs/id_array" },
+        "reward_title_ids": { "$ref": "#/$defs/id_array" }
+      }
+    }
+  }
+}

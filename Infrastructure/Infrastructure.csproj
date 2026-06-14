@@ -12,8 +12,21 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Remove="GameDataCatalog\Ac15\Schemas\ac15-challenge-compe-catalog.schema.json" />
+        <EmbeddedResource Include="GameDataCatalog\Ac15\Schemas\ac15-challenge-compe-catalog.schema.json">
+            <LogicalName>TaikoLocalServer.Infrastructure.GameDataCatalog.Ac15.Schemas.ac15-challenge-compe-catalog.schema.json</LogicalName>
+        </EmbeddedResource>
+        <Content Include="GameDataCatalog\Ac15\Schemas\ac15-challenge-compe-catalog.schema.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+            <TargetPath>schemas\ac15-challenge-compe-catalog.schema.json</TargetPath>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="BCrypt.Net-Next" />
         <PackageReference Include="EntityFrameworkCore.Exceptions.Sqlite" />
+        <PackageReference Include="JsonSchema.Net" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />

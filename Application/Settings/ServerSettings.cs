@@ -22,4 +22,8 @@ public sealed class EraSettings
     public bool? EnableShop { get; set; }
 
     public uint? ActiveShopSeasonId { get; set; }
+
+    public bool? EnableChallengeCompe { get; set; }
+
+    public string? ActiveChallengeCompeBundleId { get; set; }
 }

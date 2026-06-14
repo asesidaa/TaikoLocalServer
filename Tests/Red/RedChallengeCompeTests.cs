@@ -71,7 +71,7 @@ public sealed class RedChallengeCompeTests
         Assert.Empty(await disabledFixture.Context.RedChallengeCompeRawFacts.ToListAsync());
         Assert.Empty(await disabledFixture.Context.RedChallengeCompeProgress.ToListAsync());
 
-        await using var inactiveFixture = await RedHandlerFixture.CreateAsync(CreateCatalog(startsAt: "2016-08-01T00:00:00Z"));
+        await using var inactiveFixture = await RedHandlerFixture.CreateAsync(CreateCatalog(activeBundleId: null));
         AddUser(inactiveFixture, enrolled: true);
         await RunMatchedChallengeAsync(inactiveFixture);
 
@@ -89,6 +89,41 @@ public sealed class RedChallengeCompeTests
 
         Assert.Empty(await fixture.Context.RedChallengeCompeRawFacts.ToListAsync());
         Assert.Empty(await fixture.Context.RedChallengeCompeProgress.ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Red_DifficultyLimitedChallengeIgnoresLowerDifficulty()
+    {
+        await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(rule: new Ac15ChallengeCompeRule(
+            Ac15ChallengeCompeRuleKind.Clear,
+            MinimumLevel: 3)));
+        AddUser(fixture, enrolled: true);
+        var handler = CreateHandler(fixture);
+
+        var normalStage = new List<Ac15StageResult> { CreateStage(101, [new Ac15CompeIdFact(1001, 1)], level: 2) };
+        await handler.Handle(Ac15PlayResultTestFactory.Command(
+            1,
+            GameEra.Red,
+            playDatetime: "20160720120000",
+            stages: normalStage,
+            challenge: CreateChallenge(normalStage)),
+            CancellationToken.None);
+
+        Assert.Empty(await fixture.Context.RedChallengeCompeRawFacts.ToListAsync());
+        Assert.Empty(await fixture.Context.RedChallengeCompeProgress.ToListAsync());
+
+        var hardStage = new List<Ac15StageResult> { CreateStage(101, [new Ac15CompeIdFact(1001, 1)], level: 3) };
+        await handler.Handle(Ac15PlayResultTestFactory.Command(
+            1,
+            GameEra.Red,
+            playDatetime: "20160720120100",
+            stages: hardStage,
+            challenge: CreateChallenge(hardStage)),
+            CancellationToken.None);
+
+        var progress = Assert.Single(await fixture.Context.RedChallengeCompeProgress.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Equal(3u, progress.Level);
+        Assert.True(progress.Completed);
     }
 
     [Fact]
@@ -160,12 +195,12 @@ public sealed class RedChallengeCompeTests
     }
 
     [Fact]
-    public async Task UpdatePlayResult_Red_SongSetRuleAccumulatesDistinctMatchedSongs()
+    public async Task UpdatePlayResult_Red_ClearRequiredSongCountAccumulatesDistinctMatchedSongs()
     {
         await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(rule: new Ac15ChallengeCompeRule(
-            Ac15ChallengeCompeRuleKind.SongSetCount,
-            Threshold: 2,
-            SongNoes: [101, 102, 103])));
+            Ac15ChallengeCompeRuleKind.Clear,
+            RequiredSongCount: 2,
+            EligibleSongNoes: [101, 102, 103])));
         AddUser(fixture, enrolled: true);
         var handler = CreateHandler(fixture);
 
@@ -286,7 +321,7 @@ public sealed class RedChallengeCompeTests
         Assert.False(BitIsSet(disabledSave.TitleFlg, 10));
 
         await using var inactiveFixture = await RedHandlerFixture.CreateAsync(CreateCatalog(
-            startsAt: "2016-08-01T00:00:00Z",
+            activeBundleId: null,
             rewards: [CreateReward(songs: [102], titles: [10])]));
         AddUser(inactiveFixture, enrolled: true);
         await RunMatchedChallengeAsync(inactiveFixture);
@@ -377,7 +412,7 @@ public sealed class RedChallengeCompeTests
         Assert.True(BitIsSet(disabledResponse.SongFlags.ReleaseSongFlg, 102));
 
         await using var inactiveFixture = await RedHandlerFixture.CreateAsync(CreateCatalog(
-            startsAt: "2099-01-01T00:00:00Z",
+            activeBundleId: null,
             rewards: [CreateReward(songs: [102])]));
         AddUser(inactiveFixture, enrolled: true);
         var inactiveResponse = await CreateUserDataHandler(inactiveFixture).Handle(new Ac15UserDataQuery(1, GameEra.Red), CancellationToken.None);
@@ -581,14 +616,16 @@ public sealed class RedChallengeCompeTests
         bool enabled = true,
         string? startsAt = "2016-07-01T00:00:00Z",
         string? endsAt = "2016-08-01T00:00:00Z",
+        string? activeBundleId = "red-2016-07",
         Ac15ChallengeCompeRule? rule = null,
         IReadOnlyList<Ac15ChallengeCompeReward>? rewards = null)
     {
-        var taskRule = rule ?? new Ac15ChallengeCompeRule(Ac15ChallengeCompeRuleKind.Clear, null, []);
+        var taskRule = rule ?? new Ac15ChallengeCompeRule(Ac15ChallengeCompeRuleKind.Clear);
         return new RedHandlerFixture.TestRedCatalog
         {
             ChallengeCompe = new Ac15ChallengeCompeCatalog(
                 enabled,
+                activeBundleId,
                 [
                     new Ac15ChallengeCompeMonthlyBundle(
                         "red-2016-07",
@@ -599,7 +636,7 @@ public sealed class RedChallengeCompeTests
                                 (uint)(1000 + index),
                                 (uint)index,
                                 $"Task {index}",
-                                index == 1 ? taskRule : new Ac15ChallengeCompeRule(Ac15ChallengeCompeRuleKind.Clear, null, [])))
+                                index == 1 ? taskRule : new Ac15ChallengeCompeRule(Ac15ChallengeCompeRuleKind.Clear)))
                             .ToArray(),
                         null,
                         rewards ?? [])
@@ -617,11 +654,12 @@ public sealed class RedChallengeCompeTests
         uint songNo,
         List<Ac15CompeIdFact> challengeIds,
         List<Ac15CompeIdFact>? userCompeIds = null,
-        List<Ac15CompeIdFact>? bngCompeIds = null)
+        List<Ac15CompeIdFact>? bngCompeIds = null,
+        uint level = 1)
         => new()
         {
             SongNo = songNo,
-            Level = 1,
+            Level = level,
             StageMode = 0,
             PlayResult = 2,
             PlayScore = 765432,

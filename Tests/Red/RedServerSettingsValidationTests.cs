@@ -34,6 +34,30 @@ public sealed class RedServerSettingsValidationTests
         Assert.Null(settings.Eras[nameof(GameEra.Red)].ActiveShopSeasonId);
     }
 
+    [Fact]
+    public void RedChallengeCompeEnabledRequiresActiveBundleId()
+    {
+        var configuration = BuildConfiguration("""
+            {
+              "ServerSettings": {
+                "Eras": {
+                  "Red": {
+                    "Enabled": true,
+                    "EnableChallengeCompe": true
+                  }
+                }
+              }
+            }
+            """);
+
+        using var provider = BuildProvider(configuration);
+
+        var exception = Assert.Throws<OptionsValidationException>(() =>
+            provider.GetRequiredService<IOptions<ServerSettings>>().Value);
+
+        Assert.Contains(exception.Failures, failure => failure.Contains("ActiveChallengeCompeBundleId", StringComparison.Ordinal));
+    }
+
     private static IConfigurationRoot BuildConfiguration(string json)
     {
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));

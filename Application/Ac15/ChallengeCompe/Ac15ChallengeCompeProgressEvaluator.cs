@@ -14,10 +14,9 @@ public static class Ac15ChallengeCompeProgressEvaluator
 {
     public static IReadOnlyList<Ac15ChallengeCompeStageEvaluation> Evaluate(
         Ac15ChallengeCompeCatalog catalog,
-        DateTimeOffset activeAt,
         IReadOnlyList<Ac15StageResult> stages)
     {
-        var activeTasks = catalog.GetActiveBundles(activeAt)
+        var activeTasks = catalog.GetActiveBundles()
             .SelectMany(bundle => bundle.PersonalTasks
                 .Where(task => task.Rule.CanExecute)
                 .Select(task => new ActiveTask(bundle.BundleId, task)))
@@ -64,29 +63,34 @@ public static class Ac15ChallengeCompeProgressEvaluator
         switch (rule.Kind)
         {
             case Ac15ChallengeCompeRuleKind.Clear:
-                completed = stage.PlayResult > 0;
-                progressValue = completed ? 1u : 0u;
-                return completed;
-
-            case Ac15ChallengeCompeRuleKind.FullCombo:
-                completed = stage.PlayResult >= 2;
-                progressValue = completed ? 1u : 0u;
-                return completed;
-
-            case Ac15ChallengeCompeRuleKind.ScoreThreshold:
-                progressValue = stage.PlayScore;
-                completed = rule.Threshold is { } threshold && stage.PlayScore >= threshold;
-                return completed;
-
-            case Ac15ChallengeCompeRuleKind.SongSetCount:
-                if (stage.PlayResult == 0 || !rule.SongNoes.Contains(stage.SongNo))
+                if (stage.PlayResult == 0 || !rule.AllowsStage(stage))
                 {
                     return false;
                 }
 
                 progressValue = 1;
-                completed = rule.Threshold <= 1;
+                completed = !rule.RequiresDistinctSongProgress;
                 return true;
+
+            case Ac15ChallengeCompeRuleKind.FullCombo:
+                if (stage.PlayResult < 2 || !rule.AllowsStage(stage))
+                {
+                    return false;
+                }
+
+                progressValue = 1;
+                completed = !rule.RequiresDistinctSongProgress;
+                return true;
+
+            case Ac15ChallengeCompeRuleKind.ScoreThreshold:
+                if (!rule.AllowsStage(stage))
+                {
+                    return false;
+                }
+
+                progressValue = stage.PlayScore;
+                completed = rule.MinimumScore is { } minimumScore && stage.PlayScore >= minimumScore;
+                return completed;
 
             default:
                 return false;
