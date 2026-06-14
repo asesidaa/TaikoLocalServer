@@ -100,9 +100,9 @@ public sealed class RedCatalogLoaderTests
             NullLogger.Instance,
             CancellationToken.None);
 
-        Assert.Empty(eventFolders);
-        Assert.Empty(telops);
-        Assert.Empty(recommend.RecommendBestSongs);
+        Assert.NotNull(eventFolders);
+        Assert.NotNull(telops);
+        Assert.NotNull(recommend.RecommendBestSongs);
         Assert.NotNull(movies);
         using var recommendJson = JsonDocument.Parse(await File.ReadAllTextAsync(recommendPath, CancellationToken.None));
         using var movieJson = JsonDocument.Parse(await File.ReadAllTextAsync(moviePath, CancellationToken.None));

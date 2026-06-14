@@ -81,9 +81,9 @@ The current implementation logs the request and returns `ChallengeCompeResponse 
 
 Those facts are available to application code as `Ac15RedChallengeCompeFacts`. Phase 20 intentionally did not write ChallengeCompe state from them.
 
-## Current Compatibility State
+## Initial Compatibility State Before Stateful Plans
 
-Current Red ChallengeCompe support is limited to:
+At Phase 21 start, Red ChallengeCompe support was limited to:
 
 - Route availability for the proven Red route.
 - Request logging.
@@ -91,7 +91,7 @@ Current Red ChallengeCompe support is limited to:
 - Preservation of uploaded playresult challenge IDs as application facts.
 - Userdata readback of `UserSaveDataRed.IsChallengeCompe` through the AC15 userdata response.
 
-Current support does not include:
+At Phase 21 start, support did not include:
 
 - Challenge task catalog loading.
 - Stateful progress persistence.
@@ -115,6 +115,21 @@ If stateful implementation proceeds, the accepted Phase 21 surface is restricted
 - Tokkun playresults must not update ChallengeCompe state.
 - Red persistence, if added by later Phase 21 plans, must be Red-owned.
 - Shared application logic may evaluate transport-agnostic typed rules, but it must not own shared gameplay tables, Red route names, Red wire DTOs, or public-source schema.
+
+## Phase 21 Final Verified Outcome
+
+Phase 21 implemented stateful ChallengeCompe only inside the accepted surface above:
+
+- Red sidecar loading uses `Host/wwwroot/data/red/red_challenge_compe_data.json`, which is disabled by default and parsed into shared transport-agnostic ChallengeCompe catalog records.
+- Red-owned SQLite state stores matched raw DonChare facts and derived progress rows in `RedChallengeCompeRawFacts` and `RedChallengeCompeProgress`.
+- Non-Tokkun Red playresults update ChallengeCompe state only for users opted in through `UserSaveDataRed.IsChallengeCompe`, active configured personal tasks, and matched `ary_challenge_id` facts.
+- Tokkun playresults return through the Tokkun branch before ChallengeCompe mutation and do not create ChallengeCompe, normal, Dani, or reward state.
+- Configured rewards grant immediately from saved active completion counts and mutate only Red release-song/title flags.
+- Active unearned configured reward songs are supplied to the existing AC15 userdata locked-song path for opted-in Red users.
+- Red `challengecompe.php` is Mediator-backed and read-only. It returns active saved progress in `ary_challenge_stat` and leaves `ary_user_compe_stat` and `ary_bng_compe_stat` empty.
+- Red wire projection is mechanical Mapperly mapping; shared business behavior remains in application/catalog code.
+
+Phase 21 still does not implement user-created challenge letters, BNG/official competition buckets, community/global aggregation, AdminApi/WebUI opt-in editing, or cabinet/RPCS3 acceptance proof. Those remain evidence-gated or Phase 22 scope.
 
 ## Explicit Gaps
 
