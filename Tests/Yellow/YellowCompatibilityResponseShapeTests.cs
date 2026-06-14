@@ -106,7 +106,7 @@ public sealed class YellowCompatibilityResponseShapeTests
     {
         var common = CreateRepresentativeBaidResponse();
         var blue = AssembleBlueBaidControllerShape(common);
-        var yellow = ApplyYellowBaidControllerShape(YellowBaidResponseMapper.Map(common));
+        var yellow = AssembleYellowBaidControllerShape(common);
 
         AssertYellowIncludesBlueSerializedFields(blue, yellow);
     }
@@ -311,6 +311,48 @@ public sealed class YellowCompatibilityResponseShapeTests
         response.PurposeId = 1;
         response.RegionId = 1;
         return response;
+    }
+
+    private static YellowWire.BAIDResponse AssembleYellowBaidControllerShape(Ac15BaidResponse common)
+    {
+        var response = new YellowWire.BAIDResponse
+        {
+            Result = common.Result,
+            Baid = common.Baid,
+            ContentInfo = new byte[Ac15EraProfiles.Yellow.Limits.ContentInfoBytes]
+        };
+
+        if (common.Identity is { } identity)
+        {
+            YellowBaidResponseMapper.Apply(identity, response);
+        }
+
+        if (common.MydonProfile is { } profile)
+        {
+            YellowBaidResponseMapper.Apply(profile, response);
+        }
+
+        if (common.CustomizationInventory is { } inventory)
+        {
+            YellowBaidResponseMapper.Apply(inventory, response);
+        }
+
+        if (common.ShopMedalBalance is { } medals)
+        {
+            YellowBaidResponseMapper.Apply(medals, response);
+        }
+
+        if (common.DanStatus is { } dan)
+        {
+            YellowBaidResponseMapper.Apply(dan, response);
+        }
+
+        if (common.CompatibilityProfile is { } compatibility)
+        {
+            YellowBaidResponseMapper.Apply(compatibility, response);
+        }
+
+        return ApplyYellowBaidControllerShape(response);
     }
 
     private static YellowWire.BAIDResponse ApplyYellowBaidControllerShape(YellowWire.BAIDResponse response)

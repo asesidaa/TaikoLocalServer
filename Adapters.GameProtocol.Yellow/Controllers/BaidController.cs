@@ -23,17 +23,56 @@ public class BaidController : BaseProtocolController<BaidController>
             });
         }
 
-        var response = BaidResponseMapper.Map(common);
-        response.AccessCode = request.AccessCode;
-        response.IsPublish = true;
-        response.PlayerType = 0;
-        response.ComSvrResult = 1;
+        var response = new BAIDResponse
+        {
+            Result = common.Result,
+            Baid = common.Baid,
+            AccessCode = request.AccessCode,
+            IsPublish = true,
+            PlayerType = 0,
+            ComSvrResult = 1,
+            RegCountryId = "JPN",
+            MbId = 1,
+            PurposeId = 1,
+            RegionId = 1,
+            ContentInfo = new byte[Ac15EraProfiles.Yellow.Limits.ContentInfoBytes]
+        };
+        ApplySections(common, response);
         response.Personid = "1";
-        response.RegCountryId = "JPN";
-        response.MbId = 1;
-        response.PurposeId = 1;
-        response.RegionId = 1;
 
         return Ok(response);
+    }
+
+    private static void ApplySections(Ac15BaidResponse common, BAIDResponse response)
+    {
+        if (common.Identity is { } identity)
+        {
+            BaidResponseMapper.Apply(identity, response);
+        }
+
+        if (common.MydonProfile is { } profile)
+        {
+            BaidResponseMapper.Apply(profile, response);
+        }
+
+        if (common.CustomizationInventory is { } inventory)
+        {
+            BaidResponseMapper.Apply(inventory, response);
+        }
+
+        if (common.ShopMedalBalance is { } medals)
+        {
+            BaidResponseMapper.Apply(medals, response);
+        }
+
+        if (common.DanStatus is { } dan)
+        {
+            BaidResponseMapper.Apply(dan, response);
+        }
+
+        if (common.CompatibilityProfile is { } compatibility)
+        {
+            BaidResponseMapper.Apply(compatibility, response);
+        }
     }
 }

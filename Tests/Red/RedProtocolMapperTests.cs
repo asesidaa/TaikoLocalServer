@@ -15,7 +15,7 @@ public sealed class RedProtocolMapperTests
             Result = 1,
             Baid = 42,
             Identity = new Ac15BaidIdentity("DON", 0),
-            Profile = new Ac15BaidProfile
+            MydonProfile = new Ac15BaidProfile
             {
                 Title = "Title",
                 TitlePlateId = 3,
@@ -25,16 +25,16 @@ public sealed class RedProtocolMapperTests
                 SelectedCostume = new Ac15CostumeFacts(1, 2, 3, 4, 5),
                 DefaultToneSetting = 13
             },
-            Dan = new Ac15BaidDan(
+            DanStatus = new Ac15BaidDan(
                 0,
                 12,
                 new byte[Ac15EraProfiles.Red.Limits.DanFlagBytes],
                 new byte[Ac15EraProfiles.Red.Limits.DanExtraFlagBytes]),
-            Compatibility = new Ac15BaidCompatibility("1", null)
+            CompatibilityProfile = new Ac15BaidCompatibility("1", null)
         };
 
-        var current = ApplyBaidControllerShape(BaidResponseMapper.Map(common));
-        var older = ApplyBaidV08R00ControllerShape(BaidResponseMapper.MapV08R00(common));
+        var current = AssembleBaidControllerShape(common);
+        var older = AssembleBaidV08R00ControllerShape(common);
         var currentFields = ReadLengthDelimitedFieldLengths(Serialize(current));
         var olderFields = ReadLengthDelimitedFieldLengths(Serialize(older));
 
@@ -166,6 +166,90 @@ public sealed class RedProtocolMapperTests
             AreaCode = 1,
             Reserved = new byte[16]
         };
+
+    private static BAIDResponse AssembleBaidControllerShape(Ac15BaidResponse common)
+    {
+        var response = new BAIDResponse
+        {
+            Result = common.Result,
+            Baid = common.Baid,
+            ContentInfo = new byte[Ac15EraProfiles.Red.Limits.ContentInfoBytes]
+        };
+
+        if (common.Identity is { } identity)
+        {
+            BaidResponseMapper.Apply(identity, response);
+        }
+
+        if (common.MydonProfile is { } profile)
+        {
+            BaidResponseMapper.Apply(profile, response);
+        }
+
+        if (common.CustomizationInventory is { } inventory)
+        {
+            BaidResponseMapper.Apply(inventory, response);
+        }
+
+        if (common.DanStatus is { } dan)
+        {
+            BaidResponseMapper.Apply(dan, response);
+        }
+
+        if (common.CompatibilityProfile is { } compatibility)
+        {
+            BaidResponseMapper.Apply(compatibility, response);
+        }
+
+        if (common.RewardProgress is { } reward)
+        {
+            BaidResponseMapper.Apply(reward, response);
+        }
+
+        return ApplyBaidControllerShape(response);
+    }
+
+    private static RedV08R00.BAIDResponse AssembleBaidV08R00ControllerShape(Ac15BaidResponse common)
+    {
+        var response = new RedV08R00.BAIDResponse
+        {
+            Result = common.Result,
+            Baid = common.Baid,
+            ContentInfo = new byte[Ac15EraProfiles.Red.Limits.ContentInfoBytes]
+        };
+
+        if (common.Identity is { } identity)
+        {
+            BaidResponseMapper.Apply(identity, response);
+        }
+
+        if (common.MydonProfile is { } profile)
+        {
+            BaidResponseMapper.Apply(profile, response);
+        }
+
+        if (common.CustomizationInventory is { } inventory)
+        {
+            BaidResponseMapper.Apply(inventory, response);
+        }
+
+        if (common.DanStatus is { } dan)
+        {
+            BaidResponseMapper.Apply(dan, response);
+        }
+
+        if (common.CompatibilityProfile is { } compatibility)
+        {
+            BaidResponseMapper.Apply(compatibility, response);
+        }
+
+        if (common.RewardProgress is { } reward)
+        {
+            BaidResponseMapper.Apply(reward, response);
+        }
+
+        return ApplyBaidV08R00ControllerShape(response);
+    }
 
     private static BAIDResponse ApplyBaidControllerShape(BAIDResponse response)
     {

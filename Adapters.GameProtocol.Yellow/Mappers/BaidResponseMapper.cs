@@ -4,70 +4,32 @@ using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
 
-[Mapper]
+[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Source)]
 public static partial class BaidResponseMapper
 {
-    [MapPropertyFromSource(nameof(BAIDResponse.MydonName), Use = nameof(MapMyDonName))]
-    [MapPropertyFromSource(nameof(BAIDResponse.Title), Use = nameof(MapTitle))]
-    [MapPropertyFromSource(nameof(BAIDResponse.TitleplateId), Use = nameof(MapTitlePlateId))]
-    [MapPropertyFromSource(nameof(BAIDResponse.ColorFace), Use = nameof(MapColorFace))]
-    [MapPropertyFromSource(nameof(BAIDResponse.ColorBody), Use = nameof(MapColorBody))]
-    [MapPropertyFromSource(nameof(BAIDResponse.ColorLimb), Use = nameof(MapColorLimb))]
-    [MapPropertyFromSource(nameof(BAIDResponse.AryCostumedata), Use = nameof(MapSelectedCostumeData))]
-    [MapPropertyFromSource(nameof(BAIDResponse.CostumeFlg1), Use = nameof(MapCostumeFlag1))]
-    [MapPropertyFromSource(nameof(BAIDResponse.CostumeFlg2), Use = nameof(MapCostumeFlag2))]
-    [MapPropertyFromSource(nameof(BAIDResponse.CostumeFlg3), Use = nameof(MapCostumeFlag3))]
-    [MapPropertyFromSource(nameof(BAIDResponse.CostumeFlg4), Use = nameof(MapCostumeFlag4))]
-    [MapPropertyFromSource(nameof(BAIDResponse.CostumeFlg5), Use = nameof(MapCostumeFlag5))]
-    [MapPropertyFromSource(nameof(BAIDResponse.TotalGetDonmedal), Use = nameof(MapTotalGetDonmedal))]
-    [MapPropertyFromSource(nameof(BAIDResponse.TotalUseDonmedal), Use = nameof(MapTotalUseDonmedal))]
-    [MapPropertyFromSource(nameof(BAIDResponse.TotalGetKatsumedal), Use = nameof(MapTotalGetKatsumedal))]
-    [MapPropertyFromSource(nameof(BAIDResponse.TotalUseKatsumedal), Use = nameof(MapTotalUseKatsumedal))]
-    [MapPropertyFromSource(nameof(BAIDResponse.ItemshopTutorialFlg), Use = nameof(MapItemshopTutorialFlg))]
-    [MapPropertyFromSource(nameof(BAIDResponse.IsAutoCostumeOn), Use = nameof(MapIsAutoCostumeOn))]
-    [MapPropertyFromSource(nameof(BAIDResponse.LastPlayDatetime), Use = nameof(MapLastPlayDatetime))]
-    [MapPropertyFromSource(nameof(BAIDResponse.DispDanType), Use = nameof(MapDispDanType))]
-    [MapPropertyFromSource(nameof(BAIDResponse.GotDanMax), Use = nameof(MapGotDanMax))]
-    [MapPropertyFromSource(nameof(BAIDResponse.GotDanFlg), Use = nameof(MapDanFlag))]
-    [MapPropertyFromSource(nameof(BAIDResponse.GotDanextraFlg), Use = nameof(MapDanExtraFlag))]
-    [MapPropertyFromSource(nameof(BAIDResponse.DefaultToneSetting), Use = nameof(MapDefaultToneSetting))]
-    [MapPropertyFromSource(nameof(BAIDResponse.Personid), Use = nameof(MapPersonId))]
-    [MapPropertyFromSource(nameof(BAIDResponse.WaiwaiTutorialFlg), Use = nameof(MapWaiwaiTutorialFlg))]
-    [MapValue(nameof(BAIDResponse.ContentInfo), Use = nameof(GetContentInfo))]
-    [MapperIgnoreTarget(nameof(BAIDResponse.PlayerType))]
-    [MapperIgnoreTarget(nameof(BAIDResponse.ComSvrResult))]
-    [MapperIgnoreTarget(nameof(BAIDResponse.MbId))]
-    [MapperIgnoreTarget(nameof(BAIDResponse.AccessCode))]
-    [MapperIgnoreTarget(nameof(BAIDResponse.IsPublish))]
-    [MapperIgnoreTarget(nameof(BAIDResponse.CardOwnNum))]
-    [MapperIgnoreTarget(nameof(BAIDResponse.RegCountryId))]
-    [MapperIgnoreTarget(nameof(BAIDResponse.PurposeId))]
-    [MapperIgnoreTarget(nameof(BAIDResponse.RegionId))]
-    [MapperIgnoreTarget(nameof(BAIDResponse.AryFavoriteCostumedatas))]
-    [MapperIgnoreTarget(nameof(BAIDResponse.UpdateDatetime))]
-    [MapperIgnoreTarget(nameof(BAIDResponse.Accesstoken))]
-    public static partial BAIDResponse Map(Ac15BaidResponse common);
+    [MapProperty(nameof(Ac15BaidIdentity.MyDonName), nameof(BAIDResponse.MydonName))]
+    [MapperIgnoreSource(nameof(Ac15BaidIdentity.MyDonNameLanguage))]
+    public static partial void Apply(Ac15BaidIdentity source, [MappingTarget] BAIDResponse response);
 
-    private static string MapMyDonName(Ac15BaidResponse response)
-        => response.Identity?.MyDonName ?? string.Empty;
+    [MapProperty(nameof(Ac15BaidProfile.TitlePlateId), nameof(BAIDResponse.TitleplateId))]
+    [MapProperty(nameof(Ac15BaidProfile.SelectedCostume), nameof(BAIDResponse.AryCostumedata), Use = nameof(MapCostumeData))]
+    public static partial void Apply(Ac15BaidProfile source, [MappingTarget] BAIDResponse response);
 
-    private static string MapTitle(Ac15BaidResponse response)
-        => response.Profile?.Title ?? string.Empty;
+    [MapProperty(nameof(Ac15BaidCostumeFlags.CostumeFlg1), nameof(BAIDResponse.CostumeFlg1), Use = nameof(MapCostumeFlag))]
+    [MapProperty(nameof(Ac15BaidCostumeFlags.CostumeFlg2), nameof(BAIDResponse.CostumeFlg2), Use = nameof(MapCostumeFlag))]
+    [MapProperty(nameof(Ac15BaidCostumeFlags.CostumeFlg3), nameof(BAIDResponse.CostumeFlg3), Use = nameof(MapCostumeFlag))]
+    [MapProperty(nameof(Ac15BaidCostumeFlags.CostumeFlg4), nameof(BAIDResponse.CostumeFlg4), Use = nameof(MapCostumeFlag))]
+    [MapProperty(nameof(Ac15BaidCostumeFlags.CostumeFlg5), nameof(BAIDResponse.CostumeFlg5), Use = nameof(MapCostumeFlag))]
+    public static partial void Apply(Ac15BaidCostumeFlags source, [MappingTarget] BAIDResponse response);
 
-    private static uint? MapTitlePlateId(Ac15BaidResponse response)
-        => response.Profile?.TitlePlateId;
+    public static partial void Apply(Ac15BaidShopMedals source, [MappingTarget] BAIDResponse response);
 
-    private static uint? MapColorFace(Ac15BaidResponse response)
-        => response.Profile?.ColorFace;
+    [MapProperty(nameof(Ac15BaidDan.GotDanFlg), nameof(BAIDResponse.GotDanFlg), Use = nameof(MapDanFlag))]
+    [MapProperty(nameof(Ac15BaidDan.GotDanExtraFlg), nameof(BAIDResponse.GotDanextraFlg), Use = nameof(MapDanExtraFlag))]
+    public static partial void Apply(Ac15BaidDan source, [MappingTarget] BAIDResponse response);
 
-    private static uint? MapColorBody(Ac15BaidResponse response)
-        => response.Profile?.ColorBody;
-
-    private static uint? MapColorLimb(Ac15BaidResponse response)
-        => response.Profile?.ColorLimb;
-
-    private static BAIDResponse.CostumeData MapSelectedCostumeData(Ac15BaidResponse response)
-        => MapCostumeData(response.Profile?.SelectedCostume ?? Ac15CostumeFacts.Empty);
+    [MapProperty(nameof(Ac15BaidCompatibility.PersonId), nameof(BAIDResponse.Personid), Use = nameof(MapPersonId))]
+    public static partial void Apply(Ac15BaidCompatibility source, [MappingTarget] BAIDResponse response);
 
     private static BAIDResponse.CostumeData MapCostumeData(Ac15CostumeFacts values)
         => new()
@@ -79,65 +41,14 @@ public static partial class BaidResponseMapper
             Costume5 = values.Costume5
         };
 
-    private static byte[] MapCostumeFlag1(Ac15BaidResponse response)
-        => MapCostumeFlag(response.CostumeFlags?.CostumeFlg1);
-
-    private static byte[] MapCostumeFlag2(Ac15BaidResponse response)
-        => MapCostumeFlag(response.CostumeFlags?.CostumeFlg2);
-
-    private static byte[] MapCostumeFlag3(Ac15BaidResponse response)
-        => MapCostumeFlag(response.CostumeFlags?.CostumeFlg3);
-
-    private static byte[] MapCostumeFlag4(Ac15BaidResponse response)
-        => MapCostumeFlag(response.CostumeFlags?.CostumeFlg4);
-
-    private static byte[] MapCostumeFlag5(Ac15BaidResponse response)
-        => MapCostumeFlag(response.CostumeFlags?.CostumeFlg5);
-
     private static byte[] MapCostumeFlag(byte[]? value)
         => Ac15ProtocolBytes.FixedOrZero(value, Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes);
 
-    private static uint? MapTotalGetDonmedal(Ac15BaidResponse response)
-        => response.ShopMedals?.TotalGetDonmedal;
+    private static byte[] MapDanFlag(byte[]? value)
+        => Ac15ProtocolBytes.FixedOrZero(value, Ac15EraProfiles.Yellow.Limits.DanFlagBytes);
 
-    private static uint? MapTotalUseDonmedal(Ac15BaidResponse response)
-        => response.ShopMedals?.TotalUseDonmedal;
+    private static byte[] MapDanExtraFlag(byte[]? value)
+        => Ac15ProtocolBytes.FixedOrZero(value, Ac15EraProfiles.Yellow.Limits.DanExtraFlagBytes);
 
-    private static uint? MapTotalGetKatsumedal(Ac15BaidResponse response)
-        => response.ShopMedals?.TotalGetKatsumedal;
-
-    private static uint? MapTotalUseKatsumedal(Ac15BaidResponse response)
-        => response.ShopMedals?.TotalUseKatsumedal;
-
-    private static uint? MapItemshopTutorialFlg(Ac15BaidResponse response)
-        => response.ShopMedals?.ItemshopTutorialFlg;
-
-    private static bool? MapIsAutoCostumeOn(Ac15BaidResponse response)
-        => response.Profile?.IsAutoCostumeOn;
-
-    private static string MapLastPlayDatetime(Ac15BaidResponse response)
-        => response.Profile?.LastPlayDatetime ?? string.Empty;
-
-    private static uint? MapDispDanType(Ac15BaidResponse response)
-        => response.Dan?.DispDanType;
-
-    private static uint? MapGotDanMax(Ac15BaidResponse response)
-        => response.Dan?.GotDanMax;
-
-    private static byte[] MapDanFlag(Ac15BaidResponse response)
-        => Ac15ProtocolBytes.FixedOrZero(response.Dan?.GotDanFlg, Ac15EraProfiles.Yellow.Limits.DanFlagBytes);
-
-    private static byte[] MapDanExtraFlag(Ac15BaidResponse response)
-        => Ac15ProtocolBytes.FixedOrZero(response.Dan?.GotDanExtraFlg, Ac15EraProfiles.Yellow.Limits.DanExtraFlagBytes);
-
-    private static uint? MapDefaultToneSetting(Ac15BaidResponse response)
-        => response.Profile?.DefaultToneSetting;
-
-    private static string MapPersonId(Ac15BaidResponse response)
-        => response.Compatibility?.PersonId ?? string.Empty;
-
-    private static uint? MapWaiwaiTutorialFlg(Ac15BaidResponse response)
-        => response.Compatibility?.WaiwaiTutorialFlg;
-
-    private static byte[] GetContentInfo() => new byte[Ac15EraProfiles.Yellow.Limits.ContentInfoBytes];
+    private static string MapPersonId(string? value) => value ?? string.Empty;
 }
