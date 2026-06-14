@@ -62,25 +62,9 @@ public static partial class BaidResponseMapper
 
     public static partial void Apply(Ac15BaidReward source, [MappingTarget] RedV08R00.BAIDResponse response);
 
-    private static BAIDResponse.CostumeData MapCostumeData(Ac15CostumeFacts values)
-        => new()
-        {
-            Costume1 = values.Costume1,
-            Costume2 = values.Costume2,
-            Costume3 = values.Costume3,
-            Costume4 = values.Costume4,
-            Costume5 = values.Costume5
-        };
+    private static partial BAIDResponse.CostumeData MapCostumeData(Ac15CostumeFacts values);
 
-    private static RedV08R00.BAIDResponse.CostumeData MapOlderCostumeData(Ac15CostumeFacts values)
-        => new()
-        {
-            Costume1 = values.Costume1,
-            Costume2 = values.Costume2,
-            Costume3 = values.Costume3,
-            Costume4 = values.Costume4,
-            Costume5 = values.Costume5
-        };
+    private static partial RedV08R00.BAIDResponse.CostumeData MapOlderCostumeData(Ac15CostumeFacts values);
 
     private static byte[] MapCostumeFlag(byte[]? value)
         => Ac15ProtocolBytes.FixedOrZero(value, Ac15EraProfiles.Red.Limits.CostumeFlagBytes);

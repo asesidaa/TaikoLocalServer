@@ -14,7 +14,8 @@ public class BalanceCheckController : BaseProtocolController<BalanceCheckControl
         {
             Result = 1,
             Personid = request.Personid,
-            BnidResult = "Ok"
+            BnidResult = "Ok",
+            CoinCoupon = 9999,
         });
     }
 }

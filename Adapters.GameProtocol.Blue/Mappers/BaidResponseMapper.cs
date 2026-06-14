@@ -31,15 +31,7 @@ public static partial class BaidResponseMapper
     [MapProperty(nameof(Ac15BaidCompatibility.PersonId), nameof(BAIDResponse.Personid), Use = nameof(MapPersonId))]
     public static partial void Apply(Ac15BaidCompatibility source, [MappingTarget] BAIDResponse response);
 
-    private static BAIDResponse.CostumeData MapCostumeData(Ac15CostumeFacts values)
-        => new()
-        {
-            Costume1 = values.Costume1,
-            Costume2 = values.Costume2,
-            Costume3 = values.Costume3,
-            Costume4 = values.Costume4,
-            Costume5 = values.Costume5
-        };
+    private static partial BAIDResponse.CostumeData MapCostumeData(Ac15CostumeFacts values);
 
     private static byte[] MapCostumeFlag(byte[]? value)
         => BlueProtocolBytes.FixedOrZero(value, BlueProtocolBytes.CostumeFlagBytes);
