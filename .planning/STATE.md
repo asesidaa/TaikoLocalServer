@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Phase Summary
-status: Ready to execute
-stopped_at: Phase 21 plans ready
-last_updated: "2026-06-14T13:10:43.768Z"
-last_activity: 2026-06-14 -- Phase 21 planned with 5 execution plans
+status: executing
+stopped_at: Completed 21-01-PLAN.md
+last_updated: "2026-06-14T13:50:41.740Z"
+last_activity: 2026-06-14 -- Phase 21 execution started
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 25
-  completed_plans: 17
+  completed_plans: 18
   percent: 50
 ---
 
@@ -25,10 +25,10 @@ See: `.planning/PROJECT.md` (updated 2026-06-13)
 
 ## Current Position
 
-Phase: 21
-Plan: 5 plans ready
+Phase: 21 (older-ac15-challengecompe-capability-and-red-binding) — EXECUTING
+Plan: 2 of 5
 Status: Ready to execute
-Last activity: 2026-06-14 -- Phase 21 planned with 5 execution plans
+Last activity: 2026-06-14 -- Phase 21 execution started
 
 ## Performance Metrics
 
@@ -117,6 +117,7 @@ Last activity: 2026-06-14 -- Phase 21 planned with 5 execution plans
 | Phase 20.1 P07 | 7 min | 2 tasks | 8 files |
 | Phase 20.1 P08 | 6 min | 2 tasks | 0 files |
 | Phase 20.1 P09 | 8 min | 2 tasks | 1 files |
+| Phase 21 P01 | 14 min | 3 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -211,6 +212,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 20.1]: Previous Plans 01-04 are superseded by corrected context because the architecture was rejected. Their verification proves only that behavior did not regress, not that the mapper boundary was accepted.
 - [Phase 20.1]: Corrected context requires sectioned BAID/userdata responses, handler-owned semantic sections, controller-owned final assembly, generated Mapperly existing-target apply mappings, and no handwritten response aggregation in mapper classes.
 - [Phase 20.1]: Compact design contract is `.planning/phases/20.1-ac15-capability-dto-and-mapper-boundary-refactor/20.1-DESIGN-CONTRACT.md`; controllers control final assembly, handlers return semantic sections, and mappers stay mechanical.
+- [Phase ?]: [Phase 21 Plan 01] Public DonChare sources are product context only. — Local Red proto, route, mapper, data, runtime, and client evidence remain implementation authority for ChallengeCompe behavior.
+- [Phase ?]: [Phase 21 Plan 01] Red ChallengeCompe starts as a disabled-safe catalog contract. — Empty challengecompe.php success remains compatibility only; later stateful plans must stay inside the evidence gate.
+- [Phase ?]: [Phase 21 Plan 01] Unknown ChallengeCompe rule kinds are unsupported predicates. — The sidecar parser preserves unknown rules as non-executable instead of letting them advance progress.
 
 ### Pending Todos
 
@@ -235,9 +239,9 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-14T11:33:58.916Z
-Stopped at: Phase 21 plans ready
-Resume file: .planning/phases/21-older-ac15-challengecompe-capability-and-red-binding/21-01-PLAN.md
+Last session: 2026-06-14T13:48:51.735Z
+Stopped at: Completed 21-01-PLAN.md
+Resume file: None
 
 ## Operator Next Steps
 

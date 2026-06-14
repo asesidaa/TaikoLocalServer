@@ -31,9 +31,9 @@
 
 ### Older-AC15 ChallengeCompe Capability
 
-- [ ] **RCOMP-02**: ChallengeCompe is modeled as a shared older-AC15 capability, with Red as the first binding; protocol compatibility is supported only at the minimal level proven by Red client/runtime evidence until the shared endpoint, payload, and response contract is known.
-- [ ] **RCHAL-01**: Don Challenge product scope is documented from wiki context for the shared older-AC15 capability: monthly tasks, individual/community distinction, normal-play completion, Tokkun exclusion, and song/title reward thresholds/timing.
-- [ ] **RCHAL-02**: Stateful ChallengeCompe progress, reward, task-list, or community behavior is implemented as a shared older-AC15 capability only after Red runtime/proto/client evidence identifies the endpoint, payload, state shape, and accepted response contract.
+- [x] **RCOMP-02**: ChallengeCompe is modeled as a shared older-AC15 capability, with Red as the first binding; protocol compatibility is supported only at the minimal level proven by Red client/runtime evidence until the shared endpoint, payload, and response contract is known.
+- [x] **RCHAL-01**: Don Challenge product scope is documented from wiki context for the shared older-AC15 capability: monthly tasks, individual/community distinction, normal-play completion, Tokkun exclusion, and song/title reward thresholds/timing.
+- [x] **RCHAL-02**: Stateful ChallengeCompe progress, reward, task-list, or community behavior is implemented as a shared older-AC15 capability only after Red runtime/proto/client evidence identifies the endpoint, payload, state shape, and accepted response contract.
 
 ### Admin, Verification, And Contract
 
@@ -81,9 +81,9 @@ Roadmap phase mapping for v1.3 Red AC15 Support.
 | RSTATE-04 | Phase 20 | Pending |
 | RSTATE-05 | Phase 20 | Pending |
 | RCOMP-01 | Phase 20 | Pending |
-| RCOMP-02 | Phase 21 | Pending |
-| RCHAL-01 | Phase 21 | Pending |
-| RCHAL-02 | Phase 21 | Pending |
+| RCOMP-02 | Phase 21 | Complete |
+| RCHAL-01 | Phase 21 | Complete |
+| RCHAL-02 | Phase 21 | Complete |
 | RVER-01 | Phase 22 | Pending |
 | RVER-02 | Phase 22 | Pending |
 | RVER-03 | Phase 22 | Pending |
