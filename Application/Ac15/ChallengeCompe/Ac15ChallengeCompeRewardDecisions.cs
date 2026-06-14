@@ -27,4 +27,33 @@ public static class Ac15ChallengeCompeRewardDecisions
 
         return new Ac15ChallengeCompeRewardGrant(songNoes.ToArray(), titleIds.ToArray());
     }
+
+    public static IReadOnlyList<uint> GetLockedRewardSongIds(
+        Ac15ChallengeCompeCatalog catalog,
+        DateTimeOffset activeAt,
+        bool isEnrolled,
+        byte[] releaseSongFlags,
+        int songFlagBytes)
+    {
+        if (!isEnrolled)
+        {
+            return [];
+        }
+
+        var releaseFlags = Ac15ProtocolBytes.FixedOrZero(releaseSongFlags, songFlagBytes);
+        return catalog.GetActiveBundles(activeAt)
+            .SelectMany(bundle => bundle.Rewards)
+            .Where(reward => reward.RequiredCompletedTasks > 0)
+            .SelectMany(reward => reward.RewardSongNoes)
+            .Distinct()
+            .Where(songNo => !IsBitSet(releaseFlags, songNo))
+            .Order()
+            .ToArray();
+    }
+
+    private static bool IsBitSet(byte[] source, uint id)
+    {
+        var byteIndex = (int)(id >> 3);
+        return byteIndex < source.Length && (source[byteIndex] & (1 << ((int)id & 7))) != 0;
+    }
 }

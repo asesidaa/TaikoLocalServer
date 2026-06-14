@@ -332,6 +332,64 @@ public sealed class RedChallengeCompeTests
         Assert.Empty(await fixture.Context.RedChallengeCompeProgress.ToListAsync());
     }
 
+    [Fact]
+    public async Task UserDataQuery_Red_LocksActiveUnearnedChallengeRewardSongs()
+    {
+        await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(
+            startsAt: null,
+            endsAt: null,
+            rewards: [CreateReward(songs: [102])]));
+        AddUser(fixture, enrolled: true);
+        var handler = CreateUserDataHandler(fixture);
+
+        var response = await handler.Handle(new Ac15UserDataQuery(1, GameEra.Red), CancellationToken.None);
+
+        Assert.True(BitIsSet(response.SongFlags.ReleaseSongFlg, 101));
+        Assert.False(BitIsSet(response.SongFlags.ReleaseSongFlg, 102));
+    }
+
+    [Fact]
+    public async Task UserDataQuery_Red_EarnedChallengeRewardSongIsNotLocked()
+    {
+        await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(
+            startsAt: null,
+            endsAt: null,
+            rewards: [CreateReward(songs: [102])]));
+        AddUser(fixture, enrolled: true);
+        var save = await fixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
+        save.ReleaseSongFlg = Ac15ProtocolBytes.SetBits(save.ReleaseSongFlg, [102], Ac15EraProfiles.Red.Limits.SongFlagBytes);
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateUserDataHandler(fixture);
+
+        var response = await handler.Handle(new Ac15UserDataQuery(1, GameEra.Red), CancellationToken.None);
+
+        Assert.True(BitIsSet(response.SongFlags.ReleaseSongFlg, 102));
+    }
+
+    [Fact]
+    public async Task UserDataQuery_Red_DisabledInactiveOrNotOptedInChallengeDoesNotLockRewardSongs()
+    {
+        await using var disabledFixture = await RedHandlerFixture.CreateAsync(CreateCatalog(enabled: false, rewards: [CreateReward(songs: [102])]));
+        AddUser(disabledFixture, enrolled: true);
+        var disabledResponse = await CreateUserDataHandler(disabledFixture).Handle(new Ac15UserDataQuery(1, GameEra.Red), CancellationToken.None);
+        Assert.True(BitIsSet(disabledResponse.SongFlags.ReleaseSongFlg, 102));
+
+        await using var inactiveFixture = await RedHandlerFixture.CreateAsync(CreateCatalog(
+            startsAt: "2099-01-01T00:00:00Z",
+            rewards: [CreateReward(songs: [102])]));
+        AddUser(inactiveFixture, enrolled: true);
+        var inactiveResponse = await CreateUserDataHandler(inactiveFixture).Handle(new Ac15UserDataQuery(1, GameEra.Red), CancellationToken.None);
+        Assert.True(BitIsSet(inactiveResponse.SongFlags.ReleaseSongFlg, 102));
+
+        await using var notEnrolledFixture = await RedHandlerFixture.CreateAsync(CreateCatalog(
+            startsAt: null,
+            endsAt: null,
+            rewards: [CreateReward(songs: [102])]));
+        AddUser(notEnrolledFixture, enrolled: false);
+        var notEnrolledResponse = await CreateUserDataHandler(notEnrolledFixture).Handle(new Ac15UserDataQuery(1, GameEra.Red), CancellationToken.None);
+        Assert.True(BitIsSet(notEnrolledResponse.SongFlags.ReleaseSongFlg, 102));
+    }
+
     private static async Task RunMatchedChallengeAsync(RedHandlerFixture fixture)
     {
         var handler = CreateHandler(fixture);
@@ -442,6 +500,13 @@ public sealed class RedChallengeCompeTests
             fixture.Context,
             fixture.Catalog,
             NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+    private static UserDataQueryHandler CreateUserDataHandler(RedHandlerFixture fixture)
+        => new(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UserDataQueryHandler>.Instance,
+            Options.Create(new ServerSettings()));
 
     private static DefaultHttpContext CreateHttpContext()
     {

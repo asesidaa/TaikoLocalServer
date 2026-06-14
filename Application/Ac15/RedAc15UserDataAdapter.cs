@@ -6,7 +6,8 @@ public static class RedAc15UserDataAdapter
         UserSaveDataRed saveData,
         Ac15CatalogSnapshot catalog,
         IReadOnlyList<uint> favorites,
-        IReadOnlyList<uint> recent)
+        IReadOnlyList<uint> recent,
+        IReadOnlyList<uint>? lockedSongIds = null)
         => new(
             catalog.SongHashVersion,
             catalog.SongNoesInFileOrder,
@@ -21,7 +22,7 @@ public static class RedAc15UserDataAdapter
             catalog.RecommendBestSongs,
             Counters(saveData),
             saveData.DispTaikojukuDan,
-            LockedSongIds: [],
+            LockedSongIds: lockedSongIds ?? [],
             LockedToneIds: []);
 
     private static Ac15ProfileCounters Counters(UserSaveDataRed saveData) => new()
