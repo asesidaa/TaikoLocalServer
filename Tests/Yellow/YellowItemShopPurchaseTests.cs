@@ -378,8 +378,8 @@ public sealed class YellowItemShopPurchaseTests
 
         var crossEraOnly = await handler.Handle(new Ac15BaidQuery(GameEra.Yellow, "abc"), CancellationToken.None);
 
-        Assert.False(HasBit(crossEraOnly.CostumeFlags!.CostumeFlg1, 12));
-        Assert.False(HasBit(crossEraOnly.CostumeFlags.CostumeFlg2, 14));
+        Assert.False(HasBit(crossEraOnly.CustomizationInventory!.CostumeFlg1, 12));
+        Assert.False(HasBit(crossEraOnly.CustomizationInventory.CostumeFlg2, 14));
 
         fixture.Context.YellowShopItemStates.AddRange(
             Unlocked(1, 2, Ac15ShopItemType.Kigurumi.ToProtocolValue(), 12),
@@ -388,8 +388,8 @@ public sealed class YellowItemShopPurchaseTests
 
         var yellowPurchased = await handler.Handle(new Ac15BaidQuery(GameEra.Yellow, "abc"), CancellationToken.None);
 
-        Assert.True(HasBit(yellowPurchased.CostumeFlags!.CostumeFlg1, 12));
-        Assert.True(HasBit(yellowPurchased.CostumeFlags.CostumeFlg2, 14));
+        Assert.True(HasBit(yellowPurchased.CustomizationInventory!.CostumeFlg1, 12));
+        Assert.True(HasBit(yellowPurchased.CustomizationInventory.CostumeFlg2, 14));
     }
 
     [Fact]

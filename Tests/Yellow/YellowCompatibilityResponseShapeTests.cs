@@ -192,12 +192,7 @@ public sealed class YellowCompatibilityResponseShapeTests
             CustomizationInventory = costumeFlags,
             ShopMedalBalance = shopMedals,
             DanStatus = dan,
-            CompatibilityProfile = compatibility,
-            Profile = profile,
-            CostumeFlags = costumeFlags,
-            ShopMedals = shopMedals,
-            Dan = dan,
-            Compatibility = compatibility
+            CompatibilityProfile = compatibility
         };
     }
 

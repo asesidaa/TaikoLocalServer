@@ -12,15 +12,6 @@ public sealed record Ac15BaidResponse
     public Ac15BaidDan? DanStatus { get; init; }
     public Ac15BaidCompatibility? CompatibilityProfile { get; init; }
     public Ac15BaidReward? RewardProgress { get; init; }
-
-    // Temporary migration aliases for existing BAID mapper/controller paths.
-    // Plans 02-04 migrate consumers to semantic sections and remove these aliases.
-    public Ac15BaidProfile? Profile { get; init; }
-    public Ac15BaidCostumeFlags? CostumeFlags { get; init; }
-    public Ac15BaidShopMedals? ShopMedals { get; init; }
-    public Ac15BaidDan? Dan { get; init; }
-    public Ac15BaidCompatibility? Compatibility { get; init; }
-    public Ac15BaidReward? Reward { get; init; }
 }
 
 public sealed record Ac15BaidIdentity(

@@ -83,12 +83,7 @@ public partial class BaidQueryHandler
             CustomizationInventory = customizationInventory,
             DanStatus = danStatus,
             CompatibilityProfile = compatibilityProfile,
-            RewardProgress = rewardProgress,
-            Profile = mydonProfile,
-            CostumeFlags = customizationInventory,
-            Dan = danStatus,
-            Compatibility = compatibilityProfile,
-            Reward = rewardProgress
+            RewardProgress = rewardProgress
         };
     }
 

@@ -261,9 +261,9 @@ public sealed class YellowPlayResultHandlerTests
             fixture.Catalog);
         var baid = await baidHandler.Handle(new Ac15BaidQuery(GameEra.Yellow, "999"), CancellationToken.None);
 
-        Assert.Equal(130u, baid.ShopMedals!.TotalGetDonmedal);
-        Assert.Equal(20u, baid.ShopMedals.TotalUseDonmedal);
-        Assert.Equal(12u, baid.ShopMedals.TotalGetKatsumedal);
+        Assert.Equal(130u, baid.ShopMedalBalance!.TotalGetDonmedal);
+        Assert.Equal(20u, baid.ShopMedalBalance.TotalUseDonmedal);
+        Assert.Equal(12u, baid.ShopMedalBalance.TotalGetKatsumedal);
     }
 
     [Fact]
