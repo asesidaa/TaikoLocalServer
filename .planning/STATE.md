@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Phase Summary
-status: executing
-stopped_at: Completed 21-04-PLAN.md
-last_updated: "2026-06-14T15:04:11.820Z"
-last_activity: 2026-06-14 -- Phase 21 execution started
+status: planning
+stopped_at: Completed 21-05-PLAN.md
+last_updated: "2026-06-14T15:23:13.000Z"
+last_activity: 2026-06-14 -- Phase 21 verification and closeout completed
 progress:
   total_phases: 6
-  completed_phases: 3
+  completed_phases: 5
   total_plans: 25
-  completed_plans: 21
-  percent: 84
+  completed_plans: 25
+  percent: 92
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: `.planning/PROJECT.md` (updated 2026-06-13)
 
 ## Current Position
 
-Phase: 21 (older-ac15-challengecompe-capability-and-red-binding) — EXECUTING
+Phase: 21 (older-ac15-challengecompe-capability-and-red-binding) — COMPLETE
 Plan: 5 of 5
-Status: Ready to execute
-Last activity: 2026-06-14 -- Phase 21 execution started
+Status: Phase complete; ready for Phase 22 planning after user direction
+Last activity: 2026-06-14 -- Phase 21 verification and closeout completed
 
 ## Performance Metrics
 
@@ -121,6 +121,7 @@ Last activity: 2026-06-14 -- Phase 21 execution started
 | Phase 21 P02 | 14 min | 3 tasks | 12 files |
 | Phase 21 P03 | 16 min | 2 tasks | 5 files |
 | Phase 21 P04 | 13 min | 2 tasks | 6 files |
+| Phase 21 P05 | 14 min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -227,6 +228,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 21]: Red ChallengeCompe readback is read-only: it does not opt users in, grant rewards, or echo raw upload facts. — Phase 21 Plan 04 must satisfy D-04, D-15, D-16, and D-17 by exposing saved progress without mutating enrollment or reward state.
 - [Phase 21]: Phase 21 readback populates only ary_challenge_stat from active saved progress; user and BNG buckets remain empty. — D-13 and D-14 keep user-created and BNG/official competition behavior evidence-gated.
 - [Phase 21]: Red wire projection is Mapperly-generated and mechanical, with business behavior kept in the application query. — AGENTS.md and D-23/D-26 require transport-agnostic behavior in Application and Red-owned wire mapping in the adapter.
+- [Phase 21]: Final verification passed for Red ChallengeCompe focused tests, Red regression, full test suite, and temp-output Host build. — Phase 21 closes with stateful Red DonChare support limited to opted-in users, Red-owned sidecar/state, non-Tokkun playresults, active `ary_challenge_id` personal-task facts, configured reward grants/locks, and read-only `ary_challenge_stat` readback.
 
 ### Pending Todos
 
@@ -251,11 +253,11 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-14T15:03:23.253Z
-Stopped at: Completed 21-04-PLAN.md
+Last session: 2026-06-14T15:23:13.000Z
+Stopped at: Completed 21-05-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
 
-- Execute Phase 21 with `$gsd-execute-phase 21`.
-- Phase 21 planning is complete; requirements remain pending until execution verifies them.
+- Start Phase 22 planning only after user direction.
+- Use Phase 21 artifacts `21-SUMMARY.md` and `21-VERIFICATION.md` as the ChallengeCompe handoff.
