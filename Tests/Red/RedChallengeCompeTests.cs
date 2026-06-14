@@ -1,8 +1,10 @@
 using TaikoLocalServer.Application.Ac15.ChallengeCompe;
+using TaikoLocalServer.Application;
 using TaikoLocalServer.Tests.Ac15;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using RedChallengeCompeController = TaikoLocalServer.Adapters.GameProtocol.Red.Controllers.ChallengeCompeController;
 using RedRewardCardCheckController = TaikoLocalServer.Adapters.GameProtocol.Red.Controllers.RewardCardCheckController;
 using RedRewardExecutionController = TaikoLocalServer.Adapters.GameProtocol.Red.Controllers.RewardExecutionController;
 using RedWire = TaikoLocalServer.Adapters.GameProtocol.Red.Wire;
@@ -492,6 +494,55 @@ public sealed class RedChallengeCompeTests
         Assert.Empty(rawOnlyResponse.AryBngCompeStat);
     }
 
+    [Fact]
+    public async Task ChallengeCompeController_Red_ReturnsStatefulProgressThroughWireMapper()
+    {
+        await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(startsAt: null, endsAt: null));
+        AddUser(fixture, enrolled: true);
+        fixture.Context.RedChallengeCompeProgress.Add(new RedChallengeCompeProgress
+        {
+            Baid = 1,
+            BundleId = "red-2016-07",
+            TaskId = 1001,
+            Slot = 1,
+            CompeId = 1001,
+            TrackNo = 1,
+            SongNo = 101,
+            Level = 1,
+            OptionFlg = [1, 2, 3],
+            StageMode = 0,
+            HighScore = 765432,
+            ProgressValue = 1,
+            Completed = true,
+            UpdatedAt = new DateTime(2016, 7, 20, 12, 0, 0),
+            CompletedAt = new DateTime(2016, 7, 20, 12, 0, 0)
+        });
+        await fixture.Context.SaveChangesAsync();
+        var controller = new RedChallengeCompeController
+        {
+            ControllerContext = new ControllerContext { HttpContext = CreateHttpContext(CreateServices(fixture)) }
+        };
+
+        var result = await controller.ChallengeCompe(new RedWire.ChallengeCompeRequest
+        {
+            Baid = 1,
+            ChassisId = "268410000000",
+            ShopId = "JPN0JPN0123"
+        });
+
+        var response = Assert.IsType<RedWire.ChallengeCompeResponse>(Assert.IsType<OkObjectResult>(result).Value);
+        var challenge = Assert.Single(response.AryChallengeStats);
+        Assert.Equal(1001u, challenge.CompeId);
+        var track = Assert.Single(challenge.AryTrackStats);
+        Assert.Equal(101u, track.SongNo);
+        Assert.Equal(1u, track.Level);
+        Assert.Equal([1, 2, 3], track.OptionFlg);
+        Assert.Equal(0u, track.StageMode);
+        Assert.Equal(765432u, track.HighScore);
+        Assert.Empty(response.AryUserCompeStats);
+        Assert.Empty(response.AryBngCompeStats);
+    }
+
     private static async Task RunMatchedChallengeAsync(RedHandlerFixture fixture)
     {
         var handler = CreateHandler(fixture);
@@ -616,9 +667,17 @@ public sealed class RedChallengeCompeTests
             fixture.Catalog,
             NullLogger<GetChallengeCompeQueryHandler>.Instance);
 
-    private static DefaultHttpContext CreateHttpContext()
+    private static ServiceProvider CreateServices(RedHandlerFixture fixture)
+        => new ServiceCollection()
+            .AddLogging()
+            .AddApplication()
+            .AddScoped<ITaikoDbContext>(_ => fixture.Context)
+            .AddScoped<IGameDataCatalog>(_ => fixture.Catalog)
+            .BuildServiceProvider();
+
+    private static DefaultHttpContext CreateHttpContext(IServiceProvider? services = null)
     {
-        var services = new ServiceCollection()
+        services ??= new ServiceCollection()
             .AddLogging()
             .BuildServiceProvider();
         return new DefaultHttpContext { RequestServices = services };

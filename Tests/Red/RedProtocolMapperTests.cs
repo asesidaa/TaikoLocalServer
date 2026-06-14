@@ -150,6 +150,45 @@ public sealed class RedProtocolMapperTests
         Assert.Equal([103u], response.RecommendBestSongs);
     }
 
+    [Fact]
+    public void ChallengeCompeMapper_Red_MapsActiveChallengeProgressAndKeepsUnsupportedBucketsEmpty()
+    {
+        var response = ChallengeCompeMappers.Map(new CommonChallengeCompeResponse
+        {
+            Result = 1,
+            AryChallengeStat =
+            [
+                new CommonChallengeCompeResponse.CompeData
+                {
+                    CompeId = 1001,
+                    AryTrackStat =
+                    [
+                        new CommonChallengeCompeResponse.TracksData
+                        {
+                            SongNo = 101,
+                            Level = 1,
+                            OptionFlg = [1, 2, 3],
+                            StageMode = 0,
+                            HighScore = 800000
+                        }
+                    ]
+                }
+            ]
+        });
+
+        Assert.Equal(1u, response.Result);
+        var challenge = Assert.Single(response.AryChallengeStats);
+        Assert.Equal(1001u, challenge.CompeId);
+        var track = Assert.Single(challenge.AryTrackStats);
+        Assert.Equal(101u, track.SongNo);
+        Assert.Equal(1u, track.Level);
+        Assert.Equal([1, 2, 3], track.OptionFlg);
+        Assert.Equal(0u, track.StageMode);
+        Assert.Equal(800000u, track.HighScore);
+        Assert.Empty(response.AryUserCompeStats);
+        Assert.Empty(response.AryBngCompeStats);
+    }
+
     private static UserDataResponse AssembleRedUserDataResponse(Ac15UserDataResponse common)
     {
         var response = new UserDataResponse

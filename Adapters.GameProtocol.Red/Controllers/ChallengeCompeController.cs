@@ -7,9 +7,10 @@ public class ChallengeCompeController : BaseProtocolController<ChallengeCompeCon
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult ChallengeCompe([FromBody] ChallengeCompeRequest request)
+    public async Task<IActionResult> ChallengeCompe([FromBody] ChallengeCompeRequest request)
     {
-        Logger.LogInformation("Red route probe challengecompe.php request: {@Request}", request);
-        return Ok(new ChallengeCompeResponse { Result = 1 });
+        Logger.LogInformation("Red ChallengeCompe request: {@Request}", request);
+        var common = await Mediator.Send(new GetChallengeCompeQuery(GameEra.Red, request.Baid), HttpContext.RequestAborted);
+        return Ok(ChallengeCompeMappers.Map(common));
     }
 }
