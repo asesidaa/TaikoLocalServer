@@ -1,3 +1,4 @@
+using TaikoLocalServer.Application.Ac15.ChallengeCompe;
 using TaikoLocalServer.Application.Catalog.Ac15;
 
 namespace TaikoLocalServer.Application.Abstractions;
@@ -21,6 +22,8 @@ public interface IRedCatalog : IEraGameDataCatalog
     Ac15RecommendEntry Recommend { get; }
 
     IReadOnlyList<MovieData> Movies { get; }
+
+    Ac15ChallengeCompeCatalog ChallengeCompe { get; }
 
     IReadOnlyList<Costume> GetCostumeList();
 

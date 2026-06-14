@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using TaikoLocalServer.Application.Ac15.ChallengeCompe;
 using TaikoLocalServer.Application.Abstractions;
 using TaikoLocalServer.Application.Catalog.Ac15;
 using TaikoLocalServer.Application.Settings;
@@ -21,6 +22,7 @@ public sealed class RedEraGameDataCatalog(
     public const string CostumeFileName = "red_costume_data.json";
     public const string TitleFileName = "red_title_data.json";
     public const string NeiroFileName = "red_neiro_data.json";
+    public const string ChallengeCompeFileName = "red_challenge_compe_data.json";
 
     private uint songHashVersion;
     private IReadOnlyList<Ac15MusicInfoEntry> musicInfoFileOrder = [];
@@ -35,6 +37,7 @@ public sealed class RedEraGameDataCatalog(
     private IReadOnlyList<Costume> costumeList = [];
     private IReadOnlyDictionary<uint, Title> titleDictionary = new Dictionary<uint, Title>();
     private IReadOnlyDictionary<uint, Neiro> neiroDictionary = new Dictionary<uint, Neiro>();
+    private Ac15ChallengeCompeCatalog challengeCompe = Ac15ChallengeCompeCatalog.Disabled;
 
     public GameEra Era => GameEra.Red;
 
@@ -57,6 +60,8 @@ public sealed class RedEraGameDataCatalog(
     public Ac15RecommendEntry Recommend => recommend;
 
     public IReadOnlyList<MovieData> Movies => movies;
+
+    public Ac15ChallengeCompeCatalog ChallengeCompe => challengeCompe;
 
     public IReadOnlyList<Costume> GetCostumeList() => costumeList;
 
@@ -146,6 +151,10 @@ public sealed class RedEraGameDataCatalog(
             nameof(GameEra.Red),
             logger,
             cancellationToken);
+        challengeCompe = await Ac15ChallengeCompeLoader.LoadFromFileAsync(
+            Path.Combine(PathHelper.GetDataPath(GameEra.Red), ChallengeCompeFileName),
+            nameof(GameEra.Red),
+            cancellationToken);
         var redCustomization = await Ac15CustomizationCatalogSupport.LoadEraCatalogAsync(
             GameEra.Red,
             CostumeFileName,
@@ -168,7 +177,7 @@ public sealed class RedEraGameDataCatalog(
         neiroDictionary = customizationCatalog.Neiros;
 
         logger.LogInformation(
-            "Loaded Red catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {TaikojukuCount} taikojuku packs, {StarCount} tuning star rows, {CostumeCount} costumes, {TitleCount} titles, {NeiroCount} tones, {MovieCount} attract movies",
+            "Loaded Red catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {TaikojukuCount} taikojuku packs, {StarCount} tuning star rows, {CostumeCount} costumes, {TitleCount} titles, {NeiroCount} tones, {MovieCount} attract movies, ChallengeCompe enabled={ChallengeCompeEnabled}",
             musicInfoFileOrder.Count,
             songHashVersion,
             taikojukuFileOrder.Count,
@@ -176,7 +185,8 @@ public sealed class RedEraGameDataCatalog(
             costumeList.Count,
             titleDictionary.Count,
             neiroDictionary.Count,
-            movies.Count);
+            movies.Count,
+            challengeCompe.Enabled);
     }
 
     private EraSettings GetRedSettings()
