@@ -4,13 +4,13 @@ milestone: v1.3
 milestone_name: Phase Summary
 status: executing
 stopped_at: Phase 20.1 corrected 9-plan set ready; awaiting explicit user approval before execution
-last_updated: "2026-06-14T06:47:49.6353683+08:00"
-last_activity: 2026-06-14 -- Corrected Phase 20.1 plan set prepared with controller-owned final assembly design
+last_updated: "2026-06-14T08:23:50.799Z"
+last_activity: 2026-06-14 -- Phase 20.1 execution started
 progress:
   total_phases: 6
   completed_phases: 2
-  total_plans: 15
-  completed_plans: 11
+  total_plans: 20
+  completed_plans: 9
   percent: 33
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-13)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Phase 20.1 corrective planning - sectioned BAID/userdata responses with controller-owned final assembly
+**Current focus:** Phase 20.1 — ac15-capability-dto-and-mapper-boundary-refactor
 
 ## Current Position
 
-Phase: 20.1 (AC15 Capability DTO and Mapper Boundary Refactor) - CORRECTED PLAN READY FOR APPROVAL
-Plan: 9 corrected plans prepared; awaiting user approval before execution
-Status: executing
-Last activity: 2026-06-14 -- Corrected Phase 20.1 plan set prepared with controller-owned final assembly design
+Phase: 20.1 (ac15-capability-dto-and-mapper-boundary-refactor) — EXECUTING
+Plan: 2 of 9
+Status: Ready to execute
+Last activity: 2026-06-14 -- Phase 20.1 execution started
 
 ## Performance Metrics
 
@@ -107,6 +107,7 @@ Last activity: 2026-06-14 -- Corrected Phase 20.1 plan set prepared with control
 | Phase 20.1 rejected P01 | 35 | 3 tasks | 25 files |
 | Phase 20.1 rejected P02 | 26 | 3 tasks | 25 files |
 | Phase 20.1 rejected P03 | 13 | 3 tasks | 13 files |
+| Phase 20.1 P01 | 40 min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
