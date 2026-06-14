@@ -390,6 +390,108 @@ public sealed class RedChallengeCompeTests
         Assert.True(BitIsSet(notEnrolledResponse.SongFlags.ReleaseSongFlg, 102));
     }
 
+    [Fact]
+    public async Task GetChallengeCompeQuery_Red_ReturnsActiveProgressAndEmptyUnsupportedBucketsWithoutMutation()
+    {
+        await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(startsAt: null, endsAt: null));
+        AddUser(fixture, enrolled: true);
+        var save = await fixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
+        var releaseBefore = save.ReleaseSongFlg.ToArray();
+        var titleBefore = save.TitleFlg.ToArray();
+        fixture.Context.RedChallengeCompeProgress.Add(new RedChallengeCompeProgress
+        {
+            Baid = 1,
+            BundleId = "red-2016-07",
+            TaskId = 1001,
+            Slot = 1,
+            CompeId = 1001,
+            TrackNo = 1,
+            SongNo = 101,
+            Level = 1,
+            OptionFlg = [1, 2, 3],
+            StageMode = 0,
+            HighScore = 765432,
+            ProgressValue = 1,
+            Completed = false,
+            UpdatedAt = new DateTime(2016, 7, 20, 12, 0, 0)
+        });
+        fixture.Context.SongBestDataRed.Add(new SongBestDatumRed
+        {
+            Baid = 1,
+            SongId = 101,
+            Difficulty = Difficulty.Easy,
+            BestScore = 800000,
+            BestRate = 95,
+            BestCrown = CrownType.Clear
+        });
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateChallengeCompeHandler(fixture);
+
+        var response = await handler.Handle(new GetChallengeCompeQuery(GameEra.Red, 1), CancellationToken.None);
+
+        Assert.Equal(1u, response.Result);
+        var challenge = Assert.Single(response.AryChallengeStat);
+        Assert.Equal(1001u, challenge.CompeId);
+        var track = Assert.Single(challenge.AryTrackStat);
+        Assert.Equal(101u, track.SongNo);
+        Assert.Equal(1u, track.Level);
+        Assert.Equal([1, 2, 3], track.OptionFlg);
+        Assert.Equal(0u, track.StageMode);
+        Assert.Equal(800000u, track.HighScore);
+        Assert.Empty(response.AryUserCompeStat);
+        Assert.Empty(response.AryBngCompeStat);
+
+        var after = await fixture.Context.UserSaveDataRed.AsNoTracking().SingleAsync(row => row.Baid == 1);
+        Assert.True(after.IsChallengeCompe);
+        Assert.Equal(releaseBefore, after.ReleaseSongFlg);
+        Assert.Equal(titleBefore, after.TitleFlg);
+    }
+
+    [Fact]
+    public async Task GetChallengeCompeQuery_Red_DoesNotOptInOrEchoRawFactsWithoutSavedProgress()
+    {
+        await using var notEnrolledFixture = await RedHandlerFixture.CreateAsync(CreateCatalog(startsAt: null, endsAt: null));
+        AddUser(notEnrolledFixture, enrolled: false);
+        var notEnrolledResponse = await CreateChallengeCompeHandler(notEnrolledFixture)
+            .Handle(new GetChallengeCompeQuery(GameEra.Red, 1), CancellationToken.None);
+
+        Assert.Empty(notEnrolledResponse.AryChallengeStat);
+        Assert.False(await notEnrolledFixture.Context.UserSaveDataRed
+            .Where(row => row.Baid == 1)
+            .Select(row => row.IsChallengeCompe)
+            .SingleAsync());
+
+        await using var rawOnlyFixture = await RedHandlerFixture.CreateAsync(CreateCatalog(startsAt: null, endsAt: null));
+        AddUser(rawOnlyFixture, enrolled: true);
+        rawOnlyFixture.Context.RedChallengeCompeRawFacts.Add(new RedChallengeCompeRawFact
+        {
+            Baid = 1,
+            BundleId = "red-2016-07",
+            TaskId = 1001,
+            Slot = 1,
+            CompeId = 1001,
+            TrackNo = 1,
+            SongNo = 101,
+            Level = 1,
+            OptionFlg = [9],
+            StageMode = 0,
+            HighScore = 999999,
+            PlayResult = 2,
+            ProgressValue = 1,
+            Completed = true,
+            PlayTime = new DateTime(2016, 7, 20, 12, 0, 0),
+            CreatedAt = new DateTime(2016, 7, 20, 12, 0, 0)
+        });
+        await rawOnlyFixture.Context.SaveChangesAsync();
+
+        var rawOnlyResponse = await CreateChallengeCompeHandler(rawOnlyFixture)
+            .Handle(new GetChallengeCompeQuery(GameEra.Red, 1), CancellationToken.None);
+
+        Assert.Empty(rawOnlyResponse.AryChallengeStat);
+        Assert.Empty(rawOnlyResponse.AryUserCompeStat);
+        Assert.Empty(rawOnlyResponse.AryBngCompeStat);
+    }
+
     private static async Task RunMatchedChallengeAsync(RedHandlerFixture fixture)
     {
         var handler = CreateHandler(fixture);
@@ -507,6 +609,12 @@ public sealed class RedChallengeCompeTests
             fixture.Catalog,
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
+
+    private static GetChallengeCompeQueryHandler CreateChallengeCompeHandler(RedHandlerFixture fixture)
+        => new(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<GetChallengeCompeQueryHandler>.Instance);
 
     private static DefaultHttpContext CreateHttpContext()
     {
