@@ -9,4 +9,6 @@ public partial interface ITaikoDbContext
     DbSet<RedRecentSongs> RedRecentSongs { get; }
     DbSet<DanScoreDatumRed> DanScoreDataRed { get; }
     DbSet<DanStageScoreDatumRed> DanStageScoreDataRed { get; }
+    DbSet<RedChallengeCompeRawFact> RedChallengeCompeRawFacts { get; }
+    DbSet<RedChallengeCompeProgress> RedChallengeCompeProgress { get; }
 }
