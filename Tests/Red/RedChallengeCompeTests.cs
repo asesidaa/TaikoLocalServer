@@ -1,5 +1,11 @@
 using TaikoLocalServer.Application.Ac15.ChallengeCompe;
 using TaikoLocalServer.Tests.Ac15;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using RedRewardCardCheckController = TaikoLocalServer.Adapters.GameProtocol.Red.Controllers.RewardCardCheckController;
+using RedRewardExecutionController = TaikoLocalServer.Adapters.GameProtocol.Red.Controllers.RewardExecutionController;
+using RedWire = TaikoLocalServer.Adapters.GameProtocol.Red.Wire;
 
 namespace TaikoLocalServer.Tests.Red;
 
@@ -189,6 +195,143 @@ public sealed class RedChallengeCompeTests
         Assert.Equal(2, await fixture.Context.RedChallengeCompeRawFacts.CountAsync(row => row.Baid == 1));
     }
 
+    [Fact]
+    public async Task UpdatePlayResult_Red_CompletedChallengeGrantsConfiguredSongRewardOnlyInRedSave()
+    {
+        await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(rewards: [CreateReward(songs: [102])]));
+        AddUser(fixture, enrolled: true, includeOtherEraSaves: true);
+        var handler = CreateHandler(fixture);
+        var stages = new List<Ac15StageResult> { CreateStage(101, [new Ac15CompeIdFact(1001, 1)]) };
+
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
+            1,
+            GameEra.Red,
+            playDatetime: "20160720120000",
+            stages: stages,
+            challenge: CreateChallenge(stages)),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var redSave = await fixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
+        Assert.True(BitIsSet(redSave.ReleaseSongFlg, 102));
+
+        var blueSave = await fixture.Context.UserSaveDataBlue.SingleAsync(row => row.Baid == 1);
+        var greenSave = await fixture.Context.UserSaveDataGreen.SingleAsync(row => row.Baid == 1);
+        var yellowSave = await fixture.Context.UserSaveDataYellow.SingleAsync(row => row.Baid == 1);
+        Assert.False(BitIsSet(blueSave.ReleaseSongFlg, 102));
+        Assert.False(BitIsSet(greenSave.TitleFlg, 10));
+        Assert.False(BitIsSet(yellowSave.ReleaseSongFlg, 102));
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Red_CompletedTenTasksGrantsConfiguredTitleReward()
+    {
+        await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(rewards: [CreateReward(threshold: 10, titles: [10])]));
+        AddUser(fixture, enrolled: true);
+        var handler = CreateHandler(fixture);
+        var stages = Enumerable.Range(1, 10)
+            .Select(index => CreateStage((uint)(100 + index), [new Ac15CompeIdFact((uint)(1000 + index), (uint)index)]))
+            .ToList();
+
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
+            1,
+            GameEra.Red,
+            playDatetime: "20160720120000",
+            stages: stages,
+            challenge: CreateChallenge(stages)),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var save = await fixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
+        Assert.True(BitIsSet(save.TitleFlg, 10));
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Red_ReplayedChallengeRewardGrantIsIdempotent()
+    {
+        await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(rewards: [CreateReward(songs: [102], titles: [10])]));
+        AddUser(fixture, enrolled: true);
+        var handler = CreateHandler(fixture);
+        var stages = new List<Ac15StageResult> { CreateStage(101, [new Ac15CompeIdFact(1001, 1)]) };
+        var command = Ac15PlayResultTestFactory.Command(
+            1,
+            GameEra.Red,
+            playDatetime: "20160720120000",
+            stages: stages,
+            challenge: CreateChallenge(stages));
+
+        await handler.Handle(command, CancellationToken.None);
+        var firstSave = await fixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
+        var firstRelease = firstSave.ReleaseSongFlg.ToArray();
+        var firstTitles = firstSave.TitleFlg.ToArray();
+
+        await handler.Handle(command, CancellationToken.None);
+
+        var secondSave = await fixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(firstRelease, secondSave.ReleaseSongFlg);
+        Assert.Equal(firstTitles, secondSave.TitleFlg);
+        Assert.Single(await fixture.Context.RedChallengeCompeProgress.Where(row => row.Baid == 1).ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Red_DisabledOrNoActiveChallengeCatalogDoesNotGrantRewards()
+    {
+        await using var disabledFixture = await RedHandlerFixture.CreateAsync(CreateCatalog(enabled: false, rewards: [CreateReward(songs: [102], titles: [10])]));
+        AddUser(disabledFixture, enrolled: true);
+        await RunMatchedChallengeAsync(disabledFixture);
+        var disabledSave = await disabledFixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
+        Assert.False(BitIsSet(disabledSave.ReleaseSongFlg, 102));
+        Assert.False(BitIsSet(disabledSave.TitleFlg, 10));
+
+        await using var inactiveFixture = await RedHandlerFixture.CreateAsync(CreateCatalog(
+            startsAt: "2016-08-01T00:00:00Z",
+            rewards: [CreateReward(songs: [102], titles: [10])]));
+        AddUser(inactiveFixture, enrolled: true);
+        await RunMatchedChallengeAsync(inactiveFixture);
+        var inactiveSave = await inactiveFixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
+        Assert.False(BitIsSet(inactiveSave.ReleaseSongFlg, 102));
+        Assert.False(BitIsSet(inactiveSave.TitleFlg, 10));
+    }
+
+    [Fact]
+    public async Task RewardCompatibilityRoutesDoNotGrantChallengeCompeRewards()
+    {
+        await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(rewards: [CreateReward(songs: [102], titles: [10])]));
+        AddUser(fixture, enrolled: true);
+        var rewardCard = new RedRewardCardCheckController
+        {
+            ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
+        };
+        var rewardExecution = new RedRewardExecutionController
+        {
+            ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
+        };
+
+        var cardResult = rewardCard.RewardCardCheck(new RedWire.RewardcardcheckRequest
+        {
+            AccessCode = "12345678901234567890",
+            ChassisId = "268410000000",
+            ShopId = "JPN0JPN0123",
+            CountryId = "JPN"
+        });
+        var executionResult = rewardExecution.RewardExecution(new RedWire.RewardexecutionRequest
+        {
+            Baid = 1,
+            ChassisId = "268410000000",
+            ShopId = "JPN0JPN0123",
+            ReleaseSongNoes = [102],
+            GetTitleNoes = [10]
+        });
+
+        Assert.Equal(1u, Assert.IsType<RedWire.RewardcardcheckResponse>(Assert.IsType<OkObjectResult>(cardResult).Value).Result);
+        Assert.Equal(1u, Assert.IsType<RedWire.RewardexecutionResponse>(Assert.IsType<OkObjectResult>(executionResult).Value).Result);
+        var save = await fixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
+        Assert.False(BitIsSet(save.ReleaseSongFlg, 102));
+        Assert.False(BitIsSet(save.TitleFlg, 10));
+        Assert.Empty(await fixture.Context.RedChallengeCompeRawFacts.ToListAsync());
+        Assert.Empty(await fixture.Context.RedChallengeCompeProgress.ToListAsync());
+    }
+
     private static async Task RunMatchedChallengeAsync(RedHandlerFixture fixture)
     {
         var handler = CreateHandler(fixture);
@@ -225,8 +368,10 @@ public sealed class RedChallengeCompeTests
 
     private static RedHandlerFixture.TestRedCatalog CreateCatalog(
         bool enabled = true,
-        string startsAt = "2016-07-01T00:00:00Z",
-        Ac15ChallengeCompeRule? rule = null)
+        string? startsAt = "2016-07-01T00:00:00Z",
+        string? endsAt = "2016-08-01T00:00:00Z",
+        Ac15ChallengeCompeRule? rule = null,
+        IReadOnlyList<Ac15ChallengeCompeReward>? rewards = null)
     {
         var taskRule = rule ?? new Ac15ChallengeCompeRule(Ac15ChallengeCompeRuleKind.Clear, null, []);
         return new RedHandlerFixture.TestRedCatalog
@@ -236,8 +381,8 @@ public sealed class RedChallengeCompeTests
                 [
                     new Ac15ChallengeCompeMonthlyBundle(
                         "red-2016-07",
-                        DateTimeOffset.Parse(startsAt),
-                        DateTimeOffset.Parse("2016-08-01T00:00:00Z"),
+                        startsAt is null ? null : DateTimeOffset.Parse(startsAt),
+                        endsAt is null ? null : DateTimeOffset.Parse(endsAt),
                         Enumerable.Range(1, 10)
                             .Select(index => new Ac15ChallengeCompeTask(
                                 (uint)(1000 + index),
@@ -246,10 +391,16 @@ public sealed class RedChallengeCompeTests
                                 index == 1 ? taskRule : new Ac15ChallengeCompeRule(Ac15ChallengeCompeRuleKind.Clear, null, [])))
                             .ToArray(),
                         null,
-                        [])
+                        rewards ?? [])
                 ])
         };
     }
+
+    private static Ac15ChallengeCompeReward CreateReward(
+        uint threshold = 1,
+        IReadOnlyList<uint>? songs = null,
+        IReadOnlyList<uint>? titles = null)
+        => new(threshold, songs ?? [], titles ?? []);
 
     private static Ac15StageResult CreateStage(
         uint songNo,
@@ -291,4 +442,15 @@ public sealed class RedChallengeCompeTests
             fixture.Context,
             fixture.Catalog,
             NullLogger<UpdatePlayResultCommandHandler>.Instance);
+
+    private static DefaultHttpContext CreateHttpContext()
+    {
+        var services = new ServiceCollection()
+            .AddLogging()
+            .BuildServiceProvider();
+        return new DefaultHttpContext { RequestServices = services };
+    }
+
+    private static bool BitIsSet(byte[] source, uint id)
+        => (source[id >> 3] & (1 << ((int)id & 7))) != 0;
 }

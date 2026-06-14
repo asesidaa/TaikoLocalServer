@@ -88,7 +88,7 @@ public partial class UpdatePlayResultCommandHandler
             request.Baid,
             red.ChallengeCompe,
             validStages,
-            saveData.IsChallengeCompe,
+            saveData,
             playTime,
             cancellationToken);
 
@@ -105,11 +105,11 @@ public partial class UpdatePlayResultCommandHandler
         uint baid,
         Ac15ChallengeCompeCatalog catalog,
         IReadOnlyList<Ac15StageResult> stages,
-        bool isEnrolled,
+        UserSaveDataRed saveData,
         DateTime playTime,
         CancellationToken cancellationToken)
     {
-        if (!isEnrolled)
+        if (!saveData.IsChallengeCompe)
         {
             return;
         }
@@ -197,6 +197,53 @@ public partial class UpdatePlayResultCommandHandler
                 progress.CompletedAt = playTime;
             }
         }
+
+        await ApplyRedChallengeCompeRewardsAsync(
+            baid,
+            catalog,
+            activeAt,
+            saveData,
+            cancellationToken);
+    }
+
+    private async ValueTask ApplyRedChallengeCompeRewardsAsync(
+        uint baid,
+        Ac15ChallengeCompeCatalog catalog,
+        DateTimeOffset activeAt,
+        UserSaveDataRed saveData,
+        CancellationToken cancellationToken)
+    {
+        var activeBundleIds = catalog.GetActiveBundles(activeAt)
+            .Select(bundle => bundle.BundleId)
+            .ToArray();
+        if (activeBundleIds.Length == 0)
+        {
+            return;
+        }
+
+        var completedTasks = new HashSet<(string BundleId, uint TaskId)>();
+        var savedCompleted = await context.RedChallengeCompeProgress
+            .Where(row => row.Baid == baid && row.Completed && activeBundleIds.Contains(row.BundleId))
+            .Select(row => new { row.BundleId, row.TaskId })
+            .ToArrayAsync(cancellationToken);
+        foreach (var row in savedCompleted)
+        {
+            completedTasks.Add((row.BundleId, row.TaskId));
+        }
+
+        foreach (var row in context.RedChallengeCompeProgress.Local.Where(row =>
+                     row.Baid == baid && row.Completed && activeBundleIds.Contains(row.BundleId)))
+        {
+            completedTasks.Add((row.BundleId, row.TaskId));
+        }
+
+        var completedCounts = completedTasks
+            .GroupBy(key => key.BundleId)
+            .ToDictionary(group => group.Key, group => (uint)group.Select(key => key.TaskId).Distinct().Count());
+        var grant = Ac15ChallengeCompeRewardDecisions.GetEarnedRewards(catalog, activeAt, completedCounts);
+
+        Ac15UnlockFlagAccess.Red.ReleaseSongs?.Invoke(saveData, grant.RewardSongNoes);
+        Ac15UnlockFlagAccess.Red.Titles(saveData, grant.RewardTitleIds);
     }
 
     private async ValueTask<uint> GetProgressValueAsync(
