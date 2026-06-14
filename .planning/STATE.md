@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Phase Summary
-status: executing
-stopped_at: Completed 20.1-08-PLAN.md
-last_updated: "2026-06-14T09:37:54.266Z"
-last_activity: 2026-06-14 -- Phase 20.1 Plan 08 completed
+status: ready
+stopped_at: Completed 20.1-09-PLAN.md
+last_updated: "2026-06-14T09:47:01.121Z"
+last_activity: 2026-06-14 -- Phase 20.1 completed and verified
 progress:
   total_phases: 6
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 20
-  completed_plans: 16
-  percent: 80
+  completed_plans: 17
+  percent: 50
 ---
 
 # Project State
@@ -21,20 +21,20 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-13)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Phase 20.1 — ac15-capability-dto-and-mapper-boundary-refactor
+**Current focus:** Phase 21 — older-ac15-challengecompe-capability-and-red-binding
 
 ## Current Position
 
-Phase: 20.1 (ac15-capability-dto-and-mapper-boundary-refactor) — EXECUTING
-Plan: 9 of 9
-Status: Ready to execute
-Last activity: 2026-06-14 -- Phase 20.1 Plan 08 completed
+Phase: 21
+Plan: Not started
+Status: Ready to discuss/plan
+Last activity: 2026-06-14 -- Phase 20.1 completed and verified
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 42 in v1.2
+- Total plans completed: 51 in v1.2
 - Average duration: 23.5 min
 - Total execution time: 541 min
 
@@ -56,6 +56,7 @@ Last activity: 2026-06-14 -- Phase 20.1 Plan 08 completed
 | 16.2 | 14 | - | - |
 | 17 | 1/1 complete | closeout | closeout |
 | 18 | 4 | - | - |
+| 20.1 | 9 | - | - |
 
 **Recent Trend:**
 
@@ -115,6 +116,7 @@ Last activity: 2026-06-14 -- Phase 20.1 Plan 08 completed
 | Phase 20.1 P06 | 9 min | 2 tasks | 9 files |
 | Phase 20.1 P07 | 7 min | 2 tasks | 8 files |
 | Phase 20.1 P08 | 6 min | 2 tasks | 0 files |
+| Phase 20.1 P09 | 8 min | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -233,11 +235,11 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-14T09:37:54.014Z
-Stopped at: Completed 20.1-08-PLAN.md
+Last session: 2026-06-14T09:46:51.074Z
+Stopped at: Completed 20.1-09-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
 
-- Continue Phase 20.1 execution with `20.1-09-PLAN.md` (mapper boundary cleanup, playresult audit, generated-source verification).
-- Do not start Phase 21 until Phase 20.1 corrective rewrite has fresh verification and closeout.
+- Start Phase 21 with `$gsd-discuss-phase 21` before planning ChallengeCompe behavior.
+- Phase 20.1 corrective rewrite is complete and verified.
