@@ -29,7 +29,7 @@ Active milestone: **v1.3 Red AC15 Support**
 | 18 | Red Evidence and Capability Foundation | 4/4 | Complete    | 2026-06-12 |
 | 19 | Red Capability Profile and Catalog Binding | 3/3 | Complete | 2026-06-13 |
 | 20 | Red Runtime Capability Binding and Simple Compatibility | 4/4 | Complete | 2026-06-13 |
-| 20.1 | AC15 Capability DTO and Mapper Boundary Refactor | 4/9 | In Progress|  |
+| 20.1 | AC15 Capability DTO and Mapper Boundary Refactor | 5/9 | In Progress|  |
 | 21 | Older-AC15 ChallengeCompe Capability and Red Binding | Define the shared older-AC15 ChallengeCompe capability and bind/prove it through Red evidence, with stateful behavior only after client/runtime proof defines the contract. | RCOMP-02, RCHAL-01, RCHAL-02 | 5 |
 | 22 | Red AdminApi/WebUI and Runtime Closeout | Expose implemented Red-owned readback surfaces and close v1.3 with automated plus cabinet/RPCS3 verification. | RVER-01, RVER-02, RVER-03 | 5 |
 
@@ -182,7 +182,7 @@ Plans:
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
-- [ ] 20.1-05-PLAN.md - Blue/Green userdata semantic sections
+- [x] 20.1-05-PLAN.md - Blue/Green userdata semantic sections
 
 **Wave 6** *(blocked on Wave 5 completion)*
 
@@ -331,6 +331,6 @@ See `.planning/milestones/v1.2-ROADMAP.md` and `.planning/milestones/v1.2-phases
 | 18. Red Evidence and Capability Foundation | 4/4 | Complete | 2026-06-12 |
 | 19. Red Capability Profile and Catalog Binding | 3/3 | Complete | 2026-06-13 |
 | 20. Red Runtime Capability Binding and Simple Compatibility | 4/4 | Complete | 2026-06-13 |
-| 20.1. AC15 Capability DTO and Mapper Boundary Refactor | 4/9 | In Progress | - |
+| 20.1. AC15 Capability DTO and Mapper Boundary Refactor | 5/9 | In Progress | - |
 | 21. Older-AC15 ChallengeCompe Capability and Red Binding | 0/TBD | Not started | - |
 | 22. Red AdminApi/WebUI and Runtime Closeout | 0/TBD | Not started | - |
