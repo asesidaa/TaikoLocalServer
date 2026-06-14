@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Phase Summary
 status: executing
-stopped_at: Completed 20.1-07-PLAN.md
-last_updated: "2026-06-14T09:32:56.823Z"
-last_activity: 2026-06-14 -- Phase 20.1 Plan 07 completed
+stopped_at: Completed 20.1-08-PLAN.md
+last_updated: "2026-06-14T09:37:54.266Z"
+last_activity: 2026-06-14 -- Phase 20.1 Plan 08 completed
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 20
-  completed_plans: 15
-  percent: 75
+  completed_plans: 16
+  percent: 80
 ---
 
 # Project State
@@ -26,9 +26,9 @@ See: `.planning/PROJECT.md` (updated 2026-06-13)
 ## Current Position
 
 Phase: 20.1 (ac15-capability-dto-and-mapper-boundary-refactor) — EXECUTING
-Plan: 8 of 9
+Plan: 9 of 9
 Status: Ready to execute
-Last activity: 2026-06-14 -- Phase 20.1 Plan 07 completed
+Last activity: 2026-06-14 -- Phase 20.1 Plan 08 completed
 
 ## Performance Metrics
 
@@ -114,6 +114,7 @@ Last activity: 2026-06-14 -- Phase 20.1 Plan 07 completed
 | Phase 20.1 P05 | 4 min | 2 tasks | 0 files |
 | Phase 20.1 P06 | 9 min | 2 tasks | 9 files |
 | Phase 20.1 P07 | 7 min | 2 tasks | 8 files |
+| Phase 20.1 P08 | 6 min | 2 tasks | 0 files |
 
 ## Accumulated Context
 
@@ -232,11 +233,11 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-14T09:32:56.607Z
-Stopped at: Completed 20.1-07-PLAN.md
+Last session: 2026-06-14T09:37:54.014Z
+Stopped at: Completed 20.1-08-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
 
-- Continue Phase 20.1 execution with `20.1-08-PLAN.md` (userdata compatibility removal).
+- Continue Phase 20.1 execution with `20.1-09-PLAN.md` (mapper boundary cleanup, playresult audit, generated-source verification).
 - Do not start Phase 21 until Phase 20.1 corrective rewrite has fresh verification and closeout.
