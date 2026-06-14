@@ -87,6 +87,53 @@ public sealed class RedPlayResultHandlerTests
     }
 
     [Fact]
+    public async Task UpdatePlayResult_Red_NormalUploadWithDefaultTokkunTutorialFlagStillSavesNormalPlay()
+    {
+        await using var fixture = await RedHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var saveData = UserSaveDataRedExtensions.CreateDefaultRedSaveData(1);
+        saveData.TokkunTutorialFlg = 5;
+        fixture.Context.UserSaveDataRed.Add(saveData);
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
+            1,
+            GameEra.Red,
+            playMode: (uint)PlayMode.Normal,
+            profile: Ac15ProfileMutationFacts.Empty with
+            {
+                GetDonpoint = 1050,
+                DifficultyTutorialFlg = 1,
+                DifficultyPlayedCourse = 1,
+                DifficultyPlayedStar = 5,
+                HasDifficultyPlayedCourse = true,
+                HasDifficultyPlayedStar = true
+            },
+            stages: [CreateStage(574, 1, 0, score: 261880)],
+            tokkun: new Ac15TokkunPlayResult(TutorialFlg: 0, StageData: null)),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+
+        var play = Assert.Single(await fixture.Context.SongPlayDataRed.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Equal(574u, play.SongId);
+        Assert.Equal(261880u, play.Score);
+
+        var best = await fixture.Context.SongBestDataRed.FindAsync(1u, 574u, Difficulty.Easy, false);
+        Assert.NotNull(best);
+        Assert.Equal(261880u, best!.BestScore);
+        Assert.Single(await fixture.Context.RedRecentSongs.Where(row => row.Baid == 1 && row.SongNo == 574).ToListAsync());
+
+        var reloaded = await fixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(1050u, reloaded.TotalGetDonpoint);
+        Assert.Equal(5u, reloaded.TokkunTutorialFlg);
+        Assert.Equal(1u, reloaded.DifficultyTutorialFlg);
+        Assert.Equal(1u, reloaded.DifficultyPlayedCourse);
+        Assert.Equal(5u, reloaded.DifficultyPlayedStar);
+    }
+
+    [Fact]
     public async Task UpdatePlayResult_Red_DaniCreatesRedBestAndStageRows()
     {
         await using var fixture = await RedHandlerFixture.CreateAsync(CreateDanCatalog(1));

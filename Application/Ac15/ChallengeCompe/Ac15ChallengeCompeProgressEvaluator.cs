@@ -19,7 +19,8 @@ public static class Ac15ChallengeCompeProgressEvaluator
         var activeTasks = catalog.GetActiveBundles()
             .SelectMany(bundle => bundle.PersonalTasks
                 .Where(task => task.Rule.CanExecute)
-                .Select(task => new ActiveTask(bundle.BundleId, task)))
+                .SelectMany(task => Ac15ChallengeCompeTrackDefinitions.FromTask(task)
+                    .Select(track => new ActiveTask(bundle.BundleId, task, track))))
             .ToArray();
         if (activeTasks.Length == 0)
         {
@@ -32,8 +33,10 @@ public static class Ac15ChallengeCompeProgressEvaluator
             foreach (var fact in stage.ChallengeIds)
             {
                 var activeTask = activeTasks.FirstOrDefault(task =>
-                    task.Task.CompeId == fact.CompeId && task.Task.TrackNo == fact.TrackNo);
-                if (activeTask is null || !TryEvaluate(activeTask.Task.Rule, stage, out var progressValue, out var completed))
+                    task.Task.CompeId == fact.CompeId && task.Track.TrackNo == fact.TrackNo);
+                if (activeTask is null
+                    || !activeTask.Track.Matches(stage)
+                    || !TryEvaluate(activeTask.Task.Rule, stage, out var progressValue, out var completed))
                 {
                     continue;
                 }
@@ -97,5 +100,8 @@ public static class Ac15ChallengeCompeProgressEvaluator
         }
     }
 
-    private sealed record ActiveTask(string BundleId, Ac15ChallengeCompeTask Task);
+    private sealed record ActiveTask(
+        string BundleId,
+        Ac15ChallengeCompeTask Task,
+        Ac15ChallengeCompeTrackDefinition Track);
 }

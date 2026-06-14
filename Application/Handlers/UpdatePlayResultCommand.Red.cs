@@ -147,8 +147,7 @@ public partial class UpdatePlayResultCommandHandler
                  {
                      evaluation.BundleId,
                      evaluation.Task.TaskId,
-                     evaluation.Task.Slot,
-                     evaluation.Fact.TrackNo
+                     evaluation.Task.Slot
                  }))
         {
             var representative = group.OrderByDescending(evaluation => evaluation.ProgressValue).First();
@@ -156,7 +155,7 @@ public partial class UpdatePlayResultCommandHandler
             var completed = IsCompleted(representative.Task.Rule, progressValue, group);
 
             var progress = await context.RedChallengeCompeProgress.FindAsync(
-                [baid, group.Key.BundleId, group.Key.TaskId, group.Key.TrackNo],
+                [baid, group.Key.BundleId, group.Key.TaskId, 0u],
                 cancellationToken);
             if (progress is null)
             {
@@ -167,7 +166,7 @@ public partial class UpdatePlayResultCommandHandler
                     TaskId = representative.Task.TaskId,
                     Slot = representative.Task.Slot,
                     CompeId = representative.Fact.CompeId,
-                    TrackNo = representative.Fact.TrackNo,
+                    TrackNo = 0,
                     SongNo = representative.Stage.SongNo,
                     Level = representative.Stage.Level,
                     OptionFlg = representative.Stage.OptionFlg,
@@ -255,12 +254,10 @@ public partial class UpdatePlayResultCommandHandler
         }
 
         var bundleId = evaluations[0].BundleId;
-        var trackNo = evaluations[0].Fact.TrackNo;
         var existingSongNoes = await context.RedChallengeCompeRawFacts
             .Where(row => row.Baid == baid
                           && row.BundleId == bundleId
                           && row.TaskId == task.TaskId
-                          && row.TrackNo == trackNo
                           && row.ProgressValue > 0)
             .Select(row => row.SongNo)
             .ToArrayAsync(cancellationToken);
@@ -317,5 +314,5 @@ public partial class UpdatePlayResultCommandHandler
 
     private static bool IsRedTokkunShaped(Ac15PlayResultEnvelope playResultData)
         => playResultData.Metadata.PlayMode == (uint)PlayMode.Tokkun
-           || playResultData.Tokkun is not null;
+           || playResultData.Tokkun?.StageData is not null;
 }
