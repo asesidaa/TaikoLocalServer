@@ -102,10 +102,10 @@ public sealed class YellowCompatibilityResponseShapeTests
     }
 
     [Fact]
-    public void BaidMapper_YellowSerializesEveryBlueExistingUserField()
+    public void BaidResponse_YellowSerializesEveryBlueExistingUserField()
     {
         var common = CreateRepresentativeBaidResponse();
-        var blue = ApplyBlueBaidControllerShape(BlueBaidResponseMapper.Map(common));
+        var blue = AssembleBlueBaidControllerShape(common);
         var yellow = ApplyYellowBaidControllerShape(YellowBaidResponseMapper.Map(common));
 
         AssertYellowIncludesBlueSerializedFields(blue, yellow);
@@ -156,37 +156,50 @@ public sealed class YellowCompatibilityResponseShapeTests
     }
 
     private static Ac15BaidResponse CreateRepresentativeBaidResponse()
-        => new()
+    {
+        var profile = new Ac15BaidProfile
+        {
+            Title = "Title",
+            TitlePlateId = 3,
+            ColorFace = 4,
+            ColorBody = 5,
+            ColorLimb = 6,
+            SelectedCostume = new Ac15CostumeFacts(1, 2, 3, 4, 5),
+            IsAutoCostumeOn = true,
+            LastPlayDatetime = "20260608120000",
+            DefaultToneSetting = 13
+        };
+        var costumeFlags = new Ac15BaidCostumeFlags(
+            new byte[Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes],
+            new byte[Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes],
+            new byte[Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes],
+            new byte[Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes],
+            new byte[Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes]);
+        var shopMedals = new Ac15BaidShopMedals(7, 8, 9, 10, 11);
+        var dan = new Ac15BaidDan(
+            1,
+            12,
+            new byte[Ac15EraProfiles.Yellow.Limits.DanFlagBytes],
+            new byte[Ac15EraProfiles.Yellow.Limits.DanExtraFlagBytes]);
+        var compatibility = new Ac15BaidCompatibility("1", 14);
+
+        return new Ac15BaidResponse
         {
             Result = 1,
             Baid = 42,
             Identity = new Ac15BaidIdentity("DON", 0),
-            Profile = new Ac15BaidProfile
-            {
-                Title = "Title",
-                TitlePlateId = 3,
-                ColorFace = 4,
-                ColorBody = 5,
-                ColorLimb = 6,
-                SelectedCostume = new Ac15CostumeFacts(1, 2, 3, 4, 5),
-                IsAutoCostumeOn = true,
-                LastPlayDatetime = "20260608120000",
-                DefaultToneSetting = 13
-            },
-            CostumeFlags = new Ac15BaidCostumeFlags(
-                new byte[Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes],
-                new byte[Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes],
-                new byte[Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes],
-                new byte[Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes],
-                new byte[Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes]),
-            ShopMedals = new Ac15BaidShopMedals(7, 8, 9, 10, 11),
-            Dan = new Ac15BaidDan(
-                1,
-                12,
-                new byte[Ac15EraProfiles.Yellow.Limits.DanFlagBytes],
-                new byte[Ac15EraProfiles.Yellow.Limits.DanExtraFlagBytes]),
-            Compatibility = new Ac15BaidCompatibility("1", 14)
+            MydonProfile = profile,
+            CustomizationInventory = costumeFlags,
+            ShopMedalBalance = shopMedals,
+            DanStatus = dan,
+            CompatibilityProfile = compatibility,
+            Profile = profile,
+            CostumeFlags = costumeFlags,
+            ShopMedals = shopMedals,
+            Dan = dan,
+            Compatibility = compatibility
         };
+    }
 
     private static Ac15UserDataResponse CreateRepresentativeTokkunUserDataResponse()
         => new()
@@ -243,6 +256,48 @@ public sealed class YellowCompatibilityResponseShapeTests
             ModeFlags = new Ac15UserDataModeFlags(true, true),
             Tutorial = new Ac15UserDataTutorial(7, null)
         };
+
+    private static BlueWire.BAIDResponse AssembleBlueBaidControllerShape(Ac15BaidResponse common)
+    {
+        var response = new BlueWire.BAIDResponse
+        {
+            Result = common.Result,
+            Baid = common.Baid,
+            ContentInfo = new byte[BlueProtocolBytes.ContentInfoBytes]
+        };
+
+        if (common.Identity is { } identity)
+        {
+            BlueBaidResponseMapper.Apply(identity, response);
+        }
+
+        if (common.MydonProfile is { } profile)
+        {
+            BlueBaidResponseMapper.Apply(profile, response);
+        }
+
+        if (common.CustomizationInventory is { } inventory)
+        {
+            BlueBaidResponseMapper.Apply(inventory, response);
+        }
+
+        if (common.ShopMedalBalance is { } medals)
+        {
+            BlueBaidResponseMapper.Apply(medals, response);
+        }
+
+        if (common.DanStatus is { } dan)
+        {
+            BlueBaidResponseMapper.Apply(dan, response);
+        }
+
+        if (common.CompatibilityProfile is { } compatibility)
+        {
+            BlueBaidResponseMapper.Apply(compatibility, response);
+        }
+
+        return ApplyBlueBaidControllerShape(response);
+    }
 
     private static BlueWire.BAIDResponse ApplyBlueBaidControllerShape(BlueWire.BAIDResponse response)
     {

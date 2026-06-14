@@ -1,5 +1,6 @@
 using TaikoLocalServer.Adapters.GameProtocol.Green.Mappers;
 using TaikoLocalServer.Contracts.AdminApi.ViewModels;
+using BAIDResponse = TaikoLocalServer.Adapters.GameProtocol.Green.Wire.BAIDResponse;
 
 namespace TaikoLocalServer.Tests.Green;
 
@@ -64,7 +65,7 @@ public sealed class GreenIdentityHandlerTests
             fixture.Catalog);
 
         var response = await handler.Handle(new Ac15BaidQuery(GameEra.Green, "999"), CancellationToken.None);
-        var wire = BaidResponseMapper.Map(response);
+        var wire = AssembleGreenBaidResponse(response);
 
         Assert.True(response.MydonProfile!.IsAutoCostumeOn.HasValue);
         Assert.False(response.MydonProfile.IsAutoCostumeOn.GetValueOrDefault());
@@ -106,7 +107,7 @@ public sealed class GreenIdentityHandlerTests
             fixture.Catalog);
 
         var response = await handler.Handle(new Ac15BaidQuery(GameEra.Green, "999"), CancellationToken.None);
-        var wire = BaidResponseMapper.Map(response);
+        var wire = AssembleGreenBaidResponse(response);
 
         Assert.Equal(2u, response.MydonProfile!.TitlePlateId);
         Assert.Equal(2u, wire.TitleplateId);
@@ -436,4 +437,49 @@ public sealed class GreenIdentityHandlerTests
 
     private static bool BitIsSet(byte[] source, uint id)
         => (source[id >> 3] & (1 << ((int)id & 7))) != 0;
+
+    private static BAIDResponse AssembleGreenBaidResponse(Ac15BaidResponse common)
+    {
+        var response = new BAIDResponse
+        {
+            Result = common.Result,
+            Baid = common.Baid,
+            AccessCode = "999",
+            IsPublish = true,
+            PlayerType = 0,
+            ContentInfo = new byte[GreenProtocolBytes.ContentInfoBytes]
+        };
+
+        if (common.Identity is { } identity)
+        {
+            BaidResponseMapper.Apply(identity, response);
+        }
+
+        if (common.MydonProfile is { } profile)
+        {
+            BaidResponseMapper.Apply(profile, response);
+        }
+
+        if (common.CustomizationInventory is { } inventory)
+        {
+            BaidResponseMapper.Apply(inventory, response);
+        }
+
+        if (common.ShopMedalBalance is { } medals)
+        {
+            BaidResponseMapper.Apply(medals, response);
+        }
+
+        if (common.DanStatus is { } dan)
+        {
+            BaidResponseMapper.Apply(dan, response);
+        }
+
+        if (common.CompatibilityProfile is { } compatibility)
+        {
+            BaidResponseMapper.Apply(compatibility, response);
+        }
+
+        return response;
+    }
 }

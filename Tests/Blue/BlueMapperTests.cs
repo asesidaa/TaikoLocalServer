@@ -1,4 +1,5 @@
 using TaikoLocalServer.Adapters.GameProtocol.Blue.Mappers;
+using BAIDResponse = TaikoLocalServer.Adapters.GameProtocol.Blue.Wire.BAIDResponse;
 
 namespace TaikoLocalServer.Tests.Blue;
 
@@ -70,15 +71,19 @@ public sealed class BlueMapperTests
     }
 
     [Fact]
-    public void BaidMapper_Blue_UsesBlueFixedWidthFallbacks()
+    public void BaidMapper_Blue_AppliesFixedWidthProtocolByteSections()
     {
-        var response = BaidResponseMapper.Map(new Ac15BaidResponse
+        var response = new BAIDResponse
         {
             Result = 1,
             Baid = 3,
-            Identity = new Ac15BaidIdentity("DON", 0)
-        });
+            ContentInfo = new byte[BlueProtocolBytes.ContentInfoBytes]
+        };
+        BaidResponseMapper.Apply(new Ac15BaidIdentity("DON", 0), response);
+        BaidResponseMapper.Apply(new Ac15BaidCostumeFlags([], [], [], [], []), response);
+        BaidResponseMapper.Apply(new Ac15BaidDan(0, 0, [], []), response);
 
+        Assert.Equal("DON", response.MydonName);
         Assert.Equal(BlueProtocolBytes.CostumeFlagBytes, response.CostumeFlg1.Length);
         Assert.Equal(BlueProtocolBytes.CostumeFlagBytes, response.CostumeFlg2.Length);
         Assert.Equal(BlueProtocolBytes.CostumeFlagBytes, response.CostumeFlg3.Length);
