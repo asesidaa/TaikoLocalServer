@@ -1,4 +1,5 @@
 using TaikoLocalServer.Application.Ac15;
+using TaikoLocalServer.Application.Ac15.ChallengeCompe;
 using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Application.Handlers;
@@ -83,6 +84,14 @@ public partial class UpdatePlayResultCommandHandler
             logger,
             cancellationToken);
 
+        await SaveRedChallengeCompeAsync(
+            request.Baid,
+            red.ChallengeCompe,
+            validStages,
+            saveData.IsChallengeCompe,
+            playTime,
+            cancellationToken);
+
         await Ac15NormalPlayWriter.SaveAsync(
             context,
             RedNormalPlayTables(),
@@ -91,6 +100,140 @@ public partial class UpdatePlayResultCommandHandler
             cancellationToken);
         return 1;
     }
+
+    private async ValueTask SaveRedChallengeCompeAsync(
+        uint baid,
+        Ac15ChallengeCompeCatalog catalog,
+        IReadOnlyList<Ac15StageResult> stages,
+        bool isEnrolled,
+        DateTime playTime,
+        CancellationToken cancellationToken)
+    {
+        if (!isEnrolled)
+        {
+            return;
+        }
+
+        var activeAt = new DateTimeOffset(DateTime.SpecifyKind(playTime, DateTimeKind.Utc));
+        var evaluations = Ac15ChallengeCompeProgressEvaluator.Evaluate(catalog, activeAt, stages);
+        if (evaluations.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var evaluation in evaluations)
+        {
+            context.RedChallengeCompeRawFacts.Add(new RedChallengeCompeRawFact
+            {
+                Baid = baid,
+                BundleId = evaluation.BundleId,
+                TaskId = evaluation.Task.TaskId,
+                Slot = evaluation.Task.Slot,
+                CompeId = evaluation.Fact.CompeId,
+                TrackNo = evaluation.Fact.TrackNo,
+                SongNo = evaluation.Stage.SongNo,
+                Level = evaluation.Stage.Level,
+                OptionFlg = evaluation.Stage.OptionFlg,
+                StageMode = evaluation.Stage.StageMode,
+                HighScore = evaluation.Stage.PlayScore,
+                PlayResult = evaluation.Stage.PlayResult,
+                ProgressValue = evaluation.ProgressValue,
+                Completed = evaluation.Completed,
+                PlayTime = playTime,
+                CreatedAt = playTime
+            });
+        }
+
+        foreach (var group in evaluations.GroupBy(evaluation => new
+                 {
+                     evaluation.BundleId,
+                     evaluation.Task.TaskId,
+                     evaluation.Task.Slot,
+                     evaluation.Fact.TrackNo
+                 }))
+        {
+            var representative = group.OrderByDescending(evaluation => evaluation.ProgressValue).First();
+            var progressValue = await GetProgressValueAsync(baid, representative.Task, group.ToArray(), cancellationToken);
+            var completed = IsCompleted(representative.Task.Rule, progressValue, group);
+
+            var progress = await context.RedChallengeCompeProgress.FindAsync(
+                [baid, group.Key.BundleId, group.Key.TaskId, group.Key.TrackNo],
+                cancellationToken);
+            if (progress is null)
+            {
+                context.RedChallengeCompeProgress.Add(new RedChallengeCompeProgress
+                {
+                    Baid = baid,
+                    BundleId = group.Key.BundleId,
+                    TaskId = representative.Task.TaskId,
+                    Slot = representative.Task.Slot,
+                    CompeId = representative.Fact.CompeId,
+                    TrackNo = representative.Fact.TrackNo,
+                    SongNo = representative.Stage.SongNo,
+                    Level = representative.Stage.Level,
+                    OptionFlg = representative.Stage.OptionFlg,
+                    StageMode = representative.Stage.StageMode,
+                    HighScore = representative.Stage.PlayScore,
+                    ProgressValue = progressValue,
+                    Completed = completed,
+                    UpdatedAt = playTime,
+                    CompletedAt = completed ? playTime : null
+                });
+                continue;
+            }
+
+            progress.Slot = representative.Task.Slot;
+            progress.CompeId = representative.Fact.CompeId;
+            progress.SongNo = representative.Stage.SongNo;
+            progress.Level = representative.Stage.Level;
+            progress.OptionFlg = representative.Stage.OptionFlg;
+            progress.StageMode = representative.Stage.StageMode;
+            progress.HighScore = Math.Max(progress.HighScore, representative.Stage.PlayScore);
+            progress.ProgressValue = Math.Max(progress.ProgressValue, progressValue);
+            progress.UpdatedAt = playTime;
+            if (completed && !progress.Completed)
+            {
+                progress.Completed = true;
+                progress.CompletedAt = playTime;
+            }
+        }
+    }
+
+    private async ValueTask<uint> GetProgressValueAsync(
+        uint baid,
+        Ac15ChallengeCompeTask task,
+        IReadOnlyList<Ac15ChallengeCompeStageEvaluation> evaluations,
+        CancellationToken cancellationToken)
+    {
+        if (task.Rule.Kind != Ac15ChallengeCompeRuleKind.SongSetCount)
+        {
+            return evaluations.Max(evaluation => evaluation.ProgressValue);
+        }
+
+        var bundleId = evaluations[0].BundleId;
+        var trackNo = evaluations[0].Fact.TrackNo;
+        var existingSongNoes = await context.RedChallengeCompeRawFacts
+            .Where(row => row.Baid == baid
+                          && row.BundleId == bundleId
+                          && row.TaskId == task.TaskId
+                          && row.TrackNo == trackNo
+                          && row.ProgressValue > 0)
+            .Select(row => row.SongNo)
+            .ToArrayAsync(cancellationToken);
+
+        return (uint)existingSongNoes
+            .Concat(evaluations.Select(evaluation => evaluation.Stage.SongNo))
+            .Distinct()
+            .Count();
+    }
+
+    private static bool IsCompleted(
+        Ac15ChallengeCompeRule rule,
+        uint progressValue,
+        IEnumerable<Ac15ChallengeCompeStageEvaluation> evaluations)
+        => rule.Kind == Ac15ChallengeCompeRuleKind.SongSetCount
+            ? rule.Threshold is { } threshold && progressValue >= threshold
+            : evaluations.Any(evaluation => evaluation.Completed);
 
     private async ValueTask<uint> HandleRedTokkun(
         uint baid,

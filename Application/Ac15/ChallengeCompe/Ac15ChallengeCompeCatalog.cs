@@ -35,7 +35,12 @@ public sealed record Ac15ChallengeCompeTask(
     uint TaskId,
     uint Slot,
     string Name,
-    Ac15ChallengeCompeRule Rule);
+    Ac15ChallengeCompeRule Rule)
+{
+    public uint CompeId => TaskId;
+
+    public uint TrackNo => Slot;
+}
 
 public sealed record Ac15ChallengeCompeCommunityTask(
     uint TaskId,
