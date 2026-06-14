@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Phase Summary
 status: executing
-stopped_at: Completed 21-02-PLAN.md
-last_updated: "2026-06-14T14:20:38.727Z"
+stopped_at: Completed 21-03-PLAN.md
+last_updated: "2026-06-14T14:42:38.098Z"
 last_activity: 2026-06-14 -- Phase 21 execution started
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 25
-  completed_plans: 19
-  percent: 50
+  completed_plans: 20
+  percent: 80
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-13)
 ## Current Position
 
 Phase: 21 (older-ac15-challengecompe-capability-and-red-binding) — EXECUTING
-Plan: 3 of 5
+Plan: 4 of 5
 Status: Ready to execute
 Last activity: 2026-06-14 -- Phase 21 execution started
 
@@ -119,6 +119,7 @@ Last activity: 2026-06-14 -- Phase 21 execution started
 | Phase 20.1 P09 | 8 min | 2 tasks | 1 files |
 | Phase 21 P01 | 14 min | 3 tasks | 10 files |
 | Phase 21 P02 | 14 min | 3 tasks | 12 files |
+| Phase 21 P03 | 16 min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -219,6 +220,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 21]: Red ChallengeCompe stateful progress is allowed only inside the Plan 01 evidence gate. — Plan 21-02 writes only Red-owned state from local sidecar tasks, DonChare ary_challenge_id, opt-in users, and non-Tokkun playresults.
 - [Phase 21]: ChallengeCompe task task_id and slot are the local sidecar schema and evaluator aliases for compe_id and track_no. — The Plan 01 catalog sidecar owns task identity locally; the shared evaluator consumes explicit aliases without inventing a public-source schema.
 - [Phase 21]: ary_user_compe_id and ary_bng_compe_id remain preserved input facts only. — Plan 21-02 has no evidence-backed semantics for user-created or BNG challenge buckets, so those fields do not create raw fact or progress rows.
+- [Phase 21]: Configured ChallengeCompe rewards grant immediately from active completed-task thresholds and mutate only Red release-song/title flags. — D-18/D-20/D-21: Phase 21 plan 03 applies configured rewards through Red-owned save flags only.
+- [Phase 21]: ChallengeCompe reward-song locks are derived from active configured reward songs for opted-in Red users and cleared by the existing AC15 userdata locked-song path. — D-11/D-19: Plan 21-03 keeps locks in shared userdata behavior instead of Red wire/controller code.
+- [Phase 21]: Red rewardcardcheck.php and rewardexecution.php remain compatibility-only and do not participate in ChallengeCompe reward grants. — D-22: Plan 21-03 covers reward behavior through playresult/userdata only.
 
 ### Pending Todos
 
@@ -243,8 +247,8 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-14T14:20:38.721Z
-Stopped at: Completed 21-02-PLAN.md
+Last session: 2026-06-14T14:42:38.091Z
+Stopped at: Completed 21-03-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
