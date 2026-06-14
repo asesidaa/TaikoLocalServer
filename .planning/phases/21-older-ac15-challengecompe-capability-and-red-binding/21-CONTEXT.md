@@ -51,6 +51,7 @@ Reward card and reward execution routes remain simple compatibility routes. They
 - **D-23:** ChallengeCompe state is Red-owned for this binding. Do not write Green, Blue, Yellow, Nijiiro, or shared gameplay rows.
 - **D-24:** Do not implement broad Donder Hiroba user challenge/tournament behavior as part of this phase.
 - **D-25:** Do not use public wiki/blog data as endpoint/schema authority. Product sources define scope; Red proto, runtime logs, local data, and IDA/client evidence define server behavior.
+- **D-26:** Design the shared older-AC15 ChallengeCompe capability as transport-agnostic behavior. Red may prove a standalone `challengecompe.php` route, but older versions can bind the same capability through embedded userdata, BAID, or other protocol surfaces if their proto/runtime evidence proves that shape.
 
 ### The Agent's Discretion
 - The planner may choose exact JSON file names, DTO names, predicate enum names, table names, and plan splits.

@@ -30,7 +30,7 @@ Active milestone: **v1.3 Red AC15 Support**
 | 19 | Red Capability Profile and Catalog Binding | 3/3 | Complete | 2026-06-13 |
 | 20 | Red Runtime Capability Binding and Simple Compatibility | 4/4 | Complete | 2026-06-13 |
 | 20.1 | AC15 Capability DTO and Mapper Boundary Refactor | 9/9 | Complete    | 2026-06-14 |
-| 21 | Older-AC15 ChallengeCompe Capability and Red Binding | Define the shared older-AC15 ChallengeCompe capability and bind/prove it through Red evidence, with stateful behavior only after client/runtime proof defines the contract. | RCOMP-02, RCHAL-01, RCHAL-02 | 5 |
+| 21 | Older-AC15 ChallengeCompe Capability and Red Binding | 5/5 | Planned | 2026-06-14 |
 | 22 | Red AdminApi/WebUI and Runtime Closeout | Expose implemented Red-owned readback surfaces and close v1.3 with automated plus cabinet/RPCS3 verification. | RVER-01, RVER-02, RVER-03 | 5 |
 
 **Coverage:** 17/17 v1.3 requirements mapped exactly once.
@@ -40,7 +40,7 @@ Active milestone: **v1.3 Red AC15 Support**
 - [x] **Phase 18: Red Evidence and Capability Foundation** - Prove Red route/version/transport boundaries, inventory Red-supported capabilities, and add first-class Red adapter scaffolding. (completed 2026-06-12)
 - [x] **Phase 19: Red Capability Profile and Catalog Binding** - Bind Red catalog/config data into shared AC15 catalog capabilities and define Red capability/profile boundaries. (completed 2026-06-13)
 - [x] **Phase 20: Red Runtime Capability Binding and Simple Compatibility** - Bind shared identity, userdata, normal-play, Dani, tutorial-only Tokkun, and simple compatibility capabilities to Red-owned state. (completed 2026-06-13)
-- [ ] **Phase 21: Older-AC15 ChallengeCompe Capability and Red Binding** - Define the shared older-AC15 ChallengeCompe capability and bind/prove it through Red evidence, with stateful behavior only after client/runtime proof defines the contract.
+- [ ] **Phase 21: Older-AC15 ChallengeCompe Capability and Red Binding** - Define the shared older-AC15 ChallengeCompe capability and bind/prove it through Red evidence, with stateful behavior only after client/runtime proof defines the contract. (planned 2026-06-14)
 - [ ] **Phase 22: Red AdminApi/WebUI and Runtime Closeout** - Expose implemented Red-owned readback surfaces and close v1.3 with automated plus cabinet/RPCS3 verification.
 
 ## Phase Details
@@ -223,7 +223,28 @@ Plans:
 
 **Note:** Phase 21 starts with evidence and compatibility. Stateful ChallengeCompe progress, task-list, community, reward, or schedule behavior is implemented as a shared older-AC15 capability only if Red client/runtime evidence proves the accepted endpoint, payload, schema, and response contract.
 
-**Plans:** TBD
+**Plans:** 5/5 plans ready
+Plans:
+
+**Wave 1**
+
+- [ ] 21-01-PLAN.md - ChallengeCompe evidence gate and Red catalog contract
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 21-02-PLAN.md - Red ChallengeCompe persistence and progress evaluator
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 21-03-PLAN.md - ChallengeCompe rewards and Red userdata locks
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 21-04-PLAN.md - Red ChallengeCompe readback route binding
+
+**Wave 5** *(blocked on Wave 4 completion)*
+
+- [ ] 21-05-PLAN.md - Phase 21 verification and closeout
 
 ### Phase 22: Red AdminApi/WebUI and Runtime Closeout
 
@@ -332,5 +353,5 @@ See `.planning/milestones/v1.2-ROADMAP.md` and `.planning/milestones/v1.2-phases
 | 19. Red Capability Profile and Catalog Binding | 3/3 | Complete | 2026-06-13 |
 | 20. Red Runtime Capability Binding and Simple Compatibility | 4/4 | Complete | 2026-06-13 |
 | 20.1. AC15 Capability DTO and Mapper Boundary Refactor | 9/9 | Complete | 2026-06-14 |
-| 21. Older-AC15 ChallengeCompe Capability and Red Binding | 0/TBD | Not started | - |
+| 21. Older-AC15 ChallengeCompe Capability and Red Binding | 0/5 | Planned | 2026-06-14 |
 | 22. Red AdminApi/WebUI and Runtime Closeout | 0/TBD | Not started | - |
