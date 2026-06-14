@@ -1,6 +1,7 @@
 using TaikoLocalServer.Adapters.GameProtocol.Green.Mappers;
 using TaikoLocalServer.Contracts.AdminApi.ViewModels;
 using BAIDResponse = TaikoLocalServer.Adapters.GameProtocol.Green.Wire.BAIDResponse;
+using GreenUserDataResponse = TaikoLocalServer.Adapters.GameProtocol.Green.Wire.UserDataResponse;
 
 namespace TaikoLocalServer.Tests.Green;
 
@@ -296,7 +297,7 @@ public sealed class GreenIdentityHandlerTests
             Options.Create(new ServerSettings()));
 
         var response = await handler.Handle(new Ac15UserDataQuery(9, GameEra.Green), CancellationToken.None);
-        var wire = UserDataMappers.Map(response);
+        var wire = AssembleGreenUserDataResponse(response);
 
         Assert.Equal(1u, response.Display.DispTaikojukuDan);
         Assert.True(wire.ShouldSerializeDispTaikojukuDan());
@@ -478,6 +479,27 @@ public sealed class GreenIdentityHandlerTests
         if (common.CompatibilityProfile is { } compatibility)
         {
             BaidResponseMapper.Apply(compatibility, response);
+        }
+
+        return response;
+    }
+
+    private static GreenUserDataResponse AssembleGreenUserDataResponse(Ac15UserDataResponse common)
+    {
+        var response = new GreenUserDataResponse
+        {
+            Result = common.Result
+        };
+
+        UserDataMappers.Apply(common.SongFlags, response);
+        UserDataMappers.Apply(common.SongLists, response);
+        UserDataMappers.Apply(common.Recommendations, response);
+        UserDataMappers.Apply(common.Counters, response);
+        UserDataMappers.Apply(common.Display, response);
+
+        if (common.ModeFlags is { } modeFlags)
+        {
+            UserDataMappers.Apply(modeFlags, response);
         }
 
         return response;

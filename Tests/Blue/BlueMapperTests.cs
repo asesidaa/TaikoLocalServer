@@ -1,5 +1,6 @@
 using TaikoLocalServer.Adapters.GameProtocol.Blue.Mappers;
 using BAIDResponse = TaikoLocalServer.Adapters.GameProtocol.Blue.Wire.BAIDResponse;
+using BlueUserDataResponse = TaikoLocalServer.Adapters.GameProtocol.Blue.Wire.UserDataResponse;
 
 namespace TaikoLocalServer.Tests.Blue;
 
@@ -8,7 +9,7 @@ public sealed class BlueMapperTests
     [Fact]
     public void UserDataMapper_Blue_OmitsTokkunTutorialFlag()
     {
-        var response = UserDataMappers.Map(new Ac15UserDataResponse
+        var response = AssembleBlueUserDataResponse(new Ac15UserDataResponse
         {
             Result = 1,
             SongFlags = new Ac15UserDataSongFlags
@@ -33,7 +34,7 @@ public sealed class BlueMapperTests
     [InlineData(7u)]
     public void UserDataMapper_Blue_MapsRawTokkunTutorialFlagWhenPresent(uint tokkunTutorialFlg)
     {
-        var response = UserDataMappers.Map(new Ac15UserDataResponse
+        var response = AssembleBlueUserDataResponse(new Ac15UserDataResponse
         {
             Result = 1,
             SongFlags = new Ac15UserDataSongFlags
@@ -60,7 +61,7 @@ public sealed class BlueMapperTests
     [InlineData(20001u)]
     public void UserDataMapper_Blue_FallsBackToSentinelOneForInvalidDispTaikojukuDan(uint dispTaikojukuDan)
     {
-        var response = UserDataMappers.Map(new Ac15UserDataResponse
+        var response = AssembleBlueUserDataResponse(new Ac15UserDataResponse
         {
             Result = 1,
             Display = new Ac15UserDataDisplaySettings { DispTaikojukuDan = dispTaikojukuDan }
@@ -68,6 +69,32 @@ public sealed class BlueMapperTests
 
         Assert.True(response.ShouldSerializeDispTaikojukuDan());
         Assert.Equal(1u, response.DispTaikojukuDan);
+    }
+
+    private static BlueUserDataResponse AssembleBlueUserDataResponse(Ac15UserDataResponse common)
+    {
+        var response = new BlueUserDataResponse
+        {
+            Result = common.Result
+        };
+
+        UserDataMappers.Apply(common.SongFlags, response);
+        UserDataMappers.Apply(common.SongLists, response);
+        UserDataMappers.Apply(common.Recommendations, response);
+        UserDataMappers.Apply(common.Counters, response);
+        UserDataMappers.Apply(common.Display, response);
+
+        if (common.ModeFlags is { } modeFlags)
+        {
+            UserDataMappers.Apply(modeFlags, response);
+        }
+
+        if (common.Tutorial is { } tutorial)
+        {
+            UserDataMappers.Apply(tutorial, response);
+        }
+
+        return response;
     }
 
     [Fact]

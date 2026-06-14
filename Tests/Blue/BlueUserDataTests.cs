@@ -135,7 +135,7 @@ public sealed class BlueUserDataTests
         var handler = CreateUserDataHandler(fixture);
 
         var response = await handler.Handle(new Ac15UserDataQuery(1, GameEra.Blue), CancellationToken.None);
-        var wire = UserDataMappers.Map(response);
+        var wire = AssembleBlueUserDataResponse(response);
 
         Assert.Null(response.Tutorial!.TokkunTutorialFlg);
         Assert.False(wire.ShouldSerializeTokkunTutorialFlg());
@@ -153,7 +153,7 @@ public sealed class BlueUserDataTests
         var handler = CreateUserDataHandler(fixture);
 
         var response = await handler.Handle(new Ac15UserDataQuery(1, GameEra.Blue), CancellationToken.None);
-        var wire = UserDataMappers.Map(response);
+        var wire = AssembleBlueUserDataResponse(response);
 
         Assert.Equal(7u, response.Tutorial!.TokkunTutorialFlg);
         Assert.True(wire.ShouldSerializeTokkunTutorialFlg());
@@ -179,7 +179,7 @@ public sealed class BlueUserDataTests
             new UpdateAc15PlayResultCommand(request.Baid, GameEra.Blue, PlayResultMappers.Map(request)),
             CancellationToken.None);
         var response = await userDataHandler.Handle(new Ac15UserDataQuery(1, GameEra.Blue), CancellationToken.None);
-        var wire = UserDataMappers.Map(response);
+        var wire = AssembleBlueUserDataResponse(response);
 
         Assert.Equal(1u, playResult);
         Assert.Equal(7u, response.Tutorial!.TokkunTutorialFlg);
@@ -196,6 +196,32 @@ public sealed class BlueUserDataTests
             fixture.Catalog,
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
+
+    private static UserDataResponse AssembleBlueUserDataResponse(Ac15UserDataResponse common)
+    {
+        var response = new UserDataResponse
+        {
+            Result = common.Result
+        };
+
+        UserDataMappers.Apply(common.SongFlags, response);
+        UserDataMappers.Apply(common.SongLists, response);
+        UserDataMappers.Apply(common.Recommendations, response);
+        UserDataMappers.Apply(common.Counters, response);
+        UserDataMappers.Apply(common.Display, response);
+
+        if (common.ModeFlags is { } modeFlags)
+        {
+            UserDataMappers.Apply(modeFlags, response);
+        }
+
+        if (common.Tutorial is { } tutorial)
+        {
+            UserDataMappers.Apply(tutorial, response);
+        }
+
+        return response;
+    }
 
     private static PlayResultRequest CreateTokkunRequest(uint baid) => new()
     {
