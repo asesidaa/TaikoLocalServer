@@ -50,12 +50,12 @@ public class MuchaController : BaseProtocolController<MuchaController>
             { "AREA_FULL_3", "" },
             { "AREA_FULL_3_EN", "" },
             { "AUTH_INTERVAL", "86400" },
-            { "CHARGE_URL", $"localhost:54430" },
+            { "CHARGE_URL", $"{settings.MuchaUrl}" },
             { "CONSUME_TOKEN", "1" },
             { "COUNTRY_CD", "JPN" },
             { "DONGLE_FLG", "1" },
             { "EXPIRATION_DATE", "20500613" },
-            { "FILE_URL", $"localhost:54430" },
+            { "FILE_URL", $"{settings.MuchaUrl}" },
             { "FORCE_BOOT", "0" },
             { "PLACE_ID", request.PlaceId ?? "" },
             { "PREFECTURE_ID", "14" },
@@ -65,9 +65,9 @@ public class MuchaController : BaseProtocolController<MuchaController>
             { "SHOP_NAME_EN", "NAMCO" },
             { "SHOP_NICKNAME", "W" },
             { "SHOP_NICKNAME_EN", "W" },
-            { "URL_1", $"localhost:54430" },
-            { "URL_2", $"localhost:54430" },
-            { "URL_3", $"localhost:54430" },
+            { "URL_1", $"{settings.MuchaUrl}" },
+            { "URL_2", $"{settings.MuchaUrl}" },
+            { "URL_3", $"{settings.MuchaUrl}" },
             { "USE_TOKEN", "1" }
         };
         var formOutput = FormOutputUtil.ToFormOutput(response);

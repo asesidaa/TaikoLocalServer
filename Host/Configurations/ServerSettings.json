@@ -1,6 +1,6 @@
 ﻿{
   "ServerSettings": {
-    "MuchaUrl": "https://v402-front.mucha-prd.nbgi-amnet.jp:10122",
+    "MuchaUrl": "v402-front.mucha-prd.nbgi-amnet.jp:10122",
     "GameUrl": "vsapi.taiko-p.jp",
     "EnableMoreSongs": false,
     "MoreSongsSize": 9000,
