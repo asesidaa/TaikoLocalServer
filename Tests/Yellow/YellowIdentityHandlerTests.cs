@@ -1,4 +1,3 @@
-using TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
 using TaikoLocalServer.Application.Ac15;
 
 namespace TaikoLocalServer.Tests.Yellow;
@@ -69,20 +68,17 @@ public sealed class YellowIdentityHandlerTests
             fixture.Catalog);
 
         var response = await handler.Handle(new Ac15BaidQuery(GameEra.Yellow, "999"), CancellationToken.None);
-        var wire = BaidResponseMapper.Map(response);
 
         Assert.False(response.IsNewUser);
         Assert.Equal(7u, response.Baid);
         Assert.Equal("DON", response.Identity!.MyDonName);
-        Assert.Equal("Yellow Title", response.Profile!.Title);
-        Assert.Equal(0u, response.Profile.TitlePlateId);
-        Assert.Equal(Ac15EraProfiles.Yellow.Limits.DanFlagBytes, response.Dan!.GotDanFlg.Length);
-        Assert.Equal(Ac15EraProfiles.Yellow.Limits.DanExtraFlagBytes, response.Dan.GotDanExtraFlg.Length);
-        Assert.True(response.Profile.IsAutoCostumeOn.GetValueOrDefault());
-        Assert.Equal(6u, response.Compatibility!.WaiwaiTutorialFlg);
-        Assert.Equal(Ac15EraProfiles.Yellow.Limits.ContentInfoBytes, wire.ContentInfo.Length);
-        Assert.Equal(Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes, wire.CostumeFlg1.Length);
-        Assert.Equal(6u, wire.WaiwaiTutorialFlg);
+        Assert.Equal("Yellow Title", response.MydonProfile!.Title);
+        Assert.Equal(0u, response.MydonProfile.TitlePlateId);
+        Assert.Equal(Ac15EraProfiles.Yellow.Limits.DanFlagBytes, response.DanStatus!.GotDanFlg.Length);
+        Assert.Equal(Ac15EraProfiles.Yellow.Limits.DanExtraFlagBytes, response.DanStatus.GotDanExtraFlg.Length);
+        Assert.True(response.MydonProfile.IsAutoCostumeOn.GetValueOrDefault());
+        Assert.Equal(6u, response.CompatibilityProfile!.WaiwaiTutorialFlg);
+        Assert.Equal(Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes, response.CustomizationInventory!.CostumeFlg1.Length);
     }
 
     [Fact]

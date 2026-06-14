@@ -40,44 +40,55 @@ public partial class BaidQueryHandler
             ?? throw new InvalidOperationException($"User not found for Red card baid {card.Baid}.");
 
         var limits = Ac15EraProfiles.Red.Limits;
+        var mydonProfile = new Ac15BaidProfile
+        {
+            Title = saveData.Title,
+            TitlePlateId = ResolveRedTitlePlateId(saveData),
+            ColorFace = saveData.ColorFace,
+            ColorBody = saveData.ColorBody,
+            ColorLimb = saveData.ColorLimb,
+            SelectedCostume = new Ac15CostumeFacts(
+                saveData.Costume1,
+                saveData.Costume2,
+                saveData.Costume3,
+                saveData.Costume4,
+                saveData.Costume5),
+            IsAutoCostumeOn = saveData.IsAutoCostumeOn,
+            DefaultToneSetting = saveData.DefaultToneSetting,
+            LastPlayDatetime = saveData.LastPlayDatetime == DateTime.UnixEpoch
+                ? DateTime.Now.ToString(Constants.DateTimeFormat)
+                : saveData.LastPlayDatetime.ToString(Constants.DateTimeFormat)
+        };
+        var customizationInventory = new Ac15BaidCostumeFlags(
+            Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg1, limits.CostumeFlagBytes),
+            Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg2, limits.CostumeFlagBytes),
+            Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg3, limits.CostumeFlagBytes),
+            Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg4, limits.CostumeFlagBytes),
+            Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg5, limits.CostumeFlagBytes));
+        var danStatus = new Ac15BaidDan(
+            saveData.DispDanType == 0 ? 0u : 1u,
+            Math.Min(saveData.GotDanMax, limits.MaxNormalDanId),
+            Ac15ProtocolBytes.FixedOrZero(saveData.GotDanFlg, limits.DanFlagBytes),
+            Ac15ProtocolBytes.FixedOrZero(saveData.GotDanExtraFlg, limits.DanExtraFlagBytes));
+        var compatibilityProfile = new Ac15BaidCompatibility(null, null);
+        var rewardProgress = new Ac15BaidReward(saveData.RewardPtn);
+
         return new Ac15BaidResponse
         {
             Result = 1,
             IsNewUser = false,
             Baid = card.Baid,
             Identity = new Ac15BaidIdentity(userData.MyDonName, userData.MyDonNameLanguage),
-            Profile = new Ac15BaidProfile
-            {
-                Title = saveData.Title,
-                TitlePlateId = ResolveRedTitlePlateId(saveData),
-                ColorFace = saveData.ColorFace,
-                ColorBody = saveData.ColorBody,
-                ColorLimb = saveData.ColorLimb,
-                SelectedCostume = new Ac15CostumeFacts(
-                    saveData.Costume1,
-                    saveData.Costume2,
-                    saveData.Costume3,
-                    saveData.Costume4,
-                    saveData.Costume5),
-                IsAutoCostumeOn = saveData.IsAutoCostumeOn,
-                DefaultToneSetting = saveData.DefaultToneSetting,
-                LastPlayDatetime = saveData.LastPlayDatetime == DateTime.UnixEpoch
-                    ? DateTime.Now.ToString(Constants.DateTimeFormat)
-                    : saveData.LastPlayDatetime.ToString(Constants.DateTimeFormat)
-            },
-            CostumeFlags = new Ac15BaidCostumeFlags(
-                Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg1, limits.CostumeFlagBytes),
-                Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg2, limits.CostumeFlagBytes),
-                Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg3, limits.CostumeFlagBytes),
-                Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg4, limits.CostumeFlagBytes),
-                Ac15ProtocolBytes.FixedOrZero(saveData.CostumeFlg5, limits.CostumeFlagBytes)),
-            Dan = new Ac15BaidDan(
-                saveData.DispDanType == 0 ? 0u : 1u,
-                Math.Min(saveData.GotDanMax, limits.MaxNormalDanId),
-                Ac15ProtocolBytes.FixedOrZero(saveData.GotDanFlg, limits.DanFlagBytes),
-                Ac15ProtocolBytes.FixedOrZero(saveData.GotDanExtraFlg, limits.DanExtraFlagBytes)),
-            Compatibility = new Ac15BaidCompatibility(null, null),
-            Reward = new Ac15BaidReward(saveData.RewardPtn)
+            MydonProfile = mydonProfile,
+            CustomizationInventory = customizationInventory,
+            DanStatus = danStatus,
+            CompatibilityProfile = compatibilityProfile,
+            RewardProgress = rewardProgress,
+            Profile = mydonProfile,
+            CostumeFlags = customizationInventory,
+            Dan = danStatus,
+            Compatibility = compatibilityProfile,
+            Reward = rewardProgress
         };
     }
 
