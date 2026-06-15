@@ -5,7 +5,7 @@ namespace TaikoLocalServer.Application.Ac15.ChallengeCompe;
 public sealed record Ac15ChallengeCompeStageEvaluation(
     string BundleId,
     Ac15ChallengeCompeTask Task,
-    Ac15CompeIdFact Fact,
+    Ac15ChallengeCompeTrackDefinition Track,
     Ac15StageResult Stage,
     uint ProgressValue,
     bool Completed);
@@ -30,12 +30,9 @@ public static class Ac15ChallengeCompeProgressEvaluator
         var matches = new List<Ac15ChallengeCompeStageEvaluation>();
         foreach (var stage in stages)
         {
-            foreach (var fact in stage.ChallengeIds)
+            foreach (var activeTask in activeTasks)
             {
-                var activeTask = activeTasks.FirstOrDefault(task =>
-                    task.Task.CompeId == fact.CompeId && task.Track.TrackNo == fact.TrackNo);
-                if (activeTask is null
-                    || !activeTask.Track.Matches(stage)
+                if (!activeTask.Track.Matches(stage)
                     || !TryEvaluate(activeTask.Task.Rule, stage, out var progressValue, out var completed))
                 {
                     continue;
@@ -44,7 +41,7 @@ public static class Ac15ChallengeCompeProgressEvaluator
                 matches.Add(new Ac15ChallengeCompeStageEvaluation(
                     activeTask.BundleId,
                     activeTask.Task,
-                    fact,
+                    activeTask.Track,
                     stage,
                     progressValue,
                     completed));

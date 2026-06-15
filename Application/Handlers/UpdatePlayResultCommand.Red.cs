@@ -109,11 +109,6 @@ public partial class UpdatePlayResultCommandHandler
         DateTime playTime,
         CancellationToken cancellationToken)
     {
-        if (!saveData.IsChallengeCompe)
-        {
-            return;
-        }
-
         var evaluations = Ac15ChallengeCompeProgressEvaluator.Evaluate(catalog, stages);
         if (evaluations.Count == 0)
         {
@@ -128,8 +123,8 @@ public partial class UpdatePlayResultCommandHandler
                 BundleId = evaluation.BundleId,
                 TaskId = evaluation.Task.TaskId,
                 Slot = evaluation.Task.Slot,
-                CompeId = evaluation.Fact.CompeId,
-                TrackNo = evaluation.Fact.TrackNo,
+                CompeId = evaluation.Task.CompeId,
+                TrackNo = evaluation.Track.TrackNo,
                 SongNo = evaluation.Stage.SongNo,
                 Level = evaluation.Stage.Level,
                 OptionFlg = evaluation.Stage.OptionFlg,
@@ -165,7 +160,7 @@ public partial class UpdatePlayResultCommandHandler
                     BundleId = group.Key.BundleId,
                     TaskId = representative.Task.TaskId,
                     Slot = representative.Task.Slot,
-                    CompeId = representative.Fact.CompeId,
+                    CompeId = representative.Task.CompeId,
                     TrackNo = 0,
                     SongNo = representative.Stage.SongNo,
                     Level = representative.Stage.Level,
@@ -181,7 +176,7 @@ public partial class UpdatePlayResultCommandHandler
             }
 
             progress.Slot = representative.Task.Slot;
-            progress.CompeId = representative.Fact.CompeId;
+            progress.CompeId = representative.Task.CompeId;
             progress.SongNo = representative.Stage.SongNo;
             progress.Level = representative.Stage.Level;
             progress.OptionFlg = representative.Stage.OptionFlg;

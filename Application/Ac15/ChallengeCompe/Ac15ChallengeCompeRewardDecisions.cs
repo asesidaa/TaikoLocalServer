@@ -29,15 +29,9 @@ public static class Ac15ChallengeCompeRewardDecisions
 
     public static IReadOnlyList<uint> GetLockedRewardSongIds(
         Ac15ChallengeCompeCatalog catalog,
-        bool isEnrolled,
         byte[] releaseSongFlags,
         int songFlagBytes)
     {
-        if (!isEnrolled)
-        {
-            return [];
-        }
-
         var releaseFlags = Ac15ProtocolBytes.FixedOrZero(releaseSongFlags, songFlagBytes);
         return catalog.GetActiveBundles()
             .SelectMany(bundle => bundle.Rewards)

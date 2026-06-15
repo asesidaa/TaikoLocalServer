@@ -3,8 +3,6 @@ namespace TaikoLocalServer.Application.Handlers;
 public readonly record struct GetChallengeCompeQuery(GameEra Era, uint Baid) : IRequest<CommonChallengeCompeResponse>;
 
 public partial class GetChallengeCompeQueryHandler(
-    ITaikoDbContext context,
-    IGameDataCatalog gameDataService,
     ILogger<GetChallengeCompeQueryHandler> logger)
     : IRequestHandler<GetChallengeCompeQuery, CommonChallengeCompeResponse>
 {
