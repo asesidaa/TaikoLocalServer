@@ -170,30 +170,6 @@ else
                                                 </MudStack>
                                             }
 
-                                            @{
-                                                var taskRewards = GetRewardsForTask(task).ToList();
-                                            }
-                                            @if (taskRewards.Count > 0)
-                                            {
-                                                <MudDivider />
-                                                <MudText Typo="Typo.subtitle2">Rewards</MudText>
-                                                <MudStack Spacing="1">
-                                                    @foreach (var reward in taskRewards)
-                                                    {
-                                                        <div class="don-challenge-row">
-                                                            <MudStack Row="true" AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Spacing="2">
-                                                                <MudStack Spacing="0" Class="don-challenge-row-text">
-                                                                    <MudText Typo="Typo.body2" Class="don-challenge-wrap">@GetRewardLabel(reward)</MudText>
-                                                                    <MudText Typo="Typo.caption">Requires @reward.RequiredCompletedTasks completed tasks</MudText>
-                                                                </MudStack>
-                                                                <MudChip T="string" Size="Size.Small" Color="@GetRewardColor(reward)" Icon="@GetRewardIcon(reward)" Class="don-challenge-chip">
-                                                                    @reward.Status
-                                                                </MudChip>
-                                                            </MudStack>
-                                                        </div>
-                                                    }
-                                                </MudStack>
-                                            }
                                         </MudStack>
                                     </MudCardContent>
                                 </MudCard>

@@ -201,9 +201,6 @@ public partial class DonChallenge
         return $"Level {level}";
     }
 
-    private IEnumerable<DonChallengeReward> GetRewardsForTask(DonChallengeTask task)
-        => OrderedRewards.Where(reward => reward.RequiredCompletedTasks == task.Slot);
-
     private string GetRewardLabel(DonChallengeReward reward)
     {
         var parts = reward.RewardSongNoes.Select(songNo => $"Song {ResolveSongLabel(songNo)}")

@@ -158,11 +158,12 @@ Each card should be a `MudCard Outlined Elevation="0"` or equivalent `MudPaper` 
 - `MudProgressLinear` for executable progress
 - song rows when the task has configured songs
 - latest/best progress timestamp only when present and useful
-- reward status rows for configured song/title rewards attached to the relevant completion threshold
+
+Task cards must not render reward rows. Rewards are summarized in the top band and displayed once in the bottom Rewards section, so completion-threshold rewards such as slot 8 and slot 10 are not duplicated inside task cards.
 
 Task cards must not expose raw facts, upload arrays, wire field names, or database row names.
 
-### Song And Reward Rows
+### Song Rows And Rewards Section
 
 Song rows should reuse existing song display conventions:
 
@@ -170,7 +171,7 @@ Song rows should reuse existing song display conventions:
 - difficulty icon or level when available
 - link reward songs and task songs to `WebUiEra.UserRoute(Baid, CurrentEra, $"Songs/{songId}")` when the song exists in the current era catalog
 
-Reward rows should use compact status chips:
+Reward rows should appear only in the bottom Rewards section and should use compact status chips:
 
 - `Earned` with check icon and success color
 - `Locked` with lock icon and warning color

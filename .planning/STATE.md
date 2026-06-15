@@ -4,8 +4,8 @@ milestone: v1.3
 milestone_name: Phase Summary
 status: human_needed
 stopped_at: Phase 22 Plan 22-04 awaiting cabinet/RPCS3 smoke evidence
-last_updated: "2026-06-15T15:59:48.367Z"
-last_activity: 2026-06-15 -- Quick 260615-wt6 completed; AC15 selfbest display and favorite limit fixes committed
+last_updated: "2026-06-15T18:24:08.839Z"
+last_activity: 2026-06-16 -- Don Challenge duplicate task-card rewards removed; cabinet/RPCS3 smoke remains pending
 progress:
   total_phases: 6
   completed_phases: 4
@@ -28,7 +28,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-13)
 Phase: 22 (red-adminapi-webui-and-runtime-closeout) — HUMAN VERIFICATION
 Plan: 4 of 4
 Status: Automated verification passed; awaiting cabinet/RPCS3 smoke evidence
-Last activity: 2026-06-15 -- Quick 260615-wt6 completed; Phase 22 cabinet/RPCS3 smoke remains pending
+Last activity: 2026-06-16 -- Don Challenge duplicate task-card rewards removed; Phase 22 cabinet/RPCS3 smoke remains pending
 
 ## Performance Metrics
 

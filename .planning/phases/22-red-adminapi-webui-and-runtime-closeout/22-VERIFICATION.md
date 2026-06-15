@@ -30,12 +30,16 @@ The remaining gate is manual cabinet/RPCS3 smoke evidence for Red normal, Red To
 | `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build"` | Passed: 0 warnings, 0 errors | Clean build output at `C:\Users\10614\AppData\Local\Temp\TaikoLocalServer-host-build`. |
 | `node .codex\get-shit-done\bin\gsd-tools.cjs query verify.schema-drift 22` | Passed | `drift_detected=false`, `blocking=false`. |
 | `node .codex\get-shit-done\bin\gsd-tools.cjs verify codebase-drift` | Warning only | Non-blocking structural drift warning for pre-existing top-level planning/codebase paths. |
+| `dotnet build TaikoWebUI/TaikoWebUI.csproj` | Passed: 0 warnings, 0 errors | Follow-up verification after removing duplicate task-card reward rows. |
+| `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~GameDataServiceTests|FullyQualifiedName~DonChallengeServiceTests"` | Passed: 16 passed, 0 failed, 0 skipped | Follow-up WebUI service verification after removing duplicate task-card reward rows. |
 
 ## WebUI Manual Evidence
 
 The user manually checked the Don Challenge layout at 1280x900 and 390x844 on 2026-06-15 and reported the layout looked fine.
 
 During that check, the user also found that without login there was no navigation path from the Users page to Don Challenge. That was fixed in commit `59bc713a` by adding the Red Don Challenge user-card entry and caching availability per era. The post-fix full suite above includes that change.
+
+On 2026-06-16, the user found that completion-threshold rewards were duplicated inside slot 8 and slot 10 task cards while also appearing in the bottom Rewards table. The UI contract was corrected so task cards show task progress and configured songs only; the bottom Rewards section is the single reward display.
 
 ## Human Verification Still Required
 
