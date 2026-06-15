@@ -55,6 +55,22 @@ public sealed class GameDataServiceTests
     }
 
     [Fact]
+    public async Task InitializeAsync_LoadsRedDanDataWhenEnabled()
+    {
+        var handler = new RecordingHandler();
+        using var client = new HttpClient(handler)
+        {
+            BaseAddress = new Uri("http://localhost/")
+        };
+        var service = new GameDataService(client);
+
+        await service.InitializeAsync("http://localhost/", ["Red"]);
+
+        Assert.Equal(["api/Red/GameData/DanData"], handler.RequestPaths);
+        Assert.Empty(service.GetDanMap("Yellow"));
+    }
+
+    [Fact]
     public async Task CatalogLookups_RequestYellowAdminApiRoutes()
     {
         var handler = new RecordingHandler();
@@ -77,6 +93,33 @@ public sealed class GameDataServiceTests
                 "api/Yellow/customization/costumes",
                 "api/Yellow/customization/titles",
                 "api/Yellow/customization/neiros"
+            ],
+            handler.RequestPaths);
+    }
+
+    [Fact]
+    public async Task CatalogLookups_RequestRedAdminApiRoutes()
+    {
+        var handler = new RecordingHandler();
+        using var client = new HttpClient(handler)
+        {
+            BaseAddress = new Uri("http://localhost/")
+        };
+        var service = new GameDataService(client);
+
+        await service.InitializeAsync("http://localhost/", ["Red"]);
+        await service.GetMusicDetailDictionary("Red");
+        await service.GetCostumeList("Red");
+        await service.GetTitleDictionary("Red");
+        await service.GetNeiroDictionary("Red");
+
+        Assert.Equal(
+            [
+                "api/Red/GameData/DanData",
+                "api/Red/GameData/MusicDetails",
+                "api/Red/customization/costumes",
+                "api/Red/customization/titles",
+                "api/Red/customization/neiros"
             ],
             handler.RequestPaths);
     }
@@ -112,7 +155,20 @@ public sealed class GameDataServiceTests
     {
         var enabled = WebUiEra.NormalizeEnabled(["Yellow", "Red", "Unknown"]);
 
-        Assert.Equal(["Yellow"], enabled);
+        Assert.Equal(["Yellow", "Red"], enabled);
+    }
+
+    [Fact]
+    public void Red_IsAc15()
+    {
+        Assert.True(WebUiEra.IsAc15("Red"));
+    }
+
+    [Fact]
+    public void Red_RouteHelpersPreserveEra()
+    {
+        Assert.Equal("Users/123/Red/Songs", WebUiEra.UserRoute(123u, "Red", "Songs"));
+        Assert.Equal("api/Red/PlayData/123", WebUiEra.Api("Red", "PlayData/123"));
     }
 
     private sealed class RecordingHandler : HttpMessageHandler
@@ -128,6 +184,7 @@ public sealed class GameDataServiceTests
             var content = path switch
             {
                 "api/Yellow/GameData/DanData" => """[{"danId":900,"title":"yellow"}]""",
+                "api/Red/GameData/DanData" => """[{"danId":800,"title":"red"}]""",
                 _ when path.Contains("MusicDetails", StringComparison.Ordinal)
                     || path.Contains("customization/titles", StringComparison.Ordinal)
                     || path.Contains("customization/neiros", StringComparison.Ordinal) => "{}",
