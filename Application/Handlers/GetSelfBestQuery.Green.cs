@@ -8,12 +8,12 @@ public partial class GetSelfBestQueryHandler
         GetSelfBestQuery request,
         CancellationToken cancellationToken)
     {
-        var difficulty = GreenPlayResultMapping.MapDifficulty(request.Difficulty);
+        var difficulties = Ac15SelfBestService.GetRequestedDifficulties(request.Difficulty);
         var requestedSongs = request.SongIdList ?? [];
         var requestedSet = requestedSongs.ToHashSet();
         var bestRows = await context.SongBestDataGreen
             .Where(row => row.Baid == request.Baid
-                && row.Difficulty == difficulty
+                && difficulties.Contains(row.Difficulty)
                 && requestedSet.Contains(row.SongId))
             .ToListAsync(cancellationToken);
 

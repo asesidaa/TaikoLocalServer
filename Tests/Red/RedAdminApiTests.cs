@@ -211,7 +211,7 @@ public sealed class RedAdminApiTests
     }
 
     [Fact]
-    public async Task FavoriteSongs_Red_ReadsWritesAndRejectsSixthFavoriteOnly()
+    public async Task FavoriteSongs_Red_ReadsWritesAndRejectsEleventhFavoriteOnly()
     {
         await using var fixture = await RedHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "don" });
@@ -247,18 +247,31 @@ public sealed class RedAdminApiTests
         fixture.Context.RedFavoriteSongs.AddRange(
             new RedFavoriteSongs { Baid = 1, SongNo = 102 },
             new RedFavoriteSongs { Baid = 1, SongNo = 103 },
-            new RedFavoriteSongs { Baid = 1, SongNo = 104 });
+            new RedFavoriteSongs { Baid = 1, SongNo = 104 },
+            new RedFavoriteSongs { Baid = 1, SongNo = 106 },
+            new RedFavoriteSongs { Baid = 1, SongNo = 107 },
+            new RedFavoriteSongs { Baid = 1, SongNo = 108 },
+            new RedFavoriteSongs { Baid = 1, SongNo = 109 });
         await fixture.Context.SaveChangesAsync();
+
+        var tenthResult = await controller.UpdateFavoriteSong("Red", new SetFavoriteRequest
+        {
+            Baid = 1,
+            SongId = 110,
+            IsFavorite = true
+        });
+
+        Assert.IsType<NoContentResult>(tenthResult);
 
         var rejectResult = await controller.UpdateFavoriteSong("Red", new SetFavoriteRequest
         {
             Baid = 1,
-            SongId = 106,
+            SongId = 111,
             IsFavorite = true
         });
 
         Assert.IsType<BadRequestObjectResult>(rejectResult);
-        Assert.Equal(5, await fixture.Context.RedFavoriteSongs.CountAsync(row => row.Baid == 1));
+        Assert.Equal(Ac15EraProfiles.Red.Limits.MaxFavoriteSongs, await fixture.Context.RedFavoriteSongs.CountAsync(row => row.Baid == 1));
     }
 
     [Fact]

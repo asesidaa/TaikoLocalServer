@@ -367,8 +367,8 @@ public sealed class BluePlayResultHandlerTests
             CancellationToken.None);
 
         Assert.Equal(1u, result);
-        Assert.Equal(5, await fixture.Context.BlueFavoriteSongs.CountAsync(row => row.Baid == 1));
-        Assert.Equal(10, await fixture.Context.BlueRecentSongs.CountAsync(row => row.Baid == 1));
+        Assert.Equal(Ac15EraProfiles.Blue.Limits.MaxFavoriteSongs, await fixture.Context.BlueFavoriteSongs.CountAsync(row => row.Baid == 1));
+        Assert.Equal(Ac15EraProfiles.Blue.Limits.MaxRecentSongs, await fixture.Context.BlueRecentSongs.CountAsync(row => row.Baid == 1));
     }
 
     [Fact]

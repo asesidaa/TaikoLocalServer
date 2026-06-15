@@ -52,6 +52,7 @@ public sealed class Ac15UserDataServiceTests
                 DefaultShinSetting = true,
                 DispLevelTotal = 4,
                 DispLevelChassis = 5,
+                DispScoreType = 2,
                 DispLevelSelf = 6,
                 DifficultyPlayedCourse = 7,
                 DifficultyPlayedStar = 8,
@@ -73,6 +74,7 @@ public sealed class Ac15UserDataServiceTests
         Assert.True(response.Display.DefaultShinSetting);
         Assert.Equal(4u, response.Display.DispLevelTotal);
         Assert.Equal(5u, response.Display.DispLevelChassis);
+        Assert.Equal(2u, response.Display.DispScoreType);
         Assert.Equal(6u, response.Display.DispLevelSelf);
         Assert.Equal(1u, response.Display.DispTaikojukuDan);
         Assert.Equal(7u, response.Display.DifficultyPlayedCourse);

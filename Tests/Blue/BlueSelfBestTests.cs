@@ -77,6 +77,49 @@ public sealed class BlueSelfBestTests
     }
 
     [Fact]
+    public async Task SelfBest_Blue_ReturnsUraOniBestWithOniRows()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.SongBestDataBlue.AddRange(
+            new SongBestDatumBlue
+            {
+                Baid = 1,
+                SongId = 101,
+                Difficulty = Difficulty.Oni,
+                IsShin = false,
+                BestScore = 111111,
+                BestRate = 77,
+                BestCrown = CrownType.Clear
+            },
+            new SongBestDatumBlue
+            {
+                Baid = 1,
+                SongId = 101,
+                Difficulty = Difficulty.UraOni,
+                IsShin = false,
+                BestScore = 222222,
+                BestRate = 88,
+                BestCrown = CrownType.Gold
+            });
+        await fixture.Context.SaveChangesAsync();
+        var handler = new GetSelfBestQueryHandler(
+            fixture.Catalog,
+            fixture.Context,
+            NullLogger<GetSelfBestQueryHandler>.Instance);
+
+        var response = await handler.Handle(
+            new GetSelfBestQuery(1, GameEra.Blue, 4, [101]),
+            CancellationToken.None);
+
+        var row = Assert.Single(response.ArySelfbestScores);
+        Assert.Equal(111111u, row.SelfBestScore);
+        Assert.Equal(77u, row.SelfBestScoreRate);
+        Assert.Equal(222222u, row.UraBestScore);
+        Assert.Equal(88u, row.UraBestScoreRate);
+    }
+
+    [Fact]
     public void SelfBestMapper_Blue_MapsCommonResponse()
     {
         var response = SelfBestMappers.Map(new CommonSelfBestResponse

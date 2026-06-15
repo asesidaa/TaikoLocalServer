@@ -8,12 +8,12 @@ public partial class GetSelfBestQueryHandler
         GetSelfBestQuery request,
         CancellationToken cancellationToken)
     {
-        var difficulty = MapYellowDifficulty(request.Difficulty);
+        var difficulties = Ac15SelfBestService.GetRequestedDifficulties(request.Difficulty);
         var requestedSongs = request.SongIdList ?? [];
         var requestedSet = requestedSongs.ToHashSet();
         var bestRows = await context.SongBestDataYellow
             .Where(row => row.Baid == request.Baid
-                && row.Difficulty == difficulty
+                && difficulties.Contains(row.Difficulty)
                 && requestedSet.Contains(row.SongId))
             .ToListAsync(cancellationToken);
 
@@ -27,14 +27,4 @@ public partial class GetSelfBestQueryHandler
 
         return Ac15SelfBestService.BuildResponse(request.Difficulty, requestedSongs, canonicalRows);
     }
-
-    private static Difficulty MapYellowDifficulty(uint level) => level switch
-    {
-        1 => Difficulty.Easy,
-        2 => Difficulty.Normal,
-        3 => Difficulty.Hard,
-        4 => Difficulty.Oni,
-        5 => Difficulty.UraOni,
-        _ => Difficulty.None
-    };
 }

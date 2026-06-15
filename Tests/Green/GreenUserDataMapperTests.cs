@@ -79,15 +79,18 @@ public sealed class GreenUserDataMapperTests
             {
                 DispLevelTotal = 2,
                 DispLevelChassis = 3,
+                DispScoreType = 2,
                 DispLevelSelf = 4
             }
         });
 
         Assert.True(response.ShouldSerializeDispLevelTotal());
         Assert.True(response.ShouldSerializeDispLevelChassis());
+        Assert.True(response.ShouldSerializeDispScoreType());
         Assert.True(response.ShouldSerializeDispLevelSelf());
         Assert.Equal(2u, response.DispLevelTotal);
         Assert.Equal(3u, response.DispLevelChassis);
+        Assert.Equal(2u, response.DispScoreType);
         Assert.Equal(4u, response.DispLevelSelf);
     }
 

@@ -44,6 +44,7 @@ public static class RedAc15UserDataAdapter
         DefaultShinSetting = saveData.DefaultShinSetting,
         DispLevelTotal = saveData.DispLevelTotal,
         DispLevelChassis = saveData.DispLevelChassis,
+        DispScoreType = saveData.DispScoreType,
         DispLevelSelf = saveData.DispLevelSelf,
         DifficultyPlayedCourse = saveData.DifficultyPlayedCourse,
         DifficultyPlayedStar = saveData.DifficultyPlayedStar,

@@ -1,3 +1,5 @@
+using TaikoLocalServer.Application.Ac15;
+
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 [ApiController]
@@ -5,7 +7,6 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [Authorize]
 public partial class FavoriteSongsController(ITaikoDbContext context, IGameDataCatalog catalog) : BaseAdminController<FavoriteSongsController>
 {
-    private const int Ac15MaxFavoriteSongs = 5;
     private readonly ITaikoDbContext context = context;
     private readonly IGameDataCatalog catalog = catalog;
 
@@ -67,8 +68,9 @@ public partial class FavoriteSongsController(ITaikoDbContext context, IGameDataC
                 return NoContent();
 
             var count = await context.GreenFavoriteSongs.CountAsync(row => row.Baid == request.Baid, HttpContext.RequestAborted);
-            if (count >= Ac15MaxFavoriteSongs)
-                return BadRequest("Green supports at most 5 favorite songs.");
+            var maxFavorites = GetAc15MaxFavoriteSongs(GameEra.Green);
+            if (count >= maxFavorites)
+                return BadRequest($"Green supports at most {maxFavorites} favorite songs.");
 
             context.GreenFavoriteSongs.Add(new GreenFavoriteSongs { Baid = request.Baid, SongNo = request.SongId });
         }
@@ -91,8 +93,9 @@ public partial class FavoriteSongsController(ITaikoDbContext context, IGameDataC
                 return NoContent();
 
             var count = await context.BlueFavoriteSongs.CountAsync(row => row.Baid == request.Baid, HttpContext.RequestAborted);
-            if (count >= Ac15MaxFavoriteSongs)
-                return BadRequest("Blue supports at most 5 favorite songs.");
+            var maxFavorites = GetAc15MaxFavoriteSongs(GameEra.Blue);
+            if (count >= maxFavorites)
+                return BadRequest($"Blue supports at most {maxFavorites} favorite songs.");
 
             context.BlueFavoriteSongs.Add(new BlueFavoriteSongs { Baid = request.Baid, SongNo = request.SongId });
         }
@@ -140,4 +143,13 @@ public partial class FavoriteSongsController(ITaikoDbContext context, IGameDataC
             _ => EraRoute.BadEra(era)
         };
     }
+
+    private static int GetAc15MaxFavoriteSongs(GameEra era) => era switch
+    {
+        GameEra.Green => Ac15EraProfiles.Green.Limits.MaxFavoriteSongs,
+        GameEra.Blue => Ac15EraProfiles.Blue.Limits.MaxFavoriteSongs,
+        GameEra.Yellow => Ac15EraProfiles.Yellow.Limits.MaxFavoriteSongs,
+        GameEra.Red => Ac15EraProfiles.Red.Limits.MaxFavoriteSongs,
+        _ => throw new ArgumentOutOfRangeException(nameof(era), era, "Era does not use AC15 favorite limits.")
+    };
 }

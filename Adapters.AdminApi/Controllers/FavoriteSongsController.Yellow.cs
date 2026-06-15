@@ -12,8 +12,9 @@ public partial class FavoriteSongsController
                 return NoContent();
 
             var count = await context.YellowFavoriteSongs.CountAsync(row => row.Baid == request.Baid, HttpContext.RequestAborted);
-            if (count >= Ac15MaxFavoriteSongs)
-                return BadRequest("Yellow supports at most 5 favorite songs.");
+            var maxFavorites = GetAc15MaxFavoriteSongs(GameEra.Yellow);
+            if (count >= maxFavorites)
+                return BadRequest($"Yellow supports at most {maxFavorites} favorite songs.");
 
             context.YellowFavoriteSongs.Add(new YellowFavoriteSongs { Baid = request.Baid, SongNo = request.SongId });
         }

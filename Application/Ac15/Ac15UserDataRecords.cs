@@ -36,6 +36,7 @@ public sealed class Ac15ProfileCounters
     public bool DefaultShinSetting { get; init; }
     public uint DispLevelTotal { get; init; }
     public uint DispLevelChassis { get; init; }
+    public uint DispScoreType { get; init; }
     public uint DispLevelSelf { get; init; }
     public uint DifficultyPlayedCourse { get; init; }
     public uint DifficultyPlayedStar { get; init; }

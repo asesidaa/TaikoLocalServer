@@ -87,27 +87,37 @@ public sealed class BlueAdminApiParityTests
     }
 
     [Fact]
-    public async Task FavoriteSongs_Blue_RejectsSixthFavoriteWithoutMutatingGreen()
+    public async Task FavoriteSongs_Blue_AllowsTenFavoritesAndRejectsEleventhWithoutMutatingGreen()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "don" });
-        for (uint songNo = 101; songNo <= 105; songNo++)
+        fixture.Context.GreenFavoriteSongs.Add(new GreenFavoriteSongs { Baid = 1, SongNo = 201 });
+        for (uint songNo = 101; songNo <= 109; songNo++)
         {
             fixture.Context.BlueFavoriteSongs.Add(new BlueFavoriteSongs { Baid = 1, SongNo = songNo });
         }
         await fixture.Context.SaveChangesAsync();
 
         var controller = CreateFavoriteSongsController(fixture.Context, fixture.Catalog);
-        var result = await controller.UpdateFavoriteSong("Blue", new SetFavoriteRequest
+        var tenthResult = await controller.UpdateFavoriteSong("Blue", new SetFavoriteRequest
         {
             Baid = 1,
-            SongId = 106,
+            SongId = 110,
             IsFavorite = true
         });
 
-        Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Equal(5, await fixture.Context.BlueFavoriteSongs.CountAsync(row => row.Baid == 1));
-        Assert.Empty(await fixture.Context.GreenFavoriteSongs.ToListAsync());
+        Assert.IsType<NoContentResult>(tenthResult);
+
+        var eleventhResult = await controller.UpdateFavoriteSong("Blue", new SetFavoriteRequest
+        {
+            Baid = 1,
+            SongId = 111,
+            IsFavorite = true
+        });
+
+        Assert.IsType<BadRequestObjectResult>(eleventhResult);
+        Assert.Equal(Ac15EraProfiles.Blue.Limits.MaxFavoriteSongs, await fixture.Context.BlueFavoriteSongs.CountAsync(row => row.Baid == 1));
+        Assert.Equal([201u], await fixture.Context.GreenFavoriteSongs.Select(row => row.SongNo).ToListAsync());
     }
 
     [Fact]

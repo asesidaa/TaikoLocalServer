@@ -1100,7 +1100,7 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
-    public async Task UpdatePlayResult_Green_FavoritesCapAtFive()
+    public async Task UpdatePlayResult_Green_FavoritesCapAtEraLimit()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -1112,7 +1112,7 @@ public sealed class GreenPlayResultHandlerTests
             fixture.Catalog,
             NullLogger<UpdatePlayResultCommandHandler>.Instance);
 
-        for (var i = 0; i < 6; i++)
+        for (var i = 0; i < Ac15EraProfiles.Green.Limits.MaxFavoriteSongs + 1; i++)
         {
             await handler.Handle(Ac15PlayResultTestFactory.FromCommon(1, GameEra.Green, new CommonPlayResultData
             {
@@ -1125,8 +1125,8 @@ public sealed class GreenPlayResultHandlerTests
         var favorites = await fixture.Context.GreenFavoriteSongs
             .Where(s => s.Baid == 1)
             .ToListAsync();
-        Assert.Equal(5, favorites.Count);
-        Assert.DoesNotContain(favorites, f => f.SongNo == 106u);
+        Assert.Equal(Ac15EraProfiles.Green.Limits.MaxFavoriteSongs, favorites.Count);
+        Assert.DoesNotContain(favorites, f => f.SongNo == 111u);
     }
 
     [Fact]
@@ -1135,7 +1135,7 @@ public sealed class GreenPlayResultHandlerTests
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
         fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
-        for (var i = 0; i < 5; i++)
+        for (var i = 0; i < Ac15EraProfiles.Green.Limits.MaxFavoriteSongs; i++)
         {
             fixture.Context.GreenFavoriteSongs.Add(new GreenFavoriteSongs { Baid = 1, SongNo = (uint)(101 + i) });
         }
@@ -1154,7 +1154,7 @@ public sealed class GreenPlayResultHandlerTests
         }), CancellationToken.None);
 
         var favorites = await fixture.Context.GreenFavoriteSongs.Where(s => s.Baid == 1).ToListAsync();
-        Assert.Equal(4, favorites.Count);
+        Assert.Equal(Ac15EraProfiles.Green.Limits.MaxFavoriteSongs - 1, favorites.Count);
         Assert.DoesNotContain(favorites, f => f.SongNo == 101u);
     }
 

@@ -75,26 +75,35 @@ public class GreenAdminApiControllerTests
     }
 
     [Fact]
-    public async Task FavoriteSongs_Green_RejectsSixthFavorite()
+    public async Task FavoriteSongs_Green_AllowsTenFavoritesAndRejectsEleventh()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "don" });
-        for (uint songNo = 101; songNo <= 105; songNo++)
+        for (uint songNo = 101; songNo <= 109; songNo++)
         {
             fixture.Context.GreenFavoriteSongs.Add(new GreenFavoriteSongs { Baid = 1, SongNo = songNo });
         }
         await fixture.Context.SaveChangesAsync();
 
         var controller = CreateFavoriteSongsController(fixture.Context, fixture.Catalog);
-        var result = await controller.UpdateFavoriteSong("Green", new SetFavoriteRequest
+        var tenthResult = await controller.UpdateFavoriteSong("Green", new SetFavoriteRequest
         {
             Baid = 1,
-            SongId = 106,
+            SongId = 110,
             IsFavorite = true
         });
 
-        Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Equal(5, await fixture.Context.GreenFavoriteSongs.CountAsync(row => row.Baid == 1));
+        Assert.IsType<NoContentResult>(tenthResult);
+
+        var eleventhResult = await controller.UpdateFavoriteSong("Green", new SetFavoriteRequest
+        {
+            Baid = 1,
+            SongId = 111,
+            IsFavorite = true
+        });
+
+        Assert.IsType<BadRequestObjectResult>(eleventhResult);
+        Assert.Equal(Ac15EraProfiles.Green.Limits.MaxFavoriteSongs, await fixture.Context.GreenFavoriteSongs.CountAsync(row => row.Baid == 1));
     }
 
     [Fact]

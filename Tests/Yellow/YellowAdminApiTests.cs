@@ -202,6 +202,38 @@ public sealed class YellowAdminApiTests
     }
 
     [Fact]
+    public async Task FavoriteSongs_Yellow_AllowsTenFavoritesAndRejectsEleventh()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "don" });
+        for (uint songNo = 101; songNo <= 109; songNo++)
+        {
+            fixture.Context.YellowFavoriteSongs.Add(new YellowFavoriteSongs { Baid = 1, SongNo = songNo });
+        }
+        await fixture.Context.SaveChangesAsync();
+        var controller = CreateFavoriteSongsController(fixture.Context, fixture.Catalog);
+
+        var tenthResult = await controller.UpdateFavoriteSong("Yellow", new SetFavoriteRequest
+        {
+            Baid = 1,
+            SongId = 110,
+            IsFavorite = true
+        });
+
+        Assert.IsType<NoContentResult>(tenthResult);
+
+        var eleventhResult = await controller.UpdateFavoriteSong("Yellow", new SetFavoriteRequest
+        {
+            Baid = 1,
+            SongId = 111,
+            IsFavorite = true
+        });
+
+        Assert.IsType<BadRequestObjectResult>(eleventhResult);
+        Assert.Equal(Ac15EraProfiles.Yellow.Limits.MaxFavoriteSongs, await fixture.Context.YellowFavoriteSongs.CountAsync(row => row.Baid == 1));
+    }
+
+    [Fact]
     public async Task SongLeaderboard_Yellow_UsesYellowBestRowsOnly()
     {
         await using var fixture = await YellowHandlerFixture.CreateAsync();

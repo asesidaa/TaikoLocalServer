@@ -50,6 +50,7 @@ public sealed class BlueUserDataTests
         save.IsTojiru = false;
         save.DispLevelTotal = 2;
         save.DispLevelChassis = 3;
+        save.DispScoreType = 2;
         save.DispLevelSelf = 4;
         save.IsDevil = true;
         fixture.Context.UserSaveDataBlue.Add(save);
@@ -69,8 +70,13 @@ public sealed class BlueUserDataTests
         Assert.False(response.Display.IsTojiru);
         Assert.Equal(2u, response.Display.DispLevelTotal);
         Assert.Equal(3u, response.Display.DispLevelChassis);
+        Assert.Equal(2u, response.Display.DispScoreType);
         Assert.Equal(4u, response.Display.DispLevelSelf);
         Assert.True(response.ModeFlags!.IsDevil);
+
+        var wire = AssembleBlueUserDataResponse(response);
+        Assert.True(wire.ShouldSerializeDispScoreType());
+        Assert.Equal(2u, wire.DispScoreType);
     }
 
     [Fact]

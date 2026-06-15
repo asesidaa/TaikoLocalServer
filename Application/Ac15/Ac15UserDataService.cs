@@ -58,6 +58,7 @@ public static class Ac15UserDataService
                 DefaultShinSetting = snapshot.Counters.DefaultShinSetting,
                 DispLevelTotal = snapshot.Counters.DispLevelTotal,
                 DispLevelChassis = snapshot.Counters.DispLevelChassis,
+                DispScoreType = snapshot.Counters.DispScoreType,
                 DispLevelSelf = snapshot.Counters.DispLevelSelf,
                 DispTaikojukuDan = GetSafeDisplayDan(snapshot.DisplayDan, profile),
                 DifficultyPlayedCourse = snapshot.Counters.DifficultyPlayedCourse,
