@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using TaikoLocalServer.Adapters.AdminApi.Controllers;
 using TaikoLocalServer.Application.Ac15;
+using TaikoLocalServer.Contracts.AdminApi.Requests;
+using TaikoLocalServer.Contracts.AdminApi.Responses;
 using TaikoLocalServer.Contracts.AdminApi.ViewModels;
 using TaikoLocalServer.Infrastructure.Identity.Settings;
 
@@ -102,6 +104,212 @@ public sealed class RedAdminApiTests
         Assert.Equal(2u, save.DispLevelChassis);
         Assert.Equal("DON", (await fixture.Context.UserData.FindAsync(1u))!.MyDonName);
     }
+
+    [Fact]
+    public async Task PlayData_Red_UsesRedBestPlayAndFavoriteRowsOnly()
+    {
+        await using var fixture = await RedHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "don" });
+        fixture.Context.UserSaveDataRed.Add(UserSaveDataRedExtensions.CreateDefaultRedSaveData(1));
+        fixture.Context.SongBestDataRed.AddRange(
+            new SongBestDatumRed { Baid = 1, SongId = 101, Difficulty = Difficulty.Oni, IsShin = false, BestScore = 900000, BestRate = 90, BestCrown = CrownType.Clear },
+            new SongBestDatumRed { Baid = 1, SongId = 101, Difficulty = Difficulty.Oni, IsShin = true, BestScore = 930000, BestRate = 93, BestCrown = CrownType.Gold });
+        fixture.Context.SongBestDataBlue.Add(new SongBestDatumBlue { Baid = 1, SongId = 101, Difficulty = Difficulty.Oni, IsShin = false, BestScore = 999999, BestRate = 99, BestCrown = CrownType.Dondaful });
+        fixture.Context.SongBestDataGreen.Add(new SongBestDatumGreen { Baid = 1, SongId = 102, Difficulty = Difficulty.Oni, IsShin = false, BestScore = 888888, BestRate = 88, BestCrown = CrownType.Clear });
+        fixture.Context.SongBestDataYellow.Add(new SongBestDatumYellow { Baid = 1, SongId = 103, Difficulty = Difficulty.Oni, IsShin = false, BestScore = 777777, BestRate = 77, BestCrown = CrownType.Clear });
+        fixture.Context.SongPlayDataRed.Add(new SongPlayDatumRed
+        {
+            Baid = 1,
+            SongId = 101,
+            Difficulty = Difficulty.Oni,
+            IsShin = false,
+            Score = 900000,
+            ScoreRate = 90,
+            Crown = CrownType.Clear,
+            PlayTime = new DateTime(2026, 6, 15, 1, 2, 3, DateTimeKind.Utc)
+        });
+        fixture.Context.RedFavoriteSongs.Add(new RedFavoriteSongs { Baid = 1, SongNo = 101 });
+        await fixture.Context.SaveChangesAsync();
+
+        var controller = CreatePlayDataController(fixture.Context);
+        var result = await controller.GetSongBestRecords("Red", 1);
+
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var response = Assert.IsType<SongBestResponse>(ok.Value);
+        var row = Assert.Single(response.SongBestData);
+        Assert.Equal(101u, row.SongId);
+        Assert.Equal(900000u, row.BestScore);
+        Assert.Equal(ScoreRank.None, row.BestScoreRank);
+        Assert.True(row.IsFavorite);
+        Assert.NotNull(row.AlternateScore);
+        Assert.Equal("Shin", row.AlternateScore!.Label);
+        Assert.Equal(930000u, row.AlternateScore.BestScore);
+        var recent = Assert.Single(row.RecentPlayData);
+        Assert.Equal(ScoreRank.None, recent.ScoreRank);
+        Assert.Equal(101u, recent.SongNumber);
+    }
+
+    [Fact]
+    public async Task PlayHistory_Red_UsesRedPlaysAndFavoritesOnly()
+    {
+        await using var fixture = await RedHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "don" });
+        fixture.Context.RedFavoriteSongs.Add(new RedFavoriteSongs { Baid = 1, SongNo = 101 });
+        fixture.Context.BlueFavoriteSongs.Add(new BlueFavoriteSongs { Baid = 1, SongNo = 102 });
+        fixture.Context.GreenFavoriteSongs.Add(new GreenFavoriteSongs { Baid = 1, SongNo = 103 });
+        fixture.Context.YellowFavoriteSongs.Add(new YellowFavoriteSongs { Baid = 1, SongNo = 104 });
+        fixture.Context.SongPlayDataRed.Add(new SongPlayDatumRed
+        {
+            Baid = 1,
+            SongId = 101,
+            Difficulty = Difficulty.Hard,
+            Score = 123456,
+            Crown = CrownType.Gold,
+            PlayTime = new DateTime(2026, 6, 15, 2, 0, 0, DateTimeKind.Utc)
+        });
+        fixture.Context.SongPlayDataBlue.Add(new SongPlayDatumBlue
+        {
+            Baid = 1,
+            SongId = 102,
+            Difficulty = Difficulty.Hard,
+            Score = 654321,
+            Crown = CrownType.Gold,
+            PlayTime = new DateTime(2026, 6, 15, 3, 0, 0, DateTimeKind.Utc)
+        });
+        fixture.Context.SongPlayDataGreen.Add(new SongPlayDatumGreen
+        {
+            Baid = 1,
+            SongId = 103,
+            Difficulty = Difficulty.Hard,
+            Score = 777777,
+            Crown = CrownType.Gold,
+            PlayTime = new DateTime(2026, 6, 15, 4, 0, 0, DateTimeKind.Utc)
+        });
+        fixture.Context.SongPlayDataYellow.Add(new SongPlayDatumYellow
+        {
+            Baid = 1,
+            SongId = 104,
+            Difficulty = Difficulty.Hard,
+            Score = 888888,
+            Crown = CrownType.Gold,
+            PlayTime = new DateTime(2026, 6, 15, 5, 0, 0, DateTimeKind.Utc)
+        });
+        await fixture.Context.SaveChangesAsync();
+
+        var controller = CreatePlayHistoryController(fixture.Context);
+        var result = await controller.GetSongHistory("Red", 1);
+
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var response = Assert.IsType<SongHistoryResponse>(ok.Value);
+        var row = Assert.Single(response.SongHistoryData);
+        Assert.Equal(101u, row.SongId);
+        Assert.Equal(123456u, row.Score);
+        Assert.True(row.IsFavorite);
+        Assert.Equal(ScoreRank.None, row.ScoreRank);
+    }
+
+    [Fact]
+    public async Task FavoriteSongs_Red_ReadsWritesAndRejectsSixthFavoriteOnly()
+    {
+        await using var fixture = await RedHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "don" });
+        fixture.Context.RedFavoriteSongs.Add(new RedFavoriteSongs { Baid = 1, SongNo = 101 });
+        fixture.Context.BlueFavoriteSongs.Add(new BlueFavoriteSongs { Baid = 1, SongNo = 102 });
+        fixture.Context.GreenFavoriteSongs.Add(new GreenFavoriteSongs { Baid = 1, SongNo = 103 });
+        fixture.Context.YellowFavoriteSongs.Add(new YellowFavoriteSongs { Baid = 1, SongNo = 104 });
+        await fixture.Context.SaveChangesAsync();
+        var controller = CreateFavoriteSongsController(fixture.Context, fixture.Catalog);
+
+        var getResult = await controller.GetFavoriteSongs("Red", 1);
+
+        var ok = Assert.IsType<OkObjectResult>(getResult);
+        Assert.Equal([101u], Assert.IsAssignableFrom<List<uint>>(ok.Value));
+
+        var addResult = await controller.UpdateFavoriteSong("Red", new SetFavoriteRequest
+        {
+            Baid = 1,
+            SongId = 105,
+            IsFavorite = true
+        });
+
+        Assert.IsType<NoContentResult>(addResult);
+        Assert.Equal([101u, 105u], await fixture.Context.RedFavoriteSongs
+            .Where(row => row.Baid == 1)
+            .OrderBy(row => row.SongNo)
+            .Select(row => row.SongNo)
+            .ToListAsync());
+        Assert.Single(await fixture.Context.BlueFavoriteSongs.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Single(await fixture.Context.GreenFavoriteSongs.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Single(await fixture.Context.YellowFavoriteSongs.Where(row => row.Baid == 1).ToListAsync());
+
+        fixture.Context.RedFavoriteSongs.AddRange(
+            new RedFavoriteSongs { Baid = 1, SongNo = 102 },
+            new RedFavoriteSongs { Baid = 1, SongNo = 103 },
+            new RedFavoriteSongs { Baid = 1, SongNo = 104 });
+        await fixture.Context.SaveChangesAsync();
+
+        var rejectResult = await controller.UpdateFavoriteSong("Red", new SetFavoriteRequest
+        {
+            Baid = 1,
+            SongId = 106,
+            IsFavorite = true
+        });
+
+        Assert.IsType<BadRequestObjectResult>(rejectResult);
+        Assert.Equal(5, await fixture.Context.RedFavoriteSongs.CountAsync(row => row.Baid == 1));
+    }
+
+    [Fact]
+    public async Task SongLeaderboard_Red_UsesRedBestRowsOnly()
+    {
+        await using var fixture = await RedHandlerFixture.CreateAsync();
+        fixture.Context.UserData.AddRange(
+            new UserDatum { Baid = 1, MyDonName = "RED1" },
+            new UserDatum { Baid = 2, MyDonName = "RED2" });
+        fixture.Context.SongBestDataRed.AddRange(
+            new SongBestDatumRed { Baid = 1, SongId = 101, Difficulty = Difficulty.Oni, IsShin = false, BestScore = 800000, BestRate = 80, BestCrown = CrownType.Clear },
+            new SongBestDatumRed { Baid = 2, SongId = 101, Difficulty = Difficulty.Oni, IsShin = false, BestScore = 900000, BestRate = 90, BestCrown = CrownType.Gold },
+            new SongBestDatumRed { Baid = 2, SongId = 101, Difficulty = Difficulty.Oni, IsShin = true, BestScore = 950000, BestRate = 95, BestCrown = CrownType.Dondaful });
+        fixture.Context.SongBestDataBlue.Add(new SongBestDatumBlue { Baid = 1, SongId = 101, Difficulty = Difficulty.Oni, IsShin = false, BestScore = 999999, BestRate = 99, BestCrown = CrownType.Dondaful });
+        fixture.Context.SongBestDataGreen.Add(new SongBestDatumGreen { Baid = 2, SongId = 101, Difficulty = Difficulty.Oni, IsShin = false, BestScore = 777777, BestRate = 77, BestCrown = CrownType.Clear });
+        fixture.Context.SongBestDataYellow.Add(new SongBestDatumYellow { Baid = 1, SongId = 101, Difficulty = Difficulty.Oni, IsShin = false, BestScore = 666666, BestRate = 66, BestCrown = CrownType.Clear });
+        await fixture.Context.SaveChangesAsync();
+        var controller = CreateSongLeaderboardController(fixture.Context);
+
+        var result = await controller.GetSongLeaderboard("Red", 101, 1, (uint)Difficulty.Oni);
+
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var response = Assert.IsType<SongLeaderboardResponse>(ok.Value);
+        Assert.Equal([2u, 1u], response.LeaderboardData.Select(row => row.Baid).ToList());
+        Assert.Equal([900000u, 800000u], response.LeaderboardData.Select(row => row.BestScore).ToList());
+        Assert.All(response.LeaderboardData, row => Assert.Equal(ScoreRank.None, row.BestScoreRank));
+        Assert.NotNull(response.UserScore);
+        Assert.Equal(2, response.UserScore!.Rank);
+    }
+
+    private static PlayDataController CreatePlayDataController(ITaikoDbContext context)
+        => new(context)
+        {
+            ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
+        };
+
+    private static PlayHistoryController CreatePlayHistoryController(ITaikoDbContext context)
+        => new(context)
+        {
+            ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
+        };
+
+    private static FavoriteSongsController CreateFavoriteSongsController(ITaikoDbContext context, IGameDataCatalog catalog)
+        => new(context, catalog)
+        {
+            ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
+        };
+
+    private static SongLeaderboardController CreateSongLeaderboardController(ITaikoDbContext context)
+        => new(context)
+        {
+            ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
+        };
 
     private static UserSettingsController CreateUserSettingsController(ITaikoDbContext context)
     {
