@@ -1,125 +1,79 @@
-# Project Research Summary
+# Research Summary: White AC15 0.13 Support
 
-**Project:** TaikoLocalServer AC15 Era Support
-**Domain:** Red AC15 capability composition and shared older-AC15 ChallengeCompe scoping
-**Researched:** 2026-06-12
-**Corrected:** 2026-06-12 after requirements review
-**Confidence:** HIGH for Red proto inventory and shared AC15 reuse; MEDIUM for route/version/config-root proof; LOW for ChallengeCompe implementation details until runtime evidence exists
+**Synthesized:** 2026-06-16
 
 ## Executive Summary
 
-Red should be added as a first-class AC15 era by composing supported AC15 capabilities with Red config, limits, wire placement, typed Red persistence, and Red/older-version evidence. This is not a new architecture problem: the meaningful baseline work is Red wire generation, Red adapter/Host registration, Red capability/profile binding, Red-owned state, shared AC15 catalog/runtime capability hookup, tutorial-only Tokkun, simple compatibility, AdminApi/WebUI readback, and final runtime verification.
+- White 0.13 should be added as a first-class older-AC15 era with White-owned routes, generated wire DTOs, catalog paths, persistence tables, Mapperly mappers, AdminApi/WebUI routing, and verification evidence.
+- No new runtime stack is needed. Reuse ASP.NET Core, Mediator, EF Core SQLite, protobuf-net/protogen, Mapperly, existing AC15 services, and the current GSD verification style.
+- The first implementation gate is evidence: `proto/white` and `Host/wwwroot/data/white/data/config/ST7100-1` are present, but `.tools/white/EBOOT.ELF.i64` is zero bytes, so route/root/runtime claims need logs, captures, corrected IDB/binary evidence, or another local proof source.
+- White local proto/data support a normal AC15 flow: BAID, mydon entry, userdata, initial data, normal playresult, self-best, crowns, recommendations, folders, telops, Taikojuku/Dani leads, reward/present fields, heartbeat/bookkeeping, and related compatibility probes.
+- Missing or unproven surfaces stay absent: item shop, Banacoin wallet/payment, Blue battle, Tokkun, WaiWai, gacha runtime, later White updates, and Red's standalone `challengecompe.php` behavior.
+- White collectable data, including Don Challenge if it is proven inside the White 0.13 range, belongs late in the milestone after identity, catalog, playresult, reward, and readback surfaces are stable.
 
-The first research pass over-specified absence and challenge behavior. That is corrected here. If a surface is absent from Red proto, it should simply stay absent; it is not a requirement to implement its absence. Work on Red should not change Blue, Green, Yellow, or Nijiiro behavior except where shared code must compile and still pass existing tests.
+## Stack Additions
 
-Don Challenge / ChallengeCompe is shared older-AC15 product scope, with Red as the first binding/proof point in this milestone. The wiki documents monthly Red-era Don Challenge tasks and rewards, but it does not prove which endpoint, proto field, database schema, or response shape carries that behavior. Local Red proto exposes `ChallengeCompe*` and playresult challenge arrays, but local Red data does not currently provide enough challenge catalog/behavior evidence to specify a stateful implementation. Therefore v1.3 should include a shared older-AC15 ChallengeCompe evidence/compatibility slice, with stateful challenge progress only after runtime/client evidence identifies the actual contract.
+- Add `Adapters.GameProtocol.White` with generated `Wire/Game.cs` from `proto/white/taiko.proto` and `Wire/VsInterface.cs` from `proto/white/vsinterface.proto`.
+- Use existing `protogen 3.2.52` with nullable optional primitive generation:
 
-## Key Findings
+```powershell
+.\.tools\protogen.exe --csharp_out=Adapters.GameProtocol.White\Wire -Iproto\white +nullablevaluetype=yes proto\white\taiko.proto
+.\.tools\protogen.exe --csharp_out=Adapters.GameProtocol.White\Wire -Iproto\white +nullablevaluetype=yes proto\white\vsinterface.proto
+```
 
-### Stack
+- Add White to `GameEra`, Host project/solution/test references, Host config, data-root handling, application-part gating, adapter DI, and AC15 catalog registration.
+- Keep Mapperly source-generator driven. Verify important White mappings with `dotnet build /p:EmitCompilerGeneratedFiles=true` and inspect emitted `Riok.Mapperly` generated source.
+- Add White server-authored JSON sidecars only where the runtime expects committed server data outside raw operator data; keep `Host/wwwroot/data/white/data` operator-supplied and excluded from publish content.
 
-No new broad technology is needed.
+## Feature Table Stakes
 
-- Generate Red wire from `proto/red/taiko.proto` and `proto/red/vsinterface.proto`.
-- Keep dumped Red proto files read-only.
-- Use the existing ASP.NET Core host, protobuf-net, Mapperly, Mediator handlers, EF Core SQLite, shared `Application/Ac15` capability modules, AdminApi/WebUI routing, and xUnit verification.
-- Keep Red gameplay persistence Red-owned. Reuse shared AC15 behavior through Red config/limits/wire placement, concrete Red DbSets, Mapperly delegates, and typed helpers, not shared gameplay tables or repository-shaped wrappers.
+### Evidence And Foundation
 
-### Feature Scope
+- Prove White route prefix, startup/version ownership, direct-protobuf assumptions, active data root, and unresolved gaps before route behavior is treated as final.
+- Add first-class White adapter identity, generated wire, Host registration, settings, enabled-era gating, and minimal route probes only where evidence supports them.
 
-**Must have:**
-- Red first-class era foundation and route/version/config-root evidence.
-- Red shared-AC15 capability profile and catalog binding, kept small unless Red data proves parser differences.
-- Red-owned profile/userdata/normal play/self-best/crowns/favorites/recent/Dani state over existing shared AC15 capability modules.
-- Simple Red compatibility for reward card, reward execution, Don point fields, and Banacoin-adjacent routes only where runtime evidence requires it.
-- Red Tokkun classification/readback limited to tutorial state, with no normal-score side effects or raw history unless evidence proves more.
-- Red Banacoin-adjacent compatibility only as needed for observed runtime flow, with no wallet/payment authority.
-- Shared older-AC15 ChallengeCompe scoping/evidence: model wiki-level product behavior as target scope, but do not invent endpoint/schema semantics.
-- Red AdminApi/WebUI readback for implemented Red-owned state.
-- Automated verification and cabinet/RPCS3 smoke before closeout.
+### Catalog And Profile
 
-**No-touch boundaries:**
-- Do not alter Blue, Green, Yellow, or Nijiiro behavior for Red work unless shared code changes require preserving existing behavior.
-- Do not create Red item-shop, medal, WaiWai, battle, AI/ghost, token-count, or shop-folder surfaces without Red proto/client evidence.
+- Bind White `ST7100-1` data through shared AC15 loaders where formats match: `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, `fumen/tuning.bin`, and later `present.xml`/`spacialbaid.xml` after parser ownership is defined.
+- Add `Ac15EraProfiles.White` with White feature flags, limits, and wire placement only after White byte widths and field placement are verified.
 
-### ChallengeCompe / Don Challenge
+### Runtime
 
-Wiki-supported product behavior:
+- Implement White-owned identity/profile/userdata, mydon entry, normal playresult, self-best, crowns, favorites/recent songs, recommendations, folders/telops, and reward/profile counters where White evidence supports matching AC15 behavior.
+- Treat Taikojuku/Dani as a requirement category because White proto and `musicmedleyinfo.xml` expose clear leads, but still prove runtime classification and readback before claiming end-to-end Dani behavior.
 
-- Red was active from 2016-07-14 to 2017-03-14.
-- Red had monthly Don Challenge tasks from August 2016 through February 2017.
-- Don Challenge typically had 10 individual tasks plus one community task.
-- Tasks were shown in Donder Hiroba and required a Donder Hiroba login.
-- Task conditions included normal-play clears, full combos, score thresholds, genre/song-name filters, difficulty constraints, and grouped conditions.
-- Tokkun did not count toward Don Challenge.
-- Eight completed tasks unlocked a song; ten completed tasks awarded a title; reward reflection timing was next-day 07:00, with later general song unlocks.
+### Collectables And Don Challenge
 
-Open implementation questions:
+- Collect White unlock/reward data from local White files and proven supporting data: songs, tones, costumes, titles, Don Point presents, special BAID rows, and any Don Challenge/ChallengeCompe bundles in the White 0.13 range.
+- Do not copy Red ChallengeCompe behavior blindly. White has embedded challenge stat/playresult fields but no standalone `ChallengeCompeRequest/Response` in the current proto.
+- Bind collectables late, after White identity, catalog, playresult, reward flags, and userdata readback are stable.
 
-- Which Red cabinet endpoint or payload carries task lists and progress, and which parts are shared older-AC15 behavior versus Red binding details.
-- Whether `challengecompe.php` is actually called by the Red client and what response shape is accepted.
-- Whether the local server must compute progress, advertise tasks, simulate community counts, or only provide enough compatibility for the client flow.
-- Which parts, if any, can be backed by local Red data instead of sidecar configuration or captured runtime evidence.
+### Admin And Verification
 
-### Architecture
+- Extend existing era-routed AdminApi/WebUI contracts for implemented White-owned surfaces only.
+- Close v1.4 only after focused White tests, relevant shared AC15 regression coverage, generated-source mapper inspection for nontrivial mappings, Host build verification, and user-accepted RPCS3/cabinet smoke evidence.
 
-Use the capability-composition AC15 layered path:
+## Watch Outs
 
-1. Red controller under the proven Red route prefix.
-2. Red generated wire DTO.
-3. Red Mapperly/manual protocol mapper.
-4. Application common DTO.
-5. Mediator dispatch to `.Red.cs` handler partial.
-6. Red config/limits/wire placement and Red-owned DbSets/catalogs bound into shared AC15 capability modules where behavior matches.
-7. Red wire response mapping.
+- The zero-byte White IDB means binary-backed route/root claims are currently unavailable.
+- `ST7100-1` proves local data availability, not necessarily active runtime selection.
+- Later White update behavior must not slip into the 0.13 milestone from wiki context.
+- Red/Yellow route and state copying is the biggest implementation risk; White must start from White proto/data evidence.
+- White protocol limits and packing need proof before using shared AC15 helpers.
+- Business logic must stay in Application handlers/services, not controllers or Mapperly mapper bodies.
+- Tests must protect observable behavior and state boundaries, not generated type existence, route attribute inventory, source text, or superficial stateless echoes.
 
-Do not split Red catalog into many roadmap requirements. The default requirement is one shared AC15 catalog integration plus route/root proof. Add more only if Red data proves a parser or runtime-data delta.
+## Recommended Phase Shape
 
-### Pitfalls
+1. White evidence and era foundation.
+2. White catalog/profile binding and protocol limits.
+3. White runtime capability binding for identity, userdata, initial data, normal play, self-best, crowns, recommendations, folders/telops, rewards, and Dani where proven.
+4. White collectable data and optional Don Challenge/ChallengeCompe binding if White 0.13 evidence proves it.
+5. White AdminApi/WebUI and runtime closeout.
 
-- Treating absence as a feature requirement. If Red proto lacks a surface, do not implement it.
-- Touching previous versions while adding Red. Existing eras should remain unchanged except for shared-code preservation.
-- Treating Red as a clone instead of a composition root for shared capabilities.
-- Claiming ChallengeCompe implementation details from wiki or from `ChallengeCompe*` proto names alone.
-- Turning Don Challenge into Red `present.xml`/Don-point progression. Wiki Don Challenge rewards are song/title thresholds, not the same thing as `present.xml`.
-- Copying Yellow shop/medal/WaiWai assumptions into Red.
-- Dropping Red Tokkun into normal play before classification.
-- Writing Red state into any non-Red gameplay table.
+## Research Inputs
 
-## Suggested Roadmap Shape
-
-### Phase 18: Red Evidence and Capability Foundation
-
-Prove Red route prefix, startup/version behavior, direct-protobuf assumptions, active data root, and Red-supported capability inventory. Add `GameEra.Red`, Red adapter/wire project, Host/DI/config registration, and route scaffolding for proto-supported endpoints.
-
-### Phase 19: Red Capability Profile and Catalog Binding
-
-Bind Red catalog/config data into shared AC15 catalog capabilities and define the Red capability profile. Keep this small: one capability-profile/catalog phase, not a broad rewrite.
-
-### Phase 20: Red Runtime Capability Binding and Simple Compatibility
-
-Bind shared identity, userdata, normal-play, crown, self-best, Dani, tutorial-only Tokkun, and simple compatibility capabilities to Red-owned rows and Red wire placement.
-
-### Phase 21: Older-AC15 ChallengeCompe Capability and Red Binding
-
-Define the shared older-AC15 ChallengeCompe capability and prove/bind it through Red evidence. Start with evidence and compatibility; only implement stateful challenge progress when the actual client contract is known.
-
-### Phase 22: Red AdminApi/WebUI and Runtime Closeout
-
-Expose Red-owned readback surfaces and implemented shared capability readback, run full automated verification, and close only after cabinet/RPCS3 smoke.
-
-## Sources
-
-- `.planning/PROJECT.md`
-- `proto/red/taiko.proto`
-- `proto/red/vsinterface.proto`
-- `Host/wwwroot/data/red/data`
-- `Application/Ac15/*`
-- `Infrastructure/GameDataCatalog/Ac15/*`
-- Wiki Red page: https://wikiwiki.jp/taiko-fumen/%E4%BD%9C%E5%93%81/%E6%96%B0AC/%E3%83%AC%E3%83%83%E3%83%89
-- Wiki Don Challenge page: https://wikiwiki.jp/taiko-fumen/%E4%BD%9C%E5%93%81/%E6%96%B0AC/%E3%83%89%E3%83%B3%E3%83%81%E3%83%A3%E3%83%AC
-- Wiki Red Don Challenge history: https://wikiwiki.jp/taiko-fumen/%E4%BD%9C%E5%93%81/%E6%96%B0AC/%E3%83%89%E3%83%B3%E3%83%81%E3%83%A3%E3%83%AC/%E9%81%8E%E5%8E%BB%E3%81%AE%E3%81%8A%E9%A1%8C/%E3%83%AC%E3%83%83%E3%83%89
-
----
-*Research corrected: 2026-06-13*
-*Ready for requirements: yes*
+- `.planning/research/STACK.md`
+- `.planning/research/FEATURES.md`
+- `.planning/research/ARCHITECTURE.md`
+- `.planning/research/PITFALLS.md`

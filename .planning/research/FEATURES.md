@@ -1,143 +1,170 @@
-# Feature Research
+# Feature Research: White AC15 0.13 Support
 
-**Domain:** Red AC15 era support in TaikoLocalServer
-**Milestone:** v1.3 Red AC15 Support
-**Researched:** 2026-06-12
-**Confidence:** HIGH for local proto/data/code-backed feature inventory; MEDIUM for full Don Challenge semantics until Red runtime traces prove call order and state meaning
+## Summary
 
-## Correction Note
+- White 0.13 should be planned as a first-class older-AC15 era with White-owned routes, generated wire DTOs, persistence, catalog binding, and AdminApi/WebUI readback for only the surfaces proven by White proto/data/log/client evidence.
+- The local White proto covers the normal AC15 cabinet loop: startup/verup, bookkeeping/heartbeat, BAID, mydon entry, userdata, initial data, playresult, self-best, crowns, recommendations, folders, telops, Taikojuku, tournament check, headclerk2, getreitai, reward card check, and reward execution.
+- White local data currently exposes `config/ST7100-1` with `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, `present.xml`, `spacialbaid.xml`, `chassisinfo.xml`, and `fumen/tuning.bin`; no committed White sidecar JSON exists yet.
+- White is closer to the Red older-AC15 capability set than Yellow, but it is smaller than Red in important places: the White proto has embedded ChallengeCompe-shaped userdata/playresult fields but no standalone `ChallengeCompeRequest` / `ChallengeCompeResponse`.
+- Collectable data, including Don Challenge if any proven White 0.13 content is in range, should be the last functional category because it depends on stable White identity, catalog, playresult, reward, and challenge-readback decisions.
 
-The requirements review corrected this file's first-pass challenge framing. Treat wiki Don Challenge behavior as product scope, but do not claim local Red data already proves challenge catalog/state semantics. Requirements should not list absent Red proto surfaces as features or exclusions. Red catalog should be one shared-AC15 integration unless actual Red parser/runtime deltas are found. Previous supported eras are no-touch boundaries for this milestone.
+## Table Stakes For v1.4
 
-## Feature Landscape
+### 1. White Evidence And Era Foundation
 
-### Evidence Summary
+Requirement category:
+- Add White as an enableable first-class AC15 era with generated wire DTOs from `proto/white`, Host settings, DI registration, application-part gating, and White-owned adapter/controller files.
+- Prove the game route prefix, shared `/v01r00` startup/version ownership, direct-protobuf transport, and active catalog root from local logs, cabinet/RPCS3 traces, or corrected IDA/client evidence before locking route names.
+- Treat `.tools/white/EBOOT.ELF.i64` as unusable in the current checkout because it is zero bytes; do not derive route/root certainty from it until replaced.
 
-Red should be planned as a first-class older AC15 era, not as a Yellow copy. The local Red proto exposes the normal AC15 profile, userdata, initial data, self-best, crown, Dani, tournament/gacha, reward, Tokkun, Banacoin-adjacent, and challenge competition surfaces. Local Red data exists under `Host/wwwroot/data/red/data` with config roots `ST5100-1`, `ST5100-7`, `ST7100-1`, and `ST8100-1`; the milestone must prove the active runtime root before hardcoding catalog paths.
+Likely matching capability:
+- Reuse the existing AC15 era-foundation pattern from Yellow/Red, but keep route strings, wire classes, settings, and tests White-owned.
 
-Red has no local WaiWai proto surface in `proto/red/taiko.proto`, and the Red data scan did not find WaiWai-named assets. Red also lacks Blue battle fields and item-shop request/response messages. Do not import Yellow WaiWai handling, Blue battle handling, or Yellow item-shop/Don-Katsu medal behavior into Red unless new Red-local evidence appears.
+### 2. White Catalog And Sidecar Binding
 
-Don Challenge / challenge competition is the main Red-specific feature. Red proto exposes `ChallengeCompeRequest` / `ChallengeCompeResponse`, `UserDataResponse.is_challengecompe`, and playresult stage arrays for `ary_challenge_id`, `ary_user_compe_id`, and `ary_bng_compe_id`. Red local data also contains challenge-style `musicmedleyinfo.xml` rows with `challengelv` 101-113 under `ST8100-1`, plus `dojochallenge_*` local script assets. That is enough to include Red challenge competition in v1.3, but not enough to invent all schedule, category, reward, or ranking semantics without runtime traces.
+Requirement category:
+- Bind `ST7100-1` catalog inputs through existing AC15 loaders where formats match: `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, `present.xml`, `spacialbaid.xml`, and `fumen/tuning.bin`.
+- Add White sidecar JSON only for server-authored data that is not present in raw operator data, such as telops, event folders, movies, recommendations, Taikojuku verup metadata, and eventually challenge data.
+- Keep White sidecars explicit and era-named; do not reuse Red or Yellow JSON files as runtime data.
 
-Important correction: challengecompe route/proto presence in Blue, Green, and Yellow is not active behavior evidence. Current Blue and Green controllers only log and return `Result = 1`; current Yellow routes through a common mapper but the Yellow handler returns an empty response. Treat these as compatibility/scaffolding artifacts, not proof that newer eras meaningfully use Don Challenge.
+Likely matching capability:
+- Red/Yellow already use committed sidecars for event folders, movies, recommendations, Taikojuku verup metadata, and telops.
+- Red additionally has `red_challenge_compe_data.json`; Yellow additionally has `yellow_item_shop_data.json`. White currently has neither.
 
-### Table Stakes
+### 3. Identity, Profile, And Userdata
 
-| Feature | Why Expected | Complexity | Notes |
-|---------|--------------|------------|-------|
-| Red era foundation | Every supported era must be enableable, routable, testable, and independently configured. | MEDIUM | Add `GameEra.Red`, Red adapter project/DI, generated wire DTOs from `proto/red`, host settings, route gating, logging, and route ownership tests. Do not edit dumped proto inputs. |
-| Red route and transport proof | Red protocol version/prefix must match the client, not guesses from nearby eras. | MEDIUM | Use local proto, runtime logs, and cabinet/RPCS3 traces to prove concrete game route prefix and shared startup/version behavior before locking routes. `proto/red/vsinterface.proto` supports the shared startup/verup shape. |
-| Red catalog bootstrap | Cabinet metadata and gameplay depend on local Red data. | HIGH | Load the proven active Red config root for `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, `present.xml`, and `fumen/tuning.bin`; support committed sidecar JSON only when server-authored data is required. |
-| Red identity/profile/userdata | BAID, mydon entry, default save creation, and userdata readback are the cabinet's normal entry path. | HIGH | Use Red-owned save state; share only user/card identity. Map through common DTOs before handler logic. |
-| Initial data and metadata routes | Cabinet menu startup expects telop, folders, Taikojuku, tournament/gacha, recommendation, and release-song metadata. | MEDIUM | Reuse AC15 catalog snapshot helpers where shapes match, but keep Red route/wire/catalog ownership separate. |
-| Normal playresult persistence | Normal score, crown, favorite, recent, counters, rewards, and profile progression are the core loop. | HIGH | Use shared AC15 normal-play services where behavior is identical, binding Red-owned tables and Mapperly projections explicitly. |
-| Self-best and crowns | Prior scores and crowns must read back after normal play. | MEDIUM | Prove Red crown byte length/compression/placement before assuming Blue/Green/Yellow response encoding. |
-| Dani/Taikojuku | Red `Taikojuku*` proto and local `musicmedleyinfo.xml` expose Dan challenge levels. | MEDIUM | Reuse AC15 Dani writer/readback with Red-owned Dan tables and Red catalog rows; separate normal Dan levels from Don Challenge levels. |
-| Red reward / present progression | Red proto has `reward_ptn`, `reward_progress`, `get_donpoint`, and `Rewardexecution*`; local `present.xml` contains Don Point thresholds. | HIGH | Model Red reward progression from `present.xml` and playresult fields. This is not Yellow item shop or Don/Katsu medal spending. |
-| Tokkun compatibility | Red proto exposes `tokkun_tutorial_flg` and `ary_tokkunstage_info`; local Red assets include Tokkun sound names. | HIGH | Mirror the bounded Blue/Yellow contract: classify from stage info, persist only protocol-backed tutorial/raw history facts, and prevent normal/challenge/Dani/reward/shop writes from Tokkun uploads. |
-| Banacoin-adjacent compatibility | Red proto exposes heartbeat Banacoin status and balance/payment/error/info messages. | MEDIUM | Keep routes stateless/log-and-success where runtime needs them for Tokkun/menu flow. No wallet, coupon, receipt, CHID, BNID, settlement, or transaction persistence. |
-| AdminApi/WebUI Red routing | Operators need to inspect Red profiles, scores, history, favorites, Dani, customization, and supported catalog data. | MEDIUM | Extend `/api/{era}/...` and WebUI era selection after Red-owned persistence exists. Preserve existing legacy admin routes where already present. |
-| Runtime verification | Passing tests alone does not prove cabinet compatibility. | HIGH | Close v1.3 only after automated tests, temp-output Host build, and repeatable cabinet/RPCS3 smoke for Red normal flow, Tokkun, and Don Challenge route behavior. |
+Requirement category:
+- Support BAID card lookup/registration, mydon entry, default save creation, returning-user userdata, favorite/recent songs, profile counters, option/tone/title/costume flags, Don Point totals, reward progress, and display settings through White-owned persistence.
+- Map White generated protobuf DTOs into existing common/capability DTOs before handler logic.
+- Share only true identity data across eras; White gameplay save state must be separate from Blue, Green, Yellow, Red, and Nijiiro state.
 
-### Differentiators
+Likely matching capability:
+- Reuse the shared AC15 identity/profile/userdata services where behavior and field meaning match, with White-specific limits and Mapperly projections.
 
-| Feature | Value | Complexity | Notes |
-|---------|-------|------------|-------|
-| Evidence-backed Red Don Challenge | This is the feature that makes Red meaningfully different from Yellow-era normal support. | HIGH | Build `challengecompe.php` from Red proto, Red challenge catalog rows, and runtime call traces. Persist Red-owned per-user challenge high scores/state only after proving category and track semantics. |
-| Older-AC15 challenge-ready model | Red can become the first correct implementation of a Red-and-older behavior instead of a one-off stub. | HIGH | Design Red challenge catalog/state names so later older eras can reuse matching behavior without claiming Blue/Green/Yellow support. |
-| Red reward/present support | Red's Don Point/present system is distinct from Yellow's later item-shop/medal flow. | MEDIUM | Parse `present.xml`, persist reward progress/unlocks through Red-owned state, and keep `rewardexecution.php` scoped to Red evidence. |
-| Capability-based AC15 reuse | Red can benefit from the completed AC15 shared-core cleanup without merging era state. | MEDIUM | Use shared switch-free AC15 helpers for identical normal play, Dani, catalog projection, and AdminApi workflows; bind concrete Red tables in Red handlers. |
-| Verification-first challenge rollout | Challenge competition can be made trustworthy by requiring runtime proof for menu visibility and post-play readback. | MEDIUM | Add route logs and state inspection around `challengecompe.php`, userdata `is_challengecompe`, and playresult challenge arrays before declaring support complete. |
+### 4. Initial Data And Menu Metadata
 
-### Anti-Features
+Requirement category:
+- Implement `initialdatacheck.php`, `getfolder.php`, `gettelop.php`, `recommend.php`, `taikojuku.php`, `tournamentcheck.php`, `heartbeat.php`, `bookkeeping.php`, and `headclerk2.php` where White route evidence proves the cabinet calls them.
+- `initialdatacheck` must advertise default songs, mainichi dojo hashes, telops, event folders, and Taikojuku metadata in White's wire placement.
+- `recommend`, `telop`, and `eventfolder` should use White sidecars when raw data is absent or intentionally empty, following the Red/Yellow pattern.
 
-| Feature | Why Avoid | What to Do Instead |
-|---------|-----------|-------------------|
-| Treat Blue/Green/Yellow `challengecompe.php` as active evidence | Those eras currently have scaffold/stub behavior and the user corrected that they do not meaningfully call Don Challenge. | Use Red proto/data/runtime traces as the challenge authority; document newer-era presence as non-evidence. |
-| Red WaiWai support | Red proto has no WaiWai fields and local Red data scan did not find WaiWai assets. | Keep WaiWai routes, fields, state, play mode, WebUI labels, and tests absent for Red. |
-| Blue battle copied into Red | Red proto/data do not expose Blue battle userdata, initialdata battle flags, battle playresult fields, or battle catalogs. | Keep battle routes, persistence, and initialdata battle advertisement absent. |
-| Yellow item shop / Don-Katsu medals copied into Red | Red proto lacks `getitemshopinfo` and `itempurchase`; Red has reward/present/Don Point fields instead. | Implement Red reward/present progression only from Red evidence. |
-| Real Banacoin authority | TaikoLocalServer is not a wallet, payment, coupon, receipt, settlement, BNID, or transaction source. | Provide only stateless compatibility required by observed Red client flows. |
-| Proto-only route stubs without runtime need | Unsupported surfaces create fake compatibility and hide missing evidence. | Add Red routes only when proto plus runtime/client evidence or existing route inventory requires them; otherwise keep surfaces absent. |
-| Wiki-driven semantics | Wiki context is useful scoping material but can drift from this client/proto build. | Treat wiki as a lead; local proto, data, logs, RPCS3/cabinet traces, and IDA evidence decide behavior. |
-| Shared Red/Yellow/Blue gameplay tables | It would corrupt era boundaries and make no-cross-era behavior hard to verify. | Add Red-owned EF tables/entities; share only algorithms and identity state where already shared. |
+Likely matching capability:
+- Existing AC15 catalog snapshot and metadata handlers are the right starting point, but White field widths, byte packing, compression, and verup placement need generated-source/runtime verification.
 
-## Feature Dependencies
+### 5. Normal Play Runtime
 
-```text
-Red route/transport proof -> Red adapter foundation -> generated Red wire DTOs -> route/controller skeletons
-Red catalog root proof -> Red catalog loaders -> initial data / metadata / Taikojuku / reward / challenge catalog
-Red save schema -> BAID/mydon/userdata -> normal playresult -> self-best/crowns/favorites/recent/reward readback
-Red normal playresult -> Dani and challenge result routing can safely distinguish normal, Dan, Tokkun, and challenge facts
-Challenge catalog + playresult challenge arrays -> challengecompe readback and high-score/state persistence
-Tokkun classifier -> Tokkun persistence/readback -> no-cross-mode boundaries
-Red persistence and catalogs -> AdminApi/WebUI Red readback
-Automated verification -> cabinet/RPCS3 normal, Tokkun, and challenge smoke -> milestone closeout
-```
+Requirement category:
+- Support White normal `playresult.php` upload and readback through White-owned score history, self-best, crowns, favorites, recent songs, release songs, reward progress, Don Point totals, profile counters, selected folder, and category counters.
+- Implement `selfbest.php` and `crownsdata.php` against White-owned tables and White protocol byte lengths.
+- Persist only normal-mode state from normal playresults; preserve no-cross-era and no-cross-mode boundaries.
 
-## MVP Definition For v1.3
+Likely matching capability:
+- Reuse AC15 normal play, crown, self-best, favorites/recent, reward, and profile mutation services where White fields map cleanly.
 
-### Launch With
+### 6. Taikojuku / Dani
 
-- [ ] Red first-class era foundation: `GameEra.Red`, adapter, settings, DI, route gating, generated wire, and shared startup/version integration.
-- [ ] Proven Red route prefix and runtime config root, with catalog bootstrap from local Red data.
-- [ ] Red profile/login/userdata/default save, initial data, self-best, crowns, favorites, recent songs, recommendations, telops, folders, tournaments/gacha, and Dani/Taikojuku.
-- [ ] Red normal playresult persistence through Red-owned score, play-history, best, crown, favorite, recent, profile, and reward state.
-- [ ] Red reward/present progression from Red `present.xml` and Red playresult reward fields.
-- [ ] Red Tokkun handling with the Blue/Yellow no-cross-mode contract adapted only to Red-owned state.
-- [ ] Red Banacoin-adjacent compatibility routes only where runtime flow proves they are needed, with no payment authority.
-- [ ] Red Don Challenge / challenge competition support backed by Red proto/data/runtime evidence, including `challengecompe.php` readback and playresult challenge-array persistence where proven.
-- [ ] AdminApi/WebUI Red routing for supported readback surfaces.
-- [ ] Final automated verification, temp-output Host build, and user-confirmed cabinet/RPCS3 smoke for normal Red flow, Tokkun, and Don Challenge/challengecompe behavior.
+Requirement category:
+- Treat White Taikojuku/Dani as a requirement category because the proto exposes `TaikojukuRequest/Response`, `UserDataResponse.disp_taikojuku_dan`, `PlayResultRequest.dan_result`, and local `musicmedleyinfo.xml` has 25 medley rows.
+- Runtime support still needs White cabinet/log proof for call order and playresult classification before claiming end-to-end Dani behavior.
+- Keep White Dani persistence separate even if the shared AC15 Dan writer can be reused.
 
-### Defer
+Likely matching capability:
+- Red/Yellow/Blue AC15 Dani support should provide the implementation pattern, with White-specific medley data and wire placement.
 
-- [ ] Older-than-Red era reuse of Don Challenge until Red semantics are implemented and verified.
-- [ ] Challenge schedule windows, BNG/global ranking semantics, category-specific reward semantics, and exact `ary_user_compe_stat` / `ary_bng_compe_stat` behavior until runtime traces prove them.
-- [ ] AdminApi/WebUI editing tools for challenge schedules or challenge catalog data; expose readback/inspection first.
-- [ ] Any Banacoin balance/payment/coupon/transaction feature unless the project scope changes to become a payment authority.
-- [ ] Any Red route not proven by proto plus runtime/client evidence.
+### 7. Reward, Present, And Special Compatibility Routes
 
-### Exclude
+Requirement category:
+- Bind White reward/present progression from `present.xml`, `reward_ptn`, `reward_progress`, `get_donpoint`, `total_get_donpoint`, `total_use_donpoint`, `release_song_no`, `get_tone_no`, `get_costume_no_*`, and `get_title_no`.
+- Implement `rewardcardcheck.php` and `rewardexecution.php` only to the level proven by White flow; these are not Yellow item-shop purchases.
+- Treat `getreitai.php` as a proto surface and compatibility candidate, not a required route, until logs/client evidence prove it is called.
 
-- [ ] Red WaiWai support.
-- [ ] Red Blue-style battle support.
-- [ ] Yellow item shop / Don-Katsu medal shop support in Red.
-- [ ] Shared Red/Yellow/Blue gameplay persistence tables.
-- [ ] Treating Blue/Green/Yellow challengecompe stubs as evidence of active challenge behavior.
+Likely matching capability:
+- Red reward/present separation is the closest prior model: ordinary Don Point / present progression is distinct from Don Challenge / ChallengeCompe.
 
-## Runtime Verification Targets
+### 8. AdminApi And WebUI Readback
 
-| Flow | What To Prove | Notes |
-|------|---------------|-------|
-| Startup/version | Red cabinet reaches game routes with shared startup/verup behavior and correct route prefix. | Use logs and RPCS3/cabinet request sequence; do not infer prefix from directory names alone. |
-| Normal profile loop | BAID/mydon/userdata/initialdata/self-best/crowns survive restart and write only Red tables. | Include new user and returning user paths. |
-| Normal playresult | Scores, crowns, favorites/recent, profile counters, reward progress, and present unlocks read back correctly. | Include no-cross-era assertions against Blue/Green/Yellow state. |
-| Dani | Dan result persists and reads back through Red-owned Dan tables and Red catalog levels. | Separate Dan levels from challenge levels 101+. |
-| Tokkun | Tokkun entry/upload succeeds, persists only Red Tokkun tutorial/raw history facts, and writes no normal/challenge/Dani/reward state. | Confirm Banacoin-adjacent calls do not block Tokkun availability. |
-| Don Challenge | Client calls `challengecompe.php` as expected, challenge rows are advertised/read back, and post-play challenge facts persist only after proven. | Capture before/after play request sequence and serialized response field presence. |
-| AdminApi/WebUI | Red profile, scores, history, favorites, Dani, customization/catalog readback resolve under `/api/Red/...`. | No unsupported WaiWai/battle/item-shop controls. |
+Requirement category:
+- Add White to era-routed AdminApi and WebUI surfaces only after the corresponding White runtime persistence exists.
+- Expected readback categories are profile, score history, self-best/crowns, favorites/recent songs, Dani if implemented, catalog/customization flags, reward progress, and later Don Challenge if collected and bound.
+- Hide or omit unsupported White surfaces rather than showing Blue/Yellow/Red controls that have no White evidence.
 
-## Sources
+Likely matching capability:
+- Extend the existing era-routed AdminApi/WebUI contracts used for Red/Yellow; add new contracts only where the capability requires them, such as Don Challenge.
 
-- `.planning/PROJECT.md`
-- `.planning/MILESTONES.md`
-- `.planning/STATE.md`
-- `proto/red/taiko.proto`
-- `proto/red/vsinterface.proto`
-- `Host/wwwroot/data/red/data/config/ST5100-1`
-- `Host/wwwroot/data/red/data/config/ST5100-7`
-- `Host/wwwroot/data/red/data/config/ST7100-1`
-- `Host/wwwroot/data/red/data/config/ST8100-1`
-- `Application/Dtos/CommonChallengeCompeResponse.cs`
-- `Application/Handlers/GetChallengeCompeQuery.cs`
-- `Application/Handlers/GetChallengeCompeQuery.Yellow.cs`
-- `Adapters.GameProtocol.Yellow/Controllers/ChallengeCompeController.cs`
-- `Adapters.GameProtocol.Green/Controllers/ChallengeCompeController.cs`
-- `Adapters.GameProtocol.Blue/Controllers/ChallengeCompeController.cs`
-- `Tests/Yellow/YellowMetadataRouteTests.cs`
-- `docs/superpowers/specs/2026-06-11-ac15-capability-composition-design.md`
+### 9. Verification And Closeout
 
----
-*Feature research for: v1.3 Red AC15 Support*
-*Researched: 2026-06-12*
+Requirement category:
+- Require targeted automated tests for observable White behavior: route serialization, handler state changes, SQLite persistence, no-cross-era boundaries, catalog parsing, reward byte packing, and AdminApi/WebUI readback.
+- Close the milestone only after a temp-output Host build if normal build output is locked and user-confirmed cabinet/RPCS3 smoke evidence for implemented White flows.
+- Do not treat route inventory tests, controller attribute tests, generated wire type tests, or source-text tests as feature proof.
+
+## White 0.13 Local Evidence
+
+Proto observations:
+- `proto/white/vsinterface.proto` contains startup/version messages: `StartupAuth*`, `VerupAuth*`, and `VerupComplete*`.
+- `proto/white/taiko.proto` contains cabinet/account and normal runtime messages: `BAID*`, `MydonEntry*`, `UserData*`, `PlayResult*`, `SelfBest*`, and `CrownsData*`.
+- `UserDataResponse` includes favorites, recent songs, release song flags, challenge/user/bng competition stat arrays, reward progress, profile counters, recommendation fields, default option/shin settings, Don Point totals, and displayed Taikojuku Dan.
+- `PlayResultRequest.StageData` includes normal score facts plus `ary_challenge_id`, `ary_user_compe_id`, `ary_bng_compe_id`, `play_dan`, `stage_mode`, and `selected_folder_id`.
+- Metadata/support messages include `Initialdatacheck*`, `Getfolder*`, `Gettelop*`, `Taikojuku*`, `Recommend*`, `Tournamentcheck*`, `BookKeeping*`, `HeartBeat*`, `HeadClerk2*`, `Getreitai*`, `Rewardcardcheck*`, and `Rewardexecution*`.
+- The White proto does not define standalone `ChallengeCompeRequest/Response`, `Getitemshopinfo`, `Itempurchase`, `Getbanacoininfo`, `Balancecheck`, `Banacoinpayment`, `Banacoinerrorlog`, Blue battle messages, Tokkun fields, WaiWai fields, or gacha response payloads.
+
+Data observations:
+- `Host/wwwroot/data/white/data/config/ST7100-1` contains `chassisinfo.xml`, one duplicate chassisinfo copy, `defmusic.bin`, `musicinfo.xml`, `musicmedleyinfo.xml`, `present.xml`, and `spacialbaid.xml`.
+- `musicinfo.xml` has 568 `Data` rows. Genre counts observed locally include 199 Namco Original, 97 Game Music, 75 Anime, 70 J-POP, 41 Vocaloid, 33 Variety, 25 Medley, 23 Classical, and 5 Kids/Folk rows.
+- `musicmedleyinfo.xml` has 25 `MusicMedleyInfoData` rows with `challengelv` values 1 through 25. These look like Taikojuku/Dani rows, not Red-style high-number ChallengeCompe rows.
+- `present.xml` has 10 `PresentItemData` entries with type/item/donPoint thresholds from 1,000 through 30,000 Don Points.
+- `spacialbaid.xml` has a disabled BAID 0 example row and one non-zero special BAID entry; treat this as catalog evidence only until runtime behavior is understood.
+- `Host/wwwroot/data/white/data/fumen` contains `tuning.bin` and `tuning_ext.bin`.
+- No committed `Host/wwwroot/data/white/*.json` sidecars exist yet.
+
+Red/Yellow comparison observations:
+- Red sidecars: challenge compe data, event folders, movies, recommendations, Taikojuku verup metadata, and telops.
+- Yellow sidecars: event folders, item shop data, movies, recommendations, Taikojuku verup metadata, and telops.
+- Red controllers include the normal older-AC15 surface plus `challengecompe.php` and stateless Banacoin/balance/coinsetting probes.
+- Yellow controllers include the normal older-AC15 surface plus item shop and Banacoin-adjacent compatibility.
+- White should not clone either route set wholesale. Start from White proto plus route/client evidence; absent White proto surfaces stay absent.
+
+## Collectable Data And Don Challenge
+
+What to collect:
+- White 0.13 collectable catalog rows for unlockable songs, tones, costumes, titles, and Don Point presents from local `musicinfo.xml`, `present.xml`, any shared title/name data, and White-specific local assets.
+- Don Challenge / ChallengeCompe bundles only if evidence proves they fall inside the White 0.13 server contract. For each bundle, collect bundle id, active window, 10 personal tasks, optional community task, typed rule data, eligible songs, minimum difficulty, required score/count, reward song ids, and reward title ids.
+- White song id mapping must come from the local White `musicinfo.xml`; title/reward ids must come from local committed/shared title data or other provenance that can be rechecked.
+
+Evidence required before runtime binding:
+- Prove whether White expects a standalone route, embedded userdata readback only, or no Don Challenge readback at all. The current White proto has embedded `ary_challenge_stat`, `ary_user_compe_stat`, and `ary_bng_compe_stat` plus playresult challenge arrays, but no standalone `ChallengeCompeRequest/Response`.
+- Prove call order and field placement with White logs, cabinet/RPCS3 traces, corrected IDA/client evidence, or captured payloads.
+- Prove whether challenge progress should be evaluated from actual stage results, preserved challenge marker arrays, or both. Red's accepted shared behavior evaluates from stage results; do not assume White is identical without evidence.
+- Prove category semantics for personal/user/bng arrays, track numbering, reward grant timing, and whether there is any opt-in state. Do not import Red UI/API assumptions blindly.
+
+Why this belongs late:
+- Don Challenge depends on stable White identity, userdata mapping, playresult classification, normal score/crown persistence, reward unlocks, and catalog song/title id mapping.
+- The local White `musicmedleyinfo.xml` supports Dani planning but does not provide Don Challenge bundle data.
+- The wiki page is useful timing context only: it scopes White 0.13 to 2015-12-10 and shows visible Don Challenge song notes beginning in later White updates, not in the initial 0.13 section. That makes Don Challenge a late evidence pass, not a foundation blocker.
+- The existing `Ac15ChallengeCompeLoader` and schema already define the eventual sidecar contract: `enabled`, `monthly_bundles`, exactly 10 personal tasks per bundle, optional community task, typed rules, and rewards. White should use that shape only after White-specific data is collected.
+
+## Absent Or Evidence-Gated Surfaces
+
+- Standalone ChallengeCompe route: absent from White proto. Do not add `challengecompe.php` unless White logs/client/IDA evidence proves the cabinet calls it.
+- Yellow item shop: absent from White proto. Do not add `getitemshopinfo.php`, `itempurchase.php`, item-shop seasons, Don/Katsu medal spend state, or Yellow shop UI.
+- Banacoin wallet/payment/balance: absent from White proto. Do not add `getbanacoininfo.php`, `balancecheck.php`, `banacoinpayment.php`, `banacoinerrorlog.php`, coupon, receipt, BNID, settlement, or transaction state.
+- Blue battle: absent from White proto/data. Do not add battle userdata, battle initialdata advertisements, battle playresult handling, token/NPC state, or battle AdminApi/WebUI.
+- Tokkun: absent from White proto. Do not add `tokkun_tutorial_flg`, `ary_tokkunstage_info`, Tokkun playresult classification, Banacoin-for-Tokkun compatibility, or Tokkun history tables.
+- WaiWai: absent from White proto. Do not add WaiWai tutorial/readback or special play mode behavior.
+- Gacha runtime: absent as explicit White response payloads. Do not add gacha route/runtime state from Red/Yellow generated surfaces unless White evidence appears.
+- Tournament runtime: White has `Tournamentcheck*` and `tournament_mode`; treat this as a route/probe or playresult fact until evidence proves a fuller tournament system.
+- Getreitai route: present in proto but evidence-gated. Prior AC15 work treated reitai as proto-only unless route strings/logs proved a cabinet call.
+- Later White updates: keep White 1.10+ and later behavior out unless local White 0.13 evidence proves it belongs to this target or the milestone scope changes.
+
+## Source Notes
+
+- `.planning/PROJECT.md`: active v1.4 scope, White 0.13 evidence hierarchy, observed `ST7100-1` root, zero-byte White IDB note, active requirements, out-of-scope surfaces, and late collectable-data decision.
+- `proto/white/taiko.proto`: normal White game protocol message inventory and field placement.
+- `proto/white/vsinterface.proto`: startup/verup protocol message inventory.
+- `Host/wwwroot/data/white/data/config/ST7100-1`: local White config inventory and parsed observations from `musicinfo.xml`, `musicmedleyinfo.xml`, `present.xml`, `spacialbaid.xml`, and `defmusic.bin`.
+- `Host/wwwroot/data/white/data/fumen/tuning.bin` and `Host/wwwroot/data/white/data/fumen/tuning_ext.bin`: local White fumen/tuning inputs.
+- `Host/wwwroot/data/red/*.json` and `Host/wwwroot/data/yellow/*.json`: sidecar comparison for event folder, movie, recommendation, Taikojuku, telop, Red challenge, and Yellow item-shop data.
+- `Application/Ac15/ChallengeCompe/*`: existing shared ChallengeCompe catalog, evaluator, reward, and track-definition shape.
+- `Infrastructure/GameDataCatalog/Ac15/Ac15ChallengeCompeLoader.cs` and `Infrastructure/GameDataCatalog/Ac15/Schemas/ac15-challenge-compe-catalog.schema.json`: existing collectable/Don Challenge sidecar loader contract.
+- `Adapters.GameProtocol.Red/Controllers/*` and `Adapters.GameProtocol.Yellow/Controllers/*`: route-surface comparison only; not implementation authority for White.
+- Wiki scoping note only: https://wikiwiki.jp/taiko-fumen/%E4%BD%9C%E5%93%81/%E6%96%B0AC/%E3%82%A2%E3%83%83%E3%83%97%E3%83%87%E3%83%BC%E3%83%88%E5%B1%A5%E6%AD%B4/%E3%83%9B%E3%83%AF%E3%82%A4%E3%83%88
