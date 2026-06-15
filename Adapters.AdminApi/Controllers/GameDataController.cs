@@ -1,3 +1,4 @@
+using TaikoLocalServer.Application.Catalog.Ac15;
 using TaikoLocalServer.Application.Catalog.Blue;
 using TaikoLocalServer.Application.Catalog.Yellow;
 
@@ -23,6 +24,7 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
             GameEra.Green => Ok(BuildGreenMusicDetails()),
             GameEra.Blue => Ok(BuildBlueMusicDetails()),
             GameEra.Yellow => Ok(BuildYellowMusicDetails()),
+            GameEra.Red => Ok(BuildRedMusicDetails()),
             _ => EraRoute.BadEra(era)
         };
     }
@@ -42,6 +44,7 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
             GameEra.Green => Ok(BuildGreenDanData()),
             GameEra.Blue => Ok(BuildBlueDanData()),
             GameEra.Yellow => Ok(BuildYellowDanData()),
+            GameEra.Red => Ok(BuildRedDanData()),
             _ => EraRoute.BadEra(era)
         };
     }
@@ -153,6 +156,27 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
             });
     }
 
+    private Dictionary<uint, MusicDetail> BuildRedMusicDetails()
+    {
+        return catalog.Red().RedMusicInfos.ToDictionary(
+            pair => pair.Key,
+            pair => new MusicDetail
+            {
+                SongId = pair.Value.SongNo,
+                Index = pair.Value.FileOrder,
+                SongName = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
+                SongNameEN = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
+                SongNameCN = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
+                SongNameKO = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
+                Genre = MapRedGenre(pair.Value.GenreName),
+                StarEasy = (int)pair.Value.StarEasy,
+                StarNormal = (int)pair.Value.StarNormal,
+                StarHard = (int)pair.Value.StarHard,
+                StarOni = (int)pair.Value.StarOni,
+                StarUra = (int)pair.Value.StarUra
+            });
+    }
+
     private List<DanData> BuildYellowDanData()
     {
         return catalog.Yellow().TaikojukuFileOrder.Select(entry => new DanData
@@ -166,6 +190,22 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
                 Level = ToWebUiDifficultyLevel(song.Level)
             }).ToList(),
             OdaiBorderList = BuildYellowOdaiBorders(entry)
+        }).ToList();
+    }
+
+    private List<DanData> BuildRedDanData()
+    {
+        return catalog.Red().TaikojukuFileOrder.Select(entry => new DanData
+        {
+            DanId = entry.ChallengeLevel,
+            Title = string.IsNullOrWhiteSpace(entry.Name) ? entry.UniqueId.ToString() : entry.Name,
+            VerupNo = entry.VerupNo,
+            OdaiSongList = entry.Songs.Select(song => new DanData.OdaiSong
+            {
+                SongNo = song.SongNo,
+                Level = ToWebUiDifficultyLevel(song.Level)
+            }).ToList(),
+            OdaiBorderList = BuildRedOdaiBorders(entry)
         }).ToList();
     }
 
@@ -283,6 +323,44 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
         });
     }
 
+    private static List<DanData.OdaiBorder> BuildRedOdaiBorders(Ac15TaikojukuEntry entry)
+    {
+        var red = entry.Conditions;
+        var gold = entry.ExcellentConditions;
+        var borders = new List<DanData.OdaiBorder>();
+
+        AddRedOdaiBorder(borders, DanConditionType.SoulGauge, red.SoulGauge, gold.SoulGauge);
+        AddRedOdaiBorder(borders, DanConditionType.GoodCount, red.GoodCount, gold.GoodCount);
+        AddRedOdaiBorder(borders, DanConditionType.OkCount, red.OkCount, gold.OkCount);
+        AddRedOdaiBorder(borders, DanConditionType.BadCount, red.BadCount, gold.BadCount);
+        AddRedOdaiBorder(borders, DanConditionType.ComboCount, red.ComboCount, gold.ComboCount);
+        AddRedOdaiBorder(borders, DanConditionType.DrumrollCount, red.DrumrollCount, gold.DrumrollCount);
+        AddRedOdaiBorder(borders, DanConditionType.Score, red.Score, gold.Score);
+        AddRedOdaiBorder(borders, DanConditionType.TotalHitCount, red.TotalHitCount, gold.TotalHitCount);
+
+        return borders;
+    }
+
+    private static void AddRedOdaiBorder(
+        List<DanData.OdaiBorder> borders,
+        DanConditionType type,
+        uint redBorder,
+        uint goldBorder)
+    {
+        if (redBorder == 0 && goldBorder == 0)
+        {
+            return;
+        }
+
+        borders.Add(new DanData.OdaiBorder
+        {
+            OdaiType = (uint)type,
+            BorderType = (uint)DanBorderType.All,
+            RedBorderTotal = redBorder,
+            GoldBorderTotal = goldBorder
+        });
+    }
+
     private static uint ToWebUiDifficultyLevel(uint greenCourseLevel)
         => greenCourseLevel <= 4 ? greenCourseLevel + 1 : 0;
 
@@ -291,5 +369,21 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
         return Enum.IsDefined(typeof(SongGenre), (int)categoryId)
             ? (SongGenre)categoryId
             : SongGenre.Pop;
+    }
+
+    private static SongGenre MapRedGenre(string genreName)
+    {
+        return genreName.Trim().ToUpperInvariant() switch
+        {
+            "J-POP" or "POP" => SongGenre.Pop,
+            "ANIME" => SongGenre.Anime,
+            "KIDS" or "DOYO" => SongGenre.Kids,
+            "VOCALOID" => SongGenre.Vocaloid,
+            "GAME" or "GAME MUSIC" or "GAMEMUSIC" => SongGenre.GameMusic,
+            "NAMCO" or "NAMCO ORIGINAL" or "NAMCOORIGINAL" => SongGenre.NamcoOriginal,
+            "VARIETY" => SongGenre.Variety,
+            "CLASSIC" or "CLASSICAL" => SongGenre.Classical,
+            _ => SongGenre.Pop
+        };
     }
 }

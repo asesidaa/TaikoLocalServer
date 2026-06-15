@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using TaikoLocalServer.Adapters.AdminApi.Controllers;
 using TaikoLocalServer.Application.Ac15;
+using TaikoLocalServer.Application.Catalog.Ac15;
 using TaikoLocalServer.Contracts.AdminApi.Requests;
 using TaikoLocalServer.Contracts.AdminApi.Responses;
+using TaikoLocalServer.Contracts.AdminApi.ServerData;
 using TaikoLocalServer.Contracts.AdminApi.ViewModels;
 using TaikoLocalServer.Infrastructure.Identity.Settings;
 
@@ -287,6 +289,149 @@ public sealed class RedAdminApiTests
         Assert.Equal(2, response.UserScore!.Rank);
     }
 
+    [Fact]
+    public async Task DanBestData_Red_UsesRedDanRowsOnly()
+    {
+        await using var fixture = await RedHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "don" });
+        fixture.Context.DanScoreDataRed.Add(new DanScoreDatumRed
+        {
+            Baid = 1,
+            DanId = 1,
+            IsExtra = false,
+            MedleyUniqueId = 20001,
+            ClearGrade = Ac15DanClearGrade.GoldClear,
+            SoulGaugeTotal = 100,
+            ComboCountTotal = 300,
+            DanStageScoreData =
+            [
+                new() { Baid = 1, DanId = 1, IsExtra = false, StageIndex = 0, SongNumber = 101, PlayScore = 1000, HighScore = 1000, GoodCount = 10, OkCount = 2, BadCount = 1, DrumrollCount = 4, TotalHitCount = 13, ComboCount = 12 }
+            ]
+        });
+        fixture.Context.DanScoreDataBlue.Add(new DanScoreDatumBlue
+        {
+            Baid = 1,
+            DanId = 2,
+            IsExtra = false,
+            MedleyUniqueId = 20002,
+            ClearGrade = Ac15DanClearGrade.GoldClear,
+            SoulGaugeTotal = 200,
+            ComboCountTotal = 600
+        });
+        fixture.Context.DanScoreDataGreen.Add(new DanScoreDatumGreen
+        {
+            Baid = 1,
+            DanId = 3,
+            IsExtra = false,
+            MedleyUniqueId = 20003,
+            ClearGrade = Ac15DanClearGrade.GoldClear,
+            SoulGaugeTotal = 300,
+            ComboCountTotal = 900
+        });
+        fixture.Context.DanScoreDataYellow.Add(new DanScoreDatumYellow
+        {
+            Baid = 1,
+            DanId = 4,
+            IsExtra = false,
+            MedleyUniqueId = 20004,
+            ClearGrade = Ac15DanClearGrade.GoldClear,
+            SoulGaugeTotal = 400,
+            ComboCountTotal = 1200
+        });
+        await fixture.Context.SaveChangesAsync();
+        var controller = CreateDanBestDataController(fixture.Context);
+
+        var result = await controller.GetDanBestData("Red", 1);
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var response = Assert.IsType<DanBestDataResponse>(ok.Value);
+        var row = Assert.Single(response.DanBestDataList);
+        Assert.Equal(1u, row.DanId);
+        Assert.Equal(DanClearState.GoldNormalClear, row.ClearState);
+        Assert.Equal(100u, row.SoulGaugeTotal);
+        var stage = Assert.Single(row.DanBestStageDataList);
+        Assert.Equal(101u, stage.SongNumber);
+        Assert.Equal(1000u, stage.PlayScore);
+    }
+
+    [Fact]
+    public async Task GameData_Red_ReturnsRedMusicAndDanCatalogData()
+    {
+        var redCatalog = new RedHandlerFixture.TestRedCatalog(
+            musicInfoFileOrder:
+            [
+                new Ac15MusicInfoEntry
+                {
+                    SongNo = 201,
+                    MusicId = "red_song",
+                    Title = "Red Song",
+                    GenreName = "anime",
+                    FileOrder = 9,
+                    StarEasy = 2,
+                    StarNormal = 3,
+                    StarHard = 4,
+                    StarOni = 5,
+                    StarUra = 6
+                }
+            ],
+            taikojukuFileOrder:
+            [
+                new Ac15TaikojukuEntry
+                {
+                    UniqueId = 20001,
+                    ChallengeLevel = 1,
+                    Name = "Red Dan",
+                    VerupNo = 8100,
+                    Songs = [new Ac15TaikojukuSong { SongNo = 201, Level = 1 }],
+                    Conditions = new Ac15TaikojukuConditions { SoulGauge = 80 },
+                    ExcellentConditions = new Ac15TaikojukuConditions { SoulGauge = 100 }
+                }
+            ]);
+        await using var fixture = await RedHandlerFixture.CreateAsync(redCatalog);
+        var controller = CreateGameDataController(fixture.Catalog);
+
+        var musicResult = controller.GetMusicDetails("Red");
+        var danResult = controller.GetDanData("Red");
+
+        var musicOk = Assert.IsType<OkObjectResult>(musicResult);
+        var musicRows = Assert.IsAssignableFrom<Dictionary<uint, MusicDetail>>(musicOk.Value);
+        var music = Assert.Single(musicRows).Value;
+        Assert.Equal(201u, music.SongId);
+        Assert.Equal("Red Song", music.SongName);
+        Assert.Equal(SongGenre.Anime, music.Genre);
+        Assert.Equal(5, music.StarOni);
+
+        var danOk = Assert.IsType<OkObjectResult>(danResult);
+        var danRows = Assert.IsAssignableFrom<List<DanData>>(danOk.Value);
+        var dan = Assert.Single(danRows);
+        Assert.Equal(1u, dan.DanId);
+        Assert.Equal("Red Dan", dan.Title);
+        Assert.Equal(8100u, dan.VerupNo);
+        Assert.Equal(201u, Assert.Single(dan.OdaiSongList).SongNo);
+        var border = Assert.Single(dan.OdaiBorderList);
+        Assert.Equal((uint)DanConditionType.SoulGauge, border.OdaiType);
+        Assert.Equal(80u, border.RedBorderTotal);
+        Assert.Equal(100u, border.GoldBorderTotal);
+    }
+
+    [Fact]
+    public async Task CustomizationCatalog_Red_ReturnsRedCatalogSlices()
+    {
+        await using var fixture = await RedHandlerFixture.CreateAsync();
+        var controller = CreateCustomizationCatalogController(fixture.Catalog);
+
+        var costumes = Assert.IsType<OkObjectResult>(controller.GetCostumes("Red"));
+        var titles = Assert.IsType<OkObjectResult>(controller.GetTitles("Red"));
+        var neiros = Assert.IsType<OkObjectResult>(controller.GetNeiros("Red"));
+
+        var costumeRows = Assert.IsAssignableFrom<IReadOnlyList<Costume>>(costumes.Value);
+        var titleRows = Assert.IsAssignableFrom<IReadOnlyDictionary<uint, Title>>(titles.Value);
+        var neiroRows = Assert.IsAssignableFrom<IReadOnlyDictionary<uint, Neiro>>(neiros.Value);
+        Assert.Contains(costumeRows, row => row.CostumeType == "kigurumi");
+        Assert.Equal("Red Title", titleRows[10].TitleName);
+        Assert.Equal("Tone 4", neiroRows[4].NeiroName);
+    }
+
     private static PlayDataController CreatePlayDataController(ITaikoDbContext context)
         => new(context)
         {
@@ -307,6 +452,24 @@ public sealed class RedAdminApiTests
 
     private static SongLeaderboardController CreateSongLeaderboardController(ITaikoDbContext context)
         => new(context)
+        {
+            ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
+        };
+
+    private static DanBestDataController CreateDanBestDataController(ITaikoDbContext context)
+        => new(context)
+        {
+            ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
+        };
+
+    private static GameDataController CreateGameDataController(IGameDataCatalog catalog)
+        => new(catalog)
+        {
+            ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
+        };
+
+    private static CustomizationCatalogController CreateCustomizationCatalogController(IGameDataCatalog catalog)
+        => new(catalog)
         {
             ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
         };
