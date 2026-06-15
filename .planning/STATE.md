@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Phase Summary
 status: executing
-stopped_at: Completed 22-01-PLAN.md
-last_updated: "2026-06-15T05:38:32.154Z"
+stopped_at: Completed 22-02-PLAN.md
+last_updated: "2026-06-15T05:58:13.356Z"
 last_activity: 2026-06-15 -- Phase 22 execution started
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 29
-  completed_plans: 24
+  completed_plans: 25
   percent: 67
 ---
 
@@ -26,7 +26,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-13)
 ## Current Position
 
 Phase: 22 (red-adminapi-webui-and-runtime-closeout) — EXECUTING
-Plan: 2 of 4
+Plan: 3 of 4
 Status: Ready to execute
 Last activity: 2026-06-15 -- Phase 22 execution started
 
@@ -123,6 +123,7 @@ Last activity: 2026-06-15 -- Phase 22 execution started
 | Phase 21 P04 | 13 min | 2 tasks | 6 files |
 | Phase 21 P05 | 14 min | 2 tasks | 6 files |
 | Phase 22 P1 | 13 min | 3 tasks | 15 files |
+| Phase 22 P2 | 11 min | 3 tasks | 15 files |
 
 ## Accumulated Context
 
@@ -233,6 +234,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 22]: Red user settings reuse Ac15UserSettingsService without exposing IsChallengeCompe. — UserSaveDataRed.IsChallengeCompe is not part of the AdminApi UserSetting contract and remains outside profile editing.
 - [Phase 22]: Red music details map Ac15MusicInfoEntry.GenreName to WebUI SongGenre. — The Red shared catalog model lacks the numeric category id field used by Green, Blue, and Yellow catalog entries.
 - [Phase 22]: Red AdminApi parity is limited to normal implemented surfaces. — Plan 22-01 intentionally excludes Red item-shop, battle, WaiWai, Banacoin, medal/shop-season, payment, coupon, wallet, and ChallengeCompe opt-in editing surfaces.
+- [Phase 22]: Don Challenge AdminApi uses dedicated JSON contracts and omits raw facts, opt-in state, cabinet bucket names, and compatibility diagnostics. — Plan 22-02 implements D-07 through D-15 while preserving cabinet challengecompe.php as a separate compatibility boundary.
 
 ### Pending Todos
 
@@ -257,8 +259,8 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-15T05:37:40.622Z
-Stopped at: Completed 22-01-PLAN.md
+Last session: 2026-06-15T05:57:32.721Z
+Stopped at: Completed 22-02-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
