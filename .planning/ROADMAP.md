@@ -31,7 +31,7 @@ Active milestone: **v1.3 Red AC15 Support**
 | 20 | Red Runtime Capability Binding and Simple Compatibility | 4/4 | Complete | 2026-06-13 |
 | 20.1 | AC15 Capability DTO and Mapper Boundary Refactor | 9/9 | Complete    | 2026-06-14 |
 | 21 | Older-AC15 ChallengeCompe Capability and Red Binding | 5/5 | Complete   | 2026-06-14 |
-| 22 | Red AdminApi/WebUI and Runtime Closeout | 2/4 | In Progress|  |
+| 22 | Red AdminApi/WebUI and Runtime Closeout | 3/4 | In Progress|  |
 
 **Coverage:** 17/17 v1.3 requirements mapped exactly once.
 

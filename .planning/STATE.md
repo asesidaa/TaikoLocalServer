@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Phase Summary
 status: executing
-stopped_at: Completed 22-02-PLAN.md
-last_updated: "2026-06-15T05:58:13.356Z"
+stopped_at: Completed 22-03-PLAN.md
+last_updated: "2026-06-15T06:20:32.424Z"
 last_activity: 2026-06-15 -- Phase 22 execution started
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 29
-  completed_plans: 25
-  percent: 67
+  completed_plans: 26
+  percent: 90
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-13)
 ## Current Position
 
 Phase: 22 (red-adminapi-webui-and-runtime-closeout) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 Status: Ready to execute
 Last activity: 2026-06-15 -- Phase 22 execution started
 
@@ -124,6 +124,7 @@ Last activity: 2026-06-15 -- Phase 22 execution started
 | Phase 21 P05 | 14 min | 2 tasks | 6 files |
 | Phase 22 P1 | 13 min | 3 tasks | 15 files |
 | Phase 22 P2 | 11 min | 3 tasks | 15 files |
+| Phase 22 P3 | 15 min | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -235,6 +236,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 22]: Red music details map Ac15MusicInfoEntry.GenreName to WebUI SongGenre. — The Red shared catalog model lacks the numeric category id field used by Green, Blue, and Yellow catalog entries.
 - [Phase 22]: Red AdminApi parity is limited to normal implemented surfaces. — Plan 22-01 intentionally excludes Red item-shop, battle, WaiWai, Banacoin, medal/shop-season, payment, coupon, wallet, and ChallengeCompe opt-in editing surfaces.
 - [Phase 22]: Don Challenge AdminApi uses dedicated JSON contracts and omits raw facts, opt-in state, cabinet bucket names, and compatibility diagnostics. — Plan 22-02 implements D-07 through D-15 while preserving cabinet challengecompe.php as a separate compatibility boundary.
+- [Phase 22]: Red WebUI routing preserves Red AdminApi and user routes. — Plan 22-03 adds Red to WebUiEra supported/known eras, AC15 classification, and focused route tests.
+- [Phase 22]: Don Challenge WebUI availability is capability-gated by AdminApi availability. — Navigation shows the Play Data link only for the Red older-AC15 ChallengeCompe binding when `api/{era}/DonChallenge/availability` reports active.
+- [Phase 22]: Direct unsupported Don Challenge routes render unavailable UI without Nijiiro fallback. — The page handles unsupported routes locally and consumes only dedicated Don Challenge contracts.
 
 ### Pending Todos
 
@@ -259,11 +263,11 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-15T05:57:32.721Z
-Stopped at: Completed 22-02-PLAN.md
+Last session: 2026-06-15T06:20:06.487Z
+Stopped at: Completed 22-03-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
 
-- Execute Phase 22 wave 1 plans: `22-01-PLAN.md` and `22-02-PLAN.md`.
-- Preserve the dirty Red ChallengeCompe WIP context noted in `22-PATTERNS.md`.
+- Execute Phase 22 Plan 22-04 runtime closeout.
+- Preserve the dirty `Host/wwwroot/data/red/red_telop_data.json` WIP unless a later plan proves it belongs.
