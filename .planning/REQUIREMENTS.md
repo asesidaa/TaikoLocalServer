@@ -37,8 +37,8 @@
 
 ### Admin, Verification, And Contract
 
-- [ ] **RVER-01**: AdminApi and WebUI expose only implemented Red-owned readback surfaces and do not read or write another era's gameplay state.
-- [ ] **RVER-02**: Automated tests cover Red observable route, handler, catalog, persistence, mapper/classifier, and no-cross-era/no-cross-mode behavior.
+- [x] **RVER-01**: AdminApi and WebUI expose only implemented Red-owned readback surfaces and do not read or write another era's gameplay state.
+- [x] **RVER-02**: Automated tests cover Red observable route, handler, catalog, persistence, mapper/classifier, and no-cross-era/no-cross-mode behavior.
 - [ ] **RVER-03**: Red support closes only after full automated verification, a temp-output Host build, and cabinet/RPCS3 smoke evidence for implemented normal, Tokkun tutorial, simple compatibility, and ChallengeCompe flows.
 
 ## Future Requirements
@@ -84,8 +84,8 @@ Roadmap phase mapping for v1.3 Red AC15 Support.
 | RCOMP-02 | Phase 21 | Complete |
 | RCHAL-01 | Phase 21 | Complete |
 | RCHAL-02 | Phase 21 | Complete |
-| RVER-01 | Phase 22 | Pending |
-| RVER-02 | Phase 22 | Pending |
+| RVER-01 | Phase 22 | Complete |
+| RVER-02 | Phase 22 | Complete |
 | RVER-03 | Phase 22 | Pending |
 | OLDAC15-01 | Future milestone | Deferred |
 | RCHAL-03 | Future milestone | Deferred |

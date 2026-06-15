@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Phase Summary
 status: executing
-stopped_at: Phase 22 planned
-last_updated: "2026-06-14T21:06:43.935Z"
-last_activity: 2026-06-15 -- Phase 22 planned with four execution plans
+stopped_at: Completed 22-01-PLAN.md
+last_updated: "2026-06-15T05:38:32.154Z"
+last_activity: 2026-06-15 -- Phase 22 execution started
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 29
-  completed_plans: 23
+  completed_plans: 24
   percent: 67
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-13)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Phase 22 - red-adminapi-webui-and-runtime-closeout
+**Current focus:** Phase 22 — red-adminapi-webui-and-runtime-closeout
 
 ## Current Position
 
-Phase: 22 (red-adminapi-webui-and-runtime-closeout)
-Plan: 0 of 4
+Phase: 22 (red-adminapi-webui-and-runtime-closeout) — EXECUTING
+Plan: 2 of 4
 Status: Ready to execute
-Last activity: 2026-06-15 -- Phase 22 planned with four execution plans
+Last activity: 2026-06-15 -- Phase 22 execution started
 
 ## Performance Metrics
 
@@ -122,6 +122,7 @@ Last activity: 2026-06-15 -- Phase 22 planned with four execution plans
 | Phase 21 P03 | 16 min | 2 tasks | 5 files |
 | Phase 21 P04 | 13 min | 2 tasks | 6 files |
 | Phase 21 P05 | 14 min | 2 tasks | 6 files |
+| Phase 22 P1 | 13 min | 3 tasks | 15 files |
 
 ## Accumulated Context
 
@@ -229,6 +230,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 21]: Phase 21 readback populates only ary_challenge_stat from active saved progress; user and BNG buckets remain empty. — D-13 and D-14 keep user-created and BNG/official competition behavior evidence-gated.
 - [Phase 21]: Red wire projection is Mapperly-generated and mechanical, with business behavior kept in the application query. — AGENTS.md and D-23/D-26 require transport-agnostic behavior in Application and Red-owned wire mapping in the adapter.
 - [Phase 21]: Final verification passed for Red ChallengeCompe focused tests, Red regression, full test suite, and temp-output Host build. — Phase 21 closes with stateful Red DonChare support limited to opted-in users, Red-owned sidecar/state, non-Tokkun playresults, active `ary_challenge_id` personal-task facts, configured reward grants/locks, and read-only `ary_challenge_stat` readback.
+- [Phase 22]: Red user settings reuse Ac15UserSettingsService without exposing IsChallengeCompe. — UserSaveDataRed.IsChallengeCompe is not part of the AdminApi UserSetting contract and remains outside profile editing.
+- [Phase 22]: Red music details map Ac15MusicInfoEntry.GenreName to WebUI SongGenre. — The Red shared catalog model lacks the numeric category id field used by Green, Blue, and Yellow catalog entries.
+- [Phase 22]: Red AdminApi parity is limited to normal implemented surfaces. — Plan 22-01 intentionally excludes Red item-shop, battle, WaiWai, Banacoin, medal/shop-season, payment, coupon, wallet, and ChallengeCompe opt-in editing surfaces.
 
 ### Pending Todos
 
@@ -253,9 +257,9 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-14T21:06:43.935Z
-Stopped at: Phase 22 planned
-Resume file: .planning/phases/22-red-adminapi-webui-and-runtime-closeout/22-01-PLAN.md
+Last session: 2026-06-15T05:37:40.622Z
+Stopped at: Completed 22-01-PLAN.md
+Resume file: None
 
 ## Operator Next Steps
 
