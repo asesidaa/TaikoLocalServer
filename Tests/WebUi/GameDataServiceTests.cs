@@ -171,6 +171,14 @@ public sealed class GameDataServiceTests
         Assert.Equal("api/Red/PlayData/123", WebUiEra.Api("Red", "PlayData/123"));
     }
 
+    [Fact]
+    public void OlderAc15ChallengeCompeCapability_IsRedOnly()
+    {
+        Assert.True(WebUiEra.SupportsOlderAc15ChallengeCompe("Red"));
+        Assert.False(WebUiEra.SupportsOlderAc15ChallengeCompe("Blue"));
+        Assert.False(WebUiEra.SupportsOlderAc15ChallengeCompe("Nijiiro"));
+    }
+
     private sealed class RecordingHandler : HttpMessageHandler
     {
         public List<string> RequestPaths { get; } = [];

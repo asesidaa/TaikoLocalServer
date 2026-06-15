@@ -1,0 +1,237 @@
+@using TaikoWebUI.Utilities
+
+@inject DonChallengeService DonChallengeService
+@inject IGameDataService GameDataService
+@inject AuthService AuthService
+@inject NavigationManager NavigationManager
+@inject BreadcrumbsStateContainer BreadcrumbsStateContainer
+
+@page "/Users/{baid:int}/DonChallenge"
+@page "/Users/{baid:int}/{era}/DonChallenge"
+@attribute [Authorize]
+
+@if (IsUnauthorized)
+{
+    if (!AuthService.IsLoggedIn)
+    {
+        NavigationManager.NavigateTo("/Login");
+    }
+    else
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}
+else
+{
+    <MudGrid Class="my-4 pb-10 don-challenge-page">
+        <MudItem xs="12">
+            @if (isLoading)
+            {
+                <MudContainer Style="display:flex;margin:50px 0;align-items:center;justify-content:center;">
+                    <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+                </MudContainer>
+            }
+            else if (isError)
+            {
+                <MudText Typo="Typo.h5" Class="mb-4">Don Challenge</MudText>
+                <MudAlert Severity="Severity.Error" Variant="Variant.Outlined" Class="mb-4">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                        <MudText Typo="Typo.body2">Unable to load Don Challenge.</MudText>
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   Size="Size.Small"
+                                   StartIcon="@Icons.Material.Filled.Refresh"
+                                   OnClick="LoadAsync">
+                            Retry
+                        </MudButton>
+                    </MudStack>
+                </MudAlert>
+            }
+            else if (response is { IsAvailable: false })
+            {
+                <MudText Typo="Typo.h5" Class="mb-4">Don Challenge</MudText>
+                <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mb-4">
+                    <MudText Typo="Typo.h6" Class="mb-1">@UnavailableHeading</MudText>
+                    <MudText Typo="Typo.body2">@UnavailableBody</MudText>
+                </MudAlert>
+            }
+            else if (response is not null)
+            {
+                <MudText Typo="Typo.h5" Class="mb-4">Don Challenge</MudText>
+
+                <MudPaper Elevation="0" Outlined="true" Class="pa-4 mb-4">
+                    <MudGrid Spacing="2">
+                        <MudItem xs="12" md="4">
+                            <MudStack Spacing="1">
+                                <MudText Typo="Typo.caption">Active bundle</MudText>
+                                <MudText Typo="Typo.body1" Class="don-challenge-wrap" Style="font-weight:bold;">@(response.BundleId ?? "-")</MudText>
+                                <MudText Typo="Typo.caption">@FormatWindow(response.StartsAt, response.EndsAt)</MudText>
+                                <MudChip T="string" Size="Size.Small" Color="Color.Success" Icon="@Icons.Material.Filled.CheckCircle">Active</MudChip>
+                            </MudStack>
+                        </MudItem>
+                        <MudItem xs="12" md="4">
+                            <MudStack Spacing="1">
+                                <MudText Typo="Typo.caption">Tasks</MudText>
+                                <MudText Typo="Typo.body1" Style="font-weight:bold;">@response.CompletedTaskCount / @response.PersonalTaskCount</MudText>
+                                <MudProgressLinear Rounded="true"
+                                                   Size="Size.Medium"
+                                                   Color="Color.Primary"
+                                                   Max="@Math.Max(response.PersonalTaskCount, 1u)"
+                                                   Value="@response.CompletedTaskCount">
+                                    <MudText Typo="Typo.caption">@response.CompletedTaskCount / @response.PersonalTaskCount</MudText>
+                                </MudProgressLinear>
+                            </MudStack>
+                        </MudItem>
+                        <MudItem xs="12" md="4">
+                            <MudStack Spacing="1">
+                                <MudText Typo="Typo.caption">Rewards</MudText>
+                                <MudText Typo="Typo.body1" Style="font-weight:bold;">@EarnedRewardCount / @ConfiguredRewardCount</MudText>
+                                <MudChip T="string" Size="Size.Small" Color="Color.Info" Icon="@Icons.Material.Filled.CardGiftcard">Configured</MudChip>
+                            </MudStack>
+                        </MudItem>
+                    </MudGrid>
+                </MudPaper>
+
+                <MudText Typo="Typo.h5" Class="mb-4">Tasks</MudText>
+                @if (response.Tasks.Count == 0)
+                {
+                    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">No Data</MudAlert>
+                }
+                else
+                {
+                    <MudGrid Spacing="2">
+                        @foreach (var task in OrderedTasks)
+                        {
+                            <MudItem xs="12" sm="6" lg="4">
+                                <MudCard Outlined="true" Elevation="0" Class="don-challenge-card">
+                                    <MudCardContent>
+                                        <MudStack Spacing="2">
+                                            <MudStack Row="true" AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Spacing="2">
+                                                <MudStack Spacing="1" Class="don-challenge-wrap">
+                                                    <MudText Typo="Typo.caption">Slot @task.Slot</MudText>
+                                                    <MudText Typo="Typo.subtitle2" Class="don-challenge-wrap" Style="font-weight:bold;">@task.Name</MudText>
+                                                    <MudText Typo="Typo.body2" Class="don-challenge-wrap">@task.RuleLabel</MudText>
+                                                </MudStack>
+                                                <MudChip T="string" Size="Size.Small" Color="@GetTaskColor(task)" Icon="@GetTaskIcon(task)">
+                                                    @GetTaskStatus(task)
+                                                </MudChip>
+                                            </MudStack>
+
+                                            <MudStack Spacing="1">
+                                                <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="2">
+                                                    <MudText Typo="Typo.caption">Progress</MudText>
+                                                    <MudText Typo="Typo.caption">@GetProgressText(task)</MudText>
+                                                </MudStack>
+                                                <MudProgressLinear Rounded="true"
+                                                                   Size="Size.Medium"
+                                                                   Color="@GetTaskColor(task)"
+                                                                   Max="@GetProgressMax(task)"
+                                                                   Value="@GetProgressValue(task)">
+                                                    <MudText Typo="Typo.caption">@GetProgressText(task)</MudText>
+                                                </MudProgressLinear>
+                                            </MudStack>
+
+                                            @if (task.UpdatedAt is not null || task.CompletedAt is not null)
+                                            {
+                                                <MudText Typo="Typo.caption">@GetTaskTimestamp(task)</MudText>
+                                            }
+
+                                            <MudDivider />
+                                            <MudText Typo="Typo.subtitle2">Songs</MudText>
+                                            @if (task.Tracks.Count == 0)
+                                            {
+                                                <MudText Typo="Typo.caption">No configured songs</MudText>
+                                            }
+                                            else
+                                            {
+                                                <MudStack Spacing="1">
+                                                    @foreach (var track in task.Tracks.OrderBy(track => track.TrackNumber))
+                                                    {
+                                                        var music = GetMusic(track.SongNumber);
+                                                        <div class="don-challenge-row">
+                                                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                                                <MudChip T="string" Size="Size.Small" Color="Color.Info">@GetDifficultyText(track.Level)</MudChip>
+                                                                <MudStack Spacing="0" Class="don-challenge-row-text">
+                                                                    @if (music is not null)
+                                                                    {
+                                                                        <a href="@(WebUiEra.UserRoute(Baid, CurrentEra, $"Songs/{track.SongNumber}"))">
+                                                                            <MudText Typo="Typo.body2" Class="don-challenge-wrap" Style="font-weight:bold;">@GetMusicName(music)</MudText>
+                                                                            <MudText Typo="Typo.caption" Class="don-challenge-wrap">@GetMusicArtist(music)</MudText>
+                                                                        </a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <MudText Typo="Typo.body2" Class="don-challenge-wrap" Style="font-weight:bold;">#@track.SongNumber</MudText>
+                                                                        <MudText Typo="Typo.caption">Song data unavailable</MudText>
+                                                                    }
+                                                                </MudStack>
+                                                            </MudStack>
+                                                        </div>
+                                                    }
+                                                </MudStack>
+                                            }
+
+                                            @{
+                                                var taskRewards = GetRewardsForTask(task).ToList();
+                                            }
+                                            @if (taskRewards.Count > 0)
+                                            {
+                                                <MudDivider />
+                                                <MudText Typo="Typo.subtitle2">Rewards</MudText>
+                                                <MudStack Spacing="1">
+                                                    @foreach (var reward in taskRewards)
+                                                    {
+                                                        <div class="don-challenge-row">
+                                                            <MudStack Row="true" AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Spacing="2">
+                                                                <MudStack Spacing="0" Class="don-challenge-row-text">
+                                                                    <MudText Typo="Typo.body2" Class="don-challenge-wrap">@GetRewardLabel(reward)</MudText>
+                                                                    <MudText Typo="Typo.caption">Requires @reward.RequiredCompletedTasks completed tasks</MudText>
+                                                                </MudStack>
+                                                                <MudChip T="string" Size="Size.Small" Color="@GetRewardColor(reward)" Icon="@GetRewardIcon(reward)">
+                                                                    @reward.Status
+                                                                </MudChip>
+                                                            </MudStack>
+                                                        </div>
+                                                    }
+                                                </MudStack>
+                                            }
+                                        </MudStack>
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudItem>
+                        }
+                    </MudGrid>
+                }
+
+                <MudText Typo="Typo.h5" Class="mt-6 mb-4">Rewards</MudText>
+                @if (response.Rewards.Count == 0)
+                {
+                    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">No Data</MudAlert>
+                }
+                else
+                {
+                    <MudPaper Elevation="0" Outlined="true">
+                        <MudTable Items="@OrderedRewards" Dense="true" Hover="false" Elevation="0" Breakpoint="Breakpoint.Sm">
+                            <HeaderContent>
+                                <MudTh>Required tasks</MudTh>
+                                <MudTh>Reward</MudTh>
+                                <MudTh>Status</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd DataLabel="Required tasks">@context.RequiredCompletedTasks</MudTd>
+                                <MudTd DataLabel="Reward">
+                                    <MudText Typo="Typo.body2" Class="don-challenge-wrap">@GetRewardLabel(context)</MudText>
+                                </MudTd>
+                                <MudTd DataLabel="Status">
+                                    <MudChip T="string" Size="Size.Small" Color="@GetRewardColor(context)" Icon="@GetRewardIcon(context)">
+                                        @context.Status
+                                    </MudChip>
+                                </MudTd>
+                            </RowTemplate>
+                        </MudTable>
+                    </MudPaper>
+                }
+            }
+        </MudItem>
+    </MudGrid>
+}

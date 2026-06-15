@@ -28,6 +28,11 @@ public static class WebUiEra
             || string.Equals(era, Red, StringComparison.OrdinalIgnoreCase);
     }
 
+    public static bool SupportsOlderAc15ChallengeCompe(string? era)
+    {
+        return string.Equals(era, Red, StringComparison.OrdinalIgnoreCase);
+    }
+
     public static string Normalize(string? era)
     {
         return TryNormalize(era, out var normalized) ? normalized : Default;

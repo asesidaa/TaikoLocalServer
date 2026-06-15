@@ -2,6 +2,7 @@
 @inject AuthService AuthService
 @inject NavigationManager NavigationManager
 @inject IDialogService DialogService
+@inject DonChallengeService DonChallengeService
 
 @using TaikoWebUI.Pages.Dialogs;
 @using TaikoWebUI.Utilities
@@ -25,7 +26,7 @@
         if (AuthService.IsLoggedIn)
 		{
             <MudDivider />
-            <MudSelect T="string" @bind-Value="selectedEra" Dense="true" Margin="Margin.Dense" Class="px-4" Label="Era">
+            <MudSelect T="string" Value="@selectedEra" ValueChanged="OnSelectedEraChanged" Dense="true" Margin="Margin.Dense" Class="px-4" Label="Era">
                 @foreach (var era in AuthService.EnabledEras)
                 {
                     <MudSelectItem Value="@era">@era</MudSelectItem>
@@ -37,6 +38,10 @@
 			    <MudNavLink Href="@(WebUiEra.UserRoute((uint)baid, selectedEra, "HighScores"))" Match="NavLinkMatch.All">@Localizer["High Scores"]</MudNavLink>
 	            <MudNavLink Href="@(WebUiEra.UserRoute((uint)baid, selectedEra, "PlayHistory"))" Match="NavLinkMatch.All">@Localizer["Play History"]</MudNavLink>
 			    <MudNavLink Href="@(WebUiEra.UserRoute((uint)baid, selectedEra, "DaniDojo"))" Match="NavLinkMatch.All">@Localizer["Dani Dojo"]</MudNavLink>
+                @if (showDonChallengeLink)
+                {
+                    <MudNavLink Href="@(WebUiEra.UserRoute((uint)baid, selectedEra, "DonChallenge"))" Match="NavLinkMatch.All">Don Challenge</MudNavLink>
+                }
             </MudNavGroup>
             <MudNavGroup Title=@Localizer["Settings"] Expanded="settingsOpen" Icon="@Icons.Material.Filled.Settings">
                 <MudNavLink OnClick="ShowQrCode">@Localizer["Show QR Code"]</MudNavLink>
@@ -56,17 +61,29 @@
 @code {
     private bool settingsOpen = false;
     private string selectedEra = WebUiEra.Default;
+    private bool showDonChallengeLink;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         SyncSelectedEra();
         AuthService.LoginStatusChanged += HandleAuthStatusChanged;
+        await RefreshDonChallengeAvailabilityAsync();
     }
 
     private void HandleAuthStatusChanged(object? sender, EventArgs e)
     {
-        SyncSelectedEra();
-        StateHasChanged();
+        _ = InvokeAsync(async () =>
+        {
+            SyncSelectedEra();
+            await RefreshDonChallengeAvailabilityAsync();
+            StateHasChanged();
+        });
+    }
+
+    private async Task OnSelectedEraChanged(string era)
+    {
+        selectedEra = era;
+        await RefreshDonChallengeAvailabilityAsync();
     }
 
     private void SyncSelectedEra()
@@ -74,6 +91,26 @@
         if (!AuthService.EnabledEras.Contains(selectedEra, StringComparer.OrdinalIgnoreCase))
         {
             selectedEra = AuthService.DefaultEra;
+        }
+    }
+
+    private async Task RefreshDonChallengeAvailabilityAsync()
+    {
+        showDonChallengeLink = false;
+
+        if (!AuthService.IsLoggedIn || !WebUiEra.SupportsOlderAc15ChallengeCompe(selectedEra))
+        {
+            return;
+        }
+
+        try
+        {
+            var availability = await DonChallengeService.GetAvailabilityAsync(selectedEra);
+            showDonChallengeLink = availability.IsAvailable;
+        }
+        catch
+        {
+            showDonChallengeLink = false;
         }
     }
 
