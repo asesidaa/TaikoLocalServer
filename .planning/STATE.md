@@ -4,8 +4,8 @@ milestone: v1.3
 milestone_name: Phase Summary
 status: human_needed
 stopped_at: Phase 22 Plan 22-04 awaiting cabinet/RPCS3 smoke evidence
-last_updated: "2026-06-15T15:23:14.263Z"
-last_activity: 2026-06-15 -- Phase 22 automated closeout evidence recorded; cabinet/RPCS3 smoke pending
+last_updated: "2026-06-15T15:59:48.367Z"
+last_activity: 2026-06-15 -- Quick 260615-wt6 completed; AC15 selfbest display and favorite limit fixes committed
 progress:
   total_phases: 6
   completed_phases: 4
@@ -28,7 +28,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-13)
 Phase: 22 (red-adminapi-webui-and-runtime-closeout) — HUMAN VERIFICATION
 Plan: 4 of 4
 Status: Automated verification passed; awaiting cabinet/RPCS3 smoke evidence
-Last activity: 2026-06-15 -- Phase 22 automated closeout evidence recorded; cabinet/RPCS3 smoke pending
+Last activity: 2026-06-15 -- Quick 260615-wt6 completed; Phase 22 cabinet/RPCS3 smoke remains pending
 
 ## Performance Metrics
 
@@ -252,6 +252,7 @@ None recorded.
 
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
+| 260615-wt6 | Fix AC15 selfbest Ura Oni scores, userdata score display type, and era favorite limits | 2026-06-15 | cd824405 | [260615-wt6-now-let-s-fix-several-issues-1-currently](./quick/260615-wt6-now-let-s-fix-several-issues-1-currently/) |
 | 260613-ny9 | Support older Red `/v08r00` compatibility with old BAID wire shape | 2026-06-13 | d7032433 | [260613-ny9-before-we-continue-to-next-phase-support](./quick/260613-ny9-before-we-continue-to-next-phase-support/) |
 | 260609-7gk | Regenerate Yellow final wire support, add final-version field handling, and move Yellow game routes to `/v09r02` | 2026-06-08 | 39e49294 | [260609-7gk-now-let-s-execute-a-quick-task-we-have-c](./quick/260609-7gk-now-let-s-execute-a-quick-task-we-have-c/) |
 
@@ -263,7 +264,7 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-15T15:23:14.263Z
+Last session: 2026-06-15T15:59:48.367Z
 Stopped at: Phase 22 Plan 22-04 human verification gate
 Resume file: None
 
