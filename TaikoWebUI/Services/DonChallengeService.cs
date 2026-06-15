@@ -7,10 +7,22 @@ namespace TaikoWebUI.Services;
 
 public sealed class DonChallengeService(HttpClient client)
 {
+    private readonly Dictionary<string, DonChallengeAvailabilityResponse> availabilityCache = new(StringComparer.OrdinalIgnoreCase);
+
     public Task<DonChallengeAvailabilityResponse> GetAvailabilityAsync(string? era)
     {
         var normalized = WebUiEra.Normalize(era);
-        return GetJsonOrUnavailableAsync(
+        if (availabilityCache.TryGetValue(normalized, out var cached))
+        {
+            return Task.FromResult(cached);
+        }
+
+        return GetAvailabilityCoreAsync(normalized);
+    }
+
+    private async Task<DonChallengeAvailabilityResponse> GetAvailabilityCoreAsync(string normalized)
+    {
+        var response = await GetJsonOrUnavailableAsync(
             WebUiEra.Api(normalized, "DonChallenge/availability"),
             () => new DonChallengeAvailabilityResponse
             {
@@ -18,6 +30,9 @@ public sealed class DonChallengeService(HttpClient client)
                 IsAvailable = false,
                 Message = BuildUnavailableMessage(normalized)
             });
+
+        availabilityCache[normalized] = response;
+        return response;
     }
 
     public Task<DonChallengeResponse> GetDonChallengeAsync(string? era, int baid)

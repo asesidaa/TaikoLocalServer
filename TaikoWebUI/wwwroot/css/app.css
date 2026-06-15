@@ -289,25 +289,44 @@
 
 .don-challenge-page {
     min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    padding-right: 16px;
+}
+
+.don-challenge-page .mud-grid {
+    width: 100%;
+    margin: 0;
+}
+
+.don-challenge-page .mud-grid-item {
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .don-challenge-card {
     height: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .don-challenge-card .mud-card-content {
     height: 100%;
+    min-width: 0;
 }
 
 .don-challenge-wrap {
     min-width: 0;
     overflow-wrap: anywhere;
-    word-break: normal;
+    word-break: break-word;
     white-space: normal;
 }
 
 .don-challenge-row {
     min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
     padding: 8px;
     border: 1px solid var(--mud-palette-lines-default);
     border-radius: 4px;
@@ -317,6 +336,50 @@
 .don-challenge-row-text {
     min-width: 0;
     flex: 1 1 auto;
+}
+
+.don-challenge-summary {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.don-challenge-task-header {
+    min-width: 0;
+}
+
+.don-challenge-task-header > .mud-stack:first-child {
+    flex: 1 1 160px;
+}
+
+.don-challenge-chip {
+    max-width: 100%;
+}
+
+@media only screen and (max-width: 599px) {
+    .don-challenge-page .mud-grid-item {
+        flex-basis: calc(100vw - 64px) !important;
+        max-width: calc(100vw - 64px) !important;
+    }
+
+    .don-challenge-summary,
+    .don-challenge-card {
+        width: calc(100vw - 64px) !important;
+        max-width: calc(100vw - 64px) !important;
+    }
+
+    .don-challenge-task-header {
+        flex-wrap: wrap;
+    }
+
+    .don-challenge-task-header > .mud-stack:first-child {
+        flex-basis: 100%;
+        max-width: 100%;
+    }
+
+    .don-challenge-summary .don-challenge-chip {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 .mud-progress-linear.bar-pass-gold .mud-progress-linear-bars .mud-progress-linear-bar {

@@ -72,6 +72,27 @@ public sealed class DonChallengeServiceTests
     }
 
     [Fact]
+    public async Task GetAvailabilityAsync_CachesPerEra()
+    {
+        var handler = new RecordingHandler(path => path switch
+        {
+            "api/Red/DonChallenge/availability" => Json("""{"era":"Red","isAvailable":true,"activeBundleId":"red-1"}"""),
+            _ => NotFound()
+        });
+        using var client = new HttpClient(handler)
+        {
+            BaseAddress = new Uri("http://localhost/")
+        };
+        var service = new DonChallengeService(client);
+
+        var first = await service.GetAvailabilityAsync("Red");
+        var second = await service.GetAvailabilityAsync("red");
+
+        Assert.Same(first, second);
+        Assert.Equal(["api/Red/DonChallenge/availability"], handler.RequestPaths);
+    }
+
+    [Fact]
     public async Task GetDonChallengeAsync_NotFoundReturnsUnavailableForRequestedKnownEra()
     {
         var handler = new RecordingHandler(_ => NotFound());

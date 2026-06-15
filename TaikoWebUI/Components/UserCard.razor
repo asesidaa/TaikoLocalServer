@@ -6,6 +6,7 @@
 @inject AuthService AuthService;
 @inject HttpClient Client
 @inject NavigationManager NavigationManager
+@inject DonChallengeService DonChallengeService
 
 
 @if (User is not null)
@@ -143,6 +144,10 @@
                         <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, era, "PlayHistory"))">@era - @Localizer["Play History"]</MudMenuItem>
                         <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, era, "Songs"))">@era - @Localizer["Song List"]</MudMenuItem>
                         <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, era, "DaniDojo"))">@era - @Localizer["Dani Dojo"]</MudMenuItem>
+                        @if (IsDonChallengeAvailable(era))
+                        {
+                            <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, era, "DonChallenge"))">@era - Don Challenge</MudMenuItem>
+                        }
                     }
                 </MudMenu>
             </MudStack>
@@ -153,11 +158,35 @@
 @code {
     [Parameter] public User? User { get; set; }
     [Parameter] public UserSetting? UserSetting { get; set; }
+    private readonly HashSet<string> donChallengeAvailableEras = new(StringComparer.OrdinalIgnoreCase);
 
     protected override async Task OnInitializedAsync()
     {   
         await base.OnInitializedAsync();
+        await LoadDonChallengeAvailabilityAsync();
     }
+
+    private async Task LoadDonChallengeAvailabilityAsync()
+    {
+        foreach (var era in AuthService.EnabledEras.Where(WebUiEra.SupportsOlderAc15ChallengeCompe))
+        {
+            try
+            {
+                var availability = await DonChallengeService.GetAvailabilityAsync(era);
+                if (availability.IsAvailable)
+                {
+                    donChallengeAvailableEras.Add(WebUiEra.Normalize(era));
+                }
+            }
+            catch
+            {
+                // The direct Don Challenge route still handles unavailable/error states.
+            }
+        }
+    }
+
+    private bool IsDonChallengeAvailable(string era)
+        => donChallengeAvailableEras.Contains(WebUiEra.Normalize(era));
 
     private Task ShowQrCode(User user)
     {

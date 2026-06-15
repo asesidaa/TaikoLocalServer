@@ -23,8 +23,7 @@
 }
 else
 {
-    <MudGrid Class="my-4 pb-10 don-challenge-page">
-        <MudItem xs="12">
+    <div class="my-4 pb-10 don-challenge-page">
             @if (isLoading)
             {
                 <MudContainer Style="display:flex;margin:50px 0;align-items:center;justify-content:center;">
@@ -59,14 +58,14 @@ else
             {
                 <MudText Typo="Typo.h5" Class="mb-4">Don Challenge</MudText>
 
-                <MudPaper Elevation="0" Outlined="true" Class="pa-4 mb-4">
+                <MudPaper Elevation="0" Outlined="true" Class="pa-4 mb-4 don-challenge-summary">
                     <MudGrid Spacing="2">
                         <MudItem xs="12" md="4">
                             <MudStack Spacing="1">
                                 <MudText Typo="Typo.caption">Active bundle</MudText>
                                 <MudText Typo="Typo.body1" Class="don-challenge-wrap" Style="font-weight:bold;">@(response.BundleId ?? "-")</MudText>
                                 <MudText Typo="Typo.caption">@FormatWindow(response.StartsAt, response.EndsAt)</MudText>
-                                <MudChip T="string" Size="Size.Small" Color="Color.Success" Icon="@Icons.Material.Filled.CheckCircle">Active</MudChip>
+                                <MudChip T="string" Size="Size.Small" Color="Color.Success" Icon="@Icons.Material.Filled.CheckCircle" Class="don-challenge-chip">Active</MudChip>
                             </MudStack>
                         </MudItem>
                         <MudItem xs="12" md="4">
@@ -86,7 +85,7 @@ else
                             <MudStack Spacing="1">
                                 <MudText Typo="Typo.caption">Rewards</MudText>
                                 <MudText Typo="Typo.body1" Style="font-weight:bold;">@EarnedRewardCount / @ConfiguredRewardCount</MudText>
-                                <MudChip T="string" Size="Size.Small" Color="Color.Info" Icon="@Icons.Material.Filled.CardGiftcard">Configured</MudChip>
+                                <MudChip T="string" Size="Size.Small" Color="Color.Info" Icon="@Icons.Material.Filled.CardGiftcard" Class="don-challenge-chip">Configured</MudChip>
                             </MudStack>
                         </MudItem>
                     </MudGrid>
@@ -106,13 +105,13 @@ else
                                 <MudCard Outlined="true" Elevation="0" Class="don-challenge-card">
                                     <MudCardContent>
                                         <MudStack Spacing="2">
-                                            <MudStack Row="true" AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Spacing="2">
+                                            <MudStack Row="true" AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Spacing="2" Class="don-challenge-task-header">
                                                 <MudStack Spacing="1" Class="don-challenge-wrap">
                                                     <MudText Typo="Typo.caption">Slot @task.Slot</MudText>
                                                     <MudText Typo="Typo.subtitle2" Class="don-challenge-wrap" Style="font-weight:bold;">@task.Name</MudText>
                                                     <MudText Typo="Typo.body2" Class="don-challenge-wrap">@task.RuleLabel</MudText>
                                                 </MudStack>
-                                                <MudChip T="string" Size="Size.Small" Color="@GetTaskColor(task)" Icon="@GetTaskIcon(task)">
+                                                <MudChip T="string" Size="Size.Small" Color="@GetTaskColor(task)" Icon="@GetTaskIcon(task)" Class="don-challenge-chip">
                                                     @GetTaskStatus(task)
                                                 </MudChip>
                                             </MudStack>
@@ -150,7 +149,7 @@ else
                                                         var music = GetMusic(track.SongNumber);
                                                         <div class="don-challenge-row">
                                                             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
-                                                                <MudChip T="string" Size="Size.Small" Color="Color.Info">@GetDifficultyText(track.Level)</MudChip>
+                                                                <MudChip T="string" Size="Size.Small" Color="Color.Info" Class="don-challenge-chip">@GetDifficultyText(track.Level)</MudChip>
                                                                 <MudStack Spacing="0" Class="don-challenge-row-text">
                                                                     @if (music is not null)
                                                                     {
@@ -187,7 +186,7 @@ else
                                                                     <MudText Typo="Typo.body2" Class="don-challenge-wrap">@GetRewardLabel(reward)</MudText>
                                                                     <MudText Typo="Typo.caption">Requires @reward.RequiredCompletedTasks completed tasks</MudText>
                                                                 </MudStack>
-                                                                <MudChip T="string" Size="Size.Small" Color="@GetRewardColor(reward)" Icon="@GetRewardIcon(reward)">
+                                                                <MudChip T="string" Size="Size.Small" Color="@GetRewardColor(reward)" Icon="@GetRewardIcon(reward)" Class="don-challenge-chip">
                                                                     @reward.Status
                                                                 </MudChip>
                                                             </MudStack>
@@ -223,7 +222,7 @@ else
                                     <MudText Typo="Typo.body2" Class="don-challenge-wrap">@GetRewardLabel(context)</MudText>
                                 </MudTd>
                                 <MudTd DataLabel="Status">
-                                    <MudChip T="string" Size="Size.Small" Color="@GetRewardColor(context)" Icon="@GetRewardIcon(context)">
+                                    <MudChip T="string" Size="Size.Small" Color="@GetRewardColor(context)" Icon="@GetRewardIcon(context)" Class="don-challenge-chip">
                                         @context.Status
                                     </MudChip>
                                 </MudTd>
@@ -232,6 +231,5 @@ else
                     </MudPaper>
                 }
             }
-        </MudItem>
-    </MudGrid>
+    </div>
 }
