@@ -39,6 +39,7 @@ builder.Services.AddSingleton(httpClient);
 builder.Services.AddSingleton(authConfig);
 builder.Services.AddMudServices();
 builder.Services.AddSingleton<IGameDataService, GameDataService>();
+builder.Services.AddScoped<DonChallengeService>();
 
 builder.Services.Configure<WebUiSettings>(configuration.GetSection(nameof(WebUiSettings)));
 
