@@ -48,6 +48,7 @@ public partial class UserSettingsController(
             GameEra.Green => await GetGreenUserSetting(baid),
             GameEra.Blue => await GetBlueUserSetting(baid),
             GameEra.Yellow => await GetYellowUserSetting(baid),
+            GameEra.Red => await GetRedUserSetting(baid),
             _ => EraRoute.BadEra(era)
         };
     }
@@ -71,6 +72,7 @@ public partial class UserSettingsController(
             GameEra.Green => await SaveGreenUserSetting(baid, userSetting),
             GameEra.Blue => await SaveBlueUserSetting(baid, userSetting),
             GameEra.Yellow => await SaveYellowUserSetting(baid, userSetting),
+            GameEra.Red => await SaveRedUserSetting(baid, userSetting),
             _ => EraRoute.BadEra(era)
         };
     }

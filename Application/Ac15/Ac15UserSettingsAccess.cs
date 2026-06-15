@@ -59,6 +59,7 @@ public static class Ac15UserSettingsAccess
     public static Ac15UserSettingsAccess<UserSaveDataBlue> Blue { get; } = CreateBlue();
     public static Ac15UserSettingsAccess<UserSaveDataGreen> Green { get; } = CreateGreen();
     public static Ac15UserSettingsAccess<UserSaveDataYellow> Yellow { get; } = CreateYellow();
+    public static Ac15UserSettingsAccess<UserSaveDataRed> Red { get; } = CreateRed();
 
     private static Ac15UserSettingsAccess<UserSaveDataBlue> CreateBlue()
         => new(
@@ -152,4 +153,35 @@ public static class Ac15UserSettingsAccess
             Ac15EraProfiles.Yellow.Limits.CostumeFlagBytes,
             Ac15EraProfiles.Yellow.Limits.TitleFlagBytes,
             Ac15EraProfiles.Yellow.Limits.ToneFlagBytes);
+
+    private static Ac15UserSettingsAccess<UserSaveDataRed> CreateRed()
+        => new(
+            save => save.Title, (save, value) => save.Title = value,
+            save => save.TitleplateId, (save, value) => save.TitleplateId = value,
+            save => save.DefaultToneSetting, (save, value) => save.DefaultToneSetting = value,
+            save => save.Costume1, (save, value) => save.Costume1 = value,
+            save => save.Costume2, (save, value) => save.Costume2 = value,
+            save => save.Costume3, (save, value) => save.Costume3 = value,
+            save => save.Costume4, (save, value) => save.Costume4 = value,
+            save => save.Costume5, (save, value) => save.Costume5 = value,
+            save => save.CostumeFlg1, (save, value) => save.CostumeFlg1 = value,
+            save => save.CostumeFlg2, (save, value) => save.CostumeFlg2 = value,
+            save => save.CostumeFlg3, (save, value) => save.CostumeFlg3 = value,
+            save => save.CostumeFlg4, (save, value) => save.CostumeFlg4 = value,
+            save => save.CostumeFlg5, (save, value) => save.CostumeFlg5 = value,
+            save => save.TitleFlg, (save, value) => save.TitleFlg = value,
+            save => save.ToneFlg, (save, value) => save.ToneFlg = value,
+            save => save.ColorBody, (save, value) => save.ColorBody = value,
+            save => save.ColorFace, (save, value) => save.ColorFace = value,
+            save => save.ColorLimb, (save, value) => save.ColorLimb = value,
+            save => save.DispDanType, (save, value) => save.DispDanType = value,
+            save => save.DispTaikojukuDan, (save, value) => save.DispTaikojukuDan = value,
+            save => save.IsTojiru, (save, value) => save.IsTojiru = value,
+            save => save.IsAutoCostumeOn, (save, value) => save.IsAutoCostumeOn = value,
+            save => save.DispLevelChassis, (save, value) => save.DispLevelChassis = value,
+            save => save.DispLevelSelf, (save, value) => save.DispLevelSelf = value,
+            save => save.LastPlayDatetime,
+            Ac15EraProfiles.Red.Limits.CostumeFlagBytes,
+            Ac15EraProfiles.Red.Limits.TitleFlagBytes,
+            Ac15EraProfiles.Red.Limits.ToneFlagBytes);
 }
