@@ -288,6 +288,7 @@ public class GreenAdminApiControllerTests
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
         var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
         save.IsTojiru = true;
+        save.DispScoreType = 1;
         save.DispLevelChassis = 3;
         save.DispLevelSelf = 2;
         fixture.Context.UserSaveDataGreen.Add(save);
@@ -299,6 +300,7 @@ public class GreenAdminApiControllerTests
         var ok = Assert.IsType<OkObjectResult>(result.Result);
         var setting = Assert.IsType<UserSetting>(ok.Value);
         Assert.True(setting.GreenIsTojiru);
+        Assert.Equal(1u, setting.Ac15DispScoreType);
         Assert.Equal(3u, setting.GreenDispLevelChassis);
         Assert.Equal(2u, setting.GreenDispLevelSelf);
     }
@@ -335,6 +337,7 @@ public class GreenAdminApiControllerTests
         {
             MyDonName = "GREEN",
             GreenIsTojiru = false,
+            Ac15DispScoreType = 1,
             GreenDispLevelChassis = 4,
             GreenDispLevelSelf = 4
         });
@@ -343,6 +346,7 @@ public class GreenAdminApiControllerTests
         var save = await fixture.Context.UserSaveDataGreen.FindAsync(1u);
         Assert.NotNull(save);
         Assert.False(save!.IsTojiru);
+        Assert.Equal(1u, save.DispScoreType);
         Assert.Equal(4u, save.DispLevelChassis);
         Assert.Equal(4u, save.DispLevelSelf);
     }

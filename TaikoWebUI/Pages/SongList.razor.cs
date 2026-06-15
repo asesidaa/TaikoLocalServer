@@ -10,7 +10,6 @@ public partial class SongList
     public string? Era { get; set; }
 
     private string CurrentEra => WebUiEra.NormalizeOrDefault(Era, AuthService.DefaultEra);
-    private bool IsAc15 => WebUiEra.IsAc15(CurrentEra);
 
     private string Search { get; set; } = string.Empty;
     private string GenreFilter { get; set; } = string.Empty;
@@ -88,11 +87,12 @@ public partial class SongList
 
     private async Task OnFavoriteToggled(MusicDetail data)
     {
-        if (IsAc15 && !data.IsFavorite && CountCurrentFavorites() >= 5)
+        var maxFavorites = AuthService.GetFavoriteSongLimit(CurrentEra);
+        if (maxFavorites is not null && !data.IsFavorite && CountCurrentFavorites() >= maxFavorites)
         {
             await DialogService.ShowMessageBoxAsync(
                 Localizer["Error"],
-                "AC15 eras support at most 5 favorite songs.",
+                $"{CurrentEra} supports at most {maxFavorites} favorite songs.",
                 Localizer["Dialog OK"]);
             return;
         }

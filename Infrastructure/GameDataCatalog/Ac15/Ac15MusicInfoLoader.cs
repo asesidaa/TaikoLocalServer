@@ -21,25 +21,32 @@ public sealed class Ac15MusicInfoLoader
 
         var entries = musicInfo
             .Elements("Data")
-            .Select((element, index) => new Ac15MusicInfoEntry
-            {
-                MusicId = ReadString(element, "musicid"),
-                SongNo = ReadUInt(element, "uniqueid"),
-                NewRelease = ReadUInt(element, "newrelease"),
-                IsSecret = ReadUInt(element, "secret") != 0,
-                IsPapaMama = ReadUInt(element, "papamama") != 0,
-                HasExtreme = ReadUInt(element, "hasextreme") != 0,
-                PartsSet = ReadString(element, "partsset"),
-                WaiwaiPartsSet = ReadString(element, "wai2partsset"),
-                Title = ReadString(element, "musicname"),
-                GenreName = ReadString(element, "genrename"),
-                DemoPlay = ReadUInt(element, "demoplay"),
-                Tags = element.Elements("tag").Select(tag => ParseUInt(tag.Value)).ToArray(),
-                FileOrder = index
-            })
+            .Select(MapEntry)
             .ToArray();
 
         return new Ac15MusicInfoLoadResult(version, entries);
+    }
+
+    private static Ac15MusicInfoEntry MapEntry(XElement element, int index)
+    {
+        var genreName = ReadString(element, "genrename");
+        return new Ac15MusicInfoEntry
+        {
+            MusicId = ReadString(element, "musicid"),
+            SongNo = ReadUInt(element, "uniqueid"),
+            NewRelease = ReadUInt(element, "newrelease"),
+            IsSecret = ReadUInt(element, "secret") != 0,
+            IsPapaMama = ReadUInt(element, "papamama") != 0,
+            HasExtreme = ReadUInt(element, "hasextreme") != 0,
+            PartsSet = ReadString(element, "partsset"),
+            WaiwaiPartsSet = ReadString(element, "wai2partsset"),
+            Title = ReadString(element, "musicname"),
+            GenreName = genreName,
+            CategoryId = Ac15MusicMetadata.MapGenreNameToCategoryId(genreName),
+            DemoPlay = ReadUInt(element, "demoplay"),
+            Tags = element.Elements("tag").Select(tag => ParseUInt(tag.Value)).ToArray(),
+            FileOrder = index
+        };
     }
 
     private static string ReadString(XContainer element, string name)

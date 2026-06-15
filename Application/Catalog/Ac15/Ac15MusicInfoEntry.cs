@@ -24,6 +24,8 @@ public sealed record class Ac15MusicInfoEntry : IMusicInfoEntry
 
     public string GenreName { get; init; } = string.Empty;
 
+    public uint CategoryId { get; init; }
+
     public uint DemoPlay { get; init; }
 
     public IReadOnlyList<uint> Tags { get; init; } = [];

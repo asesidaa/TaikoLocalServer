@@ -14,7 +14,6 @@ public partial class Song
     public string? Era { get; set; }
 
     private string CurrentEra => WebUiEra.NormalizeOrDefault(Era, AuthService.DefaultEra);
-    private bool IsAc15 => WebUiEra.IsAc15(CurrentEra);
 
     private UserSetting? userSetting;
     private SongHistoryResponse? response;
@@ -72,11 +71,12 @@ public partial class Song
     {
         musicDetail.ThrowIfNull();
 
-        if (IsAc15 && !musicDetail.IsFavorite && CountCurrentFavorites() >= 5)
+        var maxFavorites = AuthService.GetFavoriteSongLimit(CurrentEra);
+        if (maxFavorites is not null && !musicDetail.IsFavorite && CountCurrentFavorites() >= maxFavorites)
         {
             await DialogService.ShowMessageBoxAsync(
                 Localizer["Error"],
-                "AC15 eras support at most 5 favorite songs.",
+                $"{CurrentEra} supports at most {maxFavorites} favorite songs.",
                 Localizer["Dialog OK"]);
             return;
         }

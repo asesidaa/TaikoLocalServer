@@ -185,11 +185,12 @@ public partial class PlayHistory
     
     private async Task OnFavoriteToggled(SongHistoryData data, List<List<SongHistoryData>> array)
     {
-        if (IsAc15 && !data.IsFavorite && CountCurrentFavorites() >= 5)
+        var maxFavorites = AuthService.GetFavoriteSongLimit(CurrentEra);
+        if (maxFavorites is not null && !data.IsFavorite && CountCurrentFavorites() >= maxFavorites)
         {
             await DialogService.ShowMessageBoxAsync(
                 Localizer["Error"],
-                "AC15 eras support at most 5 favorite songs.",
+                $"{CurrentEra} supports at most {maxFavorites} favorite songs.",
                 Localizer["Dialog OK"]);
             return;
         }

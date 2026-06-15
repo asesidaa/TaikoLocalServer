@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using OtpNet;
 using TaikoLocalServer.Adapters.AdminApi.Mapping;
+using TaikoLocalServer.Application.Ac15;
 using TaikoLocalServer.Infrastructure.Identity.Settings;
 
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
@@ -65,10 +66,26 @@ public class AuthController(
 
         var response = authSettings.ToResponse() with
         {
-            EnabledEras = enabledEras
+            EnabledEras = enabledEras,
+            FavoriteSongLimits = GetFavoriteSongLimits(enabledEras)
         };
 
         return Ok(response);
+    }
+
+    private static IReadOnlyDictionary<string, int> GetFavoriteSongLimits(IEnumerable<string> enabledEras)
+    {
+        var limits = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        foreach (var eraName in enabledEras)
+        {
+            if (Enum.TryParse<GameEra>(eraName, ignoreCase: true, out var era)
+                && Ac15EraProfiles.GetMaxFavoriteSongs(era) is { } limit)
+            {
+                limits[eraName] = limit;
+            }
+        }
+
+        return limits;
     }
 
     [HttpPost("Login")]

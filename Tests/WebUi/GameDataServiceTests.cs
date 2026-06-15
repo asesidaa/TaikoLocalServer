@@ -165,6 +165,20 @@ public sealed class GameDataServiceTests
     }
 
     [Fact]
+    public void FavoriteSongLimit_UsesServerSuppliedEraLimit()
+    {
+        var favoriteSongLimits = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Red"] = 5,
+            ["Green"] = 10
+        };
+
+        Assert.Equal(5, WebUiEra.GetFavoriteSongLimit("red", favoriteSongLimits));
+        Assert.Equal(10, WebUiEra.GetFavoriteSongLimit("Green", favoriteSongLimits));
+        Assert.Null(WebUiEra.GetFavoriteSongLimit("Nijiiro", favoriteSongLimits));
+    }
+
+    [Fact]
     public void Red_RouteHelpersPreserveEra()
     {
         Assert.Equal("Users/123/Red/Songs", WebUiEra.UserRoute(123u, "Red", "Songs"));

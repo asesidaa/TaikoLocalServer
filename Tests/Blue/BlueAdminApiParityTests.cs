@@ -132,6 +132,7 @@ public sealed class BlueAdminApiParityTests
         save.TitleFlg = BitsetCodec.Encode([10], BlueProtocolBytes.TitleFlagBytes);
         save.ToneFlg = BitsetCodec.Encode([0, 4], BlueProtocolBytes.ToneFlagBytes);
         save.DefaultToneSetting = 4;
+        save.DispScoreType = 1;
         fixture.Context.UserSaveDataBlue.Add(save);
         await fixture.Context.SaveChangesAsync();
 
@@ -144,6 +145,7 @@ public sealed class BlueAdminApiParityTests
         Assert.Equal(new List<uint> { 0, 5 }, setting.UnlockedKigurumi);
         Assert.Equal(new List<uint> { 10 }, setting.UnlockedTitle);
         Assert.Equal(new List<uint> { 0, 4 }, setting.UnlockedTone);
+        Assert.Equal(1u, setting.Ac15DispScoreType);
 
         var saveResult = await controller.SaveUserSetting("Blue", 1, new UserSetting
         {
@@ -157,6 +159,7 @@ public sealed class BlueAdminApiParityTests
             ToneId = 6,
             GreenIsTojiru = false,
             GreenIsAutoCostumeOn = false,
+            Ac15DispScoreType = 1,
             GreenDispLevelChassis = 4,
             GreenDispLevelSelf = 3
         });
@@ -169,6 +172,7 @@ public sealed class BlueAdminApiParityTests
         Assert.Contains(6u, BitsetCodec.Decode(save.ToneFlg, BlueProtocolBytes.ToneFlagBytes));
         Assert.False(save.IsTojiru);
         Assert.False(save.IsAutoCostumeOn);
+        Assert.Equal(1u, save.DispScoreType);
         Assert.Equal(4u, save.DispLevelChassis);
         Assert.Equal(3u, save.DispLevelSelf);
         Assert.NotNull(await fixture.Context.UserSaveDataGreen.FindAsync(1u));

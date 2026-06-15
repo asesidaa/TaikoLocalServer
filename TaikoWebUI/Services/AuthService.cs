@@ -33,6 +33,7 @@ public sealed class AuthService : IDisposable
     public bool AllowFreeProfileEditing => authConfig.AllowFreeProfileEditing;
     public IReadOnlyList<string> EnabledEras => WebUiEra.NormalizeEnabled(authConfig.EnabledEras);
     public string DefaultEra => EnabledEras.FirstOrDefault() ?? WebUiEra.Default;
+    public int? GetFavoriteSongLimit(string? era) => WebUiEra.GetFavoriteSongLimit(era, authConfig.FavoriteSongLimits);
 
     /// <summary>
     /// True when the user holds a valid server-issued bearer token. Stays false in local

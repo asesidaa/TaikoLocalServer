@@ -37,6 +37,7 @@ public sealed class BlueMusicInfoLoader
         WaiwaiPartsSet = entry.WaiwaiPartsSet,
         Title = entry.Title,
         GenreName = entry.GenreName,
+        CategoryId = entry.CategoryId,
         DemoPlay = entry.DemoPlay,
         Tags = entry.Tags,
         FileOrder = entry.FileOrder

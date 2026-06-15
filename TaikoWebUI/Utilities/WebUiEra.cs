@@ -87,4 +87,33 @@ public static class WebUiEra
     {
         return $"api/{Normalize(era)}/{path.TrimStart('/')}";
     }
+
+    public static int? GetFavoriteSongLimit(
+        string? era,
+        IReadOnlyDictionary<string, int>? favoriteSongLimits)
+    {
+        if (favoriteSongLimits is null)
+        {
+            return null;
+        }
+
+        var normalized = Normalize(era);
+        if (favoriteSongLimits.TryGetValue(normalized, out var limit))
+        {
+            return PositiveLimitOrNull(limit);
+        }
+
+        foreach (var pair in favoriteSongLimits)
+        {
+            if (string.Equals(pair.Key, normalized, StringComparison.OrdinalIgnoreCase))
+            {
+                return PositiveLimitOrNull(pair.Value);
+            }
+        }
+
+        return null;
+    }
+
+    private static int? PositiveLimitOrNull(int limit)
+        => limit > 0 ? limit : null;
 }

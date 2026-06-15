@@ -32,6 +32,7 @@ public sealed class RedAdminApiTests
         save.IsTojiru = true;
         save.IsAutoCostumeOn = true;
         save.IsChallengeCompe = true;
+        save.DispScoreType = 1;
         save.DispLevelChassis = 3;
         save.DispLevelSelf = 2;
         fixture.Context.UserSaveDataRed.Add(save);
@@ -49,6 +50,7 @@ public sealed class RedAdminApiTests
         Assert.Equal(4u, setting.ToneId);
         Assert.True(setting.GreenIsTojiru);
         Assert.True(setting.GreenIsAutoCostumeOn);
+        Assert.Equal(1u, setting.Ac15DispScoreType);
         Assert.Equal(3u, setting.GreenDispLevelChassis);
         Assert.Equal(2u, setting.GreenDispLevelSelf);
 
@@ -64,6 +66,7 @@ public sealed class RedAdminApiTests
             ToneId = 6,
             GreenIsTojiru = false,
             GreenIsAutoCostumeOn = false,
+            Ac15DispScoreType = 1,
             GreenDispLevelChassis = 4,
             GreenDispLevelSelf = 3
         });
@@ -77,6 +80,7 @@ public sealed class RedAdminApiTests
         Assert.False(save.IsTojiru);
         Assert.False(save.IsAutoCostumeOn);
         Assert.True(save.IsChallengeCompe);
+        Assert.Equal(1u, save.DispScoreType);
         Assert.Equal(4u, save.DispLevelChassis);
         Assert.Equal(3u, save.DispLevelSelf);
         Assert.NotNull(await fixture.Context.UserSaveDataBlue.FindAsync(1u));
@@ -377,8 +381,9 @@ public sealed class RedAdminApiTests
                 {
                     SongNo = 201,
                     MusicId = "red_song",
-                    Title = "Red Song",
-                    GenreName = "anime",
+                    Title = "Ｍｙ Ｍｕｓｃｌｅ Ｈｅａｒｔ ～高天原～",
+                    GenreName = "アニメ",
+                    CategoryId = (uint)SongGenre.Anime,
                     FileOrder = 9,
                     StarEasy = 2,
                     StarNormal = 3,
@@ -410,7 +415,10 @@ public sealed class RedAdminApiTests
         var musicRows = Assert.IsAssignableFrom<Dictionary<uint, MusicDetail>>(musicOk.Value);
         var music = Assert.Single(musicRows).Value;
         Assert.Equal(201u, music.SongId);
-        Assert.Equal("Red Song", music.SongName);
+        Assert.Equal("Ｍｙ Ｍｕｓｃｌｅ Ｈｅａｒｔ ～高天原～", music.SongName);
+        Assert.Equal("My Muscle Heart ~高天原~", music.SongNameEN);
+        Assert.Equal("My Muscle Heart ~高天原~", music.SongNameCN);
+        Assert.Equal("My Muscle Heart ~高天原~", music.SongNameKO);
         Assert.Equal(SongGenre.Anime, music.Genre);
         Assert.Equal(5, music.StarOni);
 

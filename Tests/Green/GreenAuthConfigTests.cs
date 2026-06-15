@@ -30,6 +30,35 @@ public sealed class GreenAuthConfigTests
         Assert.Equal(["Green"], response.EnabledEras);
     }
 
+    [Fact]
+    public void GetConfig_ReturnsFavoriteSongLimitsForEnabledLimitedEras()
+    {
+        var controller = new AuthController(
+            new ThrowingTaikoDbContext(),
+            new ThrowingJwtTokenService(),
+            Options.Create(new AuthSettings { AuthenticationRequired = false }),
+            Options.Create(new ServerSettings
+            {
+                Eras = new Dictionary<string, EraSettings>
+                {
+                    [nameof(GameEra.Nijiiro)] = new() { Enabled = true },
+                    [nameof(GameEra.Green)] = new() { Enabled = true },
+                    [nameof(GameEra.Blue)] = new() { Enabled = false },
+                    [nameof(GameEra.Red)] = new() { Enabled = true }
+                }
+            }));
+
+        var result = controller.GetConfig();
+
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var response = Assert.IsType<ClientAuthConfigResponse>(ok.Value);
+        Assert.NotNull(response.FavoriteSongLimits);
+        Assert.Equal(Ac15EraProfiles.Green.Limits.MaxFavoriteSongs, response.FavoriteSongLimits[nameof(GameEra.Green)]);
+        Assert.Equal(Ac15EraProfiles.Red.Limits.MaxFavoriteSongs, response.FavoriteSongLimits[nameof(GameEra.Red)]);
+        Assert.DoesNotContain(nameof(GameEra.Nijiiro), response.FavoriteSongLimits.Keys);
+        Assert.DoesNotContain(nameof(GameEra.Blue), response.FavoriteSongLimits.Keys);
+    }
+
     private sealed class ThrowingJwtTokenService : IJwtTokenService
     {
         public string IssueToken(uint baid, bool isAdmin)

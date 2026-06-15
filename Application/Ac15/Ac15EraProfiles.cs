@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace TaikoLocalServer.Application.Ac15;
 
 public static class Ac15EraProfiles
@@ -59,6 +61,23 @@ public static class Ac15EraProfiles
             HasInitialDataItemShopRows: false,
             HasInitialDataLegalTermsRows: true,
             HasTokkunTutorialFlagInUserData: true));
+
+    public static int? GetMaxFavoriteSongs(GameEra era)
+        => TryGet(era, out var profile) ? profile.Limits.MaxFavoriteSongs : null;
+
+    public static bool TryGet(GameEra era, [NotNullWhen(true)] out Ac15EraProfile? profile)
+    {
+        profile = era switch
+        {
+            GameEra.Blue => Blue,
+            GameEra.Green => Green,
+            GameEra.Yellow => Yellow,
+            GameEra.Red => Red,
+            _ => null
+        };
+
+        return profile is not null;
+    }
 
     private static Ac15ProtocolLimits CreateCommonLimits() => new(
         SongFlagBytes: BlueProtocolBytes.SongFlagBytes,

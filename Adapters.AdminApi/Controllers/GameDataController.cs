@@ -65,21 +65,17 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
     {
         return catalog.Green().GreenMusicInfos.ToDictionary(
             pair => pair.Key,
-            pair => new MusicDetail
-            {
-                SongId = pair.Value.SongNo,
-                Index = pair.Value.FileOrder,
-                SongName = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
-                SongNameEN = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
-                SongNameCN = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
-                SongNameKO = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
-                Genre = MapGreenGenre(pair.Value.CategoryId),
-                StarEasy = (int)pair.Value.StarEasy,
-                StarNormal = (int)pair.Value.StarNormal,
-                StarHard = (int)pair.Value.StarHard,
-                StarOni = (int)pair.Value.StarOni,
-                StarUra = (int)pair.Value.StarUra
-            });
+            pair => BuildAc15MusicDetail(
+                pair.Value.SongNo,
+                pair.Value.FileOrder,
+                pair.Value.Title,
+                pair.Value.MusicId,
+                pair.Value.CategoryId,
+                (int)pair.Value.StarEasy,
+                (int)pair.Value.StarNormal,
+                (int)pair.Value.StarHard,
+                (int)pair.Value.StarOni,
+                (int)pair.Value.StarUra));
     }
 
     private List<DanData> BuildGreenDanData()
@@ -102,21 +98,17 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
     {
         return catalog.Blue().BlueMusicInfos.ToDictionary(
             pair => pair.Key,
-            pair => new MusicDetail
-            {
-                SongId = pair.Value.SongNo,
-                Index = pair.Value.FileOrder,
-                SongName = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
-                SongNameEN = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
-                SongNameCN = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
-                SongNameKO = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
-                Genre = MapGreenGenre(pair.Value.CategoryId),
-                StarEasy = (int)pair.Value.StarEasy,
-                StarNormal = (int)pair.Value.StarNormal,
-                StarHard = (int)pair.Value.StarHard,
-                StarOni = (int)pair.Value.StarOni,
-                StarUra = (int)pair.Value.StarUra
-            });
+            pair => BuildAc15MusicDetail(
+                pair.Value.SongNo,
+                pair.Value.FileOrder,
+                pair.Value.Title,
+                pair.Value.MusicId,
+                pair.Value.CategoryId,
+                (int)pair.Value.StarEasy,
+                (int)pair.Value.StarNormal,
+                (int)pair.Value.StarHard,
+                (int)pair.Value.StarOni,
+                (int)pair.Value.StarUra));
     }
 
     private List<DanData> BuildBlueDanData()
@@ -139,42 +131,34 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
     {
         return catalog.Yellow().YellowMusicInfos.ToDictionary(
             pair => pair.Key,
-            pair => new MusicDetail
-            {
-                SongId = pair.Value.SongNo,
-                Index = pair.Value.FileOrder,
-                SongName = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
-                SongNameEN = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
-                SongNameCN = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
-                SongNameKO = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
-                Genre = MapGreenGenre(pair.Value.CategoryId),
-                StarEasy = (int)pair.Value.StarEasy,
-                StarNormal = (int)pair.Value.StarNormal,
-                StarHard = (int)pair.Value.StarHard,
-                StarOni = (int)pair.Value.StarOni,
-                StarUra = (int)pair.Value.StarUra
-            });
+            pair => BuildAc15MusicDetail(
+                pair.Value.SongNo,
+                pair.Value.FileOrder,
+                pair.Value.Title,
+                pair.Value.MusicId,
+                pair.Value.CategoryId,
+                (int)pair.Value.StarEasy,
+                (int)pair.Value.StarNormal,
+                (int)pair.Value.StarHard,
+                (int)pair.Value.StarOni,
+                (int)pair.Value.StarUra));
     }
 
     private Dictionary<uint, MusicDetail> BuildRedMusicDetails()
     {
         return catalog.Red().RedMusicInfos.ToDictionary(
             pair => pair.Key,
-            pair => new MusicDetail
-            {
-                SongId = pair.Value.SongNo,
-                Index = pair.Value.FileOrder,
-                SongName = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
-                SongNameEN = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
-                SongNameCN = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
-                SongNameKO = string.IsNullOrWhiteSpace(pair.Value.Title) ? pair.Value.MusicId : pair.Value.Title,
-                Genre = MapRedGenre(pair.Value.GenreName),
-                StarEasy = (int)pair.Value.StarEasy,
-                StarNormal = (int)pair.Value.StarNormal,
-                StarHard = (int)pair.Value.StarHard,
-                StarOni = (int)pair.Value.StarOni,
-                StarUra = (int)pair.Value.StarUra
-            });
+            pair => BuildAc15MusicDetail(
+                pair.Value.SongNo,
+                pair.Value.FileOrder,
+                pair.Value.Title,
+                pair.Value.MusicId,
+                pair.Value.CategoryId,
+                pair.Value.StarEasy,
+                pair.Value.StarNormal,
+                pair.Value.StarHard,
+                pair.Value.StarOni,
+                pair.Value.StarUra));
     }
 
     private List<DanData> BuildYellowDanData()
@@ -364,26 +348,41 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
     private static uint ToWebUiDifficultyLevel(uint greenCourseLevel)
         => greenCourseLevel <= 4 ? greenCourseLevel + 1 : 0;
 
-    private static SongGenre MapGreenGenre(uint categoryId)
+    private static MusicDetail BuildAc15MusicDetail(
+        uint songNo,
+        int fileOrder,
+        string title,
+        string musicId,
+        uint categoryId,
+        int starEasy,
+        int starNormal,
+        int starHard,
+        int starOni,
+        int starUra)
+    {
+        var songName = string.IsNullOrWhiteSpace(title) ? musicId : title;
+        var nonJapaneseSongName = Ac15MusicMetadata.NormalizeFullWidthAscii(songName);
+        return new MusicDetail
+        {
+            SongId = songNo,
+            Index = fileOrder,
+            SongName = songName,
+            SongNameEN = nonJapaneseSongName,
+            SongNameCN = nonJapaneseSongName,
+            SongNameKO = nonJapaneseSongName,
+            Genre = MapAc15Genre(categoryId),
+            StarEasy = starEasy,
+            StarNormal = starNormal,
+            StarHard = starHard,
+            StarOni = starOni,
+            StarUra = starUra
+        };
+    }
+
+    private static SongGenre MapAc15Genre(uint categoryId)
     {
         return Enum.IsDefined(typeof(SongGenre), (int)categoryId)
             ? (SongGenre)categoryId
             : SongGenre.Pop;
-    }
-
-    private static SongGenre MapRedGenre(string genreName)
-    {
-        return genreName.Trim().ToUpperInvariant() switch
-        {
-            "J-POP" or "POP" => SongGenre.Pop,
-            "ANIME" => SongGenre.Anime,
-            "KIDS" or "DOYO" => SongGenre.Kids,
-            "VOCALOID" => SongGenre.Vocaloid,
-            "GAME" or "GAME MUSIC" or "GAMEMUSIC" => SongGenre.GameMusic,
-            "NAMCO" or "NAMCO ORIGINAL" or "NAMCOORIGINAL" => SongGenre.NamcoOriginal,
-            "VARIETY" => SongGenre.Variety,
-            "CLASSIC" or "CLASSICAL" => SongGenre.Classical,
-            _ => SongGenre.Pop
-        };
     }
 }

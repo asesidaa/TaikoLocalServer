@@ -7,4 +7,5 @@ public sealed record ClientAuthConfigResponse(
     bool RegisterWithLastPlayTime,
     bool AllowUserDelete,
     bool AllowFreeProfileEditing,
-    IReadOnlyList<string>? EnabledEras = null);
+    IReadOnlyList<string>? EnabledEras = null,
+    IReadOnlyDictionary<string, int>? FavoriteSongLimits = null);

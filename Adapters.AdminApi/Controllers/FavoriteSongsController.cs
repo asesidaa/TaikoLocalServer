@@ -144,12 +144,7 @@ public partial class FavoriteSongsController(ITaikoDbContext context, IGameDataC
         };
     }
 
-    private static int GetAc15MaxFavoriteSongs(GameEra era) => era switch
-    {
-        GameEra.Green => Ac15EraProfiles.Green.Limits.MaxFavoriteSongs,
-        GameEra.Blue => Ac15EraProfiles.Blue.Limits.MaxFavoriteSongs,
-        GameEra.Yellow => Ac15EraProfiles.Yellow.Limits.MaxFavoriteSongs,
-        GameEra.Red => Ac15EraProfiles.Red.Limits.MaxFavoriteSongs,
-        _ => throw new ArgumentOutOfRangeException(nameof(era), era, "Era does not use AC15 favorite limits.")
-    };
+    private static int GetAc15MaxFavoriteSongs(GameEra era)
+        => Ac15EraProfiles.GetMaxFavoriteSongs(era)
+           ?? throw new ArgumentOutOfRangeException(nameof(era), era, "Era does not use AC15 favorite limits.");
 }
