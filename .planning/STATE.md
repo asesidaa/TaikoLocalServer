@@ -1,34 +1,33 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.3
-milestone_name: Red AC15 Support
-status: Awaiting next milestone
-stopped_at: v1.3 Red AC15 Support complete and archived
-last_updated: "2026-06-15T19:50:00.824Z"
-last_activity: 2026-06-16 -- Milestone v1.3 completed and archived
+milestone: v1.4
+milestone_name: White AC15 0.13 Support
+status: planning
+last_updated: "2026-06-15T20:59:56.872Z"
+last_activity: 2026-06-16
 progress:
-  total_phases: 6
-  completed_phases: 6
-  total_plans: 29
-  completed_plans: 29
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: `.planning/PROJECT.md` (updated 2026-06-13)
+See: `.planning/PROJECT.md` (updated 2026-06-16)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** v1.3 Red AC15 Support complete and archived; awaiting next milestone
+**Current focus:** v1.4 White AC15 0.13 Support requirements and roadmap definition
 
 ## Current Position
 
-Phase: Milestone v1.3 complete
+Phase: Not started (defining requirements)
 Plan: -
-Status: Awaiting next milestone
-Last activity: 2026-06-16 -- Milestone v1.3 completed and archived
+Status: Defining requirements
+Last activity: 2026-06-16 - Milestone v1.4 started
 
 ## Performance Metrics
 
@@ -271,4 +270,4 @@ Resume file: None
 
 ## Operator Next Steps
 
-- Start the next milestone with `$gsd-new-milestone`.
+- Define v1.4 White AC15 0.13 Support requirements and roadmap.

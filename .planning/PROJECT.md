@@ -4,7 +4,7 @@
 
 TaikoLocalServer is a local ASP.NET Core server for Taiko no Tatsujin cabinet protocols, local SQLite persistence, era-specific game data catalogs, and a Blazor WebAssembly admin UI. This project continues the existing Blue-era support effort from the Superpowers roadmap in `docs/superpowers/specs/2026-05-27-blue-support-roadmap-design.md`, starting after completed stages A0-A5 and carrying the work through full Blue support.
 
-Full Blue, Yellow, and Red support are complete. The project now supports Nijiiro, Green AC15, Blue AC15, Yellow AC15, and Red AC15 in one process while preserving era-owned routes, wire DTOs, persistence, handlers, mappers, catalogs, tests, and AdminApi/WebUI routing.
+Full Blue, Yellow, and Red support are complete. White 0.13 support is the active v1.4 milestone. The project now supports Nijiiro, Green AC15, Blue AC15, Yellow AC15, and Red AC15 in one process while preserving era-owned routes, wire DTOs, persistence, handlers, mappers, catalogs, tests, and AdminApi/WebUI routing.
 
 ## Core Value
 
@@ -16,6 +16,8 @@ v1.2 Yellow AC15 Support shipped on 2026-06-12. Yellow is a first-class AC15 era
 
 v1.3 Red AC15 Support shipped on 2026-06-16. Red uses `proto/red/taiko.proto`, `proto/red/vsinterface.proto`, and the local Red game-data symlink at `Host/wwwroot/data/red/data` as source evidence. Red support covers `/v08r01` game routes, shared `/v01r00` startup/version ownership, active `ST8100-1` root evidence, first-class Red adapter/wire/Host gating, catalog/profile binding, Red-owned normal runtime state, Dani, tutorial-only Tokkun readback, simple compatibility routes, shared older-AC15 ChallengeCompe/Don Challenge behavior, AdminApi/WebUI readback, and user-accepted runtime closeout.
 
+v1.4 White AC15 0.13 Support has started. White uses `proto/white/taiko.proto`, `proto/white/vsinterface.proto`, and local game data at `Host/wwwroot/data/white/data` as source evidence, with the observed data root `config/ST7100-1`. The milestone targets the first White version, so later White-version behavior must be absent unless local White proto/data/log/IDA/client evidence proves it belongs in the 0.13 server contract.
+
 Although Blue, Green, and Yellow wire surfaces contain challenge competition proto definitions and some compatibility routes, those newer versions do not meaningfully call the feature; do not treat their stubs as runtime behavior evidence. Challenge competition is meaningful scope only for Red and older AC15 versions.
 
 Blue now supports normal, battle, and Tokkun play in the same process. Tokkun support is bounded to evidence-backed Blue protocol behavior: stateless Banacoin-adjacent compatibility, Tokkun playresult acceptance, Blue-owned raw Tokkun persistence, nullable tutorial readback, final contract documentation, and user-confirmed cabinet/RPCS3 runtime verification.
@@ -24,9 +26,9 @@ Yellow support reuses AC15 shared core behavior where it directly reduces duplic
 
 ## Current Planning State
 
-No active milestone is open. v1.3 Red AC15 Support is complete and archived.
+Current milestone: **v1.4 White AC15 0.13 Support**
 
-**Recent milestone goal:** Add Red by composing supported AC15 capabilities with Red config, limits, wire placement, typed persistence, and Red/older-version evidence while preserving era-owned protocol, catalog, state, admin, and verification boundaries.
+**Current milestone goal:** Add White 0.13 by composing existing AC15 capabilities with White config, limits, wire placement, typed persistence, collectable data, and White/older-version evidence while preserving era-owned protocol, catalog, state, admin, and verification boundaries.
 
 ## Requirements
 
@@ -68,15 +70,21 @@ No active milestone is open. v1.3 Red AC15 Support is complete and archived.
 
 ### Active
 
-No active milestone requirements. Start the next milestone with `$gsd-new-milestone`.
+- [ ] White route/version/transport/data-root evidence is reviewed before White routes and catalog roots are finalized.
+- [ ] White is added as a first-class enableable AC15 era with generated White wire DTOs, Host/DI registration, settings, and enabled-era gating.
+- [ ] White binds only matching AC15 catalog/profile/runtime capabilities through White-owned persistence, protocol limits, and mechanical Mapperly projection.
+- [ ] Features missing from White 0.13 remain absent unless local White evidence proves the cabinet expects compatibility behavior.
+- [ ] White-scoped collectable data, including Don Challenge data if it falls inside the proven White 0.13 range, is collected and bound late in the milestone after core capability behavior is stable.
+- [ ] White support closes only after automated verification, a temp-output Host build if needed, and cabinet/RPCS3 smoke evidence for implemented White flows.
 
 ### Out of Scope
 
 - Real Banacoin balance, payment, settlement, receipt, coupon, deduction, BNID result, or transaction-history behavior beyond stateless compatibility routes needed for Blue Tokkun availability.
-- AC15 versions earlier than Red unless started by a later milestone.
+- AC15 versions earlier than White, or later White-version behavior beyond 0.13, unless started by a later milestone or pulled in by local White 0.13 evidence.
 - Red WaiWai behavior; Red is planned as Yellow-like support without WaiWai unless local Red evidence proves otherwise.
 - Yellow battle mode or Blue battle behavior mirrored into Yellow without concrete Yellow proto/log/client evidence.
 - Blue battle behavior mirrored into Red without concrete Red proto/log/client evidence.
+- White battle, item shop, Tokkun, gacha, tournament runtime, Banacoin wallet/payment, or later White update behavior without concrete White 0.13 proto/log/client evidence.
 - Green AI Battle changes while implementing Blue battle mode; Green AI Battle is contrast material, not the Blue design source.
 - Invented Tokkun rewards, score/crown persistence, paid-coin behavior, practice-time accounting, jump-point behavior, autoplay behavior, speed-change behavior, or song unlock side effects without concrete Blue evidence.
 - Runtime scraping of wiki or official pages.
@@ -97,6 +105,9 @@ No active milestone requirements. Start the next milestone with `$gsd-new-milest
 - v1.2 Yellow AC15 support shipped on 2026-06-12. The user confirmed Yellow support was manually tested in RPCS3 before closeout; final automated verification passed 683 tests and Host temp-output build passed with 0 warnings and 0 errors.
 - v1.3 Red AC15 Support shipped on 2026-06-16. Red local protocol inputs are `proto/red/taiko.proto` and `proto/red/vsinterface.proto`; local game data is symlinked at `Host/wwwroot/data/red/data`.
 - Red local data currently exposes versioned config roots including `config/ST5100-1`, `config/ST5100-7`, `config/ST7100-1`, and `config/ST8100-1`; the milestone must prove the runtime target/root before locking catalog paths.
+- v1.4 White AC15 0.13 Support started on 2026-06-16. White local protocol inputs are `proto/white/taiko.proto` and `proto/white/vsinterface.proto`; local game data is under `Host/wwwroot/data/white/data`.
+- White local data currently exposes `config/ST7100-1` as the observed config root, with `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, `present.xml`, and `spacialbaid.xml` in that root.
+- `.tools/white/EBOOT.ELF.i64` is currently a zero-byte file in this checkout; route/root proof may need a corrected IDB/binary or another local evidence source before White runtime assumptions are finalized.
 - The evidence hierarchy is repo code, proto files, SQLite state, cabinet/RPCS3 logs, IDA/client evidence, and only then public wiki pages for gameplay scoping.
 - Yellow local protocol input is `proto/yellow/yellow.proto`; local game data is under `Host/wwwroot/data/yellow/data`, with the observed versioned config root `config/ST9100-1`.
 - Yellow proto evidence includes Tokkun tutorial and stage-result fields, item shop and Banacoin-adjacent routes, Don/Katsu medal upload fields, and no Blue battle userdata or initialdata battle fields.
@@ -104,8 +115,10 @@ No active milestone requirements. Start the next milestone with `$gsd-new-milest
 - Crown readback compression must be proven per era. Blue/Green currently gzip `hash_crown_flg`, but older-version crown transport may differ.
 - Public wiki context says Yellow started on 2017-03-15, introduced Don/Katsu medals, and later added "Issho ni Wai Wai Ensou"; this is scoping context only and does not outrank local protocol or runtime evidence.
 - Public wiki context says Red was the active AC15 version from 2016-07-14 to 2017-03-14, and that Don Challenge effectively ended with Red before Yellow's reward-system change pause; this is scoping context only and does not outrank local protocol or runtime evidence.
+- Public wiki context says White 0.13 started on 2015-12-10 and later White updates changed or reintroduced some features. Use that as product/version scoping only; local White proto, data, logs, IDA, and cabinet/RPCS3 evidence decide server behavior.
 - Red proto evidence includes challenge competition readback through `ChallengeCompeRequest` / `ChallengeCompeResponse`, user-data `is_challengecompe`, and playresult challenge id arrays. Treat those as shared older-AC15 ChallengeCompe planning leads and Red binding evidence, not final semantics and not evidence that Blue/Green/Yellow challengecompe stubs are active, until local data/runtime traces prove behavior.
-- `docs/superpowers/specs/2026-06-07-ac15-core-extraction-design.md`, `docs/superpowers/specs/2026-06-11-ac15-capability-composition-design.md`, and `docs/superpowers/plans/2026-06-07-ac15-core-extraction/` describe the approved capability-driven AC15 sharing direction for Blue, Green, and future Yellow/Red support. Use those designs where they directly enable Red, but keep era routes, wire DTOs, and persistence separate.
+- White proto evidence initially exposes BAID, mydon, userdata, playresult, self-best, crowns, recommendations, folders, telops, Taikojuku, ChallengeCompe-like fields, and reward routes. It does not initially expose explicit battle, item-shop, Tokkun, gacha, tournament runtime, or Banacoin wallet/payment surfaces.
+- `docs/superpowers/specs/2026-06-07-ac15-core-extraction-design.md`, `docs/superpowers/specs/2026-06-11-ac15-capability-composition-design.md`, and `docs/superpowers/plans/2026-06-07-ac15-core-extraction/` describe the approved capability-driven AC15 sharing direction for Blue, Green, and older AC15 support. Use those designs where they directly enable White, but keep era routes, wire DTOs, and persistence separate.
 
 ## Shipped Milestones
 
@@ -117,25 +130,31 @@ v1.2 Yellow AC15 Support is complete. Phases 12-17 plus inserted Phases 16.1 and
 
 v1.3 Red AC15 Support is complete. Phases 18-22 added Red as a first-class older AC15 era with Red route/root evidence, generated Red wire DTOs, catalog/profile binding, Red-owned runtime state, tutorial-only Tokkun readback, shared older-AC15 ChallengeCompe/Don Challenge behavior, AdminApi/WebUI readback, and final runtime closeout evidence.
 
-## Next Milestone Goals
+## Current Milestone: v1.4 White AC15 0.13 Support
 
-- Start fresh requirements for the next support target or hardening slice.
-- Use local proto/data, runtime traces, and IDA/client evidence to define route, transport, catalog, and state boundaries before implementation.
-- Reuse AC15 shared core only where behavior truly matches, while keeping era routes, wire DTOs, and persistence separate.
-- Keep unsupported surfaces absent instead of adding stubs or compatibility layers without evidence.
+**Goal:** Add White 0.13 by composing existing AC15 capabilities with White config, limits, wire placement, typed persistence, collectable data, and White/older-version evidence while preserving era-owned protocol, catalog, state, admin, and verification boundaries.
+
+**Target features:**
+- White evidence and first-class era foundation from `proto/white`, `Host/wwwroot/data/white/data`, route/root evidence, and safe Host gating.
+- White catalog/profile binding through matching AC15 catalog loaders and White-specific sidecars only where White data proves a delta.
+- White-owned runtime bindings for matching profile/userdata, normal play, self-best, crowns, recommendations, folders/telops, reward/profile fields, and Dani only if White 0.13 evidence proves runtime support.
+- White-scoped collectable data, including Don Challenge data if present in the 0.13 range, collected and bound as the final functional step before closeout.
+- AdminApi/WebUI readback for implemented White-owned surfaces only, followed by automated verification and RPCS3/cabinet smoke evidence.
 
 ## Constraints
 
 - **Evidence**: New era semantics must be specified from proto, local data, logs, IDA/client evidence, or cabinet/RPCS3 traces before runtime implementation.
 - **Architecture**: Treat each AC15 era as a composition root for supported capabilities, with era-owned wire DTOs, routes, persistence, catalog data, tests, config/limits, wire placement, and narrow era-specific helpers.
-- **State separation**: Keep Blue, Green, Yellow, and Nijiiro persistent state separate unless the data is truly shared identity state.
-- **Transport safety**: Preserve known AC15 direct-protobuf and startup/verup assumptions only where current Yellow client/proto evidence supports them.
+- **State separation**: Keep Blue, Green, Yellow, Red, White, and Nijiiro persistent state separate unless the data is truly shared identity state.
+- **Transport safety**: Preserve known AC15 direct-protobuf and startup/verup assumptions only where current per-era client/proto evidence supports them.
 - **Scope order**: Build foundation, capability profile/catalog binding, runtime capability bindings, shared older-AC15 ChallengeCompe, and verification before claiming full support for any new AC15 era.
 - **Red scope**: Treat Red as an older-AC15 capability composition without WaiWai; ChallengeCompe is a shared older-AC15 capability whose first binding/proof point is Red.
+- **White scope**: Treat White 0.13 as an older-AC15 capability composition with more missing features than Red; do not backfill later White update behavior without local 0.13 evidence.
 - **Verification**: Done requires automated route/handler/catalog/persistence proof and repeatable cabinet/RPCS3 smoke evidence for the supported runtime flows, not only passing server tests.
 - **Local data**: Blue runtime data under `Host/wwwroot/data/blue/data` is local/operator-supplied and may be gitignored.
 - **Local data**: Yellow runtime data under `Host/wwwroot/data/yellow/data` is local/operator-supplied and may be gitignored.
 - **Local data**: Red runtime data under `Host/wwwroot/data/red/data` is local/operator-supplied and may be gitignored.
+- **Local data**: White runtime data under `Host/wwwroot/data/white/data` is local/operator-supplied and may be gitignored.
 - **Build environment**: If `Host/bin/Debug/net10.0` is locked by a running server, verify Host builds with a temp output path.
 
 ## Key Decisions
@@ -163,6 +182,8 @@ v1.3 Red AC15 Support is complete. Phases 18-22 added Red as a first-class older
 | Close Yellow only after RPCS3 runtime proof | Phase 17 records user-confirmed RPCS3 Yellow support verification plus full automated test/build evidence before v1.2 archive | Validated in v1.2 |
 | Start Red support as v1.3 | Red is the next older AC15 era after Yellow, local Red proto/data are present, and user scope says behavior should mostly share with Yellow while excluding WaiWai | Validated in v1.3 |
 | Treat ChallengeCompe as a shared older-AC15 capability with Red as the first binding | Red proto exposes challenge competition request/response and playresult/userdata fields, and public scoping context says Don Challenge is a Red-and-older AC15 behavior | Validated in v1.3 |
+| Start White 0.13 support as v1.4 | White is the next older AC15 era after Red; local White proto/data are present and the user expects mostly assembling existing capabilities with correct White responses and limits | Pending in v1.4 |
+| Collect White collectable data late in the milestone | White collectable data such as Don Challenge should be gathered if it falls in the 0.13 range, but only after core era support is stable | Pending in v1.4 |
 
 ## Evolution
 
@@ -182,4 +203,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-16 after v1.3 Red AC15 Support milestone archive*
+*Last updated: 2026-06-16 after v1.4 White AC15 0.13 Support milestone start*
