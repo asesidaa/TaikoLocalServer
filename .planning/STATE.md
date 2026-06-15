@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Phase Summary
-status: executing
-stopped_at: Completed 22-03-PLAN.md
-last_updated: "2026-06-15T06:20:32.424Z"
-last_activity: 2026-06-15 -- Phase 22 execution started
+status: human_needed
+stopped_at: Phase 22 Plan 22-04 awaiting cabinet/RPCS3 smoke evidence
+last_updated: "2026-06-15T15:23:14.263Z"
+last_activity: 2026-06-15 -- Phase 22 automated closeout evidence recorded; cabinet/RPCS3 smoke pending
 progress:
   total_phases: 6
   completed_phases: 4
@@ -25,10 +25,10 @@ See: `.planning/PROJECT.md` (updated 2026-06-13)
 
 ## Current Position
 
-Phase: 22 (red-adminapi-webui-and-runtime-closeout) — EXECUTING
+Phase: 22 (red-adminapi-webui-and-runtime-closeout) — HUMAN VERIFICATION
 Plan: 4 of 4
-Status: Ready to execute
-Last activity: 2026-06-15 -- Phase 22 execution started
+Status: Automated verification passed; awaiting cabinet/RPCS3 smoke evidence
+Last activity: 2026-06-15 -- Phase 22 automated closeout evidence recorded; cabinet/RPCS3 smoke pending
 
 ## Performance Metrics
 
@@ -246,7 +246,7 @@ None recorded.
 
 ### Blockers/Concerns
 
-None recorded.
+- Phase 22 closeout is blocked on manual cabinet/RPCS3 smoke evidence recorded in `.planning/phases/22-red-adminapi-webui-and-runtime-closeout/22-HUMAN-UAT.md`. Do not mark Phase 22 or v1.3 complete until Red normal, Red Tokkun tutorial, simple compatibility routes, Don Challenge/AdminApi/WebUI, and cabinet `challengecompe.php` boundary smoke are accepted.
 
 ### Quick Tasks Completed
 
@@ -263,11 +263,11 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-15T06:20:06.487Z
-Stopped at: Completed 22-03-PLAN.md
+Last session: 2026-06-15T15:23:14.263Z
+Stopped at: Phase 22 Plan 22-04 human verification gate
 Resume file: None
 
 ## Operator Next Steps
 
-- Execute Phase 22 Plan 22-04 runtime closeout.
+- Complete the pending cabinet/RPCS3 items in `.planning/phases/22-red-adminapi-webui-and-runtime-closeout/22-HUMAN-UAT.md`, then rerun Phase 22 verification and mark the phase complete only if the manual smoke passes.
 - Preserve the dirty `Host/wwwroot/data/red/red_telop_data.json` WIP unless a later plan proves it belongs.
