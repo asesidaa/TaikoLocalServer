@@ -1,5 +1,44 @@
 # Milestones
 
+## v1.3 Red AC15 Support (Shipped: 2026-06-16)
+
+**Phases completed:** 6 phases, 29 plans, 47 tasks
+
+**Delivered:** Red is now a first-class AC15 era with Red-owned protocol routes, generated wire DTOs, catalog/profile binding, runtime persistence, normal play, Dani, Tokkun tutorial readback, simple compatibility routes, older-AC15 ChallengeCompe/Don Challenge behavior, AdminApi/WebUI readback, and final runtime closeout evidence.
+
+**Key accomplishments:**
+
+- IDA-backed Red route/root evidence and phase-owned capability matrix before Red runtime implementation.
+- Red AC15 adapter identity with generated adapter-local protobuf DTOs from immutable `proto/red` inputs.
+- Red Host enablement with scoped protobuf fallback and settings validation that preserves unsupported-shop boundaries.
+- No-state Red route probes with user-confirmed basic RPCS3/cabinet connection.
+- AC15 BAID/userdata assembly now uses semantic application sections, controller-owned final wire assembly, and Mapperly-generated section application across Blue, Green, Yellow, and Red.
+- Evidence-gated older-AC15 ChallengeCompe catalog contract with Red sidecar loading.
+- Red-owned ChallengeCompe state with opt-in, active-task matching, Tokkun exclusion, and shared progress evaluation.
+- Configured Red ChallengeCompe rewards now grant Red unlock flags and hide active unearned reward songs through userdata.
+- Red challengecompe.php now returns active saved DonChare progress through a Mediator query and source-generated Red wire mapper.
+- Final ChallengeCompe verification with command evidence, decision audit, phase closeout, and Phase 22 handoff.
+- Red normal AdminApi readback and profile editing over Red-owned runtime tables and Red catalog slices
+- Dedicated Red Don Challenge AdminApi read model with no opt-in gates and cabinet ChallengeCompe kept as a separate compatibility surface
+- Red-aware generic WebUI routing plus a read-only Don Challenge Play Data page backed by dedicated availability/readback services
+- Red AdminApi/WebUI and runtime closeout passed with automated verification, temp-output Host build, and user-accepted manual runtime evidence.
+
+**Stats:**
+
+- 6 phases complete
+- 29 GSD plans complete
+- 47 tracked summary tasks
+- Full verification at close: `dotnet test Tests/Tests.csproj` passed 778/778, `dotnet build TaikoLocalServer.slnx` passed, and temp-output Host build passed with 0 warnings/errors.
+
+**Archived:**
+
+- `.planning/milestones/v1.3-ROADMAP.md`
+- `.planning/milestones/v1.3-REQUIREMENTS.md`
+
+**What's next:** Start a fresh milestone with `$gsd-new-milestone`.
+
+---
+
 ## v1.2 Yellow AC15 Support (Shipped: 2026-06-12)
 
 **Delivered:** Yellow is a first-class AC15 era with Yellow-owned protocol routes, catalog loading, normal play, Dani, shop/medals, WaiWai logging/readback, Tokkun, stateless Banacoin-adjacent compatibility, AdminApi/WebUI readback, runtime verification, and final contract documentation.

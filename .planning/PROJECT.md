@@ -4,7 +4,7 @@
 
 TaikoLocalServer is a local ASP.NET Core server for Taiko no Tatsujin cabinet protocols, local SQLite persistence, era-specific game data catalogs, and a Blazor WebAssembly admin UI. This project continues the existing Blue-era support effort from the Superpowers roadmap in `docs/superpowers/specs/2026-05-27-blue-support-roadmap-design.md`, starting after completed stages A0-A5 and carrying the work through full Blue support.
 
-Full Blue and Yellow support are complete. The project now supports Nijiiro, Green AC15, Blue AC15, and Yellow AC15 in one process while preserving era-owned routes, wire DTOs, persistence, handlers, mappers, catalogs, tests, and AdminApi/WebUI routing. Red AC15 support is the active v1.3 milestone.
+Full Blue, Yellow, and Red support are complete. The project now supports Nijiiro, Green AC15, Blue AC15, Yellow AC15, and Red AC15 in one process while preserving era-owned routes, wire DTOs, persistence, handlers, mappers, catalogs, tests, and AdminApi/WebUI routing.
 
 ## Core Value
 
@@ -14,7 +14,7 @@ AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, pe
 
 v1.2 Yellow AC15 Support shipped on 2026-06-12. Yellow is a first-class AC15 era using `proto/yellow/yellow.proto`, generated Yellow wire DTOs, Yellow-owned persistence, and `Host/wwwroot/data/yellow/data`.
 
-v1.3 Red AC15 Support started on 2026-06-12. Red planning uses `proto/red/taiko.proto`, `proto/red/vsinterface.proto`, and the local Red game-data symlink at `Host/wwwroot/data/red/data` as source evidence. Phase 18 completed the Red evidence/foundation slice: `/v08r01` game routes, shared `/v01r00` startup/version ownership, active `ST8100-1` root evidence, first-class Red enum/adapter/wire/Host gating, and no-state route probes with user-confirmed basic connection. Card scan, profile, gameplay, catalog binding, and ChallengeCompe semantics remain later-phase scope. Red is expected to compose shared AC15 capabilities where local evidence matches, omit WaiWai, and bind/prove ChallengeCompe as a shared older-AC15 capability.
+v1.3 Red AC15 Support shipped on 2026-06-16. Red uses `proto/red/taiko.proto`, `proto/red/vsinterface.proto`, and the local Red game-data symlink at `Host/wwwroot/data/red/data` as source evidence. Red support covers `/v08r01` game routes, shared `/v01r00` startup/version ownership, active `ST8100-1` root evidence, first-class Red adapter/wire/Host gating, catalog/profile binding, Red-owned normal runtime state, Dani, tutorial-only Tokkun readback, simple compatibility routes, shared older-AC15 ChallengeCompe/Don Challenge behavior, AdminApi/WebUI readback, and user-accepted runtime closeout.
 
 Although Blue, Green, and Yellow wire surfaces contain challenge competition proto definitions and some compatibility routes, those newer versions do not meaningfully call the feature; do not treat their stubs as runtime behavior evidence. Challenge competition is meaningful scope only for Red and older AC15 versions.
 
@@ -22,15 +22,11 @@ Blue now supports normal, battle, and Tokkun play in the same process. Tokkun su
 
 Yellow support reuses AC15 shared core behavior where it directly reduces duplicated normal-play, catalog, score, crown, Dani, shop, Tokkun, and admin behavior without merging era state or inventing unsupported routes.
 
-## Current Milestone: v1.3 Red AC15 Support
+## Current Planning State
 
-**Goal:** Add Red by composing supported AC15 capabilities with Red config, limits, wire placement, typed persistence, and Red/older-version evidence while preserving era-owned protocol, catalog, state, admin, and verification boundaries.
+No active milestone is open. v1.3 Red AC15 Support is complete and archived.
 
-**Target features:**
-- Red adapter, generated wire DTOs, route ownership, host settings, startup/version integration, and catalog foundation from local Red proto/data.
-- Red capability bindings for identity, userdata, initial data, self-best, crowns, recent/favorite songs, Dani Dojo, tutorial-only Tokkun, simple compatibility, AdminApi/WebUI routing, and runtime verification where protocol/data evidence match.
-- Shared older-AC15 ChallengeCompe capability evidence and Red binding. Wiki context defines product scope; runtime/proto/client evidence must define endpoint, schema, state, and reward implementation before stateful behavior exists.
-- No Red WaiWai surface, Blue battle mirroring, shared gameplay persistence tables, wallet/payment authority, or invented ChallengeCompe semantics.
+**Recent milestone goal:** Add Red by composing supported AC15 capabilities with Red config, limits, wire placement, typed persistence, and Red/older-version evidence while preserving era-owned protocol, catalog, state, admin, and verification boundaries.
 
 ## Requirements
 
@@ -65,14 +61,14 @@ Yellow support reuses AC15 shared core behavior where it directly reduces duplic
 - [x] Yellow no-battle absence contract: Blue-only battle behavior remains absent from Yellow; no Yellow battle routes, fields, persistence, or inferred runtime behavior are exposed without concrete Yellow evidence.
 - [x] Yellow runtime verification and final contract: Phase 17 records full automated verification, user-confirmed RPCS3 runtime proof, and final route/state/semantic contract documentation.
 - [x] Red evidence and first-class foundation: Phase 18 records Red `/v08r01` game route evidence, shared `/v01r00` startup/version ownership, active `ST8100-1` root evidence, Red enum/adapter/generated wire/Host gating, and no-state route probes with user-confirmed basic connection only.
+- [x] Red catalog/profile binding: Red composes shared AC15 catalog/profile capabilities through Red config, limits, wire placement, and Red-owned sidecar data.
+- [x] Red runtime state and readback: Red supports identity, userdata, initial data, self-best, crowns, recent/favorite songs, Dani Dojo, tutorial-only Tokkun, and simple compatibility routes through Red-owned state.
+- [x] Red ChallengeCompe/Don Challenge: Red binds the shared older-AC15 ChallengeCompe capability through local sidecar data, Red-owned progress/reward state, cabinet `challengecompe.php` readback, and dedicated AdminApi/WebUI contracts.
+- [x] Red AdminApi/WebUI and runtime closeout: Phase 22 records automated verification, temp-output Host build, and user-accepted manual runtime evidence before v1.3 archive.
 
 ### Active
 
-- [ ] Define Red catalog and state boundaries from local proto/data/runtime evidence before implementation.
-- [ ] Extend Red from first-class foundation into catalog/profile/runtime/admin support without merging Red, Yellow, Blue, Green, or Nijiiro gameplay state.
-- [ ] Compose Red from shared AC15 capabilities only where Red local evidence matches, using Red config/limits/wire placement and Red-owned typed persistence.
-- [ ] Resolve shared older-AC15 ChallengeCompe through wiki product scope plus Red runtime/proto/client evidence before implementing stateful behavior.
-- [ ] Close Red support only after automated verification plus repeatable cabinet/RPCS3 runtime smoke evidence.
+No active milestone requirements. Start the next milestone with `$gsd-new-milestone`.
 
 ### Out of Scope
 
@@ -99,7 +95,7 @@ Yellow support reuses AC15 shared core behavior where it directly reduces duplic
 - v1.0 Blue support is shipped as of 2026-06-03. The user confirmed the remaining stale debug/UAT artifacts were externally fixed and resolved before milestone close.
 - v1.1 Blue Tokkun support shipped on 2026-06-07. The user confirmed cabinet/RPCS3 runtime verification for Tokkun selection, Banacoin request sequence, gameplay entry, final upload, post-upload userdata behavior, and no unexpected blocking endpoint calls.
 - v1.2 Yellow AC15 support shipped on 2026-06-12. The user confirmed Yellow support was manually tested in RPCS3 before closeout; final automated verification passed 683 tests and Host temp-output build passed with 0 warnings and 0 errors.
-- v1.3 Red AC15 Support started on 2026-06-12. Red local protocol inputs are `proto/red/taiko.proto` and `proto/red/vsinterface.proto`; local game data is symlinked at `Host/wwwroot/data/red/data`.
+- v1.3 Red AC15 Support shipped on 2026-06-16. Red local protocol inputs are `proto/red/taiko.proto` and `proto/red/vsinterface.proto`; local game data is symlinked at `Host/wwwroot/data/red/data`.
 - Red local data currently exposes versioned config roots including `config/ST5100-1`, `config/ST5100-7`, `config/ST7100-1`, and `config/ST8100-1`; the milestone must prove the runtime target/root before locking catalog paths.
 - The evidence hierarchy is repo code, proto files, SQLite state, cabinet/RPCS3 logs, IDA/client evidence, and only then public wiki pages for gameplay scoping.
 - Yellow local protocol input is `proto/yellow/yellow.proto`; local game data is under `Host/wwwroot/data/yellow/data`, with the observed versioned config root `config/ST9100-1`.
@@ -119,11 +115,13 @@ v1.1 Blue Tokkun Mode Support is complete. Phases 7-11 established the Tokkun ev
 
 v1.2 Yellow AC15 Support is complete. Phases 12-17 plus inserted Phases 16.1 and 16.2 added Yellow as a first-class older AC15 era, using the local Yellow proto/data and Blue-equivalent behavior where Yellow supports it. The milestone also regenerated AC15 wire DTOs with nullable optional primitives and simplified shared AC15 core behavior without merging era state.
 
+v1.3 Red AC15 Support is complete. Phases 18-22 added Red as a first-class older AC15 era with Red route/root evidence, generated Red wire DTOs, catalog/profile binding, Red-owned runtime state, tutorial-only Tokkun readback, shared older-AC15 ChallengeCompe/Don Challenge behavior, AdminApi/WebUI readback, and final runtime closeout evidence.
+
 ## Next Milestone Goals
 
-- Start fresh requirements for Red AC15 support.
-- Use local Red proto/data, runtime traces, and IDA/client evidence to define Red route, transport, catalog, and state boundaries before implementation.
-- Reuse AC15 shared core only where Red behavior truly matches, while keeping era routes, wire DTOs, and persistence separate.
+- Start fresh requirements for the next support target or hardening slice.
+- Use local proto/data, runtime traces, and IDA/client evidence to define route, transport, catalog, and state boundaries before implementation.
+- Reuse AC15 shared core only where behavior truly matches, while keeping era routes, wire DTOs, and persistence separate.
 - Keep unsupported surfaces absent instead of adding stubs or compatibility layers without evidence.
 
 ## Constraints
@@ -163,8 +161,8 @@ v1.2 Yellow AC15 Support is complete. Phases 12-17 plus inserted Phases 16.1 and
 | Treat Yellow Tokkun as real and Yellow battle as absent | Yellow proto has Tokkun fields and lacks Blue battle fields/routes; runtime implementation should follow that evidence instead of copying Blue-only behavior | Validated in v1.2 |
 | Insert AC15 mapper rewrite before Yellow closeout | Green/Blue/Yellow protocol mappers relied on hand-written projection and scattered protobuf presence helper calls despite Mapperly being introduced; repo-local `protogen` supports nullable optional primitives via `+nullablevaluetype=yes` | Completed in Phase 16.1 |
 | Close Yellow only after RPCS3 runtime proof | Phase 17 records user-confirmed RPCS3 Yellow support verification plus full automated test/build evidence before v1.2 archive | Validated in v1.2 |
-| Start Red support as v1.3 | Red is the next older AC15 era after Yellow, local Red proto/data are present, and user scope says behavior should mostly share with Yellow while excluding WaiWai | Pending in v1.3 |
-| Treat ChallengeCompe as a shared older-AC15 capability with Red as the first binding | Red proto exposes challenge competition request/response and playresult/userdata fields, and public scoping context says Don Challenge is a Red-and-older AC15 behavior | Pending in v1.3 |
+| Start Red support as v1.3 | Red is the next older AC15 era after Yellow, local Red proto/data are present, and user scope says behavior should mostly share with Yellow while excluding WaiWai | Validated in v1.3 |
+| Treat ChallengeCompe as a shared older-AC15 capability with Red as the first binding | Red proto exposes challenge competition request/response and playresult/userdata fields, and public scoping context says Don Challenge is a Red-and-older AC15 behavior | Validated in v1.3 |
 
 ## Evolution
 
@@ -184,4 +182,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-12 after v1.3 Red AC15 Support milestone start*
+*Last updated: 2026-06-16 after v1.3 Red AC15 Support milestone archive*
