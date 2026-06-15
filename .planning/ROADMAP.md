@@ -5,11 +5,11 @@
 - [x] **v1.0 Blue Support** - Phases 1-6 shipped on 2026-06-03. See [v1.0 roadmap archive](milestones/v1.0-ROADMAP.md), [v1.0 requirements archive](milestones/v1.0-REQUIREMENTS.md), and [v1.0 phase artifacts](milestones/v1.0-phases/).
 - [x] **v1.1 Blue Tokkun Mode Support** - Phases 7-11 shipped on 2026-06-07. See [v1.1 roadmap archive](milestones/v1.1-ROADMAP.md), [v1.1 requirements archive](milestones/v1.1-REQUIREMENTS.md), and [v1.1 phase artifacts](milestones/v1.1-phases/).
 - [x] **v1.2 Yellow AC15 Support** - Phases 12-17 plus inserted Phases 16.1 and 16.2 shipped on 2026-06-12. See [v1.2 roadmap archive](milestones/v1.2-ROADMAP.md), [v1.2 requirements archive](milestones/v1.2-REQUIREMENTS.md), and [v1.2 phase artifacts](milestones/v1.2-phases/).
-- [ ] **v1.3 Red AC15 Support** - Phases 18-22 add Red as the next AC15 capability composition, with Red adapter/wire/table ownership, shared AC15 capability bindings, shared older-AC15 ChallengeCompe capability, admin, and runtime verification.
+- [x] **v1.3 Red AC15 Support** - Phases 18-22 shipped on 2026-06-16. Red is supported as the next AC15 capability composition, with Red adapter/wire/table ownership, shared AC15 capability bindings, shared older-AC15 ChallengeCompe capability, admin, and runtime verification.
 
 ## Current Planning State
 
-Active milestone: **v1.3 Red AC15 Support**
+Completed milestone: **v1.3 Red AC15 Support**
 
 **Goal:** Add Red by composing supported AC15 capabilities with Red config, limits, wire placement, typed persistence, and Red/older-version evidence while preserving era-owned protocol, catalog, state, admin, and verification boundaries.
 
@@ -31,7 +31,7 @@ Active milestone: **v1.3 Red AC15 Support**
 | 20 | Red Runtime Capability Binding and Simple Compatibility | 4/4 | Complete | 2026-06-13 |
 | 20.1 | AC15 Capability DTO and Mapper Boundary Refactor | 9/9 | Complete    | 2026-06-14 |
 | 21 | Older-AC15 ChallengeCompe Capability and Red Binding | 5/5 | Complete   | 2026-06-14 |
-| 22 | Red AdminApi/WebUI and Runtime Closeout | 3/4 | In Progress|  |
+| 22 | Red AdminApi/WebUI and Runtime Closeout | 4/4 | Complete    | 2026-06-16 |
 
 **Coverage:** 17/17 v1.3 requirements mapped exactly once.
 
@@ -41,7 +41,7 @@ Active milestone: **v1.3 Red AC15 Support**
 - [x] **Phase 19: Red Capability Profile and Catalog Binding** - Bind Red catalog/config data into shared AC15 catalog capabilities and define Red capability/profile boundaries. (completed 2026-06-13)
 - [x] **Phase 20: Red Runtime Capability Binding and Simple Compatibility** - Bind shared identity, userdata, normal-play, Dani, tutorial-only Tokkun, and simple compatibility capabilities to Red-owned state. (completed 2026-06-13)
 - [x] **Phase 21: Older-AC15 ChallengeCompe Capability and Red Binding** - Define the shared older-AC15 ChallengeCompe capability and bind/prove it through Red evidence, with stateful behavior only after client/runtime proof defines the contract. (completed 2026-06-14)
-- [ ] **Phase 22: Red AdminApi/WebUI and Runtime Closeout** - Expose implemented Red-owned readback surfaces and close v1.3 with automated plus cabinet/RPCS3 verification.
+- [x] **Phase 22: Red AdminApi/WebUI and Runtime Closeout** - Expose implemented Red-owned readback surfaces and close v1.3 with automated plus cabinet/RPCS3 verification. (completed 2026-06-16)
 
 ## Phase Details
 
@@ -266,7 +266,7 @@ Plans:
 4. Full automated verification and a temp-output Host build pass before v1.3 is called complete.
 5. Cabinet/RPCS3 smoke evidence records implemented Red normal, Tokkun tutorial, simple compatibility, and ChallengeCompe behavior, including explicit notes for any ChallengeCompe functionality left evidence-gated/absent.
 
-**Plans:** TBD
+**Plans:** 4/4 plans complete
 **UI hint:** yes
 
 ## Coverage Map
@@ -287,9 +287,9 @@ Plans:
 | RCOMP-02 | Phase 21 | Complete |
 | RCHAL-01 | Phase 21 | Complete |
 | RCHAL-02 | Phase 21 | Complete |
-| RVER-01 | Phase 22 | Pending |
-| RVER-02 | Phase 22 | Pending |
-| RVER-03 | Phase 22 | Pending |
+| RVER-01 | Phase 22 | Complete |
+| RVER-02 | Phase 22 | Complete |
+| RVER-03 | Phase 22 | Complete |
 
 ## Archived Phases
 
@@ -343,7 +343,7 @@ See `.planning/milestones/v1.2-ROADMAP.md` and `.planning/milestones/v1.2-phases
 | v1.0 Blue Support | 1-6 | 30 roadmap plans | Shipped | 2026-06-03 |
 | v1.1 Blue Tokkun Mode Support | 7-11 | 7 GSD plans | Shipped | 2026-06-07 |
 | v1.2 Yellow AC15 Support | 12-17 plus 16.1 and 16.2 | 38 GSD plans | Shipped | 2026-06-12 |
-| v1.3 Red AC15 Support | 18-22 | 11 GSD plans | In Progress | - |
+| v1.3 Red AC15 Support | 18-22 | 29 GSD plans | Shipped | 2026-06-16 |
 
 ## Phase Progress
 
@@ -354,4 +354,4 @@ See `.planning/milestones/v1.2-ROADMAP.md` and `.planning/milestones/v1.2-phases
 | 20. Red Runtime Capability Binding and Simple Compatibility | 4/4 | Complete | 2026-06-13 |
 | 20.1. AC15 Capability DTO and Mapper Boundary Refactor | 9/9 | Complete | 2026-06-14 |
 | 21. Older-AC15 ChallengeCompe Capability and Red Binding | 5/5 | Complete | 2026-06-14 |
-| 22. Red AdminApi/WebUI and Runtime Closeout | 0/TBD | Not started | - |
+| 22. Red AdminApi/WebUI and Runtime Closeout | 4/4 | Complete | 2026-06-16 |

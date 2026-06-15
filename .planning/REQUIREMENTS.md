@@ -14,20 +14,20 @@
 
 ### Red Capability Profile And Catalog Binding
 
-- [ ] **RCAT-01**: Red catalog initialization binds shared AC15 catalog capabilities for matching music, tuning, Taikojuku/Dani, folder, telop, recommendation, movie, and customization data, with Red-specific parser work only where Red local data proves a delta.
-- [ ] **RCAT-02**: Red has an explicit AC15 capability/profile model that composes supported behavior modules with Red config roots, protocol limits, wire placement, and typed persistence boundaries without inheriting unsupported later-era behavior.
+- [x] **RCAT-01**: Red catalog initialization binds shared AC15 catalog capabilities for matching music, tuning, Taikojuku/Dani, folder, telop, recommendation, movie, and customization data, with Red-specific parser work only where Red local data proves a delta.
+- [x] **RCAT-02**: Red has an explicit AC15 capability/profile model that composes supported behavior modules with Red config roots, protocol limits, wire placement, and typed persistence boundaries without inheriting unsupported later-era behavior.
 
 ### Red Runtime Capability Binding
 
-- [ ] **RSTATE-01**: Red binds the shared identity/userdata capability to Red-owned save/profile tables so the cabinet can register or find a card, create mydon/profile data, and read/write userdata without writing another era's gameplay tables.
-- [ ] **RSTATE-02**: Red binds the shared normal-play capability to Red-owned score, self-best, crown, favorite, recent-song, and profile-counter tables where protocol and data shapes match.
-- [ ] **RSTATE-03**: Red binds the shared Taikojuku/Dani capability to Red-owned Dan state and Red protocol limits where behavior matches.
+- [x] **RSTATE-01**: Red binds the shared identity/userdata capability to Red-owned save/profile tables so the cabinet can register or find a card, create mydon/profile data, and read/write userdata without writing another era's gameplay tables.
+- [x] **RSTATE-02**: Red binds the shared normal-play capability to Red-owned score, self-best, crown, favorite, recent-song, and profile-counter tables where protocol and data shapes match.
+- [x] **RSTATE-03**: Red binds the shared Taikojuku/Dani capability to Red-owned Dan state and Red protocol limits where behavior matches.
 
 ### Red Tokkun And Simple Compatibility
 
-- [ ] **RSTATE-04**: Red reward card, reward execution, and Don point fields are handled only as simple Red protocol/profile compatibility when runtime evidence requires them, with no item-shop, medal, or unlock semantics.
-- [ ] **RSTATE-05**: Red Tokkun playresults are classified before normal handling and persist/read back only Red-owned tutorial state; no Tokkun raw history, score, crown, reward, unlock, or challenge state is invented.
-- [ ] **RCOMP-01**: Red Banacoin-adjacent routes are implemented only as stateless compatibility when observed or required by Red runtime flow, with no wallet, balance, payment, coupon, settlement, receipt, or transaction persistence.
+- [x] **RSTATE-04**: Red reward card, reward execution, and Don point fields are handled only as simple Red protocol/profile compatibility when runtime evidence requires them, with no item-shop, medal, or unlock semantics.
+- [x] **RSTATE-05**: Red Tokkun playresults are classified before normal handling and persist/read back only Red-owned tutorial state; no Tokkun raw history, score, crown, reward, unlock, or challenge state is invented.
+- [x] **RCOMP-01**: Red Banacoin-adjacent routes are implemented only as stateless compatibility when observed or required by Red runtime flow, with no wallet, balance, payment, coupon, settlement, receipt, or transaction persistence.
 
 ### Older-AC15 ChallengeCompe Capability
 
@@ -39,7 +39,7 @@
 
 - [x] **RVER-01**: AdminApi and WebUI expose only implemented Red-owned readback surfaces and do not read or write another era's gameplay state.
 - [x] **RVER-02**: Automated tests cover Red observable route, handler, catalog, persistence, mapper/classifier, and no-cross-era/no-cross-mode behavior.
-- [ ] **RVER-03**: Red support closes only after full automated verification, a temp-output Host build, and cabinet/RPCS3 smoke evidence for implemented normal, Tokkun tutorial, simple compatibility, and ChallengeCompe flows.
+- [x] **RVER-03**: Red support closes only after full automated verification, a temp-output Host build, and cabinet/RPCS3 smoke evidence for implemented normal, Tokkun tutorial, simple compatibility, and ChallengeCompe flows.
 
 ## Future Requirements
 
@@ -73,20 +73,20 @@ Roadmap phase mapping for v1.3 Red AC15 Support.
 | RFND-01 | Phase 18 | Complete |
 | RFND-02 | Phase 18 | Complete |
 | RFND-03 | Phase 18 | Complete |
-| RCAT-01 | Phase 19 | Pending |
-| RCAT-02 | Phase 19 | Pending |
-| RSTATE-01 | Phase 20 | Pending |
-| RSTATE-02 | Phase 20 | Pending |
-| RSTATE-03 | Phase 20 | Pending |
-| RSTATE-04 | Phase 20 | Pending |
-| RSTATE-05 | Phase 20 | Pending |
-| RCOMP-01 | Phase 20 | Pending |
+| RCAT-01 | Phase 19 | Complete |
+| RCAT-02 | Phase 19 | Complete |
+| RSTATE-01 | Phase 20 | Complete |
+| RSTATE-02 | Phase 20 | Complete |
+| RSTATE-03 | Phase 20 | Complete |
+| RSTATE-04 | Phase 20 | Complete |
+| RSTATE-05 | Phase 20 | Complete |
+| RCOMP-01 | Phase 20 | Complete |
 | RCOMP-02 | Phase 21 | Complete |
 | RCHAL-01 | Phase 21 | Complete |
 | RCHAL-02 | Phase 21 | Complete |
 | RVER-01 | Phase 22 | Complete |
 | RVER-02 | Phase 22 | Complete |
-| RVER-03 | Phase 22 | Pending |
+| RVER-03 | Phase 22 | Complete |
 | OLDAC15-01 | Future milestone | Deferred |
 | RCHAL-03 | Future milestone | Deferred |
 

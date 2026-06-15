@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.3
-milestone_name: Phase Summary
-status: human_needed
-stopped_at: Phase 22 Plan 22-04 awaiting cabinet/RPCS3 smoke evidence
-last_updated: "2026-06-15T18:24:08.839Z"
-last_activity: 2026-06-16 -- Don Challenge duplicate task-card rewards removed; cabinet/RPCS3 smoke remains pending
+milestone_name: Red AC15 Support
+status: complete
+stopped_at: v1.3 Red AC15 Support complete; milestone archival pending
+last_updated: "2026-06-15T19:43:21.357Z"
+last_activity: 2026-06-16 -- Phase 22 and v1.3 Red AC15 Support completed
 progress:
   total_phases: 6
-  completed_phases: 4
+  completed_phases: 6
   total_plans: 29
-  completed_plans: 26
-  percent: 90
+  completed_plans: 29
+  percent: 100
 ---
 
 # Project State
@@ -21,20 +21,20 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-13)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Phase 22 — red-adminapi-webui-and-runtime-closeout
+**Current focus:** v1.3 Red AC15 Support complete; milestone archival pending
 
 ## Current Position
 
-Phase: 22 (red-adminapi-webui-and-runtime-closeout) — HUMAN VERIFICATION
+Phase: 22 (red-adminapi-webui-and-runtime-closeout) - COMPLETE
 Plan: 4 of 4
-Status: Automated verification passed; awaiting cabinet/RPCS3 smoke evidence
-Last activity: 2026-06-16 -- Don Challenge duplicate task-card rewards removed; Phase 22 cabinet/RPCS3 smoke remains pending
+Status: Phase 22 complete; v1.3 ready for milestone archival
+Last activity: 2026-06-16 -- Phase 22 and v1.3 Red AC15 Support completed
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 51 in v1.2
+- Total plans completed: 29 in v1.3
 - Average duration: 23.5 min
 - Total execution time: 541 min
 
@@ -57,6 +57,7 @@ Last activity: 2026-06-16 -- Don Challenge duplicate task-card rewards removed; 
 | 17 | 1/1 complete | closeout | closeout |
 | 18 | 4 | - | - |
 | 20.1 | 9 | - | - |
+| 22 | 4/4 complete | closeout | closeout |
 
 **Recent Trend:**
 
@@ -246,7 +247,7 @@ None recorded.
 
 ### Blockers/Concerns
 
-- Phase 22 closeout is blocked on manual cabinet/RPCS3 smoke evidence recorded in `.planning/phases/22-red-adminapi-webui-and-runtime-closeout/22-HUMAN-UAT.md`. Do not mark Phase 22 or v1.3 complete until Red normal, Red Tokkun tutorial, simple compatibility routes, Don Challenge/AdminApi/WebUI, and cabinet `challengecompe.php` boundary smoke are accepted.
+None recorded.
 
 ### Quick Tasks Completed
 
@@ -264,11 +265,10 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-15T15:59:48.367Z
-Stopped at: Phase 22 Plan 22-04 human verification gate
+Last session: 2026-06-15T19:43:21.357Z
+Stopped at: v1.3 Red AC15 Support complete; milestone archival pending
 Resume file: None
 
 ## Operator Next Steps
 
-- Complete the pending cabinet/RPCS3 items in `.planning/phases/22-red-adminapi-webui-and-runtime-closeout/22-HUMAN-UAT.md`, then rerun Phase 22 verification and mark the phase complete only if the manual smoke passes.
-- Preserve the dirty `Host/wwwroot/data/red/red_telop_data.json` WIP unless a later plan proves it belongs.
+- Archive v1.3 Red AC15 Support with `$gsd-complete-milestone v1.3`.

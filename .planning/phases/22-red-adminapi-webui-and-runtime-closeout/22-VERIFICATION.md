@@ -1,11 +1,11 @@
 ---
-status: human_needed
+status: passed
 phase: 22-red-adminapi-webui-and-runtime-closeout
 source: 22-04-PLAN.md
 started: 2026-06-15T23:23:14+08:00
-updated: 2026-06-15T23:23:14+08:00
+updated: 2026-06-16T03:40:50+08:00
 automated_status: passed
-manual_status: pending
+manual_status: accepted
 ---
 
 # Phase 22 Verification
@@ -16,18 +16,16 @@ manual_status: pending
 
 ## Verdict
 
-Phase 22 automated verification passed, but Phase 22 and v1.3 are not complete yet.
-
-The remaining gate is manual cabinet/RPCS3 smoke evidence for Red normal, Red Tokkun tutorial, simple Red compatibility routes, and Don Challenge/ChallengeCompe behavior. This is required by Plan 22-04 and must not be replaced by automated server tests.
+Phase 22 verification passed. Automated checks are green, the temp-output Host build is clean, and the user approved the manual runtime closeout gate on 2026-06-16.
 
 ## Automated Evidence
 
 | Check | Result | Notes |
 |-------|--------|-------|
-| `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~RedAdminApi|FullyQualifiedName~RedDonChallenge|FullyQualifiedName~RedChallengeCompe|FullyQualifiedName~GameDataServiceTests"` | Passed: 54 passed, 0 failed, 0 skipped | Fresh Phase 22 focused filter after the Don Challenge user-card navigation fix. |
-| `dotnet test Tests/Tests.csproj` | Passed: 764 passed, 0 failed, 0 skipped | Full repository test suite. |
-| `dotnet build TaikoLocalServer.slnx` | Not clean due locked runtime output | Host output was locked by `TaikoLocalServer.exe` PID 67124, command line `H:\TaikoLocalServer\Host\bin\Debug\net10.0\TaikoLocalServer.exe`, created 2026-06-15 23:14:37 local time. |
-| `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build"` | Passed: 0 warnings, 0 errors | Clean build output at `C:\Users\10614\AppData\Local\Temp\TaikoLocalServer-host-build`. |
+| `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~RedAdminApi|FullyQualifiedName~RedDonChallenge|FullyQualifiedName~RedChallengeCompe|FullyQualifiedName~GameDataServiceTests"` | Passed: 55 passed, 0 failed, 0 skipped | Fresh Phase 22 focused filter from current HEAD on 2026-06-16. |
+| `dotnet test Tests/Tests.csproj` | Passed: 778 passed, 0 failed, 0 skipped | Full repository test suite from current HEAD on 2026-06-16. |
+| `dotnet build TaikoLocalServer.slnx` | Passed: 0 warnings, 0 errors | Normal solution build from current HEAD on 2026-06-16. |
+| `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build"` | Passed: 0 warnings, 0 errors | Clean Host build output at `C:\Users\10614\AppData\Local\Temp\TaikoLocalServer-host-build`. |
 | `node .codex\get-shit-done\bin\gsd-tools.cjs query verify.schema-drift 22` | Passed | `drift_detected=false`, `blocking=false`. |
 | `node .codex\get-shit-done\bin\gsd-tools.cjs verify codebase-drift` | Warning only | Non-blocking structural drift warning for pre-existing top-level planning/codebase paths. |
 | `dotnet build TaikoWebUI/TaikoWebUI.csproj` | Passed: 0 warnings, 0 errors | Follow-up verification after removing duplicate task-card reward rows. |
@@ -41,9 +39,9 @@ During that check, the user also found that without login there was no navigatio
 
 On 2026-06-16, the user found that completion-threshold rewards were duplicated inside slot 8 and slot 10 task cards while also appearing in the bottom Rewards table. The UI contract was corrected so task cards show task progress and configured songs only; the bottom Rewards section is the single reward display.
 
-## Human Verification Still Required
+## Human Verification Accepted
 
-These items are recorded in `22-HUMAN-UAT.md` and must be resolved before running the final phase completion step:
+The user approved marking Phase 22 and v1.3 complete on 2026-06-16. `22-HUMAN-UAT.md` records the manual acceptance for:
 
 1. Red normal profile/login/userdata/playresult/readback smoke through cabinet/RPCS3.
 2. Red Tokkun tutorial upload and userdata tutorial-flag readback smoke through cabinet/RPCS3.
@@ -72,13 +70,13 @@ These items are recorded in `22-HUMAN-UAT.md` and must be resolved before runnin
 
 | Decision | Status | Evidence |
 |----------|--------|----------|
-| D-04 compatibility evidence recorded outside operator pages | Pending manual | This file separates compatibility proof from WebUI/AdminApi behavior; manual route smoke is still pending. |
-| D-15 meaningful Red AdminApi/WebUI and Don Challenge behavior | Pass for automated scope | Focused Phase 22 tests and full suite passed; user manually accepted layout sizes after fix. |
+| D-04 compatibility evidence recorded outside operator pages | Pass | Compatibility proof is recorded in verification/UAT artifacts, not operator pages. |
+| D-15 meaningful Red AdminApi/WebUI and Don Challenge behavior | Pass | Focused Phase 22 tests, full suite, builds, and user manual acceptance passed. |
 | D-16 no superficial WebUI/source-shape tests required | Pass | Verification relies on route-preserving service tests, API behavior tests, full suite, build, and manual UI check. |
-| D-17 manual cabinet/RPCS3 verification required | Pending manual | See `22-HUMAN-UAT.md`. |
-| D-18 user-reported manual verification record maintained | Partial | WebUI layout/manual navigation feedback recorded; cabinet/RPCS3 smoke still pending. |
-| D-19 manual Phase 22 issues block v1.3 closeout | Pass | Phase remains `human_needed`; no `22-SUMMARY.md` or roadmap completion was written. |
+| D-17 manual cabinet/RPCS3 verification required | Pass | User approved the manual runtime closeout gate on 2026-06-16; see `22-HUMAN-UAT.md`. |
+| D-18 user-reported manual verification record maintained | Pass | User-reported visual feedback and final manual closeout approval are recorded. |
+| D-19 manual Phase 22 issues block v1.3 closeout | Pass | The phase remained blocked until the user approved closeout on 2026-06-16. |
 
 ## Closeout Status
 
-Do not mark Phase 22 or v1.3 complete until `22-HUMAN-UAT.md` is updated with passing cabinet/RPCS3 smoke evidence and this verification is rerun as `status: passed`.
+Phase 22 can be marked complete and v1.3 can be closed.
