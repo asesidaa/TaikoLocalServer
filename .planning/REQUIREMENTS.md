@@ -62,35 +62,36 @@
 
 ## Traceability
 
-Roadmap phase mapping for v1.4 White AC15 0.13 Support. Updated during roadmap creation.
+Roadmap phase mapping for v1.4 White AC15 0.13 Support.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| WFND-01 | Pending | Pending |
-| WFND-02 | Pending | Pending |
-| WFND-03 | Pending | Pending |
-| WCAT-01 | Pending | Pending |
-| WCAT-02 | Pending | Pending |
-| WCAT-03 | Pending | Pending |
-| WSTATE-01 | Pending | Pending |
-| WSTATE-02 | Pending | Pending |
-| WSTATE-03 | Pending | Pending |
-| WSTATE-04 | Pending | Pending |
-| WCOLL-01 | Pending | Pending |
-| WCOLL-02 | Pending | Pending |
-| WCOLL-03 | Pending | Pending |
-| WVER-01 | Pending | Pending |
-| WVER-02 | Pending | Pending |
-| WVER-03 | Pending | Pending |
+| WFND-01 | Phase 23 | Pending |
+| WFND-02 | Phase 23 | Pending |
+| WFND-03 | Phase 23 | Pending |
+| WCAT-01 | Phase 24 | Pending |
+| WCAT-02 | Phase 24 | Pending |
+| WCAT-03 | Phase 24 | Pending |
+| WSTATE-01 | Phase 25 | Pending |
+| WSTATE-02 | Phase 25 | Pending |
+| WSTATE-03 | Phase 25 | Pending |
+| WSTATE-04 | Phase 25 | Pending |
+| WCOLL-01 | Phase 25 | Pending |
+| WCOLL-02 | Phase 26 | Pending |
+| WCOLL-03 | Phase 26 | Pending |
+| WVER-01 | Phase 27 | Pending |
+| WVER-02 | Phase 27 | Pending |
+| WVER-03 | Phase 27 | Pending |
 | WLATER-01 | Future milestone | Deferred |
 | WCOLL-04 | Future milestone | Deferred |
 
 **Coverage:**
 
 - v1.4 requirements: 16 total
-- Mapped to phases: 0
-- Unmapped: 16
+- Mapped to phases: 16
+- Unmapped: 0
 - Future requirements: 2 deferred
 
 ---
 *Requirements defined: 2026-06-16*
+*Last updated: 2026-06-16 after v1.4 roadmap creation*

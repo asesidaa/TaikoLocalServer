@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: White AC15 0.13 Support
 status: planning
-last_updated: "2026-06-15T20:59:56.872Z"
+last_updated: "2026-06-16T14:12:02.232Z"
 last_activity: 2026-06-16
 progress:
-  total_phases: 0
+  total_phases: 5
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -20,14 +20,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-16)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** v1.4 White AC15 0.13 Support requirements and roadmap definition
+**Current focus:** v1.4 White AC15 0.13 Support roadmap ready; next step is Phase 23 planning
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 23 - White Evidence and Era Foundation
 Plan: -
-Status: Defining requirements
-Last activity: 2026-06-16 - Milestone v1.4 started
+Status: Ready to plan
+Last activity: 2026-06-16 - Milestone v1.4 roadmap created
 
 ## Performance Metrics
 
@@ -129,6 +129,8 @@ Last activity: 2026-06-16 - Milestone v1.4 started
 ## Accumulated Context
 
 ### Roadmap Evolution
+
+- v1.4 White AC15 0.13 Support roadmap starts at Phase 23 and is organized around evidence/foundation, catalog/profile limits, runtime capability/reward binding, late collectable/Don Challenge evidence, and AdminApi/WebUI/runtime closeout.
 
 - v1.3 Red AC15 Support roadmap corrected as Phases 18-22 around capability composition: Red evidence/capability foundation, Red capability profile/catalog binding, Red runtime capability binding/simple compatibility, shared older-AC15 ChallengeCompe capability with Red binding, and AdminApi/WebUI/runtime closeout.
 - Phase 16.1 inserted after Phase 16 and completed before Phase 17: AC15 Mapperly Mapper Rewrite and Presence Semantics; includes `protogen +nullablevaluetype=yes` wire regeneration as a first-class refactor point.
@@ -239,6 +241,8 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 22]: Red WebUI routing preserves Red AdminApi and user routes. — Plan 22-03 adds Red to WebUiEra supported/known eras, AC15 classification, and focused route tests.
 - [Phase 22]: Don Challenge WebUI availability is capability-gated by AdminApi availability. — Navigation shows the Play Data link only for the Red older-AC15 ChallengeCompe binding when `api/{era}/DonChallenge/availability` reports active.
 - [Phase 22]: Direct unsupported Don Challenge routes render unavailable UI without Nijiiro fallback. — The page handles unsupported routes locally and consumes only dedicated Don Challenge contracts.
+- [Milestone v1.4]: White 0.13 support starts with route/root/transport evidence because `.tools/white/EBOOT.ELF.i64` is zero bytes and local `ST7100-1` data alone is not route proof.
+- [Milestone v1.4]: White collectable data, including Don Challenge if proven in range, is intentionally late after White identity, catalog, playresult, reward, and readback behavior are stable.
 
 ### Pending Todos
 
@@ -270,4 +274,4 @@ Resume file: None
 
 ## Operator Next Steps
 
-- Define v1.4 White AC15 0.13 Support requirements and roadmap.
+- Start Phase 23 with `$gsd-discuss-phase 23` or `$gsd-plan-phase 23`.
