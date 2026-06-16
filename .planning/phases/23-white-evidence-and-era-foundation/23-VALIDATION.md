@@ -1,8 +1,8 @@
 ---
 phase: 23
 slug: white-evidence-and-era-foundation
-status: draft
-nyquist_compliant: false
+status: approved
+nyquist_compliant: true
 wave_0_complete: false
 created: 2026-06-17
 ---
@@ -19,7 +19,7 @@ created: 2026-06-17
 |----------|-------|
 | **Framework** | xUnit 2.9.3 with Microsoft.NET.Test.Sdk 17.14.1 |
 | **Config file** | `Tests/Tests.csproj` |
-| **Quick run command** | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~White|FullyQualifiedName~RedServerSettingsValidationTests|FullyQualifiedName~StartupAuthController" -x` |
+| **Quick run command** | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~White|FullyQualifiedName~RedServerSettingsValidationTests|FullyQualifiedName~StartupAuthController"` |
 | **Full suite command** | `dotnet test Tests/Tests.csproj` |
 | **Estimated runtime** | ~300 seconds for focused test slices; full suite may be longer |
 
@@ -66,11 +66,11 @@ created: 2026-06-17
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 300s for focused checks
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references
+- [x] No watch-mode flags
+- [x] Feedback latency < 300s for focused checks
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** approved - validation commands are execution-ready; Wave 0 execution remains future work.

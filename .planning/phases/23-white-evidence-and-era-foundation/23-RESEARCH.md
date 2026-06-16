@@ -418,22 +418,24 @@ No `[ASSUMED]` claims are used as implementation authority. Route prefix `/v07r0
 |---|-------|---------|---------------|
 | A1 | None. | N/A | N/A |
 
-## Open Questions
+## Open Questions (Converted To Plan Gates)
+
+The unresolved route questions below are not open planning ambiguity anymore; they are converted into the blocking Plan 01 evidence gate. No downstream White route scaffolding, no `/v07r00/chassis` route attributes, and no Host `/v07r00/chassis` missing-content-type fallback may proceed until Plan 01 resolves the route prefix and suffix status in `23-WHITE-EVIDENCE.md`.
 
 1. **Can the current White IDB produce route strings through IDA?**
    - What we know: The IDB file exists and is 129,893,515 bytes; raw text scanning found no full `.php` route paths; IDA-CLI failed to open the database with error code 4; `ida.exe` is running and several IDB sidecar files are locked. [VERIFIED: live filesystem] [VERIFIED: binary rg] [VERIFIED: ida-cli probe] [VERIFIED: local process check]
-   - What's unclear: Whether the running IDA session can export the route strings, whether IDA-CLI needs the GUI session closed, or whether replacement evidence must come from logs/captures. [VERIFIED: ida-cli probe]
-   - Recommendation: Planner should make binary/capture route proof a blocking first task before route controller implementation. [CITED: 23-CONTEXT.md]
+   - Plan 01 gate: The executor must either export route strings from the running IDA session, safely retry IDA-CLI after the lock condition is resolved, or attach replacement request/cabinet capture evidence. If none of those produces `/v07r00/chassis` route proof, `23-WHITE-EVIDENCE.md` must mark the prefix `UNRESOLVED_BLOCKS_ROUTE_CODE`.
+   - Downstream stop condition: Plan 03 Task 2 must stop before creating White controllers, and Plan 03 Task 3 must not add the Host `/v07r00/chassis` fallback, while this prefix remains `UNRESOLVED_BLOCKS_ROUTE_CODE`. [CITED: 23-CONTEXT.md]
 
 2. **Which White route suffixes are Phase 23 scaffold candidates?**
    - What we know: `proto/white/taiko.proto` defines request/response message families for bookkeeping, gettelop, heartbeat, getfolder, taikojuku, initialdatacheck, tournamentcheck, BAID, mydonentry, userdata, playresult, selfbest, recommend, crownsdata, headclerk2, getreitai, rewardcardcheck, and rewardexecution. [VERIFIED: proto/white/taiko.proto]
-   - What's unclear: Which of those proto surfaces are actual White 0.13 HTTP route strings. [CITED: 23-CONTEXT.md]
-   - Recommendation: Use route-string evidence first, then cross-check suffixes against proto request/response pairs. [CITED: 23-CONTEXT.md]
+   - Plan 01 gate: Each candidate scaffold suffix must have White route-string evidence or replacement runtime capture evidence, plus a matching `proto/white` request/response pair, before it may be marked `SCAFFOLD_APPROVED`.
+   - Downstream stop condition: Proto-only suffixes, copied Red/Yellow suffixes, and data-only leads stay out of Plan 03 controller routes unless Plan 01 marks the exact suffix `SCAFFOLD_APPROVED`. [CITED: 23-CONTEXT.md]
 
 3. **Should Phase 23 add no-state routes when route proof is partial?**
    - What we know: D-06 allows thin no-state scaffold controllers where route evidence supports them and forbids runtime behavior. [CITED: 23-CONTEXT.md]
-   - What's unclear: Whether route evidence will cover the whole proto-backed surface or only a subset. [VERIFIED: binary rg]
-   - Recommendation: Split route scaffold tasks by proven route group and leave unproven suffixes in the evidence artifact. [CITED: 23-CONTEXT.md]
+   - Plan 01 gate: Partial proof is acceptable only for the suffixes it actually proves. The evidence artifact must keep separate tables for `SCAFFOLD_APPROVED`, `PROTO_ONLY_NOT_APPROVED`, `DATA_ONLY_NOT_APPROVED`, and `UNRESOLVED_BLOCKS_ROUTE_CODE`.
+   - Downstream stop condition: Plan 03 may scaffold only the approved subset. If no suffix is approved, Plan 03 route-controller creation stops, and the summary must record the missing evidence instead of adding no-state routes from proto presence alone. [CITED: 23-CONTEXT.md]
 
 ## Environment Availability
 
@@ -461,7 +463,7 @@ No `[ASSUMED]` claims are used as implementation authority. Route prefix `/v07r0
 |----------|-------|
 | Framework | xUnit 2.9.3 with Microsoft.NET.Test.Sdk 17.14.1. [VERIFIED: Directory.Packages.props] |
 | Config file | `Tests/Tests.csproj`; no xunit runner config file was found. [VERIFIED: Tests/Tests.csproj] [VERIFIED: rg --files] |
-| Quick run command | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~White|FullyQualifiedName~RedServerSettingsValidationTests|FullyQualifiedName~StartupAuthController" -x` [VERIFIED: Tests/Tests.csproj] |
+| Quick run command | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~White|FullyQualifiedName~RedServerSettingsValidationTests|FullyQualifiedName~StartupAuthController"` [VERIFIED: Tests/Tests.csproj] |
 | Full suite command | `dotnet test Tests/Tests.csproj` [VERIFIED: Tests/Tests.csproj] |
 
 ### Phase Requirements -> Test Map
