@@ -1,101 +1,96 @@
-# Requirements: Red AC15 Support
+# Requirements: White AC15 0.13 Support
 
-**Defined:** 2026-06-12
-**Milestone:** v1.3 Red AC15 Support
-**Core Value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
+**Defined:** 2026-06-16
+**Milestone:** v1.4 White AC15 0.13 Support
+**Core Value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Red, White, Nijiiro, or shared identity state.
 
-## v1.3 Requirements
+## v1.4 Requirements
 
-### Red Foundation
+### White Foundation
 
-- [x] **RFND-01**: Developer can review a Red route/version evidence record that identifies supported route prefix, direct-protobuf transport expectations, shared startup/version ownership, HDD/version mapping, active data root, and unresolved client-evidence gaps before routes are finalized.
-- [x] **RFND-02**: Red is served by a first-class enableable `GameEra.Red` adapter with generated Red wire DTOs from `proto/red`, era settings, Host/DI registration, route ownership, and enabled-era gating.
-- [x] **RFND-03**: Red work preserves current supported-era behavior except where shared code changes are required and existing behavior remains covered.
+- [ ] **WFND-01**: Developer can review a White evidence record that identifies route prefix, transport expectations, startup/version ownership, active data root, usable/unusable IDB evidence, and unresolved gaps before White routes are finalized.
+- [ ] **WFND-02**: White is served by a first-class enableable `GameEra.White` adapter with generated White wire DTOs from `proto/white`, era settings, Host/DI registration, route ownership, and enabled-era gating.
+- [ ] **WFND-03**: White work preserves existing supported-era behavior except where shared code changes are required and existing behavior remains covered.
 
-### Red Capability Profile And Catalog Binding
+### White Catalog And Profile
 
-- [x] **RCAT-01**: Red catalog initialization binds shared AC15 catalog capabilities for matching music, tuning, Taikojuku/Dani, folder, telop, recommendation, movie, and customization data, with Red-specific parser work only where Red local data proves a delta.
-- [x] **RCAT-02**: Red has an explicit AC15 capability/profile model that composes supported behavior modules with Red config roots, protocol limits, wire placement, and typed persistence boundaries without inheriting unsupported later-era behavior.
+- [ ] **WCAT-01**: White catalog initialization loads the proven White data root and binds matching AC15 music, medley, tuning, folder, telop, recommendation, movie/customization, Taikojuku, present, and special-BAID data through shared loaders where file formats match.
+- [ ] **WCAT-02**: White has an explicit AC15 capability/profile model with White protocol limits, feature flags, wire placement, and typed persistence boundaries, while absent 0.13 surfaces remain disabled.
+- [ ] **WCAT-03**: White server-authored sidecar data exists and is copied for every implemented White feature that needs committed server data outside raw operator files, including intentionally empty sidecars where absence is the contract.
 
-### Red Runtime Capability Binding
+### White Runtime Binding
 
-- [x] **RSTATE-01**: Red binds the shared identity/userdata capability to Red-owned save/profile tables so the cabinet can register or find a card, create mydon/profile data, and read/write userdata without writing another era's gameplay tables.
-- [x] **RSTATE-02**: Red binds the shared normal-play capability to Red-owned score, self-best, crown, favorite, recent-song, and profile-counter tables where protocol and data shapes match.
-- [x] **RSTATE-03**: Red binds the shared Taikojuku/Dani capability to Red-owned Dan state and Red protocol limits where behavior matches.
+- [ ] **WSTATE-01**: White binds shared identity/userdata behavior to White-owned save/profile tables so the cabinet can register or find a card, create mydon/profile data, and read/write userdata without writing another era's gameplay state.
+- [ ] **WSTATE-02**: White binds matching normal-play behavior to White-owned score, self-best, crown, favorite, recent-song, unlock, reward/progress, and profile-counter tables where White protocol and data shapes match.
+- [ ] **WSTATE-03**: White metadata and readback routes for initial data, folders, telops, recommendations, self-best, crowns, Taikojuku, tournament/check probes, heartbeat/bookkeeping, and related compatibility surfaces are catalog-backed or no-state only according to White evidence.
+- [ ] **WSTATE-04**: White Taikojuku/Dani runtime behavior writes and reads only White-owned Dan state when White payload and catalog evidence proves the same contract; otherwise the unsupported runtime write/readback gap is documented instead of invented.
 
-### Red Tokkun And Simple Compatibility
+### White Rewards And Collectables
 
-- [x] **RSTATE-04**: Red reward card, reward execution, and Don point fields are handled only as simple Red protocol/profile compatibility when runtime evidence requires them, with no item-shop, medal, or unlock semantics.
-- [x] **RSTATE-05**: Red Tokkun playresults are classified before normal handling and persist/read back only Red-owned tutorial state; no Tokkun raw history, score, crown, reward, unlock, or challenge state is invented.
-- [x] **RCOMP-01**: Red Banacoin-adjacent routes are implemented only as stateless compatibility when observed or required by Red runtime flow, with no wallet, balance, payment, coupon, settlement, receipt, or transaction persistence.
+- [ ] **WCOLL-01**: White reward/present and Don Point behavior uses White-owned profile/unlock flags and local `present.xml`/protocol evidence, without creating Yellow item-shop/medal, Banacoin wallet/payment, or unrelated unlock semantics.
+- [ ] **WCOLL-02**: White collectable data for songs, tones, costumes, titles, special BAID rows, presents, and other 0.13-scoped rewards is collected with provenance and bound after core runtime behavior is stable.
+- [ ] **WCOLL-03**: White Don Challenge/ChallengeCompe behavior is implemented only if White 0.13 evidence proves the data, field placement, readback surface, reward timing, and state semantics; otherwise it remains absent or data-only with the gap recorded.
 
-### Older-AC15 ChallengeCompe Capability
+### Admin, Verification, And Closeout
 
-- [x] **RCOMP-02**: ChallengeCompe is modeled as a shared older-AC15 capability, with Red as the first binding; protocol compatibility is supported only at the minimal level proven by Red client/runtime evidence until the shared endpoint, payload, and response contract is known.
-- [x] **RCHAL-01**: Don Challenge product scope is documented from wiki context for the shared older-AC15 capability: monthly tasks, individual/community distinction, normal-play completion, Tokkun exclusion, and song/title reward thresholds/timing.
-- [x] **RCHAL-02**: Stateful ChallengeCompe progress, reward, task-list, or community behavior is implemented as a shared older-AC15 capability only after Red runtime/proto/client evidence identifies the endpoint, payload, state shape, and accepted response contract.
-
-### Admin, Verification, And Contract
-
-- [x] **RVER-01**: AdminApi and WebUI expose only implemented Red-owned readback surfaces and do not read or write another era's gameplay state.
-- [x] **RVER-02**: Automated tests cover Red observable route, handler, catalog, persistence, mapper/classifier, and no-cross-era/no-cross-mode behavior.
-- [x] **RVER-03**: Red support closes only after full automated verification, a temp-output Host build, and cabinet/RPCS3 smoke evidence for implemented normal, Tokkun tutorial, simple compatibility, and ChallengeCompe flows.
+- [ ] **WVER-01**: AdminApi and WebUI expose only implemented White-owned readback and edit surfaces through existing era-routed contracts and do not read or write another era's gameplay state.
+- [ ] **WVER-02**: Automated tests cover White observable route, handler, catalog, persistence, mapper/classifier, protocol packing, build-output copy, and no-cross-era/no-cross-mode behavior.
+- [ ] **WVER-03**: White support closes only after full automated verification, Mapperly generated-source inspection for nontrivial mappings, a Host build using temp output if needed, and cabinet/RPCS3 smoke evidence for implemented White flows.
 
 ## Future Requirements
 
-### Older AC15 Reuse
+### Later White Versions
 
-- **OLDAC15-01**: Older-than-Red support can bind the shared ChallengeCompe capability only after Red proves the shared client contract and the later milestone supplies its own proto/data/config evidence.
+- **WLATER-01**: Later White update behavior can be added only after a later milestone supplies local proto/data/config/runtime evidence for that specific version range.
 
-### Don Challenge Tooling
+### White Challenge Expansion
 
-- **RCHAL-03**: Admin editing, operator-authored schedules, global/community challenge simulation, or challenge reward management can be added only after the runtime contract is proven and a stateful challenge implementation exists.
+- **WCOLL-04**: Community, user-created, BNG/official, schedule-management, or operator-authored Don Challenge behavior can be added only after White runtime evidence proves the data and readback contract.
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Stateful ChallengeCompe behavior without runtime/proto/client proof | Wiki establishes product scope, not endpoint, schema, database, or response semantics. |
-| ChallengeCompe hardcoded as Red-only behavior | ChallengeCompe is a shared older-AC15 capability; Red is the first binding, not the capability boundary. |
-| Red WaiWai, battle, item-shop, medal, AI/ghost, token-count, shop-folder, or non-challenge unlock behavior without Red evidence | These are not Red requirements just because other eras or later versions have nearby surfaces. |
-| Existing supported-era gameplay behavior changes for Red | v1.3 adds Red while preserving existing supported era contracts. |
-| Shared cross-era gameplay persistence tables | Shared AC15 behavior must still use era-owned rows and explicit typed boundaries. |
-| Real Banacoin balance, payment, settlement, receipt, coupon, deduction, BNID result, or transaction-history behavior | TaikoLocalServer is not a Banacoin authority for this milestone. |
-| Red Tokkun state beyond tutorial readback, including raw history, rewards, score/crown writes, paid-coin behavior, practice-time accounting, jump-point behavior, autoplay behavior, speed-change behavior, or unlock side effects | Red Tokkun is intentionally narrow unless Red evidence proves more than tutorial state. |
-| Runtime scraping of wiki or official pages | Public pages are scoping context only; local protocol, binary, logs, IDA, and cabinet/RPCS3 evidence decide server behavior. |
+| Later White update behavior outside 0.13 | v1.4 targets White 0.13; wiki/update-history context is scoping material and does not define runtime contracts. |
+| Standalone White `challengecompe.php` without White evidence | White proto currently exposes embedded challenge fields but no standalone ChallengeCompe request/response. |
+| White item shop, Don/Katsu medals, shop seasons, or Yellow shop UI | These are not present in current White proto evidence and must not be copied from Yellow. |
+| White Banacoin wallet, payment, coupon, balance, settlement, receipt, BNID, or transaction state | Current White evidence does not define Banacoin authority or payment routes. |
+| White battle, Tokkun, WaiWai, gacha runtime, or Blue/Red/Yellow special modes | Missing 0.13 surfaces stay absent unless local White evidence proves them. |
+| Shared cross-era gameplay persistence tables | White state must remain White-owned; shared AC15 code can share algorithms, not gameplay tables. |
+| Runtime scraping of wiki or official pages | Public pages can scope investigation, but local proto, data, logs, IDA, and cabinet/RPCS3 evidence decide server behavior. |
+| Mapper-side or controller-side business behavior | Controllers deserialize/map/call Mediator/map back; business behavior belongs in Application handlers/services. |
 
 ## Traceability
 
-Roadmap phase mapping for v1.3 Red AC15 Support.
+Roadmap phase mapping for v1.4 White AC15 0.13 Support. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| RFND-01 | Phase 18 | Complete |
-| RFND-02 | Phase 18 | Complete |
-| RFND-03 | Phase 18 | Complete |
-| RCAT-01 | Phase 19 | Complete |
-| RCAT-02 | Phase 19 | Complete |
-| RSTATE-01 | Phase 20 | Complete |
-| RSTATE-02 | Phase 20 | Complete |
-| RSTATE-03 | Phase 20 | Complete |
-| RSTATE-04 | Phase 20 | Complete |
-| RSTATE-05 | Phase 20 | Complete |
-| RCOMP-01 | Phase 20 | Complete |
-| RCOMP-02 | Phase 21 | Complete |
-| RCHAL-01 | Phase 21 | Complete |
-| RCHAL-02 | Phase 21 | Complete |
-| RVER-01 | Phase 22 | Complete |
-| RVER-02 | Phase 22 | Complete |
-| RVER-03 | Phase 22 | Complete |
-| OLDAC15-01 | Future milestone | Deferred |
-| RCHAL-03 | Future milestone | Deferred |
+| WFND-01 | Pending | Pending |
+| WFND-02 | Pending | Pending |
+| WFND-03 | Pending | Pending |
+| WCAT-01 | Pending | Pending |
+| WCAT-02 | Pending | Pending |
+| WCAT-03 | Pending | Pending |
+| WSTATE-01 | Pending | Pending |
+| WSTATE-02 | Pending | Pending |
+| WSTATE-03 | Pending | Pending |
+| WSTATE-04 | Pending | Pending |
+| WCOLL-01 | Pending | Pending |
+| WCOLL-02 | Pending | Pending |
+| WCOLL-03 | Pending | Pending |
+| WVER-01 | Pending | Pending |
+| WVER-02 | Pending | Pending |
+| WVER-03 | Pending | Pending |
+| WLATER-01 | Future milestone | Deferred |
+| WCOLL-04 | Future milestone | Deferred |
 
 **Coverage:**
 
-- v1.3 requirements: 17 total
-- Mapped to phases: 17
-- Unmapped: 0
+- v1.4 requirements: 16 total
+- Mapped to phases: 0
+- Unmapped: 16
 - Future requirements: 2 deferred
 
 ---
-*Requirements defined: 2026-06-12*
+*Requirements defined: 2026-06-16*
