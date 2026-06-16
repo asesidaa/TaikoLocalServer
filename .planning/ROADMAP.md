@@ -18,7 +18,7 @@ Active milestone: **v1.4 White AC15 0.13 Support**
 
 - White starts from `proto/white`, `Host/wwwroot/data/white/data`, request logs/captures, corrected IDA/client evidence, and RPCS3/cabinet proof.
 - The linked White wiki page is product/version scoping context only; it does not define route, payload, state, or response contracts.
-- `.tools/white/EBOOT.ELF.i64` is zero bytes in this checkout, so route/root proof must come from another local source unless the IDB/binary is corrected.
+- Current Phase 23 context records `.tools/white/EBOOT.ELF.i64` as present and nonzero (`129893515` bytes), but route strings are still not proven; route/root proof must come from White IDB route strings, logs, captures, or equivalent local evidence before route code is finalized.
 - White 0.13 has fewer surfaces than Red and Yellow. Unsupported or later-version features stay absent instead of receiving cloned compatibility routes.
 - Shared AC15 services may be reused only through explicit White limits, feature flags, wire placement, catalog data, and White-owned persistence tables.
 - Collectable data, including Don Challenge if it is proven inside the White 0.13 range, is intentionally late because it depends on stable identity, catalog, playresult, reward, and readback behavior.
@@ -50,6 +50,12 @@ Active milestone: **v1.4 White AC15 0.13 Support**
 **Goal:** Prove White route/version/transport boundaries and add first-class White adapter scaffolding.
 **Depends on:** v1.3 Red archive
 **Requirements:** WFND-01, WFND-02, WFND-03
+**Plans:** 3 plans
+
+Plans:
+- [ ] 23-01-PLAN.md - White evidence gate, feature inventory, and stale-note correction
+- [ ] 23-02-PLAN.md - White adapter identity and generated wire foundation
+- [ ] 23-03-PLAN.md - Evidence-gated route scaffolds and Host wiring
 
 **Key deliverables:**
 
