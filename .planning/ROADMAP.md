@@ -51,10 +51,17 @@ Active milestone: **v1.4 White AC15 0.13 Support**
 **Depends on:** v1.3 Red archive
 **Requirements:** WFND-01, WFND-02, WFND-03
 **Plans:** 3 plans
-
 Plans:
+**Wave 1**
+
 - [ ] 23-01-PLAN.md - White evidence gate, feature inventory, and stale-note correction
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 23-02-PLAN.md - White adapter identity and generated wire foundation
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
 - [ ] 23-03-PLAN.md - Evidence-gated route scaffolds and Host wiring
 
 **Key deliverables:**
