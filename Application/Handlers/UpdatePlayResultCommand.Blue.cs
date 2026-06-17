@@ -128,7 +128,6 @@ public partial class UpdatePlayResultCommandHandler
         => CanAddAc15(current, delta);
 
     private static bool IsBlueTokkunShaped(Ac15PlayResultEnvelope playResultData)
-        => playResultData.Metadata.PlayMode == (uint)PlayMode.Tokkun
-           || playResultData.Tokkun is not null;
+        => playResultData.Metadata.PlayMode == (uint)PlayMode.Tokkun;
 
 }

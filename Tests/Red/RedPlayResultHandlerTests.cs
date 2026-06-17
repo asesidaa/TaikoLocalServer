@@ -192,7 +192,7 @@ public sealed class RedPlayResultHandlerTests
         var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
             1,
             GameEra.Red,
-            playMode: (uint)PlayMode.Normal,
+            playMode: (uint)PlayMode.Tokkun,
             tokkun: new Ac15TokkunPlayResult(
                 TutorialFlg: 7,
                 StageData: new Ac15TokkunStageData(
@@ -224,6 +224,95 @@ public sealed class RedPlayResultHandlerTests
         Assert.Empty(await fixture.Context.DanScoreDataRed.ToListAsync());
         Assert.Empty(await fixture.Context.BlueTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
         Assert.Empty(await fixture.Context.YellowTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Red_TokkunZeroTutorialFlagDoesNotClearExistingState()
+    {
+        await using var fixture = await RedHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var saveData = UserSaveDataRedExtensions.CreateDefaultRedSaveData(1);
+        saveData.TokkunTutorialFlg = 7;
+        fixture.Context.UserSaveDataRed.Add(saveData);
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
+            1,
+            GameEra.Red,
+            playMode: (uint)PlayMode.Tokkun,
+            tokkun: new Ac15TokkunPlayResult(TutorialFlg: 0, StageData: null)),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var reloaded = await fixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(7u, reloaded.TokkunTutorialFlg);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Red_TokkunZeroTutorialFlagStoresZeroWhenUnset()
+    {
+        await using var fixture = await RedHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataRed.Add(UserSaveDataRedExtensions.CreateDefaultRedSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
+            1,
+            GameEra.Red,
+            playMode: (uint)PlayMode.Tokkun,
+            tokkun: new Ac15TokkunPlayResult(TutorialFlg: 0, StageData: null)),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var reloaded = await fixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(0u, reloaded.TokkunTutorialFlg);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Red_NormalUploadWithTokkunStageFactsStillSavesNormalPlay()
+    {
+        await using var fixture = await RedHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var saveData = UserSaveDataRedExtensions.CreateDefaultRedSaveData(1);
+        saveData.TotalGetDonpoint = 5;
+        fixture.Context.UserSaveDataRed.Add(saveData);
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
+            1,
+            GameEra.Red,
+            playMode: (uint)PlayMode.Normal,
+            tokkun: new Ac15TokkunPlayResult(
+                TutorialFlg: 7,
+                StageData: new Ac15TokkunStageData(
+                    BanacoinDatetime: "20260608120100",
+                    TokkunSongCnt: 2,
+                    TookunSongnoes: [101, 101],
+                    TokkunSpeedchangeCnt: 3,
+                    TokkunAutoplayCnt: 4,
+                    TokkunJumpCnt: 5)),
+            profile: Ac15ProfileMutationFacts.Empty with
+            {
+                GetDonpoint = 50,
+                ReleaseSongNoes = [104],
+                GetToneNoes = [4]
+            },
+            stages: [CreateStage(101, 1, 0)]),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var reloaded = await fixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(55u, reloaded.TotalGetDonpoint);
+        Assert.Null(reloaded.TokkunTutorialFlg);
+        Assert.True(BitIsSet(reloaded.ReleaseSongFlg, 104));
+        Assert.True(BitIsSet(reloaded.ToneFlg, 4));
+        Assert.Single(await fixture.Context.SongPlayDataRed.ToListAsync());
+        Assert.Single(await fixture.Context.SongBestDataRed.ToListAsync());
+        Assert.Single(await fixture.Context.RedFavoriteSongs.ToListAsync());
+        Assert.Single(await fixture.Context.RedRecentSongs.ToListAsync());
     }
 
     private static UpdatePlayResultCommandHandler CreateHandler(RedHandlerFixture fixture)

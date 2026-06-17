@@ -170,7 +170,7 @@ public sealed class BluePlayResultHandlerTests
         first.AryTokkunstageInfo!.TookunSongnoes = [101, 102, 101];
         first.AryTokkunstageInfo.TokkunSongCnt = 3;
         var second = CreateTokkunRequest(1);
-        second.TokkunTutorialFlg = 1;
+        second.TokkunTutorialFlg = 0;
         second.AryTokkunstageInfo!.TookunSongnoes = [101, 102, 101];
         second.AryTokkunstageInfo.TokkunSongCnt = 3;
 
@@ -180,7 +180,7 @@ public sealed class BluePlayResultHandlerTests
         Assert.Equal(1u, firstResult);
         Assert.Equal(1u, secondResult);
         var reloaded = await fixture.Context.UserSaveDataBlue.SingleAsync(row => row.Baid == 1);
-        Assert.Equal(1u, reloaded.TokkunTutorialFlg);
+        Assert.Equal(7u, reloaded.TokkunTutorialFlg);
         var rows = await fixture.Context.BlueTokkunStageResults
             .Where(row => row.Baid == 1)
             .OrderBy(row => row.Id)
@@ -192,7 +192,7 @@ public sealed class BluePlayResultHandlerTests
     }
 
     [Fact]
-    public async Task UpdatePlayResult_Blue_TutorialOnlyTokkunFactUpdatesFlagWithoutHistory()
+    public async Task UpdatePlayResult_Blue_NormalUploadIgnoresTokkunTutorialFlagAndSavesNormalPlay()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync();
         var saveData = UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1);
@@ -205,13 +205,50 @@ public sealed class BluePlayResultHandlerTests
         request.PlayMode = (uint)PlayMode.Normal;
         request.TokkunTutorialFlg = 7;
         request.AryTokkunstageInfo = null;
+        request.AryStageInfoes.Add(CreateWireStage(101, 1, 0));
 
         var result = await handler.Handle(CreateBlueCommand(request), CancellationToken.None);
 
         Assert.Equal(1u, result);
         var reloaded = await fixture.Context.UserSaveDataBlue.SingleAsync(row => row.Baid == 1);
-        Assert.Equal(7u, reloaded.TokkunTutorialFlg);
+        Assert.Equal(5u, reloaded.TokkunTutorialFlg);
         Assert.Empty(await fixture.Context.BlueTokkunStageResults.ToListAsync());
+
+        var play = Assert.Single(await fixture.Context.SongPlayDataBlue.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Equal(101u, play.SongId);
+        var best = await fixture.Context.SongBestDataBlue.FindAsync(1u, 101u, Difficulty.Easy, false);
+        Assert.NotNull(best);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Blue_NormalUploadWithZeroTokkunTutorialFlagDoesNotClearOrBypassNormalSave()
+    {
+        await using var fixture = await BlueHandlerFixture.CreateAsync();
+        var saveData = UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1);
+        saveData.TokkunTutorialFlg = 5;
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataBlue.Add(saveData);
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+        var request = CreateTokkunRequest(1);
+        request.PlayMode = (uint)PlayMode.Normal;
+        request.TokkunTutorialFlg = 0;
+        request.AryTokkunstageInfo = null;
+        request.AryStageInfoes.Add(CreateWireStage(303, 1, 0, score: 319200));
+
+        var result = await handler.Handle(CreateBlueCommand(request), CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var reloaded = await fixture.Context.UserSaveDataBlue.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(5u, reloaded.TokkunTutorialFlg);
+        Assert.Empty(await fixture.Context.BlueTokkunStageResults.ToListAsync());
+
+        var play = Assert.Single(await fixture.Context.SongPlayDataBlue.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Equal(303u, play.SongId);
+        Assert.Equal(319200u, play.Score);
+        var best = await fixture.Context.SongBestDataBlue.FindAsync(1u, 303u, Difficulty.Easy, false);
+        Assert.NotNull(best);
+        Assert.Equal(319200u, best!.BestScore);
     }
 
     [Fact]
@@ -655,6 +692,7 @@ public sealed class BluePlayResultHandlerTests
         uint songNo,
         uint level,
         uint stageMode,
+        uint score = 765432,
         bool includeBattle = false)
     {
         var stage = new PlayResultRequest.StageData
@@ -663,7 +701,7 @@ public sealed class BluePlayResultHandlerTests
             Level = level,
             StageMode = stageMode,
             PlayResult = 2,
-            PlayScore = 765432,
+            PlayScore = score,
             GoodCnt = 100,
             OkCnt = 20,
             NgCnt = 3,

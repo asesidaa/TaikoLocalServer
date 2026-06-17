@@ -81,6 +81,54 @@ public sealed class Ac15CommonProfileMutationTests
         Assert.True(BitIsSet(save.ToneFlg, 5));
     }
 
+    [Fact]
+    public void TryApply_DoesNotClearTutorialFlagsWithIncomingZero()
+    {
+        var save = UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1);
+        save.ItemshopTutorialFlg = 7;
+        save.WaiwaiTutorialFlg = 3;
+
+        var applied = Ac15CommonProfileMutation.TryApply(
+            save,
+            shopSeasonState: null,
+            Ac15ProfileMutationFacts.Empty with
+            {
+                ItemshopTutorialFlg = 0,
+                WaiwaiTutorialFlg = 0
+            },
+            countedStages: [Stage(101)],
+            Ac15ProfileCounterUpdater.Blue,
+            Ac15UnlockFlagAccess.Blue,
+            Ac15EraProfiles.Blue.Limits,
+            DateTime.UnixEpoch);
+
+        Assert.True(applied);
+        Assert.Equal(7u, save.ItemshopTutorialFlg);
+        Assert.Equal(3u, save.WaiwaiTutorialFlg);
+    }
+
+    [Fact]
+    public void TryApplyDonPoints_DoesNotClearDifficultyTutorialFlagWithIncomingZero()
+    {
+        var save = UserSaveDataRedExtensions.CreateDefaultRedSaveData(1);
+        save.DifficultyTutorialFlg = 2;
+
+        var applied = Ac15CommonProfileMutation.TryApplyDonPoints(
+            save,
+            Ac15ProfileMutationFacts.Empty with
+            {
+                DifficultyTutorialFlg = 0
+            },
+            countedStages: [Stage(101)],
+            Ac15ProfileCounterUpdater.Red,
+            Ac15UnlockFlagAccess.Red,
+            Ac15EraProfiles.Red.Limits,
+            DateTime.UnixEpoch);
+
+        Assert.True(applied);
+        Assert.Equal(2u, save.DifficultyTutorialFlg);
+    }
+
     private static Ac15ProfileMutationFacts PlayResult(uint getDonmedal, uint getKatsumedal)
         => Ac15ProfileMutationFacts.Empty with
         {

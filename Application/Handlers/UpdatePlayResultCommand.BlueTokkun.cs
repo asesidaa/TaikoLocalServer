@@ -1,4 +1,5 @@
 using System.Text.Json;
+using TaikoLocalServer.Application.Ac15;
 using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Application.Handlers;
@@ -20,10 +21,9 @@ public partial class UpdatePlayResultCommandHandler
         CancellationToken cancellationToken)
     {
         var saveData = await context.GetOrCreateBlueSaveDataAsync(baid, cancellationToken);
-        if (playResultData.Tokkun?.TutorialFlg is { } tokkunTutorialFlg)
-        {
-            saveData.TokkunTutorialFlg = tokkunTutorialFlg;
-        }
+        saveData.TokkunTutorialFlg = Ac15CommonProfileMutation.PreserveTutorialFlag(
+            saveData.TokkunTutorialFlg,
+            playResultData.Tokkun?.TutorialFlg);
 
         if (playResultData.Tokkun?.StageData is { } tokkunStageData)
         {

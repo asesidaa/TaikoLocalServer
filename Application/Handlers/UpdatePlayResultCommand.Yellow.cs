@@ -121,8 +121,7 @@ public partial class UpdatePlayResultCommandHandler
             Ac15DaniMapper.ApplyToYellowDanStageScoreDatum);
 
     private static bool IsYellowTokkunShaped(Ac15PlayResultEnvelope playResultData)
-        => playResultData.Metadata.PlayMode == (uint)PlayMode.Tokkun
-           || playResultData.Tokkun is not null;
+        => playResultData.Metadata.PlayMode == (uint)PlayMode.Tokkun;
 
     private void LogYellowWaiWaiStageFacts(uint baid, IEnumerable<Ac15StageResult> stages)
     {

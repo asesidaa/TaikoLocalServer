@@ -476,8 +476,26 @@ public sealed class YellowPlayResultHandlerTests
         Assert.Equal(3u, history.TokkunAutoplayCnt);
         Assert.Equal(4u, history.TokkunJumpCnt);
 
-        var repeatResult = await handler.Handle(request, CancellationToken.None);
+        var clearRequest = Ac15PlayResultTestFactory.Command(
+            1,
+            GameEra.Yellow,
+            playDatetime: "20260608120000",
+            playMode: (uint)PlayMode.Tokkun,
+            tokkun: new Ac15TokkunPlayResult(
+                TutorialFlg: 0,
+                StageData: new Ac15TokkunStageData(
+                    BanacoinDatetime: "20260608120000",
+                    TokkunSongCnt: 3,
+                    TookunSongnoes: [101, 102, 101],
+                    TokkunSpeedchangeCnt: 2,
+                    TokkunAutoplayCnt: 3,
+                    TokkunJumpCnt: 4)),
+            stages: [CreateStage(101, 1, 0)]);
+
+        var repeatResult = await handler.Handle(clearRequest, CancellationToken.None);
         Assert.Equal(1u, repeatResult);
+        var afterClearAttempt = await fixture.Context.UserSaveDataYellow.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(7u, afterClearAttempt.TokkunTutorialFlg);
         Assert.Equal(2, await fixture.Context.YellowTokkunStageResults.CountAsync(row => row.Baid == 1));
         Assert.Empty(await fixture.Context.SongPlayDataYellow.ToListAsync());
         Assert.Empty(await fixture.Context.SongBestDataYellow.ToListAsync());
@@ -541,7 +559,7 @@ public sealed class YellowPlayResultHandlerTests
     }
 
     [Fact]
-    public async Task UpdatePlayResult_Yellow_TutorialOnlyTokkunFactUpdatesFlagWithoutHistory()
+    public async Task UpdatePlayResult_Yellow_NormalUploadIgnoresTokkunTutorialFlagAndSavesNormalPlay()
     {
         await using var fixture = await YellowHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -562,9 +580,46 @@ public sealed class YellowPlayResultHandlerTests
 
         Assert.Equal(1u, result);
         var reloaded = await fixture.Context.UserSaveDataYellow.SingleAsync(row => row.Baid == 1);
-        Assert.Equal(7u, reloaded.TokkunTutorialFlg);
+        Assert.Equal(5u, reloaded.TokkunTutorialFlg);
         Assert.Empty(await fixture.Context.YellowTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
-        Assert.Empty(await fixture.Context.SongPlayDataYellow.Where(row => row.Baid == 1).ToListAsync());
+
+        var play = Assert.Single(await fixture.Context.SongPlayDataYellow.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Equal(101u, play.SongId);
+        var best = await fixture.Context.SongBestDataYellow.FindAsync(1u, 101u, Difficulty.Easy, false);
+        Assert.NotNull(best);
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Yellow_NormalUploadWithZeroTokkunTutorialFlagDoesNotClearOrBypassNormalSave()
+    {
+        await using var fixture = await YellowHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var saveData = UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(1);
+        saveData.TokkunTutorialFlg = 5;
+        fixture.Context.UserSaveDataYellow.Add(saveData);
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
+            1,
+            GameEra.Yellow,
+            playDatetime: "20260618030523",
+            playMode: (uint)PlayMode.Normal,
+            tokkun: new Ac15TokkunPlayResult(TutorialFlg: 0, StageData: null),
+            stages: [CreateStage(303, 1, 0, score: 319200)]),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var reloaded = await fixture.Context.UserSaveDataYellow.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(5u, reloaded.TokkunTutorialFlg);
+        Assert.Empty(await fixture.Context.YellowTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
+
+        var play = Assert.Single(await fixture.Context.SongPlayDataYellow.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Equal(303u, play.SongId);
+        Assert.Equal(319200u, play.Score);
+        var best = await fixture.Context.SongBestDataYellow.FindAsync(1u, 303u, Difficulty.Easy, false);
+        Assert.NotNull(best);
+        Assert.Equal(319200u, best!.BestScore);
     }
 
     [Fact]

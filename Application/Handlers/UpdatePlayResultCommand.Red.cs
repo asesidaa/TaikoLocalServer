@@ -277,10 +277,9 @@ public partial class UpdatePlayResultCommandHandler
         CancellationToken cancellationToken)
     {
         var saveData = await context.GetOrCreateRedSaveDataAsync(baid, cancellationToken);
-        if (playResultData.Tokkun?.TutorialFlg is { } tokkunTutorialFlg)
-        {
-            saveData.TokkunTutorialFlg = tokkunTutorialFlg;
-        }
+        saveData.TokkunTutorialFlg = Ac15CommonProfileMutation.PreserveTutorialFlag(
+            saveData.TokkunTutorialFlg,
+            playResultData.Tokkun?.TutorialFlg);
 
         await context.SaveChangesAsync(cancellationToken);
         return 1;
@@ -308,6 +307,5 @@ public partial class UpdatePlayResultCommandHandler
             Ac15DaniMapper.ApplyToRedDanStageScoreDatum);
 
     private static bool IsRedTokkunShaped(Ac15PlayResultEnvelope playResultData)
-        => playResultData.Metadata.PlayMode == (uint)PlayMode.Tokkun
-           || playResultData.Tokkun?.StageData is not null;
+        => playResultData.Metadata.PlayMode == (uint)PlayMode.Tokkun;
 }

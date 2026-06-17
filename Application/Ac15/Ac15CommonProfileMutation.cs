@@ -37,8 +37,8 @@ public static class Ac15CommonProfileMutation
         }
 
         saveData.TotalGetKatsumedal += profile.GetKatsumedal;
-        saveData.ItemshopTutorialFlg = profile.ItemshopTutorialFlg ?? saveData.ItemshopTutorialFlg;
-        saveData.WaiwaiTutorialFlg = profile.WaiwaiTutorialFlg ?? saveData.WaiwaiTutorialFlg;
+        saveData.ItemshopTutorialFlg = PreserveTutorialFlag(saveData.ItemshopTutorialFlg, profile.ItemshopTutorialFlg);
+        saveData.WaiwaiTutorialFlg = PreserveTutorialFlag(saveData.WaiwaiTutorialFlg, profile.WaiwaiTutorialFlg);
 
         ApplyShared(
             saveData,
@@ -74,7 +74,7 @@ public static class Ac15CommonProfileMutation
         saveData.TotalGetDonpoint += profile.GetDonpoint;
         saveData.RewardPtn = profile.RewardPtn ?? saveData.RewardPtn;
         saveData.RewardProgress = profile.RewardProgress ?? saveData.RewardProgress;
-        saveData.DifficultyTutorialFlg = profile.DifficultyTutorialFlg ?? saveData.DifficultyTutorialFlg;
+        saveData.DifficultyTutorialFlg = PreserveTutorialFlag(saveData.DifficultyTutorialFlg, profile.DifficultyTutorialFlg);
 
         ApplyShared(
             saveData,
@@ -138,5 +138,11 @@ public static class Ac15CommonProfileMutation
 
     private static bool CanAdd(uint current, uint delta)
         => delta <= uint.MaxValue - current;
+
+    public static uint PreserveTutorialFlag(uint current, uint? incoming)
+        => incoming is null || current > 0 && incoming.Value == 0 ? current : incoming.Value;
+
+    public static uint? PreserveTutorialFlag(uint? current, uint? incoming)
+        => incoming is null || current is > 0 && incoming.Value == 0 ? current : incoming.Value;
 
 }
