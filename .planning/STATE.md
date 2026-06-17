@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Phase Summary
 status: executing
-stopped_at: Completed 23-02-PLAN.md
-last_updated: "2026-06-17T13:50:31.495Z"
+stopped_at: Completed 23-03-PLAN.md
+last_updated: "2026-06-17T14:26:09.463Z"
 last_activity: 2026-06-17 -- Phase 23 Plan 02 completed
 progress:
   total_phases: 5
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 2
-  percent: 67
+  completed_plans: 3
+  percent: 20
 ---
 
 # Project State
@@ -128,6 +128,7 @@ Last activity: 2026-06-17 -- Phase 23 Plan 02 completed
 | Phase 22 P3 | 15 min | 3 tasks | 9 files |
 | Phase 23 P01 | 8 min plus checkpoint closeout | 3 tasks | 10 files |
 | Phase 23 P02 | 6 min | 1 tasks | 10 files |
+| Phase 23 P03 | 24 min | 3 tasks | 19 files |
 
 ## Accumulated Context
 
@@ -249,6 +250,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 23]: Plan 23-01 route proof is approved. — `/v07r00/chassis` is accepted as the proven White game route prefix, and only `playresult.php`, `baidcheck.php`, `mydonentry.php`, `userdata.php`, `crownsdata.php`, `recommend.php`, `selfbest.php`, `heartbeat.php`, `initialdatacheck.php`, `tournamentcheck.php`, `bookkeeping.php`, `gettelop.php`, `getfolder.php`, and `taikojuku.php` are approved for Phase 23 no-state scaffolds.
 - [Phase 23]: White startup and version ownership remains shared under /v01r00/chassis unless White evidence contradicts it. — White vsinterface proto matches the shared older-AC15 startup/version request and response family.
 - [Phase 23]: White adapter identity is foundation-only in Plan 23-02. — White now has GameEra.White, a buildable adapter assembly, and generated adapter-local wire DTOs, while controllers, Host wiring, catalog/profile/runtime state, AdminApi/WebUI, and extra tests remain deferred to their owning plans.
+- [Phase 23]: Plan 23-03 exposes White only through approved no-state /v07r00/chassis scaffold routes. — The approved route-proof artifact allows fourteen suffixes and leaves runtime state for later phases.
+- [Phase 23]: White Host wiring remains disabled-safe and exact-prefix scoped. — White is registered only when enabled, removed from MVC application parts when disabled, and missing-content-type fallback is limited to /v07r00/chassis.
+- [Phase 23]: White scaffold controllers use per-route files and classes. — The user explicitly corrected the implementation away from a monolithic scaffold file so White matches existing era adapter shape.
 
 ### Pending Todos
 
@@ -274,8 +278,8 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-17T13:50:31.489Z
-Stopped at: Completed 23-02-PLAN.md
+Last session: 2026-06-17T14:26:09.457Z
+Stopped at: Completed 23-03-PLAN.md
 Resume file: None
 
 ## Operator Next Steps

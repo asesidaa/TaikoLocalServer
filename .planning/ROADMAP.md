@@ -27,7 +27,7 @@ Active milestone: **v1.4 White AC15 0.13 Support**
 
 | Phase | Name | Goal | Requirements | Success Criteria |
 |-------|------|------|--------------|------------------|
-| 23 | White Evidence and Era Foundation | Prove White route/version/transport boundaries and add first-class White adapter scaffolding. | WFND-01, WFND-02, WFND-03 | 5 |
+| 23 | White Evidence and Era Foundation | 3/3 | Complete   | 2026-06-17 |
 | 24 | White Catalog Profile and Protocol Limits | Bind White `ST7100-1` data, sidecars, AC15 profile, feature flags, limits, and wire placement. | WCAT-01, WCAT-02, WCAT-03 | 5 |
 | 25 | White Runtime Capability Binding and Rewards | Bind White identity, userdata, normal play, metadata readback, Taikojuku/Dani where proven, and reward/present state. | WSTATE-01, WSTATE-02, WSTATE-03, WSTATE-04, WCOLL-01 | 5 |
 | 26 | White Collectable Data and Don Challenge Evidence | Collect White 0.13 collectable data and bind Don Challenge only if White evidence proves it. | WCOLL-02, WCOLL-03 | 5 |
@@ -62,7 +62,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 23-03-PLAN.md - Evidence-gated route scaffolds and Host wiring
+- [x] 23-03-PLAN.md - Evidence-gated route scaffolds and Host wiring
 
 **Key deliverables:**
 
