@@ -1,6 +1,6 @@
 namespace TaikoLocalServer.Domain.Entities;
 
-public class RedDonChallengeRawFact
+public class RedDonChallengeRawFact : IAc15DonChallengeRawFact
 {
     public long Id { get; set; }
     public uint Baid { get; set; }

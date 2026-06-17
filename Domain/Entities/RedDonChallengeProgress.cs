@@ -1,6 +1,6 @@
 namespace TaikoLocalServer.Domain.Entities;
 
-public class RedDonChallengeProgress
+public class RedDonChallengeProgress : IAc15DonChallengeProgress
 {
     public uint Baid { get; set; }
     public string BundleId { get; set; } = string.Empty;

@@ -84,12 +84,12 @@ public partial class UpdatePlayResultCommandHandler
             logger,
             cancellationToken);
 
-        await SaveRedDonChallengeAsync(
-            request.Baid,
-            red.DonChallenge,
-            validStages,
-            saveData,
-            playTime,
+        await Ac15DonChallengeWriter.SaveAsync(
+            RedDonChallengeTables(),
+            new Ac15DonChallengeWriteRequest(request.Baid, red.DonChallenge, validStages, playTime),
+            new Ac15DonChallengeRewardMutators(
+                ids => Ac15UnlockFlagAccess.Red.ReleaseSongs?.Invoke(saveData, ids),
+                ids => Ac15UnlockFlagAccess.Red.Titles(saveData, ids)),
             cancellationToken);
 
         await Ac15NormalPlayWriter.SaveAsync(
@@ -100,176 +100,6 @@ public partial class UpdatePlayResultCommandHandler
             cancellationToken);
         return 1;
     }
-
-    private async ValueTask SaveRedDonChallengeAsync(
-        uint baid,
-        Ac15DonChallengeCatalog catalog,
-        IReadOnlyList<Ac15StageResult> stages,
-        UserSaveDataRed saveData,
-        DateTime playTime,
-        CancellationToken cancellationToken)
-    {
-        var evaluations = Ac15DonChallengeProgressEvaluator.Evaluate(catalog, stages);
-        if (evaluations.Count == 0)
-        {
-            return;
-        }
-
-        foreach (var evaluation in evaluations)
-        {
-            context.RedDonChallengeRawFacts.Add(new RedDonChallengeRawFact
-            {
-                Baid = baid,
-                BundleId = evaluation.BundleId,
-                TaskId = evaluation.Task.TaskId,
-                Slot = evaluation.Task.Slot,
-                CompeId = evaluation.Task.CompeId,
-                TrackNo = evaluation.Track.TrackNo,
-                SongNo = evaluation.Stage.SongNo,
-                Level = evaluation.Stage.Level,
-                OptionFlg = evaluation.Stage.OptionFlg,
-                StageMode = evaluation.Stage.StageMode,
-                HighScore = evaluation.Stage.PlayScore,
-                PlayResult = evaluation.Stage.PlayResult,
-                ProgressValue = evaluation.ProgressValue,
-                Completed = evaluation.Completed,
-                PlayTime = playTime,
-                CreatedAt = playTime
-            });
-        }
-
-        foreach (var group in evaluations.GroupBy(evaluation => new
-                 {
-                     evaluation.BundleId,
-                     evaluation.Task.TaskId,
-                     evaluation.Task.Slot
-                 }))
-        {
-            var representative = group.OrderByDescending(evaluation => evaluation.ProgressValue).First();
-            var progressValue = await GetProgressValueAsync(baid, representative.Task, group.ToArray(), cancellationToken);
-            var completed = IsCompleted(representative.Task.Rule, progressValue, group);
-
-            var progress = await context.RedDonChallengeProgress.FindAsync(
-                [baid, group.Key.BundleId, group.Key.TaskId, 0u],
-                cancellationToken);
-            if (progress is null)
-            {
-                context.RedDonChallengeProgress.Add(new RedDonChallengeProgress
-                {
-                    Baid = baid,
-                    BundleId = group.Key.BundleId,
-                    TaskId = representative.Task.TaskId,
-                    Slot = representative.Task.Slot,
-                    CompeId = representative.Task.CompeId,
-                    TrackNo = 0,
-                    SongNo = representative.Stage.SongNo,
-                    Level = representative.Stage.Level,
-                    OptionFlg = representative.Stage.OptionFlg,
-                    StageMode = representative.Stage.StageMode,
-                    HighScore = representative.Stage.PlayScore,
-                    ProgressValue = progressValue,
-                    Completed = completed,
-                    UpdatedAt = playTime,
-                    CompletedAt = completed ? playTime : null
-                });
-                continue;
-            }
-
-            progress.Slot = representative.Task.Slot;
-            progress.CompeId = representative.Task.CompeId;
-            progress.SongNo = representative.Stage.SongNo;
-            progress.Level = representative.Stage.Level;
-            progress.OptionFlg = representative.Stage.OptionFlg;
-            progress.StageMode = representative.Stage.StageMode;
-            progress.HighScore = Math.Max(progress.HighScore, representative.Stage.PlayScore);
-            progress.ProgressValue = Math.Max(progress.ProgressValue, progressValue);
-            progress.UpdatedAt = playTime;
-            if (completed && !progress.Completed)
-            {
-                progress.Completed = true;
-                progress.CompletedAt = playTime;
-            }
-        }
-
-        await ApplyRedDonChallengeRewardsAsync(
-            baid,
-            catalog,
-            saveData,
-            cancellationToken);
-    }
-
-    private async ValueTask ApplyRedDonChallengeRewardsAsync(
-        uint baid,
-        Ac15DonChallengeCatalog catalog,
-        UserSaveDataRed saveData,
-        CancellationToken cancellationToken)
-    {
-        var activeBundleIds = catalog.GetActiveBundles()
-            .Select(bundle => bundle.BundleId)
-            .ToArray();
-        if (activeBundleIds.Length == 0)
-        {
-            return;
-        }
-
-        var completedTasks = new HashSet<(string BundleId, uint TaskId)>();
-        var savedCompleted = await context.RedDonChallengeProgress
-            .Where(row => row.Baid == baid && row.Completed && activeBundleIds.Contains(row.BundleId))
-            .Select(row => new { row.BundleId, row.TaskId })
-            .ToArrayAsync(cancellationToken);
-        foreach (var row in savedCompleted)
-        {
-            completedTasks.Add((row.BundleId, row.TaskId));
-        }
-
-        foreach (var row in context.RedDonChallengeProgress.Local.Where(row =>
-                     row.Baid == baid && row.Completed && activeBundleIds.Contains(row.BundleId)))
-        {
-            completedTasks.Add((row.BundleId, row.TaskId));
-        }
-
-        var completedCounts = completedTasks
-            .GroupBy(key => key.BundleId)
-            .ToDictionary(group => group.Key, group => (uint)group.Select(key => key.TaskId).Distinct().Count());
-        var grant = Ac15DonChallengeRewardDecisions.GetEarnedRewards(catalog, completedCounts);
-
-        Ac15UnlockFlagAccess.Red.ReleaseSongs?.Invoke(saveData, grant.RewardSongNoes);
-        Ac15UnlockFlagAccess.Red.Titles(saveData, grant.RewardTitleIds);
-    }
-
-    private async ValueTask<uint> GetProgressValueAsync(
-        uint baid,
-        Ac15DonChallengeTask task,
-        IReadOnlyList<Ac15DonChallengeStageEvaluation> evaluations,
-        CancellationToken cancellationToken)
-    {
-        if (!task.Rule.RequiresDistinctSongProgress)
-        {
-            return evaluations.Max(evaluation => evaluation.ProgressValue);
-        }
-
-        var bundleId = evaluations[0].BundleId;
-        var existingSongNoes = await context.RedDonChallengeRawFacts
-            .Where(row => row.Baid == baid
-                          && row.BundleId == bundleId
-                          && row.TaskId == task.TaskId
-                          && row.ProgressValue > 0)
-            .Select(row => row.SongNo)
-            .ToArrayAsync(cancellationToken);
-
-        return (uint)existingSongNoes
-            .Concat(evaluations.Select(evaluation => evaluation.Stage.SongNo))
-            .Distinct()
-            .Count();
-    }
-
-    private static bool IsCompleted(
-        Ac15DonChallengeRule rule,
-        uint progressValue,
-        IEnumerable<Ac15DonChallengeStageEvaluation> evaluations)
-        => rule.RequiresDistinctSongProgress
-            ? progressValue >= rule.RequiredStageCount
-            : evaluations.Any(evaluation => evaluation.Completed);
 
     private async ValueTask<uint> HandleRedTokkun(
         uint baid,
@@ -311,6 +141,11 @@ public partial class UpdatePlayResultCommandHandler
             Ac15DaniMapper.ApplyToRedDanScoreDatum,
             Ac15DaniMapper.ToRedDanStageScoreDatum,
             Ac15DaniMapper.ApplyToRedDanStageScoreDatum);
+
+    private Ac15DonChallengeTables<RedDonChallengeProgress, RedDonChallengeRawFact> RedDonChallengeTables()
+        => new(
+            context.RedDonChallengeProgress,
+            context.RedDonChallengeRawFacts);
 
     private static bool IsRedTokkunShaped(Ac15PlayResultEnvelope playResultData)
         => playResultData.Metadata.PlayMode == (uint)PlayMode.Tokkun;
