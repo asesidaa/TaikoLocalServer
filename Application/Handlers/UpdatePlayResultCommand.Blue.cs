@@ -26,7 +26,7 @@ public partial class UpdatePlayResultCommandHandler
         var playResultData = request.PlayResultData;
         var normal = playResultData.Normal;
         IReadOnlyList<Ac15StageResult> stages = normal?.Stages ?? [];
-        if (IsBlueTokkunShaped(playResultData))
+        if (Ac15TokkunPlayResultPolicy.IsTokkun(playResultData))
         {
             return await HandleBlueTokkun(request.Baid, playResultData, cancellationToken);
         }
@@ -126,8 +126,5 @@ public partial class UpdatePlayResultCommandHandler
 
     private static bool CanAddBlue(uint current, uint delta)
         => CanAddAc15(current, delta);
-
-    private static bool IsBlueTokkunShaped(Ac15PlayResultEnvelope playResultData)
-        => playResultData.Metadata.PlayMode == (uint)PlayMode.Tokkun;
 
 }

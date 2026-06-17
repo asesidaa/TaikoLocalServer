@@ -27,7 +27,7 @@ public partial class UpdatePlayResultCommandHandler
         var playResultData = request.PlayResultData;
         var normal = playResultData.Normal;
         IReadOnlyList<Ac15StageResult> stages = normal?.Stages ?? [];
-        if (IsRedTokkunShaped(playResultData))
+        if (Ac15TokkunPlayResultPolicy.IsTokkun(playResultData))
         {
             return await HandleRedTokkun(request.Baid, playResultData, cancellationToken);
         }
@@ -147,6 +147,4 @@ public partial class UpdatePlayResultCommandHandler
             context.RedDonChallengeProgress,
             context.RedDonChallengeRawFacts);
 
-    private static bool IsRedTokkunShaped(Ac15PlayResultEnvelope playResultData)
-        => playResultData.Metadata.PlayMode == (uint)PlayMode.Tokkun;
 }

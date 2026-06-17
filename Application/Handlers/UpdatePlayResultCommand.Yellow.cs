@@ -26,7 +26,7 @@ public partial class UpdatePlayResultCommandHandler
         var playResultData = request.PlayResultData;
         var normal = playResultData.Normal;
         IReadOnlyList<Ac15StageResult> stages = normal?.Stages ?? [];
-        if (IsYellowTokkunShaped(playResultData))
+        if (Ac15TokkunPlayResultPolicy.IsTokkun(playResultData))
         {
             return await HandleYellowTokkun(request.Baid, playResultData, cancellationToken);
         }
@@ -119,9 +119,6 @@ public partial class UpdatePlayResultCommandHandler
             Ac15DaniMapper.ApplyToYellowDanScoreDatum,
             Ac15DaniMapper.ToYellowDanStageScoreDatum,
             Ac15DaniMapper.ApplyToYellowDanStageScoreDatum);
-
-    private static bool IsYellowTokkunShaped(Ac15PlayResultEnvelope playResultData)
-        => playResultData.Metadata.PlayMode == (uint)PlayMode.Tokkun;
 
     private void LogYellowWaiWaiStageFacts(uint baid, IEnumerable<Ac15StageResult> stages)
     {
