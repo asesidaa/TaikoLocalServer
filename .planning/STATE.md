@@ -257,7 +257,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ### Pending Todos
 
-None recorded.
+- Refactor Don Challenge capability boundary (`.planning/todos/pending/2026-06-17-refactor-don-challenge-capability-boundary.md`)
 
 ### Blockers/Concerns
 
