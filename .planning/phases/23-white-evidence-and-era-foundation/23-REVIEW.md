@@ -1,9 +1,10 @@
 ---
 phase: 23-white-evidence-and-era-foundation
-reviewed: 2026-06-17T14:37:02Z
+reviewed: 2026-06-17T14:53:17Z
 depth: standard
-files_reviewed: 29
+files_reviewed: 30
 files_reviewed_list:
+  - Adapters.GameProtocol.Shared/GameProtocolApplicationParts.cs
   - Adapters.GameProtocol.White/Adapters.GameProtocol.White.csproj
   - Adapters.GameProtocol.White/Controllers/BaidController.cs
   - Adapters.GameProtocol.White/Controllers/BookkeepingController.cs
@@ -35,67 +36,43 @@ files_reviewed_list:
   - Tests/White/WhiteServerSettingsValidationTests.cs
 findings:
   critical: 0
-  warning: 1
+  warning: 0
   info: 0
-  total: 1
-status: issues_found
+  total: 0
+status: clean
 ---
 
 # Phase 23: Code Review Report
 
-**Reviewed:** 2026-06-17T14:37:02Z
+**Reviewed:** 2026-06-17T14:53:17Z
 **Depth:** standard
-**Files Reviewed:** 29
-**Status:** issues_found
+**Files Reviewed:** 30
+**Status:** clean
 
 ## Summary
 
-Reviewed the Phase 23 White adapter scaffold, host gating/configuration changes, generated wire scope, and White tests against the foundation-only constraints. The source builds, the White-focused test slice passes, and the reviewed controllers stay within the approved `/v07r00/chassis/{suffix}.php` route set without adding catalog/profile/runtime/AdminApi/WebUI/EF/Mediator behavior.
+Re-reviewed Phase 23 after fix commit `1c34d85f`, focusing on the White foundation route boundary, enabled-era application-part gating, first-class `GameEra.White` registration, host settings, and the White route-gating/settings tests.
 
-One test-quality defect remains: the route-gating test does not exercise the production settings-driven gating path, so it can pass while disabled White routes are exposed by a host wiring regression.
+Generated White wire files were reviewed for generation and scope risk only. They remain auto-generated under the White wire namespace and do not add route behavior by themselves.
+
+All reviewed files meet the requested Phase 23 constraints. No Critical or Warning issues were found.
+
+Verification run:
+
+```powershell
+dotnet test Tests/Tests.csproj --filter White --no-restore
+```
+
+Result: passed, 3 tests, 0 failures.
 
 ## Narrative Findings (AI reviewer)
 
-## Warnings
+No Critical or Warning findings.
 
-### WR-01: Route-gating test bypasses the production disabled-era path
-
-**Classification:** WARNING
-
-**File:** `Tests/White/WhiteHostRouteGatingTests.cs:54`
-
-**Issue:** `DiscoverWhiteRoutes` builds its own MVC service collection, removes White with the test-local `RemoveWhiteApplicationPart`, and conditionally re-adds the White assembly. That proves the White controllers have the expected attributes, but it does not prove `Host/Program.cs` removes `TaikoLocalServer.Adapters.GameProtocol.White` when `ServerSettings:Eras:White:Enabled` is false. A regression in the production application-part filter, such as deleting the White branch or mistyping the assembly name, would still leave this test passing while disabled White routes become routable in the real host.
-
-**Fix:** Exercise the host gating behavior from settings instead of reproducing it in the test. The strongest regression guard is a host-level request test that starts the app with White disabled and asserts a White route is 404, then starts with White enabled and asserts the same route is routable. If full host startup is too heavy, extract the production application-part filtering into a small host helper used by `Program.cs` and the test, rather than maintaining a separate `RemoveWhiteApplicationPart` implementation in the test.
-
-```csharp
-[Fact]
-public async Task WhiteRoutesFollowHostServerSettings()
-{
-    await using var disabledHost = await WhiteHostFixture.StartAsync(whiteEnabled: false);
-    var disabled = await disabledHost.Client.PostAsync(
-        "/v07r00/chassis/heartbeat.php",
-        ProtobufContent.Create(new HeartBeatRequest { ChassisId = "test", ShopId = "test" }));
-    Assert.Equal(HttpStatusCode.NotFound, disabled.StatusCode);
-
-    await using var enabledHost = await WhiteHostFixture.StartAsync(whiteEnabled: true);
-    var enabled = await enabledHost.Client.PostAsync(
-        "/v07r00/chassis/heartbeat.php",
-        ProtobufContent.Create(new HeartBeatRequest { ChassisId = "test", ShopId = "test" }));
-    Assert.True(enabled.IsSuccessStatusCode);
-}
-```
-
-## Verification Notes
-
-- `dotnet build Adapters.GameProtocol.White/Adapters.GameProtocol.White.csproj --no-restore` passed.
-- `dotnet test Tests/Tests.csproj --no-restore --filter "FullyQualifiedName~White"` passed.
-- `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build" --no-restore` passed.
-- `dotnet test Tests/Tests.csproj --no-restore --filter "FullyQualifiedName~White|FullyQualifiedName~RedServerSettingsValidationTests|FullyQualifiedName~StartupAuthController"` passed.
-- `git diff --check d59e2c79^..HEAD -- ...` passed for the reviewed scope.
+The White controllers remain per-route files/classes and expose only the evidence-approved `/v07r00/chassis/{suffix}.php` routes. No shared `/v01r00/chassis` White duplicates, catalog/profile/runtime/AdminApi/WebUI/EF/Mediator behavior, or source-string/file-name tests were introduced in the reviewed scope.
 
 ---
 
-_Reviewed: 2026-06-17T14:37:02Z_
+_Reviewed: 2026-06-17T14:53:17Z_
 _Reviewer: the agent (gsd-code-reviewer)_
 _Depth: standard_
