@@ -1,15 +1,16 @@
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TaikoLocalServer.Adapters.GameProtocol.Shared;
+using TaikoLocalServer.Domain.Enums;
 using WhiteAdapter = TaikoLocalServer.Adapters.GameProtocol.White.DependencyInjection;
 
 namespace TaikoLocalServer.Tests.White;
 
 public sealed class WhiteHostRouteGatingTests
 {
-    private static readonly string WhiteAssemblyName = typeof(WhiteAdapter).Assembly.GetName().Name!;
-
     private static readonly string[] ApprovedWhiteRoutes =
     [
         "/v07r00/chassis/baidcheck.php",
@@ -31,7 +32,7 @@ public sealed class WhiteHostRouteGatingTests
     [Fact]
     public void EnabledWhiteApplicationPartExposesOnlyApprovedWhiteRoutes()
     {
-        var routes = DiscoverWhiteRoutes(whiteEnabled: true);
+        var routes = DiscoverWhiteRoutesFromHostSettings(whiteEnabled: true);
 
         Assert.Equal(ApprovedWhiteRoutes, routes);
         Assert.All(routes, route => Assert.StartsWith("/v07r00/chassis/", route, StringComparison.Ordinal));
@@ -46,25 +47,22 @@ public sealed class WhiteHostRouteGatingTests
     [Fact]
     public void DisabledWhiteApplicationPartRemovesWhiteRouteExposure()
     {
-        var routes = DiscoverWhiteRoutes(whiteEnabled: false);
+        var routes = DiscoverWhiteRoutesFromHostSettings(whiteEnabled: false);
 
         Assert.Empty(routes);
     }
 
-    private static string[] DiscoverWhiteRoutes(bool whiteEnabled)
+    private static string[] DiscoverWhiteRoutesFromHostSettings(bool whiteEnabled)
     {
+        var enabledEras = ReadEnabledErasFromHostSettings(whiteEnabled);
         var services = new ServiceCollection();
         services.AddLogging();
         services
             .AddControllers()
             .ConfigureApplicationPartManager(apm =>
             {
-                RemoveWhiteApplicationPart(apm);
-
-                if (whiteEnabled)
-                {
-                    apm.ApplicationParts.Add(new AssemblyPart(typeof(WhiteAdapter).Assembly));
-                }
+                apm.ApplicationParts.Add(new AssemblyPart(typeof(WhiteAdapter).Assembly));
+                GameProtocolApplicationParts.RemoveDisabledGameProtocolApplicationParts(apm, enabledEras);
             });
 
         using var provider = services.BuildServiceProvider();
@@ -83,15 +81,15 @@ public sealed class WhiteHostRouteGatingTests
     private static string NormalizeRouteTemplate(string route)
         => route.StartsWith("/", StringComparison.Ordinal) ? route : $"/{route}";
 
-    private static void RemoveWhiteApplicationPart(ApplicationPartManager apm)
+    private static HashSet<GameEra> ReadEnabledErasFromHostSettings(bool whiteEnabled)
     {
-        var part = apm.ApplicationParts.FirstOrDefault(candidate =>
-            candidate is AssemblyPart assemblyPart
-            && assemblyPart.Assembly.GetName().Name == WhiteAssemblyName);
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ServerSettings:Eras:White:Enabled"] = whiteEnabled.ToString()
+            })
+            .Build();
 
-        if (part is not null)
-        {
-            apm.ApplicationParts.Remove(part);
-        }
+        return GameProtocolApplicationParts.ReadEnabledEras(configuration.GetSection("ServerSettings"));
     }
 }

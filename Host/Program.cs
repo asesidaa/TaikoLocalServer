@@ -20,8 +20,8 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Throw;
 using Serilog;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using System.IO.Compression;
+using TaikoLocalServer.Adapters.GameProtocol.Shared;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -74,11 +74,7 @@ try
     }
 
     var serverSettingsConfig = builder.Configuration.GetSection("ServerSettings");
-    var enabledEras = serverSettingsConfig.GetSection("Eras")
-        .GetChildren()
-        .Where(s => s.GetValue<bool>("Enabled"))
-        .Select(s => Enum.Parse<GameEra>(s.Key, ignoreCase: true))
-        .ToHashSet();
+    var enabledEras = GameProtocolApplicationParts.ReadEnabledEras(serverSettingsConfig);
 
     if (enabledEras.Count == 0)
     {
@@ -146,31 +142,7 @@ try
         {
             // Adapter assemblies referenced by Host are auto-discovered as ApplicationParts.
             // Remove disabled-era assemblies so their controllers are not routed.
-            if (!enabledEras.Contains(GameEra.Green))
-            {
-                RemoveApplicationPart(apm, "TaikoLocalServer.Adapters.GameProtocol.Green");
-            }
-            if (!enabledEras.Contains(GameEra.Blue))
-            {
-                RemoveApplicationPart(apm, "TaikoLocalServer.Adapters.GameProtocol.Blue");
-            }
-            if (!enabledEras.Contains(GameEra.Yellow))
-            {
-                RemoveApplicationPart(apm, "TaikoLocalServer.Adapters.GameProtocol.Yellow");
-            }
-            if (!enabledEras.Contains(GameEra.Red))
-            {
-                RemoveApplicationPart(apm, "TaikoLocalServer.Adapters.GameProtocol.Red");
-            }
-            if (!enabledEras.Contains(GameEra.White))
-            {
-                RemoveApplicationPart(apm, "TaikoLocalServer.Adapters.GameProtocol.White");
-            }
-            if (!enabledEras.Contains(GameEra.Nijiiro))
-            {
-                RemoveApplicationPart(apm, "TaikoLocalServer.Adapters.GameProtocol.WwR08");
-                RemoveApplicationPart(apm, "TaikoLocalServer.Adapters.GameProtocol.CnR00");
-            }
+            GameProtocolApplicationParts.RemoveDisabledGameProtocolApplicationParts(apm, enabledEras);
         });
     builder.Services.AddMemoryCache();
     builder.Services.AddCors(options =>
@@ -283,16 +255,6 @@ finally
 {
     Log.Information("Shut down complete");
     Log.CloseAndFlush();
-}
-
-static void RemoveApplicationPart(ApplicationPartManager apm, string assemblyName)
-{
-    var part = apm.ApplicationParts.FirstOrDefault(p =>
-        p is AssemblyPart a && a.Assembly.GetName().Name == assemblyName);
-    if (part is not null)
-    {
-        apm.ApplicationParts.Remove(part);
-    }
 }
 
 static bool ShouldAssumeProtobufRequest(HttpRequest request)
