@@ -53,7 +53,6 @@ public static class Ac15UserSettingsService
             GreenSelectableTaikojukuDans = selectableTaikojukuDans,
             GreenIsTojiru = access.GetIsTojiru(saveData),
             GreenIsAutoCostumeOn = access.GetIsAutoCostumeOn(saveData),
-            Ac15DispScoreType = access.GetDispScoreType(saveData),
             GreenDispLevelChassis = SafeDisplayLevel(access.GetDispLevelChassis(saveData)),
             GreenDispLevelSelf = SafeDisplayLevel(access.GetDispLevelSelf(saveData)),
             LastPlayDateTime = access.GetLastPlayDatetime(saveData)
@@ -77,12 +76,7 @@ public static class Ac15UserSettingsService
 
         if (request.GreenDispLevelSelf > 4)
         {
-            return Ac15UserSettingsResult.Error("GreenDispLevelSelf must be between 0 and 4.");
-        }
-
-        if (request.Ac15DispScoreType is > 1)
-        {
-            return Ac15UserSettingsResult.Error("Ac15DispScoreType must be between 0 and 1.");
+            return Ac15UserSettingsResult.Error("Default selected and self best difficulty must be between 0 and 4.");
         }
 
         user.MyDonName = request.MyDonName;
@@ -101,10 +95,6 @@ public static class Ac15UserSettingsService
         access.SetDispDanType(saveData, request.IsDisplayDanOnNamePlate ? 1u : 0u);
         access.SetIsTojiru(saveData, request.GreenIsTojiru);
         access.SetIsAutoCostumeOn(saveData, request.GreenIsAutoCostumeOn);
-        if (request.Ac15DispScoreType is { } dispScoreType)
-        {
-            access.SetDispScoreType(saveData, dispScoreType);
-        }
         access.SetDispLevelChassis(saveData, request.GreenDispLevelChassis);
         access.SetDispLevelSelf(saveData, request.GreenDispLevelSelf);
 

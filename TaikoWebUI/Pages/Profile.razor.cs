@@ -50,14 +50,9 @@ public partial class Profile
         "No Fixed Course", "Easy", "Normal", "Hard", "Oni"
     };
 
-    private static readonly string[] Ac15SelfBestDisplayStrings =
+    private static readonly string[] Ac15DefaultSelectedAndSelfBestDifficultyStrings =
     {
-        "Hidden", "Shown"
-    };
-
-    private static readonly string[] Ac15DefaultSelfBestDifficultyStrings =
-    {
-        "None", "Easy", "Normal", "Hard", "Oni"
+        "No Fixed Course", "Easy", "Normal", "Hard", "Oni"
     };
 
     private static readonly string[] DifficultySettingStarStrings =

@@ -50,7 +50,6 @@ public sealed class RedAdminApiTests
         Assert.Equal(4u, setting.ToneId);
         Assert.True(setting.GreenIsTojiru);
         Assert.True(setting.GreenIsAutoCostumeOn);
-        Assert.Equal(1u, setting.Ac15DispScoreType);
         Assert.Equal(3u, setting.GreenDispLevelChassis);
         Assert.Equal(2u, setting.GreenDispLevelSelf);
 
@@ -66,7 +65,6 @@ public sealed class RedAdminApiTests
             ToneId = 6,
             GreenIsTojiru = false,
             GreenIsAutoCostumeOn = false,
-            Ac15DispScoreType = 1,
             GreenDispLevelChassis = 4,
             GreenDispLevelSelf = 3
         });

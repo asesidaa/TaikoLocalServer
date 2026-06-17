@@ -13,7 +13,6 @@ public sealed class Ac15UserSettingsServiceTests
         save.Costume1 = 12;
         save.CostumeFlg1 = Ac15ProtocolBytes.SetBits(save.CostumeFlg1, [12, 13], BlueProtocolBytes.CostumeFlagBytes);
         save.DispTaikojukuDan = 5;
-        save.DispScoreType = 1;
         database.Context.UserData.Add(user);
         database.Context.UserSaveDataBlue.Add(save);
         database.Context.DanScoreDataBlue.Add(new DanScoreDatumBlue
@@ -36,7 +35,6 @@ public sealed class Ac15UserSettingsServiceTests
         Assert.True(result.IsSuccess);
         Assert.Contains(12u, result.Setting!.UnlockedKigurumi);
         Assert.Contains(13u, result.Setting.UnlockedKigurumi);
-        Assert.Equal(1u, result.Setting.Ac15DispScoreType);
         Assert.DoesNotContain(5u, result.Setting.GreenSelectableTaikojukuDans);
         Assert.Equal(Ac15EraProfiles.Blue.Limits.MinNormalDanId, result.Setting.GreenTaikojukuDan);
     }
@@ -66,37 +64,12 @@ public sealed class Ac15UserSettingsServiceTests
     }
 
     [Fact]
-    public async Task SaveAsync_RejectsInvalidScoreTypeWithoutMutation()
-    {
-        await using var database = await SchemaDatabase.CreateAsync();
-        var user = new UserDatum { Baid = 1, MyDonName = "DON" };
-        var save = UserSaveDataRedExtensions.CreateDefaultRedSaveData(1);
-        save.DispScoreType = 1;
-        database.Context.UserData.Add(user);
-        database.Context.UserSaveDataRed.Add(save);
-        await database.Context.SaveChangesAsync();
-
-        var result = await Ac15UserSettingsService.SaveAsync(
-            user,
-            save,
-            new UserSetting { MyDonName = "BAD", Ac15DispScoreType = 2 },
-            database.Context.DanScoreDataRed,
-            Ac15UserSettingsAccess.Red,
-            Ac15EraProfiles.Red.Limits,
-            CancellationToken.None);
-
-        Assert.False(result.IsSuccess);
-        Assert.Equal("Ac15DispScoreType must be between 0 and 1.", result.ErrorMessage);
-        Assert.Equal("DON", user.MyDonName);
-        Assert.Equal(1u, save.DispScoreType);
-    }
-
-    [Fact]
     public async Task SaveAsync_PersistsCustomizationAndSelectsOnlyValidTaikojukuDan()
     {
         await using var database = await SchemaDatabase.CreateAsync();
         var user = new UserDatum { Baid = 1, MyDonName = "DON" };
         var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.DispScoreType = 2;
         database.Context.UserData.Add(user);
         database.Context.UserSaveDataGreen.Add(save);
         database.Context.DanScoreDataGreen.Add(new DanScoreDatumGreen
@@ -122,7 +95,6 @@ public sealed class Ac15UserSettingsServiceTests
                 UnlockedKigurumi = [12, 13],
                 UnlockedTone = [4, 5],
                 GreenTaikojukuDan = 3,
-                Ac15DispScoreType = 1,
                 GreenDispLevelChassis = 2,
                 GreenDispLevelSelf = 1
             },
@@ -136,7 +108,7 @@ public sealed class Ac15UserSettingsServiceTests
         Assert.Equal(12u, save.Costume1);
         Assert.True(BitIsSet(save.CostumeFlg1, 13));
         Assert.True(BitIsSet(save.ToneFlg, 5));
-        Assert.Equal(1u, save.DispScoreType);
+        Assert.Equal(2u, save.DispScoreType);
         Assert.NotEqual(3u, save.DispTaikojukuDan);
     }
 

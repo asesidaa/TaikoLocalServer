@@ -111,19 +111,11 @@
                                                     }
                                                 </MudSelect>
 
-                                                <MudSelect T="uint?" @bind-Value="@response.Ac15DispScoreType" Label=@Localizer["Self Best Board"] AnchorOrigin="Origin.BottomCenter">
-                                                    @for (uint i = 0; i < Ac15SelfBestDisplayStrings.Length; i++)
-                                                    {
-                                                        var index = i;
-                                                        <MudSelectItem T="uint?" Value="@((uint?)i)">@Localizer[Ac15SelfBestDisplayStrings[index]]</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-
                                                 <MudSelect @bind-Value="@response.GreenDispLevelSelf" Label=@Localizer["Default Selected and Self Best Difficulty"] AnchorOrigin="Origin.BottomCenter">
-                                                    @for (uint i = 0; i < Ac15DefaultSelfBestDifficultyStrings.Length; i++)
+                                                    @for (uint i = 0; i < Ac15DefaultSelectedAndSelfBestDifficultyStrings.Length; i++)
                                                     {
                                                         var index = i;
-                                                        <MudSelectItem Value="@i">@Localizer[Ac15DefaultSelfBestDifficultyStrings[index]]</MudSelectItem>
+                                                        <MudSelectItem Value="@i">@Localizer[Ac15DefaultSelectedAndSelfBestDifficultyStrings[index]]</MudSelectItem>
                                                     }
                                                 </MudSelect>
                                             </MudStack>

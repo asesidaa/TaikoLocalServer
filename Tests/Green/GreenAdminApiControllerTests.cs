@@ -300,7 +300,6 @@ public class GreenAdminApiControllerTests
         var ok = Assert.IsType<OkObjectResult>(result.Result);
         var setting = Assert.IsType<UserSetting>(ok.Value);
         Assert.True(setting.GreenIsTojiru);
-        Assert.Equal(1u, setting.Ac15DispScoreType);
         Assert.Equal(3u, setting.GreenDispLevelChassis);
         Assert.Equal(2u, setting.GreenDispLevelSelf);
     }
@@ -328,7 +327,9 @@ public class GreenAdminApiControllerTests
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
-        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.DispScoreType = 2;
+        fixture.Context.UserSaveDataGreen.Add(save);
         await fixture.Context.SaveChangesAsync();
 
         var controller = CreateUserSettingsController(fixture.Context);
@@ -337,16 +338,13 @@ public class GreenAdminApiControllerTests
         {
             MyDonName = "GREEN",
             GreenIsTojiru = false,
-            Ac15DispScoreType = 1,
             GreenDispLevelChassis = 4,
             GreenDispLevelSelf = 4
         });
 
         Assert.IsType<NoContentResult>(result);
-        var save = await fixture.Context.UserSaveDataGreen.FindAsync(1u);
-        Assert.NotNull(save);
-        Assert.False(save!.IsTojiru);
-        Assert.Equal(1u, save.DispScoreType);
+        Assert.False(save.IsTojiru);
+        Assert.Equal(2u, save.DispScoreType);
         Assert.Equal(4u, save.DispLevelChassis);
         Assert.Equal(4u, save.DispLevelSelf);
     }
@@ -399,7 +397,7 @@ public class GreenAdminApiControllerTests
     }
 
     [Fact]
-    public async Task UserSettings_Green_PostRejectsInvalidDefaultSelectedDifficulty()
+    public async Task UserSettings_Green_PostRejectsInvalidDefaultSelectedAndSelfBestDifficulty()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
