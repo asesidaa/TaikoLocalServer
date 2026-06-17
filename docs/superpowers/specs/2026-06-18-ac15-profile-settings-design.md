@@ -235,7 +235,7 @@ Omitted supported groups mean leave unchanged. Submitted unsupported groups retu
 Unlock list semantics:
 
 - If free profile editing is enabled, submitted unlock lists replace the stored unlock set after adding required defaults/current selections.
-- If free profile editing is disabled, submitted unlock lists are ignored or rejected consistently with the existing authorization policy. The preferred implementation is to reject unlock-list edits when the caller lacks permission, while still allowing current selection if already unlocked.
+- If free profile editing is disabled, keep the existing authorization behavior. Unlock-list policy is not part of this redesign.
 
 ## Capabilities
 
@@ -469,8 +469,8 @@ Avoid tests that assert controller attribute inventory, source text, or the exis
 8. Delete `Ac15UserSettingsAccess<TSave>` after no callers remain.
 9. Add future older eras by binding their save rows and enabling only proven capabilities.
 
-## Open Questions
+## Resolved Decisions
 
-- Should unlock-list edits be rejected when the caller lacks free-editing permission, or should they be ignored while still allowing current selection changes within already-unlocked IDs? The stricter and clearer choice is rejection.
-- Should JSON unknown-field rejection be endpoint-local or global? The safer initial choice is endpoint-local.
-- Should capability profiles live inside `Ac15EraProfile` directly or as a nested `Ac15ProfileCapabilities` value? The cleaner shape is a nested value owned by `Ac15EraProfile`.
+- Unlock-list authorization keeps the existing behavior. This redesign does not change free-editing policy.
+- JSON unknown-field rejection is endpoint-local to `Ac15ProfileSettings`.
+- Capability profiles live as a nested `Ac15ProfileCapabilities` value owned by `Ac15EraProfile`.
