@@ -28,7 +28,7 @@ Active milestone: **v1.4 White AC15 0.13 Support**
 | Phase | Name | Goal | Requirements | Success Criteria |
 |-------|------|------|--------------|------------------|
 | 23 | White Evidence and Era Foundation | 3/3 | Complete | 2026-06-18 |
-| 23.1 | Red Don Challenge capability boundary and playresult refactor | Refactor Red Don Challenge naming, shared capability boundaries, and playresult dispatch before White reuse. | Architecture todo | 5 |
+| 23.1 | Red Don Challenge capability boundary and playresult refactor | 3/3 | Complete   | 2026-06-17 |
 | 24 | White Catalog Profile and Protocol Limits | Bind White `ST7100-1` data, sidecars, AC15 profile, feature flags, limits, and wire placement. | WCAT-01, WCAT-02, WCAT-03 | 5 |
 | 25 | White Runtime Capability Binding and Rewards | Bind White identity, userdata, normal play, metadata readback, Taikojuku/Dani where proven, and reward/present state. | WSTATE-01, WSTATE-02, WSTATE-03, WSTATE-04, WCOLL-01 | 5 |
 | 26 | White Collectable Data and Don Challenge Evidence | Collect White 0.13 collectable data and bind Don Challenge only if White evidence proves it. | WCOLL-02, WCOLL-03 | 5 |
@@ -92,15 +92,15 @@ Plans:
 
 **Wave 1**
 
-- [ ] 23.1-01-PLAN.md - Don Challenge naming, config, catalog, and data-preserving Red schema rename
+- [x] 23.1-01-PLAN.md - Don Challenge naming, config, catalog, and data-preserving Red schema rename
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 23.1-02-PLAN.md - Shared Don Challenge writer and Red playresult binding
+- [x] 23.1-02-PLAN.md - Shared Don Challenge writer and Red playresult binding
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 23.1-03-PLAN.md - AdminApi projection cleanup and shared Tokkun dispatch policy
+- [x] 23.1-03-PLAN.md - AdminApi projection cleanup and shared Tokkun dispatch policy
 
 **Key deliverables:**
 

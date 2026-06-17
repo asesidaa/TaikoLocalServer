@@ -2,6 +2,8 @@
 created: 2026-06-17T21:07:20.306Z
 title: Refactor Don Challenge capability boundary
 area: architecture
+completed: 2026-06-18
+completed_by_phase: 23.1-red-don-challenge-capability-boundary-and-playresult-refacto
 files:
   - Application/Handlers/GetDonChallengeQuery.cs:28
   - Application/Settings/ServerSettingsOptionsValidationExtensions.cs:30
