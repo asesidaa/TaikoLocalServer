@@ -106,4 +106,4 @@ These are White protocol or candidate surfaces without exact approved route suff
 
 Plan 01 delivers evidence and inventory only. Later plans may use this artifact to generate White wire and add first-class adapter identity, but route scaffolds remain paused at the Task 3 human approval checkpoint.
 
-If approved, Phase 23 route scaffolding is limited to the fourteen `SCAFFOLD_APPROVED` `/v07r00/chassis/{suffix}` routes. The current route proof does not imply persistence, catalog binding, profile mutation, reward semantics, ChallengeCompe semantics, unlocks, shop, wallet/payment, battle, Tokkun, WaiWai, or gacha behavior.
+With Task 3 approval recorded on 2026-06-17, Phase 23 route scaffolding is limited to the fourteen `SCAFFOLD_APPROVED` `/v07r00/chassis/{suffix}` routes. The current route proof does not imply persistence, catalog binding, profile mutation, reward semantics, ChallengeCompe semantics, unlocks, shop, wallet/payment, battle, Tokkun, WaiWai, or gacha behavior.

@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Phase Summary
 status: executing
-stopped_at: Completed 23-01-PLAN.md; route-proof checkpoint pending human evidence
-last_updated: "2026-06-17T02:54:21.178Z"
-last_activity: 2026-06-17 -- Phase 23 execution started
+stopped_at: Completed 23-01-PLAN.md; route-proof checkpoint approved
+last_updated: "2026-06-17T13:27:00.202Z"
+last_activity: 2026-06-17 -- Phase 23 Plan 01 route-proof checkpoint approved
 progress:
   total_phases: 5
   completed_phases: 0
@@ -27,8 +27,8 @@ See: `.planning/PROJECT.md` (updated 2026-06-16)
 
 Phase: 23 (White Evidence and Era Foundation) — EXECUTING
 Plan: 2 of 3
-Status: Ready to execute
-Last activity: 2026-06-17 -- Phase 23 execution started
+Status: Ready to execute Plan 23-02
+Last activity: 2026-06-17 -- Phase 23 Plan 01 route-proof checkpoint approved
 
 ## Performance Metrics
 
@@ -126,7 +126,7 @@ Last activity: 2026-06-17 -- Phase 23 execution started
 | Phase 22 P1 | 13 min | 3 tasks | 15 files |
 | Phase 22 P2 | 11 min | 3 tasks | 15 files |
 | Phase 22 P3 | 15 min | 3 tasks | 9 files |
-| Phase 23 P01 | 8 min | 2 completed, 1 checkpoint tasks | 10 files |
+| Phase 23 P01 | 8 min plus checkpoint closeout | 3 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -243,9 +243,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 22]: Red WebUI routing preserves Red AdminApi and user routes. — Plan 22-03 adds Red to WebUiEra supported/known eras, AC15 classification, and focused route tests.
 - [Phase 22]: Don Challenge WebUI availability is capability-gated by AdminApi availability. — Navigation shows the Play Data link only for the Red older-AC15 ChallengeCompe binding when `api/{era}/DonChallenge/availability` reports active.
 - [Phase 22]: Direct unsupported Don Challenge routes render unavailable UI without Nijiiro fallback. — The page handles unsupported routes locally and consumes only dedicated Don Challenge contracts.
-- [Milestone v1.4]: White 0.13 support starts with route/root/transport evidence because the live `.tools/white/EBOOT.ELF.i64` is nonzero (`129893515` bytes) but route strings are still not proven; local `ST7100-1` data alone is not route proof.
+- [Milestone v1.4]: White 0.13 support starts with route/root/transport evidence because the live `.tools/white/EBOOT.ELF.i64` is nonzero (`129893515` bytes), and Plan 23-01 route-table evidence now proves the `/v07r00/chassis` game route prefix plus the approved no-state suffix allowlist; local `ST7100-1` data alone is not route proof.
 - [Milestone v1.4]: White collectable data, including Don Challenge if proven in range, is intentionally late after White identity, catalog, playresult, reward, and readback behavior are stable.
-- [Phase 23]: White route scaffolds remain blocked until /v07r00/chassis and each .php suffix are proven from White route evidence. — Plan 23-01 found a nonzero White IDB but no route prefix or .php suffix strings; proto-only leads are not route approval.
+- [Phase 23]: Plan 23-01 route proof is approved. — `/v07r00/chassis` is accepted as the proven White game route prefix, and only `playresult.php`, `baidcheck.php`, `mydonentry.php`, `userdata.php`, `crownsdata.php`, `recommend.php`, `selfbest.php`, `heartbeat.php`, `initialdatacheck.php`, `tournamentcheck.php`, `bookkeeping.php`, `gettelop.php`, `getfolder.php`, and `taikojuku.php` are approved for Phase 23 no-state scaffolds.
 - [Phase 23]: White startup and version ownership remains shared under /v01r00/chassis unless White evidence contradicts it. — White vsinterface proto matches the shared older-AC15 startup/version request and response family.
 
 ### Pending Todos
@@ -254,7 +254,7 @@ None recorded.
 
 ### Blockers/Concerns
 
-- Phase 23 Plan 03 route/controller work is blocked until White route prefix and suffix evidence updates 23-WHITE-EVIDENCE.md with SCAFFOLD_APPROVED entries.
+- None for Plan 23-01. Plan 03 remains sequenced after Plan 02 and limited to the approved no-state route scaffold allowlist.
 
 ### Quick Tasks Completed
 
@@ -272,10 +272,10 @@ None recorded.
 
 ## Session Continuity
 
-Last session: 2026-06-17T02:53:31.712Z
-Stopped at: Completed 23-01-PLAN.md; route-proof checkpoint pending human evidence
+Last session: 2026-06-17T13:26:59.949Z
+Stopped at: Completed 23-01-PLAN.md; route-proof checkpoint approved
 Resume file: None
 
 ## Operator Next Steps
 
-- Start Phase 23 with `$gsd-discuss-phase 23` or `$gsd-plan-phase 23`.
+- Continue Phase 23 with Plan 23-02.

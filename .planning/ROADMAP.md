@@ -18,7 +18,7 @@ Active milestone: **v1.4 White AC15 0.13 Support**
 
 - White starts from `proto/white`, `Host/wwwroot/data/white/data`, request logs/captures, corrected IDA/client evidence, and RPCS3/cabinet proof.
 - The linked White wiki page is product/version scoping context only; it does not define route, payload, state, or response contracts.
-- Current Phase 23 context records `.tools/white/EBOOT.ELF.i64` as present and nonzero (`129893515` bytes), but route strings are still not proven; route/root proof must come from White IDB route strings, logs, captures, or equivalent local evidence before route code is finalized.
+- Current Phase 23 context records `.tools/white/EBOOT.ELF.i64` as present and nonzero (`129893515` bytes). Plan 23-01 route proof is approved for `/v07r00/chassis` and exactly fourteen no-state scaffold suffixes; any additional White route code still requires White IDB route strings, logs, captures, or equivalent local evidence.
 - White 0.13 has fewer surfaces than Red and Yellow. Unsupported or later-version features stay absent instead of receiving cloned compatibility routes.
 - Shared AC15 services may be reused only through explicit White limits, feature flags, wire placement, catalog data, and White-owned persistence tables.
 - Collectable data, including Don Challenge if it is proven inside the White 0.13 range, is intentionally late because it depends on stable identity, catalog, playresult, reward, and readback behavior.
@@ -56,7 +56,7 @@ Plans:
 
 - [x] 23-01-PLAN.md - White evidence gate, feature inventory, and stale-note correction
 
-**Wave 2** *(blocked on Wave 1 completion)*
+**Wave 2** *(unblocked after Wave 1 approval)*
 
 - [ ] 23-02-PLAN.md - White adapter identity and generated wire foundation
 
@@ -77,7 +77,7 @@ Plans:
 1. Developer can inspect a White evidence artifact before route/controller behavior or data-root choices are treated as final.
 2. White generated wire DTOs are produced from `proto/white/taiko.proto` and `proto/white/vsinterface.proto` without modifying dumped proto files.
 3. White adapter routes are enabled only when White is configured and absent when White is disabled.
-4. Route/root assumptions are evidence-tagged, and the superseded zero-byte IDB limitation is replaced with current nonzero IDB evidence plus a route-proof evidence path.
+4. Route/root assumptions are evidence-tagged, and the superseded zero-byte IDB limitation is replaced with current nonzero IDB evidence plus approved route-proof boundaries for Phase 23 scaffolding.
 5. Existing Blue, Green, Yellow, Red, and Nijiiro behavior remains preserved by focused checks for any shared-code changes.
 
 ### Phase 24: White Catalog Profile and Protocol Limits
@@ -172,9 +172,9 @@ Plans:
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| WFND-01 | Phase 23 | Pending |
+| WFND-01 | Phase 23 | Complete |
 | WFND-02 | Phase 23 | Pending |
-| WFND-03 | Phase 23 | Pending |
+| WFND-03 | Phase 23 | Complete |
 | WCAT-01 | Phase 24 | Pending |
 | WCAT-02 | Phase 24 | Pending |
 | WCAT-03 | Phase 24 | Pending |

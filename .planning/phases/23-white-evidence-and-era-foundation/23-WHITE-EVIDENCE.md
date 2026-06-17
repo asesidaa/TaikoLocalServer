@@ -2,6 +2,7 @@
 
 **Created:** 2026-06-17
 **Updated:** 2026-06-17 after route-proof checkpoint continuation
+**Approval:** Task 3 human approval recorded on 2026-06-17 from user response `approved`.
 **Scope:** White AC15 0.13 route, startup/version, transport, data-root, and feature-surface evidence before route/controller implementation.
 
 ## IDA Backend Evidence
@@ -23,7 +24,7 @@ The earlier raw string scan result is superseded for route proof by the running 
 
 ## Route Suffix Gate
 
-The following suffixes are the only White game route suffixes currently `SCAFFOLD_APPROVED` for Phase 23. Approval is bounded to no-state compatibility scaffolds under `/v07r00/chassis/{suffix}` after the Task 3 human approval checkpoint. Proto request/response names are cross-checks; IDA route table strings are the route authority.
+The following suffixes are the only White game route suffixes currently `SCAFFOLD_APPROVED` for Phase 23. Approval is bounded to no-state compatibility scaffolds under `/v07r00/chassis/{suffix}` with the Task 3 human approval recorded on 2026-06-17. Proto request/response names are cross-checks; IDA route table strings are the route authority.
 
 | Endpoint suffix | Proto request | Proto response | White route evidence | Plan 03 treatment |
 |-----------------|---------------|----------------|----------------------|-------------------|
@@ -127,7 +128,6 @@ rg -a -n "bookkeeping|heartbeat|baid|mydonentry|userdata|playresult|initialdatac
 
 | Gap | Blocks | Needed evidence |
 |-----|--------|-----------------|
-| Human approval of route-proof artifact | Plans 02 and 03 execution under the Task 3 checkpoint | User review of this artifact and explicit approval to proceed from the route-proof checkpoint. |
 | Blocked/proto-only route suffixes | Any controller for `headclerk2.php`, `getreitai.php`, `rewardcardcheck.php`, `rewardexecution.php`, standalone `challengecompe.php`, item shop, Banacoin authority, battle, Tokkun, WaiWai, gacha runtime, or AdminApi/WebUI | Exact White IDA route table strings, request-log/cabinet captures, RPCS3 traces, or equivalent local client evidence. |
 | Runtime call order | Any claim that a proto surface is mandatory cabinet flow | Request logs, captures, or IDA call graph evidence. |
 | Active runtime data selection beyond local file presence | Catalog/profile runtime implementation | Later catalog/profile plans should prove how `ST7100-1` is selected before hard runtime assumptions. |
@@ -141,9 +141,9 @@ Unsupported or unproven White 0.13 surfaces remain absent. Red, Yellow, Blue, Gr
 
 ## Plan 03 Gate
 
-Plan 03 may add White game route scaffolds and Host missing-content-type fallback only after Task 3 receives explicit human approval of this artifact.
+Plan 03 may add White game route scaffolds and Host missing-content-type fallback because Task 3 received explicit human approval of this artifact on 2026-06-17.
 
-If approved, Plan 03 route work is limited to:
+For the approved Phase 23 scope, Plan 03 route work is limited to:
 
 - White adapter no-state controllers for the fourteen `SCAFFOLD_APPROVED` `/v07r00/chassis/{suffix}` routes listed above.
 - A White-only exact-prefix missing/blank content-type fallback for `/v07r00/chassis`.
