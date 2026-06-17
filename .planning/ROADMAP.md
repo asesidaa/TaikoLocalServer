@@ -27,7 +27,7 @@ Active milestone: **v1.4 White AC15 0.13 Support**
 
 | Phase | Name | Goal | Requirements | Success Criteria |
 |-------|------|------|--------------|------------------|
-| 23 | White Evidence and Era Foundation | 3/3 | Complete   | 2026-06-17 |
+| 23 | White Evidence and Era Foundation | 3/3 | Complete    | 2026-06-17 |
 | 24 | White Catalog Profile and Protocol Limits | Bind White `ST7100-1` data, sidecars, AC15 profile, feature flags, limits, and wire placement. | WCAT-01, WCAT-02, WCAT-03 | 5 |
 | 25 | White Runtime Capability Binding and Rewards | Bind White identity, userdata, normal play, metadata readback, Taikojuku/Dani where proven, and reward/present state. | WSTATE-01, WSTATE-02, WSTATE-03, WSTATE-04, WCOLL-01 | 5 |
 | 26 | White Collectable Data and Don Challenge Evidence | Collect White 0.13 collectable data and bind Don Challenge only if White evidence proves it. | WCOLL-02, WCOLL-03 | 5 |
@@ -37,7 +37,7 @@ Active milestone: **v1.4 White AC15 0.13 Support**
 
 ## Phases
 
-- [ ] **Phase 23: White Evidence and Era Foundation** - Prove White route/version/transport boundaries and add first-class White adapter scaffolding.
+- [x] **Phase 23: White Evidence and Era Foundation** - Prove White route/version/transport boundaries and add first-class White adapter scaffolding. (completed 2026-06-17)
 - [ ] **Phase 24: White Catalog Profile and Protocol Limits** - Bind White `ST7100-1` data, sidecars, AC15 profile, feature flags, limits, and wire placement.
 - [ ] **Phase 25: White Runtime Capability Binding and Rewards** - Bind White identity, userdata, normal play, metadata readback, Taikojuku/Dani where proven, and reward/present state.
 - [ ] **Phase 26: White Collectable Data and Don Challenge Evidence** - Collect White 0.13 collectable data and bind Don Challenge only if White evidence proves it.
@@ -50,7 +50,7 @@ Active milestone: **v1.4 White AC15 0.13 Support**
 **Goal:** Prove White route/version/transport boundaries and add first-class White adapter scaffolding.
 **Depends on:** v1.3 Red archive
 **Requirements:** WFND-01, WFND-02, WFND-03
-**Plans:** 3 plans
+**Plans:** 3/3 plans complete
 Plans:
 **Wave 1**
 
@@ -227,13 +227,13 @@ See `.planning/milestones/v1.3-ROADMAP.md` and `.planning/milestones/v1.3-phases
 | v1.1 Blue Tokkun Mode Support | 7-11 | 7 GSD plans | Shipped | 2026-06-07 |
 | v1.2 Yellow AC15 Support | 12-17 plus 16.1 and 16.2 | 38 GSD plans | Shipped | 2026-06-12 |
 | v1.3 Red AC15 Support | 18-22 | 29 GSD plans | Shipped | 2026-06-16 |
-| v1.4 White AC15 0.13 Support | 23-27 | 0 planned yet | Planning | - |
+| v1.4 White AC15 0.13 Support | 23-27 | 3 GSD plans complete | Planning | - |
 
 ## Phase Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 23. White Evidence and Era Foundation | 1/3 | In Progress | - |
+| 23. White Evidence and Era Foundation | 3/3 | Complete | 2026-06-17 |
 | 24. White Catalog Profile and Protocol Limits | 0 | Pending | - |
 | 25. White Runtime Capability Binding and Rewards | 0 | Pending | - |
 | 26. White Collectable Data and Don Challenge Evidence | 0 | Pending | - |

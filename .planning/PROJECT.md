@@ -16,7 +16,7 @@ v1.2 Yellow AC15 Support shipped on 2026-06-12. Yellow is a first-class AC15 era
 
 v1.3 Red AC15 Support shipped on 2026-06-16. Red uses `proto/red/taiko.proto`, `proto/red/vsinterface.proto`, and the local Red game-data symlink at `Host/wwwroot/data/red/data` as source evidence. Red support covers `/v08r01` game routes, shared `/v01r00` startup/version ownership, active `ST8100-1` root evidence, first-class Red adapter/wire/Host gating, catalog/profile binding, Red-owned normal runtime state, Dani, tutorial-only Tokkun readback, simple compatibility routes, shared older-AC15 ChallengeCompe/Don Challenge behavior, AdminApi/WebUI readback, and user-accepted runtime closeout.
 
-v1.4 White AC15 0.13 Support has started. White uses `proto/white/taiko.proto`, `proto/white/vsinterface.proto`, and local game data at `Host/wwwroot/data/white/data` as source evidence, with the observed data root `config/ST7100-1`. The milestone targets the first White version, so later White-version behavior must be absent unless local White proto/data/log/IDA/client evidence proves it belongs in the 0.13 server contract.
+v1.4 White AC15 0.13 Support has started. Phase 23 is complete: White route/root evidence is recorded, `/v07r00/chassis` is approved for fourteen no-state scaffold routes, startup/version ownership remains shared under `/v01r00/chassis`, and White now has first-class adapter/wire/Host gating foundation. White uses `proto/white/taiko.proto`, `proto/white/vsinterface.proto`, and local game data at `Host/wwwroot/data/white/data` as source evidence, with the observed data root `config/ST7100-1`. The milestone targets the first White version, so later White-version behavior must be absent unless local White proto/data/log/IDA/client evidence proves it belongs in the 0.13 server contract.
 
 Although Blue, Green, and Yellow wire surfaces contain challenge competition proto definitions and some compatibility routes, those newer versions do not meaningfully call the feature; do not treat their stubs as runtime behavior evidence. Challenge competition is meaningful scope only for Red and older AC15 versions.
 
@@ -67,11 +67,10 @@ Current milestone: **v1.4 White AC15 0.13 Support**
 - [x] Red runtime state and readback: Red supports identity, userdata, initial data, self-best, crowns, recent/favorite songs, Dani Dojo, tutorial-only Tokkun, and simple compatibility routes through Red-owned state.
 - [x] Red ChallengeCompe/Don Challenge: Red binds the shared older-AC15 ChallengeCompe capability through local sidecar data, Red-owned progress/reward state, cabinet `challengecompe.php` readback, and dedicated AdminApi/WebUI contracts.
 - [x] Red AdminApi/WebUI and runtime closeout: Phase 22 records automated verification, temp-output Host build, and user-accepted manual runtime evidence before v1.3 archive.
+- [x] White evidence and first-class foundation: Phase 23 records White `/v07r00/chassis` route evidence for fourteen no-state scaffold suffixes, shared `/v01r00/chassis` startup/version ownership, current nonzero White IDB evidence, `ST7100-1` root evidence, generated White wire DTOs, `GameEra.White`, Host settings/registration, exact content-type fallback, disabled-era application-part gating, and no runtime/catalog/AdminApi/WebUI behavior.
 
 ### Active
 
-- [ ] White route/version/transport/data-root evidence is reviewed before White routes and catalog roots are finalized.
-- [ ] White is added as a first-class enableable AC15 era with generated White wire DTOs, Host/DI registration, settings, and enabled-era gating.
 - [ ] White binds only matching AC15 catalog/profile/runtime capabilities through White-owned persistence, protocol limits, and mechanical Mapperly projection.
 - [ ] Features missing from White 0.13 remain absent unless local White evidence proves the cabinet expects compatibility behavior.
 - [ ] White-scoped collectable data, including Don Challenge data if it falls inside the proven White 0.13 range, is collected and bound late in the milestone after core capability behavior is stable.
@@ -107,7 +106,7 @@ Current milestone: **v1.4 White AC15 0.13 Support**
 - Red local data currently exposes versioned config roots including `config/ST5100-1`, `config/ST5100-7`, `config/ST7100-1`, and `config/ST8100-1`; the milestone must prove the runtime target/root before locking catalog paths.
 - v1.4 White AC15 0.13 Support started on 2026-06-16. White local protocol inputs are `proto/white/taiko.proto` and `proto/white/vsinterface.proto`; local game data is under `Host/wwwroot/data/white/data`.
 - White local data currently exposes `config/ST7100-1` as the observed config root, with `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, `present.xml`, and `spacialbaid.xml` in that root.
-- `.tools/white/EBOOT.ELF.i64` is currently present and nonzero in this checkout (`129893515` bytes), so superseded zero-byte notes are no longer current. Route strings are still not proven; route/root proof still needs IDB route extraction, request logs/captures, or another local evidence source before White runtime assumptions are finalized.
+- `.tools/white/EBOOT.ELF.i64` is currently present and nonzero in this checkout (`129893515` bytes), so superseded zero-byte notes are no longer current. Phase 23 IDA route extraction proves `/v07r00/chassis` plus fourteen no-state scaffold suffixes; additional White route, root-selection, and runtime assumptions still need local IDB, log, capture, data, or cabinet/RPCS3 evidence before implementation.
 - The evidence hierarchy is repo code, proto files, SQLite state, cabinet/RPCS3 logs, IDA/client evidence, and only then public wiki pages for gameplay scoping.
 - Yellow local protocol input is `proto/yellow/yellow.proto`; local game data is under `Host/wwwroot/data/yellow/data`, with the observed versioned config root `config/ST9100-1`.
 - Yellow proto evidence includes Tokkun tutorial and stage-result fields, item shop and Banacoin-adjacent routes, Don/Katsu medal upload fields, and no Blue battle userdata or initialdata battle fields.
@@ -183,6 +182,7 @@ v1.3 Red AC15 Support is complete. Phases 18-22 added Red as a first-class older
 | Start Red support as v1.3 | Red is the next older AC15 era after Yellow, local Red proto/data are present, and user scope says behavior should mostly share with Yellow while excluding WaiWai | Validated in v1.3 |
 | Treat ChallengeCompe as a shared older-AC15 capability with Red as the first binding | Red proto exposes challenge competition request/response and playresult/userdata fields, and public scoping context says Don Challenge is a Red-and-older AC15 behavior | Validated in v1.3 |
 | Start White 0.13 support as v1.4 | White is the next older AC15 era after Red; local White proto/data are present and the user expects mostly assembling existing capabilities with correct White responses and limits | Pending in v1.4 |
+| Keep Phase 23 White foundation no-state and evidence-gated | White route proof approves only `/v07r00/chassis` plus fourteen scaffold suffixes; runtime catalog/profile/state/AdminApi/WebUI behavior remains owned by later phases | Validated in Phase 23 |
 | Collect White collectable data late in the milestone | White collectable data such as Don Challenge should be gathered if it falls in the 0.13 range, but only after core era support is stable | Pending in v1.4 |
 
 ## Evolution
@@ -203,4 +203,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-16 after v1.4 White AC15 0.13 Support milestone start*
+*Last updated: 2026-06-17 after Phase 23 White Evidence and Era Foundation verification*
