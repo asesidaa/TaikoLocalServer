@@ -58,7 +58,7 @@ Plans:
 
 **Wave 2** *(unblocked after Wave 1 approval)*
 
-- [ ] 23-02-PLAN.md - White adapter identity and generated wire foundation
+- [x] 23-02-PLAN.md - White adapter identity and generated wire foundation
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -173,7 +173,7 @@ Plans:
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | WFND-01 | Phase 23 | Complete |
-| WFND-02 | Phase 23 | Pending |
+| WFND-02 | Phase 23 | Complete |
 | WFND-03 | Phase 23 | Complete |
 | WCAT-01 | Phase 24 | Pending |
 | WCAT-02 | Phase 24 | Pending |
