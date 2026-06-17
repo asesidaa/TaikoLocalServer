@@ -21,26 +21,37 @@ public partial class UpdatePlayResultCommandHandler
         CancellationToken cancellationToken)
     {
         var saveData = await context.GetOrCreateBlueSaveDataAsync(baid, cancellationToken);
-        saveData.TokkunTutorialFlg = Ac15CommonProfileMutation.PreserveTutorialFlag(
-            saveData.TokkunTutorialFlg,
-            playResultData.Tokkun?.TutorialFlg);
+        await Ac15TokkunWriter.SaveAsync(
+            context,
+            new Ac15TokkunTables<BlueRecentSongs>(
+                context.BlueRecentSongs,
+                AddBlueTokkunHistory),
+            new Ac15TokkunWriteRequest(
+                baid,
+                playResultData,
+                saveData.TokkunTutorialFlg,
+                value => saveData.TokkunTutorialFlg = value,
+                Ac15EraProfiles.Blue.Limits.MaxRecentSongs,
+                ParseAc15PlayDatetimeOrNow(playResultData.Metadata.PlayDatetime)),
+            cancellationToken);
+    }
 
-        if (playResultData.Tokkun?.StageData is { } tokkunStageData)
+    private void AddBlueTokkunHistory(
+        uint baid,
+        Ac15PlayResultEnvelope playResultData,
+        Ac15TokkunStageData tokkunStageData)
+    {
+        context.BlueTokkunStageResults.Add(new BlueTokkunStageResult
         {
-            context.BlueTokkunStageResults.Add(new BlueTokkunStageResult
-            {
-                Baid = baid,
-                PlayDatetime = playResultData.Metadata.PlayDatetime,
-                PlayMode = playResultData.Metadata.PlayMode,
-                BanacoinDatetime = tokkunStageData.BanacoinDatetime,
-                TokkunSongCnt = tokkunStageData.TokkunSongCnt,
-                TookunSongnoesJson = JsonSerializer.Serialize(tokkunStageData.TookunSongnoes),
-                TokkunSpeedchangeCnt = tokkunStageData.TokkunSpeedchangeCnt,
-                TokkunAutoplayCnt = tokkunStageData.TokkunAutoplayCnt,
-                TokkunJumpCnt = tokkunStageData.TokkunJumpCnt
-            });
-        }
-
-        await context.SaveChangesAsync(cancellationToken);
+            Baid = baid,
+            PlayDatetime = playResultData.Metadata.PlayDatetime,
+            PlayMode = playResultData.Metadata.PlayMode,
+            BanacoinDatetime = tokkunStageData.BanacoinDatetime,
+            TokkunSongCnt = tokkunStageData.TokkunSongCnt,
+            TookunSongnoesJson = JsonSerializer.Serialize(tokkunStageData.TookunSongnoes),
+            TokkunSpeedchangeCnt = tokkunStageData.TokkunSpeedchangeCnt,
+            TokkunAutoplayCnt = tokkunStageData.TokkunAutoplayCnt,
+            TokkunJumpCnt = tokkunStageData.TokkunJumpCnt
+        });
     }
 }

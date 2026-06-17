@@ -497,12 +497,17 @@ public sealed class YellowPlayResultHandlerTests
         var afterClearAttempt = await fixture.Context.UserSaveDataYellow.SingleAsync(row => row.Baid == 1);
         Assert.Equal(7u, afterClearAttempt.TokkunTutorialFlg);
         Assert.Equal(2, await fixture.Context.YellowTokkunStageResults.CountAsync(row => row.Baid == 1));
+        var recentSongs = await fixture.Context.YellowRecentSongs
+            .Where(row => row.Baid == 1)
+            .OrderBy(row => row.SongNo)
+            .Select(row => row.SongNo)
+            .ToListAsync();
+        Assert.Equal([101u, 102u], recentSongs);
         Assert.Empty(await fixture.Context.SongPlayDataYellow.ToListAsync());
         Assert.Empty(await fixture.Context.SongBestDataYellow.ToListAsync());
         Assert.Empty(await fixture.Context.DanScoreDataYellow.ToListAsync());
         Assert.Empty(await fixture.Context.DanStageScoreDataYellow.ToListAsync());
         Assert.Empty(await fixture.Context.YellowFavoriteSongs.ToListAsync());
-        Assert.Empty(await fixture.Context.YellowRecentSongs.ToListAsync());
         Assert.Empty(await fixture.Context.YellowShopSeasonStates.ToListAsync());
         Assert.Empty(await fixture.Context.YellowShopItemStates.ToListAsync());
         Assert.Empty(await fixture.Context.SongPlayDataBlue.Where(row => row.Baid == 1).ToListAsync());

@@ -95,6 +95,19 @@ public sealed class GreenUserDataMapperTests
     }
 
     [Fact]
+    public void UserData_MapsHowToPlayTutorialFlag()
+    {
+        var response = AssembleGreenUserDataResponse(new Ac15UserDataResponse
+        {
+            Result = 1,
+            ModeFlags = new Ac15UserDataModeFlags(IsDevil: null, IsExplain: true)
+        });
+
+        Assert.True(response.ShouldSerializeIsExplain());
+        Assert.True(response.IsExplain);
+    }
+
+    [Fact]
     public void UserData_SerializesToneAndTitleFlagsOnWire()
     {
         var response = AssembleGreenUserDataResponse(new Ac15UserDataResponse

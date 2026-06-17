@@ -28,6 +28,19 @@ public sealed class BlueMapperTests
         Assert.False(response.ShouldSerializeTokkunTutorialFlg());
     }
 
+    [Fact]
+    public void UserDataMapper_Blue_MapsHowToPlayTutorialFlag()
+    {
+        var response = AssembleBlueUserDataResponse(new Ac15UserDataResponse
+        {
+            Result = 1,
+            ModeFlags = new Ac15UserDataModeFlags(IsDevil: null, IsExplain: true)
+        });
+
+        Assert.True(response.ShouldSerializeIsExplain());
+        Assert.True(response.IsExplain);
+    }
+
     [Theory]
     [InlineData(0u)]
     [InlineData(1u)]

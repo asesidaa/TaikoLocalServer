@@ -209,7 +209,7 @@ public sealed class RedChallengeCompeTests
         Assert.Empty(await fixture.Context.SongPlayDataRed.ToListAsync());
         Assert.Empty(await fixture.Context.SongBestDataRed.ToListAsync());
         Assert.Empty(await fixture.Context.RedFavoriteSongs.ToListAsync());
-        Assert.Empty(await fixture.Context.RedRecentSongs.ToListAsync());
+        Assert.Single(await fixture.Context.RedRecentSongs.Where(row => row.Baid == 1 && row.SongNo == 101).ToListAsync());
         Assert.Empty(await fixture.Context.DanScoreDataRed.ToListAsync());
         Assert.Equal(3u, await fixture.Context.UserSaveDataRed.Where(row => row.Baid == 1).Select(row => row.TokkunTutorialFlg).SingleAsync());
     }

@@ -13,6 +13,7 @@ public sealed class Ac15UserSettingsServiceTests
         save.Costume1 = 12;
         save.CostumeFlg1 = Ac15ProtocolBytes.SetBits(save.CostumeFlg1, [12, 13], BlueProtocolBytes.CostumeFlagBytes);
         save.DispTaikojukuDan = 5;
+        save.IsExplain = true;
         database.Context.UserData.Add(user);
         database.Context.UserSaveDataBlue.Add(save);
         database.Context.DanScoreDataBlue.Add(new DanScoreDatumBlue
@@ -35,6 +36,7 @@ public sealed class Ac15UserSettingsServiceTests
         Assert.True(result.IsSuccess);
         Assert.Contains(12u, result.Setting!.UnlockedKigurumi);
         Assert.Contains(13u, result.Setting.UnlockedKigurumi);
+        Assert.True(result.Setting.Ac15HowToPlayTutorialDisabled);
         Assert.DoesNotContain(5u, result.Setting.GreenSelectableTaikojukuDans);
         Assert.Equal(Ac15EraProfiles.Blue.Limits.MinNormalDanId, result.Setting.GreenTaikojukuDan);
     }
@@ -95,6 +97,7 @@ public sealed class Ac15UserSettingsServiceTests
                 UnlockedKigurumi = [12, 13],
                 UnlockedTone = [4, 5],
                 GreenTaikojukuDan = 3,
+                Ac15HowToPlayTutorialDisabled = true,
                 GreenDispLevelChassis = 2,
                 GreenDispLevelSelf = 1
             },
@@ -109,6 +112,7 @@ public sealed class Ac15UserSettingsServiceTests
         Assert.True(BitIsSet(save.CostumeFlg1, 13));
         Assert.True(BitIsSet(save.ToneFlg, 5));
         Assert.Equal(2u, save.DispScoreType);
+        Assert.True(save.IsExplain);
         Assert.NotEqual(3u, save.DispTaikojukuDan);
     }
 

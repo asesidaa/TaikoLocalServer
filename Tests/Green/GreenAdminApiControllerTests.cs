@@ -289,6 +289,7 @@ public class GreenAdminApiControllerTests
         var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
         save.IsTojiru = true;
         save.DispScoreType = 1;
+        save.IsExplain = true;
         save.DispLevelChassis = 3;
         save.DispLevelSelf = 2;
         fixture.Context.UserSaveDataGreen.Add(save);
@@ -300,6 +301,7 @@ public class GreenAdminApiControllerTests
         var ok = Assert.IsType<OkObjectResult>(result.Result);
         var setting = Assert.IsType<UserSetting>(ok.Value);
         Assert.True(setting.GreenIsTojiru);
+        Assert.True(setting.Ac15HowToPlayTutorialDisabled);
         Assert.Equal(3u, setting.GreenDispLevelChassis);
         Assert.Equal(2u, setting.GreenDispLevelSelf);
     }
@@ -338,6 +340,7 @@ public class GreenAdminApiControllerTests
         {
             MyDonName = "GREEN",
             GreenIsTojiru = false,
+            Ac15HowToPlayTutorialDisabled = true,
             GreenDispLevelChassis = 4,
             GreenDispLevelSelf = 4
         });
@@ -345,6 +348,7 @@ public class GreenAdminApiControllerTests
         Assert.IsType<NoContentResult>(result);
         Assert.False(save.IsTojiru);
         Assert.Equal(2u, save.DispScoreType);
+        Assert.True(save.IsExplain);
         Assert.Equal(4u, save.DispLevelChassis);
         Assert.Equal(4u, save.DispLevelSelf);
     }

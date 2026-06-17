@@ -53,6 +53,7 @@ public sealed class BlueUserDataTests
         save.DispScoreType = 2;
         save.DispLevelSelf = 4;
         save.IsDevil = true;
+        save.IsExplain = true;
         fixture.Context.UserSaveDataBlue.Add(save);
         await fixture.Context.SaveChangesAsync();
         var handler = new UserDataQueryHandler(
@@ -73,10 +74,13 @@ public sealed class BlueUserDataTests
         Assert.Equal(2u, response.Display.DispScoreType);
         Assert.Equal(4u, response.Display.DispLevelSelf);
         Assert.True(response.ModeFlags!.IsDevil);
+        Assert.True(response.ModeFlags.IsExplain);
 
         var wire = AssembleBlueUserDataResponse(response);
         Assert.True(wire.ShouldSerializeDispScoreType());
         Assert.Equal(2u, wire.DispScoreType);
+        Assert.True(wire.ShouldSerializeIsExplain());
+        Assert.True(wire.IsExplain);
     }
 
     [Fact]

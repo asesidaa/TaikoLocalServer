@@ -49,7 +49,7 @@ public partial class UserDataQueryHandler
         return response with
         {
             Display = response.Display with { DispTaikojukuDan = GetSafeTaikojukuDanSlot(displayDan) },
-            ModeFlags = new Ac15UserDataModeFlags(saveData.IsDevil, IsExplain: null)
+            ModeFlags = new Ac15UserDataModeFlags(saveData.IsDevil, saveData.IsExplain)
         };
     }
 

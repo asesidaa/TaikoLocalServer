@@ -18,6 +18,8 @@ public class UserSetting
 
     public bool GreenIsAutoCostumeOn { get; set; }
 
+    public bool Ac15HowToPlayTutorialDisabled { get; set; }
+
     public uint GreenDispLevelChassis { get; set; }
 
     public uint GreenDispLevelSelf { get; set; }

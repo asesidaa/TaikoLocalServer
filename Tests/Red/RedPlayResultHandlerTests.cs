@@ -179,7 +179,7 @@ public sealed class RedPlayResultHandlerTests
     }
 
     [Fact]
-    public async Task UpdatePlayResult_Red_TokkunUpdatesOnlyTutorialState()
+    public async Task UpdatePlayResult_Red_TokkunUpdatesTutorialAndRecentsOnly()
     {
         await using var fixture = await RedHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -220,7 +220,8 @@ public sealed class RedPlayResultHandlerTests
         Assert.Empty(await fixture.Context.SongPlayDataRed.ToListAsync());
         Assert.Empty(await fixture.Context.SongBestDataRed.ToListAsync());
         Assert.Empty(await fixture.Context.RedFavoriteSongs.ToListAsync());
-        Assert.Empty(await fixture.Context.RedRecentSongs.ToListAsync());
+        var recent = Assert.Single(await fixture.Context.RedRecentSongs.ToListAsync());
+        Assert.Equal(101u, recent.SongNo);
         Assert.Empty(await fixture.Context.DanScoreDataRed.ToListAsync());
         Assert.Empty(await fixture.Context.BlueTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
         Assert.Empty(await fixture.Context.YellowTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());

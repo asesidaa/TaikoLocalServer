@@ -99,6 +99,9 @@ public sealed class BluePlayResultHandlerTests
         Assert.Equal(7u, reloaded.TokkunTutorialFlg);
         var tokkunStage = await fixture.Context.BlueTokkunStageResults.SingleAsync(row => row.Baid == 1);
         AssertTokkunHistoryRow(tokkunStage, "20260528120000", "20260528120000", [101]);
+        var recent = Assert.Single(await fixture.Context.BlueRecentSongs.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Equal(101u, recent.SongNo);
+        Assert.Equal(new DateTime(2026, 5, 28, 12, 0, 0), recent.LastPlayed);
         await AssertTokkunForbiddenBlueStateEmptyAsync(fixture.Context);
     }
 
@@ -154,6 +157,7 @@ public sealed class BluePlayResultHandlerTests
         Assert.Equal(7u, reloaded.TokkunTutorialFlg);
         var tokkunStage = await fixture.Context.BlueTokkunStageResults.SingleAsync(row => row.Baid == 1);
         AssertTokkunHistoryRow(tokkunStage, "20260528120000", "20260528120000", [101]);
+        Assert.Single(await fixture.Context.BlueRecentSongs.Where(row => row.Baid == 1 && row.SongNo == 101).ToListAsync());
         await AssertTokkunForbiddenBlueStateEmptyAsync(fixture.Context);
     }
 
@@ -188,6 +192,12 @@ public sealed class BluePlayResultHandlerTests
         Assert.Equal(2, rows.Count);
         AssertTokkunHistoryRow(rows[0], "20260528120000", "20260528120000", [101, 102, 101], songCount: 3);
         AssertTokkunHistoryRow(rows[1], "20260528120000", "20260528120000", [101, 102, 101], songCount: 3);
+        var recentSongs = await fixture.Context.BlueRecentSongs
+            .Where(row => row.Baid == 1)
+            .OrderBy(row => row.SongNo)
+            .Select(row => row.SongNo)
+            .ToListAsync();
+        Assert.Equal([101u, 102u], recentSongs);
         await AssertTokkunForbiddenBlueStateEmptyAsync(fixture.Context);
     }
 
@@ -834,7 +844,6 @@ public sealed class BluePlayResultHandlerTests
         Assert.Empty(await context.BlueBattleNpcStates.ToListAsync());
         Assert.Empty(await context.BlueBattleTokenStates.ToListAsync());
         Assert.Empty(await context.BlueFavoriteSongs.ToListAsync());
-        Assert.Empty(await context.BlueRecentSongs.ToListAsync());
         Assert.Empty(await context.DanScoreDataBlue.ToListAsync());
         Assert.Empty(await context.DanStageScoreDataBlue.ToListAsync());
         Assert.Empty(await context.BlueShopSeasonStates.ToListAsync());

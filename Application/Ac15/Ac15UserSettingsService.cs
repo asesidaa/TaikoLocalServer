@@ -53,6 +53,7 @@ public static class Ac15UserSettingsService
             GreenSelectableTaikojukuDans = selectableTaikojukuDans,
             GreenIsTojiru = access.GetIsTojiru(saveData),
             GreenIsAutoCostumeOn = access.GetIsAutoCostumeOn(saveData),
+            Ac15HowToPlayTutorialDisabled = access.GetIsExplain(saveData),
             GreenDispLevelChassis = SafeDisplayLevel(access.GetDispLevelChassis(saveData)),
             GreenDispLevelSelf = SafeDisplayLevel(access.GetDispLevelSelf(saveData)),
             LastPlayDateTime = access.GetLastPlayDatetime(saveData)
@@ -95,6 +96,7 @@ public static class Ac15UserSettingsService
         access.SetDispDanType(saveData, request.IsDisplayDanOnNamePlate ? 1u : 0u);
         access.SetIsTojiru(saveData, request.GreenIsTojiru);
         access.SetIsAutoCostumeOn(saveData, request.GreenIsAutoCostumeOn);
+        access.SetIsExplain(saveData, request.Ac15HowToPlayTutorialDisabled);
         access.SetDispLevelChassis(saveData, request.GreenDispLevelChassis);
         access.SetDispLevelSelf(saveData, request.GreenDispLevelSelf);
 

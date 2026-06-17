@@ -277,11 +277,17 @@ public partial class UpdatePlayResultCommandHandler
         CancellationToken cancellationToken)
     {
         var saveData = await context.GetOrCreateRedSaveDataAsync(baid, cancellationToken);
-        saveData.TokkunTutorialFlg = Ac15CommonProfileMutation.PreserveTutorialFlag(
-            saveData.TokkunTutorialFlg,
-            playResultData.Tokkun?.TutorialFlg);
-
-        await context.SaveChangesAsync(cancellationToken);
+        await Ac15TokkunWriter.SaveAsync(
+            context,
+            new Ac15TokkunTables<RedRecentSongs>(context.RedRecentSongs),
+            new Ac15TokkunWriteRequest(
+                baid,
+                playResultData,
+                saveData.TokkunTutorialFlg,
+                value => saveData.TokkunTutorialFlg = value,
+                Ac15EraProfiles.Red.Limits.MaxRecentSongs,
+                ParseAc15PlayDatetimeOrNow(playResultData.Metadata.PlayDatetime)),
+            cancellationToken);
         return 1;
     }
 

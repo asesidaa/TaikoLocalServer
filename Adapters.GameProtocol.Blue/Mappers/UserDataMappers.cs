@@ -20,7 +20,7 @@ public static partial class UserDataMappers
     [MapProperty(nameof(Ac15UserDataDisplaySettings.IsChallengeCompe), nameof(UserDataResponse.IsChallengecompe))]
     public static partial void Apply(Ac15UserDataDisplaySettings source, [MappingTarget] UserDataResponse response);
 
-    [MapperIgnoreSource(nameof(Ac15UserDataModeFlags.IsExplain))]
+    [MapProperty(nameof(Ac15UserDataModeFlags.IsExplain), nameof(UserDataResponse.IsExplain))]
     public static partial void Apply(Ac15UserDataModeFlags source, [MappingTarget] UserDataResponse response);
 
     [MapperIgnoreSource(nameof(Ac15UserDataTutorial.DifficultyTutorialFlg))]

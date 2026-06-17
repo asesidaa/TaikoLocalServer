@@ -29,6 +29,7 @@ public sealed class YellowAdminApiTests
         save.DefaultToneSetting = 4;
         save.IsTojiru = true;
         save.IsAutoCostumeOn = true;
+        save.IsExplain = true;
         save.DispScoreType = 1;
         save.DispLevelChassis = 3;
         save.DispLevelSelf = 2;
@@ -47,6 +48,7 @@ public sealed class YellowAdminApiTests
         Assert.Equal(4u, setting.ToneId);
         Assert.True(setting.GreenIsTojiru);
         Assert.True(setting.GreenIsAutoCostumeOn);
+        Assert.True(setting.Ac15HowToPlayTutorialDisabled);
         Assert.Equal(3u, setting.GreenDispLevelChassis);
         Assert.Equal(2u, setting.GreenDispLevelSelf);
 
@@ -62,6 +64,7 @@ public sealed class YellowAdminApiTests
             ToneId = 6,
             GreenIsTojiru = false,
             GreenIsAutoCostumeOn = false,
+            Ac15HowToPlayTutorialDisabled = false,
             GreenDispLevelChassis = 4,
             GreenDispLevelSelf = 3
         });
@@ -74,6 +77,7 @@ public sealed class YellowAdminApiTests
         Assert.Contains(6u, BitsetCodec.Decode(save.ToneFlg, Ac15EraProfiles.Yellow.Limits.ToneFlagBytes));
         Assert.False(save.IsTojiru);
         Assert.False(save.IsAutoCostumeOn);
+        Assert.False(save.IsExplain);
         Assert.Equal(1u, save.DispScoreType);
         Assert.Equal(4u, save.DispLevelChassis);
         Assert.Equal(3u, save.DispLevelSelf);
