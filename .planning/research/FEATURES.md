@@ -15,7 +15,7 @@
 Requirement category:
 - Add White as an enableable first-class AC15 era with generated wire DTOs from `proto/white`, Host settings, DI registration, application-part gating, and White-owned adapter/controller files.
 - Prove the game route prefix, shared `/v01r00` startup/version ownership, direct-protobuf transport, and active catalog root from local logs, cabinet/RPCS3 traces, or corrected IDA/client evidence before locking route names.
-- Treat `.tools/white/EBOOT.ELF.i64` as unusable in the current checkout because it is zero bytes; do not derive route/root certainty from it until replaced.
+- Treat `.tools/white/EBOOT.ELF.i64` as present and nonzero in the current checkout (`129893515` bytes), with earlier zero-byte notes superseded. Do not derive route/root certainty from file size; require route extraction, logs, captures, or equivalent local evidence.
 
 Likely matching capability:
 - Reuse the existing AC15 era-foundation pattern from Yellow/Red, but keep route strings, wire classes, settings, and tests White-owned.
@@ -158,7 +158,7 @@ Why this belongs late:
 
 ## Source Notes
 
-- `.planning/PROJECT.md`: active v1.4 scope, White 0.13 evidence hierarchy, observed `ST7100-1` root, zero-byte White IDB note, active requirements, out-of-scope surfaces, and late collectable-data decision.
+- `.planning/PROJECT.md`: active v1.4 scope, White 0.13 evidence hierarchy, observed `ST7100-1` root, superseded zero-byte White IDB note corrected by current nonzero evidence, active requirements, out-of-scope surfaces, and late collectable-data decision.
 - `proto/white/taiko.proto`: normal White game protocol message inventory and field placement.
 - `proto/white/vsinterface.proto`: startup/verup protocol message inventory.
 - `Host/wwwroot/data/white/data/config/ST7100-1`: local White config inventory and parsed observations from `musicinfo.xml`, `musicmedleyinfo.xml`, `present.xml`, `spacialbaid.xml`, and `defmusic.bin`.

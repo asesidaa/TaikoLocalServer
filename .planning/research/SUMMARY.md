@@ -6,7 +6,7 @@
 
 - White 0.13 should be added as a first-class older-AC15 era with White-owned routes, generated wire DTOs, catalog paths, persistence tables, Mapperly mappers, AdminApi/WebUI routing, and verification evidence.
 - No new runtime stack is needed. Reuse ASP.NET Core, Mediator, EF Core SQLite, protobuf-net/protogen, Mapperly, existing AC15 services, and the current GSD verification style.
-- The first implementation gate is evidence: `proto/white` and `Host/wwwroot/data/white/data/config/ST7100-1` are present, but `.tools/white/EBOOT.ELF.i64` is zero bytes, so route/root/runtime claims need logs, captures, corrected IDB/binary evidence, or another local proof source.
+- The first implementation gate is evidence: `proto/white` and `Host/wwwroot/data/white/data/config/ST7100-1` are present, and the live `.tools/white/EBOOT.ELF.i64` is nonzero (`129893515` bytes). Route strings are still not proven, so route/root/runtime claims need IDB route extraction, logs, captures, or another local proof source.
 - White local proto/data support a normal AC15 flow: BAID, mydon entry, userdata, initial data, normal playresult, self-best, crowns, recommendations, folders, telops, Taikojuku/Dani leads, reward/present fields, heartbeat/bookkeeping, and related compatibility probes.
 - Missing or unproven surfaces stay absent: item shop, Banacoin wallet/payment, Blue battle, Tokkun, WaiWai, gacha runtime, later White updates, and Red's standalone `challengecompe.php` behavior.
 - White collectable data, including Don Challenge if it is proven inside the White 0.13 range, belongs late in the milestone after identity, catalog, playresult, reward, and readback surfaces are stable.
@@ -55,7 +55,7 @@
 
 ## Watch Outs
 
-- The zero-byte White IDB means binary-backed route/root claims are currently unavailable.
+- The superseded zero-byte White IDB note is no longer current; the live IDB is nonzero, but binary-backed route/root claims are still unavailable until route strings are extracted or replaced by captures/logs.
 - `ST7100-1` proves local data availability, not necessarily active runtime selection.
 - Later White update behavior must not slip into the 0.13 milestone from wiki context.
 - Red/Yellow route and state copying is the biggest implementation risk; White must start from White proto/data evidence.

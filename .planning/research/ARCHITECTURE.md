@@ -6,7 +6,7 @@
 - Reuse the shared AC15 services only where White has matching protocol fields and catalog data. White-specific `Ac15EraProfile`, limits, feature flags, and wire placement are the integration contract that prevents Blue/Yellow/Red assumptions from leaking in.
 - White should start with normal AC15 surfaces that are visible in `proto/white/taiko.proto` and committed data under `ST7100-1`: BAID/profile, userdata, initial data, self-best, crowns, folders, telops, recommendations, Taikojuku, MyDon entry, playresult, reward/present support if field placement is proven, and Dani only if White payload/data evidence supports it.
 - Missing features should remain absent. Do not add item shop, Banacoin wallet/payment, Tokkun, battle, gacha, or a standalone ChallengeCompe route unless White client/proto/log/IDA evidence proves those surfaces.
-- Current White route/root evidence is incomplete. The local White IDB is zero bytes, so route prefix, startup/version route ownership, and any non-proto behavior need confirmation from cabinet/RPCS3 logs, a valid binary, or captures before they become hard contracts.
+- Current White route/root evidence is incomplete. The live local White IDB is nonzero (`129893515` bytes), but route strings are still not proven, so route prefix, startup/version route ownership, and any non-proto behavior need confirmation from IDB route extraction, cabinet/RPCS3 logs, or captures before they become hard contracts.
 
 ## Integration Shape
 - **Domain:** Add `GameEra.White` and White-owned entities. Normal AC15 state should mirror Red/Yellow only at the interface boundary: `IAc15PlayProfileSaveData`, `IAc15CustomizationSaveData`, `IAc15SongUnlockSaveData`, `IAc15SongBestDatum`, `IAc15SongPlayDatum`, favorite/recent song rows, and Dani rows where White supports them. Do not share Red/Yellow tables.
@@ -56,7 +56,7 @@
 - **Phase 6: AdminApi/WebUI closeout and verification.** Extend remaining generic pages, config reporting, favorite limits, customization catalogs, and operational docs. Run targeted handler/persistence/API tests plus cabinet/RPCS3 acceptance for route and payload compatibility.
 
 ## Architecture Risks
-- **Route evidence gap:** The local White IDB is unusable, and proto files do not prove URL paths. Mitigation: make route ownership an explicit first phase deliverable using logs, captures, or a valid binary; keep Host config disabled until route proof exists.
+- **Route evidence gap:** The live White IDB is nonzero, but proto files and file size do not prove URL paths. Mitigation: make route ownership an explicit first phase deliverable using IDB route extraction, logs, captures, or equivalent local evidence; keep Host config disabled until route proof exists.
 - **Incorrect AC15 limits:** Reusing Blue/Yellow/Red byte widths can silently corrupt unlock flags, crowns, favorites, or Dan fields. Mitigation: create `Ac15EraProfiles.White` with verified White limits and inspect generated wire plus real payload sizes before enabling persistence.
 - **Feature cloning:** Red and Yellow have tempting nearby behavior, but White may lack item shop, Banacoin, Tokkun, battle, gacha, or standalone ChallengeCompe. Mitigation: each feature switch in `Ac15FeatureSet.White` should be evidence-backed and default false when absent.
 - **Mapperly drift:** Mapper declarations can look correct while generated code handles nulls, ignored members, or constants unexpectedly. Mitigation: follow current Mapperly docs and inspect emitted generated source for White mappers during verification.

@@ -77,7 +77,7 @@ Plans:
 1. Developer can inspect a White evidence artifact before route/controller behavior or data-root choices are treated as final.
 2. White generated wire DTOs are produced from `proto/white/taiko.proto` and `proto/white/vsinterface.proto` without modifying dumped proto files.
 3. White adapter routes are enabled only when White is configured and absent when White is disabled.
-4. Route/root assumptions are evidence-tagged, and the zero-byte IDB limitation is recorded with a replacement evidence path.
+4. Route/root assumptions are evidence-tagged, and the superseded zero-byte IDB limitation is replaced with current nonzero IDB evidence plus a route-proof evidence path.
 5. Existing Blue, Green, Yellow, Red, and Nijiiro behavior remains preserved by focused checks for any shared-code changes.
 
 ### Phase 24: White Catalog Profile and Protocol Limits

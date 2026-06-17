@@ -4,8 +4,8 @@ milestone: v1.4
 milestone_name: Phase Summary
 status: executing
 stopped_at: Phase 23 context gathered
-last_updated: "2026-06-16T23:52:09.792Z"
-last_activity: 2026-06-16 - Milestone v1.4 roadmap created
+last_updated: "2026-06-17T02:40:17.510Z"
+last_activity: 2026-06-17 -- Phase 23 execution started
 progress:
   total_phases: 5
   completed_phases: 0
@@ -21,14 +21,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-16)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** v1.4 White AC15 0.13 Support roadmap ready; next step is Phase 23 planning
+**Current focus:** Phase 23 — White Evidence and Era Foundation
 
 ## Current Position
 
-Phase: 23 - White Evidence and Era Foundation
-Plan: -
-Status: Ready to execute
-Last activity: 2026-06-16 - Milestone v1.4 roadmap created
+Phase: 23 (White Evidence and Era Foundation) — EXECUTING
+Plan: 1 of 3
+Status: Executing Phase 23
+Last activity: 2026-06-17 -- Phase 23 execution started
 
 ## Performance Metrics
 
@@ -242,7 +242,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 22]: Red WebUI routing preserves Red AdminApi and user routes. — Plan 22-03 adds Red to WebUiEra supported/known eras, AC15 classification, and focused route tests.
 - [Phase 22]: Don Challenge WebUI availability is capability-gated by AdminApi availability. — Navigation shows the Play Data link only for the Red older-AC15 ChallengeCompe binding when `api/{era}/DonChallenge/availability` reports active.
 - [Phase 22]: Direct unsupported Don Challenge routes render unavailable UI without Nijiiro fallback. — The page handles unsupported routes locally and consumes only dedicated Don Challenge contracts.
-- [Milestone v1.4]: White 0.13 support starts with route/root/transport evidence because `.tools/white/EBOOT.ELF.i64` is zero bytes and local `ST7100-1` data alone is not route proof.
+- [Milestone v1.4]: White 0.13 support starts with route/root/transport evidence because the live `.tools/white/EBOOT.ELF.i64` is nonzero (`129893515` bytes) but route strings are still not proven; local `ST7100-1` data alone is not route proof.
 - [Milestone v1.4]: White collectable data, including Don Challenge if proven in range, is intentionally late after White identity, catalog, playresult, reward, and readback behavior are stable.
 
 ### Pending Todos

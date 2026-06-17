@@ -2,17 +2,17 @@
 
 ## Summary
 
-- White 0.13 is an older AC15 target, not "Red minus a few fields." The local White proto and `ST7100-1` data show useful leads, but the current `.tools/white/EBOOT.ELF.i64` is zero bytes, so route/root/runtime assumptions need a separate evidence gate.
+- White 0.13 is an older AC15 target, not "Red minus a few fields." The local White proto and `ST7100-1` data show useful leads, and the live `.tools/white/EBOOT.ELF.i64` is nonzero (`129893515` bytes), but route strings are still not proven, so route/root/runtime assumptions need a separate evidence gate.
 - White 0.13 must stay version-scoped. Later White updates, Red Tokkun, Yellow shop/medal/WaiWai, and Blue battle behavior stay absent unless White 0.13 proto, local data, logs, IDA/client evidence, or RPCS3/cabinet traces prove them.
 - Reuse should be capability-first: shared `Application/Ac15` behavior is appropriate only where White limits, wire placement, and semantics match; White routes, generated wire DTOs, catalog sidecars, EF tables, and AdminApi/WebUI readback remain White-owned.
 - The highest White-specific protocol risk is placement drift. White embeds ChallengeCompe-like response rows in `UserDataResponse` and has playresult challenge arrays, but it lacks Red's separate `ChallengeCompeRequest/Response` and Red Tokkun fields.
-- Confidence is HIGH for repo/code/proto/test guardrails, MEDIUM for White route/root/runtime behavior until the zero-byte IDB is replaced or equivalent local runtime evidence is captured.
+- Confidence is HIGH for repo/code/proto/test guardrails, MEDIUM for White route/root/runtime behavior until IDB route strings are extracted or equivalent local runtime evidence is captured.
 
 ## High-Risk Pitfalls
 
 1. **Treating `ST7100-1` as route/root proof**
    - What goes wrong: implementation hardcodes White routes and catalog root from file layout alone.
-   - Prevention: first phase must produce a White evidence artifact covering game route prefix, startup/version ownership, transport/content-type behavior, HDD/version mapping, and active data root. If the zero-byte IDB remains unusable, require cabinet/RPCS3 logs, request captures, client strings from a corrected binary/IDB, or another local proof source before finalizing runtime routes.
+   - Prevention: first phase must produce a White evidence artifact covering game route prefix, startup/version ownership, transport/content-type behavior, HDD/version mapping, and active data root. The superseded zero-byte IDB note is no longer current, but file size alone is not route proof; require IDB route extraction, cabinet/RPCS3 logs, request captures, or another local proof source before finalizing runtime routes.
 
 2. **Copying later White update behavior into 0.13**
    - What goes wrong: later White features or data are implemented because public scoping says they existed somewhere in White.
@@ -53,7 +53,7 @@
 ## Evidence Gates
 
 - **Route/version/transport gate:** prove White game route prefix, shared startup/version route ownership, direct-protobuf assumptions, scoped no-content-type fallback, and disabled-era Host gating before broad controllers or route probes are treated as final.
-- **IDB/binary gate:** `.tools/white/EBOOT.ELF.i64` is zero bytes in this checkout. Any plan that needs client strings, route root proof, response parsing, or runtime mechanics must first obtain a corrected IDB/binary or use concrete cabinet/RPCS3/request-log evidence.
+- **IDB/binary gate:** `.tools/white/EBOOT.ELF.i64` is nonzero (`129893515` bytes) in this checkout, so the superseded zero-byte note is no longer current. Any plan that needs client strings, route root proof, response parsing, or runtime mechanics must first extract usable IDB evidence or use concrete cabinet/RPCS3/request-log evidence.
 - **Data-root gate:** `Host/wwwroot/data/white/data/config/ST7100-1` is observed and contains `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, `present.xml`, `spacialbaid.xml`, and `chassisinfo.xml`. That proves local data availability, not necessarily active runtime root selection.
 - **Feature inventory gate:** classify each White proto/data surface before implementation: normal profile/userdata, self-best, crowns, recommendations, folders, telops, Taikojuku/Dani, reward/donpoint, ChallengeCompe-like rows, special BAID, tournament, collabo, and absent later-era surfaces.
 - **Limits and packing gate:** prove White byte widths, crown encoding, BAID field placement, Dan extra absence, favorite/recent limits, and optional primitive presence before adding a White era profile or mapper tests.
@@ -89,7 +89,7 @@
 
 ## Phase Placement Advice
 
-- **Foundation/evidence phase:** route/root/transport proof, zero-byte IDB resolution or workaround, White feature inventory, generated White wire project, Host enabled-era gating, and minimal no-state probes only. Do not add gameplay persistence, AdminApi/WebUI, ChallengeCompe state, or collectable sidecars here.
+- **Foundation/evidence phase:** route/root/transport proof, current nonzero IDB evidence handling, White feature inventory, generated White wire project, Host enabled-era gating, and minimal no-state probes only. Do not add gameplay persistence, AdminApi/WebUI, ChallengeCompe state, or collectable sidecars here.
 - **Catalog/profile phase:** bind `ST7100-1` music, tuning, Taikojuku, folders, telops, recommendations, present/reward context, and customization data through shared loaders only where shapes match. Establish `Ac15EraProfiles.White` with proven limits and wire placement.
 - **Runtime capability phase:** add White-owned identity/userdata, normal play, self-best, crowns, favorites/recent, Dani, and reward/donpoint state only for proven White 0.13 surfaces. Bind shared AC15 helpers through concrete White DbSets and Mapperly delegates.
 - **ChallengeCompe/collectables phase:** run late and only if White 0.13 evidence proves the capability. Resolve userdata-embedded readback vs endpoint readback before schema/state work. Keep community/user/BNG buckets, reward locks, and special BAID behavior absent unless proven.

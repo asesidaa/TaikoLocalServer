@@ -6,7 +6,7 @@
 - Mirror the Red/Yellow adapter project shape: `FrameworkReference` to `Microsoft.AspNetCore.App`, project references to `Adapters.GameProtocol.Shared`, `Application`, and `Contracts.AdminApi`, and package references to `protobuf-net` and `Riok.Mapperly`.
 - White requires foundation wiring not present yet: `GameEra.White`, `ServerSettings:Eras:White`, Host project/solution/test references, Host DI and application-part gating, Infrastructure catalog registration, and White data-path/catalog abstractions.
 - No new external stack is needed. The only tooling dependency is the existing protobuf-net `protogen` generator already available in this checkout.
-- White evidence is enough for proto/data-driven setup, but not enough for binary-backed route/root claims because `.tools/white/EBOOT.ELF.i64` is currently zero bytes.
+- White evidence is enough for proto/data-driven setup, but not enough for binary-backed route/root claims. The live `.tools/white/EBOOT.ELF.i64` is nonzero (`129893515` bytes), but route strings are still not proven.
 
 ## Tooling And Generation
 - Use the existing repo-local generator first:
@@ -66,11 +66,11 @@ dotnet build /p:EmitCompilerGeneratedFiles=true
 - White data is a symbolic link at `Host/wwwroot/data/white/data` pointing to `H:\RPCS3\rpcs3-blue\dev_hdd0\game\SCEEXE001 White\USRDIR\data`.
 - The observed White config root is `config/ST7100-1`, containing `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, `present.xml`, and `spacialbaid.xml`. `fumen/tuning.bin` also exists under the White data root.
 - There are no committed White JSON sidecars under `Host/wwwroot/data/white` yet.
-- `.tools/white/EBOOT.ELF.i64` exists but has length `0`; it is not usable as IDA/binary evidence in this checkout. Route prefix, runtime root, and client-call sequencing need another local evidence source or a corrected IDB/binary before being treated as proven.
+- `.tools/white/EBOOT.ELF.i64` exists and has live filesystem length `129893515`; earlier zero-byte notes are superseded. It is still not automatic route-prefix proof: route prefix, runtime root, and client-call sequencing need IDB route extraction, logs, captures, or another local evidence source before being treated as proven.
 - Actual Yellow proto inputs in this checkout are `proto/yellow/yellow-final.proto`, `proto/yellow/yellow-00.proto`, and `proto/yellow/vsinterface.proto`; do not copy stale references to `proto/yellow/yellow.proto`.
 
 ## Implementation Risks
-- **Route/version proof gap**: without a usable White IDB or log, selecting a game route prefix is the largest tooling/evidence risk. Keep route assumptions narrow and evidence-tagged.
+- **Route/version proof gap**: without extracted White route strings or logs/captures, selecting a game route prefix is the largest tooling/evidence risk. Keep route assumptions narrow and evidence-tagged.
 - **Generator drift**: generation commands are documented in plans and `.tools/protogen.exe` exists, but there is no tracked `.config/dotnet-tools.json` manifest. Record the exact generator version used when regenerating White wire files.
 - **Nullable presence fallout**: `+nullablevaluetype=yes` changes optional primitive properties to nullable where possible. White controllers/mappers must handle nullable request fields explicitly instead of relying on default `0` values.
 - **Mapperly strictness**: `RequiredMappingStrategy.Target` will surface unmapped White response fields as warnings/errors depending on project settings. Treat that as useful protocol-boundary feedback, not as a reason to weaken defaults or hand-write mapper bodies.
