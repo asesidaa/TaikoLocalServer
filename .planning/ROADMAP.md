@@ -27,7 +27,7 @@ Active milestone: **v1.4 White AC15 0.13 Support**
 
 | Phase | Name | Goal | Requirements | Success Criteria |
 |-------|------|------|--------------|------------------|
-| 23 | White Evidence and Era Foundation | 3/3 | Complete    | 2026-06-17 |
+| 23 | White Evidence and Era Foundation | 3/3 | Complete | 2026-06-18 |
 | 24 | White Catalog Profile and Protocol Limits | Bind White `ST7100-1` data, sidecars, AC15 profile, feature flags, limits, and wire placement. | WCAT-01, WCAT-02, WCAT-03 | 5 |
 | 25 | White Runtime Capability Binding and Rewards | Bind White identity, userdata, normal play, metadata readback, Taikojuku/Dani where proven, and reward/present state. | WSTATE-01, WSTATE-02, WSTATE-03, WSTATE-04, WCOLL-01 | 5 |
 | 26 | White Collectable Data and Don Challenge Evidence | Collect White 0.13 collectable data and bind Don Challenge only if White evidence proves it. | WCOLL-02, WCOLL-03 | 5 |
@@ -37,7 +37,7 @@ Active milestone: **v1.4 White AC15 0.13 Support**
 
 ## Phases
 
-- [x] **Phase 23: White Evidence and Era Foundation** - Prove White route/version/transport boundaries and add first-class White adapter scaffolding. (completed 2026-06-17)
+- [x] **Phase 23: White Evidence and Era Foundation** - Prove White route/version/transport boundaries and add first-class White adapter scaffolding. Completed after server verification and user-confirmed White connection smoke on 2026-06-18. (completed 2026-06-18)
 - [ ] **Phase 24: White Catalog Profile and Protocol Limits** - Bind White `ST7100-1` data, sidecars, AC15 profile, feature flags, limits, and wire placement.
 - [ ] **Phase 25: White Runtime Capability Binding and Rewards** - Bind White identity, userdata, normal play, metadata readback, Taikojuku/Dani where proven, and reward/present state.
 - [ ] **Phase 26: White Collectable Data and Don Challenge Evidence** - Collect White 0.13 collectable data and bind Don Challenge only if White evidence proves it.
@@ -233,7 +233,7 @@ See `.planning/milestones/v1.3-ROADMAP.md` and `.planning/milestones/v1.3-phases
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 23. White Evidence and Era Foundation | 3/3 | Complete | 2026-06-17 |
+| 23. White Evidence and Era Foundation | 3/3 | Complete | 2026-06-18 |
 | 24. White Catalog Profile and Protocol Limits | 0 | Pending | - |
 | 25. White Runtime Capability Binding and Rewards | 0 | Pending | - |
 | 26. White Collectable Data and Don Challenge Evidence | 0 | Pending | - |

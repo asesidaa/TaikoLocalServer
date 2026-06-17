@@ -3,6 +3,7 @@ phase: 23-white-evidence-and-era-foundation
 verified: 2026-06-17T15:06:18Z
 status: passed
 score: "14/14 must-haves verified"
+acceptance: user White connection smoke accepted on 2026-06-18 after setup 405 fix
 overrides_applied: 0
 ---
 
@@ -31,7 +32,7 @@ overrides_applied: 0
 | 10 | White adapter routes are enabled only when White is configured and absent when White is disabled. | VERIFIED | `Host/Program.cs` calls `AddGameProtocolWhite()` only when enabled; `GameProtocolApplicationParts.RemoveDisabledGameProtocolApplicationParts` removes the White assembly when disabled; focused White route-gating tests passed. |
 | 11 | White route controllers are thin no-state scaffolds for evidence-approved suffixes only. | VERIFIED | Fourteen per-route controller files exist under `Adapters.GameProtocol.White/Controllers`; each route is `/v07r00/chassis/{approved suffix}` and returns generated success/default responses without Mediator, EF, catalog, AdminApi, or WebUI calls. |
 | 12 | Missing-content-type protobuf fallback adds only exact `/v07r00/chassis` scope after route-prefix proof. | VERIFIED | `Host/Program.cs` adds `path.StartsWithSegments("/v07r00/chassis", ...)`; no broad `/v07r00` fallback was found. |
-| 13 | Host settings, registration, application-part gating, and data-root handling stop at foundation work. | VERIFIED | `ServerSettings.json` adds White disabled by default with data-root fields only; `Host.csproj` excludes White operator data and adds debug junction; no White Infrastructure catalog/profile/runtime registration exists. |
+| 13 | Host settings, registration, application-part gating, and data-root handling stop at foundation work. | VERIFIED | `ServerSettings.json` enables White for the local source setup with data-root fields only; disabled-era route safety remains covered by application-part gating tests. `Host.csproj` excludes White operator data and adds debug junction; no White Infrastructure catalog/profile/runtime registration exists. |
 | 14 | Existing Blue, Green, Yellow, Red, Nijiiro, and shared behavior remains preserved by focused checks for touched shared code. | VERIFIED | `WhiteHostRouteGatingTests` uses the shared production application-part helper; orchestrator evidence records focused White/Red/Yellow/StartupAuth tests, full 780/780 suite, and temp Host build passing; verifier independently reran focused White tests and White adapter build successfully. |
 
 **Score:** 14/14 truths verified
@@ -53,7 +54,7 @@ overrides_applied: 0
 | `Adapters.GameProtocol.Shared/GameProtocolApplicationParts.cs` | Shared enabled-era parsing and disabled application-part removal | VERIFIED | Host and tests both use this helper; removes White part when `GameEra.White` is disabled. |
 | `Host/Program.cs` | Enabled-era registration, disabled application-part removal, exact fallback | VERIFIED | Conditional `AddGameProtocolWhite`, shared application-part removal, and `/v07r00/chassis` fallback present. |
 | `Host/Host.csproj` | White adapter reference and data-root handling | VERIFIED | References White adapter, excludes `wwwroot\data\white\data\**`, and defines debug junction. |
-| `Host/Configurations/ServerSettings.json` | White era settings block | VERIFIED | White disabled by default with `AutoExtractCatalog`, `GameDataPath`, and empty `CustomizationNameDataPath`; no shop/challenge settings. |
+| `Host/Configurations/ServerSettings.json` | White era settings block | VERIFIED | White enabled for the local source setup with `AutoExtractCatalog`, `GameDataPath`, and empty `CustomizationNameDataPath`; no shop/challenge settings. |
 | `Tests/White/WhiteServerSettingsValidationTests.cs` | White settings boundary regression | VERIFIED | Verifies White enabled settings do not require shop or ChallengeCompe settings. |
 | `Tests/White/WhiteHostRouteGatingTests.cs` | Behavior-facing Host route gating checks | VERIFIED | Discovers MVC action descriptors through shared application-part helper; verifies enabled route list and disabled absence. |
 
@@ -81,6 +82,8 @@ overrides_applied: 0
 | Behavior | Command | Result | Status |
 |----------|---------|--------|--------|
 | Focused White route/settings tests | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~WhiteHostRouteGatingTests|FullyQualifiedName~WhiteServerSettingsValidationTests" --no-restore --artifacts-path "$env:TEMP\TaikoLocalServer-verify-artifacts"` | Exit 0 | PASS |
+| 2026-06-18 White setup 405 regression slice | `dotnet test Tests\Tests.csproj --filter "FullyQualifiedName~WhiteHostRouteGatingTests|FullyQualifiedName~WhiteServerSettingsValidationTests|FullyQualifiedName~StartupMovieDataQueryTests|FullyQualifiedName~StartupAuthControllerTests" --no-restore --results-directory ".test-results\white-405" --logger "trx;LogFileName=white-405.trx"` | 10 passed, 0 failed, 0 skipped | PASS |
+| 2026-06-18 Host temp-output build | `dotnet build Host\Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build-white-405"` | 0 warnings, 0 errors | PASS |
 | White adapter builds | `dotnet build Adapters.GameProtocol.White\Adapters.GameProtocol.White.csproj --no-restore` | Exit 0; 0 warnings, 0 errors | PASS |
 | `proto/white` unchanged | `git status --porcelain -- proto\white; git diff --stat -- proto\white` | No output | PASS |
 | Route set equals approved allowlist | PowerShell route extraction from `Adapters.GameProtocol.White\Controllers` | approved=14, controllers=14, no missing, no extra | PASS |
@@ -111,11 +114,10 @@ No orphaned Phase 23 requirements were found in `.planning/REQUIREMENTS.md`; WFN
 | File | Line | Pattern | Severity | Impact |
 |------|------|---------|----------|--------|
 | None | - | `TBD`, `FIXME`, `XXX`, `TODO`, placeholder, empty implementation, hardcoded empty user-visible data | - | No blocking anti-patterns found in modified Phase 23 code/artifacts. |
-| `23-WHITE-FEATURE-INVENTORY.md` | 96-97 | Stale `PENDING_HUMAN_APPROVAL` labels in the Unknown/Unresolved table | Info | Non-blocking: the same file's final boundary section, the evidence artifact, and Plan 01 summary record the approval as completed. Cleanup would reduce reader confusion. |
 
 ### Human Verification Required
 
-None. The only plan-deferred human check was the route-proof approval gate in Plan 23-01, and the phase artifacts record that it was completed by the user response `approved`. Runtime/cabinet smoke is not a Phase 23 foundation success criterion.
+Completed. A 2026-06-18 live log showed White `ST710JPN00.13` requests reaching `/v07r00/chassis/*` but receiving 405 because White was disabled in the local Host setup. The setup fix enables White and maps `HddVer=700` to `GameEra.White`; the user reran cabinet/RPCS3 connection smoke and reported: "Connection seems fine."
 
 ### Gaps Summary
 

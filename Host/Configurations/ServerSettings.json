@@ -41,7 +41,7 @@
         "ActiveChallengeCompeBundleId": "red-2016-08"
       },
       "White": {
-        "Enabled": false,
+        "Enabled": true,
         "AutoExtractCatalog": true,
         "GameDataPath": "wwwroot/data/white/data",
         "CustomizationNameDataPath": ""
