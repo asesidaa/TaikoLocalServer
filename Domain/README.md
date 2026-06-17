@@ -17,7 +17,7 @@ Era-scoped state uses era suffixes. Blue state is separate from Green and Nijiir
 ## Blue Notes
 
 - Blue normal state uses Blue entities such as `UserSaveDataBlue`, `SongPlayDatumBlue`, `SongBestDatumBlue`, `DanScoreDatumBlue`, favorites, recent songs, and shop state.
-- Blue Tokkun state uses nullable `UserSaveDataBlue.TokkunTutorialFlg` plus `BlueTokkunStageResult` append-only raw history rows.
+- Blue Tokkun state uses nullable `UserSaveDataBlue.TokkunTutorialFlg` plus `BlueTokkunStageResult` append-only raw history rows. Practiced Tokkun song numbers may also update `BlueRecentSongs`, but not normal score, best, or favorite state.
 - Blue battle state uses `BlueBattleUserState`, `BlueBattleNpcState`, `BlueBattleTokenState`, and `BlueBattleStageResult`.
 - Do not collapse Blue Tokkun or Blue battle state into Green AI Battle state, Green shop state, or normal Blue score state.
 
