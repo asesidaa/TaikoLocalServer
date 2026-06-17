@@ -93,8 +93,8 @@ These are White protocol or candidate surfaces without exact approved route suff
 
 | Question | Classification | Current blocker |
 |----------|----------------|-----------------|
-| Human approval for route scaffolding | `PENDING_HUMAN_APPROVAL` | Task 3 requires user approval before Plans 02 or 03 proceed. |
-| Missing-content-type fallback implementation | `PENDING_HUMAN_APPROVAL` | `/v07r00/chassis` is proven, but Host fallback work waits for Task 3 approval and must remain exact-prefix only. |
+| Human approval for route scaffolding | `RESOLVED_PHASE_23` | Route-proof approval was recorded on 2026-06-17 before Plans 02 and 03 proceeded. |
+| Missing-content-type fallback implementation | `RESOLVED_PHASE_23` | Host fallback now adds only exact `/v07r00/chassis` missing-content-type protobuf handling. |
 | Cabinet call order | `UNKNOWN_RUNTIME` | Needs logs, capture, or IDA call graph evidence. |
 | Runtime active root selection | `UNKNOWN_RUNTIME` | `ST7100-1` is accepted local data evidence, not runtime selection proof. |
 | Taikojuku/Dani runtime classification | `UNKNOWN_RUNTIME` | Approved route/proto/data leads exist, but playresult classification and readback semantics are unproven. |
@@ -104,6 +104,6 @@ These are White protocol or candidate surfaces without exact approved route suff
 
 ## Plan Boundaries
 
-Plan 01 delivers evidence and inventory only. Later plans may use this artifact to generate White wire and add first-class adapter identity, but route scaffolds remain paused at the Task 3 human approval checkpoint.
+Plan 01 delivered evidence and inventory only. Plans 02 and 03 used the approved route proof to generate White wire, add first-class adapter identity, and add no-state route scaffolds.
 
 With Task 3 approval recorded on 2026-06-17, Phase 23 route scaffolding is limited to the fourteen `SCAFFOLD_APPROVED` `/v07r00/chassis/{suffix}` routes. The current route proof does not imply persistence, catalog binding, profile mutation, reward semantics, ChallengeCompe semantics, unlocks, shop, wallet/payment, battle, Tokkun, WaiWai, or gacha behavior.
