@@ -47,6 +47,7 @@
     <ProjectReference Include="..\Adapters.GameProtocol.Green\Adapters.GameProtocol.Green.csproj" />
     <ProjectReference Include="..\Adapters.GameProtocol.Red\Adapters.GameProtocol.Red.csproj" />
     <ProjectReference Include="..\Adapters.GameProtocol.Shared\Adapters.GameProtocol.Shared.csproj" />
+    <ProjectReference Include="..\Adapters.GameProtocol.White\Adapters.GameProtocol.White.csproj" />
     <ProjectReference Include="..\Adapters.GameProtocol.WwR08\Adapters.GameProtocol.WwR08.csproj" />
     <ProjectReference Include="..\Adapters.GameProtocol.Yellow\Adapters.GameProtocol.Yellow.csproj" />
     <ProjectReference Include="..\Application\Application.csproj" />
@@ -174,6 +175,10 @@
     <Content Update="wwwroot\data\red\red_event_folder_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\red\red_taikojuku_verup_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\red\red_challenge_compe_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+
+    <!--White Game Data-->
+    <Content Remove="wwwroot\data\white\data\**" />
+    <_ContentIncludedByDefault Remove="wwwroot\data\white\data\**" />
   </ItemGroup>
 
 
@@ -192,5 +197,9 @@
   <Target Name="CreateRedGameDataSymlinkForDebug" AfterTargets="Build" Condition="'$(Configuration)'=='Debug' and Exists('$(MSBuildProjectDirectory)\wwwroot\data\red\data')">
     <MakeDir Directories="$(OutDir)wwwroot\data\red" />
     <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -Command &quot;$link = Join-Path '$(OutDir)' 'wwwroot\data\red\data'; $target = Resolve-Path '$(MSBuildProjectDirectory)\wwwroot\data\red\data'; if (Test-Path -LiteralPath $link) { $item = Get-Item -LiteralPath $link -Force; if (($item.LinkType -eq 'SymbolicLink' -or $item.LinkType -eq 'Junction') -and $item.Target -contains $target.Path) { exit 0 }; Remove-Item -LiteralPath $link -Force -Recurse }; New-Item -ItemType Junction -Path $link -Target $target.Path | Out-Null&quot;" />
+  </Target>
+  <Target Name="CreateWhiteGameDataSymlinkForDebug" AfterTargets="Build" Condition="'$(Configuration)'=='Debug' and Exists('$(MSBuildProjectDirectory)\wwwroot\data\white\data')">
+    <MakeDir Directories="$(OutDir)wwwroot\data\white" />
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -Command &quot;$link = Join-Path '$(OutDir)' 'wwwroot\data\white\data'; $target = Resolve-Path '$(MSBuildProjectDirectory)\wwwroot\data\white\data'; if (Test-Path -LiteralPath $link) { $item = Get-Item -LiteralPath $link -Force; if (($item.LinkType -eq 'SymbolicLink' -or $item.LinkType -eq 'Junction') -and $item.Target -contains $target.Path) { exit 0 }; Remove-Item -LiteralPath $link -Force -Recurse }; New-Item -ItemType Junction -Path $link -Target $target.Path | Out-Null&quot;" />
   </Target>
 </Project>
