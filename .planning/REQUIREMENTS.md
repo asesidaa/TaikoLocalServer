@@ -8,9 +8,9 @@
 
 ### White Foundation
 
-- [ ] **WFND-01**: Developer can review a White evidence record that identifies route prefix, transport expectations, startup/version ownership, active data root, usable/unusable IDB evidence, and unresolved gaps before White routes are finalized.
+- [x] **WFND-01**: Developer can review a White evidence record that identifies route prefix, transport expectations, startup/version ownership, active data root, usable/unusable IDB evidence, and unresolved gaps before White routes are finalized.
 - [ ] **WFND-02**: White is served by a first-class enableable `GameEra.White` adapter with generated White wire DTOs from `proto/white`, era settings, Host/DI registration, route ownership, and enabled-era gating.
-- [ ] **WFND-03**: White work preserves existing supported-era behavior except where shared code changes are required and existing behavior remains covered.
+- [x] **WFND-03**: White work preserves existing supported-era behavior except where shared code changes are required and existing behavior remains covered.
 
 ### White Catalog And Profile
 
@@ -66,9 +66,9 @@ Roadmap phase mapping for v1.4 White AC15 0.13 Support.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| WFND-01 | Phase 23 | Pending |
+| WFND-01 | Phase 23 | Complete |
 | WFND-02 | Phase 23 | Pending |
-| WFND-03 | Phase 23 | Pending |
+| WFND-03 | Phase 23 | Complete |
 | WCAT-01 | Phase 24 | Pending |
 | WCAT-02 | Phase 24 | Pending |
 | WCAT-03 | Phase 24 | Pending |

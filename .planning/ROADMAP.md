@@ -54,7 +54,7 @@ Active milestone: **v1.4 White AC15 0.13 Support**
 Plans:
 **Wave 1**
 
-- [ ] 23-01-PLAN.md - White evidence gate, feature inventory, and stale-note correction
+- [x] 23-01-PLAN.md - White evidence gate, feature inventory, and stale-note correction
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -233,7 +233,7 @@ See `.planning/milestones/v1.3-ROADMAP.md` and `.planning/milestones/v1.3-phases
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 23. White Evidence and Era Foundation | 0 | Pending | - |
+| 23. White Evidence and Era Foundation | 1/3 | In Progress | - |
 | 24. White Catalog Profile and Protocol Limits | 0 | Pending | - |
 | 25. White Runtime Capability Binding and Rewards | 0 | Pending | - |
 | 26. White Collectable Data and Don Challenge Evidence | 0 | Pending | - |
