@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Phase Summary
-status: planning
-stopped_at: Phase 23.1 context gathered
-last_updated: "2026-06-17T21:45:29.076Z"
-last_activity: 2026-06-18 -- Phase 23.1 inserted for Red Don Challenge capability boundary and playresult refactor before White Phase 24
+status: executing
+stopped_at: Phase 23.1 planned
+last_updated: "2026-06-17T21:54:13.001Z"
+last_activity: 2026-06-18 -- Phase 23.1 planned with three execution waves for Don Challenge naming, shared writer, and projection/Tokkun cleanup
 progress:
   total_phases: 6
   completed_phases: 1
-  total_plans: 3
+  total_plans: 6
   completed_plans: 3
   percent: 17
 ---
@@ -27,8 +27,8 @@ See: `.planning/PROJECT.md` (updated 2026-06-18)
 
 Phase: 23.1
 Plan: Not started
-Status: planning
-Last activity: 2026-06-18 -- Phase 23.1 inserted for Red Don Challenge capability boundary and playresult refactor before White Phase 24
+Status: Ready to execute
+Last activity: 2026-06-18 -- Phase 23.1 planned with three execution waves for Don Challenge naming, shared writer, and projection/Tokkun cleanup
 
 ## Performance Metrics
 
@@ -262,7 +262,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ### Blockers/Concerns
 
-- None for Plan 23-02. Plan 03 remains sequenced after Plan 02 and limited to the approved no-state route scaffold allowlist.
+- None for Phase 23.1 planning. Execution is sequenced as schema/naming foundation, shared Don Challenge writer, then AdminApi projection and Tokkun dispatch cleanup.
 
 ### Quick Tasks Completed
 
@@ -286,4 +286,4 @@ Resume file: .planning/phases/23.1-red-don-challenge-capability-boundary-and-pla
 
 ## Operator Next Steps
 
-- Start Phase 23.1 with `$gsd-discuss-phase 23.1` (recommended) or `$gsd-plan-phase 23.1` if discussion is already covered.
+- Execute Phase 23.1 with `$gsd-execute-phase 23.1`.

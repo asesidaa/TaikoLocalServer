@@ -87,11 +87,36 @@ Plans:
 **Goal:** Refactor Red Don Challenge naming, shared capability boundaries, and playresult dispatch before White reuse.
 **Requirements**: Architecture todo: `.planning/todos/pending/2026-06-17-refactor-don-challenge-capability-boundary.md`
 **Depends on:** Phase 23
-**Plans:** 0 plans
-
+**Plans:** 3 plans
 Plans:
 
-- [ ] TBD (run /gsd-plan-phase 23.1 to break down)
+**Wave 1**
+
+- [ ] 23.1-01-PLAN.md - Don Challenge naming, config, catalog, and data-preserving Red schema rename
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 23.1-02-PLAN.md - Shared Don Challenge writer and Red playresult binding
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 23.1-03-PLAN.md - AdminApi projection cleanup and shared Tokkun dispatch policy
+
+**Key deliverables:**
+
+- `Application/Ac15/DonChallenge` capability naming for catalog, task/progress evaluation, reward decisions, writer, and AdminApi projection helpers.
+- Red-owned `RedDonChallenge*` entities, DbSets, mappings, and data-preserving EF migration from the current Red ChallengeCompe table names.
+- DonChallenge-facing settings/catalog APIs with compatibility aliases for existing `EnableChallengeCompe` and `ActiveChallengeCompeBundleId` config.
+- `Ac15DonChallengeWriter` for shared normal-play Don Challenge mutation through explicit Red bindings.
+- Shared Tokkun classifier/early-dispatch helper without a broad AC15 playresult pipeline.
+
+**Success criteria:**
+
+1. Stateful Don Challenge code/storage/config names no longer leak `ChallengeCompe`, while real protocol route/wire/stub surfaces keep `ChallengeCompe`.
+2. Existing Red challenge data is preserved through rename migration operations.
+3. Red normal playresult still writes Don Challenge progress/rewards only from valid normal stages.
+4. Red Tokkun playresult still writes only Tokkun tutorial/recent-song state and skips normal, Dani, Don Challenge, and unlock writes.
+5. Don Challenge AdminApi readback remains read-only and projection logic is no longer inline handler mechanics.
 
 ### Phase 24: White Catalog Profile and Protocol Limits
 
