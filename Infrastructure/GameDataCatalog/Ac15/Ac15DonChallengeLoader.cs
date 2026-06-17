@@ -1,14 +1,14 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Json.Schema;
-using TaikoLocalServer.Application.Ac15.ChallengeCompe;
+using TaikoLocalServer.Application.Ac15.DonChallenge;
 
 namespace TaikoLocalServer.Infrastructure.GameDataCatalog.Ac15;
 
-public static class Ac15ChallengeCompeLoader
+public static class Ac15DonChallengeLoader
 {
     private const string SchemaResourceName =
-        "TaikoLocalServer.Infrastructure.GameDataCatalog.Ac15.Schemas.ac15-challenge-compe-catalog.schema.json";
+        "TaikoLocalServer.Infrastructure.GameDataCatalog.Ac15.Schemas.ac15-don-challenge-catalog.schema.json";
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -18,7 +18,7 @@ public static class Ac15ChallengeCompeLoader
         AllowTrailingCommas = true,
         Converters =
         {
-            new JsonStringEnumConverter<Ac15ChallengeCompeRuleKind>(JsonNamingPolicy.SnakeCaseLower, allowIntegerValues: false)
+            new JsonStringEnumConverter<Ac15DonChallengeRuleKind>(JsonNamingPolicy.SnakeCaseLower, allowIntegerValues: false)
         }
     };
 
@@ -37,7 +37,7 @@ public static class Ac15ChallengeCompeLoader
 
     private static readonly JsonSchema DataSchema = JsonSchema.Build(SchemaDocument.RootElement);
 
-    public static async Task<Ac15ChallengeCompeCatalog> LoadFromFileAsync(
+    public static async Task<Ac15DonChallengeCatalog> LoadFromFileAsync(
         string path,
         bool isEnabled,
         string? activeBundleId,
@@ -48,31 +48,31 @@ public static class Ac15ChallengeCompeLoader
 
         if (!isEnabled)
         {
-            return Ac15ChallengeCompeCatalog.Disabled;
+            return Ac15DonChallengeCatalog.Disabled;
         }
 
         if (!File.Exists(path))
         {
-            throw new InvalidDataException($"{eraName} ChallengeCompe is enabled but data file was not found: {path}");
+            throw new InvalidDataException($"{eraName} Don Challenge is enabled but data file was not found: {path}");
         }
 
         using var document = await ParseDocumentAsync(path, eraName, cancellationToken);
         ValidateSchema(document.RootElement, path, eraName);
 
-        Ac15ChallengeCompeCatalog catalog;
+        Ac15DonChallengeCatalog catalog;
         try
         {
-            catalog = document.RootElement.Deserialize<Ac15ChallengeCompeCatalog>(JsonOptions)
-                      ?? Ac15ChallengeCompeCatalog.Disabled;
+            catalog = document.RootElement.Deserialize<Ac15DonChallengeCatalog>(JsonOptions)
+                      ?? Ac15DonChallengeCatalog.Disabled;
         }
         catch (JsonException ex)
         {
-            throw new InvalidDataException($"{eraName} ChallengeCompe data is malformed: {path}", ex);
+            throw new InvalidDataException($"{eraName} Don Challenge data is malformed: {path}", ex);
         }
 
         if (!catalog.Enabled)
         {
-            return Ac15ChallengeCompeCatalog.Disabled;
+            return Ac15DonChallengeCatalog.Disabled;
         }
 
         catalog = catalog with { ActiveBundleId = activeBundleId?.Trim() };
@@ -92,7 +92,7 @@ public static class Ac15ChallengeCompeLoader
         }
         catch (JsonException ex)
         {
-            throw new InvalidDataException($"{eraName} ChallengeCompe data is malformed: {path}", ex);
+            throw new InvalidDataException($"{eraName} Don Challenge data is malformed: {path}", ex);
         }
     }
 
@@ -108,7 +108,7 @@ public static class Ac15ChallengeCompeLoader
             .Take(10)
             .ToArray();
         throw new InvalidDataException(
-            $"{eraName} ChallengeCompe data failed schema validation: {path}. {string.Join("; ", errors)}");
+            $"{eraName} Don Challenge data failed schema validation: {path}. {string.Join("; ", errors)}");
     }
 
     private static IEnumerable<string> CollectErrors(EvaluationResults results)
@@ -130,11 +130,11 @@ public static class Ac15ChallengeCompeLoader
         }
     }
 
-    private static void ValidateCatalogSemantics(Ac15ChallengeCompeCatalog catalog, string eraName)
+    private static void ValidateCatalogSemantics(Ac15DonChallengeCatalog catalog, string eraName)
     {
         if (string.IsNullOrWhiteSpace(catalog.ActiveBundleId))
         {
-            throw new InvalidDataException($"{eraName} ChallengeCompe is enabled but ActiveChallengeCompeBundleId is not configured.");
+            throw new InvalidDataException($"{eraName} Don Challenge is enabled but ActiveDonChallengeBundleId is not configured.");
         }
 
         var duplicateBundleIds = catalog.MonthlyBundles
@@ -144,12 +144,12 @@ public static class Ac15ChallengeCompeLoader
             .ToArray();
         if (duplicateBundleIds.Length > 0)
         {
-            throw new InvalidDataException($"{eraName} ChallengeCompe data contains duplicate bundle_id values: {string.Join(", ", duplicateBundleIds)}");
+            throw new InvalidDataException($"{eraName} Don Challenge data contains duplicate bundle_id values: {string.Join(", ", duplicateBundleIds)}");
         }
 
         if (catalog.ActiveBundle is null)
         {
-            throw new InvalidDataException($"{eraName} ChallengeCompe active bundle {catalog.ActiveBundleId} was not found.");
+            throw new InvalidDataException($"{eraName} Don Challenge active bundle {catalog.ActiveBundleId} was not found.");
         }
 
         foreach (var bundle in catalog.MonthlyBundles)
@@ -161,15 +161,15 @@ public static class Ac15ChallengeCompeLoader
                 .ToArray();
             if (duplicateSlots.Length > 0)
             {
-                throw new InvalidDataException($"{eraName} ChallengeCompe bundle {bundle.BundleId} contains duplicate personal task slots: {string.Join(", ", duplicateSlots)}");
+                throw new InvalidDataException($"{eraName} Don Challenge bundle {bundle.BundleId} contains duplicate personal task slots: {string.Join(", ", duplicateSlots)}");
             }
         }
     }
 
     private static JsonDocument LoadSchemaDocument()
     {
-        using var stream = typeof(Ac15ChallengeCompeLoader).Assembly.GetManifestResourceStream(SchemaResourceName)
-                           ?? throw new InvalidOperationException($"Embedded ChallengeCompe schema resource was not found: {SchemaResourceName}");
+        using var stream = typeof(Ac15DonChallengeLoader).Assembly.GetManifestResourceStream(SchemaResourceName)
+                           ?? throw new InvalidOperationException($"Embedded Don Challenge schema resource was not found: {SchemaResourceName}");
         return JsonDocument.Parse(stream);
     }
 }

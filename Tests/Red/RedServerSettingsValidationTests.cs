@@ -35,7 +35,31 @@ public sealed class RedServerSettingsValidationTests
     }
 
     [Fact]
-    public void RedChallengeCompeEnabledRequiresActiveBundleId()
+    public void RedDonChallengeEnabledRequiresActiveBundleId()
+    {
+        var configuration = BuildConfiguration("""
+            {
+              "ServerSettings": {
+                "Eras": {
+                  "Red": {
+                    "Enabled": true,
+                    "EnableDonChallenge": true
+                  }
+                }
+              }
+            }
+            """);
+
+        using var provider = BuildProvider(configuration);
+
+        var exception = Assert.Throws<OptionsValidationException>(() =>
+            provider.GetRequiredService<IOptions<ServerSettings>>().Value);
+
+        Assert.Contains(exception.Failures, failure => failure.Contains("ActiveDonChallengeBundleId", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void RedChallengeCompeAliasStillRequiresActiveBundleId()
     {
         var configuration = BuildConfiguration("""
             {
@@ -55,7 +79,32 @@ public sealed class RedServerSettingsValidationTests
         var exception = Assert.Throws<OptionsValidationException>(() =>
             provider.GetRequiredService<IOptions<ServerSettings>>().Value);
 
-        Assert.Contains(exception.Failures, failure => failure.Contains("ActiveChallengeCompeBundleId", StringComparison.Ordinal));
+        Assert.Contains(exception.Failures, failure => failure.Contains("ActiveDonChallengeBundleId", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void RedChallengeCompeAliasAcceptsLegacyBundleId()
+    {
+        var configuration = BuildConfiguration("""
+            {
+              "ServerSettings": {
+                "Eras": {
+                  "Red": {
+                    "Enabled": true,
+                    "EnableChallengeCompe": true,
+                    "ActiveChallengeCompeBundleId": "red-2016-07"
+                  }
+                }
+              }
+            }
+            """);
+
+        using var provider = BuildProvider(configuration);
+
+        var exception = Record.Exception(() =>
+            provider.GetRequiredService<IOptions<ServerSettings>>().Value);
+
+        Assert.Null(exception);
     }
 
     private static IConfigurationRoot BuildConfiguration(string json)

@@ -122,8 +122,8 @@ public sealed class GreenAuthConfigTests
         public DbSet<RedRecentSongs> RedRecentSongs => throw new NotSupportedException();
         public DbSet<DanScoreDatumRed> DanScoreDataRed => throw new NotSupportedException();
         public DbSet<DanStageScoreDatumRed> DanStageScoreDataRed => throw new NotSupportedException();
-        public DbSet<RedChallengeCompeRawFact> RedChallengeCompeRawFacts => throw new NotSupportedException();
-        public DbSet<RedChallengeCompeProgress> RedChallengeCompeProgress => throw new NotSupportedException();
+        public DbSet<RedDonChallengeRawFact> RedDonChallengeRawFacts => throw new NotSupportedException();
+        public DbSet<RedDonChallengeProgress> RedDonChallengeProgress => throw new NotSupportedException();
 
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
             => throw new NotSupportedException();

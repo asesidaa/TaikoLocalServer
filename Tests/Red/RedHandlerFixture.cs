@@ -1,4 +1,4 @@
-using TaikoLocalServer.Application.Ac15.ChallengeCompe;
+using TaikoLocalServer.Application.Ac15.DonChallenge;
 using TaikoLocalServer.Application.Catalog.Ac15;
 using TaikoLocalServer.Application.ServerData;
 using TaikoLocalServer.Contracts.AdminApi.ViewModels;
@@ -79,7 +79,7 @@ internal sealed class RedHandlerFixture : IAsyncDisposable
 
         public IReadOnlyList<MovieData> Movies { get; init; } = [];
 
-        public Ac15ChallengeCompeCatalog ChallengeCompe { get; init; } = Ac15ChallengeCompeCatalog.Disabled;
+        public Ac15DonChallengeCatalog DonChallenge { get; init; } = Ac15DonChallengeCatalog.Disabled;
 
         public IReadOnlyList<Costume> CostumeList { get; init; } =
         [

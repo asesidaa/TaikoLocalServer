@@ -28,7 +28,7 @@ public static class WebUiEra
             || string.Equals(era, Red, StringComparison.OrdinalIgnoreCase);
     }
 
-    public static bool SupportsOlderAc15ChallengeCompe(string? era)
+    public static bool SupportsOlderAc15DonChallenge(string? era)
     {
         return string.Equals(era, Red, StringComparison.OrdinalIgnoreCase);
     }

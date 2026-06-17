@@ -13,8 +13,8 @@ public partial class TaikoDbContext
     public virtual DbSet<RedRecentSongs> RedRecentSongs { get; set; } = null!;
     public virtual DbSet<DanScoreDatumRed> DanScoreDataRed { get; set; } = null!;
     public virtual DbSet<DanStageScoreDatumRed> DanStageScoreDataRed { get; set; } = null!;
-    public virtual DbSet<RedChallengeCompeRawFact> RedChallengeCompeRawFacts { get; set; } = null!;
-    public virtual DbSet<RedChallengeCompeProgress> RedChallengeCompeProgress { get; set; } = null!;
+    public virtual DbSet<RedDonChallengeRawFact> RedDonChallengeRawFacts { get; set; } = null!;
+    public virtual DbSet<RedDonChallengeProgress> RedDonChallengeProgress { get; set; } = null!;
 
     partial void OnModelCreatingRed(ModelBuilder modelBuilder)
     {
@@ -110,9 +110,9 @@ public partial class TaikoDbContext
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<RedChallengeCompeRawFact>(entity =>
+        modelBuilder.Entity<RedDonChallengeRawFact>(entity =>
         {
-            entity.ToTable("RedChallengeCompeRawFacts");
+            entity.ToTable("RedDonChallengeRawFacts");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.BundleId).HasMaxLength(64);
@@ -126,9 +126,9 @@ public partial class TaikoDbContext
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<RedChallengeCompeProgress>(entity =>
+        modelBuilder.Entity<RedDonChallengeProgress>(entity =>
         {
-            entity.ToTable("RedChallengeCompeProgress");
+            entity.ToTable("RedDonChallengeProgress");
             entity.HasKey(e => new { e.Baid, e.BundleId, e.TaskId, e.TrackNo });
             entity.Property(e => e.BundleId).HasMaxLength(64);
             entity.Property(e => e.UpdatedAt).HasColumnType("datetime");

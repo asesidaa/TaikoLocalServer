@@ -45,7 +45,7 @@ public sealed class Ac15PlayResultInputTests
             Tokkun: null,
             BlueBattle: null,
             GreenGhost: null,
-            ChallengeCompe: null);
+            DonChallenge: null);
 
         Assert.Equal(1u, envelope.Metadata.Baid);
         Assert.Null(envelope.Tokkun);

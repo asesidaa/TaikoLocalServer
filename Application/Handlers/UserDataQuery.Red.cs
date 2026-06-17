@@ -1,5 +1,5 @@
 using TaikoLocalServer.Application.Ac15;
-using TaikoLocalServer.Application.Ac15.ChallengeCompe;
+using TaikoLocalServer.Application.Ac15.DonChallenge;
 using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Application.Handlers;
@@ -30,8 +30,8 @@ public partial class UserDataQueryHandler
         var displayDan = Ac15DanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalDanGrades, Ac15EraProfiles.Red.Limits);
 
         var snapshot = Ac15CatalogSnapshotFactory.FromRed(red);
-        var challengeLockedSongIds = Ac15ChallengeCompeRewardDecisions.GetLockedRewardSongIds(
-            red.ChallengeCompe,
+        var challengeLockedSongIds = Ac15DonChallengeRewardDecisions.GetLockedRewardSongIds(
+            red.DonChallenge,
             saveData.ReleaseSongFlg,
             Ac15EraProfiles.Red.Limits.SongFlagBytes);
         var userdata = RedAc15UserDataAdapter.CreateSnapshot(saveData, snapshot, favorites, recent, challengeLockedSongIds);

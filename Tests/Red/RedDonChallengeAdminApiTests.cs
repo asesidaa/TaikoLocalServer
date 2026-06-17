@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using TaikoLocalServer.Adapters.AdminApi.Controllers;
 using TaikoLocalServer.Application;
-using TaikoLocalServer.Application.Ac15.ChallengeCompe;
+using TaikoLocalServer.Application.Ac15.DonChallenge;
 using TaikoLocalServer.Application.Catalog.Ac15;
 using TaikoLocalServer.Contracts.AdminApi.Responses;
 using TaikoLocalServer.Contracts.AdminApi.ViewModels;
@@ -35,11 +35,11 @@ public sealed class RedDonChallengeAdminApiTests
         await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(
             rewards:
             [
-                new Ac15ChallengeCompeReward(1, [102], [10]),
-                new Ac15ChallengeCompeReward(2, [103], [])
+                new Ac15DonChallengeReward(1, [102], [10]),
+                new Ac15DonChallengeReward(2, [103], [])
             ]));
-        AddUser(fixture, challengeCompeVisible: false);
-        fixture.Context.RedChallengeCompeProgress.Add(new RedChallengeCompeProgress
+        AddUser(fixture, donChallengeVisible: false);
+        fixture.Context.RedDonChallengeProgress.Add(new RedDonChallengeProgress
         {
             Baid = 1,
             BundleId = "red-2016-07",
@@ -98,8 +98,8 @@ public sealed class RedDonChallengeAdminApiTests
     public async Task GetDonChallenge_Red_TreatsConfiguredRewardFlagsAsEarnedWithoutProgress()
     {
         await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(
-            rewards: [new Ac15ChallengeCompeReward(2, [102], [10])]));
-        AddUser(fixture, challengeCompeVisible: false);
+            rewards: [new Ac15DonChallengeReward(2, [102], [10])]));
+        AddUser(fixture, donChallengeVisible: false);
         var save = await fixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
         save.ReleaseSongFlg = Ac15ProtocolBytes.SetBits(save.ReleaseSongFlg, [102], Ac15EraProfiles.Red.Limits.SongFlagBytes);
         save.TitleFlg = Ac15ProtocolBytes.SetBits(save.TitleFlg, [10], Ac15EraProfiles.Red.Limits.TitleFlagBytes);
@@ -117,9 +117,9 @@ public sealed class RedDonChallengeAdminApiTests
     public async Task GetDonChallenge_UnsupportedEraReturnsUnavailableWithoutRedFallback()
     {
         await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(
-            rewards: [new Ac15ChallengeCompeReward(1, [102], [])]));
-        AddUser(fixture, challengeCompeVisible: true);
-        fixture.Context.RedChallengeCompeProgress.Add(new RedChallengeCompeProgress
+            rewards: [new Ac15DonChallengeReward(1, [102], [])]));
+        AddUser(fixture, donChallengeVisible: true);
+        fixture.Context.RedDonChallengeProgress.Add(new RedDonChallengeProgress
         {
             Baid = 1,
             BundleId = "red-2016-07",
@@ -148,14 +148,14 @@ public sealed class RedDonChallengeAdminApiTests
         Assert.Equal("Blue", readback.Era);
         Assert.Empty(readback.Tasks);
         Assert.Empty(readback.Rewards);
-        Assert.Equal(1, await fixture.Context.RedChallengeCompeProgress.CountAsync());
+        Assert.Equal(1, await fixture.Context.RedDonChallengeProgress.CountAsync());
     }
 
     [Fact]
     public async Task GetDonChallenge_Red_NoActiveBundleReturnsReadableUnavailableResponse()
     {
         await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(activeBundleId: null));
-        AddUser(fixture, challengeCompeVisible: true);
+        AddUser(fixture, donChallengeVisible: true);
         var controller = CreateController(fixture);
 
         var availability = AssertOk<DonChallengeAvailabilityResponse>(await controller.GetAvailability("Red"));
@@ -169,18 +169,18 @@ public sealed class RedDonChallengeAdminApiTests
         Assert.Empty(readback.Rewards);
     }
 
-    private static void AddUser(RedHandlerFixture fixture, bool challengeCompeVisible)
+    private static void AddUser(RedHandlerFixture fixture, bool donChallengeVisible)
     {
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
         var save = UserSaveDataRedExtensions.CreateDefaultRedSaveData(1);
-        save.IsChallengeCompe = challengeCompeVisible;
+        save.IsChallengeCompe = donChallengeVisible;
         fixture.Context.UserSaveDataRed.Add(save);
         fixture.Context.SaveChanges();
     }
 
     private static RedHandlerFixture.TestRedCatalog CreateCatalog(
         string? activeBundleId = "red-2016-07",
-        IReadOnlyList<Ac15ChallengeCompeReward>? rewards = null)
+        IReadOnlyList<Ac15DonChallengeReward>? rewards = null)
         => new(
             musicInfoFileOrder:
             [
@@ -189,29 +189,29 @@ public sealed class RedDonChallengeAdminApiTests
                 new Ac15MusicInfoEntry { SongNo = 103, MusicId = "locked_song", Title = "Locked Song", FileOrder = 2 }
             ])
         {
-            ChallengeCompe = new Ac15ChallengeCompeCatalog(
+            DonChallenge = new Ac15DonChallengeCatalog(
                 enabled: true,
                 activeBundleId,
                 [
-                    new Ac15ChallengeCompeMonthlyBundle(
+                    new Ac15DonChallengeMonthlyBundle(
                         "red-2016-07",
                         DateTimeOffset.Parse("2016-07-01T00:00:00Z"),
                         DateTimeOffset.Parse("2016-08-01T00:00:00Z"),
                         [
-                            new Ac15ChallengeCompeTask(
+                            new Ac15DonChallengeTask(
                                 1001,
                                 1,
                                 "Task 1",
-                                new Ac15ChallengeCompeRule(
-                                    Ac15ChallengeCompeRuleKind.Clear,
+                                new Ac15DonChallengeRule(
+                                    Ac15DonChallengeRuleKind.Clear,
                                     RequiredSongCount: 1,
                                     EligibleSongNoes: [101])),
-                            new Ac15ChallengeCompeTask(
+                            new Ac15DonChallengeTask(
                                 1002,
                                 2,
                                 "Task 2",
-                                new Ac15ChallengeCompeRule(
-                                    Ac15ChallengeCompeRuleKind.FullCombo,
+                                new Ac15DonChallengeRule(
+                                    Ac15DonChallengeRuleKind.FullCombo,
                                     RequiredSongCount: 2,
                                     EligibleSongNoes: [102, 103]))
                         ],

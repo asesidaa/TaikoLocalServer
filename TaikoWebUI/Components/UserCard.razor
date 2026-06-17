@@ -168,7 +168,7 @@
 
     private async Task LoadDonChallengeAvailabilityAsync()
     {
-        foreach (var era in AuthService.EnabledEras.Where(WebUiEra.SupportsOlderAc15ChallengeCompe))
+        foreach (var era in AuthService.EnabledEras.Where(WebUiEra.SupportsOlderAc15DonChallenge))
         {
             try
             {

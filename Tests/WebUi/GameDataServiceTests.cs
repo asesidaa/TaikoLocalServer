@@ -186,11 +186,11 @@ public sealed class GameDataServiceTests
     }
 
     [Fact]
-    public void OlderAc15ChallengeCompeCapability_IsRedOnly()
+    public void OlderAc15DonChallengeCapability_IsRedOnly()
     {
-        Assert.True(WebUiEra.SupportsOlderAc15ChallengeCompe("Red"));
-        Assert.False(WebUiEra.SupportsOlderAc15ChallengeCompe("Blue"));
-        Assert.False(WebUiEra.SupportsOlderAc15ChallengeCompe("Nijiiro"));
+        Assert.True(WebUiEra.SupportsOlderAc15DonChallenge("Red"));
+        Assert.False(WebUiEra.SupportsOlderAc15DonChallenge("Blue"));
+        Assert.False(WebUiEra.SupportsOlderAc15DonChallenge("Nijiiro"));
     }
 
     private sealed class RecordingHandler : HttpMessageHandler

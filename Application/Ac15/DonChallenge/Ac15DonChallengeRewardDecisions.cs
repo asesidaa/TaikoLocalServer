@@ -1,13 +1,13 @@
-namespace TaikoLocalServer.Application.Ac15.ChallengeCompe;
+namespace TaikoLocalServer.Application.Ac15.DonChallenge;
 
-public sealed record Ac15ChallengeCompeRewardGrant(
+public sealed record Ac15DonChallengeRewardGrant(
     IReadOnlyList<uint> RewardSongNoes,
     IReadOnlyList<uint> RewardTitleIds);
 
-public static class Ac15ChallengeCompeRewardDecisions
+public static class Ac15DonChallengeRewardDecisions
 {
-    public static Ac15ChallengeCompeRewardGrant GetEarnedRewards(
-        Ac15ChallengeCompeCatalog catalog,
+    public static Ac15DonChallengeRewardGrant GetEarnedRewards(
+        Ac15DonChallengeCatalog catalog,
         IReadOnlyDictionary<string, uint> completedTaskCountsByBundle)
     {
         var songNoes = new SortedSet<uint>();
@@ -24,11 +24,11 @@ public static class Ac15ChallengeCompeRewardDecisions
             }
         }
 
-        return new Ac15ChallengeCompeRewardGrant(songNoes.ToArray(), titleIds.ToArray());
+        return new Ac15DonChallengeRewardGrant(songNoes.ToArray(), titleIds.ToArray());
     }
 
     public static IReadOnlyList<uint> GetLockedRewardSongIds(
-        Ac15ChallengeCompeCatalog catalog,
+        Ac15DonChallengeCatalog catalog,
         byte[] releaseSongFlags,
         int songFlagBytes)
     {

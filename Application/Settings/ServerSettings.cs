@@ -23,7 +23,17 @@ public sealed class EraSettings
 
     public uint? ActiveShopSeasonId { get; set; }
 
+    public bool? EnableDonChallenge { get; set; }
+
+    public string? ActiveDonChallengeBundleId { get; set; }
+
     public bool? EnableChallengeCompe { get; set; }
 
     public string? ActiveChallengeCompeBundleId { get; set; }
+
+    public bool IsDonChallengeEnabled()
+        => EnableDonChallenge ?? EnableChallengeCompe.GetValueOrDefault();
+
+    public string? GetActiveDonChallengeBundleId()
+        => ActiveDonChallengeBundleId ?? ActiveChallengeCompeBundleId;
 }

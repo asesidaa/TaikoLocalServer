@@ -1,8 +1,8 @@
 using TaikoLocalServer.Application.Dtos.Ac15;
 
-namespace TaikoLocalServer.Application.Ac15.ChallengeCompe;
+namespace TaikoLocalServer.Application.Ac15.DonChallenge;
 
-public sealed record Ac15ChallengeCompeTrackDefinition(
+public sealed record Ac15DonChallengeTrackDefinition(
     uint TrackNo,
     uint SongNo,
     uint Level,
@@ -15,9 +15,9 @@ public sealed record Ac15ChallengeCompeTrackDefinition(
            && (StageMode == 2 || stage.StageMode == StageMode);
 }
 
-public static class Ac15ChallengeCompeTrackDefinitions
+public static class Ac15DonChallengeTrackDefinitions
 {
-    public static IReadOnlyList<Ac15ChallengeCompeTrackDefinition> FromTask(Ac15ChallengeCompeTask task)
+    public static IReadOnlyList<Ac15DonChallengeTrackDefinition> FromTask(Ac15DonChallengeTask task)
     {
         if (task.Rule.EligibleSongNoes.Count == 0)
         {
@@ -25,14 +25,14 @@ public static class Ac15ChallengeCompeTrackDefinitions
         }
 
         var minimumLevel = task.Rule.MinimumLevel.GetValueOrDefault(1);
-        var tracks = new List<Ac15ChallengeCompeTrackDefinition>();
+        var tracks = new List<Ac15DonChallengeTrackDefinition>();
         var trackNo = 1u;
         foreach (var songNo in task.Rule.EligibleSongNoes)
         {
             for (var level = minimumLevel; level <= 5; level++)
             {
                 // RED playresult uses the 1-based ary_track_stat index as track_no.
-                tracks.Add(new Ac15ChallengeCompeTrackDefinition(
+                tracks.Add(new Ac15DonChallengeTrackDefinition(
                     trackNo++,
                     songNo,
                     level,

@@ -12,14 +12,14 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="GameDataCatalog\Ac15\Schemas\ac15-challenge-compe-catalog.schema.json" />
-        <EmbeddedResource Include="GameDataCatalog\Ac15\Schemas\ac15-challenge-compe-catalog.schema.json">
-            <LogicalName>TaikoLocalServer.Infrastructure.GameDataCatalog.Ac15.Schemas.ac15-challenge-compe-catalog.schema.json</LogicalName>
+        <None Remove="GameDataCatalog\Ac15\Schemas\ac15-don-challenge-catalog.schema.json" />
+        <EmbeddedResource Include="GameDataCatalog\Ac15\Schemas\ac15-don-challenge-catalog.schema.json">
+            <LogicalName>TaikoLocalServer.Infrastructure.GameDataCatalog.Ac15.Schemas.ac15-don-challenge-catalog.schema.json</LogicalName>
         </EmbeddedResource>
-        <Content Include="GameDataCatalog\Ac15\Schemas\ac15-challenge-compe-catalog.schema.json">
+        <Content Include="GameDataCatalog\Ac15\Schemas\ac15-don-challenge-catalog.schema.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-            <TargetPath>schemas\ac15-challenge-compe-catalog.schema.json</TargetPath>
+            <TargetPath>schemas\ac15-don-challenge-catalog.schema.json</TargetPath>
         </Content>
     </ItemGroup>
 

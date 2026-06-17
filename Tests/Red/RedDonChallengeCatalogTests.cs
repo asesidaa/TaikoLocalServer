@@ -1,12 +1,12 @@
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using TaikoLocalServer.Application.Ac15.ChallengeCompe;
+using TaikoLocalServer.Application.Ac15.DonChallenge;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Ac15;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Red;
 
 namespace TaikoLocalServer.Tests.Red;
 
-public sealed class RedChallengeCompeCatalogTests
+public sealed class RedDonChallengeCatalogTests
 {
     [Fact]
     public async Task DisabledConfigProducesNoActiveTasks()
@@ -32,17 +32,17 @@ public sealed class RedChallengeCompeCatalogTests
         Assert.True(catalog.Enabled);
         Assert.Equal("red-2016-07", bundle.BundleId);
         Assert.True(bundle.HasExpectedPersonalTaskCount);
-        Assert.Equal(Ac15ChallengeCompeRuleKind.Clear, bundle.PersonalTasks[0].Rule.Kind);
+        Assert.Equal(Ac15DonChallengeRuleKind.Clear, bundle.PersonalTasks[0].Rule.Kind);
         Assert.Equal(1u, bundle.PersonalTasks[0].Rule.RequiredSongCount);
         Assert.True(bundle.PersonalTasks[0].Rule.CanExecute);
-        Assert.Equal(Ac15ChallengeCompeRuleKind.FullCombo, bundle.PersonalTasks[1].Rule.Kind);
+        Assert.Equal(Ac15DonChallengeRuleKind.FullCombo, bundle.PersonalTasks[1].Rule.Kind);
         Assert.Equal(3u, bundle.PersonalTasks[1].Rule.MinimumLevel);
-        Assert.Equal(Ac15ChallengeCompeRuleKind.ScoreThreshold, bundle.PersonalTasks[2].Rule.Kind);
+        Assert.Equal(Ac15DonChallengeRuleKind.ScoreThreshold, bundle.PersonalTasks[2].Rule.Kind);
         Assert.Equal(765000u, bundle.PersonalTasks[2].Rule.MinimumScore);
-        Assert.Equal(Ac15ChallengeCompeRuleKind.Clear, bundle.PersonalTasks[3].Rule.Kind);
+        Assert.Equal(Ac15DonChallengeRuleKind.Clear, bundle.PersonalTasks[3].Rule.Kind);
         Assert.Equal(2u, bundle.PersonalTasks[3].Rule.RequiredSongCount);
         Assert.Equal([101u, 102u, 103u], bundle.PersonalTasks[3].Rule.EligibleSongNoes);
-        Assert.Equal(Ac15ChallengeCompeRuleKind.CommunityCount, bundle.CommunityTask?.Rule.Kind);
+        Assert.Equal(Ac15DonChallengeRuleKind.CommunityCount, bundle.CommunityTask?.Rule.Kind);
         Assert.Equal(100000u, bundle.CommunityTask?.Rule.RequiredCommunityCount);
         Assert.Collection(
             bundle.Rewards,
@@ -87,9 +87,9 @@ public sealed class RedChallengeCompeCatalogTests
             "wwwroot",
             "data",
             "red",
-            RedEraGameDataCatalog.ChallengeCompeFileName);
+            RedEraGameDataCatalog.DonChallengeFileName);
 
-        var catalog = await Ac15ChallengeCompeLoader.LoadFromFileAsync(
+        var catalog = await Ac15DonChallengeLoader.LoadFromFileAsync(
             path,
             isEnabled: true,
             activeBundleId: "red-2016-08",
@@ -118,14 +118,14 @@ public sealed class RedChallengeCompeCatalogTests
     }
 
     [Fact]
-    public void ChallengeCompeSchemaIsVisibleInBuildOutput()
+    public void DonChallengeSchemaIsVisibleInBuildOutput()
     {
         var path = Path.Combine(
             AppContext.BaseDirectory,
             "schemas",
-            "ac15-challenge-compe-catalog.schema.json");
+            "ac15-don-challenge-catalog.schema.json");
 
-        Assert.True(File.Exists(path), $"Expected ChallengeCompe schema in build output at {path}.");
+        Assert.True(File.Exists(path), $"Expected Don Challenge schema in build output at {path}.");
 
         using var document = JsonDocument.Parse(File.ReadAllText(path));
         Assert.Equal(
@@ -133,7 +133,7 @@ public sealed class RedChallengeCompeCatalogTests
             document.RootElement.GetProperty("$schema").GetString());
     }
 
-    private static async Task<Ac15ChallengeCompeCatalog> LoadJsonAsync(
+    private static async Task<Ac15DonChallengeCatalog> LoadJsonAsync(
         string json,
         bool isEnabled = true,
         string? activeBundleId = "red-2016-07")
@@ -142,7 +142,7 @@ public sealed class RedChallengeCompeCatalogTests
         try
         {
             await File.WriteAllTextAsync(path, json, CancellationToken.None);
-            return await Ac15ChallengeCompeLoader.LoadFromFileAsync(
+            return await Ac15DonChallengeLoader.LoadFromFileAsync(
                 path,
                 isEnabled,
                 activeBundleId,

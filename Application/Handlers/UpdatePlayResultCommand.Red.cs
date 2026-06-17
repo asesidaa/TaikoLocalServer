@@ -1,5 +1,5 @@
 using TaikoLocalServer.Application.Ac15;
-using TaikoLocalServer.Application.Ac15.ChallengeCompe;
+using TaikoLocalServer.Application.Ac15.DonChallenge;
 using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Application.Handlers;
@@ -84,9 +84,9 @@ public partial class UpdatePlayResultCommandHandler
             logger,
             cancellationToken);
 
-        await SaveRedChallengeCompeAsync(
+        await SaveRedDonChallengeAsync(
             request.Baid,
-            red.ChallengeCompe,
+            red.DonChallenge,
             validStages,
             saveData,
             playTime,
@@ -101,15 +101,15 @@ public partial class UpdatePlayResultCommandHandler
         return 1;
     }
 
-    private async ValueTask SaveRedChallengeCompeAsync(
+    private async ValueTask SaveRedDonChallengeAsync(
         uint baid,
-        Ac15ChallengeCompeCatalog catalog,
+        Ac15DonChallengeCatalog catalog,
         IReadOnlyList<Ac15StageResult> stages,
         UserSaveDataRed saveData,
         DateTime playTime,
         CancellationToken cancellationToken)
     {
-        var evaluations = Ac15ChallengeCompeProgressEvaluator.Evaluate(catalog, stages);
+        var evaluations = Ac15DonChallengeProgressEvaluator.Evaluate(catalog, stages);
         if (evaluations.Count == 0)
         {
             return;
@@ -117,7 +117,7 @@ public partial class UpdatePlayResultCommandHandler
 
         foreach (var evaluation in evaluations)
         {
-            context.RedChallengeCompeRawFacts.Add(new RedChallengeCompeRawFact
+            context.RedDonChallengeRawFacts.Add(new RedDonChallengeRawFact
             {
                 Baid = baid,
                 BundleId = evaluation.BundleId,
@@ -149,12 +149,12 @@ public partial class UpdatePlayResultCommandHandler
             var progressValue = await GetProgressValueAsync(baid, representative.Task, group.ToArray(), cancellationToken);
             var completed = IsCompleted(representative.Task.Rule, progressValue, group);
 
-            var progress = await context.RedChallengeCompeProgress.FindAsync(
+            var progress = await context.RedDonChallengeProgress.FindAsync(
                 [baid, group.Key.BundleId, group.Key.TaskId, 0u],
                 cancellationToken);
             if (progress is null)
             {
-                context.RedChallengeCompeProgress.Add(new RedChallengeCompeProgress
+                context.RedDonChallengeProgress.Add(new RedDonChallengeProgress
                 {
                     Baid = baid,
                     BundleId = group.Key.BundleId,
@@ -191,16 +191,16 @@ public partial class UpdatePlayResultCommandHandler
             }
         }
 
-        await ApplyRedChallengeCompeRewardsAsync(
+        await ApplyRedDonChallengeRewardsAsync(
             baid,
             catalog,
             saveData,
             cancellationToken);
     }
 
-    private async ValueTask ApplyRedChallengeCompeRewardsAsync(
+    private async ValueTask ApplyRedDonChallengeRewardsAsync(
         uint baid,
-        Ac15ChallengeCompeCatalog catalog,
+        Ac15DonChallengeCatalog catalog,
         UserSaveDataRed saveData,
         CancellationToken cancellationToken)
     {
@@ -213,7 +213,7 @@ public partial class UpdatePlayResultCommandHandler
         }
 
         var completedTasks = new HashSet<(string BundleId, uint TaskId)>();
-        var savedCompleted = await context.RedChallengeCompeProgress
+        var savedCompleted = await context.RedDonChallengeProgress
             .Where(row => row.Baid == baid && row.Completed && activeBundleIds.Contains(row.BundleId))
             .Select(row => new { row.BundleId, row.TaskId })
             .ToArrayAsync(cancellationToken);
@@ -222,7 +222,7 @@ public partial class UpdatePlayResultCommandHandler
             completedTasks.Add((row.BundleId, row.TaskId));
         }
 
-        foreach (var row in context.RedChallengeCompeProgress.Local.Where(row =>
+        foreach (var row in context.RedDonChallengeProgress.Local.Where(row =>
                      row.Baid == baid && row.Completed && activeBundleIds.Contains(row.BundleId)))
         {
             completedTasks.Add((row.BundleId, row.TaskId));
@@ -231,7 +231,7 @@ public partial class UpdatePlayResultCommandHandler
         var completedCounts = completedTasks
             .GroupBy(key => key.BundleId)
             .ToDictionary(group => group.Key, group => (uint)group.Select(key => key.TaskId).Distinct().Count());
-        var grant = Ac15ChallengeCompeRewardDecisions.GetEarnedRewards(catalog, completedCounts);
+        var grant = Ac15DonChallengeRewardDecisions.GetEarnedRewards(catalog, completedCounts);
 
         Ac15UnlockFlagAccess.Red.ReleaseSongs?.Invoke(saveData, grant.RewardSongNoes);
         Ac15UnlockFlagAccess.Red.Titles(saveData, grant.RewardTitleIds);
@@ -239,8 +239,8 @@ public partial class UpdatePlayResultCommandHandler
 
     private async ValueTask<uint> GetProgressValueAsync(
         uint baid,
-        Ac15ChallengeCompeTask task,
-        IReadOnlyList<Ac15ChallengeCompeStageEvaluation> evaluations,
+        Ac15DonChallengeTask task,
+        IReadOnlyList<Ac15DonChallengeStageEvaluation> evaluations,
         CancellationToken cancellationToken)
     {
         if (!task.Rule.RequiresDistinctSongProgress)
@@ -249,7 +249,7 @@ public partial class UpdatePlayResultCommandHandler
         }
 
         var bundleId = evaluations[0].BundleId;
-        var existingSongNoes = await context.RedChallengeCompeRawFacts
+        var existingSongNoes = await context.RedDonChallengeRawFacts
             .Where(row => row.Baid == baid
                           && row.BundleId == bundleId
                           && row.TaskId == task.TaskId
@@ -264,9 +264,9 @@ public partial class UpdatePlayResultCommandHandler
     }
 
     private static bool IsCompleted(
-        Ac15ChallengeCompeRule rule,
+        Ac15DonChallengeRule rule,
         uint progressValue,
-        IEnumerable<Ac15ChallengeCompeStageEvaluation> evaluations)
+        IEnumerable<Ac15DonChallengeStageEvaluation> evaluations)
         => rule.RequiresDistinctSongProgress
             ? progressValue >= rule.RequiredStageCount
             : evaluations.Any(evaluation => evaluation.Completed);

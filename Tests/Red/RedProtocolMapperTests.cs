@@ -111,7 +111,7 @@ public sealed class RedProtocolMapperTests
         Assert.Equal(42u, Assert.Single(stageResult.ChallengeIds).CompeId);
         Assert.Equal(1u, stageResult.PlayDan);
         Assert.Equal(80u, stageResult.SoulGauge);
-        Assert.NotNull(envelope.ChallengeCompe);
+        Assert.NotNull(envelope.DonChallenge);
     }
 
     [Fact]

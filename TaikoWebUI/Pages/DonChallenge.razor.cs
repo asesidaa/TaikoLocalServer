@@ -35,7 +35,7 @@ public partial class DonChallenge
 
     private bool CanLoadCurrentEra
         => WebUiEra.TryNormalize(RequestedEra, out var normalized)
-           && WebUiEra.SupportsOlderAc15ChallengeCompe(normalized);
+           && WebUiEra.SupportsOlderAc15DonChallenge(normalized);
 
     private IEnumerable<DonChallengeTask> OrderedTasks
         => response?.Tasks.OrderBy(task => task.Slot).ThenBy(task => task.TaskId)

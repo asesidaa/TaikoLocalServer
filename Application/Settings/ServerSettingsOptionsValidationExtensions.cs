@@ -28,8 +28,8 @@ public static class ServerSettingsOptionsValidationExtensions
         }
 
         return builder.Validate(
-            settings => HasActiveChallengeCompeBundle(settings, enabledEras, GameEra.Red),
-            $"ServerSettings:Eras:{GameEra.Red}:ActiveChallengeCompeBundleId is required when {GameEra.Red} EnableChallengeCompe is true.");
+            settings => HasActiveDonChallengeBundle(settings, enabledEras, GameEra.Red),
+            $"ServerSettings:Eras:{GameEra.Red}:ActiveDonChallengeBundleId is required when {GameEra.Red} EnableDonChallenge is true.");
     }
 
     private static bool HasExplicitShopSetting(ServerSettings settings, ISet<GameEra> enabledEras, GameEra era)
@@ -49,15 +49,15 @@ public static class ServerSettingsOptionsValidationExtensions
         return eraSettings.ActiveShopSeasonId is > 0;
     }
 
-    private static bool HasActiveChallengeCompeBundle(ServerSettings settings, ISet<GameEra> enabledEras, GameEra era)
+    private static bool HasActiveDonChallengeBundle(ServerSettings settings, ISet<GameEra> enabledEras, GameEra era)
     {
         if (!enabledEras.Contains(era)
             || !settings.Eras.TryGetValue(era.ToString(), out var eraSettings)
-            || eraSettings.EnableChallengeCompe != true)
+            || !eraSettings.IsDonChallengeEnabled())
         {
             return true;
         }
 
-        return !string.IsNullOrWhiteSpace(eraSettings.ActiveChallengeCompeBundleId);
+        return !string.IsNullOrWhiteSpace(eraSettings.GetActiveDonChallengeBundleId());
     }
 }

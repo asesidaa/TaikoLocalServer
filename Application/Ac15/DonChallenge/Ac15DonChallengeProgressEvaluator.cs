@@ -1,25 +1,25 @@
 using TaikoLocalServer.Application.Dtos.Ac15;
 
-namespace TaikoLocalServer.Application.Ac15.ChallengeCompe;
+namespace TaikoLocalServer.Application.Ac15.DonChallenge;
 
-public sealed record Ac15ChallengeCompeStageEvaluation(
+public sealed record Ac15DonChallengeStageEvaluation(
     string BundleId,
-    Ac15ChallengeCompeTask Task,
-    Ac15ChallengeCompeTrackDefinition Track,
+    Ac15DonChallengeTask Task,
+    Ac15DonChallengeTrackDefinition Track,
     Ac15StageResult Stage,
     uint ProgressValue,
     bool Completed);
 
-public static class Ac15ChallengeCompeProgressEvaluator
+public static class Ac15DonChallengeProgressEvaluator
 {
-    public static IReadOnlyList<Ac15ChallengeCompeStageEvaluation> Evaluate(
-        Ac15ChallengeCompeCatalog catalog,
+    public static IReadOnlyList<Ac15DonChallengeStageEvaluation> Evaluate(
+        Ac15DonChallengeCatalog catalog,
         IReadOnlyList<Ac15StageResult> stages)
     {
         var activeTasks = catalog.GetActiveBundles()
             .SelectMany(bundle => bundle.PersonalTasks
                 .Where(task => task.Rule.CanExecute)
-                .SelectMany(task => Ac15ChallengeCompeTrackDefinitions.FromTask(task)
+                .SelectMany(task => Ac15DonChallengeTrackDefinitions.FromTask(task)
                     .Select(track => new ActiveTask(bundle.BundleId, task, track))))
             .ToArray();
         if (activeTasks.Length == 0)
@@ -27,7 +27,7 @@ public static class Ac15ChallengeCompeProgressEvaluator
             return [];
         }
 
-        var matches = new List<Ac15ChallengeCompeStageEvaluation>();
+        var matches = new List<Ac15DonChallengeStageEvaluation>();
         foreach (var stage in stages)
         {
             foreach (var activeTask in activeTasks)
@@ -38,7 +38,7 @@ public static class Ac15ChallengeCompeProgressEvaluator
                     continue;
                 }
 
-                matches.Add(new Ac15ChallengeCompeStageEvaluation(
+                matches.Add(new Ac15DonChallengeStageEvaluation(
                     activeTask.BundleId,
                     activeTask.Task,
                     activeTask.Track,
@@ -52,7 +52,7 @@ public static class Ac15ChallengeCompeProgressEvaluator
     }
 
     private static bool TryEvaluate(
-        Ac15ChallengeCompeRule rule,
+        Ac15DonChallengeRule rule,
         Ac15StageResult stage,
         out uint progressValue,
         out bool completed)
@@ -62,7 +62,7 @@ public static class Ac15ChallengeCompeProgressEvaluator
 
         switch (rule.Kind)
         {
-            case Ac15ChallengeCompeRuleKind.Clear:
+            case Ac15DonChallengeRuleKind.Clear:
                 if (stage.PlayResult == 0 || !rule.AllowsStage(stage))
                 {
                     return false;
@@ -72,7 +72,7 @@ public static class Ac15ChallengeCompeProgressEvaluator
                 completed = !rule.RequiresDistinctSongProgress;
                 return true;
 
-            case Ac15ChallengeCompeRuleKind.FullCombo:
+            case Ac15DonChallengeRuleKind.FullCombo:
                 if (stage.PlayResult < 2 || !rule.AllowsStage(stage))
                 {
                     return false;
@@ -82,7 +82,7 @@ public static class Ac15ChallengeCompeProgressEvaluator
                 completed = !rule.RequiresDistinctSongProgress;
                 return true;
 
-            case Ac15ChallengeCompeRuleKind.ScoreThreshold:
+            case Ac15DonChallengeRuleKind.ScoreThreshold:
                 if (!rule.AllowsStage(stage))
                 {
                     return false;
@@ -99,6 +99,6 @@ public static class Ac15ChallengeCompeProgressEvaluator
 
     private sealed record ActiveTask(
         string BundleId,
-        Ac15ChallengeCompeTask Task,
-        Ac15ChallengeCompeTrackDefinition Track);
+        Ac15DonChallengeTask Task,
+        Ac15DonChallengeTrackDefinition Track);
 }

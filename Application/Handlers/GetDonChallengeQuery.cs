@@ -1,5 +1,5 @@
 using TaikoLocalServer.Application.Ac15;
-using TaikoLocalServer.Application.Ac15.ChallengeCompe;
+using TaikoLocalServer.Application.Ac15.DonChallenge;
 using TaikoLocalServer.Contracts.AdminApi.Responses;
 using TaikoLocalServer.Contracts.AdminApi.ViewModels;
 
@@ -31,7 +31,7 @@ public sealed class GetDonChallengeQueryHandler(
             return UnavailableResponse(request.Era, $"Don Challenge is not available for {request.Era}.");
         }
 
-        var bundle = catalog.Red().ChallengeCompe.ActiveBundle;
+        var bundle = catalog.Red().DonChallenge.ActiveBundle;
         if (bundle is null)
         {
             return UnavailableResponse(request.Era, "No active Don Challenge is configured for Red.");
@@ -40,7 +40,7 @@ public sealed class GetDonChallengeQueryHandler(
         var saveData = await context.UserSaveDataRed
             .AsNoTracking()
             .SingleOrDefaultAsync(row => row.Baid == request.Baid, cancellationToken);
-        var progressRows = await context.RedChallengeCompeProgress
+        var progressRows = await context.RedDonChallengeProgress
             .AsNoTracking()
             .Where(row => row.Baid == request.Baid && row.BundleId == bundle.BundleId)
             .ToArrayAsync(cancellationToken);
@@ -77,7 +77,7 @@ public sealed class GetDonChallengeQueryHandler(
             return UnavailableAvailability(era, $"Don Challenge is not available for {era}.");
         }
 
-        var bundle = catalog.Red().ChallengeCompe.ActiveBundle;
+        var bundle = catalog.Red().DonChallenge.ActiveBundle;
         return bundle is null
             ? UnavailableAvailability(era, "No active Don Challenge is configured for Red.")
             : new DonChallengeAvailabilityResponse
@@ -107,8 +107,8 @@ public sealed class GetDonChallengeQueryHandler(
         };
 
     private static DonChallengeTask BuildTask(
-        Ac15ChallengeCompeTask task,
-        IReadOnlyList<RedChallengeCompeProgress> progressRows)
+        Ac15DonChallengeTask task,
+        IReadOnlyList<RedDonChallengeProgress> progressRows)
     {
         var taskProgressRows = progressRows
             .Where(row => row.TaskId == task.TaskId && row.Slot == task.Slot)
@@ -136,7 +136,7 @@ public sealed class GetDonChallengeQueryHandler(
                 .OrderByDescending(row => row.CompletedAt)
                 .Select(row => row.CompletedAt)
                 .FirstOrDefault(),
-            Tracks = Ac15ChallengeCompeTrackDefinitions.FromTask(task)
+            Tracks = Ac15DonChallengeTrackDefinitions.FromTask(task)
                 .Select(track => new DonChallengeTrack
                 {
                     TrackNumber = track.TrackNo,
@@ -149,7 +149,7 @@ public sealed class GetDonChallengeQueryHandler(
     }
 
     private static DonChallengeReward BuildReward(
-        Ac15ChallengeCompeReward reward,
+        Ac15DonChallengeReward reward,
         uint completedTaskCount,
         UserSaveDataRed? saveData)
     {
@@ -164,29 +164,29 @@ public sealed class GetDonChallengeQueryHandler(
         };
     }
 
-    private static uint? GetTargetValue(Ac15ChallengeCompeRule rule)
+    private static uint? GetTargetValue(Ac15DonChallengeRule rule)
         => rule.Kind switch
         {
-            Ac15ChallengeCompeRuleKind.Clear or Ac15ChallengeCompeRuleKind.FullCombo => rule.RequiredStageCount,
-            Ac15ChallengeCompeRuleKind.ScoreThreshold => rule.MinimumScore,
-            Ac15ChallengeCompeRuleKind.CommunityCount => rule.RequiredCommunityCount,
+            Ac15DonChallengeRuleKind.Clear or Ac15DonChallengeRuleKind.FullCombo => rule.RequiredStageCount,
+            Ac15DonChallengeRuleKind.ScoreThreshold => rule.MinimumScore,
+            Ac15DonChallengeRuleKind.CommunityCount => rule.RequiredCommunityCount,
             _ => null
         };
 
-    private static string BuildRuleLabel(Ac15ChallengeCompeRule rule)
+    private static string BuildRuleLabel(Ac15DonChallengeRule rule)
     {
         var label = rule.Kind switch
         {
-            Ac15ChallengeCompeRuleKind.Clear => rule.RequiredStageCount == 1
+            Ac15DonChallengeRuleKind.Clear => rule.RequiredStageCount == 1
                 ? "Clear 1 song"
                 : $"Clear {rule.RequiredStageCount} songs",
-            Ac15ChallengeCompeRuleKind.FullCombo => rule.RequiredStageCount == 1
+            Ac15DonChallengeRuleKind.FullCombo => rule.RequiredStageCount == 1
                 ? "Full combo 1 song"
                 : $"Full combo {rule.RequiredStageCount} songs",
-            Ac15ChallengeCompeRuleKind.ScoreThreshold => rule.MinimumScore is { } score
+            Ac15DonChallengeRuleKind.ScoreThreshold => rule.MinimumScore is { } score
                 ? $"Score at least {score}"
                 : "Score challenge",
-            Ac15ChallengeCompeRuleKind.CommunityCount => rule.RequiredCommunityCount is { } count
+            Ac15DonChallengeRuleKind.CommunityCount => rule.RequiredCommunityCount is { } count
                 ? $"Community total {count}"
                 : "Community challenge",
             _ => "Unsupported task"
@@ -197,7 +197,7 @@ public sealed class GetDonChallengeQueryHandler(
             : label;
     }
 
-    private static bool HasAllConfiguredRewardFlags(UserSaveDataRed? saveData, Ac15ChallengeCompeReward reward)
+    private static bool HasAllConfiguredRewardFlags(UserSaveDataRed? saveData, Ac15DonChallengeReward reward)
     {
         if (saveData is null || reward.RewardSongNoes.Count == 0 && reward.RewardTitleIds.Count == 0)
         {

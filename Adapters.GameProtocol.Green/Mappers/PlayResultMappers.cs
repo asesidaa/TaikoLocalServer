@@ -15,7 +15,7 @@ public static partial class PlayResultMappers
     [MapValue(nameof(Ac15PlayResultEnvelope.Tokkun), null)]
     [MapValue(nameof(Ac15PlayResultEnvelope.BlueBattle), null)]
     [MapPropertyFromSource(nameof(Ac15PlayResultEnvelope.GreenGhost), Use = nameof(MapGreenGhost))]
-    [MapPropertyFromSource(nameof(Ac15PlayResultEnvelope.ChallengeCompe), Use = nameof(MapChallengeCompe))]
+    [MapPropertyFromSource(nameof(Ac15PlayResultEnvelope.DonChallenge), Use = nameof(MapChallengeCompe))]
     public static partial Ac15PlayResultEnvelope Map(PlayResultDataRequest request);
 
     [MapPropertyFromSource(nameof(PlayResultResponse.Result))]
@@ -53,8 +53,8 @@ public static partial class PlayResultMappers
     [MapProperty(nameof(PlayResultDataRequest.GhostUpdateRank), nameof(Ac15GreenGhostPlayResult.RankData))]
     private static partial Ac15GreenGhostPlayResult MapGreenGhostCore(PlayResultDataRequest request);
 
-    [MapProperty(nameof(PlayResultDataRequest.AryStageInfoes), nameof(Ac15RedChallengeCompeFacts.Stages), Use = nameof(MapChallengeCompeStages))]
-    private static partial Ac15RedChallengeCompeFacts MapChallengeCompeCore(PlayResultDataRequest request);
+    [MapProperty(nameof(PlayResultDataRequest.AryStageInfoes), nameof(Ac15DonChallengeFacts.Stages), Use = nameof(MapChallengeCompeStages))]
+    private static partial Ac15DonChallengeFacts MapChallengeCompeCore(PlayResultDataRequest request);
 
     [MapProperty(nameof(PlayResultDataRequest.StageData.PlayResult), nameof(Ac15StageResult.PlayResult), Use = nameof(MapNullableUInt))]
     [MapProperty(nameof(PlayResultDataRequest.StageData.PlayScore), nameof(Ac15StageResult.PlayScore), Use = nameof(MapNullableUInt))]
@@ -109,11 +109,11 @@ public static partial class PlayResultMappers
     [UserMapping(Default = true)]
     private static partial Ac15CompeIdFact MapCompe(PlayResultDataRequest.StageData.ResultcompeData data);
 
-    [MapProperty(nameof(PlayResultDataRequest.StageData.AryChallengeIds), nameof(Ac15RedChallengeCompeStageFacts.ChallengeIds), Use = nameof(MapCompeList))]
-    [MapProperty(nameof(PlayResultDataRequest.StageData.AryUserCompeIds), nameof(Ac15RedChallengeCompeStageFacts.UserCompeIds), Use = nameof(MapCompeList))]
-    [MapProperty(nameof(PlayResultDataRequest.StageData.AryBngCompeIds), nameof(Ac15RedChallengeCompeStageFacts.BngCompeIds), Use = nameof(MapCompeList))]
+    [MapProperty(nameof(PlayResultDataRequest.StageData.AryChallengeIds), nameof(Ac15DonChallengeStageFacts.ChallengeIds), Use = nameof(MapCompeList))]
+    [MapProperty(nameof(PlayResultDataRequest.StageData.AryUserCompeIds), nameof(Ac15DonChallengeStageFacts.UserCompeIds), Use = nameof(MapCompeList))]
+    [MapProperty(nameof(PlayResultDataRequest.StageData.AryBngCompeIds), nameof(Ac15DonChallengeStageFacts.BngCompeIds), Use = nameof(MapCompeList))]
     [UserMapping(Default = true)]
-    private static partial Ac15RedChallengeCompeStageFacts MapChallengeCompeStage(PlayResultDataRequest.StageData stage);
+    private static partial Ac15DonChallengeStageFacts MapChallengeCompeStage(PlayResultDataRequest.StageData stage);
 
     private static Ac15NormalPlayResult? MapNormal(PlayResultDataRequest request)
         => request.AryStageInfoes.Count == 0 ? null : MapNormalCore(request);
@@ -123,10 +123,10 @@ public static partial class PlayResultMappers
             ? null
             : MapGreenGhostCore(request);
 
-    private static Ac15RedChallengeCompeFacts? MapChallengeCompe(PlayResultDataRequest request)
+    private static Ac15DonChallengeFacts? MapChallengeCompe(PlayResultDataRequest request)
         => request.AryStageInfoes.Any(HasChallengeCompeFacts) ? MapChallengeCompeCore(request) : null;
 
-    private static List<Ac15RedChallengeCompeStageFacts> MapChallengeCompeStages(List<PlayResultDataRequest.StageData> stages)
+    private static List<Ac15DonChallengeStageFacts> MapChallengeCompeStages(List<PlayResultDataRequest.StageData> stages)
         => stages.Where(HasChallengeCompeFacts).Select(MapChallengeCompeStage).ToList();
 
     private static List<Ac15StageResult> MapStages(List<PlayResultDataRequest.StageData> stages)

@@ -98,7 +98,7 @@
     {
         showDonChallengeLink = false;
 
-        if (!AuthService.IsLoggedIn || !WebUiEra.SupportsOlderAc15ChallengeCompe(selectedEra))
+        if (!AuthService.IsLoggedIn || !WebUiEra.SupportsOlderAc15DonChallenge(selectedEra))
         {
             return;
         }

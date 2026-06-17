@@ -69,7 +69,7 @@ internal static class Ac15PlayResultTestFactory
         Ac15TokkunPlayResult? tokkun = null,
         Ac15BlueBattlePlayResult? battle = null,
         Ac15GreenGhostPlayResult? ghost = null,
-        Ac15RedChallengeCompeFacts? challenge = null)
+        Ac15DonChallengeFacts? challenge = null)
     {
         var stageList = stages ?? [];
         var metadata = new Ac15PlayResultMetadata(
@@ -259,13 +259,13 @@ internal static class Ac15PlayResultTestFactory
                 AryWinningsData = data.AryWinningsData.Select(winning => new Ac15GreenGhostWinningsData(winning.LevelId, winning.Winnings)).ToList()
             };
 
-    private static Ac15RedChallengeCompeFacts? MapChallenge(List<Ac15StageResult> stages)
+    private static Ac15DonChallengeFacts? MapChallenge(List<Ac15StageResult> stages)
     {
         var facts = stages
             .Where(stage => stage.ChallengeIds.Count != 0 || stage.UserCompeIds.Count != 0 || stage.BngCompeIds.Count != 0)
-            .Select(stage => new Ac15RedChallengeCompeStageFacts(stage.SongNo, stage.ChallengeIds, stage.UserCompeIds, stage.BngCompeIds))
+            .Select(stage => new Ac15DonChallengeStageFacts(stage.SongNo, stage.ChallengeIds, stage.UserCompeIds, stage.BngCompeIds))
             .ToList();
-        return facts.Count == 0 ? null : new Ac15RedChallengeCompeFacts(facts);
+        return facts.Count == 0 ? null : new Ac15DonChallengeFacts(facts);
     }
 
     private static List<Ac15CompeIdFact> MapCompe(IEnumerable<CommonPlayResultData.ResultcompeData> values)
