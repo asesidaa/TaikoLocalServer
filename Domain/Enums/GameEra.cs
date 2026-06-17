@@ -6,5 +6,6 @@ public enum GameEra
     Green = 1,
     Blue = 2,
     Yellow = 3,
-    Red = 4
+    Red = 4,
+    White = 5
 }

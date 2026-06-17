@@ -8,6 +8,7 @@
   <Project Path="Adapters.GameProtocol.WwR08/Adapters.GameProtocol.WwR08.csproj" />
   <Project Path="Adapters.GameProtocol.Yellow/Adapters.GameProtocol.Yellow.csproj" />
   <Project Path="Adapters.GameProtocol.Red/Adapters.GameProtocol.Red.csproj" />
+  <Project Path="Adapters.GameProtocol.White/Adapters.GameProtocol.White.csproj" />
   <Project Path="Application/Application.csproj" />
   <Project Path="Contracts.AdminApi/Contracts.AdminApi.csproj" />
   <Project Path="Domain/Domain.csproj" />

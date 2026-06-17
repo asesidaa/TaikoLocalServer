@@ -27,6 +27,7 @@
     <ProjectReference Include="..\Adapters.GameProtocol.Green\Adapters.GameProtocol.Green.csproj" />
     <ProjectReference Include="..\Adapters.GameProtocol.Yellow\Adapters.GameProtocol.Yellow.csproj" />
     <ProjectReference Include="..\Adapters.GameProtocol.Red\Adapters.GameProtocol.Red.csproj" />
+    <ProjectReference Include="..\Adapters.GameProtocol.White\Adapters.GameProtocol.White.csproj" />
     <ProjectReference Include="..\TaikoWebUI\TaikoWebUI.csproj" />
   </ItemGroup>
 </Project>
