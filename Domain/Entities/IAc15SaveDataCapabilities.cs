@@ -78,6 +78,35 @@ public interface IAc15CustomizationSaveData
     byte[] TitleFlg { get; set; }
 }
 
+public interface IAc15ProfileSettingsSaveData :
+    IAc15CustomizationSaveData,
+    IAc15PlayProfileSaveData
+{
+    string Title { get; set; }
+
+    uint TitleplateId { get; set; }
+
+    uint DefaultToneSetting { get; set; }
+
+    uint ColorBody { get; set; }
+
+    uint ColorFace { get; set; }
+
+    uint ColorLimb { get; set; }
+
+    uint DispDanType { get; set; }
+
+    uint DispTaikojukuDan { get; set; }
+
+    bool IsTojiru { get; set; }
+
+    bool IsExplain { get; set; }
+
+    uint DispLevelChassis { get; set; }
+
+    uint DispLevelSelf { get; set; }
+}
+
 public interface IAc15SongUnlockSaveData
 {
     byte[] ReleaseSongFlg { get; set; }
