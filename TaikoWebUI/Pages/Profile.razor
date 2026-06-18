@@ -8,7 +8,7 @@
 @inject NavigationManager NavigationManager
 @inject BreadcrumbsStateContainer BreadcrumbsStateContainer
 
-@if (response is not null)
+@if (ProfileLoaded)
 {
     @if (AuthService.LoginRequired && (!AuthService.IsLoggedIn || (AuthService.GetLoggedInBaid() != Baid && !AuthService.IsAdmin)))
     {
@@ -28,25 +28,36 @@
                 <MudPaper Elevation="0" Outlined="true">
                     <MudTabs MinimumTabWidth="100px" Rounded="true" Border="true" TabPanelsClass="pa-8">
                         <MudTabPanel Text="@Localizer["Profile"]">
-                            <MudStack Spacing="4">
-                                <MudText Typo="Typo.h6">@Localizer["Profile Options"]</MudText>
-                                <MudGrid>
-                                    <MudItem xs="12" md="8">
-                                        <MudTextField TextChanged="UpdateMyDonName" Required="true" @bind-Value="@response.MyDonName" Label=@Localizer["Name"]></MudTextField>
-                                    </MudItem>
-                                    <MudItem xs="12" md="4">
-                                        <MudSelect @bind-Value="@response.MyDonNameLanguage" Label=@Localizer["Language"] AnchorOrigin="Origin.BottomCenter">
-                                            @for (uint i = 0; i < LanguageStrings.Length; i++)
-                                            {
-                                                var index = i;
-                                                <MudSelectItem Value="@i">@Localizer[LanguageStrings[index]]</MudSelectItem>
-                                            }
-                                        </MudSelect>
-                                    </MudItem>
-                                </MudGrid>
+                            @if (IsAc15 && ac15State is not null)
+                            {
+                                <Ac15ProfileEditor State="@ac15State"
+                                                   Era="@CurrentEra"
+                                                   CostumeCatalog="@costumeList"
+                                                   TitleCatalog="@titleDictionary"
+                                                   ToneCatalog="@neiroDictionary"
+                                                   DanCatalog="@danDictionary"
+                                                   AllowUnlockEditing="@CanEditUnlocks"
+                                                   StateChanged="RefreshAc15Preview" />
+                            }
+                            else if (response is not null)
+                            {
+                                <MudStack Spacing="4">
+                                    <MudText Typo="Typo.h6">@Localizer["Profile Options"]</MudText>
+                                    <MudGrid>
+                                        <MudItem xs="12" md="8">
+                                            <MudTextField TextChanged="UpdateMyDonName" Required="true" @bind-Value="@response.MyDonName" Label=@Localizer["Name"]></MudTextField>
+                                        </MudItem>
+                                        <MudItem xs="12" md="4">
+                                            <MudSelect @bind-Value="@response.MyDonNameLanguage" Label=@Localizer["Language"] AnchorOrigin="Origin.BottomCenter">
+                                                @for (uint i = 0; i < LanguageStrings.Length; i++)
+                                                {
+                                                    var index = i;
+                                                    <MudSelectItem Value="@i">@Localizer[LanguageStrings[index]]</MudSelectItem>
+                                                }
+                                            </MudSelect>
+                                        </MudItem>
+                                    </MudGrid>
 
-                                @if (!IsAc15)
-                                {
                                     <MudSelect T="Difficulty" ValueChanged=@UpdateScoreboard Value=@response.AchievementDisplayDifficulty Label=@Localizer["Achievement Panel Difficulty"] AnchorOrigin="Origin.BottomCenter">
                                         @foreach (var item in Enum.GetValues<Difficulty>())
                                         {
@@ -90,43 +101,11 @@
                                             </MudStack>
                                         </MudItem>
                                     </MudGrid>
-                                }
-                                else
-                                {
-                                    <MudGrid>
-                                        <MudItem xs="12" md="4">
-                                            <MudStack Spacing="4">
-                                                <MudSwitch @bind-Value="@response.IsDisplayDanOnNamePlate" Label=@Localizer["Display Dan Rank on Name Plate"] Color="Color.Primary" />
-                                                <MudSwitch @bind-Value="@response.GreenIsTojiru" Label=@Localizer["Show Folder Close Button"] Color="Color.Primary" />
-                                                <MudSwitch @bind-Value="@response.GreenIsAutoCostumeOn" Label=@Localizer["Apply Costume Changes from Play Results"] Color="Color.Primary" />
-                                                <MudSwitch @bind-Value="@response.Ac15HowToPlayTutorialDisabled" Label=@Localizer["Disable How to Play Tutorial"] Color="Color.Primary" />
-                                            </MudStack>
-                                        </MudItem>
-                                        <MudItem xs="12" md="8">
-                                            <MudStack Spacing="4">
-                                                <MudSelect @bind-Value="@response.GreenDispLevelChassis" Label=@Localizer["Local Ranking Difficulty"] AnchorOrigin="Origin.BottomCenter">
-                                                    @for (uint i = 0; i < GreenLocalRankingDifficultyStrings.Length; i++)
-                                                    {
-                                                        var index = i;
-                                                        <MudSelectItem Value="@i">@Localizer[GreenLocalRankingDifficultyStrings[index]]</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-
-                                                <MudSelect @bind-Value="@response.GreenDispLevelSelf" Label=@Localizer["Default Selected and Self Best Difficulty"] AnchorOrigin="Origin.BottomCenter">
-                                                    @for (uint i = 0; i < Ac15DefaultSelectedAndSelfBestDifficultyStrings.Length; i++)
-                                                    {
-                                                        var index = i;
-                                                        <MudSelectItem Value="@i">@Localizer[Ac15DefaultSelectedAndSelfBestDifficultyStrings[index]]</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-                                            </MudStack>
-                                        </MudItem>
-                                    </MudGrid>
-                                }
-                            </MudStack>
+                                </MudStack>
+                            }
                         </MudTabPanel>
 
-                        @if (costumeList.Count > 0 || titleDictionary.Count > 0 || neiroDictionary.Count > 0)
+                        @if (!IsAc15 && response is not null && (costumeList.Count > 0 || titleDictionary.Count > 0 || neiroDictionary.Count > 0))
                         {
                             <MudTabPanel Text="@Localizer["Costume"]">
                                 <MudStack Spacing="4">
@@ -185,23 +164,11 @@
                                                  Value="@colorValue"
                                                  ValueChanged="@(value => { colorValue = value; ApplyCustomizationValues(); })" />
 
-                                    @if (IsAc15 && response.GreenSelectableTaikojukuDans.Count > 0)
-                                    {
-                                        <MudSelect T="uint"
-                                                   @bind-Value="@response.GreenTaikojukuDan"
-                                                   Label="@Localizer["Taikojuku Folder Dan"]"
-                                                   AnchorOrigin="Origin.BottomCenter">
-                                            @foreach (var danId in response.GreenSelectableTaikojukuDans)
-                                            {
-                                                <MudSelectItem Value="@danId">@GetDanOptionText(danId)</MudSelectItem>
-                                            }
-                                        </MudSelect>
-                                    }
                                 </MudStack>
                             </MudTabPanel>
                         }
 
-                        @if (!IsAc15)
+                        @if (!IsAc15 && response is not null)
                         {
                         <MudTabPanel Text="@Localizer["Song Options"]">
                             <MudStack Spacing="4">
@@ -250,12 +217,15 @@
                     <MudPaper Elevation="0" Outlined="true">
                         <MudTabs MinimumTabWidth="100px" Rounded="true" Border="true" TabPanelsClass="pa-8">
                             <MudTabPanel Text=@Localizer["Player"]>
-                                <PlayerPreview Setting="@response"
-                                               TitleCatalog="@titleDictionary"
-                                               ResolveTitlePlateFromCatalog="@IsAc15" />
+                                @if (previewModel is not null)
+                                {
+                                    <PlayerPreview Preview="@previewModel"
+                                                   TitleCatalog="@titleDictionary"
+                                                   ResolveTitlePlateFromCatalog="@IsAc15" />
+                                }
                             </MudTabPanel>
 
-                            @if (!IsAc15 && response.IsDisplayAchievement)
+                            @if (!IsAc15 && response is not null && response.IsDisplayAchievement)
                             {
                                 <MudTabPanel Text="@Localizer["Achievement Panel"]">
                                     <MudItem style="text-align: center; position:relative;">

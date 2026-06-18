@@ -1,0 +1,196 @@
+@using TaikoWebUI.Shared.Customize
+
+<MudStack Spacing="4">
+    <MudText Typo="Typo.h6">@Localizer["Profile Options"]</MudText>
+    <MudGrid>
+        <MudItem xs="12" md="8">
+            <MudTextField TextChanged="OnNameChanged" Required="true" @bind-Value="State.MyDonName" Label="@Localizer["Name"]" />
+        </MudItem>
+        <MudItem xs="12" md="4">
+            <MudSelect @bind-Value="State.MyDonNameLanguage" Label="@Localizer["Language"]" AnchorOrigin="Origin.BottomCenter">
+                @for (uint i = 0; i < LanguageStrings.Length; i++)
+                {
+                    var index = i;
+                    <MudSelectItem Value="@i">@Localizer[LanguageStrings[index]]</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+    </MudGrid>
+
+    <MudGrid>
+        <MudItem xs="12" md="4">
+            <MudStack Spacing="4">
+                @if (State.ShowNamePlateOptions)
+                {
+                    <MudSwitch @bind-Value="State.DisplayDanOnNamePlate" Label="@Localizer["Display Dan Rank on Name Plate"]" Color="Color.Primary" />
+                }
+                @if (State.ShowFolderOptions)
+                {
+                    <MudSwitch @bind-Value="State.ShowFolderCloseButton" Label="@Localizer["Show Folder Close Button"]" Color="Color.Primary" />
+                }
+                @if (State.ShowCustomizationBehaviorOptions)
+                {
+                    <MudSwitch @bind-Value="State.ApplyCostumeChangesFromPlayResults" Label="@Localizer["Apply Costume Changes from Play Results"]" Color="Color.Primary" />
+                }
+                @if (State.ShowTutorialOptions)
+                {
+                    <MudSwitch @bind-Value="State.DisableHowToPlayTutorial" Label="@Localizer["Disable How to Play Tutorial"]" Color="Color.Primary" />
+                }
+            </MudStack>
+        </MudItem>
+        <MudItem xs="12" md="8">
+            <MudStack Spacing="4">
+                @if (State.ShowSongSelectOptions && State.Source.Options.SongSelect?.LocalRankingDifficulty is not null)
+                {
+                    <MudSelect @bind-Value="State.LocalRankingDifficulty" Label="@Localizer["Local Ranking Difficulty"]" AnchorOrigin="Origin.BottomCenter">
+                        @for (uint i = 0; i < Ac15DifficultyStrings.Length; i++)
+                        {
+                            var index = i;
+                            <MudSelectItem Value="@i">@Localizer[Ac15DifficultyStrings[index]]</MudSelectItem>
+                        }
+                    </MudSelect>
+                }
+                @if (State.ShowSongSelectOptions && State.Source.Options.SongSelect?.DefaultSelectedAndSelfBestDifficulty is not null)
+                {
+                    <MudSelect @bind-Value="State.DefaultSelectedAndSelfBestDifficulty" Label="@Localizer["Default Selected and Self Best Difficulty"]" AnchorOrigin="Origin.BottomCenter">
+                        @for (uint i = 0; i < Ac15DifficultyStrings.Length; i++)
+                        {
+                            var index = i;
+                            <MudSelectItem Value="@i">@Localizer[Ac15DifficultyStrings[index]]</MudSelectItem>
+                        }
+                    </MudSelect>
+                }
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+</MudStack>
+
+@if (State.ShowCustomization)
+{
+    <MudStack Spacing="4">
+        <MudText Typo="Typo.h6">@Localizer["Costume Options"]</MudText>
+
+        @foreach (var slot in State.CostumeSlots)
+        {
+            <CostumePicker Era="@Era"
+                           Label="@Localizer[GetSlotLabel(slot.Slot)]"
+                           Catalog="@GetCostumeCatalog(slot.Slot)"
+                           Value="@slot.Value"
+                           ValueChanged="@(value => OnCostumeChanged(slot.Slot, value))"
+                           AllowUnlockEditing="@AllowUnlockEditing" />
+        }
+
+        @if (State.ShowTitle && State.Title is not null)
+        {
+            <TitlePicker Era="@Era"
+                         Catalog="@TitleCatalog"
+                         Value="@State.Title"
+                         ValueChanged="OnTitleChanged"
+                         ReadOnlyTitleText="false"
+                         SelectionMode="TitleSelectionMode.TitleId"
+                         AllowUnlockEditing="@AllowUnlockEditing" />
+        }
+
+        @if (State.ShowTone && State.Tone is not null)
+        {
+            <NeiroPicker Era="@Era"
+                         Catalog="@ToneCatalog"
+                         Value="@State.Tone"
+                         ValueChanged="OnToneChanged"
+                         AllowUnlockEditing="@AllowUnlockEditing" />
+        }
+
+        @if (State.ShowColors && State.Colors is not null)
+        {
+            <ColorPicker Colors="@TaikoCustomizationVisuals.CostumeColors"
+                         Value="@State.Colors"
+                         ValueChanged="OnColorsChanged" />
+        }
+
+        @if (State.ShowTaikojukuOptions && State.SelectableTaikojukuDans.Count > 0)
+        {
+            <MudSelect T="uint"
+                       @bind-Value="State.TaikojukuFolderDan"
+                       Label="@Localizer["Taikojuku Folder Dan"]"
+                       AnchorOrigin="Origin.BottomCenter">
+                @foreach (var danId in State.SelectableTaikojukuDans)
+                {
+                    <MudSelectItem Value="@danId">@FormatDan(danId)</MudSelectItem>
+                }
+            </MudSelect>
+        }
+    </MudStack>
+}
+
+@code {
+    [Parameter, EditorRequired] public Ac15ProfileEditorState State { get; set; } = default!;
+    [Parameter, EditorRequired] public string Era { get; set; } = string.Empty;
+    [Parameter] public IReadOnlyList<Costume> CostumeCatalog { get; set; } = [];
+    [Parameter] public IReadOnlyDictionary<uint, Title> TitleCatalog { get; set; } = new Dictionary<uint, Title>();
+    [Parameter] public IReadOnlyDictionary<uint, Neiro> ToneCatalog { get; set; } = new Dictionary<uint, Neiro>();
+    [Parameter] public IReadOnlyDictionary<uint, DanData> DanCatalog { get; set; } = new Dictionary<uint, DanData>();
+    [Parameter] public bool AllowUnlockEditing { get; set; }
+    [Parameter] public EventCallback StateChanged { get; set; }
+
+    private static readonly string[] LanguageStrings =
+    {
+        "Japanese", "English", "Chinese Traditional", "Korean", "Chinese Simplified"
+    };
+
+    private static readonly string[] Ac15DifficultyStrings =
+    {
+        "No Fixed Course", "Easy", "Normal", "Hard", "Oni"
+    };
+
+    private Task OnNameChanged(string _)
+        => StateChanged.InvokeAsync();
+
+    private Task OnCostumeChanged(string slot, CostumePickerValue value)
+    {
+        var state = State.CostumeSlots.Single(item => item.Slot == slot);
+        var index = State.CostumeSlots.IndexOf(state);
+        State.CostumeSlots[index] = state with { Value = value };
+        return StateChanged.InvokeAsync();
+    }
+
+    private Task OnTitleChanged(TitlePickerValue value)
+    {
+        State.Title = value;
+        return StateChanged.InvokeAsync();
+    }
+
+    private Task OnToneChanged(NeiroPickerValue value)
+    {
+        State.Tone = value;
+        return StateChanged.InvokeAsync();
+    }
+
+    private Task OnColorsChanged(ColorPickerValue value)
+    {
+        State.Colors = value;
+        return StateChanged.InvokeAsync();
+    }
+
+    private IReadOnlyList<Costume> GetCostumeCatalog(string slot)
+        => CostumeCatalog
+            .Where(costume => costume.CostumeType == slot || costume.CostumeType == "unknown")
+            .OrderBy(costume => costume.CostumeType == "unknown" ? 1 : 0)
+            .ThenBy(costume => costume.CostumeId)
+            .ToArray();
+
+    private static string GetSlotLabel(string slot)
+        => slot switch
+        {
+            "kigurumi" => "Kigurumi",
+            "head" => "Head",
+            "body" => "Body",
+            "face" => "Face",
+            "puchi" => "Puchi",
+            _ => slot
+        };
+
+    private string FormatDan(uint danId)
+        => DanCatalog.TryGetValue(danId, out var dan) && !string.IsNullOrWhiteSpace(dan.Title)
+            ? dan.Title
+            : $"Dan {danId}";
+}

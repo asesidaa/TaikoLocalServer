@@ -1,5 +1,5 @@
 using TaikoWebUI.Utilities;
-using System.Collections.Generic;
+using TaikoWebUI.Pages.ProfileEditor;
 using TaikoWebUI.Shared.Customize;
 
 namespace TaikoWebUI.Pages;
@@ -22,6 +22,10 @@ public partial class Profile
     private SongBestResponse? songresponse;
 
     private UserSetting? response;
+    private Ac15ProfileSettingsDto? ac15Response;
+    private Ac15ProfileEditorState? ac15State;
+    private PlayerPreviewModel? previewModel;
+    private bool ProfileLoaded => IsAc15 ? ac15State is not null : response is not null;
 
     private bool isSavingOptions;
 
@@ -43,16 +47,6 @@ public partial class Profile
     {
         "None", "Set Up Each Time",
         "Easy", "Normal", "Hard", "Oni", "Ura Oni"
-    };
-
-    private static readonly string[] GreenLocalRankingDifficultyStrings =
-    {
-        "No Fixed Course", "Easy", "Normal", "Hard", "Oni"
-    };
-
-    private static readonly string[] Ac15DefaultSelectedAndSelfBestDifficultyStrings =
-    {
-        "No Fixed Course", "Easy", "Normal", "Hard", "Oni"
     };
 
     private static readonly string[] DifficultySettingStarStrings =
@@ -99,8 +93,20 @@ public partial class Profile
         await base.OnInitializedAsync();
 
         isSavingOptions = false;
-        response = await Client.GetFromJsonAsync<UserSetting>(WebUiEra.Api(CurrentEra, $"UserSettings/{Baid}"));
-        response.ThrowIfNull();
+        if (IsAc15)
+        {
+            ac15Response = await Client.GetFromJsonAsync<Ac15ProfileSettingsDto>(
+                WebUiEra.Api(CurrentEra, $"Ac15ProfileSettings/{Baid}"));
+            ac15Response.ThrowIfNull();
+            ac15State = Ac15ProfileEditorState.From(ac15Response);
+            previewModel = ac15State.ToPreviewModel();
+        }
+        else
+        {
+            response = await Client.GetFromJsonAsync<UserSetting>(WebUiEra.Api(CurrentEra, $"UserSettings/{Baid}"));
+            response.ThrowIfNull();
+            previewModel = PlayerPreviewModel.FromUserSetting(response);
+        }
         
         musicDetailDictionary = await GameDataService.GetMusicDetailDictionary(CurrentEra);
         danDictionary = GameDataService.GetDanMap(CurrentEra);
@@ -114,14 +120,18 @@ public partial class Profile
         {
             BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
         }
-        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{response.MyDonName}", href: null, disabled: true));
+        var profileName = IsAc15 ? ac15State?.MyDonName : response?.MyDonName;
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{profileName}", href: null, disabled: true));
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Profile"], href: WebUiEra.UserRoute(Baid, CurrentEra, "Profile"), disabled: false));
         BreadcrumbsStateContainer.NotifyStateChanged();
 
         costumeList = (await GameDataService.GetCostumeList(CurrentEra)).ToList();
         titleDictionary = (await GameDataService.GetTitleDictionary(CurrentEra)).ToDictionary(pair => pair.Key, pair => pair.Value);
         neiroDictionary = await GameDataService.GetNeiroDictionary(CurrentEra);
-        InitializeCustomizationValues();
+        if (!IsAc15)
+        {
+            InitializeCustomizationValues();
+        }
 
         songresponse = await Client.GetFromJsonAsync<SongBestResponse>(WebUiEra.Api(CurrentEra, $"PlayData/{Baid}"));
         songresponse.ThrowIfNull();
@@ -281,15 +291,35 @@ public partial class Profile
     private async Task SaveOptions()
     {
         isSavingOptions = true;
-        ApplyCustomizationValues();
-        await Client.PostAsJsonAsync(WebUiEra.Api(CurrentEra, $"UserSettings/{Baid}"), response);
-        isSavingOptions = false;
 
-        // Adjust breadcrumb if name is changed
-        if (response != null)
+        if (IsAc15)
         {
+            ac15State.ThrowIfNull();
+            var request = ac15State.ToUpdateDto(CanEditUnlocks);
+            await Client.PutAsJsonAsync(WebUiEra.Api(CurrentEra, $"Ac15ProfileSettings/{Baid}"), request);
+            previewModel = ac15State.ToPreviewModel();
+            BreadcrumbsStateContainer.breadcrumbs[^2] = new BreadcrumbItem($"{ac15State.MyDonName}", href: null, disabled: true);
+        }
+        else
+        {
+            response.ThrowIfNull();
+            ApplyCustomizationValues();
+            await Client.PostAsJsonAsync(WebUiEra.Api(CurrentEra, $"UserSettings/{Baid}"), response);
+            previewModel = PlayerPreviewModel.FromUserSetting(response);
             BreadcrumbsStateContainer.breadcrumbs[^2] = new BreadcrumbItem($"{response.MyDonName}", href: null, disabled: true);
         }
+
+        isSavingOptions = false;
+    }
+
+    private Task RefreshAc15Preview()
+    {
+        if (ac15State is not null)
+        {
+            previewModel = ac15State.ToPreviewModel();
+        }
+
+        return Task.CompletedTask;
     }
 
     private void UpdateScores(Difficulty difficulty)
