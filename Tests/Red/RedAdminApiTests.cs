@@ -15,7 +15,7 @@ namespace TaikoLocalServer.Tests.Red;
 public sealed class RedAdminApiTests
 {
     [Fact]
-    public async Task UserSettings_Red_ReadsAndSavesRedProfileOnly()
+    public async Task Ac15ProfileSettings_Red_ReadsAndSavesRedProfileOnly()
     {
         await using var fixture = await RedHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -38,39 +38,40 @@ public sealed class RedAdminApiTests
         save.DispLevelSelf = 2;
         fixture.Context.UserSaveDataRed.Add(save);
         await fixture.Context.SaveChangesAsync();
-        var controller = CreateUserSettingsController(fixture.Context);
+        var controller = CreateAc15ProfileSettingsController(fixture.Context);
 
-        var getResult = await controller.GetUserSetting("Red", 1);
+        var getResult = await controller.Get("Red", 1);
 
         var ok = Assert.IsType<OkObjectResult>(getResult.Result);
-        var setting = Assert.IsType<UserSetting>(ok.Value);
-        Assert.Equal(5u, setting.Kigurumi);
-        Assert.Equal([0u, 5u], setting.UnlockedKigurumi);
-        Assert.Equal([10u], setting.UnlockedTitle);
-        Assert.Equal([0u, 4u], setting.UnlockedTone);
-        Assert.Equal(4u, setting.ToneId);
-        Assert.True(setting.GreenIsTojiru);
-        Assert.True(setting.GreenIsAutoCostumeOn);
-        Assert.True(setting.Ac15HowToPlayTutorialDisabled);
-        Assert.Equal(3u, setting.GreenDispLevelChassis);
-        Assert.Equal(2u, setting.GreenDispLevelSelf);
+        var setting = Assert.IsType<Ac15ProfileSettingsDto>(ok.Value);
+        Assert.Equal(5u, Assert.Single(setting.Customization!.CostumeSlots, slot => slot.Slot == "kigurumi").CurrentId);
+        Assert.Equal([0u, 5u], Assert.Single(setting.Customization.CostumeSlots, slot => slot.Slot == "kigurumi").UnlockedIds);
+        Assert.Equal([10u], setting.Customization.Title!.UnlockedTitleIds);
+        Assert.Equal([0u, 4u], setting.Customization.Tone!.UnlockedToneIds);
+        Assert.Equal(4u, setting.Customization.Tone.ToneId);
+        Assert.True(setting.Options.Folder!.ShowFolderCloseButton);
+        Assert.True(setting.Options.CustomizationBehavior!.ApplyCostumeChangesFromPlayResults);
+        Assert.True(setting.Options.Tutorials!.DisableHowToPlayTutorial);
+        Assert.Equal(3u, setting.Options.SongSelect!.LocalRankingDifficulty);
+        Assert.Equal(2u, setting.Options.SongSelect.DefaultSelectedAndSelfBestDifficulty);
 
-        var saveResult = await controller.SaveUserSetting("Red", 1, new UserSetting
-        {
-            MyDonName = "RED",
-            Kigurumi = 7,
-            UnlockedKigurumi = [0, 7],
-            UnlockedTitle = [10],
-            Title = "Red Title",
-            TitlePlateId = 10,
-            UnlockedTone = [0, 6],
-            ToneId = 6,
-            GreenIsTojiru = false,
-            GreenIsAutoCostumeOn = false,
-            Ac15HowToPlayTutorialDisabled = false,
-            GreenDispLevelChassis = 4,
-            GreenDispLevelSelf = 3
-        });
+        var saveResult = await controller.Put("Red", 1, new Ac15ProfileSettingsUpdateDto(
+            new Ac15ProfileIdentityDto("RED", 0),
+            new Ac15CustomizationUpdateDto(
+                CostumeSlots:
+                [
+                    new Ac15CostumeSlotUpdateDto("kigurumi", 7, [0, 7])
+                ],
+                Title: new Ac15TitleSelectionUpdateDto("Red Title", 10, [10]),
+                Tone: new Ac15ToneSelectionUpdateDto(6, [0, 6]),
+                Colors: null),
+            new Ac15ProfileOptionGroupsUpdateDto(
+                NamePlate: null,
+                Folder: new Ac15FolderOptionsDto(false),
+                SongSelect: new Ac15SongSelectOptionsDto(4, 3),
+                Taikojuku: null,
+                Tutorials: new Ac15TutorialOptionsDto(false),
+                CustomizationBehavior: new Ac15CustomizationBehaviorOptionsDto(false))));
 
         Assert.IsType<NoContentResult>(saveResult);
         Assert.Equal("RED", (await fixture.Context.UserData.FindAsync(1u))!.MyDonName);
@@ -92,7 +93,7 @@ public sealed class RedAdminApiTests
     }
 
     [Fact]
-    public async Task UserSettings_Red_RejectsInvalidSharedAc15Settings()
+    public async Task Ac15ProfileSettings_Red_RejectsInvalidSharedAc15Settings()
     {
         await using var fixture = await RedHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -100,13 +101,18 @@ public sealed class RedAdminApiTests
         save.DispLevelChassis = 2;
         fixture.Context.UserSaveDataRed.Add(save);
         await fixture.Context.SaveChangesAsync();
-        var controller = CreateUserSettingsController(fixture.Context);
+        var controller = CreateAc15ProfileSettingsController(fixture.Context);
 
-        var result = await controller.SaveUserSetting("Red", 1, new UserSetting
-        {
-            MyDonName = "RED",
-            GreenDispLevelChassis = 5
-        });
+        var result = await controller.Put("Red", 1, new Ac15ProfileSettingsUpdateDto(
+            new Ac15ProfileIdentityDto("RED", 0),
+            Customization: null,
+            Options: new Ac15ProfileOptionGroupsUpdateDto(
+                NamePlate: null,
+                Folder: null,
+                SongSelect: new Ac15SongSelectOptionsDto(5, null),
+                Taikojuku: null,
+                Tutorials: null,
+                CustomizationBehavior: null)));
 
         Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal(2u, save.DispLevelChassis);
@@ -497,15 +503,15 @@ public sealed class RedAdminApiTests
             ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
         };
 
-    private static UserSettingsController CreateUserSettingsController(ITaikoDbContext context)
+    private static Ac15ProfileSettingsController CreateAc15ProfileSettingsController(ITaikoDbContext context)
     {
-        var authSettings = new AuthSettings { AuthenticationRequired = false };
+        var authSettings = new AuthSettings { AuthenticationRequired = false, AllowFreeProfileEditing = true };
         var httpContext = CreateHttpContext();
         httpContext.RequestServices = new ServiceCollection()
             .AddSingleton(Options.Create(authSettings))
             .BuildServiceProvider();
 
-        return new UserSettingsController(context, Options.Create(authSettings))
+        return new Ac15ProfileSettingsController(context, Options.Create(authSettings))
         {
             ControllerContext = new ControllerContext { HttpContext = httpContext }
         };

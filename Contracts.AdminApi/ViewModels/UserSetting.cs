@@ -10,20 +10,6 @@ public class UserSetting
 
     public bool IsDisplayDanOnNamePlate { get; set; }
 
-    public uint GreenTaikojukuDan { get; set; }
-
-    public List<uint> GreenSelectableTaikojukuDans { get; set; } = new();
-
-    public bool GreenIsTojiru { get; set; }
-
-    public bool GreenIsAutoCostumeOn { get; set; }
-
-    public bool Ac15HowToPlayTutorialDisabled { get; set; }
-
-    public uint GreenDispLevelChassis { get; set; }
-
-    public uint GreenDispLevelSelf { get; set; }
-
     public bool IsDisplaySouUchi { get; set; }
 
     public uint DifficultySettingCourse { get; set; }

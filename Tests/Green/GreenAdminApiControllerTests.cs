@@ -235,7 +235,7 @@ public class GreenAdminApiControllerTests
     }
 
     [Fact]
-    public async Task UserSettings_Green_GetDecodesCustomizationBitsets()
+    public async Task Ac15ProfileSettings_Green_GetDecodesProfileSettings()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -245,193 +245,12 @@ public class GreenAdminApiControllerTests
         save.TitleFlg = BitsetCodec.Encode([10], GreenProtocolBytes.TitleFlagBytes);
         save.ToneFlg = BitsetCodec.Encode([0, 4], GreenProtocolBytes.ToneFlagBytes);
         save.DefaultToneSetting = 4;
-        fixture.Context.UserSaveDataGreen.Add(save);
-        await fixture.Context.SaveChangesAsync();
-
-        var controller = CreateUserSettingsController(fixture.Context);
-        var result = await controller.GetUserSetting("Green", 1);
-
-        var ok = Assert.IsType<OkObjectResult>(result.Result);
-        var setting = Assert.IsType<UserSetting>(ok.Value);
-        Assert.Equal(5u, setting.Kigurumi);
-        Assert.Equal(new List<uint> { 0, 5 }, setting.UnlockedKigurumi);
-        Assert.Equal(new List<uint> { 10 }, setting.UnlockedTitle);
-        Assert.Equal(new List<uint> { 0, 4 }, setting.UnlockedTone);
-        Assert.Equal(4u, setting.ToneId);
-    }
-
-    [Theory]
-    [InlineData(0, false)]
-    [InlineData(1, true)]
-    [InlineData(2, true)]
-    public async Task UserSettings_Green_GetMapsDispDanTypeToProfileDisplayDan(uint dispDanType, bool expected)
-    {
-        await using var fixture = await GreenHandlerFixture.CreateAsync();
-        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
-        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
-        save.DispDanType = dispDanType;
-        fixture.Context.UserSaveDataGreen.Add(save);
-        await fixture.Context.SaveChangesAsync();
-
-        var controller = CreateUserSettingsController(fixture.Context);
-        var result = await controller.GetUserSetting("Green", 1);
-
-        var ok = Assert.IsType<OkObjectResult>(result.Result);
-        var setting = Assert.IsType<UserSetting>(ok.Value);
-        Assert.Equal(expected, setting.IsDisplayDanOnNamePlate);
-    }
-
-    [Fact]
-    public async Task UserSettings_Green_GetExposesTojiruAndDisplayDifficultySettings()
-    {
-        await using var fixture = await GreenHandlerFixture.CreateAsync();
-        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
-        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.DispDanType = 2;
         save.IsTojiru = true;
-        save.DispScoreType = 1;
+        save.IsAutoCostumeOn = true;
         save.IsExplain = true;
         save.DispLevelChassis = 3;
         save.DispLevelSelf = 2;
-        fixture.Context.UserSaveDataGreen.Add(save);
-        await fixture.Context.SaveChangesAsync();
-
-        var controller = CreateUserSettingsController(fixture.Context);
-        var result = await controller.GetUserSetting("Green", 1);
-
-        var ok = Assert.IsType<OkObjectResult>(result.Result);
-        var setting = Assert.IsType<UserSetting>(ok.Value);
-        Assert.True(setting.GreenIsTojiru);
-        Assert.True(setting.Ac15HowToPlayTutorialDisabled);
-        Assert.Equal(3u, setting.GreenDispLevelChassis);
-        Assert.Equal(2u, setting.GreenDispLevelSelf);
-    }
-
-    [Fact]
-    public async Task UserSettings_Green_GetExposesAutoCostume()
-    {
-        await using var fixture = await GreenHandlerFixture.CreateAsync();
-        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
-        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
-        save.IsAutoCostumeOn = true;
-        fixture.Context.UserSaveDataGreen.Add(save);
-        await fixture.Context.SaveChangesAsync();
-
-        var controller = CreateUserSettingsController(fixture.Context);
-        var result = await controller.GetUserSetting("Green", 1);
-
-        var ok = Assert.IsType<OkObjectResult>(result.Result);
-        var setting = Assert.IsType<UserSetting>(ok.Value);
-        Assert.True(setting.GreenIsAutoCostumeOn);
-    }
-
-    [Fact]
-    public async Task UserSettings_Green_PostPersistsTojiruAndDisplayDifficultySettings()
-    {
-        await using var fixture = await GreenHandlerFixture.CreateAsync();
-        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
-        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
-        save.DispScoreType = 2;
-        fixture.Context.UserSaveDataGreen.Add(save);
-        await fixture.Context.SaveChangesAsync();
-
-        var controller = CreateUserSettingsController(fixture.Context);
-
-        var result = await controller.SaveUserSetting("Green", 1, new UserSetting
-        {
-            MyDonName = "GREEN",
-            GreenIsTojiru = false,
-            Ac15HowToPlayTutorialDisabled = true,
-            GreenDispLevelChassis = 4,
-            GreenDispLevelSelf = 4
-        });
-
-        Assert.IsType<NoContentResult>(result);
-        Assert.False(save.IsTojiru);
-        Assert.Equal(2u, save.DispScoreType);
-        Assert.True(save.IsExplain);
-        Assert.Equal(4u, save.DispLevelChassis);
-        Assert.Equal(4u, save.DispLevelSelf);
-    }
-
-    [Fact]
-    public async Task UserSettings_Green_PostPersistsAutoCostume()
-    {
-        await using var fixture = await GreenHandlerFixture.CreateAsync();
-        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
-        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
-        save.IsAutoCostumeOn = true;
-        fixture.Context.UserSaveDataGreen.Add(save);
-        await fixture.Context.SaveChangesAsync();
-
-        var controller = CreateUserSettingsController(fixture.Context);
-
-        var result = await controller.SaveUserSetting("Green", 1, new UserSetting
-        {
-            MyDonName = "GREEN",
-            GreenIsTojiru = true,
-            GreenDispLevelChassis = 0,
-            GreenIsAutoCostumeOn = false
-        });
-
-        Assert.IsType<NoContentResult>(result);
-        Assert.False(save.IsAutoCostumeOn);
-    }
-
-    [Fact]
-    public async Task UserSettings_Green_PostRejectsInvalidLocalRankingDifficulty()
-    {
-        await using var fixture = await GreenHandlerFixture.CreateAsync();
-        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
-        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
-        save.DispLevelChassis = 2;
-        fixture.Context.UserSaveDataGreen.Add(save);
-        await fixture.Context.SaveChangesAsync();
-
-        var controller = CreateUserSettingsController(fixture.Context);
-
-        var result = await controller.SaveUserSetting("Green", 1, new UserSetting
-        {
-            MyDonName = "GREEN",
-            GreenIsTojiru = true,
-            GreenDispLevelChassis = 5
-        });
-
-        Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Equal(2u, save.DispLevelChassis);
-    }
-
-    [Fact]
-    public async Task UserSettings_Green_PostRejectsInvalidDefaultSelectedAndSelfBestDifficulty()
-    {
-        await using var fixture = await GreenHandlerFixture.CreateAsync();
-        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
-        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
-        save.DispLevelChassis = 2;
-        save.DispLevelSelf = 3;
-        fixture.Context.UserSaveDataGreen.Add(save);
-        await fixture.Context.SaveChangesAsync();
-
-        var controller = CreateUserSettingsController(fixture.Context);
-
-        var result = await controller.SaveUserSetting("Green", 1, new UserSetting
-        {
-            MyDonName = "GREEN",
-            GreenIsTojiru = true,
-            GreenDispLevelChassis = 2,
-            GreenDispLevelSelf = 5
-        });
-
-        Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Equal(2u, save.DispLevelChassis);
-        Assert.Equal(3u, save.DispLevelSelf);
-    }
-
-    [Fact]
-    public async Task UserSettings_Green_GetExposesTaikojukuFolderDanSelectionForUnpassedNormalDans()
-    {
-        await using var fixture = await GreenHandlerFixture.CreateAsync();
-        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
-        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
         save.DispTaikojukuDan = 2;
         fixture.Context.UserSaveDataGreen.Add(save);
         fixture.Context.DanScoreDataGreen.AddRange(
@@ -451,221 +270,124 @@ public class GreenAdminApiControllerTests
             });
         await fixture.Context.SaveChangesAsync();
 
-        var controller = CreateUserSettingsController(fixture.Context);
-        var result = await controller.GetUserSetting("Green", 1);
+        var controller = CreateAc15ProfileSettingsController(fixture.Context);
+        var result = await controller.Get("Green", 1);
 
         var ok = Assert.IsType<OkObjectResult>(result.Result);
-        var setting = Assert.IsType<UserSetting>(ok.Value);
-        Assert.Equal(2u, setting.GreenTaikojukuDan);
-        Assert.DoesNotContain(1u, setting.GreenSelectableTaikojukuDans);
-        Assert.Contains(2u, setting.GreenSelectableTaikojukuDans);
-        Assert.DoesNotContain(101u, setting.GreenSelectableTaikojukuDans);
+        var setting = Assert.IsType<Ac15ProfileSettingsDto>(ok.Value);
+        var kigurumi = Assert.Single(setting.Customization!.CostumeSlots, slot => slot.Slot == "kigurumi");
+        Assert.Equal(5u, kigurumi.CurrentId);
+        Assert.Equal([0u, 5u], kigurumi.UnlockedIds);
+        Assert.Equal([10u], setting.Customization.Title!.UnlockedTitleIds);
+        Assert.Equal([0u, 4u], setting.Customization.Tone!.UnlockedToneIds);
+        Assert.Equal(4u, setting.Customization.Tone.ToneId);
+        Assert.True(setting.Options.NamePlate!.DisplayDanOnNamePlate);
+        Assert.True(setting.Options.Folder!.ShowFolderCloseButton);
+        Assert.True(setting.Options.CustomizationBehavior!.ApplyCostumeChangesFromPlayResults);
+        Assert.True(setting.Options.Tutorials!.DisableHowToPlayTutorial);
+        Assert.Equal(3u, setting.Options.SongSelect!.LocalRankingDifficulty);
+        Assert.Equal(2u, setting.Options.SongSelect.DefaultSelectedAndSelfBestDifficulty);
+        Assert.Equal(2u, setting.Options.Taikojuku!.FolderDan);
+        Assert.DoesNotContain(1u, setting.Options.Taikojuku.SelectableFolderDans);
+        Assert.Contains(2u, setting.Options.Taikojuku.SelectableFolderDans);
+        Assert.DoesNotContain(101u, setting.Options.Taikojuku.SelectableFolderDans);
     }
 
     [Fact]
-    public async Task UserSettings_Green_PostPersistsOnlyUnpassedNormalTaikojukuFolderDan()
+    public async Task Ac15ProfileSettings_Green_PutPersistsProfileSettings()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
-        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.DispScoreType = 2;
+        fixture.Context.UserSaveDataGreen.Add(save);
         fixture.Context.DanScoreDataGreen.Add(new DanScoreDatumGreen
         {
             Baid = 1,
-            DanId = 1,
+            DanId = 3,
             IsExtra = false,
-            ClearGrade = Ac15DanClearGrade.GoldClear
+            ClearGrade = Ac15DanClearGrade.NotClear
         });
         await fixture.Context.SaveChangesAsync();
 
-        var controller = CreateUserSettingsController(fixture.Context);
+        var controller = CreateAc15ProfileSettingsController(fixture.Context);
 
-        await controller.SaveUserSetting("Green", 1, new UserSetting
-        {
-            MyDonName = "GREEN",
-            GreenTaikojukuDan = 1
-        });
-        var save = await fixture.Context.UserSaveDataGreen.FindAsync(1u);
-        Assert.NotNull(save);
-        Assert.Equal(2u, save!.DispTaikojukuDan);
+        var result = await controller.Put("Green", 1, new Ac15ProfileSettingsUpdateDto(
+            new Ac15ProfileIdentityDto("GREEN", 1),
+            new Ac15CustomizationUpdateDto(
+                CostumeSlots:
+                [
+                    new Ac15CostumeSlotUpdateDto("kigurumi", 7, [0, 7]),
+                    new Ac15CostumeSlotUpdateDto("head", 8, [0, 8]),
+                    new Ac15CostumeSlotUpdateDto("body", 9, [0, 9]),
+                    new Ac15CostumeSlotUpdateDto("face", 10, [0, 10]),
+                    new Ac15CostumeSlotUpdateDto("puchi", 11, [0, 11])
+                ],
+                Title: new Ac15TitleSelectionUpdateDto("Green Title", 10, [10]),
+                Tone: new Ac15ToneSelectionUpdateDto(4, [0, 4]),
+                Colors: new Ac15CostumeColorsDto(2, 3, 4)),
+            new Ac15ProfileOptionGroupsUpdateDto(
+                NamePlate: new Ac15NamePlateOptionsDto(false),
+                Folder: new Ac15FolderOptionsDto(false),
+                SongSelect: new Ac15SongSelectOptionsDto(4, 3),
+                Taikojuku: new Ac15TaikojukuFolderDanUpdateDto(3),
+                Tutorials: new Ac15TutorialOptionsDto(true),
+                CustomizationBehavior: new Ac15CustomizationBehaviorOptionsDto(false))));
 
-        await controller.SaveUserSetting("Green", 1, new UserSetting
-        {
-            MyDonName = "GREEN",
-            GreenTaikojukuDan = 3
-        });
+        Assert.IsType<NoContentResult>(result);
+        Assert.Equal("GREEN", (await fixture.Context.UserData.FindAsync(1u))!.MyDonName);
+        Assert.Equal(1u, (await fixture.Context.UserData.FindAsync(1u))!.MyDonNameLanguage);
+        Assert.Equal(7u, save.Costume1);
+        Assert.Equal(8u, save.Costume2);
+        Assert.Equal(9u, save.Costume3);
+        Assert.Equal(10u, save.Costume4);
+        Assert.Equal(11u, save.Costume5);
+        Assert.Contains(7u, BitsetCodec.Decode(save.CostumeFlg1, GreenProtocolBytes.CostumeFlagBytes));
+        Assert.Contains(10u, BitsetCodec.Decode(save.TitleFlg, GreenProtocolBytes.TitleFlagBytes));
+        Assert.Contains(4u, BitsetCodec.Decode(save.ToneFlg, GreenProtocolBytes.ToneFlagBytes));
+        Assert.Equal("Green Title", save.Title);
+        Assert.Equal(10u, save.TitleplateId);
+        Assert.Equal(4u, save.DefaultToneSetting);
+        Assert.Equal(2u, save.ColorBody);
+        Assert.Equal(3u, save.ColorFace);
+        Assert.Equal(4u, save.ColorLimb);
+        Assert.Equal(0u, save.DispDanType);
+        Assert.False(save.IsTojiru);
+        Assert.Equal(2u, save.DispScoreType);
+        Assert.False(save.IsAutoCostumeOn);
+        Assert.True(save.IsExplain);
+        Assert.Equal(4u, save.DispLevelChassis);
+        Assert.Equal(3u, save.DispLevelSelf);
         Assert.Equal(3u, save.DispTaikojukuDan);
     }
 
     [Fact]
-    public async Task UserSettings_Green_PostPersistsUnlockBitsetsWhenEditingIsFree()
-    {
-        await using var fixture = await GreenHandlerFixture.CreateAsync();
-        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
-        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
-        await fixture.Context.SaveChangesAsync();
-
-        var controller = CreateUserSettingsController(
-            fixture.Context,
-            new AuthSettings
-            {
-                AuthenticationRequired = false,
-                AllowFreeProfileEditing = true
-            });
-
-        var result = await controller.SaveUserSetting("Green", 1, new UserSetting
-        {
-            MyDonName = "GREEN",
-            Kigurumi = 7,
-            Head = 8,
-            Body = 9,
-            Face = 10,
-            Puchi = 11,
-            UnlockedKigurumi = [0, 7],
-            UnlockedHead = [0, 8],
-            UnlockedBody = [0, 9],
-            UnlockedFace = [0, 10],
-            UnlockedPuchi = [0, 11],
-            UnlockedTitle = [10],
-            UnlockedTone = [0, 4],
-            ToneId = 4,
-            Title = "Green Title",
-            TitlePlateId = 0,
-            BodyColor = 2,
-            FaceColor = 3,
-            LimbColor = 4,
-            IsDisplayDanOnNamePlate = false
-        });
-
-        Assert.IsType<NoContentResult>(result);
-        var save = await fixture.Context.UserSaveDataGreen.FindAsync(1u);
-        Assert.NotNull(save);
-        Assert.Contains(7u, BitsetCodec.Decode(save!.CostumeFlg1, GreenProtocolBytes.CostumeFlagBytes));
-        Assert.Contains(10u, BitsetCodec.Decode(save.TitleFlg, GreenProtocolBytes.TitleFlagBytes));
-        Assert.Contains(4u, BitsetCodec.Decode(save.ToneFlg, GreenProtocolBytes.ToneFlagBytes));
-        Assert.Equal(4u, save.DefaultToneSetting);
-        Assert.Equal(0u, save.DispDanType);
-        Assert.Equal(0u, save.DispTaikojukuDan);
-        Assert.Equal("GREEN", (await fixture.Context.UserData.FindAsync(1u))!.MyDonName);
-    }
-
-    [Fact]
-    public async Task UserSettings_Green_PostLeavesTaikojukuFolderDanUnchangedWhenOmitted()
+    public async Task Ac15ProfileSettings_Green_PutRejectsInvalidDefaultSelectedAndSelfBestDifficulty()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
         var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
-        save.DispTaikojukuDan = 4;
+        save.DispLevelChassis = 2;
+        save.DispLevelSelf = 3;
         fixture.Context.UserSaveDataGreen.Add(save);
         await fixture.Context.SaveChangesAsync();
 
-        var controller = CreateUserSettingsController(fixture.Context);
+        var controller = CreateAc15ProfileSettingsController(fixture.Context);
 
-        await controller.SaveUserSetting("Green", 1, new UserSetting
-        {
-            MyDonName = "GREEN",
-            GreenTaikojukuDan = 0
-        });
+        var result = await controller.Put("Green", 1, new Ac15ProfileSettingsUpdateDto(
+            new Ac15ProfileIdentityDto("GREEN", 0),
+            Customization: null,
+            Options: new Ac15ProfileOptionGroupsUpdateDto(
+                NamePlate: null,
+                Folder: null,
+                SongSelect: new Ac15SongSelectOptionsDto(2, 5),
+                Taikojuku: null,
+                Tutorials: null,
+                CustomizationBehavior: null)));
 
-        Assert.Equal(4u, save.DispTaikojukuDan);
-    }
-
-    [Fact]
-    public async Task UserSettings_Green_PostPersistsTitleIdAndFreeTextTitle()
-    {
-        await using var fixture = await GreenHandlerFixture.CreateAsync();
-        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
-        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
-        save.Title = "Persisted Title";
-        fixture.Context.UserSaveDataGreen.Add(save);
-        await fixture.Context.SaveChangesAsync();
-
-        var controller = CreateUserSettingsController(
-            fixture.Context,
-            new AuthSettings
-            {
-                AuthenticationRequired = false,
-                AllowFreeProfileEditing = true
-            });
-
-        var result = await controller.SaveUserSetting("Green", 1, new UserSetting
-        {
-            MyDonName = "GREEN",
-            Title = "Injected Free Text",
-            TitlePlateId = 10,
-            UnlockedTitle = []
-        });
-
-        Assert.IsType<NoContentResult>(result);
-        Assert.Equal(10u, save.TitleplateId);
-        Assert.Equal("Injected Free Text", save.Title);
-        Assert.Contains(10u, BitsetCodec.Decode(save.TitleFlg, GreenProtocolBytes.TitleFlagBytes));
-    }
-
-    [Fact]
-    public async Task UserSettings_Green_PostPersistsCustomizationWithoutUnlockEnforcement()
-    {
-        await using var fixture = await GreenHandlerFixture.CreateAsync();
-        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
-        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
-        save.Title = "Persisted Title";
-        save.TitleplateId = 10;
-        save.Costume1 = 5;
-        save.Costume2 = 6;
-        save.Costume3 = 7;
-        save.Costume4 = 9;
-        save.Costume5 = 10;
-        save.DefaultToneSetting = 4;
-        save.CostumeFlg1 = BitsetCodec.Encode([0, 5], GreenProtocolBytes.CostumeFlagBytes);
-        save.CostumeFlg2 = BitsetCodec.Encode([0, 6, 8], GreenProtocolBytes.CostumeFlagBytes);
-        save.CostumeFlg3 = BitsetCodec.Encode([0, 7], GreenProtocolBytes.CostumeFlagBytes);
-        save.CostumeFlg4 = BitsetCodec.Encode([0, 9], GreenProtocolBytes.CostumeFlagBytes);
-        save.CostumeFlg5 = BitsetCodec.Encode([0, 10], GreenProtocolBytes.CostumeFlagBytes);
-        save.TitleFlg = BitsetCodec.Encode([10], GreenProtocolBytes.TitleFlagBytes);
-        save.ToneFlg = BitsetCodec.Encode([0, 4, 6], GreenProtocolBytes.ToneFlagBytes);
-        fixture.Context.UserSaveDataGreen.Add(save);
-        await fixture.Context.SaveChangesAsync();
-
-        var controller = CreateUserSettingsController(
-            fixture.Context,
-            new AuthSettings
-            {
-                AuthenticationRequired = true,
-                AllowFreeProfileEditing = false
-            });
-        controller.ControllerContext.HttpContext.User = CreateUserPrincipal(1);
-
-        var result = await controller.SaveUserSetting("Green", 1, new UserSetting
-        {
-            MyDonName = "GREEN",
-            Kigurumi = 25,
-            Head = 8,
-            Body = 26,
-            Face = 27,
-            Puchi = 28,
-            ToneId = 12,
-            Title = "Locked Title",
-            TitlePlateId = 99,
-            UnlockedKigurumi = [0, 5, 25],
-            UnlockedHead = [0, 6, 8],
-            UnlockedBody = [0, 7, 26],
-            UnlockedFace = [0, 9, 27],
-            UnlockedPuchi = [0, 10, 28],
-            UnlockedTitle = [10, 99],
-            UnlockedTone = [0, 4, 6, 12]
-        });
-
-        Assert.IsType<NoContentResult>(result);
-        Assert.Equal("Locked Title", save.Title);
-        Assert.Equal(99u, save.TitleplateId);
-        Assert.Equal(25u, save.Costume1);
-        Assert.Equal(8u, save.Costume2);
-        Assert.Equal(26u, save.Costume3);
-        Assert.Equal(27u, save.Costume4);
-        Assert.Equal(28u, save.Costume5);
-        Assert.Equal(12u, save.DefaultToneSetting);
-        Assert.Contains(25u, BitsetCodec.Decode(save.CostumeFlg1, GreenProtocolBytes.CostumeFlagBytes));
-        Assert.Contains(99u, BitsetCodec.Decode(save.TitleFlg, GreenProtocolBytes.TitleFlagBytes));
-        Assert.Contains(12u, BitsetCodec.Decode(save.ToneFlg, GreenProtocolBytes.ToneFlagBytes));
+        Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal(2u, save.DispLevelChassis);
+        Assert.Equal(3u, save.DispLevelSelf);
     }
 
     [Fact]
@@ -762,6 +484,20 @@ public class GreenAdminApiControllerTests
         return new SongLeaderboardController(context)
         {
             ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
+        };
+    }
+
+    private static Ac15ProfileSettingsController CreateAc15ProfileSettingsController(ITaikoDbContext context)
+    {
+        var authSettings = new AuthSettings { AuthenticationRequired = false, AllowFreeProfileEditing = true };
+        var httpContext = CreateHttpContext();
+        httpContext.RequestServices = new ServiceCollection()
+            .AddSingleton(Options.Create(authSettings))
+            .BuildServiceProvider();
+
+        return new Ac15ProfileSettingsController(context, Options.Create(authSettings))
+        {
+            ControllerContext = new ControllerContext { HttpContext = httpContext }
         };
     }
 

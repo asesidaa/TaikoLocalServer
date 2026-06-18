@@ -104,6 +104,34 @@ public sealed class Ac15ProfileSettingsControllerTests
         Assert.Equal("Local ranking difficulty must be between 0 and 4.", badRequest.Value);
     }
 
+    [Fact]
+    public async Task UserSettingsController_RejectsAc15AfterMigrationAndKeepsNijiiro()
+    {
+        await using var database = await SchemaDatabase.CreateAsync();
+        database.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        database.Context.UserSaveDataNijiiro.Add(UserSaveDataNijiiroExtensions.CreateDefaultNijiiroSaveData(1));
+        database.Context.UserSaveDataBlue.Add(UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1));
+        await database.Context.SaveChangesAsync();
+        var authSettings = new AuthSettings { AuthenticationRequired = false };
+        var services = new ServiceCollection()
+            .AddSingleton(Options.Create(authSettings))
+            .BuildServiceProvider();
+        var controller = new UserSettingsController(database.Context, Options.Create(authSettings))
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { RequestServices = services }
+            }
+        };
+
+        var nijiiro = await controller.GetUserSetting("Nijiiro", 1);
+        var blue = await controller.GetUserSetting("Blue", 1);
+
+        Assert.IsType<OkObjectResult>(nijiiro.Result);
+        var badRequest = Assert.IsType<BadRequestObjectResult>(blue.Result);
+        Assert.Equal("Unsupported game era 'Blue'.", badRequest.Value);
+    }
+
     private static Ac15ProfileSettingsController CreateController(ITaikoDbContext context)
     {
         var authSettings = new AuthSettings { AuthenticationRequired = false, AllowFreeProfileEditing = true };

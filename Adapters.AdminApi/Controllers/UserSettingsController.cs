@@ -45,10 +45,6 @@ public partial class UserSettingsController(
         return gameEra switch
         {
             GameEra.Nijiiro => await GetNijiiroUserSetting(baid),
-            GameEra.Green => await GetGreenUserSetting(baid),
-            GameEra.Blue => await GetBlueUserSetting(baid),
-            GameEra.Yellow => await GetYellowUserSetting(baid),
-            GameEra.Red => await GetRedUserSetting(baid),
             _ => EraRoute.BadEra(era)
         };
     }
@@ -69,10 +65,6 @@ public partial class UserSettingsController(
         return gameEra switch
         {
             GameEra.Nijiiro => await SaveNijiiroUserSetting(baid, userSetting),
-            GameEra.Green => await SaveGreenUserSetting(baid, userSetting),
-            GameEra.Blue => await SaveBlueUserSetting(baid, userSetting),
-            GameEra.Yellow => await SaveYellowUserSetting(baid, userSetting),
-            GameEra.Red => await SaveRedUserSetting(baid, userSetting),
             _ => EraRoute.BadEra(era)
         };
     }

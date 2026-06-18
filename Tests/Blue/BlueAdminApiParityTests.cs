@@ -121,7 +121,7 @@ public sealed class BlueAdminApiParityTests
     }
 
     [Fact]
-    public async Task UserSettings_Blue_DecodesAndPersistsBlueCustomization()
+    public async Task Ac15ProfileSettings_Blue_DecodesAndPersistsBlueCustomization()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -137,33 +137,34 @@ public sealed class BlueAdminApiParityTests
         fixture.Context.UserSaveDataBlue.Add(save);
         await fixture.Context.SaveChangesAsync();
 
-        var controller = CreateUserSettingsController(fixture.Context);
-        var getResult = await controller.GetUserSetting("Blue", 1);
+        var controller = CreateAc15ProfileSettingsController(fixture.Context);
+        var getResult = await controller.Get("Blue", 1);
 
         var ok = Assert.IsType<OkObjectResult>(getResult.Result);
-        var setting = Assert.IsType<UserSetting>(ok.Value);
-        Assert.Equal(5u, setting.Kigurumi);
-        Assert.Equal(new List<uint> { 0, 5 }, setting.UnlockedKigurumi);
-        Assert.Equal(new List<uint> { 10 }, setting.UnlockedTitle);
-        Assert.Equal(new List<uint> { 0, 4 }, setting.UnlockedTone);
-        Assert.True(setting.Ac15HowToPlayTutorialDisabled);
+        var setting = Assert.IsType<Ac15ProfileSettingsDto>(ok.Value);
+        Assert.Equal(5u, Assert.Single(setting.Customization!.CostumeSlots, slot => slot.Slot == "kigurumi").CurrentId);
+        Assert.Equal([0u, 5u], Assert.Single(setting.Customization.CostumeSlots, slot => slot.Slot == "kigurumi").UnlockedIds);
+        Assert.Equal([10u], setting.Customization.Title!.UnlockedTitleIds);
+        Assert.Equal([0u, 4u], setting.Customization.Tone!.UnlockedToneIds);
+        Assert.True(setting.Options.Tutorials!.DisableHowToPlayTutorial);
 
-        var saveResult = await controller.SaveUserSetting("Blue", 1, new UserSetting
-        {
-            MyDonName = "BLUE",
-            Kigurumi = 7,
-            UnlockedKigurumi = [0, 7],
-            UnlockedTitle = [10],
-            Title = "Blue Title",
-            TitlePlateId = 10,
-            UnlockedTone = [0, 6],
-            ToneId = 6,
-            GreenIsTojiru = false,
-            GreenIsAutoCostumeOn = false,
-            Ac15HowToPlayTutorialDisabled = false,
-            GreenDispLevelChassis = 4,
-            GreenDispLevelSelf = 3
-        });
+        var saveResult = await controller.Put("Blue", 1, new Ac15ProfileSettingsUpdateDto(
+            new Ac15ProfileIdentityDto("BLUE", 0),
+            new Ac15CustomizationUpdateDto(
+                CostumeSlots:
+                [
+                    new Ac15CostumeSlotUpdateDto("kigurumi", 7, [0, 7])
+                ],
+                Title: new Ac15TitleSelectionUpdateDto("Blue Title", 10, [10]),
+                Tone: new Ac15ToneSelectionUpdateDto(6, [0, 6]),
+                Colors: null),
+            new Ac15ProfileOptionGroupsUpdateDto(
+                NamePlate: null,
+                Folder: new Ac15FolderOptionsDto(false),
+                SongSelect: new Ac15SongSelectOptionsDto(4, 3),
+                Taikojuku: null,
+                Tutorials: new Ac15TutorialOptionsDto(false),
+                CustomizationBehavior: new Ac15CustomizationBehaviorOptionsDto(false))));
 
         Assert.IsType<NoContentResult>(saveResult);
         Assert.Equal("BLUE", (await fixture.Context.UserData.FindAsync(1u))!.MyDonName);
@@ -242,15 +243,15 @@ public sealed class BlueAdminApiParityTests
         };
     }
 
-    private static UserSettingsController CreateUserSettingsController(ITaikoDbContext context)
+    private static Ac15ProfileSettingsController CreateAc15ProfileSettingsController(ITaikoDbContext context)
     {
-        var authSettings = new AuthSettings { AuthenticationRequired = false };
+        var authSettings = new AuthSettings { AuthenticationRequired = false, AllowFreeProfileEditing = true };
         var httpContext = CreateHttpContext();
         httpContext.RequestServices = new ServiceCollection()
             .AddSingleton(Options.Create(authSettings))
             .BuildServiceProvider();
 
-        return new UserSettingsController(context, Options.Create(authSettings))
+        return new Ac15ProfileSettingsController(context, Options.Create(authSettings))
         {
             ControllerContext = new ControllerContext { HttpContext = httpContext }
         };
