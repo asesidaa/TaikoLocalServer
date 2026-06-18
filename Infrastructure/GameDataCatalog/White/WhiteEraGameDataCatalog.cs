@@ -32,6 +32,8 @@ public sealed class WhiteEraGameDataCatalog(
     private IReadOnlyDictionary<uint, Ac15TelopEntry> telops = new Dictionary<uint, Ac15TelopEntry>();
     private Ac15RecommendEntry recommend = Ac15RecommendEntry.Empty;
     private IReadOnlyList<MovieData> movies = [];
+    private IReadOnlyList<Ac15PresentItem> presents = [];
+    private IReadOnlyList<Ac15SpecialBaidEntry> specialBaids = [];
     private IReadOnlyList<Costume> costumeList = [];
     private IReadOnlyDictionary<uint, Title> titleDictionary = new Dictionary<uint, Title>();
     private IReadOnlyDictionary<uint, Neiro> neiroDictionary = new Dictionary<uint, Neiro>();
@@ -57,6 +59,10 @@ public sealed class WhiteEraGameDataCatalog(
     public Ac15RecommendEntry Recommend => recommend;
 
     public IReadOnlyList<MovieData> Movies => movies;
+
+    public IReadOnlyList<Ac15PresentItem> Presents => presents;
+
+    public IReadOnlyList<Ac15SpecialBaidEntry> SpecialBaids => specialBaids;
 
     public IReadOnlyList<Costume> GetCostumeList() => costumeList;
 
@@ -146,6 +152,12 @@ public sealed class WhiteEraGameDataCatalog(
             nameof(GameEra.White),
             logger,
             cancellationToken);
+        presents = await Ac15PresentLoader.LoadFromFileAsync(
+            WhiteGameDataPaths.PresentXml,
+            cancellationToken);
+        specialBaids = await Ac15SpecialBaidLoader.LoadFromFileAsync(
+            WhiteGameDataPaths.SpecialBaidXml,
+            cancellationToken);
         var whiteCustomization = await Ac15CustomizationCatalogSupport.LoadEraCatalogAsync(
             GameEra.White,
             CostumeFileName,
@@ -170,7 +182,7 @@ public sealed class WhiteEraGameDataCatalog(
         neiroDictionary = customizationCatalog.Neiros;
 
         logger.LogInformation(
-            "Loaded White catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {TaikojukuCount} taikojuku packs, {StarCount} tuning star rows, {CostumeCount} costumes, {TitleCount} titles, {NeiroCount} tones, {MovieCount} attract movies",
+            "Loaded White catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {TaikojukuCount} taikojuku packs, {StarCount} tuning star rows, {CostumeCount} costumes, {TitleCount} titles, {NeiroCount} tones, {MovieCount} attract movies, {PresentCount} present rows, {SpecialBaidCount} special BAID rows",
             musicInfoFileOrder.Count,
             songHashVersion,
             taikojukuFileOrder.Count,
@@ -178,7 +190,9 @@ public sealed class WhiteEraGameDataCatalog(
             costumeList.Count,
             titleDictionary.Count,
             neiroDictionary.Count,
-            movies.Count);
+            movies.Count,
+            presents.Count,
+            specialBaids.Count);
     }
 
     private EraSettings GetWhiteSettings()

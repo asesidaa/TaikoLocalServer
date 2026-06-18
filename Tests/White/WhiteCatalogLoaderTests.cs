@@ -63,6 +63,41 @@ public sealed class WhiteCatalogLoaderTests
     }
 
     [Fact]
+    public async Task PresentLoader_ReadsLocalWhiteDonPointRewardsWhenPresent()
+    {
+        var file = FindRepoFileOrSkip("Host", "wwwroot", "data", "white", "data", "config", "ST7100-1", "present.xml");
+        if (file is null)
+        {
+            return;
+        }
+
+        var rows = await Ac15PresentLoader.LoadFromFileAsync(file, CancellationToken.None);
+
+        Assert.Equal(10, rows.Count);
+        Assert.Equal(0u, rows[0].Index);
+        Assert.Equal(4u, rows[0].ItemType);
+        Assert.Equal(38u, rows[0].ItemNumber);
+        Assert.Equal(1000u, rows[0].DonPoint);
+        Assert.Equal(rows.Count, rows.Select(row => row.Index).Distinct().Count());
+    }
+
+    [Fact]
+    public async Task SpecialBaidLoader_ReadsLocalWhiteSpecialBaidRowsWhenPresent()
+    {
+        var file = FindRepoFileOrSkip("Host", "wwwroot", "data", "white", "data", "config", "ST7100-1", "spacialbaid.xml");
+        if (file is null)
+        {
+            return;
+        }
+
+        var rows = await Ac15SpecialBaidLoader.LoadFromFileAsync(file, CancellationToken.None);
+
+        Assert.Equal(2, rows.Count);
+        Assert.Contains(rows, row => row.Baid == 0 && row.AccessCode == "00000000000000000000");
+        Assert.Contains(rows, row => row.Baid == 316 && row.AccessCode == "30028566915530313138");
+    }
+
+    [Fact]
     public void RequiredDataFiles_ThrowsWhiteSpecificMessageForMissingFile()
     {
         var missingPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}", "musicinfo.xml");

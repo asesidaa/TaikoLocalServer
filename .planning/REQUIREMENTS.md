@@ -14,7 +14,7 @@
 
 ### White Catalog And Profile
 
-- [ ] **WCAT-01**: White catalog initialization loads the proven White data root and binds matching AC15 music, medley, tuning, folder, telop, recommendation, movie/customization, Taikojuku, present, and special-BAID data through shared loaders where file formats match.
+- [x] **WCAT-01**: White catalog initialization loads the proven White data root and binds matching AC15 music, medley, tuning, folder, telop, recommendation, movie/customization, Taikojuku, present, and special-BAID data through shared loaders where file formats match.
 - [x] **WCAT-02**: White has an explicit AC15 capability/profile model with White protocol limits, feature flags, wire placement, and typed persistence boundaries, while absent 0.13 surfaces remain disabled.
 - [x] **WCAT-03**: White server-authored sidecar data exists and is copied for every implemented White feature that needs committed server data outside raw operator files, including intentionally empty sidecars where absence is the contract.
 
@@ -27,9 +27,9 @@
 
 ### White Rewards And Collectables
 
-- [ ] **WCOLL-01**: White reward/present and Don Point behavior uses White-owned profile/unlock flags and local `present.xml`/protocol evidence, without creating Yellow item-shop/medal, Banacoin wallet/payment, or unrelated unlock semantics.
-- [ ] **WCOLL-02**: White collectable data for songs, tones, costumes, titles, special BAID rows, presents, and other 0.13-scoped rewards is collected with provenance and bound after core runtime behavior is stable.
-- [ ] **WCOLL-03**: White Don Challenge/ChallengeCompe behavior is implemented only if White 0.13 evidence proves the data, field placement, readback surface, reward timing, and state semantics; otherwise it remains absent or data-only with the gap recorded.
+- [x] **WCOLL-01**: White reward/present and Don Point behavior uses White-owned profile/unlock flags and local `present.xml`/protocol evidence, without creating Yellow item-shop/medal, Banacoin wallet/payment, or unrelated unlock semantics.
+- [x] **WCOLL-02**: White collectable data for songs, tones, costumes, titles, special BAID rows, presents, and other 0.13-scoped rewards is collected with provenance and bound after core runtime behavior is stable.
+- [x] **WCOLL-03**: White Don Challenge/ChallengeCompe behavior is implemented only if White 0.13 evidence proves the data, field placement, readback surface, reward timing, and state semantics; otherwise it remains absent or data-only with the gap recorded.
 
 ### Admin, Verification, And Closeout
 
@@ -69,16 +69,16 @@ Roadmap phase mapping for v1.4 White AC15 0.13 Support.
 | WFND-01 | Phase 23 | Complete |
 | WFND-02 | Phase 23 | Complete |
 | WFND-03 | Phase 23 | Complete |
-| WCAT-01 | Phase 24/26 | Partial |
+| WCAT-01 | Phase 24/26 | Verified |
 | WCAT-02 | Phase 24 | Verified |
 | WCAT-03 | Phase 24 | Verified |
 | WSTATE-01 | Phase 25 | Verified |
 | WSTATE-02 | Phase 25 | Verified |
 | WSTATE-03 | Phase 25 | Verified |
 | WSTATE-04 | Phase 25 | Verified |
-| WCOLL-01 | Phase 25/26 | Partial |
-| WCOLL-02 | Phase 26 | Pending |
-| WCOLL-03 | Phase 26 | Pending |
+| WCOLL-01 | Phase 25/26 | Verified |
+| WCOLL-02 | Phase 26 | Verified |
+| WCOLL-03 | Phase 26 | Verified absent |
 | WVER-01 | Phase 27 | Pending |
 | WVER-02 | Phase 27 | Pending |
 | WVER-03 | Phase 27 | Pending |
@@ -94,4 +94,4 @@ Roadmap phase mapping for v1.4 White AC15 0.13 Support.
 
 ---
 *Requirements defined: 2026-06-16*
-*Last updated: 2026-06-18 after Phase 25 White runtime binding*
+*Last updated: 2026-06-18 after Phase 26 White collectable evidence*

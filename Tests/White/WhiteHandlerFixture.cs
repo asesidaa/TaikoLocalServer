@@ -77,6 +77,10 @@ internal sealed class WhiteHandlerFixture : IAsyncDisposable
 
         public IReadOnlyList<MovieData> Movies { get; init; } = [];
 
+        public IReadOnlyList<Ac15PresentItem> Presents { get; init; } = [];
+
+        public IReadOnlyList<Ac15SpecialBaidEntry> SpecialBaids { get; init; } = [];
+
         public IReadOnlyList<Costume> CostumeList { get; init; } =
         [
             new() { CostumeId = 0, CostumeType = "kigurumi" },

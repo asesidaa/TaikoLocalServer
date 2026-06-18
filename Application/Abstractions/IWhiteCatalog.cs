@@ -22,6 +22,10 @@ public interface IWhiteCatalog : IEraGameDataCatalog
 
     IReadOnlyList<MovieData> Movies { get; }
 
+    IReadOnlyList<Ac15PresentItem> Presents { get; }
+
+    IReadOnlyList<Ac15SpecialBaidEntry> SpecialBaids { get; }
+
     IReadOnlyList<Costume> GetCostumeList();
 
     IReadOnlyDictionary<uint, Title> GetTitleDictionary();

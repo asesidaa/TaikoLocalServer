@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Phase Summary
 status: in_progress
-stopped_at: Phase 25 complete and verified
+stopped_at: Phase 26 complete and verified
 last_updated: "2026-06-18T16:45:00.000Z"
-last_activity: 2026-06-18 -- Phase 25 White runtime binding completed
+last_activity: 2026-06-18 -- Phase 26 White collectable evidence completed
 progress:
   total_phases: 6
-  completed_phases: 4
-  total_plans: 8
-  completed_plans: 8
-  percent: 67
+  completed_phases: 5
+  total_plans: 9
+  completed_plans: 9
+  percent: 83
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-18)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Phase 26 - White collectable data and Don Challenge evidence
+**Current focus:** Phase 27 - White AdminApi WebUI and runtime closeout
 
 ## Current Position
 
-Phase: 25 - COMPLETE
+Phase: 26 - COMPLETE
 Plan: 1 of 1
-Status: Phase 25 complete; autonomous flow continues to Phase 26
-Last activity: 2026-06-18 -- Phase 25 White runtime binding completed
+Status: Phase 26 complete; autonomous flow continues to Phase 27
+Last activity: 2026-06-18 -- Phase 26 White collectable evidence completed
 
 ## Performance Metrics
 
@@ -259,6 +259,8 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 25]: White runtime state is White-owned. White identity, save/profile, normal play, favorite, recent, self-best, crowns, reward/Don Point, and Dani behavior now bind through White tables and explicit shared AC15 helpers without writing Blue, Green, Yellow, Red, Nijiiro, shop, Tokkun, battle, or Don Challenge state.
 - [Phase 25]: White unsupported mode sections remain absent. Mapperly-generated White playresult maps Tokkun, BlueBattle, GreenGhost, and DonChallenge sections to null, and White userdata intentionally omits Tokkun tutorial and ChallengeCompe stateful readback.
 - [Phase 25]: White present and special-BAID provenance is not complete. Phase 25 covers protocol-backed `get_donpoint`, `reward_ptn`, `reward_progress`, and unlock flags; Phase 26 owns `present.xml`, `spacialbaid.xml`, collectable sidecars, and the Don Challenge evidence decision.
+- [Phase 26]: White present and special-BAID data is catalog-bound. `present.xml` rows are parsed as numeric item-type/item-number/Don Point reward facts, and `spacialbaid.xml` rows are parsed as catalog facts without mutating identity behavior.
+- [Phase 26]: White Don Challenge remains absent/data-only. Embedded White challenge fields are not enough evidence for active bundle data, standalone route ownership, reward timing, readback mutation, or state semantics.
 
 ### Pending Todos
 
@@ -284,10 +286,10 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ## Session Continuity
 
-Last session: 2026-06-18T16:45:00.000Z
-Stopped at: Phase 25 complete and verified
-Resume file: .planning/phases/25-white-runtime-capability-binding-and-rewards/25-01-SUMMARY.md
+Last session: 2026-06-18T17:15:00.000Z
+Stopped at: Phase 26 complete and verified
+Resume file: .planning/phases/26-white-collectable-data-and-don-challenge-evidence/26-01-SUMMARY.md
 
 ## Operator Next Steps
 
-- Continue Phase 26 collectable data and Don Challenge evidence. Manual RPCS3/cabinet and WebUI verification remains reserved for Phase 27 closeout per user instruction.
+- Continue Phase 27 AdminApi/WebUI automation and runtime closeout. Stop before final manual RPCS3/cabinet and WebUI verification per user instruction.

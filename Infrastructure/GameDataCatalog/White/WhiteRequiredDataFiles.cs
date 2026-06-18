@@ -9,6 +9,8 @@ public static class WhiteRequiredDataFiles
             WhiteGameDataPaths.MusicInfoXml,
             WhiteGameDataPaths.MusicMedleyInfoXml,
             WhiteGameDataPaths.DefMusicBin,
+            WhiteGameDataPaths.PresentXml,
+            WhiteGameDataPaths.SpecialBaidXml,
             WhiteGameDataPaths.TuningBin
         ];
     }
