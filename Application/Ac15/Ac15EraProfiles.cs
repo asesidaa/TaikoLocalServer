@@ -30,7 +30,8 @@ public static class Ac15EraProfiles
             CrownPlacement: Ac15CrownWirePlacement.DedicatedEndpoint,
             HasInitialDataItemShopRows: true,
             HasInitialDataLegalTermsRows: true,
-            HasTokkunTutorialFlagInUserData: true));
+            HasTokkunTutorialFlagInUserData: true),
+        Ac15ProfileCapabilities.CurrentFull);
 
     public static Ac15EraProfile Green { get; } = new(
         GameEra.Green,
@@ -40,7 +41,8 @@ public static class Ac15EraProfiles
             CrownPlacement: Ac15CrownWirePlacement.DedicatedEndpoint,
             HasInitialDataItemShopRows: true,
             HasInitialDataLegalTermsRows: false,
-            HasTokkunTutorialFlagInUserData: false));
+            HasTokkunTutorialFlagInUserData: false),
+        Ac15ProfileCapabilities.CurrentFull);
 
     public static Ac15EraProfile Yellow { get; } = new(
         GameEra.Yellow,
@@ -50,7 +52,8 @@ public static class Ac15EraProfiles
             CrownPlacement: Ac15CrownWirePlacement.DedicatedEndpoint,
             HasInitialDataItemShopRows: true,
             HasInitialDataLegalTermsRows: true,
-            HasTokkunTutorialFlagInUserData: true));
+            HasTokkunTutorialFlagInUserData: true),
+        Ac15ProfileCapabilities.CurrentFull);
 
     public static Ac15EraProfile Red { get; } = new(
         GameEra.Red,
@@ -60,7 +63,8 @@ public static class Ac15EraProfiles
             CrownPlacement: Ac15CrownWirePlacement.DedicatedEndpoint,
             HasInitialDataItemShopRows: false,
             HasInitialDataLegalTermsRows: true,
-            HasTokkunTutorialFlagInUserData: true));
+            HasTokkunTutorialFlagInUserData: true),
+        Ac15ProfileCapabilities.CurrentFull);
 
     public static int? GetMaxFavoriteSongs(GameEra era)
         => TryGet(era, out var profile) ? profile.Limits.MaxFavoriteSongs : null;

@@ -11,6 +11,7 @@ global using TaikoLocalServer.Application.Dtos;
 global using TaikoLocalServer.Application.Dtos.Ac15;
 global using TaikoLocalServer.Application.Handlers;
 global using TaikoLocalServer.Application.Settings;
+global using TaikoLocalServer.Contracts.AdminApi.Ac15ProfileSettings;
 global using TaikoLocalServer.Domain.Entities;
 global using TaikoLocalServer.Domain.Enums;
 global using TaikoLocalServer.Infrastructure.GameDataCatalog;

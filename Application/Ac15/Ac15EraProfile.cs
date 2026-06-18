@@ -4,4 +4,5 @@ public sealed record Ac15EraProfile(
     GameEra Era,
     Ac15FeatureSet Features,
     Ac15ProtocolLimits Limits,
-    Ac15WirePlacement WirePlacement);
+    Ac15WirePlacement WirePlacement,
+    Ac15ProfileCapabilities ProfileCapabilities);

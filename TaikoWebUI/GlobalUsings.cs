@@ -12,5 +12,6 @@ global using TaikoLocalServer.Contracts.AdminApi.Requests;
 global using TaikoLocalServer.Contracts.AdminApi.Responses;
 global using TaikoLocalServer.Contracts.AdminApi.ServerData;
 global using TaikoLocalServer.Contracts.AdminApi.Converters;
+global using TaikoLocalServer.Contracts.AdminApi.Ac15ProfileSettings;
 global using TaikoLocalServer.Domain.Enums;
 global using Throw;
