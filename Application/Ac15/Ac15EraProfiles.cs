@@ -90,7 +90,7 @@ public static class Ac15EraProfiles
         CrownPackedBytes: BlueProtocolBytes.CrownInflatedBytes,
         CrownSongCount: 1024,
         MaxFavoriteSongs: 10,
-        MaxRecentSongs: 10,
+        MaxRecentSongs: 5,
         MaxSongsPerTaikojukuPack: 10,
         MaxRequestedTaikojukuSlots: 11,
         MinCourseLevel: 1,

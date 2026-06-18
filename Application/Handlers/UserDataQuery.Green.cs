@@ -31,7 +31,7 @@ public partial class UserDataQueryHandler
             .Where(song => song.Baid == request.Baid)
             .OrderByDescending(song => song.LastPlayed)
             .Select(song => song.SongNo)
-            .Take(10)
+            .Take(Ac15EraProfiles.Green.Limits.MaxRecentSongs)
             .ToArrayAsync(cancellationToken);
         var normalDanGrades = await context.DanScoreDataGreen
             .Where(row => row.Baid == request.Baid && !row.IsExtra)

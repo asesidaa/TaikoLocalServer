@@ -329,7 +329,7 @@ public sealed class YellowPlayResultHandlerTests
 
         Assert.Equal(1u, result);
         Assert.Equal(Ac15EraProfiles.Yellow.Limits.MaxFavoriteSongs, await fixture.Context.YellowFavoriteSongs.CountAsync(row => row.Baid == 1));
-        Assert.Equal(Ac15EraProfiles.Yellow.Limits.MaxRecentSongs, await fixture.Context.YellowRecentSongs.CountAsync(row => row.Baid == 1));
+        Assert.Equal(5, await fixture.Context.YellowRecentSongs.CountAsync(row => row.Baid == 1));
     }
 
     [Fact]

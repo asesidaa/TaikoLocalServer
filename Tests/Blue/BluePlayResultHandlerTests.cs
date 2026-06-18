@@ -415,7 +415,7 @@ public sealed class BluePlayResultHandlerTests
 
         Assert.Equal(1u, result);
         Assert.Equal(Ac15EraProfiles.Blue.Limits.MaxFavoriteSongs, await fixture.Context.BlueFavoriteSongs.CountAsync(row => row.Baid == 1));
-        Assert.Equal(Ac15EraProfiles.Blue.Limits.MaxRecentSongs, await fixture.Context.BlueRecentSongs.CountAsync(row => row.Baid == 1));
+        Assert.Equal(5, await fixture.Context.BlueRecentSongs.CountAsync(row => row.Baid == 1));
     }
 
     [Fact]

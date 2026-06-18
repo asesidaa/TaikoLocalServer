@@ -1067,7 +1067,7 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
-    public async Task UpdatePlayResult_Green_RecentSongsTrimToTen()
+    public async Task UpdatePlayResult_Green_RecentSongsTrimToFive()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -1093,9 +1093,9 @@ public sealed class GreenPlayResultHandlerTests
             .Where(s => s.Baid == 1)
             .OrderByDescending(s => s.LastPlayed)
             .ToListAsync();
-        Assert.Equal(10, recents.Count);
+        Assert.Equal(5, recents.Count);
         Assert.Equal(111u, recents[0].SongNo);
-        Assert.Equal(102u, recents[9].SongNo);
+        Assert.Equal(107u, recents[4].SongNo);
         Assert.DoesNotContain(recents, r => r.SongNo == 101u);
     }
 

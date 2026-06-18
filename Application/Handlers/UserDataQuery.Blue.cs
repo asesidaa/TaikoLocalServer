@@ -35,7 +35,7 @@ public partial class UserDataQueryHandler
             .Where(song => song.Baid == request.Baid)
             .OrderByDescending(song => song.LastPlayed)
             .Select(song => song.SongNo)
-            .Take(10)
+            .Take(Ac15EraProfiles.Blue.Limits.MaxRecentSongs)
             .ToArrayAsync(cancellationToken);
 
         var snapshot = Ac15CatalogSnapshotFactory.FromBlue(blue);
