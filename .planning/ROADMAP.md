@@ -106,7 +106,7 @@ Plans:
 
 - `Application/Ac15/DonChallenge` capability naming for catalog, task/progress evaluation, reward decisions, writer, and AdminApi projection helpers.
 - Red-owned `RedDonChallenge*` entities, DbSets, mappings, and data-preserving EF migration from the current Red ChallengeCompe table names.
-- DonChallenge-facing settings/catalog APIs with compatibility aliases for existing `EnableChallengeCompe` and `ActiveChallengeCompeBundleId` config.
+- DonChallenge-facing settings/catalog APIs and config keys only; `ChallengeCompe` config names are reserved for real protocol surfaces and do not enable Don Challenge.
 - `Ac15DonChallengeWriter` for shared normal-play Don Challenge mutation through explicit Red bindings.
 - Shared Tokkun classifier/early-dispatch helper without a broad AC15 playresult pipeline.
 
@@ -192,7 +192,7 @@ Plans:
 2. Collectable reward data mutates only White-owned release-song, title, tone, costume, Don Point, or profile flags proven by White runtime behavior.
 3. Don Challenge remains absent or data-only unless White-specific evidence proves a runtime/readback contract.
 4. If Don Challenge is implemented, White progress/reward state uses explicit field names and White-owned persistence, not Red endpoint assumptions.
-5. Tests cover sidecar parsing, provenance-backed data, reward readback, and any implemented ChallengeCompe behavior through observable White surfaces.
+5. Tests cover sidecar parsing, provenance-backed data, reward readback, Don Challenge behavior, and explicitly stubbed/absent ChallengeCompe protocol surfaces through observable White surfaces.
 
 ### Phase 27: White AdminApi WebUI and Runtime Closeout
 

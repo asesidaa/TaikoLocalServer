@@ -22,7 +22,7 @@ public sealed class RedEraGameDataCatalog(
     public const string CostumeFileName = "red_costume_data.json";
     public const string TitleFileName = "red_title_data.json";
     public const string NeiroFileName = "red_neiro_data.json";
-    public const string DonChallengeFileName = "red_challenge_compe_data.json";
+    public const string DonChallengeFileName = "red_don_challenge_data.json";
 
     private uint songHashVersion;
     private IReadOnlyList<Ac15MusicInfoEntry> musicInfoFileOrder = [];

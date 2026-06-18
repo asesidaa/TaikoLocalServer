@@ -4,7 +4,6 @@ using TaikoLocalServer.Tests.Ac15;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using RedChallengeCompeController = TaikoLocalServer.Adapters.GameProtocol.Red.Controllers.ChallengeCompeController;
 using RedRewardCardCheckController = TaikoLocalServer.Adapters.GameProtocol.Red.Controllers.RewardCardCheckController;
 using RedRewardExecutionController = TaikoLocalServer.Adapters.GameProtocol.Red.Controllers.RewardExecutionController;
 using RedWire = TaikoLocalServer.Adapters.GameProtocol.Red.Wire;
@@ -17,7 +16,7 @@ public sealed class RedDonChallengeTests
     public async Task UpdatePlayResult_Red_MatchedStagePersistsDonChallengeProgressOnlyInRedTables()
     {
         await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog());
-        AddUser(fixture, donChallengeVisible: false, includeOtherEraSaves: true);
+        AddUser(fixture, protocolChallengeVisible: false, includeOtherEraSaves: true);
         var handler = CreateHandler(fixture);
         var stages = new List<Ac15StageResult>
         {
@@ -60,7 +59,7 @@ public sealed class RedDonChallengeTests
     public async Task UpdatePlayResult_Red_CompeBucketsDoNotDriveDonChallengeProgress()
     {
         await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog());
-        AddUser(fixture, donChallengeVisible: true);
+        AddUser(fixture, protocolChallengeVisible: true);
         var handler = CreateHandler(fixture);
         var nonMatchingSongWithMatchingCompeIds = new List<Ac15StageResult>
         {
@@ -75,8 +74,7 @@ public sealed class RedDonChallengeTests
             1,
             GameEra.Red,
             playDatetime: "20160720120000",
-            stages: nonMatchingSongWithMatchingCompeIds,
-            challenge: CreateChallenge(nonMatchingSongWithMatchingCompeIds)),
+            stages: nonMatchingSongWithMatchingCompeIds),
             CancellationToken.None);
 
         Assert.Empty(await fixture.Context.RedDonChallengeRawFacts.ToListAsync());
@@ -102,14 +100,14 @@ public sealed class RedDonChallengeTests
     public async Task UpdatePlayResult_Red_DisabledOrNoActiveChallengeCatalogDoesNotCreateChallengeRows()
     {
         await using var disabledFixture = await RedHandlerFixture.CreateAsync(CreateCatalog(enabled: false));
-        AddUser(disabledFixture, donChallengeVisible: true);
+        AddUser(disabledFixture, protocolChallengeVisible: true);
         await RunMatchedChallengeAsync(disabledFixture);
 
         Assert.Empty(await disabledFixture.Context.RedDonChallengeRawFacts.ToListAsync());
         Assert.Empty(await disabledFixture.Context.RedDonChallengeProgress.ToListAsync());
 
         await using var inactiveFixture = await RedHandlerFixture.CreateAsync(CreateCatalog(activeBundleId: null));
-        AddUser(inactiveFixture, donChallengeVisible: true);
+        AddUser(inactiveFixture, protocolChallengeVisible: true);
         await RunMatchedChallengeAsync(inactiveFixture);
 
         Assert.Empty(await inactiveFixture.Context.RedDonChallengeRawFacts.ToListAsync());
@@ -117,10 +115,10 @@ public sealed class RedDonChallengeTests
     }
 
     [Fact]
-    public async Task UpdatePlayResult_Red_ChallengeCompeVisibilityFlagDoesNotGateDonChallengeRows()
+    public async Task UpdatePlayResult_Red_ProtocolChallengeVisibilityFlagDoesNotGateDonChallengeRows()
     {
         await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog());
-        AddUser(fixture, donChallengeVisible: false);
+        AddUser(fixture, protocolChallengeVisible: false);
 
         await RunMatchedChallengeAsync(fixture);
 
@@ -135,7 +133,7 @@ public sealed class RedDonChallengeTests
             Ac15DonChallengeRuleKind.Clear,
             EligibleSongNoes: [101],
             MinimumLevel: 3)));
-        AddUser(fixture, donChallengeVisible: true);
+        AddUser(fixture, protocolChallengeVisible: true);
         var handler = CreateHandler(fixture);
 
         var normalStage = new List<Ac15StageResult>
@@ -148,8 +146,7 @@ public sealed class RedDonChallengeTests
             1,
             GameEra.Red,
             playDatetime: "20160720120000",
-            stages: normalStage,
-            challenge: CreateChallenge(normalStage)),
+            stages: normalStage),
             CancellationToken.None);
 
         Assert.Empty(await fixture.Context.RedDonChallengeRawFacts.ToListAsync());
@@ -165,8 +162,7 @@ public sealed class RedDonChallengeTests
             1,
             GameEra.Red,
             playDatetime: "20160720120100",
-            stages: hardStage,
-            challenge: CreateChallenge(hardStage)),
+            stages: hardStage),
             CancellationToken.None);
 
         var progress = Assert.Single(await fixture.Context.RedDonChallengeProgress.Where(row => row.Baid == 1).ToListAsync());
@@ -178,7 +174,7 @@ public sealed class RedDonChallengeTests
     public async Task UpdatePlayResult_Red_TokkunChallengeFactsDoNotCreateChallengeOrNormalRows()
     {
         await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog());
-        AddUser(fixture, donChallengeVisible: true);
+        AddUser(fixture, protocolChallengeVisible: true);
         var handler = CreateHandler(fixture);
         var stages = new List<Ac15StageResult>
         {
@@ -199,8 +195,7 @@ public sealed class RedDonChallengeTests
                     TookunSongnoes: [101],
                     TokkunSpeedchangeCnt: 0,
                     TokkunAutoplayCnt: 0,
-                    TokkunJumpCnt: 0)),
-            challenge: CreateChallenge(stages)),
+                    TokkunJumpCnt: 0))),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -218,7 +213,7 @@ public sealed class RedDonChallengeTests
     public async Task UpdatePlayResult_Red_UnmatchedSongDoesNotCreateChallengeRowsEvenWhenCompeBucketsMatch()
     {
         await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog());
-        AddUser(fixture, donChallengeVisible: true);
+        AddUser(fixture, protocolChallengeVisible: true);
         var handler = CreateHandler(fixture);
         var stages = new List<Ac15StageResult>
         {
@@ -233,8 +228,7 @@ public sealed class RedDonChallengeTests
             1,
             GameEra.Red,
             playDatetime: "20160720120000",
-            stages: stages,
-            challenge: CreateChallenge(stages)),
+            stages: stages),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -250,7 +244,7 @@ public sealed class RedDonChallengeTests
             RequiredSongCount: 2,
             EligibleSongNoes: [101, 102, 103]),
             includeDefaultTaskTracks: false));
-        AddUser(fixture, donChallengeVisible: true);
+        AddUser(fixture, protocolChallengeVisible: true);
         var handler = CreateHandler(fixture);
 
         var firstStage = new List<Ac15StageResult>
@@ -261,8 +255,7 @@ public sealed class RedDonChallengeTests
             1,
             GameEra.Red,
             playDatetime: "20160720120000",
-            stages: firstStage,
-            challenge: CreateChallenge(firstStage)),
+            stages: firstStage),
             CancellationToken.None);
 
         var firstProgress = await fixture.Context.RedDonChallengeProgress.SingleAsync(row => row.Baid == 1);
@@ -277,8 +270,7 @@ public sealed class RedDonChallengeTests
             1,
             GameEra.Red,
             playDatetime: "20160720120100",
-            stages: secondStage,
-            challenge: CreateChallenge(secondStage)),
+            stages: secondStage),
             CancellationToken.None);
 
         var progress = await fixture.Context.RedDonChallengeProgress.SingleAsync(row => row.Baid == 1);
@@ -291,7 +283,7 @@ public sealed class RedDonChallengeTests
     public async Task UpdatePlayResult_Red_CompletedChallengeGrantsConfiguredSongRewardOnlyInRedSave()
     {
         await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(rewards: [CreateReward(songs: [102])]));
-        AddUser(fixture, donChallengeVisible: true, includeOtherEraSaves: true);
+        AddUser(fixture, protocolChallengeVisible: true, includeOtherEraSaves: true);
         var handler = CreateHandler(fixture);
         var stages = new List<Ac15StageResult>
         {
@@ -302,8 +294,7 @@ public sealed class RedDonChallengeTests
             1,
             GameEra.Red,
             playDatetime: "20160720120000",
-            stages: stages,
-            challenge: CreateChallenge(stages)),
+            stages: stages),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -322,7 +313,7 @@ public sealed class RedDonChallengeTests
     public async Task UpdatePlayResult_Red_CompletedTenTasksGrantsConfiguredTitleReward()
     {
         await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(rewards: [CreateReward(threshold: 10, titles: [10])]));
-        AddUser(fixture, donChallengeVisible: true);
+        AddUser(fixture, protocolChallengeVisible: true);
         var handler = CreateHandler(fixture);
         var stages = Enumerable.Range(1, 10)
             .Select(index => CreateStage(
@@ -333,8 +324,7 @@ public sealed class RedDonChallengeTests
             1,
             GameEra.Red,
             playDatetime: "20160720120000",
-            stages: stages,
-            challenge: CreateChallenge(stages)),
+            stages: stages),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
@@ -346,7 +336,7 @@ public sealed class RedDonChallengeTests
     public async Task UpdatePlayResult_Red_ReplayedChallengeRewardGrantIsIdempotent()
     {
         await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(rewards: [CreateReward(songs: [102], titles: [10])]));
-        AddUser(fixture, donChallengeVisible: true);
+        AddUser(fixture, protocolChallengeVisible: true);
         var handler = CreateHandler(fixture);
         var stages = new List<Ac15StageResult>
         {
@@ -356,8 +346,7 @@ public sealed class RedDonChallengeTests
             1,
             GameEra.Red,
             playDatetime: "20160720120000",
-            stages: stages,
-            challenge: CreateChallenge(stages));
+            stages: stages);
 
         await handler.Handle(command, CancellationToken.None);
         var firstSave = await fixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
@@ -376,7 +365,7 @@ public sealed class RedDonChallengeTests
     public async Task UpdatePlayResult_Red_DisabledOrNoActiveChallengeCatalogDoesNotGrantRewards()
     {
         await using var disabledFixture = await RedHandlerFixture.CreateAsync(CreateCatalog(enabled: false, rewards: [CreateReward(songs: [102], titles: [10])]));
-        AddUser(disabledFixture, donChallengeVisible: true);
+        AddUser(disabledFixture, protocolChallengeVisible: true);
         await RunMatchedChallengeAsync(disabledFixture);
         var disabledSave = await disabledFixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
         Assert.False(BitIsSet(disabledSave.ReleaseSongFlg, 102));
@@ -385,7 +374,7 @@ public sealed class RedDonChallengeTests
         await using var inactiveFixture = await RedHandlerFixture.CreateAsync(CreateCatalog(
             activeBundleId: null,
             rewards: [CreateReward(songs: [102], titles: [10])]));
-        AddUser(inactiveFixture, donChallengeVisible: true);
+        AddUser(inactiveFixture, protocolChallengeVisible: true);
         await RunMatchedChallengeAsync(inactiveFixture);
         var inactiveSave = await inactiveFixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
         Assert.False(BitIsSet(inactiveSave.ReleaseSongFlg, 102));
@@ -393,10 +382,10 @@ public sealed class RedDonChallengeTests
     }
 
     [Fact]
-    public async Task RewardCompatibilityRoutesDoNotGrantChallengeCompeRewards()
+    public async Task RewardCompatibilityRoutesDoNotGrantDonChallengeRewards()
     {
         await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(rewards: [CreateReward(songs: [102], titles: [10])]));
-        AddUser(fixture, donChallengeVisible: true);
+        AddUser(fixture, protocolChallengeVisible: true);
         var rewardCard = new RedRewardCardCheckController
         {
             ControllerContext = new ControllerContext { HttpContext = CreateHttpContext() }
@@ -438,7 +427,7 @@ public sealed class RedDonChallengeTests
             startsAt: null,
             endsAt: null,
             rewards: [CreateReward(songs: [102])]));
-        AddUser(fixture, donChallengeVisible: true);
+        AddUser(fixture, protocolChallengeVisible: true);
         var handler = CreateUserDataHandler(fixture);
 
         var response = await handler.Handle(new Ac15UserDataQuery(1, GameEra.Red), CancellationToken.None);
@@ -454,7 +443,7 @@ public sealed class RedDonChallengeTests
             startsAt: null,
             endsAt: null,
             rewards: [CreateReward(songs: [102])]));
-        AddUser(fixture, donChallengeVisible: true);
+        AddUser(fixture, protocolChallengeVisible: true);
         var save = await fixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
         save.ReleaseSongFlg = Ac15ProtocolBytes.SetBits(save.ReleaseSongFlg, [102], Ac15EraProfiles.Red.Limits.SongFlagBytes);
         await fixture.Context.SaveChangesAsync();
@@ -469,226 +458,31 @@ public sealed class RedDonChallengeTests
     public async Task UserDataQuery_Red_DisabledOrInactiveChallengeDoesNotLockRewardSongs()
     {
         await using var disabledFixture = await RedHandlerFixture.CreateAsync(CreateCatalog(enabled: false, rewards: [CreateReward(songs: [102])]));
-        AddUser(disabledFixture, donChallengeVisible: true);
+        AddUser(disabledFixture, protocolChallengeVisible: true);
         var disabledResponse = await CreateUserDataHandler(disabledFixture).Handle(new Ac15UserDataQuery(1, GameEra.Red), CancellationToken.None);
         Assert.True(BitIsSet(disabledResponse.SongFlags.ReleaseSongFlg, 102));
 
         await using var inactiveFixture = await RedHandlerFixture.CreateAsync(CreateCatalog(
             activeBundleId: null,
             rewards: [CreateReward(songs: [102])]));
-        AddUser(inactiveFixture, donChallengeVisible: true);
+        AddUser(inactiveFixture, protocolChallengeVisible: true);
         var inactiveResponse = await CreateUserDataHandler(inactiveFixture).Handle(new Ac15UserDataQuery(1, GameEra.Red), CancellationToken.None);
         Assert.True(BitIsSet(inactiveResponse.SongFlags.ReleaseSongFlg, 102));
 
     }
 
     [Fact]
-    public async Task UserDataQuery_Red_ChallengeCompeVisibilityFlagDoesNotControlDonChallengeRewardLocks()
+    public async Task UserDataQuery_Red_ProtocolChallengeVisibilityFlagDoesNotControlDonChallengeRewardLocks()
     {
         await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(
             startsAt: null,
             endsAt: null,
             rewards: [CreateReward(songs: [102])]));
-        AddUser(fixture, donChallengeVisible: false);
+        AddUser(fixture, protocolChallengeVisible: false);
 
         var response = await CreateUserDataHandler(fixture).Handle(new Ac15UserDataQuery(1, GameEra.Red), CancellationToken.None);
 
         Assert.False(BitIsSet(response.SongFlags.ReleaseSongFlg, 102));
-    }
-
-    [Fact]
-    public async Task GetChallengeCompeQuery_Red_ReturnsActiveProgressAndEmptyUnsupportedBucketsWithoutMutation()
-    {
-        await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(
-            startsAt: null,
-            endsAt: null,
-            includeDefaultTaskTracks: false));
-        AddUser(fixture, donChallengeVisible: true);
-        var save = await fixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
-        var releaseBefore = save.ReleaseSongFlg.ToArray();
-        var titleBefore = save.TitleFlg.ToArray();
-        fixture.Context.RedDonChallengeProgress.Add(new RedDonChallengeProgress
-        {
-            Baid = 1,
-            BundleId = "red-2016-07",
-            TaskId = 1001,
-            Slot = 1,
-            CompeId = 1001,
-            TrackNo = 1,
-            SongNo = 101,
-            Level = 1,
-            OptionFlg = [1, 2, 3],
-            StageMode = 0,
-            HighScore = 765432,
-            ProgressValue = 1,
-            Completed = false,
-            UpdatedAt = new DateTime(2016, 7, 20, 12, 0, 0)
-        });
-        fixture.Context.SongBestDataRed.Add(new SongBestDatumRed
-        {
-            Baid = 1,
-            SongId = 101,
-            Difficulty = Difficulty.Easy,
-            BestScore = 800000,
-            BestRate = 95,
-            BestCrown = CrownType.Clear
-        });
-        await fixture.Context.SaveChangesAsync();
-        var handler = CreateChallengeCompeHandler(fixture);
-
-        var response = await handler.Handle(new GetChallengeCompeQuery(GameEra.Red, 1), CancellationToken.None);
-
-        Assert.Empty(response.AryChallengeStat);
-        Assert.Empty(response.AryUserCompeStat);
-        Assert.Empty(response.AryBngCompeStat);
-
-        var after = await fixture.Context.UserSaveDataRed.AsNoTracking().SingleAsync(row => row.Baid == 1);
-        Assert.True(after.IsChallengeCompe);
-        Assert.Equal(releaseBefore, after.ReleaseSongFlg);
-        Assert.Equal(titleBefore, after.TitleFlg);
-    }
-
-    [Fact]
-    public async Task GetChallengeCompeQuery_Red_DoesNotAdvertiseConfiguredDonChallengeTracks()
-    {
-        await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(
-            startsAt: null,
-            endsAt: null,
-            includeDefaultTaskTracks: false,
-            rule: new Ac15DonChallengeRule(
-                Ac15DonChallengeRuleKind.Clear,
-                RequiredSongCount: 1,
-                EligibleSongNoes: [101])));
-        AddUser(fixture, donChallengeVisible: true);
-
-        var response = await CreateChallengeCompeHandler(fixture)
-            .Handle(new GetChallengeCompeQuery(GameEra.Red, 1), CancellationToken.None);
-
-        Assert.Empty(response.AryChallengeStat);
-        Assert.Empty(response.AryUserCompeStat);
-        Assert.Empty(response.AryBngCompeStat);
-        Assert.Empty(await fixture.Context.RedDonChallengeRawFacts.ToListAsync());
-        Assert.Empty(await fixture.Context.RedDonChallengeProgress.ToListAsync());
-    }
-
-    [Fact]
-    public async Task GetChallengeCompeQuery_Red_DoesNotAdvertiseCommunityDonChallengeTask()
-    {
-        await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(
-            startsAt: null,
-            endsAt: null,
-            includeDefaultTaskTracks: false,
-            rule: new Ac15DonChallengeRule(
-                Ac15DonChallengeRuleKind.Clear,
-                RequiredSongCount: 1,
-                EligibleSongNoes: [101]),
-            communityRule: new Ac15DonChallengeRule(
-                Ac15DonChallengeRuleKind.CommunityCount,
-                RequiredCommunityCount: 5000,
-                EligibleSongNoes: [618])));
-        AddUser(fixture, donChallengeVisible: true);
-
-        var response = await CreateChallengeCompeHandler(fixture)
-            .Handle(new GetChallengeCompeQuery(GameEra.Red, 1), CancellationToken.None);
-
-        Assert.Empty(response.AryChallengeStat);
-        Assert.Empty(response.AryUserCompeStat);
-        Assert.Empty(response.AryBngCompeStat);
-    }
-
-    [Fact]
-    public async Task GetChallengeCompeQuery_Red_DoesNotSetVisibilityFlagOrEchoRawFacts()
-    {
-        await using var hiddenFixture = await RedHandlerFixture.CreateAsync(CreateCatalog(startsAt: null, endsAt: null));
-        AddUser(hiddenFixture, donChallengeVisible: false);
-        var hiddenResponse = await CreateChallengeCompeHandler(hiddenFixture)
-            .Handle(new GetChallengeCompeQuery(GameEra.Red, 1), CancellationToken.None);
-
-        Assert.Empty(hiddenResponse.AryChallengeStat);
-        Assert.False(await hiddenFixture.Context.UserSaveDataRed
-            .Where(row => row.Baid == 1)
-            .Select(row => row.IsChallengeCompe)
-            .SingleAsync());
-
-        await using var rawOnlyFixture = await RedHandlerFixture.CreateAsync(CreateCatalog(
-            startsAt: null,
-            endsAt: null,
-            includeDefaultTaskTracks: false,
-            rule: new Ac15DonChallengeRule(Ac15DonChallengeRuleKind.Clear)));
-        AddUser(rawOnlyFixture, donChallengeVisible: true);
-        rawOnlyFixture.Context.RedDonChallengeRawFacts.Add(new RedDonChallengeRawFact
-        {
-            Baid = 1,
-            BundleId = "red-2016-07",
-            TaskId = 1001,
-            Slot = 1,
-            CompeId = 1001,
-            TrackNo = 1,
-            SongNo = 101,
-            Level = 1,
-            OptionFlg = [9],
-            StageMode = 0,
-            HighScore = 999999,
-            PlayResult = 2,
-            ProgressValue = 1,
-            Completed = true,
-            PlayTime = new DateTime(2016, 7, 20, 12, 0, 0),
-            CreatedAt = new DateTime(2016, 7, 20, 12, 0, 0)
-        });
-        await rawOnlyFixture.Context.SaveChangesAsync();
-
-        var rawOnlyResponse = await CreateChallengeCompeHandler(rawOnlyFixture)
-            .Handle(new GetChallengeCompeQuery(GameEra.Red, 1), CancellationToken.None);
-
-        Assert.Empty(rawOnlyResponse.AryChallengeStat);
-        Assert.Empty(rawOnlyResponse.AryUserCompeStat);
-        Assert.Empty(rawOnlyResponse.AryBngCompeStat);
-    }
-
-    [Fact]
-    public async Task ChallengeCompeController_Red_ReturnsEmptyBucketsWhenDonChallengeProgressExists()
-    {
-        await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(
-            startsAt: null,
-            endsAt: null,
-            includeDefaultTaskTracks: false,
-            rule: new Ac15DonChallengeRule(Ac15DonChallengeRuleKind.Clear)));
-        AddUser(fixture, donChallengeVisible: true);
-        fixture.Context.RedDonChallengeProgress.Add(new RedDonChallengeProgress
-        {
-            Baid = 1,
-            BundleId = "red-2016-07",
-            TaskId = 1001,
-            Slot = 1,
-            CompeId = 1001,
-            TrackNo = 1,
-            SongNo = 101,
-            Level = 1,
-            OptionFlg = [1, 2, 3],
-            StageMode = 0,
-            HighScore = 765432,
-            ProgressValue = 1,
-            Completed = true,
-            UpdatedAt = new DateTime(2016, 7, 20, 12, 0, 0),
-            CompletedAt = new DateTime(2016, 7, 20, 12, 0, 0)
-        });
-        await fixture.Context.SaveChangesAsync();
-        var controller = new RedChallengeCompeController
-        {
-            ControllerContext = new ControllerContext { HttpContext = CreateHttpContext(CreateServices(fixture)) }
-        };
-
-        var result = await controller.ChallengeCompe(new RedWire.ChallengeCompeRequest
-        {
-            Baid = 1,
-            ChassisId = "268410000000",
-            ShopId = "JPN0JPN0123"
-        });
-
-        var response = Assert.IsType<RedWire.ChallengeCompeResponse>(Assert.IsType<OkObjectResult>(result).Value);
-        Assert.Empty(response.AryChallengeStats);
-        Assert.Empty(response.AryUserCompeStats);
-        Assert.Empty(response.AryBngCompeStats);
     }
 
     private static async Task RunMatchedChallengeAsync(RedHandlerFixture fixture)
@@ -710,12 +504,12 @@ public sealed class RedDonChallengeTests
 
     private static void AddUser(
         RedHandlerFixture fixture,
-        bool donChallengeVisible,
+        bool protocolChallengeVisible,
         bool includeOtherEraSaves = false)
     {
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
         var save = UserSaveDataRedExtensions.CreateDefaultRedSaveData(1);
-        save.IsChallengeCompe = donChallengeVisible;
+        save.IsChallengeCompe = protocolChallengeVisible;
         fixture.Context.UserSaveDataRed.Add(save);
         if (includeOtherEraSaves)
         {
@@ -813,12 +607,6 @@ public sealed class RedDonChallengeTests
             BngCompeIds = bngCompeIds ?? []
         };
 
-    private static Ac15DonChallengeFacts CreateChallenge(List<Ac15StageResult> stages)
-        => new(stages
-            .Where(stage => stage.ChallengeIds.Count != 0 || stage.UserCompeIds.Count != 0 || stage.BngCompeIds.Count != 0)
-            .Select(stage => new Ac15DonChallengeStageFacts(stage.SongNo, stage.ChallengeIds, stage.UserCompeIds, stage.BngCompeIds))
-            .ToList());
-
     private static UpdatePlayResultCommandHandler CreateHandler(RedHandlerFixture fixture)
         => new(
             fixture.Context,
@@ -831,18 +619,6 @@ public sealed class RedDonChallengeTests
             fixture.Catalog,
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()));
-
-    private static GetChallengeCompeQueryHandler CreateChallengeCompeHandler(RedHandlerFixture fixture)
-        => new(
-            NullLogger<GetChallengeCompeQueryHandler>.Instance);
-
-    private static ServiceProvider CreateServices(RedHandlerFixture fixture)
-        => new ServiceCollection()
-            .AddLogging()
-            .AddApplication()
-            .AddScoped<ITaikoDbContext>(_ => fixture.Context)
-            .AddScoped<IGameDataCatalog>(_ => fixture.Catalog)
-            .BuildServiceProvider();
 
     private static DefaultHttpContext CreateHttpContext(IServiceProvider? services = null)
     {

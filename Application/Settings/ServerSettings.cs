@@ -27,13 +27,9 @@ public sealed class EraSettings
 
     public string? ActiveDonChallengeBundleId { get; set; }
 
-    public bool? EnableChallengeCompe { get; set; }
-
-    public string? ActiveChallengeCompeBundleId { get; set; }
-
     public bool IsDonChallengeEnabled()
-        => EnableDonChallenge ?? EnableChallengeCompe.GetValueOrDefault();
+        => EnableDonChallenge.GetValueOrDefault();
 
     public string? GetActiveDonChallengeBundleId()
-        => ActiveDonChallengeBundleId ?? ActiveChallengeCompeBundleId;
+        => ActiveDonChallengeBundleId;
 }

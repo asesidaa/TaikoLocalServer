@@ -7,8 +7,7 @@ public sealed record Ac15PlayResultEnvelope(
     Ac15DaniPlayResult? Dani,
     Ac15TokkunPlayResult? Tokkun,
     Ac15BlueBattlePlayResult? BlueBattle,
-    Ac15GreenGhostPlayResult? GreenGhost,
-    Ac15DonChallengeFacts? DonChallenge);
+    Ac15GreenGhostPlayResult? GreenGhost);
 
 public sealed record Ac15PlayResultMetadata(
     uint Baid,
@@ -214,12 +213,3 @@ public sealed record Ac15GreenGhostRankData
 }
 
 public sealed record Ac15GreenGhostWinningsData(uint LevelId, uint Winnings);
-
-public sealed record Ac15DonChallengeFacts(
-    List<Ac15DonChallengeStageFacts> Stages);
-
-public sealed record Ac15DonChallengeStageFacts(
-    uint SongNo,
-    List<Ac15CompeIdFact> ChallengeIds,
-    List<Ac15CompeIdFact> UserCompeIds,
-    List<Ac15CompeIdFact> BngCompeIds);

@@ -35,8 +35,8 @@ public sealed class WhiteServerSettingsValidationTests
         Assert.True(settings.Eras[nameof(GameEra.White)].Enabled);
         Assert.Null(settings.Eras[nameof(GameEra.White)].EnableShop);
         Assert.Null(settings.Eras[nameof(GameEra.White)].ActiveShopSeasonId);
-        Assert.Null(settings.Eras[nameof(GameEra.White)].EnableChallengeCompe);
-        Assert.Null(settings.Eras[nameof(GameEra.White)].ActiveChallengeCompeBundleId);
+        Assert.Null(settings.Eras[nameof(GameEra.White)].EnableDonChallenge);
+        Assert.Null(settings.Eras[nameof(GameEra.White)].ActiveDonChallengeBundleId);
     }
 
     [Fact]

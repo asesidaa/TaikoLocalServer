@@ -29,7 +29,7 @@ Requirement category:
 
 Likely matching capability:
 - Red/Yellow already use committed sidecars for event folders, movies, recommendations, Taikojuku verup metadata, and telops.
-- Red additionally has `red_challenge_compe_data.json`; Yellow additionally has `yellow_item_shop_data.json`. White currently has neither.
+- Red additionally has `red_don_challenge_data.json`; Yellow additionally has `yellow_item_shop_data.json`. White currently has its own `white_don_challenge_data.json` after the 2026-06-18 correction.
 
 ### 3. Identity, Profile, And Userdata
 
@@ -79,7 +79,7 @@ Requirement category:
 - Treat `getreitai.php` as a proto surface and compatibility candidate, not a required route, until logs/client evidence prove it is called.
 
 Likely matching capability:
-- Red reward/present separation is the closest prior model: ordinary Don Point / present progression is distinct from Don Challenge / ChallengeCompe.
+- Red reward/present separation is the closest prior model: ordinary Don Point / present progression is distinct from Don Challenge, and Don Challenge is distinct from ChallengeCompe protocol stubs.
 
 ### 8. AdminApi And WebUI Readback
 
@@ -118,7 +118,7 @@ Data observations:
 - No committed `Host/wwwroot/data/white/*.json` sidecars exist yet.
 
 Red/Yellow comparison observations:
-- Red sidecars: challenge compe data, event folders, movies, recommendations, Taikojuku verup metadata, and telops.
+- Red sidecars: Don Challenge data, event folders, movies, recommendations, Taikojuku verup metadata, and telops.
 - Yellow sidecars: event folders, item shop data, movies, recommendations, Taikojuku verup metadata, and telops.
 - Red controllers include the normal older-AC15 surface plus `challengecompe.php` and stateless Banacoin/balance/coinsetting probes.
 - Yellow controllers include the normal older-AC15 surface plus item shop and Banacoin-adjacent compatibility.
@@ -128,7 +128,7 @@ Red/Yellow comparison observations:
 
 What to collect:
 - White 0.13 collectable catalog rows for unlockable songs, tones, costumes, titles, and Don Point presents from local `musicinfo.xml`, `present.xml`, any shared title/name data, and White-specific local assets.
-- Don Challenge / ChallengeCompe bundles only if evidence proves they fall inside the White 0.13 server contract. For each bundle, collect bundle id, active window, 10 personal tasks, optional community task, typed rule data, eligible songs, minimum difficulty, required score/count, reward song ids, and reward title ids.
+- Don Challenge bundles only if evidence proves they fall inside the White 0.13 server contract. For each bundle, collect bundle id, active window, 10 personal tasks, optional community task, typed rule data, eligible songs, minimum difficulty, required score/count, reward song ids, and reward title ids.
 - White song id mapping must come from the local White `musicinfo.xml`; title/reward ids must come from local committed/shared title data or other provenance that can be rechecked.
 
 Evidence required before runtime binding:
@@ -141,7 +141,7 @@ Why this belongs late:
 - Don Challenge depends on stable White identity, userdata mapping, playresult classification, normal score/crown persistence, reward unlocks, and catalog song/title id mapping.
 - The local White `musicmedleyinfo.xml` supports Dani planning but does not provide Don Challenge bundle data.
 - The wiki page is useful timing context only: it scopes White 0.13 to 2015-12-10 and shows visible Don Challenge song notes beginning in later White updates, not in the initial 0.13 section. That makes Don Challenge a late evidence pass, not a foundation blocker.
-- The existing `Ac15ChallengeCompeLoader` and schema already define the eventual sidecar contract: `enabled`, `monthly_bundles`, exactly 10 personal tasks per bundle, optional community task, typed rules, and rewards. White should use that shape only after White-specific data is collected.
+- The existing `Ac15DonChallengeLoader` and schema define the sidecar contract: `enabled`, `monthly_bundles`, exactly 10 personal tasks per bundle, optional community task, typed rules, and rewards. White should use that shape only after White-specific data is collected.
 
 ## Absent Or Evidence-Gated Surfaces
 
@@ -164,7 +164,7 @@ Why this belongs late:
 - `Host/wwwroot/data/white/data/config/ST7100-1`: local White config inventory and parsed observations from `musicinfo.xml`, `musicmedleyinfo.xml`, `present.xml`, `spacialbaid.xml`, and `defmusic.bin`.
 - `Host/wwwroot/data/white/data/fumen/tuning.bin` and `Host/wwwroot/data/white/data/fumen/tuning_ext.bin`: local White fumen/tuning inputs.
 - `Host/wwwroot/data/red/*.json` and `Host/wwwroot/data/yellow/*.json`: sidecar comparison for event folder, movie, recommendation, Taikojuku, telop, Red challenge, and Yellow item-shop data.
-- `Application/Ac15/ChallengeCompe/*`: existing shared ChallengeCompe catalog, evaluator, reward, and track-definition shape.
-- `Infrastructure/GameDataCatalog/Ac15/Ac15ChallengeCompeLoader.cs` and `Infrastructure/GameDataCatalog/Ac15/Schemas/ac15-challenge-compe-catalog.schema.json`: existing collectable/Don Challenge sidecar loader contract.
+- `Application/Ac15/DonChallenge/*`: shared Don Challenge catalog, evaluator, reward, and track-definition shape.
+- `Infrastructure/GameDataCatalog/Ac15/Ac15DonChallengeLoader.cs` and `Infrastructure/GameDataCatalog/Ac15/Schemas/ac15-don-challenge-catalog.schema.json`: Don Challenge sidecar loader contract.
 - `Adapters.GameProtocol.Red/Controllers/*` and `Adapters.GameProtocol.Yellow/Controllers/*`: route-surface comparison only; not implementation authority for White.
 - Wiki scoping note only: https://wikiwiki.jp/taiko-fumen/%E4%BD%9C%E5%93%81/%E6%96%B0AC/%E3%82%A2%E3%83%83%E3%83%97%E3%83%87%E3%83%BC%E3%83%88%E5%B1%A5%E6%AD%B4/%E3%83%9B%E3%83%AF%E3%82%A4%E3%83%88

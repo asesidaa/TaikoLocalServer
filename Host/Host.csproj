@@ -174,7 +174,7 @@
     <Content Update="wwwroot\data\red\red_movie_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\red\red_event_folder_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\red\red_taikojuku_verup_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    <Content Update="wwwroot\data\red\red_challenge_compe_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\red\red_don_challenge_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
 
     <!--White Game Data-->
     <Content Remove="wwwroot\data\white\data\**" />

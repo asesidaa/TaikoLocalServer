@@ -4,7 +4,7 @@
 
 **Phases completed:** 6 phases, 29 plans, 47 tasks
 
-**Delivered:** Red is now a first-class AC15 era with Red-owned protocol routes, generated wire DTOs, catalog/profile binding, runtime persistence, normal play, Dani, Tokkun tutorial readback, simple compatibility routes, older-AC15 ChallengeCompe/Don Challenge behavior, AdminApi/WebUI readback, and final runtime closeout evidence.
+**Delivered:** Red is now a first-class AC15 era with Red-owned protocol routes, generated wire DTOs, catalog/profile binding, runtime persistence, normal play, Dani, Tokkun tutorial readback, simple compatibility routes, server-side Don Challenge behavior, separate ChallengeCompe protocol compatibility stubs, AdminApi/WebUI readback, and final runtime closeout evidence.
 
 **Key accomplishments:**
 
@@ -13,11 +13,11 @@
 - Red Host enablement with scoped protobuf fallback and settings validation that preserves unsupported-shop boundaries.
 - No-state Red route probes with user-confirmed basic RPCS3/cabinet connection.
 - AC15 BAID/userdata assembly now uses semantic application sections, controller-owned final wire assembly, and Mapperly-generated section application across Blue, Green, Yellow, and Red.
-- Evidence-gated older-AC15 ChallengeCompe catalog contract with Red sidecar loading.
-- Red-owned ChallengeCompe state with opt-in, active-task matching, Tokkun exclusion, and shared progress evaluation.
-- Configured Red ChallengeCompe rewards now grant Red unlock flags and hide active unearned reward songs through userdata.
-- Red challengecompe.php now returns active saved DonChare progress through a Mediator query and source-generated Red wire mapper.
-- Final ChallengeCompe verification with command evidence, decision audit, phase closeout, and Phase 22 handoff.
+- Evidence-gated Don Challenge catalog contract with Red sidecar loading.
+- Red-owned Don Challenge state with active-task matching, Tokkun exclusion, and shared progress evaluation.
+- Configured Red Don Challenge rewards now grant Red unlock flags and hide active unearned reward songs through userdata.
+- Red `challengecompe.php` remains a separate empty protocol compatibility stub.
+- Final Don Challenge and protocol-stub verification with command evidence, decision audit, phase closeout, and Phase 22 handoff.
 - Red normal AdminApi readback and profile editing over Red-owned runtime tables and Red catalog slices
 - Dedicated Red Don Challenge AdminApi read model with no opt-in gates and cabinet ChallengeCompe kept as a separate compatibility surface
 - Red-aware generic WebUI routing plus a read-only Don Challenge Play Data page backed by dedicated availability/readback services

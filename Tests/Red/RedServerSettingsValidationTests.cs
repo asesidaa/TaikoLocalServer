@@ -59,7 +59,7 @@ public sealed class RedServerSettingsValidationTests
     }
 
     [Fact]
-    public void RedChallengeCompeAliasStillRequiresActiveBundleId()
+    public void RedChallengeCompeSettingDoesNotEnableDonChallenge()
     {
         var configuration = BuildConfiguration("""
             {
@@ -76,35 +76,11 @@ public sealed class RedServerSettingsValidationTests
 
         using var provider = BuildProvider(configuration);
 
-        var exception = Assert.Throws<OptionsValidationException>(() =>
-            provider.GetRequiredService<IOptions<ServerSettings>>().Value);
-
-        Assert.Contains(exception.Failures, failure => failure.Contains("ActiveDonChallengeBundleId", StringComparison.Ordinal));
-    }
-
-    [Fact]
-    public void RedChallengeCompeAliasAcceptsLegacyBundleId()
-    {
-        var configuration = BuildConfiguration("""
-            {
-              "ServerSettings": {
-                "Eras": {
-                  "Red": {
-                    "Enabled": true,
-                    "EnableChallengeCompe": true,
-                    "ActiveChallengeCompeBundleId": "red-2016-07"
-                  }
-                }
-              }
-            }
-            """);
-
-        using var provider = BuildProvider(configuration);
-
         var exception = Record.Exception(() =>
             provider.GetRequiredService<IOptions<ServerSettings>>().Value);
 
         Assert.Null(exception);
+        Assert.Null(provider.GetRequiredService<IOptions<ServerSettings>>().Value.Eras[nameof(GameEra.Red)].EnableDonChallenge);
     }
 
     private static IConfigurationRoot BuildConfiguration(string json)

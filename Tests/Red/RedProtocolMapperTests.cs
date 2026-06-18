@@ -47,7 +47,7 @@ public sealed class RedProtocolMapperTests
     }
 
     [Fact]
-    public void PlayResultMapper_Red_MapsDonPointTokkunAndChallengeFacts()
+    public void PlayResultMapper_Red_MapsDonPointTokkunAndProtocolChallengeFactsOnStages()
     {
         var request = CreateWireRequest(1);
         request.GetDonpoint = 25;
@@ -111,7 +111,6 @@ public sealed class RedProtocolMapperTests
         Assert.Equal(42u, Assert.Single(stageResult.ChallengeIds).CompeId);
         Assert.Equal(1u, stageResult.PlayDan);
         Assert.Equal(80u, stageResult.SoulGauge);
-        Assert.NotNull(envelope.DonChallenge);
     }
 
     [Fact]

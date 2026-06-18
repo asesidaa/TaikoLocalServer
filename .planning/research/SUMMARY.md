@@ -44,8 +44,8 @@
 
 ### Collectables And Don Challenge
 
-- Collect White unlock/reward data from local White files and proven supporting data: songs, tones, costumes, titles, Don Point presents, special BAID rows, and any Don Challenge/ChallengeCompe bundles in the White 0.13 range.
-- Do not copy Red ChallengeCompe behavior blindly. White has embedded challenge stat/playresult fields but no standalone `ChallengeCompeRequest/Response` in the current proto.
+- Collect White unlock/reward data from local White files and proven supporting data: songs, tones, costumes, titles, Don Point presents, special BAID rows, and any Don Challenge bundles in the White 0.13 range.
+- Do not copy protocol ChallengeCompe behavior blindly. White has embedded challenge stat/playresult fields but no standalone `ChallengeCompeRequest/Response` in the current proto, and Don Challenge is handled separately.
 - Bind collectables late, after White identity, catalog, playresult, reward flags, and userdata readback are stable.
 
 ### Admin And Verification
@@ -68,7 +68,7 @@
 1. White evidence and era foundation.
 2. White catalog/profile binding and protocol limits.
 3. White runtime capability binding for identity, userdata, initial data, normal play, self-best, crowns, recommendations, folders/telops, rewards, and Dani where proven.
-4. White collectable data and optional Don Challenge/ChallengeCompe binding if White 0.13 evidence proves it.
+4. White collectable data and optional Don Challenge binding if White 0.13 evidence proves it.
 5. White AdminApi/WebUI and runtime closeout.
 
 ## Research Inputs

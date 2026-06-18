@@ -15,7 +15,6 @@ public static partial class PlayResultMappers
     [MapValue(nameof(Ac15PlayResultEnvelope.Tokkun), null)]
     [MapValue(nameof(Ac15PlayResultEnvelope.BlueBattle), null)]
     [MapValue(nameof(Ac15PlayResultEnvelope.GreenGhost), null)]
-    [MapValue(nameof(Ac15PlayResultEnvelope.DonChallenge), null)]
     public static partial Ac15PlayResultEnvelope Map(PlayResultRequest request);
 
     [MapPropertyFromSource(nameof(PlayResultResponse.Result))]

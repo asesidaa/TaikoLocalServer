@@ -77,7 +77,7 @@ public sealed class WhiteRuntimeHandlerTests
     }
 
     [Fact]
-    public async Task UserDataQuery_White_LocksUnearnedDonChallengeRewardSongsWithoutChallengeCompeStats()
+    public async Task UserDataQuery_White_LocksUnearnedDonChallengeRewardSongsWithoutProtocolChallengeStats()
     {
         await using var fixture = await WhiteHandlerFixture.CreateAsync(CreateDonChallengeCatalog(
             rewards: [new Ac15DonChallengeReward(1, [104], [10])]));
@@ -331,8 +331,6 @@ public sealed class WhiteRuntimeHandlerTests
         Assert.Null(envelope.Tokkun);
         Assert.Null(envelope.BlueBattle);
         Assert.Null(envelope.GreenGhost);
-        Assert.Null(envelope.DonChallenge);
-
         var mappedStage = Assert.Single(envelope.Normal!.Stages);
         Assert.Equal(101u, mappedStage.SongNo);
         Assert.Equal(765432u, mappedStage.PlayScore);

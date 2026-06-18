@@ -38,7 +38,7 @@ public sealed class RedDonChallengeAdminApiTests
                 new Ac15DonChallengeReward(1, [102], [10]),
                 new Ac15DonChallengeReward(2, [103], [])
             ]));
-        AddUser(fixture, donChallengeVisible: false);
+        AddUser(fixture, protocolChallengeVisible: false);
         fixture.Context.RedDonChallengeProgress.Add(new RedDonChallengeProgress
         {
             Baid = 1,
@@ -99,7 +99,7 @@ public sealed class RedDonChallengeAdminApiTests
     {
         await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(
             rewards: [new Ac15DonChallengeReward(2, [102], [10])]));
-        AddUser(fixture, donChallengeVisible: false);
+        AddUser(fixture, protocolChallengeVisible: false);
         var save = await fixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1);
         save.ReleaseSongFlg = Ac15ProtocolBytes.SetBits(save.ReleaseSongFlg, [102], Ac15EraProfiles.Red.Limits.SongFlagBytes);
         save.TitleFlg = Ac15ProtocolBytes.SetBits(save.TitleFlg, [10], Ac15EraProfiles.Red.Limits.TitleFlagBytes);
@@ -118,7 +118,7 @@ public sealed class RedDonChallengeAdminApiTests
     {
         await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(
             rewards: [new Ac15DonChallengeReward(1, [102], [])]));
-        AddUser(fixture, donChallengeVisible: true);
+        AddUser(fixture, protocolChallengeVisible: true);
         fixture.Context.RedDonChallengeProgress.Add(new RedDonChallengeProgress
         {
             Baid = 1,
@@ -161,7 +161,7 @@ public sealed class RedDonChallengeAdminApiTests
     public async Task GetDonChallenge_Red_NoActiveBundleReturnsReadableUnavailableResponse()
     {
         await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(activeBundleId: null));
-        AddUser(fixture, donChallengeVisible: true);
+        AddUser(fixture, protocolChallengeVisible: true);
         var controller = CreateController(fixture);
 
         var availability = AssertOk<DonChallengeAvailabilityResponse>(await controller.GetAvailability("Red"));
@@ -175,11 +175,11 @@ public sealed class RedDonChallengeAdminApiTests
         Assert.Empty(readback.Rewards);
     }
 
-    private static void AddUser(RedHandlerFixture fixture, bool donChallengeVisible)
+    private static void AddUser(RedHandlerFixture fixture, bool protocolChallengeVisible)
     {
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
         var save = UserSaveDataRedExtensions.CreateDefaultRedSaveData(1);
-        save.IsChallengeCompe = donChallengeVisible;
+        save.IsChallengeCompe = protocolChallengeVisible;
         fixture.Context.UserSaveDataRed.Add(save);
         fixture.Context.SaveChanges();
     }

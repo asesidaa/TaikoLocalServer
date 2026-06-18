@@ -81,6 +81,8 @@ public sealed class RedDonChallengeCatalogTests
     [Fact]
     public async Task CommittedRedSidecarExistsAndLoadsWikiBundles()
     {
+        Assert.Equal("red_don_challenge_data.json", RedEraGameDataCatalog.DonChallengeFileName);
+
         var path = Path.Combine(
             RepoRoot(),
             "Host",

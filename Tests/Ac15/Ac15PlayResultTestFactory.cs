@@ -54,8 +54,7 @@ internal static class Ac15PlayResultTestFactory
             dani: new Ac15DaniPlayResult(data.DanResult, data.ComboCntTotal, stages),
             tokkun: MapTokkun(data),
             battle: MapBattle(data, stages),
-            ghost: MapGhost(data),
-            challenge: MapChallenge(stages));
+            ghost: MapGhost(data));
     }
 
     public static UpdateAc15PlayResultCommand Command(
@@ -68,8 +67,7 @@ internal static class Ac15PlayResultTestFactory
         Ac15DaniPlayResult? dani = null,
         Ac15TokkunPlayResult? tokkun = null,
         Ac15BlueBattlePlayResult? battle = null,
-        Ac15GreenGhostPlayResult? ghost = null,
-        Ac15DonChallengeFacts? challenge = null)
+        Ac15GreenGhostPlayResult? ghost = null)
     {
         var stageList = stages ?? [];
         var metadata = new Ac15PlayResultMetadata(
@@ -93,8 +91,7 @@ internal static class Ac15PlayResultTestFactory
             dani ?? new Ac15DaniPlayResult(DanResult: 0, ComboCntTotal: 0, Stages: stageList),
             tokkun,
             battle,
-            ghost,
-            challenge);
+            ghost);
 
         return new UpdateAc15PlayResultCommand(baid, era, envelope);
     }
@@ -258,15 +255,6 @@ internal static class Ac15PlayResultTestFactory
                 CertifiedLevelId = data.CertifiedLevelId,
                 AryWinningsData = data.AryWinningsData.Select(winning => new Ac15GreenGhostWinningsData(winning.LevelId, winning.Winnings)).ToList()
             };
-
-    private static Ac15DonChallengeFacts? MapChallenge(List<Ac15StageResult> stages)
-    {
-        var facts = stages
-            .Where(stage => stage.ChallengeIds.Count != 0 || stage.UserCompeIds.Count != 0 || stage.BngCompeIds.Count != 0)
-            .Select(stage => new Ac15DonChallengeStageFacts(stage.SongNo, stage.ChallengeIds, stage.UserCompeIds, stage.BngCompeIds))
-            .ToList();
-        return facts.Count == 0 ? null : new Ac15DonChallengeFacts(facts);
-    }
 
     private static List<Ac15CompeIdFact> MapCompe(IEnumerable<CommonPlayResultData.ResultcompeData> values)
         => values.Select(value => new Ac15CompeIdFact(value.CompeId, value.TrackNo)).ToList();
