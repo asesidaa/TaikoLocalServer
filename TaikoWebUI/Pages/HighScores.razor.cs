@@ -15,7 +15,7 @@ public partial class HighScores
     private const string IconStyle = "width:25px; height:25px;";
 
     private SongBestResponse? response;
-    private UserSetting? userSetting;
+    private string? profileDisplayName;
     private Dictionary<Difficulty, List<SongBestData>> songBestDataMap = new();
     private int selectedDifficultyTab;
     private Dictionary<uint, MusicDetail> musicDetailDictionary = new();
@@ -30,7 +30,7 @@ public partial class HighScores
         response = await Client.GetFromJsonAsync<SongBestResponse>(WebUiEra.Api(CurrentEra, $"PlayData/{Baid}"));
         response.ThrowIfNull();
 
-        userSetting = await Client.GetFromJsonAsync<UserSetting>(WebUiEra.Api(CurrentEra, $"UserSettings/{Baid}"));
+        profileDisplayName = await Client.GetProfileDisplayNameAsync(CurrentEra, (uint)Baid);
 
         var songNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
         musicDetailDictionary = await GameDataService.GetMusicDetailDictionary(CurrentEra);
@@ -72,7 +72,7 @@ public partial class HighScores
         {
             BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
         }
-        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{profileDisplayName}", href: null, disabled: true));
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["High Scores"], href: WebUiEra.UserRoute(Baid, CurrentEra, "HighScores"), disabled: false));
         BreadcrumbsStateContainer.NotifyStateChanged();
     }

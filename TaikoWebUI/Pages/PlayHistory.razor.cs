@@ -23,7 +23,7 @@ public partial class PlayHistory
     private string? songNameLanguage;
 
     private SongHistoryResponse? response;
-    private UserSetting? userSetting;
+    private string? profileDisplayName;
 
     private Dictionary<DateTime, List<SongHistoryData>> songHistoryDataMap = new();
 
@@ -39,7 +39,7 @@ public partial class PlayHistory
         response = await Client.GetFromJsonAsync<SongHistoryResponse>(WebUiEra.Api(CurrentEra, $"PlayHistory/{Baid}"));
         response.ThrowIfNull();
 
-        userSetting = await Client.GetFromJsonAsync<UserSetting>(WebUiEra.Api(CurrentEra, $"UserSettings/{Baid}"));
+        profileDisplayName = await Client.GetProfileDisplayNameAsync(CurrentEra, (uint)Baid);
 
         songNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
         
@@ -69,7 +69,7 @@ public partial class PlayHistory
         BreadcrumbsStateContainer.breadcrumbs.Clear();
         if (AuthService.IsLoggedIn && !AuthService.IsAdmin) BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
         else BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
-        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{profileDisplayName}", href: null, disabled: true));
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Play History"], href: WebUiEra.UserRoute(Baid, CurrentEra, "PlayHistory"), disabled: false));
         BreadcrumbsStateContainer.NotifyStateChanged();
     }

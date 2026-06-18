@@ -92,6 +92,28 @@ public sealed class Ac15ProfileSettingsWebUiTests
             handler.RequestPaths);
     }
 
+    [Fact]
+    public async Task BreadcrumbDisplayNameHelperPreservesEraSpecificRoutes()
+    {
+        var handler = new RecordingHandler();
+        using var client = new HttpClient(handler)
+        {
+            BaseAddress = new Uri("http://localhost/")
+        };
+
+        await client.GetProfileDisplayNameAsync("Red", 99);
+        await client.GetProfileDisplayNameAsync("Green", 100);
+        await client.GetProfileDisplayNameAsync("Nijiiro", 101);
+
+        Assert.Equal(
+            [
+                "api/Red/Ac15ProfileSettings/99",
+                "api/Green/Ac15ProfileSettings/100",
+                "api/Nijiiro/UserSettings/101"
+            ],
+            handler.RequestPaths);
+    }
+
     private static Ac15ProfileSettingsDto CreateAc15Dto(
         Ac15CustomizationDto? customization,
         Ac15ProfileOptionGroupsDto options)
@@ -140,6 +162,53 @@ public sealed class Ac15ProfileSettingsWebUiTests
                 }
                 """,
                 "api/Nijiiro/UserSettings/2" => """{ "myDonName": "NIJIIRO" }""",
+                "api/Red/Ac15ProfileSettings/99" => """
+                {
+                  "era": "Red",
+                  "baid": 99,
+                  "identity": { "myDonName": "RED", "myDonNameLanguage": 0 },
+                  "customization": null,
+                  "options": {},
+                  "capabilities": {
+                    "costumeSlots": [],
+                    "supportsTitle": false,
+                    "supportsTone": false,
+                    "supportsColors": false,
+                    "supportsDisplayDanOnNamePlate": false,
+                    "supportsFolderCloseButton": false,
+                    "supportsAutoCostume": false,
+                    "supportsHowToPlayTutorialFlag": false,
+                    "supportsLocalRankingDifficulty": false,
+                    "supportsDefaultSelectedSelfBestDifficulty": false,
+                    "supportsTaikojukuFolderDan": false
+                  },
+                  "lastPlayDateTime": "1970-01-01T00:00:00Z"
+                }
+                """,
+                "api/Green/Ac15ProfileSettings/100" => """
+                {
+                  "era": "Green",
+                  "baid": 100,
+                  "identity": { "myDonName": "GREEN", "myDonNameLanguage": 0 },
+                  "customization": null,
+                  "options": {},
+                  "capabilities": {
+                    "costumeSlots": [],
+                    "supportsTitle": false,
+                    "supportsTone": false,
+                    "supportsColors": false,
+                    "supportsDisplayDanOnNamePlate": false,
+                    "supportsFolderCloseButton": false,
+                    "supportsAutoCostume": false,
+                    "supportsHowToPlayTutorialFlag": false,
+                    "supportsLocalRankingDifficulty": false,
+                    "supportsDefaultSelectedSelfBestDifficulty": false,
+                    "supportsTaikojukuFolderDan": false
+                  },
+                  "lastPlayDateTime": "1970-01-01T00:00:00Z"
+                }
+                """,
+                "api/Nijiiro/UserSettings/101" => """{ "myDonName": "NIJIIRO" }""",
                 _ => "{}"
             };
 

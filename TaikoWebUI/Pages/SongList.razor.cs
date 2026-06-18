@@ -16,7 +16,7 @@ public partial class SongList
     private string? SongNameLanguage { get; set; }
 
     private SongBestResponse? response;
-    private UserSetting? userSetting;
+    private string? profileDisplayName;
 
     private Dictionary<uint, MusicDetail> musicDetailDictionary = new();
 
@@ -31,7 +31,7 @@ public partial class SongList
         response = await Client.GetFromJsonAsync<SongBestResponse>(WebUiEra.Api(CurrentEra, $"PlayData/{Baid}"));
         response.ThrowIfNull();
 
-        userSetting = await Client.GetFromJsonAsync<UserSetting>(WebUiEra.Api(CurrentEra, $"UserSettings/{Baid}"));
+        profileDisplayName = await Client.GetProfileDisplayNameAsync(CurrentEra, (uint)Baid);
         musicDetailDictionary = await GameDataService.GetMusicDetailDictionary(CurrentEra);
 
         SongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
@@ -51,7 +51,7 @@ public partial class SongList
             BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
         }
         ;
-        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{profileDisplayName}", href: null, disabled: true));
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Song List"], href: WebUiEra.UserRoute(Baid, CurrentEra, "Songs"), disabled: false));
         BreadcrumbsStateContainer.NotifyStateChanged();
     }

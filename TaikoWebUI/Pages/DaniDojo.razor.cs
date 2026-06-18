@@ -22,7 +22,7 @@ public partial class DaniDojo
     private string? SongNameLanguage { get; set; }
 
     private DanBestDataResponse? response;
-    private UserSetting? userSetting;
+    private string? profileDisplayName;
 
     private Dictionary<uint, DanBestData> _bestDataMap = new();
     private Dictionary<uint, MusicDetail> musicDetailDictionary = new();
@@ -60,7 +60,7 @@ public partial class DaniDojo
 
         SongNameLanguage = await LocalStorage.GetItemAsync<string>("songNameLanguage");
 
-        userSetting = await Client.GetFromJsonAsync<UserSetting>(WebUiEra.Api(CurrentEra, $"UserSettings/{Baid}"));
+        profileDisplayName = await Client.GetProfileDisplayNameAsync(CurrentEra, (uint)Baid);
 
         musicDetailDictionary = await GameDataService.GetMusicDetailDictionary(CurrentEra);
 
@@ -68,7 +68,7 @@ public partial class DaniDojo
         BreadcrumbsStateContainer.breadcrumbs.Clear();
         if (AuthService.IsLoggedIn && !AuthService.IsAdmin) BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
         else BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
-        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{profileDisplayName}", href: null, disabled: true));
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dani Dojo"], href: WebUiEra.UserRoute(Baid, CurrentEra, "DaniDojo"), disabled: false));
         BreadcrumbsStateContainer.NotifyStateChanged();
         isLoading = false;

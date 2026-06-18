@@ -15,7 +15,7 @@ public partial class Song
 
     private string CurrentEra => WebUiEra.NormalizeOrDefault(Era, AuthService.DefaultEra);
 
-    private UserSetting? userSetting;
+    private string? profileDisplayName;
     private SongHistoryResponse? response;
     private List<SongHistoryData>? songHistoryData;
     private Dictionary<uint, MusicDetail> musicDetailDictionary = new();
@@ -34,8 +34,7 @@ public partial class Song
         songHistoryData = response.SongHistoryData.Where(data => data.SongId == (uint)SongId).ToList();
 
 
-        // Get user settings
-        userSetting = await Client.GetFromJsonAsync<UserSetting>(WebUiEra.Api(CurrentEra, $"UserSettings/{Baid}"));
+        profileDisplayName = await Client.GetProfileDisplayNameAsync(CurrentEra, (uint)Baid);
         musicDetailDictionary = await GameDataService.GetMusicDetailDictionary(CurrentEra);
 
         // Get song title and artist
@@ -61,7 +60,7 @@ public partial class Song
         BreadcrumbsStateContainer.breadcrumbs.Clear();
         if (AuthService.IsLoggedIn && !AuthService.IsAdmin) BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
         else BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Users"], href: "/Users"));
-        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{userSetting?.MyDonName}", href: null, disabled: true));
+        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem($"{profileDisplayName}", href: null, disabled: true));
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Song List"], href: WebUiEra.UserRoute(Baid, CurrentEra, "Songs"), disabled: false));
         BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(formattedSongTitle, href: WebUiEra.UserRoute(Baid, CurrentEra, $"Songs/{SongId}"), disabled: false));
         BreadcrumbsStateContainer.NotifyStateChanged();
