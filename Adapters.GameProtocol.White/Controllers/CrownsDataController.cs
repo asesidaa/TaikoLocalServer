@@ -1,18 +1,29 @@
+using Microsoft.EntityFrameworkCore;
+using TaikoLocalServer.Application.Abstractions;
+
 namespace TaikoLocalServer.Adapters.GameProtocol.White.Controllers;
 
 [ApiController]
 [Route("/v07r00/chassis/crownsdata.php")]
-public sealed class CrownsDataController : BaseProtocolController<CrownsDataController>
+public sealed class CrownsDataController(ITaikoDbContext context, IGameDataCatalog gameDataService)
+    : BaseProtocolController<CrownsDataController>
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult CrownsData([FromBody] CrownsDataRequest request)
+    public async Task<IActionResult> CrownsData([FromBody] CrownsDataRequest request)
     {
-        Logger.LogInformation(
-            "White scaffold crownsdata.php request: Baid={Baid}, ChassisId={ChassisId}, ShopId={ShopId}",
-            request.Baid,
-            request.ChassisId,
-            request.ShopId);
-        return Ok(new CrownsDataResponse { Result = 1 });
+        Logger.LogInformation("White CrownsData request: {@Request}", request);
+        var bestRows = await context.SongBestDataWhite
+            .Where(row => row.Baid == request.Baid)
+            .ToListAsync(HttpContext.RequestAborted);
+        var white = gameDataService.White();
+        var inflated = CrownsDataMappers.BuildRawInflatedBody(bestRows, white);
+
+        return Ok(new CrownsDataResponse
+        {
+            Result = 1,
+            SongHashVer = white.SongHashVersion,
+            HashCrownFlg = inflated
+        });
     }
 }

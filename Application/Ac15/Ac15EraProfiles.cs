@@ -75,7 +75,7 @@ public static class Ac15EraProfiles
         new Ac15WirePlacement(
             CrownPlacement: Ac15CrownWirePlacement.DedicatedEndpoint,
             HasInitialDataItemShopRows: false,
-            HasInitialDataLegalTermsRows: true,
+            HasInitialDataLegalTermsRows: false,
             HasTokkunTutorialFlagInUserData: false),
         Ac15ProfileCapabilities.CurrentFull);
 

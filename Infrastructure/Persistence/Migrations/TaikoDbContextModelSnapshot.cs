@@ -547,6 +547,41 @@ namespace TaikoLocalServer.Migrations
                     b.ToTable("DanScoreDatum_Red", (string)null);
                 });
 
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.DanScoreDatumWhite", b =>
+                {
+                    b.Property<uint>("Baid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("DanId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsExtra")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("ArrivalSongCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("ClearGrade")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(0u);
+
+                    b.Property<uint>("ComboCountTotal")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("MedleyUniqueId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("SoulGaugeTotal")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Baid", "DanId", "IsExtra");
+
+                    b.HasIndex("MedleyUniqueId");
+
+                    b.ToTable("DanScoreDatum_White", (string)null);
+                });
+
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.DanScoreDatumYellow", b =>
                 {
                     b.Property<uint>("Baid")
@@ -763,6 +798,52 @@ namespace TaikoLocalServer.Migrations
                     b.HasKey("Baid", "DanId", "IsExtra", "StageIndex");
 
                     b.ToTable("DanStageScoreDatum_Red", (string)null);
+                });
+
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.DanStageScoreDatumWhite", b =>
+                {
+                    b.Property<uint>("Baid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("DanId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsExtra")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("StageIndex")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("BadCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("ComboCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("DrumrollCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("GoodCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("HighScore")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("OkCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("PlayScore")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("SongNumber")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("TotalHitCount")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Baid", "DanId", "IsExtra", "StageIndex");
+
+                    b.ToTable("DanStageScoreDatum_White", (string)null);
                 });
 
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.DanStageScoreDatumYellow", b =>
@@ -1245,6 +1326,36 @@ namespace TaikoLocalServer.Migrations
                     b.ToTable("SongBestDatum_Red", (string)null);
                 });
 
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.SongBestDatumWhite", b =>
+                {
+                    b.Property<uint>("Baid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("SongId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("Difficulty")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsShin")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("BestCrown")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("BestRate")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("BestScore")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Baid", "SongId", "Difficulty", "IsShin");
+
+                    b.HasIndex("SongId", "Difficulty", "BestScore");
+
+                    b.ToTable("SongBestDatum_White", (string)null);
+                });
+
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.SongBestDatumYellow", b =>
                 {
                     b.Property<uint>("Baid")
@@ -1646,6 +1757,108 @@ namespace TaikoLocalServer.Migrations
                     b.HasIndex("Baid", "SongId", "Difficulty", "PlayTime");
 
                     b.ToTable("SongPlayDatum_Red", (string)null);
+                });
+
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.SongPlayDatumWhite", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("Baid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("ComboCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("Crown")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("Difficulty")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("GoodCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("HitCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsFavorite")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsPapamama")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsPushed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsRecent")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsShin")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("MissCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("MusicCategory")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("OkCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte[]>("OptionFlg")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<uint>("PlayDan")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("PlayMode")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("PlayTime")
+                        .HasColumnType("datetime");
+
+                    b.Property<uint>("PoundCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("Score")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("ScoreRate")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("SelectedFolderId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("SongId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("SoulGauge")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("StageMode")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("StarLevel")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte[]>("ToneFlg")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<uint>("WaiwaiGauge")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("WaiwaiResult")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Baid", "SongId", "Difficulty", "PlayTime");
+
+                    b.ToTable("SongPlayDatum_White", (string)null);
                 });
 
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.SongPlayDatumYellow", b =>
@@ -2551,6 +2764,200 @@ namespace TaikoLocalServer.Migrations
                     b.ToTable("UserSaveData_Red", (string)null);
                 });
 
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.UserSaveDataWhite", b =>
+                {
+                    b.Property<uint>("Baid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("CategAnimeCnt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("CategClassicCnt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("CategDoyoCnt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("CategGameCnt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("CategJpopCnt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("CategNamcoCnt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("CategVarietyCnt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("CategVocaloidCnt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("ColorBody")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("ColorFace")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("ColorLimb")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("ConsecAreaCnt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("Costume1")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("Costume2")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("Costume3")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("Costume4")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("Costume5")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte[]>("CostumeFlg1")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<byte[]>("CostumeFlg2")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<byte[]>("CostumeFlg3")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<byte[]>("CostumeFlg4")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<byte[]>("CostumeFlg5")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<byte[]>("DefaultOptionSetting")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<bool>("DefaultShinSetting")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("DefaultToneSetting")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("DifficultyPlayedCourse")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("DifficultyPlayedStar")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("DifficultyTutorialFlg")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("DispDanType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("DispLevelChassis")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("DispLevelSelf")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("DispLevelTotal")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("DispScoreType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("DispTaikojukuDan")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte[]>("GotDanExtraFlg")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<byte[]>("GotDanFlg")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<uint>("GotDanMax")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsAutoCostumeOn")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDevil")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsExplain")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsTojiru")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("LastPlayDatetime")
+                        .HasColumnType("datetime");
+
+                    b.Property<byte[]>("OptionFlg")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<uint>("PrevAreaCode")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte[]>("ReleaseSongFlg")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<uint>("RewardProgress")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("RewardPtn")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("SongFavoriteCnt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("SongPushedCnt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("SongRecentCnt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("TitleFlg")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<uint>("TitleplateId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte[]>("ToneFlg")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<uint>("TotalCreditCnt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("TotalGetDonpoint")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("TotalUseDonpoint")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Baid");
+
+                    b.ToTable("UserSaveData_White", (string)null);
+                });
+
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.UserSaveDataYellow", b =>
                 {
                     b.Property<uint>("Baid")
@@ -2752,6 +3159,35 @@ namespace TaikoLocalServer.Migrations
                     b.HasKey("Baid");
 
                     b.ToTable("UserSaveData_Yellow", (string)null);
+                });
+
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.WhiteFavoriteSongs", b =>
+                {
+                    b.Property<uint>("Baid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("SongNo")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Baid", "SongNo");
+
+                    b.ToTable("WhiteFavoriteSongs", (string)null);
+                });
+
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.WhiteRecentSongs", b =>
+                {
+                    b.Property<uint>("Baid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("SongNo")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("LastPlayed")
+                        .HasColumnType("datetime");
+
+                    b.HasKey("Baid", "SongNo");
+
+                    b.ToTable("WhiteRecentSongs", (string)null);
                 });
 
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.YellowFavoriteSongs", b =>
@@ -3072,6 +3508,17 @@ namespace TaikoLocalServer.Migrations
                     b.Navigation("Ba");
                 });
 
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.DanScoreDatumWhite", b =>
+                {
+                    b.HasOne("TaikoLocalServer.Domain.Entities.UserDatum", "Ba")
+                        .WithMany()
+                        .HasForeignKey("Baid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ba");
+                });
+
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.DanScoreDatumYellow", b =>
                 {
                     b.HasOne("TaikoLocalServer.Domain.Entities.UserDatum", "Ba")
@@ -3119,6 +3566,17 @@ namespace TaikoLocalServer.Migrations
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.DanStageScoreDatumRed", b =>
                 {
                     b.HasOne("TaikoLocalServer.Domain.Entities.DanScoreDatumRed", "Parent")
+                        .WithMany("DanStageScoreData")
+                        .HasForeignKey("Baid", "DanId", "IsExtra")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.DanStageScoreDatumWhite", b =>
+                {
+                    b.HasOne("TaikoLocalServer.Domain.Entities.DanScoreDatumWhite", "Parent")
                         .WithMany("DanStageScoreData")
                         .HasForeignKey("Baid", "DanId", "IsExtra")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -3314,6 +3772,17 @@ namespace TaikoLocalServer.Migrations
                     b.Navigation("Ba");
                 });
 
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.SongBestDatumWhite", b =>
+                {
+                    b.HasOne("TaikoLocalServer.Domain.Entities.UserDatum", "Ba")
+                        .WithMany()
+                        .HasForeignKey("Baid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ba");
+                });
+
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.SongBestDatumYellow", b =>
                 {
                     b.HasOne("TaikoLocalServer.Domain.Entities.UserDatum", "Ba")
@@ -3359,6 +3828,17 @@ namespace TaikoLocalServer.Migrations
                 });
 
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.SongPlayDatumRed", b =>
+                {
+                    b.HasOne("TaikoLocalServer.Domain.Entities.UserDatum", "Ba")
+                        .WithMany()
+                        .HasForeignKey("Baid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ba");
+                });
+
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.SongPlayDatumWhite", b =>
                 {
                     b.HasOne("TaikoLocalServer.Domain.Entities.UserDatum", "Ba")
                         .WithMany()
@@ -3435,7 +3915,40 @@ namespace TaikoLocalServer.Migrations
                     b.Navigation("Ba");
                 });
 
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.UserSaveDataWhite", b =>
+                {
+                    b.HasOne("TaikoLocalServer.Domain.Entities.UserDatum", "Ba")
+                        .WithMany()
+                        .HasForeignKey("Baid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ba");
+                });
+
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.UserSaveDataYellow", b =>
+                {
+                    b.HasOne("TaikoLocalServer.Domain.Entities.UserDatum", "Ba")
+                        .WithMany()
+                        .HasForeignKey("Baid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ba");
+                });
+
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.WhiteFavoriteSongs", b =>
+                {
+                    b.HasOne("TaikoLocalServer.Domain.Entities.UserDatum", "Ba")
+                        .WithMany()
+                        .HasForeignKey("Baid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ba");
+                });
+
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.WhiteRecentSongs", b =>
                 {
                     b.HasOne("TaikoLocalServer.Domain.Entities.UserDatum", "Ba")
                         .WithMany()
@@ -3522,6 +4035,11 @@ namespace TaikoLocalServer.Migrations
                 });
 
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.DanScoreDatumRed", b =>
+                {
+                    b.Navigation("DanStageScoreData");
+                });
+
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.DanScoreDatumWhite", b =>
                 {
                     b.Navigation("DanStageScoreData");
                 });

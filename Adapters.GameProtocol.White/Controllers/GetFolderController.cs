@@ -6,14 +6,12 @@ public sealed class GetFolderController : BaseProtocolController<GetFolderContro
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult GetFolder([FromBody] GetfolderRequest request)
+    public async Task<IActionResult> GetFolder([FromBody] GetfolderRequest request)
     {
-        Logger.LogInformation(
-            "White scaffold getfolder.php request: ChassisId={ChassisId}, ShopId={ShopId}, HddVer={HddVer}, FolderCount={FolderCount}",
-            request.ChassisId,
-            request.ShopId,
-            request.HddVer,
-            request.FolderIds?.Length ?? 0);
-        return Ok(new GetfolderResponse { Result = 1 });
+        Logger.LogInformation("White GetFolder request: {@Request}", request);
+        var common = await Mediator.Send(
+            new GetFolderQuery(GameEra.White, request.FolderIds ?? []),
+            HttpContext.RequestAborted);
+        return Ok(FolderDataMappers.Map(common));
     }
 }

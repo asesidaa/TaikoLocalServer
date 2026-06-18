@@ -124,6 +124,13 @@ public sealed class GreenAuthConfigTests
         public DbSet<DanStageScoreDatumRed> DanStageScoreDataRed => throw new NotSupportedException();
         public DbSet<RedDonChallengeRawFact> RedDonChallengeRawFacts => throw new NotSupportedException();
         public DbSet<RedDonChallengeProgress> RedDonChallengeProgress => throw new NotSupportedException();
+        public DbSet<UserSaveDataWhite> UserSaveDataWhite => throw new NotSupportedException();
+        public DbSet<SongBestDatumWhite> SongBestDataWhite => throw new NotSupportedException();
+        public DbSet<SongPlayDatumWhite> SongPlayDataWhite => throw new NotSupportedException();
+        public DbSet<WhiteFavoriteSongs> WhiteFavoriteSongs => throw new NotSupportedException();
+        public DbSet<WhiteRecentSongs> WhiteRecentSongs => throw new NotSupportedException();
+        public DbSet<DanScoreDatumWhite> DanScoreDataWhite => throw new NotSupportedException();
+        public DbSet<DanStageScoreDatumWhite> DanStageScoreDataWhite => throw new NotSupportedException();
 
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
             => throw new NotSupportedException();

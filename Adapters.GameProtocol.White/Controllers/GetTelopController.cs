@@ -6,13 +6,12 @@ public sealed class GetTelopController : BaseProtocolController<GetTelopControll
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult GetTelop([FromBody] GettelopRequest request)
+    public async Task<IActionResult> GetTelop([FromBody] GettelopRequest request)
     {
-        Logger.LogInformation(
-            "White scaffold gettelop.php request: ChassisId={ChassisId}, ShopId={ShopId}, TelopId={TelopId}",
-            request.ChassisId,
-            request.ShopId,
-            request.TelopId);
-        return Ok(new GettelopResponse { Result = 1 });
+        Logger.LogInformation("White GetTelop request: {@Request}", request);
+        var common = await Mediator.Send(
+            new GetTelopQuery(GameEra.White, request.TelopId),
+            HttpContext.RequestAborted);
+        return Ok(GetTelopMappers.Map(common));
     }
 }

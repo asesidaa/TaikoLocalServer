@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Phase Summary
-status: completed
-stopped_at: Phase 23.1 complete and verified
-last_updated: "2026-06-17T22:25:36.830Z"
-last_activity: 2026-06-17 -- Phase 23.1 marked complete
+status: in_progress
+stopped_at: Phase 25 complete and verified
+last_updated: "2026-06-18T16:45:00.000Z"
+last_activity: 2026-06-18 -- Phase 25 White runtime binding completed
 progress:
   total_phases: 6
-  completed_phases: 2
-  total_plans: 6
-  completed_plans: 6
-  percent: 33
+  completed_phases: 4
+  total_plans: 8
+  completed_plans: 8
+  percent: 67
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-18)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Phase 23.1 — Red Don Challenge capability boundary and playresult refactor
+**Current focus:** Phase 26 - White collectable data and Don Challenge evidence
 
 ## Current Position
 
-Phase: 23.1 — COMPLETE
-Plan: 3 of 3
-Status: Phase 23.1 complete
-Last activity: 2026-06-17 -- Phase 23.1 marked complete
+Phase: 25 - COMPLETE
+Plan: 1 of 1
+Status: Phase 25 complete; autonomous flow continues to Phase 26
+Last activity: 2026-06-18 -- Phase 25 White runtime binding completed
 
 ## Performance Metrics
 
@@ -256,13 +256,17 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 23]: White Host wiring remains disabled-safe and exact-prefix scoped. — White is registered only when enabled, removed from MVC application parts when disabled, and missing-content-type fallback is limited to /v07r00/chassis.
 - [Phase 23]: White scaffold controllers use per-route files and classes. — The user explicitly corrected the implementation away from a monolithic scaffold file so White matches existing era adapter shape.
 
+- [Phase 25]: White runtime state is White-owned. White identity, save/profile, normal play, favorite, recent, self-best, crowns, reward/Don Point, and Dani behavior now bind through White tables and explicit shared AC15 helpers without writing Blue, Green, Yellow, Red, Nijiiro, shop, Tokkun, battle, or Don Challenge state.
+- [Phase 25]: White unsupported mode sections remain absent. Mapperly-generated White playresult maps Tokkun, BlueBattle, GreenGhost, and DonChallenge sections to null, and White userdata intentionally omits Tokkun tutorial and ChallengeCompe stateful readback.
+- [Phase 25]: White present and special-BAID provenance is not complete. Phase 25 covers protocol-backed `get_donpoint`, `reward_ptn`, `reward_progress`, and unlock flags; Phase 26 owns `present.xml`, `spacialbaid.xml`, collectable sidecars, and the Don Challenge evidence decision.
+
 ### Pending Todos
 
 - None. Phase 23.1 completed the Don Challenge capability boundary refactor todo.
 
 ### Blockers/Concerns
 
-- None for Phase 23.1 implementation. Final build, Red tests, Blue/Yellow playresult tests, and temp Host build passed.
+- None for Phase 25 implementation. White focused tests, shared AC15 regression filter, Mapperly generated-source inspection, and temp Host build passed.
 
 ### Quick Tasks Completed
 
@@ -280,10 +284,10 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ## Session Continuity
 
-Last session: 2026-06-17T21:45:29.069Z
-Stopped at: Phase 23.1 complete and verified
-Resume file: .planning/phases/23.1-red-don-challenge-capability-boundary-and-playresult-refacto/23.1-03-SUMMARY.md
+Last session: 2026-06-18T16:45:00.000Z
+Stopped at: Phase 25 complete and verified
+Resume file: .planning/phases/25-white-runtime-capability-binding-and-rewards/25-01-SUMMARY.md
 
 ## Operator Next Steps
 
-- Continue to the next v1.4 White phase when accepted.
+- Continue Phase 26 collectable data and Don Challenge evidence. Manual RPCS3/cabinet and WebUI verification remains reserved for Phase 27 closeout per user instruction.

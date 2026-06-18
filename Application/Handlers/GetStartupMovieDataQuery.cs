@@ -25,6 +25,7 @@ public sealed class GetStartupMovieDataQueryHandler(
 
         var movies = era.Value switch
         {
+            GameEra.White => gameDataService.White().Movies,
             GameEra.Red => gameDataService.Red().Movies,
             GameEra.Blue => gameDataService.Blue().Movies,
             GameEra.Green => gameDataService.Green().Movies,

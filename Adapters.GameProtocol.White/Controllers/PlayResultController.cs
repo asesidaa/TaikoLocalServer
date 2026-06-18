@@ -6,15 +6,15 @@ public sealed class PlayResultController : BaseProtocolController<PlayResultCont
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult PlayResult([FromBody] PlayResultRequest request)
+    public async Task<IActionResult> PlayResult([FromBody] PlayResultRequest request)
     {
-        Logger.LogInformation(
-            "White scaffold playresult.php request: Baid={Baid}, ChassisId={ChassisId}, ShopId={ShopId}, PlayMode={PlayMode}, StageCount={StageCount}",
-            request.Baid,
-            request.ChassisId,
-            request.ShopId,
-            request.PlayMode,
-            request.AryStageInfoes.Count);
-        return Ok(new PlayResultResponse { Result = 1 });
+        Logger.LogInformation("White PlayResult request: {@Request}", request);
+        var playResult = PlayResultMappers.Map(request);
+
+        var result = await Mediator.Send(
+            new UpdateAc15PlayResultCommand(request.Baid, GameEra.White, playResult),
+            HttpContext.RequestAborted);
+
+        return Ok(PlayResultMappers.Map(result));
     }
 }

@@ -6,14 +6,12 @@ public sealed class RecommendController : BaseProtocolController<RecommendContro
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult Recommend([FromBody] RecommendRequest request)
+    public async Task<IActionResult> Recommend([FromBody] RecommendRequest request)
     {
-        Logger.LogInformation(
-            "White scaffold recommend.php request: ChassisId={ChassisId}, ShopId={ShopId}, GenderType={GenderType}, PlayerAge={PlayerAge}",
-            request.ChassisId,
-            request.ShopId,
-            request.GenderType,
-            request.PlayerAge);
-        return Ok(new RecommendResponse { Result = 1 });
+        Logger.LogInformation("White Recommend request: {@Request}", request);
+        var common = await Mediator.Send(
+            new GetRecommendQuery(GameEra.White, request.GenderType, request.PlayerAge),
+            HttpContext.RequestAborted);
+        return Ok(RecommendMappers.Map(common));
     }
 }

@@ -6,13 +6,12 @@ public sealed class TaikojukuController : BaseProtocolController<TaikojukuContro
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult Taikojuku([FromBody] TaikojukuRequest request)
+    public async Task<IActionResult> Taikojuku([FromBody] TaikojukuRequest request)
     {
-        Logger.LogInformation(
-            "White scaffold taikojuku.php request: ChassisId={ChassisId}, ShopId={ShopId}, GetDanCount={GetDanCount}",
-            request.ChassisId,
-            request.ShopId,
-            request.GetDans?.Length ?? 0);
-        return Ok(new TaikojukuResponse { Result = 1 });
+        Logger.LogInformation("White Taikojuku request: {@Request}", request);
+        var common = await Mediator.Send(
+            new GetTaikojukuQuery(GameEra.White, request.GetDans ?? []),
+            HttpContext.RequestAborted);
+        return Ok(TaikojukuMappers.Map(common));
     }
 }

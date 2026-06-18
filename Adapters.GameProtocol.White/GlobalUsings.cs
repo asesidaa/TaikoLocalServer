@@ -5,6 +5,7 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
 global using ProtoBuf;
+global using TaikoLocalServer.Adapters.GameProtocol.White.Mappers;
 global using TaikoLocalServer.Adapters.GameProtocol.Shared.Controllers;
 global using TaikoLocalServer.Adapters.GameProtocol.White.Wire;
 global using TaikoLocalServer.Application.Ac15;

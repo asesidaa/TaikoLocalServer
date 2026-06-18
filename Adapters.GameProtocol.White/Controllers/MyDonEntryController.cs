@@ -6,13 +6,23 @@ public sealed class MyDonEntryController : BaseProtocolController<MyDonEntryCont
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult MydonEntry([FromBody] MydonEntryRequest request)
+    public async Task<IActionResult> MydonEntry([FromBody] MydonEntryRequest request)
     {
-        Logger.LogInformation(
-            "White scaffold mydonentry.php request: DeviceType={DeviceType}, ChassisId={ChassisId}, ShopId={ShopId}",
-            request.DeviceType,
-            request.ChassisId,
-            request.ShopId);
-        return Ok(new MydonEntryResponse { Result = 1 });
+        Logger.LogInformation("White MyDonEntry request: {@Request}", request);
+
+        var common = await Mediator.Send(
+            new AddMyDonEntryCommand(GameEra.White, request.AccessCode, request.MydonName, 0),
+            HttpContext.RequestAborted);
+
+        return Ok(new MydonEntryResponse
+        {
+            Result = common.Result,
+            ComSvrResult = common.ComSvrResult,
+            Baid = common.Baid,
+            AccessCode = common.AccessCode,
+            IsPublish = true,
+            MydonName = common.MydonName,
+            ContentInfo = new byte[Ac15EraProfiles.White.Limits.ContentInfoBytes]
+        });
     }
 }

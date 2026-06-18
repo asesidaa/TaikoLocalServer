@@ -6,15 +6,12 @@ public sealed class SelfBestController : BaseProtocolController<SelfBestControll
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult SelfBest([FromBody] SelfBestRequest request)
+    public async Task<IActionResult> SelfBest([FromBody] SelfBestRequest request)
     {
-        Logger.LogInformation(
-            "White scaffold selfbest.php request: Baid={Baid}, ChassisId={ChassisId}, ShopId={ShopId}, Level={Level}, SongCount={SongCount}",
-            request.Baid,
-            request.ChassisId,
-            request.ShopId,
-            request.Level,
-            request.ArySongNoes?.Length ?? 0);
-        return Ok(new SelfBestResponse { Result = 1 });
+        Logger.LogInformation("White SelfBest request: {@Request}", request);
+        var common = await Mediator.Send(
+            new GetSelfBestQuery(request.Baid, GameEra.White, request.Level.GetValueOrDefault(), request.ArySongNoes ?? []),
+            HttpContext.RequestAborted);
+        return Ok(SelfBestMappers.Map(common));
     }
 }

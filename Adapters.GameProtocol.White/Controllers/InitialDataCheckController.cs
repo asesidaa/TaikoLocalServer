@@ -6,12 +6,10 @@ public sealed class InitialDataCheckController : BaseProtocolController<InitialD
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult InitialDataCheck([FromBody] InitialdatacheckRequest request)
+    public async Task<IActionResult> InitialDataCheck([FromBody] InitialdatacheckRequest request)
     {
-        Logger.LogInformation(
-            "White scaffold initialdatacheck.php request: ChassisId={ChassisId}, ShopId={ShopId}",
-            request.ChassisId,
-            request.ShopId);
-        return Ok(new InitialdatacheckResponse { Result = 1 });
+        Logger.LogInformation("White InitialDataCheck request: {@Request}", request);
+        var common = await Mediator.Send(new GetInitialDataQuery(GameEra.White), HttpContext.RequestAborted);
+        return Ok(InitialDataMappers.Map(common));
     }
 }

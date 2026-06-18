@@ -15,15 +15,15 @@
 ### White Catalog And Profile
 
 - [ ] **WCAT-01**: White catalog initialization loads the proven White data root and binds matching AC15 music, medley, tuning, folder, telop, recommendation, movie/customization, Taikojuku, present, and special-BAID data through shared loaders where file formats match.
-- [ ] **WCAT-02**: White has an explicit AC15 capability/profile model with White protocol limits, feature flags, wire placement, and typed persistence boundaries, while absent 0.13 surfaces remain disabled.
-- [ ] **WCAT-03**: White server-authored sidecar data exists and is copied for every implemented White feature that needs committed server data outside raw operator files, including intentionally empty sidecars where absence is the contract.
+- [x] **WCAT-02**: White has an explicit AC15 capability/profile model with White protocol limits, feature flags, wire placement, and typed persistence boundaries, while absent 0.13 surfaces remain disabled.
+- [x] **WCAT-03**: White server-authored sidecar data exists and is copied for every implemented White feature that needs committed server data outside raw operator files, including intentionally empty sidecars where absence is the contract.
 
 ### White Runtime Binding
 
-- [ ] **WSTATE-01**: White binds shared identity/userdata behavior to White-owned save/profile tables so the cabinet can register or find a card, create mydon/profile data, and read/write userdata without writing another era's gameplay state.
-- [ ] **WSTATE-02**: White binds matching normal-play behavior to White-owned score, self-best, crown, favorite, recent-song, unlock, reward/progress, and profile-counter tables where White protocol and data shapes match.
-- [ ] **WSTATE-03**: White metadata and readback routes for initial data, folders, telops, recommendations, self-best, crowns, Taikojuku, tournament/check probes, heartbeat/bookkeeping, and related compatibility surfaces are catalog-backed or no-state only according to White evidence.
-- [ ] **WSTATE-04**: White Taikojuku/Dani runtime behavior writes and reads only White-owned Dan state when White payload and catalog evidence proves the same contract; otherwise the unsupported runtime write/readback gap is documented instead of invented.
+- [x] **WSTATE-01**: White binds shared identity/userdata behavior to White-owned save/profile tables so the cabinet can register or find a card, create mydon/profile data, and read/write userdata without writing another era's gameplay state.
+- [x] **WSTATE-02**: White binds matching normal-play behavior to White-owned score, self-best, crown, favorite, recent-song, unlock, reward/progress, and profile-counter tables where White protocol and data shapes match.
+- [x] **WSTATE-03**: White metadata and readback routes for initial data, folders, telops, recommendations, self-best, crowns, Taikojuku, tournament/check probes, heartbeat/bookkeeping, and related compatibility surfaces are catalog-backed or no-state only according to White evidence.
+- [x] **WSTATE-04**: White Taikojuku/Dani runtime behavior writes and reads only White-owned Dan state when White payload and catalog evidence proves the same contract; otherwise the unsupported runtime write/readback gap is documented instead of invented.
 
 ### White Rewards And Collectables
 
@@ -69,14 +69,14 @@ Roadmap phase mapping for v1.4 White AC15 0.13 Support.
 | WFND-01 | Phase 23 | Complete |
 | WFND-02 | Phase 23 | Complete |
 | WFND-03 | Phase 23 | Complete |
-| WCAT-01 | Phase 24 | Pending |
-| WCAT-02 | Phase 24 | Pending |
-| WCAT-03 | Phase 24 | Pending |
-| WSTATE-01 | Phase 25 | Pending |
-| WSTATE-02 | Phase 25 | Pending |
-| WSTATE-03 | Phase 25 | Pending |
-| WSTATE-04 | Phase 25 | Pending |
-| WCOLL-01 | Phase 25 | Pending |
+| WCAT-01 | Phase 24/26 | Partial |
+| WCAT-02 | Phase 24 | Verified |
+| WCAT-03 | Phase 24 | Verified |
+| WSTATE-01 | Phase 25 | Verified |
+| WSTATE-02 | Phase 25 | Verified |
+| WSTATE-03 | Phase 25 | Verified |
+| WSTATE-04 | Phase 25 | Verified |
+| WCOLL-01 | Phase 25/26 | Partial |
 | WCOLL-02 | Phase 26 | Pending |
 | WCOLL-03 | Phase 26 | Pending |
 | WVER-01 | Phase 27 | Pending |
@@ -94,4 +94,4 @@ Roadmap phase mapping for v1.4 White AC15 0.13 Support.
 
 ---
 *Requirements defined: 2026-06-16*
-*Last updated: 2026-06-18 after Phase 23 White foundation closeout*
+*Last updated: 2026-06-18 after Phase 25 White runtime binding*

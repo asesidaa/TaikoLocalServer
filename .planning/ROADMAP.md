@@ -30,7 +30,7 @@ Active milestone: **v1.4 White AC15 0.13 Support**
 | 23 | White Evidence and Era Foundation | 3/3 | Complete | 2026-06-18 |
 | 23.1 | Red Don Challenge capability boundary and playresult refactor | 3/3 | Complete   | 2026-06-17 |
 | 24 | White Catalog Profile and Protocol Limits | Bind White `ST7100-1` data, sidecars, AC15 profile, feature flags, limits, and wire placement. | WCAT-01, WCAT-02, WCAT-03 | 5 |
-| 25 | White Runtime Capability Binding and Rewards | Bind White identity, userdata, normal play, metadata readback, Taikojuku/Dani where proven, and reward/present state. | WSTATE-01, WSTATE-02, WSTATE-03, WSTATE-04, WCOLL-01 | 5 |
+| 25 | White Runtime Capability Binding and Rewards | 1/1 | Complete | 2026-06-18 |
 | 26 | White Collectable Data and Don Challenge Evidence | Collect White 0.13 collectable data and bind Don Challenge only if White evidence proves it. | WCOLL-02, WCOLL-03 | 5 |
 | 27 | White AdminApi WebUI and Runtime Closeout | Expose implemented White-owned readback surfaces and close v1.4 with automated plus RPCS3/cabinet verification. | WVER-01, WVER-02, WVER-03 | 5 |
 
@@ -41,7 +41,7 @@ Active milestone: **v1.4 White AC15 0.13 Support**
 - [x] **Phase 23: White Evidence and Era Foundation** - Prove White route/version/transport boundaries and add first-class White adapter scaffolding. Completed after server verification and user-confirmed White connection smoke on 2026-06-18. (completed 2026-06-18)
 - [x] **Phase 23.1: Red Don Challenge capability boundary and playresult refactor** - Refactor Red Don Challenge naming, shared capability boundaries, and playresult dispatch before White reuse. Completed 2026-06-17. (INSERTED)
 - [x] **Phase 24: White Catalog Profile and Protocol Limits** - Bind White `ST7100-1` data, sidecars, AC15 profile, feature flags, limits, and wire placement. Completed 2026-06-18.
-- [ ] **Phase 25: White Runtime Capability Binding and Rewards** - Bind White identity, userdata, normal play, metadata readback, Taikojuku/Dani where proven, and reward/present state.
+- [x] **Phase 25: White Runtime Capability Binding and Rewards** - Bind White identity, userdata, normal play, metadata readback, Taikojuku/Dani where proven, and protocol-backed reward/Don Point state. Completed 2026-06-18.
 - [ ] **Phase 26: White Collectable Data and Don Challenge Evidence** - Collect White 0.13 collectable data and bind Don Challenge only if White evidence proves it.
 - [ ] **Phase 27: White AdminApi WebUI and Runtime Closeout** - Expose implemented White-owned readback surfaces and close v1.4 with automated plus RPCS3/cabinet verification.
 
@@ -145,6 +145,10 @@ Plans:
 **Goal:** Bind White identity, userdata, normal play, metadata readback, Taikojuku/Dani where proven, and reward/present state.
 **Depends on:** Phase 24
 **Requirements:** WSTATE-01, WSTATE-02, WSTATE-03, WSTATE-04, WCOLL-01
+**Plans:** 1/1 plans complete
+Plans:
+
+- [x] 25-01-PLAN.md - White runtime state binding
 
 **Key deliverables:**
 
@@ -153,6 +157,7 @@ Plans:
 - White normal `playresult.php` classification and state mutation through shared AC15 helpers bound to concrete White tables and White limits.
 - White Taikojuku/Dani runtime writes/readback only if White payload and catalog evidence proves the same contract; otherwise documented absence.
 - White reward/present and Don Point behavior from `present.xml` and White protocol fields without Yellow shop/medal or Banacoin state.
+- Phase 25 completed the protocol-backed reward/Don Point state; detailed `present.xml`/special-BAID provenance is carried to Phase 26 collectable work.
 
 **Success criteria:**
 
@@ -216,11 +221,11 @@ Plans:
 | WCAT-01 | Phase 24 | Verified |
 | WCAT-02 | Phase 24 | Verified |
 | WCAT-03 | Phase 24 | Verified |
-| WSTATE-01 | Phase 25 | Pending |
-| WSTATE-02 | Phase 25 | Pending |
-| WSTATE-03 | Phase 25 | Pending |
-| WSTATE-04 | Phase 25 | Pending |
-| WCOLL-01 | Phase 25 | Pending |
+| WSTATE-01 | Phase 25 | Verified |
+| WSTATE-02 | Phase 25 | Verified |
+| WSTATE-03 | Phase 25 | Verified |
+| WSTATE-04 | Phase 25 | Verified |
+| WCOLL-01 | Phase 25/26 | Partial |
 | WCOLL-02 | Phase 26 | Pending |
 | WCOLL-03 | Phase 26 | Pending |
 | WVER-01 | Phase 27 | Pending |
@@ -265,7 +270,7 @@ See `.planning/milestones/v1.3-ROADMAP.md` and `.planning/milestones/v1.3-phases
 | v1.1 Blue Tokkun Mode Support | 7-11 | 7 GSD plans | Shipped | 2026-06-07 |
 | v1.2 Yellow AC15 Support | 12-17 plus 16.1 and 16.2 | 38 GSD plans | Shipped | 2026-06-12 |
 | v1.3 Red AC15 Support | 18-22 | 29 GSD plans | Shipped | 2026-06-16 |
-| v1.4 White AC15 0.13 Support | 23-27 plus 23.1 | 7 GSD plans complete | In Progress | - |
+| v1.4 White AC15 0.13 Support | 23-27 plus 23.1 | 8 GSD plans complete | In Progress | - |
 
 ## Phase Progress
 
@@ -274,6 +279,6 @@ See `.planning/milestones/v1.3-ROADMAP.md` and `.planning/milestones/v1.3-phases
 | 23. White Evidence and Era Foundation | 3/3 | Complete | 2026-06-18 |
 | 23.1 Red Don Challenge capability boundary and playresult refactor | 3/3 | Complete | 2026-06-17 |
 | 24. White Catalog Profile and Protocol Limits | 1/1 | Complete | 2026-06-18 |
-| 25. White Runtime Capability Binding and Rewards | 0 | Pending | - |
+| 25. White Runtime Capability Binding and Rewards | 1/1 | Complete | 2026-06-18 |
 | 26. White Collectable Data and Don Challenge Evidence | 0 | Pending | - |
 | 27. White AdminApi WebUI and Runtime Closeout | 0 | Pending | - |
