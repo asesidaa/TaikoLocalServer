@@ -145,10 +145,31 @@ public sealed class WhiteCatalogLoaderTests
         Assert.NotNull(recommend.RecommendBestSongs);
         Assert.NotNull(movies);
         Assert.True(donChallenge.Enabled);
+        Assert.Equal(6, donChallenge.MonthlyBundles.Count);
+        Assert.All(donChallenge.MonthlyBundles, bundle => Assert.True(bundle.HasExpectedPersonalTaskCount));
         Assert.Equal("white-2016-06", donChallenge.ActiveBundleId);
         Assert.NotNull(donChallenge.ActiveBundle);
-        Assert.Equal(10, donChallenge.ActiveBundle.PersonalTasks.Count);
-        Assert.Contains(donChallenge.ActiveBundle.Rewards, reward => reward.RewardSongNoes.Contains(585u));
+        Assert.Equal("黄泉、それはすなわち『あの世』・・・。曲名にひらがなの「よ」が入る曲をどれか1曲クリアするドン！", donChallenge.ActiveBundle.PersonalTasks[0].Name);
+        Assert.Contains(donChallenge.ActiveBundle.Rewards, reward => reward.RewardSongNoes.SequenceEqual([585u]));
+        Assert.Contains(donChallenge.ActiveBundle.Rewards, reward => reward.RewardTitleIds.SequenceEqual([457u]));
+
+        var january = Assert.Single(donChallenge.MonthlyBundles, bundle => bundle.BundleId == "white-2016-01");
+        Assert.Equal([554u], january.CommunityTask?.Rule.EligibleSongNoes);
+        Assert.Contains(january.Rewards, reward => reward.RewardSongNoes.SequenceEqual([554u]));
+        Assert.Contains(january.Rewards, reward => reward.RewardTitleIds.SequenceEqual([421u]));
+
+        var february = Assert.Single(donChallenge.MonthlyBundles, bundle => bundle.BundleId == "white-2016-02");
+        Assert.Equal([527u], february.CommunityTask?.Rule.EligibleSongNoes);
+        Assert.Contains(february.Rewards, reward => reward.RewardSongNoes.SequenceEqual([527u]));
+        Assert.Contains(february.Rewards, reward => reward.RewardTitleIds.SequenceEqual([422u]));
+
+        var april = Assert.Single(donChallenge.MonthlyBundles, bundle => bundle.BundleId == "white-2016-04");
+        Assert.Equal([579u], april.CommunityTask?.Rule.EligibleSongNoes);
+        Assert.Equal([453u], april.Rewards[1].RewardTitleIds);
+
+        var may = Assert.Single(donChallenge.MonthlyBundles, bundle => bundle.BundleId == "white-2016-05");
+        Assert.Equal([580u], may.CommunityTask?.Rule.EligibleSongNoes);
+        Assert.Equal([456u], may.Rewards[1].RewardTitleIds);
         using var recommendJson = JsonDocument.Parse(await File.ReadAllTextAsync(recommendPath, CancellationToken.None));
         using var movieJson = JsonDocument.Parse(await File.ReadAllTextAsync(moviePath, CancellationToken.None));
         using var taikojukuJson = JsonDocument.Parse(await File.ReadAllTextAsync(taikojukuVerupPath, CancellationToken.None));

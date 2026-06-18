@@ -2,6 +2,741 @@
   "enabled": true,
   "monthly_bundles": [
     {
+      "bundle_id": "white-2016-01",
+      "starts_at": "2016-01-01T00:00:00Z",
+      "ends_at": "2016-02-01T00:00:00Z",
+      "personal_tasks": [
+        {
+          "task_id": 20160101,
+          "slot": 1,
+          "name": "あけましておめでドーンっ！ホワイトVer.のドンチャレ、はっじまるド～ン♪まずは「百花繚乱」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              66
+            ]
+          }
+        },
+        {
+          "task_id": 20160102,
+          "slot": 2,
+          "name": "みんな今年の初夢は何だったカッ？ボクは、虎と竜がガチンコバトルをしている夢を見たドン。何かの暗示カッ…！？次は「画竜点睛」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              64
+            ]
+          }
+        },
+        {
+          "task_id": 20160103,
+          "slot": 3,
+          "name": "ガチンコバトルといえば、今年は！ついに！太鼓の達人 世界大会が開催されるドン！！お祭りだド～ン！！「伝説の祭り」をフルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              111
+            ]
+          }
+        },
+        {
+          "task_id": 20160104,
+          "slot": 4,
+          "name": "世界中の並み居る強豪を制するのはキミなのカッ？楽しみすぎて今からドキがムネムネだドンっ！！「ドキドキ胸きゅん お祭りタイム」をフルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              13
+            ]
+          }
+        },
+        {
+          "task_id": 20160105,
+          "slot": 5,
+          "name": "世界大会の前哨戦として、ドンだーのみんなにお題を出すドン。クリア目指して頑張るド～ン！まずはホワイトVer.から追加されたジャンル「J-POP」の中から3曲、難易度「かんたん」以上でクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3,
+            "minimum_level": 1
+          }
+        },
+        {
+          "task_id": 20160106,
+          "slot": 6,
+          "name": "次はホワイトVer.から追加されたジャンル「アニメ」の中から3曲、難易度「ふつう」以上でクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3,
+            "minimum_level": 2
+          }
+        },
+        {
+          "task_id": 20160107,
+          "slot": 7,
+          "name": "ドンドンいくドンっ！ホワイトVer.から追加されたジャンル「ボーカロイド™曲」と「バラエティ」の中から3曲、難易度「むずかしい」以上でクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3,
+            "minimum_level": 3
+          }
+        },
+        {
+          "task_id": 20160108,
+          "slot": 8,
+          "name": "しっかりついてきてるカッ！？続いてはホワイトVer.から追加されたジャンル「ゲームミュージック」の中から3曲、難易度「おに」でクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3,
+            "minimum_level": 4
+          }
+        },
+        {
+          "task_id": 20160109,
+          "slot": 9,
+          "name": "いつもとちょっと違う感じのドンチャレ、楽しんでもらえたカッ？せっかくだから、ホワイトVer.から追加されたジャンル「ナムコオリジナル」の中から1曲、フルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1
+          }
+        },
+        {
+          "task_id": 20160110,
+          "slot": 10,
+          "name": "怒涛のお題で気合いが入ったところで、みんなが世界大会に来てくれるのを楽しみに待っているドン！！お祭りだドン！おMATSURI DAドーーン！！「MATSURI D／A」でスコアを「765000点」以上獲得するドン！",
+          "rule": {
+            "kind": "score_threshold",
+            "minimum_score": 765000,
+            "minimum_level": 4,
+            "eligible_song_noes": [
+              257
+            ]
+          }
+        }
+      ],
+      "community_task": {
+        "task_id": 20160190,
+        "name": "「黒船来航」をみんなで「8765回」以上クリアするドン！",
+        "description": "達成失敗。記録6982回。292.2回/日ペース。",
+        "rule": {
+          "kind": "community_count",
+          "required_community_count": 8765,
+          "eligible_song_noes": [
+            554
+          ]
+        }
+      },
+      "rewards": [
+        {
+          "required_completed_tasks": 8,
+          "reward_song_noes": [
+            554
+          ],
+          "reward_title_ids": []
+        },
+        {
+          "required_completed_tasks": 10,
+          "reward_song_noes": [],
+          "reward_title_ids": [
+            421
+          ]
+        }
+      ]
+    },
+    {
+      "bundle_id": "white-2016-02",
+      "starts_at": "2016-02-01T00:00:00Z",
+      "ends_at": "2016-03-01T00:00:00Z",
+      "personal_tasks": [
+        {
+          "task_id": 20160201,
+          "slot": 1,
+          "name": "2月だドーンっ！今月も気合いを入れていっくド～ンっ！まずは「時空庁捜査2課」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              215
+            ]
+          }
+        },
+        {
+          "task_id": 20160202,
+          "slot": 2,
+          "name": "今月はいよいよ、公式大会「2月の陣」が開催されるドン！みんなエントリーはもう済んだカッ？まだの人は開催店舗にダッシュ！！次は「チャーリーダッシュ！」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              503
+            ]
+          }
+        },
+        {
+          "task_id": 20160203,
+          "slot": 3,
+          "name": "「2月の陣」に向けて、ボクがみんなを特訓してあげるドン！お題1！難易度「ふつう」以上で「ドキドキ胸きゅん おまつりタイム」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "minimum_level": 2,
+            "eligible_song_noes": [
+              13
+            ]
+          }
+        },
+        {
+          "task_id": 20160204,
+          "slot": 4,
+          "name": "お題2！難易度「むずかしい」以上で「恋幻想(Love Fantasy)」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "minimum_level": 3,
+            "eligible_song_noes": [
+              548
+            ]
+          }
+        },
+        {
+          "task_id": 20160205,
+          "slot": 5,
+          "name": "ついてきてるカッ！？お題3！難易度「おに」で「冬竜 ～Toryu～」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "minimum_level": 4,
+            "eligible_song_noes": [
+              150
+            ]
+          }
+        },
+        {
+          "task_id": 20160206,
+          "slot": 6,
+          "name": "特訓はどうだったカッ？一緒にがんばってくれたみんなにバレンタインのチョコレイトをあげるドン。「チョコレイト・ディスコ」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              77
+            ]
+          }
+        },
+        {
+          "task_id": 20160207,
+          "slot": 7,
+          "name": "2月ドンチャレはまだまだ続くドン！次はジャンル「J-POP」の中から、ホワイトVer.から追加された曲を3曲フルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20160208,
+          "slot": 8,
+          "name": "続いてはジャンル「アニメ」の中から、ホワイトVer.から追加された曲を3曲クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20160209,
+          "slot": 9,
+          "name": "ドンドンいくドン！！続きましてはジャンル「ボーカロイドTM曲」と「バラエティ」の中から、ホワイトVer.から追加された曲を１曲、フルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1
+          }
+        },
+        {
+          "task_id": 20160210,
+          "slot": 10,
+          "name": "ナムコオリジナルの「豊穣弥生」か「セイクリッド ルイン」のどちらかで、難易度「おに」でスコア「765000点」以上獲得するドン！",
+          "rule": {
+            "kind": "score_threshold",
+            "minimum_score": 765000,
+            "minimum_level": 4,
+            "eligible_song_noes": [
+              455,
+              400
+            ]
+          }
+        }
+      ],
+      "community_task": {
+        "task_id": 20160290,
+        "name": "曲「マリオネットピュア」をみんなで「5515回」以上クリアするドン！",
+        "description": "2/7 14:20頃達成。919.1回/日ペース。",
+        "rule": {
+          "kind": "community_count",
+          "required_community_count": 5515,
+          "eligible_song_noes": [
+            527
+          ]
+        }
+      },
+      "rewards": [
+        {
+          "required_completed_tasks": 8,
+          "reward_song_noes": [
+            527
+          ],
+          "reward_title_ids": []
+        },
+        {
+          "required_completed_tasks": 10,
+          "reward_song_noes": [],
+          "reward_title_ids": [
+            422
+          ]
+        }
+      ]
+    },
+    {
+      "bundle_id": "white-2016-03",
+      "starts_at": "2016-03-01T00:00:00Z",
+      "ends_at": "2016-04-01T00:00:00Z",
+      "personal_tasks": [
+        {
+          "task_id": 20160301,
+          "slot": 1,
+          "name": "3月のドンチャレはじまるドンっ！今月は初代「太鼓の達人」からボクもお世話になってる「ササオカ」さんにフィーチャーしたお題にチャレンジ！まずは「本能寺の変」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              541
+            ]
+          }
+        },
+        {
+          "task_id": 20160302,
+          "slot": 2,
+          "name": "こっそり教えてあげるドン。ササオカさんは、太鼓チーム内ではみんなから、親しみをこめて「ササにい」って呼ばれているんだドン！さぁ、次は「Bad Apple!! feat.nomico」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              413
+            ]
+          }
+        },
+        {
+          "task_id": 20160303,
+          "slot": 3,
+          "name": "ササオカさんと言えばこの譜面は外せないドン！みんなも大好き、「夏祭り」をフルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              303
+            ]
+          }
+        },
+        {
+          "task_id": 20160304,
+          "slot": 4,
+          "name": "みんな知ってるカッ？太鼓チームのビジュアル系でもあるササオカさんは、イラストは左手、文字は右手で描くんだドン。すごい器用だと思わないカッ！？次は「我ら思う、故に我ら在り」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              521
+            ]
+          }
+        },
+        {
+          "task_id": 20160305,
+          "slot": 5,
+          "name": "この譜面もササオカイズム炸裂なチョー楽しい譜面だと思わないカッ！？難易度「おに」で「ポリリズム」をクリアするドン！？",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "minimum_level": 4,
+            "eligible_song_noes": [
+              331
+            ]
+          }
+        },
+        {
+          "task_id": 20160306,
+          "slot": 6,
+          "name": "ササオカさんと言えば、ドンだーひろばのホワイトVer.太鼓塾 一級の「本能寺の変」にミニインタビューが掲載されてるドン。みんなもうチェックしてくれたカッ？次は「XY&Z」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              557
+            ]
+          }
+        },
+        {
+          "task_id": 20160307,
+          "slot": 7,
+          "name": "3月ドンチャレはまだまだ続くドン！次はジャンル「アニメ」の中から、ホワイトVer.から追加された曲を3曲フルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20160308,
+          "slot": 8,
+          "name": "続いてはジャンル「ナムコオリジナル」の中から、ホワイトVer.から追加された曲を3曲クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20160309,
+          "slot": 9,
+          "name": "そういえば思い出したドン。ササオカさんの出身は京都だそうだドン。似合いすぎだドン！曲名の読みに「きょうと」がはいる曲を1曲、フルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1
+          }
+        },
+        {
+          "task_id": 20160310,
+          "slot": 10,
+          "name": "続いてはジャンル「ボーカロイド™曲」のうち、ホワイトVer.から追加された曲どれか1曲を難易度「おに」でスコア765000点以上獲得するドン！",
+          "rule": {
+            "kind": "score_threshold",
+            "minimum_score": 765000,
+            "minimum_level": 4
+          }
+        }
+      ],
+      "community_task": {
+        "task_id": 20160390,
+        "name": "さぁ最後はこの曲！甘酸っぱいドキドキな歌詞はササオカさんの力作だド～ンッ！「ねぇ教えて」をみんなで合わせて「3321回」以上クリアするドン！",
+        "description": "3/15 12:20頃達成。237.2回/日ペース。",
+        "rule": {
+          "kind": "community_count",
+          "required_community_count": 3321,
+          "eligible_song_noes": [
+            305
+          ]
+        }
+      },
+      "rewards": [
+        {
+          "required_completed_tasks": 8,
+          "reward_song_noes": [
+            305
+          ],
+          "reward_title_ids": []
+        },
+        {
+          "required_completed_tasks": 10,
+          "reward_song_noes": [],
+          "reward_title_ids": [
+            427
+          ]
+        }
+      ]
+    },
+    {
+      "bundle_id": "white-2016-04",
+      "starts_at": "2016-04-01T00:00:00Z",
+      "ends_at": "2016-05-01T00:00:00Z",
+      "personal_tasks": [
+        {
+          "task_id": 20160401,
+          "slot": 1,
+          "name": "またせたドン！4月のドンチャレはじまるド～ンっ！まずは「冬竜～Toryu～」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              150
+            ]
+          }
+        },
+        {
+          "task_id": 20160402,
+          "slot": 2,
+          "name": "今月はみんなに昔話をしてあげるドン。むかしむかしあるところに、宮廷に仕える、ものすごーく絵が上手な画家さんがいたんだドン。…と、次は「春竜～Haryu～」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              178
+            ]
+          }
+        },
+        {
+          "task_id": 20160403,
+          "slot": 3,
+          "name": "画家さんは皇帝さまからの命でたくさんの絵を描いたんだけど、その中の一つに「四匹の白い竜」の絵があったんだドン。…と、次は「夏竜～Karyu～」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              221
+            ]
+          }
+        },
+        {
+          "task_id": 20160404,
+          "slot": 4,
+          "name": "その竜の絵は、それはそれはすっごーい絵だったのに、なぜか竜の目が描かれていなかったんだドン。絵を見た人はみんな「目を描いて！」ってお願いしたんだドン。…と、次は「秋竜～Shiuryu～」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              519
+            ]
+          }
+        },
+        {
+          "task_id": 20160405,
+          "slot": 5,
+          "name": "でも画家さんは『竜に目を描いたら、どこかへ飛んで行ってしまう』と言って、なかなか目を描いてくれなかったドン。…次！曲名の読みに「どらごん」がある曲を3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20160406,
+          "slot": 6,
+          "name": "そんな画家さんの言葉を誰も信じてくれなくて、ある日とうとう、画家さんは四匹のうち二匹の竜に目を描いたんだドン。…さぁ、次は「双竜ノ乱」をフルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              393
+            ]
+          }
+        },
+        {
+          "task_id": 20160407,
+          "slot": 7,
+          "name": "するとたちまち、あたり一面に雷が鳴りひびいて、絵から飛び出た二匹の竜が天に昇って行ったんだドン！これが「画竜点睛」のお話だドン！！さぁ、次は「画竜点睛」をフルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              64
+            ]
+          }
+        },
+        {
+          "task_id": 20160408,
+          "slot": 8,
+          "name": "ちなみに、目を描かれなかった残りの竜は、今でも絵として残っているらしいドン。ボクもいつか見てみたいドン！さぁ、次はジャンル「ナムコオリジナル」の中から、ホワイトVer.から追加された曲を3曲フルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20160409,
+          "slot": 9,
+          "name": "ちなみに！！「一登竜門」は『苦しくて険しい道のりでも一度登りきってしまえば名声を手に入れられる』という意味なんだドン。…さぁ、次は「風の国の龍と騎士」を難易度「むずかしい」以上でフルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1,
+            "minimum_level": 3,
+            "eligible_song_noes": [
+              367
+            ]
+          }
+        },
+        {
+          "task_id": 20160410,
+          "slot": 10,
+          "name": "一登竜門を目指すみんな、それを応援するみんな、一緒に世界一決定戦へ向かって盛り上がっていっくドーーン！続いてはジャンル「ボーカロイド™曲」のうち、ホワイトVer.から追加された曲を3曲、クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        }
+      ],
+      "community_task": {
+        "task_id": 20160490,
+        "name": "さぁ最後はこの曲！「真･画竜点睛」をみんなで合わせて「7650回」以上クリアするドーン！",
+        "description": "4/19達成。達成時刻不明。425.0回/日ペース。",
+        "rule": {
+          "kind": "community_count",
+          "required_community_count": 7650,
+          "eligible_song_noes": [
+            579
+          ]
+        }
+      },
+      "rewards": [
+        {
+          "required_completed_tasks": 8,
+          "reward_song_noes": [
+            579
+          ],
+          "reward_title_ids": []
+        },
+        {
+          "required_completed_tasks": 10,
+          "reward_song_noes": [],
+          "reward_title_ids": [
+            453
+          ]
+        }
+      ]
+    },
+    {
+      "bundle_id": "white-2016-05",
+      "starts_at": "2016-05-01T00:00:00Z",
+      "ends_at": "2016-06-01T00:00:00Z",
+      "personal_tasks": [
+        {
+          "task_id": 20160501,
+          "slot": 1,
+          "name": "健全な精神は健全な肉体に宿る、スポーツマンシップにのっとり、正々堂々と「イマジネーション」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              176
+            ]
+          }
+        },
+        {
+          "task_id": 20160502,
+          "slot": 2,
+          "name": "勝負は最後までわからないドン！「ワールズエンド・ダンスホール」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              446
+            ]
+          }
+        },
+        {
+          "task_id": 20160503,
+          "slot": 3,
+          "name": "時に熱くなる時もあるけれど、お互いを尊重して挑むドン！「喧嘩上等」をクリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              224
+            ]
+          }
+        },
+        {
+          "task_id": 20160504,
+          "slot": 4,
+          "name": "勉強の事も忘れてはいけないカッ？「チルノのパーフェクトさんすう教室」をフルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              414
+            ]
+          }
+        },
+        {
+          "task_id": 20160505,
+          "slot": 5,
+          "name": "放課後に待受けるイベント、それは何カッ！？「放課後ストライド」をフルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              170
+            ]
+          }
+        },
+        {
+          "task_id": 20160506,
+          "slot": 6,
+          "name": "文武両道、頑張っている人は魅力的だドン！「ドキドキ恋の予感！？をフルコンボするドン！",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              169
+            ]
+          }
+        },
+        {
+          "task_id": 20160507,
+          "slot": 7,
+          "name": "４月２７日に行われたホワイトVer.のアップデートで追加された「ゲームミュージック」の曲から、3曲クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20160508,
+          "slot": 8,
+          "name": "ドンだー！世界一決定戦の課題曲の内「ボーカロイド™曲」の曲を3曲クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20160509,
+          "slot": 9,
+          "name": "ドンだー！世界一決定戦の課題曲の内「ナムコオリジナル」の曲を3曲クリアするドン！",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20160510,
+          "slot": 10,
+          "name": "勝負の後に芽生える友情…「友情ぽっぷ」を難易度「おに」でスコア「765000点」以上獲得するドン！",
+          "rule": {
+            "kind": "score_threshold",
+            "minimum_score": 765000,
+            "minimum_level": 4,
+            "eligible_song_noes": [
+              437
+            ]
+          }
+        }
+      ],
+      "community_task": {
+        "task_id": 20160590,
+        "name": "スポーツのようにいい汗かいたカッ？「スポーツダイジェスドン」を、みんなで合わせて「5000回」以上クリアするドーン！",
+        "description": "達成失敗。記録4000回。133.3回/日ペース。",
+        "rule": {
+          "kind": "community_count",
+          "required_community_count": 5000,
+          "eligible_song_noes": [
+            580
+          ]
+        }
+      },
+      "rewards": [
+        {
+          "required_completed_tasks": 8,
+          "reward_song_noes": [
+            580
+          ],
+          "reward_title_ids": []
+        },
+        {
+          "required_completed_tasks": 10,
+          "reward_song_noes": [],
+          "reward_title_ids": [
+            456
+          ]
+        }
+      ]
+    },
+    {
       "bundle_id": "white-2016-06",
       "starts_at": "2016-06-01T00:00:00Z",
       "ends_at": "2016-07-01T00:00:00Z",
@@ -9,7 +744,7 @@
         {
           "task_id": 20160601,
           "slot": 1,
-          "name": "2016-06 slot 1: clear any song whose title contains hiragana yo",
+          "name": "黄泉、それはすなわち『あの世』・・・。曲名にひらがなの「よ」が入る曲をどれか1曲クリアするドン！",
           "rule": {
             "kind": "clear",
             "required_song_count": 1
@@ -18,7 +753,7 @@
         {
           "task_id": 20160602,
           "slot": 2,
-          "name": "2016-06 slot 2: clear two songs whose title contains hiragana mi",
+          "name": "ちなみに『ヨミ』は古い日本語（やまと言葉）で、漢字の『黄泉』は古い中国の言葉をあてはめたものらしいドン。次は曲名にひらがなの「み」が入る曲を2曲、クリアするドン！",
           "rule": {
             "kind": "clear",
             "required_song_count": 2
@@ -27,7 +762,7 @@
         {
           "task_id": 20160603,
           "slot": 3,
-          "name": "2016-06 slot 3: full combo three songs whose katakana title starts with i",
+          "name": "次は曲名がカタカナの「イ」から始まる曲を3曲、フルコンボするドン！",
           "rule": {
             "kind": "full_combo",
             "required_song_count": 3
@@ -36,7 +771,7 @@
         {
           "task_id": 20160604,
           "slot": 4,
-          "name": "2016-06 slot 4: clear two songs whose title contains katakana za",
+          "name": "次は曲名にカタカナの「ザ」が入る曲を2曲、クリアするドン！",
           "rule": {
             "kind": "clear",
             "required_song_count": 2
@@ -45,7 +780,7 @@
         {
           "task_id": 20160605,
           "slot": 5,
-          "name": "2016-06 slot 5: full combo three songs whose title contains katakana na but does not start with na",
+          "name": "曲名にカタカナの「ナ」が入り、曲名がカタカナの「ナ」から始まらない曲を3曲、フルコンボするドン！",
           "rule": {
             "kind": "full_combo",
             "required_song_count": 3
@@ -54,7 +789,7 @@
         {
           "task_id": 20160606,
           "slot": 6,
-          "name": "2016-06 slot 6: clear two songs whose katakana title starts with mi on muzukashii or harder",
+          "name": "曲名がカタカナの「ミ」から始まる曲を2曲、難易度「むずかしい」以上でクリアするドン！",
           "rule": {
             "kind": "clear",
             "required_song_count": 2,
@@ -64,7 +799,7 @@
         {
           "task_id": 20160607,
           "slot": 7,
-          "name": "2016-06 slot 7: clear Houjou Yayoi and Sacred Ruin",
+          "name": "「豊穣弥生」と「セイクリッド ルイン」をクリアするドン！",
           "rule": {
             "kind": "clear",
             "required_song_count": 2,
@@ -77,7 +812,7 @@
         {
           "task_id": 20160608,
           "slot": 8,
-          "name": "2016-06 slot 8: full combo Gashadokuro",
+          "name": "「がしゃどくろ」をフルコンボするドン！",
           "rule": {
             "kind": "full_combo",
             "required_song_count": 1,
@@ -89,7 +824,7 @@
         {
           "task_id": 20160609,
           "slot": 9,
-          "name": "2016-06 slot 9: clear two Namco Original songs from the world championship song list",
+          "name": "ドンだー！世界一決定戦の課題曲から、「ナムコオリジナル」の曲を2曲クリアするドン！",
           "rule": {
             "kind": "clear",
             "required_song_count": 2
@@ -98,7 +833,7 @@
         {
           "task_id": 20160610,
           "slot": 10,
-          "name": "2016-06 slot 10: full combo one Vocaloid song from the world championship song list",
+          "name": "ドンだー！世界一決定戦の課題曲から、「ボーカロイド™曲」の曲をどれか1曲、フルコンボするドン！",
           "rule": {
             "kind": "full_combo",
             "required_song_count": 1
@@ -107,8 +842,8 @@
       ],
       "community_task": {
         "task_id": 20160690,
-        "name": "2016-06 community: clear Yomi no Izanami 5000 times",
-        "description": "Wiki row records achievement on 2016-06-18 around 18:25.",
+        "name": "「黄泉のイザナミ」を、みんなで合わせて「5000回」以上クリアするドーン！",
+        "description": "6/18 18:25頃達成。294.1回/日ペース。",
         "rule": {
           "kind": "community_count",
           "required_community_count": 5000,
@@ -128,7 +863,9 @@
         {
           "required_completed_tasks": 10,
           "reward_song_noes": [],
-          "reward_title_ids": []
+          "reward_title_ids": [
+            457
+          ]
         }
       ]
     }
