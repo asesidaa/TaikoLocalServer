@@ -14,7 +14,7 @@
 | WCAT-01 | VERIFIED | White catalog now loads required music, medley, tuning, present, and special BAID data; metadata sidecars remain loaded from Phase 24. |
 | WCOLL-01 | VERIFIED | White reward/Don Point state is protocol-backed from Phase 25 and present reward provenance is parsed from local `present.xml`. |
 | WCOLL-02 | VERIFIED | Songs/customization remain catalog-bound; Phase 26 adds present and special BAID provenance through White catalog data. |
-| WCOLL-03 | VERIFIED ABSENT | White Don Challenge remains absent/data-only because embedded fields alone do not prove active data, standalone route, reward timing, or state semantics. |
+| WCOLL-03 | SUPERSEDED | Phase 26 recorded White Don Challenge as absent/data-only. The 2026-06-18 correction implements White Don Challenge as server-side stage-derived progress plus AdminApi/WebUI readback, while keeping ChallengeCompe cabinet route/readback semantics absent. |
 
 ## Manual Verification
 

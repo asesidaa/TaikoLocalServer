@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using TaikoLocalServer.Application.Ac15.DonChallenge;
 using TaikoLocalServer.Application.Abstractions;
 using TaikoLocalServer.Application.Catalog.Ac15;
 using TaikoLocalServer.Application.Settings;
@@ -21,6 +22,7 @@ public sealed class WhiteEraGameDataCatalog(
     public const string CostumeFileName = "white_costume_data.json";
     public const string TitleFileName = "white_title_data.json";
     public const string NeiroFileName = "white_neiro_data.json";
+    public const string DonChallengeFileName = "white_don_challenge_data.json";
 
     private uint songHashVersion;
     private IReadOnlyList<Ac15MusicInfoEntry> musicInfoFileOrder = [];
@@ -34,6 +36,7 @@ public sealed class WhiteEraGameDataCatalog(
     private IReadOnlyList<MovieData> movies = [];
     private IReadOnlyList<Ac15PresentItem> presents = [];
     private IReadOnlyList<Ac15SpecialBaidEntry> specialBaids = [];
+    private Ac15DonChallengeCatalog donChallenge = Ac15DonChallengeCatalog.Disabled;
     private IReadOnlyList<Costume> costumeList = [];
     private IReadOnlyDictionary<uint, Title> titleDictionary = new Dictionary<uint, Title>();
     private IReadOnlyDictionary<uint, Neiro> neiroDictionary = new Dictionary<uint, Neiro>();
@@ -63,6 +66,8 @@ public sealed class WhiteEraGameDataCatalog(
     public IReadOnlyList<Ac15PresentItem> Presents => presents;
 
     public IReadOnlyList<Ac15SpecialBaidEntry> SpecialBaids => specialBaids;
+
+    public Ac15DonChallengeCatalog DonChallenge => donChallenge;
 
     public IReadOnlyList<Costume> GetCostumeList() => costumeList;
 
@@ -158,6 +163,12 @@ public sealed class WhiteEraGameDataCatalog(
         specialBaids = await Ac15SpecialBaidLoader.LoadFromFileAsync(
             WhiteGameDataPaths.SpecialBaidXml,
             cancellationToken);
+        donChallenge = await Ac15DonChallengeLoader.LoadFromFileAsync(
+            Path.Combine(PathHelper.GetDataPath(GameEra.White), DonChallengeFileName),
+            whiteSettings.IsDonChallengeEnabled(),
+            whiteSettings.GetActiveDonChallengeBundleId(),
+            nameof(GameEra.White),
+            cancellationToken);
         var whiteCustomization = await Ac15CustomizationCatalogSupport.LoadEraCatalogAsync(
             GameEra.White,
             CostumeFileName,
@@ -182,7 +193,7 @@ public sealed class WhiteEraGameDataCatalog(
         neiroDictionary = customizationCatalog.Neiros;
 
         logger.LogInformation(
-            "Loaded White catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {TaikojukuCount} taikojuku packs, {StarCount} tuning star rows, {CostumeCount} costumes, {TitleCount} titles, {NeiroCount} tones, {MovieCount} attract movies, {PresentCount} present rows, {SpecialBaidCount} special BAID rows",
+            "Loaded White catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {TaikojukuCount} taikojuku packs, {StarCount} tuning star rows, {CostumeCount} costumes, {TitleCount} titles, {NeiroCount} tones, {MovieCount} attract movies, {PresentCount} present rows, {SpecialBaidCount} special BAID rows, Don Challenge enabled={DonChallengeEnabled}",
             musicInfoFileOrder.Count,
             songHashVersion,
             taikojukuFileOrder.Count,
@@ -192,7 +203,8 @@ public sealed class WhiteEraGameDataCatalog(
             neiroDictionary.Count,
             movies.Count,
             presents.Count,
-            specialBaids.Count);
+            specialBaids.Count,
+            donChallenge.Enabled);
     }
 
     private EraSettings GetWhiteSettings()

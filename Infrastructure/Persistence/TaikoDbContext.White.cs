@@ -13,6 +13,8 @@ public partial class TaikoDbContext
     public virtual DbSet<WhiteRecentSongs> WhiteRecentSongs { get; set; } = null!;
     public virtual DbSet<DanScoreDatumWhite> DanScoreDataWhite { get; set; } = null!;
     public virtual DbSet<DanStageScoreDatumWhite> DanStageScoreDataWhite { get; set; } = null!;
+    public virtual DbSet<WhiteDonChallengeRawFact> WhiteDonChallengeRawFacts { get; set; } = null!;
+    public virtual DbSet<WhiteDonChallengeProgress> WhiteDonChallengeProgress { get; set; } = null!;
 
     partial void OnModelCreatingWhite(ModelBuilder modelBuilder)
     {
@@ -105,6 +107,37 @@ public partial class TaikoDbContext
             entity.HasOne(d => d.Parent)
                 .WithMany(p => p.DanStageScoreData)
                 .HasForeignKey(d => new { d.Baid, d.DanId, d.IsExtra })
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<WhiteDonChallengeRawFact>(entity =>
+        {
+            entity.ToTable("WhiteDonChallengeRawFacts");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            entity.Property(e => e.BundleId).HasMaxLength(64);
+            entity.Property(e => e.PlayTime).HasColumnType("datetime");
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.HasIndex(e => new { e.Baid, e.BundleId, e.TaskId, e.TrackNo, e.PlayTime });
+            entity.HasOne(d => d.Ba)
+                .WithMany()
+                .HasPrincipalKey(p => p.Baid)
+                .HasForeignKey(d => d.Baid)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<WhiteDonChallengeProgress>(entity =>
+        {
+            entity.ToTable("WhiteDonChallengeProgress");
+            entity.HasKey(e => new { e.Baid, e.BundleId, e.TaskId, e.TrackNo });
+            entity.Property(e => e.BundleId).HasMaxLength(64);
+            entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+            entity.Property(e => e.CompletedAt).HasColumnType("datetime");
+            entity.HasIndex(e => new { e.BundleId, e.TaskId, e.TrackNo });
+            entity.HasOne(d => d.Ba)
+                .WithMany()
+                .HasPrincipalKey(p => p.Baid)
+                .HasForeignKey(d => d.Baid)
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }

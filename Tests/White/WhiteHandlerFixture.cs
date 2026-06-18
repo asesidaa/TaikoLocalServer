@@ -1,3 +1,4 @@
+using TaikoLocalServer.Application.Ac15.DonChallenge;
 using TaikoLocalServer.Contracts.AdminApi.ViewModels;
 using TaikoLocalServer.Application.ServerData;
 
@@ -80,6 +81,8 @@ internal sealed class WhiteHandlerFixture : IAsyncDisposable
         public IReadOnlyList<Ac15PresentItem> Presents { get; init; } = [];
 
         public IReadOnlyList<Ac15SpecialBaidEntry> SpecialBaids { get; init; } = [];
+
+        public Ac15DonChallengeCatalog DonChallenge { get; init; } = Ac15DonChallengeCatalog.Disabled;
 
         public IReadOnlyList<Costume> CostumeList { get; init; } =
         [

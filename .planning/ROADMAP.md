@@ -17,7 +17,7 @@ Active milestone: **v1.4 White AC15 0.13 Support**
 **Scope guardrails:**
 
 - White starts from `proto/white`, `Host/wwwroot/data/white/data`, request logs/captures, corrected IDA/client evidence, and RPCS3/cabinet proof.
-- The linked White wiki page is product/version scoping context only; it does not define route, payload, state, or response contracts.
+- The linked White wiki page is product/version scoping and Don Challenge bundle data input only; it does not define route, payload, state, or response contracts.
 - Current Phase 23 context records `.tools/white/EBOOT.ELF.i64` as present and nonzero (`129893515` bytes). Plan 23-01 route proof is approved for `/v07r00/chassis` and exactly fourteen no-state scaffold suffixes; any additional White route code still requires White IDB route strings, logs, captures, or equivalent local evidence.
 - White 0.13 has fewer surfaces than Red and Yellow. Unsupported or later-version features stay absent instead of receiving cloned compatibility routes.
 - Shared AC15 services may be reused only through explicit White limits, feature flags, wire placement, catalog data, and White-owned persistence tables.
@@ -42,7 +42,7 @@ Active milestone: **v1.4 White AC15 0.13 Support**
 - [x] **Phase 23.1: Red Don Challenge capability boundary and playresult refactor** - Refactor Red Don Challenge naming, shared capability boundaries, and playresult dispatch before White reuse. Completed 2026-06-17. (INSERTED)
 - [x] **Phase 24: White Catalog Profile and Protocol Limits** - Bind White `ST7100-1` data, sidecars, AC15 profile, feature flags, limits, and wire placement. Completed 2026-06-18.
 - [x] **Phase 25: White Runtime Capability Binding and Rewards** - Bind White identity, userdata, normal play, metadata readback, Taikojuku/Dani where proven, and protocol-backed reward/Don Point state. Completed 2026-06-18.
-- [x] **Phase 26: White Collectable Data and Don Challenge Evidence** - Collect White 0.13 present/special-BAID data and record Don Challenge as absent/data-only without stronger White evidence. Completed 2026-06-18.
+- [x] **Phase 26: White Collectable Data and Don Challenge Evidence** - Collect White 0.13 present/special-BAID data; its earlier Don Challenge absence decision is superseded by the Phase 27 White Don Challenge correction. Completed 2026-06-18.
 - [ ] **Phase 27: White AdminApi WebUI and Runtime Closeout** - Automated AdminApi/WebUI exposure and build/test closeout complete; manual RPCS3/cabinet and WebUI verification pending.
 
 ## Phase Details
@@ -181,10 +181,10 @@ Plans:
 
 - White collectable data record with provenance for songs, tones, costumes, titles, special BAID rows, presents, and other 0.13-scoped rewards.
 - White sidecar data and schema usage for collectables that cannot be derived directly from raw operator files.
-- Evidence decision for White Don Challenge/ChallengeCompe: absent, data-only, embedded-userdata readback, or stateful runtime binding.
-- Optional White ChallengeCompe binding only if White 0.13 evidence proves data, field placement, readback surface, reward timing, and state semantics.
+- Evidence decision for White Don Challenge: stage-derived server-side runtime binding through White-owned data/state/AdminApi/WebUI, with no White standalone ChallengeCompe route/readback binding.
+- White ChallengeCompe protocol fields remain separate from Don Challenge and must not be used to invent cabinet route/readback semantics.
 - Guardrails preventing Red standalone `challengecompe.php`, Yellow item-shop reward semantics, or generic threshold schemas from leaking into White.
-- Phase 26 decision: White Don Challenge remains absent/data-only because current White evidence proves embedded fields but not route, data, reward timing, or state semantics.
+- Phase 26 correction: White Don Challenge is implemented after the user supplied White range data, but only as server-side playresult-derived progress plus AdminApi/WebUI readback. ChallengeCompe cabinet requests/readback remain absent/stubbed.
 
 **Success criteria:**
 
@@ -215,7 +215,7 @@ Plans:
 **Success criteria:**
 
 1. AdminApi and WebUI expose White only for implemented White-owned surfaces and never read/write Blue, Green, Yellow, Red, or Nijiiro gameplay state.
-2. Unsupported White item shop, Banacoin authority, battle, Tokkun, WaiWai, gacha runtime, later White updates, and unproven Don Challenge controls are absent.
+2. Unsupported White item shop, Banacoin authority, battle, Tokkun, WaiWai, gacha runtime, later White updates, and ChallengeCompe cabinet controls remain absent; Don Challenge is exposed only through dedicated AdminApi/WebUI readback.
 3. Automated verification covers meaningful White behavior and state boundaries, not superficial generated type, controller attribute, route inventory, or source-text assertions.
 4. Mapperly generated-source inspection confirms important White mappings remain source-generator driven and mechanically correct.
 5. v1.4 is not called complete until automated verification, build evidence, and RPCS3/cabinet smoke evidence for implemented White flows are recorded.

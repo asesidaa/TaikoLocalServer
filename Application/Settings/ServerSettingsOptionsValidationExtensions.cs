@@ -27,9 +27,14 @@ public static class ServerSettingsOptionsValidationExtensions
                     $"ServerSettings:Eras:{era}:ActiveShopSeasonId must be a nonzero season id when {era} EnableShop is true.");
         }
 
-        return builder.Validate(
-            settings => HasActiveDonChallengeBundle(settings, enabledEras, GameEra.Red),
-            $"ServerSettings:Eras:{GameEra.Red}:ActiveDonChallengeBundleId is required when {GameEra.Red} EnableDonChallenge is true.");
+        foreach (var era in new[] { GameEra.Red, GameEra.White })
+        {
+            builder = builder.Validate(
+                settings => HasActiveDonChallengeBundle(settings, enabledEras, era),
+                $"ServerSettings:Eras:{era}:ActiveDonChallengeBundleId is required when {era} EnableDonChallenge is true.");
+        }
+
+        return builder;
     }
 
     private static bool HasExplicitShopSetting(ServerSettings settings, ISet<GameEra> enabledEras, GameEra era)

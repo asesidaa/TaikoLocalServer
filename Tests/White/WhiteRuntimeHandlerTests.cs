@@ -1,5 +1,6 @@
 using TaikoLocalServer.Adapters.GameProtocol.White.Mappers;
 using TaikoLocalServer.Adapters.GameProtocol.White.Wire;
+using TaikoLocalServer.Application.Ac15.DonChallenge;
 
 namespace TaikoLocalServer.Tests.White;
 
@@ -70,6 +71,47 @@ public sealed class WhiteRuntimeHandlerTests
         Assert.Equal(120u, wire.TotalGetDonpoint);
         Assert.Equal(30u, wire.TotalUseDonpoint);
         Assert.Equal(8u, wire.RewardProgress);
+        Assert.Empty(wire.AryChallengeStats);
+        Assert.Empty(wire.AryUserCompeStats);
+        Assert.Empty(wire.AryBngCompeStats);
+    }
+
+    [Fact]
+    public async Task UserDataQuery_White_LocksUnearnedDonChallengeRewardSongsWithoutChallengeCompeStats()
+    {
+        await using var fixture = await WhiteHandlerFixture.CreateAsync(CreateDonChallengeCatalog(
+            rewards: [new Ac15DonChallengeReward(1, [104], [10])]));
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataWhite.Add(UserSaveDataWhiteExtensions.CreateDefaultWhiteSaveData(1));
+        fixture.Context.WhiteDonChallengeProgress.Add(new WhiteDonChallengeProgress
+        {
+            Baid = 1,
+            BundleId = "white-2016-06",
+            TaskId = 1001,
+            Slot = 1,
+            CompeId = 1001,
+            TrackNo = 0,
+            SongNo = 101,
+            Level = 1,
+            OptionFlg = [1, 2],
+            StageMode = 0,
+            HighScore = 765432,
+            ProgressValue = 1,
+            Completed = false,
+            UpdatedAt = new DateTime(2016, 6, 20, 12, 0, 0)
+        });
+        await fixture.Context.SaveChangesAsync();
+        var handler = new UserDataQueryHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UserDataQueryHandler>.Instance,
+            Options.Create(new ServerSettings()));
+
+        var response = await handler.Handle(new Ac15UserDataQuery(1, GameEra.White), CancellationToken.None);
+        var wire = AssembleWhiteUserDataResponse(response);
+
+        Assert.True(BitIsSet(response.SongFlags.ReleaseSongFlg, 101));
+        Assert.False(BitIsSet(response.SongFlags.ReleaseSongFlg, 104));
         Assert.Empty(wire.AryChallengeStats);
         Assert.Empty(wire.AryUserCompeStats);
         Assert.Empty(wire.AryBngCompeStats);
@@ -147,6 +189,50 @@ public sealed class WhiteRuntimeHandlerTests
         Assert.Empty(await fixture.Context.YellowTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
         Assert.Empty(await fixture.Context.RedDonChallengeRawFacts.Where(row => row.Baid == 1).ToListAsync());
         Assert.Empty(await fixture.Context.RedDonChallengeProgress.Where(row => row.Baid == 1).ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_White_MatchedDonChallengeStagePersistsProgressRewardsAndOnlyWhiteRows()
+    {
+        await using var fixture = await WhiteHandlerFixture.CreateAsync(CreateDonChallengeCatalog(
+            rewards: [new Ac15DonChallengeReward(1, [104], [10])]));
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataWhite.Add(UserSaveDataWhiteExtensions.CreateDefaultWhiteSaveData(1));
+        fixture.Context.UserSaveDataRed.Add(UserSaveDataRedExtensions.CreateDefaultRedSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
+            1,
+            GameEra.White,
+            playDatetime: "20160620120000",
+            stages: [CreateStage(101, 1, 0)]),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var raw = Assert.Single(await fixture.Context.WhiteDonChallengeRawFacts.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Equal("white-2016-06", raw.BundleId);
+        Assert.Equal(1001u, raw.TaskId);
+        Assert.Equal(1u, raw.Slot);
+        Assert.Equal(1001u, raw.CompeId);
+        Assert.Equal(1u, raw.TrackNo);
+        Assert.Equal(101u, raw.SongNo);
+        Assert.Equal(765432u, raw.HighScore);
+        Assert.True(raw.Completed);
+
+        var progress = Assert.Single(await fixture.Context.WhiteDonChallengeProgress.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Equal("white-2016-06", progress.BundleId);
+        Assert.Equal(1001u, progress.TaskId);
+        Assert.Equal(1u, progress.ProgressValue);
+        Assert.True(progress.Completed);
+        Assert.Equal(new DateTime(2016, 6, 20, 12, 0, 0), progress.CompletedAt);
+
+        var save = await fixture.Context.UserSaveDataWhite.SingleAsync(row => row.Baid == 1);
+        Assert.True(BitIsSet(save.ReleaseSongFlg, 104));
+        Assert.True(BitIsSet(save.TitleFlg, 10));
+        Assert.Empty(await fixture.Context.RedDonChallengeRawFacts.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.RedDonChallengeProgress.Where(row => row.Baid == 1).ToListAsync());
+        Assert.False(BitIsSet((await fixture.Context.UserSaveDataRed.SingleAsync(row => row.Baid == 1)).ReleaseSongFlg, 104));
     }
 
     [Fact]
@@ -341,6 +427,33 @@ public sealed class WhiteRuntimeHandlerTests
                 ]
             })
             .ToArray());
+
+    private static WhiteHandlerFixture.TestWhiteCatalog CreateDonChallengeCatalog(
+        IReadOnlyList<Ac15DonChallengeReward>? rewards = null)
+        => new()
+        {
+            DonChallenge = new Ac15DonChallengeCatalog(
+                enabled: true,
+                activeBundleId: "white-2016-06",
+                [
+                    new Ac15DonChallengeMonthlyBundle(
+                        "white-2016-06",
+                        DateTimeOffset.Parse("2016-06-01T00:00:00Z"),
+                        DateTimeOffset.Parse("2016-07-01T00:00:00Z"),
+                        [
+                            new Ac15DonChallengeTask(
+                                1001,
+                                1,
+                                "White Task",
+                                new Ac15DonChallengeRule(
+                                    Ac15DonChallengeRuleKind.Clear,
+                                    RequiredSongCount: 1,
+                                    EligibleSongNoes: [101]))
+                        ],
+                        null,
+                        rewards ?? [])
+                ])
+        };
 
     private static PlayResultRequest CreateWireRequest(uint baid)
         => new()

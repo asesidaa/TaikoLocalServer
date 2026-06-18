@@ -1,0 +1,136 @@
+{
+  "enabled": true,
+  "monthly_bundles": [
+    {
+      "bundle_id": "white-2016-06",
+      "starts_at": "2016-06-01T00:00:00Z",
+      "ends_at": "2016-07-01T00:00:00Z",
+      "personal_tasks": [
+        {
+          "task_id": 20160601,
+          "slot": 1,
+          "name": "2016-06 slot 1: clear any song whose title contains hiragana yo",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 1
+          }
+        },
+        {
+          "task_id": 20160602,
+          "slot": 2,
+          "name": "2016-06 slot 2: clear two songs whose title contains hiragana mi",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 2
+          }
+        },
+        {
+          "task_id": 20160603,
+          "slot": 3,
+          "name": "2016-06 slot 3: full combo three songs whose katakana title starts with i",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20160604,
+          "slot": 4,
+          "name": "2016-06 slot 4: clear two songs whose title contains katakana za",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 2
+          }
+        },
+        {
+          "task_id": 20160605,
+          "slot": 5,
+          "name": "2016-06 slot 5: full combo three songs whose title contains katakana na but does not start with na",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 3
+          }
+        },
+        {
+          "task_id": 20160606,
+          "slot": 6,
+          "name": "2016-06 slot 6: clear two songs whose katakana title starts with mi on muzukashii or harder",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 2,
+            "minimum_level": 3
+          }
+        },
+        {
+          "task_id": 20160607,
+          "slot": 7,
+          "name": "2016-06 slot 7: clear Houjou Yayoi and Sacred Ruin",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 2,
+            "eligible_song_noes": [
+              455,
+              400
+            ]
+          }
+        },
+        {
+          "task_id": 20160608,
+          "slot": 8,
+          "name": "2016-06 slot 8: full combo Gashadokuro",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1,
+            "eligible_song_noes": [
+              155
+            ]
+          }
+        },
+        {
+          "task_id": 20160609,
+          "slot": 9,
+          "name": "2016-06 slot 9: clear two Namco Original songs from the world championship song list",
+          "rule": {
+            "kind": "clear",
+            "required_song_count": 2
+          }
+        },
+        {
+          "task_id": 20160610,
+          "slot": 10,
+          "name": "2016-06 slot 10: full combo one Vocaloid song from the world championship song list",
+          "rule": {
+            "kind": "full_combo",
+            "required_song_count": 1
+          }
+        }
+      ],
+      "community_task": {
+        "task_id": 20160690,
+        "name": "2016-06 community: clear Yomi no Izanami 5000 times",
+        "description": "Wiki row records achievement on 2016-06-18 around 18:25.",
+        "rule": {
+          "kind": "community_count",
+          "required_community_count": 5000,
+          "eligible_song_noes": [
+            585
+          ]
+        }
+      },
+      "rewards": [
+        {
+          "required_completed_tasks": 8,
+          "reward_song_noes": [
+            585
+          ],
+          "reward_title_ids": []
+        },
+        {
+          "required_completed_tasks": 10,
+          "reward_song_noes": [],
+          "reward_title_ids": []
+        }
+      ]
+    }
+  ]
+}

@@ -133,6 +133,8 @@ public sealed class GreenAuthConfigTests
         public DbSet<WhiteRecentSongs> WhiteRecentSongs => throw new NotSupportedException();
         public DbSet<DanScoreDatumWhite> DanScoreDataWhite => throw new NotSupportedException();
         public DbSet<DanStageScoreDatumWhite> DanStageScoreDataWhite => throw new NotSupportedException();
+        public DbSet<WhiteDonChallengeRawFact> WhiteDonChallengeRawFacts => throw new NotSupportedException();
+        public DbSet<WhiteDonChallengeProgress> WhiteDonChallengeProgress => throw new NotSupportedException();
 
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
             => throw new NotSupportedException();

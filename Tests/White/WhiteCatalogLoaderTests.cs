@@ -115,6 +115,7 @@ public sealed class WhiteCatalogLoaderTests
         var recommendPath = FindRequiredRepoFile("Host", "wwwroot", "data", "white", WhiteEraGameDataCatalog.RecommendFileName);
         var moviePath = FindRequiredRepoFile("Host", "wwwroot", "data", "white", WhiteEraGameDataCatalog.MovieFileName);
         var taikojukuVerupPath = FindRequiredRepoFile("Host", "wwwroot", "data", "white", WhiteEraGameDataCatalog.TaikojukuVerupFileName);
+        var donChallengePath = FindRequiredRepoFile("Host", "wwwroot", "data", "white", WhiteEraGameDataCatalog.DonChallengeFileName);
 
         var eventFolders = await Ac15EventFolderLoader.LoadFromFileAsync(
             eventFolderPath,
@@ -132,11 +133,22 @@ public sealed class WhiteCatalogLoaderTests
             nameof(GameEra.White),
             NullLogger.Instance,
             CancellationToken.None);
+        var donChallenge = await Ac15DonChallengeLoader.LoadFromFileAsync(
+            donChallengePath,
+            isEnabled: true,
+            activeBundleId: "white-2016-06",
+            nameof(GameEra.White),
+            CancellationToken.None);
 
         Assert.NotNull(eventFolders);
         Assert.NotNull(telops);
         Assert.NotNull(recommend.RecommendBestSongs);
         Assert.NotNull(movies);
+        Assert.True(donChallenge.Enabled);
+        Assert.Equal("white-2016-06", donChallenge.ActiveBundleId);
+        Assert.NotNull(donChallenge.ActiveBundle);
+        Assert.Equal(10, donChallenge.ActiveBundle.PersonalTasks.Count);
+        Assert.Contains(donChallenge.ActiveBundle.Rewards, reward => reward.RewardSongNoes.Contains(585u));
         using var recommendJson = JsonDocument.Parse(await File.ReadAllTextAsync(recommendPath, CancellationToken.None));
         using var movieJson = JsonDocument.Parse(await File.ReadAllTextAsync(moviePath, CancellationToken.None));
         using var taikojukuJson = JsonDocument.Parse(await File.ReadAllTextAsync(taikojukuVerupPath, CancellationToken.None));

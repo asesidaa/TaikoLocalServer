@@ -14,7 +14,9 @@
 
 ## Don Challenge Decision
 
-White Don Challenge is not implemented as stateful runtime behavior in Phase 26.
+White Don Challenge was not implemented as stateful runtime behavior in Phase 26.
+
+This decision is superseded by the 2026-06-18 correction: White Don Challenge is now server-side, stage-derived progress using White-owned catalog/state/AdminApi/WebUI data. ChallengeCompe protocol request/readback remains a separate stub/absent cabinet surface and is not used to send Don Challenge to the game.
 
 Evidence is insufficient for:
 

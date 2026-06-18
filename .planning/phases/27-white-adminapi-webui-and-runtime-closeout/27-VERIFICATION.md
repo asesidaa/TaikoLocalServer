@@ -1,8 +1,8 @@
 ---
 phase: 27-white-adminapi-webui-and-runtime-closeout
-verified: 2026-06-18T17:10:00Z
+verified: 2026-06-18T21:35:00Z
 status: human_needed
-score: "4/5 automated closeout criteria verified; manual RPCS3/WebUI verification pending"
+score: "automated closeout verified; manual RPCS3/WebUI verification pending"
 acceptance: manual RPCS3/cabinet and WebUI review intentionally deferred per user instruction
 overrides_applied: 0
 ---
@@ -16,8 +16,12 @@ overrides_applied: 0
 | Focused White/WebUI/Auth/Don Challenge tests | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~White|FullyQualifiedName~WebUi|FullyQualifiedName~GreenAuthConfigTests|FullyQualifiedName~RedDonChallengeAdminApiTests"` | PASS: 54 passed |
 | Broader AdminApi/controller regression slice | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~AdminApi|FullyQualifiedName~Ac15ProfileSettingsControllerTests|FullyQualifiedName~GreenAdminApiControllerTests|FullyQualifiedName~YellowAdminApiTests|FullyQualifiedName~BlueAdminApi"` | PASS: 60 passed |
 | Additive Don Challenge unsupported-era rerun | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~DonChallengeServiceTests|FullyQualifiedName~RedDonChallengeAdminApiTests"` | PASS: 12 passed |
-| Full automated suite | `dotnet test Tests/Tests.csproj` | PASS: 822 passed |
-| Host temp-output build with generated source | `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build" /p:EmitCompilerGeneratedFiles=true` | PASS: 0 warnings, 0 errors |
+| White Don Challenge correction filter | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~WhiteRuntimeHandlerTests|FullyQualifiedName~WhiteDonChallengeAdminApiTests|FullyQualifiedName~WhiteServerSettingsValidationTests|FullyQualifiedName~GameDataServiceTests|FullyQualifiedName~RedDonChallengeAdminApiTests|FullyQualifiedName~WhiteCatalogLoaderTests"` | PASS: 40 passed |
+| Full automated suite | `dotnet test Tests/Tests.csproj --no-restore` | PASS: 829 passed |
+| Solution build | `dotnet build TaikoLocalServer.slnx --no-restore` | PASS: 0 warnings, 0 errors |
+| Host temp-output build with generated source | `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build" --no-restore /p:EmitCompilerGeneratedFiles=true` | PASS: 0 warnings, 0 errors |
+| Host temp-output build | `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build" --no-restore` | PASS: 0 warnings, 0 errors |
+| White Don Challenge sidecar copy | `Test-Path "$env:TEMP\TaikoLocalServer-host-build\wwwroot\data\white\white_don_challenge_data.json"` | PASS: True; file contains `white-2016-06`, `20160601`, and `585` |
 
 ## Generated-Source Inspection
 
@@ -34,7 +38,7 @@ overrides_applied: 0
 | Requirement | Status | Evidence |
 | --- | --- | --- |
 | WVER-01 | VERIFIED | White AdminApi/WebUI routes now expose implemented White-owned AC15 surfaces through generic contracts and tests prove White rows are used without Blue/Green/Yellow/Red fallback. |
-| WVER-02 | VERIFIED | Full suite plus focused White/AdminApi/WebUI tests cover White route behavior, persistence boundaries, catalog/customization readback, mapper/classifier behavior, protocol packing from earlier White runtime tests, and no-cross-era/no-cross-mode behavior. |
+| WVER-02 | VERIFIED | Full suite plus focused White/AdminApi/WebUI tests cover White route behavior, persistence boundaries, catalog/customization readback, mapper/classifier behavior, protocol packing from earlier White runtime tests, White Don Challenge server-side progress/AdminApi readback, and no-cross-era/no-cross-mode behavior. |
 | WVER-03 | PARTIAL - HUMAN NEEDED | Full automated suite, generated-source inspection, and temp Host build passed. Final RPCS3/cabinet smoke and manual WebUI review are pending by user instruction. |
 
 ## Human Verification
@@ -45,8 +49,9 @@ Required manual checks before v1.4 can be called complete:
 
 - Run White RPCS3/cabinet flow against the server and confirm implemented profile/login/userdata/playresult/readback flows behave acceptably.
 - Review the WebUI with White enabled and confirm White user profile, score/history/song/favorite/Dani/catalog pages expose the expected implemented surfaces.
-- Confirm unsupported White surfaces remain absent or unavailable in the UI, especially Don Challenge, item shop, Banacoin authority, battle, Tokkun, WaiWai, gacha runtime, and later White behavior.
+- Review the White Don Challenge page and confirm the server-side progress/reward display is acceptable.
+- Confirm unsupported White surfaces remain absent or unavailable in the UI, especially item shop, Banacoin authority, battle, Tokkun, WaiWai, gacha runtime, later White behavior, and ChallengeCompe cabinet controls.
 
 ## Closeout Decision
 
-Automated Phase 27 implementation and verification are complete. Milestone v1.4 is not marked complete because manual runtime/WebUI verification is still pending.
+Automated Phase 27 implementation and White Don Challenge correction verification are complete. Milestone v1.4 is not marked complete because manual runtime/WebUI verification is still pending.

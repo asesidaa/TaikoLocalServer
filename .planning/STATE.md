@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Phase Summary
 status: human_verification_pending
-stopped_at: Phase 27 automated closeout complete; manual RPCS3/WebUI verification pending
-last_updated: "2026-06-18T17:10:00.000Z"
-last_activity: 2026-06-18 -- Phase 27 White AdminApi/WebUI automation completed; manual verification pending
+stopped_at: White Don Challenge correction automated checks complete; manual RPCS3/WebUI verification pending
+last_updated: "2026-06-18T21:30:00.000Z"
+last_activity: 2026-06-18 -- White Don Challenge corrected to server-side stage-derived progress plus AdminApi/WebUI readback; manual verification pending
 progress:
   total_phases: 6
   completed_phases: 6
@@ -21,14 +21,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-18)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Manual Phase 27 RPCS3/cabinet and WebUI verification for White 0.13
+**Current focus:** Manual Phase 27 RPCS3/cabinet and WebUI verification for White 0.13, including the White Don Challenge AdminApi/WebUI correction
 
 ## Current Position
 
 Phase: 27 - HUMAN VERIFICATION PENDING
 Plan: 1 of 1
-Status: Automated AdminApi/WebUI implementation, full tests, Mapperly generated-source inspection, and Host temp build complete; manual runtime/WebUI verification remains.
-Last activity: 2026-06-18 -- Phase 27 White AdminApi/WebUI automation completed; manual verification pending
+Status: Automated AdminApi/WebUI implementation plus White Don Challenge correction are in progress/verification; manual runtime/WebUI verification remains.
+Last activity: 2026-06-18 -- White Don Challenge corrected to server-side stage-derived progress plus AdminApi/WebUI readback; manual verification pending
 
 ## Performance Metrics
 
@@ -260,9 +260,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 25]: White unsupported mode sections remain absent. Mapperly-generated White playresult maps Tokkun, BlueBattle, GreenGhost, and DonChallenge sections to null, and White userdata intentionally omits Tokkun tutorial and ChallengeCompe stateful readback.
 - [Phase 25]: White present and special-BAID provenance is not complete. Phase 25 covers protocol-backed `get_donpoint`, `reward_ptn`, `reward_progress`, and unlock flags; Phase 26 owns `present.xml`, `spacialbaid.xml`, collectable sidecars, and the Don Challenge evidence decision.
 - [Phase 26]: White present and special-BAID data is catalog-bound. `present.xml` rows are parsed as numeric item-type/item-number/Don Point reward facts, and `spacialbaid.xml` rows are parsed as catalog facts without mutating identity behavior.
-- [Phase 26]: White Don Challenge remains absent/data-only. Embedded White challenge fields are not enough evidence for active bundle data, standalone route ownership, reward timing, readback mutation, or state semantics.
+- [Phase 26]: The earlier White Don Challenge absent/data-only decision is superseded by the 2026-06-18 correction. White Don Challenge is server-side, stage-derived, and backed by White-owned catalog/state/AdminApi/WebUI data; White standalone ChallengeCompe route/readback remains absent.
 - [Phase 27]: White AdminApi/WebUI support exposes only implemented White-owned AC15 surfaces. White joins generic profile settings, favorites, score/history/leaderboard, Dani, game-data, and customization contracts; legacy Nijiiro UserSettings remains unchanged.
-- [Phase 27]: White Don Challenge remains unavailable in AdminApi/WebUI. White is a known WebUI era but `SupportsOlderAc15DonChallenge` remains Red-only, and direct White Don Challenge calls return unavailable without reading Red state.
+- [Phase 27]: White Don Challenge is exposed through the dedicated AdminApi/WebUI Don Challenge contract only. It derives progress from normal White playresult stages and White-owned tables; it does not add White ChallengeCompe cabinet route/readback semantics or read Red state.
 - [Phase 27]: Automated closeout passed full tests, generated-source inspection, and temp Host build, but v1.4 remains open until the user completes manual RPCS3/cabinet and WebUI verification.
 
 ### Pending Todos
@@ -289,10 +289,10 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ## Session Continuity
 
-Last session: 2026-06-18T17:10:00.000Z
-Stopped at: Phase 27 automated closeout complete; manual verification pending
+Last session: 2026-06-18T21:30:00.000Z
+Stopped at: White Don Challenge correction automated checks complete; manual verification pending
 Resume file: .planning/phases/27-white-adminapi-webui-and-runtime-closeout/27-01-SUMMARY.md
 
 ## Operator Next Steps
 
-- Run manual White RPCS3/cabinet verification and review the WebUI. If accepted, record the manual evidence and complete v1.4 lifecycle.
+- Run manual White RPCS3/cabinet verification and review the WebUI, including the White Don Challenge page. If accepted, record the manual evidence and complete v1.4 lifecycle.

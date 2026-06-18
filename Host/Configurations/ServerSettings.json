@@ -44,7 +44,9 @@
         "Enabled": true,
         "AutoExtractCatalog": true,
         "GameDataPath": "wwwroot/data/white/data",
-        "CustomizationNameDataPath": ""
+        "CustomizationNameDataPath": "",
+        "EnableDonChallenge": true,
+        "ActiveDonChallengeBundleId": "white-2016-06"
       }
     }
   }

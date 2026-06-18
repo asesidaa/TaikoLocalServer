@@ -2,16 +2,18 @@
 
 ## Completed
 
-- Added White to `WebUiEra` supported/known eras and AC15 classification while keeping Don Challenge support Red-only.
+- Added White to `WebUiEra` supported/known eras and AC15 classification, with Don Challenge support enabled for Red and White through the dedicated AdminApi/WebUI capability.
 - Added White AdminApi route handling for AC15 profile settings, favorites, play data, play history, song leaderboard, Dani best data, music/Dani catalog data, and customization catalog data.
 - Added White-specific AdminApi partials over White-owned tables for favorites, play data, play history, leaderboard, Dani, and profile settings.
 - Added focused `WhiteAdminApiTests` for White profile edit/readback, score/history/favorite/leaderboard/Dani data, catalog data, customization data, and cross-era isolation.
-- Extended WebUI tests for White game-data routes, profile-display routes, route helpers, AC15 classification, server-published favorite limits, and Don Challenge unavailability.
-- Kept `UserSettingsController` Nijiiro-only and kept Don Challenge unavailable for White.
+- Extended WebUI tests for White game-data routes, profile-display routes, route helpers, AC15 classification, server-published favorite limits, and Red/White Don Challenge capability gating.
+- Kept `UserSettingsController` Nijiiro-only and kept White ChallengeCompe cabinet route/readback semantics absent while adding White Don Challenge AdminApi/WebUI readback.
+- Added White-owned Don Challenge catalog/state, stage-derived playresult progress, reward locking/grants, and AdminApi readback without reading Red Don Challenge rows.
 
 ## Verification
 
-- Focused White/WebUI/Auth/Don Challenge filter passed: 54 tests.
+- Focused White/WebUI/Auth/Don Challenge filter passed before correction: 54 tests.
+- Focused White Don Challenge correction filter passed: 40 tests.
 - Broader AdminApi/controller regression filter passed: 60 tests.
 - Don Challenge additive boundary rerun passed: 12 tests.
 - Full test suite passed: 822 tests.

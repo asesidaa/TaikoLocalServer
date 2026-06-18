@@ -184,6 +184,7 @@
     <Content Update="wwwroot\data\white\white_movie_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\white\white_event_folder_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\white\white_taikojuku_verup_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\white\white_don_challenge_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
   </ItemGroup>
 
 

@@ -139,7 +139,7 @@ public sealed class RedDonChallengeAdminApiTests
         var controller = CreateController(fixture);
 
         await AssertUnavailable("Blue");
-        await AssertUnavailable("White");
+        await AssertUnavailable("Yellow");
         Assert.Equal(1, await fixture.Context.RedDonChallengeProgress.CountAsync());
 
         async Task AssertUnavailable(string era)

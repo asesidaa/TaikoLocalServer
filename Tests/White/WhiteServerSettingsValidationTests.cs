@@ -39,6 +39,30 @@ public sealed class WhiteServerSettingsValidationTests
         Assert.Null(settings.Eras[nameof(GameEra.White)].ActiveChallengeCompeBundleId);
     }
 
+    [Fact]
+    public void WhiteDonChallengeEnabledRequiresActiveBundleId()
+    {
+        var configuration = BuildConfiguration("""
+            {
+              "ServerSettings": {
+                "Eras": {
+                  "White": {
+                    "Enabled": true,
+                    "EnableDonChallenge": true
+                  }
+                }
+              }
+            }
+            """);
+
+        using var provider = BuildProvider(configuration);
+
+        var exception = Assert.Throws<OptionsValidationException>(() =>
+            provider.GetRequiredService<IOptions<ServerSettings>>().Value);
+
+        Assert.Contains(exception.Failures, failure => failure.Contains("ActiveDonChallengeBundleId", StringComparison.Ordinal));
+    }
+
     private static IConfigurationRoot BuildConfiguration(string json)
     {
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));

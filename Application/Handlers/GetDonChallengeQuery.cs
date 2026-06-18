@@ -23,24 +23,28 @@ public sealed class GetDonChallengeQueryHandler(
         GetDonChallengeQuery request,
         CancellationToken cancellationToken)
     {
-        if (request.Era != GameEra.Red)
+        return request.Era switch
         {
-            logger.LogInformation("Don Challenge AdminApi unavailable for era {Era}", request.Era);
-            return UnavailableResponse(request.Era, $"Don Challenge is not available for {request.Era}.");
-        }
+            GameEra.Red => await BuildRedResponseAsync(request.Baid, cancellationToken),
+            GameEra.White => await BuildWhiteResponseAsync(request.Baid, cancellationToken),
+            _ => BuildUnsupportedResponse(request.Era)
+        };
+    }
 
+    private async ValueTask<DonChallengeResponse> BuildRedResponseAsync(uint baid, CancellationToken cancellationToken)
+    {
         var bundle = catalog.Red().DonChallenge.ActiveBundle;
         if (bundle is null)
         {
-            return UnavailableResponse(request.Era, "No active Don Challenge is configured for Red.");
+            return UnavailableResponse(GameEra.Red, "No active Don Challenge is configured for Red.");
         }
 
         var saveData = await context.UserSaveDataRed
             .AsNoTracking()
-            .SingleOrDefaultAsync(row => row.Baid == request.Baid, cancellationToken);
+            .SingleOrDefaultAsync(row => row.Baid == baid, cancellationToken);
         var progressRows = await context.RedDonChallengeProgress
             .AsNoTracking()
-            .Where(row => row.Baid == request.Baid && row.BundleId == bundle.BundleId)
+            .Where(row => row.Baid == baid && row.BundleId == bundle.BundleId)
             .ToArrayAsync(cancellationToken);
 
         return Ac15DonChallengeAdminProjection.BuildResponse(
@@ -52,18 +56,45 @@ public sealed class GetDonChallengeQueryHandler(
                 : new Ac15DonChallengeRewardFlagState(saveData.ReleaseSongFlg, saveData.TitleFlg));
     }
 
-    private DonChallengeAvailabilityResponse BuildAvailability(GameEra era)
+    private async ValueTask<DonChallengeResponse> BuildWhiteResponseAsync(uint baid, CancellationToken cancellationToken)
     {
-        if (era != GameEra.Red)
+        var bundle = catalog.White().DonChallenge.ActiveBundle;
+        if (bundle is null)
         {
-            return UnavailableAvailability(era, $"Don Challenge is not available for {era}.");
+            return UnavailableResponse(GameEra.White, "No active Don Challenge is configured for White.");
         }
 
-        var bundle = catalog.Red().DonChallenge.ActiveBundle;
-        return bundle is null
-            ? UnavailableAvailability(era, "No active Don Challenge is configured for Red.")
-            : Ac15DonChallengeAdminProjection.BuildAvailability(GameEra.Red, bundle);
+        var saveData = await context.UserSaveDataWhite
+            .AsNoTracking()
+            .SingleOrDefaultAsync(row => row.Baid == baid, cancellationToken);
+        var progressRows = await context.WhiteDonChallengeProgress
+            .AsNoTracking()
+            .Where(row => row.Baid == baid && row.BundleId == bundle.BundleId)
+            .ToArrayAsync(cancellationToken);
+
+        return Ac15DonChallengeAdminProjection.BuildResponse(
+            GameEra.White,
+            bundle,
+            progressRows,
+            saveData is null
+                ? null
+                : new Ac15DonChallengeRewardFlagState(saveData.ReleaseSongFlg, saveData.TitleFlg));
     }
+
+    private DonChallengeAvailabilityResponse BuildAvailability(GameEra era)
+        => era switch
+        {
+            GameEra.Red => BuildEraAvailability(GameEra.Red, catalog.Red().DonChallenge.ActiveBundle),
+            GameEra.White => BuildEraAvailability(GameEra.White, catalog.White().DonChallenge.ActiveBundle),
+            _ => UnavailableAvailability(era, $"Don Challenge is not available for {era}.")
+        };
+
+    private static DonChallengeAvailabilityResponse BuildEraAvailability(
+        GameEra era,
+        Ac15DonChallengeMonthlyBundle? bundle)
+        => bundle is null
+            ? UnavailableAvailability(era, $"No active Don Challenge is configured for {era}.")
+            : Ac15DonChallengeAdminProjection.BuildAvailability(era, bundle);
 
     private static DonChallengeAvailabilityResponse UnavailableAvailability(GameEra era, string message)
         => new()
@@ -72,6 +103,12 @@ public sealed class GetDonChallengeQueryHandler(
             IsAvailable = false,
             Message = message
         };
+
+    private DonChallengeResponse BuildUnsupportedResponse(GameEra era)
+    {
+        logger.LogInformation("Don Challenge AdminApi unavailable for era {Era}", era);
+        return UnavailableResponse(era, $"Don Challenge is not available for {era}.");
+    }
 
     private static DonChallengeResponse UnavailableResponse(GameEra era, string message)
         => new()

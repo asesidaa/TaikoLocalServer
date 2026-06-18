@@ -242,10 +242,10 @@ public sealed class GameDataServiceTests
     }
 
     [Fact]
-    public void OlderAc15DonChallengeCapability_IsRedOnly()
+    public void OlderAc15DonChallengeCapability_IsRedAndWhiteOnly()
     {
         Assert.True(WebUiEra.SupportsOlderAc15DonChallenge("Red"));
-        Assert.False(WebUiEra.SupportsOlderAc15DonChallenge("White"));
+        Assert.True(WebUiEra.SupportsOlderAc15DonChallenge("White"));
         Assert.False(WebUiEra.SupportsOlderAc15DonChallenge("Blue"));
         Assert.False(WebUiEra.SupportsOlderAc15DonChallenge("Nijiiro"));
     }

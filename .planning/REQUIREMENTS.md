@@ -29,7 +29,7 @@
 
 - [x] **WCOLL-01**: White reward/present and Don Point behavior uses White-owned profile/unlock flags and local `present.xml`/protocol evidence, without creating Yellow item-shop/medal, Banacoin wallet/payment, or unrelated unlock semantics.
 - [x] **WCOLL-02**: White collectable data for songs, tones, costumes, titles, special BAID rows, presents, and other 0.13-scoped rewards is collected with provenance and bound after core runtime behavior is stable.
-- [x] **WCOLL-03**: White Don Challenge/ChallengeCompe behavior is implemented only if White 0.13 evidence proves the data, field placement, readback surface, reward timing, and state semantics; otherwise it remains absent or data-only with the gap recorded.
+- [x] **WCOLL-03**: White Don Challenge is implemented only as server-side stage-derived progress with White-owned data/state/AdminApi/WebUI readback; White ChallengeCompe cabinet route/readback semantics remain absent/stubbed.
 
 ### Admin, Verification, And Closeout
 

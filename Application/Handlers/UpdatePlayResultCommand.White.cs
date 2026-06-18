@@ -1,4 +1,5 @@
 using TaikoLocalServer.Application.Ac15;
+using TaikoLocalServer.Application.Ac15.DonChallenge;
 using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Application.Handlers;
@@ -78,6 +79,14 @@ public partial class UpdatePlayResultCommandHandler
             logger,
             cancellationToken);
 
+        await Ac15DonChallengeWriter.SaveAsync(
+            WhiteDonChallengeTables(),
+            new Ac15DonChallengeWriteRequest(request.Baid, white.DonChallenge, validStages, playTime),
+            new Ac15DonChallengeRewardMutators(
+                ids => Ac15UnlockFlagAccess.White.ReleaseSongs?.Invoke(saveData, ids),
+                ids => Ac15UnlockFlagAccess.White.Titles(saveData, ids)),
+            cancellationToken);
+
         await Ac15NormalPlayWriter.SaveAsync(
             context,
             WhiteNormalPlayTables(),
@@ -107,4 +116,9 @@ public partial class UpdatePlayResultCommandHandler
             Ac15DaniMapper.ApplyToWhiteDanScoreDatum,
             Ac15DaniMapper.ToWhiteDanStageScoreDatum,
             Ac15DaniMapper.ApplyToWhiteDanStageScoreDatum);
+
+    private Ac15DonChallengeTables<WhiteDonChallengeProgress, WhiteDonChallengeRawFact> WhiteDonChallengeTables()
+        => new(
+            context.WhiteDonChallengeProgress,
+            context.WhiteDonChallengeRawFacts);
 }

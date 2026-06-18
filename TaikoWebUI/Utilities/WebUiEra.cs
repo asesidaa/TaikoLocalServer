@@ -32,7 +32,8 @@ public static class WebUiEra
 
     public static bool SupportsOlderAc15DonChallenge(string? era)
     {
-        return string.Equals(era, Red, StringComparison.OrdinalIgnoreCase);
+        return string.Equals(era, Red, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(era, White, StringComparison.OrdinalIgnoreCase);
     }
 
     public static string Normalize(string? era)

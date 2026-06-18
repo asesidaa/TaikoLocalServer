@@ -1,3 +1,4 @@
+using TaikoLocalServer.Application.Ac15.DonChallenge;
 using TaikoLocalServer.Application.Catalog.Ac15;
 
 namespace TaikoLocalServer.Application.Abstractions;
@@ -25,6 +26,8 @@ public interface IWhiteCatalog : IEraGameDataCatalog
     IReadOnlyList<Ac15PresentItem> Presents { get; }
 
     IReadOnlyList<Ac15SpecialBaidEntry> SpecialBaids { get; }
+
+    Ac15DonChallengeCatalog DonChallenge { get; }
 
     IReadOnlyList<Costume> GetCostumeList();
 
