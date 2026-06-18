@@ -69,28 +69,13 @@ public partial class DanBestDataController(ITaikoDbContext context) : BaseAdminC
 
         return new DanBestDataResponse
         {
-            DanBestDataList = rows.Select(row => new DanBestData
-            {
-                DanId = row.DanId,
-                ClearState = MapGreenClearGrade(row.ClearGrade),
-                SoulGaugeTotal = row.SoulGaugeTotal,
-                ComboCountTotal = row.ComboCountTotal,
-                DanBestStageDataList = row.DanStageScoreData
-                    .OrderBy(stage => stage.StageIndex)
-                    .Select(stage => new DanBestStageData
-                    {
-                        SongNumber = stage.SongNumber,
-                        PlayScore = stage.PlayScore,
-                        GoodCount = stage.GoodCount,
-                        OkCount = stage.OkCount,
-                        BadCount = stage.BadCount,
-                        DrumrollCount = stage.DrumrollCount,
-                        TotalHitCount = stage.TotalHitCount,
-                        ComboCount = stage.ComboCount,
-                        HighScore = stage.HighScore
-                    })
-                    .ToList()
-            }).ToList()
+            DanBestDataList = rows.Select(row => ToAc15DanBestData(
+                row.DanId,
+                row.ClearGrade,
+                row.SoulGaugeTotal,
+                row.ComboCountTotal,
+                row.DanStageScoreData,
+                MapGreenClearGrade)).ToList()
         };
     }
 
@@ -116,28 +101,13 @@ public partial class DanBestDataController(ITaikoDbContext context) : BaseAdminC
 
         return new DanBestDataResponse
         {
-            DanBestDataList = rows.Select(row => new DanBestData
-            {
-                DanId = row.DanId,
-                ClearState = MapBlueClearGrade(row.ClearGrade),
-                SoulGaugeTotal = row.SoulGaugeTotal,
-                ComboCountTotal = row.ComboCountTotal,
-                DanBestStageDataList = row.DanStageScoreData
-                    .OrderBy(stage => stage.StageIndex)
-                    .Select(stage => new DanBestStageData
-                    {
-                        SongNumber = stage.SongNumber,
-                        PlayScore = stage.PlayScore,
-                        GoodCount = stage.GoodCount,
-                        OkCount = stage.OkCount,
-                        BadCount = stage.BadCount,
-                        DrumrollCount = stage.DrumrollCount,
-                        TotalHitCount = stage.TotalHitCount,
-                        ComboCount = stage.ComboCount,
-                        HighScore = stage.HighScore
-                    })
-                    .ToList()
-            }).ToList()
+            DanBestDataList = rows.Select(row => ToAc15DanBestData(
+                row.DanId,
+                row.ClearGrade,
+                row.SoulGaugeTotal,
+                row.ComboCountTotal,
+                row.DanStageScoreData,
+                MapBlueClearGrade)).ToList()
         };
     }
 
@@ -163,28 +133,13 @@ public partial class DanBestDataController(ITaikoDbContext context) : BaseAdminC
 
         return new DanBestDataResponse
         {
-            DanBestDataList = rows.Select(row => new DanBestData
-            {
-                DanId = row.DanId,
-                ClearState = MapYellowClearGrade(row.ClearGrade),
-                SoulGaugeTotal = row.SoulGaugeTotal,
-                ComboCountTotal = row.ComboCountTotal,
-                DanBestStageDataList = row.DanStageScoreData
-                    .OrderBy(stage => stage.StageIndex)
-                    .Select(stage => new DanBestStageData
-                    {
-                        SongNumber = stage.SongNumber,
-                        PlayScore = stage.PlayScore,
-                        GoodCount = stage.GoodCount,
-                        OkCount = stage.OkCount,
-                        BadCount = stage.BadCount,
-                        DrumrollCount = stage.DrumrollCount,
-                        TotalHitCount = stage.TotalHitCount,
-                        ComboCount = stage.ComboCount,
-                        HighScore = stage.HighScore
-                    })
-                    .ToList()
-            }).ToList()
+            DanBestDataList = rows.Select(row => ToAc15DanBestData(
+                row.DanId,
+                row.ClearGrade,
+                row.SoulGaugeTotal,
+                row.ComboCountTotal,
+                row.DanStageScoreData,
+                MapYellowClearGrade)).ToList()
         };
     }
 
@@ -210,28 +165,13 @@ public partial class DanBestDataController(ITaikoDbContext context) : BaseAdminC
 
         return new DanBestDataResponse
         {
-            DanBestDataList = rows.Select(row => new DanBestData
-            {
-                DanId = row.DanId,
-                ClearState = MapRedClearGrade(row.ClearGrade),
-                SoulGaugeTotal = row.SoulGaugeTotal,
-                ComboCountTotal = row.ComboCountTotal,
-                DanBestStageDataList = row.DanStageScoreData
-                    .OrderBy(stage => stage.StageIndex)
-                    .Select(stage => new DanBestStageData
-                    {
-                        SongNumber = stage.SongNumber,
-                        PlayScore = stage.PlayScore,
-                        GoodCount = stage.GoodCount,
-                        OkCount = stage.OkCount,
-                        BadCount = stage.BadCount,
-                        DrumrollCount = stage.DrumrollCount,
-                        TotalHitCount = stage.TotalHitCount,
-                        ComboCount = stage.ComboCount,
-                        HighScore = stage.HighScore
-                    })
-                    .ToList()
-            }).ToList()
+            DanBestDataList = rows.Select(row => ToAc15DanBestData(
+                row.DanId,
+                row.ClearGrade,
+                row.SoulGaugeTotal,
+                row.ComboCountTotal,
+                row.DanStageScoreData,
+                MapRedClearGrade)).ToList()
         };
     }
 
@@ -245,4 +185,62 @@ public partial class DanBestDataController(ITaikoDbContext context) : BaseAdminC
             _ => DanClearState.NotClear
         };
     }
+
+    private static DanBestData ToAc15DanBestData<TStage>(
+        uint danId,
+        Ac15DanClearGrade clearGrade,
+        uint soulGaugeTotal,
+        uint comboCountTotal,
+        IEnumerable<TStage> stages,
+        Func<Ac15DanClearGrade, DanClearState> mapClearGrade)
+        where TStage : class, IAc15DanStageScoreDatum
+    {
+        var orderedStages = stages.OrderBy(stage => stage.StageIndex).ToList();
+
+        return new DanBestData
+        {
+            DanId = danId,
+            ClearState = mapClearGrade(clearGrade),
+            SoulGaugeTotal = soulGaugeTotal,
+            ComboCountTotal = GetAc15ComboCountTotal(comboCountTotal, orderedStages),
+            DanBestStageDataList = BuildAc15DanBestStageData(orderedStages)
+        };
+    }
+
+    private static uint GetAc15ComboCountTotal<TStage>(uint storedComboCountTotal, IReadOnlyList<TStage> orderedStages)
+        where TStage : class, IAc15DanStageScoreDatum
+        => storedComboCountTotal != 0
+            ? storedComboCountTotal
+            : orderedStages.LastOrDefault()?.ComboCount ?? 0;
+
+    private static List<DanBestStageData> BuildAc15DanBestStageData<TStage>(IReadOnlyList<TStage> orderedStages)
+        where TStage : class, IAc15DanStageScoreDatum
+    {
+        var result = new List<DanBestStageData>(orderedStages.Count);
+        TStage? previous = default;
+
+        foreach (var stage in orderedStages)
+        {
+            // AC15 Dan uploads carry additive counters as after-stage cumulative snapshots.
+            result.Add(new DanBestStageData
+            {
+                SongNumber = stage.SongNumber,
+                PlayScore = DeltaFromPrevious(stage.PlayScore, previous?.PlayScore ?? 0),
+                GoodCount = DeltaFromPrevious(stage.GoodCount, previous?.GoodCount ?? 0),
+                OkCount = DeltaFromPrevious(stage.OkCount, previous?.OkCount ?? 0),
+                BadCount = DeltaFromPrevious(stage.BadCount, previous?.BadCount ?? 0),
+                DrumrollCount = DeltaFromPrevious(stage.DrumrollCount, previous?.DrumrollCount ?? 0),
+                TotalHitCount = DeltaFromPrevious(stage.TotalHitCount, previous?.TotalHitCount ?? 0),
+                ComboCount = stage.ComboCount,
+                HighScore = DeltaFromPrevious(stage.HighScore, previous?.HighScore ?? 0)
+            });
+
+            previous = stage;
+        }
+
+        return result;
+    }
+
+    private static uint DeltaFromPrevious(uint current, uint previous)
+        => current >= previous ? current - previous : current;
 }

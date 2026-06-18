@@ -13,28 +13,13 @@ public partial class DanBestDataController
 
         return new DanBestDataResponse
         {
-            DanBestDataList = rows.Select(row => new DanBestData
-            {
-                DanId = row.DanId,
-                ClearState = MapWhiteClearGrade(row.ClearGrade),
-                SoulGaugeTotal = row.SoulGaugeTotal,
-                ComboCountTotal = row.ComboCountTotal,
-                DanBestStageDataList = row.DanStageScoreData
-                    .OrderBy(stage => stage.StageIndex)
-                    .Select(stage => new DanBestStageData
-                    {
-                        SongNumber = stage.SongNumber,
-                        PlayScore = stage.PlayScore,
-                        GoodCount = stage.GoodCount,
-                        OkCount = stage.OkCount,
-                        BadCount = stage.BadCount,
-                        DrumrollCount = stage.DrumrollCount,
-                        TotalHitCount = stage.TotalHitCount,
-                        ComboCount = stage.ComboCount,
-                        HighScore = stage.HighScore
-                    })
-                    .ToList()
-            }).ToList()
+            DanBestDataList = rows.Select(row => ToAc15DanBestData(
+                row.DanId,
+                row.ClearGrade,
+                row.SoulGaugeTotal,
+                row.ComboCountTotal,
+                row.DanStageScoreData,
+                MapWhiteClearGrade)).ToList()
         };
     }
 

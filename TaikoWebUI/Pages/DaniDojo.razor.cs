@@ -41,9 +41,7 @@ public partial class DaniDojo
 
         response = await Client.GetFromJsonAsync<DanBestDataResponse>(WebUiEra.Api(CurrentEra, $"DanBestData/{Baid}"));
         response.ThrowIfNull();
-        response.DanBestDataList.ForEach(data => data.DanBestStageDataList
-            .Sort((stageData, otherStageData) => stageData.SongNumber.CompareTo(otherStageData.SongNumber)));
-        
+
         _bestDataMap = response.DanBestDataList.ToDictionary(data => data.DanId);
 
         if (!UiSettings.Value.DisplayUnplayedDans)
@@ -355,7 +353,11 @@ public partial class DaniDojo
 
     private long GetTotalMaxCombo(uint danId)
     {
-        return _bestDataMap.TryGetValue(danId, out DanBestData? value) ? value.DanBestStageDataList.Sum(stageData => stageData.ComboCount) : 0;
+        return _bestDataMap.TryGetValue(danId, out DanBestData? value)
+            ? value.ComboCountTotal != 0
+                ? value.ComboCountTotal
+                : value.DanBestStageDataList.LastOrDefault()?.ComboCount ?? 0
+            : 0;
     }
 
     private long GetTotalHits(uint danId)

@@ -366,11 +366,10 @@ else
                                                                                         resultText = Localizer["Pass"];
                                                                                     }
 
-                                                                                    var resultValue = redRequirement - bestData;
-                                                                                    if (resultValue < 0) resultValue = 0;
+                                                                                    var resultValue = bestData < redRequirement ? redRequirement - bestData : 0;
 
                                                                                     <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="@redRequirement" Value="@resultValue">
-                                                                                        <MudText Typo="Typo.caption">@resultValue</MudText>
+                                                                                        <MudText Typo="Typo.caption">@bestData</MudText>
                                                                                     </MudProgressLinear>
                                                                                     <MudText Typo="Typo.caption" Style="text-align: right">@resultText</MudText>
                                                                                 }
@@ -459,11 +458,10 @@ else
                                                                                                     resultText = Localizer["Gold"];
                                                                                                 }
 
-                                                                                                var resultValue = redRequirement - bestData;
-                                                                                                if (bestData >= redRequirement) resultValue = 0;
+                                                                                                var resultValue = bestData < redRequirement ? redRequirement - bestData : 0;
 
                                                                                                 <MudProgressLinear Class="@barClass" Rounded="true" Size="Size.Large" Max="@redRequirement" Value="@resultValue">
-                                                                                                    <MudText Typo="Typo.caption">@resultValue</MudText>
+                                                                                                    <MudText Typo="Typo.caption">@bestData</MudText>
                                                                                                 </MudProgressLinear>
                                                                                                 <MudText Typo="Typo.caption" Style="text-align: right">@resultText</MudText>
                                                                                             }
