@@ -7,7 +7,7 @@ public sealed class Ac15ProfileCapabilitiesTests
     [Fact]
     public void CurrentImplementedAc15ProfilesExposeFullProfileSettingsCapabilities()
     {
-        var profiles = new[] { Ac15EraProfiles.Blue, Ac15EraProfiles.Green, Ac15EraProfiles.Yellow, Ac15EraProfiles.Red };
+        var profiles = new[] { Ac15EraProfiles.Blue, Ac15EraProfiles.Green, Ac15EraProfiles.Yellow, Ac15EraProfiles.Red, Ac15EraProfiles.White };
 
         foreach (var profile in profiles)
         {

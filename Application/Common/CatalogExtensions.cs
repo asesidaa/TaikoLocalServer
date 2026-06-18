@@ -19,4 +19,7 @@ public static class CatalogExtensions
 
     public static IRedCatalog Red(this IGameDataCatalog catalog)
         => (IRedCatalog)catalog.For(GameEra.Red);
+
+    public static IWhiteCatalog White(this IGameDataCatalog catalog)
+        => (IWhiteCatalog)catalog.For(GameEra.White);
 }

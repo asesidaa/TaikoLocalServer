@@ -59,4 +59,15 @@ public static class Ac15CatalogSnapshotFactory
             red.Recommend.RecommendBestSongs.ToArray(),
             Ac15ItemShopCatalog.Disabled,
             red.TaikojukuFileOrder));
+
+    public static Ac15CatalogSnapshot FromWhite(IWhiteCatalog white)
+        => FromSource(new Ac15CatalogProjectionSource(
+            white.SongHashVersion,
+            white.MusicInfoFileOrder.Select(song => song.SongNo).ToArray(),
+            white.EventFolders,
+            white.Telops,
+            white.Recommend.RecommendSong,
+            white.Recommend.RecommendBestSongs.ToArray(),
+            Ac15ItemShopCatalog.Disabled,
+            white.TaikojukuFileOrder));
 }

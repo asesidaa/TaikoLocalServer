@@ -15,6 +15,7 @@ using TaikoLocalServer.Infrastructure.GameDataCatalog.Blue;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Nijiiro;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Red;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.White;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Yellow;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Settings;
 using TaikoLocalServer.Infrastructure.Identity;
@@ -93,6 +94,13 @@ public static class DependencyInjection
             services.AddSingleton<RedEraGameDataCatalog>();
             services.AddSingleton<IRedCatalog>(sp => sp.GetRequiredService<RedEraGameDataCatalog>());
             services.AddSingleton<IEraGameDataCatalog>(sp => sp.GetRequiredService<RedEraGameDataCatalog>());
+        }
+
+        if (enabledEras.Contains(GameEra.White))
+        {
+            services.AddSingleton<WhiteEraGameDataCatalog>();
+            services.AddSingleton<IWhiteCatalog>(sp => sp.GetRequiredService<WhiteEraGameDataCatalog>());
+            services.AddSingleton<IEraGameDataCatalog>(sp => sp.GetRequiredService<WhiteEraGameDataCatalog>());
         }
 
         services.AddSingleton<IGameDataCatalog>(sp => new FileGameDataCatalog(

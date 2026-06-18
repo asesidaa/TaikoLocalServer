@@ -179,6 +179,11 @@
     <!--White Game Data-->
     <Content Remove="wwwroot\data\white\data\**" />
     <_ContentIncludedByDefault Remove="wwwroot\data\white\data\**" />
+    <Content Update="wwwroot\data\white\white_recommend_songs.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\white\white_telop_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\white\white_movie_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\white\white_event_folder_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Update="wwwroot\data\white\white_taikojuku_verup_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
   </ItemGroup>
 
 
