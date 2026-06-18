@@ -71,6 +71,22 @@ public sealed class GameDataServiceTests
     }
 
     [Fact]
+    public async Task InitializeAsync_LoadsWhiteDanDataWhenEnabled()
+    {
+        var handler = new RecordingHandler();
+        using var client = new HttpClient(handler)
+        {
+            BaseAddress = new Uri("http://localhost/")
+        };
+        var service = new GameDataService(client);
+
+        await service.InitializeAsync("http://localhost/", ["White"]);
+
+        Assert.Equal(["api/White/GameData/DanData"], handler.RequestPaths);
+        Assert.Empty(service.GetDanMap("Red"));
+    }
+
+    [Fact]
     public async Task CatalogLookups_RequestYellowAdminApiRoutes()
     {
         var handler = new RecordingHandler();
@@ -125,6 +141,33 @@ public sealed class GameDataServiceTests
     }
 
     [Fact]
+    public async Task CatalogLookups_RequestWhiteAdminApiRoutes()
+    {
+        var handler = new RecordingHandler();
+        using var client = new HttpClient(handler)
+        {
+            BaseAddress = new Uri("http://localhost/")
+        };
+        var service = new GameDataService(client);
+
+        await service.InitializeAsync("http://localhost/", ["White"]);
+        await service.GetMusicDetailDictionary("White");
+        await service.GetCostumeList("White");
+        await service.GetTitleDictionary("White");
+        await service.GetNeiroDictionary("White");
+
+        Assert.Equal(
+            [
+                "api/White/GameData/DanData",
+                "api/White/GameData/MusicDetails",
+                "api/White/customization/costumes",
+                "api/White/customization/titles",
+                "api/White/customization/neiros"
+            ],
+            handler.RequestPaths);
+    }
+
+    [Fact]
     public async Task LegacyCatalogLookups_UseFirstEnabledEra()
     {
         var handler = new RecordingHandler();
@@ -153,15 +196,21 @@ public sealed class GameDataServiceTests
     [Fact]
     public void NormalizeEnabled_IgnoresUnsupportedEras()
     {
-        var enabled = WebUiEra.NormalizeEnabled(["Yellow", "Red", "Unknown"]);
+        var enabled = WebUiEra.NormalizeEnabled(["Yellow", "Red", "White", "Unknown"]);
 
-        Assert.Equal(["Yellow", "Red"], enabled);
+        Assert.Equal(["Yellow", "Red", "White"], enabled);
     }
 
     [Fact]
     public void Red_IsAc15()
     {
         Assert.True(WebUiEra.IsAc15("Red"));
+    }
+
+    [Fact]
+    public void White_IsAc15()
+    {
+        Assert.True(WebUiEra.IsAc15("White"));
     }
 
     [Fact]
@@ -186,9 +235,17 @@ public sealed class GameDataServiceTests
     }
 
     [Fact]
+    public void White_RouteHelpersPreserveEra()
+    {
+        Assert.Equal("Users/123/White/Songs", WebUiEra.UserRoute(123u, "White", "Songs"));
+        Assert.Equal("api/White/PlayData/123", WebUiEra.Api("White", "PlayData/123"));
+    }
+
+    [Fact]
     public void OlderAc15DonChallengeCapability_IsRedOnly()
     {
         Assert.True(WebUiEra.SupportsOlderAc15DonChallenge("Red"));
+        Assert.False(WebUiEra.SupportsOlderAc15DonChallenge("White"));
         Assert.False(WebUiEra.SupportsOlderAc15DonChallenge("Blue"));
         Assert.False(WebUiEra.SupportsOlderAc15DonChallenge("Nijiiro"));
     }
@@ -207,6 +264,7 @@ public sealed class GameDataServiceTests
             {
                 "api/Yellow/GameData/DanData" => """[{"danId":900,"title":"yellow"}]""",
                 "api/Red/GameData/DanData" => """[{"danId":800,"title":"red"}]""",
+                "api/White/GameData/DanData" => """[{"danId":700,"title":"white"}]""",
                 _ when path.Contains("MusicDetails", StringComparison.Ordinal)
                     || path.Contains("customization/titles", StringComparison.Ordinal)
                     || path.Contains("customization/neiros", StringComparison.Ordinal) => "{}",

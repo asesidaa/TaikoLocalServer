@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Phase Summary
-status: in_progress
-stopped_at: Phase 26 complete and verified
-last_updated: "2026-06-18T16:45:00.000Z"
-last_activity: 2026-06-18 -- Phase 26 White collectable evidence completed
+status: human_verification_pending
+stopped_at: Phase 27 automated closeout complete; manual RPCS3/WebUI verification pending
+last_updated: "2026-06-18T17:10:00.000Z"
+last_activity: 2026-06-18 -- Phase 27 White AdminApi/WebUI automation completed; manual verification pending
 progress:
   total_phases: 6
-  completed_phases: 5
-  total_plans: 9
-  completed_plans: 9
-  percent: 83
+  completed_phases: 6
+  total_plans: 10
+  completed_plans: 10
+  percent: 100
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-18)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Phase 27 - White AdminApi WebUI and runtime closeout
+**Current focus:** Manual Phase 27 RPCS3/cabinet and WebUI verification for White 0.13
 
 ## Current Position
 
-Phase: 26 - COMPLETE
+Phase: 27 - HUMAN VERIFICATION PENDING
 Plan: 1 of 1
-Status: Phase 26 complete; autonomous flow continues to Phase 27
-Last activity: 2026-06-18 -- Phase 26 White collectable evidence completed
+Status: Automated AdminApi/WebUI implementation, full tests, Mapperly generated-source inspection, and Host temp build complete; manual runtime/WebUI verification remains.
+Last activity: 2026-06-18 -- Phase 27 White AdminApi/WebUI automation completed; manual verification pending
 
 ## Performance Metrics
 
@@ -261,6 +261,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 25]: White present and special-BAID provenance is not complete. Phase 25 covers protocol-backed `get_donpoint`, `reward_ptn`, `reward_progress`, and unlock flags; Phase 26 owns `present.xml`, `spacialbaid.xml`, collectable sidecars, and the Don Challenge evidence decision.
 - [Phase 26]: White present and special-BAID data is catalog-bound. `present.xml` rows are parsed as numeric item-type/item-number/Don Point reward facts, and `spacialbaid.xml` rows are parsed as catalog facts without mutating identity behavior.
 - [Phase 26]: White Don Challenge remains absent/data-only. Embedded White challenge fields are not enough evidence for active bundle data, standalone route ownership, reward timing, readback mutation, or state semantics.
+- [Phase 27]: White AdminApi/WebUI support exposes only implemented White-owned AC15 surfaces. White joins generic profile settings, favorites, score/history/leaderboard, Dani, game-data, and customization contracts; legacy Nijiiro UserSettings remains unchanged.
+- [Phase 27]: White Don Challenge remains unavailable in AdminApi/WebUI. White is a known WebUI era but `SupportsOlderAc15DonChallenge` remains Red-only, and direct White Don Challenge calls return unavailable without reading Red state.
+- [Phase 27]: Automated closeout passed full tests, generated-source inspection, and temp Host build, but v1.4 remains open until the user completes manual RPCS3/cabinet and WebUI verification.
 
 ### Pending Todos
 
@@ -268,7 +271,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ### Blockers/Concerns
 
-- None for Phase 25 implementation. White focused tests, shared AC15 regression filter, Mapperly generated-source inspection, and temp Host build passed.
+- Human verification pending: user must run White RPCS3/cabinet flows and review the WebUI before v1.4 can be called complete.
 
 ### Quick Tasks Completed
 
@@ -286,10 +289,10 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ## Session Continuity
 
-Last session: 2026-06-18T17:15:00.000Z
-Stopped at: Phase 26 complete and verified
-Resume file: .planning/phases/26-white-collectable-data-and-don-challenge-evidence/26-01-SUMMARY.md
+Last session: 2026-06-18T17:10:00.000Z
+Stopped at: Phase 27 automated closeout complete; manual verification pending
+Resume file: .planning/phases/27-white-adminapi-webui-and-runtime-closeout/27-01-SUMMARY.md
 
 ## Operator Next Steps
 
-- Continue Phase 27 AdminApi/WebUI automation and runtime closeout. Stop before final manual RPCS3/cabinet and WebUI verification per user instruction.
+- Run manual White RPCS3/cabinet verification and review the WebUI. If accepted, record the manual evidence and complete v1.4 lifecycle.

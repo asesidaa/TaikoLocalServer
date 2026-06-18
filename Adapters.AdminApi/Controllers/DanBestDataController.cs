@@ -5,7 +5,7 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class DanBestDataController(ITaikoDbContext context) : BaseAdminController<DanBestDataController>
+public partial class DanBestDataController(ITaikoDbContext context) : BaseAdminController<DanBestDataController>
 {
     [HttpGet("{baid}")]
     public Task<IActionResult> GetDanBestData(uint baid)
@@ -27,6 +27,7 @@ public class DanBestDataController(ITaikoDbContext context) : BaseAdminControlle
             GameEra.Blue => Ok(await BuildBlueDanBestData(baid)),
             GameEra.Yellow => Ok(await BuildYellowDanBestData(baid)),
             GameEra.Red => Ok(await BuildRedDanBestData(baid)),
+            GameEra.White => Ok(await BuildWhiteDanBestData(baid)),
             _ => EraRoute.BadEra(era)
         };
     }

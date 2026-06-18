@@ -35,6 +35,7 @@ public sealed partial class Ac15ProfileSettingsController(
             GameEra.Green => await GetGreen(baid),
             GameEra.Yellow => await GetYellow(baid),
             GameEra.Red => await GetRed(baid),
+            GameEra.White => await GetWhite(baid),
             _ => BadAc15Era(era)
         };
     }
@@ -58,6 +59,7 @@ public sealed partial class Ac15ProfileSettingsController(
             GameEra.Green => await PutGreen(baid, request),
             GameEra.Yellow => await PutYellow(baid, request),
             GameEra.Red => await PutRed(baid, request),
+            GameEra.White => await PutWhite(baid, request),
             _ => BadAc15Era(era)
         };
     }

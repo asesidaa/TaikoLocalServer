@@ -138,17 +138,23 @@ public sealed class RedDonChallengeAdminApiTests
         await fixture.Context.SaveChangesAsync();
         var controller = CreateController(fixture);
 
-        var availability = AssertOk<DonChallengeAvailabilityResponse>(await controller.GetAvailability("Blue"));
-        var readback = AssertOk<DonChallengeResponse>(await controller.GetDonChallenge("Blue", 1));
-
-        Assert.False(availability.IsAvailable);
-        Assert.Equal("Blue", availability.Era);
-        Assert.Contains("not available", availability.Message, StringComparison.OrdinalIgnoreCase);
-        Assert.False(readback.IsAvailable);
-        Assert.Equal("Blue", readback.Era);
-        Assert.Empty(readback.Tasks);
-        Assert.Empty(readback.Rewards);
+        await AssertUnavailable("Blue");
+        await AssertUnavailable("White");
         Assert.Equal(1, await fixture.Context.RedDonChallengeProgress.CountAsync());
+
+        async Task AssertUnavailable(string era)
+        {
+            var availability = AssertOk<DonChallengeAvailabilityResponse>(await controller.GetAvailability(era));
+            var readback = AssertOk<DonChallengeResponse>(await controller.GetDonChallenge(era, 1));
+
+            Assert.False(availability.IsAvailable);
+            Assert.Equal(era, availability.Era);
+            Assert.Contains("not available", availability.Message, StringComparison.OrdinalIgnoreCase);
+            Assert.False(readback.IsAvailable);
+            Assert.Equal(era, readback.Era);
+            Assert.Empty(readback.Tasks);
+            Assert.Empty(readback.Rewards);
+        }
     }
 
     [Fact]

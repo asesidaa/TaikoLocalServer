@@ -36,6 +36,7 @@ public partial class FavoriteSongsController(ITaikoDbContext context, IGameDataC
             GameEra.Blue => await UpdateBlueFavoriteSong(request),
             GameEra.Yellow => await UpdateYellowFavoriteSong(request),
             GameEra.Red => await UpdateRedFavoriteSong(request),
+            GameEra.White => await UpdateWhiteFavoriteSong(request),
             _ => EraRoute.BadEra(era)
         };
     }
@@ -140,6 +141,7 @@ public partial class FavoriteSongsController(ITaikoDbContext context, IGameDataC
                 .ToListAsync(HttpContext.RequestAborted)),
             GameEra.Yellow => Ok(await GetYellowFavoriteSongs(baid)),
             GameEra.Red => Ok(await GetRedFavoriteSongs(baid)),
+            GameEra.White => Ok(await GetWhiteFavoriteSongs(baid)),
             _ => EraRoute.BadEra(era)
         };
     }

@@ -49,12 +49,14 @@ public sealed class DonChallengeServiceTests
         Assert.Equal(["api/Red/DonChallenge/123"], handler.RequestPaths);
     }
 
-    [Fact]
-    public async Task GetAvailabilityAsync_UnavailableKnownEraDoesNotFallback()
+    [Theory]
+    [InlineData("Blue")]
+    [InlineData("White")]
+    public async Task GetAvailabilityAsync_UnavailableKnownEraDoesNotFallback(string era)
     {
         var handler = new RecordingHandler(path => path switch
         {
-            "api/Blue/DonChallenge/availability" => Json("""{"era":"Blue","isAvailable":false,"message":"Don Challenge is not available for Blue."}"""),
+            _ when path == $"api/{era}/DonChallenge/availability" => Json($$"""{"era":"{{era}}","isAvailable":false,"message":"Don Challenge is not available for {{era}}."}"""),
             _ => NotFound()
         });
         using var client = new HttpClient(handler)
@@ -63,12 +65,12 @@ public sealed class DonChallengeServiceTests
         };
         var service = new DonChallengeService(client);
 
-        var response = await service.GetAvailabilityAsync("Blue");
+        var response = await service.GetAvailabilityAsync(era);
 
         Assert.False(response.IsAvailable);
-        Assert.Equal("Blue", response.Era);
-        Assert.Equal("Don Challenge is not available for Blue.", response.Message);
-        Assert.Equal(["api/Blue/DonChallenge/availability"], handler.RequestPaths);
+        Assert.Equal(era, response.Era);
+        Assert.Equal($"Don Challenge is not available for {era}.", response.Message);
+        Assert.Equal([$"api/{era}/DonChallenge/availability"], handler.RequestPaths);
     }
 
     [Fact]
@@ -92,8 +94,10 @@ public sealed class DonChallengeServiceTests
         Assert.Equal(["api/Red/DonChallenge/availability"], handler.RequestPaths);
     }
 
-    [Fact]
-    public async Task GetDonChallengeAsync_NotFoundReturnsUnavailableForRequestedKnownEra()
+    [Theory]
+    [InlineData("Blue")]
+    [InlineData("White")]
+    public async Task GetDonChallengeAsync_NotFoundReturnsUnavailableForRequestedKnownEra(string era)
     {
         var handler = new RecordingHandler(_ => NotFound());
         using var client = new HttpClient(handler)
@@ -102,12 +106,12 @@ public sealed class DonChallengeServiceTests
         };
         var service = new DonChallengeService(client);
 
-        DonChallengeResponse response = await service.GetDonChallengeAsync("Blue", 123);
+        DonChallengeResponse response = await service.GetDonChallengeAsync(era, 123);
 
         Assert.False(response.IsAvailable);
-        Assert.Equal("Blue", response.Era);
-        Assert.Equal("Don Challenge is not available for Blue.", response.Message);
-        Assert.Equal(["api/Blue/DonChallenge/123"], handler.RequestPaths);
+        Assert.Equal(era, response.Era);
+        Assert.Equal($"Don Challenge is not available for {era}.", response.Message);
+        Assert.Equal([$"api/{era}/DonChallenge/123"], handler.RequestPaths);
     }
 
     private static HttpResponseMessage Json(string json)

@@ -36,6 +36,7 @@ public partial class PlayDataController(ITaikoDbContext context) : BaseAdminCont
             GameEra.Blue => Ok(await BuildBlueSongBestResponse(baid)),
             GameEra.Yellow => Ok(await BuildYellowSongBestResponse(baid)),
             GameEra.Red => Ok(await BuildRedSongBestResponse(baid)),
+            GameEra.White => Ok(await BuildWhiteSongBestResponse(baid)),
             _ => EraRoute.BadEra(era)
         };
     }

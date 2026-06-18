@@ -44,7 +44,8 @@ public sealed class GreenAuthConfigTests
                     [nameof(GameEra.Nijiiro)] = new() { Enabled = true },
                     [nameof(GameEra.Green)] = new() { Enabled = true },
                     [nameof(GameEra.Blue)] = new() { Enabled = false },
-                    [nameof(GameEra.Red)] = new() { Enabled = true }
+                    [nameof(GameEra.Red)] = new() { Enabled = true },
+                    [nameof(GameEra.White)] = new() { Enabled = true }
                 }
             }));
 
@@ -55,6 +56,7 @@ public sealed class GreenAuthConfigTests
         Assert.NotNull(response.FavoriteSongLimits);
         Assert.Equal(Ac15EraProfiles.Green.Limits.MaxFavoriteSongs, response.FavoriteSongLimits[nameof(GameEra.Green)]);
         Assert.Equal(Ac15EraProfiles.Red.Limits.MaxFavoriteSongs, response.FavoriteSongLimits[nameof(GameEra.Red)]);
+        Assert.Equal(Ac15EraProfiles.White.Limits.MaxFavoriteSongs, response.FavoriteSongLimits[nameof(GameEra.White)]);
         Assert.DoesNotContain(nameof(GameEra.Nijiiro), response.FavoriteSongLimits.Keys);
         Assert.DoesNotContain(nameof(GameEra.Blue), response.FavoriteSongLimits.Keys);
     }

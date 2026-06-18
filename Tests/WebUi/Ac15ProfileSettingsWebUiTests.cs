@@ -102,12 +102,14 @@ public sealed class Ac15ProfileSettingsWebUiTests
         };
 
         await client.GetProfileDisplayNameAsync("Red", 99);
+        await client.GetProfileDisplayNameAsync("White", 98);
         await client.GetProfileDisplayNameAsync("Green", 100);
         await client.GetProfileDisplayNameAsync("Nijiiro", 101);
 
         Assert.Equal(
             [
                 "api/Red/Ac15ProfileSettings/99",
+                "api/White/Ac15ProfileSettings/98",
                 "api/Green/Ac15ProfileSettings/100",
                 "api/Nijiiro/UserSettings/101"
             ],
@@ -167,6 +169,29 @@ public sealed class Ac15ProfileSettingsWebUiTests
                   "era": "Red",
                   "baid": 99,
                   "identity": { "myDonName": "RED", "myDonNameLanguage": 0 },
+                  "customization": null,
+                  "options": {},
+                  "capabilities": {
+                    "costumeSlots": [],
+                    "supportsTitle": false,
+                    "supportsTone": false,
+                    "supportsColors": false,
+                    "supportsDisplayDanOnNamePlate": false,
+                    "supportsFolderCloseButton": false,
+                    "supportsAutoCostume": false,
+                    "supportsHowToPlayTutorialFlag": false,
+                    "supportsLocalRankingDifficulty": false,
+                    "supportsDefaultSelectedSelfBestDifficulty": false,
+                    "supportsTaikojukuFolderDan": false
+                  },
+                  "lastPlayDateTime": "1970-01-01T00:00:00Z"
+                }
+                """,
+                "api/White/Ac15ProfileSettings/98" => """
+                {
+                  "era": "White",
+                  "baid": 98,
+                  "identity": { "myDonName": "WHITE", "myDonNameLanguage": 0 },
                   "customization": null,
                   "options": {},
                   "capabilities": {

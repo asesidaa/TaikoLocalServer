@@ -33,9 +33,9 @@
 
 ### Admin, Verification, And Closeout
 
-- [ ] **WVER-01**: AdminApi and WebUI expose only implemented White-owned readback and edit surfaces through existing era-routed contracts and do not read or write another era's gameplay state.
-- [ ] **WVER-02**: Automated tests cover White observable route, handler, catalog, persistence, mapper/classifier, protocol packing, build-output copy, and no-cross-era/no-cross-mode behavior.
-- [ ] **WVER-03**: White support closes only after full automated verification, Mapperly generated-source inspection for nontrivial mappings, a Host build using temp output if needed, and cabinet/RPCS3 smoke evidence for implemented White flows.
+- [x] **WVER-01**: AdminApi and WebUI expose only implemented White-owned readback and edit surfaces through existing era-routed contracts and do not read or write another era's gameplay state.
+- [x] **WVER-02**: Automated tests cover White observable route, handler, catalog, persistence, mapper/classifier, protocol packing, build-output copy, and no-cross-era/no-cross-mode behavior.
+- [ ] **WVER-03**: White support closes only after full automated verification, Mapperly generated-source inspection for nontrivial mappings, a Host build using temp output if needed, and cabinet/RPCS3 smoke evidence for implemented White flows. Automated verification, Mapperly inspection, and Host temp build are complete; manual cabinet/RPCS3 and WebUI verification remains pending.
 
 ## Future Requirements
 
@@ -79,9 +79,9 @@ Roadmap phase mapping for v1.4 White AC15 0.13 Support.
 | WCOLL-01 | Phase 25/26 | Verified |
 | WCOLL-02 | Phase 26 | Verified |
 | WCOLL-03 | Phase 26 | Verified absent |
-| WVER-01 | Phase 27 | Pending |
-| WVER-02 | Phase 27 | Pending |
-| WVER-03 | Phase 27 | Pending |
+| WVER-01 | Phase 27 | Verified |
+| WVER-02 | Phase 27 | Verified |
+| WVER-03 | Phase 27 | Automated partial; manual verification pending |
 | WLATER-01 | Future milestone | Deferred |
 | WCOLL-04 | Future milestone | Deferred |
 
@@ -94,4 +94,4 @@ Roadmap phase mapping for v1.4 White AC15 0.13 Support.
 
 ---
 *Requirements defined: 2026-06-16*
-*Last updated: 2026-06-18 after Phase 26 White collectable evidence*
+*Last updated: 2026-06-18 after Phase 27 automated closeout; manual verification pending*
