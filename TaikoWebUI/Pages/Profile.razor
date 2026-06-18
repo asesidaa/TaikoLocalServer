@@ -37,6 +37,7 @@
                                                    ToneCatalog="@neiroDictionary"
                                                    DanCatalog="@danDictionary"
                                                    AllowUnlockEditing="@CanEditUnlocks"
+                                                   ShowCustomization="false"
                                                    StateChanged="RefreshAc15Preview" />
                             }
                             else if (response is not null)
@@ -105,66 +106,82 @@
                             }
                         </MudTabPanel>
 
-                        @if (!IsAc15 && response is not null && (costumeList.Count > 0 || titleDictionary.Count > 0 || neiroDictionary.Count > 0))
+                        @if ((IsAc15 && ac15State is not null && ac15State.ShowCustomization)
+                             || (!IsAc15 && response is not null && (costumeList.Count > 0 || titleDictionary.Count > 0 || neiroDictionary.Count > 0)))
                         {
                             <MudTabPanel Text="@Localizer["Costume"]">
-                                <MudStack Spacing="4">
-                                    <MudText Typo="Typo.h6">@Localizer["Costume Options"]</MudText>
+                                @if (IsAc15 && ac15State is not null)
+                                {
+                                    <Ac15ProfileEditor State="@ac15State"
+                                                       Era="@CurrentEra"
+                                                       CostumeCatalog="@costumeList"
+                                                       TitleCatalog="@titleDictionary"
+                                                       ToneCatalog="@neiroDictionary"
+                                                       DanCatalog="@danDictionary"
+                                                       AllowUnlockEditing="@CanEditUnlocks"
+                                                       ShowProfileOptions="false"
+                                                       StateChanged="RefreshAc15Preview" />
+                                }
+                                else if (response is not null)
+                                {
+                                    <MudStack Spacing="4">
+                                        <MudText Typo="Typo.h6">@Localizer["Costume Options"]</MudText>
 
-                                    <CostumePicker Era="@CurrentEra"
-                                                   Label="@Localizer["Kigurumi"]"
-                                                   Catalog="@kigurumiCatalog"
-                                                   Value="@kigurumiValue"
-                                                   ValueChanged="@(value => { kigurumiValue = value; ApplyCustomizationValues(); })"
-                                                   AllowUnlockEditing="@CanEditUnlocks" />
+                                        <CostumePicker Era="@CurrentEra"
+                                                       Label="@Localizer["Kigurumi"]"
+                                                       Catalog="@kigurumiCatalog"
+                                                       Value="@kigurumiValue"
+                                                       ValueChanged="@(value => { kigurumiValue = value; ApplyCustomizationValues(); })"
+                                                       AllowUnlockEditing="@CanEditUnlocks" />
 
-                                    <CostumePicker Era="@CurrentEra"
-                                                   Label="@Localizer["Head"]"
-                                                   Catalog="@headCatalog"
-                                                   Value="@headValue"
-                                                   ValueChanged="@(value => { headValue = value; ApplyCustomizationValues(); })"
-                                                   AllowUnlockEditing="@CanEditUnlocks" />
+                                        <CostumePicker Era="@CurrentEra"
+                                                       Label="@Localizer["Head"]"
+                                                       Catalog="@headCatalog"
+                                                       Value="@headValue"
+                                                       ValueChanged="@(value => { headValue = value; ApplyCustomizationValues(); })"
+                                                       AllowUnlockEditing="@CanEditUnlocks" />
 
-                                    <CostumePicker Era="@CurrentEra"
-                                                   Label="@Localizer["Body"]"
-                                                   Catalog="@bodyCatalog"
-                                                   Value="@bodyValue"
-                                                   ValueChanged="@(value => { bodyValue = value; ApplyCustomizationValues(); })"
-                                                   AllowUnlockEditing="@CanEditUnlocks" />
+                                        <CostumePicker Era="@CurrentEra"
+                                                       Label="@Localizer["Body"]"
+                                                       Catalog="@bodyCatalog"
+                                                       Value="@bodyValue"
+                                                       ValueChanged="@(value => { bodyValue = value; ApplyCustomizationValues(); })"
+                                                       AllowUnlockEditing="@CanEditUnlocks" />
 
-                                    <CostumePicker Era="@CurrentEra"
-                                                   Label="@Localizer["Face"]"
-                                                   Catalog="@faceCatalog"
-                                                   Value="@faceValue"
-                                                   ValueChanged="@(value => { faceValue = value; ApplyCustomizationValues(); })"
-                                                   AllowUnlockEditing="@CanEditUnlocks" />
+                                        <CostumePicker Era="@CurrentEra"
+                                                       Label="@Localizer["Face"]"
+                                                       Catalog="@faceCatalog"
+                                                       Value="@faceValue"
+                                                       ValueChanged="@(value => { faceValue = value; ApplyCustomizationValues(); })"
+                                                       AllowUnlockEditing="@CanEditUnlocks" />
 
-                                    <CostumePicker Era="@CurrentEra"
-                                                   Label="@Localizer["Puchi"]"
-                                                   Catalog="@puchiCatalog"
-                                                   Value="@puchiValue"
-                                                   ValueChanged="@(value => { puchiValue = value; ApplyCustomizationValues(); })"
-                                                   AllowUnlockEditing="@CanEditUnlocks" />
+                                        <CostumePicker Era="@CurrentEra"
+                                                       Label="@Localizer["Puchi"]"
+                                                       Catalog="@puchiCatalog"
+                                                       Value="@puchiValue"
+                                                       ValueChanged="@(value => { puchiValue = value; ApplyCustomizationValues(); })"
+                                                       AllowUnlockEditing="@CanEditUnlocks" />
 
-                                    <TitlePicker Era="@CurrentEra"
-                                                 Catalog="@titleDictionary"
-                                                 Value="@titleValue"
-                                                 ValueChanged="HandleTitleChanged"
-                                                 ReadOnlyTitleText="false"
-                                                 SelectionMode="@CurrentTitleSelectionMode"
-                                                 AllowUnlockEditing="@CanEditUnlocks" />
+                                        <TitlePicker Era="@CurrentEra"
+                                                     Catalog="@titleDictionary"
+                                                     Value="@titleValue"
+                                                     ValueChanged="HandleTitleChanged"
+                                                     ReadOnlyTitleText="false"
+                                                     SelectionMode="@CurrentTitleSelectionMode"
+                                                     AllowUnlockEditing="@CanEditUnlocks" />
 
-                                    <NeiroPicker Era="@CurrentEra"
-                                                 Catalog="@neiroDictionary"
-                                                 Value="@neiroValue"
-                                                 ValueChanged="@(value => { neiroValue = value; ApplyCustomizationValues(); })"
-                                                 AllowUnlockEditing="@CanEditUnlocks" />
+                                        <NeiroPicker Era="@CurrentEra"
+                                                     Catalog="@neiroDictionary"
+                                                     Value="@neiroValue"
+                                                     ValueChanged="@(value => { neiroValue = value; ApplyCustomizationValues(); })"
+                                                     AllowUnlockEditing="@CanEditUnlocks" />
 
-                                    <ColorPicker Colors="@TaikoCustomizationVisuals.CostumeColors"
-                                                 Value="@colorValue"
-                                                 ValueChanged="@(value => { colorValue = value; ApplyCustomizationValues(); })" />
+                                        <ColorPicker Colors="@TaikoCustomizationVisuals.CostumeColors"
+                                                     Value="@colorValue"
+                                                     ValueChanged="@(value => { colorValue = value; ApplyCustomizationValues(); })" />
 
-                                </MudStack>
+                                    </MudStack>
+                                }
                             </MudTabPanel>
                         }
 
