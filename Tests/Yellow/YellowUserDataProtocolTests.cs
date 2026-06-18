@@ -1,6 +1,6 @@
 using TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
 using TaikoLocalServer.Application.Ac15;
-using TaikoLocalServer.Application.Catalog.Yellow;
+using TaikoLocalServer.Application.Catalog.Ac15;
 using TaikoLocalServer.Tests.Ac15;
 using YellowUserDataResponse = TaikoLocalServer.Adapters.GameProtocol.Yellow.Wire.UserDataResponse;
 
@@ -14,29 +14,29 @@ public sealed class YellowUserDataProtocolTests
         var catalog = new YellowHandlerFixture.TestYellowCatalog(
             musicInfoFileOrder:
             [
-                new YellowMusicInfoEntry { SongNo = 101, MusicId = "a", FileOrder = 0 },
-                new YellowMusicInfoEntry { SongNo = 102, MusicId = "b", FileOrder = 1 },
-                new YellowMusicInfoEntry { SongNo = 103, MusicId = "c", FileOrder = 2 }
+                new Ac15MusicInfoEntry { SongNo = 101, MusicId = "a", FileOrder = 0 },
+                new Ac15MusicInfoEntry { SongNo = 102, MusicId = "b", FileOrder = 1 },
+                new Ac15MusicInfoEntry { SongNo = 103, MusicId = "c", FileOrder = 2 }
             ],
-            itemShopCatalog: new YellowItemShopCatalog
+            itemShopCatalog: new Ac15ItemShopCatalog
             {
                 IsEnabled = true,
                 ActiveSeasonId = 1,
-                Seasons = new Dictionary<uint, YellowItemShopSeason>
+                Seasons = new Dictionary<uint, Ac15ItemShopSeason>
                 {
                     [1] = new()
                     {
                         SeasonId = 1,
                         Items =
                         [
-                            new YellowItemShopEntry
+                            new Ac15ItemShopEntry
                             {
                                 ItemNo = 1,
                                 ItemType = Ac15ShopItemType.Song,
                                 ItemId = 103,
                                 Price = 10
                             },
-                            new YellowItemShopEntry
+                            new Ac15ItemShopEntry
                             {
                                 ItemNo = 2,
                                 ItemType = Ac15ShopItemType.Tone,
@@ -48,7 +48,7 @@ public sealed class YellowUserDataProtocolTests
                 }
             })
         {
-            Recommend = new YellowRecommendEntry
+            Recommend = new Ac15RecommendEntry
             {
                 RecommendSong = 102,
                 RecommendBestSongs = [101, 102]
@@ -363,22 +363,22 @@ public sealed class YellowUserDataProtocolTests
         var catalog = new YellowHandlerFixture.TestYellowCatalog(
             musicInfoFileOrder:
             [
-                new YellowMusicInfoEntry { SongNo = 101, MusicId = "a", FileOrder = 0 },
-                new YellowMusicInfoEntry { SongNo = 103, MusicId = "c", FileOrder = 1 }
+                new Ac15MusicInfoEntry { SongNo = 101, MusicId = "a", FileOrder = 0 },
+                new Ac15MusicInfoEntry { SongNo = 103, MusicId = "c", FileOrder = 1 }
             ],
-            itemShopCatalog: new YellowItemShopCatalog
+            itemShopCatalog: new Ac15ItemShopCatalog
             {
                 IsEnabled = true,
                 ActiveSeasonId = 2,
-                Seasons = new Dictionary<uint, YellowItemShopSeason>
+                Seasons = new Dictionary<uint, Ac15ItemShopSeason>
                 {
                     [2] = new()
                     {
                         SeasonId = 2,
                         Items =
                         [
-                            new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 103, Price = 10 },
-                            new YellowItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Tone, ItemId = 4, Price = 20 }
+                            new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 103, Price = 10 },
+                            new Ac15ItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Tone, ItemId = 4, Price = 20 }
                         ]
                     }
                 }

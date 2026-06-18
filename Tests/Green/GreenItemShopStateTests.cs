@@ -92,19 +92,19 @@ public sealed class GreenItemShopStateTests
 
     private static GreenHandlerFixture.TestGreenCatalog CreateSingleSongShopCatalog()
     {
-        var season = new GreenItemShopSeason
+        var season = new Ac15ItemShopSeason
         {
             SeasonId = 2,
             StartDatetime = "20190314000000",
             EndDatetime = "20190626075959",
-            Items = [new GreenItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 101, Price = 1300 }]
+            Items = [new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 101, Price = 1300 }]
         };
 
-        return new GreenHandlerFixture.TestGreenCatalog(itemShopCatalog: new GreenItemShopCatalog
+        return new GreenHandlerFixture.TestGreenCatalog(itemShopCatalog: new Ac15ItemShopCatalog
         {
             IsEnabled = true,
             ActiveSeasonId = 2,
-            Seasons = new Dictionary<uint, GreenItemShopSeason> { [2] = season }
+            Seasons = new Dictionary<uint, Ac15ItemShopSeason> { [2] = season }
         });
     }
 }

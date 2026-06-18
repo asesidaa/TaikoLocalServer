@@ -42,61 +42,61 @@ internal sealed class BlueHandlerFixture : IAsyncDisposable
 
     internal sealed class TestBlueCatalog : IBlueCatalog
     {
-        private readonly IReadOnlyList<BlueMusicInfoEntry> musicInfoFileOrder;
-        private readonly IReadOnlyList<BlueTaikojukuEntry> taikojukuFileOrder;
+        private readonly IReadOnlyList<Ac15MusicInfoEntry> musicInfoFileOrder;
+        private readonly IReadOnlyList<Ac15TaikojukuEntry> taikojukuFileOrder;
 
         public TestBlueCatalog(
             IReadOnlyDictionary<uint, EventFolderData>? eventFolders = null,
-            IReadOnlyDictionary<uint, BlueTelopEntry>? telops = null,
-            IReadOnlyList<BlueMusicInfoEntry>? musicInfoFileOrder = null,
-            IReadOnlyList<BlueTaikojukuEntry>? taikojukuFileOrder = null,
-            BlueItemShopCatalog? itemShopCatalog = null,
+            IReadOnlyDictionary<uint, Ac15TelopEntry>? telops = null,
+            IReadOnlyList<Ac15MusicInfoEntry>? musicInfoFileOrder = null,
+            IReadOnlyList<Ac15TaikojukuEntry>? taikojukuFileOrder = null,
+            Ac15ItemShopCatalog? itemShopCatalog = null,
             BlueBattleCatalog? battleCatalog = null,
-            BlueRecommendEntry? recommend = null)
+            Ac15RecommendEntry? recommend = null)
         {
             EventFolders = eventFolders ?? new Dictionary<uint, EventFolderData>();
-            Telops = telops ?? new Dictionary<uint, BlueTelopEntry>();
+            Telops = telops ?? new Dictionary<uint, Ac15TelopEntry>();
             this.musicInfoFileOrder = musicInfoFileOrder ?? DefaultMusicInfoFileOrder;
             this.taikojukuFileOrder = taikojukuFileOrder ?? DefaultTaikojukuFileOrder;
-            ItemShopCatalog = itemShopCatalog ?? BlueItemShopCatalog.Disabled;
+            ItemShopCatalog = itemShopCatalog ?? Ac15ItemShopCatalog.Disabled;
             ItemShop = ItemShopCatalog.ActiveItemsByNo;
             BattleCatalog = battleCatalog ?? BlueBattleCatalog.Unavailable;
-            Recommend = recommend ?? BlueRecommendEntry.Empty;
+            Recommend = recommend ?? Ac15RecommendEntry.Empty;
         }
 
         public GameEra Era => GameEra.Blue;
 
         public uint SongHashVersion => 456;
 
-        public IReadOnlyList<BlueMusicInfoEntry> MusicInfoFileOrder => musicInfoFileOrder;
+        public IReadOnlyList<Ac15MusicInfoEntry> MusicInfoFileOrder => musicInfoFileOrder;
 
         public IReadOnlyDictionary<uint, IMusicInfoEntry> MusicInfos
             => MusicInfoFileOrder.ToDictionary(song => song.SongNo, song => (IMusicInfoEntry)song);
 
-        public IReadOnlyDictionary<uint, BlueMusicInfoEntry> BlueMusicInfos
+        public IReadOnlyDictionary<uint, Ac15MusicInfoEntry> BlueMusicInfos
             => MusicInfoFileOrder.ToDictionary(song => song.SongNo);
 
-        public IReadOnlyList<BlueTaikojukuEntry> TaikojukuFileOrder => taikojukuFileOrder;
+        public IReadOnlyList<Ac15TaikojukuEntry> TaikojukuFileOrder => taikojukuFileOrder;
 
-        public IReadOnlyDictionary<uint, BlueTaikojukuEntry> Taikojuku
+        public IReadOnlyDictionary<uint, Ac15TaikojukuEntry> Taikojuku
             => TaikojukuFileOrder.ToDictionary(pack => pack.UniqueId);
 
-        public BlueItemShopCatalog ItemShopCatalog { get; }
+        public Ac15ItemShopCatalog ItemShopCatalog { get; }
 
-        public IReadOnlyDictionary<uint, BlueItemShopEntry> ItemShop { get; }
+        public IReadOnlyDictionary<uint, Ac15ItemShopEntry> ItemShop { get; }
 
         public BlueBattleCatalog BattleCatalog { get; }
 
         public IReadOnlyDictionary<uint, EventFolderData> EventFolders { get; }
 
-        public IReadOnlyDictionary<uint, BlueTelopEntry> Telops { get; }
+        public IReadOnlyDictionary<uint, Ac15TelopEntry> Telops { get; }
 
-        public IReadOnlyDictionary<uint, BlueGachaEntry> Gachas { get; } = new Dictionary<uint, BlueGachaEntry>();
+        public IReadOnlyDictionary<uint, Ac15GachaEntry> Gachas { get; } = new Dictionary<uint, Ac15GachaEntry>();
 
-        public IReadOnlyDictionary<uint, BlueTournamentEntry> Tournaments { get; } =
-            new Dictionary<uint, BlueTournamentEntry>();
+        public IReadOnlyDictionary<uint, Ac15TournamentEntry> Tournaments { get; } =
+            new Dictionary<uint, Ac15TournamentEntry>();
 
-        public BlueRecommendEntry Recommend { get; }
+        public Ac15RecommendEntry Recommend { get; }
 
         public IReadOnlyList<MovieData> Movies { get; init; } = [];
 
@@ -130,14 +130,14 @@ internal sealed class BlueHandlerFixture : IAsyncDisposable
 
         public Task InitializeAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
-        private static IReadOnlyList<BlueMusicInfoEntry> DefaultMusicInfoFileOrder { get; } =
+        private static IReadOnlyList<Ac15MusicInfoEntry> DefaultMusicInfoFileOrder { get; } =
         [
             new() { SongNo = 101, MusicId = "a", FileOrder = 0 },
             new() { SongNo = 102, MusicId = "b", FileOrder = 1 },
             new() { SongNo = 103, MusicId = "c", FileOrder = 2 }
         ];
 
-        private static IReadOnlyList<BlueTaikojukuEntry> DefaultTaikojukuFileOrder { get; } =
+        private static IReadOnlyList<Ac15TaikojukuEntry> DefaultTaikojukuFileOrder { get; } =
         [
             new()
             {

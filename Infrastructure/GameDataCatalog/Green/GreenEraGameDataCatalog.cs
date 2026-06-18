@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using TaikoLocalServer.Application.Abstractions;
-using TaikoLocalServer.Application.Catalog.Green;
+using TaikoLocalServer.Application.Catalog.Ac15;
 using TaikoLocalServer.Application.Settings;
 using TaikoLocalServer.Domain.Enums;
 using TaikoLocalServer.Infrastructure.GameDataCatalog;
@@ -15,18 +15,18 @@ public sealed class GreenEraGameDataCatalog(
     INijiiroCatalog? nijiiroCatalog = null) : IGreenCatalog
 {
     private uint songHashVersion;
-    private IReadOnlyList<GreenMusicInfoEntry> musicInfoFileOrder = [];
-    private IReadOnlyDictionary<uint, GreenMusicInfoEntry> musicInfos = new Dictionary<uint, GreenMusicInfoEntry>();
+    private IReadOnlyList<Ac15MusicInfoEntry> musicInfoFileOrder = [];
+    private IReadOnlyDictionary<uint, Ac15MusicInfoEntry> musicInfos = new Dictionary<uint, Ac15MusicInfoEntry>();
     private IReadOnlyDictionary<uint, IMusicInfoEntry> sharedMusicInfos = new Dictionary<uint, IMusicInfoEntry>();
-    private IReadOnlyList<GreenTaikojukuEntry> taikojukuFileOrder = [];
-    private IReadOnlyDictionary<uint, GreenTaikojukuEntry> taikojuku = new Dictionary<uint, GreenTaikojukuEntry>();
-    private GreenItemShopCatalog itemShopCatalog = GreenItemShopCatalog.Disabled;
-    private IReadOnlyDictionary<uint, GreenItemShopEntry> itemShop = new Dictionary<uint, GreenItemShopEntry>();
+    private IReadOnlyList<Ac15TaikojukuEntry> taikojukuFileOrder = [];
+    private IReadOnlyDictionary<uint, Ac15TaikojukuEntry> taikojuku = new Dictionary<uint, Ac15TaikojukuEntry>();
+    private Ac15ItemShopCatalog itemShopCatalog = Ac15ItemShopCatalog.Disabled;
+    private IReadOnlyDictionary<uint, Ac15ItemShopEntry> itemShop = new Dictionary<uint, Ac15ItemShopEntry>();
     private IReadOnlyDictionary<uint, EventFolderData> eventFolders = new Dictionary<uint, EventFolderData>();
-    private IReadOnlyDictionary<uint, GreenTelopEntry> telops = new Dictionary<uint, GreenTelopEntry>();
-    private IReadOnlyDictionary<uint, GreenGachaEntry> gachas = new Dictionary<uint, GreenGachaEntry>();
-    private IReadOnlyDictionary<uint, GreenTournamentEntry> tournaments = new Dictionary<uint, GreenTournamentEntry>();
-    private GreenRecommendEntry recommend = GreenRecommendEntry.Empty;
+    private IReadOnlyDictionary<uint, Ac15TelopEntry> telops = new Dictionary<uint, Ac15TelopEntry>();
+    private IReadOnlyDictionary<uint, Ac15GachaEntry> gachas = new Dictionary<uint, Ac15GachaEntry>();
+    private IReadOnlyDictionary<uint, Ac15TournamentEntry> tournaments = new Dictionary<uint, Ac15TournamentEntry>();
+    private Ac15RecommendEntry recommend = Ac15RecommendEntry.Empty;
     private IReadOnlyList<MovieData> movies = [];
     private IReadOnlyList<Costume> costumeList = [];
     private IReadOnlyDictionary<uint, Title> titleDictionary = new Dictionary<uint, Title>();
@@ -38,27 +38,27 @@ public sealed class GreenEraGameDataCatalog(
 
     public uint SongHashVersion => songHashVersion;
 
-    public IReadOnlyList<GreenMusicInfoEntry> MusicInfoFileOrder => musicInfoFileOrder;
+    public IReadOnlyList<Ac15MusicInfoEntry> MusicInfoFileOrder => musicInfoFileOrder;
 
-    public IReadOnlyDictionary<uint, GreenMusicInfoEntry> GreenMusicInfos => musicInfos;
+    public IReadOnlyDictionary<uint, Ac15MusicInfoEntry> GreenMusicInfos => musicInfos;
 
-    public IReadOnlyList<GreenTaikojukuEntry> TaikojukuFileOrder => taikojukuFileOrder;
+    public IReadOnlyList<Ac15TaikojukuEntry> TaikojukuFileOrder => taikojukuFileOrder;
 
-    public IReadOnlyDictionary<uint, GreenTaikojukuEntry> Taikojuku => taikojuku;
+    public IReadOnlyDictionary<uint, Ac15TaikojukuEntry> Taikojuku => taikojuku;
 
-    public GreenItemShopCatalog ItemShopCatalog => itemShopCatalog;
+    public Ac15ItemShopCatalog ItemShopCatalog => itemShopCatalog;
 
-    public IReadOnlyDictionary<uint, GreenItemShopEntry> ItemShop => itemShop;
+    public IReadOnlyDictionary<uint, Ac15ItemShopEntry> ItemShop => itemShop;
 
     public IReadOnlyDictionary<uint, EventFolderData> EventFolders => eventFolders;
 
-    public IReadOnlyDictionary<uint, GreenTelopEntry> Telops => telops;
+    public IReadOnlyDictionary<uint, Ac15TelopEntry> Telops => telops;
 
-    public IReadOnlyDictionary<uint, GreenGachaEntry> Gachas => gachas;
+    public IReadOnlyDictionary<uint, Ac15GachaEntry> Gachas => gachas;
 
-    public IReadOnlyDictionary<uint, GreenTournamentEntry> Tournaments => tournaments;
+    public IReadOnlyDictionary<uint, Ac15TournamentEntry> Tournaments => tournaments;
 
-    public GreenRecommendEntry Recommend => recommend;
+    public Ac15RecommendEntry Recommend => recommend;
 
     public IReadOnlyList<MovieData> Movies => movies;
 

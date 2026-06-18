@@ -109,7 +109,7 @@ public sealed class GreenTaikojukuTests
         var greenCatalog = new GreenHandlerFixture.TestGreenCatalog(
             taikojukuFileOrder:
             [
-                new GreenTaikojukuEntry
+                new Ac15TaikojukuEntry
                 {
                     UniqueId = 20001,
                     ChallengeLevel = 1,

@@ -1,34 +1,35 @@
+using TaikoLocalServer.Application.Catalog.Ac15;
 using TaikoLocalServer.Application.Catalog.Blue;
 
 namespace TaikoLocalServer.Application.Abstractions;
 
 public interface IBlueCatalog : IEraGameDataCatalog
 {
-    IReadOnlyList<BlueMusicInfoEntry> MusicInfoFileOrder { get; }
+    IReadOnlyList<Ac15MusicInfoEntry> MusicInfoFileOrder { get; }
 
     uint SongHashVersion { get; }
 
-    IReadOnlyDictionary<uint, BlueMusicInfoEntry> BlueMusicInfos { get; }
+    IReadOnlyDictionary<uint, Ac15MusicInfoEntry> BlueMusicInfos { get; }
 
-    IReadOnlyList<BlueTaikojukuEntry> TaikojukuFileOrder { get; }
+    IReadOnlyList<Ac15TaikojukuEntry> TaikojukuFileOrder { get; }
 
-    IReadOnlyDictionary<uint, BlueTaikojukuEntry> Taikojuku { get; }
+    IReadOnlyDictionary<uint, Ac15TaikojukuEntry> Taikojuku { get; }
 
-    BlueItemShopCatalog ItemShopCatalog { get; }
+    Ac15ItemShopCatalog ItemShopCatalog { get; }
 
-    IReadOnlyDictionary<uint, BlueItemShopEntry> ItemShop { get; }
+    IReadOnlyDictionary<uint, Ac15ItemShopEntry> ItemShop { get; }
 
     BlueBattleCatalog BattleCatalog { get; }
 
     IReadOnlyDictionary<uint, EventFolderData> EventFolders { get; }
 
-    IReadOnlyDictionary<uint, BlueTelopEntry> Telops { get; }
+    IReadOnlyDictionary<uint, Ac15TelopEntry> Telops { get; }
 
-    IReadOnlyDictionary<uint, BlueGachaEntry> Gachas { get; }
+    IReadOnlyDictionary<uint, Ac15GachaEntry> Gachas { get; }
 
-    IReadOnlyDictionary<uint, BlueTournamentEntry> Tournaments { get; }
+    IReadOnlyDictionary<uint, Ac15TournamentEntry> Tournaments { get; }
 
-    BlueRecommendEntry Recommend { get; }
+    Ac15RecommendEntry Recommend { get; }
 
     IReadOnlyList<MovieData> Movies { get; }
 

@@ -1,7 +1,7 @@
 using System.Buffers.Binary;
 using System.Text;
 using Microsoft.Extensions.Logging;
-using TaikoLocalServer.Application.Catalog.Green;
+using TaikoLocalServer.Application.Catalog.Ac15;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
 
 namespace TaikoLocalServer.Tests.Green;
@@ -79,7 +79,7 @@ public sealed class GreenCatalogLoaderTests
                 songCount: 2,
                 baseRecordCount: 1,
                 musicId: "modsong",
-                expectedStars: new GreenStarSet(3, 4, 5, 6, 9));
+                expectedStars: new Ac15StarSet(3, 4, 5, 6, 9));
         }
         finally
         {
@@ -102,7 +102,7 @@ public sealed class GreenCatalogLoaderTests
             songCount: 1_211,
             baseRecordCount: 1_054,
             musicId: "kaibu2",
-            expectedStars: new GreenStarSet(0, 0, 0, 10, 0));
+            expectedStars: new Ac15StarSet(0, 0, 0, 10, 0));
     }
 
     [Fact]
@@ -164,7 +164,7 @@ public sealed class GreenCatalogLoaderTests
         uint songCount,
         int baseRecordCount,
         string musicId,
-        GreenStarSet expectedStars)
+        Ac15StarSet expectedStars)
     {
         var bytes = await File.ReadAllBytesAsync(file, CancellationToken.None);
         var actualSongCount = BinaryPrimitives.ReadUInt32BigEndian(bytes.AsSpan(0, 4));

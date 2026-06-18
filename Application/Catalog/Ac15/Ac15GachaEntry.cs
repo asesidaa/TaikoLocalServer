@@ -1,6 +1,6 @@
-namespace TaikoLocalServer.Application.Catalog.Yellow;
+namespace TaikoLocalServer.Application.Catalog.Ac15;
 
-public sealed class YellowGachaEntry
+public sealed class Ac15GachaEntry
 {
     public uint GachaId { get; init; }
 

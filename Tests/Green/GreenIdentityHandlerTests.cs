@@ -389,7 +389,7 @@ public sealed class GreenIdentityHandlerTests
     {
         var greenCatalog = new GreenHandlerFixture.TestGreenCatalog
         {
-            Recommend = new GreenRecommendEntry
+            Recommend = new Ac15RecommendEntry
             {
                 RecommendSong = 102,
                 RecommendBestSongs = [101, 102, 103]

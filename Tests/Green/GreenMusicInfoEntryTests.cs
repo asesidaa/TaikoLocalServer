@@ -1,16 +1,16 @@
 namespace TaikoLocalServer.Tests.Green;
 
-public sealed class GreenMusicInfoEntryTests
+public sealed class Ac15MusicInfoEntryTests
 {
     [Fact]
     public void WithExpression_CanPopulateStarsWithoutMutatingOriginal()
     {
-        var entry = new GreenMusicInfoEntry
+        var entry = new Ac15MusicInfoEntry
         {
             MusicId = "tank",
             SongNo = 105
         };
-        var set = new GreenStarSet(3, 5, 6, 6, 9);
+        var set = new Ac15StarSet(3, 5, 6, 6, 9);
 
         var enriched = entry with
         {
@@ -21,16 +21,16 @@ public sealed class GreenMusicInfoEntryTests
             StarUra = set.Ura
         };
 
-        Assert.Equal(0u, entry.StarEasy);
-        Assert.Equal(0u, entry.StarNormal);
-        Assert.Equal(0u, entry.StarHard);
-        Assert.Equal(0u, entry.StarOni);
-        Assert.Equal(0u, entry.StarUra);
+        Assert.Equal((byte)0, entry.StarEasy);
+        Assert.Equal((byte)0, entry.StarNormal);
+        Assert.Equal((byte)0, entry.StarHard);
+        Assert.Equal((byte)0, entry.StarOni);
+        Assert.Equal((byte)0, entry.StarUra);
 
-        Assert.Equal(3u, enriched.StarEasy);
-        Assert.Equal(5u, enriched.StarNormal);
-        Assert.Equal(6u, enriched.StarHard);
-        Assert.Equal(6u, enriched.StarOni);
-        Assert.Equal(9u, enriched.StarUra);
+        Assert.Equal((byte)3, enriched.StarEasy);
+        Assert.Equal((byte)5, enriched.StarNormal);
+        Assert.Equal((byte)6, enriched.StarHard);
+        Assert.Equal((byte)6, enriched.StarOni);
+        Assert.Equal((byte)9, enriched.StarUra);
     }
 }

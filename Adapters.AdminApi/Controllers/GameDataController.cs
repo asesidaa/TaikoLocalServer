@@ -1,6 +1,4 @@
 using TaikoLocalServer.Application.Catalog.Ac15;
-using TaikoLocalServer.Application.Catalog.Blue;
-using TaikoLocalServer.Application.Catalog.Yellow;
 
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
@@ -90,7 +88,7 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
                 SongNo = song.SongNo,
                 Level = ToWebUiDifficultyLevel(song.Level)
             }).ToList(),
-            OdaiBorderList = BuildGreenOdaiBorders(entry)
+            OdaiBorderList = BuildAc15OdaiBorders(entry)
         }).ToList();
     }
 
@@ -123,7 +121,7 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
                 SongNo = song.SongNo,
                 Level = ToWebUiDifficultyLevel(song.Level)
             }).ToList(),
-            OdaiBorderList = BuildBlueOdaiBorders(entry)
+            OdaiBorderList = BuildAc15OdaiBorders(entry)
         }).ToList();
     }
 
@@ -173,7 +171,7 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
                 SongNo = song.SongNo,
                 Level = ToWebUiDifficultyLevel(song.Level)
             }).ToList(),
-            OdaiBorderList = BuildYellowOdaiBorders(entry)
+            OdaiBorderList = BuildAc15OdaiBorders(entry)
         }).ToList();
     }
 
@@ -189,143 +187,29 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
                 SongNo = song.SongNo,
                 Level = ToWebUiDifficultyLevel(song.Level)
             }).ToList(),
-            OdaiBorderList = BuildRedOdaiBorders(entry)
+            OdaiBorderList = BuildAc15OdaiBorders(entry)
         }).ToList();
     }
 
-    private static List<DanData.OdaiBorder> BuildGreenOdaiBorders(GreenTaikojukuEntry entry)
+    private static List<DanData.OdaiBorder> BuildAc15OdaiBorders(Ac15TaikojukuEntry entry)
     {
         var red = entry.Conditions;
         var gold = entry.ExcellentConditions;
         var borders = new List<DanData.OdaiBorder>();
 
-        AddGreenOdaiBorder(borders, DanConditionType.SoulGauge, red.SoulGauge, gold.SoulGauge);
-        AddGreenOdaiBorder(borders, DanConditionType.GoodCount, red.GoodCount, gold.GoodCount);
-        AddGreenOdaiBorder(borders, DanConditionType.OkCount, red.OkCount, gold.OkCount);
-        AddGreenOdaiBorder(borders, DanConditionType.BadCount, red.BadCount, gold.BadCount);
-        AddGreenOdaiBorder(borders, DanConditionType.ComboCount, red.ComboCount, gold.ComboCount);
-        AddGreenOdaiBorder(borders, DanConditionType.DrumrollCount, red.DrumrollCount, gold.DrumrollCount);
-        AddGreenOdaiBorder(borders, DanConditionType.Score, red.Score, gold.Score);
-        AddGreenOdaiBorder(borders, DanConditionType.TotalHitCount, red.TotalHitCount, gold.TotalHitCount);
+        AddAc15OdaiBorder(borders, DanConditionType.SoulGauge, red.SoulGauge, gold.SoulGauge);
+        AddAc15OdaiBorder(borders, DanConditionType.GoodCount, red.GoodCount, gold.GoodCount);
+        AddAc15OdaiBorder(borders, DanConditionType.OkCount, red.OkCount, gold.OkCount);
+        AddAc15OdaiBorder(borders, DanConditionType.BadCount, red.BadCount, gold.BadCount);
+        AddAc15OdaiBorder(borders, DanConditionType.ComboCount, red.ComboCount, gold.ComboCount);
+        AddAc15OdaiBorder(borders, DanConditionType.DrumrollCount, red.DrumrollCount, gold.DrumrollCount);
+        AddAc15OdaiBorder(borders, DanConditionType.Score, red.Score, gold.Score);
+        AddAc15OdaiBorder(borders, DanConditionType.TotalHitCount, red.TotalHitCount, gold.TotalHitCount);
 
         return borders;
     }
 
-    private static void AddGreenOdaiBorder(
-        List<DanData.OdaiBorder> borders,
-        DanConditionType type,
-        uint redBorder,
-        uint goldBorder)
-    {
-        if (redBorder == 0 && goldBorder == 0)
-        {
-            return;
-        }
-
-        borders.Add(new DanData.OdaiBorder
-        {
-            OdaiType = (uint)type,
-            BorderType = (uint)DanBorderType.All,
-            RedBorderTotal = redBorder,
-            GoldBorderTotal = goldBorder
-        });
-    }
-
-    private static List<DanData.OdaiBorder> BuildBlueOdaiBorders(BlueTaikojukuEntry entry)
-    {
-        var red = entry.Conditions;
-        var gold = entry.ExcellentConditions;
-        var borders = new List<DanData.OdaiBorder>();
-
-        AddBlueOdaiBorder(borders, DanConditionType.SoulGauge, red.SoulGauge, gold.SoulGauge);
-        AddBlueOdaiBorder(borders, DanConditionType.GoodCount, red.GoodCount, gold.GoodCount);
-        AddBlueOdaiBorder(borders, DanConditionType.OkCount, red.OkCount, gold.OkCount);
-        AddBlueOdaiBorder(borders, DanConditionType.BadCount, red.BadCount, gold.BadCount);
-        AddBlueOdaiBorder(borders, DanConditionType.ComboCount, red.ComboCount, gold.ComboCount);
-        AddBlueOdaiBorder(borders, DanConditionType.DrumrollCount, red.DrumrollCount, gold.DrumrollCount);
-        AddBlueOdaiBorder(borders, DanConditionType.Score, red.Score, gold.Score);
-        AddBlueOdaiBorder(borders, DanConditionType.TotalHitCount, red.TotalHitCount, gold.TotalHitCount);
-
-        return borders;
-    }
-
-    private static void AddBlueOdaiBorder(
-        List<DanData.OdaiBorder> borders,
-        DanConditionType type,
-        uint redBorder,
-        uint goldBorder)
-    {
-        if (redBorder == 0 && goldBorder == 0)
-        {
-            return;
-        }
-
-        borders.Add(new DanData.OdaiBorder
-        {
-            OdaiType = (uint)type,
-            BorderType = (uint)DanBorderType.All,
-            RedBorderTotal = redBorder,
-            GoldBorderTotal = goldBorder
-        });
-    }
-
-    private static List<DanData.OdaiBorder> BuildYellowOdaiBorders(YellowTaikojukuEntry entry)
-    {
-        var red = entry.Conditions;
-        var gold = entry.ExcellentConditions;
-        var borders = new List<DanData.OdaiBorder>();
-
-        AddYellowOdaiBorder(borders, DanConditionType.SoulGauge, red.SoulGauge, gold.SoulGauge);
-        AddYellowOdaiBorder(borders, DanConditionType.GoodCount, red.GoodCount, gold.GoodCount);
-        AddYellowOdaiBorder(borders, DanConditionType.OkCount, red.OkCount, gold.OkCount);
-        AddYellowOdaiBorder(borders, DanConditionType.BadCount, red.BadCount, gold.BadCount);
-        AddYellowOdaiBorder(borders, DanConditionType.ComboCount, red.ComboCount, gold.ComboCount);
-        AddYellowOdaiBorder(borders, DanConditionType.DrumrollCount, red.DrumrollCount, gold.DrumrollCount);
-        AddYellowOdaiBorder(borders, DanConditionType.Score, red.Score, gold.Score);
-        AddYellowOdaiBorder(borders, DanConditionType.TotalHitCount, red.TotalHitCount, gold.TotalHitCount);
-
-        return borders;
-    }
-
-    private static void AddYellowOdaiBorder(
-        List<DanData.OdaiBorder> borders,
-        DanConditionType type,
-        uint redBorder,
-        uint goldBorder)
-    {
-        if (redBorder == 0 && goldBorder == 0)
-        {
-            return;
-        }
-
-        borders.Add(new DanData.OdaiBorder
-        {
-            OdaiType = (uint)type,
-            BorderType = (uint)DanBorderType.All,
-            RedBorderTotal = redBorder,
-            GoldBorderTotal = goldBorder
-        });
-    }
-
-    private static List<DanData.OdaiBorder> BuildRedOdaiBorders(Ac15TaikojukuEntry entry)
-    {
-        var red = entry.Conditions;
-        var gold = entry.ExcellentConditions;
-        var borders = new List<DanData.OdaiBorder>();
-
-        AddRedOdaiBorder(borders, DanConditionType.SoulGauge, red.SoulGauge, gold.SoulGauge);
-        AddRedOdaiBorder(borders, DanConditionType.GoodCount, red.GoodCount, gold.GoodCount);
-        AddRedOdaiBorder(borders, DanConditionType.OkCount, red.OkCount, gold.OkCount);
-        AddRedOdaiBorder(borders, DanConditionType.BadCount, red.BadCount, gold.BadCount);
-        AddRedOdaiBorder(borders, DanConditionType.ComboCount, red.ComboCount, gold.ComboCount);
-        AddRedOdaiBorder(borders, DanConditionType.DrumrollCount, red.DrumrollCount, gold.DrumrollCount);
-        AddRedOdaiBorder(borders, DanConditionType.Score, red.Score, gold.Score);
-        AddRedOdaiBorder(borders, DanConditionType.TotalHitCount, red.TotalHitCount, gold.TotalHitCount);
-
-        return borders;
-    }
-
-    private static void AddRedOdaiBorder(
+    private static void AddAc15OdaiBorder(
         List<DanData.OdaiBorder> borders,
         DanConditionType type,
         uint redBorder,

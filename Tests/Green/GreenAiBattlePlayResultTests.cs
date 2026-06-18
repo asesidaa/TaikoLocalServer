@@ -599,7 +599,7 @@ public sealed class GreenAiBattlePlayResultTests
     private static bool BitIsSet(byte[] source, uint id)
         => (source[id >> 3] & (1 << ((int)id & 7))) != 0;
 
-    private static GreenHandlerFixture.TestGreenCatalog CatalogWithSong101Stars(uint starNormal = 2)
+    private static GreenHandlerFixture.TestGreenCatalog CatalogWithSong101Stars(byte starNormal = 2)
         => new(musicInfoFileOrder:
         [
             new()

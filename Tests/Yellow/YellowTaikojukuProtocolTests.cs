@@ -1,4 +1,4 @@
-using TaikoLocalServer.Application.Catalog.Yellow;
+using TaikoLocalServer.Application.Catalog.Ac15;
 using TaikoLocalServer.Application.ServerData;
 using TaikoLocalServer.Contracts.AdminApi.ViewModels;
 
@@ -13,20 +13,20 @@ public sealed class YellowTaikojukuProtocolTests
         {
             MusicInfoFileOrder =
             [
-                new YellowMusicInfoEntry { MusicId = "song101", SongNo = 101, FileOrder = 0 },
-                new YellowMusicInfoEntry { MusicId = "song102", SongNo = 102, FileOrder = 1 }
+                new Ac15MusicInfoEntry { MusicId = "song101", SongNo = 101, FileOrder = 0 },
+                new Ac15MusicInfoEntry { MusicId = "song102", SongNo = 102, FileOrder = 1 }
             ],
             TaikojukuFileOrder =
             [
-                new YellowTaikojukuEntry
+                new Ac15TaikojukuEntry
                 {
                     UniqueId = 9001,
                     ChallengeLevel = 1,
                     VerupNo = 44,
                     Songs =
                     [
-                        new YellowTaikojukuSong { MusicId = "song101", SongNo = 101, Level = 0 },
-                        new YellowTaikojukuSong { MusicId = "song102", SongNo = 102, Level = 3 }
+                        new Ac15TaikojukuSong { MusicId = "song101", SongNo = 101, Level = 0 },
+                        new Ac15TaikojukuSong { MusicId = "song102", SongNo = 102, Level = 3 }
                     ]
                 }
             ]
@@ -59,38 +59,38 @@ public sealed class YellowTaikojukuProtocolTests
     {
         public GameEra Era => GameEra.Yellow;
 
-        public IReadOnlyList<YellowMusicInfoEntry> MusicInfoFileOrder { get; init; } = [];
+        public IReadOnlyList<Ac15MusicInfoEntry> MusicInfoFileOrder { get; init; } = [];
 
         public uint SongHashVersion { get; init; }
 
-        public IReadOnlyDictionary<uint, YellowMusicInfoEntry> YellowMusicInfos
+        public IReadOnlyDictionary<uint, Ac15MusicInfoEntry> YellowMusicInfos
             => MusicInfoFileOrder.ToDictionary(song => song.SongNo);
 
         public IReadOnlyDictionary<uint, IMusicInfoEntry> MusicInfos
             => YellowMusicInfos.ToDictionary(pair => pair.Key, pair => (IMusicInfoEntry)pair.Value);
 
-        public IReadOnlyList<YellowTaikojukuEntry> TaikojukuFileOrder { get; init; } = [];
+        public IReadOnlyList<Ac15TaikojukuEntry> TaikojukuFileOrder { get; init; } = [];
 
-        public IReadOnlyDictionary<uint, YellowTaikojukuEntry> Taikojuku
+        public IReadOnlyDictionary<uint, Ac15TaikojukuEntry> Taikojuku
             => TaikojukuFileOrder.ToDictionary(entry => entry.ChallengeLevel);
 
-        public YellowItemShopCatalog ItemShopCatalog { get; init; } = YellowItemShopCatalog.Disabled;
+        public Ac15ItemShopCatalog ItemShopCatalog { get; init; } = Ac15ItemShopCatalog.Disabled;
 
-        public IReadOnlyDictionary<uint, YellowItemShopEntry> ItemShop => ItemShopCatalog.ActiveItemsByNo;
+        public IReadOnlyDictionary<uint, Ac15ItemShopEntry> ItemShop => ItemShopCatalog.ActiveItemsByNo;
 
         public IReadOnlyDictionary<uint, EventFolderData> EventFolders { get; init; }
             = new Dictionary<uint, EventFolderData>();
 
-        public IReadOnlyDictionary<uint, YellowTelopEntry> Telops { get; init; }
-            = new Dictionary<uint, YellowTelopEntry>();
+        public IReadOnlyDictionary<uint, Ac15TelopEntry> Telops { get; init; }
+            = new Dictionary<uint, Ac15TelopEntry>();
 
-        public IReadOnlyDictionary<uint, YellowGachaEntry> Gachas { get; init; }
-            = new Dictionary<uint, YellowGachaEntry>();
+        public IReadOnlyDictionary<uint, Ac15GachaEntry> Gachas { get; init; }
+            = new Dictionary<uint, Ac15GachaEntry>();
 
-        public IReadOnlyDictionary<uint, YellowTournamentEntry> Tournaments { get; init; }
-            = new Dictionary<uint, YellowTournamentEntry>();
+        public IReadOnlyDictionary<uint, Ac15TournamentEntry> Tournaments { get; init; }
+            = new Dictionary<uint, Ac15TournamentEntry>();
 
-        public YellowRecommendEntry Recommend { get; init; } = YellowRecommendEntry.Empty;
+        public Ac15RecommendEntry Recommend { get; init; } = Ac15RecommendEntry.Empty;
 
         public IReadOnlyList<MovieData> Movies { get; init; } = [];
 

@@ -1,13 +1,13 @@
-using TaikoLocalServer.Application.Catalog.Blue;
+using TaikoLocalServer.Application.Catalog.Ac15;
 
 namespace TaikoLocalServer.Infrastructure.GameDataCatalog.Blue;
 
 internal sealed class BlueGachaLoader
 {
-    public Task<IReadOnlyDictionary<uint, BlueGachaEntry>> LoadAsync(CancellationToken cancellationToken)
+    public Task<IReadOnlyDictionary<uint, Ac15GachaEntry>> LoadAsync(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        IReadOnlyDictionary<uint, BlueGachaEntry> empty = new Dictionary<uint, BlueGachaEntry>();
+        IReadOnlyDictionary<uint, Ac15GachaEntry> empty = new Dictionary<uint, Ac15GachaEntry>();
         return Task.FromResult(empty);
     }
 }

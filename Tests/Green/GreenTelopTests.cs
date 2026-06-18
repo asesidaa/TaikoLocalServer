@@ -1,6 +1,6 @@
 using System.Text;
 using TaikoLocalServer.Adapters.GameProtocol.Green.Mappers;
-using TaikoLocalServer.Application.Catalog.Green;
+using TaikoLocalServer.Application.Catalog.Ac15;
 using TaikoLocalServer.Application.Common;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
 
@@ -56,7 +56,7 @@ public sealed class GreenTelopTests
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync(new GreenHandlerFixture.TestGreenCatalog
         {
-            Telops = new Dictionary<uint, GreenTelopEntry>
+            Telops = new Dictionary<uint, Ac15TelopEntry>
             {
                 [2] = new() { TelopId = 2, VerupNo = 5, Message = "Second" },
                 [1] = new() { TelopId = 1, VerupNo = 3, Message = "First" }
@@ -96,7 +96,7 @@ public sealed class GreenTelopTests
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync(new GreenHandlerFixture.TestGreenCatalog
         {
-            Telops = new Dictionary<uint, GreenTelopEntry>
+            Telops = new Dictionary<uint, Ac15TelopEntry>
             {
                 [7] = new()
                 {

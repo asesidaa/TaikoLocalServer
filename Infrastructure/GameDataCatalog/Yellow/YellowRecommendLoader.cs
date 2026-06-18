@@ -1,5 +1,4 @@
 using TaikoLocalServer.Application.Catalog.Ac15;
-using TaikoLocalServer.Application.Catalog.Yellow;
 using TaikoLocalServer.Domain.Enums;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Ac15;
 
@@ -9,18 +8,11 @@ public sealed class YellowRecommendLoader
 {
     public const string FileName = "yellow_recommend_songs.json";
 
-    public async Task<YellowRecommendEntry> LoadAsync(
+    public Task<Ac15RecommendEntry> LoadAsync(
         IReadOnlySet<uint> catalogSongIds,
         CancellationToken cancellationToken)
     {
         var path = Path.Combine(PathHelper.GetDataPath(GameEra.Yellow), FileName);
-        var entry = await Ac15RecommendLoader.LoadFromFileAsync(path, catalogSongIds, cancellationToken);
-        return Map(entry);
+        return Ac15RecommendLoader.LoadFromFileAsync(path, catalogSongIds, cancellationToken);
     }
-
-    private static YellowRecommendEntry Map(Ac15RecommendEntry entry) => new()
-    {
-        RecommendSong = entry.RecommendSong,
-        RecommendBestSongs = entry.RecommendBestSongs
-    };
 }

@@ -204,7 +204,7 @@ public sealed class BlueItemShopLockingTests
 
     private static BlueHandlerFixture.TestBlueCatalog CreateShopCatalog()
     {
-        var season = new BlueItemShopSeason
+        var season = new Ac15ItemShopSeason
         {
             SeasonId = 2,
             VerupNo = 20170404,
@@ -215,21 +215,21 @@ public sealed class BlueItemShopLockingTests
             BeforecloseDays = 0,
             Items =
             [
-                new BlueItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 101, Price = 1300 },
-                new BlueItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Tone, ItemId = 4, Price = 500 },
-                new BlueItemShopEntry { ItemNo = 3, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 },
-                new BlueItemShopEntry { ItemNo = 4, ItemType = Ac15ShopItemType.Head, ItemId = 117, Price = 500 },
-                new BlueItemShopEntry { ItemNo = 5, ItemType = Ac15ShopItemType.Body, ItemId = 146, Price = 500 },
-                new BlueItemShopEntry { ItemNo = 6, ItemType = Ac15ShopItemType.Face, ItemId = 6, Price = 500 },
-                new BlueItemShopEntry { ItemNo = 7, ItemType = Ac15ShopItemType.Puchi, ItemId = 7, Price = 500 }
+                new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 101, Price = 1300 },
+                new Ac15ItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Tone, ItemId = 4, Price = 500 },
+                new Ac15ItemShopEntry { ItemNo = 3, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 },
+                new Ac15ItemShopEntry { ItemNo = 4, ItemType = Ac15ShopItemType.Head, ItemId = 117, Price = 500 },
+                new Ac15ItemShopEntry { ItemNo = 5, ItemType = Ac15ShopItemType.Body, ItemId = 146, Price = 500 },
+                new Ac15ItemShopEntry { ItemNo = 6, ItemType = Ac15ShopItemType.Face, ItemId = 6, Price = 500 },
+                new Ac15ItemShopEntry { ItemNo = 7, ItemType = Ac15ShopItemType.Puchi, ItemId = 7, Price = 500 }
             ]
         };
 
-        return new BlueHandlerFixture.TestBlueCatalog(itemShopCatalog: new BlueItemShopCatalog
+        return new BlueHandlerFixture.TestBlueCatalog(itemShopCatalog: new Ac15ItemShopCatalog
         {
             IsEnabled = true,
             ActiveSeasonId = 2,
-            Seasons = new Dictionary<uint, BlueItemShopSeason> { [2] = season }
+            Seasons = new Dictionary<uint, Ac15ItemShopSeason> { [2] = season }
         });
     }
 

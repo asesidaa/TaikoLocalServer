@@ -36,7 +36,7 @@ public sealed class BlueItemShopStateTests
 
         var state = await fixture.Context.GetOrCreateActiveBlueShopSeasonStateAsync(
             save,
-            BlueItemShopCatalog.Disabled,
+            Ac15ItemShopCatalog.Disabled,
             CancellationToken.None);
         await fixture.Context.SaveChangesAsync();
 
@@ -53,11 +53,11 @@ public sealed class BlueItemShopStateTests
         fixture.Context.UserSaveDataBlue.Add(save);
         await fixture.Context.SaveChangesAsync();
 
-        var catalog = new BlueItemShopCatalog
+        var catalog = new Ac15ItemShopCatalog
         {
             IsEnabled = true,
             ActiveSeasonId = 2,
-            Seasons = new Dictionary<uint, BlueItemShopSeason>
+            Seasons = new Dictionary<uint, Ac15ItemShopSeason>
             {
                 [2] = new() { SeasonId = 2, Items = [] }
             }
@@ -149,16 +149,16 @@ public sealed class BlueItemShopStateTests
     [Fact]
     public async Task UpdatePlayResult_WhenShopHasNoActiveSeason_DoesNotCreateShopSeasonState()
     {
-        var catalog = new BlueItemShopCatalog
+        var catalog = new Ac15ItemShopCatalog
         {
             IsEnabled = true,
             ActiveSeasonId = 99,
-            Seasons = new Dictionary<uint, BlueItemShopSeason>
+            Seasons = new Dictionary<uint, Ac15ItemShopSeason>
             {
                 [2] = new()
                 {
                     SeasonId = 2,
-                    Items = [new BlueItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 101, Price = 1300 }]
+                    Items = [new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 101, Price = 1300 }]
                 }
             }
         };
@@ -223,19 +223,19 @@ public sealed class BlueItemShopStateTests
 
     private static BlueHandlerFixture.TestBlueCatalog CreateSingleSongShopCatalog()
     {
-        var season = new BlueItemShopSeason
+        var season = new Ac15ItemShopSeason
         {
             SeasonId = 2,
             StartDatetime = "20181219070000",
             EndDatetime = "20190314020000",
-            Items = [new BlueItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 101, Price = 1300 }]
+            Items = [new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 101, Price = 1300 }]
         };
 
-        return new BlueHandlerFixture.TestBlueCatalog(itemShopCatalog: new BlueItemShopCatalog
+        return new BlueHandlerFixture.TestBlueCatalog(itemShopCatalog: new Ac15ItemShopCatalog
         {
             IsEnabled = true,
             ActiveSeasonId = 2,
-            Seasons = new Dictionary<uint, BlueItemShopSeason> { [2] = season }
+            Seasons = new Dictionary<uint, Ac15ItemShopSeason> { [2] = season }
         });
     }
 }

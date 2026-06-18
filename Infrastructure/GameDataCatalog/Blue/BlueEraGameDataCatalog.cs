@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using TaikoLocalServer.Application.Abstractions;
+using TaikoLocalServer.Application.Catalog.Ac15;
 using TaikoLocalServer.Application.Catalog.Blue;
 using TaikoLocalServer.Application.Settings;
 using TaikoLocalServer.Domain.Enums;
@@ -14,19 +15,19 @@ public sealed class BlueEraGameDataCatalog(
     INijiiroCatalog? nijiiroCatalog = null) : IBlueCatalog
 {
     private uint songHashVersion;
-    private IReadOnlyList<BlueMusicInfoEntry> musicInfoFileOrder = [];
-    private IReadOnlyDictionary<uint, BlueMusicInfoEntry> musicInfos = new Dictionary<uint, BlueMusicInfoEntry>();
+    private IReadOnlyList<Ac15MusicInfoEntry> musicInfoFileOrder = [];
+    private IReadOnlyDictionary<uint, Ac15MusicInfoEntry> musicInfos = new Dictionary<uint, Ac15MusicInfoEntry>();
     private IReadOnlyDictionary<uint, IMusicInfoEntry> sharedMusicInfos = new Dictionary<uint, IMusicInfoEntry>();
-    private IReadOnlyList<BlueTaikojukuEntry> taikojukuFileOrder = [];
-    private IReadOnlyDictionary<uint, BlueTaikojukuEntry> taikojuku = new Dictionary<uint, BlueTaikojukuEntry>();
-    private BlueItemShopCatalog itemShopCatalog = BlueItemShopCatalog.Disabled;
-    private IReadOnlyDictionary<uint, BlueItemShopEntry> itemShop = new Dictionary<uint, BlueItemShopEntry>();
+    private IReadOnlyList<Ac15TaikojukuEntry> taikojukuFileOrder = [];
+    private IReadOnlyDictionary<uint, Ac15TaikojukuEntry> taikojuku = new Dictionary<uint, Ac15TaikojukuEntry>();
+    private Ac15ItemShopCatalog itemShopCatalog = Ac15ItemShopCatalog.Disabled;
+    private IReadOnlyDictionary<uint, Ac15ItemShopEntry> itemShop = new Dictionary<uint, Ac15ItemShopEntry>();
     private BlueBattleCatalog battleCatalog = BlueBattleCatalog.Unavailable;
     private IReadOnlyDictionary<uint, EventFolderData> eventFolders = new Dictionary<uint, EventFolderData>();
-    private IReadOnlyDictionary<uint, BlueTelopEntry> telops = new Dictionary<uint, BlueTelopEntry>();
-    private IReadOnlyDictionary<uint, BlueGachaEntry> gachas = new Dictionary<uint, BlueGachaEntry>();
-    private IReadOnlyDictionary<uint, BlueTournamentEntry> tournaments = new Dictionary<uint, BlueTournamentEntry>();
-    private BlueRecommendEntry recommend = BlueRecommendEntry.Empty;
+    private IReadOnlyDictionary<uint, Ac15TelopEntry> telops = new Dictionary<uint, Ac15TelopEntry>();
+    private IReadOnlyDictionary<uint, Ac15GachaEntry> gachas = new Dictionary<uint, Ac15GachaEntry>();
+    private IReadOnlyDictionary<uint, Ac15TournamentEntry> tournaments = new Dictionary<uint, Ac15TournamentEntry>();
+    private Ac15RecommendEntry recommend = Ac15RecommendEntry.Empty;
     private IReadOnlyList<MovieData> movies = [];
     private IReadOnlyList<Costume> costumeList = [];
     private IReadOnlyDictionary<uint, Title> titleDictionary = new Dictionary<uint, Title>();
@@ -38,29 +39,29 @@ public sealed class BlueEraGameDataCatalog(
 
     public uint SongHashVersion => songHashVersion;
 
-    public IReadOnlyList<BlueMusicInfoEntry> MusicInfoFileOrder => musicInfoFileOrder;
+    public IReadOnlyList<Ac15MusicInfoEntry> MusicInfoFileOrder => musicInfoFileOrder;
 
-    public IReadOnlyDictionary<uint, BlueMusicInfoEntry> BlueMusicInfos => musicInfos;
+    public IReadOnlyDictionary<uint, Ac15MusicInfoEntry> BlueMusicInfos => musicInfos;
 
-    public IReadOnlyList<BlueTaikojukuEntry> TaikojukuFileOrder => taikojukuFileOrder;
+    public IReadOnlyList<Ac15TaikojukuEntry> TaikojukuFileOrder => taikojukuFileOrder;
 
-    public IReadOnlyDictionary<uint, BlueTaikojukuEntry> Taikojuku => taikojuku;
+    public IReadOnlyDictionary<uint, Ac15TaikojukuEntry> Taikojuku => taikojuku;
 
-    public BlueItemShopCatalog ItemShopCatalog => itemShopCatalog;
+    public Ac15ItemShopCatalog ItemShopCatalog => itemShopCatalog;
 
-    public IReadOnlyDictionary<uint, BlueItemShopEntry> ItemShop => itemShop;
+    public IReadOnlyDictionary<uint, Ac15ItemShopEntry> ItemShop => itemShop;
 
     public BlueBattleCatalog BattleCatalog => battleCatalog;
 
     public IReadOnlyDictionary<uint, EventFolderData> EventFolders => eventFolders;
 
-    public IReadOnlyDictionary<uint, BlueTelopEntry> Telops => telops;
+    public IReadOnlyDictionary<uint, Ac15TelopEntry> Telops => telops;
 
-    public IReadOnlyDictionary<uint, BlueGachaEntry> Gachas => gachas;
+    public IReadOnlyDictionary<uint, Ac15GachaEntry> Gachas => gachas;
 
-    public IReadOnlyDictionary<uint, BlueTournamentEntry> Tournaments => tournaments;
+    public IReadOnlyDictionary<uint, Ac15TournamentEntry> Tournaments => tournaments;
 
-    public BlueRecommendEntry Recommend => recommend;
+    public Ac15RecommendEntry Recommend => recommend;
 
     public IReadOnlyList<MovieData> Movies => movies;
 

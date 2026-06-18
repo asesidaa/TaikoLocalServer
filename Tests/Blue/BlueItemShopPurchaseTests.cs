@@ -8,7 +8,7 @@ public sealed class BlueItemShopPurchaseTests
     public async Task ItemPurchase_PreflightReturnsSeasonBalanceWithoutSpending()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync(CreateShopCatalog(
-            new BlueItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
+            new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
         await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 700, totalUseDonmedal: 200);
         var handler = CreateHandler(fixture);
 
@@ -50,7 +50,7 @@ public sealed class BlueItemShopPurchaseTests
         uint itemPrice)
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync(CreateShopCatalog(
-            new BlueItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
+            new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
         await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 2000);
         var handler = CreateHandler(fixture);
 
@@ -68,7 +68,7 @@ public sealed class BlueItemShopPurchaseTests
     public async Task ItemPurchase_RejectsZeroPriceRowsWithoutMutation()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync(CreateShopCatalog(
-            new BlueItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 0 }));
+            new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 0 }));
         await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 2000);
         var handler = CreateHandler(fixture);
 
@@ -84,7 +84,7 @@ public sealed class BlueItemShopPurchaseTests
     public async Task ItemPurchase_RejectsInsufficientMedalsWithoutMutation()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync(CreateShopCatalog(
-            new BlueItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
+            new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
         await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 1200);
         var handler = CreateHandler(fixture);
 
@@ -100,7 +100,7 @@ public sealed class BlueItemShopPurchaseTests
     public async Task ItemPurchase_RejectsDuplicateUnlockedWithoutDoubleSpend()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync(CreateShopCatalog(
-            new BlueItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
+            new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
         await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 2000, totalUseDonmedal: 1300);
         fixture.Context.BlueShopItemStates.Add(new BlueShopItemState
         {
@@ -129,7 +129,7 @@ public sealed class BlueItemShopPurchaseTests
     public async Task ItemPurchase_ActiveSeasonSpendsDonmedalsAndPersistsUnlockedItem()
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync(CreateShopCatalog(
-            new BlueItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
+            new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
         await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 2000);
         var handler = CreateHandler(fixture);
 
@@ -165,7 +165,7 @@ public sealed class BlueItemShopPurchaseTests
         string expectedField)
     {
         await using var fixture = await BlueHandlerFixture.CreateAsync(CreateShopCatalog(
-            new BlueItemShopEntry { ItemNo = 1, ItemType = itemType, ItemId = itemId, Price = 100 }));
+            new Ac15ItemShopEntry { ItemNo = 1, ItemType = itemType, ItemId = itemId, Price = 100 }));
         var save = await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 2000);
         var before = SnapshotUnlockFields(save);
         var handler = CreateHandler(fixture);
@@ -226,12 +226,12 @@ public sealed class BlueItemShopPurchaseTests
         return save;
     }
 
-    private static BlueHandlerFixture.TestBlueCatalog CreateShopCatalog(params BlueItemShopEntry[] items)
-        => new(itemShopCatalog: new BlueItemShopCatalog
+    private static BlueHandlerFixture.TestBlueCatalog CreateShopCatalog(params Ac15ItemShopEntry[] items)
+        => new(itemShopCatalog: new Ac15ItemShopCatalog
         {
             IsEnabled = true,
             ActiveSeasonId = 2,
-            Seasons = new Dictionary<uint, BlueItemShopSeason>
+            Seasons = new Dictionary<uint, Ac15ItemShopSeason>
             {
                 [2] = new()
                 {

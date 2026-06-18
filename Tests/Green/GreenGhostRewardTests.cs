@@ -154,19 +154,19 @@ public sealed class GreenGhostRewardTests
 
     private static GreenHandlerFixture.TestGreenCatalog CreatePurchaseShopCatalog()
     {
-        var season = new GreenItemShopSeason
+        var season = new Ac15ItemShopSeason
         {
             SeasonId = 2,
             StartDatetime = "20190314000000",
             EndDatetime = "20190626075959",
-            Items = [new GreenItemShopEntry { ItemNo = 10, ItemType = Ac15ShopItemType.Song, ItemId = 2, Price = 40 }]
+            Items = [new Ac15ItemShopEntry { ItemNo = 10, ItemType = Ac15ShopItemType.Song, ItemId = 2, Price = 40 }]
         };
 
-        return new GreenHandlerFixture.TestGreenCatalog(itemShopCatalog: new GreenItemShopCatalog
+        return new GreenHandlerFixture.TestGreenCatalog(itemShopCatalog: new Ac15ItemShopCatalog
         {
             IsEnabled = true,
             ActiveSeasonId = 2,
-            Seasons = new Dictionary<uint, GreenItemShopSeason> { [2] = season }
+            Seasons = new Dictionary<uint, Ac15ItemShopSeason> { [2] = season }
         });
     }
 }

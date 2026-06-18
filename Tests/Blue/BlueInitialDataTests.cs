@@ -49,7 +49,7 @@ public sealed class BlueInitialDataTests
             {
                 [3] = new() { FolderId = 3, VerupNo = 9, SongNoes = [101, 102] }
             },
-            telops: new Dictionary<uint, BlueTelopEntry>
+            telops: new Dictionary<uint, Ac15TelopEntry>
             {
                 [7] = new() { TelopId = 7, VerupNo = 4 }
             });
@@ -72,7 +72,7 @@ public sealed class BlueInitialDataTests
         var blueCatalog = new BlueHandlerFixture.TestBlueCatalog(
             taikojukuFileOrder:
             [
-                new BlueTaikojukuEntry
+                new Ac15TaikojukuEntry
                 {
                     UniqueId = 20001,
                     ChallengeLevel = 1,

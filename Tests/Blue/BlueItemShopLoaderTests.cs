@@ -207,7 +207,7 @@ public sealed class BlueItemShopLoaderTests
     private static bool IsProtocolDateTime(string value)
         => value is { Length: 14 } && value.All(char.IsAsciiDigit);
 
-    private static void AssertItem(BlueItemShopEntry item, uint itemNo)
+    private static void AssertItem(Ac15ItemShopEntry item, uint itemNo)
     {
         Assert.Equal(itemNo, item.ItemNo);
         Assert.True(item.ItemType.IsSupported());

@@ -1,5 +1,5 @@
 using TaikoLocalServer.Application.Ac15;
-using TaikoLocalServer.Application.Catalog.Blue;
+using TaikoLocalServer.Application.Catalog.Ac15;
 
 namespace TaikoLocalServer.Application.Common;
 
@@ -43,14 +43,14 @@ public static class BlueShopStateExtensions
     public static async ValueTask<BlueShopSeasonState?> GetOrCreateActiveBlueShopSeasonStateAsync(
         this ITaikoDbContext context,
         UserSaveDataBlue saveData,
-        BlueItemShopCatalog itemShopCatalog,
+        Ac15ItemShopCatalog itemShopCatalog,
         CancellationToken cancellationToken = default)
         => await context.GetOrCreateActiveBlueShopSeasonStateAsync(saveData.Baid, itemShopCatalog, cancellationToken);
 
     public static async ValueTask<BlueShopSeasonState?> GetOrCreateActiveBlueShopSeasonStateAsync(
         this ITaikoDbContext context,
         uint baid,
-        BlueItemShopCatalog itemShopCatalog,
+        Ac15ItemShopCatalog itemShopCatalog,
         CancellationToken cancellationToken = default)
     {
         if (!itemShopCatalog.IsEnabled || itemShopCatalog.ActiveSeason is not { Items.Count: > 0 } activeSeason)

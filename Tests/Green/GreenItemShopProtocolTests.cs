@@ -6,7 +6,7 @@ namespace TaikoLocalServer.Tests.Green;
 public sealed class GreenItemShopProtocolTests
 {
     [Fact]
-    public async Task InitialData_AdvertisesActiveGreenItemShopSeason()
+    public async Task InitialData_AdvertisesActiveAc15ItemShopSeason()
     {
         await using var fixture = await GreenHandlerFixture.CreateAsync(CreateShopCatalog());
         var handler = new GetInitialDataQueryHandler(
@@ -69,7 +69,7 @@ public sealed class GreenItemShopProtocolTests
 
     private static GreenHandlerFixture.TestGreenCatalog CreateShopCatalog()
     {
-        var season = new GreenItemShopSeason
+        var season = new Ac15ItemShopSeason
         {
             SeasonId = 2,
             VerupNo = 9,
@@ -80,16 +80,16 @@ public sealed class GreenItemShopProtocolTests
             BeforecloseDays = 4,
             Items =
             [
-                new GreenItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Body, ItemId = 117, Price = 500 },
-                new GreenItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Song, ItemId = 101, Price = 1300 }
+                new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Body, ItemId = 117, Price = 500 },
+                new Ac15ItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Song, ItemId = 101, Price = 1300 }
             ]
         };
 
-        return new GreenHandlerFixture.TestGreenCatalog(itemShopCatalog: new GreenItemShopCatalog
+        return new GreenHandlerFixture.TestGreenCatalog(itemShopCatalog: new Ac15ItemShopCatalog
         {
             IsEnabled = true,
             ActiveSeasonId = 2,
-            Seasons = new Dictionary<uint, GreenItemShopSeason> { [2] = season }
+            Seasons = new Dictionary<uint, Ac15ItemShopSeason> { [2] = season }
         });
     }
 

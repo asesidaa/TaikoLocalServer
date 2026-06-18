@@ -168,7 +168,7 @@ public class GreenAdminApiControllerTests
         var catalog = new FileGameDataCatalog([new GreenHandlerFixture.TestGreenCatalog(
             musicInfoFileOrder:
             [
-                new GreenMusicInfoEntry
+                new Ac15MusicInfoEntry
                 {
                     SongNo = 105,
                     MusicId = "tank",

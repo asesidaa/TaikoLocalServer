@@ -6,7 +6,7 @@ using TaikoLocalServer.Adapters.GameProtocol.Yellow.Controllers;
 using TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
 using TaikoLocalServer.Adapters.GameProtocol.Yellow.Wire;
 using TaikoLocalServer.Application.Ac15;
-using TaikoLocalServer.Application.Catalog.Yellow;
+using TaikoLocalServer.Application.Catalog.Ac15;
 using TaikoLocalServer.Tests.Ac15;
 
 namespace TaikoLocalServer.Tests.Yellow;
@@ -1078,7 +1078,7 @@ public sealed class YellowPlayResultHandlerTests
 
     private static YellowHandlerFixture.TestYellowCatalog CreateDanCatalog(params uint[] challengeLevels)
         => new(taikojukuFileOrder: challengeLevels
-            .Select((dan, index) => new YellowTaikojukuEntry
+            .Select((dan, index) => new Ac15TaikojukuEntry
             {
                 UniqueId = 20001u + (uint)index,
                 ChallengeLevel = dan,
@@ -1086,25 +1086,25 @@ public sealed class YellowPlayResultHandlerTests
                 Name = $"Dan {dan}",
                 Songs =
                 [
-                    new YellowTaikojukuSong { SongNo = 101, Level = 1 },
-                    new YellowTaikojukuSong { SongNo = 102, Level = 1 }
+                    new Ac15TaikojukuSong { SongNo = 101, Level = 1 },
+                    new Ac15TaikojukuSong { SongNo = 102, Level = 1 }
                 ]
             })
             .ToArray());
 
     private static YellowHandlerFixture.TestYellowCatalog CreateShopCatalog()
-        => new(itemShopCatalog: new YellowItemShopCatalog
+        => new(itemShopCatalog: new Ac15ItemShopCatalog
         {
             IsEnabled = true,
             ActiveSeasonId = 2,
-            Seasons = new Dictionary<uint, YellowItemShopSeason>
+            Seasons = new Dictionary<uint, Ac15ItemShopSeason>
             {
                 [2] = new()
                 {
                     SeasonId = 2,
                     Items =
                     [
-                        new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 103, Price = 10 }
+                        new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 103, Price = 10 }
                     ]
                 }
             }

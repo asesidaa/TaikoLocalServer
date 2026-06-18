@@ -1,5 +1,5 @@
 using TaikoLocalServer.Application.Ac15;
-using TaikoLocalServer.Application.Catalog.Yellow;
+using TaikoLocalServer.Application.Catalog.Ac15;
 using TaikoLocalServer.Application;
 using TaikoLocalServer.Adapters.GameProtocol.Yellow.Controllers;
 using TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
@@ -48,7 +48,7 @@ public sealed class YellowItemShopPurchaseTests
 
         var state = await fixture.Context.GetOrCreateActiveYellowShopSeasonStateAsync(
             save,
-            YellowItemShopCatalog.Disabled,
+            Ac15ItemShopCatalog.Disabled,
             CancellationToken.None);
         await fixture.Context.SaveChangesAsync();
 
@@ -65,11 +65,11 @@ public sealed class YellowItemShopPurchaseTests
         fixture.Context.UserSaveDataYellow.Add(save);
         await fixture.Context.SaveChangesAsync();
 
-        var catalog = new YellowItemShopCatalog
+        var catalog = new Ac15ItemShopCatalog
         {
             IsEnabled = true,
             ActiveSeasonId = 2,
-            Seasons = new Dictionary<uint, YellowItemShopSeason>
+            Seasons = new Dictionary<uint, Ac15ItemShopSeason>
             {
                 [2] = new() { SeasonId = 2, Items = [] }
             }
@@ -141,7 +141,7 @@ public sealed class YellowItemShopPurchaseTests
     public async Task ItemPurchase_PreflightReturnsYellowActiveSeasonBalanceWithoutSpending()
     {
         await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
-            new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
+            new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
         await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 700, totalUseDonmedal: 200);
         var handler = CreateHandler(fixture);
 
@@ -159,7 +159,7 @@ public sealed class YellowItemShopPurchaseTests
     public async Task ItemPurchase_ValidYellowPurchaseSpendsDonmedalsAndPersistsUnlockedItem()
     {
         await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
-            new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
+            new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
         await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 2000);
         var handler = CreateHandler(fixture);
 
@@ -193,7 +193,7 @@ public sealed class YellowItemShopPurchaseTests
         uint itemPrice)
     {
         await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
-            new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
+            new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
         await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 2000);
         var handler = CreateHandler(fixture);
 
@@ -211,7 +211,7 @@ public sealed class YellowItemShopPurchaseTests
     public async Task ItemPurchase_RejectsZeroPriceYellowRowsWithoutMutation()
     {
         await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
-            new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 0 }));
+            new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 0 }));
         await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 2000);
         var handler = CreateHandler(fixture);
 
@@ -227,7 +227,7 @@ public sealed class YellowItemShopPurchaseTests
     public async Task ItemPurchase_RejectsInsufficientYellowDonmedalsWithoutMutation()
     {
         await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
-            new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
+            new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
         await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 1200);
         var handler = CreateHandler(fixture);
 
@@ -243,7 +243,7 @@ public sealed class YellowItemShopPurchaseTests
     public async Task ItemPurchase_DoesNotUseYellowKatsumedalsAsPurchaseCurrency()
     {
         await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
-            new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
+            new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
         var save = await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 1200);
         save.TotalGetKatsumedal = 9999;
         await fixture.Context.SaveChangesAsync();
@@ -264,7 +264,7 @@ public sealed class YellowItemShopPurchaseTests
     {
         var unsupportedItemType = (Ac15ShopItemType)99;
         await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
-            new YellowItemShopEntry { ItemNo = 1, ItemType = unsupportedItemType, ItemId = 12, Price = 1300 }));
+            new Ac15ItemShopEntry { ItemNo = 1, ItemType = unsupportedItemType, ItemId = 12, Price = 1300 }));
         await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 2000);
         var handler = CreateHandler(fixture);
 
@@ -282,7 +282,7 @@ public sealed class YellowItemShopPurchaseTests
     public async Task ItemPurchase_RejectsDuplicateYellowUnlockedWithoutDoubleSpend()
     {
         await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
-            new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
+            new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
         await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 2000, totalUseDonmedal: 1300);
         fixture.Context.YellowShopItemStates.Add(Unlocked(1, 2, 3, 12));
         await fixture.Context.SaveChangesAsync();
@@ -310,7 +310,7 @@ public sealed class YellowItemShopPurchaseTests
         string expectedField)
     {
         await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
-            new YellowItemShopEntry { ItemNo = 1, ItemType = itemType, ItemId = itemId, Price = 100 }));
+            new Ac15ItemShopEntry { ItemNo = 1, ItemType = itemType, ItemId = itemId, Price = 100 }));
         var save = await AddUserWithSeasonAsync(fixture, totalGetDonmedal: 2000);
         var before = SnapshotUnlockFields(save);
         var handler = CreateHandler(fixture);
@@ -338,8 +338,8 @@ public sealed class YellowItemShopPurchaseTests
     public async Task BaidQuery_UsesOnlyYellowPurchasedShopRowsForCostumeLocks()
     {
         await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
-            new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 },
-            new YellowItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Head, ItemId = 14, Price = 500 }));
+            new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 },
+            new Ac15ItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Head, ItemId = 14, Price = 500 }));
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
         fixture.Context.Cards.Add(new Card { Baid = 1, AccessCode = "abc" });
         var save = UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(1);
@@ -455,7 +455,7 @@ public sealed class YellowItemShopPurchaseTests
     public async Task YellowRewardCompatibilityRoutes_ReturnSuccessWithoutMutatingShopOrSaveState(string route)
     {
         await using var fixture = await YellowHandlerFixture.CreateAsync(CreateShopCatalog(
-            new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
+            new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }));
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
         var save = UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(1);
         save.ToneFlg = Ac15ProtocolBytes.SetBits(save.ToneFlg, [4], Ac15EraProfiles.Yellow.Limits.ToneFlagBytes);
@@ -574,12 +574,12 @@ public sealed class YellowItemShopPurchaseTests
         return save;
     }
 
-    private static YellowHandlerFixture.TestYellowCatalog CreateShopCatalog(params YellowItemShopEntry[] items)
-        => new(itemShopCatalog: new YellowItemShopCatalog
+    private static YellowHandlerFixture.TestYellowCatalog CreateShopCatalog(params Ac15ItemShopEntry[] items)
+        => new(itemShopCatalog: new Ac15ItemShopCatalog
         {
             IsEnabled = true,
             ActiveSeasonId = 2,
-            Seasons = new Dictionary<uint, YellowItemShopSeason>
+            Seasons = new Dictionary<uint, Ac15ItemShopSeason>
             {
                 [2] = new()
                 {
@@ -592,19 +592,19 @@ public sealed class YellowItemShopPurchaseTests
             }
         });
 
-    private static YellowItemShopCatalog CreateSingleItemShopCatalog()
+    private static Ac15ItemShopCatalog CreateSingleItemShopCatalog()
     {
-        var season = new YellowItemShopSeason
+        var season = new Ac15ItemShopSeason
         {
             SeasonId = 2,
-            Items = [new YellowItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 101, Price = 1300 }]
+            Items = [new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 101, Price = 1300 }]
         };
 
-        return new YellowItemShopCatalog
+        return new Ac15ItemShopCatalog
         {
             IsEnabled = true,
             ActiveSeasonId = 2,
-            Seasons = new Dictionary<uint, YellowItemShopSeason> { [2] = season }
+            Seasons = new Dictionary<uint, Ac15ItemShopSeason> { [2] = season }
         };
     }
 

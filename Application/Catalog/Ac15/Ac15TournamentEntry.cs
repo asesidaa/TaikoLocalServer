@@ -1,6 +1,6 @@
-namespace TaikoLocalServer.Application.Catalog.Green;
+namespace TaikoLocalServer.Application.Catalog.Ac15;
 
-public sealed class GreenTournamentEntry
+public sealed class Ac15TournamentEntry
 {
     public uint TournamentId { get; init; }
 

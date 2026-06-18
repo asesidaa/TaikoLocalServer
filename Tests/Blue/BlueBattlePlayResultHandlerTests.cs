@@ -311,11 +311,11 @@ public sealed class BlueBattlePlayResultHandlerTests
     }
 
     private static BlueHandlerFixture.TestBlueCatalog CreateShopCatalog()
-        => new(itemShopCatalog: new BlueItemShopCatalog
+        => new(itemShopCatalog: new Ac15ItemShopCatalog
         {
             IsEnabled = true,
             ActiveSeasonId = 2,
-            Seasons = new Dictionary<uint, BlueItemShopSeason>
+            Seasons = new Dictionary<uint, Ac15ItemShopSeason>
             {
                 [2] = new()
                 {
@@ -323,7 +323,7 @@ public sealed class BlueBattlePlayResultHandlerTests
                     VerupNo = 7,
                     Items =
                     [
-                        new BlueItemShopEntry
+                        new Ac15ItemShopEntry
                         {
                             ItemNo = 1,
                             ItemType = Ac15ShopItemType.Song,

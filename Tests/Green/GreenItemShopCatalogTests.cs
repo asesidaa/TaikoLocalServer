@@ -1,11 +1,11 @@
 namespace TaikoLocalServer.Tests.Green;
 
-public sealed class GreenItemShopCatalogTests
+public sealed class Ac15ItemShopCatalogTests
 {
     [Fact]
     public void ActiveSeason_ItemsByNoUseInferredItemNo()
     {
-        var season = new GreenItemShopSeason
+        var season = new Ac15ItemShopSeason
         {
             SeasonId = 1,
             VerupNo = 7,
@@ -16,16 +16,16 @@ public sealed class GreenItemShopCatalogTests
             BeforecloseDays = 4,
             Items =
             [
-                new GreenItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Body, ItemId = 117, Price = 500 },
-                new GreenItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Song, ItemId = 865, Price = 1300 }
+                new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Body, ItemId = 117, Price = 500 },
+                new Ac15ItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Song, ItemId = 865, Price = 1300 }
             ]
         };
 
-        var catalog = new GreenItemShopCatalog
+        var catalog = new Ac15ItemShopCatalog
         {
             IsEnabled = true,
             ActiveSeasonId = 1,
-            Seasons = new Dictionary<uint, GreenItemShopSeason>
+            Seasons = new Dictionary<uint, Ac15ItemShopSeason>
             {
                 [1] = season
             }
@@ -38,7 +38,7 @@ public sealed class GreenItemShopCatalogTests
     [Fact]
     public void DisabledCatalog_HasNoActiveSeasonOrItems()
     {
-        var catalog = GreenItemShopCatalog.Disabled;
+        var catalog = Ac15ItemShopCatalog.Disabled;
 
         Assert.False(catalog.IsEnabled);
         Assert.Null(catalog.ActiveSeason);

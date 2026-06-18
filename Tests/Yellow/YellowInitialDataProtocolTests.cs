@@ -1,6 +1,6 @@
 using TaikoLocalServer.Application.Ac15;
 using TaikoLocalServer.Application.Catalog.Ac15;
-using TaikoLocalServer.Application.Catalog.Yellow;
+using TaikoLocalServer.Application.Catalog.Ac15;
 using TaikoLocalServer.Application.ServerData;
 using TaikoLocalServer.Contracts.AdminApi.ViewModels;
 
@@ -78,28 +78,28 @@ public sealed class YellowInitialDataProtocolTests
     {
         MusicInfoFileOrder =
         [
-            new YellowMusicInfoEntry { MusicId = "song101", SongNo = 101, FileOrder = 0 },
-            new YellowMusicInfoEntry { MusicId = "song102", SongNo = 102, FileOrder = 1 }
+            new Ac15MusicInfoEntry { MusicId = "song101", SongNo = 101, FileOrder = 0 },
+            new Ac15MusicInfoEntry { MusicId = "song102", SongNo = 102, FileOrder = 1 }
         ],
         SongHashVersion = 987,
         EventFolders = new Dictionary<uint, EventFolderData>
         {
             [44] = new() { FolderId = 44, VerupNo = 5 }
         },
-        Telops = new Dictionary<uint, YellowTelopEntry>
+        Telops = new Dictionary<uint, Ac15TelopEntry>
         {
             [31] = new() { TelopId = 31, VerupNo = 6, Message = "Yellow" }
         },
-        Recommend = new YellowRecommendEntry
+        Recommend = new Ac15RecommendEntry
         {
             RecommendSong = 102,
             RecommendBestSongs = [101, 102]
         },
-        ItemShopCatalog = new YellowItemShopCatalog
+        ItemShopCatalog = new Ac15ItemShopCatalog
         {
             IsEnabled = true,
             ActiveSeasonId = 7,
-            Seasons = new Dictionary<uint, YellowItemShopSeason>
+            Seasons = new Dictionary<uint, Ac15ItemShopSeason>
             {
                 [7] = new()
                 {
@@ -107,7 +107,7 @@ public sealed class YellowInitialDataProtocolTests
                     VerupNo = 14,
                     Items =
                     [
-                        new YellowItemShopEntry
+                        new Ac15ItemShopEntry
                         {
                             ItemNo = 1,
                             ItemType = Ac15ShopItemType.Song,
@@ -120,23 +120,23 @@ public sealed class YellowInitialDataProtocolTests
         },
         TaikojukuFileOrder =
         [
-            new YellowTaikojukuEntry
+            new Ac15TaikojukuEntry
             {
                 UniqueId = 9001,
                 DanLevel = 1,
                 ChallengeLevel = 1,
                 VerupNo = 8,
-                Songs = [new YellowTaikojukuSong { MusicId = "song101", SongNo = 101, Level = 2 }]
+                Songs = [new Ac15TaikojukuSong { MusicId = "song101", SongNo = 101, Level = 2 }]
             }
         ]
     };
 
     private static FakeYellowCatalog YellowCatalogWithoutOptionalRows() => new()
     {
-        MusicInfoFileOrder = [new YellowMusicInfoEntry { MusicId = "song101", SongNo = 101, FileOrder = 0 }],
+        MusicInfoFileOrder = [new Ac15MusicInfoEntry { MusicId = "song101", SongNo = 101, FileOrder = 0 }],
         SongHashVersion = 123,
-        ItemShopCatalog = YellowItemShopCatalog.Disabled,
-        Recommend = YellowRecommendEntry.Empty
+        ItemShopCatalog = Ac15ItemShopCatalog.Disabled,
+        Recommend = Ac15RecommendEntry.Empty
     };
 
     private sealed class FakeGameDataCatalog(IYellowCatalog yellow) : IGameDataCatalog
@@ -151,38 +151,38 @@ public sealed class YellowInitialDataProtocolTests
     {
         public GameEra Era => GameEra.Yellow;
 
-        public IReadOnlyList<YellowMusicInfoEntry> MusicInfoFileOrder { get; init; } = [];
+        public IReadOnlyList<Ac15MusicInfoEntry> MusicInfoFileOrder { get; init; } = [];
 
         public uint SongHashVersion { get; init; }
 
-        public IReadOnlyDictionary<uint, YellowMusicInfoEntry> YellowMusicInfos
+        public IReadOnlyDictionary<uint, Ac15MusicInfoEntry> YellowMusicInfos
             => MusicInfoFileOrder.ToDictionary(song => song.SongNo);
 
         public IReadOnlyDictionary<uint, IMusicInfoEntry> MusicInfos
             => YellowMusicInfos.ToDictionary(pair => pair.Key, pair => (IMusicInfoEntry)pair.Value);
 
-        public IReadOnlyList<YellowTaikojukuEntry> TaikojukuFileOrder { get; init; } = [];
+        public IReadOnlyList<Ac15TaikojukuEntry> TaikojukuFileOrder { get; init; } = [];
 
-        public IReadOnlyDictionary<uint, YellowTaikojukuEntry> Taikojuku
+        public IReadOnlyDictionary<uint, Ac15TaikojukuEntry> Taikojuku
             => TaikojukuFileOrder.ToDictionary(entry => entry.ChallengeLevel);
 
-        public YellowItemShopCatalog ItemShopCatalog { get; init; } = YellowItemShopCatalog.Disabled;
+        public Ac15ItemShopCatalog ItemShopCatalog { get; init; } = Ac15ItemShopCatalog.Disabled;
 
-        public IReadOnlyDictionary<uint, YellowItemShopEntry> ItemShop => ItemShopCatalog.ActiveItemsByNo;
+        public IReadOnlyDictionary<uint, Ac15ItemShopEntry> ItemShop => ItemShopCatalog.ActiveItemsByNo;
 
         public IReadOnlyDictionary<uint, EventFolderData> EventFolders { get; init; }
             = new Dictionary<uint, EventFolderData>();
 
-        public IReadOnlyDictionary<uint, YellowTelopEntry> Telops { get; init; }
-            = new Dictionary<uint, YellowTelopEntry>();
+        public IReadOnlyDictionary<uint, Ac15TelopEntry> Telops { get; init; }
+            = new Dictionary<uint, Ac15TelopEntry>();
 
-        public IReadOnlyDictionary<uint, YellowGachaEntry> Gachas { get; init; }
-            = new Dictionary<uint, YellowGachaEntry>();
+        public IReadOnlyDictionary<uint, Ac15GachaEntry> Gachas { get; init; }
+            = new Dictionary<uint, Ac15GachaEntry>();
 
-        public IReadOnlyDictionary<uint, YellowTournamentEntry> Tournaments { get; init; }
-            = new Dictionary<uint, YellowTournamentEntry>();
+        public IReadOnlyDictionary<uint, Ac15TournamentEntry> Tournaments { get; init; }
+            = new Dictionary<uint, Ac15TournamentEntry>();
 
-        public YellowRecommendEntry Recommend { get; init; } = YellowRecommendEntry.Empty;
+        public Ac15RecommendEntry Recommend { get; init; } = Ac15RecommendEntry.Empty;
 
         public IReadOnlyList<MovieData> Movies { get; init; } = [];
 

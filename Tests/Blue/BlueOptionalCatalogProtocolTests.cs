@@ -39,7 +39,7 @@ public sealed class BlueOptionalCatalogProtocolTests
     public async Task GetTelop_BlueReturnsCatalogEntryWithOptionalFields()
     {
         var blueCatalog = new BlueHandlerFixture.TestBlueCatalog(
-            telops: new Dictionary<uint, BlueTelopEntry>
+            telops: new Dictionary<uint, Ac15TelopEntry>
             {
                 [7] = new()
                 {

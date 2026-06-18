@@ -1,5 +1,5 @@
 using TaikoLocalServer.Application.Ac15;
-using TaikoLocalServer.Application.Catalog.Yellow;
+using TaikoLocalServer.Application.Catalog.Ac15;
 
 namespace TaikoLocalServer.Application.Common;
 
@@ -41,7 +41,7 @@ public static class YellowShopStateExtensions
     public static async ValueTask<YellowShopSeasonState?> GetOrCreateActiveYellowShopSeasonStateAsync(
         this ITaikoDbContext context,
         UserSaveDataYellow saveData,
-        YellowItemShopCatalog itemShopCatalog,
+        Ac15ItemShopCatalog itemShopCatalog,
         CancellationToken cancellationToken = default)
     {
         if (!itemShopCatalog.IsEnabled || itemShopCatalog.ActiveSeason is not { Items.Count: > 0 } activeSeason)

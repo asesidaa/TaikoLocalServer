@@ -31,11 +31,11 @@ public sealed class BlueItemShopProtocolTests
     [Fact]
     public async Task InitialData_MissingActiveSeasonDoesNotAdvertiseItemShop()
     {
-        var catalog = new BlueItemShopCatalog
+        var catalog = new Ac15ItemShopCatalog
         {
             IsEnabled = true,
             ActiveSeasonId = 99,
-            Seasons = new Dictionary<uint, BlueItemShopSeason>
+            Seasons = new Dictionary<uint, Ac15ItemShopSeason>
             {
                 [2] = CreateSeason()
             }
@@ -59,11 +59,11 @@ public sealed class BlueItemShopProtocolTests
     [Fact]
     public async Task InitialData_EmptyActiveSeasonDoesNotAdvertiseItemShop()
     {
-        var catalog = new BlueItemShopCatalog
+        var catalog = new Ac15ItemShopCatalog
         {
             IsEnabled = true,
             ActiveSeasonId = 2,
-            Seasons = new Dictionary<uint, BlueItemShopSeason>
+            Seasons = new Dictionary<uint, Ac15ItemShopSeason>
             {
                 [2] = new() { SeasonId = 2, VerupNo = 20170404, Items = [] }
             }
@@ -129,11 +129,11 @@ public sealed class BlueItemShopProtocolTests
     [Fact]
     public async Task GetItemShopInfo_InactiveShopReturnsSuccessWithoutRows()
     {
-        var catalog = new BlueItemShopCatalog
+        var catalog = new Ac15ItemShopCatalog
         {
             IsEnabled = true,
             ActiveSeasonId = 99,
-            Seasons = new Dictionary<uint, BlueItemShopSeason>
+            Seasons = new Dictionary<uint, Ac15ItemShopSeason>
             {
                 [2] = CreateSeason()
             }
@@ -312,11 +312,11 @@ public sealed class BlueItemShopProtocolTests
 
     private static BlueHandlerFixture.TestBlueCatalog CreateShopCatalog()
     {
-        return new BlueHandlerFixture.TestBlueCatalog(itemShopCatalog: new BlueItemShopCatalog
+        return new BlueHandlerFixture.TestBlueCatalog(itemShopCatalog: new Ac15ItemShopCatalog
         {
             IsEnabled = true,
             ActiveSeasonId = 2,
-            Seasons = new Dictionary<uint, BlueItemShopSeason>
+            Seasons = new Dictionary<uint, Ac15ItemShopSeason>
             {
                 [2] = CreateSeason()
             }
@@ -325,11 +325,11 @@ public sealed class BlueItemShopProtocolTests
 
     private static BlueHandlerFixture.TestBlueCatalog CreateSongShopCatalog()
     {
-        return new BlueHandlerFixture.TestBlueCatalog(itemShopCatalog: new BlueItemShopCatalog
+        return new BlueHandlerFixture.TestBlueCatalog(itemShopCatalog: new Ac15ItemShopCatalog
         {
             IsEnabled = true,
             ActiveSeasonId = 2,
-            Seasons = new Dictionary<uint, BlueItemShopSeason>
+            Seasons = new Dictionary<uint, Ac15ItemShopSeason>
             {
                 [2] = new()
                 {
@@ -337,15 +337,15 @@ public sealed class BlueItemShopProtocolTests
                     VerupNo = 20170404,
                     Items =
                     [
-                        new BlueItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 101, Price = 1300 },
-                        new BlueItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }
+                        new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 101, Price = 1300 },
+                        new Ac15ItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }
                     ]
                 }
             }
         });
     }
 
-    private static BlueItemShopSeason CreateSeason()
+    private static Ac15ItemShopSeason CreateSeason()
         => new()
         {
             SeasonId = 2,
@@ -357,8 +357,8 @@ public sealed class BlueItemShopProtocolTests
             BeforecloseDays = 0,
             Items =
             [
-                new BlueItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 7, Price = 1500 },
-                new BlueItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }
+                new Ac15ItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 7, Price = 1500 },
+                new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Kigurumi, ItemId = 12, Price = 1300 }
             ]
         };
 

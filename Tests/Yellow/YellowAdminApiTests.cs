@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using TaikoLocalServer.Adapters.AdminApi.Controllers;
 using TaikoLocalServer.Application.Ac15;
-using TaikoLocalServer.Application.Catalog.Yellow;
+using TaikoLocalServer.Application.Catalog.Ac15;
 using TaikoLocalServer.Contracts.AdminApi.Requests;
 using TaikoLocalServer.Contracts.AdminApi.Responses;
 using TaikoLocalServer.Contracts.AdminApi.ServerData;
@@ -327,7 +327,7 @@ public sealed class YellowAdminApiTests
         var yellowCatalog = new YellowHandlerFixture.TestYellowCatalog(
             musicInfoFileOrder:
             [
-                new YellowMusicInfoEntry
+                new Ac15MusicInfoEntry
                 {
                     SongNo = 201,
                     MusicId = "yellow_song",
@@ -343,15 +343,15 @@ public sealed class YellowAdminApiTests
             ],
             taikojukuFileOrder:
             [
-                new YellowTaikojukuEntry
+                new Ac15TaikojukuEntry
                 {
                     UniqueId = 20001,
                     ChallengeLevel = 1,
                     Name = "Yellow Dan",
                     VerupNo = 9100,
-                    Songs = [new YellowTaikojukuSong { SongNo = 201, Level = 1 }],
-                    Conditions = new YellowTaikojukuConditions { SoulGauge = 80 },
-                    ExcellentConditions = new YellowTaikojukuConditions { SoulGauge = 100 }
+                    Songs = [new Ac15TaikojukuSong { SongNo = 201, Level = 1 }],
+                    Conditions = new Ac15TaikojukuConditions { SoulGauge = 80 },
+                    ExcellentConditions = new Ac15TaikojukuConditions { SoulGauge = 100 }
                 }
             ]);
         await using var fixture = await YellowHandlerFixture.CreateAsync(yellowCatalog);

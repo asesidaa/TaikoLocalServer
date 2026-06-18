@@ -1163,7 +1163,7 @@ public sealed class GreenPlayResultHandlerTests
     {
         var greenCatalog = new GreenHandlerFixture.TestGreenCatalog
         {
-            Recommend = new GreenRecommendEntry
+            Recommend = new Ac15RecommendEntry
             {
                 RecommendSong = 101,
                 RecommendBestSongs = [101, 102]
@@ -1994,8 +1994,8 @@ public sealed class GreenPlayResultHandlerTests
         await using var fixture = await GreenHandlerFixture.CreateAsync(new GreenHandlerFixture.TestGreenCatalog(
             musicInfoFileOrder:
             [
-            new GreenMusicInfoEntry { SongNo = 463, MusicId = "class-id-729-song", FileOrder = 0 },
-            new GreenMusicInfoEntry { SongNo = 729, MusicId = "lemon", FileOrder = 1 }
+            new Ac15MusicInfoEntry { SongNo = 463, MusicId = "class-id-729-song", FileOrder = 0 },
+            new Ac15MusicInfoEntry { SongNo = 729, MusicId = "lemon", FileOrder = 1 }
             ]));
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
         fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
@@ -2143,7 +2143,7 @@ public sealed class GreenPlayResultHandlerTests
         return (source[id >> 3] & (1 << ((int)id & 7))) != 0;
     }
 
-    private static GreenTaikojukuEntry TestDanPack(uint danId)
+    private static Ac15TaikojukuEntry TestDanPack(uint danId)
         => new()
         {
             UniqueId = 20000 + danId,

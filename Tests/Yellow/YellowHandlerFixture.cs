@@ -1,4 +1,4 @@
-using TaikoLocalServer.Application.Catalog.Yellow;
+using TaikoLocalServer.Application.Catalog.Ac15;
 using TaikoLocalServer.Application.ServerData;
 using TaikoLocalServer.Contracts.AdminApi.ViewModels;
 
@@ -42,17 +42,17 @@ internal sealed class YellowHandlerFixture : IAsyncDisposable
 
     internal sealed class TestYellowCatalog : IYellowCatalog
     {
-        private readonly IReadOnlyList<YellowMusicInfoEntry> musicInfoFileOrder;
-        private readonly IReadOnlyList<YellowTaikojukuEntry> taikojukuFileOrder;
+        private readonly IReadOnlyList<Ac15MusicInfoEntry> musicInfoFileOrder;
+        private readonly IReadOnlyList<Ac15TaikojukuEntry> taikojukuFileOrder;
 
         public TestYellowCatalog(
-            IReadOnlyList<YellowMusicInfoEntry>? musicInfoFileOrder = null,
-            IReadOnlyList<YellowTaikojukuEntry>? taikojukuFileOrder = null,
-            YellowItemShopCatalog? itemShopCatalog = null)
+            IReadOnlyList<Ac15MusicInfoEntry>? musicInfoFileOrder = null,
+            IReadOnlyList<Ac15TaikojukuEntry>? taikojukuFileOrder = null,
+            Ac15ItemShopCatalog? itemShopCatalog = null)
         {
             this.musicInfoFileOrder = musicInfoFileOrder ?? DefaultMusicInfoFileOrder;
             this.taikojukuFileOrder = taikojukuFileOrder ?? [];
-            ItemShopCatalog = itemShopCatalog ?? YellowItemShopCatalog.Disabled;
+            ItemShopCatalog = itemShopCatalog ?? Ac15ItemShopCatalog.Disabled;
             ItemShop = ItemShopCatalog.ActiveItemsByNo;
         }
 
@@ -60,33 +60,33 @@ internal sealed class YellowHandlerFixture : IAsyncDisposable
 
         public uint SongHashVersion => 789;
 
-        public IReadOnlyList<YellowMusicInfoEntry> MusicInfoFileOrder => musicInfoFileOrder;
+        public IReadOnlyList<Ac15MusicInfoEntry> MusicInfoFileOrder => musicInfoFileOrder;
 
         public IReadOnlyDictionary<uint, IMusicInfoEntry> MusicInfos
             => MusicInfoFileOrder.ToDictionary(song => song.SongNo, song => (IMusicInfoEntry)song);
 
-        public IReadOnlyDictionary<uint, YellowMusicInfoEntry> YellowMusicInfos
+        public IReadOnlyDictionary<uint, Ac15MusicInfoEntry> YellowMusicInfos
             => MusicInfoFileOrder.ToDictionary(song => song.SongNo);
 
-        public IReadOnlyList<YellowTaikojukuEntry> TaikojukuFileOrder => taikojukuFileOrder;
+        public IReadOnlyList<Ac15TaikojukuEntry> TaikojukuFileOrder => taikojukuFileOrder;
 
-        public IReadOnlyDictionary<uint, YellowTaikojukuEntry> Taikojuku
+        public IReadOnlyDictionary<uint, Ac15TaikojukuEntry> Taikojuku
             => TaikojukuFileOrder.ToDictionary(pack => pack.UniqueId);
 
-        public YellowItemShopCatalog ItemShopCatalog { get; }
+        public Ac15ItemShopCatalog ItemShopCatalog { get; }
 
-        public IReadOnlyDictionary<uint, YellowItemShopEntry> ItemShop { get; }
+        public IReadOnlyDictionary<uint, Ac15ItemShopEntry> ItemShop { get; }
 
         public IReadOnlyDictionary<uint, EventFolderData> EventFolders { get; } = new Dictionary<uint, EventFolderData>();
 
-        public IReadOnlyDictionary<uint, YellowTelopEntry> Telops { get; } = new Dictionary<uint, YellowTelopEntry>();
+        public IReadOnlyDictionary<uint, Ac15TelopEntry> Telops { get; } = new Dictionary<uint, Ac15TelopEntry>();
 
-        public IReadOnlyDictionary<uint, YellowGachaEntry> Gachas { get; } = new Dictionary<uint, YellowGachaEntry>();
+        public IReadOnlyDictionary<uint, Ac15GachaEntry> Gachas { get; } = new Dictionary<uint, Ac15GachaEntry>();
 
-        public IReadOnlyDictionary<uint, YellowTournamentEntry> Tournaments { get; } =
-            new Dictionary<uint, YellowTournamentEntry>();
+        public IReadOnlyDictionary<uint, Ac15TournamentEntry> Tournaments { get; } =
+            new Dictionary<uint, Ac15TournamentEntry>();
 
-        public YellowRecommendEntry Recommend { get; init; } = YellowRecommendEntry.Empty;
+        public Ac15RecommendEntry Recommend { get; init; } = Ac15RecommendEntry.Empty;
 
         public IReadOnlyList<MovieData> Movies { get; init; } = [];
 
@@ -120,7 +120,7 @@ internal sealed class YellowHandlerFixture : IAsyncDisposable
 
         public Task InitializeAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
-        private static IReadOnlyList<YellowMusicInfoEntry> DefaultMusicInfoFileOrder { get; } =
+        private static IReadOnlyList<Ac15MusicInfoEntry> DefaultMusicInfoFileOrder { get; } =
         [
             new() { SongNo = 101, MusicId = "a", FileOrder = 0 },
             new() { SongNo = 102, MusicId = "b", FileOrder = 1 },

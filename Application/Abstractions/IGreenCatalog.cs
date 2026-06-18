@@ -1,32 +1,32 @@
-using TaikoLocalServer.Application.Catalog.Green;
+using TaikoLocalServer.Application.Catalog.Ac15;
 
 namespace TaikoLocalServer.Application.Abstractions;
 
 public interface IGreenCatalog : IEraGameDataCatalog
 {
-    IReadOnlyList<GreenMusicInfoEntry> MusicInfoFileOrder { get; }
+    IReadOnlyList<Ac15MusicInfoEntry> MusicInfoFileOrder { get; }
 
     uint SongHashVersion { get; }
 
-    IReadOnlyDictionary<uint, GreenMusicInfoEntry> GreenMusicInfos { get; }
+    IReadOnlyDictionary<uint, Ac15MusicInfoEntry> GreenMusicInfos { get; }
 
-    IReadOnlyList<GreenTaikojukuEntry> TaikojukuFileOrder { get; }
+    IReadOnlyList<Ac15TaikojukuEntry> TaikojukuFileOrder { get; }
 
-    IReadOnlyDictionary<uint, GreenTaikojukuEntry> Taikojuku { get; }
+    IReadOnlyDictionary<uint, Ac15TaikojukuEntry> Taikojuku { get; }
 
-    GreenItemShopCatalog ItemShopCatalog { get; }
+    Ac15ItemShopCatalog ItemShopCatalog { get; }
 
-    IReadOnlyDictionary<uint, GreenItemShopEntry> ItemShop { get; }
+    IReadOnlyDictionary<uint, Ac15ItemShopEntry> ItemShop { get; }
 
     IReadOnlyDictionary<uint, EventFolderData> EventFolders { get; }
 
-    IReadOnlyDictionary<uint, GreenTelopEntry> Telops { get; }
+    IReadOnlyDictionary<uint, Ac15TelopEntry> Telops { get; }
 
-    IReadOnlyDictionary<uint, GreenGachaEntry> Gachas { get; }
+    IReadOnlyDictionary<uint, Ac15GachaEntry> Gachas { get; }
 
-    IReadOnlyDictionary<uint, GreenTournamentEntry> Tournaments { get; }
+    IReadOnlyDictionary<uint, Ac15TournamentEntry> Tournaments { get; }
 
-    GreenRecommendEntry Recommend { get; }
+    Ac15RecommendEntry Recommend { get; }
 
     IReadOnlyList<MovieData> Movies { get; }
 

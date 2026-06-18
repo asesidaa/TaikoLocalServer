@@ -87,7 +87,7 @@ public sealed class BlueUserDataTests
     public async Task UserData_Blue_RecommendComesFromCatalog()
     {
         var blueCatalog = new BlueHandlerFixture.TestBlueCatalog(
-            recommend: new TaikoLocalServer.Application.Catalog.Blue.BlueRecommendEntry
+            recommend: new TaikoLocalServer.Application.Catalog.Ac15.Ac15RecommendEntry
             {
                 RecommendSong = 102,
                 RecommendBestSongs = [101, 102, 103]

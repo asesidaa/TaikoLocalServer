@@ -1,6 +1,4 @@
 using TaikoLocalServer.Application.Ac15;
-using TaikoLocalServer.Application.Catalog.Ac15;
-using TaikoLocalServer.Application.Catalog.Green;
 
 namespace TaikoLocalServer.Application.Handlers;
 
@@ -17,33 +15,9 @@ public partial class GetTaikojukuQueryHandler
         var green = gameDataService.Green();
         return ValueTask.FromResult(Ac15TaikojukuService.BuildResponse(
             request.RequestedDans,
-            green.TaikojukuFileOrder.Select(MapGreenTaikojuku).ToArray(),
-            green.MusicInfoFileOrder.Select(MapGreenMusic).ToArray(),
+            green.TaikojukuFileOrder,
+            green.MusicInfoFileOrder,
             green.GreenMusicInfos.Keys.ToArray(),
             Ac15EraProfiles.Green.Limits));
     }
-
-    private static Ac15TaikojukuEntry MapGreenTaikojuku(GreenTaikojukuEntry entry) => new()
-    {
-        UniqueId = entry.UniqueId,
-        DanLevel = entry.DanLevel,
-        ChallengeLevel = entry.ChallengeLevel,
-        Name = entry.Name,
-        Difficulty = entry.Difficulty,
-        VerupNo = entry.VerupNo,
-        Songs = entry.Songs.Select(song => new Ac15TaikojukuSong
-        {
-            MusicId = song.MusicId,
-            SongNo = song.SongNo,
-            Level = song.Level,
-            Notes = song.Notes
-        }).ToArray()
-    };
-
-    private static Ac15MusicInfoEntry MapGreenMusic(GreenMusicInfoEntry entry) => new()
-    {
-        MusicId = entry.MusicId,
-        SongNo = entry.SongNo,
-        FileOrder = entry.FileOrder
-    };
 }

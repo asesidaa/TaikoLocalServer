@@ -6,7 +6,7 @@ global using Microsoft.Extensions.Options;
 global using TaikoLocalServer.Application.Abstractions;
 global using TaikoLocalServer.Application.Ac15;
 global using TaikoLocalServer.Application.Common;
-global using TaikoLocalServer.Application.Catalog.Green;
+global using TaikoLocalServer.Application.Catalog.Ac15;
 global using TaikoLocalServer.Application.Dtos;
 global using TaikoLocalServer.Application.Dtos.Ac15;
 global using TaikoLocalServer.Application.Handlers;

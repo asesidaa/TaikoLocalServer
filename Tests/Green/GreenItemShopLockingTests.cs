@@ -100,7 +100,7 @@ public sealed class GreenItemShopLockingTests
 
     private static GreenHandlerFixture.TestGreenCatalog CreateShopCatalog()
     {
-        var season = new GreenItemShopSeason
+        var season = new Ac15ItemShopSeason
         {
             SeasonId = 2,
             VerupNo = 9,
@@ -109,18 +109,18 @@ public sealed class GreenItemShopLockingTests
             EndDatetime = "20190626075959",
             Items =
             [
-                new GreenItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 101, Price = 1300 },
-                new GreenItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Tone, ItemId = 4, Price = 500 },
-                new GreenItemShopEntry { ItemNo = 3, ItemType = Ac15ShopItemType.Head, ItemId = 117, Price = 500 },
-                new GreenItemShopEntry { ItemNo = 4, ItemType = Ac15ShopItemType.Body, ItemId = 146, Price = 500 }
+                new Ac15ItemShopEntry { ItemNo = 1, ItemType = Ac15ShopItemType.Song, ItemId = 101, Price = 1300 },
+                new Ac15ItemShopEntry { ItemNo = 2, ItemType = Ac15ShopItemType.Tone, ItemId = 4, Price = 500 },
+                new Ac15ItemShopEntry { ItemNo = 3, ItemType = Ac15ShopItemType.Head, ItemId = 117, Price = 500 },
+                new Ac15ItemShopEntry { ItemNo = 4, ItemType = Ac15ShopItemType.Body, ItemId = 146, Price = 500 }
             ]
         };
 
-        return new GreenHandlerFixture.TestGreenCatalog(itemShopCatalog: new GreenItemShopCatalog
+        return new GreenHandlerFixture.TestGreenCatalog(itemShopCatalog: new Ac15ItemShopCatalog
         {
             IsEnabled = true,
             ActiveSeasonId = 2,
-            Seasons = new Dictionary<uint, GreenItemShopSeason> { [2] = season }
+            Seasons = new Dictionary<uint, Ac15ItemShopSeason> { [2] = season }
         });
     }
 
