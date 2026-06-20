@@ -89,9 +89,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         public uint Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"verup_no")]
-        public uint? VerupNo
+        public uint VerupNo
         {
-            get => __pbn__VerupNo;
+            get => __pbn__VerupNo.GetValueOrDefault();
             set => __pbn__VerupNo = value;
         }
         public bool ShouldSerializeVerupNo() => __pbn__VerupNo != null;
@@ -164,6 +164,12 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         [global::ProtoBuf.ProtoMember(3, Name = @"game_svr_stat", IsRequired = true)]
         public uint GameSvrStat { get; set; }
 
+        [global::ProtoBuf.ProtoMember(4, Name = @"bnid_svr_stat", IsRequired = true)]
+        public uint BnidSvrStat { get; set; }
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"banacoin_stat", IsRequired = true)]
+        public uint BanacoinStat { get; set; }
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -208,9 +214,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
                 => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
             [global::ProtoBuf.ProtoMember(1, Name = @"folder_id")]
-            public uint? FolderId
+            public uint FolderId
             {
-                get => __pbn__FolderId;
+                get => __pbn__FolderId.GetValueOrDefault();
                 set => __pbn__FolderId = value;
             }
             public bool ShouldSerializeFolderId() => __pbn__FolderId != null;
@@ -218,9 +224,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
             private uint? __pbn__FolderId;
 
             [global::ProtoBuf.ProtoMember(2, Name = @"verup_no")]
-            public uint? VerupNo
+            public uint VerupNo
             {
-                get => __pbn__VerupNo;
+                get => __pbn__VerupNo.GetValueOrDefault();
                 set => __pbn__VerupNo = value;
             }
             public bool ShouldSerializeVerupNo() => __pbn__VerupNo != null;
@@ -276,9 +282,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
             public uint GetDan { get; set; }
 
             [global::ProtoBuf.ProtoMember(2, Name = @"verup_no")]
-            public uint? VerupNo
+            public uint VerupNo
             {
-                get => __pbn__VerupNo;
+                get => __pbn__VerupNo.GetValueOrDefault();
                 set => __pbn__VerupNo = value;
             }
             public bool ShouldSerializeVerupNo() => __pbn__VerupNo != null;
@@ -333,9 +339,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         public uint Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"song_hash_ver")]
-        public uint? SongHashVer
+        public uint SongHashVer
         {
-            get => __pbn__SongHashVer;
+            get => __pbn__SongHashVer.GetValueOrDefault();
             set => __pbn__SongHashVer = value;
         }
         public bool ShouldSerializeSongHashVer() => __pbn__SongHashVer != null;
@@ -380,6 +386,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
 
         [global::ProtoBuf.ProtoMember(8, Name = @"ary_taikojuku_data")]
         public global::System.Collections.Generic.List<InformationData> AryTaikojukuDatas { get; } = new global::System.Collections.Generic.List<InformationData>();
+
+        [global::ProtoBuf.ProtoMember(9, Name = @"ary_legalterms_data")]
+        public global::System.Collections.Generic.List<InformationData> AryLegaltermsDatas { get; } = new global::System.Collections.Generic.List<InformationData>();
 
         [global::ProtoBuf.ProtoContract()]
         public partial class InformationData : global::ProtoBuf.IExtensible
@@ -426,6 +435,172 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
         public uint Result { get; set; }
 
+        [global::ProtoBuf.ProtoMember(2, Name = @"rare_rate")]
+        public uint RareRate
+        {
+            get => __pbn__RareRate.GetValueOrDefault();
+            set => __pbn__RareRate = value;
+        }
+        public bool ShouldSerializeRareRate() => __pbn__RareRate != null;
+        public void ResetRareRate() => __pbn__RareRate = null;
+        private uint? __pbn__RareRate;
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"song_hash_ver")]
+        public uint SongHashVer
+        {
+            get => __pbn__SongHashVer.GetValueOrDefault();
+            set => __pbn__SongHashVer = value;
+        }
+        public bool ShouldSerializeSongHashVer() => __pbn__SongHashVer != null;
+        public void ResetSongHashVer() => __pbn__SongHashVer = null;
+        private uint? __pbn__SongHashVer;
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"ary_gacha_song_data")]
+        public global::System.Collections.Generic.List<GachainfoData> AryGachaSongDatas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"ary_gacha_tone_data")]
+        public global::System.Collections.Generic.List<GachainfoData> AryGachaToneDatas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
+
+        [global::ProtoBuf.ProtoMember(6, Name = @"ary_gacha_costume_1_data")]
+        public global::System.Collections.Generic.List<GachainfoData> AryGachaCostume1Datas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
+
+        [global::ProtoBuf.ProtoMember(7, Name = @"ary_gacha_costume_2_data")]
+        public global::System.Collections.Generic.List<GachainfoData> AryGachaCostume2Datas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
+
+        [global::ProtoBuf.ProtoMember(8, Name = @"ary_gacha_costume_3_data")]
+        public global::System.Collections.Generic.List<GachainfoData> AryGachaCostume3Datas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
+
+        [global::ProtoBuf.ProtoMember(9, Name = @"ary_gacha_costume_4_data")]
+        public global::System.Collections.Generic.List<GachainfoData> AryGachaCostume4Datas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
+
+        [global::ProtoBuf.ProtoMember(10, Name = @"ary_gacha_costume_5_data")]
+        public global::System.Collections.Generic.List<GachainfoData> AryGachaCostume5Datas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
+
+        [global::ProtoBuf.ProtoMember(11, Name = @"ary_gacha_title_data")]
+        public global::System.Collections.Generic.List<GachainfoData> AryGachaTitleDatas { get; } = new global::System.Collections.Generic.List<GachainfoData>();
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class GachainfoData : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1, Name = @"normal_gacha_flg", IsRequired = true)]
+            public byte[] NormalGachaFlg { get; set; }
+
+            [global::ProtoBuf.ProtoMember(2, Name = @"rare_gacha_flg", IsRequired = true)]
+            public byte[] RareGachaFlg { get; set; }
+
+        }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CoinsettingRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"setting_datetime", IsRequired = true)]
+        public string SettingDatetime { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"play_rates", IsRequired = true)]
+        public uint PlayRates { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CoinsettingResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetlegaltermsRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"type_id", IsRequired = true)]
+        public uint TypeId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"parts_number", IsRequired = true)]
+        public uint PartsNumber { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetlegaltermsResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"verup_no")]
+        public uint VerupNo
+        {
+            get => __pbn__VerupNo.GetValueOrDefault();
+            set => __pbn__VerupNo = value;
+        }
+        public bool ShouldSerializeVerupNo() => __pbn__VerupNo != null;
+        public void ResetVerupNo() => __pbn__VerupNo = null;
+        private uint? __pbn__VerupNo;
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"total_number")]
+        public uint TotalNumber
+        {
+            get => __pbn__TotalNumber.GetValueOrDefault();
+            set => __pbn__TotalNumber = value;
+        }
+        public bool ShouldSerializeTotalNumber() => __pbn__TotalNumber != null;
+        public void ResetTotalNumber() => __pbn__TotalNumber = null;
+        private uint? __pbn__TotalNumber;
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"parts_number")]
+        public uint PartsNumber
+        {
+            get => __pbn__PartsNumber.GetValueOrDefault();
+            set => __pbn__PartsNumber = value;
+        }
+        public bool ShouldSerializePartsNumber() => __pbn__PartsNumber != null;
+        public void ResetPartsNumber() => __pbn__PartsNumber = null;
+        private uint? __pbn__PartsNumber;
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"legal_terms_text")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string LegalTermsText
+        {
+            get => __pbn__LegalTermsText ?? "";
+            set => __pbn__LegalTermsText = value;
+        }
+        public bool ShouldSerializeLegalTermsText() => __pbn__LegalTermsText != null;
+        public void ResetLegalTermsText() => __pbn__LegalTermsText = null;
+        private string __pbn__LegalTermsText;
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -466,9 +641,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         public uint Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"player_type")]
-        public uint? PlayerType
+        public uint PlayerType
         {
-            get => __pbn__PlayerType;
+            get => __pbn__PlayerType.GetValueOrDefault();
             set => __pbn__PlayerType = value;
         }
         public bool ShouldSerializePlayerType() => __pbn__PlayerType != null;
@@ -476,9 +651,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__PlayerType;
 
         [global::ProtoBuf.ProtoMember(3, Name = @"com_svr_result")]
-        public uint? ComSvrResult
+        public uint ComSvrResult
         {
-            get => __pbn__ComSvrResult;
+            get => __pbn__ComSvrResult.GetValueOrDefault();
             set => __pbn__ComSvrResult = value;
         }
         public bool ShouldSerializeComSvrResult() => __pbn__ComSvrResult != null;
@@ -486,9 +661,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__ComSvrResult;
 
         [global::ProtoBuf.ProtoMember(4, Name = @"mb_id")]
-        public uint? MbId
+        public uint MbId
         {
-            get => __pbn__MbId;
+            get => __pbn__MbId.GetValueOrDefault();
             set => __pbn__MbId = value;
         }
         public bool ShouldSerializeMbId() => __pbn__MbId != null;
@@ -496,9 +671,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__MbId;
 
         [global::ProtoBuf.ProtoMember(5, Name = @"baid")]
-        public uint? Baid
+        public uint Baid
         {
-            get => __pbn__Baid;
+            get => __pbn__Baid.GetValueOrDefault();
             set => __pbn__Baid = value;
         }
         public bool ShouldSerializeBaid() => __pbn__Baid != null;
@@ -517,9 +692,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private string __pbn__AccessCode;
 
         [global::ProtoBuf.ProtoMember(7, Name = @"is_publish")]
-        public bool? IsPublish
+        public bool IsPublish
         {
-            get => __pbn__IsPublish;
+            get => __pbn__IsPublish.GetValueOrDefault();
             set => __pbn__IsPublish = value;
         }
         public bool ShouldSerializeIsPublish() => __pbn__IsPublish != null;
@@ -527,9 +702,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private bool? __pbn__IsPublish;
 
         [global::ProtoBuf.ProtoMember(8, Name = @"card_own_num")]
-        public uint? CardOwnNum
+        public uint CardOwnNum
         {
-            get => __pbn__CardOwnNum;
+            get => __pbn__CardOwnNum.GetValueOrDefault();
             set => __pbn__CardOwnNum = value;
         }
         public bool ShouldSerializeCardOwnNum() => __pbn__CardOwnNum != null;
@@ -548,9 +723,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private string __pbn__RegCountryId;
 
         [global::ProtoBuf.ProtoMember(10, Name = @"purpose_id")]
-        public uint? PurposeId
+        public uint PurposeId
         {
-            get => __pbn__PurposeId;
+            get => __pbn__PurposeId.GetValueOrDefault();
             set => __pbn__PurposeId = value;
         }
         public bool ShouldSerializePurposeId() => __pbn__PurposeId != null;
@@ -558,9 +733,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__PurposeId;
 
         [global::ProtoBuf.ProtoMember(11, Name = @"region_id")]
-        public uint? RegionId
+        public uint RegionId
         {
-            get => __pbn__RegionId;
+            get => __pbn__RegionId.GetValueOrDefault();
             set => __pbn__RegionId = value;
         }
         public bool ShouldSerializeRegionId() => __pbn__RegionId != null;
@@ -590,9 +765,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private string __pbn__Title;
 
         [global::ProtoBuf.ProtoMember(14, Name = @"color_face")]
-        public uint? ColorFace
+        public uint ColorFace
         {
-            get => __pbn__ColorFace;
+            get => __pbn__ColorFace.GetValueOrDefault();
             set => __pbn__ColorFace = value;
         }
         public bool ShouldSerializeColorFace() => __pbn__ColorFace != null;
@@ -600,9 +775,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__ColorFace;
 
         [global::ProtoBuf.ProtoMember(15, Name = @"color_body")]
-        public uint? ColorBody
+        public uint ColorBody
         {
-            get => __pbn__ColorBody;
+            get => __pbn__ColorBody.GetValueOrDefault();
             set => __pbn__ColorBody = value;
         }
         public bool ShouldSerializeColorBody() => __pbn__ColorBody != null;
@@ -610,9 +785,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__ColorBody;
 
         [global::ProtoBuf.ProtoMember(16, Name = @"color_limb")]
-        public uint? ColorLimb
+        public uint ColorLimb
         {
-            get => __pbn__ColorLimb;
+            get => __pbn__ColorLimb.GetValueOrDefault();
             set => __pbn__ColorLimb = value;
         }
         public bool ShouldSerializeColorLimb() => __pbn__ColorLimb != null;
@@ -676,9 +851,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private byte[] __pbn__CostumeFlg5;
 
         [global::ProtoBuf.ProtoMember(24, Name = @"reward_ptn")]
-        public uint? RewardPtn
+        public uint RewardPtn
         {
-            get => __pbn__RewardPtn;
+            get => __pbn__RewardPtn.GetValueOrDefault();
             set => __pbn__RewardPtn = value;
         }
         public bool ShouldSerializeRewardPtn() => __pbn__RewardPtn != null;
@@ -697,9 +872,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private string __pbn__UpdateDatetime;
 
         [global::ProtoBuf.ProtoMember(26, Name = @"disp_dan_type")]
-        public uint? DispDanType
+        public uint DispDanType
         {
-            get => __pbn__DispDanType;
+            get => __pbn__DispDanType.GetValueOrDefault();
             set => __pbn__DispDanType = value;
         }
         public bool ShouldSerializeDispDanType() => __pbn__DispDanType != null;
@@ -707,9 +882,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__DispDanType;
 
         [global::ProtoBuf.ProtoMember(27, Name = @"got_dan_max")]
-        public uint? GotDanMax
+        public uint GotDanMax
         {
-            get => __pbn__GotDanMax;
+            get => __pbn__GotDanMax.GetValueOrDefault();
             set => __pbn__GotDanMax = value;
         }
         public bool ShouldSerializeGotDanMax() => __pbn__GotDanMax != null;
@@ -748,14 +923,25 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private byte[] __pbn__ContentInfo;
 
         [global::ProtoBuf.ProtoMember(31, Name = @"default_tone_setting")]
-        public uint? DefaultToneSetting
+        public uint DefaultToneSetting
         {
-            get => __pbn__DefaultToneSetting;
+            get => __pbn__DefaultToneSetting.GetValueOrDefault();
             set => __pbn__DefaultToneSetting = value;
         }
         public bool ShouldSerializeDefaultToneSetting() => __pbn__DefaultToneSetting != null;
         public void ResetDefaultToneSetting() => __pbn__DefaultToneSetting = null;
         private uint? __pbn__DefaultToneSetting;
+
+        [global::ProtoBuf.ProtoMember(32, Name = @"personid")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Personid
+        {
+            get => __pbn__Personid ?? "";
+            set => __pbn__Personid = value;
+        }
+        public bool ShouldSerializePersonid() => __pbn__Personid != null;
+        public void ResetPersonid() => __pbn__Personid = null;
+        private string __pbn__Personid;
 
         [global::ProtoBuf.ProtoContract()]
         public partial class CostumeData : global::ProtoBuf.IExtensible
@@ -765,9 +951,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
                 => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
             [global::ProtoBuf.ProtoMember(1, Name = @"costume_1")]
-            public uint? Costume1
+            public uint Costume1
             {
-                get => __pbn__Costume1;
+                get => __pbn__Costume1.GetValueOrDefault();
                 set => __pbn__Costume1 = value;
             }
             public bool ShouldSerializeCostume1() => __pbn__Costume1 != null;
@@ -775,9 +961,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
             private uint? __pbn__Costume1;
 
             [global::ProtoBuf.ProtoMember(2, Name = @"costume_2")]
-            public uint? Costume2
+            public uint Costume2
             {
-                get => __pbn__Costume2;
+                get => __pbn__Costume2.GetValueOrDefault();
                 set => __pbn__Costume2 = value;
             }
             public bool ShouldSerializeCostume2() => __pbn__Costume2 != null;
@@ -785,9 +971,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
             private uint? __pbn__Costume2;
 
             [global::ProtoBuf.ProtoMember(3, Name = @"costume_3")]
-            public uint? Costume3
+            public uint Costume3
             {
-                get => __pbn__Costume3;
+                get => __pbn__Costume3.GetValueOrDefault();
                 set => __pbn__Costume3 = value;
             }
             public bool ShouldSerializeCostume3() => __pbn__Costume3 != null;
@@ -795,9 +981,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
             private uint? __pbn__Costume3;
 
             [global::ProtoBuf.ProtoMember(4, Name = @"costume_4")]
-            public uint? Costume4
+            public uint Costume4
             {
-                get => __pbn__Costume4;
+                get => __pbn__Costume4.GetValueOrDefault();
                 set => __pbn__Costume4 = value;
             }
             public bool ShouldSerializeCostume4() => __pbn__Costume4 != null;
@@ -805,9 +991,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
             private uint? __pbn__Costume4;
 
             [global::ProtoBuf.ProtoMember(5, Name = @"costume_5")]
-            public uint? Costume5
+            public uint Costume5
             {
-                get => __pbn__Costume5;
+                get => __pbn__Costume5.GetValueOrDefault();
                 set => __pbn__Costume5 = value;
             }
             public bool ShouldSerializeCostume5() => __pbn__Costume5 != null;
@@ -862,9 +1048,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         public uint Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"com_svr_result")]
-        public uint? ComSvrResult
+        public uint ComSvrResult
         {
-            get => __pbn__ComSvrResult;
+            get => __pbn__ComSvrResult.GetValueOrDefault();
             set => __pbn__ComSvrResult = value;
         }
         public bool ShouldSerializeComSvrResult() => __pbn__ComSvrResult != null;
@@ -872,9 +1058,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__ComSvrResult;
 
         [global::ProtoBuf.ProtoMember(3, Name = @"mb_id")]
-        public uint? MbId
+        public uint MbId
         {
-            get => __pbn__MbId;
+            get => __pbn__MbId.GetValueOrDefault();
             set => __pbn__MbId = value;
         }
         public bool ShouldSerializeMbId() => __pbn__MbId != null;
@@ -882,9 +1068,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__MbId;
 
         [global::ProtoBuf.ProtoMember(4, Name = @"baid")]
-        public uint? Baid
+        public uint Baid
         {
-            get => __pbn__Baid;
+            get => __pbn__Baid.GetValueOrDefault();
             set => __pbn__Baid = value;
         }
         public bool ShouldSerializeBaid() => __pbn__Baid != null;
@@ -903,9 +1089,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private string __pbn__AccessCode;
 
         [global::ProtoBuf.ProtoMember(6, Name = @"is_publish")]
-        public bool? IsPublish
+        public bool IsPublish
         {
-            get => __pbn__IsPublish;
+            get => __pbn__IsPublish.GetValueOrDefault();
             set => __pbn__IsPublish = value;
         }
         public bool ShouldSerializeIsPublish() => __pbn__IsPublish != null;
@@ -913,9 +1099,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private bool? __pbn__IsPublish;
 
         [global::ProtoBuf.ProtoMember(7, Name = @"card_own_num")]
-        public uint? CardOwnNum
+        public uint CardOwnNum
         {
-            get => __pbn__CardOwnNum;
+            get => __pbn__CardOwnNum.GetValueOrDefault();
             set => __pbn__CardOwnNum = value;
         }
         public bool ShouldSerializeCardOwnNum() => __pbn__CardOwnNum != null;
@@ -934,9 +1120,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private string __pbn__RegCountryId;
 
         [global::ProtoBuf.ProtoMember(9, Name = @"purpose_id")]
-        public uint? PurposeId
+        public uint PurposeId
         {
-            get => __pbn__PurposeId;
+            get => __pbn__PurposeId.GetValueOrDefault();
             set => __pbn__PurposeId = value;
         }
         public bool ShouldSerializePurposeId() => __pbn__PurposeId != null;
@@ -944,9 +1130,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__PurposeId;
 
         [global::ProtoBuf.ProtoMember(10, Name = @"region_id")]
-        public uint? RegionId
+        public uint RegionId
         {
-            get => __pbn__RegionId;
+            get => __pbn__RegionId.GetValueOrDefault();
             set => __pbn__RegionId = value;
         }
         public bool ShouldSerializeRegionId() => __pbn__RegionId != null;
@@ -965,9 +1151,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private string __pbn__MydonName;
 
         [global::ProtoBuf.ProtoMember(12, Name = @"reward_ptn")]
-        public uint? RewardPtn
+        public uint RewardPtn
         {
-            get => __pbn__RewardPtn;
+            get => __pbn__RewardPtn.GetValueOrDefault();
             set => __pbn__RewardPtn = value;
         }
         public bool ShouldSerializeRewardPtn() => __pbn__RewardPtn != null;
@@ -994,6 +1180,17 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         public bool ShouldSerializeContentInfo() => __pbn__ContentInfo != null;
         public void ResetContentInfo() => __pbn__ContentInfo = null;
         private byte[] __pbn__ContentInfo;
+
+        [global::ProtoBuf.ProtoMember(15, Name = @"personid")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Personid
+        {
+            get => __pbn__Personid ?? "";
+            set => __pbn__Personid = value;
+        }
+        public bool ShouldSerializePersonid() => __pbn__Personid != null;
+        public void ResetPersonid() => __pbn__Personid = null;
+        private string __pbn__Personid;
 
     }
 
@@ -1026,9 +1223,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         public uint Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"is_explain")]
-        public bool? IsExplain
+        public bool IsExplain
         {
-            get => __pbn__IsExplain;
+            get => __pbn__IsExplain.GetValueOrDefault();
             set => __pbn__IsExplain = value;
         }
         public bool ShouldSerializeIsExplain() => __pbn__IsExplain != null;
@@ -1042,9 +1239,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         public uint[] AryRecentSongNoes { get; set; }
 
         [global::ProtoBuf.ProtoMember(5, Name = @"song_hash_ver")]
-        public uint? SongHashVer
+        public uint SongHashVer
         {
-            get => __pbn__SongHashVer;
+            get => __pbn__SongHashVer.GetValueOrDefault();
             set => __pbn__SongHashVer = value;
         }
         public bool ShouldSerializeSongHashVer() => __pbn__SongHashVer != null;
@@ -1062,9 +1259,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private byte[] __pbn__HashReleaseSongFlg;
 
         [global::ProtoBuf.ProtoMember(7, Name = @"is_devil")]
-        public bool? IsDevil
+        public bool IsDevil
         {
-            get => __pbn__IsDevil;
+            get => __pbn__IsDevil.GetValueOrDefault();
             set => __pbn__IsDevil = value;
         }
         public bool ShouldSerializeIsDevil() => __pbn__IsDevil != null;
@@ -1081,9 +1278,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         public global::System.Collections.Generic.List<CompeData> AryBngCompeStats { get; } = new global::System.Collections.Generic.List<CompeData>();
 
         [global::ProtoBuf.ProtoMember(11, Name = @"disp_score_type")]
-        public uint? DispScoreType
+        public uint DispScoreType
         {
-            get => __pbn__DispScoreType;
+            get => __pbn__DispScoreType.GetValueOrDefault();
             set => __pbn__DispScoreType = value;
         }
         public bool ShouldSerializeDispScoreType() => __pbn__DispScoreType != null;
@@ -1094,9 +1291,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         public global::System.Collections.Generic.List<FriendInfo> AryFriendInfoes { get; } = new global::System.Collections.Generic.List<FriendInfo>();
 
         [global::ProtoBuf.ProtoMember(13, Name = @"disp_level_total")]
-        public uint? DispLevelTotal
+        public uint DispLevelTotal
         {
-            get => __pbn__DispLevelTotal;
+            get => __pbn__DispLevelTotal.GetValueOrDefault();
             set => __pbn__DispLevelTotal = value;
         }
         public bool ShouldSerializeDispLevelTotal() => __pbn__DispLevelTotal != null;
@@ -1104,9 +1301,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__DispLevelTotal;
 
         [global::ProtoBuf.ProtoMember(14, Name = @"disp_level_chassis")]
-        public uint? DispLevelChassis
+        public uint DispLevelChassis
         {
-            get => __pbn__DispLevelChassis;
+            get => __pbn__DispLevelChassis.GetValueOrDefault();
             set => __pbn__DispLevelChassis = value;
         }
         public bool ShouldSerializeDispLevelChassis() => __pbn__DispLevelChassis != null;
@@ -1144,9 +1341,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private byte[] __pbn__TitleFlg;
 
         [global::ProtoBuf.ProtoMember(18, Name = @"reward_progress")]
-        public uint? RewardProgress
+        public uint RewardProgress
         {
-            get => __pbn__RewardProgress;
+            get => __pbn__RewardProgress.GetValueOrDefault();
             set => __pbn__RewardProgress = value;
         }
         public bool ShouldSerializeRewardProgress() => __pbn__RewardProgress != null;
@@ -1154,9 +1351,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__RewardProgress;
 
         [global::ProtoBuf.ProtoMember(19, Name = @"categ_jpop_cnt")]
-        public uint? CategJpopCnt
+        public uint CategJpopCnt
         {
-            get => __pbn__CategJpopCnt;
+            get => __pbn__CategJpopCnt.GetValueOrDefault();
             set => __pbn__CategJpopCnt = value;
         }
         public bool ShouldSerializeCategJpopCnt() => __pbn__CategJpopCnt != null;
@@ -1164,9 +1361,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__CategJpopCnt;
 
         [global::ProtoBuf.ProtoMember(20, Name = @"categ_anime_cnt")]
-        public uint? CategAnimeCnt
+        public uint CategAnimeCnt
         {
-            get => __pbn__CategAnimeCnt;
+            get => __pbn__CategAnimeCnt.GetValueOrDefault();
             set => __pbn__CategAnimeCnt = value;
         }
         public bool ShouldSerializeCategAnimeCnt() => __pbn__CategAnimeCnt != null;
@@ -1174,9 +1371,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__CategAnimeCnt;
 
         [global::ProtoBuf.ProtoMember(21, Name = @"categ_doyo_cnt")]
-        public uint? CategDoyoCnt
+        public uint CategDoyoCnt
         {
-            get => __pbn__CategDoyoCnt;
+            get => __pbn__CategDoyoCnt.GetValueOrDefault();
             set => __pbn__CategDoyoCnt = value;
         }
         public bool ShouldSerializeCategDoyoCnt() => __pbn__CategDoyoCnt != null;
@@ -1184,9 +1381,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__CategDoyoCnt;
 
         [global::ProtoBuf.ProtoMember(22, Name = @"categ_variety_cnt")]
-        public uint? CategVarietyCnt
+        public uint CategVarietyCnt
         {
-            get => __pbn__CategVarietyCnt;
+            get => __pbn__CategVarietyCnt.GetValueOrDefault();
             set => __pbn__CategVarietyCnt = value;
         }
         public bool ShouldSerializeCategVarietyCnt() => __pbn__CategVarietyCnt != null;
@@ -1194,9 +1391,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__CategVarietyCnt;
 
         [global::ProtoBuf.ProtoMember(23, Name = @"categ_classic_cnt")]
-        public uint? CategClassicCnt
+        public uint CategClassicCnt
         {
-            get => __pbn__CategClassicCnt;
+            get => __pbn__CategClassicCnt.GetValueOrDefault();
             set => __pbn__CategClassicCnt = value;
         }
         public bool ShouldSerializeCategClassicCnt() => __pbn__CategClassicCnt != null;
@@ -1204,9 +1401,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__CategClassicCnt;
 
         [global::ProtoBuf.ProtoMember(24, Name = @"categ_game_cnt")]
-        public uint? CategGameCnt
+        public uint CategGameCnt
         {
-            get => __pbn__CategGameCnt;
+            get => __pbn__CategGameCnt.GetValueOrDefault();
             set => __pbn__CategGameCnt = value;
         }
         public bool ShouldSerializeCategGameCnt() => __pbn__CategGameCnt != null;
@@ -1214,9 +1411,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__CategGameCnt;
 
         [global::ProtoBuf.ProtoMember(25, Name = @"categ_namco_cnt")]
-        public uint? CategNamcoCnt
+        public uint CategNamcoCnt
         {
-            get => __pbn__CategNamcoCnt;
+            get => __pbn__CategNamcoCnt.GetValueOrDefault();
             set => __pbn__CategNamcoCnt = value;
         }
         public bool ShouldSerializeCategNamcoCnt() => __pbn__CategNamcoCnt != null;
@@ -1224,9 +1421,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__CategNamcoCnt;
 
         [global::ProtoBuf.ProtoMember(26, Name = @"categ_vocaloid_cnt")]
-        public uint? CategVocaloidCnt
+        public uint CategVocaloidCnt
         {
-            get => __pbn__CategVocaloidCnt;
+            get => __pbn__CategVocaloidCnt.GetValueOrDefault();
             set => __pbn__CategVocaloidCnt = value;
         }
         public bool ShouldSerializeCategVocaloidCnt() => __pbn__CategVocaloidCnt != null;
@@ -1234,9 +1431,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__CategVocaloidCnt;
 
         [global::ProtoBuf.ProtoMember(27, Name = @"song_pushed_cnt")]
-        public uint? SongPushedCnt
+        public uint SongPushedCnt
         {
-            get => __pbn__SongPushedCnt;
+            get => __pbn__SongPushedCnt.GetValueOrDefault();
             set => __pbn__SongPushedCnt = value;
         }
         public bool ShouldSerializeSongPushedCnt() => __pbn__SongPushedCnt != null;
@@ -1244,9 +1441,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__SongPushedCnt;
 
         [global::ProtoBuf.ProtoMember(28, Name = @"song_favorite_cnt")]
-        public uint? SongFavoriteCnt
+        public uint SongFavoriteCnt
         {
-            get => __pbn__SongFavoriteCnt;
+            get => __pbn__SongFavoriteCnt.GetValueOrDefault();
             set => __pbn__SongFavoriteCnt = value;
         }
         public bool ShouldSerializeSongFavoriteCnt() => __pbn__SongFavoriteCnt != null;
@@ -1254,9 +1451,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__SongFavoriteCnt;
 
         [global::ProtoBuf.ProtoMember(29, Name = @"song_recent_cnt")]
-        public uint? SongRecentCnt
+        public uint SongRecentCnt
         {
-            get => __pbn__SongRecentCnt;
+            get => __pbn__SongRecentCnt.GetValueOrDefault();
             set => __pbn__SongRecentCnt = value;
         }
         public bool ShouldSerializeSongRecentCnt() => __pbn__SongRecentCnt != null;
@@ -1264,9 +1461,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__SongRecentCnt;
 
         [global::ProtoBuf.ProtoMember(30, Name = @"total_credit_cnt")]
-        public uint? TotalCreditCnt
+        public uint TotalCreditCnt
         {
-            get => __pbn__TotalCreditCnt;
+            get => __pbn__TotalCreditCnt.GetValueOrDefault();
             set => __pbn__TotalCreditCnt = value;
         }
         public bool ShouldSerializeTotalCreditCnt() => __pbn__TotalCreditCnt != null;
@@ -1274,9 +1471,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__TotalCreditCnt;
 
         [global::ProtoBuf.ProtoMember(31, Name = @"prev_area_code")]
-        public uint? PrevAreaCode
+        public uint PrevAreaCode
         {
-            get => __pbn__PrevAreaCode;
+            get => __pbn__PrevAreaCode.GetValueOrDefault();
             set => __pbn__PrevAreaCode = value;
         }
         public bool ShouldSerializePrevAreaCode() => __pbn__PrevAreaCode != null;
@@ -1284,9 +1481,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__PrevAreaCode;
 
         [global::ProtoBuf.ProtoMember(32, Name = @"consec_area_cnt")]
-        public uint? ConsecAreaCnt
+        public uint ConsecAreaCnt
         {
-            get => __pbn__ConsecAreaCnt;
+            get => __pbn__ConsecAreaCnt.GetValueOrDefault();
             set => __pbn__ConsecAreaCnt = value;
         }
         public bool ShouldSerializeConsecAreaCnt() => __pbn__ConsecAreaCnt != null;
@@ -1294,9 +1491,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__ConsecAreaCnt;
 
         [global::ProtoBuf.ProtoMember(33, Name = @"recommend_song")]
-        public uint? RecommendSong
+        public uint RecommendSong
         {
-            get => __pbn__RecommendSong;
+            get => __pbn__RecommendSong.GetValueOrDefault();
             set => __pbn__RecommendSong = value;
         }
         public bool ShouldSerializeRecommendSong() => __pbn__RecommendSong != null;
@@ -1307,9 +1504,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         public uint[] RecommendBestSongs { get; set; }
 
         [global::ProtoBuf.ProtoMember(35, Name = @"disp_level_self")]
-        public uint? DispLevelSelf
+        public uint DispLevelSelf
         {
-            get => __pbn__DispLevelSelf;
+            get => __pbn__DispLevelSelf.GetValueOrDefault();
             set => __pbn__DispLevelSelf = value;
         }
         public bool ShouldSerializeDispLevelSelf() => __pbn__DispLevelSelf != null;
@@ -1317,9 +1514,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__DispLevelSelf;
 
         [global::ProtoBuf.ProtoMember(36, Name = @"is_auto_title_on")]
-        public bool? IsAutoTitleOn
+        public bool IsAutoTitleOn
         {
-            get => __pbn__IsAutoTitleOn;
+            get => __pbn__IsAutoTitleOn.GetValueOrDefault();
             set => __pbn__IsAutoTitleOn = value;
         }
         public bool ShouldSerializeIsAutoTitleOn() => __pbn__IsAutoTitleOn != null;
@@ -1337,9 +1534,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private byte[] __pbn__DefaultOptionSetting;
 
         [global::ProtoBuf.ProtoMember(38, Name = @"default_shin_setting")]
-        public bool? DefaultShinSetting
+        public bool DefaultShinSetting
         {
-            get => __pbn__DefaultShinSetting;
+            get => __pbn__DefaultShinSetting.GetValueOrDefault();
             set => __pbn__DefaultShinSetting = value;
         }
         public bool ShouldSerializeDefaultShinSetting() => __pbn__DefaultShinSetting != null;
@@ -1347,9 +1544,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private bool? __pbn__DefaultShinSetting;
 
         [global::ProtoBuf.ProtoMember(39, Name = @"total_get_donpoint")]
-        public uint? TotalGetDonpoint
+        public uint TotalGetDonpoint
         {
-            get => __pbn__TotalGetDonpoint;
+            get => __pbn__TotalGetDonpoint.GetValueOrDefault();
             set => __pbn__TotalGetDonpoint = value;
         }
         public bool ShouldSerializeTotalGetDonpoint() => __pbn__TotalGetDonpoint != null;
@@ -1357,9 +1554,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__TotalGetDonpoint;
 
         [global::ProtoBuf.ProtoMember(40, Name = @"total_use_donpoint")]
-        public uint? TotalUseDonpoint
+        public uint TotalUseDonpoint
         {
-            get => __pbn__TotalUseDonpoint;
+            get => __pbn__TotalUseDonpoint.GetValueOrDefault();
             set => __pbn__TotalUseDonpoint = value;
         }
         public bool ShouldSerializeTotalUseDonpoint() => __pbn__TotalUseDonpoint != null;
@@ -1367,14 +1564,54 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__TotalUseDonpoint;
 
         [global::ProtoBuf.ProtoMember(41, Name = @"disp_taikojuku_dan")]
-        public uint? DispTaikojukuDan
+        public uint DispTaikojukuDan
         {
-            get => __pbn__DispTaikojukuDan;
+            get => __pbn__DispTaikojukuDan.GetValueOrDefault();
             set => __pbn__DispTaikojukuDan = value;
         }
         public bool ShouldSerializeDispTaikojukuDan() => __pbn__DispTaikojukuDan != null;
         public void ResetDispTaikojukuDan() => __pbn__DispTaikojukuDan = null;
         private uint? __pbn__DispTaikojukuDan;
+
+        [global::ProtoBuf.ProtoMember(42, Name = @"difficulty_tutorial_flg")]
+        public uint DifficultyTutorialFlg
+        {
+            get => __pbn__DifficultyTutorialFlg.GetValueOrDefault();
+            set => __pbn__DifficultyTutorialFlg = value;
+        }
+        public bool ShouldSerializeDifficultyTutorialFlg() => __pbn__DifficultyTutorialFlg != null;
+        public void ResetDifficultyTutorialFlg() => __pbn__DifficultyTutorialFlg = null;
+        private uint? __pbn__DifficultyTutorialFlg;
+
+        [global::ProtoBuf.ProtoMember(43, Name = @"difficulty_played_course")]
+        public uint DifficultyPlayedCourse
+        {
+            get => __pbn__DifficultyPlayedCourse.GetValueOrDefault();
+            set => __pbn__DifficultyPlayedCourse = value;
+        }
+        public bool ShouldSerializeDifficultyPlayedCourse() => __pbn__DifficultyPlayedCourse != null;
+        public void ResetDifficultyPlayedCourse() => __pbn__DifficultyPlayedCourse = null;
+        private uint? __pbn__DifficultyPlayedCourse;
+
+        [global::ProtoBuf.ProtoMember(44, Name = @"difficulty_played_star")]
+        public uint DifficultyPlayedStar
+        {
+            get => __pbn__DifficultyPlayedStar.GetValueOrDefault();
+            set => __pbn__DifficultyPlayedStar = value;
+        }
+        public bool ShouldSerializeDifficultyPlayedStar() => __pbn__DifficultyPlayedStar != null;
+        public void ResetDifficultyPlayedStar() => __pbn__DifficultyPlayedStar = null;
+        private uint? __pbn__DifficultyPlayedStar;
+
+        [global::ProtoBuf.ProtoMember(45, Name = @"tokkun_tutorial_flg")]
+        public uint TokkunTutorialFlg
+        {
+            get => __pbn__TokkunTutorialFlg.GetValueOrDefault();
+            set => __pbn__TokkunTutorialFlg = value;
+        }
+        public bool ShouldSerializeTokkunTutorialFlg() => __pbn__TokkunTutorialFlg != null;
+        public void ResetTokkunTutorialFlg() => __pbn__TokkunTutorialFlg = null;
+        private uint? __pbn__TokkunTutorialFlg;
 
         [global::ProtoBuf.ProtoContract()]
         public partial class CompeData : global::ProtoBuf.IExtensible
@@ -1488,9 +1725,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         public uint[] GetTitleNoes { get; set; }
 
         [global::ProtoBuf.ProtoMember(17, Name = @"get_donpoint")]
-        public uint? GetDonpoint
+        public uint GetDonpoint
         {
-            get => __pbn__GetDonpoint;
+            get => __pbn__GetDonpoint.GetValueOrDefault();
             set => __pbn__GetDonpoint = value;
         }
         public bool ShouldSerializeGetDonpoint() => __pbn__GetDonpoint != null;
@@ -1498,9 +1735,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__GetDonpoint;
 
         [global::ProtoBuf.ProtoMember(18, Name = @"reward_ptn")]
-        public uint? RewardPtn
+        public uint RewardPtn
         {
-            get => __pbn__RewardPtn;
+            get => __pbn__RewardPtn.GetValueOrDefault();
             set => __pbn__RewardPtn = value;
         }
         public bool ShouldSerializeRewardPtn() => __pbn__RewardPtn != null;
@@ -1508,9 +1745,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__RewardPtn;
 
         [global::ProtoBuf.ProtoMember(19, Name = @"reward_progress")]
-        public uint? RewardProgress
+        public uint RewardProgress
         {
-            get => __pbn__RewardProgress;
+            get => __pbn__RewardProgress.GetValueOrDefault();
             set => __pbn__RewardProgress = value;
         }
         public bool ShouldSerializeRewardProgress() => __pbn__RewardProgress != null;
@@ -1518,9 +1755,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__RewardProgress;
 
         [global::ProtoBuf.ProtoMember(20, Name = @"is_devil")]
-        public bool? IsDevil
+        public bool IsDevil
         {
-            get => __pbn__IsDevil;
+            get => __pbn__IsDevil.GetValueOrDefault();
             set => __pbn__IsDevil = value;
         }
         public bool ShouldSerializeIsDevil() => __pbn__IsDevil != null;
@@ -1528,9 +1765,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private bool? __pbn__IsDevil;
 
         [global::ProtoBuf.ProtoMember(21, Name = @"is_explain")]
-        public bool? IsExplain
+        public bool IsExplain
         {
-            get => __pbn__IsExplain;
+            get => __pbn__IsExplain.GetValueOrDefault();
             set => __pbn__IsExplain = value;
         }
         public bool ShouldSerializeIsExplain() => __pbn__IsExplain != null;
@@ -1559,9 +1796,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         public byte[] Reserved { get; set; }
 
         [global::ProtoBuf.ProtoMember(29, Name = @"lowerlimit_age")]
-        public uint? LowerlimitAge
+        public uint LowerlimitAge
         {
-            get => __pbn__LowerlimitAge;
+            get => __pbn__LowerlimitAge.GetValueOrDefault();
             set => __pbn__LowerlimitAge = value;
         }
         public bool ShouldSerializeLowerlimitAge() => __pbn__LowerlimitAge != null;
@@ -1569,9 +1806,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__LowerlimitAge;
 
         [global::ProtoBuf.ProtoMember(30, Name = @"upperlimit_age")]
-        public uint? UpperlimitAge
+        public uint UpperlimitAge
         {
-            get => __pbn__UpperlimitAge;
+            get => __pbn__UpperlimitAge.GetValueOrDefault();
             set => __pbn__UpperlimitAge = value;
         }
         public bool ShouldSerializeUpperlimitAge() => __pbn__UpperlimitAge != null;
@@ -1579,9 +1816,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__UpperlimitAge;
 
         [global::ProtoBuf.ProtoMember(31, Name = @"age_score")]
-        public uint? AgeScore
+        public uint AgeScore
         {
-            get => __pbn__AgeScore;
+            get => __pbn__AgeScore.GetValueOrDefault();
             set => __pbn__AgeScore = value;
         }
         public bool ShouldSerializeAgeScore() => __pbn__AgeScore != null;
@@ -1589,9 +1826,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__AgeScore;
 
         [global::ProtoBuf.ProtoMember(32, Name = @"estimation_count")]
-        public uint? EstimationCount
+        public uint EstimationCount
         {
-            get => __pbn__EstimationCount;
+            get => __pbn__EstimationCount.GetValueOrDefault();
             set => __pbn__EstimationCount = value;
         }
         public bool ShouldSerializeEstimationCount() => __pbn__EstimationCount != null;
@@ -1599,9 +1836,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         private uint? __pbn__EstimationCount;
 
         [global::ProtoBuf.ProtoMember(33, Name = @"dan_result")]
-        public uint? DanResult
+        public uint DanResult
         {
-            get => __pbn__DanResult;
+            get => __pbn__DanResult.GetValueOrDefault();
             set => __pbn__DanResult = value;
         }
         public bool ShouldSerializeDanResult() => __pbn__DanResult != null;
@@ -1612,9 +1849,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         public global::System.Collections.Generic.List<CollaboData> AryCollaboInfoes { get; } = new global::System.Collections.Generic.List<CollaboData>();
 
         [global::ProtoBuf.ProtoMember(35, Name = @"tournament_mode")]
-        public uint? TournamentMode
+        public uint TournamentMode
         {
-            get => __pbn__TournamentMode;
+            get => __pbn__TournamentMode.GetValueOrDefault();
             set => __pbn__TournamentMode = value;
         }
         public bool ShouldSerializeTournamentMode() => __pbn__TournamentMode != null;
@@ -1641,6 +1878,59 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         public bool ShouldSerializeContentInfo() => __pbn__ContentInfo != null;
         public void ResetContentInfo() => __pbn__ContentInfo = null;
         private byte[] __pbn__ContentInfo;
+
+        [global::ProtoBuf.ProtoMember(38, Name = @"difficulty_tutorial_flg")]
+        public uint DifficultyTutorialFlg
+        {
+            get => __pbn__DifficultyTutorialFlg.GetValueOrDefault();
+            set => __pbn__DifficultyTutorialFlg = value;
+        }
+        public bool ShouldSerializeDifficultyTutorialFlg() => __pbn__DifficultyTutorialFlg != null;
+        public void ResetDifficultyTutorialFlg() => __pbn__DifficultyTutorialFlg = null;
+        private uint? __pbn__DifficultyTutorialFlg;
+
+        [global::ProtoBuf.ProtoMember(39, Name = @"difficulty_played_course")]
+        public uint DifficultyPlayedCourse
+        {
+            get => __pbn__DifficultyPlayedCourse.GetValueOrDefault();
+            set => __pbn__DifficultyPlayedCourse = value;
+        }
+        public bool ShouldSerializeDifficultyPlayedCourse() => __pbn__DifficultyPlayedCourse != null;
+        public void ResetDifficultyPlayedCourse() => __pbn__DifficultyPlayedCourse = null;
+        private uint? __pbn__DifficultyPlayedCourse;
+
+        [global::ProtoBuf.ProtoMember(40, Name = @"difficulty_played_star")]
+        public uint DifficultyPlayedStar
+        {
+            get => __pbn__DifficultyPlayedStar.GetValueOrDefault();
+            set => __pbn__DifficultyPlayedStar = value;
+        }
+        public bool ShouldSerializeDifficultyPlayedStar() => __pbn__DifficultyPlayedStar != null;
+        public void ResetDifficultyPlayedStar() => __pbn__DifficultyPlayedStar = null;
+        private uint? __pbn__DifficultyPlayedStar;
+
+        [global::ProtoBuf.ProtoMember(41, Name = @"payment_method")]
+        public uint PaymentMethod
+        {
+            get => __pbn__PaymentMethod.GetValueOrDefault();
+            set => __pbn__PaymentMethod = value;
+        }
+        public bool ShouldSerializePaymentMethod() => __pbn__PaymentMethod != null;
+        public void ResetPaymentMethod() => __pbn__PaymentMethod = null;
+        private uint? __pbn__PaymentMethod;
+
+        [global::ProtoBuf.ProtoMember(42, Name = @"tokkun_tutorial_flg")]
+        public uint TokkunTutorialFlg
+        {
+            get => __pbn__TokkunTutorialFlg.GetValueOrDefault();
+            set => __pbn__TokkunTutorialFlg = value;
+        }
+        public bool ShouldSerializeTokkunTutorialFlg() => __pbn__TokkunTutorialFlg != null;
+        public void ResetTokkunTutorialFlg() => __pbn__TokkunTutorialFlg = null;
+        private uint? __pbn__TokkunTutorialFlg;
+
+        [global::ProtoBuf.ProtoMember(43, Name = @"ary_tokkunstage_info")]
+        public TokkunstageData AryTokkunstageInfo { get; set; }
 
         [global::ProtoBuf.ProtoContract()]
         public partial class StageData : global::ProtoBuf.IExtensible
@@ -1710,9 +2000,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
             public uint PlayDan { get; set; }
 
             [global::ProtoBuf.ProtoMember(21, Name = @"soul_gauge")]
-            public uint? SoulGauge
+            public uint SoulGauge
             {
-                get => __pbn__SoulGauge;
+                get => __pbn__SoulGauge.GetValueOrDefault();
                 set => __pbn__SoulGauge = value;
             }
             public bool ShouldSerializeSoulGauge() => __pbn__SoulGauge != null;
@@ -1720,9 +2010,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
             private uint? __pbn__SoulGauge;
 
             [global::ProtoBuf.ProtoMember(22, Name = @"hit_cnt")]
-            public uint? HitCnt
+            public uint HitCnt
             {
-                get => __pbn__HitCnt;
+                get => __pbn__HitCnt.GetValueOrDefault();
                 set => __pbn__HitCnt = value;
             }
             public bool ShouldSerializeHitCnt() => __pbn__HitCnt != null;
@@ -1760,9 +2050,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
                 => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
             [global::ProtoBuf.ProtoMember(1, Name = @"costume_1")]
-            public uint? Costume1
+            public uint Costume1
             {
-                get => __pbn__Costume1;
+                get => __pbn__Costume1.GetValueOrDefault();
                 set => __pbn__Costume1 = value;
             }
             public bool ShouldSerializeCostume1() => __pbn__Costume1 != null;
@@ -1770,9 +2060,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
             private uint? __pbn__Costume1;
 
             [global::ProtoBuf.ProtoMember(2, Name = @"costume_2")]
-            public uint? Costume2
+            public uint Costume2
             {
-                get => __pbn__Costume2;
+                get => __pbn__Costume2.GetValueOrDefault();
                 set => __pbn__Costume2 = value;
             }
             public bool ShouldSerializeCostume2() => __pbn__Costume2 != null;
@@ -1780,9 +2070,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
             private uint? __pbn__Costume2;
 
             [global::ProtoBuf.ProtoMember(3, Name = @"costume_3")]
-            public uint? Costume3
+            public uint Costume3
             {
-                get => __pbn__Costume3;
+                get => __pbn__Costume3.GetValueOrDefault();
                 set => __pbn__Costume3 = value;
             }
             public bool ShouldSerializeCostume3() => __pbn__Costume3 != null;
@@ -1790,9 +2080,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
             private uint? __pbn__Costume3;
 
             [global::ProtoBuf.ProtoMember(4, Name = @"costume_4")]
-            public uint? Costume4
+            public uint Costume4
             {
-                get => __pbn__Costume4;
+                get => __pbn__Costume4.GetValueOrDefault();
                 set => __pbn__Costume4 = value;
             }
             public bool ShouldSerializeCostume4() => __pbn__Costume4 != null;
@@ -1800,9 +2090,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
             private uint? __pbn__Costume4;
 
             [global::ProtoBuf.ProtoMember(5, Name = @"costume_5")]
-            public uint? Costume5
+            public uint Costume5
             {
-                get => __pbn__Costume5;
+                get => __pbn__Costume5.GetValueOrDefault();
                 set => __pbn__Costume5 = value;
             }
             public bool ShouldSerializeCostume5() => __pbn__Costume5 != null;
@@ -1822,9 +2112,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
             public uint CollaboSelect { get; set; }
 
             [global::ProtoBuf.ProtoMember(2, Name = @"collabo_id")]
-            public uint? CollaboId
+            public uint CollaboId
             {
-                get => __pbn__CollaboId;
+                get => __pbn__CollaboId.GetValueOrDefault();
                 set => __pbn__CollaboId = value;
             }
             public bool ShouldSerializeCollaboId() => __pbn__CollaboId != null;
@@ -1832,14 +2122,41 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
             private uint? __pbn__CollaboId;
 
             [global::ProtoBuf.ProtoMember(3, Name = @"collabo_result")]
-            public uint? CollaboResult
+            public uint CollaboResult
             {
-                get => __pbn__CollaboResult;
+                get => __pbn__CollaboResult.GetValueOrDefault();
                 set => __pbn__CollaboResult = value;
             }
             public bool ShouldSerializeCollaboResult() => __pbn__CollaboResult != null;
             public void ResetCollaboResult() => __pbn__CollaboResult = null;
             private uint? __pbn__CollaboResult;
+
+        }
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class TokkunstageData : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1, Name = @"banacoin_datetime", IsRequired = true)]
+            public string BanacoinDatetime { get; set; }
+
+            [global::ProtoBuf.ProtoMember(2, Name = @"tokkun_song_cnt", IsRequired = true)]
+            public uint TokkunSongCnt { get; set; }
+
+            [global::ProtoBuf.ProtoMember(3, Name = @"tookun_songno")]
+            public uint[] TookunSongnoes { get; set; }
+
+            [global::ProtoBuf.ProtoMember(4, Name = @"tokkun_speedchange_cnt", IsRequired = true)]
+            public uint TokkunSpeedchangeCnt { get; set; }
+
+            [global::ProtoBuf.ProtoMember(5, Name = @"tokkun_autoplay_cnt", IsRequired = true)]
+            public uint TokkunAutoplayCnt { get; set; }
+
+            [global::ProtoBuf.ProtoMember(6, Name = @"tokkun_jump_cnt", IsRequired = true)]
+            public uint TokkunJumpCnt { get; set; }
 
         }
 
@@ -1874,9 +2191,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         public string ShopId { get; set; }
 
         [global::ProtoBuf.ProtoMember(4, Name = @"level")]
-        public uint? Level
+        public uint Level
         {
-            get => __pbn__Level;
+            get => __pbn__Level.GetValueOrDefault();
             set => __pbn__Level = value;
         }
         public bool ShouldSerializeLevel() => __pbn__Level != null;
@@ -1899,9 +2216,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         public uint Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"level")]
-        public uint? Level
+        public uint Level
         {
-            get => __pbn__Level;
+            get => __pbn__Level.GetValueOrDefault();
             set => __pbn__Level = value;
         }
         public bool ShouldSerializeLevel() => __pbn__Level != null;
@@ -1966,9 +2283,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         public uint Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"recommend_song")]
-        public uint? RecommendSong
+        public uint RecommendSong
         {
-            get => __pbn__RecommendSong;
+            get => __pbn__RecommendSong.GetValueOrDefault();
             set => __pbn__RecommendSong = value;
         }
         public bool ShouldSerializeRecommendSong() => __pbn__RecommendSong != null;
@@ -2009,9 +2326,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         public uint Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"song_hash_ver")]
-        public uint? SongHashVer
+        public uint SongHashVer
         {
-            get => __pbn__SongHashVer;
+            get => __pbn__SongHashVer.GetValueOrDefault();
             set => __pbn__SongHashVer = value;
         }
         public bool ShouldSerializeSongHashVer() => __pbn__SongHashVer != null;
@@ -2080,9 +2397,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
             public string PlaceId { get; set; }
 
             [global::ProtoBuf.ProtoMember(6, Name = @"type")]
-            public uint? Type
+            public uint Type
             {
-                get => __pbn__Type;
+                get => __pbn__Type.GetValueOrDefault();
                 set => __pbn__Type = value;
             }
             public bool ShouldSerializeType() => __pbn__Type != null;
@@ -2090,9 +2407,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
             private uint? __pbn__Type;
 
             [global::ProtoBuf.ProtoMember(7, Name = @"amount")]
-            public uint? Amount
+            public uint Amount
             {
-                get => __pbn__Amount;
+                get => __pbn__Amount.GetValueOrDefault();
                 set => __pbn__Amount = value;
             }
             public bool ShouldSerializeAmount() => __pbn__Amount != null;
@@ -2192,9 +2509,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
         public uint Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"baid")]
-        public uint? Baid
+        public uint Baid
         {
-            get => __pbn__Baid;
+            get => __pbn__Baid.GetValueOrDefault();
             set => __pbn__Baid = value;
         }
         public bool ShouldSerializeBaid() => __pbn__Baid != null;
@@ -2254,6 +2571,312 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Wire
 
         [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
         public uint Result { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class BalancecheckRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"personid", IsRequired = true)]
+        public string Personid { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class BalancecheckResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"personid", IsRequired = true)]
+        public string Personid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"bnid_result")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string BnidResult
+        {
+            get => __pbn__BnidResult ?? "";
+            set => __pbn__BnidResult = value;
+        }
+        public bool ShouldSerializeBnidResult() => __pbn__BnidResult != null;
+        public void ResetBnidResult() => __pbn__BnidResult = null;
+        private string __pbn__BnidResult;
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"coin_coupon")]
+        public uint CoinCoupon
+        {
+            get => __pbn__CoinCoupon.GetValueOrDefault();
+            set => __pbn__CoinCoupon = value;
+        }
+        public bool ShouldSerializeCoinCoupon() => __pbn__CoinCoupon != null;
+        public void ResetCoinCoupon() => __pbn__CoinCoupon = null;
+        private uint? __pbn__CoinCoupon;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class BanacoinpaymentRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"shop_name", IsRequired = true)]
+        public string ShopName { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"personid", IsRequired = true)]
+        public string Personid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"mode", IsRequired = true)]
+        public uint Mode { get; set; }
+
+        [global::ProtoBuf.ProtoMember(6, Name = @"banacoin_price", IsRequired = true)]
+        public uint BanacoinPrice { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class BanacoinpaymentResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"personid", IsRequired = true)]
+        public string Personid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"bnid_result")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string BnidResult
+        {
+            get => __pbn__BnidResult ?? "";
+            set => __pbn__BnidResult = value;
+        }
+        public bool ShouldSerializeBnidResult() => __pbn__BnidResult != null;
+        public void ResetBnidResult() => __pbn__BnidResult = null;
+        private string __pbn__BnidResult;
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"chid")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Chid
+        {
+            get => __pbn__Chid ?? "";
+            set => __pbn__Chid = value;
+        }
+        public bool ShouldSerializeChid() => __pbn__Chid != null;
+        public void ResetChid() => __pbn__Chid = null;
+        private string __pbn__Chid;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class BanacoinerrorlogRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"shop_name", IsRequired = true)]
+        public string ShopName { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"personid", IsRequired = true)]
+        public string Personid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"timeout_datetime", IsRequired = true)]
+        public string TimeoutDatetime { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class BanacoinerrorlogResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetbanacoininfoRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"device_type", IsRequired = true)]
+        public uint DeviceType { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"access_code", IsRequired = true)]
+        public string AccessCode { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"chip_id", IsRequired = true)]
+        public string ChipId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"chassis_id", IsRequired = true)]
+        public string ChassisId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"shop_id", IsRequired = true)]
+        public string ShopId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(6, Name = @"country_id", IsRequired = true)]
+        public string CountryId { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GetbanacoininfoResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
+        public uint Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"player_type")]
+        public uint PlayerType
+        {
+            get => __pbn__PlayerType.GetValueOrDefault();
+            set => __pbn__PlayerType = value;
+        }
+        public bool ShouldSerializePlayerType() => __pbn__PlayerType != null;
+        public void ResetPlayerType() => __pbn__PlayerType = null;
+        private uint? __pbn__PlayerType;
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"com_svr_result")]
+        public uint ComSvrResult
+        {
+            get => __pbn__ComSvrResult.GetValueOrDefault();
+            set => __pbn__ComSvrResult = value;
+        }
+        public bool ShouldSerializeComSvrResult() => __pbn__ComSvrResult != null;
+        public void ResetComSvrResult() => __pbn__ComSvrResult = null;
+        private uint? __pbn__ComSvrResult;
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"mb_id")]
+        public uint MbId
+        {
+            get => __pbn__MbId.GetValueOrDefault();
+            set => __pbn__MbId = value;
+        }
+        public bool ShouldSerializeMbId() => __pbn__MbId != null;
+        public void ResetMbId() => __pbn__MbId = null;
+        private uint? __pbn__MbId;
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"baid")]
+        public uint Baid
+        {
+            get => __pbn__Baid.GetValueOrDefault();
+            set => __pbn__Baid = value;
+        }
+        public bool ShouldSerializeBaid() => __pbn__Baid != null;
+        public void ResetBaid() => __pbn__Baid = null;
+        private uint? __pbn__Baid;
+
+        [global::ProtoBuf.ProtoMember(6, Name = @"access_code")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string AccessCode
+        {
+            get => __pbn__AccessCode ?? "";
+            set => __pbn__AccessCode = value;
+        }
+        public bool ShouldSerializeAccessCode() => __pbn__AccessCode != null;
+        public void ResetAccessCode() => __pbn__AccessCode = null;
+        private string __pbn__AccessCode;
+
+        [global::ProtoBuf.ProtoMember(7, Name = @"is_publish")]
+        public bool IsPublish
+        {
+            get => __pbn__IsPublish.GetValueOrDefault();
+            set => __pbn__IsPublish = value;
+        }
+        public bool ShouldSerializeIsPublish() => __pbn__IsPublish != null;
+        public void ResetIsPublish() => __pbn__IsPublish = null;
+        private bool? __pbn__IsPublish;
+
+        [global::ProtoBuf.ProtoMember(8, Name = @"card_own_num")]
+        public uint CardOwnNum
+        {
+            get => __pbn__CardOwnNum.GetValueOrDefault();
+            set => __pbn__CardOwnNum = value;
+        }
+        public bool ShouldSerializeCardOwnNum() => __pbn__CardOwnNum != null;
+        public void ResetCardOwnNum() => __pbn__CardOwnNum = null;
+        private uint? __pbn__CardOwnNum;
+
+        [global::ProtoBuf.ProtoMember(9, Name = @"reg_country_id")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string RegCountryId
+        {
+            get => __pbn__RegCountryId ?? "";
+            set => __pbn__RegCountryId = value;
+        }
+        public bool ShouldSerializeRegCountryId() => __pbn__RegCountryId != null;
+        public void ResetRegCountryId() => __pbn__RegCountryId = null;
+        private string __pbn__RegCountryId;
+
+        [global::ProtoBuf.ProtoMember(10, Name = @"purpose_id")]
+        public uint PurposeId
+        {
+            get => __pbn__PurposeId.GetValueOrDefault();
+            set => __pbn__PurposeId = value;
+        }
+        public bool ShouldSerializePurposeId() => __pbn__PurposeId != null;
+        public void ResetPurposeId() => __pbn__PurposeId = null;
+        private uint? __pbn__PurposeId;
+
+        [global::ProtoBuf.ProtoMember(11, Name = @"region_id")]
+        public uint RegionId
+        {
+            get => __pbn__RegionId.GetValueOrDefault();
+            set => __pbn__RegionId = value;
+        }
+        public bool ShouldSerializeRegionId() => __pbn__RegionId != null;
+        public void ResetRegionId() => __pbn__RegionId = null;
+        private uint? __pbn__RegionId;
+
+        [global::ProtoBuf.ProtoMember(12, Name = @"personid")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Personid
+        {
+            get => __pbn__Personid ?? "";
+            set => __pbn__Personid = value;
+        }
+        public bool ShouldSerializePersonid() => __pbn__Personid != null;
+        public void ResetPersonid() => __pbn__Personid = null;
+        private string __pbn__Personid;
 
     }
 
