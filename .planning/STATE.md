@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Phase Summary
 status: human_verification_pending
-stopped_at: White Don Challenge correction automated checks complete; manual RPCS3/WebUI verification pending
-last_updated: "2026-06-18T21:30:00.000Z"
-last_activity: 2026-06-18 -- White Don Challenge corrected to server-side stage-derived progress plus AdminApi/WebUI readback; manual verification pending
+stopped_at: White final 11.01 automated support complete; manual RPCS3/WebUI verification pending
+last_updated: "2026-06-20T14:23:51.158Z"
+last_activity: 2026-06-20 -- White final 11.01 support added under /v07r03 with Tokkun and difficulty panel readback; manual verification pending
 progress:
   total_phases: 6
   completed_phases: 6
@@ -21,14 +21,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-18)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Manual Phase 27 RPCS3/cabinet and WebUI verification for White 0.13, including the White Don Challenge AdminApi/WebUI correction
+**Current focus:** Manual Phase 27 RPCS3/cabinet and WebUI verification for White final 11.01, including `/v07r03`, Tokkun, difficulty panel, and White Don Challenge flows
 
 ## Current Position
 
 Phase: 27 - HUMAN VERIFICATION PENDING
 Plan: 1 of 1
-Status: Automated AdminApi/WebUI implementation plus White Don Challenge correction are in progress/verification; manual runtime/WebUI verification remains.
-Last activity: 2026-06-18 -- White Don Challenge corrected to server-side stage-derived progress plus AdminApi/WebUI readback; manual verification pending
+Status: Automated AdminApi/WebUI implementation, White Don Challenge correction, and White final 11.01 support are complete; manual runtime/WebUI verification remains.
+Last activity: 2026-06-20 -- White final 11.01 support added under /v07r03 with Tokkun and difficulty panel readback; manual verification pending
 
 ## Performance Metrics
 
@@ -271,12 +271,13 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ### Blockers/Concerns
 
-- Human verification pending: user must run White RPCS3/cabinet flows and review the WebUI before v1.4 can be called complete.
+- Human verification pending: user must run White final 11.01 RPCS3/cabinet flows and review the WebUI before v1.4 can be called complete.
 
 ### Quick Tasks Completed
 
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
+| 260620-ub3 | Support White final 11.01 under /v07r03 with Tokkun and difficulty panel support | 2026-06-20 | 19cf0643 | [260620-ub3-support-white-final-version-11-01-under-](./quick/260620-ub3-support-white-final-version-11-01-under-/) |
 | 260615-wt6 | Fix AC15 selfbest Ura Oni scores, userdata score display type, and era favorite limits | 2026-06-15 | cd824405 | [260615-wt6-now-let-s-fix-several-issues-1-currently](./quick/260615-wt6-now-let-s-fix-several-issues-1-currently/) |
 | 260613-ny9 | Support older Red `/v08r00` compatibility with old BAID wire shape | 2026-06-13 | d7032433 | [260613-ny9-before-we-continue-to-next-phase-support](./quick/260613-ny9-before-we-continue-to-next-phase-support/) |
 | 260609-7gk | Regenerate Yellow final wire support, add final-version field handling, and move Yellow game routes to `/v09r02` | 2026-06-08 | 39e49294 | [260609-7gk-now-let-s-execute-a-quick-task-we-have-c](./quick/260609-7gk-now-let-s-execute-a-quick-task-we-have-c/) |
