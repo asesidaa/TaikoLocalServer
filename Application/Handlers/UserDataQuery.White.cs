@@ -40,7 +40,7 @@ public partial class UserDataQueryHandler
         {
             Display = response.Display with { DispTaikojukuDan = GetSafeWhiteTaikojukuDanSlot(displayDan) },
             ModeFlags = new Ac15UserDataModeFlags(saveData.IsDevil, saveData.IsExplain),
-            Tutorial = new Ac15UserDataTutorial(null, saveData.DifficultyTutorialFlg),
+            Tutorial = new Ac15UserDataTutorial(saveData.TokkunTutorialFlg, saveData.DifficultyTutorialFlg),
             Reward = new Ac15UserDataReward(
                 saveData.TotalGetDonpoint,
                 saveData.TotalUseDonpoint,

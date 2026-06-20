@@ -1,6 +1,7 @@
 using TaikoLocalServer.Adapters.GameProtocol.White.Mappers;
 using TaikoLocalServer.Adapters.GameProtocol.White.Wire;
 using TaikoLocalServer.Application.Ac15.DonChallenge;
+using System.Text.Json;
 
 namespace TaikoLocalServer.Tests.White;
 
@@ -118,6 +119,43 @@ public sealed class WhiteRuntimeHandlerTests
     }
 
     [Fact]
+    public async Task UserDataQuery_White_ReadsStoredTokkunTutorialFlagWithoutHistorySurface()
+    {
+        await using var fixture = await WhiteHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 5, MyDonName = "DON" });
+        var save = UserSaveDataWhiteExtensions.CreateDefaultWhiteSaveData(5);
+        save.TokkunTutorialFlg = 7;
+        fixture.Context.UserSaveDataWhite.Add(save);
+        fixture.Context.WhiteTokkunStageResults.Add(new WhiteTokkunStageResult
+        {
+            Baid = 5,
+            PlayDatetime = "20260620120000",
+            PlayMode = (uint)PlayMode.Tokkun,
+            BanacoinDatetime = "20260620120102",
+            TokkunSongCnt = 1,
+            TookunSongnoesJson = JsonSerializer.Serialize(new uint[] { 101 }),
+            TokkunSpeedchangeCnt = 0,
+            TokkunAutoplayCnt = 0,
+            TokkunJumpCnt = 0
+        });
+        await fixture.Context.SaveChangesAsync();
+        var handler = new UserDataQueryHandler(
+            fixture.Context,
+            fixture.Catalog,
+            NullLogger<UserDataQueryHandler>.Instance,
+            Options.Create(new ServerSettings()));
+
+        var response = await handler.Handle(new Ac15UserDataQuery(5, GameEra.White), CancellationToken.None);
+        var wire = AssembleWhiteUserDataResponse(response);
+
+        Assert.Equal(7u, response.Tutorial!.TokkunTutorialFlg);
+        Assert.True(wire.ShouldSerializeTokkunTutorialFlg());
+        Assert.Equal(7u, wire.TokkunTutorialFlg);
+        AssertNoTokkunHistorySurface(response);
+        AssertNoTokkunHistorySurface(wire);
+    }
+
+    [Fact]
     public async Task UpdatePlayResult_White_SavesNormalPlayRewardAndOnlyWhiteRows()
     {
         await using var fixture = await WhiteHandlerFixture.CreateAsync();
@@ -187,8 +225,117 @@ public sealed class WhiteRuntimeHandlerTests
         Assert.Empty(await fixture.Context.YellowShopSeasonStates.Where(row => row.Baid == 1).ToListAsync());
         Assert.Empty(await fixture.Context.BlueTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
         Assert.Empty(await fixture.Context.YellowTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.WhiteTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
         Assert.Empty(await fixture.Context.RedDonChallengeRawFacts.Where(row => row.Baid == 1).ToListAsync());
         Assert.Empty(await fixture.Context.RedDonChallengeProgress.Where(row => row.Baid == 1).ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_White_TokkunUpdatesTutorialHistoryAndRecentSongsOnly()
+    {
+        await using var fixture = await WhiteHandlerFixture.CreateAsync(CreateDonChallengeCatalog());
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataWhite.Add(UserSaveDataWhiteExtensions.CreateDefaultWhiteSaveData(1));
+        fixture.Context.UserSaveDataBlue.Add(UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1));
+        fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
+        fixture.Context.UserSaveDataYellow.Add(UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(1));
+        fixture.Context.UserSaveDataRed.Add(UserSaveDataRedExtensions.CreateDefaultRedSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
+            1,
+            GameEra.White,
+            playMode: (uint)PlayMode.Tokkun,
+            playDatetime: "20260620120000",
+            profile: Ac15ProfileMutationFacts.Empty with
+            {
+                GetDonpoint = 99,
+                RewardPtn = 5,
+                RewardProgress = 6,
+                DifficultyTutorialFlg = 4,
+                HasDifficultyPlayedCourse = true,
+                DifficultyPlayedCourse = 3,
+                HasDifficultyPlayedStar = true,
+                DifficultyPlayedStar = 8,
+                ReleaseSongNoes = [104],
+                GetTitleNoes = [10]
+            },
+            stages: [CreateStage(101, 1, 0)],
+            tokkun: new Ac15TokkunPlayResult(
+                TutorialFlg: 7,
+                StageData: new Ac15TokkunStageData(
+                    BanacoinDatetime: "20260620120102",
+                    TokkunSongCnt: 3,
+                    TookunSongnoes: [101, 102, 101],
+                    TokkunSpeedchangeCnt: 4,
+                    TokkunAutoplayCnt: 5,
+                    TokkunJumpCnt: 6))),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var save = await fixture.Context.UserSaveDataWhite.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(7u, save.TokkunTutorialFlg);
+        Assert.Equal(0u, save.TotalGetDonpoint);
+        Assert.Equal(0u, save.RewardPtn);
+        Assert.Equal(0u, save.RewardProgress);
+        Assert.Equal(0u, save.DifficultyTutorialFlg);
+        Assert.Equal(0u, save.DifficultyPlayedCourse);
+        Assert.Equal(0u, save.DifficultyPlayedStar);
+        Assert.False(BitIsSet(save.ReleaseSongFlg, 104));
+        Assert.False(BitIsSet(save.TitleFlg, 10));
+
+        var history = Assert.Single(await fixture.Context.WhiteTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Equal("20260620120000", history.PlayDatetime);
+        Assert.Equal((uint)PlayMode.Tokkun, history.PlayMode);
+        Assert.Equal("20260620120102", history.BanacoinDatetime);
+        Assert.Equal(3u, history.TokkunSongCnt);
+        var tookunSongnoes = JsonSerializer.Deserialize<uint[]>(history.TookunSongnoesJson);
+        Assert.NotNull(tookunSongnoes);
+        Assert.Equal([101u, 102u, 101u], tookunSongnoes);
+        Assert.Equal(4u, history.TokkunSpeedchangeCnt);
+        Assert.Equal(5u, history.TokkunAutoplayCnt);
+        Assert.Equal(6u, history.TokkunJumpCnt);
+        var recentSongNoes = await fixture.Context.WhiteRecentSongs
+            .Where(row => row.Baid == 1)
+            .OrderBy(row => row.SongNo)
+            .Select(row => row.SongNo)
+            .ToArrayAsync();
+        Assert.Equal([101u, 102u], recentSongNoes);
+
+        Assert.Empty(await fixture.Context.SongPlayDataWhite.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.SongBestDataWhite.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.WhiteFavoriteSongs.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.DanScoreDataWhite.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.WhiteDonChallengeRawFacts.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.WhiteDonChallengeProgress.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.SongPlayDataBlue.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.SongPlayDataGreen.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.SongPlayDataYellow.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.SongPlayDataRed.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.BlueTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.YellowTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.RedDonChallengeRawFacts.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.RedDonChallengeProgress.Where(row => row.Baid == 1).ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_White_TokkunUnknownUserReturnsSuccessWithoutRows()
+    {
+        await using var fixture = await WhiteHandlerFixture.CreateAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
+            404,
+            GameEra.White,
+            playMode: (uint)PlayMode.Tokkun,
+            tokkun: new Ac15TokkunPlayResult(7, null)),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        Assert.Empty(await fixture.Context.UserSaveDataWhite.Where(row => row.Baid == 404).ToListAsync());
+        Assert.Empty(await fixture.Context.WhiteTokkunStageResults.Where(row => row.Baid == 404).ToListAsync());
+        Assert.Empty(await fixture.Context.WhiteRecentSongs.Where(row => row.Baid == 404).ToListAsync());
     }
 
     [Fact]
@@ -335,6 +482,34 @@ public sealed class WhiteRuntimeHandlerTests
         Assert.Equal(101u, mappedStage.SongNo);
         Assert.Equal(765432u, mappedStage.PlayScore);
         Assert.Single(mappedStage.ChallengeIds);
+    }
+
+    [Fact]
+    public void PlayResultMapper_White_MapsTokkunWirePayloadAndOmitsUnsupportedModeSections()
+    {
+        var request = CreateWireRequest(1);
+        request.PlayMode = (uint)PlayMode.Tokkun;
+        request.TokkunTutorialFlg = 7;
+        request.AryTokkunstageInfo = new PlayResultRequest.TokkunstageData
+        {
+            BanacoinDatetime = "20260620120102",
+            TokkunSongCnt = 3,
+            TookunSongnoes = [101, 102, 101],
+            TokkunSpeedchangeCnt = 4,
+            TokkunAutoplayCnt = 5,
+            TokkunJumpCnt = 6
+        };
+
+        var envelope = PlayResultMappers.Map(request);
+
+        Assert.Equal((uint)PlayMode.Tokkun, envelope.Metadata.PlayMode);
+        Assert.NotNull(envelope.Tokkun);
+        Assert.Equal(7u, envelope.Tokkun!.TutorialFlg);
+        Assert.NotNull(envelope.Tokkun.StageData);
+        Assert.Equal("20260620120102", envelope.Tokkun.StageData!.BanacoinDatetime);
+        Assert.Equal([101u, 102u, 101u], envelope.Tokkun.StageData.TookunSongnoes);
+        Assert.Null(envelope.BlueBattle);
+        Assert.Null(envelope.GreenGhost);
     }
 
     private static UpdatePlayResultCommandHandler CreateHandler(WhiteHandlerFixture fixture)
@@ -497,4 +672,14 @@ public sealed class WhiteRuntimeHandlerTests
 
     private static bool BitIsSet(byte[] source, uint id)
         => (source[id >> 3] & (1 << ((int)id & 7))) != 0;
+
+    private static void AssertNoTokkunHistorySurface(object response)
+    {
+        var propertyNames = response.GetType().GetProperties().Select(property => property.Name).ToArray();
+        Assert.DoesNotContain(propertyNames, name => name.Contains("TokkunStage", StringComparison.Ordinal));
+        Assert.DoesNotContain(propertyNames, name => name.Contains("TokkunSongCnt", StringComparison.Ordinal));
+        Assert.DoesNotContain(propertyNames, name => name.Contains("TokkunSpeedchange", StringComparison.Ordinal));
+        Assert.DoesNotContain(propertyNames, name => name.Contains("TokkunAutoplay", StringComparison.Ordinal));
+        Assert.DoesNotContain(propertyNames, name => name.Contains("TokkunJump", StringComparison.Ordinal));
+    }
 }

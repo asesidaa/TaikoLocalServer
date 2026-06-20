@@ -131,6 +131,7 @@ public sealed class GreenAuthConfigTests
         public DbSet<SongPlayDatumWhite> SongPlayDataWhite => throw new NotSupportedException();
         public DbSet<WhiteFavoriteSongs> WhiteFavoriteSongs => throw new NotSupportedException();
         public DbSet<WhiteRecentSongs> WhiteRecentSongs => throw new NotSupportedException();
+        public DbSet<WhiteTokkunStageResult> WhiteTokkunStageResults => throw new NotSupportedException();
         public DbSet<DanScoreDatumWhite> DanScoreDataWhite => throw new NotSupportedException();
         public DbSet<DanStageScoreDatumWhite> DanStageScoreDataWhite => throw new NotSupportedException();
         public DbSet<WhiteDonChallengeRawFact> WhiteDonChallengeRawFacts => throw new NotSupportedException();

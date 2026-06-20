@@ -27,6 +27,11 @@ public partial class UpdatePlayResultCommandHandler
         var playResultData = request.PlayResultData;
         var normal = playResultData.Normal;
         IReadOnlyList<Ac15StageResult> stages = normal?.Stages ?? [];
+        if (Ac15TokkunPlayResultPolicy.IsTokkun(playResultData))
+        {
+            return await HandleWhiteTokkun(request.Baid, playResultData, cancellationToken);
+        }
+
         var validStages = Ac15NormalStageFilter.Filter(
             request.Baid,
             stages,

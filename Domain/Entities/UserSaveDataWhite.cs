@@ -39,6 +39,7 @@ public partial class UserSaveDataWhite :
     public uint RewardPtn { get; set; }
     public uint RewardProgress { get; set; }
     public uint DifficultyTutorialFlg { get; set; }
+    public uint? TokkunTutorialFlg { get; set; }
     public bool IsAutoCostumeOn { get; set; }
     public uint CategJpopCnt { get; set; }
     public uint CategAnimeCnt { get; set; }

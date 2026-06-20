@@ -25,7 +25,6 @@ public static partial class UserDataMappers
 
     public static partial void Apply(Ac15UserDataModeFlags source, [MappingTarget] UserDataResponse response);
 
-    [MapperIgnoreSource(nameof(Ac15UserDataTutorial.TokkunTutorialFlg))]
     [MapperIgnoreSource(nameof(Ac15UserDataTutorial.DifficultyTutorialFlg))]
     public static partial void Apply(Ac15UserDataTutorial source, [MappingTarget] UserDataResponse response);
 

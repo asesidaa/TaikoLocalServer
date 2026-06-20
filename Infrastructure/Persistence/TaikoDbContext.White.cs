@@ -11,6 +11,7 @@ public partial class TaikoDbContext
     public virtual DbSet<SongPlayDatumWhite> SongPlayDataWhite { get; set; } = null!;
     public virtual DbSet<WhiteFavoriteSongs> WhiteFavoriteSongs { get; set; } = null!;
     public virtual DbSet<WhiteRecentSongs> WhiteRecentSongs { get; set; } = null!;
+    public virtual DbSet<WhiteTokkunStageResult> WhiteTokkunStageResults { get; set; } = null!;
     public virtual DbSet<DanScoreDatumWhite> DanScoreDataWhite { get; set; } = null!;
     public virtual DbSet<DanStageScoreDatumWhite> DanStageScoreDataWhite { get; set; } = null!;
     public virtual DbSet<WhiteDonChallengeRawFact> WhiteDonChallengeRawFacts { get; set; } = null!;
@@ -78,6 +79,19 @@ public partial class TaikoDbContext
             entity.ToTable("WhiteRecentSongs");
             entity.HasKey(e => new { e.Baid, e.SongNo });
             entity.Property(e => e.LastPlayed).HasColumnType("datetime");
+            entity.HasOne(d => d.Ba)
+                .WithMany()
+                .HasPrincipalKey(p => p.Baid)
+                .HasForeignKey(d => d.Baid)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<WhiteTokkunStageResult>(entity =>
+        {
+            entity.ToTable("WhiteTokkunStageResults");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            entity.HasIndex(e => new { e.Baid, e.PlayDatetime });
             entity.HasOne(d => d.Ba)
                 .WithMany()
                 .HasPrincipalKey(p => p.Baid)

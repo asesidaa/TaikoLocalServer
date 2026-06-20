@@ -12,7 +12,7 @@ public static partial class PlayResultMappers
     [MapPropertyFromSource(nameof(Ac15PlayResultEnvelope.Profile), Use = nameof(MapProfile))]
     [MapPropertyFromSource(nameof(Ac15PlayResultEnvelope.Normal), Use = nameof(MapNormal))]
     [MapPropertyFromSource(nameof(Ac15PlayResultEnvelope.Dani), Use = nameof(MapDani))]
-    [MapValue(nameof(Ac15PlayResultEnvelope.Tokkun), null)]
+    [MapPropertyFromSource(nameof(Ac15PlayResultEnvelope.Tokkun), Use = nameof(MapTokkun))]
     [MapValue(nameof(Ac15PlayResultEnvelope.BlueBattle), null)]
     [MapValue(nameof(Ac15PlayResultEnvelope.GreenGhost), null)]
     public static partial Ac15PlayResultEnvelope Map(PlayResultRequest request);
@@ -49,6 +49,10 @@ public static partial class PlayResultMappers
     [MapProperty(nameof(PlayResultRequest.AryStageInfoes), nameof(Ac15DaniPlayResult.Stages), Use = nameof(MapStages))]
     private static partial Ac15DaniPlayResult MapDani(PlayResultRequest request);
 
+    [MapPropertyFromSource(nameof(Ac15TokkunPlayResult.TutorialFlg), Use = nameof(MapTokkunTutorialFlg))]
+    [MapProperty(nameof(PlayResultRequest.AryTokkunstageInfo), nameof(Ac15TokkunPlayResult.StageData))]
+    private static partial Ac15TokkunPlayResult MapTokkunCore(PlayResultRequest request);
+
     [MapProperty(nameof(PlayResultRequest.StageData.HitCnt), nameof(Ac15StageResult.HitCnt), Use = nameof(MapNullableUInt))]
     [MapProperty(nameof(PlayResultRequest.StageData.OptionFlg), nameof(Ac15StageResult.OptionFlg), Use = nameof(MapBytes))]
     [MapProperty(nameof(PlayResultRequest.StageData.ToneFlg), nameof(Ac15StageResult.ToneFlg), Use = nameof(MapBytes))]
@@ -73,11 +77,20 @@ public static partial class PlayResultMappers
     [UserMapping(Default = true)]
     private static partial Ac15CostumeFacts MapCostumeData(PlayResultRequest.CostumeData costume);
 
+    [MapProperty(nameof(PlayResultRequest.TokkunstageData.BanacoinDatetime), nameof(Ac15TokkunStageData.BanacoinDatetime), Use = nameof(MapString))]
+    [UserMapping(Default = true)]
+    private static partial Ac15TokkunStageData? MapTokkunStageData(PlayResultRequest.TokkunstageData? data);
+
     [UserMapping(Default = true)]
     private static partial Ac15CompeIdFact MapCompe(PlayResultRequest.StageData.ResultcompeData data);
 
     private static Ac15NormalPlayResult? MapNormal(PlayResultRequest request)
         => request.AryStageInfoes.Count == 0 ? null : MapNormalCore(request);
+
+    private static Ac15TokkunPlayResult? MapTokkun(PlayResultRequest request)
+        => !request.ShouldSerializeTokkunTutorialFlg() && request.AryTokkunstageInfo is null
+            ? null
+            : MapTokkunCore(request);
 
     private static List<Ac15StageResult> MapStages(List<PlayResultRequest.StageData> stages)
         => stages.Select(MapStage).ToList();
@@ -86,6 +99,9 @@ public static partial class PlayResultMappers
         => values.Select(MapCompe).ToList();
 
     private static bool HasCurrentCostume(PlayResultRequest request) => request.AryCurrentCostume is not null;
+
+    private static uint? MapTokkunTutorialFlg(PlayResultRequest request)
+        => request.ShouldSerializeTokkunTutorialFlg() ? request.TokkunTutorialFlg : null;
 
     [UserMapping(Default = true)]
     private static List<uint> MapUIntList(uint[]? values)
