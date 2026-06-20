@@ -1,7 +1,8 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.White.Controllers;
 
 [ApiController]
-[Route("/v07r00/chassis/recommend.php")]
+[Route(WhiteRoutePrefixes.Final + "/recommend.php")]
+[Route(WhiteRoutePrefixes.Compatibility + "/recommend.php")]
 public sealed class RecommendController : BaseProtocolController<RecommendController>
 {
     [HttpPost]

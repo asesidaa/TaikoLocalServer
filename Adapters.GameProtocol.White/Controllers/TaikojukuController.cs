@@ -1,7 +1,8 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.White.Controllers;
 
 [ApiController]
-[Route("/v07r00/chassis/taikojuku.php")]
+[Route(WhiteRoutePrefixes.Final + "/taikojuku.php")]
+[Route(WhiteRoutePrefixes.Compatibility + "/taikojuku.php")]
 public sealed class TaikojukuController : BaseProtocolController<TaikojukuController>
 {
     [HttpPost]

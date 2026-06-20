@@ -1,7 +1,8 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.White.Controllers;
 
 [ApiController]
-[Route("/v07r00/chassis/bookkeeping.php")]
+[Route(WhiteRoutePrefixes.Final + "/bookkeeping.php")]
+[Route(WhiteRoutePrefixes.Compatibility + "/bookkeeping.php")]
 public sealed class BookkeepingController : BaseProtocolController<BookkeepingController>
 {
     [HttpPost]

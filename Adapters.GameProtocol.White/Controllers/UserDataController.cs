@@ -1,7 +1,8 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.White.Controllers;
 
 [ApiController]
-[Route("/v07r00/chassis/userdata.php")]
+[Route(WhiteRoutePrefixes.Final + "/userdata.php")]
+[Route(WhiteRoutePrefixes.Compatibility + "/userdata.php")]
 public sealed class UserDataController : BaseProtocolController<UserDataController>
 {
     [HttpPost]

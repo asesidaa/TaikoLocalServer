@@ -1,7 +1,8 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.White.Controllers;
 
 [ApiController]
-[Route("/v07r00/chassis/getfolder.php")]
+[Route(WhiteRoutePrefixes.Final + "/getfolder.php")]
+[Route(WhiteRoutePrefixes.Compatibility + "/getfolder.php")]
 public sealed class GetFolderController : BaseProtocolController<GetFolderController>
 {
     [HttpPost]

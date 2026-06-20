@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TaikoLocalServer.Adapters.GameProtocol.White;
 using TaikoLocalServer.Adapters.GameProtocol.Shared;
 using TaikoLocalServer.Domain.Enums;
 using WhiteAdapter = TaikoLocalServer.Adapters.GameProtocol.White.DependencyInjection;
@@ -11,23 +12,34 @@ namespace TaikoLocalServer.Tests.White;
 
 public sealed class WhiteHostRouteGatingTests
 {
-    private static readonly string[] ApprovedWhiteRoutes =
+    private static readonly string[] ApprovedWhitePrefixes =
     [
-        "/v07r00/chassis/baidcheck.php",
-        "/v07r00/chassis/bookkeeping.php",
-        "/v07r00/chassis/crownsdata.php",
-        "/v07r00/chassis/getfolder.php",
-        "/v07r00/chassis/gettelop.php",
-        "/v07r00/chassis/heartbeat.php",
-        "/v07r00/chassis/initialdatacheck.php",
-        "/v07r00/chassis/mydonentry.php",
-        "/v07r00/chassis/playresult.php",
-        "/v07r00/chassis/recommend.php",
-        "/v07r00/chassis/selfbest.php",
-        "/v07r00/chassis/taikojuku.php",
-        "/v07r00/chassis/tournamentcheck.php",
-        "/v07r00/chassis/userdata.php"
+        WhiteRoutePrefixes.Compatibility,
+        WhiteRoutePrefixes.Final
     ];
+
+    private static readonly string[] ApprovedWhiteSuffixes =
+    [
+        "baidcheck.php",
+        "bookkeeping.php",
+        "crownsdata.php",
+        "getfolder.php",
+        "gettelop.php",
+        "heartbeat.php",
+        "initialdatacheck.php",
+        "mydonentry.php",
+        "playresult.php",
+        "recommend.php",
+        "selfbest.php",
+        "taikojuku.php",
+        "tournamentcheck.php",
+        "userdata.php"
+    ];
+
+    private static readonly string[] ApprovedWhiteRoutes = ApprovedWhitePrefixes
+        .SelectMany(prefix => ApprovedWhiteSuffixes.Select(suffix => $"{prefix}/{suffix}"))
+        .Order(StringComparer.Ordinal)
+        .ToArray();
 
     [Fact]
     public void EnabledWhiteApplicationPartExposesOnlyApprovedWhiteRoutes()
@@ -35,13 +47,16 @@ public sealed class WhiteHostRouteGatingTests
         var routes = DiscoverWhiteRoutesFromHostSettings(whiteEnabled: true);
 
         Assert.Equal(ApprovedWhiteRoutes, routes);
-        Assert.All(routes, route => Assert.StartsWith("/v07r00/chassis/", route, StringComparison.Ordinal));
-        Assert.DoesNotContain("/v07r00/chassis/startupauth.php", routes);
-        Assert.DoesNotContain("/v07r00/chassis/verupauth.php", routes);
-        Assert.DoesNotContain("/v07r00/chassis/verupcomplete.php", routes);
-        Assert.DoesNotContain("/v07r00/chassis/rewardexecution.php", routes);
-        Assert.DoesNotContain("/v07r00/chassis/rewardcardcheck.php", routes);
-        Assert.DoesNotContain("/v07r00/chassis/challengecompe.php", routes);
+        Assert.All(routes, route => Assert.Contains(ApprovedWhitePrefixes, prefix => route.StartsWith($"{prefix}/", StringComparison.Ordinal)));
+        foreach (var prefix in ApprovedWhitePrefixes)
+        {
+            Assert.DoesNotContain($"{prefix}/startupauth.php", routes);
+            Assert.DoesNotContain($"{prefix}/verupauth.php", routes);
+            Assert.DoesNotContain($"{prefix}/verupcomplete.php", routes);
+            Assert.DoesNotContain($"{prefix}/rewardexecution.php", routes);
+            Assert.DoesNotContain($"{prefix}/rewardcardcheck.php", routes);
+            Assert.DoesNotContain($"{prefix}/challengecompe.php", routes);
+        }
     }
 
     [Fact]

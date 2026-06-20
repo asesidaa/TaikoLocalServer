@@ -1,7 +1,8 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.White.Controllers;
 
 [ApiController]
-[Route("/v07r00/chassis/mydonentry.php")]
+[Route(WhiteRoutePrefixes.Final + "/mydonentry.php")]
+[Route(WhiteRoutePrefixes.Compatibility + "/mydonentry.php")]
 public sealed class MyDonEntryController : BaseProtocolController<MyDonEntryController>
 {
     [HttpPost]

@@ -1,7 +1,8 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.White.Controllers;
 
 [ApiController]
-[Route("/v07r00/chassis/baidcheck.php")]
+[Route(WhiteRoutePrefixes.Final + "/baidcheck.php")]
+[Route(WhiteRoutePrefixes.Compatibility + "/baidcheck.php")]
 public sealed class BaidController : BaseProtocolController<BaidController>
 {
     [HttpPost]

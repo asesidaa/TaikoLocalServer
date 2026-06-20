@@ -4,7 +4,8 @@ using TaikoLocalServer.Application.Abstractions;
 namespace TaikoLocalServer.Adapters.GameProtocol.White.Controllers;
 
 [ApiController]
-[Route("/v07r00/chassis/crownsdata.php")]
+[Route(WhiteRoutePrefixes.Final + "/crownsdata.php")]
+[Route(WhiteRoutePrefixes.Compatibility + "/crownsdata.php")]
 public sealed class CrownsDataController(ITaikoDbContext context, IGameDataCatalog gameDataService)
     : BaseProtocolController<CrownsDataController>
 {
