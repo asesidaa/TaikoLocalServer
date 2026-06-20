@@ -264,7 +264,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 27]: White AdminApi/WebUI support exposes only implemented White-owned AC15 surfaces. White joins generic profile settings, favorites, score/history/leaderboard, Dani, game-data, and customization contracts; legacy Nijiiro UserSettings remains unchanged.
 - [Phase 27]: White Don Challenge is exposed through the dedicated AdminApi/WebUI Don Challenge contract only. It derives progress from normal White playresult stages and White-owned tables; it does not add White ChallengeCompe cabinet route/readback semantics or read Red state.
 - [Phase 27]: Automated closeout passed full tests, generated-source inspection, and temp Host build, but v1.4 remains open until the user completes manual RPCS3/cabinet and WebUI verification.
-- [Quick 260620-ub3 correction]: White final `/v07r03` and legacy `/v07r00` no longer share protocol controllers or generated DTOs. `/v07r03` uses final `proto/white-final` wire with Banacoin heartbeat fields; `/v07r00` uses regenerated legacy `proto/white` wire and compatibility-only controllers.
+- [Quick 260620-ub3 correction]: White final `/v07r03` and legacy `/v07r00` no longer share generated DTOs. The same per-endpoint controller classes now expose separate final and legacy handler methods; `/v07r03` uses final `proto/white-final` wire with Banacoin heartbeat fields, while `/v07r00` uses regenerated legacy `proto/white` wire.
 
 ### Pending Todos
 
@@ -279,7 +279,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260621-4ze | Support random AC15 recommend_song and remove recommend songs config files | 2026-06-21 | 84f219d1 | [260621-4ze-support-random-recommend-song-only-and-r](./quick/260621-4ze-support-random-recommend-song-only-and-r/) |
-| 260620-ub3 | Support White final 11.01 under /v07r03 with Tokkun, Banacoin, difficulty panel support, and split legacy /v07r00 protocol compatibility | 2026-06-20 | dbd37c3a | [260620-ub3-support-white-final-version-11-01-under-](./quick/260620-ub3-support-white-final-version-11-01-under-/) |
+| 260620-ub3 | Support White final 11.01 under /v07r03 with Tokkun, Banacoin, difficulty panel support, and split legacy /v07r00 protocol compatibility | 2026-06-20 | 261120d0 | [260620-ub3-support-white-final-version-11-01-under-](./quick/260620-ub3-support-white-final-version-11-01-under-/) |
 | 260615-wt6 | Fix AC15 selfbest Ura Oni scores, userdata score display type, and era favorite limits | 2026-06-15 | cd824405 | [260615-wt6-now-let-s-fix-several-issues-1-currently](./quick/260615-wt6-now-let-s-fix-several-issues-1-currently/) |
 | 260613-ny9 | Support older Red `/v08r00` compatibility with old BAID wire shape | 2026-06-13 | d7032433 | [260613-ny9-before-we-continue-to-next-phase-support](./quick/260613-ny9-before-we-continue-to-next-phase-support/) |
 | 260609-7gk | Regenerate Yellow final wire support, add final-version field handling, and move Yellow game routes to `/v09r02` | 2026-06-08 | 39e49294 | [260609-7gk-now-let-s-execute-a-quick-task-we-have-c](./quick/260609-7gk-now-let-s-execute-a-quick-task-we-have-c/) |

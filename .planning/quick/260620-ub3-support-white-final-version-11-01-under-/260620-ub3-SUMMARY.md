@@ -10,11 +10,12 @@ commits:
   - 19cf0643
   - 87616f0e
   - dbd37c3a
+  - 261120d0
 ---
 
 # Quick Task 260620-ub3 Summary
 
-White final 11.01 direct-protobuf support now uses `proto/white-final/taiko.proto` under `/v07r03/chassis/*`, while `/v07r00/chassis/*` is served through regenerated legacy White wire DTOs from `proto/white/taiko.proto`. Both versions reuse the same Application handlers where behavior is compatible, but they do not share protocol controllers or response DTOs. Final White adds White-owned Tokkun, stateless Banacoin compatibility, plus difficulty panel persistence/readback.
+White final 11.01 direct-protobuf support now uses `proto/white-final/taiko.proto` under `/v07r03/chassis/*`, while `/v07r00/chassis/*` is served through regenerated legacy White wire DTOs from `proto/white/taiko.proto`. Both versions reuse the same per-endpoint controller classes and Application handlers where behavior is compatible, but each controller exposes separate final and legacy handler methods with separate request/response DTOs. Final White adds White-owned Tokkun, stateless Banacoin compatibility, plus difficulty panel persistence/readback.
 
 ## Completed Tasks
 
@@ -25,14 +26,14 @@ White final 11.01 direct-protobuf support now uses `proto/white-final/taiko.prot
 | Add White Tokkun state | Added nullable `TokkunTutorialFlg`, `WhiteTokkunStageResults`, EF migration, handler routing, mapper coverage, and no-cross-mode tests | `ebd32377` |
 | Wire difficulty panel fields | Normal White playresults persist difficulty tutorial/course/star with presence checks; userdata returns saved fields | `19cf0643` |
 | Add Banacoin compatibility routes | Added stateless final White `getbanacoininfo.php`, `balancecheck.php`, `banacoinpayment.php`, and `banacoinerrorlog.php`; legacy `/v07r00` remains on the old non-Banacoin schema | `87616f0e`, `dbd37c3a` |
-| Split final and legacy protocol layers | Added `LegacyWire` DTOs/controllers/mappers for `/v07r00`, removed compatibility routes from final controllers, and made final heartbeat emit Banacoin status fields 4/5 | `dbd37c3a` |
+| Split final and legacy protocol layers | Added `LegacyWire` DTOs/mappers for `/v07r00`, added legacy handler methods beside the final methods in each existing White controller, and made final heartbeat emit Banacoin status fields 4/5 | `dbd37c3a`, `261120d0` |
 
 ## Key Files
 
 - `Adapters.GameProtocol.White/Wire/Game.cs`
 - `Adapters.GameProtocol.White/LegacyWire/Game.cs`
-- `Adapters.GameProtocol.White/LegacyWire/LegacyControllers.cs`
 - `Adapters.GameProtocol.White/LegacyWire/LegacyMappers.cs`
+- `Adapters.GameProtocol.White/Controllers/*.cs`
 - `Adapters.GameProtocol.White/WhiteRoutePrefixes.cs`
 - `Adapters.GameProtocol.White/Controllers/BalanceCheckController.cs`
 - `Adapters.GameProtocol.White/Controllers/BanacoinErrorLogController.cs`
@@ -72,6 +73,11 @@ White final 11.01 direct-protobuf support now uses `proto/white-final/taiko.prot
   - `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build"` - passed, 0 warnings/errors.
   - `dotnet build Adapters.GameProtocol.White/Adapters.GameProtocol.White.csproj /p:EmitCompilerGeneratedFiles=true` - passed, 0 warnings/errors.
   - Inspected generated Mapperly files under `Adapters.GameProtocol.White/obj/Debug/net10.0/generated/Riok.Mapperly/Riok.Mapperly.MapperGenerator/` for `LegacyPlayResultMappers.g.cs` and `LegacyUserDataMappers.g.cs`; legacy playresult maps unsupported mode sections to null and legacy userdata omits final-only tutorial/difficulty fields.
+- Controller organization correction:
+  - `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~WhiteProtocolVersionCompatibilityTests"` - initially failed because `HeartbeatController.LegacyHeartbeat` did not exist, then passed after moving the legacy handler into `HeartbeatController`.
+  - `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~White"` - passed, 45 tests.
+  - `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build"` - passed, 0 warnings/errors.
+  - `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~YellowTokkunPersistenceTests|FullyQualifiedName~BlueTokkunPersistenceTests|FullyQualifiedName~RedPlayResultHandlerTests"` - passed, 13 tests.
 
 ## Deviations from Plan
 
@@ -101,9 +107,16 @@ White final 11.01 direct-protobuf support now uses `proto/white-final/taiko.prot
 **4. [Critical review follow-up] Split `/v07r03` final protocol from `/v07r00` legacy protocol**
 - **Found during:** User review after Banacoin follow-up.
 - **Issue:** The previous fix shared final White controllers and generated final DTOs with `/v07r00`, which made legacy White serialize final-only fields such as heartbeat Banacoin status fields.
-- **Fix:** Regenerated the old White proto into `LegacyWire`, added compatibility-only legacy controllers/mappers, removed compatibility routes from final controllers, and replaced the rejected route/source-shape test with a protobuf byte-presence behavior test.
+- **Fix:** Regenerated the old White proto into `LegacyWire`, added legacy request handlers beside the final handlers in the existing White controller classes, kept legacy response mapping in `LegacyMappers`, and replaced the rejected route/source-shape test with a protobuf byte-presence behavior test.
 - **Files modified:** `Adapters.GameProtocol.White/Controllers/*`, `Adapters.GameProtocol.White/LegacyWire/*`, `Tests/White/WhiteProtocolVersionCompatibilityTests.cs`, superseded route-gating test deleted
 - **Commit:** `dbd37c3a`
+
+**5. [Review follow-up] Colocate legacy handlers with final controller files**
+- **Found during:** User review after the protocol split.
+- **Issue:** `LegacyControllers.cs` preserved the protocol split but organized legacy routes separately from their final route peers.
+- **Fix:** Removed `LegacyControllers.cs` and moved each `/v07r00` handler into the corresponding existing White controller class as a separate route/action method, while retaining `LegacyWire` DTOs and mappers for the old schema.
+- **Files modified:** `Adapters.GameProtocol.White/Controllers/*`, `Adapters.GameProtocol.White/LegacyWire/LegacyControllers.cs`, `Tests/White/WhiteProtocolVersionCompatibilityTests.cs`
+- **Commit:** `261120d0`
 
 ## Known Stubs
 
