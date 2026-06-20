@@ -8,11 +8,12 @@ commits:
   - aada5791
   - ebd32377
   - 19cf0643
+  - 87616f0e
 ---
 
 # Quick Task 260620-ub3 Summary
 
-White final 11.01 direct-protobuf support now uses `proto/white-final/taiko.proto`, exposes existing White handlers under `/v07r03/chassis/*` while preserving `/v07r00/chassis/*`, and adds White-owned Tokkun plus difficulty panel persistence/readback.
+White final 11.01 direct-protobuf support now uses `proto/white-final/taiko.proto`, exposes existing White handlers under `/v07r03/chassis/*` while preserving `/v07r00/chassis/*`, and adds White-owned Tokkun, stateless Banacoin compatibility, plus difficulty panel persistence/readback.
 
 ## Completed Tasks
 
@@ -22,11 +23,16 @@ White final 11.01 direct-protobuf support now uses `proto/white-final/taiko.prot
 | Add `/v07r03` aliases | Existing White controllers expose both final and compatibility prefixes; Host protobuf fallback accepts both | `aada5791` |
 | Add White Tokkun state | Added nullable `TokkunTutorialFlg`, `WhiteTokkunStageResults`, EF migration, handler routing, mapper coverage, and no-cross-mode tests | `ebd32377` |
 | Wire difficulty panel fields | Normal White playresults persist difficulty tutorial/course/star with presence checks; userdata returns saved fields | `19cf0643` |
+| Add Banacoin compatibility routes | Added stateless `getbanacoininfo.php`, `balancecheck.php`, `banacoinpayment.php`, and `banacoinerrorlog.php` under both White prefixes | `87616f0e` |
 
 ## Key Files
 
 - `Adapters.GameProtocol.White/Wire/Game.cs`
 - `Adapters.GameProtocol.White/WhiteRoutePrefixes.cs`
+- `Adapters.GameProtocol.White/Controllers/BalanceCheckController.cs`
+- `Adapters.GameProtocol.White/Controllers/BanacoinErrorLogController.cs`
+- `Adapters.GameProtocol.White/Controllers/BanacoinPaymentController.cs`
+- `Adapters.GameProtocol.White/Controllers/GetBanacoinInfoController.cs`
 - `Adapters.GameProtocol.White/Mappers/PlayResultMappers.cs`
 - `Adapters.GameProtocol.White/Mappers/UserDataMappers.cs`
 - `Application/Handlers/UpdatePlayResultCommand.White.cs`
@@ -37,6 +43,7 @@ White final 11.01 direct-protobuf support now uses `proto/white-final/taiko.prot
 - `Infrastructure/Persistence/Migrations/20260620141329_AddWhiteFinalTokkunState.cs`
 - `Tests/White/WhiteRuntimeHandlerTests.cs`
 - `Tests/White/WhiteTokkunPersistenceTests.cs`
+- `Tests/White/WhiteBanacoinCompatibilityTests.cs`
 
 ## Verification
 
@@ -49,6 +56,11 @@ White final 11.01 direct-protobuf support now uses `proto/white-final/taiko.prot
 - `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~White"` - passed, 41 tests.
 - `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~YellowTokkunPersistenceTests|FullyQualifiedName~BlueTokkunPersistenceTests|FullyQualifiedName~RedPlayResultHandlerTests"` - passed, 13 tests.
 - `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build"` - passed, 0 warnings/errors.
+- Follow-up Banacoin fix:
+  - `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~WhiteBanacoinCompatibilityTests|FullyQualifiedName~WhiteHostRouteGatingTests"` - passed, 6 tests.
+  - `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~White"` - passed, 45 tests.
+  - `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~YellowTokkunPersistenceTests|FullyQualifiedName~BlueTokkunPersistenceTests|FullyQualifiedName~RedPlayResultHandlerTests"` - passed, 13 tests.
+  - `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build"` - passed, 0 warnings/errors.
 
 ## Deviations from Plan
 
@@ -67,6 +79,13 @@ White final 11.01 direct-protobuf support now uses `proto/white-final/taiko.prot
 - **Fix:** Added a throwing `DbSet<WhiteTokkunStageResult>` property to the test stub.
 - **Files modified:** `Tests/Green/GreenAuthConfigTests.cs`
 - **Commit:** `ebd32377`
+
+**3. [Review follow-up] Added White final Banacoin compatibility endpoints**
+- **Found during:** User review after quick-task closeout.
+- **Issue:** The first pass reused the older White 0.13 absence allowlist even though `proto/white-final/taiko.proto` defines Banacoin-adjacent final White messages.
+- **Fix:** Added stateless success-shaped White controllers for `getbanacoininfo.php`, `balancecheck.php`, `banacoinpayment.php`, and `banacoinerrorlog.php`, with route coverage under `/v07r03/chassis/*` and `/v07r00/chassis/*`.
+- **Files modified:** `Adapters.GameProtocol.White/Controllers/*Banacoin*.cs`, `Adapters.GameProtocol.White/Controllers/BalanceCheckController.cs`, `Tests/White/WhiteBanacoinCompatibilityTests.cs`, `Tests/White/WhiteHostRouteGatingTests.cs`
+- **Commit:** `87616f0e`
 
 ## Known Stubs
 
