@@ -2,7 +2,6 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Controllers;
 
 [ApiController]
 [Route(WhiteRoutePrefixes.Final + "/banacoinerrorlog.php")]
-[Route(WhiteRoutePrefixes.Compatibility + "/banacoinerrorlog.php")]
 public class BanacoinErrorLogController : BaseProtocolController<BanacoinErrorLogController>
 {
     [HttpPost]

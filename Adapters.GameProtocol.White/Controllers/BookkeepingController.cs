@@ -2,7 +2,6 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Controllers;
 
 [ApiController]
 [Route(WhiteRoutePrefixes.Final + "/bookkeeping.php")]
-[Route(WhiteRoutePrefixes.Compatibility + "/bookkeeping.php")]
 public sealed class BookkeepingController : BaseProtocolController<BookkeepingController>
 {
     [HttpPost]

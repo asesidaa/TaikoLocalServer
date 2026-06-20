@@ -5,7 +5,6 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Controllers;
 
 [ApiController]
 [Route(WhiteRoutePrefixes.Final + "/crownsdata.php")]
-[Route(WhiteRoutePrefixes.Compatibility + "/crownsdata.php")]
 public sealed class CrownsDataController(ITaikoDbContext context, IGameDataCatalog gameDataService)
     : BaseProtocolController<CrownsDataController>
 {

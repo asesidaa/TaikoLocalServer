@@ -2,7 +2,6 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Controllers;
 
 [ApiController]
 [Route(WhiteRoutePrefixes.Final + "/gettelop.php")]
-[Route(WhiteRoutePrefixes.Compatibility + "/gettelop.php")]
 public sealed class GetTelopController : BaseProtocolController<GetTelopController>
 {
     [HttpPost]

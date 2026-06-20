@@ -2,7 +2,6 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Controllers;
 
 [ApiController]
 [Route(WhiteRoutePrefixes.Final + "/initialdatacheck.php")]
-[Route(WhiteRoutePrefixes.Compatibility + "/initialdatacheck.php")]
 public sealed class InitialDataCheckController : BaseProtocolController<InitialDataCheckController>
 {
     [HttpPost]

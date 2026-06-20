@@ -2,7 +2,6 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Controllers;
 
 [ApiController]
 [Route(WhiteRoutePrefixes.Final + "/selfbest.php")]
-[Route(WhiteRoutePrefixes.Compatibility + "/selfbest.php")]
 public sealed class SelfBestController : BaseProtocolController<SelfBestController>
 {
     [HttpPost]

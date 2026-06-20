@@ -2,7 +2,6 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Controllers;
 
 [ApiController]
 [Route(WhiteRoutePrefixes.Final + "/balancecheck.php")]
-[Route(WhiteRoutePrefixes.Compatibility + "/balancecheck.php")]
 public class BalanceCheckController : BaseProtocolController<BalanceCheckController>
 {
     [HttpPost]

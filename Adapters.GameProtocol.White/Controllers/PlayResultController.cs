@@ -2,7 +2,6 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Controllers;
 
 [ApiController]
 [Route(WhiteRoutePrefixes.Final + "/playresult.php")]
-[Route(WhiteRoutePrefixes.Compatibility + "/playresult.php")]
 public sealed class PlayResultController : BaseProtocolController<PlayResultController>
 {
     [HttpPost]

@@ -2,7 +2,6 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Controllers;
 
 [ApiController]
 [Route(WhiteRoutePrefixes.Final + "/tournamentcheck.php")]
-[Route(WhiteRoutePrefixes.Compatibility + "/tournamentcheck.php")]
 public sealed class TournamentCheckController : BaseProtocolController<TournamentCheckController>
 {
     [HttpPost]

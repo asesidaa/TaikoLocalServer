@@ -2,7 +2,6 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Controllers;
 
 [ApiController]
 [Route(WhiteRoutePrefixes.Final + "/getbanacoininfo.php")]
-[Route(WhiteRoutePrefixes.Compatibility + "/getbanacoininfo.php")]
 public class GetBanacoinInfoController : BaseProtocolController<GetBanacoinInfoController>
 {
     [HttpPost]

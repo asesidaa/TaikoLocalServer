@@ -2,7 +2,6 @@ namespace TaikoLocalServer.Adapters.GameProtocol.White.Controllers;
 
 [ApiController]
 [Route(WhiteRoutePrefixes.Final + "/banacoinpayment.php")]
-[Route(WhiteRoutePrefixes.Compatibility + "/banacoinpayment.php")]
 public class BanacoinPaymentController : BaseProtocolController<BanacoinPaymentController>
 {
     [HttpPost]
