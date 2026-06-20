@@ -15,7 +15,6 @@ public class UserDataController : BaseProtocolController<UserDataController>
             Result = common.Result
         };
         ApplySections(common, response);
-
         return Ok(response);
     }
 
