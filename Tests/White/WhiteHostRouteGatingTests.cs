@@ -21,9 +21,13 @@ public sealed class WhiteHostRouteGatingTests
     private static readonly string[] ApprovedWhiteSuffixes =
     [
         "baidcheck.php",
+        "balancecheck.php",
+        "banacoinerrorlog.php",
+        "banacoinpayment.php",
         "bookkeeping.php",
         "crownsdata.php",
         "getfolder.php",
+        "getbanacoininfo.php",
         "gettelop.php",
         "heartbeat.php",
         "initialdatacheck.php",
