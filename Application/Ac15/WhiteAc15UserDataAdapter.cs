@@ -18,8 +18,6 @@ public static class WhiteAc15UserDataAdapter
             saveData.OptionFlg,
             favorites,
             recent,
-            catalog.RecommendSong,
-            catalog.RecommendBestSongs,
             Counters(saveData),
             saveData.DispTaikojukuDan,
             LockedSongIds: lockedSongIds ?? [],

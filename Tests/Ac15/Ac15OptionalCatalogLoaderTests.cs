@@ -123,33 +123,6 @@ public sealed class Ac15OptionalCatalogLoaderTests
     }
 
     [Fact]
-    public async Task RecommendLoader_FiltersUnknownSongs()
-    {
-        var path = Path.GetTempFileName();
-        await File.WriteAllTextAsync(path, """
-            {
-              "recommendSong": 100,
-              "recommendBestSongs": [100, 999]
-            }
-            """);
-
-        try
-        {
-            var recommend = await Ac15RecommendLoader.LoadFromFileAsync(
-                path,
-                new HashSet<uint> { 100 },
-                CancellationToken.None);
-
-            Assert.Equal(100u, recommend.RecommendSong);
-            Assert.Equal([100u], recommend.RecommendBestSongs);
-        }
-        finally
-        {
-            File.Delete(path);
-        }
-    }
-
-    [Fact]
     public async Task MovieLoader_MissingConfigDiscoversNonzeroMovies()
     {
         var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));

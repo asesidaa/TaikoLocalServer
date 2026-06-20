@@ -112,7 +112,6 @@ public sealed class WhiteCatalogLoaderTests
     {
         var eventFolderPath = FindRequiredRepoFile("Host", "wwwroot", "data", "white", WhiteEraGameDataCatalog.EventFolderFileName);
         var telopPath = FindRequiredRepoFile("Host", "wwwroot", "data", "white", WhiteEraGameDataCatalog.TelopFileName);
-        var recommendPath = FindRequiredRepoFile("Host", "wwwroot", "data", "white", WhiteEraGameDataCatalog.RecommendFileName);
         var moviePath = FindRequiredRepoFile("Host", "wwwroot", "data", "white", WhiteEraGameDataCatalog.MovieFileName);
         var taikojukuVerupPath = FindRequiredRepoFile("Host", "wwwroot", "data", "white", WhiteEraGameDataCatalog.TaikojukuVerupFileName);
         var donChallengePath = FindRequiredRepoFile("Host", "wwwroot", "data", "white", WhiteEraGameDataCatalog.DonChallengeFileName);
@@ -123,10 +122,6 @@ public sealed class WhiteCatalogLoaderTests
             nameof(GameEra.White),
             CancellationToken.None);
         var telops = await Ac15TelopLoader.LoadFromFileAsync(telopPath, CancellationToken.None);
-        var recommend = await Ac15RecommendLoader.LoadFromFileAsync(
-            recommendPath,
-            new HashSet<uint>(),
-            CancellationToken.None);
         var movies = await Ac15MovieLoader.LoadFromFileAsync(
             moviePath,
             Path.Combine(Path.GetTempPath(), "missing-white-movie-directory"),
@@ -142,7 +137,6 @@ public sealed class WhiteCatalogLoaderTests
 
         Assert.NotNull(eventFolders);
         Assert.NotNull(telops);
-        Assert.NotNull(recommend.RecommendBestSongs);
         Assert.NotNull(movies);
         Assert.True(donChallenge.Enabled);
         Assert.Equal(6, donChallenge.MonthlyBundles.Count);
@@ -170,10 +164,8 @@ public sealed class WhiteCatalogLoaderTests
         var may = Assert.Single(donChallenge.MonthlyBundles, bundle => bundle.BundleId == "white-2016-05");
         Assert.Equal([580u], may.CommunityTask?.Rule.EligibleSongNoes);
         Assert.Equal([456u], may.Rewards[1].RewardTitleIds);
-        using var recommendJson = JsonDocument.Parse(await File.ReadAllTextAsync(recommendPath, CancellationToken.None));
         using var movieJson = JsonDocument.Parse(await File.ReadAllTextAsync(moviePath, CancellationToken.None));
         using var taikojukuJson = JsonDocument.Parse(await File.ReadAllTextAsync(taikojukuVerupPath, CancellationToken.None));
-        Assert.True(recommendJson.RootElement.TryGetProperty("recommendBestSongs", out _));
         Assert.True(movieJson.RootElement.TryGetProperty("override_default", out _));
         Assert.True(taikojukuJson.RootElement.TryGetProperty("packs", out _));
     }

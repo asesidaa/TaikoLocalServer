@@ -18,8 +18,6 @@ public sealed class Ac15UserDataServiceTests
                 OptionFlg: [],
                 Favorites: [101],
                 Recent: [102],
-                RecommendSong: 101,
-                RecommendBestSongs: [102],
                 Counters: new Ac15ProfileCounters { SongFavoriteCnt = 1 },
                 DisplayDan: 1,
                 LockedSongIds: [102],
@@ -43,8 +41,6 @@ public sealed class Ac15UserDataServiceTests
             ToneFlg = Ac15ProtocolBytes.CreateFixedBitset([4], Ac15EraProfiles.Green.Limits.ToneFlagBytes),
             TitleFlg = Ac15ProtocolBytes.CreateFixedBitset([10], Ac15EraProfiles.Green.Limits.TitleFlagBytes),
             DefaultOptionSetting = [7, 8],
-            RecommendSong = 101,
-            RecommendBestSongs = [101, 102],
             Counters = new Ac15ProfileCounters
             {
                 CategJpopCnt = 2,
@@ -68,7 +64,7 @@ public sealed class Ac15UserDataServiceTests
         Assert.True((response.SongFlags.TitleFlg[10 >> 3] & (1 << (10 & 7))) != 0);
         Assert.Equal([7, 8], response.Display.DefaultOptionSetting);
         Assert.Equal(101u, response.Recommendations.RecommendSong);
-        Assert.Equal([101u, 102u], response.Recommendations.RecommendBestSong);
+        Assert.Empty(response.Recommendations.RecommendBestSong);
         Assert.Equal(2u, response.Counters.CategJpopCnt);
         Assert.Equal(3u, response.Counters.SongRecentCnt);
         Assert.True(response.Display.DefaultShinSetting);
@@ -87,7 +83,7 @@ public sealed class Ac15UserDataServiceTests
 
     private static Ac15UserDataSnapshot MinimalSnapshot() => new(
         SongHashVersion: 1,
-        CatalogReleaseSongNoes: [],
+        CatalogReleaseSongNoes: [101],
         SaveReleaseSongFlg: [],
         ToneFlg: [],
         TitleFlg: [],
@@ -95,8 +91,6 @@ public sealed class Ac15UserDataServiceTests
         OptionFlg: [],
         Favorites: [],
         Recent: [],
-        RecommendSong: 0,
-        RecommendBestSongs: [],
         Counters: new Ac15ProfileCounters(),
         DisplayDan: 1,
         LockedSongIds: [],

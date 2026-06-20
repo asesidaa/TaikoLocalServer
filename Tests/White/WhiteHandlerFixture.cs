@@ -74,8 +74,6 @@ internal sealed class WhiteHandlerFixture : IAsyncDisposable
 
         public IReadOnlyDictionary<uint, Ac15TelopEntry> Telops { get; } = new Dictionary<uint, Ac15TelopEntry>();
 
-        public Ac15RecommendEntry Recommend { get; init; } = Ac15RecommendEntry.Empty;
-
         public IReadOnlyList<MovieData> Movies { get; init; } = [];
 
         public IReadOnlyList<Ac15PresentItem> Presents { get; init; } = [];

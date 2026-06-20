@@ -36,12 +36,7 @@ public static class Ac15CatalogReadbackService
     }
 
     public static CommonRecommendResponse BuildRecommendResponse(Ac15CatalogSnapshot snapshot)
-        => new()
-        {
-            Result = 1,
-            RecommendSong = snapshot.RecommendSong,
-            RecommendBestSong = snapshot.RecommendBestSongs.ToList()
-        };
+        => Ac15RecommendationService.BuildRecommendResponse(snapshot.SongNoesInFileOrder);
 
     public static CommonItemShopInfoResponse BuildItemShopInfo(Ac15CatalogSnapshot snapshot)
     {

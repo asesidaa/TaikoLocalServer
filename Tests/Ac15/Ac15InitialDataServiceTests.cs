@@ -14,8 +14,6 @@ public sealed class Ac15InitialDataServiceTests
             SongNoesInFileOrder: [101, 102],
             EventFolders: new Dictionary<uint, EventFolderData>(),
             Telops: new Dictionary<uint, Ac15TelopEntry>(),
-            RecommendSong: 101,
-            RecommendBestSongs: [],
             ItemShopCatalog: new Ac15ItemShopCatalog
             {
                 IsEnabled = true,

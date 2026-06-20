@@ -51,8 +51,7 @@ internal sealed class BlueHandlerFixture : IAsyncDisposable
             IReadOnlyList<Ac15MusicInfoEntry>? musicInfoFileOrder = null,
             IReadOnlyList<Ac15TaikojukuEntry>? taikojukuFileOrder = null,
             Ac15ItemShopCatalog? itemShopCatalog = null,
-            BlueBattleCatalog? battleCatalog = null,
-            Ac15RecommendEntry? recommend = null)
+            BlueBattleCatalog? battleCatalog = null)
         {
             EventFolders = eventFolders ?? new Dictionary<uint, EventFolderData>();
             Telops = telops ?? new Dictionary<uint, Ac15TelopEntry>();
@@ -61,7 +60,6 @@ internal sealed class BlueHandlerFixture : IAsyncDisposable
             ItemShopCatalog = itemShopCatalog ?? Ac15ItemShopCatalog.Disabled;
             ItemShop = ItemShopCatalog.ActiveItemsByNo;
             BattleCatalog = battleCatalog ?? BlueBattleCatalog.Unavailable;
-            Recommend = recommend ?? Ac15RecommendEntry.Empty;
         }
 
         public GameEra Era => GameEra.Blue;
@@ -95,8 +93,6 @@ internal sealed class BlueHandlerFixture : IAsyncDisposable
 
         public IReadOnlyDictionary<uint, Ac15TournamentEntry> Tournaments { get; } =
             new Dictionary<uint, Ac15TournamentEntry>();
-
-        public Ac15RecommendEntry Recommend { get; }
 
         public IReadOnlyList<MovieData> Movies { get; init; } = [];
 

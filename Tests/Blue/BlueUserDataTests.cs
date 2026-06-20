@@ -84,14 +84,10 @@ public sealed class BlueUserDataTests
     }
 
     [Fact]
-    public async Task UserData_Blue_RecommendComesFromCatalog()
+    public async Task UserData_Blue_ReturnsRandomCatalogRecommendSongWithoutBestSongAppendList()
     {
         var blueCatalog = new BlueHandlerFixture.TestBlueCatalog(
-            recommend: new TaikoLocalServer.Application.Catalog.Ac15.Ac15RecommendEntry
-            {
-                RecommendSong = 102,
-                RecommendBestSongs = [101, 102, 103]
-            });
+            musicInfoFileOrder: [new Ac15MusicInfoEntry { SongNo = 102, MusicId = "b", FileOrder = 0 }]);
         await using var fixture = await BlueHandlerFixture.CreateAsync(blueCatalog);
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
         fixture.Context.UserSaveDataBlue.Add(UserSaveDataBlueExtensions.CreateDefaultBlueSaveData(1));
@@ -105,7 +101,7 @@ public sealed class BlueUserDataTests
         var response = await handler.Handle(new Ac15UserDataQuery(1, GameEra.Blue), CancellationToken.None);
 
         Assert.Equal(102u, response.Recommendations.RecommendSong);
-        Assert.Equal(new List<uint> { 101, 102, 103 }, response.Recommendations.RecommendBestSong);
+        Assert.Empty(response.Recommendations.RecommendBestSong);
     }
 
     [Fact]

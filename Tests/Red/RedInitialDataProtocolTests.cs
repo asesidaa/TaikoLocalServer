@@ -37,8 +37,6 @@ public sealed class RedInitialDataProtocolTests
         Assert.Equal([101u, 102u], snapshot.SongNoesInFileOrder);
         Assert.Equal(44u, snapshot.EventFolders[44].FolderId);
         Assert.Equal(31u, snapshot.Telops[31].TelopId);
-        Assert.Equal(102u, snapshot.RecommendSong);
-        Assert.Equal([101u, 102u], snapshot.RecommendBestSongs);
         Assert.False(snapshot.ItemShopCatalog.IsEnabled);
         Assert.Equal(1u, snapshot.TaikojukuPacks[0].ChallengeLevel);
         Assert.Equal(101u, snapshot.TaikojukuPacks[0].Songs[0].SongNo);
@@ -102,11 +100,6 @@ public sealed class RedInitialDataProtocolTests
         {
             [31] = new() { TelopId = 31, VerupNo = 6, Message = "Red" }
         },
-        Recommend = new Ac15RecommendEntry
-        {
-            RecommendSong = 102,
-            RecommendBestSongs = [101, 102]
-        },
         TaikojukuFileOrder =
         [
             new Ac15TaikojukuEntry
@@ -152,8 +145,6 @@ public sealed class RedInitialDataProtocolTests
 
         public IReadOnlyDictionary<uint, Ac15TelopEntry> Telops { get; init; }
             = new Dictionary<uint, Ac15TelopEntry>();
-
-        public Ac15RecommendEntry Recommend { get; init; } = Ac15RecommendEntry.Empty;
 
         public IReadOnlyList<MovieData> Movies { get; init; } = [];
 

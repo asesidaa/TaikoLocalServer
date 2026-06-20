@@ -139,7 +139,6 @@
     <!--Green Game Data-->
     <Content Remove="wwwroot\data\green\data\**" />
     <_ContentIncludedByDefault Remove="wwwroot\data\green\data\**" />
-    <Content Update="wwwroot\data\green\recommend_songs.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\green\telop_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\green\movie_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\green\green_item_shop_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
@@ -149,7 +148,6 @@
     <!--Blue Game Data-->
     <Content Remove="wwwroot\data\blue\data\**" />
     <_ContentIncludedByDefault Remove="wwwroot\data\blue\data\**" />
-    <Content Update="wwwroot\data\blue\blue_recommend_songs.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\blue\blue_telop_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\blue\blue_movie_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\blue\blue_item_shop_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
@@ -159,7 +157,6 @@
     <!--Yellow Game Data-->
     <Content Remove="wwwroot\data\yellow\data\**" />
     <_ContentIncludedByDefault Remove="wwwroot\data\yellow\data\**" />
-    <Content Update="wwwroot\data\yellow\yellow_recommend_songs.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\yellow\yellow_telop_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\yellow\yellow_movie_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\yellow\yellow_item_shop_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
@@ -169,7 +166,6 @@
     <!--Red Game Data-->
     <Content Remove="wwwroot\data\red\data\**" />
     <_ContentIncludedByDefault Remove="wwwroot\data\red\data\**" />
-    <Content Update="wwwroot\data\red\red_recommend_songs.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\red\red_telop_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\red\red_movie_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\red\red_event_folder_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
@@ -179,7 +175,6 @@
     <!--White Game Data-->
     <Content Remove="wwwroot\data\white\data\**" />
     <_ContentIncludedByDefault Remove="wwwroot\data\white\data\**" />
-    <Content Update="wwwroot\data\white\white_recommend_songs.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\white\white_telop_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\white\white_movie_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\white\white_event_folder_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>

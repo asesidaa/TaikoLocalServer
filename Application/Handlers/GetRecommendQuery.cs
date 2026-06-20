@@ -9,6 +9,7 @@ public partial class GetRecommendQueryHandler(
 {
     public ValueTask<CommonRecommendResponse> Handle(GetRecommendQuery request, CancellationToken cancellationToken) => request.Era switch
     {
+        GameEra.Blue => HandleBlue(request, cancellationToken),
         GameEra.Green => HandleGreen(request, cancellationToken),
         GameEra.Yellow => HandleYellow(request, cancellationToken),
         GameEra.Red => HandleRed(request, cancellationToken),
@@ -16,6 +17,7 @@ public partial class GetRecommendQueryHandler(
         _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
     };
 
+    private partial ValueTask<CommonRecommendResponse> HandleBlue(GetRecommendQuery request, CancellationToken cancellationToken);
     private partial ValueTask<CommonRecommendResponse> HandleGreen(GetRecommendQuery request, CancellationToken cancellationToken);
     private partial ValueTask<CommonRecommendResponse> HandleYellow(GetRecommendQuery request, CancellationToken cancellationToken);
     private partial ValueTask<CommonRecommendResponse> HandleRed(GetRecommendQuery request, CancellationToken cancellationToken);

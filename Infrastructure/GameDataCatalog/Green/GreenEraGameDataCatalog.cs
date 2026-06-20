@@ -26,7 +26,6 @@ public sealed class GreenEraGameDataCatalog(
     private IReadOnlyDictionary<uint, Ac15TelopEntry> telops = new Dictionary<uint, Ac15TelopEntry>();
     private IReadOnlyDictionary<uint, Ac15GachaEntry> gachas = new Dictionary<uint, Ac15GachaEntry>();
     private IReadOnlyDictionary<uint, Ac15TournamentEntry> tournaments = new Dictionary<uint, Ac15TournamentEntry>();
-    private Ac15RecommendEntry recommend = Ac15RecommendEntry.Empty;
     private IReadOnlyList<MovieData> movies = [];
     private IReadOnlyList<Costume> costumeList = [];
     private IReadOnlyDictionary<uint, Title> titleDictionary = new Dictionary<uint, Title>();
@@ -57,8 +56,6 @@ public sealed class GreenEraGameDataCatalog(
     public IReadOnlyDictionary<uint, Ac15GachaEntry> Gachas => gachas;
 
     public IReadOnlyDictionary<uint, Ac15TournamentEntry> Tournaments => tournaments;
-
-    public Ac15RecommendEntry Recommend => recommend;
 
     public IReadOnlyList<MovieData> Movies => movies;
 
@@ -125,9 +122,6 @@ public sealed class GreenEraGameDataCatalog(
         telops = await new GreenTelopLoader().LoadAsync(cancellationToken);
         gachas = await new GreenGachaLoader().LoadAsync(cancellationToken);
         tournaments = await new GreenTournamentLoader().LoadAsync(cancellationToken);
-        recommend = await new GreenRecommendLoader().LoadAsync(
-            new HashSet<uint>(musicInfos.Keys),
-            cancellationToken);
         movies = await new GreenMovieLoader().LoadAsync(logger, cancellationToken);
         var greenCostumes = await new GreenCostumeLoader().LoadAsync(cancellationToken);
         var greenTitles = await new GreenTitleLoader().LoadAsync(cancellationToken);

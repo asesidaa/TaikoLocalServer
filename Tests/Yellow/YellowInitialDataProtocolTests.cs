@@ -19,8 +19,6 @@ public sealed class YellowInitialDataProtocolTests
         Assert.Equal([101u, 102u], snapshot.SongNoesInFileOrder);
         Assert.Equal(44u, snapshot.EventFolders[44].FolderId);
         Assert.Equal(31u, snapshot.Telops[31].TelopId);
-        Assert.Equal(102u, snapshot.RecommendSong);
-        Assert.Equal([101u, 102u], snapshot.RecommendBestSongs);
         Assert.True(snapshot.ItemShopCatalog.IsEnabled);
         Assert.Equal(7u, snapshot.ItemShopCatalog.ActiveSeasonId);
         Assert.Equal(14u, snapshot.ItemShopCatalog.ActiveSeason!.VerupNo);
@@ -90,11 +88,6 @@ public sealed class YellowInitialDataProtocolTests
         {
             [31] = new() { TelopId = 31, VerupNo = 6, Message = "Yellow" }
         },
-        Recommend = new Ac15RecommendEntry
-        {
-            RecommendSong = 102,
-            RecommendBestSongs = [101, 102]
-        },
         ItemShopCatalog = new Ac15ItemShopCatalog
         {
             IsEnabled = true,
@@ -135,8 +128,7 @@ public sealed class YellowInitialDataProtocolTests
     {
         MusicInfoFileOrder = [new Ac15MusicInfoEntry { MusicId = "song101", SongNo = 101, FileOrder = 0 }],
         SongHashVersion = 123,
-        ItemShopCatalog = Ac15ItemShopCatalog.Disabled,
-        Recommend = Ac15RecommendEntry.Empty
+        ItemShopCatalog = Ac15ItemShopCatalog.Disabled
     };
 
     private sealed class FakeGameDataCatalog(IYellowCatalog yellow) : IGameDataCatalog
@@ -181,8 +173,6 @@ public sealed class YellowInitialDataProtocolTests
 
         public IReadOnlyDictionary<uint, Ac15TournamentEntry> Tournaments { get; init; }
             = new Dictionary<uint, Ac15TournamentEntry>();
-
-        public Ac15RecommendEntry Recommend { get; init; } = Ac15RecommendEntry.Empty;
 
         public IReadOnlyList<MovieData> Movies { get; init; } = [];
 

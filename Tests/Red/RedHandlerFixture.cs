@@ -75,8 +75,6 @@ internal sealed class RedHandlerFixture : IAsyncDisposable
 
         public IReadOnlyDictionary<uint, Ac15TelopEntry> Telops { get; } = new Dictionary<uint, Ac15TelopEntry>();
 
-        public Ac15RecommendEntry Recommend { get; init; } = Ac15RecommendEntry.Empty;
-
         public IReadOnlyList<MovieData> Movies { get; init; } = [];
 
         public Ac15DonChallengeCatalog DonChallenge { get; init; } = Ac15DonChallengeCatalog.Disabled;

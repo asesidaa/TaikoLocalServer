@@ -86,8 +86,6 @@ internal sealed class YellowHandlerFixture : IAsyncDisposable
         public IReadOnlyDictionary<uint, Ac15TournamentEntry> Tournaments { get; } =
             new Dictionary<uint, Ac15TournamentEntry>();
 
-        public Ac15RecommendEntry Recommend { get; init; } = Ac15RecommendEntry.Empty;
-
         public IReadOnlyList<MovieData> Movies { get; init; } = [];
 
         public IReadOnlyList<Costume> CostumeList { get; init; } =

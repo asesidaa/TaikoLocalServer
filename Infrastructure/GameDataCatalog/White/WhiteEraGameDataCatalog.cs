@@ -16,7 +16,6 @@ public sealed class WhiteEraGameDataCatalog(
 {
     public const string EventFolderFileName = "white_event_folder_data.json";
     public const string TelopFileName = "white_telop_data.json";
-    public const string RecommendFileName = "white_recommend_songs.json";
     public const string MovieFileName = "white_movie_data.json";
     public const string TaikojukuVerupFileName = "white_taikojuku_verup_data.json";
     public const string CostumeFileName = "white_costume_data.json";
@@ -32,7 +31,6 @@ public sealed class WhiteEraGameDataCatalog(
     private IReadOnlyDictionary<uint, Ac15TaikojukuEntry> taikojuku = new Dictionary<uint, Ac15TaikojukuEntry>();
     private IReadOnlyDictionary<uint, EventFolderData> eventFolders = new Dictionary<uint, EventFolderData>();
     private IReadOnlyDictionary<uint, Ac15TelopEntry> telops = new Dictionary<uint, Ac15TelopEntry>();
-    private Ac15RecommendEntry recommend = Ac15RecommendEntry.Empty;
     private IReadOnlyList<MovieData> movies = [];
     private IReadOnlyList<Ac15PresentItem> presents = [];
     private IReadOnlyList<Ac15SpecialBaidEntry> specialBaids = [];
@@ -58,8 +56,6 @@ public sealed class WhiteEraGameDataCatalog(
     public IReadOnlyDictionary<uint, EventFolderData> EventFolders => eventFolders;
 
     public IReadOnlyDictionary<uint, Ac15TelopEntry> Telops => telops;
-
-    public Ac15RecommendEntry Recommend => recommend;
 
     public IReadOnlyList<MovieData> Movies => movies;
 
@@ -146,10 +142,6 @@ public sealed class WhiteEraGameDataCatalog(
             cancellationToken);
         telops = await Ac15TelopLoader.LoadFromFileAsync(
             Path.Combine(PathHelper.GetDataPath(GameEra.White), TelopFileName),
-            cancellationToken);
-        recommend = await Ac15RecommendLoader.LoadFromFileAsync(
-            Path.Combine(PathHelper.GetDataPath(GameEra.White), RecommendFileName),
-            new HashSet<uint>(musicInfos.Keys),
             cancellationToken);
         movies = await Ac15MovieLoader.LoadFromFileAsync(
             Path.Combine(PathHelper.GetDataPath(GameEra.White), MovieFileName),

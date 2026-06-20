@@ -106,7 +106,6 @@ public sealed class YellowCatalogLoaderTests
     {
         var eventFolderPath = FindRequiredRepoFile("Host", "wwwroot", "data", "yellow", YellowEventFolderLoader.FileName);
         var telopPath = FindRequiredRepoFile("Host", "wwwroot", "data", "yellow", YellowTelopLoader.FileName);
-        var recommendPath = FindRequiredRepoFile("Host", "wwwroot", "data", "yellow", YellowRecommendLoader.FileName);
         var moviePath = FindRequiredRepoFile("Host", "wwwroot", "data", "yellow", YellowMovieLoader.FileName);
         var itemShopPath = FindRequiredRepoFile("Host", "wwwroot", "data", "yellow", YellowItemShopLoader.FileName);
         var taikojukuVerupPath = FindRequiredRepoFile("Host", "wwwroot", "data", "yellow", YellowTaikojukuLoader.VerupFileName);
@@ -116,10 +115,6 @@ public sealed class YellowCatalogLoaderTests
             new HashSet<uint>(),
             CancellationToken.None);
         var telops = await YellowTelopLoader.LoadFromFileAsync(telopPath, CancellationToken.None);
-        var recommend = await Ac15RecommendLoader.LoadFromFileAsync(
-            recommendPath,
-            new HashSet<uint>(),
-            CancellationToken.None);
         var movies = await Ac15MovieLoader.LoadFromFileAsync(
             moviePath,
             Path.Combine(Path.GetTempPath(), "missing-yellow-movie-directory"),
@@ -133,7 +128,6 @@ public sealed class YellowCatalogLoaderTests
 
         Assert.NotNull(eventFolders);
         Assert.NotNull(telops);
-        Assert.NotNull(recommend.RecommendBestSongs);
         Assert.NotNull(movies);
         Assert.False(itemShop.IsEnabled);
         using var itemShopJson = JsonDocument.Parse(await File.ReadAllTextAsync(itemShopPath, CancellationToken.None));
@@ -308,10 +302,9 @@ public sealed class YellowCatalogLoaderTests
     [
         YellowEventFolderLoader.FileName,
         YellowTelopLoader.FileName,
-        YellowRecommendLoader.FileName,
         YellowItemShopLoader.FileName,
-            YellowMovieLoader.FileName,
-            YellowTaikojukuLoader.VerupFileName
+        YellowMovieLoader.FileName,
+        YellowTaikojukuLoader.VerupFileName
     ];
 
     private static void DeleteYellowCustomizationSidecarsFromProcessRoot()

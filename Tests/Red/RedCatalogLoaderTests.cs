@@ -79,7 +79,6 @@ public sealed class RedCatalogLoaderTests
     {
         var eventFolderPath = FindRequiredRepoFile("Host", "wwwroot", "data", "red", RedEraGameDataCatalog.EventFolderFileName);
         var telopPath = FindRequiredRepoFile("Host", "wwwroot", "data", "red", RedEraGameDataCatalog.TelopFileName);
-        var recommendPath = FindRequiredRepoFile("Host", "wwwroot", "data", "red", RedEraGameDataCatalog.RecommendFileName);
         var moviePath = FindRequiredRepoFile("Host", "wwwroot", "data", "red", RedEraGameDataCatalog.MovieFileName);
         var taikojukuVerupPath = FindRequiredRepoFile("Host", "wwwroot", "data", "red", RedEraGameDataCatalog.TaikojukuVerupFileName);
 
@@ -89,10 +88,6 @@ public sealed class RedCatalogLoaderTests
             nameof(GameEra.Red),
             CancellationToken.None);
         var telops = await Ac15TelopLoader.LoadFromFileAsync(telopPath, CancellationToken.None);
-        var recommend = await Ac15RecommendLoader.LoadFromFileAsync(
-            recommendPath,
-            new HashSet<uint>(),
-            CancellationToken.None);
         var movies = await Ac15MovieLoader.LoadFromFileAsync(
             moviePath,
             Path.Combine(Path.GetTempPath(), "missing-red-movie-directory"),
@@ -102,12 +97,9 @@ public sealed class RedCatalogLoaderTests
 
         Assert.NotNull(eventFolders);
         Assert.NotNull(telops);
-        Assert.NotNull(recommend.RecommendBestSongs);
         Assert.NotNull(movies);
-        using var recommendJson = JsonDocument.Parse(await File.ReadAllTextAsync(recommendPath, CancellationToken.None));
         using var movieJson = JsonDocument.Parse(await File.ReadAllTextAsync(moviePath, CancellationToken.None));
         using var taikojukuJson = JsonDocument.Parse(await File.ReadAllTextAsync(taikojukuVerupPath, CancellationToken.None));
-        Assert.True(recommendJson.RootElement.TryGetProperty("recommendBestSongs", out _));
         Assert.True(movieJson.RootElement.TryGetProperty("override_default", out _));
         Assert.True(taikojukuJson.RootElement.TryGetProperty("packs", out _));
     }

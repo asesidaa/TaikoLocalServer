@@ -6,7 +6,7 @@ namespace TaikoLocalServer.Tests.Ac15;
 public sealed class Ac15CatalogSnapshotFactoryCompositionTests
 {
     [Fact]
-    public void FromSource_PreservesMusicOrderTelopsRecommendationsShopAndTaikojuku()
+    public void FromSource_PreservesMusicOrderTelopsShopAndTaikojuku()
     {
         var source = new Ac15CatalogProjectionSource(
             SongHashVersion: 123,
@@ -26,8 +26,6 @@ public sealed class Ac15CatalogSnapshotFactoryCompositionTests
                     Message = "HELLO"
                 }
             },
-            RecommendSong: 101,
-            RecommendBestSongs: [102],
             ItemShopCatalog: new Ac15ItemShopCatalog
             {
                 IsEnabled = true,
@@ -57,8 +55,6 @@ public sealed class Ac15CatalogSnapshotFactoryCompositionTests
         Assert.Equal([101u, 102u], snapshot.SongNoesInFileOrder);
         Assert.Single(snapshot.EventFolders);
         Assert.True(snapshot.Telops.ContainsKey(4));
-        Assert.Equal(101u, snapshot.RecommendSong);
-        Assert.Equal([102u], snapshot.RecommendBestSongs);
         Assert.True(snapshot.ItemShopCatalog.IsEnabled);
         Assert.Single(snapshot.TaikojukuPacks);
     }

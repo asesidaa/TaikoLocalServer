@@ -22,8 +22,6 @@ public static class GreenAc15UserDataAdapter
             saveData.OptionFlg,
             favorites,
             recent,
-            catalog.RecommendSong,
-            catalog.RecommendBestSongs,
             Counters(saveData),
             saveData.DispTaikojukuDan,
             lockedSongIds,

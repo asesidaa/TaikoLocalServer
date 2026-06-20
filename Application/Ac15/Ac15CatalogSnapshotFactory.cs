@@ -11,8 +11,6 @@ public static class Ac15CatalogSnapshotFactory
             source.SongNoesInFileOrder,
             source.EventFolders,
             source.Telops,
-            source.RecommendSong,
-            source.RecommendBestSongs,
             source.ItemShopCatalog,
             source.TaikojukuPacks);
 
@@ -22,8 +20,6 @@ public static class Ac15CatalogSnapshotFactory
             blue.MusicInfoFileOrder.Select(song => song.SongNo).ToArray(),
             blue.EventFolders,
             blue.Telops,
-            blue.Recommend.RecommendSong,
-            blue.Recommend.RecommendBestSongs.ToArray(),
             blue.ItemShopCatalog,
             blue.TaikojukuFileOrder));
 
@@ -33,8 +29,6 @@ public static class Ac15CatalogSnapshotFactory
             green.MusicInfoFileOrder.Select(song => song.SongNo).ToArray(),
             green.EventFolders,
             green.Telops,
-            green.Recommend.RecommendSong,
-            green.Recommend.RecommendBestSongs.ToArray(),
             green.ItemShopCatalog,
             green.TaikojukuFileOrder));
 
@@ -44,8 +38,6 @@ public static class Ac15CatalogSnapshotFactory
             yellow.MusicInfoFileOrder.Select(song => song.SongNo).ToArray(),
             yellow.EventFolders,
             yellow.Telops,
-            yellow.Recommend.RecommendSong,
-            yellow.Recommend.RecommendBestSongs.ToArray(),
             yellow.ItemShopCatalog,
             yellow.TaikojukuFileOrder));
 
@@ -55,8 +47,6 @@ public static class Ac15CatalogSnapshotFactory
             red.MusicInfoFileOrder.Select(song => song.SongNo).ToArray(),
             red.EventFolders,
             red.Telops,
-            red.Recommend.RecommendSong,
-            red.Recommend.RecommendBestSongs.ToArray(),
             Ac15ItemShopCatalog.Disabled,
             red.TaikojukuFileOrder));
 
@@ -66,8 +56,6 @@ public static class Ac15CatalogSnapshotFactory
             white.MusicInfoFileOrder.Select(song => song.SongNo).ToArray(),
             white.EventFolders,
             white.Telops,
-            white.Recommend.RecommendSong,
-            white.Recommend.RecommendBestSongs.ToArray(),
             Ac15ItemShopCatalog.Disabled,
             white.TaikojukuFileOrder));
 }

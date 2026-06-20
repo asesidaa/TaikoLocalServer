@@ -90,8 +90,6 @@ public sealed class YellowTaikojukuProtocolTests
         public IReadOnlyDictionary<uint, Ac15TournamentEntry> Tournaments { get; init; }
             = new Dictionary<uint, Ac15TournamentEntry>();
 
-        public Ac15RecommendEntry Recommend { get; init; } = Ac15RecommendEntry.Empty;
-
         public IReadOnlyList<MovieData> Movies { get; init; } = [];
 
         public IReadOnlyList<Costume> GetCostumeList() => [];

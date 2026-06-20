@@ -30,11 +30,7 @@ public static class Ac15UserDataService
                 AryFavoriteSongNoes = snapshot.Favorites.ToArray(),
                 AryRecentSongNoes = snapshot.Recent.ToArray()
             },
-            Recommendations = new Ac15UserDataRecommendations
-            {
-                RecommendSong = snapshot.RecommendSong,
-                RecommendBestSong = snapshot.RecommendBestSongs.ToList()
-            },
+            Recommendations = Ac15RecommendationService.BuildUserDataRecommendations(snapshot.CatalogReleaseSongNoes),
             Counters = new Ac15UserDataProfileCounters
             {
                 CategJpopCnt = snapshot.Counters.CategJpopCnt,

@@ -1159,16 +1159,10 @@ public sealed class GreenPlayResultHandlerTests
     }
 
     [Fact]
-    public async Task GreenRecommend_ReturnsCatalogValues()
+    public async Task GreenRecommend_ReturnsRandomCatalogSongWithoutBestSongAppendList()
     {
-        var greenCatalog = new GreenHandlerFixture.TestGreenCatalog
-        {
-            Recommend = new Ac15RecommendEntry
-            {
-                RecommendSong = 101,
-                RecommendBestSongs = [101, 102]
-            }
-        };
+        var greenCatalog = new GreenHandlerFixture.TestGreenCatalog(
+            musicInfoFileOrder: [new Ac15MusicInfoEntry { SongNo = 101, MusicId = "a", FileOrder = 0 }]);
         await using var fixture = await GreenHandlerFixture.CreateAsync(greenCatalog);
 
         var handler = new GetRecommendQueryHandler(
@@ -1181,7 +1175,7 @@ public sealed class GreenPlayResultHandlerTests
 
         Assert.Equal(1u, response.Result);
         Assert.Equal(101u, response.RecommendSong);
-        Assert.Equal(new List<uint> { 101, 102 }, response.RecommendBestSong);
+        Assert.Empty(response.RecommendBestSong);
     }
 
     [Fact]

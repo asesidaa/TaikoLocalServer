@@ -49,7 +49,6 @@ wwwroot/data/
 |       |-- shougou.bin
 |       `-- neiro.bin
 |-- green/                      Green AC15 server-owned JSON plus game data link/copy
-|   |-- recommend_songs.json    Optional Green pushed/recommended songs
 |   |-- telop_data.json         Optional Green telops
 |   |-- movie_data.json         Green attract movie permissions
 |   |-- green_item_shop_data.json Green item-shop seasons and item rows
@@ -66,7 +65,6 @@ wwwroot/data/
 |           `-- tuning.bin
 |-- blue/                       Blue AC15 server-owned JSON plus game data link/copy
 |   |-- blue_event_folder_data.json Optional Blue event folders
-|   |-- blue_recommend_songs.json   Optional Blue pushed/recommended songs
 |   |-- blue_telop_data.json        Optional Blue telops
 |   |-- blue_movie_data.json        Blue attract movie permissions
 |   |-- blue_item_shop_data.json    Blue item shop seasons and item rows
@@ -196,7 +194,6 @@ era-specific:
 
 | Feature | Green file | Blue file | Missing-file behavior |
 |---------|------------|-----------|-----------------------|
-| Recommendations | `recommend_songs.json` | `blue_recommend_songs.json` | Empty recommendation |
 | Telops | `telop_data.json` | `blue_telop_data.json` | No telops |
 | Attract movies | `movie_data.json` | `blue_movie_data.json` | Auto-discover nonzero `attract_cm_###.pam` files |
 | Event folders | `green_event_folder_data.json` | `blue_event_folder_data.json` | No event folders |

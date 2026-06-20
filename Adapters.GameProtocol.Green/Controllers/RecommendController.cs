@@ -6,9 +6,12 @@ public class RecommendController : BaseProtocolController<RecommendController>
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public IActionResult Recommend([FromBody] RecommendRequest request)
+    public async Task<IActionResult> Recommend([FromBody] RecommendRequest request)
     {
         Logger.LogInformation("Green Recommend request: {@Request}", request);
-        return Ok(new RecommendResponse { Result = 1 });
+        var common = await Mediator.Send(
+            new GetRecommendQuery(GameEra.Green, request.GenderType, request.PlayerAge),
+            HttpContext.RequestAborted);
+        return Ok(RecommendMappers.Map(common));
     }
 }

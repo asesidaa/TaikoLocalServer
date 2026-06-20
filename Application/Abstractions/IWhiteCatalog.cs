@@ -19,8 +19,6 @@ public interface IWhiteCatalog : IEraGameDataCatalog
 
     IReadOnlyDictionary<uint, Ac15TelopEntry> Telops { get; }
 
-    Ac15RecommendEntry Recommend { get; }
-
     IReadOnlyList<MovieData> Movies { get; }
 
     IReadOnlyList<Ac15PresentItem> Presents { get; }

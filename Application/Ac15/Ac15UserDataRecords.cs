@@ -10,8 +10,6 @@ public sealed record Ac15UserDataSnapshot(
     byte[] OptionFlg,
     IReadOnlyList<uint> Favorites,
     IReadOnlyList<uint> Recent,
-    uint RecommendSong,
-    IReadOnlyList<uint> RecommendBestSongs,
     Ac15ProfileCounters Counters,
     uint DisplayDan,
     IReadOnlyList<uint> LockedSongIds,

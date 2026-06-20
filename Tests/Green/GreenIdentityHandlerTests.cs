@@ -385,16 +385,10 @@ public sealed class GreenIdentityHandlerTests
     }
 
     [Fact]
-    public async Task UserData_Green_RecommendComesFromCatalog()
+    public async Task UserData_Green_ReturnsRandomCatalogRecommendSongWithoutBestSongAppendList()
     {
-        var greenCatalog = new GreenHandlerFixture.TestGreenCatalog
-        {
-            Recommend = new Ac15RecommendEntry
-            {
-                RecommendSong = 102,
-                RecommendBestSongs = [101, 102, 103]
-            }
-        };
+        var greenCatalog = new GreenHandlerFixture.TestGreenCatalog(
+            musicInfoFileOrder: [new Ac15MusicInfoEntry { SongNo = 102, MusicId = "b", FileOrder = 0 }]);
         await using var fixture = await GreenHandlerFixture.CreateAsync(greenCatalog);
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
         fixture.Context.UserSaveDataGreen.Add(UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1));
@@ -409,7 +403,7 @@ public sealed class GreenIdentityHandlerTests
         var response = await handler.Handle(new Ac15UserDataQuery(1, GameEra.Green), CancellationToken.None);
 
         Assert.Equal(102u, response.Recommendations.RecommendSong);
-        Assert.Equal(new List<uint> { 101, 102, 103 }, response.Recommendations.RecommendBestSong);
+        Assert.Empty(response.Recommendations.RecommendBestSong);
     }
 
     [Fact]

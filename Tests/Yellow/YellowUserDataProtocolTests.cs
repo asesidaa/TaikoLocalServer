@@ -46,14 +46,7 @@ public sealed class YellowUserDataProtocolTests
                         ]
                     }
                 }
-            })
-        {
-            Recommend = new Ac15RecommendEntry
-            {
-                RecommendSong = 102,
-                RecommendBestSongs = [101, 102]
-            }
-        };
+            });
         await using var fixture = await YellowHandlerFixture.CreateAsync(catalog);
         fixture.Context.UserData.Add(new UserDatum { Baid = 5, MyDonName = "DON" });
         var save = UserSaveDataYellowExtensions.CreateDefaultYellowSaveData(5);
@@ -116,8 +109,8 @@ public sealed class YellowUserDataProtocolTests
         Assert.True(BitIsSet(response.SongFlags.TitleFlg, 10));
         Assert.Equal([101u, 102u], response.SongLists.AryFavoriteSongNoes.Order().ToArray());
         Assert.Equal([102u, 101u], response.SongLists.AryRecentSongNoes);
-        Assert.Equal(102u, response.Recommendations.RecommendSong);
-        Assert.Equal(new List<uint> { 101, 102 }, response.Recommendations.RecommendBestSong);
+        Assert.Contains(response.Recommendations.RecommendSong, new[] { 101u, 102u, 103u });
+        Assert.Empty(response.Recommendations.RecommendBestSong);
         Assert.Equal(2u, response.Counters.CategJpopCnt);
         Assert.Equal(3u, response.Counters.SongFavoriteCnt);
         Assert.Equal(4u, response.Counters.SongRecentCnt);

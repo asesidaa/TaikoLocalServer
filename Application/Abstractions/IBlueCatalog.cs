@@ -29,8 +29,6 @@ public interface IBlueCatalog : IEraGameDataCatalog
 
     IReadOnlyDictionary<uint, Ac15TournamentEntry> Tournaments { get; }
 
-    Ac15RecommendEntry Recommend { get; }
-
     IReadOnlyList<MovieData> Movies { get; }
 
     IReadOnlyList<Costume> GetCostumeList();

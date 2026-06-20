@@ -37,9 +37,19 @@ public sealed class Ac15CatalogReadbackServiceTests
         Assert.Equal([1u, 2u], response.AryItemshopData.Select(row => row.ItemNo));
     }
 
-    private static Ac15CatalogSnapshot Snapshot() => new(
+    [Fact]
+    public void BuildRecommendResponse_ReturnsRandomSongWithoutBestSongAppendList()
+    {
+        var response = Ac15CatalogReadbackService.BuildRecommendResponse(Snapshot(songNoes: [101]));
+
+        Assert.Equal(1u, response.Result);
+        Assert.Equal(101u, response.RecommendSong);
+        Assert.Empty(response.RecommendBestSong);
+    }
+
+    private static Ac15CatalogSnapshot Snapshot(IReadOnlyList<uint>? songNoes = null) => new(
         SongHashVersion: 456,
-        SongNoesInFileOrder: [101, 102, 103],
+        SongNoesInFileOrder: songNoes ?? [101, 102, 103],
         EventFolders: new Dictionary<uint, EventFolderData>
         {
             [1] = new() { FolderId = 1, VerupNo = 8, SongNoes = [101] },
@@ -49,8 +59,6 @@ public sealed class Ac15CatalogReadbackServiceTests
         {
             [5] = new() { TelopId = 5, VerupNo = 10, StartDatetime = "20260101000000", EndDatetime = "20261231235959", Message = "hello" }
         },
-        RecommendSong: 101,
-        RecommendBestSongs: [102, 103],
         ItemShopCatalog: new Ac15ItemShopCatalog
         {
             IsEnabled = true,
