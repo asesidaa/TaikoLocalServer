@@ -17,15 +17,12 @@ public static partial class UserDataMappers
     public static partial void Apply(Ac15UserDataProfileCounters source, [MappingTarget] UserDataResponse response);
 
     [MapperIgnoreSource(nameof(Ac15UserDataDisplaySettings.DispTaikojukuDan))]
-    [MapperIgnoreSource(nameof(Ac15UserDataDisplaySettings.DifficultyPlayedCourse))]
-    [MapperIgnoreSource(nameof(Ac15UserDataDisplaySettings.DifficultyPlayedStar))]
     [MapperIgnoreSource(nameof(Ac15UserDataDisplaySettings.IsChallengeCompe))]
     [MapperIgnoreSource(nameof(Ac15UserDataDisplaySettings.IsTojiru))]
     public static partial void Apply(Ac15UserDataDisplaySettings source, [MappingTarget] UserDataResponse response);
 
     public static partial void Apply(Ac15UserDataModeFlags source, [MappingTarget] UserDataResponse response);
 
-    [MapperIgnoreSource(nameof(Ac15UserDataTutorial.DifficultyTutorialFlg))]
     public static partial void Apply(Ac15UserDataTutorial source, [MappingTarget] UserDataResponse response);
 
     public static partial void Apply(Ac15UserDataReward source, [MappingTarget] UserDataResponse response);

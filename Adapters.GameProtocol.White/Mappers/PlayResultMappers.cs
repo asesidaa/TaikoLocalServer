@@ -28,23 +28,23 @@ public static partial class PlayResultMappers
     [MapProperty(nameof(PlayResultRequest.ContentInfo), nameof(Ac15PlayResultMetadata.ContentInfo), Use = nameof(MapBytes))]
     private static partial Ac15PlayResultMetadata MapMetadata(PlayResultRequest request);
 
-    [MapProperty(nameof(PlayResultRequest.GetDonpoint), nameof(Ac15ProfileMutationFacts.GetDonpoint), Use = nameof(MapNullableUInt))]
+    [MapProperty(nameof(PlayResultRequest.GetDonpoint), nameof(Ac15ProfileMutationFacts.GetDonpoint), Use = nameof(MapUInt))]
     [MapPropertyFromSource(nameof(Ac15ProfileMutationFacts.HasAryCurrentCostume), Use = nameof(HasCurrentCostume))]
+    [MapPropertyFromSource(nameof(Ac15ProfileMutationFacts.DifficultyTutorialFlg), Use = nameof(MapDifficultyTutorialFlg))]
+    [MapPropertyFromSource(nameof(Ac15ProfileMutationFacts.HasDifficultyPlayedCourse), Use = nameof(HasDifficultyPlayedCourse))]
+    [MapPropertyFromSource(nameof(Ac15ProfileMutationFacts.DifficultyPlayedCourse), Use = nameof(MapDifficultyPlayedCourse))]
+    [MapPropertyFromSource(nameof(Ac15ProfileMutationFacts.HasDifficultyPlayedStar), Use = nameof(HasDifficultyPlayedStar))]
+    [MapPropertyFromSource(nameof(Ac15ProfileMutationFacts.DifficultyPlayedStar), Use = nameof(MapDifficultyPlayedStar))]
     [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.GetDonmedal))]
     [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.GetKatsumedal))]
-    [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.DifficultyTutorialFlg))]
     [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.ItemshopTutorialFlg))]
     [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.WaiwaiTutorialFlg))]
-    [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.HasDifficultyPlayedCourse))]
-    [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.DifficultyPlayedCourse))]
-    [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.HasDifficultyPlayedStar))]
-    [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.DifficultyPlayedStar))]
     private static partial Ac15ProfileMutationFacts MapProfile(PlayResultRequest request);
 
     [MapProperty(nameof(PlayResultRequest.AryStageInfoes), nameof(Ac15NormalPlayResult.Stages), Use = nameof(MapStages))]
     private static partial Ac15NormalPlayResult MapNormalCore(PlayResultRequest request);
 
-    [MapProperty(nameof(PlayResultRequest.DanResult), nameof(Ac15DaniPlayResult.DanResult), Use = nameof(MapNullableUInt))]
+    [MapProperty(nameof(PlayResultRequest.DanResult), nameof(Ac15DaniPlayResult.DanResult), Use = nameof(MapUInt))]
     [MapValue(nameof(Ac15DaniPlayResult.ComboCntTotal), 0u)]
     [MapProperty(nameof(PlayResultRequest.AryStageInfoes), nameof(Ac15DaniPlayResult.Stages), Use = nameof(MapStages))]
     private static partial Ac15DaniPlayResult MapDani(PlayResultRequest request);
@@ -53,7 +53,7 @@ public static partial class PlayResultMappers
     [MapProperty(nameof(PlayResultRequest.AryTokkunstageInfo), nameof(Ac15TokkunPlayResult.StageData))]
     private static partial Ac15TokkunPlayResult MapTokkunCore(PlayResultRequest request);
 
-    [MapProperty(nameof(PlayResultRequest.StageData.HitCnt), nameof(Ac15StageResult.HitCnt), Use = nameof(MapNullableUInt))]
+    [MapProperty(nameof(PlayResultRequest.StageData.HitCnt), nameof(Ac15StageResult.HitCnt), Use = nameof(MapUInt))]
     [MapProperty(nameof(PlayResultRequest.StageData.OptionFlg), nameof(Ac15StageResult.OptionFlg), Use = nameof(MapBytes))]
     [MapProperty(nameof(PlayResultRequest.StageData.ToneFlg), nameof(Ac15StageResult.ToneFlg), Use = nameof(MapBytes))]
     [MapProperty(nameof(PlayResultRequest.StageData.PlayDan), nameof(Ac15StageResult.PlayDan), Use = nameof(MapPlayDan))]
@@ -100,6 +100,17 @@ public static partial class PlayResultMappers
 
     private static bool HasCurrentCostume(PlayResultRequest request) => request.AryCurrentCostume is not null;
 
+    private static uint? MapDifficultyTutorialFlg(PlayResultRequest request)
+        => request.ShouldSerializeDifficultyTutorialFlg() ? request.DifficultyTutorialFlg : null;
+
+    private static bool HasDifficultyPlayedCourse(PlayResultRequest request) => request.ShouldSerializeDifficultyPlayedCourse();
+
+    private static uint MapDifficultyPlayedCourse(PlayResultRequest request) => request.DifficultyPlayedCourse;
+
+    private static bool HasDifficultyPlayedStar(PlayResultRequest request) => request.ShouldSerializeDifficultyPlayedStar();
+
+    private static uint MapDifficultyPlayedStar(PlayResultRequest request) => request.DifficultyPlayedStar;
+
     private static uint? MapTokkunTutorialFlg(PlayResultRequest request)
         => request.ShouldSerializeTokkunTutorialFlg() ? request.TokkunTutorialFlg : null;
 
@@ -110,6 +121,9 @@ public static partial class PlayResultMappers
     [UserMapping(Default = true)]
     private static uint MapNullableUInt(uint? value)
         => value.GetValueOrDefault();
+
+    private static uint MapUInt(uint value)
+        => value;
 
     private static byte[] MapBytes(byte[]? values)
         => values ?? [];

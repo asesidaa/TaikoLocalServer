@@ -43,6 +43,8 @@ public sealed class WhiteRuntimeHandlerTests
         save.TotalUseDonpoint = 30;
         save.RewardProgress = 8;
         save.DifficultyTutorialFlg = 2;
+        save.DifficultyPlayedCourse = 3;
+        save.DifficultyPlayedStar = 8;
         save.IsDevil = true;
         save.IsExplain = true;
         fixture.Context.UserSaveDataWhite.Add(save);
@@ -65,6 +67,8 @@ public sealed class WhiteRuntimeHandlerTests
         Assert.Equal(8u, response.Reward.RewardProgress);
         Assert.Equal(2u, response.Tutorial!.DifficultyTutorialFlg);
         Assert.Null(response.Tutorial.TokkunTutorialFlg);
+        Assert.Equal(3u, response.Display.DifficultyPlayedCourse);
+        Assert.Equal(8u, response.Display.DifficultyPlayedStar);
         Assert.Equal([101u], response.SongLists.AryFavoriteSongNoes);
         Assert.Equal([102u], response.SongLists.AryRecentSongNoes);
         Assert.True(response.ModeFlags!.IsDevil);
@@ -72,6 +76,12 @@ public sealed class WhiteRuntimeHandlerTests
         Assert.Equal(120u, wire.TotalGetDonpoint);
         Assert.Equal(30u, wire.TotalUseDonpoint);
         Assert.Equal(8u, wire.RewardProgress);
+        Assert.True(wire.ShouldSerializeDifficultyTutorialFlg());
+        Assert.Equal(2u, wire.DifficultyTutorialFlg);
+        Assert.True(wire.ShouldSerializeDifficultyPlayedCourse());
+        Assert.Equal(3u, wire.DifficultyPlayedCourse);
+        Assert.True(wire.ShouldSerializeDifficultyPlayedStar());
+        Assert.Equal(8u, wire.DifficultyPlayedStar);
         Assert.Empty(wire.AryChallengeStats);
         Assert.Empty(wire.AryUserCompeStats);
         Assert.Empty(wire.AryBngCompeStats);
@@ -173,6 +183,11 @@ public sealed class WhiteRuntimeHandlerTests
             GetDonpoint = 25,
             RewardPtn = 4,
             RewardProgress = 9,
+            DifficultyTutorialFlg = 4,
+            HasDifficultyPlayedCourse = true,
+            DifficultyPlayedCourse = 3,
+            HasDifficultyPlayedStar = true,
+            DifficultyPlayedStar = 8,
             ReleaseSongNoes = [104],
             GetToneNoes = [4],
             GetCostumeNo1s = [1],
@@ -208,6 +223,9 @@ public sealed class WhiteRuntimeHandlerTests
         Assert.Equal(0u, save.TotalUseDonpoint);
         Assert.Equal(4u, save.RewardPtn);
         Assert.Equal(9u, save.RewardProgress);
+        Assert.Equal(4u, save.DifficultyTutorialFlg);
+        Assert.Equal(3u, save.DifficultyPlayedCourse);
+        Assert.Equal(8u, save.DifficultyPlayedStar);
         Assert.Equal(new DateTime(2026, 6, 8, 12, 0, 0), save.LastPlayDatetime);
         Assert.Equal(12u, save.PrevAreaCode);
         Assert.Equal(1u, save.Costume1);
@@ -228,6 +246,34 @@ public sealed class WhiteRuntimeHandlerTests
         Assert.Empty(await fixture.Context.WhiteTokkunStageResults.Where(row => row.Baid == 1).ToListAsync());
         Assert.Empty(await fixture.Context.RedDonChallengeRawFacts.Where(row => row.Baid == 1).ToListAsync());
         Assert.Empty(await fixture.Context.RedDonChallengeProgress.Where(row => row.Baid == 1).ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_White_NormalUploadWithoutDifficultyFieldsPreservesExistingPanelState()
+    {
+        await using var fixture = await WhiteHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 2, MyDonName = "DON" });
+        var save = UserSaveDataWhiteExtensions.CreateDefaultWhiteSaveData(2);
+        save.DifficultyTutorialFlg = 4;
+        save.DifficultyPlayedCourse = 3;
+        save.DifficultyPlayedStar = 8;
+        fixture.Context.UserSaveDataWhite.Add(save);
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
+            2,
+            GameEra.White,
+            playDatetime: "20260608120000",
+            profile: Ac15ProfileMutationFacts.Empty with { GetDonpoint = 1 },
+            stages: [CreateStage(101, 1, 0)]),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        var reloaded = await fixture.Context.UserSaveDataWhite.SingleAsync(row => row.Baid == 2);
+        Assert.Equal(4u, reloaded.DifficultyTutorialFlg);
+        Assert.Equal(3u, reloaded.DifficultyPlayedCourse);
+        Assert.Equal(8u, reloaded.DifficultyPlayedStar);
     }
 
     [Fact]
@@ -441,6 +487,9 @@ public sealed class WhiteRuntimeHandlerTests
         request.GetDonpoint = 10;
         request.RewardPtn = 4;
         request.RewardProgress = 9;
+        request.DifficultyTutorialFlg = 4;
+        request.DifficultyPlayedCourse = 3;
+        request.DifficultyPlayedStar = 8;
         request.GetToneNoes = [4];
         request.GetCostumeNo1s = [1];
         request.GetTitleNoes = [10];
@@ -466,13 +515,16 @@ public sealed class WhiteRuntimeHandlerTests
         Assert.Equal(10u, envelope.Profile.GetDonpoint);
         Assert.Equal(4u, envelope.Profile.RewardPtn);
         Assert.Equal(9u, envelope.Profile.RewardProgress);
+        Assert.Equal(4u, envelope.Profile.DifficultyTutorialFlg);
+        Assert.True(envelope.Profile.HasDifficultyPlayedCourse);
+        Assert.Equal(3u, envelope.Profile.DifficultyPlayedCourse);
+        Assert.True(envelope.Profile.HasDifficultyPlayedStar);
+        Assert.Equal(8u, envelope.Profile.DifficultyPlayedStar);
         Assert.Equal([104u], envelope.Profile.ReleaseSongNoes);
         Assert.Equal([4u], envelope.Profile.GetToneNoes);
         Assert.Equal([1u], envelope.Profile.GetCostumeNo1s);
         Assert.Equal([10u], envelope.Profile.GetTitleNoes);
         Assert.True(envelope.Profile.HasAryCurrentCostume);
-        Assert.False(envelope.Profile.HasDifficultyPlayedCourse);
-        Assert.False(envelope.Profile.HasDifficultyPlayedStar);
         Assert.Equal(0u, envelope.Profile.GetDonmedal);
         Assert.Equal(0u, envelope.Profile.GetKatsumedal);
         Assert.Null(envelope.Tokkun);
