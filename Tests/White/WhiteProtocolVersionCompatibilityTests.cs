@@ -14,8 +14,8 @@ public sealed class WhiteProtocolVersionCompatibilityTests
     public void Heartbeat_CompatibilitySchemaOmitsFinalBanacoinFields()
     {
         var response = Invoke(
-            new LegacyWire.LegacyHeartbeatController(),
-            controller => controller.Heartbeat(new LegacyWire.HeartBeatRequest
+            new FinalControllers.HeartbeatController(),
+            controller => controller.LegacyHeartbeat(new LegacyWire.HeartBeatRequest
             {
                 ChassisId = "268410000000",
                 ShopId = "JPN0JPN0123"

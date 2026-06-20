@@ -1,10 +1,11 @@
+using LegacyWire = TaikoLocalServer.Adapters.GameProtocol.White.LegacyWire;
+
 namespace TaikoLocalServer.Adapters.GameProtocol.White.Controllers;
 
 [ApiController]
-[Route(WhiteRoutePrefixes.Final + "/tournamentcheck.php")]
 public sealed class TournamentCheckController : BaseProtocolController<TournamentCheckController>
 {
-    [HttpPost]
+    [HttpPost(WhiteRoutePrefixes.Final + "/tournamentcheck.php")]
     [Produces("application/protobuf")]
     public IActionResult TournamentCheck([FromBody] TournamentcheckRequest request)
     {
@@ -14,5 +15,17 @@ public sealed class TournamentCheckController : BaseProtocolController<Tournamen
             request.ShopId,
             request.KitId);
         return Ok(new TournamentcheckResponse { Result = 1 });
+    }
+
+    [HttpPost(WhiteRoutePrefixes.Compatibility + "/tournamentcheck.php")]
+    [Produces("application/protobuf")]
+    public IActionResult LegacyTournamentCheck([FromBody] LegacyWire.TournamentcheckRequest request)
+    {
+        Logger.LogInformation(
+            "White legacy tournamentcheck.php request: ChassisId={ChassisId}, ShopId={ShopId}, KitId={KitId}",
+            request.ChassisId,
+            request.ShopId,
+            request.KitId);
+        return Ok(new LegacyWire.TournamentcheckResponse { Result = 1 });
     }
 }

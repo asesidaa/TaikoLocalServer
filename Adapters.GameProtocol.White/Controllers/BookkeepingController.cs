@@ -1,10 +1,11 @@
+using LegacyWire = TaikoLocalServer.Adapters.GameProtocol.White.LegacyWire;
+
 namespace TaikoLocalServer.Adapters.GameProtocol.White.Controllers;
 
 [ApiController]
-[Route(WhiteRoutePrefixes.Final + "/bookkeeping.php")]
 public sealed class BookkeepingController : BaseProtocolController<BookkeepingController>
 {
-    [HttpPost]
+    [HttpPost(WhiteRoutePrefixes.Final + "/bookkeeping.php")]
     [Produces("application/protobuf")]
     public IActionResult Bookkeeping([FromBody] BookKeepingRequest request)
     {
@@ -13,5 +14,16 @@ public sealed class BookkeepingController : BaseProtocolController<BookkeepingCo
             request.ChassisId,
             request.ShopId);
         return Ok(new BookKeepingResponse { Result = 1 });
+    }
+
+    [HttpPost(WhiteRoutePrefixes.Compatibility + "/bookkeeping.php")]
+    [Produces("application/protobuf")]
+    public IActionResult LegacyBookkeeping([FromBody] LegacyWire.BookKeepingRequest request)
+    {
+        Logger.LogInformation(
+            "White legacy bookkeeping.php request: ChassisId={ChassisId}, ShopId={ShopId}",
+            request.ChassisId,
+            request.ShopId);
+        return Ok(new LegacyWire.BookKeepingResponse { Result = 1 });
     }
 }
