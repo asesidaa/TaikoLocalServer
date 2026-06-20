@@ -5,7 +5,7 @@ milestone_name: Phase Summary
 status: human_verification_pending
 stopped_at: White final 11.01 automated support complete; manual RPCS3/WebUI verification pending
 last_updated: "2026-06-20T17:22:18.226Z"
-last_activity: 2026-06-21 -- White final 11.01 Banacoin compatibility routes added as stateless endpoints; manual verification pending
+last_activity: 2026-06-21 -- Completed quick task 260621-4ze: random AC15 recommend_song support with obsolete recommend sidecars removed
 progress:
   total_phases: 6
   completed_phases: 6
@@ -28,7 +28,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-18)
 Phase: 27 - HUMAN VERIFICATION PENDING
 Plan: 1 of 1
 Status: Automated AdminApi/WebUI implementation, White Don Challenge correction, and White final 11.01 support are complete; manual runtime/WebUI verification remains.
-Last activity: 2026-06-21 -- White final 11.01 Banacoin compatibility routes added as stateless endpoints; manual verification pending
+Last activity: 2026-06-21 -- Completed quick task 260621-4ze: random AC15 recommend_song support with obsolete recommend sidecars removed
 
 ## Performance Metrics
 
@@ -277,6 +277,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
+| 260621-4ze | Support random AC15 recommend_song and remove recommend songs config files | 2026-06-21 | 84f219d1 | [260621-4ze-support-random-recommend-song-only-and-r](./quick/260621-4ze-support-random-recommend-song-only-and-r/) |
 | 260620-ub3 | Support White final 11.01 under /v07r03 with Tokkun, Banacoin, and difficulty panel support | 2026-06-20 | 87616f0e | [260620-ub3-support-white-final-version-11-01-under-](./quick/260620-ub3-support-white-final-version-11-01-under-/) |
 | 260615-wt6 | Fix AC15 selfbest Ura Oni scores, userdata score display type, and era favorite limits | 2026-06-15 | cd824405 | [260615-wt6-now-let-s-fix-several-issues-1-currently](./quick/260615-wt6-now-let-s-fix-several-issues-1-currently/) |
 | 260613-ny9 | Support older Red `/v08r00` compatibility with old BAID wire shape | 2026-06-13 | d7032433 | [260613-ny9-before-we-continue-to-next-phase-support](./quick/260613-ny9-before-we-continue-to-next-phase-support/) |
