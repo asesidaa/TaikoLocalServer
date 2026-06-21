@@ -309,6 +309,26 @@ public sealed class GameDataServiceTests
         Assert.False(WebUiEra.SupportsOlderAc15DonChallenge("Nijiiro"));
     }
 
+    [Fact]
+    public void UserPageFeatures_ExposeSupportedPagesPerEra()
+    {
+        foreach (var era in WebUiEra.Supported)
+        {
+            var pages = WebUiEra.GetUserPageFeatures(era).Select(feature => feature.Page).ToArray();
+
+            Assert.Contains(WebUiUserPage.Profile, pages);
+            Assert.Contains(WebUiUserPage.SongList, pages);
+            Assert.Contains(WebUiUserPage.HighScores, pages);
+            Assert.Contains(WebUiUserPage.PlayHistory, pages);
+            Assert.Contains(WebUiUserPage.DaniDojo, pages);
+            Assert.Equal(
+                WebUiEra.SupportsOlderAc15DonChallenge(era),
+                pages.Contains(WebUiUserPage.DonChallenge));
+        }
+
+        Assert.Empty(WebUiEra.GetUserPageFeatures("Unknown"));
+    }
+
     private sealed class RecordingHandler : HttpMessageHandler
     {
         public List<string> RequestPaths { get; } = [];

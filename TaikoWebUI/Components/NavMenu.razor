@@ -25,6 +25,8 @@
 
         if (AuthService.IsLoggedIn)
 		{
+            var profileFeature = GetProfileFeature(selectedEra);
+            var playDataFeatures = GetPlayDataFeatures(selectedEra);
             <MudDivider />
             <MudSelect T="string" Value="@selectedEra" ValueChanged="OnSelectedEraChanged" Dense="true" Margin="Margin.Dense" Class="px-4" Label="Era">
                 @foreach (var era in AuthService.EnabledEras)
@@ -32,17 +34,19 @@
                     <MudSelectItem Value="@era">@era</MudSelectItem>
                 }
             </MudSelect>
-			<MudNavLink Href="@(WebUiEra.UserRoute((uint)baid, selectedEra, "Profile"))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Person">@Localizer["Profile"]</MudNavLink>
-            <MudNavGroup Title=@Localizer["Play Data"] Expanded="true" Icon="@Icons.Material.Filled.EmojiEvents">
-			    <MudNavLink Href="@(WebUiEra.UserRoute((uint)baid, selectedEra, "Songs"))" Match="NavLinkMatch.All">@Localizer["Song List"]</MudNavLink>
-			    <MudNavLink Href="@(WebUiEra.UserRoute((uint)baid, selectedEra, "HighScores"))" Match="NavLinkMatch.All">@Localizer["High Scores"]</MudNavLink>
-	            <MudNavLink Href="@(WebUiEra.UserRoute((uint)baid, selectedEra, "PlayHistory"))" Match="NavLinkMatch.All">@Localizer["Play History"]</MudNavLink>
-			    <MudNavLink Href="@(WebUiEra.UserRoute((uint)baid, selectedEra, "DaniDojo"))" Match="NavLinkMatch.All">@Localizer["Dani Dojo"]</MudNavLink>
-                @if (showDonChallengeLink)
-                {
-                    <MudNavLink Href="@(WebUiEra.UserRoute((uint)baid, selectedEra, "DonChallenge"))" Match="NavLinkMatch.All">Don Challenge</MudNavLink>
-                }
-            </MudNavGroup>
+            @if (profileFeature is not null)
+            {
+			    <MudNavLink Href="@(WebUiEra.UserRoute((uint)baid, selectedEra, profileFeature.RouteSegment))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Person">@Localizer[profileFeature.LabelKey]</MudNavLink>
+            }
+            @if (playDataFeatures.Count > 0)
+            {
+                <MudNavGroup Title=@Localizer["Play Data"] Expanded="true" Icon="@Icons.Material.Filled.EmojiEvents">
+                    @foreach (var feature in playDataFeatures)
+                    {
+                        <MudNavLink Href="@(WebUiEra.UserRoute((uint)baid, selectedEra, feature.RouteSegment))" Match="NavLinkMatch.All">@Localizer[feature.LabelKey]</MudNavLink>
+                    }
+                </MudNavGroup>
+            }
             <MudNavGroup Title=@Localizer["Settings"] Expanded="settingsOpen" Icon="@Icons.Material.Filled.Settings">
                 <MudNavLink OnClick="ShowQrCode">@Localizer["Show QR Code"]</MudNavLink>
                 <MudNavLink Href="/ChangePassword" Match="NavLinkMatch.All">@Localizer["Change Password"]</MudNavLink>
@@ -113,6 +117,16 @@
             showDonChallengeLink = false;
         }
     }
+
+    private static WebUiUserPageFeature? GetProfileFeature(string era)
+        => WebUiEra.GetUserPageFeatures(era)
+            .FirstOrDefault(feature => feature.Page == WebUiUserPage.Profile);
+
+    private IReadOnlyList<WebUiUserPageFeature> GetPlayDataFeatures(string era)
+        => WebUiEra.GetUserPageFeatures(era)
+            .Where(feature => feature.Page != WebUiUserPage.Profile)
+            .Where(feature => feature.Page != WebUiUserPage.DonChallenge || showDonChallengeLink)
+            .ToArray();
 
     public void Dispose()
     {

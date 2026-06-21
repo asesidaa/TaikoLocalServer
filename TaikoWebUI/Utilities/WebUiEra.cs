@@ -1,5 +1,20 @@
 namespace TaikoWebUI.Utilities;
 
+public enum WebUiUserPage
+{
+    Profile,
+    SongList,
+    HighScores,
+    PlayHistory,
+    DaniDojo,
+    DonChallenge
+}
+
+public sealed record WebUiUserPageFeature(
+    WebUiUserPage Page,
+    string RouteSegment,
+    string LabelKey);
+
 public static class WebUiEra
 {
     public const string Default = "Nijiiro";
@@ -37,6 +52,33 @@ public static class WebUiEra
         return string.Equals(era, Red, StringComparison.OrdinalIgnoreCase)
             || string.Equals(era, White, StringComparison.OrdinalIgnoreCase);
     }
+
+    public static IReadOnlyList<WebUiUserPageFeature> GetUserPageFeatures(string? era)
+    {
+        if (!TryNormalize(era, out var normalized))
+        {
+            return [];
+        }
+
+        var features = new List<WebUiUserPageFeature>
+        {
+            new(WebUiUserPage.Profile, "Profile", "Profile"),
+            new(WebUiUserPage.SongList, "Songs", "Song List"),
+            new(WebUiUserPage.HighScores, "HighScores", "High Scores"),
+            new(WebUiUserPage.PlayHistory, "PlayHistory", "Play History"),
+            new(WebUiUserPage.DaniDojo, "DaniDojo", "Dani Dojo")
+        };
+
+        if (SupportsOlderAc15DonChallenge(normalized))
+        {
+            features.Add(new WebUiUserPageFeature(WebUiUserPage.DonChallenge, "DonChallenge", "Don Challenge"));
+        }
+
+        return features;
+    }
+
+    public static bool SupportsUserPage(string? era, WebUiUserPage page)
+        => GetUserPageFeatures(era).Any(feature => feature.Page == page);
 
     public static string Normalize(string? era)
     {

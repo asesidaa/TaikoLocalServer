@@ -126,7 +126,15 @@
                          TransformOrigin="Origin.TopCenter">
                     @foreach (var era in AuthService.EnabledEras)
                     {
-                        <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, era, "Profile"))">@era - @Localizer["Edit Profile"]</MudMenuItem>
+                        var profileFeature = GetProfileFeature(era);
+                        if (profileFeature is not null)
+                        {
+                            <MudMenu Dense="true"
+                                     Label="@WebUiEra.Normalize(era)"
+                                     ActivationEvent="MouseEvent.MouseOver">
+                                <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, era, profileFeature.RouteSegment))">@Localizer[profileFeature.LabelKey]</MudMenuItem>
+                            </MudMenu>
+                        }
                     }
                 </MudMenu>
                 <MudMenu Size="Size.Small"
@@ -140,13 +148,17 @@
                          TransformOrigin="Origin.TopCenter">
                     @foreach (var era in AuthService.EnabledEras)
                     {
-                        <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, era, "HighScores"))">@era - @Localizer["High Scores"]</MudMenuItem>
-                        <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, era, "PlayHistory"))">@era - @Localizer["Play History"]</MudMenuItem>
-                        <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, era, "Songs"))">@era - @Localizer["Song List"]</MudMenuItem>
-                        <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, era, "DaniDojo"))">@era - @Localizer["Dani Dojo"]</MudMenuItem>
-                        @if (IsDonChallengeAvailable(era))
+                        var playDataFeatures = GetPlayDataFeatures(era);
+                        if (playDataFeatures.Count > 0)
                         {
-                            <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, era, "DonChallenge"))">@era - Don Challenge</MudMenuItem>
+                            <MudMenu Dense="true"
+                                     Label="@WebUiEra.Normalize(era)"
+                                     ActivationEvent="MouseEvent.MouseOver">
+                                @foreach (var feature in playDataFeatures)
+                                {
+                                    <MudMenuItem Href="@(WebUiEra.UserRoute(User.Baid, era, feature.RouteSegment))">@Localizer[feature.LabelKey]</MudMenuItem>
+                                }
+                            </MudMenu>
                         }
                     }
                 </MudMenu>
@@ -187,6 +199,16 @@
 
     private bool IsDonChallengeAvailable(string era)
         => donChallengeAvailableEras.Contains(WebUiEra.Normalize(era));
+
+    private static WebUiUserPageFeature? GetProfileFeature(string era)
+        => WebUiEra.GetUserPageFeatures(era)
+            .FirstOrDefault(feature => feature.Page == WebUiUserPage.Profile);
+
+    private IReadOnlyList<WebUiUserPageFeature> GetPlayDataFeatures(string era)
+        => WebUiEra.GetUserPageFeatures(era)
+            .Where(feature => feature.Page != WebUiUserPage.Profile)
+            .Where(feature => feature.Page != WebUiUserPage.DonChallenge || IsDonChallengeAvailable(era))
+            .ToArray();
 
     private Task ShowQrCode(User user)
     {
