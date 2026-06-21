@@ -22,4 +22,4 @@
 
 ## Manual Verification
 
-Not run. Phase 27 is intentionally left at `human_needed` so the user can run the game and review the WebUI manually.
+Accepted at milestone close on 2026-06-21. The user selected verified closeout for the White RPCS3/cabinet and WebUI verification gate.

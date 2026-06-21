@@ -4,11 +4,11 @@
 
 TaikoLocalServer is a local ASP.NET Core server for Taiko no Tatsujin cabinet protocols, local SQLite persistence, era-specific game data catalogs, and a Blazor WebAssembly admin UI. This project continues the existing Blue-era support effort from the Superpowers roadmap in `docs/superpowers/specs/2026-05-27-blue-support-roadmap-design.md`, starting after completed stages A0-A5 and carrying the work through full Blue support.
 
-Full Blue, Yellow, and Red support are complete. White 0.13 support is the active v1.4 milestone. The project now supports Nijiiro, Green AC15, Blue AC15, Yellow AC15, and Red AC15 in one process while preserving era-owned routes, wire DTOs, persistence, handlers, mappers, catalogs, tests, and AdminApi/WebUI routing.
+Full Blue, Yellow, Red, and White 0.13 support are complete. The project now supports Nijiiro, Green AC15, Blue AC15, Yellow AC15, Red AC15, and White AC15 in one process while preserving era-owned routes, wire DTOs, persistence, handlers, mappers, catalogs, tests, and AdminApi/WebUI routing.
 
 ## Core Value
 
-AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
+AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Red, White, Nijiiro, or shared identity state.
 
 ## Current State
 
@@ -16,7 +16,7 @@ v1.2 Yellow AC15 Support shipped on 2026-06-12. Yellow is a first-class AC15 era
 
 v1.3 Red AC15 Support shipped on 2026-06-16. Red uses `proto/red/taiko.proto`, `proto/red/vsinterface.proto`, and the local Red game-data symlink at `Host/wwwroot/data/red/data` as source evidence. Red support covers `/v08r01` game routes, shared `/v01r00` startup/version ownership, active `ST8100-1` root evidence, first-class Red adapter/wire/Host gating, catalog/profile binding, Red-owned normal runtime state, Dani, tutorial-only Tokkun readback, simple compatibility routes, server-side Don Challenge progress/rewards, separate stubbed `challengecompe.php` protocol compatibility, AdminApi/WebUI readback, and user-accepted runtime closeout.
 
-v1.4 White AC15 0.13 Support has started. Phase 23 is complete: White route/root evidence is recorded, `/v07r00/chassis` is approved for fourteen no-state scaffold routes, startup/version ownership remains shared under `/v01r00/chassis`, and White now has first-class adapter/wire/Host gating foundation. A 2026-06-18 live log showed the local setup returning 405 while White was disabled; the setup was fixed by enabling White for the source Host setup, mapping `HddVer=700` to White, and recording user-confirmed cabinet/RPCS3 connection smoke before Phase 24. White uses `proto/white/taiko.proto`, `proto/white/vsinterface.proto`, and local game data at `Host/wwwroot/data/white/data` as source evidence, with the observed data root `config/ST7100-1`. The milestone targets the first White version, so later White-version behavior must be absent unless local White proto/data/log/IDA/client evidence proves it belongs in the 0.13 server contract.
+v1.4 White AC15 0.13 Support shipped on 2026-06-21. White uses `proto/white/taiko.proto`, `proto/white/vsinterface.proto`, and local game data at `Host/wwwroot/data/white/data` as source evidence, with observed `config/ST7100-1` data. White support covers `/v07r00/chassis` game routes, shared `/v01r00/chassis` startup/version ownership, first-class White adapter/wire/Host gating, catalog/profile binding, White-owned runtime state, normal play, Dani where proven, reward/Don Point state, present/special-BAID provenance, server-side Don Challenge progress/rewards through dedicated AdminApi/WebUI readback, and accepted runtime/WebUI closeout. Later White-version behavior remains evidence-gated. The follow-up White final 11.01 quick work split `/v07r03` final protocol support from legacy `/v07r00` compatibility and added proven Tokkun/Banacoin/difficulty panel handling without changing the v1.4 White 0.13 milestone scope.
 
 Although Blue, Green, and Yellow wire surfaces contain challenge competition proto definitions and some compatibility routes, those newer versions do not meaningfully call the feature; do not treat their stubs as runtime behavior evidence. Challenge competition is meaningful scope only for Red and older AC15 versions.
 
@@ -26,9 +26,9 @@ Yellow support reuses AC15 shared core behavior where it directly reduces duplic
 
 ## Current Planning State
 
-Current milestone: **v1.4 White AC15 0.13 Support**
+Current milestone: **None - awaiting next milestone**
 
-**Current milestone goal:** Add White 0.13 by composing existing AC15 capabilities with White config, limits, wire placement, typed persistence, collectable data, and White/older-version evidence while preserving era-owned protocol, catalog, state, admin, and verification boundaries.
+**Current milestone goal:** Not yet defined. Use `$gsd-new-milestone` to define the next era requirements, research targets, and roadmap before implementation.
 
 ## Requirements
 
@@ -68,13 +68,13 @@ Current milestone: **v1.4 White AC15 0.13 Support**
 - [x] Red Don Challenge: Red binds server-side Don Challenge through local sidecar data, Red-owned progress/reward state, normal playresult stage matching, and dedicated AdminApi/WebUI contracts. Cabinet `challengecompe.php` remains a separate protocol compatibility stub.
 - [x] Red AdminApi/WebUI and runtime closeout: Phase 22 records automated verification, temp-output Host build, and user-accepted manual runtime evidence before v1.3 archive.
 - [x] White evidence and first-class foundation: Phase 23 records White `/v07r00/chassis` route evidence for fourteen no-state scaffold suffixes, shared `/v01r00/chassis` startup/version ownership, current nonzero White IDB evidence, `ST7100-1` root evidence, generated White wire DTOs, `GameEra.White`, Host settings/registration, exact content-type fallback, disabled-era application-part gating, the 2026-06-18 setup 405 fix, user-confirmed connection smoke, and no runtime/catalog/AdminApi/WebUI behavior.
+- [x] White catalog/profile/runtime binding: White binds matching AC15 catalog, profile, userdata, normal play, self-best, crowns, favorites, recent songs, reward/Don Point, and Dani behavior through White-owned state, explicit White protocol limits, and mechanical Mapperly projection.
+- [x] White collectable and Don Challenge support: White present/special-BAID provenance is collected, and White Don Challenge is implemented only as server-side stage-derived progress with White-owned data/state/AdminApi/WebUI readback.
+- [x] White AdminApi/WebUI and runtime closeout: Phase 27 records White readback/edit surfaces over implemented White-owned state only, automated verification, generated-source inspection, temp-output Host build, and user-accepted RPCS3/cabinet/WebUI closeout.
 
 ### Active
 
-- [ ] White binds only matching AC15 catalog/profile/runtime capabilities through White-owned persistence, protocol limits, and mechanical Mapperly projection.
-- [ ] Features missing from White 0.13 remain absent unless local White evidence proves the cabinet expects compatibility behavior.
-- [ ] White-scoped collectable data, including Don Challenge data if it falls inside the proven White 0.13 range, is collected and bound late in the milestone after core capability behavior is stable.
-- [ ] White support closes only after automated verification, a temp-output Host build if needed, and cabinet/RPCS3 smoke evidence for implemented White flows.
+- [ ] Define the next milestone through `$gsd-new-milestone` before implementing the next era.
 
 ### Out of Scope
 
@@ -129,16 +129,11 @@ v1.2 Yellow AC15 Support is complete. Phases 12-17 plus inserted Phases 16.1 and
 
 v1.3 Red AC15 Support is complete. Phases 18-22 added Red as a first-class older AC15 era with Red route/root evidence, generated Red wire DTOs, catalog/profile binding, Red-owned runtime state, tutorial-only Tokkun readback, server-side Don Challenge behavior, separate stubbed ChallengeCompe protocol compatibility, AdminApi/WebUI readback, and final runtime closeout evidence.
 
-## Current Milestone: v1.4 White AC15 0.13 Support
+v1.4 White AC15 0.13 Support is complete. Phases 23-27 plus inserted Phase 23.1 added White as a first-class older AC15 era with White route/root evidence, generated White wire DTOs, catalog/profile binding, White-owned runtime state, present/special-BAID provenance, server-side Don Challenge behavior, AdminApi/WebUI readback, and accepted runtime closeout evidence.
 
-**Goal:** Add White 0.13 by composing existing AC15 capabilities with White config, limits, wire placement, typed persistence, collectable data, and White/older-version evidence while preserving era-owned protocol, catalog, state, admin, and verification boundaries.
+## Next Milestone
 
-**Target features:**
-- White evidence and first-class era foundation from `proto/white`, `Host/wwwroot/data/white/data`, route/root evidence, and safe Host gating.
-- White catalog/profile binding through matching AC15 catalog loaders and White-specific sidecars only where White data proves a delta.
-- White-owned runtime bindings for matching profile/userdata, normal play, self-best, crowns, recommendations, folders/telops, reward/profile fields, and Dani only if White 0.13 evidence proves runtime support.
-- White-scoped collectable data, including Don Challenge data if present in the 0.13 range, collected and bound as the final functional step before closeout.
-- AdminApi/WebUI readback for implemented White-owned surfaces only, followed by automated verification and RPCS3/cabinet smoke evidence.
+Not defined yet. The next era should start with `$gsd-new-milestone` so requirements and roadmap scope are built from current local proto, data, logs, IDA/client evidence, and cabinet/RPCS3 behavior.
 
 ## Constraints
 
@@ -183,7 +178,10 @@ v1.3 Red AC15 Support is complete. Phases 18-22 added Red as a first-class older
 | Treat Don Challenge as server-side stage-derived progress, not ChallengeCompe protocol state | Red/White behavior is driven from normal playresult stages and dedicated AdminApi/WebUI readback; `challengecompe.php` remains a separate protocol surface | Corrected in v1.4 |
 | Start White 0.13 support as v1.4 | White is the next older AC15 era after Red; local White proto/data are present and the user expects mostly assembling existing capabilities with correct White responses and limits | Validated in Phase 23 |
 | Keep Phase 23 White foundation no-state and evidence-gated | White route proof approves only `/v07r00/chassis` plus fourteen scaffold suffixes; runtime catalog/profile/state/AdminApi/WebUI behavior remains owned by later phases | Validated in Phase 23 |
-| Collect White collectable data late in the milestone | White collectable data such as Don Challenge should be gathered if it falls in the 0.13 range, but only after core era support is stable | Pending in v1.4 |
+| Collect White collectable data late in the milestone | White collectable data such as Don Challenge should be gathered if it falls in the 0.13 range, but only after core era support is stable | Validated in v1.4 |
+| Implement White Don Challenge as server-side stage-derived progress only | White data/range evidence supports dedicated server-side Don Challenge readback, while standalone ChallengeCompe cabinet route/readback remains absent | Validated in v1.4 |
+| Close White after accepted runtime/WebUI verification | Automated tests/builds and generated-source inspection are necessary but not sufficient; milestone close records user-accepted RPCS3/cabinet/WebUI verification | Validated in v1.4 |
+| Split White final `/v07r03` from legacy `/v07r00` protocol support | Final 11.01 behavior uses different generated wire and proven routes; compatibility must not force final fields onto legacy White wire | Validated by quick task 260620-ub3 |
 
 ## Evolution
 
@@ -203,4 +201,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-18 after Phase 23 White Evidence and Era Foundation connection smoke closeout*
+*Last updated: 2026-06-21 after v1.4 White AC15 0.13 Support milestone closeout*

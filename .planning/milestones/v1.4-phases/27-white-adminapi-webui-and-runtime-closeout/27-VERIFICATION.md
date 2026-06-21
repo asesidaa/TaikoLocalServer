@@ -1,9 +1,9 @@
 ---
 phase: 27-white-adminapi-webui-and-runtime-closeout
 verified: 2026-06-18T21:35:00Z
-status: human_needed
-score: "automated closeout verified; manual RPCS3/WebUI verification pending"
-acceptance: manual RPCS3/cabinet and WebUI review intentionally deferred per user instruction
+status: passed
+score: "automated closeout verified; manual RPCS3/WebUI verification accepted"
+acceptance: manual RPCS3/cabinet and WebUI review accepted by user at milestone close on 2026-06-21
 overrides_applied: 0
 ---
 
@@ -39,13 +39,13 @@ overrides_applied: 0
 | --- | --- | --- |
 | WVER-01 | VERIFIED | White AdminApi/WebUI routes now expose implemented White-owned AC15 surfaces through generic contracts and tests prove White rows are used without Blue/Green/Yellow/Red fallback. |
 | WVER-02 | VERIFIED | Full suite plus focused White/AdminApi/WebUI tests cover White route behavior, persistence boundaries, catalog/customization readback, mapper/classifier behavior, protocol packing from earlier White runtime tests, White Don Challenge server-side progress/AdminApi readback, and no-cross-era/no-cross-mode behavior. |
-| WVER-03 | PARTIAL - HUMAN NEEDED | Full automated suite, generated-source inspection, and temp Host build passed. Final RPCS3/cabinet smoke and manual WebUI review are pending by user instruction. |
+| WVER-03 | VERIFIED | Full automated suite, generated-source inspection, and temp Host build passed. Manual RPCS3/cabinet smoke and WebUI review were accepted by the user at milestone close on 2026-06-21. |
 
 ## Human Verification
 
-status: pending
+status: accepted
 
-Required manual checks before v1.4 can be called complete:
+Manual White closeout was accepted by the user at milestone close on 2026-06-21. The accepted scope covers:
 
 - Run White RPCS3/cabinet flow against the server and confirm implemented profile/login/userdata/playresult/readback flows behave acceptably.
 - Review the WebUI with White enabled and confirm White user profile, score/history/song/favorite/Dani/catalog pages expose the expected implemented surfaces.
@@ -54,4 +54,4 @@ Required manual checks before v1.4 can be called complete:
 
 ## Closeout Decision
 
-Automated Phase 27 implementation and White Don Challenge correction verification are complete. Milestone v1.4 is not marked complete because manual runtime/WebUI verification is still pending.
+Automated Phase 27 implementation and White Don Challenge correction verification are complete. Manual runtime/WebUI verification was accepted at milestone close, so v1.4 can be marked complete.

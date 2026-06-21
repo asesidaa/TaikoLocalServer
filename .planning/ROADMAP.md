@@ -6,240 +6,11 @@
 - [x] **v1.1 Blue Tokkun Mode Support** - Phases 7-11 shipped on 2026-06-07. See [v1.1 roadmap archive](milestones/v1.1-ROADMAP.md), [v1.1 requirements archive](milestones/v1.1-REQUIREMENTS.md), and [v1.1 phase artifacts](milestones/v1.1-phases/).
 - [x] **v1.2 Yellow AC15 Support** - Phases 12-17 plus inserted Phases 16.1 and 16.2 shipped on 2026-06-12. See [v1.2 roadmap archive](milestones/v1.2-ROADMAP.md), [v1.2 requirements archive](milestones/v1.2-REQUIREMENTS.md), and [v1.2 phase artifacts](milestones/v1.2-phases/).
 - [x] **v1.3 Red AC15 Support** - Phases 18-22 shipped on 2026-06-16. See [v1.3 roadmap archive](milestones/v1.3-ROADMAP.md), [v1.3 requirements archive](milestones/v1.3-REQUIREMENTS.md), and [v1.3 phase artifacts](milestones/v1.3-phases/).
-- [ ] **v1.4 White AC15 0.13 Support** - Phases 23-27 plus inserted Phase 23.1. White 0.13 is the next older AC15 capability composition, with White-owned protocol, catalog, state, collectable data, admin, and runtime verification boundaries.
+- [x] **v1.4 White AC15 0.13 Support** - Phases 23-27 plus inserted Phase 23.1 shipped on 2026-06-21. See [v1.4 roadmap archive](milestones/v1.4-ROADMAP.md), [v1.4 requirements archive](milestones/v1.4-REQUIREMENTS.md), and [v1.4 phase artifacts](milestones/v1.4-phases/).
 
 ## Current Planning State
 
-Active milestone: **v1.4 White AC15 0.13 Support**
-
-**Goal:** Add White 0.13 by composing existing AC15 capabilities with White config, limits, wire placement, typed persistence, collectable data, and White/older-version evidence while preserving era-owned protocol, catalog, state, admin, and verification boundaries.
-
-**Scope guardrails:**
-
-- White starts from `proto/white`, `Host/wwwroot/data/white/data`, request logs/captures, corrected IDA/client evidence, and RPCS3/cabinet proof.
-- The linked White wiki page is product/version scoping and Don Challenge bundle data input only; it does not define route, payload, state, or response contracts.
-- Current Phase 23 context records `.tools/white/EBOOT.ELF.i64` as present and nonzero (`129893515` bytes). Plan 23-01 route proof is approved for `/v07r00/chassis` and exactly fourteen no-state scaffold suffixes; any additional White route code still requires White IDB route strings, logs, captures, or equivalent local evidence.
-- White 0.13 has fewer surfaces than Red and Yellow. Unsupported or later-version features stay absent instead of receiving cloned compatibility routes.
-- Shared AC15 services may be reused only through explicit White limits, feature flags, wire placement, catalog data, and White-owned persistence tables.
-- Collectable data, including Don Challenge if it is proven inside the White 0.13 range, is intentionally late because it depends on stable identity, catalog, playresult, reward, and readback behavior.
-
-## v1.4 Phase Summary
-
-| Phase | Name | Goal | Requirements | Success Criteria |
-|-------|------|------|--------------|------------------|
-| 23 | White Evidence and Era Foundation | 3/3 | Complete | 2026-06-18 |
-| 23.1 | Red Don Challenge capability boundary and playresult refactor | 3/3 | Complete   | 2026-06-17 |
-| 24 | White Catalog Profile and Protocol Limits | Bind White `ST7100-1` data, sidecars, AC15 profile, feature flags, limits, and wire placement. | WCAT-01, WCAT-02, WCAT-03 | 5 |
-| 25 | White Runtime Capability Binding and Rewards | 1/1 | Complete | 2026-06-18 |
-| 26 | White Collectable Data and Don Challenge Evidence | 1/1 | Complete | 2026-06-18 |
-| 27 | White AdminApi WebUI and Runtime Closeout | 1/1 automated plan complete | WVER-01/WVER-02 verified; WVER-03 manual verification pending | Human needed |
-
-**Coverage:** 16/16 v1.4 requirements mapped exactly once.
-
-## Phases
-
-- [x] **Phase 23: White Evidence and Era Foundation** - Prove White route/version/transport boundaries and add first-class White adapter scaffolding. Completed after server verification and user-confirmed White connection smoke on 2026-06-18. (completed 2026-06-18)
-- [x] **Phase 23.1: Red Don Challenge capability boundary and playresult refactor** - Refactor Red Don Challenge naming, shared capability boundaries, and playresult dispatch before White reuse. Completed 2026-06-17. (INSERTED)
-- [x] **Phase 24: White Catalog Profile and Protocol Limits** - Bind White `ST7100-1` data, sidecars, AC15 profile, feature flags, limits, and wire placement. Completed 2026-06-18.
-- [x] **Phase 25: White Runtime Capability Binding and Rewards** - Bind White identity, userdata, normal play, metadata readback, Taikojuku/Dani where proven, and protocol-backed reward/Don Point state. Completed 2026-06-18.
-- [x] **Phase 26: White Collectable Data and Don Challenge Evidence** - Collect White 0.13 present/special-BAID data; its earlier Don Challenge absence decision is superseded by the Phase 27 White Don Challenge correction. Completed 2026-06-18.
-- [ ] **Phase 27: White AdminApi WebUI and Runtime Closeout** - Automated AdminApi/WebUI exposure and build/test closeout complete; manual RPCS3/cabinet and WebUI verification pending.
-
-## Phase Details
-
-### Phase 23: White Evidence and Era Foundation
-
-**Goal:** Prove White route/version/transport boundaries and add first-class White adapter scaffolding.
-**Depends on:** v1.3 Red archive
-**Requirements:** WFND-01, WFND-02, WFND-03
-**Plans:** 3/3 plans complete
-Plans:
-**Wave 1**
-
-- [x] 23-01-PLAN.md - White evidence gate, feature inventory, and stale-note correction
-
-**Wave 2** *(unblocked after Wave 1 approval)*
-
-- [x] 23-02-PLAN.md - White adapter identity and generated wire foundation
-
-**Wave 3** *(blocked on Wave 2 completion)*
-
-- [x] 23-03-PLAN.md - Evidence-gated route scaffolds and Host wiring
-
-**Key deliverables:**
-
-- White evidence artifact covering game route prefix, startup/version ownership, direct-protobuf transport, active data root, usable/unusable binary evidence, and unresolved runtime gaps.
-- White feature inventory separating White 0.13 proven surfaces, later White-only leads, other-era behavior, and unknowns.
-- Generated White wire DTOs from immutable `proto/white` inputs in a first-class White adapter project.
-- `GameEra.White`, Host settings, DI registration, application-part gating, content-type fallback scope, and disabled-era route safety.
-- Existing-era preservation checks for any shared code touched during foundation work.
-
-**Success criteria:**
-
-1. Developer can inspect a White evidence artifact before route/controller behavior or data-root choices are treated as final.
-2. White generated wire DTOs are produced from `proto/white/taiko.proto` and `proto/white/vsinterface.proto` without modifying dumped proto files.
-3. White adapter routes are enabled only when White is configured and absent when White is disabled.
-4. Route/root assumptions are evidence-tagged, and the superseded zero-byte IDB limitation is replaced with current nonzero IDB evidence plus approved route-proof boundaries for Phase 23 scaffolding.
-5. Existing Blue, Green, Yellow, Red, and Nijiiro behavior remains preserved by focused checks for any shared-code changes.
-
-### Phase 23.1: Red Don Challenge capability boundary and playresult refactor (INSERTED)
-
-**Goal:** Refactor Red Don Challenge naming, shared capability boundaries, and playresult dispatch before White reuse.
-**Requirements**: Architecture todo: `.planning/todos/pending/2026-06-17-refactor-don-challenge-capability-boundary.md`
-**Depends on:** Phase 23
-**Plans:** 3 plans
-Plans:
-
-**Wave 1**
-
-- [x] 23.1-01-PLAN.md - Don Challenge naming, config, catalog, and data-preserving Red schema rename
-
-**Wave 2** *(blocked on Wave 1 completion)*
-
-- [x] 23.1-02-PLAN.md - Shared Don Challenge writer and Red playresult binding
-
-**Wave 3** *(blocked on Wave 2 completion)*
-
-- [x] 23.1-03-PLAN.md - AdminApi projection cleanup and shared Tokkun dispatch policy
-
-**Key deliverables:**
-
-- `Application/Ac15/DonChallenge` capability naming for catalog, task/progress evaluation, reward decisions, writer, and AdminApi projection helpers.
-- Red-owned `RedDonChallenge*` entities, DbSets, mappings, and data-preserving EF migration from the current Red ChallengeCompe table names.
-- DonChallenge-facing settings/catalog APIs and config keys only; `ChallengeCompe` config names are reserved for real protocol surfaces and do not enable Don Challenge.
-- `Ac15DonChallengeWriter` for shared normal-play Don Challenge mutation through explicit Red bindings.
-- Shared Tokkun classifier/early-dispatch helper without a broad AC15 playresult pipeline.
-
-**Success criteria:**
-
-1. Stateful Don Challenge code/storage/config names no longer leak `ChallengeCompe`, while real protocol route/wire/stub surfaces keep `ChallengeCompe`.
-2. Existing Red challenge data is preserved through rename migration operations.
-3. Red normal playresult still writes Don Challenge progress/rewards only from valid normal stages.
-4. Red Tokkun playresult still writes only Tokkun tutorial/recent-song state and skips normal, Dani, Don Challenge, and unlock writes.
-5. Don Challenge AdminApi readback remains read-only and projection logic is no longer inline handler mechanics.
-
-### Phase 24: White Catalog Profile and Protocol Limits
-
-**Goal:** Bind White `ST7100-1` data, sidecars, AC15 profile, feature flags, limits, and wire placement.
-**Depends on:** Phase 23.1
-**Requirements:** WCAT-01, WCAT-02, WCAT-03
-
-**Key deliverables:**
-
-- `WhiteGameDataPaths`, `WhiteRequiredDataFiles`, `IWhiteCatalog`, `WhiteEraGameDataCatalog`, and DI registration rooted through `PathHelper`.
-- Shared AC15 catalog-loader binding for White music, medley, tuning, folder, telop, recommendation, movie/customization, Taikojuku, present, and special-BAID data where formats match.
-- White server-authored sidecars for implemented metadata features, including intentionally empty files where absence is the runtime contract.
-- `Ac15EraProfiles.White` with White feature flags, protocol limits, and wire placement proven from generated wire/data/payload evidence.
-- Host copy/exclude rules so White operator data is not published wholesale while White sidecars are present in build output.
-
-**Success criteria:**
-
-1. White catalog initialization validates the proven White data root and fails clearly when required White files are missing.
-2. White catalog outputs are populated through shared AC15 loaders only where White data format matches; deltas are handled as White-specific parser work.
-3. White feature flags do not advertise item shop, Banacoin authority, battle, Tokkun, WaiWai, gacha runtime, later White behavior, or standalone ChallengeCompe without evidence.
-4. White protocol limits and wire placement are explicit before runtime handlers depend on them.
-5. Tests prove parser/catalog behavior and build-output copy for White data/sidecars without source-shape assertions.
-
-### Phase 25: White Runtime Capability Binding and Rewards
-
-**Goal:** Bind White identity, userdata, normal play, metadata readback, Taikojuku/Dani where proven, and reward/present state.
-**Depends on:** Phase 24
-**Requirements:** WSTATE-01, WSTATE-02, WSTATE-03, WSTATE-04, WCOLL-01
-**Plans:** 1/1 plans complete
-Plans:
-
-- [x] 25-01-PLAN.md - White runtime state binding
-
-**Key deliverables:**
-
-- White-owned EF entities, DbSets, migrations, typed accessors, and handler partials for identity, save/profile, userdata, score/self-best, crowns, favorites, recent songs, profile counters, and reward/progress state.
-- White BAID, mydon entry, userdata, initial data, self-best, crowns, folder, telop, recommend, Taikojuku, tournament/check probe, heartbeat, bookkeeping, and related compatibility route behavior according to White evidence.
-- White normal `playresult.php` classification and state mutation through shared AC15 helpers bound to concrete White tables and White limits.
-- White Taikojuku/Dani runtime writes/readback only if White payload and catalog evidence proves the same contract; otherwise documented absence.
-- White reward/present and Don Point behavior from `present.xml` and White protocol fields without Yellow shop/medal or Banacoin state.
-- Phase 25 completed the protocol-backed reward/Don Point state; detailed `present.xml`/special-BAID provenance is carried to Phase 26 collectable work.
-
-**Success criteria:**
-
-1. White cabinet flow can create/find a card, create mydon/profile data, and read White-owned userdata without writing another era's gameplay state.
-2. White normal playresult persists and reads back supported normal state through White-owned tables and White protocol limits.
-3. Metadata/readback routes are catalog-backed or no-state according to White evidence and do not silently alias Red/Yellow routes.
-4. White Dani and reward behavior is implemented only where the White contract is proven; unproven behavior is explicitly absent rather than guessed.
-5. Tests cover White handler state changes, no-cross-era/no-cross-mode boundaries, protocol packing, and reward/profile mutations through observable readback.
-
-### Phase 26: White Collectable Data and Don Challenge Evidence
-
-**Goal:** Collect White 0.13 collectable data and bind Don Challenge only if White evidence proves it.
-**Depends on:** Phase 25
-**Requirements:** WCOLL-02, WCOLL-03
-**Plans:** 1/1 plans complete
-Plans:
-
-- [x] 26-01-PLAN.md - White collectable provenance binding
-
-**Key deliverables:**
-
-- White collectable data record with provenance for songs, tones, costumes, titles, special BAID rows, presents, and other 0.13-scoped rewards.
-- White sidecar data and schema usage for collectables that cannot be derived directly from raw operator files.
-- Evidence decision for White Don Challenge: stage-derived server-side runtime binding through White-owned data/state/AdminApi/WebUI, with no White standalone ChallengeCompe route/readback binding.
-- White ChallengeCompe protocol fields remain separate from Don Challenge and must not be used to invent cabinet route/readback semantics.
-- Guardrails preventing Red standalone `challengecompe.php`, Yellow item-shop reward semantics, or generic threshold schemas from leaking into White.
-- Phase 26 correction: White Don Challenge is implemented after the user supplied White range data, but only as server-side playresult-derived progress plus AdminApi/WebUI readback. ChallengeCompe cabinet requests/readback remain absent/stubbed.
-
-**Success criteria:**
-
-1. White collectable data can be regenerated or audited from local/proven sources, with wiki/OCR material treated only as scoping context unless backed by local evidence.
-2. Collectable reward data mutates only White-owned release-song, title, tone, costume, Don Point, or profile flags proven by White runtime behavior.
-3. Don Challenge remains absent or data-only unless White-specific evidence proves a runtime/readback contract.
-4. If Don Challenge is implemented, White progress/reward state uses explicit field names and White-owned persistence, not Red endpoint assumptions.
-5. Tests cover sidecar parsing, provenance-backed data, reward readback, Don Challenge behavior, and explicitly stubbed/absent ChallengeCompe protocol surfaces through observable White surfaces.
-
-### Phase 27: White AdminApi WebUI and Runtime Closeout
-
-**Goal:** Expose implemented White-owned readback surfaces and close v1.4 with automated plus RPCS3/cabinet verification.
-**Depends on:** Phase 26
-**Requirements:** WVER-01, WVER-02, WVER-03
-**Plans:** 1/1 automated plan complete; human verification pending
-Plans:
-
-- [x] 27-01-PLAN.md - White AdminApi WebUI exposure and automated closeout
-
-**Key deliverables:**
-
-- White AdminApi era routing for implemented profile, user settings, scores/history, self-best/crowns, favorites/recent, catalog/customization, Dani if implemented, reward/collectable data, and Don Challenge only if implemented.
-- White WebUI routing through existing generic pages and capability-gated navigation, with unsupported surfaces hidden or unavailable.
-- Focused tests for White route behavior, handler persistence, catalog parsing, mapper/classifier behavior, protocol packing, build-output copy, AdminApi/WebUI behavior, and no-cross-era/no-cross-mode boundaries.
-- Mapperly generated-source inspection evidence for nontrivial White mappings.
-- Final runtime verification record covering automated tests, solution/Host build, temp-output Host build if needed, and user-accepted RPCS3/cabinet smoke for implemented White flows.
-
-**Success criteria:**
-
-1. AdminApi and WebUI expose White only for implemented White-owned surfaces and never read/write Blue, Green, Yellow, Red, or Nijiiro gameplay state.
-2. Unsupported White item shop, Banacoin authority, battle, Tokkun, WaiWai, gacha runtime, later White updates, and ChallengeCompe cabinet controls remain absent; Don Challenge is exposed only through dedicated AdminApi/WebUI readback.
-3. Automated verification covers meaningful White behavior and state boundaries, not superficial generated type, controller attribute, route inventory, or source-text assertions.
-4. Mapperly generated-source inspection confirms important White mappings remain source-generator driven and mechanically correct.
-5. v1.4 is not called complete until automated verification, build evidence, and RPCS3/cabinet smoke evidence for implemented White flows are recorded.
-
-## Coverage Map
-
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| WFND-01 | Phase 23 | Complete |
-| WFND-02 | Phase 23 | Complete |
-| WFND-03 | Phase 23 | Complete |
-| WCAT-01 | Phase 24 | Verified |
-| WCAT-02 | Phase 24 | Verified |
-| WCAT-03 | Phase 24 | Verified |
-| WSTATE-01 | Phase 25 | Verified |
-| WSTATE-02 | Phase 25 | Verified |
-| WSTATE-03 | Phase 25 | Verified |
-| WSTATE-04 | Phase 25 | Verified |
-| WCOLL-01 | Phase 25/26 | Verified |
-| WCOLL-02 | Phase 26 | Verified |
-| WCOLL-03 | Phase 26 | Verified absent |
-| WVER-01 | Phase 27 | Verified |
-| WVER-02 | Phase 27 | Verified |
-| WVER-03 | Phase 27 | Automated partial; manual verification pending |
+No active milestone is defined. Start the next era milestone with `$gsd-new-milestone` so new requirements and phases are created from current evidence.
 
 ## Archived Phases
 
@@ -271,6 +42,13 @@ See `.planning/milestones/v1.3-ROADMAP.md` and `.planning/milestones/v1.3-phases
 
 </details>
 
+<details>
+<summary>v1.4 White AC15 0.13 Support (Phases 23-27, 23.1) - shipped 2026-06-21</summary>
+
+See `.planning/milestones/v1.4-ROADMAP.md` and `.planning/milestones/v1.4-phases/`.
+
+</details>
+
 ## Progress
 
 | Milestone | Phases | Plans | Status | Shipped |
@@ -279,15 +57,4 @@ See `.planning/milestones/v1.3-ROADMAP.md` and `.planning/milestones/v1.3-phases
 | v1.1 Blue Tokkun Mode Support | 7-11 | 7 GSD plans | Shipped | 2026-06-07 |
 | v1.2 Yellow AC15 Support | 12-17 plus 16.1 and 16.2 | 38 GSD plans | Shipped | 2026-06-12 |
 | v1.3 Red AC15 Support | 18-22 | 29 GSD plans | Shipped | 2026-06-16 |
-| v1.4 White AC15 0.13 Support | 23-27 plus 23.1 | 10 GSD plans complete | Human Verification Pending | - |
-
-## Phase Progress
-
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 23. White Evidence and Era Foundation | 3/3 | Complete | 2026-06-18 |
-| 23.1 Red Don Challenge capability boundary and playresult refactor | 3/3 | Complete | 2026-06-17 |
-| 24. White Catalog Profile and Protocol Limits | 1/1 | Complete | 2026-06-18 |
-| 25. White Runtime Capability Binding and Rewards | 1/1 | Complete | 2026-06-18 |
-| 26. White Collectable Data and Don Challenge Evidence | 1/1 | Complete | 2026-06-18 |
-| 27. White AdminApi WebUI and Runtime Closeout | 1/1 automated | Human Verification Pending | - |
+| v1.4 White AC15 0.13 Support | 23-27 plus 23.1 | 10 GSD plans | Shipped | 2026-06-21 |

@@ -138,6 +138,53 @@
 
 ---
 
+## Milestone: v1.4 White AC15 0.13 Support
+
+**Shipped:** 2026-06-21
+**Phases:** 6 | **Plans:** 10 | **Sessions:** not measured
+
+### What Was Built
+
+- White first-class adapter foundation with route/root evidence, generated wire DTOs, Host gating, and no-state scaffold limits.
+- White catalog/profile binding through matching AC15 loaders, White sidecars, explicit protocol limits, and White-owned persistence boundaries.
+- White runtime support for identity, userdata, normal play, self-best, crowns, favorites, recent songs, reward/Don Point state, and Dani where proven.
+- White present/special-BAID provenance plus server-side White Don Challenge progress/reward readback through dedicated AdminApi/WebUI contracts.
+- White AdminApi/WebUI support for implemented White-owned surfaces, with unsupported White surfaces kept absent.
+- Accepted closeout with automated tests, Mapperly generated-source inspection, temp-output Host build, and user-accepted RPCS3/cabinet/WebUI verification.
+
+### What Worked
+
+- Route/root evidence before implementation kept White 0.13 bounded to proven `/v07r00` behavior.
+- Capability-owned AC15 reuse let White assemble from existing services without adding shared gameplay tables.
+- Keeping Don Challenge distinct from ChallengeCompe avoided repeating the Red naming/semantics confusion.
+- The final closeout decision made the manual runtime gate explicit instead of leaving `human_needed` artifacts open.
+
+### What Was Inefficient
+
+- The generated milestone summary undercounted tasks because several summaries do not expose task counts in the helper's expected format.
+- A stale quick-task status spelling (`completed` vs `complete`) caused a false `audit-open` warning during closeout.
+- The White final 11.01 follow-up happened as quick work around the milestone and needs to remain clearly separate from the v1.4 White 0.13 archive.
+
+### Patterns Established
+
+- Older AC15 eras should be added by composing explicit era profiles, typed persistence, generated wire placement, and catalog sidecars.
+- White and later White updates need separate protocol evidence when route or wire shape changes.
+- Server-side Don Challenge can be shared as an AC15 capability, but each era must still own data, state, readback, and cabinet-route semantics.
+
+### Key Lessons
+
+1. Do not let later-version White evidence silently redefine White 0.13 behavior.
+2. Keep manual runtime/WebUI verification status synchronized across `VERIFICATION.md`, `REQUIREMENTS.md`, `ROADMAP.md`, `STATE.md`, and archives before milestone close.
+3. Generated milestone stats are useful, but phase/plan counts and verification artifacts are the authoritative closeout scope.
+
+### Cost Observations
+
+- Model mix: not measured.
+- Sessions: not measured.
+- Notable: Most process cost came from evidence/status synchronization and post-closeout narrative cleanup rather than code changes.
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -147,6 +194,8 @@
 | v1.0 | not measured | 6 | Blue support moved from staged normal support into evidence-gated battle runtime and final closeout. |
 | v1.1 | not measured | 5 | Tokkun support used evidence-scoped phases with runtime proof deferred until final closeout. |
 | v1.2 | not measured | 8 | Yellow support reused AC15 shared core where behavior matched while preserving era-owned state and closing with RPCS3 smoke. |
+| v1.3 | not measured | 6 | Red introduced server-side Don Challenge and separate ChallengeCompe compatibility while preserving era-owned runtime state. |
+| v1.4 | not measured | 6 | White reused AC15 capabilities behind White evidence/profile/state boundaries and closed with accepted runtime/WebUI verification. |
 
 ### Cumulative Quality
 
@@ -155,6 +204,8 @@
 | v1.0 | Full server suite plus focused Blue/BlueBattle/source-guard tests | not measured | Blue-owned battle/source-guard patterns |
 | v1.1 | Full server suite: 638 passed at close | not measured | Blue-owned Tokkun persistence/readback and stateless Banacoin compatibility |
 | v1.2 | Full server suite: 683 passed at close | not measured | Yellow-owned AC15 support plus shared AC15 Mapperly/core patterns |
+| v1.3 | Full server suite: 778 passed at close | not measured | Red-owned Don Challenge and AdminApi/WebUI closeout patterns |
+| v1.4 | Full server suite: 829 passed at close | not measured | White-owned runtime state plus dedicated White Don Challenge readback |
 
 ### Top Lessons (Verified Across Milestones)
 
@@ -162,3 +213,5 @@
 2. Prefer evidence-backed protocol contracts over inferred catalog/default behavior.
 3. Treat runtime smoke proof as a separate closeout gate when earlier phases are intentionally source/test/build scoped.
 4. Preserve era-owned persistence and route ownership even when extracting shared AC15 algorithms.
+5. Keep Don Challenge capability sharing separate from ChallengeCompe protocol compatibility.
+6. For White and older eras, separate version-specific route/wire evidence before adding compatibility for later updates.

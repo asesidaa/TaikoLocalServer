@@ -1,11 +1,12 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.4
-milestone_name: Phase Summary
-status: human_verification_pending
-stopped_at: White final 11.01 automated support corrected with split final/legacy protocol controllers; manual RPCS3/WebUI verification pending
-last_updated: "2026-06-21T04:25:01.5253504+08:00"
-last_activity: 2026-06-21 -- Corrected quick task 260620-ub3 by splitting White final `/v07r03` and legacy `/v07r00` protocol layers
+milestone_name: White AC15 0.13 Support
+status: awaiting_next_milestone
+stopped_at: v1.4 White AC15 0.13 Support archived; ready for next milestone definition
+last_updated: "2026-06-21T09:18:46.913Z"
+last_activity: 2026-06-21
+last_activity_desc: Milestone v1.4 completed and archived
 progress:
   total_phases: 6
   completed_phases: 6
@@ -18,17 +19,17 @@ progress:
 
 ## Project Reference
 
-See: `.planning/PROJECT.md` (updated 2026-06-18)
+See: `.planning/PROJECT.md` (updated 2026-06-21)
 
-**Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Nijiiro, or shared identity state.
-**Current focus:** Manual Phase 27 RPCS3/cabinet and WebUI verification for White final 11.01, including `/v07r03`, Tokkun, Banacoin compatibility, difficulty panel, and White Don Challenge flows
+**Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Red, White, Nijiiro, or shared identity state.
+**Current focus:** Awaiting next milestone definition
 
 ## Current Position
 
-Phase: 27 - HUMAN VERIFICATION PENDING
-Plan: 1 of 1
-Status: Automated AdminApi/WebUI implementation, White Don Challenge correction, and White final 11.01 support are complete after correcting the `/v07r03` final and `/v07r00` legacy protocol split; manual runtime/WebUI verification remains.
-Last activity: 2026-06-21 -- Corrected quick task 260620-ub3 by splitting White final `/v07r03` and legacy `/v07r00` protocol layers
+Phase: Milestone v1.4 complete
+Plan: None
+Status: Awaiting next milestone
+Last activity: 2026-06-21 - Milestone v1.4 completed and archived
 
 ## Performance Metrics
 
@@ -135,7 +136,7 @@ Last activity: 2026-06-21 -- Corrected quick task 260620-ub3 by splitting White 
 
 ### Roadmap Evolution
 
-- v1.4 White AC15 0.13 Support roadmap starts at Phase 23 and is organized around evidence/foundation, catalog/profile limits, runtime capability/reward binding, late collectable/Don Challenge evidence, and AdminApi/WebUI/runtime closeout.
+- v1.4 White AC15 0.13 Support shipped on 2026-06-21 and is archived. It covered evidence/foundation, catalog/profile limits, runtime capability/reward binding, collectable/Don Challenge evidence, AdminApi/WebUI support, and accepted runtime closeout.
 
 - v1.3 Red AC15 Support roadmap corrected as Phases 18-22 around capability composition: Red evidence/capability foundation, Red capability profile/catalog binding, Red runtime capability binding/simple compatibility, server-side Don Challenge with Red binding, separate ChallengeCompe protocol stubs, and AdminApi/WebUI/runtime closeout.
 - Phase 16.1 inserted after Phase 16 and completed before Phase 17: AC15 Mapperly Mapper Rewrite and Presence Semantics; includes `protogen +nullablevaluetype=yes` wire regeneration as a first-class refactor point.
@@ -263,7 +264,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 26]: The earlier White Don Challenge absent/data-only decision is superseded by the 2026-06-18 correction. White Don Challenge is server-side, stage-derived, and backed by White-owned catalog/state/AdminApi/WebUI data; White standalone ChallengeCompe route/readback remains absent.
 - [Phase 27]: White AdminApi/WebUI support exposes only implemented White-owned AC15 surfaces. White joins generic profile settings, favorites, score/history/leaderboard, Dani, game-data, and customization contracts; legacy Nijiiro UserSettings remains unchanged.
 - [Phase 27]: White Don Challenge is exposed through the dedicated AdminApi/WebUI Don Challenge contract only. It derives progress from normal White playresult stages and White-owned tables; it does not add White ChallengeCompe cabinet route/readback semantics or read Red state.
-- [Phase 27]: Automated closeout passed full tests, generated-source inspection, and temp Host build, but v1.4 remains open until the user completes manual RPCS3/cabinet and WebUI verification.
+- [Phase 27]: Automated closeout passed full tests, generated-source inspection, and temp Host build; user-accepted RPCS3/cabinet/WebUI verification closed v1.4 on 2026-06-21.
 - [Quick 260620-ub3 correction]: White final `/v07r03` and legacy `/v07r00` no longer share generated DTOs. The same per-endpoint controller classes now expose separate final and legacy handler methods; `/v07r03` uses final `proto/white-final` wire with Banacoin heartbeat fields, while `/v07r00` uses regenerated legacy `proto/white` wire.
 
 ### Pending Todos
@@ -272,7 +273,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ### Blockers/Concerns
 
-- Human verification pending: user must run White final 11.01 RPCS3/cabinet flows and review the WebUI before v1.4 can be called complete.
+- None for the closed v1.4 milestone.
 
 ### Quick Tasks Completed
 
@@ -293,9 +294,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 ## Session Continuity
 
 Last session: 2026-06-18T21:30:00.000Z
-Stopped at: White Don Challenge correction automated checks complete; manual verification pending
-Resume file: .planning/phases/27-white-adminapi-webui-and-runtime-closeout/27-01-SUMMARY.md
+Stopped at: v1.4 White milestone archived; awaiting next milestone
+Resume file: .planning/PROJECT.md
 
 ## Operator Next Steps
 
-- Run manual White RPCS3/cabinet verification and review the WebUI, including the White Don Challenge page. If accepted, record the manual evidence and complete v1.4 lifecycle.
+- Start the next milestone with `$gsd-new-milestone`.

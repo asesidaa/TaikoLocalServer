@@ -1,5 +1,37 @@
 # Milestones
 
+## v1.4 White AC15 0.13 Support (Shipped: 2026-06-21)
+
+**Delivered:** White is now a first-class older AC15 era with White-owned protocol routes, generated wire DTOs, catalog/profile binding, runtime persistence, normal play, Dani, reward/Don Point state, server-side Don Challenge readback, AdminApi/WebUI support, and accepted runtime/WebUI closeout.
+
+**Phases completed:** 6 phases, 10 plans, 4 tracked summary tasks
+
+**Key accomplishments:**
+
+- Proved White `/v07r00/chassis` route boundaries, shared `/v01r00/chassis` startup/version ownership, direct-protobuf transport, active `ST7100-1` data root, and no-state scaffold limits before runtime work.
+- Added first-class White adapter, generated wire DTOs, Host settings/DI/application-part gating, and exact content-type fallback without modifying dumped proto inputs.
+- Bound White catalog/profile/runtime behavior through White-owned tables and explicit AC15 capability profiles for identity, userdata, normal play, self-best, crowns, favorites, recent songs, Dani, recommendations, folders/telops, reward fields, and Don Points.
+- Collected White present/special-BAID provenance and implemented White Don Challenge only as server-side stage-derived progress with White-owned data/state/AdminApi/WebUI readback.
+- Exposed White AdminApi/WebUI routes for implemented White-owned surfaces while keeping item shop, battle, Tokkun, WaiWai, gacha runtime, Banacoin authority, later White behavior, and ChallengeCompe cabinet controls absent.
+- Closed with clear automated verification, generated-source inspection, temp-output Host build evidence, and user-accepted RPCS3/cabinet/WebUI verification.
+
+**Stats:**
+
+- 6 phases complete
+- 10 GSD plans complete
+- 4 tracked summary tasks reported by the archive helper
+- Full verification at close: `dotnet test Tests/Tests.csproj --no-restore` passed 829/829, solution build passed, and temp-output Host build with generated-source emission passed with 0 warnings/errors.
+
+**Archived:**
+
+- `.planning/milestones/v1.4-ROADMAP.md`
+- `.planning/milestones/v1.4-REQUIREMENTS.md`
+- `.planning/milestones/v1.4-phases/`
+
+**What's next:** Start a fresh milestone with `$gsd-new-milestone`.
+
+---
+
 ## v1.3 Red AC15 Support (Shipped: 2026-06-16)
 
 **Phases completed:** 6 phases, 29 plans, 47 tasks
