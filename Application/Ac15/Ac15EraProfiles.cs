@@ -24,6 +24,8 @@ public static class Ac15EraProfiles
 
     private static readonly Ac15FeatureSet WhiteFeatures = RedFeatures;
 
+    private static readonly Ac15FeatureSet MurasakiFeatures = RedFeatures;
+
     public static Ac15EraProfile Blue { get; } = new(
         GameEra.Blue,
         BlueGreenFeatures,
@@ -79,6 +81,17 @@ public static class Ac15EraProfiles
             HasTokkunTutorialFlagInUserData: false),
         Ac15ProfileCapabilities.CurrentFull);
 
+    public static Ac15EraProfile Murasaki { get; } = new(
+        GameEra.Murasaki,
+        MurasakiFeatures,
+        CreateMurasakiLimits(),
+        new Ac15WirePlacement(
+            CrownPlacement: Ac15CrownWirePlacement.DedicatedEndpoint,
+            HasInitialDataItemShopRows: false,
+            HasInitialDataLegalTermsRows: false,
+            HasTokkunTutorialFlagInUserData: false),
+        Ac15ProfileCapabilities.CurrentFull);
+
     public static int? GetMaxFavoriteSongs(GameEra era)
         => TryGet(era, out var profile) ? profile.Limits.MaxFavoriteSongs : null;
 
@@ -91,6 +104,7 @@ public static class Ac15EraProfiles
             GameEra.Yellow => Yellow,
             GameEra.Red => Red,
             GameEra.White => White,
+            GameEra.Murasaki => Murasaki,
             _ => null
         };
 
@@ -120,4 +134,6 @@ public static class Ac15EraProfiles
         SafeDisplayDanFallback: 1);
 
     private static Ac15ProtocolLimits CreateWhiteLimits() => CreateCommonLimits();
+
+    private static Ac15ProtocolLimits CreateMurasakiLimits() => CreateCommonLimits();
 }

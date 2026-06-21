@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.5
 milestone_name: Murasaki AC15 Support
-status: planning
-last_updated: "2026-06-21T18:30:02.8358586+08:00"
+status: in_progress
+last_updated: "2026-06-21T21:20:00+08:00"
 last_activity: 2026-06-21
 progress:
   total_phases: 7
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  completed_phases: 5
+  total_plans: 5
+  completed_plans: 5
+  percent: 71
 ---
 
 # Project State
@@ -20,21 +20,21 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-21)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Murasaki, White, Red, Yellow, Blue, Green, Nijiiro, or shared identity state.
-**Current focus:** Phase 28 - Murasaki Evidence and Era Foundation
+**Current focus:** Phase 33 - Evidence-Gated Special Capabilities
 
 ## Current Position
 
-Phase: 28 of 34 (1 of 7 in v1.5)
+Phase: 33 of 34 (6 of 7 in v1.5)
 Plan: Not planned yet
-Status: Ready to plan Phase 28
-Last activity: 2026-06-21 - v1.5 roadmap created from Murasaki requirements
+Status: Paused after `$gsd-autonomous --to 32`; ready to plan Phase 33
+Last activity: 2026-06-21 - Murasaki phases 28-32 implemented and verified
 
-Progress: [----------] 0%
+Progress: [#######---] 71%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed in v1.5: 0
+- Total plans completed in v1.5: 5
 - Average duration: n/a
 - Total execution time: n/a
 
@@ -42,16 +42,16 @@ Progress: [----------] 0%
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 28 | 0/TBD | - | - |
-| 29 | 0/TBD | - | - |
-| 30 | 0/TBD | - | - |
-| 31 | 0/TBD | - | - |
-| 32 | 0/TBD | - | - |
+| 28 | 1/1 | - | - |
+| 29 | 1/1 | - | - |
+| 30 | 1/1 | - | - |
+| 31 | 1/1 | - | - |
+| 32 | 1/1 | - | - |
 | 33 | 0/TBD | - | - |
 | 34 | 0/TBD | - | - |
 
 **Recent Trend:**
-- No v1.5 plans have executed yet.
+- Phases 28-32 executed in one autonomous range and verified with solution build plus 845 tests.
 - Prior milestone v1.4 closed on 2026-06-21 after automated verification and user-accepted runtime/WebUI evidence.
 
 ## Accumulated Context
@@ -83,5 +83,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-06-21
-Stopped at: v1.5 roadmap created; Phase 28 is ready for `$gsd-plan-phase 28`
+Stopped at: `$gsd-autonomous --to 32` completed; Phase 33 is ready for `$gsd-plan-phase 33`
 Resume file: `.planning/ROADMAP.md`

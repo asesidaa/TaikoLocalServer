@@ -22,4 +22,7 @@ public static class CatalogExtensions
 
     public static IWhiteCatalog White(this IGameDataCatalog catalog)
         => (IWhiteCatalog)catalog.For(GameEra.White);
+
+    public static IMurasakiCatalog Murasaki(this IGameDataCatalog catalog)
+        => (IMurasakiCatalog)catalog.For(GameEra.Murasaki);
 }

@@ -47,6 +47,7 @@ namespace TaikoLocalServer.Infrastructure.Persistence
             OnModelCreatingYellow(modelBuilder);
             OnModelCreatingRed(modelBuilder);
             OnModelCreatingWhite(modelBuilder);
+            OnModelCreatingMurasaki(modelBuilder);
             OnModelCreatingPartial(modelBuilder);
         }
 
@@ -57,6 +58,7 @@ namespace TaikoLocalServer.Infrastructure.Persistence
         partial void OnModelCreatingYellow(ModelBuilder modelBuilder);
         partial void OnModelCreatingRed(ModelBuilder modelBuilder);
         partial void OnModelCreatingWhite(ModelBuilder modelBuilder);
+        partial void OnModelCreatingMurasaki(ModelBuilder modelBuilder);
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }

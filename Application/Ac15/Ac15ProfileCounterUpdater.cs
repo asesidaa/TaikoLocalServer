@@ -69,6 +69,19 @@ public static class Ac15ProfileCounterUpdater
         Favorite: new(save => save.SongFavoriteCnt, (save, value) => save.SongFavoriteCnt = value),
         Recent: new(save => save.SongRecentCnt, (save, value) => save.SongRecentCnt = value));
 
+    public static Ac15ProfileCounterAccess<UserSaveDataMurasaki> Murasaki { get; } = new(
+        Jpop: new(save => save.CategJpopCnt, (save, value) => save.CategJpopCnt = value),
+        Anime: new(save => save.CategAnimeCnt, (save, value) => save.CategAnimeCnt = value),
+        Vocaloid: new(save => save.CategVocaloidCnt, (save, value) => save.CategVocaloidCnt = value),
+        Doyo: new(save => save.CategDoyoCnt, (save, value) => save.CategDoyoCnt = value),
+        Variety: new(save => save.CategVarietyCnt, (save, value) => save.CategVarietyCnt = value),
+        Classic: new(save => save.CategClassicCnt, (save, value) => save.CategClassicCnt = value),
+        Game: new(save => save.CategGameCnt, (save, value) => save.CategGameCnt = value),
+        Namco: new(save => save.CategNamcoCnt, (save, value) => save.CategNamcoCnt = value),
+        Pushed: new(save => save.SongPushedCnt, (save, value) => save.SongPushedCnt = value),
+        Favorite: new(save => save.SongFavoriteCnt, (save, value) => save.SongFavoriteCnt = value),
+        Recent: new(save => save.SongRecentCnt, (save, value) => save.SongRecentCnt = value));
+
     public static void ApplyBlueStage(UserSaveDataBlue saveData, Ac15StageResult stage)
         => ApplyStage(saveData, stage, Blue);
 
@@ -83,6 +96,9 @@ public static class Ac15ProfileCounterUpdater
 
     public static void ApplyWhiteStage(UserSaveDataWhite saveData, Ac15StageResult stage)
         => ApplyStage(saveData, stage, White);
+
+    public static void ApplyMurasakiStage(UserSaveDataMurasaki saveData, Ac15StageResult stage)
+        => ApplyStage(saveData, stage, Murasaki);
 
     public static void ApplyStage<TSave>(
         TSave saveData,

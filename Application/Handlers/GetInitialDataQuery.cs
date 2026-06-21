@@ -22,6 +22,7 @@ public partial class GetInitialDataQueryHandler(IGameDataCatalog gameDataService
         GameEra.Yellow => HandleYellow(request, cancellationToken),
         GameEra.Red => HandleRed(request, cancellationToken),
         GameEra.White => HandleWhite(request, cancellationToken),
+        GameEra.Murasaki => HandleMurasaki(request, cancellationToken),
         _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
     };
 
@@ -31,4 +32,5 @@ public partial class GetInitialDataQueryHandler(IGameDataCatalog gameDataService
     private partial ValueTask<CommonInitialDataCheckResponse> HandleYellow(GetInitialDataQuery request, CancellationToken cancellationToken);
     private partial ValueTask<CommonInitialDataCheckResponse> HandleRed(GetInitialDataQuery request, CancellationToken cancellationToken);
     private partial ValueTask<CommonInitialDataCheckResponse> HandleWhite(GetInitialDataQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonInitialDataCheckResponse> HandleMurasaki(GetInitialDataQuery request, CancellationToken cancellationToken);
 }

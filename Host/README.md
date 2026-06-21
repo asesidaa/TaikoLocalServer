@@ -15,6 +15,7 @@ As the game uses protobuf, `protobuf-net` is used for serializing and deserializ
     - [AC15 Don Challenge](#ac15-don-challenge)
     - [Blue battle and Tokkun](#blue-battle-and-tokkun)
     - [White final and legacy routes](#white-final-and-legacy-routes)
+    - [Murasaki routes and split metadata](#murasaki-routes-and-split-metadata)
   - [Datatable documentation](#datatable-documentation)
     - [dan\_data.json](#dan_datajson)
     - [event\_folder\_data.json](#event_folder_datajson)
@@ -122,6 +123,20 @@ wwwroot/data/
 |       |   `-- spacialbaid.xml
 |       `-- fumen/
 |           `-- tuning.bin
+|-- murasaki/                   Murasaki AC15 server-owned JSON plus game data link/copy
+|   |-- murasaki_event_folder_data.json
+|   |-- murasaki_telop_data.json
+|   |-- murasaki_movie_data.json
+|   |-- murasaki_taikojuku_verup_data.json
+|   `-- data/
+|       |-- config/ST6100-1/
+|       |   |-- musicinfo.xml
+|       |   |-- musicmedleyinfo.xml
+|       |   |-- defmusic.bin
+|       |   |-- present.xml
+|       |   `-- spacialbaid.xml
+|       `-- fumen/
+|           `-- tuning.bin
 `-- shared/                     Cross-era operator-edited tables and AC15 name overrides
     |-- token_data.json
     |-- qrcode_data.json
@@ -132,12 +147,12 @@ wwwroot/data/
 
 Era availability is controlled by `Configurations/ServerSettings.json` under
 `ServerSettings:Eras`. At least one of `Nijiiro`, `Green`, `Blue`, `Yellow`,
-`Red`, or `White` must be enabled or the host refuses to start. Disabled-era
+`Red`, `White`, or `Murasaki` must be enabled or the host refuses to start. Disabled-era
 controller assemblies are removed from ASP.NET Core routing at startup.
 
 ## AC15 Setup
 
-Green, Blue, Yellow, Red, and White AC15 use the same setup shape:
+Green, Blue, Yellow, Red, White, and Murasaki AC15 use the same setup shape:
 
 - Enable the era in `Configurations/ServerSettings.json`.
 - Point `ServerSettings:Eras:<Era>:GameDataPath` at that era's `USRDIR/data`
@@ -183,6 +198,15 @@ When `ServerSettings:Eras:White:Enabled` is `true`, White startup requires:
 - `wwwroot/data/white/data/config/ST7100-1/spacialbaid.xml`
 - `wwwroot/data/white/data/fumen/tuning.bin`
 
+When `ServerSettings:Eras:Murasaki:Enabled` is `true`, Murasaki startup requires:
+
+- `wwwroot/data/murasaki/data/config/ST6100-1/musicinfo.xml`
+- `wwwroot/data/murasaki/data/config/ST6100-1/musicmedleyinfo.xml`
+- `wwwroot/data/murasaki/data/config/ST6100-1/defmusic.bin`
+- `wwwroot/data/murasaki/data/config/ST6100-1/present.xml`
+- `wwwroot/data/murasaki/data/config/ST6100-1/spacialbaid.xml`
+- `wwwroot/data/murasaki/data/fumen/tuning.bin`
+
 The build excludes `wwwroot/data/<era>/data/**` AC15 game-data trees from
 publish output. Operator game data should not be committed or shipped by the
 project.
@@ -199,6 +223,7 @@ New-Item -ItemType SymbolicLink -Target 'path\to\blue\USRDIR\data\' -Path '.\Hos
 New-Item -ItemType SymbolicLink -Target 'path\to\yellow\USRDIR\data\' -Path '.\Host\wwwroot\data\yellow\data'
 New-Item -ItemType SymbolicLink -Target 'path\to\red\USRDIR\data\' -Path '.\Host\wwwroot\data\red\data'
 New-Item -ItemType SymbolicLink -Target 'path\to\white\USRDIR\data\' -Path '.\Host\wwwroot\data\white\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\murasaki\USRDIR\data\' -Path '.\Host\wwwroot\data\murasaki\data'
 ```
 
 From an extracted release folder, run these from the folder containing
@@ -210,6 +235,7 @@ New-Item -ItemType SymbolicLink -Target 'path\to\blue\USRDIR\data\' -Path '.\www
 New-Item -ItemType SymbolicLink -Target 'path\to\yellow\USRDIR\data\' -Path '.\wwwroot\data\yellow\data'
 New-Item -ItemType SymbolicLink -Target 'path\to\red\USRDIR\data\' -Path '.\wwwroot\data\red\data'
 New-Item -ItemType SymbolicLink -Target 'path\to\white\USRDIR\data\' -Path '.\wwwroot\data\white\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\murasaki\USRDIR\data\' -Path '.\wwwroot\data\murasaki\data'
 ```
 
 If you prefer copying for a release instead of linking:
@@ -225,6 +251,8 @@ New-Item -ItemType Directory -Force -Path '.\wwwroot\data\red' | Out-Null
 Copy-Item -Recurse -Path 'path\to\red\USRDIR\data' -Destination '.\wwwroot\data\red\data'
 New-Item -ItemType Directory -Force -Path '.\wwwroot\data\white' | Out-Null
 Copy-Item -Recurse -Path 'path\to\white\USRDIR\data' -Destination '.\wwwroot\data\white\data'
+New-Item -ItemType Directory -Force -Path '.\wwwroot\data\murasaki' | Out-Null
+Copy-Item -Recurse -Path 'path\to\murasaki\USRDIR\data' -Destination '.\wwwroot\data\murasaki\data'
 ```
 
 PowerShell may need to run as Administrator, unless Windows Developer Mode
@@ -268,14 +296,14 @@ better names or slot types.
 
 AC15 optional sidecar file names are era-specific:
 
-| Feature | Green file | Blue file | Yellow file | Red file | White file | Missing-file behavior |
-|---------|------------|-----------|-------------|----------|------------|-----------------------|
-| Telops | `telop_data.json` | `blue_telop_data.json` | `yellow_telop_data.json` | `red_telop_data.json` | `white_telop_data.json` | No telops |
-| Attract movies | `movie_data.json` | `blue_movie_data.json` | `yellow_movie_data.json` | `red_movie_data.json` | `white_movie_data.json` | Auto-discover nonzero `attract_cm_###.pam` files |
-| Event folders | `green_event_folder_data.json` | `blue_event_folder_data.json` | `yellow_event_folder_data.json` | `red_event_folder_data.json` | `white_event_folder_data.json` | No event folders |
-| Taikojuku verup | `green_taikojuku_verup_data.json` | `blue_taikojuku_verup_data.json` | `yellow_taikojuku_verup_data.json` | `red_taikojuku_verup_data.json` | `white_taikojuku_verup_data.json` | XML-loaded Taikojuku packs keep `verup_no = 0` |
-| Item shop | `green_item_shop_data.json` | `blue_item_shop_data.json` | `yellow_item_shop_data.json` | none | none | Required only when shop is enabled |
-| Don Challenge | none | none | none | `red_don_challenge_data.json` | `white_don_challenge_data.json` | Disabled unless enabled with an active bundle |
+| Feature | Green file | Blue file | Yellow file | Red file | White file | Murasaki file | Missing-file behavior |
+|---------|------------|-----------|-------------|----------|------------|---------------|-----------------------|
+| Telops | `telop_data.json` | `blue_telop_data.json` | `yellow_telop_data.json` | `red_telop_data.json` | `white_telop_data.json` | `murasaki_telop_data.json` | No telops |
+| Attract movies | `movie_data.json` | `blue_movie_data.json` | `yellow_movie_data.json` | `red_movie_data.json` | `white_movie_data.json` | `murasaki_movie_data.json` | Auto-discover nonzero `attract_cm_###.pam` files |
+| Event folders | `green_event_folder_data.json` | `blue_event_folder_data.json` | `yellow_event_folder_data.json` | `red_event_folder_data.json` | `white_event_folder_data.json` | `murasaki_event_folder_data.json` | No event folders |
+| Taikojuku verup | `green_taikojuku_verup_data.json` | `blue_taikojuku_verup_data.json` | `yellow_taikojuku_verup_data.json` | `red_taikojuku_verup_data.json` | `white_taikojuku_verup_data.json` | `murasaki_taikojuku_verup_data.json` | XML-loaded Taikojuku packs keep `verup_no = 0` |
+| Item shop | `green_item_shop_data.json` | `blue_item_shop_data.json` | `yellow_item_shop_data.json` | none | none | none | Required only when shop is enabled |
+| Don Challenge | none | none | none | `red_don_challenge_data.json` | `white_don_challenge_data.json` | none | Disabled unless enabled with an active bundle |
 
 Taikojuku packs come from `musicmedleyinfo.xml`, but that original AC15 file
 does not carry the protocol `verup_no`. Use the era sidecar to set one default
@@ -453,6 +481,20 @@ Do not share generated DTOs or final-only fields across the two route families.
 Final White support includes proven Tokkun, stateless Banacoin-adjacent routes,
 difficulty panel state, and heartbeat Banacoin status fields. Legacy White
 compatibility keeps the older wire shape.
+
+### Murasaki routes and split metadata
+
+Murasaki game endpoints are direct protobuf under `/v06r00/chassis/*`.
+Shared AC15 startup/version endpoints remain under `/v01r00/chassis/*`.
+
+Murasaki does not expose a White-style `initialdatacheck.php` route. Startup
+metadata is split across Murasaki-owned route files such as `defaultsong.php`,
+`mainichisong.php`, `foldercheck.php`, `getfolder.php`, `telopcheck.php`, and
+`gettelop.php`.
+
+Special or older-version surfaces such as `bestscore.php`, `songhash.php`,
+`shoppingresult.php`, challenge arrays, `content_info`,
+`default_option_setting`, and reserved byte payloads remain evidence-gated.
 
 ## Datatable documentation
 

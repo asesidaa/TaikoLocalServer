@@ -6,6 +6,7 @@ using TaikoLocalServer.Adapters.AllnetMucha;
 using TaikoLocalServer.Adapters.GameProtocol.Blue;
 using TaikoLocalServer.Adapters.GameProtocol.CnR00;
 using TaikoLocalServer.Adapters.GameProtocol.Green;
+using TaikoLocalServer.Adapters.GameProtocol.Murasaki;
 using TaikoLocalServer.Adapters.GameProtocol.Red;
 using TaikoLocalServer.Adapters.GameProtocol.White;
 using TaikoLocalServer.Adapters.GameProtocol.WwR08;
@@ -78,7 +79,7 @@ try
 
     if (enabledEras.Count == 0)
     {
-        Log.Fatal("ServerSettings.Eras has no enabled era. At least one era (Nijiiro, Green, Blue, Yellow, Red, or White) must be enabled in Host/Configurations/ServerSettings.json. Refusing to start.");
+        Log.Fatal("ServerSettings.Eras has no enabled era. At least one era (Nijiiro, Green, Blue, Yellow, Red, White, or Murasaki) must be enabled in Host/Configurations/ServerSettings.json. Refusing to start.");
         throw new InvalidOperationException("No game eras enabled.");
     }
 
@@ -134,6 +135,10 @@ try
     if (enabledEras.Contains(GameEra.White))
     {
         builder.Services.AddGameProtocolWhite();
+    }
+    if (enabledEras.Contains(GameEra.Murasaki))
+    {
+        builder.Services.AddGameProtocolMurasaki();
     }
 
     builder.Services.AddControllers()
@@ -272,6 +277,7 @@ static bool ShouldAssumeProtobufRequest(HttpRequest request)
            || path.StartsWithSegments("/v08r00_tw/chassis", StringComparison.OrdinalIgnoreCase)
            || path.StartsWithSegments(WhiteRoutePrefixes.Final, StringComparison.OrdinalIgnoreCase)
            || path.StartsWithSegments(WhiteRoutePrefixes.Compatibility, StringComparison.OrdinalIgnoreCase)
+           || path.StartsWithSegments(MurasakiRoutePrefixes.Game, StringComparison.OrdinalIgnoreCase)
            || path.StartsWithSegments("/v01r00/chassis", StringComparison.OrdinalIgnoreCase)
            || path.StartsWithSegments("/v01r00_tw/chassis", StringComparison.OrdinalIgnoreCase)
            || path.StartsWithSegments("/v12r08_ww/chassis", StringComparison.OrdinalIgnoreCase)

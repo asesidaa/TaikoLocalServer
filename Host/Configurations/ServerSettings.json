@@ -47,6 +47,12 @@
         "CustomizationNameDataPath": "",
         "EnableDonChallenge": true,
         "ActiveDonChallengeBundleId": "white-2016-06"
+      },
+      "Murasaki": {
+        "Enabled": true,
+        "AutoExtractCatalog": true,
+        "GameDataPath": "wwwroot/data/murasaki/data",
+        "CustomizationNameDataPath": ""
       }
     }
   }

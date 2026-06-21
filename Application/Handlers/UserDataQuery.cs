@@ -17,7 +17,7 @@ public partial class UserDataQueryHandler(ITaikoDbContext context, IGameDataCata
     public ValueTask<CommonUserDataResponse> Handle(UserDataQuery request, CancellationToken cancellationToken) => request.Era switch
     {
         GameEra.Nijiiro => HandleNijiiro(request, cancellationToken),
-        GameEra.Green or GameEra.Blue or GameEra.Yellow or GameEra.Red or GameEra.White => throw new InvalidOperationException($"Use {nameof(Ac15UserDataQuery)} for AC15 userdata era {request.Era}."),
+        GameEra.Green or GameEra.Blue or GameEra.Yellow or GameEra.Red or GameEra.White or GameEra.Murasaki => throw new InvalidOperationException($"Use {nameof(Ac15UserDataQuery)} for AC15 userdata era {request.Era}."),
         _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
     };
 
@@ -28,6 +28,7 @@ public partial class UserDataQueryHandler(ITaikoDbContext context, IGameDataCata
         GameEra.Yellow => HandleYellow(request, cancellationToken),
         GameEra.Red => HandleRed(request, cancellationToken),
         GameEra.White => HandleWhite(request, cancellationToken),
+        GameEra.Murasaki => HandleMurasaki(request, cancellationToken),
         GameEra.Nijiiro => throw new InvalidOperationException($"Use {nameof(UserDataQuery)} for Nijiiro userdata."),
         _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
     };
@@ -38,4 +39,5 @@ public partial class UserDataQueryHandler(ITaikoDbContext context, IGameDataCata
     private partial ValueTask<Ac15UserDataResponse> HandleYellow(Ac15UserDataQuery request, CancellationToken cancellationToken);
     private partial ValueTask<Ac15UserDataResponse> HandleRed(Ac15UserDataQuery request, CancellationToken cancellationToken);
     private partial ValueTask<Ac15UserDataResponse> HandleWhite(Ac15UserDataQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<Ac15UserDataResponse> HandleMurasaki(Ac15UserDataQuery request, CancellationToken cancellationToken);
 }

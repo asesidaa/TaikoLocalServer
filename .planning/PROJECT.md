@@ -4,7 +4,7 @@
 
 TaikoLocalServer is a local ASP.NET Core server for Taiko no Tatsujin cabinet protocols, local SQLite persistence, era-specific game data catalogs, and a Blazor WebAssembly admin UI. This project continues the existing Blue-era support effort from the Superpowers roadmap in `docs/superpowers/specs/2026-05-27-blue-support-roadmap-design.md`, starting after completed stages A0-A5 and carrying the work through full Blue support.
 
-Full Blue, Yellow, Red, and White 0.13 support are complete. The project now supports Nijiiro, Green AC15, Blue AC15, Yellow AC15, Red AC15, and White AC15 in one process while preserving era-owned routes, wire DTOs, persistence, handlers, mappers, catalogs, tests, and AdminApi/WebUI routing. The next milestone targets first-class Murasaki AC15 support from local proto, data, route, and client evidence.
+Full Blue, Yellow, Red, and White 0.13 support are complete. The project now supports Nijiiro, Green AC15, Blue AC15, Yellow AC15, Red AC15, White AC15, and server-side Murasaki AC15 phases 28-32 in one process while preserving era-owned routes, wire DTOs, persistence, handlers, mappers, catalogs, and tests. Remaining Murasaki work targets evidence-gated special capabilities plus AdminApi/WebUI closeout.
 
 ## Core Value
 
@@ -30,15 +30,17 @@ Current milestone: **v1.5 Murasaki AC15 Support**
 
 **Current milestone goal:** Add first-class Murasaki support by assembling White-like older AC15 capabilities where local Murasaki proto/data proves compatibility, while evidence-gating changed wire shapes and new request families.
 
+Current stop point: Phases 28-32 are implemented and verified. Phase 33 remains responsible for Murasaki-specific or older-version special surfaces such as `bestscore.php`, `songhash.php`, `shoppingresult.php`, challenge arrays, `content_info`, `default_option_setting`, and reserved bytes.
+
 ## Current Milestone: v1.5 Murasaki AC15 Support
 
 **Goal:** Add first-class Murasaki support by assembling White-like older AC15 capabilities where local Murasaki proto/data proves compatibility, while evidence-gating changed wire shapes and new request families.
 
 **Target features:**
-- First-class `GameEra.Murasaki` foundation with Murasaki-owned adapter, generated wire DTOs from `proto/murasaki`, Host gating, route handling, direct-protobuf transport where proven, and shared startup/version ownership only where `proto/murasaki/vsinterface.proto` and client evidence agree.
+- First-class `GameEra.Murasaki` foundation with Murasaki-owned adapter, generated wire DTOs from `proto/murasaki`, Host gating, route handling, direct-protobuf transport where proven, and shared startup/version ownership only where `proto/murasaki/vsinterface.proto` and client evidence agree. Implemented through Phase 28.
 - Route/root evidence from local Murasaki binary/client data before locking the game route prefix and active config root. Local data currently exposes `ST5100-1`, `ST5100-7`, and `ST6100-1`; runtime root must not be guessed from filenames.
-- Catalog/profile/runtime binding through existing AC15/White-era capabilities where wire/data semantics match: identity, BAID/mydon, userdata, normal play, self-best/crowns, favorites/recent, folders/telops/recommendations, Dani/Taikojuku, reward/Don Point fields, and Don Challenge-like challenge arrays only if proven.
-- Murasaki-specific protocol mapping for changed wire shape: the local `taiko.proto` does not expose the White-style monolithic `initialdatacheck` message and instead splits metadata across request families such as `defaultsong`, `mainichisong`, `foldercheck`, `getfolder`, `telopcheck`, `gettelop`, `songhash`, and `bestscore`.
+- Catalog/profile/runtime binding through existing AC15/White-era capabilities where wire/data semantics match: identity, BAID/mydon, userdata, normal play, self-best/crowns, favorites/recent, folders/telops/recommendations, Dani/Taikojuku, and reward/Don Point fields. Implemented through Phase 32. Don Challenge-like challenge arrays remain Phase 33 evidence-gated.
+- Murasaki-specific protocol mapping for changed wire shape: the local `taiko.proto` does not expose the White-style monolithic `initialdatacheck` message and instead splits metadata across request families. Implemented split metadata for `defaultsong`, `mainichisong`, `foldercheck`, `getfolder`, `telopcheck`, and `gettelop`; `songhash` and `bestscore` remain Phase 33.
 - Binary/client evidence pass for new or unclear request families and byte fields, especially global-ranking/high-score readback, song hash tables, default/mainichi song hashes, `content_info`, `default_option_setting`, and reserved payload fields.
 - AdminApi/WebUI parity only for implemented Murasaki-owned state, with final runtime/WebUI closeout gated by user-observed cabinet/RPCS3 verification.
 
@@ -86,10 +88,10 @@ Current milestone: **v1.5 Murasaki AC15 Support**
 
 ### Active
 
-- [ ] Start v1.5 Murasaki AC15 Support from local `proto/murasaki` and `Host/wwwroot/data/murasaki/data` evidence before implementation.
-- [ ] Prove Murasaki route prefix, transport, startup/version ownership, and active data root before binding runtime behavior.
-- [ ] Map Murasaki wire DTOs through application/common capability shapes rather than persisting wire DTOs directly.
-- [ ] Reuse existing AC15/White-like capabilities only where Murasaki proto/data/client evidence proves the same behavior and limits.
+- [x] Start v1.5 Murasaki AC15 Support from local `proto/murasaki` and `Host/wwwroot/data/murasaki/data` evidence before implementation.
+- [x] Prove Murasaki route prefix, transport, startup/version ownership, and active data root before binding runtime behavior.
+- [x] Map Murasaki wire DTOs through application/common capability shapes rather than persisting wire DTOs directly.
+- [x] Reuse existing AC15/White-like capabilities only where Murasaki proto/data/client evidence proves the same behavior and limits.
 - [ ] Model new Murasaki request families, byte fields, and global high-score semantics as new evidence-backed capabilities after binary/client investigation.
 - [ ] Expose AdminApi/WebUI readback only for implemented Murasaki-owned state and close support only after automated verification plus user-observed cabinet/RPCS3 evidence.
 
@@ -127,7 +129,9 @@ Current milestone: **v1.5 Murasaki AC15 Support**
 - White local data currently exposes `config/ST7100-1` as the observed config root, with `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, `present.xml`, and `spacialbaid.xml` in that root.
 - `.tools/white/EBOOT.ELF.i64` is currently present and nonzero in this checkout (`129893515` bytes), so superseded zero-byte notes are no longer current. Phase 23 IDA route extraction proves `/v07r00/chassis` plus fourteen no-state scaffold suffixes; additional White route, root-selection, and runtime assumptions still need local IDB, log, capture, data, or cabinet/RPCS3 evidence before implementation.
 - v1.5 Murasaki AC15 Support started on 2026-06-21. Murasaki local protocol inputs are `proto/murasaki/taiko.proto` and `proto/murasaki/vsinterface.proto`; local game data is under `Host/wwwroot/data/murasaki/data`.
-- Murasaki local data currently exposes `config/ST5100-1`, `config/ST5100-7`, and `config/ST6100-1`, each with `musicinfo.xml` and `musicmedleyinfo.xml`. The active runtime root and route prefix require binary/client evidence before implementation locks them.
+- Murasaki Phase 28 evidence records exact `v01r00`, `v06r00`, and `.php` strings from local IDA evidence. Shared startup/version stays on `v01r00`; game routes are under `v06r00`.
+- Murasaki catalog binding currently uses `config/ST6100-1` with required `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, `present.xml`, `spacialbaid.xml`, and `fumen/tuning.bin`.
+- Murasaki phases 28-32 are implemented and verified with generated Mapperly source inspection, `dotnet build TaikoLocalServer.slnx /p:EmitCompilerGeneratedFiles=true`, and `dotnet test Tests/Tests.csproj --no-build` passing 845 tests.
 - The evidence hierarchy is repo code, proto files, SQLite state, cabinet/RPCS3 logs, IDA/client evidence, and only then public wiki pages for gameplay scoping.
 - Yellow local protocol input is `proto/yellow/yellow.proto`; local game data is under `Host/wwwroot/data/yellow/data`, with the observed versioned config root `config/ST9100-1`.
 - Yellow proto evidence includes Tokkun tutorial and stage-result fields, item shop and Banacoin-adjacent routes, Don/Katsu medal upload fields, and no Blue battle userdata or initialdata battle fields.
@@ -206,8 +210,8 @@ v1.5 Murasaki AC15 Support is now active. Requirements and roadmap scope must be
 | Implement White Don Challenge as server-side stage-derived progress only | White data/range evidence supports dedicated server-side Don Challenge readback, while standalone ChallengeCompe cabinet route/readback remains absent | Validated in v1.4 |
 | Close White after accepted runtime/WebUI verification | Automated tests/builds and generated-source inspection are necessary but not sufficient; milestone close records user-accepted RPCS3/cabinet/WebUI verification | Validated in v1.4 |
 | Split White final `/v07r03` from legacy `/v07r00` protocol support | Final 11.01 behavior uses different generated wire and proven routes; compatibility must not force final fields onto legacy White wire | Validated by quick task 260620-ub3 |
-| Start Murasaki support as v1.5 | Murasaki is the next older AC15 era after White; local Murasaki proto/data are present, features look White-like, and the user expects reuse of existing capabilities where wire/data semantics match | Pending |
-| Treat Murasaki changed wire shape as a first-class evidence gate | Murasaki lacks the White-style monolithic initial-data request and adds split metadata/global-score request families, so capability reuse must be mediated through Murasaki-owned wire mapping and binary/client evidence for unknown byte fields | Pending |
+| Start Murasaki support as v1.5 | Murasaki is the next older AC15 era after White; local Murasaki proto/data are present, features look White-like, and the user expects reuse of existing capabilities where wire/data semantics match | Validated through Phase 32 |
+| Treat Murasaki changed wire shape as a first-class evidence gate | Murasaki lacks the White-style monolithic initial-data request and adds split metadata/global-score request families, so capability reuse must be mediated through Murasaki-owned wire mapping and binary/client evidence for unknown byte fields | Validated through Phase 30; special/global surfaces remain Phase 33 |
 
 ## Evolution
 
@@ -227,4 +231,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-21 after v1.5 Murasaki AC15 Support milestone startup*
+*Last updated: 2026-06-21 after Murasaki phases 28-32 implementation*

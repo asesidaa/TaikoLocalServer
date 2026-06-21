@@ -8,32 +8,32 @@
 
 ### Murasaki Foundation
 
-- [ ] **MFND-01**: Developer can review a Murasaki evidence record that identifies startup and game route prefixes, `.php` route suffixes, direct-protobuf transport expectations, active data root, IDA/binary evidence handles, absent `initialdatacheck.php` evidence, and unresolved gaps before Murasaki routes are finalized.
-- [ ] **MFND-02**: Murasaki is served by a first-class enableable `GameEra.Murasaki` adapter with generated Murasaki wire DTOs from `proto/murasaki`, era settings, Host/DI registration, route ownership for `/v06r00/chassis/*.php`, shared `/v01r00/chassis/*` startup/version use only where evidence supports it, and enabled-era gating.
-- [ ] **MFND-03**: Murasaki work preserves existing supported-era behavior and dumped proto immutability; any shared code changes remain capability-owned and covered by observable regression checks.
+- [x] **MFND-01**: Developer can review a Murasaki evidence record that identifies startup and game route prefixes, `.php` route suffixes, direct-protobuf transport expectations, active data root, IDA/binary evidence handles, absent `initialdatacheck.php` evidence, and unresolved gaps before Murasaki routes are finalized.
+- [x] **MFND-02**: Murasaki is served by a first-class enableable `GameEra.Murasaki` adapter with generated Murasaki wire DTOs from `proto/murasaki`, era settings, Host/DI registration, route ownership for `/v06r00/chassis/*.php`, shared `/v01r00/chassis/*` startup/version use only where evidence supports it, and enabled-era gating.
+- [x] **MFND-03**: Murasaki work preserves existing supported-era behavior and dumped proto immutability; any shared code changes remain capability-owned and covered by observable regression checks.
 
 ### Murasaki Catalog And Profile
 
-- [ ] **MCAT-01**: Murasaki catalog initialization loads the proven active Murasaki data root and binds matching AC15 music, medley, tuning, folder, telop, recommendation, Taikojuku, present, and special-BAID data through shared loaders where file formats match.
-- [ ] **MCAT-02**: Murasaki has an explicit AC15 capability/profile model with Murasaki protocol limits, favorite cap 10 where proven, Don Point/root limits where proven, feature flags, wire placement, split metadata support, and typed persistence boundaries while absent surfaces remain disabled.
-- [ ] **MCAT-03**: Murasaki server-authored sidecar data exists and is copied for every implemented Murasaki feature that needs committed server data outside raw operator files, including intentionally empty sidecars where absence or conservative default behavior is the contract.
+- [x] **MCAT-01**: Murasaki catalog initialization loads the proven active Murasaki data root and binds matching AC15 music, medley, tuning, folder, telop, recommendation, Taikojuku, present, and special-BAID data through shared loaders where file formats match.
+- [x] **MCAT-02**: Murasaki has an explicit AC15 capability/profile model with Murasaki protocol limits, favorite cap 10 where proven, Don Point/root limits where proven, feature flags, wire placement, split metadata support, and typed persistence boundaries while absent surfaces remain disabled.
+- [x] **MCAT-03**: Murasaki server-authored sidecar data exists and is copied for every implemented Murasaki feature that needs committed server data outside raw operator files, including intentionally empty sidecars where absence or conservative default behavior is the contract.
 
 ### Murasaki Split Metadata
 
-- [ ] **MMETA-01**: Murasaki split metadata routes for proven `defaultsong.php`, `mainichisong.php`, `foldercheck.php`, `getfolder.php`, `telopcheck.php`, `gettelop.php`, and related catalog-backed readback use dedicated Application queries and Murasaki mappers instead of copying a White-style `initialdatacheck.php` contract.
-- [ ] **MMETA-02**: Murasaki song-hash, default-song, mainichi-song, release-song, crown, content, option, and reserved byte payloads are generated only from proven Murasaki limits, existing packers whose compatibility is verified, or conservative documented defaults; guessed byte semantics are not accepted.
-- [ ] **MMETA-03**: Murasaki operational route surfaces such as `heartbeat.php`, `bookkeeping.php`, `communicationlog.php`, and `headclerk2.php` are implemented only as route-evidence-backed catalog, log-success, or no-state compatibility endpoints and do not create unintended economy, audit, or gameplay persistence.
+- [x] **MMETA-01**: Murasaki split metadata routes for proven `defaultsong.php`, `mainichisong.php`, `foldercheck.php`, `getfolder.php`, `telopcheck.php`, `gettelop.php`, and related catalog-backed readback use dedicated Application queries and Murasaki mappers instead of copying a White-style `initialdatacheck.php` contract.
+- [x] **MMETA-02**: Murasaki song-hash, default-song, mainichi-song, release-song, crown, content, option, and reserved byte payloads are generated only from proven Murasaki limits, existing packers whose compatibility is verified, or conservative documented defaults; guessed byte semantics are not accepted.
+- [x] **MMETA-03**: Murasaki operational route surfaces such as `heartbeat.php`, `bookkeeping.php`, `communicationlog.php`, and `headclerk2.php` are implemented only as route-evidence-backed catalog, log-success, or no-state compatibility endpoints and do not create unintended economy, audit, or gameplay persistence.
 
 ### Murasaki Runtime Binding
 
-- [ ] **MSTATE-01**: Murasaki binds shared identity/userdata behavior to Murasaki-owned save/profile tables so the cabinet can register or find a card, create mydon/profile data, and read/write userdata without writing another era's gameplay state.
-- [ ] **MSTATE-02**: Murasaki binds matching normal-play behavior to Murasaki-owned score, self-best, crown, favorite, recent-song, unlock, reward/progress, and profile-counter tables where Murasaki protocol and data shapes match.
-- [ ] **MSTATE-03**: Murasaki self-best, crown, favorite, recent-song, and release-song readback uses Murasaki protocol byte and array limits, including favorite cap 10 where proven, and does not use `bestscore.php` or global ranking data as a substitute for per-user self-best.
-- [ ] **MSTATE-04**: Murasaki Taikojuku/Dani runtime behavior writes and reads only Murasaki-owned Dan state when Murasaki payload and catalog evidence proves the same contract; otherwise the unsupported runtime write/readback gap is documented instead of invented.
+- [x] **MSTATE-01**: Murasaki binds shared identity/userdata behavior to Murasaki-owned save/profile tables so the cabinet can register or find a card, create mydon/profile data, and read/write userdata without writing another era's gameplay state.
+- [x] **MSTATE-02**: Murasaki binds matching normal-play behavior to Murasaki-owned score, self-best, crown, favorite, recent-song, unlock, reward/progress, and profile-counter tables where Murasaki protocol and data shapes match.
+- [x] **MSTATE-03**: Murasaki self-best, crown, favorite, recent-song, and release-song readback uses Murasaki protocol byte and array limits, including favorite cap 10 where proven, and does not use `bestscore.php` or global ranking data as a substitute for per-user self-best.
+- [x] **MSTATE-04**: Murasaki Taikojuku/Dani runtime behavior writes and reads only Murasaki-owned Dan state when Murasaki payload and catalog evidence proves the same contract; otherwise the unsupported runtime write/readback gap is documented instead of invented.
 
 ### Murasaki Special Capabilities
 
-- [ ] **MSPEC-01**: Murasaki reward, present, special-BAID, and Don Point behavior uses Murasaki-owned profile/unlock flags plus local `present.xml`, `spacialbaid.xml`, and protocol evidence without creating Yellow item-shop, medal, Banacoin wallet/payment, or unrelated unlock semantics.
+- [x] **MSPEC-01**: Murasaki reward, present, special-BAID, and Don Point behavior uses Murasaki-owned profile/unlock flags plus local `present.xml`, `spacialbaid.xml`, and protocol evidence without creating Yellow item-shop, medal, Banacoin wallet/payment, or unrelated unlock semantics.
 - [ ] **MSPEC-02**: Murasaki `bestscore.php`, `songhash.php`, `shoppingresult.php`, challenge arrays, `content_info`, `default_option_setting`, and reserved bytes get targeted binary/log/cabinet evidence and a bounded implementation only where that evidence defines route sequence, byte sizes, defaults, and state authority; otherwise their conservative behavior is documented.
 - [ ] **MSPEC-03**: Murasaki Don Challenge-like behavior is implemented only if local Murasaki data and client read/write semantics prove a server-side contract; Red `challengecompe.php` routing and White Don Challenge behavior are not copied by assumption.
 
@@ -76,20 +76,20 @@ Roadmap phase mapping for v1.5 Murasaki AC15 Support. Updated during roadmap cre
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| MFND-01 | Phase 28 | Pending |
-| MFND-02 | Phase 28 | Pending |
-| MFND-03 | Phase 28 | Pending |
-| MCAT-01 | Phase 29 | Pending |
-| MCAT-02 | Phase 29 | Pending |
-| MCAT-03 | Phase 29 | Pending |
-| MMETA-01 | Phase 30 | Pending |
-| MMETA-02 | Phase 30 | Pending |
-| MMETA-03 | Phase 30 | Pending |
-| MSTATE-01 | Phase 31 | Pending |
-| MSTATE-02 | Phase 32 | Pending |
-| MSTATE-03 | Phase 31 | Pending |
-| MSTATE-04 | Phase 32 | Pending |
-| MSPEC-01 | Phase 32 | Pending |
+| MFND-01 | Phase 28 | Complete |
+| MFND-02 | Phase 28 | Complete |
+| MFND-03 | Phase 28 | Complete |
+| MCAT-01 | Phase 29 | Complete |
+| MCAT-02 | Phase 29 | Complete |
+| MCAT-03 | Phase 29 | Complete |
+| MMETA-01 | Phase 30 | Complete |
+| MMETA-02 | Phase 30 | Complete |
+| MMETA-03 | Phase 30 | Complete |
+| MSTATE-01 | Phase 31 | Complete |
+| MSTATE-02 | Phase 32 | Complete |
+| MSTATE-03 | Phase 31 | Complete |
+| MSTATE-04 | Phase 32 | Complete |
+| MSPEC-01 | Phase 32 | Complete |
 | MSPEC-02 | Phase 33 | Pending |
 | MSPEC-03 | Phase 33 | Pending |
 | MVER-01 | Phase 34 | Pending |
@@ -107,4 +107,4 @@ Roadmap phase mapping for v1.5 Murasaki AC15 Support. Updated during roadmap cre
 
 ---
 *Requirements defined: 2026-06-21*
-*Last updated: 2026-06-21 after v1.5 Murasaki requirements definition*
+*Last updated: 2026-06-21 after phases 28-32 implementation*

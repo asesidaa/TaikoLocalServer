@@ -24,11 +24,11 @@
 - Integer phases (28, 29, 30): planned milestone work
 - Decimal phases (28.1, 28.2): urgent insertions, if needed later
 
-- [ ] **Phase 28: Murasaki Evidence and Era Foundation** - Lock route/root/transport evidence and introduce first-class Murasaki adapter identity without runtime state.
-- [ ] **Phase 29: Catalog and AC15 Profile Binding** - Bind the proven Murasaki catalog root, capability profile, limits, and sidecar data boundaries.
-- [ ] **Phase 30: Split Metadata Readback** - Implement Murasaki split metadata and operational readback routes without copying White `initialdatacheck.php`.
-- [ ] **Phase 31: Identity, Userdata, Self-Best, and Normal Read Paths** - Expose Murasaki-owned identity, userdata, self-best, crown, favorite, recent, and release-song read paths.
-- [ ] **Phase 32: Normal Playresult, Dani, Reward, and Don Point Mutation** - Persist normal play, Dani, reward, present, special-BAID, and Don Point behavior only through Murasaki-owned state where proven.
+- [x] **Phase 28: Murasaki Evidence and Era Foundation** - Lock route/root/transport evidence and introduce first-class Murasaki adapter identity without runtime state.
+- [x] **Phase 29: Catalog and AC15 Profile Binding** - Bind the proven Murasaki catalog root, capability profile, limits, and sidecar data boundaries.
+- [x] **Phase 30: Split Metadata Readback** - Implement Murasaki split metadata and operational readback routes without copying White `initialdatacheck.php`.
+- [x] **Phase 31: Identity, Userdata, Self-Best, and Normal Read Paths** - Expose Murasaki-owned identity, userdata, self-best, crown, favorite, recent, and release-song read paths.
+- [x] **Phase 32: Normal Playresult, Dani, Reward, and Don Point Mutation** - Persist normal play, Dani, reward, present, special-BAID, and Don Point behavior only through Murasaki-owned state where proven.
 - [ ] **Phase 33: Evidence-Gated Special Capabilities** - Resolve and implement only proven high-risk surfaces such as bestscore, songhash, shopping, challenge arrays, and reserved byte payloads.
 - [ ] **Phase 34: AdminApi/WebUI and Runtime Closeout** - Expose implemented Murasaki-owned state in operator surfaces and close only after automated and user-observed verification.
 
@@ -43,7 +43,7 @@
   2. `GameEra.Murasaki` can be enabled with adapter-local generated wire DTOs, era settings, Host/DI/application-part gating, `/v06r00/chassis/*.php` route ownership, and shared `/v01r00/chassis/*` startup/version use only where evidence supports it.
   3. Disabled-era checks and existing supported-era route/build regression checks show Murasaki scaffolding does not expose disabled routes or change Blue, Green, Yellow, Red, White, Nijiiro, or shared startup behavior.
   4. Dumped `proto/murasaki` inputs remain immutable; any shared code introduced by the phase is capability-owned and protected by observable regression checks.
-**Plans**: TBD
+**Plans**: 1 complete
 
 ### Phase 29: Catalog and AC15 Profile Binding
 **Goal**: Murasaki catalog and profile facts are loaded through proven data roots and explicit capability limits before runtime state depends on them.
@@ -54,7 +54,7 @@
   2. Murasaki exposes an explicit AC15 capability/profile model with proven protocol limits, favorite cap 10 where proven, Don Point/root limits where proven, split metadata support, and disabled absent surfaces.
   3. Server-authored Murasaki sidecar data exists and is copied for every implemented feature that requires committed data outside raw operator files, including intentionally empty sidecars where conservative behavior is the contract.
   4. Any nontrivial Murasaki catalog/profile Mapperly projections can be inspected in generated source, with handwritten mapper code limited to configured helper conversions.
-**Plans**: TBD
+**Plans**: 1 complete
 
 ### Phase 30: Split Metadata Readback
 **Goal**: Murasaki split metadata routes return evidence-backed catalog and byte readback without introducing a White-style monolithic initial-data contract.
@@ -65,7 +65,7 @@
   2. The cabinet can receive catalog-backed Murasaki default song, mainichi song, folder, telop, recommendation/readiness, and related metadata responses without a White `initialdatacheck.php` route or contract.
   3. Song-hash, default-song, mainichi-song, release-song, crown, content, option, and reserved byte payloads are emitted only from proven Murasaki limits, verified compatible packers, or documented conservative defaults.
   4. Operational routes such as `heartbeat.php`, `bookkeeping.php`, `communicationlog.php`, and `headclerk2.php` behave only as route-evidence-backed catalog, log-success, or no-state compatibility endpoints and do not create economy, audit, or gameplay persistence.
-**Plans**: TBD
+**Plans**: 1 complete
 
 ### Phase 31: Identity, Userdata, Self-Best, and Normal Read Paths
 **Goal**: Cabinets and operators can read Murasaki-owned profile and normal-play state without introducing normal playresult mutations yet.
@@ -76,7 +76,7 @@
   2. Murasaki self-best, crown, favorite, recent-song, and release-song readback uses Murasaki protocol byte and array limits, including favorite cap 10 where proven.
   3. `bestscore.php` or global ranking data is not used as a substitute for per-user self-best readback.
   4. Persistence checks show Murasaki read paths do not read or write White, Red, Yellow, Blue, Green, Nijiiro, or unsupported Murasaki gameplay state.
-**Plans**: TBD
+**Plans**: 1 complete
 
 ### Phase 32: Normal Playresult, Dani, Reward, and Don Point Mutation
 **Goal**: Murasaki normal play, Dani, reward, present, special-BAID, and Don Point mutations persist through Murasaki-owned state where local evidence proves the contract.
@@ -87,7 +87,7 @@
   2. Murasaki Taikojuku/Dani uploads and readback write only Murasaki-owned Dan state when payload and catalog evidence proves the contract; unsupported gaps are documented instead of invented.
   3. Reward, present, special-BAID, and Don Point behavior uses Murasaki-owned profile/unlock flags plus local `present.xml`, `spacialbaid.xml`, and protocol evidence.
   4. Normal mutation paths do not create Yellow item-shop, medal, Banacoin wallet/payment, unrelated unlock, unsupported mode, or cross-era state changes.
-**Plans**: TBD
+**Plans**: 1 complete
 
 ### Phase 33: Evidence-Gated Special Capabilities
 **Goal**: High-risk Murasaki special surfaces are either implemented from targeted evidence or explicitly documented as conservative/absent behavior.
@@ -153,11 +153,11 @@ See `.planning/milestones/v1.4-ROADMAP.md` and `.planning/milestones/v1.4-phases
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 28. Murasaki Evidence and Era Foundation | v1.5 | 0/TBD | Not started | - |
-| 29. Catalog and AC15 Profile Binding | v1.5 | 0/TBD | Not started | - |
-| 30. Split Metadata Readback | v1.5 | 0/TBD | Not started | - |
-| 31. Identity, Userdata, Self-Best, and Normal Read Paths | v1.5 | 0/TBD | Not started | - |
-| 32. Normal Playresult, Dani, Reward, and Don Point Mutation | v1.5 | 0/TBD | Not started | - |
+| 28. Murasaki Evidence and Era Foundation | v1.5 | 1/1 | Complete | 2026-06-21 |
+| 29. Catalog and AC15 Profile Binding | v1.5 | 1/1 | Complete | 2026-06-21 |
+| 30. Split Metadata Readback | v1.5 | 1/1 | Complete | 2026-06-21 |
+| 31. Identity, Userdata, Self-Best, and Normal Read Paths | v1.5 | 1/1 | Complete | 2026-06-21 |
+| 32. Normal Playresult, Dani, Reward, and Don Point Mutation | v1.5 | 1/1 | Complete | 2026-06-21 |
 | 33. Evidence-Gated Special Capabilities | v1.5 | 0/TBD | Not started | - |
 | 34. AdminApi/WebUI and Runtime Closeout | v1.5 | 0/TBD | Not started | - |
 
@@ -170,4 +170,4 @@ See `.planning/milestones/v1.4-ROADMAP.md` and `.planning/milestones/v1.4-phases
 | v1.2 Yellow AC15 Support | 12-17 plus 16.1 and 16.2 | 38 GSD plans | Shipped | 2026-06-12 |
 | v1.3 Red AC15 Support | 18-22 | 29 GSD plans | Shipped | 2026-06-16 |
 | v1.4 White AC15 0.13 Support | 23-27 plus 23.1 | 10 GSD plans | Shipped | 2026-06-21 |
-| v1.5 Murasaki AC15 Support | 28-34 | TBD | Planned | - |
+| v1.5 Murasaki AC15 Support | 28-34 | 5/7 phases complete | In progress | - |

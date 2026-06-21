@@ -58,4 +58,13 @@ public static class Ac15CatalogSnapshotFactory
             white.Telops,
             Ac15ItemShopCatalog.Disabled,
             white.TaikojukuFileOrder));
+
+    public static Ac15CatalogSnapshot FromMurasaki(IMurasakiCatalog murasaki)
+        => FromSource(new Ac15CatalogProjectionSource(
+            murasaki.SongHashVersion,
+            murasaki.MusicInfoFileOrder.Select(song => song.SongNo).ToArray(),
+            murasaki.EventFolders,
+            murasaki.Telops,
+            Ac15ItemShopCatalog.Disabled,
+            murasaki.TaikojukuFileOrder));
 }
