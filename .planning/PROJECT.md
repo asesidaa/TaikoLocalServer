@@ -4,11 +4,11 @@
 
 TaikoLocalServer is a local ASP.NET Core server for Taiko no Tatsujin cabinet protocols, local SQLite persistence, era-specific game data catalogs, and a Blazor WebAssembly admin UI. This project continues the existing Blue-era support effort from the Superpowers roadmap in `docs/superpowers/specs/2026-05-27-blue-support-roadmap-design.md`, starting after completed stages A0-A5 and carrying the work through full Blue support.
 
-Full Blue, Yellow, Red, and White 0.13 support are complete. The project now supports Nijiiro, Green AC15, Blue AC15, Yellow AC15, Red AC15, and White AC15 in one process while preserving era-owned routes, wire DTOs, persistence, handlers, mappers, catalogs, tests, and AdminApi/WebUI routing.
+Full Blue, Yellow, Red, and White 0.13 support are complete. The project now supports Nijiiro, Green AC15, Blue AC15, Yellow AC15, Red AC15, and White AC15 in one process while preserving era-owned routes, wire DTOs, persistence, handlers, mappers, catalogs, tests, and AdminApi/WebUI routing. The next milestone targets first-class Murasaki AC15 support from local proto, data, route, and client evidence.
 
 ## Core Value
 
-AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Blue, Green, Yellow, Red, White, Nijiiro, or shared identity state.
+AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Murasaki, White, Red, Yellow, Blue, Green, Nijiiro, or shared identity state.
 
 ## Current State
 
@@ -26,9 +26,21 @@ Yellow support reuses AC15 shared core behavior where it directly reduces duplic
 
 ## Current Planning State
 
-Current milestone: **None - awaiting next milestone**
+Current milestone: **v1.5 Murasaki AC15 Support**
 
-**Current milestone goal:** Not yet defined. Use `$gsd-new-milestone` to define the next era requirements, research targets, and roadmap before implementation.
+**Current milestone goal:** Add first-class Murasaki support by assembling White-like older AC15 capabilities where local Murasaki proto/data proves compatibility, while evidence-gating changed wire shapes and new request families.
+
+## Current Milestone: v1.5 Murasaki AC15 Support
+
+**Goal:** Add first-class Murasaki support by assembling White-like older AC15 capabilities where local Murasaki proto/data proves compatibility, while evidence-gating changed wire shapes and new request families.
+
+**Target features:**
+- First-class `GameEra.Murasaki` foundation with Murasaki-owned adapter, generated wire DTOs from `proto/murasaki`, Host gating, route handling, direct-protobuf transport where proven, and shared startup/version ownership only where `proto/murasaki/vsinterface.proto` and client evidence agree.
+- Route/root evidence from local Murasaki binary/client data before locking the game route prefix and active config root. Local data currently exposes `ST5100-1`, `ST5100-7`, and `ST6100-1`; runtime root must not be guessed from filenames.
+- Catalog/profile/runtime binding through existing AC15/White-era capabilities where wire/data semantics match: identity, BAID/mydon, userdata, normal play, self-best/crowns, favorites/recent, folders/telops/recommendations, Dani/Taikojuku, reward/Don Point fields, and Don Challenge-like challenge arrays only if proven.
+- Murasaki-specific protocol mapping for changed wire shape: the local `taiko.proto` does not expose the White-style monolithic `initialdatacheck` message and instead splits metadata across request families such as `defaultsong`, `mainichisong`, `foldercheck`, `getfolder`, `telopcheck`, `gettelop`, `songhash`, and `bestscore`.
+- Binary/client evidence pass for new or unclear request families and byte fields, especially global-ranking/high-score readback, song hash tables, default/mainichi song hashes, `content_info`, `default_option_setting`, and reserved payload fields.
+- AdminApi/WebUI parity only for implemented Murasaki-owned state, with final runtime/WebUI closeout gated by user-observed cabinet/RPCS3 verification.
 
 ## Requirements
 
@@ -74,7 +86,12 @@ Current milestone: **None - awaiting next milestone**
 
 ### Active
 
-- [ ] Define the next milestone through `$gsd-new-milestone` before implementing the next era.
+- [ ] Start v1.5 Murasaki AC15 Support from local `proto/murasaki` and `Host/wwwroot/data/murasaki/data` evidence before implementation.
+- [ ] Prove Murasaki route prefix, transport, startup/version ownership, and active data root before binding runtime behavior.
+- [ ] Map Murasaki wire DTOs through application/common capability shapes rather than persisting wire DTOs directly.
+- [ ] Reuse existing AC15/White-like capabilities only where Murasaki proto/data/client evidence proves the same behavior and limits.
+- [ ] Model new Murasaki request families, byte fields, and global high-score semantics as new evidence-backed capabilities after binary/client investigation.
+- [ ] Expose AdminApi/WebUI readback only for implemented Murasaki-owned state and close support only after automated verification plus user-observed cabinet/RPCS3 evidence.
 
 ### Out of Scope
 
@@ -84,6 +101,8 @@ Current milestone: **None - awaiting next milestone**
 - Yellow battle mode or Blue battle behavior mirrored into Yellow without concrete Yellow proto/log/client evidence.
 - Blue battle behavior mirrored into Red without concrete Red proto/log/client evidence.
 - White battle, item shop, Tokkun, gacha, tournament runtime, Banacoin wallet/payment, or later White update behavior without concrete White 0.13 proto/log/client evidence.
+- Later Murasaki update behavior beyond the local initial-version target unless local Murasaki proto, data, binary/client evidence, logs, or cabinet/RPCS3 behavior pulls it into scope.
+- Invented Murasaki global high-score, song-hash, default-song, mainichi-song, shopping, or reserved-byte semantics without concrete local evidence.
 - Green AI Battle changes while implementing Blue battle mode; Green AI Battle is contrast material, not the Blue design source.
 - Invented Tokkun rewards, score/crown persistence, paid-coin behavior, practice-time accounting, jump-point behavior, autoplay behavior, speed-change behavior, or song unlock side effects without concrete Blue evidence.
 - Runtime scraping of wiki or official pages.
@@ -107,6 +126,8 @@ Current milestone: **None - awaiting next milestone**
 - v1.4 White AC15 0.13 Support started on 2026-06-16. White local protocol inputs are `proto/white/taiko.proto` and `proto/white/vsinterface.proto`; local game data is under `Host/wwwroot/data/white/data`.
 - White local data currently exposes `config/ST7100-1` as the observed config root, with `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, `present.xml`, and `spacialbaid.xml` in that root.
 - `.tools/white/EBOOT.ELF.i64` is currently present and nonzero in this checkout (`129893515` bytes), so superseded zero-byte notes are no longer current. Phase 23 IDA route extraction proves `/v07r00/chassis` plus fourteen no-state scaffold suffixes; additional White route, root-selection, and runtime assumptions still need local IDB, log, capture, data, or cabinet/RPCS3 evidence before implementation.
+- v1.5 Murasaki AC15 Support started on 2026-06-21. Murasaki local protocol inputs are `proto/murasaki/taiko.proto` and `proto/murasaki/vsinterface.proto`; local game data is under `Host/wwwroot/data/murasaki/data`.
+- Murasaki local data currently exposes `config/ST5100-1`, `config/ST5100-7`, and `config/ST6100-1`, each with `musicinfo.xml` and `musicmedleyinfo.xml`. The active runtime root and route prefix require binary/client evidence before implementation locks them.
 - The evidence hierarchy is repo code, proto files, SQLite state, cabinet/RPCS3 logs, IDA/client evidence, and only then public wiki pages for gameplay scoping.
 - Yellow local protocol input is `proto/yellow/yellow.proto`; local game data is under `Host/wwwroot/data/yellow/data`, with the observed versioned config root `config/ST9100-1`.
 - Yellow proto evidence includes Tokkun tutorial and stage-result fields, item shop and Banacoin-adjacent routes, Don/Katsu medal upload fields, and no Blue battle userdata or initialdata battle fields.
@@ -115,6 +136,7 @@ Current milestone: **None - awaiting next milestone**
 - Public wiki context says Yellow started on 2017-03-15, introduced Don/Katsu medals, and later added "Issho ni Wai Wai Ensou"; this is scoping context only and does not outrank local protocol or runtime evidence.
 - Public wiki context says Red was the active AC15 version from 2016-07-14 to 2017-03-14, and that Don Challenge effectively ended with Red before Yellow's reward-system change pause; this is scoping context only and does not outrank local protocol or runtime evidence.
 - Public wiki context says White 0.13 started on 2015-12-10 and later White updates changed or reintroduced some features. Use that as product/version scoping only; local White proto, data, logs, IDA, and cabinet/RPCS3 evidence decide server behavior.
+- Public wiki context says Murasaki started on 2015-03-11, expanded favorite songs from 5 to 10, introduced Murasaki-era feature folders, and used Don Point behavior with a 30000-point cap. This is product/version scoping only; local Murasaki proto, data, logs, binary/client evidence, and cabinet/RPCS3 behavior decide server behavior.
 - Red proto evidence includes challenge competition readback through `ChallengeCompeRequest` / `ChallengeCompeResponse`, user-data `is_challengecompe`, and playresult challenge id arrays. Treat those as protocol facts only; they are not Don Challenge semantics and are not evidence that Blue/Green/Yellow challengecompe stubs are active.
 - White proto evidence initially exposes BAID, mydon, userdata, playresult, self-best, crowns, recommendations, folders, telops, Taikojuku, embedded challenge stat fields, and reward routes. It does not initially expose explicit battle, item-shop, Tokkun, gacha, tournament runtime, or Banacoin wallet/payment surfaces.
 - `docs/superpowers/specs/2026-06-07-ac15-core-extraction-design.md`, `docs/superpowers/specs/2026-06-11-ac15-capability-composition-design.md`, and `docs/superpowers/plans/2026-06-07-ac15-core-extraction/` describe the approved capability-driven AC15 sharing direction for Blue, Green, and older AC15 support. Use those designs where they directly enable White, but keep era routes, wire DTOs, and persistence separate.
@@ -133,7 +155,7 @@ v1.4 White AC15 0.13 Support is complete. Phases 23-27 plus inserted Phase 23.1 
 
 ## Next Milestone
 
-Not defined yet. The next era should start with `$gsd-new-milestone` so requirements and roadmap scope are built from current local proto, data, logs, IDA/client evidence, and cabinet/RPCS3 behavior.
+v1.5 Murasaki AC15 Support is now active. Requirements and roadmap scope must be built from current local Murasaki proto, data, logs, binary/client evidence, and cabinet/RPCS3 behavior.
 
 ## Constraints
 
@@ -144,11 +166,13 @@ Not defined yet. The next era should start with `$gsd-new-milestone` so requirem
 - **Scope order**: Build foundation, capability profile/catalog binding, runtime capability bindings, Don Challenge where era data proves it, and verification before claiming full support for any new AC15 era.
 - **Red scope**: Treat Red as an older-AC15 capability composition without WaiWai; Don Challenge is server-side progress/rewards, while ChallengeCompe remains a separate protocol surface.
 - **White scope**: Treat White 0.13 as an older-AC15 capability composition with more missing features than Red; do not backfill later White update behavior without local 0.13 evidence.
+- **Murasaki scope**: Treat initial Murasaki as an older-AC15 capability composition that is feature-similar to White only where local Murasaki evidence proves matching limits and wire placement.
 - **Verification**: Done requires automated route/handler/catalog/persistence proof and repeatable cabinet/RPCS3 smoke evidence for the supported runtime flows, not only passing server tests.
 - **Local data**: Blue runtime data under `Host/wwwroot/data/blue/data` is local/operator-supplied and may be gitignored.
 - **Local data**: Yellow runtime data under `Host/wwwroot/data/yellow/data` is local/operator-supplied and may be gitignored.
 - **Local data**: Red runtime data under `Host/wwwroot/data/red/data` is local/operator-supplied and may be gitignored.
 - **Local data**: White runtime data under `Host/wwwroot/data/white/data` is local/operator-supplied and may be gitignored.
+- **Local data**: Murasaki runtime data under `Host/wwwroot/data/murasaki/data` is local/operator-supplied and may be gitignored.
 - **Build environment**: If `Host/bin/Debug/net10.0` is locked by a running server, verify Host builds with a temp output path.
 
 ## Key Decisions
@@ -182,6 +206,8 @@ Not defined yet. The next era should start with `$gsd-new-milestone` so requirem
 | Implement White Don Challenge as server-side stage-derived progress only | White data/range evidence supports dedicated server-side Don Challenge readback, while standalone ChallengeCompe cabinet route/readback remains absent | Validated in v1.4 |
 | Close White after accepted runtime/WebUI verification | Automated tests/builds and generated-source inspection are necessary but not sufficient; milestone close records user-accepted RPCS3/cabinet/WebUI verification | Validated in v1.4 |
 | Split White final `/v07r03` from legacy `/v07r00` protocol support | Final 11.01 behavior uses different generated wire and proven routes; compatibility must not force final fields onto legacy White wire | Validated by quick task 260620-ub3 |
+| Start Murasaki support as v1.5 | Murasaki is the next older AC15 era after White; local Murasaki proto/data are present, features look White-like, and the user expects reuse of existing capabilities where wire/data semantics match | Pending |
+| Treat Murasaki changed wire shape as a first-class evidence gate | Murasaki lacks the White-style monolithic initial-data request and adds split metadata/global-score request families, so capability reuse must be mediated through Murasaki-owned wire mapping and binary/client evidence for unknown byte fields | Pending |
 
 ## Evolution
 
@@ -201,4 +227,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-21 after v1.4 White AC15 0.13 Support milestone closeout*
+*Last updated: 2026-06-21 after v1.5 Murasaki AC15 Support milestone startup*

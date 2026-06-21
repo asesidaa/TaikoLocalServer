@@ -1,18 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.4
-milestone_name: White AC15 0.13 Support
-status: awaiting_next_milestone
-stopped_at: v1.4 White AC15 0.13 Support archived; ready for next milestone definition
-last_updated: "2026-06-21T09:18:46.913Z"
+milestone: v1.5
+milestone_name: Murasaki AC15 Support
+status: planning
+last_updated: "2026-06-21T09:49:02.890Z"
 last_activity: 2026-06-21
-last_activity_desc: Milestone v1.4 completed and archived
 progress:
-  total_phases: 6
-  completed_phases: 6
-  total_plans: 10
-  completed_plans: 10
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -26,10 +24,10 @@ See: `.planning/PROJECT.md` (updated 2026-06-21)
 
 ## Current Position
 
-Phase: Milestone v1.4 complete
-Plan: None
-Status: Awaiting next milestone
-Last activity: 2026-06-21 - Milestone v1.4 completed and archived
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-06-21 — Milestone v1.5 started
 
 ## Performance Metrics
 
