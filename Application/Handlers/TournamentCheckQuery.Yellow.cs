@@ -6,7 +6,7 @@ public partial class TournamentCheckQueryHandler
         TournamentCheckQuery request,
         CancellationToken cancellationToken)
     {
-        logger.LogInformation("Yellow TournamentCheck stub for kit {KitId}, returning empty", request.KitId);
-        return ValueTask.FromResult(new CommonTournamentCheckResponse());
+        logger.LogInformation("Yellow TournamentCheck experiment for kit {KitId}, returning accepted no-gacha result", request.KitId);
+        return ValueTask.FromResult(new CommonTournamentCheckResponse { Result = 904 });
     }
 }

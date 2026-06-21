@@ -9,6 +9,6 @@ public class TournamentCheckController : BaseProtocolController<TournamentCheckC
     public IActionResult TournamentCheck([FromBody] TournamentcheckRequest request)
     {
         Logger.LogInformation("Blue TournamentCheck request: {@Request}", request);
-        return Ok(new TournamentcheckResponse { Result = 1 });
+        return Ok(new TournamentcheckResponse { Result = 904 });
     }
 }

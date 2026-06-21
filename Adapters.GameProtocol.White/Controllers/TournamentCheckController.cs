@@ -14,7 +14,7 @@ public sealed class TournamentCheckController : BaseProtocolController<Tournamen
             request.ChassisId,
             request.ShopId,
             request.KitId);
-        return Ok(new TournamentcheckResponse { Result = 1 });
+        return Ok(new TournamentcheckResponse { Result = 904 });
     }
 
     [HttpPost(WhiteRoutePrefixes.Compatibility + "/tournamentcheck.php")]
@@ -26,6 +26,6 @@ public sealed class TournamentCheckController : BaseProtocolController<Tournamen
             request.ChassisId,
             request.ShopId,
             request.KitId);
-        return Ok(new LegacyWire.TournamentcheckResponse { Result = 1 });
+        return Ok(new LegacyWire.TournamentcheckResponse { Result = 904 });
     }
 }
