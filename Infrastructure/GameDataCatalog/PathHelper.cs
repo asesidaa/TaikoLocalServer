@@ -6,17 +6,33 @@ public static class PathHelper
 {
     public static string GetRootPath()
     {
-        var path = Environment.ProcessPath;
-        if (path is null)
+        return ResolveRootPath(Environment.ProcessPath, AppContext.BaseDirectory);
+    }
+
+    public static string ResolveRootPath(string? processPath, string baseDirectory)
+    {
+        var applicationDirectory = ResolveApplicationDirectory(processPath, baseDirectory);
+        return Path.Combine(applicationDirectory, "wwwroot");
+    }
+
+    private static string ResolveApplicationDirectory(string? processPath, string baseDirectory)
+    {
+        if (!string.IsNullOrWhiteSpace(processPath)
+            && !string.Equals(Path.GetFileNameWithoutExtension(processPath), "dotnet", StringComparison.OrdinalIgnoreCase))
+        {
+            var parentPath = Directory.GetParent(processPath);
+            if (parentPath is not null)
+            {
+                return parentPath.FullName;
+            }
+        }
+
+        if (string.IsNullOrWhiteSpace(baseDirectory))
         {
             throw new ApplicationException();
         }
-        var parentPath = Directory.GetParent(path);
-        if (parentPath is null)
-        {
-            throw new ApplicationException();
-        }
-        return Path.Combine(parentPath.ToString(), "wwwroot");
+
+        return Path.GetFullPath(baseDirectory);
     }
 
     public static string GetDataPath()

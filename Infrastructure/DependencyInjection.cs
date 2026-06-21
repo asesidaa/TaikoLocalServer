@@ -60,6 +60,8 @@ public static class DependencyInjection
                     .Ignore(SqliteEventId.TableRebuildPendingWarning));
         });
         services.AddScoped<ITaikoDbContext>(sp => sp.GetRequiredService<TaikoDbContext>());
+        services.AddOptions<DatabaseStartupMigrationOptions>();
+        services.AddSingleton<DatabaseStartupMigrator>();
 
         // Game data catalog (singleton — initialized once at startup)
         if (enabledEras.Contains(GameEra.Nijiiro))

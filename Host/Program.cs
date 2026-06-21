@@ -166,7 +166,8 @@ try
     using (var scope = app.Services.CreateScope())
     {
         var db = scope.ServiceProvider.GetRequiredService<TaikoDbContext>();
-        db.Database.Migrate();
+        var migrator = scope.ServiceProvider.GetRequiredService<DatabaseStartupMigrator>();
+        await migrator.MigrateAsync(db);
     }
 
     app.UseSerilogRequestLogging(options =>
