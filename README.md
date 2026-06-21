@@ -7,6 +7,9 @@ Supported eras:
 - Nijiiro CHN and WW
 - Green AC15
 - Blue AC15, including normal play, battle runtime support, and Tokkun practice mode
+- Yellow AC15, including normal play, item shop, Tokkun, Banacoin compatibility, and WebUI/AdminApi routing
+- Red AC15, including normal play, tutorial-only Tokkun readback, Don Challenge, and WebUI/AdminApi routing
+- White AC15, including final `/v07r03` game routes, legacy `/v07r00` compatibility routes, White-owned runtime state, Tokkun, Don Challenge, and WebUI/AdminApi routing
 
 ## Project Readmes
 
@@ -23,6 +26,9 @@ Supported eras:
 - [Adapters.GameProtocol.CnR00](./Adapters.GameProtocol.CnR00/README.md) - Nijiiro CN adapter
 - [Adapters.GameProtocol.Green](./Adapters.GameProtocol.Green/README.md) - Green AC15 adapter
 - [Adapters.GameProtocol.Blue](./Adapters.GameProtocol.Blue/README.md) - Blue AC15 adapter
+- [Adapters.GameProtocol.Yellow](./Adapters.GameProtocol.Yellow/README.md) - Yellow AC15 adapter
+- [Adapters.GameProtocol.Red](./Adapters.GameProtocol.Red/README.md) - Red AC15 adapter
+- [Adapters.GameProtocol.White](./Adapters.GameProtocol.White/README.md) - White AC15 adapter
 - [GreenCatalogExtractor](./GreenCatalogExtractor/README.md) - Green AC15 catalog extraction utility
 - [LocalSaveModScoreMigrator](./LocalSaveModScoreMigrator/README.md) - local-save import utility
 
@@ -36,7 +42,7 @@ Supported eras:
 ### Setup Steps
 
 1. Extract a release anywhere, or use a source checkout.
-2. Configure enabled eras in [Host/Configurations/ServerSettings.json](./Host/Configurations/ServerSettings.json). At least one of `Nijiiro`, `Green`, or `Blue` must be enabled.
+2. Configure enabled eras in [Host/Configurations/ServerSettings.json](./Host/Configurations/ServerSettings.json). At least one of `Nijiiro`, `Green`, `Blue`, `Yellow`, `Red`, or `White` must be enabled.
 3. For Nijiiro, copy the game datatable files from `Data/x64/datatable` into `wwwroot/data/nijiiro/datatable` in a release folder, or `Host/wwwroot/data/nijiiro/datatable` in a source checkout:
    - `music_order.bin`
    - `musicinfo.bin`
@@ -44,12 +50,18 @@ Supported eras:
    - `don_cos_reward.bin`
    - `shougou.bin`
    - `neiro.bin`
-4. For Green and Blue AC15, provide each enabled era's original `USRDIR/data` folder under the matching era data root:
+4. For AC15 eras, provide each enabled era's original `USRDIR/data` folder under the matching era data root:
    - Green: `wwwroot/data/green/data` in a release folder, or `Host/wwwroot/data/green/data` in a source checkout.
    - Blue: `wwwroot/data/blue/data` in a release folder, or `Host/wwwroot/data/blue/data` in a source checkout.
+   - Yellow: `wwwroot/data/yellow/data` in a release folder, or `Host/wwwroot/data/yellow/data` in a source checkout.
+   - Red: `wwwroot/data/red/data` in a release folder, or `Host/wwwroot/data/red/data` in a source checkout.
+   - White: `wwwroot/data/white/data` in a release folder, or `Host/wwwroot/data/white/data` in a source checkout.
 5. Verify the AC15 catalog inputs for each enabled era:
    - Green requires `config/S11100-1/musicinfo.xml`, `config/S11100-1/musicmedleyinfo.xml`, and `fumen/tuning.bin`.
-   - For Blue AC15, normal startup requires `config/S10100-1/musicinfo.xml`, `config/S10100-1/musicmedleyinfo.xml`, and `fumen/tuning.bin`.
+   - Blue requires `config/S10100-1/musicinfo.xml`, `config/S10100-1/musicmedleyinfo.xml`, and `fumen/tuning.bin`.
+   - Yellow requires `config/ST9100-1/musicinfo.xml`, `config/ST9100-1/musicmedleyinfo.xml`, `config/ST9100-1/defmusic.bin`, and `fumen/tuning.bin`.
+   - Red requires `config/ST8100-1/musicinfo.xml`, `config/ST8100-1/musicmedleyinfo.xml`, `config/ST8100-1/defmusic.bin`, and `fumen/tuning.bin`.
+   - White requires `config/ST7100-1/musicinfo.xml`, `config/ST7100-1/musicmedleyinfo.xml`, `config/ST7100-1/defmusic.bin`, `config/ST7100-1/present.xml`, `config/ST7100-1/spacialbaid.xml`, and `fumen/tuning.bin`.
 6. For Blue battle availability, keep the complete battle XML folder under `wwwroot/data/blue/data/config/S10100-1/battle`:
    - `battleadjsetting.xml`
    - `battlenpcinfo.xml`
@@ -66,6 +78,9 @@ From a source checkout:
 ```powershell
 New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\Host\wwwroot\data\green\data'
 New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\Host\wwwroot\data\blue\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\Host\wwwroot\data\yellow\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\Host\wwwroot\data\red\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\Host\wwwroot\data\white\data'
 ```
 
 From an extracted release folder:
@@ -73,6 +88,9 @@ From an extracted release folder:
 ```powershell
 New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\wwwroot\data\green\data'
 New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\wwwroot\data\blue\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\wwwroot\data\yellow\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\wwwroot\data\red\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\rpcs3\dev_hdd0\game\SCEEXE001\USRDIR\data\' -Path '.\wwwroot\data\white\data'
 ```
 
 PowerShell may need Administrator privileges unless Windows Developer Mode allows unprivileged symlink creation.
@@ -84,10 +102,11 @@ Server configuration lives under [Host/Configurations](./Host/Configurations/). 
 The most important server settings are:
 
 - `ServerSettings:Eras:<Era>:Enabled` - registers or removes era routes.
-- `ServerSettings:Eras:<Era>:GameDataPath` - AC15 source data path for Green and Blue.
+- `ServerSettings:Eras:<Era>:GameDataPath` - AC15 source data path for Green, Blue, Yellow, Red, and White.
 - `ServerSettings:Eras:<Era>:AutoExtractCatalog` - allows first-run AC15 customization catalog extraction.
 - `ServerSettings:Eras:<Era>:CustomizationNameDataPath` - optional override directory for AC15 customization display names.
-- `ServerSettings:Eras:<Era>:EnableShop` and `ActiveShopSeasonId` - controls Green and Blue item-shop availability.
+- `ServerSettings:Eras:<Era>:EnableShop` and `ActiveShopSeasonId` - controls Green, Blue, and Yellow item-shop availability.
+- `ServerSettings:Eras:<Era>:EnableDonChallenge` and `ActiveDonChallengeBundleId` - controls Red and White Don Challenge availability.
 
 See [Host/README.md](./Host/README.md) for data file details.
 

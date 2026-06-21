@@ -15,7 +15,7 @@ This project contains controller base types, protobuf helpers, compression helpe
 
 Use this project only for behavior that genuinely applies across protocol adapters. Per-era wire types, mappers, controllers, and runtime semantics belong in their own adapter or Application era partials.
 
-Blue and Green AC15 share `/v01r00/chassis/*` startup/version behavior, while their game endpoints remain separate under `/v10r03/chassis/*` and `/v11r01/chassis/*`.
+AC15 eras share `/v01r00/chassis/*` startup/version behavior where current evidence supports it, while game endpoints remain era-owned: Green `/v11r01/chassis/*`, Blue `/v10r03/chassis/*`, Yellow `/v09r02/chassis/*`, Red `/v08r01/chassis/*`, White final `/v07r03/chassis/*`, and White legacy compatibility `/v07r00/chassis/*`.
 
 ## When To Add Code Here
 

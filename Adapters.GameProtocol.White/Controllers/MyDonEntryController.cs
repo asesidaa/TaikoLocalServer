@@ -23,7 +23,8 @@ public sealed class MyDonEntryController : BaseProtocolController<MyDonEntryCont
             AccessCode = common.AccessCode,
             IsPublish = true,
             MydonName = common.MydonName,
-            ContentInfo = new byte[Ac15EraProfiles.White.Limits.ContentInfoBytes]
+            ContentInfo = new byte[Ac15EraProfiles.White.Limits.ContentInfoBytes],
+            Personid = "1"
         });
     }
 

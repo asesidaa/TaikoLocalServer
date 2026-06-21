@@ -28,11 +28,15 @@ Presentation settings live in [wwwroot/appsettings.json](./wwwroot/appsettings.j
 
 Authentication and account-policy settings live on the server in [../Host/Configurations/AuthSettings.json](../Host/Configurations/AuthSettings.json). The WebUI fetches that policy from `GET /api/Auth/Config`.
 
-## Blue Notes
+## Era Notes
 
-Blue is a supported WebUI era. Blue routes should use Blue AdminApi endpoints and Blue catalog data for customization, Dani, normal play history, favorites, and profile settings.
+Blue, Yellow, Red, and White are supported WebUI eras. Era routes should use the matching AdminApi endpoints and catalog data for customization, Dani, normal play history, favorites, profile settings, and other implemented surfaces.
 
 Blue Tokkun history is not currently a WebUI surface.
+
+White Tokkun history is not currently a WebUI surface.
+
+Red and White Don Challenge are available through the dedicated Don Challenge page only when the AdminApi availability endpoint reports an active bundle.
 
 Treat title id `0` as the empty/default title in UI surfaces.
 

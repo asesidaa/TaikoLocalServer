@@ -39,6 +39,7 @@ public sealed class BaidController : BaseProtocolController<BaidController>
             ContentInfo = new byte[Ac15EraProfiles.White.Limits.ContentInfoBytes]
         };
         ApplySections(common, response);
+        response.Personid = "1";
 
         return Ok(response);
     }

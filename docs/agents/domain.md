@@ -4,7 +4,7 @@ How the engineering skills should consume this repo's domain documentation when 
 
 ## Layout
 
-This repo uses a multi-context documentation layout:
+This repo can use a multi-context documentation layout when context files have been created:
 
 - Root project context: `CONTEXT.md`
 - Context map entry point: `CONTEXT-MAP.md`
@@ -13,9 +13,14 @@ This repo uses a multi-context documentation layout:
 - Nijiiro WW era context: `Adapters.GameProtocol.WwR08/CONTEXT.md`
 - Green era context: `Adapters.GameProtocol.Green/CONTEXT.md`
 - Blue era context: `Adapters.GameProtocol.Blue/CONTEXT.md`
+- Yellow era context: `Adapters.GameProtocol.Yellow/CONTEXT.md`
+- Red era context: `Adapters.GameProtocol.Red/CONTEXT.md`
+- White era context: `Adapters.GameProtocol.White/CONTEXT.md`
 - WebUI context: `TaikoWebUI/CONTEXT.md`
 
 Context-specific ADRs may live under each context's `docs/adr/` directory, for example `Adapters.GameProtocol.Green/docs/adr/`.
+
+In the current checkout these context files may not exist yet. When they are absent, use root docs, adapter READMEs, `.planning/PROJECT.md`, `.planning/STATE.md`, current source, and current tests as the truth sources.
 
 ## Before exploring, read these
 

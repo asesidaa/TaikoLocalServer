@@ -1,6 +1,6 @@
 # Agent Notes
 
-TaikoLocalServer is an ASP.NET Core 10 host for Taiko cabinet protocol endpoints, SQLite persistence, era-specific game-data catalogs, and the Blazor WebAssembly admin UI. The repo now supports Nijiiro, Green AC15, and Blue AC15 in the same process. Blue is a first-class era, not a Green variant.
+TaikoLocalServer is an ASP.NET Core 10 host for Taiko cabinet protocol endpoints, SQLite persistence, era-specific game-data catalogs, and the Blazor WebAssembly admin UI. The repo now supports Nijiiro, Green AC15, Blue AC15, Yellow AC15, Red AC15, and White AC15 in the same process. Blue, Yellow, Red, and White are first-class eras, not variants of Green or each other.
 
 ## Current Blue State
 
@@ -17,6 +17,25 @@ TaikoLocalServer is an ASP.NET Core 10 host for Taiko cabinet protocol endpoints
 - Preserve known battle ID contracts: runtime token ids and NPC ids are zero-based; response-side persisted token rows use the `TokenId - 1` mapping with `0` guarded.
 - New users receive the IDA-backed starter battle state only when no persisted Blue battle state exists; after playresult, `battleuserdata.php` reads back persisted BlueBattle rows.
 
+## Current White State
+
+- White final-version game routes live under `/v07r03/chassis/*`.
+- White legacy compatibility game routes live under `/v07r00/chassis/*`.
+- Shared AC15 startup and version routes remain under `/v01r00/chassis/*`.
+- Final `/v07r03` and legacy `/v07r00` White routes must stay schema-separated: final routes use `Adapters.GameProtocol.White.Wire`, while legacy routes use `Adapters.GameProtocol.White.LegacyWire`.
+- White request bodies are direct protobuf for game endpoints; preserve that transport unless current client evidence proves otherwise.
+- White catalog data uses the `ST7100-1` root from `Host/wwwroot/data/white/data/config/ST7100-1`.
+- White required catalog inputs are `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, `present.xml`, `spacialbaid.xml`, and `fumen/tuning.bin`.
+- White normal play supports profile/login, userdata, initial data, self-best, crowns, recent/favorite songs, Dani Dojo, reward/Don Point state, present and special-BAID provenance, event folders, telops, movies, recommendations, AdminApi/WebUI era routing, and dedicated Don Challenge readback.
+- White final 11.01 support adds proven Tokkun, Banacoin-adjacent, difficulty panel, and final heartbeat fields under `/v07r03`; do not force these fields onto legacy `/v07r00` wire.
+- White Tokkun support accepts Tokkun-classified `playresult.php` uploads before normal/Dani/Don Challenge handling, persists nullable `TokkunTutorialFlg` plus append-only raw `WhiteTokkunStageResults`, upserts recent-song rows from practiced `tookun_songno` values, and keeps history out of userdata/AdminApi/WebUI readback.
+- White Tokkun playresults must not write normal White score, crown, Dani, profile, favorite, normal unlock, Don Challenge, Red/Yellow/Blue Tokkun, battle, or shop state. Recent-song rows derived from Tokkun practiced song numbers are the allowed side effect.
+- White Banacoin-adjacent support is stateless compatibility. `getbanacoininfo.php`, `banacoinpayment.php`, and `banacoinerrorlog.php` return success shapes without wallet, balance, payment, coupon, or transaction persistence.
+- White Don Challenge is server-side and stage-derived from normal White playresult stages, `white_don_challenge_data.json`, and White-owned progress/raw-fact tables. It is exposed through the dedicated AdminApi/WebUI Don Challenge contract only.
+- White must not add standalone `challengecompe.php` cabinet route/readback semantics, protocol opt-in state, user/BNG challenge buckets, Red Don Challenge state reads, or ChallengeCompe-derived reward behavior unless new White client/proto/log/IDA evidence proves it.
+- White `userdata.php` does not expose Don Challenge progress arrays as stateful readback; reward-song locks are derived through ordinary locked-song readback.
+- Do not infer White title-plate behavior from newer AC15 eras. Check generated White wire and `Application/Handlers/BaidQuery.White.cs`; current White BAID title handling resolves through title text/catalog rarity and the generated field layout must be verified before schema claims.
+
 ## Repo Layout
 
 - `Host/` composes the ASP.NET Core process, loads `Host/Configurations/*.json`, applies migrations, initializes catalogs, registers enabled-era adapters, hosts static WebUI files, and serves fallback routing.
@@ -31,15 +50,19 @@ TaikoLocalServer is an ASP.NET Core 10 host for Taiko cabinet protocol endpoints
 - `Adapters.GameProtocol.CnR00/` serves Nijiiro CN routes under `/v12r00_cn/*`.
 - `Adapters.GameProtocol.Green/` serves Green AC15 routes under `/v11r01/*`.
 - `Adapters.GameProtocol.Blue/` serves Blue AC15 routes under `/v10r03/*`.
+- `Adapters.GameProtocol.Yellow/` serves Yellow AC15 routes under `/v09r02/*`.
+- `Adapters.GameProtocol.Red/` serves Red AC15 routes under `/v08r01/*`.
+- `Adapters.GameProtocol.White/` serves White final AC15 routes under `/v07r03/*` and legacy White compatibility routes under `/v07r00/*`.
 - `TaikoWebUI/` is the MudBlazor WebAssembly admin UI hosted by `Host`.
 - `GreenCatalogExtractor/` and `LocalSaveModScoreMigrator/` are standalone utilities.
 - `proto/` contains protocol schema inputs; generated wire models live in adapter `Wire/` folders.
 - `.tools/blue/` contains local Blue reverse-engineering material. Treat it as local evidence, not runtime code.
+- `.tools/white/` contains local White reverse-engineering material. Treat it as local evidence, not runtime code.
 
 ## Architecture Rules
 
-- Keep era state separate. Blue, Green, and Nijiiro persistence must remain separate unless the state is truly shared identity data such as card/user identity.
-- Use the existing partial-file pattern for era behavior: shared dispatcher in the unsuffixed file, era implementation in `.Nijiiro.cs`, `.Green.cs`, or `.Blue.cs`.
+- Keep era state separate. Blue, Green, Yellow, Red, White, and Nijiiro persistence must remain separate unless the state is truly shared identity data such as card/user identity.
+- Use the existing partial-file pattern for era behavior: shared dispatcher in the unsuffixed file, era implementation in `.Nijiiro.cs`, `.Green.cs`, `.Blue.cs`, `.Yellow.cs`, `.Red.cs`, or `.White.cs`.
 - Map generated protobuf DTOs through `Application/Dtos/Common*` shapes before handler logic. Do not persist wire DTOs directly.
 - For Mapperly-specific behavior, do not rely on memory or prior agent summaries. Check the current official Mapperly documentation online, especially null-value behavior at `https://mapperly.riok.app/docs/configuration/mapper/#null-values`, constant/generated values at `https://mapperly.riok.app/docs/configuration/constant-generated-values/`, and generated-source inspection at `https://mapperly.riok.app/docs/configuration/generated-source/`.
 - Mapperly mappers must remain source-generator driven. Do not replace Mapperly projections with hand-written mapper bodies; handwritten code in mapper classes is limited to helper conversions that are configured for Mapperly or discovered by Mapperly.
@@ -61,11 +84,15 @@ TaikoLocalServer is an ASP.NET Core 10 host for Taiko cabinet protocol endpoints
 
 ## Data Caveats
 
-- Blue and Green AC15 game data share the same setup shape: operator-supplied `USRDIR/data` lives under `Host/wwwroot/data/<era>/data` in source checkouts, or `wwwroot/data/<era>/data` in published folders. Debug builds create output junctions for both eras when those source paths exist.
+- AC15 game data shares the same setup shape: operator-supplied `USRDIR/data` lives under `Host/wwwroot/data/<era>/data` in source checkouts, or `wwwroot/data/<era>/data` in published folders. Debug builds create output junctions for Green, Blue, Yellow, Red, and White when those source paths exist.
 - Green required startup data comes from `config/S11100-1/musicinfo.xml`, `config/S11100-1/musicmedleyinfo.xml`, and `fumen/tuning.bin`.
 - Blue normal catalog data comes from `config/S10100-1/musicinfo.xml`, `config/S10100-1/musicmedleyinfo.xml`, and `fumen/tuning.bin`.
+- Yellow catalog data comes from `config/ST9100-1/musicinfo.xml`, `config/ST9100-1/musicmedleyinfo.xml`, `config/ST9100-1/defmusic.bin`, and `fumen/tuning.bin`.
+- Red catalog data comes from `config/ST8100-1/musicinfo.xml`, `config/ST8100-1/musicmedleyinfo.xml`, `config/ST8100-1/defmusic.bin`, and `fumen/tuning.bin`.
+- White catalog data comes from `config/ST7100-1/musicinfo.xml`, `config/ST7100-1/musicmedleyinfo.xml`, `config/ST7100-1/defmusic.bin`, `config/ST7100-1/present.xml`, `config/ST7100-1/spacialbaid.xml`, and `fumen/tuning.bin`.
 - Blue battle availability requires the five parsed files under `config/S10100-1/battle`: `battleadjsetting.xml`, `battlenpcinfo.xml`, `battlestageinfo.xml`, `battlesupportinfo.xml`, and `battletokeninfo.xml`.
-- Green and Blue item shop data is committed JSON under `Host/wwwroot/data/<era>/`; `rewardshopdata.bin` remains local provenance and is not a runtime dependency.
+- Green, Blue, and Yellow item shop data is committed JSON under `Host/wwwroot/data/<era>/`; `rewardshopdata.bin` remains local provenance and is not a runtime dependency.
+- Red and White Don Challenge data is committed JSON under `Host/wwwroot/data/<era>/<era>_don_challenge_data.json` and is the runtime sidecar for server-side progress/reward behavior.
 - For every era, if a feature exists and expects committed server-authored data outside raw operator game data, the corresponding `Host/wwwroot/data/<era>/...` JSON should exist and be copied even when its data is intentionally empty.
 - Blue customization JSON can be bootstrapped from Blue AC15 data when `AutoExtractCatalog` is enabled, with display names composed from shared and optional override name data.
 - Treat title id `0` as the explicit empty/default title state.

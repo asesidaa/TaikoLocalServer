@@ -20,9 +20,12 @@ Supported eras:
 - Nijiiro WW under `/v12r08_ww/*`
 - Green AC15 under `/v11r01/*`
 - Blue AC15 under `/v10r03/*`
+- Yellow AC15 under `/v09r02/*`
+- Red AC15 under `/v08r01/*`
+- White final AC15 under `/v07r03/*`, with legacy White compatibility under `/v07r00/*`
 - Shared AC15 startup/version endpoints under `/v01r00/*`
 
-Blue is implemented as its own era with Blue-owned persistence, handlers, DTO fields, catalogs, mappers, byte helpers, AdminApi routing, and WebUI routing.
+Blue, Yellow, Red, and White are implemented as their own eras with era-owned persistence, handlers, DTO fields, catalogs, mappers, byte helpers, AdminApi routing, and WebUI routing.
 
 ## Solution Layout
 
@@ -37,6 +40,9 @@ Blue is implemented as its own era with Blue-owned persistence, handlers, DTO fi
 - `Adapters.GameProtocol.CnR00` - Nijiiro CN protocol adapter.
 - `Adapters.GameProtocol.Green` - Green AC15 protocol adapter.
 - `Adapters.GameProtocol.Blue` - Blue AC15 protocol adapter.
+- `Adapters.GameProtocol.Yellow` - Yellow AC15 protocol adapter.
+- `Adapters.GameProtocol.Red` - Red AC15 protocol adapter.
+- `Adapters.GameProtocol.White` - White AC15 protocol adapter.
 - `Host` - runtime composition root and hosted WebUI files.
 - `TaikoWebUI` - MudBlazor WebAssembly admin interface.
 - `GreenCatalogExtractor` - Green catalog extraction utility.
@@ -46,7 +52,7 @@ Dependency direction stays inward: `Domain` has no outbound references; `Applica
 
 ## Era Architecture
 
-`GameEra` selects persistence, catalog, handlers, routes, and WebUI URLs. Shared handlers dispatch by era in the unsuffixed file, while era-specific logic lives beside it in `.Nijiiro.cs`, `.Green.cs`, or `.Blue.cs` partial files.
+`GameEra` selects persistence, catalog, handlers, routes, and WebUI URLs. Shared handlers dispatch by era in the unsuffixed file, while era-specific logic lives beside it in `.Nijiiro.cs`, `.Green.cs`, `.Blue.cs`, `.Yellow.cs`, `.Red.cs`, or `.White.cs` partial files.
 
 Apply the same split to:
 
@@ -57,7 +63,7 @@ Apply the same split to:
 - era catalog loaders under `Infrastructure/GameDataCatalog/<Era>`
 - adapter mappers and controllers under `Adapters.GameProtocol.<Era>`
 
-When adding behavior, decide whether it is shared, Nijiiro-only, Green-only, or Blue-only before editing shared files.
+When adding behavior, decide whether it is shared, Nijiiro-only, Green-only, Blue-only, Yellow-only, Red-only, or White-only before editing shared files.
 
 ## Blue Caveats
 
@@ -74,6 +80,16 @@ When adding behavior, decide whether it is shared, Nijiiro-only, Green-only, or 
 - Treat title id `0` as the empty/default title.
 - Keep `rewardexecution.php` as log-and-success unless newer evidence proves a state mutation contract.
 
+## White Caveats
+
+- Preserve White final `/v07r03/chassis/*` and legacy `/v07r00/chassis/*` as separate protocol surfaces. Final routes use `Adapters.GameProtocol.White.Wire`; legacy routes use `Adapters.GameProtocol.White.LegacyWire`.
+- Preserve shared `/v01r00/chassis/*` startup/version route ownership for AC15.
+- Keep White runtime state in White entities and handler partials. Do not read or write Blue, Green, Yellow, Red, Nijiiro, shop, battle, or ChallengeCompe state from White flows unless new evidence proves it.
+- White Tokkun is supported only where proven: tutorial flag, raw append-only history rows, and recent-song upserts from practiced songs. Tokkun uploads must not fall through to normal/Dani/Don Challenge writes.
+- White Banacoin-adjacent routes are stateless compatibility only; do not add wallet, balance, payment, coupon, or transaction persistence.
+- White Don Challenge is server-side and stage-derived through `white_don_challenge_data.json` plus White-owned raw-fact/progress tables. It is exposed through dedicated AdminApi/WebUI contracts, not a standalone cabinet `challengecompe.php` route/readback.
+- White catalog data is rooted at `config/ST7100-1`; later White-version behavior stays evidence-gated unless the final `/v07r03` quick task already proves it.
+
 ## Data Layout
 
 Runtime data resolves beside the running executable:
@@ -81,6 +97,9 @@ Runtime data resolves beside the running executable:
 - `wwwroot/data/nijiiro/` - Nijiiro operator JSON and game datatables.
 - `wwwroot/data/green/data/` - Green AC15 `USRDIR/data`.
 - `wwwroot/data/blue/data/` - Blue AC15 `USRDIR/data`.
+- `wwwroot/data/yellow/data/` - Yellow AC15 `USRDIR/data`.
+- `wwwroot/data/red/data/` - Red AC15 `USRDIR/data`.
+- `wwwroot/data/white/data/` - White AC15 `USRDIR/data`.
 - `wwwroot/data/shared/` - shared token, QR, and customization name data.
 - `wwwroot/taiko.db3` - SQLite database.
 
@@ -91,6 +110,12 @@ Blue normal data requires:
 - `fumen/tuning.bin`
 
 Blue battle availability also requires the five parsed battle XML files under `config/S10100-1/battle`.
+
+Yellow data requires `config/ST9100-1/musicinfo.xml`, `config/ST9100-1/musicmedleyinfo.xml`, `config/ST9100-1/defmusic.bin`, and `fumen/tuning.bin`.
+
+Red data requires `config/ST8100-1/musicinfo.xml`, `config/ST8100-1/musicmedleyinfo.xml`, `config/ST8100-1/defmusic.bin`, and `fumen/tuning.bin`.
+
+White data requires `config/ST7100-1/musicinfo.xml`, `config/ST7100-1/musicmedleyinfo.xml`, `config/ST7100-1/defmusic.bin`, `config/ST7100-1/present.xml`, `config/ST7100-1/spacialbaid.xml`, and `fumen/tuning.bin`.
 
 Use `PathHelper.GetDataPath(GameEra era)` and era path helpers instead of hardcoded data paths.
 
