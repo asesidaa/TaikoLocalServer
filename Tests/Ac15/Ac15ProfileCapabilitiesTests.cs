@@ -7,12 +7,13 @@ public sealed class Ac15ProfileCapabilitiesTests
     [Fact]
     public void CurrentImplementedAc15ProfilesExposeFullProfileSettingsCapabilities()
     {
-        var profiles = new[] { Ac15EraProfiles.Blue, Ac15EraProfiles.Green, Ac15EraProfiles.Yellow, Ac15EraProfiles.Red, Ac15EraProfiles.White };
+        var profiles = new[] { Ac15EraProfiles.Blue, Ac15EraProfiles.Green, Ac15EraProfiles.Yellow, Ac15EraProfiles.Red };
 
         foreach (var profile in profiles)
         {
             Assert.Equal(["kigurumi", "head", "body", "face", "puchi"], profile.ProfileCapabilities.CostumeSlots);
             Assert.True(profile.ProfileCapabilities.SupportsTitle);
+            Assert.True(profile.ProfileCapabilities.SupportsTitlePlate);
             Assert.True(profile.ProfileCapabilities.SupportsTone);
             Assert.True(profile.ProfileCapabilities.SupportsColors);
             Assert.True(profile.ProfileCapabilities.SupportsDisplayDanOnNamePlate);
@@ -26,11 +27,29 @@ public sealed class Ac15ProfileCapabilitiesTests
     }
 
     [Fact]
+    public void WhiteAndMurasakiExposeTitleCustomizationWithoutTitlePlateCustomization()
+    {
+        var profiles = new[] { Ac15EraProfiles.White, Ac15EraProfiles.Murasaki };
+
+        foreach (var profile in profiles)
+        {
+            Assert.True(profile.ProfileCapabilities.SupportsTitle);
+            Assert.False(profile.ProfileCapabilities.SupportsTitlePlate);
+
+            var dto = profile.ProfileCapabilities.ToDto();
+
+            Assert.True(dto.SupportsTitle);
+            Assert.False(dto.SupportsTitlePlate);
+        }
+    }
+
+    [Fact]
     public void CapabilityDtoCanRepresentTitleOnlyOlderEra()
     {
         var capabilities = new Ac15ProfileCapabilities(
             CostumeSlots: [],
             SupportsTitle: true,
+            SupportsTitlePlate: false,
             SupportsTone: false,
             SupportsColors: false,
             SupportsDisplayDanOnNamePlate: true,
@@ -45,6 +64,7 @@ public sealed class Ac15ProfileCapabilitiesTests
 
         Assert.Empty(dto.CostumeSlots);
         Assert.True(dto.SupportsTitle);
+        Assert.False(dto.SupportsTitlePlate);
         Assert.False(dto.SupportsTone);
         Assert.True(dto.SupportsDisplayDanOnNamePlate);
     }

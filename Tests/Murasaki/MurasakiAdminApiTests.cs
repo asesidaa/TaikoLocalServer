@@ -39,8 +39,11 @@ public sealed class MurasakiAdminApiTests
         var ok = Assert.IsType<OkObjectResult>(getResult.Result);
         var setting = Assert.IsType<Ac15ProfileSettingsDto>(ok.Value);
         Assert.Equal("Murasaki", setting.Era);
+        Assert.True(setting.Capabilities.SupportsTitle);
+        Assert.False(setting.Capabilities.SupportsTitlePlate);
         Assert.Equal(5u, Assert.Single(setting.Customization!.CostumeSlots, slot => slot.Slot == "kigurumi").CurrentId);
         Assert.Equal([0u, 5u], Assert.Single(setting.Customization.CostumeSlots, slot => slot.Slot == "kigurumi").UnlockedIds);
+        Assert.NotNull(setting.Customization.Title);
         Assert.Equal([10u], setting.Customization.Title!.UnlockedTitleIds);
         Assert.Equal(4u, setting.Customization.Tone!.ToneId);
         Assert.True(setting.Options.Folder!.ShowFolderCloseButton);

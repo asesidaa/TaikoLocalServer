@@ -38,9 +38,12 @@ public sealed class WhiteAdminApiTests
 
         var ok = Assert.IsType<OkObjectResult>(getResult.Result);
         var setting = Assert.IsType<Ac15ProfileSettingsDto>(ok.Value);
+        Assert.True(setting.Capabilities.SupportsTitle);
+        Assert.False(setting.Capabilities.SupportsTitlePlate);
         var kigurumi = Assert.Single(setting.Customization!.CostumeSlots, slot => slot.Slot == "kigurumi");
         Assert.Equal(0u, kigurumi.CurrentId);
         Assert.Contains(36u, kigurumi.UnlockedIds);
+        Assert.NotNull(setting.Customization.Title);
         Assert.Equal([10u], setting.Customization.Title!.UnlockedTitleIds);
         Assert.Equal(4u, setting.Customization.Tone!.ToneId);
         Assert.True(setting.Options.Folder!.ShowFolderCloseButton);

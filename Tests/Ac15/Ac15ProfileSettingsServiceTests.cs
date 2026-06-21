@@ -49,6 +49,7 @@ public sealed class Ac15ProfileSettingsServiceTests
         Assert.Equal(1u, setting.Baid);
         Assert.Equal("DON", setting.Identity.MyDonName);
         Assert.Equal(2u, setting.Identity.MyDonNameLanguage);
+        Assert.True(setting.Capabilities.SupportsTitlePlate);
         Assert.NotNull(setting.Customization);
         var kigurumi = Assert.Single(setting.Customization!.CostumeSlots, slot => slot.Slot == "kigurumi");
         Assert.Equal(12u, kigurumi.CurrentId);
@@ -82,6 +83,7 @@ public sealed class Ac15ProfileSettingsServiceTests
             ProfileCapabilities = new Ac15ProfileCapabilities(
                 CostumeSlots: [],
                 SupportsTitle: true,
+                SupportsTitlePlate: false,
                 SupportsTone: false,
                 SupportsColors: false,
                 SupportsDisplayDanOnNamePlate: true,
@@ -102,6 +104,7 @@ public sealed class Ac15ProfileSettingsServiceTests
 
         var setting = result.Setting!;
         Assert.NotNull(setting.Customization);
+        Assert.False(setting.Capabilities.SupportsTitlePlate);
         Assert.Empty(setting.Customization!.CostumeSlots);
         Assert.NotNull(setting.Customization.Title);
         Assert.Null(setting.Customization.Tone);

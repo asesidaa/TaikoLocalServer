@@ -12,7 +12,7 @@
                       ReadOnly="@TitleTextReadOnly" />
 
         <MudStack Spacing="0">
-            <MudText Typo="Typo.caption" Class="picker-activator-label">@Localizer["Title Plate"]</MudText>
+            <MudText Typo="Typo.caption" Class="picker-activator-label">@Localizer[SelectionLabelKey]</MudText>
             <MudButton Variant="Variant.Outlined"
                        FullWidth="true"
                        Disabled="@ReadOnly"
@@ -84,7 +84,7 @@
         };
 
         var options = new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true };
-        var dialog = await DialogService.ShowAsync<IdPickerDialog>(Localizer["Title Plate"], parameters, options);
+        var dialog = await DialogService.ShowAsync<IdPickerDialog>(Localizer[SelectionLabelKey], parameters, options);
         var result = await dialog.Result;
         if (result is null || result.Canceled || result.Data is not uint id)
         {
@@ -150,4 +150,6 @@
             : title.TitleName;
         return $"{title.TitleId} - {name}";
     }
+
+    private string SelectionLabelKey => TitlePickerCatalog.GetSelectionLabelKey(SelectionMode);
 }

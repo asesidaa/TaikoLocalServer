@@ -115,6 +115,7 @@ public sealed record Ac15ToneSelectionUpdateDto(
 public sealed record Ac15ProfileCapabilitiesDto(
     IReadOnlyList<string> CostumeSlots,
     bool SupportsTitle,
+    bool SupportsTitlePlate,
     bool SupportsTone,
     bool SupportsColors,
     bool SupportsDisplayDanOnNamePlate,

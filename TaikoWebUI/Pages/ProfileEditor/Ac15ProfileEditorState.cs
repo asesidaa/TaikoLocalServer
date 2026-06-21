@@ -18,6 +18,7 @@ public sealed class Ac15ProfileEditorState
         DisableHowToPlayTutorial = source.Options.Tutorials?.DisableHowToPlayTutorial ?? false;
         ApplyCostumeChangesFromPlayResults = source.Options.CustomizationBehavior?.ApplyCostumeChangesFromPlayResults ?? false;
         CostumeSlots = source.Customization?.CostumeSlots
+            .Where(slot => source.Capabilities.CostumeSlots.Contains(slot.Slot, StringComparer.Ordinal))
             .Select(slot => new Ac15CostumeSlotEditorState(
                 slot.Slot,
                 new CostumePickerValue(slot.CurrentId, slot.UnlockedIds)))
@@ -55,10 +56,12 @@ public sealed class Ac15ProfileEditorState
     public bool ShowTaikojukuOptions => Source.Options.Taikojuku is not null;
     public bool ShowTutorialOptions => Source.Options.Tutorials is not null;
     public bool ShowCustomizationBehaviorOptions => Source.Options.CustomizationBehavior is not null;
-    public bool ShowCustomization => Source.Customization is not null;
-    public bool ShowTitle => Source.Customization?.Title is not null;
-    public bool ShowTone => Source.Customization?.Tone is not null;
-    public bool ShowColors => Source.Customization?.Colors is not null;
+    public bool ShowCustomization => Source.Customization is not null
+        && (CostumeSlots.Count > 0 || ShowTitle || ShowTone || ShowColors);
+    public bool ShowTitle => Source.Capabilities.SupportsTitle && Source.Customization?.Title is not null;
+    public bool ShowTitlePlate => Source.Capabilities.SupportsTitlePlate && Source.Customization?.Title is not null;
+    public bool ShowTone => Source.Capabilities.SupportsTone && Source.Customization?.Tone is not null;
+    public bool ShowColors => Source.Capabilities.SupportsColors && Source.Customization?.Colors is not null;
 
     public static Ac15ProfileEditorState From(Ac15ProfileSettingsDto source)
         => new(source);

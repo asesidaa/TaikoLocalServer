@@ -10,6 +10,9 @@ public enum TitleSelectionMode
 
 public static class TitlePickerCatalog
 {
+    public static string GetSelectionLabelKey(TitleSelectionMode selectionMode)
+        => selectionMode == TitleSelectionMode.TitleId ? "Title" : "Title Plate";
+
     public static IReadOnlyList<uint> GetSelectableIds(
         IReadOnlyDictionary<uint, Title> catalog,
         uint currentId,

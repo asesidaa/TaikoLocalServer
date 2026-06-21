@@ -79,7 +79,7 @@ public static class Ac15EraProfiles
             HasInitialDataItemShopRows: false,
             HasInitialDataLegalTermsRows: false,
             HasTokkunTutorialFlagInUserData: false),
-        Ac15ProfileCapabilities.CurrentFull);
+        Ac15ProfileCapabilities.CurrentWithoutTitlePlate);
 
     public static Ac15EraProfile Murasaki { get; } = new(
         GameEra.Murasaki,
@@ -90,7 +90,7 @@ public static class Ac15EraProfiles
             HasInitialDataItemShopRows: false,
             HasInitialDataLegalTermsRows: false,
             HasTokkunTutorialFlagInUserData: false),
-        Ac15ProfileCapabilities.CurrentFull);
+        Ac15ProfileCapabilities.CurrentWithoutTitlePlate);
 
     public static int? GetMaxFavoriteSongs(GameEra era)
         => TryGet(era, out var profile) ? profile.Limits.MaxFavoriteSongs : null;

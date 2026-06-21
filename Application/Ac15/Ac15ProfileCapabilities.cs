@@ -5,6 +5,7 @@ namespace TaikoLocalServer.Application.Ac15;
 public sealed record Ac15ProfileCapabilities(
     IReadOnlyList<string> CostumeSlots,
     bool SupportsTitle,
+    bool SupportsTitlePlate,
     bool SupportsTone,
     bool SupportsColors,
     bool SupportsDisplayDanOnNamePlate,
@@ -18,6 +19,7 @@ public sealed record Ac15ProfileCapabilities(
     public static Ac15ProfileCapabilities CurrentFull { get; } = new(
         CostumeSlots: ["kigurumi", "head", "body", "face", "puchi"],
         SupportsTitle: true,
+        SupportsTitlePlate: true,
         SupportsTone: true,
         SupportsColors: true,
         SupportsDisplayDanOnNamePlate: true,
@@ -28,10 +30,16 @@ public sealed record Ac15ProfileCapabilities(
         SupportsDefaultSelectedSelfBestDifficulty: true,
         SupportsTaikojukuFolderDan: true);
 
+    public static Ac15ProfileCapabilities CurrentWithoutTitlePlate { get; } = CurrentFull with
+    {
+        SupportsTitlePlate = false
+    };
+
     public Ac15ProfileCapabilitiesDto ToDto()
         => new(
             CostumeSlots,
             SupportsTitle,
+            SupportsTitlePlate,
             SupportsTone,
             SupportsColors,
             SupportsDisplayDanOnNamePlate,

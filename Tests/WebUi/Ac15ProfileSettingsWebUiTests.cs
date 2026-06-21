@@ -71,6 +71,41 @@ public sealed class Ac15ProfileSettingsWebUiTests
     }
 
     [Fact]
+    public void EditorState_KeepsTitleCustomizationWhenTitlePlateUnsupported()
+    {
+        var dto = CreateAc15Dto(
+            customization: new Ac15CustomizationDto(
+                CostumeSlots: [],
+                Title: new Ac15TitleSelectionDto("White Title", 10, [10]),
+                Tone: null,
+                Colors: null),
+            options: new Ac15ProfileOptionGroupsDto(
+                NamePlate: null,
+                Folder: null,
+                SongSelect: null,
+                Taikojuku: null,
+                Tutorials: null,
+                CustomizationBehavior: null),
+            capabilities: Ac15ProfileCapabilities.CurrentWithoutTitlePlate.ToDto());
+
+        var state = Ac15ProfileEditorState.From(dto);
+
+        Assert.True(state.ShowCustomization);
+        Assert.True(state.ShowTitle);
+        Assert.False(state.ShowTitlePlate);
+        var update = state.ToUpdateDto(includeUnlockLists: true);
+        Assert.Equal("White Title", update.Customization!.Title!.TitleText);
+        Assert.Equal(10u, update.Customization.Title.TitleId);
+    }
+
+    [Fact]
+    public void TitlePickerCatalog_UsesModeSpecificSelectionLabels()
+    {
+        Assert.Equal("Title", TitlePickerCatalog.GetSelectionLabelKey(TitleSelectionMode.TitleId));
+        Assert.Equal("Title Plate", TitlePickerCatalog.GetSelectionLabelKey(TitleSelectionMode.TitlePlate));
+    }
+
+    [Fact]
     public async Task GetProfileDisplayNameAsync_UsesAc15RouteForAc15AndUserSettingsForNijiiro()
     {
         var handler = new RecordingHandler();
@@ -120,14 +155,15 @@ public sealed class Ac15ProfileSettingsWebUiTests
 
     private static Ac15ProfileSettingsDto CreateAc15Dto(
         Ac15CustomizationDto? customization,
-        Ac15ProfileOptionGroupsDto options)
+        Ac15ProfileOptionGroupsDto options,
+        Ac15ProfileCapabilitiesDto? capabilities = null)
         => new(
             Era: "Blue",
             Baid: 1,
             Identity: new Ac15ProfileIdentityDto("DON", 0),
             Customization: customization,
             Options: options,
-            Capabilities: Ac15ProfileCapabilities.CurrentFull.ToDto(),
+            Capabilities: capabilities ?? Ac15ProfileCapabilities.CurrentFull.ToDto(),
             LastPlayDateTime: DateTime.UnixEpoch);
 
     private sealed class RecordingHandler : HttpMessageHandler
@@ -152,6 +188,7 @@ public sealed class Ac15ProfileSettingsWebUiTests
                   "capabilities": {
                     "costumeSlots": [],
                     "supportsTitle": false,
+                    "supportsTitlePlate": false,
                     "supportsTone": false,
                     "supportsColors": false,
                     "supportsDisplayDanOnNamePlate": false,
@@ -176,6 +213,7 @@ public sealed class Ac15ProfileSettingsWebUiTests
                   "capabilities": {
                     "costumeSlots": [],
                     "supportsTitle": false,
+                    "supportsTitlePlate": false,
                     "supportsTone": false,
                     "supportsColors": false,
                     "supportsDisplayDanOnNamePlate": false,
@@ -199,6 +237,7 @@ public sealed class Ac15ProfileSettingsWebUiTests
                   "capabilities": {
                     "costumeSlots": [],
                     "supportsTitle": false,
+                    "supportsTitlePlate": false,
                     "supportsTone": false,
                     "supportsColors": false,
                     "supportsDisplayDanOnNamePlate": false,
@@ -222,6 +261,7 @@ public sealed class Ac15ProfileSettingsWebUiTests
                   "capabilities": {
                     "costumeSlots": [],
                     "supportsTitle": false,
+                    "supportsTitlePlate": false,
                     "supportsTone": false,
                     "supportsColors": false,
                     "supportsDisplayDanOnNamePlate": false,
@@ -245,6 +285,7 @@ public sealed class Ac15ProfileSettingsWebUiTests
                   "capabilities": {
                     "costumeSlots": [],
                     "supportsTitle": false,
+                    "supportsTitlePlate": false,
                     "supportsTone": false,
                     "supportsColors": false,
                     "supportsDisplayDanOnNamePlate": false,
