@@ -5,6 +5,32 @@ namespace TaikoLocalServer.Tests.Murasaki;
 public sealed class MurasakiRuntimeHandlerTests
 {
     [Fact]
+    public void Ac15EraProfiles_Murasaki_UsesEstablishedByteLimits()
+    {
+        var limits = Ac15EraProfiles.Murasaki.Limits;
+        var save = UserSaveDataMurasakiExtensions.CreateDefaultMurasakiSaveData(1);
+
+        Assert.Equal(128, limits.SongFlagBytes);
+        Assert.Equal(16, limits.ToneFlagBytes);
+        Assert.Equal(128, limits.TitleFlagBytes);
+        Assert.Equal(32, limits.CostumeFlagBytes);
+        Assert.Equal(18, limits.DanFlagBytes);
+        Assert.Equal(36, limits.DanExtraFlagBytes);
+        Assert.Equal(32, limits.ContentInfoBytes);
+        Assert.Equal(1280, limits.CrownPackedBytes);
+        Assert.Equal(1024, limits.CrownSongCount);
+        Assert.Equal(10, limits.MaxFavoriteSongs);
+        Assert.Equal(5, limits.MaxRecentSongs);
+        Assert.Equal(2, save.DefaultOptionSetting.Length);
+        Assert.Equal(limits.SongFlagBytes, save.ReleaseSongFlg.Length);
+        Assert.Equal(limits.ToneFlagBytes, save.ToneFlg.Length);
+        Assert.Equal(limits.TitleFlagBytes, save.TitleFlg.Length);
+        Assert.Equal(limits.CostumeFlagBytes, save.CostumeFlg1.Length);
+        Assert.Equal(limits.DanFlagBytes, save.GotDanFlg.Length);
+        Assert.Equal(limits.DanExtraFlagBytes, save.GotDanExtraFlg.Length);
+    }
+
+    [Fact]
     public async Task AddMyDonEntry_Murasaki_CreatesSharedIdentityAndMurasakiSaveOnly()
     {
         await using var fixture = await MurasakiHandlerFixture.CreateAsync();
@@ -253,6 +279,40 @@ public sealed class MurasakiRuntimeHandlerTests
         Assert.Empty(await fixture.Context.DanScoreDataYellow.Where(row => row.Baid == 1).ToListAsync());
         Assert.Empty(await fixture.Context.DanScoreDataRed.Where(row => row.Baid == 1).ToListAsync());
         Assert.Empty(await fixture.Context.DanScoreDataWhite.Where(row => row.Baid == 1).ToListAsync());
+    }
+
+    [Fact]
+    public async Task UpdatePlayResult_Murasaki_ChallengeArraysDoNotCreateChallengeOrShopState()
+    {
+        await using var fixture = await MurasakiHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataMurasaki.Add(UserSaveDataMurasakiExtensions.CreateDefaultMurasakiSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+        var handler = CreateHandler(fixture);
+
+        var stage = CreateStage(101, 1, 0) with
+        {
+            ChallengeIds = [new Ac15CompeIdFact(42, 1)],
+            UserCompeIds = [new Ac15CompeIdFact(43, 2)],
+            BngCompeIds = [new Ac15CompeIdFact(44, 3)]
+        };
+
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
+            1,
+            GameEra.Murasaki,
+            stages: [stage]),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        Assert.Single(await fixture.Context.SongPlayDataMurasaki.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Single(await fixture.Context.SongBestDataMurasaki.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.RedDonChallengeRawFacts.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.RedDonChallengeProgress.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.WhiteDonChallengeRawFacts.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.WhiteDonChallengeProgress.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.BlueShopSeasonStates.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.GreenShopSeasonStates.Where(row => row.Baid == 1).ToListAsync());
+        Assert.Empty(await fixture.Context.YellowShopSeasonStates.Where(row => row.Baid == 1).ToListAsync());
     }
 
     private static UpdatePlayResultCommandHandler CreateHandler(MurasakiHandlerFixture fixture)

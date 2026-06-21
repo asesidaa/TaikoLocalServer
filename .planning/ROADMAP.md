@@ -21,6 +21,7 @@
 ## Phases
 
 **Phase Numbering:**
+
 - Integer phases (28, 29, 30): planned milestone work
 - Decimal phases (28.1, 28.2): urgent insertions, if needed later
 
@@ -29,86 +30,107 @@
 - [x] **Phase 30: Split Metadata Readback** - Implement Murasaki split metadata and operational readback routes without copying White `initialdatacheck.php`.
 - [x] **Phase 31: Identity, Userdata, Self-Best, and Normal Read Paths** - Expose Murasaki-owned identity, userdata, self-best, crown, favorite, recent, and release-song read paths.
 - [x] **Phase 32: Normal Playresult, Dani, Reward, and Don Point Mutation** - Persist normal play, Dani, reward, present, special-BAID, and Don Point behavior only through Murasaki-owned state where proven.
-- [ ] **Phase 33: Evidence-Gated Special Capabilities** - Resolve and implement only proven high-risk surfaces such as bestscore, songhash, shopping, challenge arrays, and reserved byte payloads.
+- [x] **Phase 33: Evidence-Gated Special Capabilities** - Resolve and implement only proven high-risk surfaces such as bestscore, songhash, shopping, challenge arrays, and reserved byte payloads. (completed 2026-06-21)
 - [ ] **Phase 34: AdminApi/WebUI and Runtime Closeout** - Expose implemented Murasaki-owned state in operator surfaces and close only after automated and user-observed verification.
 
 ## Phase Details
 
 ### Phase 28: Murasaki Evidence and Era Foundation
+
 **Goal**: Developers can enable a first-class no-state Murasaki era only after route, root, transport, and wire ownership evidence is recorded.
 **Depends on**: v1.4 shipped through Phase 27 and inserted Phase 23.1
 **Requirements**: MFND-01, MFND-02, MFND-03
 **Success Criteria** (what must be TRUE):
+
   1. Developer can review a Murasaki evidence record identifying startup/game route prefixes, approved `.php` suffixes, direct-protobuf expectations, active data root, binary/IDA handles, absent `initialdatacheck.php` evidence, and unresolved gaps.
   2. `GameEra.Murasaki` can be enabled with adapter-local generated wire DTOs, era settings, Host/DI/application-part gating, `/v06r00/chassis/*.php` route ownership, and shared `/v01r00/chassis/*` startup/version use only where evidence supports it.
   3. Disabled-era checks and existing supported-era route/build regression checks show Murasaki scaffolding does not expose disabled routes or change Blue, Green, Yellow, Red, White, Nijiiro, or shared startup behavior.
   4. Dumped `proto/murasaki` inputs remain immutable; any shared code introduced by the phase is capability-owned and protected by observable regression checks.
+
 **Plans**: 1 complete
 
 ### Phase 29: Catalog and AC15 Profile Binding
+
 **Goal**: Murasaki catalog and profile facts are loaded through proven data roots and explicit capability limits before runtime state depends on them.
 **Depends on**: Phase 28
 **Requirements**: MCAT-01, MCAT-02, MCAT-03
 **Success Criteria** (what must be TRUE):
+
   1. Murasaki catalog initialization loads only the proven active data root and validates required music, medley, tuning, folder, telop, recommendation, Taikojuku, present, and special-BAID inputs through Murasaki data-path helpers.
   2. Murasaki exposes an explicit AC15 capability/profile model with proven protocol limits, favorite cap 10 where proven, Don Point/root limits where proven, split metadata support, and disabled absent surfaces.
   3. Server-authored Murasaki sidecar data exists and is copied for every implemented feature that requires committed data outside raw operator files, including intentionally empty sidecars where conservative behavior is the contract.
   4. Any nontrivial Murasaki catalog/profile Mapperly projections can be inspected in generated source, with handwritten mapper code limited to configured helper conversions.
+
 **Plans**: 1 complete
 
 ### Phase 30: Split Metadata Readback
+
 **Goal**: Murasaki split metadata routes return evidence-backed catalog and byte readback without introducing a White-style monolithic initial-data contract.
 **Depends on**: Phase 29
 **Requirements**: MMETA-01, MMETA-02, MMETA-03
 **Success Criteria** (what must be TRUE):
+
   1. Proven Murasaki split metadata routes such as `defaultsong.php`, `mainichisong.php`, `foldercheck.php`, `getfolder.php`, `telopcheck.php`, and `gettelop.php` use dedicated Application queries and Murasaki mappers.
   2. The cabinet can receive catalog-backed Murasaki default song, mainichi song, folder, telop, recommendation/readiness, and related metadata responses without a White `initialdatacheck.php` route or contract.
   3. Song-hash, default-song, mainichi-song, release-song, crown, content, option, and reserved byte payloads are emitted only from proven Murasaki limits, verified compatible packers, or documented conservative defaults.
   4. Operational routes such as `heartbeat.php`, `bookkeeping.php`, `communicationlog.php`, and `headclerk2.php` behave only as route-evidence-backed catalog, log-success, or no-state compatibility endpoints and do not create economy, audit, or gameplay persistence.
+
 **Plans**: 1 complete
 
 ### Phase 31: Identity, Userdata, Self-Best, and Normal Read Paths
+
 **Goal**: Cabinets and operators can read Murasaki-owned profile and normal-play state without introducing normal playresult mutations yet.
 **Depends on**: Phase 30
 **Requirements**: MSTATE-01, MSTATE-03
 **Success Criteria** (what must be TRUE):
+
   1. A Murasaki cabinet can register or find a card, create mydon/profile defaults, and read userdata from Murasaki-owned save/profile tables.
   2. Murasaki self-best, crown, favorite, recent-song, and release-song readback uses Murasaki protocol byte and array limits, including favorite cap 10 where proven.
   3. `bestscore.php` or global ranking data is not used as a substitute for per-user self-best readback.
   4. Persistence checks show Murasaki read paths do not read or write White, Red, Yellow, Blue, Green, Nijiiro, or unsupported Murasaki gameplay state.
+
 **Plans**: 1 complete
 
 ### Phase 32: Normal Playresult, Dani, Reward, and Don Point Mutation
+
 **Goal**: Murasaki normal play, Dani, reward, present, special-BAID, and Don Point mutations persist through Murasaki-owned state where local evidence proves the contract.
 **Depends on**: Phase 31
 **Requirements**: MSTATE-02, MSTATE-04, MSPEC-01
 **Success Criteria** (what must be TRUE):
+
   1. Murasaki normal playresult uploads update Murasaki-owned score, self-best, crown, favorite, recent-song, unlock, reward/progress, and profile-counter rows where Murasaki protocol and data shapes match.
   2. Murasaki Taikojuku/Dani uploads and readback write only Murasaki-owned Dan state when payload and catalog evidence proves the contract; unsupported gaps are documented instead of invented.
   3. Reward, present, special-BAID, and Don Point behavior uses Murasaki-owned profile/unlock flags plus local `present.xml`, `spacialbaid.xml`, and protocol evidence.
   4. Normal mutation paths do not create Yellow item-shop, medal, Banacoin wallet/payment, unrelated unlock, unsupported mode, or cross-era state changes.
+
 **Plans**: 1 complete
 
 ### Phase 33: Evidence-Gated Special Capabilities
+
 **Goal**: High-risk Murasaki special surfaces are either implemented from targeted evidence or explicitly documented as conservative/absent behavior.
 **Depends on**: Phase 32
 **Requirements**: MSPEC-02, MSPEC-03
 **Success Criteria** (what must be TRUE):
+
   1. Developer can review targeted binary/log/cabinet evidence for `bestscore.php`, `songhash.php`, `shoppingresult.php`, challenge arrays, `content_info`, `default_option_setting`, and reserved bytes, including route sequence, byte sizes, defaults, and state authority where known.
   2. Any implemented special capability is bounded to evidence-backed behavior and does not fake global rankings from self-best rows, invent shopping authority, or guess byte semantics.
   3. Murasaki Don Challenge-like behavior is implemented only if local Murasaki data and client read/write semantics prove a server-side contract.
   4. If evidence is insufficient, conservative no-state/default behavior is documented and verified without copying Red `challengecompe.php` routing or White Don Challenge behavior by assumption.
-**Plans**: TBD
+
+**Plans**: 1 complete
 
 ### Phase 34: AdminApi/WebUI and Runtime Closeout
+
 **Goal**: Operators can use AdminApi/WebUI surfaces for implemented Murasaki-owned state, and Murasaki support closes only after automated proof plus user-accepted runtime evidence.
 **Depends on**: Phase 33
 **Requirements**: MVER-01, MVER-02, MVER-03
 **Success Criteria** (what must be TRUE):
+
   1. AdminApi and WebUI expose only implemented Murasaki-owned profile, score/history, favorite, Dani, reward, catalog, and customization surfaces through era-routed contracts.
   2. Unsupported Murasaki global-score, shopping, Don Challenge, challenge, or special capability controls remain absent unless Phase 33 proved and implemented them.
   3. Automated verification covers Murasaki observable routes, handlers, catalog loading, persistence, mapper/classifier behavior, protocol packing, build-output copy, and no-cross-era/no-cross-mode boundaries.
   4. Closeout records Mapperly generated-source inspection for nontrivial mappings, a Host build using temp output if needed, and user-accepted cabinet/RPCS3 plus WebUI evidence for implemented Murasaki flows.
+
 **Plans**: TBD
 **UI hint**: yes
 
@@ -158,7 +180,7 @@ See `.planning/milestones/v1.4-ROADMAP.md` and `.planning/milestones/v1.4-phases
 | 30. Split Metadata Readback | v1.5 | 1/1 | Complete | 2026-06-21 |
 | 31. Identity, Userdata, Self-Best, and Normal Read Paths | v1.5 | 1/1 | Complete | 2026-06-21 |
 | 32. Normal Playresult, Dani, Reward, and Don Point Mutation | v1.5 | 1/1 | Complete | 2026-06-21 |
-| 33. Evidence-Gated Special Capabilities | v1.5 | 0/TBD | Not started | - |
+| 33. Evidence-Gated Special Capabilities | v1.5 | 1/1 | Complete    | 2026-06-21 |
 | 34. AdminApi/WebUI and Runtime Closeout | v1.5 | 0/TBD | Not started | - |
 
 ## Milestone Progress

@@ -34,8 +34,8 @@
 ### Murasaki Special Capabilities
 
 - [x] **MSPEC-01**: Murasaki reward, present, special-BAID, and Don Point behavior uses Murasaki-owned profile/unlock flags plus local `present.xml`, `spacialbaid.xml`, and protocol evidence without creating Yellow item-shop, medal, Banacoin wallet/payment, or unrelated unlock semantics.
-- [ ] **MSPEC-02**: Murasaki `bestscore.php`, `songhash.php`, `shoppingresult.php`, challenge arrays, `content_info`, `default_option_setting`, and reserved bytes get targeted binary/log/cabinet evidence and a bounded implementation only where that evidence defines route sequence, byte sizes, defaults, and state authority; otherwise their conservative behavior is documented.
-- [ ] **MSPEC-03**: Murasaki Don Challenge-like behavior is implemented only if local Murasaki data and client read/write semantics prove a server-side contract; Red `challengecompe.php` routing and White Don Challenge behavior are not copied by assumption.
+- [x] **MSPEC-02**: Murasaki `bestscore.php`, `songhash.php`, `shoppingresult.php`, challenge arrays, `content_info`, `default_option_setting`, and reserved bytes get targeted binary/log/cabinet evidence and a bounded implementation only where that evidence defines route sequence, byte sizes, defaults, and state authority; otherwise their conservative behavior is documented.
+- [x] **MSPEC-03**: Murasaki Don Challenge-like behavior is implemented only if local Murasaki data and client read/write semantics prove a server-side contract; Red `challengecompe.php` routing and White Don Challenge behavior are not copied by assumption.
 
 ### Admin, Verification, And Closeout
 
@@ -90,8 +90,8 @@ Roadmap phase mapping for v1.5 Murasaki AC15 Support. Updated during roadmap cre
 | MSTATE-03 | Phase 31 | Complete |
 | MSTATE-04 | Phase 32 | Complete |
 | MSPEC-01 | Phase 32 | Complete |
-| MSPEC-02 | Phase 33 | Pending |
-| MSPEC-03 | Phase 33 | Pending |
+| MSPEC-02 | Phase 33 | Complete |
+| MSPEC-03 | Phase 33 | Complete |
 | MVER-01 | Phase 34 | Pending |
 | MVER-02 | Phase 34 | Pending |
 | MVER-03 | Phase 34 | Pending |
