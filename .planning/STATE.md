@@ -6,9 +6,9 @@ current_phase: 34
 current_phase_name: AdminApi/WebUI and Runtime Closeout
 status: in_progress
 stopped_at: Phase 34 implementation and automated verification complete; awaiting user-observed cabinet/RPCS3 and WebUI acceptance
-last_updated: "2026-06-21T22:35:32+08:00"
+last_updated: "2026-06-21T23:39:54+08:00"
 last_activity: 2026-06-21
-last_activity_desc: Phase 34 AdminApi/WebUI implementation and automated verification complete
+last_activity_desc: "Completed quick task 260621-w8x: improve WebUI era selection and capability visibility"
 progress:
   total_phases: 7
   completed_phases: 6
@@ -31,7 +31,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-21)
 Phase: 34 of 34 (AdminApi/WebUI and Runtime Closeout)
 Plan: 34-01 implemented; manual acceptance pending
 Status: Automated implementation and verification complete; awaiting user-observed cabinet/RPCS3 and WebUI acceptance
-Last activity: 2026-06-21 - Phase 34 AdminApi/WebUI implementation and automated verification complete
+Last activity: 2026-06-21 - Completed quick task 260621-w8x: improve WebUI era selection and capability visibility
 
 Progress: [##########] 95%
 
@@ -80,6 +80,12 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 - Unsupported Murasaki special surfaces such as `bestscore.php`, `songhash.php`, `shoppingresult.php`, ChallengeCompe, Don Challenge, Yellow shop, Banacoin, and global-score persistence remain future evidence-gated work.
 - Cabinet/RPCS3 and WebUI acceptance are the remaining closeout gates for Phase 34 and must not be claimed from automated tests alone.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260621-w8x | Improve WebUI era selection and capability visibility | 2026-06-21 | 7007f7cb | [260621-w8x-let-s-have-a-quick-pass-to-improve-web-u](./quick/260621-w8x-let-s-have-a-quick-pass-to-improve-web-u/) |
 
 ## Deferred Items
 
