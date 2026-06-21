@@ -39,8 +39,8 @@
 
 ### Admin, Verification, And Closeout
 
-- [ ] **MVER-01**: AdminApi and WebUI expose only implemented Murasaki-owned readback and edit surfaces through existing era-routed contracts and do not read or write another era's gameplay state.
-- [ ] **MVER-02**: Automated verification covers Murasaki observable route, handler, catalog, persistence, mapper/classifier, protocol packing, build-output copy, and no-cross-era/no-cross-mode behavior without adding implementation-shape tests that do not protect cabinet behavior.
+- [x] **MVER-01**: AdminApi and WebUI expose only implemented Murasaki-owned readback and edit surfaces through existing era-routed contracts and do not read or write another era's gameplay state.
+- [x] **MVER-02**: Automated verification covers Murasaki observable route, handler, catalog, persistence, mapper/classifier, protocol packing, build-output copy, and no-cross-era/no-cross-mode behavior without adding implementation-shape tests that do not protect cabinet behavior.
 - [ ] **MVER-03**: Murasaki support closes only after full automated verification, Mapperly generated-source inspection for nontrivial mappings, a Host build using temp output if needed, and user-accepted cabinet/RPCS3 and WebUI evidence for implemented Murasaki flows.
 
 ## Future Requirements
@@ -92,8 +92,8 @@ Roadmap phase mapping for v1.5 Murasaki AC15 Support. Updated during roadmap cre
 | MSPEC-01 | Phase 32 | Complete |
 | MSPEC-02 | Phase 33 | Complete |
 | MSPEC-03 | Phase 33 | Complete |
-| MVER-01 | Phase 34 | Pending |
-| MVER-02 | Phase 34 | Pending |
+| MVER-01 | Phase 34 | Complete |
+| MVER-02 | Phase 34 | Complete |
 | MVER-03 | Phase 34 | Pending |
 | MLATER-01 | Future milestone | Deferred |
 | MSPEC-04 | Future milestone | Deferred |
@@ -107,4 +107,4 @@ Roadmap phase mapping for v1.5 Murasaki AC15 Support. Updated during roadmap cre
 
 ---
 *Requirements defined: 2026-06-21*
-*Last updated: 2026-06-21 after phases 28-32 implementation*
+*Last updated: 2026-06-21 after Phase 34 automated verification; manual runtime/WebUI acceptance remains pending*

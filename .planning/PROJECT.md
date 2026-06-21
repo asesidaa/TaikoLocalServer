@@ -4,7 +4,7 @@
 
 TaikoLocalServer is a local ASP.NET Core server for Taiko no Tatsujin cabinet protocols, local SQLite persistence, era-specific game data catalogs, and a Blazor WebAssembly admin UI. This project continues the existing Blue-era support effort from the Superpowers roadmap in `docs/superpowers/specs/2026-05-27-blue-support-roadmap-design.md`, starting after completed stages A0-A5 and carrying the work through full Blue support.
 
-Full Blue, Yellow, Red, and White 0.13 support are complete. The project now supports Nijiiro, Green AC15, Blue AC15, Yellow AC15, Red AC15, White AC15, and server-side Murasaki AC15 phases 28-32 in one process while preserving era-owned routes, wire DTOs, persistence, handlers, mappers, catalogs, and tests. Remaining Murasaki work targets evidence-gated special capabilities plus AdminApi/WebUI closeout.
+Full Blue, Yellow, Red, and White 0.13 support are complete. The project now supports Nijiiro, Green AC15, Blue AC15, Yellow AC15, Red AC15, White AC15, and Murasaki AC15 automated implementation through Phase 34 in one process while preserving era-owned routes, wire DTOs, persistence, handlers, mappers, catalogs, and tests. Remaining Murasaki closeout work is user-observed cabinet/RPCS3 and WebUI acceptance.
 
 ## Core Value
 
@@ -30,7 +30,7 @@ Current milestone: **v1.5 Murasaki AC15 Support**
 
 **Current milestone goal:** Add first-class Murasaki support by assembling White-like older AC15 capabilities where local Murasaki proto/data proves compatibility, while evidence-gating changed wire shapes and new request families.
 
-Current stop point: Phases 28-32 are implemented and verified. Phase 33 remains responsible for Murasaki-specific or older-version special surfaces such as `bestscore.php`, `songhash.php`, `shoppingresult.php`, challenge arrays, `content_info`, `default_option_setting`, and reserved bytes.
+Current stop point: Phases 28-34 are implemented and automated verification has passed. Phase 34 remains open until user-observed cabinet/RPCS3 and WebUI acceptance is recorded.
 
 ## Current Milestone: v1.5 Murasaki AC15 Support
 
@@ -39,10 +39,10 @@ Current stop point: Phases 28-32 are implemented and verified. Phase 33 remains 
 **Target features:**
 - First-class `GameEra.Murasaki` foundation with Murasaki-owned adapter, generated wire DTOs from `proto/murasaki`, Host gating, route handling, direct-protobuf transport where proven, and shared startup/version ownership only where `proto/murasaki/vsinterface.proto` and client evidence agree. Implemented through Phase 28.
 - Route/root evidence from local Murasaki binary/client data before locking the game route prefix and active config root. Local data currently exposes `ST5100-1`, `ST5100-7`, and `ST6100-1`; runtime root must not be guessed from filenames.
-- Catalog/profile/runtime binding through existing AC15/White-era capabilities where wire/data semantics match: identity, BAID/mydon, userdata, normal play, self-best/crowns, favorites/recent, folders/telops/recommendations, Dani/Taikojuku, and reward/Don Point fields. Implemented through Phase 32. Don Challenge-like challenge arrays remain Phase 33 evidence-gated.
-- Murasaki-specific protocol mapping for changed wire shape: the local `taiko.proto` does not expose the White-style monolithic `initialdatacheck` message and instead splits metadata across request families. Implemented split metadata for `defaultsong`, `mainichisong`, `foldercheck`, `getfolder`, `telopcheck`, and `gettelop`; `songhash` and `bestscore` remain Phase 33.
-- Binary/client evidence pass for new or unclear request families and byte fields, especially global-ranking/high-score readback, song hash tables, default/mainichi song hashes, `content_info`, `default_option_setting`, and reserved payload fields.
-- AdminApi/WebUI parity only for implemented Murasaki-owned state, with final runtime/WebUI closeout gated by user-observed cabinet/RPCS3 verification.
+- Catalog/profile/runtime binding through existing AC15/White-era capabilities where wire/data semantics match: identity, BAID/mydon, userdata, normal play, self-best/crowns, favorites/recent, folders/telops/recommendations, Dani/Taikojuku, and reward/Don Point fields. Implemented through Phase 32.
+- Murasaki-specific protocol mapping for changed wire shape: the local `taiko.proto` does not expose the White-style monolithic `initialdatacheck` message and instead splits metadata across request families. Implemented split metadata for `defaultsong`, `mainichisong`, `foldercheck`, `getfolder`, `telopcheck`, and `gettelop`.
+- Phase 33 closed unsupported special surfaces conservatively: `bestscore.php`, `songhash.php`, and `shoppingresult.php` remain absent because no current route evidence exists; challenge arrays do not enable Don Challenge or ChallengeCompe behavior.
+- AdminApi/WebUI parity for implemented Murasaki-owned state is implemented and automated verification passed; final closeout remains gated by user-observed cabinet/RPCS3 and WebUI acceptance.
 
 ## Requirements
 
@@ -92,8 +92,8 @@ Current stop point: Phases 28-32 are implemented and verified. Phase 33 remains 
 - [x] Prove Murasaki route prefix, transport, startup/version ownership, and active data root before binding runtime behavior.
 - [x] Map Murasaki wire DTOs through application/common capability shapes rather than persisting wire DTOs directly.
 - [x] Reuse existing AC15/White-like capabilities only where Murasaki proto/data/client evidence proves the same behavior and limits.
-- [ ] Model new Murasaki request families, byte fields, and global high-score semantics as new evidence-backed capabilities after binary/client investigation.
-- [ ] Expose AdminApi/WebUI readback only for implemented Murasaki-owned state and close support only after automated verification plus user-observed cabinet/RPCS3 evidence.
+- [x] Model currently scoped Murasaki request families, byte fields, and global high-score semantics as evidence-backed or explicitly absent behavior after binary/client investigation.
+- [ ] Close Murasaki support only after user-observed cabinet/RPCS3 and WebUI evidence for implemented flows.
 
 ### Out of Scope
 

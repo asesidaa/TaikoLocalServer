@@ -103,6 +103,7 @@ public sealed class Ac15ProfileSettingsWebUiTests
 
         await client.GetProfileDisplayNameAsync("Red", 99);
         await client.GetProfileDisplayNameAsync("White", 98);
+        await client.GetProfileDisplayNameAsync("Murasaki", 97);
         await client.GetProfileDisplayNameAsync("Green", 100);
         await client.GetProfileDisplayNameAsync("Nijiiro", 101);
 
@@ -110,6 +111,7 @@ public sealed class Ac15ProfileSettingsWebUiTests
             [
                 "api/Red/Ac15ProfileSettings/99",
                 "api/White/Ac15ProfileSettings/98",
+                "api/Murasaki/Ac15ProfileSettings/97",
                 "api/Green/Ac15ProfileSettings/100",
                 "api/Nijiiro/UserSettings/101"
             ],
@@ -192,6 +194,29 @@ public sealed class Ac15ProfileSettingsWebUiTests
                   "era": "White",
                   "baid": 98,
                   "identity": { "myDonName": "WHITE", "myDonNameLanguage": 0 },
+                  "customization": null,
+                  "options": {},
+                  "capabilities": {
+                    "costumeSlots": [],
+                    "supportsTitle": false,
+                    "supportsTone": false,
+                    "supportsColors": false,
+                    "supportsDisplayDanOnNamePlate": false,
+                    "supportsFolderCloseButton": false,
+                    "supportsAutoCostume": false,
+                    "supportsHowToPlayTutorialFlag": false,
+                    "supportsLocalRankingDifficulty": false,
+                    "supportsDefaultSelectedSelfBestDifficulty": false,
+                    "supportsTaikojukuFolderDan": false
+                  },
+                  "lastPlayDateTime": "1970-01-01T00:00:00Z"
+                }
+                """,
+                "api/Murasaki/Ac15ProfileSettings/97" => """
+                {
+                  "era": "Murasaki",
+                  "baid": 97,
+                  "identity": { "myDonName": "MURASAKI", "myDonNameLanguage": 0 },
                   "customization": null,
                   "options": {},
                   "capabilities": {

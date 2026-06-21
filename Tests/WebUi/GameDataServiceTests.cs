@@ -87,6 +87,22 @@ public sealed class GameDataServiceTests
     }
 
     [Fact]
+    public async Task InitializeAsync_LoadsMurasakiDanDataWhenEnabled()
+    {
+        var handler = new RecordingHandler();
+        using var client = new HttpClient(handler)
+        {
+            BaseAddress = new Uri("http://localhost/")
+        };
+        var service = new GameDataService(client);
+
+        await service.InitializeAsync("http://localhost/", ["Murasaki"]);
+
+        Assert.Equal(["api/Murasaki/GameData/DanData"], handler.RequestPaths);
+        Assert.Empty(service.GetDanMap("White"));
+    }
+
+    [Fact]
     public async Task CatalogLookups_RequestYellowAdminApiRoutes()
     {
         var handler = new RecordingHandler();
@@ -168,6 +184,33 @@ public sealed class GameDataServiceTests
     }
 
     [Fact]
+    public async Task CatalogLookups_RequestMurasakiAdminApiRoutes()
+    {
+        var handler = new RecordingHandler();
+        using var client = new HttpClient(handler)
+        {
+            BaseAddress = new Uri("http://localhost/")
+        };
+        var service = new GameDataService(client);
+
+        await service.InitializeAsync("http://localhost/", ["Murasaki"]);
+        await service.GetMusicDetailDictionary("Murasaki");
+        await service.GetCostumeList("Murasaki");
+        await service.GetTitleDictionary("Murasaki");
+        await service.GetNeiroDictionary("Murasaki");
+
+        Assert.Equal(
+            [
+                "api/Murasaki/GameData/DanData",
+                "api/Murasaki/GameData/MusicDetails",
+                "api/Murasaki/customization/costumes",
+                "api/Murasaki/customization/titles",
+                "api/Murasaki/customization/neiros"
+            ],
+            handler.RequestPaths);
+    }
+
+    [Fact]
     public async Task LegacyCatalogLookups_UseFirstEnabledEra()
     {
         var handler = new RecordingHandler();
@@ -196,9 +239,9 @@ public sealed class GameDataServiceTests
     [Fact]
     public void NormalizeEnabled_IgnoresUnsupportedEras()
     {
-        var enabled = WebUiEra.NormalizeEnabled(["Yellow", "Red", "White", "Unknown"]);
+        var enabled = WebUiEra.NormalizeEnabled(["Yellow", "Red", "White", "Murasaki", "Unknown"]);
 
-        Assert.Equal(["Yellow", "Red", "White"], enabled);
+        Assert.Equal(["Yellow", "Red", "White", "Murasaki"], enabled);
     }
 
     [Fact]
@@ -214,16 +257,24 @@ public sealed class GameDataServiceTests
     }
 
     [Fact]
+    public void Murasaki_IsAc15()
+    {
+        Assert.True(WebUiEra.IsAc15("Murasaki"));
+    }
+
+    [Fact]
     public void FavoriteSongLimit_UsesServerSuppliedEraLimit()
     {
         var favoriteSongLimits = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
         {
             ["Red"] = 5,
-            ["Green"] = 10
+            ["Green"] = 10,
+            ["Murasaki"] = 10
         };
 
         Assert.Equal(5, WebUiEra.GetFavoriteSongLimit("red", favoriteSongLimits));
         Assert.Equal(10, WebUiEra.GetFavoriteSongLimit("Green", favoriteSongLimits));
+        Assert.Equal(10, WebUiEra.GetFavoriteSongLimit("murasaki", favoriteSongLimits));
         Assert.Null(WebUiEra.GetFavoriteSongLimit("Nijiiro", favoriteSongLimits));
     }
 
@@ -242,11 +293,19 @@ public sealed class GameDataServiceTests
     }
 
     [Fact]
+    public void Murasaki_RouteHelpersPreserveEra()
+    {
+        Assert.Equal("Users/123/Murasaki/Songs", WebUiEra.UserRoute(123u, "Murasaki", "Songs"));
+        Assert.Equal("api/Murasaki/PlayData/123", WebUiEra.Api("Murasaki", "PlayData/123"));
+    }
+
+    [Fact]
     public void OlderAc15DonChallengeCapability_IsRedAndWhiteOnly()
     {
         Assert.True(WebUiEra.SupportsOlderAc15DonChallenge("Red"));
         Assert.True(WebUiEra.SupportsOlderAc15DonChallenge("White"));
         Assert.False(WebUiEra.SupportsOlderAc15DonChallenge("Blue"));
+        Assert.False(WebUiEra.SupportsOlderAc15DonChallenge("Murasaki"));
         Assert.False(WebUiEra.SupportsOlderAc15DonChallenge("Nijiiro"));
     }
 
@@ -265,6 +324,7 @@ public sealed class GameDataServiceTests
                 "api/Yellow/GameData/DanData" => """[{"danId":900,"title":"yellow"}]""",
                 "api/Red/GameData/DanData" => """[{"danId":800,"title":"red"}]""",
                 "api/White/GameData/DanData" => """[{"danId":700,"title":"white"}]""",
+                "api/Murasaki/GameData/DanData" => """[{"danId":600,"title":"murasaki"}]""",
                 _ when path.Contains("MusicDetails", StringComparison.Ordinal)
                     || path.Contains("customization/titles", StringComparison.Ordinal)
                     || path.Contains("customization/neiros", StringComparison.Ordinal) => "{}",

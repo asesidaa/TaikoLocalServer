@@ -131,7 +131,7 @@
   3. Automated verification covers Murasaki observable routes, handlers, catalog loading, persistence, mapper/classifier behavior, protocol packing, build-output copy, and no-cross-era/no-cross-mode boundaries.
   4. Closeout records Mapperly generated-source inspection for nontrivial mappings, a Host build using temp output if needed, and user-accepted cabinet/RPCS3 plus WebUI evidence for implemented Murasaki flows.
 
-**Plans**: TBD
+**Plans**: 1 implemented; manual closeout pending
 **UI hint**: yes
 
 ## Archived Phases
@@ -181,7 +181,7 @@ See `.planning/milestones/v1.4-ROADMAP.md` and `.planning/milestones/v1.4-phases
 | 31. Identity, Userdata, Self-Best, and Normal Read Paths | v1.5 | 1/1 | Complete | 2026-06-21 |
 | 32. Normal Playresult, Dani, Reward, and Don Point Mutation | v1.5 | 1/1 | Complete | 2026-06-21 |
 | 33. Evidence-Gated Special Capabilities | v1.5 | 1/1 | Complete    | 2026-06-21 |
-| 34. AdminApi/WebUI and Runtime Closeout | v1.5 | 0/TBD | Not started | - |
+| 34. AdminApi/WebUI and Runtime Closeout | v1.5 | 1/1 | Awaiting user acceptance | - |
 
 ## Milestone Progress
 
@@ -192,4 +192,4 @@ See `.planning/milestones/v1.4-ROADMAP.md` and `.planning/milestones/v1.4-phases
 | v1.2 Yellow AC15 Support | 12-17 plus 16.1 and 16.2 | 38 GSD plans | Shipped | 2026-06-12 |
 | v1.3 Red AC15 Support | 18-22 | 29 GSD plans | Shipped | 2026-06-16 |
 | v1.4 White AC15 0.13 Support | 23-27 plus 23.1 | 10 GSD plans | Shipped | 2026-06-21 |
-| v1.5 Murasaki AC15 Support | 28-34 | 5/7 phases complete | In progress | - |
+| v1.5 Murasaki AC15 Support | 28-34 | 6/7 phases complete; Phase 34 automated work done | Awaiting user acceptance | - |

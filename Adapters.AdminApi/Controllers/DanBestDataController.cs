@@ -28,6 +28,7 @@ public partial class DanBestDataController(ITaikoDbContext context) : BaseAdminC
             GameEra.Yellow => Ok(await BuildYellowDanBestData(baid)),
             GameEra.Red => Ok(await BuildRedDanBestData(baid)),
             GameEra.White => Ok(await BuildWhiteDanBestData(baid)),
+            GameEra.Murasaki => Ok(await BuildMurasakiDanBestData(baid)),
             _ => EraRoute.BadEra(era)
         };
     }

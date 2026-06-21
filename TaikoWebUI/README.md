@@ -30,13 +30,15 @@ Authentication and account-policy settings live on the server in [../Host/Config
 
 ## Era Notes
 
-Blue, Yellow, Red, and White are supported WebUI eras. Era routes should use the matching AdminApi endpoints and catalog data for customization, Dani, normal play history, favorites, profile settings, and other implemented surfaces.
+Blue, Yellow, Red, White, and Murasaki are supported WebUI eras. Era routes should use the matching AdminApi endpoints and catalog data for customization, Dani, normal play history, favorites, profile settings, and other implemented surfaces.
 
 Blue Tokkun history is not currently a WebUI surface.
 
 White Tokkun history is not currently a WebUI surface.
 
 Red and White Don Challenge are available through the dedicated Don Challenge page only when the AdminApi availability endpoint reports an active bundle.
+
+Murasaki Don Challenge, ChallengeCompe, global-score, shopping, Tokkun, battle, and proto-only special request families are not WebUI surfaces unless newer Murasaki route/client evidence proves those workflows.
 
 Treat title id `0` as the empty/default title in UI surfaces.
 

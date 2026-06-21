@@ -34,6 +34,7 @@ public partial class PlayHistoryController(ITaikoDbContext context) : BaseAdminC
             GameEra.Yellow => Ok(await BuildYellowSongHistory(baid)),
             GameEra.Red => Ok(await BuildRedSongHistory(baid)),
             GameEra.White => Ok(await BuildWhiteSongHistory(baid)),
+            GameEra.Murasaki => Ok(await BuildMurasakiSongHistory(baid)),
             _ => EraRoute.BadEra(era)
         };
     }

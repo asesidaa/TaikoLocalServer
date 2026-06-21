@@ -18,13 +18,15 @@ Controllers translate HTTP requests into Application requests or admin DTO opera
 
 Era-aware admin routes should support `/api/{era}/...` with `EraRoute.TryParse`. Preserve existing legacy routes where a controller already exposes them.
 
-Blue, Yellow, Red, and White WebUI/AdminApi parity is present for profile, normal play history, favorites, Dani, customization data, and user settings surfaces where the era implements those flows. Keep routes backed by the selected era's state and catalogs rather than another era's state.
+Blue, Yellow, Red, White, and Murasaki WebUI/AdminApi parity is present for profile, normal play history, favorites, Dani, customization data, and user settings surfaces where the era implements those flows. Keep routes backed by the selected era's state and catalogs rather than another era's state.
 
 Blue Tokkun history is persisted for protocol support but is not currently exposed through AdminApi/WebUI routes.
 
 Red and White Don Challenge use dedicated `/api/{era}/DonChallenge/...` routes over server-side progress/reward contracts. Do not expose cabinet ChallengeCompe wire DTOs or raw protocol buckets through AdminApi unless new evidence proves a separate admin workflow.
 
 White Tokkun history is persisted for protocol support but is not currently exposed through AdminApi/WebUI routes.
+
+Murasaki global-score, shopping, Don Challenge, ChallengeCompe, Tokkun, battle, and proto-only special request families are not exposed through AdminApi/WebUI unless newer Murasaki route/client evidence proves those workflows.
 
 ## When To Add Code Here
 

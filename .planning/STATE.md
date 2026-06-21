@@ -5,16 +5,16 @@ milestone_name: Murasaki AC15 Support
 current_phase: 34
 current_phase_name: AdminApi/WebUI and Runtime Closeout
 status: in_progress
-stopped_at: Phase 33 complete; Phase 34 ready for planning
-last_updated: "2026-06-21T22:20:37+08:00"
+stopped_at: Phase 34 implementation and automated verification complete; awaiting user-observed cabinet/RPCS3 and WebUI acceptance
+last_updated: "2026-06-21T22:35:32+08:00"
 last_activity: 2026-06-21
-last_activity_desc: Phase 33 complete, transitioned to Phase 34
+last_activity_desc: Phase 34 AdminApi/WebUI implementation and automated verification complete
 progress:
   total_phases: 7
   completed_phases: 6
-  total_plans: 6
-  completed_plans: 6
-  percent: 86
+  total_plans: 7
+  completed_plans: 7
+  percent: 95
 ---
 
 # Project State
@@ -29,17 +29,17 @@ See: `.planning/PROJECT.md` (updated 2026-06-21)
 ## Current Position
 
 Phase: 34 of 34 (AdminApi/WebUI and Runtime Closeout)
-Plan: Not started
-Status: Phase 33 complete; ready to plan Phase 34
-Last activity: 2026-06-21 - Phase 33 complete, transitioned to Phase 34
+Plan: 34-01 implemented; manual acceptance pending
+Status: Automated implementation and verification complete; awaiting user-observed cabinet/RPCS3 and WebUI acceptance
+Last activity: 2026-06-21 - Phase 34 AdminApi/WebUI implementation and automated verification complete
 
-Progress: [#########-] 86%
+Progress: [##########] 95%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed in v1.5: 6
+- Total plans completed in v1.5: 7
 - Average duration: n/a
 - Total execution time: n/a
 
@@ -53,12 +53,13 @@ Progress: [#########-] 86%
 | 31 | 1/1 | - | - |
 | 32 | 1/1 | - | - |
 | 33 | 1/1 | - | - |
-| 34 | 0/TBD | - | - |
+| 34 | 1/1 | - | - |
 
 **Recent Trend:**
 
 - Phases 28-32 executed in one autonomous range and verified with solution build plus 845 tests.
 - Phase 33 closed unsupported Murasaki special surfaces with route/byte evidence and 847-test verification.
+- Phase 34 implemented Murasaki AdminApi/WebUI parity for supported surfaces and passed 857 tests; user-observed runtime/WebUI acceptance remains open.
 - Prior milestone v1.4 closed on 2026-06-21 after automated verification and user-accepted runtime/WebUI evidence.
 
 ## Accumulated Context
@@ -73,12 +74,12 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ### Pending Todos
 
-None.
+- User-observed cabinet/RPCS3 and WebUI acceptance for implemented Murasaki flows.
 
 ### Blockers/Concerns
 
 - Unsupported Murasaki special surfaces such as `bestscore.php`, `songhash.php`, `shoppingresult.php`, ChallengeCompe, Don Challenge, Yellow shop, Banacoin, and global-score persistence remain future evidence-gated work.
-- Cabinet/RPCS3 and WebUI acceptance are closeout gates for Phase 34 and must not be claimed from automated tests alone.
+- Cabinet/RPCS3 and WebUI acceptance are the remaining closeout gates for Phase 34 and must not be claimed from automated tests alone.
 
 ## Deferred Items
 
@@ -90,5 +91,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-06-21
-Stopped at: Phase 33 complete; Phase 34 is ready for `$gsd-plan-phase 34`
+Stopped at: Phase 34 automated implementation complete; awaiting user-observed acceptance
 Resume file: `.planning/ROADMAP.md`
