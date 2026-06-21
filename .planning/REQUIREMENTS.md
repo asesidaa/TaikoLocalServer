@@ -76,33 +76,33 @@ Roadmap phase mapping for v1.5 Murasaki AC15 Support. Updated during roadmap cre
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| MFND-01 | TBD | Pending |
-| MFND-02 | TBD | Pending |
-| MFND-03 | TBD | Pending |
-| MCAT-01 | TBD | Pending |
-| MCAT-02 | TBD | Pending |
-| MCAT-03 | TBD | Pending |
-| MMETA-01 | TBD | Pending |
-| MMETA-02 | TBD | Pending |
-| MMETA-03 | TBD | Pending |
-| MSTATE-01 | TBD | Pending |
-| MSTATE-02 | TBD | Pending |
-| MSTATE-03 | TBD | Pending |
-| MSTATE-04 | TBD | Pending |
-| MSPEC-01 | TBD | Pending |
-| MSPEC-02 | TBD | Pending |
-| MSPEC-03 | TBD | Pending |
-| MVER-01 | TBD | Pending |
-| MVER-02 | TBD | Pending |
-| MVER-03 | TBD | Pending |
+| MFND-01 | Phase 28 | Pending |
+| MFND-02 | Phase 28 | Pending |
+| MFND-03 | Phase 28 | Pending |
+| MCAT-01 | Phase 29 | Pending |
+| MCAT-02 | Phase 29 | Pending |
+| MCAT-03 | Phase 29 | Pending |
+| MMETA-01 | Phase 30 | Pending |
+| MMETA-02 | Phase 30 | Pending |
+| MMETA-03 | Phase 30 | Pending |
+| MSTATE-01 | Phase 31 | Pending |
+| MSTATE-02 | Phase 32 | Pending |
+| MSTATE-03 | Phase 31 | Pending |
+| MSTATE-04 | Phase 32 | Pending |
+| MSPEC-01 | Phase 32 | Pending |
+| MSPEC-02 | Phase 33 | Pending |
+| MSPEC-03 | Phase 33 | Pending |
+| MVER-01 | Phase 34 | Pending |
+| MVER-02 | Phase 34 | Pending |
+| MVER-03 | Phase 34 | Pending |
 | MLATER-01 | Future milestone | Deferred |
 | MSPEC-04 | Future milestone | Deferred |
 
 **Coverage:**
 
 - v1.5 requirements: 19 total
-- Mapped to phases: 0
-- Unmapped: 19
+- Mapped to phases: 19
+- Unmapped: 0
 - Future requirements: 2 deferred
 
 ---
