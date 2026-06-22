@@ -8,9 +8,7 @@ public sealed class PlayResultController : BaseProtocolController<PlayResultCont
     public Task<IActionResult> FinalPlayResult([FromBody] PlayResultRequest request)
     {
         Logger.LogInformation("Murasaki final PlayResult request: {@Request}", request);
-        return request.PlayMode == (uint)PlayMode.DanMode
-            ? Task.FromResult<IActionResult>(Ok(new PlayResultResponse { Result = 1 }))
-            : HandlePlayResult(request);
+        return HandlePlayResult(request);
     }
 
     [HttpPost(MurasakiRoutePrefixes.Compatibility + "/playresult.php")]

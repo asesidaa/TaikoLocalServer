@@ -25,9 +25,9 @@ Implemented Murasaki final support under `/v06r01/chassis/*` as a narrow delta o
 - Split `getfolder.php` by protocol shape:
   - final reads repeated `FolderIds` and returns repeated `AryEventfolderDatas`.
   - compatibility reads scalar `FolderId` and returns scalar `FolderId` plus `SongNoes`.
-- Encoded final availability boundaries:
-  - final `taikojuku.php` returns empty success instead of catalog-backed packs.
-  - final Dan-mode `playresult.php` returns success without creating Murasaki Dan state.
+- Preserved binary-supported final Dani/Taikojuku behavior:
+  - final `taikojuku.php` returns catalog-backed packs.
+  - final Dan-mode `playresult.php` uses the existing Murasaki Dan handler and creates Murasaki Dan state.
   - `/v06r00` Dani/Taikojuku behavior remains intact.
 - Updated Host direct-protobuf fallback to accept both Murasaki prefixes.
 - Added Murasaki protocol compatibility tests and the required test project reference.
