@@ -6,9 +6,9 @@ current_phase: 34
 current_phase_name: AdminApi/WebUI and Runtime Closeout
 status: in_progress
 stopped_at: Phase 34 implementation and automated verification complete; awaiting user-observed cabinet/RPCS3 and WebUI acceptance
-last_updated: "2026-06-21T23:39:54+08:00"
-last_activity: 2026-06-21
-last_activity_desc: "Completed quick task 260621-w8x: improve WebUI era selection and capability visibility"
+last_updated: "2026-06-23T02:33:51+08:00"
+last_activity: 2026-06-23
+last_activity_desc: "Completed quick task 260623-2ff: add Murasaki final /v06r01 support"
 progress:
   total_phases: 7
   completed_phases: 6
@@ -31,7 +31,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-21)
 Phase: 34 of 34 (AdminApi/WebUI and Runtime Closeout)
 Plan: 34-01 implemented; manual acceptance pending
 Status: Automated implementation and verification complete; awaiting user-observed cabinet/RPCS3 and WebUI acceptance
-Last activity: 2026-06-21 - Completed quick task 260621-w8x: improve WebUI era selection and capability visibility
+Last activity: 2026-06-23 - Completed quick task 260623-2ff: add Murasaki final /v06r01 support
 
 Progress: [##########] 95%
 
@@ -86,6 +86,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260621-w8x | Improve WebUI era selection and capability visibility | 2026-06-21 | 7007f7cb | [260621-w8x-let-s-have-a-quick-pass-to-improve-web-u](./quick/260621-w8x-let-s-have-a-quick-pass-to-improve-web-u/) |
+| 260623-2ff | Add Murasaki final /v06r01 support | 2026-06-23 | 30552da7 | [260623-2ff-now-let-s-add-support-for-murasaki-final](./quick/260623-2ff-now-let-s-add-support-for-murasaki-final/) |
 
 ## Deferred Items
 
