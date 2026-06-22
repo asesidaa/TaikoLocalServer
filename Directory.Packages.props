@@ -19,6 +19,7 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.7" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.7" />
     <PackageVersion Include="EntityFrameworkCore.Exceptions.Sqlite" Version="10.0.0" />
+    <PackageVersion Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.3" />
 
     <!-- Tests -->
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />

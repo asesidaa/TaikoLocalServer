@@ -1,3 +1,6 @@
 using Riok.Mapperly.Abstractions;
 
-[assembly: MapperDefaults(EnumMappingStrategy = EnumMappingStrategy.ByName)]
+[assembly: MapperDefaults(
+    AutoUserMappings = false,
+    EnumMappingStrategy = EnumMappingStrategy.ByName,
+    RequiredMappingStrategy = RequiredMappingStrategy.Target)]
