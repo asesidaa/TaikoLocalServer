@@ -2,14 +2,17 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.Mappers;
 
 public static class FolderDataMappers
 {
-    public static GetfolderResponse MapSingle(CommonGetFolderResponse common, uint requestedFolderId)
+    public static GetfolderResponse Map(CommonGetFolderResponse common)
     {
-        var folder = common.AryEventfolderDatas.FirstOrDefault(data => data.FolderId == requestedFolderId);
-        return new GetfolderResponse
-        {
-            Result = common.Result,
-            FolderId = folder?.FolderId ?? requestedFolderId,
-            SongNoes = folder?.SongNoes ?? []
-        };
+        var response = new GetfolderResponse { Result = common.Result };
+        response.AryEventfolderDatas.AddRange(common.AryEventfolderDatas.Select(MapEventFolderData));
+        return response;
     }
+
+    private static GetfolderResponse.EventfolderData MapEventFolderData(EventFolderData folder)
+        => new()
+        {
+            FolderId = folder.FolderId,
+            SongNoes = folder.SongNoes ?? []
+        };
 }

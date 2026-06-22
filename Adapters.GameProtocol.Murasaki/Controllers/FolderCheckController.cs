@@ -3,7 +3,8 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.Controllers;
 [ApiController]
 public sealed class FolderCheckController : BaseProtocolController<FolderCheckController>
 {
-    [HttpPost(MurasakiRoutePrefixes.Game + "/foldercheck.php")]
+    [HttpPost(MurasakiRoutePrefixes.Final + "/foldercheck.php")]
+    [HttpPost(MurasakiRoutePrefixes.Compatibility + "/foldercheck.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> FolderCheck([FromBody] FoldercheckRequest request)
     {

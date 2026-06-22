@@ -3,7 +3,8 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.Controllers;
 [ApiController]
 public sealed class BookkeepingController : BaseProtocolController<BookkeepingController>
 {
-    [HttpPost(MurasakiRoutePrefixes.Game + "/bookkeeping.php")]
+    [HttpPost(MurasakiRoutePrefixes.Final + "/bookkeeping.php")]
+    [HttpPost(MurasakiRoutePrefixes.Compatibility + "/bookkeeping.php")]
     [Produces("application/protobuf")]
     public IActionResult Bookkeeping([FromBody] BookKeepingRequest request)
     {

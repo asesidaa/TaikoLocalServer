@@ -229,7 +229,7 @@ public sealed class MurasakiRuntimeHandlerTests
     }
 
     [Fact]
-    public async Task UpdatePlayResult_Murasaki_DaniCreatesMurasakiDanRows()
+    public async Task UpdatePlayResult_MurasakiCompatibility_DaniCreatesMurasakiDanRows()
     {
         await using var fixture = await MurasakiHandlerFixture.CreateAsync(CreateDanCatalog(1));
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });

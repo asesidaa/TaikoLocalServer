@@ -3,7 +3,8 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.Controllers;
 [ApiController]
 public sealed class RecommendController : BaseProtocolController<RecommendController>
 {
-    [HttpPost(MurasakiRoutePrefixes.Game + "/recommend.php")]
+    [HttpPost(MurasakiRoutePrefixes.Final + "/recommend.php")]
+    [HttpPost(MurasakiRoutePrefixes.Compatibility + "/recommend.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> Recommend([FromBody] RecommendRequest request)
     {

@@ -3,7 +3,8 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.Controllers;
 [ApiController]
 public sealed class GetTelopController : BaseProtocolController<GetTelopController>
 {
-    [HttpPost(MurasakiRoutePrefixes.Game + "/gettelop.php")]
+    [HttpPost(MurasakiRoutePrefixes.Final + "/gettelop.php")]
+    [HttpPost(MurasakiRoutePrefixes.Compatibility + "/gettelop.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetTelop([FromBody] GettelopRequest request)
     {

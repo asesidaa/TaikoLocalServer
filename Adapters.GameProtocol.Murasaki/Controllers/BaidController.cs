@@ -3,7 +3,8 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.Controllers;
 [ApiController]
 public sealed class BaidController : BaseProtocolController<BaidController>
 {
-    [HttpPost(MurasakiRoutePrefixes.Game + "/baidcheck.php")]
+    [HttpPost(MurasakiRoutePrefixes.Final + "/baidcheck.php")]
+    [HttpPost(MurasakiRoutePrefixes.Compatibility + "/baidcheck.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> BaidCheck([FromBody] BAIDRequest request)
     {

@@ -3,7 +3,8 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.Controllers;
 [ApiController]
 public sealed class DefaultSongController : BaseProtocolController<DefaultSongController>
 {
-    [HttpPost(MurasakiRoutePrefixes.Game + "/defaultsong.php")]
+    [HttpPost(MurasakiRoutePrefixes.Final + "/defaultsong.php")]
+    [HttpPost(MurasakiRoutePrefixes.Compatibility + "/defaultsong.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> DefaultSong([FromBody] DefaultsongRequest request)
     {

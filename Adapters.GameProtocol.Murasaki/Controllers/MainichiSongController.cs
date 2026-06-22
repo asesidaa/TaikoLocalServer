@@ -3,7 +3,8 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.Controllers;
 [ApiController]
 public sealed class MainichiSongController : BaseProtocolController<MainichiSongController>
 {
-    [HttpPost(MurasakiRoutePrefixes.Game + "/mainichisong.php")]
+    [HttpPost(MurasakiRoutePrefixes.Final + "/mainichisong.php")]
+    [HttpPost(MurasakiRoutePrefixes.Compatibility + "/mainichisong.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> MainichiSong([FromBody] MainichisongRequest request)
     {

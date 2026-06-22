@@ -3,7 +3,8 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.Controllers;
 [ApiController]
 public sealed class MyDonEntryController : BaseProtocolController<MyDonEntryController>
 {
-    [HttpPost(MurasakiRoutePrefixes.Game + "/mydonentry.php")]
+    [HttpPost(MurasakiRoutePrefixes.Final + "/mydonentry.php")]
+    [HttpPost(MurasakiRoutePrefixes.Compatibility + "/mydonentry.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> MydonEntry([FromBody] MydonEntryRequest request)
     {

@@ -3,7 +3,8 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.Controllers;
 [ApiController]
 public sealed class UserDataController : BaseProtocolController<UserDataController>
 {
-    [HttpPost(MurasakiRoutePrefixes.Game + "/userdata.php")]
+    [HttpPost(MurasakiRoutePrefixes.Final + "/userdata.php")]
+    [HttpPost(MurasakiRoutePrefixes.Compatibility + "/userdata.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> UserData([FromBody] UserDataRequest request)
     {

@@ -3,7 +3,8 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.Controllers;
 [ApiController]
 public sealed class HeartbeatController : BaseProtocolController<HeartbeatController>
 {
-    [HttpPost(MurasakiRoutePrefixes.Game + "/heartbeat.php")]
+    [HttpPost(MurasakiRoutePrefixes.Final + "/heartbeat.php")]
+    [HttpPost(MurasakiRoutePrefixes.Compatibility + "/heartbeat.php")]
     [Produces("application/protobuf")]
     public IActionResult Heartbeat([FromBody] HeartBeatRequest request)
     {

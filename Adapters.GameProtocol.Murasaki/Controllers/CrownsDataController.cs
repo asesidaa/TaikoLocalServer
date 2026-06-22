@@ -7,7 +7,8 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.Controllers;
 public sealed class CrownsDataController(ITaikoDbContext context, IGameDataCatalog gameDataService)
     : BaseProtocolController<CrownsDataController>
 {
-    [HttpPost(MurasakiRoutePrefixes.Game + "/crownsdata.php")]
+    [HttpPost(MurasakiRoutePrefixes.Final + "/crownsdata.php")]
+    [HttpPost(MurasakiRoutePrefixes.Compatibility + "/crownsdata.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> CrownsData([FromBody] CrownsDataRequest request)
     {

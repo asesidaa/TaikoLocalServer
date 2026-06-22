@@ -3,7 +3,8 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.Controllers;
 [ApiController]
 public sealed class TelopCheckController : BaseProtocolController<TelopCheckController>
 {
-    [HttpPost(MurasakiRoutePrefixes.Game + "/telopcheck.php")]
+    [HttpPost(MurasakiRoutePrefixes.Final + "/telopcheck.php")]
+    [HttpPost(MurasakiRoutePrefixes.Compatibility + "/telopcheck.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> TelopCheck([FromBody] TelopcheckRequest request)
     {

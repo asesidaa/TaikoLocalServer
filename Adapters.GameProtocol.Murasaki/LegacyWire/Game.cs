@@ -6,7 +6,7 @@
 
 #region Designer generated code
 #pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
-namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.Wire
+namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
 {
 
     [global::ProtoBuf.ProtoContract()]
@@ -333,8 +333,8 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.Wire
         [global::ProtoBuf.ProtoMember(2, Name = @"shop_id", IsRequired = true)]
         public string ShopId { get; set; }
 
-        [global::ProtoBuf.ProtoMember(3, Name = @"folder_id")]
-        public uint[] FolderIds { get; set; }
+        [global::ProtoBuf.ProtoMember(3, Name = @"folder_id", IsRequired = true)]
+        public uint FolderId { get; set; }
 
         [global::ProtoBuf.ProtoMember(4, Name = @"hdd_ver", IsRequired = true)]
         public uint HddVer { get; set; }
@@ -351,30 +351,18 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.Wire
         [global::ProtoBuf.ProtoMember(1, Name = @"result", IsRequired = true)]
         public uint Result { get; set; }
 
-        [global::ProtoBuf.ProtoMember(2, Name = @"ary_eventfolder_data")]
-        public global::System.Collections.Generic.List<EventfolderData> AryEventfolderDatas { get; } = new global::System.Collections.Generic.List<EventfolderData>();
-
-        [global::ProtoBuf.ProtoContract()]
-        public partial class EventfolderData : global::ProtoBuf.IExtensible
+        [global::ProtoBuf.ProtoMember(2, Name = @"folder_id")]
+        public uint FolderId
         {
-            private global::ProtoBuf.IExtension __pbn__extensionData;
-            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-            [global::ProtoBuf.ProtoMember(1, Name = @"folder_id")]
-            public uint FolderId
-            {
-                get => __pbn__FolderId.GetValueOrDefault();
-                set => __pbn__FolderId = value;
-            }
-            public bool ShouldSerializeFolderId() => __pbn__FolderId != null;
-            public void ResetFolderId() => __pbn__FolderId = null;
-            private uint? __pbn__FolderId;
-
-            [global::ProtoBuf.ProtoMember(2, Name = @"song_no")]
-            public uint[] SongNoes { get; set; }
-
+            get => __pbn__FolderId.GetValueOrDefault();
+            set => __pbn__FolderId = value;
         }
+        public bool ShouldSerializeFolderId() => __pbn__FolderId != null;
+        public void ResetFolderId() => __pbn__FolderId = null;
+        private uint? __pbn__FolderId;
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"song_no")]
+        public uint[] SongNoes { get; set; }
 
     }
 
