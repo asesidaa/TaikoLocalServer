@@ -1,20 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.5
-milestone_name: Murasaki AC15 Support
-current_phase: null
-current_phase_name: null
-status: awaiting_next_milestone
-stopped_at: Milestone v1.5 completed and archived; awaiting next milestone definition
-last_updated: "2026-06-23T21:39:34+08:00"
+milestone: v1.6
+milestone_name: KIMIDORI AC15 Support
+status: planning
+last_updated: "2026-06-23T14:11:49.672Z"
 last_activity: 2026-06-23
-last_activity_desc: Milestone v1.5 completed and archived
 progress:
-  total_phases: 7
-  completed_phases: 7
-  total_plans: 7
-  completed_plans: 7
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -23,17 +19,15 @@ progress:
 
 See: `.planning/PROJECT.md` (updated 2026-06-23)
 
-**Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Murasaki, White, Red, Yellow, Blue, Green, Nijiiro, or shared identity state.
-**Current focus:** Between milestones; define the next milestone with `$gsd-new-milestone`.
+**Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, Nijiiro, or shared identity state.
+**Current focus:** Defining requirements and roadmap for v1.6 KIMIDORI AC15 Support.
 
 ## Current Position
 
-Milestone v1.5 Murasaki AC15 Support is complete and archived.
-
-Status: awaiting next milestone
-Last activity: 2026-06-23 - Milestone v1.5 completed and archived
-
-Progress: [##########] 100%
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-06-23 — Milestone v1.6 started
 
 ## Performance Metrics
 
@@ -74,14 +68,19 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - Treat Murasaki changed wire shape as a first-class evidence gate; split metadata/global-score request families must not be hidden behind White `initialdatacheck.php`.
 - Preserve final `/v06r01` route parity where final binary/proto evidence supports the surface, including Dani/Taikojuku.
 - Keep unsupported Murasaki special surfaces absent until route/cabinet/log/IDA evidence proves specific server contracts.
+- Start KIMIDORI support as v1.6, using `proto/kimidori`, `.tools/kimidori`, linked root-level KIMIDORI data, `/v01r00` startup/version routes, and `/v05r00` game routes.
+- Define KIMIDORI 0.12 features only from protocol presence plus binary `.php` route evidence; if `proto/kimidori` lacks a feature, treat it as missing.
+- Treat KIMIDORI game data as root-level era data rather than assuming a newer `config/STxxxx-*` catalog layout.
 
 ### Pending Todos
 
-- None for v1.5 closeout.
+- None for v1.6 kickoff.
 
 ### Blockers/Concerns
 
 - Unsupported Murasaki special surfaces such as `bestscore.php`, `songhash.php`, `shoppingresult.php`, ChallengeCompe, Don Challenge, Yellow shop, Banacoin, and global-score persistence remain future evidence-gated work.
+- KIMIDORI route inventory still needs binary `.php` route proof during the foundation phase.
+- KIMIDORI root-level data loading needs parser/path support instead of newer AC15 `config/STxxxx-*` assumptions.
 
 ### Quick Tasks Completed
 
@@ -100,9 +99,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 ## Session Continuity
 
 Last session: 2026-06-23
-Stopped at: Milestone v1.5 completed and archived; awaiting next milestone definition
+Stopped at: Milestone v1.6 started; defining requirements and roadmap
 Resume file: `.planning/ROADMAP.md`
 
 ## Operator Next Steps
 
-- Start the next milestone with `$gsd-new-milestone`.
+- Finish v1.6 KIMIDORI requirements and roadmap.

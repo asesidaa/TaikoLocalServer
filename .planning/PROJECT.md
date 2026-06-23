@@ -4,11 +4,11 @@
 
 TaikoLocalServer is a local ASP.NET Core server for Taiko no Tatsujin cabinet protocols, local SQLite persistence, era-specific game data catalogs, and a Blazor WebAssembly admin UI. This project continues the existing Blue-era support effort from the Superpowers roadmap in `docs/superpowers/specs/2026-05-27-blue-support-roadmap-design.md`, starting after completed stages A0-A5 and carrying the work through full Blue support.
 
-Full Blue, Yellow, Red, White 0.13, and Murasaki support are complete. The project now supports Nijiiro, Green AC15, Blue AC15, Yellow AC15, Red AC15, White AC15, and Murasaki AC15 in one process while preserving era-owned routes, wire DTOs, persistence, handlers, mappers, catalogs, and tests.
+Full Blue, Yellow, Red, White 0.13, and Murasaki support are complete. The project now supports Nijiiro, Green AC15, Blue AC15, Yellow AC15, Red AC15, White AC15, and Murasaki AC15 in one process while preserving era-owned routes, wire DTOs, persistence, handlers, mappers, catalogs, and tests. KIMIDORI AC15 0.12 support is the active milestone.
 
 ## Core Value
 
-AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Murasaki, White, Red, Yellow, Blue, Green, Nijiiro, or shared identity state.
+AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, Nijiiro, or shared identity state.
 
 ## Current State
 
@@ -26,7 +26,18 @@ Yellow support reuses AC15 shared core behavior where it directly reduces duplic
 
 ## Current Planning State
 
-No active milestone is planned. Start the next milestone with `$gsd-new-milestone`.
+Active milestone: v1.6 KIMIDORI AC15 Support. Requirements and roadmap are being defined.
+
+## Current Milestone: v1.6 KIMIDORI AC15 Support
+
+**Goal:** Add first-class KIMIDORI 0.12 support by composing existing older-AC15 capabilities around KIMIDORI-owned proto, route, root-level data, persistence, AdminApi/WebUI surfaces, and verification.
+
+**Target features:**
+- First-class `GameEra.Kimidori` foundation with generated wire DTOs from `proto/kimidori`, `/v05r00/chassis/*` game routes, shared `/v01r00/chassis/*` startup/version routes, Host settings, DI, application-part gating, and direct-protobuf transport where local evidence supports it.
+- Route/root evidence from `.tools/kimidori/EBOOT.ELF.i64`, `proto/kimidori`, and linked KIMIDORI game data before locking route handlers, route inventory, and catalog roots.
+- Root-level KIMIDORI catalog loading from `Host/wwwroot/data/kimidori/data` without assuming newer `config/STxxxx-*` data layout.
+- Catalog/profile/runtime binding through existing AC15/Murasaki-style capabilities where KIMIDORI proto and binary route evidence both prove the feature: BAID/mydon, userdata, normal play, self-best, crowns, favorites/recent, folders/telops/default/mainichi/song-hash surfaces, recommendations, Don Point/reward fields, shopping-result compatibility, and AdminApi/WebUI routing.
+- Explicit absence handling for features missing from `proto/kimidori` or without a corresponding binary `.php` route, including Taikojuku for KIMIDORI 0.12 unless new local evidence proves otherwise.
 
 ## Completed Milestone: v1.5 Murasaki AC15 Support
 
@@ -86,18 +97,24 @@ No active milestone is planned. Start the next milestone with `$gsd-new-mileston
 
 ### Active
 
-(None. Define the next milestone with `$gsd-new-milestone`.)
+- [ ] KIMIDORI is a first-class enableable AC15 era with KIMIDORI-owned generated wire DTOs, adapter routes, Host settings, DI, and route gating.
+- [ ] KIMIDORI startup/version routes use shared `/v01r00/chassis/*` behavior while KIMIDORI game routes live under `/v05r00/chassis/*`.
+- [ ] KIMIDORI catalog loading supports the linked root-level game-data layout under `Host/wwwroot/data/kimidori/data`.
+- [ ] KIMIDORI runtime state stays era-owned while composing proven AC15 behavior for identity, userdata, normal play, self-best, crowns, favorites, recent songs, folders, telops, recommendations, Don Points/rewards, and shopping-result compatibility where proto and route evidence both support it.
+- [ ] KIMIDORI AdminApi/WebUI surfaces expose implemented KIMIDORI-owned state without adding controls for unsupported features.
+- [ ] KIMIDORI verification includes automated route/handler/catalog/persistence proof plus user-observed cabinet/RPCS3 smoke before milestone close.
 
 ### Out of Scope
 
 - Real Banacoin balance, payment, settlement, receipt, coupon, deduction, BNID result, or transaction-history behavior beyond stateless compatibility routes needed for Blue Tokkun availability.
-- AC15 versions earlier than White, or later White-version behavior beyond 0.13, unless started by a later milestone or pulled in by local White 0.13 evidence.
+- AC15 versions earlier than KIMIDORI, later KIMIDORI updates beyond 0.12, or later White-version behavior beyond 0.13, unless started by a later milestone or pulled in by local per-era evidence.
 - Red WaiWai behavior; Red is planned as Yellow-like support without WaiWai unless local Red evidence proves otherwise.
 - Yellow battle mode or Blue battle behavior mirrored into Yellow without concrete Yellow proto/log/client evidence.
 - Blue battle behavior mirrored into Red without concrete Red proto/log/client evidence.
 - White battle, item shop, Tokkun, gacha, tournament runtime, Banacoin wallet/payment, or later White update behavior without concrete White 0.13 proto/log/client evidence.
 - Later Murasaki update behavior beyond the shipped v1.5 final `/v06r01` support unless local Murasaki proto, data, binary/client evidence, logs, or cabinet/RPCS3 behavior pulls it into scope.
 - Invented Murasaki global high-score, song-hash, default-song, mainichi-song, shopping, or reserved-byte semantics without concrete local evidence.
+- KIMIDORI Taikojuku, Don Challenge/ChallengeCompe, battle, Tokkun, Banacoin, or full shop authority unless `proto/kimidori` contains the feature and the local binary proves the corresponding `.php` route.
 - Green AI Battle changes while implementing Blue battle mode; Green AI Battle is contrast material, not the Blue design source.
 - Invented Tokkun rewards, score/crown persistence, paid-coin behavior, practice-time accounting, jump-point behavior, autoplay behavior, speed-change behavior, or song unlock side effects without concrete Blue evidence.
 - Runtime scraping of wiki or official pages.
@@ -125,6 +142,10 @@ No active milestone is planned. Start the next milestone with `$gsd-new-mileston
 - Murasaki Phase 28 evidence records exact `v01r00`, `v06r00`, and `.php` strings from local IDA evidence. Shared startup/version stays on `v01r00`; game routes are under `v06r00`.
 - Murasaki catalog binding currently uses `config/ST6100-1` with required `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, `present.xml`, `spacialbaid.xml`, and `fumen/tuning.bin`.
 - Murasaki phases 28-34 plus quick task 260623-2ff are complete. Final closeout verification on 2026-06-23 reported no vulnerable packages, `dotnet test Tests/Tests.csproj --no-build` passed 865 tests, `dotnet build TaikoLocalServer.slnx /p:EmitCompilerGeneratedFiles=true` passed with 0 warnings and 0 errors, and the user reported the in-game Murasaki flow works.
+- v1.6 KIMIDORI AC15 Support started on 2026-06-23. KIMIDORI local protocol inputs are `proto/kimidori/taiko.proto` and `proto/kimidori/vsinterface.proto`; local reverse-engineering evidence is under `.tools/kimidori/`.
+- KIMIDORI uses shared `/v01r00/chassis` startup/version routing and `/v05r00/chassis` game routing for this milestone.
+- KIMIDORI local game data is linked at `Host/wwwroot/data/kimidori/data` and currently uses root-level `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, and `fumen/tuning.bin` instead of a versioned `config/STxxxx-*` directory.
+- KIMIDORI feature support must require both protocol presence and binary `.php` route presence. If the proto does not contain a feature, treat that feature as missing for KIMIDORI 0.12 even if adjacent AC15 eras support it.
 - The evidence hierarchy is repo code, proto files, SQLite state, cabinet/RPCS3 logs, IDA/client evidence, and only then public wiki pages for gameplay scoping.
 - Yellow local protocol input is `proto/yellow/yellow.proto`; local game data is under `Host/wwwroot/data/yellow/data`, with the observed versioned config root `config/ST9100-1`.
 - Yellow proto evidence includes Tokkun tutorial and stage-result fields, item shop and Banacoin-adjacent routes, Don/Katsu medal upload fields, and no Blue battle userdata or initialdata battle fields.
@@ -134,6 +155,7 @@ No active milestone is planned. Start the next milestone with `$gsd-new-mileston
 - Public wiki context says Red was the active AC15 version from 2016-07-14 to 2017-03-14, and that Don Challenge effectively ended with Red before Yellow's reward-system change pause; this is scoping context only and does not outrank local protocol or runtime evidence.
 - Public wiki context says White 0.13 started on 2015-12-10 and later White updates changed or reintroduced some features. Use that as product/version scoping only; local White proto, data, logs, IDA, and cabinet/RPCS3 evidence decide server behavior.
 - Public wiki context says Murasaki started on 2015-03-11, expanded favorite songs from 5 to 10, introduced Murasaki-era feature folders, and used Don Point behavior with a 30000-point cap. This is product/version scoping only; local Murasaki proto, data, logs, binary/client evidence, and cabinet/RPCS3 behavior decide server behavior.
+- Public wiki context says KIMIDORI 0.12 started on 2014-07-16, introduced KIMIDORI-era feature folders, and kept favorite folders at 5 songs before Murasaki expanded the limit to 10. This is product/version scoping only; local KIMIDORI proto, data, logs, binary/client evidence, and cabinet/RPCS3 behavior decide server behavior.
 - Red proto evidence includes challenge competition readback through `ChallengeCompeRequest` / `ChallengeCompeResponse`, user-data `is_challengecompe`, and playresult challenge id arrays. Treat those as protocol facts only; they are not Don Challenge semantics and are not evidence that Blue/Green/Yellow challengecompe stubs are active.
 - White proto evidence initially exposes BAID, mydon, userdata, playresult, self-best, crowns, recommendations, folders, telops, Taikojuku, embedded challenge stat fields, and reward routes. It does not initially expose explicit battle, item-shop, Tokkun, gacha, tournament runtime, or Banacoin wallet/payment surfaces.
 - `docs/superpowers/specs/2026-06-07-ac15-core-extraction-design.md`, `docs/superpowers/specs/2026-06-11-ac15-capability-composition-design.md`, and `docs/superpowers/plans/2026-06-07-ac15-core-extraction/` describe the approved capability-driven AC15 sharing direction for Blue, Green, and older AC15 support. Use those designs where they directly enable White, but keep era routes, wire DTOs, and persistence separate.
@@ -154,7 +176,7 @@ v1.5 Murasaki AC15 Support is complete. Phases 28-34 plus quick task 260623-2ff 
 
 ## Next Milestone
 
-No next milestone is defined yet. Requirements and roadmap scope must be built from current local evidence and the user's next goal.
+v1.6 KIMIDORI AC15 Support is active. Requirements and roadmap scope are built from `proto/kimidori`, `.tools/kimidori`, linked root-level KIMIDORI game data, the user's route/version guidance, and public wiki context only as secondary product scoping.
 
 ## Constraints
 
@@ -166,12 +188,14 @@ No next milestone is defined yet. Requirements and roadmap scope must be built f
 - **Red scope**: Treat Red as an older-AC15 capability composition without WaiWai; Don Challenge is server-side progress/rewards, while ChallengeCompe remains a separate protocol surface.
 - **White scope**: Treat White 0.13 as an older-AC15 capability composition with more missing features than Red; do not backfill later White update behavior without local 0.13 evidence.
 - **Murasaki scope**: Treat initial Murasaki as an older-AC15 capability composition that is feature-similar to White only where local Murasaki evidence proves matching limits and wire placement.
+- **KIMIDORI scope**: Treat KIMIDORI 0.12 as an older-AC15 capability composition whose feature set is determined by `proto/kimidori` plus binary route evidence, not by copying Murasaki or later AC15 behavior.
 - **Verification**: Done requires automated route/handler/catalog/persistence proof and repeatable cabinet/RPCS3 smoke evidence for the supported runtime flows, not only passing server tests.
 - **Local data**: Blue runtime data under `Host/wwwroot/data/blue/data` is local/operator-supplied and may be gitignored.
 - **Local data**: Yellow runtime data under `Host/wwwroot/data/yellow/data` is local/operator-supplied and may be gitignored.
 - **Local data**: Red runtime data under `Host/wwwroot/data/red/data` is local/operator-supplied and may be gitignored.
 - **Local data**: White runtime data under `Host/wwwroot/data/white/data` is local/operator-supplied and may be gitignored.
 - **Local data**: Murasaki runtime data under `Host/wwwroot/data/murasaki/data` is local/operator-supplied and may be gitignored.
+- **Local data**: KIMIDORI runtime data under `Host/wwwroot/data/kimidori/data` is local/operator-supplied and may be gitignored.
 - **Build environment**: If `Host/bin/Debug/net10.0` is locked by a running server, verify Host builds with a temp output path.
 
 ## Key Decisions
@@ -208,6 +232,9 @@ No next milestone is defined yet. Requirements and roadmap scope must be built f
 | Start Murasaki support as v1.5 | Murasaki is the next older AC15 era after White; local Murasaki proto/data are present, features look White-like, and the user expects reuse of existing capabilities where wire/data semantics match | Validated in v1.5 |
 | Treat Murasaki changed wire shape as a first-class evidence gate | Murasaki lacks the White-style monolithic initial-data request and adds split metadata/global-score request families, so capability reuse must be mediated through Murasaki-owned wire mapping and binary/client evidence for unknown byte fields | Validated in v1.5; unproven special/global surfaces remain future evidence-gated work |
 | Preserve Murasaki final `/v06r01` parity where the final binary still supports the route surface | Final proto/binary evidence supports final route parity and binary-supported Dani/Taikojuku behavior despite changelog wording that could be over-read as a server-disable signal | Validated by quick task 260623-2ff and v1.5 closeout |
+| Start KIMIDORI support as v1.6 | KIMIDORI is the next older AC15 era after Murasaki; local KIMIDORI proto, binary evidence, and linked game data are present, and the user expects straightforward capability composition for version 0.12 | Pending in v1.6 |
+| Define KIMIDORI features from proto plus binary route evidence | If `proto/kimidori` lacks a feature, it is missing; if the binary lacks a corresponding `.php` route, the server should not invent that surface | Pending in v1.6 |
+| Treat KIMIDORI game data as root-level era data | The linked KIMIDORI `USRDIR/data` puts core files at the data root rather than under `config/STxxxx-*`, so catalog loading must adapt instead of hardcoding newer AC15 layout assumptions | Pending in v1.6 |
 
 ## Evolution
 
@@ -227,4 +254,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-23 after v1.5 Murasaki AC15 Support closeout*
+*Last updated: 2026-06-23 after starting v1.6 KIMIDORI AC15 Support*
