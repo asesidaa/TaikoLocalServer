@@ -1,5 +1,42 @@
 # Milestones
 
+## v1.5 Murasaki AC15 Support (Shipped: 2026-06-23)
+
+**Delivered:** Murasaki is now a first-class older AC15 era with Murasaki-owned `/v06r00` compatibility routes, final `/v06r01` route parity where binary/proto evidence supports it, generated wire DTOs, catalog/profile binding, runtime persistence, split metadata readback, normal play, Dani/Taikojuku, reward/Don Point state, AdminApi/WebUI support, and accepted in-game closeout.
+
+**Phases completed:** 7 phases, 7 plans, plus quick final-route task 260623-2ff
+
+**Key accomplishments:**
+
+- Proved Murasaki route/root/transport evidence before runtime work, including shared `/v01r00` startup/version routing and `/v06r00` game-route ownership.
+- Added first-class Murasaki adapter identity with generated wire DTOs, Host settings/DI/application-part gating, direct-protobuf fallback, and Murasaki-owned controller files.
+- Bound the `ST6100-1` catalog root and AC15 capability/profile limits, including favorite cap 10, Don Point/root boundaries, present/special-BAID data, folders, telops, movies, recommendations, and Taikojuku sidecars.
+- Implemented Murasaki split metadata readback without adding a White-style `initialdatacheck.php` contract.
+- Added Murasaki-owned identity, userdata, self-best, crowns, favorites, recent songs, release-song readback, normal playresult mutation, Dani state, reward/progress, profile counters, and unlock state with no cross-era gameplay writes.
+- Resolved special surfaces conservatively: `bestscore.php`, `songhash.php`, `shoppingresult.php`, Don Challenge, ChallengeCompe, Yellow shop, Banacoin, battle, and global-score persistence remain absent until Murasaki-specific evidence proves them.
+- Exposed implemented Murasaki-owned state through AdminApi/WebUI while keeping unsupported controls absent.
+- Added final `/v06r01/chassis` support with schema-separated final and compatibility `getfolder.php` behavior, while preserving binary-supported final Dani/Taikojuku.
+- Closed with user-observed Murasaki in-game acceptance, no vulnerable packages, 865 passing tests, and a full solution build with 0 warnings and 0 errors.
+
+**Stats:**
+
+- 7 phases complete
+- 7 GSD plans complete
+- 1 quick final-route task complete
+- Milestone audit passed: 19/19 requirements satisfied
+- Final verification at close: no vulnerable packages, `dotnet test Tests/Tests.csproj --no-build` passed 865/865, and `dotnet build TaikoLocalServer.slnx /p:EmitCompilerGeneratedFiles=true` passed with 0 warnings/errors.
+
+**Archived:**
+
+- `.planning/milestones/v1.5-ROADMAP.md`
+- `.planning/milestones/v1.5-REQUIREMENTS.md`
+- `.planning/milestones/v1.5-MILESTONE-AUDIT.md`
+- `.planning/milestones/v1.5-phases/`
+
+**What's next:** Start a fresh milestone with `$gsd-new-milestone`.
+
+---
+
 ## v1.4 White AC15 0.13 Support (Shipped: 2026-06-21)
 
 **Delivered:** White is now a first-class older AC15 era with White-owned protocol routes, generated wire DTOs, catalog/profile binding, runtime persistence, normal play, Dani, reward/Don Point state, server-side Don Challenge readback, AdminApi/WebUI support, and accepted runtime/WebUI closeout.

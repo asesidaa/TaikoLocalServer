@@ -72,6 +72,6 @@ Known warnings observed during test/build runs:
 - Regenerated the new Murasaki wire without `+nullablevaluetype=yes` after an adapter build exposed incompatibility with the existing public DTO API used by current Murasaki code.
 - Added a missing test import for `EventFolderData` after the first focused test compile failed.
 
-## Manual Gap
+## Manual Acceptance
 
-Manual RPCS3/cabinet verification was not run. Automated tests and Host build verify server behavior only; cabinet acceptance remains the compatibility gate.
+2026-06-23: User reported that the Murasaki in-game flow was checked and works. This closes the quick task's manual RPCS3/cabinet compatibility gate for milestone closeout.

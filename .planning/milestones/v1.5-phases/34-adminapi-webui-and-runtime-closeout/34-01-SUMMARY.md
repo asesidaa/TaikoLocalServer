@@ -21,4 +21,4 @@
 
 ## Closeout Status
 
-Automated implementation and verification are complete. Phase 34 remains open until user-observed cabinet/RPCS3 and WebUI acceptance is recorded.
+Automated implementation and verification are complete. User-observed Murasaki in-game acceptance was recorded on 2026-06-23, with WebUI/AdminApi parity covered by focused automated tests and no new WebUI runtime issue reported during final acceptance.

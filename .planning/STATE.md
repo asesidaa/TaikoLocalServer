@@ -2,44 +2,45 @@
 gsd_state_version: 1.0
 milestone: v1.5
 milestone_name: Murasaki AC15 Support
-current_phase: 34
-current_phase_name: AdminApi/WebUI and Runtime Closeout
-status: in_progress
-stopped_at: Phase 34 implementation and automated verification complete; awaiting user-observed cabinet/RPCS3 and WebUI acceptance
-last_updated: "2026-06-23T02:33:51+08:00"
+current_phase: null
+current_phase_name: null
+status: awaiting_next_milestone
+stopped_at: Milestone v1.5 completed and archived; awaiting next milestone definition
+last_updated: "2026-06-23T21:39:34+08:00"
 last_activity: 2026-06-23
-last_activity_desc: "Completed quick task 260623-2ff: add Murasaki final /v06r01 support"
+last_activity_desc: Milestone v1.5 completed and archived
 progress:
   total_phases: 7
-  completed_phases: 6
+  completed_phases: 7
   total_plans: 7
   completed_plans: 7
-  percent: 95
+  percent: 100
 ---
 
 # Project State
 
 ## Project Reference
 
-See: `.planning/PROJECT.md` (updated 2026-06-21)
+See: `.planning/PROJECT.md` (updated 2026-06-23)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating Murasaki, White, Red, Yellow, Blue, Green, Nijiiro, or shared identity state.
-**Current focus:** Phase 34 - AdminApi/WebUI and Runtime Closeout
+**Current focus:** Between milestones; define the next milestone with `$gsd-new-milestone`.
 
 ## Current Position
 
-Phase: 34 of 34 (AdminApi/WebUI and Runtime Closeout)
-Plan: 34-01 implemented; manual acceptance pending
-Status: Automated implementation and verification complete; awaiting user-observed cabinet/RPCS3 and WebUI acceptance
-Last activity: 2026-06-23 - Completed quick task 260623-2ff: add Murasaki final /v06r01 support
+Milestone v1.5 Murasaki AC15 Support is complete and archived.
 
-Progress: [##########] 95%
+Status: awaiting next milestone
+Last activity: 2026-06-23 - Milestone v1.5 completed and archived
+
+Progress: [##########] 100%
 
 ## Performance Metrics
 
 **Velocity:**
 
 - Total plans completed in v1.5: 7
+- Quick tasks completed during v1.5 closeout: 1
 - Average duration: n/a
 - Total execution time: n/a
 
@@ -59,27 +60,28 @@ Progress: [##########] 95%
 
 - Phases 28-32 executed in one autonomous range and verified with solution build plus 845 tests.
 - Phase 33 closed unsupported Murasaki special surfaces with route/byte evidence and 847-test verification.
-- Phase 34 implemented Murasaki AdminApi/WebUI parity for supported surfaces and passed 857 tests; user-observed runtime/WebUI acceptance remains open.
-- Prior milestone v1.4 closed on 2026-06-21 after automated verification and user-accepted runtime/WebUI evidence.
+- Phase 34 implemented Murasaki AdminApi/WebUI parity for supported surfaces and passed focused verification.
+- Quick task 260623-2ff added final `/v06r01` Murasaki route support while preserving `/v06r00` compatibility.
+- Final closeout on 2026-06-23 recorded user-observed Murasaki in-game acceptance, no vulnerable packages, 865 passing tests, and a full solution build with 0 warnings and 0 errors.
 
 ## Accumulated Context
 
 ### Decisions
 
-Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecting current work:
+Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecting future work:
 
 - Start Murasaki support as v1.5 because it is the next older AC15 era after White and local Murasaki proto/data are present.
 - Treat Murasaki changed wire shape as a first-class evidence gate; split metadata/global-score request families must not be hidden behind White `initialdatacheck.php`.
-- Reuse existing AC15/White-like capabilities only where Murasaki proto, data, binary/client, logs, or cabinet/RPCS3 evidence proves matching behavior and limits.
+- Preserve final `/v06r01` route parity where final binary/proto evidence supports the surface, including Dani/Taikojuku.
+- Keep unsupported Murasaki special surfaces absent until route/cabinet/log/IDA evidence proves specific server contracts.
 
 ### Pending Todos
 
-- User-observed cabinet/RPCS3 and WebUI acceptance for implemented Murasaki flows.
+- None for v1.5 closeout.
 
 ### Blockers/Concerns
 
 - Unsupported Murasaki special surfaces such as `bestscore.php`, `songhash.php`, `shoppingresult.php`, ChallengeCompe, Don Challenge, Yellow shop, Banacoin, and global-score persistence remain future evidence-gated work.
-- Cabinet/RPCS3 and WebUI acceptance are the remaining closeout gates for Phase 34 and must not be claimed from automated tests alone.
 
 ### Quick Tasks Completed
 
@@ -97,6 +99,10 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ## Session Continuity
 
-Last session: 2026-06-21
-Stopped at: Phase 34 automated implementation complete; awaiting user-observed acceptance
+Last session: 2026-06-23
+Stopped at: Milestone v1.5 completed and archived; awaiting next milestone definition
 Resume file: `.planning/ROADMAP.md`
+
+## Operator Next Steps
+
+- Start the next milestone with `$gsd-new-milestone`.

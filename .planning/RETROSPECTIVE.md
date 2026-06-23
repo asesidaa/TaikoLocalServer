@@ -185,6 +185,55 @@
 
 ---
 
+## Milestone: v1.5 Murasaki AC15 Support
+
+**Shipped:** 2026-06-23
+**Phases:** 7 | **Plans:** 7 | **Quick tasks:** 1 | **Sessions:** not measured
+
+### What Was Built
+
+- Murasaki first-class adapter foundation with route/root/transport evidence, generated wire DTOs, Host gating, direct-protobuf fallback, and no `initialdatacheck.php` assumption.
+- Murasaki catalog/profile binding through the proven `ST6100-1` data root, AC15 loaders, sidecars, limits, and explicit capability profile.
+- Split metadata readback for defaults, mainichi song, folders, telops, recommendations/readiness, and operational no-state/log-success endpoints.
+- Murasaki-owned identity, userdata, self-best, crowns, favorites, recent songs, release readback, normal play, Dani/Taikojuku, reward/progress, Don Point, and unlock state.
+- Evidence-gated absence for unsupported special surfaces such as `bestscore.php`, `songhash.php`, `shoppingresult.php`, Don Challenge, ChallengeCompe, shop authority, Banacoin, battle, and global-score persistence.
+- AdminApi/WebUI parity for implemented Murasaki-owned surfaces.
+- Final `/v06r01/chassis` route support with schema-separated final and compatibility `getfolder.php`, while preserving binary-supported final Dani/Taikojuku behavior.
+- Accepted closeout with user-observed in-game verification, no vulnerable packages, 865 passing tests, and full solution build with 0 warnings/errors.
+
+### What Worked
+
+- Treating Murasaki as White-like only where local proto/data/client evidence agreed kept the implementation narrow and prevented unsupported surface creep.
+- The split metadata design avoided forcing White `initialdatacheck.php` patterns onto Murasaki.
+- Phase 33 made absence decisions explicit, so Phase 34 and `/v06r01` quick work could preserve unsupported-route boundaries.
+- Comparing proto, changelog, and final binary route evidence prevented a wrong Dani/Taikojuku disable decision.
+
+### What Was Inefficient
+
+- Summary artifacts still do not expose `requirements-completed` frontmatter, so milestone audit had to cross-check requirements manually through traceability and verification reports.
+- The milestone helper archived files mechanically but left ROADMAP/STATE/MILESTONES narrative cleanup to manual follow-up.
+- The final `/v06r01` task landed after Phase 34, so closeout needed an extra audit pass to include quick-task evidence and acceptance.
+
+### Patterns Established
+
+- Murasaki final and compatibility protocol shapes should stay schema-separated when wire shape diverges.
+- Changelog availability notes are scoping context, not server-disable proof, when binary/proto evidence still exposes supported route surfaces.
+- For older AC15 support, explicit absent-surface tests and archive notes are as important as implemented-route tests.
+
+### Key Lessons
+
+1. A final-version quick task can be part of the milestone only if the audit explicitly includes it; otherwise archives understate shipped behavior.
+2. Requirement traceability needs durable summary/frontmatter support, or closeout audits become manual cross-checks.
+3. Existing warning/advisory snapshots should be refreshed at milestone close after follow-up cleanup commits.
+
+### Cost Observations
+
+- Model mix: not measured.
+- Sessions: not measured.
+- Notable: Most late cost came from closeout synchronization and final-route evidence correction, not from broad new runtime implementation.
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -196,6 +245,7 @@
 | v1.2 | not measured | 8 | Yellow support reused AC15 shared core where behavior matched while preserving era-owned state and closing with RPCS3 smoke. |
 | v1.3 | not measured | 6 | Red introduced server-side Don Challenge and separate ChallengeCompe compatibility while preserving era-owned runtime state. |
 | v1.4 | not measured | 6 | White reused AC15 capabilities behind White evidence/profile/state boundaries and closed with accepted runtime/WebUI verification. |
+| v1.5 | not measured | 7 | Murasaki added split metadata, final `/v06r01` parity, and strict absent-surface gates while closing with accepted in-game verification. |
 
 ### Cumulative Quality
 
@@ -206,6 +256,7 @@
 | v1.2 | Full server suite: 683 passed at close | not measured | Yellow-owned AC15 support plus shared AC15 Mapperly/core patterns |
 | v1.3 | Full server suite: 778 passed at close | not measured | Red-owned Don Challenge and AdminApi/WebUI closeout patterns |
 | v1.4 | Full server suite: 829 passed at close | not measured | White-owned runtime state plus dedicated White Don Challenge readback |
+| v1.5 | Full server suite: 865 passed at close | not measured | Murasaki split metadata, final/compat wire separation, and unsupported special-surface absence guards |
 
 ### Top Lessons (Verified Across Milestones)
 
@@ -215,3 +266,4 @@
 4. Preserve era-owned persistence and route ownership even when extracting shared AC15 algorithms.
 5. Keep Don Challenge capability sharing separate from ChallengeCompe protocol compatibility.
 6. For White and older eras, separate version-specific route/wire evidence before adding compatibility for later updates.
+7. Treat changelog notes as investigation hints, not server-disable proof, when binary/proto evidence still exposes route surfaces.
