@@ -36,8 +36,8 @@ Active milestone: v1.6 KIMIDORI AC15 Support. Requirements and roadmap are being
 - First-class `GameEra.Kimidori` foundation with generated wire DTOs from `proto/kimidori`, `/v05r00/chassis/*` game routes, shared `/v01r00/chassis/*` startup/version routes, Host settings, DI, application-part gating, and direct-protobuf transport where local evidence supports it.
 - Route/root evidence from `.tools/kimidori/EBOOT.ELF.i64`, `proto/kimidori`, and linked KIMIDORI game data before locking route handlers, route inventory, and catalog roots.
 - Root-level KIMIDORI catalog loading from `Host/wwwroot/data/kimidori/data` without assuming newer `config/STxxxx-*` data layout.
-- Catalog/profile/runtime binding through existing AC15/Murasaki-style capabilities where KIMIDORI proto and binary route evidence both prove the feature: BAID/mydon, userdata, normal play, self-best, crowns, favorites/recent, folders/telops/default/mainichi/song-hash surfaces, recommendations, Don Point/reward fields, shopping-result compatibility, and AdminApi/WebUI routing.
-- Explicit absence handling for features missing from `proto/kimidori` or without a corresponding binary `.php` route, including Taikojuku for KIMIDORI 0.12 unless new local evidence proves otherwise.
+- Catalog/profile/runtime binding through existing AC15/Murasaki-style capabilities where KIMIDORI proto and binary route evidence both prove the feature: BAID/mydon, userdata, normal play, Dani Dojo, self-best, crowns, favorites/recent, folders/telops/default/mainichi/song-hash surfaces, recommendations, Don Point/reward fields, shopping-result compatibility, and AdminApi/WebUI routing.
+- Explicit absence handling for features missing from `proto/kimidori` or without a corresponding binary `.php` route, including Taikojuku practice-folder behavior for KIMIDORI 0.12 unless new local evidence proves otherwise.
 
 ## Completed Milestone: v1.5 Murasaki AC15 Support
 
@@ -100,7 +100,7 @@ Active milestone: v1.6 KIMIDORI AC15 Support. Requirements and roadmap are being
 - [ ] KIMIDORI is a first-class enableable AC15 era with KIMIDORI-owned generated wire DTOs, adapter routes, Host settings, DI, and route gating.
 - [ ] KIMIDORI startup/version routes use shared `/v01r00/chassis/*` behavior while KIMIDORI game routes live under `/v05r00/chassis/*`.
 - [ ] KIMIDORI catalog loading supports the linked root-level game-data layout under `Host/wwwroot/data/kimidori/data`.
-- [ ] KIMIDORI runtime state stays era-owned while composing proven AC15 behavior for identity, userdata, normal play, self-best, crowns, favorites, recent songs, folders, telops, recommendations, Don Points/rewards, and shopping-result compatibility where proto and route evidence both support it.
+- [ ] KIMIDORI runtime state stays era-owned while composing proven AC15 behavior for identity, userdata, normal play, Dani Dojo, self-best, crowns, favorites, recent songs, folders, telops, recommendations, Don Points/rewards, and shopping-result compatibility where proto and route evidence both support it.
 - [ ] KIMIDORI AdminApi/WebUI surfaces expose implemented KIMIDORI-owned state without adding controls for unsupported features.
 - [ ] KIMIDORI verification includes automated route/handler/catalog/persistence proof plus user-observed cabinet/RPCS3 smoke before milestone close.
 
@@ -114,7 +114,7 @@ Active milestone: v1.6 KIMIDORI AC15 Support. Requirements and roadmap are being
 - White battle, item shop, Tokkun, gacha, tournament runtime, Banacoin wallet/payment, or later White update behavior without concrete White 0.13 proto/log/client evidence.
 - Later Murasaki update behavior beyond the shipped v1.5 final `/v06r01` support unless local Murasaki proto, data, binary/client evidence, logs, or cabinet/RPCS3 behavior pulls it into scope.
 - Invented Murasaki global high-score, song-hash, default-song, mainichi-song, shopping, or reserved-byte semantics without concrete local evidence.
-- KIMIDORI Taikojuku, Don Challenge/ChallengeCompe, battle, Tokkun, Banacoin, or full shop authority unless `proto/kimidori` contains the feature and the local binary proves the corresponding `.php` route.
+- KIMIDORI Taikojuku practice-folder behavior, Don Challenge/ChallengeCompe, battle, Tokkun, Banacoin, or full shop authority unless `proto/kimidori` contains the feature and the local binary proves the corresponding `.php` route.
 - Green AI Battle changes while implementing Blue battle mode; Green AI Battle is contrast material, not the Blue design source.
 - Invented Tokkun rewards, score/crown persistence, paid-coin behavior, practice-time accounting, jump-point behavior, autoplay behavior, speed-change behavior, or song unlock side effects without concrete Blue evidence.
 - Runtime scraping of wiki or official pages.
@@ -235,6 +235,7 @@ v1.6 KIMIDORI AC15 Support is active. Requirements and roadmap scope are built f
 | Start KIMIDORI support as v1.6 | KIMIDORI is the next older AC15 era after Murasaki; local KIMIDORI proto, binary evidence, and linked game data are present, and the user expects straightforward capability composition for version 0.12 | Pending in v1.6 |
 | Define KIMIDORI features from proto plus binary route evidence | If `proto/kimidori` lacks a feature, it is missing; if the binary lacks a corresponding `.php` route, the server should not invent that surface | Pending in v1.6 |
 | Treat KIMIDORI game data as root-level era data | The linked KIMIDORI `USRDIR/data` puts core files at the data root rather than under `config/STxxxx-*`, so catalog loading must adapt instead of hardcoding newer AC15 layout assumptions | Pending in v1.6 |
+| Separate KIMIDORI Dani Dojo from Taikojuku practice-folder behavior | Dani Dojo is normal/Dan state surfaced through KIMIDORI runtime fields, while Taikojuku is a separate practice-folder route family and must not be conflated with Dani support | Pending in v1.6 |
 
 ## Evolution
 

@@ -25,7 +25,12 @@
 - [ ] **KRUN-02**: KIMIDORI normal playresults persist scores, crowns, profile counters, recent songs, favorite songs, rewards, Don Point totals, unlock flags, and release-song state only to KIMIDORI-owned tables.
 - [ ] **KRUN-03**: KIMIDORI self-best and crown readback return persisted KIMIDORI state with era-correct byte packing and compression verified against current wire/data behavior.
 - [ ] **KRUN-04**: KIMIDORI shopping-result compatibility accepts only proto-and-route-backed shopping uploads and updates KIMIDORI-owned Don Point/unlock/readback state without adding unsupported shop authority.
-- [ ] **KRUN-05**: KIMIDORI challenge arrays in userdata or playresult payloads do not create Don Challenge, ChallengeCompe, battle, Tokkun, Banacoin, Taikojuku, or cross-era state unless KIMIDORI-specific proto and route evidence proves that behavior.
+- [ ] **KRUN-05**: KIMIDORI challenge arrays in userdata or playresult payloads do not create Don Challenge, ChallengeCompe, battle, Tokkun, Banacoin, Taikojuku practice-folder, or cross-era state unless KIMIDORI-specific proto and route evidence proves that behavior.
+
+### Dani Dojo
+
+- [ ] **KDANI-01**: KIMIDORI Dani Dojo playresult and readback behavior persists only KIMIDORI-owned Dan state where `proto/kimidori` fields and binary route flow prove the normal Dan contract.
+- [ ] **KDANI-02**: KIMIDORI Dani Dojo support stays separate from Taikojuku practice-folder behavior; absence of a Taikojuku proto/route does not remove proven Dani result persistence or readback.
 
 ### Admin and Verification
 
@@ -38,7 +43,7 @@
 
 ### Later KIMIDORI Versions
 
-- **KLATER-01**: Later KIMIDORI update behavior, including Taikojuku if proven by later proto/binary evidence, can be added as a future version-specific extension.
+- **KLATER-01**: Later KIMIDORI update behavior, including Taikojuku practice-folder behavior if proven by later proto/binary evidence, can be added as a future version-specific extension.
 - **KLATER-02**: KIMIDORI multi-version route or catalog-root selection can be added if multiple linked versions or binary/protocol evidence require it.
 
 ### Special Capability Expansion
@@ -51,7 +56,7 @@ Explicitly excluded. Documented to prevent scope creep.
 
 | Feature | Reason |
 |---------|--------|
-| Taikojuku for KIMIDORI 0.12 | `proto/kimidori` does not expose Taikojuku messages; missing proto means missing feature unless new local evidence proves otherwise. |
+| Taikojuku practice-folder behavior for KIMIDORI 0.12 | `proto/kimidori` does not expose Taikojuku messages; missing proto means missing feature unless new local evidence proves otherwise. This does not exclude Dani Dojo result/state behavior. |
 | Don Challenge or ChallengeCompe semantics | Challenge-shaped arrays in older AC15 protos are not enough to infer server-side challenge behavior without KIMIDORI route and runtime evidence. |
 | Battle, Tokkun, WaiWai, or Banacoin behavior | These are adjacent-era capabilities and must not be copied into KIMIDORI without KIMIDORI-specific proto and binary route proof. |
 | Full shop/payment authority | KIMIDORI may accept shopping-result compatibility where proven, but TaikoLocalServer should not invent wallet/payment/settlement authority. |
@@ -64,29 +69,31 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| KFOUND-01 | TBD | Pending |
-| KFOUND-02 | TBD | Pending |
-| KFOUND-03 | TBD | Pending |
-| KFOUND-04 | TBD | Pending |
-| KCAT-01 | TBD | Pending |
-| KCAT-02 | TBD | Pending |
-| KCAT-03 | TBD | Pending |
-| KCAT-04 | TBD | Pending |
-| KRUN-01 | TBD | Pending |
-| KRUN-02 | TBD | Pending |
-| KRUN-03 | TBD | Pending |
-| KRUN-04 | TBD | Pending |
-| KRUN-05 | TBD | Pending |
-| KADMIN-01 | TBD | Pending |
-| KADMIN-02 | TBD | Pending |
-| KVERIFY-01 | TBD | Pending |
-| KVERIFY-02 | TBD | Pending |
+| KFOUND-01 | Phase 35 | Pending |
+| KFOUND-02 | Phase 35 | Pending |
+| KFOUND-03 | Phase 35 | Pending |
+| KFOUND-04 | Phase 35 | Pending |
+| KCAT-01 | Phase 36 | Pending |
+| KCAT-02 | Phase 36 | Pending |
+| KCAT-03 | Phase 36 | Pending |
+| KCAT-04 | Phase 36 | Pending |
+| KRUN-01 | Phase 37 | Pending |
+| KRUN-02 | Phase 37 | Pending |
+| KRUN-03 | Phase 37 | Pending |
+| KRUN-04 | Phase 37 | Pending |
+| KRUN-05 | Phase 37 | Pending |
+| KDANI-01 | Phase 37 | Pending |
+| KDANI-02 | Phase 37 | Pending |
+| KADMIN-01 | Phase 38 | Pending |
+| KADMIN-02 | Phase 38 | Pending |
+| KVERIFY-01 | Phase 38 | Pending |
+| KVERIFY-02 | Phase 38 | Pending |
 
 **Coverage:**
-- v1.6 requirements: 17 total
-- Mapped to phases: 0
-- Unmapped: 17
+- v1.6 requirements: 19 total
+- Mapped to phases: 19
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-06-23*
-*Last updated: 2026-06-23 after initial definition*
+*Last updated: 2026-06-23 after roadmap creation*

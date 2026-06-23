@@ -2,13 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.6
 milestone_name: KIMIDORI AC15 Support
-status: planning
+current_phase: 35
+current_phase_name: KIMIDORI Evidence and Era Foundation
+status: roadmap_ready
 last_updated: "2026-06-23T14:11:49.672Z"
 last_activity: 2026-06-23
+last_activity_desc: Roadmap created for milestone v1.6
 progress:
-  total_phases: 0
+  total_phases: 4
   completed_phases: 0
-  total_plans: 0
+  total_plans: 4
   completed_plans: 0
   percent: 0
 ---
@@ -24,10 +27,10 @@ See: `.planning/PROJECT.md` (updated 2026-06-23)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-06-23 — Milestone v1.6 started
+Phase: 35 - KIMIDORI Evidence and Era Foundation
+Plan: Not started
+Status: Roadmap ready
+Last activity: 2026-06-23 - Roadmap created for milestone v1.6
 
 ## Performance Metrics
 
@@ -57,6 +60,7 @@ Last activity: 2026-06-23 — Milestone v1.6 started
 - Phase 34 implemented Murasaki AdminApi/WebUI parity for supported surfaces and passed focused verification.
 - Quick task 260623-2ff added final `/v06r01` Murasaki route support while preserving `/v06r00` compatibility.
 - Final closeout on 2026-06-23 recorded user-observed Murasaki in-game acceptance, no vulnerable packages, 865 passing tests, and a full solution build with 0 warnings and 0 errors.
+- v1.6 KIMIDORI roadmap defines 4 pending phases starting at Phase 35, with all 19 requirements mapped.
 
 ## Accumulated Context
 
@@ -71,6 +75,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - Start KIMIDORI support as v1.6, using `proto/kimidori`, `.tools/kimidori`, linked root-level KIMIDORI data, `/v01r00` startup/version routes, and `/v05r00` game routes.
 - Define KIMIDORI 0.12 features only from protocol presence plus binary `.php` route evidence; if `proto/kimidori` lacks a feature, treat it as missing.
 - Treat KIMIDORI game data as root-level era data rather than assuming a newer `config/STxxxx-*` catalog layout.
+- Keep KIMIDORI Dani Dojo support separate from Taikojuku practice-folder behavior; missing Taikojuku proto/route evidence does not remove proven Dani result/state support.
 
 ### Pending Todos
 
@@ -104,4 +109,4 @@ Resume file: `.planning/ROADMAP.md`
 
 ## Operator Next Steps
 
-- Finish v1.6 KIMIDORI requirements and roadmap.
+- Start Phase 35 with `$gsd-discuss-phase 35` or `$gsd-plan-phase 35`.
