@@ -1,5 +1,38 @@
 # Milestones
 
+## v1.6 KIMIDORI AC15 Support (Shipped: 2026-06-25)
+
+**Phases completed:** 4 phases, 4 plans, 0 tasks
+
+**Delivered:** KIMIDORI 0.12 is now a first-class older AC15 era with KIMIDORI-owned `/v05r00` game routes, shared `/v01r00` startup/version routing, generated wire DTOs, root-level catalog support, runtime state, Dani Dojo, normal play, AdminApi/WebUI support, songhash-backed catalog enablement, and accepted runtime closeout.
+
+**Key accomplishments:**
+
+- Proved KIMIDORI route/proto/data evidence from `proto/kimidori`, `.tools/kimidori/EBOOT.ELF.i64`, and linked root-level game data before runtime support.
+- Added first-class KIMIDORI adapter identity with generated wire DTOs, Host settings/DI/application-part gating, and `/v05r00/chassis/*.php` route ownership while preserving shared `/v01r00` startup/version behavior.
+- Bound KIMIDORI root-level catalog and metadata loading without assuming newer `config/STxxxx-*` AC15 layouts.
+- Added KIMIDORI-owned identity, userdata, self-best, crowns, favorites, recent songs, release-song readback, normal playresult mutation, Dani Dojo state, Don Point/reward/unlock state, and bounded shopping-result compatibility.
+- Fixed the runtime songhash enablement gap from KIMIDORI binary evidence by returning the file-order song hash table and compacting hash-indexed payloads.
+- Exposed implemented KIMIDORI-owned state through AdminApi/WebUI while keeping Taikojuku, Tokkun, Banacoin, battle, Don Challenge, ChallengeCompe, and full shop-authority controls absent.
+- Closed with user-observed KIMIDORI cabinet/RPCS3 runtime acceptance recorded on 2026-06-25.
+
+**Stats:**
+
+- 4 phases complete
+- 4 GSD plans complete
+- 19/19 v1.6 requirements complete
+- Open artifact audit clear at close
+
+**Archived:**
+
+- `.planning/milestones/v1.6-ROADMAP.md`
+- `.planning/milestones/v1.6-REQUIREMENTS.md`
+- `.planning/milestones/v1.6-phases/`
+
+**What's next:** Start a fresh milestone with `$gsd-new-milestone`.
+
+---
+
 ## v1.5 Murasaki AC15 Support (Shipped: 2026-06-23)
 
 **Delivered:** Murasaki is now a first-class older AC15 era with Murasaki-owned `/v06r00` compatibility routes, final `/v06r01` route parity where binary/proto evidence supports it, generated wire DTOs, catalog/profile binding, runtime persistence, split metadata readback, normal play, Dani/Taikojuku, reward/Don Point state, AdminApi/WebUI support, and accepted in-game closeout.

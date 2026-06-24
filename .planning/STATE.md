@@ -2,35 +2,36 @@
 gsd_state_version: 1.0
 milestone: v1.6
 milestone_name: KIMIDORI AC15 Support
-current_phase: 38
-current_phase_name: AdminApi, WebUI, and Runtime Closeout
-status: complete
-last_updated: "2026-06-25T03:49:34+08:00"
+current_phase: 6
+status: Awaiting next milestone
+stopped_at: KIMIDORI v1.6 milestone archived; ready for next milestone
+last_updated: "2026-06-25T04:00:00+08:00"
 last_activity: 2026-06-25
-last_activity_desc: KIMIDORI runtime smoke accepted by user; v1.6 ready for milestone closeout
+last_activity_desc: Milestone v1.6 completed and archived
 progress:
   total_phases: 4
   completed_phases: 4
   total_plans: 4
   completed_plans: 4
   percent: 100
+current_phase_name: AdminApi, WebUI, and Runtime Closeout
 ---
 
 # Project State
 
 ## Project Reference
 
-See: `.planning/PROJECT.md` (updated 2026-06-23)
+See: `.planning/PROJECT.md` (updated 2026-06-25)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, Nijiiro, or shared identity state.
-**Current focus:** KIMIDORI runtime smoke acceptance is recorded; ready to complete the v1.6 milestone.
+**Current focus:** Planning the next milestone.
 
 ## Current Position
 
-Phase: 38 - AdminApi, WebUI, and Runtime Closeout
-Plan: Automated implementation and verification recorded
-Status: complete
-Last activity: 2026-06-25 - KIMIDORI runtime smoke accepted by user; Phase 38 complete
+Phase: Milestone v1.6 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-06-25 — Milestone v1.6 completed and archived
 
 ## Performance Metrics
 
@@ -85,7 +86,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ### Pending Todos
 
-- Complete v1.6 milestone closeout and archive now that KIMIDORI runtime acceptance is recorded.
+- None recorded.
 
 ### Blockers/Concerns
 
@@ -110,9 +111,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 ## Session Continuity
 
 Last session: 2026-06-25
-Stopped at: KIMIDORI runtime accepted; v1.6 milestone closeout ready
+Stopped at: KIMIDORI v1.6 milestone archived; ready for next milestone
 Resume file: `.planning/ROADMAP.md`
 
 ## Operator Next Steps
 
-- Run `$gsd-complete-milestone` to archive v1.6 and prepare the next milestone.
+- Start the next milestone with $gsd-new-milestone

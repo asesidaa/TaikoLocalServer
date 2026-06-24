@@ -234,6 +234,52 @@
 
 ---
 
+## Milestone: v1.6 KIMIDORI AC15 Support
+
+**Shipped:** 2026-06-25
+**Phases:** 4 | **Plans:** 4 | **Sessions:** not measured
+
+### What Was Built
+
+- KIMIDORI first-class adapter foundation with route/proto/data evidence, generated wire DTOs, Host gating, and `/v05r00` route ownership.
+- Root-level KIMIDORI catalog and metadata binding for `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, `fumen/tuning.bin`, sidecars, and conservative metadata readback.
+- KIMIDORI-owned identity, userdata, normal play, self-best, crowns, favorites, recent songs, release-song readback, rewards/Don Points, bounded shopping-result compatibility, and Dani Dojo state.
+- KIMIDORI AdminApi/WebUI readback for implemented state only.
+- Runtime songhash enablement fix from KIMIDORI binary evidence, including file-order hash table readback and compacted hash-indexed payloads.
+- Accepted cabinet/RPCS3 runtime closeout on 2026-06-25.
+
+### What Worked
+
+- The proto-plus-binary-route gate kept KIMIDORI from inheriting Taikojuku, Tokkun, Banacoin, battle, Don Challenge, or ChallengeCompe behavior by assumption.
+- Treating the linked data as root-level from the start avoided another round of `config/STxxxx-*` loader churn.
+- The songhash debug loop stayed evidence-first: binary consumer proof identified the exact missing table and payload compaction shape.
+
+### What Was Inefficient
+
+- The archive helper still generated sparse accomplishments because phase summaries lack one-line metadata.
+- Helper-generated closeout dates used UTC, so local-date closeout records needed manual normalization to 2026-06-25.
+- `PROJECT.md` still needed manual evolution after the mechanical archive step.
+
+### Patterns Established
+
+- For KIMIDORI-era hash payloads, return the song hash table and compact hash-indexed response arrays by musicinfo file-order ordinal.
+- Keep Dani Dojo separate from Taikojuku practice-folder behavior even when adjacent eras support both.
+- Treat older-AC15 root-level data layout as an era profile capability, not a special-case handler filesystem path.
+
+### Key Lessons
+
+1. Missing music in-game can come from catalog-index remapping, not from missing song rows or startup routes.
+2. A route existing in proto is not enough; binary consumers decide whether response content must be dense, ordinal-indexed, or song-number-indexed.
+3. Closeout helpers need richer summary metadata to avoid manual milestone-entry reconstruction.
+
+### Cost Observations
+
+- Model mix: not measured.
+- Sessions: not measured.
+- Notable: Late cost came from runtime songhash evidence and closeout synchronization, not from broad new feature scope.
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -246,6 +292,7 @@
 | v1.3 | not measured | 6 | Red introduced server-side Don Challenge and separate ChallengeCompe compatibility while preserving era-owned runtime state. |
 | v1.4 | not measured | 6 | White reused AC15 capabilities behind White evidence/profile/state boundaries and closed with accepted runtime/WebUI verification. |
 | v1.5 | not measured | 7 | Murasaki added split metadata, final `/v06r01` parity, and strict absent-surface gates while closing with accepted in-game verification. |
+| v1.6 | not measured | 4 | KIMIDORI added root-level catalog support, songhash-backed enablement, and strict proto-plus-route feature gates while closing with accepted runtime verification. |
 
 ### Cumulative Quality
 
@@ -257,6 +304,7 @@
 | v1.3 | Full server suite: 778 passed at close | not measured | Red-owned Don Challenge and AdminApi/WebUI closeout patterns |
 | v1.4 | Full server suite: 829 passed at close | not measured | White-owned runtime state plus dedicated White Don Challenge readback |
 | v1.5 | Full server suite: 865 passed at close | not measured | Murasaki split metadata, final/compat wire separation, and unsupported special-surface absence guards |
+| v1.6 | Full server suite: 868 passed at close | not measured | KIMIDORI root-level catalog, songhash remapping, and proto-plus-route absence gates |
 
 ### Top Lessons (Verified Across Milestones)
 
@@ -267,3 +315,4 @@
 5. Keep Don Challenge capability sharing separate from ChallengeCompe protocol compatibility.
 6. For White and older eras, separate version-specific route/wire evidence before adding compatibility for later updates.
 7. Treat changelog notes as investigation hints, not server-disable proof, when binary/proto evidence still exposes route surfaces.
+8. For KIMIDORI and older hash-era payloads, inspect binary remappers before assuming song IDs and response arrays share the same index space.

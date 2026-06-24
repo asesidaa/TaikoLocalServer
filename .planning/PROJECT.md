@@ -4,7 +4,7 @@
 
 TaikoLocalServer is a local ASP.NET Core server for Taiko no Tatsujin cabinet protocols, local SQLite persistence, era-specific game data catalogs, and a Blazor WebAssembly admin UI. This project continues the existing Blue-era support effort from the Superpowers roadmap in `docs/superpowers/specs/2026-05-27-blue-support-roadmap-design.md`, starting after completed stages A0-A5 and carrying the work through full Blue support.
 
-Full Blue, Yellow, Red, White 0.13, Murasaki, and KIMIDORI 0.12 support are complete. The project now supports Nijiiro, Green AC15, Blue AC15, Yellow AC15, Red AC15, White AC15, Murasaki AC15, and KIMIDORI AC15 in one process while preserving era-owned routes, wire DTOs, persistence, handlers, mappers, catalogs, and tests. KIMIDORI AC15 0.12 support is ready for v1.6 milestone closeout.
+Full Blue, Yellow, Red, White 0.13, Murasaki, and KIMIDORI 0.12 support are complete. The project now supports Nijiiro, Green AC15, Blue AC15, Yellow AC15, Red AC15, White AC15, Murasaki AC15, and KIMIDORI AC15 in one process while preserving era-owned routes, wire DTOs, persistence, handlers, mappers, catalogs, and tests.
 
 ## Core Value
 
@@ -26,9 +26,9 @@ Yellow support reuses AC15 shared core behavior where it directly reduces duplic
 
 ## Current Planning State
 
-Active milestone: v1.6 KIMIDORI AC15 Support. Phases 35-38 are complete, user-observed runtime acceptance is recorded, and milestone closeout is ready.
+No active milestone. v1.6 KIMIDORI AC15 Support shipped on 2026-06-25 and is archived.
 
-## Current Milestone: v1.6 KIMIDORI AC15 Support
+## Completed Milestone: v1.6 KIMIDORI AC15 Support
 
 **Goal:** Add first-class KIMIDORI 0.12 support by composing existing older-AC15 capabilities around KIMIDORI-owned proto, route, root-level data, persistence, AdminApi/WebUI surfaces, and verification.
 
@@ -38,6 +38,7 @@ Active milestone: v1.6 KIMIDORI AC15 Support. Phases 35-38 are complete, user-ob
 - Root-level KIMIDORI catalog loading from `Host/wwwroot/data/kimidori/data` without assuming newer `config/STxxxx-*` data layout.
 - Catalog/profile/runtime binding through existing AC15/Murasaki-style capabilities where KIMIDORI proto and binary route evidence both prove the feature: BAID/mydon, userdata, normal play, Dani Dojo, self-best, crowns, favorites/recent, folders/telops/default/mainichi/song-hash surfaces, recommendations, Don Point/reward fields, shopping-result compatibility, and AdminApi/WebUI routing.
 - Explicit absence handling for features missing from `proto/kimidori` or without a corresponding binary `.php` route, including Taikojuku practice-folder behavior for KIMIDORI 0.12 unless new local evidence proves otherwise.
+- Runtime acceptance was recorded on 2026-06-25, and v1.6 is archived under `.planning/milestones/`.
 
 ## Completed Milestone: v1.5 Murasaki AC15 Support
 
@@ -97,12 +98,7 @@ Active milestone: v1.6 KIMIDORI AC15 Support. Phases 35-38 are complete, user-ob
 
 ### Active
 
-- [x] KIMIDORI is a first-class enableable AC15 era with KIMIDORI-owned generated wire DTOs, adapter routes, Host settings, DI, and route gating.
-- [x] KIMIDORI startup/version routes use shared `/v01r00/chassis/*` behavior while KIMIDORI game routes live under `/v05r00/chassis/*`.
-- [x] KIMIDORI catalog loading supports the linked root-level game-data layout under `Host/wwwroot/data/kimidori/data`.
-- [x] KIMIDORI runtime state stays era-owned while composing proven AC15 behavior for identity, userdata, normal play, Dani Dojo, self-best, crowns, favorites, recent songs, folders, telops, recommendations, Don Points/rewards, and shopping-result compatibility where proto and route evidence both support it.
-- [x] KIMIDORI AdminApi/WebUI surfaces expose implemented KIMIDORI-owned state without adding controls for unsupported features.
-- [x] KIMIDORI verification includes automated route/handler/catalog/persistence proof plus user-observed cabinet/RPCS3 smoke before milestone close.
+- No active milestone requirements. Run `$gsd-new-milestone` to define the next scope.
 
 ### Out of Scope
 
@@ -174,15 +170,17 @@ v1.4 White AC15 0.13 Support is complete. Phases 23-27 plus inserted Phase 23.1 
 
 v1.5 Murasaki AC15 Support is complete. Phases 28-34 plus quick task 260623-2ff added Murasaki as a first-class older AC15 era with Murasaki route/root evidence, generated wire DTOs, catalog/profile binding, split metadata readback, Murasaki-owned runtime state, normal play, Dani/Taikojuku, reward/Don Point behavior, AdminApi/WebUI readback, final `/v06r01` protocol support, and accepted in-game closeout evidence.
 
+v1.6 KIMIDORI AC15 Support is complete. Phases 35-38 added KIMIDORI as a first-class older AC15 era with KIMIDORI route/root evidence, generated wire DTOs, root-level catalog loading, KIMIDORI-owned runtime state, normal play, Dani Dojo, songhash-backed catalog enablement, AdminApi/WebUI readback, and accepted cabinet/RPCS3 closeout evidence.
+
 ## Next Milestone
 
-v1.6 KIMIDORI AC15 Support is active. Requirements and roadmap scope are built from `proto/kimidori`, `.tools/kimidori`, linked root-level KIMIDORI game data, the user's route/version guidance, and public wiki context only as secondary product scoping.
+Not started. Run `$gsd-new-milestone` to define the next milestone through questioning, research, requirements, and roadmap.
 
 ## Constraints
 
 - **Evidence**: New era semantics must be specified from proto, local data, logs, IDA/client evidence, or cabinet/RPCS3 traces before runtime implementation.
 - **Architecture**: Treat each AC15 era as a composition root for supported capabilities, with era-owned wire DTOs, routes, persistence, catalog data, tests, config/limits, wire placement, and narrow era-specific helpers.
-- **State separation**: Keep Blue, Green, Yellow, Red, White, and Nijiiro persistent state separate unless the data is truly shared identity state.
+- **State separation**: Keep Blue, Green, Yellow, Red, White, Murasaki, KIMIDORI, and Nijiiro persistent state separate unless the data is truly shared identity state.
 - **Transport safety**: Preserve known AC15 direct-protobuf and startup/verup assumptions only where current per-era client/proto evidence supports them.
 - **Scope order**: Build foundation, capability profile/catalog binding, runtime capability bindings, Don Challenge where era data proves it, and verification before claiming full support for any new AC15 era.
 - **Red scope**: Treat Red as an older-AC15 capability composition without WaiWai; Don Challenge is server-side progress/rewards, while ChallengeCompe remains a separate protocol surface.
@@ -255,4 +253,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-23 after starting v1.6 KIMIDORI AC15 Support*
+*Last updated: 2026-06-25 after shipping v1.6 KIMIDORI AC15 Support*
