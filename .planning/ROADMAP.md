@@ -8,7 +8,7 @@
 - [x] **v1.3 Red AC15 Support** - Phases 18-22 shipped on 2026-06-16. See [v1.3 roadmap archive](milestones/v1.3-ROADMAP.md), [v1.3 requirements archive](milestones/v1.3-REQUIREMENTS.md), and [v1.3 phase artifacts](milestones/v1.3-phases/).
 - [x] **v1.4 White AC15 0.13 Support** - Phases 23-27 plus inserted Phase 23.1 shipped on 2026-06-21. See [v1.4 roadmap archive](milestones/v1.4-ROADMAP.md), [v1.4 requirements archive](milestones/v1.4-REQUIREMENTS.md), and [v1.4 phase artifacts](milestones/v1.4-phases/).
 - [x] **v1.5 Murasaki AC15 Support** - Phases 28-34 plus quick final `/v06r01` route support shipped on 2026-06-23. See [v1.5 roadmap archive](milestones/v1.5-ROADMAP.md), [v1.5 requirements archive](milestones/v1.5-REQUIREMENTS.md), [v1.5 milestone audit](milestones/v1.5-MILESTONE-AUDIT.md), and [v1.5 phase artifacts](milestones/v1.5-phases/).
-- [ ] **v1.6 KIMIDORI AC15 Support** - Phases 35-38. Define KIMIDORI 0.12 from `proto/kimidori`, `.tools/kimidori`, linked root-level game data, `/v01r00` startup/version routes, and `/v05r00` game routes.
+- [ ] **v1.6 KIMIDORI AC15 Support** - Phases 35-38 complete; ready for milestone closeout. Define KIMIDORI 0.12 from `proto/kimidori`, `.tools/kimidori`, linked root-level game data, `/v01r00` startup/version routes, and `/v05r00` game routes.
 
 ## Current Planning State
 
@@ -19,7 +19,7 @@
 **Granularity:** standard
 **Coverage:** 19/19 active v1.6 requirements mapped. Future `KLATER-01`, `KLATER-02`, and `KSPEC-01` remain deferred.
 
-**Current closeout state:** Phases 35-37 are automated complete. Phase 38 automated implementation is verified and remains `human_needed` for user-observed KIMIDORI cabinet/RPCS3 runtime acceptance.
+**Current closeout state:** Phases 35-38 are complete. Phase 38 automated implementation is verified, user-observed KIMIDORI cabinet/RPCS3 runtime acceptance was recorded on 2026-06-25, and v1.6 is ready for milestone closeout.
 
 ## Phases
 
@@ -31,7 +31,7 @@
 - [x] **Phase 35: KIMIDORI Evidence and Era Foundation** - Prove route/proto/data boundaries and introduce a no-state first-class KIMIDORI adapter.
 - [x] **Phase 36: Root-Level Catalog and Metadata Binding** - Load KIMIDORI root-level data and expose only proto-and-route-backed metadata families.
 - [x] **Phase 37: KIMIDORI Runtime State, Dani Dojo, and Normal Play** - Bind identity, userdata, normal play, Dani Dojo, self-best, crowns, favorites/recent, rewards, Don Points, and bounded shopping-result behavior through KIMIDORI-owned state.
-- [ ] **Phase 38: AdminApi, WebUI, and Runtime Closeout** - Expose implemented KIMIDORI-owned state to operators and close with automated plus user-observed runtime verification.
+- [x] **Phase 38: AdminApi, WebUI, and Runtime Closeout** - Expose implemented KIMIDORI-owned state to operators and close with automated plus user-observed runtime verification.
 
 ## Phase Details
 
@@ -90,7 +90,7 @@
   3. Automated verification covers KIMIDORI observable routes, handlers, root-level catalog loading, persistence, mapper/classifier behavior, protocol packing, build-output copy, AdminApi/WebUI readback, and no-cross-era/no-cross-mode boundaries.
   4. Closeout records Mapperly generated-source inspection for nontrivial mappings, a Host build using temp output if needed, and user-accepted cabinet/RPCS3 evidence for implemented KIMIDORI flows.
 
-**Plans**: 1 automated plan complete; phase remains `human_needed` pending user runtime acceptance
+**Plans**: 1 complete; user runtime acceptance recorded on 2026-06-25
 **UI hint**: yes
 
 ## Progress
@@ -100,7 +100,7 @@
 | 35. KIMIDORI Evidence and Era Foundation | v1.6 | 1/1 | Complete | 2026-06-23 |
 | 36. Root-Level Catalog and Metadata Binding | v1.6 | 1/1 | Complete | 2026-06-23 |
 | 37. KIMIDORI Runtime State, Dani Dojo, and Normal Play | v1.6 | 1/1 | Complete | 2026-06-23 |
-| 38. AdminApi, WebUI, and Runtime Closeout | v1.6 | 1/1 | Human Needed | - |
+| 38. AdminApi, WebUI, and Runtime Closeout | v1.6 | 1/1 | Complete | 2026-06-25 |
 
 ## Milestone Progress
 
@@ -112,4 +112,4 @@
 | v1.3 Red AC15 Support | 18-22 | 29 GSD plans | Shipped | 2026-06-16 |
 | v1.4 White AC15 0.13 Support | 23-27 plus 23.1 | 10 GSD plans | Shipped | 2026-06-21 |
 | v1.5 Murasaki AC15 Support | 28-34 plus quick 260623-2ff | 7 GSD plans plus final-route quick task | Shipped | 2026-06-23 |
-| v1.6 KIMIDORI AC15 Support | 35-38 | 4/4 GSD plans | Human Needed | - |
+| v1.6 KIMIDORI AC15 Support | 35-38 | 4/4 GSD plans | Ready for closeout | - |

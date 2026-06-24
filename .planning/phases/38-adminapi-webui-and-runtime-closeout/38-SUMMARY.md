@@ -16,5 +16,4 @@
 
 ## Closeout Status
 
-Automated implementation and verification are complete through the available build/test/package/generated-source gates. Phase 38 remains `human_needed` until the user accepts KIMIDORI cabinet/RPCS3 runtime smoke evidence.
-
+Automated implementation and verification are complete through the available build/test/package/generated-source gates. User-observed KIMIDORI cabinet/RPCS3 runtime smoke acceptance was recorded on 2026-06-25, so Phase 38 is complete and v1.6 is ready for milestone closeout.

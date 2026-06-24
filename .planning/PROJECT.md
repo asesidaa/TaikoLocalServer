@@ -4,7 +4,7 @@
 
 TaikoLocalServer is a local ASP.NET Core server for Taiko no Tatsujin cabinet protocols, local SQLite persistence, era-specific game data catalogs, and a Blazor WebAssembly admin UI. This project continues the existing Blue-era support effort from the Superpowers roadmap in `docs/superpowers/specs/2026-05-27-blue-support-roadmap-design.md`, starting after completed stages A0-A5 and carrying the work through full Blue support.
 
-Full Blue, Yellow, Red, White 0.13, and Murasaki support are complete. The project now supports Nijiiro, Green AC15, Blue AC15, Yellow AC15, Red AC15, White AC15, and Murasaki AC15 in one process while preserving era-owned routes, wire DTOs, persistence, handlers, mappers, catalogs, and tests. KIMIDORI AC15 0.12 support is the active milestone.
+Full Blue, Yellow, Red, White 0.13, Murasaki, and KIMIDORI 0.12 support are complete. The project now supports Nijiiro, Green AC15, Blue AC15, Yellow AC15, Red AC15, White AC15, Murasaki AC15, and KIMIDORI AC15 in one process while preserving era-owned routes, wire DTOs, persistence, handlers, mappers, catalogs, and tests. KIMIDORI AC15 0.12 support is ready for v1.6 milestone closeout.
 
 ## Core Value
 
@@ -26,7 +26,7 @@ Yellow support reuses AC15 shared core behavior where it directly reduces duplic
 
 ## Current Planning State
 
-Active milestone: v1.6 KIMIDORI AC15 Support. Requirements and roadmap are being defined.
+Active milestone: v1.6 KIMIDORI AC15 Support. Phases 35-38 are complete, user-observed runtime acceptance is recorded, and milestone closeout is ready.
 
 ## Current Milestone: v1.6 KIMIDORI AC15 Support
 
@@ -97,12 +97,12 @@ Active milestone: v1.6 KIMIDORI AC15 Support. Requirements and roadmap are being
 
 ### Active
 
-- [ ] KIMIDORI is a first-class enableable AC15 era with KIMIDORI-owned generated wire DTOs, adapter routes, Host settings, DI, and route gating.
-- [ ] KIMIDORI startup/version routes use shared `/v01r00/chassis/*` behavior while KIMIDORI game routes live under `/v05r00/chassis/*`.
-- [ ] KIMIDORI catalog loading supports the linked root-level game-data layout under `Host/wwwroot/data/kimidori/data`.
-- [ ] KIMIDORI runtime state stays era-owned while composing proven AC15 behavior for identity, userdata, normal play, Dani Dojo, self-best, crowns, favorites, recent songs, folders, telops, recommendations, Don Points/rewards, and shopping-result compatibility where proto and route evidence both support it.
-- [ ] KIMIDORI AdminApi/WebUI surfaces expose implemented KIMIDORI-owned state without adding controls for unsupported features.
-- [ ] KIMIDORI verification includes automated route/handler/catalog/persistence proof plus user-observed cabinet/RPCS3 smoke before milestone close.
+- [x] KIMIDORI is a first-class enableable AC15 era with KIMIDORI-owned generated wire DTOs, adapter routes, Host settings, DI, and route gating.
+- [x] KIMIDORI startup/version routes use shared `/v01r00/chassis/*` behavior while KIMIDORI game routes live under `/v05r00/chassis/*`.
+- [x] KIMIDORI catalog loading supports the linked root-level game-data layout under `Host/wwwroot/data/kimidori/data`.
+- [x] KIMIDORI runtime state stays era-owned while composing proven AC15 behavior for identity, userdata, normal play, Dani Dojo, self-best, crowns, favorites, recent songs, folders, telops, recommendations, Don Points/rewards, and shopping-result compatibility where proto and route evidence both support it.
+- [x] KIMIDORI AdminApi/WebUI surfaces expose implemented KIMIDORI-owned state without adding controls for unsupported features.
+- [x] KIMIDORI verification includes automated route/handler/catalog/persistence proof plus user-observed cabinet/RPCS3 smoke before milestone close.
 
 ### Out of Scope
 
@@ -232,10 +232,10 @@ v1.6 KIMIDORI AC15 Support is active. Requirements and roadmap scope are built f
 | Start Murasaki support as v1.5 | Murasaki is the next older AC15 era after White; local Murasaki proto/data are present, features look White-like, and the user expects reuse of existing capabilities where wire/data semantics match | Validated in v1.5 |
 | Treat Murasaki changed wire shape as a first-class evidence gate | Murasaki lacks the White-style monolithic initial-data request and adds split metadata/global-score request families, so capability reuse must be mediated through Murasaki-owned wire mapping and binary/client evidence for unknown byte fields | Validated in v1.5; unproven special/global surfaces remain future evidence-gated work |
 | Preserve Murasaki final `/v06r01` parity where the final binary still supports the route surface | Final proto/binary evidence supports final route parity and binary-supported Dani/Taikojuku behavior despite changelog wording that could be over-read as a server-disable signal | Validated by quick task 260623-2ff and v1.5 closeout |
-| Start KIMIDORI support as v1.6 | KIMIDORI is the next older AC15 era after Murasaki; local KIMIDORI proto, binary evidence, and linked game data are present, and the user expects straightforward capability composition for version 0.12 | Pending in v1.6 |
-| Define KIMIDORI features from proto plus binary route evidence | If `proto/kimidori` lacks a feature, it is missing; if the binary lacks a corresponding `.php` route, the server should not invent that surface | Pending in v1.6 |
-| Treat KIMIDORI game data as root-level era data | The linked KIMIDORI `USRDIR/data` puts core files at the data root rather than under `config/STxxxx-*`, so catalog loading must adapt instead of hardcoding newer AC15 layout assumptions | Pending in v1.6 |
-| Separate KIMIDORI Dani Dojo from Taikojuku practice-folder behavior | Dani Dojo is normal/Dan state surfaced through KIMIDORI runtime fields, while Taikojuku is a separate practice-folder route family and must not be conflated with Dani support | Pending in v1.6 |
+| Start KIMIDORI support as v1.6 | KIMIDORI is the next older AC15 era after Murasaki; local KIMIDORI proto, binary evidence, and linked game data are present, and the user expects straightforward capability composition for version 0.12 | Validated in v1.6 |
+| Define KIMIDORI features from proto plus binary route evidence | If `proto/kimidori` lacks a feature, it is missing; if the binary lacks a corresponding `.php` route, the server should not invent that surface | Validated in v1.6 |
+| Treat KIMIDORI game data as root-level era data | The linked KIMIDORI `USRDIR/data` puts core files at the data root rather than under `config/STxxxx-*`, so catalog loading must adapt instead of hardcoding newer AC15 layout assumptions | Validated in v1.6 |
+| Separate KIMIDORI Dani Dojo from Taikojuku practice-folder behavior | Dani Dojo is normal/Dan state surfaced through KIMIDORI runtime fields, while Taikojuku is a separate practice-folder route family and must not be conflated with Dani support | Validated in v1.6 |
 
 ## Evolution
 

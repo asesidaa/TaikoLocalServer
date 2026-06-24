@@ -1,9 +1,9 @@
 ---
 phase: 38-adminapi-webui-and-runtime-closeout
 verified: 2026-06-23T16:06:40Z
-status: human_needed
-score: "automated closeout verified; manual KIMIDORI runtime verification pending"
-acceptance: "pending user-observed cabinet/RPCS3 smoke evidence"
+status: passed
+score: "automated closeout verified; manual KIMIDORI runtime verification accepted"
+acceptance: "user-confirmed cabinet/RPCS3 runtime smoke accepted on 2026-06-25"
 overrides_applied: 0
 ---
 
@@ -33,9 +33,9 @@ overrides_applied: 0
 
 ## Human Verification
 
-status: pending
+status: accepted
 
-The user still needs to run KIMIDORI cabinet/RPCS3 smoke flows against the server and accept the runtime behavior. Minimum smoke scope:
+The user confirmed on 2026-06-25 that KIMIDORI can now be marked runtime checked. This records user-observed cabinet/RPCS3 smoke acceptance for the Phase 38 manual gate. The accepted minimum smoke scope is:
 
 - Startup/version flow uses shared `/v01r00/chassis/*` and KIMIDORI game requests use `/v05r00/chassis/*`.
 - Profile/login/mydon/userdata readback works for a KIMIDORI card.
@@ -45,5 +45,4 @@ The user still needs to run KIMIDORI cabinet/RPCS3 smoke flows against the serve
 
 ## Closeout Decision
 
-Phase 38 is not complete. Automated implementation is verified, but milestone closeout is blocked on user-observed KIMIDORI runtime acceptance.
-
+Phase 38 is complete. Automated implementation is verified, and user-observed KIMIDORI runtime smoke acceptance was recorded on 2026-06-25. v1.6 can proceed to milestone closeout.
