@@ -25,4 +25,7 @@ public static class CatalogExtensions
 
     public static IMurasakiCatalog Murasaki(this IGameDataCatalog catalog)
         => (IMurasakiCatalog)catalog.For(GameEra.Murasaki);
+
+    public static IKimidoriCatalog Kimidori(this IGameDataCatalog catalog)
+        => (IKimidoriCatalog)catalog.For(GameEra.Kimidori);
 }

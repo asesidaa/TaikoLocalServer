@@ -95,6 +95,21 @@ public static partial class Ac15DaniMapper
                 .Select(ToAc15DaniStageScore)
                 .ToArray());
 
+    public static Ac15DaniScore ToAc15DaniScore(DanScoreDatumKimidori row)
+        => new(
+            row.Baid,
+            row.DanId,
+            row.IsExtra,
+            row.MedleyUniqueId,
+            row.ArrivalSongCount,
+            row.SoulGaugeTotal,
+            row.ComboCountTotal,
+            row.ClearGrade,
+            row.DanStageScoreData
+                .OrderBy(stage => stage.StageIndex)
+                .Select(ToAc15DaniStageScore)
+                .ToArray());
+
     public static partial Ac15DaniStageScore ToAc15DaniStageScore(DanStageScoreDatumBlue stage);
 
     public static partial Ac15DaniStageScore ToAc15DaniStageScore(DanStageScoreDatumGreen stage);
@@ -107,6 +122,8 @@ public static partial class Ac15DaniMapper
 
     public static partial Ac15DaniStageScore ToAc15DaniStageScore(DanStageScoreDatumMurasaki stage);
 
+    public static partial Ac15DaniStageScore ToAc15DaniStageScore(DanStageScoreDatumKimidori stage);
+
     public static partial Ac15DaniScoreSummary ToAc15DaniScoreSummary(DanScoreDatumBlue row);
 
     public static partial Ac15DaniScoreSummary ToAc15DaniScoreSummary(DanScoreDatumGreen row);
@@ -118,6 +135,8 @@ public static partial class Ac15DaniMapper
     public static partial Ac15DaniScoreSummary ToAc15DaniScoreSummary(DanScoreDatumWhite row);
 
     public static partial Ac15DaniScoreSummary ToAc15DaniScoreSummary(DanScoreDatumMurasaki row);
+
+    public static partial Ac15DaniScoreSummary ToAc15DaniScoreSummary(DanScoreDatumKimidori row);
 
     [MapperIgnoreTarget(nameof(DanScoreDatumBlue.DanStageScoreData))]
     [MapperIgnoreTarget(nameof(DanScoreDatumBlue.Ba))]
@@ -143,6 +162,10 @@ public static partial class Ac15DaniMapper
     [MapperIgnoreTarget(nameof(DanScoreDatumMurasaki.Ba))]
     public static partial DanScoreDatumMurasaki ToMurasakiDanScoreDatum(Ac15DaniScore score);
 
+    [MapperIgnoreTarget(nameof(DanScoreDatumKimidori.DanStageScoreData))]
+    [MapperIgnoreTarget(nameof(DanScoreDatumKimidori.Ba))]
+    public static partial DanScoreDatumKimidori ToKimidoriDanScoreDatum(Ac15DaniScore score);
+
     [MapperIgnoreTarget(nameof(DanScoreDatumBlue.DanStageScoreData))]
     [MapperIgnoreTarget(nameof(DanScoreDatumBlue.Ba))]
     public static partial void ApplyToBlueDanScoreDatum(Ac15DaniScore score, [MappingTarget] DanScoreDatumBlue row);
@@ -166,6 +189,10 @@ public static partial class Ac15DaniMapper
     [MapperIgnoreTarget(nameof(DanScoreDatumMurasaki.DanStageScoreData))]
     [MapperIgnoreTarget(nameof(DanScoreDatumMurasaki.Ba))]
     public static partial void ApplyToMurasakiDanScoreDatum(Ac15DaniScore score, [MappingTarget] DanScoreDatumMurasaki row);
+
+    [MapperIgnoreTarget(nameof(DanScoreDatumKimidori.DanStageScoreData))]
+    [MapperIgnoreTarget(nameof(DanScoreDatumKimidori.Ba))]
+    public static partial void ApplyToKimidoriDanScoreDatum(Ac15DaniScore score, [MappingTarget] DanScoreDatumKimidori row);
 
     public static DanStageScoreDatumBlue ToBlueDanStageScoreDatum(Ac15DaniStageScore stage, Ac15DaniScore score)
     {
@@ -221,6 +248,15 @@ public static partial class Ac15DaniMapper
         return row;
     }
 
+    public static DanStageScoreDatumKimidori ToKimidoriDanStageScoreDatum(Ac15DaniStageScore stage, Ac15DaniScore score)
+    {
+        var row = ToKimidoriDanStageScoreDatum(stage);
+        row.Baid = score.Baid;
+        row.DanId = score.DanId;
+        row.IsExtra = score.IsExtra;
+        return row;
+    }
+
     [MapperIgnoreTarget(nameof(DanStageScoreDatumBlue.Baid))]
     [MapperIgnoreTarget(nameof(DanStageScoreDatumBlue.DanId))]
     [MapperIgnoreTarget(nameof(DanStageScoreDatumBlue.IsExtra))]
@@ -269,6 +305,14 @@ public static partial class Ac15DaniMapper
         Ac15DaniStageScore stage,
         [MappingTarget] DanStageScoreDatumMurasaki row);
 
+    [MapperIgnoreTarget(nameof(DanStageScoreDatumKimidori.Baid))]
+    [MapperIgnoreTarget(nameof(DanStageScoreDatumKimidori.DanId))]
+    [MapperIgnoreTarget(nameof(DanStageScoreDatumKimidori.IsExtra))]
+    [MapperIgnoreTarget(nameof(DanStageScoreDatumKimidori.Parent))]
+    public static partial void ApplyToKimidoriDanStageScoreDatum(
+        Ac15DaniStageScore stage,
+        [MappingTarget] DanStageScoreDatumKimidori row);
+
     [MapperIgnoreTarget(nameof(DanStageScoreDatumBlue.Baid))]
     [MapperIgnoreTarget(nameof(DanStageScoreDatumBlue.DanId))]
     [MapperIgnoreTarget(nameof(DanStageScoreDatumBlue.IsExtra))]
@@ -304,4 +348,10 @@ public static partial class Ac15DaniMapper
     [MapperIgnoreTarget(nameof(DanStageScoreDatumMurasaki.IsExtra))]
     [MapperIgnoreTarget(nameof(DanStageScoreDatumMurasaki.Parent))]
     private static partial DanStageScoreDatumMurasaki ToMurasakiDanStageScoreDatum(Ac15DaniStageScore stage);
+
+    [MapperIgnoreTarget(nameof(DanStageScoreDatumKimidori.Baid))]
+    [MapperIgnoreTarget(nameof(DanStageScoreDatumKimidori.DanId))]
+    [MapperIgnoreTarget(nameof(DanStageScoreDatumKimidori.IsExtra))]
+    [MapperIgnoreTarget(nameof(DanStageScoreDatumKimidori.Parent))]
+    private static partial DanStageScoreDatumKimidori ToKimidoriDanStageScoreDatum(Ac15DaniStageScore stage);
 }

@@ -37,6 +37,7 @@ public sealed partial class Ac15ProfileSettingsController(
             GameEra.Red => await GetRed(baid),
             GameEra.White => await GetWhite(baid),
             GameEra.Murasaki => await GetMurasaki(baid),
+            GameEra.Kimidori => await GetKimidori(baid),
             _ => BadAc15Era(era)
         };
     }
@@ -62,6 +63,7 @@ public sealed partial class Ac15ProfileSettingsController(
             GameEra.Red => await PutRed(baid, request),
             GameEra.White => await PutWhite(baid, request),
             GameEra.Murasaki => await PutMurasaki(baid, request),
+            GameEra.Kimidori => await PutKimidori(baid, request),
             _ => BadAc15Era(era)
         };
     }

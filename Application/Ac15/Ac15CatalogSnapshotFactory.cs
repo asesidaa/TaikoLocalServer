@@ -67,4 +67,13 @@ public static class Ac15CatalogSnapshotFactory
             murasaki.Telops,
             Ac15ItemShopCatalog.Disabled,
             murasaki.TaikojukuFileOrder));
+
+    public static Ac15CatalogSnapshot FromKimidori(IKimidoriCatalog kimidori)
+        => FromSource(new Ac15CatalogProjectionSource(
+            kimidori.SongHashVersion,
+            kimidori.MusicInfoFileOrder.Select(song => song.SongNo).ToArray(),
+            kimidori.EventFolders,
+            kimidori.Telops,
+            Ac15ItemShopCatalog.Disabled,
+            []));
 }

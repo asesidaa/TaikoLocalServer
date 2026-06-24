@@ -101,15 +101,23 @@ internal static partial class Ac15CustomizationSourceParser
             return [];
         }
 
-        return Directory.EnumerateFiles(nutdataRoot, "*.nut", SearchOption.AllDirectories)
+        return Directory.EnumerateFiles(nutdataRoot, "*", SearchOption.AllDirectories)
             .Where(path => string.Equals(
                 Path.GetFileName(Path.GetDirectoryName(path)),
                 catalogDirectoryName,
                 StringComparison.OrdinalIgnoreCase))
+            .Where(path => IsNameCatalogFile(path))
             .SelectMany(path => ParseIds(Path.GetFileNameWithoutExtension(path)))
             .Distinct()
             .Order()
             .ToArray();
+    }
+
+    private static bool IsNameCatalogFile(string path)
+    {
+        var extension = Path.GetExtension(path);
+        return string.Equals(extension, ".nut", StringComparison.OrdinalIgnoreCase)
+               || string.Equals(extension, ".ndp", StringComparison.OrdinalIgnoreCase);
     }
 
     private static IEnumerable<uint> ParseIds(string fileName)

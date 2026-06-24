@@ -53,6 +53,12 @@
         "AutoExtractCatalog": true,
         "GameDataPath": "wwwroot/data/murasaki/data",
         "CustomizationNameDataPath": ""
+      },
+      "Kimidori": {
+        "Enabled": true,
+        "AutoExtractCatalog": true,
+        "GameDataPath": "wwwroot/data/kimidori/data",
+        "CustomizationNameDataPath": ""
       }
     }
   }

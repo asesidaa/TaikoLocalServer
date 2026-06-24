@@ -27,6 +27,7 @@ public sealed class GetStartupMovieDataQueryHandler(
         {
             GameEra.White => gameDataService.White().Movies,
             GameEra.Murasaki => gameDataService.Murasaki().Movies,
+            GameEra.Kimidori => gameDataService.Kimidori().Movies,
             GameEra.Red => gameDataService.Red().Movies,
             GameEra.Blue => gameDataService.Blue().Movies,
             GameEra.Green => gameDataService.Green().Movies,
@@ -48,6 +49,7 @@ public sealed class GetStartupMovieDataQueryHandler(
         {
             7 => GameEra.White,
             6 => GameEra.Murasaki,
+            5 => GameEra.Kimidori,
             8 => GameEra.Red,
             9 => GameEra.Yellow,
             10 => GameEra.Blue,

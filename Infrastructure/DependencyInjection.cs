@@ -13,6 +13,7 @@ using TaikoLocalServer.Domain.Enums;
 using TaikoLocalServer.Infrastructure.GameDataCatalog;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Blue;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Kimidori;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Murasaki;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Nijiiro;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Red;
@@ -111,6 +112,13 @@ public static class DependencyInjection
             services.AddSingleton<MurasakiEraGameDataCatalog>();
             services.AddSingleton<IMurasakiCatalog>(sp => sp.GetRequiredService<MurasakiEraGameDataCatalog>());
             services.AddSingleton<IEraGameDataCatalog>(sp => sp.GetRequiredService<MurasakiEraGameDataCatalog>());
+        }
+
+        if (enabledEras.Contains(GameEra.Kimidori))
+        {
+            services.AddSingleton<KimidoriEraGameDataCatalog>();
+            services.AddSingleton<IKimidoriCatalog>(sp => sp.GetRequiredService<KimidoriEraGameDataCatalog>());
+            services.AddSingleton<IEraGameDataCatalog>(sp => sp.GetRequiredService<KimidoriEraGameDataCatalog>());
         }
 
         services.AddSingleton<IGameDataCatalog>(sp => new FileGameDataCatalog(

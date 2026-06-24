@@ -29,6 +29,10 @@ public static partial class Ac15NormalPlayMapper
     [MapperIgnoreTarget(nameof(SongPlayDatumMurasaki.Ba))]
     public static partial SongPlayDatumMurasaki ToMurasakiSongPlayDatum(Ac15PlayRow row);
 
+    [MapperIgnoreTarget(nameof(SongPlayDatumKimidori.Id))]
+    [MapperIgnoreTarget(nameof(SongPlayDatumKimidori.Ba))]
+    public static partial SongPlayDatumKimidori ToKimidoriSongPlayDatum(Ac15PlayRow row);
+
     public static SongBestDatumBlue ToBlueSongBestDatum(uint baid, Ac15BestRow row, bool allowCrownUpdate)
     {
         var best = ToBlueSongBestDatum(row);
@@ -101,6 +105,18 @@ public static partial class Ac15NormalPlayMapper
         return best;
     }
 
+    public static SongBestDatumKimidori ToKimidoriSongBestDatum(uint baid, Ac15BestRow row, bool allowCrownUpdate)
+    {
+        var best = ToKimidoriSongBestDatum(row);
+        best.Baid = baid;
+        if (!allowCrownUpdate)
+        {
+            best.BestCrown = CrownType.None;
+        }
+
+        return best;
+    }
+
     [MapperIgnoreTarget(nameof(SongBestDatumBlue.Baid))]
     [MapperIgnoreTarget(nameof(SongBestDatumBlue.Ba))]
     private static partial SongBestDatumBlue ToBlueSongBestDatum(Ac15BestRow row);
@@ -124,4 +140,8 @@ public static partial class Ac15NormalPlayMapper
     [MapperIgnoreTarget(nameof(SongBestDatumMurasaki.Baid))]
     [MapperIgnoreTarget(nameof(SongBestDatumMurasaki.Ba))]
     private static partial SongBestDatumMurasaki ToMurasakiSongBestDatum(Ac15BestRow row);
+
+    [MapperIgnoreTarget(nameof(SongBestDatumKimidori.Baid))]
+    [MapperIgnoreTarget(nameof(SongBestDatumKimidori.Ba))]
+    private static partial SongBestDatumKimidori ToKimidoriSongBestDatum(Ac15BestRow row);
 }

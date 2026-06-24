@@ -23,7 +23,8 @@ internal static class Ac15CustomizationCatalogSupport
             Path.Combine(outputDirectory, neiroFileName)
         };
 
-        if (required.All(File.Exists))
+        var refreshExistingCatalogs = await ShouldRefreshEmptyTitleCatalogAsync(eraSettings, required[1], cancellationToken);
+        if (required.All(File.Exists) && !refreshExistingCatalogs)
         {
             return;
         }
@@ -60,10 +61,10 @@ internal static class Ac15CustomizationCatalogSupport
                     cancellationToken);
 
                 Directory.CreateDirectory(outputDirectory);
-                foreach (var path in required.Where(path => !File.Exists(path)))
+                foreach (var path in required.Where(path => refreshExistingCatalogs || !File.Exists(path)))
                 {
                     var sourcePath = Path.Combine(stagingDirectory, Path.GetFileName(path));
-                    PublishStagedFile(sourcePath, path);
+                    PublishStagedFile(sourcePath, path, refreshExistingCatalogs);
                 }
             }
             finally
@@ -173,7 +174,7 @@ internal static class Ac15CustomizationCatalogSupport
         return result;
     }
 
-    private static void PublishStagedFile(string sourcePath, string destinationPath)
+    private static void PublishStagedFile(string sourcePath, string destinationPath, bool overwrite)
     {
         var tempPath = Path.Combine(
             Path.GetDirectoryName(destinationPath)
@@ -183,7 +184,7 @@ internal static class Ac15CustomizationCatalogSupport
         File.Copy(sourcePath, tempPath, overwrite: false);
         try
         {
-            File.Move(tempPath, destinationPath, overwrite: false);
+            File.Move(tempPath, destinationPath, overwrite);
         }
         finally
         {
@@ -204,6 +205,37 @@ internal static class Ac15CustomizationCatalogSupport
         var root = Directory.GetParent(PathHelper.GetRootPath())?.FullName
                    ?? throw new InvalidOperationException("Could not resolve server root.");
         return Path.GetFullPath(Path.Combine(root, configuredPath));
+    }
+
+    private static async Task<bool> ShouldRefreshEmptyTitleCatalogAsync(
+        EraSettings eraSettings,
+        string titlePath,
+        CancellationToken cancellationToken)
+    {
+        if (!eraSettings.AutoExtractCatalog || !File.Exists(titlePath))
+        {
+            return false;
+        }
+
+        var titles = await Ac15CustomizationCatalogLoader.LoadListAsync<Title>(titlePath, cancellationToken);
+        if (titles.Count > 0)
+        {
+            return false;
+        }
+
+        var gameDataPath = ResolveConfiguredPath(eraSettings.GameDataPath);
+        return HasNameCatalogSource(gameDataPath, "title_name");
+    }
+
+    private static bool HasNameCatalogSource(string gameDataPath, string catalogDirectoryName)
+    {
+        var nutdataRoot = Path.Combine(gameDataPath, "nutdata");
+        return Directory.Exists(nutdataRoot)
+               && Directory.EnumerateFiles(nutdataRoot, "*", SearchOption.AllDirectories)
+                   .Any(path => string.Equals(
+                       Path.GetFileName(Path.GetDirectoryName(path)),
+                       catalogDirectoryName,
+                       StringComparison.OrdinalIgnoreCase));
     }
 
     private readonly record struct CostumeKey(string CostumeType, uint CostumeId);

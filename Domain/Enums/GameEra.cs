@@ -8,5 +8,6 @@ public enum GameEra
     Yellow = 3,
     Red = 4,
     White = 5,
-    Murasaki = 6
+    Murasaki = 6,
+    Kimidori = 7
 }

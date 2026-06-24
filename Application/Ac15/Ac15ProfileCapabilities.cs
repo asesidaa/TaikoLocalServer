@@ -35,6 +35,11 @@ public sealed record Ac15ProfileCapabilities(
         SupportsTitlePlate = false
     };
 
+    public static Ac15ProfileCapabilities CurrentWithoutTitlePlateOrTaikojuku { get; } = CurrentWithoutTitlePlate with
+    {
+        SupportsTaikojukuFolderDan = false
+    };
+
     public Ac15ProfileCapabilitiesDto ToDto()
         => new(
             CostumeSlots,

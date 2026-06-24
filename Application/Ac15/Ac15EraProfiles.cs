@@ -26,6 +26,12 @@ public static class Ac15EraProfiles
 
     private static readonly Ac15FeatureSet MurasakiFeatures = RedFeatures;
 
+    private static readonly Ac15FeatureSet KimidoriFeatures = MurasakiFeatures with
+    {
+        InitialData = false,
+        Taikojuku = false
+    };
+
     public static Ac15EraProfile Blue { get; } = new(
         GameEra.Blue,
         BlueGreenFeatures,
@@ -92,6 +98,17 @@ public static class Ac15EraProfiles
             HasTokkunTutorialFlagInUserData: false),
         Ac15ProfileCapabilities.CurrentWithoutTitlePlate);
 
+    public static Ac15EraProfile Kimidori { get; } = new(
+        GameEra.Kimidori,
+        KimidoriFeatures,
+        CreateKimidoriLimits(),
+        new Ac15WirePlacement(
+            CrownPlacement: Ac15CrownWirePlacement.DedicatedEndpoint,
+            HasInitialDataItemShopRows: false,
+            HasInitialDataLegalTermsRows: false,
+            HasTokkunTutorialFlagInUserData: false),
+        Ac15ProfileCapabilities.CurrentWithoutTitlePlateOrTaikojuku);
+
     public static int? GetMaxFavoriteSongs(GameEra era)
         => TryGet(era, out var profile) ? profile.Limits.MaxFavoriteSongs : null;
 
@@ -105,6 +122,7 @@ public static class Ac15EraProfiles
             GameEra.Red => Red,
             GameEra.White => White,
             GameEra.Murasaki => Murasaki,
+            GameEra.Kimidori => Kimidori,
             _ => null
         };
 
@@ -136,4 +154,6 @@ public static class Ac15EraProfiles
     private static Ac15ProtocolLimits CreateWhiteLimits() => CreateCommonLimits();
 
     private static Ac15ProtocolLimits CreateMurasakiLimits() => CreateCommonLimits();
+
+    private static Ac15ProtocolLimits CreateKimidoriLimits() => CreateCommonLimits();
 }

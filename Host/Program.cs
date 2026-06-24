@@ -6,6 +6,7 @@ using TaikoLocalServer.Adapters.AllnetMucha;
 using TaikoLocalServer.Adapters.GameProtocol.Blue;
 using TaikoLocalServer.Adapters.GameProtocol.CnR00;
 using TaikoLocalServer.Adapters.GameProtocol.Green;
+using TaikoLocalServer.Adapters.GameProtocol.Kimidori;
 using TaikoLocalServer.Adapters.GameProtocol.Murasaki;
 using TaikoLocalServer.Adapters.GameProtocol.Red;
 using TaikoLocalServer.Adapters.GameProtocol.White;
@@ -79,7 +80,7 @@ try
 
     if (enabledEras.Count == 0)
     {
-        Log.Fatal("ServerSettings.Eras has no enabled era. At least one era (Nijiiro, Green, Blue, Yellow, Red, White, or Murasaki) must be enabled in Host/Configurations/ServerSettings.json. Refusing to start.");
+        Log.Fatal("ServerSettings.Eras has no enabled era. At least one era (Nijiiro, Green, Blue, Yellow, Red, White, Murasaki, or Kimidori) must be enabled in Host/Configurations/ServerSettings.json. Refusing to start.");
         throw new InvalidOperationException("No game eras enabled.");
     }
 
@@ -139,6 +140,10 @@ try
     if (enabledEras.Contains(GameEra.Murasaki))
     {
         builder.Services.AddGameProtocolMurasaki();
+    }
+    if (enabledEras.Contains(GameEra.Kimidori))
+    {
+        builder.Services.AddGameProtocolKimidori();
     }
 
     builder.Services.AddControllers()
@@ -280,6 +285,7 @@ static bool ShouldAssumeProtobufRequest(HttpRequest request)
            || path.StartsWithSegments(WhiteRoutePrefixes.Compatibility, StringComparison.OrdinalIgnoreCase)
            || path.StartsWithSegments(MurasakiRoutePrefixes.Final, StringComparison.OrdinalIgnoreCase)
            || path.StartsWithSegments(MurasakiRoutePrefixes.Compatibility, StringComparison.OrdinalIgnoreCase)
+           || path.StartsWithSegments(KimidoriRoutePrefixes.Game, StringComparison.OrdinalIgnoreCase)
            || path.StartsWithSegments("/v01r00/chassis", StringComparison.OrdinalIgnoreCase)
            || path.StartsWithSegments("/v01r00_tw/chassis", StringComparison.OrdinalIgnoreCase)
            || path.StartsWithSegments("/v12r08_ww/chassis", StringComparison.OrdinalIgnoreCase)
