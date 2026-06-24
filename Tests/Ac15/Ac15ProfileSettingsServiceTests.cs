@@ -118,6 +118,38 @@ public sealed class Ac15ProfileSettingsServiceTests
     }
 
     [Fact]
+    public async Task GetAsync_KimidoriOmitsTaikojukuOptions()
+    {
+        await using var database = await SchemaDatabase.CreateAsync();
+        var user = new UserDatum { Baid = 1, MyDonName = "KIMI" };
+        var save = UserSaveDataKimidoriExtensions.CreateDefaultKimidoriSaveData(1);
+        save.DispTaikojukuDan = 5;
+        database.Context.UserData.Add(user);
+        database.Context.UserSaveDataKimidori.Add(save);
+        database.Context.DanScoreDataKimidori.Add(new DanScoreDatumKimidori
+        {
+            Baid = 1,
+            DanId = 5,
+            IsExtra = false,
+            ClearGrade = Ac15DanClearGrade.GoldClear
+        });
+        await database.Context.SaveChangesAsync();
+
+        var result = await Ac15ProfileSettingsService.GetAsync<UserSaveDataKimidori, DanScoreDatumKimidori>(
+            user,
+            save,
+            database.Context.DanScoreDataKimidori,
+            Ac15EraProfiles.Kimidori,
+            CancellationToken.None);
+
+        Assert.Equal(Ac15ProfileSettingsResultStatus.Success, result.Status);
+        var setting = result.Setting!;
+        Assert.Equal("Kimidori", setting.Era);
+        Assert.False(setting.Capabilities.SupportsTaikojukuFolderDan);
+        Assert.Null(setting.Options.Taikojuku);
+    }
+
+    [Fact]
     public async Task SaveAsync_RejectsUnsupportedOptionGroupWithoutMutation()
     {
         await using var database = await SchemaDatabase.CreateAsync();

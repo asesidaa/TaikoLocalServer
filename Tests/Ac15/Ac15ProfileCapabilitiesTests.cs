@@ -44,6 +44,20 @@ public sealed class Ac15ProfileCapabilitiesTests
     }
 
     [Fact]
+    public void KimidoriExposesOlderProfileSettingsWithoutTaikojukuFolderDan()
+    {
+        var profile = Ac15EraProfiles.Kimidori;
+
+        Assert.True(profile.ProfileCapabilities.SupportsTitle);
+        Assert.False(profile.ProfileCapabilities.SupportsTitlePlate);
+        Assert.False(profile.ProfileCapabilities.SupportsTaikojukuFolderDan);
+        Assert.False(profile.Features.Taikojuku);
+
+        var dto = profile.ProfileCapabilities.ToDto();
+        Assert.False(dto.SupportsTaikojukuFolderDan);
+    }
+
+    [Fact]
     public void CapabilityDtoCanRepresentTitleOnlyOlderEra()
     {
         var capabilities = new Ac15ProfileCapabilities(

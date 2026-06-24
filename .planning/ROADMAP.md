@@ -19,6 +19,8 @@
 **Granularity:** standard
 **Coverage:** 19/19 active v1.6 requirements mapped. Future `KLATER-01`, `KLATER-02`, and `KSPEC-01` remain deferred.
 
+**Current closeout state:** Phases 35-37 are automated complete. Phase 38 automated implementation is verified and remains `human_needed` for user-observed KIMIDORI cabinet/RPCS3 runtime acceptance.
+
 ## Phases
 
 **Phase Numbering:**
@@ -26,9 +28,9 @@
 - Integer phases (35, 36, 37, 38): planned milestone work
 - Decimal phases (35.1, 35.2): urgent insertions, if needed later
 
-- [ ] **Phase 35: KIMIDORI Evidence and Era Foundation** - Prove route/proto/data boundaries and introduce a no-state first-class KIMIDORI adapter.
-- [ ] **Phase 36: Root-Level Catalog and Metadata Binding** - Load KIMIDORI root-level data and expose only proto-and-route-backed metadata families.
-- [ ] **Phase 37: KIMIDORI Runtime State, Dani Dojo, and Normal Play** - Bind identity, userdata, normal play, Dani Dojo, self-best, crowns, favorites/recent, rewards, Don Points, and bounded shopping-result behavior through KIMIDORI-owned state.
+- [x] **Phase 35: KIMIDORI Evidence and Era Foundation** - Prove route/proto/data boundaries and introduce a no-state first-class KIMIDORI adapter.
+- [x] **Phase 36: Root-Level Catalog and Metadata Binding** - Load KIMIDORI root-level data and expose only proto-and-route-backed metadata families.
+- [x] **Phase 37: KIMIDORI Runtime State, Dani Dojo, and Normal Play** - Bind identity, userdata, normal play, Dani Dojo, self-best, crowns, favorites/recent, rewards, Don Points, and bounded shopping-result behavior through KIMIDORI-owned state.
 - [ ] **Phase 38: AdminApi, WebUI, and Runtime Closeout** - Expose implemented KIMIDORI-owned state to operators and close with automated plus user-observed runtime verification.
 
 ## Phase Details
@@ -45,7 +47,7 @@
   3. Disabled-era checks and supported-era route/build regression checks show KIMIDORI scaffolding does not expose disabled routes or change Blue, Green, Yellow, Red, White, Murasaki, Nijiiro, or shared startup behavior.
   4. Feature inclusion rules are documented and enforced: proto message presence plus binary `.php` route evidence is required, and missing proto features such as KIMIDORI 0.12 Taikojuku remain absent.
 
-**Plans**: 0 complete
+**Plans**: 1 complete
 
 ### Phase 36: Root-Level Catalog and Metadata Binding
 
@@ -59,7 +61,7 @@
   3. Proto-and-route-backed metadata routes such as default songs, mainichi songs, folders, telops, song hash, heartbeat, bookkeeping, recommendations, and movies return catalog-backed or conservative no-state responses without copying unsupported adjacent-era contracts.
   4. Required server-authored sidecar data exists or intentionally empty sidecars are committed for every implemented KIMIDORI feature that needs data outside raw operator files.
 
-**Plans**: 0 complete
+**Plans**: 1 complete
 
 ### Phase 37: KIMIDORI Runtime State, Dani Dojo, and Normal Play
 
@@ -74,7 +76,7 @@
   4. KIMIDORI shopping-result compatibility is bounded to proto-and-route-backed uploads and does not invent wallet/payment, shop-season, medal, or unrelated item-shop authority.
   5. Challenge arrays and other ambiguous payloads do not create Don Challenge, ChallengeCompe, battle, Tokkun, Banacoin, Taikojuku practice-folder behavior, or cross-era state unless later KIMIDORI-specific evidence proves that behavior; Dani Dojo remains separate from Taikojuku.
 
-**Plans**: 0 complete
+**Plans**: 1 complete
 
 ### Phase 38: AdminApi, WebUI, and Runtime Closeout
 
@@ -88,17 +90,17 @@
   3. Automated verification covers KIMIDORI observable routes, handlers, root-level catalog loading, persistence, mapper/classifier behavior, protocol packing, build-output copy, AdminApi/WebUI readback, and no-cross-era/no-cross-mode boundaries.
   4. Closeout records Mapperly generated-source inspection for nontrivial mappings, a Host build using temp output if needed, and user-accepted cabinet/RPCS3 evidence for implemented KIMIDORI flows.
 
-**Plans**: 0 complete
+**Plans**: 1 automated plan complete; phase remains `human_needed` pending user runtime acceptance
 **UI hint**: yes
 
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 35. KIMIDORI Evidence and Era Foundation | v1.6 | 0/1 | Pending | - |
-| 36. Root-Level Catalog and Metadata Binding | v1.6 | 0/1 | Pending | - |
-| 37. KIMIDORI Runtime State, Dani Dojo, and Normal Play | v1.6 | 0/1 | Pending | - |
-| 38. AdminApi, WebUI, and Runtime Closeout | v1.6 | 0/1 | Pending | - |
+| 35. KIMIDORI Evidence and Era Foundation | v1.6 | 1/1 | Complete | 2026-06-23 |
+| 36. Root-Level Catalog and Metadata Binding | v1.6 | 1/1 | Complete | 2026-06-23 |
+| 37. KIMIDORI Runtime State, Dani Dojo, and Normal Play | v1.6 | 1/1 | Complete | 2026-06-23 |
+| 38. AdminApi, WebUI, and Runtime Closeout | v1.6 | 1/1 | Human Needed | - |
 
 ## Milestone Progress
 
@@ -110,4 +112,4 @@
 | v1.3 Red AC15 Support | 18-22 | 29 GSD plans | Shipped | 2026-06-16 |
 | v1.4 White AC15 0.13 Support | 23-27 plus 23.1 | 10 GSD plans | Shipped | 2026-06-21 |
 | v1.5 Murasaki AC15 Support | 28-34 plus quick 260623-2ff | 7 GSD plans plus final-route quick task | Shipped | 2026-06-23 |
-| v1.6 KIMIDORI AC15 Support | 35-38 | 0/4 GSD plans | Planning | - |
+| v1.6 KIMIDORI AC15 Support | 35-38 | 4/4 GSD plans | Human Needed | - |

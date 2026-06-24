@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.6
 milestone_name: KIMIDORI AC15 Support
-current_phase: 35
-current_phase_name: KIMIDORI Evidence and Era Foundation
-status: roadmap_ready
-last_updated: "2026-06-23T14:11:49.672Z"
+current_phase: 38
+current_phase_name: AdminApi, WebUI, and Runtime Closeout
+status: human_needed
+last_updated: "2026-06-23T16:06:40.524Z"
 last_activity: 2026-06-23
-last_activity_desc: Roadmap created for milestone v1.6
+last_activity_desc: KIMIDORI automated implementation and verification recorded; manual cabinet/RPCS3 runtime acceptance pending
 progress:
   total_phases: 4
-  completed_phases: 0
+  completed_phases: 3
   total_plans: 4
-  completed_plans: 0
-  percent: 0
+  completed_plans: 4
+  percent: 75
 ---
 
 # Project State
@@ -23,14 +23,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-23)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, Nijiiro, or shared identity state.
-**Current focus:** Defining requirements and roadmap for v1.6 KIMIDORI AC15 Support.
+**Current focus:** Waiting for user-observed KIMIDORI cabinet/RPCS3 runtime smoke acceptance after automated implementation and verification.
 
 ## Current Position
 
-Phase: 35 - KIMIDORI Evidence and Era Foundation
-Plan: Not started
-Status: Roadmap ready
-Last activity: 2026-06-23 - Roadmap created for milestone v1.6
+Phase: 38 - AdminApi, WebUI, and Runtime Closeout
+Plan: Automated implementation and verification recorded
+Status: human_needed
+Last activity: 2026-06-23 - KIMIDORI phases 35-37 completed; Phase 38 remains pending user runtime acceptance
 
 ## Performance Metrics
 
@@ -52,6 +52,10 @@ Last activity: 2026-06-23 - Roadmap created for milestone v1.6
 | 32 | 1/1 | - | - |
 | 33 | 1/1 | - | - |
 | 34 | 1/1 | - | - |
+| 35 | 1/1 | - | - |
+| 36 | 1/1 | - | - |
+| 37 | 1/1 | - | - |
+| 38 | 1/1 | human_needed | - |
 
 **Recent Trend:**
 
@@ -60,7 +64,9 @@ Last activity: 2026-06-23 - Roadmap created for milestone v1.6
 - Phase 34 implemented Murasaki AdminApi/WebUI parity for supported surfaces and passed focused verification.
 - Quick task 260623-2ff added final `/v06r01` Murasaki route support while preserving `/v06r00` compatibility.
 - Final closeout on 2026-06-23 recorded user-observed Murasaki in-game acceptance, no vulnerable packages, 865 passing tests, and a full solution build with 0 warnings and 0 errors.
-- v1.6 KIMIDORI roadmap defines 4 pending phases starting at Phase 35, with all 19 requirements mapped.
+- v1.6 KIMIDORI roadmap defines 4 phases with all 19 active requirements mapped.
+- Phases 35-37 completed automated implementation for KIMIDORI evidence/foundation, root-level catalog/metadata binding, and KIMIDORI-owned runtime state.
+- Phase 38 completed automated AdminApi/WebUI implementation and verification, but remains `human_needed` for cabinet/RPCS3 runtime smoke acceptance.
 
 ## Accumulated Context
 
@@ -79,13 +85,13 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ### Pending Todos
 
-- None for v1.6 kickoff.
+- User needs to run KIMIDORI cabinet/RPCS3 smoke verification and accept implemented runtime behavior before Phase 38 and v1.6 can close.
 
 ### Blockers/Concerns
 
-- Unsupported Murasaki special surfaces such as `bestscore.php`, `songhash.php`, `shoppingresult.php`, ChallengeCompe, Don Challenge, Yellow shop, Banacoin, and global-score persistence remain future evidence-gated work.
-- KIMIDORI route inventory still needs binary `.php` route proof during the foundation phase.
-- KIMIDORI root-level data loading needs parser/path support instead of newer AC15 `config/STxxxx-*` assumptions.
+- KIMIDORI Phase 38 is intentionally open until cabinet/RPCS3 runtime behavior is user-accepted.
+- KIMIDORI unsupported surfaces remain evidence-gated: Taikojuku, Tokkun, Banacoin, battle, Don Challenge, ChallengeCompe, and full shop-authority controls.
+- Unsupported copied KIMIDORI scaffold files were moved to `.planning/batch-delete/kimidori-scaffold/` for user-managed cleanup; do not delete them directly.
 
 ### Quick Tasks Completed
 
@@ -104,9 +110,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 ## Session Continuity
 
 Last session: 2026-06-23
-Stopped at: Milestone v1.6 started; defining requirements and roadmap
+Stopped at: KIMIDORI automated implementation verified; manual runtime acceptance pending
 Resume file: `.planning/ROADMAP.md`
 
 ## Operator Next Steps
 
-- Start Phase 35 with `$gsd-discuss-phase 35` or `$gsd-plan-phase 35`.
+- Run KIMIDORI cabinet/RPCS3 smoke verification and confirm whether Phase 38 can be accepted.

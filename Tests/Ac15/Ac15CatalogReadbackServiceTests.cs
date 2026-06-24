@@ -47,6 +47,16 @@ public sealed class Ac15CatalogReadbackServiceTests
         Assert.Empty(response.RecommendBestSong);
     }
 
+    [Fact]
+    public void BuildRecommendResponse_DoesNotUseReservedMedleyRowsAsSeed()
+    {
+        var response = Ac15CatalogReadbackService.BuildRecommendResponse(Snapshot(songNoes: [20001]));
+
+        Assert.Equal(1u, response.Result);
+        Assert.Equal(0u, response.RecommendSong);
+        Assert.Empty(response.RecommendBestSong);
+    }
+
     private static Ac15CatalogSnapshot Snapshot(IReadOnlyList<uint>? songNoes = null) => new(
         SongHashVersion: 456,
         SongNoesInFileOrder: songNoes ?? [101, 102, 103],

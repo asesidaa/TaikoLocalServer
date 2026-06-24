@@ -5,6 +5,9 @@ namespace TaikoLocalServer.Application.Ac15;
 
 public static class Ac15RecommendationService
 {
+    private const uint FirstReservedMedleySongNo = 10_000;
+    private const uint LastReservedMedleySongNo = 49_999;
+
     public static CommonRecommendResponse BuildRecommendResponse(IReadOnlyList<uint> songNoes)
         => new()
         {
@@ -20,9 +23,13 @@ public static class Ac15RecommendationService
 
     private static uint PickRecommendSong(IReadOnlyList<uint> songNoes)
     {
-        var candidates = songNoes.Where(songNo => songNo > 0).ToArray();
+        var candidates = songNoes.Where(IsRecommendSeedCandidate).ToArray();
         return candidates.Length == 0
             ? 0u
             : candidates[Random.Shared.Next(candidates.Length)];
     }
+
+    private static bool IsRecommendSeedCandidate(uint songNo)
+        => songNo > 0
+            && (songNo < FirstReservedMedleySongNo || songNo > LastReservedMedleySongNo);
 }

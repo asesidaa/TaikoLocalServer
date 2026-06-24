@@ -45,7 +45,8 @@ public sealed class GreenAuthConfigTests
                     [nameof(GameEra.Green)] = new() { Enabled = true },
                     [nameof(GameEra.Blue)] = new() { Enabled = false },
                     [nameof(GameEra.Red)] = new() { Enabled = true },
-                    [nameof(GameEra.White)] = new() { Enabled = true }
+                    [nameof(GameEra.White)] = new() { Enabled = true },
+                    [nameof(GameEra.Kimidori)] = new() { Enabled = true }
                 }
             }));
 
@@ -57,6 +58,7 @@ public sealed class GreenAuthConfigTests
         Assert.Equal(Ac15EraProfiles.Green.Limits.MaxFavoriteSongs, response.FavoriteSongLimits[nameof(GameEra.Green)]);
         Assert.Equal(Ac15EraProfiles.Red.Limits.MaxFavoriteSongs, response.FavoriteSongLimits[nameof(GameEra.Red)]);
         Assert.Equal(Ac15EraProfiles.White.Limits.MaxFavoriteSongs, response.FavoriteSongLimits[nameof(GameEra.White)]);
+        Assert.Equal(Ac15EraProfiles.Kimidori.Limits.MaxFavoriteSongs, response.FavoriteSongLimits[nameof(GameEra.Kimidori)]);
         Assert.DoesNotContain(nameof(GameEra.Nijiiro), response.FavoriteSongLimits.Keys);
         Assert.DoesNotContain(nameof(GameEra.Blue), response.FavoriteSongLimits.Keys);
     }
@@ -143,6 +145,13 @@ public sealed class GreenAuthConfigTests
         public DbSet<MurasakiRecentSongs> MurasakiRecentSongs => throw new NotSupportedException();
         public DbSet<DanScoreDatumMurasaki> DanScoreDataMurasaki => throw new NotSupportedException();
         public DbSet<DanStageScoreDatumMurasaki> DanStageScoreDataMurasaki => throw new NotSupportedException();
+        public DbSet<UserSaveDataKimidori> UserSaveDataKimidori => throw new NotSupportedException();
+        public DbSet<SongBestDatumKimidori> SongBestDataKimidori => throw new NotSupportedException();
+        public DbSet<SongPlayDatumKimidori> SongPlayDataKimidori => throw new NotSupportedException();
+        public DbSet<KimidoriFavoriteSongs> KimidoriFavoriteSongs => throw new NotSupportedException();
+        public DbSet<KimidoriRecentSongs> KimidoriRecentSongs => throw new NotSupportedException();
+        public DbSet<DanScoreDatumKimidori> DanScoreDataKimidori => throw new NotSupportedException();
+        public DbSet<DanStageScoreDatumKimidori> DanStageScoreDataKimidori => throw new NotSupportedException();
 
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
             => throw new NotSupportedException();

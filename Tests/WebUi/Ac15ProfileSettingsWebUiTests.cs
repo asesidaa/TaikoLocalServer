@@ -2,6 +2,7 @@ using System.Net;
 using TaikoWebUI.Pages.ProfileEditor;
 using TaikoWebUI.Services;
 using TaikoWebUI.Shared.Customize;
+using TaikoWebUI.Utilities;
 
 namespace TaikoLocalServer.Tests.WebUi;
 
@@ -139,6 +140,7 @@ public sealed class Ac15ProfileSettingsWebUiTests
         await client.GetProfileDisplayNameAsync("Red", 99);
         await client.GetProfileDisplayNameAsync("White", 98);
         await client.GetProfileDisplayNameAsync("Murasaki", 97);
+        await client.GetProfileDisplayNameAsync("Kimidori", 96);
         await client.GetProfileDisplayNameAsync("Green", 100);
         await client.GetProfileDisplayNameAsync("Nijiiro", 101);
 
@@ -147,10 +149,25 @@ public sealed class Ac15ProfileSettingsWebUiTests
                 "api/Red/Ac15ProfileSettings/99",
                 "api/White/Ac15ProfileSettings/98",
                 "api/Murasaki/Ac15ProfileSettings/97",
+                "api/Kimidori/Ac15ProfileSettings/96",
                 "api/Green/Ac15ProfileSettings/100",
                 "api/Nijiiro/UserSettings/101"
             ],
             handler.RequestPaths);
+    }
+
+    [Fact]
+    public void WebUiEra_TreatsKimidoriAsSupportedAc15Era()
+    {
+        Assert.True(WebUiEra.IsSupported("Kimidori"));
+        Assert.True(WebUiEra.IsAc15("Kimidori"));
+        Assert.Contains(WebUiEra.Kimidori, WebUiEra.Supported);
+        Assert.Contains(
+            WebUiEra.GetUserPageFeatures("Kimidori"),
+            feature => feature.Page == WebUiUserPage.DaniDojo);
+        Assert.DoesNotContain(
+            WebUiEra.GetUserPageFeatures("Kimidori"),
+            feature => feature.Page == WebUiUserPage.DonChallenge);
     }
 
     private static Ac15ProfileSettingsDto CreateAc15Dto(
@@ -256,6 +273,30 @@ public sealed class Ac15ProfileSettingsWebUiTests
                   "era": "Murasaki",
                   "baid": 97,
                   "identity": { "myDonName": "MURASAKI", "myDonNameLanguage": 0 },
+                  "customization": null,
+                  "options": {},
+                  "capabilities": {
+                    "costumeSlots": [],
+                    "supportsTitle": false,
+                    "supportsTitlePlate": false,
+                    "supportsTone": false,
+                    "supportsColors": false,
+                    "supportsDisplayDanOnNamePlate": false,
+                    "supportsFolderCloseButton": false,
+                    "supportsAutoCostume": false,
+                    "supportsHowToPlayTutorialFlag": false,
+                    "supportsLocalRankingDifficulty": false,
+                    "supportsDefaultSelectedSelfBestDifficulty": false,
+                    "supportsTaikojukuFolderDan": false
+                  },
+                  "lastPlayDateTime": "1970-01-01T00:00:00Z"
+                }
+                """,
+                "api/Kimidori/Ac15ProfileSettings/96" => """
+                {
+                  "era": "Kimidori",
+                  "baid": 96,
+                  "identity": { "myDonName": "KIMIDORI", "myDonNameLanguage": 0 },
                   "customization": null,
                   "options": {},
                   "capabilities": {

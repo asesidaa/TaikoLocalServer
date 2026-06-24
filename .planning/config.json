@@ -57,5 +57,6 @@
   "claude_md_path": "./CLAUDE.md",
   "mode": "yolo",
   "granularity": "standard",
-  "resolve_model_ids": "omit"
+  "resolve_model_ids": "omit",
+  "runtime": "codex"
 }
