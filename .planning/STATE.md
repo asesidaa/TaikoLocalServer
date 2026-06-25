@@ -4,17 +4,17 @@ milestone: v1.7
 milestone_name: MOMOIRO AC15 0.11 Support
 current_phase: 39
 current_phase_name: MOMOIRO Evidence and Era Foundation
-status: executing
-stopped_at: Completed 39-03-PLAN.md
-last_updated: "2026-06-25T21:03:44.861Z"
+status: verifying
+stopped_at: Completed 39-04-PLAN.md
+last_updated: "2026-06-25T21:24:00.231Z"
 last_activity: 2026-06-26
-last_activity_desc: Completed 39-03 Momoiro Host settings, DI, fallback, and application-part gating.
+last_activity_desc: Completed 39-04 Momoiro route surface and build gates.
 progress:
   total_phases: 6
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 4
-  completed_plans: 3
-  percent: 75
+  completed_plans: 4
+  percent: 17
 ---
 
 # Project State
@@ -29,25 +29,25 @@ See: `.planning/PROJECT.md` (updated 2026-06-25)
 ## Current Position
 
 Phase: 39 of 44 (MOMOIRO Evidence and Era Foundation)
-Plan: 4 of 4 (next: 39-04)
-Status: Ready to execute
-Last activity: 2026-06-26 - Completed 39-03 Momoiro Host settings, DI, fallback, and application-part gating.
+Plan: 4 of 4 (complete)
+Status: Phase complete — ready for verification
+Last activity: 2026-06-26 - Completed 39-04 Momoiro route surface and build gates.
 
-Progress: [########--] 75%
+Progress: [##--------] 17%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed in v1.7: 3
-- Average duration: 14 min
-- Total execution time: 42 min
+- Total plans completed in v1.7: 4
+- Average duration: 18 min
+- Total execution time: 70 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 39 | 3/4 | 42 min | 14 min |
+| 39 | 4/4 | 70 min | 18 min |
 | 40 | 0/TBD | - | - |
 | 41 | 0/TBD | - | - |
 | 42 | 0/TBD | - | - |
@@ -62,6 +62,7 @@ Progress: [########--] 75%
 | Phase 39 P01 | 7 min | 3 tasks | 4 files |
 | Phase 39 P02 | 18 min | 3 tasks | 11 files |
 | Phase 39 P03 | 17 min | 3 tasks | 5 files |
+| Phase 39 P04 | 28 min | 3 tasks | 14 files |
 
 ## Accumulated Context
 
@@ -82,6 +83,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 39]: Plan 39-03 moved the Host Momoiro project reference into the Host-registration task. Rationale: Program.cs could not compile against the Momoiro adapter namespace until Host.csproj referenced the adapter project.
 - [Phase 39]: Plan 39-03 keeps Momoiro protobuf fallback exact to /v04r00/chassis. Rationale: Momoiro game posts use MomoiroRoutePrefixes.Game while shared /v01r00 startup/version fallback remains unchanged.
 - [Phase 39]: Plan 39-03 uses shared application-part removal as the Momoiro disabled-route gate. Rationale: Keeps route exposure centralized in GameProtocolApplicationParts instead of duplicating era checks in controllers.
+- [Phase 39]: Plan 39-04 uses generated Momoiro response objects directly in no-state controllers — Phase 39 proves route ownership only; runtime semantics are deferred to Phases 40-42, so controllers must not call Mediator, EF, catalogs, AdminApi, WebUI, or adjacent-era handlers.
+- [Phase 39]: Plan 39-04 records Momoiro controllers as intentional no-state scaffolds — Catalog, identity, userdata, score, playresult, recommendation, telop, song-hash, AdminApi, WebUI, and persistence behavior remain future phase scope.
+- [Phase 39]: Plan 39-04 uses MVC ApplicationPartManager controller discovery for route-surface tests — The tests inspect runtime discovery surfaces and avoid source-text or generated-wire assertions.
 
 ### Pending Todos
 
@@ -102,10 +106,10 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ## Session Continuity
 
-Last session: 2026-06-25T21:01:22.043Z
-Stopped at: Completed 39-03-PLAN.md
+Last session: 2026-06-25T21:23:43.353Z
+Stopped at: Completed 39-04-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
 
-- Execute Phase 39 plan `39-04-PLAN.md`.
+- Verify Phase 39, then continue with Phase 40 planning/execution.

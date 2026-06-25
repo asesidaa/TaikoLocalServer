@@ -23,7 +23,7 @@ v1.7 MOMOIRO AC15 0.11 Support is active. The milestone adds MOMOIRO as a first-
 
 **Phase Numbering:** Continuous from prior milestones. v1.6 ended at Phase 38; v1.7 starts at Phase 39.
 
-- [ ] **Phase 39: MOMOIRO Evidence and Era Foundation** - Record the exact route inventory and add evidence-gated first-class MOMOIRO scaffolding.
+- [x] **Phase 39: MOMOIRO Evidence and Era Foundation** - Record the exact route inventory and add evidence-gated first-class MOMOIRO scaffolding. (completed 2026-06-26)
 - [ ] **Phase 40: MOMOIRO Protocol Limits, Root Catalog, and Route Behavior** - Bind root-level catalog data, protocol limits, and binary-proven route behavior before runtime mutation.
 - [ ] **Phase 41: MOMOIRO Identity, Userdata, Self-Best, and Crown Readback** - Read MOMOIRO-owned identity, profile, score, recent/favorite, release, hash, and crown state.
 - [ ] **Phase 42: MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility** - Mutate only evidence-backed MOMOIRO-owned normal-play, unlock, reward, Dan, and challenge-compatible state.
@@ -44,7 +44,7 @@ v1.7 MOMOIRO AC15 0.11 Support is active. The milestone adds MOMOIRO as a first-
   3. When MOMOIRO is disabled, MOMOIRO game routes are not exposed and other era routes continue to behave as before.
   4. Proto-only MOMOIRO route families outside the binary route list, including `shoppingresult.php`, `bestscore.php`, `communicationlog.php`, and `mainichisong.php`, remain absent instead of becoming route stubs.
 
-**Plans**: 3/4 plans executed
+**Plans**: 4/4 plans complete
 Plans:
 **Wave 1**
 
@@ -57,7 +57,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 39-04-PLAN.md - Evidence-gated Momoiro game route surface and build gates
+- [x] 39-04-PLAN.md - Evidence-gated Momoiro game route surface and build gates
 
 ### Phase 40: MOMOIRO Protocol Limits, Root Catalog, and Route Behavior
 
@@ -142,7 +142,7 @@ Plans:
 | 36. Root-Level Catalog and Metadata Binding | v1.6 | 1/1 | Complete | 2026-06-23 |
 | 37. KIMIDORI Runtime State, Dani Dojo, and Normal Play | v1.6 | 1/1 | Complete | 2026-06-23 |
 | 38. AdminApi, WebUI, and Runtime Closeout | v1.6 | 1/1 | Complete | 2026-06-25 |
-| 39. MOMOIRO Evidence and Era Foundation | v1.7 | 3/4 | In Progress|  |
+| 39. MOMOIRO Evidence and Era Foundation | v1.7 | 4/4 | Complete   | 2026-06-26 |
 | 40. MOMOIRO Protocol Limits, Root Catalog, and Route Behavior | v1.7 | 0/TBD | Not started | - |
 | 41. MOMOIRO Identity, Userdata, Self-Best, and Crown Readback | v1.7 | 0/TBD | Not started | - |
 | 42. MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility | v1.7 | 0/TBD | Not started | - |
