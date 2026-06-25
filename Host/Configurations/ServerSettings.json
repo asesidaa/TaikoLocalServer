@@ -59,6 +59,12 @@
         "AutoExtractCatalog": true,
         "GameDataPath": "wwwroot/data/kimidori/data",
         "CustomizationNameDataPath": ""
+      },
+      "Momoiro": {
+        "Enabled": true,
+        "AutoExtractCatalog": true,
+        "GameDataPath": "wwwroot/data/momoiro/data",
+        "CustomizationNameDataPath": ""
       }
     }
   }
