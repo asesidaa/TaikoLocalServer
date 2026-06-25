@@ -41,7 +41,12 @@ v1.7 MOMOIRO AC15 0.11 Support is active. The milestone adds MOMOIRO as a first-
   2. When MOMOIRO is enabled, binary-proven game routes are registered under `/v04r00/chassis/*.php` while shared startup/version routes remain under `/v01r00/chassis/*.php`.
   3. When MOMOIRO is disabled, MOMOIRO game routes are not exposed and other era routes continue to behave as before.
   4. Proto-only MOMOIRO route families outside the binary route list, including `shoppingresult.php`, `bestscore.php`, `communicationlog.php`, and `mainichisong.php`, remain absent instead of becoming route stubs.
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+- [ ] 39-01-PLAN.md - Evidence matrix and Wave 0 validation contracts
+- [ ] 39-02-PLAN.md - First-class Momoiro adapter identity and generated wire
+- [ ] 39-03-PLAN.md - Host settings, DI, direct-protobuf fallback, and application-part gating
+- [ ] 39-04-PLAN.md - Evidence-gated Momoiro game route surface and build gates
 
 ### Phase 40: MOMOIRO Protocol Limits, Root Catalog, and Route Behavior
 **Goal**: MOMOIRO catalog data, protocol limits, and binary-proven route behavior are explicit, evidence-backed inputs for later readback and mutation.
@@ -111,7 +116,7 @@ v1.7 MOMOIRO AC15 0.11 Support is active. The milestone adds MOMOIRO as a first-
 | 36. Root-Level Catalog and Metadata Binding | v1.6 | 1/1 | Complete | 2026-06-23 |
 | 37. KIMIDORI Runtime State, Dani Dojo, and Normal Play | v1.6 | 1/1 | Complete | 2026-06-23 |
 | 38. AdminApi, WebUI, and Runtime Closeout | v1.6 | 1/1 | Complete | 2026-06-25 |
-| 39. MOMOIRO Evidence and Era Foundation | v1.7 | 0/TBD | Not started | - |
+| 39. MOMOIRO Evidence and Era Foundation | v1.7 | 0/4 | Not started | - |
 | 40. MOMOIRO Protocol Limits, Root Catalog, and Route Behavior | v1.7 | 0/TBD | Not started | - |
 | 41. MOMOIRO Identity, Userdata, Self-Best, and Crown Readback | v1.7 | 0/TBD | Not started | - |
 | 42. MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility | v1.7 | 0/TBD | Not started | - |
