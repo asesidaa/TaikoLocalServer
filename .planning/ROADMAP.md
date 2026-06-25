@@ -72,7 +72,27 @@ Plans:
   4. `recommend.php`, `defaultsong.php`, `songhash.php`, `telopcheck.php`, and `gettelop.php` are feature-complete for their binary-proven MOMOIRO route role, while `heartbeat.php` and `bookkeeping.php` are explicit static-result operational stubs if no stateful role is proven.
   5. Crown support is modeled as userdata-owned `hash_crown_flg`; no standalone `crownsdata.php` route is part of active MOMOIRO scope.
 
-**Plans**: TBD
+**Plans**: 5 plans
+Plans:
+**Wave 0**
+
+- [ ] 40-01-PLAN.md - Wave 0 catalog/profile/metadata route validation contracts
+
+**Wave 1** *(blocked on Wave 0 completion)*
+
+- [ ] 40-02-PLAN.md - Momoiro root catalog, profile limits, and snapshot projection
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 40-03-PLAN.md - Momoiro Application metadata handler dispatch
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 40-04-PLAN.md - Momoiro catalog-backed metadata controllers and Mapperly mappers
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 40-05-PLAN.md - Final Phase 40 verification and source-audit gates
 
 ### Phase 41: MOMOIRO Identity, Userdata, Self-Best, and Crown Readback
 
@@ -143,7 +163,7 @@ Plans:
 | 37. KIMIDORI Runtime State, Dani Dojo, and Normal Play | v1.6 | 1/1 | Complete | 2026-06-23 |
 | 38. AdminApi, WebUI, and Runtime Closeout | v1.6 | 1/1 | Complete | 2026-06-25 |
 | 39. MOMOIRO Evidence and Era Foundation | v1.7 | 4/4 | Complete    | 2026-06-26 |
-| 40. MOMOIRO Protocol Limits, Root Catalog, and Route Behavior | v1.7 | 0/TBD | Not started | - |
+| 40. MOMOIRO Protocol Limits, Root Catalog, and Route Behavior | v1.7 | 0/5 | Not started | - |
 | 41. MOMOIRO Identity, Userdata, Self-Best, and Crown Readback | v1.7 | 0/TBD | Not started | - |
 | 42. MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility | v1.7 | 0/TBD | Not started | - |
 | 43. MOMOIRO AdminApi and WebUI Routing | v1.7 | 0/TBD | Not started | - |
