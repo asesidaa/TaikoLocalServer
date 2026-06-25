@@ -1,20 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.6
-milestone_name: KIMIDORI AC15 Support
-current_phase: 6
-status: Awaiting next milestone
-stopped_at: KIMIDORI v1.6 milestone archived; ready for next milestone
-last_updated: "2026-06-25T04:00:00+08:00"
+milestone: v1.7
+milestone_name: MOMOIRO AC15 0.11 Support
+status: planning
+last_updated: "2026-06-25T15:36:59.847Z"
 last_activity: 2026-06-25
-last_activity_desc: Milestone v1.6 completed and archived
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 4
-  completed_plans: 4
-  percent: 100
-current_phase_name: AdminApi, WebUI, and Runtime Closeout
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -28,10 +24,10 @@ See: `.planning/PROJECT.md` (updated 2026-06-25)
 
 ## Current Position
 
-Phase: Milestone v1.6 complete
+Phase: Not started (defining requirements)
 Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-06-25 — Milestone v1.6 completed and archived
+Status: Defining requirements
+Last activity: 2026-06-25 — Milestone v1.7 started
 
 ## Performance Metrics
 
