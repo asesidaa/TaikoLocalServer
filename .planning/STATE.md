@@ -5,16 +5,16 @@ milestone_name: MOMOIRO AC15 0.11 Support
 current_phase: 39
 current_phase_name: MOMOIRO Evidence and Era Foundation
 status: executing
-stopped_at: Completed 39-02-PLAN.md
-last_updated: "2026-06-25T20:41:17.537Z"
+stopped_at: Completed 39-03-PLAN.md
+last_updated: "2026-06-25T21:03:44.861Z"
 last_activity: 2026-06-26
-last_activity_desc: Completed 39-02 Momoiro adapter identity and generated wire.
+last_activity_desc: Completed 39-03 Momoiro Host settings, DI, fallback, and application-part gating.
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 4
-  completed_plans: 2
-  percent: 50
+  completed_plans: 3
+  percent: 75
 ---
 
 # Project State
@@ -29,25 +29,25 @@ See: `.planning/PROJECT.md` (updated 2026-06-25)
 ## Current Position
 
 Phase: 39 of 44 (MOMOIRO Evidence and Era Foundation)
-Plan: 3 of 4 (next: 39-03)
+Plan: 4 of 4 (next: 39-04)
 Status: Ready to execute
-Last activity: 2026-06-26 - Completed 39-02 Momoiro adapter identity and generated wire.
+Last activity: 2026-06-26 - Completed 39-03 Momoiro Host settings, DI, fallback, and application-part gating.
 
-Progress: [#####-----] 50%
+Progress: [########--] 75%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed in v1.7: 2
-- Average duration: 13 min
-- Total execution time: 25 min
+- Total plans completed in v1.7: 3
+- Average duration: 14 min
+- Total execution time: 42 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 39 | 2/4 | 25 min | 13 min |
+| 39 | 3/4 | 42 min | 14 min |
 | 40 | 0/TBD | - | - |
 | 41 | 0/TBD | - | - |
 | 42 | 0/TBD | - | - |
@@ -61,6 +61,7 @@ Progress: [#####-----] 50%
 
 | Phase 39 P01 | 7 min | 3 tasks | 4 files |
 | Phase 39 P02 | 18 min | 3 tasks | 11 files |
+| Phase 39 P03 | 17 min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -78,6 +79,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - Wave 0 Momoiro tests are intentionally red until later Phase 39 plans add `GameEra.Momoiro`, settings, adapter identity, and application-part wiring.
 - [Phase 39]: Plan 39-02 kept Momoiro limited to adapter identity and generated wire; Host registration, application-part gating, controllers, runtime state, AdminApi, and WebUI stay deferred. Rationale: Matches the plan file and preserves the Phase 39 Wave 1 boundary.
 - [Phase 39]: Plan 39-02 generated Momoiro wire from proto/momoiro with repo-local protogen and left proto inputs untouched. Rationale: MOFND-04 requires generated wire to be evidence input without turning proto-only families into route behavior.
+- [Phase 39]: Plan 39-03 moved the Host Momoiro project reference into the Host-registration task. Rationale: Program.cs could not compile against the Momoiro adapter namespace until Host.csproj referenced the adapter project.
+- [Phase 39]: Plan 39-03 keeps Momoiro protobuf fallback exact to /v04r00/chassis. Rationale: Momoiro game posts use MomoiroRoutePrefixes.Game while shared /v01r00 startup/version fallback remains unchanged.
+- [Phase 39]: Plan 39-03 uses shared application-part removal as the Momoiro disabled-route gate. Rationale: Keeps route exposure centralized in GameProtocolApplicationParts instead of duplicating era checks in controllers.
 
 ### Pending Todos
 
@@ -98,10 +102,10 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ## Session Continuity
 
-Last session: 2026-06-25T20:41:17.530Z
-Stopped at: Completed 39-02-PLAN.md
+Last session: 2026-06-25T21:01:22.043Z
+Stopped at: Completed 39-03-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
 
-- Execute Phase 39 plan `39-02-PLAN.md`.
+- Execute Phase 39 plan `39-04-PLAN.md`.
