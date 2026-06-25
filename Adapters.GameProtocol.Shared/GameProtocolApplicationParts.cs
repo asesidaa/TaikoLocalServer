@@ -45,6 +45,10 @@ public static class GameProtocolApplicationParts
         {
             RemoveApplicationPart(apm, "TaikoLocalServer.Adapters.GameProtocol.Kimidori");
         }
+        if (!enabledEras.Contains(GameEra.Momoiro))
+        {
+            RemoveApplicationPart(apm, "TaikoLocalServer.Adapters.GameProtocol.Momoiro");
+        }
         if (!enabledEras.Contains(GameEra.Nijiiro))
         {
             RemoveApplicationPart(apm, "TaikoLocalServer.Adapters.GameProtocol.WwR08");
