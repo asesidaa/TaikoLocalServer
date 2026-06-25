@@ -9,9 +9,9 @@
 ### Evidence and Foundation
 
 - [ ] **MOFND-01**: MOMOIRO support records the binary-proven route inventory, startup/version route ownership, game route prefix, direct-protobuf transport, binary evidence handles, and unresolved limit gaps before runtime behavior is claimed.
-- [ ] **MOFND-02**: MOMOIRO is a first-class `GameEra.Momoiro` with era-owned adapter registration, generated wire DTOs, Host settings, DI, application-part gating, and no enabled routes when the era is disabled.
+- [x] **MOFND-02**: MOMOIRO is a first-class `GameEra.Momoiro` with era-owned adapter registration, generated wire DTOs, Host settings, DI, application-part gating, and no enabled routes when the era is disabled.
 - [ ] **MOFND-03**: MOMOIRO startup/version endpoints use shared `/v01r00/chassis/*.php` behavior while MOMOIRO game endpoints are served under `/v04r00/chassis/*.php`.
-- [ ] **MOFND-04**: MOMOIRO feature support requires both protocol message presence in `proto/momoiro` and corresponding binary/client `.php` route evidence; features failing either condition stay absent.
+- [x] **MOFND-04**: MOMOIRO feature support requires both protocol message presence in `proto/momoiro` and corresponding binary/client `.php` route evidence; features failing either condition stay absent.
 
 ### Catalog, Metadata, and Limits
 
@@ -81,9 +81,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | MOFND-01 | Phase 39 | Pending |
-| MOFND-02 | Phase 39 | Pending |
+| MOFND-02 | Phase 39 | Complete |
 | MOFND-03 | Phase 39 | Pending |
-| MOFND-04 | Phase 39 | Pending |
+| MOFND-04 | Phase 39 | Complete |
 | MOCAT-01 | Phase 40 | Pending |
 | MOCAT-02 | Phase 40 | Pending |
 | MOCAT-03 | Phase 40 | Pending |
