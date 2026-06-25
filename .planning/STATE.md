@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v1.7
 milestone_name: MOMOIRO AC15 0.11 Support
 status: planning
-last_updated: "2026-06-25T15:36:59.847Z"
-last_activity: 2026-06-25
+last_updated: "2026-06-26T03:10:00+08:00"
+last_activity: 2026-06-26
 progress:
-  total_phases: 0
+  total_phases: 6
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -19,22 +19,23 @@ progress:
 
 See: `.planning/PROJECT.md` (updated 2026-06-25)
 
-**Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, Nijiiro, or shared identity state.
-**Current focus:** Planning the next milestone.
+**Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating MOMOIRO, KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, Nijiiro, or shared identity state.
+**Current focus:** Phase 39 - MOMOIRO Evidence and Era Foundation.
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-06-25 — Milestone v1.7 started
+Phase: 39 of 44 (MOMOIRO Evidence and Era Foundation)
+Plan: TBD
+Status: Ready to plan
+Last activity: 2026-06-26 - Revised v1.7 roadmap to 6 phases using the supplied MOMOIRO binary route inventory.
+
+Progress: [----------] 0%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed in v1.5: 7
-- Quick tasks completed during v1.5 closeout: 1
+- Total plans completed in v1.7: 0
 - Average duration: n/a
 - Total execution time: n/a
 
@@ -42,43 +43,30 @@ Last activity: 2026-06-25 — Milestone v1.7 started
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 28 | 1/1 | - | - |
-| 29 | 1/1 | - | - |
-| 30 | 1/1 | - | - |
-| 31 | 1/1 | - | - |
-| 32 | 1/1 | - | - |
-| 33 | 1/1 | - | - |
-| 34 | 1/1 | - | - |
-| 35 | 1/1 | - | - |
-| 36 | 1/1 | - | - |
-| 37 | 1/1 | - | - |
-| 38 | 1/1 | complete | 2026-06-25 |
+| 39 | 0/TBD | - | - |
+| 40 | 0/TBD | - | - |
+| 41 | 0/TBD | - | - |
+| 42 | 0/TBD | - | - |
+| 43 | 0/TBD | - | - |
+| 44 | 0/TBD | - | - |
 
 **Recent Trend:**
 
-- Phases 28-32 executed in one autonomous range and verified with solution build plus 845 tests.
-- Phase 33 closed unsupported Murasaki special surfaces with route/byte evidence and 847-test verification.
-- Phase 34 implemented Murasaki AdminApi/WebUI parity for supported surfaces and passed focused verification.
-- Quick task 260623-2ff added final `/v06r01` Murasaki route support while preserving `/v06r00` compatibility.
-- Final closeout on 2026-06-23 recorded user-observed Murasaki in-game acceptance, no vulnerable packages, 865 passing tests, and a full solution build with 0 warnings and 0 errors.
-- v1.6 KIMIDORI roadmap defines 4 phases with all 19 active requirements mapped.
-- Phases 35-37 completed automated implementation for KIMIDORI evidence/foundation, root-level catalog/metadata binding, and KIMIDORI-owned runtime state.
-- Phase 38 completed automated AdminApi/WebUI implementation and verification, and user-observed cabinet/RPCS3 runtime smoke acceptance was recorded on 2026-06-25.
+- v1.6 KIMIDORI shipped on 2026-06-25 with Phases 35-38 complete and cabinet/RPCS3 acceptance recorded.
+- v1.7 MOMOIRO starts at Phase 39 and follows a six-phase shape after folding route behavior into catalog/limits work.
 
 ## Accumulated Context
 
 ### Decisions
 
-Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecting future work:
+Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecting current work:
 
-- Start Murasaki support as v1.5 because it is the next older AC15 era after White and local Murasaki proto/data are present.
-- Treat Murasaki changed wire shape as a first-class evidence gate; split metadata/global-score request families must not be hidden behind White `initialdatacheck.php`.
-- Preserve final `/v06r01` route parity where final binary/proto evidence supports the surface, including Dani/Taikojuku.
-- Keep unsupported Murasaki special surfaces absent until route/cabinet/log/IDA evidence proves specific server contracts.
-- Start KIMIDORI support as v1.6, using `proto/kimidori`, `.tools/kimidori`, linked root-level KIMIDORI data, `/v01r00` startup/version routes, and `/v05r00` game routes.
-- Define KIMIDORI 0.12 features only from protocol presence plus binary `.php` route evidence; if `proto/kimidori` lacks a feature, treat it as missing.
-- Treat KIMIDORI game data as root-level era data rather than assuming a newer `config/STxxxx-*` catalog layout.
-- Keep KIMIDORI Dani Dojo support separate from Taikojuku practice-folder behavior; missing Taikojuku proto/route evidence does not remove proven Dani result/state support.
+- Start MOMOIRO support as v1.7 because it is the next older AC15 era after KIMIDORI and local MOMOIRO proto, binary evidence, and linked root-level game data are present.
+- Define MOMOIRO features from `proto/momoiro` plus binary/client `.php` route evidence; unsupported feature families remain absent.
+- Treat MOMOIRO crowns as userdata-owned through `hash_crown_flg` unless new local evidence proves a separate crown contract.
+- Treat MOMOIRO data as root-level era data under `Host/wwwroot/data/momoiro/data`, not a newer `config/STxxxx-*` layout.
+- Treat the supplied MOMOIRO route list as the active route inventory: startup/version use `/v01r00`, game routes use `/v04r00`, and proto-only route families remain absent.
+- MOMOIRO routes should be feature-complete where they carry feature behavior, or explicit static-result operational stubs where the route role is static; do not create a separate route-readback phase.
 
 ### Pending Todos
 
@@ -86,30 +74,23 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ### Blockers/Concerns
 
-- KIMIDORI Phase 38 runtime acceptance is recorded; unsupported surfaces remain evidence-gated after closeout.
-- KIMIDORI unsupported surfaces remain evidence-gated: Taikojuku, Tokkun, Banacoin, battle, Don Challenge, ChallengeCompe, and full shop-authority controls.
-- Unsupported copied KIMIDORI scaffold files were moved to `.planning/batch-delete/kimidori-scaffold/` for user-managed cleanup; do not delete them directly.
-
-### Quick Tasks Completed
-
-| # | Description | Date | Commit | Directory |
-|---|-------------|------|--------|-----------|
-| 260621-w8x | Improve WebUI era selection and capability visibility | 2026-06-21 | 7007f7cb | [260621-w8x-let-s-have-a-quick-pass-to-improve-web-u](./quick/260621-w8x-let-s-have-a-quick-pass-to-improve-web-u/) |
-| 260623-2ff | Add Murasaki final /v06r01 support | 2026-06-23 | 30552da7 | [260623-2ff-now-let-s-add-support-for-murasaki-final](./quick/260623-2ff-now-let-s-add-support-for-murasaki-final/) |
+- Phase 39-42 planning must preserve evidence gates for song unlocking, crown packing, and changed limits before stateful implementation relies on those facts.
+- Future requirements MOLATER-01, MOSPEC-01, and MOSPEC-02 remain deferred and are not active v1.7 phase work.
 
 ## Deferred Items
 
 | Category | Item | Status | Deferred At |
 |----------|------|--------|-------------|
-| Later Murasaki versions | MLATER-01: later update behavior or multi-root version selection | Future requirement | v1.5 requirements |
-| Special capability expansion | MSPEC-04: full global ranking, shopping authority, challenge scheduling/management, or operator-authored challenge behavior | Future requirement | v1.5 requirements |
+| Later MOMOIRO versions | MOLATER-01: later update behavior or multi-version MOMOIRO route/catalog selection | Future requirement | v1.7 requirements |
+| Special capability expansion | MOSPEC-01: Taikojuku, Tokkun, Banacoin, battle, gacha, tournament, Don Challenge, ChallengeCompe, event-folder, newer shop authority, or live-service shop behavior | Future requirement | v1.7 requirements |
+| Special capability expansion | MOSPEC-02: rich AdminApi/WebUI editing for packed crown, release-song, favorite/recent, challenge, or Dan state after limits stabilize | Future requirement | v1.7 requirements |
 
 ## Session Continuity
 
-Last session: 2026-06-25
-Stopped at: KIMIDORI v1.6 milestone archived; ready for next milestone
+Last session: 2026-06-26
+Stopped at: v1.7 roadmap revised and ready for Phase 39 planning.
 Resume file: `.planning/ROADMAP.md`
 
 ## Operator Next Steps
 
-- Start the next milestone with $gsd-new-milestone
+- Review the roadmap, then plan Phase 39 with `$gsd-plan-phase 39`.

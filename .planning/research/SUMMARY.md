@@ -47,9 +47,9 @@ MOMOIRO launch scope should implement only route/proto/data/binary-supported fea
 - Crowns inside `UserDataResponse.hash_crown_flg`; do not add a standalone `crownsdata.php`.
 - AdminApi/WebUI readback for implemented MOMOIRO-owned state.
 
-**Should have (after proof or as bounded compatibility):**
-- `songhash`, `defaultsong`, `mainichisong`, telop, recommendation, bookkeeping, communication log, heartbeat, and best-score compatibility where route and payload evidence exists.
-- Shopping-result compatibility for Don Point totals and release-song flags after binary/client proof.
+**Should have (after proof or as bounded static/feature behavior):**
+- `songhash`, `defaultsong`, telop, recommendation, bookkeeping, and heartbeat behavior from the supplied MOMOIRO binary route inventory.
+- Don Point/reward totals and release-song flags through binary-proven `playresult.php` and `userdata.php` behavior after binary/client proof.
 - Challenge-shaped arrays only as bounded protocol/readback data if proven; do not promote them into a new challenge product.
 - AdminApi/WebUI editing for packed fields only after limits and packing are stable.
 
@@ -88,7 +88,9 @@ Use adapter-owned wire/routes, Application-owned behavior, Infrastructure-owned 
 
 ## Implications for Roadmap
 
-Suggested phase numbering starts at Phase 39 unless `.planning/ROADMAP.md` changes before roadmap creation.
+**Route inventory correction, 2026-06-26:** The user supplied the MOMOIRO binary route inventory after the first research synthesis. Shared startup/version routes are `startupauth.php`, `verupauth.php`, and `verupcomplete.php` under `/v01r00/chassis`. MOMOIRO game routes are `playresult.php`, `baidcheck.php`, `mydonentry.php`, `userdata.php`, `recommend.php`, `selfbest.php`, `heartbeat.php`, `defaultsong.php`, `bookkeeping.php`, `songhash.php`, `telopcheck.php`, and `gettelop.php` under `/v04r00/chassis`. Proto-only route families such as `shoppingresult.php`, `bestscore.php`, `communicationlog.php`, and `mainichisong.php` are not active route scope.
+
+The live roadmap uses six phases starting at Phase 39.
 
 ### Phase 39: MOMOIRO Evidence and Era Foundation
 
@@ -98,47 +100,39 @@ Suggested phase numbering starts at Phase 39 unless `.planning/ROADMAP.md` chang
 **Avoids:** Route/proto mismatch, wiki-driven implementation, adjacent-era copy behavior, Mapperly blind spots.
 **Research flag:** Needs `$gsd-plan-phase --research-phase 39`. IDA/log route inventory and changed-limit evidence are required, not optional.
 
-### Phase 40: MOMOIRO Protocol Limits and Root Catalog Binding
+### Phase 40: MOMOIRO Protocol Limits, Root Catalog, and Route Behavior
 
-**Rationale:** Catalog ordering and protocol limits drive crowns, unlock flags, favorites/recent, default/mainichi hashes, song hash tables, and safe WebUI editing.
-**Delivers:** `IMomoiroCatalog`, root-level path helpers, required-file validation, root-level catalog loader, MOMOIRO sidecar naming, `Ac15EraProfiles.Momoiro`, protocol-limits artifact, catalog snapshot binding, and explicit crown placement profile.
-**Addresses:** Root-level catalog loading, song/crown/unlock limit proof, favorites/recent limits, no later-era config root.
+**Rationale:** Catalog ordering, protocol limits, and route behavior drive crowns, unlock flags, favorites/recent, default-song flags, song hash tables, telops, recommendations, and safe WebUI editing.
+**Delivers:** `IMomoiroCatalog`, root-level path helpers, required-file validation, root-level catalog loader, MOMOIRO sidecar naming, `Ac15EraProfiles.Momoiro`, protocol-limits artifact, catalog snapshot binding, explicit crown placement profile, feature-complete catalog-backed handlers for proven route roles, and static-result operational stubs for routes such as heartbeat/bookkeeping where no stateful role is proven.
+**Addresses:** Root-level catalog loading, route behavior, song/crown/unlock limit proof, favorites/recent limits, no later-era config root.
 **Avoids:** Wrong data root, hardcoded `config/STxxxx-*`, guessed byte widths, copied `CreateCommonLimits()` behavior.
 **Research flag:** Needs `$gsd-plan-phase --research-phase 40` for binary-backed limits and byte-payload contracts.
 
-### Phase 41: MOMOIRO Catalog and No-State Route Readback
-
-**Rationale:** The cabinet often needs metadata and compatibility routes before state mutation is complete, but these can be bounded to catalog/log/readback behavior.
-**Delivers:** Proven controllers/handlers for heartbeat, bookkeeping, communication log, `defaultsong`, `mainichisong`, `songhash`, telop check/get, recommend, and other catalog-backed routes where route proof exists.
-**Addresses:** Metadata routes, safe compatibility responses, catalog-backed payloads.
-**Avoids:** Early state mutation, unsupported feature-family stubs, best-score/ranking assumptions before semantics are proven.
-**Research flag:** Use focused research only for byte payloads that were not resolved in Phase 40; otherwise this follows standard adapter patterns.
-
-### Phase 42: MOMOIRO Identity, Userdata, Self-Best, and Crown Readback
+### Phase 41: MOMOIRO Identity, Userdata, Self-Best, and Crown Readback
 
 **Rationale:** User identity and readback are the core cabinet loop and must be correct before normal play writes can be meaningfully verified.
 **Delivers:** MOMOIRO save/best/play/favorite/recent tables, BAID/MyDon/profile defaults, `userdata.php`, `selfbest.php`, canonical userdata adapter, crown bytes in `hash_crown_flg`, and readback tests over MOMOIRO-owned state.
 **Addresses:** BAID/MyDon/profile, userdata, self-best, favorites/recent readback, crowns in userdata.
 **Avoids:** Fake crown endpoint, cross-era reads/writes, null or wrong-width crown/release flags, AdminApi exposure before backend state exists.
-**Research flag:** Needs `$gsd-plan-phase --research-phase 42` if crown packing, recent/favorite counts, or self-best response limits remain unresolved.
+**Research flag:** Needs `$gsd-plan-phase --research-phase 41` if crown packing, recent/favorite counts, or self-best response limits remain unresolved.
 
-### Phase 43: MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility
+### Phase 42: MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility
 
-**Rationale:** Stateful writes have the highest corruption risk and depend on Phase 40 limits plus Phase 42 readback paths.
-**Delivers:** Normal playresult classification, score/best/crown/favorite/recent writes, release-song mutation and readback, Don Point/reward totals, shopping-result compatibility, bounded challenge-array handling, and Dan/Dani persistence only where evidence proves semantics.
-**Addresses:** Normal play persistence, song unlocking, rewards, shopping result, Dan fields, challenge-compatible arrays.
+**Rationale:** Stateful writes have the highest corruption risk and depend on Phase 40 limits plus Phase 41 readback paths.
+**Delivers:** Normal playresult classification, score/best/crown/favorite/recent writes, release-song mutation and readback, Don Point/reward totals, bounded challenge-array handling, and Dan/Dani persistence only where evidence proves semantics.
+**Addresses:** Normal play persistence, song unlocking, rewards, Dan fields, challenge-compatible arrays.
 **Avoids:** New feature families, newer item-shop authority, challengecompe/Don Challenge invention, KIMIDORI/Murasaki behavior copy, cross-era writes.
-**Research flag:** Needs `$gsd-plan-phase --research-phase 43` for unlock mutation, shopping-result effects, Don Point cap, challenge arrays, and Dan result semantics.
+**Research flag:** Needs `$gsd-plan-phase --research-phase 42` for unlock mutation, Don Point cap, challenge arrays, and Dan result semantics.
 
-### Phase 44: MOMOIRO AdminApi and WebUI Routing
+### Phase 43: MOMOIRO AdminApi and WebUI Routing
 
 **Rationale:** UI should trail backend behavior so it exposes only state the cabinet actually reads or writes.
 **Delivers:** `/api/momoiro/...` AdminApi partials, `WebUiEra.Momoiro`, era selector support, profile/play-data/favorites/history/leaderboard/customization/Dan surfaces where implemented, and hidden unsupported panels.
 **Addresses:** AdminApi/WebUI readback and selective editing for implemented MOMOIRO-owned state.
 **Avoids:** UI for absent Tokkun/Banacoin/battle/Taikojuku/Don Challenge/folder features, editing packed fields before limits are stable.
-**Research flag:** Standard patterns; skip research-phase unless Phase 43 leaves unresolved packed-field edit semantics.
+**Research flag:** Standard patterns; skip research-phase unless Phase 42 leaves unresolved packed-field edit semantics.
 
-### Phase 45: MOMOIRO Verification and Acceptance
+### Phase 44: MOMOIRO Verification and Acceptance
 
 **Rationale:** AC15 cabinet support is not complete until automated checks and runtime evidence are both recorded.
 **Delivers:** focused tests, full solution build, temp-output Host build if needed, Mapperly generated-source review, route smoke/log evidence, startup/login/userdata/catalog/playresult/self-best/crown/AdminApi/WebUI verification, and cabinet/RPCS3 acceptance notes.
@@ -150,7 +144,7 @@ Suggested phase numbering starts at Phase 39 unless `.planning/ROADMAP.md` chang
 
 - Evidence and route/proto proof must precede implementation because MOMOIRO scope is explicitly local-evidence driven.
 - Catalog and limits come before userdata/playresult because song ordering, byte widths, crown packing, favorites/recent limits, and unlock hashes depend on them.
-- No-state metadata routes can be built before persistence, but only after route evidence and catalog data shape are known.
+- Route behavior belongs with catalog/limits: each binary-proven route should be feature-complete for its role or an explicit static-result operational stub, not a separate readback phase.
 - Readback comes before writes so playresult changes can be verified through the same cabinet-consumed surfaces.
 - AdminApi/WebUI trails backend behavior to avoid exposing unsupported or corrupting controls.
 - Verification is its own closeout because build/test evidence and cabinet/RPCS3 acceptance answer different questions.
@@ -160,13 +154,12 @@ Suggested phase numbering starts at Phase 39 unless `.planning/ROADMAP.md` chang
 Phases likely needing deeper research during planning:
 - **Phase 39:** IDA route suffixes, `/v01r00` versus `/v04r00` ownership, and transport proof.
 - **Phase 40:** binary-backed protocol limits, byte widths, indexing, and catalog ordering.
-- **Phase 42:** crown-in-userdata packing, self-best limits, favorites/recent limits.
-- **Phase 43:** release-song mutation, shopping result, Don Point caps, challenge arrays, and Dan semantics.
+- **Phase 41:** crown-in-userdata packing, self-best limits, favorites/recent limits.
+- **Phase 42:** release-song mutation, Don Point caps, challenge arrays, and Dan semantics.
 
 Phases with standard patterns where research can usually be skipped:
-- **Phase 41:** standard controller/handler/catalog route pattern once route and payload evidence exist.
-- **Phase 44:** established AdminApi/WebUI era-routing pattern, unless packed-field editing remains unresolved.
-- **Phase 45:** established verification/closeout mechanics, with cabinet/RPCS3 as a manual gate.
+- **Phase 43:** established AdminApi/WebUI era-routing pattern, unless packed-field editing remains unresolved.
+- **Phase 44:** established verification/closeout mechanics, with cabinet/RPCS3 as a manual gate.
 
 ## Confidence Assessment
 
@@ -182,9 +175,9 @@ Phases with standard patterns where research can usually be skipped:
 ### Gaps to Address
 
 - **Route inventory:** Extract and record `/v04r00/chassis/*.php` and shared `/v01r00/chassis/*.php` route evidence from `.tools/momoiro/EBOOT.ELF.i64`, logs, captures, or cabinet/RPCS3 traces.
-- **Protocol limits:** Prove byte widths, indexing, defaults, and readback routes for `hash_crown_flg`, `hash_release_song_flg`, `song_hash_tbl`, default/mainichi flags, favorites/recent, Don Point, and related arrays.
+- **Protocol limits:** Prove byte widths, indexing, defaults, and readback routes for `hash_crown_flg`, `hash_release_song_flg`, `song_hash_tbl`, default-song flags, favorites/recent, Don Point, and related arrays.
 - **Crowns in userdata:** Confirm packing, song count, difficulty placement, ura/shin handling, and absent/default behavior before declaring crown support complete.
-- **Unlocks and shopping result:** Prove how `release_song_no`, `hash_release_song_flg`, `song_hash_ver`, `use_donpoint`, `total_get_donpoint`, `total_use_donpoint`, and shopping song arrays interact.
+- **Unlocks and rewards:** Prove how `release_song_no`, `hash_release_song_flg`, `song_hash_ver`, `use_donpoint`, `total_get_donpoint`, `total_use_donpoint`, and any reward/unlock arrays interact without adding `shoppingresult.php`.
 - **Challenge and Dan semantics:** Treat arrays/fields as protocol facts only until client/binary evidence proves persistence, readback, and mode classification.
 - **Cabinet acceptance:** Automated tests and builds are regression guards; runtime compatibility needs captured client behavior or user-observed cabinet/RPCS3 acceptance.
 

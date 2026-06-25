@@ -34,9 +34,9 @@ v1.7 MOMOIRO AC15 0.11 Support is active. v1.6 KIMIDORI AC15 Support shipped on 
 
 **Target features:**
 - First-class `GameEra.Momoiro` foundation with generated wire DTOs from `proto/momoiro`, `/v04r00/chassis/*.php` game routes, shared `/v01r00/chassis/*.php` startup/version routes, Host settings, DI, application-part gating, and direct-protobuf transport where local evidence supports it.
-- Route/root evidence from `.tools/momoiro/EBOOT.ELF.i64`, `proto/momoiro`, and linked MOMOIRO game data before locking route handlers, route inventory, catalog roots, and supported route families.
+- Route/root evidence from `.tools/momoiro/EBOOT.ELF.i64`, `proto/momoiro`, and linked MOMOIRO game data before locking route handlers, catalog roots, and supported route behavior. The current MOMOIRO binary route inventory is shared startup/version `startupauth.php`, `verupauth.php`, and `verupcomplete.php` plus game routes `playresult.php`, `baidcheck.php`, `mydonentry.php`, `userdata.php`, `recommend.php`, `selfbest.php`, `heartbeat.php`, `defaultsong.php`, `bookkeeping.php`, `songhash.php`, `telopcheck.php`, and `gettelop.php`.
 - Root-level MOMOIRO catalog loading from `Host/wwwroot/data/momoiro/data` without assuming newer `config/STxxxx-*` data layout.
-- Catalog/profile/runtime binding through existing AC15/KIMIDORI-style capabilities where MOMOIRO proto and binary route evidence both prove the feature: BAID/mydon, userdata, normal play, self-best, crowns inside userdata, favorites/recent, default/mainichi/song-hash surfaces, recommendations, Don Point/reward fields, shopping-result compatibility, challenge arrays where proven, and AdminApi/WebUI routing.
+- Catalog/profile/runtime binding through existing AC15/KIMIDORI-style capabilities where MOMOIRO proto and binary route evidence both prove the feature: BAID/mydon, userdata, normal play, self-best, crowns inside userdata, favorites/recent, default-song/song-hash/telop surfaces, recommendations, Don Point/reward fields, challenge arrays where proven through `playresult.php` and `userdata.php`, and AdminApi/WebUI routing.
 - Binary research for song unlocking, crown byte placement/packing, and changed protocol limits before implementing persistence/readback semantics.
 - Explicit absence handling for features missing from `proto/momoiro` or without a corresponding binary `.php` route, including later-era route families and stateful behavior unless new local evidence proves otherwise.
 
@@ -111,8 +111,8 @@ v1.7 MOMOIRO AC15 0.11 Support is active. v1.6 KIMIDORI AC15 Support shipped on 
 ### Active
 
 - [ ] Add first-class MOMOIRO 0.11 route, wire, Host, settings, and era-foundation support from local proto and binary evidence.
-- [ ] Load MOMOIRO root-level catalog data from `Host/wwwroot/data/momoiro/data` and preserve evidence-backed song hash/release/default/mainichi behavior.
-- [ ] Implement MOMOIRO-owned identity, userdata, self-best, crowns-in-userdata, favorites/recent, normal play, Don Point/reward, shopping-result, recommendation, and challenge-compatible state only where proto plus binary evidence prove the route and fields.
+- [ ] Load MOMOIRO root-level catalog data from `Host/wwwroot/data/momoiro/data` and preserve evidence-backed song hash, release-song, default-song, telop, and recommendation behavior.
+- [ ] Implement MOMOIRO-owned identity, userdata, self-best, crowns-in-userdata, favorites/recent, normal play, Don Point/reward, recommendation, and challenge-compatible state only where proto plus binary evidence prove the route and fields.
 - [ ] Expose implemented MOMOIRO state through AdminApi/WebUI without writing KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, or Nijiiro gameplay state.
 - [ ] Close with automated verification plus repeatable cabinet/RPCS3 runtime evidence for supported MOMOIRO flows.
 
@@ -127,7 +127,7 @@ v1.7 MOMOIRO AC15 0.11 Support is active. v1.6 KIMIDORI AC15 Support shipped on 
 - Later Murasaki update behavior beyond the shipped v1.5 final `/v06r01` support unless local Murasaki proto, data, binary/client evidence, logs, or cabinet/RPCS3 behavior pulls it into scope.
 - Invented Murasaki global high-score, song-hash, default-song, mainichi-song, shopping, or reserved-byte semantics without concrete local evidence.
 - KIMIDORI Taikojuku practice-folder behavior, Don Challenge/ChallengeCompe, battle, Tokkun, Banacoin, or full shop authority unless `proto/kimidori` contains the feature and the local binary proves the corresponding `.php` route.
-- MOMOIRO Taikojuku, Tokkun, Banacoin, battle, newer item-shop authority, separate `crownsdata.php`, separate Don Challenge/ChallengeCompe management, or later-era feature folders unless `proto/momoiro` contains the feature and the local binary proves the corresponding `.php` route and runtime contract.
+- MOMOIRO Taikojuku, Tokkun, Banacoin, battle, newer item-shop authority, `shoppingresult.php`, `bestscore.php`, `communicationlog.php`, `mainichisong.php`, separate `crownsdata.php`, separate Don Challenge/ChallengeCompe management, or later-era feature folders unless `proto/momoiro` contains the feature and the local binary proves the corresponding `.php` route and runtime contract.
 - Green AI Battle changes while implementing Blue battle mode; Green AI Battle is contrast material, not the Blue design source.
 - Invented Tokkun rewards, score/crown persistence, paid-coin behavior, practice-time accounting, jump-point behavior, autoplay behavior, speed-change behavior, or song unlock side effects without concrete Blue evidence.
 - Runtime scraping of wiki or official pages.
@@ -161,9 +161,10 @@ v1.7 MOMOIRO AC15 0.11 Support is active. v1.6 KIMIDORI AC15 Support shipped on 
 - KIMIDORI feature support must require both protocol presence and binary `.php` route presence. If the proto does not contain a feature, treat that feature as missing for KIMIDORI 0.12 even if adjacent AC15 eras support it.
 - v1.7 MOMOIRO AC15 0.11 Support started on 2026-06-25. MOMOIRO local protocol inputs are `proto/momoiro/taiko.proto` and `proto/momoiro/vsinterface.proto`; local reverse-engineering evidence is under `.tools/momoiro/`.
 - MOMOIRO uses shared `/v01r00/chassis` startup/version routing and `/v04r00/chassis` game routing for this milestone. All MOMOIRO route handlers should remain `.php` routes.
+- The current MOMOIRO binary route inventory is `startupauth.php`, `verupauth.php`, and `verupcomplete.php` under shared `/v01r00/chassis`, plus `playresult.php`, `baidcheck.php`, `mydonentry.php`, `userdata.php`, `recommend.php`, `selfbest.php`, `heartbeat.php`, `defaultsong.php`, `bookkeeping.php`, `songhash.php`, `telopcheck.php`, and `gettelop.php` under `/v04r00/chassis`.
 - MOMOIRO local game data is linked at `Host/wwwroot/data/momoiro/data` and currently uses root-level `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, and `fumen/tuning.bin` instead of a versioned `config/STxxxx-*` directory.
 - MOMOIRO proto evidence exposes crowns through `UserDataResponse.hash_crown_flg`; do not add a separate `crownsdata.php` contract unless binary/client evidence proves one.
-- MOMOIRO feature support must require both protocol presence and binary `.php` route presence. Binary research is required before locking song unlocking, crown byte packing/placement, and changed protocol limits.
+- MOMOIRO feature support must require both protocol presence and binary `.php` route presence. Routes from the current binary inventory should become either feature-complete handlers or explicit static-result operational stubs; proto-only route families stay absent. Binary research is still required before locking song unlocking, crown byte packing/placement, and changed protocol limits.
 - The evidence hierarchy is repo code, proto files, SQLite state, cabinet/RPCS3 logs, IDA/client evidence, and only then public wiki pages for gameplay scoping.
 - Yellow local protocol input is `proto/yellow/yellow.proto`; local game data is under `Host/wwwroot/data/yellow/data`, with the observed versioned config root `config/ST9100-1`.
 - Yellow proto evidence includes Tokkun tutorial and stage-result fields, item shop and Banacoin-adjacent routes, Don/Katsu medal upload fields, and no Blue battle userdata or initialdata battle fields.
@@ -282,4 +283,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-25 after starting v1.7 MOMOIRO AC15 0.11 Support*
+*Last updated: 2026-06-26 after recording MOMOIRO binary route inventory*

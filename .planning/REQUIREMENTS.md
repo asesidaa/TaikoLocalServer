@@ -8,7 +8,7 @@
 
 ### Evidence and Foundation
 
-- [ ] **MOFND-01**: MOMOIRO support proves startup/version route ownership, game route prefix, direct-protobuf transport, `.php` route inventory, binary evidence handles, and unresolved route/limit gaps before runtime behavior is claimed.
+- [ ] **MOFND-01**: MOMOIRO support records the binary-proven route inventory, startup/version route ownership, game route prefix, direct-protobuf transport, binary evidence handles, and unresolved limit gaps before runtime behavior is claimed.
 - [ ] **MOFND-02**: MOMOIRO is a first-class `GameEra.Momoiro` with era-owned adapter registration, generated wire DTOs, Host settings, DI, application-part gating, and no enabled routes when the era is disabled.
 - [ ] **MOFND-03**: MOMOIRO startup/version endpoints use shared `/v01r00/chassis/*.php` behavior while MOMOIRO game endpoints are served under `/v04r00/chassis/*.php`.
 - [ ] **MOFND-04**: MOMOIRO feature support requires both protocol message presence in `proto/momoiro` and corresponding binary/client `.php` route evidence; features failing either condition stay absent.
@@ -17,8 +17,8 @@
 
 - [ ] **MOCAT-01**: MOMOIRO catalog loading supports the root-level layout under `Host/wwwroot/data/momoiro/data`, including `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, and `fumen/tuning.bin`.
 - [ ] **MOCAT-02**: MOMOIRO data paths are resolved through existing path/settings abstractions instead of hardcoded runtime filesystem access in handlers.
-- [ ] **MOCAT-03**: MOMOIRO has an explicit AC15 profile/limits model for byte widths, song ordering, favorite/recent limits, default/mainichi flags, song hash, release flags, crown placement, Don Point/reward limits, and absent feature flags, backed by local evidence.
-- [ ] **MOCAT-04**: MOMOIRO metadata and compatibility routes expose only proto-and-route-backed route families such as `songhash`, `defaultsong`, `mainichisong`, telops, recommendations, heartbeat, bookkeeping, communication logs, and best-score compatibility where evidence exists.
+- [ ] **MOCAT-03**: MOMOIRO has an explicit AC15 profile/limits model for byte widths, song ordering, favorite/recent limits, default-song flags, song hash, release flags, crown placement, Don Point/reward limits, and absent feature flags, backed by local evidence.
+- [ ] **MOCAT-04**: MOMOIRO metadata and operational routes from the binary inventory expose feature-complete behavior where data exists or explicit static-result stubs where the route role is static, including `recommend.php`, `heartbeat.php`, `defaultsong.php`, `bookkeeping.php`, `songhash.php`, `telopcheck.php`, and `gettelop.php`.
 - [ ] **MOCAT-05**: MOMOIRO crown readback is modeled as userdata-owned through `UserDataResponse.hash_crown_flg`; no standalone `crownsdata.php` contract is added unless new MOMOIRO evidence proves one.
 
 ### Runtime Readback
@@ -32,7 +32,7 @@
 ### Runtime Mutation
 
 - [ ] **MORUN-01**: MOMOIRO normal playresults persist scores, self-best, crowns, profile counters, recent songs, favorite songs, and related normal-play state only to MOMOIRO-owned tables.
-- [ ] **MORUN-02**: MOMOIRO song unlock, Don Point, reward, and `shoppingresult.php` behavior mutates only evidence-backed MOMOIRO-owned fields and does not create newer item-shop, wallet, payment, or shop-season authority.
+- [ ] **MORUN-02**: MOMOIRO song unlock, Don Point, and reward behavior mutates only evidence-backed MOMOIRO-owned fields and does not create `shoppingresult.php`, newer item-shop, wallet, payment, or shop-season authority.
 - [ ] **MORUN-03**: MOMOIRO Dan/Dani fields are persisted and read back only where MOMOIRO playresult, userdata, and binary/client evidence prove the normal Dan contract; Taikojuku practice-folder behavior remains separate and absent.
 - [ ] **MORUN-04**: MOMOIRO challenge-shaped arrays are accepted, stored, echoed, or omitted only according to MOMOIRO-specific evidence and do not create Don Challenge, ChallengeCompe, or reward-management behavior by assumption.
 - [ ] **MORUN-05**: MOMOIRO runtime writes do not touch KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, Nijiiro, Tokkun, battle, Banacoin, or unsupported feature state.
@@ -63,6 +63,7 @@ Explicitly excluded. Documented to prevent scope creep.
 | Feature | Reason |
 |---------|--------|
 | Standalone `crownsdata.php` | MOMOIRO proto exposes crowns through `UserDataResponse.hash_crown_flg`; a separate crown route would invent a contract unless binary/client evidence proves one. |
+| Proto-only MOMOIRO route families such as `shoppingresult.php`, `bestscore.php`, `communicationlog.php`, and `mainichisong.php` | The supplied MOMOIRO binary route inventory does not include these routes, so proto message presence alone is insufficient to add handlers. |
 | KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, or Nijiiro gameplay persistence reuse | MOMOIRO gameplay state must be MOMOIRO-owned; shared AC15 code can share algorithms, not gameplay tables. |
 | `config/STxxxx-*` MOMOIRO catalog layout | The local MOMOIRO data layout is root-level under `Host/wwwroot/data/momoiro/data`; newer config-root assumptions are not evidence. |
 | Taikojuku practice-folder behavior | Local MOMOIRO proto has Dan fields but no Taikojuku request/response family; Dani/Dan support does not imply Taikojuku routes. |
@@ -79,37 +80,37 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| MOFND-01 | TBD | Pending |
-| MOFND-02 | TBD | Pending |
-| MOFND-03 | TBD | Pending |
-| MOFND-04 | TBD | Pending |
-| MOCAT-01 | TBD | Pending |
-| MOCAT-02 | TBD | Pending |
-| MOCAT-03 | TBD | Pending |
-| MOCAT-04 | TBD | Pending |
-| MOCAT-05 | TBD | Pending |
-| MORDB-01 | TBD | Pending |
-| MORDB-02 | TBD | Pending |
-| MORDB-03 | TBD | Pending |
-| MORDB-04 | TBD | Pending |
-| MORDB-05 | TBD | Pending |
-| MORUN-01 | TBD | Pending |
-| MORUN-02 | TBD | Pending |
-| MORUN-03 | TBD | Pending |
-| MORUN-04 | TBD | Pending |
-| MORUN-05 | TBD | Pending |
-| MOADMIN-01 | TBD | Pending |
-| MOADMIN-02 | TBD | Pending |
-| MOVFY-01 | TBD | Pending |
-| MOVFY-02 | TBD | Pending |
-| MOVFY-03 | TBD | Pending |
+| MOFND-01 | Phase 39 | Pending |
+| MOFND-02 | Phase 39 | Pending |
+| MOFND-03 | Phase 39 | Pending |
+| MOFND-04 | Phase 39 | Pending |
+| MOCAT-01 | Phase 40 | Pending |
+| MOCAT-02 | Phase 40 | Pending |
+| MOCAT-03 | Phase 40 | Pending |
+| MOCAT-04 | Phase 40 | Pending |
+| MOCAT-05 | Phase 40 | Pending |
+| MORDB-01 | Phase 41 | Pending |
+| MORDB-02 | Phase 41 | Pending |
+| MORDB-03 | Phase 41 | Pending |
+| MORDB-04 | Phase 41 | Pending |
+| MORDB-05 | Phase 41 | Pending |
+| MORUN-01 | Phase 42 | Pending |
+| MORUN-02 | Phase 42 | Pending |
+| MORUN-03 | Phase 42 | Pending |
+| MORUN-04 | Phase 42 | Pending |
+| MORUN-05 | Phase 42 | Pending |
+| MOADMIN-01 | Phase 43 | Pending |
+| MOADMIN-02 | Phase 43 | Pending |
+| MOVFY-01 | Phase 44 | Pending |
+| MOVFY-02 | Phase 44 | Pending |
+| MOVFY-03 | Phase 44 | Pending |
 
 **Coverage:**
 
 - v1.7 requirements: 24 total
-- Mapped to phases: 0
-- Unmapped: 24
+- Mapped to phases: 24
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-06-25*
-*Last updated: 2026-06-25 after requirements definition*
+*Last updated: 2026-06-26 after route inventory roadmap revision*
