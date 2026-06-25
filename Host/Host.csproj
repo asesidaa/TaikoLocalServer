@@ -202,6 +202,7 @@
     <!--Momoiro Game Data-->
     <Content Remove="wwwroot\data\momoiro\data\**" />
     <_ContentIncludedByDefault Remove="wwwroot\data\momoiro\data\**" />
+    <Content Update="wwwroot\data\momoiro\momoiro_telop_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
   </ItemGroup>
 
 
