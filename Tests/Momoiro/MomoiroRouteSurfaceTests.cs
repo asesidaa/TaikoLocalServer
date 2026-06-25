@@ -32,7 +32,8 @@ public sealed class MomoiroRouteSurfaceTests
         "shoppingresult.php",
         "bestscore.php",
         "communicationlog.php",
-        "mainichisong.php"
+        "mainichisong.php",
+        "crownsdata.php"
     ];
 
     private static readonly string[] SharedStartupRoutes =
@@ -80,6 +81,20 @@ public sealed class MomoiroRouteSurfaceTests
                 momoiroRoutes,
                 route => route.Contains(routeFragment, StringComparison.OrdinalIgnoreCase));
         }
+    }
+
+    [Fact]
+    public void EnabledMomoiro_DiscoveredActionSurface_ExcludesDedicatedCrownRoute()
+    {
+        var actions = DiscoverControllerActions(new HashSet<GameEra> { GameEra.Momoiro });
+        var momoiroRoutes = actions
+            .Where(IsMomoiroAction)
+            .Select(action => action.RouteTemplate)
+            .ToArray();
+
+        Assert.DoesNotContain(
+            momoiroRoutes,
+            route => route.Contains("crownsdata.php", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]

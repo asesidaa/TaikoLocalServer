@@ -18,6 +18,7 @@ public sealed class Ac15RecommendQueryHandlerTests
     [InlineData(GameEra.White, 205u)]
     [InlineData(GameEra.Murasaki, 206u)]
     [InlineData(GameEra.Kimidori, 207u)]
+    [InlineData(GameEra.Momoiro, 208u)]
     public async Task Handle_ReturnsRandomCatalogSongAndLeavesBestSongUnset(GameEra era, uint expectedSongNo)
     {
         var catalog = Catalog(
@@ -27,7 +28,8 @@ public sealed class Ac15RecommendQueryHandlerTests
             redSongs: [204],
             whiteSongs: [205],
             murasakiSongs: [206],
-            kimidoriSongs: [207]);
+            kimidoriSongs: [207],
+            momoiroSongs: [208]);
         var handler = new GetRecommendQueryHandler(
             NullLogger<GetRecommendQueryHandler>.Instance,
             catalog);
@@ -49,6 +51,7 @@ public sealed class Ac15RecommendQueryHandlerTests
     [InlineData(GameEra.White)]
     [InlineData(GameEra.Murasaki)]
     [InlineData(GameEra.Kimidori)]
+    [InlineData(GameEra.Momoiro)]
     public async Task Handle_DoesNotUseReservedMedleyRowsAsRecommendSeed(GameEra era)
     {
         var catalog = Catalog(
@@ -58,7 +61,8 @@ public sealed class Ac15RecommendQueryHandlerTests
             redSongs: [20001],
             whiteSongs: [20001],
             murasakiSongs: [20001],
-            kimidoriSongs: [20001]);
+            kimidoriSongs: [20001],
+            momoiroSongs: [20001]);
         var handler = new GetRecommendQueryHandler(
             NullLogger<GetRecommendQueryHandler>.Instance,
             catalog);
@@ -82,7 +86,8 @@ public sealed class Ac15RecommendQueryHandlerTests
         IReadOnlyList<uint> redSongs,
         IReadOnlyList<uint> whiteSongs,
         IReadOnlyList<uint> murasakiSongs,
-        IReadOnlyList<uint> kimidoriSongs)
+        IReadOnlyList<uint> kimidoriSongs,
+        IReadOnlyList<uint> momoiroSongs)
         => new(
         [
             new BlueHandlerFixture.TestBlueCatalog(musicInfoFileOrder: blueSongs.Select(Song).ToArray()),
@@ -91,6 +96,24 @@ public sealed class Ac15RecommendQueryHandlerTests
             new RedHandlerFixture.TestRedCatalog(musicInfoFileOrder: redSongs.Select(Song).ToArray()),
             new WhiteHandlerFixture.TestWhiteCatalog(musicInfoFileOrder: whiteSongs.Select(Song).ToArray()),
             new MurasakiHandlerFixture.TestMurasakiCatalog(musicInfoFileOrder: murasakiSongs.Select(Song).ToArray()),
-            new KimidoriHandlerFixture.TestKimidoriCatalog(musicInfoFileOrder: kimidoriSongs.Select(Song).ToArray())
+            new KimidoriHandlerFixture.TestKimidoriCatalog(musicInfoFileOrder: kimidoriSongs.Select(Song).ToArray()),
+            new TestMomoiroCatalog(momoiroSongs.Select(Song).ToArray())
         ]);
+
+    private sealed class TestMomoiroCatalog(IReadOnlyList<Ac15MusicInfoEntry> musicInfoFileOrder) : IEraGameDataCatalog
+    {
+        public GameEra Era => GameEra.Momoiro;
+
+        public uint SongHashVersion => 538_116_869;
+
+        public IReadOnlyList<Ac15MusicInfoEntry> MusicInfoFileOrder => musicInfoFileOrder;
+
+        public IReadOnlyList<ushort> SongHashTable
+            => MusicInfoFileOrder.Select(song => checked((ushort)song.SongNo)).ToArray();
+
+        public IReadOnlyDictionary<uint, IMusicInfoEntry> MusicInfos
+            => MusicInfoFileOrder.ToDictionary(song => song.SongNo, song => (IMusicInfoEntry)song);
+
+        public Task InitializeAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+    }
 }
