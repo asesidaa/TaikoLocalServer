@@ -76,4 +76,13 @@ public static class Ac15CatalogSnapshotFactory
             kimidori.Telops,
             Ac15ItemShopCatalog.Disabled,
             []));
+
+    public static Ac15CatalogSnapshot FromMomoiro(IMomoiroCatalog momoiro)
+        => FromSource(new Ac15CatalogProjectionSource(
+            momoiro.SongHashVersion,
+            momoiro.MusicInfoFileOrder.Select(song => song.SongNo).ToArray(),
+            new Dictionary<uint, EventFolderData>(),
+            momoiro.Telops,
+            Ac15ItemShopCatalog.Disabled,
+            []));
 }
