@@ -357,22 +357,25 @@ Use the skeleton only for route-proven endpoints and do not extrapolate fields o
 |---|-------|---------|---------------|
 | A1 | A no-content-type post may fail if `/v04r00/chassis` is missing from `ShouldAssumeProtobufRequest`; the exact failure status is inferred from ASP.NET Core formatter behavior, not reproduced in this run. | Common Pitfalls | Planner should verify with a smoke request or build/runtime log if route probes are added. |
 
-## Open Questions
+## Resolved Planning Questions
 
 1. **Should Phase 39 controller stubs return minimal success or another explicit "not implemented yet" shape?**
    - What we know: Phase 39 requires routes to be registered but forbids claiming runtime state behavior. [CITED: .planning/phases/39-momoiro-evidence-and-era-foundation/39-CONTEXT.md]
    - What's unclear: The exact static response payloads for stateful-looking routes such as `userdata.php`, `selfbest.php`, and `playresult.php` are not locked by this research. [CITED: .planning/REQUIREMENTS.md]
    - Recommendation: Prefer minimal protobuf response objects that compile and make route ownership testable, and label them as no-state scaffolds in the evidence matrix. [VERIFIED: codebase grep]
+   - RESOLVED: Phase 39 should use minimal protobuf response objects only for binary-proven routes, explicitly record them as no-state scaffolds, and leave route-specific runtime semantics to Phases 40-42.
 
 2. **Should Phase 39 re-open IDA to record exact route offsets?**
    - What we know: The phase context locks a supplied binary route inventory and the local evidence handle is `.tools/momoiro/EBOOT.ELF.i64`. [CITED: .planning/phases/39-momoiro-evidence-and-era-foundation/39-CONTEXT.md] [VERIFIED: codebase grep]
    - What's unclear: Exact IDA string addresses were not captured in this research run. [VERIFIED: codebase grep]
    - Recommendation: If the planner wants stronger provenance, add a small Wave 0 evidence task to capture route-string handles with IDA; otherwise cite the supplied inventory and avoid claiming fresh offset proof. [CITED: .planning/phases/39-momoiro-evidence-and-era-foundation/39-CONTEXT.md]
+   - RESOLVED: Phase 39 will not claim freshly re-captured IDA offsets. Its evidence matrix must state that the route inventory is supplied and locked by the phase context, with `.tools/momoiro/EBOOT.ELF.i64` retained as the local evidence handle.
 
 3. **Should `Ac15EraProfiles.Momoiro` exist in Phase 39?**
    - What we know: Profile limits, crown placement, catalog binding, and route behavior are Phase 40 scope. [CITED: .planning/REQUIREMENTS.md]
    - What's unclear: Some future handlers may need an inert profile placeholder, but Phase 39 can avoid those handlers. [VERIFIED: codebase grep]
    - Recommendation: Do not add `Ac15EraProfiles.Momoiro` in Phase 39 unless a compile seam requires it; if added, mark it placeholder-only and schedule Phase 40 replacement. [CITED: .planning/phases/39-momoiro-evidence-and-era-foundation/39-CONTEXT.md]
+   - RESOLVED: Do not add `Ac15EraProfiles.Momoiro` in Phase 39. If a compile seam unexpectedly requires a placeholder, label it placeholder-only in the implementation summary and replace it with researched Phase 40 limits.
 
 ## Environment Availability
 
