@@ -42,6 +42,7 @@ created: 2026-06-26
 | 39-W0-02 | 39-01 | 0 | MOFND-02 | T-39-02 | Disabled Momoiro removes the future Momoiro adapter assembly from MVC application parts. | unit/integration-light | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroApplicationPart"` | `Tests/Momoiro/MomoiroApplicationPartTests.cs` | green |
 | 39-W0-03 | 39-01 | 0 | MOFND-03 | T-39-03 | Momoiro can be enabled in `ServerSettings:Eras` without shop or Don Challenge settings while shared startup/version ownership remains recorded in evidence. | options validation | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroServerSettingsValidation"` | `Tests/Momoiro/MomoiroServerSettingsValidationTests.cs` | green |
 | 39-W0-04 | 39-01 | 0 | MOFND-04 | T-39-04 | Proto-only route families remain absent before route-surface implementation. | artifact review | `rg -n "shoppingresult.php|bestscore.php|communicationlog.php|mainichisong.php" .planning/phases/39-momoiro-evidence-and-era-foundation/39-MOMOIRO-EVIDENCE.md` | `39-MOMOIRO-EVIDENCE.md` | green |
+| 39-W0-05 | 39-04 | 0 | MOFND-02, MOFND-03, MOFND-04 | T-39-13, T-39-14, T-39-15 | Runtime-discovered Momoiro controller surface exposes only the supplied `/v04r00/chassis` game routes, hides disabled Momoiro routes, keeps `/v01r00/chassis` startup/version in Shared, and excludes proto-only route families. | application-part/controller discovery | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroRouteSurface"` | `Tests/Momoiro/MomoiroRouteSurfaceTests.cs` | green |
 
 *Status: pending - green - red - flaky*
 
@@ -51,6 +52,7 @@ created: 2026-06-26
 
 - [x] `Tests/Momoiro/MomoiroApplicationPartTests.cs` verifies enabled/disabled application-part discovery for the Momoiro adapter assembly without asserting source strings; green after Plan 39-03 application-part gating.
 - [x] `Tests/Momoiro/MomoiroServerSettingsValidationTests.cs` verifies Momoiro can be enabled without shop or Don Challenge settings; green after Plan 39-03 Host settings wiring.
+- [x] `Tests/Momoiro/MomoiroRouteSurfaceTests.cs` verifies the final Plan 39-04 runtime-discovered Momoiro game-route surface, disabled-route absence, proto-only route absence, and shared startup/version ownership.
 - [x] `Tests/Tests.csproj` remains unchanged because the Wave 0 tests use a test-owned assembly part and do not reference `Adapters.GameProtocol.Momoiro`.
 
 ---
