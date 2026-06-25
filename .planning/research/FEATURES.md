@@ -1,217 +1,216 @@
-# Feature Research: v1.5 Murasaki AC15 Support
+# Feature Research: v1.7 MOMOIRO AC15 0.11 Support
 
 **Domain:** Brownfield TaikoLocalServer AC15 era support
-**Researched:** 2026-06-21
+**Researched:** 2026-06-25
 **Confidence:** MEDIUM
 
 ## Evidence Strength
 
 Local repo evidence is authoritative for feature planning. Evidence strength in this file uses this order:
 
-1. **Local proto/data/code** - checked files in this repo, including `proto/murasaki/*` and `Host/wwwroot/data/murasaki/data`.
-2. **Binary/client/cabinet evidence** - IDA, route strings, logs, captures, RPCS3/cabinet behavior. This is still needed for route inventory, active root, request ordering, and byte-heavy semantics.
-3. **Cross-era implementation evidence** - existing Green/Blue/Yellow/Red/White AC15 capability patterns. Useful for reuse only after Murasaki wire/data shapes match.
-4. **Wiki/product context** - useful for visible gameplay scope, dates, caps, and feature names, but never sufficient to define server behavior.
+1. **Project contract and local protocol/data** - `.planning/PROJECT.md`, `proto/momoiro/taiko.proto`, `proto/momoiro/vsinterface.proto`, and `Host/wwwroot/data/momoiro/data`.
+2. **Binary/client/cabinet evidence** - `.tools/momoiro/EBOOT.ELF.i64`, route strings, IDA analysis, logs, captures, and RPCS3/cabinet behavior. This research inventoried the local IDB only; it does not claim route or byte-limit facts from binary analysis.
+3. **Cross-era implementation evidence** - existing AC15 capability patterns from KIMIDORI, Murasaki, White, Red, Yellow, Blue, and Green. Useful only after MOMOIRO proto and binary route evidence match.
+4. **Wiki/product context** - useful for version-era scoping, dates, Don Point context, and public feature timing. It is secondary evidence and never sufficient to define server behavior.
 
-Overall confidence is **MEDIUM** because Murasaki proto/data evidence is strong for the message inventory and catalog inputs, while route extraction, active-root choice, global high-score semantics, song-hash bytes, default/mainichi hashes, shopping semantics, and reserved bytes still need binary/client/cabinet proof.
+Overall confidence is **MEDIUM**. The local proto and root-level data inventory strongly define the candidate feature surface, but MOMOIRO 0.11 still needs binary/client research before locking `.php` route inventory, song unlock packing, crown packing, favorites/recent limits, challenge-array semantics, and Don Point/shopping limits.
 
 ## Feature Landscape
 
 ### Table Stakes (Users Expect These)
 
-Features users assume exist. Missing these = Murasaki support feels incomplete or unsafe to implement.
+Features users assume exist. Missing these = MOMOIRO support feels incomplete or unsafe to implement.
 
 | Feature | Why Expected | Complexity | Notes |
 |---------|--------------|------------|-------|
-| First-class Murasaki era foundation | Existing AC15 support treats Blue, Yellow, Red, and White as first-class eras; Murasaki must not be a White variant. | MEDIUM | Evidence: `.planning/PROJECT.md`, `proto/murasaki/taiko.proto`, `proto/murasaki/vsinterface.proto`. Add `GameEra.Murasaki`, generated Murasaki wire DTOs, adapter/controller project, Host settings/gating, Murasaki-owned persistence, and era-routed AdminApi/WebUI hooks. |
-| Route and transport proof | Cabinet compatibility depends on exact `.php` route names, prefix, and protobuf transport. | HIGH | Evidence: user context says `/v01r00` startup and `/v06r00` game requests, with `.php` paths and direct protobuf. Still require binary/client/log confirmation before locking route inventory. |
-| Shared startup/version ownership | Murasaki `vsinterface.proto` exposes the same startup/verup message family as older AC15 startup routing. | MEDIUM | Evidence: `StartupAuth*`, `VerupAuth*`, `VerupComplete*` in `proto/murasaki/vsinterface.proto`. Reuse shared `/v01r00` only where route/client evidence matches. |
-| Active catalog root and loader binding | Local Murasaki data has multiple config roots, so the server must bind the correct runtime root before building catalog-dependent features. | HIGH | Evidence: `Host/wwwroot/data/murasaki/data/config/common`, `ST5100-1`, `ST5100-7`, `ST6100-1`, plus `fumen/tuning.bin`. Required files include `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, `present.xml`, and `spacialbaid.xml` for each version root. Active root must come from binary/client/cabinet evidence, not filename guessing. |
-| Murasaki-owned wire mapping through application DTOs | Proto shape differs from White; direct handler persistence of wire DTOs would bake in the wrong boundary. | MEDIUM | Evidence: `proto/murasaki/taiko.proto` diverges from White around metadata and additional request families. Controllers should deserialize, map into Common/AC15 application shapes, call Mediator, then map back. |
-| BAID, mydon entry, profile, and userdata | Normal cabinet login and readback are core AC15 support. | MEDIUM | Evidence: `BAID*`, `MydonEntry*`, and `UserData*` in Murasaki proto. Murasaki userdata exposes favorites, recent songs, release-song hash, challenge arrays, display settings, options/tone/title flags, reward progress, Don Point totals, and default option/shin settings. State must be Murasaki-owned except shared identity. |
-| Favorite and recent song support with Murasaki limits | Favorites are user-visible and Murasaki raises the visible favorite cap compared with older context. | MEDIUM | Evidence: Murasaki proto exposes `ary_favorite_song_no`, `song_favorite_cnt`, and playresult `is_favorite`; wiki/product context and orchestrator verification say favorite limit is 10. Implement Murasaki limit 10 only for Murasaki, and do not regress other AC15 era limits. |
-| Normal playresult persistence | A card-using Murasaki play session must upload results and read back scores, crowns, favorites, recents, rewards, and profile counters. | HIGH | Evidence: `PlayResultRequest`, `SelfBest*`, `CrownsData*`, and `UserData*` in local proto. Reuse AC15 normal-play services where field meanings match, but keep Murasaki tables, mappers, limits, byte packing, and no-cross-era boundaries separate. |
-| Self-best and crown readback | Song select and score screens expect existing best scores and crown state. | MEDIUM | Evidence: Murasaki `SelfBestResponse` has normal and Shin self-best arrays; `CrownsDataResponse` has `song_hash_ver` and `hash_crown_flg`. Byte lengths/compression must be verified against Murasaki data/client behavior. |
-| Split metadata request family | Murasaki replaces White's monolithic `initialdatacheck` shape with separate metadata requests; copying White `initialdatacheck.php` would be wrong. | HIGH | Evidence: Murasaki-only `defaultsong`, `mainichisong`, `foldercheck`, `getfolder`, `telopcheck`, `gettelop`, `songhash`, and `bestscore` messages. Build route compatibility for proven calls, but keep hash/table byte semantics evidence-gated. |
-| `defaultsong.php` compatibility | The cabinet likely asks separately for default-song availability hashes. | HIGH | Evidence: `DefaultsongResponse.song_hash_ver` and `hash_default_song_flg`. Table-stakes route if binary/client evidence proves the path; byte contents must come from existing AC15 packing rules or a new Murasaki binary pass, not guessed arrays. |
-| `mainichisong.php` compatibility | Mainichi Dojo/default daily song hashes are no longer bundled in `initialdatacheck`. | HIGH | Evidence: `MainichisongResponse.hash_mainichidojo_all` and `hash_mainichidojo_rare`. Treat as a separate Murasaki metadata capability; do not infer White field placement. |
-| `foldercheck.php` / `getfolder.php` compatibility | Wiki/product context says feature folders were added, and Murasaki proto splits folder ids from folder contents. | MEDIUM | Evidence: `FoldercheckResponse.folder_id`, `GetfolderRequest.folder_id/hdd_ver`, `GetfolderResponse.song_no`, and local config roots. Sidecar or data-derived folder content must be explicit and Murasaki-owned. |
-| `telopcheck.php` / `gettelop.php` compatibility | Murasaki splits telop id discovery from telop body fetch. | MEDIUM | Evidence: `TelopcheckResponse.telop_id`, `GettelopResponse.start_datetime/end_datetime/telop`. Use Murasaki-owned sidecar/defaults; do not wire White `initialdatacheck` telop arrays. |
-| `songhash.php` compatibility | Murasaki has a dedicated song hash table request. | HIGH | Evidence: `SonghashResponse.song_hash_ver` and `song_hash_tbl`. This is table-stakes only as a proven route/response surface; exact table format requires binary/client proof. |
-| `bestscore.php` compatibility | Murasaki appears to ask for global top scores by sequence, which is not the same as local self-best. | HIGH | Evidence: `BestScoreRequest.seq_id`, `BestScoreResponse.last_seq_id`, and nested best-3 rank score/name rows. Implement after binary/client pass defines sequencing and expected contents. Until then, avoid converting local self-best into fake global rankings. |
-| Taikojuku/Dani | Murasaki proto and local medley data support the older AC15 Dani flow. | MEDIUM | Evidence: `Taikojuku*`, `UserDataResponse.disp_taikojuku_dan`, `PlayResultRequest.dan_result`, and `musicmedleyinfo.xml` in each root. Reuse AC15 Dani helpers with Murasaki-specific catalog root and wire placement. |
-| Reward, present, and Don Point readback | Murasaki presents and Don Points are visible progression systems. | MEDIUM | Evidence: `present.xml` exists in each root; `ST5100-1` and `ST6100-1` present thresholds run through 30000, while `ST5100-7` extends beyond that. Proto exposes `reward_ptn`, `reward_progress`, `get_donpoint`, `total_get_donpoint`, and `total_use_donpoint`. Use active-root evidence before setting caps; orchestrator/wiki context says initial Murasaki cap is 30000. |
-| `shoppingresult.php` route classification | Murasaki has a shopping result upload, but the semantics are not the same as Yellow item shop or Red reward execution. | HIGH | Evidence: `ShoppingResultRequest` uploads `use_donpoint`, tone/costume byte flags, and purchased song ids; response returns updated totals, flags, and release-song hash. Route compatibility and persistence need binary/client proof before mutation. |
-| `communicationlog.php`, `bookkeeping.php`, `heartbeat.php`, and `headclerk2.php` compatibility | Older AC15 clients commonly call operational endpoints during normal operation. | LOW/MEDIUM | Evidence: local proto has these messages. Start with log-and-success/no-state behavior where route evidence proves calls. Do not infer economy, audit, or settlement semantics from field names. |
-| Challenge array compatibility | Murasaki userdata/playresult has challenge arrays, but no standalone ChallengeCompe route. | HIGH | Evidence: `ary_challenge_stat`, `ary_user_compe_stat`, `ary_bng_compe_stat`, and stage challenge id arrays are present; standalone `ChallengeCompeRequest/Response` is absent. Preserve safe empty/readback compatibility until Murasaki-specific Don Challenge evidence is collected. |
-| AdminApi/WebUI parity for implemented Murasaki state | Users need to inspect and edit supported Murasaki profiles without touching White/Red/Yellow state. | MEDIUM | Evidence: project architecture and prior AC15 milestones. Expose only implemented Murasaki-owned profile, scores, crowns, favorites/recents, Dani, rewards, and any proven challenge surfaces. |
-| Automated and user-observed verification | Passing server tests alone is not enough for cabinet protocol compatibility. | MEDIUM | Evidence: project requirements and shipped AC15 milestone pattern. Include route/handler/catalog/persistence tests, generated-source inspection where mappers are involved, temp-output Host build if needed, and cabinet/RPCS3 smoke before closeout. |
+| First-class MOMOIRO era foundation | Existing AC15 eras are first-class and MOMOIRO must not be a KIMIDORI/Murasaki alias. | MEDIUM | Add `GameEra.Momoiro`, MOMOIRO settings, DI/application-part gating, generated wire DTOs from `proto/momoiro`, MOMOIRO-owned adapter/controller routes, persistence, and AdminApi/WebUI route registration. |
+| Shared startup/version routing | User contract says MOMOIRO 0.11 uses `/v01r00/chassis` for startup/version; `vsinterface.proto` exposes `StartupAuth`, `VerupAuth`, and `VerupComplete`. | MEDIUM | Reuse shared AC15 startup/version handling where HDD/version detection and direct-protobuf transport are proven for MOMOIRO. Do not add era-local startup controllers unless current evidence requires it. |
+| `/v04r00/chassis/*.php` game route skeleton | User contract says non-startup game routes use `/v04r00` and all routes are `.php`. | HIGH | Proto names imply candidate route families, but implementation should still perform binary route-string proof before each route is considered supported. |
+| Root-level catalog loading | MOMOIRO data is under `Host/wwwroot/data/momoiro/data` with root-level `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, and `fumen/tuning.bin`. | HIGH | Do not hardcode newer `config/STxxxx-*` layout. Catalog loading should follow the KIMIDORI/root-level path shape and validate required key files before route behavior depends on them. |
+| BAID and mydon/profile support | `BAIDRequest/Response` and `MydonEntryRequest/Response` exist and include access code, BAID, mydon name, costume flags, reward pattern, and Dan display fields. | MEDIUM | Support card lookup/registration/profile defaults through MOMOIRO-owned save state. Preserve title id `0` semantics from repo policy where title state is used. |
+| UserData readback | `UserDataResponse` is the main readback surface and contains favorites, recent songs, release-song hash, crowns, challenge arrays, options/tone/title flags, reward progress, category counts, recommendation fields, and Don Point totals. | HIGH | Crown data is inside userdata through `hash_crown_flg`; do not add `crownsdata.php`. Packing and array limits require binary/client proof before final implementation. |
+| Normal playresult persistence | `PlayResultRequest` carries per-stage score facts, favorites/recent flags, `release_song_no`, options/tone/costume/title flags, Don Point/reward fields, Dan fields, and challenge id arrays. | HIGH | Persist normal score, crown, recent/favorite, unlock, Don Point, reward, and Dan state only after MOMOIRO-specific field placement and limit proof. Keep state MOMOIRO-owned. |
+| Self-best readback | `SelfBestRequest/Response` exists and returns normal, ura, and shin self-best arrays by requested song/level. | MEDIUM | Use existing AC15 self-best capability only after MOMOIRO level/song ordering and response limits are verified. |
+| Crowns-in-userdata readback | User specifically called out crowns inside userdata; proto confirms `hash_crown_flg` in `UserDataResponse`. | HIGH | Binary research must prove byte packing, song-order basis, level/ura/shin placement, compression expectations if any, and maximum song count. |
+| Song unlocking/readback | Proto exposes `release_song_no` in playresult, `hash_release_song_flg` in userdata and shopping result, plus `song_hash_ver`. | HIGH | This is a required binary research gate. Do not copy KIMIDORI/Murasaki unlock byte semantics until MOMOIRO 0.11 packing and route use are proven. |
+| Favorites and recent songs | `UserDataResponse` repeats `ary_favorite_song_no` and `ary_recent_song_no`; playresult stages include `is_favorite` and `is_recent`. | HIGH | Limits are not encoded in proto. Treat later-era favorite limits as unproven; binary/client proof decides MOMOIRO count, ordering, duplicate handling, and truncation. |
+| Default, mainichi, songhash metadata | Proto exposes `defaultsong`, `mainichisong`, and `songhash` request/response families. | MEDIUM | Implement from MOMOIRO catalog data once route proof exists. `song_hash_tbl`, `hash_default_song_flg`, and mainichi bytes are byte-heavy and need client/binary validation. |
+| Telop metadata | Proto exposes `telopcheck` and `gettelop` request/response families. | LOW | No committed MOMOIRO telop sidecar was observed in `Host/wwwroot/data/momoiro/`; add the route shape only if binary route proof exists, and return safe empty/success content until data exists. |
+| Recommendations | Proto exposes `RecommendRequest/Response`, and userdata repeats recommendation fields. | LOW | Use deterministic catalog-backed recommendations or safe empty values. Do not infer personalized server recommendation semantics from newer eras. |
+| Best score, heartbeat, bookkeeping, and communication logs | Proto exposes these compatibility surfaces. | LOW | Keep no-state/log-and-success or bounded readback behavior unless MOMOIRO client evidence proves a stateful role. |
+| Don Point, reward, and shopping-result compatibility | Proto exposes `get_donpoint`, `reward_ptn`, `reward_progress`, `use_donpoint`, `total_get_donpoint`, `total_use_donpoint`, `ary_shopping_song_no`, and shopping release-song hash readback. | HIGH | Support MOMOIRO-owned totals and unlock flags after binary proof. Wiki context says early MOMOIRO had a 30000 point cap, but the cap must be confirmed against 0.11 binary/client behavior before hardcoding. |
+| Challenge arrays as bounded protocol state | Proto includes challenge id arrays on playresult stages and challenge/user/bng stat arrays in userdata. | HIGH | Accept and preserve only evidence-backed normal payload fields. Arrays alone do not prove `challengecompe.php`, Don Challenge, reward side effects, or external challenge authority. |
+| Dani Dojo state, separate from Taikojuku | Proto includes Dan readback/upload fields: `disp_dan_type`, `got_dan_max`, `got_dan_flg`, stage `play_dan`, and `dan_result`. | HIGH | Dan state is a candidate table-stakes feature if binary route/playresult behavior proves it. The proto does **not** expose a `TaikojukuRequest/Response` family, so do not add Taikojuku practice-folder routes. |
+| AdminApi/WebUI readback for implemented state | Existing eras expose supported state through era-aware AdminApi/WebUI surfaces. | MEDIUM | Expose only implemented MOMOIRO-owned profile, scores, crowns, recent/favorite, unlock, Don Point/reward, Dan, and challenge-compatible state. No cross-era writes. |
 
-### Differentiators (Competitive Advantage)
+### Deferred or Future Surfaces
 
-Features that make Murasaki support robust, but should follow the table-stakes compatibility path.
+Features to hold until stronger MOMOIRO-specific evidence exists.
 
-| Feature | Value Proposition | Complexity | Notes |
-|---------|-------------------|------------|-------|
-| Murasaki-specific metadata capability layer | Prevents White-like code from leaking into Murasaki while still reusing AC15 catalog primitives. | HIGH | Build a dedicated application shape for split default/mainichi/folder/telop/songhash responses once route ordering and byte formats are known. |
-| Real `bestscore.php` global ranking model | Could reproduce cabinet ranking panels better than local-only score readback. | HIGH | Requires binary/client/capture evidence for `seq_id`, pagination, `last_seq_id`, rank ordering, difficulty indexing, and whether empty/global/shared rows are acceptable. |
-| Evidence-backed song hash/default/mainichi byte generation | Reduces brittle compatibility stubs and makes updates/root changes deterministic. | HIGH | Requires deriving byte table lengths and bit ordering from Murasaki client behavior or binary evidence. Existing AC15 packers are candidates only after comparison. |
-| Proven `shoppingresult.php` persistence | Could support Murasaki-era Don Point spending and purchased song/voice/costume unlocks. | HIGH | Needs binary/client evidence for what the upload means, whether the server is authoritative, and how response flags should be merged. Until then, log-only or minimal compatibility is safer. |
-| Murasaki Don Challenge data/progress | If Murasaki-specific data and client flow are proven, server-side challenge progress would align Murasaki with Red/White quality. | HIGH | Wiki/product context shows Murasaki update entries with Don Challenge songs, and proto has embedded challenge arrays. That is not enough by itself. Need Murasaki sidecar/proven bundles and route/readback/write semantics. |
-| Active-root version strategy | Supporting `ST5100-1`, `ST5100-7`, and `ST6100-1` cleanly could handle multiple Murasaki dumps/updates. | MEDIUM | First milestone should lock one proven active root. Multi-root selection is useful later if real clients/logs require it. |
-| Murasaki-specific WebUI capability profile | Keeps older-era UI compact and avoids exposing unsupported White-final/Red/Yellow controls. | MEDIUM | Should be driven by implemented capability groups: profile, costume, favorites, scores, Dani, rewards, and proven challenge/shopping surfaces. |
+| Feature | Why Deferred | Required Evidence |
+|---------|--------------|-------------------|
+| Exact `.php` route inventory | Proto message names and user route prefix are not enough to prove every handler the binary calls. | Binary route strings, IDA route table, client log/capture, or cabinet/RPCS3 request trace. |
+| Song unlock byte semantics | `release_song_no` and `hash_release_song_flg` exist, but packing/order/limits are not self-describing. | Binary/client proof of song-hash version, release bitset length, song-number ordering, and deleted-song behavior. |
+| Crown byte semantics | `hash_crown_flg` is in userdata, but byte layout and limits are unknown. | Binary/client proof for level placement, ura/shin handling, compression, song count, and SORAIRO removed-song crown caveats. |
+| Favorites/recent limits | Repeated fields do not encode maximum count or ordering. | Binary/client proof for maximum favorite count, recent count, truncation order, and duplicate policy. |
+| Don Point cap and shopping limits | Public wiki context suggests a 30000 launch cap and later shop-point changes, but that is not protocol proof for 0.11. | MOMOIRO 0.11 binary/client proof for cap, overflow behavior, total counters, and `shoppingresult.php` unlock effects. |
+| Challenge-array semantics | The proto arrays may be passive readback, ranking metadata, or ignored compatibility. | Client/binary proof of what the cabinet expects in `ary_challenge_stat`, `ary_user_compe_stat`, `ary_bng_compe_stat`, and per-stage ids. |
+| Dani result semantics | Dan fields exist, but exact clear-grade/rank packing and route expectations need proof. | Binary/client proof for Dan mode classification, `play_dan`, `dan_result`, `got_dan_flg`, and `got_dan_max`. |
+| Telop/default/mainichi/songhash payload bytes | Proto confirms route families, but byte payload interpretation remains client-defined. | Binary/client proof or adjacent-era parser proof validated against MOMOIRO data. |
+| AdminApi editing beyond readback | WebUI edits can corrupt era state if limits and packing are wrong. | Implement only after handler/persistence behavior and binary-backed limits are stable. |
 
 ### Anti-Features (Commonly Requested, Often Problematic)
 
-Features that seem good but create incorrect Murasaki behavior without evidence.
+Features that seem useful but create incorrect scope or unsafe behavior.
 
 | Feature | Why Requested | Why Problematic | Alternative |
 |---------|---------------|-----------------|-------------|
-| Treat Murasaki as a White variant | Murasaki looks White-like and shares many older AC15 fields. | Murasaki proto lacks White `initialdatacheck` and White reward route messages, and adds separate metadata/high-score/shopping/log requests. | Add first-class Murasaki wire/controllers/state; reuse AC15 services only behind Murasaki mappers and capability profiles. |
-| Copy White `initialdatacheck.php` | White already bundles default songs, mainichi hashes, telops, folders, and Taikojuku metadata. | Murasaki has no `InitialdatacheckRequest/Response`; metadata is split across separate requests. | Implement proven `defaultsong`, `mainichisong`, `foldercheck/getfolder`, `telopcheck/gettelop`, `songhash`, and `bestscore` routes. |
-| Fake global high scores from local self-best | `bestscore.php` looks like score readback, and local scores are available. | Murasaki `BestScoreResponse` is sequence-based and nested around best-3 rank rows with names; local self-best is a different contract. | Return only evidence-backed empty/global rows until binary/client proof defines behavior. Keep self-best on `selfbest.php`. |
-| Invent song-hash/default/mainichi bytes | The proto names byte fields clearly. | Field names do not prove byte length, bit order, compression, versioning, or update semantics. Bad bytes can break song select. | Derive from binary/client/capture evidence or reuse existing packers only after comparing expected payloads. |
-| Interpret `reserved`, `content_info`, or `default_option_setting` by name | These fields look useful for capability flags or defaults. | Byte-heavy fields are high-risk and may be opaque client contracts. | Preserve/pass through only if observed; otherwise use conservative defaults and document unresolved bytes. |
-| Clone Red standalone `challengecompe.php` | Murasaki has challenge arrays and wiki context mentions Don Challenge. | Murasaki proto does not define `ChallengeCompeRequest/Response`; Red's route is a different protocol surface. | Keep embedded challenge arrays empty/safe until Murasaki-specific route/client evidence proves more. |
-| Import White final 11.01 features | White final has newer compatibility work and may seem adjacent. | Murasaki is older and must not inherit final White Tokkun/Banacoin/difficulty-panel/heartbeat fields without local Murasaki evidence. | Use only `proto/murasaki`, local Murasaki data, and client evidence. |
-| Add Banacoin wallet/payment routes | Some AC15 eras have Banacoin-adjacent compatibility routes. | Murasaki proto lacks `getbanacoininfo`, `balancecheck`, `banacoinpayment`, and `banacoinerrorlog`. | Keep absent unless binary/client evidence proves Murasaki calls a route outside the proto. |
-| Add Blue battle, Yellow item shop, Tokkun, WaiWai, gacha, or tournaments | Existing eras support or expose some of these concepts. | Murasaki proto/data reviewed here does not prove these runtime systems; `shoppingresult` is not Yellow item shop, and `bestscore` is not tournament runtime. | Treat each as absent or future evidence-gated work. |
-| Merge Murasaki state into White/Red tables | Saves implementation time. | Violates repo rule that AC15 era state stays separate except true shared identity; creates cross-era corruption. | Add Murasaki-owned save/history tables and reuse shared application algorithms. |
-| Edit dumped `proto/` to fit existing code | Fast way to compile against existing mappers. | Proto is source evidence; manual edits destroy evidence and hide schema differences. | Generate Murasaki wire from the local dumped proto and adapt code around it. |
-| Treat wiki as server-contract authority | Wiki is easy to browse and confirms visible product features. | Wiki cannot prove request paths, protobuf fields, byte packing, active root, or state mutation semantics. | Use wiki for scoping only; require local proto/data/binary/client evidence for implementation. |
+| Treat MOMOIRO as KIMIDORI or Murasaki with renamed routes | Adjacent older AC15 eras look similar. | User explicitly requires MOMOIRO-owned support and evidence gates; later-era limits can be wrong. | Compose shared AC15 capabilities only after MOMOIRO proto and binary route evidence match. |
+| Standalone `crownsdata.php` | Newer AC15 eras may have standalone crown surfaces. | MOMOIRO proto places crowns in `UserDataResponse.hash_crown_flg`; adding a route invents a contract. | Implement crowns inside userdata only. |
+| Event folders or `getfolder.php` | Later eras expose folder routes and data. | MOMOIRO proto has no folder request/response family in the local input. | Keep folders absent unless a future MOMOIRO proto plus binary route evidence proves them. |
+| Taikojuku practice-folder route | Adjacent eras and public wording can blur Dani and Taikojuku. | MOMOIRO proto has Dan fields but no `TaikojukuRequest/Response`; Dani Dojo and Taikojuku are separate surfaces. | Support Dan state only where proven; keep Taikojuku absent. |
+| Stateful Don Challenge or `challengecompe.php` | Challenge arrays are present in userdata/playresult. | Arrays alone do not prove challenge route/readback semantics or reward behavior. | Accept/preserve bounded array state only after binary proof; no standalone ChallengeCompe route without proto plus binary route evidence. |
+| Full Donder Hiroba/shop/gasha economy | Wiki mentions shop/customization and title-part gasha changes. | TaikoLocalServer is not the live web service and proto only proves cabinet compatibility fields. | Support cabinet-facing Don Point totals, shopping result compatibility, and unlock flags within MOMOIRO save state. |
+| Banacoin, Tokkun, battle, tournament, gacha, WaiWai, or newer item-shop families | These exist in later AC15 eras or adjacent project history. | MOMOIRO 0.11 proto does not expose these feature families. | Treat them as absent unless future local MOMOIRO proto and binary route evidence prove otherwise. |
+| Version behavior beyond MOMOIRO 0.11 | Public update history includes later MOMOIRO versions and changes. | The milestone target is 0.11. Later update behavior can contradict 0.11. | Keep 0.11 support narrow; start a separate milestone for later MOMOIRO versions. |
+| Hardcoded `config/STxxxx-*` catalog root | Most newer AC15 eras use versioned config roots. | MOMOIRO data inventory is root-level. | Resolve through era data helpers and a MOMOIRO root-level catalog loader. |
+| Persist generated wire DTOs directly | It is faster to wire controllers straight to EF. | It breaks the repo boundary and makes later wire corrections expensive. | Map wire DTOs through Application/Common AC15 DTOs and MOMOIRO-owned handlers. |
 
 ## Feature Dependencies
 
 ```text
-Route/transport proof
-    -> Murasaki era foundation
-        -> generated Murasaki wire DTOs
-            -> Murasaki controllers and mappers
-                -> runtime capability binding
+MOMOIRO evidence gate
+  -> generated wire and era foundation
+  -> /v01r00 startup/version and /v04r00 game route skeleton
+  -> root-level catalog loader
+  -> BAID/mydon/profile defaults
+  -> userdata and normal playresult
+  -> self-best, crowns-in-userdata, release-song hash, favorites/recent
+  -> Don Point/shopping, Dan state, challenge-compatible arrays
+  -> AdminApi/WebUI readback
 
-Active data root proof
-    -> catalog loading
-        -> folder/telop/default/mainichi/songhash metadata
-        -> Taikojuku/Dani
-        -> reward/present/Don Point readback
+Binary route proof
+  -> supported route list
+  -> controller/handler implementation
 
-BAID + mydon + userdata
-    -> normal playresult persistence
-        -> self-best/crowns/favorites/recents
-        -> AdminApi/WebUI readback
-
-Binary/client byte pass
-    -> songhash/default/mainichi bytes
-    -> bestscore global ranking
-    -> shoppingresult mutation
-    -> reserved/content_info/default_option_setting handling
-
-Challenge array evidence + Murasaki challenge data
-    -> server-side Don Challenge progress
-    -> Don Challenge AdminApi/WebUI
+Binary limit proof
+  -> crown packing
+  -> release-song packing
+  -> favorites/recent truncation
+  -> Don Point/shopping caps
+  -> challenge/Dan semantics
 ```
 
 ### Dependency Notes
 
-- **Route/transport proof before controllers:** The user context gives the intended route prefixes, but implementation should still verify route names and call order through binary/client/log evidence before claiming compatibility.
-- **Active root before catalog features:** `ST5100-1`, `ST5100-7`, and `ST6100-1` all exist and differ. Root choice changes song counts, presents, hashes, and possible feature availability.
-- **Split metadata before normal smoke:** If the cabinet expects `defaultsong`, `mainichisong`, `foldercheck`, `telopcheck`, or `songhash` before login/play, normal support can fail before userdata is reached.
-- **Normal play before AdminApi/WebUI:** AdminApi/WebUI should expose only state the runtime actually persists and reads back for Murasaki.
-- **Binary byte pass before semantic claims:** `bestscore`, `songhash`, `shoppingresult`, `reserved`, `content_info`, and `default_option_setting` are not safe to model from names alone.
-- **Challenge compatibility before full Don Challenge:** Empty/proven embedded arrays are safer than importing Red `challengecompe.php` or White server-side challenge behavior prematurely.
+- **Catalog before userdata/playresult:** Unlock, crown, self-best, recommendation, default, mainichi, and songhash bytes all depend on song catalog ordering.
+- **Binary route proof before route claims:** User-supplied `/v04r00` is the prefix contract, but each route still needs direct binary/client evidence before behavior is considered supported.
+- **Binary limit proof before WebUI editing:** AdminApi/WebUI can read implemented state early, but editing byte-packed release/crown/favorite/recent/challenge fields should wait until limits are proven.
+- **Dani before Taikojuku decisions:** Dan fields exist; Taikojuku messages do not. Implementing Dan state does not imply a practice-folder route.
+- **Challenge arrays before challenge products:** Challenge arrays may be ordinary payload fields. Do not promote them into Don Challenge, ChallengeCompe, or reward behavior without route/proto proof.
 
 ## MVP Definition
 
-### Launch With (v1.5)
+### Launch With (v1)
 
-Minimum viable Murasaki support for this milestone.
+Minimum viable MOMOIRO 0.11 support.
 
-- [ ] First-class Murasaki era foundation - generated wire, adapter, Host gating, settings, Murasaki-owned persistence, and route scaffolding.
-- [ ] Verified `/v01r00` startup and `/v06r00` game route ownership - direct-protobuf `.php` requests where local evidence proves them.
-- [ ] Active Murasaki catalog root binding - one proven root among `ST5100-1`, `ST5100-7`, and `ST6100-1`, with `musicinfo`, `musicmedleyinfo`, `defmusic`, `present`, `spacialbaid`, and `fumen/tuning.bin`.
-- [ ] BAID, mydon, userdata, profile, favorites, recents, options/tone/title/costume flags, reward progress, and Don Point totals - Murasaki-owned state, favorite cap 10 where verified.
-- [ ] Split metadata routes - `defaultsong`, `mainichisong`, `foldercheck/getfolder`, `telopcheck/gettelop`, and `songhash` with evidence-backed or conservative payloads.
-- [ ] Normal play runtime - `playresult`, self-best, crowns, release-song readback, score/crown/favorite/recent persistence, reward/Don Point updates, and no-cross-era writes.
-- [ ] Taikojuku/Dani - use local `musicmedleyinfo.xml` and existing AC15 Dani patterns after field/call-order verification.
-- [ ] Operational compatibility - `bookkeeping`, `heartbeat`, `headclerk2`, and `communicationlog` as proven no-state/log-success endpoints.
-- [ ] AdminApi/WebUI parity for implemented Murasaki state - no unsupported controls.
-- [ ] Verification - targeted tests, build, generated-source inspection where applicable, and user-observed cabinet/RPCS3 smoke before closeout.
+- [ ] First-class `GameEra.Momoiro`, settings, generated wire DTOs, adapter registration, and disabled-era gating.
+- [ ] Shared `/v01r00/chassis/*.php` startup/version routing and `/v04r00/chassis/*.php` game route skeleton with direct-protobuf transport where verified.
+- [ ] Root-level MOMOIRO catalog loader for `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, and `fumen/tuning.bin`.
+- [ ] BAID/mydon/profile creation and readback through MOMOIRO-owned save state.
+- [ ] Userdata and normal playresult for scores, self-best, crowns-in-userdata, recent/favorite, release-song flags, Don Point/reward, and Dan fields after binary limit proof.
+- [ ] `songhash`, `defaultsong`, `mainichisong`, `telopcheck`, `gettelop`, and `recommend` compatibility where route proof exists.
+- [ ] `shoppingresult` compatibility for Don Point totals and unlock flags after binary proof.
+- [ ] Bounded challenge-array acceptance/readback only where route and payload behavior are proven.
+- [ ] AdminApi/WebUI readback for implemented MOMOIRO-owned state only.
 
-### Add After Validation (v1.5.x)
+### Add After Validation (v1.x)
 
-Features to add once the core Murasaki loop is stable.
+Features to add only after the core cabinet flow is verified.
 
-- [ ] Real `bestscore.php` global ranking - only after `seq_id`, row contents, and empty/default behavior are proven.
-- [ ] Full song-hash/default/mainichi byte generation - after binary/client evidence defines table shape and bit ordering.
-- [ ] `shoppingresult.php` mutation - after proving whether Murasaki expects authoritative Don Point spending, unlock merging, or a compatibility echo.
-- [ ] Murasaki Don Challenge sidecar/progress - after local Murasaki data and client read/write behavior prove the server contract.
-- [ ] Multi-root support - if real cabinet/client behavior needs multiple Murasaki version roots in one installation.
+- [ ] AdminApi/WebUI editing for byte-packed unlock/crown/favorite/recent/challenge data after limit proof.
+- [ ] Richer catalog sidecars for telops, recommendations, and metadata if MOMOIRO-specific data is added.
+- [ ] More complete Dan readback/editing after MOMOIRO `got_dan_flg` and `dan_result` semantics are proven.
+- [ ] Challenge-array visualization if client evidence proves meaningful user-visible state.
 
 ### Future Consideration (v2+)
 
-Features to defer unless concrete Murasaki evidence appears.
+Out of current milestone unless new evidence starts a separate scope.
 
-- [ ] Banacoin wallet/payment/balance behavior - absent from local Murasaki proto.
-- [ ] Tokkun/difficulty-panel/White-final behavior - not proven for Murasaki by the reviewed proto/data.
-- [ ] Blue battle or AI battle behavior - no Murasaki evidence.
-- [ ] Yellow-style item-shop seasons/Don-Katsu medal shop - `shoppingresult` needs its own Murasaki evidence and must not be mapped to Yellow shop by default.
-- [ ] Standalone `challengecompe.php` cabinet route - absent from local Murasaki proto.
+- [ ] Later MOMOIRO update behavior beyond 0.11.
+- [ ] Standalone challenge route behavior.
+- [ ] Taikojuku practice-folder behavior.
+- [ ] Live-service shop/gasha/Donder Hiroba behavior.
+- [ ] Any newer AC15 feature family missing from local MOMOIRO proto.
 
 ## Feature Prioritization Matrix
 
 | Feature | User Value | Implementation Cost | Priority |
 |---------|------------|---------------------|----------|
-| First-class Murasaki foundation | HIGH | MEDIUM | P1 |
-| Route/transport proof | HIGH | HIGH | P1 |
-| Active catalog root binding | HIGH | HIGH | P1 |
-| BAID/mydon/userdata/profile | HIGH | MEDIUM | P1 |
-| Normal playresult/self-best/crowns | HIGH | HIGH | P1 |
-| Favorites/recents with Murasaki limits | HIGH | MEDIUM | P1 |
-| Split metadata request family | HIGH | HIGH | P1 |
-| Taikojuku/Dani | MEDIUM | MEDIUM | P1 |
-| Reward/present/Don Point readback | MEDIUM | MEDIUM | P1 |
-| Operational log/success routes | MEDIUM | LOW | P1 |
-| AdminApi/WebUI parity | HIGH | MEDIUM | P1 |
-| `bestscore.php` global ranking | MEDIUM | HIGH | P2 |
-| `shoppingresult.php` state mutation | MEDIUM | HIGH | P2 |
-| Murasaki Don Challenge progress | MEDIUM | HIGH | P2 |
-| Multi-root version strategy | LOW/MEDIUM | MEDIUM | P2 |
-| Banacoin/Tokkun/battle/standalone ChallengeCompe | LOW until proven | HIGH | P3 / anti-feature |
+| Era foundation and generated wire | HIGH | MEDIUM | P1 |
+| Shared startup/version routing | HIGH | MEDIUM | P1 |
+| `/v04r00` game route skeleton and proof | HIGH | HIGH | P1 |
+| Root-level catalog loader | HIGH | HIGH | P1 |
+| BAID/mydon/profile | HIGH | MEDIUM | P1 |
+| Userdata/readback core | HIGH | HIGH | P1 |
+| Normal playresult persistence | HIGH | HIGH | P1 |
+| Self-best | HIGH | MEDIUM | P1 |
+| Crowns in userdata | HIGH | HIGH | P1 |
+| Song unlocking/release hash | HIGH | HIGH | P1 |
+| Favorites/recent | HIGH | HIGH | P1 |
+| Don Point/reward/shopping result | MEDIUM | HIGH | P1 |
+| Default/mainichi/songhash metadata | MEDIUM | MEDIUM | P1 |
+| Telops/recommendations | MEDIUM | MEDIUM | P2 |
+| Challenge arrays | MEDIUM | HIGH | P2 |
+| Dani Dojo state | MEDIUM | HIGH | P2 |
+| AdminApi/WebUI readback | HIGH | MEDIUM | P1 |
+| AdminApi/WebUI editing for packed state | MEDIUM | HIGH | P2 |
+| Taikojuku/folders/newer modes | LOW | HIGH | P3 or anti-feature unless proven |
 
 **Priority key:**
-- P1: Must have for v1.5 launch or must be explicitly resolved as an evidence-gated compatibility surface.
-- P2: Valuable after core runtime validation or if binary/client evidence pulls it into scope.
-- P3: Future only; otherwise keep out.
+- P1: Must have for launch or must be explicitly proven absent before launch.
+- P2: Should have when binary/client evidence proves behavior and core flow is stable.
+- P3: Future only; do not build in the v1.7 core path.
 
-## Existing-Era Feature Comparison
+## Adjacent Era Feature Analysis
 
-| Feature | White 0.13 / White Final | Red | Murasaki Approach |
-|---------|---------------------------|-----|-------------------|
-| Era foundation | White-owned adapter/wire/state with legacy/final split later | Red-owned adapter/wire/state | Murasaki-owned adapter/wire/state; no White variant naming. |
-| Startup/version | Shared `/v01r00` where proven | Shared `/v01r00` where proven | Use `/v01r00` startup/version only after Murasaki route proof. |
-| Initial metadata | White 0.13 has `initialdatacheck`; final White has additional fields on final routes | Red has `initialdatacheck` | Murasaki has no `initialdatacheck`; use split metadata routes. |
-| Favorites | White-like older AC15 profile support | Red older AC15 support | Murasaki favorite cap is 10 by verified product context; keep era-specific limit. |
-| Rewards/Don Points | Present/progress through White-owned state | Red rewards plus Don Challenge | Murasaki has present data and Don Point fields; shopping result is separate and evidence-gated. |
-| Challenge/Don Challenge | Server-side stage-derived Don Challenge after White evidence; no standalone ChallengeCompe route for legacy White | Red has separate `challengecompe.php` compatibility plus server-side Don Challenge | Murasaki has embedded challenge arrays but no standalone ChallengeCompe proto; do not clone Red route. |
-| Banacoin/Tokkun | White final support only where proven; legacy schema-separated | Red has Banacoin routes, not Murasaki proof | Keep absent for Murasaki unless local evidence appears. |
-| Shopping | No Yellow-style shop by default | Reward routes, not Yellow shop | `shoppingresult.php` exists but semantics require binary/client proof. |
+| Feature | KIMIDORI/Murasaki/White Pattern | MOMOIRO Approach |
+|---------|----------------------------------|------------------|
+| Era foundation | First-class era with owned wire/routes/persistence. | Same pattern, but MOMOIRO-owned from `proto/momoiro` and `/v04r00`. |
+| Catalog layout | KIMIDORI uses root-level data; newer eras often use `config/STxxxx-*`. | Follow root-level layout. Do not import newer config-root assumptions. |
+| Crowns | Later eras may have different crown routes/packing. | Use `UserDataResponse.hash_crown_flg` only; packing is a binary gate. |
+| Favorites | Murasaki and later changed favorite capacity; KIMIDORI/MOMOIRO are older. | Do not assume the later limit. Prove MOMOIRO limit in binary/client behavior. |
+| Folders | Murasaki/White route families may expose folder behavior. | MOMOIRO proto has no folder family; keep absent. |
+| Dani/Taikojuku | Adjacent eras can support Dan state and sometimes Taikojuku route families. | Dan fields are present; Taikojuku request/response is absent. Keep them separate. |
+| Don Point/shop | Public MOMOIRO context mentions point/shop changes. | Implement only cabinet-facing proto fields and MOMOIRO-owned totals/unlocks after cap proof. |
+| Challenge | Older eras may expose challenge arrays or routes differently. | Arrays are protocol facts only; no standalone challenge product without route/proto proof. |
+
+## Research Gaps for Roadmap
+
+| Topic | Required Research | Phase Flag |
+|-------|-------------------|------------|
+| Route inventory | Extract `/v04r00/chassis/*.php` and shared `/v01r00/chassis/*.php` route proof from `.tools/momoiro/EBOOT.ELF.i64` or runtime traces. | Foundation phase must not skip. |
+| Song unlocks | Prove `song_hash_ver`, `release_song_no`, and `hash_release_song_flg` behavior. | Runtime state phase needs deeper binary research. |
+| Crown bytes | Prove `hash_crown_flg` layout, song count, level packing, ura/shin handling, and compression. | Runtime state phase needs deeper binary research. |
+| Favorites/recent limits | Prove counts and ordering. | Runtime state phase needs deeper binary research. |
+| Don Point/shopping | Prove 0.11 cap, totals, `shoppingresult.php` route use, and unlock side effects. | Reward/shop phase needs deeper binary research. |
+| Challenge arrays | Prove whether arrays need persistence, echo, or safe omission. | Optional/compatibility phase should be evidence-gated. |
+| Dan state | Prove play mode classification and Dan readback semantics. | P2 unless cabinet flow requires it earlier. |
+| Telop/default/mainichi/songhash | Prove byte payload expectations against MOMOIRO data. | Metadata phase should include focused binary/client checks. |
+| AdminApi/WebUI | Decide read-only vs editable packed fields after limits are known. | WebUI phase should trail runtime proof. |
 
 ## Sources
 
-- `.planning/PROJECT.md` - active v1.5 Murasaki scope, evidence hierarchy, route/root cautions, active and out-of-scope requirements.
-- `.planning/MILESTONES.md` - shipped White/Red/Yellow/Blue milestone behavior and closeout expectations.
-- `.codex/gsd-core/templates/research-project/FEATURES.md` - template structure adapted for this brownfield feature research.
-- `proto/murasaki/taiko.proto` - Murasaki game protocol message inventory and field placement.
-- `proto/murasaki/vsinterface.proto` - Murasaki startup/verup protocol message inventory.
-- `proto/white/taiko.proto` - comparison source showing White `initialdatacheck` and White-only reward/getreitai surfaces.
-- `proto/red/taiko.proto` - comparison source showing Red-only Banacoin and standalone `ChallengeCompe*` surfaces.
-- `Host/wwwroot/data/murasaki/data/config` - local Murasaki config roots: `common`, `ST5100-1`, `ST5100-7`, `ST6100-1`.
-- `Host/wwwroot/data/murasaki/data/fumen/tuning.bin` - local Murasaki tuning input.
-- `Host/wwwroot/data/murasaki/data/config/*/present.xml` - local Don Point/present thresholds; `ST5100-1` and `ST6100-1` reach 30000, `ST5100-7` contains later higher thresholds.
-- Public wiki update log, scoping only: https://wikiwiki.jp/taiko-fumen/%E4%BD%9C%E5%93%81/%E6%96%B0AC/%E3%82%A2%E3%83%83%E3%83%97%E3%83%87%E3%83%BC%E3%83%88%E5%B1%A5%E6%AD%B4/%E3%83%A0%E3%83%A9%E3%82%B5%E3%82%AD
-- Public wiki AC15 history, scoping only: https://wikiwiki.jp/taiko-fumen/%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0/AC%E3%81%AE%E6%AD%B4%E5%8F%B2/AC15#murasaki
-- User-provided milestone context in this research request - `/v06r00` game prefix, Murasaki start date, favorite cap 10, Don Point cap 30000, feature-folder context, and known route-family concerns.
+- `.planning/PROJECT.md` - current v1.7 MOMOIRO milestone contract and repo constraints. Confidence: HIGH.
+- `proto/momoiro/taiko.proto` - local MOMOIRO game protocol message inventory. Confidence: HIGH.
+- `proto/momoiro/vsinterface.proto` - local shared startup/version message inventory. Confidence: HIGH.
+- `Host/wwwroot/data/momoiro/data` - root-level MOMOIRO game-data inventory. Confidence: HIGH.
+- `.tools/momoiro/EBOOT.ELF.i64` - local binary research input exists; route/semantic analysis not performed in this feature research. Confidence for existence only: MEDIUM.
+- `H:/TaikoLocalServer/.codex/gsd-core/templates/research-project/FEATURES.md` - output template. Confidence: HIGH.
+- https://wikiwiki.jp/taiko-fumen/%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0/AC%E3%81%AE%E6%AD%B4%E5%8F%B2/AC15#momoiro - secondary public product/version context. Confidence: LOW.
+- https://wikiwiki.jp/taiko-fumen/%E4%BD%9C%E5%93%81/%E6%96%B0AC/%E3%82%A2%E3%83%83%E3%83%97%E3%83%87%E3%83%BC%E3%83%88%E5%B1%A5%E6%AD%B4/%E3%83%A2%E3%83%A2%E3%82%A4%E3%83%AD - secondary public update context. Confidence: LOW.
 
 ---
-*Feature research for: v1.5 Murasaki AC15 Support*
-*Researched: 2026-06-21*
+*Feature research for: v1.7 MOMOIRO AC15 0.11 Support*
+*Researched: 2026-06-25*

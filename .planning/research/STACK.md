@@ -1,16 +1,18 @@
-# Stack Research: v1.5 Murasaki AC15 Support
+# Stack Research
 
-**Domain:** Brownfield AC15 cabinet protocol adapter, catalog, persistence, and admin surface
-**Researched:** 2026-06-21
-**Confidence:** HIGH for stack decision; MEDIUM for Murasaki route/root details until binary/log evidence is captured
+**Domain:** Brownfield MOMOIRO 0.11 AC15 cabinet protocol support in TaikoLocalServer  
+**Researched:** 2026-06-25  
+**Confidence:** HIGH for stack/tooling decision from repo evidence; MEDIUM for workflow details that depend on later MOMOIRO IDA inspection; LOW for public wiki scoping context
 
-## Summary
+## Executive Recommendation
 
-No new runtime stack is justified for Murasaki. Implement v1.5 as another first-class AC15 era on the existing .NET 10 / ASP.NET Core / EF Core SQLite / protobuf-net / Mapperly / Mediator / MudBlazor stack.
+Do not add a new runtime stack for MOMOIRO. No new runtime stack is expected unless current repo evidence proves otherwise. Implement v1.7 as another first-class AC15 era on the existing ASP.NET Core 10, EF Core SQLite, protobuf-net, Mapperly, Mediator, and MudBlazor stack. The only expected additions are MOMOIRO-owned project artifacts and evidence workflows: adapter project, generated wire DTOs, route controllers, catalog bindings, persistence where proven, AdminApi/WebUI era routing, and focused verification.
 
-The required additions are project and tooling additions, not library additions: a new Murasaki adapter project, Murasaki-owned generated wire DTOs from `proto/murasaki`, Mapperly projection boundaries that account for Murasaki's split request families, Murasaki-owned EF/catalog/AdminApi/WebUI registrations when behavior is implemented, and evidence capture using local proto/data/log/IDA artifacts.
+Route/tooling scope is fixed for this milestone: shared startup/version routes remain `/v01r00/chassis/*.php`, MOMOIRO game routes are `/v04r00/chassis/*.php`, and all cabinet routes stay `.php`.
 
-Murasaki should reuse White-like and shared AC15 capabilities only after the Murasaki proto/data/client evidence proves matching semantics. The local `proto/murasaki/taiko.proto` differs materially from White: it does not have the White-style monolithic `Initialdatacheck*` message and instead splits metadata into request families such as `defaultsong`, `mainichisong`, `foldercheck`, `getfolder`, `telopcheck`, `gettelop`, `songhash`, and `bestscore`. That is a mapper/controller/Application-shape concern, not a reason to add another serialization, mapping, or runtime framework.
+MOMOIRO differs from the later completed eras in where evidence must come from, not in the core technology. The milestone should reuse KIMIDORI/Murasaki-era root-level catalog patterns and shared older-AC15 capabilities only after `proto/momoiro`, `.tools/momoiro/EBOOT.ELF.i64`, `Host/wwwroot/data/momoiro/data`, and runtime/cabinet evidence prove the corresponding behavior.
+
+Public wiki pages are useful only for release/context scoping. The wiki confirms MOMOIRO 0.11 as the 2013-12-11 large update and lists broad gameplay changes, but it must not override local proto, data, binary, generated wire, logs, or cabinet evidence.
 
 ## Recommended Stack
 
@@ -18,203 +20,276 @@ Murasaki should reuse White-like and shared AC15 capabilities only after the Mur
 
 | Technology | Version | Purpose | Why Recommended |
 |------------|---------|---------|-----------------|
-| .NET / C# | `net10.0`, C# 13 | Runtime target and language | Already repo-wide in `Directory.Build.props`; changing target would widen the milestone for no Murasaki benefit. |
-| ASP.NET Core MVC | 10.0.x framework reference | Cabinet `.php` protocol endpoints and AdminApi host | Existing era adapters are controller-based and hosted behind enabled-era application-part gating. Murasaki should follow that shape. |
-| EF Core SQLite | 10.0.7 | Local era-owned persistence | Existing stateful AC15 eras use separate EF tables and SQLite migrations; Murasaki runtime state should be Murasaki-owned rather than sharing White/Red tables. |
-| protobuf-net | Runtime `3.2.56`; generator `protogen 3.2.52+f4db4afce3` | Direct protobuf transport and generated wire DTOs | The local Murasaki proto files are proto2 inputs and existing AC15 adapters use protobuf-net-generated DTOs. |
-| Riok.Mapperly | 4.3.1 | Mechanical source-generated mapping between wire DTOs and application DTO/capability records | Current AC15 mapping policy is strict and source-generator driven. Murasaki's changed wire shape should be expressed through Mapperly mappings and explicit helper conversions, not handwritten mapper bodies. |
-| Mediator | 3.0.2 | Application request/handler dispatch | Existing controllers deserialize, map, call Mediator, and map back. Murasaki should add handler partials or new request handlers within that pipeline. |
-| Blazor WebAssembly + MudBlazor | MudBlazor 9.4.0 | Admin WebUI parity after backend behavior exists | No new UI framework is warranted; extend existing era-routed surfaces only for implemented Murasaki-owned state. |
+| .NET SDK / C# | SDK `10.0.100`, `net10.0` | Host runtime and project target | Already repo-wide via `global.json` and existing projects. Changing target would create milestone risk without solving a MOMOIRO problem. |
+| ASP.NET Core MVC | Package family `10.0.7` / framework reference | Cabinet `.php` endpoints and hosted AdminApi/WebUI | Existing era adapters use controllers, shared protocol helpers, and Host application-part gating. MOMOIRO should add `Adapters.GameProtocol.Momoiro` instead of introducing a second web stack. |
+| EF Core SQLite | `10.0.7` plus `SQLitePCLRaw.bundle_e_sqlite3 3.0.3` | Local persistence for MOMOIRO-owned state | Existing AC15 eras use era-owned tables over SQLite. MOMOIRO must not write KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, or Nijiiro gameplay state. |
+| protobuf-net | Runtime `3.2.56`; ASP.NET package `3.2.52`; local protogen `3.2.52+f4db4afce3` | Direct protobuf request/response transport and generated wire DTOs | `proto/momoiro/taiko.proto` and `proto/momoiro/vsinterface.proto` are proto2-style inputs. Existing AC15 adapters keep generated wire classes under adapter-local `Wire/` folders. |
+| Riok.Mapperly | `4.3.1` | Source-generated DTO projection | Repo policy and existing adapters require Mapperly-driven mechanical projection. Use generated-source inspection for nontrivial mappings. |
+| Mediator | `3.0.2` | Controller-to-application dispatch | Preserve the existing boundary: controllers deserialize/map, call Mediator, then map back. Runtime behavior belongs in `Application/Handlers`, not controllers. |
+| Blazor WebAssembly + MudBlazor | MudBlazor `9.4.0` | Admin UI parity for implemented MOMOIRO state | Extend existing era-routed UI/AdminApi surfaces after backend behavior exists. No UI framework change is warranted. |
 
 ### Supporting Libraries
 
 | Library | Version | Purpose | When to Use |
 |---------|---------|---------|-------------|
-| `protobuf-net.AspNetCore` | 3.2.52 | ASP.NET Core protobuf content negotiation and helpers | Reuse existing Host/shared adapter behavior for direct-protobuf request/response handling. |
-| `EntityFrameworkCore.Exceptions.Sqlite` | 10.0.0 | SQLite exception normalization | Use through existing Infrastructure patterns if Murasaki adds unique constraints or state tables. |
-| `Serilog.AspNetCore` | 10.0.0 | Request/runtime/evidence logging | Use for protocol-edge request logging, unsupported-shape diagnostics, and compatibility route logs. |
-| `JsonSchema.Net` | 9.2.2 | Existing JSON sidecar validation support | Use only if Murasaki gets committed server-authored sidecar JSON with schema-backed validation. Do not add a new validation library. |
-| `SharpZipLib` | 1.4.2 | Existing compression/archive utility | Reuse only where an existing AC15 parser/protocol path already needs it; Murasaki direct-protobuf transport does not justify new compression plumbing. |
-| xUnit | 2.9.3 | Observable behavior and persistence regression tests | Add focused tests for Murasaki handler/catalog/persistence/protocol behavior after evidence, not source-shape tests. |
+| `protobuf-net.AspNetCore` | `3.2.52` | Existing protobuf formatter integration | Use for direct-protobuf cabinet endpoints. Do not switch MOMOIRO to JSON or Google.Protobuf. |
+| `Riok.Mapperly` | `4.3.1` | Adapter and application projections | Use partial mapper methods, configured helper conversions, and generated `.g.cs` review. |
+| `EntityFrameworkCore.Exceptions.Sqlite` | `10.0.0` | SQLite exception normalization | Reuse through existing Infrastructure patterns if MOMOIRO adds unique constraints or new save-state tables. |
+| `Serilog.AspNetCore` | `10.0.0` | Runtime and protocol-edge diagnostics | Use for unsupported shape logs, stateless compatibility logs, and evidence capture. |
+| xUnit / Microsoft.NET.Test.Sdk | xUnit `2.9.3`, test SDK `17.14.1` | Regression tests for observable behavior | Add tests for evidence-backed parser behavior, persistence transitions, protocol classification, no-cross-era writes, and AdminApi readback. Do not test generated DTO existence. |
 
 ### Development Tools
 
 | Tool | Purpose | Notes |
 |------|---------|-------|
-| `.tools/protogen.exe` | Generate Murasaki wire DTOs from local proto inputs | Present in this checkout and reports `protogen 3.2.52+f4db4afce3`. Use `+nullablevaluetype=yes` to preserve optional primitive presence where supported. |
-| Mapperly generated-source emission | Inspect generated mapper implementation | Later Mapperly work must check current official Mapperly docs and build with `/p:EmitCompilerGeneratedFiles=true`; inspect emitted `.g.cs` under `obj/.../generated/.../Riok.Mapperly/`. |
-| `ida-cli` daemon mode | Binary/client evidence when proto/data/logs are insufficient | Use against `.tools/murasaki/EBOOT.ELF.i64` only when binary proof materially affects stack/tooling or implementation decisions. Keep it as evidence tooling, not runtime dependency. |
-| `rg`, PowerShell directory/file inspection | Route/data evidence capture | Use for local proto/data/config inventory and generated-output audits. Record evidence in planning artifacts rather than deriving runtime behavior from guesses. |
-| `dotnet build` / `dotnet test` | Build, source-generator, and behavior verification | Use solution builds, focused tests, and temp-output Host builds if `Host/bin/Debug/net10.0` is locked by a running server. |
+| `.tools/protogen.exe` | Generate MOMOIRO `Wire/Game.cs` and `Wire/VsInterface.cs` | Present locally and reports `protogen 3.2.52+f4db4afce3`. Reuse it with `+nullablevaluetype=yes`. |
+| Mapperly generated-source emission | Prove mapper implementation | Run `dotnet build ... /p:EmitCompilerGeneratedFiles=true` and inspect emitted `.g.cs` under `obj/Debug/net10.0/generated/.../Riok.Mapperly/...`. |
+| Local IDA database | Binary-backed route, limit, and packing evidence | `.tools/momoiro/EBOOT.ELF.i64` is present. Use IDA/ida-cli as research tooling only; it is not a runtime dependency. |
+| Root-level data inventory | Prove active catalog shape | `Host/wwwroot/data/momoiro/data` is root-level and contains `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, and `fumen/tuning.bin`. Do not assume a later `config/STxxxx-*` root. |
+| `dotnet build` / `dotnet test` | Build and behavioral verification | Use full solution builds for source-generator warnings and focused tests for behavior. Use temp Host output when `Host/bin` is locked. |
 
-## Wire DTO And Mapperly Pattern
+## Proto Generation Workflow
 
-Generate Murasaki wire DTOs into a new adapter-local namespace, for example:
+Use the existing standalone protogen workflow. Do not add `protobuf-net.BuildTools`, a new global tool manifest, Google.Protobuf generation, or handwritten C# wire models for this milestone.
+
+Recommended generation shape:
 
 ```powershell
-.\.tools\protogen.exe --csharp_out=Adapters.GameProtocol.Murasaki\Wire -Iproto\murasaki +nullablevaluetype=yes proto\murasaki\taiko.proto
-.\.tools\protogen.exe --csharp_out=Adapters.GameProtocol.Murasaki\Wire -Iproto\murasaki +nullablevaluetype=yes proto\murasaki\vsinterface.proto
+New-Item -ItemType Directory -Force Adapters.GameProtocol.Momoiro\Wire
+
+.\.tools\protogen.exe --csharp_out=Adapters.GameProtocol.Momoiro\Wire -Iproto\momoiro --package=TaikoLocalServer.Adapters.GameProtocol.Momoiro.Wire +nullablevaluetype=yes taiko.proto
+.\.tools\protogen.exe --csharp_out=Adapters.GameProtocol.Momoiro\Wire -Iproto\momoiro --package=TaikoLocalServer.Adapters.GameProtocol.Momoiro.Wire +nullablevaluetype=yes vsinterface.proto
 ```
 
-Expected generated-file convention:
+Expected tracked convention after generation:
 
-| Input | Output |
-|-------|--------|
-| `proto/murasaki/taiko.proto` | `Adapters.GameProtocol.Murasaki/Wire/Game.cs` |
-| `proto/murasaki/vsinterface.proto` | `Adapters.GameProtocol.Murasaki/Wire/VsInterface.cs` |
+| Proto input | Generated file convention | Verification |
+|-------------|---------------------------|--------------|
+| `proto/momoiro/taiko.proto` | `Adapters.GameProtocol.Momoiro/Wire/Game.cs` | Header should say `Input: taiko.proto` and namespace `TaikoLocalServer.Adapters.GameProtocol.Momoiro.Wire`. |
+| `proto/momoiro/vsinterface.proto` | `Adapters.GameProtocol.Momoiro/Wire/VsInterface.cs` | Header should say `Input: vsinterface.proto` and namespace `TaikoLocalServer.Adapters.GameProtocol.Momoiro.Wire`. |
 
-Do not hand-edit generated `Wire/` files. If the generator output needs namespace or filename normalization, adjust generation/placement once and keep the generated field/tag surface intact.
-
-Mapperly should remain source-generator driven:
-
-- Keep the existing assembly defaults from `Application/MapperlyDefaults.cs`: `AutoUserMappings = false` and `RequiredMappingStrategy = RequiredMappingStrategy.Target`.
-- Map Murasaki wire DTOs into application/common AC15 capability shapes before handler logic.
-- For Murasaki split metadata endpoints, prefer small endpoint-specific application records or capability records instead of forcing everything through the White `Initialdatacheck` shape.
-- Use Mapperly-native attributes and configured helper conversions for constants, byte normalization, nullable optional primitives, and field placement.
-- Manual mapper code is limited to explicit helper conversions that Mapperly calls. It must not classify modes, decide persistence policy, or replace source-generated projection.
-- Build with `dotnet build /p:EmitCompilerGeneratedFiles=true` and inspect the emitted Mapperly `.g.cs` output before declaring mapper implementation correct.
-
-## Runtime Project Additions
-
-Add the Murasaki runtime shape by copying the existing adapter/project pattern, not by changing stack:
-
-| Area | Recommended Addition | Notes |
-|------|----------------------|-------|
-| Adapter project | `Adapters.GameProtocol.Murasaki` | Match Red/White project shape: `FrameworkReference` to `Microsoft.AspNetCore.App`, project references to Shared/Application/Contracts, package references to `protobuf-net` and `Riok.Mapperly`. |
-| Era identity | `GameEra.Murasaki` | Add as a first-class era; update route parsing and UI enum support only where behavior exists. |
-| Host configuration | `ServerSettings:Eras:Murasaki` | Include `Enabled`, `AutoExtractCatalog`, `GameDataPath`, and capability flags only when needed. Do not add shop/Don Challenge settings until Murasaki evidence requires them. |
-| Host content/build | Murasaki data exclusion and debug junction target | Exclude `wwwroot\data\murasaki\data\**` from publish/content and mirror the debug symlink/junction behavior used for Blue/Yellow/Red/White. |
-| Catalog | `MurasakiGameDataPaths`, `MurasakiRequiredDataFiles`, `MurasakiEraGameDataCatalog`, `IMurasakiCatalog` | Reuse AC15 loaders where file formats match, but keep the interface and active-root decision Murasaki-owned. |
-| Persistence | Murasaki-owned EF entities and migrations | Add only when runtime state is implemented. Do not reuse White/Red tables. |
-| AdminApi/WebUI | Existing era-routed contracts | Extend generic AC15 surfaces for implemented Murasaki-owned state; avoid Murasaki-only API shapes unless a Murasaki-only capability needs one. |
-
-## Evidence And Tooling Notes
-
-Local evidence already available:
-
-| Evidence | Current Finding | Stack Implication |
-|----------|-----------------|-------------------|
-| `.planning/PROJECT.md` | v1.5 is Murasaki AC15 support in the existing multi-era server. | Brownfield stack reuse is the default. |
-| `Directory.Build.props` | `net10.0`, nullable enabled, C# 13. | Do not change target/language. |
-| `Directory.Packages.props` | Central versions for EF Core, protobuf-net, Mapperly, Mediator, MudBlazor, xUnit. | Add package references without explicit versions in new projects. |
-| `proto/murasaki/taiko.proto` | Murasaki has split metadata/global-score families and no White-style monolithic `Initialdatacheck*`. | Add Murasaki-owned controllers/mappers/application records for split endpoints. |
-| `proto/murasaki/vsinterface.proto` | Startup/version message family exists. | Reuse shared startup/version handling only where client evidence agrees. |
-| `Host/wwwroot/data/murasaki/data` | Symlink to local Murasaki operator data. | Runtime data is local/operator-supplied and should be excluded from publish. |
-| `Host/wwwroot/data/murasaki/data/config` | Roots: `common`, `ST5100-1`, `ST5100-7`, `ST6100-1`. Each versioned root includes `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, `present.xml`, and `spacialbaid.xml`. | Catalog loaders can reuse AC15 parsers, but active root selection needs evidence. |
-| `.tools/murasaki/EBOOT.ELF.i64` | Present and nonzero (`122793480` bytes). | Use `ida-cli` daemon mode when binary route/root/request proof is needed. Do not make IDA a runtime dependency. |
-| Current White adapter | Final `/v07r03` and compatibility `/v07r00` use separate generated wire namespaces. | If Murasaki later needs version-split support, follow the White split-wire pattern only after evidence proves the split. |
-
-## Installation
-
-No new package installation is expected for Murasaki support.
-
-New project references should use central package management:
-
-```xml
-<ItemGroup>
-  <FrameworkReference Include="Microsoft.AspNetCore.App" />
-</ItemGroup>
-
-<ItemGroup>
-  <ProjectReference Include="..\Adapters.GameProtocol.Shared\Adapters.GameProtocol.Shared.csproj" />
-  <ProjectReference Include="..\Application\Application.csproj" />
-  <ProjectReference Include="..\Contracts.AdminApi\Contracts.AdminApi.csproj" />
-</ItemGroup>
-
-<ItemGroup>
-  <PackageReference Include="protobuf-net" />
-  <PackageReference Include="Riok.Mapperly" />
-</ItemGroup>
-```
+If protogen emits filenames based on proto input names, rename the generated files to the repo convention without editing generated contents. The generated field names, tags, `ShouldSerialize*` helpers, and spelling must remain generator output.
 
 Verification commands:
 
 ```powershell
-dotnet build TaikoLocalServer.slnx
-dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build"
-dotnet build /p:EmitCompilerGeneratedFiles=true
-dotnet test Tests/Tests.csproj
+.\.tools\protogen.exe --version
+git status --porcelain -- proto/momoiro
+Select-String -Path Adapters.GameProtocol.Momoiro\Wire\Game.cs -Pattern 'Input: taiko.proto','namespace TaikoLocalServer.Adapters.GameProtocol.Momoiro.Wire'
+Select-String -Path Adapters.GameProtocol.Momoiro\Wire\VsInterface.cs -Pattern 'Input: vsinterface.proto','namespace TaikoLocalServer.Adapters.GameProtocol.Momoiro.Wire'
 ```
 
-Use focused test slices during implementation, then full solution/test verification before milestone closeout. Cabinet/RPCS3 acceptance remains outside stack tooling and is still the compatibility gate.
+## Mapperly Workflow
+
+MOMOIRO mappers should follow the current adapter defaults:
+
+```csharp
+using Riok.Mapperly.Abstractions;
+
+[assembly: MapperDefaults(
+    AutoUserMappings = false,
+    EnumMappingStrategy = EnumMappingStrategy.ByName,
+    RequiredMappingStrategy = RequiredMappingStrategy.Target)]
+```
+
+Use Mapperly for mechanical projection between MOMOIRO wire DTOs and application/common AC15 records. Manual code in mapper files should be limited to narrow helper conversions that Mapperly calls for byte arrays, optional-presence normalization, constants, or field-name mismatches. Do not put mode classification, persistence policy, unlock policy, or catalog decisions in mapper bodies.
+
+Generated-source inspection is mandatory when a MOMOIRO phase adds or changes nontrivial mappers:
+
+```powershell
+dotnet build TaikoLocalServer.slnx /p:EmitCompilerGeneratedFiles=true
+```
+
+Inspect the emitted files under the touched project, typically:
+
+```text
+Adapters.GameProtocol.Momoiro/obj/Debug/net10.0/generated/.../Riok.Mapperly/.../*.g.cs
+Application/obj/Debug/net10.0/generated/.../Riok.Mapperly/.../*.g.cs
+```
+
+Acceptance criteria for mapper work:
+
+| Check | Required Result |
+|-------|-----------------|
+| Build diagnostics | No new Mapperly warnings hidden by incremental builds. Use full solution build if warning behavior looks inconsistent. |
+| Generated `.g.cs` | Proves partial mapper methods generate expected assignments and helper calls. |
+| Handwritten mapper code | Only helper conversions, not top-level mapping bodies that replace Mapperly. |
+| Strict mapping | Large ignore lists are architecture feedback; redesign DTO/capability shape before suppressing warnings. |
+
+## Local IDA And Binary Research Workflow
+
+The current local inventory contains `.tools/momoiro/EBOOT.ELF.i64` only. That is sufficient as a binary-research input, but this research did not inspect IDA semantics and therefore makes no binary-behavior claims.
+
+Use local binary research before implementing these MOMOIRO decisions:
+
+| Topic | Why Binary Evidence Is Required | Minimum Evidence To Record |
+|-------|---------------------------------|----------------------------|
+| Route inventory | User-provided route prefix is `/v04r00/chassis/*.php`, but supported suffixes must be proven locally. | IDA route string table or xrefs showing each `.php` suffix and whether startup/version remains `/v01r00/chassis/*.php`. |
+| Song unlocking | `proto/momoiro` exposes release/hash fields such as `hash_release_song_flg`, `release_song_no`, shopping song arrays, and `song_hash_tbl`; byte widths and semantics are not proven by proto alone. | Parser/writer functions, field offsets, byte-array lengths, and downstream consumer functions for unlock/readback behavior. |
+| Crown data | `UserDataResponse` contains `hash_crown_flg`; there is no separate MOMOIRO `crownsdata.php` message in the inspected proto inventory. | Client parse and render/readback consumers for crown byte placement, width, difficulty packing, and absent/default handling. |
+| Changed limits | MOMOIRO 0.11 may differ from KIMIDORI/Murasaki limits for favorites, recent songs, self-best rows, challenge arrays, Don Point cap, and related counts. | Binary constants or loops tied to request/response arrays, plus corroborating proto field shape where available. |
+
+Evidence report format for future phases:
+
+```markdown
+## MOMOIRO BINARY EVIDENCE
+
+| Route/Field | IDA Function/Address | Proto Field | Width/Limit | Consumer | Confidence | Notes |
+|-------------|----------------------|-------------|-------------|----------|------------|-------|
+```
+
+Rules:
+
+- Binary/IDA evidence outranks proto names and public wiki context for runtime mechanics.
+- Proto presence plus matching binary `.php` route is the gate for supported feature families.
+- Unknown byte arrays should stay omitted/null/defaulted until a phase records a safe value contract.
+- IDA artifacts stay under `.tools/momoiro` or ignored scratch paths; they are not runtime assets and should not be committed unless explicitly requested.
+
+## Root-Level Catalog Data Workflow
+
+The MOMOIRO data inventory is root-level:
+
+| Required Input | Present In Inventory | Notes |
+|----------------|----------------------|-------|
+| `musicinfo.xml` | yes | Root file, not under `config/STxxxx-*`. |
+| `musicmedleyinfo.xml` | yes | Root file. |
+| `defmusic.bin` | yes | Root file. |
+| `fumen/tuning.bin` | yes | Present under `fumen`. |
+| `config/STxxxx-*` root | not present in top-level inventory | Do not reuse later-era config-root assumptions. |
+
+Top-level inventory also includes `chassisinfo.xml`, `config.xml`, `device.xml`, `don3d`, `font`, `forbidden.xml`, `libsmart`, `lumendata`, `movie`, `nutdata`, `shader`, and `sound`.
+
+Files not found at the root during inventory included `songrelease.bin`, `defaultsong.xml`, `mainichisong.xml`, `folder.xml`, `telop.xml`, and `songhash.bin`. Do not build a runtime dependency on those names unless a later data or binary pass proves the correct source.
+
+Recommended implementation pattern:
+
+| Area | Use | Avoid |
+|------|-----|-------|
+| Path resolution | `PathHelper`, era data path helpers, and `IGameDataCatalog.For(GameEra.Momoiro)` | Hardcoded `Host/wwwroot/data/momoiro/data` in handlers. |
+| Catalog loader | Reuse AC15 root-level parser pieces where formats match KIMIDORI/Murasaki | Assuming White/Red/Yellow `config/STxxxx-*` layout. |
+| Missing committed sidecars | Add only if MOMOIRO needs server-authored JSON outside raw operator data | Empty or guessed JSON sidecars without a runtime consumer. |
+| Large data assets | Treat as operator/local evidence | Ingesting or committing huge raw assets as part of stack research. |
+
+## Focused Verification Workflow
+
+Use verification that proves the exact thing changed. Avoid route-list and generated-type tests that only confirm source shape.
+
+### Foundation / Wire Phase
+
+```powershell
+.\.tools\protogen.exe --version
+dotnet build TaikoLocalServer.slnx
+dotnet build TaikoLocalServer.slnx /p:EmitCompilerGeneratedFiles=true
+git status --porcelain -- proto/momoiro
+```
+
+Required checks:
+
+| Check | Pass Criteria |
+|-------|---------------|
+| Wire generation | `Game.cs` and `VsInterface.cs` headers reference the MOMOIRO proto inputs and adapter namespace. |
+| Proto immutability | `proto/momoiro` remains clean unless the user explicitly permits schema edits. |
+| Adapter registration | Disabled MOMOIRO routes are absent; enabled routes appear through Host application-part gating. |
+| Mapperly source | Any nontrivial mapper emits expected `.g.cs` source and no new warning is hidden by incremental build state. |
+
+### Catalog Phase
+
+```powershell
+dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build" /p:EmitCompilerGeneratedFiles=true
+```
+
+Required checks:
+
+| Check | Pass Criteria |
+|-------|---------------|
+| Data root | Loader reads root-level MOMOIRO `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, and `fumen/tuning.bin`. |
+| No later-era root assumption | Loader does not require `config/STxxxx-*` for MOMOIRO. |
+| Parser behavior | Tests cover observable parsed catalog behavior, not file existence strings. |
+
+### Runtime State Phase
+
+```powershell
+dotnet build TaikoLocalServer.slnx /p:EmitCompilerGeneratedFiles=true
+dotnet test Tests/Tests.csproj --no-build
+```
+
+Required checks:
+
+| Check | Pass Criteria |
+|-------|---------------|
+| No cross-era writes | MOMOIRO playresult/userdata flows do not mutate KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, or Nijiiro gameplay tables. |
+| Crowns in userdata | Crown readback uses MOMOIRO `hash_crown_flg` only after binary-backed packing/width is documented. |
+| Song unlocking | Release/hash state uses binary-backed widths and limits; unknown unlock semantics remain conservative. |
+| AdminApi/WebUI | Expose only implemented MOMOIRO-owned state through existing era-routed surfaces. |
+
+### Runtime Acceptance
+
+Final compatibility still needs cabinet/RPCS3 evidence. Automated tests and builds are regression guards, not proof that the MOMOIRO client accepts the protocol.
+
+Record final manual evidence narrowly:
+
+| Flow | Evidence To Capture |
+|------|---------------------|
+| Startup/version | `/v01r00/chassis/startupauth.php`, `verupauth.php`, and `verupcomplete.php` request/response sequence. |
+| Game route smoke | `/v04r00/chassis/*.php` route sequence observed from client logs. |
+| Userdata | Profile/readback succeeds and crown/unlock arrays do not crash client parsing. |
+| Normal playresult | Upload accepted and only MOMOIRO-owned state mutates. |
+| Admin/WebUI | MOMOIRO era routes display/edit only supported surfaces. |
 
 ## Alternatives Considered
 
-| Recommended | Alternative | When to Use Alternative |
+| Recommended | Alternative | When To Use Alternative |
 |-------------|-------------|-------------------------|
-| protobuf-net generated DTOs | `Google.Protobuf` / `Grpc.Tools` | Only if the repo intentionally migrates all protocol adapters. Murasaki alone does not justify a second protobuf runtime/model. |
-| Adapter-local `Wire/` namespace | Shared AC15 generated wire assembly | Do not use for Murasaki. Existing architecture keeps each era's generated wire separate because field placement/versioning differs. |
-| Mapperly source-generated projections | Handwritten mapper bodies | Use handwritten code only for helper conversions Mapperly invokes; full handwritten projection hides wire/field drift and violates current mapper policy. |
-| Existing EF Core SQLite tables per era | Shared `Ac15SaveData` table with era discriminator | Do not use. State separation is a core repo rule and prevents cross-era corruption. |
-| Existing Application/Ac15 capability modules | New generic "old AC15" runtime library | Add no new library. Reuse capability modules through Murasaki-owned composition and extend only where Murasaki evidence proves shared behavior. |
-| `ida-cli` evidence tooling | Runtime binary-analysis dependency or route scraper package | Binary analysis belongs in planning/evidence capture only. Runtime code should be static, explicit, and testable. |
+| Existing adapter project + generated tracked wire files | `protobuf-net.BuildTools` generated-on-build flow | Use only in a separate tooling-hardening milestone. The repo currently tracks adapter `Wire/` files and already has a local protogen workflow. |
+| protobuf-net | Google.Protobuf | Do not use for MOMOIRO. Existing Host and adapter code are protobuf-net based, and migration would affect all eras. |
+| Mapperly partial mappers | Handwritten mapping bodies | Use handwritten code only for helper conversions Mapperly calls. If mapping cannot be expressed cleanly, revisit DTO shape before bypassing Mapperly. |
+| EF Core SQLite era-owned tables | Shared gameplay tables across older AC15 eras | Share only identity data that is truly shared. Gameplay state must stay MOMOIRO-owned. |
+| Existing Blazor/MudBlazor Admin UI | New admin frontend | Not justified; extend existing era-routed surfaces. |
+| Local IDA evidence workflow | Public wiki or route-name inference | Wiki is scoping context only. Runtime mechanics require local binary/proto/data/log/cabinet proof. |
 
 ## What NOT To Use
 
 | Avoid | Why | Use Instead |
 |-------|-----|-------------|
-| New runtime serialization library | Existing adapters and Host already use protobuf-net; dual protobuf models would complicate transport and tests. | `protobuf-net` plus generated adapter-local DTOs. |
-| Shared generated AC15 wire DTOs | Murasaki, White legacy, White final, Red, Yellow, and Blue have different field placement/version surfaces. | One `Wire/` namespace per adapter/version. |
-| Hand-edited generated `Wire/` files | Manual edits lose repeatability and hide proto/generator drift. | Regenerate from `proto/murasaki` and map through partial/helper code. |
-| Repository-shaped persistence abstraction | Prior AC15 direction keeps direct `ITaikoDbContext`, concrete `DbSet`s, and narrow row-shape helpers visible. | Murasaki-owned entities with shared generic helpers where behavior is identical. |
-| Runtime route inference from proto similarity | Proto messages prove possible payload shapes, not actual client calls or route prefixes. | Capture route/client evidence from logs, captures, or `.tools/murasaki/EBOOT.ELF.i64` via `ida-cli`. |
-| Public wiki/runtime scraping | Runtime scraping is out of scope and public sources do not outrank local proto/data/client evidence. | Local proto, game data, logs, IDA, and cabinet/RPCS3 observations. |
-| New frontend framework | Existing AdminApi/WebUI routes are already Blazor WASM/MudBlazor. | Extend existing era-routed WebUI surfaces after backend state exists. |
-
-## Stack Patterns By Variant
-
-**If Murasaki is a single confirmed game protocol version:**
-
-- Generate one `Adapters.GameProtocol.Murasaki/Wire` namespace from `proto/murasaki`.
-- Add one Murasaki route-prefix constant for `/v06r00/chassis` after route evidence is locked.
-- Keep `/v01r00/chassis` startup/version routing shared if `vsinterface` and client evidence agree.
-
-**If later evidence proves multiple Murasaki protocol versions:**
-
-- Follow the current White final/legacy split pattern with separate generated namespaces.
-- Do not force newer fields onto older wire DTOs.
-- Keep controller methods explicit per route/version.
-
-**If a Murasaki endpoint is White-like but split differently:**
-
-- Reuse the underlying Application/Ac15 service or catalog helper only after mapping Murasaki wire facts into an application shape that represents the actual Murasaki request.
-- Do not fake a White `Initialdatacheck` contract just to reuse a controller.
-
-**If a feature needs binary proof:**
-
-- Use `ida-cli` daemon mode against `.tools/murasaki/EBOOT.ELF.i64`.
-- Capture route strings, config-root selection, request family sequencing, or byte-field interpretation as evidence artifacts.
-- Keep any generated JSON/evidence outputs out of runtime dependencies unless deliberately converted into committed server-authored sidecars.
+| New runtime framework, database, or serializer | No repo evidence indicates MOMOIRO needs it; it would widen risk across shipped eras. | Existing ASP.NET Core, SQLite, protobuf-net, Mapperly, Mediator, MudBlazor stack. |
+| Editing `proto/momoiro` | User rules require proto edits only with explicit permission; dumped proto is evidence. | Generate wire from current proto and adapt at mapper/application boundaries. |
+| Hand-editing generated `Wire/` files | Breaks repeatable generation and hides protocol drift. | Regenerate with protogen and inspect headers/diffs. |
+| `protobuf-net.BuildTools` as a milestone change | Official docs describe it as convenient, but repo precedent uses tracked generated wire and local protogen. | Keep the current standalone generation workflow. |
+| Runtime dependency on IDA output | IDA is evidence tooling, not application code. | Record binary findings in planning artifacts and implement normal C# code. |
+| Wiki-derived feature implementation | Public wiki pages do not prove route, field, byte width, or client parser behavior. | Require `proto/momoiro` plus binary route/client evidence. |
+| New feature families | User explicitly scoped no new feature families. | Implement only proto-plus-route-proven MOMOIRO surfaces. |
+| Separate `crownsdata.php` assumptions | MOMOIRO proto inventory shows crowns inside `userdata` as `hash_crown_flg`. | Binary-backed `userdata` crown packing/readback. |
+| Tests for generated DTO/property existence | Repo testing rules reject generated-shape tests without runtime failure. | Behavioral tests over handlers, persistence, parsers, byte packing, and AdminApi readback. |
+| Broad adjacent-era research | Completed eras are patterns, not MOMOIRO proof. | Reuse KIMIDORI/Murasaki/White patterns only after MOMOIRO evidence matches. |
 
 ## Version Compatibility
 
 | Package / Tool | Compatible With | Notes |
 |----------------|-----------------|-------|
-| `net10.0` / C# 13 | EF Core 10.0.7, ASP.NET Core 10.0.7 packages | Current repo baseline. |
-| `protobuf-net` 3.2.56 | `protogen` 3.2.52 | Runtime and generator versions differ slightly in the existing repo; record exact generator version when regenerating Murasaki wire files. |
-| `protobuf-net.AspNetCore` 3.2.52 | ASP.NET Core 10 Host | Reuse existing direct-protobuf handling and missing-content-type fallback patterns. |
-| Mapperly 4.3.1 | Current Mapperly docs stable 4.3.1 | Official docs confirm generated-source emission via `/p:EmitCompilerGeneratedFiles=true`; implementation should recheck docs at mapper work time. |
-| Mediator 3.0.2 | Existing Application handlers | Use current request/handler patterns; no new mediator library. |
-| MudBlazor 9.4.0 | Existing Blazor WebAssembly Admin UI | Extend only after backend/AdminApi behavior exists. |
+| .NET SDK `10.0.100` | ASP.NET/EF package family `10.0.7` | Verified from `global.json` and `Directory.Packages.props`. |
+| `protobuf-net 3.2.56` | local `protogen 3.2.52+f4db4afce3` | Existing AC15 adapters use generated protobuf-net DTOs. Preserve optional primitive presence with `+nullablevaluetype=yes`. |
+| `Riok.Mapperly 4.3.1` | `EmitCompilerGeneratedFiles=true` source inspection | Official docs document emitted generated source; repo defaults require strict target mapping. |
+| `Mediator.SourceGenerator 3.0.2` | Existing controller/Mediator boundary | Add MOMOIRO handlers through existing request/handler patterns. |
+| MudBlazor `9.4.0` | Existing Blazor WASM Admin UI | Extend existing era-routing, not UI framework. |
 
 ## Sources
 
-- `.planning/PROJECT.md` - active v1.5 Murasaki scope, AC15 reuse constraints, evidence hierarchy.
-- `.planning/MILESTONES.md` and `.planning/STATE.md` - current milestone state and prior White/AC15 closeout context.
-- `.codex/gsd-core/templates/research-project/STACK.md` - stack research structure.
-- `Directory.Build.props`, `Directory.Packages.props` - current target framework and central package versions.
-- `proto/murasaki/taiko.proto`, `proto/murasaki/vsinterface.proto` - Murasaki wire inputs.
-- `proto/white/taiko.proto`, `proto/white-final/taiko.proto` - White legacy/final comparison for split-wire precedent.
-- `Host/wwwroot/data/murasaki/data/config` - local Murasaki config roots and required data candidates.
-- `.tools/murasaki/EBOOT.ELF.i64` - local nonzero binary evidence handle for `ida-cli`.
-- `docs/superpowers/specs/2026-06-07-ac15-core-extraction-design.md` - AC15 sharing rule: share behavior, not routes or generated wire models.
-- `docs/superpowers/specs/2026-06-11-ac15-capability-composition-design.md` - capability-driven Application/Ac15 composition and no shared EF tables.
-- `docs/superpowers/specs/2026-06-13-ac15-playresult-capability-input-design.md` - Mapperly and capability-shaped input boundary direction.
-- `https://mapperly.riok.app/docs/configuration/mapper/#null-values` - Mapperly null and strict mapping behavior.
-- `https://mapperly.riok.app/docs/configuration/constant-generated-values/` - Mapperly `MapValue` support for constants/generated values.
-- `https://mapperly.riok.app/docs/configuration/generated-source/` - Mapperly generated-source inspection with `EmitCompilerGeneratedFiles`.
-- `https://protobuf-net.github.io/protobuf-net/` - protobuf-net project documentation.
+| Source | Confidence | Used For |
+|--------|------------|----------|
+| `.planning/PROJECT.md` | HIGH local | Active v1.7 MOMOIRO scope, route prefix, root-level data expectation, no-new-feature-family constraint. |
+| `.planning/config.json` | HIGH local | GSD workflow and disabled external search-provider config. |
+| `proto/momoiro/taiko.proto` | HIGH local | MOMOIRO message inventory, `UserDataResponse.hash_crown_flg`, release/hash fields, absence of standalone `crownsdata.php` proto family. |
+| `proto/momoiro/vsinterface.proto` | HIGH local | Shared startup/version message family. |
+| `Host/wwwroot/data/momoiro/data` inventory | HIGH local inventory | Root-level catalog layout and required file presence. |
+| `.tools/momoiro` inventory | HIGH local inventory for presence only | Confirms `EBOOT.ELF.i64` exists; no binary semantics claimed here. |
+| `.tools/protogen.exe --version` | HIGH local command | Confirms `protogen 3.2.52+f4db4afce3`. |
+| `Directory.Packages.props`, `global.json` | HIGH local | Current package/tool versions. |
+| Existing KIMIDORI/Murasaki/White adapter files and planning summaries | MEDIUM pattern | Generation, adapter, Mapperly, and verification precedent; not MOMOIRO behavior proof. |
+| Mapperly generated-source docs | LOW by webfetch classifier; official support source | Supports `dotnet build /p:EmitCompilerGeneratedFiles=true` and generated output path. |
+| Mapperly mapper/null-value docs | LOW by webfetch classifier; official support source | Supports checking Mapperly null/strict behavior instead of assuming manual mapping. |
+| protobuf-net contract-first docs | LOW by webfetch classifier; official support source | Confirms BuildTools/protogen options; repo precedent still favors local protogen for this milestone. |
+| WikiWiki AC15 history and MOMOIRO update pages | LOW context only | Confirms public MOMOIRO 0.11 context and broad gameplay notes; not implementation authority. |
 
 ---
-*Stack research for: v1.5 Murasaki AC15 Support*
-*Researched: 2026-06-21*
+*Stack research for: v1.7 MOMOIRO AC15 0.11 Support*  
+*Researched: 2026-06-25*
