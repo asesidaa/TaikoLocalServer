@@ -107,7 +107,7 @@ Plans:
   4. Crown bytes in `userdata.php` reflect proven MOMOIRO packing, song count, difficulty placement, and default behavior through `hash_crown_flg`.
   5. Release-song and song-hash readback follow MOMOIRO catalog order and proven `song_hash_ver`, `song_hash_tbl`, and `hash_release_song_flg` semantics.
 
-**Plans**: 2/5 plans executed
+**Plans**: 3/5 plans executed
 Plans:
 **Wave 0**
 
@@ -119,7 +119,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 41-03-PLAN.md - Momoiro Application readback handlers and crown builder
+- [x] 41-03-PLAN.md - Momoiro Application readback handlers and crown builder
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -184,7 +184,7 @@ Plans:
 | 38. AdminApi, WebUI, and Runtime Closeout | v1.6 | 1/1 | Complete | 2026-06-25 |
 | 39. MOMOIRO Evidence and Era Foundation | v1.7 | 4/4 | Complete    | 2026-06-26 |
 | 40. MOMOIRO Protocol Limits, Root Catalog, and Route Behavior | v1.7 | 5/5 | Complete    | 2026-06-26 |
-| 41. MOMOIRO Identity, Userdata, Self-Best, and Crown Readback | v1.7 | 2/5 | In Progress|  |
+| 41. MOMOIRO Identity, Userdata, Self-Best, and Crown Readback | v1.7 | 3/5 | In Progress|  |
 | 42. MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility | v1.7 | 0/TBD | Not started | - |
 | 43. MOMOIRO AdminApi and WebUI Routing | v1.7 | 0/TBD | Not started | - |
 | 44. MOMOIRO Verification and Acceptance | v1.7 | 0/TBD | Not started | - |

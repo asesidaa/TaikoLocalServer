@@ -5,16 +5,16 @@ milestone_name: MOMOIRO AC15 0.11 Support
 current_phase: 41
 current_phase_name: MOMOIRO Identity, Userdata, Self-Best, and Crown Readback
 status: executing
-stopped_at: Completed 41-02-PLAN.md
-last_updated: "2026-06-26T08:39:49.681Z"
+stopped_at: Completed 41-03-PLAN.md
+last_updated: "2026-06-26T09:00:23.675Z"
 last_activity: 2026-06-26
-last_activity_desc: Phase 41 Plan 02 persistence schema complete
+last_activity_desc: Phase 41 Plan 03 Application readback handlers complete
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 14
-  completed_plans: 11
-  percent: 79
+  completed_plans: 12
+  percent: 86
 ---
 
 # Project State
@@ -29,19 +29,19 @@ See: `.planning/PROJECT.md` (updated 2026-06-25)
 ## Current Position
 
 Phase: 41 of 44 (MOMOIRO Identity, Userdata, Self-Best, and Crown Readback)
-Plan: 41-02 complete; next 41-03
+Plan: 41-03 complete; next 41-04
 Status: In Progress
-Last activity: 2026-06-26 - Phase 41 Plan 02 persistence schema complete
+Last activity: 2026-06-26 - Phase 41 Plan 03 Application readback handlers complete
 
-Progress: [########--] 79%
+Progress: [#########-] 86%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed in v1.7: 10
+- Total plans completed in v1.7: 12
 - Average duration: 18 min
-- Total execution time: 70 min
+- Total execution time: 83 min
 
 **By Phase:**
 
@@ -65,6 +65,7 @@ Progress: [########--] 79%
 | Phase 39 P04 | 28 min | 3 tasks | 14 files |
 | Phase 41 P01 | 14 min | 3 tasks | 5 files |
 | Phase 41 P02 | 12min | 2 tasks | 12 files |
+| Phase 41 P03 | 13min | 3 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -92,6 +93,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 41]: Plan 41-02 persists Momoiro favorite order as DisplayOrder with (Baid, DisplayOrder) index while keeping (Baid, SongNo) as the row key. — Phase 41 readback must return ary_favorite_song_no by user-facing order, not song-number sorting.
 - [Phase 41]: Plan 41-02 adds only the four Momoiro readback tables and leaves unsupported mutation/Admin/proto surfaces absent. — Matches the persistence-only plan and user constraints.
 - [Phase 41]: Plan 41-02 completed the persistence/schema slice only; MORDB runtime requirement checkboxes remain pending until handler/controller readback plans complete. — Avoids overclaiming runtime readback while focused tests still fail on unsupported Momoiro dispatch.
+- [Phase 41]: Plan 41-03 packs Momoiro userdata crowns by catalog/file order instead of raw song-id index. — Momoiro high raw song IDs can exceed CrownSongCount while still belonging at a valid catalog ordinal.
+- [Phase 41]: Plan 41-03 leaves Momoiro controller and Mapperly crown serialization failures to plan 41-04. — The user scoped 41-03 to Application-layer handlers, and the remaining failures are in the still-scaffolded Momoiro UserDataController.
+- [Phase 41]: Plan 41-03 keeps shared Ac15SelfBestService unchanged and trims empty Momoiro shin rows only in the Momoiro handler. — Other eras already depend on shared self-best response shape, while the Momoiro RED contract expects only populated shin rows.
 
 ### Pending Todos
 
@@ -113,10 +117,10 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ## Session Continuity
 
-Last session: 2026-06-26T08:37:51.747Z
-Stopped at: Completed 41-02-PLAN.md
+Last session: 2026-06-26T09:00:23.663Z
+Stopped at: Completed 41-03-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
 
-- Continue with Phase 41 Plan 03 for Momoiro Application readback handlers and crown builder.
+- Continue with Phase 41 Plan 04 for Momoiro readback controllers and Mapperly mappers.
