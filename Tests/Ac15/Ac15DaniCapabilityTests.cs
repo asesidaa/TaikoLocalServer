@@ -7,6 +7,19 @@ namespace TaikoLocalServer.Tests.Ac15;
 public sealed class Ac15DaniCapabilityTests
 {
     [Fact]
+    public void MomoiroProfile_EnablesBoundedDaniWithoutUnsupportedFeatureFamilies()
+    {
+        var profile = Ac15EraProfiles.Momoiro;
+
+        Assert.True(profile.Features.Dani);
+        Assert.False(profile.Features.Taikojuku);
+        Assert.False(profile.Features.Folders);
+        Assert.False(profile.Features.ItemShop);
+        Assert.Equal(18, profile.Limits.DanFlagBytes);
+        Assert.Equal(36, profile.Limits.DanExtraFlagBytes);
+    }
+
+    [Fact]
     public async Task GetScoresAsync_ReadsOnlyTheBoundTableAndTruncatesByArrivalSongCount()
     {
         await using var database = await SchemaDatabase.CreateAsync();

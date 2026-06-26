@@ -29,10 +29,10 @@ public sealed class MomoiroProtocolLimitsTests
         Assert.True(profile.Features.Crowns);
         Assert.True(profile.Features.Telops);
         Assert.True(profile.Features.Recommendations);
+        Assert.True(profile.Features.Dani);
         Assert.False(profile.Features.InitialData);
         Assert.False(profile.Features.Folders);
         Assert.False(profile.Features.Taikojuku);
-        Assert.False(profile.Features.Dani);
         Assert.False(profile.Features.ItemShop);
     }
 

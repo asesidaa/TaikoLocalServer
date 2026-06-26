@@ -35,7 +35,7 @@ public static class Ac15EraProfiles
     private static readonly Ac15FeatureSet MomoiroFeatures = KimidoriFeatures with
     {
         Folders = false,
-        Dani = false,
+        Dani = true,
         ItemShop = false
     };
 
