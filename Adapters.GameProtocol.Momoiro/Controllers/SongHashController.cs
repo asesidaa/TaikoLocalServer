@@ -1,18 +1,34 @@
-using TaikoLocalServer.Adapters.GameProtocol.Momoiro.Wire;
-
 namespace TaikoLocalServer.Adapters.GameProtocol.Momoiro.Controllers;
 
 [ApiController]
-public sealed class SongHashController : BaseProtocolController<SongHashController>
+public sealed class SongHashController(IGameDataCatalog gameDataService)
+    : BaseProtocolController<SongHashController>
 {
     [HttpPost(MomoiroRoutePrefixes.Game + "/songhash.php")]
     [Produces("application/protobuf")]
-    public IActionResult SongHash([FromBody] SonghashRequest request)
+    public async Task<IActionResult> SongHash([FromBody] SonghashRequest request)
     {
-        Logger.LogInformation(
-            "Momoiro songhash.php scaffold request: ChassisId={ChassisId}",
-            request.ChassisId);
+        Logger.LogInformation("Momoiro SongHash request: {@Request}", request);
+        var momoiro = await GetMomoiroCatalogAsync(gameDataService, HttpContext.RequestAborted);
+        return Ok(new SonghashResponse
+        {
+            Result = 1,
+            SongHashVer = momoiro.SongHashVersion,
+            SongHashTbl = Ac15SongHashCodec.EncodeTable(momoiro.SongHashTable)
+        });
+    }
 
-        return Ok(new SonghashResponse { Result = 1 });
+    private static async ValueTask<IMomoiroCatalog> GetMomoiroCatalogAsync(
+        IGameDataCatalog gameDataService,
+        CancellationToken cancellationToken)
+    {
+        var momoiro = gameDataService.Momoiro();
+        if (momoiro.SongHashTable.Count == 0)
+        {
+            await gameDataService.InitializeAsync(cancellationToken);
+            momoiro = gameDataService.Momoiro();
+        }
+
+        return momoiro;
     }
 }

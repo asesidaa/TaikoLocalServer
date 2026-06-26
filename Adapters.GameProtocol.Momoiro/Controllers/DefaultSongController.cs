@@ -1,18 +1,37 @@
-using TaikoLocalServer.Adapters.GameProtocol.Momoiro.Wire;
-
 namespace TaikoLocalServer.Adapters.GameProtocol.Momoiro.Controllers;
 
 [ApiController]
-public sealed class DefaultSongController : BaseProtocolController<DefaultSongController>
+public sealed class DefaultSongController(IGameDataCatalog gameDataService)
+    : BaseProtocolController<DefaultSongController>
 {
     [HttpPost(MomoiroRoutePrefixes.Game + "/defaultsong.php")]
     [Produces("application/protobuf")]
-    public IActionResult DefaultSong([FromBody] DefaultsongRequest request)
+    public async Task<IActionResult> DefaultSong([FromBody] DefaultsongRequest request)
     {
-        Logger.LogInformation(
-            "Momoiro defaultsong.php scaffold request: ChassisId={ChassisId}",
-            request.ChassisId);
+        Logger.LogInformation("Momoiro DefaultSong request: {@Request}", request);
+        var momoiro = await GetMomoiroCatalogAsync(gameDataService, HttpContext.RequestAborted);
+        var common = await Mediator.Send(new GetInitialDataQuery(GameEra.Momoiro), HttpContext.RequestAborted);
+        return Ok(new DefaultsongResponse
+        {
+            Result = common.Result,
+            SongHashVer = common.SongHashVer,
+            HashDefaultSongFlg = Ac15SongHashCodec.CompactBitset(
+                common.DefaultSongFlg,
+                momoiro.SongHashTable)
+        });
+    }
 
-        return Ok(new DefaultsongResponse { Result = 1 });
+    private static async ValueTask<IMomoiroCatalog> GetMomoiroCatalogAsync(
+        IGameDataCatalog gameDataService,
+        CancellationToken cancellationToken)
+    {
+        var momoiro = gameDataService.Momoiro();
+        if (momoiro.SongHashTable.Count == 0)
+        {
+            await gameDataService.InitializeAsync(cancellationToken);
+            momoiro = gameDataService.Momoiro();
+        }
+
+        return momoiro;
     }
 }

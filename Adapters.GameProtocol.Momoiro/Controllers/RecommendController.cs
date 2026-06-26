@@ -1,20 +1,28 @@
-using TaikoLocalServer.Adapters.GameProtocol.Momoiro.Wire;
-
 namespace TaikoLocalServer.Adapters.GameProtocol.Momoiro.Controllers;
 
 [ApiController]
-public sealed class RecommendController : BaseProtocolController<RecommendController>
+public sealed class RecommendController(IGameDataCatalog gameDataService)
+    : BaseProtocolController<RecommendController>
 {
     [HttpPost(MomoiroRoutePrefixes.Game + "/recommend.php")]
     [Produces("application/protobuf")]
-    public IActionResult Recommend([FromBody] RecommendRequest request)
+    public async Task<IActionResult> Recommend([FromBody] RecommendRequest request)
     {
-        Logger.LogInformation(
-            "Momoiro recommend.php scaffold request: ChassisId={ChassisId}, GenderType={GenderType}, PlayerAge={PlayerAge}",
-            request.ChassisId,
-            request.GenderType,
-            request.PlayerAge);
+        Logger.LogInformation("Momoiro Recommend request: {@Request}", request);
+        await EnsureMomoiroCatalogInitializedAsync(gameDataService, HttpContext.RequestAborted);
+        var common = await Mediator.Send(
+            new GetRecommendQuery(GameEra.Momoiro, request.GenderType, request.PlayerAge),
+            HttpContext.RequestAborted);
+        return Ok(RecommendMappers.Map(common));
+    }
 
-        return Ok(new RecommendResponse { Result = 1 });
+    private static async ValueTask EnsureMomoiroCatalogInitializedAsync(
+        IGameDataCatalog gameDataService,
+        CancellationToken cancellationToken)
+    {
+        if (gameDataService.Momoiro().SongHashTable.Count == 0)
+        {
+            await gameDataService.InitializeAsync(cancellationToken);
+        }
     }
 }
