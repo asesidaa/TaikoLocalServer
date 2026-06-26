@@ -1,9 +1,9 @@
 ---
 phase: 42
 slug: momoiro-normal-playresult-unlocks-rewards-and-dan-compatibil
-status: planned
+status: executing
 nyquist_compliant: true
-wave_0_complete: false
+wave_0_complete: true
 created: 2026-06-26
 ---
 
@@ -48,11 +48,11 @@ created: 2026-06-26
 
 | Task ID | Plan | Wave | Requirement | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------------|-----------|-------------------|-------------|--------|
-| 42-W0-01 | 42-01 | 0 | MORUN-01 | Normal playresult writes only Momoiro play-history, best/crown source, counters, recents, favorites with append-only `DisplayOrder`, and no adjacent-era rows. | handler/controller integration | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroPlayResultHandler|FullyQualifiedName~MomoiroPlayResultController" --no-restore -- RunConfiguration.DisableParallelization=true` | Planned: `Tests/Momoiro/MomoiroPlayResultHandlerTests.cs`; `Tests/Momoiro/MomoiroPlayResultControllerTests.cs` | PENDING - Wave 0 adds RED contracts before production behavior. |
-| 42-W0-02 | 42-01 | 0 | MORUN-02 | Release-song IDs, Don Point, and reward fields update only Momoiro save/readback state; no shop, wallet, payment, or spend authority is created. | handler/controller integration | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroPlayResultHandler|FullyQualifiedName~MomoiroReadback" --no-restore -- RunConfiguration.DisableParallelization=true` | Planned: `Tests/Momoiro/MomoiroPlayResultHandlerTests.cs`; existing readback tests | PENDING - Wave 0 adds RED contracts before production behavior. |
-| 42-W0-03 | 42-01/42-04 | 0/2 | MORUN-03 | Dan persistence is Momoiro-owned and bounded to playresult/BAID/userdata compatibility; no Taikojuku route, practice folder, or broader feature family is exposed. | handler/unit/profile | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroPlayResultHandler|FullyQualifiedName~Ac15DaniCapabilityTests" --no-restore -- RunConfiguration.DisableParallelization=true` | Planned handler tests; existing `Tests/Ac15/Ac15DaniCapabilityTests.cs` | PENDING - Wave 0 adds RED contracts; Wave 2 adds bounded implementation checks. |
-| 42-W0-04 | 42-01 | 0 | MORUN-04 | Challenge-shaped arrays are accepted/mapped for diagnostics and dropped; no Don Challenge, ChallengeCompe, reward-management, or raw future-proof challenge table is written. | negative persistence/integration | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroPlayResultHandler|FullyQualifiedName~MomoiroPlayResultController" --no-restore -- RunConfiguration.DisableParallelization=true` | Planned: `Tests/Momoiro/MomoiroPlayResultHandlerTests.cs`; `Tests/Momoiro/MomoiroPlayResultControllerTests.cs` | PENDING - Wave 0 adds RED contracts before production behavior. |
-| 42-W0-05 | 42-01/42-07 | 0/final | MORUN-05 | Runtime writes are Momoiro-owned only; unsupported Momoiro route families, proto edits, unsupported feature state, hardcoded data paths, and `Host/.gitignore` edits are absent. | integration/source gate | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroPlayResultHandler|FullyQualifiedName~MomoiroRouteSurface" --no-restore -- RunConfiguration.DisableParallelization=true`; source gates in 42-07 | Planned handler tests; existing `Tests/Momoiro/MomoiroRouteSurfaceTests.cs` | PENDING - Wave 0 adds RED contracts and final gate records green evidence. |
+| 42-W0-01 | 42-01 | 0 | MORUN-01 | Normal playresult writes only Momoiro play-history, best/crown source, counters, recents, favorites with append-only `DisplayOrder`, and no adjacent-era rows. | handler/controller integration | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroPlayResultHandler|FullyQualifiedName~MomoiroPlayResultController" --no-restore -- RunConfiguration.DisableParallelization=true` | Added: `Tests/Momoiro/MomoiroPlayResultHandlerTests.cs`; `Tests/Momoiro/MomoiroPlayResultControllerTests.cs` | RED EXPECTED - contracts compile and fail until Momoiro playresult schema/dispatch/write behavior is implemented. |
+| 42-W0-02 | 42-01 | 0 | MORUN-02 | Release-song IDs, Don Point, and reward fields update only Momoiro save/readback state; no shop, wallet, payment, or spend authority is created. | handler/controller integration | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroPlayResultHandler|FullyQualifiedName~MomoiroReadback" --no-restore -- RunConfiguration.DisableParallelization=true` | Added: `Tests/Momoiro/MomoiroPlayResultHandlerTests.cs`; existing readback tests | RED EXPECTED - contracts compile and fail until Momoiro save-field mutation is implemented. |
+| 42-W0-03 | 42-01/42-04 | 0/2 | MORUN-03 | Dan persistence is Momoiro-owned and bounded to playresult/BAID/userdata compatibility; no Taikojuku route, practice folder, or broader feature family is exposed. | handler/unit/profile | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroPlayResultHandler|FullyQualifiedName~Ac15DaniCapabilityTests" --no-restore -- RunConfiguration.DisableParallelization=true` | Added: `Tests/Momoiro/MomoiroPlayResultHandlerTests.cs`; existing `Tests/Ac15/Ac15DaniCapabilityTests.cs` | RED EXPECTED - bounded Dan contracts compile and fail until Momoiro-owned Dan schema/handler support is implemented. |
+| 42-W0-04 | 42-01 | 0 | MORUN-04 | Challenge-shaped arrays are accepted/mapped for diagnostics and dropped; no Don Challenge, ChallengeCompe, reward-management, or raw future-proof challenge table is written. | negative persistence/integration | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroPlayResultHandler|FullyQualifiedName~MomoiroPlayResultController" --no-restore -- RunConfiguration.DisableParallelization=true` | Added: `Tests/Momoiro/MomoiroPlayResultHandlerTests.cs`; `Tests/Momoiro/MomoiroPlayResultControllerTests.cs` | RED EXPECTED - challenge-array no-state contracts compile and fail until Momoiro playresult dispatch/mapping exists. |
+| 42-W0-05 | 42-01/42-07 | 0/final | MORUN-05 | Runtime writes are Momoiro-owned only; unsupported Momoiro route families, proto edits, unsupported feature state, hardcoded data paths, and `Host/.gitignore` edits are absent. | integration/source gate | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroPlayResultHandler|FullyQualifiedName~MomoiroRouteSurface" --no-restore -- RunConfiguration.DisableParallelization=true`; source gates in 42-07 | Added handler/controller contracts; existing `Tests/Momoiro/MomoiroRouteSurfaceTests.cs` | RED EXPECTED - no-cross-era contracts compile and fail until Momoiro runtime writes are implemented; unsupported-route tests remain green. |
 
 *Status: pending - red - green - flaky*
 
@@ -60,11 +60,11 @@ created: 2026-06-26
 
 ## Wave 0 Requirements
 
-- [ ] `Tests/Momoiro/MomoiroPlayResultHandlerTests.cs` covers MORUN-01 through MORUN-05 through handler/database/readback behavior.
-- [ ] `Tests/Momoiro/MomoiroPlayResultControllerTests.cs` covers direct protobuf controller mapping without source-text route assertions.
-- [ ] `Tests/Momoiro/MomoiroHandlerFixture.cs` supports play-history and Dan table helpers without relying on future production symbols before schema lands.
-- [ ] Momoiro Dan tests prove bounded Dan compatibility and absence of Taikojuku route/practice-folder behavior.
-- [ ] Challenge-array tests prove accepted route payloads do not create Don Challenge, ChallengeCompe, reward-management, or adjacent-era state.
+- [x] `Tests/Momoiro/MomoiroPlayResultHandlerTests.cs` covers MORUN-01 through MORUN-05 through handler/database/readback behavior.
+- [x] `Tests/Momoiro/MomoiroPlayResultControllerTests.cs` covers direct protobuf controller mapping without source-text route assertions.
+- [x] `Tests/Momoiro/MomoiroHandlerFixture.cs` supports play-history and Dan table helpers without relying on future production symbols before schema lands.
+- [x] Momoiro Dan tests prove bounded Dan compatibility and absence of Taikojuku route/practice-folder behavior.
+- [x] Challenge-array tests prove accepted route payloads do not create Don Challenge, ChallengeCompe, reward-management, or adjacent-era state.
 
 ---
 
