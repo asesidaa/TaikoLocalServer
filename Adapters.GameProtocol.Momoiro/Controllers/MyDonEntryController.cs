@@ -1,5 +1,3 @@
-using TaikoLocalServer.Adapters.GameProtocol.Momoiro.Wire;
-
 namespace TaikoLocalServer.Adapters.GameProtocol.Momoiro.Controllers;
 
 [ApiController]
@@ -7,13 +5,27 @@ public sealed class MyDonEntryController : BaseProtocolController<MyDonEntryCont
 {
     [HttpPost(MomoiroRoutePrefixes.Game + "/mydonentry.php")]
     [Produces("application/protobuf")]
-    public IActionResult MydonEntry([FromBody] MydonEntryRequest request)
+    public async Task<IActionResult> MydonEntry([FromBody] MydonEntryRequest request)
     {
-        Logger.LogInformation(
-            "Momoiro mydonentry.php scaffold request: ChassisId={ChassisId}, ShopId={ShopId}",
-            request.ChassisId,
-            request.ShopId);
+        Logger.LogInformation("Momoiro MyDonEntry request: {@Request}", request);
 
-        return Ok(new MydonEntryResponse { Result = 1 });
+        var common = await Mediator.Send(
+            new AddMyDonEntryCommand(GameEra.Momoiro, request.AccessCode, request.MydonName, 0),
+            HttpContext.RequestAborted);
+
+        return Ok(new MydonEntryResponse
+        {
+            Result = common.Result,
+            ComSvrResult = common.ComSvrResult,
+            Baid = common.Baid,
+            AccessCode = common.AccessCode,
+            IsPublish = true,
+            RegCountryId = "JPN",
+            PurposeId = 1,
+            RegionId = 1,
+            MydonName = common.MydonName,
+            RewardPtn = request.RewardPtn,
+            ContentInfo = new byte[Ac15EraProfiles.Momoiro.Limits.ContentInfoBytes]
+        });
     }
 }
