@@ -152,6 +152,10 @@ public sealed class GreenAuthConfigTests
         public DbSet<KimidoriRecentSongs> KimidoriRecentSongs => throw new NotSupportedException();
         public DbSet<DanScoreDatumKimidori> DanScoreDataKimidori => throw new NotSupportedException();
         public DbSet<DanStageScoreDatumKimidori> DanStageScoreDataKimidori => throw new NotSupportedException();
+        public DbSet<UserSaveDataMomoiro> UserSaveDataMomoiro => throw new NotSupportedException();
+        public DbSet<SongBestDatumMomoiro> SongBestDataMomoiro => throw new NotSupportedException();
+        public DbSet<MomoiroFavoriteSongs> MomoiroFavoriteSongs => throw new NotSupportedException();
+        public DbSet<MomoiroRecentSongs> MomoiroRecentSongs => throw new NotSupportedException();
 
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
             => throw new NotSupportedException();
