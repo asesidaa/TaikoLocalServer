@@ -142,7 +142,7 @@ Plans:
   4. Challenge-shaped arrays are accepted, stored, echoed, or omitted only according to MOMOIRO evidence and do not imply Don Challenge, ChallengeCompe, or reward-management behavior.
   5. MOMOIRO runtime writes do not touch KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, Nijiiro, Tokkun, battle, Banacoin, or unsupported feature state.
 
-**Plans**: 4/7 plans executed
+**Plans**: 5/7 plans executed
 Plans:
 **Wave 0**
 
@@ -159,7 +159,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 42-05-PLAN.md - Momoiro Application playresult mutation handler
+- [x] 42-05-PLAN.md - Momoiro Application playresult mutation handler
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
@@ -210,7 +210,7 @@ Plans:
 | 39. MOMOIRO Evidence and Era Foundation | v1.7 | 4/4 | Complete    | 2026-06-26 |
 | 40. MOMOIRO Protocol Limits, Root Catalog, and Route Behavior | v1.7 | 5/5 | Complete    | 2026-06-26 |
 | 41. MOMOIRO Identity, Userdata, Self-Best, and Crown Readback | v1.7 | 5/5 | Complete   | 2026-06-26 |
-| 42. MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility | v1.7 | 4/7 | In Progress|  |
+| 42. MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility | v1.7 | 5/7 | In Progress|  |
 | 43. MOMOIRO AdminApi and WebUI Routing | v1.7 | 0/TBD | Not started | - |
 | 44. MOMOIRO Verification and Acceptance | v1.7 | 0/TBD | Not started | - |
 

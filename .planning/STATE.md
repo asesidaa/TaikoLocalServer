@@ -5,16 +5,16 @@ milestone_name: MOMOIRO AC15 0.11 Support
 current_phase: 42
 current_phase_name: MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility
 status: executing
-stopped_at: Completed 42-04-PLAN.md
-last_updated: "2026-06-26T14:57:39.777Z"
+stopped_at: Completed 42-05-PLAN.md
+last_updated: "2026-06-26T19:37:01.375Z"
 last_activity: 2026-06-26
-last_activity_desc: Completed 42-04-PLAN.md; Phase 42 has 4/7 plans executed
+last_activity_desc: Completed 42-05-PLAN.md; Phase 42 has 5/7 plans executed
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 21
-  completed_plans: 18
-  percent: 86
+  completed_plans: 19
+  percent: 90
 ---
 
 # Project State
@@ -29,11 +29,11 @@ See: `.planning/PROJECT.md` (updated 2026-06-25)
 ## Current Position
 
 Phase: 42 of 44 (MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility)
-Plan: 5 of 7 in current phase
+Plan: 6 of 7 in current phase
 Status: Ready to execute
-Last activity: 2026-06-26 - Completed 42-04-PLAN.md; Phase 42 has 4/7 plans executed
+Last activity: 2026-06-26 - Completed 42-05-PLAN.md; Phase 42 has 5/7 plans executed
 
-Progress: [#########-] 86%
+Progress: [#########-] 90%
 
 ## Performance Metrics
 
@@ -50,7 +50,7 @@ Progress: [#########-] 86%
 | 39 | 4 | - | - |
 | 40 | 5 | - | - |
 | 41 | 5/5 | 67 min | 13 min |
-| 42 | 3/7 | 40 min | 13 min |
+| 42 | 5/7 | 67 min | 13 min |
 | 43 | 0/TBD | - | - |
 | 44 | 0/TBD | - | - |
 
@@ -72,6 +72,7 @@ Progress: [#########-] 86%
 | Phase 42 P02 | 12min | 3 tasks | 11 files |
 | Phase 42 P03 | 14min | 3 tasks | 5 files |
 | Phase 42 P04 | 14min | 3 tasks | 7 files |
+| Phase 42 P05 | 13min | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -119,10 +120,14 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 42]: Momoiro exposes bounded Dan course order as DaniFileOrder, not TaikojukuFileOrder. — Plan 42-04 supports playresult/BAID/userdata Dan compatibility without adding Taikojuku route, practice-folder, AdminApi, or WebUI behavior.
 - [Phase 42]: Momoiro Features.Dani is enabled only for bounded Dan compatibility while Taikojuku, folders, and item shop remain disabled. — This preserves the unsupported-route boundary and keeps MORUN-05 scope intact.
 - [Phase 42]: Momoiro Dan Mapperly projections remain source-generator driven and were verified in emitted Ac15DaniMapper.g.cs. — Mapperly generated source confirms score and stage field assignment for Momoiro Dan rows without handwritten mapper bodies.
+- [Phase 42]: Momoiro playresult mutation stays in the AC15 Application command path; no adapter/controller or Mapperly route changes were made. — Plan 42-05 is scoped to Application-layer mutation; 42-06 owns controller mapping.
+- [Phase 42]: Momoiro favorites added by playresult append after the current maximum DisplayOrder across persisted and tracked rows. — Preserves the Phase 41 favorite readback order contract.
+- [Phase 42]: Momoiro challenge-shaped arrays are diagnostics only in plan 42-05: they are logged and not persisted. — MOMOIRO evidence does not prove Don Challenge, ChallengeCompe, or reward-management authority.
+- [Phase 42]: MORUN requirement checkboxes remain pending after plan 42-05. — 42-06 and 42-07 still own controller mapping and final verification closeout.
 
 ### Pending Todos
 
-- Execute Phase 42 plans 42-05 through 42-07.
+- Execute Phase 42 plans 42-06 through 42-07.
 
 ### Blockers/Concerns
 
@@ -140,8 +145,8 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ## Session Continuity
 
-Last session: 2026-06-26T14:56:10.142Z
-Stopped at: Completed 42-04-PLAN.md
+Last session: 2026-06-26T19:36:20.195Z
+Stopped at: Completed 42-05-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
