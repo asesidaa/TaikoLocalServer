@@ -5,15 +5,15 @@ milestone_name: MOMOIRO AC15 0.11 Support
 current_phase: 42
 current_phase_name: MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility
 status: executing
-stopped_at: Completed 42-01-PLAN.md
-last_updated: "2026-06-26T13:51:20.372Z"
+stopped_at: Completed 42-02-PLAN.md
+last_updated: "2026-06-26T14:10:51.895Z"
 last_activity: 2026-06-26
 last_activity_desc: Completed 42-01-PLAN.md; Phase 42 has 1/7 plans executed
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 21
-  completed_plans: 15
+  completed_plans: 16
   percent: 50
 ---
 
@@ -29,7 +29,7 @@ See: `.planning/PROJECT.md` (updated 2026-06-25)
 ## Current Position
 
 Phase: 42 of 44 (MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility)
-Plan: 2 of 7 in current phase
+Plan: 3 of 7 in current phase
 Status: Ready to execute
 Last activity: 2026-06-26 - Completed 42-01-PLAN.md; Phase 42 has 1/7 plans executed
 
@@ -69,6 +69,7 @@ Progress: [#######---] 71%
 | Phase 41 P04 | 18min | 3 tasks | 7 files |
 | Phase 41 P05 | 10min | 3 tasks | 2 files |
 | Phase 42 P01 | 14min | 3 tasks | 5 files |
+| Phase 42 P02 | 12min | 3 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -108,6 +109,8 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 42]: Plan 42-01 remains RED-only: no production Momoiro playresult dispatch, schema, controller mapping, mapper, migration, or proto code was implemented. — Wave 0 scope is bounded to contracts for later implementation plans.
 - [Phase 42]: Momoiro favorite playresult contracts preserve Phase 41 DisplayOrder semantics by appending new favorites after the current max display order. — This guards against reverting to raw song-number ordering during playresult mutation implementation.
 - [Phase 42]: Challenge-shaped arrays are contractually accepted, mapped, and dropped without Don Challenge, ChallengeCompe, reward-management, or raw future challenge persistence. — The active MOMOIRO scope allows compatibility handling but not unsupported challenge feature authority.
+- [Phase 42]: Plan 42-02 adds Momoiro-owned play-history and bounded Dan persistence schema only. — Later plans own playresult handler/controller runtime behavior, so schema tables are available without marking MORUN runtime requirements complete.
+- [Phase 42]: Plan 42-02 validates unsupported feature scope against the active migration body, not EF designer or full snapshot metadata. — The active migration creates only SongPlayDatum_Momoiro, DanScoreDatum_Momoiro, and DanStageScoreDatum_Momoiro; designer snapshots naturally contain existing adjacent-era terms.
 
 ### Pending Todos
 
@@ -129,8 +132,8 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ## Session Continuity
 
-Last session: 2026-06-26T13:50:01.298Z
-Stopped at: Completed 42-01-PLAN.md
+Last session: 2026-06-26T14:10:51.888Z
+Stopped at: Completed 42-02-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
