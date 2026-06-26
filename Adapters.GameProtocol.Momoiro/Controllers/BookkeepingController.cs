@@ -10,7 +10,7 @@ public sealed class BookkeepingController : BaseProtocolController<BookkeepingCo
     public IActionResult Bookkeeping([FromBody] BookKeepingRequest request)
     {
         Logger.LogInformation(
-            "Momoiro bookkeeping.php scaffold request: ChassisId={ChassisId}, ShopId={ShopId}",
+            "Momoiro bookkeeping.php operational compatibility request: ChassisId={ChassisId}, ShopId={ShopId}",
             request.ChassisId,
             request.ShopId);
 

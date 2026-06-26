@@ -10,7 +10,7 @@ public sealed class HeartbeatController : BaseProtocolController<HeartbeatContro
     public IActionResult Heartbeat([FromBody] HeartBeatRequest request)
     {
         Logger.LogInformation(
-            "Momoiro heartbeat.php scaffold request: ChassisId={ChassisId}",
+            "Momoiro heartbeat.php operational compatibility request: ChassisId={ChassisId}",
             request.ChassisId);
 
         return Ok(new HeartBeatResponse
