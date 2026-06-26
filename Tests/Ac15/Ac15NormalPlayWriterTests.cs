@@ -68,6 +68,52 @@ public sealed class Ac15NormalPlayWriterTests
         Assert.Equal(10u, section.GoodCount);
     }
 
+    [Fact]
+    public async Task SaveAsync_MomoiroFavoritesAppendAfterCurrentDisplayOrder()
+    {
+        await using var database = await SchemaDatabase.CreateAsync();
+        database.Context.UserData.Add(new UserDatum { Baid = 1 });
+        database.Context.MomoiroFavoriteSongs.AddRange(
+            new MomoiroFavoriteSongs { Baid = 1, SongNo = 300, DisplayOrder = 20 },
+            new MomoiroFavoriteSongs { Baid = 1, SongNo = 100, DisplayOrder = 10 });
+        await database.Context.SaveChangesAsync();
+
+        await Ac15NormalPlayWriter.SaveAsync(
+            database.Context,
+            MomoiroTables(database.Context),
+            new Ac15NormalPlayWriteRequest(
+                1,
+                PlayMode: 0,
+                Stages: [Stage(200, isFavorite: true)],
+                Ac15EraProfiles.Momoiro.Limits,
+                DateTime.UnixEpoch),
+            Ac15NormalStagePolicies.Standard,
+            CancellationToken.None);
+
+        var favorites = await database.Context.MomoiroFavoriteSongs
+            .Where(song => song.Baid == 1)
+            .OrderBy(song => song.SongNo)
+            .ToArrayAsync();
+
+        Assert.Collection(
+            favorites,
+            song =>
+            {
+                Assert.Equal(100u, song.SongNo);
+                Assert.Equal(10, song.DisplayOrder);
+            },
+            song =>
+            {
+                Assert.Equal(200u, song.SongNo);
+                Assert.Equal(21, song.DisplayOrder);
+            },
+            song =>
+            {
+                Assert.Equal(300u, song.SongNo);
+                Assert.Equal(20, song.DisplayOrder);
+            });
+    }
+
     private static Ac15NormalPlayTables<SongPlayDatumBlue, SongBestDatumBlue, BlueFavoriteSongs, BlueRecentSongs> BlueTables(TaikoDbContext context)
         => new(
             context.SongPlayDataBlue,
@@ -107,6 +153,80 @@ public sealed class Ac15NormalPlayWriterTests
                     });
                 }
             });
+
+    private static Ac15NormalPlayTables<SongPlayDatumMomoiro, SongBestDatumMomoiro, MomoiroFavoriteSongs, MomoiroRecentSongs> MomoiroTables(TaikoDbContext context)
+        => new(
+            context.SongPlayDataMomoiro,
+            context.SongBestDataMomoiro,
+            context.MomoiroFavoriteSongs,
+            context.MomoiroRecentSongs,
+            CreateMomoiroSongPlayDatum,
+            CreateMomoiroSongBestDatum,
+            CreateFavorite: async (baid, songNo, cancellationToken) =>
+            {
+                var persistedMax = await context.MomoiroFavoriteSongs
+                    .Where(song => song.Baid == baid)
+                    .Select(song => (int?)song.DisplayOrder)
+                    .MaxAsync(cancellationToken);
+                var trackedMax = context.MomoiroFavoriteSongs.Local
+                    .Where(song => song.Baid == baid)
+                    .Select(song => (int?)song.DisplayOrder)
+                    .DefaultIfEmpty()
+                    .Max();
+
+                return new MomoiroFavoriteSongs
+                {
+                    Baid = baid,
+                    SongNo = songNo,
+                    DisplayOrder = Math.Max(persistedMax ?? 0, trackedMax ?? 0) + 1
+                };
+            });
+
+    private static SongPlayDatumMomoiro CreateMomoiroSongPlayDatum(Ac15PlayRow row)
+        => new()
+        {
+            Baid = row.Baid,
+            SongId = row.SongId,
+            Difficulty = row.Difficulty,
+            Crown = row.Crown,
+            Score = row.Score,
+            ScoreRate = row.ScoreRate,
+            GoodCount = row.GoodCount,
+            OkCount = row.OkCount,
+            MissCount = row.MissCount,
+            ComboCount = row.ComboCount,
+            HitCount = row.HitCount,
+            PoundCount = row.PoundCount,
+            StarLevel = row.StarLevel,
+            OptionFlg = row.OptionFlg,
+            ToneFlg = row.ToneFlg,
+            PlayMode = row.PlayMode,
+            StageMode = row.StageMode,
+            IsShin = row.IsShin,
+            MusicCategory = row.MusicCategory,
+            SelectedFolderId = row.SelectedFolderId,
+            IsFavorite = row.IsFavorite,
+            IsRecent = row.IsRecent,
+            IsPapamama = row.IsPapamama,
+            IsPushed = row.IsPushed,
+            SoulGauge = row.SoulGauge,
+            PlayDan = row.PlayDan,
+            WaiwaiResult = row.WaiwaiResult,
+            WaiwaiGauge = row.WaiwaiGauge,
+            PlayTime = row.PlayTime
+        };
+
+    private static SongBestDatumMomoiro CreateMomoiroSongBestDatum(uint baid, Ac15BestRow row, bool allowCrownUpdate)
+        => new()
+        {
+            Baid = baid,
+            SongId = row.SongId,
+            Difficulty = row.Difficulty,
+            IsShin = row.IsShin,
+            BestScore = row.BestScore,
+            BestRate = row.BestRate,
+            BestCrown = allowCrownUpdate ? row.BestCrown : CrownType.None
+        };
 
     private static Ac15StageResult Stage(
         uint songNo,

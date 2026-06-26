@@ -9,7 +9,8 @@ public sealed record Ac15NormalPlayTables<TPlay, TBest, TFavorite, TRecent>(
     DbSet<TRecent> RecentRows,
     Func<Ac15PlayRow, TPlay> CreatePlay,
     Func<uint, Ac15BestRow, bool, TBest> CreateBest,
-    Action<TPlay, Ac15PlayRow>? AfterAddPlayRow = null)
+    Action<TPlay, Ac15PlayRow>? AfterAddPlayRow = null,
+    Func<uint, uint, CancellationToken, ValueTask<TFavorite>>? CreateFavorite = null)
     where TPlay : class, IAc15SongPlayDatum
     where TBest : class, IAc15SongBestDatum
     where TFavorite : class, IAc15FavoriteSong, new()
@@ -57,7 +58,14 @@ public static class Ac15NormalPlayWriter
                     cancellationToken);
             }
 
-            await SetFavoriteAsync(tables.FavoriteRows, request.Baid, stage.SongNo, stage.IsFavorite, request.Limits.MaxFavoriteSongs, cancellationToken);
+            await SetFavoriteAsync(
+                tables.FavoriteRows,
+                request.Baid,
+                stage.SongNo,
+                stage.IsFavorite,
+                request.Limits.MaxFavoriteSongs,
+                tables.CreateFavorite,
+                cancellationToken);
             await UpsertRecentAsync(tables.RecentRows, request.Baid, stage.SongNo, request.PlayTime, cancellationToken);
         }
 
@@ -99,6 +107,7 @@ public static class Ac15NormalPlayWriter
         uint songNo,
         bool isFavorite,
         int maxFavorites,
+        Func<uint, uint, CancellationToken, ValueTask<TFavorite>>? createFavorite,
         CancellationToken cancellationToken)
         where TFavorite : class, IAc15FavoriteSong, new()
     {
@@ -109,7 +118,10 @@ public static class Ac15NormalPlayWriter
             var tracked = favorites.Local.Where(song => song.Baid == baid).Select(song => song.SongNo);
             if (persisted.Concat(tracked).Distinct().Count() < maxFavorites)
             {
-                favorites.Add(new TFavorite { Baid = baid, SongNo = songNo });
+                var newFavorite = createFavorite is null
+                    ? new TFavorite { Baid = baid, SongNo = songNo }
+                    : await createFavorite(baid, songNo, cancellationToken);
+                favorites.Add(newFavorite);
             }
         }
         else if (!isFavorite && favorite is not null)
