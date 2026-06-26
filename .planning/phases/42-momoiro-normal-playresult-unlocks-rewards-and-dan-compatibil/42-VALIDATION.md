@@ -109,3 +109,23 @@ Generated-source observations:
 - `UserDataMappers.g.cs` assigns `HashReleaseSongFlg`, `RewardProgress`, `TotalGetDonpoint`, and `HashCrownFlg`.
 - `BaidResponseMapper.g.cs` assigns `RewardPtn`.
 - This evidence confirms server-side generated Mapperly mappings for Momoiro playresult/readback fields; it is not cabinet/RPCS3 acceptance.
+
+### Task 2 - Full build/test and Momoiro source gates
+
+| Gate | Command | Result |
+|------|---------|--------|
+| Full serialized test suite | `dotnet test Tests/Tests.csproj --no-restore -- RunConfiguration.DisableParallelization=true` | PASS: 924 passed, 0 failed, 0 skipped. |
+| Solution build, first attempt | `dotnet build TaikoLocalServer.slnx --no-restore` | BLOCKED: `Host/bin/Debug/net10.0` assemblies were locked by pre-existing `TaikoLocalServer` process PID 77312. |
+| Environment lock clear | `Stop-Process -Id 77312` | PASS: local server process stopped to unblock the required exact solution-build gate. |
+| Solution build, rerun | `dotnet build TaikoLocalServer.slnx --no-restore` | PASS: 0 warnings, 0 errors. |
+| Temp-output Host build | `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build" --no-restore` | PASS: 0 warnings, 0 errors. |
+| Proto cleanliness, unsupported route/state absence, `Host/.gitignore` staging and baseline hash | `$status = git status --porcelain -- proto\momoiro; if ($status) { $status; exit 1 }; $routes = rg -n "shoppingresult\.php|bestscore\.php|communicationlog\.php|mainichisong\.php|crownsdata\.php|taikojuku\.php|challengecompe\.php|banacoin|battleuserdata\.php" Adapters.GameProtocol.Momoiro/Controllers; if ($LASTEXITCODE -eq 0) { $routes; exit 1 }; if ($LASTEXITCODE -ne 1) { exit $LASTEXITCODE }; $state = rg -n "Momoiro.*Tokkun|Tokkun.*Momoiro|Momoiro.*Battle|Battle.*Momoiro|Momoiro.*Banacoin|Banacoin.*Momoiro|Momoiro.*ChallengeCompe|ChallengeCompe.*Momoiro|Momoiro.*DonChallenge|DonChallenge.*Momoiro|ShopSeason.*Momoiro|Momoiro.*ShopSeason|Momoiro.*Wallet|Wallet.*Momoiro|Momoiro.*Payment|Payment.*Momoiro|Momoiro.*Coupon|Coupon.*Momoiro|Momoiro.*Transaction|Transaction.*Momoiro" Application/Handlers Application/Ac15 Domain/Entities Infrastructure/Persistence Adapters.GameProtocol.Momoiro; if ($LASTEXITCODE -eq 0) { $state; exit 1 }; if ($LASTEXITCODE -ne 1) { exit $LASTEXITCODE }; $staged = git diff --cached --name-only -- Host/.gitignore; if ($staged) { $staged; exit 1 }; $diff = git diff -- Host/.gitignore; $text = ($diff -join "`n"); $bytes = [System.Text.Encoding]::UTF8.GetBytes($text); $sha = [System.Security.Cryptography.SHA256]::Create(); $hash = [System.BitConverter]::ToString($sha.ComputeHash($bytes)).Replace('-','').ToLowerInvariant(); if ($hash -ne '73190e8a4bb993eadc0a9364cac7e1b0336f45192911fb68d9ab1ebb87cac782') { Write-Error "Host/.gitignore baseline diff changed: $hash"; exit 1 }; exit 0` | PASS: no proto changes; no unsupported Momoiro route families; no unsupported Momoiro Tokkun/battle/Banacoin/ChallengeCompe/DonChallenge/shop/wallet/payment/coupon/transaction state; no staged `Host/.gitignore`; baseline diff hash preserved. Command emitted only the expected Git line-ending warning for the pre-existing unstaged `Host/.gitignore` diff. |
+| Route-prefix correctness | `rg -n "MomoiroRoutePrefixes|v04r00|v01r00" Adapters.GameProtocol.Momoiro Host Tests/Momoiro` | PASS: Momoiro game routes use `MomoiroRoutePrefixes.Game = "/v04r00/chassis"`; shared startup/version route assertions remain `/v01r00/chassis`. |
+| Hardcoded Momoiro data-path absence | `rg -n "wwwroot[/\\]data[/\\]momoiro|wwwroot/data/momoiro|wwwroot\\data\\momoiro|Host[/\\]wwwroot[/\\]data[/\\]momoiro|Host/wwwroot/data/momoiro|Host\\wwwroot\\data\\momoiro" Adapters.GameProtocol.Momoiro/Controllers Application/Handlers Application/Ac15` | PASS: no matches. |
+
+Scope notes:
+
+- `proto/momoiro` remained clean after all Task 2 gates.
+- `Host/.gitignore` remained unstaged, with SHA-256 `73190e8a4bb993eadc0a9364cac7e1b0336f45192911fb68d9ab1ebb87cac782` for the visible pre-existing diff.
+- `.scratch/` remained an untracked pre-existing local scratch directory and was not staged.
+- AdminApi/WebUI remains Phase 43; cabinet/RPCS3 acceptance remains Phase 44.
