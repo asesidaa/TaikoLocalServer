@@ -47,7 +47,7 @@ MOMOIRO users can register, log in, enter MyDon/profile flow, and read back MOMO
 |----|-------------|------------------|
 | MORDB-01 | MOMOIRO card registration, login, mydon entry, and userdata readback use MOMOIRO-owned save state while sharing only true identity data across eras. | Use shared `Cards`, `UserData`, and `Credentials`; add only `UserSaveDataMomoiro` as the era save table for identity/profile readback. [VERIFIED: AddMyDonEntryCommand.Kimidori/Murasaki + 41-PATTERNS.md] |
 | MORDB-02 | MOMOIRO self-best readback returns MOMOIRO-owned score state with normal, ura, and shin handling where proven. | Add `SongBestDatumMomoiro` and feed shared `Ac15SelfBestService`; map `ArySelfbestScores` and `AryShinSelfbestScores` to Momoiro wire. [VERIFIED: generated wire + GetSelfBestQuery.Kimidori/Murasaki] |
-| MORDB-03 | MOMOIRO favorite/recent readback uses backed limits, ordering, truncation, and duplicate behavior. | Add `MomoiroFavoriteSongs` and `MomoiroRecentSongs`; use Phase 40 limits of 5/5, recent descending `LastPlayed`, and unique `(Baid, SongNo)` duplicate prevention. [VERIFIED: 40-VERIFICATION.md + Ac15NormalPlayWriter] |
+| MORDB-03 | MOMOIRO favorite/recent readback uses backed limits, ordering, truncation, and duplicate behavior. | Add `MomoiroFavoriteSongs` and `MomoiroRecentSongs`; use Phase 40 limits of 5/5, persist favorite response order with `MomoiroFavoriteSongs.DisplayOrder`, use recent descending `LastPlayed`, and keep unique `(Baid, SongNo)` duplicate prevention. [VERIFIED: generated wire ordered array + 40-VERIFICATION.md + Ac15NormalPlayWriter] |
 | MORDB-04 | MOMOIRO crown bytes in `userdata.php` use backed packing, song count, difficulty placement, and defaults. | Build 10-bit crown values from `SongBestDatumMomoiro`, then compact by MOMOIRO song-hash/file order to 475 bytes for `UserDataResponse.HashCrownFlg`. [VERIFIED: generated wire + Ac15ProtocolBytes + Ac15SongHashCodec] |
 | MORDB-05 | MOMOIRO release-song and song-hash readback uses catalog order and backed `song_hash_ver`, `song_hash_tbl`, and `hash_release_song_flg` semantics. | Use `IMomoiroCatalog.SongHashVersion`, `SongHashTable`, and `Ac15SongHashCodec.CompactBitset` for release/default flag wire envelopes. [VERIFIED: IMomoiroCatalog + MomoiroEraGameDataCatalog + 40-VERIFICATION.md] |
 </phase_requirements>
@@ -118,7 +118,7 @@ EF planning checklist: add `ITaikoDbContext.Momoiro.cs`, `TaikoDbContext.Momoiro
 
 | Concern | Representation | Required Tests |
 |---------|----------------|----------------|
-| Favorites | Store in `MomoiroFavoriteSongs` with unique key `(Baid, SongNo)` and cap response to `Ac15EraProfiles.Momoiro.Limits.MaxFavoriteSongs` (`5` from Phase 40). [VERIFIED: 40-VERIFICATION.md + KimidoriFavoriteSongs] Favorite native ordering is not proven; use deterministic `OrderBy(SongNo).Take(5)` for readback until a writer/order column is evidence-backed. [ASSUMED] | Assert max 5, duplicate prevention by key, MOMOIRO-only source, and deterministic returned values without asserting unsupported native ordering. [VERIFIED: AGENTS.md testing rules] |
+| Favorites | Store in `MomoiroFavoriteSongs` with unique key `(Baid, SongNo)`, persisted `DisplayOrder`, and cap response to `Ac15EraProfiles.Momoiro.Limits.MaxFavoriteSongs` (`5` from Phase 40). Generated wire backs an ordered `ary_favorite_song_no` array; the exact native mutation source of `DisplayOrder` remains unproven. [VERIFIED: 40-VERIFICATION.md + Momoiro generated wire] | Assert max 5, duplicate prevention by key, MOMOIRO-only source, and returned values ordered by persisted `DisplayOrder` rather than raw song number. [VERIFIED: AGENTS.md testing rules] |
 | Recents | Store in `MomoiroRecentSongs` with unique key `(Baid, SongNo)`, order by `LastPlayed` descending, and cap to 5. [VERIFIED: UserDataQuery.Kimidori/Murasaki + Ac15NormalPlayWriter + 40-VERIFICATION.md] | Seed six recents and assert newest five in descending `LastPlayed`; seed adjacent-era recents and assert ignored. [VERIFIED: current adjacent AC15 tests pattern] |
 | Duplicate behavior | Favorites and recents cannot duplicate a `(Baid, SongNo)` row because the EF key is `(Baid, SongNo)`. [VERIFIED: TaikoDbContext.Kimidori/Murasaki] Future playresult recents should upsert `LastPlayed` and trim old rows, matching `Ac15NormalPlayWriter`. [VERIFIED: Ac15NormalPlayWriter] | Phase 41 tests seed/update one row rather than relying on duplicate rows that SQLite keys disallow. [VERIFIED: EF model pattern] |
 | Release flags | Persist internal `ReleaseSongFlg` in `UserSaveDataMomoiro` using the shared inflated `SongFlagBytes` envelope, then OR with catalog release/defaults in `Ac15UserDataService` and compact to 48 bytes through `Ac15SongHashCodec.CompactBitset(momoiro.SongHashTable)` for wire. [VERIFIED: UserSaveDataKimidori/Murasaki + Ac15UserDataService + Ac15SongHashCodec + 40-VERIFICATION.md] | Assert a seeded MOMOIRO release bit appears in `HashReleaseSongFlg` using MOMOIRO hash order; assert adjacent-era release flags are ignored. [VERIFIED: MORDB-05] |
@@ -161,7 +161,7 @@ Mapperly `RequiredMappingStrategy` and ignore attributes should be used to make 
 
 | Item | Status | Planner Handling |
 |------|--------|------------------|
-| Favorite native ordering | LOW confidence. [ASSUMED] | Use deterministic server ordering for Phase 41 tests, but do not claim native order until client/IDA evidence proves it. |
+| Favorite native ordering source | LOW confidence. [ASSUMED] | Generated wire backs an ordered `ary_favorite_song_no` array, so Phase 41 persists and reads an explicit `DisplayOrder`. Do not claim whether native mutation derives that order from selection order, UI order, or another client rule until client/IDA evidence proves it. |
 | Favorite native max | LOW confidence; Phase 40 uses conservative `5`. [ASSUMED] | Keep `5` unless new evidence appears; add a note in tests that it is a profile-bound cap. |
 | Crown native byte constant | MEDIUM-LOW; 475 is inferred from 380 songs times 10 bits. [INFERRED: 40-VERIFICATION.md + Ac15ProtocolBytes] | Test length/difficulty placement now; cabinet acceptance remains Phase 44. |
 | Exact `IsAutoTitleOn` semantics | LOW; field exists but no save/source semantics were proven. [VERIFIED: generated wire; ASSUMED semantics] | Leave default unless evidence backs a save field; do not map from `IsAutoCostumeOn`. |
@@ -449,7 +449,7 @@ dotnet build Adapters.GameProtocol.Momoiro/Adapters.GameProtocol.Momoiro.csproj 
 
 | # | Claim | Section | Risk if Wrong |
 |---|-------|---------|---------------|
-| A1 | Favorite response order can be deterministic `OrderBy(SongNo)` until native order evidence exists. | Direct Answers / Lists | Cabinet may expect insertion/order-of-selection behavior; Phase 42 writer may need an order column. |
+| A1 | Favorite response order should come from explicit persisted `DisplayOrder`, with `SongNo` only as a tie-breaker. | Direct Answers / Lists | Cabinet mutation may later prove a more specific source for `DisplayOrder`; Phase 42 writer must preserve or derive this order rather than sorting by raw song number. |
 | A2 | Favorite max remains `5` from Phase 40 conservative profile. | Direct Answers / Lists | Client may support a different cap; tests should frame this as current profile behavior. |
 | A3 | 475-byte crown payload is correct because 380 songs times 10 bits equals 3800 bits. | Crown Representation | Native may include padding/versioning not represented by simple 10-bit packing. |
 | A4 | `IsAutoTitleOn` should stay default/unset because semantics are unproven. | Wire Fields / Mapperly | Client may rely on a specific default if native behavior later proves it. |
@@ -458,8 +458,8 @@ dotnet build Adapters.GameProtocol.Momoiro/Adapters.GameProtocol.Momoiro.csproj 
 
 1. **What is the exact native favorite order?**  
    - What we know: fields and counts exist, and Phase 40 set the cap to 5. [VERIFIED: generated wire + 40-VERIFICATION.md]  
-   - What's unclear: whether order is selection order, song-number order, or client-side sorted. [ASSUMED]  
-   - Recommendation: use deterministic server ordering for Phase 41 and defer native order proof to a targeted IDA/client capture if tests or cabinet behavior demand it. [ASSUMED]
+   - What's unclear: whether native mutation order is selection order, UI order, or client-side sorted. [ASSUMED]  
+   - Recommendation: persist explicit `DisplayOrder` for Phase 41 readback and defer the exact native mutation source of that order to a targeted IDA/client capture if tests or cabinet behavior demand it. [ASSUMED]
 
 2. **Does `IsAutoTitleOn` have a backed save source?**  
    - What we know: Momoiro generated wire has nullable `is_auto_title_on` field 37. [VERIFIED: generated wire]  
@@ -562,7 +562,7 @@ Security enforcement is enabled because `.planning/config.json` does not disable
 
 ### Tertiary (LOW confidence)
 
-- Favorite native order and exact native favorite cap remain inferred from current profile/adjacent behavior rather than newly proven by IDA instruction flow. [ASSUMED]
+- Favorite native mutation order source and exact native favorite cap remain inferred from current profile/adjacent behavior rather than newly proven by IDA instruction flow; Phase 41 readback avoids song-number sorting by storing explicit `DisplayOrder`. [ASSUMED]
 - Crown 475-byte envelope is arithmetic from verified song count and shared 10-bit crown layout; native instruction-flow proof remains deferred. [INFERRED: Phase 40 profile + Ac15ProtocolBytes]
 
 ## Metadata
@@ -574,7 +574,7 @@ Security enforcement is enabled because `.planning/config.json` does not disable
 - Persistence split: HIGH for four required Phase 41 tables and deferred mutation tables. [VERIFIED: 41-CONTEXT.md + 41-PATTERNS.md]
 - Wire mapping: HIGH for field presence and field names. [VERIFIED: generated wire]
 - Crown implementation detail: MEDIUM - byte length and field placement are supported, but native constant/order proof remains incomplete. [INFERRED: 40-VERIFICATION.md + Ac15ProtocolBytes]
-- Favorite ordering: LOW - deterministic server behavior is recommended, but native order is unproven. [ASSUMED]
+- Favorite ordering source: LOW - `ary_favorite_song_no` is an ordered wire array and Phase 41 stores explicit `DisplayOrder`, but the native mutation source for that order is unproven. [ASSUMED]
 
 **Research date:** 2026-06-26  
 **Valid until:** 2026-07-03 for Mapperly/current package behavior; 2026-07-26 for stable local codebase findings unless generated wire or Phase 40 artifacts change.
