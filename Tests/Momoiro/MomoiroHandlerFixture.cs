@@ -151,6 +151,80 @@ internal sealed class MomoiroHandlerFixture : IAsyncDisposable
                 PRIMARY KEY (Baid, SongNo)
             );
             """);
+
+        await Context.Database.ExecuteSqlRawAsync(
+            """
+            CREATE TABLE IF NOT EXISTS SongPlayDatum_Momoiro (
+                Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                Baid INTEGER NOT NULL,
+                SongId INTEGER NOT NULL,
+                Difficulty INTEGER NOT NULL,
+                Crown INTEGER NOT NULL,
+                Score INTEGER NOT NULL,
+                ScoreRate INTEGER NOT NULL,
+                GoodCount INTEGER NOT NULL,
+                OkCount INTEGER NOT NULL,
+                MissCount INTEGER NOT NULL,
+                ComboCount INTEGER NOT NULL,
+                HitCount INTEGER NOT NULL,
+                PoundCount INTEGER NOT NULL,
+                StarLevel INTEGER NOT NULL,
+                OptionFlg BLOB NOT NULL,
+                ToneFlg BLOB NOT NULL,
+                PlayMode INTEGER NOT NULL,
+                StageMode INTEGER NOT NULL,
+                IsShin INTEGER NOT NULL,
+                MusicCategory INTEGER NOT NULL,
+                SelectedFolderId INTEGER NOT NULL,
+                IsFavorite INTEGER NOT NULL,
+                IsRecent INTEGER NOT NULL,
+                IsPapamama INTEGER NOT NULL,
+                IsPushed INTEGER NOT NULL,
+                SoulGauge INTEGER NOT NULL,
+                PlayDan INTEGER NOT NULL,
+                WaiwaiResult INTEGER NOT NULL,
+                WaiwaiGauge INTEGER NOT NULL,
+                PlayTime datetime NOT NULL
+            );
+            """);
+
+        await Context.Database.ExecuteSqlRawAsync(
+            """
+            CREATE TABLE IF NOT EXISTS DanScoreDatum_Momoiro (
+                Baid INTEGER NOT NULL,
+                DanId INTEGER NOT NULL,
+                IsExtra INTEGER NOT NULL,
+                MedleyUniqueId INTEGER NOT NULL,
+                ArrivalSongCount INTEGER NOT NULL,
+                SoulGaugeTotal INTEGER NOT NULL,
+                ComboCountTotal INTEGER NOT NULL,
+                ClearGrade INTEGER NOT NULL DEFAULT 0,
+                PRIMARY KEY (Baid, DanId, IsExtra)
+            );
+            """);
+
+        await Context.Database.ExecuteSqlRawAsync(
+            """
+            CREATE TABLE IF NOT EXISTS DanStageScoreDatum_Momoiro (
+                Baid INTEGER NOT NULL,
+                DanId INTEGER NOT NULL,
+                IsExtra INTEGER NOT NULL,
+                StageIndex INTEGER NOT NULL,
+                SongNumber INTEGER NOT NULL,
+                PlayScore INTEGER NOT NULL,
+                GoodCount INTEGER NOT NULL,
+                OkCount INTEGER NOT NULL,
+                BadCount INTEGER NOT NULL,
+                DrumrollCount INTEGER NOT NULL,
+                TotalHitCount INTEGER NOT NULL,
+                ComboCount INTEGER NOT NULL,
+                HighScore INTEGER NOT NULL,
+                PRIMARY KEY (Baid, DanId, IsExtra, StageIndex),
+                FOREIGN KEY (Baid, DanId, IsExtra)
+                    REFERENCES DanScoreDatum_Momoiro (Baid, DanId, IsExtra)
+                    ON DELETE CASCADE
+            );
+            """);
     }
 
     public async Task SeedSharedIdentityAsync(uint baid, string accessCode, string myDonName = "MOMO")
@@ -298,8 +372,153 @@ internal sealed class MomoiroHandlerFixture : IAsyncDisposable
                 ["LastPlayed"] = lastPlayed
             });
 
+    public Task SeedMomoiroPlayAsync(
+        uint baid,
+        uint songId,
+        Difficulty difficulty = Difficulty.Easy,
+        CrownType crown = CrownType.Gold,
+        uint score = 765_432,
+        DateTime? playTime = null)
+        => InsertAsync(
+            "SongPlayDatum_Momoiro",
+            new Dictionary<string, object?>
+            {
+                ["Baid"] = baid,
+                ["SongId"] = songId,
+                ["Difficulty"] = (uint)difficulty,
+                ["Crown"] = (uint)crown,
+                ["Score"] = score,
+                ["ScoreRate"] = 95u,
+                ["GoodCount"] = 100u,
+                ["OkCount"] = 20u,
+                ["MissCount"] = 3u,
+                ["ComboCount"] = 120u,
+                ["HitCount"] = 123u,
+                ["PoundCount"] = 4u,
+                ["StarLevel"] = 0u,
+                ["OptionFlg"] = new byte[] { 1, 2, 3 },
+                ["ToneFlg"] = new byte[] { 4 },
+                ["PlayMode"] = 0u,
+                ["StageMode"] = 0u,
+                ["IsShin"] = false,
+                ["MusicCategory"] = 1u,
+                ["SelectedFolderId"] = 9u,
+                ["IsFavorite"] = true,
+                ["IsRecent"] = true,
+                ["IsPapamama"] = false,
+                ["IsPushed"] = true,
+                ["SoulGauge"] = 100u,
+                ["PlayDan"] = 0u,
+                ["WaiwaiResult"] = 0u,
+                ["WaiwaiGauge"] = 0u,
+                ["PlayTime"] = playTime ?? new DateTime(2026, 6, 8, 12, 0, 0)
+            });
+
+    public Task SeedMomoiroDanScoreAsync(
+        uint baid,
+        uint danId,
+        uint medleyUniqueId = 20_001,
+        Ac15DanClearGrade clearGrade = Ac15DanClearGrade.GoldClear,
+        uint arrivalSongCount = 2,
+        uint soulGaugeTotal = 88,
+        uint comboCountTotal = 320,
+        bool isExtra = false)
+        => InsertOrReplaceAsync(
+            "DanScoreDatum_Momoiro",
+            new Dictionary<string, object?>
+            {
+                ["Baid"] = baid,
+                ["DanId"] = danId,
+                ["IsExtra"] = isExtra,
+                ["MedleyUniqueId"] = medleyUniqueId,
+                ["ArrivalSongCount"] = arrivalSongCount,
+                ["SoulGaugeTotal"] = soulGaugeTotal,
+                ["ComboCountTotal"] = comboCountTotal,
+                ["ClearGrade"] = (uint)clearGrade
+            });
+
+    public Task SeedMomoiroDanStageScoreAsync(
+        uint baid,
+        uint danId,
+        uint stageIndex,
+        uint songNumber,
+        uint playScore,
+        bool isExtra = false)
+        => InsertOrReplaceAsync(
+            "DanStageScoreDatum_Momoiro",
+            new Dictionary<string, object?>
+            {
+                ["Baid"] = baid,
+                ["DanId"] = danId,
+                ["IsExtra"] = isExtra,
+                ["StageIndex"] = stageIndex,
+                ["SongNumber"] = songNumber,
+                ["PlayScore"] = playScore,
+                ["GoodCount"] = 100u,
+                ["OkCount"] = 20u,
+                ["BadCount"] = 3u,
+                ["DrumrollCount"] = 4u,
+                ["TotalHitCount"] = 123u,
+                ["ComboCount"] = 120u,
+                ["HighScore"] = playScore
+            });
+
     public Task<bool> MomoiroSaveExistsAsync(uint baid)
         => RowExistsAsync("UserSaveData_Momoiro", baid);
+
+    public Task<int> CountMomoiroPlayRowsAsync(uint baid)
+        => CountRowsAsync("SongPlayDatum_Momoiro", baid);
+
+    public Task<int> CountMomoiroDanRowsAsync(uint baid)
+        => CountRowsAsync("DanScoreDatum_Momoiro", baid);
+
+    public Task<int> CountMomoiroDanStageRowsAsync(uint baid)
+        => CountRowsAsync("DanStageScoreDatum_Momoiro", baid);
+
+    public Task<int> CountMomoiroFavoriteRowsAsync(uint baid)
+        => CountRowsAsync("MomoiroFavoriteSongs", baid);
+
+    public Task<int> CountMomoiroRecentRowsAsync(uint baid)
+        => CountRowsAsync("MomoiroRecentSongs", baid);
+
+    public async Task<IReadOnlyDictionary<string, int>> CountSelectedAdjacentUnsupportedRowsAsync(uint baid)
+    {
+        var tableNames = new[]
+        {
+            "SongPlayDatum_Green",
+            "SongPlayDatum_Blue",
+            "SongPlayDatum_Yellow",
+            "SongPlayDatum_Red",
+            "SongPlayDatum_White",
+            "SongPlayDatum_Murasaki",
+            "SongPlayDatum_Kimidori",
+            "DanScoreDatum_Green",
+            "DanScoreDatum_Blue",
+            "DanScoreDatum_Yellow",
+            "DanScoreDatum_Red",
+            "DanScoreDatum_White",
+            "DanScoreDatum_Murasaki",
+            "DanScoreDatum_Kimidori",
+            "BlueTokkunStageResults",
+            "YellowTokkunStageResults",
+            "WhiteTokkunStageResults",
+            "BlueShopSeasonStates",
+            "GreenShopSeasonStates",
+            "YellowShopSeasonStates",
+            "RedDonChallengeRawFacts",
+            "RedDonChallengeProgress",
+            "WhiteDonChallengeRawFacts",
+            "WhiteDonChallengeProgress"
+        };
+
+        var counts = new Dictionary<string, int>(StringComparer.Ordinal);
+        foreach (var tableName in tableNames)
+        {
+            counts[tableName] = await CountRowsAsync(tableName, baid);
+        }
+
+        return counts;
+    }
 
     public async Task<int> CountRowsAsync(string tableName, uint baid)
     {
@@ -323,13 +542,19 @@ internal sealed class MomoiroHandlerFixture : IAsyncDisposable
         => await CountRowsAsync(tableName, baid) > 0;
 
     private async Task InsertOrReplaceAsync(string tableName, IReadOnlyDictionary<string, object?> values)
+        => await InsertAsync(tableName, values, replace: true);
+
+    private async Task InsertAsync(string tableName, IReadOnlyDictionary<string, object?> values)
+        => await InsertAsync(tableName, values, replace: false);
+
+    private async Task InsertAsync(string tableName, IReadOnlyDictionary<string, object?> values, bool replace)
     {
         await EnsureMomoiroReadbackTablesAsync();
         await using var command = Context.Database.GetDbConnection().CreateCommand();
         var columns = values.Keys.ToArray();
         var parameterNames = columns.Select((_, index) => $"@p{index}").ToArray();
         command.CommandText =
-            $"INSERT OR REPLACE INTO {tableName} ({string.Join(", ", columns)}) VALUES ({string.Join(", ", parameterNames)})";
+            $"{(replace ? "INSERT OR REPLACE" : "INSERT")} INTO {tableName} ({string.Join(", ", columns)}) VALUES ({string.Join(", ", parameterNames)})";
 
         for (var i = 0; i < columns.Length; i++)
         {
@@ -346,9 +571,12 @@ internal sealed class MomoiroHandlerFixture : IAsyncDisposable
     {
         private readonly IReadOnlyList<Ac15MusicInfoEntry> musicInfoFileOrder;
 
-        public TestMomoiroCatalog(IReadOnlyList<Ac15MusicInfoEntry>? musicInfoFileOrder = null)
+        public TestMomoiroCatalog(
+            IReadOnlyList<Ac15MusicInfoEntry>? musicInfoFileOrder = null,
+            IReadOnlyList<Ac15TaikojukuEntry>? daniFileOrder = null)
         {
             this.musicInfoFileOrder = musicInfoFileOrder ?? DefaultMusicInfoFileOrder;
+            DaniFileOrder = daniFileOrder ?? DefaultDaniFileOrder;
         }
 
         public GameEra Era => GameEra.Momoiro;
@@ -368,6 +596,8 @@ internal sealed class MomoiroHandlerFixture : IAsyncDisposable
 
         public IReadOnlyDictionary<uint, Ac15TelopEntry> Telops { get; init; } =
             new Dictionary<uint, Ac15TelopEntry>();
+
+        public IReadOnlyList<Ac15TaikojukuEntry> DaniFileOrder { get; }
 
         public IReadOnlyList<Costume> CostumeList { get; init; } =
         [
@@ -414,5 +644,22 @@ internal sealed class MomoiroHandlerFixture : IAsyncDisposable
                     FileOrder = HighSongOrdinal
                 })
                 .ToArray();
+
+        private static IReadOnlyList<Ac15TaikojukuEntry> DefaultDaniFileOrder { get; } =
+        [
+            new()
+            {
+                UniqueId = 20_001,
+                ChallengeLevel = 1,
+                DanLevel = 1,
+                VerupNo = 1,
+                Name = "Momoiro Dan 1",
+                Songs =
+                [
+                    new Ac15TaikojukuSong { SongNo = 101, Level = 1 },
+                    new Ac15TaikojukuSong { SongNo = 102, Level = 1 }
+                ]
+            }
+        ];
     }
 }
