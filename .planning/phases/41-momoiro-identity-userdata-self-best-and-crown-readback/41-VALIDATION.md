@@ -112,3 +112,37 @@ Mapperly documentation checked before inspection: current official Mapperly stab
 - `https://mapperly.riok.app/docs/configuration/mapper/#null-values`
 - `https://mapperly.riok.app/docs/configuration/constant-generated-values/`
 - `https://mapperly.riok.app/docs/configuration/generated-source/`
+
+### Task 2 - Full Build/Test and Scope Guards
+
+**Recorded:** 2026-06-26T09:29:16Z
+
+| Gate | Command | Result |
+|------|---------|--------|
+| Full serialized test suite | `dotnet test Tests/Tests.csproj --no-restore -- RunConfiguration.DisableParallelization=true` | PASS: 918 passed, 0 failed, 0 skipped. |
+| Solution build | `dotnet build TaikoLocalServer.slnx --no-restore` | PASS: build succeeded with 0 warnings and 0 errors. |
+| Temp-output Host build | `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build" --no-restore` | PASS: build succeeded with 0 warnings and 0 errors. |
+| Proto cleanliness | `$status = git status --porcelain -- proto\momoiro; if ($status) { $status; exit 1 }; exit 0` | PASS: no output; `proto/momoiro` is clean. |
+| Path abstraction | `$hits = rg -n "Host/wwwroot/data/momoiro|wwwroot\\data\\momoiro|File\.|Directory\.|Path\.Combine" Adapters.GameProtocol.Momoiro Application/Handlers Application/Ac15; if ($LASTEXITCODE -eq 0) { $hits; exit 1 }; if ($LASTEXITCODE -eq 1) { exit 0 }; exit $LASTEXITCODE` | PASS: no hardcoded Momoiro data paths or handler/controller filesystem access. |
+| `Host/.gitignore` staged-clean check | `$staged = git diff --cached --name-only -- Host/.gitignore; if ($staged) { $staged; exit 1 }; exit 0` | PASS: no output; pre-existing `Host/.gitignore` modification is not staged. |
+
+Unsupported-state/source gate notes:
+
+- The plan's broad gate command was run and failed with false positives from `Infrastructure/Persistence/Migrations/20260626082924_AddMomoiroReadbackState.Designer.cs`, because EF migration designer files contain the full model snapshot for adjacent eras including existing Blue battle, Tokkun, Dan, Don Challenge, and play-history entities.
+- The same broad command also matched `Application/Ac15/MomoiroAc15UserDataAdapter.cs:48` where Phase 41 readback explicitly sets `IsChallengeCompe = false`; that is an absence/default, not unsupported ChallengeCompe behavior.
+- No production code was changed for these false positives.
+
+Intent-focused source gates were rerun against the Phase 41 boundary:
+
+| Gate | Command | Result |
+|------|---------|--------|
+| Momoiro unsupported state absence | `$hits = rg -n "SongPlayDatumMomoiro|DanScoreDatumMomoiro|DanStageScoreDatumMomoiro|Momoiro.*Tokkun|Momoiro.*Battle|Momoiro.*Banacoin|Momoiro.*ChallengeCompe|ChallengeCompe.*Momoiro|Momoiro.*DonChallenge|DonChallenge.*Momoiro|IsChallengeCompe\s*=\s*true" Application/Handlers Application/Ac15 Domain/Entities Infrastructure/Persistence; if ($LASTEXITCODE -eq 0) { $hits; exit 1 }; if ($LASTEXITCODE -eq 1) { exit 0 }; exit $LASTEXITCODE` | PASS: no hits. |
+| Unsupported Momoiro route absence | `$routeHits = rg -n "shoppingresult\.php|bestscore\.php|communicationlog\.php|mainichisong\.php|crownsdata\.php" Adapters.GameProtocol.Momoiro/Controllers; if ($LASTEXITCODE -eq 0) { $routeHits; exit 1 }; if ($LASTEXITCODE -eq 1) { exit 0 }; exit $LASTEXITCODE` | PASS: no hits. |
+| Momoiro schema surface review | `rg -n "Momoiro" Infrastructure/Persistence/Migrations/20260626082924_AddMomoiroReadbackState.cs Infrastructure/Persistence/Migrations/20260626082924_AddMomoiroReadbackState.Designer.cs Infrastructure/Persistence/TaikoDbContext.Momoiro.cs Application/Abstractions/ITaikoDbContext.Momoiro.cs Domain/Entities/UserSaveDataMomoiro.cs Domain/Entities/SongBestDatumMomoiro.cs Domain/Entities/MomoiroFavoriteSongs.cs Domain/Entities/MomoiroRecentSongs.cs` | PASS: Momoiro-specific schema surface is limited to `UserSaveData_Momoiro`, `SongBestDatum_Momoiro`, `MomoiroFavoriteSongs`, and `MomoiroRecentSongs`. |
+
+Task 2 scope result:
+
+- MORDB-01 through MORDB-05 remain server-verified by the full test/build gates.
+- No `proto/` changes were introduced.
+- No `Host/.gitignore` staging occurred.
+- No Phase 42 playresult mutation, Phase 43 AdminApi/WebUI, or Phase 44 cabinet/RPCS3 acceptance is claimed here.
