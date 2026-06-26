@@ -5,16 +5,16 @@ milestone_name: MOMOIRO AC15 0.11 Support
 current_phase: 42
 current_phase_name: MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility
 status: executing
-stopped_at: Phase 42 planned; 7 plans ready
-last_updated: "2026-06-26T13:04:07.854Z"
+stopped_at: Completed 42-01-PLAN.md
+last_updated: "2026-06-26T13:51:20.372Z"
 last_activity: 2026-06-26
-last_activity_desc: Phase 42 planning complete; 7 plans ready
+last_activity_desc: Completed 42-01-PLAN.md; Phase 42 has 1/7 plans executed
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 21
-  completed_plans: 14
-  percent: 67
+  completed_plans: 15
+  percent: 50
 ---
 
 # Project State
@@ -29,11 +29,11 @@ See: `.planning/PROJECT.md` (updated 2026-06-25)
 ## Current Position
 
 Phase: 42 of 44 (MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility)
-Plan: 7 plans ready; next execute Phase 42 Wave 0
+Plan: 2 of 7 in current phase
 Status: Ready to execute
-Last activity: 2026-06-26 - Phase 42 planning complete; 7 plans ready
+Last activity: 2026-06-26 - Completed 42-01-PLAN.md; Phase 42 has 1/7 plans executed
 
-Progress: [#######---] 67%
+Progress: [#######---] 71%
 
 ## Performance Metrics
 
@@ -68,6 +68,7 @@ Progress: [#######---] 67%
 | Phase 41 P03 | 13min | 3 tasks | 12 files |
 | Phase 41 P04 | 18min | 3 tasks | 7 files |
 | Phase 41 P05 | 10min | 3 tasks | 2 files |
+| Phase 42 P01 | 14min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -104,6 +105,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 41]: Phase 41 closes MORDB-01 through MORDB-05 as automated server-side Momoiro readback verification only. Rationale: Focused tests, full serialized tests, builds, proto cleanliness, source gates, and Mapperly generated-source inspection all passed; cabinet/RPCS3 acceptance remains Phase 44.
 - [Phase 41]: Mapperly generated-source inspection is the evidence for Momoiro BAID, userdata, and selfbest wire assignments. Rationale: BaidResponseMapper.g.cs, UserDataMappers.g.cs, and SelfBestMappers.g.cs were emitted and inspected after an EmitCompilerGeneratedFiles=true adapter build.
 - [Phase 41]: EF migration designer full-snapshot grep hits are not treated as unsupported Momoiro state unless the Momoiro-specific schema surface contains those tables. Rationale: The broad source gate produced adjacent-era false positives, while intent-focused Momoiro unsupported-state and route gates passed.
+- [Phase 42]: Plan 42-01 remains RED-only: no production Momoiro playresult dispatch, schema, controller mapping, mapper, migration, or proto code was implemented. — Wave 0 scope is bounded to contracts for later implementation plans.
+- [Phase 42]: Momoiro favorite playresult contracts preserve Phase 41 DisplayOrder semantics by appending new favorites after the current max display order. — This guards against reverting to raw song-number ordering during playresult mutation implementation.
+- [Phase 42]: Challenge-shaped arrays are contractually accepted, mapped, and dropped without Don Challenge, ChallengeCompe, reward-management, or raw future challenge persistence. — The active MOMOIRO scope allows compatibility handling but not unsupported challenge feature authority.
 
 ### Pending Todos
 
@@ -125,8 +129,8 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ## Session Continuity
 
-Last session: 2026-06-26T09:41:42.973Z
-Stopped at: Completed 41-05-PLAN.md
+Last session: 2026-06-26T13:50:01.298Z
+Stopped at: Completed 42-01-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
