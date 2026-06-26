@@ -15,11 +15,11 @@
 
 ### Catalog, Metadata, and Limits
 
-- [ ] **MOCAT-01**: MOMOIRO catalog loading supports the root-level layout under `Host/wwwroot/data/momoiro/data`, including `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, and `fumen/tuning.bin`.
-- [ ] **MOCAT-02**: MOMOIRO data paths are resolved through existing path/settings abstractions instead of hardcoded runtime filesystem access in handlers.
-- [ ] **MOCAT-03**: MOMOIRO has an explicit AC15 profile/limits model for byte widths, song ordering, favorite/recent limits, default-song flags, song hash, release flags, crown placement, Don Point/reward limits, and absent feature flags, backed by local evidence.
-- [ ] **MOCAT-04**: MOMOIRO metadata and operational routes from the binary inventory expose feature-complete behavior where data exists or explicit static-result stubs where the route role is static, including `recommend.php`, `heartbeat.php`, `defaultsong.php`, `bookkeeping.php`, `songhash.php`, `telopcheck.php`, and `gettelop.php`.
-- [ ] **MOCAT-05**: MOMOIRO crown readback is modeled as userdata-owned through `UserDataResponse.hash_crown_flg`; no standalone `crownsdata.php` contract is added unless new MOMOIRO evidence proves one.
+- [x] **MOCAT-01**: MOMOIRO catalog loading supports the root-level layout under `Host/wwwroot/data/momoiro/data`, including `musicinfo.xml`, `musicmedleyinfo.xml`, `defmusic.bin`, and `fumen/tuning.bin`.
+- [x] **MOCAT-02**: MOMOIRO data paths are resolved through existing path/settings abstractions instead of hardcoded runtime filesystem access in handlers.
+- [x] **MOCAT-03**: MOMOIRO has an explicit AC15 profile/limits model for byte widths, song ordering, favorite/recent limits, default-song flags, song hash, release flags, crown placement, Don Point/reward limits, and absent feature flags, backed by local evidence.
+- [x] **MOCAT-04**: MOMOIRO metadata and operational routes from the binary inventory expose feature-complete behavior where data exists or explicit static-result stubs where the route role is static, including `recommend.php`, `heartbeat.php`, `defaultsong.php`, `bookkeeping.php`, `songhash.php`, `telopcheck.php`, and `gettelop.php`.
+- [x] **MOCAT-05**: MOMOIRO crown readback is modeled as userdata-owned through `UserDataResponse.hash_crown_flg`; no standalone `crownsdata.php` contract is added unless new MOMOIRO evidence proves one.
 
 ### Runtime Readback
 
@@ -84,11 +84,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MOFND-02 | Phase 39 | Complete |
 | MOFND-03 | Phase 39 | Complete |
 | MOFND-04 | Phase 39 | Complete |
-| MOCAT-01 | Phase 40 | Pending |
-| MOCAT-02 | Phase 40 | Pending |
-| MOCAT-03 | Phase 40 | Pending |
-| MOCAT-04 | Phase 40 | Pending |
-| MOCAT-05 | Phase 40 | Pending |
+| MOCAT-01 | Phase 40 | Complete |
+| MOCAT-02 | Phase 40 | Complete |
+| MOCAT-03 | Phase 40 | Complete |
+| MOCAT-04 | Phase 40 | Complete |
+| MOCAT-05 | Phase 40 | Complete |
 | MORDB-01 | Phase 41 | Pending |
 | MORDB-02 | Phase 41 | Pending |
 | MORDB-03 | Phase 41 | Pending |
