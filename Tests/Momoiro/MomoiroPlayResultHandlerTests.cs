@@ -30,13 +30,13 @@ public sealed class MomoiroPlayResultHandlerTests
             GameEra.Momoiro,
             playDatetime: "20260608120000",
             profile: profile,
-            stages: [CreateStage(250, 1, 0)]),
+            stages: [CreateStage(250, 4, 0)]),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
         Assert.Equal(1, await fixture.CountMomoiroPlayRowsAsync(1));
 
-        var best = await fixture.Context.SongBestDataMomoiro.FindAsync(1u, 250u, Difficulty.Easy, false);
+        var best = await fixture.Context.SongBestDataMomoiro.FindAsync(1u, 250u, Difficulty.Oni, false);
         Assert.NotNull(best);
         Assert.Equal(765_432u, best!.BestScore);
         Assert.Equal(CrownType.Gold, best.BestCrown);
@@ -64,7 +64,7 @@ public sealed class MomoiroPlayResultHandlerTests
             fixture.Catalog,
             fixture.Context,
             NullLogger<GetSelfBestQueryHandler>.Instance)
-            .Handle(new GetSelfBestQuery(1, GameEra.Momoiro, 1, [250]), CancellationToken.None);
+            .Handle(new GetSelfBestQuery(1, GameEra.Momoiro, 4, [250]), CancellationToken.None);
         Assert.Equal(765_432u, selfBest.ArySelfbestScores.Single().SelfBestScore);
 
         var userData = await new UserDataQueryHandler(
