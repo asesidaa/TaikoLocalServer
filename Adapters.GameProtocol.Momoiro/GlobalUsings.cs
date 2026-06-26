@@ -3,6 +3,8 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.Extensions.Logging;
 global using ProtoBuf;
 global using TaikoLocalServer.Adapters.GameProtocol.Momoiro;
+global using TaikoLocalServer.Adapters.GameProtocol.Momoiro.Mappers;
+global using TaikoLocalServer.Adapters.GameProtocol.Momoiro.Wire;
 global using TaikoLocalServer.Adapters.GameProtocol.Shared.Controllers;
 global using TaikoLocalServer.Application.Abstractions;
 global using TaikoLocalServer.Application.Ac15;
