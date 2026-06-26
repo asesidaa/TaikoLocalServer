@@ -16,6 +16,7 @@ public partial class GetRecommendQueryHandler(
         GameEra.White => HandleWhite(request, cancellationToken),
         GameEra.Murasaki => HandleMurasaki(request, cancellationToken),
         GameEra.Kimidori => HandleKimidori(request, cancellationToken),
+        GameEra.Momoiro => HandleMomoiro(request, cancellationToken),
         _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
     };
 
@@ -26,4 +27,5 @@ public partial class GetRecommendQueryHandler(
     private partial ValueTask<CommonRecommendResponse> HandleWhite(GetRecommendQuery request, CancellationToken cancellationToken);
     private partial ValueTask<CommonRecommendResponse> HandleMurasaki(GetRecommendQuery request, CancellationToken cancellationToken);
     private partial ValueTask<CommonRecommendResponse> HandleKimidori(GetRecommendQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonRecommendResponse> HandleMomoiro(GetRecommendQuery request, CancellationToken cancellationToken);
 }

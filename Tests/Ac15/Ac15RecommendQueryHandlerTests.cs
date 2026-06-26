@@ -100,7 +100,7 @@ public sealed class Ac15RecommendQueryHandlerTests
             new TestMomoiroCatalog(momoiroSongs.Select(Song).ToArray())
         ]);
 
-    private sealed class TestMomoiroCatalog(IReadOnlyList<Ac15MusicInfoEntry> musicInfoFileOrder) : IEraGameDataCatalog
+    private sealed class TestMomoiroCatalog(IReadOnlyList<Ac15MusicInfoEntry> musicInfoFileOrder) : IMomoiroCatalog
     {
         public GameEra Era => GameEra.Momoiro;
 
@@ -113,6 +113,11 @@ public sealed class Ac15RecommendQueryHandlerTests
 
         public IReadOnlyDictionary<uint, IMusicInfoEntry> MusicInfos
             => MusicInfoFileOrder.ToDictionary(song => song.SongNo, song => (IMusicInfoEntry)song);
+
+        public IReadOnlyDictionary<uint, Ac15MusicInfoEntry> MomoiroMusicInfos
+            => MusicInfoFileOrder.ToDictionary(song => song.SongNo);
+
+        public IReadOnlyDictionary<uint, Ac15TelopEntry> Telops { get; } = new Dictionary<uint, Ac15TelopEntry>();
 
         public Task InitializeAsync(CancellationToken cancellationToken) => Task.CompletedTask;
     }
