@@ -184,8 +184,17 @@ internal sealed class MomoiroHandlerFixture : IAsyncDisposable
                 PlayDan INTEGER NOT NULL,
                 WaiwaiResult INTEGER NOT NULL,
                 WaiwaiGauge INTEGER NOT NULL,
-                PlayTime datetime NOT NULL
+                PlayTime datetime NOT NULL,
+                FOREIGN KEY (Baid)
+                    REFERENCES UserData (Baid)
+                    ON DELETE CASCADE
             );
+            """);
+
+        await Context.Database.ExecuteSqlRawAsync(
+            """
+            CREATE INDEX IF NOT EXISTS IX_SongPlayDatum_Momoiro_Baid_SongId_Difficulty_PlayTime
+            ON SongPlayDatum_Momoiro (Baid, SongId, Difficulty, PlayTime);
             """);
 
         await Context.Database.ExecuteSqlRawAsync(
@@ -199,8 +208,17 @@ internal sealed class MomoiroHandlerFixture : IAsyncDisposable
                 SoulGaugeTotal INTEGER NOT NULL,
                 ComboCountTotal INTEGER NOT NULL,
                 ClearGrade INTEGER NOT NULL DEFAULT 0,
-                PRIMARY KEY (Baid, DanId, IsExtra)
+                PRIMARY KEY (Baid, DanId, IsExtra),
+                FOREIGN KEY (Baid)
+                    REFERENCES UserData (Baid)
+                    ON DELETE CASCADE
             );
+            """);
+
+        await Context.Database.ExecuteSqlRawAsync(
+            """
+            CREATE INDEX IF NOT EXISTS IX_DanScoreDatum_Momoiro_MedleyUniqueId
+            ON DanScoreDatum_Momoiro (MedleyUniqueId);
             """);
 
         await Context.Database.ExecuteSqlRawAsync(
