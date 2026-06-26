@@ -24,6 +24,16 @@ public partial class UpdatePlayResultCommandHandler
         }
 
         var playResultData = request.PlayResultData;
+        var playMode = (PlayMode)playResultData.Metadata.PlayMode;
+        if (playMode is not PlayMode.Normal and not PlayMode.DanMode)
+        {
+            logger.LogWarning(
+                "Skipping unsupported Momoiro playresult mode {PlayMode} for baid {Baid}",
+                playResultData.Metadata.PlayMode,
+                request.Baid);
+            return 1;
+        }
+
         var normal = playResultData.Normal;
         IReadOnlyList<Ac15StageResult> stages = normal?.Stages ?? [];
 
@@ -56,7 +66,7 @@ public partial class UpdatePlayResultCommandHandler
             return 1;
         }
 
-        var dani = playResultData.Metadata.PlayMode == (uint)PlayMode.DanMode && playResultData.Dani is { } inputDani
+        var dani = playMode == PlayMode.DanMode && playResultData.Dani is { } inputDani
             ? inputDani with { Stages = validStages.ToList() }
             : null;
 

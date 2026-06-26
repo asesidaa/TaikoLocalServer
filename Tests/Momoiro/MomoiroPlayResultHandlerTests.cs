@@ -161,6 +161,54 @@ public sealed class MomoiroPlayResultHandlerTests
         await AssertSelectedAdjacentUnsupportedRowsUnchangedAsync(fixture, 3, unsupportedBefore);
     }
 
+    [Theory]
+    [InlineData((uint)PlayMode.Tokkun)]
+    [InlineData((uint)PlayMode.GaidenMode)]
+    [InlineData((uint)PlayMode.AiBattle)]
+    [InlineData(99u)]
+    public async Task UpdatePlayResult_Momoiro_UnsupportedPlayModesReturnSuccessWithoutMutation(uint playMode)
+    {
+        await using var fixture = await MomoiroHandlerFixture.CreateAsync();
+        await fixture.SeedSharedIdentityAsync(4, "44444444444444444444", "MODE");
+        await fixture.SeedMomoiroSaveAsync(4, totalGetDonpoint: 11, rewardPtn: 2, rewardProgress: 3);
+        var unsupportedBefore = await fixture.CountSelectedAdjacentUnsupportedRowsAsync(4);
+        var handler = CreateHandler(fixture);
+        var profile = Ac15ProfileMutationFacts.Empty with
+        {
+            GetDonpoint = 25,
+            RewardPtn = 4,
+            RewardProgress = 9,
+            ReleaseSongNoes = [MomoiroHandlerFixture.HighSongNo]
+        };
+
+        var result = await handler.Handle(Ac15PlayResultTestFactory.Command(
+            4,
+            GameEra.Momoiro,
+            playMode: playMode,
+            profile: profile,
+            stages: [CreateStage(250, 4, 0)]),
+            CancellationToken.None);
+
+        Assert.Equal(1u, result);
+        Assert.Equal(0, await fixture.CountMomoiroPlayRowsAsync(4));
+        Assert.Equal(0, await fixture.CountMomoiroDanRowsAsync(4));
+        Assert.Equal(0, await fixture.CountMomoiroDanStageRowsAsync(4));
+        Assert.Equal(0, await fixture.CountMomoiroFavoriteRowsAsync(4));
+        Assert.Equal(0, await fixture.CountMomoiroRecentRowsAsync(4));
+        Assert.Empty(await fixture.Context.SongBestDataMomoiro.Where(row => row.Baid == 4).ToListAsync());
+
+        var save = await fixture.Context.UserSaveDataMomoiro.SingleAsync(row => row.Baid == 4);
+        Assert.Equal(11u, save.TotalGetDonpoint);
+        Assert.Equal(0u, save.TotalUseDonpoint);
+        Assert.Equal(2u, save.RewardPtn);
+        Assert.Equal(3u, save.RewardProgress);
+        Assert.False(BitIsSet(save.ReleaseSongFlg, MomoiroHandlerFixture.HighSongNo));
+        Assert.Equal(0u, save.SongPushedCnt);
+        Assert.Equal(0u, save.SongFavoriteCnt);
+        Assert.Equal(0u, save.SongRecentCnt);
+        await AssertSelectedAdjacentUnsupportedRowsUnchangedAsync(fixture, 4, unsupportedBefore);
+    }
+
     private static UpdatePlayResultCommandHandler CreateHandler(MomoiroHandlerFixture fixture)
         => new(
             fixture.Context,
