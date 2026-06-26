@@ -88,3 +88,24 @@ created: 2026-06-26
 - [x] `nyquist_compliant: true` set in frontmatter.
 
 **Approval:** planned for executor consumption 2026-06-26.
+
+---
+
+## Plan 42-07 Final Execution Evidence
+
+Status: in progress - automated server-side verification only. Cabinet/RPCS3 acceptance remains Phase 44, and AdminApi/WebUI remains Phase 43.
+
+### Task 1 - Focused Momoiro playresult and Mapperly gates
+
+| Gate | Command | Result |
+|------|---------|--------|
+| Focused Momoiro Phase 42 + Phase 41 readback suite | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroPlayResult|FullyQualifiedName~MomoiroReadback|FullyQualifiedName~MomoiroControllerReadback|FullyQualifiedName~MomoiroCrown|FullyQualifiedName~MomoiroRouteSurface|FullyQualifiedName~Ac15NormalPlayWriter|FullyQualifiedName~Ac15Dani" --no-restore -- RunConfiguration.DisableParallelization=true` | PASS: 25 passed, 0 failed, 0 skipped. |
+| Momoiro adapter generated-source build | `dotnet build Adapters.GameProtocol.Momoiro/Adapters.GameProtocol.Momoiro.csproj /p:EmitCompilerGeneratedFiles=true --no-restore` | PASS: 0 warnings, 0 errors. |
+| Mapperly generated-source inspection | `rg -n "ReleaseSongNoes|GetDonpoint|RewardPtn|RewardProgress|DanResult|PlayDan|ChallengeIds|HashReleaseSongFlg|HashCrownFlg" Adapters.GameProtocol.Momoiro/obj/Debug/net10.0/generated/Riok.Mapperly` | PASS: expected playresult request and readback response assignments found. |
+
+Generated-source observations:
+
+- `PlayResultMappers.g.cs` assigns `GetDonpoint`, `RewardPtn`, `RewardProgress`, `ReleaseSongNoes`, nullable `DanResult`, `PlayDan`, and `ChallengeIds`.
+- `UserDataMappers.g.cs` assigns `HashReleaseSongFlg`, `RewardProgress`, `TotalGetDonpoint`, and `HashCrownFlg`.
+- `BaidResponseMapper.g.cs` assigns `RewardPtn`.
+- This evidence confirms server-side generated Mapperly mappings for Momoiro playresult/readback fields; it is not cabinet/RPCS3 acceptance.
