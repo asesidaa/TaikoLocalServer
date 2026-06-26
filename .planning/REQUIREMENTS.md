@@ -31,11 +31,11 @@
 
 ### Runtime Mutation
 
-- [ ] **MORUN-01**: MOMOIRO normal playresults persist scores, self-best, crowns, profile counters, recent songs, favorite songs, and related normal-play state only to MOMOIRO-owned tables.
-- [ ] **MORUN-02**: MOMOIRO song unlock, Don Point, and reward behavior mutates only evidence-backed MOMOIRO-owned fields and does not create `shoppingresult.php`, newer item-shop, wallet, payment, or shop-season authority.
-- [ ] **MORUN-03**: MOMOIRO Dan/Dani fields are persisted and read back only where MOMOIRO playresult, userdata, and binary/client evidence prove the normal Dan contract; Taikojuku practice-folder behavior remains separate and absent.
-- [ ] **MORUN-04**: MOMOIRO challenge-shaped arrays are accepted, stored, echoed, or omitted only according to MOMOIRO-specific evidence and do not create Don Challenge, ChallengeCompe, or reward-management behavior by assumption.
-- [ ] **MORUN-05**: MOMOIRO runtime writes do not touch KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, Nijiiro, Tokkun, battle, Banacoin, or unsupported feature state.
+- [x] **MORUN-01**: MOMOIRO normal playresults persist scores, self-best, crowns, profile counters, recent songs, favorite songs, and related normal-play state only to MOMOIRO-owned tables.
+- [x] **MORUN-02**: MOMOIRO song unlock, Don Point, and reward behavior mutates only evidence-backed MOMOIRO-owned fields and does not create `shoppingresult.php`, newer item-shop, wallet, payment, or shop-season authority.
+- [x] **MORUN-03**: MOMOIRO Dan/Dani fields are persisted and read back only where MOMOIRO playresult, userdata, and binary/client evidence prove the normal Dan contract; Taikojuku practice-folder behavior remains separate and absent.
+- [x] **MORUN-04**: MOMOIRO challenge-shaped arrays are accepted, stored, echoed, or omitted only according to MOMOIRO-specific evidence and do not create Don Challenge, ChallengeCompe, or reward-management behavior by assumption.
+- [x] **MORUN-05**: MOMOIRO runtime writes do not touch KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, Nijiiro, Tokkun, battle, Banacoin, or unsupported feature state.
 
 ### Admin, WebUI, and Verification
 
@@ -94,11 +94,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MORDB-03 | Phase 41 | Complete |
 | MORDB-04 | Phase 41 | Complete |
 | MORDB-05 | Phase 41 | Complete |
-| MORUN-01 | Phase 42 | Pending |
-| MORUN-02 | Phase 42 | Pending |
-| MORUN-03 | Phase 42 | Pending |
-| MORUN-04 | Phase 42 | Pending |
-| MORUN-05 | Phase 42 | Pending |
+| MORUN-01 | Phase 42 | Complete |
+| MORUN-02 | Phase 42 | Complete |
+| MORUN-03 | Phase 42 | Complete |
+| MORUN-04 | Phase 42 | Complete |
+| MORUN-05 | Phase 42 | Complete |
 | MOADMIN-01 | Phase 43 | Pending |
 | MOADMIN-02 | Phase 43 | Pending |
 | MOVFY-01 | Phase 44 | Pending |

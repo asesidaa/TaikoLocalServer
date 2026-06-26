@@ -1,7 +1,7 @@
 ---
 phase: 42
 slug: momoiro-normal-playresult-unlocks-rewards-and-dan-compatibil
-status: executing
+status: complete
 nyquist_compliant: true
 wave_0_complete: true
 created: 2026-06-26
@@ -93,7 +93,7 @@ created: 2026-06-26
 
 ## Plan 42-07 Final Execution Evidence
 
-Status: in progress - automated server-side verification only. Cabinet/RPCS3 acceptance remains Phase 44, and AdminApi/WebUI remains Phase 43.
+Status: complete - automated server-side verification only. Cabinet/RPCS3 acceptance remains Phase 44, and AdminApi/WebUI remains Phase 43.
 
 ### Task 1 - Focused Momoiro playresult and Mapperly gates
 
@@ -129,3 +129,24 @@ Scope notes:
 - `Host/.gitignore` remained unstaged, with SHA-256 `73190e8a4bb993eadc0a9364cac7e1b0336f45192911fb68d9ab1ebb87cac782` for the visible pre-existing diff.
 - `.scratch/` remained an untracked pre-existing local scratch directory and was not staged.
 - AdminApi/WebUI remains Phase 43; cabinet/RPCS3 acceptance remains Phase 44.
+
+### Task 3 - MORUN closeout and final sign-off
+
+| Gate | Command | Result |
+|------|---------|--------|
+| Requirement closeout | `node .codex\gsd-core\bin\gsd-tools.cjs query requirements.mark-complete MORUN-01 MORUN-02 MORUN-03 MORUN-04 MORUN-05` | PASS: marked exactly MORUN-01 through MORUN-05 complete; no other requirements were changed. |
+| Requirement checkbox verification | `rg -n "\[x\] \*\*MORUN-01\*\*|\[x\] \*\*MORUN-02\*\*|\[x\] \*\*MORUN-03\*\*|\[x\] \*\*MORUN-04\*\*|\[x\] \*\*MORUN-05\*\*" .planning/REQUIREMENTS.md` | PASS: all five MORUN requirement checkboxes are complete. |
+| Final validation text verification | `rg -n "42-FINAL|green|MORUN-01|MORUN-02|MORUN-03|MORUN-04|MORUN-05|cabinet/RPCS3 acceptance remains Phase 44|AdminApi/WebUI remains Phase 43" .planning/phases/42-momoiro-normal-playresult-unlocks-rewards-and-dan-compatibil/42-VALIDATION.md` | PASS: final green rows and Phase 43/44 non-claim language are present. |
+
+## Final Phase 42 Sign-Off
+
+| ID | Status | Evidence |
+|----|--------|----------|
+| 42-FINAL | green | Focused Momoiro suite passed; full serialized suite passed; solution and temp-output Host builds passed; Mapperly generated source was emitted and inspected; proto cleanliness, unsupported route/state absence, route-prefix correctness, hardcoded-path absence, and `Host/.gitignore` baseline/staged-clean gates passed. |
+| MORUN-01 | green | Focused tests and readback coverage verify Momoiro-owned normal playresult writes feed Phase 41 userdata, selfbest, and crown readback. |
+| MORUN-02 | green | Source and behavior gates verify no Momoiro shop, wallet, payment, purchase, spend, or shop-season authority was added. |
+| MORUN-03 | green | Tests verify bounded Momoiro Dan playresult/BAID/userdata compatibility, and route/source gates keep Taikojuku absent. |
+| MORUN-04 | green | Tests and source gates verify challenge-shaped arrays do not create Don Challenge, ChallengeCompe, or reward-management state. |
+| MORUN-05 | green | Full gates verify no adjacent-era gameplay writes and no unsupported Momoiro route families. |
+
+Final scope statement: AdminApi/WebUI remains Phase 43. Cabinet/RPCS3 acceptance remains Phase 44. Phase 42 is closed only as automated server-side verification.

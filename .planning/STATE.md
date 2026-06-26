@@ -4,17 +4,17 @@ milestone: v1.7
 milestone_name: MOMOIRO AC15 0.11 Support
 current_phase: 42
 current_phase_name: MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility
-status: executing
-stopped_at: Completed 42-06-PLAN.md
-last_updated: "2026-06-26T19:57:16.812Z"
-last_activity: 2026-06-26
-last_activity_desc: Completed 42-06-PLAN.md; Phase 42 has 6/7 plans executed
+status: complete
+stopped_at: Completed 42-07-PLAN.md
+last_updated: "2026-06-26T20:13:07.217Z"
+last_activity: 2026-06-27
+last_activity_desc: Completed 42-07-PLAN.md; Phase 42 is complete with MORUN-01 through MORUN-05 closed by automated server-side verification
 progress:
   total_phases: 6
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 21
-  completed_plans: 20
-  percent: 95
+  completed_plans: 21
+  percent: 100
 ---
 
 # Project State
@@ -24,24 +24,24 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-25)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating MOMOIRO, KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, Nijiiro, or shared identity state.
-**Current focus:** Phase 42 - MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility
+**Current focus:** Phase 42 complete - MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility
 
 ## Current Position
 
 Phase: 42 of 44 (MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility)
 Plan: 7 of 7 in current phase
-Status: Ready to execute
-Last activity: 2026-06-26 - Completed 42-06-PLAN.md; Phase 42 has 6/7 plans executed
+Status: Complete
+Last activity: 2026-06-27 - Completed 42-07-PLAN.md; Phase 42 is complete with MORUN-01 through MORUN-05 closed by automated server-side verification
 
-Progress: [##########] 95%
+Progress: [##########] 100%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed in v1.7: 17
+- Total plans completed in v1.7: 18
 - Average duration: 17 min
-- Total execution time: 93 min
+- Total execution time: 111 min
 
 **By Phase:**
 
@@ -50,7 +50,7 @@ Progress: [##########] 95%
 | 39 | 4 | - | - |
 | 40 | 5 | - | - |
 | 41 | 5/5 | 67 min | 13 min |
-| 42 | 6/7 | 84 min | 14 min |
+| 42 | 7/7 | 102 min | 15 min |
 | 43 | 0/TBD | - | - |
 | 44 | 0/TBD | - | - |
 
@@ -74,6 +74,7 @@ Progress: [##########] 95%
 | Phase 42 P04 | 14min | 3 tasks | 7 files |
 | Phase 42 P05 | 13min | 3 tasks | 3 files |
 | Phase 42 P06 | 17min | 3 tasks | 3 files |
+| Phase 42 P07 | 18min | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -128,10 +129,11 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 42]: Momoiro playresult request mapping remains Mapperly source-generator driven. — Generated PlayResultMappers.g.cs assigns release, reward, Dan, and challenge facts.
 - [Phase 42]: MORUN requirement checkboxes remain pending after plan 42-06. — The user assigned final Phase 42 verification and closeout to 42-07.
 - [Phase 42]: Momoiro playresult.php now dispatches UpdateAc15PlayResultCommand with GameEra.Momoiro. — Adapter code only logs, maps, calls Mediator, and maps the response; persistence stays in Application.
+- [Phase 42]: Phase 42 closes MORUN-01 through MORUN-05 as automated server-side verification only. — Focused/full tests, builds, Mapperly generated-source inspection, and source gates passed; AdminApi/WebUI remains Phase 43 and cabinet/RPCS3 acceptance remains Phase 44.
 
 ### Pending Todos
 
-- Execute Phase 42 plans 42-06 through 42-07.
+- Phase 42 is complete. Phase 43 AdminApi/WebUI planning remains not started.
 
 ### Blockers/Concerns
 
@@ -149,10 +151,10 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ## Session Continuity
 
-Last session: 2026-06-26T19:56:13.333Z
-Stopped at: Completed 42-06-PLAN.md
+Last session: 2026-06-26T20:13:07.217Z
+Stopped at: Completed 42-07-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
 
-- Execute Phase 42 plan 42-07 for final verification and MORUN closeout.
+- Plan Phase 43 AdminApi/WebUI work when ready. Do not treat Phase 42 automated server-side verification as cabinet/RPCS3 acceptance.

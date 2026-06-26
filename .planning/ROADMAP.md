@@ -26,7 +26,7 @@ v1.7 MOMOIRO AC15 0.11 Support is active. The milestone adds MOMOIRO as a first-
 - [x] **Phase 39: MOMOIRO Evidence and Era Foundation** - Record the exact route inventory and add evidence-gated first-class MOMOIRO scaffolding. (completed 2026-06-26)
 - [x] **Phase 40: MOMOIRO Protocol Limits, Root Catalog, and Route Behavior** - Bind root-level catalog data, protocol limits, and binary-proven route behavior before runtime mutation. (completed 2026-06-26)
 - [x] **Phase 41: MOMOIRO Identity, Userdata, Self-Best, and Crown Readback** - Read MOMOIRO-owned identity, profile, score, recent/favorite, release, hash, and crown state. (completed 2026-06-26)
-- [ ] **Phase 42: MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility** - Mutate only evidence-backed MOMOIRO-owned normal-play, unlock, reward, Dan, and challenge-compatible state.
+- [x] **Phase 42: MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility** - Mutate only evidence-backed MOMOIRO-owned normal-play, unlock, reward, Dan, and challenge-compatible state. (completed 2026-06-27)
 - [ ] **Phase 43: MOMOIRO AdminApi and WebUI Routing** - Expose implemented MOMOIRO-owned state through admin and browser surfaces while hiding unsupported controls.
 - [ ] **Phase 44: MOMOIRO Verification and Acceptance** - Record automated verification, generated-source/build evidence, and repeatable cabinet/RPCS3 acceptance.
 
@@ -142,7 +142,7 @@ Plans:
   4. Challenge-shaped arrays are accepted, stored, echoed, or omitted only according to MOMOIRO evidence and do not imply Don Challenge, ChallengeCompe, or reward-management behavior.
   5. MOMOIRO runtime writes do not touch KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, Nijiiro, Tokkun, battle, Banacoin, or unsupported feature state.
 
-**Plans**: 6/7 plans executed
+**Plans**: 7/7 plans complete
 Plans:
 **Wave 0**
 
@@ -167,7 +167,7 @@ Plans:
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
-- [ ] 42-07-PLAN.md - Final Phase 42 verification, source gates, and MORUN closeout
+- [x] 42-07-PLAN.md - Final Phase 42 verification, source gates, and MORUN closeout
 
 ### Phase 43: MOMOIRO AdminApi and WebUI Routing
 
@@ -210,7 +210,7 @@ Plans:
 | 39. MOMOIRO Evidence and Era Foundation | v1.7 | 4/4 | Complete    | 2026-06-26 |
 | 40. MOMOIRO Protocol Limits, Root Catalog, and Route Behavior | v1.7 | 5/5 | Complete    | 2026-06-26 |
 | 41. MOMOIRO Identity, Userdata, Self-Best, and Crown Readback | v1.7 | 5/5 | Complete   | 2026-06-26 |
-| 42. MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility | v1.7 | 6/7 | In Progress|  |
+| 42. MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility | v1.7 | 7/7 | Complete | 2026-06-27 |
 | 43. MOMOIRO AdminApi and WebUI Routing | v1.7 | 0/TBD | Not started | - |
 | 44. MOMOIRO Verification and Acceptance | v1.7 | 0/TBD | Not started | - |
 
