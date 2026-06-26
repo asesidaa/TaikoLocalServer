@@ -142,7 +142,32 @@ Plans:
   4. Challenge-shaped arrays are accepted, stored, echoed, or omitted only according to MOMOIRO evidence and do not imply Don Challenge, ChallengeCompe, or reward-management behavior.
   5. MOMOIRO runtime writes do not touch KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, Nijiiro, Tokkun, battle, Banacoin, or unsupported feature state.
 
-**Plans**: TBD
+**Plans**: 7 plans
+Plans:
+**Wave 0**
+
+- [ ] 42-01-PLAN.md - Wave 0 playresult, unlock, reward, Dan, and no-cross-era RED contracts
+
+**Wave 1** *(blocked on Wave 0 completion)*
+
+- [ ] 42-02-PLAN.md - Momoiro play-history and bounded Dan persistence schema
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 42-03-PLAN.md - Momoiro normal-play helpers, favorite ordering, unlocks, and counters
+- [ ] 42-04-PLAN.md - Momoiro bounded Dan catalog/profile/mapper support
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 42-05-PLAN.md - Momoiro Application playresult mutation handler
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 42-06-PLAN.md - Momoiro playresult controller and Mapperly request mapping
+
+**Wave 5** *(blocked on Wave 4 completion)*
+
+- [ ] 42-07-PLAN.md - Final Phase 42 verification, source gates, and MORUN closeout
 
 ### Phase 43: MOMOIRO AdminApi and WebUI Routing
 
