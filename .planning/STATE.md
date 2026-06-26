@@ -5,16 +5,16 @@ milestone_name: MOMOIRO AC15 0.11 Support
 current_phase: 41
 current_phase_name: MOMOIRO Identity, Userdata, Self-Best, and Crown Readback
 status: executing
-stopped_at: Completed 41-03-PLAN.md
-last_updated: "2026-06-26T09:00:23.675Z"
+stopped_at: Completed 41-04-PLAN.md
+last_updated: "2026-06-26T09:23:52.596Z"
 last_activity: 2026-06-26
-last_activity_desc: Phase 41 Plan 03 Application readback handlers complete
+last_activity_desc: Phase 41 Plan 04 Momoiro readback controllers complete
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 14
-  completed_plans: 12
-  percent: 86
+  completed_plans: 13
+  percent: 93
 ---
 
 # Project State
@@ -29,17 +29,17 @@ See: `.planning/PROJECT.md` (updated 2026-06-25)
 ## Current Position
 
 Phase: 41 of 44 (MOMOIRO Identity, Userdata, Self-Best, and Crown Readback)
-Plan: 41-03 complete; next 41-04
+Plan: 41-04 complete; next 41-05
 Status: In Progress
-Last activity: 2026-06-26 - Phase 41 Plan 03 Application readback handlers complete
+Last activity: 2026-06-26 - Phase 41 Plan 04 Momoiro readback controllers complete
 
-Progress: [#########-] 86%
+Progress: [#########-] 93%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed in v1.7: 12
+- Total plans completed in v1.7: 13
 - Average duration: 18 min
 - Total execution time: 83 min
 
@@ -49,7 +49,7 @@ Progress: [#########-] 86%
 |-------|-------|-------|----------|
 | 39 | 4 | - | - |
 | 40 | 5 | - | - |
-| 41 | 0/TBD | - | - |
+| 41 | 4/5 | 57 min | 14 min |
 | 42 | 0/TBD | - | - |
 | 43 | 0/TBD | - | - |
 | 44 | 0/TBD | - | - |
@@ -66,6 +66,7 @@ Progress: [#########-] 86%
 | Phase 41 P01 | 14 min | 3 tasks | 5 files |
 | Phase 41 P02 | 12min | 2 tasks | 12 files |
 | Phase 41 P03 | 13min | 3 tasks | 12 files |
+| Phase 41 P04 | 18min | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -96,6 +97,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 41]: Plan 41-03 packs Momoiro userdata crowns by catalog/file order instead of raw song-id index. — Momoiro high raw song IDs can exceed CrownSongCount while still belonging at a valid catalog ordinal.
 - [Phase 41]: Plan 41-03 leaves Momoiro controller and Mapperly crown serialization failures to plan 41-04. — The user scoped 41-03 to Application-layer handlers, and the remaining failures are in the still-scaffolded Momoiro UserDataController.
 - [Phase 41]: Plan 41-03 keeps shared Ac15SelfBestService unchanged and trims empty Momoiro shin rows only in the Momoiro handler. — Other eras already depend on shared self-best response shape, while the Momoiro RED contract expects only populated shin rows.
+- [Phase 41]: Momoiro protocol controllers now route BAID, MyDon, userdata, and selfbest through Application handlers instead of scaffold responses. — Plan 41-04 replaces route scaffolds with thin Mediator-backed controllers for the proven Momoiro route set.
+- [Phase 41]: Momoiro userdata maps Ac15UserDataResponse.HashCrownFlg to wire UserDataResponse.HashCrownFlg only when Application supplies the bytes. — Crowns are userdata-owned for Momoiro and the Application handler already builds the catalog-order compact payload.
+- [Phase 41]: Unsupported Momoiro challenge, friend, auto-title, and proto-only route fields remain unassigned. — Phase 41 supports only the proven BAID, MyDon, userdata, and selfbest readback fields and must not infer unsupported route families from generated wire presence.
 
 ### Pending Todos
 
@@ -117,10 +121,10 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ## Session Continuity
 
-Last session: 2026-06-26T09:00:23.663Z
-Stopped at: Completed 41-03-PLAN.md
+Last session: 2026-06-26T09:23:52.590Z
+Stopped at: Completed 41-04-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
 
-- Continue with Phase 41 Plan 04 for Momoiro readback controllers and Mapperly mappers.
+- Continue with Phase 41 Plan 05 for final Phase 41 verification and source audit.

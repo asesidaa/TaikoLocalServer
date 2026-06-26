@@ -23,11 +23,11 @@
 
 ### Runtime Readback
 
-- [ ] **MORDB-01**: MOMOIRO card registration, login, mydon entry, and userdata readback use MOMOIRO-owned save state while sharing only true identity data across eras.
-- [ ] **MORDB-02**: MOMOIRO self-best readback returns MOMOIRO-owned score state with era-correct normal, ura, and shin handling where proven.
-- [ ] **MORDB-03**: MOMOIRO favorite and recent song readback uses binary/client-backed limits, ordering, truncation, and duplicate behavior.
-- [ ] **MORDB-04**: MOMOIRO crown bytes in `userdata.php` use binary/client-backed packing, song count, difficulty placement, and default behavior.
-- [ ] **MORDB-05**: MOMOIRO release-song and song-hash readback uses MOMOIRO catalog order and binary-backed `song_hash_ver`, `song_hash_tbl`, and `hash_release_song_flg` semantics.
+- [x] **MORDB-01**: MOMOIRO card registration, login, mydon entry, and userdata readback use MOMOIRO-owned save state while sharing only true identity data across eras.
+- [x] **MORDB-02**: MOMOIRO self-best readback returns MOMOIRO-owned score state with era-correct normal, ura, and shin handling where proven.
+- [x] **MORDB-03**: MOMOIRO favorite and recent song readback uses binary/client-backed limits, ordering, truncation, and duplicate behavior.
+- [x] **MORDB-04**: MOMOIRO crown bytes in `userdata.php` use binary/client-backed packing, song count, difficulty placement, and default behavior.
+- [x] **MORDB-05**: MOMOIRO release-song and song-hash readback uses MOMOIRO catalog order and binary-backed `song_hash_ver`, `song_hash_tbl`, and `hash_release_song_flg` semantics.
 
 ### Runtime Mutation
 
@@ -89,11 +89,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MOCAT-03 | Phase 40 | Complete |
 | MOCAT-04 | Phase 40 | Complete |
 | MOCAT-05 | Phase 40 | Complete |
-| MORDB-01 | Phase 41 | Pending |
-| MORDB-02 | Phase 41 | Pending |
-| MORDB-03 | Phase 41 | Pending |
-| MORDB-04 | Phase 41 | Pending |
-| MORDB-05 | Phase 41 | Pending |
+| MORDB-01 | Phase 41 | Complete |
+| MORDB-02 | Phase 41 | Complete |
+| MORDB-03 | Phase 41 | Complete |
+| MORDB-04 | Phase 41 | Complete |
+| MORDB-05 | Phase 41 | Complete |
 | MORUN-01 | Phase 42 | Pending |
 | MORUN-02 | Phase 42 | Pending |
 | MORUN-03 | Phase 42 | Pending |
