@@ -355,27 +355,29 @@ if (stage.ChallengeIds.Count != 0 || stage.UserCompeIds.Count != 0 || stage.BngC
 | A4 | Challenge arrays should not persist state in Phase 42. | Direct Answers, Common Pitfalls | If cabinet expects challenge stat readback, state will be missing; mitigate by logging fields and leaving open question for runtime evidence. |
 | A5 | New favorite ordering can be derived by appending after existing `DisplayOrder` max. | Common Pitfalls | Cabinet may expect a different favorite insertion order; mitigate with tests around Phase 41 readback contract and no raw song sorting. |
 
-## Open Questions
+## Open Questions (RESOLVED)
+
+Planner resolutions below are locked for Phase 42 execution. Reopen only if new Momoiro binary, proto, request-log, or cabinet evidence contradicts them.
 
 1. **Should Momoiro Dan compatibility be implemented in Phase 42 or gated behind a human checkpoint?**
    - What we know: `play_dan`, `dan_result`, BAID Dan fields, and Dani UI/asset strings are present. [VERIFIED: `proto/momoiro/taiko.proto:221`, `proto/momoiro/taiko.proto:262`, IDA strings]
    - What's unclear: Complete instruction-flow proof for Dan field construction and whether `Ac15EraProfiles.Momoiro.Features.Dani` should mean route exposure, save capability, or both. [ASSUMED]
-   - Recommendation: Implement only if the plan adds Momoiro-owned Dan tables and catalog Dan-order read surface; keep Taikojuku routes absent. [ASSUMED]
+   - Resolution: Implement bounded Momoiro-owned Dan score/stage persistence for `playresult.php`, BAID, and userdata compatibility only. Add no `taikojuku.php` route, practice-folder behavior, or Taikojuku AdminApi/WebUI surface. [ASSUMED]
 
 2. **How should `DispDanType` be initialized when Momoiro Dan is enabled?**
    - What we know: Existing BAID readback emits display type `0` when `saveData.DispDanType == 0`; current Momoiro save default is zero. [VERIFIED: `Application/Handlers/BaidQuery.Momoiro.cs:68`, `Domain/Entities/UserSaveDataMomoiro.cs:32`]
    - What's unclear: Whether Momoiro expects display type to become `1` after first Dan result or to use a richer type value. [ASSUMED]
-   - Recommendation: If Dan is implemented, set a conservative nonzero display type only after a validated Dan result and cover BAID readback in tests. [ASSUMED]
+   - Resolution: Leave `DispDanType` at the existing default until a validated in-range Dan result is persisted; then set only the conservative nonzero display type needed for BAID readback tests. Do not invent richer display taxonomy. [ASSUMED]
 
 3. **Should challenge arrays be raw-stored for future proofing?**
    - What we know: Descriptors exist; stateful challenge semantics and route families are unproven. [VERIFIED: `proto/momoiro/taiko.proto:199`, IDA route string list]
    - What's unclear: Whether cabinet later consumes userdata challenge stat arrays for Momoiro. [ASSUMED]
-   - Recommendation: Do not persist challenge state in Phase 42; log received values if useful for future captures. [ASSUMED]
+   - Resolution: Accept/map challenge-shaped arrays through the route/application envelope for diagnostics, but log/drop them without persistence. Add no Don Challenge, ChallengeCompe, reward-management, or future-proof raw challenge table. [ASSUMED]
 
 4. **Should Momoiro favorites mutate from playresult at all if ordering is ambiguous?**
    - What we know: `is_favorite` exists on stage data, and Phase 41 readback uses `DisplayOrder`. [VERIFIED: `proto/momoiro/taiko.proto:216`, `Application/Handlers/UserDataQuery.Momoiro.cs:20`]
    - What's unclear: Exact client order update semantics when a played song is marked favorite. [ASSUMED]
-   - Recommendation: Preserve existing order and append newly added favorites after max `DisplayOrder`; never sort by raw song number. [ASSUMED]
+   - Resolution: Allow playresult favorite mutation, preserve existing rows, and append newly added favorites at `max(DisplayOrder) + 1`; use raw song number only as the Phase 41 readback tie-breaker. [ASSUMED]
 
 ## Environment Availability
 
