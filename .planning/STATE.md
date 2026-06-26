@@ -41,7 +41,7 @@ Progress: [##########] 100%
 
 - Total plans completed in v1.7: 18
 - Average duration: 17 min
-- Total execution time: 111 min
+- Total execution time: 107 min
 
 **By Phase:**
 
@@ -50,7 +50,7 @@ Progress: [##########] 100%
 | 39 | 4 | - | - |
 | 40 | 5 | - | - |
 | 41 | 5/5 | 67 min | 13 min |
-| 42 | 7/7 | 102 min | 15 min |
+| 42 | 7/7 | 98 min | 14 min |
 | 43 | 0/TBD | - | - |
 | 44 | 0/TBD | - | - |
 
@@ -74,7 +74,7 @@ Progress: [##########] 100%
 | Phase 42 P04 | 14min | 3 tasks | 7 files |
 | Phase 42 P05 | 13min | 3 tasks | 3 files |
 | Phase 42 P06 | 17min | 3 tasks | 3 files |
-| Phase 42 P07 | 18min | 3 tasks | 4 files |
+| Phase 42 P07 | 14min | 3 tasks | 4 files |
 
 ## Accumulated Context
 
