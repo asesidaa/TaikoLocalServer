@@ -31,6 +31,7 @@ public partial class UpdatePlayResultCommandHandler(
         GameEra.White => HandleWhite(request, cancellationToken),
         GameEra.Murasaki => HandleMurasaki(request, cancellationToken),
         GameEra.Kimidori => HandleKimidori(request, cancellationToken),
+        GameEra.Momoiro => HandleMomoiro(request, cancellationToken),
         _ => throw new InvalidOperationException($"Unsupported AC15 playresult command era: {request.Era}")
     };
 
@@ -42,4 +43,5 @@ public partial class UpdatePlayResultCommandHandler(
     private partial ValueTask<uint> HandleWhite(UpdateAc15PlayResultCommand request, CancellationToken cancellationToken);
     private partial ValueTask<uint> HandleMurasaki(UpdateAc15PlayResultCommand request, CancellationToken cancellationToken);
     private partial ValueTask<uint> HandleKimidori(UpdateAc15PlayResultCommand request, CancellationToken cancellationToken);
+    private partial ValueTask<uint> HandleMomoiro(UpdateAc15PlayResultCommand request, CancellationToken cancellationToken);
 }
