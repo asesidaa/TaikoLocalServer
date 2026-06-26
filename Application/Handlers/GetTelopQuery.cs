@@ -14,6 +14,7 @@ public partial class GetTelopQueryHandler(IGameDataCatalog gameDataService)
         GameEra.White => HandleWhite(request, cancellationToken),
         GameEra.Murasaki => HandleMurasaki(request, cancellationToken),
         GameEra.Kimidori => HandleKimidori(request, cancellationToken),
+        GameEra.Momoiro => HandleMomoiro(request, cancellationToken),
         _ => throw new InvalidOperationException($"GetTelopQuery is not implemented for era: {request.Era}")
     };
 
@@ -24,4 +25,5 @@ public partial class GetTelopQueryHandler(IGameDataCatalog gameDataService)
     private partial ValueTask<CommonGetTelopResponse> HandleWhite(GetTelopQuery request, CancellationToken cancellationToken);
     private partial ValueTask<CommonGetTelopResponse> HandleMurasaki(GetTelopQuery request, CancellationToken cancellationToken);
     private partial ValueTask<CommonGetTelopResponse> HandleKimidori(GetTelopQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonGetTelopResponse> HandleMomoiro(GetTelopQuery request, CancellationToken cancellationToken);
 }
