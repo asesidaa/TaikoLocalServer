@@ -79,3 +79,36 @@ created: 2026-06-26
 - [x] `nyquist_compliant: true` set in frontmatter.
 
 **Approval:** draft for planner consumption 2026-06-26
+
+---
+
+## Plan 41-05 Final Gate Evidence
+
+### Task 1 - Focused Readback and Mapperly Gates
+
+**Recorded:** 2026-06-26T09:29:16Z
+
+| Gate | Command | Result |
+|------|---------|--------|
+| Focused Momoiro readback/controller/crown/route/AC15 codec tests | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroReadback|FullyQualifiedName~MomoiroControllerReadback|FullyQualifiedName~MomoiroCrown|FullyQualifiedName~MomoiroRouteSurface|FullyQualifiedName~Ac15CrownService|FullyQualifiedName~Ac15SongHashCodec" --no-restore -- RunConfiguration.DisableParallelization=true` | PASS: 20 passed, 0 failed, 0 skipped. |
+| Momoiro adapter generated-source build | `dotnet build Adapters.GameProtocol.Momoiro/Adapters.GameProtocol.Momoiro.csproj /p:EmitCompilerGeneratedFiles=true --no-restore` | PASS: build succeeded with 0 warnings and 0 errors. |
+| Mapperly generated-source grep | `rg -n "MydonName|HashReleaseSongFlg|HashCrownFlg|ArySelfbestScores|AryShinSelfbestScores" Adapters.GameProtocol.Momoiro/obj/Debug/net10.0/generated/Riok.Mapperly` | PASS: expected assignments found in `BaidResponseMapper.g.cs`, `UserDataMappers.g.cs`, and `SelfBestMappers.g.cs`. |
+
+Generated Mapperly files inspected:
+
+- `Adapters.GameProtocol.Momoiro/obj/Debug/net10.0/generated/Riok.Mapperly/Riok.Mapperly.MapperGenerator/BaidResponseMapper.g.cs`
+- `Adapters.GameProtocol.Momoiro/obj/Debug/net10.0/generated/Riok.Mapperly/Riok.Mapperly.MapperGenerator/UserDataMappers.g.cs`
+- `Adapters.GameProtocol.Momoiro/obj/Debug/net10.0/generated/Riok.Mapperly/Riok.Mapperly.MapperGenerator/SelfBestMappers.g.cs`
+
+Generated-source findings:
+
+- `BaidResponseMapper.g.cs` assigns `MydonName`, title/color fields, selected costume data, update datetime, costume flags, Dan display/default flags, and `RewardPtn`.
+- `UserDataMappers.g.cs` assigns `SongHashVer`, `HashReleaseSongFlg`, option/tone/title flags, favorite and recent arrays, recommendations, profile counters, display settings, mode flags, reward fields, and `HashCrownFlg` via `MapRequiredBytes(source.HashCrownFlg)`.
+- `SelfBestMappers.g.cs` assigns response `Result` and `Level`, appends mapped rows to `ArySelfbestScores` and `AryShinSelfbestScores`, and maps each row's `SongNo`, `SelfBestScore`, and `UraBestScore`.
+- Generated source does not add playresult mutation, AdminApi/WebUI behavior, unsupported route families, or proto-derived challenge/friend route behavior.
+
+Mapperly documentation checked before inspection: current official Mapperly stable docs for null-value behavior, constant/generated values, and generated-source inspection:
+
+- `https://mapperly.riok.app/docs/configuration/mapper/#null-values`
+- `https://mapperly.riok.app/docs/configuration/constant-generated-values/`
+- `https://mapperly.riok.app/docs/configuration/generated-source/`
