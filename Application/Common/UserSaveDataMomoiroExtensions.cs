@@ -4,6 +4,22 @@ namespace TaikoLocalServer.Application.Common;
 
 public static class UserSaveDataMomoiroExtensions
 {
+    public static async ValueTask<UserSaveDataMomoiro> GetOrCreateMomoiroSaveDataAsync(
+        this ITaikoDbContext context,
+        uint baid,
+        CancellationToken cancellationToken = default)
+    {
+        var saveData = await context.UserSaveDataMomoiro.FindAsync([baid], cancellationToken);
+        if (saveData is not null)
+        {
+            return saveData;
+        }
+
+        saveData = CreateDefaultMomoiroSaveData(baid);
+        context.UserSaveDataMomoiro.Add(saveData);
+        return saveData;
+    }
+
     public static UserSaveDataMomoiro CreateDefaultMomoiroSaveData(uint baid)
     {
         var limits = Ac15EraProfiles.Momoiro.Limits;

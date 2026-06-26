@@ -11,6 +11,7 @@ public sealed record Ac15UserDataResponse
     public Ac15UserDataTutorial? Tutorial { get; init; }
     public Ac15UserDataModeFlags? ModeFlags { get; init; }
     public Ac15UserDataReward? Reward { get; init; }
+    public byte[]? HashCrownFlg { get; init; }
 }
 
 public sealed record Ac15UserDataSongFlags
