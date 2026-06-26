@@ -5,16 +5,16 @@ milestone_name: MOMOIRO AC15 0.11 Support
 current_phase: 41
 current_phase_name: MOMOIRO Identity, Userdata, Self-Best, and Crown Readback
 status: executing
-stopped_at: Phase 39 complete; ready to plan Phase 40
-last_updated: "2026-06-26T06:50:35.573Z"
+stopped_at: Completed 41-01-PLAN.md
+last_updated: "2026-06-26T08:18:11.367Z"
 last_activity: 2026-06-26
-last_activity_desc: Phase 40 complete, transitioned to Phase 41
+last_activity_desc: Phase 41 Plan 01 RED contracts complete
 progress:
   total_phases: 6
   completed_phases: 2
-  total_plans: 9
-  completed_plans: 9
-  percent: 33
+  total_plans: 14
+  completed_plans: 10
+  percent: 71
 ---
 
 # Project State
@@ -24,22 +24,22 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-25)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating MOMOIRO, KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, Nijiiro, or shared identity state.
-**Current focus:** Phase 40 - MOMOIRO Protocol Limits, Root Catalog, and Route Behavior
+**Current focus:** Phase 41 - MOMOIRO Identity, Userdata, Self-Best, and Crown Readback
 
 ## Current Position
 
 Phase: 41 of 44 (MOMOIRO Identity, Userdata, Self-Best, and Crown Readback)
-Plan: Not started
-Status: Ready to execute
-Last activity: 2026-06-26 — Phase 40 complete, transitioned to Phase 41
+Plan: 41-01 complete; next 41-02
+Status: In Progress
+Last activity: 2026-06-26 - Phase 41 Plan 01 RED contracts complete
 
-Progress: [##--------] 17%
+Progress: [#######---] 71%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed in v1.7: 4
+- Total plans completed in v1.7: 10
 - Average duration: 18 min
 - Total execution time: 70 min
 
@@ -63,6 +63,7 @@ Progress: [##--------] 17%
 | Phase 39 P02 | 18 min | 3 tasks | 11 files |
 | Phase 39 P03 | 17 min | 3 tasks | 5 files |
 | Phase 39 P04 | 28 min | 3 tasks | 14 files |
+| Phase 41 P01 | 14 min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -86,6 +87,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 39]: Plan 39-04 uses generated Momoiro response objects directly in no-state controllers — Phase 39 proves route ownership only; runtime semantics are deferred to Phases 40-42, so controllers must not call Mediator, EF, catalogs, AdminApi, WebUI, or adjacent-era handlers.
 - [Phase 39]: Plan 39-04 records Momoiro controllers as intentional no-state scaffolds — Catalog, identity, userdata, score, playresult, recommendation, telop, song-hash, AdminApi, WebUI, and persistence behavior remain future phase scope.
 - [Phase 39]: Plan 39-04 uses MVC ApplicationPartManager controller discovery for route-surface tests — The tests inspect runtime discovery surfaces and avoid source-text or generated-wire assertions.
+- [Phase 41]: Plan 41-01 added RED-only Momoiro readback contracts; MORDB runtime requirements remain pending until later implementation plans. Rationale: The user explicitly scoped Wave 0 to tests only, so requirements checkboxes were not marked complete.
 
 ### Pending Todos
 
@@ -93,6 +95,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ### Blockers/Concerns
 
+- Phase 41 implementation must make the 41-01 RED tests pass without treating those tests as cabinet/RPCS3 acceptance.
 - Phase 39-42 planning must preserve evidence gates for song unlocking, crown packing, and changed limits before stateful implementation relies on those facts.
 - Future requirements MOLATER-01, MOSPEC-01, and MOSPEC-02 remain deferred and are not active v1.7 phase work.
 
@@ -106,10 +109,10 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ## Session Continuity
 
-Last session: 2026-06-25T21:42:52.077Z
-Stopped at: Phase 39 complete; ready to plan Phase 40
+Last session: 2026-06-26T08:18:11.349Z
+Stopped at: Completed 41-01-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
 
-- Verify Phase 39, then continue with Phase 40 planning/execution.
+- Continue with Phase 41 Plan 02 for Momoiro readback persistence and EF migration.
