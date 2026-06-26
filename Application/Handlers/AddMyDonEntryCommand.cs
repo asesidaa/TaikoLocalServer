@@ -17,6 +17,7 @@ public partial class AddMyDonEntryCommandHandler(
         GameEra.White => HandleWhite(request, cancellationToken),
         GameEra.Murasaki => HandleMurasaki(request, cancellationToken),
         GameEra.Kimidori => HandleKimidori(request, cancellationToken),
+        GameEra.Momoiro => HandleMomoiro(request, cancellationToken),
         _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
     };
 
@@ -28,4 +29,5 @@ public partial class AddMyDonEntryCommandHandler(
     private partial ValueTask<CommonMyDonEntryResponse> HandleWhite(AddMyDonEntryCommand request, CancellationToken cancellationToken);
     private partial ValueTask<CommonMyDonEntryResponse> HandleMurasaki(AddMyDonEntryCommand request, CancellationToken cancellationToken);
     private partial ValueTask<CommonMyDonEntryResponse> HandleKimidori(AddMyDonEntryCommand request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonMyDonEntryResponse> HandleMomoiro(AddMyDonEntryCommand request, CancellationToken cancellationToken);
 }
