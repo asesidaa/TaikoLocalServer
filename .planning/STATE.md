@@ -5,16 +5,16 @@ milestone_name: MOMOIRO AC15 0.11 Support
 current_phase: 41
 current_phase_name: MOMOIRO Identity, Userdata, Self-Best, and Crown Readback
 status: executing
-stopped_at: Completed 41-01-PLAN.md
-last_updated: "2026-06-26T08:18:11.367Z"
+stopped_at: Completed 41-02-PLAN.md
+last_updated: "2026-06-26T08:39:49.681Z"
 last_activity: 2026-06-26
-last_activity_desc: Phase 41 Plan 01 RED contracts complete
+last_activity_desc: Phase 41 Plan 02 persistence schema complete
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 14
-  completed_plans: 10
-  percent: 71
+  completed_plans: 11
+  percent: 79
 ---
 
 # Project State
@@ -29,11 +29,11 @@ See: `.planning/PROJECT.md` (updated 2026-06-25)
 ## Current Position
 
 Phase: 41 of 44 (MOMOIRO Identity, Userdata, Self-Best, and Crown Readback)
-Plan: 41-01 complete; next 41-02
+Plan: 41-02 complete; next 41-03
 Status: In Progress
-Last activity: 2026-06-26 - Phase 41 Plan 01 RED contracts complete
+Last activity: 2026-06-26 - Phase 41 Plan 02 persistence schema complete
 
-Progress: [#######---] 71%
+Progress: [########--] 79%
 
 ## Performance Metrics
 
@@ -64,6 +64,7 @@ Progress: [#######---] 71%
 | Phase 39 P03 | 17 min | 3 tasks | 5 files |
 | Phase 39 P04 | 28 min | 3 tasks | 14 files |
 | Phase 41 P01 | 14 min | 3 tasks | 5 files |
+| Phase 41 P02 | 12min | 2 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -88,6 +89,9 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 39]: Plan 39-04 records Momoiro controllers as intentional no-state scaffolds — Catalog, identity, userdata, score, playresult, recommendation, telop, song-hash, AdminApi, WebUI, and persistence behavior remain future phase scope.
 - [Phase 39]: Plan 39-04 uses MVC ApplicationPartManager controller discovery for route-surface tests — The tests inspect runtime discovery surfaces and avoid source-text or generated-wire assertions.
 - [Phase 41]: Plan 41-01 added RED-only Momoiro readback contracts; MORDB runtime requirements remain pending until later implementation plans. Rationale: The user explicitly scoped Wave 0 to tests only, so requirements checkboxes were not marked complete.
+- [Phase 41]: Plan 41-02 persists Momoiro favorite order as DisplayOrder with (Baid, DisplayOrder) index while keeping (Baid, SongNo) as the row key. — Phase 41 readback must return ary_favorite_song_no by user-facing order, not song-number sorting.
+- [Phase 41]: Plan 41-02 adds only the four Momoiro readback tables and leaves unsupported mutation/Admin/proto surfaces absent. — Matches the persistence-only plan and user constraints.
+- [Phase 41]: Plan 41-02 completed the persistence/schema slice only; MORDB runtime requirement checkboxes remain pending until handler/controller readback plans complete. — Avoids overclaiming runtime readback while focused tests still fail on unsupported Momoiro dispatch.
 
 ### Pending Todos
 
@@ -109,10 +113,10 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ## Session Continuity
 
-Last session: 2026-06-26T08:18:11.349Z
-Stopped at: Completed 41-01-PLAN.md
+Last session: 2026-06-26T08:37:51.747Z
+Stopped at: Completed 41-02-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
 
-- Continue with Phase 41 Plan 02 for Momoiro readback persistence and EF migration.
+- Continue with Phase 41 Plan 03 for Momoiro Application readback handlers and crown builder.
