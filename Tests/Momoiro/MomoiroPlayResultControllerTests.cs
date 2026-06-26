@@ -25,7 +25,7 @@ public sealed class MomoiroPlayResultControllerTests
             CreateRequest());
 
         Assert.Equal(1u, response.Result);
-        Assert.Equal(1, await fixture.CountMomoiroPlayRowsAsync(4));
+        Assert.Equal(2, await fixture.CountMomoiroPlayRowsAsync(4));
         Assert.Equal(1, await fixture.CountMomoiroDanRowsAsync(4));
         Assert.Equal(2, await fixture.CountMomoiroDanStageRowsAsync(4));
 
@@ -47,7 +47,7 @@ public sealed class MomoiroPlayResultControllerTests
             NullLogger<UserDataQueryHandler>.Instance,
             Options.Create(new ServerSettings()))
             .Handle(new Ac15UserDataQuery(4, GameEra.Momoiro), CancellationToken.None);
-        Assert.Equal([300u, 101u, 250u], userdata.SongLists.AryFavoriteSongNoes);
+        Assert.Equal([300u, 101u, 250u, 102u], userdata.SongLists.AryFavoriteSongNoes);
         await AssertSelectedAdjacentUnsupportedRowsUnchangedAsync(fixture, 4, unsupportedBefore);
     }
 
