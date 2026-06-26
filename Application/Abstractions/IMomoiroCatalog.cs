@@ -12,5 +12,7 @@ public interface IMomoiroCatalog : IEraGameDataCatalog
 
     IReadOnlyDictionary<uint, Ac15MusicInfoEntry> MomoiroMusicInfos { get; }
 
+    IReadOnlyList<Ac15TaikojukuEntry> DaniFileOrder { get; }
+
     IReadOnlyDictionary<uint, Ac15TelopEntry> Telops { get; }
 }

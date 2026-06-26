@@ -117,6 +117,8 @@ public sealed class Ac15RecommendQueryHandlerTests
         public IReadOnlyDictionary<uint, Ac15MusicInfoEntry> MomoiroMusicInfos
             => MusicInfoFileOrder.ToDictionary(song => song.SongNo);
 
+        public IReadOnlyList<Ac15TaikojukuEntry> DaniFileOrder { get; } = [];
+
         public IReadOnlyDictionary<uint, Ac15TelopEntry> Telops { get; } = new Dictionary<uint, Ac15TelopEntry>();
 
         public Task InitializeAsync(CancellationToken cancellationToken) => Task.CompletedTask;

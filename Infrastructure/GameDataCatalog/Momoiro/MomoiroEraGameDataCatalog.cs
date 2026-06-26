@@ -17,7 +17,7 @@ public sealed class MomoiroEraGameDataCatalog(
     private IReadOnlyList<Ac15MusicInfoEntry> musicInfoFileOrder = [];
     private IReadOnlyDictionary<uint, Ac15MusicInfoEntry> musicInfos = new Dictionary<uint, Ac15MusicInfoEntry>();
     private IReadOnlyDictionary<uint, IMusicInfoEntry> sharedMusicInfos = new Dictionary<uint, IMusicInfoEntry>();
-    private IReadOnlyList<Ac15TaikojukuEntry> medleyFileOrder = [];
+    private IReadOnlyList<Ac15TaikojukuEntry> daniFileOrder = [];
     private IReadOnlyDictionary<uint, Ac15TelopEntry> telops = new Dictionary<uint, Ac15TelopEntry>();
 
     public GameEra Era => GameEra.Momoiro;
@@ -32,6 +32,8 @@ public sealed class MomoiroEraGameDataCatalog(
 
     public IReadOnlyDictionary<uint, Ac15MusicInfoEntry> MomoiroMusicInfos => musicInfos;
 
+    public IReadOnlyList<Ac15TaikojukuEntry> DaniFileOrder => daniFileOrder;
+
     public IReadOnlyDictionary<uint, Ac15TelopEntry> Telops => telops;
 
     public async Task InitializeAsync(CancellationToken cancellationToken)
@@ -43,7 +45,7 @@ public sealed class MomoiroEraGameDataCatalog(
             MomoiroGameDataPaths.TuningBin,
             nameof(GameEra.Momoiro),
             cancellationToken);
-        var loadedMedleyFileOrder = await Ac15TaikojukuLoader.LoadFromFileAsync(
+        var loadedDaniFileOrder = await Ac15TaikojukuLoader.LoadFromFileAsync(
             MomoiroGameDataPaths.MusicMedleyInfoXml,
             cancellationToken);
         var enrichedEntries = musicInfo.Entries
@@ -79,16 +81,16 @@ public sealed class MomoiroEraGameDataCatalog(
         sharedMusicInfos = musicInfos.ToDictionary(
             pair => pair.Key,
             pair => (IMusicInfoEntry)pair.Value);
-        medleyFileOrder = loadedMedleyFileOrder;
+        daniFileOrder = loadedDaniFileOrder;
         telops = await Ac15TelopLoader.LoadFromFileAsync(
             Path.Combine(PathHelper.GetDataPath(GameEra.Momoiro), TelopFileName),
             cancellationToken);
 
         logger.LogInformation(
-            "Loaded Momoiro catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {MedleyCount} medley rows, {StarCount} tuning star rows, {TelopCount} telops",
+            "Loaded Momoiro catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {DaniCount} Dani rows, {StarCount} tuning star rows, {TelopCount} telops",
             musicInfoFileOrder.Count,
             songHashVersion,
-            medleyFileOrder.Count,
+            daniFileOrder.Count,
             stars.Count,
             telops.Count);
     }
