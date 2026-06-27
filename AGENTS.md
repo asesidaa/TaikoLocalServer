@@ -73,6 +73,16 @@ TaikoLocalServer is an ASP.NET Core 10 host for Taiko cabinet protocol endpoints
 - For AdminApi era routes, preserve both legacy routes where they exist and `/api/{era}/...` routes validated by `EraRoute.TryParse`.
 - Keep generated `Wire/` files out of manual cleanup unless regenerating protocol output.
 
+## Local Game Data Link Rules
+
+- `Host/wwwroot/data/<era>/data` is operator-supplied game data and must be treated as external local evidence, even when tests or builds depend on it.
+- These `data` entries must be Windows directory symbolic links or junctions to local `USRDIR/data` roots, never copied directories. Do not copy RPCS3/game-install data into the repo tree.
+- Never delete, move, overwrite, clean, recreate, or "repair" `Host/wwwroot/data/<era>/data` or its contents from an agent without explicit same-turn user approval for the exact path and exact action.
+- Never run `Remove-Item`, `rm`, `git clean`, `robocopy /MIR`, cleanup scripts, broad restore commands, or recursive move/delete operations against `Host/wwwroot`, `Host/wwwroot/data`, or any `Host/wwwroot/data/<era>/data` link.
+- If a `data` link is missing, broken, or no longer a link, stop and report the environment blocker. The only acceptable repair is an explicitly approved symlink/junction operation plus `.gitignore` coverage.
+- Do not stage or commit game data, symlink targets, copied catalog XML/bin/NDP files, or generated local catalog outputs. Only tracked server-authored JSON sidecars already owned by the repo may be staged.
+- Preserve NTFS ACL protections on local data links. If ACLs block an operation, treat that as a safety signal and ask before changing permissions.
+
 ## Testing Rules
 
 - Do not add tests just to satisfy a TDD checkbox. Every new test must protect a specific evidence-backed cabinet behavior, runtime state transition, parser/packing rule, AdminApi/WebUI workflow, or no-cross-era/no-cross-mode persistence boundary.

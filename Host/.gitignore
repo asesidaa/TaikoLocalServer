@@ -5,9 +5,15 @@ wwwroot/data/datatable/*
 wwwroot/data/*/datatable/*
 wwwroot/taiko.db3
 wwwroot/data/*/data/*
+
+# Local operator game-data roots. These entries should be symlinks/junctions to
+# RPCS3 or cabinet USRDIR/data folders, never copied data. Agents must not delete,
+# move, copy over, clean, stage, or commit these paths.
+wwwroot/data/green/data
 wwwroot/data/blue/data
 wwwroot/data/yellow/data
 wwwroot/data/red/data
 wwwroot/data/white/data
 wwwroot/data/murasaki/data
 wwwroot/data/kimidori/data
+wwwroot/data/momoiro/data

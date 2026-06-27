@@ -233,7 +233,7 @@ public static partial class LegacyUserDataMappers
 
     public static partial void Apply(Ac15UserDataProfileCounters source, [MappingTarget] UserDataResponse response);
 
-    [MapperIgnoreSource(nameof(Ac15UserDataDisplaySettings.DispTaikojukuDan))]
+    [MapProperty(nameof(Ac15UserDataDisplaySettings.DispTaikojukuDan), nameof(UserDataResponse.DispTaikojukuDan), Use = nameof(MapDispTaikojukuDan))]
     [MapperIgnoreSource(nameof(Ac15UserDataDisplaySettings.DifficultyPlayedCourse))]
     [MapperIgnoreSource(nameof(Ac15UserDataDisplaySettings.DifficultyPlayedStar))]
     [MapperIgnoreSource(nameof(Ac15UserDataDisplaySettings.IsChallengeCompe))]
@@ -247,6 +247,8 @@ public static partial class LegacyUserDataMappers
     public static partial void Apply(Ac15UserDataTutorial source, [MappingTarget] UserDataResponse response);
 
     public static partial void Apply(Ac15UserDataReward source, [MappingTarget] UserDataResponse response);
+
+    private static uint MapDispTaikojukuDan(uint value) => value is >= 1 and <= 25 ? value : 1u;
 
     private static uint[] MapRecommendBestSongs(List<uint> value) => value.ToArray();
 }

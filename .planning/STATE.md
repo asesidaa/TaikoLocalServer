@@ -138,6 +138,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ### Blockers/Concerns
 
+- Hard guardrail: `Host/wwwroot/data/<era>/data` entries are local operator game-data links. Agents must never delete, move, copy over, clean, or repair them by copying data. If a link is missing or broken, stop and ask; only explicit symlink/junction and `.gitignore` actions are allowed.
 - Phase 41 implementation must make the 41-01 RED tests pass without treating those tests as cabinet/RPCS3 acceptance.
 - Phase 39-42 planning must preserve evidence gates for song unlocking, crown packing, and changed limits before stateful implementation relies on those facts.
 - Future requirements MOLATER-01, MOSPEC-01, and MOSPEC-02 remain deferred and are not active v1.7 phase work.
