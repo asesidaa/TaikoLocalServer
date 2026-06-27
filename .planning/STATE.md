@@ -133,6 +133,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ### Pending Todos
 
+- Blocking before Phase 43/WebUI: fix MOMOIRO startup movie support captured in `.planning/todos/pending/2026-06-27-fix-momoiro-startup-movies.md`.
 - Phase 42 is complete. Phase 43 AdminApi/WebUI planning remains not started.
 
 ### Blockers/Concerns
