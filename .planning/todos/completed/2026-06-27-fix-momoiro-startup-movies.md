@@ -2,6 +2,9 @@
 created: 2026-06-27T18:14:58.677Z
 title: Fix Momoiro startup movies
 area: general
+completed: 2026-06-27
+completed_by_quick: 260628-3ef-fix-momoiro-startup-movie-support-before
+completion_commit: aa93a2d5
 files:
   - Application/Handlers/GetStartupMovieDataQuery.cs:26
   - Application/Abstractions/IMomoiroCatalog.cs:5

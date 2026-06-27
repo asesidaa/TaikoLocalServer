@@ -130,10 +130,10 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 42]: MORUN requirement checkboxes remain pending after plan 42-06. — The user assigned final Phase 42 verification and closeout to 42-07.
 - [Phase 42]: Momoiro playresult.php now dispatches UpdateAc15PlayResultCommand with GameEra.Momoiro. — Adapter code only logs, maps, calls Mediator, and maps the response; persistence stays in Application.
 - [Phase 42]: Phase 42 closes MORUN-01 through MORUN-05 as automated server-side verification only. — Focused/full tests, builds, Mapperly generated-source inspection, and source gates passed; AdminApi/WebUI remains Phase 43 and cabinet/RPCS3 acceptance remains Phase 44.
+- [Quick 260628-3ef]: MOMOIRO startup movies are enabled server-side through `momoiro_movie_data.json`, raw `data/movie` discovery, and `hdd_ver` 4xx startup dispatch. Rationale: This closes the movie-data blocker found after Phase 42 before Phase 43 AdminApi/WebUI planning proceeds.
 
 ### Pending Todos
 
-- Blocking before Phase 43/WebUI: fix MOMOIRO startup movie support captured in `.planning/todos/pending/2026-06-27-fix-momoiro-startup-movies.md`.
 - Phase 42 is complete. Phase 43 AdminApi/WebUI planning remains not started.
 
 ### Blockers/Concerns
