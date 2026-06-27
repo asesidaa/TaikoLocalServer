@@ -57,6 +57,7 @@ public static partial class PlayResultMappers
 
     [MapProperty(nameof(PlayResultRequest.StageData.PlayResult), nameof(Ac15StageResult.PlayResult), Use = nameof(MapNullableUInt))]
     [MapProperty(nameof(PlayResultRequest.StageData.PlayScore), nameof(Ac15StageResult.PlayScore), Use = nameof(MapNullableUInt))]
+    [MapProperty(nameof(PlayResultRequest.StageData.Level), nameof(Ac15StageResult.Level), Use = nameof(MapDifficulty))]
     [MapProperty(nameof(PlayResultRequest.StageData.HitCnt), nameof(Ac15StageResult.HitCnt), Use = nameof(MapNullableUInt))]
     [MapProperty(nameof(PlayResultRequest.StageData.OptionFlg), nameof(Ac15StageResult.OptionFlg), Use = nameof(MapBytes))]
     [MapProperty(nameof(PlayResultRequest.StageData.ToneFlg), nameof(Ac15StageResult.ToneFlg), Use = nameof(MapBytes))]
@@ -138,6 +139,9 @@ public static partial class PlayResultMappers
     [UserMapping(Default = true)]
     private static uint MapNullableUInt(uint? value)
         => value.GetValueOrDefault();
+
+    private static Difficulty MapDifficulty(uint value)
+        => Ac15Difficulty.FromProtocol(value);
 
     private static byte[] MapBytes(byte[]? values)
         => values ?? [];

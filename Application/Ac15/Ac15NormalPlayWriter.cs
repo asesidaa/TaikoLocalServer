@@ -38,7 +38,7 @@ public static class Ac15NormalPlayWriter
     {
         foreach (var stage in request.Stages)
         {
-            var difficulty = MapDifficulty(stage.Level);
+            var difficulty = stage.Level;
             var crown = MapCrown(stage.PlayResult);
             var isShin = stage.StageMode == 1 || stage.StageMode == 4;
             var bestPolicy = policy.GetBestUpdatePolicy(stage, crown);
@@ -169,16 +169,6 @@ public static class Ac15NormalPlayWriter
         recents.RemoveRange(overage);
         await saveChanges(cancellationToken);
     }
-
-    private static Difficulty MapDifficulty(uint level) => level switch
-    {
-        1 => Difficulty.Easy,
-        2 => Difficulty.Normal,
-        3 => Difficulty.Hard,
-        4 => Difficulty.Oni,
-        5 => Difficulty.UraOni,
-        _ => Difficulty.None
-    };
 
     private static CrownType MapCrown(uint playResult) => playResult switch
     {

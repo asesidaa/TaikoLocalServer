@@ -334,8 +334,8 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
         });
     }
 
-    private static uint ToWebUiDifficultyLevel(uint greenCourseLevel)
-        => greenCourseLevel <= 4 ? greenCourseLevel + 1 : 0;
+    private static uint ToWebUiDifficultyLevel(Difficulty difficulty)
+        => Ac15Difficulty.ToProtocol(difficulty);
 
     private static MusicDetail BuildAc15MusicDetail(
         uint songNo,

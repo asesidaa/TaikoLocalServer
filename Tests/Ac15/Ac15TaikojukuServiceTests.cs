@@ -12,7 +12,7 @@ public sealed class Ac15TaikojukuServiceTests
             requestedDans: [1],
             packs:
             [
-                Pack(1, 9, [Song(101, 0), Song(102, 1), Song(103, 2)])
+                Pack(1, 9, [Song(101, Difficulty.Easy), Song(102, Difficulty.Normal), Song(103, Difficulty.Hard)])
             ],
             musicFileOrder: [Music(101), Music(102), Music(103)],
             validSongNoes: [101, 102, 103],
@@ -21,6 +21,7 @@ public sealed class Ac15TaikojukuServiceTests
         var pack = Assert.Single(response.Packs);
         Assert.Equal(1u, pack.GetDan);
         Assert.Equal(3, pack.Songs.Count);
+        Assert.Equal([Difficulty.Easy, Difficulty.Normal, Difficulty.Hard], pack.Songs.Select(song => song.Level).ToArray());
         Assert.Equal(9u, pack.VerupNo);
     }
 
@@ -45,23 +46,23 @@ public sealed class Ac15TaikojukuServiceTests
             requestedDans: [0, 1],
             packs:
             [
-                Pack(0, 0, [Song(101, 0)]),
+                Pack(0, 0, [Song(101, Difficulty.Easy)]),
                 Pack(1, 9,
                 [
-                    Song(0, 0),
-                    Song(1024, 0),
-                    Song(101, 5),
-                    Song(101, 0),
-                    Song(102, 1),
-                    Song(103, 2),
-                    Song(104, 3),
-                    Song(105, 4),
-                    Song(106, 0),
-                    Song(107, 1),
-                    Song(108, 2),
-                    Song(109, 3),
-                    Song(110, 4),
-                    Song(111, 0)
+                    Song(0, Difficulty.Easy),
+                    Song(1024, Difficulty.Easy),
+                    Song(101, Difficulty.None),
+                    Song(101, Difficulty.Easy),
+                    Song(102, Difficulty.Normal),
+                    Song(103, Difficulty.Hard),
+                    Song(104, Difficulty.Oni),
+                    Song(105, Difficulty.UraOni),
+                    Song(106, Difficulty.Easy),
+                    Song(107, Difficulty.Normal),
+                    Song(108, Difficulty.Hard),
+                    Song(109, Difficulty.Oni),
+                    Song(110, Difficulty.UraOni),
+                    Song(111, Difficulty.Easy)
                 ])
             ],
             musicFileOrder: [Music(101), Music(102), Music(103)],
@@ -72,7 +73,10 @@ public sealed class Ac15TaikojukuServiceTests
         Assert.Equal(1u, pack.GetDan);
         Assert.Equal(10, pack.Songs.Count);
         Assert.DoesNotContain(pack.Songs, song => song.SongNo is 0 or 1024);
-        Assert.All(pack.Songs, song => Assert.InRange(song.Level, 0u, 4u));
+        Assert.All(pack.Songs, song => Assert.True(Ac15Difficulty.IsInRange(
+            song.Level,
+            Ac15EraProfiles.Green.Limits.MinCourseLevel,
+            Ac15EraProfiles.Green.Limits.MaxCourseLevel)));
     }
 
     private static Ac15TaikojukuEntry Pack(uint challengeLevel, uint verupNo, IReadOnlyList<Ac15TaikojukuSong> songs) => new()
@@ -83,7 +87,7 @@ public sealed class Ac15TaikojukuServiceTests
         Songs = songs
     };
 
-    private static Ac15TaikojukuSong Song(uint songNo, uint level) => new()
+    private static Ac15TaikojukuSong Song(uint songNo, Difficulty level) => new()
     {
         SongNo = songNo,
         Level = level,

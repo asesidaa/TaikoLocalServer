@@ -100,7 +100,7 @@ internal static class Ac15PlayResultTestFactory
         => new()
         {
             SongNo = stage.SongNo,
-            Level = stage.Level,
+            Level = Ac15Difficulty.FromProtocol(stage.Level),
             PlayResult = stage.PlayResult,
             PlayScore = stage.PlayScore,
             ScoreRate = stage.ScoreRate,

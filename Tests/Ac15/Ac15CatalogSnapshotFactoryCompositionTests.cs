@@ -45,7 +45,7 @@ public sealed class Ac15CatalogSnapshotFactoryCompositionTests
                 {
                     UniqueId = 20001,
                     ChallengeLevel = 1,
-                    Songs = [new Ac15TaikojukuSong { SongNo = 101, Level = 1 }]
+                    Songs = [new Ac15TaikojukuSong { SongNo = 101, Level = Difficulty.Easy }]
                 }
             ]);
 

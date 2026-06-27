@@ -269,7 +269,7 @@ public sealed class MurasakiAdminApiTests
                     ChallengeLevel = 1,
                     Name = "Murasaki Dan",
                     VerupNo = 6100,
-                    Songs = [new Ac15TaikojukuSong { SongNo = 201, Level = 1 }],
+                    Songs = [new Ac15TaikojukuSong { SongNo = 201, Level = Difficulty.Easy }],
                     Conditions = new Ac15TaikojukuConditions { SoulGauge = 80 },
                     ExcellentConditions = new Ac15TaikojukuConditions { SoulGauge = 100 }
                 }

@@ -41,12 +41,11 @@ public partial class SongLeaderboardController(ITaikoDbContext context) : BaseAd
             return BadRequest(new { Message = "Limit cannot be greater than 200." });
         }
 
-        if (difficulty < 1 || difficulty > 5)
+        var diff = Ac15Difficulty.FromProtocol(difficulty);
+        if (diff == Difficulty.None)
         {
             return BadRequest(new { Message = "Invalid difficulty. Please provide a number between 1-5." });
         }
-
-        var diff = (Difficulty)difficulty;
 
         var rows = gameEra switch
         {

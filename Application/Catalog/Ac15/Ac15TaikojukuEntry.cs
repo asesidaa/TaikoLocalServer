@@ -10,7 +10,7 @@ public sealed class Ac15TaikojukuEntry
 
     public string Name { get; init; } = string.Empty;
 
-    public uint Difficulty { get; init; }
+    public Difficulty Difficulty { get; init; }
 
     public uint VerupNo { get; init; }
 
@@ -48,7 +48,7 @@ public sealed class Ac15TaikojukuSong
 
     public uint SongNo { get; init; }
 
-    public uint Level { get; init; }
+    public Difficulty Level { get; init; }
 
     public uint Notes { get; init; }
 }

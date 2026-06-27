@@ -126,6 +126,7 @@ public static partial class LegacyPlayResultMappers
     [MapProperty(nameof(PlayResultRequest.AryStageInfoes), nameof(Ac15DaniPlayResult.Stages), Use = nameof(MapStages))]
     private static partial Ac15DaniPlayResult MapDani(PlayResultRequest request);
 
+    [MapProperty(nameof(PlayResultRequest.StageData.Level), nameof(Ac15StageResult.Level), Use = nameof(MapDifficulty))]
     [MapProperty(nameof(PlayResultRequest.StageData.HitCnt), nameof(Ac15StageResult.HitCnt), Use = nameof(MapUInt))]
     [MapProperty(nameof(PlayResultRequest.StageData.OptionFlg), nameof(Ac15StageResult.OptionFlg), Use = nameof(MapBytes))]
     [MapProperty(nameof(PlayResultRequest.StageData.ToneFlg), nameof(Ac15StageResult.ToneFlg), Use = nameof(MapBytes))]
@@ -172,6 +173,9 @@ public static partial class LegacyPlayResultMappers
     private static uint MapUInt(uint value)
         => value;
 
+    private static Difficulty MapDifficulty(uint value)
+        => Ac15Difficulty.FromProtocol(value);
+
     private static byte[] MapBytes(byte[]? values)
         => values ?? [];
 
@@ -209,8 +213,11 @@ public static partial class LegacyTaikojukuMappers
     private static partial TaikojukuResponse.JukupackData MapPack(
         CommonTaikojukuResponse.Pack pack);
 
+    [MapProperty(nameof(CommonTaikojukuResponse.Song.Level), nameof(TaikojukuResponse.JukupackData.JukusongData.Level), Use = nameof(MapTaikojukuDifficulty))]
     private static partial TaikojukuResponse.JukupackData.JukusongData MapSong(
         CommonTaikojukuResponse.Song song);
+
+    private static uint MapTaikojukuDifficulty(Difficulty value) => Ac15Difficulty.ToProtocol(value);
 }
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Source)]

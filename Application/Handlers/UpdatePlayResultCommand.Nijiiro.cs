@@ -66,7 +66,7 @@ public partial class UpdatePlayResultCommandHandler
                 await UpdateAiBattleData(playResultData, stageData, cancellationToken);
             }
 
-            var difficulty = (Difficulty)stageData.Level;
+            var difficulty = Ac15Difficulty.FromProtocol(stageData.Level);
             difficulty.Throw().IfOutOfRange();
             var existing = await context.SongBestDataNijiiro.FindAsync([playResultData.Baid, stageData.SongNo, difficulty], cancellationToken);
 
@@ -110,7 +110,7 @@ public partial class UpdatePlayResultCommandHandler
                 Skipped = stageData.IsSkipUse,
                 SongId = stageData.SongNo,
                 PlayTime = lastPlayDateTime,
-                Difficulty = (Difficulty)stageData.Level,
+                Difficulty = difficulty,
                 OptionSetting = stageData.OptionFlg[0]
             };
             context.SongPlayDataNijiiro.Add(SongPlayDatumNijiiro);
@@ -122,7 +122,7 @@ public partial class UpdatePlayResultCommandHandler
 
     private async Task UpdateAiBattleData(CommonPlayResultData playResultData, CommonPlayResultData.StageData stageData, CancellationToken cancellationToken)
     {
-        var difficulty = (Difficulty)stageData.Level;
+        var difficulty = Ac15Difficulty.FromProtocol(stageData.Level);
         difficulty.Throw().IfOutOfRange();
         var existing = await context.AiScoreDataNijiiro
             .Include(datum => datum.AiSectionScoreData)

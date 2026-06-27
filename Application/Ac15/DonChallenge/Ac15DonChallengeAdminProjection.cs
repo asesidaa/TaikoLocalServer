@@ -91,7 +91,7 @@ public static class Ac15DonChallengeAdminProjection
                 {
                     TrackNumber = track.TrackNo,
                     SongNumber = track.SongNo,
-                    Level = track.Level,
+                    Level = Ac15Difficulty.ToProtocol(track.Level),
                     StageMode = track.StageMode
                 })
                 .ToList()
@@ -145,7 +145,7 @@ public static class Ac15DonChallengeAdminProjection
         };
 
         return rule.MinimumLevel is { } minimumLevel
-            ? $"{label} at level {minimumLevel}+"
+            ? $"{label} at level {Ac15Difficulty.ToProtocol(minimumLevel)}+"
             : label;
     }
 

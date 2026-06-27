@@ -81,7 +81,7 @@ public sealed class RedInitialDataProtocolTests
         Assert.Equal(1u, pack.GetDan);
         Assert.Equal(8u, pack.VerupNo);
         Assert.Equal([101u], pack.Songs.Select(song => song.SongNo).ToArray());
-        Assert.Equal([2u], pack.Songs.Select(song => song.Level).ToArray());
+        Assert.Equal([Difficulty.Hard], pack.Songs.Select(song => song.Level).ToArray());
     }
 
     private static FakeRedCatalog RedCatalogWithOptionalRows() => new()
@@ -108,7 +108,7 @@ public sealed class RedInitialDataProtocolTests
                 DanLevel = 1,
                 ChallengeLevel = 1,
                 VerupNo = 8,
-                Songs = [new Ac15TaikojukuSong { MusicId = "song101", SongNo = 101, Level = 2 }]
+                Songs = [new Ac15TaikojukuSong { MusicId = "song101", SongNo = 101, Level = Difficulty.Hard }]
             }
         ]
     };

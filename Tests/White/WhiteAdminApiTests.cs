@@ -321,7 +321,7 @@ public sealed class WhiteAdminApiTests
                     ChallengeLevel = 1,
                     Name = "White Dan",
                     VerupNo = 7100,
-                    Songs = [new Ac15TaikojukuSong { SongNo = 201, Level = 1 }],
+                    Songs = [new Ac15TaikojukuSong { SongNo = 201, Level = Difficulty.Easy }],
                     Conditions = new Ac15TaikojukuConditions { SoulGauge = 80 },
                     ExcellentConditions = new Ac15TaikojukuConditions { SoulGauge = 100 }
                 }

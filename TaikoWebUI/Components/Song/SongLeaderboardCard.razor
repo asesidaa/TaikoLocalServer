@@ -16,9 +16,9 @@
                 <MudItem xs="6">
                     <MudStack Justify="Justify.FlexEnd" Row="true">
                         <MudToggleGroup T="string" Size="Size.Small" ValueChanged="(value) => OnDifficultyChange(value)" Value="SelectedDifficulty" Style="width:300px">
-                            @foreach (var difficulty in Enum.GetValues(typeof(Difficulty)))
+                            @foreach (var difficulty in Enum.GetValues<Difficulty>())
                         {
-                            if ((Difficulty)difficulty == Difficulty.None)
+                            if (difficulty == Difficulty.None)
                             {
                                 continue;
                             }

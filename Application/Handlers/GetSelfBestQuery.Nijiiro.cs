@@ -1,13 +1,14 @@
-using Throw;
-
 namespace TaikoLocalServer.Application.Handlers;
 
 public partial class GetSelfBestQueryHandler
 {
     private partial async ValueTask<CommonSelfBestResponse> HandleNijiiro(GetSelfBestQuery request, CancellationToken cancellationToken)
     {
-        var requestDifficulty = (Difficulty)request.Difficulty;
-        requestDifficulty.Throw().IfOutOfRange();
+        var requestDifficulty = Ac15Difficulty.FromProtocol(request.Difficulty);
+        if (requestDifficulty == Difficulty.None)
+        {
+            throw new ArgumentOutOfRangeException(nameof(request.Difficulty), request.Difficulty, "Invalid difficulty.");
+        }
 
         var allSongSet = gameDataService.Nijiiro().GetMusicList().ToHashSet();
         var requestSet = request.SongIdList.ToHashSet();

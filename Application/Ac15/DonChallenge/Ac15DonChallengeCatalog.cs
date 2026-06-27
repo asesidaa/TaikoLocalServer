@@ -72,7 +72,7 @@ public sealed record Ac15DonChallengeRule(
     uint? MinimumScore = null,
     uint? RequiredSongCount = null,
     uint? RequiredCommunityCount = null,
-    uint? MinimumLevel = null,
+    Difficulty? MinimumLevel = null,
     IReadOnlyList<uint>? EligibleSongNoes = null)
 {
     public static Ac15DonChallengeRule Unsupported { get; } = new(

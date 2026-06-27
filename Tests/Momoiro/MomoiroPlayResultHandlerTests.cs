@@ -267,7 +267,7 @@ public sealed class MomoiroPlayResultHandlerTests
         => new()
         {
             SongNo = songNo,
-            Level = level,
+            Level = Ac15Difficulty.FromProtocol(level),
             StageMode = stageMode,
             PlayResult = 2,
             PlayScore = score,

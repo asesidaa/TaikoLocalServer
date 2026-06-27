@@ -33,7 +33,7 @@ public sealed class Ac15PlayResultInputTests
                     new Ac15StageResult
                     {
                         SongNo = 101,
-                        Level = 1,
+                        Level = Difficulty.Easy,
                         StageMode = 0,
                         PlayResult = 2,
                         PlayScore = 765432,

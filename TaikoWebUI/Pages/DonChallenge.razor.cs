@@ -193,9 +193,10 @@ public partial class DonChallenge
 
     private static string GetDifficultyText(uint level)
     {
-        if (Enum.IsDefined(typeof(Difficulty), level) && (Difficulty)level is not Difficulty.None)
+        var difficulty = ScoreUtils.GetDifficulty(level);
+        if (difficulty is not Difficulty.None)
         {
-            return (Difficulty)level is Difficulty.UraOni ? "Ura Oni" : ((Difficulty)level).ToString();
+            return difficulty is Difficulty.UraOni ? "Ura Oni" : difficulty.ToString();
         }
 
         return $"Level {level}";

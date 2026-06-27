@@ -19,6 +19,6 @@ public sealed class CommonTaikojukuResponse
     {
         public uint SongNo { get; set; }
 
-        public uint Level { get; set; }
+        public Difficulty Level { get; set; }
     }
 }

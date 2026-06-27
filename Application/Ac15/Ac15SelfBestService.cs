@@ -7,7 +7,7 @@ public static class Ac15SelfBestService
         IReadOnlyList<uint> requestedSongs,
         IEnumerable<Ac15BestRow> bestRows)
     {
-        var difficulty = MapProtocolDifficulty(requestedDifficulty);
+        var difficulty = Ac15Difficulty.FromProtocol(requestedDifficulty);
         var rowsByKey = bestRows.ToDictionary(row => (row.SongId, row.Difficulty, row.IsShin));
 
         return new CommonSelfBestResponse
@@ -21,7 +21,7 @@ public static class Ac15SelfBestService
 
     public static Difficulty[] GetRequestedDifficulties(uint requestedDifficulty)
     {
-        var difficulty = MapProtocolDifficulty(requestedDifficulty);
+        var difficulty = Ac15Difficulty.FromProtocol(requestedDifficulty);
         return difficulty == Difficulty.Oni
             ? [Difficulty.Oni, Difficulty.UraOni]
             : [difficulty];
@@ -46,13 +46,4 @@ public static class Ac15SelfBestService
         };
     }
 
-    private static Difficulty MapProtocolDifficulty(uint difficulty) => difficulty switch
-    {
-        1 => Difficulty.Easy,
-        2 => Difficulty.Normal,
-        3 => Difficulty.Hard,
-        4 => Difficulty.Oni,
-        5 => Difficulty.UraOni,
-        _ => Difficulty.None
-    };
 }

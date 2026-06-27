@@ -142,9 +142,9 @@ internal sealed class BlueHandlerFixture : IAsyncDisposable
                 VerupNo = 0,
                 Songs =
                 [
-                    new() { SongNo = 101, Level = 0 },
-                    new() { SongNo = 102, Level = 0 },
-                    new() { SongNo = 103, Level = 0 }
+                    new() { SongNo = 101, Level = Difficulty.Easy },
+                    new() { SongNo = 102, Level = Difficulty.Easy },
+                    new() { SongNo = 103, Level = Difficulty.Easy }
                 ]
             }
         ];

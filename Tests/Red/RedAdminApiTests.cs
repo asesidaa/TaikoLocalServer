@@ -408,7 +408,7 @@ public sealed class RedAdminApiTests
                     ChallengeLevel = 1,
                     Name = "Red Dan",
                     VerupNo = 8100,
-                    Songs = [new Ac15TaikojukuSong { SongNo = 201, Level = 1 }],
+                    Songs = [new Ac15TaikojukuSong { SongNo = 201, Level = Difficulty.Easy }],
                     Conditions = new Ac15TaikojukuConditions { SoulGauge = 80 },
                     ExcellentConditions = new Ac15TaikojukuConditions { SoulGauge = 100 }
                 }

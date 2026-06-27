@@ -175,8 +175,8 @@ public sealed class MurasakiProtocolVersionCompatibilityTests
                 Name = $"Dan {dan}",
                 Songs =
                 [
-                    new Ac15TaikojukuSong { SongNo = 101, Level = 1 },
-                    new Ac15TaikojukuSong { SongNo = 102, Level = 1 }
+                    new Ac15TaikojukuSong { SongNo = 101, Level = Difficulty.Easy },
+                    new Ac15TaikojukuSong { SongNo = 102, Level = Difficulty.Easy }
                 ]
             })
             .ToArray());

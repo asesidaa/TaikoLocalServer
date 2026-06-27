@@ -1,13 +1,14 @@
-using Throw;
-
 namespace TaikoLocalServer.Application.Handlers;
 
 public partial class GetAiScoreQueryHandler
 {
     private partial async ValueTask<CommonAiScoreResponse> HandleNijiiro(GetAiScoreQuery request, CancellationToken cancellationToken)
     {
-        var difficulty = (Difficulty)request.Level;
-        difficulty.Throw().IfOutOfRange();
+        var difficulty = Ac15Difficulty.FromProtocol(request.Level);
+        if (difficulty == Difficulty.None)
+        {
+            throw new ArgumentOutOfRangeException(nameof(request.Level), request.Level, "Invalid difficulty.");
+        }
 
         var aiData = await context.AiScoreDataNijiiro.Where(datum => datum.Baid == request.Baid &&
                                                              datum.SongId == request.SongId &&

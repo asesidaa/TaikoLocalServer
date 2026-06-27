@@ -154,7 +154,7 @@ public sealed class Ac15DaniCapabilityTests
                 new Ac15StageResult
                 {
                     SongNo = 101,
-                    Level = 1,
+                    Level = Difficulty.Easy,
                     PlayScore = 1000,
                     GoodCnt = 10,
                     OkCnt = 2,

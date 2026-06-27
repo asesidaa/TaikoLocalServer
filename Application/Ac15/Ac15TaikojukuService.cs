@@ -90,7 +90,7 @@ public static class Ac15TaikojukuService
             Songs = songs.Select(song => new Ac15TaikojukuSong
             {
                 SongNo = song.SongNo,
-                Level = (uint)Math.Min(index, (int)limits.MaxCourseLevel - 1),
+                Level = Ac15Difficulty.FromSequentialIndex(index, limits.MinCourseLevel, limits.MaxCourseLevel),
                 MusicId = song.MusicId
             }).ToArray()
         };
@@ -107,7 +107,7 @@ public static class Ac15TaikojukuService
             VerupNo = entry.VerupNo,
             Songs = entry.Songs
                 .Where(song => validSongNoes.Contains(song.SongNo))
-                .Where(song => song.Level <= limits.MaxCourseLevel - 1)
+                .Where(song => Ac15Difficulty.IsInRange(song.Level, limits.MinCourseLevel, limits.MaxCourseLevel))
                 .Take(limits.MaxSongsPerTaikojukuPack)
                 .Select(song => new CommonTaikojukuResponse.Song
                 {

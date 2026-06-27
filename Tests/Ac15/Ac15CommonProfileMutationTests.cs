@@ -148,7 +148,7 @@ public sealed class Ac15CommonProfileMutationTests
         => new()
         {
             SongNo = songNo,
-            Level = 1,
+            Level = Difficulty.Easy,
             StageMode = 0,
             MusicCateg = 2,
             IsFavorite = isFavorite,

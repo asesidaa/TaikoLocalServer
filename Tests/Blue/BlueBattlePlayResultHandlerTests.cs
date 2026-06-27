@@ -18,14 +18,14 @@ public sealed class BlueBattlePlayResultHandlerTests
             playDatetime: "20260528120000",
             playMode: 6,
             release: CreateReleaseData(assignNextStageId: 44),
-            stages: [CreateBattleStage(9999, 99, 99, battleStageId: 33)]),
+            stages: [CreateBattleStage(9999, 5, 99, battleStageId: 33)]),
             CancellationToken.None);
 
         Assert.Equal(1u, result);
 
         var stage = await fixture.Context.BlueBattleStageResults.SingleAsync(row => row.Baid == 1);
         Assert.Equal(9999u, stage.SongNo);
-        Assert.Equal(99u, stage.Level);
+        Assert.Equal(5u, stage.Level);
         Assert.Equal(99u, stage.StageMode);
         Assert.Equal(33u, stage.BattleStageId);
         Assert.Equal(9u, stage.NpcId);
@@ -372,7 +372,7 @@ public sealed class BlueBattlePlayResultHandlerTests
         => new()
         {
             SongNo = songNo,
-            Level = level,
+            Level = Ac15Difficulty.FromProtocol(level),
             StageMode = stageMode,
             PlayResult = 2,
             PlayScore = 765432,

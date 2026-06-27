@@ -91,7 +91,7 @@ public partial class SongLeaderboardCard
         if (songPageDifficulty != null)
         {
             SelectedDifficulty = songPageDifficulty;
-            Difficulty = Enum.Parse<Difficulty>(SelectedDifficulty);
+            Difficulty = ParseSelectedDifficulty(SelectedDifficulty);
         } 
         else
         {
@@ -109,7 +109,7 @@ public partial class SongLeaderboardCard
     {
         isLoading = true;
         SelectedDifficulty = difficulty;
-        Difficulty = Enum.Parse<Difficulty>(SelectedDifficulty);
+        Difficulty = ParseSelectedDifficulty(SelectedDifficulty);
         
         await LocalStorage.SetItemAsync("songPageDifficulty", SelectedDifficulty);
         await GetLeaderboardData();
@@ -123,6 +123,11 @@ public partial class SongLeaderboardCard
         currentPage = page;
         await GetLeaderboardData();
     }
+
+    private static Difficulty ParseSelectedDifficulty(string selected)
+        => Enum.TryParse<Difficulty>(selected, out var difficulty) && difficulty is not Difficulty.None
+            ? difficulty
+            : Difficulty.Easy;
 
 
     private Task UserChanged(SongLeaderboard leaderboard)

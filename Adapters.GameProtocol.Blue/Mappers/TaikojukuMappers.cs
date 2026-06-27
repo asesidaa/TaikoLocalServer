@@ -12,6 +12,9 @@ public static partial class TaikojukuMappers
     private static partial TaikojukuResponse.JukupackData MapPack(
         CommonTaikojukuResponse.Pack pack);
 
+    [MapProperty(nameof(CommonTaikojukuResponse.Song.Level), nameof(TaikojukuResponse.JukupackData.JukusongData.Level), Use = nameof(MapDifficulty))]
     private static partial TaikojukuResponse.JukupackData.JukusongData MapSong(
         CommonTaikojukuResponse.Song song);
+
+    private static uint MapDifficulty(Difficulty value) => Ac15Difficulty.ToProtocol(value);
 }

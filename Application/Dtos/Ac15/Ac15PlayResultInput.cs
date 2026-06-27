@@ -64,7 +64,7 @@ public sealed record Ac15ProfileMutationFacts
 public sealed record Ac15StageResult
 {
     public uint SongNo { get; init; }
-    public uint Level { get; init; }
+    public Difficulty Level { get; init; }
     public uint PlayResult { get; init; }
     public uint PlayScore { get; init; }
     public uint ScoreRate { get; init; }

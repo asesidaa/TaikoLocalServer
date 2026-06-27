@@ -153,11 +153,13 @@ public partial class Profile
                                       .CompareTo(GameDataService.GetMusicIndexBySongId(musicDetailDictionary, data2.SongId)));
         }
 
-        for (var i = 0; i <= (int)Difficulty.UraOni; i++)
-            if (songBestDataMap.ContainsKey((Difficulty)i) && songBestDataMap[(Difficulty)i].Count > 0)
+        foreach (var value in Enum.GetValues<Difficulty>().Where(value => value is not Difficulty.None))
+        {
+            if (songBestDataMap.ContainsKey(value) && songBestDataMap[value].Count > 0)
             {
-                highestDifficulty = (Difficulty)i;
+                highestDifficulty = value;
             }
+        }
         
         if (response != null) UpdateScores(response.AchievementDisplayDifficulty);
     }

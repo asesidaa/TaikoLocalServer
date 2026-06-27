@@ -236,7 +236,7 @@ public sealed class Ac15NormalPlayWriterTests
         => new()
         {
             SongNo = songNo,
-            Level = 1,
+            Level = Difficulty.Easy,
             StageMode = 0,
             PlayResult = 2,
             PlayScore = 123456,

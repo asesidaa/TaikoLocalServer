@@ -526,7 +526,7 @@ public sealed class BluePlayResultHandlerTests
                     UniqueId = 20101,
                     ChallengeLevel = 101,
                     VerupNo = 0,
-                    Songs = [new Ac15TaikojukuSong { SongNo = 101, Level = 1 }]
+                    Songs = [new Ac15TaikojukuSong { SongNo = 101, Level = Difficulty.Easy }]
                 }
             ]));
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
@@ -787,7 +787,7 @@ public sealed class BluePlayResultHandlerTests
         return new Ac15StageResult
         {
             SongNo = songNo,
-            Level = level,
+            Level = Ac15Difficulty.FromProtocol(level),
             StageMode = stageMode,
             PlayResult = 2,
             PlayScore = score,

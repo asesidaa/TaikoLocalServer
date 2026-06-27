@@ -72,7 +72,7 @@ public sealed class YellowMetadataRouteTests
                 {
                     GetDan = 1,
                     VerupNo = 7,
-                    Songs = [new CommonTaikojukuResponse.Song { SongNo = 101, Level = 2 }]
+                    Songs = [new CommonTaikojukuResponse.Song { SongNo = 101, Level = Difficulty.Normal }]
                 }
             ]
         });

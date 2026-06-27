@@ -2,15 +2,7 @@ namespace TaikoLocalServer.Application.Common;
 
 public static class BluePlayResultMapping
 {
-    public static Difficulty MapDifficulty(uint level) => level switch
-    {
-        1 => Difficulty.Easy,
-        2 => Difficulty.Normal,
-        3 => Difficulty.Hard,
-        4 => Difficulty.Oni,
-        5 => Difficulty.UraOni,
-        _ => Difficulty.None
-    };
+    public static Difficulty MapDifficulty(uint level) => Ac15Difficulty.FromProtocol(level);
 
     public static CrownType MapCrown(uint playResult) => playResult switch
     {

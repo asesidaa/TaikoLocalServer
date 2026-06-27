@@ -183,7 +183,7 @@ else
                                                 var index = (int)j;
                                                 var danDataOdaiSong = danData.OdaiSongList[index];
                                                 var stageNumber = j + 1;
-                                                var difficulty = (Difficulty)danDataOdaiSong.Level;
+                                                var difficulty = ScoreUtils.GetDifficulty(danDataOdaiSong.Level);
 
                                                 <MudItem xs="12" Class="pb-1">
                                                     <MudCard Outlined="true" Class="pa-4">

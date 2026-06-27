@@ -5,7 +5,7 @@ namespace TaikoLocalServer.Application.Ac15.DonChallenge;
 public sealed record Ac15DonChallengeTrackDefinition(
     uint TrackNo,
     uint SongNo,
-    uint Level,
+    Difficulty Level,
     uint StageMode,
     byte[] OptionFlg)
 {
@@ -24,12 +24,12 @@ public static class Ac15DonChallengeTrackDefinitions
             return [];
         }
 
-        var minimumLevel = task.Rule.MinimumLevel.GetValueOrDefault(1);
+        var minimumLevel = task.Rule.MinimumLevel.GetValueOrDefault(Difficulty.Easy);
         var tracks = new List<Ac15DonChallengeTrackDefinition>();
         var trackNo = 1u;
         foreach (var songNo in task.Rule.EligibleSongNoes)
         {
-            for (var level = minimumLevel; level <= 5; level++)
+            foreach (var level in Ac15Difficulty.Range(minimumLevel, Difficulty.UraOni))
             {
                 // RED playresult uses the 1-based ary_track_stat index as track_no.
                 tracks.Add(new Ac15DonChallengeTrackDefinition(

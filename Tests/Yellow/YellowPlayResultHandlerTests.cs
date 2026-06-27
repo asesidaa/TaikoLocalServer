@@ -954,7 +954,7 @@ public sealed class YellowPlayResultHandlerTests
 
         var stage = Assert.Single(envelope.Normal!.Stages);
         Assert.Equal(101u, stage.SongNo);
-        Assert.Equal(1u, stage.Level);
+        Assert.Equal(Difficulty.Easy, stage.Level);
         Assert.Equal(0u, stage.StageMode);
         Assert.Equal(765432u, stage.PlayScore);
         Assert.Equal(123u, stage.HitCnt);
@@ -1053,7 +1053,7 @@ public sealed class YellowPlayResultHandlerTests
         return new Ac15StageResult
         {
             SongNo = songNo,
-            Level = level,
+            Level = Ac15Difficulty.FromProtocol(level),
             StageMode = stageMode,
             PlayResult = 2,
             PlayScore = score,
@@ -1086,8 +1086,8 @@ public sealed class YellowPlayResultHandlerTests
                 Name = $"Dan {dan}",
                 Songs =
                 [
-                    new Ac15TaikojukuSong { SongNo = 101, Level = 1 },
-                    new Ac15TaikojukuSong { SongNo = 102, Level = 1 }
+                    new Ac15TaikojukuSong { SongNo = 101, Level = Difficulty.Easy },
+                    new Ac15TaikojukuSong { SongNo = 102, Level = Difficulty.Easy }
                 ]
             })
             .ToArray());

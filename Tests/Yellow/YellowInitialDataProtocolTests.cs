@@ -119,7 +119,7 @@ public sealed class YellowInitialDataProtocolTests
                 DanLevel = 1,
                 ChallengeLevel = 1,
                 VerupNo = 8,
-                Songs = [new Ac15TaikojukuSong { MusicId = "song101", SongNo = 101, Level = 2 }]
+                Songs = [new Ac15TaikojukuSong { MusicId = "song101", SongNo = 101, Level = Difficulty.Hard }]
             }
         ]
     };

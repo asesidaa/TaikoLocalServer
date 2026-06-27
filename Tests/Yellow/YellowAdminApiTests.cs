@@ -349,7 +349,7 @@ public sealed class YellowAdminApiTests
                     ChallengeLevel = 1,
                     Name = "Yellow Dan",
                     VerupNo = 9100,
-                    Songs = [new Ac15TaikojukuSong { SongNo = 201, Level = 1 }],
+                    Songs = [new Ac15TaikojukuSong { SongNo = 201, Level = Difficulty.Easy }],
                     Conditions = new Ac15TaikojukuConditions { SoulGauge = 80 },
                     ExcellentConditions = new Ac15TaikojukuConditions { SoulGauge = 100 }
                 }

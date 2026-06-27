@@ -36,7 +36,7 @@ public sealed class RedDonChallengeCatalogTests
         Assert.Equal(1u, bundle.PersonalTasks[0].Rule.RequiredSongCount);
         Assert.True(bundle.PersonalTasks[0].Rule.CanExecute);
         Assert.Equal(Ac15DonChallengeRuleKind.FullCombo, bundle.PersonalTasks[1].Rule.Kind);
-        Assert.Equal(3u, bundle.PersonalTasks[1].Rule.MinimumLevel);
+        Assert.Equal(Difficulty.Hard, bundle.PersonalTasks[1].Rule.MinimumLevel);
         Assert.Equal(Ac15DonChallengeRuleKind.ScoreThreshold, bundle.PersonalTasks[2].Rule.Kind);
         Assert.Equal(765000u, bundle.PersonalTasks[2].Rule.MinimumScore);
         Assert.Equal(Ac15DonChallengeRuleKind.Clear, bundle.PersonalTasks[3].Rule.Kind);
@@ -110,7 +110,7 @@ public sealed class RedDonChallengeCatalogTests
         Assert.Equal([618u], august.CommunityTask?.Rule.EligibleSongNoes);
         Assert.Equal([618u], august.Rewards[0].RewardSongNoes);
         Assert.Equal([484u], august.Rewards[1].RewardTitleIds);
-        Assert.Equal(3u, august.PersonalTasks[2].Rule.MinimumLevel);
+        Assert.Equal(Difficulty.Hard, august.PersonalTasks[2].Rule.MinimumLevel);
 
         var february = Assert.Single(catalog.MonthlyBundles, bundle => bundle.BundleId == "red-2017-02");
         Assert.Equal([388u, 677u], february.PersonalTasks[9].Rule.EligibleSongNoes);

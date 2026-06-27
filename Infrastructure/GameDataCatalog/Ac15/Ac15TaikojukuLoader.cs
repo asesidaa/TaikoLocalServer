@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Xml.Linq;
 using TaikoLocalServer.Application.Catalog.Ac15;
+using TaikoLocalServer.Application.Common;
 
 namespace TaikoLocalServer.Infrastructure.GameDataCatalog.Ac15;
 
@@ -28,7 +29,7 @@ public sealed class Ac15TaikojukuLoader
                 UniqueId = ReadUInt(element, "uniqueid"),
                 DanLevel = ReadUInt(element, "challengelv"),
                 Name = ReadString(element, "medleyname"),
-                Difficulty = ReadUInt(element, "difficulty"),
+                Difficulty = Ac15Difficulty.FromZeroBasedCourse(ReadUInt(element, "difficulty")),
                 ChallengeLevel = ReadUInt(element, "challengelv"),
                 Conditions = ReadConditions(element.Element("Conditions")),
                 ExcellentConditions = ReadConditions(element.Element("ExcellentConditions")),
@@ -37,7 +38,7 @@ public sealed class Ac15TaikojukuLoader
                     {
                         MusicId = ReadString(content, "musicid"),
                         SongNo = ReadUInt(content, "uniqueid"),
-                        Level = ReadUInt(content, "difficulty"),
+                        Level = Ac15Difficulty.FromZeroBasedCourse(ReadUInt(content, "difficulty")),
                         Notes = ReadUInt(content, "notes")
                     })
                     .ToArray()

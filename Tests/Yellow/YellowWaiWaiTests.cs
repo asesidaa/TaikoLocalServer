@@ -119,7 +119,7 @@ public sealed class YellowWaiWaiTests
         => new()
         {
             SongNo = songNo,
-            Level = level,
+            Level = Ac15Difficulty.FromProtocol(level),
             StageMode = stageMode,
             PlayResult = 2,
             PlayScore = 765432,

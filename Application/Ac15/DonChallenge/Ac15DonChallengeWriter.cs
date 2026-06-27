@@ -45,7 +45,7 @@ public static class Ac15DonChallengeWriter
                 CompeId = evaluation.Task.CompeId,
                 TrackNo = evaluation.Track.TrackNo,
                 SongNo = evaluation.Stage.SongNo,
-                Level = evaluation.Stage.Level,
+                Level = Ac15Difficulty.ToProtocol(evaluation.Stage.Level),
                 OptionFlg = evaluation.Stage.OptionFlg,
                 StageMode = evaluation.Stage.StageMode,
                 HighScore = evaluation.Stage.PlayScore,
@@ -88,7 +88,7 @@ public static class Ac15DonChallengeWriter
                     CompeId = representative.Task.CompeId,
                     TrackNo = 0,
                     SongNo = representative.Stage.SongNo,
-                    Level = representative.Stage.Level,
+                    Level = Ac15Difficulty.ToProtocol(representative.Stage.Level),
                     OptionFlg = representative.Stage.OptionFlg,
                     StageMode = representative.Stage.StageMode,
                     HighScore = representative.Stage.PlayScore,
@@ -103,7 +103,7 @@ public static class Ac15DonChallengeWriter
             progress.Slot = representative.Task.Slot;
             progress.CompeId = representative.Task.CompeId;
             progress.SongNo = representative.Stage.SongNo;
-            progress.Level = representative.Stage.Level;
+            progress.Level = Ac15Difficulty.ToProtocol(representative.Stage.Level);
             progress.OptionFlg = representative.Stage.OptionFlg;
             progress.StageMode = representative.Stage.StageMode;
             progress.HighScore = Math.Max(progress.HighScore, representative.Stage.PlayScore);

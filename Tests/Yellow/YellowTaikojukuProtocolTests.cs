@@ -25,8 +25,8 @@ public sealed class YellowTaikojukuProtocolTests
                     VerupNo = 44,
                     Songs =
                     [
-                        new Ac15TaikojukuSong { MusicId = "song101", SongNo = 101, Level = 0 },
-                        new Ac15TaikojukuSong { MusicId = "song102", SongNo = 102, Level = 3 }
+                        new Ac15TaikojukuSong { MusicId = "song101", SongNo = 101, Level = Difficulty.Easy },
+                        new Ac15TaikojukuSong { MusicId = "song102", SongNo = 102, Level = Difficulty.Oni }
                     ]
                 }
             ]
@@ -44,7 +44,7 @@ public sealed class YellowTaikojukuProtocolTests
         Assert.Equal(1u, pack.GetDan);
         Assert.Equal(44u, pack.VerupNo);
         Assert.Equal([101u, 102u], pack.Songs.Select(song => song.SongNo).ToArray());
-        Assert.Equal([0u, 3u], pack.Songs.Select(song => song.Level).ToArray());
+        Assert.Equal([Difficulty.Easy, Difficulty.Oni], pack.Songs.Select(song => song.Level).ToArray());
     }
 
     private sealed class FakeGameDataCatalog(IYellowCatalog yellow) : IGameDataCatalog

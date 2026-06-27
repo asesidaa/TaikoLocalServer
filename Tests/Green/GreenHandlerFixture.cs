@@ -113,9 +113,9 @@ internal sealed class GreenHandlerFixture : IAsyncDisposable
                 },
                 Songs =
                 [
-                    new() { SongNo = 101, Level = 0 },
-                    new() { SongNo = 102, Level = 0 },
-                    new() { SongNo = 103, Level = 0 }
+                    new() { SongNo = 101, Level = Difficulty.Easy },
+                    new() { SongNo = 102, Level = Difficulty.Easy },
+                    new() { SongNo = 103, Level = Difficulty.Easy }
                 ]
             },
             new()
@@ -124,9 +124,9 @@ internal sealed class GreenHandlerFixture : IAsyncDisposable
                 ChallengeLevel = 101,
                 Songs =
                 [
-                    new() { SongNo = 104, Level = 1 },
-                    new() { SongNo = 105, Level = 1 },
-                    new() { SongNo = 106, Level = 1 }
+                    new() { SongNo = 104, Level = Difficulty.Normal },
+                    new() { SongNo = 105, Level = Difficulty.Normal },
+                    new() { SongNo = 106, Level = Difficulty.Normal }
                 ]
             }
         ];

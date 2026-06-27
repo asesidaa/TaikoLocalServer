@@ -44,7 +44,7 @@ public sealed class BlueCatalogLoaderTests
         Assert.NotEmpty(entries);
         Assert.True(entries[0].UniqueId > 0);
         Assert.True(entries[0].ChallengeLevel > 0);
-        Assert.Equal(1u, entries[0].VerupNo);
+        Assert.Equal(5u, entries[0].VerupNo);
         Assert.NotEmpty(entries[0].Songs);
     }
 

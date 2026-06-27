@@ -4,11 +4,6 @@ namespace TaikoLocalServer.Application.Handlers;
 
 public partial class GetTaikojukuQueryHandler
 {
-    private const int MaxBlueDanSlots = 25;
-    private const int MaxBlueRequestedSlotsPerRequest = 11;
-    private const int MaxBlueSongsPerPack = 10;
-    private const uint MaxBlueCourseLevel = 4;
-
     private partial ValueTask<CommonTaikojukuResponse> HandleBlue(
         GetTaikojukuQuery request,
         CancellationToken cancellationToken)

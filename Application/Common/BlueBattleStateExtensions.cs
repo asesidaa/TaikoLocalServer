@@ -39,7 +39,7 @@ public static class BlueBattleStateExtensions
                 StageMode = stage.StageMode,
                 StageIndex = (uint)index,
                 SongNo = stage.SongNo,
-                Level = stage.Level,
+                Level = Ac15Difficulty.ToProtocol(stage.Level),
                 BattleStageId = battleStage.BattleStageId,
                 NpcId = npc?.NpcId,
                 ResultType = stage.PlayResult,

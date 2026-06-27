@@ -132,7 +132,7 @@ public sealed class RedDonChallengeTests
         await using var fixture = await RedHandlerFixture.CreateAsync(CreateCatalog(rule: new Ac15DonChallengeRule(
             Ac15DonChallengeRuleKind.Clear,
             EligibleSongNoes: [101],
-            MinimumLevel: 3)));
+            MinimumLevel: Difficulty.Hard)));
         AddUser(fixture, protocolChallengeVisible: true);
         var handler = CreateHandler(fixture);
 
@@ -586,7 +586,7 @@ public sealed class RedDonChallengeTests
         => new()
         {
             SongNo = songNo,
-            Level = level,
+            Level = Ac15Difficulty.FromProtocol(level),
             StageMode = 0,
             PlayResult = 2,
             PlayScore = 765432,

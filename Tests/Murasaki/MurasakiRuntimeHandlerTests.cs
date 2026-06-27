@@ -112,7 +112,7 @@ public sealed class MurasakiRuntimeHandlerTests
                 DanLevel = 1,
                 VerupNo = 5,
                 Name = "Dan 1",
-                Songs = [new Ac15TaikojukuSong { SongNo = 101, Level = 1 }]
+                Songs = [new Ac15TaikojukuSong { SongNo = 101, Level = Difficulty.Easy }]
             }
         ])
         {
@@ -335,7 +335,7 @@ public sealed class MurasakiRuntimeHandlerTests
         => new()
         {
             SongNo = songNo,
-            Level = level,
+            Level = Ac15Difficulty.FromProtocol(level),
             StageMode = stageMode,
             PlayResult = 2,
             PlayScore = score,
@@ -367,8 +367,8 @@ public sealed class MurasakiRuntimeHandlerTests
                 Name = $"Dan {dan}",
                 Songs =
                 [
-                    new Ac15TaikojukuSong { SongNo = 101, Level = 1 },
-                    new Ac15TaikojukuSong { SongNo = 102, Level = 1 }
+                    new Ac15TaikojukuSong { SongNo = 101, Level = Difficulty.Easy },
+                    new Ac15TaikojukuSong { SongNo = 102, Level = Difficulty.Easy }
                 ]
             })
             .ToArray());

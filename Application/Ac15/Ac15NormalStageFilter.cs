@@ -19,8 +19,7 @@ public static class Ac15NormalStageFilter
         foreach (var stage in stages)
         {
             if (stage.SongNo >= limits.SongFlagBytes * 8
-                || stage.Level < limits.MinCourseLevel
-                || stage.Level > limits.MaxCourseLevel)
+                || !Ac15Difficulty.IsInRange(stage.Level, limits.MinCourseLevel, limits.MaxCourseLevel))
             {
                 logger.LogWarning(
                     "Skipping invalid AC15 stage for baid {Baid}: song={SongNo} level={Level} stage_mode={StageMode}",
