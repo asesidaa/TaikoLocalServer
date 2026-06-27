@@ -140,7 +140,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
-| 260628-ama | Check White Taikojuku patch portability for White final and Murasaki variants | 2026-06-27 | analysis-only | [260628-ama-now-we-have-finished-the-patch-for-white](./quick/260628-ama-now-we-have-finished-the-patch-for-white/) |
+| 260628-ama | Check White Taikojuku patch portability for White final and Murasaki variants | 2026-06-27 | eab33d5b | [260628-ama-now-we-have-finished-the-patch-for-white](./quick/260628-ama-now-we-have-finished-the-patch-for-white/) |
 
 ### Blockers/Concerns
 
