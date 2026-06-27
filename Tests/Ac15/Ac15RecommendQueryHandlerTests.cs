@@ -121,6 +121,8 @@ public sealed class Ac15RecommendQueryHandlerTests
 
         public IReadOnlyDictionary<uint, Ac15TelopEntry> Telops { get; } = new Dictionary<uint, Ac15TelopEntry>();
 
+        public IReadOnlyList<TaikoLocalServer.Application.ServerData.MovieData> Movies { get; } = [];
+
         public Task InitializeAsync(CancellationToken cancellationToken) => Task.CompletedTask;
     }
 }

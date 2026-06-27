@@ -615,6 +615,8 @@ internal sealed class MomoiroHandlerFixture : IAsyncDisposable
         public IReadOnlyDictionary<uint, Ac15TelopEntry> Telops { get; init; } =
             new Dictionary<uint, Ac15TelopEntry>();
 
+        public IReadOnlyList<MovieData> Movies { get; init; } = [];
+
         public IReadOnlyList<Ac15TaikojukuEntry> DaniFileOrder { get; }
 
         public IReadOnlyList<Costume> CostumeList { get; init; } =

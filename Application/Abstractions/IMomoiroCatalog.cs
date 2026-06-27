@@ -15,4 +15,6 @@ public interface IMomoiroCatalog : IEraGameDataCatalog
     IReadOnlyList<Ac15TaikojukuEntry> DaniFileOrder { get; }
 
     IReadOnlyDictionary<uint, Ac15TelopEntry> Telops { get; }
+
+    IReadOnlyList<MovieData> Movies { get; }
 }

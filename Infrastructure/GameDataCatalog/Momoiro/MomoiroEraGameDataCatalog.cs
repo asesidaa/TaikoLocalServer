@@ -11,6 +11,7 @@ public sealed class MomoiroEraGameDataCatalog(
     ILogger<MomoiroEraGameDataCatalog> logger) : IMomoiroCatalog
 {
     public const string TelopFileName = "momoiro_telop_data.json";
+    public const string MovieFileName = "momoiro_movie_data.json";
 
     private uint songHashVersion;
     private IReadOnlyList<ushort> songHashTable = [];
@@ -19,6 +20,7 @@ public sealed class MomoiroEraGameDataCatalog(
     private IReadOnlyDictionary<uint, IMusicInfoEntry> sharedMusicInfos = new Dictionary<uint, IMusicInfoEntry>();
     private IReadOnlyList<Ac15TaikojukuEntry> daniFileOrder = [];
     private IReadOnlyDictionary<uint, Ac15TelopEntry> telops = new Dictionary<uint, Ac15TelopEntry>();
+    private IReadOnlyList<MovieData> movies = [];
 
     public GameEra Era => GameEra.Momoiro;
 
@@ -35,6 +37,8 @@ public sealed class MomoiroEraGameDataCatalog(
     public IReadOnlyList<Ac15TaikojukuEntry> DaniFileOrder => daniFileOrder;
 
     public IReadOnlyDictionary<uint, Ac15TelopEntry> Telops => telops;
+
+    public IReadOnlyList<MovieData> Movies => movies;
 
     public async Task InitializeAsync(CancellationToken cancellationToken)
     {
@@ -85,14 +89,21 @@ public sealed class MomoiroEraGameDataCatalog(
         telops = await Ac15TelopLoader.LoadFromFileAsync(
             Path.Combine(PathHelper.GetDataPath(GameEra.Momoiro), TelopFileName),
             cancellationToken);
+        movies = await Ac15MovieLoader.LoadFromFileAsync(
+            Path.Combine(PathHelper.GetDataPath(GameEra.Momoiro), MovieFileName),
+            MomoiroGameDataPaths.MovieDirectory,
+            nameof(GameEra.Momoiro),
+            logger,
+            cancellationToken);
 
         logger.LogInformation(
-            "Loaded Momoiro catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {DaniCount} Dani rows, {StarCount} tuning star rows, {TelopCount} telops",
+            "Loaded Momoiro catalog: {SongCount} songs, song_hash_ver={SongHashVersion}, {DaniCount} Dani rows, {StarCount} tuning star rows, {TelopCount} telops, {MovieCount} attract movies",
             musicInfoFileOrder.Count,
             songHashVersion,
             daniFileOrder.Count,
             stars.Count,
-            telops.Count);
+            telops.Count,
+            movies.Count);
     }
 
     private static bool IsMedleyMusicInfoEntry(Ac15MusicInfoEntry entry)

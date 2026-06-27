@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TaikoLocalServer.Application.Settings;
 using TaikoLocalServer.Infrastructure;
+using MovieData = TaikoLocalServer.Application.ServerData.MovieData;
 
 namespace TaikoLocalServer.Tests.Momoiro;
 
@@ -30,6 +31,26 @@ public sealed class MomoiroCatalogLoaderTests
 
         var musicInfoFileOrder = GetRequiredPropertyValue<IReadOnlyList<Ac15MusicInfoEntry>>(momoiro, "MusicInfoFileOrder");
         Assert.Equal(380, musicInfoFileOrder.Count);
+    }
+
+    [Fact]
+    public async Task CatalogInitialize_LoadsMomoiroMovieSidecarAndDiscoversAttractMovies()
+    {
+        CopyMomoiroCatalogFilesToProcessRoot(includeMovies: true);
+        await using var provider = BuildMomoiroProvider();
+        var catalog = provider.GetRequiredService<IGameDataCatalog>();
+
+        await catalog.InitializeAsync(CancellationToken.None);
+
+        var momoiro = catalog.For(GameEra.Momoiro);
+        var movies = GetRequiredPropertyValue<IReadOnlyList<MovieData>>(momoiro, "Movies");
+        Assert.Collection(
+            movies,
+            movie =>
+            {
+                Assert.Equal(100u, movie.MovieId);
+                Assert.Equal(999u, movie.EnableDays);
+            });
     }
 
     [Fact]
@@ -76,7 +97,9 @@ public sealed class MomoiroCatalogLoaderTests
         return Assert.IsAssignableFrom<T>(value);
     }
 
-    private static void CopyMomoiroCatalogFilesToProcessRoot(bool skipDefMusic = false)
+    private static void CopyMomoiroCatalogFilesToProcessRoot(
+        bool skipDefMusic = false,
+        bool includeMovies = false)
     {
         var repoRoot = FindRepoRoot();
         var targetRoot = ProcessMomoiroRoot();
@@ -101,6 +124,14 @@ public sealed class MomoiroCatalogLoaderTests
         Copy(
             Path.Combine(repoRoot, "Host", "wwwroot", "data", "momoiro", "data", "fumen", "tuning.bin"),
             Path.Combine(targetRoot, "data", "fumen", "tuning.bin"));
+
+        if (includeMovies)
+        {
+            Copy(
+                Path.Combine(repoRoot, "Host", "wwwroot", "data", "momoiro", "momoiro_movie_data.json"),
+                Path.Combine(targetRoot, "momoiro_movie_data.json"));
+            Touch(Path.Combine(targetRoot, "data", "movie", "attract_cm_100.pam"));
+        }
     }
 
     private static string ProcessMomoiroRoot()
@@ -130,5 +161,12 @@ public sealed class MomoiroCatalogLoaderTests
         Directory.CreateDirectory(Path.GetDirectoryName(destination)
             ?? throw new ApplicationException($"Cannot resolve directory for {destination}."));
         File.Copy(source, destination, overwrite: true);
+    }
+
+    private static void Touch(string path)
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(path)
+            ?? throw new ApplicationException($"Cannot resolve directory for {path}."));
+        using var _ = File.Create(path);
     }
 }
