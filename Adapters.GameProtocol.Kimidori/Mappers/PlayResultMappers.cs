@@ -31,6 +31,13 @@ public static partial class PlayResultMappers
     [MapProperty(nameof(PlayResultRequest.GetDonpoint), nameof(Ac15ProfileMutationFacts.GetDonpoint), Use = nameof(MapUInt))]
     [MapPropertyFromSource(nameof(Ac15ProfileMutationFacts.RewardPtn), Use = nameof(MapRewardPtn))]
     [MapPropertyFromSource(nameof(Ac15ProfileMutationFacts.RewardProgress), Use = nameof(MapRewardProgress))]
+    [MapProperty(nameof(PlayResultRequest.ToneFlg), nameof(Ac15ProfileMutationFacts.GetToneNoes), Use = nameof(MapToneFlags))]
+    [MapProperty(nameof(PlayResultRequest.CostumeFlg1), nameof(Ac15ProfileMutationFacts.GetCostumeNo1s), Use = nameof(MapCostumeFlags))]
+    [MapProperty(nameof(PlayResultRequest.CostumeFlg2), nameof(Ac15ProfileMutationFacts.GetCostumeNo2s), Use = nameof(MapCostumeFlags))]
+    [MapProperty(nameof(PlayResultRequest.CostumeFlg3), nameof(Ac15ProfileMutationFacts.GetCostumeNo3s), Use = nameof(MapCostumeFlags))]
+    [MapProperty(nameof(PlayResultRequest.CostumeFlg4), nameof(Ac15ProfileMutationFacts.GetCostumeNo4s), Use = nameof(MapCostumeFlags))]
+    [MapProperty(nameof(PlayResultRequest.CostumeFlg5), nameof(Ac15ProfileMutationFacts.GetCostumeNo5s), Use = nameof(MapCostumeFlags))]
+    [MapProperty(nameof(PlayResultRequest.TitleFlg), nameof(Ac15ProfileMutationFacts.GetTitleNoes), Use = nameof(MapTitleFlags))]
     [MapPropertyFromSource(nameof(Ac15ProfileMutationFacts.IsDevil), Use = nameof(MapIsDevil))]
     [MapPropertyFromSource(nameof(Ac15ProfileMutationFacts.IsExplain), Use = nameof(MapIsExplain))]
     [MapPropertyFromSource(nameof(Ac15ProfileMutationFacts.HasAryCurrentCostume), Use = nameof(HasCurrentCostume))]
@@ -44,13 +51,6 @@ public static partial class PlayResultMappers
     [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.DifficultyPlayedCourse))]
     [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.HasDifficultyPlayedStar))]
     [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.DifficultyPlayedStar))]
-    [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.GetToneNoes))]
-    [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.GetCostumeNo1s))]
-    [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.GetCostumeNo2s))]
-    [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.GetCostumeNo3s))]
-    [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.GetCostumeNo4s))]
-    [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.GetCostumeNo5s))]
-    [MapperIgnoreTarget(nameof(Ac15ProfileMutationFacts.GetTitleNoes))]
     private static partial Ac15ProfileMutationFacts MapProfile(PlayResultRequest request);
 
     [MapProperty(nameof(PlayResultRequest.AryStageInfoes), nameof(Ac15NormalPlayResult.Stages), Use = nameof(MapStages))]
@@ -110,6 +110,15 @@ public static partial class PlayResultMappers
 
     private static uint? MapRewardProgress(PlayResultRequest request)
         => request.ShouldSerializeRewardProgress() ? request.RewardProgress : null;
+
+    private static List<uint> MapToneFlags(byte[]? values)
+        => BitsetCodec.Decode(values, Ac15EraProfiles.Kimidori.Limits.ToneFlagBytes);
+
+    private static List<uint> MapCostumeFlags(byte[]? values)
+        => BitsetCodec.Decode(values, Ac15EraProfiles.Kimidori.Limits.CostumeFlagBytes);
+
+    private static List<uint> MapTitleFlags(byte[]? values)
+        => BitsetCodec.Decode(values, Ac15EraProfiles.Kimidori.Limits.TitleFlagBytes);
 
     private static bool? MapIsDevil(PlayResultRequest request)
         => request.ShouldSerializeIsDevil() ? request.IsDevil : null;

@@ -129,6 +129,33 @@ public sealed class Ac15CommonProfileMutationTests
         Assert.Equal(2u, save.DifficultyTutorialFlg);
     }
 
+    [Fact]
+    public void TryApplyDonPoints_DoesNotClearRewardStateWithIncomingZero()
+    {
+        var save = UserSaveDataMurasakiExtensions.CreateDefaultMurasakiSaveData(1);
+        save.RewardPtn = 1;
+        save.RewardProgress = 1;
+
+        var applied = Ac15CommonProfileMutation.TryApplyDonPoints(
+            save,
+            Ac15ProfileMutationFacts.Empty with
+            {
+                GetDonpoint = 50,
+                RewardPtn = 0,
+                RewardProgress = 0
+            },
+            countedStages: [Stage(101)],
+            Ac15ProfileCounterUpdater.Murasaki,
+            Ac15UnlockFlagAccess.Murasaki,
+            Ac15EraProfiles.Murasaki.Limits,
+            DateTime.UnixEpoch);
+
+        Assert.True(applied);
+        Assert.Equal(50u, save.TotalGetDonpoint);
+        Assert.Equal(1u, save.RewardPtn);
+        Assert.Equal(1u, save.RewardProgress);
+    }
+
     private static Ac15ProfileMutationFacts PlayResult(uint getDonmedal, uint getKatsumedal)
         => Ac15ProfileMutationFacts.Empty with
         {

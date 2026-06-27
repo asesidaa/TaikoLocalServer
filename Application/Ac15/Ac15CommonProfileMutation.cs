@@ -72,8 +72,8 @@ public static class Ac15CommonProfileMutation
         }
 
         saveData.TotalGetDonpoint += profile.GetDonpoint;
-        saveData.RewardPtn = profile.RewardPtn ?? saveData.RewardPtn;
-        saveData.RewardProgress = profile.RewardProgress ?? saveData.RewardProgress;
+        saveData.RewardPtn = PreserveRewardState(saveData.RewardPtn, profile.RewardPtn);
+        saveData.RewardProgress = PreserveRewardState(saveData.RewardProgress, profile.RewardProgress);
         saveData.DifficultyTutorialFlg = PreserveTutorialFlag(saveData.DifficultyTutorialFlg, profile.DifficultyTutorialFlg);
 
         ApplyShared(
@@ -138,6 +138,9 @@ public static class Ac15CommonProfileMutation
 
     private static bool CanAdd(uint current, uint delta)
         => delta <= uint.MaxValue - current;
+
+    private static uint PreserveRewardState(uint current, uint? incoming)
+        => incoming is null || current > 0 && incoming.Value == 0 ? current : incoming.Value;
 
     public static uint PreserveTutorialFlag(uint current, uint? incoming)
         => incoming is null || current > 0 && incoming.Value == 0 ? current : incoming.Value;

@@ -105,6 +105,35 @@ public sealed class MurasakiProtocolVersionCompatibilityTests
         Assert.Equal(Ac15DanClearGrade.GoldClear, dan.ClearGrade);
     }
 
+    [Fact]
+    public async Task PlayResult_FinalRewardFlagBytesPersistMurasakiUnlocks()
+    {
+        await using var fixture = await MurasakiHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        fixture.Context.UserSaveDataMurasaki.Add(UserSaveDataMurasakiExtensions.CreateDefaultMurasakiSaveData(1));
+        await fixture.Context.SaveChangesAsync();
+
+        var response = await InvokeMaybeAsync(
+            new FinalControllers.PlayResultController(),
+            controller => controller.FinalPlayResult(CreateRewardWireRequest(1)),
+            value => Assert.IsType<FinalWire.PlayResultResponse>(value),
+            CreateServices(fixture));
+
+        Assert.Equal(1u, response.Result);
+        var save = await fixture.Context.UserSaveDataMurasaki.SingleAsync(row => row.Baid == 1);
+        Assert.Equal(25u, save.TotalGetDonpoint);
+        Assert.Equal(4u, save.RewardPtn);
+        Assert.Equal(9u, save.RewardProgress);
+        Assert.True(BitIsSet(save.ReleaseSongFlg, 104));
+        Assert.True(BitIsSet(save.ToneFlg, 4));
+        Assert.True(BitIsSet(save.CostumeFlg1, 1));
+        Assert.True(BitIsSet(save.CostumeFlg2, 2));
+        Assert.True(BitIsSet(save.CostumeFlg3, 3));
+        Assert.True(BitIsSet(save.CostumeFlg4, 4));
+        Assert.True(BitIsSet(save.CostumeFlg5, 5));
+        Assert.True(BitIsSet(save.TitleFlg, 10));
+    }
+
     private static TResponse Invoke<TController, TResponse>(
         TController controller,
         Func<TController, IActionResult> action,
@@ -204,6 +233,39 @@ public sealed class MurasakiProtocolVersionCompatibilityTests
         return request;
     }
 
+    private static FinalWire.PlayResultRequest CreateRewardWireRequest(uint baid)
+    {
+        var limits = Ac15EraProfiles.Murasaki.Limits;
+        var request = new FinalWire.PlayResultRequest
+        {
+            Baid = baid,
+            ChassisId = "268410000000",
+            ShopId = "JPN0JPN0123",
+            PlayDatetime = "20260623090000",
+            IsRight = false,
+            CardType = 1,
+            IsTwoPlayers = false,
+            GenderType = 0,
+            PlayerAge = 0,
+            PlayMode = (uint)PlayMode.Normal,
+            AreaCode = 1,
+            Reserved = [],
+            ReleaseSongNoes = [104],
+            ToneFlg = BitsetCodec.Encode([4], limits.ToneFlagBytes),
+            CostumeFlg1 = BitsetCodec.Encode([1], limits.CostumeFlagBytes),
+            CostumeFlg2 = BitsetCodec.Encode([2], limits.CostumeFlagBytes),
+            CostumeFlg3 = BitsetCodec.Encode([3], limits.CostumeFlagBytes),
+            CostumeFlg4 = BitsetCodec.Encode([4], limits.CostumeFlagBytes),
+            CostumeFlg5 = BitsetCodec.Encode([5], limits.CostumeFlagBytes),
+            TitleFlg = BitsetCodec.Encode([10], limits.TitleFlagBytes),
+            GetDonpoint = 25,
+            RewardPtn = 4,
+            RewardProgress = 9
+        };
+        request.AryStageInfoes.Add(CreateDanWireStage(101, score: 100000, soulGauge: 55));
+        return request;
+    }
+
     private static FinalWire.PlayResultRequest.StageData CreateDanWireStage(
         uint songNo,
         uint score,
@@ -290,4 +352,7 @@ public sealed class MurasakiProtocolVersionCompatibilityTests
 
         throw new InvalidOperationException("Unterminated protobuf varint.");
     }
+
+    private static bool BitIsSet(byte[] source, uint id)
+        => (source[id >> 3] & (1 << ((int)id & 7))) != 0;
 }
