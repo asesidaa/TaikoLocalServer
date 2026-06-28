@@ -5,10 +5,10 @@ milestone_name: MOMOIRO AC15 0.11 Support
 current_phase: 43
 current_phase_name: MOMOIRO AdminApi and WebUI Routing
 status: complete
-stopped_at: Completed quick task 260629-40w
-last_updated: "2026-06-29T03:51:58+08:00"
+stopped_at: Completed quick task 260629-5j1
+last_updated: "2026-06-29T04:15:00+08:00"
 last_activity: 2026-06-29
-last_activity_desc: Completed quick task 260629-40w: Implement AC15 mapper helper normalization extraction
+last_activity_desc: Completed quick task 260629-5j1: Review AC15 mapper nullability and playresult helper cleanup
 progress:
   total_phases: 6
   completed_phases: 5
@@ -24,14 +24,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-25)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating MOMOIRO, KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, Nijiiro, or shared identity state.
-**Current focus:** Phase 43 complete - MOMOIRO AdminApi and WebUI Routing; quick task 260629-40w completed AC15 mapper helper normalization extraction
+**Current focus:** Phase 43 complete - MOMOIRO AdminApi and WebUI Routing; quick task 260629-5j1 completed AC15 mapper nullability and playresult helper review
 
 ## Current Position
 
 Phase: 43 of 44 (MOMOIRO AdminApi and WebUI Routing)
 Plan: 1 of 1 in current phase
 Status: Complete
-Last activity: 2026-06-29 - Completed quick task 260629-40w: Implement AC15 mapper helper normalization extraction
+Last activity: 2026-06-29 - Completed quick task 260629-5j1: Review AC15 mapper nullability and playresult helper cleanup
 
 Progress: [##########] 100%
 
@@ -136,6 +136,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 43]: Momoiro customization catalog endpoints return Momoiro-owned empty runtime catalogs until Momoiro-specific customization provenance exists. Rationale: The WebUI profile editor can route successfully without borrowing KIMIDORI, Murasaki, or Nijiiro catalog data.
 - [Phase 43]: Exact solution build was environment-blocked by running `TaikoLocalServer (14536)`, while the temp-output Host build passed with 0 warnings and 0 errors. Rationale: The running server's output lock should not be treated as a compile failure or stopped implicitly.
 - [Quick 260629-40w]: AC15 mapper pure normalization primitives are centralized in `Ac15MapperNormalization` and referenced with Mapperly direct external `Use = nameof(@Ac15MapperNormalization.X)` mappings. Rationale: Pure one-line helpers should not be repeated across era mappers, while era-limit wrappers stay local where the boundary matters.
+- [Quick 260629-5j1]: AC15 generated wire should be regenerated through a tracked `.tools/protogen.exe` entrypoint that includes `+nullablevaluetype=yes`; playresult mapper cleanup should follow generated wire regeneration. Rationale: Current White/Murasaki/Kimidori wire surfaces expose some optional value fields as non-nullable public properties with `ShouldSerialize*`, while direct protogen probes show nullable-value generation removes the mapper pressure without changing required proto fields.
 
 ### Pending Todos
 
@@ -149,6 +150,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 | 260628-ama | Check White Taikojuku patch portability for White final and Murasaki variants | 2026-06-27 | eab33d5b | [260628-ama-now-we-have-finished-the-patch-for-white](./quick/260628-ama-now-we-have-finished-the-patch-for-white/) |
 | 260629-29p | Add KIMIDORI final support | 2026-06-29 | c873b5bf | [260629-29p-now-let-s-add-support-for-kimidori-final](./quick/260629-29p-now-let-s-add-support-for-kimidori-final/) |
 | 260629-40w | Implement AC15 mapper helper normalization extraction | 2026-06-29 | 4c031b09 | [260629-40w-implement-ac15-mapper-helper-normalizati](./quick/260629-40w-implement-ac15-mapper-helper-normalizati/) |
+| 260629-5j1 | Review AC15 mapper nullability and playresult helper cleanup | 2026-06-29 | review-only | [260629-5j1-now-perform-a-code-review-on-the-mappers](./quick/260629-5j1-now-perform-a-code-review-on-the-mappers/) |
 
 ### Blockers/Concerns
 
