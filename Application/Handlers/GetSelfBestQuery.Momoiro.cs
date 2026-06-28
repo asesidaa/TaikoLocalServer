@@ -25,13 +25,6 @@ public partial class GetSelfBestQueryHandler
             row.BestRate,
             row.BestCrown));
 
-        var response = Ac15SelfBestService.BuildResponse(request.Difficulty, requestedSongs, canonicalRows);
-        response.AryShinSelfbestScores = response.AryShinSelfbestScores
-            .Where(row => row.SelfBestScore != 0
-                || row.UraBestScore != 0
-                || row.SelfBestScoreRate != 0
-                || row.UraBestScoreRate != 0)
-            .ToList();
-        return response;
+        return Ac15SelfBestService.BuildResponse(request.Difficulty, requestedSongs, canonicalRows);
     }
 }

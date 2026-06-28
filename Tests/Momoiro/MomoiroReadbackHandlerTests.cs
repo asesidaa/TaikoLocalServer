@@ -55,7 +55,7 @@ public sealed class MomoiroReadbackHandlerTests
     }
 
     [Fact]
-    public async Task GetSelfBestQuery_Momoiro_ReadsMomoiroNormalUraAndShinRowsOnlyInRequestOrder()
+    public async Task GetSelfBestQuery_Momoiro_ReadsMomoiroNormalUraAndParallelShinRowsInRequestOrder()
     {
         await using var fixture = await MomoiroHandlerFixture.CreateAsync();
         await fixture.SeedSharedIdentityAsync(3, "33333333333333333333");
@@ -121,10 +121,45 @@ public sealed class MomoiroReadbackHandlerTests
         Assert.Equal(910_000u, response.ArySelfbestScores[0].UraBestScore);
         Assert.Equal(101_000u, response.ArySelfbestScores[1].SelfBestScore);
         Assert.Equal(0u, response.ArySelfbestScores[2].SelfBestScore);
-        var shin = Assert.Single(response.AryShinSelfbestScores);
-        Assert.Equal(MomoiroHandlerFixture.HighSongNo, shin.SongNo);
-        Assert.Equal(700_000u, shin.SelfBestScore);
-        Assert.Equal(710_000u, shin.UraBestScore);
+        Assert.Equal(
+            [MomoiroHandlerFixture.HighSongNo, 101u, 102u],
+            response.AryShinSelfbestScores.Select(row => row.SongNo).ToArray());
+        Assert.Equal(700_000u, response.AryShinSelfbestScores[0].SelfBestScore);
+        Assert.Equal(710_000u, response.AryShinSelfbestScores[0].UraBestScore);
+        Assert.Equal(0u, response.AryShinSelfbestScores[1].SelfBestScore);
+        Assert.Equal(0u, response.AryShinSelfbestScores[2].SelfBestScore);
+    }
+
+    [Fact]
+    public async Task GetSelfBestQuery_Momoiro_ReturnsParallelZeroRowsWhenNoRecordsExist()
+    {
+        await using var fixture = await MomoiroHandlerFixture.CreateAsync();
+        await fixture.SeedSharedIdentityAsync(2, "22222222222222222222");
+        await fixture.SeedMomoiroSaveAsync(2);
+        var requestedSongs = new uint[] { 652, 656, 650, 654, 636, 508, 376, 612, 510, 372 };
+        var handler = new GetSelfBestQueryHandler(
+            fixture.Catalog,
+            fixture.Context,
+            NullLogger<GetSelfBestQueryHandler>.Instance);
+
+        var response = await handler.Handle(
+            new GetSelfBestQuery(2, GameEra.Momoiro, 2, requestedSongs),
+            CancellationToken.None);
+
+        Assert.Equal(1u, response.Result);
+        Assert.Equal(2u, response.Level);
+        Assert.Equal(requestedSongs, response.ArySelfbestScores.Select(row => row.SongNo).ToArray());
+        Assert.Equal(requestedSongs, response.AryShinSelfbestScores.Select(row => row.SongNo).ToArray());
+        Assert.All(response.ArySelfbestScores, row =>
+        {
+            Assert.Equal(0u, row.SelfBestScore);
+            Assert.Equal(0u, row.UraBestScore);
+        });
+        Assert.All(response.AryShinSelfbestScores, row =>
+        {
+            Assert.Equal(0u, row.SelfBestScore);
+            Assert.Equal(0u, row.UraBestScore);
+        });
     }
 
     [Fact]
