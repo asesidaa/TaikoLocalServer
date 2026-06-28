@@ -4,6 +4,7 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Momoiro.Controllers;
 public sealed class DefaultSongController(IGameDataCatalog gameDataService)
     : BaseProtocolController<DefaultSongController>
 {
+    [HttpPost(MomoiroRoutePrefixes.Final + "/defaultsong.php")]
     [HttpPost(MomoiroRoutePrefixes.Game + "/defaultsong.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> DefaultSong([FromBody] DefaultsongRequest request)

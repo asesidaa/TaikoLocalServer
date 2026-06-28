@@ -4,6 +4,7 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Momoiro.Controllers;
 public sealed class SongHashController(IGameDataCatalog gameDataService)
     : BaseProtocolController<SongHashController>
 {
+    [HttpPost(MomoiroRoutePrefixes.Final + "/songhash.php")]
     [HttpPost(MomoiroRoutePrefixes.Game + "/songhash.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> SongHash([FromBody] SonghashRequest request)

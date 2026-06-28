@@ -5,6 +5,7 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Momoiro.Controllers;
 [ApiController]
 public sealed class HeartbeatController : BaseProtocolController<HeartbeatController>
 {
+    [HttpPost(MomoiroRoutePrefixes.Final + "/heartbeat.php")]
     [HttpPost(MomoiroRoutePrefixes.Game + "/heartbeat.php")]
     [Produces("application/protobuf")]
     public IActionResult Heartbeat([FromBody] HeartBeatRequest request)

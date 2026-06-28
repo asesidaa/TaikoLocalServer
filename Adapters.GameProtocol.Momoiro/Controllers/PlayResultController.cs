@@ -3,6 +3,7 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Momoiro.Controllers;
 [ApiController]
 public sealed class PlayResultController : BaseProtocolController<PlayResultController>
 {
+    [HttpPost(MomoiroRoutePrefixes.Final + "/playresult.php")]
     [HttpPost(MomoiroRoutePrefixes.Game + "/playresult.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> PlayResult([FromBody] PlayResultRequest request)

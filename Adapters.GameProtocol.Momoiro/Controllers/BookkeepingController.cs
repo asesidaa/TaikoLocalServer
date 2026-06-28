@@ -5,6 +5,7 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Momoiro.Controllers;
 [ApiController]
 public sealed class BookkeepingController : BaseProtocolController<BookkeepingController>
 {
+    [HttpPost(MomoiroRoutePrefixes.Final + "/bookkeeping.php")]
     [HttpPost(MomoiroRoutePrefixes.Game + "/bookkeeping.php")]
     [Produces("application/protobuf")]
     public IActionResult Bookkeeping([FromBody] BookKeepingRequest request)

@@ -4,6 +4,7 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Momoiro.Controllers;
 public sealed class UserDataController(IGameDataCatalog gameDataService)
     : BaseProtocolController<UserDataController>
 {
+    [HttpPost(MomoiroRoutePrefixes.Final + "/userdata.php")]
     [HttpPost(MomoiroRoutePrefixes.Game + "/userdata.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> UserData([FromBody] UserDataRequest request)

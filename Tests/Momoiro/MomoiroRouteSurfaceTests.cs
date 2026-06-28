@@ -11,20 +11,26 @@ namespace TaikoLocalServer.Tests.Momoiro;
 
 public sealed class MomoiroRouteSurfaceTests
 {
-    private static readonly string[] ExpectedGameRoutes =
+    private static readonly string[] ExpectedGameRoutePaths =
     [
-        "/v04r00/chassis/baidcheck.php",
-        "/v04r00/chassis/bookkeeping.php",
-        "/v04r00/chassis/defaultsong.php",
-        "/v04r00/chassis/gettelop.php",
-        "/v04r00/chassis/heartbeat.php",
-        "/v04r00/chassis/mydonentry.php",
-        "/v04r00/chassis/playresult.php",
-        "/v04r00/chassis/recommend.php",
-        "/v04r00/chassis/selfbest.php",
-        "/v04r00/chassis/songhash.php",
-        "/v04r00/chassis/telopcheck.php",
-        "/v04r00/chassis/userdata.php"
+        "/baidcheck.php",
+        "/bookkeeping.php",
+        "/defaultsong.php",
+        "/gettelop.php",
+        "/heartbeat.php",
+        "/mydonentry.php",
+        "/playresult.php",
+        "/recommend.php",
+        "/selfbest.php",
+        "/songhash.php",
+        "/telopcheck.php",
+        "/userdata.php"
+    ];
+
+    private static readonly string[] ExpectedGameRoutePrefixes =
+    [
+        MomoiroRoutePrefixes.Final,
+        MomoiroRoutePrefixes.Game
     ];
 
     private static readonly string[] ProtoOnlyRouteFragments =
@@ -51,11 +57,16 @@ public sealed class MomoiroRouteSurfaceTests
         var momoiroRoutes = actions
             .Where(IsMomoiroAction)
             .Select(action => action.RouteTemplate)
-            .Where(route => route.StartsWith(MomoiroRoutePrefixes.Game, StringComparison.OrdinalIgnoreCase))
+            .Where(IsMomoiroGameRoute)
             .Order(StringComparer.Ordinal)
             .ToArray();
 
-        Assert.Equal(ExpectedGameRoutes, momoiroRoutes);
+        var expectedRoutes = ExpectedGameRoutePrefixes
+            .SelectMany(prefix => ExpectedGameRoutePaths.Select(path => prefix + path))
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.Equal(expectedRoutes, momoiroRoutes);
     }
 
     [Fact]
@@ -178,6 +189,10 @@ public sealed class MomoiroRouteSurfaceTests
 
     private static bool IsMomoiroAction(DiscoveredControllerAction action)
         => action.ControllerTypeInfo.Assembly == MomoiroAssembly;
+
+    private static bool IsMomoiroGameRoute(string route)
+        => ExpectedGameRoutePrefixes.Any(prefix =>
+            route.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
 
     private static void RemoveDuplicatePart(ApplicationPartManager apm, string? assemblyName)
     {

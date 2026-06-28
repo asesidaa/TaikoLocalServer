@@ -4,6 +4,7 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Momoiro.Controllers;
 public sealed class TelopCheckController(IGameDataCatalog gameDataService)
     : BaseProtocolController<TelopCheckController>
 {
+    [HttpPost(MomoiroRoutePrefixes.Final + "/telopcheck.php")]
     [HttpPost(MomoiroRoutePrefixes.Game + "/telopcheck.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> TelopCheck([FromBody] TelopCheckRequest request)

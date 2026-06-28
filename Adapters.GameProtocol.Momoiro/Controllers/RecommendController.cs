@@ -4,6 +4,7 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Momoiro.Controllers;
 public sealed class RecommendController(IGameDataCatalog gameDataService)
     : BaseProtocolController<RecommendController>
 {
+    [HttpPost(MomoiroRoutePrefixes.Final + "/recommend.php")]
     [HttpPost(MomoiroRoutePrefixes.Game + "/recommend.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> Recommend([FromBody] RecommendRequest request)

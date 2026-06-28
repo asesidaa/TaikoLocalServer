@@ -3,6 +3,7 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Momoiro.Controllers;
 [ApiController]
 public sealed class MyDonEntryController : BaseProtocolController<MyDonEntryController>
 {
+    [HttpPost(MomoiroRoutePrefixes.Final + "/mydonentry.php")]
     [HttpPost(MomoiroRoutePrefixes.Game + "/mydonentry.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> MydonEntry([FromBody] MydonEntryRequest request)

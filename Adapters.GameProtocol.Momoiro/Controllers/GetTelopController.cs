@@ -4,6 +4,7 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Momoiro.Controllers;
 public sealed class GetTelopController(IGameDataCatalog gameDataService)
     : BaseProtocolController<GetTelopController>
 {
+    [HttpPost(MomoiroRoutePrefixes.Final + "/gettelop.php")]
     [HttpPost(MomoiroRoutePrefixes.Game + "/gettelop.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetTelop([FromBody] GetTelopRequest request)

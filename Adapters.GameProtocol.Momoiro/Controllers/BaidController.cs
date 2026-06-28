@@ -3,6 +3,7 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Momoiro.Controllers;
 [ApiController]
 public sealed class BaidController : BaseProtocolController<BaidController>
 {
+    [HttpPost(MomoiroRoutePrefixes.Final + "/baidcheck.php")]
     [HttpPost(MomoiroRoutePrefixes.Game + "/baidcheck.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> BaidCheck([FromBody] BAIDRequest request)
