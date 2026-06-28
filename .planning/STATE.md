@@ -5,10 +5,10 @@ milestone_name: MOMOIRO AC15 0.11 Support
 current_phase: 43
 current_phase_name: MOMOIRO AdminApi and WebUI Routing
 status: complete
-stopped_at: Completed quick task 260629-5j1
-last_updated: "2026-06-29T04:15:00+08:00"
+stopped_at: Completed quick task 260629-6k9
+last_updated: "2026-06-29T04:44:00+08:00"
 last_activity: 2026-06-29
-last_activity_desc: Completed quick task 260629-5j1: Review AC15 mapper nullability and playresult helper cleanup
+last_activity_desc: Completed quick task 260629-6k9: Execute AC15 mapper nullability review fix
 progress:
   total_phases: 6
   completed_phases: 5
@@ -24,14 +24,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-25)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating MOMOIRO, KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, Nijiiro, or shared identity state.
-**Current focus:** Phase 43 complete - MOMOIRO AdminApi and WebUI Routing; quick task 260629-5j1 completed AC15 mapper nullability and playresult helper review
+**Current focus:** Phase 43 complete - MOMOIRO AdminApi and WebUI Routing; quick task 260629-6k9 completed AC15 generated optional value mapping cleanup
 
 ## Current Position
 
 Phase: 43 of 44 (MOMOIRO AdminApi and WebUI Routing)
 Plan: 1 of 1 in current phase
 Status: Complete
-Last activity: 2026-06-29 - Completed quick task 260629-5j1: Review AC15 mapper nullability and playresult helper cleanup
+Last activity: 2026-06-29 - Completed quick task 260629-6k9: Execute AC15 mapper nullability review fix
 
 Progress: [##########] 100%
 
@@ -137,6 +137,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 - [Phase 43]: Exact solution build was environment-blocked by running `TaikoLocalServer (14536)`, while the temp-output Host build passed with 0 warnings and 0 errors. Rationale: The running server's output lock should not be treated as a compile failure or stopped implicitly.
 - [Quick 260629-40w]: AC15 mapper pure normalization primitives are centralized in `Ac15MapperNormalization` and referenced with Mapperly direct external `Use = nameof(@Ac15MapperNormalization.X)` mappings. Rationale: Pure one-line helpers should not be repeated across era mappers, while era-limit wrappers stay local where the boundary matters.
 - [Quick 260629-5j1]: AC15 generated wire should be regenerated through a tracked `.tools/protogen.exe` entrypoint that includes `+nullablevaluetype=yes`; playresult mapper cleanup should follow generated wire regeneration. Rationale: Current White/Murasaki/Kimidori wire surfaces expose some optional value fields as non-nullable public properties with `ShouldSerialize*`, while direct protogen probes show nullable-value generation removes the mapper pressure without changing required proto fields.
+- [Quick 260629-6k9]: AC15 game-wire regeneration is tracked through `tools/generate-ac15-game-wire.ps1`, with reviewed surfaces regenerated using `+nullablevaluetype=yes` and mapper boundaries defaulting absent optional values only where the Application DTO is non-nullable. Rationale: Keeps generated wire source-driven, preserves proto-required fields, and removes ad hoc `ShouldSerialize*` value helpers from playresult mappers.
 
 ### Pending Todos
 
@@ -151,6 +152,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 | 260629-29p | Add KIMIDORI final support | 2026-06-29 | c873b5bf | [260629-29p-now-let-s-add-support-for-kimidori-final](./quick/260629-29p-now-let-s-add-support-for-kimidori-final/) |
 | 260629-40w | Implement AC15 mapper helper normalization extraction | 2026-06-29 | 4c031b09 | [260629-40w-implement-ac15-mapper-helper-normalizati](./quick/260629-40w-implement-ac15-mapper-helper-normalizati/) |
 | 260629-5j1 | Review AC15 mapper nullability and playresult helper cleanup | 2026-06-29 | review-only | [260629-5j1-now-perform-a-code-review-on-the-mappers](./quick/260629-5j1-now-perform-a-code-review-on-the-mappers/) |
+| 260629-6k9 | Execute AC15 mapper nullability review fix | 2026-06-29 | 579be2ac | [260629-6k9-execute-ac15-mapper-nullability-review-f](./quick/260629-6k9-execute-ac15-mapper-nullability-review-f/) |
 
 ### Blockers/Concerns
 
