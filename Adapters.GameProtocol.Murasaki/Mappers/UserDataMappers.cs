@@ -28,6 +28,6 @@ public static partial class UserDataMappers
 
     public static partial void Apply(Ac15UserDataReward source, [MappingTarget] UserDataResponse response);
 
-    private static uint MapDispTaikojukuDan(uint value)
+    private static uint? MapDispTaikojukuDan(uint value)
         => Ac15MapperNormalization.DisplayDan(value, Ac15EraProfiles.Murasaki.Limits);
 }

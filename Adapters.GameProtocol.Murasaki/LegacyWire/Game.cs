@@ -212,9 +212,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         public uint Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"song_hash_ver")]
-        public uint SongHashVer
+        public uint? SongHashVer
         {
-            get => __pbn__SongHashVer.GetValueOrDefault();
+            get => __pbn__SongHashVer;
             set => __pbn__SongHashVer = value;
         }
         public bool ShouldSerializeSongHashVer() => __pbn__SongHashVer != null;
@@ -259,9 +259,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         public uint Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"song_hash_ver")]
-        public uint SongHashVer
+        public uint? SongHashVer
         {
-            get => __pbn__SongHashVer.GetValueOrDefault();
+            get => __pbn__SongHashVer;
             set => __pbn__SongHashVer = value;
         }
         public bool ShouldSerializeSongHashVer() => __pbn__SongHashVer != null;
@@ -352,9 +352,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         public uint Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"folder_id")]
-        public uint FolderId
+        public uint? FolderId
         {
-            get => __pbn__FolderId.GetValueOrDefault();
+            get => __pbn__FolderId;
             set => __pbn__FolderId = value;
         }
         public bool ShouldSerializeFolderId() => __pbn__FolderId != null;
@@ -467,9 +467,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         public uint Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"player_type")]
-        public uint PlayerType
+        public uint? PlayerType
         {
-            get => __pbn__PlayerType.GetValueOrDefault();
+            get => __pbn__PlayerType;
             set => __pbn__PlayerType = value;
         }
         public bool ShouldSerializePlayerType() => __pbn__PlayerType != null;
@@ -477,9 +477,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__PlayerType;
 
         [global::ProtoBuf.ProtoMember(3, Name = @"com_svr_result")]
-        public uint ComSvrResult
+        public uint? ComSvrResult
         {
-            get => __pbn__ComSvrResult.GetValueOrDefault();
+            get => __pbn__ComSvrResult;
             set => __pbn__ComSvrResult = value;
         }
         public bool ShouldSerializeComSvrResult() => __pbn__ComSvrResult != null;
@@ -487,9 +487,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__ComSvrResult;
 
         [global::ProtoBuf.ProtoMember(4, Name = @"mb_id")]
-        public uint MbId
+        public uint? MbId
         {
-            get => __pbn__MbId.GetValueOrDefault();
+            get => __pbn__MbId;
             set => __pbn__MbId = value;
         }
         public bool ShouldSerializeMbId() => __pbn__MbId != null;
@@ -497,9 +497,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__MbId;
 
         [global::ProtoBuf.ProtoMember(5, Name = @"baid")]
-        public uint Baid
+        public uint? Baid
         {
-            get => __pbn__Baid.GetValueOrDefault();
+            get => __pbn__Baid;
             set => __pbn__Baid = value;
         }
         public bool ShouldSerializeBaid() => __pbn__Baid != null;
@@ -518,9 +518,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private string __pbn__AccessCode;
 
         [global::ProtoBuf.ProtoMember(7, Name = @"is_publish")]
-        public bool IsPublish
+        public bool? IsPublish
         {
-            get => __pbn__IsPublish.GetValueOrDefault();
+            get => __pbn__IsPublish;
             set => __pbn__IsPublish = value;
         }
         public bool ShouldSerializeIsPublish() => __pbn__IsPublish != null;
@@ -528,9 +528,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private bool? __pbn__IsPublish;
 
         [global::ProtoBuf.ProtoMember(8, Name = @"card_own_num")]
-        public uint CardOwnNum
+        public uint? CardOwnNum
         {
-            get => __pbn__CardOwnNum.GetValueOrDefault();
+            get => __pbn__CardOwnNum;
             set => __pbn__CardOwnNum = value;
         }
         public bool ShouldSerializeCardOwnNum() => __pbn__CardOwnNum != null;
@@ -549,9 +549,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private string __pbn__RegCountryId;
 
         [global::ProtoBuf.ProtoMember(10, Name = @"purpose_id")]
-        public uint PurposeId
+        public uint? PurposeId
         {
-            get => __pbn__PurposeId.GetValueOrDefault();
+            get => __pbn__PurposeId;
             set => __pbn__PurposeId = value;
         }
         public bool ShouldSerializePurposeId() => __pbn__PurposeId != null;
@@ -559,9 +559,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__PurposeId;
 
         [global::ProtoBuf.ProtoMember(11, Name = @"region_id")]
-        public uint RegionId
+        public uint? RegionId
         {
-            get => __pbn__RegionId.GetValueOrDefault();
+            get => __pbn__RegionId;
             set => __pbn__RegionId = value;
         }
         public bool ShouldSerializeRegionId() => __pbn__RegionId != null;
@@ -591,9 +591,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private string __pbn__Title;
 
         [global::ProtoBuf.ProtoMember(14, Name = @"color_face")]
-        public uint ColorFace
+        public uint? ColorFace
         {
-            get => __pbn__ColorFace.GetValueOrDefault();
+            get => __pbn__ColorFace;
             set => __pbn__ColorFace = value;
         }
         public bool ShouldSerializeColorFace() => __pbn__ColorFace != null;
@@ -601,9 +601,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__ColorFace;
 
         [global::ProtoBuf.ProtoMember(15, Name = @"color_body")]
-        public uint ColorBody
+        public uint? ColorBody
         {
-            get => __pbn__ColorBody.GetValueOrDefault();
+            get => __pbn__ColorBody;
             set => __pbn__ColorBody = value;
         }
         public bool ShouldSerializeColorBody() => __pbn__ColorBody != null;
@@ -611,9 +611,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__ColorBody;
 
         [global::ProtoBuf.ProtoMember(16, Name = @"color_limb")]
-        public uint ColorLimb
+        public uint? ColorLimb
         {
-            get => __pbn__ColorLimb.GetValueOrDefault();
+            get => __pbn__ColorLimb;
             set => __pbn__ColorLimb = value;
         }
         public bool ShouldSerializeColorLimb() => __pbn__ColorLimb != null;
@@ -677,9 +677,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private byte[] __pbn__CostumeFlg5;
 
         [global::ProtoBuf.ProtoMember(24, Name = @"reward_ptn")]
-        public uint RewardPtn
+        public uint? RewardPtn
         {
-            get => __pbn__RewardPtn.GetValueOrDefault();
+            get => __pbn__RewardPtn;
             set => __pbn__RewardPtn = value;
         }
         public bool ShouldSerializeRewardPtn() => __pbn__RewardPtn != null;
@@ -698,9 +698,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private string __pbn__UpdateDatetime;
 
         [global::ProtoBuf.ProtoMember(26, Name = @"disp_dan_type")]
-        public uint DispDanType
+        public uint? DispDanType
         {
-            get => __pbn__DispDanType.GetValueOrDefault();
+            get => __pbn__DispDanType;
             set => __pbn__DispDanType = value;
         }
         public bool ShouldSerializeDispDanType() => __pbn__DispDanType != null;
@@ -708,9 +708,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__DispDanType;
 
         [global::ProtoBuf.ProtoMember(27, Name = @"got_dan_max")]
-        public uint GotDanMax
+        public uint? GotDanMax
         {
-            get => __pbn__GotDanMax.GetValueOrDefault();
+            get => __pbn__GotDanMax;
             set => __pbn__GotDanMax = value;
         }
         public bool ShouldSerializeGotDanMax() => __pbn__GotDanMax != null;
@@ -749,9 +749,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private byte[] __pbn__ContentInfo;
 
         [global::ProtoBuf.ProtoMember(31, Name = @"default_tone_setting")]
-        public uint DefaultToneSetting
+        public uint? DefaultToneSetting
         {
-            get => __pbn__DefaultToneSetting.GetValueOrDefault();
+            get => __pbn__DefaultToneSetting;
             set => __pbn__DefaultToneSetting = value;
         }
         public bool ShouldSerializeDefaultToneSetting() => __pbn__DefaultToneSetting != null;
@@ -766,9 +766,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
                 => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
             [global::ProtoBuf.ProtoMember(1, Name = @"costume_1")]
-            public uint Costume1
+            public uint? Costume1
             {
-                get => __pbn__Costume1.GetValueOrDefault();
+                get => __pbn__Costume1;
                 set => __pbn__Costume1 = value;
             }
             public bool ShouldSerializeCostume1() => __pbn__Costume1 != null;
@@ -776,9 +776,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
             private uint? __pbn__Costume1;
 
             [global::ProtoBuf.ProtoMember(2, Name = @"costume_2")]
-            public uint Costume2
+            public uint? Costume2
             {
-                get => __pbn__Costume2.GetValueOrDefault();
+                get => __pbn__Costume2;
                 set => __pbn__Costume2 = value;
             }
             public bool ShouldSerializeCostume2() => __pbn__Costume2 != null;
@@ -786,9 +786,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
             private uint? __pbn__Costume2;
 
             [global::ProtoBuf.ProtoMember(3, Name = @"costume_3")]
-            public uint Costume3
+            public uint? Costume3
             {
-                get => __pbn__Costume3.GetValueOrDefault();
+                get => __pbn__Costume3;
                 set => __pbn__Costume3 = value;
             }
             public bool ShouldSerializeCostume3() => __pbn__Costume3 != null;
@@ -796,9 +796,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
             private uint? __pbn__Costume3;
 
             [global::ProtoBuf.ProtoMember(4, Name = @"costume_4")]
-            public uint Costume4
+            public uint? Costume4
             {
-                get => __pbn__Costume4.GetValueOrDefault();
+                get => __pbn__Costume4;
                 set => __pbn__Costume4 = value;
             }
             public bool ShouldSerializeCostume4() => __pbn__Costume4 != null;
@@ -806,9 +806,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
             private uint? __pbn__Costume4;
 
             [global::ProtoBuf.ProtoMember(5, Name = @"costume_5")]
-            public uint Costume5
+            public uint? Costume5
             {
-                get => __pbn__Costume5.GetValueOrDefault();
+                get => __pbn__Costume5;
                 set => __pbn__Costume5 = value;
             }
             public bool ShouldSerializeCostume5() => __pbn__Costume5 != null;
@@ -863,9 +863,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         public uint Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"com_svr_result")]
-        public uint ComSvrResult
+        public uint? ComSvrResult
         {
-            get => __pbn__ComSvrResult.GetValueOrDefault();
+            get => __pbn__ComSvrResult;
             set => __pbn__ComSvrResult = value;
         }
         public bool ShouldSerializeComSvrResult() => __pbn__ComSvrResult != null;
@@ -873,9 +873,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__ComSvrResult;
 
         [global::ProtoBuf.ProtoMember(3, Name = @"mb_id")]
-        public uint MbId
+        public uint? MbId
         {
-            get => __pbn__MbId.GetValueOrDefault();
+            get => __pbn__MbId;
             set => __pbn__MbId = value;
         }
         public bool ShouldSerializeMbId() => __pbn__MbId != null;
@@ -883,9 +883,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__MbId;
 
         [global::ProtoBuf.ProtoMember(4, Name = @"baid")]
-        public uint Baid
+        public uint? Baid
         {
-            get => __pbn__Baid.GetValueOrDefault();
+            get => __pbn__Baid;
             set => __pbn__Baid = value;
         }
         public bool ShouldSerializeBaid() => __pbn__Baid != null;
@@ -904,9 +904,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private string __pbn__AccessCode;
 
         [global::ProtoBuf.ProtoMember(6, Name = @"is_publish")]
-        public bool IsPublish
+        public bool? IsPublish
         {
-            get => __pbn__IsPublish.GetValueOrDefault();
+            get => __pbn__IsPublish;
             set => __pbn__IsPublish = value;
         }
         public bool ShouldSerializeIsPublish() => __pbn__IsPublish != null;
@@ -914,9 +914,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private bool? __pbn__IsPublish;
 
         [global::ProtoBuf.ProtoMember(7, Name = @"card_own_num")]
-        public uint CardOwnNum
+        public uint? CardOwnNum
         {
-            get => __pbn__CardOwnNum.GetValueOrDefault();
+            get => __pbn__CardOwnNum;
             set => __pbn__CardOwnNum = value;
         }
         public bool ShouldSerializeCardOwnNum() => __pbn__CardOwnNum != null;
@@ -935,9 +935,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private string __pbn__RegCountryId;
 
         [global::ProtoBuf.ProtoMember(9, Name = @"purpose_id")]
-        public uint PurposeId
+        public uint? PurposeId
         {
-            get => __pbn__PurposeId.GetValueOrDefault();
+            get => __pbn__PurposeId;
             set => __pbn__PurposeId = value;
         }
         public bool ShouldSerializePurposeId() => __pbn__PurposeId != null;
@@ -945,9 +945,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__PurposeId;
 
         [global::ProtoBuf.ProtoMember(10, Name = @"region_id")]
-        public uint RegionId
+        public uint? RegionId
         {
-            get => __pbn__RegionId.GetValueOrDefault();
+            get => __pbn__RegionId;
             set => __pbn__RegionId = value;
         }
         public bool ShouldSerializeRegionId() => __pbn__RegionId != null;
@@ -966,9 +966,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private string __pbn__MydonName;
 
         [global::ProtoBuf.ProtoMember(12, Name = @"reward_ptn")]
-        public uint RewardPtn
+        public uint? RewardPtn
         {
-            get => __pbn__RewardPtn.GetValueOrDefault();
+            get => __pbn__RewardPtn;
             set => __pbn__RewardPtn = value;
         }
         public bool ShouldSerializeRewardPtn() => __pbn__RewardPtn != null;
@@ -1027,9 +1027,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         public uint Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"is_explain")]
-        public bool IsExplain
+        public bool? IsExplain
         {
-            get => __pbn__IsExplain.GetValueOrDefault();
+            get => __pbn__IsExplain;
             set => __pbn__IsExplain = value;
         }
         public bool ShouldSerializeIsExplain() => __pbn__IsExplain != null;
@@ -1043,9 +1043,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         public uint[] AryRecentSongNoes { get; set; }
 
         [global::ProtoBuf.ProtoMember(5, Name = @"song_hash_ver")]
-        public uint SongHashVer
+        public uint? SongHashVer
         {
-            get => __pbn__SongHashVer.GetValueOrDefault();
+            get => __pbn__SongHashVer;
             set => __pbn__SongHashVer = value;
         }
         public bool ShouldSerializeSongHashVer() => __pbn__SongHashVer != null;
@@ -1063,9 +1063,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private byte[] __pbn__HashReleaseSongFlg;
 
         [global::ProtoBuf.ProtoMember(7, Name = @"is_devil")]
-        public bool IsDevil
+        public bool? IsDevil
         {
-            get => __pbn__IsDevil.GetValueOrDefault();
+            get => __pbn__IsDevil;
             set => __pbn__IsDevil = value;
         }
         public bool ShouldSerializeIsDevil() => __pbn__IsDevil != null;
@@ -1082,9 +1082,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         public global::System.Collections.Generic.List<CompeData> AryBngCompeStats { get; } = new global::System.Collections.Generic.List<CompeData>();
 
         [global::ProtoBuf.ProtoMember(11, Name = @"disp_score_type")]
-        public uint DispScoreType
+        public uint? DispScoreType
         {
-            get => __pbn__DispScoreType.GetValueOrDefault();
+            get => __pbn__DispScoreType;
             set => __pbn__DispScoreType = value;
         }
         public bool ShouldSerializeDispScoreType() => __pbn__DispScoreType != null;
@@ -1095,9 +1095,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         public global::System.Collections.Generic.List<FriendInfo> AryFriendInfoes { get; } = new global::System.Collections.Generic.List<FriendInfo>();
 
         [global::ProtoBuf.ProtoMember(13, Name = @"disp_level_total")]
-        public uint DispLevelTotal
+        public uint? DispLevelTotal
         {
-            get => __pbn__DispLevelTotal.GetValueOrDefault();
+            get => __pbn__DispLevelTotal;
             set => __pbn__DispLevelTotal = value;
         }
         public bool ShouldSerializeDispLevelTotal() => __pbn__DispLevelTotal != null;
@@ -1105,9 +1105,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__DispLevelTotal;
 
         [global::ProtoBuf.ProtoMember(14, Name = @"disp_level_chassis")]
-        public uint DispLevelChassis
+        public uint? DispLevelChassis
         {
-            get => __pbn__DispLevelChassis.GetValueOrDefault();
+            get => __pbn__DispLevelChassis;
             set => __pbn__DispLevelChassis = value;
         }
         public bool ShouldSerializeDispLevelChassis() => __pbn__DispLevelChassis != null;
@@ -1145,9 +1145,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private byte[] __pbn__TitleFlg;
 
         [global::ProtoBuf.ProtoMember(18, Name = @"reward_progress")]
-        public uint RewardProgress
+        public uint? RewardProgress
         {
-            get => __pbn__RewardProgress.GetValueOrDefault();
+            get => __pbn__RewardProgress;
             set => __pbn__RewardProgress = value;
         }
         public bool ShouldSerializeRewardProgress() => __pbn__RewardProgress != null;
@@ -1155,9 +1155,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__RewardProgress;
 
         [global::ProtoBuf.ProtoMember(19, Name = @"categ_jpop_cnt")]
-        public uint CategJpopCnt
+        public uint? CategJpopCnt
         {
-            get => __pbn__CategJpopCnt.GetValueOrDefault();
+            get => __pbn__CategJpopCnt;
             set => __pbn__CategJpopCnt = value;
         }
         public bool ShouldSerializeCategJpopCnt() => __pbn__CategJpopCnt != null;
@@ -1165,9 +1165,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__CategJpopCnt;
 
         [global::ProtoBuf.ProtoMember(20, Name = @"categ_anime_cnt")]
-        public uint CategAnimeCnt
+        public uint? CategAnimeCnt
         {
-            get => __pbn__CategAnimeCnt.GetValueOrDefault();
+            get => __pbn__CategAnimeCnt;
             set => __pbn__CategAnimeCnt = value;
         }
         public bool ShouldSerializeCategAnimeCnt() => __pbn__CategAnimeCnt != null;
@@ -1175,9 +1175,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__CategAnimeCnt;
 
         [global::ProtoBuf.ProtoMember(21, Name = @"categ_doyo_cnt")]
-        public uint CategDoyoCnt
+        public uint? CategDoyoCnt
         {
-            get => __pbn__CategDoyoCnt.GetValueOrDefault();
+            get => __pbn__CategDoyoCnt;
             set => __pbn__CategDoyoCnt = value;
         }
         public bool ShouldSerializeCategDoyoCnt() => __pbn__CategDoyoCnt != null;
@@ -1185,9 +1185,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__CategDoyoCnt;
 
         [global::ProtoBuf.ProtoMember(22, Name = @"categ_variety_cnt")]
-        public uint CategVarietyCnt
+        public uint? CategVarietyCnt
         {
-            get => __pbn__CategVarietyCnt.GetValueOrDefault();
+            get => __pbn__CategVarietyCnt;
             set => __pbn__CategVarietyCnt = value;
         }
         public bool ShouldSerializeCategVarietyCnt() => __pbn__CategVarietyCnt != null;
@@ -1195,9 +1195,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__CategVarietyCnt;
 
         [global::ProtoBuf.ProtoMember(23, Name = @"categ_classic_cnt")]
-        public uint CategClassicCnt
+        public uint? CategClassicCnt
         {
-            get => __pbn__CategClassicCnt.GetValueOrDefault();
+            get => __pbn__CategClassicCnt;
             set => __pbn__CategClassicCnt = value;
         }
         public bool ShouldSerializeCategClassicCnt() => __pbn__CategClassicCnt != null;
@@ -1205,9 +1205,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__CategClassicCnt;
 
         [global::ProtoBuf.ProtoMember(24, Name = @"categ_game_cnt")]
-        public uint CategGameCnt
+        public uint? CategGameCnt
         {
-            get => __pbn__CategGameCnt.GetValueOrDefault();
+            get => __pbn__CategGameCnt;
             set => __pbn__CategGameCnt = value;
         }
         public bool ShouldSerializeCategGameCnt() => __pbn__CategGameCnt != null;
@@ -1215,9 +1215,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__CategGameCnt;
 
         [global::ProtoBuf.ProtoMember(25, Name = @"categ_namco_cnt")]
-        public uint CategNamcoCnt
+        public uint? CategNamcoCnt
         {
-            get => __pbn__CategNamcoCnt.GetValueOrDefault();
+            get => __pbn__CategNamcoCnt;
             set => __pbn__CategNamcoCnt = value;
         }
         public bool ShouldSerializeCategNamcoCnt() => __pbn__CategNamcoCnt != null;
@@ -1225,9 +1225,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__CategNamcoCnt;
 
         [global::ProtoBuf.ProtoMember(26, Name = @"categ_vocaloid_cnt")]
-        public uint CategVocaloidCnt
+        public uint? CategVocaloidCnt
         {
-            get => __pbn__CategVocaloidCnt.GetValueOrDefault();
+            get => __pbn__CategVocaloidCnt;
             set => __pbn__CategVocaloidCnt = value;
         }
         public bool ShouldSerializeCategVocaloidCnt() => __pbn__CategVocaloidCnt != null;
@@ -1235,9 +1235,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__CategVocaloidCnt;
 
         [global::ProtoBuf.ProtoMember(27, Name = @"song_pushed_cnt")]
-        public uint SongPushedCnt
+        public uint? SongPushedCnt
         {
-            get => __pbn__SongPushedCnt.GetValueOrDefault();
+            get => __pbn__SongPushedCnt;
             set => __pbn__SongPushedCnt = value;
         }
         public bool ShouldSerializeSongPushedCnt() => __pbn__SongPushedCnt != null;
@@ -1245,9 +1245,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__SongPushedCnt;
 
         [global::ProtoBuf.ProtoMember(28, Name = @"song_favorite_cnt")]
-        public uint SongFavoriteCnt
+        public uint? SongFavoriteCnt
         {
-            get => __pbn__SongFavoriteCnt.GetValueOrDefault();
+            get => __pbn__SongFavoriteCnt;
             set => __pbn__SongFavoriteCnt = value;
         }
         public bool ShouldSerializeSongFavoriteCnt() => __pbn__SongFavoriteCnt != null;
@@ -1255,9 +1255,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__SongFavoriteCnt;
 
         [global::ProtoBuf.ProtoMember(29, Name = @"song_recent_cnt")]
-        public uint SongRecentCnt
+        public uint? SongRecentCnt
         {
-            get => __pbn__SongRecentCnt.GetValueOrDefault();
+            get => __pbn__SongRecentCnt;
             set => __pbn__SongRecentCnt = value;
         }
         public bool ShouldSerializeSongRecentCnt() => __pbn__SongRecentCnt != null;
@@ -1265,9 +1265,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__SongRecentCnt;
 
         [global::ProtoBuf.ProtoMember(30, Name = @"total_credit_cnt")]
-        public uint TotalCreditCnt
+        public uint? TotalCreditCnt
         {
-            get => __pbn__TotalCreditCnt.GetValueOrDefault();
+            get => __pbn__TotalCreditCnt;
             set => __pbn__TotalCreditCnt = value;
         }
         public bool ShouldSerializeTotalCreditCnt() => __pbn__TotalCreditCnt != null;
@@ -1275,9 +1275,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__TotalCreditCnt;
 
         [global::ProtoBuf.ProtoMember(31, Name = @"prev_area_code")]
-        public uint PrevAreaCode
+        public uint? PrevAreaCode
         {
-            get => __pbn__PrevAreaCode.GetValueOrDefault();
+            get => __pbn__PrevAreaCode;
             set => __pbn__PrevAreaCode = value;
         }
         public bool ShouldSerializePrevAreaCode() => __pbn__PrevAreaCode != null;
@@ -1285,9 +1285,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__PrevAreaCode;
 
         [global::ProtoBuf.ProtoMember(32, Name = @"consec_area_cnt")]
-        public uint ConsecAreaCnt
+        public uint? ConsecAreaCnt
         {
-            get => __pbn__ConsecAreaCnt.GetValueOrDefault();
+            get => __pbn__ConsecAreaCnt;
             set => __pbn__ConsecAreaCnt = value;
         }
         public bool ShouldSerializeConsecAreaCnt() => __pbn__ConsecAreaCnt != null;
@@ -1295,9 +1295,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__ConsecAreaCnt;
 
         [global::ProtoBuf.ProtoMember(33, Name = @"recommend_song")]
-        public uint RecommendSong
+        public uint? RecommendSong
         {
-            get => __pbn__RecommendSong.GetValueOrDefault();
+            get => __pbn__RecommendSong;
             set => __pbn__RecommendSong = value;
         }
         public bool ShouldSerializeRecommendSong() => __pbn__RecommendSong != null;
@@ -1308,9 +1308,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         public uint[] RecommendBestSongs { get; set; }
 
         [global::ProtoBuf.ProtoMember(35, Name = @"disp_level_self")]
-        public uint DispLevelSelf
+        public uint? DispLevelSelf
         {
-            get => __pbn__DispLevelSelf.GetValueOrDefault();
+            get => __pbn__DispLevelSelf;
             set => __pbn__DispLevelSelf = value;
         }
         public bool ShouldSerializeDispLevelSelf() => __pbn__DispLevelSelf != null;
@@ -1318,9 +1318,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__DispLevelSelf;
 
         [global::ProtoBuf.ProtoMember(36, Name = @"is_auto_title_on")]
-        public bool IsAutoTitleOn
+        public bool? IsAutoTitleOn
         {
-            get => __pbn__IsAutoTitleOn.GetValueOrDefault();
+            get => __pbn__IsAutoTitleOn;
             set => __pbn__IsAutoTitleOn = value;
         }
         public bool ShouldSerializeIsAutoTitleOn() => __pbn__IsAutoTitleOn != null;
@@ -1338,9 +1338,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private byte[] __pbn__DefaultOptionSetting;
 
         [global::ProtoBuf.ProtoMember(38, Name = @"default_shin_setting")]
-        public bool DefaultShinSetting
+        public bool? DefaultShinSetting
         {
-            get => __pbn__DefaultShinSetting.GetValueOrDefault();
+            get => __pbn__DefaultShinSetting;
             set => __pbn__DefaultShinSetting = value;
         }
         public bool ShouldSerializeDefaultShinSetting() => __pbn__DefaultShinSetting != null;
@@ -1348,9 +1348,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private bool? __pbn__DefaultShinSetting;
 
         [global::ProtoBuf.ProtoMember(39, Name = @"total_get_donpoint")]
-        public uint TotalGetDonpoint
+        public uint? TotalGetDonpoint
         {
-            get => __pbn__TotalGetDonpoint.GetValueOrDefault();
+            get => __pbn__TotalGetDonpoint;
             set => __pbn__TotalGetDonpoint = value;
         }
         public bool ShouldSerializeTotalGetDonpoint() => __pbn__TotalGetDonpoint != null;
@@ -1358,9 +1358,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__TotalGetDonpoint;
 
         [global::ProtoBuf.ProtoMember(40, Name = @"total_use_donpoint")]
-        public uint TotalUseDonpoint
+        public uint? TotalUseDonpoint
         {
-            get => __pbn__TotalUseDonpoint.GetValueOrDefault();
+            get => __pbn__TotalUseDonpoint;
             set => __pbn__TotalUseDonpoint = value;
         }
         public bool ShouldSerializeTotalUseDonpoint() => __pbn__TotalUseDonpoint != null;
@@ -1368,9 +1368,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__TotalUseDonpoint;
 
         [global::ProtoBuf.ProtoMember(41, Name = @"disp_taikojuku_dan")]
-        public uint DispTaikojukuDan
+        public uint? DispTaikojukuDan
         {
-            get => __pbn__DispTaikojukuDan.GetValueOrDefault();
+            get => __pbn__DispTaikojukuDan;
             set => __pbn__DispTaikojukuDan = value;
         }
         public bool ShouldSerializeDispTaikojukuDan() => __pbn__DispTaikojukuDan != null;
@@ -1548,9 +1548,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private byte[] __pbn__TitleFlg;
 
         [global::ProtoBuf.ProtoMember(18, Name = @"get_donpoint")]
-        public uint GetDonpoint
+        public uint? GetDonpoint
         {
-            get => __pbn__GetDonpoint.GetValueOrDefault();
+            get => __pbn__GetDonpoint;
             set => __pbn__GetDonpoint = value;
         }
         public bool ShouldSerializeGetDonpoint() => __pbn__GetDonpoint != null;
@@ -1558,9 +1558,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__GetDonpoint;
 
         [global::ProtoBuf.ProtoMember(19, Name = @"reward_ptn")]
-        public uint RewardPtn
+        public uint? RewardPtn
         {
-            get => __pbn__RewardPtn.GetValueOrDefault();
+            get => __pbn__RewardPtn;
             set => __pbn__RewardPtn = value;
         }
         public bool ShouldSerializeRewardPtn() => __pbn__RewardPtn != null;
@@ -1568,9 +1568,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__RewardPtn;
 
         [global::ProtoBuf.ProtoMember(20, Name = @"reward_progress")]
-        public uint RewardProgress
+        public uint? RewardProgress
         {
-            get => __pbn__RewardProgress.GetValueOrDefault();
+            get => __pbn__RewardProgress;
             set => __pbn__RewardProgress = value;
         }
         public bool ShouldSerializeRewardProgress() => __pbn__RewardProgress != null;
@@ -1578,9 +1578,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__RewardProgress;
 
         [global::ProtoBuf.ProtoMember(21, Name = @"is_devil")]
-        public bool IsDevil
+        public bool? IsDevil
         {
-            get => __pbn__IsDevil.GetValueOrDefault();
+            get => __pbn__IsDevil;
             set => __pbn__IsDevil = value;
         }
         public bool ShouldSerializeIsDevil() => __pbn__IsDevil != null;
@@ -1588,9 +1588,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private bool? __pbn__IsDevil;
 
         [global::ProtoBuf.ProtoMember(22, Name = @"is_explain")]
-        public bool IsExplain
+        public bool? IsExplain
         {
-            get => __pbn__IsExplain.GetValueOrDefault();
+            get => __pbn__IsExplain;
             set => __pbn__IsExplain = value;
         }
         public bool ShouldSerializeIsExplain() => __pbn__IsExplain != null;
@@ -1630,9 +1630,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         public byte[] Reserved { get; set; }
 
         [global::ProtoBuf.ProtoMember(31, Name = @"lowerlimit_age")]
-        public uint LowerlimitAge
+        public uint? LowerlimitAge
         {
-            get => __pbn__LowerlimitAge.GetValueOrDefault();
+            get => __pbn__LowerlimitAge;
             set => __pbn__LowerlimitAge = value;
         }
         public bool ShouldSerializeLowerlimitAge() => __pbn__LowerlimitAge != null;
@@ -1640,9 +1640,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__LowerlimitAge;
 
         [global::ProtoBuf.ProtoMember(32, Name = @"upperlimit_age")]
-        public uint UpperlimitAge
+        public uint? UpperlimitAge
         {
-            get => __pbn__UpperlimitAge.GetValueOrDefault();
+            get => __pbn__UpperlimitAge;
             set => __pbn__UpperlimitAge = value;
         }
         public bool ShouldSerializeUpperlimitAge() => __pbn__UpperlimitAge != null;
@@ -1650,9 +1650,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__UpperlimitAge;
 
         [global::ProtoBuf.ProtoMember(33, Name = @"age_score")]
-        public uint AgeScore
+        public uint? AgeScore
         {
-            get => __pbn__AgeScore.GetValueOrDefault();
+            get => __pbn__AgeScore;
             set => __pbn__AgeScore = value;
         }
         public bool ShouldSerializeAgeScore() => __pbn__AgeScore != null;
@@ -1660,9 +1660,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__AgeScore;
 
         [global::ProtoBuf.ProtoMember(34, Name = @"estimation_count")]
-        public uint EstimationCount
+        public uint? EstimationCount
         {
-            get => __pbn__EstimationCount.GetValueOrDefault();
+            get => __pbn__EstimationCount;
             set => __pbn__EstimationCount = value;
         }
         public bool ShouldSerializeEstimationCount() => __pbn__EstimationCount != null;
@@ -1670,9 +1670,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__EstimationCount;
 
         [global::ProtoBuf.ProtoMember(35, Name = @"dan_result")]
-        public uint DanResult
+        public uint? DanResult
         {
-            get => __pbn__DanResult.GetValueOrDefault();
+            get => __pbn__DanResult;
             set => __pbn__DanResult = value;
         }
         public bool ShouldSerializeDanResult() => __pbn__DanResult != null;
@@ -1683,9 +1683,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         public global::System.Collections.Generic.List<CollaboData> AryCollaboInfoes { get; } = new global::System.Collections.Generic.List<CollaboData>();
 
         [global::ProtoBuf.ProtoMember(37, Name = @"chassis_link_key")]
-        public uint ChassisLinkKey
+        public uint? ChassisLinkKey
         {
-            get => __pbn__ChassisLinkKey.GetValueOrDefault();
+            get => __pbn__ChassisLinkKey;
             set => __pbn__ChassisLinkKey = value;
         }
         public bool ShouldSerializeChassisLinkKey() => __pbn__ChassisLinkKey != null;
@@ -1787,9 +1787,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
             public uint PlayDan { get; set; }
 
             [global::ProtoBuf.ProtoMember(23, Name = @"soul_gauge")]
-            public uint SoulGauge
+            public uint? SoulGauge
             {
-                get => __pbn__SoulGauge.GetValueOrDefault();
+                get => __pbn__SoulGauge;
                 set => __pbn__SoulGauge = value;
             }
             public bool ShouldSerializeSoulGauge() => __pbn__SoulGauge != null;
@@ -1797,9 +1797,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
             private uint? __pbn__SoulGauge;
 
             [global::ProtoBuf.ProtoMember(24, Name = @"hit_cnt")]
-            public uint HitCnt
+            public uint? HitCnt
             {
-                get => __pbn__HitCnt.GetValueOrDefault();
+                get => __pbn__HitCnt;
                 set => __pbn__HitCnt = value;
             }
             public bool ShouldSerializeHitCnt() => __pbn__HitCnt != null;
@@ -1837,9 +1837,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
                 => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
             [global::ProtoBuf.ProtoMember(1, Name = @"costume_1")]
-            public uint Costume1
+            public uint? Costume1
             {
-                get => __pbn__Costume1.GetValueOrDefault();
+                get => __pbn__Costume1;
                 set => __pbn__Costume1 = value;
             }
             public bool ShouldSerializeCostume1() => __pbn__Costume1 != null;
@@ -1847,9 +1847,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
             private uint? __pbn__Costume1;
 
             [global::ProtoBuf.ProtoMember(2, Name = @"costume_2")]
-            public uint Costume2
+            public uint? Costume2
             {
-                get => __pbn__Costume2.GetValueOrDefault();
+                get => __pbn__Costume2;
                 set => __pbn__Costume2 = value;
             }
             public bool ShouldSerializeCostume2() => __pbn__Costume2 != null;
@@ -1857,9 +1857,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
             private uint? __pbn__Costume2;
 
             [global::ProtoBuf.ProtoMember(3, Name = @"costume_3")]
-            public uint Costume3
+            public uint? Costume3
             {
-                get => __pbn__Costume3.GetValueOrDefault();
+                get => __pbn__Costume3;
                 set => __pbn__Costume3 = value;
             }
             public bool ShouldSerializeCostume3() => __pbn__Costume3 != null;
@@ -1867,9 +1867,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
             private uint? __pbn__Costume3;
 
             [global::ProtoBuf.ProtoMember(4, Name = @"costume_4")]
-            public uint Costume4
+            public uint? Costume4
             {
-                get => __pbn__Costume4.GetValueOrDefault();
+                get => __pbn__Costume4;
                 set => __pbn__Costume4 = value;
             }
             public bool ShouldSerializeCostume4() => __pbn__Costume4 != null;
@@ -1877,9 +1877,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
             private uint? __pbn__Costume4;
 
             [global::ProtoBuf.ProtoMember(5, Name = @"costume_5")]
-            public uint Costume5
+            public uint? Costume5
             {
-                get => __pbn__Costume5.GetValueOrDefault();
+                get => __pbn__Costume5;
                 set => __pbn__Costume5 = value;
             }
             public bool ShouldSerializeCostume5() => __pbn__Costume5 != null;
@@ -1899,9 +1899,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
             public uint CollaboSelect { get; set; }
 
             [global::ProtoBuf.ProtoMember(2, Name = @"collabo_id")]
-            public uint CollaboId
+            public uint? CollaboId
             {
-                get => __pbn__CollaboId.GetValueOrDefault();
+                get => __pbn__CollaboId;
                 set => __pbn__CollaboId = value;
             }
             public bool ShouldSerializeCollaboId() => __pbn__CollaboId != null;
@@ -1909,9 +1909,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
             private uint? __pbn__CollaboId;
 
             [global::ProtoBuf.ProtoMember(3, Name = @"collabo_result")]
-            public uint CollaboResult
+            public uint? CollaboResult
             {
-                get => __pbn__CollaboResult.GetValueOrDefault();
+                get => __pbn__CollaboResult;
                 set => __pbn__CollaboResult = value;
             }
             public bool ShouldSerializeCollaboResult() => __pbn__CollaboResult != null;
@@ -1951,9 +1951,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         public string ShopId { get; set; }
 
         [global::ProtoBuf.ProtoMember(4, Name = @"level")]
-        public uint Level
+        public uint? Level
         {
-            get => __pbn__Level.GetValueOrDefault();
+            get => __pbn__Level;
             set => __pbn__Level = value;
         }
         public bool ShouldSerializeLevel() => __pbn__Level != null;
@@ -1976,9 +1976,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         public uint Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"level")]
-        public uint Level
+        public uint? Level
         {
-            get => __pbn__Level.GetValueOrDefault();
+            get => __pbn__Level;
             set => __pbn__Level = value;
         }
         public bool ShouldSerializeLevel() => __pbn__Level != null;
@@ -2043,9 +2043,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         public uint Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"recommend_song")]
-        public uint RecommendSong
+        public uint? RecommendSong
         {
-            get => __pbn__RecommendSong.GetValueOrDefault();
+            get => __pbn__RecommendSong;
             set => __pbn__RecommendSong = value;
         }
         public bool ShouldSerializeRecommendSong() => __pbn__RecommendSong != null;
@@ -2086,9 +2086,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         public uint Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"song_hash_ver")]
-        public uint SongHashVer
+        public uint? SongHashVer
         {
-            get => __pbn__SongHashVer.GetValueOrDefault();
+            get => __pbn__SongHashVer;
             set => __pbn__SongHashVer = value;
         }
         public bool ShouldSerializeSongHashVer() => __pbn__SongHashVer != null;
@@ -2157,9 +2157,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
             public string PlaceId { get; set; }
 
             [global::ProtoBuf.ProtoMember(6, Name = @"type")]
-            public uint Type
+            public uint? Type
             {
-                get => __pbn__Type.GetValueOrDefault();
+                get => __pbn__Type;
                 set => __pbn__Type = value;
             }
             public bool ShouldSerializeType() => __pbn__Type != null;
@@ -2167,9 +2167,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
             private uint? __pbn__Type;
 
             [global::ProtoBuf.ProtoMember(7, Name = @"amount")]
-            public uint Amount
+            public uint? Amount
             {
-                get => __pbn__Amount.GetValueOrDefault();
+                get => __pbn__Amount;
                 set => __pbn__Amount = value;
             }
             public bool ShouldSerializeAmount() => __pbn__Amount != null;
@@ -2215,9 +2215,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         public uint Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"song_hash_ver")]
-        public uint SongHashVer
+        public uint? SongHashVer
         {
-            get => __pbn__SongHashVer.GetValueOrDefault();
+            get => __pbn__SongHashVer;
             set => __pbn__SongHashVer = value;
         }
         public bool ShouldSerializeSongHashVer() => __pbn__SongHashVer != null;
@@ -2415,9 +2415,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         public uint Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"total_get_donpoint")]
-        public uint TotalGetDonpoint
+        public uint? TotalGetDonpoint
         {
-            get => __pbn__TotalGetDonpoint.GetValueOrDefault();
+            get => __pbn__TotalGetDonpoint;
             set => __pbn__TotalGetDonpoint = value;
         }
         public bool ShouldSerializeTotalGetDonpoint() => __pbn__TotalGetDonpoint != null;
@@ -2425,9 +2425,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private uint? __pbn__TotalGetDonpoint;
 
         [global::ProtoBuf.ProtoMember(3, Name = @"total_use_donpoint")]
-        public uint TotalUseDonpoint
+        public uint? TotalUseDonpoint
         {
-            get => __pbn__TotalUseDonpoint.GetValueOrDefault();
+            get => __pbn__TotalUseDonpoint;
             set => __pbn__TotalUseDonpoint = value;
         }
         public bool ShouldSerializeTotalUseDonpoint() => __pbn__TotalUseDonpoint != null;
@@ -2475,9 +2475,9 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Murasaki.LegacyWire
         private byte[] __pbn__CostumeFlg3;
 
         [global::ProtoBuf.ProtoMember(8, Name = @"song_hash_ver")]
-        public uint SongHashVer
+        public uint? SongHashVer
         {
-            get => __pbn__SongHashVer.GetValueOrDefault();
+            get => __pbn__SongHashVer;
             set => __pbn__SongHashVer = value;
         }
         public bool ShouldSerializeSongHashVer() => __pbn__SongHashVer != null;

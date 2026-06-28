@@ -11,7 +11,7 @@ public sealed class SelfBestController : BaseProtocolController<SelfBestControll
     {
         Logger.LogInformation("White SelfBest request: {@Request}", request);
         var common = await Mediator.Send(
-            new GetSelfBestQuery(request.Baid, GameEra.White, request.Level, request.ArySongNoes ?? []),
+            new GetSelfBestQuery(request.Baid, GameEra.White, request.Level.GetValueOrDefault(), request.ArySongNoes ?? []),
             HttpContext.RequestAborted);
         return Ok(SelfBestMappers.Map(common));
     }
@@ -22,7 +22,7 @@ public sealed class SelfBestController : BaseProtocolController<SelfBestControll
     {
         Logger.LogInformation("White legacy SelfBest request: {@Request}", request);
         var common = await Mediator.Send(
-            new GetSelfBestQuery(request.Baid, GameEra.White, request.Level, request.ArySongNoes ?? []),
+            new GetSelfBestQuery(request.Baid, GameEra.White, request.Level.GetValueOrDefault(), request.ArySongNoes ?? []),
             HttpContext.RequestAborted);
         return Ok(LegacyWire.LegacySelfBestMappers.Map(common));
     }

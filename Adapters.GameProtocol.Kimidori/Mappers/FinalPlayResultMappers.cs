@@ -64,8 +64,7 @@ public static partial class FinalPlayResultMappers
     [MapProperty(nameof(FinalWire.PlayResultRequest.StageData.AryChallengeIds), nameof(Ac15StageResult.ChallengeIds), Use = nameof(MapCompeList))]
     [MapProperty(nameof(FinalWire.PlayResultRequest.StageData.AryUserCompeIds), nameof(Ac15StageResult.UserCompeIds), Use = nameof(MapCompeList))]
     [MapProperty(nameof(FinalWire.PlayResultRequest.StageData.AryBngCompeIds), nameof(Ac15StageResult.BngCompeIds), Use = nameof(MapCompeList))]
-    [MapPropertyFromSource(nameof(Ac15StageResult.SoulGauge), Use = nameof(MapSoulGauge))]
-    [MapPropertyFromSource(nameof(Ac15StageResult.HitCount), Use = nameof(MapHitCount))]
+    [MapProperty(nameof(FinalWire.PlayResultRequest.StageData.HitCnt), nameof(Ac15StageResult.HitCount))]
     [MapperIgnoreTarget(nameof(Ac15StageResult.ScoreRate))]
     [MapperIgnoreTarget(nameof(Ac15StageResult.ScoreRank))]
     [MapperIgnoreTarget(nameof(Ac15StageResult.SelectedFolderId))]
@@ -108,11 +107,5 @@ public static partial class FinalPlayResultMappers
 
     private static List<uint> MapTitleFlags(byte[]? values)
         => Ac15MapperNormalization.DecodeBitset(values, Ac15EraProfiles.Kimidori.Limits.TitleFlagBytes);
-
-    private static uint? MapSoulGauge(FinalWire.PlayResultRequest.StageData stage)
-        => stage.SoulGauge;
-
-    private static uint? MapHitCount(FinalWire.PlayResultRequest.StageData stage)
-        => stage.HitCnt;
 
 }

@@ -10,7 +10,7 @@ public sealed class SelfBestController : BaseProtocolController<SelfBestControll
     {
         Logger.LogInformation("Murasaki SelfBest request: {@Request}", request);
         var common = await Mediator.Send(
-            new GetSelfBestQuery(request.Baid, GameEra.Murasaki, request.Level, request.ArySongNoes ?? []),
+            new GetSelfBestQuery(request.Baid, GameEra.Murasaki, request.Level.GetValueOrDefault(), request.ArySongNoes ?? []),
             HttpContext.RequestAborted);
         return Ok(SelfBestMappers.Map(common));
     }
