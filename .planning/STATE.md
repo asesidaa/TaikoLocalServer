@@ -5,10 +5,10 @@ milestone_name: MOMOIRO AC15 0.11 Support
 current_phase: 43
 current_phase_name: MOMOIRO AdminApi and WebUI Routing
 status: complete
-stopped_at: Completed 43-01-PLAN.md
-last_updated: "2026-06-28T22:24:06.631+08:00"
-last_activity: 2026-06-28
-last_activity_desc: Completed Phase 43 Momoiro AdminApi and WebUI routing
+stopped_at: Completed quick task 260629-29p
+last_updated: "2026-06-29T02:10:15+08:00"
+last_activity: 2026-06-29
+last_activity_desc: Completed quick task 260629-29p: Add KIMIDORI final support
 progress:
   total_phases: 6
   completed_phases: 5
@@ -24,14 +24,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-25)
 
 **Core value:** AC15 cabinets can use TaikoLocalServer through era-correct protocol, catalog, persistence, and admin surfaces without corrupting or conflating MOMOIRO, KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, Nijiiro, or shared identity state.
-**Current focus:** Phase 43 complete - MOMOIRO AdminApi and WebUI Routing
+**Current focus:** Phase 43 complete - MOMOIRO AdminApi and WebUI Routing; quick task 260629-29p completed KIMIDORI final `/v05r06` support
 
 ## Current Position
 
 Phase: 43 of 44 (MOMOIRO AdminApi and WebUI Routing)
 Plan: 1 of 1 in current phase
 Status: Complete
-Last activity: 2026-06-28 - Completed Phase 43 Momoiro AdminApi and WebUI routing
+Last activity: 2026-06-29 - Completed quick task 260629-29p: Add KIMIDORI final support
 
 Progress: [##########] 100%
 
@@ -145,6 +145,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260628-ama | Check White Taikojuku patch portability for White final and Murasaki variants | 2026-06-27 | eab33d5b | [260628-ama-now-we-have-finished-the-patch-for-white](./quick/260628-ama-now-we-have-finished-the-patch-for-white/) |
+| 260629-29p | Add KIMIDORI final support | 2026-06-29 | c873b5bf | [260629-29p-now-let-s-add-support-for-kimidori-final](./quick/260629-29p-now-let-s-add-support-for-kimidori-final/) |
 
 ### Blockers/Concerns
 
@@ -163,8 +164,8 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ## Session Continuity
 
-Last session: 2026-06-28T22:24:06.631+08:00
-Stopped at: Completed 43-01-PLAN.md
+Last session: 2026-06-29T02:10:15+08:00
+Stopped at: Completed quick task 260629-29p
 Resume file: None
 
 ## Operator Next Steps
