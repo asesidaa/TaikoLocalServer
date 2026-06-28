@@ -138,6 +138,7 @@ Decisions are logged in PROJECT.md Key Decisions table. Recent decisions affecti
 
 ### Pending Todos
 
+- 1 pending todo: Centralize AC15 mapper helper normalization.
 - Phase 43 is complete. Phase 44 verification and acceptance remains not started.
 
 ### Quick Tasks Completed
