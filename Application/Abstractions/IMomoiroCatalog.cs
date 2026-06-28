@@ -17,4 +17,10 @@ public interface IMomoiroCatalog : IEraGameDataCatalog
     IReadOnlyDictionary<uint, Ac15TelopEntry> Telops { get; }
 
     IReadOnlyList<MovieData> Movies { get; }
+
+    IReadOnlyList<Costume> GetCostumeList();
+
+    IReadOnlyDictionary<uint, Title> GetTitleDictionary();
+
+    IReadOnlyDictionary<uint, Neiro> GetNeiroDictionary();
 }

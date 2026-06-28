@@ -39,8 +39,8 @@
 
 ### Admin, WebUI, and Verification
 
-- [ ] **MOADMIN-01**: AdminApi routes expose MOMOIRO-owned implemented state through `/api/momoiro/...` and applicable era-routed contracts without reading or writing another era's gameplay state.
-- [ ] **MOADMIN-02**: The WebUI exposes MOMOIRO as a supported era with read/edit surfaces only for implemented MOMOIRO-owned state and without controls for unsupported MOMOIRO features.
+- [x] **MOADMIN-01**: AdminApi routes expose MOMOIRO-owned implemented state through `/api/momoiro/...` and applicable era-routed contracts without reading or writing another era's gameplay state.
+- [x] **MOADMIN-02**: The WebUI exposes MOMOIRO as a supported era with read/edit surfaces only for implemented MOMOIRO-owned state and without controls for unsupported MOMOIRO features.
 - [ ] **MOVFY-01**: Automated verification covers MOMOIRO route ownership, generated mapper behavior, root-level catalog parsing, persistence/no-cross-era boundaries, byte packing, AdminApi/WebUI readback, and absence of unsupported routes or state writes.
 - [ ] **MOVFY-02**: MOMOIRO verification includes Mapperly generated-source inspection and a full build/temp-output Host build where needed before runtime closeout.
 - [ ] **MOVFY-03**: Milestone closeout records repeatable cabinet/RPCS3 MOMOIRO smoke evidence for supported startup, login, userdata, catalog/readback, playresult, self-best/crown, AdminApi, and WebUI flows before full support is claimed.
@@ -99,8 +99,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MORUN-03 | Phase 42 | Complete |
 | MORUN-04 | Phase 42 | Complete |
 | MORUN-05 | Phase 42 | Complete |
-| MOADMIN-01 | Phase 43 | Pending |
-| MOADMIN-02 | Phase 43 | Pending |
+| MOADMIN-01 | Phase 43 | Complete |
+| MOADMIN-02 | Phase 43 | Complete |
 | MOVFY-01 | Phase 44 | Pending |
 | MOVFY-02 | Phase 44 | Pending |
 | MOVFY-03 | Phase 44 | Pending |
@@ -113,4 +113,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-06-25*
-*Last updated: 2026-06-26 after route inventory roadmap revision*
+*Last updated: 2026-06-28 after Phase 43 AdminApi/WebUI closeout*

@@ -26,6 +26,7 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
             GameEra.White => Ok(BuildWhiteMusicDetails()),
             GameEra.Murasaki => Ok(BuildMurasakiMusicDetails()),
             GameEra.Kimidori => Ok(BuildKimidoriMusicDetails()),
+            GameEra.Momoiro => Ok(BuildMomoiroMusicDetails()),
             _ => EraRoute.BadEra(era)
         };
     }
@@ -49,6 +50,7 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
             GameEra.White => Ok(BuildWhiteDanData()),
             GameEra.Murasaki => Ok(BuildMurasakiDanData()),
             GameEra.Kimidori => Ok(BuildKimidoriDanData()),
+            GameEra.Momoiro => Ok(BuildMomoiroDanData()),
             _ => EraRoute.BadEra(era)
         };
     }
@@ -216,6 +218,23 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
                 pair.Value.StarUra));
     }
 
+    private Dictionary<uint, MusicDetail> BuildMomoiroMusicDetails()
+    {
+        return catalog.Momoiro().MomoiroMusicInfos.ToDictionary(
+            pair => pair.Key,
+            pair => BuildAc15MusicDetail(
+                pair.Value.SongNo,
+                pair.Value.FileOrder,
+                pair.Value.Title,
+                pair.Value.MusicId,
+                pair.Value.CategoryId,
+                pair.Value.StarEasy,
+                pair.Value.StarNormal,
+                pair.Value.StarHard,
+                pair.Value.StarOni,
+                pair.Value.StarUra));
+    }
+
     private List<DanData> BuildYellowDanData()
     {
         return catalog.Yellow().TaikojukuFileOrder.Select(entry => new DanData
@@ -283,6 +302,22 @@ public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<
     private List<DanData> BuildKimidoriDanData()
     {
         return catalog.Kimidori().DaniFileOrder.Select(entry => new DanData
+        {
+            DanId = entry.ChallengeLevel,
+            Title = string.IsNullOrWhiteSpace(entry.Name) ? entry.UniqueId.ToString() : entry.Name,
+            VerupNo = entry.VerupNo,
+            OdaiSongList = entry.Songs.Select(song => new DanData.OdaiSong
+            {
+                SongNo = song.SongNo,
+                Level = ToWebUiDifficultyLevel(song.Level)
+            }).ToList(),
+            OdaiBorderList = BuildAc15OdaiBorders(entry)
+        }).ToList();
+    }
+
+    private List<DanData> BuildMomoiroDanData()
+    {
+        return catalog.Momoiro().DaniFileOrder.Select(entry => new DanData
         {
             DanId = entry.ChallengeLevel,
             Title = string.IsNullOrWhiteSpace(entry.Name) ? entry.UniqueId.ToString() : entry.Name,

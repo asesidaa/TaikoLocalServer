@@ -27,7 +27,7 @@ v1.7 MOMOIRO AC15 0.11 Support is active. The milestone adds MOMOIRO as a first-
 - [x] **Phase 40: MOMOIRO Protocol Limits, Root Catalog, and Route Behavior** - Bind root-level catalog data, protocol limits, and binary-proven route behavior before runtime mutation. (completed 2026-06-26)
 - [x] **Phase 41: MOMOIRO Identity, Userdata, Self-Best, and Crown Readback** - Read MOMOIRO-owned identity, profile, score, recent/favorite, release, hash, and crown state. (completed 2026-06-26)
 - [x] **Phase 42: MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility** - Mutate only evidence-backed MOMOIRO-owned normal-play, unlock, reward, Dan, and challenge-compatible state. (completed 2026-06-27)
-- [ ] **Phase 43: MOMOIRO AdminApi and WebUI Routing** - Expose implemented MOMOIRO-owned state through admin and browser surfaces while hiding unsupported controls.
+- [x] **Phase 43: MOMOIRO AdminApi and WebUI Routing** - Expose implemented MOMOIRO-owned state through admin and browser surfaces while hiding unsupported controls. (completed 2026-06-28)
 - [ ] **Phase 44: MOMOIRO Verification and Acceptance** - Record automated verification, generated-source/build evidence, and repeatable cabinet/RPCS3 acceptance.
 
 ## Phase Details
@@ -181,7 +181,11 @@ Plans:
   3. Unsupported MOMOIRO controls for Taikojuku, Tokkun, Banacoin, battle, Don Challenge, ChallengeCompe, event folders, newer item-shop authority, and proto-only route families are not shown as active features.
   4. AdminApi and WebUI edits round-trip through the same MOMOIRO-owned state that cabinet readback consumes.
 
-**Plans**: TBD
+**Plans**: 1/1 plans complete
+Plans:
+
+- [x] 43-01-PLAN.md - Momoiro AdminApi and WebUI routing
+
 **UI hint**: yes
 
 ### Phase 44: MOMOIRO Verification and Acceptance
@@ -211,7 +215,7 @@ Plans:
 | 40. MOMOIRO Protocol Limits, Root Catalog, and Route Behavior | v1.7 | 5/5 | Complete    | 2026-06-26 |
 | 41. MOMOIRO Identity, Userdata, Self-Best, and Crown Readback | v1.7 | 5/5 | Complete   | 2026-06-26 |
 | 42. MOMOIRO Normal Playresult, Unlocks, Rewards, and Dan Compatibility | v1.7 | 7/7 | Complete | 2026-06-27 |
-| 43. MOMOIRO AdminApi and WebUI Routing | v1.7 | 0/TBD | Not started | - |
+| 43. MOMOIRO AdminApi and WebUI Routing | v1.7 | 1/1 | Complete | 2026-06-28 |
 | 44. MOMOIRO Verification and Acceptance | v1.7 | 0/TBD | Not started | - |
 
 ## Milestone Progress

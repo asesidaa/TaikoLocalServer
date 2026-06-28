@@ -25,8 +25,9 @@ public static class WebUiEra
     public const string White = "White";
     public const string Murasaki = "Murasaki";
     public const string Kimidori = "Kimidori";
-    public static readonly string[] Supported = [Default, Green, Blue, Yellow, Red, White, Murasaki, Kimidori];
-    private static readonly string[] Known = [Default, Green, Blue, Yellow, Red, White, Murasaki, Kimidori];
+    public const string Momoiro = "Momoiro";
+    public static readonly string[] Supported = [Default, Green, Blue, Yellow, Red, White, Murasaki, Kimidori, Momoiro];
+    private static readonly string[] Known = [Default, Green, Blue, Yellow, Red, White, Murasaki, Kimidori, Momoiro];
 
     public static bool IsSupported(string? era)
     {
@@ -46,7 +47,8 @@ public static class WebUiEra
             || string.Equals(era, Red, StringComparison.OrdinalIgnoreCase)
             || string.Equals(era, White, StringComparison.OrdinalIgnoreCase)
             || string.Equals(era, Murasaki, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(era, Kimidori, StringComparison.OrdinalIgnoreCase);
+            || string.Equals(era, Kimidori, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(era, Momoiro, StringComparison.OrdinalIgnoreCase);
     }
 
     public static bool SupportsOlderAc15DonChallenge(string? era)

@@ -57,6 +57,7 @@ public partial class SongLeaderboardController(ITaikoDbContext context) : BaseAd
             GameEra.White => await GetWhiteLeaderboardRows(songId, diff),
             GameEra.Murasaki => await GetMurasakiLeaderboardRows(songId, diff),
             GameEra.Kimidori => await GetKimidoriLeaderboardRows(songId, diff),
+            GameEra.Momoiro => await GetMomoiroLeaderboardRows(songId, diff),
             _ => null
         };
 

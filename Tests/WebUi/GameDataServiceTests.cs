@@ -103,6 +103,22 @@ public sealed class GameDataServiceTests
     }
 
     [Fact]
+    public async Task InitializeAsync_LoadsMomoiroDanDataWhenEnabled()
+    {
+        var handler = new RecordingHandler();
+        using var client = new HttpClient(handler)
+        {
+            BaseAddress = new Uri("http://localhost/")
+        };
+        var service = new GameDataService(client);
+
+        await service.InitializeAsync("http://localhost/", ["Momoiro"]);
+
+        Assert.Equal(["api/Momoiro/GameData/DanData"], handler.RequestPaths);
+        Assert.Empty(service.GetDanMap("Murasaki"));
+    }
+
+    [Fact]
     public async Task CatalogLookups_RequestYellowAdminApiRoutes()
     {
         var handler = new RecordingHandler();
@@ -211,6 +227,33 @@ public sealed class GameDataServiceTests
     }
 
     [Fact]
+    public async Task CatalogLookups_RequestMomoiroAdminApiRoutes()
+    {
+        var handler = new RecordingHandler();
+        using var client = new HttpClient(handler)
+        {
+            BaseAddress = new Uri("http://localhost/")
+        };
+        var service = new GameDataService(client);
+
+        await service.InitializeAsync("http://localhost/", ["Momoiro"]);
+        await service.GetMusicDetailDictionary("Momoiro");
+        await service.GetCostumeList("Momoiro");
+        await service.GetTitleDictionary("Momoiro");
+        await service.GetNeiroDictionary("Momoiro");
+
+        Assert.Equal(
+            [
+                "api/Momoiro/GameData/DanData",
+                "api/Momoiro/GameData/MusicDetails",
+                "api/Momoiro/customization/costumes",
+                "api/Momoiro/customization/titles",
+                "api/Momoiro/customization/neiros"
+            ],
+            handler.RequestPaths);
+    }
+
+    [Fact]
     public async Task LegacyCatalogLookups_UseFirstEnabledEra()
     {
         var handler = new RecordingHandler();
@@ -239,9 +282,9 @@ public sealed class GameDataServiceTests
     [Fact]
     public void NormalizeEnabled_IgnoresUnsupportedEras()
     {
-        var enabled = WebUiEra.NormalizeEnabled(["Yellow", "Red", "White", "Murasaki", "Unknown"]);
+        var enabled = WebUiEra.NormalizeEnabled(["Yellow", "Red", "White", "Murasaki", "Momoiro", "Unknown"]);
 
-        Assert.Equal(["Yellow", "Red", "White", "Murasaki"], enabled);
+        Assert.Equal(["Yellow", "Red", "White", "Murasaki", "Momoiro"], enabled);
     }
 
     [Fact]
@@ -263,18 +306,26 @@ public sealed class GameDataServiceTests
     }
 
     [Fact]
+    public void Momoiro_IsAc15()
+    {
+        Assert.True(WebUiEra.IsAc15("Momoiro"));
+    }
+
+    [Fact]
     public void FavoriteSongLimit_UsesServerSuppliedEraLimit()
     {
         var favoriteSongLimits = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
         {
             ["Red"] = 5,
             ["Green"] = 10,
-            ["Murasaki"] = 10
+            ["Murasaki"] = 10,
+            ["Momoiro"] = 5
         };
 
         Assert.Equal(5, WebUiEra.GetFavoriteSongLimit("red", favoriteSongLimits));
         Assert.Equal(10, WebUiEra.GetFavoriteSongLimit("Green", favoriteSongLimits));
         Assert.Equal(10, WebUiEra.GetFavoriteSongLimit("murasaki", favoriteSongLimits));
+        Assert.Equal(5, WebUiEra.GetFavoriteSongLimit("momoiro", favoriteSongLimits));
         Assert.Null(WebUiEra.GetFavoriteSongLimit("Nijiiro", favoriteSongLimits));
     }
 
@@ -300,12 +351,20 @@ public sealed class GameDataServiceTests
     }
 
     [Fact]
+    public void Momoiro_RouteHelpersPreserveEra()
+    {
+        Assert.Equal("Users/123/Momoiro/Songs", WebUiEra.UserRoute(123u, "Momoiro", "Songs"));
+        Assert.Equal("api/Momoiro/PlayData/123", WebUiEra.Api("Momoiro", "PlayData/123"));
+    }
+
+    [Fact]
     public void OlderAc15DonChallengeCapability_IsRedAndWhiteOnly()
     {
         Assert.True(WebUiEra.SupportsOlderAc15DonChallenge("Red"));
         Assert.True(WebUiEra.SupportsOlderAc15DonChallenge("White"));
         Assert.False(WebUiEra.SupportsOlderAc15DonChallenge("Blue"));
         Assert.False(WebUiEra.SupportsOlderAc15DonChallenge("Murasaki"));
+        Assert.False(WebUiEra.SupportsOlderAc15DonChallenge("Momoiro"));
         Assert.False(WebUiEra.SupportsOlderAc15DonChallenge("Nijiiro"));
     }
 
@@ -345,6 +404,7 @@ public sealed class GameDataServiceTests
                 "api/Red/GameData/DanData" => """[{"danId":800,"title":"red"}]""",
                 "api/White/GameData/DanData" => """[{"danId":700,"title":"white"}]""",
                 "api/Murasaki/GameData/DanData" => """[{"danId":600,"title":"murasaki"}]""",
+                "api/Momoiro/GameData/DanData" => """[{"danId":500,"title":"momoiro"}]""",
                 _ when path.Contains("MusicDetails", StringComparison.Ordinal)
                     || path.Contains("customization/titles", StringComparison.Ordinal)
                     || path.Contains("customization/neiros", StringComparison.Ordinal) => "{}",

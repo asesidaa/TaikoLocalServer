@@ -113,7 +113,7 @@ v1.7 MOMOIRO AC15 0.11 Support is active. v1.6 KIMIDORI AC15 Support shipped on 
 - [ ] Add first-class MOMOIRO 0.11 route, wire, Host, settings, and era-foundation support from local proto and binary evidence.
 - [ ] Load MOMOIRO root-level catalog data from `Host/wwwroot/data/momoiro/data` and preserve evidence-backed song hash, release-song, default-song, telop, and recommendation behavior.
 - [ ] Implement MOMOIRO-owned identity, userdata, self-best, crowns-in-userdata, favorites/recent, normal play, Don Point/reward, recommendation, and challenge-compatible state only where proto plus binary evidence prove the route and fields.
-- [ ] Expose implemented MOMOIRO state through AdminApi/WebUI without writing KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, or Nijiiro gameplay state.
+- [x] Expose implemented MOMOIRO state through AdminApi/WebUI without writing KIMIDORI, Murasaki, White, Red, Yellow, Blue, Green, or Nijiiro gameplay state.
 - [ ] Close with automated verification plus repeatable cabinet/RPCS3 runtime evidence for supported MOMOIRO flows.
 
 ### Out of Scope

@@ -141,6 +141,7 @@ public sealed class Ac15ProfileSettingsWebUiTests
         await client.GetProfileDisplayNameAsync("White", 98);
         await client.GetProfileDisplayNameAsync("Murasaki", 97);
         await client.GetProfileDisplayNameAsync("Kimidori", 96);
+        await client.GetProfileDisplayNameAsync("Momoiro", 95);
         await client.GetProfileDisplayNameAsync("Green", 100);
         await client.GetProfileDisplayNameAsync("Nijiiro", 101);
 
@@ -150,6 +151,7 @@ public sealed class Ac15ProfileSettingsWebUiTests
                 "api/White/Ac15ProfileSettings/98",
                 "api/Murasaki/Ac15ProfileSettings/97",
                 "api/Kimidori/Ac15ProfileSettings/96",
+                "api/Momoiro/Ac15ProfileSettings/95",
                 "api/Green/Ac15ProfileSettings/100",
                 "api/Nijiiro/UserSettings/101"
             ],
@@ -167,6 +169,20 @@ public sealed class Ac15ProfileSettingsWebUiTests
             feature => feature.Page == WebUiUserPage.DaniDojo);
         Assert.DoesNotContain(
             WebUiEra.GetUserPageFeatures("Kimidori"),
+            feature => feature.Page == WebUiUserPage.DonChallenge);
+    }
+
+    [Fact]
+    public void WebUiEra_TreatsMomoiroAsSupportedAc15EraWithoutDonChallenge()
+    {
+        Assert.True(WebUiEra.IsSupported("Momoiro"));
+        Assert.True(WebUiEra.IsAc15("Momoiro"));
+        Assert.Contains(WebUiEra.Momoiro, WebUiEra.Supported);
+        Assert.Contains(
+            WebUiEra.GetUserPageFeatures("Momoiro"),
+            feature => feature.Page == WebUiUserPage.DaniDojo);
+        Assert.DoesNotContain(
+            WebUiEra.GetUserPageFeatures("Momoiro"),
             feature => feature.Page == WebUiUserPage.DonChallenge);
     }
 
@@ -297,6 +313,30 @@ public sealed class Ac15ProfileSettingsWebUiTests
                   "era": "Kimidori",
                   "baid": 96,
                   "identity": { "myDonName": "KIMIDORI", "myDonNameLanguage": 0 },
+                  "customization": null,
+                  "options": {},
+                  "capabilities": {
+                    "costumeSlots": [],
+                    "supportsTitle": false,
+                    "supportsTitlePlate": false,
+                    "supportsTone": false,
+                    "supportsColors": false,
+                    "supportsDisplayDanOnNamePlate": false,
+                    "supportsFolderCloseButton": false,
+                    "supportsAutoCostume": false,
+                    "supportsHowToPlayTutorialFlag": false,
+                    "supportsLocalRankingDifficulty": false,
+                    "supportsDefaultSelectedSelfBestDifficulty": false,
+                    "supportsTaikojukuFolderDan": false
+                  },
+                  "lastPlayDateTime": "1970-01-01T00:00:00Z"
+                }
+                """,
+                "api/Momoiro/Ac15ProfileSettings/95" => """
+                {
+                  "era": "Momoiro",
+                  "baid": 95,
+                  "identity": { "myDonName": "MOMOIRO", "myDonNameLanguage": 0 },
                   "customization": null,
                   "options": {},
                   "capabilities": {

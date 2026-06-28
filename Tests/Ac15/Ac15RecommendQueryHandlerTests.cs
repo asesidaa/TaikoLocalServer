@@ -5,6 +5,7 @@ using TaikoLocalServer.Tests.Murasaki;
 using TaikoLocalServer.Tests.Red;
 using TaikoLocalServer.Tests.White;
 using TaikoLocalServer.Tests.Yellow;
+using TaikoLocalServer.Contracts.AdminApi.ViewModels;
 
 namespace TaikoLocalServer.Tests.Ac15;
 
@@ -122,6 +123,12 @@ public sealed class Ac15RecommendQueryHandlerTests
         public IReadOnlyDictionary<uint, Ac15TelopEntry> Telops { get; } = new Dictionary<uint, Ac15TelopEntry>();
 
         public IReadOnlyList<TaikoLocalServer.Application.ServerData.MovieData> Movies { get; } = [];
+
+        public IReadOnlyList<Costume> GetCostumeList() => [];
+
+        public IReadOnlyDictionary<uint, Title> GetTitleDictionary() => new Dictionary<uint, Title>();
+
+        public IReadOnlyDictionary<uint, Neiro> GetNeiroDictionary() => new Dictionary<uint, Neiro>();
 
         public Task InitializeAsync(CancellationToken cancellationToken) => Task.CompletedTask;
     }

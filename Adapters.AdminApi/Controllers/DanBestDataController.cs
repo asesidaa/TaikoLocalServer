@@ -30,6 +30,7 @@ public partial class DanBestDataController(ITaikoDbContext context) : BaseAdminC
             GameEra.White => Ok(await BuildWhiteDanBestData(baid)),
             GameEra.Murasaki => Ok(await BuildMurasakiDanBestData(baid)),
             GameEra.Kimidori => Ok(await BuildKimidoriDanBestData(baid)),
+            GameEra.Momoiro => Ok(await BuildMomoiroDanBestData(baid)),
             _ => EraRoute.BadEra(era)
         };
     }

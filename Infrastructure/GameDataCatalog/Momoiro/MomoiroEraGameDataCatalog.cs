@@ -21,6 +21,9 @@ public sealed class MomoiroEraGameDataCatalog(
     private IReadOnlyList<Ac15TaikojukuEntry> daniFileOrder = [];
     private IReadOnlyDictionary<uint, Ac15TelopEntry> telops = new Dictionary<uint, Ac15TelopEntry>();
     private IReadOnlyList<MovieData> movies = [];
+    private readonly IReadOnlyList<Costume> costumeList = [];
+    private readonly IReadOnlyDictionary<uint, Title> titleDictionary = new Dictionary<uint, Title>();
+    private readonly IReadOnlyDictionary<uint, Neiro> neiroDictionary = new Dictionary<uint, Neiro>();
 
     public GameEra Era => GameEra.Momoiro;
 
@@ -39,6 +42,12 @@ public sealed class MomoiroEraGameDataCatalog(
     public IReadOnlyDictionary<uint, Ac15TelopEntry> Telops => telops;
 
     public IReadOnlyList<MovieData> Movies => movies;
+
+    public IReadOnlyList<Costume> GetCostumeList() => costumeList;
+
+    public IReadOnlyDictionary<uint, Title> GetTitleDictionary() => titleDictionary;
+
+    public IReadOnlyDictionary<uint, Neiro> GetNeiroDictionary() => neiroDictionary;
 
     public async Task InitializeAsync(CancellationToken cancellationToken)
     {
