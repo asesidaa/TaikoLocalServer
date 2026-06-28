@@ -27,6 +27,7 @@ public sealed class KimidoriEraGameDataCatalog(
     private IReadOnlyDictionary<uint, Ac15MusicInfoEntry> musicInfos = new Dictionary<uint, Ac15MusicInfoEntry>();
     private IReadOnlyDictionary<uint, IMusicInfoEntry> sharedMusicInfos = new Dictionary<uint, IMusicInfoEntry>();
     private IReadOnlyList<Ac15TaikojukuEntry> daniFileOrder = [];
+    private IReadOnlyList<Ac15TaikojukuEntry> taikojukuFileOrder = [];
     private IReadOnlyDictionary<uint, EventFolderData> eventFolders = new Dictionary<uint, EventFolderData>();
     private IReadOnlyDictionary<uint, Ac15TelopEntry> telops = new Dictionary<uint, Ac15TelopEntry>();
     private IReadOnlyList<MovieData> movies = [];
@@ -49,6 +50,8 @@ public sealed class KimidoriEraGameDataCatalog(
     public IReadOnlyDictionary<uint, Ac15MusicInfoEntry> KimidoriMusicInfos => musicInfos;
 
     public IReadOnlyList<Ac15TaikojukuEntry> DaniFileOrder => daniFileOrder;
+
+    public IReadOnlyList<Ac15TaikojukuEntry> TaikojukuFileOrder => taikojukuFileOrder;
 
     public IReadOnlyDictionary<uint, EventFolderData> EventFolders => eventFolders;
 
@@ -122,6 +125,7 @@ public sealed class KimidoriEraGameDataCatalog(
             pair => pair.Key,
             pair => (IMusicInfoEntry)pair.Value);
         daniFileOrder = loadedDaniFileOrder;
+        taikojukuFileOrder = loadedDaniFileOrder;
 
         eventFolders = await Ac15EventFolderLoader.LoadFromFileAsync(
             Path.Combine(PathHelper.GetDataPath(GameEra.Kimidori), EventFolderFileName),

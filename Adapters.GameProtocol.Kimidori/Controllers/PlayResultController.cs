@@ -1,8 +1,22 @@
 namespace TaikoLocalServer.Adapters.GameProtocol.Kimidori.Controllers;
 
+using FinalWire = TaikoLocalServer.Adapters.GameProtocol.Kimidori.FinalWire;
+
 [ApiController]
 public sealed class PlayResultController : BaseProtocolController<PlayResultController>
 {
+    [HttpPost(KimidoriRoutePrefixes.Final + "/playresult.php")]
+    [Produces("application/protobuf")]
+    public async Task<IActionResult> FinalPlayResult([FromBody] FinalWire.PlayResultRequest request)
+    {
+        Logger.LogInformation("Kimidori final PlayResult request: {@Request}", request);
+        var playResult = FinalPlayResultMappers.Map(request);
+        var result = await Mediator.Send(
+            new UpdateAc15PlayResultCommand(request.Baid, GameEra.Kimidori, playResult),
+            HttpContext.RequestAborted);
+        return Ok(FinalPlayResultMappers.Map(result));
+    }
+
     [HttpPost(KimidoriRoutePrefixes.Game + "/playresult.php")]
     [Produces("application/protobuf")]
     public async Task<IActionResult> PlayResult([FromBody] PlayResultRequest request)

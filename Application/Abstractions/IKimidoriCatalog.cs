@@ -14,6 +14,8 @@ public interface IKimidoriCatalog : IEraGameDataCatalog
 
     IReadOnlyList<Ac15TaikojukuEntry> DaniFileOrder { get; }
 
+    IReadOnlyList<Ac15TaikojukuEntry> TaikojukuFileOrder { get; }
+
     IReadOnlyDictionary<uint, EventFolderData> EventFolders { get; }
 
     IReadOnlyDictionary<uint, Ac15TelopEntry> Telops { get; }

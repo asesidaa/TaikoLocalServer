@@ -31,6 +31,8 @@ internal static class KimidoriHandlerFixture
 
         public IReadOnlyList<Ac15TaikojukuEntry> DaniFileOrder { get; init; } = [];
 
+        public IReadOnlyList<Ac15TaikojukuEntry> TaikojukuFileOrder { get; init; } = [];
+
         public IReadOnlyDictionary<uint, EventFolderData> EventFolders { get; init; } =
             new Dictionary<uint, EventFolderData>();
 

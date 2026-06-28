@@ -16,6 +16,7 @@ public partial class GetTaikojukuQueryHandler(
             GameEra.Red => HandleRed(request, cancellationToken),
             GameEra.White => HandleWhite(request, cancellationToken),
             GameEra.Murasaki => HandleMurasaki(request, cancellationToken),
+            GameEra.Kimidori => HandleKimidori(request, cancellationToken),
             _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
         };
 
@@ -25,4 +26,5 @@ public partial class GetTaikojukuQueryHandler(
     private partial ValueTask<CommonTaikojukuResponse> HandleRed(GetTaikojukuQuery request, CancellationToken cancellationToken);
     private partial ValueTask<CommonTaikojukuResponse> HandleWhite(GetTaikojukuQuery request, CancellationToken cancellationToken);
     private partial ValueTask<CommonTaikojukuResponse> HandleMurasaki(GetTaikojukuQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonTaikojukuResponse> HandleKimidori(GetTaikojukuQuery request, CancellationToken cancellationToken);
 }
