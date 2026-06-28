@@ -42,10 +42,11 @@ public partial class UserDataQueryHandler
         var snapshot = Ac15CatalogSnapshotFactory.FromMomoiro(momoiro);
         var userdata = MomoiroAc15UserDataAdapter.CreateSnapshot(saveData, snapshot, favorites, recent);
         var response = Ac15UserDataService.BuildResponse(userdata, Ac15EraProfiles.Momoiro);
-        var crownBytes = Ac15CrownService.BuildCatalogOrderBody(
+        var inflatedCrownBytes = Ac15CrownService.BuildEightBitIndexedBody(
             bestRows,
-            momoiro.MusicInfoFileOrder.Select(song => song.SongNo),
+            momoiro.SongHashTable.Select(songNo => (uint)songNo),
             limits);
+        var crownBytes = Ac15SongHashCodec.CompactEightBitValues(inflatedCrownBytes, momoiro.SongHashTable);
 
         return response with
         {

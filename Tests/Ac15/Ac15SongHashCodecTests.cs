@@ -41,6 +41,19 @@ public sealed class Ac15SongHashCodecTests
         Assert.Equal((ushort)0x0155, ReadTenBitValue(compact, 1));
     }
 
+    [Fact]
+    public void CompactEightBitValues_ReindexesByteValuesByHashTableOrdinal()
+    {
+        var inflated = new byte[1024];
+        inflated[236] = 0xce;
+        inflated[5] = 0xc0;
+        var table = Ac15SongHashCodec.BuildTable([236u, 5u]);
+
+        var compact = Ac15SongHashCodec.CompactEightBitValues(inflated, table);
+
+        Assert.Equal([0xce, 0xc0], compact);
+    }
+
     private static ushort ReadTenBitValue(byte[] packed, int index)
     {
         ushort value = 0;

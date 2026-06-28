@@ -37,18 +37,18 @@ public sealed class MomoiroProtocolLimitsTests
     }
 
     [Fact]
-    public void TryGet_Momoiro_LabelsLowConfidenceFavoriteRecentAndCrownConstants()
+    public void TryGet_Momoiro_RecordsFavoriteRecentAndCrownConstants()
     {
         var found = Ac15EraProfiles.TryGet(GameEra.Momoiro, out var profile);
 
-        Assert.True(found, "Momoiro profile constants are RED contracts; favorite/crown values remain low-confidence until native proof improves.");
+        Assert.True(found, "Momoiro profile constants must match the Momoiro binary readback format.");
         Assert.NotNull(profile);
         Assert.Equal(128, profile.Limits.SongFlagBytes);
         Assert.Equal(5, profile.Limits.MaxFavoriteSongs);
         Assert.Equal(5, profile.Limits.MaxRecentSongs);
-        Assert.Equal(380, profile.Limits.CrownSongCount);
+        Assert.Equal(1024, profile.Limits.CrownSongCount);
         Assert.Equal(
-            475,
+            380,
             profile.Limits.CrownPackedBytes);
     }
 }

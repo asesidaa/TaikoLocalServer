@@ -147,15 +147,15 @@ public sealed class MomoiroControllerReadbackTests
         Assert.Equal(48, response.HashReleaseSongFlg.Length);
         Assert.True(BitIsSetByOrdinal(response.HashReleaseSongFlg, MomoiroHandlerFixture.HighSongOrdinal));
         Assert.True(response.ShouldSerializeHashCrownFlg());
-        Assert.Equal(475, response.HashCrownFlg.Length);
+        Assert.Equal(Ac15EraProfiles.Momoiro.Limits.CrownPackedBytes, response.HashCrownFlg.Length);
         Assert.Equal(
-            Ac15ProtocolBytes.BuildCrownValue(
+            (byte)Ac15ProtocolBytes.BuildCrownValue(
                 Ac15CrownState.None,
                 Ac15CrownState.None,
                 Ac15CrownState.None,
                 Ac15CrownState.FullCombo,
                 Ac15CrownState.None),
-            ReadTenBitValue(response.HashCrownFlg, MomoiroHandlerFixture.HighSongOrdinal));
+            response.HashCrownFlg[MomoiroHandlerFixture.HighSongOrdinal]);
         Assert.True(response.ShouldSerializeIsDevil());
         Assert.True(response.IsDevil.GetValueOrDefault());
         Assert.True(response.ShouldSerializeIsExplain());
@@ -194,19 +194,4 @@ public sealed class MomoiroControllerReadbackTests
     private static bool BitIsSetByOrdinal(byte[] source, int ordinal)
         => (source[ordinal >> 3] & (1 << (ordinal & 7))) != 0;
 
-    private static ushort ReadTenBitValue(byte[] packed, int index)
-    {
-        ushort value = 0;
-        var bitOffset = index * 10;
-        for (var bit = 0; bit < 10; bit++)
-        {
-            var absoluteBit = bitOffset + bit;
-            if ((packed[absoluteBit >> 3] & (1 << (absoluteBit & 7))) != 0)
-            {
-                value |= (ushort)(1 << bit);
-            }
-        }
-
-        return value;
-    }
 }

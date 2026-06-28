@@ -178,8 +178,8 @@ public static class Ac15EraProfiles
 
     private static Ac15ProtocolLimits CreateMomoiroLimits() => CreateCommonLimits() with
     {
-        CrownPackedBytes = 475,
-        CrownSongCount = 380,
+        CrownPackedBytes = 380,
+        CrownSongCount = 1024,
         MaxFavoriteSongs = 5,
         MaxRecentSongs = 5
     };

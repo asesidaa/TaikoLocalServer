@@ -70,6 +70,29 @@ public static class Ac15CrownService
         return Ac15ProtocolBytes.PackTenBitValues(values, limits.CrownPackedBytes, limits.CrownSongCount);
     }
 
+    public static byte[] BuildEightBitIndexedBody(
+        IEnumerable<Ac15BestRow> bestRows,
+        IEnumerable<uint> validSongNoes,
+        Ac15ProtocolLimits limits)
+    {
+        var values = new byte[limits.CrownSongCount];
+        var validSongs = validSongNoes
+            .Where(songNo => songNo < limits.CrownSongCount)
+            .ToHashSet();
+
+        foreach (var group in bestRows.GroupBy(row => row.SongId))
+        {
+            if (!validSongs.Contains(group.Key))
+            {
+                continue;
+            }
+
+            values[group.Key] = BuildEightBitCrownValue(group);
+        }
+
+        return values;
+    }
+
     public static Ac15CrownState MapCrownState(CrownType crown) => crown switch
     {
         CrownType.Clear => Ac15CrownState.Clear,
@@ -113,5 +136,35 @@ public static class Ac15CrownService
         }
 
         return Ac15ProtocolBytes.BuildCrownValue(easy, normal, hard, oni, ura);
+    }
+
+    private static byte BuildEightBitCrownValue(IEnumerable<Ac15BestRow> rows)
+    {
+        var easy = Ac15CrownState.None;
+        var normal = Ac15CrownState.None;
+        var hard = Ac15CrownState.None;
+        var oni = Ac15CrownState.None;
+
+        foreach (var row in rows)
+        {
+            var state = MapCrownState(row.BestCrown);
+            switch (row.Difficulty)
+            {
+                case Difficulty.Easy:
+                    easy = Max(easy, state);
+                    break;
+                case Difficulty.Normal:
+                    normal = Max(normal, state);
+                    break;
+                case Difficulty.Hard:
+                    hard = Max(hard, state);
+                    break;
+                case Difficulty.Oni:
+                    oni = Max(oni, state);
+                    break;
+            }
+        }
+
+        return (byte)Ac15ProtocolBytes.BuildCrownValue(easy, normal, hard, oni, Ac15CrownState.None);
     }
 }

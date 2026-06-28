@@ -80,21 +80,18 @@ public sealed class MomoiroCrownReadbackTests
                 ChassisId = "chassis"
             });
 
-        var expected = Ac15ProtocolBytes.BuildCrownValue(
+        var expected = (byte)Ac15ProtocolBytes.BuildCrownValue(
             Ac15CrownState.Clear,
             Ac15CrownState.FullCombo,
             Ac15CrownState.None,
             Ac15CrownState.FullCombo,
-            Ac15CrownState.Clear);
+            Ac15CrownState.None);
 
         Assert.True(response.ShouldSerializeHashCrownFlg());
         Assert.Equal(Ac15EraProfiles.Momoiro.Limits.CrownPackedBytes, response.HashCrownFlg.Length);
-        Assert.Equal(expected, ReadTenBitValue(response.HashCrownFlg, MomoiroHandlerFixture.HighSongOrdinal));
-        Assert.Equal(0, ReadTenBitValue(response.HashCrownFlg, MomoiroHandlerFixture.HighSongOrdinal - 1));
-        Assert.True(MomoiroHandlerFixture.HighSongNo >= Ac15EraProfiles.Momoiro.Limits.CrownSongCount);
-        Assert.True(
-            MomoiroHandlerFixture.HighSongNo >= (uint)((response.HashCrownFlg.Length * 8) / 10),
-            "A raw song-number crown index would fall outside the compact 380-song Momoiro payload.");
+        Assert.Equal(expected, response.HashCrownFlg[MomoiroHandlerFixture.HighSongOrdinal]);
+        Assert.Equal(0, response.HashCrownFlg[MomoiroHandlerFixture.HighSongOrdinal - 1]);
+        Assert.True(MomoiroHandlerFixture.HighSongNo < Ac15EraProfiles.Momoiro.Limits.CrownSongCount);
     }
 
     private static async Task<TResponse> InvokeActionAsync<TController, TResponse>(
@@ -126,19 +123,4 @@ public sealed class MomoiroCrownReadbackTests
         return Assert.IsType<TResponse>(ok.Value);
     }
 
-    private static ushort ReadTenBitValue(byte[] packed, int index)
-    {
-        ushort value = 0;
-        var bitOffset = index * 10;
-        for (var bit = 0; bit < 10; bit++)
-        {
-            var absoluteBit = bitOffset + bit;
-            if ((packed[absoluteBit >> 3] & (1 << (absoluteBit & 7))) != 0)
-            {
-                value |= (ushort)(1 << bit);
-            }
-        }
-
-        return value;
-    }
 }

@@ -21,6 +21,9 @@ public static class Ac15SongHashCodec
     public static byte[] CompactBitset(byte[] inflated, IReadOnlyList<ushort> table)
         => CompactValues(inflated, table, bitsPerValue: 1);
 
+    public static byte[] CompactEightBitValues(byte[] inflated, IReadOnlyList<ushort> table)
+        => CompactValues(inflated, table, bitsPerValue: 8);
+
     public static byte[] CompactTenBitValues(byte[] inflated, IReadOnlyList<ushort> table)
         => CompactValues(inflated, table, bitsPerValue: 10);
 

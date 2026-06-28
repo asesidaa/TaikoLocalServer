@@ -76,14 +76,15 @@ public sealed class MomoiroPlayResultHandlerTests
         Assert.Equal([300u, 101u, 250u], userData.SongLists.AryFavoriteSongNoes);
         Assert.True(BitIsSetByOrdinal(userData.SongFlags.ReleaseSongFlg, MomoiroHandlerFixture.HighSongOrdinal));
         Assert.NotNull(userData.HashCrownFlg);
+        Assert.Equal(Ac15EraProfiles.Momoiro.Limits.CrownPackedBytes, userData.HashCrownFlg!.Length);
         Assert.Equal(
-            Ac15ProtocolBytes.BuildCrownValue(
+            (byte)Ac15ProtocolBytes.BuildCrownValue(
                 Ac15CrownState.None,
                 Ac15CrownState.None,
                 Ac15CrownState.None,
                 Ac15CrownState.FullCombo,
                 Ac15CrownState.None),
-            ReadTenBitValue(userData.HashCrownFlg!, 249));
+            userData.HashCrownFlg[249]);
         await AssertSelectedAdjacentUnsupportedRowsUnchangedAsync(fixture, 1, unsupportedBefore);
     }
 
@@ -295,19 +296,4 @@ public sealed class MomoiroPlayResultHandlerTests
     private static bool BitIsSetByOrdinal(byte[] source, int ordinal)
         => (source[ordinal >> 3] & (1 << (ordinal & 7))) != 0;
 
-    private static ushort ReadTenBitValue(byte[] packed, int index)
-    {
-        ushort value = 0;
-        var bitOffset = index * 10;
-        for (var bit = 0; bit < 10; bit++)
-        {
-            var absoluteBit = bitOffset + bit;
-            if ((packed[absoluteBit >> 3] & (1 << (absoluteBit & 7))) != 0)
-            {
-                value |= (ushort)(1 << bit);
-            }
-        }
-
-        return value;
-    }
 }
