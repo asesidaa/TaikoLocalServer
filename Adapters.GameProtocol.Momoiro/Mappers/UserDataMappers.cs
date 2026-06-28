@@ -1,4 +1,5 @@
 using Riok.Mapperly.Abstractions;
+using TaikoLocalServer.Application.Ac15;
 using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Adapters.GameProtocol.Momoiro.Mappers;
@@ -11,7 +12,7 @@ public static partial class UserDataMappers
 
     public static partial void Apply(Ac15UserDataSongLists source, [MappingTarget] UserDataResponse response);
 
-    [MapProperty(nameof(Ac15UserDataRecommendations.RecommendBestSong), nameof(UserDataResponse.RecommendBestSongs), Use = nameof(MapRecommendBestSongs))]
+    [MapProperty(nameof(Ac15UserDataRecommendations.RecommendBestSong), nameof(UserDataResponse.RecommendBestSongs), Use = nameof(@Ac15MapperNormalization.ToUIntArray))]
     public static partial void Apply(Ac15UserDataRecommendations source, [MappingTarget] UserDataResponse response);
 
     public static partial void Apply(Ac15UserDataProfileCounters source, [MappingTarget] UserDataResponse response);
@@ -28,7 +29,7 @@ public static partial class UserDataMappers
 
     public static partial void Apply(Ac15UserDataReward source, [MappingTarget] UserDataResponse response);
 
-    [MapProperty(nameof(Ac15UserDataResponse.HashCrownFlg), nameof(UserDataResponse.HashCrownFlg), Use = nameof(MapRequiredBytes))]
+    [MapProperty(nameof(Ac15UserDataResponse.HashCrownFlg), nameof(UserDataResponse.HashCrownFlg), Use = nameof(@Ac15MapperNormalization.BytesOrEmpty))]
     [MapperIgnoreSource(nameof(Ac15UserDataResponse.Result))]
     [MapperIgnoreSource(nameof(Ac15UserDataResponse.SongFlags))]
     [MapperIgnoreSource(nameof(Ac15UserDataResponse.SongLists))]
@@ -40,7 +41,4 @@ public static partial class UserDataMappers
     [MapperIgnoreSource(nameof(Ac15UserDataResponse.Reward))]
     public static partial void ApplyCrown(Ac15UserDataResponse source, [MappingTarget] UserDataResponse response);
 
-    private static uint[] MapRecommendBestSongs(List<uint> value) => value.ToArray();
-
-    private static byte[] MapRequiredBytes(byte[]? value) => value ?? [];
 }

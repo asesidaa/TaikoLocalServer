@@ -1,5 +1,6 @@
 using FinalWire = TaikoLocalServer.Adapters.GameProtocol.Kimidori.FinalWire;
 using Riok.Mapperly.Abstractions;
+using TaikoLocalServer.Application.Ac15;
 using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Adapters.GameProtocol.Kimidori.Mappers;
@@ -12,7 +13,7 @@ public static partial class FinalUserDataMappers
 
     public static partial void Apply(Ac15UserDataSongLists source, [MappingTarget] FinalWire.UserDataResponse response);
 
-    [MapProperty(nameof(Ac15UserDataRecommendations.RecommendBestSong), nameof(FinalWire.UserDataResponse.RecommendBestSongs), Use = nameof(MapRecommendBestSongs))]
+    [MapProperty(nameof(Ac15UserDataRecommendations.RecommendBestSong), nameof(FinalWire.UserDataResponse.RecommendBestSongs), Use = nameof(@Ac15MapperNormalization.ToUIntArray))]
     public static partial void Apply(Ac15UserDataRecommendations source, [MappingTarget] FinalWire.UserDataResponse response);
 
     public static partial void Apply(Ac15UserDataProfileCounters source, [MappingTarget] FinalWire.UserDataResponse response);
@@ -27,5 +28,4 @@ public static partial class FinalUserDataMappers
 
     public static partial void Apply(Ac15UserDataReward source, [MappingTarget] FinalWire.UserDataResponse response);
 
-    private static uint[] MapRecommendBestSongs(List<uint> value) => value.ToArray();
 }

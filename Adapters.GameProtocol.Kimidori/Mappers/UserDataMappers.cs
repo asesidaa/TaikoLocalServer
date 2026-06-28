@@ -1,4 +1,5 @@
 using Riok.Mapperly.Abstractions;
+using TaikoLocalServer.Application.Ac15;
 using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Adapters.GameProtocol.Kimidori.Mappers;
@@ -11,7 +12,7 @@ public static partial class UserDataMappers
 
     public static partial void Apply(Ac15UserDataSongLists source, [MappingTarget] UserDataResponse response);
 
-    [MapProperty(nameof(Ac15UserDataRecommendations.RecommendBestSong), nameof(UserDataResponse.RecommendBestSongs), Use = nameof(MapRecommendBestSongs))]
+    [MapProperty(nameof(Ac15UserDataRecommendations.RecommendBestSong), nameof(UserDataResponse.RecommendBestSongs), Use = nameof(@Ac15MapperNormalization.ToUIntArray))]
     public static partial void Apply(Ac15UserDataRecommendations source, [MappingTarget] UserDataResponse response);
 
     public static partial void Apply(Ac15UserDataProfileCounters source, [MappingTarget] UserDataResponse response);
@@ -27,5 +28,4 @@ public static partial class UserDataMappers
 
     public static partial void Apply(Ac15UserDataReward source, [MappingTarget] UserDataResponse response);
 
-    private static uint[] MapRecommendBestSongs(List<uint> value) => value.ToArray();
 }

@@ -50,11 +50,11 @@ public static partial class BaidResponseMapper
     [MapperIgnoreSource(nameof(Ac15BaidDan.GotDanExtraFlg))]
     public static partial void Apply(Ac15BaidDan source, [MappingTarget] RedV08R00.BAIDResponse response);
 
-    [MapProperty(nameof(Ac15BaidCompatibility.PersonId), nameof(BAIDResponse.Personid), Use = nameof(MapPersonId))]
+    [MapProperty(nameof(Ac15BaidCompatibility.PersonId), nameof(BAIDResponse.Personid), Use = nameof(@Ac15MapperNormalization.StringOrEmpty))]
     [MapperIgnoreSource(nameof(Ac15BaidCompatibility.WaiwaiTutorialFlg))]
     public static partial void Apply(Ac15BaidCompatibility source, [MappingTarget] BAIDResponse response);
 
-    [MapProperty(nameof(Ac15BaidCompatibility.PersonId), nameof(RedV08R00.BAIDResponse.Personid), Use = nameof(MapPersonId))]
+    [MapProperty(nameof(Ac15BaidCompatibility.PersonId), nameof(RedV08R00.BAIDResponse.Personid), Use = nameof(@Ac15MapperNormalization.StringOrEmpty))]
     [MapperIgnoreSource(nameof(Ac15BaidCompatibility.WaiwaiTutorialFlg))]
     public static partial void Apply(Ac15BaidCompatibility source, [MappingTarget] RedV08R00.BAIDResponse response);
 
@@ -67,13 +67,11 @@ public static partial class BaidResponseMapper
     private static partial RedV08R00.BAIDResponse.CostumeData MapOlderCostumeData(Ac15CostumeFacts values);
 
     private static byte[] MapCostumeFlag(byte[]? value)
-        => Ac15ProtocolBytes.FixedOrZero(value, Ac15EraProfiles.Red.Limits.CostumeFlagBytes);
+        => Ac15MapperNormalization.FixedOrZero(value, Ac15EraProfiles.Red.Limits.CostumeFlagBytes);
 
     private static byte[] MapDanFlag(byte[]? value)
-        => Ac15ProtocolBytes.FixedOrZero(value, Ac15EraProfiles.Red.Limits.DanFlagBytes);
+        => Ac15MapperNormalization.FixedOrZero(value, Ac15EraProfiles.Red.Limits.DanFlagBytes);
 
     private static byte[] MapDanExtraFlag(byte[]? value)
-        => Ac15ProtocolBytes.FixedOrZero(value, Ac15EraProfiles.Red.Limits.DanExtraFlagBytes);
-
-    private static string MapPersonId(string? value) => value ?? string.Empty;
+        => Ac15MapperNormalization.FixedOrZero(value, Ac15EraProfiles.Red.Limits.DanExtraFlagBytes);
 }

@@ -1,5 +1,5 @@
 using Riok.Mapperly.Abstractions;
-using TaikoLocalServer.Application.Common;
+using TaikoLocalServer.Application.Ac15;
 using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Adapters.GameProtocol.Green.Mappers;
@@ -28,19 +28,17 @@ public static partial class BaidResponseMapper
     [MapProperty(nameof(Ac15BaidDan.GotDanExtraFlg), nameof(BAIDResponse.GotDanextraFlg), Use = nameof(MapDanExtraFlag))]
     public static partial void Apply(Ac15BaidDan source, [MappingTarget] BAIDResponse response);
 
-    [MapProperty(nameof(Ac15BaidCompatibility.PersonId), nameof(BAIDResponse.Personid), Use = nameof(MapPersonId))]
+    [MapProperty(nameof(Ac15BaidCompatibility.PersonId), nameof(BAIDResponse.Personid), Use = nameof(@Ac15MapperNormalization.StringOrEmpty))]
     public static partial void Apply(Ac15BaidCompatibility source, [MappingTarget] BAIDResponse response);
 
     private static partial BAIDResponse.CostumeData MapCostumeData(Ac15CostumeFacts values);
 
     private static byte[] MapCostumeFlag(byte[]? value)
-        => GreenProtocolBytes.FixedOrZero(value, GreenProtocolBytes.CostumeFlagBytes);
+        => Ac15MapperNormalization.FixedOrZero(value, Ac15EraProfiles.Green.Limits.CostumeFlagBytes);
 
     private static byte[] MapDanFlag(byte[]? value)
-        => GreenProtocolBytes.FixedOrZero(value, GreenProtocolBytes.DanFlagBytes);
+        => Ac15MapperNormalization.FixedOrZero(value, Ac15EraProfiles.Green.Limits.DanFlagBytes);
 
     private static byte[] MapDanExtraFlag(byte[]? value)
-        => GreenProtocolBytes.FixedOrZero(value, GreenProtocolBytes.DanExtraFlagBytes);
-
-    private static string MapPersonId(string? value) => value ?? string.Empty;
+        => Ac15MapperNormalization.FixedOrZero(value, Ac15EraProfiles.Green.Limits.DanExtraFlagBytes);
 }

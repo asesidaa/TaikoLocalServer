@@ -1,5 +1,6 @@
 using FinalWire = TaikoLocalServer.Adapters.GameProtocol.Kimidori.FinalWire;
 using Riok.Mapperly.Abstractions;
+using TaikoLocalServer.Application.Ac15;
 
 namespace TaikoLocalServer.Adapters.GameProtocol.Kimidori.Mappers;
 
@@ -14,9 +15,7 @@ public static partial class FinalTaikojukuMappers
     private static partial FinalWire.TaikojukuResponse.JukupackData MapPack(
         CommonTaikojukuResponse.Pack pack);
 
-    [MapProperty(nameof(CommonTaikojukuResponse.Song.Level), nameof(FinalWire.TaikojukuResponse.JukupackData.JukusongData.Level), Use = nameof(MapDifficulty))]
+    [MapProperty(nameof(CommonTaikojukuResponse.Song.Level), nameof(FinalWire.TaikojukuResponse.JukupackData.JukusongData.Level), Use = nameof(@Ac15MapperNormalization.ToProtocolDifficulty))]
     private static partial FinalWire.TaikojukuResponse.JukupackData.JukusongData MapSong(
         CommonTaikojukuResponse.Song song);
-
-    private static uint MapDifficulty(Difficulty value) => Ac15Difficulty.ToProtocol(value);
 }

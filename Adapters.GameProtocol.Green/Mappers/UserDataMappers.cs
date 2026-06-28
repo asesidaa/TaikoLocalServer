@@ -1,4 +1,5 @@
 using Riok.Mapperly.Abstractions;
+using TaikoLocalServer.Application.Ac15;
 using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Adapters.GameProtocol.Green.Mappers;
@@ -11,7 +12,7 @@ public static partial class UserDataMappers
 
     public static partial void Apply(Ac15UserDataSongLists source, [MappingTarget] UserDataResponse response);
 
-    [MapProperty(nameof(Ac15UserDataRecommendations.RecommendBestSong), nameof(UserDataResponse.RecommendBestSongs), Use = nameof(MapRecommendBestSongs))]
+    [MapProperty(nameof(Ac15UserDataRecommendations.RecommendBestSong), nameof(UserDataResponse.RecommendBestSongs), Use = nameof(@Ac15MapperNormalization.ToUIntArray))]
     public static partial void Apply(Ac15UserDataRecommendations source, [MappingTarget] UserDataResponse response);
 
     public static partial void Apply(Ac15UserDataProfileCounters source, [MappingTarget] UserDataResponse response);
@@ -32,8 +33,6 @@ public static partial class UserDataMappers
         // 0 from an absent tag - underflows Taikojuku_GetDanSlotSongRange's
         // 84-byte-per-slot table at 0x127F98 and crashes the client at boot.
         // sub_7FDFFC uses 1 as its baked-in "no data" default; mirror that.
-        return value is >= 1 and <= 25 ? value : 1u;
+        return Ac15MapperNormalization.DisplayDan(value, Ac15EraProfiles.Green.Limits);
     }
-
-    private static uint[] MapRecommendBestSongs(List<uint> value) => value.ToArray();
 }

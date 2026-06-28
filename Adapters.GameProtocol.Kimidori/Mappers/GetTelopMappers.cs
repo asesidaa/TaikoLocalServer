@@ -1,4 +1,5 @@
 using Riok.Mapperly.Abstractions;
+using TaikoLocalServer.Application.Ac15;
 
 namespace TaikoLocalServer.Adapters.GameProtocol.Kimidori.Mappers;
 
@@ -6,10 +7,8 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Kimidori.Mappers;
 public static partial class GetTelopMappers
 {
     [MapperIgnoreSource(nameof(CommonGetTelopResponse.VerupNo))]
-    [MapProperty(nameof(CommonGetTelopResponse.StartDatetime), nameof(GettelopResponse.StartDatetime), Use = nameof(MapPresentString))]
-    [MapProperty(nameof(CommonGetTelopResponse.EndDatetime), nameof(GettelopResponse.EndDatetime), Use = nameof(MapPresentString))]
-    [MapProperty(nameof(CommonGetTelopResponse.Telop), nameof(GettelopResponse.Telop), Use = nameof(MapPresentString))]
+    [MapProperty(nameof(CommonGetTelopResponse.StartDatetime), nameof(GettelopResponse.StartDatetime), Use = nameof(@Ac15MapperNormalization.PresentString))]
+    [MapProperty(nameof(CommonGetTelopResponse.EndDatetime), nameof(GettelopResponse.EndDatetime), Use = nameof(@Ac15MapperNormalization.PresentString))]
+    [MapProperty(nameof(CommonGetTelopResponse.Telop), nameof(GettelopResponse.Telop), Use = nameof(@Ac15MapperNormalization.PresentString))]
     public static partial GettelopResponse Map(CommonGetTelopResponse common);
-
-    private static string MapPresentString(string? value) => string.IsNullOrEmpty(value) ? null! : value;
 }

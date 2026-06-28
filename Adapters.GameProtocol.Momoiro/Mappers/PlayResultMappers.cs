@@ -1,4 +1,5 @@
 using Riok.Mapperly.Abstractions;
+using TaikoLocalServer.Application.Ac15;
 
 namespace TaikoLocalServer.Adapters.GameProtocol.Momoiro.Mappers;
 
@@ -20,15 +21,15 @@ public static partial class PlayResultMappers
     [MapPropertyFromSource(nameof(PlayResultResponse.Result))]
     public static partial PlayResultResponse Map(uint result);
 
-    [MapProperty(nameof(PlayResultRequest.ChassisId), nameof(Ac15PlayResultMetadata.ChassisId), Use = nameof(MapString))]
-    [MapProperty(nameof(PlayResultRequest.ShopId), nameof(Ac15PlayResultMetadata.ShopId), Use = nameof(MapString))]
-    [MapProperty(nameof(PlayResultRequest.PlayDatetime), nameof(Ac15PlayResultMetadata.PlayDatetime), Use = nameof(MapString))]
-    [MapProperty(nameof(PlayResultRequest.Reserved), nameof(Ac15PlayResultMetadata.Reserved), Use = nameof(MapBytes))]
-    [MapProperty(nameof(PlayResultRequest.Accesstoken), nameof(Ac15PlayResultMetadata.Accesstoken), Use = nameof(MapString))]
-    [MapProperty(nameof(PlayResultRequest.ContentInfo), nameof(Ac15PlayResultMetadata.ContentInfo), Use = nameof(MapBytes))]
+    [MapProperty(nameof(PlayResultRequest.ChassisId), nameof(Ac15PlayResultMetadata.ChassisId), Use = nameof(@Ac15MapperNormalization.StringOrEmpty))]
+    [MapProperty(nameof(PlayResultRequest.ShopId), nameof(Ac15PlayResultMetadata.ShopId), Use = nameof(@Ac15MapperNormalization.StringOrEmpty))]
+    [MapProperty(nameof(PlayResultRequest.PlayDatetime), nameof(Ac15PlayResultMetadata.PlayDatetime), Use = nameof(@Ac15MapperNormalization.StringOrEmpty))]
+    [MapProperty(nameof(PlayResultRequest.Reserved), nameof(Ac15PlayResultMetadata.Reserved), Use = nameof(@Ac15MapperNormalization.BytesOrEmpty))]
+    [MapProperty(nameof(PlayResultRequest.Accesstoken), nameof(Ac15PlayResultMetadata.Accesstoken), Use = nameof(@Ac15MapperNormalization.StringOrEmpty))]
+    [MapProperty(nameof(PlayResultRequest.ContentInfo), nameof(Ac15PlayResultMetadata.ContentInfo), Use = nameof(@Ac15MapperNormalization.BytesOrEmpty))]
     private static partial Ac15PlayResultMetadata MapMetadata(PlayResultRequest request);
 
-    [MapProperty(nameof(PlayResultRequest.GetDonpoint), nameof(Ac15ProfileMutationFacts.GetDonpoint), Use = nameof(MapNullableUInt))]
+    [MapProperty(nameof(PlayResultRequest.GetDonpoint), nameof(Ac15ProfileMutationFacts.GetDonpoint), Use = nameof(@Ac15MapperNormalization.UIntOrZero))]
     [MapPropertyFromSource(nameof(Ac15ProfileMutationFacts.RewardPtn), Use = nameof(MapRewardPtn))]
     [MapPropertyFromSource(nameof(Ac15ProfileMutationFacts.RewardProgress), Use = nameof(MapRewardProgress))]
     [MapProperty(nameof(PlayResultRequest.ToneFlg), nameof(Ac15ProfileMutationFacts.GetToneNoes), Use = nameof(MapToneFlags))]
@@ -56,16 +57,16 @@ public static partial class PlayResultMappers
     [MapProperty(nameof(PlayResultRequest.AryStageInfoes), nameof(Ac15NormalPlayResult.Stages), Use = nameof(MapStages))]
     private static partial Ac15NormalPlayResult MapNormalCore(PlayResultRequest request);
 
-    [MapProperty(nameof(PlayResultRequest.DanResult), nameof(Ac15DaniPlayResult.DanResult), Use = nameof(MapNullableUInt))]
+    [MapProperty(nameof(PlayResultRequest.DanResult), nameof(Ac15DaniPlayResult.DanResult), Use = nameof(@Ac15MapperNormalization.UIntOrZero))]
     [MapValue(nameof(Ac15DaniPlayResult.ComboCntTotal), 0u)]
     [MapProperty(nameof(PlayResultRequest.AryStageInfoes), nameof(Ac15DaniPlayResult.Stages), Use = nameof(MapStages))]
     private static partial Ac15DaniPlayResult MapDani(PlayResultRequest request);
 
-    [MapProperty(nameof(PlayResultRequest.StageData.Level), nameof(Ac15StageResult.Level), Use = nameof(MapDifficulty))]
-    [MapProperty(nameof(PlayResultRequest.StageData.HitCnt), nameof(Ac15StageResult.HitCnt), Use = nameof(MapNullableUInt))]
-    [MapProperty(nameof(PlayResultRequest.StageData.OptionFlg), nameof(Ac15StageResult.OptionFlg), Use = nameof(MapBytes))]
-    [MapProperty(nameof(PlayResultRequest.StageData.ToneFlg), nameof(Ac15StageResult.ToneFlg), Use = nameof(MapBytes))]
-    [MapProperty(nameof(PlayResultRequest.StageData.PlayDan), nameof(Ac15StageResult.PlayDan), Use = nameof(MapPlayDan))]
+    [MapProperty(nameof(PlayResultRequest.StageData.Level), nameof(Ac15StageResult.Level), Use = nameof(@Ac15MapperNormalization.FromProtocolDifficulty))]
+    [MapProperty(nameof(PlayResultRequest.StageData.HitCnt), nameof(Ac15StageResult.HitCnt), Use = nameof(@Ac15MapperNormalization.UIntOrZero))]
+    [MapProperty(nameof(PlayResultRequest.StageData.OptionFlg), nameof(Ac15StageResult.OptionFlg), Use = nameof(@Ac15MapperNormalization.BytesOrEmpty))]
+    [MapProperty(nameof(PlayResultRequest.StageData.ToneFlg), nameof(Ac15StageResult.ToneFlg), Use = nameof(@Ac15MapperNormalization.BytesOrEmpty))]
+    [MapProperty(nameof(PlayResultRequest.StageData.PlayDan), nameof(Ac15StageResult.PlayDan), Use = nameof(@Ac15MapperNormalization.PositivePlayDan))]
     [MapProperty(nameof(PlayResultRequest.StageData.AryChallengeIds), nameof(Ac15StageResult.ChallengeIds), Use = nameof(MapCompeList))]
     [MapProperty(nameof(PlayResultRequest.StageData.AryUserCompeIds), nameof(Ac15StageResult.UserCompeIds), Use = nameof(MapCompeList))]
     [MapProperty(nameof(PlayResultRequest.StageData.AryBngCompeIds), nameof(Ac15StageResult.BngCompeIds), Use = nameof(MapCompeList))]
@@ -112,13 +113,13 @@ public static partial class PlayResultMappers
         => request.ShouldSerializeRewardProgress() ? request.RewardProgress : null;
 
     private static List<uint> MapToneFlags(byte[]? values)
-        => BitsetCodec.Decode(values, Ac15EraProfiles.Momoiro.Limits.ToneFlagBytes);
+        => Ac15MapperNormalization.DecodeBitset(values, Ac15EraProfiles.Momoiro.Limits.ToneFlagBytes);
 
     private static List<uint> MapCostumeFlags(byte[]? values)
-        => BitsetCodec.Decode(values, Ac15EraProfiles.Momoiro.Limits.CostumeFlagBytes);
+        => Ac15MapperNormalization.DecodeBitset(values, Ac15EraProfiles.Momoiro.Limits.CostumeFlagBytes);
 
     private static List<uint> MapTitleFlags(byte[]? values)
-        => BitsetCodec.Decode(values, Ac15EraProfiles.Momoiro.Limits.TitleFlagBytes);
+        => Ac15MapperNormalization.DecodeBitset(values, Ac15EraProfiles.Momoiro.Limits.TitleFlagBytes);
 
     private static bool? MapIsDevil(PlayResultRequest request)
         => request.ShouldSerializeIsDevil() ? request.IsDevil : null;
@@ -132,26 +133,4 @@ public static partial class PlayResultMappers
     private static uint? MapHitCount(PlayResultRequest.StageData stage)
         => stage.ShouldSerializeHitCnt() ? stage.HitCnt : null;
 
-    [UserMapping(Default = true)]
-    private static List<uint> MapUIntList(uint[]? values)
-        => values?.ToList() ?? [];
-
-    [UserMapping(Default = true)]
-    private static uint MapNullableUInt(uint? value)
-        => value.GetValueOrDefault();
-
-    private static uint MapUInt(uint value)
-        => value;
-
-    private static Difficulty MapDifficulty(uint value)
-        => Ac15Difficulty.FromProtocol(value);
-
-    private static byte[] MapBytes(byte[]? values)
-        => values ?? [];
-
-    private static string MapString(string? value)
-        => value ?? string.Empty;
-
-    private static uint? MapPlayDan(uint value)
-        => value > 0 ? value : null;
 }

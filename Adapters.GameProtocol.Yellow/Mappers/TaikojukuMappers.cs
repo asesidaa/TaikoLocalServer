@@ -1,4 +1,5 @@
 using Riok.Mapperly.Abstractions;
+using TaikoLocalServer.Application.Ac15;
 
 namespace TaikoLocalServer.Adapters.GameProtocol.Yellow.Mappers;
 
@@ -12,9 +13,7 @@ public static partial class TaikojukuMappers
     private static partial TaikojukuResponse.JukupackData MapPack(
         CommonTaikojukuResponse.Pack pack);
 
-    [MapProperty(nameof(CommonTaikojukuResponse.Song.Level), nameof(TaikojukuResponse.JukupackData.JukusongData.Level), Use = nameof(MapDifficulty))]
+    [MapProperty(nameof(CommonTaikojukuResponse.Song.Level), nameof(TaikojukuResponse.JukupackData.JukusongData.Level), Use = nameof(@Ac15MapperNormalization.ToProtocolDifficulty))]
     private static partial TaikojukuResponse.JukupackData.JukusongData MapSong(
         CommonTaikojukuResponse.Song song);
-
-    private static uint MapDifficulty(Difficulty value) => Ac15Difficulty.ToProtocol(value);
 }

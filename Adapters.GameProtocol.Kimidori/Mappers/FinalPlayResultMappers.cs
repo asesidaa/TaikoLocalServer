@@ -1,5 +1,6 @@
 using FinalWire = TaikoLocalServer.Adapters.GameProtocol.Kimidori.FinalWire;
 using Riok.Mapperly.Abstractions;
+using TaikoLocalServer.Application.Ac15;
 
 namespace TaikoLocalServer.Adapters.GameProtocol.Kimidori.Mappers;
 
@@ -21,12 +22,12 @@ public static partial class FinalPlayResultMappers
     [MapPropertyFromSource(nameof(FinalWire.PlayResultResponse.Result))]
     public static partial FinalWire.PlayResultResponse Map(uint result);
 
-    [MapProperty(nameof(FinalWire.PlayResultRequest.ChassisId), nameof(Ac15PlayResultMetadata.ChassisId), Use = nameof(MapString))]
-    [MapProperty(nameof(FinalWire.PlayResultRequest.ShopId), nameof(Ac15PlayResultMetadata.ShopId), Use = nameof(MapString))]
-    [MapProperty(nameof(FinalWire.PlayResultRequest.PlayDatetime), nameof(Ac15PlayResultMetadata.PlayDatetime), Use = nameof(MapString))]
-    [MapProperty(nameof(FinalWire.PlayResultRequest.Reserved), nameof(Ac15PlayResultMetadata.Reserved), Use = nameof(MapBytes))]
-    [MapProperty(nameof(FinalWire.PlayResultRequest.Accesstoken), nameof(Ac15PlayResultMetadata.Accesstoken), Use = nameof(MapString))]
-    [MapProperty(nameof(FinalWire.PlayResultRequest.ContentInfo), nameof(Ac15PlayResultMetadata.ContentInfo), Use = nameof(MapBytes))]
+    [MapProperty(nameof(FinalWire.PlayResultRequest.ChassisId), nameof(Ac15PlayResultMetadata.ChassisId), Use = nameof(@Ac15MapperNormalization.StringOrEmpty))]
+    [MapProperty(nameof(FinalWire.PlayResultRequest.ShopId), nameof(Ac15PlayResultMetadata.ShopId), Use = nameof(@Ac15MapperNormalization.StringOrEmpty))]
+    [MapProperty(nameof(FinalWire.PlayResultRequest.PlayDatetime), nameof(Ac15PlayResultMetadata.PlayDatetime), Use = nameof(@Ac15MapperNormalization.StringOrEmpty))]
+    [MapProperty(nameof(FinalWire.PlayResultRequest.Reserved), nameof(Ac15PlayResultMetadata.Reserved), Use = nameof(@Ac15MapperNormalization.BytesOrEmpty))]
+    [MapProperty(nameof(FinalWire.PlayResultRequest.Accesstoken), nameof(Ac15PlayResultMetadata.Accesstoken), Use = nameof(@Ac15MapperNormalization.StringOrEmpty))]
+    [MapProperty(nameof(FinalWire.PlayResultRequest.ContentInfo), nameof(Ac15PlayResultMetadata.ContentInfo), Use = nameof(@Ac15MapperNormalization.BytesOrEmpty))]
     private static partial Ac15PlayResultMetadata MapMetadata(FinalWire.PlayResultRequest request);
 
     [MapProperty(nameof(FinalWire.PlayResultRequest.ToneFlg), nameof(Ac15ProfileMutationFacts.GetToneNoes), Use = nameof(MapToneFlags))]
@@ -56,10 +57,10 @@ public static partial class FinalPlayResultMappers
     [MapProperty(nameof(FinalWire.PlayResultRequest.AryStageInfoes), nameof(Ac15DaniPlayResult.Stages), Use = nameof(MapStages))]
     private static partial Ac15DaniPlayResult MapDani(FinalWire.PlayResultRequest request);
 
-    [MapProperty(nameof(FinalWire.PlayResultRequest.StageData.Level), nameof(Ac15StageResult.Level), Use = nameof(MapDifficulty))]
-    [MapProperty(nameof(FinalWire.PlayResultRequest.StageData.OptionFlg), nameof(Ac15StageResult.OptionFlg), Use = nameof(MapBytes))]
-    [MapProperty(nameof(FinalWire.PlayResultRequest.StageData.ToneFlg), nameof(Ac15StageResult.ToneFlg), Use = nameof(MapBytes))]
-    [MapProperty(nameof(FinalWire.PlayResultRequest.StageData.PlayDan), nameof(Ac15StageResult.PlayDan), Use = nameof(MapPlayDan))]
+    [MapProperty(nameof(FinalWire.PlayResultRequest.StageData.Level), nameof(Ac15StageResult.Level), Use = nameof(@Ac15MapperNormalization.FromProtocolDifficulty))]
+    [MapProperty(nameof(FinalWire.PlayResultRequest.StageData.OptionFlg), nameof(Ac15StageResult.OptionFlg), Use = nameof(@Ac15MapperNormalization.BytesOrEmpty))]
+    [MapProperty(nameof(FinalWire.PlayResultRequest.StageData.ToneFlg), nameof(Ac15StageResult.ToneFlg), Use = nameof(@Ac15MapperNormalization.BytesOrEmpty))]
+    [MapProperty(nameof(FinalWire.PlayResultRequest.StageData.PlayDan), nameof(Ac15StageResult.PlayDan), Use = nameof(@Ac15MapperNormalization.PositivePlayDan))]
     [MapProperty(nameof(FinalWire.PlayResultRequest.StageData.AryChallengeIds), nameof(Ac15StageResult.ChallengeIds), Use = nameof(MapCompeList))]
     [MapProperty(nameof(FinalWire.PlayResultRequest.StageData.AryUserCompeIds), nameof(Ac15StageResult.UserCompeIds), Use = nameof(MapCompeList))]
     [MapProperty(nameof(FinalWire.PlayResultRequest.StageData.AryBngCompeIds), nameof(Ac15StageResult.BngCompeIds), Use = nameof(MapCompeList))]
@@ -100,13 +101,13 @@ public static partial class FinalPlayResultMappers
         => request.AryCurrentCostume is null ? Ac15CostumeFacts.Empty : MapCostumeData(request.AryCurrentCostume);
 
     private static List<uint> MapToneFlags(byte[]? values)
-        => BitsetCodec.Decode(values, Ac15EraProfiles.Kimidori.Limits.ToneFlagBytes);
+        => Ac15MapperNormalization.DecodeBitset(values, Ac15EraProfiles.Kimidori.Limits.ToneFlagBytes);
 
     private static List<uint> MapCostumeFlags(byte[]? values)
-        => BitsetCodec.Decode(values, Ac15EraProfiles.Kimidori.Limits.CostumeFlagBytes);
+        => Ac15MapperNormalization.DecodeBitset(values, Ac15EraProfiles.Kimidori.Limits.CostumeFlagBytes);
 
     private static List<uint> MapTitleFlags(byte[]? values)
-        => BitsetCodec.Decode(values, Ac15EraProfiles.Kimidori.Limits.TitleFlagBytes);
+        => Ac15MapperNormalization.DecodeBitset(values, Ac15EraProfiles.Kimidori.Limits.TitleFlagBytes);
 
     private static uint? MapSoulGauge(FinalWire.PlayResultRequest.StageData stage)
         => stage.SoulGauge;
@@ -114,19 +115,4 @@ public static partial class FinalPlayResultMappers
     private static uint? MapHitCount(FinalWire.PlayResultRequest.StageData stage)
         => stage.HitCnt;
 
-    [UserMapping(Default = true)]
-    private static List<uint> MapUIntList(uint[]? values)
-        => values?.ToList() ?? [];
-
-    private static Difficulty MapDifficulty(uint value)
-        => Ac15Difficulty.FromProtocol(value);
-
-    private static byte[] MapBytes(byte[]? values)
-        => values ?? [];
-
-    private static string MapString(string? value)
-        => value ?? string.Empty;
-
-    private static uint? MapPlayDan(uint value)
-        => value > 0 ? value : null;
 }

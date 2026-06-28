@@ -34,8 +34,8 @@ public static partial class BaidResponseMapper
     private static partial BAIDResponse.CostumeData MapCostumeData(Ac15CostumeFacts values);
 
     private static byte[] MapCostumeFlag(byte[]? value)
-        => Ac15ProtocolBytes.FixedOrZero(value, Ac15EraProfiles.Kimidori.Limits.CostumeFlagBytes);
+        => Ac15MapperNormalization.FixedOrZero(value, Ac15EraProfiles.Kimidori.Limits.CostumeFlagBytes);
 
     private static byte[] MapDanFlag(byte[]? value)
-        => Ac15ProtocolBytes.FixedOrZero(value, Ac15EraProfiles.Kimidori.Limits.DanFlagBytes);
+        => Ac15MapperNormalization.FixedOrZero(value, Ac15EraProfiles.Kimidori.Limits.DanFlagBytes);
 }
