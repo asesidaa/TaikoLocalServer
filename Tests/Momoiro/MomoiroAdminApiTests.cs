@@ -42,7 +42,11 @@ public sealed class MomoiroAdminApiTests
         Assert.Equal("Momoiro", setting.Era);
         Assert.True(setting.Capabilities.SupportsTitle);
         Assert.False(setting.Capabilities.SupportsTitlePlate);
+        Assert.False(setting.Capabilities.SupportsFolderCloseButton);
+        Assert.False(setting.Capabilities.SupportsAutoCostume);
         Assert.False(setting.Capabilities.SupportsTaikojukuFolderDan);
+        Assert.Null(setting.Options.Folder);
+        Assert.Null(setting.Options.CustomizationBehavior);
         Assert.Null(setting.Options.Taikojuku);
         Assert.Equal(5u, Assert.Single(setting.Customization!.CostumeSlots, slot => slot.Slot == "kigurumi").CurrentId);
         Assert.Equal([0u, 5u], Assert.Single(setting.Customization.CostumeSlots, slot => slot.Slot == "kigurumi").UnlockedIds);
@@ -62,11 +66,11 @@ public sealed class MomoiroAdminApiTests
                 Colors: new Ac15CostumeColorsDto(2, 3, 4)),
             new Ac15ProfileOptionGroupsUpdateDto(
                 NamePlate: null,
-                Folder: new Ac15FolderOptionsDto(false),
+                Folder: null,
                 SongSelect: new Ac15SongSelectOptionsDto(4, 3),
                 Taikojuku: null,
                 Tutorials: new Ac15TutorialOptionsDto(false),
-                CustomizationBehavior: new Ac15CustomizationBehaviorOptionsDto(false))));
+                CustomizationBehavior: null)));
 
         Assert.IsType<NoContentResult>(saveResult);
         Assert.Equal("MOMO", (await fixture.Context.UserData.FindAsync(1u))!.MyDonName);
@@ -75,13 +79,36 @@ public sealed class MomoiroAdminApiTests
         Assert.Equal("Momoiro Title 2", save.Title);
         Assert.Contains(11u, BitsetCodec.Decode(save.TitleFlg, Ac15EraProfiles.Momoiro.Limits.TitleFlagBytes));
         Assert.Contains(6u, BitsetCodec.Decode(save.ToneFlg, Ac15EraProfiles.Momoiro.Limits.ToneFlagBytes));
-        Assert.False(save.IsTojiru);
-        Assert.False(save.IsAutoCostumeOn);
+        Assert.True(save.IsTojiru);
+        Assert.True(save.IsAutoCostumeOn);
         Assert.False(save.IsExplain);
         Assert.Equal(4u, save.DispLevelChassis);
         Assert.Equal(3u, save.DispLevelSelf);
         Assert.NotNull(await fixture.Context.UserSaveDataBlue.FindAsync(1u));
         Assert.NotNull(await fixture.Context.UserSaveDataKimidori.FindAsync(1u));
+    }
+
+    [Fact]
+    public async Task Ac15ProfileSettings_Momoiro_RejectsUnsupportedOptionGroups()
+    {
+        await using var fixture = await MomoiroHandlerFixture.CreateAsync();
+        fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
+        var save = UserSaveDataMomoiroExtensions.CreateDefaultMomoiroSaveData(1);
+        save.IsTojiru = true;
+        save.IsAutoCostumeOn = true;
+        fixture.Context.UserSaveDataMomoiro.Add(save);
+        await fixture.Context.SaveChangesAsync();
+        var controller = CreateAc15ProfileSettingsController(fixture.Context);
+
+        var folderResult = await controller.Put("Momoiro", 1, CreateMomoiroUpdate(
+            folder: new Ac15FolderOptionsDto(false)));
+        var autoCostumeResult = await controller.Put("Momoiro", 1, CreateMomoiroUpdate(
+            customizationBehavior: new Ac15CustomizationBehaviorOptionsDto(false)));
+
+        Assert.IsType<BadRequestObjectResult>(folderResult);
+        Assert.IsType<BadRequestObjectResult>(autoCostumeResult);
+        Assert.True(save.IsTojiru);
+        Assert.True(save.IsAutoCostumeOn);
     }
 
     [Fact]
@@ -332,4 +359,18 @@ public sealed class MomoiroAdminApiTests
 
         return new DefaultHttpContext { RequestServices = services };
     }
+
+    private static Ac15ProfileSettingsUpdateDto CreateMomoiroUpdate(
+        Ac15FolderOptionsDto? folder = null,
+        Ac15CustomizationBehaviorOptionsDto? customizationBehavior = null)
+        => new(
+            new Ac15ProfileIdentityDto("MOMO", 0),
+            null,
+            new Ac15ProfileOptionGroupsUpdateDto(
+                NamePlate: null,
+                Folder: folder,
+                SongSelect: null,
+                Taikojuku: null,
+                Tutorials: null,
+                CustomizationBehavior: customizationBehavior));
 }

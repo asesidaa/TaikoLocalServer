@@ -34,6 +34,27 @@ public sealed class MomoiroCatalogLoaderTests
     }
 
     [Fact]
+    public async Task CatalogInitialize_LoadsMomoiroCustomizationSidecars()
+    {
+        CopyMomoiroCatalogFilesToProcessRoot(includeCustomization: true);
+        await using var provider = BuildMomoiroProvider();
+        var catalog = provider.GetRequiredService<IGameDataCatalog>();
+
+        await catalog.InitializeAsync(CancellationToken.None);
+
+        var momoiro = Assert.IsAssignableFrom<IMomoiroCatalog>(catalog.For(GameEra.Momoiro));
+        var costumes = momoiro.GetCostumeList();
+        var titles = momoiro.GetTitleDictionary();
+        var neiros = momoiro.GetNeiroDictionary();
+        Assert.Contains(costumes, costume =>
+            costume.CostumeType == "kigurumi"
+            && costume.CostumeId == 36
+            && costume.CostumeName == "Momoiro Kigurumi");
+        Assert.Equal("Momoiro Title", titles[11].TitleName);
+        Assert.Equal("Momoiro Tone", neiros[6].NeiroName);
+    }
+
+    [Fact]
     public async Task CatalogInitialize_LoadsMomoiroMovieSidecarAndDiscoversAttractMovies()
     {
         CopyMomoiroCatalogFilesToProcessRoot(includeMovies: true);
@@ -99,7 +120,8 @@ public sealed class MomoiroCatalogLoaderTests
 
     private static void CopyMomoiroCatalogFilesToProcessRoot(
         bool skipDefMusic = false,
-        bool includeMovies = false)
+        bool includeMovies = false,
+        bool includeCustomization = false)
     {
         var repoRoot = FindRepoRoot();
         var targetRoot = ProcessMomoiroRoot();
@@ -131,6 +153,25 @@ public sealed class MomoiroCatalogLoaderTests
                 Path.Combine(repoRoot, "Host", "wwwroot", "data", "momoiro", "momoiro_movie_data.json"),
                 Path.Combine(targetRoot, "momoiro_movie_data.json"));
             Touch(Path.Combine(targetRoot, "data", "movie", "attract_cm_100.pam"));
+        }
+
+        if (includeCustomization)
+        {
+            Write(
+                Path.Combine(targetRoot, "momoiro_costume_data.json"),
+                """
+                {"schemaVersion":1,"items":[{"costumeId":36,"costumeType":"kigurumi","costumeName":"Momoiro Kigurumi","costumeNameEN":"Momoiro Kigurumi","costumeNameCN":"Momoiro Kigurumi","costumeNameKO":"Momoiro Kigurumi"}]}
+                """);
+            Write(
+                Path.Combine(targetRoot, "momoiro_title_data.json"),
+                """
+                {"schemaVersion":1,"items":[{"titleId":11,"titleName":"Momoiro Title","titleNameEN":"Momoiro Title","titleNameCN":"Momoiro Title","titleNameKO":"Momoiro Title","titleRarity":0}]}
+                """);
+            Write(
+                Path.Combine(targetRoot, "momoiro_neiro_data.json"),
+                """
+                {"schemaVersion":1,"items":[{"neiroId":6,"neiroName":"Momoiro Tone","neiroNameEN":"Momoiro Tone","neiroNameCN":"Momoiro Tone","neiroNameKO":"Momoiro Tone"}]}
+                """);
         }
     }
 
@@ -168,5 +209,12 @@ public sealed class MomoiroCatalogLoaderTests
         Directory.CreateDirectory(Path.GetDirectoryName(path)
             ?? throw new ApplicationException($"Cannot resolve directory for {path}."));
         using var _ = File.Create(path);
+    }
+
+    private static void Write(string path, string content)
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(path)
+            ?? throw new ApplicationException($"Cannot resolve directory for {path}."));
+        File.WriteAllText(path, content);
     }
 }

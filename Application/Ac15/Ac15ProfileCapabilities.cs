@@ -40,6 +40,12 @@ public sealed record Ac15ProfileCapabilities(
         SupportsTaikojukuFolderDan = false
     };
 
+    public static Ac15ProfileCapabilities Momoiro { get; } = CurrentWithoutTitlePlateOrTaikojuku with
+    {
+        SupportsFolderCloseButton = false,
+        SupportsAutoCostume = false
+    };
+
     public Ac15ProfileCapabilitiesDto ToDto()
         => new(
             CostumeSlots,

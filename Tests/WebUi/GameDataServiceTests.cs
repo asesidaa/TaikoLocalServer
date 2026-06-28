@@ -242,6 +242,10 @@ public sealed class GameDataServiceTests
         await service.GetTitleDictionary("Momoiro");
         await service.GetNeiroDictionary("Momoiro");
 
+        var costumes = await service.GetCostumeList("Momoiro");
+        var titles = await service.GetTitleDictionary("Momoiro");
+        var neiros = await service.GetNeiroDictionary("Momoiro");
+
         Assert.Equal(
             [
                 "api/Momoiro/GameData/DanData",
@@ -251,6 +255,12 @@ public sealed class GameDataServiceTests
                 "api/Momoiro/customization/neiros"
             ],
             handler.RequestPaths);
+        Assert.Contains(costumes, costume =>
+            costume.CostumeType == "kigurumi"
+            && costume.CostumeId == 36
+            && costume.CostumeName == "Momoiro Kigurumi");
+        Assert.Equal("Momoiro Title", titles[11].TitleName);
+        Assert.Equal("Momoiro Tone", neiros[6].NeiroName);
     }
 
     [Fact]
@@ -405,6 +415,9 @@ public sealed class GameDataServiceTests
                 "api/White/GameData/DanData" => """[{"danId":700,"title":"white"}]""",
                 "api/Murasaki/GameData/DanData" => """[{"danId":600,"title":"murasaki"}]""",
                 "api/Momoiro/GameData/DanData" => """[{"danId":500,"title":"momoiro"}]""",
+                "api/Momoiro/customization/costumes" => """[{"costumeId":36,"costumeType":"kigurumi","costumeName":"Momoiro Kigurumi"}]""",
+                "api/Momoiro/customization/titles" => """{"11":{"titleId":11,"titleName":"Momoiro Title"}}""",
+                "api/Momoiro/customization/neiros" => """{"6":{"neiroId":6,"neiroName":"Momoiro Tone"}}""",
                 _ when path.Contains("MusicDetails", StringComparison.Ordinal)
                     || path.Contains("customization/titles", StringComparison.Ordinal)
                     || path.Contains("customization/neiros", StringComparison.Ordinal) => "{}",

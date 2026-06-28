@@ -125,7 +125,7 @@ public static class Ac15EraProfiles
             HasInitialDataItemShopRows: false,
             HasInitialDataLegalTermsRows: false,
             HasTokkunTutorialFlagInUserData: false),
-        Ac15ProfileCapabilities.CurrentWithoutTitlePlateOrTaikojuku);
+        Ac15ProfileCapabilities.Momoiro);
 
     public static int? GetMaxFavoriteSongs(GameEra era)
         => TryGet(era, out var profile) ? profile.Limits.MaxFavoriteSongs : null;

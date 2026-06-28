@@ -19,18 +19,19 @@ Momoiro AdminApi and WebUI routing is implemented for existing Momoiro-owned sta
 - Added Momoiro as a supported WebUI AC15 era.
 - Added AdminApi Momoiro dispatch for profile settings, music/Dan data, customization catalogs, play data, play history, favorites, leaderboards, and Dan best data.
 - Preserved Momoiro favorite `DisplayOrder` for AdminApi read/write.
-- Returned Momoiro-owned empty runtime customization catalogs rather than borrowing adjacent-era data.
-- Added focused Momoiro AdminApi and WebUI route/capability tests.
+- Loaded Momoiro-owned runtime customization catalogs through the shared AC15 sidecar/extraction pipeline rather than borrowing adjacent-era data.
+- Hid and rejected unsupported Momoiro profile controls for folder close and auto-costume behavior while preserving supported costume/title/tone/color editing.
+- Added focused Momoiro AdminApi, catalog, and WebUI route/capability tests.
 
 ## Verification
 
 | Command | Result |
 | --- | --- |
-| `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroAdminApi\|FullyQualifiedName~GameDataServiceTests\|FullyQualifiedName~Ac15ProfileSettingsWebUiTests" --no-restore -- RunConfiguration.DisableParallelization=true` | PASS: 39 passed, 0 failed, 0 skipped. |
+| `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroAdminApi\|FullyQualifiedName~MomoiroCatalogLoader\|FullyQualifiedName~GameDataServiceTests\|FullyQualifiedName~Ac15ProfileSettingsWebUiTests" --no-restore -- RunConfiguration.DisableParallelization=true` | PASS: 44 passed, 0 failed, 0 skipped. |
 | `dotnet build TaikoLocalServer.slnx --no-restore` | Environment blocked: running `TaikoLocalServer (14536)` locked `Host/bin/Debug/net10.0`; not a compile failure. |
 | `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build" --no-restore` | PASS: 0 warnings, 0 errors. |
 | `git diff --name-only -- proto Host\wwwroot\data` | PASS: no paths. |
-| Momoiro unsupported AdminApi/WebUI source gate | PASS: no direct Momoiro wiring for Don Challenge, ChallengeCompe, Tokkun, Banacoin, battle, event folders, proto-only route families, or Taikojuku controls. |
+| Momoiro unsupported AdminApi/WebUI gate | PASS: no direct Momoiro wiring for Don Challenge, ChallengeCompe, Tokkun, Banacoin, battle, event folders, proto-only route families, Taikojuku controls, folder-close controls, or auto-costume behavior controls. |
 
 ## Non-Claims
 
