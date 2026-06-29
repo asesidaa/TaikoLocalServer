@@ -2,10 +2,10 @@
   "seasons": [
     {
       "season_id": 1,
-      "verup_no": 1,
+      "verup_no": 10,
       "telop": "Spring reward shop",
       "start_datetime": "20190314000000",
-      "end_datetime": "20190529235959",
+      "end_datetime": "20301231235959",
       "afterstart_days": 7,
       "beforeclose_days": 7,
       "items": [
@@ -17,10 +17,10 @@
     },
     {
       "season_id": 2,
-      "verup_no": 3,
+      "verup_no": 10,
       "telop": "Summer reward shop",
       "start_datetime": "20190530000000",
-      "end_datetime": "20190903235959",
+      "end_datetime": "20301231235959",
       "afterstart_days": 7,
       "beforeclose_days": 7,
       "items": [
@@ -36,10 +36,10 @@
     },
     {
       "season_id": 3,
-      "verup_no": 3,
+      "verup_no": 10,
       "telop": "Fall reward shop",
       "start_datetime": "20190904000000",
-      "end_datetime": "20191204235959",
+      "end_datetime": "20301231235959",
       "afterstart_days": 7,
       "beforeclose_days": 7,
       "items": [
@@ -55,10 +55,10 @@
     },
     {
       "season_id": 4,
-      "verup_no": 4,
+      "verup_no": 10,
       "telop": "Winter reward shop",
       "start_datetime": "20191205000000",
-      "end_datetime": "20200323235959",
+      "end_datetime": "20301231235959",
       "afterstart_days": 7,
       "beforeclose_days": 7,
       "items": [

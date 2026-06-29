@@ -197,16 +197,6 @@ try
     // Use response compression
     app.UseResponseCompression();
 
-    app.Use(async (context, next) =>
-    {
-        if (ShouldAssumeProtobufRequest(context.Request))
-        {
-            context.Request.ContentType = "application/protobuf";
-        }
-
-        await next();
-    });
-
     // For reverse proxy
     app.UseForwardedHeaders(new ForwardedHeadersOptions
     {
@@ -232,6 +222,7 @@ try
     app.UseBlazorFrameworkFiles();
     app.UseStaticFiles();
     app.UseRouting();
+    app.UseGameProtocolProtobufRequestContentTypeFallback();
 
     // Enable Authentication and Authorization middleware
     app.UseAuthentication();
@@ -271,30 +262,4 @@ finally
 {
     Log.Information("Shut down complete");
     Log.CloseAndFlush();
-}
-
-static bool ShouldAssumeProtobufRequest(HttpRequest request)
-{
-    if (!HttpMethods.IsPost(request.Method) || !string.IsNullOrWhiteSpace(request.ContentType))
-    {
-        return false;
-    }
-
-    var path = request.Path;
-    return path.StartsWithSegments("/v11r01/chassis", StringComparison.OrdinalIgnoreCase)
-           || path.StartsWithSegments("/v10r03/chassis", StringComparison.OrdinalIgnoreCase)
-           || path.StartsWithSegments("/v09r02/chassis", StringComparison.OrdinalIgnoreCase)
-           || path.StartsWithSegments("/v08r01/chassis", StringComparison.OrdinalIgnoreCase)
-           || path.StartsWithSegments("/v08r00_tw/chassis", StringComparison.OrdinalIgnoreCase)
-           || path.StartsWithSegments(WhiteRoutePrefixes.Final, StringComparison.OrdinalIgnoreCase)
-           || path.StartsWithSegments(WhiteRoutePrefixes.Compatibility, StringComparison.OrdinalIgnoreCase)
-           || path.StartsWithSegments(MurasakiRoutePrefixes.Final, StringComparison.OrdinalIgnoreCase)
-           || path.StartsWithSegments(MurasakiRoutePrefixes.Compatibility, StringComparison.OrdinalIgnoreCase)
-           || path.StartsWithSegments(KimidoriRoutePrefixes.Game, StringComparison.OrdinalIgnoreCase)
-           || path.StartsWithSegments(MomoiroRoutePrefixes.Final, StringComparison.OrdinalIgnoreCase)
-           || path.StartsWithSegments(MomoiroRoutePrefixes.Game, StringComparison.OrdinalIgnoreCase)
-           || path.StartsWithSegments("/v01r00/chassis", StringComparison.OrdinalIgnoreCase)
-           || path.StartsWithSegments("/v01r00_tw/chassis", StringComparison.OrdinalIgnoreCase)
-           || path.StartsWithSegments("/v12r08_ww/chassis", StringComparison.OrdinalIgnoreCase)
-           || path.StartsWithSegments("/v12r00_cn/chassis", StringComparison.OrdinalIgnoreCase);
 }

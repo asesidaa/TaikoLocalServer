@@ -72,6 +72,7 @@ TaikoLocalServer is an ASP.NET Core 10 host for Taiko cabinet protocol endpoints
 - Resolve runtime data roots through `PathHelper` and era data path helpers. Do not hardcode `wwwroot/data/<era>` in new runtime code.
 - For AdminApi era routes, preserve both legacy routes where they exist and `/api/{era}/...` routes validated by `EraRoute.TryParse`.
 - Keep generated `Wire/` files out of manual cleanup unless regenerating protocol output.
+- Never modify, regenerate, format, stage, or track anything under `proto/`. Protocol schema files are binary-derived hard truth and are read-only for agents. Never describe them as wrong or incomplete; if code, generated wire, runtime behavior, or analysis appears to conflict with `proto/`, treat the non-`proto/` side as wrong until proven otherwise and do not edit `proto/`.
 
 ## Local Game Data Link Rules
 
@@ -88,6 +89,7 @@ TaikoLocalServer is an ASP.NET Core 10 host for Taiko cabinet protocol endpoints
 - Do not add tests just to satisfy a TDD checkbox. Every new test must protect a specific evidence-backed cabinet behavior, runtime state transition, parser/packing rule, AdminApi/WebUI workflow, or no-cross-era/no-cross-mode persistence boundary.
 - Game-facing tests are regression guards after evidence, not proof of client compatibility. Cabinet/RPCS3/client acceptance remains the compatibility gate.
 - Do not test generated protobuf output, generated `Wire/` type/property existence, route inventory, controller attribute lists, DI registration shape, enum numeric values, static config key presence, source text, project files, migrations, private methods, or "returns `Result = 1`" stateless echoes unless there is a demonstrated runtime failure that only that assertion can catch.
+- Do not assert literal values from committed config/sidecar data such as JSON catalog rows, shop `verup_no`, dates, ids, prices, text, or file contents. Tests may validate parser behavior and data shape only when that protects runtime behavior; exact config values are free data, not test contracts.
 - Avoid assertions over `.cs`, `.csproj`, `Program.cs`, migrations, controller method bodies, class/file names, `Mediator.Send`, `SaveChanges`, reflection-only metadata, or other implementation strings.
 - Useful tests exercise observable behavior: handler/service state changes, SQLite persistence and no-write boundaries, catalog/parser behavior, byte/bit packing owned by this repo, protocol payload classification backed by real captures/proto evidence, build/publish output when it affects deployed runtime files, API responses that drive WebUI behavior, and readback paths consumed by the cabinet.
 - Mapper tests are allowed only when they protect nontrivial classification, omission, packing, or evidence-backed field placement. Do not write one-to-one copy/echo mapper tests.

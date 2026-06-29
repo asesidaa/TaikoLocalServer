@@ -2,10 +2,10 @@
   "seasons": [
     {
       "season_id": 1,
-      "verup_no": 1,
+      "verup_no": 10,
       "telop": "",
       "start_datetime": "20170315070000",
-      "end_datetime": "20170601020000",
+      "end_datetime": "20301231235959",
       "afterstart_days": 30,
       "beforeclose_days": 0,
       "items": [
@@ -25,10 +25,10 @@
     },
     {
       "season_id": 2,
-      "verup_no": 2,
+      "verup_no": 10,
       "telop": "",
       "start_datetime": "20170601070000",
-      "end_datetime": "20170906020000",
+      "end_datetime": "20301231235959",
       "afterstart_days": 30,
       "beforeclose_days": 0,
       "items": [
@@ -48,10 +48,10 @@
     },
     {
       "season_id": 3,
-      "verup_no": 3,
+      "verup_no": 10,
       "telop": "",
       "start_datetime": "20170906070000",
-      "end_datetime": "20171221020000",
+      "end_datetime": "20301231235959",
       "afterstart_days": 30,
       "beforeclose_days": 0,
       "items": [
@@ -71,10 +71,10 @@
     },
     {
       "season_id": 4,
-      "verup_no": 2,
+      "verup_no": 10,
       "telop": "",
       "start_datetime": "20171221070000",
-      "end_datetime": "20180601020000",
+      "end_datetime": "20301231235959",
       "afterstart_days": 30,
       "beforeclose_days": 0,
       "items": [
