@@ -5,20 +5,19 @@ public class GetTelopController : BaseProtocolController<GetTelopController>
 {
     [HttpPost("/v12r08_ww/chassis/gettelop_o0cb2z3e.php")]
     [Produces("application/protobuf")]
-    public IActionResult GetTelop([FromBody] GettelopRequest request)
+    public async Task<IActionResult> GetTelop([FromBody] GettelopRequest request)
     {
         Logger.LogInformation("GetTelop request : {Request}", request.Stringify());
 
-        var startDateTime = DateTime.Now - TimeSpan.FromDays(999.0);
-        var endDateTime = DateTime.Now + TimeSpan.FromDays(999.0);
+        var commonResponse = await Mediator.Send(new GetTelopQuery(request.TelopId), HttpContext.RequestAborted);
 
         var response = new GettelopResponse
         {
-            Result = 1,
-            StartDatetime = startDateTime.ToString(Constants.DateTimeFormat),
-            EndDatetime = endDateTime.ToString(Constants.DateTimeFormat),
-            Telop = "Hello WW08",
-            VerupNo = 1
+            Result = commonResponse.Result,
+            StartDatetime = commonResponse.StartDatetime,
+            EndDatetime = commonResponse.EndDatetime,
+            Telop = commonResponse.Telop,
+            VerupNo = commonResponse.VerupNo
         };
 
         return Ok(response);

@@ -10,6 +10,7 @@ public static class DomainConstants
     public const uint ShopVerupMasterType = 104;
 
     // Verup2
+    public const uint TelopVerupMasterType = 11;
     public const uint DanVerupMasterType = 101;
     public const uint GaidenVerupMasterType = 102;
     public const uint FolderVerupMasterType = 103;

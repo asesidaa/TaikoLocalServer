@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Options;
 using System.Collections.Immutable;
 using System.IO.Compression;
 using System.Security.Cryptography;
@@ -33,6 +33,9 @@ public class FileGameDataCatalog(IOptions<DataSettings> dataSettings) : IGameDat
     
     private ImmutableDictionary<uint, EventFolderData> eventFolderDictionary = 
         ImmutableDictionary<uint, EventFolderData>.Empty;
+
+    private ImmutableDictionary<uint, TelopData> telopDataDictionary =
+        ImmutableDictionary<uint, TelopData>.Empty;
 
     private List<ShopFolderData> shopFolderList = [];
 
@@ -86,6 +89,11 @@ public class FileGameDataCatalog(IOptions<DataSettings> dataSettings) : IGameDat
     public ImmutableDictionary<uint, EventFolderData> GetEventFolderDictionary()
     {
         return eventFolderDictionary;
+    }
+
+    public ImmutableDictionary<uint, TelopData> GetTelopDataDictionary()
+    {
+        return telopDataDictionary;
     }
 
     public ImmutableDictionary<uint, DanData> GetCommonDanDataDictionary()
@@ -206,6 +214,7 @@ public class FileGameDataCatalog(IOptions<DataSettings> dataSettings) : IGameDat
         var songIntroDataPath = Path.Combine(dataPath, settings.IntroDataFileName);
         var movieDataPath = Path.Combine(dataPath, settings.MovieDataFileName);
         var eventFolderDataPath = Path.Combine(dataPath, settings.EventFolderDataFileName);
+        var telopDataPath = Path.Combine(dataPath, settings.TelopDataFileName);
         var shopFolderDataPath = Path.Combine(dataPath, settings.ShopFolderDataFileName);
         var tokenDataPath = Path.Combine(dataPath, settings.TokenDataFileName);
         var lockedSongsDataPath = Path.Combine(dataPath, settings.LockedSongsDataFileName);
@@ -255,6 +264,7 @@ public class FileGameDataCatalog(IOptions<DataSettings> dataSettings) : IGameDat
         await using var songIntroDataFile = File.OpenRead(songIntroDataPath);
         await using var movieDataFile = File.OpenRead(movieDataPath);
         await using var eventFolderDataFile = File.OpenRead(eventFolderDataPath);
+        await using var telopDataFile = File.OpenRead(telopDataPath);
         await using var shopFolderDataFile = File.OpenRead(shopFolderDataPath);
         await using var tokenDataFile = File.OpenRead(tokenDataPath);
         await using var lockedSongsDataFile = File.OpenRead(lockedSongsDataPath);
@@ -274,6 +284,7 @@ public class FileGameDataCatalog(IOptions<DataSettings> dataSettings) : IGameDat
         var introData = await JsonSerializer.DeserializeAsync<List<SongIntroductionData>>(songIntroDataFile);
         var movieData = await JsonSerializer.DeserializeAsync<List<MovieData>>(movieDataFile);
         var eventFolderData = await JsonSerializer.DeserializeAsync<List<EventFolderData>>(eventFolderDataFile);
+        var telopData = await JsonSerializer.DeserializeAsync<List<TelopData>>(telopDataFile);
         var shopFolderData = await JsonSerializer.DeserializeAsync<List<ShopFolderData>>(shopFolderDataFile);
         var tokenData = await JsonSerializer.DeserializeAsync<Dictionary<string, int>>(tokenDataFile);
         var lockedSongsData = await JsonSerializer.DeserializeAsync<Dictionary<string, uint[]>>(lockedSongsDataFile);
@@ -298,6 +309,8 @@ public class FileGameDataCatalog(IOptions<DataSettings> dataSettings) : IGameDat
         InitializeMovieData(movieData);
 
         InitializeEventFolderData(eventFolderData);
+
+        InitializeTelopData(telopData);
 
         InitializeShopFolderData(shopFolderData);
 
@@ -371,6 +384,12 @@ public class FileGameDataCatalog(IOptions<DataSettings> dataSettings) : IGameDat
     {
         eventFolderData.ThrowIfNull("Shouldn't happen!");
         eventFolderDictionary = eventFolderData.ToImmutableDictionary(d => d.FolderId);
+    }
+
+    private void InitializeTelopData(List<TelopData>? telopData)
+    {
+        telopData.ThrowIfNull("Shouldn't happen!");
+        telopDataDictionary = telopData.ToImmutableDictionary(d => d.TelopId);
     }
 
     private void InitializeMusicInfos(MusicInfos? infosData)

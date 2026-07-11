@@ -16,6 +16,8 @@ public interface IGameDataCatalog
 
     public ImmutableDictionary<uint, EventFolderData> GetEventFolderDictionary();
 
+    public ImmutableDictionary<uint, TelopData> GetTelopDataDictionary();
+
     public ImmutableDictionary<uint, DanData> GetCommonDanDataDictionary();
 
     public ImmutableDictionary<uint, DanData> GetCommonGaidenDataDictionary();

@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Microsoft.Extensions.Options;
 using TaikoLocalServer.Application.Settings;
 
@@ -63,6 +63,7 @@ public class GetInitialDataQueryHandler(IGameDataCatalog gameDataService,
         response.AryVerupNoData1s.AddRange(aryVerUp);
         response.AryVerupNoData1s.AddRange(verupNo1List);
         
+        var telopDataDictionary = gameDataService.GetTelopDataDictionary();
         var commonDanDataDictionary = gameDataService.GetCommonDanDataDictionary();
         var commonGaidenDataDictionary = gameDataService.GetCommonGaidenDataDictionary();
         var eventFolderDictionary = gameDataService.GetEventFolderDictionary();
@@ -70,6 +71,7 @@ public class GetInitialDataQueryHandler(IGameDataCatalog gameDataService,
 
         CommonInitialDataCheckResponse.VerupNoData2[] verupNo2List =
         [
+            GetVerupNoData2(DomainConstants.TelopVerupMasterType, telopDataDictionary),
             GetVerupNoData2(DomainConstants.DanVerupMasterType, commonDanDataDictionary),
             GetVerupNoData2(DomainConstants.GaidenVerupMasterType, commonGaidenDataDictionary),
             GetVerupNoData2(DomainConstants.FolderVerupMasterType, eventFolderDictionary),

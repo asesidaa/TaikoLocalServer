@@ -1,4 +1,4 @@
-﻿namespace TaikoLocalServer.Infrastructure.GameDataCatalog.Settings;
+namespace TaikoLocalServer.Infrastructure.GameDataCatalog.Settings;
 
 public class DataSettings
 {
@@ -7,6 +7,8 @@ public class DataSettings
 	public string GaidenDataFileName { get; set; } = "gaiden_data.json";
 
 	public string EventFolderDataFileName { get; set; } = "event_folder_data.json";
+
+	public string TelopDataFileName { get; set; } = "telop_data.json";
 
 	public string IntroDataFileName { get; set; } = "intro_data.json";
 
