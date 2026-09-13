@@ -9,18 +9,38 @@ public static class TitleMerger
         IEnumerable<NdpEntry> ndpEntries,
         IEnumerable<uint> rewardTitleIds,
         GreenCatalogOverrides overrides)
-    {
-        var rewardSet = rewardTitleIds.ToHashSet();
+        => Merge(ndpEntries, ndpEntries.Select(entry => entry.Id), rewardTitleIds, overrides);
 
-        return ndpEntries
-            .Select(entry =>
+    public static IReadOnlyList<Title> Merge(
+        IEnumerable<NdpEntry> ndpEntries,
+        IEnumerable<uint> discoveredTitleIds,
+        IEnumerable<uint> rewardTitleIds,
+        GreenCatalogOverrides overrides)
+    {
+        var ndpIds = ndpEntries
+            .Select(entry => entry.Id)
+            .ToHashSet();
+        var rewardSet = rewardTitleIds.ToHashSet();
+        var allIds = ndpIds
+            .Concat(discoveredTitleIds)
+            .Distinct()
+            .Order()
+            .ToArray();
+
+        return allIds
+            .Select(id =>
             {
-                overrides.Titles.TryGetValue(entry.Id, out var itemOverride);
+                overrides.Titles.TryGetValue(id, out var itemOverride);
                 var hasOverride = !string.IsNullOrWhiteSpace(itemOverride?.Name);
-                var source = rewardSet.Contains(entry.Id) ? "ndp+rewardtitlefiltering" : "ndp";
+                var source = ndpIds.Contains(id) ? "ndp" : "nut";
+                if (rewardSet.Contains(id))
+                {
+                    source += "+rewardtitlefiltering";
+                }
+
                 return new Title
                 {
-                    TitleId = entry.Id,
+                    TitleId = id,
                     TitleName = itemOverride?.Name ?? string.Empty,
                     TitleNameEN = itemOverride?.Name ?? string.Empty,
                     TitleNameCN = itemOverride?.Name ?? string.Empty,
@@ -29,9 +49,7 @@ public static class TitleMerger
                     Source = hasOverride ? $"{source}+overrides" : source
                 };
             })
-            .GroupBy(title => title.TitleId)
-            .Select(group => group.First())
-            .OrderBy(title => title.TitleId)
             .ToArray();
     }
+
 }

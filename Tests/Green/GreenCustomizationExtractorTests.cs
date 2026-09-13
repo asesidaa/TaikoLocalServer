@@ -344,6 +344,49 @@ public sealed class GreenCustomizationExtractorTests
     }
 
     [Fact]
+    public async Task GreenCatalogExtractor_ExpandsCumulativeTitleNameRanges()
+    {
+        var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        var outDir = Path.Combine(root, "out");
+        Directory.CreateDirectory(Path.Combine(root, "nutdata", "cos_name"));
+        Directory.CreateDirectory(Path.Combine(root, "nutdata", "title_name"));
+        Directory.CreateDirectory(Path.Combine(root, "nutdata", "tone_name"));
+        Directory.CreateDirectory(Path.Combine(root, "nutdata", "S11100-1", "appendable", "00", "title_name"));
+
+        await File.WriteAllBytesAsync(Path.Combine(root, "nutdata", "cos_name", "nutdatapack.ndp"), BuildNdp(("cos_name_001.nut", 0, 1)));
+        await File.WriteAllBytesAsync(Path.Combine(root, "nutdata", "title_name", "nutdatapack.ndp"), BuildNdp(("title_name_000.nut", 0, 1), ("title_name_001.nut", 1, 1)));
+        await File.WriteAllBytesAsync(Path.Combine(root, "nutdata", "tone_name", "nutdatapack.ndp"), BuildNdp(("tone_name_004.nut", 0, 1)));
+        await File.WriteAllTextAsync(
+            Path.Combine(root, "nutdata", "S11100-1", "appendable", "00", "title_name", "title_name_00000_00760.nut"),
+            string.Empty);
+
+        await GreenCatalogExtractor.ExtractAsync(
+            new GreenExtractorOptions(GameDataPath: root, OutputDirectory: outDir),
+            CancellationToken.None);
+
+        var titleJson = await File.ReadAllTextAsync(Path.Combine(outDir, GreenCatalogExtractor.TitleFileName));
+        Assert.Contains("\"titleId\": 760", titleJson);
+        Assert.Contains("\"source\": \"nut\"", titleJson);
+
+        Directory.Delete(root, recursive: true);
+    }
+
+    [Fact]
+    public void TitleMerger_CombinesNdpAndFilenameRangeIds()
+    {
+        var titles = TitleMerger.Merge(
+            [new NdpEntry(0, "title_name_000.nut", 0, 1)],
+            [0u, 1u, 2u, 3u],
+            [3u],
+            new GreenCatalogOverrides());
+
+        Assert.Equal([0u, 1u, 2u, 3u], titles.Select(title => title.TitleId).ToArray());
+        Assert.Equal("ndp", titles[0].Source);
+        Assert.Equal("nut", titles[1].Source);
+        Assert.Equal("nut+rewardtitlefiltering", titles[3].Source);
+    }
+
+    [Fact]
     public async Task GreenCatalogExtractor_ReadsRecursiveGreenCostumeNamePacks()
     {
         var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
