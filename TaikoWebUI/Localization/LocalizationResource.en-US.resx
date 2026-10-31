@@ -433,7 +433,7 @@
     <value>Access code not registered.&lt;br /&gt;Please register first and try again.</value>
   </data>
   <data name="Login Wrong Password Error" xml:space="preserve">
-    <value>Wrong password.&lt;br /&gt;Please check again.</value>
+    <value>Wrong access code or password.&lt;br /&gt;Please check again.</value>
   </data>
   <data name="Register Only Admin Error" xml:space="preserve">
     <value>Only admin can register.</value>

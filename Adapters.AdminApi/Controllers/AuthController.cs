@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
 using OtpNet;
 using TaikoLocalServer.Adapters.AdminApi.Mapping;
@@ -57,32 +58,30 @@ public class AuthController(
 
     [HttpPost("Login")]
     [AllowAnonymous]
+    [EnableRateLimiting(DependencyInjection.AuthRateLimitPolicy)]
     public async Task<IActionResult> Login(LoginRequest loginRequest)
     {
-        var accessCode = loginRequest.AccessCode;
-        var password = loginRequest.Password;
+        // One message for unknown card / wrong password so login can't be used to probe access codes.
+        var invalid = Unauthorized(new { message = "Invalid Credentials" });
 
-        var card = await context.Cards.FindAsync(new object?[] { accessCode }, HttpContext.RequestAborted);
+        var card = await context.Cards.FindAsync(new object?[] { loginRequest.AccessCode }, HttpContext.RequestAborted);
         if (card == null)
-            return Unauthorized(new { message = "Access Code Not Found" });
+            return invalid;
 
         var credential = await context.Credentials.FindAsync(new object?[] { card.Baid }, HttpContext.RequestAborted);
         if (credential == null)
-            return Unauthorized(new { message = "Credential Not Found" });
+            return invalid;
 
         if (credential.Password == "")
             return Unauthorized(new { message = "User Not Registered" });
 
-        var hashedPassword = ComputeHash(password, credential.Salt);
-
-        if (credential.Password != hashedPassword)
-            return Unauthorized(new { message = "Invalid Password" });
+        if (!BCrypt.Net.BCrypt.Verify(loginRequest.Password, credential.Password))
+            return invalid;
 
         var user = await context.UserData
-            .Include(d => d.Tokens)
             .FirstOrDefaultAsync(d => d.Baid == card.Baid, HttpContext.RequestAborted);
         if (user == null)
-            return Unauthorized(new { message = "User Does Not Exist" });
+            return invalid;
 
         var authToken = jwtTokens.IssueToken(card.Baid, user.IsAdmin);
 
@@ -96,6 +95,7 @@ public class AuthController(
 
     [HttpPost("Register")]
     [AllowAnonymous]
+    [EnableRateLimiting(DependencyInjection.AuthRateLimitPolicy)]
     public async Task<IActionResult> Register(RegisterRequest registerRequest)
     {
         if (authSettings.AuthenticationRequired && authSettings.OnlyAdmin && !User.IsAdmin())
@@ -132,7 +132,6 @@ public class AuthController(
             if (!invited)
             {
                 var user = await context.UserData
-                    .Include(d => d.Tokens)
                     .FirstOrDefaultAsync(d => d.Baid == card.Baid, HttpContext.RequestAborted);
                 if (user == null)
                     return Unauthorized(new { message = "User Does Not Exist" });
@@ -154,40 +153,28 @@ public class AuthController(
 
     [HttpPost("ChangePassword")]
     [Authorize]
+    [EnableRateLimiting(DependencyInjection.AuthRateLimitPolicy)]
     public async Task<IActionResult> ChangePassword(ChangePasswordRequest changePasswordRequest)
     {
         if (authSettings.AuthenticationRequired && authSettings.OnlyAdmin && !User.IsAdmin())
             return Forbid();
 
-        var accessCode = changePasswordRequest.AccessCode;
-        var oldPassword = changePasswordRequest.OldPassword;
-        var newPassword = changePasswordRequest.NewPassword;
-
-        var card = await context.Cards.FindAsync(new object?[] { accessCode }, HttpContext.RequestAborted);
-        if (card == null)
-            return Unauthorized(new { message = "Access Code Not Found" });
-
-        if (this.AuthorizeOwnerOrAdmin(card.Baid) is { } forbid)
-            return forbid;
-
-        var credential = await context.Credentials.FindAsync(new object?[] { card.Baid }, HttpContext.RequestAborted);
-        if (credential == null)
-            return Unauthorized(new { message = "Credential Not Found" });
-
-        if (credential.Password == "")
+        // The account comes from the token, never from the request body.
+        if (User.GetBaid() is not { } baid)
             return Unauthorized(new { message = "User Not Registered" });
 
-        var hashedOldPassword = ComputeHash(oldPassword, credential.Salt);
-        if (credential.Password != hashedOldPassword)
+        var credential = await context.Credentials.FindAsync(new object?[] { baid }, HttpContext.RequestAborted);
+        if (credential == null || credential.Password == "")
+            return Unauthorized(new { message = "User Not Registered" });
+
+        if (!BCrypt.Net.BCrypt.Verify(changePasswordRequest.OldPassword, credential.Password))
             return Unauthorized(new { message = "Wrong Old Password" });
 
-        if (newPassword.Length <= 0)
+        if (changePasswordRequest.NewPassword.Length <= 0)
             return Unauthorized(new { message = "Password Cannot Be Empty !" });
 
         var salt = CreateSalt();
-        var hashedNewPassword = ComputeHash(newPassword, salt);
-
-        credential.Password = hashedNewPassword;
+        credential.Password = ComputeHash(changePasswordRequest.NewPassword, salt);
         credential.Salt = salt;
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return Ok();

@@ -433,7 +433,7 @@
     <value>アクセスコードが登録されていません。&lt;br /&gt;まず登録してから再度お試しください。</value>
   </data>
   <data name="Login Wrong Password Error" xml:space="preserve">
-    <value>パスワードが間違っています。&lt;br /&gt;再度ご確認ください。</value>
+    <value>アクセスコードまたはパスワードが間違っています。&lt;br /&gt;再度ご確認ください。</value>
   </data>
   <data name="Register Only Admin Error" xml:space="preserve">
     <value>登録できるのは管理者のみです。</value>

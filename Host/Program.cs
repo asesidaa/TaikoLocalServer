@@ -8,6 +8,7 @@ using TaikoLocalServer.Adapters.GameProtocol.WwR08;
 using TaikoLocalServer.Application;
 using TaikoLocalServer.Infrastructure;
 using TaikoLocalServer.Infrastructure.Persistence;
+using TaikoLocalServer.Cli;
 using TaikoLocalServer.Logging;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -116,6 +117,9 @@ try
     {
         var db = scope.ServiceProvider.GetRequiredService<TaikoDbContext>();
         db.Database.Migrate();
+
+        if (AdminCli.IsAdminCommand(args))
+            return await AdminCli.RunAsync(args, db);
     }
 
     app.UseSerilogRequestLogging(options =>
@@ -164,6 +168,7 @@ try
     // Enable Authentication and Authorization middleware
     app.UseAuthentication();
     app.UseAuthorization();
+    app.UseAdminApi();
 
     app.UseHttpLogging();
     app.Use(async (context, next) =>
@@ -190,10 +195,12 @@ try
     app.UseAllnetMucha();
 
     app.Run();
+    return 0;
 }
 catch (Exception ex) when (ex.GetType().Name is not "HostAbortedException")
 {
     Log.Fatal(ex, "Unhandled exception");
+    return 1;
 }
 finally
 {

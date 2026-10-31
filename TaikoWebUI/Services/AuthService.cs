@@ -110,9 +110,8 @@ public sealed class AuthService : IDisposable
         {
             return MapErrorMessage(await responseMessage.Content.ReadAsStringAsync(), msg => msg switch
             {
-                "Access Code Not Found" => 3,
+                "Invalid Credentials" => 2,
                 "User Not Registered" => 4,
-                "Invalid Password" => 2,
                 _ => 5
             }, fallback: 5);
         }
@@ -163,7 +162,7 @@ public sealed class AuthService : IDisposable
         }, fallback: 6);
     }
 
-    public async Task<int> ChangePassword(string inputAccessCode, string inputOldPassword, string inputNewPassword,
+    public async Task<int> ChangePassword(string inputOldPassword, string inputNewPassword,
         string inputConfirmNewPassword)
     {
         if (OnlyAdmin) return 0;
@@ -172,7 +171,6 @@ public sealed class AuthService : IDisposable
 
         var request = new ChangePasswordRequest
         {
-            AccessCode = inputAccessCode,
             OldPassword = inputOldPassword,
             NewPassword = inputNewPassword
         };
@@ -182,7 +180,6 @@ public sealed class AuthService : IDisposable
 
         return MapErrorMessage(await responseMessage.Content.ReadAsStringAsync(), msg => msg switch
         {
-            "Access Code Not Found" => 3,
             "User Not Registered" => 5,
             "Wrong Old Password" => 4,
             _ => 6
@@ -227,7 +224,10 @@ public sealed class AuthService : IDisposable
 
     private static int MapErrorMessage(string responseContent, Func<string, int> map, int fallback)
     {
-        var responseJson = JsonSerializer.Deserialize<Dictionary<string, string>>(responseContent);
+        // 403/429 responses have empty or non-JSON bodies.
+        Dictionary<string, string>? responseJson;
+        try { responseJson = JsonSerializer.Deserialize<Dictionary<string, string>>(responseContent); }
+        catch (JsonException) { return fallback; }
         if (responseJson is null || !responseJson.TryGetValue("message", out var message))
             return fallback;
         return map(message);

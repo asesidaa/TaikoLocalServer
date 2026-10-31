@@ -433,7 +433,7 @@
     <value>访问码未注册。&lt;br /&gt;请先注册然后再试一次。</value>
   </data>
   <data name="Login Wrong Password Error" xml:space="preserve">
-    <value>密码错误。&lt;br /&gt;请再检查一次。</value>
+    <value>访问码或密码错误。&lt;br /&gt;请再检查一次。</value>
   </data>
   <data name="Register Only Admin Error" xml:space="preserve">
     <value>只有管理员可以注册。</value>

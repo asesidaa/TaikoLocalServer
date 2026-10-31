@@ -433,7 +433,7 @@
     <value>Code d'accès non enregistré.&lt;br /&gt;Veuillez d'abord vous inscrire et réessayer.</value>
   </data>
   <data name="Login Wrong Password Error" xml:space="preserve">
-    <value>Mot de passe erroné.&lt;br /&gt;Vérifiez à nouveau.</value>
+    <value>Code d'accès ou mot de passe erroné.&lt;br /&gt;Vérifiez à nouveau.</value>
   </data>
   <data name="Register Only Admin Error" xml:space="preserve">
     <value>Seuls les administrateurs peuvent s'inscrire.</value>

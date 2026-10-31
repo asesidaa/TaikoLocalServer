@@ -19,11 +19,30 @@ Scope: `TaikoWebUI/` (~4.6k lines of razor/C#) and the admin auth endpoints it c
 | # | Finding | Where | Fix |
 |---|---|---|---|
 | S1 | **No rate limiting on `Login` / `Register`.** Invite codes are 6-digit TOTPs accepted across 25 one-hour windows, so a register attempt guesses right ~1 in 40k. Brute-forcing that, or passwords, over HTTP is cheap. | `AuthController` | ASP.NET Core built-in `AddRateLimiter` + `[EnableRateLimiting("auth")]` (fixed window per IP, ~10/min). No new package. |
-| S2 | **Without `RegisterWithLastPlayTime`, anyone who knows an access code can claim that account.** Access codes are printed on the card. | `AuthController.Register` | **Decided:** replace the `RegisterWithLastPlayTime` bool with `AuthSettings.RegistrationMode` = `InviteCode` (**default**) \| `LastPlayTime` \| `InviteCodeOrLastPlayTime` \| `Open`. `Open` keeps today's behaviour for operators who want it, with a warning comment in `AuthSettings.json`. Reading the old bool still works (`true` → `InviteCodeOrLastPlayTime`, which is today's semantics), so existing configs don't break. The client gets the mode through `ClientAuthConfigResponse` so the Register page shows the right fields. |
+| S2 | **Without `RegisterWithLastPlayTime`, anyone who knows an access code can claim that account.** Access codes are printed on the card. | `AuthController.Register` | **Deferred to the accounts phase (§1a-3).** A `RegistrationMode` setting was tried in PR 1 and reverted. |
 | S3 | **Username enumeration.** Login returns different messages for "Access Code Not Found", "User Not Registered" and "Invalid Password". | `AuthController.Login` | Return a single "invalid credentials" message. Keep "not registered" only if the UX needs it (it's a hint to go register). |
 | S4 | Password check re-hashes and compares strings (`credential.Password != hashedPassword`). That works, but the compare isn't constant-time and it hand-rolls BCrypt. | `Login`, `ChangePassword` | `BCrypt.Net.BCrypt.Verify(password, credential.Password)`. The salt column becomes redundant (BCrypt embeds it) but leave it for now so no migration is needed. |
 | S5 | `ChangePassword` takes the access code from the request body even though the caller is authenticated. | `AuthController.ChangePassword`, `AuthService.ChangePassword` | Derive the BAID from the token (`User.GetBaid()`), and drop `AccessCode` from `ChangePasswordRequest`. |
-| S6 | DB queries live in the controller, against the CLAUDE.md rule ("never query `ITaikoDbContext` directly from a controller"). | `AuthController` | Move into `Application` handlers (`LoginCommand`, `RegisterCommand`, …). Do it while fixing S1–S5, since the same code is being touched. |
+| S6 | DB queries live in the controller, against the CLAUDE.md rule ("never query `ITaikoDbContext` directly from a controller"). | `AuthController` | **Deferred.** All 9 admin controllers query the DB directly and none use Mediator, so moving only auth would leave a one-off. Do it later as one admin-API-wide refactor. |
+| S7 | No self-service password reset. The only path is an admin clearing the password on the Users page. | `AuthController` | **Deferred to the accounts phase (§1a-3).** A forgot-password flow was tried in PR 1 and reverted. |
+
+### 1a-3. Accounts phase (later)
+
+Registering with your last play time is the wrong model. This phase replaces it with an **admin panel plus an admin API**: admins create and claim accounts for cards, issue password resets and one-time login links, and see why a login failed (troubleshooting). Players never prove ownership through play data. The PR 1 admin CLI (`promote`, `demote`, `set-password`) is the bootstrap until the panel exists, and the panel calls the same operations through the API. 2FA and magic links (§1a-2) fold into this phase.
+
+### 1a-2. 2FA and magic-link login (follow-up PR, toggleable)
+
+Users have no email address, so there's nothing to send a magic link to. Both features come from what the server already has:
+
+- **TOTP 2FA (authenticator app).** `AuthSettings.TwoFactor = Off | Optional | RequiredForAdmins | Required`.
+  - Add a per-user `TotpSecret` (nullable) and `RecoveryCodes` (hashed) to `Credential`, with a new migration.
+  - Enroll from Profile → Security: show a QR with an `otpauth://` URI (QRCoder is already in the WebUI), then confirm one code.
+  - Login becomes two steps: the password returns a short-lived "2FA pending" token, and `POST api/Auth/Verify2fa` exchanges it for the real JWT.
+  - `Otp.NET` is already on the server.
+- **Magic link / device login.** `AuthSettings.MagicLink = Off | AdminIssued | DeviceHandoff`.
+  - *AdminIssued:* an admin clicks "login link" on a user and gets a one-time URL (`/Login/Link?t=…`, random 32-byte token, stored hashed, 15-minute expiry, single use) to share however they like. This replaces "reset password and tell them to re-register".
+  - *DeviceHandoff:* a logged-in device shows a QR code, and scanning it on a phone logs the phone in. It uses the same one-time token table.
+  - Email delivery stays out of scope unless users get an email field.
 
 ### 1b. Login / auth state (client)
 
@@ -233,7 +252,8 @@ Deletes: `wwwroot/images/Costumes/**`, the `Masks` list, `CostumeColors`, `Costu
 
 | PR | Contents | Depends on |
 |---|---|---|
-| 1 | Server auth: S1–S6 (incl. `RegistrationMode`) | none |
+| 1 | Server auth: S1, S3, S4, S5 + admin CLI (`promote`, `demote`, `set-password`) | none |
+| 1b | 2FA + magic-link login (§1a-2), each toggleable | 1 |
 | 2 | Client auth: A1–A8 | 1 (S5) |
 | 3 | Perf: P1–P5, P7, P11 (+ P6 bug fix) | none |
 | 4 | `tools/nijiiro-extract`: move `nuanmb_to_glb` in, add the open-source model exporter + texture export, its README | open questions answered |
@@ -247,6 +267,6 @@ PRs 1, 3, 4 and 6 are independent and can run in parallel.
 ## Decisions needed
 
 1. ~~UI kit~~: decided, **LumexUI** (§3a fit check + spike plan).
-2. ~~S2~~: decided. `RegistrationMode` option, default `InviteCode`.
+2. ~~S2~~: decided. Defer registration, reset and troubleshooting to the accounts phase (§1a-3).
 3. ~~Extractor repo home~~: decided, `tools/nijiiro-extract/` in this repo.
 4. ~~Model GLB provenance~~: decided. They came from the closed-source `numd-exporter`, and we'll write an open-source replacement (clean-room, black-box diffing only).

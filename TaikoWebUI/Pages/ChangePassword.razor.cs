@@ -2,7 +2,6 @@
 
 public partial class ChangePassword
 {
-    private string cardNum = "";
     private MudForm changePasswordForm = default!;
     private string confirmNewPassword = "";
     private string newPassword = "";
@@ -19,7 +18,7 @@ public partial class ChangePassword
 
     private async Task OnChangePassword()
     {
-        var result = await AuthService.ChangePassword(cardNum, oldPassword, newPassword, confirmNewPassword);
+        var result = await AuthService.ChangePassword(oldPassword, newPassword, confirmNewPassword);
         switch (result)
         {
             case 0:

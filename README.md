@@ -28,6 +28,18 @@ It is composed of two major components :
 There are various json files under [Host/wwwroot/data](./Host/wwwroot/data/) that can be customized.  
 Please refer to the [Host README file](./Host/README.md) for documentation.
 
+### Web UI admins
+
+When `AuthenticationRequired` is `true` in [AuthSettings.json](./Host/Configurations/AuthSettings.json), players log in to the web UI with their access code and a password. Admins are managed from the command line, run from the server folder. Each card must have played at least one credit first.
+
+```bash
+TaikoLocalServer.exe admin promote <accessCode>       # make this card's user an admin
+TaikoLocalServer.exe admin demote <accessCode>        # remove admin rights
+TaikoLocalServer.exe admin set-password <accessCode>  # set the web UI password (prompts, input hidden)
+```
+
+These commands apply database migrations, make the change and exit; they don't start the server. To create your first admin, run `promote` and then `set-password` on your own card, and log in. On Windows, run them from an administrator terminal, like the server itself.
+
 ### TaikoWebUI configuration
 
 The WebUI has a few settings you can change in [appsettings.json](./TaikoWebUI/wwwroot/appsettings.json)  
