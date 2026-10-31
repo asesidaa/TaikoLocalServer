@@ -5,7 +5,7 @@ Branch: `webui-refactor` (off `dev`). Status: **planning**, nothing implemented 
 Three workstreams, in the order they should land:
 
 1. **Audit fixes** (auth + perf + dead weight) — small, independent, ship first on MudBlazor.
-2. **Game-data extractor (`nijiiro-extract`)** — one command-line tool that takes the operator's game folder and produces every file the server and WebUI need, including the 3D don-chan assets.
+2. **Game-data extractor (`extract`)** — one command-line tool that takes the operator's game folder and produces every file the server and WebUI need, including the 3D don-chan assets.
 3. **UI kit migration + 3D don-chan previewer** — page-by-page rewrite on the new kit, with the Profile costume tab swapped from stacked PNGs to the three.js previewer.
 
 ---
@@ -72,7 +72,7 @@ The app has **two sources of truth** for auth: `JwtAuthenticationStateProvider` 
 | P6 | `GetHeadTitle/GetBodyTitle/...` are 6 copy-pasted methods with 7-arm switches, each doing a linear `FirstOrDefault` over the whole costume list. Profile calls them per dropdown item, which makes it O(n²) per render. | One `GetCostumeName(type, id, lang)` over a `Dictionary<(string,uint),Costume>`, and one shared `lang → field` selector. The `"jp"` vs `"ja"` key mismatch in some of them is a **bug**: those arms never match. | Less code, and a bug fixed |
 | P7 | `index.html` pulls Roboto from Google Fonts. The server is often on an offline LAN or cabinet network. | Self-host it or drop it (the new kit decides). | Works offline |
 | P8 | `Nijiiro.woff2` is 3.2 MB. | Subset it to the glyphs actually used (pyftsubset), or load it only on pages that show song titles. | -3 MB |
-| P9 | **21 MB of costume PNG/WebP and nameplate art committed under `wwwroot/images`.** It's game art in the repo, and it ships in every publish. | Generate it from the operator's game files with `nijiiro-extract` (§2). The 3D previewer replaces the costume layers. Nameplates and rank panels come from `Data/x64/lumen` / `textures` later. | Repo/publish -21 MB, and no game art in git |
+| P9 | **21 MB of costume PNG/WebP and nameplate art committed under `wwwroot/images`.** It's game art in the repo, and it ships in every publish. | Generate it from the operator's game files with `extract` (§2). The 3D previewer replaces the costume layers. Nameplates and rank panels come from `Data/x64/lumen` / `textures` later. | Repo/publish -21 MB, and no game art in git |
 | P10 | `textFit.min.js` + `updateTextFit.js` for nameplate text sizing. | CSS `clamp()` / container query units will probably replace it. Check during the Profile rewrite. | One less script |
 | P11 | csproj has a stale `Pages\Pages\...` `_ContentIncludedByDefault` / `UpToDateCheckInput` block, and copy rules for `wwwroot\data\datatable\*` that WebUI doesn't own. | Delete them. | Tidy |
 
@@ -85,7 +85,7 @@ The app has **two sources of truth** for auth: `JwtAuthenticationStateProvider` 
 
 ---
 
-## 2. Game-data extractor (`nijiiro-extract`)
+## 2. Game-data extractor (`extract`)
 
 ### What the operator does today
 
@@ -96,7 +96,7 @@ From `README.md`: copy 6 datatable `.bin` files into `Host/wwwroot/data/datatabl
 There's one standalone command-line tool that extracts everything, the don-chan model included:
 
 ```bash
-nijiiro-extract --game "G:\...\Taiko no Tatsujin Nijiiro Version (SBWY 39.06)" --out "<server-dir>\wwwroot"
+extract --game "G:\...\Taiko no Tatsujin Nijiiro Version (SBWY 39.06)" --out "<server-dir>\wwwroot"
 ```
 
 It validates the folder, then writes everything into `<exe-dir>/wwwroot/` and says what it found and what was missing. It's idempotent, and it skips anything already up to date (by size + mtime).
@@ -122,9 +122,9 @@ Every 3D asset is in Namco's **SSBH** format (the same family as Smash Ultimate)
 
 **Model export is the new piece.** The current `body/head/cos` GLBs came from a closed-source tool (`numd-exporter.exe`, usage `numd-exporter <input_file> <output_file>`). We're writing our own open-source exporter. It's a **clean-room** build on `ssbh_data`: we use the closed tool only as a black box (run it on a few models and diff its GLB output against ours: node names, skin, material names/extras, UV sets), and we don't decompile it. The diff tells us which quirks `normalize.ts` relies on.
 
-The plan is one Rust CLI, `nijiiro-extract`, that grows out of `nuanmb_to_glb` and lives in **this repo at `tools/nijiiro-extract/`** (a Rust crate; `nuanmb_to_glb` moves there from `don-chan-previewer/scripts/`). Its subcommands:
+The plan is one Rust CLI, `extract`, that grows out of `nuanmb_to_glb` and lives in **this repo at `tools/extract/`** (a Rust crate; `nuanmb_to_glb` moves there from `don-chan-previewer/scripts/`). Its subcommands:
 
-- `nijiiro-extract --game <dir> --out <wwwroot>`: everything below, in order, with a summary of what it found and what was missing.
+- `extract --game <dir> --out <wwwroot>`: everything below, in order, with a summary of what it found and what was missing.
 - `datatables`: copies the `.bin` files (plain file copy).
 - `models`: `body`/`head`/`cos` → `.glb`, via `ssbh_data` mesh/skel/matl plus the `gltf` writer.
 - `textures`: `face`/`paint`/`acce` `.nutexb` → `.png`, via `nutexb` + `image_dds`.
@@ -132,18 +132,80 @@ The plan is one Rust CLI, `nijiiro-extract`, that grows out of `nuanmb_to_glb` a
 
 Then:
 
-- This repo's CI (`.github/workflows`) builds `tools/nijiiro-extract` with `cargo build --release` on the Windows runner, in the same publish job, and drops the exe next to `TaikoLocalServer.exe`. No cross-repo release fetching is needed.
-- **README:** the top-level `README.md` setup section swaps "copy 6 datatable files" for a "Run `nijiiro-extract`" section (what it needs, the exact command, what it writes, how to re-run it after a game update, and what to do when it reports a missing file). `tools/nijiiro-extract/README.md` holds the developer details (subcommands, building, format notes; it absorbs the current `nuanmb_to_glb` README). `Host/README.md` notes the new `wwwroot/don-model/` folder.
+- This repo's CI (`.github/workflows`) builds `tools/extract` with `cargo build --release` on the Windows runner, in the same publish job, and drops the exe next to `TaikoLocalServer.exe`. No cross-repo release fetching is needed.
+- **README:** the top-level `README.md` setup section swaps "copy 6 datatable files" for a "Run `extract`" section (what it needs, the exact command, what it writes, how to re-run it after a game update, and what to do when it reports a missing file). `tools/extract/README.md` holds the developer details (subcommands, building, format notes; it absorbs the current `nuanmb_to_glb` README). `Host/README.md` notes the new `wwwroot/don-model/` folder.
 - No C# setup command is needed. The server keeps owning decryption and only needs `don_cos` + `don_color` added to `FileGameDataCatalog`.
 
 Rejected alternatives:
 - Port SSBH parsing to C#: a lot of reverse-engineered format code exists only in Rust, so this means rewriting it for no gain.
 - A PowerShell script: it can't decode `.nutexb`/BCn, so it would still need the Rust binary.
 
-**Open questions:**
-- What does `numd-exporter` emit that `normalize.ts` (782 lines of material fixes) depends on? The black-box diff answers this. Our exporter either matches it or `normalize.ts` gets simpler.
-- Which models actually need the `nusrcmdlb` / `nuhlpb` / `nusubf/` files, and does the exporter need them?
-- How does `don_cos.bin` map `UserSetting.Body/Head/Kigurumi/Face/Puchi` IDs to file names? The previewer's `cosinfo.json` suggests `dataId = uniqueId * 1000` → `cos_{dataId:000000}`, plus variant suffixes (`cos_036001`). Is puchi `acce`? The counts suggest so (149 vs 149).
+### Extractor audit (done 2026-10-31, against SBWY 39.06)
+
+All of the earlier open questions are answered.
+
+**Toolchain.** Rust 1.93.1 (rustup) is installed on the dev machine. GitHub's `windows-latest` runners ship with Rust, so CI needs no setup step. Crates:
+- `ssbh_lib` / `ssbh_data` (git, MIT) are already used by `nuanmb_to_glb`.
+- Textures: `nutexb` + `image_dds` (MIT).
+- Encoding: `gltf-json` (or hand-written JSON, like `nuanmb_to_glb` does today) + `png`.
+
+**Source format.** Every one of the 483 models has the same layout:
+
+```
+model/<cat>/<name>/
+  <name>/<name>.numdlb            MODL v1.7: points at the files below, plus mesh object → material pairs
+  <name>/<name>.nusrcmdlb         MODL v1.7: same as .numdlb minus the nust ref (ignore)
+  <name>/<name>.nuhlpb            HLPB v1.1: helper bones (ignore for preview)
+  <name>/nusubf/<name>__maya__.numshb   MESH v1.9: geometry
+  <name>/nusubf/<name>__maya__.nusktb   SKEL v1.0: the shared 40-joint don rig (BONE_root, BASE, ARM_L0…)
+  <name>/nusubf/<name>__maya__.numatb   MATL v1.5: material → texture path (../../textures/<tex>)
+  <name>/nusubf/<name>__nust__.numatb   MATL v1.5: material → shader label (taikoEffect / taikoEffectChangeColors / taikoEffectFace)
+  <name>/nusubf/<name>__maya__.nuanmb   ANIM v1.2: rest/idle pose (ignore)
+  textures/*.nutexb                     1–5 per model, incl. shared RGB_don_* colour masks
+```
+
+- These are the same SSBH versions as Smash Ultimate, so `ssbh_data` parses MODL, MESH, SKEL and MATL as-is. Only ANIM v1.2 needs the custom decoder that `nuanmb_to_glb` already has.
+- All 1,819 `.nutexb` are format `0xA0` (BC3) or `0x00` (R8), with a 176-byte footer and the ` XET` magic.
+- Sizes are mostly 512² / 256×128 / 128×8 / 8×8.
+
+**Target GLB.** This is a black-box diff of `numd-exporter` against the previewer's `cos_001000.glb`. Ours must match it, because `normalize.ts` keys on it:
+- One skinned mesh node per MESH object, named `DON_O_OBJShape-<n>`. Attributes are `POSITION, NORMAL, COLOR_0, TEXCOORD_0, JOINTS_0, WEIGHTS_0`. All 40 joints come from the SKEL, with node names kept.
+- One material per mesh, **named with the MATL label verbatim** (e.g. `cos_001000_HEADBODY__color_S_CUS_0x10000000__AT_ONE_`). `normalize.ts` parses flags out of the name: `_AT_ONE`, `_AT_ZERO`, `_AA_ADD`, `_A_AB`, `FACIAL`, `_color_S_CUS_0x…`, `rgb_don_*`, `don_facehip`, `_nom_`, `tras`, `cullnone`.
+- Material settings: `alphaMode: OPAQUE`, `doubleSided: false`, `metallic 0`, `roughness 1`, `baseColorTexture` = the MATL's texture as **PNG**, one image per material (named after the material).
+- One sampler: linear/linear, repeat/repeat.
+- **`extras.shaderType`** comes from the `__nust__` MATL. `numd-exporter` does *not* write this; the previewer's GLBs had it added afterwards. Ours writes it directly.
+- The file is a single-buffer binary `.glb`. `numd-exporter` writes a `.gltf` with 37 base64 buffers, about 30% larger.
+
+**Skeleton for animations.** `nuanmb_to_glb` currently needs `--skeleton-glb` (the old `Don_3D_Nij.glb`). The extractor builds the rig from any model's `__maya__.nusktb` instead, so no pre-made GLB is needed.
+
+**ID → file mapping** (`don_cos_reward.bin`, which the server already loads). The file is `<folder>_<dataId:000000>`, where `dataId` is `uniqueId × 1000`:
+
+| `cosType` | folder | reward entries | files | gaps |
+|---|---|---|---|---|
+| `kigurumi` | `cos/` (GLB) | 157 | 179 | IDs 40, 103 and 104 have **no model**, so fall back to `cos_000000`. The extra files are unlisted variants such as `cos_036001`. |
+| `head` | `head/` (GLB) | 140 | 140 | none |
+| `body` | `body/` (GLB) | 163 | 163 | none |
+| `face` | `paint/` (PNG) | 58 | 58 | none |
+| `puchi` | `acce/` (PNG) | 148 | 149 | none |
+
+- `model/face/*.nutexb` (22) are *expression atlases* keyed by kigurumi `dataId`, plus `r` variants. They aren't user-selectable, and the previewer picks the matching one.
+- `don_color.bin` has 63 `{red, green, blue}` floats. That's exactly the 63-entry `CostumeColors` palette hardcoded in `Profile.razor.cs` today.
+- `don3d_anim.bin` (56 entries) maps animation keys to `.nuanmb` names (54 files).
+- The previewer also has `cos_160000`–`167000`, which aren't in 39.06 (they came from the newer "asb52" build). The extractor only outputs what the operator's game has.
+
+**Server-side gaps found:**
+- `UseStaticFiles()` has **no MIME type for `.glb`**, so every model would 404. Add `FileExtensionContentTypeProvider` with `.glb → model/gltf-binary`.
+- `UseStaticFiles()` serves the *content root's* `wwwroot` (the working directory), but `PathHelper` and the extractor use the *exe's* `wwwroot`. They only match when the server starts from its own folder. Serve `don-model/` explicitly from `PathHelper.GetRootPath()`.
+- `don_cos.bin` (103 entries: `cool/cute/joke/choice/collabo` tags per costume) isn't loaded. It isn't needed for the preview, so skip it.
+
+**Output and size.** About 230 MB under `<exe>/wwwroot/don-model/{body,head,cos,paint,acce,face,animation}/`. It's git-ignored and never included in the publish output. The extractor is idempotent: it skips any output newer than its source.
+
+**Build order** (one PR each):
+1. `tools/extract` skeleton: CLI args, copying the datatables, the summary report.
+2. Textures: `.nutexb` → PNG, for `paint`, `acce` and `face`, and for embedding in GLBs.
+3. Models: MODL + MESH + SKEL + MATL (both) → GLB. Check `cos_001000` field-by-field against the `numd-exporter` output, then check every model loads in the previewer.
+4. Animations: port `nuanmb_to_glb`, building the skeleton from `.nusktb`.
+5. Server: `.glb` MIME, a static mapping for `don-model/`, README "Run extract", CI `cargo build` + bundle the exe.
 
 ---
 
@@ -240,7 +302,7 @@ The previewer is React 19 + react-three-fiber + Mantine + tweakpane. Embedding R
 1. In `don-chan-previewer`, add a second Vite entry, `embed.html`. It renders only `<DonCharacter>` on a transparent canvas (no Mantine, tweakpane, debug panel or stats) and reads its state from the URL plus `postMessage`: `{ body, head, kigurumi, face, puchi, bodyColor, faceColor, limbColor, anim }`.
 2. Its build output (`dist-embed/`, a few hundred KB of JS) is vendored into `TaikoWebUI/wwwroot/don-preview/` by a script, or pulled as a CI artifact.
 3. A Blazor `<DonPreview Setting="@userSetting" />` component renders the iframe and `postMessage`s on every change. That's about 20 lines of C# and one JS interop call, and the costume dropdowns update the model live.
-4. Model URLs point at `/don-model/...` produced by §2. If the assets are missing (extractor not run), the component shows a "run nijiiro-extract" notice instead of broken images.
+4. Model URLs point at `/don-model/...` produced by §2. If the assets are missing (extractor not run), the component shows a "run extract" notice instead of broken images.
 
 Why an iframe: it fully isolates the React/three.js runtime from Blazor's DOM diffing, needs no build coupling between the two repos beyond copying static files, and keeps the previewer independently developable.
 
@@ -256,8 +318,8 @@ Deletes: `wwwroot/images/Costumes/**`, the `Masks` list, `CostumeColors`, `Costu
 | 1b | 2FA + magic-link login (§1a-2), each toggleable | 1 |
 | 2 | Client auth: A1–A8 | 1 (S5) |
 | 3 | Perf: P1–P5, P7, P11 (+ P6 bug fix) | none |
-| 4 | `tools/nijiiro-extract`: move `nuanmb_to_glb` in, add the open-source model exporter + texture export, its README | open questions answered |
-| 5 | Server: load `don_cos`/`don_color`, build + bundle `nijiiro-extract.exe` in CI publish, top-level README "Run nijiiro-extract" section | 4 |
+| 4 | `tools/extract`: move `nuanmb_to_glb` in, add the open-source model exporter + texture export, its README | open questions answered |
+| 5 | Server: load `don_cos`/`don_color`, build + bundle `extract.exe` in CI publish, top-level README "Run extract" section | 4 |
 | 6 | Previewer `embed` entry (in `don-chan-previewer`) | none (can start now with existing GLBs) |
 | 7 | LumexUI spike: Tailwind CLI build, shell, Login, Users, HighScores | 2 |
 | 8+ | Remaining pages, Profile + `<DonPreview>` last; delete `images/Costumes`, remove MudBlazor | 5, 6, 7 |
@@ -268,5 +330,5 @@ PRs 1, 3, 4 and 6 are independent and can run in parallel.
 
 1. ~~UI kit~~: decided, **LumexUI** (§3a fit check + spike plan).
 2. ~~S2~~: decided. Defer registration, reset and troubleshooting to the accounts phase (§1a-3).
-3. ~~Extractor repo home~~: decided, `tools/nijiiro-extract/` in this repo.
+3. ~~Extractor repo home~~: decided, `tools/extract/` in this repo.
 4. ~~Model GLB provenance~~: decided. They came from the closed-source `numd-exporter`, and we'll write an open-source replacement (clean-room, black-box diffing only).

@@ -23,6 +23,8 @@ A private server emulator for Taiko no Tatsujin Nijiiro (CHN `v12r00_cn` and 39.
 - **TaikoWebUI** — Blazor WebAssembly admin UI (MudBlazor 9). References Contracts.AdminApi only. Referenced as a `<ProjectReference>` by Host so the WASM build artifacts are bundled into Host's publish output (then served via `UseBlazorFrameworkFiles()`).
 - **LocalSaveModScoreMigrator** — standalone CLI (System.CommandLine) for importing local-save-mod JSON dumps into `taiko.db3`. References Infrastructure to reuse the EF Core context. Not part of the runtime.
 
+Outside the .NET solution, `tools/extract/` is a Rust CLI (`cargo build --release --manifest-path tools/extract/Cargo.toml`) that copies the game files the server needs from an operator's Nijiiro install into `wwwroot/`. See its README.
+
 The dependency direction is strictly: `Domain ← Contracts.AdminApi ← Application ← Infrastructure ← Host`, with the adapters slotting in at the right layer (`Adapters.* → Application` for game/admin/AllNet logic; Host references all adapters and Infrastructure to compose the runtime). Domain has zero outbound references.
 
 ## Adapter contract

@@ -398,3 +398,6 @@ FodyWeavers.xsd
 *.sln.iml
 TaikoLocalServer/wwwroot/data/music_attribute.bin
 /Published
+
+# Rust build output (tools/extract)
+tools/extract/target/

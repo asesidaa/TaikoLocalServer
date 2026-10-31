@@ -1,0 +1,17 @@
+[package]
+name = "extract"
+version = "0.1.0"
+edition = "2021"
+description = "Extracts the game files TaikoLocalServer needs from a Taiko no Tatsujin Nijiiro install."
+license = "MIT"
+publish = false
+
+[dependencies]
+anyhow = "1.0.86"
+clap = { version = "4.5.4", features = ["derive"] }
+image = { version = "0.25.10", default-features = false, features = ["png"] }
+image_dds = { version = "0.7.2", default-features = false, features = ["ddsfile", "image"] }
+nutexb = { version = "0.7.0", features = ["ddsfile"] }
+
+[profile.release]
+strip = true
