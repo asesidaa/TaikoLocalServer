@@ -3198,4 +3198,13 @@
   <data name="best of {0} plays" xml:space="preserve">
     <value>meilleure de {0} parties</value>
   </data>
+  <data name="New" xml:space="preserve">
+    <value>Nouveau</value>
+  </data>
+  <data name="New songs first" xml:space="preserve">
+    <value>Nouveautés d'abord</value>
+  </data>
+  <data name="Reverse order" xml:space="preserve">
+    <value>Inverser l'ordre</value>
+  </data>
 </root>

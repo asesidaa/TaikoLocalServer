@@ -53,13 +53,23 @@
                 }
             </button>
         </div>
-        @if (F.Favorites || F.Genre >= 0)
+        @if (F.Favorites || F.Genre >= 0 || F.New)
         {
             <div class="flex flex-wrap gap-1.5">
-                <button class="inline-flex items-center gap-1 rounded-full bg-zinc-900 px-2.5 py-1 text-xs font-medium text-white dark:bg-white dark:text-zinc-900"
-                        @onclick="() => Change(() => { F.Favorites = false; F.Genre = -1; })">
-                    @(F.Favorites ? Localizer["Favourites"] : GameData.Genre((SongGenre)F.Genre).Name)<Icon Name="x" Class="size-3" />
-                </button>
+                @if (F.Favorites || F.Genre >= 0)
+                {
+                    <button class="inline-flex items-center gap-1 rounded-full bg-zinc-900 px-2.5 py-1 text-xs font-medium text-white dark:bg-white dark:text-zinc-900"
+                            @onclick="() => Change(() => { F.Favorites = false; F.Genre = -1; })">
+                        @(F.Favorites ? Localizer["Favourites"] : GameData.Genre((SongGenre)F.Genre).Name)<Icon Name="x" Class="size-3" />
+                    </button>
+                }
+                @if (F.New)
+                {
+                    <button class="inline-flex items-center gap-1 rounded-full bg-zinc-900 px-2.5 py-1 text-xs font-medium text-white dark:bg-white dark:text-zinc-900"
+                            @onclick="() => Change(() => F.New = false)">
+                        @Localizer["New"]<Icon Name="x" Class="size-3" />
+                    </button>
+                }
             </div>
         }
     </div>
@@ -82,7 +92,7 @@
                     <li class="flex gap-3 px-3 py-3">
                         <span class="w-1 self-stretch rounded-full" style="background:@GameData.Genre(s.Genre).Bg"></span>
                         <button class="min-w-0 flex-1 text-left" @onclick="() => Open(s.SongId)">
-                            <span class="block truncate text-[15px]">@s.Name</span>
+                            <span class="block truncate text-[15px]">@s.Name@if (s.IsNew){<span class="ml-1.5 inline-block rounded-full bg-primary-500 px-1.5 align-middle text-[10px] font-semibold uppercase leading-4 text-white">@Localizer["New"]</span>}</span>
                             @if (s.NameEn.Length > 0)
                             {
                                 <span class="block truncate text-xs @Css.Muted">@s.NameEn</span>
@@ -138,7 +148,7 @@
                             <tr class="cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800/40" @onclick="() => Open(s.SongId)">
                                 <td class="pl-2">@Heart(s)</td>
                                 <td class="w-full max-w-0 py-2 pr-2">
-                                    <span class="block truncate">@s.Name</span>
+                                    <span class="block truncate">@s.Name@if (s.IsNew){<span class="ml-1.5 inline-block rounded-full bg-primary-500 px-1.5 align-middle text-[10px] font-semibold uppercase leading-4 text-white">@Localizer["New"]</span>}</span>
                                     @if (s.NameEn.Length > 0)
                                     {
                                         <span class="block truncate text-xs @Css.Muted">@s.NameEn</span>
@@ -220,7 +230,7 @@
         // Only the newest answer counts when filters change quickly.
         var mine = ++request;
         var url = $"api/Songs/{Baid}?q={Uri.EscapeDataString(F.Query)}&genre={F.Genre}&fav={(F.Favorites ? "true" : "false")}&diff={F.Difficulty}" +
-                  $"&status={F.Status}&sort={F.Sort}&page={F.Page}&limit={PageSize}";
+                  $"&isNew={(F.New ? "true" : "false")}&status={F.Status}&sort={F.Sort}&reverse={(F.Reverse ? "true" : "false")}&page={F.Page}&limit={PageSize}";
         var page = await Client.GetFromJsonAsync<SongListPage>(url);
         if (mine != request) return;
         data = page;
@@ -338,11 +348,20 @@
                 <option value="@key">@(key == "all" ? label : $"{label} ({diffName})")</option>
             }
         </select>
-        <select aria-label="@Localizer["Sort"]" class="@Css.Input !w-auto !py-2" value="@F.Sort" @onchange='e => Change(() => F.Sort = e.Value?.ToString() ?? "id")'>
-            <option value="id">@Localizer["Song ID"]</option>
-            <option value="title">@Localizer["Song title"]</option>
-            <option value="stars">@Localizer["Stars (high first)"]</option>
-        </select>
+        @* Each sort has its natural order (A to Z, most first, new songs first); the button flips it. *@
+        <div class="inline-flex gap-1">
+            <select aria-label="@Localizer["Sort"]" class="@Css.Input !w-auto !py-2" value="@F.Sort" @onchange='e => Change(() => F.Sort = e.Value?.ToString() ?? "id")'>
+                <option value="id">@Localizer["Song ID"]</option>
+                <option value="title">@Localizer["Song title"]</option>
+                <option value="stars">@Localizer["Stars (high first)"]</option>
+                <option value="plays">@Localizer["Most played"]</option>
+                <option value="new">@Localizer["New songs first"]</option>
+            </select>
+            <button aria-pressed="@Css.Aria(F.Reverse)" aria-label="@Localizer["Reverse order"]" title="@Localizer["Reverse order"]" @onclick="() => Change(() => F.Reverse = !F.Reverse)"
+                    class="grid size-10 shrink-0 place-items-center rounded-xl border @(F.Reverse ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900" : "border-zinc-200 text-zinc-500 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-100")">
+                <Icon Name="sortOrder" Class="size-4" />
+            </button>
+        </div>
     };
 
     private RenderFragment ModeAndChips => __builder =>
@@ -356,8 +375,10 @@
                             class="rounded-lg px-3 py-1 text-xs font-medium @(on ? "bg-white shadow-sm dark:bg-zinc-900" : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200")">@label</button>
                 }
             </div>
-            @Chip(F.Genre < 0 && !F.Favorites, Localizer["All"], null, () => { F.Genre = -1; F.Favorites = false; })
+            @Chip(F.Genre < 0 && !F.Favorites && !F.New, Localizer["All"], null, () => { F.Genre = -1; F.Favorites = F.New = false; })
             @Chip(F.Favorites, Localizer["Favourites"], null, () => { F.Favorites = !F.Favorites; F.Genre = -1; }, true)
+            @* New combines with a genre or Favourites. *@
+            @Chip(F.New, Localizer["New"], "var(--color-primary-500)", () => F.New = !F.New)
             @foreach (var g in Enum.GetValues<SongGenre>())
             {
                 var (name, bg, _) = GameData.Genre(g);

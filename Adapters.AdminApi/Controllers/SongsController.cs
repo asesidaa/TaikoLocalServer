@@ -18,11 +18,13 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
 
     /// <param name="diff">The difficulty (1 Easy … 5 Ura Oni) that <paramref name="status"/> and the stars sort refer to.</param>
     /// <param name="status">all, unplayed, notcleared, nofc; AI Battle: aiunplayed, ailost, aiwon.</param>
-    /// <param name="sort">id, title or stars (high first).</param>
+    /// <param name="isNew">Only songs the game marks new.</param>
+    /// <param name="sort">id, title (A to Z), stars (high first), plays (most played by everyone first) or new (new songs first).</param>
+    /// <param name="reverse">The other way round, e.g. Z to A.</param>
     [HttpGet("{baid}")]
     public async Task<ActionResult<SongListPage>> List(uint baid, [FromQuery] string? q = null, [FromQuery] int genre = -1,
-        [FromQuery] bool fav = false, [FromQuery] int diff = 4, [FromQuery] string status = "all", [FromQuery] string sort = "id",
-        [FromQuery] int page = 1, [FromQuery] int limit = 50)
+        [FromQuery] bool fav = false, [FromQuery] bool isNew = false, [FromQuery] int diff = 4, [FromQuery] string status = "all",
+        [FromQuery] string sort = "id", [FromQuery] bool reverse = false, [FromQuery] int page = 1, [FromQuery] int limit = 50)
     {
         if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
             return forbid;
@@ -46,6 +48,7 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
         IEnumerable<MusicDetail> list = songs.Where(s =>
             (genre < 0 || (int)s.Genre == genre) &&
             (!fav || favorites.Contains(s.SongId)) &&
+            (!isNew || s.IsNew) &&
             (query.Length == 0 || s.SongId.ToString() == query ||
              s.SongName.Contains(query, StringComparison.OrdinalIgnoreCase) || s.SongNameEN.Contains(query, StringComparison.OrdinalIgnoreCase)));
         if (status != "all")
@@ -65,29 +68,30 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
                     _ => true,
                 };
             });
+        // Most played needs every song's count, not just this page's (read from the SongId/Skipped index).
+        var allPlays = sort == "plays" ? await PlayCounts(null) : null;
         list = sort switch
         {
             "title" => list.OrderBy(s => s.SongName, TitleOrder),
             "stars" => list.OrderByDescending(s => Stars(s)[diff - 1]).ThenBy(s => s.SongId),
+            "plays" => list.OrderByDescending(s => allPlays!.GetValueOrDefault(s.SongId)).ThenBy(s => s.SongId),
+            "new" => list.OrderByDescending(s => s.IsNew).ThenBy(s => s.SongId),
             _ => list.OrderBy(s => s.SongId),
         };
 
         var all = list.ToList();
+        if (reverse) all.Reverse();
         var pages = Math.Max(1, (all.Count + limit - 1) / limit);
         page = Math.Min(page, pages);
         var shown = all.Skip((page - 1) * limit).Take(limit).ToList();
-        // Every player's plays, for the songs on this page only (read from the SongId/Skipped index).
-        var ids = shown.Select(s => s.SongId).ToList();
-        var totals = await context.SongPlayData.Where(p => ids.Contains(p.SongId) && !p.Skipped)
-            .GroupBy(p => p.SongId).Select(g => new { g.Key, Count = g.Count() })
-            .ToDictionaryAsync(x => x.Key, x => x.Count, HttpContext.RequestAborted);
+        var totals = allPlays ?? await PlayCounts(shown.Select(s => s.SongId).ToList());
         return new SongListPage
         {
             Total = all.Count, AllSongs = songs.Count, Page = page, TotalPages = pages,
             Items = shown.Select(s => new SongListItem
             {
                 SongId = s.SongId, Name = s.SongName, NameEn = s.SongNameEN, Genre = s.Genre, Favorite = favorites.Contains(s.SongId),
-                TotalPlays = totals.GetValueOrDefault(s.SongId),
+                IsNew = s.IsNew, TotalPlays = totals.GetValueOrDefault(s.SongId),
                 Stars = Stars(s),
                 Crowns = Enumerable.Range(1, 5).Select(i => best.TryGetValue((s.SongId, (Difficulty)i), out var c) ? c : (CrownType?)null).ToArray(),
                 Ai = Enumerable.Range(1, 5).Select(i => ai.GetValueOrDefault((s.SongId, (Difficulty)i))).ToArray(),
@@ -119,7 +123,7 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
         return new SongDetail
         {
             SongId = s.SongId, Name = s.SongName, NameEn = s.SongNameEN, Genre = s.Genre, Stars = stars,
-            Favorite = user.FavoriteSongsArray.Contains(songId),
+            Favorite = user.FavoriteSongsArray.Contains(songId), IsNew = s.IsNew,
             TotalPlays = await context.SongPlayData.CountAsync(p => p.SongId == songId && !p.Skipped, HttpContext.RequestAborted),
             Charts = Enumerable.Range(1, 5).Where(i => stars[i - 1] > 0).Select(i =>
             {
@@ -141,6 +145,12 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
             }).ToList(),
         };
     }
+
+    /// <summary>Every player's plays per song (skipped songs don't count), for <paramref name="songs"/> or every song.</summary>
+    private Task<Dictionary<uint, int>> PlayCounts(List<uint>? songs) =>
+        context.SongPlayData.Where(p => (songs == null || songs.Contains(p.SongId)) && !p.Skipped)
+            .GroupBy(p => p.SongId).Select(g => new { g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.Key, x => x.Count, HttpContext.RequestAborted);
 
     /// <summary>One chart's plays, newest first, a page at a time (the Song page's play history).</summary>
     [HttpGet("{baid}/{songId}/Plays")]

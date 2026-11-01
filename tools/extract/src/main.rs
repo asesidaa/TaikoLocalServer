@@ -16,10 +16,12 @@ use std::process::ExitCode;
 use anyhow::{bail, Context, Result};
 use clap::Parser;
 
-/// Datatables the server decrypts on startup (see `FileGameDataCatalog`).
-const DATATABLES: [&str; 6] = [
+/// Datatables the server decrypts on startup (see `FileGameDataCatalog`). music_attribute is optional there (the
+/// Song List's "new" flag).
+const DATATABLES: [&str; 7] = [
     "musicinfo.bin",
     "music_order.bin",
+    "music_attribute.bin",
     "wordlist.bin",
     "don_cos_reward.bin",
     "shougou.bin",
@@ -266,19 +268,21 @@ mod tests {
         let root = temp_dir("copy");
         let src = root.join("Data").join("x64").join("datatable");
         fs::create_dir_all(&src).unwrap();
-        for name in &DATATABLES[..5] {
+        // Every table but the last one, neiro.
+        let present = &DATATABLES[..DATATABLES.len() - 1];
+        for name in present {
             fs::write(src.join(name), name.as_bytes()).unwrap();
         }
         let game = game::Game::new(resolve_x64(&root).unwrap(), false).unwrap();
         let dst = root.join("out");
 
         let first = copy_datatables(&game, &dst).unwrap();
-        assert_eq!(first.copied.len(), 5);
+        assert_eq!(first.copied.len(), present.len());
         assert_eq!(first.missing, vec!["neiro.bin".to_string()]);
 
         let second = copy_datatables(&game, &dst).unwrap();
         assert!(second.copied.is_empty());
-        assert_eq!(second.up_to_date.len(), 5);
+        assert_eq!(second.up_to_date.len(), present.len());
 
         fs::remove_dir_all(&root).unwrap();
     }

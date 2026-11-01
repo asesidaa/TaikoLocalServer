@@ -3198,4 +3198,13 @@
   <data name="best of {0} plays" xml:space="preserve">
     <value>{0}回中のベスト</value>
   </data>
+  <data name="New" xml:space="preserve">
+    <value>新曲</value>
+  </data>
+  <data name="New songs first" xml:space="preserve">
+    <value>新曲を先に</value>
+  </data>
+  <data name="Reverse order" xml:space="preserve">
+    <value>逆順</value>
+  </data>
 </root>

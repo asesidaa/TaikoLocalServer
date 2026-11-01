@@ -28,6 +28,10 @@ else
             <div class="min-w-0 flex-1">
                 <div class="flex flex-wrap items-center gap-2">
                     <span class="rounded-full px-2 py-0.5 text-[11px] font-medium" style="background:@genre.Bg;color:@genre.Fg">@genre.Name</span>
+                    @if (song.IsNew)
+                    {
+                        <span class="rounded-full bg-primary-500 px-2 py-0.5 text-[11px] font-semibold uppercase text-white">@Localizer["New"]</span>
+                    }
                     <span class="font-mono text-xs @Css.Muted">#@song.SongId</span>
                     <span class="text-xs @Css.Muted" title="@Localizer["Plays by every player"]">· @string.Format(Localizer["{0} on this server"], (song.TotalPlays == 1 ? Localizer["1 play"] : string.Format(Localizer["{0} plays"], song.TotalPlays.ToString("N0"))))</span>
                 </div>

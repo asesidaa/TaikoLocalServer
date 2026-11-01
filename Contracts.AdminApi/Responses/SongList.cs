@@ -19,6 +19,8 @@ public class SongListItem
     public string NameEn { get; set; } = string.Empty;
     public SongGenre Genre { get; set; }
     public bool Favorite { get; set; }
+    /// <summary>The game marks it new (its latest update).</summary>
+    public bool IsNew { get; set; }
     /// <summary>Plays of this song by every player on the server (skipped songs don't count).</summary>
     public int TotalPlays { get; set; }
     /// <summary>Easy, Normal, Hard, Oni, Ura Oni; 0 = no chart.</summary>
@@ -47,6 +49,7 @@ public class SongDetail
     public string NameEn { get; set; } = string.Empty;
     public SongGenre Genre { get; set; }
     public bool Favorite { get; set; }
+    public bool IsNew { get; set; }
     /// <summary>Plays of this song by every player on the server (skipped songs don't count).</summary>
     public int TotalPlays { get; set; }
     public int[] Stars { get; set; } = new int[5];

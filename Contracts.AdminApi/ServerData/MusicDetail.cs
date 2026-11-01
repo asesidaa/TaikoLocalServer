@@ -24,4 +24,6 @@ public class MusicDetail
     public int StarUra { get; set; }
 
     public bool IsFavorite { get; set; } = false;
+    /// <summary>The game marks it new (music_attribute); false when that table isn't there.</summary>
+    public bool IsNew { get; set; }
 }
