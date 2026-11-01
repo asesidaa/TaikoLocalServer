@@ -3414,4 +3414,67 @@
   <data name="Players can type their own title instead of picking one of the game's. Admins always can." xml:space="preserve">
     <value>玩家可以自行输入称号，而不只是从游戏称号中选择。管理员始终可以。</value>
   </data>
+  <data name="Favourites Order Hint" xml:space="preserve">
+    <value>机台的收藏文件夹会按此顺序显示（从你的下一局开始）。先排序，再拖动微调。</value>
+  </data>
+  <data name="Add a song to favourites" xml:space="preserve">
+    <value>将歌曲加入收藏</value>
+  </data>
+  <data name="Add a song: search by name or ID" xml:space="preserve">
+    <value>添加歌曲：按名称或 ID 搜索</value>
+  </data>
+  <data name="Already in your favourites." xml:space="preserve">
+    <value>已在你的收藏中。</value>
+  </data>
+  <data name="Sort by, then drag to fine-tune" xml:space="preserve">
+    <value>先排序，再拖动微调</value>
+  </data>
+  <data name="Sort by" xml:space="preserve">
+    <value>排序</value>
+  </data>
+  <data name="Oni level" xml:space="preserve">
+    <value>鬼难度</value>
+  </data>
+  <data name="Recently added" xml:space="preserve">
+    <value>最近添加</value>
+  </data>
+  <data name="Clear favourites" xml:space="preserve">
+    <value>清空收藏</value>
+  </data>
+  <data name="No favourites yet" xml:space="preserve">
+    <value>还没有收藏</value>
+  </data>
+  <data name="Search above to add songs, or use the heart on the Song List or on the cabinet." xml:space="preserve">
+    <value>在上方搜索添加歌曲，或使用歌曲列表或机台上的爱心。</value>
+  </data>
+  <data name="Favourites, in order" xml:space="preserve">
+    <value>收藏（按顺序）</value>
+  </data>
+  <data name="Move {0}, position {1} of {2}. Use the up and down arrow keys." xml:space="preserve">
+    <value>移动 {0}，第 {1} 位，共 {2} 首。请使用上下方向键。</value>
+  </data>
+  <data name="Not on this server" xml:space="preserve">
+    <value>不在此服务器上</value>
+  </data>
+  <data name="Remove {0} from favourites" xml:space="preserve">
+    <value>将 {0} 移出收藏</value>
+  </data>
+  <data name="{0}, position {1} of {2}" xml:space="preserve">
+    <value>{0}，第 {1} 位，共 {2} 首</value>
+  </data>
+  <data name="Added {0} at the end" xml:space="preserve">
+    <value>已将 {0} 添加到末尾</value>
+  </data>
+  <data name="Favourites cleared. Discard to undo, or Save." xml:space="preserve">
+    <value>已清空收藏。点“放弃”撤销，或点“保存”。</value>
+  </data>
+  <data name="Order changed" xml:space="preserve">
+    <value>顺序已更改</value>
+  </data>
+  <data name="Favourites saved" xml:space="preserve">
+    <value>收藏已保存</value>
+  </data>
+  <data name="Reorder" xml:space="preserve">
+    <value>调整顺序</value>
+  </data>
 </root>

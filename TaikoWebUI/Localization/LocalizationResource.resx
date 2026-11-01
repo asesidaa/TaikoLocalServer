@@ -897,4 +897,7 @@
   <data name="Delete Account Password Hint" xml:space="preserve">
     <value />
   </data>
+  <data name="Favourites Order Hint" xml:space="preserve">
+    <value />
+  </data>
 </root>

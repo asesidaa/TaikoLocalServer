@@ -897,4 +897,7 @@
   <data name="Delete Account Password Hint" xml:space="preserve">
     <value>This deletes your account and everything you've played, for good. Enter your password to confirm.</value>
   </data>
+  <data name="Favourites Order Hint" xml:space="preserve">
+    <value>The Favourites folder on the cabinet shows them in this order, from your next credit. Sort to start, then drag to fine-tune.</value>
+  </data>
 </root>

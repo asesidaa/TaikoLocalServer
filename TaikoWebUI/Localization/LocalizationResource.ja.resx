@@ -3414,4 +3414,67 @@
   <data name="Players can type their own title instead of picking one of the game's. Admins always can." xml:space="preserve">
     <value>プレイヤーがゲームの称号から選ぶ代わりに、自分で称号を入力できます。管理者は常に入力できます。</value>
   </data>
+  <data name="Favourites Order Hint" xml:space="preserve">
+    <value>筐体のお気に入りフォルダーはこの順番で表示されます（次のクレジットから）。まず並べ替えてから、ドラッグで細かく調整してください。</value>
+  </data>
+  <data name="Add a song to favourites" xml:space="preserve">
+    <value>お気に入りに曲を追加</value>
+  </data>
+  <data name="Add a song: search by name or ID" xml:space="preserve">
+    <value>曲を追加：曲名またはIDで検索</value>
+  </data>
+  <data name="Already in your favourites." xml:space="preserve">
+    <value>すでにお気に入りに入っています。</value>
+  </data>
+  <data name="Sort by, then drag to fine-tune" xml:space="preserve">
+    <value>並べ替えてから、ドラッグで調整</value>
+  </data>
+  <data name="Sort by" xml:space="preserve">
+    <value>並べ替え</value>
+  </data>
+  <data name="Oni level" xml:space="preserve">
+    <value>おに難易度</value>
+  </data>
+  <data name="Recently added" xml:space="preserve">
+    <value>最近追加</value>
+  </data>
+  <data name="Clear favourites" xml:space="preserve">
+    <value>お気に入りをすべて解除</value>
+  </data>
+  <data name="No favourites yet" xml:space="preserve">
+    <value>お気に入りはまだありません</value>
+  </data>
+  <data name="Search above to add songs, or use the heart on the Song List or on the cabinet." xml:space="preserve">
+    <value>上の検索で曲を追加するか、曲リストや筐体のハートを使ってください。</value>
+  </data>
+  <data name="Favourites, in order" xml:space="preserve">
+    <value>お気に入り（順番どおり）</value>
+  </data>
+  <data name="Move {0}, position {1} of {2}. Use the up and down arrow keys." xml:space="preserve">
+    <value>{0} を移動（{2} 曲中 {1} 番目）。上下の矢印キーを使ってください。</value>
+  </data>
+  <data name="Not on this server" xml:space="preserve">
+    <value>このサーバーにはありません</value>
+  </data>
+  <data name="Remove {0} from favourites" xml:space="preserve">
+    <value>{0} をお気に入りから外す</value>
+  </data>
+  <data name="{0}, position {1} of {2}" xml:space="preserve">
+    <value>{0}、{2} 曲中 {1} 番目</value>
+  </data>
+  <data name="Added {0} at the end" xml:space="preserve">
+    <value>{0} を最後に追加しました</value>
+  </data>
+  <data name="Favourites cleared. Discard to undo, or Save." xml:space="preserve">
+    <value>お気に入りを空にしました。取り消すには「破棄」、確定するには「保存」。</value>
+  </data>
+  <data name="Order changed" xml:space="preserve">
+    <value>順番が変更されました</value>
+  </data>
+  <data name="Favourites saved" xml:space="preserve">
+    <value>お気に入りを保存しました</value>
+  </data>
+  <data name="Reorder" xml:space="preserve">
+    <value>並べ替え</value>
+  </data>
 </root>

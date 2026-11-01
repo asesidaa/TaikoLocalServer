@@ -1,0 +1,287 @@
+@page "/Users/{baid:int}/Favourites"
+@attribute [Authorize]
+@implements IAsyncDisposable
+@inject PageState Page
+@inject HttpClient Client
+@inject GameDataService GameDataService
+@inject ToastService Toast
+@inject IJSRuntime Js
+
+<PageTitle>@Localizer["Favourites"]</PageTitle>
+
+@* The cabinet's Favourites folder lists songs in this order (UserData.FavoriteSongsArray). Everything here is a draft
+   until Save, which sends the whole list (PUT api/FavoriteSongs). Dragging is js/favourites.js. *@
+<div class="mx-auto max-w-2xl space-y-4">
+    <div>
+        <h1 class="text-2xl font-semibold tracking-tight">@Localizer["Favourites"]</h1>
+        <p class="mt-1 text-sm @Css.Muted">@string.Format(Localizer[order.Count == 1 ? "{0} song" : "{0} songs"], order.Count). @Localizer["Favourites Order Hint"]</p>
+    </div>
+    @if (songs is null)
+    {
+        <Skeleton />
+    }
+    else
+    {
+        @* Add a song: search by name or ID; songs already in the list are left out. *@
+        <div class="relative">
+            @if (Hits is not null)
+            {
+                <div class="fixed inset-0 z-20" @onclick="() => query = string.Empty"></div>
+            }
+            <label class="relative z-30 block">
+                <span class="sr-only">@Localizer["Add a song to favourites"]</span>
+                <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"><Icon Name="plus" /></span>
+                <input @ref="search" type="search" role="combobox" aria-expanded="@Css.Aria(Hits is not null)" aria-controls="fv-hits" aria-autocomplete="list"
+                       aria-activedescendant="@(Hits is { Count: > 0 } h ? $"fv-hit-{h[Math.Min(highlight, h.Count - 1)].SongId}" : null)"
+                       value="@query" @oninput="e => { query = e.Value?.ToString() ?? string.Empty; highlight = 0; }" @onkeydown="SearchKey"
+                       placeholder="@Localizer["Add a song: search by name or ID"]" autocomplete="off" class="@Css.Input pl-9" />
+            </label>
+            @if (Hits is { } hits)
+            {
+                <ul id="fv-hits" role="listbox" class="pop absolute inset-x-0 top-full z-30 mt-1 max-h-80 overflow-y-auto rounded-xl border border-zinc-200 bg-white p-1 shadow-xl dark:border-zinc-700 dark:bg-zinc-900">
+                    @if (hits.Count == 0)
+                    {
+                        <li class="px-3 py-3 text-sm @Css.Muted">@(AlreadyFavourite ? Localizer["Already in your favourites."] : Localizer["No songs match."])</li>
+                    }
+                    @for (var k = 0; k < hits.Count; k++)
+                    {
+                        var s = hits[k];
+                        var on = k == Math.Min(highlight, hits.Count - 1);
+                        <li id="fv-hit-@s.SongId" role="option" aria-selected="@Css.Aria(on)">
+                            <button tabindex="-1" @onclick="() => Add(s)"
+                                    class="flex w-full items-center gap-3 rounded-lg px-2 py-1.5 text-left @(on ? "bg-zinc-100 dark:bg-zinc-800" : "hover:bg-zinc-50 dark:hover:bg-zinc-800/60")">
+                                <span class="h-7 w-1 shrink-0 rounded-full" style="background:@GameData.Genre(s.Genre).Bg"></span>
+                                <span class="min-w-0 flex-1">
+                                    <span class="block truncate text-sm">@s.SongName</span>
+                                    <span class="block truncate text-xs @Css.Muted">@Subtitle(s) · ID @s.SongId</span>
+                                </span>
+                                <span class="shrink-0 text-primary-500"><Icon Name="heart" /></span>
+                            </button>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+
+        @* Sort once to start; any manual move clears the pressed chip. Clear empties the draft (Save confirms it). *@
+        <div class="-mx-4 flex snap-x gap-1.5 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0" role="group" aria-label="@Localizer["Sort by, then drag to fine-tune"]">
+            <span class="shrink-0 self-center text-sm @Css.Muted">@Localizer["Sort by"]</span>
+            @foreach (var (key, label) in Sorts)
+            {
+                <button aria-pressed="@Css.Aria(sort == key)" @onclick="() => SortBy(key)"
+                        class="shrink-0 snap-start rounded-full border px-3 py-1 text-sm @(sort == key ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900" : "border-zinc-200 hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-800")">@label</button>
+            }
+            @if (order.Count > 0)
+            {
+                <button class="ml-auto shrink-0 rounded-full px-3 py-1 text-sm font-medium text-red-600 hover:bg-red-500/10 dark:text-red-400" @onclick="Clear">@Localizer["Clear favourites"]</button>
+            }
+        </div>
+
+        @if (order.Count == 0)
+        {
+            <div class="@Css.Card px-6 py-12 text-center">
+                <p class="font-medium">@Localizer["No favourites yet"]</p>
+                <p class="mt-1 text-sm @Css.Muted">@Localizer["Search above to add songs, or use the heart on the Song List or on the cabinet."]</p>
+            </div>
+        }
+        else
+        {
+            <ol @ref="list" class="@Css.Card divide-y divide-zinc-100 overflow-hidden dark:divide-zinc-800" aria-label="@Localizer["Favourites, in order"]">
+                @for (var i = 0; i < order.Count; i++)
+                {
+                    var id = order[i];
+                    var s = Song(id);
+                    <li @key="id" data-id="@id" class="flex items-center gap-2 bg-white px-3 py-2 sm:gap-3 dark:bg-zinc-900">
+                        <button data-fv-grip aria-label="@string.Format(Localizer["Move {0}, position {1} of {2}. Use the up and down arrow keys."], s?.SongName ?? $"#{id}", i + 1, order.Count)"
+                                class="grid size-9 shrink-0 cursor-grab touch-none place-items-center rounded-lg text-zinc-400 hover:bg-zinc-100 active:cursor-grabbing dark:hover:bg-zinc-800">
+                            <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.6" /><circle cx="15" cy="6" r="1.6" /><circle cx="9" cy="12" r="1.6" /><circle cx="15" cy="12" r="1.6" /><circle cx="9" cy="18" r="1.6" /><circle cx="15" cy="18" r="1.6" /></svg>
+                        </button>
+                        <span class="h-9 w-1 shrink-0 rounded-full" style="background:@(s is null ? "#a1a1aa" : GameData.Genre(s.Genre).Bg)"></span>
+                        <span class="min-w-0 flex-1">
+                            <span class="block truncate text-sm font-medium">@(s?.SongName ?? $"#{id}")</span>
+                            <span class="block truncate text-xs @Css.Muted">@(s is null ? Localizer["Not on this server"] : Subtitle(s))</span>
+                        </span>
+                        @if (s is { StarOni: > 0 })
+                        {
+                            <span class="hidden shrink-0 items-center gap-1 text-xs tabular-nums sm:flex @Css.Muted"><img data-asset="@GameData.DifficultyIcon(Difficulty.Oni)" alt="@GameData.DifficultyName(Difficulty.Oni)" class="size-5 object-contain" />★@s.StarOni</span>
+                        }
+                        <button aria-label="@string.Format(Localizer["Remove {0} from favourites"], s?.SongName ?? $"#{id}")" title="@Localizer["Remove from favourites"]"
+                                class="grid size-9 shrink-0 place-items-center rounded-lg text-primary-500 hover:bg-primary-500/10" @onclick="() => Remove(id)"><Icon Name="heartFill" /></button>
+                    </li>
+                }
+            </ol>
+        }
+        <p class="sr-only" aria-live="polite">@announce</p>
+    }
+</div>
+
+@if (Dirty)
+{
+    <div class="rise fixed inset-x-0 bottom-0 z-30 px-4 lg:left-64">
+        <div class="mx-auto mb-6 flex max-w-xl items-center gap-3 rounded-2xl bg-zinc-900 px-4 py-3 text-white shadow-2xl dark:bg-zinc-800">
+            <span class="size-2 rounded-full bg-primary-500"></span>
+            <span class="flex-1 text-sm">@Localizer["Order changed"]</span>
+            <button class="rounded-xl px-3 py-1.5 text-sm font-medium text-zinc-300 hover:bg-white/10" @onclick="Discard">@Localizer["Discard"]</button>
+            <button class="rounded-xl bg-primary-500 px-4 py-1.5 text-sm font-medium hover:bg-primary-600 active:scale-[.98] disabled:opacity-50" disabled="@saving" @onclick="Save">@Localizer["Save"]</button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int Baid { get; set; }
+
+    private Dictionary<uint, MusicDetail>? songs;
+    private List<uint> order = [], saved = [];
+    private string sort = "", query = "", announce = "";
+    private int highlight;
+    private bool saving;
+    private ElementReference list, search;
+    private IJSObjectReference? module;
+    private DotNetObjectReference<Favourites>? self;
+
+    private bool Dirty => !order.SequenceEqual(saved);
+    private MusicDetail? Song(uint id) => songs?.GetValueOrDefault(id);
+    private string Subtitle(MusicDetail s) => s.SongNameEN.Length > 0 ? s.SongNameEN : GameData.Genre(s.Genre).Name;
+
+    private (string Key, string Label)[] Sorts =>
+        [("genre", Localizer["Genre"]), ("title", Localizer["Title"]), ("oni", Localizer["Oni level"]), ("recent", Localizer["Recently added"])];
+
+    private bool Matches(MusicDetail s, string q) =>
+        s.SongId.ToString() == q || s.SongName.Contains(q, StringComparison.OrdinalIgnoreCase) || s.SongNameEN.Contains(q, StringComparison.OrdinalIgnoreCase);
+
+    // Up to 8 songs that aren't favourites yet; null while the box is empty.
+    private List<MusicDetail>? Hits => query.Trim() is { Length: > 0 } q && songs is not null
+        ? songs.Values.Where(s => !order.Contains(s.SongId) && Matches(s, q)).OrderBy(s => s.SongId).Take(8).ToList()
+        : null;
+
+    private bool AlreadyFavourite => order.Any(id => Song(id) is { } s && Matches(s, query.Trim()));
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Page.Set(Localizer["Play Data"], Localizer["Favourites"]);
+        songs = await GameDataService.GetMusicDetailDictionary();
+        saved = await Client.GetFromJsonAsync<List<uint>>($"api/FavoriteSongs/{Baid}") ?? [];
+        order = [.. saved];
+        sort = "";
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await Js.InvokeVoidAsync("ui.hydrateAssets");
+        if (songs is null) return;
+        module ??= await Js.InvokeAsync<IJSObjectReference>("import", "./js/favourites.js");
+        self ??= DotNetObjectReference.Create(this);
+        if (order.Count > 0) await module.InvokeVoidAsync("init", list, self);
+        await module.InvokeVoidAsync("combobox", search);
+    }
+
+    private void Move(uint id, int to)
+    {
+        order.Remove(id);
+        order.Insert(Math.Clamp(to, 0, order.Count), id);
+        sort = "";
+    }
+
+    [JSInvokable]
+    public Task Reordered(uint[] ids)
+    {
+        // Only a reordering of the same songs (the list can't change while a row is held).
+        if (ids.Length == order.Count && !ids.Except(order).Any())
+        {
+            order = [.. ids];
+            sort = "";
+            StateHasChanged();
+        }
+        return Task.CompletedTask;
+    }
+
+    [JSInvokable]
+    public Task MoveByKey(uint id, string key)
+    {
+        var i = order.IndexOf(id);
+        var to = key switch { "ArrowUp" => i - 1, "ArrowDown" => i + 1, "Home" => 0, _ => order.Count - 1 };
+        if (i < 0 || to < 0 || to >= order.Count || to == i) return Task.CompletedTask;
+        Move(id, to);
+        announce = string.Format(Localizer["{0}, position {1} of {2}"], Song(id)?.SongName ?? $"#{id}", to + 1, order.Count);
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    private void SearchKey(KeyboardEventArgs e)
+    {
+        if (Hits is not { } hits) return;
+        switch (e.Key)
+        {
+            case "ArrowDown" when hits.Count > 0: highlight = (Math.Min(highlight, hits.Count - 1) + 1) % hits.Count; break;
+            case "ArrowUp" when hits.Count > 0: highlight = (Math.Min(highlight, hits.Count - 1) + hits.Count - 1) % hits.Count; break;
+            case "Enter" when hits.Count > 0: Add(hits[Math.Min(highlight, hits.Count - 1)]); break;
+            case "Escape": query = string.Empty; break;
+        }
+    }
+
+    // Added at the end; the search stays open so several can be added in a row.
+    private void Add(MusicDetail s)
+    {
+        order.Add(s.SongId);
+        sort = "";
+        highlight = 0;
+        Toast.Show(string.Format(Localizer["Added {0} at the end"], s.SongName));
+        _ = search.FocusAsync();
+    }
+
+    private void Remove(uint id)
+    {
+        order.Remove(id);
+    }
+
+    private void Clear()
+    {
+        order.Clear();
+        sort = "";
+        Toast.Show(Localizer["Favourites cleared. Discard to undo, or Save."]);
+    }
+
+    private void SortBy(string key)
+    {
+        sort = key;
+        // Recently added: the newest last in the saved list, and songs added since then newest of all.
+        int Age(uint id) => saved.IndexOf(id) is var i and >= 0 ? i : saved.Count + order.IndexOf(id);
+        order = key switch
+        {
+            "genre" => [.. order.OrderBy(id => Song(id)?.Genre ?? (SongGenre)int.MaxValue).ThenBy(id => id)],
+            "title" => [.. order.OrderBy(id => Song(id) is { } s ? Subtitle(s) : $"#{id}", StringComparer.CurrentCultureIgnoreCase)],
+            "oni" => [.. order.OrderByDescending(id => Song(id)?.StarOni ?? 0).ThenBy(id => id)],
+            _ => [.. order.OrderByDescending(Age)],
+        };
+    }
+
+    private void Discard()
+    {
+        order = [.. saved];
+        sort = "";
+    }
+
+    private async Task Save()
+    {
+        saving = true;
+        var res = await Client.PutAsJsonAsync($"api/FavoriteSongs/{Baid}", order);
+        saving = false;
+        if (!res.IsSuccessStatusCode)
+        {
+            Toast.Show(Localizer["Save Failed"], true);
+            return;
+        }
+        saved = [.. order];
+        sort = "";
+        Toast.Show(Localizer["Favourites saved"]);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        self?.Dispose();
+        if (module is not null)
+        {
+            try { await module.DisposeAsync(); } catch (JSDisconnectedException) { }
+        }
+    }
+}

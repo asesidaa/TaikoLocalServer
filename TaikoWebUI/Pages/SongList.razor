@@ -63,6 +63,10 @@
                         @(F.Favorites ? Localizer["Favourites"] : GameData.Genre((SongGenre)F.Genre).Name)<Icon Name="x" Class="size-3" />
                     </button>
                 }
+                @if (F.Favorites)
+                {
+                    @ReorderLink
+                }
                 @if (F.New)
                 {
                     <button class="inline-flex items-center gap-1 rounded-full bg-zinc-900 px-2.5 py-1 text-xs font-medium text-white dark:bg-white dark:text-zinc-900"
@@ -377,6 +381,10 @@
             </div>
             @Chip(F.Genre < 0 && !F.Favorites && !F.New, Localizer["All"], null, () => { F.Genre = -1; F.Favorites = F.New = false; })
             @Chip(F.Favorites, Localizer["Favourites"], null, () => { F.Favorites = !F.Favorites; F.Genre = -1; }, true)
+            @if (F.Favorites)
+            {
+                @ReorderLink
+            }
             @* New combines with a genre or Favourites. *@
             @Chip(F.New, Localizer["New"], "var(--color-primary-500)", () => F.New = !F.New)
             @foreach (var g in Enum.GetValues<SongGenre>())
@@ -386,6 +394,9 @@
             }
         </div>
     };
+
+    // The Favourites page sets the order the cabinet's Favourites folder shows them in.
+    private RenderFragment ReorderLink => @<a href="/Users/@Baid/Favourites" class="self-center px-1 text-xs font-medium text-primary-600 hover:underline dark:text-primary-400">@Localizer["Reorder"]</a>;
 
     private RenderFragment Chip(bool on, string label, string? color, Action pick, bool heart = false) => __builder =>
     {
