@@ -3120,8 +3120,8 @@
   <data name="Render avatars on the server" xml:space="preserve">
     <value>在伺服器上繪製頭像</value>
   </data>
-  <data name="Gives every player an avatar, even players who never open the Web UI. Edge or Chrome runs in the background only while avatars are waiting. When off, each avatar is drawn the next time its player views their card." xml:space="preserve">
-    <value>為每位玩家產生頭像，包括從不開啟 Web UI 的玩家。僅在有頭像等待繪製時，Edge 或 Chrome 才會在背景執行。關閉時，頭像會在玩家下次查看自己的卡片時繪製。</value>
+  <data name="Draws each player's avatar on the server the first time it's shown, so players who never open the Web UI get one too. Edge or Chrome runs in the background only while avatars are waiting. When off, avatars show the player's initial." xml:space="preserve">
+    <value>在頭像首次顯示時由伺服器繪製，從不開啟 Web UI 的玩家也會有頭像。僅在有頭像等待繪製時，Edge 或 Chrome 才會在背景執行。關閉時，頭像顯示玩家名字的首字。</value>
   </data>
   <data name="Browser" xml:space="preserve">
     <value>瀏覽器</value>
@@ -3336,11 +3336,11 @@
   <data name="No name" xml:space="preserve">
     <value>無名稱</value>
   </data>
-  <data name="Every stored avatar is deleted. The server draws them all again in the background." xml:space="preserve">
-    <value>將刪除所有已儲存的頭像。伺服器會在背景重新繪製全部頭像。</value>
+  <data name="Every stored avatar is deleted. The server draws each one again the next time it's shown." xml:space="preserve">
+    <value>將刪除所有已儲存的頭像。每個頭像會在下次顯示時由伺服器重新繪製。</value>
   </data>
-  <data name="Every stored avatar is deleted. Each is drawn again the next time its player views their card." xml:space="preserve">
-    <value>將刪除所有已儲存的頭像。每個頭像會在玩家下次查看自己的卡片時重新繪製。</value>
+  <data name="Every stored avatar is deleted. While rendering is off, avatars show the player's initial." xml:space="preserve">
+    <value>將刪除所有已儲存的頭像。關閉繪製期間，頭像顯示玩家名字的首字。</value>
   </data>
   <data name="Avatars cleared ({0})" xml:space="preserve">
     <value>已清除頭像（{0}）</value>

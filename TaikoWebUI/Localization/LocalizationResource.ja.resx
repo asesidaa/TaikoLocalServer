@@ -3120,8 +3120,8 @@
   <data name="Render avatars on the server" xml:space="preserve">
     <value>サーバーでアバターを描画</value>
   </data>
-  <data name="Gives every player an avatar, even players who never open the Web UI. Edge or Chrome runs in the background only while avatars are waiting. When off, each avatar is drawn the next time its player views their card." xml:space="preserve">
-    <value>Web UI を開かないプレイヤーも含め、全員にアバターを用意します。描画待ちのアバターがあるときだけ、Edge か Chrome がバックグラウンドで動きます。オフの場合は、プレイヤーが自分のカードを表示したときに描画されます。</value>
+  <data name="Draws each player's avatar on the server the first time it's shown, so players who never open the Web UI get one too. Edge or Chrome runs in the background only while avatars are waiting. When off, avatars show the player's initial." xml:space="preserve">
+    <value>各プレイヤーのアバターを、初めて表示されるときにサーバーで描画します。Web UI を開かないプレイヤーにもアバターが付きます。描画待ちのアバターがあるときだけ、Edge か Chrome がバックグラウンドで動きます。オフの場合、アバターはプレイヤー名の頭文字になります。</value>
   </data>
   <data name="Browser" xml:space="preserve">
     <value>ブラウザー</value>
@@ -3336,11 +3336,11 @@
   <data name="No name" xml:space="preserve">
     <value>名前なし</value>
   </data>
-  <data name="Every stored avatar is deleted. The server draws them all again in the background." xml:space="preserve">
-    <value>保存済みのアバターをすべて削除します。サーバーがバックグラウンドですべて描き直します。</value>
+  <data name="Every stored avatar is deleted. The server draws each one again the next time it's shown." xml:space="preserve">
+    <value>保存済みのアバターをすべて削除します。各アバターは、次に表示されるときにサーバーが描き直します。</value>
   </data>
-  <data name="Every stored avatar is deleted. Each is drawn again the next time its player views their card." xml:space="preserve">
-    <value>保存済みのアバターをすべて削除します。各アバターは、プレイヤーが次にカードを表示したときに描き直されます。</value>
+  <data name="Every stored avatar is deleted. While rendering is off, avatars show the player's initial." xml:space="preserve">
+    <value>保存済みのアバターをすべて削除します。描画がオフの間、アバターはプレイヤー名の頭文字になります。</value>
   </data>
   <data name="Avatars cleared ({0})" xml:space="preserve">
     <value>アバターを削除しました（{0}）</value>

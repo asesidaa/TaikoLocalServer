@@ -12,7 +12,7 @@
     else
     {
         <Toggle Label="@Localizer["Render avatars on the server"]" Icon="profile" Value="status.Enabled" ValueChanged="Set"
-                Description="@Localizer["Gives every player an avatar, even players who never open the Web UI. Edge or Chrome runs in the background only while avatars are waiting. When off, each avatar is drawn the next time its player views their card."]" />
+                Description="@Localizer["Draws each player's avatar on the server the first time it's shown, so players who never open the Web UI get one too. Edge or Chrome runs in the background only while avatars are waiting. When off, avatars show the player's initial."]" />
         @* Stills come from the renderer above, so without it cards stay 3D. *@
         <Toggle Label="@Localizer["Enable 3D Renderer"]" Icon="profile" Value="status.Cards3D || !status.Enabled" ValueChanged="SetCards3D" Disabled="!status.Enabled"
                 Description="@(status.Enabled
@@ -74,8 +74,8 @@
     <Dialog Title="@Localizer["Clear all avatars?"]" Alert OnClose="() => confirmClear = false">
         <ChildContent>
             @(status?.Enabled == true
-                ? Localizer["Every stored avatar is deleted. The server draws them all again in the background."]
-                : Localizer["Every stored avatar is deleted. Each is drawn again the next time its player views their card."])
+                ? Localizer["Every stored avatar is deleted. The server draws each one again the next time it's shown."]
+                : Localizer["Every stored avatar is deleted. While rendering is off, avatars show the player's initial."])
         </ChildContent>
         <Footer>
             <button class="@Css.GhostButton" @onclick="() => confirmClear = false">@Localizer["Cancel"]</button>

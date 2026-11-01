@@ -3120,8 +3120,8 @@
   <data name="Render avatars on the server" xml:space="preserve">
     <value>Générer les avatars sur le serveur</value>
   </data>
-  <data name="Gives every player an avatar, even players who never open the Web UI. Edge or Chrome runs in the background only while avatars are waiting. When off, each avatar is drawn the next time its player views their card." xml:space="preserve">
-    <value>Donne un avatar à chaque joueur, même à ceux qui n'ouvrent jamais l'interface web. Edge ou Chrome tourne en arrière-plan seulement quand des avatars attendent. Désactivé : chaque avatar est dessiné la prochaine fois que son joueur affiche sa carte.</value>
+  <data name="Draws each player's avatar on the server the first time it's shown, so players who never open the Web UI get one too. Edge or Chrome runs in the background only while avatars are waiting. When off, avatars show the player's initial." xml:space="preserve">
+    <value>Dessine l'avatar de chaque joueur sur le serveur la première fois qu'il s'affiche, pour que les joueurs qui n'ouvrent jamais l'interface web en aient un aussi. Edge ou Chrome tourne en arrière-plan seulement quand des avatars attendent. Désactivé : les avatars affichent l'initiale du joueur.</value>
   </data>
   <data name="Browser" xml:space="preserve">
     <value>Navigateur</value>
@@ -3336,11 +3336,11 @@
   <data name="No name" xml:space="preserve">
     <value>Sans nom</value>
   </data>
-  <data name="Every stored avatar is deleted. The server draws them all again in the background." xml:space="preserve">
-    <value>Tous les avatars enregistrés sont supprimés. Le serveur les redessine tous en arrière-plan.</value>
+  <data name="Every stored avatar is deleted. The server draws each one again the next time it's shown." xml:space="preserve">
+    <value>Tous les avatars enregistrés sont supprimés. Le serveur redessine chacun la prochaine fois qu'il s'affiche.</value>
   </data>
-  <data name="Every stored avatar is deleted. Each is drawn again the next time its player views their card." xml:space="preserve">
-    <value>Tous les avatars enregistrés sont supprimés. Chacun est redessiné la prochaine fois que son joueur affiche sa carte.</value>
+  <data name="Every stored avatar is deleted. While rendering is off, avatars show the player's initial." xml:space="preserve">
+    <value>Tous les avatars enregistrés sont supprimés. Tant que le rendu est désactivé, les avatars affichent l'initiale du joueur.</value>
   </data>
   <data name="Avatars cleared ({0})" xml:space="preserve">
     <value>Avatars effacés ({0})</value>
