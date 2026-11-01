@@ -744,6 +744,9 @@ namespace TaikoLocalServer.Migrations
                     b.Property<uint>("Baid")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Accent")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("CardAnimation")
                         .HasColumnType("INTEGER");
 
@@ -754,6 +757,9 @@ namespace TaikoLocalServer.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("CardPattern")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool?>("DarkMode")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("FriendCode")

@@ -35,6 +35,31 @@ public class UsersController(ITaikoDbContext context, IServerAccess access) : Ba
         };
     }
 
+    /// <summary>The Web UI theme they last picked; nulls when they never did.</summary>
+    [HttpGet("{baid}/Theme")]
+    public async Task<ActionResult<UiTheme>> GetTheme(uint baid)
+    {
+        if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
+            return forbid;
+        var profile = await context.UserWebProfiles.FindAsync([baid], HttpContext.RequestAborted);
+        return new UiTheme { Dark = profile?.DarkMode, Accent = profile?.Accent };
+    }
+
+    [HttpPut("{baid}/Theme")]
+    public async Task<IActionResult> PutTheme(uint baid, UiTheme theme)
+    {
+        if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
+            return forbid;
+        if (theme.Accent is { } a && (a.Length > 20 || !a.All(char.IsAsciiLetterLower)))
+            return BadRequest(new { message = "Unknown accent." });
+        var profile = await context.UserWebProfiles.FindAsync([baid], HttpContext.RequestAborted);
+        if (profile is null) return NotFound();
+        profile.DarkMode = theme.Dark ?? profile.DarkMode;
+        profile.Accent = theme.Accent ?? profile.Accent;
+        await context.SaveChangesAsync(HttpContext.RequestAborted);
+        return NoContent();
+    }
+
     [HttpGet]
     [Authorize(Policy = AuthPolicies.Admin)]
     public async Task<ActionResult<UsersResponse>> GetUsers([FromQuery] int page = 1, [FromQuery] int limit = 10, [FromQuery] string? searchTerm = null)

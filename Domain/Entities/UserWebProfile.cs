@@ -20,5 +20,9 @@ public class UserWebProfile
     public int CardFade { get; set; } = -1;
     public CardAnimation CardAnimation { get; set; }
 
+    /// <summary>The Web UI theme they last picked (top bar), applied when they sign in; null: never picked.</summary>
+    public bool? DarkMode { get; set; }
+    public string? Accent { get; set; }
+
     public virtual UserDatum? Ba { get; set; }
 }

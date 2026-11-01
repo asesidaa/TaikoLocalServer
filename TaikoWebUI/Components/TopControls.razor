@@ -1,5 +1,8 @@
-@* Top-bar controls: language, theme colour, light/dark. Menus close on an outside click or Escape. *@
+@* Top-bar controls: language, theme colour, light/dark. Menus close on an outside click or Escape.
+   Signed in, the theme follows the account: loaded on start, saved on each change. *@
 @inject IJSRuntime Js
+@inject AuthService AuthService
+@inject HttpClient Client
 @inject NavigationManager Nav
 @inject IOptions<WebUiSettings> Settings
 @using Microsoft.Extensions.Options
@@ -81,7 +84,30 @@
         if (!firstRender) return;
         dark = await Js.InvokeAsync<bool>("ui.isDark");
         accent = await Js.InvokeAsync<string>("ui.getAccent");
+        if (SignedIn)
+        {
+            try
+            {
+                var saved = await Client.GetFromJsonAsync<UiTheme>($"api/Users/{AuthService.GetLoggedInBaid()}/Theme");
+                if (saved?.Dark is { } d && d != dark) await Js.InvokeVoidAsync("ui.setDark", dark = d);
+                if (saved?.Accent is { } a && a != accent && Accents.Any(x => x.Id == a)) await Js.InvokeVoidAsync("ui.setAccent", accent = a);
+            }
+            catch (HttpRequestException)
+            {
+                // Keep this browser's theme.
+            }
+        }
         StateHasChanged();
+    }
+
+    private bool SignedIn => AuthService.LoginRequired && AuthService.IsLoggedIn;
+
+    // Best effort: the theme is already applied here; another browser just won't pick it up.
+    private async Task Save(UiTheme theme)
+    {
+        if (!SignedIn) return;
+        try { await Client.PutAsJsonAsync($"api/Users/{AuthService.GetLoggedInBaid()}/Theme", theme); }
+        catch (HttpRequestException) { }
     }
 
     private void Open(string name) => menu = menu == name ? null : name;
@@ -102,11 +128,13 @@
     {
         accent = id;
         await Js.InvokeVoidAsync("ui.setAccent", id);
+        await Save(new UiTheme { Accent = id });
     }
 
     private async Task ToggleDark()
     {
         dark = !dark;
         await Js.InvokeVoidAsync("ui.setDark", dark);
+        await Save(new UiTheme { Dark = dark });
     }
 }
