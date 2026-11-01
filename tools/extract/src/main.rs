@@ -163,6 +163,7 @@ fn run(args: Args) -> Result<Vec<Report>> {
     reports.push(report);
     let mut report = Report::new("icons");
     ui::icons(&game, &game_data.join("ui"), &mut report)?;
+    ui::note_icon(&game, &game_data.join("ui"), &mut report)?;
     reports.push(report);
     let mut report = Report::new("font pages");
     font::convert(&game, &game_data.join("font"), &mut report)?;

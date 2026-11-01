@@ -38,10 +38,14 @@ const ICONS: [(&str, &str, &[(&str, &str, &str)]); 5] = [
 
 const NAMEPLATE_LUMEN: &str = "common/name_plate";
 const SCOREBOARD_LUMEN: &str = "common/player_board";
+/// The notes on the lane; one sprite has a frame per note type, each with its caption (ドン) under the note.
+const NOTE_LUMEN: &str = "enso_normal/enso/onpu/onp_all";
+/// The WebUI's logo and favicon (served by api/Brand/Icon).
+pub const NOTE_ICON: &str = "don_note.png";
 
 /// The Lumen files under `lumen/000_default` this module reads (`--inputs`).
 pub fn lumen_files() -> impl Iterator<Item = &'static str> {
-    ICONS.iter().map(|(file, ..)| *file).chain([NAMEPLATE_LUMEN, SCOREBOARD_LUMEN])
+    ICONS.iter().map(|(file, ..)| *file).chain([NAMEPLATE_LUMEN, SCOREBOARD_LUMEN, NOTE_LUMEN])
 }
 
 /// The WebUI's icons (see [`ICONS`]), into `<dst_dir>/<prefix>_<label>.png` with one index per source file.
@@ -57,6 +61,44 @@ pub fn icons(game: &Game, dst_dir: &Path, report: &mut crate::Report) -> Result<
         })?;
     }
     Ok(())
+}
+
+/// The don note, without its caption, on a square transparent canvas: `<dst_dir>/don_note.png`.
+pub fn note_icon(game: &Game, dst_dir: &Path, report: &mut crate::Report) -> Result<()> {
+    let sources: [PathBuf; 2] = ["nulm", "nutexb"].map(|ext| game.file(format!("lumen/000_default/{NOTE_LUMEN}.{ext}")));
+    if let Some(missing) = sources.iter().find(|s| !s.is_file()) {
+        report.missing.push(missing.display().to_string());
+        return Ok(());
+    }
+    let out = dst_dir.join(NOTE_ICON);
+    if sources.iter().try_fold(true, |ok, s| crate::is_newer_than(&out, s).map(|n| ok && n))? {
+        report.up_to_date.push(NOTE_ICON.into());
+        return Ok(());
+    }
+    let lm = Lumen::parse(&fs::read(&sources[0])?).with_context(|| format!("parsing {}", sources[0].display()))?;
+    let atlas = crate::textures::decode(&sources[1])?;
+    // The lane's note sprite is the one with the two-player notes (wdon1p…); the others are captions.
+    let sprite = lm.sprite_with_label("wdon1p").context("no note sprite (wdon1p) in onp_all")?;
+    let icon = first_blob(&lm.render(sprite, "don", &atlas, None)?).context("the don note rendered empty")?;
+    fs::create_dir_all(dst_dir).with_context(|| format!("creating {}", dst_dir.display()))?;
+    icon.save(&out).with_context(|| format!("writing {}", out.display()))?;
+    report.copied.push(NOTE_ICON.into());
+    Ok(())
+}
+
+/// The topmost shape (the rows down to the first empty one, e.g. the note above its caption), centred on a square.
+fn first_blob(img: &RgbaImage) -> Option<RgbaImage> {
+    let opaque = |x: u32, y: u32| img.get_pixel(x, y)[3] > 16;
+    let filled = |y: u32| (0..img.width()).any(|x| opaque(x, y));
+    let top = (0..img.height()).find(|&y| filled(y))?;
+    let bottom = (top..img.height()).find(|&y| !filled(y)).unwrap_or(img.height());
+    let cols: Vec<u32> = (0..img.width()).filter(|&x| (top..bottom).any(|y| opaque(x, y))).collect();
+    let (left, right) = (*cols.first()?, *cols.last()? + 1);
+    let (w, h) = (right - left, bottom - top);
+    let side = w.max(h);
+    let mut square = RgbaImage::new(side, side);
+    image::imageops::overlay(&mut square, &image::imageops::crop_imm(img, left, top, w, h).to_image(), ((side - w) / 2) as i64, ((side - h) / 2) as i64);
+    Some(square)
 }
 
 /// Title plates (index = `TitlePlateId`) and dan badges, plus a Lumen scene of the game's whole nameplate.
@@ -164,4 +206,22 @@ fn render_set(lm: &Lumen, atlas: &RgbaImage, sprite: u32, prefix: &str, dst_dir:
         }
     }
     Ok(json!({ "sprite": sprite, "bounds": union, "labels": names }))
+}
+
+#[cfg(test)]
+mod tests {
+    use image::{Rgba, RgbaImage};
+
+    #[test]
+    fn first_blob_keeps_the_shape_above_the_caption_on_a_square() {
+        let mut img = RgbaImage::new(20, 20);
+        for y in 2..8 { for x in 4..14 { img.put_pixel(x, y, Rgba([255, 0, 0, 255])); } } // the note: 10 x 6
+        for y in 12..15 { for x in 1..19 { img.put_pixel(x, y, Rgba([0, 0, 0, 255])); } } // the caption
+        let icon = super::first_blob(&img).unwrap();
+        assert_eq!(icon.dimensions(), (10, 10));
+        assert_eq!(icon.get_pixel(0, 1)[3], 0, "padding above the note");
+        assert_eq!(icon.get_pixel(0, 2), &Rgba([255, 0, 0, 255]), "the note, centred");
+        assert!(icon.pixels().all(|p| p[0] == 255 || p[3] == 0), "nothing of the caption");
+        assert!(super::first_blob(&RgbaImage::new(4, 4)).is_none());
+    }
 }

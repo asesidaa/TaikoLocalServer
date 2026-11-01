@@ -11,6 +11,16 @@
   root.classList.toggle("dark", dark === null ? matchMedia("(prefers-color-scheme: dark)").matches : dark === "1");
   root.dataset.accent = store.get("ui.accent") || "don";
 
+  // ---- The don note from the game (extract; api/Brand/Icon) as the favicon and logo, when it's there ----
+  // The logo's <img> shows through CSS (html[data-brand-icon]), so Blazor's renders don't fight it.
+  const brand = new Image();
+  brand.onload = () => {
+    root.dataset.brandIcon = "";
+    const link = document.getElementById("favicon");
+    if (link) { link.type = "image/png"; link.href = brand.src; }
+  };
+  brand.src = "api/Brand/Icon";
+
   window.blazorCulture = {
     get: () => store.get("BlazorCulture"),
     set: v => store.set("BlazorCulture", v),
