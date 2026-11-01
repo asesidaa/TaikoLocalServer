@@ -20,16 +20,18 @@ else
     <div class="lg:grid lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start lg:gap-6">
         <aside class="lg:sticky lg:top-24"><PlayerCard Setting="setting" Dans="dans" /></aside>
         <div class="min-w-0">
-            <div class="mt-4 grid grid-cols-3 lg:mt-0 gap-1 rounded-2xl bg-zinc-100 p-1 dark:bg-zinc-900" role="tablist">
+            <div class="mt-4 grid grid-cols-2 gap-1 rounded-2xl bg-zinc-100 p-1 dark:bg-zinc-900 lg:mt-0 xl:grid-cols-4" role="tablist">
                 @Tab(Section.Profile, Localizer["Profile"], "id")
                 @Tab(Section.Costume, Localizer["Costume"], "shirt")
                 @Tab(Section.SongOptions, Localizer["Song Options"], "drum")
+                @Tab(Section.Card, Localizer["Card"], "palette")
             </div>
             <section class="@Css.Card mt-4 p-5 sm:p-6" role="tabpanel">
                 @switch (section)
                 {
                     case Section.Profile: @ProfileSection break;
                     case Section.Costume: @CostumeSection break;
+                    case Section.Card: @CardSection break;
                     default: @SongSection break;
                 }
             </section>
@@ -50,6 +52,38 @@ else
                 class="flex items-center justify-center gap-2 whitespace-nowrap rounded-xl px-2 py-2 text-sm font-medium transition-colors @(on ? "bg-white shadow-sm dark:bg-zinc-800" : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200")">
             <Icon Name="@icon" Class="hidden size-4 xl:block" />@label
         </button>
+    };
+
+    // Card: background colour + fade, the don-chan animation, and the pattern (tiles preview it on the chosen colour).
+    private RenderFragment CardSection => __builder =>
+    {
+        var s = setting!;
+        <ColorRow Label="@Localizer["Background"]" Value="s.CardColor" ValueChanged="v => Set(x => x.CardColor = v)" />
+        <ColorRow Label="@Localizer["Fade"]" AllowNone="true" Value="@(s.CardFade < 0 ? ColorRow.None : (uint)s.CardFade)"
+                  ValueChanged="v => Set(x => x.CardFade = v == ColorRow.None ? -1 : (int)v)" />
+        <p class="mt-4 text-sm font-medium text-zinc-700 dark:text-zinc-300">@Localizer["Animation"]</p>
+        <div class="mt-2 grid grid-cols-3 gap-2" role="radiogroup" aria-label="@Localizer["Animation"]">
+            @foreach (var (value, name, _) in CardStyle.Animations)
+            {
+                var on = s.CardAnimation == value;
+                <button role="radio" aria-checked="@Css.Aria(on)" @onclick="() => Set(x => x.CardAnimation = value)"
+                        class="h-10 rounded-xl border text-sm font-medium transition-colors @(on ? "border-primary-500 bg-primary-500/10 text-primary-700 dark:text-primary-300" : "border-zinc-200 text-zinc-600 hover:border-zinc-300 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700")">
+                    @Localizer[name]
+                </button>
+            }
+        </div>
+        <p class="mt-4 text-sm font-medium text-zinc-700 dark:text-zinc-300">@Localizer["Pattern"]</p>
+        <div class="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4 xl:grid-cols-6" role="radiogroup" aria-label="@Localizer["Pattern"]">
+            @foreach (var (value, name) in CardStyle.Patterns)
+            {
+                var on = s.CardPattern == value;
+                <button role="radio" aria-checked="@Css.Aria(on)" class="group text-center" @onclick="() => Set(x => x.CardPattern = value)">
+                    <span class="block h-16 rounded-xl ring-2 ring-offset-2 ring-offset-white transition-shadow dark:ring-offset-zinc-900 @(on ? "ring-primary-500" : "ring-transparent group-hover:ring-zinc-300 dark:group-hover:ring-zinc-700")"
+                          style="@CardStyle.Background(s.CardColor, value)"></span>
+                    <span class="mt-1.5 block text-xs @(on ? "font-medium" : Css.Muted)">@Localizer[name]</span>
+                </button>
+            }
+        </div>
     };
 
     private RenderFragment ProfileSection => __builder =>

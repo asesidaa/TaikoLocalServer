@@ -15,11 +15,12 @@ public class UserSettingsController(ITaikoDbContext context, IOptions<AuthSettin
     public async Task<ActionResult<List<UserSetting>>> GetAllUserSetting()
     {
         var users = await context.UserData.Include(d => d.Tokens).ToListAsync();
+        var profiles = await context.UserWebProfiles.ToDictionaryAsync(p => p.Baid);
 
         var response = new List<UserSetting>();
         foreach (var user in users)
         {
-            response.Add(BuildUserSetting(user));
+            response.Add(BuildUserSetting(user, profiles.GetValueOrDefault(user.Baid)));
         }
 
         return Ok(response);
@@ -38,7 +39,7 @@ public class UserSettingsController(ITaikoDbContext context, IOptions<AuthSettin
             return NotFound();
         }
 
-        return Ok(BuildUserSetting(user));
+        return Ok(BuildUserSetting(user, await context.UserWebProfiles.FindAsync(baid)));
     }
 
     [HttpPost("{baid}")]
@@ -115,12 +116,23 @@ public class UserSettingsController(ITaikoDbContext context, IOptions<AuthSettin
         toneFlg = toneFlg.Append(0u).Append(userSetting.ToneId).Distinct().ToList();
         user.ToneFlgArray = toneFlg;
 
+        // WebUI-only card settings live in UserWebProfiles; the friend code is server-assigned and never taken from here.
+        var profile = await context.UserWebProfiles.FindAsync(baid);
+        if (profile is not null)
+        {
+            profile.CardColor = userSetting.CardColor < 63 ? userSetting.CardColor : profile.CardColor;
+            profile.CardPattern = Enum.IsDefined(userSetting.CardPattern) ? userSetting.CardPattern : profile.CardPattern;
+            profile.CardFade = userSetting.CardFade is >= -1 and < 63 ? userSetting.CardFade : profile.CardFade;
+            profile.CardAnimation = Enum.IsDefined(userSetting.CardAnimation) ? userSetting.CardAnimation : profile.CardAnimation;
+        }
+
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return NoContent();
     }
 
-    private static UserSetting BuildUserSetting(UserDatum user)
+    private static UserSetting BuildUserSetting(UserDatum user, UserWebProfile? profile)
     {
+        profile ??= new UserWebProfile();
         List<List<uint>> costumeUnlockData =
             [user.UnlockedKigurumi, user.UnlockedHead, user.UnlockedBody, user.UnlockedFace, user.UnlockedPuchi];
 
@@ -168,7 +180,11 @@ public class UserSettingsController(ITaikoDbContext context, IOptions<AuthSettin
             FaceColor = user.ColorFace,
             LimbColor = user.ColorLimb,
             LastPlayDateTime = user.LastPlayDatetime,
-            FriendCode = user.FriendCode,
+            FriendCode = profile.FriendCode,
+            CardColor = profile.CardColor,
+            CardPattern = profile.CardPattern,
+            CardFade = profile.CardFade,
+            CardAnimation = profile.CardAnimation,
         };
     }
 }

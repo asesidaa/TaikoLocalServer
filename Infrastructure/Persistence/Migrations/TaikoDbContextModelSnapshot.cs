@@ -361,11 +361,6 @@ namespace TaikoLocalServer.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("FriendCode")
-                        .IsRequired()
-                        .HasMaxLength(12)
-                        .HasColumnType("TEXT");
-
                     b.PrimitiveCollection<string>("GenericInfoFlgArray")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -446,10 +441,37 @@ namespace TaikoLocalServer.Migrations
 
                     b.HasKey("Baid");
 
+                    b.ToTable("UserData");
+                });
+
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.UserWebProfile", b =>
+                {
+                    b.Property<uint>("Baid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CardAnimation")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("CardColor")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CardFade")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CardPattern")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("FriendCode")
+                        .IsRequired()
+                        .HasMaxLength(12)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Baid");
+
                     b.HasIndex("FriendCode")
                         .IsUnique();
 
-                    b.ToTable("UserData");
+                    b.ToTable("UserWebProfiles");
                 });
 
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.AiScoreDatum", b =>
@@ -549,6 +571,17 @@ namespace TaikoLocalServer.Migrations
                         .IsRequired();
 
                     b.Navigation("Datum");
+                });
+
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.UserWebProfile", b =>
+                {
+                    b.HasOne("TaikoLocalServer.Domain.Entities.UserDatum", "Ba")
+                        .WithOne()
+                        .HasForeignKey("TaikoLocalServer.Domain.Entities.UserWebProfile", "Baid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ba");
                 });
 
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.AiScoreDatum", b =>

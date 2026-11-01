@@ -14,11 +14,10 @@ public class AddMyDonEntryCommandHandler(ITaikoDbContext context, ILogger<AddMyD
             .MaxAsync(cancellationToken) + 1;
         string friendCode;
         do friendCode = FriendCode.New();
-        while (await context.UserData.AnyAsync(u => u.FriendCode == friendCode, cancellationToken));
+        while (await context.UserWebProfiles.AnyAsync(p => p.FriendCode == friendCode, cancellationToken));
         var newUser = new UserDatum
         {
             Baid = nextBaid,
-            FriendCode = friendCode,
             MyDonName = request.Name,
             MyDonNameLanguage = request.Language,
             DisplayDan = true,
@@ -41,6 +40,7 @@ public class AddMyDonEntryCommandHandler(ITaikoDbContext context, ILogger<AddMyD
         };
         
         context.UserData.Add(newUser);
+        context.UserWebProfiles.Add(new UserWebProfile { Baid = nextBaid, FriendCode = friendCode });
         
         var newCard = new Card
         {

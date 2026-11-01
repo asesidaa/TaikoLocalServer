@@ -68,4 +68,12 @@ public class UserSetting
 
     /// <summary>12 digits; read-only (the server assigns it and ignores it on save).</summary>
     public string FriendCode { get; set; } = string.Empty;
+
+    // Player card (WebUI only; stored in UserWebProfiles).
+    /// <summary>Game palette index (0 = Don red).</summary>
+    public uint CardColor { get; set; }
+    public CardPattern CardPattern { get; set; }
+    /// <summary>Game palette index, or -1 for no fade.</summary>
+    public int CardFade { get; set; } = -1;
+    public CardAnimation CardAnimation { get; set; }
 }

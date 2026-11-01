@@ -5,6 +5,7 @@ public interface ITaikoDbContext
     DbSet<UserDatum> UserData { get; }
     DbSet<Card> Cards { get; }
     DbSet<Credential> Credentials { get; }
+    DbSet<UserWebProfile> UserWebProfiles { get; }
     DbSet<Token> Tokens { get; }
     DbSet<SongBestDatum> SongBestData { get; }
     DbSet<SongPlayDatum> SongPlayData { get; }

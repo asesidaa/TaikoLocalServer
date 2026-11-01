@@ -1,11 +1,12 @@
 @* Compact colour row: label + current swatch/name button; the popover is a 12×4 hue grid, neutrals and the
-   classic 8. It stays open while you try colours (live preview) and closes on an outside click or Escape. *@
+   classic 8. It stays open while you try colours (live preview) and closes on an outside click or Escape.
+   With AllowNone, a slashed "None" swatch leads the neutrals and Value = None (uint.MaxValue) means no colour. *@
 <div class="relative flex items-center justify-between gap-3 py-1" @onkeydown="OnKey">
     <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">@Label</span>
     <button type="button" aria-haspopup="dialog" aria-expanded="@Css.Aria(open)" @onclick="() => open = !open"
             class="flex h-10 items-center gap-2.5 rounded-xl border border-zinc-200 bg-zinc-50 pl-2 pr-2.5 text-sm hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800/60 dark:hover:border-zinc-600">
         @Swatch(Value, false)
-        <span class="w-20 text-left">@GameData.ColorName(Value)</span>
+        <span class="w-20 text-left">@(Value == None ? Localizer["None"] : GameData.ColorName(Value))</span>
         <Icon Name="chevDown" Class="size-4 text-zinc-400" />
     </button>
     @if (open)
@@ -22,6 +23,10 @@
                 }
             </div>
             <div class="mt-3 flex items-center gap-2 border-t border-zinc-100 pt-3 dark:border-zinc-800">
+                @if (AllowNone)
+                {
+                    @Swatch(None, true)
+                }
                 @foreach (var i in GameData.Neutrals)
                 {
                     @Swatch(i, true)
@@ -42,6 +47,9 @@
     [Parameter, EditorRequired] public string Label { get; set; } = "";
     [Parameter] public uint Value { get; set; }
     [Parameter] public EventCallback<uint> ValueChanged { get; set; }
+    [Parameter] public bool AllowNone { get; set; }
+
+    public const uint None = uint.MaxValue;
 
     private bool open;
 
@@ -54,17 +62,20 @@
     private RenderFragment Swatch(uint i, bool pickable) => __builder =>
     {
         var on = pickable && i == Value;
+        var name = i == None ? Localizer["None"].Value : GameData.ColorName(i);
+        // None: white with a red slash.
+        var fill = i == None ? "linear-gradient(135deg, #fff 45%, #ef4444 45% 55%, #fff 55%)" : GameData.Color(i);
         if (pickable)
         {
-            <button type="button" role="radio" aria-checked="@Css.Aria(on)" aria-label="@GameData.ColorName(i)" title="@GameData.ColorName(i)"
-                    class="relative size-6 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-primary-500" style="background:@GameData.Color(i)"
+            <button type="button" role="radio" aria-checked="@Css.Aria(on)" aria-label="@name" title="@name"
+                    class="relative size-6 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-primary-500" style="background:@fill"
                     @onclick="() => ValueChanged.InvokeAsync(i)">
                 @Ring(on)
             </button>
         }
         else
         {
-            <span class="relative size-6 rounded-full" style="background:@GameData.Color(i)">@Ring(false)</span>
+            <span class="relative size-6 rounded-full" style="background:@fill">@Ring(false)</span>
         }
     };
 

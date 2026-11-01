@@ -7,7 +7,7 @@ public partial class Profile : IDisposable
 {
     [Parameter] public int Baid { get; set; }
 
-    private enum Section { Profile, Costume, SongOptions }
+    private enum Section { Profile, Costume, SongOptions, Card }
 
     private UserSetting? setting;
     private List<DanBestData> dans = [];

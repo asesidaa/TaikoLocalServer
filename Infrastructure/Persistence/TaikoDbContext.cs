@@ -27,6 +27,7 @@ namespace TaikoLocalServer.Infrastructure.Persistence
         public virtual DbSet<SongBestDatum> SongBestData { get; set; } = null!;
         public virtual DbSet<SongPlayDatum> SongPlayData { get; set; } = null!;
         public virtual DbSet<UserDatum> UserData { get; set; } = null!;
+        public virtual DbSet<UserWebProfile> UserWebProfiles { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -59,6 +60,19 @@ namespace TaikoLocalServer.Infrastructure.Persistence
                     .OnDelete(DeleteBehavior.Cascade);
             });
             
+            modelBuilder.Entity<UserWebProfile>(entity =>
+            {
+                entity.HasKey(e => e.Baid);
+
+                entity.Property(e => e.FriendCode).HasMaxLength(Domain.FriendCode.Length);
+                entity.HasIndex(e => e.FriendCode).IsUnique();
+
+                entity.HasOne(d => d.Ba)
+                    .WithOne()
+                    .HasForeignKey<UserWebProfile>(d => d.Baid)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
             modelBuilder.Entity<Credential>(entity =>
             {
                 entity.HasKey(e => e.Baid);
@@ -119,9 +133,6 @@ namespace TaikoLocalServer.Infrastructure.Persistence
             modelBuilder.Entity<UserDatum>(entity =>
             {
                 entity.HasKey(e => e.Baid);
-
-                entity.Property(e => e.FriendCode).HasMaxLength(Domain.FriendCode.Length);
-                entity.HasIndex(e => e.FriendCode).IsUnique();
 
                 entity.Property(e => e.LastPlayDatetime).HasColumnType("datetime");
 

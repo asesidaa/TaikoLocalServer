@@ -1,13 +1,18 @@
 @* The player's card: 3D don-chan (display-only embed covering the whole card so costumes never clip),
    name, and the game nameplate. DanView = the Dani Dojo look (段位道場 outfit for the top rank, no puchi,
-   Clear animation, and a dan panel under the nameplate). Card colour/pattern/fade/animation aren't stored
-   by the server yet, so the card uses the defaults (Don red, dots, Clear). *@
+   Clear animation, and a dan panel under the nameplate). Colour, pattern, fade and animation come from the
+   user's card settings (UserWebProfiles; see Shared/CardStyle.cs). *@
 @inject IJSRuntime Js
 @inject IOptions<WebUiSettings> Settings
 @using Microsoft.Extensions.Options
 
-<section class="relative overflow-hidden rounded-3xl text-white shadow-[0_8px_24px_-12px_rgba(0,0,0,.4)]" aria-label="@Localizer["Player card"]"
-         style="background:radial-gradient(circle at 8px 8px, rgba(255,255,255,.16) 2px, transparent 2.5px) 0 0/16px 16px, #f84828">
+<section class="relative overflow-hidden rounded-3xl shadow-[0_8px_24px_-12px_rgba(0,0,0,.4)] @(LightText ? "text-zinc-900" : "text-white")" aria-label="@Localizer["Player card"]"
+         style="@CardStyle.Background(Setting.CardColor, Setting.CardPattern)">
+    @if (Setting.CardFade >= 0)
+    {
+        @* The fade sits behind don-chan, the name and the nameplate; the text contrast follows it. *@
+        <div class="absolute inset-x-0 bottom-0 h-3/5" style="background:linear-gradient(to top, @GameData.Color((uint)Setting.CardFade) 15%, transparent)"></div>
+    }
     @if (HasEmbed)
     {
         <iframe @ref="frame" src="@EmbedSrc" title="@Localizer["3D preview"]" class="pointer-events-none absolute inset-0 size-full border-0" loading="lazy"></iframe>
@@ -20,12 +25,12 @@
             }
         </div>
         <div class="min-w-0 lg:text-center">
-            <p class="font-display truncate text-2xl drop-shadow-[0_2px_0_rgba(0,0,0,.2)]">@(string.IsNullOrEmpty(Setting.MyDonName) ? " " : Setting.MyDonName)</p>
+            <p class="font-display truncate text-2xl @(LightText ? "" : "drop-shadow-[0_2px_0_rgba(0,0,0,.2)]")">@(string.IsNullOrEmpty(Setting.MyDonName) ? " " : Setting.MyDonName)</p>
             @if (Setting.FriendCode.Length == 12)
             {
                 @* Friend code: digits in groups of four, no label (the accessible name and tooltip say it); copies without spaces. *@
                 <span class="relative mt-1.5 inline-block">
-                    <button class="inline-flex items-center gap-1.5 rounded-full bg-black/25 px-2.5 py-1 text-xs font-semibold tabular-nums tracking-wide transition-colors hover:bg-black/35"
+                    <button class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold tabular-nums tracking-wide transition-colors @(LightText ? "bg-black/10 hover:bg-black/15" : "bg-black/25 hover:bg-black/35")"
                             aria-label="@string.Format(Localizer["Friend code {0}, copy"], FriendCodeGroups)" title="@Localizer["Friend code · click to copy"]" @onclick="CopyFriendCode">
                         @FriendCodeGroups<Icon Name="copy" Class="size-3.5 opacity-70" />
                     </button>
@@ -69,6 +74,9 @@
     [Parameter] public bool DanView { get; set; }
 
     private ElementReference frame, anchor;
+
+    // Text sits over the fade when there is one, otherwise over the background.
+    private bool LightText => CardStyle.IsLight(GameData.Color(Setting.CardFade >= 0 ? (uint)Setting.CardFade : Setting.CardColor));
     private bool copied;
 
     private string FriendCodeGroups => string.Join(' ', Setting.FriendCode.Chunk(4).Select(c => new string(c)));
@@ -101,7 +109,7 @@
             body = Setting.Body, head = Setting.Head, kigurumi = Setting.Kigurumi, face = Setting.Face,
             puchi = DanView ? 0 : Setting.Puchi,
             bodyColor = Setting.BodyColor, faceColor = Setting.FaceColor, limbColor = Setting.LimbColor,
-            anim = "don_result_clear_loop",
+            anim = DanView ? CardStyle.Clip(CardAnimation.Clear) : CardStyle.Clip(Setting.CardAnimation),
             cosFile = DanView ? DanCostume : "",
             zoom = 0.25, camY = 0.2,
         });
