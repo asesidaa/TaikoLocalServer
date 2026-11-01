@@ -17,7 +17,7 @@ else if (status.ExtractFound && status.GamePathFound)
                 <p class="truncate font-mono text-xs @Css.Muted" title="@status.GamePath">@status.GamePath</p>
             </div>
         </div>
-        <Toggle Label="@Localizer["Include the game's mods folder"]" Description="@Localizer["Data_mods: new songs, modded fonts and models."]" Icon="archive" @bind-Value="mods" />
+        <Toggle Label="@Localizer["Include the game's mods folder"]" Description="@Localizer["Include files from Data_mods over vanilla ones"]" Icon="archive" @bind-Value="mods" />
         @if (status.Running)
         {
             <div role="progressbar" aria-label="@Localizer["Extracting"]" class="h-1.5 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
