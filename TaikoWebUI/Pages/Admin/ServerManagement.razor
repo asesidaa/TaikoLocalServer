@@ -13,13 +13,13 @@
     @if (Current == "status")
     {
         <ServerStateCard />
+        <div class="mt-4">@ConfigCard</div>
     }
     else if (Current == "settings")
     {
-        @* Server-wide settings an admin changes while it runs, then what the config files set (read-only). *@
+        @* Server-wide settings an admin changes while it runs. *@
         <PlayerRulesCard />
         <div class="mt-4"><AvatarRendererCard /></div>
-        <div class="mt-4">@ConfigCard</div>
     }
     else if (Current == "announcements")
     {
@@ -56,7 +56,7 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        if (Current == "settings" && config is null)
+        if (Current == "status" && config is null)
             config = await Client.GetFromJsonAsync<ServerConfigResponse>("api/ServerConfig");
     }
 
