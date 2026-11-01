@@ -118,7 +118,7 @@
                  role="img" aria-label="@Localizer["Plays per day, last 12 months"]">
                 @foreach (var (day, plays) in days)
                 {
-                    <span class="size-3.5 rounded-[3px] @Seq[Bucket(plays)]" title="@($"{day:d MMM yyyy}: {plays}")"></span>
+                    <span class="size-3.5 rounded-[3px] @Seq[Bucket(plays)]" data-tip="@($"{day:d MMM yyyy}: {string.Format(Localizer[plays == 1 ? "{0} play" : "{0} plays"], plays)}")"></span>
                 }
             </div>
         </div>

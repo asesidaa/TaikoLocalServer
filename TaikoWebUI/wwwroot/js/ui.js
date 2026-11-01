@@ -198,6 +198,28 @@
     donSend(frame, { type: "don", ...msg, anchor });
   };
 
+  // Tooltips for dense grids (heatmaps, calendars): an element's data-tip shows at once above it, on hover or tap.
+  // A native title waits a second and never shows on touch. The element keeps its own aria-label for screen readers.
+  const tip = document.createElement("div");
+  tip.className = "pointer-events-none fixed z-50 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-lg bg-zinc-950/90 px-2 py-1 text-xs text-white shadow-lg";
+  tip.setAttribute("aria-hidden", "true");
+  tip.hidden = true;
+  const showTip = e => {
+    const el = e.target.closest?.("[data-tip]");
+    if (!el) { tip.hidden = true; return; }
+    if (!tip.isConnected) document.body.append(tip);   // this script runs in <head>, before there's a body
+    const r = el.getBoundingClientRect();
+    tip.textContent = el.dataset.tip;
+    tip.hidden = false;
+    // Kept inside the window: centred over the element, clamped to the edges.
+    const half = tip.offsetWidth / 2, x = Math.min(innerWidth - half - 4, Math.max(half + 4, r.left + r.width / 2));
+    tip.style.left = `${x}px`;
+    tip.style.top = `${r.top - 6}px`;
+  };
+  addEventListener("pointerover", showTip);
+  addEventListener("pointerdown", showTip);
+  addEventListener("scroll", () => { tip.hidden = true; }, true);
+
   // Phone menu (MainLayout): Escape closes it, and so does growing past lg, where the sidebar is always shown.
   const closeDrawer = () => document.querySelector("[data-drawer-close]")?.click();
   addEventListener("keydown", e => { if (e.key === "Escape") closeDrawer(); });
