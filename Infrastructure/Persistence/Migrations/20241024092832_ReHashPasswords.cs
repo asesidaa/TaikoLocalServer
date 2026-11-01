@@ -9,14 +9,21 @@ using System.Text.Json;
 
 namespace TaikoLocalServer.Infrastructure.Persistence.Migrations
 {
+    internal record CredentialRow(uint Baid, string Password, string Salt);
+
     /// <inheritdoc />
     public partial class ReHashPasswords : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // Plain SQL over just the columns this migration knows, never the Credential entity: the entity gained columns
+            // in later migrations (2-step verification), and querying it here failed on a new database, where those
+            // columns don't exist yet ("no such column: RecoveryCodes"), so a fresh install couldn't start.
             using var context = new TaikoDbContext();
-            var credentials = context.Credentials.ToList();
+            var credentials = context.Database
+                .SqlQuery<CredentialRow>($"SELECT Baid, Password, Salt FROM Credential")
+                .ToList();
 
             foreach (var credential in credentials)
             {
@@ -31,12 +38,12 @@ namespace TaikoLocalServer.Infrastructure.Persistence.Migrations
                     decodedData = Encoding.UTF8.GetString(Convert.FromBase64String(decodedData)); // Last pass, leaving us with plain text password + salt
                     decodedData = decodedData.Substring(0, decodedData.Length - credential.Salt.Length); // Recovering plain text password
 
-                    credential.Salt = BCrypt.Net.BCrypt.GenerateSalt(10);
-                    credential.Password = BCrypt.Net.BCrypt.HashPassword(decodedData, credential.Salt); // Hashing the pass properly this time
+                    var salt = BCrypt.Net.BCrypt.GenerateSalt(10);
+                    var password = BCrypt.Net.BCrypt.HashPassword(decodedData, salt); // Hashing the pass properly this time
+                    context.Database.ExecuteSql($"UPDATE Credential SET Password = {password}, Salt = {salt} WHERE Baid = {credential.Baid}");
                     Console.WriteLine("ReHashed password for baid " + credential.Baid + " (out of " + credentials.Count + " baids)");
                 }
             }
-            context.SaveChanges();
         }
 
         /// <inheritdoc />
