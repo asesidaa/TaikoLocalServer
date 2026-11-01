@@ -3,6 +3,7 @@ mod font;
 mod game;
 mod lumen;
 mod models;
+mod movies;
 mod textures;
 mod tones;
 mod ui;
@@ -134,6 +135,9 @@ fn run(args: Args) -> Result<Vec<Report>> {
     reports.push(report);
     let mut report = Report::new("font pages");
     font::convert(&game, &game_data.join("font"), &mut report)?;
+    reports.push(report);
+    let mut report = Report::new("movies");
+    movies::convert(&game, &game_data, &mut report)?;
     reports.push(report);
     let mut report = Report::new("tones");
     tones::convert(&game, &game_data.join("tone"), &mut report)?;

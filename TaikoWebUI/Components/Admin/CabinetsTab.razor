@@ -74,6 +74,9 @@
     private List<uint> draftMovies = [];
     private string originalDraft = "";
     private JsonArray? defaultMovies;
+    // The numbered movies in the game install (extract writes the list); null when extract hasn't.
+    private List<uint>? gameMovies;
+    private sealed record MovieList(List<uint> Movies);
 
     private string DraftKey => $"{draftOwn}|{draftSet}|{string.Join(',', draftMovies)}";
     private bool Dirty => originalDraft.Length > 0 && DraftKey != originalDraft;
@@ -81,6 +84,8 @@
     protected override async Task OnInitializedAsync()
     {
         sets = await Client.GetFromJsonAsync<List<DanSetInfo>>("api/DanSets") ?? [];
+        var movies = await Client.GetAsync("api/Assets/movies.json");
+        if (movies.IsSuccessStatusCode) gameMovies = (await movies.Content.ReadFromJsonAsync<MovieList>())?.Movies;
         await Load();
         await Pick(null);
     }
@@ -207,10 +212,42 @@
         movieInput = "";
     }
 
+    private void ToggleMovie(uint id)
+    {
+        if (!draftMovies.Remove(id)) draftMovies.Add(id);
+    }
+
     private RenderFragment Movies(bool locked) => __builder =>
     {
         <div class="@(locked ? "pointer-events-none opacity-50" : "")">
             <p class="text-sm font-medium">@Localizer["Movies"]</p>
+            @if (gameMovies is { Count: > 0 } game)
+            {
+                @* One toggle per movie in the game; ids that aren't in it (an older list, a removed mod) can only be removed. *@
+                <div class="mt-2 flex flex-wrap items-center gap-1.5" role="group" aria-label="@Localizer["Movies"]">
+                    @foreach (var id in game)
+                    {
+                        var on = draftMovies.Contains(id);
+                        <button aria-pressed="@Css.Aria(on)" @onclick="() => ToggleMovie(id)"
+                                class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-mono text-xs @(on ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700")">
+                            @if (on)
+                            {
+                                <Icon Name="check" Class="size-3" />
+                            }
+                            #@id
+                        </button>
+                    }
+                    @foreach (var id in draftMovies.Where(m => !game.Contains(m)).ToList())
+                    {
+                        <span class="inline-flex items-center gap-1 rounded-full bg-amber-500/15 py-1 pl-2.5 pr-1 font-mono text-xs text-amber-800 dark:text-amber-200" title="@Localizer["Not in the game's movie folder"]">#@id
+                            <button class="grid size-5 place-items-center rounded-full hover:bg-amber-500/20" aria-label="@Localizer["Remove"]" @onclick="() => draftMovies.Remove(id)"><Icon Name="x" Class="size-3" /></button>
+                        </span>
+                    }
+                </div>
+                <p class="mt-1 text-xs @Css.Muted">@string.Format(Localizer["{0} of the game's {1} movies selected."], draftMovies.Count(game.Contains), game.Count)</p>
+            }
+            else
+            {
             <div class="mt-2 flex flex-wrap items-center gap-1.5">
                 @foreach (var id in draftMovies.ToList())
                 {
@@ -223,7 +260,8 @@
                     <button class="rounded-full border border-dashed border-zinc-300 px-2.5 py-1 text-xs font-medium hover:border-primary-500 dark:border-zinc-600">@Localizer["Add"]</button>
                 </form>
             </div>
-            <p class="mt-1 text-xs @Css.Muted">@Localizer["Movie IDs are the numbered files in the game's Data/x64/movie folder."]</p>
+            <p class="mt-1 text-xs @Css.Muted">@Localizer["Movie IDs are the numbered files in the game's Data/x64/movie folder. Run extract to pick from a list."]</p>
+            }
         </div>
     };
 
