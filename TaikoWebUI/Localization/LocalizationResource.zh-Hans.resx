@@ -3342,4 +3342,34 @@
   <data name="Avatars cleared ({0})" xml:space="preserve">
     <value>已清除头像（{0}）</value>
   </data>
+  <data name="Delete Account Hint" xml:space="preserve">
+    <value>将永久删除你的资料、成绩、游玩记录、卡片和登录信息。之后你的卡片可以作为新玩家重新注册。</value>
+  </data>
+  <data name="Delete your account" xml:space="preserve">
+    <value>删除你的账户</value>
+  </data>
+  <data name="Delete account" xml:space="preserve">
+    <value>删除账户</value>
+  </data>
+  <data name="Delete your account?" xml:space="preserve">
+    <value>删除你的账户？</value>
+  </data>
+  <data name="Deleting accounts is turned off on this server." xml:space="preserve">
+    <value>此服务器已关闭删除账户。</value>
+  </data>
+  <data name="Couldn't delete the account. Try again." xml:space="preserve">
+    <value>无法删除账户。请重试。</value>
+  </data>
+  <data name="Your account was deleted." xml:space="preserve">
+    <value>你的账户已删除。</value>
+  </data>
+  <data name="Delete Account Password Hint" xml:space="preserve">
+    <value>这将永久删除你的账户及所有游玩记录。请输入密码以确认。</value>
+  </data>
+  <data name="Deleted an account" xml:space="preserve">
+    <value>删除了账户</value>
+  </data>
+  <data name="Too many tries. Wait a minute, then try again." xml:space="preserve">
+    <value>尝试次数过多。请等一分钟后再试。</value>
+  </data>
 </root>

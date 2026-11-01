@@ -206,7 +206,8 @@ public class UsersController(ITaikoDbContext context, IServerAccess access, IAva
         if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
             return forbid;
 
-        if (access.LoginRequired && !access.Rules.AllowUserDelete && !User.IsAdmin())
+        // Players delete their own account with their password (api/Auth/DeleteAccount), not here.
+        if (access.LoginRequired && !User.IsAdmin())
             return Forbid();
 
         var userDatum = await context.UserData.FindAsync(baid);
@@ -215,7 +216,7 @@ public class UsersController(ITaikoDbContext context, IServerAccess access, IAva
             return NotFound();
         }
 
-        context.UserData.Remove(userDatum);
+        UserRemoval.Remove(context, userDatum);
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return NoContent();
     }

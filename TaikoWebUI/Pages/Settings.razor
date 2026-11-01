@@ -27,6 +27,11 @@
         {
             <TwoFactorCard />
         }
+        @* Admins delete accounts in User Management (and so can't remove the last admin here). *@
+        @if (AuthService.AllowUserDelete && !AuthService.IsAdmin)
+        {
+            <DeleteAccountCard />
+        }
     }
 </div>
 

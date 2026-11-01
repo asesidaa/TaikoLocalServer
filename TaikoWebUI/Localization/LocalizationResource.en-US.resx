@@ -891,4 +891,10 @@
   <data name="Player Rules Moved Hint" xml:space="preserve">
     <value>Free profile editing, deleting accounts and the access-code limit are in {0}.</value>
   </data>
+  <data name="Delete Account Hint" xml:space="preserve">
+    <value>Deletes your profile, scores, play history, cards and sign-in for good. Your cards can be registered again afterwards, as a new player.</value>
+  </data>
+  <data name="Delete Account Password Hint" xml:space="preserve">
+    <value>This deletes your account and everything you've played, for good. Enter your password to confirm.</value>
+  </data>
 </root>

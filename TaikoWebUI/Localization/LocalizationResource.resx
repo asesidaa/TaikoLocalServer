@@ -891,4 +891,10 @@
   <data name="Player Rules Moved Hint" xml:space="preserve">
     <value />
   </data>
+  <data name="Delete Account Hint" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Delete Account Password Hint" xml:space="preserve">
+    <value />
+  </data>
 </root>

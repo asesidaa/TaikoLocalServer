@@ -323,6 +323,41 @@ public class AuthController(
         return Ok();
     }
 
+    /// <summary>
+    /// A player deletes their own account (Settings), when the access rules allow it: with their password, and their
+    /// 2-step code if it's on ("Code Required" when it's missing). Admins delete accounts in User Management.
+    /// </summary>
+    [HttpPost("DeleteAccount")]
+    [Authorize]
+    [EnableRateLimiting(DependencyInjection.AuthRateLimitPolicy)]
+    public async Task<IActionResult> DeleteAccount(DeleteAccountRequest request)
+    {
+        if (!access.LoginRequired || !access.Rules.AllowUserDelete || User.IsAdmin())
+            return Forbid();
+        // The account comes from the token, never from the request body.
+        if (User.GetBaid() is not { } baid)
+            return BadRequest(new { message = "User Not Registered" });
+
+        var credential = await context.Credentials.FindAsync([baid], HttpContext.RequestAborted);
+        if (credential is null || credential.Password == "")
+            return BadRequest(new { message = "User Not Registered" });
+        if (!BCrypt.Net.BCrypt.Verify(request.Password, credential.Password))
+            return BadRequest(new { message = "Wrong Password" });
+        if (credential.TotpSecret is not null)
+        {
+            if (string.IsNullOrWhiteSpace(request.Code)) return BadRequest(new { message = "Code Required" });
+            if (!TwoFactorCodes.Verify(credential, request.Code)) return BadRequest(new { message = "Wrong Code" });
+        }
+
+        var user = await context.UserData.FindAsync([baid], HttpContext.RequestAborted);
+        if (user is null)
+            return BadRequest(new { message = "User Not Registered" });
+        UserRemoval.Remove(context, user);
+        this.LogActivity(context, "user.delete", baid, "their own account");
+        await context.SaveChangesAsync(HttpContext.RequestAborted);
+        return NoContent();
+    }
+
     [HttpPost("ResetPassword")]
     [ApiScope(write: ApiScopes.AdminUsers)]
     [Authorize]
