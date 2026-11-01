@@ -1,18 +1,16 @@
-using Microsoft.Extensions.Options;
 using System.Collections.Immutable;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text.Json;
 using TaikoLocalServer.Application.Abstractions;
 using TaikoLocalServer.Application.Catalog;
-using TaikoLocalServer.Infrastructure.GameDataCatalog.Settings;
 using Throw;
 
 namespace TaikoLocalServer.Infrastructure.GameDataCatalog;
 
 // TODO(PR2-followup): extract per-table loaders into Loaders/*.cs (spec §3 calls for
 // 18 standalone loader classes; deferred to keep PR2 scope manageable).
-public class FileGameDataCatalog(IOptions<DataSettings> dataSettings) : IGameDataCatalog
+public class FileGameDataCatalog : IGameDataCatalog
 {
     private ImmutableDictionary<uint, DanData> commonDanDataDictionary =
         ImmutableDictionary<uint, DanData>.Empty;
@@ -68,8 +66,6 @@ public class FileGameDataCatalog(IOptions<DataSettings> dataSettings) : IGameDat
     private int toneFlagArraySize;
 
     private Dictionary<string, int> tokenDataDictionary = new();
-
-    private readonly DataSettings settings = dataSettings.Value;
 
     public List<uint> GetMusicList()
     {
@@ -209,19 +205,19 @@ public class FileGameDataCatalog(IOptions<DataSettings> dataSettings) : IGameDat
         var neiroPath = Path.Combine(datatablePath, $"{CatalogConstants.NeiroBaseName}.json");
         var encryptedNeiro = Path.Combine(datatablePath, $"{CatalogConstants.NeiroBaseName}.bin");
 
-        var danDataPath = Path.Combine(dataPath, settings.DanDataFileName);
-        var gaidenDataPath = Path.Combine(dataPath, settings.GaidenDataFileName);
-        var songIntroDataPath = Path.Combine(dataPath, settings.IntroDataFileName);
-        var movieDataPath = Path.Combine(dataPath, settings.MovieDataFileName);
-        var eventFolderDataPath = Path.Combine(dataPath, settings.EventFolderDataFileName);
-        var telopDataPath = Path.Combine(dataPath, settings.TelopDataFileName);
-        var shopFolderDataPath = Path.Combine(dataPath, settings.ShopFolderDataFileName);
-        var tokenDataPath = Path.Combine(dataPath, settings.TokenDataFileName);
-        var lockedSongsDataPath = Path.Combine(dataPath, settings.LockedSongsDataFileName);
-        var specialSongsDataPath = Path.Combine(dataPath, settings.SpecialSongsDataFileName);
-        var qrCodeDataPath = Path.Combine(dataPath, settings.QrCodeDataFileName);
-        var lockedCostumeDataPath = Path.Combine(dataPath, settings.LockedCostumeDataFileName);
-        var lockedTitleDataPath = Path.Combine(dataPath, settings.LockedTitleDataFileName);
+        var danDataPath = Path.Combine(dataPath, DataFiles.Dan);
+        var gaidenDataPath = Path.Combine(dataPath, DataFiles.Gaiden);
+        var songIntroDataPath = Path.Combine(dataPath, DataFiles.Intro);
+        var movieDataPath = Path.Combine(dataPath, DataFiles.Movie);
+        var eventFolderDataPath = Path.Combine(dataPath, DataFiles.EventFolder);
+        var telopDataPath = Path.Combine(dataPath, DataFiles.Telop);
+        var shopFolderDataPath = Path.Combine(dataPath, DataFiles.ShopFolder);
+        var tokenDataPath = Path.Combine(dataPath, DataFiles.Token);
+        var lockedSongsDataPath = Path.Combine(dataPath, DataFiles.LockedSongs);
+        var specialSongsDataPath = Path.Combine(dataPath, DataFiles.SpecialSongs);
+        var qrCodeDataPath = Path.Combine(dataPath, DataFiles.QrCode);
+        var lockedCostumeDataPath = Path.Combine(dataPath, DataFiles.LockedCostume);
+        var lockedTitleDataPath = Path.Combine(dataPath, DataFiles.LockedTitle);
 
         var encryptedFiles = new List<string>
         {

@@ -32,9 +32,20 @@ It is composed of two major components :
 There are various json files under [Host/wwwroot/data](./Host/wwwroot/data/) that can be customized.  
 Please refer to the [Host README file](./Host/README.md) for documentation.
 
-### Web UI admins
+### Local or Server mode
 
-When `AuthenticationRequired` is `true` in [AuthSettings.json](./Host/Configurations/AuthSettings.json), players log in to the web UI with their access code and a password. Admins are managed from the command line, run from the server folder. Each card must have played at least one credit first.
+Set `"Mode"` in [ServerSettings.json](./Host/Configurations/ServerSettings.json):
+
+- **`Local`** (the default): no accounts or logins. Everyone who can open the web UI can edit any profile and use the admin pages. Good for a home cabinet.
+- **`Server`**: players log in with their access code and a password, and only admins can use the admin pages. Account rules (who may register, deleting users, free profile editing, the access-code limit) are changed by admins in the web UI.
+
+There is nothing else to configure for logins: the server generates its own signing key on first start.
+
+### Web UI admins (Server mode)
+
+The first time the server starts in Server mode without an admin, it prints a **setup code** in its console, for example `K7QF-2M9X`. Register on the web UI with your own card, enter the code at the "Setup" step, and that account becomes the admin. The code changes each start until an admin exists. Each card must have played at least one credit first.
+
+Admins can also be managed from the command line, run from the server folder:
 
 ```bash
 TaikoLocalServer.exe admin promote <accessCode>       # make this card's user an admin

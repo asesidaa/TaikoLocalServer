@@ -1,14 +1,11 @@
-using Microsoft.Extensions.Options;
-using TaikoLocalServer.Infrastructure.Identity.Settings;
 
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class UsersController(ITaikoDbContext context, IOptions<AuthSettings> authOptions) : BaseAdminController<UsersController>
+public class UsersController(ITaikoDbContext context, IServerAccess access) : BaseAdminController<UsersController>
 {
-    private readonly AuthSettings authSettings = authOptions.Value;
 
 
     [HttpGet("{baid}")]
@@ -145,7 +142,7 @@ public class UsersController(ITaikoDbContext context, IOptions<AuthSettings> aut
         if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
             return forbid;
 
-        if (authSettings.AuthenticationRequired && !authSettings.AllowUserDelete && !User.IsAdmin())
+        if (access.LoginRequired && !access.Rules.AllowUserDelete && !User.IsAdmin())
             return Forbid();
 
         var userDatum = await context.UserData.FindAsync(baid);

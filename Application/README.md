@@ -39,8 +39,8 @@ Concrete implementations of those ports live in `Infrastructure`.
 - `ServerData/` — server-only JSON shapes (loaded by `FileGameDataCatalog`
   but never sent to the WebUI: `EventFolderData`, `MovieData`,
   `QRCodeData`, `ShopFolderData`, `SongIntroductionData`, ...).
-- `Settings/` — `IOptions`-bound settings types (`ServerSettings`,
-  `DataSettings`).
+- `Settings/` — `IOptions`-bound settings types (`ServerSettings`, with
+  `Mode` and `GamePath`).
 - `DependencyInjection.cs` — `AddApplication()` extension that registers
   Mediator + handlers + settings.
 

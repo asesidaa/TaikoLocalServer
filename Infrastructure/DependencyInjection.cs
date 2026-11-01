@@ -10,9 +10,7 @@ using TaikoLocalServer.Application.Abstractions;
 using TaikoLocalServer.Application.Settings;
 using TaikoLocalServer.Contracts.AdminApi.Authorization;
 using TaikoLocalServer.Infrastructure.GameDataCatalog;
-using TaikoLocalServer.Infrastructure.GameDataCatalog.Settings;
 using TaikoLocalServer.Infrastructure.Identity;
-using TaikoLocalServer.Infrastructure.Identity.Settings;
 using TaikoLocalServer.Infrastructure.Persistence;
 using TaikoLocalServer.Infrastructure.Settings;
 using TaikoLocalServer.Infrastructure.Time;
@@ -24,8 +22,6 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         // Settings
-        services.Configure<AuthSettings>(configuration.GetSection(nameof(AuthSettings)));
-        services.Configure<DataSettings>(configuration.GetSection(nameof(DataSettings)));
         services.Configure<ServerSettings>(configuration.GetSection(nameof(ServerSettings)));   // Application's portion (EnableMoreSongs / MoreSongsSize)
         services.Configure<AllnetSettings>(configuration.GetSection(nameof(ServerSettings)));   // Infrastructure's portion (MuchaUrl / GameUrl) — same JSON section, different POCO
 
@@ -51,6 +47,8 @@ public static class DependencyInjection
         services.AddSingleton<IGameDataCatalog, FileGameDataCatalog>();
 
         // Identity
+        services.AddSingleton<ServerAccess>();
+        services.AddSingleton<IServerAccess>(sp => sp.GetRequiredService<ServerAccess>());
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddHttpContextAccessor();
         services.AddAuthentication(options =>
@@ -60,7 +58,6 @@ public static class DependencyInjection
         })
         .AddJwtBearer(options =>
         {
-            var authSection = configuration.GetSection(nameof(AuthSettings));
             // MapInboundClaims = true ensures the JWT short names (unique_name, role)
             // are mapped to the long-form ClaimTypes URIs on the ClaimsPrincipal so
             // User.IsInRole("Admin") and User.FindFirstValue(ClaimTypes.Name) work.
@@ -71,13 +68,16 @@ public static class DependencyInjection
                 ValidateAudience = true,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = authSection["JwtIssuer"],
-                ValidAudience = authSection["JwtAudience"],
+                ValidIssuer = JwtTokenService.Issuer,
+                ValidAudience = JwtTokenService.Issuer,
                 NameClaimType = ClaimTypes.Name,
                 RoleClaimType = ClaimTypes.Role,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSection["JwtKey"] ?? throw new InvalidOperationException()))
             };
         });
+        // The signing key is generated and stored by ServerAccess; options are built on first use, after it has loaded.
+        services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
+            .Configure<IServerAccess>((options, access) =>
+                options.TokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(access.SigningKey));
         services.AddAuthorization(options =>
         {
             options.AddPolicy(AuthPolicies.Admin, policy => policy.RequireRole(AuthPolicies.Admin));

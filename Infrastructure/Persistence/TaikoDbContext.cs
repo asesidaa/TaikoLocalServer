@@ -28,6 +28,8 @@ namespace TaikoLocalServer.Infrastructure.Persistence
         public virtual DbSet<SongPlayDatum> SongPlayData { get; set; } = null!;
         public virtual DbSet<UserDatum> UserData { get; set; } = null!;
         public virtual DbSet<UserWebProfile> UserWebProfiles { get; set; } = null!;
+        public virtual DbSet<AccessRules> AccessRules { get; set; } = null!;
+        public virtual DbSet<ServerSecrets> ServerSecrets { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -60,6 +62,10 @@ namespace TaikoLocalServer.Infrastructure.Persistence
                     .OnDelete(DeleteBehavior.Cascade);
             });
             
+            // Single-row tables (Id 1), created by ServerAccess at first start.
+            modelBuilder.Entity<AccessRules>(entity => entity.Property(e => e.Id).ValueGeneratedNever());
+            modelBuilder.Entity<ServerSecrets>(entity => entity.Property(e => e.Id).ValueGeneratedNever());
+
             modelBuilder.Entity<UserWebProfile>(entity =>
             {
                 entity.HasKey(e => e.Baid);

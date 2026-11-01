@@ -8,8 +8,8 @@ Routes are under `/api/...`.
 HTTP-facing translation layer between the WebUI and the `Application`
 handlers. Each controller deserializes a `Contracts.AdminApi` request
 type, sends it through `IMediator`, then returns a `Contracts.AdminApi`
-response type. Auth is opt-in via `[AuthorizeIfRequired]`, which short-
-circuits when `AuthSettings.AuthenticationRequired` is false.
+response type. Auth uses `[Authorize]` and the admin policy; in
+Local mode (`ServerSettings.Mode`) `AuthAwarePolicyEvaluator` lets every request through.
 
 ## Dependencies
 

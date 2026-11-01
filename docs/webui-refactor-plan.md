@@ -530,7 +530,59 @@ The game protocol has no friend or rival concept: the only hit in the wire types
 
 ---
 
-## Phasing / PRs
+## 5. Two modes and configuration (decided 2026-11-01)
+
+The server runs in one of two modes, chosen by a single switch. The goal is an easy setup: download, run `extract` (or let the server run it), start.
+
+- **`"Mode": "Local"`**: no accounts or login. Everyone on the network is effectively the operator: profiles, play data and the admin pages (User Management, Server Management, Dani Dojo, backups) are all usable. Features that need accounts are hidden: sign-in/sign-up, Admin › Access (sign-up and sign-in rules, sessions, 2-step), friends, notifications and Discord. Game assets stay behind the same-origin check on `api/Assets`.
+- **`"Mode": "Server"`**: accounts and login, the admin role, and everything else. The first admin comes from a **one-time setup code printed in the console** on first start while no admin exists (registering with it makes that account admin), or from the existing CLI (`TaikoLocalServer.exe admin promote …`).
+
+**Config files (operator, set before start; restart to change):**
+
+- one small operator file with `Mode`, the ports and certificate (Kestrel), the DB file name, the game URLs (Mucha / game host), `EnableMoreSongs`, and an optional `GamePath` (the install `extract` reads from);
+- logging.
+
+**Removed from config:**
+
+- `JwtKey` / `JwtIssuer` / `JwtAudience`: the key is generated on first start and stored with the server's data. Today every install ships the same default key.
+- `AuthenticationRequired`: replaced by `Mode`.
+- `DataSettings.json`: the data JSON files get fixed names; the game data editors know where they are.
+
+**Database (admin-editable at runtime in Server mode, Admin › Access):** sign-up mode, `OnlyAdmin`, user delete, free profile editing / custom titles, the access-code limit, required 2-step for admins, lockout, log retention (Activity 365 days, Sign-ins 90 days) and the Discord webhook. Built-in defaults; existing `AuthSettings.json` values are imported once, then those keys go. CLAUDE.md's "config lives in `Host/Configurations/`" rule gets this exception written in.
+
+**Extract from the server:** with `GamePath` set, Server Management › Game data has a "Run extract" button (it runs `extract.exe` with `--game`, and `--mods` when chosen) and shows its report, so operators never need the CLI.
+
+### Admin hand-over answers (2026-11-01, see `docs/webui-admin-handover.md`)
+
+1. PR order as suggested; PR 0 below comes first. Defer only PR 7 (export/import/merge) if needed.
+2. Sign-up/sign-in rules: DB-backed and editable (above).
+3. Sessions: per-device refresh tokens plus short-lived access tokens, with "Sign out everywhere".
+4. Dani Dojo course sets: `wwwroot/data/dan/<set>.json` (today's `dan_data.json` becomes the first set; gaiden separate; each cabinet picks a set). Check `Taiko.exe` for the real condition limit before fixing it at Soul gauge + 3.
+5. In-game messages stay global for now.
+6. Editors write the operator's JSON (temp file + rename, `.bak`, reload); duplicate songs only warn.
+7. Backups in `wwwroot/backups` via SQLite online backup; restore needs the Offline state; keep 3/7/14/30.
+8. Discord webhook allowed (outbound HTTPS with retry, URL stored server-side as a secret), off by default.
+9. Export may include access codes: off by default, with a warning.
+10. Friends: 100 limit, regenerable codes, accept-requests switch. Hide "Compare scores" until High Scores is designed.
+11. Retention: Activity 365 days, Sign-ins 90 days.
+12. Admin › Security is renamed **Access** (Settings › Security stays the user's own).
+13. Remove `LocalSaveModScoreMigrator` (and its CLAUDE.md lines) in PR 2.
+14. Shop "type" passes 0/1 through for now; check the binary alongside question 4.
+
+### Next phases
+
+| PR | Contents |
+|---|---|
+| 0 | Modes and config: the `Mode` switch, generated JWT key, fixed data file names, DB-backed Access rules (seeded, import once), the console setup code, the mode-aware WebUI shell |
+| 1 | Admin shell, tab switcher, song picker |
+| 2 | Small server pieces: config card, remove a score, move an access code, admin role, Activity table; remove LocalSaveModScoreMigrator |
+| 3 | Game data editors and Dani Dojo course sets; "Run extract" |
+| 4 | Admin › Access (rules, sessions, 2-step, lockout) |
+| 5 | Backups and announcements |
+| 6 | Friends, notifications, Discord |
+| 7 | Export / import / merge (deferrable) |
+
+## Phasing / PRs (first round)
 
 | PR | Contents | Depends on |
 |---|---|---|

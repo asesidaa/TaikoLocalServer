@@ -81,20 +81,12 @@
     </None>
 
     <!--Configuration-->
-    <Content Remove="Configurations\AuthSettings.json" />
-    <None Include="Configurations\AuthSettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <Content Remove="Configurations\ServerSettings.json" />
     <None Include="Configurations\ServerSettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Remove="Configurations\Database.json" />
     <None Include="Configurations\Database.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Content Remove="Configurations\DataSettings.json" />
-    <None Include="Configurations\DataSettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Remove="Configurations\Kestrel.json" />

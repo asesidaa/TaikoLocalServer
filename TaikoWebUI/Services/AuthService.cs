@@ -22,7 +22,11 @@ public sealed class AuthService : IDisposable
 
     public event EventHandler? LoginStatusChanged;
 
+    /// <summary>Local (no accounts or login) or Server.</summary>
+    public ServerMode Mode => authConfig.Mode;
     public bool LoginRequired => authConfig.AuthenticationRequired;
+    /// <summary>Server mode with no admin yet: Register takes the one-time setup code from the server console.</summary>
+    public bool SetupPending => authConfig.SetupPending;
     public bool OnlyAdmin => authConfig.OnlyAdmin;
     public int BoundAccessCodeUpperLimit => authConfig.BoundAccessCodeUpperLimit;
     public bool RegisterWithLastPlayTime => authConfig.RegisterWithLastPlayTime;
@@ -121,9 +125,9 @@ public sealed class AuthService : IDisposable
     }
 
     public async Task<int> Register(string inputCardNum, DateTime inputDateTime, string inputPassword,
-        string inputConfirmPassword, string inviteCode)
+        string inputConfirmPassword, string inviteCode, string setupCode = "")
     {
-        if (OnlyAdmin) return 0;
+        if (OnlyAdmin && setupCode.Length == 0) return 0;
 
         if (inputPassword != inputConfirmPassword) return 2;
 
@@ -132,7 +136,8 @@ public sealed class AuthService : IDisposable
             AccessCode = NormalizeAccessCode(inputCardNum),
             Password = inputPassword,
             LastPlayDateTime = inputDateTime,
-            InviteCode = inviteCode
+            InviteCode = inviteCode,
+            SetupCode = setupCode
         };
 
         var responseMessage = await client.PostAsJsonAsync("api/Auth/Register", request);
@@ -143,6 +148,7 @@ public sealed class AuthService : IDisposable
             "Access Code Not Found" => 3,
             "User Already Registered" => 4,
             "Wrong Last Play Time" => 5,
+            "Wrong Setup Code" => 7,
             _ => 6
         }, fallback: 6);
     }

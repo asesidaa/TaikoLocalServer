@@ -7,6 +7,7 @@ using TaikoLocalServer.Adapters.GameProtocol.CnR00;
 using TaikoLocalServer.Adapters.GameProtocol.WwR08;
 using TaikoLocalServer.Application;
 using TaikoLocalServer.Infrastructure;
+using TaikoLocalServer.Infrastructure.Identity;
 using TaikoLocalServer.Infrastructure.Persistence;
 using TaikoLocalServer.Cli;
 using TaikoLocalServer.Logging;
@@ -52,7 +53,8 @@ try
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/Logging.json", optional: false, reloadOnChange: false);
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/Database.json", optional: false, reloadOnChange: false);
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/ServerSettings.json", optional: false, reloadOnChange: false);
-    builder.Configuration.AddJsonFile($"{configurationsDirectory}/DataSettings.json", optional: true, reloadOnChange: false);
+    // No longer shipped: an older install's copy is read once, to import its rules (and its own JWT key) into the
+    // database and to infer Mode when ServerSettings.json doesn't set it.
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/AuthSettings.json", optional: true, reloadOnChange: false);
 
     builder.Host.UseSerilog((context, configuration) =>
@@ -121,6 +123,7 @@ try
         if (AdminCli.IsAdminCommand(args))
             return await AdminCli.RunAsync(args, db);
     }
+    await app.Services.GetRequiredService<ServerAccess>().InitializeAsync();
 
     app.UseSerilogRequestLogging(options =>
     {

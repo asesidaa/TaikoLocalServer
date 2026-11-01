@@ -2,16 +2,14 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using TaikoLocalServer.Infrastructure.Identity.Settings;
 
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 [ApiController]
 [Route("/api/[controller]")]
 [Authorize]
-public class UserSettingsController(ITaikoDbContext context, IOptions<AuthSettings> authOptions) : BaseAdminController<UserSettingsController>
+public class UserSettingsController(ITaikoDbContext context, IServerAccess access) : BaseAdminController<UserSettingsController>
 {
-    private readonly AuthSettings authSettings = authOptions.Value;
 
     [HttpGet]
     [Authorize(Policy = AuthPolicies.Admin)]
@@ -86,8 +84,8 @@ public class UserSettingsController(ITaikoDbContext context, IOptions<AuthSettin
             return NotFound();
         }
 
-        var enforceUnlockedOnly = authSettings.AuthenticationRequired
-                                  && !authSettings.AllowFreeProfileEditing
+        var enforceUnlockedOnly = access.LoginRequired
+                                  && !access.Rules.AllowFreeProfileEditing
                                   && !User.IsAdmin();
 
         user.IsSkipOn = userSetting.IsSkipOn;

@@ -1,14 +1,11 @@
-using Microsoft.Extensions.Options;
-using TaikoLocalServer.Infrastructure.Identity.Settings;
 
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class CardsController(ITaikoDbContext context, IOptions<AuthSettings> authOptions) : BaseAdminController<CardsController>
+public class CardsController(ITaikoDbContext context, IServerAccess access) : BaseAdminController<CardsController>
 {
-    private readonly AuthSettings authSettings = authOptions.Value;
 
     [HttpDelete("{accessCode}")]
     public async Task<IActionResult> DeleteAccessCode(string accessCode)
@@ -36,10 +33,10 @@ public class CardsController(ITaikoDbContext context, IOptions<AuthSettings> aut
         var accessCode = bindAccessCodeRequest.AccessCode;
         var baid = bindAccessCodeRequest.Baid;
 
-        if (authSettings.AuthenticationRequired && !User.IsAdmin())
+        if (access.LoginRequired && !User.IsAdmin())
         {
             var existingCount = await context.Cards.CountAsync(c => c.Baid == baid, HttpContext.RequestAborted);
-            if (existingCount >= authSettings.BoundAccessCodeUpperLimit)
+            if (existingCount >= access.Rules.AccessCodeLimit)
                 return Conflict(new { message = "Access Code Limit Reached" });
         }
 

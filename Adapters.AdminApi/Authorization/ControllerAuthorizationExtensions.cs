@@ -1,6 +1,4 @@
-using Microsoft.Extensions.Options;
 using TaikoLocalServer.Contracts.AdminApi.Authorization;
-using TaikoLocalServer.Infrastructure.Identity.Settings;
 
 namespace TaikoLocalServer.Adapters.AdminApi.Authorization;
 
@@ -17,9 +15,7 @@ public static class ControllerAuthorizationExtensions
     /// signature return the value via the implicit conversion.</returns>
     public static ActionResult? AuthorizeOwnerOrAdmin(this ControllerBase controller, uint baid)
     {
-        var authSettings = controller.HttpContext.RequestServices
-            .GetRequiredService<IOptions<AuthSettings>>().Value;
-        if (!authSettings.AuthenticationRequired)
+        if (!controller.HttpContext.RequestServices.GetRequiredService<IServerAccess>().LoginRequired)
         {
             return null;
         }

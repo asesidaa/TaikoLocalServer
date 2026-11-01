@@ -17,6 +17,31 @@ namespace TaikoLocalServer.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.7");
 
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.AccessRules", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AccessCodeLimit")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("AllowFreeProfileEditing")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("AllowUserDelete")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("OnlyAdmin")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("RegisterWithLastPlayTime")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AccessRules");
+                });
+
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.AiScoreDatum", b =>
                 {
                     b.Property<uint>("Baid")
@@ -184,6 +209,20 @@ namespace TaikoLocalServer.Migrations
                     b.HasKey("Baid", "DanId", "DanType", "SongNumber");
 
                     b.ToTable("DanStageScoreData");
+                });
+
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.ServerSecrets", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("JwtKey")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ServerSecrets");
                 });
 
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.SongBestDatum", b =>

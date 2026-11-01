@@ -2,10 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.Extensions.Options;
 using OtpNet;
-using TaikoLocalServer.Adapters.AdminApi.Mapping;
-using TaikoLocalServer.Infrastructure.Identity.Settings;
 
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
@@ -14,9 +11,8 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 public class AuthController(
     ITaikoDbContext context,
     IJwtTokenService jwtTokens,
-    IOptions<AuthSettings> settings) : BaseAdminController<AuthController>
+    IServerAccess access) : BaseAdminController<AuthController>
 {
-    private readonly AuthSettings authSettings = settings.Value;
 
     private const int OtpStepSeconds = 3600;
     // 24 prior 1-hour windows = 24h backwards-acceptance for invite codes.
@@ -34,15 +30,7 @@ public class AuthController(
 
     private Totp MakeTotp(uint baid)
     {
-        var jwtKey = authSettings.JwtKey;
-        if (string.IsNullOrEmpty(jwtKey))
-        {
-            throw new InvalidOperationException("JwtKey must be configured to derive OTP secrets.");
-        }
-
-        var secret = HMACSHA256.HashData(
-            Encoding.UTF8.GetBytes(jwtKey),
-            Encoding.UTF8.GetBytes(baid.ToString()));
+        var secret = HMACSHA256.HashData(access.SigningKey, Encoding.UTF8.GetBytes(baid.ToString()));
         return new Totp(secret, step: OtpStepSeconds);
     }
 
@@ -54,7 +42,12 @@ public class AuthController(
 
     [HttpGet("Config")]
     [AllowAnonymous]
-    public ActionResult<ClientAuthConfigResponse> GetConfig() => Ok(authSettings.ToResponse());
+    public ActionResult<ClientAuthConfigResponse> GetConfig()
+    {
+        var rules = access.Rules;
+        return Ok(new ClientAuthConfigResponse(access.Mode, access.LoginRequired, rules.OnlyAdmin, rules.AccessCodeLimit,
+            rules.RegisterWithLastPlayTime, rules.AllowUserDelete, rules.AllowFreeProfileEditing, access.SetupPending));
+    }
 
     [HttpPost("Login")]
     [AllowAnonymous]
@@ -93,13 +86,16 @@ public class AuthController(
     [EnableRateLimiting(DependencyInjection.AuthRateLimitPolicy)]
     public async Task<IActionResult> Register(RegisterRequest registerRequest)
     {
-        if (authSettings.AuthenticationRequired && authSettings.OnlyAdmin && !User.IsAdmin())
+        // A setup code (Server mode, no admin yet) is the operator's proof: it skips the sign-up rules and makes
+        // this account the admin. It's checked last, so a failed registration doesn't use it up.
+        var withSetupCode = access.LoginRequired && access.SetupPending && !string.IsNullOrWhiteSpace(registerRequest.SetupCode);
+        if (access.LoginRequired && access.Rules.OnlyAdmin && !User.IsAdmin() && !withSetupCode)
             return Forbid();
 
         var accessCode = registerRequest.AccessCode;
         var password = registerRequest.Password;
         var lastPlayDateTime = registerRequest.LastPlayDateTime;
-        var registerWithLastPlayTime = authSettings.RegisterWithLastPlayTime;
+        var registerWithLastPlayTime = access.Rules.RegisterWithLastPlayTime && !withSetupCode;
         var inviteCode = registerRequest.InviteCode;
 
         var card = await context.Cards.FindAsync(new object?[] { accessCode }, HttpContext.RequestAborted);
@@ -137,6 +133,16 @@ public class AuthController(
             }
         }
 
+        if (withSetupCode)
+        {
+            if (!access.TryUseSetupCode(registerRequest.SetupCode))
+                return Unauthorized(new { message = "Wrong Setup Code" });
+            var admin = await context.UserData.FirstOrDefaultAsync(d => d.Baid == card.Baid, HttpContext.RequestAborted);
+            if (admin is null)
+                return Unauthorized(new { message = "User Does Not Exist" });
+            admin.IsAdmin = true;
+        }
+
         var salt = CreateSalt();
         var hashedPassword = ComputeHash(password, salt);
 
@@ -151,7 +157,7 @@ public class AuthController(
     [EnableRateLimiting(DependencyInjection.AuthRateLimitPolicy)]
     public async Task<IActionResult> ChangePassword(ChangePasswordRequest changePasswordRequest)
     {
-        if (authSettings.AuthenticationRequired && authSettings.OnlyAdmin && !User.IsAdmin())
+        if (access.LoginRequired && access.Rules.OnlyAdmin && !User.IsAdmin())
             return Forbid();
 
         // The account comes from the token, never from the request body.

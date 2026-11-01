@@ -6,12 +6,9 @@ It is implemented with Blazor Webassembly (also in C#).
 ## TaikoWebUI appsettings.json config
 
 This section is for configuring the TaikoWebUI [appsettings.json](./wwwroot/appsettings.json) file.
-This file holds **WebUI-only** presentation settings. Authentication / authorization knobs
-(`AuthenticationRequired`, `OnlyAdmin`, `BoundAccessCodeUpperLimit`, `RegisterWithLastPlayTime`,
-`AllowUserDelete`, `AllowFreeProfileEditing`) live in the server's
-[Host/Configurations/AuthSettings.json](../Host/Configurations/AuthSettings.json) and are
-fetched at startup via `GET /api/Auth/Config`. The server is the source of truth — the WebUI
-never needs to be restarted for an auth-policy change there.
+This file holds **WebUI-only** presentation settings. The mode (Local or Server, from the server's
+[ServerSettings.json](../Host/Configurations/ServerSettings.json)) and the Server-mode access rules
+(stored in the server's database, changed by admins) are fetched at startup via `GET /api/Auth/Config`.
 
 ```json
 {
