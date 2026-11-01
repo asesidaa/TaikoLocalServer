@@ -72,7 +72,9 @@
             // The server ended this account's sessions; forget this one here too.
             await AuthService.Logout();
             Toast.Show(Localizer["Your account was deleted."]);
-            Nav.NavigateTo("/Login");
+            // Like Log Out: "/" sends the signed-out visitor to Log in (going there directly raced the sign-out and
+            // left a blank page).
+            Nav.NavigateTo("/");
             return;
         }
         if (res.StatusCode == System.Net.HttpStatusCode.Forbidden)
