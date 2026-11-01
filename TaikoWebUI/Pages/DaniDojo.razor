@@ -36,7 +36,7 @@
                              class="relative isolate flex flex-col items-center gap-1 overflow-hidden rounded-xl border border-zinc-900/10 bg-zinc-900 px-2 py-3 text-center dark:border-zinc-700 dark:bg-zinc-950 @(best == top && top is not null ? "ring-2 ring-primary-500" : "")">
                             @if (passed)
                             {
-                                <img data-asset="@GameData.DanStamp(best!.ClearState)" alt="" class="pointer-events-none absolute -bottom-3 -right-3 -z-10 size-20 opacity-25" />
+                                <img data-asset="@GameData.DanStamp(best!.ClearState)" alt="" class="pointer-events-none absolute -bottom-3 -right-3 -z-10 size-20 object-contain opacity-25" />
                             }
                             <span class="grid h-8 w-16 place-items-center @(passed ? "" : "opacity-30 grayscale")">
                                 <img data-asset="@($"nameplate/dan_{badge}_{(gold ? "gold" : "red")}.png")" alt="" class="peer h-8 w-16" />
