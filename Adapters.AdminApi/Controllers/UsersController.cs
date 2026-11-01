@@ -147,7 +147,7 @@ public class UsersController(ITaikoDbContext context, IServerAccess access, IAva
 
     /// <summary>
     /// The avatar (drawn by the server's renderer) for costume <paramref name="v"/>. Any other key
-    /// 404s and queues a render; the URL changes with the key, so it caches forever.
+    /// 404s and queues a render.
     /// </summary>
     [HttpGet("{baid}/Avatar")]
     [ApiScope(ApiScopes.ReadAvatars)]
@@ -161,9 +161,18 @@ public class UsersController(ITaikoDbContext context, IServerAccess access, IAva
             return NotFound();
         }
 
-        Response.Headers.CacheControl = "private, max-age=31536000, immutable";
+        return Cached(avatar.Key) ?? File(avatar.Image, avatar.ContentType);
+    }
+
+    // Revalidated on every load (no-cache + the key as ETag), not cached for good: a browser's copy still asks, so an
+    // image that's gone from the server (cleared, or never stored) is a miss here and queues a render.
+    private IActionResult? Cached(string key)
+    {
+        var etag = $"\"{key}\"";
+        Response.Headers.CacheControl = "private, no-cache";
+        Response.Headers.ETag = etag;
         Response.Headers.XContentTypeOptions = "nosniff";
-        return File(avatar.Image, avatar.ContentType);
+        return Request.Headers.IfNoneMatch == etag ? StatusCode(304) : null;
     }
 
     /// <summary>
@@ -181,9 +190,7 @@ public class UsersController(ITaikoDbContext context, IServerAccess access, IAva
             return NotFound();
         }
 
-        Response.Headers.CacheControl = "private, max-age=31536000, immutable";
-        Response.Headers.XContentTypeOptions = "nosniff";
-        return File(still.Image, still.ContentType);
+        return Cached(still.Key) ?? File(still.Image, still.ContentType);
     }
 
     [HttpDelete("{baid}")]

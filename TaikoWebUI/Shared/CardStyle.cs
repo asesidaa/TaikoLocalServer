@@ -35,7 +35,8 @@ public static class CardStyle
     public static string AvatarKey(UserSetting s) =>
         AvatarKeys.Key(s.Kigurumi, s.Head, s.Body, s.Face, s.BodyColor, s.FaceColor, s.LimbColor, s.CardAnimation);
 
-    public static string AvatarSrc(UserSetting s) => $"api/Users/{s.Baid}/Avatar?v={AvatarKey(s)}";
+    // c=2: skips copies browsers cached for a year under the old never-ask-again headers (the server ignores it).
+    public static string AvatarSrc(UserSetting s) => $"api/Users/{s.Baid}/Avatar?v={AvatarKey(s)}&c=2";
 
     /// <summary>Relative luminance above 0.45 means dark text and dark pattern ink, so light cards stay readable.</summary>
     public static bool IsLight(string hex)

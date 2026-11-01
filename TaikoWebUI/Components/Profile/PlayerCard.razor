@@ -100,7 +100,7 @@
     private bool Is2D => Auth.ServerStills;
 
     // The still: the normal costume and its puchi (the Dani Dojo look has no still of its own).
-    private string StillSrc => $"api/Users/{Setting.Baid}/Still?v={Uri.EscapeDataString(CardStyle.StillKey(Setting))}";
+    private string StillSrc => $"api/Users/{Setting.Baid}/Still?v={Uri.EscapeDataString(CardStyle.StillKey(Setting))}&c=2"; // c: see CardStyle.AvatarSrc
 
     private async Task OpenBig()
     {
