@@ -11,6 +11,11 @@ public class GameDataService(HttpClient client)
     private Dictionary<string, List<uint>>? lockedCostumes;
     private Dictionary<uint, Title>? titles;
     private Dictionary<string, List<uint>>? lockedTitles;
+    private CostumeNames? costumeNames;
+
+    // wwwroot/i18n/costume-names.json: the game ships costume names in Japanese only, so the WebUI keeps its own
+    // translations, keyed by the Japanese name, one column per UI language.
+    private sealed record CostumeNames(string[] Languages, Dictionary<string, string[]> Names);
 
     public async Task<Dictionary<uint, MusicDetail>> GetMusicDetailDictionary() =>
         musicDetails ??= await client.GetFromJsonAsync<Dictionary<uint, MusicDetail>>("api/GameData/MusicDetails") ?? [];
@@ -56,11 +61,20 @@ public class GameDataService(HttpClient client)
         };
     }
 
-    /// <summary>A costume part's name: <paramref name="type"/> is kigurumi, head, body, face or puchi.</summary>
-    public string GetCostumeName(IEnumerable<Costume> costumes, string type, uint id, string? language) =>
-        costumes.FirstOrDefault(c => c.CostumeType == type && c.CostumeId == id) is { } c
-            ? Pick(language, c.CostumeName, c.CostumeNameEN, c.CostumeNameCN, c.CostumeNameKO)
-            : string.Empty;
+    /// <summary>
+    /// A costume part's name (<paramref name="type"/>: kigurumi, head, body, face or puchi): the game's name in <paramref name="language"/> when it has one, else the WebUI dictionary's, else Japanese
+    /// (a costume newer than the dictionary).
+    /// </summary>
+    public string GetCostumeName(IEnumerable<Costume> costumes, string type, uint id, string? language)
+    {
+        if (costumes.FirstOrDefault(c => c.CostumeType == type && c.CostumeId == id) is not { } c) return string.Empty;
+        var game = Pick(language, c.CostumeName, c.CostumeNameEN, c.CostumeNameCN, c.CostumeNameKO);
+        if (game != c.CostumeName || costumeNames is null) return game;
+        var column = Array.IndexOf(costumeNames.Languages, language);
+        return column >= 0 && costumeNames.Names.TryGetValue(c.CostumeName, out var row) && column < row.Length && row[column].Length > 0
+            ? row[column]
+            : game;
+    }
 
     public string GetTitle(IEnumerable<Title> titles, uint id, string? language) =>
         titles.FirstOrDefault(t => t.TitleId == id) is { } t ? Pick(language, t.TitleName, t.TitleNameEN, t.TitleNameCN, t.TitleNameKO) : string.Empty;
@@ -78,6 +92,8 @@ public class GameDataService(HttpClient client)
     {
         if (costumes is not null) return;
         lockedCostumes = await client.GetFromJsonAsync<Dictionary<string, List<uint>>>("api/GameData/LockedCostumes") ?? [];
+        try { costumeNames = await client.GetFromJsonAsync<CostumeNames>("i18n/costume-names.json"); }
+        catch (Exception e) when (e is HttpRequestException or System.Text.Json.JsonException) { /* Japanese names, as the game has them */ }
         costumes = await client.GetFromJsonAsync<List<Costume>>("api/GameData/Costumes") ?? [];
     }
 

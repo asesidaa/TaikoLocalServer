@@ -298,7 +298,7 @@ else
             {
                 var p = plays[i];
                 var isBest = p.Score == bestScore;
-                var tip = $"{p.PlayTime:d MMM}: {p.Score:N0}{(isBest ? " (" + Localizer["best"] + ")" : "")}";
+                var tip = $"{p.PlayTime:d MMM}: {p.Score:N0}{(isBest ? " (" + Localizer["Best"] + ")" : "")}";
                 <circle cx="@N(X(i))" cy="@N(Y(p.Score))" r="@(isBest ? 5 : 4)" stroke="var(--color-primary-500)" stroke-width="2"
                         class="@(isBest ? "fill-primary-500" : "fill-white dark:fill-zinc-900")"><title>@tip</title></circle>
                 <circle cx="@N(X(i))" cy="@N(Y(p.Score))" r="12" fill="transparent"><title>@tip</title></circle>
@@ -319,7 +319,7 @@ else
         var pages = (rows.Count + PlaysPerPage - 1) / PlaysPerPage;
         var page = Math.Min(playsPage, pages);
         <section class="@Css.Card p-5">
-            <div class="flex items-baseline justify-between"><h2 class="font-semibold">@Localizer["Play history"]</h2><span class="text-xs @Css.Muted">@string.Format(Localizer[rows.Count == 1 ? "{0} play" : "{0} plays"], rows.Count)</span></div>
+            <div class="flex items-baseline justify-between"><h2 class="font-semibold">@Localizer["Play History"]</h2><span class="text-xs @Css.Muted">@string.Format(Localizer[rows.Count == 1 ? "{0} play" : "{0} plays"], rows.Count)</span></div>
             <ul class="mt-2 divide-y divide-zinc-100 dark:divide-zinc-800">
                 @foreach (var p in rows.Skip((page - 1) * PlaysPerPage).Take(PlaysPerPage))
                 {

@@ -163,7 +163,7 @@
                     <span class="w-4 text-right tabular-nums text-zinc-400">@(i + 1)</span>
                     <span class="flex min-w-0 flex-1 items-center gap-2 truncate font-medium">@SongName(songId)
                         <span class="rounded-md px-1.5 py-0.5 text-[10px] font-semibold" style="background:@bg;color:@fg">@gName</span></span>
-                    <span class="tabular-nums">@plays <span class="text-xs @Css.Muted">@Localizer["plays"]</span></span>
+                    <span class="tabular-nums">@string.Format(Localizer["{0} plays"], plays)</span>
                 </li>
             }
         </ol>

@@ -818,6 +818,9 @@ namespace TaikoLocalServer.Migrations
                         .HasMaxLength(12)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Language")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Baid");
 
                     b.HasIndex("FriendCode")

@@ -129,12 +129,6 @@
   <data name="Log In" xml:space="preserve">
     <value>Connexion</value>
   </data>
-  <data name="Achievement Panel" xml:space="preserve">
-    <value>Tableau de reussite</value>
-  </data>
-  <data name="Achievement Panel Difficulty" xml:space="preserve">
-    <value>Difficulté du tableau de réussite</value>
-  </data>
   <data name="AI Battle Data" xml:space="preserve">
     <value>Données du mode IA Battle</value>
   </data>
@@ -156,9 +150,6 @@
   <data name="High Scores" xml:space="preserve">
     <value>Meilleurs Scores</value>
   </data>
-  <data name="Access Codes" xml:space="preserve">
-    <value>Codes d'accès</value>
-  </data>
   <data name="Add Access Code" xml:space="preserve">
     <value>Ajouter un code d'accès</value>
   </data>
@@ -174,17 +165,11 @@
   <data name="Old Password" xml:space="preserve">
     <value>Ancien mot de passe</value>
   </data>
-  <data name="New Password" xml:space="preserve">
-    <value>Nouveau mot de passe</value>
-  </data>
   <data name="Confirm New Password" xml:space="preserve">
     <value>Confirmer le nouveau mot de passe</value>
   </data>
   <data name="Dialog OK" xml:space="preserve">
     <value>OK</value>
-  </data>
-  <data name="QR Code" xml:space="preserve">
-    <value>Code QR</value>
   </data>
   <data name="Fifth Kyuu" xml:space="preserve">
     <value>5ème Kyuu</value>
@@ -327,9 +312,6 @@
   <data name="Copy to Clipboard" xml:space="preserve">
     <value>Copier dans le presse papier</value>
   </data>
-  <data name="Invite Code" xml:space="preserve">
-    <value>Code d'invitation</value>
-  </data>
   <data name="Error" xml:space="preserve">
     <value>Erreur</value>
   </data>
@@ -356,9 +338,6 @@
   </data>
   <data name="Password is Required" xml:space="preserve">
     <value>Mot de passe est requis</value>
-  </data>
-  <data name="Confirm Password" xml:space="preserve">
-    <value>Confirmer le mot de passe</value>
   </data>
   <data name="Confirm Password is Required" xml:space="preserve">
     <value>Vous devez confirmer le mot de passe</value>
@@ -462,9 +441,6 @@
   <data name="ID" xml:space="preserve">
     <value>ID</value>
   </data>
-  <data name="Edit Profile" xml:space="preserve">
-    <value>Profil</value>
-  </data>
   <data name="Access Code Delete Confirm" xml:space="preserve">
     <value>Êtes-vous sûr de vouloir supprimer ce code d'accès ?</value>
   </data>
@@ -481,7 +457,7 @@
     <value>Le mot de passe actuel de l'utilisateur sera alors supprimé et l'utilisateur devra s'inscrire à nouveau.</value>
   </data>
   <data name="Delete User Confirm" xml:space="preserve">
-    <value>Voulez-vous vraiment supprimer les données de cet utilisateur ? &lt;br /&gt;Toutes les données associées seront supprimées et ne pourront pas être récupérées !</value>
+    <value>Cela supprime {0}, ses scores, son historique, ses résultats au Dani Dojo et ses codes d'accès. Tapez son nom pour confirmer.</value>
   </data>
   <data name="Delete User Success" xml:space="preserve">
     <value>Utilisateur supprimé.</value>
@@ -567,7 +543,7 @@
   <data name="Default" xml:space="preserve">
     <value>Défaut</value>
   </data>
-  <data name="Not Cleared" xml:space="preserve">
+  <data name="Not Cleared First" xml:space="preserve">
     <value>Pas Clear</value>
   </data>
   <data name="Not Full Combo" xml:space="preserve">
@@ -648,12 +624,6 @@
   <data name="Change Password" xml:space="preserve">
     <value>Changer le mot de passe</value>
   </data>
-  <data name="Reset Password" xml:space="preserve">
-    <value>Réinitialiser le mot de passe</value>
-  </data>
-  <data name="Delete User" xml:space="preserve">
-    <value>Supprimer l'utilisateur</value>
-  </data>
   <data name="Welcome to TaikoWebUI!" xml:space="preserve">
     <value>Bienvenue sur TaikoWebUI !</value>
   </data>
@@ -674,9 +644,6 @@
   </data>
   <data name="Drumroll" xml:space="preserve">
     <value>Drumroll</value>
-  </data>
-  <data name="MAX Combo" xml:space="preserve">
-    <value>Combo</value>
   </data>
   <data name="Played" xml:space="preserve">
     <value>Date</value>
@@ -835,84 +802,2313 @@
     <value>Afficher les musiques SouUchi</value>
   </data>
   <data name="Access Local Mode" xml:space="preserve">
-    <value>Access rules apply in Server mode only. This server runs in Local mode, so everyone can open every page.</value>
+    <value>Les règles d'accès ne s'appliquent qu'en mode Serveur. Ce serveur tourne en mode Local : tout le monde peut ouvrir toutes les pages.</value>
   </data>
   <data name="Access Rules Hint" xml:space="preserve">
-    <value>Who can create an account and sign in to the Web UI.</value>
+    <value>Qui peut créer un compte et se connecter au Web UI.</value>
   </data>
   <data name="Register With Last Play Time Hint" xml:space="preserve">
-    <value>Players prove a card is theirs by entering when they last played it.</value>
+    <value>Les joueurs prouvent qu'une carte est à eux en indiquant leur dernière partie avec.</value>
   </data>
   <data name="Free Profile Editing Hint" xml:space="preserve">
-    <value>Players can pick any title and costume part, not only the ones they have unlocked.</value>
+    <value>Les joueurs peuvent choisir n'importe quel titre et élément de costume, pas seulement ceux débloqués.</value>
   </data>
   <data name="Save Failed" xml:space="preserve">
-    <value>Couldn’t save. Try again.</value>
+    <value>Impossible d'enregistrer. Réessayez.</value>
   </data>
   <data name="Config Card Hint" xml:space="preserve">
-    <value>What the server read when it started. Change these in {0} and restart the server.</value>
+    <value>Ce que le serveur a lu au démarrage. Modifiez-les dans {0} et redémarrez le serveur.</value>
   </data>
   <data name="Activity Hint" xml:space="preserve">
-    <value>Admin actions on users, scores and access codes. Kept for a year.</value>
+    <value>Actions des administrateurs sur les utilisateurs, scores et codes d'accès. Conservées un an.</value>
   </data>
   <data name="Invite Code Hint" xml:space="preserve">
-    <value>6 digits, valid 24 h. Lets them register.</value>
+    <value>6 chiffres, valable 24 h. Permet de s'inscrire.</value>
   </data>
   <data name="Move Code Hint" xml:space="preserve">
-    <value>Move {0} to another user. Scores already played with it stay here.</value>
+    <value>Déplacer {0} vers un autre utilisateur. Les scores déjà joués avec restent ici.</value>
   </data>
   <data name="Invite Dialog Hint" xml:space="preserve">
-    <value>Give this code to the owner of {0}. They enter it when registering. It works for 24 hours.</value>
+    <value>Donnez ce code au propriétaire de {0}. Il le saisit lors de l'inscription. Il est valable 24 heures.</value>
   </data>
   <data name="Reset Password Confirm" xml:space="preserve">
-    <value>{0} won’t be able to sign in until they register again. Their scores are kept.</value>
+    <value>{0} ne pourra plus se connecter avant de se réinscrire. Ses scores sont conservés.</value>
   </data>
   <data name="Make Admin Confirm" xml:space="preserve">
-    <value>{0} will be able to manage every user and the server.</value>
+    <value>{0} pourra gérer tous les utilisateurs et le serveur.</value>
   </data>
   <data name="Remove Admin Confirm" xml:space="preserve">
-    <value>{0} will keep their account and scores, but lose access to the admin pages.</value>
-  </data>
-  <data name="Delete User Confirm" xml:space="preserve">
-    <value>This deletes {0}, their scores, play history, Dani Dojo results and access codes. Type their name to confirm.</value>
+    <value>{0} garde son compte et ses scores, mais perd l'accès aux pages d'administration.</value>
   </data>
   <data name="Delete User Hint" xml:space="preserve">
-    <value>Deletes the user, their scores, play history and access codes.</value>
+    <value>Supprime l'utilisateur, ses scores, son historique et ses codes d'accès.</value>
   </data>
   <data name="Remove Score Hint" xml:space="preserve">
-    <value>Removes the best score and the plays behind it from play history.</value>
+    <value>Retire le meilleur score et les parties correspondantes de l'historique.</value>
   </data>
   <data name="Setup Code Hint" xml:space="preserve">
-    <value>This server has no admin yet. Look in the server console for a line like this one and enter its code.</value>
+    <value>Ce serveur n'a pas encore d'administrateur. Cherchez une ligne comme celle-ci dans la console du serveur et saisissez son code.</value>
   </data>
   <data name="Game Files Hint" xml:space="preserve">
-    <value>Cabinets and these pages need files from the game install: song data, nameplates and the 3D don-chan. Run the extractor on the game folder:</value>
+    <value>Les bornes et ces pages ont besoin de fichiers de l'installation du jeu : données des chansons, plaques et le Don-chan en 3D. Lancez l'extracteur sur le dossier du jeu :</value>
   </data>
   <data name="Admin Account Hint" xml:space="preserve">
-    <value>Your card. It doesn’t need to have played on this server yet. If it already has an account, this becomes its password.</value>
+    <value>Votre carte. Elle n'a pas besoin d'avoir déjà joué sur ce serveur. Si elle a déjà un compte, ceci devient son mot de passe.</value>
   </data>
   <data name="Game Assets Hint" xml:space="preserve">
-    <value>Import assets from the game that are required by the WebUI.</value>
+    <value>Importer depuis le jeu les ressources dont le Web UI a besoin.</value>
   </data>
   <data name="Data Files Hint" xml:space="preserve">
-    <value>What the server loaded. Edit the server-owned files here, or by hand and then Reload.</value>
+    <value>Ce que le serveur a chargé. Modifiez ici les fichiers du serveur, ou à la main puis Recharger.</value>
   </data>
   <data name="Set GamePath Hint" xml:space="preserve">
-    <value>Set {0} in {1} and restart the server, and it can extract the files itself. Or run this on the game PC:</value>
+    <value>Définissez {0} dans {1} et redémarrez le serveur : il pourra extraire les fichiers lui-même. Ou lancez ceci sur le PC du jeu :</value>
   </data>
   <data name="Delete Set Confirm" xml:space="preserve">
-    <value>Delete the course set “{0}”? Its file is kept as a .bak next to it.</value>
+    <value>Supprimer l'ensemble de parcours « {0} » ? Son fichier est conservé en .bak à côté.</value>
   </data>
   <data name="Ban Card Dialog Hint" xml:space="preserve">
-    <value>Ban {0}? It is refused at the cabinet and for Web UI sign-in. The account, its scores and its other cards keep working.</value>
+    <value>Bannir {0} ? Elle est refusée sur les bornes et à la connexion au Web UI. Le compte, ses scores et ses autres cartes continuent de fonctionner.</value>
   </data>
   <data name="Ban Card Hint" xml:space="preserve">
-    <value>A banned card is refused at the cabinet and for Web UI sign-in. The account and its scores stay. It needn’t have played here yet.</value>
+    <value>Une carte bannie est refusée sur les bornes et à la connexion au Web UI. Le compte et ses scores restent. Elle n'a pas besoin d'avoir déjà joué ici.</value>
   </data>
   <data name="Api Tokens Hint" xml:space="preserve">
-    <value>For Discord bots, leaderboard sites and scripts that read this server. A token acts as the admin who created it, limited to its scopes, and stops working if that admin is no longer an admin.</value>
+    <value>Pour les bots Discord, sites de classement et scripts qui lisent ce serveur. Un jeton agit comme l'administrateur qui l'a créé, limité à ses portées, et cesse de fonctionner si cet administrateur ne l'est plus.</value>
   </data>
   <data name="Api Tokens Off Hint" xml:space="preserve">
-    <value>API tokens are turned off, so the server refuses them. To turn them on, set {0} in {1} and restart the server.</value>
+    <value>Les jetons d'API sont désactivés, le serveur les refuse. Pour les activer, définissez {0} dans {1} et redémarrez le serveur.</value>
+  </data>
+  <data name="(empty: now)" xml:space="preserve">
+    <value>(vide : maintenant)</value>
+  </data>
+  <data name="(empty: until changed)" xml:space="preserve">
+    <value>(vide : jusqu'à modification)</value>
+  </data>
+  <data name="(no name)" xml:space="preserve">
+    <value>(sans nom)</value>
+  </data>
+  <data name="(you)" xml:space="preserve">
+    <value>(vous)</value>
+  </data>
+  <data name="**bold**, line breaks" xml:space="preserve">
+    <value>**gras**, retours à la ligne</value>
+  </data>
+  <data name="+{0} this week" xml:space="preserve">
+    <value>+{0} cette semaine</value>
+  </data>
+  <data name=", with mods" xml:space="preserve">
+    <value>, avec mods</value>
+  </data>
+  <data name="1 day" xml:space="preserve">
+    <value>1 jour</value>
+  </data>
+  <data name="1 device · last active {1}" xml:space="preserve">
+    <value>1 appareil · actif {1}</value>
+  </data>
+  <data name="1 play" xml:space="preserve">
+    <value>1 partie</value>
+  </data>
+  <data name="1. In your authenticator app, add an account: scan this code, or type in the key below it." xml:space="preserve">
+    <value>1. Dans votre application d'authentification, ajoutez un compte : scannez ce code ou saisissez la clé ci-dessous.</value>
+  </data>
+  <data name="2-step verification" xml:space="preserve">
+    <value>Validation en 2 étapes</value>
+  </data>
+  <data name="2-step verification is off" xml:space="preserve">
+    <value>La validation en 2 étapes est désactivée</value>
+  </data>
+  <data name="2-step verification is on" xml:space="preserve">
+    <value>La validation en 2 étapes est activée</value>
+  </data>
+  <data name="2-step verification reset" xml:space="preserve">
+    <value>Validation en 2 étapes réinitialisée</value>
+  </data>
+  <data name="2. Enter the 6-digit code it shows:" xml:space="preserve">
+    <value>2. Saisissez le code à 6 chiffres affiché :</value>
+  </data>
+  <data name="30 days" xml:space="preserve">
+    <value>30 jours</value>
+  </data>
+  <data name="3D preview" xml:space="preserve">
+    <value>Aperçu 3D</value>
+  </data>
+  <data name="7 days" xml:space="preserve">
+    <value>7 jours</value>
+  </data>
+  <data name="A banner at the top of everyone's Dashboard in the Web UI." xml:space="preserve">
+    <value>Une bannière en haut du tableau de bord de chacun dans le Web UI.</value>
+  </data>
+  <data name="A notice that shows needs a title or a message." xml:space="preserve">
+    <value>Une annonce affichée doit avoir un titre ou un message.</value>
+  </data>
+  <data name="A song in this course isn't on this server." xml:space="preserve">
+    <value>Une chanson de ce parcours n'est pas sur ce serveur.</value>
+  </data>
+  <data name="A user needs at least one access code." xml:space="preserve">
+    <value>Un utilisateur a besoin d'au moins un code d'accès.</value>
+  </data>
+  <data name="AI Battle" xml:space="preserve">
+    <value>Combat IA</value>
+  </data>
+  <data name="AI Battle · {0}" xml:space="preserve">
+    <value>Combat IA · {0}</value>
+  </data>
+  <data name="AI Battle: lost, {0} of {1} sections won" xml:space="preserve">
+    <value>Combat IA : perdu, {0} sections gagnées sur {1}</value>
+  </data>
+  <data name="AI Battle: won {0} of {1} sections" xml:space="preserve">
+    <value>Combat IA : {0} sections gagnées sur {1}</value>
+  </data>
+  <data name="API tokens" xml:space="preserve">
+    <value>Jetons d'API</value>
+  </data>
+  <data name="API tokens are on (ServerSettings.ApiTokens)." xml:space="preserve">
+    <value>Les jetons d'API sont activés (ServerSettings.ApiTokens).</value>
+  </data>
+  <data name="Access" xml:space="preserve">
+    <value>Accès</value>
+  </data>
+  <data name="Access code bound" xml:space="preserve">
+    <value>Code d'accès lié</value>
+  </data>
+  <data name="Access code removed" xml:space="preserve">
+    <value>Code d'accès retiré</value>
+  </data>
+  <data name="Access codes" xml:space="preserve">
+    <value>Codes d'accès</value>
+  </data>
+  <data name="Access codes are 20 digits." xml:space="preserve">
+    <value>Les codes d'accès comptent 20 chiffres.</value>
+  </data>
+  <data name="Access codes per player" xml:space="preserve">
+    <value>Codes d'accès par joueur</value>
+  </data>
+  <data name="Access: {0} to fix" xml:space="preserve">
+    <value>Accès : {0} à corriger</value>
+  </data>
+  <data name="Account" xml:space="preserve">
+    <value>Compte</value>
+  </data>
+  <data name="Account locked" xml:space="preserve">
+    <value>Compte verrouillé</value>
+  </data>
+  <data name="Accuracy" xml:space="preserve">
+    <value>Précision</value>
+  </data>
+  <data name="Accuracy counts a Good as 1 and an OK as ½." xml:space="preserve">
+    <value>La précision compte un Bien pour 1 et un OK pour ½.</value>
+  </data>
+  <data name="Achievement panel" xml:space="preserve">
+    <value>Panneau des succès</value>
+  </data>
+  <data name="Achievement panel difficulty" xml:space="preserve">
+    <value>Difficulté du panneau des succès</value>
+  </data>
+  <data name="Across all songs" xml:space="preserve">
+    <value>Sur toutes les chansons</value>
+  </data>
+  <data name="Activity" xml:space="preserve">
+    <value>Activité</value>
+  </data>
+  <data name="Add a card" xml:space="preserve">
+    <value>Ajouter une carte</value>
+  </data>
+  <data name="Add a song" xml:space="preserve">
+    <value>Ajouter une chanson</value>
+  </data>
+  <data name="Add a song to the shop" xml:space="preserve">
+    <value>Ajouter une chanson à la boutique</value>
+  </data>
+  <data name="Add condition" xml:space="preserve">
+    <value>Ajouter une condition</value>
+  </data>
+  <data name="Add message" xml:space="preserve">
+    <value>Ajouter un message</value>
+  </data>
+  <data name="Add song" xml:space="preserve">
+    <value>Ajouter une chanson</value>
+  </data>
+  <data name="Add them" xml:space="preserve">
+    <value>Les ajouter</value>
+  </data>
+  <data name="Add to favourites" xml:space="preserve">
+    <value>Ajouter aux favoris</value>
+  </data>
+  <data name="Added to favourites" xml:space="preserve">
+    <value>Ajouté aux favoris</value>
+  </data>
+  <data name="Admin" xml:space="preserve">
+    <value>Admin</value>
+  </data>
+  <data name="Admin account" xml:space="preserve">
+    <value>Compte administrateur</value>
+  </data>
+  <data name="Admin role" xml:space="preserve">
+    <value>Rôle d'administrateur</value>
+  </data>
+  <data name="Admins" xml:space="preserve">
+    <value>Administrateurs</value>
+  </data>
+  <data name="Admins can manage every user and the server." xml:space="preserve">
+    <value>Les administrateurs gèrent tous les utilisateurs et le serveur.</value>
+  </data>
+  <data name="Admins only" xml:space="preserve">
+    <value>Administrateurs uniquement</value>
+  </data>
+  <data name="After your password, a code from an authenticator app on your phone." xml:space="preserve">
+    <value>Après votre mot de passe, un code d'une application d'authentification sur votre téléphone.</value>
+  </data>
+  <data name="Ahead on &lt;b&gt;{0}&lt;/b&gt; · behind on &lt;b&gt;{1}&lt;/b&gt; of {2} charts you've both played" xml:space="preserve">
+    <value>Devant sur &lt;b&gt;{0}&lt;/b&gt; · derrière sur &lt;b&gt;{1}&lt;/b&gt; des {2} partitions jouées par vous deux</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>Tout</value>
+  </data>
+  <data name="All changes saved" xml:space="preserve">
+    <value>Toutes les modifications sont enregistrées</value>
+  </data>
+  <data name="All difficulties" xml:space="preserve">
+    <value>Toutes les difficultés</value>
+  </data>
+  <data name="All genres" xml:space="preserve">
+    <value>Tous les genres</value>
+  </data>
+  <data name="All plays" xml:space="preserve">
+    <value>Toutes les parties</value>
+  </data>
+  <data name="All songs" xml:space="preserve">
+    <value>Toutes les chansons</value>
+  </data>
+  <data name="Allow" xml:space="preserve">
+    <value>Autoriser</value>
+  </data>
+  <data name="Allow a chassis ID before it connects" xml:space="preserve">
+    <value>Autoriser un ID de borne avant sa connexion</value>
+  </data>
+  <data name="Allow skipping during play" xml:space="preserve">
+    <value>Autoriser à passer pendant la partie</value>
+  </data>
+  <data name="Allowed" xml:space="preserve">
+    <value>Autorisée</value>
+  </data>
+  <data name="Always first" xml:space="preserve">
+    <value>Toujours en premier</value>
+  </data>
+  <data name="An authenticator app code after the password. Admins who must use it get admin access once they turn it on." xml:space="preserve">
+    <value>Un code d'application d'authentification après le mot de passe. Les administrateurs concernés obtiennent l'accès admin une fois activé.</value>
+  </data>
+  <data name="Animation" xml:space="preserve">
+    <value>Animation</value>
+  </data>
+  <data name="Announcements" xml:space="preserve">
+    <value>Annonces</value>
+  </data>
+  <data name="Announcer voice" xml:space="preserve">
+    <value>Voix de l'annonceur</value>
+  </data>
+  <data name="Any crown" xml:space="preserve">
+    <value>Toute couronne</value>
+  </data>
+  <data name="Anyone with a card" xml:space="preserve">
+    <value>Toute personne avec une carte</value>
+  </data>
+  <data name="Anyone with a card's access code." xml:space="preserve">
+    <value>Toute personne connaissant le code d'accès d'une carte.</value>
+  </data>
+  <data name="Anyone with this code can play as you. Don't share it." xml:space="preserve">
+    <value>Avec ce code, n'importe qui peut jouer à votre place. Ne le partagez pas.</value>
+  </data>
+  <data name="Anything using it stops working immediately." xml:space="preserve">
+    <value>Ce qui l'utilise cesse de fonctionner immédiatement.</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Appliquer</value>
+  </data>
+  <data name="Ask an admin to generate an invite code for your card." xml:space="preserve">
+    <value>Demandez à un administrateur de générer un code d'invitation pour votre carte.</value>
+  </data>
+  <data name="At most {0} songs." xml:space="preserve">
+    <value>{0} chansons au maximum.</value>
+  </data>
+  <data name="Available" xml:space="preserve">
+    <value>Disponible</value>
+  </data>
+  <data name="Average judgements" xml:space="preserve">
+    <value>Jugements moyens</value>
+  </data>
+  <data name="Average score" xml:space="preserve">
+    <value>Score moyen</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Retour</value>
+  </data>
+  <data name="Background" xml:space="preserve">
+    <value>Arrière-plan</value>
+  </data>
+  <data name="Bad or cheated scores" xml:space="preserve">
+    <value>Scores erronés ou tricherie</value>
+  </data>
+  <data name="Bads" xml:space="preserve">
+    <value>Mauvais</value>
+  </data>
+  <data name="Ban" xml:space="preserve">
+    <value>Bannir</value>
+  </data>
+  <data name="Ban a card" xml:space="preserve">
+    <value>Bannir une carte</value>
+  </data>
+  <data name="Ban this card" xml:space="preserve">
+    <value>Bannir cette carte</value>
+  </data>
+  <data name="Banned" xml:space="preserve">
+    <value>Bannie</value>
+  </data>
+  <data name="Banned cards" xml:space="preserve">
+    <value>Cartes bannies</value>
+  </data>
+  <data name="Banned until {0}" xml:space="preserve">
+    <value>Bannie jusqu'au {0}</value>
+  </data>
+  <data name="Beat the AI" xml:space="preserve">
+    <value>Battre l'IA</value>
+  </data>
+  <data name="Best" xml:space="preserve">
+    <value>Meilleur</value>
+  </data>
+  <data name="Best combo" xml:space="preserve">
+    <value>Meilleur combo</value>
+  </data>
+  <data name="Bind" xml:space="preserve">
+    <value>Lier</value>
+  </data>
+  <data name="Block" xml:space="preserve">
+    <value>Bloquer</value>
+  </data>
+  <data name="Blocked" xml:space="preserve">
+    <value>Bloquée</value>
+  </data>
+  <data name="Bodies" xml:space="preserve">
+    <value>Corps</value>
+  </data>
+  <data name="By {0}, {1} · refused {2}×" xml:space="preserve">
+    <value>Par {0}, {1} · refusée {2}×</value>
+  </data>
+  <data name="Cabinets" xml:space="preserve">
+    <value>Bornes</value>
+  </data>
+  <data name="Cabinets can't play until this is done." xml:space="preserve">
+    <value>Les bornes ne peuvent pas jouer tant que ce n'est pas fait.</value>
+  </data>
+  <data name="Cabinets get a network error; nothing is saved." xml:space="preserve">
+    <value>Les bornes reçoivent une erreur réseau ; rien n'est enregistré.</value>
+  </data>
+  <data name="Cabinets keep playing and show that maintenance is coming." xml:space="preserve">
+    <value>Les bornes continuent de fonctionner et annoncent la maintenance à venir.</value>
+  </data>
+  <data name="Cabinets pick a change up on their next heartbeat, within about a minute." xml:space="preserve">
+    <value>Les bornes appliquent le changement à leur prochain signal, d'ici une minute environ.</value>
+  </data>
+  <data name="Cabinets play normally." xml:space="preserve">
+    <value>Les bornes fonctionnent normalement.</value>
+  </data>
+  <data name="Cabinets show the maintenance screen." xml:space="preserve">
+    <value>Les bornes affichent l'écran de maintenance.</value>
+  </data>
+  <data name="Can't see the console?" xml:space="preserve">
+    <value>Vous ne voyez pas la console ?</value>
+  </data>
+  <data name="Card" xml:space="preserve">
+    <value>Carte</value>
+  </data>
+  <data name="Card QR code" xml:space="preserve">
+    <value>QR code de la carte</value>
+  </data>
+  <data name="Card added" xml:space="preserve">
+    <value>Carte ajoutée</value>
+  </data>
+  <data name="Card banned" xml:space="preserve">
+    <value>Carte bannie</value>
+  </data>
+  <data name="Card name" xml:space="preserve">
+    <value>Nom de la carte</value>
+  </data>
+  <data name="Card removed" xml:space="preserve">
+    <value>Carte retirée</value>
+  </data>
+  <data name="Certificate" xml:space="preserve">
+    <value>Certificat</value>
+  </data>
+  <data name="Change" xml:space="preserve">
+    <value>Modifier</value>
+  </data>
+  <data name="Change main song" xml:space="preserve">
+    <value>Changer la chanson principale</value>
+  </data>
+  <data name="Change song" xml:space="preserve">
+    <value>Changer de chanson</value>
+  </data>
+  <data name="Change the default set in Dani Dojo" xml:space="preserve">
+    <value>Changer l'ensemble par défaut dans Dani Dojo</value>
+  </data>
+  <data name="Chassis ID or shop" xml:space="preserve">
+    <value>ID de borne ou boutique</value>
+  </data>
+  <data name="Check again" xml:space="preserve">
+    <value>Vérifier à nouveau</value>
+  </data>
+  <data name="Checklist" xml:space="preserve">
+    <value>Liste de contrôle</value>
+  </data>
+  <data name="Choose a password" xml:space="preserve">
+    <value>Choisissez un mot de passe</value>
+  </data>
+  <data name="Choose a password." xml:space="preserve">
+    <value>Choisissez un mot de passe.</value>
+  </data>
+  <data name="Choose a title" xml:space="preserve">
+    <value>Choisir un titre</value>
+  </data>
+  <data name="Classic" xml:space="preserve">
+    <value>Classique</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>Réussi</value>
+  </data>
+  <data name="Clear rate" xml:space="preserve">
+    <value>Taux de réussite</value>
+  </data>
+  <data name="Cleared" xml:space="preserve">
+    <value>Réussies</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Fermer</value>
+  </data>
+  <data name="Closed" xml:space="preserve">
+    <value>Fermée</value>
+  </data>
+  <data name="Code from your authenticator app" xml:space="preserve">
+    <value>Code de votre application d'authentification</value>
+  </data>
+  <data name="Compare with…" xml:space="preserve">
+    <value>Comparer avec…</value>
+  </data>
+  <data name="Condition" xml:space="preserve">
+    <value>Condition</value>
+  </data>
+  <data name="Configuration" xml:space="preserve">
+    <value>Configuration</value>
+  </data>
+  <data name="Confirm password" xml:space="preserve">
+    <value>Confirmer le mot de passe</value>
+  </data>
+  <data name="Connecting…" xml:space="preserve">
+    <value>Connexion…</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Continuer</value>
+  </data>
+  <data name="Copied" xml:space="preserve">
+    <value>Copié</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Copier</value>
+  </data>
+  <data name="Couldn't save your changes." xml:space="preserve">
+    <value>Impossible d'enregistrer vos modifications.</value>
+  </data>
+  <data name="Counted" xml:space="preserve">
+    <value>Décompte</value>
+  </data>
+  <data name="Course" xml:space="preserve">
+    <value>Parcours</value>
+  </data>
+  <data name="Course sets" xml:space="preserve">
+    <value>Ensembles de parcours</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Créer</value>
+  </data>
+  <data name="Create token" xml:space="preserve">
+    <value>Créer le jeton</value>
+  </data>
+  <data name="Created {0}" xml:space="preserve">
+    <value>Créé le {0}</value>
+  </data>
+  <data name="Crowns by difficulty" xml:space="preserve">
+    <value>Couronnes par difficulté</value>
+  </data>
+  <data name="Current password" xml:space="preserve">
+    <value>Mot de passe actuel</value>
+  </data>
+  <data name="Dan rank on nameplate" xml:space="preserve">
+    <value>Rang dan sur la plaque</value>
+  </data>
+  <data name="Danger zone" xml:space="preserve">
+    <value>Zone dangereuse</value>
+  </data>
+  <data name="Dani Dojo courses" xml:space="preserve">
+    <value>Parcours du Dani Dojo</value>
+  </data>
+  <data name="Dashboard notice" xml:space="preserve">
+    <value>Annonce du tableau de bord</value>
+  </data>
+  <data name="Data files" xml:space="preserve">
+    <value>Fichiers de données</value>
+  </data>
+  <data name="Data tools" xml:space="preserve">
+    <value>Outils de données</value>
+  </data>
+  <data name="Database file" xml:space="preserve">
+    <value>Fichier de base de données</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="Defaults" xml:space="preserve">
+    <value>Par défaut</value>
+  </data>
+  <data name="Delete set" xml:space="preserve">
+    <value>Supprimer l'ensemble</value>
+  </data>
+  <data name="Delete user" xml:space="preserve">
+    <value>Supprimer l'utilisateur</value>
+  </data>
+  <data name="Deleted {0}" xml:space="preserve">
+    <value>Supprimé le {0}</value>
+  </data>
+  <data name="Discard" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="Don-chan" xml:space="preserve">
+    <value>Don-chan</value>
+  </data>
+  <data name="Donderful" xml:space="preserve">
+    <value>Donderful</value>
+  </data>
+  <data name="Donderful combo" xml:space="preserve">
+    <value>Combo Donderful</value>
+  </data>
+  <data name="Donderful combos" xml:space="preserve">
+    <value>Combos Donderful</value>
+  </data>
+  <data name="Done" xml:space="preserve">
+    <value>Terminé</value>
+  </data>
+  <data name="Done in {0:0} s{1}." xml:space="preserve">
+    <value>Terminé en {0:0} s{1}.</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>Télécharger</value>
+  </data>
+  <data name="Download .txt" xml:space="preserve">
+    <value>Télécharger le .txt</value>
+  </data>
+  <data name="Drumroll hits" xml:space="preserve">
+    <value>Coups de roulement</value>
+  </data>
+  <data name="Duplicate" xml:space="preserve">
+    <value>Doublon</value>
+  </data>
+  <data name="Edit profile" xml:space="preserve">
+    <value>Modifier le profil</value>
+  </data>
+  <data name="Elsewhere" xml:space="preserve">
+    <value>Ailleurs</value>
+  </data>
+  <data name="Empty." xml:space="preserve">
+    <value>Vide.</value>
+  </data>
+  <data name="End" xml:space="preserve">
+    <value>Fin</value>
+  </data>
+  <data name="Ended" xml:space="preserve">
+    <value>Terminé</value>
+  </data>
+  <data name="Ends" xml:space="preserve">
+    <value>Fin</value>
+  </data>
+  <data name="Enter when you last played with this card, to within 5 minutes." xml:space="preserve">
+    <value>Indiquez la dernière fois que vous avez joué avec cette carte, à 5 minutes près.</value>
+  </data>
+  <data name="Enter your access code and password." xml:space="preserve">
+    <value>Saisissez votre code d'accès et votre mot de passe.</value>
+  </data>
+  <data name="Errors {0}" xml:space="preserve">
+    <value>Erreurs {0}</value>
+  </data>
+  <data name="Event" xml:space="preserve">
+    <value>Événement</value>
+  </data>
+  <data name="Event folders" xml:space="preserve">
+    <value>Dossiers d'événements</value>
+  </data>
+  <data name="Every QR code needs its own serial." xml:space="preserve">
+    <value>Chaque QR code doit avoir son propre numéro de série.</value>
+  </data>
+  <data name="Every cabinet" xml:space="preserve">
+    <value>Toutes les bornes</value>
+  </data>
+  <data name="Every cabinet gets a network error until you switch back. A credit in progress won't save." xml:space="preserve">
+    <value>Toutes les bornes reçoivent une erreur réseau jusqu'au retour. Un crédit en cours ne sera pas enregistré.</value>
+  </data>
+  <data name="Every cabinet shows the maintenance screen from {0} to {1}." xml:space="preserve">
+    <value>Toutes les bornes affichent l'écran de maintenance du {0} au {1}.</value>
+  </data>
+  <data name="Every cabinet shows the maintenance screen from {0} until you switch back." xml:space="preserve">
+    <value>Toutes les bornes affichent l'écran de maintenance à partir du {0} jusqu'au retour.</value>
+  </data>
+  <data name="Every cabinet without its own settings" xml:space="preserve">
+    <value>Toutes les bornes sans réglages propres</value>
+  </data>
+  <data name="Every cabinet without its own settings uses these." xml:space="preserve">
+    <value>Toutes les bornes sans réglages propres utilisent ceux-ci.</value>
+  </data>
+  <data name="Every other Web UI session ends now. Passwords still work, so people can sign in again." xml:space="preserve">
+    <value>Toutes les autres sessions Web UI se terminent maintenant. Les mots de passe restent valides, on peut se reconnecter.</value>
+  </data>
+  <data name="Expired" xml:space="preserve">
+    <value>Expiré</value>
+  </data>
+  <data name="Expires" xml:space="preserve">
+    <value>Expire</value>
+  </data>
+  <data name="Expires {0}" xml:space="preserve">
+    <value>Expire le {0}</value>
+  </data>
+  <data name="Extra courses" xml:space="preserve">
+    <value>Parcours supplémentaires</value>
+  </data>
+  <data name="Extra dan-style courses, offered on every cabinet." xml:space="preserve">
+    <value>Parcours supplémentaires de style dan, proposés sur toutes les bornes.</value>
+  </data>
+  <data name="Extract game files" xml:space="preserve">
+    <value>Extraire les fichiers du jeu</value>
+  </data>
+  <data name="Extracting" xml:space="preserve">
+    <value>Extraction</value>
+  </data>
+  <data name="Extracting… This takes about a minute. Nothing in the game folder is changed." xml:space="preserve">
+    <value>Extraction… Cela prend environ une minute. Le dossier du jeu n'est pas modifié.</value>
+  </data>
+  <data name="Face paint" xml:space="preserve">
+    <value>Peinture faciale</value>
+  </data>
+  <data name="Fade" xml:space="preserve">
+    <value>Fondu</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Échec</value>
+  </data>
+  <data name="Failed sign-ins" xml:space="preserve">
+    <value>Connexions échouées</value>
+  </data>
+  <data name="Failed sign-ins, last 24 hours" xml:space="preserve">
+    <value>Connexions échouées, dernières 24 heures</value>
+  </data>
+  <data name="Favourites" xml:space="preserve">
+    <value>Favoris</value>
+  </data>
+  <data name="Fewer" xml:space="preserve">
+    <value>Moins</value>
+  </data>
+  <data name="Files with problems" xml:space="preserve">
+    <value>Fichiers avec problèmes</value>
+  </data>
+  <data name="Filter users" xml:space="preserve">
+    <value>Filtrer les utilisateurs</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>Filtres</value>
+  </data>
+  <data name="Finished with errors (exit code {0}). See the report." xml:space="preserve">
+    <value>Terminé avec des erreurs (code de sortie {0}). Voir le rapport.</value>
+  </data>
+  <data name="First played" xml:space="preserve">
+    <value>Première partie</value>
+  </data>
+  <data name="Folder" xml:space="preserve">
+    <value>Dossier</value>
+  </data>
+  <data name="For" xml:space="preserve">
+    <value>Pour</value>
+  </data>
+  <data name="For example:" xml:space="preserve">
+    <value>Par exemple :</value>
+  </data>
+  <data name="For the card ending •••• {0}" xml:space="preserve">
+    <value>Pour la carte se terminant par •••• {0}</value>
+  </data>
+  <data name="Forget" xml:space="preserve">
+    <value>Oublier</value>
+  </data>
+  <data name="Found the game" xml:space="preserve">
+    <value>Jeu trouvé</value>
+  </data>
+  <data name="Free profile editing" xml:space="preserve">
+    <value>Modification libre du profil</value>
+  </data>
+  <data name="Friend Code copied!" xml:space="preserve">
+    <value>Code ami copié !</value>
+  </data>
+  <data name="Friend code {0}, copy" xml:space="preserve">
+    <value>Code ami {0}, copier</value>
+  </data>
+  <data name="Friend code · click to copy" xml:space="preserve">
+    <value>Code ami · cliquez pour copier</value>
+  </data>
+  <data name="Full combo" xml:space="preserve">
+    <value>Full combo</value>
+  </data>
+  <data name="Full combos" xml:space="preserve">
+    <value>Full combos</value>
+  </data>
+  <data name="Game Data" xml:space="preserve">
+    <value>Données du jeu</value>
+  </data>
+  <data name="Game assets" xml:space="preserve">
+    <value>Ressources du jeu</value>
+  </data>
+  <data name="Game data reloaded" xml:space="preserve">
+    <value>Données du jeu rechargées</value>
+  </data>
+  <data name="Game files" xml:space="preserve">
+    <value>Fichiers du jeu</value>
+  </data>
+  <data name="Game files are missing. Cabinets can't play and pages show IDs instead of names." xml:space="preserve">
+    <value>Des fichiers du jeu manquent. Les bornes ne peuvent pas jouer et les pages affichent des ID au lieu des noms.</value>
+  </data>
+  <data name="Game folder" xml:space="preserve">
+    <value>Dossier du jeu</value>
+  </data>
+  <data name="Game host" xml:space="preserve">
+    <value>Hôte du jeu</value>
+  </data>
+  <data name="Give it only what it needs." xml:space="preserve">
+    <value>Ne lui donnez que ce dont il a besoin.</value>
+  </data>
+  <data name="Go to the Dashboard" xml:space="preserve">
+    <value>Aller au tableau de bord</value>
+  </data>
+  <data name="Gold is easier than red." xml:space="preserve">
+    <value>L'or est plus facile que le rouge.</value>
+  </data>
+  <data name="Gold pass" xml:space="preserve">
+    <value>Réussite or</value>
+  </data>
+  <data name="Gold passes" xml:space="preserve">
+    <value>Réussites or</value>
+  </data>
+  <data name="Good {0} · OK {1} · Bad {2} · Drumroll {3}" xml:space="preserve">
+    <value>Bien {0} · OK {1} · Mauvais {2} · Roulement {3}</value>
+  </data>
+  <data name="Good {0} · OK {1} · Bad {2} · combo {3}" xml:space="preserve">
+    <value>Bien {0} · OK {1} · Mauvais {2} · combo {3}</value>
+  </data>
+  <data name="Goods" xml:space="preserve">
+    <value>Biens</value>
+  </data>
+  <data name="Has a password and can sign in." xml:space="preserve">
+    <value>A un mot de passe et peut se connecter.</value>
+  </data>
+  <data name="Has the maximum" xml:space="preserve">
+    <value>Au maximum</value>
+  </data>
+  <data name="Heads" xml:space="preserve">
+    <value>Têtes</value>
+  </data>
+  <data name="Hide access code" xml:space="preserve">
+    <value>Masquer le code d'accès</value>
+  </data>
+  <data name="Hide name" xml:space="preserve">
+    <value>Masquer le nom</value>
+  </data>
+  <data name="Hide password" xml:space="preserve">
+    <value>Masquer le mot de passe</value>
+  </data>
+  <data name="Hide the code" xml:space="preserve">
+    <value>Masquer le code</value>
+  </data>
+  <data name="Highest rank" xml:space="preserve">
+    <value>Rang le plus haut</value>
+  </data>
+  <data name="Highest with crowns" xml:space="preserve">
+    <value>Plus haute difficulté couronnée</value>
+  </data>
+  <data name="Hits" xml:space="preserve">
+    <value>Coups</value>
+  </data>
+  <data name="I've saved these" xml:space="preserve">
+    <value>J'ai enregistré ces codes</value>
+  </data>
+  <data name="In 30 days" xml:space="preserve">
+    <value>Dans 30 jours</value>
+  </data>
+  <data name="In 90 days" xml:space="preserve">
+    <value>Dans 90 jours</value>
+  </data>
+  <data name="In a year" xml:space="preserve">
+    <value>Dans un an</value>
+  </data>
+  <data name="In place" xml:space="preserve">
+    <value>En place</value>
+  </data>
+  <data name="In the list" xml:space="preserve">
+    <value>Dans la liste</value>
+  </data>
+  <data name="In the shop" xml:space="preserve">
+    <value>Dans la boutique</value>
+  </data>
+  <data name="In this course" xml:space="preserve">
+    <value>Dans ce parcours</value>
+  </data>
+  <data name="In-game messages" xml:space="preserve">
+    <value>Messages en jeu</value>
+  </data>
+  <data name="Include files from Data_mods over vanilla ones" xml:space="preserve">
+    <value>Utiliser les fichiers de Data_mods à la place des originaux</value>
+  </data>
+  <data name="Include the game's mods folder" xml:space="preserve">
+    <value>Inclure le dossier de mods du jeu</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="Invite code" xml:space="preserve">
+    <value>Code d'invitation</value>
+  </data>
+  <data name="Invite code only" xml:space="preserve">
+    <value>Code d'invitation uniquement</value>
+  </data>
+  <data name="Invite codes are 6 digits." xml:space="preserve">
+    <value>Les codes d'invitation comptent 6 chiffres.</value>
+  </data>
+  <data name="It can connect and play." xml:space="preserve">
+    <value>Elle peut se connecter et jouer.</value>
+  </data>
+  <data name="It tried to connect {0} times. Allow it to let it play." xml:space="preserve">
+    <value>Elle a tenté de se connecter {0} fois. Autorisez-la pour qu'elle puisse jouer.</value>
+  </data>
+  <data name="It's online: its next request is refused, and a credit in progress won't save." xml:space="preserve">
+    <value>Elle est en ligne : sa prochaine requête sera refusée et un crédit en cours ne sera pas enregistré.</value>
+  </data>
+  <data name="Its requests are refused ({0} so far). Players' data isn't touched." xml:space="preserve">
+    <value>Ses requêtes sont refusées ({0} jusqu'ici). Les données des joueurs ne sont pas touchées.</value>
+  </data>
+  <data name="Keep" xml:space="preserve">
+    <value>Garder</value>
+  </data>
+  <data name="LOSE" xml:space="preserve">
+    <value>PERDU</value>
+  </data>
+  <data name="Last 16 weeks" xml:space="preserve">
+    <value>16 dernières semaines</value>
+  </data>
+  <data name="Last play time" xml:space="preserve">
+    <value>Dernière partie</value>
+  </data>
+  <data name="Last play time or invite code" xml:space="preserve">
+    <value>Dernière partie ou code d'invitation</value>
+  </data>
+  <data name="Last played" xml:space="preserve">
+    <value>Dernière partie</value>
+  </data>
+  <data name="Last played today at {0}" xml:space="preserve">
+    <value>Dernière partie aujourd'hui à {0}</value>
+  </data>
+  <data name="Last played yesterday at {0}" xml:space="preserve">
+    <value>Dernière partie hier à {0}</value>
+  </data>
+  <data name="Last played {0}" xml:space="preserve">
+    <value>Dernière partie le {0}</value>
+  </data>
+  <data name="Last seen {0}" xml:space="preserve">
+    <value>Vue le {0}</value>
+  </data>
+  <data name="Leaderboard pages" xml:space="preserve">
+    <value>Pages du classement</value>
+  </data>
+  <data name="Less" xml:space="preserve">
+    <value>Moins</value>
+  </data>
+  <data name="Live" xml:space="preserve">
+    <value>En direct</value>
+  </data>
+  <data name="Loading..." xml:space="preserve">
+    <value>Chargement...</value>
+  </data>
+  <data name="Local" xml:space="preserve">
+    <value>Local</value>
+  </data>
+  <data name="Local mode" xml:space="preserve">
+    <value>Mode local</value>
+  </data>
+  <data name="Lock an account after failed sign-ins" xml:space="preserve">
+    <value>Verrouiller un compte après des connexions échouées</value>
+  </data>
+  <data name="Lock: {0}" xml:space="preserve">
+    <value>Verrouillage : {0}</value>
+  </data>
+  <data name="Locked" xml:space="preserve">
+    <value>Verrouillé</value>
+  </data>
+  <data name="Locked Ura (inner) charts" xml:space="preserve">
+    <value>Partitions Ura (cachées) verrouillées</value>
+  </data>
+  <data name="Locked accounts" xml:space="preserve">
+    <value>Comptes verrouillés</value>
+  </data>
+  <data name="Locked costumes" xml:space="preserve">
+    <value>Costumes verrouillés</value>
+  </data>
+  <data name="Locked for" xml:space="preserve">
+    <value>Verrouillé pendant</value>
+  </data>
+  <data name="Locked songs" xml:space="preserve">
+    <value>Chansons verrouillées</value>
+  </data>
+  <data name="Locked titles" xml:space="preserve">
+    <value>Titres verrouillés</value>
+  </data>
+  <data name="Log in instead" xml:space="preserve">
+    <value>Se connecter</value>
+  </data>
+  <data name="Log in with your access code and new password." xml:space="preserve">
+    <value>Connectez-vous avec votre code d'accès et votre nouveau mot de passe.</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Journaux</value>
+  </data>
+  <data name="Lost against the AI" xml:space="preserve">
+    <value>Perdu contre l'IA</value>
+  </data>
+  <data name="Lost to the AI" xml:space="preserve">
+    <value>Perdu contre l'IA</value>
+  </data>
+  <data name="Made admin" xml:space="preserve">
+    <value>Promu administrateur</value>
+  </data>
+  <data name="Main song" xml:space="preserve">
+    <value>Chanson principale</value>
+  </data>
+  <data name="Maintenance" xml:space="preserve">
+    <value>Maintenance</value>
+  </data>
+  <data name="Make admin" xml:space="preserve">
+    <value>Rendre administrateur</value>
+  </data>
+  <data name="Make default" xml:space="preserve">
+    <value>Définir par défaut</value>
+  </data>
+  <data name="Max combo" xml:space="preserve">
+    <value>Combo max</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="Messages are at most {0} characters." xml:space="preserve">
+    <value>Les messages font au plus {0} caractères.</value>
+  </data>
+  <data name="Missing" xml:space="preserve">
+    <value>Manquant</value>
+  </data>
+  <data name="Missing: extract the game files" xml:space="preserve">
+    <value>Manquant : extrayez les fichiers du jeu</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>Mode</value>
+  </data>
+  <data name="More" xml:space="preserve">
+    <value>Plus</value>
+  </data>
+  <data name="More songs" xml:space="preserve">
+    <value>Plus de chansons</value>
+  </data>
+  <data name="Most played" xml:space="preserve">
+    <value>Les plus jouées</value>
+  </data>
+  <data name="Move access code" xml:space="preserve">
+    <value>Déplacer le code d'accès</value>
+  </data>
+  <data name="Move down" xml:space="preserve">
+    <value>Descendre</value>
+  </data>
+  <data name="Move to another user" xml:space="preserve">
+    <value>Déplacer vers un autre utilisateur</value>
+  </data>
+  <data name="Move up" xml:space="preserve">
+    <value>Monter</value>
+  </data>
+  <data name="Moved an access code" xml:space="preserve">
+    <value>Code d'accès déplacé</value>
+  </data>
+  <data name="Moved to {0}" xml:space="preserve">
+    <value>Déplacé vers {0}</value>
+  </data>
+  <data name="Movie ID" xml:space="preserve">
+    <value>ID de vidéo</value>
+  </data>
+  <data name="Movie IDs are the numbered files in the game's Data/x64/movie folder. Run extract to pick from a list." xml:space="preserve">
+    <value>Les ID de vidéo sont les fichiers numérotés du dossier Data/x64/movie du jeu. Lancez extract pour choisir dans une liste.</value>
+  </data>
+  <data name="Movies" xml:space="preserve">
+    <value>Vidéos</value>
+  </data>
+  <data name="Mucha URL" xml:space="preserve">
+    <value>URL Mucha</value>
+  </data>
+  <data name="Name or IP" xml:space="preserve">
+    <value>Nom ou IP</value>
+  </data>
+  <data name="Name or user ID" xml:space="preserve">
+    <value>Nom ou ID d'utilisateur</value>
+  </data>
+  <data name="Name, user ID or access code" xml:space="preserve">
+    <value>Nom, ID d'utilisateur ou code d'accès</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>Jamais</value>
+  </data>
+  <data name="Never connected (pre-approved)" xml:space="preserve">
+    <value>Jamais connectée (pré-approuvée)</value>
+  </data>
+  <data name="Never expires" xml:space="preserve">
+    <value>N'expire jamais</value>
+  </data>
+  <data name="Never used" xml:space="preserve">
+    <value>Jamais utilisé</value>
+  </data>
+  <data name="New API token" xml:space="preserve">
+    <value>Nouveau jeton d'API</value>
+  </data>
+  <data name="New best" xml:space="preserve">
+    <value>Nouveau record</value>
+  </data>
+  <data name="New bests only" xml:space="preserve">
+    <value>Nouveaux records uniquement</value>
+  </data>
+  <data name="New password" xml:space="preserve">
+    <value>Nouveau mot de passe</value>
+  </data>
+  <data name="New recovery codes" xml:space="preserve">
+    <value>Nouveaux codes de récupération</value>
+  </data>
+  <data name="New set" xml:space="preserve">
+    <value>Nouvel ensemble</value>
+  </data>
+  <data name="New token" xml:space="preserve">
+    <value>Nouveau jeton</value>
+  </data>
+  <data name="New?" xml:space="preserve">
+    <value>Nouveau ?</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Suivant</value>
+  </data>
+  <data name="Next month" xml:space="preserve">
+    <value>Mois suivant</value>
+  </data>
+  <data name="Next page" xml:space="preserve">
+    <value>Page suivante</value>
+  </data>
+  <data name="No AI battle yet" xml:space="preserve">
+    <value>Pas encore de combat IA</value>
+  </data>
+  <data name="No Dani Dojo pass yet" xml:space="preserve">
+    <value>Aucune réussite au Dani Dojo</value>
+  </data>
+  <data name="No access codes yet." xml:space="preserve">
+    <value>Aucun code d'accès pour l'instant.</value>
+  </data>
+  <data name="No account" xml:space="preserve">
+    <value>Pas de compte</value>
+  </data>
+  <data name="No banned cards." xml:space="preserve">
+    <value>Aucune carte bannie.</value>
+  </data>
+  <data name="No cabinet has connected yet." xml:space="preserve">
+    <value>Aucune borne ne s'est encore connectée.</value>
+  </data>
+  <data name="No form for this file yet; use JSON." xml:space="preserve">
+    <value>Pas encore de formulaire pour ce fichier ; utilisez le JSON.</value>
+  </data>
+  <data name="No full combo" xml:space="preserve">
+    <value>Pas de full combo</value>
+  </data>
+  <data name="No matches" xml:space="preserve">
+    <value>Aucun résultat</value>
+  </data>
+  <data name="No messages." xml:space="preserve">
+    <value>Aucun message.</value>
+  </data>
+  <data name="No new accounts. Admins can still help in User Management." xml:space="preserve">
+    <value>Pas de nouveaux comptes. Les administrateurs peuvent aider via la gestion des utilisateurs.</value>
+  </data>
+  <data name="No password set yet. Send an invite code." xml:space="preserve">
+    <value>Pas encore de mot de passe. Envoyez un code d'invitation.</value>
+  </data>
+  <data name="No players yet" xml:space="preserve">
+    <value>Pas encore de joueurs</value>
+  </data>
+  <data name="No plays in the last 7 days." xml:space="preserve">
+    <value>Aucune partie ces 7 derniers jours.</value>
+  </data>
+  <data name="No plays match. Try another difficulty." xml:space="preserve">
+    <value>Aucune partie ne correspond. Essayez une autre difficulté.</value>
+  </data>
+  <data name="No scores match." xml:space="preserve">
+    <value>Aucun score ne correspond.</value>
+  </data>
+  <data name="No shop ID yet" xml:space="preserve">
+    <value>Pas encore d'ID de boutique</value>
+  </data>
+  <data name="No songs match." xml:space="preserve">
+    <value>Aucune chanson ne correspond.</value>
+  </data>
+  <data name="No songs match. Try another genre or clear the search." xml:space="preserve">
+    <value>Aucune chanson ne correspond. Essayez un autre genre ou effacez la recherche.</value>
+  </data>
+  <data name="No songs yet." xml:space="preserve">
+    <value>Pas encore de chansons.</value>
+  </data>
+  <data name="No titles match." xml:space="preserve">
+    <value>Aucun titre ne correspond.</value>
+  </data>
+  <data name="No tokens yet." xml:space="preserve">
+    <value>Pas encore de jetons.</value>
+  </data>
+  <data name="No users yet. A user appears the first time a card is played." xml:space="preserve">
+    <value>Pas encore d'utilisateurs. Un utilisateur apparaît la première fois qu'une carte est jouée.</value>
+  </data>
+  <data name="Nobody has played this chart yet." xml:space="preserve">
+    <value>Personne n'a encore joué cette partition.</value>
+  </data>
+  <data name="None (use head &amp; body)" xml:space="preserve">
+    <value>Aucun (tête et corps)</value>
+  </data>
+  <data name="None in the last 7 days." xml:space="preserve">
+    <value>Aucune ces 7 derniers jours.</value>
+  </data>
+  <data name="Not added yet" xml:space="preserve">
+    <value>Pas encore ajouté</value>
+  </data>
+  <data name="Not cleared" xml:space="preserve">
+    <value>Pas réussi</value>
+  </data>
+  <data name="Not in the game's movie folder" xml:space="preserve">
+    <value>Absent du dossier des vidéos du jeu</value>
+  </data>
+  <data name="Not passed yet" xml:space="preserve">
+    <value>Pas encore réussi</value>
+  </data>
+  <data name="Not played" xml:space="preserve">
+    <value>Pas jouée</value>
+  </data>
+  <data name="Not played in AI Battle on {0} yet." xml:space="preserve">
+    <value>Pas encore joué en Combat IA en {0}.</value>
+  </data>
+  <data name="Not played yet" xml:space="preserve">
+    <value>Pas encore jouée</value>
+  </data>
+  <data name="Not registered" xml:space="preserve">
+    <value>Non inscrit</value>
+  </data>
+  <data name="Not registered yet" xml:space="preserve">
+    <value>Pas encore inscrit</value>
+  </data>
+  <data name="Not set" xml:space="preserve">
+    <value>Non défini</value>
+  </data>
+  <data name="Not signed in anywhere" xml:space="preserve">
+    <value>Connecté nulle part</value>
+  </data>
+  <data name="Not the default" xml:space="preserve">
+    <value>Pas l'ensemble par défaut</value>
+  </data>
+  <data name="Not used yet. Make it the default to serve it." xml:space="preserve">
+    <value>Pas encore utilisé. Définissez-le par défaut pour le servir.</value>
+  </data>
+  <data name="Not yet" xml:space="preserve">
+    <value>Pas encore</value>
+  </data>
+  <data name="Notes disappear before the judge mark" xml:space="preserve">
+    <value>Les notes disparaissent avant la cible</value>
+  </data>
+  <data name="Notes hit" xml:space="preserve">
+    <value>Notes touchées</value>
+  </data>
+  <data name="Nothing matches." xml:space="preserve">
+    <value>Aucun résultat.</value>
+  </data>
+  <data name="Nothing to fix." xml:space="preserve">
+    <value>Rien à corriger.</value>
+  </data>
+  <data name="Nothing yet." xml:space="preserve">
+    <value>Rien pour l'instant.</value>
+  </data>
+  <data name="OKs" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Off" xml:space="preserve">
+    <value>Désactivé</value>
+  </data>
+  <data name="Off: it uses the defaults." xml:space="preserve">
+    <value>Désactivé : elle utilise les réglages par défaut.</value>
+  </data>
+  <data name="Offline" xml:space="preserve">
+    <value>Hors ligne</value>
+  </data>
+  <data name="Older plays are in Play History" xml:space="preserve">
+    <value>Les parties plus anciennes sont dans l'historique</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>Activé</value>
+  </data>
+  <data name="On your card or Banapass" xml:space="preserve">
+    <value>Sur votre carte ou Banapass</value>
+  </data>
+  <data name="On, up to {0}" xml:space="preserve">
+    <value>Activé, jusqu'à {0}</value>
+  </data>
+  <data name="On. Reset it if they lost their phone and their recovery codes." xml:space="preserve">
+    <value>Activée. Réinitialisez-la s'ils ont perdu leur téléphone et leurs codes de récupération.</value>
+  </data>
+  <data name="Oni clears by star level" xml:space="preserve">
+    <value>Réussites Oni par niveau d'étoiles</value>
+  </data>
+  <data name="Online now" xml:space="preserve">
+    <value>En ligne</value>
+  </data>
+  <data name="Only admins can sign in" xml:space="preserve">
+    <value>Seuls les administrateurs peuvent se connecter</value>
+  </data>
+  <data name="Only with an invite code from an admin (User Management)." xml:space="preserve">
+    <value>Uniquement avec un code d'invitation d'un administrateur (gestion des utilisateurs).</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Ouvert</value>
+  </data>
+  <data name="Open in an app on this device" xml:space="preserve">
+    <value>Ouvrir dans une application sur cet appareil</value>
+  </data>
+  <data name="Open navigation" xml:space="preserve">
+    <value>Ouvrir la navigation</value>
+  </data>
+  <data name="Open: any cabinet can connect, except blocked ones." xml:space="preserve">
+    <value>Ouvert : toute borne peut se connecter, sauf celles bloquées.</value>
+  </data>
+  <data name="Operational" xml:space="preserve">
+    <value>Opérationnel</value>
+  </data>
+  <data name="Optional" xml:space="preserve">
+    <value>Facultatif</value>
+  </data>
+  <data name="Other songs" xml:space="preserve">
+    <value>Autres chansons</value>
+  </data>
+  <data name="Overview" xml:space="preserve">
+    <value>Vue d'ensemble</value>
+  </data>
+  <data name="Own settings" xml:space="preserve">
+    <value>Réglages propres</value>
+  </data>
+  <data name="Page {0}" xml:space="preserve">
+    <value>Page {0}</value>
+  </data>
+  <data name="Pass at or above" xml:space="preserve">
+    <value>Réussite à partir de</value>
+  </data>
+  <data name="Pass at or below" xml:space="preserve">
+    <value>Réussite jusqu'à</value>
+  </data>
+  <data name="Pass conditions" xml:space="preserve">
+    <value>Conditions de réussite</value>
+  </data>
+  <data name="Passed" xml:space="preserve">
+    <value>Réussi</value>
+  </data>
+  <data name="Password reset" xml:space="preserve">
+    <value>Mot de passe réinitialisé</value>
+  </data>
+  <data name="Pattern" xml:space="preserve">
+    <value>Motif</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="Paused · {0} new" xml:space="preserve">
+    <value>En pause · {0} nouvelles</value>
+  </data>
+  <data name="Per song" xml:space="preserve">
+    <value>Par chanson</value>
+  </data>
+  <data name="Permanent" xml:space="preserve">
+    <value>Permanent</value>
+  </data>
+  <data name="Permanently" xml:space="preserve">
+    <value>Définitivement</value>
+  </data>
+  <data name="Pick a day with plays." xml:space="preserve">
+    <value>Choisissez un jour avec des parties.</value>
+  </data>
+  <data name="Pick a user" xml:space="preserve">
+    <value>Choisissez un utilisateur</value>
+  </data>
+  <data name="Play history pages" xml:space="preserve">
+    <value>Pages de l'historique</value>
+  </data>
+  <data name="Play tone" xml:space="preserve">
+    <value>Écouter le son</value>
+  </data>
+  <data name="Played, not cleared" xml:space="preserve">
+    <value>Jouée, pas réussie</value>
+  </data>
+  <data name="Player card" xml:space="preserve">
+    <value>Carte de joueur</value>
+  </data>
+  <data name="Players" xml:space="preserve">
+    <value>Joueurs</value>
+  </data>
+  <data name="Players can delete their account" xml:space="preserve">
+    <value>Les joueurs peuvent supprimer leur compte</value>
+  </data>
+  <data name="Plays" xml:space="preserve">
+    <value>Parties</value>
+  </data>
+  <data name="Plays by genre" xml:space="preserve">
+    <value>Parties par genre</value>
+  </data>
+  <data name="Plays per day, last 16 weeks" xml:space="preserve">
+    <value>Parties par jour, 16 dernières semaines</value>
+  </data>
+  <data name="Ports" xml:space="preserve">
+    <value>Ports</value>
+  </data>
+  <data name="Pre-maintenance" xml:space="preserve">
+    <value>Pré-maintenance</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Aperçu</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Précédent</value>
+  </data>
+  <data name="Previous month" xml:space="preserve">
+    <value>Mois précédent</value>
+  </data>
+  <data name="Previous page" xml:space="preserve">
+    <value>Page précédente</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Prix</value>
+  </data>
+  <data name="Progress" xml:space="preserve">
+    <value>Progression</value>
+  </data>
+  <data name="Prove it's your card" xml:space="preserve">
+    <value>Prouvez que c'est votre carte</value>
+  </data>
+  <data name="QR" xml:space="preserve">
+    <value>QR</value>
+  </data>
+  <data name="QR code" xml:space="preserve">
+    <value>QR code</value>
+  </data>
+  <data name="QR code for your authenticator app" xml:space="preserve">
+    <value>QR code pour votre application d'authentification</value>
+  </data>
+  <data name="QR codes" xml:space="preserve">
+    <value>QR codes</value>
+  </data>
+  <data name="Rank {0}" xml:space="preserve">
+    <value>Rang {0}</value>
+  </data>
+  <data name="Ranks" xml:space="preserve">
+    <value>Rangs</value>
+  </data>
+  <data name="Ranks passed" xml:space="preserve">
+    <value>Rangs réussis</value>
+  </data>
+  <data name="Reason" xml:space="preserve">
+    <value>Raison</value>
+  </data>
+  <data name="Recent failed sign-ins" xml:space="preserve">
+    <value>Connexions échouées récentes</value>
+  </data>
+  <data name="Recently set" xml:space="preserve">
+    <value>Records récents</value>
+  </data>
+  <data name="Recovery code" xml:space="preserve">
+    <value>Code de récupération</value>
+  </data>
+  <data name="Recovery codes sign you in if you lose your phone. Each works once. Keep them somewhere safe: they're shown only now." xml:space="preserve">
+    <value>Les codes de récupération vous connectent si vous perdez votre téléphone. Chacun ne sert qu'une fois. Gardez-les en lieu sûr : ils ne sont affichés que maintenant.</value>
+  </data>
+  <data name="Registered" xml:space="preserve">
+    <value>Inscrit</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>Recharger</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Retirer</value>
+  </data>
+  <data name="Remove a score" xml:space="preserve">
+    <value>Retirer un score</value>
+  </data>
+  <data name="Remove access code" xml:space="preserve">
+    <value>Retirer le code d'accès</value>
+  </data>
+  <data name="Remove admin" xml:space="preserve">
+    <value>Retirer l'administrateur</value>
+  </data>
+  <data name="Remove condition" xml:space="preserve">
+    <value>Retirer la condition</value>
+  </data>
+  <data name="Remove from favourites" xml:space="preserve">
+    <value>Retirer des favoris</value>
+  </data>
+  <data name="Remove this card?" xml:space="preserve">
+    <value>Retirer cette carte ?</value>
+  </data>
+  <data name="Removed a score" xml:space="preserve">
+    <value>Score retiré</value>
+  </data>
+  <data name="Removed admin" xml:space="preserve">
+    <value>Administrateur retiré</value>
+  </data>
+  <data name="Removed from favourites" xml:space="preserve">
+    <value>Retiré des favoris</value>
+  </data>
+  <data name="Removes it from this list; it reappears if it connects again." xml:space="preserve">
+    <value>La retire de cette liste ; elle réapparaît si elle se reconnecte.</value>
+  </data>
+  <data name="Rename" xml:space="preserve">
+    <value>Renommer</value>
+  </data>
+  <data name="Replaces head, body &amp; face paint" xml:space="preserve">
+    <value>Remplace la tête, le corps et la peinture faciale</value>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>Rapport</value>
+  </data>
+  <data name="Required for admins" xml:space="preserve">
+    <value>Obligatoire pour les administrateurs</value>
+  </data>
+  <data name="Reset password" xml:space="preserve">
+    <value>Réinitialiser le mot de passe</value>
+  </data>
+  <data name="Restricted: only allowed cabinets can connect. New ones wait for your approval." xml:space="preserve">
+    <value>Restreint : seules les bornes autorisées peuvent se connecter. Les nouvelles attendent votre approbation.</value>
+  </data>
+  <data name="Results to show" xml:space="preserve">
+    <value>Résultats à afficher</value>
+  </data>
+  <data name="Resume" xml:space="preserve">
+    <value>Reprendre</value>
+  </data>
+  <data name="Revoke" xml:space="preserve">
+    <value>Révoquer</value>
+  </data>
+  <data name="Revoke {0}?" xml:space="preserve">
+    <value>Révoquer {0} ?</value>
+  </data>
+  <data name="Revoked" xml:space="preserve">
+    <value>Révoqué</value>
+  </data>
+  <data name="Reward ID" xml:space="preserve">
+    <value>ID de récompense</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Enregistré</value>
+  </data>
+  <data name="Saved. Cabinets pick it up on their next startup." xml:space="preserve">
+    <value>Enregistré. Les bornes l'appliquent à leur prochain démarrage.</value>
+  </data>
+  <data name="Saved. Game data reloaded." xml:space="preserve">
+    <value>Enregistré. Données du jeu rechargées.</value>
+  </data>
+  <data name="Saving…" xml:space="preserve">
+    <value>Enregistrement…</value>
+  </data>
+  <data name="Scan any of them at a cabinet to play as you. Every card's scores go to the same profile." xml:space="preserve">
+    <value>Scannez n'importe laquelle sur une borne pour jouer en votre nom. Les scores de chaque carte vont sur le même profil.</value>
+  </data>
+  <data name="Scan it at a cabinet's card reader to play as {0}." xml:space="preserve">
+    <value>Scannez-le sur le lecteur de carte d'une borne pour jouer en tant que {0}.</value>
+  </data>
+  <data name="Scanning it at a cabinet won't sign in as you any more. Your scores stay, and you can add the card again later." xml:space="preserve">
+    <value>La scanner sur une borne ne vous connectera plus. Vos scores restent, et vous pourrez rajouter la carte plus tard.</value>
+  </data>
+  <data name="Scheduled" xml:space="preserve">
+    <value>Programmé</value>
+  </data>
+  <data name="Scopes" xml:space="preserve">
+    <value>Portées</value>
+  </data>
+  <data name="Score pages" xml:space="preserve">
+    <value>Pages des scores</value>
+  </data>
+  <data name="Score per play" xml:space="preserve">
+    <value>Score par partie</value>
+  </data>
+  <data name="Score per play, from {0} to {1}" xml:space="preserve">
+    <value>Score par partie, de {0} à {1}</value>
+  </data>
+  <data name="Score removed" xml:space="preserve">
+    <value>Score retiré</value>
+  </data>
+  <data name="Scoreboard" xml:space="preserve">
+    <value>Tableau des scores</value>
+  </data>
+  <data name="Search digits" xml:space="preserve">
+    <value>Rechercher des chiffres</value>
+  </data>
+  <data name="Search players" xml:space="preserve">
+    <value>Rechercher des joueurs</value>
+  </data>
+  <data name="Search songs" xml:space="preserve">
+    <value>Rechercher des chansons</value>
+  </data>
+  <data name="Search titles" xml:space="preserve">
+    <value>Rechercher des titres</value>
+  </data>
+  <data name="Search users" xml:space="preserve">
+    <value>Rechercher des utilisateurs</value>
+  </data>
+  <data name="Search your scores" xml:space="preserve">
+    <value>Rechercher dans vos scores</value>
+  </data>
+  <data name="Search {0} QR codes" xml:space="preserve">
+    <value>Rechercher parmi {0} QR codes</value>
+  </data>
+  <data name="Search {0} by name or ID" xml:space="preserve">
+    <value>Rechercher {0} par nom ou ID</value>
+  </data>
+  <data name="Search {0} songs by name or ID" xml:space="preserve">
+    <value>Rechercher parmi {0} chansons par nom ou ID</value>
+  </data>
+  <data name="Search {0} titles" xml:space="preserve">
+    <value>Rechercher parmi {0} titres</value>
+  </data>
+  <data name="Sections" xml:space="preserve">
+    <value>Sections</value>
+  </data>
+  <data name="Seen by this server" xml:space="preserve">
+    <value>Vues par ce serveur</value>
+  </data>
+  <data name="Serial" xml:space="preserve">
+    <value>Numéro de série</value>
+  </data>
+  <data name="Server" xml:space="preserve">
+    <value>Serveur</value>
+  </data>
+  <data name="Server Management" xml:space="preserve">
+    <value>Gestion du serveur</value>
+  </data>
+  <data name="Server state" xml:space="preserve">
+    <value>État du serveur</value>
+  </data>
+  <data name="Sessions" xml:space="preserve">
+    <value>Sessions</value>
+  </data>
+  <data name="Set" xml:space="preserve">
+    <value>Définir</value>
+  </data>
+  <data name="Set a token to -1 to turn it off." xml:space="preserve">
+    <value>Mettez un jeton à -1 pour le désactiver.</value>
+  </data>
+  <data name="Set it up" xml:space="preserve">
+    <value>La configurer</value>
+  </data>
+  <data name="Set on" xml:space="preserve">
+    <value>Établi le</value>
+  </data>
+  <data name="Set up" xml:space="preserve">
+    <value>Configurer</value>
+  </data>
+  <data name="Set up the server" xml:space="preserve">
+    <value>Configurer le serveur</value>
+  </data>
+  <data name="Setup code" xml:space="preserve">
+    <value>Code de configuration</value>
+  </data>
+  <data name="Shop" xml:space="preserve">
+    <value>Boutique</value>
+  </data>
+  <data name="Show Sou-uchi songs" xml:space="preserve">
+    <value>Afficher les chansons Sou-uchi</value>
+  </data>
+  <data name="Show access code" xml:space="preserve">
+    <value>Afficher le code d'accès</value>
+  </data>
+  <data name="Show all {0} songs" xml:space="preserve">
+    <value>Afficher les {0} chansons</value>
+  </data>
+  <data name="Show it" xml:space="preserve">
+    <value>L'afficher</value>
+  </data>
+  <data name="Show less" xml:space="preserve">
+    <value>Afficher moins</value>
+  </data>
+  <data name="Show my rank" xml:space="preserve">
+    <value>Voir mon rang</value>
+  </data>
+  <data name="Show older" xml:space="preserve">
+    <value>Afficher plus ancien</value>
+  </data>
+  <data name="Show password" xml:space="preserve">
+    <value>Afficher le mot de passe</value>
+  </data>
+  <data name="Show the code" xml:space="preserve">
+    <value>Afficher le code</value>
+  </data>
+  <data name="Show until" xml:space="preserve">
+    <value>Afficher jusqu'au</value>
+  </data>
+  <data name="Show {0} songs" xml:space="preserve">
+    <value>Afficher {0} chansons</value>
+  </data>
+  <data name="Show/hide the achievement panel in-game" xml:space="preserve">
+    <value>Afficher/masquer le panneau des succès en jeu</value>
+  </data>
+  <data name="Sign out" xml:space="preserve">
+    <value>Se déconnecter</value>
+  </data>
+  <data name="Sign out everyone else" xml:space="preserve">
+    <value>Déconnecter tous les autres</value>
+  </data>
+  <data name="Sign out everywhere" xml:space="preserve">
+    <value>Se déconnecter partout</value>
+  </data>
+  <data name="Sign-in and security" xml:space="preserve">
+    <value>Connexion et sécurité</value>
+  </data>
+  <data name="Sign-in help" xml:space="preserve">
+    <value>Aide à la connexion</value>
+  </data>
+  <data name="Sign-ins" xml:space="preserve">
+    <value>Connexions</value>
+  </data>
+  <data name="Sign-up" xml:space="preserve">
+    <value>Inscription</value>
+  </data>
+  <data name="Sign-up and sign-in" xml:space="preserve">
+    <value>Inscription et connexion</value>
+  </data>
+  <data name="Sign-up is closed on this server. Ask an admin." xml:space="preserve">
+    <value>Les inscriptions sont fermées sur ce serveur. Demandez à un administrateur.</value>
+  </data>
+  <data name="Signed in" xml:space="preserve">
+    <value>Connecté</value>
+  </data>
+  <data name="Signed in {0} · active {1}" xml:space="preserve">
+    <value>Connecté le {0} · actif {1}</value>
+  </data>
+  <data name="Signed out everyone else" xml:space="preserve">
+    <value>Tous les autres ont été déconnectés</value>
+  </data>
+  <data name="Signed out everywhere" xml:space="preserve">
+    <value>Déconnecté partout</value>
+  </data>
+  <data name="Signed-in Web UI devices, active in the last week." xml:space="preserve">
+    <value>Appareils connectés au Web UI, actifs la semaine dernière.</value>
+  </data>
+  <data name="Signed-in devices" xml:space="preserve">
+    <value>Appareils connectés</value>
+  </data>
+  <data name="Skip for now" xml:space="preserve">
+    <value>Passer pour l'instant</value>
+  </data>
+  <data name="Song" xml:space="preserve">
+    <value>Chanson</value>
+  </data>
+  <data name="Song ID" xml:space="preserve">
+    <value>ID de chanson</value>
+  </data>
+  <data name="Song intros" xml:space="preserve">
+    <value>Présentations de chansons</value>
+  </data>
+  <data name="Song name or ID" xml:space="preserve">
+    <value>Nom ou ID de chanson</value>
+  </data>
+  <data name="Song pages" xml:space="preserve">
+    <value>Pages des chansons</value>
+  </data>
+  <data name="Song select defaults" xml:space="preserve">
+    <value>Choix de chansons par défaut</value>
+  </data>
+  <data name="Song {0}" xml:space="preserve">
+    <value>Chanson {0}</value>
+  </data>
+  <data name="Songs" xml:space="preserve">
+    <value>Chansons</value>
+  </data>
+  <data name="Songs played" xml:space="preserve">
+    <value>Chansons jouées</value>
+  </data>
+  <data name="Sort" xml:space="preserve">
+    <value>Trier</value>
+  </data>
+  <data name="Sort by {0} stars" xml:space="preserve">
+    <value>Trier par étoiles en {0}</value>
+  </data>
+  <data name="Soul gauge %" xml:space="preserve">
+    <value>Jauge d'âme %</value>
+  </data>
+  <data name="Soul gauge + up to {0} more" xml:space="preserve">
+    <value>Jauge d'âme + jusqu'à {0} de plus</value>
+  </data>
+  <data name="Star" xml:space="preserve">
+    <value>Étoiles</value>
+  </data>
+  <data name="Stars" xml:space="preserve">
+    <value>Étoiles</value>
+  </data>
+  <data name="Stars (high first)" xml:space="preserve">
+    <value>Étoiles (décroissant)</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>Début</value>
+  </data>
+  <data name="Start from a copy of" xml:space="preserve">
+    <value>Partir d'une copie de</value>
+  </data>
+  <data name="Start maintenance?" xml:space="preserve">
+    <value>Lancer la maintenance ?</value>
+  </data>
+  <data name="Starts" xml:space="preserve">
+    <value>Commence</value>
+  </data>
+  <data name="Stats" xml:space="preserve">
+    <value>Statistiques</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="Stop comparing" xml:space="preserve">
+    <value>Arrêter la comparaison</value>
+  </data>
+  <data name="Style" xml:space="preserve">
+    <value>Style</value>
+  </data>
+  <data name="Successful" xml:space="preserve">
+    <value>Réussies</value>
+  </data>
+  <data name="Swap don and ka" xml:space="preserve">
+    <value>Inverser don et ka</value>
+  </data>
+  <data name="Switch to dark mode" xml:space="preserve">
+    <value>Passer en mode sombre</value>
+  </data>
+  <data name="Switch to light mode" xml:space="preserve">
+    <value>Passer en mode clair</value>
+  </data>
+  <data name="Taiko Mode" xml:space="preserve">
+    <value>Mode Taiko</value>
+  </data>
+  <data name="Take the server offline?" xml:space="preserve">
+    <value>Mettre le serveur hors ligne ?</value>
+  </data>
+  <data name="That access code is already bound to a user." xml:space="preserve">
+    <value>Ce code d'accès est déjà lié à un utilisateur.</value>
+  </data>
+  <data name="That card is already yours." xml:space="preserve">
+    <value>Cette carte est déjà à vous.</value>
+  </data>
+  <data name="That code didn't work. Check the key was typed in exactly, then try the newest code." xml:space="preserve">
+    <value>Ce code n'a pas fonctionné. Vérifiez que la clé a été saisie exactement, puis essayez le code le plus récent.</value>
+  </data>
+  <data name="That code didn't work. Codes change every 30 seconds, so try the newest one." xml:space="preserve">
+    <value>Ce code n'a pas fonctionné. Les codes changent toutes les 30 secondes, essayez le plus récent.</value>
+  </data>
+  <data name="That recovery code didn't work. Each one works only once." xml:space="preserve">
+    <value>Ce code de récupération n'a pas fonctionné. Chacun ne sert qu'une fois.</value>
+  </data>
+  <data name="That setup code isn't right. It changes every time the server starts: check the console again." xml:space="preserve">
+    <value>Ce code de configuration est incorrect. Il change à chaque démarrage du serveur : vérifiez à nouveau la console.</value>
+  </data>
+  <data name="That took too long. Enter your password again." xml:space="preserve">
+    <value>C'était trop long. Saisissez à nouveau votre mot de passe.</value>
+  </data>
+  <data name="That user has the maximum number of access codes." xml:space="preserve">
+    <value>Cet utilisateur a le nombre maximal de codes d'accès.</value>
+  </data>
+  <data name="The 20 digits on your card or Banapass. Spaces are added for you." xml:space="preserve">
+    <value>Les 20 chiffres de votre carte ou Banapass. Les espaces sont ajoutés pour vous.</value>
+  </data>
+  <data name="The 20-digit number on the back of the card. The cabinet also shows it after you scan." xml:space="preserve">
+    <value>Le numéro à 20 chiffres au dos de la carte. La borne l'affiche aussi après le scan.</value>
+  </data>
+  <data name="The built-in set can't be deleted." xml:space="preserve">
+    <value>L'ensemble intégré ne peut pas être supprimé.</value>
+  </data>
+  <data name="The default set ({0})" xml:space="preserve">
+    <value>L'ensemble par défaut ({0})</value>
+  </data>
+  <data name="The default set: the game serves it to every cabinet." xml:space="preserve">
+    <value>L'ensemble par défaut : le jeu le sert à toutes les bornes.</value>
+  </data>
+  <data name="The end must be after the start." xml:space="preserve">
+    <value>La fin doit être après le début.</value>
+  </data>
+  <data name="The file is missing." xml:space="preserve">
+    <value>Le fichier est manquant.</value>
+  </data>
+  <data name="The game files are in place." xml:space="preserve">
+    <value>Les fichiers du jeu sont en place.</value>
+  </data>
+  <data name="The server is ready" xml:space="preserve">
+    <value>Le serveur est prêt</value>
+  </data>
+  <data name="The server still uses the previous contents." xml:space="preserve">
+    <value>Le serveur utilise toujours le contenu précédent.</value>
+  </data>
+  <data name="The server still uses the previous contents. Saving here rewrites and fixes the file." xml:space="preserve">
+    <value>Le serveur utilise toujours le contenu précédent. Enregistrer ici réécrit et corrige le fichier.</value>
+  </data>
+  <data name="The ticker cabinets show. Cabinets pick changes up on their next startup." xml:space="preserve">
+    <value>Le bandeau défilant des bornes. Les bornes l'appliquent à leur prochain démarrage.</value>
+  </data>
+  <data name="Theme colour" xml:space="preserve">
+    <value>Couleur du thème</value>
+  </data>
+  <data name="They prove the card with when they last played it, or an invite code." xml:space="preserve">
+    <value>Ils prouvent la carte avec leur dernière partie, ou un code d'invitation.</value>
+  </data>
+  <data name="They register again" xml:space="preserve">
+    <value>Ils doivent se réinscrire</value>
+  </data>
+  <data name="This card belongs to another player. Ask an admin to move it to you." xml:space="preserve">
+    <value>Cette carte appartient à un autre joueur. Demandez à un administrateur de vous la transférer.</value>
+  </data>
+  <data name="This card is banned on this server. Ask an admin." xml:space="preserve">
+    <value>Cette carte est bannie sur ce serveur. Demandez à un administrateur.</value>
+  </data>
+  <data name="This device" xml:space="preserve">
+    <value>Cet appareil</value>
+  </data>
+  <data name="This file didn't load" xml:space="preserve">
+    <value>Ce fichier n'a pas pu être chargé</value>
+  </data>
+  <data name="This is the only time it's shown. Copy it now." xml:space="preserve">
+    <value>C'est la seule fois qu'il est affiché. Copiez-le maintenant.</value>
+  </data>
+  <data name="This page is being redesigned and will be back soon." xml:space="preserve">
+    <value>Cette page est en cours de refonte et reviendra bientôt.</value>
+  </data>
+  <data name="This server needs an invite code from an admin." xml:space="preserve">
+    <value>Ce serveur exige un code d'invitation d'un administrateur.</value>
+  </data>
+  <data name="This server requires 2-step verification for admins. Your admin pages open once it's on." xml:space="preserve">
+    <value>Ce serveur exige la validation en 2 étapes pour les administrateurs. Vos pages d'administration s'ouvrent une fois activée.</value>
+  </data>
+  <data name="This song is in the list more than once." xml:space="preserve">
+    <value>Cette chanson figure plusieurs fois dans la liste.</value>
+  </data>
+  <data name="This song isn't on the server." xml:space="preserve">
+    <value>Cette chanson n'est pas sur le serveur.</value>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>Heure</value>
+  </data>
+  <data name="Time-limited songs" xml:space="preserve">
+    <value>Chansons à durée limitée</value>
+  </data>
+  <data name="Tip: paste the whole code, dashes and all." xml:space="preserve">
+    <value>Astuce : collez le code entier, tirets compris.</value>
+  </data>
+  <data name="Title plates" xml:space="preserve">
+    <value>Plaques de titre</value>
+  </data>
+  <data name="Titles" xml:space="preserve">
+    <value>Titres</value>
+  </data>
+  <data name="To make new recovery codes, enter a code from your app:" xml:space="preserve">
+    <value>Pour créer de nouveaux codes de récupération, saisissez un code de votre application :</value>
+  </data>
+  <data name="To turn it off, enter a code from your app (or a recovery code):" xml:space="preserve">
+    <value>Pour la désactiver, saisissez un code de votre application (ou un code de récupération) :</value>
+  </data>
+  <data name="Today" xml:space="preserve">
+    <value>Aujourd'hui</value>
+  </data>
+  <data name="Token for {0}" xml:space="preserve">
+    <value>Jeton pour {0}</value>
+  </data>
+  <data name="Tokens" xml:space="preserve">
+    <value>Jetons</value>
+  </data>
+  <data name="Too many wrong passwords. This account is locked for a while: try again later, or ask an admin." xml:space="preserve">
+    <value>Trop de mots de passe erronés. Ce compte est verrouillé un moment : réessayez plus tard ou demandez à un administrateur.</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="Trust this browser for 30 days" xml:space="preserve">
+    <value>Faire confiance à ce navigateur pendant 30 jours</value>
+  </data>
+  <data name="Turn off" xml:space="preserve">
+    <value>Désactiver</value>
+  </data>
+  <data name="Turn on 2-step verification to use the admin pages." xml:space="preserve">
+    <value>Activez la validation en 2 étapes pour utiliser les pages d'administration.</value>
+  </data>
+  <data name="Turn your screen brightness up if the reader doesn't pick it up." xml:space="preserve">
+    <value>Augmentez la luminosité de l'écran si le lecteur ne le capte pas.</value>
+  </data>
+  <data name="Turn yours off in Settings › Security." xml:space="preserve">
+    <value>Désactivez la vôtre dans Paramètres › Sécurité.</value>
+  </data>
+  <data name="Two-player charts in the song list" xml:space="preserve">
+    <value>Partitions à deux joueurs dans la liste des chansons</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Type anything" xml:space="preserve">
+    <value>Écrivez ce que vous voulez</value>
+  </data>
+  <data name="Unban" xml:space="preserve">
+    <value>Débannir</value>
+  </data>
+  <data name="Unbanned" xml:space="preserve">
+    <value>Débannie</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>Débloquer</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>Inconnu</value>
+  </data>
+  <data name="Unknown access code" xml:space="preserve">
+    <value>Code d'accès inconnu</value>
+  </data>
+  <data name="Unknown song" xml:space="preserve">
+    <value>Chanson inconnue</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Déverrouiller</value>
+  </data>
+  <data name="Unlocked" xml:space="preserve">
+    <value>Déverrouillé</value>
+  </data>
+  <data name="Unlocks" xml:space="preserve">
+    <value>Déblocages</value>
+  </data>
+  <data name="Unsaved changes" xml:space="preserve">
+    <value>Modifications non enregistrées</value>
+  </data>
+  <data name="Until {0}" xml:space="preserve">
+    <value>Jusqu'au {0}</value>
+  </data>
+  <data name="Use" xml:space="preserve">
+    <value>Utiliser</value>
+  </data>
+  <data name="Use Log out for your own devices." xml:space="preserve">
+    <value>Utilisez Se déconnecter pour vos propres appareils.</value>
+  </data>
+  <data name="Use Log out to end it." xml:space="preserve">
+    <value>Utilisez Se déconnecter pour la terminer.</value>
+  </data>
+  <data name="Use a recovery code" xml:space="preserve">
+    <value>Utiliser un code de récupération</value>
+  </data>
+  <data name="Use an invite code instead" xml:space="preserve">
+    <value>Utiliser plutôt un code d'invitation</value>
+  </data>
+  <data name="Use at least 8 characters." xml:space="preserve">
+    <value>Utilisez au moins 8 caractères.</value>
+  </data>
+  <data name="Use the access code on your card and your web UI password." xml:space="preserve">
+    <value>Utilisez le code d'accès de votre carte et votre mot de passe Web UI.</value>
+  </data>
+  <data name="Use this cabinet's own settings" xml:space="preserve">
+    <value>Utiliser les réglages propres à cette borne</value>
+  </data>
+  <data name="Use your authenticator app" xml:space="preserve">
+    <value>Utiliser votre application d'authentification</value>
+  </data>
+  <data name="Use your last play time instead" xml:space="preserve">
+    <value>Utiliser plutôt votre dernière partie</value>
+  </data>
+  <data name="Used with your access code to log in here." xml:space="preserve">
+    <value>Utilisé avec votre code d'accès pour vous connecter ici.</value>
+  </data>
+  <data name="Used {0} from {1}" xml:space="preserve">
+    <value>Utilisé le {0} depuis {1}</value>
+  </data>
+  <data name="User Management" xml:space="preserve">
+    <value>Gestion des utilisateurs</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>Vérifier</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="View don-chan larger" xml:space="preserve">
+    <value>Voir Don-chan en grand</value>
+  </data>
+  <data name="View larger" xml:space="preserve">
+    <value>Agrandir</value>
+  </data>
+  <data name="WIN" xml:space="preserve">
+    <value>GAGNÉ</value>
+  </data>
+  <data name="Waiting for approval" xml:space="preserve">
+    <value>En attente d'approbation</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Avertissement</value>
+  </data>
+  <data name="Warnings {0}" xml:space="preserve">
+    <value>Avertissements {0}</value>
+  </data>
+  <data name="Web UI account" xml:space="preserve">
+    <value>Compte Web UI</value>
+  </data>
+  <data name="What uses it, e.g. Discord bot" xml:space="preserve">
+    <value>Ce qui l'utilise, ex. bot Discord</value>
+  </data>
+  <data name="What's your access code?" xml:space="preserve">
+    <value>Quel est votre code d'accès ?</value>
+  </data>
+  <data name="Where {0} is ahead" xml:space="preserve">
+    <value>Là où {0} est devant</value>
+  </data>
+  <data name="Who can sign up" xml:space="preserve">
+    <value>Qui peut s'inscrire</value>
+  </data>
+  <data name="Who can sign up is set in Admin › Access." xml:space="preserve">
+    <value>Qui peut s'inscrire se règle dans Admin › Accès.</value>
+  </data>
+  <data name="Whose data to show. Remembered on this device." xml:space="preserve">
+    <value>Les données à afficher. Mémorisé sur cet appareil.</value>
+  </data>
+  <data name="Won against the AI" xml:space="preserve">
+    <value>Gagné contre l'IA</value>
+  </data>
+  <data name="Write a title or a message." xml:space="preserve">
+    <value>Écrivez un titre ou un message.</value>
+  </data>
+  <data name="Wrong 2-step code" xml:space="preserve">
+    <value>Mauvais code de validation en 2 étapes</value>
+  </data>
+  <data name="Wrong password" xml:space="preserve">
+    <value>Mauvais mot de passe</value>
+  </data>
+  <data name="Yesterday" xml:space="preserve">
+    <value>Hier</value>
+  </data>
+  <data name="You can't change your own admin role." xml:space="preserve">
+    <value>Vous ne pouvez pas modifier votre propre rôle d'administrateur.</value>
+  </data>
+  <data name="You can't delete yourself." xml:space="preserve">
+    <value>Vous ne pouvez pas vous supprimer vous-même.</value>
+  </data>
+  <data name="You have the most cards this server allows ({0}). Remove one to add another." xml:space="preserve">
+    <value>Vous avez le maximum de cartes autorisé par ce serveur ({0}). Retirez-en une pour en ajouter une autre.</value>
+  </data>
+  <data name="You haven't played {0} on {1} yet." xml:space="preserve">
+    <value>Vous n'avez pas encore joué {0} en {1}.</value>
+  </data>
+  <data name="You vs {0}" xml:space="preserve">
+    <value>Vous contre {0}</value>
+  </data>
+  <data name="You'll use it with your access code to log in here." xml:space="preserve">
+    <value>Vous l'utiliserez avec votre code d'accès pour vous connecter ici.</value>
+  </data>
+  <data name="You're &lt;b&gt;#{0}&lt;/b&gt; of {1}" xml:space="preserve">
+    <value>Vous êtes &lt;b&gt;n°{0}&lt;/b&gt; sur {1}</value>
+  </data>
+  <data name="You're registered" xml:space="preserve">
+    <value>Vous êtes inscrit</value>
+  </data>
+  <data name="Your best · {0}" xml:space="preserve">
+    <value>Votre meilleur · {0}</value>
+  </data>
+  <data name="Your cards" xml:space="preserve">
+    <value>Vos cartes</value>
+  </data>
+  <data name="Your highest pass (outlined) is the badge on your nameplate. On this page the card shows your Dani Dojo outfit." xml:space="preserve">
+    <value>Votre plus haute réussite (encadrée) est le badge de votre plaque. Sur cette page, la carte affiche votre tenue Dani Dojo.</value>
+  </data>
+  <data name="Your only card can't be removed." xml:space="preserve">
+    <value>Votre seule carte ne peut pas être retirée.</value>
+  </data>
+  <data name="Your own title" xml:space="preserve">
+    <value>Votre propre titre</value>
+  </data>
+  <data name="Your results" xml:space="preserve">
+    <value>Vos résultats</value>
+  </data>
+  <data name="as shown in game" xml:space="preserve">
+    <value>tel qu'affiché en jeu</value>
+  </data>
+  <data name="by {0}" xml:space="preserve">
+    <value>par {0}</value>
+  </data>
+  <data name="extract.exe isn't next to TaikoLocalServer.exe, so run it yourself:" xml:space="preserve">
+    <value>extract.exe n'est pas à côté de TaikoLocalServer.exe, lancez-le vous-même :</value>
+  </data>
+  <data name="for 1 day" xml:space="preserve">
+    <value>pendant 1 jour</value>
+  </data>
+  <data name="for 1 hour" xml:space="preserve">
+    <value>pendant 1 heure</value>
+  </data>
+  <data name="for 15 min" xml:space="preserve">
+    <value>pendant 15 min</value>
+  </data>
+  <data name="now" xml:space="preserve">
+    <value>maintenant</value>
+  </data>
+  <data name="of {0}" xml:space="preserve">
+    <value>sur {0}</value>
+  </data>
+  <data name="or pick one of the game's titles" xml:space="preserve">
+    <value>ou choisissez l'un des titres du jeu</value>
+  </data>
+  <data name="over {0} play" xml:space="preserve">
+    <value>sur {0} partie</value>
+  </data>
+  <data name="over {0} plays" xml:space="preserve">
+    <value>sur {0} parties</value>
+  </data>
+  <data name="played in this order" xml:space="preserve">
+    <value>jouées dans cet ordre</value>
+  </data>
+  <data name="{0} Donderful" xml:space="preserve">
+    <value>{0} Donderful</value>
+  </data>
+  <data name="{0} credit" xml:space="preserve">
+    <value>{0} crédit</value>
+  </data>
+  <data name="{0} credits" xml:space="preserve">
+    <value>{0} crédits</value>
+  </data>
+  <data name="{0} days ago" xml:space="preserve">
+    <value>il y a {0} jours</value>
+  </data>
+  <data name="{0} devices · last active {1}" xml:space="preserve">
+    <value>{0} appareils · actif {1}</value>
+  </data>
+  <data name="{0} isn't ahead of you anywhere here." xml:space="preserve">
+    <value>{0} n'est devant vous nulle part ici.</value>
+  </data>
+  <data name="{0} more. Keep typing to narrow it down." xml:space="preserve">
+    <value>{0} de plus. Continuez à taper pour affiner.</value>
+  </data>
+  <data name="{0} new best" xml:space="preserve">
+    <value>{0} nouveau record</value>
+  </data>
+  <data name="{0} new bests" xml:space="preserve">
+    <value>{0} nouveaux records</value>
+  </data>
+  <data name="{0} new lines ↓" xml:space="preserve">
+    <value>{0} nouvelles lignes ↓</value>
+  </data>
+  <data name="{0} of the game's {1} movies selected." xml:space="preserve">
+    <value>{0} des {1} vidéos du jeu sélectionnées.</value>
+  </data>
+  <data name="{0} of {1}" xml:space="preserve">
+    <value>{0} sur {1}</value>
+  </data>
+  <data name="{0} of {1} cabinets online" xml:space="preserve">
+    <value>{0} bornes sur {1} en ligne</value>
+  </data>
+  <data name="{0} of {1} plays" xml:space="preserve">
+    <value>{0} parties sur {1}</value>
+  </data>
+  <data name="{0} of {1} sections won" xml:space="preserve">
+    <value>{0} sections gagnées sur {1}</value>
+  </data>
+  <data name="{0} of {1} songs" xml:space="preserve">
+    <value>{0} chansons sur {1}</value>
+  </data>
+  <data name="{0} of {1} {2} charts played" xml:space="preserve">
+    <value>{0} partitions {2} jouées sur {1}</value>
+  </data>
+  <data name="{0} play" xml:space="preserve">
+    <value>{0} partie</value>
+  </data>
+  <data name="{0} play today" xml:space="preserve">
+    <value>{0} partie aujourd'hui</value>
+  </data>
+  <data name="{0} player" xml:space="preserve">
+    <value>{0} joueur</value>
+  </data>
+  <data name="{0} players" xml:space="preserve">
+    <value>{0} joueurs</value>
+  </data>
+  <data name="{0} plays" xml:space="preserve">
+    <value>{0} parties</value>
+  </data>
+  <data name="{0} plays today" xml:space="preserve">
+    <value>{0} parties aujourd'hui</value>
+  </data>
+  <data name="{0} recovery codes left." xml:space="preserve">
+    <value>{0} codes de récupération restants.</value>
+  </data>
+  <data name="{0} sections" xml:space="preserve">
+    <value>{0} sections</value>
+  </data>
+  <data name="{0} song" xml:space="preserve">
+    <value>{0} chanson</value>
+  </data>
+  <data name="{0} songs" xml:space="preserve">
+    <value>{0} chansons</value>
+  </data>
+  <data name="{0} to fix, {1} warnings" xml:space="preserve">
+    <value>{0} à corriger, {1} avertissements</value>
+  </data>
+  <data name="{0} tries" xml:space="preserve">
+    <value>{0} essais</value>
+  </data>
+  <data name="{0}: a pass condition is empty." xml:space="preserve">
+    <value>{0} : une condition de réussite est vide.</value>
+  </data>
+  <data name="{0}: a song isn't on this server." xml:space="preserve">
+    <value>{0} : une chanson n'est pas sur ce serveur.</value>
+  </data>
+  <data name="{0}: {1} play" xml:space="preserve">
+    <value>{0} : {1} partie</value>
+  </data>
+  <data name="{0}: {1} plays" xml:space="preserve">
+    <value>{0} : {1} parties</value>
+  </data>
+  <data name="{0}–{1} of {2}" xml:space="preserve">
+    <value>{0}–{1} sur {2}</value>
+  </data>
+  <data name="Pop" xml:space="preserve">
+    <value>Pop</value>
+  </data>
+  <data name="Anime" xml:space="preserve">
+    <value>Anime</value>
+  </data>
+  <data name="Kids" xml:space="preserve">
+    <value>Enfants</value>
+  </data>
+  <data name="Vocaloid" xml:space="preserve">
+    <value>Vocaloid</value>
+  </data>
+  <data name="Game Music" xml:space="preserve">
+    <value>Musique de jeu</value>
+  </data>
+  <data name="NAMCO Original" xml:space="preserve">
+    <value>NAMCO Original</value>
+  </data>
+  <data name="Variety" xml:space="preserve">
+    <value>Variété</value>
+  </data>
+  <data name="Classical" xml:space="preserve">
+    <value>Classique</value>
+  </data>
+  <data name="Song title" xml:space="preserve">
+    <value>Titre de la chanson</value>
+  </data>
+  <data name="Notice title" xml:space="preserve">
+    <value>Titre de l'annonce</value>
   </data>
 </root>

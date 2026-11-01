@@ -42,7 +42,7 @@ public class UsersController(ITaikoDbContext context, IServerAccess access) : Ba
         if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
             return forbid;
         var profile = await context.UserWebProfiles.FindAsync([baid], HttpContext.RequestAborted);
-        return new UiTheme { Dark = profile?.DarkMode, Accent = profile?.Accent };
+        return new UiTheme { Dark = profile?.DarkMode, Accent = profile?.Accent, Language = profile?.Language };
     }
 
     [HttpPut("{baid}/Theme")]
@@ -52,10 +52,13 @@ public class UsersController(ITaikoDbContext context, IServerAccess access) : Ba
             return forbid;
         if (theme.Accent is { } a && (a.Length > 20 || !a.All(char.IsAsciiLetterLower)))
             return BadRequest(new { message = "Unknown accent." });
+        if (theme.Language is { } l && (l.Length is 0 or > 16 || !l.All(c => char.IsAsciiLetter(c) || c == '-')))
+            return BadRequest(new { message = "Unknown language." });
         var profile = await context.UserWebProfiles.FindAsync([baid], HttpContext.RequestAborted);
         if (profile is null) return NotFound();
         profile.DarkMode = theme.Dark ?? profile.DarkMode;
         profile.Accent = theme.Accent ?? profile.Accent;
+        profile.Language = theme.Language ?? profile.Language;
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return NoContent();
     }

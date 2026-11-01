@@ -129,12 +129,6 @@
   <data name="Log In" xml:space="preserve">
     <value />
   </data>
-  <data name="Achievement Panel" xml:space="preserve">
-    <value />
-  </data>
-  <data name="Achievement Panel Difficulty" xml:space="preserve">
-    <value />
-  </data>
   <data name="AI Battle Data" xml:space="preserve">
     <value />
   </data>
@@ -156,9 +150,6 @@
   <data name="High Scores" xml:space="preserve">
     <value />
   </data>
-  <data name="Access Codes" xml:space="preserve">
-    <value />
-  </data>
   <data name="Add Access Code" xml:space="preserve">
     <value />
   </data>
@@ -174,16 +165,10 @@
   <data name="Old Password" xml:space="preserve">
     <value />
   </data>
-  <data name="New Password" xml:space="preserve">
-    <value />
-  </data>
   <data name="Confirm New Password" xml:space="preserve">
     <value />
   </data>
   <data name="Dialog OK" xml:space="preserve">
-    <value />
-  </data>
-  <data name="QR Code" xml:space="preserve">
     <value />
   </data>
   <data name="Fifth Kyuu" xml:space="preserve">
@@ -327,9 +312,6 @@
   <data name="Copy to Clipboard" xml:space="preserve">
     <value />
   </data>
-  <data name="Invite Code" xml:space="preserve">
-    <value />
-  </data>
   <data name="Error" xml:space="preserve">
     <value />
   </data>
@@ -355,9 +337,6 @@
     <value />
   </data>
   <data name="Password is Required" xml:space="preserve">
-    <value />
-  </data>
-  <data name="Confirm Password" xml:space="preserve">
     <value />
   </data>
   <data name="Confirm Password is Required" xml:space="preserve">
@@ -462,9 +441,6 @@
   <data name="ID" xml:space="preserve">
     <value />
   </data>
-  <data name="Edit Profile" xml:space="preserve">
-    <value />
-  </data>
   <data name="Access Code Delete Confirm" xml:space="preserve">
     <value />
   </data>
@@ -567,7 +543,7 @@
   <data name="Default" xml:space="preserve">
     <value />
   </data>
-  <data name="Not Cleared" xml:space="preserve">
+  <data name="Not Cleared First" xml:space="preserve">
     <value />
   </data>
   <data name="Not Full Combo" xml:space="preserve">
@@ -648,12 +624,6 @@
   <data name="Change Password" xml:space="preserve">
     <value />
   </data>
-  <data name="Reset Password" xml:space="preserve">
-    <value />
-  </data>
-  <data name="Delete User" xml:space="preserve">
-    <value />
-  </data>
   <data name="Welcome to TaikoWebUI!" xml:space="preserve">
     <value />
   </data>
@@ -673,9 +643,6 @@
     <value />
   </data>
   <data name="Drumroll" xml:space="preserve">
-    <value />
-  </data>
-  <data name="MAX Combo" xml:space="preserve">
     <value />
   </data>
   <data name="Played" xml:space="preserve">
@@ -871,9 +838,6 @@
     <value />
   </data>
   <data name="Remove Admin Confirm" xml:space="preserve">
-    <value />
-  </data>
-  <data name="Delete User Confirm" xml:space="preserve">
     <value />
   </data>
   <data name="Delete User Hint" xml:space="preserve">

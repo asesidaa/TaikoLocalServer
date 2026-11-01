@@ -337,7 +337,7 @@
         </select>
         <select aria-label="@Localizer["Sort"]" class="@Css.Input !w-auto !py-2" value="@F.Sort" @onchange='e => Change(() => F.Sort = e.Value?.ToString() ?? "id")'>
             <option value="id">@Localizer["Song ID"]</option>
-            <option value="title">@Localizer["Title"]</option>
+            <option value="title">@Localizer["Song title"]</option>
             <option value="stars">@Localizer["Stars (high first)"]</option>
         </select>
     };

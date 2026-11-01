@@ -129,12 +129,6 @@
   <data name="Log In" xml:space="preserve">
     <value>Log In</value>
   </data>
-  <data name="Achievement Panel" xml:space="preserve">
-    <value>Achievement Panel</value>
-  </data>
-  <data name="Achievement Panel Difficulty" xml:space="preserve">
-    <value>Achievement Panel Difficulty</value>
-  </data>
   <data name="AI Battle Data" xml:space="preserve">
     <value>AI Battle Data</value>
   </data>
@@ -156,9 +150,6 @@
   <data name="High Scores" xml:space="preserve">
     <value>High Scores</value>
   </data>
-  <data name="Access Codes" xml:space="preserve">
-    <value>Manage Access Codes</value>
-  </data>
   <data name="Add Access Code" xml:space="preserve">
     <value>Add Access Code</value>
   </data>
@@ -174,17 +165,11 @@
   <data name="Old Password" xml:space="preserve">
     <value>Old Password</value>
   </data>
-  <data name="New Password" xml:space="preserve">
-    <value>New Password</value>
-  </data>
   <data name="Confirm New Password" xml:space="preserve">
     <value>Confirm New Password</value>
   </data>
   <data name="Dialog OK" xml:space="preserve">
     <value>OK</value>
-  </data>
-  <data name="QR Code" xml:space="preserve">
-    <value>QR Code</value>
   </data>
   <data name="Fifth Kyuu" xml:space="preserve">
     <value>5th Kyuu</value>
@@ -327,9 +312,6 @@
   <data name="Copy to Clipboard" xml:space="preserve">
     <value>Copy to Clipboard</value>
   </data>
-  <data name="Invite Code" xml:space="preserve">
-    <value>Invite Code</value>
-  </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
   </data>
@@ -356,9 +338,6 @@
   </data>
   <data name="Password is Required" xml:space="preserve">
     <value>Password is required</value>
-  </data>
-  <data name="Confirm Password" xml:space="preserve">
-    <value>Confirm Password</value>
   </data>
   <data name="Confirm Password is Required" xml:space="preserve">
     <value>Confirm password is required</value>
@@ -462,9 +441,6 @@
   <data name="ID" xml:space="preserve">
     <value>ID</value>
   </data>
-  <data name="Edit Profile" xml:space="preserve">
-    <value>Edit Profile</value>
-  </data>
   <data name="Access Code Delete Confirm" xml:space="preserve">
     <value>Are you sure you want to delete this access code?</value>
   </data>
@@ -567,7 +543,7 @@
   <data name="Default" xml:space="preserve">
     <value>Default</value>
   </data>
-  <data name="Not Cleared" xml:space="preserve">
+  <data name="Not Cleared First" xml:space="preserve">
     <value>Not Cleared</value>
   </data>
   <data name="Not Full Combo" xml:space="preserve">
@@ -648,12 +624,6 @@
   <data name="Change Password" xml:space="preserve">
     <value>Change Password</value>
   </data>
-  <data name="Reset Password" xml:space="preserve">
-    <value>Reset Password</value>
-  </data>
-  <data name="Delete User" xml:space="preserve">
-    <value>Delete User</value>
-  </data>
   <data name="Welcome to TaikoWebUI!" xml:space="preserve">
     <value>Welcome to TaikoWebUI!</value>
   </data>
@@ -674,9 +644,6 @@
   </data>
   <data name="Drumroll" xml:space="preserve">
     <value>Drumroll</value>
-  </data>
-  <data name="MAX Combo" xml:space="preserve">
-    <value>MAX Combo</value>
   </data>
   <data name="Played" xml:space="preserve">
     <value>Date</value>
@@ -872,9 +839,6 @@
   </data>
   <data name="Remove Admin Confirm" xml:space="preserve">
     <value>{0} will keep their account and scores, but lose access to the admin pages.</value>
-  </data>
-  <data name="Delete User Confirm" xml:space="preserve">
-    <value>This deletes {0}, their scores, play history, Dani Dojo results and access codes. Type their name to confirm.</value>
   </data>
   <data name="Delete User Hint" xml:space="preserve">
     <value>Deletes the user, their scores, play history and access codes.</value>

@@ -342,7 +342,7 @@
     };
 
     private string CostumeName(string kind, uint id) =>
-        costumes.FirstOrDefault(c => c.CostumeType == kind && c.CostumeId == id) is { } c ? (c.CostumeNameEN.Length > 0 ? c.CostumeNameEN : c.CostumeName) : "";
+        GameDataService.GetCostumeName(costumes, kind, id, CultureInfo.CurrentCulture.ToString());
 
     private string TitleName(string kind, uint id) =>
         kind == "title" && titles.TryGetValue(id, out var t) ? (t.TitleNameEN.Length > 0 ? t.TitleNameEN : t.TitleName)

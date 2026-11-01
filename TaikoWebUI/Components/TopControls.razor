@@ -1,5 +1,5 @@
 @* Top-bar controls: language, theme colour, light/dark. Menus close on an outside click or Escape.
-   Signed in, the theme follows the account: loaded on start, saved on each change. *@
+   Signed in, the theme and language follow the account: loaded on start, saved on each change. *@
 @inject IJSRuntime Js
 @inject AuthService AuthService
 @inject HttpClient Client
@@ -91,6 +91,13 @@
                 var saved = await Client.GetFromJsonAsync<UiTheme>($"api/Users/{AuthService.GetLoggedInBaid()}/Theme");
                 if (saved?.Dark is { } d && d != dark) await Js.InvokeVoidAsync("ui.setDark", dark = d);
                 if (saved?.Accent is { } a && a != accent && Accents.Any(x => x.Id == a)) await Js.InvokeVoidAsync("ui.setAccent", accent = a);
+                // Another browser picked a different language: switch to it (a culture change needs a reload).
+                if (saved?.Language is { } lang && lang != CultureInfo.CurrentUICulture.Name && Settings.Value.SupportedLanguages.Any(l => l.CultureCode == lang))
+                {
+                    await Js.InvokeVoidAsync("blazorCulture.set", lang);
+                    Nav.NavigateTo(Nav.Uri, forceLoad: true);
+                    return;
+                }
             }
             catch (HttpRequestException)
             {
@@ -121,6 +128,7 @@
     {
         menu = null;
         await Js.InvokeVoidAsync("blazorCulture.set", code);
+        await Save(new UiTheme { Language = code });
         Nav.NavigateTo(Nav.Uri, forceLoad: true);
     }
 

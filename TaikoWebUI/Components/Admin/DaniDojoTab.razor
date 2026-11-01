@@ -429,9 +429,9 @@
         <div class="flex flex-wrap items-center gap-2 text-xs">
             <span class="w-16 @Css.Muted">@label</span>
             <label class="flex items-center gap-1.5"><span class="size-2 rounded-full bg-red-500"></span>
-                <input type="number" min="0" class="@Css.Input !w-24 !py-1.5" aria-label='@($"{label} {Localizer["red"]}")' value="@r" @onchange="e => SetBorder(b, red, e)" /></label>
+                <input type="number" min="0" class="@Css.Input !w-24 !py-1.5" aria-label='@($"{label} {Localizer["Red"]}")' value="@r" @onchange="e => SetBorder(b, red, e)" /></label>
             <label class="flex items-center gap-1.5"><span class="size-2 rounded-full bg-amber-400"></span>
-                <input type="number" min="0" class="@Css.Input !w-24 !py-1.5" aria-label='@($"{label} {Localizer["gold"]}")' value="@g" @onchange="e => SetBorder(b, gold, e)" /></label>
+                <input type="number" min="0" class="@Css.Input !w-24 !py-1.5" aria-label='@($"{label} {Localizer["Gold"]}")' value="@g" @onchange="e => SetBorder(b, gold, e)" /></label>
             @if (easier)
             {
                 <span class="text-amber-600 dark:text-amber-400">@Localizer["Gold is easier than red."]</span>

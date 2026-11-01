@@ -16,7 +16,7 @@
                 {
                     <li class="flex items-center gap-2 text-sm">
                         <span class="min-w-0 flex-1 truncate font-medium">@l.Name</span>
-                        <span class="text-xs @Css.Muted">@string.Format(Localizer["until {0}"], l.Until.ToLocalTime().ToString("t"))</span>
+                        <span class="text-xs @Css.Muted">@string.Format(Localizer["Until {0}"], l.Until.ToLocalTime().ToString("t"))</span>
                         <button class="@Css.GhostButton !px-2.5 !py-1 text-xs" @onclick="() => Unlock(l.Baid)">@Localizer["Unlock"]</button>
                     </li>
                 }

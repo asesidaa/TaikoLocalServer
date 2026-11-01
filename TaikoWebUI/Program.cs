@@ -3,10 +3,12 @@ using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 using TaikoLocalServer.Contracts.AdminApi.Authorization;
 using TaikoLocalServer.Contracts.AdminApi.Responses;
 using TaikoWebUI.Authorization;
+using TaikoWebUI.Localization;
 using TaikoWebUI.Services;
 using TaikoWebUI.Settings;
 
@@ -100,5 +102,8 @@ else
 
 CultureInfo.DefaultThreadCurrentCulture = culture;
 CultureInfo.DefaultThreadCurrentUICulture = culture;
+
+var labels = host.Services.GetRequiredService<IStringLocalizer<LocalizationResource>>();
+GameData.T = s => labels[s];
 
 await host.RunAsync();

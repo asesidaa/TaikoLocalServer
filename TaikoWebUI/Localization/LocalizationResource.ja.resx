@@ -129,12 +129,6 @@
   <data name="Log In" xml:space="preserve">
     <value>ログイン</value>
   </data>
-  <data name="Achievement Panel" xml:space="preserve">
-    <value>総合成績パネル</value>
-  </data>
-  <data name="Achievement Panel Difficulty" xml:space="preserve">
-    <value>総合成績パネルの難易度</value>
-  </data>
   <data name="AI Battle Data" xml:space="preserve">
     <value>AIバトル演奏データ</value>
   </data>
@@ -156,9 +150,6 @@
   <data name="High Scores" xml:space="preserve">
     <value>自己ベスト</value>
   </data>
-  <data name="Access Codes" xml:space="preserve">
-    <value>アクセスコード管理</value>
-  </data>
   <data name="Add Access Code" xml:space="preserve">
     <value>アクセスコード追加</value>
   </data>
@@ -174,17 +165,11 @@
   <data name="Old Password" xml:space="preserve">
     <value>旧パスワード</value>
   </data>
-  <data name="New Password" xml:space="preserve">
-    <value>新しいパスワード</value>
-  </data>
   <data name="Confirm New Password" xml:space="preserve">
     <value>パスワードの再入力</value>
   </data>
   <data name="Dialog OK" xml:space="preserve">
     <value>確認</value>
-  </data>
-  <data name="QR Code" xml:space="preserve">
-    <value>QRコード</value>
   </data>
   <data name="Fifth Kyuu" xml:space="preserve">
     <value>五級</value>
@@ -327,9 +312,6 @@
   <data name="Copy to Clipboard" xml:space="preserve">
     <value>クリップボードにコピー</value>
   </data>
-  <data name="Invite Code" xml:space="preserve">
-    <value>招待コード</value>
-  </data>
   <data name="Error" xml:space="preserve">
     <value>エラー</value>
   </data>
@@ -356,9 +338,6 @@
   </data>
   <data name="Password is Required" xml:space="preserve">
     <value>パスワードが必要です</value>
-  </data>
-  <data name="Confirm Password" xml:space="preserve">
-    <value>パスワードの再入力</value>
   </data>
   <data name="Confirm Password is Required" xml:space="preserve">
     <value>アクセスコードの再入力が必要です</value>
@@ -462,9 +441,6 @@
   <data name="ID" xml:space="preserve">
     <value>ID</value>
   </data>
-  <data name="Edit Profile" xml:space="preserve">
-    <value>プロフィール編集</value>
-  </data>
   <data name="Access Code Delete Confirm" xml:space="preserve">
     <value>このアクセスコードを削除してもよろしいですか？</value>
   </data>
@@ -481,7 +457,7 @@
     <value>これにより、ユーザーの現在のパスワードは削除され、ユーザーは再度登録する必要があります。</value>
   </data>
   <data name="Delete User Confirm" xml:space="preserve">
-    <value>このユーザーのデータを本当に削除してもよろしいですか？&lt;br /&gt;関連するすべてのデータが削除され、この操作は元に戻せません！</value>
+    <value>{0}とそのスコア、プレイ履歴、段位道場の結果、アクセスコードを削除します。確認のため名前を入力してください。</value>
   </data>
   <data name="Delete User Success" xml:space="preserve">
     <value>ユーザーが正常に削除されました。</value>
@@ -567,7 +543,7 @@
   <data name="Default" xml:space="preserve">
     <value>デフォルト</value>
   </data>
-  <data name="Not Cleared" xml:space="preserve">
+  <data name="Not Cleared First" xml:space="preserve">
     <value>未クリア優先</value>
   </data>
   <data name="Not Full Combo" xml:space="preserve">
@@ -648,12 +624,6 @@
   <data name="Change Password" xml:space="preserve">
     <value>パスワード変更</value>
   </data>
-  <data name="Reset Password" xml:space="preserve">
-    <value>パスワードリセット</value>
-  </data>
-  <data name="Delete User" xml:space="preserve">
-    <value>ユーザー削除</value>
-  </data>
   <data name="Welcome to TaikoWebUI!" xml:space="preserve">
     <value>TaikoWebUIへようこそ!</value>
   </data>
@@ -674,9 +644,6 @@
   </data>
   <data name="Drumroll" xml:space="preserve">
     <value>連打</value>
-  </data>
-  <data name="MAX Combo" xml:space="preserve">
-    <value>最大コンボ数</value>
   </data>
   <data name="Played" xml:space="preserve">
     <value>ラストプレイ</value>
@@ -835,84 +802,2313 @@
     <value>双打曲表示</value>
   </data>
   <data name="Access Local Mode" xml:space="preserve">
-    <value>Access rules apply in Server mode only. This server runs in Local mode, so everyone can open every page.</value>
+    <value>アクセスルールはサーバーモードでのみ適用されます。このサーバーはローカルモードで動いているため、誰でもすべてのページを開けます。</value>
   </data>
   <data name="Access Rules Hint" xml:space="preserve">
-    <value>Who can create an account and sign in to the Web UI.</value>
+    <value>Web UIでアカウントを作成・ログインできる人。</value>
   </data>
   <data name="Register With Last Play Time Hint" xml:space="preserve">
-    <value>Players prove a card is theirs by entering when they last played it.</value>
+    <value>プレイヤーはカードで最後に遊んだ日時を入力して自分のカードであることを証明します。</value>
   </data>
   <data name="Free Profile Editing Hint" xml:space="preserve">
-    <value>Players can pick any title and costume part, not only the ones they have unlocked.</value>
+    <value>プレイヤーは解放済みのものに限らず、どの称号やきせかえパーツでも選べます。</value>
   </data>
   <data name="Save Failed" xml:space="preserve">
-    <value>Couldn’t save. Try again.</value>
+    <value>保存できませんでした。もう一度お試しください。</value>
   </data>
   <data name="Config Card Hint" xml:space="preserve">
-    <value>What the server read when it started. Change these in {0} and restart the server.</value>
+    <value>起動時にサーバーが読み込んだ内容です。{0}で変更してサーバーを再起動してください。</value>
   </data>
   <data name="Activity Hint" xml:space="preserve">
-    <value>Admin actions on users, scores and access codes. Kept for a year.</value>
+    <value>ユーザー、スコア、アクセスコードに対する管理者の操作。1年間保存されます。</value>
   </data>
   <data name="Invite Code Hint" xml:space="preserve">
-    <value>6 digits, valid 24 h. Lets them register.</value>
+    <value>6桁、24時間有効。これで登録できます。</value>
   </data>
   <data name="Move Code Hint" xml:space="preserve">
-    <value>Move {0} to another user. Scores already played with it stay here.</value>
+    <value>{0}を別のユーザーへ移動します。このカードで遊んだスコアはここに残ります。</value>
   </data>
   <data name="Invite Dialog Hint" xml:space="preserve">
-    <value>Give this code to the owner of {0}. They enter it when registering. It works for 24 hours.</value>
+    <value>このコードを{0}の持ち主に渡してください。登録時に入力します。24時間有効です。</value>
   </data>
   <data name="Reset Password Confirm" xml:space="preserve">
-    <value>{0} won’t be able to sign in until they register again. Their scores are kept.</value>
+    <value>{0}は再登録するまでログインできなくなります。スコアは残ります。</value>
   </data>
   <data name="Make Admin Confirm" xml:space="preserve">
-    <value>{0} will be able to manage every user and the server.</value>
+    <value>{0}はすべてのユーザーとサーバーを管理できるようになります。</value>
   </data>
   <data name="Remove Admin Confirm" xml:space="preserve">
-    <value>{0} will keep their account and scores, but lose access to the admin pages.</value>
-  </data>
-  <data name="Delete User Confirm" xml:space="preserve">
-    <value>This deletes {0}, their scores, play history, Dani Dojo results and access codes. Type their name to confirm.</value>
+    <value>{0}のアカウントとスコアは残りますが、管理ページは使えなくなります。</value>
   </data>
   <data name="Delete User Hint" xml:space="preserve">
-    <value>Deletes the user, their scores, play history and access codes.</value>
+    <value>ユーザーとそのスコア、プレイ履歴、アクセスコードを削除します。</value>
   </data>
   <data name="Remove Score Hint" xml:space="preserve">
-    <value>Removes the best score and the plays behind it from play history.</value>
+    <value>自己ベストと、その元になったプレイをプレイ履歴から削除します。</value>
   </data>
   <data name="Setup Code Hint" xml:space="preserve">
-    <value>This server has no admin yet. Look in the server console for a line like this one and enter its code.</value>
+    <value>このサーバーにはまだ管理者がいません。サーバーのコンソールでこのような行を探し、そのコードを入力してください。</value>
   </data>
   <data name="Game Files Hint" xml:space="preserve">
-    <value>Cabinets and these pages need files from the game install: song data, nameplates and the 3D don-chan. Run the extractor on the game folder:</value>
+    <value>筐体とこれらのページにはゲームのファイル（曲データ、ネームプレート、3Dどんちゃん）が必要です。ゲームフォルダーに対して抽出ツールを実行してください：</value>
   </data>
   <data name="Admin Account Hint" xml:space="preserve">
-    <value>Your card. It doesn’t need to have played on this server yet. If it already has an account, this becomes its password.</value>
+    <value>あなたのカード。このサーバーで遊んだことがなくても大丈夫です。すでにアカウントがある場合は、これがそのパスワードになります。</value>
   </data>
   <data name="Game Assets Hint" xml:space="preserve">
-    <value>Import assets from the game that are required by the WebUI.</value>
+    <value>Web UIに必要なアセットをゲームから取り込みます。</value>
   </data>
   <data name="Data Files Hint" xml:space="preserve">
-    <value>What the server loaded. Edit the server-owned files here, or by hand and then Reload.</value>
+    <value>サーバーが読み込んだ内容です。サーバー側のファイルはここで編集するか、手で編集してから再読み込みしてください。</value>
   </data>
   <data name="Set GamePath Hint" xml:space="preserve">
-    <value>Set {0} in {1} and restart the server, and it can extract the files itself. Or run this on the game PC:</value>
+    <value>{1}で{0}を設定してサーバーを再起動すると、サーバーがファイルを取り込めるようになります。またはゲームPCでこれを実行してください：</value>
   </data>
   <data name="Delete Set Confirm" xml:space="preserve">
-    <value>Delete the course set “{0}”? Its file is kept as a .bak next to it.</value>
+    <value>コースセット「{0}」を削除しますか？ファイルは同じ場所に.bakとして残ります。</value>
   </data>
   <data name="Ban Card Dialog Hint" xml:space="preserve">
-    <value>Ban {0}? It is refused at the cabinet and for Web UI sign-in. The account, its scores and its other cards keep working.</value>
+    <value>{0}をBANしますか？筐体とWeb UIのログインで拒否されます。アカウント、スコア、ほかのカードはそのまま使えます。</value>
   </data>
   <data name="Ban Card Hint" xml:space="preserve">
-    <value>A banned card is refused at the cabinet and for Web UI sign-in. The account and its scores stay. It needn’t have played here yet.</value>
+    <value>BANされたカードは筐体とWeb UIのログインで拒否されます。アカウントとスコアは残ります。ここで遊んだことがないカードでもBANできます。</value>
   </data>
   <data name="Api Tokens Hint" xml:space="preserve">
-    <value>For Discord bots, leaderboard sites and scripts that read this server. A token acts as the admin who created it, limited to its scopes, and stops working if that admin is no longer an admin.</value>
+    <value>このサーバーを読み取るDiscordボット、ランキングサイト、スクリプト向けです。トークンは作成した管理者として権限の範囲内で動き、その人が管理者でなくなると使えなくなります。</value>
   </data>
   <data name="Api Tokens Off Hint" xml:space="preserve">
-    <value>API tokens are turned off, so the server refuses them. To turn them on, set {0} in {1} and restart the server.</value>
+    <value>APIトークンはオフなので、サーバーは受け付けません。オンにするには{1}で{0}を設定し、サーバーを再起動してください。</value>
+  </data>
+  <data name="(empty: now)" xml:space="preserve">
+    <value>（空欄：今すぐ）</value>
+  </data>
+  <data name="(empty: until changed)" xml:space="preserve">
+    <value>（空欄：変更するまで）</value>
+  </data>
+  <data name="(no name)" xml:space="preserve">
+    <value>（名前なし）</value>
+  </data>
+  <data name="(you)" xml:space="preserve">
+    <value>（あなた）</value>
+  </data>
+  <data name="**bold**, line breaks" xml:space="preserve">
+    <value>**太字**、改行</value>
+  </data>
+  <data name="+{0} this week" xml:space="preserve">
+    <value>今週 +{0}</value>
+  </data>
+  <data name=", with mods" xml:space="preserve">
+    <value>、MODあり</value>
+  </data>
+  <data name="1 day" xml:space="preserve">
+    <value>1日</value>
+  </data>
+  <data name="1 device · last active {1}" xml:space="preserve">
+    <value>1台 · 最終アクティブ {1}</value>
+  </data>
+  <data name="1 play" xml:space="preserve">
+    <value>1プレイ</value>
+  </data>
+  <data name="1. In your authenticator app, add an account: scan this code, or type in the key below it." xml:space="preserve">
+    <value>1. 認証アプリでアカウントを追加：このコードを読み取るか、下のキーを入力します。</value>
+  </data>
+  <data name="2-step verification" xml:space="preserve">
+    <value>2段階認証</value>
+  </data>
+  <data name="2-step verification is off" xml:space="preserve">
+    <value>2段階認証をオフにしました</value>
+  </data>
+  <data name="2-step verification is on" xml:space="preserve">
+    <value>2段階認証をオンにしました</value>
+  </data>
+  <data name="2-step verification reset" xml:space="preserve">
+    <value>2段階認証をリセットしました</value>
+  </data>
+  <data name="2. Enter the 6-digit code it shows:" xml:space="preserve">
+    <value>2. アプリに表示される6桁のコードを入力：</value>
+  </data>
+  <data name="30 days" xml:space="preserve">
+    <value>30日</value>
+  </data>
+  <data name="3D preview" xml:space="preserve">
+    <value>3Dプレビュー</value>
+  </data>
+  <data name="7 days" xml:space="preserve">
+    <value>7日</value>
+  </data>
+  <data name="A banner at the top of everyone's Dashboard in the Web UI." xml:space="preserve">
+    <value>Web UIのみんなのダッシュボード上部に表示されるお知らせです。</value>
+  </data>
+  <data name="A notice that shows needs a title or a message." xml:space="preserve">
+    <value>表示するお知らせにはタイトルかメッセージが必要です。</value>
+  </data>
+  <data name="A song in this course isn't on this server." xml:space="preserve">
+    <value>このコースの曲がこのサーバーにありません。</value>
+  </data>
+  <data name="A user needs at least one access code." xml:space="preserve">
+    <value>ユーザーには少なくとも1つのアクセスコードが必要です。</value>
+  </data>
+  <data name="AI Battle" xml:space="preserve">
+    <value>AIバトル</value>
+  </data>
+  <data name="AI Battle · {0}" xml:space="preserve">
+    <value>AIバトル · {0}</value>
+  </data>
+  <data name="AI Battle: lost, {0} of {1} sections won" xml:space="preserve">
+    <value>AIバトル：負け、{1}区間中{0}区間勝利</value>
+  </data>
+  <data name="AI Battle: won {0} of {1} sections" xml:space="preserve">
+    <value>AIバトル：{1}区間中{0}区間で勝利</value>
+  </data>
+  <data name="API tokens" xml:space="preserve">
+    <value>APIトークン</value>
+  </data>
+  <data name="API tokens are on (ServerSettings.ApiTokens)." xml:space="preserve">
+    <value>APIトークンは有効です（ServerSettings.ApiTokens）。</value>
+  </data>
+  <data name="Access" xml:space="preserve">
+    <value>アクセス</value>
+  </data>
+  <data name="Access code bound" xml:space="preserve">
+    <value>アクセスコードを登録しました</value>
+  </data>
+  <data name="Access code removed" xml:space="preserve">
+    <value>アクセスコードを削除しました</value>
+  </data>
+  <data name="Access codes" xml:space="preserve">
+    <value>アクセスコード</value>
+  </data>
+  <data name="Access codes are 20 digits." xml:space="preserve">
+    <value>アクセスコードは20桁です。</value>
+  </data>
+  <data name="Access codes per player" xml:space="preserve">
+    <value>1人あたりのアクセスコード数</value>
+  </data>
+  <data name="Access: {0} to fix" xml:space="preserve">
+    <value>アクセス：要対応 {0}件</value>
+  </data>
+  <data name="Account" xml:space="preserve">
+    <value>アカウント</value>
+  </data>
+  <data name="Account locked" xml:space="preserve">
+    <value>アカウントがロックされています</value>
+  </data>
+  <data name="Accuracy" xml:space="preserve">
+    <value>精度</value>
+  </data>
+  <data name="Accuracy counts a Good as 1 and an OK as ½." xml:space="preserve">
+    <value>精度は良を1、可を½として数えます。</value>
+  </data>
+  <data name="Achievement panel" xml:space="preserve">
+    <value>実績パネル</value>
+  </data>
+  <data name="Achievement panel difficulty" xml:space="preserve">
+    <value>実績パネルの難易度</value>
+  </data>
+  <data name="Across all songs" xml:space="preserve">
+    <value>全曲合計</value>
+  </data>
+  <data name="Activity" xml:space="preserve">
+    <value>アクティビティ</value>
+  </data>
+  <data name="Add a card" xml:space="preserve">
+    <value>カードを追加</value>
+  </data>
+  <data name="Add a song" xml:space="preserve">
+    <value>曲を追加</value>
+  </data>
+  <data name="Add a song to the shop" xml:space="preserve">
+    <value>ショップに曲を追加</value>
+  </data>
+  <data name="Add condition" xml:space="preserve">
+    <value>条件を追加</value>
+  </data>
+  <data name="Add message" xml:space="preserve">
+    <value>メッセージを追加</value>
+  </data>
+  <data name="Add song" xml:space="preserve">
+    <value>曲を追加</value>
+  </data>
+  <data name="Add them" xml:space="preserve">
+    <value>追加する</value>
+  </data>
+  <data name="Add to favourites" xml:space="preserve">
+    <value>お気に入りに追加</value>
+  </data>
+  <data name="Added to favourites" xml:space="preserve">
+    <value>お気に入りに追加しました</value>
+  </data>
+  <data name="Admin" xml:space="preserve">
+    <value>管理者</value>
+  </data>
+  <data name="Admin account" xml:space="preserve">
+    <value>管理者アカウント</value>
+  </data>
+  <data name="Admin role" xml:space="preserve">
+    <value>管理者権限</value>
+  </data>
+  <data name="Admins" xml:space="preserve">
+    <value>管理者</value>
+  </data>
+  <data name="Admins can manage every user and the server." xml:space="preserve">
+    <value>管理者はすべてのユーザーとサーバーを管理できます。</value>
+  </data>
+  <data name="Admins only" xml:space="preserve">
+    <value>管理者のみ</value>
+  </data>
+  <data name="After your password, a code from an authenticator app on your phone." xml:space="preserve">
+    <value>パスワードの後に、スマホの認証アプリのコードを入力します。</value>
+  </data>
+  <data name="Ahead on &lt;b&gt;{0}&lt;/b&gt; · behind on &lt;b&gt;{1}&lt;/b&gt; of {2} charts you've both played" xml:space="preserve">
+    <value>お互いにプレイした{2}譜面のうち、&lt;b&gt;{0}&lt;/b&gt;譜面でリード · &lt;b&gt;{1}&lt;/b&gt;譜面で負け</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>すべて</value>
+  </data>
+  <data name="All changes saved" xml:space="preserve">
+    <value>すべての変更を保存しました</value>
+  </data>
+  <data name="All difficulties" xml:space="preserve">
+    <value>すべての難易度</value>
+  </data>
+  <data name="All genres" xml:space="preserve">
+    <value>すべてのジャンル</value>
+  </data>
+  <data name="All plays" xml:space="preserve">
+    <value>すべてのプレイ</value>
+  </data>
+  <data name="All songs" xml:space="preserve">
+    <value>すべての曲</value>
+  </data>
+  <data name="Allow" xml:space="preserve">
+    <value>許可</value>
+  </data>
+  <data name="Allow a chassis ID before it connects" xml:space="preserve">
+    <value>接続前に筐体IDを許可</value>
+  </data>
+  <data name="Allow skipping during play" xml:space="preserve">
+    <value>プレイ中のスキップを許可</value>
+  </data>
+  <data name="Allowed" xml:space="preserve">
+    <value>許可済み</value>
+  </data>
+  <data name="Always first" xml:space="preserve">
+    <value>常に先頭</value>
+  </data>
+  <data name="An authenticator app code after the password. Admins who must use it get admin access once they turn it on." xml:space="preserve">
+    <value>パスワードの後に認証アプリのコードを入力します。必須の管理者は、オンにすると管理者権限が使えるようになります。</value>
+  </data>
+  <data name="Animation" xml:space="preserve">
+    <value>アニメーション</value>
+  </data>
+  <data name="Announcements" xml:space="preserve">
+    <value>お知らせ</value>
+  </data>
+  <data name="Announcer voice" xml:space="preserve">
+    <value>アナウンス音声</value>
+  </data>
+  <data name="Any crown" xml:space="preserve">
+    <value>王冠すべて</value>
+  </data>
+  <data name="Anyone with a card" xml:space="preserve">
+    <value>カードを持つ全員</value>
+  </data>
+  <data name="Anyone with a card's access code." xml:space="preserve">
+    <value>カードのアクセスコードを知っている人なら誰でも。</value>
+  </data>
+  <data name="Anyone with this code can play as you. Don't share it." xml:space="preserve">
+    <value>このコードがあれば誰でもあなたとしてプレイできます。共有しないでください。</value>
+  </data>
+  <data name="Anything using it stops working immediately." xml:space="preserve">
+    <value>これを使っているものはすぐに動かなくなります。</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>適用</value>
+  </data>
+  <data name="Ask an admin to generate an invite code for your card." xml:space="preserve">
+    <value>管理者にカードの招待コードを発行してもらってください。</value>
+  </data>
+  <data name="At most {0} songs." xml:space="preserve">
+    <value>最大{0}曲まで。</value>
+  </data>
+  <data name="Available" xml:space="preserve">
+    <value>使用可能</value>
+  </data>
+  <data name="Average judgements" xml:space="preserve">
+    <value>平均判定</value>
+  </data>
+  <data name="Average score" xml:space="preserve">
+    <value>平均スコア</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>戻る</value>
+  </data>
+  <data name="Background" xml:space="preserve">
+    <value>背景</value>
+  </data>
+  <data name="Bad or cheated scores" xml:space="preserve">
+    <value>不正・誤ったスコア</value>
+  </data>
+  <data name="Bads" xml:space="preserve">
+    <value>不可</value>
+  </data>
+  <data name="Ban" xml:space="preserve">
+    <value>BAN</value>
+  </data>
+  <data name="Ban a card" xml:space="preserve">
+    <value>カードをBAN</value>
+  </data>
+  <data name="Ban this card" xml:space="preserve">
+    <value>このカードをBAN</value>
+  </data>
+  <data name="Banned" xml:space="preserve">
+    <value>BAN中</value>
+  </data>
+  <data name="Banned cards" xml:space="preserve">
+    <value>BANしたカード</value>
+  </data>
+  <data name="Banned until {0}" xml:space="preserve">
+    <value>{0}までBAN</value>
+  </data>
+  <data name="Beat the AI" xml:space="preserve">
+    <value>AIに勝利</value>
+  </data>
+  <data name="Best" xml:space="preserve">
+    <value>ベスト</value>
+  </data>
+  <data name="Best combo" xml:space="preserve">
+    <value>最大コンボ</value>
+  </data>
+  <data name="Bind" xml:space="preserve">
+    <value>登録</value>
+  </data>
+  <data name="Block" xml:space="preserve">
+    <value>ブロック</value>
+  </data>
+  <data name="Blocked" xml:space="preserve">
+    <value>ブロック中</value>
+  </data>
+  <data name="Bodies" xml:space="preserve">
+    <value>ボディ</value>
+  </data>
+  <data name="By {0}, {1} · refused {2}×" xml:space="preserve">
+    <value>{0}が{1}に · 拒否 {2}回</value>
+  </data>
+  <data name="Cabinets" xml:space="preserve">
+    <value>筐体</value>
+  </data>
+  <data name="Cabinets can't play until this is done." xml:space="preserve">
+    <value>これが終わるまで筐体はプレイできません。</value>
+  </data>
+  <data name="Cabinets get a network error; nothing is saved." xml:space="preserve">
+    <value>筐体はネットワークエラーになり、何も保存されません。</value>
+  </data>
+  <data name="Cabinets keep playing and show that maintenance is coming." xml:space="preserve">
+    <value>筐体はプレイを続け、メンテナンスが近いことを表示します。</value>
+  </data>
+  <data name="Cabinets pick a change up on their next heartbeat, within about a minute." xml:space="preserve">
+    <value>変更は次のハートビート（約1分以内）で筐体に反映されます。</value>
+  </data>
+  <data name="Cabinets play normally." xml:space="preserve">
+    <value>筐体は通常どおりプレイできます。</value>
+  </data>
+  <data name="Cabinets show the maintenance screen." xml:space="preserve">
+    <value>筐体はメンテナンス画面を表示します。</value>
+  </data>
+  <data name="Can't see the console?" xml:space="preserve">
+    <value>コンソールが見えない場合</value>
+  </data>
+  <data name="Card" xml:space="preserve">
+    <value>カード</value>
+  </data>
+  <data name="Card QR code" xml:space="preserve">
+    <value>カードのQRコード</value>
+  </data>
+  <data name="Card added" xml:space="preserve">
+    <value>カードを追加しました</value>
+  </data>
+  <data name="Card banned" xml:space="preserve">
+    <value>BANされたカード</value>
+  </data>
+  <data name="Card name" xml:space="preserve">
+    <value>カード名</value>
+  </data>
+  <data name="Card removed" xml:space="preserve">
+    <value>カードを削除しました</value>
+  </data>
+  <data name="Certificate" xml:space="preserve">
+    <value>証明書</value>
+  </data>
+  <data name="Change" xml:space="preserve">
+    <value>変更</value>
+  </data>
+  <data name="Change main song" xml:space="preserve">
+    <value>メイン曲を変更</value>
+  </data>
+  <data name="Change song" xml:space="preserve">
+    <value>曲を変更</value>
+  </data>
+  <data name="Change the default set in Dani Dojo" xml:space="preserve">
+    <value>段位道場でデフォルトのセットを変更</value>
+  </data>
+  <data name="Chassis ID or shop" xml:space="preserve">
+    <value>筐体IDまたは店舗</value>
+  </data>
+  <data name="Check again" xml:space="preserve">
+    <value>再確認</value>
+  </data>
+  <data name="Checklist" xml:space="preserve">
+    <value>チェックリスト</value>
+  </data>
+  <data name="Choose a password" xml:space="preserve">
+    <value>パスワードを決める</value>
+  </data>
+  <data name="Choose a password." xml:space="preserve">
+    <value>パスワードを決めてください。</value>
+  </data>
+  <data name="Choose a title" xml:space="preserve">
+    <value>称号を選ぶ</value>
+  </data>
+  <data name="Classic" xml:space="preserve">
+    <value>クラシック</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>クリア</value>
+  </data>
+  <data name="Clear rate" xml:space="preserve">
+    <value>クリア率</value>
+  </data>
+  <data name="Cleared" xml:space="preserve">
+    <value>クリア</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="Closed" xml:space="preserve">
+    <value>受付停止</value>
+  </data>
+  <data name="Code from your authenticator app" xml:space="preserve">
+    <value>認証アプリのコード</value>
+  </data>
+  <data name="Compare with…" xml:space="preserve">
+    <value>比較する相手…</value>
+  </data>
+  <data name="Condition" xml:space="preserve">
+    <value>条件</value>
+  </data>
+  <data name="Configuration" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="Confirm password" xml:space="preserve">
+    <value>パスワード（確認）</value>
+  </data>
+  <data name="Connecting…" xml:space="preserve">
+    <value>接続中…</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>続ける</value>
+  </data>
+  <data name="Copied" xml:space="preserve">
+    <value>コピーしました</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>コピー</value>
+  </data>
+  <data name="Couldn't save your changes." xml:space="preserve">
+    <value>変更を保存できませんでした。</value>
+  </data>
+  <data name="Counted" xml:space="preserve">
+    <value>数え方</value>
+  </data>
+  <data name="Course" xml:space="preserve">
+    <value>コース</value>
+  </data>
+  <data name="Course sets" xml:space="preserve">
+    <value>コースセット</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>作成</value>
+  </data>
+  <data name="Create token" xml:space="preserve">
+    <value>トークンを作成</value>
+  </data>
+  <data name="Created {0}" xml:space="preserve">
+    <value>{0}に作成</value>
+  </data>
+  <data name="Crowns by difficulty" xml:space="preserve">
+    <value>難易度別の王冠</value>
+  </data>
+  <data name="Current password" xml:space="preserve">
+    <value>現在のパスワード</value>
+  </data>
+  <data name="Dan rank on nameplate" xml:space="preserve">
+    <value>ネームプレートに段位を表示</value>
+  </data>
+  <data name="Danger zone" xml:space="preserve">
+    <value>危険な操作</value>
+  </data>
+  <data name="Dani Dojo courses" xml:space="preserve">
+    <value>段位道場のコース</value>
+  </data>
+  <data name="Dashboard notice" xml:space="preserve">
+    <value>ダッシュボードのお知らせ</value>
+  </data>
+  <data name="Data files" xml:space="preserve">
+    <value>データファイル</value>
+  </data>
+  <data name="Data tools" xml:space="preserve">
+    <value>データツール</value>
+  </data>
+  <data name="Database file" xml:space="preserve">
+    <value>データベースファイル</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>日付</value>
+  </data>
+  <data name="Defaults" xml:space="preserve">
+    <value>デフォルト</value>
+  </data>
+  <data name="Delete set" xml:space="preserve">
+    <value>セットを削除</value>
+  </data>
+  <data name="Delete user" xml:space="preserve">
+    <value>ユーザーを削除</value>
+  </data>
+  <data name="Deleted {0}" xml:space="preserve">
+    <value>{0}に削除</value>
+  </data>
+  <data name="Discard" xml:space="preserve">
+    <value>破棄</value>
+  </data>
+  <data name="Don-chan" xml:space="preserve">
+    <value>どんちゃん</value>
+  </data>
+  <data name="Donderful" xml:space="preserve">
+    <value>ドンダフル</value>
+  </data>
+  <data name="Donderful combo" xml:space="preserve">
+    <value>ドンダフルコンボ</value>
+  </data>
+  <data name="Donderful combos" xml:space="preserve">
+    <value>ドンダフルコンボ</value>
+  </data>
+  <data name="Done" xml:space="preserve">
+    <value>完了</value>
+  </data>
+  <data name="Done in {0:0} s{1}." xml:space="preserve">
+    <value>{0:0}秒で完了{1}。</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>ダウンロード</value>
+  </data>
+  <data name="Download .txt" xml:space="preserve">
+    <value>.txtをダウンロード</value>
+  </data>
+  <data name="Drumroll hits" xml:space="preserve">
+    <value>連打数</value>
+  </data>
+  <data name="Duplicate" xml:space="preserve">
+    <value>重複</value>
+  </data>
+  <data name="Edit profile" xml:space="preserve">
+    <value>プロフィールを編集</value>
+  </data>
+  <data name="Elsewhere" xml:space="preserve">
+    <value>その他</value>
+  </data>
+  <data name="Empty." xml:space="preserve">
+    <value>空です。</value>
+  </data>
+  <data name="End" xml:space="preserve">
+    <value>終了</value>
+  </data>
+  <data name="Ended" xml:space="preserve">
+    <value>終了</value>
+  </data>
+  <data name="Ends" xml:space="preserve">
+    <value>終了日時</value>
+  </data>
+  <data name="Enter when you last played with this card, to within 5 minutes." xml:space="preserve">
+    <value>このカードで最後に遊んだ日時を5分以内の精度で入力してください。</value>
+  </data>
+  <data name="Enter your access code and password." xml:space="preserve">
+    <value>アクセスコードとパスワードを入力してください。</value>
+  </data>
+  <data name="Errors {0}" xml:space="preserve">
+    <value>エラー {0}</value>
+  </data>
+  <data name="Event" xml:space="preserve">
+    <value>イベント</value>
+  </data>
+  <data name="Event folders" xml:space="preserve">
+    <value>イベントフォルダー</value>
+  </data>
+  <data name="Every QR code needs its own serial." xml:space="preserve">
+    <value>QRコードにはそれぞれ別のシリアルが必要です。</value>
+  </data>
+  <data name="Every cabinet" xml:space="preserve">
+    <value>すべての筐体</value>
+  </data>
+  <data name="Every cabinet gets a network error until you switch back. A credit in progress won't save." xml:space="preserve">
+    <value>元に戻すまで、すべての筐体がネットワークエラーになります。プレイ中のクレジットは保存されません。</value>
+  </data>
+  <data name="Every cabinet shows the maintenance screen from {0} to {1}." xml:space="preserve">
+    <value>{0}から{1}まで、すべての筐体がメンテナンス画面を表示します。</value>
+  </data>
+  <data name="Every cabinet shows the maintenance screen from {0} until you switch back." xml:space="preserve">
+    <value>{0}から元に戻すまで、すべての筐体がメンテナンス画面を表示します。</value>
+  </data>
+  <data name="Every cabinet without its own settings" xml:space="preserve">
+    <value>個別設定のないすべての筐体</value>
+  </data>
+  <data name="Every cabinet without its own settings uses these." xml:space="preserve">
+    <value>個別設定のない筐体はすべてこれを使います。</value>
+  </data>
+  <data name="Every other Web UI session ends now. Passwords still work, so people can sign in again." xml:space="preserve">
+    <value>ほかのWeb UIセッションはすべて今すぐ終了します。パスワードはそのままなので、再度ログインできます。</value>
+  </data>
+  <data name="Expired" xml:space="preserve">
+    <value>期限切れ</value>
+  </data>
+  <data name="Expires" xml:space="preserve">
+    <value>有効期限</value>
+  </data>
+  <data name="Expires {0}" xml:space="preserve">
+    <value>{0}に期限切れ</value>
+  </data>
+  <data name="Extra courses" xml:space="preserve">
+    <value>追加コース</value>
+  </data>
+  <data name="Extra dan-style courses, offered on every cabinet." xml:space="preserve">
+    <value>段位風の追加コース。すべての筐体で遊べます。</value>
+  </data>
+  <data name="Extract game files" xml:space="preserve">
+    <value>ゲームファイルを取り込む</value>
+  </data>
+  <data name="Extracting" xml:space="preserve">
+    <value>取り込み中</value>
+  </data>
+  <data name="Extracting… This takes about a minute. Nothing in the game folder is changed." xml:space="preserve">
+    <value>取り込み中…約1分かかります。ゲームフォルダーは変更されません。</value>
+  </data>
+  <data name="Face paint" xml:space="preserve">
+    <value>顔ペイント</value>
+  </data>
+  <data name="Fade" xml:space="preserve">
+    <value>フェード</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>失敗</value>
+  </data>
+  <data name="Failed sign-ins" xml:space="preserve">
+    <value>ログイン失敗</value>
+  </data>
+  <data name="Failed sign-ins, last 24 hours" xml:space="preserve">
+    <value>過去24時間のログイン失敗</value>
+  </data>
+  <data name="Favourites" xml:space="preserve">
+    <value>お気に入り</value>
+  </data>
+  <data name="Fewer" xml:space="preserve">
+    <value>少ない</value>
+  </data>
+  <data name="Files with problems" xml:space="preserve">
+    <value>問題のあるファイル</value>
+  </data>
+  <data name="Filter users" xml:space="preserve">
+    <value>ユーザーを絞り込む</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>絞り込み</value>
+  </data>
+  <data name="Finished with errors (exit code {0}). See the report." xml:space="preserve">
+    <value>エラーで終了しました（終了コード {0}）。レポートを確認してください。</value>
+  </data>
+  <data name="First played" xml:space="preserve">
+    <value>初プレイ</value>
+  </data>
+  <data name="Folder" xml:space="preserve">
+    <value>フォルダー</value>
+  </data>
+  <data name="For" xml:space="preserve">
+    <value>期間</value>
+  </data>
+  <data name="For example:" xml:space="preserve">
+    <value>例：</value>
+  </data>
+  <data name="For the card ending •••• {0}" xml:space="preserve">
+    <value>末尾 •••• {0} のカード</value>
+  </data>
+  <data name="Forget" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="Found the game" xml:space="preserve">
+    <value>ゲームが見つかりました</value>
+  </data>
+  <data name="Free profile editing" xml:space="preserve">
+    <value>プロフィールの自由編集</value>
+  </data>
+  <data name="Friend Code copied!" xml:space="preserve">
+    <value>フレンドコードをコピーしました！</value>
+  </data>
+  <data name="Friend code {0}, copy" xml:space="preserve">
+    <value>フレンドコード {0}、コピー</value>
+  </data>
+  <data name="Friend code · click to copy" xml:space="preserve">
+    <value>フレンドコード · クリックでコピー</value>
+  </data>
+  <data name="Full combo" xml:space="preserve">
+    <value>フルコンボ</value>
+  </data>
+  <data name="Full combos" xml:space="preserve">
+    <value>フルコンボ</value>
+  </data>
+  <data name="Game Data" xml:space="preserve">
+    <value>ゲームデータ</value>
+  </data>
+  <data name="Game assets" xml:space="preserve">
+    <value>ゲームアセット</value>
+  </data>
+  <data name="Game data reloaded" xml:space="preserve">
+    <value>ゲームデータを再読み込みしました</value>
+  </data>
+  <data name="Game files" xml:space="preserve">
+    <value>ゲームファイル</value>
+  </data>
+  <data name="Game files are missing. Cabinets can't play and pages show IDs instead of names." xml:space="preserve">
+    <value>ゲームファイルがありません。筐体はプレイできず、ページには名前の代わりにIDが表示されます。</value>
+  </data>
+  <data name="Game folder" xml:space="preserve">
+    <value>ゲームフォルダー</value>
+  </data>
+  <data name="Game host" xml:space="preserve">
+    <value>ゲームホスト</value>
+  </data>
+  <data name="Give it only what it needs." xml:space="preserve">
+    <value>必要な権限だけを与えてください。</value>
+  </data>
+  <data name="Go to the Dashboard" xml:space="preserve">
+    <value>ダッシュボードへ</value>
+  </data>
+  <data name="Gold is easier than red." xml:space="preserve">
+    <value>金の条件が赤より簡単になっています。</value>
+  </data>
+  <data name="Gold pass" xml:space="preserve">
+    <value>金合格</value>
+  </data>
+  <data name="Gold passes" xml:space="preserve">
+    <value>金合格</value>
+  </data>
+  <data name="Good {0} · OK {1} · Bad {2} · Drumroll {3}" xml:space="preserve">
+    <value>良 {0} · 可 {1} · 不可 {2} · 連打 {3}</value>
+  </data>
+  <data name="Good {0} · OK {1} · Bad {2} · combo {3}" xml:space="preserve">
+    <value>良 {0} · 可 {1} · 不可 {2} · コンボ {3}</value>
+  </data>
+  <data name="Goods" xml:space="preserve">
+    <value>良</value>
+  </data>
+  <data name="Has a password and can sign in." xml:space="preserve">
+    <value>パスワードがあり、ログインできます。</value>
+  </data>
+  <data name="Has the maximum" xml:space="preserve">
+    <value>上限に達しています</value>
+  </data>
+  <data name="Heads" xml:space="preserve">
+    <value>あたま</value>
+  </data>
+  <data name="Hide access code" xml:space="preserve">
+    <value>アクセスコードを隠す</value>
+  </data>
+  <data name="Hide name" xml:space="preserve">
+    <value>曲名を隠す</value>
+  </data>
+  <data name="Hide password" xml:space="preserve">
+    <value>パスワードを隠す</value>
+  </data>
+  <data name="Hide the code" xml:space="preserve">
+    <value>コードを隠す</value>
+  </data>
+  <data name="Highest rank" xml:space="preserve">
+    <value>最高段位</value>
+  </data>
+  <data name="Highest with crowns" xml:space="preserve">
+    <value>王冠のある最高難易度</value>
+  </data>
+  <data name="Hits" xml:space="preserve">
+    <value>叩けた数</value>
+  </data>
+  <data name="I've saved these" xml:space="preserve">
+    <value>保存しました</value>
+  </data>
+  <data name="In 30 days" xml:space="preserve">
+    <value>30日後</value>
+  </data>
+  <data name="In 90 days" xml:space="preserve">
+    <value>90日後</value>
+  </data>
+  <data name="In a year" xml:space="preserve">
+    <value>1年後</value>
+  </data>
+  <data name="In place" xml:space="preserve">
+    <value>配置済み</value>
+  </data>
+  <data name="In the list" xml:space="preserve">
+    <value>リスト内</value>
+  </data>
+  <data name="In the shop" xml:space="preserve">
+    <value>ショップ内</value>
+  </data>
+  <data name="In this course" xml:space="preserve">
+    <value>このコース内</value>
+  </data>
+  <data name="In-game messages" xml:space="preserve">
+    <value>ゲーム内メッセージ</value>
+  </data>
+  <data name="Include files from Data_mods over vanilla ones" xml:space="preserve">
+    <value>Data_modsのファイルを元のファイルより優先します</value>
+  </data>
+  <data name="Include the game's mods folder" xml:space="preserve">
+    <value>ゲームのMODフォルダーを含める</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>情報</value>
+  </data>
+  <data name="Invite code" xml:space="preserve">
+    <value>招待コード</value>
+  </data>
+  <data name="Invite code only" xml:space="preserve">
+    <value>招待コードのみ</value>
+  </data>
+  <data name="Invite codes are 6 digits." xml:space="preserve">
+    <value>招待コードは6桁です。</value>
+  </data>
+  <data name="It can connect and play." xml:space="preserve">
+    <value>接続してプレイできます。</value>
+  </data>
+  <data name="It tried to connect {0} times. Allow it to let it play." xml:space="preserve">
+    <value>{0}回接続しようとしました。許可するとプレイできます。</value>
+  </data>
+  <data name="It's online: its next request is refused, and a credit in progress won't save." xml:space="preserve">
+    <value>オンライン中です：次のリクエストは拒否され、プレイ中のクレジットは保存されません。</value>
+  </data>
+  <data name="Its requests are refused ({0} so far). Players' data isn't touched." xml:space="preserve">
+    <value>リクエストは拒否されます（これまで{0}回）。プレイヤーのデータには影響しません。</value>
+  </data>
+  <data name="Keep" xml:space="preserve">
+    <value>保持</value>
+  </data>
+  <data name="LOSE" xml:space="preserve">
+    <value>LOSE</value>
+  </data>
+  <data name="Last 16 weeks" xml:space="preserve">
+    <value>過去16週間</value>
+  </data>
+  <data name="Last play time" xml:space="preserve">
+    <value>最終プレイ日時</value>
+  </data>
+  <data name="Last play time or invite code" xml:space="preserve">
+    <value>最終プレイ日時または招待コード</value>
+  </data>
+  <data name="Last played" xml:space="preserve">
+    <value>最終プレイ</value>
+  </data>
+  <data name="Last played today at {0}" xml:space="preserve">
+    <value>今日 {0} に最終プレイ</value>
+  </data>
+  <data name="Last played yesterday at {0}" xml:space="preserve">
+    <value>昨日 {0} に最終プレイ</value>
+  </data>
+  <data name="Last played {0}" xml:space="preserve">
+    <value>{0} に最終プレイ</value>
+  </data>
+  <data name="Last seen {0}" xml:space="preserve">
+    <value>最終確認 {0}</value>
+  </data>
+  <data name="Leaderboard pages" xml:space="preserve">
+    <value>ランキングのページ</value>
+  </data>
+  <data name="Less" xml:space="preserve">
+    <value>少なく</value>
+  </data>
+  <data name="Live" xml:space="preserve">
+    <value>ライブ</value>
+  </data>
+  <data name="Loading..." xml:space="preserve">
+    <value>読み込み中...</value>
+  </data>
+  <data name="Local" xml:space="preserve">
+    <value>ローカル</value>
+  </data>
+  <data name="Local mode" xml:space="preserve">
+    <value>ローカルモード</value>
+  </data>
+  <data name="Lock an account after failed sign-ins" xml:space="preserve">
+    <value>ログイン失敗でアカウントをロック</value>
+  </data>
+  <data name="Lock: {0}" xml:space="preserve">
+    <value>ロック：{0}</value>
+  </data>
+  <data name="Locked" xml:space="preserve">
+    <value>ロック中</value>
+  </data>
+  <data name="Locked Ura (inner) charts" xml:space="preserve">
+    <value>ロックされた裏譜面</value>
+  </data>
+  <data name="Locked accounts" xml:space="preserve">
+    <value>ロック中のアカウント</value>
+  </data>
+  <data name="Locked costumes" xml:space="preserve">
+    <value>ロックされたきせかえ</value>
+  </data>
+  <data name="Locked for" xml:space="preserve">
+    <value>ロック時間</value>
+  </data>
+  <data name="Locked songs" xml:space="preserve">
+    <value>ロックされた曲</value>
+  </data>
+  <data name="Locked titles" xml:space="preserve">
+    <value>ロックされた称号</value>
+  </data>
+  <data name="Log in instead" xml:space="preserve">
+    <value>ログインする</value>
+  </data>
+  <data name="Log in with your access code and new password." xml:space="preserve">
+    <value>アクセスコードと新しいパスワードでログインしてください。</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>ログ</value>
+  </data>
+  <data name="Lost against the AI" xml:space="preserve">
+    <value>AIに負けました</value>
+  </data>
+  <data name="Lost to the AI" xml:space="preserve">
+    <value>AIに負け</value>
+  </data>
+  <data name="Made admin" xml:space="preserve">
+    <value>管理者にしました</value>
+  </data>
+  <data name="Main song" xml:space="preserve">
+    <value>メイン曲</value>
+  </data>
+  <data name="Maintenance" xml:space="preserve">
+    <value>メンテナンス</value>
+  </data>
+  <data name="Make admin" xml:space="preserve">
+    <value>管理者にする</value>
+  </data>
+  <data name="Make default" xml:space="preserve">
+    <value>デフォルトにする</value>
+  </data>
+  <data name="Max combo" xml:space="preserve">
+    <value>最大コンボ</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>メッセージ</value>
+  </data>
+  <data name="Messages are at most {0} characters." xml:space="preserve">
+    <value>メッセージは最大{0}文字です。</value>
+  </data>
+  <data name="Missing" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="Missing: extract the game files" xml:space="preserve">
+    <value>なし：ゲームファイルを取り込んでください</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>モード</value>
+  </data>
+  <data name="More" xml:space="preserve">
+    <value>多い</value>
+  </data>
+  <data name="More songs" xml:space="preserve">
+    <value>曲数の拡張</value>
+  </data>
+  <data name="Most played" xml:space="preserve">
+    <value>プレイ回数順</value>
+  </data>
+  <data name="Move access code" xml:space="preserve">
+    <value>アクセスコードを移動</value>
+  </data>
+  <data name="Move down" xml:space="preserve">
+    <value>下へ</value>
+  </data>
+  <data name="Move to another user" xml:space="preserve">
+    <value>別のユーザーへ移動</value>
+  </data>
+  <data name="Move up" xml:space="preserve">
+    <value>上へ</value>
+  </data>
+  <data name="Moved an access code" xml:space="preserve">
+    <value>アクセスコードを移動しました</value>
+  </data>
+  <data name="Moved to {0}" xml:space="preserve">
+    <value>{0}へ移動しました</value>
+  </data>
+  <data name="Movie ID" xml:space="preserve">
+    <value>ムービーID</value>
+  </data>
+  <data name="Movie IDs are the numbered files in the game's Data/x64/movie folder. Run extract to pick from a list." xml:space="preserve">
+    <value>ムービーIDはゲームのData/x64/movieフォルダーにある番号付きファイルです。extractを実行すると一覧から選べます。</value>
+  </data>
+  <data name="Movies" xml:space="preserve">
+    <value>ムービー</value>
+  </data>
+  <data name="Mucha URL" xml:space="preserve">
+    <value>Mucha URL</value>
+  </data>
+  <data name="Name or IP" xml:space="preserve">
+    <value>名前またはIP</value>
+  </data>
+  <data name="Name or user ID" xml:space="preserve">
+    <value>名前またはユーザーID</value>
+  </data>
+  <data name="Name, user ID or access code" xml:space="preserve">
+    <value>名前、ユーザーIDまたはアクセスコード</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="Never connected (pre-approved)" xml:space="preserve">
+    <value>未接続（事前承認）</value>
+  </data>
+  <data name="Never expires" xml:space="preserve">
+    <value>無期限</value>
+  </data>
+  <data name="Never used" xml:space="preserve">
+    <value>未使用</value>
+  </data>
+  <data name="New API token" xml:space="preserve">
+    <value>新しいAPIトークン</value>
+  </data>
+  <data name="New best" xml:space="preserve">
+    <value>自己ベスト更新</value>
+  </data>
+  <data name="New bests only" xml:space="preserve">
+    <value>自己ベスト更新のみ</value>
+  </data>
+  <data name="New password" xml:space="preserve">
+    <value>新しいパスワード</value>
+  </data>
+  <data name="New recovery codes" xml:space="preserve">
+    <value>新しいリカバリーコード</value>
+  </data>
+  <data name="New set" xml:space="preserve">
+    <value>新しいセット</value>
+  </data>
+  <data name="New token" xml:space="preserve">
+    <value>新しいトークン</value>
+  </data>
+  <data name="New?" xml:space="preserve">
+    <value>はじめて？</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>次へ</value>
+  </data>
+  <data name="Next month" xml:space="preserve">
+    <value>次の月</value>
+  </data>
+  <data name="Next page" xml:space="preserve">
+    <value>次のページ</value>
+  </data>
+  <data name="No AI battle yet" xml:space="preserve">
+    <value>AIバトル未プレイ</value>
+  </data>
+  <data name="No Dani Dojo pass yet" xml:space="preserve">
+    <value>段位道場の合格なし</value>
+  </data>
+  <data name="No access codes yet." xml:space="preserve">
+    <value>アクセスコードはまだありません。</value>
+  </data>
+  <data name="No account" xml:space="preserve">
+    <value>アカウントなし</value>
+  </data>
+  <data name="No banned cards." xml:space="preserve">
+    <value>BANされたカードはありません。</value>
+  </data>
+  <data name="No cabinet has connected yet." xml:space="preserve">
+    <value>まだ接続した筐体はありません。</value>
+  </data>
+  <data name="No form for this file yet; use JSON." xml:space="preserve">
+    <value>このファイルの編集フォームはまだありません。JSONを使ってください。</value>
+  </data>
+  <data name="No full combo" xml:space="preserve">
+    <value>フルコンボなし</value>
+  </data>
+  <data name="No matches" xml:space="preserve">
+    <value>該当なし</value>
+  </data>
+  <data name="No messages." xml:space="preserve">
+    <value>メッセージはありません。</value>
+  </data>
+  <data name="No new accounts. Admins can still help in User Management." xml:space="preserve">
+    <value>新規アカウントは作れません。管理者はユーザー管理から手助けできます。</value>
+  </data>
+  <data name="No password set yet. Send an invite code." xml:space="preserve">
+    <value>パスワード未設定です。招待コードを送ってください。</value>
+  </data>
+  <data name="No players yet" xml:space="preserve">
+    <value>プレイヤーはまだいません</value>
+  </data>
+  <data name="No plays in the last 7 days." xml:space="preserve">
+    <value>過去7日間のプレイはありません。</value>
+  </data>
+  <data name="No plays match. Try another difficulty." xml:space="preserve">
+    <value>条件に合うプレイがありません。別の難易度を試してください。</value>
+  </data>
+  <data name="No scores match." xml:space="preserve">
+    <value>条件に合うスコアがありません。</value>
+  </data>
+  <data name="No shop ID yet" xml:space="preserve">
+    <value>店舗IDなし</value>
+  </data>
+  <data name="No songs match." xml:space="preserve">
+    <value>条件に合う曲がありません。</value>
+  </data>
+  <data name="No songs match. Try another genre or clear the search." xml:space="preserve">
+    <value>条件に合う曲がありません。別のジャンルにするか、検索を消してください。</value>
+  </data>
+  <data name="No songs yet." xml:space="preserve">
+    <value>曲はまだありません。</value>
+  </data>
+  <data name="No titles match." xml:space="preserve">
+    <value>条件に合う称号がありません。</value>
+  </data>
+  <data name="No tokens yet." xml:space="preserve">
+    <value>トークンはまだありません。</value>
+  </data>
+  <data name="No users yet. A user appears the first time a card is played." xml:space="preserve">
+    <value>ユーザーはまだいません。カードで初めて遊んだときに作られます。</value>
+  </data>
+  <data name="Nobody has played this chart yet." xml:space="preserve">
+    <value>この譜面はまだ誰もプレイしていません。</value>
+  </data>
+  <data name="None (use head &amp; body)" xml:space="preserve">
+    <value>なし（あたまとボディを使う）</value>
+  </data>
+  <data name="None in the last 7 days." xml:space="preserve">
+    <value>過去7日間はありません。</value>
+  </data>
+  <data name="Not added yet" xml:space="preserve">
+    <value>未追加</value>
+  </data>
+  <data name="Not cleared" xml:space="preserve">
+    <value>未クリア</value>
+  </data>
+  <data name="Not in the game's movie folder" xml:space="preserve">
+    <value>ゲームのムービーフォルダーにありません</value>
+  </data>
+  <data name="Not passed yet" xml:space="preserve">
+    <value>未合格</value>
+  </data>
+  <data name="Not played" xml:space="preserve">
+    <value>未プレイ</value>
+  </data>
+  <data name="Not played in AI Battle on {0} yet." xml:space="preserve">
+    <value>{0}のAIバトルはまだプレイしていません。</value>
+  </data>
+  <data name="Not played yet" xml:space="preserve">
+    <value>未プレイ</value>
+  </data>
+  <data name="Not registered" xml:space="preserve">
+    <value>未登録</value>
+  </data>
+  <data name="Not registered yet" xml:space="preserve">
+    <value>まだ未登録</value>
+  </data>
+  <data name="Not set" xml:space="preserve">
+    <value>未設定</value>
+  </data>
+  <data name="Not signed in anywhere" xml:space="preserve">
+    <value>どこにもログインしていません</value>
+  </data>
+  <data name="Not the default" xml:space="preserve">
+    <value>デフォルトではありません</value>
+  </data>
+  <data name="Not used yet. Make it the default to serve it." xml:space="preserve">
+    <value>まだ使われていません。デフォルトにすると配信されます。</value>
+  </data>
+  <data name="Not yet" xml:space="preserve">
+    <value>まだ</value>
+  </data>
+  <data name="Notes disappear before the judge mark" xml:space="preserve">
+    <value>判定枠の手前で音符が消えます</value>
+  </data>
+  <data name="Notes hit" xml:space="preserve">
+    <value>叩いた音符</value>
+  </data>
+  <data name="Nothing matches." xml:space="preserve">
+    <value>該当なし。</value>
+  </data>
+  <data name="Nothing to fix." xml:space="preserve">
+    <value>対応が必要な項目はありません。</value>
+  </data>
+  <data name="Nothing yet." xml:space="preserve">
+    <value>まだありません。</value>
+  </data>
+  <data name="OKs" xml:space="preserve">
+    <value>可</value>
+  </data>
+  <data name="Off" xml:space="preserve">
+    <value>オフ</value>
+  </data>
+  <data name="Off: it uses the defaults." xml:space="preserve">
+    <value>オフ：デフォルトを使います。</value>
+  </data>
+  <data name="Offline" xml:space="preserve">
+    <value>オフライン</value>
+  </data>
+  <data name="Older plays are in Play History" xml:space="preserve">
+    <value>それより前のプレイはプレイ履歴にあります</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>オン</value>
+  </data>
+  <data name="On your card or Banapass" xml:space="preserve">
+    <value>カードまたはバナパスポートに記載</value>
+  </data>
+  <data name="On, up to {0}" xml:space="preserve">
+    <value>オン（最大{0}）</value>
+  </data>
+  <data name="On. Reset it if they lost their phone and their recovery codes." xml:space="preserve">
+    <value>オン。スマホとリカバリーコードを両方なくした場合はリセットしてください。</value>
+  </data>
+  <data name="Oni clears by star level" xml:space="preserve">
+    <value>星の数別おに譜面クリア</value>
+  </data>
+  <data name="Online now" xml:space="preserve">
+    <value>オンライン</value>
+  </data>
+  <data name="Only admins can sign in" xml:space="preserve">
+    <value>管理者のみログイン可能</value>
+  </data>
+  <data name="Only with an invite code from an admin (User Management)." xml:space="preserve">
+    <value>管理者（ユーザー管理）が発行する招待コードがある場合のみ。</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>公開</value>
+  </data>
+  <data name="Open in an app on this device" xml:space="preserve">
+    <value>この端末のアプリで開く</value>
+  </data>
+  <data name="Open navigation" xml:space="preserve">
+    <value>ナビゲーションを開く</value>
+  </data>
+  <data name="Open: any cabinet can connect, except blocked ones." xml:space="preserve">
+    <value>公開：ブロックされた筐体以外はどれでも接続できます。</value>
+  </data>
+  <data name="Operational" xml:space="preserve">
+    <value>稼働中</value>
+  </data>
+  <data name="Optional" xml:space="preserve">
+    <value>任意</value>
+  </data>
+  <data name="Other songs" xml:space="preserve">
+    <value>その他の曲</value>
+  </data>
+  <data name="Overview" xml:space="preserve">
+    <value>概要</value>
+  </data>
+  <data name="Own settings" xml:space="preserve">
+    <value>個別設定</value>
+  </data>
+  <data name="Page {0}" xml:space="preserve">
+    <value>{0}ページ</value>
+  </data>
+  <data name="Pass at or above" xml:space="preserve">
+    <value>以上で合格</value>
+  </data>
+  <data name="Pass at or below" xml:space="preserve">
+    <value>以下で合格</value>
+  </data>
+  <data name="Pass conditions" xml:space="preserve">
+    <value>合格条件</value>
+  </data>
+  <data name="Passed" xml:space="preserve">
+    <value>合格</value>
+  </data>
+  <data name="Password reset" xml:space="preserve">
+    <value>パスワードをリセットしました</value>
+  </data>
+  <data name="Pattern" xml:space="preserve">
+    <value>柄</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>一時停止</value>
+  </data>
+  <data name="Paused · {0} new" xml:space="preserve">
+    <value>一時停止中 · 新着 {0}</value>
+  </data>
+  <data name="Per song" xml:space="preserve">
+    <value>曲ごと</value>
+  </data>
+  <data name="Permanent" xml:space="preserve">
+    <value>無期限</value>
+  </data>
+  <data name="Permanently" xml:space="preserve">
+    <value>無期限</value>
+  </data>
+  <data name="Pick a day with plays." xml:space="preserve">
+    <value>プレイした日を選んでください。</value>
+  </data>
+  <data name="Pick a user" xml:space="preserve">
+    <value>ユーザーを選んでください</value>
+  </data>
+  <data name="Play history pages" xml:space="preserve">
+    <value>プレイ履歴のページ</value>
+  </data>
+  <data name="Play tone" xml:space="preserve">
+    <value>音色を試聴</value>
+  </data>
+  <data name="Played, not cleared" xml:space="preserve">
+    <value>プレイ済み・未クリア</value>
+  </data>
+  <data name="Player card" xml:space="preserve">
+    <value>プレイヤーカード</value>
+  </data>
+  <data name="Players" xml:space="preserve">
+    <value>プレイヤー</value>
+  </data>
+  <data name="Players can delete their account" xml:space="preserve">
+    <value>プレイヤーが自分のアカウントを削除できる</value>
+  </data>
+  <data name="Plays" xml:space="preserve">
+    <value>プレイ回数</value>
+  </data>
+  <data name="Plays by genre" xml:space="preserve">
+    <value>ジャンル別プレイ</value>
+  </data>
+  <data name="Plays per day, last 16 weeks" xml:space="preserve">
+    <value>1日あたりのプレイ（過去16週間）</value>
+  </data>
+  <data name="Ports" xml:space="preserve">
+    <value>ポート</value>
+  </data>
+  <data name="Pre-maintenance" xml:space="preserve">
+    <value>メンテナンス予告</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>プレビュー</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>前へ</value>
+  </data>
+  <data name="Previous month" xml:space="preserve">
+    <value>前の月</value>
+  </data>
+  <data name="Previous page" xml:space="preserve">
+    <value>前のページ</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>価格</value>
+  </data>
+  <data name="Progress" xml:space="preserve">
+    <value>進捗</value>
+  </data>
+  <data name="Prove it's your card" xml:space="preserve">
+    <value>自分のカードであることを証明</value>
+  </data>
+  <data name="QR" xml:space="preserve">
+    <value>QR</value>
+  </data>
+  <data name="QR code" xml:space="preserve">
+    <value>QRコード</value>
+  </data>
+  <data name="QR code for your authenticator app" xml:space="preserve">
+    <value>認証アプリ用のQRコード</value>
+  </data>
+  <data name="QR codes" xml:space="preserve">
+    <value>QRコード</value>
+  </data>
+  <data name="Rank {0}" xml:space="preserve">
+    <value>ランク {0}</value>
+  </data>
+  <data name="Ranks" xml:space="preserve">
+    <value>ランク</value>
+  </data>
+  <data name="Ranks passed" xml:space="preserve">
+    <value>合格した段位</value>
+  </data>
+  <data name="Reason" xml:space="preserve">
+    <value>理由</value>
+  </data>
+  <data name="Recent failed sign-ins" xml:space="preserve">
+    <value>最近のログイン失敗</value>
+  </data>
+  <data name="Recently set" xml:space="preserve">
+    <value>最近更新した順</value>
+  </data>
+  <data name="Recovery code" xml:space="preserve">
+    <value>リカバリーコード</value>
+  </data>
+  <data name="Recovery codes sign you in if you lose your phone. Each works once. Keep them somewhere safe: they're shown only now." xml:space="preserve">
+    <value>リカバリーコードはスマホをなくしたときのログインに使います。それぞれ1回だけ使えます。安全な場所に保管してください：表示されるのは今だけです。</value>
+  </data>
+  <data name="Registered" xml:space="preserve">
+    <value>登録済み</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>再読み込み</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="Remove a score" xml:space="preserve">
+    <value>スコアを削除</value>
+  </data>
+  <data name="Remove access code" xml:space="preserve">
+    <value>アクセスコードを削除</value>
+  </data>
+  <data name="Remove admin" xml:space="preserve">
+    <value>管理者を解除</value>
+  </data>
+  <data name="Remove condition" xml:space="preserve">
+    <value>条件を削除</value>
+  </data>
+  <data name="Remove from favourites" xml:space="preserve">
+    <value>お気に入りから削除</value>
+  </data>
+  <data name="Remove this card?" xml:space="preserve">
+    <value>このカードを削除しますか？</value>
+  </data>
+  <data name="Removed a score" xml:space="preserve">
+    <value>スコアを削除しました</value>
+  </data>
+  <data name="Removed admin" xml:space="preserve">
+    <value>管理者を解除しました</value>
+  </data>
+  <data name="Removed from favourites" xml:space="preserve">
+    <value>お気に入りから削除しました</value>
+  </data>
+  <data name="Removes it from this list; it reappears if it connects again." xml:space="preserve">
+    <value>一覧から消します。再び接続すると表示されます。</value>
+  </data>
+  <data name="Rename" xml:space="preserve">
+    <value>名前を変更</value>
+  </data>
+  <data name="Replaces head, body &amp; face paint" xml:space="preserve">
+    <value>あたま、ボディ、顔ペイントを置き換えます</value>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>レポート</value>
+  </data>
+  <data name="Required for admins" xml:space="preserve">
+    <value>管理者は必須</value>
+  </data>
+  <data name="Reset password" xml:space="preserve">
+    <value>パスワードをリセット</value>
+  </data>
+  <data name="Restricted: only allowed cabinets can connect. New ones wait for your approval." xml:space="preserve">
+    <value>制限中：許可された筐体だけが接続できます。新しい筐体はあなたの承認待ちになります。</value>
+  </data>
+  <data name="Results to show" xml:space="preserve">
+    <value>表示する結果</value>
+  </data>
+  <data name="Resume" xml:space="preserve">
+    <value>再開</value>
+  </data>
+  <data name="Revoke" xml:space="preserve">
+    <value>取り消す</value>
+  </data>
+  <data name="Revoke {0}?" xml:space="preserve">
+    <value>{0}を取り消しますか？</value>
+  </data>
+  <data name="Revoked" xml:space="preserve">
+    <value>取り消し済み</value>
+  </data>
+  <data name="Reward ID" xml:space="preserve">
+    <value>報酬ID</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>保存しました</value>
+  </data>
+  <data name="Saved. Cabinets pick it up on their next startup." xml:space="preserve">
+    <value>保存しました。筐体は次回の起動時に反映します。</value>
+  </data>
+  <data name="Saved. Game data reloaded." xml:space="preserve">
+    <value>保存しました。ゲームデータを再読み込みしました。</value>
+  </data>
+  <data name="Saving…" xml:space="preserve">
+    <value>保存中…</value>
+  </data>
+  <data name="Scan any of them at a cabinet to play as you. Every card's scores go to the same profile." xml:space="preserve">
+    <value>どれを筐体で読み込んでもあなたとしてプレイできます。スコアはすべて同じプロフィールに記録されます。</value>
+  </data>
+  <data name="Scan it at a cabinet's card reader to play as {0}." xml:space="preserve">
+    <value>筐体のカードリーダーで読み込むと{0}としてプレイできます。</value>
+  </data>
+  <data name="Scanning it at a cabinet won't sign in as you any more. Your scores stay, and you can add the card again later." xml:space="preserve">
+    <value>筐体で読み込んでもあなたとしてログインしなくなります。スコアは残り、カードはあとで再追加できます。</value>
+  </data>
+  <data name="Scheduled" xml:space="preserve">
+    <value>予定</value>
+  </data>
+  <data name="Scopes" xml:space="preserve">
+    <value>権限</value>
+  </data>
+  <data name="Score pages" xml:space="preserve">
+    <value>スコアのページ</value>
+  </data>
+  <data name="Score per play" xml:space="preserve">
+    <value>プレイごとのスコア</value>
+  </data>
+  <data name="Score per play, from {0} to {1}" xml:space="preserve">
+    <value>プレイごとのスコア（{0}から{1}）</value>
+  </data>
+  <data name="Score removed" xml:space="preserve">
+    <value>スコアを削除しました</value>
+  </data>
+  <data name="Scoreboard" xml:space="preserve">
+    <value>スコアボード</value>
+  </data>
+  <data name="Search digits" xml:space="preserve">
+    <value>数字で検索</value>
+  </data>
+  <data name="Search players" xml:space="preserve">
+    <value>プレイヤーを検索</value>
+  </data>
+  <data name="Search songs" xml:space="preserve">
+    <value>曲を検索</value>
+  </data>
+  <data name="Search titles" xml:space="preserve">
+    <value>称号を検索</value>
+  </data>
+  <data name="Search users" xml:space="preserve">
+    <value>ユーザーを検索</value>
+  </data>
+  <data name="Search your scores" xml:space="preserve">
+    <value>自分のスコアを検索</value>
+  </data>
+  <data name="Search {0} QR codes" xml:space="preserve">
+    <value>{0}件のQRコードを検索</value>
+  </data>
+  <data name="Search {0} by name or ID" xml:space="preserve">
+    <value>{0}を名前またはIDで検索</value>
+  </data>
+  <data name="Search {0} songs by name or ID" xml:space="preserve">
+    <value>{0}曲を名前またはIDで検索</value>
+  </data>
+  <data name="Search {0} titles" xml:space="preserve">
+    <value>{0}件の称号を検索</value>
+  </data>
+  <data name="Sections" xml:space="preserve">
+    <value>区間</value>
+  </data>
+  <data name="Seen by this server" xml:space="preserve">
+    <value>このサーバーで確認済み</value>
+  </data>
+  <data name="Serial" xml:space="preserve">
+    <value>シリアル</value>
+  </data>
+  <data name="Server" xml:space="preserve">
+    <value>サーバー</value>
+  </data>
+  <data name="Server Management" xml:space="preserve">
+    <value>サーバー管理</value>
+  </data>
+  <data name="Server state" xml:space="preserve">
+    <value>サーバーの状態</value>
+  </data>
+  <data name="Sessions" xml:space="preserve">
+    <value>セッション</value>
+  </data>
+  <data name="Set" xml:space="preserve">
+    <value>セット</value>
+  </data>
+  <data name="Set a token to -1 to turn it off." xml:space="preserve">
+    <value>トークンを-1にするとオフになります。</value>
+  </data>
+  <data name="Set it up" xml:space="preserve">
+    <value>設定する</value>
+  </data>
+  <data name="Set on" xml:space="preserve">
+    <value>更新日</value>
+  </data>
+  <data name="Set up" xml:space="preserve">
+    <value>設定する</value>
+  </data>
+  <data name="Set up the server" xml:space="preserve">
+    <value>サーバーをセットアップ</value>
+  </data>
+  <data name="Setup code" xml:space="preserve">
+    <value>セットアップコード</value>
+  </data>
+  <data name="Shop" xml:space="preserve">
+    <value>ショップ</value>
+  </data>
+  <data name="Show Sou-uchi songs" xml:space="preserve">
+    <value>双打の曲を表示</value>
+  </data>
+  <data name="Show access code" xml:space="preserve">
+    <value>アクセスコードを表示</value>
+  </data>
+  <data name="Show all {0} songs" xml:space="preserve">
+    <value>{0}曲すべて表示</value>
+  </data>
+  <data name="Show it" xml:space="preserve">
+    <value>表示する</value>
+  </data>
+  <data name="Show less" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="Show my rank" xml:space="preserve">
+    <value>自分の順位を表示</value>
+  </data>
+  <data name="Show older" xml:space="preserve">
+    <value>古いものを表示</value>
+  </data>
+  <data name="Show password" xml:space="preserve">
+    <value>パスワードを表示</value>
+  </data>
+  <data name="Show the code" xml:space="preserve">
+    <value>コードを表示</value>
+  </data>
+  <data name="Show until" xml:space="preserve">
+    <value>表示期限</value>
+  </data>
+  <data name="Show {0} songs" xml:space="preserve">
+    <value>{0}曲を表示</value>
+  </data>
+  <data name="Show/hide the achievement panel in-game" xml:space="preserve">
+    <value>ゲーム内の実績パネルを表示／非表示</value>
+  </data>
+  <data name="Sign out" xml:space="preserve">
+    <value>ログアウト</value>
+  </data>
+  <data name="Sign out everyone else" xml:space="preserve">
+    <value>ほかの端末をすべてログアウト</value>
+  </data>
+  <data name="Sign out everywhere" xml:space="preserve">
+    <value>すべての端末でログアウト</value>
+  </data>
+  <data name="Sign-in and security" xml:space="preserve">
+    <value>ログインとセキュリティ</value>
+  </data>
+  <data name="Sign-in help" xml:space="preserve">
+    <value>ログインのヘルプ</value>
+  </data>
+  <data name="Sign-ins" xml:space="preserve">
+    <value>ログイン履歴</value>
+  </data>
+  <data name="Sign-up" xml:space="preserve">
+    <value>新規登録</value>
+  </data>
+  <data name="Sign-up and sign-in" xml:space="preserve">
+    <value>新規登録とログイン</value>
+  </data>
+  <data name="Sign-up is closed on this server. Ask an admin." xml:space="preserve">
+    <value>このサーバーでは新規登録を受け付けていません。管理者にお問い合わせください。</value>
+  </data>
+  <data name="Signed in" xml:space="preserve">
+    <value>ログインしました</value>
+  </data>
+  <data name="Signed in {0} · active {1}" xml:space="preserve">
+    <value>{0}にログイン · 最終アクティブ {1}</value>
+  </data>
+  <data name="Signed out everyone else" xml:space="preserve">
+    <value>ほかの端末をすべてログアウトしました</value>
+  </data>
+  <data name="Signed out everywhere" xml:space="preserve">
+    <value>すべての端末でログアウトしました</value>
+  </data>
+  <data name="Signed-in Web UI devices, active in the last week." xml:space="preserve">
+    <value>Web UIにログイン中の端末（過去1週間にアクティブ）。</value>
+  </data>
+  <data name="Signed-in devices" xml:space="preserve">
+    <value>ログイン中の端末</value>
+  </data>
+  <data name="Skip for now" xml:space="preserve">
+    <value>今はスキップ</value>
+  </data>
+  <data name="Song" xml:space="preserve">
+    <value>曲</value>
+  </data>
+  <data name="Song ID" xml:space="preserve">
+    <value>曲ID</value>
+  </data>
+  <data name="Song intros" xml:space="preserve">
+    <value>曲紹介</value>
+  </data>
+  <data name="Song name or ID" xml:space="preserve">
+    <value>曲名またはID</value>
+  </data>
+  <data name="Song pages" xml:space="preserve">
+    <value>曲のページ</value>
+  </data>
+  <data name="Song select defaults" xml:space="preserve">
+    <value>選曲のデフォルト</value>
+  </data>
+  <data name="Song {0}" xml:space="preserve">
+    <value>曲 {0}</value>
+  </data>
+  <data name="Songs" xml:space="preserve">
+    <value>曲</value>
+  </data>
+  <data name="Songs played" xml:space="preserve">
+    <value>プレイした曲</value>
+  </data>
+  <data name="Sort" xml:space="preserve">
+    <value>並び替え</value>
+  </data>
+  <data name="Sort by {0} stars" xml:space="preserve">
+    <value>{0}の星の数で並び替え</value>
+  </data>
+  <data name="Soul gauge %" xml:space="preserve">
+    <value>魂ゲージ %</value>
+  </data>
+  <data name="Soul gauge + up to {0} more" xml:space="preserve">
+    <value>魂ゲージ＋最大{0}つ</value>
+  </data>
+  <data name="Star" xml:space="preserve">
+    <value>星</value>
+  </data>
+  <data name="Stars" xml:space="preserve">
+    <value>星</value>
+  </data>
+  <data name="Stars (high first)" xml:space="preserve">
+    <value>星（高い順）</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>開始</value>
+  </data>
+  <data name="Start from a copy of" xml:space="preserve">
+    <value>コピー元</value>
+  </data>
+  <data name="Start maintenance?" xml:space="preserve">
+    <value>メンテナンスを開始しますか？</value>
+  </data>
+  <data name="Starts" xml:space="preserve">
+    <value>開始</value>
+  </data>
+  <data name="Stats" xml:space="preserve">
+    <value>統計</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>状態</value>
+  </data>
+  <data name="Stop comparing" xml:space="preserve">
+    <value>比較をやめる</value>
+  </data>
+  <data name="Style" xml:space="preserve">
+    <value>スタイル</value>
+  </data>
+  <data name="Successful" xml:space="preserve">
+    <value>成功</value>
+  </data>
+  <data name="Swap don and ka" xml:space="preserve">
+    <value>ドンとカッを入れ替え</value>
+  </data>
+  <data name="Switch to dark mode" xml:space="preserve">
+    <value>ダークモードに切り替え</value>
+  </data>
+  <data name="Switch to light mode" xml:space="preserve">
+    <value>ライトモードに切り替え</value>
+  </data>
+  <data name="Taiko Mode" xml:space="preserve">
+    <value>太鼓モード</value>
+  </data>
+  <data name="Take the server offline?" xml:space="preserve">
+    <value>サーバーをオフラインにしますか？</value>
+  </data>
+  <data name="That access code is already bound to a user." xml:space="preserve">
+    <value>このアクセスコードはすでにほかのユーザーに登録されています。</value>
+  </data>
+  <data name="That card is already yours." xml:space="preserve">
+    <value>このカードはすでにあなたのものです。</value>
+  </data>
+  <data name="That code didn't work. Check the key was typed in exactly, then try the newest code." xml:space="preserve">
+    <value>コードが違います。キーが正確に入力されているか確認して、最新のコードを試してください。</value>
+  </data>
+  <data name="That code didn't work. Codes change every 30 seconds, so try the newest one." xml:space="preserve">
+    <value>コードが違います。コードは30秒ごとに変わるので、最新のものを試してください。</value>
+  </data>
+  <data name="That recovery code didn't work. Each one works only once." xml:space="preserve">
+    <value>リカバリーコードが違います。各コードは1回しか使えません。</value>
+  </data>
+  <data name="That setup code isn't right. It changes every time the server starts: check the console again." xml:space="preserve">
+    <value>セットアップコードが違います。サーバーを起動するたびに変わるので、コンソールを確認してください。</value>
+  </data>
+  <data name="That took too long. Enter your password again." xml:space="preserve">
+    <value>時間がかかりすぎました。もう一度パスワードを入力してください。</value>
+  </data>
+  <data name="That user has the maximum number of access codes." xml:space="preserve">
+    <value>このユーザーのアクセスコード数は上限に達しています。</value>
+  </data>
+  <data name="The 20 digits on your card or Banapass. Spaces are added for you." xml:space="preserve">
+    <value>カードまたはバナパスポートの20桁の番号。スペースは自動で入ります。</value>
+  </data>
+  <data name="The 20-digit number on the back of the card. The cabinet also shows it after you scan." xml:space="preserve">
+    <value>カード裏面の20桁の番号。読み込んだあとに筐体にも表示されます。</value>
+  </data>
+  <data name="The built-in set can't be deleted." xml:space="preserve">
+    <value>組み込みのセットは削除できません。</value>
+  </data>
+  <data name="The default set ({0})" xml:space="preserve">
+    <value>デフォルトのセット（{0}）</value>
+  </data>
+  <data name="The default set: the game serves it to every cabinet." xml:space="preserve">
+    <value>デフォルトのセット：ゲームはこれをすべての筐体に配信します。</value>
+  </data>
+  <data name="The end must be after the start." xml:space="preserve">
+    <value>終了は開始より後にしてください。</value>
+  </data>
+  <data name="The file is missing." xml:space="preserve">
+    <value>ファイルがありません。</value>
+  </data>
+  <data name="The game files are in place." xml:space="preserve">
+    <value>ゲームファイルは揃っています。</value>
+  </data>
+  <data name="The server is ready" xml:space="preserve">
+    <value>サーバーの準備ができました</value>
+  </data>
+  <data name="The server still uses the previous contents." xml:space="preserve">
+    <value>サーバーは以前の内容を使い続けています。</value>
+  </data>
+  <data name="The server still uses the previous contents. Saving here rewrites and fixes the file." xml:space="preserve">
+    <value>サーバーは以前の内容を使い続けています。ここで保存するとファイルが書き直され、修正されます。</value>
+  </data>
+  <data name="The ticker cabinets show. Cabinets pick changes up on their next startup." xml:space="preserve">
+    <value>筐体に流れるテロップです。筐体は次回の起動時に反映します。</value>
+  </data>
+  <data name="Theme colour" xml:space="preserve">
+    <value>テーマカラー</value>
+  </data>
+  <data name="They prove the card with when they last played it, or an invite code." xml:space="preserve">
+    <value>最後に遊んだ日時か招待コードでカードを証明します。</value>
+  </data>
+  <data name="They register again" xml:space="preserve">
+    <value>再登録が必要</value>
+  </data>
+  <data name="This card belongs to another player. Ask an admin to move it to you." xml:space="preserve">
+    <value>このカードはほかのプレイヤーのものです。管理者に移動してもらってください。</value>
+  </data>
+  <data name="This card is banned on this server. Ask an admin." xml:space="preserve">
+    <value>このカードはこのサーバーでBANされています。管理者にお問い合わせください。</value>
+  </data>
+  <data name="This device" xml:space="preserve">
+    <value>この端末</value>
+  </data>
+  <data name="This file didn't load" xml:space="preserve">
+    <value>このファイルは読み込めませんでした</value>
+  </data>
+  <data name="This is the only time it's shown. Copy it now." xml:space="preserve">
+    <value>表示されるのは今回だけです。今すぐコピーしてください。</value>
+  </data>
+  <data name="This page is being redesigned and will be back soon." xml:space="preserve">
+    <value>このページはリニューアル中です。近日公開予定です。</value>
+  </data>
+  <data name="This server needs an invite code from an admin." xml:space="preserve">
+    <value>このサーバーでは管理者の招待コードが必要です。</value>
+  </data>
+  <data name="This server requires 2-step verification for admins. Your admin pages open once it's on." xml:space="preserve">
+    <value>このサーバーでは管理者に2段階認証が必須です。オンにすると管理ページが使えるようになります。</value>
+  </data>
+  <data name="This song is in the list more than once." xml:space="preserve">
+    <value>この曲はリストに複数回入っています。</value>
+  </data>
+  <data name="This song isn't on the server." xml:space="preserve">
+    <value>この曲はサーバーにありません。</value>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>時間</value>
+  </data>
+  <data name="Time-limited songs" xml:space="preserve">
+    <value>期間限定曲</value>
+  </data>
+  <data name="Tip: paste the whole code, dashes and all." xml:space="preserve">
+    <value>ヒント：コードはダッシュごと丸ごと貼り付けられます。</value>
+  </data>
+  <data name="Title plates" xml:space="preserve">
+    <value>称号プレート</value>
+  </data>
+  <data name="Titles" xml:space="preserve">
+    <value>称号</value>
+  </data>
+  <data name="To make new recovery codes, enter a code from your app:" xml:space="preserve">
+    <value>新しいリカバリーコードを作るには、アプリのコードを入力してください：</value>
+  </data>
+  <data name="To turn it off, enter a code from your app (or a recovery code):" xml:space="preserve">
+    <value>オフにするには、アプリのコード（またはリカバリーコード）を入力してください：</value>
+  </data>
+  <data name="Today" xml:space="preserve">
+    <value>今日</value>
+  </data>
+  <data name="Token for {0}" xml:space="preserve">
+    <value>{0}のトークン</value>
+  </data>
+  <data name="Tokens" xml:space="preserve">
+    <value>トークン</value>
+  </data>
+  <data name="Too many wrong passwords. This account is locked for a while: try again later, or ask an admin." xml:space="preserve">
+    <value>パスワードの間違いが多すぎます。このアカウントはしばらくロックされます：時間をおいて試すか、管理者にお問い合わせください。</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>合計</value>
+  </data>
+  <data name="Trust this browser for 30 days" xml:space="preserve">
+    <value>このブラウザーを30日間信頼する</value>
+  </data>
+  <data name="Turn off" xml:space="preserve">
+    <value>オフにする</value>
+  </data>
+  <data name="Turn on 2-step verification to use the admin pages." xml:space="preserve">
+    <value>管理ページを使うには2段階認証をオンにしてください。</value>
+  </data>
+  <data name="Turn your screen brightness up if the reader doesn't pick it up." xml:space="preserve">
+    <value>リーダーが読み取らない場合は画面を明るくしてください。</value>
+  </data>
+  <data name="Turn yours off in Settings › Security." xml:space="preserve">
+    <value>自分の分は設定 › セキュリティでオフにしてください。</value>
+  </data>
+  <data name="Two-player charts in the song list" xml:space="preserve">
+    <value>曲リストの双打譜面</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>種類</value>
+  </data>
+  <data name="Type anything" xml:space="preserve">
+    <value>自由に入力</value>
+  </data>
+  <data name="Unban" xml:space="preserve">
+    <value>BAN解除</value>
+  </data>
+  <data name="Unbanned" xml:space="preserve">
+    <value>BANを解除しました</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>ブロック解除</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>不明</value>
+  </data>
+  <data name="Unknown access code" xml:space="preserve">
+    <value>不明なアクセスコード</value>
+  </data>
+  <data name="Unknown song" xml:space="preserve">
+    <value>不明な曲</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>ロック解除</value>
+  </data>
+  <data name="Unlocked" xml:space="preserve">
+    <value>ロックを解除しました</value>
+  </data>
+  <data name="Unlocks" xml:space="preserve">
+    <value>解放</value>
+  </data>
+  <data name="Unsaved changes" xml:space="preserve">
+    <value>未保存の変更</value>
+  </data>
+  <data name="Until {0}" xml:space="preserve">
+    <value>{0}まで</value>
+  </data>
+  <data name="Use" xml:space="preserve">
+    <value>使う</value>
+  </data>
+  <data name="Use Log out for your own devices." xml:space="preserve">
+    <value>自分の端末はログアウトを使ってください。</value>
+  </data>
+  <data name="Use Log out to end it." xml:space="preserve">
+    <value>ログアウトで終了してください。</value>
+  </data>
+  <data name="Use a recovery code" xml:space="preserve">
+    <value>リカバリーコードを使う</value>
+  </data>
+  <data name="Use an invite code instead" xml:space="preserve">
+    <value>招待コードを使う</value>
+  </data>
+  <data name="Use at least 8 characters." xml:space="preserve">
+    <value>8文字以上にしてください。</value>
+  </data>
+  <data name="Use the access code on your card and your web UI password." xml:space="preserve">
+    <value>カードのアクセスコードとWeb UIのパスワードを使います。</value>
+  </data>
+  <data name="Use this cabinet's own settings" xml:space="preserve">
+    <value>この筐体の個別設定を使う</value>
+  </data>
+  <data name="Use your authenticator app" xml:space="preserve">
+    <value>認証アプリを使う</value>
+  </data>
+  <data name="Use your last play time instead" xml:space="preserve">
+    <value>最後に遊んだ日時を使う</value>
+  </data>
+  <data name="Used with your access code to log in here." xml:space="preserve">
+    <value>ここでのログインにアクセスコードと一緒に使います。</value>
+  </data>
+  <data name="Used {0} from {1}" xml:space="preserve">
+    <value>{0}に{1}から使用</value>
+  </data>
+  <data name="User Management" xml:space="preserve">
+    <value>ユーザー管理</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>確認</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>バージョン</value>
+  </data>
+  <data name="View don-chan larger" xml:space="preserve">
+    <value>どんちゃんを大きく表示</value>
+  </data>
+  <data name="View larger" xml:space="preserve">
+    <value>大きく表示</value>
+  </data>
+  <data name="WIN" xml:space="preserve">
+    <value>WIN</value>
+  </data>
+  <data name="Waiting for approval" xml:space="preserve">
+    <value>承認待ち</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>警告</value>
+  </data>
+  <data name="Warnings {0}" xml:space="preserve">
+    <value>警告 {0}</value>
+  </data>
+  <data name="Web UI account" xml:space="preserve">
+    <value>Web UIアカウント</value>
+  </data>
+  <data name="What uses it, e.g. Discord bot" xml:space="preserve">
+    <value>用途（例：Discordボット）</value>
+  </data>
+  <data name="What's your access code?" xml:space="preserve">
+    <value>アクセスコードは？</value>
+  </data>
+  <data name="Where {0} is ahead" xml:space="preserve">
+    <value>{0}がリードしている譜面</value>
+  </data>
+  <data name="Who can sign up" xml:space="preserve">
+    <value>新規登録できる人</value>
+  </data>
+  <data name="Who can sign up is set in Admin › Access." xml:space="preserve">
+    <value>新規登録できる人は管理 › アクセスで設定します。</value>
+  </data>
+  <data name="Whose data to show. Remembered on this device." xml:space="preserve">
+    <value>表示するデータの持ち主。この端末で記憶されます。</value>
+  </data>
+  <data name="Won against the AI" xml:space="preserve">
+    <value>AIに勝ちました</value>
+  </data>
+  <data name="Write a title or a message." xml:space="preserve">
+    <value>タイトルかメッセージを入力してください。</value>
+  </data>
+  <data name="Wrong 2-step code" xml:space="preserve">
+    <value>2段階認証のコードが違う</value>
+  </data>
+  <data name="Wrong password" xml:space="preserve">
+    <value>パスワードが違う</value>
+  </data>
+  <data name="Yesterday" xml:space="preserve">
+    <value>昨日</value>
+  </data>
+  <data name="You can't change your own admin role." xml:space="preserve">
+    <value>自分の管理者権限は変更できません。</value>
+  </data>
+  <data name="You can't delete yourself." xml:space="preserve">
+    <value>自分自身は削除できません。</value>
+  </data>
+  <data name="You have the most cards this server allows ({0}). Remove one to add another." xml:space="preserve">
+    <value>このサーバーで持てるカードの上限（{0}枚）です。追加するには1枚削除してください。</value>
+  </data>
+  <data name="You haven't played {0} on {1} yet." xml:space="preserve">
+    <value>{0}の{1}はまだプレイしていません。</value>
+  </data>
+  <data name="You vs {0}" xml:space="preserve">
+    <value>あなた vs {0}</value>
+  </data>
+  <data name="You'll use it with your access code to log in here." xml:space="preserve">
+    <value>ここでのログインにアクセスコードと一緒に使います。</value>
+  </data>
+  <data name="You're &lt;b&gt;#{0}&lt;/b&gt; of {1}" xml:space="preserve">
+    <value>{1}人中&lt;b&gt;{0}位&lt;/b&gt;です</value>
+  </data>
+  <data name="You're registered" xml:space="preserve">
+    <value>登録しました</value>
+  </data>
+  <data name="Your best · {0}" xml:space="preserve">
+    <value>自己ベスト · {0}</value>
+  </data>
+  <data name="Your cards" xml:space="preserve">
+    <value>あなたのカード</value>
+  </data>
+  <data name="Your highest pass (outlined) is the badge on your nameplate. On this page the card shows your Dani Dojo outfit." xml:space="preserve">
+    <value>最高の合格段位（枠付き）がネームプレートのバッジになります。このページのカードは段位道場の衣装で表示されます。</value>
+  </data>
+  <data name="Your only card can't be removed." xml:space="preserve">
+    <value>唯一のカードは削除できません。</value>
+  </data>
+  <data name="Your own title" xml:space="preserve">
+    <value>自分で作った称号</value>
+  </data>
+  <data name="Your results" xml:space="preserve">
+    <value>あなたの結果</value>
+  </data>
+  <data name="as shown in game" xml:space="preserve">
+    <value>ゲーム内の表示</value>
+  </data>
+  <data name="by {0}" xml:space="preserve">
+    <value>{0}による</value>
+  </data>
+  <data name="extract.exe isn't next to TaikoLocalServer.exe, so run it yourself:" xml:space="preserve">
+    <value>extract.exeがTaikoLocalServer.exeと同じ場所にありません。自分で実行してください：</value>
+  </data>
+  <data name="for 1 day" xml:space="preserve">
+    <value>1日間</value>
+  </data>
+  <data name="for 1 hour" xml:space="preserve">
+    <value>1時間</value>
+  </data>
+  <data name="for 15 min" xml:space="preserve">
+    <value>15分間</value>
+  </data>
+  <data name="now" xml:space="preserve">
+    <value>今</value>
+  </data>
+  <data name="of {0}" xml:space="preserve">
+    <value>{0}中</value>
+  </data>
+  <data name="or pick one of the game's titles" xml:space="preserve">
+    <value>またはゲームの称号から選ぶ</value>
+  </data>
+  <data name="over {0} play" xml:space="preserve">
+    <value>{0}プレイ中</value>
+  </data>
+  <data name="over {0} plays" xml:space="preserve">
+    <value>{0}プレイ中</value>
+  </data>
+  <data name="played in this order" xml:space="preserve">
+    <value>この順でプレイ</value>
+  </data>
+  <data name="{0} Donderful" xml:space="preserve">
+    <value>ドンダフル {0}</value>
+  </data>
+  <data name="{0} credit" xml:space="preserve">
+    <value>{0}クレジット</value>
+  </data>
+  <data name="{0} credits" xml:space="preserve">
+    <value>{0}クレジット</value>
+  </data>
+  <data name="{0} days ago" xml:space="preserve">
+    <value>{0}日前</value>
+  </data>
+  <data name="{0} devices · last active {1}" xml:space="preserve">
+    <value>{0}台 · 最終アクティブ {1}</value>
+  </data>
+  <data name="{0} isn't ahead of you anywhere here." xml:space="preserve">
+    <value>{0}がリードしている譜面はここにはありません。</value>
+  </data>
+  <data name="{0} more. Keep typing to narrow it down." xml:space="preserve">
+    <value>ほか{0}件。入力して絞り込んでください。</value>
+  </data>
+  <data name="{0} new best" xml:space="preserve">
+    <value>自己ベスト更新 {0}</value>
+  </data>
+  <data name="{0} new bests" xml:space="preserve">
+    <value>自己ベスト更新 {0}</value>
+  </data>
+  <data name="{0} new lines ↓" xml:space="preserve">
+    <value>新着 {0}行 ↓</value>
+  </data>
+  <data name="{0} of the game's {1} movies selected." xml:space="preserve">
+    <value>ゲームの{1}本のムービーのうち{0}本を選択中。</value>
+  </data>
+  <data name="{0} of {1}" xml:space="preserve">
+    <value>{1}中{0}</value>
+  </data>
+  <data name="{0} of {1} cabinets online" xml:space="preserve">
+    <value>{1}台中{0}台がオンライン</value>
+  </data>
+  <data name="{0} of {1} plays" xml:space="preserve">
+    <value>{1}プレイ中{0}</value>
+  </data>
+  <data name="{0} of {1} sections won" xml:space="preserve">
+    <value>{1}区間中{0}区間で勝利</value>
+  </data>
+  <data name="{0} of {1} songs" xml:space="preserve">
+    <value>{1}曲中{0}曲</value>
+  </data>
+  <data name="{0} of {1} {2} charts played" xml:space="preserve">
+    <value>{2}の{1}譜面中{0}譜面をプレイ</value>
+  </data>
+  <data name="{0} play" xml:space="preserve">
+    <value>{0}プレイ</value>
+  </data>
+  <data name="{0} play today" xml:space="preserve">
+    <value>今日 {0}プレイ</value>
+  </data>
+  <data name="{0} player" xml:space="preserve">
+    <value>{0}人</value>
+  </data>
+  <data name="{0} players" xml:space="preserve">
+    <value>{0}人</value>
+  </data>
+  <data name="{0} plays" xml:space="preserve">
+    <value>{0}プレイ</value>
+  </data>
+  <data name="{0} plays today" xml:space="preserve">
+    <value>今日 {0}プレイ</value>
+  </data>
+  <data name="{0} recovery codes left." xml:space="preserve">
+    <value>リカバリーコード残り{0}個。</value>
+  </data>
+  <data name="{0} sections" xml:space="preserve">
+    <value>{0}区間</value>
+  </data>
+  <data name="{0} song" xml:space="preserve">
+    <value>{0}曲</value>
+  </data>
+  <data name="{0} songs" xml:space="preserve">
+    <value>{0}曲</value>
+  </data>
+  <data name="{0} to fix, {1} warnings" xml:space="preserve">
+    <value>要対応 {0}件、警告 {1}件</value>
+  </data>
+  <data name="{0} tries" xml:space="preserve">
+    <value>{0}回</value>
+  </data>
+  <data name="{0}: a pass condition is empty." xml:space="preserve">
+    <value>{0}：合格条件が空です。</value>
+  </data>
+  <data name="{0}: a song isn't on this server." xml:space="preserve">
+    <value>{0}：このサーバーにない曲があります。</value>
+  </data>
+  <data name="{0}: {1} play" xml:space="preserve">
+    <value>{0}：{1}プレイ</value>
+  </data>
+  <data name="{0}: {1} plays" xml:space="preserve">
+    <value>{0}：{1}プレイ</value>
+  </data>
+  <data name="{0}–{1} of {2}" xml:space="preserve">
+    <value>{0}–{1}／{2}</value>
+  </data>
+  <data name="Pop" xml:space="preserve">
+    <value>ポップス</value>
+  </data>
+  <data name="Anime" xml:space="preserve">
+    <value>アニメ</value>
+  </data>
+  <data name="Kids" xml:space="preserve">
+    <value>キッズ</value>
+  </data>
+  <data name="Vocaloid" xml:space="preserve">
+    <value>ボーカロイド™曲</value>
+  </data>
+  <data name="Game Music" xml:space="preserve">
+    <value>ゲームミュージック</value>
+  </data>
+  <data name="NAMCO Original" xml:space="preserve">
+    <value>ナムコオリジナル</value>
+  </data>
+  <data name="Variety" xml:space="preserve">
+    <value>バラエティ</value>
+  </data>
+  <data name="Classical" xml:space="preserve">
+    <value>クラシック</value>
+  </data>
+  <data name="Song title" xml:space="preserve">
+    <value>曲名</value>
+  </data>
+  <data name="Notice title" xml:space="preserve">
+    <value>タイトル</value>
   </data>
 </root>

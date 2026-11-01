@@ -129,12 +129,6 @@
   <data name="Log In" xml:space="preserve">
     <value>登錄</value>
   </data>
-  <data name="Achievement Panel" xml:space="preserve">
-    <value>成績版面</value>
-  </data>
-  <data name="Achievement Panel Difficulty" xml:space="preserve">
-    <value>成績版面難度</value>
-  </data>
   <data name="AI Battle Data" xml:space="preserve">
     <value>AI對戰數據</value>
   </data>
@@ -156,9 +150,6 @@
   <data name="High Scores" xml:space="preserve">
     <value>最高分</value>
   </data>
-  <data name="Access Codes" xml:space="preserve">
-    <value>管理訪問碼</value>
-  </data>
   <data name="Add Access Code" xml:space="preserve">
     <value>新增訪問碼</value>
   </data>
@@ -174,17 +165,11 @@
   <data name="Old Password" xml:space="preserve">
     <value>現有密碼</value>
   </data>
-  <data name="New Password" xml:space="preserve">
-    <value>新密碼</value>
-  </data>
   <data name="Confirm New Password" xml:space="preserve">
     <value>再次輸入新密碼</value>
   </data>
   <data name="Dialog OK" xml:space="preserve">
     <value>確認</value>
-  </data>
-  <data name="QR Code" xml:space="preserve">
-    <value>查看QR Code</value>
   </data>
   <data name="Fifth Kyuu" xml:space="preserve">
     <value>五級</value>
@@ -327,9 +312,6 @@
   <data name="Copy to Clipboard" xml:space="preserve">
     <value>複製到粘貼板</value>
   </data>
-  <data name="Invite Code" xml:space="preserve">
-    <value>邀請碼</value>
-  </data>
   <data name="Error" xml:space="preserve">
     <value> 錯誤</value>
   </data>
@@ -356,9 +338,6 @@
   </data>
   <data name="Password is Required" xml:space="preserve">
     <value>密碼為必填項</value>
-  </data>
-  <data name="Confirm Password" xml:space="preserve">
-    <value>再次輸入密碼</value>
   </data>
   <data name="Confirm Password is Required" xml:space="preserve">
     <value>再次輸入密碼為必填項</value>
@@ -462,9 +441,6 @@
   <data name="ID" xml:space="preserve">
     <value>ID</value>
   </data>
-  <data name="Edit Profile" xml:space="preserve">
-    <value>編輯檔案</value>
-  </data>
   <data name="Access Code Delete Confirm" xml:space="preserve">
     <value>您確定要刪除此訪問碼嗎？</value>
   </data>
@@ -481,7 +457,7 @@
     <value>重置密碼后，用戶需要再次注冊</value>
   </data>
   <data name="Delete User Confirm" xml:space="preserve">
-    <value>您真的要刪除該用戶的數據嗎？&lt;br /&gt;所有相關數據將被刪除，此過程無法撤銷！</value>
+    <value>這將刪除{0}及其分數、遊玩歷史、段位道場結果和存取碼。請輸入其名稱以確認。</value>
   </data>
   <data name="Delete User Success" xml:space="preserve">
     <value>用戶已成功刪除。</value>
@@ -567,7 +543,7 @@
   <data name="Default" xml:space="preserve">
     <value>默認</value>
   </data>
-  <data name="Not Cleared" xml:space="preserve">
+  <data name="Not Cleared First" xml:space="preserve">
     <value>未通關優先</value>
   </data>
   <data name="Not Full Combo" xml:space="preserve">
@@ -648,12 +624,6 @@
   <data name="Change Password" xml:space="preserve">
     <value>更改密碼</value>
   </data>
-  <data name="Reset Password" xml:space="preserve">
-    <value>重置密碼</value>
-  </data>
-  <data name="Delete User" xml:space="preserve">
-    <value>刪除帳號</value>
-  </data>
   <data name="Welcome to TaikoWebUI!" xml:space="preserve">
     <value>歡迎來到TaikoWebUI!</value>
   </data>
@@ -674,9 +644,6 @@
   </data>
   <data name="Drumroll" xml:space="preserve">
     <value>連打</value>
-  </data>
-  <data name="MAX Combo" xml:space="preserve">
-    <value>最大連擊數</value>
   </data>
   <data name="Played" xml:space="preserve">
     <value>日期</value>
@@ -835,84 +802,2313 @@
     <value>顯示雙打譜面</value>
   </data>
   <data name="Access Local Mode" xml:space="preserve">
-    <value>Access rules apply in Server mode only. This server runs in Local mode, so everyone can open every page.</value>
+    <value>存取規則僅在伺服器模式下生效。本伺服器執行於本機模式，所以任何人都能開啟所有頁面。</value>
   </data>
   <data name="Access Rules Hint" xml:space="preserve">
-    <value>Who can create an account and sign in to the Web UI.</value>
+    <value>誰可以建立帳號並登入網頁版。</value>
   </data>
   <data name="Register With Last Play Time Hint" xml:space="preserve">
-    <value>Players prove a card is theirs by entering when they last played it.</value>
+    <value>玩家輸入最後一次用該卡遊玩的時間，以證明卡片屬於自己。</value>
   </data>
   <data name="Free Profile Editing Hint" xml:space="preserve">
-    <value>Players can pick any title and costume part, not only the ones they have unlocked.</value>
+    <value>玩家可以選擇任何稱號和服裝部件，而不只是已解鎖的。</value>
   </data>
   <data name="Save Failed" xml:space="preserve">
-    <value>Couldn’t save. Try again.</value>
+    <value>無法儲存。請重試。</value>
   </data>
   <data name="Config Card Hint" xml:space="preserve">
-    <value>What the server read when it started. Change these in {0} and restart the server.</value>
+    <value>伺服器啟動時讀取的內容。請在{0}中修改，然後重新啟動伺服器。</value>
   </data>
   <data name="Activity Hint" xml:space="preserve">
-    <value>Admin actions on users, scores and access codes. Kept for a year.</value>
+    <value>管理員對使用者、分數和存取碼的操作。保留一年。</value>
   </data>
   <data name="Invite Code Hint" xml:space="preserve">
-    <value>6 digits, valid 24 h. Lets them register.</value>
+    <value>6位數字，24小時內有效。可用於註冊。</value>
   </data>
   <data name="Move Code Hint" xml:space="preserve">
-    <value>Move {0} to another user. Scores already played with it stay here.</value>
+    <value>將{0}移到其他使用者。已用它遊玩的分數會留在這裡。</value>
   </data>
   <data name="Invite Dialog Hint" xml:space="preserve">
-    <value>Give this code to the owner of {0}. They enter it when registering. It works for 24 hours.</value>
+    <value>把這個碼交給{0}的持有人。註冊時輸入。24小時內有效。</value>
   </data>
   <data name="Reset Password Confirm" xml:space="preserve">
-    <value>{0} won’t be able to sign in until they register again. Their scores are kept.</value>
+    <value>{0}在重新註冊之前將無法登入。分數會保留。</value>
   </data>
   <data name="Make Admin Confirm" xml:space="preserve">
-    <value>{0} will be able to manage every user and the server.</value>
+    <value>{0}將可以管理所有使用者和伺服器。</value>
   </data>
   <data name="Remove Admin Confirm" xml:space="preserve">
-    <value>{0} will keep their account and scores, but lose access to the admin pages.</value>
-  </data>
-  <data name="Delete User Confirm" xml:space="preserve">
-    <value>This deletes {0}, their scores, play history, Dani Dojo results and access codes. Type their name to confirm.</value>
+    <value>{0}會保留帳號和分數，但將無法存取管理頁面。</value>
   </data>
   <data name="Delete User Hint" xml:space="preserve">
-    <value>Deletes the user, their scores, play history and access codes.</value>
+    <value>刪除該使用者及其分數、遊玩歷史和存取碼。</value>
   </data>
   <data name="Remove Score Hint" xml:space="preserve">
-    <value>Removes the best score and the plays behind it from play history.</value>
+    <value>從遊玩歷史中移除最佳分數及其對應的遊玩。</value>
   </data>
   <data name="Setup Code Hint" xml:space="preserve">
-    <value>This server has no admin yet. Look in the server console for a line like this one and enter its code.</value>
+    <value>本伺服器還沒有管理員。請在伺服器主控台中找到類似這樣的一行，並輸入其中的碼。</value>
   </data>
   <data name="Game Files Hint" xml:space="preserve">
-    <value>Cabinets and these pages need files from the game install: song data, nameplates and the 3D don-chan. Run the extractor on the game folder:</value>
+    <value>機台和這些頁面需要遊戲安裝中的檔案：歌曲資料、名牌和3D小咚。請對遊戲資料夾執行擷取工具：</value>
   </data>
   <data name="Admin Account Hint" xml:space="preserve">
-    <value>Your card. It doesn’t need to have played on this server yet. If it already has an account, this becomes its password.</value>
+    <value>你的卡片。不需要在本伺服器上玩過。如果它已有帳號，這將成為它的密碼。</value>
   </data>
   <data name="Game Assets Hint" xml:space="preserve">
-    <value>Import assets from the game that are required by the WebUI.</value>
+    <value>從遊戲中匯入網頁版所需的資源。</value>
   </data>
   <data name="Data Files Hint" xml:space="preserve">
-    <value>What the server loaded. Edit the server-owned files here, or by hand and then Reload.</value>
+    <value>伺服器載入的內容。可在此編輯伺服器自有的檔案，或手動編輯後點重新載入。</value>
   </data>
   <data name="Set GamePath Hint" xml:space="preserve">
-    <value>Set {0} in {1} and restart the server, and it can extract the files itself. Or run this on the game PC:</value>
+    <value>在{1}中設定{0}並重新啟動伺服器，伺服器就能自行擷取檔案。或在遊戲電腦上執行：</value>
   </data>
   <data name="Delete Set Confirm" xml:space="preserve">
-    <value>Delete the course set “{0}”? Its file is kept as a .bak next to it.</value>
+    <value>刪除課程組「{0}」？其檔案會以.bak保留在旁邊。</value>
   </data>
   <data name="Ban Card Dialog Hint" xml:space="preserve">
-    <value>Ban {0}? It is refused at the cabinet and for Web UI sign-in. The account, its scores and its other cards keep working.</value>
+    <value>封禁{0}？它會在機台和網頁版登入時被拒絕。帳號、分數和其他卡片照常可用。</value>
   </data>
   <data name="Ban Card Hint" xml:space="preserve">
-    <value>A banned card is refused at the cabinet and for Web UI sign-in. The account and its scores stay. It needn’t have played here yet.</value>
+    <value>被封禁的卡片會在機台和網頁版登入時被拒絕。帳號和分數會保留。卡片無需在此玩過。</value>
   </data>
   <data name="Api Tokens Hint" xml:space="preserve">
-    <value>For Discord bots, leaderboard sites and scripts that read this server. A token acts as the admin who created it, limited to its scopes, and stops working if that admin is no longer an admin.</value>
+    <value>供讀取本伺服器的Discord機器人、排行榜網站和指令碼使用。權杖以建立它的管理員身分運作，僅限其權限範圍；若該管理員不再是管理員，權杖即失效。</value>
   </data>
   <data name="Api Tokens Off Hint" xml:space="preserve">
-    <value>API tokens are turned off, so the server refuses them. To turn them on, set {0} in {1} and restart the server.</value>
+    <value>API權杖已關閉，伺服器會拒絕它們。要開啟，請在{1}中設定{0}並重新啟動伺服器。</value>
+  </data>
+  <data name="(empty: now)" xml:space="preserve">
+    <value>（留空：立即）</value>
+  </data>
+  <data name="(empty: until changed)" xml:space="preserve">
+    <value>（留空：直到更改）</value>
+  </data>
+  <data name="(no name)" xml:space="preserve">
+    <value>（無名稱）</value>
+  </data>
+  <data name="(you)" xml:space="preserve">
+    <value>（你）</value>
+  </data>
+  <data name="**bold**, line breaks" xml:space="preserve">
+    <value>**粗體**、換行</value>
+  </data>
+  <data name="+{0} this week" xml:space="preserve">
+    <value>本週 +{0}</value>
+  </data>
+  <data name=", with mods" xml:space="preserve">
+    <value>，含模組</value>
+  </data>
+  <data name="1 day" xml:space="preserve">
+    <value>1天</value>
+  </data>
+  <data name="1 device · last active {1}" xml:space="preserve">
+    <value>1台設備 · 最後活動 {1}</value>
+  </data>
+  <data name="1 play" xml:space="preserve">
+    <value>1次遊玩</value>
+  </data>
+  <data name="1. In your authenticator app, add an account: scan this code, or type in the key below it." xml:space="preserve">
+    <value>1. 在驗證器應用程式中添加帳號：掃描此QR碼，或輸入下方的密鑰。</value>
+  </data>
+  <data name="2-step verification" xml:space="preserve">
+    <value>兩步驗證</value>
+  </data>
+  <data name="2-step verification is off" xml:space="preserve">
+    <value>兩步驗證已關閉</value>
+  </data>
+  <data name="2-step verification is on" xml:space="preserve">
+    <value>兩步驗證已開啟</value>
+  </data>
+  <data name="2-step verification reset" xml:space="preserve">
+    <value>兩步驗證已重置</value>
+  </data>
+  <data name="2. Enter the 6-digit code it shows:" xml:space="preserve">
+    <value>2. 輸入應用程式顯示的6位驗證碼：</value>
+  </data>
+  <data name="30 days" xml:space="preserve">
+    <value>30天</value>
+  </data>
+  <data name="3D preview" xml:space="preserve">
+    <value>3D預覽</value>
+  </data>
+  <data name="7 days" xml:space="preserve">
+    <value>7天</value>
+  </data>
+  <data name="A banner at the top of everyone's Dashboard in the Web UI." xml:space="preserve">
+    <value>顯示在網頁版所有人儀表板頂部的橫幅。</value>
+  </data>
+  <data name="A notice that shows needs a title or a message." xml:space="preserve">
+    <value>要顯示的公告需要標題或內容。</value>
+  </data>
+  <data name="A song in this course isn't on this server." xml:space="preserve">
+    <value>此課程中有歌曲不在本伺服器上。</value>
+  </data>
+  <data name="A user needs at least one access code." xml:space="preserve">
+    <value>使用者至少需要一個存取碼。</value>
+  </data>
+  <data name="AI Battle" xml:space="preserve">
+    <value>AI對戰</value>
+  </data>
+  <data name="AI Battle · {0}" xml:space="preserve">
+    <value>AI對戰 · {0}</value>
+  </data>
+  <data name="AI Battle: lost, {0} of {1} sections won" xml:space="preserve">
+    <value>AI對戰：落敗，贏下{1}個區間中的{0}個</value>
+  </data>
+  <data name="AI Battle: won {0} of {1} sections" xml:space="preserve">
+    <value>AI對戰：贏下{1}個區間中的{0}個</value>
+  </data>
+  <data name="API tokens" xml:space="preserve">
+    <value>API權杖</value>
+  </data>
+  <data name="API tokens are on (ServerSettings.ApiTokens)." xml:space="preserve">
+    <value>API權杖已啟用（ServerSettings.ApiTokens）。</value>
+  </data>
+  <data name="Access" xml:space="preserve">
+    <value>存取</value>
+  </data>
+  <data name="Access code bound" xml:space="preserve">
+    <value>已綁定存取碼</value>
+  </data>
+  <data name="Access code removed" xml:space="preserve">
+    <value>已移除存取碼</value>
+  </data>
+  <data name="Access codes" xml:space="preserve">
+    <value>存取碼</value>
+  </data>
+  <data name="Access codes are 20 digits." xml:space="preserve">
+    <value>存取碼為20位數字。</value>
+  </data>
+  <data name="Access codes per player" xml:space="preserve">
+    <value>每位玩家的存取碼數量</value>
+  </data>
+  <data name="Access: {0} to fix" xml:space="preserve">
+    <value>存取：{0}項待處理</value>
+  </data>
+  <data name="Account" xml:space="preserve">
+    <value>帳號</value>
+  </data>
+  <data name="Account locked" xml:space="preserve">
+    <value>帳號已鎖定</value>
+  </data>
+  <data name="Accuracy" xml:space="preserve">
+    <value>準確率</value>
+  </data>
+  <data name="Accuracy counts a Good as 1 and an OK as ½." xml:space="preserve">
+    <value>準確率以良計1、可計½。</value>
+  </data>
+  <data name="Achievement panel" xml:space="preserve">
+    <value>成就面板</value>
+  </data>
+  <data name="Achievement panel difficulty" xml:space="preserve">
+    <value>成就面板難度</value>
+  </data>
+  <data name="Across all songs" xml:space="preserve">
+    <value>全部歌曲合計</value>
+  </data>
+  <data name="Activity" xml:space="preserve">
+    <value>活動記錄</value>
+  </data>
+  <data name="Add a card" xml:space="preserve">
+    <value>添加卡片</value>
+  </data>
+  <data name="Add a song" xml:space="preserve">
+    <value>添加歌曲</value>
+  </data>
+  <data name="Add a song to the shop" xml:space="preserve">
+    <value>向商店添加歌曲</value>
+  </data>
+  <data name="Add condition" xml:space="preserve">
+    <value>添加條件</value>
+  </data>
+  <data name="Add message" xml:space="preserve">
+    <value>添加消息</value>
+  </data>
+  <data name="Add song" xml:space="preserve">
+    <value>添加歌曲</value>
+  </data>
+  <data name="Add them" xml:space="preserve">
+    <value>添加</value>
+  </data>
+  <data name="Add to favourites" xml:space="preserve">
+    <value>加入收藏</value>
+  </data>
+  <data name="Added to favourites" xml:space="preserve">
+    <value>已加入收藏</value>
+  </data>
+  <data name="Admin" xml:space="preserve">
+    <value>管理</value>
+  </data>
+  <data name="Admin account" xml:space="preserve">
+    <value>管理員帳號</value>
+  </data>
+  <data name="Admin role" xml:space="preserve">
+    <value>管理員身份</value>
+  </data>
+  <data name="Admins" xml:space="preserve">
+    <value>管理員</value>
+  </data>
+  <data name="Admins can manage every user and the server." xml:space="preserve">
+    <value>管理員可以管理所有使用者和伺服器。</value>
+  </data>
+  <data name="Admins only" xml:space="preserve">
+    <value>僅限管理員</value>
+  </data>
+  <data name="After your password, a code from an authenticator app on your phone." xml:space="preserve">
+    <value>輸入密碼後，再輸入手機驗證器應用程式中的驗證碼。</value>
+  </data>
+  <data name="Ahead on &lt;b&gt;{0}&lt;/b&gt; · behind on &lt;b&gt;{1}&lt;/b&gt; of {2} charts you've both played" xml:space="preserve">
+    <value>在你們都玩過的{2}個譜面中，領先&lt;b&gt;{0}&lt;/b&gt;個 · 落後&lt;b&gt;{1}&lt;/b&gt;個</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>全部</value>
+  </data>
+  <data name="All changes saved" xml:space="preserve">
+    <value>所有更改已保存</value>
+  </data>
+  <data name="All difficulties" xml:space="preserve">
+    <value>全部難度</value>
+  </data>
+  <data name="All genres" xml:space="preserve">
+    <value>全部類型</value>
+  </data>
+  <data name="All plays" xml:space="preserve">
+    <value>全部遊玩</value>
+  </data>
+  <data name="All songs" xml:space="preserve">
+    <value>全部歌曲</value>
+  </data>
+  <data name="Allow" xml:space="preserve">
+    <value>允許</value>
+  </data>
+  <data name="Allow a chassis ID before it connects" xml:space="preserve">
+    <value>在連接前允許機台ID</value>
+  </data>
+  <data name="Allow skipping during play" xml:space="preserve">
+    <value>允許遊玩中跳過</value>
+  </data>
+  <data name="Allowed" xml:space="preserve">
+    <value>已允許</value>
+  </data>
+  <data name="Always first" xml:space="preserve">
+    <value>始終最前</value>
+  </data>
+  <data name="An authenticator app code after the password. Admins who must use it get admin access once they turn it on." xml:space="preserve">
+    <value>輸入密碼後需輸入驗證器的驗證碼。必須開啟的管理員在開啟後才獲得管理權限。</value>
+  </data>
+  <data name="Animation" xml:space="preserve">
+    <value>動畫</value>
+  </data>
+  <data name="Announcements" xml:space="preserve">
+    <value>公告</value>
+  </data>
+  <data name="Announcer voice" xml:space="preserve">
+    <value>播報語音</value>
+  </data>
+  <data name="Any crown" xml:space="preserve">
+    <value>任意王冠</value>
+  </data>
+  <data name="Anyone with a card" xml:space="preserve">
+    <value>任何持卡人</value>
+  </data>
+  <data name="Anyone with a card's access code." xml:space="preserve">
+    <value>任何知道卡片存取碼的人。</value>
+  </data>
+  <data name="Anyone with this code can play as you. Don't share it." xml:space="preserve">
+    <value>任何拿到此碼的人都能以你的身份遊玩。請勿分享。</value>
+  </data>
+  <data name="Anything using it stops working immediately." xml:space="preserve">
+    <value>使用它的程序會立即失效。</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>應用程式</value>
+  </data>
+  <data name="Ask an admin to generate an invite code for your card." xml:space="preserve">
+    <value>請管理員為你的卡片生成邀請碼。</value>
+  </data>
+  <data name="At most {0} songs." xml:space="preserve">
+    <value>最多{0}首歌曲。</value>
+  </data>
+  <data name="Available" xml:space="preserve">
+    <value>可用</value>
+  </data>
+  <data name="Average judgements" xml:space="preserve">
+    <value>平均判定</value>
+  </data>
+  <data name="Average score" xml:space="preserve">
+    <value>平均分數</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>返回</value>
+  </data>
+  <data name="Background" xml:space="preserve">
+    <value>背景</value>
+  </data>
+  <data name="Bad or cheated scores" xml:space="preserve">
+    <value>錯誤或作弊的分數</value>
+  </data>
+  <data name="Bads" xml:space="preserve">
+    <value>不可</value>
+  </data>
+  <data name="Ban" xml:space="preserve">
+    <value>封禁</value>
+  </data>
+  <data name="Ban a card" xml:space="preserve">
+    <value>封禁卡片</value>
+  </data>
+  <data name="Ban this card" xml:space="preserve">
+    <value>封禁此卡片</value>
+  </data>
+  <data name="Banned" xml:space="preserve">
+    <value>已封禁</value>
+  </data>
+  <data name="Banned cards" xml:space="preserve">
+    <value>已封禁的卡片</value>
+  </data>
+  <data name="Banned until {0}" xml:space="preserve">
+    <value>封禁至{0}</value>
+  </data>
+  <data name="Beat the AI" xml:space="preserve">
+    <value>擊敗AI</value>
+  </data>
+  <data name="Best" xml:space="preserve">
+    <value>最佳</value>
+  </data>
+  <data name="Best combo" xml:space="preserve">
+    <value>最高連擊</value>
+  </data>
+  <data name="Bind" xml:space="preserve">
+    <value>綁定</value>
+  </data>
+  <data name="Block" xml:space="preserve">
+    <value>封鎖</value>
+  </data>
+  <data name="Blocked" xml:space="preserve">
+    <value>已封鎖</value>
+  </data>
+  <data name="Bodies" xml:space="preserve">
+    <value>身體</value>
+  </data>
+  <data name="By {0}, {1} · refused {2}×" xml:space="preserve">
+    <value>由{0}於{1} · 已拒絕{2}次</value>
+  </data>
+  <data name="Cabinets" xml:space="preserve">
+    <value>機台</value>
+  </data>
+  <data name="Cabinets can't play until this is done." xml:space="preserve">
+    <value>完成之前機台無法遊玩。</value>
+  </data>
+  <data name="Cabinets get a network error; nothing is saved." xml:space="preserve">
+    <value>機台會出現網路錯誤，不會保存任何內容。</value>
+  </data>
+  <data name="Cabinets keep playing and show that maintenance is coming." xml:space="preserve">
+    <value>機台繼續運行，並提示即將維護。</value>
+  </data>
+  <data name="Cabinets pick a change up on their next heartbeat, within about a minute." xml:space="preserve">
+    <value>機台會在下次心跳（約一分鐘內）應用程式更改。</value>
+  </data>
+  <data name="Cabinets play normally." xml:space="preserve">
+    <value>機台正常運行。</value>
+  </data>
+  <data name="Cabinets show the maintenance screen." xml:space="preserve">
+    <value>機台顯示維護畫面。</value>
+  </data>
+  <data name="Can't see the console?" xml:space="preserve">
+    <value>看不到主控台？</value>
+  </data>
+  <data name="Card" xml:space="preserve">
+    <value>卡片</value>
+  </data>
+  <data name="Card QR code" xml:space="preserve">
+    <value>卡片QR碼</value>
+  </data>
+  <data name="Card added" xml:space="preserve">
+    <value>已添加卡片</value>
+  </data>
+  <data name="Card banned" xml:space="preserve">
+    <value>卡片已封禁</value>
+  </data>
+  <data name="Card name" xml:space="preserve">
+    <value>卡片名稱</value>
+  </data>
+  <data name="Card removed" xml:space="preserve">
+    <value>已移除卡片</value>
+  </data>
+  <data name="Certificate" xml:space="preserve">
+    <value>憑證</value>
+  </data>
+  <data name="Change" xml:space="preserve">
+    <value>更改</value>
+  </data>
+  <data name="Change main song" xml:space="preserve">
+    <value>更換主歌曲</value>
+  </data>
+  <data name="Change song" xml:space="preserve">
+    <value>更換歌曲</value>
+  </data>
+  <data name="Change the default set in Dani Dojo" xml:space="preserve">
+    <value>在段位道場中更改預設組</value>
+  </data>
+  <data name="Chassis ID or shop" xml:space="preserve">
+    <value>機台ID或店鋪</value>
+  </data>
+  <data name="Check again" xml:space="preserve">
+    <value>重新檢查</value>
+  </data>
+  <data name="Checklist" xml:space="preserve">
+    <value>檢查清單</value>
+  </data>
+  <data name="Choose a password" xml:space="preserve">
+    <value>設定密碼</value>
+  </data>
+  <data name="Choose a password." xml:space="preserve">
+    <value>請設定密碼。</value>
+  </data>
+  <data name="Choose a title" xml:space="preserve">
+    <value>選擇稱號</value>
+  </data>
+  <data name="Classic" xml:space="preserve">
+    <value>經典</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>通關</value>
+  </data>
+  <data name="Clear rate" xml:space="preserve">
+    <value>通關率</value>
+  </data>
+  <data name="Cleared" xml:space="preserve">
+    <value>已通關</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>關閉</value>
+  </data>
+  <data name="Closed" xml:space="preserve">
+    <value>已關閉</value>
+  </data>
+  <data name="Code from your authenticator app" xml:space="preserve">
+    <value>驗證器應用程式中的驗證碼</value>
+  </data>
+  <data name="Compare with…" xml:space="preserve">
+    <value>比較對象…</value>
+  </data>
+  <data name="Condition" xml:space="preserve">
+    <value>條件</value>
+  </data>
+  <data name="Configuration" xml:space="preserve">
+    <value>配置</value>
+  </data>
+  <data name="Confirm password" xml:space="preserve">
+    <value>確認密碼</value>
+  </data>
+  <data name="Connecting…" xml:space="preserve">
+    <value>連接中…</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>繼續</value>
+  </data>
+  <data name="Copied" xml:space="preserve">
+    <value>已複製</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>複製</value>
+  </data>
+  <data name="Couldn't save your changes." xml:space="preserve">
+    <value>無法保存你的更改。</value>
+  </data>
+  <data name="Counted" xml:space="preserve">
+    <value>計算方式</value>
+  </data>
+  <data name="Course" xml:space="preserve">
+    <value>課程</value>
+  </data>
+  <data name="Course sets" xml:space="preserve">
+    <value>課程組</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>創建</value>
+  </data>
+  <data name="Create token" xml:space="preserve">
+    <value>創建權杖</value>
+  </data>
+  <data name="Created {0}" xml:space="preserve">
+    <value>創建於{0}</value>
+  </data>
+  <data name="Crowns by difficulty" xml:space="preserve">
+    <value>各難度王冠</value>
+  </data>
+  <data name="Current password" xml:space="preserve">
+    <value>當前密碼</value>
+  </data>
+  <data name="Dan rank on nameplate" xml:space="preserve">
+    <value>在名牌上顯示段位</value>
+  </data>
+  <data name="Danger zone" xml:space="preserve">
+    <value>危險操作</value>
+  </data>
+  <data name="Dani Dojo courses" xml:space="preserve">
+    <value>段位道場課程</value>
+  </data>
+  <data name="Dashboard notice" xml:space="preserve">
+    <value>儀表板公告</value>
+  </data>
+  <data name="Data files" xml:space="preserve">
+    <value>資料檔案</value>
+  </data>
+  <data name="Data tools" xml:space="preserve">
+    <value>資料工具</value>
+  </data>
+  <data name="Database file" xml:space="preserve">
+    <value>資料庫檔案</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>日期</value>
+  </data>
+  <data name="Defaults" xml:space="preserve">
+    <value>預設</value>
+  </data>
+  <data name="Delete set" xml:space="preserve">
+    <value>刪除組</value>
+  </data>
+  <data name="Delete user" xml:space="preserve">
+    <value>刪除使用者</value>
+  </data>
+  <data name="Deleted {0}" xml:space="preserve">
+    <value>刪除於{0}</value>
+  </data>
+  <data name="Discard" xml:space="preserve">
+    <value>放棄</value>
+  </data>
+  <data name="Don-chan" xml:space="preserve">
+    <value>小咚</value>
+  </data>
+  <data name="Donderful" xml:space="preserve">
+    <value>全良</value>
+  </data>
+  <data name="Donderful combo" xml:space="preserve">
+    <value>全良連擊</value>
+  </data>
+  <data name="Donderful combos" xml:space="preserve">
+    <value>全良連擊</value>
+  </data>
+  <data name="Done" xml:space="preserve">
+    <value>完成</value>
+  </data>
+  <data name="Done in {0:0} s{1}." xml:space="preserve">
+    <value>{0:0}秒完成{1}。</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>下載</value>
+  </data>
+  <data name="Download .txt" xml:space="preserve">
+    <value>下載.txt</value>
+  </data>
+  <data name="Drumroll hits" xml:space="preserve">
+    <value>連打數</value>
+  </data>
+  <data name="Duplicate" xml:space="preserve">
+    <value>重複</value>
+  </data>
+  <data name="Edit profile" xml:space="preserve">
+    <value>編輯個人檔案</value>
+  </data>
+  <data name="Elsewhere" xml:space="preserve">
+    <value>其他</value>
+  </data>
+  <data name="Empty." xml:space="preserve">
+    <value>空。</value>
+  </data>
+  <data name="End" xml:space="preserve">
+    <value>結束</value>
+  </data>
+  <data name="Ended" xml:space="preserve">
+    <value>已結束</value>
+  </data>
+  <data name="Ends" xml:space="preserve">
+    <value>結束時間</value>
+  </data>
+  <data name="Enter when you last played with this card, to within 5 minutes." xml:space="preserve">
+    <value>輸入你最後一次用這張卡遊玩的時間，誤差5分鐘以內。</value>
+  </data>
+  <data name="Enter your access code and password." xml:space="preserve">
+    <value>請輸入存取碼和密碼。</value>
+  </data>
+  <data name="Errors {0}" xml:space="preserve">
+    <value>錯誤 {0}</value>
+  </data>
+  <data name="Event" xml:space="preserve">
+    <value>活動</value>
+  </data>
+  <data name="Event folders" xml:space="preserve">
+    <value>活動資料夾</value>
+  </data>
+  <data name="Every QR code needs its own serial." xml:space="preserve">
+    <value>每個QR碼都需要獨立的序列號。</value>
+  </data>
+  <data name="Every cabinet" xml:space="preserve">
+    <value>所有機台</value>
+  </data>
+  <data name="Every cabinet gets a network error until you switch back. A credit in progress won't save." xml:space="preserve">
+    <value>在你切換回來之前，所有機台都會出現網路錯誤。正在進行的遊玩不會保存。</value>
+  </data>
+  <data name="Every cabinet shows the maintenance screen from {0} to {1}." xml:space="preserve">
+    <value>從{0}到{1}，所有機台顯示維護畫面。</value>
+  </data>
+  <data name="Every cabinet shows the maintenance screen from {0} until you switch back." xml:space="preserve">
+    <value>從{0}起直到你切換回來，所有機台顯示維護畫面。</value>
+  </data>
+  <data name="Every cabinet without its own settings" xml:space="preserve">
+    <value>沒有單獨設定的所有機台</value>
+  </data>
+  <data name="Every cabinet without its own settings uses these." xml:space="preserve">
+    <value>沒有單獨設定的機台都使用這些設定。</value>
+  </data>
+  <data name="Every other Web UI session ends now. Passwords still work, so people can sign in again." xml:space="preserve">
+    <value>其他所有網頁版會話將立即結束。密碼不變，可以重新登入。</value>
+  </data>
+  <data name="Expired" xml:space="preserve">
+    <value>已過期</value>
+  </data>
+  <data name="Expires" xml:space="preserve">
+    <value>到期</value>
+  </data>
+  <data name="Expires {0}" xml:space="preserve">
+    <value>{0}到期</value>
+  </data>
+  <data name="Extra courses" xml:space="preserve">
+    <value>額外課程</value>
+  </data>
+  <data name="Extra dan-style courses, offered on every cabinet." xml:space="preserve">
+    <value>段位風格的額外課程，所有機台都可遊玩。</value>
+  </data>
+  <data name="Extract game files" xml:space="preserve">
+    <value>提取遊戲檔案</value>
+  </data>
+  <data name="Extracting" xml:space="preserve">
+    <value>提取中</value>
+  </data>
+  <data name="Extracting… This takes about a minute. Nothing in the game folder is changed." xml:space="preserve">
+    <value>提取中…大約需要一分鐘。不會修改遊戲資料夾。</value>
+  </data>
+  <data name="Face paint" xml:space="preserve">
+    <value>臉部彩繪</value>
+  </data>
+  <data name="Fade" xml:space="preserve">
+    <value>漸變</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>失敗</value>
+  </data>
+  <data name="Failed sign-ins" xml:space="preserve">
+    <value>登入失敗</value>
+  </data>
+  <data name="Failed sign-ins, last 24 hours" xml:space="preserve">
+    <value>登入失敗（過去24小時）</value>
+  </data>
+  <data name="Favourites" xml:space="preserve">
+    <value>收藏</value>
+  </data>
+  <data name="Fewer" xml:space="preserve">
+    <value>較少</value>
+  </data>
+  <data name="Files with problems" xml:space="preserve">
+    <value>有問題的檔案</value>
+  </data>
+  <data name="Filter users" xml:space="preserve">
+    <value>篩選使用者</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>篩選</value>
+  </data>
+  <data name="Finished with errors (exit code {0}). See the report." xml:space="preserve">
+    <value>完成但有錯誤（退出碼{0}）。請查看報告。</value>
+  </data>
+  <data name="First played" xml:space="preserve">
+    <value>首次遊玩</value>
+  </data>
+  <data name="Folder" xml:space="preserve">
+    <value>資料夾</value>
+  </data>
+  <data name="For" xml:space="preserve">
+    <value>適用</value>
+  </data>
+  <data name="For example:" xml:space="preserve">
+    <value>例如：</value>
+  </data>
+  <data name="For the card ending •••• {0}" xml:space="preserve">
+    <value>尾號 •••• {0} 的卡片</value>
+  </data>
+  <data name="Forget" xml:space="preserve">
+    <value>移除</value>
+  </data>
+  <data name="Found the game" xml:space="preserve">
+    <value>已找到遊戲</value>
+  </data>
+  <data name="Free profile editing" xml:space="preserve">
+    <value>自由編輯個人檔案</value>
+  </data>
+  <data name="Friend Code copied!" xml:space="preserve">
+    <value>好友碼已複製！</value>
+  </data>
+  <data name="Friend code {0}, copy" xml:space="preserve">
+    <value>好友碼 {0}，複製</value>
+  </data>
+  <data name="Friend code · click to copy" xml:space="preserve">
+    <value>好友碼 · 點擊複製</value>
+  </data>
+  <data name="Full combo" xml:space="preserve">
+    <value>全連段</value>
+  </data>
+  <data name="Full combos" xml:space="preserve">
+    <value>全連段</value>
+  </data>
+  <data name="Game Data" xml:space="preserve">
+    <value>遊戲資料</value>
+  </data>
+  <data name="Game assets" xml:space="preserve">
+    <value>遊戲資源</value>
+  </data>
+  <data name="Game data reloaded" xml:space="preserve">
+    <value>遊戲資料已重新載入</value>
+  </data>
+  <data name="Game files" xml:space="preserve">
+    <value>遊戲檔案</value>
+  </data>
+  <data name="Game files are missing. Cabinets can't play and pages show IDs instead of names." xml:space="preserve">
+    <value>缺少遊戲檔案。機台無法遊玩，頁面會顯示ID而不是名稱。</value>
+  </data>
+  <data name="Game folder" xml:space="preserve">
+    <value>遊戲資料夾</value>
+  </data>
+  <data name="Game host" xml:space="preserve">
+    <value>遊戲主機</value>
+  </data>
+  <data name="Give it only what it needs." xml:space="preserve">
+    <value>只授予它需要的權限。</value>
+  </data>
+  <data name="Go to the Dashboard" xml:space="preserve">
+    <value>前往儀表板</value>
+  </data>
+  <data name="Gold is easier than red." xml:space="preserve">
+    <value>金色條件比紅色更容易。</value>
+  </data>
+  <data name="Gold pass" xml:space="preserve">
+    <value>金色合格</value>
+  </data>
+  <data name="Gold passes" xml:space="preserve">
+    <value>金色合格</value>
+  </data>
+  <data name="Good {0} · OK {1} · Bad {2} · Drumroll {3}" xml:space="preserve">
+    <value>良 {0} · 可 {1} · 不可 {2} · 連打 {3}</value>
+  </data>
+  <data name="Good {0} · OK {1} · Bad {2} · combo {3}" xml:space="preserve">
+    <value>良 {0} · 可 {1} · 不可 {2} · 連擊 {3}</value>
+  </data>
+  <data name="Goods" xml:space="preserve">
+    <value>良</value>
+  </data>
+  <data name="Has a password and can sign in." xml:space="preserve">
+    <value>已設定密碼，可以登入。</value>
+  </data>
+  <data name="Has the maximum" xml:space="preserve">
+    <value>已達上限</value>
+  </data>
+  <data name="Heads" xml:space="preserve">
+    <value>頭部</value>
+  </data>
+  <data name="Hide access code" xml:space="preserve">
+    <value>隱藏存取碼</value>
+  </data>
+  <data name="Hide name" xml:space="preserve">
+    <value>隱藏曲名</value>
+  </data>
+  <data name="Hide password" xml:space="preserve">
+    <value>隱藏密碼</value>
+  </data>
+  <data name="Hide the code" xml:space="preserve">
+    <value>隱藏驗證碼</value>
+  </data>
+  <data name="Highest rank" xml:space="preserve">
+    <value>最高段位</value>
+  </data>
+  <data name="Highest with crowns" xml:space="preserve">
+    <value>有王冠的最高難度</value>
+  </data>
+  <data name="Hits" xml:space="preserve">
+    <value>命中數</value>
+  </data>
+  <data name="I've saved these" xml:space="preserve">
+    <value>我已保存</value>
+  </data>
+  <data name="In 30 days" xml:space="preserve">
+    <value>30天後</value>
+  </data>
+  <data name="In 90 days" xml:space="preserve">
+    <value>90天後</value>
+  </data>
+  <data name="In a year" xml:space="preserve">
+    <value>一年後</value>
+  </data>
+  <data name="In place" xml:space="preserve">
+    <value>已就位</value>
+  </data>
+  <data name="In the list" xml:space="preserve">
+    <value>已在列表中</value>
+  </data>
+  <data name="In the shop" xml:space="preserve">
+    <value>已在商店中</value>
+  </data>
+  <data name="In this course" xml:space="preserve">
+    <value>已在此課程中</value>
+  </data>
+  <data name="In-game messages" xml:space="preserve">
+    <value>遊戲內消息</value>
+  </data>
+  <data name="Include files from Data_mods over vanilla ones" xml:space="preserve">
+    <value>用Data_mods中的檔案替換原版檔案</value>
+  </data>
+  <data name="Include the game's mods folder" xml:space="preserve">
+    <value>包含遊戲的模組資料夾</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>資訊</value>
+  </data>
+  <data name="Invite code" xml:space="preserve">
+    <value>邀請碼</value>
+  </data>
+  <data name="Invite code only" xml:space="preserve">
+    <value>僅限邀請碼</value>
+  </data>
+  <data name="Invite codes are 6 digits." xml:space="preserve">
+    <value>邀請碼為6位數字。</value>
+  </data>
+  <data name="It can connect and play." xml:space="preserve">
+    <value>它可以連接並遊玩。</value>
+  </data>
+  <data name="It tried to connect {0} times. Allow it to let it play." xml:space="preserve">
+    <value>它已嘗試連接{0}次。允許後即可遊玩。</value>
+  </data>
+  <data name="It's online: its next request is refused, and a credit in progress won't save." xml:space="preserve">
+    <value>它在線：下一個請求將被拒絕，正在進行的遊玩不會保存。</value>
+  </data>
+  <data name="Its requests are refused ({0} so far). Players' data isn't touched." xml:space="preserve">
+    <value>它的請求會被拒絕（目前{0}次）。玩家資料不受影響。</value>
+  </data>
+  <data name="Keep" xml:space="preserve">
+    <value>保留</value>
+  </data>
+  <data name="LOSE" xml:space="preserve">
+    <value>LOSE</value>
+  </data>
+  <data name="Last 16 weeks" xml:space="preserve">
+    <value>最近16週</value>
+  </data>
+  <data name="Last play time" xml:space="preserve">
+    <value>最後遊玩時間</value>
+  </data>
+  <data name="Last play time or invite code" xml:space="preserve">
+    <value>最後遊玩時間或邀請碼</value>
+  </data>
+  <data name="Last played" xml:space="preserve">
+    <value>最後遊玩</value>
+  </data>
+  <data name="Last played today at {0}" xml:space="preserve">
+    <value>今天 {0} 最後遊玩</value>
+  </data>
+  <data name="Last played yesterday at {0}" xml:space="preserve">
+    <value>昨天 {0} 最後遊玩</value>
+  </data>
+  <data name="Last played {0}" xml:space="preserve">
+    <value>{0} 最後遊玩</value>
+  </data>
+  <data name="Last seen {0}" xml:space="preserve">
+    <value>最後出現 {0}</value>
+  </data>
+  <data name="Leaderboard pages" xml:space="preserve">
+    <value>排行榜頁面</value>
+  </data>
+  <data name="Less" xml:space="preserve">
+    <value>較少</value>
+  </data>
+  <data name="Live" xml:space="preserve">
+    <value>實時</value>
+  </data>
+  <data name="Loading..." xml:space="preserve">
+    <value>載入中...</value>
+  </data>
+  <data name="Local" xml:space="preserve">
+    <value>本地</value>
+  </data>
+  <data name="Local mode" xml:space="preserve">
+    <value>本地模式</value>
+  </data>
+  <data name="Lock an account after failed sign-ins" xml:space="preserve">
+    <value>登入失敗後鎖定帳號</value>
+  </data>
+  <data name="Lock: {0}" xml:space="preserve">
+    <value>鎖定：{0}</value>
+  </data>
+  <data name="Locked" xml:space="preserve">
+    <value>已鎖定</value>
+  </data>
+  <data name="Locked Ura (inner) charts" xml:space="preserve">
+    <value>已鎖定的裏譜面</value>
+  </data>
+  <data name="Locked accounts" xml:space="preserve">
+    <value>已鎖定的帳號</value>
+  </data>
+  <data name="Locked costumes" xml:space="preserve">
+    <value>已鎖定的服裝</value>
+  </data>
+  <data name="Locked for" xml:space="preserve">
+    <value>鎖定時長</value>
+  </data>
+  <data name="Locked songs" xml:space="preserve">
+    <value>已鎖定的歌曲</value>
+  </data>
+  <data name="Locked titles" xml:space="preserve">
+    <value>已鎖定的稱號</value>
+  </data>
+  <data name="Log in instead" xml:space="preserve">
+    <value>改為登入</value>
+  </data>
+  <data name="Log in with your access code and new password." xml:space="preserve">
+    <value>請使用存取碼和新密碼登入。</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>記錄</value>
+  </data>
+  <data name="Lost against the AI" xml:space="preserve">
+    <value>輸給了AI</value>
+  </data>
+  <data name="Lost to the AI" xml:space="preserve">
+    <value>輸給AI</value>
+  </data>
+  <data name="Made admin" xml:space="preserve">
+    <value>已設為管理員</value>
+  </data>
+  <data name="Main song" xml:space="preserve">
+    <value>主歌曲</value>
+  </data>
+  <data name="Maintenance" xml:space="preserve">
+    <value>維護中</value>
+  </data>
+  <data name="Make admin" xml:space="preserve">
+    <value>設為管理員</value>
+  </data>
+  <data name="Make default" xml:space="preserve">
+    <value>設為預設</value>
+  </data>
+  <data name="Max combo" xml:space="preserve">
+    <value>最高連擊</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>消息</value>
+  </data>
+  <data name="Messages are at most {0} characters." xml:space="preserve">
+    <value>消息最多{0}個字符。</value>
+  </data>
+  <data name="Missing" xml:space="preserve">
+    <value>缺失</value>
+  </data>
+  <data name="Missing: extract the game files" xml:space="preserve">
+    <value>缺失：請提取遊戲檔案</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>模式</value>
+  </data>
+  <data name="More" xml:space="preserve">
+    <value>較多</value>
+  </data>
+  <data name="More songs" xml:space="preserve">
+    <value>更多歌曲</value>
+  </data>
+  <data name="Most played" xml:space="preserve">
+    <value>遊玩最多</value>
+  </data>
+  <data name="Move access code" xml:space="preserve">
+    <value>移動存取碼</value>
+  </data>
+  <data name="Move down" xml:space="preserve">
+    <value>下移</value>
+  </data>
+  <data name="Move to another user" xml:space="preserve">
+    <value>移到其他使用者</value>
+  </data>
+  <data name="Move up" xml:space="preserve">
+    <value>上移</value>
+  </data>
+  <data name="Moved an access code" xml:space="preserve">
+    <value>已移動存取碼</value>
+  </data>
+  <data name="Moved to {0}" xml:space="preserve">
+    <value>已移至{0}</value>
+  </data>
+  <data name="Movie ID" xml:space="preserve">
+    <value>影片ID</value>
+  </data>
+  <data name="Movie IDs are the numbered files in the game's Data/x64/movie folder. Run extract to pick from a list." xml:space="preserve">
+    <value>影片ID是遊戲Data/x64/movie資料夾中帶編號的檔案。運行extract後可從列表中選擇。</value>
+  </data>
+  <data name="Movies" xml:space="preserve">
+    <value>影片</value>
+  </data>
+  <data name="Mucha URL" xml:space="preserve">
+    <value>Mucha URL</value>
+  </data>
+  <data name="Name or IP" xml:space="preserve">
+    <value>名稱或IP</value>
+  </data>
+  <data name="Name or user ID" xml:space="preserve">
+    <value>名稱或使用者ID</value>
+  </data>
+  <data name="Name, user ID or access code" xml:space="preserve">
+    <value>名稱、使用者ID或存取碼</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>從不</value>
+  </data>
+  <data name="Never connected (pre-approved)" xml:space="preserve">
+    <value>從未連接（預先批準）</value>
+  </data>
+  <data name="Never expires" xml:space="preserve">
+    <value>永不過期</value>
+  </data>
+  <data name="Never used" xml:space="preserve">
+    <value>從未使用</value>
+  </data>
+  <data name="New API token" xml:space="preserve">
+    <value>新API權杖</value>
+  </data>
+  <data name="New best" xml:space="preserve">
+    <value>新紀錄</value>
+  </data>
+  <data name="New bests only" xml:space="preserve">
+    <value>僅新紀錄</value>
+  </data>
+  <data name="New password" xml:space="preserve">
+    <value>新密碼</value>
+  </data>
+  <data name="New recovery codes" xml:space="preserve">
+    <value>新的復原碼</value>
+  </data>
+  <data name="New set" xml:space="preserve">
+    <value>新組</value>
+  </data>
+  <data name="New token" xml:space="preserve">
+    <value>新權杖</value>
+  </data>
+  <data name="New?" xml:space="preserve">
+    <value>新使用者？</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>下一步</value>
+  </data>
+  <data name="Next month" xml:space="preserve">
+    <value>下個月</value>
+  </data>
+  <data name="Next page" xml:space="preserve">
+    <value>下一頁</value>
+  </data>
+  <data name="No AI battle yet" xml:space="preserve">
+    <value>尚未進行AI對戰</value>
+  </data>
+  <data name="No Dani Dojo pass yet" xml:space="preserve">
+    <value>尚未通過段位道場</value>
+  </data>
+  <data name="No access codes yet." xml:space="preserve">
+    <value>還沒有存取碼。</value>
+  </data>
+  <data name="No account" xml:space="preserve">
+    <value>無帳號</value>
+  </data>
+  <data name="No banned cards." xml:space="preserve">
+    <value>沒有被封禁的卡片。</value>
+  </data>
+  <data name="No cabinet has connected yet." xml:space="preserve">
+    <value>還沒有機台連接。</value>
+  </data>
+  <data name="No form for this file yet; use JSON." xml:space="preserve">
+    <value>此檔案暫無表單，請使用JSON。</value>
+  </data>
+  <data name="No full combo" xml:space="preserve">
+    <value>未全連段</value>
+  </data>
+  <data name="No matches" xml:space="preserve">
+    <value>無匹配</value>
+  </data>
+  <data name="No messages." xml:space="preserve">
+    <value>沒有消息。</value>
+  </data>
+  <data name="No new accounts. Admins can still help in User Management." xml:space="preserve">
+    <value>不接受新帳號。管理員仍可在使用者管理中協助。</value>
+  </data>
+  <data name="No password set yet. Send an invite code." xml:space="preserve">
+    <value>尚未設定密碼。請發送邀請碼。</value>
+  </data>
+  <data name="No players yet" xml:space="preserve">
+    <value>還沒有玩家</value>
+  </data>
+  <data name="No plays in the last 7 days." xml:space="preserve">
+    <value>最近7天沒有遊玩。</value>
+  </data>
+  <data name="No plays match. Try another difficulty." xml:space="preserve">
+    <value>沒有匹配的遊玩。請嘗試其他難度。</value>
+  </data>
+  <data name="No scores match." xml:space="preserve">
+    <value>沒有匹配的分數。</value>
+  </data>
+  <data name="No shop ID yet" xml:space="preserve">
+    <value>尚無店鋪ID</value>
+  </data>
+  <data name="No songs match." xml:space="preserve">
+    <value>沒有匹配的歌曲。</value>
+  </data>
+  <data name="No songs match. Try another genre or clear the search." xml:space="preserve">
+    <value>沒有匹配的歌曲。請嘗試其他類型或清除搜尋。</value>
+  </data>
+  <data name="No songs yet." xml:space="preserve">
+    <value>還沒有歌曲。</value>
+  </data>
+  <data name="No titles match." xml:space="preserve">
+    <value>沒有匹配的稱號。</value>
+  </data>
+  <data name="No tokens yet." xml:space="preserve">
+    <value>還沒有權杖。</value>
+  </data>
+  <data name="No users yet. A user appears the first time a card is played." xml:space="preserve">
+    <value>還沒有使用者。卡片首次遊玩時會創建使用者。</value>
+  </data>
+  <data name="Nobody has played this chart yet." xml:space="preserve">
+    <value>還沒有人玩過這個譜面。</value>
+  </data>
+  <data name="None (use head &amp; body)" xml:space="preserve">
+    <value>無（使用頭部和身體）</value>
+  </data>
+  <data name="None in the last 7 days." xml:space="preserve">
+    <value>最近7天沒有。</value>
+  </data>
+  <data name="Not added yet" xml:space="preserve">
+    <value>尚未添加</value>
+  </data>
+  <data name="Not cleared" xml:space="preserve">
+    <value>未通關</value>
+  </data>
+  <data name="Not in the game's movie folder" xml:space="preserve">
+    <value>不在遊戲的影片資料夾中</value>
+  </data>
+  <data name="Not passed yet" xml:space="preserve">
+    <value>尚未合格</value>
+  </data>
+  <data name="Not played" xml:space="preserve">
+    <value>未遊玩</value>
+  </data>
+  <data name="Not played in AI Battle on {0} yet." xml:space="preserve">
+    <value>尚未在{0}難度進行AI對戰。</value>
+  </data>
+  <data name="Not played yet" xml:space="preserve">
+    <value>尚未遊玩</value>
+  </data>
+  <data name="Not registered" xml:space="preserve">
+    <value>未註冊</value>
+  </data>
+  <data name="Not registered yet" xml:space="preserve">
+    <value>尚未註冊</value>
+  </data>
+  <data name="Not set" xml:space="preserve">
+    <value>未設定</value>
+  </data>
+  <data name="Not signed in anywhere" xml:space="preserve">
+    <value>未在任何地方登入</value>
+  </data>
+  <data name="Not the default" xml:space="preserve">
+    <value>非預設</value>
+  </data>
+  <data name="Not used yet. Make it the default to serve it." xml:space="preserve">
+    <value>尚未使用。設為預設即可提供。</value>
+  </data>
+  <data name="Not yet" xml:space="preserve">
+    <value>尚未</value>
+  </data>
+  <data name="Notes disappear before the judge mark" xml:space="preserve">
+    <value>音符在判定框前消失</value>
+  </data>
+  <data name="Notes hit" xml:space="preserve">
+    <value>擊中音符</value>
+  </data>
+  <data name="Nothing matches." xml:space="preserve">
+    <value>沒有匹配項。</value>
+  </data>
+  <data name="Nothing to fix." xml:space="preserve">
+    <value>沒有需要處理的項目。</value>
+  </data>
+  <data name="Nothing yet." xml:space="preserve">
+    <value>暫無內容。</value>
+  </data>
+  <data name="OKs" xml:space="preserve">
+    <value>可</value>
+  </data>
+  <data name="Off" xml:space="preserve">
+    <value>關閉</value>
+  </data>
+  <data name="Off: it uses the defaults." xml:space="preserve">
+    <value>關閉：使用預設設定。</value>
+  </data>
+  <data name="Offline" xml:space="preserve">
+    <value>離線</value>
+  </data>
+  <data name="Older plays are in Play History" xml:space="preserve">
+    <value>更早的遊玩記錄在遊玩歷史中</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>開啟</value>
+  </data>
+  <data name="On your card or Banapass" xml:space="preserve">
+    <value>印在你的卡片或Banapass上</value>
+  </data>
+  <data name="On, up to {0}" xml:space="preserve">
+    <value>開啟，最多{0}</value>
+  </data>
+  <data name="On. Reset it if they lost their phone and their recovery codes." xml:space="preserve">
+    <value>已開啟。如果對方丟失了手機和復原碼，請重置。</value>
+  </data>
+  <data name="Oni clears by star level" xml:space="preserve">
+    <value>按星級統計的鬼通關</value>
+  </data>
+  <data name="Online now" xml:space="preserve">
+    <value>在線</value>
+  </data>
+  <data name="Only admins can sign in" xml:space="preserve">
+    <value>僅管理員可登入</value>
+  </data>
+  <data name="Only with an invite code from an admin (User Management)." xml:space="preserve">
+    <value>僅限持有管理員（使用者管理）發放的邀請碼。</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>開放</value>
+  </data>
+  <data name="Open in an app on this device" xml:space="preserve">
+    <value>在此設備上的應用程式中開啟</value>
+  </data>
+  <data name="Open navigation" xml:space="preserve">
+    <value>開啟導覽</value>
+  </data>
+  <data name="Open: any cabinet can connect, except blocked ones." xml:space="preserve">
+    <value>開放：除被封鎖的機台外，任何機台都可連接。</value>
+  </data>
+  <data name="Operational" xml:space="preserve">
+    <value>正常運行</value>
+  </data>
+  <data name="Optional" xml:space="preserve">
+    <value>可選</value>
+  </data>
+  <data name="Other songs" xml:space="preserve">
+    <value>其他歌曲</value>
+  </data>
+  <data name="Overview" xml:space="preserve">
+    <value>概覽</value>
+  </data>
+  <data name="Own settings" xml:space="preserve">
+    <value>單獨設定</value>
+  </data>
+  <data name="Page {0}" xml:space="preserve">
+    <value>第{0}頁</value>
+  </data>
+  <data name="Pass at or above" xml:space="preserve">
+    <value>達到或高於即合格</value>
+  </data>
+  <data name="Pass at or below" xml:space="preserve">
+    <value>達到或低於即合格</value>
+  </data>
+  <data name="Pass conditions" xml:space="preserve">
+    <value>合格條件</value>
+  </data>
+  <data name="Passed" xml:space="preserve">
+    <value>已合格</value>
+  </data>
+  <data name="Password reset" xml:space="preserve">
+    <value>密碼已重置</value>
+  </data>
+  <data name="Pattern" xml:space="preserve">
+    <value>圖案</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>暫停</value>
+  </data>
+  <data name="Paused · {0} new" xml:space="preserve">
+    <value>已暫停 · {0}條新消息</value>
+  </data>
+  <data name="Per song" xml:space="preserve">
+    <value>每首歌</value>
+  </data>
+  <data name="Permanent" xml:space="preserve">
+    <value>永久</value>
+  </data>
+  <data name="Permanently" xml:space="preserve">
+    <value>永久</value>
+  </data>
+  <data name="Pick a day with plays." xml:space="preserve">
+    <value>選擇有遊玩記錄的日期。</value>
+  </data>
+  <data name="Pick a user" xml:space="preserve">
+    <value>選擇使用者</value>
+  </data>
+  <data name="Play history pages" xml:space="preserve">
+    <value>遊玩歷史頁面</value>
+  </data>
+  <data name="Play tone" xml:space="preserve">
+    <value>試聽音色</value>
+  </data>
+  <data name="Played, not cleared" xml:space="preserve">
+    <value>已遊玩，未通關</value>
+  </data>
+  <data name="Player card" xml:space="preserve">
+    <value>玩家卡片</value>
+  </data>
+  <data name="Players" xml:space="preserve">
+    <value>玩家</value>
+  </data>
+  <data name="Players can delete their account" xml:space="preserve">
+    <value>玩家可以刪除自己的帳號</value>
+  </data>
+  <data name="Plays" xml:space="preserve">
+    <value>遊玩次數</value>
+  </data>
+  <data name="Plays by genre" xml:space="preserve">
+    <value>各類型遊玩</value>
+  </data>
+  <data name="Plays per day, last 16 weeks" xml:space="preserve">
+    <value>每日遊玩（最近16週）</value>
+  </data>
+  <data name="Ports" xml:space="preserve">
+    <value>連接埠</value>
+  </data>
+  <data name="Pre-maintenance" xml:space="preserve">
+    <value>維護預告</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>預覽</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>上一步</value>
+  </data>
+  <data name="Previous month" xml:space="preserve">
+    <value>上個月</value>
+  </data>
+  <data name="Previous page" xml:space="preserve">
+    <value>上一頁</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>價格</value>
+  </data>
+  <data name="Progress" xml:space="preserve">
+    <value>進度</value>
+  </data>
+  <data name="Prove it's your card" xml:space="preserve">
+    <value>證明這是你的卡片</value>
+  </data>
+  <data name="QR" xml:space="preserve">
+    <value>QR碼</value>
+  </data>
+  <data name="QR code" xml:space="preserve">
+    <value>QR碼</value>
+  </data>
+  <data name="QR code for your authenticator app" xml:space="preserve">
+    <value>驗證器應用程式的QR碼</value>
+  </data>
+  <data name="QR codes" xml:space="preserve">
+    <value>QR碼</value>
+  </data>
+  <data name="Rank {0}" xml:space="preserve">
+    <value>等級 {0}</value>
+  </data>
+  <data name="Ranks" xml:space="preserve">
+    <value>等級</value>
+  </data>
+  <data name="Ranks passed" xml:space="preserve">
+    <value>已合格段位</value>
+  </data>
+  <data name="Reason" xml:space="preserve">
+    <value>原因</value>
+  </data>
+  <data name="Recent failed sign-ins" xml:space="preserve">
+    <value>最近的登入失敗</value>
+  </data>
+  <data name="Recently set" xml:space="preserve">
+    <value>最近刷新</value>
+  </data>
+  <data name="Recovery code" xml:space="preserve">
+    <value>復原碼</value>
+  </data>
+  <data name="Recovery codes sign you in if you lose your phone. Each works once. Keep them somewhere safe: they're shown only now." xml:space="preserve">
+    <value>丟失手機時可用復原碼登入。每個只能使用一次。請妥善保存：只會顯示這一次。</value>
+  </data>
+  <data name="Registered" xml:space="preserve">
+    <value>已註冊</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>重新載入</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>移除</value>
+  </data>
+  <data name="Remove a score" xml:space="preserve">
+    <value>移除分數</value>
+  </data>
+  <data name="Remove access code" xml:space="preserve">
+    <value>移除存取碼</value>
+  </data>
+  <data name="Remove admin" xml:space="preserve">
+    <value>取消管理員</value>
+  </data>
+  <data name="Remove condition" xml:space="preserve">
+    <value>移除條件</value>
+  </data>
+  <data name="Remove from favourites" xml:space="preserve">
+    <value>取消收藏</value>
+  </data>
+  <data name="Remove this card?" xml:space="preserve">
+    <value>移除這張卡片？</value>
+  </data>
+  <data name="Removed a score" xml:space="preserve">
+    <value>已移除分數</value>
+  </data>
+  <data name="Removed admin" xml:space="preserve">
+    <value>已取消管理員</value>
+  </data>
+  <data name="Removed from favourites" xml:space="preserve">
+    <value>已取消收藏</value>
+  </data>
+  <data name="Removes it from this list; it reappears if it connects again." xml:space="preserve">
+    <value>從此列表中移除；再次連接時會重新出現。</value>
+  </data>
+  <data name="Rename" xml:space="preserve">
+    <value>重命名</value>
+  </data>
+  <data name="Replaces head, body &amp; face paint" xml:space="preserve">
+    <value>替換頭部、身體和臉部彩繪</value>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>報告</value>
+  </data>
+  <data name="Required for admins" xml:space="preserve">
+    <value>管理員必須開啟</value>
+  </data>
+  <data name="Reset password" xml:space="preserve">
+    <value>重置密碼</value>
+  </data>
+  <data name="Restricted: only allowed cabinets can connect. New ones wait for your approval." xml:space="preserve">
+    <value>受限：只有被允許的機台可以連接。新機台需等待你的批準。</value>
+  </data>
+  <data name="Results to show" xml:space="preserve">
+    <value>顯示結果</value>
+  </data>
+  <data name="Resume" xml:space="preserve">
+    <value>繼續</value>
+  </data>
+  <data name="Revoke" xml:space="preserve">
+    <value>撤銷</value>
+  </data>
+  <data name="Revoke {0}?" xml:space="preserve">
+    <value>撤銷{0}？</value>
+  </data>
+  <data name="Revoked" xml:space="preserve">
+    <value>已撤銷</value>
+  </data>
+  <data name="Reward ID" xml:space="preserve">
+    <value>獎勵ID</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>已保存</value>
+  </data>
+  <data name="Saved. Cabinets pick it up on their next startup." xml:space="preserve">
+    <value>已保存。機台會在下次啟動時應用程式。</value>
+  </data>
+  <data name="Saved. Game data reloaded." xml:space="preserve">
+    <value>已保存。遊戲資料已重新載入。</value>
+  </data>
+  <data name="Saving…" xml:space="preserve">
+    <value>保存中…</value>
+  </data>
+  <data name="Scan any of them at a cabinet to play as you. Every card's scores go to the same profile." xml:space="preserve">
+    <value>在機台上刷其中任意一張都能以你的身份遊玩。每張卡的分數都記在同一個個人檔案中。</value>
+  </data>
+  <data name="Scan it at a cabinet's card reader to play as {0}." xml:space="preserve">
+    <value>在機台的讀卡器上刷它即可以{0}的身份遊玩。</value>
+  </data>
+  <data name="Scanning it at a cabinet won't sign in as you any more. Your scores stay, and you can add the card again later." xml:space="preserve">
+    <value>在機台上刷這張卡將不再以你的身份登入。分數會保留，之後可以再次添加這張卡。</value>
+  </data>
+  <data name="Scheduled" xml:space="preserve">
+    <value>已排程</value>
+  </data>
+  <data name="Scopes" xml:space="preserve">
+    <value>權限範圍</value>
+  </data>
+  <data name="Score pages" xml:space="preserve">
+    <value>分數頁面</value>
+  </data>
+  <data name="Score per play" xml:space="preserve">
+    <value>每次遊玩的分數</value>
+  </data>
+  <data name="Score per play, from {0} to {1}" xml:space="preserve">
+    <value>每次遊玩的分數，從{0}到{1}</value>
+  </data>
+  <data name="Score removed" xml:space="preserve">
+    <value>已移除分數</value>
+  </data>
+  <data name="Scoreboard" xml:space="preserve">
+    <value>記分板</value>
+  </data>
+  <data name="Search digits" xml:space="preserve">
+    <value>搜尋數字</value>
+  </data>
+  <data name="Search players" xml:space="preserve">
+    <value>搜尋玩家</value>
+  </data>
+  <data name="Search songs" xml:space="preserve">
+    <value>搜尋歌曲</value>
+  </data>
+  <data name="Search titles" xml:space="preserve">
+    <value>搜尋稱號</value>
+  </data>
+  <data name="Search users" xml:space="preserve">
+    <value>搜尋使用者</value>
+  </data>
+  <data name="Search your scores" xml:space="preserve">
+    <value>搜尋你的分數</value>
+  </data>
+  <data name="Search {0} QR codes" xml:space="preserve">
+    <value>搜尋{0}個QR碼</value>
+  </data>
+  <data name="Search {0} by name or ID" xml:space="preserve">
+    <value>按名稱或ID搜尋{0}</value>
+  </data>
+  <data name="Search {0} songs by name or ID" xml:space="preserve">
+    <value>按名稱或ID搜尋{0}首歌曲</value>
+  </data>
+  <data name="Search {0} titles" xml:space="preserve">
+    <value>搜尋{0}個稱號</value>
+  </data>
+  <data name="Sections" xml:space="preserve">
+    <value>區間</value>
+  </data>
+  <data name="Seen by this server" xml:space="preserve">
+    <value>本伺服器見過的</value>
+  </data>
+  <data name="Serial" xml:space="preserve">
+    <value>序列號</value>
+  </data>
+  <data name="Server" xml:space="preserve">
+    <value>伺服器</value>
+  </data>
+  <data name="Server Management" xml:space="preserve">
+    <value>伺服器管理</value>
+  </data>
+  <data name="Server state" xml:space="preserve">
+    <value>伺服器狀態</value>
+  </data>
+  <data name="Sessions" xml:space="preserve">
+    <value>會話</value>
+  </data>
+  <data name="Set" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="Set a token to -1 to turn it off." xml:space="preserve">
+    <value>將權杖設為-1即可關閉。</value>
+  </data>
+  <data name="Set it up" xml:space="preserve">
+    <value>去設定</value>
+  </data>
+  <data name="Set on" xml:space="preserve">
+    <value>創下於</value>
+  </data>
+  <data name="Set up" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="Set up the server" xml:space="preserve">
+    <value>設定伺服器</value>
+  </data>
+  <data name="Setup code" xml:space="preserve">
+    <value>設定碼</value>
+  </data>
+  <data name="Shop" xml:space="preserve">
+    <value>商店</value>
+  </data>
+  <data name="Show Sou-uchi songs" xml:space="preserve">
+    <value>顯示雙打歌曲</value>
+  </data>
+  <data name="Show access code" xml:space="preserve">
+    <value>顯示存取碼</value>
+  </data>
+  <data name="Show all {0} songs" xml:space="preserve">
+    <value>顯示全部{0}首歌曲</value>
+  </data>
+  <data name="Show it" xml:space="preserve">
+    <value>顯示</value>
+  </data>
+  <data name="Show less" xml:space="preserve">
+    <value>收起</value>
+  </data>
+  <data name="Show my rank" xml:space="preserve">
+    <value>顯示我的排名</value>
+  </data>
+  <data name="Show older" xml:space="preserve">
+    <value>顯示更早</value>
+  </data>
+  <data name="Show password" xml:space="preserve">
+    <value>顯示密碼</value>
+  </data>
+  <data name="Show the code" xml:space="preserve">
+    <value>顯示驗證碼</value>
+  </data>
+  <data name="Show until" xml:space="preserve">
+    <value>顯示至</value>
+  </data>
+  <data name="Show {0} songs" xml:space="preserve">
+    <value>顯示{0}首歌曲</value>
+  </data>
+  <data name="Show/hide the achievement panel in-game" xml:space="preserve">
+    <value>在遊戲中顯示／隱藏成就面板</value>
+  </data>
+  <data name="Sign out" xml:space="preserve">
+    <value>登出</value>
+  </data>
+  <data name="Sign out everyone else" xml:space="preserve">
+    <value>讓其他所有設備退出</value>
+  </data>
+  <data name="Sign out everywhere" xml:space="preserve">
+    <value>在所有設備上退出</value>
+  </data>
+  <data name="Sign-in and security" xml:space="preserve">
+    <value>登入與安全</value>
+  </data>
+  <data name="Sign-in help" xml:space="preserve">
+    <value>登入幫助</value>
+  </data>
+  <data name="Sign-ins" xml:space="preserve">
+    <value>登入記錄</value>
+  </data>
+  <data name="Sign-up" xml:space="preserve">
+    <value>註冊</value>
+  </data>
+  <data name="Sign-up and sign-in" xml:space="preserve">
+    <value>註冊與登入</value>
+  </data>
+  <data name="Sign-up is closed on this server. Ask an admin." xml:space="preserve">
+    <value>本伺服器已關閉註冊。請聯繫管理員。</value>
+  </data>
+  <data name="Signed in" xml:space="preserve">
+    <value>已登入</value>
+  </data>
+  <data name="Signed in {0} · active {1}" xml:space="preserve">
+    <value>{0}登入 · 最後活動 {1}</value>
+  </data>
+  <data name="Signed out everyone else" xml:space="preserve">
+    <value>已讓其他所有設備退出</value>
+  </data>
+  <data name="Signed out everywhere" xml:space="preserve">
+    <value>已在所有設備上退出</value>
+  </data>
+  <data name="Signed-in Web UI devices, active in the last week." xml:space="preserve">
+    <value>已登入網頁版的設備（過去一週內活動）。</value>
+  </data>
+  <data name="Signed-in devices" xml:space="preserve">
+    <value>已登入的設備</value>
+  </data>
+  <data name="Skip for now" xml:space="preserve">
+    <value>暫時跳過</value>
+  </data>
+  <data name="Song" xml:space="preserve">
+    <value>歌曲</value>
+  </data>
+  <data name="Song ID" xml:space="preserve">
+    <value>歌曲ID</value>
+  </data>
+  <data name="Song intros" xml:space="preserve">
+    <value>歌曲介紹</value>
+  </data>
+  <data name="Song name or ID" xml:space="preserve">
+    <value>曲名或ID</value>
+  </data>
+  <data name="Song pages" xml:space="preserve">
+    <value>歌曲頁面</value>
+  </data>
+  <data name="Song select defaults" xml:space="preserve">
+    <value>選曲預設設定</value>
+  </data>
+  <data name="Song {0}" xml:space="preserve">
+    <value>歌曲 {0}</value>
+  </data>
+  <data name="Songs" xml:space="preserve">
+    <value>歌曲</value>
+  </data>
+  <data name="Songs played" xml:space="preserve">
+    <value>玩過的歌曲</value>
+  </data>
+  <data name="Sort" xml:space="preserve">
+    <value>排序</value>
+  </data>
+  <data name="Sort by {0} stars" xml:space="preserve">
+    <value>按{0}星級排序</value>
+  </data>
+  <data name="Soul gauge %" xml:space="preserve">
+    <value>魂槽 %</value>
+  </data>
+  <data name="Soul gauge + up to {0} more" xml:space="preserve">
+    <value>魂槽 + 最多{0}項</value>
+  </data>
+  <data name="Star" xml:space="preserve">
+    <value>星級</value>
+  </data>
+  <data name="Stars" xml:space="preserve">
+    <value>星級</value>
+  </data>
+  <data name="Stars (high first)" xml:space="preserve">
+    <value>星級（從高到低）</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>開始</value>
+  </data>
+  <data name="Start from a copy of" xml:space="preserve">
+    <value>複製自</value>
+  </data>
+  <data name="Start maintenance?" xml:space="preserve">
+    <value>開始維護？</value>
+  </data>
+  <data name="Starts" xml:space="preserve">
+    <value>開始</value>
+  </data>
+  <data name="Stats" xml:space="preserve">
+    <value>統計</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>狀態</value>
+  </data>
+  <data name="Stop comparing" xml:space="preserve">
+    <value>停止比較</value>
+  </data>
+  <data name="Style" xml:space="preserve">
+    <value>樣式</value>
+  </data>
+  <data name="Successful" xml:space="preserve">
+    <value>成功</value>
+  </data>
+  <data name="Swap don and ka" xml:space="preserve">
+    <value>交換咚和咔</value>
+  </data>
+  <data name="Switch to dark mode" xml:space="preserve">
+    <value>切換到深色模式</value>
+  </data>
+  <data name="Switch to light mode" xml:space="preserve">
+    <value>切換到淺色模式</value>
+  </data>
+  <data name="Taiko Mode" xml:space="preserve">
+    <value>太鼓模式</value>
+  </data>
+  <data name="Take the server offline?" xml:space="preserve">
+    <value>讓伺服器離線？</value>
+  </data>
+  <data name="That access code is already bound to a user." xml:space="preserve">
+    <value>該存取碼已綁定到其他使用者。</value>
+  </data>
+  <data name="That card is already yours." xml:space="preserve">
+    <value>這張卡已經是你的了。</value>
+  </data>
+  <data name="That code didn't work. Check the key was typed in exactly, then try the newest code." xml:space="preserve">
+    <value>驗證碼無效。請確認密鑰輸入完全正確，然後嘗試最新的驗證碼。</value>
+  </data>
+  <data name="That code didn't work. Codes change every 30 seconds, so try the newest one." xml:space="preserve">
+    <value>驗證碼無效。驗證碼每30秒更換一次，請嘗試最新的。</value>
+  </data>
+  <data name="That recovery code didn't work. Each one works only once." xml:space="preserve">
+    <value>復原碼無效。每個復原碼只能使用一次。</value>
+  </data>
+  <data name="That setup code isn't right. It changes every time the server starts: check the console again." xml:space="preserve">
+    <value>設定碼不正確。每次伺服器啟動都會更換，請重新查看主控台。</value>
+  </data>
+  <data name="That took too long. Enter your password again." xml:space="preserve">
+    <value>耗時太久。請重新輸入密碼。</value>
+  </data>
+  <data name="That user has the maximum number of access codes." xml:space="preserve">
+    <value>該使用者的存取碼已達上限。</value>
+  </data>
+  <data name="The 20 digits on your card or Banapass. Spaces are added for you." xml:space="preserve">
+    <value>卡片或Banapass上的20位數字。會自動添加空格。</value>
+  </data>
+  <data name="The 20-digit number on the back of the card. The cabinet also shows it after you scan." xml:space="preserve">
+    <value>卡片背面的20位數字。刷卡後機台也會顯示。</value>
+  </data>
+  <data name="The built-in set can't be deleted." xml:space="preserve">
+    <value>內置組無法刪除。</value>
+  </data>
+  <data name="The default set ({0})" xml:space="preserve">
+    <value>預設組（{0}）</value>
+  </data>
+  <data name="The default set: the game serves it to every cabinet." xml:space="preserve">
+    <value>預設組：遊戲會將它提供給所有機台。</value>
+  </data>
+  <data name="The end must be after the start." xml:space="preserve">
+    <value>結束時間必須晚於開始時間。</value>
+  </data>
+  <data name="The file is missing." xml:space="preserve">
+    <value>檔案缺失。</value>
+  </data>
+  <data name="The game files are in place." xml:space="preserve">
+    <value>遊戲檔案已就位。</value>
+  </data>
+  <data name="The server is ready" xml:space="preserve">
+    <value>伺服器已就緒</value>
+  </data>
+  <data name="The server still uses the previous contents." xml:space="preserve">
+    <value>伺服器仍在使用之前的內容。</value>
+  </data>
+  <data name="The server still uses the previous contents. Saving here rewrites and fixes the file." xml:space="preserve">
+    <value>伺服器仍在使用之前的內容。在此保存會重寫並修復該檔案。</value>
+  </data>
+  <data name="The ticker cabinets show. Cabinets pick changes up on their next startup." xml:space="preserve">
+    <value>機台上顯示的滾動字幕。機台會在下次啟動時應用程式。</value>
+  </data>
+  <data name="Theme colour" xml:space="preserve">
+    <value>主題色</value>
+  </data>
+  <data name="They prove the card with when they last played it, or an invite code." xml:space="preserve">
+    <value>他們用最後遊玩時間或邀請碼證明卡片歸屬。</value>
+  </data>
+  <data name="They register again" xml:space="preserve">
+    <value>需要重新註冊</value>
+  </data>
+  <data name="This card belongs to another player. Ask an admin to move it to you." xml:space="preserve">
+    <value>這張卡屬於其他玩家。請管理員將它轉給你。</value>
+  </data>
+  <data name="This card is banned on this server. Ask an admin." xml:space="preserve">
+    <value>這張卡在本伺服器上已被封禁。請聯繫管理員。</value>
+  </data>
+  <data name="This device" xml:space="preserve">
+    <value>此設備</value>
+  </data>
+  <data name="This file didn't load" xml:space="preserve">
+    <value>此檔案未能載入</value>
+  </data>
+  <data name="This is the only time it's shown. Copy it now." xml:space="preserve">
+    <value>只會顯示這一次。請立即複製。</value>
+  </data>
+  <data name="This page is being redesigned and will be back soon." xml:space="preserve">
+    <value>此頁面正在重新設計，即將回歸。</value>
+  </data>
+  <data name="This server needs an invite code from an admin." xml:space="preserve">
+    <value>本伺服器需要管理員發放的邀請碼。</value>
+  </data>
+  <data name="This server requires 2-step verification for admins. Your admin pages open once it's on." xml:space="preserve">
+    <value>本伺服器要求管理員開啟兩步驗證。開啟後即可使用管理頁面。</value>
+  </data>
+  <data name="This song is in the list more than once." xml:space="preserve">
+    <value>這首歌在列表中出現了多次。</value>
+  </data>
+  <data name="This song isn't on the server." xml:space="preserve">
+    <value>這首歌不在伺服器上。</value>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>時間</value>
+  </data>
+  <data name="Time-limited songs" xml:space="preserve">
+    <value>限時歌曲</value>
+  </data>
+  <data name="Tip: paste the whole code, dashes and all." xml:space="preserve">
+    <value>提示：可以直接貼上完整的碼，包括橫線。</value>
+  </data>
+  <data name="Title plates" xml:space="preserve">
+    <value>稱號牌</value>
+  </data>
+  <data name="Titles" xml:space="preserve">
+    <value>稱號</value>
+  </data>
+  <data name="To make new recovery codes, enter a code from your app:" xml:space="preserve">
+    <value>要生成新的復原碼，請輸入應用程式中的驗證碼：</value>
+  </data>
+  <data name="To turn it off, enter a code from your app (or a recovery code):" xml:space="preserve">
+    <value>要關閉，請輸入應用程式中的驗證碼（或復原碼）：</value>
+  </data>
+  <data name="Today" xml:space="preserve">
+    <value>今天</value>
+  </data>
+  <data name="Token for {0}" xml:space="preserve">
+    <value>{0}的權杖</value>
+  </data>
+  <data name="Tokens" xml:space="preserve">
+    <value>權杖</value>
+  </data>
+  <data name="Too many wrong passwords. This account is locked for a while: try again later, or ask an admin." xml:space="preserve">
+    <value>密碼錯誤次數過多。此帳號暫時被鎖定：請稍後再試，或聯繫管理員。</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>合計</value>
+  </data>
+  <data name="Trust this browser for 30 days" xml:space="preserve">
+    <value>信任此瀏覽器30天</value>
+  </data>
+  <data name="Turn off" xml:space="preserve">
+    <value>關閉</value>
+  </data>
+  <data name="Turn on 2-step verification to use the admin pages." xml:space="preserve">
+    <value>請開啟兩步驗證以使用管理頁面。</value>
+  </data>
+  <data name="Turn your screen brightness up if the reader doesn't pick it up." xml:space="preserve">
+    <value>如果讀卡器讀不到，請調高螢幕亮度。</value>
+  </data>
+  <data name="Turn yours off in Settings › Security." xml:space="preserve">
+    <value>在設定 › 安全中關閉你自己的兩步驗證。</value>
+  </data>
+  <data name="Two-player charts in the song list" xml:space="preserve">
+    <value>歌曲列表中的雙人譜面</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>類型</value>
+  </data>
+  <data name="Type anything" xml:space="preserve">
+    <value>隨意輸入</value>
+  </data>
+  <data name="Unban" xml:space="preserve">
+    <value>解除封禁</value>
+  </data>
+  <data name="Unbanned" xml:space="preserve">
+    <value>已解除封禁</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>取消封鎖</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>未知</value>
+  </data>
+  <data name="Unknown access code" xml:space="preserve">
+    <value>未知的存取碼</value>
+  </data>
+  <data name="Unknown song" xml:space="preserve">
+    <value>未知歌曲</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>解鎖</value>
+  </data>
+  <data name="Unlocked" xml:space="preserve">
+    <value>已解鎖</value>
+  </data>
+  <data name="Unlocks" xml:space="preserve">
+    <value>解鎖內容</value>
+  </data>
+  <data name="Unsaved changes" xml:space="preserve">
+    <value>未保存的更改</value>
+  </data>
+  <data name="Until {0}" xml:space="preserve">
+    <value>至{0}</value>
+  </data>
+  <data name="Use" xml:space="preserve">
+    <value>使用</value>
+  </data>
+  <data name="Use Log out for your own devices." xml:space="preserve">
+    <value>你自己的設備請使用登出。</value>
+  </data>
+  <data name="Use Log out to end it." xml:space="preserve">
+    <value>使用登出來結束它。</value>
+  </data>
+  <data name="Use a recovery code" xml:space="preserve">
+    <value>使用復原碼</value>
+  </data>
+  <data name="Use an invite code instead" xml:space="preserve">
+    <value>改用邀請碼</value>
+  </data>
+  <data name="Use at least 8 characters." xml:space="preserve">
+    <value>至少使用8個字符。</value>
+  </data>
+  <data name="Use the access code on your card and your web UI password." xml:space="preserve">
+    <value>使用卡片上的存取碼和你的網頁版密碼。</value>
+  </data>
+  <data name="Use this cabinet's own settings" xml:space="preserve">
+    <value>使用此機台的單獨設定</value>
+  </data>
+  <data name="Use your authenticator app" xml:space="preserve">
+    <value>使用驗證器應用程式</value>
+  </data>
+  <data name="Use your last play time instead" xml:space="preserve">
+    <value>改用最後遊玩時間</value>
+  </data>
+  <data name="Used with your access code to log in here." xml:space="preserve">
+    <value>與存取碼一起用於在此登入。</value>
+  </data>
+  <data name="Used {0} from {1}" xml:space="preserve">
+    <value>{0}從{1}使用</value>
+  </data>
+  <data name="User Management" xml:space="preserve">
+    <value>使用者管理</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>驗證</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>版本</value>
+  </data>
+  <data name="View don-chan larger" xml:space="preserve">
+    <value>放大查看小咚</value>
+  </data>
+  <data name="View larger" xml:space="preserve">
+    <value>放大查看</value>
+  </data>
+  <data name="WIN" xml:space="preserve">
+    <value>WIN</value>
+  </data>
+  <data name="Waiting for approval" xml:space="preserve">
+    <value>等待批準</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>警告</value>
+  </data>
+  <data name="Warnings {0}" xml:space="preserve">
+    <value>警告 {0}</value>
+  </data>
+  <data name="Web UI account" xml:space="preserve">
+    <value>網頁版帳號</value>
+  </data>
+  <data name="What uses it, e.g. Discord bot" xml:space="preserve">
+    <value>用途，例如Discord機器人</value>
+  </data>
+  <data name="What's your access code?" xml:space="preserve">
+    <value>你的存取碼是？</value>
+  </data>
+  <data name="Where {0} is ahead" xml:space="preserve">
+    <value>{0}領先的譜面</value>
+  </data>
+  <data name="Who can sign up" xml:space="preserve">
+    <value>誰可以註冊</value>
+  </data>
+  <data name="Who can sign up is set in Admin › Access." xml:space="preserve">
+    <value>誰可以註冊在管理 › 存取中設定。</value>
+  </data>
+  <data name="Whose data to show. Remembered on this device." xml:space="preserve">
+    <value>要顯示誰的資料。會記在此設備上。</value>
+  </data>
+  <data name="Won against the AI" xml:space="preserve">
+    <value>戰勝了AI</value>
+  </data>
+  <data name="Write a title or a message." xml:space="preserve">
+    <value>請填寫標題或內容。</value>
+  </data>
+  <data name="Wrong 2-step code" xml:space="preserve">
+    <value>兩步驗證碼錯誤</value>
+  </data>
+  <data name="Wrong password" xml:space="preserve">
+    <value>密碼錯誤</value>
+  </data>
+  <data name="Yesterday" xml:space="preserve">
+    <value>昨天</value>
+  </data>
+  <data name="You can't change your own admin role." xml:space="preserve">
+    <value>不能更改你自己的管理員身份。</value>
+  </data>
+  <data name="You can't delete yourself." xml:space="preserve">
+    <value>不能刪除你自己。</value>
+  </data>
+  <data name="You have the most cards this server allows ({0}). Remove one to add another." xml:space="preserve">
+    <value>你的卡片已達本伺服器上限（{0}張）。請先移除一張再添加。</value>
+  </data>
+  <data name="You haven't played {0} on {1} yet." xml:space="preserve">
+    <value>你還沒有在{1}難度玩過{0}。</value>
+  </data>
+  <data name="You vs {0}" xml:space="preserve">
+    <value>你 vs {0}</value>
+  </data>
+  <data name="You'll use it with your access code to log in here." xml:space="preserve">
+    <value>之後與存取碼一起用於在此登入。</value>
+  </data>
+  <data name="You're &lt;b&gt;#{0}&lt;/b&gt; of {1}" xml:space="preserve">
+    <value>你在{1}人中排&lt;b&gt;第{0}名&lt;/b&gt;</value>
+  </data>
+  <data name="You're registered" xml:space="preserve">
+    <value>註冊完成</value>
+  </data>
+  <data name="Your best · {0}" xml:space="preserve">
+    <value>你的最佳 · {0}</value>
+  </data>
+  <data name="Your cards" xml:space="preserve">
+    <value>你的卡片</value>
+  </data>
+  <data name="Your highest pass (outlined) is the badge on your nameplate. On this page the card shows your Dani Dojo outfit." xml:space="preserve">
+    <value>你的最高合格段位（帶外框）就是名牌上的徽章。此頁面的卡片顯示你的段位道場服裝。</value>
+  </data>
+  <data name="Your only card can't be removed." xml:space="preserve">
+    <value>唯一的卡片無法移除。</value>
+  </data>
+  <data name="Your own title" xml:space="preserve">
+    <value>自定義稱號</value>
+  </data>
+  <data name="Your results" xml:space="preserve">
+    <value>你的結果</value>
+  </data>
+  <data name="as shown in game" xml:space="preserve">
+    <value>與遊戲中顯示相同</value>
+  </data>
+  <data name="by {0}" xml:space="preserve">
+    <value>由{0}</value>
+  </data>
+  <data name="extract.exe isn't next to TaikoLocalServer.exe, so run it yourself:" xml:space="preserve">
+    <value>extract.exe不在TaikoLocalServer.exe旁邊，請自行運行：</value>
+  </data>
+  <data name="for 1 day" xml:space="preserve">
+    <value>1天</value>
+  </data>
+  <data name="for 1 hour" xml:space="preserve">
+    <value>1小時</value>
+  </data>
+  <data name="for 15 min" xml:space="preserve">
+    <value>15分鐘</value>
+  </data>
+  <data name="now" xml:space="preserve">
+    <value>現在</value>
+  </data>
+  <data name="of {0}" xml:space="preserve">
+    <value>共{0}</value>
+  </data>
+  <data name="or pick one of the game's titles" xml:space="preserve">
+    <value>或從遊戲稱號中選擇</value>
+  </data>
+  <data name="over {0} play" xml:space="preserve">
+    <value>共{0}次遊玩</value>
+  </data>
+  <data name="over {0} plays" xml:space="preserve">
+    <value>共{0}次遊玩</value>
+  </data>
+  <data name="played in this order" xml:space="preserve">
+    <value>按此順序遊玩</value>
+  </data>
+  <data name="{0} Donderful" xml:space="preserve">
+    <value>全良 {0}</value>
+  </data>
+  <data name="{0} credit" xml:space="preserve">
+    <value>{0}次投幣</value>
+  </data>
+  <data name="{0} credits" xml:space="preserve">
+    <value>{0}次投幣</value>
+  </data>
+  <data name="{0} days ago" xml:space="preserve">
+    <value>{0}天前</value>
+  </data>
+  <data name="{0} devices · last active {1}" xml:space="preserve">
+    <value>{0}台設備 · 最後活動 {1}</value>
+  </data>
+  <data name="{0} isn't ahead of you anywhere here." xml:space="preserve">
+    <value>這裏沒有{0}領先你的譜面。</value>
+  </data>
+  <data name="{0} more. Keep typing to narrow it down." xml:space="preserve">
+    <value>還有{0}項。繼續輸入以縮小範圍。</value>
+  </data>
+  <data name="{0} new best" xml:space="preserve">
+    <value>{0}個新紀錄</value>
+  </data>
+  <data name="{0} new bests" xml:space="preserve">
+    <value>{0}個新紀錄</value>
+  </data>
+  <data name="{0} new lines ↓" xml:space="preserve">
+    <value>{0}條新消息 ↓</value>
+  </data>
+  <data name="{0} of the game's {1} movies selected." xml:space="preserve">
+    <value>已選擇遊戲{1}個影片中的{0}個。</value>
+  </data>
+  <data name="{0} of {1}" xml:space="preserve">
+    <value>{0}／{1}</value>
+  </data>
+  <data name="{0} of {1} cabinets online" xml:space="preserve">
+    <value>{1}台機台中{0}台在線</value>
+  </data>
+  <data name="{0} of {1} plays" xml:space="preserve">
+    <value>{1}次遊玩中{0}次</value>
+  </data>
+  <data name="{0} of {1} sections won" xml:space="preserve">
+    <value>贏下{1}個區間中的{0}個</value>
+  </data>
+  <data name="{0} of {1} songs" xml:space="preserve">
+    <value>{1}首歌曲中{0}首</value>
+  </data>
+  <data name="{0} of {1} {2} charts played" xml:space="preserve">
+    <value>已玩過{1}個{2}譜面中的{0}個</value>
+  </data>
+  <data name="{0} play" xml:space="preserve">
+    <value>{0}次遊玩</value>
+  </data>
+  <data name="{0} play today" xml:space="preserve">
+    <value>今天{0}次遊玩</value>
+  </data>
+  <data name="{0} player" xml:space="preserve">
+    <value>{0}位玩家</value>
+  </data>
+  <data name="{0} players" xml:space="preserve">
+    <value>{0}位玩家</value>
+  </data>
+  <data name="{0} plays" xml:space="preserve">
+    <value>{0}次遊玩</value>
+  </data>
+  <data name="{0} plays today" xml:space="preserve">
+    <value>今天{0}次遊玩</value>
+  </data>
+  <data name="{0} recovery codes left." xml:space="preserve">
+    <value>還剩{0}個復原碼。</value>
+  </data>
+  <data name="{0} sections" xml:space="preserve">
+    <value>{0}個區間</value>
+  </data>
+  <data name="{0} song" xml:space="preserve">
+    <value>{0}首歌曲</value>
+  </data>
+  <data name="{0} songs" xml:space="preserve">
+    <value>{0}首歌曲</value>
+  </data>
+  <data name="{0} to fix, {1} warnings" xml:space="preserve">
+    <value>{0}項待處理，{1}項警告</value>
+  </data>
+  <data name="{0} tries" xml:space="preserve">
+    <value>{0}次</value>
+  </data>
+  <data name="{0}: a pass condition is empty." xml:space="preserve">
+    <value>{0}：有合格條件為空。</value>
+  </data>
+  <data name="{0}: a song isn't on this server." xml:space="preserve">
+    <value>{0}：有歌曲不在本伺服器上。</value>
+  </data>
+  <data name="{0}: {1} play" xml:space="preserve">
+    <value>{0}：{1}次遊玩</value>
+  </data>
+  <data name="{0}: {1} plays" xml:space="preserve">
+    <value>{0}：{1}次遊玩</value>
+  </data>
+  <data name="{0}–{1} of {2}" xml:space="preserve">
+    <value>{0}–{1}／共{2}</value>
+  </data>
+  <data name="Pop" xml:space="preserve">
+    <value>流行音樂</value>
+  </data>
+  <data name="Anime" xml:space="preserve">
+    <value>卡通動畫音樂</value>
+  </data>
+  <data name="Kids" xml:space="preserve">
+    <value>兒童音樂</value>
+  </data>
+  <data name="Vocaloid" xml:space="preserve">
+    <value>VOCALOID™音樂</value>
+  </data>
+  <data name="Game Music" xml:space="preserve">
+    <value>遊戲音樂</value>
+  </data>
+  <data name="NAMCO Original" xml:space="preserve">
+    <value>NAMCO原創音樂</value>
+  </data>
+  <data name="Variety" xml:space="preserve">
+    <value>綜合音樂</value>
+  </data>
+  <data name="Classical" xml:space="preserve">
+    <value>古典音樂</value>
+  </data>
+  <data name="Song title" xml:space="preserve">
+    <value>曲名</value>
+  </data>
+  <data name="Notice title" xml:space="preserve">
+    <value>公告標題</value>
   </data>
 </root>

@@ -3,6 +3,9 @@ namespace TaikoWebUI.Shared;
 /// <summary>Fixed game lists the WebUI shows: colours, title plates, dan ranks and play options.</summary>
 public static class GameData
 {
+    /// <summary>Translates a label (difficulty and genre names) into the UI language; set once at startup.</summary>
+    public static Func<string, string> T { get; set; } = s => s;
+
     /// <summary>The 63 costume colours, by game index.</summary>
     public static readonly string[] Colors =
     [
@@ -128,15 +131,19 @@ public static class GameData
 
     public static readonly string[] NameLanguages = ["Japanese", "English", "Chinese Traditional", "Korean", "Chinese Simplified"];
 
-    public static readonly (Difficulty Value, string Name)[] Difficulties =
-        [(Difficulty.Easy, "Easy"), (Difficulty.Normal, "Normal"), (Difficulty.Hard, "Hard"), (Difficulty.Oni, "Oni"), (Difficulty.UraOni, "Ura Oni")];
+    /// <summary>The five difficulties with their names in the UI language.</summary>
+    public static (Difficulty Value, string Name)[] Difficulties =>
+        [(Difficulty.Easy, T("Easy")), (Difficulty.Normal, T("Normal")), (Difficulty.Hard, T("Hard")), (Difficulty.Oni, T("Oni")), (Difficulty.UraOni, T("Ura Oni"))];
 
     public static readonly string[] CourseOptions = ["None", "Set Up Each Time", "Easy", "Normal", "Hard", "Oni", "Ura Oni"];
     public static readonly string[] StarOptions = ["None", "Set Up Each Time", "1 Star", "2 Star", "3 Star", "4 Star", "5 Star", "6 Star", "7 Star", "8 Star", "9 Star", "10 Star"];
-    public static readonly string[] SortOptions = ["None", "Set Up Each Time", "Default", "Not Cleared", "Not Full Combo", "Not Donderful Combo"];
+    public static readonly string[] SortOptions = ["None", "Set Up Each Time", "Default", "Not Cleared First", "Not Full Combo", "Not Donderful Combo"];
 
     /// <summary>Genre label + chip colours (the game's genre colours).</summary>
-    public static (string Name, string Bg, string Fg) Genre(SongGenre g) => g switch
+    /// <summary>Genre name (in the UI language) and chip colours (the game's genre colours).</summary>
+    public static (string Name, string Bg, string Fg) Genre(SongGenre g) => GenreColors(g) is var (name, bg, fg) ? (T(name), bg, fg) : default;
+
+    private static (string Name, string Bg, string Fg) GenreColors(SongGenre g) => g switch
     {
         SongGenre.Pop => ("Pop", "#42c0d2", "#fff"),
         SongGenre.Anime => ("Anime", "#ff90d3", "#fff"),
