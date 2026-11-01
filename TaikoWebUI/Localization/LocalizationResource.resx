@@ -849,4 +849,7 @@
   <data name="Save Failed" xml:space="preserve">
     <value />
   </data>
+  <data name="Config Card Hint" xml:space="preserve">
+    <value />
+  </data>
 </root>

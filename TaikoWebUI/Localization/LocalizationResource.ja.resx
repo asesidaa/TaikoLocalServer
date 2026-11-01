@@ -849,4 +849,7 @@
   <data name="Save Failed" xml:space="preserve">
     <value>Couldn’t save. Try again.</value>
   </data>
+  <data name="Config Card Hint" xml:space="preserve">
+    <value>What the server read when it started. Change these in {0} and restart the server.</value>
+  </data>
 </root>

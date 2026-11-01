@@ -3,19 +3,82 @@
 @attribute [Authorize(Policy = AuthPolicies.Admin)]
 @inject NavigationManager Nav
 @inject PageState Page
+@inject HttpClient Client
 
 <PageTitle>Server Management</PageTitle>
 <Tabs Items="tabs" Selected="@Current" SelectedChanged="Go" Label="@Localizer["Server Management"]"
       Columns="grid-cols-4 xl:inline-grid xl:grid-cols-7" />
 <div class="mt-4" role="tabpanel">
-    @{ var t = tabs.First(x => x.Id == Current); }
-    <ComingSoon Title="@t.Label" IconName="@t.Icon" />
+    @if (Current == "status")
+    {
+        @ConfigCard
+    }
+    else
+    {
+        var t = tabs.First(x => x.Id == Current);
+        <ComingSoon Title="@t.Label" IconName="@t.Icon" />
+    }
 </div>
 
 @code {
     [Parameter] public string? Tab { get; set; }
 
     private IReadOnlyList<(string Id, string Label, string Icon)> tabs = [];
+    private ServerConfigResponse? config;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Current == "status" && config is null)
+            config = await Client.GetFromJsonAsync<ServerConfigResponse>("api/ServerConfig");
+    }
+
+    // Read-only: what the server read from Host/Configurations at start. Each row's config key shows on hover.
+    private RenderFragment ConfigCard => __builder =>
+    {
+        <section class="@Css.Card p-5 sm:p-6">
+            <h2 class="font-semibold">@Localizer["Configuration"]</h2>
+            <p class="text-sm @Css.Muted">@((MarkupString)string.Format(Localizer["Config Card Hint"], "<code class=\"font-mono text-xs\">Host/Configurations</code>"))</p>
+            @if (config is null)
+            {
+                <p class="mt-4 text-sm @Css.Muted">@Localizer["Loading..."]</p>
+            }
+            else
+            {
+            <div class="mt-4 grid gap-x-8 gap-y-5 md:grid-cols-2">
+                @Group(Localizer["Server"],
+                [
+                    ("ServerSettings:Mode", Localizer["Mode"], config.Mode == ServerMode.Server ? Localizer["Server"] : Localizer["Local"]),
+                    ("DbFileName", Localizer["Database file"], config.DbFileName),
+                    ("ServerSettings:GamePath", Localizer["Game folder"], config.GamePath.Length > 0 ? config.GamePath : Localizer["Not set"]),
+                    ("Kestrel:Certificates:Default:Path", Localizer["Certificate"], config.CertificatePath),
+                ])
+                @Group(Localizer["Cabinets"],
+                [
+                    ("ServerSettings:GameUrl", Localizer["Game host"], config.GameUrl),
+                    ("ServerSettings:MuchaUrl", Localizer["Mucha URL"], config.MuchaUrl),
+                    ("ServerSettings:EnableMoreSongs", Localizer["More songs"], config.EnableMoreSongs ? string.Format(Localizer["On, up to {0}"], config.MoreSongsSize) : Localizer["Off"]),
+                ])
+                @Group(Localizer["Ports"], config.Endpoints.Select(e => ($"Kestrel:Endpoints:{e.Name}:Url", e.Name, e.Url)).ToList())
+            </div>
+            }
+        </section>
+    };
+
+    private RenderFragment Group(string title, IReadOnlyList<(string Key, string Label, string Value)> rows) => __builder =>
+    {
+        <div>
+            <h3 class="text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">@title</h3>
+            <dl class="mt-1 divide-y divide-zinc-100 dark:divide-zinc-800">
+                @foreach (var (key, label, value) in rows)
+                {
+                    <div class="flex items-baseline justify-between gap-4 py-2 text-sm" title="@key">
+                        <dt class="shrink-0 whitespace-nowrap @Css.Muted">@label</dt>
+                        <dd class="min-w-0 truncate text-right font-medium">@value</dd>
+                    </div>
+                }
+            </dl>
+        </div>
+    };
 
     // Unknown or missing tab names land on Status, so old links still open the page.
     private string Current => tabs.Any(x => x.Id == Tab?.ToLowerInvariant()) ? Tab!.ToLowerInvariant() : "status";
