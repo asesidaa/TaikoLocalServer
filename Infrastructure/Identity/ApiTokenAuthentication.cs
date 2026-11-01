@@ -18,7 +18,7 @@ namespace TaikoLocalServer.Infrastructure.Identity;
 /// </summary>
 public sealed class ApiTokenAuthenticationHandler(
     IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder,
-    ITaikoDbContext db, IOptions<ServerSettings> settings)
+    ITaikoDbContext db, IOptions<ServerSettings> settings, IAvatarRenderer avatars)
     : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
 {
     public const string Scheme = "ApiToken";
@@ -35,6 +35,13 @@ public sealed class ApiTokenAuthenticationHandler(
     {
         string? header = Request.Headers.Authorization;
         if (!IsApiToken(header)) return AuthenticateResult.NoResult();
+        // The avatar renderer's headless browser: game assets only, whether or not API tokens are on.
+        if (avatars.IsRendererToken(header!["Bearer ".Length..].Trim()))
+        {
+            var renderer = new ClaimsIdentity([new Claim(ClaimTypes.Name, "0"), new Claim(ApiScopes.TokenClaim, "avatar-renderer"),
+                new Claim(ApiScopes.Claim, ApiScopes.ReadAssets)], Scheme, ClaimTypes.Name, ClaimTypes.Role);
+            return AuthenticateResult.Success(new AuthenticationTicket(new ClaimsPrincipal(renderer), Scheme));
+        }
         if (!settings.Value.ApiTokens) return AuthenticateResult.Fail("API tokens are turned off (ServerSettings.ApiTokens).");
 
         var hash = Hash(header!["Bearer ".Length..].Trim());

@@ -3111,4 +3111,34 @@
   <data name="Notice title" xml:space="preserve">
     <value>タイトル</value>
   </data>
+  <data name="Avatars" xml:space="preserve">
+    <value>アバター</value>
+  </data>
+  <data name="Render avatars on the server" xml:space="preserve">
+    <value>サーバーでアバターを描画</value>
+  </data>
+  <data name="A headless Edge or Chrome draws every player's avatar, including players who never open the Web UI. It opens only while there's work. Off: an avatar is drawn when the player's own browser shows their card." xml:space="preserve">
+    <value>ヘッドレスの Edge または Chrome が、Web UI を開かないプレイヤーも含め、全員のアバターを描画します。作業があるときだけ起動します。オフの場合、プレイヤー自身のブラウザーがカードを表示したときに描画されます。</value>
+  </data>
+  <data name="Browser" xml:space="preserve">
+    <value>ブラウザー</value>
+  </data>
+  <data name="None found" xml:space="preserve">
+    <value>見つかりません</value>
+  </data>
+  <data name="Running" xml:space="preserve">
+    <value>実行中</value>
+  </data>
+  <data name="Idle" xml:space="preserve">
+    <value>待機中</value>
+  </data>
+  <data name="{0} queued · {1} drawn · {2} failed" xml:space="preserve">
+    <value>待機 {0} · 描画 {1} · 失敗 {2}</value>
+  </data>
+  <data name="Avatar renderer on" xml:space="preserve">
+    <value>アバター描画をオンにしました</value>
+  </data>
+  <data name="Avatar renderer off" xml:space="preserve">
+    <value>アバター描画をオフにしました</value>
+  </data>
 </root>

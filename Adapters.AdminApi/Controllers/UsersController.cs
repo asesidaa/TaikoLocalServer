@@ -7,7 +7,7 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [Route("api/[controller]")]
 [Authorize]
 [ApiScope(ApiScopes.ReadProfiles, ApiScopes.AdminUsers)]
-public class UsersController(ITaikoDbContext context, IServerAccess access) : BaseAdminController<UsersController>
+public class UsersController(ITaikoDbContext context, IServerAccess access, IAvatarRenderer avatars) : BaseAdminController<UsersController>
 {
 
 
@@ -135,8 +135,8 @@ public class UsersController(ITaikoDbContext context, IServerAccess access) : Ba
     }
 
     /// <summary>
-    /// The avatar the WebUI uploaded for costume <paramref name="v"/>. Any other key 404s, so a costume changed in
-    /// game shows the fallback until the WebUI renders it again; the URL changes with the key, so it caches forever.
+    /// The avatar (rendered by the server, or uploaded by the WebUI) for costume <paramref name="v"/>. Any other key
+    /// 404s and queues a render; the URL changes with the key, so it caches forever.
     /// </summary>
     [HttpGet("{baid}/Avatar")]
     [ApiScope(ApiScopes.ReadAvatars)]
@@ -145,6 +145,8 @@ public class UsersController(ITaikoDbContext context, IServerAccess access) : Ba
         var avatar = await context.UserAvatars.FindAsync(baid);
         if (avatar is null || avatar.Key != v)
         {
+            // A costume changed (in game too) or a new player: the server renders it, if that's on.
+            avatars.Enqueue(baid);
             return NotFound();
         }
 

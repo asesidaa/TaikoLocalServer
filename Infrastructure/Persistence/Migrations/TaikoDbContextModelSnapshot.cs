@@ -408,6 +408,19 @@ namespace TaikoLocalServer.Migrations
                     b.ToTable("DashboardNotices");
                 });
 
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.ServerOptions", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("RenderAvatars")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ServerOptions");
+                });
+
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.ServerSecrets", b =>
                 {
                     b.Property<int>("Id")

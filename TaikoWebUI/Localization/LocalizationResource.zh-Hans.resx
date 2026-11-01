@@ -3111,4 +3111,34 @@
   <data name="Notice title" xml:space="preserve">
     <value>公告标题</value>
   </data>
+  <data name="Avatars" xml:space="preserve">
+    <value>头像</value>
+  </data>
+  <data name="Render avatars on the server" xml:space="preserve">
+    <value>在服务器上绘制头像</value>
+  </data>
+  <data name="A headless Edge or Chrome draws every player's avatar, including players who never open the Web UI. It opens only while there's work. Off: an avatar is drawn when the player's own browser shows their card." xml:space="preserve">
+    <value>无界面的 Edge 或 Chrome 会为每位玩家绘制头像，包括从不打开 Web UI 的玩家。仅在有任务时启动。关闭时，头像会在玩家自己的浏览器显示其卡片时绘制。</value>
+  </data>
+  <data name="Browser" xml:space="preserve">
+    <value>浏览器</value>
+  </data>
+  <data name="None found" xml:space="preserve">
+    <value>未找到</value>
+  </data>
+  <data name="Running" xml:space="preserve">
+    <value>运行中</value>
+  </data>
+  <data name="Idle" xml:space="preserve">
+    <value>空闲</value>
+  </data>
+  <data name="{0} queued · {1} drawn · {2} failed" xml:space="preserve">
+    <value>排队 {0} · 已绘制 {1} · 失败 {2}</value>
+  </data>
+  <data name="Avatar renderer on" xml:space="preserve">
+    <value>头像绘制已开启</value>
+  </data>
+  <data name="Avatar renderer off" xml:space="preserve">
+    <value>头像绘制已关闭</value>
+  </data>
 </root>

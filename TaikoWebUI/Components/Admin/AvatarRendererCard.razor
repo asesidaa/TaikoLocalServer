@@ -1,0 +1,44 @@
+@* Server Management › Status: the server-side avatar renderer, with an off switch for servers that don't want the overhead. *@
+@inject HttpClient Client
+@inject ToastService Toast
+
+<section class="@Css.Card p-5 sm:p-6">
+    <h2 class="font-semibold">@Localizer["Avatars"]</h2>
+    @if (status is null)
+    {
+        <p class="mt-2 text-sm @Css.Muted">@Localizer["Loading..."]</p>
+    }
+    else
+    {
+        <Toggle Label="@Localizer["Render avatars on the server"]" Icon="profile" Value="status.Enabled" ValueChanged="Set"
+                Description="@Localizer["A headless Edge or Chrome draws every player's avatar, including players who never open the Web UI. It opens only while there's work. Off: an avatar is drawn when the player's own browser shows their card."]" />
+        <dl class="mt-3 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
+            <div class="min-w-0">
+                <dt class="text-xs @Css.Muted">@Localizer["Browser"]</dt>
+                <dd class="truncate font-mono text-xs" title="@status.Browser">@(status.Browser ?? Localizer["None found"].Value)</dd>
+            </div>
+            <div>
+                <dt class="text-xs @Css.Muted">@Localizer["Activity"]</dt>
+                <dd>@(status.Running ? Localizer["Running"] : Localizer["Idle"]) · @string.Format(Localizer["{0} queued · {1} drawn · {2} failed"], status.Queued, status.Rendered, status.Failed)</dd>
+            </div>
+        </dl>
+        @if (status.LastError is { } error)
+        {
+            <p class="mt-3 rounded-xl bg-amber-500/10 px-3 py-2 text-xs text-amber-800 dark:text-amber-200">@error</p>
+        }
+    }
+</section>
+
+@code {
+    private AvatarRendererStatus? status;
+
+    protected override async Task OnInitializedAsync() => status = await Client.GetFromJsonAsync<AvatarRendererStatus>("api/AvatarRenderer");
+
+    private async Task Set(bool on)
+    {
+        var res = await Client.PutAsJsonAsync("api/AvatarRenderer", new { enabled = on });
+        if (!res.IsSuccessStatusCode) { Toast.Show(Localizer["Save Failed"], true); return; }
+        status = await res.Content.ReadFromJsonAsync<AvatarRendererStatus>();
+        Toast.Show(on ? Localizer["Avatar renderer on"] : Localizer["Avatar renderer off"]);
+    }
+}

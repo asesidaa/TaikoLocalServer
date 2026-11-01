@@ -39,6 +39,7 @@ namespace TaikoLocalServer.Infrastructure.Persistence
         public virtual DbSet<DashboardNotice> DashboardNotices { get; set; } = null!;
         public virtual DbSet<ServerStatus> ServerStatuses { get; set; } = null!;
         public virtual DbSet<TrustedBrowser> TrustedBrowsers { get; set; } = null!;
+        public virtual DbSet<ServerOptions> ServerOptions { get; set; } = null!;
         public virtual DbSet<Cabinet> Cabinets { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -87,6 +88,7 @@ namespace TaikoLocalServer.Infrastructure.Persistence
             modelBuilder.Entity<DashboardNotice>(entity => entity.Property(e => e.Id).ValueGeneratedNever());
             modelBuilder.Entity<ServerStatus>(entity => entity.Property(e => e.Id).ValueGeneratedNever());
             modelBuilder.Entity<TrustedBrowser>(entity => entity.HasIndex(e => e.TokenHash).IsUnique());
+            modelBuilder.Entity<ServerOptions>(entity => entity.Property(e => e.Id).ValueGeneratedNever());
             modelBuilder.Entity<Cabinet>(entity => entity.HasKey(e => e.ChassisId));
 
             modelBuilder.Entity<UserWebProfile>(entity =>

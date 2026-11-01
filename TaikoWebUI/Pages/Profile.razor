@@ -63,7 +63,7 @@ else
                   ValueChanged="v => Set(x => x.CardFade = v == ColorRow.None ? -1 : (int)v)" />
         <p class="mt-4 text-sm font-medium text-zinc-700 dark:text-zinc-300">@Localizer["Animation"]</p>
         <div class="mt-2 grid grid-cols-3 gap-2" role="radiogroup" aria-label="@Localizer["Animation"]">
-            @foreach (var (value, name, _) in CardStyle.Animations)
+            @foreach (var (value, name) in CardStyle.Animations)
             {
                 var on = s.CardAnimation == value;
                 <button role="radio" aria-checked="@Css.Aria(on)" @onclick="() => Set(x => x.CardAnimation = value)"

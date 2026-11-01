@@ -1,4 +1,5 @@
 using System.Globalization;
+using TaikoLocalServer.Contracts.AdminApi;
 
 namespace TaikoWebUI.Shared;
 
@@ -18,23 +19,18 @@ public static class CardStyle
         (CardPattern.Zigzag, "Zigzag"), (CardPattern.Grid, "Grid"), (CardPattern.Sunburst, "Sunburst"), (CardPattern.None, "Plain"),
     ];
 
-    /// <summary>Animation presets and the clips they loop (don_miss and don_full_combo are one-shot clips, looped on request).</summary>
-    public static readonly (CardAnimation Value, string Name, string Clip)[] Animations =
+    /// <summary>Animation presets in picker order; the clip each loops is <see cref="AvatarKeys.Clip"/>.</summary>
+    public static readonly (CardAnimation Value, string Name)[] Animations =
     [
-        (CardAnimation.Celebrate, "Celebrate", "don_result_full_loop"), (CardAnimation.Clear, "Clear", "don_result_clear_loop"),
-        (CardAnimation.Aggressive, "Aggressive", "don_wait_loop"), (CardAnimation.Miss, "Miss", "don_miss"),
-        (CardAnimation.FullCombo, "Full Combo", "don_full_combo"), (CardAnimation.Pout, "Pout", "don_result_failure_loop"),
+        (CardAnimation.Celebrate, "Celebrate"), (CardAnimation.Clear, "Clear"), (CardAnimation.Aggressive, "Aggressive"),
+        (CardAnimation.Miss, "Miss"), (CardAnimation.FullCombo, "Full Combo"), (CardAnimation.Pout, "Pout"),
     ];
 
-    public static string Clip(CardAnimation a) => Animations.FirstOrDefault(x => x.Value == a).Clip ?? "don_result_clear_loop";
+    public static string Clip(CardAnimation a) => AvatarKeys.Clip(a);
 
-    /// <summary>
-    /// What an avatar shows: the costume (without the puchi, which it leaves out), colours and pose (its animation's
-    /// first frame). It's in the avatar's URL, so any change, in game too, misses the stored image until the card renders
-    /// a new one. Bump the version (the leading number) to re-render all, e.g. after changing the framing in ui.js.
-    /// </summary>
+    /// <summary>What an avatar shows (shared with the server renderer, see <see cref="AvatarKeys"/>).</summary>
     public static string AvatarKey(UserSetting s) =>
-        $"2-{s.Kigurumi}-{s.Head}-{s.Body}-{s.Face}-{s.BodyColor}-{s.FaceColor}-{s.LimbColor}-{(int)s.CardAnimation}";
+        AvatarKeys.Key(s.Kigurumi, s.Head, s.Body, s.Face, s.BodyColor, s.FaceColor, s.LimbColor, s.CardAnimation);
 
     public static string AvatarSrc(UserSetting s) => $"api/Users/{s.Baid}/Avatar?v={AvatarKey(s)}";
 
