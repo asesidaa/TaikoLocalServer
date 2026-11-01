@@ -28,13 +28,14 @@ public class PlayDataController(ITaikoDbContext context) : BaseAdminController<P
             .Where(d => d.Baid == baid)
             .Include(d => d.AiSectionScoreData)
             .ToListAsync();
-        var songPlayData = await context.SongPlayData.Where(d => d.Baid == baid).ToListAsync();
+        // Each chart's plays, grouped once: looking them up per best scanned every play per best (5,000 × 100,000).
+        var playsByChart = (await context.SongPlayData.Where(d => d.Baid == baid).ToListAsync())
+            .ToLookup(d => (d.SongId, d.Difficulty));
+        var aiByChart = aiSectionBest.ToDictionary(d => (d.SongId, d.Difficulty));
 
         foreach (var bestData in songBestRecords)
         {
-            var songPlayDatums = songPlayData
-                .Where(d => d.Difficulty == bestData.Difficulty && d.SongId == bestData.SongId)
-                .ToArray();
+            var songPlayDatums = playsByChart[(bestData.SongId, bestData.Difficulty)].ToArray();
             songPlayDatums.Throw($"Play log for song id {bestData.SongId} is null! Something is wrong with db!").IfEmpty();
 
             bestData.LastPlayTime = songPlayDatums.MaxBy(d => d.PlayTime)!.PlayTime;
@@ -54,41 +55,24 @@ public class PlayDataController(ITaikoDbContext context) : BaseAdminController<P
                 bestData.PlaySetting = PlaySettingConverter.ShortToPlaySetting((short)bestLog.OptionSetting);
             }
 
-            var aiSection = aiSectionBest.FirstOrDefault(d =>
-                d.Difficulty == bestData.Difficulty && d.SongId == bestData.SongId);
-            if (aiSection is null)
+            bestData.PlayCount = songPlayDatums.Length;
+            bestData.ClearCount = songPlayDatums.Count(d => d.Crown >= CrownType.Clear);
+            bestData.FullComboCount = songPlayDatums.Count(d => d.Crown >= CrownType.Gold);
+            bestData.PerfectCount = songPlayDatums.Count(d => d.Crown >= CrownType.Dondaful);
+            bestData.RecentPlayData = songPlayDatums.Select(SongBestResponseMapper.MapToDto).ToList();
+
+            if (aiByChart.TryGetValue((bestData.SongId, bestData.Difficulty), out var aiSection))
             {
-                continue;
+                bestData.AiSectionBestData = aiSection.AiSectionScoreData
+                    .Select(d => d.CopyPropertiesToNew<AiSectionBestData>())
+                    .ToList();
             }
-
-            bestData.AiSectionBestData = aiSection.AiSectionScoreData
-                .Select(d => d.CopyPropertiesToNew<AiSectionBestData>())
-                .ToList();
-        }
-
-        foreach (var songBestData in songBestRecords)
-        {
-            var songPlayLogs = songPlayData
-                .Where(d => d.SongId == songBestData.SongId && d.Difficulty == songBestData.Difficulty)
-                .ToList();
-            songBestData.PlayCount = songPlayLogs.Count;
-            songBestData.ClearCount = songPlayLogs.Count(d => d.Crown >= CrownType.Clear);
-            songBestData.FullComboCount = songPlayLogs.Count(d => d.Crown >= CrownType.Gold);
-            songBestData.PerfectCount = songPlayLogs.Count(d => d.Crown >= CrownType.Dondaful);
         }
 
         var favoriteSet = user.FavoriteSongsArray.ToHashSet();
         foreach (var songBestRecord in songBestRecords.Where(r => favoriteSet.Contains(r.SongId)))
         {
             songBestRecord.IsFavorite = true;
-        }
-
-        foreach (var songBestRecord in songBestRecords)
-        {
-            songBestRecord.RecentPlayData = songPlayData
-                .Where(d => d.SongId == songBestRecord.SongId && d.Difficulty == songBestRecord.Difficulty)
-                .Select(SongBestResponseMapper.MapToDto)
-                .ToList();
         }
 
         return Ok(new SongBestResponse

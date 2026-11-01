@@ -3,17 +3,16 @@ using Microsoft.JSInterop;
 
 namespace TaikoWebUI.Pages;
 
-// The player's own numbers are computed client-side from api/PlayData (best per song × difficulty) and api/PlayHistory
-// (every play); the comparisons with other players come from api/Stats/{baid}/Server.
-// shortcut: pulls the whole play history; move the own-play sums to api/Stats too when histories get large.
+// The player's own numbers come summed from api/Stats/{baid} (their bests and totals, never every play: megabytes for a
+// heavy player); the comparisons with other players from api/Stats/{baid}/Server.
 public partial class Stats
 {
     [Parameter] public int Baid { get; set; }
 
     private UserSetting? setting;
     private List<DanBestData> dans = [];
-    private List<SongBestData> best = [];
-    private List<SongHistoryData> history = [];
+    private List<StatsBest> best = [];
+    private PlayerStatsSummary own = new();
     private Dictionary<uint, MusicDetail> music = [];
     // Across the whole server (api/Stats/{baid}/Server); null while loading or if it failed.
     private PlayerServerStats? server;
@@ -37,13 +36,12 @@ public partial class Stats
         Page.Set(Localizer["Play Data"], Localizer["Stats"]);
         var settingTask = Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
         var dansTask = Client.GetFromJsonAsync<DanBestDataResponse>($"api/DanBestData/{Baid}");
-        var bestTask = Client.GetFromJsonAsync<SongBestResponse>($"api/PlayData/{Baid}");
-        var historyTask = Client.GetFromJsonAsync<SongHistoryResponse>($"api/PlayHistory/{Baid}");
+        var ownTask = Client.GetFromJsonAsync<PlayerStatsSummary>($"api/Stats/{Baid}");
         music = await GameDataService.GetMusicDetailDictionary();
         setting = await settingTask;
         dans = (await dansTask)?.DanBestDataList ?? [];
-        best = (await bestTask)?.SongBestData ?? [];
-        history = (await historyTask)?.SongHistoryData ?? [];
+        own = await ownTask ?? new();
+        best = own.Bests;
         loaded = true;
         StateHasChanged();
         // The server-wide numbers come after the rest is shown.
@@ -59,8 +57,8 @@ public partial class Stats
     private string ClearRate => best.Count == 0 ? "–" : $"{best.Count(b => b.BestCrown >= CrownType.Clear) * 100 / best.Count}%";
     private int FullCombos => best.Count(b => b.BestCrown >= CrownType.Gold);
     private int Donderfuls => best.Count(b => b.BestCrown == CrownType.Dondaful);
-    private uint BestCombo => history.Count == 0 ? 0 : history.Max(h => h.ComboCount);
-    private int PlaysThisWeek => history.Count(h => h.PlayTime >= DateTime.Now.Date.AddDays(-6));
+    private uint BestCombo => own.BestCombo;
+    private int PlaysThisWeek => own.PlaysThisWeek;
 
     // ---- Scoreboard (the in-game achievement panel): same counting as the game ----
     // None = the highest difficulty with plays; Ura Oni also counts Oni.
@@ -130,7 +128,7 @@ public partial class Stats
     {
         var today = DateTime.Now.Date;
         var start = today.AddDays(-(((int)today.DayOfWeek + 6) % 7) - 7 * (ActivityWeeks - 1));
-        var counts = history.Where(h => h.PlayTime >= start).GroupBy(h => h.PlayTime.Date).ToDictionary(g => g.Key, g => g.Count());
+        var counts = own.Days.ToDictionary(d => d.Day.Date, d => d.Plays);
         return Enumerable.Range(0, (today - start).Days + 1).Select(i => start.AddDays(i)).Select(d => (d, counts.GetValueOrDefault(d))).ToArray();
     }
 
@@ -145,16 +143,8 @@ public partial class Stats
 
     // ---- Next goals (the closest places come from the server) ----
 
-    // Charts without a full combo, by the fewest Bads in any play of them (that play's OKs alongside).
-    private List<(uint SongId, Difficulty Difficulty, uint Bad, uint Ok)> ClosestFullCombos()
-    {
-        var done = best.Where(b => b.BestCrown >= CrownType.Gold).Select(b => (b.SongId, b.Difficulty)).ToHashSet();
-        return history.Where(h => h.MissCount > 0 && !done.Contains((h.SongId, h.Difficulty)))
-            .GroupBy(h => (h.SongId, h.Difficulty))
-            .Select(g => g.OrderBy(h => h.MissCount).ThenBy(h => h.OkCount).First())
-            .OrderBy(h => h.MissCount).ThenBy(h => h.OkCount).Take(2)
-            .Select(h => (h.SongId, h.Difficulty, h.MissCount, h.OkCount)).ToList();
-    }
+    // Charts without a full combo, by the fewest Bads in any play of them (that play's OKs alongside): from the server.
+    private List<FullComboGoal> ClosestFullCombos() => own.ClosestFullCombos;
 
     // The Oni star level closest to half cleared (of those you've cleared something at but not half): the fewest clears
     // to go, the harder level on a tie.
@@ -176,38 +166,21 @@ public partial class Stats
         return target;
     }
 
-    // ---- Recent personal bests: plays in the last 14 days that beat the chart's earlier best, the latest per chart ----
-    private List<(uint SongId, Difficulty Difficulty, DateTime PlayTime, uint Score, uint Gain, CrownType Crown)> RecentBests()
-    {
-        var since = DateTime.Now.Date.AddDays(-13);
-        var result = new List<(uint, Difficulty, DateTime, uint, uint, CrownType)>();
-        foreach (var chart in history.GroupBy(h => (h.SongId, h.Difficulty)))
-        {
-            uint? top = null;
-            (uint, Difficulty, DateTime, uint, uint, CrownType)? latest = null;
-            foreach (var h in chart.OrderBy(h => h.PlayTime))
-            {
-                if (top is { } before && h.Score > before && h.PlayTime >= since) latest = (h.SongId, h.Difficulty, h.PlayTime, h.Score, h.Score - before, h.Crown);
-                top = Math.Max(top ?? 0, h.Score);
-            }
-            if (latest is { } pb) result.Add(pb);
-        }
-        return result.OrderByDescending(p => p.Item3).Take(12).ToList();
-    }
+    // ---- Recent personal bests (the last 14 days', from the server) ----
+    private List<RecentBest> RecentBests() => own.RecentBests;
 
-    // ---- Genres, accuracy, most played (from every play) ----
-    private List<(SongGenre Genre, int Plays)> Genres() => history
-        .GroupBy(h => GameDataService.GetMusicGenreBySongId(music, h.SongId)).Select(g => (g.Key, g.Count()))
+    // ---- Genres, accuracy, most played (plays per song and judgement totals from the server) ----
+    private List<(SongGenre Genre, int Plays)> Genres() => own.Songs
+        .GroupBy(s => GameDataService.GetMusicGenreBySongId(music, s.SongId)).Select(g => (g.Key, g.Sum(s => s.Plays)))
         .OrderByDescending(g => g.Item2).ToList();
 
     private (string Label, double Pct)[] Accuracy()
     {
-        double good = history.Sum(h => (double)h.GoodCount), ok = history.Sum(h => (double)h.OkCount), bad = history.Sum(h => (double)h.MissCount);
+        double good = own.Good, ok = own.Ok, bad = own.Bad;
         var total = good + ok + bad;
         if (total == 0) return [];
         return [(Localizer["Good"], good / total * 100), (Localizer["OK"], ok / total * 100), (Localizer["Bad"], bad / total * 100)];
     }
 
-    private List<(uint SongId, int Plays)> MostPlayed() => history.GroupBy(h => h.SongId)
-        .Select(g => (g.Key, g.Count())).OrderByDescending(g => g.Item2).Take(5).ToList();
+    private List<(uint SongId, int Plays)> MostPlayed() => own.Songs.OrderByDescending(s => s.Plays).Take(5).Select(s => (s.SongId, s.Plays)).ToList();
 }

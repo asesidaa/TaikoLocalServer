@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Caching.Memory;
+
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 /// <summary>A player across the whole server, for Play Data › Stats (the rest of that page is worked out from their own plays).</summary>
@@ -5,9 +7,12 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [Route("api/[controller]")]
 [Authorize]
 [ApiScope(ApiScopes.ReadScores, ApiScopes.AdminUsers)]
-public class StatsController(ITaikoDbContext context) : BaseAdminController<StatsController>
+public class StatsController(ITaikoDbContext context, IMemoryCache cache) : BaseAdminController<StatsController>
 {
     private const int ClosestPlaces = 3;
+
+    private sealed record ChartTotals(uint Baid, int Played, int Cleared, int FullCombos);
+    private sealed record PlayTotals(uint Baid, long Good, long Ok, long Bad, int Credits);
 
     [HttpGet("{baid}/Server")]
     public async Task<ActionResult<PlayerServerStats>> Server(uint baid)
@@ -16,23 +21,23 @@ public class StatsController(ITaikoDbContext context) : BaseAdminController<Stat
             return forbid;
         var ct = HttpContext.RequestAborted;
 
-        // Per player: charts (their bests, as the leaderboards and the Crowns table count them) and plays.
-        var charts = await context.SongBestData.GroupBy(b => b.Baid).Select(g => new
+        // Every player's totals: the same for every viewer and a scan of every best and play, so they're kept 5 minutes.
+        // The viewer's own come fresh below, so they always match the rest of their Stats page.
+        var (allCharts, allPlays) = (await cache.GetOrCreateAsync("stats.server", async entry =>
         {
-            Baid = g.Key, Played = g.Count(), Cleared = g.Count(b => b.BestCrown >= CrownType.Clear),
-            FullCombos = g.Count(b => b.BestCrown >= CrownType.Gold),
-        }).ToListAsync(ct);
-        // shortcut: a credit is counted at its first song (SongNumber 0), so one whose first song wasn't saved is missed;
-        // PlayHistory numbers credits exactly by walking the plays in order, too slow for every player at once.
-        var plays = await context.SongPlayData.Where(p => !p.Skipped).GroupBy(p => p.Baid).Select(g => new
-        {
-            Baid = g.Key, Good = g.Sum(p => (long)p.GoodCount), Ok = g.Sum(p => (long)p.OkCount), Bad = g.Sum(p => (long)p.MissCount),
-            Credits = g.Count(p => p.SongNumber == 0),
-        }).ToDictionaryAsync(p => p.Baid, ct);
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);
+            return (await ChartTotalsQuery(context.SongBestData).ToListAsync(ct), await PlayTotalsQuery(context.SongPlayData).ToListAsync(ct));
+        }))!;
+        var charts = allCharts.ToDictionary(c => c.Baid);
+        var plays = allPlays.ToDictionary(p => p.Baid);
+        charts.Remove(baid);
+        plays.Remove(baid);
+        if (await ChartTotalsQuery(context.SongBestData.Where(b => b.Baid == baid)).FirstOrDefaultAsync(ct) is { } myCharts) charts[baid] = myCharts;
+        if (await PlayTotalsQuery(context.SongPlayData.Where(p => p.Baid == baid)).FirstOrDefaultAsync(ct) is { } myPlays) plays[baid] = myPlays;
 
         PlayerTotals Totals(uint who)
         {
-            var c = charts.FirstOrDefault(x => x.Baid == who);
+            var c = charts.GetValueOrDefault(who);
             var p = plays.GetValueOrDefault(who);
             var notes = p is null ? 0 : p.Good + p.Ok + p.Bad;
             return new PlayerTotals
@@ -42,7 +47,7 @@ public class StatsController(ITaikoDbContext context) : BaseAdminController<Stat
             };
         }
 
-        var others = charts.Where(c => c.Baid != baid).Select(c => Totals(c.Baid)).ToList();
+        var others = charts.Keys.Where(b => b != baid).Select(Totals).ToList();
         var stats = new PlayerServerStats
         {
             Players = charts.Count,
@@ -53,13 +58,12 @@ public class StatsController(ITaikoDbContext context) : BaseAdminController<Stat
                 FullCombos = others.Average(o => o.FullCombos), Accuracy = others.Average(o => o.Accuracy), Credits = others.Average(o => o.Credits),
             },
         };
-        var me = charts.FirstOrDefault(c => c.Baid == baid);
-        if (me is null) return stats;
+        if (charts.GetValueOrDefault(baid) is not { } me) return stats;
 
         // The clears ranking: places shared on a tie, as on the leaderboards.
-        int RankOf(int cleared) => 1 + charts.Count(c => c.Cleared > cleared);
+        int RankOf(int cleared) => 1 + charts.Values.Count(c => c.Cleared > cleared);
         stats.Rank = RankOf(me.Cleared);
-        var order = charts.OrderByDescending(c => c.Cleared).ThenBy(c => c.Baid).ToList();
+        var order = charts.Values.OrderByDescending(c => c.Cleared).ThenBy(c => c.Baid).ToList();
         var at = order.FindIndex(c => c.Baid == baid);
         var near = order.Skip(Math.Max(0, at - 2)).Take(Math.Min(at, 2) + 3).ToList();
         var nearBaids = near.Select(c => c.Baid).ToList();
@@ -96,4 +100,75 @@ public class StatsController(ITaikoDbContext context) : BaseAdminController<Stat
         }
         return stats;
     }
+
+    /// <summary>This player's own Stats, summed here (see <see cref="PlayerStatsSummary"/>).</summary>
+    [HttpGet("{baid}")]
+    public async Task<ActionResult<PlayerStatsSummary>> Summary(uint baid)
+    {
+        if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
+            return forbid;
+        var ct = HttpContext.RequestAborted;
+        // Every play counts, skipped ones too, as api/PlayHistory (which this page used to sum) returns them.
+        var plays = context.SongPlayData.Where(p => p.Baid == baid);
+        var today = DateTime.Now.Date;
+
+        var bests = await context.SongBestData.Where(b => b.Baid == baid)
+            .Select(b => new StatsBest(b.SongId, b.Difficulty, b.BestCrown, b.BestScoreRank)).ToListAsync(ct);
+        var totals = await plays.GroupBy(p => p.Baid).Select(g => new
+        {
+            Plays = g.Count(), Week = g.Count(p => p.PlayTime >= today.AddDays(-6)), Combo = g.Max(p => p.ComboCount),
+            Good = g.Sum(p => (long)p.GoodCount), Ok = g.Sum(p => (long)p.OkCount), Bad = g.Sum(p => (long)p.MissCount),
+        }).FirstOrDefaultAsync(ct);
+        var summary = new PlayerStatsSummary { Bests = bests };
+        if (totals is null) return summary;
+        summary.Plays = totals.Plays;
+        summary.PlaysThisWeek = totals.Week;
+        summary.BestCombo = totals.Combo;
+        (summary.Good, summary.Ok, summary.Bad) = (totals.Good, totals.Ok, totals.Bad);
+
+        summary.Days = await plays.Where(p => p.PlayTime >= today.AddDays(-7 * 53)).GroupBy(p => p.PlayTime.Date)
+            .Select(g => new DayPlays(g.Key, g.Count())).ToListAsync(ct);
+        summary.Songs = await plays.GroupBy(p => p.SongId).Select(g => new SongPlays(g.Key, g.Count())).ToListAsync(ct);
+
+        // Closest full combos: per chart without one, the play with the fewest Bads, then the fewest OKs. Both in one
+        // minimum (Bads × 1,000,000 + OKs: a chart never has a million notes).
+        const long okSpan = 1_000_000;
+        var fullCombos = bests.Where(b => b.BestCrown >= CrownType.Gold).Select(b => (b.SongId, b.Difficulty)).ToHashSet();
+        summary.ClosestFullCombos = (await plays.Where(p => p.MissCount > 0).GroupBy(p => new { p.SongId, p.Difficulty })
+                .Select(g => new { g.Key.SongId, g.Key.Difficulty, Key = g.Min(p => (long)p.MissCount * okSpan + p.OkCount) }).ToListAsync(ct))
+            .Where(c => !fullCombos.Contains((c.SongId, c.Difficulty))).OrderBy(c => c.Key).Take(2)
+            .Select(c => new FullComboGoal(c.SongId, c.Difficulty, (uint)(c.Key / okSpan), (uint)(c.Key % okSpan))).ToList();
+
+        // Recent personal bests: the last 14 days' plays that beat everything before them on their chart.
+        var since = today.AddDays(-13);
+        var recent = await plays.Where(p => p.PlayTime >= since).OrderBy(p => p.PlayTime)
+            .Select(p => new { p.SongId, p.Difficulty, p.PlayTime, p.Score, p.Crown }).ToListAsync(ct);
+        var songs = recent.Select(p => p.SongId).Distinct().ToList();
+        var before = (await plays.Where(p => p.PlayTime < since && songs.Contains(p.SongId))
+                .GroupBy(p => new { p.SongId, p.Difficulty }).Select(g => new { g.Key.SongId, g.Key.Difficulty, Top = g.Max(p => p.Score) })
+                .ToListAsync(ct))
+            .ToDictionary(c => (c.SongId, c.Difficulty), c => (uint?)c.Top);
+        var latest = new Dictionary<(uint, Difficulty), RecentBest>();
+        foreach (var p in recent)
+        {
+            var key = (p.SongId, p.Difficulty);
+            var top = before.GetValueOrDefault(key);
+            if (top is { } prior && p.Score > prior) latest[key] = new RecentBest(p.SongId, p.Difficulty, p.PlayTime, p.Score, p.Score - prior, p.Crown);
+            before[key] = Math.Max(top ?? 0, p.Score);
+        }
+        summary.RecentBests = latest.Values.OrderByDescending(b => b.PlayTime).Take(12).ToList();
+        return summary;
+    }
+
+    // Per player: their charts (bests, as the leaderboards and the Crowns table count them) and their plays. One query
+    // shape for everyone (cached) and for the viewer (fresh), so the two agree.
+    private static IQueryable<ChartTotals> ChartTotalsQuery(IQueryable<SongBestDatum> bests) =>
+        bests.GroupBy(b => b.Baid).Select(g => new ChartTotals(g.Key, g.Count(),
+            g.Count(b => b.BestCrown >= CrownType.Clear), g.Count(b => b.BestCrown >= CrownType.Gold)));
+
+    // shortcut: a credit is counted at its first song (SongNumber 0), so one whose first song wasn't saved is missed;
+    // PlayHistory numbers credits exactly by walking the plays in order, too slow for every player at once.
+    private static IQueryable<PlayTotals> PlayTotalsQuery(IQueryable<SongPlayDatum> plays) =>
+        plays.Where(p => !p.Skipped).GroupBy(p => p.Baid).Select(g => new PlayTotals(g.Key, g.Sum(p => (long)p.GoodCount),
+            g.Sum(p => (long)p.OkCount), g.Sum(p => (long)p.MissCount), g.Count(p => p.SongNumber == 0)));
 }

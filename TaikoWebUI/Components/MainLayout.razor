@@ -11,7 +11,11 @@
 @inject AppStatus Status
 @using Microsoft.Extensions.Options
 
-@if ((AuthService.LoginRequired && !AuthService.IsLoggedIn) || OnSetup)
+@if (!AuthService.Ready)
+{
+    @* A moment at start-up, until the saved sign-in is read (see AuthService.Ready). *@
+}
+else if ((AuthService.LoginRequired && !AuthService.IsLoggedIn) || OnSetup)
 {
     @* Logged out, or first-run setup: auth layout, no sidebar. Brand left, language + theme right, card centred. *@
     <div class="flex min-h-dvh flex-col">

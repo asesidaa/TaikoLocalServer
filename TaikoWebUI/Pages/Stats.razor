@@ -214,7 +214,7 @@
     private RenderFragment GlanceBlock => __builder =>
     {
         <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            @Tile(Localizer["Plays"], history.Count.ToString("N0"), PlaysThisWeek > 0 ? string.Format(Localizer["+{0} this week"], PlaysThisWeek) : null)
+            @Tile(Localizer["Plays"], own.Plays.ToString("N0"), PlaysThisWeek > 0 ? string.Format(Localizer["+{0} this week"], PlaysThisWeek) : null)
             @Tile(Localizer["Songs played"], SongsPlayed.ToString("N0"))
             @Tile(Localizer["Clear rate"], ClearRate)
             @Tile(Localizer["Full combos"], FullCombos.ToString("N0"))

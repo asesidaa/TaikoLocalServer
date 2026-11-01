@@ -101,8 +101,15 @@ public sealed class AuthService : IDisposable
     {
         var state = await stateTask;
         UpdateFromPrincipal(state.User);
+        Ready = true;
         LoginStatusChanged?.Invoke(this, EventArgs.Empty);
     }
+
+    /// <summary>
+    /// The saved sign-in has been read. Until then IsLoggedIn is false even for a signed-in user, so MainLayout waits:
+    /// placing the page in the signed-out shell first and moving it made every page load twice on start-up.
+    /// </summary>
+    public bool Ready { get; private set; }
 
     private void UpdateFromPrincipal(ClaimsPrincipal user)
     {

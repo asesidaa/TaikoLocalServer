@@ -52,3 +52,33 @@ public class PlaceGoal
     /// <summary>Their place, which passing them takes.</summary>
     public int Rank { get; set; }
 }
+
+/// <summary>
+/// Play Data › Stats for one player, summed on the server: their bests (four fields each) and totals over their plays,
+/// so the page doesn't download every play (megabytes for a heavy player).
+/// </summary>
+public class PlayerStatsSummary
+{
+    public List<StatsBest> Bests { get; set; } = [];
+    public int Plays { get; set; }
+    /// <summary>Plays in the last 7 days, today included.</summary>
+    public int PlaysThisWeek { get; set; }
+    public uint BestCombo { get; set; }
+    public long Good { get; set; }
+    public long Ok { get; set; }
+    public long Bad { get; set; }
+    /// <summary>Plays per day over the last 53 weeks; days without plays are left out.</summary>
+    public List<DayPlays> Days { get; set; } = [];
+    /// <summary>Plays per song, every difficulty (genres and Most played).</summary>
+    public List<SongPlays> Songs { get; set; } = [];
+    /// <summary>Charts without a full combo, by the fewest Bads in any play (that play's OKs alongside), fewest first.</summary>
+    public List<FullComboGoal> ClosestFullCombos { get; set; } = [];
+    /// <summary>The last 14 days' new bests, the latest per chart, newest first.</summary>
+    public List<RecentBest> RecentBests { get; set; } = [];
+}
+
+public record StatsBest(uint SongId, Difficulty Difficulty, CrownType BestCrown, ScoreRank BestScoreRank);
+public record DayPlays(DateTime Day, int Plays);
+public record SongPlays(uint SongId, int Plays);
+public record FullComboGoal(uint SongId, Difficulty Difficulty, uint Bad, uint Ok);
+public record RecentBest(uint SongId, Difficulty Difficulty, DateTime PlayTime, uint Score, uint Gain, CrownType Crown);
