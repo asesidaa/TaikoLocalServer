@@ -474,10 +474,59 @@ ASB61 has **93 title plates** (sprite 541; the first 21 are unchanged from 39.06
 - **Tests:** a hand-built LMB checks parsing, label lookup and mask clipping.
 
 **Left:**
-- **Animated plates** (rainbow shimmer, sparkles) are rendered at frame 0. That's fine for static images.
+- **Animated plates:** the PNGs are frame 0. The live preview plays them through the Lumen player below.
+
+#### Lumen animations (needed for the nameplate preview, 2026-10-31)
+
+**How many animate:** 7 of 21 plates in 39.06, and 48 of 93 in ASB61 (World Tournament, `dani_*`, `crown_*`, `aprilfool2024`, …). Dan badges and scoreboard panels are static.
+
+**How they animate:** each plate is several **nested layers looping independently** at different lengths, at 60 fps (`F00C`). For example `gold` and `purple` are one 120-frame layer, while `ai_3` has layers of 300, 800 and 60 frames, so the whole thing only repeats after their LCM: 2,400 frames = 40 s. The `dani_*` and `crown_*` plates repeat every 34 s, and World Tournament every 98 s.
+
+**Why not baked APNG/WebP:** one loop of `ai_3` at 340×88 is 2,400 frames. Cutting it short (e.g. 4 s) causes a visible seam on every multi-layer plate. Baking each layer separately would need each layer's own transform, mask and colour in the final coordinates, which is most of a renderer anyway.
+
+**Plan: ship the scene as data and play it in the browser.**
+- **`extract`** writes each UI set's **scene**: a JSON with only the sprites, shapes (verts/UVs/indices, fill), matrices, positions, colours and labels reachable from the set's sprite, plus its atlas PNG (the decoded `.nutexb` layers, one PNG per layer). Path: `don-model/ui/<set>/scene.json` + `atlas_<n>.png`. The static PNGs stay too, for lists, `<img>`, the card endpoint fallback, and browsers without WebGL.
+- **WebUI `LumenPlayer`:** a small WebGL module (~300 lines, a direct port of `src/lumen.rs`, and the Node prototype already validates the semantics), wrapped as a Blazor component `<LumenPlayer Set="nameplate" Label="gold" />`. It draws textured or solid triangles with colour multiply/add, clip masks via the stencil buffer, and nested sprites each advancing their own playhead (`(t − placedAt) mod frameCount`), at 60 fps.
+- **Plays only while visible** (`IntersectionObserver`), and honours `prefers-reduced-motion` by showing frame 0, i.e. the static PNG.
+- **`extract` itself gains the same nested-playhead logic** (render at time *t*), so `lumen-render` can produce frame strips for checking, and the server's headless card renderer (§4b) can capture a chosen frame.
+- **Game-glyph text** (§2b) draws on top of the player canvas in the same component, so the name and title sit on the animated plate.
+- **Size (measured on 39.06):** the whole nameplate scene, before pruning to reachable sprites, is 412 KB of JSON, **34 KB gzipped**, plus the decoded atlas PNG at **406 KB** (5 × 512²). It's loaded once and cached.
 - **No base frame yet.** The WebUI currently layers plates on `nameplate.webp`, the black capsule. That frame is part of the full-nameplate sprite (`1p` label), not a sprite of its own. Wait for the final Profile design before deciding whether to export the frame or the whole composite.
 - **WebUI switch:** point the Profile page at `api/Assets/nameplate/plate_{label}.png`, taking the labels from `plates.json` instead of the hardcoded `TitlePlateStrings`, so newer builds' extra plates show up. Then delete `wwwroot/images/Nameplates/`.
 - **Scoreboard done (2026-10-31):** `common/player_board` → `don-model/scoreboard/panel_{easy,normal,hard,oni,oniura}.png` (these replace `rank_panel_*.webp`) plus the `digit_ns_00…09` glyphs, found by instance name (`num_kiwami_instance` → `bg_instance`, `n1_ins`). The rest of `lumen/` (crown and difficulty icons) can follow the same pattern, the remaining committed art under `wwwroot/images`.
+
+---
+
+## 4. Future features (noted 2026-10-31, not scheduled)
+
+### 4a. Friend system
+
+The game protocol has no friend or rival concept: the only hit in the wire types is `arrival_song_cnt`, a dan stat. So this is a **web-only** feature, and the game adapters don't change.
+
+- **Adding friends:** by friend code or from the Users page. Each user gets a short, shareable **friend code**, not their access code (access codes are login secrets). It's random and stored, rather than derived from the BAID, so it can be regenerated.
+- **Requests:** send, accept, decline, cancel and remove. A friendship is mutual once accepted. Blocking is optional and later.
+- **Privacy setting** on the Settings › Security page: *who can see my profile and scores*, either Everyone (the server default), Friends or Only me. It applies to profile views, leaderboards and the card image (4b). Admins always see everything.
+- **Uses:**
+  - a Friends page (list, pending requests, add by code)
+  - a friend's player card, read-only
+  - a **Friends filter on song leaderboards** (`SongLeaderboard` already exists; add a `friendsOnly` query)
+  - optionally, "friend X beat your score on Y" on the Dashboard, computed from play history when the page loads (no push notifications)
+- **Data:**
+  - `UserDatum.FriendCode` (unique) and `UserDatum.ProfileVisibility` (enum)
+  - a `Friendship` table: `RequesterBaid`, `AddresseeBaid`, `Status` (Pending/Accepted), `CreatedAt`, `RespondedAt`, with a unique (low, high) pair index
+  - one EF migration under `Infrastructure/Persistence/Migrations/`
+- **API:** `Adapters.AdminApi/Controllers/FriendsController` under the usual auth policy. It acts only as the logged-in user, with BAIDs taken from the token, never the body. Rate-limit "add by code" with the existing `auth` policy, so codes can't be guessed by brute force.
+- **Local mode** (auth off): there's no identity, so hide the friend UI entirely.
+- **Open:** whether friend leaderboards should count only a friend's best per song (simplest) or their history too.
+
+### 4b. Player card image endpoint
+
+`GET api/Users/{baid}/Card` (`.png`) renders the **whole player card** as an image, so players can share it (Discord, social links) and the server can use it for link previews. The card includes the background colour and pattern, the 3D don-chan, the name and title in game glyphs (§2b), the nameplate and the scoreboard.
+- **Renderer:** it reuses the headless avatar renderer from `docs/webui-design-decisions.md` ("Avatar endpoint"): the same warm PuppeteerSharp page, work queue, timeouts and config. The embed gets a `?card=1` mode that lays out the card component at a fixed size (e.g. 1200×630 for Open Graph, plus a square variant) and returns a data URL. It's one more `IAvatarRenderer` method (`RenderCardAsync`), not a second browser.
+- **Inputs and cache:** everything on the card. That's the avatar hash inputs plus name, title, `MyDonNameLanguage`, plate id, dan, achievement difficulty and the scoreboard counts, so the hash changes when scores change. Cached as `wwwroot/cards/{baid}-{hash}.png` with an `ETag`, and re-rendered on the same triggers as the avatar plus after `PlayResult` updates (debounced per user).
+- **Access:** follows the friend privacy setting (4a). It's public only if the profile is Everyone; otherwise it needs a logged-in viewer who's allowed. Because shared links must work logged-out, add an optional **share link**, `GET api/Share/{token}/Card.png`. The token is random, can be revoked from Settings, and exposes only the image.
+- **Link previews:** a small server-rendered `/u/{shareToken}` HTML page (no WASM) with `og:image` pointing at the card. Optional, later.
+- **Dependencies:** none beyond the avatar renderer. If the headless renderer is disabled, the endpoint returns 503 with a clear message, not a broken image.
 
 ---
 

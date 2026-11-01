@@ -65,14 +65,16 @@ fn convert(
 
     let mut labels = Map::new();
     for (key, prefix, sprite) in sets(&lm)? {
-        labels.insert(key.into(), Value::from(render_set(&lm, &atlas, sprite, prefix, dst_dir, report)?));
+        labels.insert(key.into(), render_set(&lm, &atlas, sprite, prefix, dst_dir, report)?);
     }
     fs::write(&index, serde_json::to_string_pretty(&json!(labels))?).with_context(|| format!("writing {}", index.display()))?;
     Ok(())
 }
 
 /// Renders every label of `sprite` on one canvas (the union of their mask-clipped bounds) so they line up.
-fn render_set(lm: &Lumen, atlas: &RgbaImage, sprite: u32, prefix: &str, dst_dir: &Path, report: &mut crate::Report) -> Result<Vec<String>> {
+/// Returns the set's index entry: its labels in order, the sprite id and the shared canvas bounds
+/// (stage units), which a live Lumen player needs to frame the same canvas.
+fn render_set(lm: &Lumen, atlas: &RgbaImage, sprite: u32, prefix: &str, dst_dir: &Path, report: &mut crate::Report) -> Result<Value> {
     let names = lm.labels(sprite);
     let mut union: Option<[f32; 4]> = None;
     for name in &names {
@@ -87,5 +89,5 @@ fn render_set(lm: &Lumen, atlas: &RgbaImage, sprite: u32, prefix: &str, dst_dir:
             Err(e) => report.failed.push(format!("{prefix}_{name}: {e:#}")),
         }
     }
-    Ok(names)
+    Ok(json!({ "sprite": sprite, "bounds": union, "labels": names }))
 }

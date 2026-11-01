@@ -280,10 +280,11 @@ impl Lumen {
                         list.remove(&depth);
                     }
                     Op::Place { character, mode, depth, clip, transform, color_mult, color_add, .. } => {
-                        // mode 2 = move: update the existing object, keeping what isn't given.
-                        let mut obj = match (mode, list.get(&depth)) {
-                            (2, Some(prev)) => prev.clone(),
-                            _ => Placed { character, matrix: IDENTITY, mult: [1.0; 4], add: [0.0; 4], clip },
+                        // A placement on an occupied depth keeps what it doesn't give (transform 0xFFFF, colour -1);
+                        // mode 2 (move) also keeps the character. E.g. toho_y22_3 swaps the chibi with "unchanged" transform.
+                        let mut obj = match list.get(&depth) {
+                            Some(prev) => prev.clone(),
+                            None => Placed { character, matrix: IDENTITY, mult: [1.0; 4], add: [0.0; 4], clip },
                         };
                         if mode != 2 {
                             obj.character = character;
@@ -561,6 +562,34 @@ mod tests {
         assert_eq!(lm.child(10, "wood"), Some(1));
         assert_eq!(lm.sprite_placing("missing"), None);
         assert_eq!(lm.labels(10), vec!["wood"]);
+    }
+
+    #[test]
+    fn replacing_with_unchanged_transform_keeps_the_previous_one() {
+        let one = 0x100;
+        let mut moved = place(1, 1, 0);
+        moved[7] = 0x8000_0000; // position 0
+        let lm = Lumen::parse(&lmb(&[
+            (T_SYMBOLS, vec![2, 4, u32::from_le_bytes(*b"aaaa"), 0, 4, u32::from_le_bytes(*b"bbbb"), 0]),
+            (T_COLORS, vec![1, one | (one << 16), one | (one << 16)]),
+            (T_POSITIONS, vec![1, 10f32.to_bits(), 0]),
+            (T_ATLASES, vec![1, 0, 0, 4f32.to_bits(), 4f32.to_bits()]),
+            (T_SHAPE, vec![1, 0, 0, 0, 1]),
+            (T_GRAPHIC, solid_quad(0, [0.0, 0.0, 1.0, 1.0])),
+            (T_SHAPE, vec![2, 0, 0, 0, 1]),
+            (T_GRAPHIC, solid_quad(0, [0.0, 0.0, 2.0, 2.0])),
+            (T_SPRITE, vec![10, 0, 0, 2, 2, 2, 2]),
+            (T_LABEL, vec![0, 0, 0]),
+            (T_LABEL, vec![1, 1, 0]),
+            (T_FRAME, vec![0, 1]),
+            (T_PLACE, moved),
+            (T_FRAME, vec![1, 1]),
+            (T_PLACE, place(2, 1, 0)), // new character, transform 0xFFFF (unchanged)
+        ]))
+        .unwrap();
+
+        assert_eq!(lm.bounds(10, "aaaa").unwrap(), Some([10.0, 0.0, 11.0, 1.0]));
+        assert_eq!(lm.bounds(10, "bbbb").unwrap(), Some([10.0, 0.0, 12.0, 2.0]), "replacement stays at the old position");
     }
 
     #[test]
