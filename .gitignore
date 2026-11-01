@@ -404,3 +404,6 @@ tools/extract/target/
 
 # Tailwind standalone CLI for the WebUI CSS build (downloaded, pinned version)
 tools/tailwindcss/
+
+# Local test projects (self-checks, the stress-test seeder): kept on disk, never shipped.
+tests/

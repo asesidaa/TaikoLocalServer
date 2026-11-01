@@ -52,7 +52,7 @@ dotnet ef migrations add <Name> --project Infrastructure --startup-project Infra
 dotnet ef database update --project Infrastructure --startup-project Infrastructure
 ```
 
-There is no test framework. `tests/SelfChecks` is a console app of plain asserts over security code (2-step codes): `dotnet run --project tests/SelfChecks` exits 1 when a check fails.
+There is no test framework. `tests/` is gitignored and not in the solution: it holds local-only projects that are never shipped, run with `dotnet run --project tests/<Name>` when present (e.g. `SelfChecks`, plain asserts over the 2-step codes; `StressSeed`, a large realistic database for load testing).
 
 ## Configuration model
 
