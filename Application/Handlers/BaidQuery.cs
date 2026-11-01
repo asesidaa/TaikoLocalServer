@@ -19,8 +19,10 @@ public class BaidQueryHandler(
             ban.RefusedCount++;
             await context.SaveChangesAsync(cancellationToken);
             logger.LogWarning("Refused banned card {AccessCode}", request.AccessCode);
-            // shortcut: Result 0 is assumed to make the cabinet refuse the card; not yet checked on a cabinet or in Taiko.exe.
-            return new CommonBaidResponse { Result = 0 };
+            // Taiko.exe 39.06 (the BAIDResponse handler): any Result but 1 is kServerAccess, which card_load.tlb shows as a
+            // network error; com_svr_result 300 is kDataFail instead, shown as "this card can't be used". CHN (no such
+            // field) still gets the network error.
+            return new CommonBaidResponse { Result = 0, ComSvrResult = 300 };
         }
 
         var card = await context.Cards.FindAsync([request.AccessCode], cancellationToken);

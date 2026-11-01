@@ -28,7 +28,8 @@ public sealed class CabinetFilter(ICabinetRegistry cabinets, IServerAccess acces
             if (!cabinets.Seen(chassis, shop, version) || offline)
             {
                 if (!offline) logger.LogWarning("Refused cabinet {ChassisId} ({Path})", chassis, path);
-                // shortcut: a bare 403 is assumed to show the cabinet's network error; not yet checked on a cabinet.
+                // The cabinet shows its network error: in Taiko.exe 39.06 a failed request (or an empty answer, whose
+                // result is 0) sets GameConnectStatus kError with kServerAccess, shown as connectserver_error.
                 context.Result = new StatusCodeResult(StatusCodes.Status403Forbidden);
                 return;
             }
