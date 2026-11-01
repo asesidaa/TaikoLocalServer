@@ -28,9 +28,9 @@
 
             @Block(Localizer["Crowns by difficulty"], CrownsBlock)
 
-            @Block(Localizer["Oni clears by star level"], StarsBlock)
+            @Block(Localizer["Clears by star level"], StarsBlock)
 
-            @Block(Localizer["Activity"], ActivityBlock, Localizer["Last 16 weeks"])
+            @Block(Localizer["Activity"], ActivityBlock, Localizer["Last 12 months"])
 
             @Block(Localizer["Plays by genre"], GenresBlock)
 
@@ -74,9 +74,20 @@
 
     private RenderFragment StarsBlock => __builder =>
     {
-        var stars = OniStars();
+        var stars = StarLevels();
         var max = Math.Max(1, stars.Max(s => s.Available));
-        <div class="flex h-36 items-end gap-2 border-b border-zinc-200 dark:border-zinc-800" role="img" aria-label="@Localizer["Oni clears by star level"]">
+        <div class="mb-3 flex flex-wrap gap-1" role="radiogroup" aria-label="@Localizer["Difficulty"]">
+            @foreach (var (d, name) in GameData.Difficulties)
+            {
+                var on = starsDifficulty == d;
+                <button role="radio" aria-checked="@Css.Aria(on)" @onclick="() => starsDifficulty = d"
+                        class="inline-flex items-center gap-1 rounded-full py-1 pl-1 pr-2.5 text-xs font-medium @Css.Pill(on)">
+                    <img data-asset="@GameData.DifficultyIcon(d)" alt="" class="size-5 object-contain" />@Localizer[name]
+                </button>
+            }
+        </div>
+        <div class="flex h-36 items-end gap-2 border-b border-zinc-200 dark:border-zinc-800" role="img"
+             aria-label="@string.Format(Localizer["{0} clears by star level"], Localizer[GameData.Difficulties.First(x => x.Value == starsDifficulty).Name])">
             @for (var i = 0; i < stars.Length; i++)
             {
                 var (cleared, available) = stars[i];
@@ -101,11 +112,13 @@
 
     private RenderFragment ActivityBlock => __builder =>
     {
-        <div class="overflow-x-auto">
-            <div class="grid w-max grid-flow-col grid-rows-7 gap-0.5" role="img" aria-label="@Localizer["Plays per day, last 16 weeks"]">
+        @* Squares share the width, at least 10px; narrower than that (phones) it scrolls, starting at the newest week (rtl). *@
+        <div class="overflow-x-auto [direction:rtl]">
+            <div class="grid w-max min-w-full grid-flow-col grid-rows-7 gap-0.5 [direction:ltr]" style="grid-template-columns:repeat(@ActivityWeeks, minmax(10px, 1fr))"
+                 role="img" aria-label="@Localizer["Plays per day, last 12 months"]">
                 @foreach (var (day, plays) in Activity())
                 {
-                    <span class="size-4 rounded @Seq[Bucket(plays)]" title="@($"{day:d MMM}: {plays}")"></span>
+                    <span class="aspect-square rounded-[3px] @Seq[Bucket(plays)]" title="@($"{day:d MMM yyyy}: {plays}")"></span>
                 }
             </div>
         </div>

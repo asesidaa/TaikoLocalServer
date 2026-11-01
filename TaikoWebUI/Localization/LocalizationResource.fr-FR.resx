@@ -1701,8 +1701,8 @@
   <data name="LOSE" xml:space="preserve">
     <value>PERDU</value>
   </data>
-  <data name="Last 16 weeks" xml:space="preserve">
-    <value>16 dernières semaines</value>
+  <data name="Last 12 months" xml:space="preserve">
+    <value>12 derniers mois</value>
   </data>
   <data name="Last play time" xml:space="preserve">
     <value>Dernière partie</value>
@@ -2073,8 +2073,11 @@
   <data name="On. Reset it if they lost their phone and their recovery codes." xml:space="preserve">
     <value>Activée. Réinitialisez-la s'ils ont perdu leur téléphone et leurs codes de récupération.</value>
   </data>
-  <data name="Oni clears by star level" xml:space="preserve">
-    <value>Réussites Oni par niveau d'étoiles</value>
+  <data name="Clears by star level" xml:space="preserve">
+    <value>Réussites par niveau d'étoiles</value>
+  </data>
+  <data name="{0} clears by star level" xml:space="preserve">
+    <value>Réussites {0} par niveau d'étoiles</value>
   </data>
   <data name="Online now" xml:space="preserve">
     <value>En ligne</value>
@@ -2178,8 +2181,8 @@
   <data name="Plays by genre" xml:space="preserve">
     <value>Parties par genre</value>
   </data>
-  <data name="Plays per day, last 16 weeks" xml:space="preserve">
-    <value>Parties par jour, 16 dernières semaines</value>
+  <data name="Plays per day, last 12 months" xml:space="preserve">
+    <value>Parties par jour, 12 derniers mois</value>
   </data>
   <data name="Ports" xml:space="preserve">
     <value>Ports</value>

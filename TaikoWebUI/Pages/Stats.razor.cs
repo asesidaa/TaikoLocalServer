@@ -98,25 +98,34 @@ public partial class Stats
         return (rows.Count, rows.Count(b => b.BestCrown >= CrownType.Clear), rows.Count(b => b.BestCrown >= CrownType.Gold), rows.Count(b => b.BestCrown == CrownType.Dondaful));
     }
 
-    // ---- Oni clears by star level: cleared vs available ----
-    private (int Cleared, int Available)[] OniStars()
+    // ---- Clears by star level, for the picked difficulty: cleared vs available ----
+    private Difficulty starsDifficulty = Difficulty.Oni;
+
+    private (int Cleared, int Available)[] StarLevels()
     {
         var result = new (int, int)[10];
-        foreach (var m in music.Values.Where(m => m.StarOni is >= 1 and <= 10)) result[m.StarOni - 1].Item2++;
-        foreach (var b in best.Where(b => b.Difficulty == Difficulty.Oni && b.BestCrown >= CrownType.Clear))
+        foreach (var id in music.Keys)
         {
-            var star = GameDataService.GetMusicStarLevel(music, b.SongId, Difficulty.Oni);
+            var star = GameDataService.GetMusicStarLevel(music, id, starsDifficulty);
+            if (star is >= 1 and <= 10) result[star - 1].Item2++;
+        }
+        foreach (var b in best.Where(b => b.Difficulty == starsDifficulty && b.BestCrown >= CrownType.Clear))
+        {
+            var star = GameDataService.GetMusicStarLevel(music, b.SongId, starsDifficulty);
             if (star is >= 1 and <= 10) result[star - 1].Item1++;
         }
         return result;
     }
 
-    // ---- Activity: 16 weeks × 7 days ----
+    // ---- Activity: the last year, one column per week (Monday first), up to today ----
+    private const int ActivityWeeks = 53;
+
     private (DateTime Day, int Plays)[] Activity()
     {
         var today = DateTime.Now.Date;
-        var counts = history.GroupBy(h => h.PlayTime.Date).ToDictionary(g => g.Key, g => g.Count());
-        return Enumerable.Range(0, 112).Select(i => today.AddDays(i - 111)).Select(d => (d, counts.GetValueOrDefault(d))).ToArray();
+        var start = today.AddDays(-(((int)today.DayOfWeek + 6) % 7) - 7 * (ActivityWeeks - 1));
+        var counts = history.Where(h => h.PlayTime >= start).GroupBy(h => h.PlayTime.Date).ToDictionary(g => g.Key, g => g.Count());
+        return Enumerable.Range(0, (today - start).Days + 1).Select(i => start.AddDays(i)).Select(d => (d, counts.GetValueOrDefault(d))).ToArray();
     }
 
     private static int Bucket(int v) => v switch { 0 => 0, <= 2 => 1, <= 4 => 2, <= 6 => 3, _ => 4 };

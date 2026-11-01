@@ -1701,8 +1701,8 @@
   <data name="LOSE" xml:space="preserve">
     <value>LOSE</value>
   </data>
-  <data name="Last 16 weeks" xml:space="preserve">
-    <value>最近16週</value>
+  <data name="Last 12 months" xml:space="preserve">
+    <value>最近12個月</value>
   </data>
   <data name="Last play time" xml:space="preserve">
     <value>最後遊玩時間</value>
@@ -2073,8 +2073,11 @@
   <data name="On. Reset it if they lost their phone and their recovery codes." xml:space="preserve">
     <value>已開啟。如果對方丟失了手機和復原碼，請重置。</value>
   </data>
-  <data name="Oni clears by star level" xml:space="preserve">
-    <value>按星級統計的鬼通關</value>
+  <data name="Clears by star level" xml:space="preserve">
+    <value>按星級統計的通關</value>
+  </data>
+  <data name="{0} clears by star level" xml:space="preserve">
+    <value>按星級統計的{0}通關</value>
   </data>
   <data name="Online now" xml:space="preserve">
     <value>在線</value>
@@ -2178,8 +2181,8 @@
   <data name="Plays by genre" xml:space="preserve">
     <value>各類型遊玩</value>
   </data>
-  <data name="Plays per day, last 16 weeks" xml:space="preserve">
-    <value>每日遊玩（最近16週）</value>
+  <data name="Plays per day, last 12 months" xml:space="preserve">
+    <value>每日遊玩（最近12個月）</value>
   </data>
   <data name="Ports" xml:space="preserve">
     <value>連接埠</value>

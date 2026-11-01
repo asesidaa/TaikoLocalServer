@@ -1701,8 +1701,8 @@
   <data name="LOSE" xml:space="preserve">
     <value>LOSE</value>
   </data>
-  <data name="Last 16 weeks" xml:space="preserve">
-    <value>過去16週間</value>
+  <data name="Last 12 months" xml:space="preserve">
+    <value>過去12か月</value>
   </data>
   <data name="Last play time" xml:space="preserve">
     <value>最終プレイ日時</value>
@@ -2073,8 +2073,11 @@
   <data name="On. Reset it if they lost their phone and their recovery codes." xml:space="preserve">
     <value>オン。スマホとリカバリーコードを両方なくした場合はリセットしてください。</value>
   </data>
-  <data name="Oni clears by star level" xml:space="preserve">
-    <value>星の数別おに譜面クリア</value>
+  <data name="Clears by star level" xml:space="preserve">
+    <value>星の数別クリア</value>
+  </data>
+  <data name="{0} clears by star level" xml:space="preserve">
+    <value>星の数別{0}譜面クリア</value>
   </data>
   <data name="Online now" xml:space="preserve">
     <value>オンライン</value>
@@ -2178,8 +2181,8 @@
   <data name="Plays by genre" xml:space="preserve">
     <value>ジャンル別プレイ</value>
   </data>
-  <data name="Plays per day, last 16 weeks" xml:space="preserve">
-    <value>1日あたりのプレイ（過去16週間）</value>
+  <data name="Plays per day, last 12 months" xml:space="preserve">
+    <value>1日あたりのプレイ（過去12か月）</value>
   </data>
   <data name="Ports" xml:space="preserve">
     <value>ポート</value>
