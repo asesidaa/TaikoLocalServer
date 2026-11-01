@@ -80,6 +80,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
 
+    <!--tools/extract, when built with cargo (release): "Run extract" finds it next to the exe-->
+    <None Include="..\tools\extract\target\release\extract.exe" Link="extract.exe" Condition="Exists('..\tools\extract\target\release\extract.exe')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+
     <!--Configuration-->
     <Content Remove="Configurations\ServerSettings.json" />
     <None Include="Configurations\ServerSettings.json">

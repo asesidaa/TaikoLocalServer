@@ -4,6 +4,7 @@
 @inject NavigationManager Nav
 @inject PageState Page
 @inject HttpClient Client
+@using TaikoWebUI.Components.Admin
 
 <PageTitle>Server Management</PageTitle>
 <Tabs Items="tabs" Selected="@Current" SelectedChanged="Go" Label="@Localizer["Server Management"]"
@@ -12,6 +13,10 @@
     @if (Current == "status")
     {
         @ConfigCard
+    }
+    else if (Current == "data")
+    {
+        <GameDataTab />
     }
     else
     {

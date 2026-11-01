@@ -1,0 +1,105 @@
+@* Server Management › Game data: a list (Overview, then the editable datasets) beside the picked one. *@
+@inject HttpClient Client
+@inject AssetStatus AssetStatus
+@inject ToastService Toast
+
+<div class="grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-start">
+    <nav class="@Css.Card p-2 lg:sticky lg:top-24" aria-label="@Localizer["Game data"]">
+        @Item("overview", Localizer["Overview"], "database", files?.Count(f => f.Error is not null || f.Missing) ?? 0)
+    </nav>
+    <div class="min-w-0 space-y-4">
+        @if (selected == "overview")
+        {
+            <section class="@Css.Card p-5 sm:p-6">
+                <h2 class="font-semibold">@Localizer["Game assets"]</h2>
+                <p class="mb-4 text-sm @Css.Muted">@Localizer["Game Assets Hint"]</p>
+                <ExtractPanel OnFinished="Reloaded" />
+            </section>
+            <section class="@Css.Card p-5 sm:p-6">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                        <h2 class="font-semibold">@Localizer["Data files"]</h2>
+                        <p class="text-sm @Css.Muted">@Localizer["Data Files Hint"]</p>
+                    </div>
+                    <button class="@Css.GhostButton border border-zinc-200 dark:border-zinc-700" disabled="@reloading" @onclick="Reload">
+                        <Icon Name="rotate" Class="@(reloading ? "size-4 animate-spin" : "size-4")" />@Localizer["Reload"]
+                    </button>
+                </div>
+                @if (files is null)
+                {
+                    <p class="mt-4 text-sm @Css.Muted">@Localizer["Loading..."]</p>
+                }
+                else
+                {
+                    <ul class="mt-3 divide-y divide-zinc-100 dark:divide-zinc-800">
+                        @foreach (var f in files)
+                        {
+                            <li class="flex items-start gap-3 py-2 text-sm">
+                                <Icon Name="@(f.Missing || f.Error is not null ? "alert" : "check")"
+                                      Class="@($"mt-0.5 size-4 {(f.Missing ? "text-amber-500" : f.Error is not null ? "text-red-500" : "text-emerald-500")}")" />
+                                <span class="min-w-0 flex-1">
+                                    <span class="block font-mono text-xs">@f.Name</span>
+                                    @if (f.Missing)
+                                    {
+                                        <span class="block text-xs text-amber-700 dark:text-amber-300">@Localizer[f.Editable ? "Missing" : "Missing: extract the game files"]</span>
+                                    }
+                                    else if (f.Error is not null)
+                                    {
+                                        <span class="block text-xs text-red-600 dark:text-red-400">@f.Error @Localizer["The server still uses the previous contents."]</span>
+                                    }
+                                </span>
+                                @if (f.Modified is { } m)
+                                {
+                                    <time class="shrink-0 text-xs tabular-nums @Css.Muted" datetime="@m.ToString("O")">@m.ToLocalTime().ToString("g")</time>
+                                }
+                            </li>
+                        }
+                    </ul>
+                }
+            </section>
+        }
+    </div>
+</div>
+
+@code {
+    private IReadOnlyList<GameDataFileStatus>? files;
+    private string selected = "overview";
+    private bool reloading;
+
+    protected override async Task OnInitializedAsync() =>
+        files = await Client.GetFromJsonAsync<List<GameDataFileStatus>>("api/GameData/Files");
+
+    private async Task Reload()
+    {
+        reloading = true;
+        var res = await Client.PostAsync("api/GameData/Reload", null);
+        reloading = false;
+        if (!res.IsSuccessStatusCode)
+        {
+            Toast.Show(Localizer["Save Failed"], true);
+            return;
+        }
+        files = await res.Content.ReadFromJsonAsync<List<GameDataFileStatus>>();
+        Toast.Show(Localizer["Game data reloaded"]);
+    }
+
+    // extract reloads the server's game data itself; refresh what this page shows.
+    private async Task Reloaded()
+    {
+        files = await Client.GetFromJsonAsync<List<GameDataFileStatus>>("api/GameData/Files");
+        await AssetStatus.IsMissingAsync(refresh: true);
+    }
+
+    private RenderFragment Item(string id, string label, string icon, int problems = 0) => __builder =>
+    {
+        var on = selected == id;
+        <button aria-current="@(on ? "true" : null)" @onclick="() => selected = id"
+                class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-sm @(on ? "bg-primary-500/10 font-medium text-primary-700 dark:text-primary-300" : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800/70")">
+            <Icon Name="@icon" /><span class="min-w-0 flex-1 truncate">@label</span>
+            @if (problems > 0)
+            {
+                <span class="rounded-full bg-red-500 px-1.5 text-[11px] font-semibold text-white" title="@Localizer["Files with problems"]">@problems</span>
+            }
+        </button>
+    };
+}

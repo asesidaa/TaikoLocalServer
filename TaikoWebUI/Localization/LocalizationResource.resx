@@ -891,4 +891,13 @@
   <data name="Admin Account Hint" xml:space="preserve">
     <value />
   </data>
+  <data name="Game Assets Hint" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Data Files Hint" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Set GamePath Hint" xml:space="preserve">
+    <value />
+  </data>
 </root>

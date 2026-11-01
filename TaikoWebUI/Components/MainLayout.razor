@@ -68,13 +68,10 @@ else
             @if (assetsMissing && CanFixAssets)
             {
                 @* Only people who can run it see this; players just get the plain fallbacks. *@
-                <div role="alert" class="mb-6 flex items-start gap-3 rounded-2xl border border-primary-500/30 bg-primary-500/10 p-4 text-sm text-primary-700 dark:text-primary-300">
-                    <Icon Name="alert" Class="mt-0.5 size-5" />
-                    <div class="min-w-0">
-                        <p class="font-semibold">@Localizer["Game assets haven't been extracted"]</p>
-                        <p class="mt-1 text-zinc-700 dark:text-zinc-300">@Localizer["Nameplates, dan badges, the scoreboard and the 3D don-chan come from the game install. Run the extractor next to TaikoLocalServer.exe, then reload this page:"]</p>
-                        <code class="mt-2 block overflow-x-auto whitespace-nowrap rounded-lg bg-zinc-900 px-3 py-2 font-mono text-xs text-zinc-100">extract --game "&lt;Nijiiro game folder&gt;"</code>
-                    </div>
+                <div role="alert" class="mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-800 dark:text-amber-200">
+                    <Icon Name="alert" Class="size-5" />
+                    <p class="min-w-0 flex-1">@Localizer["Game files are missing. Cabinets can't play and pages show IDs instead of names."]</p>
+                    <a href="/Admin/Server/data" class="font-semibold underline underline-offset-2">@Localizer["Add them"]</a>
                 </div>
             }
             @Body

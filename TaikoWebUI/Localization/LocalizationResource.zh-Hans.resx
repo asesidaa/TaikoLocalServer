@@ -891,4 +891,13 @@
   <data name="Admin Account Hint" xml:space="preserve">
     <value>Your card. It doesn’t need to have played on this server yet. If it already has an account, this becomes its password.</value>
   </data>
+  <data name="Game Assets Hint" xml:space="preserve">
+    <value>Song data, nameplates, the scoreboard and the 3D don-chan, copied in from the game install.</value>
+  </data>
+  <data name="Data Files Hint" xml:space="preserve">
+    <value>What the server loaded. Edit the server-owned files here, or by hand and then Reload.</value>
+  </data>
+  <data name="Set GamePath Hint" xml:space="preserve">
+    <value>Set {0} in {1} and restart the server, and it can extract the files itself. Or run this on the game PC:</value>
+  </data>
 </root>

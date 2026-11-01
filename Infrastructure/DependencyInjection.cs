@@ -43,8 +43,9 @@ public static class DependencyInjection
         });
         services.AddScoped<ITaikoDbContext>(sp => sp.GetRequiredService<TaikoDbContext>());
 
-        // Game data catalog (singleton — initialized once at startup)
+        // Game data catalog (singleton: loaded at startup, reloaded from Server Management › Game data)
         services.AddSingleton<IGameDataCatalog, FileGameDataCatalog>();
+        services.AddSingleton<IExtractRunner, ExtractRunner>();
 
         // Identity
         services.AddSingleton<ServerAccess>();
