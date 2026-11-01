@@ -91,6 +91,7 @@
                 var saved = await Client.GetFromJsonAsync<UiTheme>($"api/Users/{AuthService.GetLoggedInBaid()}/Theme");
                 if (saved?.Dark is { } d && d != dark) await Js.InvokeVoidAsync("ui.setDark", dark = d);
                 if (saved?.Accent is { } a && a != accent && Accents.Any(x => x.Id == a)) await Js.InvokeVoidAsync("ui.setAccent", accent = a);
+                if (saved?.Quality3D is { } q) await Js.InvokeVoidAsync("ui.setQuality3D", q.ToString().ToLowerInvariant());
                 // Another browser picked a different language: switch to it (a culture change needs a reload).
                 if (saved?.Language is { } lang && lang != CultureInfo.CurrentUICulture.Name && Settings.Value.SupportedLanguages.Any(l => l.CultureCode == lang))
                 {

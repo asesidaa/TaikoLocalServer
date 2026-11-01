@@ -42,7 +42,7 @@ public class UsersController(ITaikoDbContext context, IServerAccess access, IAva
         if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
             return forbid;
         var profile = await context.UserWebProfiles.FindAsync([baid], HttpContext.RequestAborted);
-        return new UiTheme { Dark = profile?.DarkMode, Accent = profile?.Accent, Language = profile?.Language };
+        return new UiTheme { Dark = profile?.DarkMode, Accent = profile?.Accent, Language = profile?.Language, Quality3D = profile?.Quality3D };
     }
 
     [HttpPut("{baid}/Theme")]
@@ -54,11 +54,14 @@ public class UsersController(ITaikoDbContext context, IServerAccess access, IAva
             return BadRequest(new { message = "Unknown accent." });
         if (theme.Language is { } l && (l.Length is 0 or > 16 || !l.All(c => char.IsAsciiLetter(c) || c == '-')))
             return BadRequest(new { message = "Unknown language." });
+        if (theme.Quality3D is { } q && !Enum.IsDefined(q))
+            return BadRequest(new { message = "Unknown quality." });
         var profile = await context.UserWebProfiles.FindAsync([baid], HttpContext.RequestAborted);
         if (profile is null) return NotFound();
         profile.DarkMode = theme.Dark ?? profile.DarkMode;
         profile.Accent = theme.Accent ?? profile.Accent;
         profile.Language = theme.Language ?? profile.Language;
+        profile.Quality3D = theme.Quality3D ?? profile.Quality3D;
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return NoContent();
     }

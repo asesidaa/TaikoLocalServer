@@ -1,6 +1,6 @@
 namespace TaikoLocalServer.Domain.Enums;
 
-/// <summary>How many pixels the player cards' 3D don-chan is drawn with (the embed's <c>quality</c>).</summary>
+/// <summary>How many pixels the player cards' 3D don-chan is drawn with (the embed's <c>quality</c>; each player picks).</summary>
 public enum RenderQuality
 {
     /// <summary>1x: the lightest, for slow phones and PCs.</summary>

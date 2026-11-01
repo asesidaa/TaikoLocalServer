@@ -1,0 +1,48 @@
+@* Settings › Display: how finely player cards draw the 3D don-chan for you. Kept on this device (the embed reads it)
+   and, signed in, on your account so your other devices use it too. Only while cards are 3D (Player Settings). *@
+@inject HttpClient Client
+@inject AuthService AuthService
+@inject ToastService Toast
+@inject IJSRuntime Js
+
+<section class="@Css.Card p-5 sm:p-6">
+    <h2 class="font-semibold">@Localizer["Display"]</h2>
+    <div class="mt-3 flex flex-wrap items-center gap-3">
+        <span class="min-w-0 flex-1">
+            <span class="block text-sm font-medium">@Localizer["3D quality"]</span>
+            <span class="block max-w-2xl text-xs @Css.Muted">@Localizer["High draws don-chan with twice the pixels on ordinary screens, for smoother edges. Low is the lightest, for slow phones and PCs."]</span>
+        </span>
+        <div class="inline-flex gap-0.5 rounded-xl bg-zinc-100 p-1 dark:bg-zinc-800" role="radiogroup" aria-label="@Localizer["3D quality"]">
+            @foreach (var (q, label) in new[] { (RenderQuality.Low, Localizer["Low"].Value), (RenderQuality.Standard, Localizer["Standard"].Value), (RenderQuality.High, Localizer["High"].Value) })
+            {
+                var on = quality == q;
+                <button role="radio" aria-checked="@Css.Aria(on)" @onclick="() => Set(q)"
+                        class="rounded-lg px-3 py-1 text-xs font-medium @(on ? "bg-white shadow-sm dark:bg-zinc-900" : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200")">@label</button>
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private RenderQuality? quality;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        quality = Enum.TryParse<RenderQuality>(await Js.InvokeAsync<string>("ui.getQuality3D"), true, out var q) ? q : RenderQuality.Standard;
+        StateHasChanged();
+    }
+
+    private async Task Set(RenderQuality q)
+    {
+        if (quality == q) return;
+        quality = q;
+        await Js.InvokeVoidAsync("ui.setQuality3D", q.ToString().ToLowerInvariant());
+        if (AuthService.LoginRequired && AuthService.IsLoggedIn)
+        {
+            var res = await Client.PutAsJsonAsync($"api/Users/{AuthService.GetLoggedInBaid()}/Theme", new UiTheme { Quality3D = q });
+            if (!res.IsSuccessStatusCode) { Toast.Show(Localizer["Save Failed"], true); return; }
+        }
+        Toast.Show(Localizer["Saved"]);
+    }
+}

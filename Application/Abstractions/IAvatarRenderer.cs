@@ -22,9 +22,6 @@ public interface IAvatarRenderer
     /// <summary>"Enable 3D Renderer": player cards show the 3D model (on) or still images this renderer draws (off).</summary>
     Task SetCards3DAsync(bool on, CancellationToken cancellationToken);
 
-    /// <summary>The 3D model's pixel density on player cards (kept here with the other card options).</summary>
-    Task SetQuality3DAsync(RenderQuality quality, CancellationToken cancellationToken);
-
     /// <summary>True for the renderer's own sign-in token (asset reads only).</summary>
     bool IsRendererToken(string token);
 }

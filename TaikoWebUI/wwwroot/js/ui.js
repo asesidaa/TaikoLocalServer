@@ -343,6 +343,9 @@
     setDark: on => { root.classList.toggle("dark", on); store.set("ui.dark", on ? "1" : "0"); },
     isDark: () => root.classList.contains("dark"),
     setAccent: id => { root.dataset.accent = id; store.set("ui.accent", id); },
+    // The 3D don-chan's quality on player cards (the embed reads it): low, standard (the default) or high.
+    getQuality3D: () => store.get("ui.quality3d") || "standard",
+    setQuality3D: q => store.set("ui.quality3d", q),
     getAccent: () => root.dataset.accent,
     focusIn: el => el?.querySelector("input, button")?.focus(),
     copy: text => navigator.clipboard?.writeText(text).then(() => true, () => false) ?? false,

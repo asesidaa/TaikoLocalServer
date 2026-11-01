@@ -127,7 +127,7 @@
     }
 
     private bool HasEmbed => !string.IsNullOrWhiteSpace(Settings.Value.DonEmbedUrl);
-    private string EmbedSrc => $"{Settings.Value.DonEmbedUrl}?quality={Auth.Quality3D}";
+    private string EmbedSrc => Settings.Value.DonEmbedUrl;
 
     private DanBestData? TopDan => Dans.Where(d => d.ClearState != DanClearState.NotClear && d.DanId is >= 1 and <= 19)
         .MaxBy(d => d.DanId);
@@ -150,7 +150,7 @@
     // The large 3D view (rendered by the layout): its own embed, configured by its URL, framed so the feet clear the bottom.
     private RenderFragment BigView => __builder =>
     {
-        var src = $"{EmbedSrc}&body={Setting.Body}&head={Setting.Head}&kigurumi={Setting.Kigurumi}&face={Setting.Face}&puchi={Setting.Puchi}" +
+        var src = $"{EmbedSrc}?body={Setting.Body}&head={Setting.Head}&kigurumi={Setting.Kigurumi}&face={Setting.Face}&puchi={Setting.Puchi}" +
                   $"&bodyColor={Setting.BodyColor}&faceColor={Setting.FaceColor}&limbColor={Setting.LimbColor}" +
                   $"&anim={Uri.EscapeDataString(CardStyle.Clip(Setting.CardAnimation))}&zoom=0.22&camY=0.19";
         <div class="fade fixed inset-0 z-[60] grid place-items-center bg-black/60 p-4" @onclick="Overlay.Hide">

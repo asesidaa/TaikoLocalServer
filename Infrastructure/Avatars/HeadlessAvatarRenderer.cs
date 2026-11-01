@@ -48,7 +48,6 @@ public sealed class HeadlessAvatarRenderer(
     private bool enabled;
     // Stills are drawn only while cards use them (ServerOptions.Cards3D off).
     private bool stills;
-    private RenderQuality quality3D = RenderQuality.High;
     private string? browserPath;
     private IBrowser? browser;
     private IPage? page;
@@ -57,7 +56,7 @@ public sealed class HeadlessAvatarRenderer(
     private DateTime? lastRenderedAt;
 
     public AvatarRendererStatus Status =>
-        new(enabled, browserPath, browser is { IsClosed: false }, queued.Count, rendered, failed, lastError, lastRenderedAt, !stills, quality3D);
+        new(enabled, browserPath, browser is { IsClosed: false }, queued.Count, rendered, failed, lastError, lastRenderedAt, !stills);
 
     public bool IsRendererToken(string candidate) =>
         candidate.Length == token.Length && CryptographicOperations.FixedTimeEquals(
@@ -85,16 +84,6 @@ public sealed class HeadlessAvatarRenderer(
         else await CloseBrowserAsync();
     }
 
-    public async Task SetQuality3DAsync(RenderQuality quality, CancellationToken cancellationToken)
-    {
-        using var scope = scopes.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<ITaikoDbContext>();
-        var row = await db.ServerOptions.FindAsync([1], cancellationToken) ?? db.ServerOptions.Add(new ServerOptions()).Entity;
-        row.Quality3D = quality;
-        await db.SaveChangesAsync(cancellationToken);
-        quality3D = quality;
-    }
-
     public async Task SetCards3DAsync(bool on, CancellationToken cancellationToken)
     {
         using var scope = scopes.CreateScope();
@@ -115,7 +104,6 @@ public sealed class HeadlessAvatarRenderer(
             var options = await db.ServerOptions.AsNoTracking().FirstOrDefaultAsync(stoppingToken);
             enabled = options?.RenderAvatars ?? true;
             stills = !(options?.Cards3D ?? true);
-            quality3D = options?.Quality3D ?? RenderQuality.High;
         }
         if (browserPath is null)
         {

@@ -25,6 +25,8 @@ public class UserWebProfile
     public string? Accent { get; set; }
     /// <summary>The Web UI language they last picked (a culture code such as "ja"), applied when they sign in.</summary>
     public string? Language { get; set; }
+    /// <summary>How finely player cards draw the 3D don-chan for them (Settings › Display); null = never picked.</summary>
+    public RenderQuality? Quality3D { get; set; }
 
     public virtual UserDatum? Ba { get; set; }
 }

@@ -3405,4 +3405,7 @@
   <data name="Drawing don-chan…" xml:space="preserve">
     <value>正在绘制小咚…</value>
   </data>
+  <data name="Display" xml:space="preserve">
+    <value>显示</value>
+  </data>
 </root>

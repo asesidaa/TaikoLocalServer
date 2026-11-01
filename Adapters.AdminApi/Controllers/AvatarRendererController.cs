@@ -31,19 +31,6 @@ public class AvatarRendererController(IAvatarRenderer renderer, ITaikoDbContext 
         return renderer.Status;
     }
 
-    public sealed record QualityRequest(RenderQuality Quality);
-
-    /// <summary>The 3D model's pixel density on player cards.</summary>
-    [HttpPut("Quality3D")]
-    public async Task<ActionResult<AvatarRendererStatus>> PutQuality3D(QualityRequest request)
-    {
-        if (!Enum.IsDefined(request.Quality)) return BadRequest(new { message = "Unknown quality." });
-        await renderer.SetQuality3DAsync(request.Quality, HttpContext.RequestAborted);
-        this.LogActivity(context, "server.avatars", null, $"3d quality {request.Quality.ToString().ToLowerInvariant()}");
-        await context.SaveChangesAsync(HttpContext.RequestAborted);
-        return renderer.Status;
-    }
-
     /// <summary>Every stored avatar, without the images.</summary>
     [HttpGet("Avatars")]
     public Task<List<StoredAvatar>> Avatars() =>

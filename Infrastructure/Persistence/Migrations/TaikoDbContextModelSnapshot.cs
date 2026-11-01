@@ -416,9 +416,6 @@ namespace TaikoLocalServer.Migrations
                     b.Property<bool>("Cards3D")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Quality3D")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("RenderAvatars")
                         .HasColumnType("INTEGER");
 
@@ -865,6 +862,9 @@ namespace TaikoLocalServer.Migrations
 
                     b.Property<string>("Language")
                         .HasColumnType("TEXT");
+
+                    b.Property<int?>("Quality3D")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Baid");
 
