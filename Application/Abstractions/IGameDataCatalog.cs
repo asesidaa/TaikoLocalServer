@@ -25,6 +25,9 @@ public interface IGameDataCatalog
 
     public IReadOnlyList<DanSetInfo> GetDanSets();
 
+    /// <summary>A course set's courses; null or an unknown id gives the default set.</summary>
+    public ImmutableDictionary<uint, DanData> GetDanSet(string? id);
+
     /// <summary>A new set, a copy of <paramref name="copyFrom"/>; returns its id.</summary>
     public Task<string> CreateDanSetAsync(string name, string copyFrom);
 

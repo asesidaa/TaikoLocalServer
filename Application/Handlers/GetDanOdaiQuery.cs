@@ -2,15 +2,18 @@ using Throw;
 
 namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct GetDanOdaiQuery(uint[] DanIds, uint Type) : IRequest<List<DanData>>;
+/// <param name="ChassisId">The asking cabinet: one with its own settings gets its own Dani Dojo course set.</param>
+public readonly record struct GetDanOdaiQuery(uint[] DanIds, uint Type, string ChassisId) : IRequest<List<DanData>>;
 
 public class GetDanOdaiQueryHandler : IRequestHandler<GetDanOdaiQuery, List<DanData>>
 {
     private readonly IGameDataCatalog gameDataService;
+    private readonly ICabinetRegistry cabinets;
 
-    public GetDanOdaiQueryHandler(IGameDataCatalog gameDataService)
+    public GetDanOdaiQueryHandler(IGameDataCatalog gameDataService, ICabinetRegistry cabinets)
     {
         this.gameDataService = gameDataService;
+        this.cabinets = cabinets;
     }
 
     public ValueTask<List<DanData>> Handle(GetDanOdaiQuery request, CancellationToken cancellationToken)
@@ -21,7 +24,9 @@ public class GetDanOdaiQueryHandler : IRequestHandler<GetDanOdaiQuery, List<DanD
         switch (type)
         {
             case DanType.Normal:
-                var danDataDictionary = gameDataService.GetCommonDanDataDictionary();
+                var danDataDictionary = cabinets.Find(request.ChassisId) is { OwnSettings: true } cabinet
+                    ? gameDataService.GetDanSet(cabinet.DanSet)
+                    : gameDataService.GetCommonDanDataDictionary();
 
                 foreach (var danId in request.DanIds)
                 {

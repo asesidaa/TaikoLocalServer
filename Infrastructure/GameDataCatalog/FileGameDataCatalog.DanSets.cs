@@ -33,6 +33,9 @@ public partial class FileGameDataCatalog
         return () => danSets = danSets.SetItem(id, d);
     };
 
+    public ImmutableDictionary<uint, DanData> GetDanSet(string? id) =>
+        id is not null && danSets.TryGetValue(id, out var set) ? set : GetCommonDanDataDictionary();
+
     public IReadOnlyList<DanSetInfo> GetDanSets() =>
         danIndex.Sets.Select(x => new DanSetInfo(x.Id, x.Name, DanSetFile(x.Id), x.Id == danIndex.DefaultSet,
             danSets.GetValueOrDefault(x.Id)?.Count ?? 0)).ToList();

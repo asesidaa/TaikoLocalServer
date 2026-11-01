@@ -4,9 +4,10 @@ using TaikoLocalServer.Application.Settings;
 
 namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct GetInitialDataQuery : IRequest<CommonInitialDataCheckResponse>;
+/// <param name="ChassisId">The asking cabinet: one with its own settings gets its own Dani Dojo set and movies.</param>
+public readonly record struct GetInitialDataQuery(string ChassisId) : IRequest<CommonInitialDataCheckResponse>;
 
-public class GetInitialDataQueryHandler(IGameDataCatalog gameDataService, 
+public class GetInitialDataQueryHandler(IGameDataCatalog gameDataService, ICabinetRegistry cabinets,
     ILogger<GetInitialDataQueryHandler>                  logger,
     IOptions<ServerSettings>                             settings) 
     : IRequestHandler<GetInitialDataQuery, CommonInitialDataCheckResponse>
@@ -43,7 +44,14 @@ public class GetInitialDataQueryHandler(IGameDataCatalog gameDataService,
             ServerCurrentDatetime = (ulong)DateTimeOffset.Now.ToUnixTimeSeconds()
         };
 
+        var cabinet = cabinets.Find(request.ChassisId) is { OwnSettings: true } own ? own : null;
         var movieDataDictionary = gameDataService.GetMovieDataDictionary();
+        if (cabinet is not null)
+        {
+            // Its own movie list; enable_days as the defaults have it, else 0.
+            movieDataDictionary = cabinet.Movies.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(uint.Parse)
+                .ToImmutableDictionary(id => id, id => movieDataDictionary.TryGetValue(id, out var m) ? m : new MovieData { MovieId = id });
+        }
         foreach (var movieData in movieDataDictionary)
         {
             response.AryMovieInfoes.Add(movieData.Value);
@@ -64,7 +72,7 @@ public class GetInitialDataQueryHandler(IGameDataCatalog gameDataService,
         response.AryVerupNoData1s.AddRange(verupNo1List);
         
         var telopDataDictionary = gameDataService.GetTelopDataDictionary();
-        var commonDanDataDictionary = gameDataService.GetCommonDanDataDictionary();
+        var commonDanDataDictionary = cabinet is not null ? gameDataService.GetDanSet(cabinet.DanSet) : gameDataService.GetCommonDanDataDictionary();
         var commonGaidenDataDictionary = gameDataService.GetCommonGaidenDataDictionary();
         var eventFolderDictionary = gameDataService.GetEventFolderDictionary();
         var songIntroDictionary = gameDataService.GetSongIntroductionDictionary();
