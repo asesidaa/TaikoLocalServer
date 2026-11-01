@@ -25,9 +25,6 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: Restore workloads
-        run: dotnet workload restore Host/Host.csproj
-
       # Self-contained + single-file + native-libs-bundled are configured in
       # Host/Host.csproj under the `Configuration != Debug` PropertyGroup.
       # We do NOT pass -p:PublishSingleFile=true on the CLI because it would

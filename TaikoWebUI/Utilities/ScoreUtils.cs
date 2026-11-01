@@ -84,12 +84,5 @@ namespace TaikoWebUI.Utilities
                 _ => ""
             };
         }
-
-        public static bool IsAiDataPresent(SongBestData data)
-        {
-            var aiData = data.AiSectionBestData;
-
-            return aiData.Count > 0;
-        }
     }
 }

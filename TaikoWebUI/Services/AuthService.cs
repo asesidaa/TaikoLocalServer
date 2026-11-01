@@ -1,7 +1,6 @@
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text.Json;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using TaikoLocalServer.Contracts.AdminApi.Authorization;
 using TaikoLocalServer.Contracts.AdminApi.Responses;
@@ -20,7 +19,6 @@ public sealed class AuthService : IDisposable
     private readonly HttpClient client;
     private readonly JwtAuthenticationStateProvider authStateProvider;
     private readonly ClientAuthConfigResponse authConfig;
-    private readonly NavigationManager navigationManager;
 
     public event EventHandler? LoginStatusChanged;
 
@@ -50,13 +48,11 @@ public sealed class AuthService : IDisposable
     public AuthService(
         HttpClient client,
         JwtAuthenticationStateProvider authStateProvider,
-        ClientAuthConfigResponse authConfig,
-        NavigationManager navigationManager)
+        ClientAuthConfigResponse authConfig)
     {
         this.client = client;
         this.authStateProvider = authStateProvider;
         this.authConfig = authConfig;
-        this.navigationManager = navigationManager;
 
         authStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
         // Eagerly read the initial state so synchronous property accesses on first render
@@ -122,17 +118,6 @@ public sealed class AuthService : IDisposable
 
         await authStateProvider.MarkUserAsAuthenticatedAsync(responseJson["authToken"]);
         return 1;
-    }
-
-    public async Task LoginWithAuthToken()
-    {
-        // The state provider validates token presence and expiry on every read; we just consume
-        // its result and bounce to /Login when the user holds no usable token.
-        var state = await authStateProvider.GetAuthenticationStateAsync();
-        if (state.User.Identity?.IsAuthenticated != true && authConfig.AuthenticationRequired)
-        {
-            navigationManager.NavigateTo("/Login");
-        }
     }
 
     public async Task<int> Register(string inputCardNum, DateTime inputDateTime, string inputPassword,

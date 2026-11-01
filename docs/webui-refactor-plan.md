@@ -64,9 +64,9 @@ The app has **two sources of truth** for auth: `JwtAuthenticationStateProvider` 
 
 | # | Finding | Fix | Win |
 |---|---|---|---|
-| P1 | `BlazorWebAssemblyLoadAllGlobalizationData=true` ships full ICU (~several MB). | Remove it. The 5 supported cultures are covered by the default sharded ICU (`en`/`fr`/`ja`/`zh` ship in `icudt_CJK` + `icudt_EFIGS`). Verify that date/number formatting still works in `ja`/`zh-Hant`. | Large first-load cut |
-| P2 | `WasmEnableSIMD=false`, `WasmEnableExceptionHandling=false` turn off .NET 10 defaults that make WASM faster and smaller. Probably a leftover from an old-browser workaround. | Delete both lines. If a target cabinet browser is old, document which one. | Faster runtime |
-| P3 | Unused packages: `Swan.Core`, `SharpZipLib`, `Otp.NET`, `CodeBeam.MudBlazor.Extensions` (no references in WebUI). | Remove them. `System.IdentityModel.Tokens.Jwt` is also heavy for "decode payload + read `exp`", so replace it with a ~15-line base64url decode. | Smaller bundle |
+| P1 | `BlazorWebAssemblyLoadAllGlobalizationData=true` ships full ICU (~several MB). | **Kept on purpose (2026-10-31).** Blazor picks the ICU shard from the *browser* language before .NET starts, but the UI culture is switched at runtime from `localStorage`, so sharding would break `ja`/`zh` from an English browser. Fix in the new `index.html`: pass `applicationCulture` (read from `localStorage`) to `Blazor.start`, then drop the flag. | Large first-load cut |
+| P2 | `WasmEnableSIMD=false`, `WasmEnableExceptionHandling=false` turned off .NET 10 defaults. | **Done (2026-10-31).** Both removed. Builds and Release publish no longer need the `wasm-tools` workload, so CI's "Restore workloads" step is gone too. The runtime boots with SIMD on. | Faster runtime, simpler build |
+| P3 | Unused packages: `Swan.Core`, `SharpZipLib`, `Otp.NET`, `CodeBeam.MudBlazor.Extensions` (no references in WebUI). | **Done (2026-10-31)** for the four packages (the server still uses the first three). `CodeBeam` and the unreferenced `Swan.Logging` were also dropped from `Directory.Packages.props`. Still open: replace `System.IdentityModel.Tokens.Jwt` with a ~15-line base64url decode (do it with A2). | Smaller bundle |
 | P4 | Startup is serial: appsettings + auth config, **then** `dan_data.json`, **then** a culture JS call, then render. | Make dan data lazy like the other catalogs (only DaniDojo uses it). Read the culture alongside the other bootstrap fetches. | Faster first paint |
 | P5 | `GameDataService` lazy init has no concurrency guard, so two components on one page can both fetch `MusicDetails` (it's big). | Cache the `Task` (`musicTask ??= Load()`), not a bool flag. | Fewer duplicate fetches |
 | P6 | `GetHeadTitle/GetBodyTitle/...` are 6 copy-pasted methods with 7-arm switches, each doing a linear `FirstOrDefault` over the whole costume list. Profile calls them per dropdown item, which makes it O(n²) per render. | One `GetCostumeName(type, id, lang)` over a `Dictionary<(string,uint),Costume>`, and one shared `lang → field` selector. The `"jp"` vs `"ja"` key mismatch in some of them is a **bug**: those arms never match. | Less code, and a bug fixed |
@@ -74,7 +74,35 @@ The app has **two sources of truth** for auth: `JwtAuthenticationStateProvider` 
 | P8 | `Nijiiro.woff2` is 3.2 MB. | Subset it to the glyphs actually used (pyftsubset), or load it only on pages that show song titles. | -3 MB |
 | P9 | **21 MB of costume PNG/WebP and nameplate art committed under `wwwroot/images`.** It's game art in the repo, and it ships in every publish. | Generate it from the operator's game files with `extract` (§2). The 3D previewer replaces the costume layers. Nameplates and rank panels come from `Data/x64/lumen` / `textures` later. | Repo/publish -21 MB, and no game art in git |
 | P10 | `textFit.min.js` + `updateTextFit.js` for nameplate text sizing. | CSS `clamp()` / container query units will probably replace it. Check during the Profile rewrite. | One less script |
-| P11 | csproj has a stale `Pages\Pages\...` `_ContentIncludedByDefault` / `UpToDateCheckInput` block, and copy rules for `wwwroot\data\datatable\*` that WebUI doesn't own. | Delete them. | Tidy |
+| P11 | csproj had a stale `Pages\Pages\...` `_ContentIncludedByDefault` / `UpToDateCheckInput` block, and copy rules for `wwwroot\data\datatable\*` that WebUI doesn't own. | **Done (2026-10-31).** | Tidy |
+
+### 1c-2. Clearing the way for the new UI (2026-10-31)
+
+**Removed now:** dead code, and kit-independent plumbing the new UI reuses as-is.
+- **Unused members:**
+  - `Constants.*_BASE_NAME` (5 constants left from when the WebUI read datatables)
+  - `ScoreUtils.IsAiDataPresent`
+  - `BreadcrumbsStateContainer.SetBreadcrumbs`
+  - `AuthService.LoginWithAuthToken` (and its `NavigationManager` dependency)
+  - `Authorization/PrincipalExtensions.cs` (`IsOwnerOrAdmin`, never called)
+- **Server:** `POST api/Auth/LoginWithToken` had no caller.
+- **Packages and project file:** P2, P3 and P11 above.
+
+**Deliberately left for the rewrite to delete,** so it isn't polished in the meantime. Each item goes away when the page or shell that uses it is ported:
+
+| Goes away | Replaced by | When |
+|---|---|---|
+| `MudBlazor` package, `ResXMudLocalizer`, `MudThemeProvider`, the `_content/MudBlazor` links in `index.html` | LumexUI + Tailwind | the last page ported |
+| `BreadcrumbsStateContainer` and every page's manual crumbs | route-derived `Breadcrumbs` component (design doc, shell) | the shell port |
+| `AuthService` facade state (`IsLoggedIn`, `IsAdmin`, `LoginStatusChanged`) and the `IsAdmin \|\| !LoginRequired` idiom | `<AuthorizeView>` + cascading `AuthenticationState` (A1–A8) | the shell + auth pages |
+| Google Fonts Roboto link | self-hosted font from the design tokens | the shell port |
+| `wwwroot/images/Costumes/**`, `CostumeColors`, `CostumeColorFilters`, `Masks`, `CostumeOrDefault` | 3D embed via `api/Assets` | the Profile port |
+| `wwwroot/images/Nameplates/**`, `TitlePlateStrings`, `textFit.min.js` + `updateTextFit.js` | `api/Assets/nameplate/*` + `plates.json`, CSS text fitting | the Profile port |
+| `window.clipboardCopy` with `alert()` in `index.html` | toast | the Users/OTP dialog port |
+| `blazorCulture` get/set in `index.html` and `BlazorWebAssemblyLoadAllGlobalizationData` | `Blazor.start({ applicationCulture })` (P1) | the shell port |
+| other `wwwroot/images/*.webp` (crowns, ranks, difficulty) | Lumen renders from `extract` (§3d) | each page that uses them |
+
+**Not checked:** unused `.resx` keys. Many keys are looked up dynamically (`Localizer[variable]`), so a grep can't prove a key is dead. Prune them per page during the port instead.
 
 ### 1d. Smaller cleanups (do while touching each page)
 

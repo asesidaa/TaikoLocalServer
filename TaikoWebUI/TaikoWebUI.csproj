@@ -1,15 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
-    <WasmEnableSIMD>false</WasmEnableSIMD>
-    <WasmEnableExceptionHandling>false</WasmEnableExceptionHandling>
+    <!-- The UI culture is switched at runtime (localStorage), but Blazor picks the ICU shard from the
+         browser language before .NET starts. Until index.html passes applicationCulture to Blazor.start,
+         ship all ICU data so ja/zh formatting works from an English browser. -->
     <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
-    <InvariantGlobalization>false</InvariantGlobalization>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" />
-    <PackageReference Include="CodeBeam.MudBlazor.Extensions" />
     <PackageReference Include="Markdig" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
@@ -18,10 +17,7 @@
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
     <PackageReference Include="MudBlazor" />
-    <PackageReference Include="Otp.NET" />
     <PackageReference Include="QRCoder" />
-    <PackageReference Include="SharpZipLib" />
-    <PackageReference Include="Swan.Core" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
   </ItemGroup>
 
@@ -37,53 +33,6 @@
     <Content Update="wwwroot\Dashboard.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-
-
-    <!--Encrypted Game Datatables-->
-    <Content Update="wwwroot\data\datatable\wordlist.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\data\datatable\musicinfo.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\data\datatable\music_order.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-
-
-    <!--Decrypted Game Datatables-->
-    <Content Update="wwwroot\data\datatable\wordlist.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\data\datatable\music_order.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\data\datatable\musicinfo.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Pages\Pages\AccessCode.razor" />
-    <_ContentIncludedByDefault Remove="Pages\Pages\ChangePassword.razor" />
-    <_ContentIncludedByDefault Remove="Pages\Pages\DaniDojo.razor" />
-    <_ContentIncludedByDefault Remove="Pages\Pages\Dashboard.razor" />
-    <_ContentIncludedByDefault Remove="Pages\Pages\Dialogs\AccessCodeDeleteConfirmDialog.razor" />
-    <_ContentIncludedByDefault Remove="Pages\Pages\Dialogs\ChooseTitleDialog.razor" />
-    <_ContentIncludedByDefault Remove="Pages\Pages\Dialogs\UserDeleteConfirmDialog.razor" />
-    <_ContentIncludedByDefault Remove="Pages\Pages\Dialogs\UserQrCodeDialog.razor" />
-    <_ContentIncludedByDefault Remove="Pages\Pages\HighScores.razor" />
-    <_ContentIncludedByDefault Remove="Pages\Pages\Profile.razor" />
-    <_ContentIncludedByDefault Remove="Pages\Pages\Register.razor" />
-    <_ContentIncludedByDefault Remove="Pages\Pages\Users.razor" />
-    <_ContentIncludedByDefault Remove="Pages\Pages\Dialogs\OTPDialog.razor" />
-    <_ContentIncludedByDefault Remove="Pages\Pages\Dialogs\ResetPasswordConfirmDialog.razor" />
-    <_ContentIncludedByDefault Remove="Pages\Pages\Login.razor" />
-    <_ContentIncludedByDefault Remove="Pages\Pages\PlayHistory.razor" />
-    <_ContentIncludedByDefault Remove="Pages\Pages\Song.razor" />
-    <_ContentIncludedByDefault Remove="Pages\Pages\SongList.razor" />
-    <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css" />
-    <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css.map" />
   </ItemGroup>
 
   <ItemGroup>
@@ -124,15 +73,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>LocalizationResource.resx</DependentUpon>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Pages\Pages\AccessCode.razor" />
-    <UpToDateCheckInput Remove="Pages\Pages\ChangePassword.razor" />
-    <UpToDateCheckInput Remove="Pages\Pages\DaniDojo.razor" />
-    <UpToDateCheckInput Remove="Pages\Pages\Dashboard.razor" />
-    <UpToDateCheckInput Remove="Pages\Pages\Dialogs\AccessCodeDeleteConfirmDialog.razor" />
-    <UpToDateCheckInput Remove="Pages\Pages\Dialogs\ChooseTitleDialog.razor" />
   </ItemGroup>
 
 </Project>

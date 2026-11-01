@@ -88,11 +88,6 @@ public class AuthController(
         return Ok(new { authToken });
     }
 
-    [HttpPost("LoginWithToken")]
-    [Authorize]
-    public IActionResult LoginWithToken() => Ok();
-
-
     [HttpPost("Register")]
     [AllowAnonymous]
     [EnableRateLimiting(DependencyInjection.AuthRateLimitPolicy)]

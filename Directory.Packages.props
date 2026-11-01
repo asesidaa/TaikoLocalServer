@@ -43,12 +43,10 @@
     <PackageVersion Include="Otp.NET" Version="1.4.1" />
     <PackageVersion Include="SharpZipLib" Version="1.4.2" />
     <PackageVersion Include="Swan.Core" Version="7.0.0-beta.2" />
-    <PackageVersion Include="Swan.Logging" Version="6.0.2-beta.96" />
     <PackageVersion Include="Throw" Version="1.4.0" />
 
     <!-- TaikoWebUI (Blazor WASM) -->
     <PackageVersion Include="MudBlazor" Version="9.4.0" />
-    <PackageVersion Include="CodeBeam.MudBlazor.Extensions" Version="9.0.5" />
     <PackageVersion Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageVersion Include="Markdig" Version="0.38.0" />
     <PackageVersion Include="QRCoder" Version="1.6.0" />
