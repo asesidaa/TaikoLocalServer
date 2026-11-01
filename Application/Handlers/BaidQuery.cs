@@ -35,6 +35,9 @@ public class BaidQueryHandler(
             };
         }
 
+        card.LastScanAt = DateTime.UtcNow;
+        await context.SaveChangesAsync(cancellationToken);
+
         var baid = card.Baid;
         var userData = await context.UserData.FindAsync(baid, cancellationToken);
         userData.ThrowIfNull($"User not found for card with Baid {baid}!");

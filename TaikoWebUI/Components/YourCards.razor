@@ -1,0 +1,187 @@
+@* Settings › Your cards: every card that plays as this player, with a name, QR, rename and remove, and Add a card. *@
+@inject HttpClient Client
+@inject AuthService AuthService
+@inject ToastService Toast
+
+<section class="@Css.Card p-5 sm:p-6">
+    <div class="flex items-baseline justify-between gap-4">
+        <h2 class="font-semibold">@Localizer["Your cards"]</h2>
+        @if (cards is not null)
+        {
+            <span class="text-sm tabular-nums @Css.Muted">@(Limited ? string.Format(Localizer["{0} of {1}"], cards.Count, Limit) : cards.Count.ToString())</span>
+        }
+    </div>
+    <p class="text-sm @Css.Muted">@Localizer["Scan any of them at a cabinet to play as you. Every card's scores go to the same profile."]</p>
+
+    @if (cards is null)
+    {
+        <p class="mt-4 text-sm @Css.Muted">@Localizer["Loading..."]</p>
+    }
+    else
+    {
+        <ul class="mt-4 divide-y divide-zinc-100 dark:divide-zinc-800">
+            @foreach (var c in cards)
+            {
+                var shown = revealed.Contains(c.AccessCode);
+                <li class="flex flex-wrap items-center gap-3 py-3">
+                    <span class="grid size-9 shrink-0 place-items-center rounded-lg bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"><Icon Name="card" Class="size-5" /></span>
+                    <div class="min-w-0 flex-1">
+                        @if (renaming == c.AccessCode)
+                        {
+                            <input @ref="renameBox" maxlength="20" class="@Css.Input !py-1 text-sm" value="@renameText" aria-label="@Localizer["Card name"]"
+                                   @oninput="e => renameText = e.Value?.ToString() ?? string.Empty" @onkeydown="e => OnRenameKey(e, c)" @onblur="() => SaveName(c)" />
+                        }
+                        else
+                        {
+                            <p class="truncate text-sm font-medium">@(c.Name.Length > 0 ? c.Name : Localizer["Card"])</p>
+                        }
+                        <p class="flex items-center gap-1.5 text-xs @Css.Muted">
+                            <span class="font-mono tabular-nums">@(shown ? Grouped(c.AccessCode) : $"•••• {c.AccessCode[^4..]}")</span>
+                            <button class="grid size-5 place-items-center rounded hover:text-zinc-900 dark:hover:text-zinc-100" aria-label="@(shown ? Localizer["Hide the code"] : Localizer["Show the code"])"
+                                    @onclick="() => { if (!revealed.Remove(c.AccessCode)) revealed.Add(c.AccessCode); }">
+                                <Icon Name="@(shown ? "eyeOff" : "eye")" Class="size-3.5" />
+                            </button>
+                            <span>· @LastScan(c)</span>
+                        </p>
+                    </div>
+                    <div class="flex gap-1">
+                        <button class="@Css.GhostButton !px-3 !py-1.5" @onclick="() => qrFor = c.AccessCode"><Icon Name="qr" Class="size-4" />@Localizer["QR"]</button>
+                        <button class="@Css.GhostButton !px-3 !py-1.5" @onclick="() => StartRename(c)">@Localizer["Rename"]</button>
+                        <button class="@Css.GhostButton !px-3 !py-1.5 text-red-600 disabled:opacity-40 dark:text-red-400" disabled="@(cards.Count <= 1)"
+                                title="@(cards.Count <= 1 ? Localizer["Your only card can't be removed."] : null)" @onclick="() => removing = c">@Localizer["Remove"]</button>
+                    </div>
+                </li>
+            }
+        </ul>
+
+        <div class="mt-2 border-t border-zinc-100 pt-4 dark:border-zinc-800">
+            @if (Limited && cards.Count >= Limit)
+            {
+                <p class="text-sm @Css.Muted">@string.Format(Localizer["You have the most cards this server allows ({0}). Remove one to add another."], Limit)</p>
+            }
+            else
+            {
+                <form class="space-y-2" novalidate @onsubmit="Add">
+                    <AccessCodeField @bind-Value="newCode" />
+                    <p class="text-xs @Css.Muted">@Localizer["The 20-digit number on the back of the card. The cabinet also shows it after you scan."]</p>
+                    <ErrorBox Message="@addError" />
+                    <div class="flex justify-end"><button class="@Css.PrimaryButton" disabled="@adding"><Icon Name="plus" />@Localizer["Add a card"]</button></div>
+                </form>
+            }
+        </div>
+    }
+</section>
+
+@if (qrFor is not null)
+{
+    <Dialog Title="@Localizer["QR code"]" OnClose="() => qrFor = null">
+        <ChildContent><CardQr AccessCodes="[qrFor]" Name="@Name" /></ChildContent>
+    </Dialog>
+}
+@if (removing is { } doomed)
+{
+    <Dialog Title="@Localizer["Remove this card?"]" Alert OnClose="() => removing = null">
+        <ChildContent>@Localizer["Scanning it at a cabinet won't sign in as you any more. Your scores stay, and you can add the card again later."]</ChildContent>
+        <Footer>
+            <button class="@Css.GhostButton" @onclick="() => removing = null">@Localizer["Cancel"]</button>
+            <button class="inline-flex items-center gap-1.5 rounded-xl bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700" @onclick="() => Remove(doomed)">@Localizer["Remove"]</button>
+        </Footer>
+    </Dialog>
+}
+
+@code {
+    [Parameter, EditorRequired] public uint Baid { get; set; }
+    /// <summary>For the QR dialog's line ("…to play as <name>").</summary>
+    [Parameter] public string Name { get; set; } = "";
+
+    private List<CardItem>? cards;
+    private readonly HashSet<string> revealed = [];
+    private string? renaming, qrFor, addError;
+    private string renameText = "", newCode = "";
+    private CardItem? removing;
+    private bool adding, focusRename;
+    private ElementReference renameBox;
+
+    // Admins and Local mode have no limit (as the server checks it).
+    private bool Limited => AuthService.LoginRequired && !AuthService.IsAdmin;
+    private int Limit => AuthService.BoundAccessCodeUpperLimit;
+
+    protected override async Task OnParametersSetAsync() => await Load();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!focusRename) return;
+        focusRename = false;
+        await renameBox.FocusAsync();
+    }
+
+    private async Task Load() => cards = await Client.GetFromJsonAsync<List<CardItem>>($"api/Cards/Of/{Baid}");
+
+    private string LastScan(CardItem c) => c.LastScanAt is not { } t ? Localizer["Not played yet"]
+        : t.ToLocalTime().Date == DateTime.Today ? string.Format(Localizer["Last played today at {0}"], t.ToLocalTime().ToString("HH:mm"))
+        : t.ToLocalTime().Date == DateTime.Today.AddDays(-1) ? string.Format(Localizer["Last played yesterday at {0}"], t.ToLocalTime().ToString("HH:mm"))
+        : string.Format(Localizer["Last played {0}"], t.ToLocalTime().ToString("d MMM yyyy"));
+
+    private static string Grouped(string code) => string.Join(' ', code.Chunk(4).Select(x => new string(x)));
+
+    private void StartRename(CardItem c)
+    {
+        renaming = c.AccessCode;
+        renameText = c.Name;
+        focusRename = true;
+    }
+
+    private async Task OnRenameKey(KeyboardEventArgs e, CardItem c)
+    {
+        if (e.Key == "Escape") renaming = null;
+        else if (e.Key == "Enter") await SaveName(c);
+    }
+
+    private async Task SaveName(CardItem c)
+    {
+        if (renaming != c.AccessCode) return;
+        renaming = null;
+        var name = renameText.Trim();
+        if (name == c.Name) return;
+        var res = await Client.PutAsJsonAsync($"api/Cards/{c.AccessCode}/Name", new RenameCardRequest(name));
+        if (!res.IsSuccessStatusCode) { Toast.Show(Localizer["Save Failed"], true); return; }
+        await Load();
+    }
+
+    private async Task Remove(CardItem c)
+    {
+        removing = null;
+        var res = await Client.DeleteAsync($"api/Cards/{c.AccessCode}");
+        if (!res.IsSuccessStatusCode) { Toast.Show(Localizer["Save Failed"], true); return; }
+        Toast.Show(Localizer["Card removed"]);
+        await Load();
+    }
+
+    private async Task Add()
+    {
+        var code = AccessCodeField.Digits(newCode);
+        if (code.Length != 20)
+        {
+            addError = Localizer["Access codes are 20 digits."];
+            return;
+        }
+        adding = true;
+        var res = await Client.PostAsJsonAsync("api/Cards/BindAccessCode", new BindAccessCodeRequest { AccessCode = code, Baid = Baid });
+        adding = false;
+        if (!res.IsSuccessStatusCode)
+        {
+            var body = await res.Content.ReadAsStringAsync();
+            addError = body.Contains("Already Yours") ? Localizer["That card is already yours."]
+                : body.Contains("Another Player") ? Localizer["This card belongs to another player. Ask an admin to move it to you."]
+                : body.Contains("Card Banned") ? Localizer["This card is banned on this server. Ask an admin."]
+                : body.Contains("Limit Reached") ? string.Format(Localizer["You have the most cards this server allows ({0}). Remove one to add another."], Limit)
+                : body.Contains("Not 20 Digits") ? Localizer["Access codes are 20 digits."]
+                : Localizer["Save Failed"];
+            return;
+        }
+        addError = null;
+        newCode = "";
+        Toast.Show(Localizer["Card added"]);
+        await Load();
+    }
+}

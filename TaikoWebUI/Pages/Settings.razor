@@ -1,0 +1,63 @@
+@page "/Settings"
+@page "/Settings/Security"
+@page "/Users/{baid:int}/Settings"
+@page "/Users/{baid:int}/AccessCode"
+@page "/Users/{baid:int}/QrCode"
+@attribute [Authorize]
+@implements IDisposable
+@inject PageState Page
+@inject HttpClient Client
+@inject AuthService AuthService
+@inject PlayerSelection Players
+
+<PageTitle>@Localizer["Settings"]</PageTitle>
+
+@* One page: Your cards, then (Server mode) Sign-in and security. The old Access Codes, Show QR Code and Security pages land here. *@
+<div class="mx-auto max-w-2xl space-y-4">
+    <h1 class="text-2xl font-semibold tracking-tight">@Localizer["Settings"]</h1>
+    @if (Owner != 0)
+    {
+        <YourCards @key="Owner" Baid="Owner" Name="@name" />
+    }
+    @if (AuthService.LoginRequired && Owner == AuthService.GetLoggedInBaid())
+    {
+        <h2 class="pt-4 text-lg font-semibold">@Localizer["Sign-in and security"]</h2>
+        <PasswordCard />
+        @if (AuthService.TwoFactor != TwoFactorMode.Off)
+        {
+            <TwoFactorCard />
+        }
+    }
+</div>
+
+@code {
+    /// <summary>An admin opening someone else's (from User Management); otherwise yours, or the switcher's player in Local mode.</summary>
+    [Parameter] public int? Baid { get; set; }
+
+    private string name = "";
+
+    private uint Owner => Baid is > 0 ? (uint)Baid.Value : AuthService.LoginRequired ? AuthService.GetLoggedInBaid() : Players.Baid;
+
+    protected override void OnInitialized() => Players.Changed += OnPlayerChanged;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Page.Set(Localizer["Settings"]);
+        if (!AuthService.LoginRequired && Players.Baid == 0) await Players.LoadAsync();
+        await LoadName();
+    }
+
+    private async Task LoadName()
+    {
+        if (Owner == 0) return;
+        name = (await Client.GetFromJsonAsync<User>($"api/Users/{Owner}"))?.UserSetting.MyDonName ?? "";
+    }
+
+    private async void OnPlayerChanged()
+    {
+        await LoadName();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose() => Players.Changed -= OnPlayerChanged;
+}

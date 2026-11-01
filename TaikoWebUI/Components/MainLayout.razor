@@ -70,12 +70,12 @@ else
             </div>
         </header>
         <main class="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
-            @if (AuthService.TwoFactorSetupRequired && !Nav.Uri.Contains("/Settings/Security", StringComparison.OrdinalIgnoreCase))
+            @if (AuthService.TwoFactorSetupRequired && !Nav.Uri.Contains("/Settings", StringComparison.OrdinalIgnoreCase))
             {
                 <div role="alert" class="mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-800 dark:text-amber-200">
                     <Icon Name="shield" Class="size-5" />
                     <p class="min-w-0 flex-1">@Localizer["Turn on 2-step verification to use the admin pages."]</p>
-                    <a href="/Settings/Security" class="font-semibold underline underline-offset-2">@Localizer["Set it up"]</a>
+                    <a href="/Settings" class="font-semibold underline underline-offset-2">@Localizer["Set it up"]</a>
                 </div>
             }
             @if (assetsMissing && CanFixAssets)

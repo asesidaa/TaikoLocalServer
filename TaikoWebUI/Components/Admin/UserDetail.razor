@@ -465,7 +465,7 @@
             {
                 var body = await res.Content.ReadAsStringAsync();
                 Toast.Show(body.Contains("Access Code Limit Reached") ? Localizer["That user has the maximum number of access codes."]
-                    : body.Contains("already exists") ? Localizer["That access code is already bound to a user."]
+                    : (body.Contains("Already Yours") || body.Contains("Another Player")) ? Localizer["That access code is already bound to a user."]
                     : body.Contains("Last Access Code") ? Localizer["A user needs at least one access code."]
                     : Localizer["Save Failed"], true);
                 return false;

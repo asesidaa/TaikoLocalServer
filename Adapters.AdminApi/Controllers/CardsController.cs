@@ -18,6 +18,30 @@ public class CardsController(ITaikoDbContext context, IServerAccess access) : Ba
         return Ok(new { qrCode = QrImage.DataUri("BNTTCNID" + card.AccessCode, QRCoder.QRCodeGenerator.ECCLevel.Q, 10) });
     }
 
+    /// <summary>A player's cards for Settings › Your cards: code, name and when a cabinet last read it.</summary>
+    [HttpGet("Of/{baid}")]
+    public async Task<ActionResult<List<CardItem>>> Of(uint baid)
+    {
+        if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
+            return forbid;
+        return (await context.Cards.Where(c => c.Baid == baid).ToListAsync(HttpContext.RequestAborted))
+            .Select(c => new CardItem(c.AccessCode, c.Name, c.LastScanAt is { } t ? DateTime.SpecifyKind(t, DateTimeKind.Utc) : null)).ToList();
+    }
+
+    [HttpPut("{accessCode}/Name")]
+    public async Task<IActionResult> Rename(string accessCode, RenameCardRequest request)
+    {
+        var card = await context.Cards.FindAsync([accessCode], HttpContext.RequestAborted);
+        if (card is null) return NotFound();
+        if (this.AuthorizeOwnerOrAdmin(card.Baid) is { } forbid)
+            return forbid;
+        var name = request.Name.Trim();
+        if (name.Length > 20) return BadRequest(new { message = "At most 20 characters." });
+        card.Name = name;
+        await context.SaveChangesAsync(HttpContext.RequestAborted);
+        return NoContent();
+    }
+
     [HttpDelete("{accessCode}")]
     public async Task<IActionResult> DeleteAccessCode(string accessCode)
     {
@@ -29,6 +53,9 @@ public class CardsController(ITaikoDbContext context, IServerAccess access) : Ba
 
         if (this.AuthorizeOwnerOrAdmin(card.Baid) is { } forbid)
             return forbid;
+        // A player can't remove their last card: they couldn't play as themselves any more.
+        if (access.LoginRequired && !User.IsAdmin() && await context.Cards.CountAsync(c => c.Baid == card.Baid, HttpContext.RequestAborted) <= 1)
+            return BadRequest(new { message = "Last Card" });
 
         context.Cards.Remove(card);
         await context.SaveChangesAsync(HttpContext.RequestAborted);
@@ -78,11 +105,14 @@ public class CardsController(ITaikoDbContext context, IServerAccess access) : Ba
                 return Conflict(new { message = "Access Code Limit Reached" });
         }
 
+        if (accessCode.Length != 20 || !accessCode.All(char.IsAsciiDigit))
+            return BadRequest(new { message = "Not 20 Digits" });
         var existingCard = await context.Cards.FindAsync(accessCode);
         if (existingCard is not null)
-        {
-            return BadRequest("Access code already exists");
-        }
+            return Conflict(new { message = existingCard.Baid == baid ? "Already Yours" : "Another Player" });
+        var ban = await context.BannedCards.FindAsync([accessCode], HttpContext.RequestAborted);
+        if (ban is not null && (ban.Until is null || ban.Until > DateTime.UtcNow))
+            return Conflict(new { message = "Card Banned" });
 
         var newCard = new Card
         {

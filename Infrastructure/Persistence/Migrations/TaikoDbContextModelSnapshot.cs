@@ -262,6 +262,13 @@ namespace TaikoLocalServer.Migrations
                     b.Property<uint>("Baid")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime?>("LastScanAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("AccessCode");
 
                     b.HasIndex("Baid");

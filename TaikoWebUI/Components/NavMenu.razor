@@ -19,7 +19,7 @@
             [($"/Users/{Baid}/Stats", Localizer["Stats"]), ($"/Users/{Baid}/Songs", Localizer["Song List"]),
              ($"/Users/{Baid}/HighScores", Localizer["High Scores"]), ($"/Users/{Baid}/PlayHistory", Localizer["Play History"]),
              ($"/Users/{Baid}/DaniDojo", Localizer["Dani Dojo"])])
-        @Group("settings", Localizer["Settings"], settingsOpen, () => settingsOpen = !settingsOpen, SettingsLinks())
+        @Link("/Settings", "settings", Localizer["Settings"], prefix: true)
     }
     @* Local mode has no accounts: the admin pages are open to everyone, and Access (sign-in rules) doesn't apply. *@
     @if (AuthService.IsAdmin || !AuthService.LoginRequired)
@@ -60,18 +60,10 @@ else if (!AuthService.LoginRequired)
 
 @code {
     private bool playDataOpen = true;
-    private bool settingsOpen;
     private User? me;
 
     // The signed-in user, or (Local mode) the player picked in the top bar.
     private uint Baid => AuthService.LoginRequired ? AuthService.GetLoggedInBaid() : Players.Baid;
-
-    private List<(string, string)> SettingsLinks()
-    {
-        var links = new List<(string, string)> { ($"/Users/{Baid}/QrCode", Localizer["Show QR Code"]), ($"/Users/{Baid}/AccessCode", Localizer["Access Codes"]) };
-        if (AuthService.LoginRequired && AuthService.IsLoggedIn) links.Add(("/Settings/Security", Localizer["Security"]));
-        return links;
-    }
 
     // prefix: the link stays active on its sub-routes (a page's tabs).
     private bool IsActive(string href, bool prefix = false)
