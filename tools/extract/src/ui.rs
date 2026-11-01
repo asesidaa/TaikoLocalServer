@@ -1,5 +1,6 @@
 //! Game UI art rendered from the game's Lumen files instead of committed images:
-//! title plates and dan badges (`common/name_plate`) and the scoreboard panel (`common/player_board`).
+//! title plates and dan badges (`common/name_plate`), the scoreboard panel (`common/player_board`) and the
+//! icons the WebUI shows (song options, difficulties, crowns, Dani Dojo pass stamps).
 //! Sprites are located by frame labels or instance names, never by id, since ids change between builds.
 
 use std::fs;
@@ -18,6 +19,31 @@ pub const NAMEPLATE_SCENE: &str = "nameplate.scene.json";
 const PLATE_INSTANCE: &str = "title_instance";
 pub const SCOREBOARD_INDEX: &str = "scoreboard.json";
 
+/// Icon sets: (Lumen file under `lumen/000_default`, index name, [(index key, file prefix, a label the sprite has)]).
+/// Each set is the sprite carrying that label, rendered one PNG per label.
+const ICONS: [(&str, &str, &[(&str, &str, &str)]); 4] = [
+    // none, doron, abekobe (mirror), kimagure / detarame (random: whimsical / messy), note_pos, speedx1.1 … speedx4
+    ("common/option", "options.json", &[("options", "option", "doron")]),
+    // easy, normal, hard, oni, ura
+    ("common_songselect/common_song_select_song_board_icon", "difficulty.json", &[("difficulty", "difficulty", "ura")]),
+    // badge_crown_1…3 (clear, gold, donderful) and badge_rank_1…7 (the seven score ranks)
+    ("common_songselect/common_song_select_main_diff_board", "badges.json", &[("crowns", "crown", "badge_crown_1"), ("ranks", "rank", "badge_rank_1")]),
+    // stamp_red_01…03, stamp_gold_01…03: a Dani Dojo pass (normal, full combo, perfect) in red or gold
+    ("enso_dani/dani_select/dani_select", "dani.json", &[("stamps", "dani", "stamp_gold_01")]),
+];
+
+/// The WebUI's icons (see [`ICONS`]), into `<dst_dir>/<prefix>_<label>.png` with one index per source file.
+pub fn icons(x64: &Path, dst_dir: &Path, report: &mut crate::Report) -> Result<()> {
+    for (file, index, sets) in ICONS {
+        convert(x64, file, dst_dir, index, None, report, |lm| {
+            sets.iter()
+                .map(|&(key, prefix, label)| Ok((key, prefix, lm.sprite_with_label(label).with_context(|| format!("no sprite labelled {label} in {file}"))?)))
+                .collect()
+        })?;
+    }
+    Ok(())
+}
+
 /// Title plates (index = `TitlePlateId`) and dan badges, plus a Lumen scene of the game's whole nameplate.
 pub fn nameplates(x64: &Path, dst_dir: &Path, report: &mut crate::Report) -> Result<()> {
     let sets = |lm: &Lumen| {
@@ -26,7 +52,7 @@ pub fn nameplates(x64: &Path, dst_dir: &Path, report: &mut crate::Report) -> Res
             ("dan", "dan", lm.sprite_with_label("5kyuu_red").context("no sprite labelled 5kyuu_red")?),
         ])
     };
-    convert(x64, "name_plate", dst_dir, NAMEPLATE_INDEX, Some((NAMEPLATE_SCENE, nameplate_set as SceneSets)), report, sets)
+    convert(x64, "common/name_plate", dst_dir, NAMEPLATE_INDEX, Some((NAMEPLATE_SCENE, nameplate_set as SceneSets)), report, sets)
 }
 
 type SceneSets = fn(&Lumen, &Map<String, Value>) -> Result<(&'static str, Value)>;
@@ -50,7 +76,7 @@ fn nameplate_set(lm: &Lumen, sets: &Map<String, Value>) -> Result<(&'static str,
 
 /// The per-difficulty achievement panel (crowns and 粋/雅/極 rank slots) and its digit glyphs.
 pub fn scoreboard(x64: &Path, dst_dir: &Path, report: &mut crate::Report) -> Result<()> {
-    convert(x64, "player_board", dst_dir, SCOREBOARD_INDEX, None, report, |lm| {
+    convert(x64, "common/player_board", dst_dir, SCOREBOARD_INDEX, None, report, |lm| {
         // The board places the panel as bg_instance next to its rank counters; each counter places digits as n1_ins….
         let board = lm.sprite_placing("num_kiwami_instance").context("no scoreboard sprite (num_kiwami_instance)")?;
         let counter = lm.child(board, "num_kiwami_instance").context("no rank counter")?;
@@ -61,7 +87,7 @@ pub fn scoreboard(x64: &Path, dst_dir: &Path, report: &mut crate::Report) -> Res
     })
 }
 
-/// Renders each `(index key, file prefix, sprite)` set from `lumen/000_default/common/<file>` into
+/// Renders each `(index key, file prefix, sprite)` set from `lumen/000_default/<file>` into
 /// `<dst_dir>/<prefix>_<label>.png`, one shared canvas per set, and writes an index of the labels.
 /// With `scene`, also writes those sets plus the one `scene`'s function adds as a Lumen scene for live playback.
 fn convert(
@@ -73,7 +99,7 @@ fn convert(
     report: &mut crate::Report,
     sets: impl FnOnce(&Lumen) -> Result<Vec<(&'static str, &'static str, u32)>>,
 ) -> Result<()> {
-    let src = x64.join("lumen").join("000_default").join("common");
+    let src = x64.join("lumen").join("000_default");
     let sources: [PathBuf; 2] = [src.join(format!("{file}.nulm")), src.join(format!("{file}.nutexb"))];
     if let Some(missing) = sources.iter().find(|p| !p.is_file()) {
         report.missing.push(missing.display().to_string());
