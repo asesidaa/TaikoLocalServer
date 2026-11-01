@@ -7,34 +7,82 @@
 <PageTitle>@Localizer["Log In"]</PageTitle>
 
 <div class="mx-auto w-full max-w-md @Css.Card p-6 sm:p-8">
-    <div class="mb-5 flex items-center justify-between">
-        <h1 class="font-display text-xl">@Localizer["Log In"]</h1>
-        @if (!AuthService.OnlyAdmin && AuthService.SignUpMode != SignUpMode.Closed)
-        {
-            <span class="text-sm @Css.Muted">@Localizer["New?"] <a href="/Register" class="@Css.Link">@Localizer["Register"]</a></span>
-        }
-    </div>
-    <form class="space-y-4" novalidate @onsubmit="Submit">
-        <p class="text-sm @Css.Muted">@Localizer["Use the access code on your card and your web UI password."]</p>
-        <AccessCodeField @bind-Value="code" />
-        <PasswordField Label="@Localizer["Password"]" @bind-Value="password" />
-        <ErrorBox Message="@error" />
-        <div class="flex justify-end pt-2">
-            <button class="@Css.PrimaryButton" disabled="@busy">@Localizer["Log In"]</button>
+    @if (!verifying)
+    {
+        <div class="mb-5 flex items-center justify-between">
+            <h1 class="font-display text-xl">@Localizer["Log In"]</h1>
+            @if (!AuthService.OnlyAdmin && AuthService.SignUpMode != SignUpMode.Closed)
+            {
+                <span class="text-sm @Css.Muted">@Localizer["New?"] <a href="/Register" class="@Css.Link">@Localizer["Register"]</a></span>
+            }
         </div>
-    </form>
+        <form class="space-y-4" novalidate @onsubmit="Submit">
+            <p class="text-sm @Css.Muted">@Localizer["Use the access code on your card and your web UI password."]</p>
+            <AccessCodeField @bind-Value="code" />
+            <PasswordField Label="@Localizer["Password"]" @bind-Value="password" />
+            <ErrorBox Message="@error" />
+            <div class="flex justify-end pt-2">
+                <button class="@Css.PrimaryButton" disabled="@busy">@(AuthService.TwoFactor == TwoFactorMode.Off ? Localizer["Log In"] : Localizer["Continue"])</button>
+            </div>
+        </form>
+    }
+    else
+    {
+        @* Step 2: the password was accepted; only now is the card named (by its last 4 digits). *@
+        <div class="mb-5 flex items-center gap-3">
+            <span class="grid size-10 place-items-center rounded-xl bg-primary-500/10 text-primary-600 dark:text-primary-400"><Icon Name="shield" Class="size-5" /></span>
+            <div>
+                <h1 class="font-display text-xl">@Localizer["2-step verification"]</h1>
+                <p class="text-sm @Css.Muted">@string.Format(Localizer["For the card ending •••• {0}"], AuthService.PendingLast4)</p>
+            </div>
+        </div>
+        <form class="space-y-4" novalidate @onsubmit="Verify">
+            @if (!recovery)
+            {
+                <label class="block">
+                    <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">@Localizer["Code from your authenticator app"]</span>
+                    <input @ref="codeBox" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000" value="@otp"
+                           class="@Css.Input mt-1 font-mono tracking-[.3em]" @oninput="OnOtp" />
+                </label>
+            }
+            else
+            {
+                <label class="block">
+                    <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">@Localizer["Recovery code"]</span>
+                    <input @ref="codeBox" maxlength="10" autocomplete="off" placeholder="XXXXX-XXXX" @bind="otp"
+                           class="@Css.Input mt-1 font-mono uppercase tracking-widest" />
+                </label>
+            }
+            <ErrorBox Message="@error" />
+            <div class="flex items-center justify-between gap-2 pt-2">
+                <button type="button" class="text-sm @Css.Link" @onclick="ToggleRecovery">
+                    @(recovery ? Localizer["Use your authenticator app"] : Localizer["Use a recovery code"])
+                </button>
+                <button class="@Css.PrimaryButton" disabled="@busy">@Localizer["Log In"]</button>
+            </div>
+        </form>
+    }
 </div>
 
 @code {
     private string code = "";
     private string password = "";
+    private string otp = "";
     private string? error;
-    private bool busy;
+    private bool busy, verifying, recovery, focusCode;
+    private ElementReference codeBox;
 
     protected override void OnInitialized()
     {
         if (AuthService.IsLoggedIn) Nav.NavigateTo("/", replace: true);
         Page.Set(Localizer["Log In"]);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!focusCode) return;
+        focusCode = false;
+        await codeBox.FocusAsync();
     }
 
     private async Task Submit()
@@ -47,17 +95,69 @@
         busy = true;
         var result = await AuthService.Login(code, password);
         busy = false;
-        error = result switch
+        if (result == 8)
         {
-            1 => (string?)null,
-            0 => Localizer["Login Only Admin Error"],
-            2 => Localizer["Login Wrong Password Error"],
-            3 => Localizer["Unknown Access Code Error"],
-            4 => Localizer["Access Code Not Registered Error"],
-            6 => Localizer["Too many wrong passwords. This account is locked for a while: try again later, or ask an admin."],
-            7 => Localizer["This card is banned on this server. Ask an admin."],
-            _ => Localizer["Unknown Error"],
-        };
+            error = null;
+            verifying = focusCode = true;
+            return;
+        }
+        error = Error(result);
         if (result == 1) Nav.NavigateTo("/");
     }
+
+    // The 6th digit submits.
+    private async Task OnOtp(ChangeEventArgs e)
+    {
+        otp = AccessCodeField.Digits(e.Value?.ToString() ?? string.Empty);
+        if (otp.Length == 6 && !busy) await Verify();
+    }
+
+    private void ToggleRecovery()
+    {
+        recovery = !recovery;
+        otp = "";
+        error = null;
+        focusCode = true;
+    }
+
+    private async Task Verify()
+    {
+        if (otp.Trim().Length == 0) return;
+        busy = true;
+        var result = await AuthService.VerifyTwoFactor(otp);
+        busy = false;
+        if (result == 1)
+        {
+            Nav.NavigateTo("/");
+            return;
+        }
+        otp = "";
+        focusCode = true;
+        if (result is 10 or 6)
+        {
+            // Step 1 has expired (or the account locked): back to the password.
+            verifying = recovery = false;
+            password = "";
+        }
+        error = result switch
+        {
+            9 => recovery
+                ? Localizer["That recovery code didn't work. Each one works only once."]
+                : Localizer["That code didn't work. Codes change every 30 seconds, so try the newest one."],
+            10 => Localizer["That took too long. Enter your password again."],
+            _ => Error(result),
+        };
+    }
+
+    private string? Error(int result) => result switch
+    {
+        1 => null,
+        0 => Localizer["Login Only Admin Error"],
+        2 => Localizer["Login Wrong Password Error"],
+        3 => Localizer["Unknown Access Code Error"],
+        4 => Localizer["Access Code Not Registered Error"],
+        6 => Localizer["Too many wrong passwords. This account is locked for a while: try again later, or ask an admin."],
+        7 => Localizer["This card is banned on this server. Ask an admin."],
+        _ => Localizer["Unknown Error"],
+    };
 }

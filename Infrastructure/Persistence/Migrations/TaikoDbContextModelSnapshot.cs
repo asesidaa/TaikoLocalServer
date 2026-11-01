@@ -43,6 +43,9 @@ namespace TaikoLocalServer.Migrations
                     b.Property<int>("SignUpMode")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("TwoFactor")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.ToTable("AccessRules");
@@ -275,8 +278,18 @@ namespace TaikoLocalServer.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("RecoveryCodes")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Salt")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("TotpLastStep")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("TotpSecret")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Baid");

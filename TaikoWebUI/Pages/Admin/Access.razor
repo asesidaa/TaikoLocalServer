@@ -61,8 +61,8 @@ else
     private string Current => tabs.Any(x => x.Id == Tab?.ToLowerInvariant()) ? Tab!.ToLowerInvariant() : "overview";
 
     private bool Changed => saved is not null && draft is not null &&
-        (saved.OnlyAdmin, saved.SignUpMode, saved.AllowUserDelete, saved.AllowFreeProfileEditing, saved.AccessCodeLimit, saved.LockoutAttempts, saved.LockoutMinutes) !=
-        (draft.OnlyAdmin, draft.SignUpMode, draft.AllowUserDelete, draft.AllowFreeProfileEditing, draft.AccessCodeLimit, draft.LockoutAttempts, draft.LockoutMinutes);
+        (saved.OnlyAdmin, saved.SignUpMode, saved.AllowUserDelete, saved.AllowFreeProfileEditing, saved.AccessCodeLimit, saved.LockoutAttempts, saved.LockoutMinutes, saved.TwoFactor) !=
+        (draft.OnlyAdmin, draft.SignUpMode, draft.AllowUserDelete, draft.AllowFreeProfileEditing, draft.AccessCodeLimit, draft.LockoutAttempts, draft.LockoutMinutes, draft.TwoFactor);
 
     protected override async Task OnInitializedAsync()
     {
@@ -159,7 +159,7 @@ else
     {
         OnlyAdmin = r.OnlyAdmin, SignUpMode = r.SignUpMode, AllowUserDelete = r.AllowUserDelete,
         AllowFreeProfileEditing = r.AllowFreeProfileEditing, AccessCodeLimit = r.AccessCodeLimit,
-        LockoutAttempts = r.LockoutAttempts, LockoutMinutes = r.LockoutMinutes,
+        LockoutAttempts = r.LockoutAttempts, LockoutMinutes = r.LockoutMinutes, TwoFactor = r.TwoFactor,
     };
 
     private async Task Save()
@@ -248,6 +248,18 @@ else
                         <option value="15">@Localizer["for 15 min"]</option>
                         <option value="60">@Localizer["for 1 hour"]</option>
                         <option value="1440">@Localizer["for 1 day"]</option>
+                    </select>
+                </div>
+                <div class="flex flex-wrap items-center gap-3 py-2">
+                    <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"><Icon Name="shield" Class="size-5" /></span>
+                    <span class="min-w-0 flex-1">
+                        <span class="block text-sm font-medium">@Localizer["2-step verification"]</span>
+                        <span class="block text-xs @Css.Muted">@Localizer["An authenticator app code after the password. Admins who must use it get admin access once they turn it on."]</span>
+                    </span>
+                    <select class="@Css.Input !w-auto !py-1.5" aria-label="@Localizer["2-step verification"]" @bind="draft.TwoFactor">
+                        <option value="@TwoFactorMode.Off">@Localizer["Off"]</option>
+                        <option value="@TwoFactorMode.Optional">@Localizer["Optional"]</option>
+                        <option value="@TwoFactorMode.RequiredForAdmins">@Localizer["Required for admins"]</option>
                     </select>
                 </div>
             </div>

@@ -11,4 +11,5 @@ public sealed record ClientAuthConfigResponse(
     SignUpMode SignUpMode,
     bool AllowUserDelete,
     bool AllowFreeProfileEditing,
-    bool SetupPending);
+    bool SetupPending,
+    TwoFactorMode TwoFactor);

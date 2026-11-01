@@ -14,7 +14,7 @@ public class JwtTokenService(IServerAccess access) : IJwtTokenService
     // Sessions are checked on every request (see DependencyInjection), so a week is safe: signing out ends it at once.
     private static readonly TimeSpan Lifetime = TimeSpan.FromDays(7);
 
-    public string IssueToken(uint baid, bool isAdmin, Guid sessionId)
+    public string IssueToken(uint baid, bool isAdmin, Guid sessionId, bool twoFactorSetupRequired = false)
     {
         var tokenHandler = new JwtSecurityTokenHandler { MapInboundClaims = true };
         var tokenDescriptor = new SecurityTokenDescriptor
@@ -22,9 +22,9 @@ public class JwtTokenService(IServerAccess access) : IJwtTokenService
             Subject = new ClaimsIdentity(new[]
             {
                 new Claim(ClaimTypes.Name, baid.ToString()),
-                new Claim(ClaimTypes.Role, isAdmin ? AuthPolicies.Admin : "User"),
+                new Claim(ClaimTypes.Role, isAdmin && !twoFactorSetupRequired ? AuthPolicies.Admin : "User"),
                 new Claim(IJwtTokenService.SessionClaim, sessionId.ToString()),
-            }),
+            }.Concat(twoFactorSetupRequired ? [new Claim(IJwtTokenService.TwoFactorSetupClaim, "1")] : Array.Empty<Claim>())),
             Expires = DateTime.UtcNow.Add(Lifetime),
             Issuer = Issuer,
             Audience = Issuer,

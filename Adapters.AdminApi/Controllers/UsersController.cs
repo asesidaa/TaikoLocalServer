@@ -103,6 +103,8 @@ public class UsersController(ITaikoDbContext context, IServerAccess access) : Ba
 
         var registered = await context.Credentials.Where(c => pageBaids.Contains(c.Baid) && c.Password != "")
             .Select(c => c.Baid).ToListAsync(HttpContext.RequestAborted);
+        var twoFactor = await context.Credentials.Where(c => pageBaids.Contains(c.Baid) && c.TotpSecret != null)
+            .Select(c => c.Baid).ToListAsync(HttpContext.RequestAborted);
         var plays = await context.SongPlayData.Where(p => pageBaids.Contains(p.Baid)).GroupBy(p => p.Baid)
             .Select(g => new { g.Key, Count = g.Count() }).ToDictionaryAsync(g => g.Key, g => g.Count, HttpContext.RequestAborted);
 
@@ -114,6 +116,7 @@ public class UsersController(ITaikoDbContext context, IServerAccess access) : Ba
                 AccessCodes = cardEntries.Where(card => card.Baid == user.Baid).Select(card => card.AccessCode).ToList(),
                 IsAdmin = user.IsAdmin,
                 IsRegistered = registered.Contains(user.Baid),
+                TwoFactor = twoFactor.Contains(user.Baid),
                 Plays = plays.GetValueOrDefault(user.Baid),
                 UserSetting = UserSettingsController.BuildUserSetting(user, profiles.GetValueOrDefault(user.Baid))
             });

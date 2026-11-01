@@ -15,7 +15,7 @@ public class AccessRulesController(IServerAccess access) : BaseAdminController<A
         {
             OnlyAdmin = r.OnlyAdmin, SignUpMode = r.SignUpMode,
             AllowUserDelete = r.AllowUserDelete, AllowFreeProfileEditing = r.AllowFreeProfileEditing, AccessCodeLimit = r.AccessCodeLimit,
-            LockoutAttempts = r.LockoutAttempts, LockoutMinutes = r.LockoutMinutes,
+            LockoutAttempts = r.LockoutAttempts, LockoutMinutes = r.LockoutMinutes, TwoFactor = r.TwoFactor,
         });
     }
 
@@ -31,6 +31,7 @@ public class AccessRulesController(IServerAccess access) : BaseAdminController<A
             AllowUserDelete = settings.AllowUserDelete, AllowFreeProfileEditing = settings.AllowFreeProfileEditing,
             AccessCodeLimit = settings.AccessCodeLimit,
             LockoutAttempts = settings.LockoutAttempts, LockoutMinutes = settings.LockoutMinutes,
+            TwoFactor = Enum.IsDefined(settings.TwoFactor) ? settings.TwoFactor : TwoFactorMode.Off,
         }, HttpContext.RequestAborted);
         return NoContent();
     }

@@ -28,4 +28,6 @@ public class AccessRules
     public int LockoutAttempts { get; set; } = 10;
 
     public int LockoutMinutes { get; set; } = 15;
+
+    public TwoFactorMode TwoFactor { get; set; }
 }

@@ -56,6 +56,17 @@
         <button class="@Outline shrink-0 disabled:opacity-40" disabled="@(!(sessions?.Count > 0) || self)" title="@(self ? Localizer["Use Log out for your own devices."] : null)"
                 @onclick="SignOutEverywhere"><Icon Name="logOut" />@Localizer["Sign out everywhere"]</button>
     </div>
+    <div class="mt-3 flex items-center justify-between gap-4 text-sm">
+        <div>
+            <p class="font-medium">@Localizer["2-step verification"]</p>
+            <p class="text-xs @Css.Muted">@(User.TwoFactor ? Localizer["On. Reset it if they lost their phone and their recovery codes."] : Localizer["Off"])</p>
+        </div>
+        @if (User.TwoFactor)
+        {
+            <button class="@Outline shrink-0 disabled:opacity-40" disabled="@self" title="@(self ? Localizer["Turn yours off in Settings › Security."] : null)"
+                    @onclick="ResetTwoFactor"><Icon Name="rotate" />@Localizer["Reset"]</button>
+        }
+    </div>
     </div>)
 }
 
@@ -336,6 +347,7 @@
         SignInOutcome.NotRegistered => Localizer["Not registered yet"],
         SignInOutcome.AccountLocked => Localizer["Account locked"],
         SignInOutcome.CardBanned => Localizer["Card banned"],
+        SignInOutcome.WrongTwoFactorCode => Localizer["Wrong 2-step code"],
         _ => Localizer["Unknown access code"],
     };
 
@@ -350,6 +362,12 @@
     {
         if (await Run(() => Client.PostAsync($"api/Sessions/RevokeOthers?baid={User.Baid}", null), Localizer["Signed out everywhere"]))
             sessions = [];
+    }
+
+    private async Task ResetTwoFactor()
+    {
+        if (await Run(() => Client.DeleteAsync($"api/TwoFactor/{User.Baid}"), Localizer["2-step verification reset"]))
+            User.TwoFactor = false;
     }
 
     private async Task BanCard()

@@ -103,6 +103,7 @@ public sealed class ServerAccess(
         row.AccessCodeLimit = Math.Max(1, updated.AccessCodeLimit);
         row.LockoutAttempts = Math.Max(1, updated.LockoutAttempts);
         row.LockoutMinutes = Math.Max(1, updated.LockoutMinutes);
+        row.TwoFactor = updated.TwoFactor;
         await db.SaveChangesAsync(cancellationToken);
         rules = Copy(row);
     }
@@ -152,6 +153,6 @@ public sealed class ServerAccess(
     {
         OnlyAdmin = r.OnlyAdmin, SignUpMode = r.SignUpMode, AllowUserDelete = r.AllowUserDelete,
         AllowFreeProfileEditing = r.AllowFreeProfileEditing, AccessCodeLimit = r.AccessCodeLimit,
-        LockoutAttempts = r.LockoutAttempts, LockoutMinutes = r.LockoutMinutes,
+        LockoutAttempts = r.LockoutAttempts, LockoutMinutes = r.LockoutMinutes, TwoFactor = r.TwoFactor,
     };
 }

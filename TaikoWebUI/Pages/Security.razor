@@ -7,7 +7,6 @@
 
 <PageTitle>@Localizer["Security"]</PageTitle>
 
-@* 2-step verification joins this page when the server supports it (refactor plan §1a-2). *@
 <div class="mx-auto max-w-2xl">
     <h1 class="mb-6 text-2xl font-semibold tracking-tight">@Localizer["Security"]</h1>
     <section class="@Css.Card p-5 sm:p-6">
@@ -35,6 +34,10 @@
             </form>
         }
     </section>
+    @if (AuthService.TwoFactor != TwoFactorMode.Off)
+    {
+        <TwoFactorCard />
+    }
 </div>
 
 @code {

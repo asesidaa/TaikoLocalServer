@@ -43,7 +43,7 @@ public class SignInsController(ITaikoDbContext context, IServerAccess access) : 
         var locked = recent.GroupBy(a => a.Baid!.Value).Select(g =>
         {
             var reset = g.LastOrDefault(a => a.Result is SignInOutcome.SignedIn or SignInOutcome.Unlocked)?.Time ?? DateTime.MinValue;
-            var failures = g.Where(a => a.Result == SignInOutcome.WrongPassword && a.Time > reset).ToList();
+            var failures = g.Where(a => a.Result is SignInOutcome.WrongPassword or SignInOutcome.WrongTwoFactorCode && a.Time > reset).ToList();
             return failures.Count >= rules.LockoutAttempts ? (Baid: g.Key, Until: failures[rules.LockoutAttempts - 1].Time.AddMinutes(rules.LockoutMinutes)) : default;
         }).Where(x => x.Baid != 0).ToList();
         var names = await Names(locked.Select(l => (uint?)l.Baid));

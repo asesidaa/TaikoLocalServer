@@ -26,7 +26,18 @@ public class ChecklistController(IConfiguration config, IHostEnvironment host, I
                     "Anyone who knows a card's access code (it's printed on the card) can create its account. Pick Last play time or Invite code only below.")
                 : new(ChecklistLevel.Ok, "Sign-up needs proof", $"Sign-up mode: {rules.SignUpMode}."));
             items.Add(new(ChecklistLevel.Ok, "Failed sign-ins are limited",
-                $"An account locks for {rules.LockoutMinutes} min after {rules.LockoutAttempts} wrong passwords, and each IP gets 10 tries a minute."));
+                $"An account locks for {rules.LockoutMinutes} min after {rules.LockoutAttempts} wrong passwords or 2-step codes, and each IP gets 10 tries a minute."));
+
+            var without = await context.UserData.Where(u => u.IsAdmin)
+                .CountAsync(u => !context.Credentials.Any(c => c.Baid == u.Baid && c.TotpSecret != null), HttpContext.RequestAborted);
+            items.Add(rules.TwoFactor == TwoFactorMode.RequiredForAdmins
+                ? new(ChecklistLevel.Ok, "2-step is required for admins", without == 0
+                    ? "Every admin has it on."
+                    : $"{without} admin(s) get admin access once they turn it on in Settings › Security.")
+                : without > 0
+                    ? new(ChecklistLevel.Warning, $"{without} admin(s) without 2-step verification",
+                        "A leaked password gives full control. Set 2-step to Required for admins below (they set it up at their next sign-in).")
+                    : new(ChecklistLevel.Ok, "Every admin uses 2-step verification", "Required for admins makes sure it stays that way."));
         }
 
         var now = DateTime.UtcNow;

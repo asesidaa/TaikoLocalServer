@@ -47,6 +47,16 @@ public sealed class AuthService : IDisposable
     /// </summary>
     public bool IsAdmin { get; private set; }
 
+    public TwoFactorMode TwoFactor => authConfig.TwoFactor;
+
+    /// <summary>An admin whose server requires 2-step: they're a player until they turn it on in Settings › Security.</summary>
+    public bool TwoFactorSetupRequired { get; private set; }
+
+    /// <summary>After <see cref="Login"/> returned 8: the card's last 4 digits, for the verify step.</summary>
+    public string PendingLast4 { get; private set; } = "";
+
+    private string pendingToken = "";
+
     private uint loggedInBaid;
 
     public AuthService(
@@ -93,6 +103,7 @@ public sealed class AuthService : IDisposable
         var isAuthenticated = user.Identity?.IsAuthenticated == true;
         IsLoggedIn = isAuthenticated;
         IsAdmin = isAuthenticated && user.IsAdmin();
+        TwoFactorSetupRequired = isAuthenticated && user.FindFirst("tfa_setup") is not null;
         loggedInBaid = isAuthenticated ? user.GetBaid() ?? 0u : 0u;
     }
 
@@ -118,13 +129,44 @@ public sealed class AuthService : IDisposable
             }, fallback: 5);
         }
 
-        var responseContent = await responseMessage.Content.ReadAsStringAsync();
-        var responseJson = JsonSerializer.Deserialize<Dictionary<string, string>>(responseContent);
-        if (responseJson is null) return 5;
+        using var json = JsonDocument.Parse(await responseMessage.Content.ReadAsStringAsync());
+        var root = json.RootElement;
+        if (root.TryGetProperty("twoFactor", out var tf) && tf.ValueKind == JsonValueKind.True)
+        {
+            // Password accepted; a code from the authenticator app comes next (VerifyTwoFactor).
+            pendingToken = root.GetProperty("pendingToken").GetString() ?? "";
+            PendingLast4 = root.GetProperty("last4").GetString() ?? "";
+            return 8;
+        }
+        if (!root.TryGetProperty("authToken", out var token) || token.GetString() is not { } authToken) return 5;
 
-        await authStateProvider.MarkUserAsAuthenticatedAsync(responseJson["authToken"]);
+        await authStateProvider.MarkUserAsAuthenticatedAsync(authToken);
         return 1;
     }
+
+    /// <summary>Login step 2. 1 signed in, 9 wrong code, 10 step 1 expired (start over), 6 locked, 5 other.</summary>
+    public async Task<int> VerifyTwoFactor(string code)
+    {
+        var response = await client.PostAsJsonAsync("api/Auth/Verify2fa", new VerifyTwoFactorRequest { PendingToken = pendingToken, Code = code });
+        if (!response.IsSuccessStatusCode)
+        {
+            return MapErrorMessage(await response.Content.ReadAsStringAsync(), msg => msg switch
+            {
+                "Wrong Code" => 9,
+                "Sign In Expired" => 10,
+                "Account Locked" => 6,
+                _ => 5
+            }, fallback: 5);
+        }
+        using var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        if (json.RootElement.GetProperty("authToken").GetString() is not { } authToken) return 5;
+        pendingToken = "";
+        await authStateProvider.MarkUserAsAuthenticatedAsync(authToken);
+        return 1;
+    }
+
+    /// <summary>A new token from the server (turning on 2-step unlocked admin access).</summary>
+    public Task UseToken(string authToken) => authStateProvider.MarkUserAsAuthenticatedAsync(authToken);
 
     public async Task<int> Register(string inputCardNum, DateTime inputDateTime, string inputPassword,
         string inputConfirmPassword, string inviteCode, string setupCode = "")

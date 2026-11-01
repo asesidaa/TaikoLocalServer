@@ -1,0 +1,199 @@
+@* Settings › Security: 2-step verification. Off → key + first code → recovery codes (saved) → On. *@
+@inject HttpClient Client
+@inject AuthService AuthService
+@inject ToastService Toast
+@inject IJSRuntime Js
+
+<section class="@Css.Card mt-4 p-5 sm:p-6">
+    <div class="flex items-center justify-between gap-4">
+        <div>
+            <p class="text-sm font-medium">@Localizer["2-step verification"]</p>
+            <p class="text-xs @Css.Muted">@Localizer["After your password, a code from an authenticator app on your phone."]</p>
+        </div>
+        @if (status is { Enabled: true } && codes is null)
+        {
+            <span class="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-700 dark:text-emerald-400">@Localizer["On"]</span>
+        }
+        else if (status is { Enabled: false } && setup is null && codes is null)
+        {
+            <button class="@Css.GhostButton" @onclick="StartSetup">@Localizer["Set up"]</button>
+        }
+    </div>
+
+    @if (AuthService.TwoFactorSetupRequired && status is { Enabled: false })
+    {
+        <p class="mt-3 rounded-xl bg-amber-500/10 p-3 text-sm text-amber-800 dark:text-amber-200">@Localizer["This server requires 2-step verification for admins. Your admin pages open once it's on."]</p>
+    }
+
+    @if (setup is not null)
+    {
+        <div class="rise mt-5 space-y-4 text-sm">
+            <p>@Localizer["1. In your authenticator app, add an account and type in this key:"]</p>
+            <div class="flex flex-wrap items-center gap-2">
+                <code class="rounded-lg bg-zinc-100 px-3 py-2 font-mono tracking-wider dark:bg-zinc-800">@Grouped(setup.Secret)</code>
+                <button class="@Css.GhostButton !px-3 !py-1.5" @onclick="() => Copy(setup.Secret)"><Icon Name="copy" />@Localizer["Copy"]</button>
+                <a href="@setup.Uri" class="text-sm @Css.Link">@Localizer["Open in an app on this device"]</a>
+            </div>
+            <label class="block">
+                <span>@Localizer["2. Enter the 6-digit code it shows:"]</span>
+                <input inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000" value="@entry"
+                       class="@Css.Input mt-1 !w-44 font-mono tracking-[.3em]" @oninput="OnSetupCode" />
+            </label>
+            <ErrorBox Message="@error" />
+            <div class="flex justify-end">
+                <button class="@Css.GhostButton" @onclick="Reset">@Localizer["Cancel"]</button>
+            </div>
+        </div>
+    }
+    else if (codes is not null)
+    {
+        <div class="rise mt-5 space-y-4 text-sm">
+            <p>@Localizer["Recovery codes sign you in if you lose your phone. Each works once. Keep them somewhere safe: they're shown only now."]</p>
+            <ul class="grid grid-cols-2 gap-x-6 gap-y-1 rounded-xl bg-zinc-100 p-4 font-mono dark:bg-zinc-800">
+                @foreach (var c in codes)
+                {
+                    <li>@c</li>
+                }
+            </ul>
+            <div class="flex flex-wrap gap-2">
+                <button class="@Css.GhostButton !px-3 !py-1.5" @onclick='() => Copy(string.Join("\n", codes))'><Icon Name="copy" />@Localizer["Copy"]</button>
+                <button class="@Css.GhostButton !px-3 !py-1.5" @onclick="Download"><Icon Name="archive" />@Localizer["Download .txt"]</button>
+            </div>
+            <label class="flex items-center gap-2"><input type="checkbox" class="size-4 accent-primary-500" @bind="savedCodes" />@Localizer["I've saved these"]</label>
+            <div class="flex justify-end">
+                <button class="@Css.PrimaryButton" disabled="@(!savedCodes)" @onclick="Done">@Localizer["Done"]</button>
+            </div>
+        </div>
+    }
+    else if (status is { Enabled: true })
+    {
+        <p class="mt-2 text-xs @Css.Muted">@string.Format(Localizer["{0} recovery codes left."], status.RecoveryCodesLeft)</p>
+        @if (action is null)
+        {
+            <div class="mt-4 flex flex-wrap justify-end gap-2">
+                <button class="@Css.GhostButton" @onclick='() => Ask("codes")'>@Localizer["New recovery codes"]</button>
+                @if (!(AuthService.IsAdmin && AuthService.TwoFactor == TwoFactorMode.RequiredForAdmins))
+                {
+                    <button class="@Css.GhostButton text-red-600 dark:text-red-400" @onclick='() => Ask("off")'>@Localizer["Turn off"]</button>
+                }
+            </div>
+        }
+        else
+        {
+            <form class="rise mt-4 space-y-3 text-sm" novalidate @onsubmit="Confirm">
+                <label class="block">
+                    <span>@(action == "off" ? Localizer["To turn it off, enter a code from your app (or a recovery code):"] : Localizer["To make new recovery codes, enter a code from your app:"])</span>
+                    <input maxlength="10" autocomplete="one-time-code" class="@Css.Input mt-1 !w-44 font-mono tracking-widest" @bind="entry" />
+                </label>
+                <ErrorBox Message="@error" />
+                <div class="flex justify-end gap-2">
+                    <button type="button" class="@Css.GhostButton" @onclick="Reset">@Localizer["Cancel"]</button>
+                    <button class="@(action == "off" ? "inline-flex items-center gap-1.5 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-700" : Css.PrimaryButton)" disabled="@busy">
+                        @(action == "off" ? Localizer["Turn off"] : Localizer["New recovery codes"])
+                    </button>
+                </div>
+            </form>
+        }
+    }
+</section>
+
+@code {
+    private TwoFactorStatus? status;
+    private TwoFactorSetup? setup;
+    private List<string>? codes;
+    private string entry = "";
+    private string? error, action;
+    private bool busy, savedCodes;
+
+    protected override async Task OnInitializedAsync() => await Load();
+
+    private async Task Load() => status = await Client.GetFromJsonAsync<TwoFactorStatus>("api/TwoFactor");
+
+    private async Task StartSetup()
+    {
+        var res = await Client.PostAsync("api/TwoFactor/Setup", null);
+        if (!res.IsSuccessStatusCode) { Toast.Show(Localizer["Save Failed"], true); return; }
+        setup = await res.Content.ReadFromJsonAsync<TwoFactorSetup>();
+        entry = "";
+        error = null;
+    }
+
+    // The 6th digit confirms.
+    private async Task OnSetupCode(ChangeEventArgs e)
+    {
+        entry = AccessCodeField.Digits(e.Value?.ToString() ?? string.Empty);
+        if (entry.Length < 6 || busy || setup is null) return;
+        busy = true;
+        var res = await Client.PostAsJsonAsync("api/TwoFactor/Enable", new TwoFactorCodeRequest { Secret = setup.Secret, Code = entry });
+        busy = false;
+        if (!res.IsSuccessStatusCode)
+        {
+            entry = "";
+            error = Localizer["That code didn't work. Check the key was typed in exactly, then try the newest code."];
+            return;
+        }
+        var r = await res.Content.ReadFromJsonAsync<TwoFactorCodesResponse>();
+        setup = null;
+        codes = r?.RecoveryCodes ?? [];
+        savedCodes = false;
+        error = null;
+        // An admin who had to turn it on: this sign-in now has admin access.
+        if (r?.AuthToken is { } token) await AuthService.UseToken(token);
+    }
+
+    private void Ask(string what)
+    {
+        action = what;
+        entry = "";
+        error = null;
+    }
+
+    private async Task Confirm()
+    {
+        busy = true;
+        var res = await Client.PostAsJsonAsync(action == "off" ? "api/TwoFactor/Disable" : "api/TwoFactor/RecoveryCodes", new TwoFactorCodeRequest { Code = entry });
+        busy = false;
+        if (!res.IsSuccessStatusCode)
+        {
+            entry = "";
+            error = Localizer["That code didn't work. Codes change every 30 seconds, so try the newest one."];
+            return;
+        }
+        if (action == "off")
+        {
+            Toast.Show(Localizer["2-step verification is off"]);
+        }
+        else
+        {
+            codes = (await res.Content.ReadFromJsonAsync<TwoFactorCodesResponse>())?.RecoveryCodes ?? [];
+            savedCodes = false;
+        }
+        action = null;
+        await Load();
+    }
+
+    private async Task Done()
+    {
+        codes = null;
+        await Load();
+        Toast.Show(Localizer["2-step verification is on"]);
+    }
+
+    private void Reset()
+    {
+        setup = null;
+        action = null;
+        entry = "";
+        error = null;
+    }
+
+    private async Task Copy(string text)
+    {
+        if (await Js.InvokeAsync<bool>("ui.copy", text)) Toast.Show(Localizer["Copied"]);
+    }
+
+    private async Task Download() =>
+        await Js.InvokeVoidAsync("ui.saveText", "taiko-recovery-codes.txt", "TaikoLocalServer recovery codes (each works once)\n\n" + string.Join("\n", codes!));
+
+    private static string Grouped(string secret) => string.Join(" ", secret.Chunk(4).Select(c => new string(c)));
+}

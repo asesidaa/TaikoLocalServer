@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Caching.Memory;
 using OtpNet;
 using TaikoLocalServer.Application.Handlers;
 
@@ -12,8 +13,13 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 public class AuthController(
     ITaikoDbContext context,
     IJwtTokenService jwtTokens,
-    IServerAccess access) : BaseAdminController<AuthController>
+    IServerAccess access,
+    IMemoryCache pending) : BaseAdminController<AuthController>
 {
+    // Login step 1 to step 2: who passed the password, kept briefly, with a few code tries.
+    private sealed record PendingSignIn(uint Baid, string AccessCode, bool IsAdmin) { public int Tries; }
+    private static readonly TimeSpan PendingLifetime = TimeSpan.FromMinutes(5);
+    private const int PendingTries = 5;
 
     private const int OtpStepSeconds = 3600;
     // 24 prior 1-hour windows = 24h backwards-acceptance for invite codes.
@@ -49,7 +55,7 @@ public class AuthController(
         access.LogSetupCode();
         var rules = access.Rules;
         return Ok(new ClientAuthConfigResponse(access.Mode, access.LoginRequired, rules.OnlyAdmin, rules.AccessCodeLimit,
-            rules.SignUpMode, rules.AllowUserDelete, rules.AllowFreeProfileEditing, access.SetupPending));
+            rules.SignUpMode, rules.AllowUserDelete, rules.AllowFreeProfileEditing, access.SetupPending, rules.TwoFactor));
     }
 
     [HttpPost("Login")]
@@ -91,14 +97,56 @@ public class AuthController(
         if (user == null)
             return await Attempt(card.Baid, card.AccessCode, SignInOutcome.UnknownAccessCode, invalid);
 
+        var mode = access.Rules.TwoFactor;
+        if (mode != TwoFactorMode.Off && credential.TotpSecret is not null)
+        {
+            // Step 2 next: nothing is signed in until the code checks out. The last 4 digits name the card on that step.
+            var pendingToken = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+            pending.Set(PendingKey(pendingToken), new PendingSignIn(card.Baid, card.AccessCode, user.IsAdmin), PendingLifetime);
+            return Ok(new { twoFactor = true, pendingToken, last4 = card.AccessCode[^4..] });
+        }
+
+        var setupRequired = mode == TwoFactorMode.RequiredForAdmins && user.IsAdmin && credential.TotpSecret is null;
+        return await SignIn(card.Baid, card.AccessCode, user.IsAdmin, setupRequired);
+    }
+
+    /// <summary>Login step 2: the step-1 token and a code from the authenticator app (or a recovery code).</summary>
+    [HttpPost("Verify2fa")]
+    [AllowAnonymous]
+    [EnableRateLimiting(DependencyInjection.AuthRateLimitPolicy)]
+    public async Task<IActionResult> VerifyTwoFactor(VerifyTwoFactorRequest request)
+    {
+        if (!pending.TryGetValue(PendingKey(request.PendingToken), out PendingSignIn? p) || p is null)
+            return Unauthorized(new { message = "Sign In Expired" });
+        if (await IsLockedAsync(p.Baid, DateTime.UtcNow))
+        {
+            pending.Remove(PendingKey(request.PendingToken));
+            return await Attempt(p.Baid, p.AccessCode, SignInOutcome.AccountLocked, Unauthorized(new { message = "Account Locked" }));
+        }
+
+        var credential = await context.Credentials.FindAsync(new object?[] { p.Baid }, HttpContext.RequestAborted);
+        if (credential is null || !TwoFactorCodes.Verify(credential, request.Code))
+        {
+            if (Interlocked.Increment(ref p.Tries) >= PendingTries) pending.Remove(PendingKey(request.PendingToken));
+            return await Attempt(p.Baid, p.AccessCode, SignInOutcome.WrongTwoFactorCode, Unauthorized(new { message = "Wrong Code" }));
+        }
+        pending.Remove(PendingKey(request.PendingToken));
+        return await SignIn(p.Baid, p.AccessCode, p.IsAdmin, false);
+    }
+
+    private static string PendingKey(string token) => "2fa-pending:" + token;
+
+    private async Task<IActionResult> SignIn(uint baid, string accessCode, bool isAdmin, bool twoFactorSetupRequired)
+    {
+        var now = DateTime.UtcNow;
         var session = new WebSession
         {
-            Id = Guid.NewGuid(), Baid = card.Baid, CreatedAt = now, LastSeenAt = now,
+            Id = Guid.NewGuid(), Baid = baid, CreatedAt = now, LastSeenAt = now,
             Ip = Ip, UserAgent = UserAgent,
         };
         context.WebSessions.Add(session);
-        var authToken = jwtTokens.IssueToken(card.Baid, user.IsAdmin, session.Id);
-        return await Attempt(card.Baid, card.AccessCode, SignInOutcome.SignedIn, Ok(new { authToken }));
+        var authToken = jwtTokens.IssueToken(baid, isAdmin, session.Id, twoFactorSetupRequired);
+        return await Attempt(baid, accessCode, SignInOutcome.SignedIn, Ok(new { authToken }));
     }
 
     private string Ip => HttpContext.Connection.RemoteIpAddress?.ToString() ?? "";
@@ -129,7 +177,7 @@ public class AuthController(
             .MaxAsync(a => (DateTime?)a.Time, HttpContext.RequestAborted);
         if (reset > since) since = reset.Value;
         var failures = await context.SignInAttempts
-            .CountAsync(a => a.Baid == baid && a.Result == SignInOutcome.WrongPassword && a.Time > since, HttpContext.RequestAborted);
+            .CountAsync(a => a.Baid == baid && (a.Result == SignInOutcome.WrongPassword || a.Result == SignInOutcome.WrongTwoFactorCode) && a.Time > since, HttpContext.RequestAborted);
         return failures >= rules.LockoutAttempts;
     }
 

@@ -10,4 +10,5 @@ public enum SignInOutcome
     AccountLocked = 4,
     CardBanned = 5,
     Unlocked = 6,
+    WrongTwoFactorCode = 7,
 }
