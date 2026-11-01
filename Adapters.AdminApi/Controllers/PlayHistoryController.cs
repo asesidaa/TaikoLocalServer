@@ -105,9 +105,8 @@ public class PlayHistoryController(ITaikoDbContext context, IGameDataCatalog cat
         return sessions.AsEnumerable().Reverse().Select(s => new PlaySession
         {
             Start = s[0].PlayTime, End = s[^1].PlayTime, Songs = s.Count,
-            // Each credit numbers its songs from 0.
-            Credits = Math.Max(1, s.Count(p => p.SongNumber == 0)),
-            Plays = s.Where(p => Matches(p, diff, best)).Reverse().Select(p =>
+            Credits = NumberCredits(s),
+            Plays = s.Where(p => Matches(p, diff, best)).OrderByDescending(p => p.Play.Credit).ThenBy(p => p.SongNumber).Select(p =>
             {
                 var song = songs.GetValueOrDefault(p.SongId);
                 p.Play.Name = song?.SongName ?? $"#{p.SongId}";
@@ -120,6 +119,21 @@ public class PlayHistoryController(ITaikoDbContext context, IGameDataCatalog cat
                 return p.Play;
             }).ToList(),
         }).Where(s => s.Plays.Count > 0).ToList();
+    }
+
+    // Each credit numbers its songs from 0, so a credit starts at song 0, or where the numbering goes back (its
+    // first song wasn't saved). Sets each play's Credit and returns how many there were.
+    private static int NumberCredits(List<Row> session)
+    {
+        var credit = 0;
+        Row? previous = null;
+        foreach (var p in session)
+        {
+            if (previous is null || p.SongNumber == 0 || p.SongNumber <= previous.SongNumber) credit++;
+            p.Play.Credit = credit;
+            previous = p;
+        }
+        return credit;
     }
 
     private sealed class Row

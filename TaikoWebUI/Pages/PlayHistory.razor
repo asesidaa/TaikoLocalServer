@@ -87,7 +87,6 @@
             }
             else
             {
-                <h2 class="text-lg font-semibold">@DayName(selected.Value)</h2>
                 @if (dayData is null)
                 {
                     <p class="text-sm @Css.Muted">@Localizer["Loading..."]</p>
@@ -177,7 +176,6 @@
         await LoadDay();
     }
 
-    private static string DayName(DateTime d) => d.ToString(d.Year == DateTime.Today.Year ? "ddd d MMM" : "ddd d MMM yyyy");
 
     private RenderFragment Chip(bool on, Func<Task> pick, string? label, Difficulty? d) => __builder =>
     {

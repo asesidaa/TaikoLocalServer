@@ -24,7 +24,7 @@ public class PlaySession
     public int Credits { get; set; }
     /// <summary>Every song played in the session, whatever the filters.</summary>
     public int Songs { get; set; }
-    /// <summary>The plays that match the filters, newest first.</summary>
+    /// <summary>The plays that match the filters: the newest credit first, each credit's songs in the order played.</summary>
     public List<HistoryPlay> Plays { get; set; } = [];
 }
 
@@ -41,6 +41,8 @@ public class HistoryPlay
     public ScoreRank Rank { get; set; }
     /// <summary>Beat every earlier play of the chart (a first play isn't counted).</summary>
     public bool NewBest { get; set; }
+    /// <summary>Which credit of its session it was played in, from 1.</summary>
+    public int Credit { get; set; }
 }
 
 /// <summary>The Dashboard's server strip (admins).</summary>

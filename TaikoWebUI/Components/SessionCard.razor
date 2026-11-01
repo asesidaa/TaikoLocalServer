@@ -1,5 +1,7 @@
-@* One visit's plays (Play History, Dashboard): time span, credits, songs, new bests, then the first few plays. *@
+@* One visit's plays (Play History, Dashboard): time span, credits, songs, new bests, then the plays under a small
+   header per credit (its number and time: a credit's songs share it). The preview ends on a whole credit. *@
 @inject NavigationManager Nav
+@inject IJSRuntime Js
 
 <section class="@Css.Card p-4 sm:p-5">
     <h2 class="font-semibold">@Title <span class="font-normal @Css.Muted">· @Session.Start.ToString("HH:mm")–@Session.End.ToString("HH:mm")</span></h2>
@@ -11,32 +13,38 @@
             <span> · </span><span class="font-medium text-primary-600 dark:text-primary-400">@string.Format(Localizer[Bests == 1 ? "{0} new best" : "{0} new bests"], Bests)</span>
         }
     </p>
-    <ul class="mt-2 divide-y divide-zinc-100 dark:divide-zinc-800">
-        @foreach (var p in open ? Session.Plays : Session.Plays.Take(Preview))
-        {
-            <li>
-                <button class="flex w-full items-center gap-3 px-1 py-2 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/40"
-                        @onclick='() => Nav.NavigateTo($"/Users/{Baid}/Songs/{p.SongId}?diff={(int)p.Difficulty}")'>
-                    <img data-asset="@GameData.DifficultyIcon(p.Difficulty)" alt="@GameData.DifficultyName(p.Difficulty)" class="size-7 object-contain" />
-                    <span class="min-w-0 flex-1">
-                        <span class="block truncate text-sm">@p.Name</span>
-                        <span class="block truncate text-xs @Css.Muted">@p.PlayTime.ToString("HH:mm") · ★@p.Stars@(p.NameEn.Length > 0 ? " · " + p.NameEn : "")</span>
-                    </span>
-                    @if (p.NewBest)
-                    {
-                        <span class="whitespace-nowrap rounded-full bg-primary-500/10 px-2 py-0.5 text-[11px] font-medium text-primary-700 dark:text-primary-300">@Localizer["New best"]</span>
-                    }
-                    <span class="font-mono text-sm tabular-nums">@p.Score.ToString("N0")</span>
-                    <img data-asset="@GameData.CrownIcon(p.Crown)" alt="@Localizer[GameData.CrownName(p.Crown)]" title="@Localizer[GameData.CrownName(p.Crown)]" class="size-5" />
-                    @if (GameData.RankIcon(p.Rank) is { } rank)
-                    {
-                        <img data-asset="@rank" alt="@string.Format(Localizer["Rank {0}"], p.Rank)" class="hidden h-5 w-auto sm:block" />
-                    }
-                </button>
-            </li>
-        }
-    </ul>
-    @if (Session.Plays.Count > Preview)
+    @foreach (var credit in Shown)
+    {
+        <h3 class="mt-3 px-1 text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+            @string.Format(Localizer["Credit {0}"], credit.Key) · @credit.First().PlayTime.ToString("HH:mm")
+        </h3>
+        <ul class="divide-y divide-zinc-100 dark:divide-zinc-800">
+            @foreach (var p in credit)
+            {
+                <li>
+                    <button class="flex w-full items-center gap-3 px-1 py-2 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/40"
+                            @onclick='() => Nav.NavigateTo($"/Users/{Baid}/Songs/{p.SongId}?diff={(int)p.Difficulty}")'>
+                        <img data-asset="@GameData.DifficultyIcon(p.Difficulty)" alt="@GameData.DifficultyName(p.Difficulty)" class="size-7 object-contain" />
+                        <span class="min-w-0 flex-1">
+                            <span class="block truncate text-sm">@p.Name</span>
+                            <span class="block truncate text-xs @Css.Muted">★@p.Stars@(p.NameEn.Length > 0 ? " · " + p.NameEn : "")</span>
+                        </span>
+                        @if (p.NewBest)
+                        {
+                            <span class="whitespace-nowrap rounded-full bg-primary-500/10 px-2 py-0.5 text-[11px] font-medium text-primary-700 dark:text-primary-300">@Localizer["New best"]</span>
+                        }
+                        <span class="font-mono text-sm tabular-nums">@p.Score.ToString("N0")</span>
+                        <img data-asset="@GameData.CrownIcon(p.Crown)" alt="@Localizer[GameData.CrownName(p.Crown)]" title="@Localizer[GameData.CrownName(p.Crown)]" class="size-5" />
+                        @if (GameData.RankIcon(p.Rank) is { } rank)
+                        {
+                            <img data-asset="@rank" alt="@string.Format(Localizer["Rank {0}"], p.Rank)" class="hidden h-5 w-auto sm:block" />
+                        }
+                    </button>
+                </li>
+            }
+        </ul>
+    }
+    @if (Shown.Sum(c => c.Count()) < Session.Plays.Count || open)
     {
         <button class="mt-1 text-sm font-medium text-primary-600 hover:underline dark:text-primary-400" @onclick="() => open = !open">
             @(open ? Localizer["Show less"] : string.Format(Localizer["Show all {0} songs"], Session.Plays.Count))
@@ -47,11 +55,26 @@
 @code {
     [Parameter, EditorRequired] public PlaySession Session { get; set; } = null!;
     [Parameter, EditorRequired] public uint Baid { get; set; }
-    /// <summary>Plays shown before "Show all".</summary>
+    /// <summary>About how many plays show before "Show all"; the last credit started is shown whole.</summary>
     [Parameter] public int Preview { get; set; } = 5;
 
     private bool open;
     private int Bests => Session.Plays.Count(p => p.NewBest);
 
     private string Title => Session.Start.ToString(Session.Start.Year == DateTime.Today.Year ? "ddd d MMM" : "ddd d MMM yyyy");
+
+    // The plays come newest credit first; whole credits until the preview is reached.
+    private IEnumerable<IGrouping<int, HistoryPlay>> Shown
+    {
+        get
+        {
+            var credits = Session.Plays.GroupBy(p => p.Credit);
+            if (open) return credits;
+            var count = 0;
+            return credits.TakeWhile(c => (count += c.Count()) - c.Count() < Preview).ToList();
+        }
+    }
+
+    // "Show all" renders only this card, so the page's own call doesn't reach the new rows' icons.
+    protected override Task OnAfterRenderAsync(bool firstRender) => Js.InvokeVoidAsync("ui.hydrateAssets").AsTask();
 }
