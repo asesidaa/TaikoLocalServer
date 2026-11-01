@@ -33,9 +33,13 @@ public sealed class HeadlessAvatarRenderer(
     private static readonly TimeSpan RenderTimeout = TimeSpan.FromSeconds(30);
     // A key that failed isn't tried again for this long (each avatar request that misses would queue it).
     private static readonly TimeSpan RetryAfter = TimeSpan.FromMinutes(10);
+    // A player is rendered once they've left their costume alone this long: clicking through parts on Profile (each
+    // autosave queues them) gives one render, and their own browser's upload usually lands first, which skips it.
+    private static readonly TimeSpan Settle = TimeSpan.FromSeconds(10);
 
     private readonly Channel<uint> queue = Channel.CreateUnbounded<uint>();
-    private readonly ConcurrentDictionary<uint, byte> queued = new();
+    // Queued players, with when they were last queued.
+    private readonly ConcurrentDictionary<uint, DateTime> queued = new();
     private readonly ConcurrentDictionary<string, DateTime> failedKeys = new();
     // The renderer's own bearer token: asset reads only (see ApiTokenAuthenticationHandler). New on every start.
     private readonly string token = ApiScopes.Prefix + "render_" + Convert.ToHexString(RandomNumberGenerator.GetBytes(24));
@@ -57,7 +61,10 @@ public sealed class HeadlessAvatarRenderer(
 
     public void Enqueue(uint baid)
     {
-        if (enabled && browserPath is not null && queued.TryAdd(baid, 0)) queue.Writer.TryWrite(baid);
+        if (!enabled || browserPath is null) return;
+        var added = false;
+        queued.AddOrUpdate(baid, _ => { added = true; return DateTime.UtcNow; }, (_, _) => DateTime.UtcNow);
+        if (added) queue.Writer.TryWrite(baid);
     }
 
     public async Task SetEnabledAsync(bool on, CancellationToken cancellationToken)
@@ -108,6 +115,16 @@ public sealed class HeadlessAvatarRenderer(
                 {
                     break;
                 }
+            }
+            try
+            {
+                // Each change while waiting pushes the render back (see Settle).
+                while (queued.TryGetValue(baid, out var changed) && Settle - (DateTime.UtcNow - changed) is { Ticks: > 0 } wait)
+                    await Task.Delay(wait, stoppingToken);
+            }
+            catch (OperationCanceledException)
+            {
+                break;
             }
             queued.TryRemove(baid, out _);
             if (!enabled || browserPath is null) continue;
