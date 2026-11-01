@@ -8,7 +8,7 @@
 
 <PageTitle>Server Management</PageTitle>
 <Tabs Items="tabs" Selected="@Current" SelectedChanged="Go" Label="@Localizer["Server Management"]"
-      Columns="grid-cols-4 xl:inline-grid xl:grid-cols-7" />
+      Columns="grid-cols-3 xl:inline-grid xl:grid-cols-6" />
 <div class="mt-4" role="tabpanel">
     @if (Current == "status")
     {
@@ -102,7 +102,6 @@
             ("data", Localizer["Game data"], "database"),
             ("dan", Localizer["Dani Dojo"], "medal"),
             ("announcements", Localizer["Announcements"], "megaphone"),
-            ("backups", Localizer["Backups"], "archive"),
             ("logs", Localizer["Logs"], "chart"),
         ];
         Page.Set(Localizer["Admin"], Localizer["Server Management"]);

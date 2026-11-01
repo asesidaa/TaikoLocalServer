@@ -118,16 +118,6 @@ try
     using (var scope = app.Services.CreateScope())
     {
         var db = scope.ServiceProvider.GetRequiredService<TaikoDbContext>();
-        // A database update (pending migrations on an existing database) is backed up first, unless that's switched off.
-        var applied = db.Database.GetAppliedMigrations().ToList();
-        if (applied.Count > 0 && db.Database.GetPendingMigrations().Any())
-        {
-            // The schedule's table exists once its migration has run; before that, back up.
-            var beforeUpdates = !applied.Any(m => m.EndsWith("_BackupSchedule"))
-                                || (db.BackupSchedules.AsNoTracking().FirstOrDefault()?.BeforeUpdates ?? true);
-            if (beforeUpdates)
-                await app.Services.GetRequiredService<TaikoLocalServer.Application.Abstractions.IBackupService>().CreateAsync("update");
-        }
         db.Database.Migrate();
         // Access › Activity keeps a year, Sign-ins 90 days; sessions go a week after their last use (the token lifetime).
         db.Activity.Where(e => e.Time < DateTime.UtcNow.AddDays(-365)).ExecuteDelete();
@@ -197,7 +187,7 @@ try
         var path = context.Request.Path;
         // /don-model: the folder's old name, in case an install still has one.
         if (path.StartsWithSegments("/data") || path.StartsWithSegments("/game_data") || path.StartsWithSegments("/don-model")
-            || (!path.StartsWithSegments("/api") && (path.Value?.Contains(".db3", StringComparison.OrdinalIgnoreCase) ?? false)))
+            || (path.Value?.Contains(".db3", StringComparison.OrdinalIgnoreCase) ?? false))
         {
             context.Response.StatusCode = StatusCodes.Status404NotFound;
             return;

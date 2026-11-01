@@ -578,7 +578,7 @@ The server runs in one of two modes, chosen by a single switch. The goal is an e
 | 2 | Small server pieces: config card, remove a score, move an access code, admin role, Activity table; remove LocalSaveModScoreMigrator |
 | 3 | Game data editors and Dani Dojo course sets; "Run extract" |
 | 4 | Admin › Access (rules, sessions, 2-step, lockout) |
-| 5 | Backups and announcements |
+| 5 | Announcements (backups dropped 2026-11-01: operators back the database up with their own scripts or scheduled tasks) |
 | 6 | Friends, notifications, Discord |
 | 7 | Export / import / merge (deferrable) |
 

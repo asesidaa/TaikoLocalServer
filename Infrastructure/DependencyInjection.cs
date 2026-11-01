@@ -43,8 +43,6 @@ public static class DependencyInjection
                     .Ignore(SqliteEventId.TableRebuildPendingWarning));
         });
         services.AddScoped<ITaikoDbContext>(sp => sp.GetRequiredService<TaikoDbContext>());
-        services.AddSingleton<IBackupService, BackupService>();
-        services.AddHostedService<BackupScheduler>();
 
         // Game data catalog (singleton: loaded at startup, reloaded from Server Management › Game data)
         services.AddSingleton<IGameDataCatalog, FileGameDataCatalog>();

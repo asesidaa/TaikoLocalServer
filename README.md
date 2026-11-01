@@ -55,6 +55,10 @@ TaikoLocalServer.exe admin set-password <accessCode>  # set the web UI password 
 
 These commands apply database migrations, make the change and exit; they don't start the server. To create your first admin, run `promote` and then `set-password` on your own card, and log in. On Windows, run them from an administrator terminal, like the server itself.
 
+### Backing up
+
+Everything players have (accounts, scores, profiles) is in one SQLite file, `wwwroot/taiko.db3` next to `TaikoLocalServer.exe`. Back it up with your own scheduled task or cron job. Either copy it while the server is stopped, or, while it runs, use SQLite's online backup: `sqlite3 wwwroot/taiko.db3 ".backup taiko-backup.db3"`. To restore, stop the server and put the copy back as `taiko.db3`.
+
 ### TaikoWebUI configuration
 
 The WebUI has a few settings you can change in [appsettings.json](./TaikoWebUI/wwwroot/appsettings.json)  

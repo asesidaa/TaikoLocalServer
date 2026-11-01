@@ -36,7 +36,6 @@ namespace TaikoLocalServer.Infrastructure.Persistence
         public virtual DbSet<BannedCard> BannedCards { get; set; } = null!;
         public virtual DbSet<WebSession> WebSessions { get; set; } = null!;
         public virtual DbSet<ApiToken> ApiTokens { get; set; } = null!;
-        public virtual DbSet<BackupSchedule> BackupSchedules { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -81,7 +80,6 @@ namespace TaikoLocalServer.Infrastructure.Persistence
             modelBuilder.Entity<BannedCard>(entity => entity.HasKey(e => e.AccessCode));
             modelBuilder.Entity<WebSession>(entity => entity.HasIndex(e => e.Baid));
             modelBuilder.Entity<ApiToken>(entity => entity.HasIndex(e => e.Hash).IsUnique());
-            modelBuilder.Entity<BackupSchedule>(entity => entity.Property(e => e.Id).ValueGeneratedNever());
 
             modelBuilder.Entity<UserWebProfile>(entity =>
             {
