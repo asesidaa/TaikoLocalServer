@@ -20,7 +20,7 @@ use ssbh_data::prelude::*;
 
 const ARRAY_BUFFER: u32 = 34962;
 const ELEMENT_ARRAY_BUFFER: u32 = 34963;
-const FLOAT: u32 = 5126;
+pub(crate) const FLOAT: u32 = 5126;
 const UNSIGNED_SHORT: u32 = 5123;
 const UNSIGNED_INT: u32 = 5125;
 
@@ -93,22 +93,9 @@ pub fn build_glb(dir: &Path, name: &str) -> Result<Vec<u8>> {
 
     // Bones: node i == bone i, so skin joints are simply 0..n.
     let bone_index: HashMap<&str, usize> = skel.bones.iter().enumerate().map(|(i, b)| (b.name.as_str(), i)).collect();
-    let mut children: Vec<Vec<usize>> = vec![Vec::new(); skel.bones.len()];
-    let mut roots = Vec::new();
-    for (i, bone) in skel.bones.iter().enumerate() {
-        match bone.parent_index {
-            Some(p) => children[p].push(i),
-            None => roots.push(i),
-        }
-    }
+    let mut roots = push_bones(&mut g, &skel);
     let mut inverse_binds = Vec::with_capacity(skel.bones.len() * 16);
-    for (i, bone) in skel.bones.iter().enumerate() {
-        let (s, r, t) = decompose(bone.transform);
-        let mut node = json!({ "name": bone.name, "translation": t.to_array(), "rotation": r.to_array(), "scale": s.to_array() });
-        if !children[i].is_empty() {
-            node["children"] = json!(children[i]);
-        }
-        g.nodes.push(node);
+    for bone in &skel.bones {
         let world: Mat4 = skel.calculate_world_transform(bone).map_err(|e| anyhow::anyhow!("{e:?}"))?;
         // Zero-scale (hidden) bones aren't invertible; identity matches numd-exporter.
         let mut ibm = Some(world.inverse()).filter(|m| m.is_finite()).unwrap_or(Mat4::IDENTITY).to_cols_array();
@@ -161,9 +148,30 @@ pub fn build_glb(dir: &Path, name: &str) -> Result<Vec<u8>> {
     g.finish(roots)
 }
 
+/// Appends one node per bone (node index == bone index) with its rest TRS; returns the root bones.
+pub(crate) fn push_bones(g: &mut Gltf, skel: &SkelData) -> Vec<usize> {
+    let mut children: Vec<Vec<usize>> = vec![Vec::new(); skel.bones.len()];
+    let mut roots = Vec::new();
+    for (i, bone) in skel.bones.iter().enumerate() {
+        match bone.parent_index {
+            Some(p) => children[p].push(i),
+            None => roots.push(i),
+        }
+    }
+    for (i, bone) in skel.bones.iter().enumerate() {
+        let (s, r, t) = decompose(bone.transform);
+        let mut node = json!({ "name": bone.name, "translation": t.to_array(), "rotation": r.to_array(), "scale": s.to_array() });
+        if !children[i].is_empty() {
+            node["children"] = json!(children[i]);
+        }
+        g.nodes.push(node);
+    }
+    roots
+}
+
 /// TRS from a bone matrix. Some costumes (e.g. `head_003000`, no arms or legs) hide bones with a
 /// zero-scale basis; glam then returns a NaN rotation. Rotation is meaningless at zero scale, so use identity.
-fn decompose(m: Mat4) -> (Vec3, Quat, Vec3) {
+pub(crate) fn decompose(m: Mat4) -> (Vec3, Quat, Vec3) {
     let (s, r, t) = m.to_scale_rotation_translation();
     if r.is_finite() {
         return (s, r, t);
@@ -232,16 +240,17 @@ fn skin_attributes(object: &MeshObjectData, vertex_count: usize, bone_index: &Ha
 }
 
 #[derive(Default)]
-struct Gltf {
+pub(crate) struct Gltf {
     bin: Vec<u8>,
     views: Vec<Value>,
     accessors: Vec<Value>,
-    nodes: Vec<Value>,
+    pub(crate) nodes: Vec<Value>,
     meshes: Vec<Value>,
     skins: Vec<Value>,
     materials: Vec<Value>,
     textures: Vec<Value>,
     images: Vec<Value>,
+    pub(crate) animations: Vec<Value>,
 }
 
 impl Gltf {
@@ -258,7 +267,7 @@ impl Gltf {
         self.views.len() - 1
     }
 
-    fn accessor(&mut self, bytes: &[u8], component: u32, count: usize, kind: &str, target: Option<u32>, min_max: Option<(Vec<f32>, Vec<f32>)>) -> usize {
+    pub(crate) fn accessor(&mut self, bytes: &[u8], component: u32, count: usize, kind: &str, target: Option<u32>, min_max: Option<(Vec<f32>, Vec<f32>)>) -> usize {
         let view = self.view(bytes, target);
         let mut a = json!({ "bufferView": view, "componentType": component, "count": count, "type": kind });
         if let Some((min, max)) = min_max {
@@ -352,7 +361,7 @@ impl Gltf {
         Ok(self.materials.len() - 1)
     }
 
-    fn finish(mut self, scene_nodes: Vec<usize>) -> Result<Vec<u8>> {
+    pub(crate) fn finish(mut self, scene_nodes: Vec<usize>) -> Result<Vec<u8>> {
         while !self.bin.len().is_multiple_of(4) {
             self.bin.push(0);
         }
@@ -361,14 +370,22 @@ impl Gltf {
             "scene": 0,
             "scenes": [{ "nodes": scene_nodes }],
             "nodes": self.nodes,
-            "meshes": self.meshes,
-            "materials": self.materials,
             "accessors": self.accessors,
             "bufferViews": self.views,
             "buffers": [{ "byteLength": self.bin.len() }],
-            "samplers": [{ "magFilter": 9729, "minFilter": 9729, "wrapS": 10497, "wrapT": 10497 }],
         });
-        for (key, list) in [("skins", self.skins), ("textures", self.textures), ("images", self.images)] {
+        if !self.textures.is_empty() {
+            doc["samplers"] = json!([{ "magFilter": 9729, "minFilter": 9729, "wrapS": 10497, "wrapT": 10497 }]);
+        }
+        // glTF arrays must be non-empty when present.
+        for (key, list) in [
+            ("meshes", self.meshes),
+            ("materials", self.materials),
+            ("skins", self.skins),
+            ("textures", self.textures),
+            ("images", self.images),
+            ("animations", self.animations),
+        ] {
             if !list.is_empty() {
                 doc[key] = json!(list);
             }

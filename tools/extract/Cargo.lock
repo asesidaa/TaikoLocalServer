@@ -332,6 +332,7 @@ name = "extract"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "binrw 0.15.2",
  "clap",
  "glam",
  "image",
@@ -339,6 +340,7 @@ dependencies = [
  "nutexb",
  "serde_json",
  "ssbh_data",
+ "ssbh_lib",
 ]
 
 [[package]]

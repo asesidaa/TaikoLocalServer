@@ -111,7 +111,7 @@ All paths are relative to `Data/x64/`. `Data_mods/` is ignored.
 | `datatable/don_cos.bin`, `don_color.bin` | 2 files | copied as-is. The server decrypts them on startup like the other tables, so the CLI needs no keys, and exposes them via `api/GameData/...` | previewer: costume ID → model file map and the color palette (replaces the hardcoded `CostumeColors`) |
 | `model/{body,head,cos}/<name>/` (`.numdlb/.numshb/.nusktb/.numatb` + `textures/*.nutexb`) | 163 body, 140 head, 179 cos (~340 MB raw) | one `.glb` per part, to `wwwroot/don-model/{body,head,cos}/` | previewer |
 | `model/{face,paint,acce}/*.nutexb` | 22 face, 58 paint, 149 acce | `.png` (or `.webp`), to `wwwroot/don-model/{face,paint,acce}/` | previewer |
-| `animation/*.nuanmb` | 54 files | `Don_3D_Nij.glb` + `facekeys.json` (the existing `nuanmb_to_glb` tool) | previewer |
+| `animation/*.nuanmb` | 54 files | `don.glb` + `facekeys.json` (the existing `nuanmb_to_glb` tool) | previewer |
 | (later) `lumen/`, `textures/` | nameplates, rank panels | `.png` | Profile nameplate (replaces the committed `images/Nameplates`) |
 
 Expected output size is ~230 MB (the previewer's converted `public/don-model` today is 227 MB). It's served lazily per costume, so the browser only downloads what's on screen.
@@ -128,7 +128,7 @@ The plan is one Rust CLI, `extract`, that grows out of `nuanmb_to_glb` and lives
 - `datatables`: copies the `.bin` files (plain file copy).
 - `models`: `body`/`head`/`cos` → `.glb`, via `ssbh_data` mesh/skel/matl plus the `gltf` writer.
 - `textures`: `face`/`paint`/`acce` `.nutexb` → `.png`, via `nutexb` + `image_dds`.
-- `anims`: the existing `nuanmb_to_glb` logic → `Don_3D_Nij.glb` + `facekeys.json`.
+- `anims`: the existing `nuanmb_to_glb` logic → `don.glb` + `facekeys.json`.
 
 Then:
 
@@ -194,9 +194,25 @@ model/<cat>/<name>/
 - The previewer also has `cos_160000`–`167000`, which aren't in 39.06 (they came from the newer "asb52" build). The extractor only outputs what the operator's game has.
 
 **Server-side gaps found:**
-- `UseStaticFiles()` has **no MIME type for `.glb`**, so every model would 404. Add `FileExtensionContentTypeProvider` with `.glb → model/gltf-binary`.
-- `UseStaticFiles()` serves the *content root's* `wwwroot` (the working directory), but `PathHelper` and the extractor use the *exe's* `wwwroot`. They only match when the server starts from its own folder. Serve `don-model/` explicitly from `PathHelper.GetRootPath()`.
+- `UseStaticFiles()` has **no MIME type for `.glb`**, so every model would 404.
+- `UseStaticFiles()` serves the *content root's* `wwwroot` (the working directory), but `PathHelper` and the extractor use the *exe's* `wwwroot`. They only match when the server starts from its own folder.
 - `don_cos.bin` (103 entries: `cool/cute/joke/choice/collabo` tags per costume) isn't loaded. It isn't needed for the preview, so skip it.
+
+**Data exposure (found 2026-10-31).** The WebUI's files and the server's data share one `wwwroot`, and `UseStaticFiles()` serves all of it. When the server runs from its own folder (the README setup), these are **publicly downloadable**, with no login:
+- `data/*.json`: every operator table (QR codes, tokens, locked songs, events, …).
+- `data/datatable/*.bin`: the game's encrypted datatables.
+- `data/datatable/*.json`: the **decrypted** copies `FileGameDataCatalog` writes beside them (`musicinfo.json`, `wordlist.json`, …).
+- `don-model/**` once `extract` runs (if `.glb` gets a MIME type).
+- `taiko.db3` (+ `-wal`, `-shm`) is *not* served, only because `.db3` has no MIME mapping. That is one `ServeUnknownFileTypes` away from leaking every account.
+
+The WebUI itself reads one table raw: `GameDataService.InitializeAsync` fetches `data/dan_data.json`. Everything else already goes through `api/GameData/*`.
+
+**Fix (part of step 5):**
+1. **Stop serving server data as static files.** Short-circuit `/data/**`, `/don-model/**` and `*.db3*` with a 404 before `UseStaticFiles()`, so only the WebUI's own files stay public (`index.html`, `_framework`, `css`, `appsettings.json`, `Dashboard.md`). It's a path guard and not a folder move, so existing operator layouts keep working.
+2. **Dan data via the API:** add `GET api/GameData/DanData` (from `IGameDataCatalog`, which already loads it), and switch `GameDataService` to it, lazily, like the other catalogs (this also covers perf item P4).
+3. **Models and textures via an authenticated endpoint:** `GET api/Assets/{**path}` under `[Authorize]` (the policy-aware one, so local mode still works). It serves from `PathHelper.GetRootPath()/don-model` with an explicit content type (`.glb → model/gltf-binary`, `.png`, `.json`), rejects `..` or rooted paths, and sends `ETag`/`Cache-Control: private`. This fixes the MIME gap and the content-root mismatch in one place.
+4. **The embed loads through `fetch()` → `ArrayBuffer` → `GLTFLoader.parse()`**, with blob URLs for PNGs, sending the bearer token. No asset URL appears in the DOM.
+5. Later, consider moving `taiko.db3` out of `wwwroot` (a `Database.json` path plus a one-time move on startup). It's not urgent once the guard exists.
 
 **Output and size.** About 230 MB under `<exe>/wwwroot/don-model/{body,head,cos,paint,acce,face,animation}/`. It's git-ignored and never included in the publish output. The extractor is idempotent: it skips any output newer than its source.
 
@@ -205,7 +221,7 @@ model/<cat>/<name>/
 2. Textures: `.nutexb` → PNG, for `paint`, `acce` and `face`, and for embedding in GLBs.
 3. Models: MODL + MESH + SKEL + MATL (both) → GLB. Check `cos_001000` field-by-field against the `numd-exporter` output, then check every model loads in the previewer.
 4. Animations: port `nuanmb_to_glb`, building the skeleton from `.nusktb`.
-5. Server: `.glb` MIME, a static mapping for `don-model/`, README "Run extract", CI `cargo build` + bundle the exe.
+5. Server: block static access to `/data`, `/don-model` and `*.db3*`; add `api/GameData/DanData` and the authenticated `api/Assets/{**path}`; point the WebUI at them; README "Run extract"; CI `cargo build` + bundle the exe.
 
 ---
 
@@ -308,6 +324,16 @@ Why an iframe: it fully isolates the React/three.js runtime from Blazor's DOM di
 
 Deletes: `wwwroot/images/Costumes/**`, the `Masks` list, `CostumeColors`, `CostumeColorFilters`, and `CostumeOrDefault` in `Profile.razor.cs`.
 
+#### Discouraging asset downloads
+
+Anything the browser renders can be pulled out with dev tools or a GPU capture. No scheme makes the models undownloadable, so the aim is only to stop casual grabbing (right-click, guessable URLs, a browsable folder). In order of value for effort:
+
+1. **Serve `don-model/` through an authenticated endpoint**, not as public static files. Then only logged-in users can fetch, and there's no folder to browse or link to. This is a small controller plus the existing auth; it's also the fix for the `.glb` MIME gap and the exe-dir-vs-content-root mismatch from §2.
+2. **Load through `fetch()` → `ArrayBuffer` → `GLTFLoader.parse()` (and blob URLs for PNGs)**, so no asset URL ever appears in the DOM or as a right-clickable image. This is about 10 lines in the embed.
+3. **Optional light obfuscation:** for example, XOR or AES the bytes with a per-session key from the API, and decode in the embed before `parse()`. This defeats "save the network response" but costs CPU and HTTP caching, and the key is in the page anyway. Only do it if 1–2 prove insufficient.
+
+Not worth doing: disabling dev tools, right-click blockers, or watermarking. They're trivially bypassed and annoy legitimate users. The operator extracted these files from their own game install, so the realistic goal is "not freely hot-linkable from the server", which 1 achieves.
+
 ---
 
 ## Phasing / PRs
@@ -319,7 +345,7 @@ Deletes: `wwwroot/images/Costumes/**`, the `Masks` list, `CostumeColors`, `Costu
 | 2 | Client auth: A1–A8 | 1 (S5) |
 | 3 | Perf: P1–P5, P7, P11 (+ P6 bug fix) | none |
 | 4 | `tools/extract`: move `nuanmb_to_glb` in, add the open-source model exporter + texture export, its README | open questions answered |
-| 5 | Server: load `don_cos`/`don_color`, build + bundle `extract.exe` in CI publish, top-level README "Run extract" section | 4 |
+| 5 | Server: stop serving `/data`, `/don-model`, `*.db3*` statically; `api/GameData/DanData` + authenticated `api/Assets`; load `don_color`; bundle `extract.exe` in CI; README "Run extract" | 4 |
 | 6 | Previewer `embed` entry (in `don-chan-previewer`) | none (can start now with existing GLBs) |
 | 7 | LumexUI spike: Tailwind CLI build, shell, Login, Users, HighScores | 2 |
 | 8+ | Remaining pages, Profile + `<DonPreview>` last; delete `images/Costumes`, remove MudBlazor | 5, 6, 7 |

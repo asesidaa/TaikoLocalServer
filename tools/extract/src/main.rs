@@ -1,5 +1,7 @@
+mod anims;
 mod models;
 mod textures;
+mod v12;
 
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -94,6 +96,9 @@ fn run(args: Args) -> Result<Vec<Report>> {
         models::convert_category(&x64.join("model").join(dir), &out.join("don-model").join(dir), &mut report)?;
         reports.push(report);
     }
+    let mut report = Report::new("animations");
+    anims::convert(&x64, &out.join("don-model").join("animation"), &mut report)?;
+    reports.push(report);
     Ok(reports)
 }
 

@@ -22,8 +22,23 @@ It is safe to re-run, for example after a game update. Outputs that are already 
 | `model/acce/*.nutexb` (149) | `don-model/acce/*.png` | Puchi accessories |
 | `model/face/*.nutexb` (22) | `don-model/face/*.png` | Expression atlases: 12 layers stacked vertically |
 | `model/{body,head,cos}/<name>/<name>/<name>.numdlb` (483) | `don-model/{body,head,cos}/<name>.glb` | Skinned don-chan parts, textures embedded |
+| `animation/*.nuanmb` (54) | `don-model/animation/don.glb` + `facekeys.json` | One animation library (a clip per file) and the face-expression keys |
 
-Converting the animations is next. See `docs/webui-refactor-plan.md` §2.
+## Animation export (`src/anims.rs`, `src/v12/`)
+
+Ported from `don-chan-previewer/scripts/nuanmb_to_glb`, which this replaces. The ANIM v1.2 curve decoder in `src/v12/` is copied from it unchanged; see that tool's README for the format notes. The changes:
+
+- The rig comes from the game's `body_000000` `.nusktb` instead of a pre-made `--skeleton-glb`, so nothing outside the game install is needed.
+- Only ANIM v1.2 is handled (every Nijiiro file). The `ssbh_data` v2 fallback is gone.
+- Output is deterministic (bones in SKEL order), and output accessors drop the optional min/max, making the GLB about 11% smaller.
+
+Checked against the previewer's `Don_3D_Nij.glb`: all 54 clips have the same channels, translation and scale are bit-identical, and rotations are within 2e-7 (float noise). `facekeys.json` is byte-identical. The library is rebuilt when any `.nuanmb` or the rig is newer than the output.
+
+To check the decoder against a game install:
+
+```bash
+NUANMB_DIR="<game>/Data/x64/animation" cargo test --release --manifest-path tools/extract/Cargo.toml -- --nocapture
+```
 
 ## Model export (`src/models.rs`)
 
