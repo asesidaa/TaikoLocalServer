@@ -85,4 +85,13 @@ The repo pins the .NET SDK band via `global.json`.
 
 This solution targets **.NET 10 LTS**. Install the .NET 10 SDK from <https://dotnet.microsoft.com/download> (or any 10.0.x patch — the `global.json` allows latestFeature roll-forward).
 
+### Building the Web UI
+
+`dotnet build` is all it takes. The Web UI has two front-end parts, and their built output is committed, so a build without their tools still works and ships the last built version:
+
+- **Styles** (Tailwind, `TaikoWebUI/Styles/app.css` → `wwwroot/css/app.css`). The first build downloads the pinned Tailwind CLI into `tools/tailwindcss/` and checks it against the release's published SHA-256. No Node.js needed.
+- **don-chan's 3D view** (`TaikoWebUI/DonEmbed`, React + three.js → `wwwroot/don-embed`). With [Node.js](https://nodejs.org/) installed, the first build runs `npm ci` there; after that it rebuilds whenever its source changes. `npm test` in that folder checks its material rules. Without Node.js everything else still builds, but a change to `DonEmbed` gets a warning, since it can't show.
+
+To build without downloading anything (CI, offline), pass `-p:WebUiToolRestore=false`. Style changes then need `tools/tailwindcss/tailwindcss(.exe)` in place yourself, and 3D view changes need `npm ci` in `TaikoWebUI/DonEmbed`.
+
 The admin UI uses **MudBlazor 9.x**. If you customize `TaikoWebUI/`, refer to the [MudBlazor v9 docs](https://mudblazor.com/) — components and parameters changed across the 7→8→9 majors compared to older forks.

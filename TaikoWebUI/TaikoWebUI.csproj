@@ -22,34 +22,70 @@
     <ProjectReference Include="..\Contracts.AdminApi\Contracts.AdminApi.csproj" />
   </ItemGroup>
 
-  <!-- Tailwind v4: Styles/app.css → wwwroot/css/app.css with the standalone CLI (no Node.js).
-       Put the pinned binary at tools/tailwindcss/tailwindcss(.exe), v4.1.14. The output is committed,
-       so a build without the CLI (e.g. CI) still ships the last generated CSS. -->
+  <!-- Front-end tools. Their outputs (wwwroot/css/app.css, wwwroot/don-embed) are committed, so a build without
+       them still ships the last generated files. With WebUiToolRestore on (the default), the first build fetches them:
+       the pinned Tailwind CLI (checked against its published SHA-256) and DonEmbed's npm packages (npm ci, when Node.js
+       is installed). Builds that mustn't download anything (CI, offline): -p:WebUiToolRestore=false. -->
   <PropertyGroup>
-    <TailwindCli Condition="'$(OS)' == 'Windows_NT'">$(MSBuildThisFileDirectory)..\tools\tailwindcss\tailwindcss.exe</TailwindCli>
-    <TailwindCli Condition="'$(OS)' != 'Windows_NT'">$(MSBuildThisFileDirectory)../tools/tailwindcss/tailwindcss</TailwindCli>
+    <WebUiToolRestore Condition="'$(WebUiToolRestore)' == ''">true</WebUiToolRestore>
   </PropertyGroup>
-  <Target Name="TailwindBuild" BeforeTargets="BeforeBuild" Condition="Exists('$(TailwindCli)')">
-    <Exec Command="&quot;$(TailwindCli)&quot; -i Styles/app.css -o wwwroot/css/app.css --minify" WorkingDirectory="$(MSBuildThisFileDirectory)" />
+
+  <!-- Tailwind v4: Styles/app.css → wwwroot/css/app.css with the standalone CLI (no Node.js), v4.1.14 at
+       tools/tailwindcss/tailwindcss(.exe). There's no Windows ARM build; the x64 one runs there under emulation. -->
+  <PropertyGroup>
+    <TailwindVersion>4.1.14</TailwindVersion>
+    <TailwindDir>$(MSBuildThisFileDirectory)../tools/tailwindcss/</TailwindDir>
+    <TailwindCli Condition="'$(OS)' == 'Windows_NT'">$(TailwindDir)tailwindcss.exe</TailwindCli>
+    <TailwindCli Condition="'$(OS)' != 'Windows_NT'">$(TailwindDir)tailwindcss</TailwindCli>
+    <_TailwindArm>$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString().Equals('Arm64'))</_TailwindArm>
+    <TailwindAsset Condition="'$(OS)' == 'Windows_NT'">tailwindcss-windows-x64.exe</TailwindAsset>
+    <TailwindAsset Condition="$([MSBuild]::IsOSPlatform('Linux')) And '$(_TailwindArm)' == 'true'">tailwindcss-linux-arm64</TailwindAsset>
+    <TailwindAsset Condition="$([MSBuild]::IsOSPlatform('Linux')) And '$(_TailwindArm)' != 'true'">tailwindcss-linux-x64</TailwindAsset>
+    <TailwindAsset Condition="$([MSBuild]::IsOSPlatform('OSX')) And '$(_TailwindArm)' == 'true'">tailwindcss-macos-arm64</TailwindAsset>
+    <TailwindAsset Condition="$([MSBuild]::IsOSPlatform('OSX')) And '$(_TailwindArm)' != 'true'">tailwindcss-macos-x64</TailwindAsset>
+    <!-- From the release's sha256sums.txt. -->
+    <TailwindSha256 Condition="'$(TailwindAsset)' == 'tailwindcss-windows-x64.exe'">ae892cdb0817fbe6b692fc67bb1339a728f21116020e620bc4b94d87d6ba1fee</TailwindSha256>
+    <TailwindSha256 Condition="'$(TailwindAsset)' == 'tailwindcss-linux-x64'">bc34c301b080b6e6b98ed24118419833f966f6f347e556945d6557d36a44a56e</TailwindSha256>
+    <TailwindSha256 Condition="'$(TailwindAsset)' == 'tailwindcss-linux-arm64'">314941f5f6e143e74e740c587ad1fbaaede5462572dd330bbe0937e611e966db</TailwindSha256>
+    <TailwindSha256 Condition="'$(TailwindAsset)' == 'tailwindcss-macos-x64'">67b25b6103fa7677637e5a5de3327fec3335da316d90d3fdb1a4cd72bda41c0a</TailwindSha256>
+    <TailwindSha256 Condition="'$(TailwindAsset)' == 'tailwindcss-macos-arm64'">e722b752f51def86d42e886b4c1171f2d09a4be1a7487a0a51e4aff8e7603ce3</TailwindSha256>
+  </PropertyGroup>
+  <Target Name="TailwindRestore" Condition="'$(WebUiToolRestore)' == 'true' And !Exists('$(TailwindCli)') And '$(TailwindAsset)' != ''">
+    <DownloadFile SourceUrl="https://github.com/tailwindlabs/tailwindcss/releases/download/v$(TailwindVersion)/$(TailwindAsset)"
+                  DestinationFolder="$(TailwindDir)" DestinationFileName="tailwindcss.download" ContinueOnError="WarnAndContinue" />
+    <GetFileHash Condition="Exists('$(TailwindDir)tailwindcss.download')" Files="$(TailwindDir)tailwindcss.download" Algorithm="SHA256">
+      <Output TaskParameter="Hash" PropertyName="_TailwindHash" />
+    </GetFileHash>
+    <Copy Condition="'$(_TailwindHash)' != '' And $(_TailwindHash.Equals('$(TailwindSha256)', StringComparison.OrdinalIgnoreCase))"
+          SourceFiles="$(TailwindDir)tailwindcss.download" DestinationFiles="$(TailwindCli)" />
+    <Exec Condition="Exists('$(TailwindCli)') And '$(OS)' != 'Windows_NT'" Command="chmod +x &quot;$(TailwindCli)&quot;" />
+    <Warning Condition="'$(_TailwindHash)' != '' And !Exists('$(TailwindCli)')"
+             Text="The downloaded Tailwind CLI's SHA-256 ($(_TailwindHash)) isn't the published one for $(TailwindAsset) v$(TailwindVersion); not using it." />
+    <Delete Files="$(TailwindDir)tailwindcss.download" />
   </Target>
-  <Target Name="TailwindMissing" BeforeTargets="BeforeBuild" Condition="!Exists('$(TailwindCli)')">
-    <Warning Text="Tailwind CLI not found at $(TailwindCli); using the committed wwwroot/css/app.css. Download tailwindcss v4.1.14 there to rebuild the styles." />
+  <Target Name="TailwindBuild" BeforeTargets="BeforeBuild" DependsOnTargets="TailwindRestore">
+    <Exec Condition="Exists('$(TailwindCli)')" Command="&quot;$(TailwindCli)&quot; -i Styles/app.css -o wwwroot/css/app.css --minify" WorkingDirectory="$(MSBuildThisFileDirectory)" />
+    <Warning Condition="!Exists('$(TailwindCli)')" Text="No Tailwind CLI at $(TailwindCli); using the committed wwwroot/css/app.css, so style changes won't show. Build with WebUiToolRestore on to fetch it, or put tailwindcss v$(TailwindVersion) there." />
   </Target>
 
   <!-- don-chan's 3D view (DonEmbed: React + three.js, built with Vite) → wwwroot/don-embed, the iframe the WebUI and the
-       avatar renderer load. Like Tailwind, the output is committed: the build runs only once `npm install` has been run
-       in DonEmbed, and only when its sources changed. -->
+       avatar renderer load. It builds only when its sources are newer than the committed output; without Node.js that's a
+       warning, since the change wouldn't show. -->
   <ItemGroup>
-    <Content Remove="DonEmbed\**" />
-    <None Remove="DonEmbed\**" />
-    <DonEmbedSource Include="DonEmbed\src\**;DonEmbed\embed.html;DonEmbed\vite.config.ts;DonEmbed\tsconfig.json;DonEmbed\package.json" />
+    <Content Remove="DonEmbed/**" />
+    <None Remove="DonEmbed/**" />
+    <DonEmbedSource Include="DonEmbed/src/**;DonEmbed/embed.html;DonEmbed/vite.config.ts;DonEmbed/tsconfig.json;DonEmbed/package.json" />
   </ItemGroup>
-  <Target Name="DonEmbedBuild" BeforeTargets="BeforeBuild" Condition="Exists('DonEmbed\node_modules')"
-          Inputs="@(DonEmbedSource)" Outputs="wwwroot\don-embed\assets\embed.js">
-    <Exec Command="npm run build" WorkingDirectory="$(MSBuildThisFileDirectory)DonEmbed" />
+  <Target Name="DonEmbedRestore" Condition="'$(WebUiToolRestore)' == 'true' And !Exists('DonEmbed/node_modules')">
+    <Exec Command="npm --version" IgnoreExitCode="true" StandardOutputImportance="low" StandardErrorImportance="low" EchoOff="true">
+      <Output TaskParameter="ExitCode" PropertyName="_NpmExit" />
+    </Exec>
+    <Exec Condition="'$(_NpmExit)' == '0'" Command="npm ci --no-fund --no-audit" WorkingDirectory="$(MSBuildThisFileDirectory)DonEmbed" />
   </Target>
-  <Target Name="DonEmbedMissing" BeforeTargets="BeforeBuild" Condition="!Exists('DonEmbed\node_modules')">
-    <Message Importance="normal" Text="DonEmbed: no node_modules, using the committed wwwroot/don-embed. Run npm install in TaikoWebUI/DonEmbed to rebuild it." />
+  <Target Name="DonEmbedBuild" BeforeTargets="BeforeBuild" DependsOnTargets="DonEmbedRestore"
+          Inputs="@(DonEmbedSource)" Outputs="wwwroot/don-embed/assets/embed.js">
+    <Exec Condition="Exists('DonEmbed/node_modules')" Command="npm run build" WorkingDirectory="$(MSBuildThisFileDirectory)DonEmbed" />
+    <Warning Condition="!Exists('DonEmbed/node_modules')" Text="TaikoWebUI/DonEmbed changed but can't be rebuilt (no Node.js, or WebUiToolRestore off), so the committed wwwroot/don-embed is used and the change won't show. Install Node.js and build again, or run npm ci in TaikoWebUI/DonEmbed." />
   </Target>
 
   <ItemGroup>
