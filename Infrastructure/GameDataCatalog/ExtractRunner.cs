@@ -25,7 +25,7 @@ public sealed class ExtractRunner(IOptions<ServerSettings> settings, IGameDataCa
     private int? exitCode;
     private ExtractInputs? inputs;
 
-    private static string ExePath => Path.Combine(Path.GetDirectoryName(Environment.ProcessPath)!, OperatingSystem.IsWindows() ? "extract.exe" : "extract");
+    private static string ExePath => Path.Combine(AppContext.BaseDirectory, OperatingSystem.IsWindows() ? "extract.exe" : "extract");
     private static readonly string UploadPath = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "TaikoLocalServer-game-upload"));
     private string GamePath => settings.Value.GamePath?.Trim() ?? "";
     private bool RemoteAllowed => settings.Value.AllowRemoteGameDir && File.Exists(ExePath);

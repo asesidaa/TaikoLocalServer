@@ -80,9 +80,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
 
-    <!--tools/extract, when built with cargo (release): "Run extract" finds it next to the exe-->
+    <!--tools/extract, when built with cargo (release): "Run extract" finds it next to the exe, so it stays out of the single-file bundle-->
     <None Include="..\tools\extract\target\release\extract.exe" Link="extract.exe" Condition="Exists('..\tools\extract\target\release\extract.exe')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </None>
+    <None Include="..\tools\extract\target\release\extract" Link="extract" Condition="!$([MSBuild]::IsOSPlatform('Windows')) And Exists('..\tools\extract\target\release\extract')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </None>
 
     <!--Configuration-->

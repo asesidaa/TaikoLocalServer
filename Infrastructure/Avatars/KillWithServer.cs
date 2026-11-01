@@ -26,7 +26,8 @@ internal static class KillWithServer
             if (!int.TryParse(Path.GetFileName(dir), out var pid) || pid == Environment.ProcessId) continue;
             try
             {
-                if (File.ReadAllText(Path.Combine(dir, "cmdline")).Split('\0').Contains(marker)) Process.GetProcessById(pid).Kill();
+                // Chrome rewrites its process title, which turns cmdline into one string of space-separated arguments.
+                if (File.ReadAllText(Path.Combine(dir, "cmdline")).Split(['\0', ' ']).Contains(marker)) Process.GetProcessById(pid).Kill();
             }
             catch (Exception e) when (e is IOException or UnauthorizedAccessException or ArgumentException or InvalidOperationException)
             {

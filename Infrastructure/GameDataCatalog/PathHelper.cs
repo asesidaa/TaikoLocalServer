@@ -14,20 +14,8 @@ public static class PathHelper
             Directory.Move(old, current);
     }
 
-    public static string GetRootPath()
-    {
-        var path = Environment.ProcessPath;
-        if (path is null)
-        {
-            throw new ApplicationException();
-        }
-        var parentPath = Directory.GetParent(path);
-        if (parentPath is null)
-        {
-            throw new ApplicationException();
-        }
-        return Path.Combine(parentPath.ToString(), "wwwroot");
-    }
+    // The app's folder, however it was started (its exe, or `dotnet TaikoLocalServer.dll`, whose process is dotnet).
+    public static string GetRootPath() => Path.Combine(AppContext.BaseDirectory, "wwwroot");
     
     public static string GetDataPath()
     {
