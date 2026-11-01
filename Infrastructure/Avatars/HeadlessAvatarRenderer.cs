@@ -100,7 +100,7 @@ public sealed class HeadlessAvatarRenderer(
         {
             var db = scope.ServiceProvider.GetRequiredService<ITaikoDbContext>();
             var options = await db.ServerOptions.AsNoTracking().FirstOrDefaultAsync(stoppingToken);
-            enabled = options?.RenderAvatars ?? true;
+            enabled = options?.RenderAvatars ?? false;
             stills = !(options?.Cards3D ?? true);
         }
         if (browserPath is null)

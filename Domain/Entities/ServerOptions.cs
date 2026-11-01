@@ -5,8 +5,11 @@ public class ServerOptions
 {
     public int Id { get; set; } = 1;
 
-    /// <summary>Render players' avatars on the server with a headless Edge or Chrome. Off: only the WebUI renders them.</summary>
-    public bool RenderAvatars { get; set; } = true;
+    /// <summary>
+    /// Render players' avatars on the server with a headless Edge or Chrome. Off (the default, so admins opt in to a
+    /// browser running on their server): only the WebUI renders them.
+    /// </summary>
+    public bool RenderAvatars { get; set; }
 
     /// <summary>
     /// Player cards show don-chan as the animated 3D model ("Enable 3D Renderer"). Off: a still image the server's
