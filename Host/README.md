@@ -23,9 +23,13 @@ You'll find a list of all the files bellow!
 
 The documentation is updated to reflect 39.06 files but most of it is similar for CHN.
 
+Most of these files can also be edited in the web UI, under **Admin › Server Management › Game data** (and **Dani Dojo**). Saving there checks the file the way the server reads it, keeps the previous version as `<file>.bak`, and reloads it without a restart. After editing a file by hand, press **Reload** on the Game data page. A file that fails to load keeps its previous contents, and the page shows the error.
+
 ### dan_data.json
 
 This is used to customize normal dans.
+
+`dan_data.json` is the built-in course set. You can add more sets (one per year, say) in Server Management › Dani Dojo. They are stored as `data/dan/<id>.json` in the same format, and `data/dan/sets.json` holds their names and which set the game serves.
   
 ```json
 [
