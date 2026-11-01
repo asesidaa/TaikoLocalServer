@@ -879,4 +879,13 @@
   <data name="Api Tokens Off Hint" xml:space="preserve">
     <value />
   </data>
+  <data name="Send Game Folder Hint" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Allow Remote Game Dir Hint" xml:space="preserve">
+    <value />
+  </data>
+  <data name="No Game In Folder" xml:space="preserve">
+    <value />
+  </data>
 </root>

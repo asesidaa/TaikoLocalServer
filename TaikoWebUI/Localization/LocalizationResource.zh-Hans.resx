@@ -3159,4 +3159,25 @@
   <data name="Scroll right" xml:space="preserve">
     <value>向右滚动</value>
   </data>
+  <data name="Send Game Folder Hint" xml:space="preserve">
+    <value>游戏不在这台机器上。选择游戏文件夹（包含 Data 的文件夹），此浏览器只会发送 extract 需要的文件，约 600 MB。游戏文件夹中的内容不会被更改。</value>
+  </data>
+  <data name="Allow Remote Game Dir Hint" xml:space="preserve">
+    <value>若要改为从浏览器发送游戏文件夹，请设置 {0} 并重启服务器。</value>
+  </data>
+  <data name="No Game In Folder" xml:space="preserve">
+    <value>该文件夹中没有游戏。请选择包含 Data 的文件夹（或 Data 本身）。</value>
+  </data>
+  <data name="Choose game folder" xml:space="preserve">
+    <value>选择游戏文件夹</value>
+  </data>
+  <data name="Sending the game files" xml:space="preserve">
+    <value>正在发送游戏文件</value>
+  </data>
+  <data name="Sending the game files: {0:0} of {1:0} MB" xml:space="preserve">
+    <value>正在发送游戏文件：{0:0} / {1:0} MB</value>
+  </data>
+  <data name="Or run it on the game PC" xml:space="preserve">
+    <value>或在游戏 PC 上运行</value>
+  </data>
 </root>

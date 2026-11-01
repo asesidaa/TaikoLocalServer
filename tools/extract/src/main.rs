@@ -38,8 +38,8 @@ const MODEL_DIRS: [&str; 3] = ["body", "head", "cos"];
 #[command(version)]
 struct Args {
     /// Game install folder: the one containing `Data/x64` (passing `Data/x64` itself also works).
-    #[arg(long)]
-    game: PathBuf,
+    #[arg(long, required_unless_present = "inputs")]
+    game: Option<PathBuf>,
 
     /// The server's `wwwroot` folder. Defaults to `wwwroot` next to this exe,
     /// which is right when it sits beside `TaikoLocalServer.exe`.
@@ -50,6 +50,11 @@ struct Args {
     /// modded fonts, models and UI replace the originals, and modded datatables (new songs) are used.
     #[arg(long)]
     mods: bool,
+
+    /// Print the game files this tool reads, as JSON, and exit. The WebUI uploads only these from a folder the
+    /// admin picks in the browser, into a copy of the install's layout that extract then runs on.
+    #[arg(long)]
+    inputs: bool,
 }
 
 /// Records which layers the outputs came from, so switching `--mods` on or off rebuilds them.
@@ -73,8 +78,32 @@ impl Report {
     }
 }
 
+/// `--inputs`: paths relative to the game folder. `files` are exact files or, ending in `/`, whole folders;
+/// in `names` folders only the file names are read (empty files will do). `mods` is the same for `Data_mods`.
+fn inputs() -> serde_json::Value {
+    let mut rel: Vec<String> = DATATABLES.iter().map(|n| format!("datatable/{n}")).collect();
+    rel.extend(TEXTURE_DIRS.iter().chain(&MODEL_DIRS).map(|d| format!("model/{d}/")));
+    rel.push("animation/".into());
+    rel.extend(font::SHEETS.iter().flat_map(|s| [format!("font/{s}.xml"), format!("font/{s}.nutexb")]));
+    rel.extend(ui::lumen_files().flat_map(|f| ["nulm", "nutexb"].map(|ext| format!("lumen/000_default/{f}.{ext}"))));
+    rel.extend(tones::inputs());
+    // Data_mods keeps its datatables encrypted in x64_enc (see game.rs).
+    let mod_files = rel.iter().filter(|r| !r.starts_with("datatable/")).map(|r| format!("Data_mods/x64/{r}"))
+        .chain(DATATABLES.iter().map(|n| format!("Data_mods/x64_enc/datatable/{n}")));
+    serde_json::json!({
+        "files": rel.iter().map(|r| format!("Data/x64/{r}")).collect::<Vec<_>>(),
+        "names": ["Data/x64/movie/"],
+        "mods": { "files": mod_files.collect::<Vec<_>>(), "names": ["Data_mods/x64/movie/"] },
+    })
+}
+
 fn main() -> ExitCode {
-    match run(Args::parse()) {
+    let args = Args::parse();
+    if args.inputs {
+        println!("{}", inputs());
+        return ExitCode::SUCCESS;
+    }
+    match run(args) {
         Ok(reports) => {
             reports.iter().for_each(print_report);
             if reports.iter().any(|r| !r.missing.is_empty() || !r.failed.is_empty()) {
@@ -91,7 +120,7 @@ fn main() -> ExitCode {
 }
 
 fn run(args: Args) -> Result<Vec<Report>> {
-    let x64 = resolve_x64(&args.game)?;
+    let x64 = resolve_x64(&args.game.context("--game is required")?)?;
     let out = match args.out {
         Some(p) => p,
         None => std::env::current_exe()?

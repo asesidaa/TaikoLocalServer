@@ -26,12 +26,17 @@ fn wavs(bank: &[u8]) -> Vec<&[u8]> {
     out
 }
 
+/// The sound banks this module reads (`--inputs`).
+pub fn inputs() -> impl Iterator<Item = String> {
+    (0..TONES).map(|id| format!("sound/se_neiro_{id:02}_v12a.nus3bank"))
+}
+
 /// Writes `<dst_dir>/<NN>_don.wav` and `<NN>_ka.wav` for every tone.
 pub fn convert(game: &crate::game::Game, dst_dir: &Path, report: &mut crate::Report) -> Result<()> {
     fs::create_dir_all(dst_dir).with_context(|| format!("creating {}", dst_dir.display()))?;
     for id in 0..TONES {
         let name = format!("{id:02}");
-        let src = game.file(format!("sound/se_neiro_{name}_v12a.nus3bank"));
+        let src = game.file(format!("sound/se_neiro_{name}_v12a.nus3bank")); // keep in step with inputs()
         if !src.is_file() {
             report.missing.push(src.display().to_string());
             continue;

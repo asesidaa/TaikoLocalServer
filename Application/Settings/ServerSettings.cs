@@ -11,6 +11,12 @@ public class ServerSettings
     /// <summary>The game install extract reads from (the folder containing Data/x64); enables "Run extract".</summary>
     public string? GamePath { get; set; }
 
+    /// <summary>
+    /// Let admins send the game files from their browser (Server Management › Game data: pick the game folder) when
+    /// the game isn't on this machine. Off: only GamePath, or extract run by hand.
+    /// </summary>
+    public bool AllowRemoteGameDir { get; set; }
+
     /// <summary>Allow admins' API tokens (Access › API tokens). Off: tls_ bearers are refused.</summary>
     public bool ApiTokens { get; set; }
 

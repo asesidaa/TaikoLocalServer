@@ -3159,4 +3159,25 @@
   <data name="Scroll right" xml:space="preserve">
     <value>Défiler vers la droite</value>
   </data>
+  <data name="Send Game Folder Hint" xml:space="preserve">
+    <value>Le jeu n'est pas sur cette machine. Choisissez son dossier (celui qui contient Data) et ce navigateur n'envoie que les fichiers dont extract a besoin, environ 600 Mo. Rien n'est modifié dans le dossier du jeu.</value>
+  </data>
+  <data name="Allow Remote Game Dir Hint" xml:space="preserve">
+    <value>Pour envoyer plutôt le dossier du jeu depuis votre navigateur, définissez {0} et redémarrez le serveur.</value>
+  </data>
+  <data name="No Game In Folder" xml:space="preserve">
+    <value>Ce dossier ne contient pas le jeu. Choisissez celui qui contient Data (ou Data lui-même).</value>
+  </data>
+  <data name="Choose game folder" xml:space="preserve">
+    <value>Choisir le dossier du jeu</value>
+  </data>
+  <data name="Sending the game files" xml:space="preserve">
+    <value>Envoi des fichiers du jeu</value>
+  </data>
+  <data name="Sending the game files: {0:0} of {1:0} MB" xml:space="preserve">
+    <value>Envoi des fichiers du jeu : {0:0} sur {1:0} Mo</value>
+  </data>
+  <data name="Or run it on the game PC" xml:space="preserve">
+    <value>Ou lancez-le sur le PC du jeu</value>
+  </data>
 </root>

@@ -36,6 +36,14 @@ const ICONS: [(&str, &str, &[(&str, &str, &str)]); 5] = [
     ("enso_ai/result/result_ai_section", "ai.json", &[("results", "ai", "win,lose"), ("crowns", "ai", "crown_rainbow")]),
 ];
 
+const NAMEPLATE_LUMEN: &str = "common/name_plate";
+const SCOREBOARD_LUMEN: &str = "common/player_board";
+
+/// The Lumen files under `lumen/000_default` this module reads (`--inputs`).
+pub fn lumen_files() -> impl Iterator<Item = &'static str> {
+    ICONS.iter().map(|(file, ..)| *file).chain([NAMEPLATE_LUMEN, SCOREBOARD_LUMEN])
+}
+
 /// The WebUI's icons (see [`ICONS`]), into `<dst_dir>/<prefix>_<label>.png` with one index per source file.
 pub fn icons(game: &Game, dst_dir: &Path, report: &mut crate::Report) -> Result<()> {
     for (file, index, sets) in ICONS {
@@ -59,7 +67,7 @@ pub fn nameplates(game: &Game, dst_dir: &Path, report: &mut crate::Report) -> Re
             ("dan", "dan", lm.sprite_with_label("5kyuu_red").context("no sprite labelled 5kyuu_red")?),
         ])
     };
-    convert(game, "common/name_plate", dst_dir, NAMEPLATE_INDEX, Some((NAMEPLATE_SCENE, nameplate_set as SceneSets)), report, sets)
+    convert(game, NAMEPLATE_LUMEN, dst_dir, NAMEPLATE_INDEX, Some((NAMEPLATE_SCENE, nameplate_set as SceneSets)), report, sets)
 }
 
 type SceneSets = fn(&Lumen, &Map<String, Value>) -> Result<(&'static str, Value)>;
@@ -83,7 +91,7 @@ fn nameplate_set(lm: &Lumen, sets: &Map<String, Value>) -> Result<(&'static str,
 
 /// The per-difficulty achievement panel (crowns and 粋/雅/極 rank slots) and its digit glyphs.
 pub fn scoreboard(game: &Game, dst_dir: &Path, report: &mut crate::Report) -> Result<()> {
-    convert(game, "common/player_board", dst_dir, SCOREBOARD_INDEX, None, report, |lm| {
+    convert(game, SCOREBOARD_LUMEN, dst_dir, SCOREBOARD_INDEX, None, report, |lm| {
         // The board places the panel as bg_instance next to its rank counters; each counter places digits as n1_ins….
         let board = lm.sprite_placing("num_kiwami_instance").context("no scoreboard sprite (num_kiwami_instance)")?;
         let counter = lm.child(board, "num_kiwami_instance").context("no rank counter")?;

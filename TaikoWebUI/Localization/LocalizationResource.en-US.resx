@@ -879,4 +879,13 @@
   <data name="Api Tokens Off Hint" xml:space="preserve">
     <value>API tokens are turned off, so the server refuses them. To turn them on, set {0} in {1} and restart the server.</value>
   </data>
+  <data name="Send Game Folder Hint" xml:space="preserve">
+    <value>The game isn't on this machine. Pick its folder (the one that contains Data) and this browser sends only the files extract needs, about 600 MB. Nothing in the game folder is changed.</value>
+  </data>
+  <data name="Allow Remote Game Dir Hint" xml:space="preserve">
+    <value>To send the game folder from your browser instead, set {0} and restart the server.</value>
+  </data>
+  <data name="No Game In Folder" xml:space="preserve">
+    <value>That folder doesn't contain the game. Pick the one that contains Data (or Data itself).</value>
+  </data>
 </root>

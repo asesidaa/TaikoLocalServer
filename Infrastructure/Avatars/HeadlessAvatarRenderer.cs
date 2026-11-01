@@ -240,7 +240,10 @@ public sealed class HeadlessAvatarRenderer(
             ExecutablePath = browserPath,
             Headless = true,
             // WebGL without a GPU falls back to SwiftShader; the server's own certificate may be self-signed.
-            Args = ["--enable-unsafe-swiftshader", "--ignore-certificate-errors", "--no-first-run", "--mute-audio", "--disable-extensions"],
+            // Chrome refuses to start as root (a Linux server bound to ports 80/443) unless sandboxing is off; it only
+            // loads this server's own embed.
+            Args = ["--enable-unsafe-swiftshader", "--ignore-certificate-errors", "--no-first-run", "--mute-audio", "--disable-extensions",
+                    .. OperatingSystem.IsLinux() && Environment.UserName == "root" ? ["--no-sandbox"] : Array.Empty<string>()],
         });
         page = await browser.NewPageAsync();
         await page.SetViewportAsync(new ViewPortOptions { Width = 512, Height = 512 });

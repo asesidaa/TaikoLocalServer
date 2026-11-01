@@ -3159,4 +3159,25 @@
   <data name="Scroll right" xml:space="preserve">
     <value>右へスクロール</value>
   </data>
+  <data name="Send Game Folder Hint" xml:space="preserve">
+    <value>ゲームはこのマシンにありません。ゲームのフォルダー（Data を含むフォルダー）を選ぶと、このブラウザーが extract に必要なファイルだけ（約 600 MB）を送信します。ゲームフォルダーの中身は変更されません。</value>
+  </data>
+  <data name="Allow Remote Game Dir Hint" xml:space="preserve">
+    <value>代わりにブラウザーからゲームフォルダーを送るには、{0} を設定してサーバーを再起動してください。</value>
+  </data>
+  <data name="No Game In Folder" xml:space="preserve">
+    <value>このフォルダーにはゲームがありません。Data を含むフォルダー（または Data 自体）を選んでください。</value>
+  </data>
+  <data name="Choose game folder" xml:space="preserve">
+    <value>ゲームフォルダーを選択</value>
+  </data>
+  <data name="Sending the game files" xml:space="preserve">
+    <value>ゲームファイルを送信中</value>
+  </data>
+  <data name="Sending the game files: {0:0} of {1:0} MB" xml:space="preserve">
+    <value>ゲームファイルを送信中：{0:0} / {1:0} MB</value>
+  </data>
+  <data name="Or run it on the game PC" xml:space="preserve">
+    <value>またはゲーム PC で実行</value>
+  </data>
 </root>

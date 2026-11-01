@@ -18,14 +18,16 @@ It is composed of two major components :
 1. Extract the server's release anywhere.
 2. Open [Configurations/ServerSettings.json](./Host/Configurations/ServerSettings.json) and set:
    - `"Mode"`: `"Local"` (the default, no logins) or `"Server"` (accounts and admins). See [Local or Server mode](#local-or-server-mode).
-   - `"GamePath"`: your game install, the folder that contains `Data`, for example `"C:/Games/Taiko no Tatsujin Nijiiro Version"`. The web UI uses it to copy the game files the server needs. You can leave it empty if the game is on another PC (see step 5).
+   - `"GamePath"`: your game install, the folder that contains `Data`, for example `"C:/Games/Taiko no Tatsujin Nijiiro Version"`. The web UI uses it to copy the game files the server needs. If the game is on another PC, leave it empty and set `"AllowRemoteGameDir": true` instead (see step 5).
 3. (Optional) In the `Certificates` folder, import `root.pfx` into the trusted root store and `cert.pfx` into the personal store. The other import options can stay at their defaults.
-4. Start `TaikoLocalServer.exe`. It asks for administrator rights, because it listens on ports 80 and 443 as well as the game's ports. Then open [http://localhost](http://localhost).
+4. Start the server: `TaikoLocalServer.exe` on Windows, which asks for administrator rights, or `./TaikoLocalServer` on Linux, as root or with permission to bind low ports. It listens on ports 80 and 443 as well as the game's ports. Then open [http://localhost](http://localhost).
    - **Server mode:** the web UI opens on a setup page until an admin exists. Enter the **setup code** printed in the server's console, then your card's access code and a password for the admin account (see [Web UI admins](#web-ui-admins-server-mode)).
    - **Local mode:** the web UI opens straight away.
-5. Add the game files. In Server mode this is the setup's **Game files** step. Afterwards, and in Local mode, use **Admin › Server Management › Game Data**; until it's done, admins see a "Game files are missing" banner. Press **Extract game files**: this runs `extract.exe` (next to the server) on your `GamePath`. It copies the datatables the server needs and converts the don-chan models, textures and animations for the web UI's 3D preview (about 175 MB). It writes only into the server's `wwwroot` folder, never into your game folder. Run it again after a game update; files that are already up to date are skipped.
+5. Add the game files. In Server mode this is the setup's **Game files** step. Afterwards, and in Local mode, use **Admin › Server Management › Game Data**; until it's done, admins see a "Game files are missing" banner. Press **Extract game files**: this runs `extract` (`extract.exe` on Windows, next to the server) on your `GamePath`. It copies the datatables the server needs and converts the don-chan models, textures and animations for the web UI's 3D preview (about 175 MB). It writes only into the server's `wwwroot` folder, never into your game folder. Run it again after a game update; files that are already up to date are skipped.
 
-   If `GamePath` isn't set (for example the game is on another PC), run it yourself on the game PC, then copy its `wwwroot` output into the server's `wwwroot` folder:
+   **The game is on another PC** (for example the server runs on a Linux box): with `"AllowRemoteGameDir": true`, open the web UI on the game PC and press **Choose game folder** instead. Pick the game folder (the one that contains `Data`, so `Data_mods` comes along). The browser sends only the files extract reads (about 600 MB of a 15 GB install), and the server runs extract on them, then deletes them.
+
+   Or run extract yourself on the game PC, then copy its `wwwroot` output into the server's `wwwroot` folder:
    ```bash
    extract.exe --game "C:\Games\Taiko no Tatsujin Nijiiro Version"
    ```
