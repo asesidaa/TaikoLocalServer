@@ -29,11 +29,12 @@ public static class CardStyle
     public static string Clip(CardAnimation a) => Animations.FirstOrDefault(x => x.Value == a).Clip ?? "don_result_clear_loop";
 
     /// <summary>
-    /// What an avatar shows: the costume, colours and pose (its animation's first frame). It's in the avatar's URL, so
-    /// any change, in game too, misses the stored image until the card renders a new one. Bump the "1" to re-render all.
+    /// What an avatar shows: the costume (without the puchi, which it leaves out), colours and pose (its animation's
+    /// first frame). It's in the avatar's URL, so any change, in game too, misses the stored image until the card renders
+    /// a new one. Bump the version (the leading number) to re-render all, e.g. after changing the framing in ui.js.
     /// </summary>
     public static string AvatarKey(UserSetting s) =>
-        $"1-{s.Kigurumi}-{s.Head}-{s.Body}-{s.Face}-{s.Puchi}-{s.BodyColor}-{s.FaceColor}-{s.LimbColor}-{(int)s.CardAnimation}";
+        $"2-{s.Kigurumi}-{s.Head}-{s.Body}-{s.Face}-{s.BodyColor}-{s.FaceColor}-{s.LimbColor}-{(int)s.CardAnimation}";
 
     public static string AvatarSrc(UserSetting s) => $"api/Users/{s.Baid}/Avatar?v={AvatarKey(s)}";
 

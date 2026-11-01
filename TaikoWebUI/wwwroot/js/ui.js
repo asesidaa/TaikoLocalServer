@@ -188,7 +188,8 @@
     const dataUrl = await new Promise(resolve => {
       const onMsg = e => { if (e.source === frame.contentWindow && e.data?.type === "don-snapshot") { removeEventListener("message", onMsg); resolve(e.data.dataUrl); } };
       addEventListener("message", onMsg);
-      frame.contentWindow.postMessage({ type: "don-snapshot", zoom: 0.15, camY: 0.17, size: 256 }, new URL(frame.src).origin);
+      // Face centred (camX), without the puchi. Changing the framing means bumping CardStyle.AvatarKey's version.
+      frame.contentWindow.postMessage({ type: "don-snapshot", zoom: 0.14, camY: 0.165, camX: 0.04, puchi: false, size: 256 }, new URL(frame.src).origin);
     });
     if (frame._avatarKey !== job.key) return;   // the costume changed while rendering; the newer job uploads
     const img = new Image();
