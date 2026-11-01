@@ -23,7 +23,8 @@ else
             <Icon Name="chevLeft" Class="size-4" />@Localizer["Song List"]
         </a>
         <section class="@Css.Card flex items-start gap-4 p-5">
-            <span class="mt-1 h-14 w-1.5 shrink-0 rounded-full" style="background:@genre.Bg"></span>
+            @* Runs the height of the text beside it (chip, title, English name), however many lines that is. *@
+            <span class="w-1.5 shrink-0 self-stretch rounded-full" style="background:@genre.Bg"></span>
             <div class="min-w-0 flex-1">
                 <div class="flex flex-wrap items-center gap-2">
                     <span class="rounded-full px-2 py-0.5 text-[11px] font-medium" style="background:@genre.Bg;color:@genre.Fg">@genre.Name</span>

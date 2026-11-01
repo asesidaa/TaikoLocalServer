@@ -16,9 +16,24 @@
     font-display: swap;
 }
 
+/* DM Mono (OFL, see dm-mono.LICENSE.txt), Latin only: mono text is codes, IDs, paths, tokens and log lines. */
+@font-face {
+    font-family: "DM Mono";
+    src: url("dm-mono-400.woff2") format("woff2");
+    font-weight: 400;
+    font-display: swap;
+}
+@font-face {
+    font-family: "DM Mono";
+    src: url("dm-mono-500.woff2") format("woff2");
+    font-weight: 500;
+    font-display: swap;
+}
+
 @theme {
     --font-sans: ui-sans-serif, system-ui, "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif;
     --font-display: "Zen Maru Gothic", ui-sans-serif, system-ui, sans-serif;
+    --font-mono: "DM Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
     /* Don (default theme). The other accent themes override these below. */
     --color-primary-50: #fff3f0;
     --color-primary-100: #ffe2db;
