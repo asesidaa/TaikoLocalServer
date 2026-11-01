@@ -3183,4 +3183,7 @@
   <data name="More actions" xml:space="preserve">
     <value>Plus d'actions</value>
   </data>
+  <data name="Player Rules Moved Hint" xml:space="preserve">
+    <value>La modification libre du profil, la suppression des comptes et la limite de codes d'accès se trouvent dans {0}.</value>
+  </data>
 </root>

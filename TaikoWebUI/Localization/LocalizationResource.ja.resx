@@ -3183,4 +3183,7 @@
   <data name="More actions" xml:space="preserve">
     <value>その他の操作</value>
   </data>
+  <data name="Player Rules Moved Hint" xml:space="preserve">
+    <value>プロフィールの自由編集、アカウント削除、アクセスコードの上限は {0} にあります。</value>
+  </data>
 </root>

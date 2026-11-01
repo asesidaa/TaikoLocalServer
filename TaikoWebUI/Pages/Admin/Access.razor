@@ -165,9 +165,13 @@ else
     private async Task Save()
     {
         saving = true;
-        var res = await Client.PutAsJsonAsync("api/AccessRules", draft);
+        // The player rules are edited on Server Management › Settings: keep their current values.
+        var current = await Client.GetFromJsonAsync<AccessRulesSettings>("api/AccessRules");
+        if (current is not null)
+            (draft!.AllowUserDelete, draft.AllowFreeProfileEditing, draft.AccessCodeLimit) = (current.AllowUserDelete, current.AllowFreeProfileEditing, current.AccessCodeLimit);
+        var res = current is null ? null : await Client.PutAsJsonAsync("api/AccessRules", draft);
         saving = false;
-        if (!res.IsSuccessStatusCode)
+        if (res is not { IsSuccessStatusCode: true })
         {
             Toast.Show(Localizer["Save Failed"], true);
             return;
@@ -229,13 +233,6 @@ else
             </div>
             <div class="mt-3 divide-y divide-zinc-100 dark:divide-zinc-800">
                 <Toggle Label="@Localizer["Only admins can sign in"]" Icon="lock" @bind-Value="draft.OnlyAdmin" />
-                <Toggle Label="@Localizer["Players can delete their account"]" Icon="users" @bind-Value="draft.AllowUserDelete" />
-                <Toggle Label="@Localizer["Free profile editing"]" Description="@Localizer["Free Profile Editing Hint"]" Icon="id" @bind-Value="draft.AllowFreeProfileEditing" />
-                <label class="flex items-center gap-3 py-2">
-                    <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"><Icon Name="card" Class="size-5" /></span>
-                    <span class="min-w-0 flex-1 text-sm font-medium">@Localizer["Access codes per player"]</span>
-                    <input type="number" min="1" max="99" class="@Css.Input !w-20 text-right" @bind="draft.AccessCodeLimit" />
-                </label>
                 <div class="flex flex-wrap items-center gap-3 py-2">
                     <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"><Icon Name="lock" Class="size-5" /></span>
                     <span class="min-w-0 flex-1 text-sm font-medium">@Localizer["Lock an account after failed sign-ins"]</span>
@@ -263,12 +260,13 @@ else
                     </select>
                 </div>
             </div>
+            <p class="mt-3 text-xs @Css.Muted">@((MarkupString)string.Format(Localizer["Player Rules Moved Hint"], $"<a class=\"underline\" href=\"/Admin/Server/settings\">{Localizer["Server Management"]} › {Localizer["Settings"]}</a>"))</p>
             <div class="mt-4 flex justify-end gap-2">
                 @if (Changed)
                 {
                     <button class="@Css.GhostButton" @onclick="() => draft = Copy(saved)">@Localizer["Cancel"]</button>
                 }
-                <button class="@Css.PrimaryButton" disabled="@(!Changed || saving || draft.AccessCodeLimit < 1)" @onclick="Save">@Localizer["Save"]</button>
+                <button class="@Css.PrimaryButton" disabled="@(!Changed || saving)" @onclick="Save">@Localizer["Save"]</button>
             </div>
         </section>
     };

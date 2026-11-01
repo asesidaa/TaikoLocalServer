@@ -3183,4 +3183,7 @@
   <data name="More actions" xml:space="preserve">
     <value>更多操作</value>
   </data>
+  <data name="Player Rules Moved Hint" xml:space="preserve">
+    <value>自由编辑资料、删除账户和访问码上限位于 {0}。</value>
+  </data>
 </root>

@@ -8,11 +8,16 @@
 
 <PageTitle>Server Management</PageTitle>
 <Tabs Items="tabs" Selected="@Current" SelectedChanged="Go" Label="@Localizer["Server Management"]"
-      Columns="sm:grid-cols-3 xl:grid-cols-6" />
+      Columns="sm:grid-cols-4 xl:grid-cols-7" />
 <div class="mt-4" role="tabpanel">
     @if (Current == "status")
     {
         <ServerStateCard />
+    }
+    else if (Current == "settings")
+    {
+        @* Server-wide settings an admin changes while it runs, then what the config files set (read-only). *@
+        <PlayerRulesCard />
         <div class="mt-4"><AvatarRendererCard /></div>
         <div class="mt-4">@ConfigCard</div>
     }
@@ -51,7 +56,7 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        if (Current == "status" && config is null)
+        if (Current == "settings" && config is null)
             config = await Client.GetFromJsonAsync<ServerConfigResponse>("api/ServerConfig");
     }
 
@@ -112,6 +117,7 @@
         tabs =
         [
             ("status", Localizer["Status"], "server"),
+            ("settings", Localizer["Settings"], "settings"),
             ("cabinets", Localizer["Cabinets"], "monitor"),
             ("data", Localizer["Game Data"], "database"),
             ("dan", Localizer["Dani Dojo"], "medal"),

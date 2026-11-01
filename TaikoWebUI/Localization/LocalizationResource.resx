@@ -888,4 +888,7 @@
   <data name="No Game In Folder" xml:space="preserve">
     <value />
   </data>
+  <data name="Player Rules Moved Hint" xml:space="preserve">
+    <value />
+  </data>
 </root>

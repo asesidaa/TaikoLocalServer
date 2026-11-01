@@ -888,4 +888,7 @@
   <data name="No Game In Folder" xml:space="preserve">
     <value>That folder doesn't contain the game. Pick the one that contains Data (or Data itself).</value>
   </data>
+  <data name="Player Rules Moved Hint" xml:space="preserve">
+    <value>Free profile editing, deleting accounts and the access-code limit are in {0}.</value>
+  </data>
 </root>
