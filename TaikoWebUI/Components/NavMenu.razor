@@ -48,7 +48,7 @@
             }
             <div class="min-w-0 flex-1">
                 <p class="truncate text-sm font-medium">@me?.UserSetting.MyDonName</p>
-                <p class="truncate text-xs @Css.Muted">Baid @Baid@(AuthService.IsAdmin ? $" · {Localizer["Admin"]}" : "")</p>
+                <p class="truncate text-xs @Css.Muted">ID: @Baid@(AuthService.IsAdmin ? $" · {Localizer["Admin"]}" : "")</p>
             </div>
             <button class="@Css.IconButton hover:!text-primary-600" aria-label="@Localizer["Log Out"]" @onclick="OnLogout"><Icon Name="logOut" /></button>
         </div>
