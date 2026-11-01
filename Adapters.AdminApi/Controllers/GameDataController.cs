@@ -43,13 +43,13 @@ public class GameDataController(IGameDataCatalog catalog, ITaikoDbContext contex
         return catalog.GetFileStatus();
     }
 
-    [HttpGet("Files/{name}")]
+    [HttpGet("Files/{**name}")]
     [Authorize(Policy = AuthPolicies.Admin)]
     public async Task<IActionResult> GetFile(string name) =>
         await catalog.ReadDataFileAsync(name) is { } json ? Content(json, "application/json") : NotFound();
 
     /// <summary>Saves an editable data file (the body is its JSON) and reloads. 400 with the reason when it doesn't parse.</summary>
-    [HttpPut("Files/{name}")]
+    [HttpPut("Files/{**name}")]
     [Authorize(Policy = AuthPolicies.Admin)]
     [RequestSizeLimit(MaxFileBytes)]
     [Consumes("application/json")]

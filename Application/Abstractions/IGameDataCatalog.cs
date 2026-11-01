@@ -21,6 +21,20 @@ public interface IGameDataCatalog
     /// </summary>
     public Task<string?> SaveDataFileAsync(string name, string json);
 
+    // ---- Dani Dojo course sets: GetCommonDanDataDictionary is the default set ----
+
+    public IReadOnlyList<DanSetInfo> GetDanSets();
+
+    /// <summary>A new set, a copy of <paramref name="copyFrom"/>; returns its id.</summary>
+    public Task<string> CreateDanSetAsync(string name, string copyFrom);
+
+    public Task<bool> RenameDanSetAsync(string id, string name);
+
+    public Task<bool> SetDefaultDanSetAsync(string id);
+
+    /// <summary>False for the built-in set, the default set, or an unknown id.</summary>
+    public Task<bool> DeleteDanSetAsync(string id);
+
     public List<uint> GetMusicList();
 
     public List<uint> GetMusicWithUraList();

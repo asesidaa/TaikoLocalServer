@@ -11,7 +11,7 @@ namespace TaikoLocalServer.Infrastructure.GameDataCatalog;
 
 // TODO(PR2-followup): extract per-table loaders into Loaders/*.cs (spec §3 calls for
 // 18 standalone loader classes; deferred to keep PR2 scope manageable).
-public class FileGameDataCatalog : IGameDataCatalog
+public partial class FileGameDataCatalog : IGameDataCatalog
 {
     private ImmutableDictionary<uint, DanData> commonDanDataDictionary =
         ImmutableDictionary<uint, DanData>.Empty;
@@ -93,9 +93,10 @@ public class FileGameDataCatalog : IGameDataCatalog
         return telopDataDictionary;
     }
 
+    // The default course set (cabinets will pick their own set once they have settings).
     public ImmutableDictionary<uint, DanData> GetCommonDanDataDictionary()
     {
-        return commonDanDataDictionary;
+        return danSets.GetValueOrDefault(danIndex.DefaultSet) ?? commonDanDataDictionary;
     }
 
     public ImmutableDictionary<uint, DanData> GetCommonGaidenDataDictionary()
@@ -266,6 +267,7 @@ public class FileGameDataCatalog : IGameDataCatalog
                     status.Add(new GameDataFileStatus(name, true, false, e.Message, File.GetLastWriteTimeUtc(path)));
                 }
             }
+            await LoadDanSetsAsync(status);
             fileStatus = status;
         }
         finally
@@ -279,14 +281,14 @@ public class FileGameDataCatalog : IGameDataCatalog
     public async Task<string?> ReadDataFileAsync(string name)
     {
         // Only the known names: this is also what keeps paths out of the request.
-        if (!DataParsers.ContainsKey(name)) return null;
+        if (ParserFor(name) is null) return null;
         var path = Path.Combine(PathHelper.GetDataPath(), name);
         return File.Exists(path) ? await File.ReadAllTextAsync(path) : null;
     }
 
     public async Task<string?> SaveDataFileAsync(string name, string json)
     {
-        if (!DataParsers.TryGetValue(name, out var parse)) return "Unknown data file.";
+        if (ParserFor(name) is not { } parse) return "Unknown data file.";
         string formatted;
         try
         {
@@ -298,14 +300,25 @@ public class FileGameDataCatalog : IGameDataCatalog
             return e.Message;
         }
 
-        var path = Path.Combine(PathHelper.GetDataPath(), name);
-        var temp = path + ".tmp";
-        await File.WriteAllTextAsync(temp, formatted);
-        if (File.Exists(path)) File.Copy(path, path + ".bak", overwrite: true);
-        File.Move(temp, path, overwrite: true);
+        await WriteAtomicAsync(Path.Combine(PathHelper.GetDataPath(), name), formatted);
         await ReloadAsync();
         return null;
     }
+
+    // Temp file + rename, so a crash mid-write never leaves half a file; the previous one is kept as .bak.
+    private static async Task WriteAtomicAsync(string path, string text)
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        var temp = path + ".tmp";
+        await File.WriteAllTextAsync(temp, text);
+        if (File.Exists(path)) File.Copy(path, path + ".bak", overwrite: true);
+        File.Move(temp, path, overwrite: true);
+    }
+
+    private Func<string, Action>? ParserFor(string name) =>
+        DataParsers.TryGetValue(name, out var parse) ? parse
+        : DanSetId(name) is { } id && danIndex.Sets.Any(x => x.Id == id) ? DanSetParser(id)
+        : null;
 
     // The game's datatables depend on each other (names come from the wordlist), so they load as one group.
     private void LoadDatatables(List<GameDataFileStatus> status)
