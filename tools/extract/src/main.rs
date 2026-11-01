@@ -1,3 +1,4 @@
+mod models;
 mod textures;
 
 use std::fs;
@@ -20,6 +21,9 @@ const DATATABLES: [&str; 6] = [
 /// Flat texture folders under `Data/x64/model`: face paint (the `face` costume slot),
 /// puchi accessories, and the per-kigurumi expression atlases.
 const TEXTURE_DIRS: [&str; 3] = ["paint", "acce", "face"];
+
+/// Model folders under `Data/x64/model`: bodies, heads, and kigurumi (full costumes).
+const MODEL_DIRS: [&str; 3] = ["body", "head", "cos"];
 
 /// Extract the game files TaikoLocalServer needs from a Taiko no Tatsujin Nijiiro install.
 #[derive(Parser)]
@@ -83,6 +87,11 @@ fn run(args: Args) -> Result<Vec<Report>> {
     for dir in TEXTURE_DIRS {
         let mut report = Report::new(&format!("{dir} textures"));
         textures::convert_dir(&x64.join("model").join(dir), &out.join("don-model").join(dir), &mut report)?;
+        reports.push(report);
+    }
+    for dir in MODEL_DIRS {
+        let mut report = Report::new(&format!("{dir} models"));
+        models::convert_category(&x64.join("model").join(dir), &out.join("don-model").join(dir), &mut report)?;
         reports.push(report);
     }
     Ok(reports)
