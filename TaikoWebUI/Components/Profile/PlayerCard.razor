@@ -40,6 +40,10 @@
                 @* Until the still arrives: a soft placeholder. A new costume dims the old still until its own is drawn. *@
                 <img @ref="stillImg" alt="@Localizer["Don-chan"]" hidden class="peer absolute inset-0 size-full object-contain transition-opacity data-pending:opacity-50" />
                 <span class="absolute inset-[15%] animate-pulse rounded-full bg-black/10 peer-[:not([hidden])]:hidden" aria-hidden="true"></span>
+                @* Shown while the first still loads or a new costume's is being drawn (the image's own state drives it). *@
+                <span role="status" class="pointer-events-none absolute bottom-1 left-1/2 hidden -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full bg-black/50 px-2.5 py-1 text-xs font-medium text-white backdrop-blur peer-data-pending:flex peer-[[hidden]]:flex">
+                    <Icon Name="rotate" Class="size-3.5 animate-spin" />@Localizer["Drawing don-chan…"]
+                </span>
             }
         </div>
         <div class="min-w-0 lg:text-center">
@@ -123,7 +127,7 @@
     }
 
     private bool HasEmbed => !string.IsNullOrWhiteSpace(Settings.Value.DonEmbedUrl);
-    private string EmbedSrc => Settings.Value.DonEmbedUrl;
+    private string EmbedSrc => $"{Settings.Value.DonEmbedUrl}?quality={Auth.Quality3D}";
 
     private DanBestData? TopDan => Dans.Where(d => d.ClearState != DanClearState.NotClear && d.DanId is >= 1 and <= 19)
         .MaxBy(d => d.DanId);
@@ -146,7 +150,7 @@
     // The large 3D view (rendered by the layout): its own embed, configured by its URL, framed so the feet clear the bottom.
     private RenderFragment BigView => __builder =>
     {
-        var src = $"{EmbedSrc}?body={Setting.Body}&head={Setting.Head}&kigurumi={Setting.Kigurumi}&face={Setting.Face}&puchi={Setting.Puchi}" +
+        var src = $"{EmbedSrc}&body={Setting.Body}&head={Setting.Head}&kigurumi={Setting.Kigurumi}&face={Setting.Face}&puchi={Setting.Puchi}" +
                   $"&bodyColor={Setting.BodyColor}&faceColor={Setting.FaceColor}&limbColor={Setting.LimbColor}" +
                   $"&anim={Uri.EscapeDataString(CardStyle.Clip(Setting.CardAnimation))}&zoom=0.22&camY=0.19";
         <div class="fade fixed inset-0 z-[60] grid place-items-center bg-black/60 p-4" @onclick="Overlay.Hide">

@@ -54,6 +54,8 @@ public sealed class AuthService : IDisposable
     public bool ServerAvatars => authConfig.ServerAvatars;
     /// <summary>Player cards show still images the server draws (Player Settings › Enable 3D Renderer off).</summary>
     public bool ServerStills => authConfig.ServerStills;
+    /// <summary>The 3D model's pixel density on player cards (Player Settings), as the embed's quality value.</summary>
+    public string Quality3D => authConfig.Quality3D.ToString().ToLowerInvariant();
 
     /// <summary>An admin whose server requires 2-step: they're a player until they turn it on in Settings › Security.</summary>
     public bool TwoFactorSetupRequired { get; private set; }

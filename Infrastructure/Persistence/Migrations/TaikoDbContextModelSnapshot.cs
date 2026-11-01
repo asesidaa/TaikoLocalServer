@@ -416,6 +416,9 @@ namespace TaikoLocalServer.Migrations
                     b.Property<bool>("Cards3D")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("Quality3D")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("RenderAvatars")
                         .HasColumnType("INTEGER");
 

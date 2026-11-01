@@ -3387,4 +3387,22 @@
   <data name="Player cards show still images" xml:space="preserve">
     <value>卡片顯示靜態圖片</value>
   </data>
+  <data name="3D quality" xml:space="preserve">
+    <value>3D 畫質</value>
+  </data>
+  <data name="High draws don-chan with twice the pixels on ordinary screens, for smoother edges. Low is the lightest, for slow phones and PCs." xml:space="preserve">
+    <value>高：在一般螢幕上以兩倍像素繪製小咚，邊緣更平滑。低：最省資源，適合較慢的手機和電腦。</value>
+  </data>
+  <data name="Low" xml:space="preserve">
+    <value>低</value>
+  </data>
+  <data name="Standard" xml:space="preserve">
+    <value>標準</value>
+  </data>
+  <data name="High" xml:space="preserve">
+    <value>高</value>
+  </data>
+  <data name="Drawing don-chan…" xml:space="preserve">
+    <value>正在繪製小咚…</value>
+  </data>
 </root>

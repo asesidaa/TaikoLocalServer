@@ -18,6 +18,23 @@
                 Description="@(status.Enabled
                     ? Localizer["Player cards show an animated 3D don-chan. When off, they show a still image the server draws: lighter for phones and older PCs, and it updates a few seconds after a costume change."]
                     : Localizer["Player cards show an animated 3D don-chan. Turn on rendering avatars on the server to use still images instead."])" />
+        @* The 3D model's pixel density, for whichever cards show it. *@
+        var cards3D = status.Cards3D || !status.Enabled;
+        <div class="flex flex-wrap items-center gap-3 py-2 @(cards3D ? "" : "opacity-60")">
+            <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"><Icon Name="monitor" Class="size-5" /></span>
+            <span class="min-w-0 flex-1">
+                <span class="block text-sm font-medium">@Localizer["3D quality"]</span>
+                <span class="block max-w-2xl text-xs @Css.Muted">@Localizer["High draws don-chan with twice the pixels on ordinary screens, for smoother edges. Low is the lightest, for slow phones and PCs."]</span>
+            </span>
+            <div class="inline-flex gap-0.5 rounded-xl bg-zinc-100 p-1 dark:bg-zinc-800" role="radiogroup" aria-label="@Localizer["3D quality"]">
+                @foreach (var (q, label) in new[] { (RenderQuality.Low, Localizer["Low"].Value), (RenderQuality.Standard, Localizer["Standard"].Value), (RenderQuality.High, Localizer["High"].Value) })
+                {
+                    var on = status.Quality3D == q;
+                    <button role="radio" aria-checked="@Css.Aria(on)" disabled="@(!cards3D)" @onclick="() => SetQuality(q)"
+                            class="rounded-lg px-3 py-1 text-xs font-medium disabled:cursor-not-allowed @(on ? "bg-white shadow-sm dark:bg-zinc-900" : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200")">@label</button>
+                }
+            </div>
+        </div>
         <dl class="mt-3 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
             <div class="min-w-0">
                 <dt class="text-xs @Css.Muted">@Localizer["Browser"]</dt>
@@ -105,6 +122,15 @@
         if (!res.IsSuccessStatusCode) { Toast.Show(Localizer["Save Failed"], true); return; }
         status = await res.Content.ReadFromJsonAsync<AvatarRendererStatus>();
         Toast.Show(on ? Localizer["Player cards show 3D"] : Localizer["Player cards show still images"]);
+    }
+
+    private async Task SetQuality(RenderQuality quality)
+    {
+        if (status?.Quality3D == quality) return;
+        var res = await Client.PutAsJsonAsync("api/AvatarRenderer/Quality3D", new { quality });
+        if (!res.IsSuccessStatusCode) { Toast.Show(Localizer["Save Failed"], true); return; }
+        status = await res.Content.ReadFromJsonAsync<AvatarRendererStatus>();
+        Toast.Show(Localizer["Saved"]);
     }
 
     // The list's thumbnails load through the asset fetcher (they need the sign-in token).

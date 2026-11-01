@@ -3387,4 +3387,22 @@
   <data name="Player cards show still images" xml:space="preserve">
     <value>Les cartes montrent des images fixes</value>
   </data>
+  <data name="3D quality" xml:space="preserve">
+    <value>Qualité 3D</value>
+  </data>
+  <data name="High draws don-chan with twice the pixels on ordinary screens, for smoother edges. Low is the lightest, for slow phones and PCs." xml:space="preserve">
+    <value>Élevée dessine don-chan avec deux fois plus de pixels sur les écrans ordinaires, pour des contours plus lisses. Basse est la plus légère, pour les téléphones et PC lents.</value>
+  </data>
+  <data name="Low" xml:space="preserve">
+    <value>Basse</value>
+  </data>
+  <data name="Standard" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="High" xml:space="preserve">
+    <value>Élevée</value>
+  </data>
+  <data name="Drawing don-chan…" xml:space="preserve">
+    <value>Dessin de don-chan…</value>
+  </data>
 </root>

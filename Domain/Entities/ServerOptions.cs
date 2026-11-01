@@ -1,3 +1,5 @@
+using TaikoLocalServer.Domain.Enums;
+
 namespace TaikoLocalServer.Domain.Entities;
 
 /// <summary>Server features an admin turns on or off while the server runs (Server Management › Player Settings). One row (Id 1).</summary>
@@ -13,4 +15,7 @@ public class ServerOptions
     /// renderer draws, lighter for phones and older PCs; that needs <see cref="RenderAvatars"/>, so without it cards stay 3D.
     /// </summary>
     public bool Cards3D { get; set; } = true;
+
+    /// <summary>The 3D don-chan's pixel density on player cards: lower is lighter for slow devices, higher is smoother.</summary>
+    public RenderQuality Quality3D { get; set; } = RenderQuality.High;
 }
