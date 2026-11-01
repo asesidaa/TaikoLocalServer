@@ -1,6 +1,9 @@
-﻿@font-face {
+﻿/* Zen Maru Gothic Black (OFL, see font.LICENSE.txt), subset to the WebUI's characters.
+   The 'Nijiiro' family name stays until the Profile page is ported (§2b of the refactor plan). */
+@font-face {
     font-family: 'Nijiiro';
     src: url('font.woff2') format('woff2');
+    font-weight: 900;
     font-display: swap;
 }
 

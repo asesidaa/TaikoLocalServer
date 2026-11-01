@@ -290,10 +290,27 @@ The WebUI itself reads one table raw: `GameDataService.InitializeAsync` fetches 
 
 **Font: decided, an OFL font (2026-10-31).** The game has no vector font to extract (only bitmap glyph atlases), and the old file was a vector OTF of unclear origin, so it gets replaced by an OFL-licensed rounded display font, self-hosted and subset.
 - **File:** `TaikoWebUI/wwwroot/css/font.woff2`, a generic name, so swapping the font later is a file replacement with no reference changes. The old `Nijiiro.woff2` has already been renamed to it, and `app.css` points at it. Its *contents* get replaced with the chosen OFL font in the shell port.
-- **Candidates** (the prototype picks, by eye): M PLUS Rounded 1c (heavy weights, JP + Latin), Zen Maru Gothic, Kosugi Maru. Subset to Latin + kana + the kanji the UI uses, plus the characters in player names if feasible; otherwise keep a full-JP fallback to the system stack.
+- **Done (2026-10-31): Zen Maru Gothic 900 (Black)** is now `css/font.woff2` (117 KB) with `css/font.LICENSE.txt` (OFL 1.1), and `app.css` declares `font-weight: 900`.
+  - **Source:** `ofl/zenmarugothic/ZenMaruGothic-Black.ttf` (3.7 MB) and `OFL.txt` from the google/fonts repo.
+  - **Subset:** 1,071 characters: everything in TaikoWebUI's `.resx`, `.razor`, `.cs`, `.json`, `.md` and `.html` files, plus full Latin, Latin-1, general punctuation, CJK punctuation, kana and fullwidth forms. Characters outside it fall back to the system font. Player names and titles never use it (see below), so the subset can stay small.
+  - **To regenerate after adding UI strings:** collect the characters from `TaikoWebUI/` the same way, then run the `subset-font` npm package (HarfBuzz WASM), e.g. `subsetFont(ttf, text, { targetFormat: "woff2" })`. A full Japanese fallback isn't needed, because missing glyphs use the system font.
 - **CSS:** the family name moves to a generic `--font-display` token in the new shell. Today's `'Nijiiro'` family name stays until the Profile page is ported.
 - The OFL licence text ships next to it (`font.LICENSE.txt`).
-- **Not doing:** game-glyph text rendering. It's possible later from `font/*.nutexb` + `.xml` if wanted.
+
+**Game-glyph text for the nameplate and scoreboard previews (2026-10-31).** The game previews draw text with the game's own glyph sheets, chosen by the player's in-game language, so names look exactly as they do on the cabinet. Everywhere else uses Zen Maru Gothic.
+- **Source:** `Data/x64/font/<lang>_<size>.{nutexb,xml}`. Each is a BC7 alpha-mask sheet (white glyphs, no outline) plus `<glyph index=… offsetU offsetV width height>`, where **`index` is the Unicode code point**. The game uses the 32-pt sheets: `Taiko.exe` hardcodes `jp_32_DB` and builds the rest as `<lang>_32`.
+- **Language:** `UserSetting.MyDonNameLanguage` (the Profile "Language" selector, already persisted) maps 0 Japanese → `jp_32_DB`, 1 English → `en_32`, 2 Chinese Traditional → `tw_32`, 3 Korean → `kr_32`, 4 Chinese Simplified → `tw_32`, because 39.06 ships no Simplified sheet (the CHN build may have `cn_32`; check later). Missing glyphs fall back through jp → tw → kr → en, then Zen Maru Gothic.
+- **Text styles,** from the name_plate Lumen text tags (HTML templates plus the outline word):
+
+  | Field | Size | Fill | Outline | Box |
+  |---|---|---|---|---|
+  | Title | 22 | `#000000` | none | 215×60 |
+  | Name | 30, or 24 in the dan/shougou variants | `#ffffff` | 3 px black | 190×60 or 260×60 |
+
+  All are centred, and glyphs scale by `size / fontPoint`.
+- **`extract` output:** `don-model/font/<sheet>/<page>.png` + `<page>.json`, where a page is 256 code points (`cp >> 8`) holding only the glyphs present. Pages are cropped and repacked so each is small. A name needs 1–3 pages, never the 16–32 MB sheets. A `font/index.json` lists the sheets, `fontPoint` and the language map.
+- **WebUI:** a small `<GameText Text Lang Size Fill Outline Box>` component draws on a canvas from the pages, fetched through `api/Assets` and cached. Used only by the nameplate and scoreboard previews.
+- **Prototyped:** `Shibe` (en), `どんちゃん` (jp), `동동이` (kr) and `太鼓之達人` (tw) render in the game's style on the full in-game nameplate, with no missing glyphs.
 
 ---
 
