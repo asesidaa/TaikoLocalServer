@@ -22,7 +22,7 @@
                 <p class="font-display min-w-0 truncate text-2xl @(light ? "" : "drop-shadow-[0_2px_0_rgba(0,0,0,.2)]")">@(string.IsNullOrEmpty(s.MyDonName) ? $"#{u.Baid}" : s.MyDonName)</p>
             </div>
             <div class="flex flex-wrap items-center gap-2 border-t px-5 py-3 @(light ? "border-black/10" : "border-white/15")">
-                @if (AuthService.LoginRequired && s.FriendCode.Length == 12)
+                @if (Constants.ShowFriendCodes && AuthService.LoginRequired && s.FriendCode.Length == 12)
                 {
                     <span class="relative">
                         <button class="@Frosted(light) tabular-nums tracking-wide" title="@Localizer["Friend code · click to copy"]"

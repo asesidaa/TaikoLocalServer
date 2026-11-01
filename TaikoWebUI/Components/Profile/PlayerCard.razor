@@ -48,7 +48,7 @@
         </div>
         <div class="min-w-0 lg:text-center">
             <p class="font-display truncate text-2xl @(LightText ? "" : "drop-shadow-[0_2px_0_rgba(0,0,0,.2)]")">@(string.IsNullOrEmpty(Setting.MyDonName) ? " " : Setting.MyDonName)</p>
-            @if (Setting.FriendCode.Length == 12)
+            @if (Constants.ShowFriendCodes && Setting.FriendCode.Length == 12)
             {
                 @* Friend code: digits in groups of four, no label (the accessible name and tooltip say it); copies without spaces. *@
                 <span class="relative mt-1.5 inline-block">
