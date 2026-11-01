@@ -95,6 +95,16 @@ public static class GameData
         CrownType.Clear => "Clear", CrownType.Gold => "Full combo", CrownType.Dondaful => "Donderful combo", _ => "Played, not cleared",
     };
 
+    /// <summary>The AI Battle result emblem: won or lost.</summary>
+    public static string AiResultIcon(bool win) => win ? "ui/ai_win.png" : "ui/ai_lose.png";
+
+    /// <summary>An AI Battle section's crown; the game's "none" is blank, so that uses the empty crown.</summary>
+    public static string AiCrownIcon(CrownType crown) => crown switch
+    {
+        CrownType.Clear => "ui/ai_crown_silver.png", CrownType.Gold => "ui/ai_crown_gold.png", CrownType.Dondaful => "ui/ai_crown_rainbow.png",
+        _ => "ui/crown_none.png",
+    };
+
     /// <summary>The score rank badge (White … Donderful); null for none.</summary>
     public static string? RankIcon(ScoreRank rank) => rank > ScoreRank.None ? $"ui/rank_badge_rank_{(int)rank - 1}.png" : null;
 

@@ -220,6 +220,16 @@ impl Lumen {
             .map(|(id, _)| *id)
     }
 
+    /// The sprite whose labels are exactly `labels` (comma-separated, in order), for when a single label is ambiguous.
+    pub fn sprite_with_labels(&self, labels: &str) -> Option<u32> {
+        let want: Vec<&str> = labels.split(',').collect();
+        self.sprites
+            .iter()
+            .filter(|(_, s)| s.labels.iter().map(|(n, _)| n.as_str()).eq(want.iter().copied()))
+            .map(|(id, _)| *id)
+            .min()
+    }
+
     /// Characters `sprite` places on any frame, with their instance names (stable across builds).
     fn placements(&self, sprite: u32) -> impl Iterator<Item = (u32, &str)> {
         self.sprites.get(&sprite).into_iter().flat_map(|s| &s.frames).flat_map(|(_, ops)| ops).filter_map(|op| match op {

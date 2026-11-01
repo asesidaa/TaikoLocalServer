@@ -21,8 +21,9 @@ const PLATE_INSTANCE: &str = "title_instance";
 pub const SCOREBOARD_INDEX: &str = "scoreboard.json";
 
 /// Icon sets: (Lumen file under `lumen/000_default`, index name, [(index key, file prefix, a label the sprite has)]).
-/// Each set is the sprite carrying that label, rendered one PNG per label.
-const ICONS: [(&str, &str, &[(&str, &str, &str)]); 4] = [
+/// Each set is the sprite carrying that label, rendered one PNG per label. A comma-separated label names the sprite
+/// whose labels are exactly those, where one label alone would match a bigger animation.
+const ICONS: [(&str, &str, &[(&str, &str, &str)]); 5] = [
     // none, doron, abekobe (mirror), kimagure / detarame (random: whimsical / messy), note_pos, speedx1.1 … speedx4
     ("common/option", "options.json", &[("options", "option", "doron")]),
     // easy, normal, hard, oni, ura
@@ -31,6 +32,8 @@ const ICONS: [(&str, &str, &[(&str, &str, &str)]); 4] = [
     ("common_songselect/common_song_select_main_diff_board", "badges.json", &[("crowns", "crown", "badge_crown_1"), ("ranks", "rank", "badge_rank_1")]),
     // stamp_red_01…03, stamp_gold_01…03: a Dani Dojo pass (normal, full combo, perfect) in red or gold
     ("enso_dani/dani_select/dani_select", "dani.json", &[("stamps", "dani", "stamp_gold_01")]),
+    // AI Battle: win / lose (the result emblems), and each section's crown: none, crown_silver, crown_gold, crown_rainbow
+    ("enso_ai/result/result_ai_section", "ai.json", &[("results", "ai", "win,lose"), ("crowns", "ai", "crown_rainbow")]),
 ];
 
 /// The WebUI's icons (see [`ICONS`]), into `<dst_dir>/<prefix>_<label>.png` with one index per source file.
@@ -38,7 +41,10 @@ pub fn icons(game: &Game, dst_dir: &Path, report: &mut crate::Report) -> Result<
     for (file, index, sets) in ICONS {
         convert(game, file, dst_dir, index, None, report, |lm| {
             sets.iter()
-                .map(|&(key, prefix, label)| Ok((key, prefix, lm.sprite_with_label(label).with_context(|| format!("no sprite labelled {label} in {file}"))?)))
+                .map(|&(key, prefix, label)| {
+                    let sprite = if label.contains(',') { lm.sprite_with_labels(label) } else { lm.sprite_with_label(label) };
+                    Ok((key, prefix, sprite.with_context(|| format!("no sprite labelled {label} in {file}"))?))
+                })
                 .collect()
         })?;
     }

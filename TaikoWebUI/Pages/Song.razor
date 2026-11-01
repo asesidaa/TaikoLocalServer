@@ -356,7 +356,7 @@ else
         {
             var won = sections.Count(x => x.Win);
             <div class="mt-2 flex items-center gap-3 rounded-xl border border-zinc-200 p-3 dark:border-zinc-700">
-                <AiEmblem Result="new AiResult { Win = win, SectionsWon = won, Sections = sections.Count }" Small="true" SizeClass="size-14 text-2xl" />
+                <AiEmblem Result="new AiResult { Win = win, SectionsWon = won, Sections = sections.Count }" Small="true" SizeClass="size-14" />
                 <div>
                     <p class="font-semibold @(win ? "text-amber-600 dark:text-amber-400" : "")">@(win ? Localizer["Won against the AI"] : Localizer["Lost against the AI"])</p>
                     <p class="text-sm @Css.Muted">@string.Format(Localizer["{0} of {1} sections won"], won, sections.Count)</p>
@@ -369,7 +369,7 @@ else
                     <li title="@string.Format(Localizer["Good {0} · OK {1} · Bad {2} · Drumroll {3}"], x.Good, x.Ok, x.Bad, x.Drumroll)"
                         class="flex flex-col items-center gap-1 rounded-xl border px-1 py-2 text-center @(x.Win ? "border-amber-400/50 bg-amber-400/10" : "border-zinc-200 dark:border-zinc-700")">
                         <span class="text-[10px] font-medium uppercase tracking-wider @Css.Muted">@(k + 1)</span>
-                        <img data-asset="@GameData.CrownIcon(x.Crown)" alt="@Localizer[GameData.CrownName(x.Crown)]" class="size-7" />
+                        <img data-asset="@GameData.AiCrownIcon(x.Crown)" alt="@Localizer[GameData.CrownName(x.Crown)]" class="size-7 object-contain" />
                         <span class="font-mono text-[11px] tabular-nums">@x.Score.ToString("N0")</span>
                         <span class="text-[10px] font-semibold @(x.Win ? "text-amber-600 dark:text-amber-400" : Css.Muted)">@(x.Win ? Localizer["WIN"] : Localizer["LOSE"])</span>
                     </li>

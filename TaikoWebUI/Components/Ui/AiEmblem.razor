@@ -1,10 +1,9 @@
-@* AI Battle result: 勝 (won) / 負 (lost) plus sections won. Drawn in CSS until extract ships the game's emblems. *@
+@* AI Battle result: the game's win / lose emblem, plus sections won. *@
 @if (Result is { } r)
 {
     var title = string.Format(Localizer[r.Win ? "AI Battle: won {0} of {1} sections" : "AI Battle: lost, {0} of {1} sections won"], r.SectionsWon, r.Sections);
     <span class="inline-flex shrink-0 items-center gap-1" title="@title">
-        <span role="img" aria-label="@title"
-              class="grid place-items-center rounded-full font-bold leading-none text-white @(Size) @(r.Win ? "bg-amber-500" : "bg-zinc-400 dark:bg-zinc-600")">@(r.Win ? "勝" : "負")</span>
+        <img data-asset="@GameData.AiResultIcon(r.Win)" alt="@title" class="@Size shrink-0" />
         @if (!Small)
         {
             <span class="text-xs tabular-nums @Css.Muted">@r.SectionsWon/@r.Sections</span>
@@ -19,8 +18,8 @@ else
 @code {
     [Parameter] public AiResult? Result { get; set; }
     [Parameter] public bool Small { get; set; }
-    /// <summary>Overrides the circle size (e.g. "size-14 text-2xl").</summary>
+    /// <summary>Overrides the emblem size (e.g. "size-14").</summary>
     [Parameter] public string? SizeClass { get; set; }
 
-    private string Size => SizeClass ?? (Small ? "size-4 text-[9px]" : "size-5 text-[11px]");
+    private string Size => SizeClass ?? (Small ? "size-5" : "size-6");
 }
