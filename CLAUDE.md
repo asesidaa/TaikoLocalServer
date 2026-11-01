@@ -74,7 +74,7 @@ These files are copied to the publish output via `<None Include=... CopyToOutput
 - `wwwroot/data/datatable/*.bin` — **game-owned** binary datatables (`musicinfo.bin`, `music_order.bin`, `wordlist.bin`, `don_cos_reward.bin`, `shougou.bin`, `neiro.bin`). These ship with the game install and **must be copied in by the operator before first run** (see top-level `README.md`). Decoded `*.json` siblings may also be present.
 - `wwwroot/taiko.db3` — SQLite DB.
 
-`IGameDataCatalog` (singleton, implemented in Infrastructure as `FileGameDataCatalog`) loads all of the above once at startup via `await catalog.InitializeAsync()` in `Program.cs`. Treat its in-memory dictionaries as immutable for the lifetime of the process.
+`IGameDataCatalog` (singleton, implemented in Infrastructure as `FileGameDataCatalog`) loads all of the above at startup via `await catalog.InitializeAsync()` in `Program.cs`, and again on `ReloadAsync()` (Server Management › Game data, or after the editors save). A reload swaps whole collections, so never mutate what a getter returns, and don't hold one across requests. Each file loads on its own: one that fails to parse keeps its previous contents and reports the error in `GetFileStatus()`; missing game datatables no longer stop the server from starting. The editors save through `SaveDataFileAsync`, which runs the same parser first, writes atomically and keeps a `.bak`.
 
 ## Request architecture (game side)
 

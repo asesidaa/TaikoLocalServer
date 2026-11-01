@@ -1,10 +1,25 @@
 using System.Collections.Immutable;
+using TaikoLocalServer.Contracts.AdminApi.Responses;
 
 namespace TaikoLocalServer.Application.Abstractions;
 
 public interface IGameDataCatalog
 {
     public Task InitializeAsync();
+
+    /// <summary>Reads every file again. A file that fails keeps its previous contents; see <see cref="GetFileStatus"/>.</summary>
+    public Task ReloadAsync();
+
+    public IReadOnlyList<GameDataFileStatus> GetFileStatus();
+
+    /// <summary>The raw JSON of an editable data file, or null for an unknown name or a missing file.</summary>
+    public Task<string?> ReadDataFileAsync(string name);
+
+    /// <summary>
+    /// Validates <paramref name="json"/> with the parser the server uses, writes it (temp file + rename, the old file
+    /// kept as .bak) and reloads. Returns null on success, else why it was refused.
+    /// </summary>
+    public Task<string?> SaveDataFileAsync(string name, string json);
 
     public List<uint> GetMusicList();
 
