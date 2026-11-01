@@ -59,7 +59,7 @@
                     var on = selected == date;
                     <button disabled="@(n == 0)" aria-pressed="@Css.Aria(on)" @onclick="() => PickDay(date)"
                             aria-label="@string.Format(Localizer[n == 1 ? "{0}: {1} play" : "{0}: {1} plays"], date.ToString("d MMMM"), n)"
-                            class="grid aspect-square place-items-center rounded-lg text-xs tabular-nums @Stats.Seq[step] @(step >= 3 ? "text-white" : "") @(on ? "ring-2 ring-zinc-900 dark:ring-white" : "") @(date > DateTime.Today ? "opacity-30" : "")">
+                            class="grid aspect-square place-items-center rounded-lg text-xs tabular-nums @Stats.Seq[step] @(step >= 3 ? "text-white" : "") @(on ? "outline-2 outline-offset-2 outline-zinc-900 dark:outline-white" : "") @(date > DateTime.Today ? "opacity-30" : "")">
                         @dayNumber
                     </button>
                 }

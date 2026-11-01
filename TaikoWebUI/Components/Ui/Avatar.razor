@@ -5,8 +5,8 @@
 
 @* The initial is nudged up 0.075em: Zen Maru Gothic's ascent/descent (1.15/0.3em) put a capital's middle that far below
    the line box's. *@
-<span class="relative grid shrink-0 place-items-center overflow-hidden rounded-full font-display leading-none @(CardStyle.IsLight(Hex) ? "text-zinc-900" : "text-white") @(OnCard ? "ring-2 ring-white" : "")"
-      style="width:@(Size)px;height:@(Size)px;@CardStyle.Background(Setting.CardColor, OnCard ? CardPattern.None : Setting.CardPattern);font-size:@(Size / 2)px" aria-hidden="true">
+<span class="relative grid shrink-0 place-items-center overflow-hidden rounded-full font-display leading-none @(CardStyle.IsLight(Hex) ? "text-zinc-900" : "text-white") @(OnCard ? "border-2 border-white" : "")"
+      style="width:@(Size)px;height:@(Size)px;@CardStyle.Background(Setting.CardColor, OnCard ? CardPattern.None : Setting.CardPattern);background-clip:padding-box;font-size:@(Size / 2)px" aria-hidden="true">
     <span class="-translate-y-[0.075em]">@Initial</span>
     @if (Auth.ServerAvatars)
     {
@@ -18,7 +18,10 @@
     [Parameter, EditorRequired] public UserSetting Setting { get; set; } = null!;
     /// <summary>In px; keep it on the 8px grid (docs/webui-design-decisions.md).</summary>
     [Parameter] public int Size { get; set; } = 40;
-    /// <summary>Sits on the player's card: plain colour (the card already shows the pattern) inside a white outline.</summary>
+    /// <summary>
+    /// Sits on the player's card: plain colour (the card already shows the pattern) inside a white outline. A border, not
+    /// a ring: a box-shadow ring leaves a hairline of the card showing between it and the circle.
+    /// </summary>
     [Parameter] public bool OnCard { get; set; }
 
     private string Hex => GameData.Color(Setting.CardColor);
