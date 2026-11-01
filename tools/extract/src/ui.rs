@@ -12,21 +12,45 @@ use serde_json::{json, Map, Value};
 use crate::lumen::Lumen;
 
 pub const NAMEPLATE_INDEX: &str = "plates.json";
+/// The animated nameplate for the WebUI's Lumen player, with its atlas beside it as `atlas.png`.
+pub const NAMEPLATE_SCENE: &str = "nameplate.scene.json";
+/// The instance the game's whole nameplate places the title plate as.
+const PLATE_INSTANCE: &str = "title_instance";
 pub const SCOREBOARD_INDEX: &str = "scoreboard.json";
 
-/// Title plates (index = `TitlePlateId`) and dan badges.
+/// Title plates (index = `TitlePlateId`) and dan badges, plus a Lumen scene of the game's whole nameplate.
 pub fn nameplates(x64: &Path, dst_dir: &Path, report: &mut crate::Report) -> Result<()> {
-    convert(x64, "name_plate", dst_dir, NAMEPLATE_INDEX, report, |lm| {
+    let sets = |lm: &Lumen| {
         Ok(vec![
             ("plates", "plate", lm.sprite_with_label("wood").context("no sprite labelled wood")?),
             ("dan", "dan", lm.sprite_with_label("5kyuu_red").context("no sprite labelled 5kyuu_red")?),
         ])
-    })
+    };
+    convert(x64, "name_plate", dst_dir, NAMEPLATE_INDEX, Some((NAMEPLATE_SCENE, nameplate_set as SceneSets)), report, sets)
+}
+
+type SceneSets = fn(&Lumen, &Map<String, Value>) -> Result<(&'static str, Value)>;
+
+/// The game's whole nameplate (frame, plate slot, dan slot); its labels are layouts such as `newentry_shougou_dani`.
+/// Each layout lists its text fields (`text_title`, `text_name`) so the WebUI can draw names in the game's boxes.
+fn nameplate_set(lm: &Lumen, sets: &Map<String, Value>) -> Result<(&'static str, Value)> {
+    let sprite = lm.sprite_placing(PLATE_INSTANCE).context("no nameplate sprite (title_instance)")?;
+    let labels = lm.labels(sprite);
+    let mut bounds = lm.union_bounds(sprite)?.context("empty nameplate")?;
+    // Every plate fits where the nameplate puts it, not only the one placed by default.
+    if let (Some(pb), Some([x, y])) = (sets["plates"]["bounds"].as_array(), labels.first().and_then(|l| lm.position_of(sprite, l, PLATE_INSTANCE))) {
+        let pb: Vec<f32> = pb.iter().filter_map(|v| v.as_f64()).map(|v| v as f32).collect();
+        if let [x0, y0, x1, y1] = pb[..] {
+            bounds = [bounds[0].min(x0 + x), bounds[1].min(y0 + y), bounds[2].max(x1 + x), bounds[3].max(y1 + y)];
+        }
+    }
+    let text: Map<String, Value> = labels.iter().map(|l| (l.clone(), Value::Object(lm.text_fields(sprite, l)))).collect();
+    Ok(("nameplate", json!({ "sprite": sprite, "bounds": bounds, "labels": labels, "plateInstance": PLATE_INSTANCE, "text": text })))
 }
 
 /// The per-difficulty achievement panel (crowns and 粋/雅/極 rank slots) and its digit glyphs.
 pub fn scoreboard(x64: &Path, dst_dir: &Path, report: &mut crate::Report) -> Result<()> {
-    convert(x64, "player_board", dst_dir, SCOREBOARD_INDEX, report, |lm| {
+    convert(x64, "player_board", dst_dir, SCOREBOARD_INDEX, None, report, |lm| {
         // The board places the panel as bg_instance next to its rank counters; each counter places digits as n1_ins….
         let board = lm.sprite_placing("num_kiwami_instance").context("no scoreboard sprite (num_kiwami_instance)")?;
         let counter = lm.child(board, "num_kiwami_instance").context("no rank counter")?;
@@ -39,11 +63,13 @@ pub fn scoreboard(x64: &Path, dst_dir: &Path, report: &mut crate::Report) -> Res
 
 /// Renders each `(index key, file prefix, sprite)` set from `lumen/000_default/common/<file>` into
 /// `<dst_dir>/<prefix>_<label>.png`, one shared canvas per set, and writes an index of the labels.
+/// With `scene`, also writes those sets plus the one `scene`'s function adds as a Lumen scene for live playback.
 fn convert(
     x64: &Path,
     file: &str,
     dst_dir: &Path,
     index_name: &str,
+    scene: Option<(&str, SceneSets)>,
     report: &mut crate::Report,
     sets: impl FnOnce(&Lumen) -> Result<Vec<(&'static str, &'static str, u32)>>,
 ) -> Result<()> {
@@ -54,7 +80,9 @@ fn convert(
         return Ok(());
     }
     let index = dst_dir.join(index_name);
-    if sources.iter().try_fold(true, |ok, s| crate::is_newer_than(&index, s).map(|n| ok && n))? {
+    let outputs: Vec<PathBuf> = std::iter::once(index.clone()).chain(scene.map(|(name, _)| dst_dir.join(name))).collect();
+    let fresh = |o: &PathBuf| sources.iter().try_fold(true, |ok, s| crate::is_newer_than(o, s).map(|n| ok && n));
+    if outputs.iter().try_fold(true, |ok, o| fresh(o).map(|n| ok && n))? {
         report.up_to_date.push(file.into());
         return Ok(());
     }
@@ -67,6 +95,17 @@ fn convert(
     for (key, prefix, sprite) in sets(&lm)? {
         labels.insert(key.into(), render_set(&lm, &atlas, sprite, prefix, dst_dir, report)?);
     }
+    if let Some((name, extra)) = scene {
+        let mut sets = labels.clone();
+        let (key, set) = extra(&lm, &labels)?;
+        sets.insert(key.into(), set);
+        let path = dst_dir.join(name);
+        fs::write(&path, serde_json::to_string(&lm.scene_json(sets))?).with_context(|| format!("writing {}", path.display()))?;
+        let atlas_path = dst_dir.join("atlas.png");
+        atlas.save(&atlas_path).with_context(|| format!("writing {}", atlas_path.display()))?;
+        report.copied.push(name.into());
+    }
+    // The index goes last: its being up to date means everything else is.
     fs::write(&index, serde_json::to_string_pretty(&json!(labels))?).with_context(|| format!("writing {}", index.display()))?;
     Ok(())
 }
@@ -76,12 +115,7 @@ fn convert(
 /// (stage units), which a live Lumen player needs to frame the same canvas.
 fn render_set(lm: &Lumen, atlas: &RgbaImage, sprite: u32, prefix: &str, dst_dir: &Path, report: &mut crate::Report) -> Result<Value> {
     let names = lm.labels(sprite);
-    let mut union: Option<[f32; 4]> = None;
-    for name in &names {
-        if let Some(b) = lm.bounds(sprite, name)? {
-            union = Some(union.map_or(b, |u| [u[0].min(b[0]), u[1].min(b[1]), u[2].max(b[2]), u[3].max(b[3])]));
-        }
-    }
+    let union = lm.union_bounds(sprite)?;
     for name in &names {
         let out = dst_dir.join(format!("{prefix}_{name}.png"));
         match lm.render(sprite, name, atlas, union).and_then(|img| img.save(&out).with_context(|| format!("writing {}", out.display()))) {

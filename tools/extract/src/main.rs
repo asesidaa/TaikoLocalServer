@@ -1,4 +1,5 @@
 mod anims;
+mod font;
 mod lumen;
 mod models;
 mod textures;
@@ -106,6 +107,9 @@ fn run(args: Args) -> Result<Vec<Report>> {
     reports.push(report);
     let mut report = Report::new("scoreboard");
     ui::scoreboard(&x64, &out.join("don-model").join("scoreboard"), &mut report)?;
+    reports.push(report);
+    let mut report = Report::new("font pages");
+    font::convert(&x64, &out.join("don-model").join("font"), &mut report)?;
     reports.push(report);
     Ok(reports)
 }

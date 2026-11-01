@@ -24,6 +24,8 @@ It is safe to re-run, for example after a game update. Outputs that are already 
 | `model/{body,head,cos}/<name>/<name>/<name>.numdlb` (483) | `don-model/{body,head,cos}/<name>.glb` | Skinned don-chan parts, textures embedded |
 | `animation/*.nuanmb` (54) | `don-model/animation/don.glb` + `facekeys.json` | One animation library (a clip per file) and the face-expression keys |
 | `lumen/000_default/common/name_plate.{nulm,nutexb}` | `don-model/nameplate/plate_<label>.png`, `dan_<label>.png`, `plates.json` | Title plates and dan badges rendered from the game's UI. `plates.json` lists the labels in order, and a plate's index is its `TitlePlateId` |
+| same | `don-model/nameplate/nameplate.scene.json` + `atlas.png` | The animated nameplate for the WebUI's Lumen player (`lumen-player.js`): plates, badges and the game's whole nameplate with its text boxes per layout |
+| `font/{jp_32_DB,en_32,tw_32,kr_32}.{xml,nutexb}` | `don-model/font/<sheet>/<page>.{png,json}` | The game's glyph sheets in 256-code-point pages, so name and title previews use the game's lettering |
 | `lumen/000_default/common/player_board.{nulm,nutexb}` | `don-model/scoreboard/panel_<difficulty>.png`, `digit_ns_0N.png`, `scoreboard.json` | The Profile achievement panel ("scoreboard") per difficulty, plus the game's counter digit glyphs |
 
 ## Game UI art (`src/lumen.rs`, `src/ui.rs`)
@@ -37,7 +39,8 @@ The game's 2D UI, including the nameplates and the player board, uses Lumen file
 - The scoreboard panels match the WebUI's existing `rank_panel_*.webp`. The game draws the counts on top, so the panels have empty slots.
 - Each set renders on one shared canvas (the union of every label's mask-clipped bounds), so plates line up.
 - Tested on SBWY 39.06 (21 plates, 38 badges) and the newer ASB61 dump (93 plates, 38 badges), both with no failures. `ai_3` matches the WebUI's existing `nameplate_AI_3.webp`.
-- Animated plates (shimmer, sparkles) are rendered at their first frame.
+- Animated plates (shimmer, sparkles) are rendered at their first frame in the PNGs. `nameplate.scene.json` keeps the full timelines (format `lumen-scene` v1: shapes, sprites with instance names, colour and matrix tables, and the sets with their canvas bounds), and the WebUI plays them with WebGL.
+- A placement on an occupied depth keeps the transform and colours it doesn't set (Toho Y22 3–5 swap their character that way). Ops after a keyframe tag belong to the keyframe, not to the last frame.
 
 ## Animation export (`src/anims.rs`, `src/v12/`)
 

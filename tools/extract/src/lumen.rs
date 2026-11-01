@@ -9,11 +9,13 @@ use std::collections::HashMap;
 
 use anyhow::{bail, Context, Result};
 use image::RgbaImage;
+use serde_json::{json, Map, Value};
 
 const T_SYMBOLS: u32 = 0xF001;
 const T_COLORS: u32 = 0xF002;
 const T_MATRICES: u32 = 0xF003;
 const T_POSITIONS: u32 = 0xF103;
+const T_BOUNDS: u32 = 0xF004;
 const T_ATLASES: u32 = 0xF007;
 const T_SHAPE: u32 = 0xF022;
 const T_GRAPHIC: u32 = 0xF024;
@@ -23,6 +25,7 @@ const T_FRAME: u32 = 0x0001;
 const T_KEYFRAME: u32 = 0xF105;
 const T_PLACE: u32 = 0x0004;
 const T_REMOVE: u32 = 0x0005;
+const T_TEXT: u32 = 0x0025;
 const T_END: u32 = 0xFF00;
 
 /// `F024` fill type 0: a solid colour, with the colour index stored where the atlas id normally is.
@@ -37,8 +40,11 @@ pub struct Lumen {
     colors: Vec<[f32; 4]>,
     matrices: Vec<Matrix>,
     positions: Vec<[f32; 2]>,
+    bounds: Vec<[f32; 4]>,
     /// Every atlas in a file has the same size; layer `i` of the `.nutexb` is atlas `i`.
     atlas_size: (f32, f32),
+    atlas_count: usize,
+    texts: HashMap<u32, Text>,
     shapes: HashMap<u32, Vec<Graphic>>,
     pub sprites: HashMap<u32, Sprite>,
 }
@@ -49,6 +55,15 @@ struct Graphic {
     fill: u16,
     verts: Vec<[f32; 4]>, // x y u v
     indices: Vec<u16>,
+}
+
+/// A text field: the game fills it at runtime, so only its box and style matter here.
+#[derive(Debug, Clone)]
+struct Text {
+    bounds: u32,
+    /// Symbol holding an HTML template: `<p align="center"><font ... size="22" color="#000000">sample</font></p>`.
+    template: u32,
+    outline: f32,
 }
 
 #[derive(Debug, Default, Clone)]
@@ -88,6 +103,8 @@ impl Lumen {
         let mut lm = Lumen::default();
         let mut shape: Option<u32> = None;
         let mut sprite: Option<u32> = None;
+        // Ops after a keyframe tag belong to that keyframe (a snapshot for seeking), not to the last frame.
+        let mut in_keyframe = false;
         let mut o = 0x40;
         while o + 8 <= bytes.len() {
             let (tag, size) = (r.u32(o)?, r.u32(o + 4)? as usize);
@@ -121,10 +138,22 @@ impl Lumen {
                         lm.positions.push([r.f32(p + 4 + i * 8)?, r.f32(p + 8 + i * 8)?]);
                     }
                 }
+                T_BOUNDS => {
+                    for i in 0..count()? {
+                        let b = p + 4 + i * 16;
+                        lm.bounds.push([r.f32(b)?, r.f32(b + 4)?, r.f32(b + 8)?, r.f32(b + 12)?]);
+                    }
+                }
                 T_ATLASES => {
-                    if count()? > 0 {
+                    lm.atlas_count = count()?;
+                    if lm.atlas_count > 0 {
                         lm.atlas_size = (r.f32(p + 12)?, r.f32(p + 16)?);
                     }
+                }
+                T_TEXT => {
+                    // Words: id, ?, template symbol, ?, ?, bounds index, … word 15 = outline width.
+                    let text = Text { template: r.u32(p + 8)?, bounds: r.u32(p + 20)?, outline: r.f32(p + 60)? };
+                    lm.texts.insert(r.u32(p)?, text);
                 }
                 T_SHAPE => {
                     let id = r.u32(p)?;
@@ -145,13 +174,18 @@ impl Lumen {
                     let id = r.u32(p)?;
                     lm.sprites.insert(id, Sprite::default());
                     sprite = Some(id);
+                    in_keyframe = false;
                 }
                 T_LABEL => {
                     let name = lm.symbols.get(r.u32(p)? as usize).cloned().unwrap_or_default();
                     current(&mut lm, sprite)?.labels.push((name, r.u32(p + 4)?));
                 }
-                T_FRAME => current(&mut lm, sprite)?.frames.push((r.u32(p)?, Vec::new())),
-                T_KEYFRAME => {} // keyframes duplicate state already reachable by playing frames
+                T_FRAME => {
+                    current(&mut lm, sprite)?.frames.push((r.u32(p)?, Vec::new()));
+                    in_keyframe = false;
+                }
+                T_KEYFRAME => in_keyframe = true, // duplicates state already reachable by playing frames
+                T_PLACE | T_REMOVE if in_keyframe => {}
                 T_PLACE => {
                     let op = Op::Place {
                         character: r.u32(p)?,
@@ -270,6 +304,100 @@ impl Lumen {
         Ok(scene)
     }
 
+    /// Union of `sprite`'s mask-clipped bounds over all its labels: a canvas every label fits on.
+    pub fn union_bounds(&self, sprite: u32) -> Result<Option<[f32; 4]>> {
+        let mut union: Option<[f32; 4]> = None;
+        for name in self.labels(sprite) {
+            if let Some(b) = self.bounds(sprite, &name)? {
+                union = Some(union.map_or(b, |u| [u[0].min(b[0]), u[1].min(b[1]), u[2].max(b[2]), u[3].max(b[3])]));
+            }
+        }
+        Ok(union)
+    }
+
+    /// Where `sprite` places `instance` at `label` (its translation).
+    pub fn position_of(&self, sprite: u32, label: &str, instance: &str) -> Option<[f32; 2]> {
+        let s = self.sprites.get(&sprite)?;
+        let frame = s.labels.iter().find(|(n, _)| n == label)?.1;
+        self.display_list(s, frame).into_iter().find(|(_, o)| self.symbol(o.name) == instance).map(|(_, o)| [o.matrix[4], o.matrix[5]])
+    }
+
+    /// The text fields `sprite` shows at `label`, by instance name: `{ box: [x0,y0,x1,y1], size, color, align, outline }`
+    /// in the sprite's stage units, with the style read from the field's HTML template.
+    pub fn text_fields(&self, sprite: u32, label: &str) -> Map<String, Value> {
+        let Some(s) = self.sprites.get(&sprite) else { return Map::new() };
+        let Some(&(_, frame)) = s.labels.iter().find(|(n, _)| n == label) else { return Map::new() };
+        let mut fields = Map::new();
+        for (_, o) in self.display_list(s, frame) {
+            let Some(t) = self.texts.get(&o.character) else { continue };
+            let [x0, y0, x1, y1] = self.bounds.get(t.bounds as usize).copied().unwrap_or_default();
+            let m = o.matrix;
+            let html = self.symbol(t.template);
+            let attr = |name: &str| html.split(&format!("{name}=\"")).nth(1).and_then(|v| v.split('"').next()).map(str::to_string);
+            fields.insert(self.symbol(o.name).to_string(), json!({
+                "box": [m[0] * x0 + m[4], m[3] * y0 + m[5], m[0] * x1 + m[4], m[3] * y1 + m[5]],
+                "size": attr("size").and_then(|v| v.parse::<f32>().ok()).unwrap_or(0.0),
+                "color": attr("color").unwrap_or_else(|| "#000000".into()),
+                "align": attr("align").unwrap_or_else(|| "left".into()),
+                "outline": t.outline,
+            }));
+        }
+        fields
+    }
+
+    /// A `lumen-scene` v1 document (played by the WebUI's lumen-player.js) holding `sets` (each `{ "sprite": id, … }`)
+    /// and every shape and sprite they reach. The atlas is the decoded `.nutexb`, saved beside it as `atlas.png`.
+    pub fn scene_json(&self, sets: Map<String, Value>) -> Value {
+        let mut keep = std::collections::BTreeSet::new();
+        let mut stack: Vec<u32> = sets.values().filter_map(|s| s["sprite"].as_u64()).map(|id| id as u32).collect();
+        while let Some(id) = stack.pop() {
+            if keep.insert(id) {
+                stack.extend(self.placements(id).map(|(c, _)| c));
+            }
+        }
+        let round = |v: f32, k: f64| (v as f64 * k).round() / k;
+        let (mut shapes, mut sprites) = (Map::new(), Map::new());
+        for &id in &keep {
+            if let Some(graphics) = self.shapes.get(&id) {
+                let gs: Vec<Value> = graphics
+                    .iter()
+                    .map(|g| json!({ "atlas": g.atlas, "fill": g.fill, "verts": g.verts.iter().flatten().map(|&v| round(v, 1e5)).collect::<Vec<_>>(), "indices": g.indices }))
+                    .collect();
+                shapes.insert(id.to_string(), gs.into());
+            }
+            if let Some(s) = self.sprites.get(&id) {
+                // place: [1, char, mode, depth, clip, transform, colorMult, colorAdd, instanceName?]; remove: [0, depth]
+                let op = |op: &Op| match *op {
+                    Op::Remove { depth } => json!([0, depth]),
+                    Op::Place { character, name, mode, depth, clip, transform, color_mult, color_add } => {
+                        let mut v = vec![json!(1), json!(character), json!(mode), json!(depth), json!(clip), json!(transform), json!(color_mult), json!(color_add)];
+                        if !self.symbol(name).is_empty() {
+                            v.push(json!(self.symbol(name)));
+                        }
+                        Value::Array(v)
+                    }
+                };
+                sprites.insert(id.to_string(), json!({
+                    "frameCount": s.frames.iter().map(|(f, _)| f + 1).max().unwrap_or(1),
+                    "labels": s.labels.iter().map(|(n, f)| (n.clone(), json!(f))).collect::<Map<_, _>>(),
+                    "frames": s.frames.iter().map(|(f, ops)| json!([f, ops.iter().map(op).collect::<Vec<_>>()])).collect::<Vec<_>>(),
+                }));
+            }
+        }
+        json!({
+            "format": "lumen-scene", "version": 1, "fps": 60,
+            "atlas": { "image": "atlas.png", "width": self.atlas_size.0, "height": self.atlas_size.1, "layers": self.atlas_count },
+            "colors": self.colors.iter().map(|c| c.map(|v| round(v, 1e5))).collect::<Vec<_>>(),
+            "matrices": self.matrices.iter().map(|m| m.map(|v| round(v, 1e5))).collect::<Vec<_>>(),
+            "positions": self.positions.iter().map(|p| p.map(|v| round(v, 1e3))).collect::<Vec<_>>(),
+            "shapes": shapes, "sprites": sprites, "sets": sets,
+        })
+    }
+
+    fn symbol(&self, index: u32) -> &str {
+        self.symbols.get(index as usize).map_or("", String::as_str)
+    }
+
     /// Plays `sprite`'s frames up to `frame` into a depth-ordered display list.
     fn display_list(&self, sprite: &Sprite, frame: u32) -> Vec<(u16, Placed)> {
         let mut list: HashMap<u16, Placed> = HashMap::new();
@@ -279,15 +407,16 @@ impl Lumen {
                     Op::Remove { depth } => {
                         list.remove(&depth);
                     }
-                    Op::Place { character, mode, depth, clip, transform, color_mult, color_add, .. } => {
+                    Op::Place { character, name, mode, depth, clip, transform, color_mult, color_add } => {
                         // A placement on an occupied depth keeps what it doesn't give (transform 0xFFFF, colour -1);
                         // mode 2 (move) also keeps the character. E.g. toho_y22_3 swaps the chibi with "unchanged" transform.
                         let mut obj = match list.get(&depth) {
                             Some(prev) => prev.clone(),
-                            None => Placed { character, matrix: IDENTITY, mult: [1.0; 4], add: [0.0; 4], clip },
+                            None => Placed { character, name, matrix: IDENTITY, mult: [1.0; 4], add: [0.0; 4], clip },
                         };
                         if mode != 2 {
                             obj.character = character;
+                            obj.name = name;
                             obj.clip = clip;
                         }
                         let (kind, index) = (transform >> 16, (transform & 0xFFFF) as usize);
@@ -372,6 +501,7 @@ fn push_op(lm: &mut Lumen, sprite: Option<u32>, op: Op) -> Result<()> {
 #[derive(Debug, Clone)]
 struct Placed {
     character: u32,
+    name: u32,
     matrix: Matrix,
     mult: [f32; 4],
     add: [f32; 4],
@@ -590,6 +720,29 @@ mod tests {
 
         assert_eq!(lm.bounds(10, "aaaa").unwrap(), Some([10.0, 0.0, 11.0, 1.0]));
         assert_eq!(lm.bounds(10, "bbbb").unwrap(), Some([10.0, 0.0, 12.0, 2.0]), "replacement stays at the old position");
+    }
+
+    #[test]
+    fn keyframe_ops_are_not_added_to_the_last_frame() {
+        let one = 0x100;
+        let lm = Lumen::parse(&lmb(&[
+            (T_SYMBOLS, vec![1, 4, u32::from_le_bytes(*b"wood"), 0]),
+            (T_COLORS, vec![1, one | (one << 16), one | (one << 16)]),
+            (T_ATLASES, vec![1, 0, 0, 4f32.to_bits(), 4f32.to_bits()]),
+            (T_SHAPE, vec![1, 0, 0, 0, 1]),
+            (T_GRAPHIC, solid_quad(0, [0.0, 0.0, 1.0, 1.0])),
+            (T_SHAPE, vec![2, 0, 0, 0, 1]),
+            (T_GRAPHIC, solid_quad(0, [0.0, 0.0, 9.0, 9.0])),
+            (T_SPRITE, vec![10, 0, 0, 1, 1, 1, 1]),
+            (T_LABEL, vec![0, 0, 0]),
+            (T_FRAME, vec![0, 1]),
+            (T_PLACE, place(1, 1, 0)),
+            (T_KEYFRAME, vec![0, 1]),
+            (T_PLACE, place(2, 2, 0)), // keyframe snapshot, not part of frame 0
+        ]))
+        .unwrap();
+
+        assert_eq!(lm.bounds(10, "wood").unwrap(), Some([0.0, 0.0, 1.0, 1.0]));
     }
 
     #[test]
