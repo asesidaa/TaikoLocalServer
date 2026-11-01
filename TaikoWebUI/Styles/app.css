@@ -46,6 +46,7 @@
     .pop { transform-origin: var(--origin, top left); animation: pop 160ms cubic-bezier(.25, 1, .5, 1); }
     .fade { animation: fade 160ms ease-out; }
     .rise { animation: rise 200ms cubic-bezier(.25, 1, .5, 1); }
+    .sheet-up { animation: sheet-up 220ms cubic-bezier(.25, 1, .5, 1); }
     .drawer { transition: transform 220ms cubic-bezier(.25, 1, .5, 1); }
     .chev { transition: transform 160ms ease-out; }
 }
@@ -53,10 +54,11 @@
 @keyframes pop { from { opacity: 0; transform: scale(.96) translateY(-2px); } }
 @keyframes fade { from { opacity: 0; } }
 @keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+@keyframes sheet-up { from { transform: translateY(100%); } }
 @keyframes ticker { to { transform: translateX(-100%); } }
 
 @media (prefers-reduced-motion: reduce) {
-    .pop, .fade, .rise { animation: none; }
+    .pop, .fade, .rise, .sheet-up { animation: none; }
     .drawer, .chev { transition: none; }
 }
 

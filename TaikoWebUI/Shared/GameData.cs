@@ -87,6 +87,25 @@ public static class GameData
     /// <summary>1 = clear (silver), 2 = full combo (gold), 3 = donderful (rainbow).</summary>
     public static string CrownIcon(int crown) => $"ui/crown_badge_crown_{crown}.png";
 
+    /// <summary>A played chart's crown; "played, not cleared" has the game's empty crown.</summary>
+    public static string CrownIcon(CrownType crown) => crown == CrownType.None ? "ui/crown_none.png" : CrownIcon((int)crown);
+
+    public static string CrownName(CrownType crown) => crown switch
+    {
+        CrownType.Clear => "Clear", CrownType.Gold => "Full combo", CrownType.Dondaful => "Donderful combo", _ => "Played, not cleared",
+    };
+
+    /// <summary>The score rank badge (White … Donderful); null for none.</summary>
+    public static string? RankIcon(ScoreRank rank) => rank > ScoreRank.None ? $"ui/rank_badge_rank_{(int)rank - 1}.png" : null;
+
+    /// <summary>The difficulty's colour (star numbers, pills).</summary>
+    public static string DifficultyColor(Difficulty d) => d switch
+    {
+        Difficulty.Easy => "#f82808", Difficulty.Normal => "#88b858", Difficulty.Hard => "#983828", Difficulty.Oni => "#d81888", _ => "#7838d8",
+    };
+
+    public static string DifficultyName(Difficulty d) => Difficulties.FirstOrDefault(x => x.Value == d).Name ?? "";
+
     /// <summary>The Dani Dojo pass stamp (合格, red or gold; clear / full combo / perfect); null when not passed.</summary>
     public static string? DanStamp(DanClearState s) => s == DanClearState.NotClear ? null
         : $"ui/dani_stamp_{(IsGold(s) ? "gold" : "red")}_0{ClearType(s) + 1}.png";

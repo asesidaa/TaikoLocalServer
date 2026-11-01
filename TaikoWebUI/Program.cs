@@ -74,6 +74,7 @@ builder.Services.AddScoped<AuthenticationStateProvider>(sp =>
     sp.GetRequiredService<JwtAuthenticationStateProvider>());
 
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<SongListState>();
 builder.Services.AddLocalization();
 builder.Services.AddSingleton<ScoreUtils>();
 builder.Services.AddSingleton<StringUtil>();

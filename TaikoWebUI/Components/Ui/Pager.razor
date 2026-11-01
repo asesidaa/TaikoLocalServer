@@ -1,0 +1,47 @@
+@* Numbered pages: ‹, 1, current ±1, last, with … gaps, ›. Hidden with a single page. *@
+@if (Total > 1)
+{
+    <nav class="flex items-center justify-center gap-1 @Class" aria-label="@Label">
+        @Button(Current - 1, Current == 1, Localizer["Previous page"], false, true)
+        @{ var last = 0; }
+        @foreach (var p in Pages)
+        {
+            if (last > 0 && p - last > 1)
+            {
+                <span class="px-1 text-xs @Css.Muted">…</span>
+            }
+            @Button(p, false, string.Format(Localizer["Page {0}"], p), p == Current, false)
+            last = p;
+        }
+        @Button(Current + 1, Current == Total, Localizer["Next page"], false, false, true)
+    </nav>
+}
+
+@code {
+    [Parameter, EditorRequired] public int Current { get; set; }
+    [Parameter, EditorRequired] public int Total { get; set; }
+    [Parameter] public EventCallback<int> OnPage { get; set; }
+    [Parameter] public string Label { get; set; } = "";
+    [Parameter] public string Class { get; set; } = "";
+
+    private IEnumerable<int> Pages => new[] { 1, Current - 1, Current, Current + 1, Total }.Where(p => p >= 1 && p <= Total).Distinct().Order();
+
+    private RenderFragment Button(int target, bool disabled, string aria, bool current, bool prev, bool next = false) => __builder =>
+    {
+        <button disabled="@disabled" aria-label="@aria" aria-current="@(current ? "page" : null)" @onclick="() => OnPage.InvokeAsync(target)"
+                class="grid h-8 min-w-8 place-items-center rounded-lg px-2 text-xs font-medium tabular-nums @(current ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "text-zinc-600 hover:bg-zinc-100 disabled:opacity-30 disabled:hover:bg-transparent dark:text-zinc-300 dark:hover:bg-zinc-800")">
+            @if (prev)
+            {
+                <Icon Name="chevLeft" Class="size-4" />
+            }
+            else if (next)
+            {
+                <Icon Name="chevRight" Class="size-4" />
+            }
+            else
+            {
+                @target
+            }
+        </button>
+    };
+}

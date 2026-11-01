@@ -53,22 +53,26 @@ public class SongLeaderboardController(ITaikoDbContext context) : BaseAdminContr
             .Take(limit)
             .ToListAsync();
 
+        // Two queries for the page, not two per row: names in one go, and ranks from the first row's (ties share a rank).
+        var pageBaids = scores.Select(s => s.Baid).ToList();
+        var names = await context.UserData.Where(u => pageBaids.Contains(u.Baid))
+            .ToDictionaryAsync(u => u.Baid, u => u.MyDonName, HttpContext.RequestAborted);
+        var firstRank = scores.Count == 0 ? 0 : 1 + await context.SongBestData
+            .CountAsync(x => x.SongId == songId && x.Difficulty == diff && x.BestScore > scores[0].BestScore, HttpContext.RequestAborted);
+
         var leaderboard = new List<SongLeaderboard>();
-        foreach (var score in scores)
+        for (var i = 0; i < scores.Count; i++)
         {
-            var user = await context.UserData
-                .Where(x => x.Baid == score.Baid)
-                .FirstOrDefaultAsync();
-
-            var rank = await context.SongBestData
-                .Where(x => x.SongId == songId && x.Difficulty == diff && x.BestScore > score.BestScore)
-                .CountAsync();
-
+            var score = scores[i];
+            // Below a lower score, everyone earlier (this page and the ones before) scored higher.
+            var rank = i == 0 ? firstRank
+                : score.BestScore != scores[i - 1].BestScore ? (page - 1) * limit + i + 1
+                : leaderboard[i - 1].Rank;
             leaderboard.Add(new SongLeaderboard
             {
-                Rank = rank + 1,
+                Rank = rank,
                 Baid = score.Baid,
-                UserName = user?.MyDonName,
+                UserName = names.GetValueOrDefault(score.Baid),
                 BestScore = score.BestScore,
                 BestRate = score.BestRate,
                 BestCrown = score.BestCrown,

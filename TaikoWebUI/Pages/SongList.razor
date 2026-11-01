@@ -1,12 +1,383 @@
 @page "/Users/{baid:int}/Songs"
 @attribute [Authorize]
+@implements IDisposable
 @inject PageState Page
+@inject HttpClient Client
+@inject NavigationManager Nav
+@inject SongListState F
+@inject ToastService Toast
+@inject IJSRuntime Js
 
-<PageTitle>SongList</PageTitle>
-<ComingSoon Title="@(Localizer["Song List"])" IconName="songList" />
+<PageTitle>@Localizer["Song List"]</PageTitle>
+
+<div class="mx-auto max-w-6xl space-y-4">
+    <div class="flex items-baseline justify-between">
+        <h1 class="text-2xl font-semibold tracking-tight">@Localizer["Song List"]</h1>
+        @if (data is not null)
+        {
+            <span class="text-sm @Css.Muted">@string.Format(Localizer["{0} songs"], data.Total.ToString("N0"))</span>
+        }
+    </div>
+
+    @* Desktop filters *@
+    <div class="hidden md:block">
+        <div class="space-y-3">
+            <div class="flex flex-wrap items-center gap-2">
+                <label class="relative w-full xl:w-auto xl:min-w-48 xl:flex-1">
+                    <span class="sr-only">@Localizer["Search songs"]</span>
+                    <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"><Icon Name="search" Class="size-4" /></span>
+                    <input type="search" value="@F.Query" @oninput="OnSearch" class="@Css.Input pl-9"
+                           placeholder="@string.Format(Localizer["Search {0} songs by name or ID"], (data?.AllSongs ?? 0).ToString("N0"))" />
+                </label>
+                @DifficultyPicker
+                @StatusAndSort
+            </div>
+            @ModeAndChips
+        </div>
+    </div>
+
+    @* Phone bar: search + Filters (a bottom sheet) *@
+    <div class="space-y-3 md:hidden">
+        <div class="flex gap-2">
+            <label class="relative min-w-0 flex-1">
+                <span class="sr-only">@Localizer["Search songs"]</span>
+                <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"><Icon Name="search" Class="size-4" /></span>
+                <input type="search" value="@F.Query" @oninput="OnSearch" placeholder="@Localizer["Search songs"]" class="@Css.Input pl-9" />
+            </label>
+            <button aria-haspopup="dialog" @onclick="() => sheet = true"
+                    class="relative inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-zinc-200 bg-white px-3 text-sm font-medium dark:border-zinc-700 dark:bg-zinc-900">
+                <Icon Name="settings" Class="size-4" />@Localizer["Filters"]
+                @if (F.ActiveFilters > 0)
+                {
+                    <span class="grid size-5 place-items-center rounded-full bg-primary-500 text-[11px] text-white">@F.ActiveFilters</span>
+                }
+            </button>
+        </div>
+        @if (F.Favorites || F.Genre >= 0)
+        {
+            <div class="flex flex-wrap gap-1.5">
+                <button class="inline-flex items-center gap-1 rounded-full bg-zinc-900 px-2.5 py-1 text-xs font-medium text-white dark:bg-white dark:text-zinc-900"
+                        @onclick="() => Change(() => { F.Favorites = false; F.Genre = -1; })">
+                    @(F.Favorites ? Localizer["Favourites"] : GameData.Genre((SongGenre)F.Genre).Name)<Icon Name="x" Class="size-3" />
+                </button>
+            </div>
+        }
+    </div>
+
+    <section class="@Css.Card overflow-hidden">
+        @if (data is null)
+        {
+            <p class="px-4 py-12 text-center text-sm @Css.Muted">@Localizer["Loading..."]</p>
+        }
+        else if (data.Items.Count == 0)
+        {
+            <p class="px-4 py-12 text-center text-sm @Css.Muted">@Localizer["No songs match. Try another genre or clear the search."]</p>
+        }
+        else
+        {
+            @* Phones: a row per song with a chip per difficulty *@
+            <ul class="divide-y divide-zinc-100 md:hidden dark:divide-zinc-800">
+                @foreach (var s in data.Items)
+                {
+                    <li class="flex gap-3 px-3 py-3">
+                        <span class="w-1 self-stretch rounded-full" style="background:@GameData.Genre(s.Genre).Bg"></span>
+                        <button class="min-w-0 flex-1 text-left" @onclick="() => Open(s.SongId)">
+                            <span class="block truncate text-[15px]">@s.Name</span>
+                            @if (s.NameEn.Length > 0)
+                            {
+                                <span class="block truncate text-xs @Css.Muted">@s.NameEn</span>
+                            }
+                            <span class="mt-2 flex flex-wrap gap-1">
+                                @for (var i = 0; i < 5; i++)
+                                {
+                                    if (s.Stars[i] == 0) continue;
+                                    var d = (Difficulty)(i + 1);
+                                    <span class="inline-flex items-center gap-1 rounded-lg bg-zinc-100 py-0.5 pl-0.5 pr-1.5 dark:bg-zinc-800">
+                                        <img data-asset="@GameData.DifficultyIcon(d)" alt="@GameData.DifficultyName(d)" class="size-5 object-contain" />
+                                        <span class="text-xs font-semibold tabular-nums" style="color:@GameData.DifficultyColor(d)">@s.Stars[i]</span>
+                                        @Result(s, i, true)
+                                    </span>
+                                }
+                            </span>
+                        </button>
+                        @Heart(s)
+                    </li>
+                }
+            </ul>
+
+            @* md and up: a table with a column per difficulty *@
+            <div class="hidden overflow-x-auto md:block">
+                <table class="w-full text-sm">
+                    <thead class="border-b border-zinc-100 text-left text-xs @Css.Muted dark:border-zinc-800">
+                        <tr>
+                            <th class="w-10"></th>
+                            <th class="py-2.5 pl-0 pr-2 font-medium">
+                                <button class="inline-flex items-center gap-1 hover:text-zinc-900 dark:hover:text-zinc-100 @(F.Sort == "title" ? "text-zinc-900 dark:text-zinc-100" : "")"
+                                        @onclick='() => Change(() => F.Sort = "title")'>
+                                    @Localizer["Song"]@if (F.Sort == "title"){<Icon Name="chevDown" Class="size-3.5" />}
+                                </button>
+                            </th>
+                            <th class="hidden px-2 py-2.5 font-medium xl:table-cell">@Localizer["Genre"]</th>
+                            @foreach (var (d, name) in GameData.Difficulties)
+                            {
+                                var on = F.Difficulty == (int)d;
+                                <th class="px-1 py-2.5 text-center font-medium">
+                                    <button title="@string.Format(Localizer["Sort by {0} stars"], name)" class="mx-auto grid place-items-center @(on ? "" : "opacity-60 hover:opacity-100")"
+                                            @onclick='() => Change(() => { F.Difficulty = (int)d; F.Sort = "stars"; })'>
+                                        <img data-asset="@GameData.DifficultyIcon(d)" alt="@name" class="size-6 object-contain" />
+                                    </button>
+                                </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+                        @foreach (var s in data.Items)
+                        {
+                            <tr class="cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800/40" @onclick="() => Open(s.SongId)">
+                                <td class="pl-2">@Heart(s)</td>
+                                <td class="w-full max-w-0 py-2 pr-2">
+                                    <span class="block truncate">@s.Name</span>
+                                    @if (s.NameEn.Length > 0)
+                                    {
+                                        <span class="block truncate text-xs @Css.Muted">@s.NameEn</span>
+                                    }
+                                </td>
+                                <td class="hidden whitespace-nowrap px-2 xl:table-cell">@GenreChip(s.Genre)</td>
+                                @for (var i = 0; i < 5; i++)
+                                {
+                                    var d = (Difficulty)(i + 1);
+                                    <td class="px-1 py-2 text-center">
+                                        <span class="inline-flex items-center gap-1 @(F.Difficulty == i + 1 ? "" : "opacity-80")">
+                                            @if (s.Stars[i] > 0)
+                                            {
+                                                <span class="w-6 text-right text-xs font-semibold tabular-nums" style="color:@GameData.DifficultyColor(d)">★@s.Stars[i]</span>
+                                                @Result(s, i, true)
+                                            }
+                                            else
+                                            {
+                                                <span class="text-xs text-zinc-300 dark:text-zinc-700">–</span>
+                                            }
+                                        </span>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3 border-t border-zinc-100 px-4 py-3 dark:border-zinc-800">
+                <span class="text-xs tabular-nums @Css.Muted">
+                    @string.Format(Localizer["{0}–{1} of {2}"], ((data.Page - 1) * PageSize + 1).ToString("N0"), Math.Min(data.Page * PageSize, data.Total).ToString("N0"), data.Total.ToString("N0"))
+                </span>
+                <Pager Current="data.Page" Total="data.TotalPages" OnPage="GoToPage" Label="@Localizer["Song pages"]" />
+            </div>
+        }
+    </section>
+</div>
+
+@if (sheet)
+{
+    <div class="fixed inset-0 z-[60] bg-black/40 md:hidden" @onclick="() => sheet = false"></div>
+    <div role="dialog" aria-modal="true" aria-label="@Localizer["Filters"]" @onkeydown="OnSheetKey"
+         class="sheet-up fixed inset-x-0 bottom-0 z-[61] max-h-[85dvh] overflow-y-auto rounded-t-3xl bg-white p-5 pb-8 shadow-2xl md:hidden dark:bg-zinc-900">
+        <div class="mx-auto mb-4 h-1 w-10 rounded-full bg-zinc-300 dark:bg-zinc-700"></div>
+        <div class="mb-4 flex items-center justify-between">
+            <h2 class="font-semibold">@Localizer["Filters"]</h2>
+            <button class="text-sm font-medium text-primary-600 dark:text-primary-400" @onclick="() => Change(F.Reset)">@Localizer["Reset"]</button>
+        </div>
+        <div class="space-y-3">
+            <div class="flex flex-wrap items-center gap-2">@DifficultyPicker @StatusAndSort</div>
+            @ModeAndChips
+        </div>
+        <button class="@Css.PrimaryButton mt-5 w-full" @onclick="() => sheet = false">@string.Format(Localizer["Show {0} songs"], (data?.Total ?? 0).ToString("N0"))</button>
+    </div>
+}
 
 @code {
+    private const int PageSize = 50;
+
     [Parameter] public int Baid { get; set; }
 
-    protected override void OnInitialized() => Page.Set(Localizer["Play Data"], Localizer["Song List"]);
+    private SongListPage? data;
+    private bool sheet;
+    private int request;
+    private CancellationTokenSource? typing;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Page.Set(Localizer["Play Data"], Localizer["Song List"]);
+        await Load();
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender) => Js.InvokeVoidAsync("ui.hydrateAssets").AsTask();
+
+    private async Task Load()
+    {
+        // Only the newest answer counts when filters change quickly.
+        var mine = ++request;
+        var url = $"api/Songs/{Baid}?q={Uri.EscapeDataString(F.Query)}&genre={F.Genre}&fav={(F.Favorites ? "true" : "false")}&diff={F.Difficulty}" +
+                  $"&status={F.Status}&sort={F.Sort}&page={F.Page}&limit={PageSize}";
+        var page = await Client.GetFromJsonAsync<SongListPage>(url);
+        if (mine != request) return;
+        data = page;
+        if (data is not null) F.Page = data.Page;
+    }
+
+    private async Task Change(Action change)
+    {
+        change();
+        F.Page = 1;
+        await Load();
+    }
+
+    // Typing waits a moment before asking the server.
+    private async Task OnSearch(ChangeEventArgs e)
+    {
+        F.Query = e.Value?.ToString() ?? "";
+        F.Page = 1;
+        typing?.Cancel();
+        typing = new CancellationTokenSource();
+        try
+        {
+            await Task.Delay(200, typing.Token);
+        }
+        catch (TaskCanceledException)
+        {
+            return;
+        }
+        await Load();
+    }
+
+    private async Task GoToPage(int page)
+    {
+        F.Page = page;
+        await Load();
+        await Js.InvokeVoidAsync("scrollTo", new { top = 0, behavior = "instant" });
+    }
+
+    private void Open(uint songId) => Nav.NavigateTo($"/Users/{Baid}/Songs/{songId}?diff={F.Difficulty}");
+
+    private async Task ToggleFavorite(SongListItem s)
+    {
+        var on = !s.Favorite;
+        var res = await Client.PostAsJsonAsync("api/FavoriteSongs", new SetFavoriteRequest { Baid = (uint)Baid, SongId = s.SongId, IsFavorite = on });
+        if (!res.IsSuccessStatusCode)
+        {
+            Toast.Show(Localizer["Save Failed"], true);
+            return;
+        }
+        s.Favorite = on;
+        Toast.Show(on ? Localizer["Added to favourites"] : Localizer["Removed from favourites"]);
+        if (F.Favorites && !on) await Load();
+    }
+
+    private void OnSheetKey(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") sheet = false;
+    }
+
+    // Crown (Taiko Mode) or the 勝/負 emblem (AI Battle) for difficulty index i; an empty slot keeps columns aligned.
+    private RenderFragment Result(SongListItem s, int i, bool small) => __builder =>
+    {
+        if (F.AiBattle)
+        {
+            <AiEmblem Result="s.Ai[i]" Small="small" />
+        }
+        else if (s.Crowns[i] is { } crown)
+        {
+            <img data-asset="@GameData.CrownIcon(crown)" alt="@Localizer[GameData.CrownName(crown)]" title="@Localizer[GameData.CrownName(crown)]" class="@(small ? "size-4" : "size-5") shrink-0" />
+        }
+        else
+        {
+            <span class="@(small ? "size-4" : "size-5")"></span>
+        }
+    };
+
+    private RenderFragment Heart(SongListItem s) => __builder =>
+    {
+        <button aria-pressed="@Css.Aria(s.Favorite)" aria-label="@(s.Favorite ? Localizer["Remove from favourites"] : Localizer["Add to favourites"])"
+                class="grid size-8 shrink-0 place-items-center rounded-lg @(s.Favorite ? "text-primary-500" : "text-zinc-300 hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400")"
+                @onclick="() => ToggleFavorite(s)" @onclick:stopPropagation="true">
+            <Icon Name="@(s.Favorite ? "heartFill" : "heart")" Class="size-4" />
+        </button>
+    };
+
+    private static RenderFragment GenreChip(SongGenre g) => __builder =>
+    {
+        var (name, bg, fg) = GameData.Genre(g);
+        <span class="rounded-full px-2 py-0.5 text-[11px] font-medium" style="background:@bg;color:@fg">@name</span>
+    };
+
+    private RenderFragment DifficultyPicker => __builder =>
+    {
+        <div class="inline-flex gap-0.5 rounded-xl bg-zinc-100 p-1 dark:bg-zinc-800" role="radiogroup" aria-label="@Localizer["Difficulty"]">
+            @foreach (var (d, name) in GameData.Difficulties)
+            {
+                var on = F.Difficulty == (int)d;
+                <button role="radio" aria-checked="@Css.Aria(on)" title="@name" @onclick="() => Change(() => F.Difficulty = (int)d)"
+                        class="grid size-8 place-items-center rounded-lg @(on ? "bg-white shadow-sm dark:bg-zinc-900" : "opacity-60 hover:opacity-100")">
+                    <img data-asset="@GameData.DifficultyIcon(d)" alt="@name" class="size-6 object-contain" />
+                </button>
+            }
+        </div>
+    };
+
+    private RenderFragment StatusAndSort => __builder =>
+    {
+        var diffName = GameData.DifficultyName((Difficulty)F.Difficulty);
+        var statuses = F.AiBattle
+            ? new[] { ("all", Localizer["All songs"].Value), ("aiunplayed", Localizer["No AI battle yet"].Value), ("ailost", Localizer["Lost to the AI"].Value), ("aiwon", Localizer["Beat the AI"].Value) }
+            : new[] { ("all", Localizer["All songs"].Value), ("unplayed", Localizer["Not played"].Value), ("notcleared", Localizer["Not cleared"].Value), ("nofc", Localizer["No full combo"].Value) };
+        <select aria-label="@Localizer["Your results"]" class="@Css.Input !w-auto !py-2" value="@F.Status" @onchange='e => Change(() => F.Status = e.Value?.ToString() ?? "all")'>
+            @foreach (var (key, label) in statuses)
+            {
+                <option value="@key">@(key == "all" ? label : $"{label} ({diffName})")</option>
+            }
+        </select>
+        <select aria-label="@Localizer["Sort"]" class="@Css.Input !w-auto !py-2" value="@F.Sort" @onchange='e => Change(() => F.Sort = e.Value?.ToString() ?? "id")'>
+            <option value="id">@Localizer["Song ID"]</option>
+            <option value="title">@Localizer["Title"]</option>
+            <option value="stars">@Localizer["Stars (high first)"]</option>
+        </select>
+    };
+
+    private RenderFragment ModeAndChips => __builder =>
+    {
+        <div class="flex flex-wrap items-center gap-1.5">
+            <div class="mr-1 inline-flex gap-0.5 rounded-xl bg-zinc-100 p-1 dark:bg-zinc-800" role="radiogroup" aria-label="@Localizer["Results to show"]">
+                @foreach (var (ai, label) in new[] { (false, Localizer["Taiko Mode"].Value), (true, Localizer["AI Battle"].Value) })
+                {
+                    var on = F.AiBattle == ai;
+                    <button role="radio" aria-checked="@Css.Aria(on)" @onclick='() => Change(() => { F.AiBattle = ai; F.Status = "all"; })'
+                            class="rounded-lg px-3 py-1 text-xs font-medium @(on ? "bg-white shadow-sm dark:bg-zinc-900" : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200")">@label</button>
+                }
+            </div>
+            @Chip(F.Genre < 0 && !F.Favorites, Localizer["All"], null, () => { F.Genre = -1; F.Favorites = false; })
+            @Chip(F.Favorites, Localizer["Favourites"], null, () => { F.Favorites = !F.Favorites; F.Genre = -1; }, true)
+            @foreach (var g in Enum.GetValues<SongGenre>())
+            {
+                var (name, bg, _) = GameData.Genre(g);
+                @Chip(F.Genre == (int)g, name, bg, () => { F.Genre = (int)g; F.Favorites = false; })
+            }
+        </div>
+    };
+
+    private RenderFragment Chip(bool on, string label, string? color, Action pick, bool heart = false) => __builder =>
+    {
+        <button aria-pressed="@Css.Aria(on)" @onclick="() => Change(pick)"
+                class="flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium @(on ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700")">
+            @if (color is not null)
+            {
+                <span class="size-2 rounded-full" style="background:@color"></span>
+            }
+            @if (heart)
+            {
+                <Icon Name="@(on ? "heartFill" : "heart")" Class="size-3" />
+            }
+            @label
+        </button>
+    };
+
+    public void Dispose() => typing?.Cancel();
 }
