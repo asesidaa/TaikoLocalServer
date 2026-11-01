@@ -12,7 +12,8 @@ public sealed class AssetStatus(HttpClient client)
 
     private Task<bool>? missing;
 
-    public Task<bool> IsMissingAsync() => missing ??= CheckAsync();
+    /// <param name="refresh">Check again (after running extract) instead of the answer from earlier.</param>
+    public Task<bool> IsMissingAsync(bool refresh = false) => refresh ? missing = CheckAsync() : missing ??= CheckAsync();
 
     private async Task<bool> CheckAsync()
     {

@@ -1,0 +1,37 @@
+@* Guided-flow progress: 24px SVG circles (a multiple of 8, so they render crisply at 125% / 150% scaling). *@
+<ol class="flex items-center gap-2" aria-label="@Localizer["Progress"]">
+    @for (var i = 0; i < Labels.Count; i++)
+    {
+        var index = i;
+        var isDone = index < Current;
+        var active = index == Current;
+        <li class="flex items-center gap-2 @(index > 0 ? "flex-1" : "")">
+            @if (index > 0)
+            {
+                <span class="h-px flex-1 @(index <= Current ? "bg-primary-500" : "bg-zinc-200 dark:bg-zinc-700")"></span>
+            }
+            <span class="flex items-center gap-1.5 text-xs font-medium @(index <= Current ? "text-primary-600 dark:text-primary-400" : "text-zinc-400")" aria-current="@(active ? "step" : null)">
+                <span class="relative grid size-6 shrink-0 place-items-center">
+                    <svg class="absolute inset-0 size-6" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="@(isDone ? 12 : 11)" stroke-width="@(active ? 2 : 1.5)"
+                                class="@(isDone ? "fill-primary-500" : "fill-none") @(active ? "stroke-primary-500" : isDone ? "stroke-none" : "stroke-zinc-300 dark:stroke-zinc-600")" />
+                    </svg>
+                    @if (isDone)
+                    {
+                        <span class="relative text-white"><Icon Name="check" /></span>
+                    }
+                    else
+                    {
+                        <span class="relative text-[11px] leading-none">@(index + 1)</span>
+                    }
+                </span>
+                <span class="hidden sm:inline">@Labels[index]</span>
+            </span>
+        </li>
+    }
+</ol>
+
+@code {
+    [Parameter, EditorRequired] public IReadOnlyList<string> Labels { get; set; } = [];
+    [Parameter] public int Current { get; set; }
+}

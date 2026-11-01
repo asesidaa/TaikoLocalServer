@@ -24,4 +24,7 @@ public interface IServerAccess
 
     /// <summary>True (once) when <paramref name="code"/> is the setup code; the caller then makes that account admin.</summary>
     bool TryUseSetupCode(string code);
+
+    /// <summary>Logs the setup code again (if one is pending), so it's the newest console line when someone opens the WebUI.</summary>
+    void LogSetupCode();
 }

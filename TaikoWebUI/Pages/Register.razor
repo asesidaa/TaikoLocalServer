@@ -23,38 +23,7 @@
             <a href="/Login" class="text-sm @Css.Link">@Localizer["Log in instead"]</a>
         </div>
 
-        @* Progress: 24px SVG circles (a multiple of 8, so they render crisply at 125% / 150% scaling). *@
-        <ol class="flex items-center gap-2" aria-label="@Localizer["Progress"]">
-            @for (var i = 0; i < Steps.Count; i++)
-            {
-                var index = i;
-                var isDone = index < step;
-                var active = index == step;
-                <li class="flex items-center gap-2 @(index > 0 ? "flex-1" : "")">
-                    @if (index > 0)
-                    {
-                        <span class="h-px flex-1 @(index <= step ? "bg-primary-500" : "bg-zinc-200 dark:bg-zinc-700")"></span>
-                    }
-                    <span class="flex items-center gap-1.5 text-xs font-medium @(index <= step ? "text-primary-600 dark:text-primary-400" : "text-zinc-400")" aria-current="@(active ? "step" : null)">
-                        <span class="relative grid size-6 shrink-0 place-items-center">
-                            <svg class="absolute inset-0 size-6" viewBox="0 0 24 24" aria-hidden="true">
-                                <circle cx="12" cy="12" r="@(isDone ? 12 : 11)" stroke-width="@(active ? 2 : 1.5)"
-                                        class="@(isDone ? "fill-primary-500" : "fill-none") @(active ? "stroke-primary-500" : isDone ? "stroke-none" : "stroke-zinc-300 dark:stroke-zinc-600")" />
-                            </svg>
-                            @if (isDone)
-                            {
-                                <span class="relative text-white"><Icon Name="check" /></span>
-                            }
-                            else
-                            {
-                                <span class="relative text-[11px] leading-none">@(index + 1)</span>
-                            }
-                        </span>
-                        <span class="hidden sm:inline">@Steps[index].Label</span>
-                    </span>
-                </li>
-            }
-        </ol>
+        <StepProgress Labels="Steps.Select(x => x.Label).ToList()" Current="step" />
 
         <form class="mt-6" novalidate @onsubmit="Next">
             <div class="rise" @key="step">
@@ -65,19 +34,6 @@
                         <p class="mt-1 text-sm @Css.Muted">@Localizer["The 20 digits on your card or Banapass. Spaces are added for you."]</p>
                         <div class="mt-5"><AccessCodeField @bind-Value="code" Large="true" /></div>
                         <p class="mt-3 text-xs @Css.Muted">@(code.Length > 0 ? $"{code.Length}/20" : Localizer["Tip: paste the whole code, dashes and all."])</p>
-                        break;
-                    case "setup":
-                        <h2 class="text-lg font-semibold">@Localizer["Set up the admin account"]</h2>
-                        <p class="mt-1 text-sm @Css.Muted">@Localizer["This server has no admin yet. Enter the setup code shown in the server's console to make this card's account the admin."]</p>
-                        <label class="mt-5 block">
-                            <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">@Localizer["Setup code"]</span>
-                            <span class="relative mt-1.5 block">
-                                <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"><Icon Name="key" /></span>
-                                <input maxlength="9" autocomplete="off" spellcheck="false" placeholder="XXXX-XXXX" value="@setupCode"
-                                       class="@Css.Input pl-9 font-mono uppercase tracking-[.2em]" @oninput="e => setupCode = e.Value?.ToString()?.Trim() ?? string.Empty" />
-                            </span>
-                        </label>
-                        <p class="mt-3 text-xs @Css.Muted">@Localizer["Not the operator? Leave this blank and ask an admin to register you later."]</p>
                         break;
                     case "verify":
                         <h2 class="text-lg font-semibold">@Localizer["Prove it's your card"]</h2>
@@ -140,7 +96,6 @@
     private string invite = "";
     private string password = "";
     private string confirm = "";
-    private string setupCode = "";
     private bool useInvite;
     private DateOnly playDate = DateOnly.FromDateTime(DateTime.Today);
     private TimeOnly playTime = new(0, 45);
@@ -148,11 +103,9 @@
     private bool busy;
     private bool done;
 
-    // While the server has no admin, a setup step offers the console's one-time code. Otherwise the server checks the
-    // last play time (or an invite code instead) only when RegisterWithLastPlayTime is on.
-    private List<(string Id, string Label)> Steps => AuthService.SetupPending
-        ? [("card", Localizer["Card"]), ("setup", Localizer["Setup"]), ("password", Localizer["Password"])]
-        : AuthService.RegisterWithLastPlayTime
+    // The server checks the last play time (or an invite code instead) only when RegisterWithLastPlayTime is on.
+    // (The first admin registers on /setup instead.)
+    private List<(string Id, string Label)> Steps => AuthService.RegisterWithLastPlayTime
             ? [("card", Localizer["Card"]), ("verify", Localizer["Verify"]), ("password", Localizer["Password"])]
             : [("card", Localizer["Card"]), ("password", Localizer["Password"])];
 
@@ -160,7 +113,7 @@
 
     protected override void OnInitialized()
     {
-        if (AuthService.OnlyAdmin && !AuthService.SetupPending) Nav.NavigateTo("/Login", replace: true);
+        if (AuthService.OnlyAdmin) Nav.NavigateTo("/Login", replace: true);
         Page.Set(Localizer["Register"]);
     }
 
@@ -188,7 +141,7 @@
         }
 
         busy = true;
-        var result = await AuthService.Register(code, playDate.ToDateTime(playTime), password, confirm, useInvite ? invite : "", setupCode);
+        var result = await AuthService.Register(code, playDate.ToDateTime(playTime), password, confirm, useInvite ? invite : "");
         busy = false;
         switch (result)
         {
@@ -198,7 +151,6 @@
             case 3: error = Localizer["Unknown Access Code Error"]; step = 0; break;
             case 4: error = Localizer["Register Already Registered Error"]; step = 0; break;
             case 5: error = Localizer["Register Wrong Last Play Time Error"]; step = Steps.FindIndex(s => s.Id == "verify"); break;
-            case 7: error = Localizer["That setup code isn't right. Check the server console."]; step = Steps.FindIndex(s => s.Id == "setup"); break;
             default: error = Localizer["Unknown Error"]; break;
         }
     }

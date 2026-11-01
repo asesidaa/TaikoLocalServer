@@ -135,6 +135,17 @@ try
         {
             diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);
         };
+        // A WebUI page load fetches dozens of files (the WASM app, CSS, game art); logging each buries the lines that
+        // matter. Successful GETs of files drop to Debug; API calls, game requests (.php) and failures still log.
+        options.GetLevel = (httpContext, _, ex) =>
+        {
+            var path = httpContext.Request.Path;
+            var isFile = HttpMethods.IsGet(httpContext.Request.Method)
+                         && (path.StartsWithSegments("/api/Assets") || (Path.HasExtension(path.Value) && !path.Value!.EndsWith(".php")));
+            return ex is null && httpContext.Response.StatusCode < 400 && isFile
+                ? Serilog.Events.LogEventLevel.Debug
+                : Serilog.Events.LogEventLevel.Information;
+        };
     });
 
     var gameDataCatalog = app.Services.GetService<IGameDataCatalog>();

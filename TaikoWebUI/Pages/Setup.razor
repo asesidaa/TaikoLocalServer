@@ -1,0 +1,180 @@
+@page "/setup"
+@implements IDisposable
+@inject AuthService AuthService
+@inject HttpClient Client
+@inject AssetStatus AssetStatus
+@inject NavigationManager Nav
+@inject PageState Page
+
+<PageTitle>@Localizer["Set up the server"]</PageTitle>
+@* Server mode, first start: the only open page until an admin exists (MainLayout redirects here). *@
+<div class="mx-auto w-full max-w-md @Css.Card p-6 sm:p-8">
+    <h1 class="mb-5 font-display text-xl">@Localizer["Set up the server"]</h1>
+    <StepProgress Labels="labels" Current="step" />
+
+    <form class="mt-6" novalidate @onsubmit="Next">
+        <div class="rise" @key="step">
+            @switch (step)
+            {
+                case 0:
+                    <h2 class="text-lg font-semibold">@Localizer["Setup code"]</h2>
+                    <p class="mt-1 text-sm @Css.Muted">@Localizer["Setup Code Hint"]</p>
+                    <code class="mt-3 block overflow-x-auto whitespace-nowrap rounded-lg bg-zinc-900 px-3 py-2 font-mono text-xs text-zinc-100">[WRN] No admin account yet. Setup code: <span class="text-amber-300">K7QM-2XPA</span></code>
+                    <input maxlength="9" autocomplete="off" spellcheck="false" autofocus placeholder="XXXX-XXXX" value="@setupCode" aria-label="@Localizer["Setup code"]"
+                           class="@Css.Input mt-5 py-3.5 text-center font-mono text-lg uppercase tracking-[.3em]" @oninput="OnCodeInput" />
+                    <p class="mt-3 text-xs @Css.Muted">@Localizer["Can't see the console?"] <code class="font-mono">TaikoLocalServer.exe admin promote &lt;access code&gt;</code></p>
+                    break;
+                case 1:
+                    <h2 class="text-lg font-semibold">@Localizer["Admin account"]</h2>
+                    <p class="mt-1 text-sm @Css.Muted">@Localizer["Admin Account Hint"]</p>
+                    <div class="mt-5 space-y-4">
+                        <AccessCodeField @bind-Value="code" />
+                        <PasswordField Label="@Localizer["Password"]" AutoComplete="new-password" @bind-Value="password" />
+                        <PasswordField Label="@Localizer["Confirm password"]" AutoComplete="new-password" @bind-Value="confirm" />
+                    </div>
+                    break;
+                case 2:
+                    <h2 class="text-lg font-semibold">@Localizer["Game files"]</h2>
+                    @if (assetsMissing == false)
+                    {
+                        <p class="mt-3 flex items-center gap-2 text-sm"><Icon Name="check" Class="size-5 text-emerald-500" />@Localizer["The game files are in place."]</p>
+                    }
+                    else
+                    {
+                        <p class="mt-1 text-sm @Css.Muted">@Localizer["Game Files Hint"]</p>
+                        <code class="mt-3 block overflow-x-auto whitespace-nowrap rounded-lg bg-zinc-900 px-3 py-2 font-mono text-xs text-zinc-100">extract --game "@(string.IsNullOrEmpty(gamePath) ? "<Nijiiro game folder>" : gamePath)"</code>
+                        <p class="mt-3 text-xs @Css.Muted">@Localizer["Run it next to TaikoLocalServer.exe, then check again. Cabinets can't play until this is done."]</p>
+                        <button type="button" class="@Css.GhostButton mt-3 !px-0" @onclick="CheckAssets"><Icon Name="rotate" />@Localizer["Check again"]</button>
+                    }
+                    break;
+                default:
+                    <div class="pop py-2 text-center" style="--origin:center">
+                        <span class="mx-auto grid size-12 place-items-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"><Icon Name="check" Class="size-6" /></span>
+                        <p class="mt-3 font-semibold">@Localizer["The server is ready"]</p>
+                    </div>
+                    <dl class="mt-4 divide-y divide-zinc-100 text-sm dark:divide-zinc-800">
+                        @foreach (var (k, v) in Summary())
+                        {
+                            <div class="flex justify-between gap-4 py-2"><dt class="@Css.Muted">@k</dt><dd class="font-medium">@v</dd></div>
+                        }
+                    </dl>
+                    <p class="mt-3 text-xs @Css.Muted">@Localizer["Who can sign up is set in Admin › Access."]</p>
+                    break;
+            }
+        </div>
+        <div class="mt-4"><ErrorBox Message="@error" /></div>
+        <div class="mt-6 flex items-center justify-end gap-2">
+            @switch (step)
+            {
+                case 0:
+                case 1:
+                    <button class="@Css.PrimaryButton" disabled="@(busy || (step == 0 && setupCode.Length != 9))">@Localizer["Continue"]<Icon Name="chevRight" /></button>
+                    break;
+                case 2:
+                    <button class="@Css.PrimaryButton">@(assetsMissing == false ? Localizer["Continue"] : Localizer["Skip for now"])<Icon Name="chevRight" /></button>
+                    break;
+                default:
+                    @* A full reload: the server no longer reports setup as pending. *@
+                    <button type="button" class="@Css.GhostButton" @onclick='() => Nav.NavigateTo("/Admin/Server", forceLoad: true)'>@Localizer["Server Management"]</button>
+                    <button type="button" class="@Css.PrimaryButton" @onclick='() => Nav.NavigateTo("/", forceLoad: true)'>@Localizer["Go to the Dashboard"]</button>
+                    break;
+            }
+        </div>
+    </form>
+</div>
+
+@code {
+    private int step;
+    private string setupCode = "";
+    private string code = "";
+    private string password = "";
+    private string confirm = "";
+    private string? error;
+    private bool busy;
+    private bool? assetsMissing;
+    private string gamePath = "";
+    private List<string> labels = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!AuthService.SetupPending) Nav.NavigateTo("/", replace: true);
+        labels = [Localizer["Setup code"], Localizer["Admin account"], Localizer["Game files"], Localizer["Done"]];
+        Page.Set(Localizer["Set up the server"]);
+        // Signing in at the end of step 2 re-creates this page, and the sign-in state arrives a moment later.
+        AuthService.LoginStatusChanged += OnLoginChanged;
+        await Resume();
+    }
+
+    // Carry on as the new admin.
+    private async Task Resume()
+    {
+        if (step >= 2 || !AuthService.IsLoggedIn || !AuthService.IsAdmin) return;
+        code = (await AuthService.GetLoggedInUser())?.AccessCodes.FirstOrDefault() ?? "";
+        step = 2;
+        await CheckAssets();
+        StateHasChanged();
+    }
+
+    private void OnLoginChanged(object? sender, EventArgs e) => InvokeAsync(Resume);
+
+    public void Dispose() => AuthService.LoginStatusChanged -= OnLoginChanged;
+
+    // Upper-case, and the dash goes in for you: XXXX-XXXX.
+    private void OnCodeInput(ChangeEventArgs e)
+    {
+        var raw = new string((e.Value?.ToString() ?? "").ToUpperInvariant().Where(char.IsAsciiLetterOrDigit).Take(8).ToArray());
+        setupCode = raw.Length > 4 ? $"{raw[..4]}-{raw[4..]}" : raw;
+    }
+
+    private async Task Next()
+    {
+        error = null;
+        switch (step)
+        {
+            case 0:
+                step++;
+                return;
+            case 1:
+                error = code.Length != 20 ? Localizer["Access codes are 20 digits."]
+                    : password.Length < 8 ? Localizer["Use at least 8 characters."]
+                    : password != confirm ? Localizer["Register Different Confirm Password Error"]
+                    : null;
+                if (error is not null) return;
+                busy = true;
+                var result = await AuthService.Register(code, DateTime.Now, password, confirm, "", setupCode);
+                if (result == 1) result = await AuthService.Login(code, password) == 1 ? 1 : 6;
+                busy = false;
+                switch (result)
+                {
+                    case 1:
+                        await Resume();
+                        return;
+                    case 4: error = Localizer["Register Already Registered Error"]; return;
+                    case 7:
+                        error = Localizer["That setup code isn't right. It changes every time the server starts: check the console again."];
+                        step = 0;
+                        return;
+                    default: error = Localizer["Unknown Error"]; return;
+                }
+            case 2:
+                step++;
+                return;
+        }
+    }
+
+    private async Task CheckAssets()
+    {
+        assetsMissing = await AssetStatus.IsMissingAsync(refresh: true);
+        if (assetsMissing == true && gamePath.Length == 0)
+            gamePath = (await Client.GetFromJsonAsync<ServerConfigResponse>("api/ServerConfig"))?.GamePath ?? "";
+    }
+
+    private IEnumerable<(string, string)> Summary() =>
+    [
+        (Localizer["Mode"], Localizer["Server"]),
+        (Localizer["Admin"], code.Length > 4 ? $"•••• {code[^4..]}" : code),
+        (Localizer["Game files"], assetsMissing == false ? Localizer["In place"] : Localizer["Not added yet"]),
+        (Localizer["Sign-up"], AuthService.OnlyAdmin ? Localizer["Admins only"]
+            : AuthService.RegisterWithLastPlayTime ? Localizer["Last play time or invite code"] : Localizer["Anyone with a card"]),
+    ];
+}

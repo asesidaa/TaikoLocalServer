@@ -882,4 +882,13 @@
   <data name="Remove Score Hint" xml:space="preserve">
     <value />
   </data>
+  <data name="Setup Code Hint" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Game Files Hint" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Admin Account Hint" xml:space="preserve">
+    <value />
+  </data>
 </root>

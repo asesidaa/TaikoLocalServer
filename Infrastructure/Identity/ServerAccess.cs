@@ -81,8 +81,7 @@ public sealed class ServerAccess(
         if (Mode == ServerMode.Server && !await db.UserData.AnyAsync(u => u.IsAdmin, cancellationToken))
         {
             setupCode = NewSetupCode();
-            logger.LogWarning("Server mode has no admin yet. Register on the WebUI with setup code {SetupCode} to become the admin " +
-                              "(or run: TaikoLocalServer admin promote <access code>). The code changes on every start until an admin exists.", setupCode);
+            LogSetupCode();
         }
         logger.LogInformation("Mode: {Mode}", Mode);
     }
@@ -99,6 +98,13 @@ public sealed class ServerAccess(
         row.AccessCodeLimit = Math.Max(1, updated.AccessCodeLimit);
         await db.SaveChangesAsync(cancellationToken);
         rules = Copy(row);
+    }
+
+    public void LogSetupCode()
+    {
+        if (setupCode is { } code)
+            logger.LogWarning("No admin account yet. Setup code: {SetupCode} (enter it on the WebUI's setup page, or run: " +
+                              "TaikoLocalServer admin promote <access code>). The code changes on every start until an admin exists.", code);
     }
 
     public bool TryUseSetupCode(string code)

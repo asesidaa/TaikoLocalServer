@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using OtpNet;
+using TaikoLocalServer.Application.Handlers;
 
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
@@ -44,6 +45,8 @@ public class AuthController(
     [AllowAnonymous]
     public ActionResult<ClientAuthConfigResponse> GetConfig()
     {
+        // Every WebUI load starts here: while setup is pending, repeat the code at the bottom of the console.
+        access.LogSetupCode();
         var rules = access.Rules;
         return Ok(new ClientAuthConfigResponse(access.Mode, access.LoginRequired, rules.OnlyAdmin, rules.AccessCodeLimit,
             rules.RegisterWithLastPlayTime, rules.AllowUserDelete, rules.AllowFreeProfileEditing, access.SetupPending));
@@ -99,14 +102,33 @@ public class AuthController(
         var inviteCode = registerRequest.InviteCode;
 
         var card = await context.Cards.FindAsync(new object?[] { accessCode }, HttpContext.RequestAborted);
+        var setupCodeUsed = false;
         if (card == null)
-            return Unauthorized(new { message = "Access Code Not Found" });
+        {
+            // The first admin's card doesn't have to have played here: create its user, as the game would on
+            // its first scan. Only with a valid setup code, checked before anything is created.
+            if (!withSetupCode)
+                return Unauthorized(new { message = "Access Code Not Found" });
+            if (accessCode.Length != 20 || !accessCode.All(char.IsAsciiDigit))
+                return BadRequest(new { message = "Invalid Access Code" });
+            if (password.Length <= 0)
+                return Unauthorized(new { message = "Password Cannot Be Empty !" });
+            if (!access.TryUseSetupCode(registerRequest.SetupCode))
+                return Unauthorized(new { message = "Wrong Setup Code" });
+            setupCodeUsed = true;
+            await Mediator.Send(new AddMyDonEntryCommand(accessCode, "Admin", 0), HttpContext.RequestAborted);
+            card = await context.Cards.FindAsync(new object?[] { accessCode }, HttpContext.RequestAborted);
+            if (card == null)
+                return Unauthorized(new { message = "Access Code Not Found" });
+        }
 
         var credential = await context.Credentials.FindAsync(new object?[] { card.Baid }, HttpContext.RequestAborted);
         if (credential == null)
             return Unauthorized(new { message = "Credential Not Found" });
 
-        if (credential.Password != "")
+        // With a setup code the operator may also pick a card that already has an account: it becomes the admin
+        // and gets the new password (the setup code is the stronger proof).
+        if (credential.Password != "" && !withSetupCode)
             return Unauthorized(new { message = "User Already Registered" });
 
         if (password.Length <= 0)
@@ -135,7 +157,7 @@ public class AuthController(
 
         if (withSetupCode)
         {
-            if (!access.TryUseSetupCode(registerRequest.SetupCode))
+            if (!setupCodeUsed && !access.TryUseSetupCode(registerRequest.SetupCode))
                 return Unauthorized(new { message = "Wrong Setup Code" });
             var admin = await context.UserData.FirstOrDefaultAsync(d => d.Baid == card.Baid, HttpContext.RequestAborted);
             if (admin is null)

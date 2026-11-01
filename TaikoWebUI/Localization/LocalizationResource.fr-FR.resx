@@ -882,4 +882,13 @@
   <data name="Remove Score Hint" xml:space="preserve">
     <value>Removes the best score and the plays behind it from play history.</value>
   </data>
+  <data name="Setup Code Hint" xml:space="preserve">
+    <value>This server has no admin yet. Look in the server console for a line like this one and enter its code.</value>
+  </data>
+  <data name="Game Files Hint" xml:space="preserve">
+    <value>Cabinets and these pages need files from the game install: song data, nameplates and the 3D don-chan. Run the extractor on the game folder:</value>
+  </data>
+  <data name="Admin Account Hint" xml:space="preserve">
+    <value>Your card. It doesn’t need to have played on this server yet. If it already has an account, this becomes its password.</value>
+  </data>
 </root>

@@ -8,9 +8,9 @@
 @inject IOptions<WebUiSettings> Settings
 @using Microsoft.Extensions.Options
 
-@if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
+@if ((AuthService.LoginRequired && !AuthService.IsLoggedIn) || OnSetup)
 {
-    @* Logged out: auth layout, no sidebar. Brand left, language + theme right, card centred. *@
+    @* Logged out, or first-run setup: auth layout, no sidebar. Brand left, language + theme right, card centred. *@
     <div class="flex min-h-dvh flex-col">
         <header class="flex h-16 items-center gap-2.5 px-4 sm:px-6">
             <DrumMark />
@@ -96,8 +96,17 @@ else
     // Admins (or everyone when login is off) can run the extractor; api/Assets needs a logged-in user.
     private bool CanFixAssets => AuthService.IsAdmin || !AuthService.LoginRequired;
 
+    private bool OnSetup => Nav.ToBaseRelativePath(Nav.Uri).StartsWith("setup", StringComparison.OrdinalIgnoreCase);
+
+    // Server mode without an admin: only the setup page is open (cabinets keep working; they don't use the WebUI).
+    private void RequireSetup()
+    {
+        if (AuthService.SetupPending && !OnSetup) Nav.NavigateTo("/setup", replace: true);
+    }
+
     protected override async Task OnInitializedAsync()
     {
+        RequireSetup();
         AuthService.LoginStatusChanged += OnChanged;
         Page.Changed += Refresh;
         Toast.Changed += Refresh;
@@ -121,6 +130,7 @@ else
     private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
     {
         drawerOpen = false;
+        RequireSetup();
         Refresh();
     }
 
