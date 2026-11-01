@@ -12,7 +12,7 @@
 }
 <div class="overflow-hidden rounded-t-2xl @(CardStyle.IsLight(hex) ? "text-zinc-900" : "text-white")" style="@CardStyle.Background(s.CardColor, s.CardPattern)">
     <div class="flex items-center gap-4 p-5">
-        <Avatar Setting="s" Size="64" />
+        <Avatar Setting="s" Size="64" OnCard />
         <div class="min-w-0 flex-1">
             <p class="font-display truncate text-2xl">@s.MyDonName</p>
             <p class="truncate text-sm opacity-80">@s.Title</p>
