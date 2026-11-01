@@ -3,12 +3,14 @@
 @inject IJSRuntime Js
 @inject AuthService Auth
 
-<span class="relative grid shrink-0 place-items-center overflow-hidden rounded-full font-display @(CardStyle.IsLight(Hex) ? "text-zinc-900" : "text-white")"
-      style="width:@(Size)px;height:@(Size)px;background:@Hex;font-size:@(Size / 2)px" aria-hidden="true">
-    @Initial
+@* The initial is nudged up 0.075em: Zen Maru Gothic's ascent/descent (1.15/0.3em) put a capital's middle that far below
+   the line box's. *@
+<span class="relative grid shrink-0 place-items-center overflow-hidden rounded-full font-display leading-none @(CardStyle.IsLight(Hex) ? "text-zinc-900" : "text-white")"
+      style="width:@(Size)px;height:@(Size)px;@CardStyle.Background(Setting.CardColor, Setting.CardPattern);font-size:@(Size / 2)px" aria-hidden="true">
+    <span class="-translate-y-[0.075em]">@Initial</span>
     @if (Auth.ServerAvatars)
     {
-        <img data-avatar="@CardStyle.AvatarSrc(Setting)" alt="" hidden class="absolute inset-0 size-full object-cover" style="background:@Hex" />
+        <img data-avatar="@CardStyle.AvatarSrc(Setting)" alt="" hidden class="absolute inset-0 size-full object-cover" />
     }
 </span>
 
@@ -18,7 +20,8 @@
     [Parameter] public int Size { get; set; } = 40;
 
     private string Hex => GameData.Color(Setting.CardColor);
-    private string Initial => string.IsNullOrEmpty(Setting.MyDonName) ? "?" : char.ConvertFromUtf32(char.ConvertToUtf32(Setting.MyDonName, 0));
+    // A capital: a lowercase letter's x-height sits below the circle's middle.
+    private string Initial => string.IsNullOrEmpty(Setting.MyDonName) ? "?" : char.ConvertFromUtf32(char.ConvertToUtf32(Setting.MyDonName, 0)).ToUpperInvariant();
 
     protected override Task OnAfterRenderAsync(bool firstRender) => Js.InvokeVoidAsync("ui.hydrateAssets").AsTask();
 }
