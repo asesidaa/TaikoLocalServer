@@ -16,6 +16,11 @@ public interface IServerAccess
 
     Task UpdateRulesAsync(AccessRules rules, CancellationToken cancellationToken);
 
+    /// <summary>A copy of the server state an admin set; <see cref="ServerStatus.At"/> gives the one in force.</summary>
+    ServerStatus Status { get; }
+
+    Task UpdateStatusAsync(ServerStatus status, CancellationToken cancellationToken);
+
     /// <summary>The key that signs login tokens and derives invite codes.</summary>
     byte[] SigningKey { get; }
 

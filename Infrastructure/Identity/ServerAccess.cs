@@ -24,12 +24,15 @@ public sealed class ServerAccess(
     private const string LegacyDefaultJwtKey = "SuperSecretKeyAndHeresItsPadding";
 
     private AccessRules rules = new();
+    private ServerStatus status = new();
     private byte[] signingKey = [];
     private string? setupCode;
 
     public ServerMode Mode { get; private set; }
 
     public AccessRules Rules => Copy(rules);
+
+    public ServerStatus Status => Copy(status);
 
     public byte[] SigningKey => signingKey.Length > 0 ? signingKey : throw new InvalidOperationException("ServerAccess isn't initialized.");
 
@@ -61,6 +64,8 @@ public sealed class ServerAccess(
             };
             db.AccessRules.Add(rules);
         }
+
+        status = await db.ServerStatuses.AsNoTracking().FirstOrDefaultAsync(cancellationToken) ?? new ServerStatus();
 
         if (await db.ServerSecrets.FindAsync([1], cancellationToken) is not { } secrets)
         {
@@ -102,6 +107,18 @@ public sealed class ServerAccess(
         rules = Copy(row);
     }
 
+    public async Task UpdateStatusAsync(ServerStatus updated, CancellationToken cancellationToken)
+    {
+        using var scope = scopes.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ITaikoDbContext>();
+        var row = await db.ServerStatuses.FindAsync([1], cancellationToken) ?? db.ServerStatuses.Add(new ServerStatus()).Entity;
+        row.State = updated.State;
+        row.Start = updated.Start;
+        row.End = updated.End;
+        await db.SaveChangesAsync(cancellationToken);
+        status = Copy(row);
+    }
+
     public void LogSetupCode()
     {
         if (setupCode is { } code)
@@ -128,6 +145,8 @@ public sealed class ServerAccess(
         var chars = Enumerable.Range(0, 8).Select(_ => alphabet[RandomNumberGenerator.GetInt32(alphabet.Length)]).ToArray();
         return $"{new string(chars, 0, 4)}-{new string(chars, 4, 4)}";
     }
+
+    private static ServerStatus Copy(ServerStatus s) => new() { State = s.State, Start = s.Start, End = s.End };
 
     private static AccessRules Copy(AccessRules r) => new()
     {

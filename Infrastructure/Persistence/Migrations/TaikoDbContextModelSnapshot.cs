@@ -402,6 +402,25 @@ namespace TaikoLocalServer.Migrations
                     b.ToTable("ServerSecrets");
                 });
 
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.ServerStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("End")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("Start")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("State")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ServerStatuses");
+                });
+
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.SignInAttempt", b =>
                 {
                     b.Property<long>("Id")

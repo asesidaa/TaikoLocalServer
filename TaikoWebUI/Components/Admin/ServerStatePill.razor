@@ -1,0 +1,25 @@
+@* The server state in force, as a small pill (Status tab, and the top bar on admin pages). *@
+<a href="/Admin/Server/status" title="@Localizer["Server state"]"
+   class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-medium @Color">
+    <span class="size-1.5 rounded-full bg-current"></span>@Label
+</a>
+
+@code {
+    [Parameter, EditorRequired] public ServerState State { get; set; }
+
+    private string Label => State switch
+    {
+        ServerState.PreMaintenance => Localizer["Pre-maintenance"],
+        ServerState.Maintenance => Localizer["Maintenance"],
+        ServerState.Offline => Localizer["Offline"],
+        _ => Localizer["Operational"],
+    };
+
+    private string Color => State switch
+    {
+        ServerState.PreMaintenance => "bg-amber-500/15 text-amber-700 dark:text-amber-300",
+        ServerState.Maintenance => "bg-red-500/15 text-red-700 dark:text-red-300",
+        ServerState.Offline => "bg-zinc-500/15 text-zinc-600 dark:text-zinc-300",
+        _ => "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
+    };
+}

@@ -12,7 +12,8 @@
 <div class="mt-4" role="tabpanel">
     @if (Current == "status")
     {
-        @ConfigCard
+        <ServerStateCard />
+        <div class="mt-4">@ConfigCard</div>
     }
     else if (Current == "announcements")
     {

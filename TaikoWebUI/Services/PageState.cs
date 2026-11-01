@@ -1,3 +1,5 @@
+using TaikoLocalServer.Domain.Enums;
+
 namespace TaikoWebUI.Services;
 
 /// <summary>
@@ -13,12 +15,21 @@ public sealed class PageState
 
     public SaveStatus? Save { get; private set; }
 
+    /// <summary>The server state in force, for the pill on admin pages; null until an admin page loads it.</summary>
+    public ServerState? ServerState { get; private set; }
+
     public event Action? Changed;
 
     public void Set(params string[] crumbs)
     {
         Crumbs = crumbs;
         Save = null;
+        Changed?.Invoke();
+    }
+
+    public void SetServerState(ServerState state)
+    {
+        ServerState = state;
         Changed?.Invoke();
     }
 

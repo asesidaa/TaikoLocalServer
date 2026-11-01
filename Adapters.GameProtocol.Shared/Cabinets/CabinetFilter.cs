@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
+using TaikoLocalServer.Domain.Enums;
 
 namespace TaikoLocalServer.Adapters.GameProtocol.Shared.Cabinets;
 
@@ -9,7 +10,7 @@ namespace TaikoLocalServer.Adapters.GameProtocol.Shared.Cabinets;
 /// Every game request carries the cabinet's chassis ID: record the cabinet, and refuse a blocked (or, when only approved
 /// cabinets may connect, an unapproved) one before the controller runs. Requests without one (AllNet, admin API) pass.
 /// </summary>
-public sealed class CabinetFilter(ICabinetRegistry cabinets, ILogger<CabinetFilter> logger) : IAsyncActionFilter
+public sealed class CabinetFilter(ICabinetRegistry cabinets, IServerAccess access, ILogger<CabinetFilter> logger) : IAsyncActionFilter
 {
     private static readonly ConcurrentDictionary<Type, (PropertyInfo Chassis, PropertyInfo? Shop)?> Properties = new();
 
@@ -22,9 +23,11 @@ public sealed class CabinetFilter(ICabinetRegistry cabinets, ILogger<CabinetFilt
             var shop = props.Shop?.GetValue(argument)?.ToString() ?? "";
             var path = context.HttpContext.Request.Path;
             var version = path.StartsWithSegments("/v12r08_ww") ? "WW 39.06" : path.StartsWithSegments("/v12r00_cn") ? "CHN" : "";
-            if (!cabinets.Seen(chassis, shop, version))
+            // Offline: the heartbeat itself tells the cabinet (NG); everything else is refused.
+            var offline = access.Status.At(DateTime.UtcNow) == ServerState.Offline && !path.Value!.Contains("heartbeat");
+            if (!cabinets.Seen(chassis, shop, version) || offline)
             {
-                logger.LogWarning("Refused cabinet {ChassisId} ({Path})", chassis, path);
+                if (!offline) logger.LogWarning("Refused cabinet {ChassisId} ({Path})", chassis, path);
                 // shortcut: a bare 403 is assumed to show the cabinet's network error; not yet checked on a cabinet.
                 context.Result = new StatusCodeResult(StatusCodes.Status403Forbidden);
                 return;

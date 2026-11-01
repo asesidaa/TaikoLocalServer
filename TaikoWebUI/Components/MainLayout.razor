@@ -6,6 +6,7 @@
 @inject AssetStatus AssetStatus
 @inject NavigationManager Nav
 @inject IOptions<WebUiSettings> Settings
+@inject HttpClient Client
 @using Microsoft.Extensions.Options
 
 @if ((AuthService.LoginRequired && !AuthService.IsLoggedIn) || OnSetup)
@@ -56,6 +57,10 @@ else
                             default: <Icon Name="cloud" Class="size-4" /><span class="max-sm:sr-only">@Localizer["All changes saved"]</span> break;
                         }
                     </span>
+                }
+                @if (OnAdminPage && Page.ServerState is { } state)
+                {
+                    <span class="mr-1"><TaikoWebUI.Components.Admin.ServerStatePill State="state" /></span>
                 }
                 @if (!AuthService.LoginRequired)
                 {
@@ -112,6 +117,22 @@ else
     // Admins (or everyone when login is off) can run the extractor; api/Assets needs a logged-in user.
     private bool CanFixAssets => AuthService.IsAdmin || !AuthService.LoginRequired;
 
+    private bool OnAdminPage => CanFixAssets && Nav.ToBaseRelativePath(Nav.Uri).StartsWith("admin", StringComparison.OrdinalIgnoreCase);
+
+    // Loaded once on the first admin page; the Status tab updates it after a change.
+    private async Task LoadServerState()
+    {
+        if (!OnAdminPage || Page.ServerState is not null || (AuthService.LoginRequired && !AuthService.IsLoggedIn)) return;
+        try
+        {
+            if (await Client.GetFromJsonAsync<ServerStateSettings>("api/ServerState") is { } s) Page.SetServerState(s.Current);
+        }
+        catch (HttpRequestException)
+        {
+            // Not an admin after all, or the server is down: no pill.
+        }
+    }
+
     private bool OnSetup => Nav.ToBaseRelativePath(Nav.Uri).StartsWith("setup", StringComparison.OrdinalIgnoreCase);
 
     // Server mode without an admin: only the setup page is open (cabinets keep working; they don't use the WebUI).
@@ -128,6 +149,7 @@ else
         Toast.Changed += Refresh;
         Nav.LocationChanged += OnLocationChanged;
         await CheckAssets();
+        await LoadServerState();
     }
 
     private async Task CheckAssets()
@@ -147,6 +169,7 @@ else
     {
         drawerOpen = false;
         RequireSetup();
+        _ = LoadServerState();
         Refresh();
     }
 

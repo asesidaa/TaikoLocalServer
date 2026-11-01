@@ -1,0 +1,131 @@
+@* Server Management › Status: what cabinets are told on each heartbeat. Maintenance and Offline ask first. *@
+@inject HttpClient Client
+@inject PageState Page
+@inject ToastService Toast
+
+<section class="@Css.Card p-5 sm:p-6">
+    <div class="flex flex-wrap items-center gap-2">
+        <h2 class="font-semibold">@Localizer["Server state"]</h2>
+        @if (saved is not null)
+        {
+            <ServerStatePill State="saved.Current" />
+        }
+    </div>
+    <p class="text-sm @Css.Muted">@Localizer["Cabinets pick a change up on their next heartbeat, within about a minute."]</p>
+    @if (saved is null)
+    {
+        <p class="mt-4 text-sm @Css.Muted">@Localizer["Loading..."]</p>
+    }
+    else
+    {
+        <div class="mt-4 grid gap-2 sm:grid-cols-2" role="radiogroup" aria-label="@Localizer["Server state"]">
+            @foreach (var (state, label, hint, dot) in States)
+            {
+                var on = draft == state;
+                <button role="radio" aria-checked="@Css.Aria(on)" @onclick="() => draft = state"
+                        class="rounded-xl border p-3 text-left transition-colors @(on ? "border-primary-500 bg-primary-500/5 ring-1 ring-primary-500" : "border-zinc-200 hover:border-zinc-300 dark:border-zinc-700 dark:hover:border-zinc-600")">
+                    <span class="flex items-center gap-2 text-sm font-medium"><span class="size-2 rounded-full @dot"></span>@label</span>
+                    <span class="mt-0.5 block text-xs @Css.Muted">@hint</span>
+                </button>
+            }
+        </div>
+        @if (draft is ServerState.PreMaintenance or ServerState.Maintenance)
+        {
+            <div class="mt-4 grid gap-3 sm:grid-cols-2">
+                <label class="text-sm">@Localizer["Start"] <span class="@Css.Muted">@Localizer["(empty: now)"]</span>
+                    <input type="datetime-local" class="@Css.Input mt-1" @bind="start" /></label>
+                <label class="text-sm">@Localizer["End"] <span class="@Css.Muted">@Localizer["(empty: until changed)"]</span>
+                    <input type="datetime-local" class="@Css.Input mt-1" @bind="end" /></label>
+            </div>
+        }
+        <div class="mt-4 flex justify-end">
+            @if (Dangerous)
+            {
+                <button class="inline-flex items-center gap-1.5 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50" disabled="@(!Dirty)" @onclick="() => confirming = true">@Localizer["Apply"]</button>
+            }
+            else
+            {
+                <button class="@Css.PrimaryButton" disabled="@(!Dirty)" @onclick="Apply">@Localizer["Apply"]</button>
+            }
+        </div>
+    }
+</section>
+
+@if (confirming)
+{
+    <Dialog Title="@(draft == ServerState.Offline ? Localizer["Take the server offline?"] : Localizer["Start maintenance?"])" Alert OnClose="() => confirming = false">
+        <ChildContent>@Effect</ChildContent>
+        <Footer>
+            <button class="@Css.GhostButton" @onclick="() => confirming = false">@Localizer["Cancel"]</button>
+            <button class="inline-flex items-center gap-1.5 rounded-xl bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700" @onclick="Apply">@Localizer["Apply"]</button>
+        </Footer>
+    </Dialog>
+}
+
+@code {
+    private ServerStateSettings? saved;
+    private ServerState draft;
+    private DateTime? start, end;
+    private bool confirming;
+
+    private (ServerState State, string Label, string Hint, string Dot)[] States =>
+    [
+        (ServerState.Operational, Localizer["Operational"], Localizer["Cabinets play normally."], "bg-emerald-500"),
+        (ServerState.PreMaintenance, Localizer["Pre-maintenance"], Localizer["Cabinets keep playing and show that maintenance is coming."], "bg-amber-500"),
+        (ServerState.Maintenance, Localizer["Maintenance"], Localizer["Cabinets show the maintenance screen."], "bg-red-500"),
+        (ServerState.Offline, Localizer["Offline"], Localizer["Cabinets get a network error; nothing is saved."], "bg-zinc-400"),
+    ];
+
+    private bool Dangerous => draft is ServerState.Maintenance or ServerState.Offline;
+
+    private bool Windowed => draft is ServerState.PreMaintenance or ServerState.Maintenance;
+
+    private bool Dirty => saved is not null && (draft != saved.State || Windowed && (start != Local(saved.Start) || end != Local(saved.End)));
+
+    // "Every cabinet shows the maintenance screen from Sun 1 Nov 02:00 to 06:00."
+    private string Effect
+    {
+        get
+        {
+            if (draft == ServerState.Offline)
+                return Localizer["Every cabinet gets a network error until you switch back. A credit in progress won't save."];
+            var from = start is { } s ? s.ToString("ddd d MMM HH:mm") : Localizer["now"].Value;
+            return end is { } e
+                ? string.Format(Localizer["Every cabinet shows the maintenance screen from {0} to {1}."], from, e.ToString(e.Date == start?.Date ? "HH:mm" : "ddd d MMM HH:mm"))
+                : string.Format(Localizer["Every cabinet shows the maintenance screen from {0} until you switch back."], from);
+        }
+    }
+
+    protected override async Task OnInitializedAsync() => await Load();
+
+    private async Task Load()
+    {
+        saved = await Client.GetFromJsonAsync<ServerStateSettings>("api/ServerState");
+        if (saved is null) return;
+        draft = saved.State;
+        start = Local(saved.Start);
+        end = Local(saved.End);
+        Page.SetServerState(saved.Current);
+    }
+
+    private async Task Apply()
+    {
+        confirming = false;
+        var res = await Client.PutAsJsonAsync("api/ServerState", new ServerStateSettings
+        {
+            State = draft,
+            Start = Windowed ? start?.ToUniversalTime() : null,
+            End = Windowed ? end?.ToUniversalTime() : null,
+        });
+        if (!res.IsSuccessStatusCode)
+        {
+            var body = await res.Content.ReadAsStringAsync();
+            Toast.Show(body.Contains("after the start") ? Localizer["The end must be after the start."] : Localizer["Save Failed"], true);
+            return;
+        }
+        Toast.Show(Localizer["Saved"]);
+        await Load();
+    }
+
+    private static DateTime? Local(DateTime? utc) => utc?.ToLocalTime();
+}

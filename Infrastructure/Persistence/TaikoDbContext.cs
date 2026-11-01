@@ -37,6 +37,7 @@ namespace TaikoLocalServer.Infrastructure.Persistence
         public virtual DbSet<WebSession> WebSessions { get; set; } = null!;
         public virtual DbSet<ApiToken> ApiTokens { get; set; } = null!;
         public virtual DbSet<DashboardNotice> DashboardNotices { get; set; } = null!;
+        public virtual DbSet<ServerStatus> ServerStatuses { get; set; } = null!;
         public virtual DbSet<Cabinet> Cabinets { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -83,6 +84,7 @@ namespace TaikoLocalServer.Infrastructure.Persistence
             modelBuilder.Entity<WebSession>(entity => entity.HasIndex(e => e.Baid));
             modelBuilder.Entity<ApiToken>(entity => entity.HasIndex(e => e.Hash).IsUnique());
             modelBuilder.Entity<DashboardNotice>(entity => entity.Property(e => e.Id).ValueGeneratedNever());
+            modelBuilder.Entity<ServerStatus>(entity => entity.Property(e => e.Id).ValueGeneratedNever());
             modelBuilder.Entity<Cabinet>(entity => entity.HasKey(e => e.ChassisId));
 
             modelBuilder.Entity<UserWebProfile>(entity =>

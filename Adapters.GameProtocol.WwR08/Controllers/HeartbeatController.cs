@@ -1,7 +1,9 @@
+using TaikoLocalServer.Adapters.GameProtocol.Shared.Cabinets;
+
 namespace TaikoLocalServer.Adapters.GameProtocol.WwR08.Controllers;
 
 [ApiController]
-public class HeartbeatController : BaseProtocolController<HeartbeatController>
+public class HeartbeatController(IServerAccess access) : BaseProtocolController<HeartbeatController>
 {
     [HttpPost("/v12r08_ww/chassis/heartbeat_hcv5akgr.php")]
     [Produces("application/protobuf")]
@@ -12,7 +14,7 @@ public class HeartbeatController : BaseProtocolController<HeartbeatController>
         {
             Result = 1,
             ComSvrStat = 1,
-            GameSvrStat = 1
+            GameSvrStat = access.GameSvrStat()
         };
 
         return Ok(response);
