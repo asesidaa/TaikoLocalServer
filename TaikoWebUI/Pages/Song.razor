@@ -435,28 +435,6 @@ else
 
     private static string Signed(double v, string format = "N0") => (v >= 0 ? "+" : "−") + Math.Abs(v).ToString(format);
 
-    // Your value as a fill, the others' average as a tick; Plays is neutral (playing less isn't worse).
-    private RenderFragment Bullet(string label, double mine, double average, double max, Func<double, string> fmt, bool neutral = false) => __builder =>
-    {
-        var delta = mine - average;
-        double Pos(double v) => Math.Clamp(v / max * 100, 0, 100);
-        <div>
-            <div class="flex items-baseline justify-between text-sm">
-                <span>@label</span>
-                <span class="tabular-nums">
-                    <b>@fmt(mine)</b>
-                    <span class="text-xs @(neutral ? Css.Muted : delta >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400")">@(neutral ? "" : delta >= 0 ? "▲ " : "▼ ")@((delta >= 0 ? "+" : "−") + fmt(Math.Abs(delta)))</span>
-                </span>
-            </div>
-            <div class="relative mt-1.5 h-2 rounded-full bg-zinc-100 dark:bg-zinc-800">
-                <span class="absolute inset-y-0 left-0 rounded-full bg-primary-500" style="width:@Pos(mine).ToString("0.##", CultureInfo.InvariantCulture)%"></span>
-                <span class="absolute -inset-y-1 w-0.5 rounded-full bg-zinc-900 dark:bg-zinc-100" style="left:@Pos(average).ToString("0.##", CultureInfo.InvariantCulture)%"
-                      title="@string.Format(Localizer["Server average: {0}"], fmt(average))"></span>
-            </div>
-            <p class="mt-1 text-xs @Css.Muted">@string.Format(Localizer["Server average {0}"], fmt(average))</p>
-        </div>
-    };
-
     private RenderFragment VsServerCard(SongChartServerStats s, SongChartSummary? mine, SongChartPlay? best) => __builder =>
     {
         var others = s.Players - (s.Rank is null ? 0 : 1);
@@ -482,9 +460,9 @@ else
                     : string.Format(Localizer["<b>Better than {0}%</b> of players on this chart"], Math.Round(s.BetterThan ?? 0))))</p>
                 <p class="text-sm @Css.Muted">@string.Format(Localizer[rel >= 0 ? "{0}% above the average score · #{1} of {2}" : "{0}% below the average score · #{1} of {2}"], Math.Abs(rel).ToString("0.0"), rank, s.Players.ToString("N0"))</p>
                 <div class="mt-4 space-y-3">
-                    @Bullet(Localizer["Score"], best.Score, s.AverageBest, 1_000_000, v => Math.Round(v).ToString("N0"))
-                    @Bullet(Localizer["Accuracy"], accuracy, s.AverageAccuracy, 100, v => v.ToString("0.0") + "%")
-                    @Bullet(Localizer["Plays"], mine.Plays, s.AveragePlays, Math.Max(mine.Plays, s.AveragePlays) * 1.15, v => Math.Round(v).ToString("N0"), neutral: true)
+                    <Bullet Label="@Localizer["Score"]" Mine="best.Score" Average="s.AverageBest" Max="1_000_000" Format="@(v => Math.Round(v).ToString("N0"))" />
+                    <Bullet Label="@Localizer["Accuracy"]" Mine="accuracy" Average="s.AverageAccuracy" Max="100" Format="@(v => v.ToString("0.0") + "%")" />
+                    <Bullet Label="@Localizer["Plays"]" Mine="mine.Plays" Average="s.AveragePlays" Format="@(v => Math.Round(v).ToString("N0"))" Neutral />
                 </div>
                 @Histogram(s, best.Score)
             }

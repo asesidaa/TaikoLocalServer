@@ -646,7 +646,7 @@
     <value>Drumroll</value>
   </data>
   <data name="Played" xml:space="preserve">
-    <value>Date</value>
+    <value>Played</value>
   </data>
   <data name="Total Clears" xml:space="preserve">
     <value>Total Clears</value>

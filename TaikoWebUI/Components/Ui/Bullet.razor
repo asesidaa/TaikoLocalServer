@@ -1,0 +1,36 @@
+@* One "you vs the server" row: your value as a fill, the others' average as a tick, and the difference. Neutral rows
+   (plays, credits) show the difference without ▲/▼ or colour, because more isn't better. *@
+@using System.Globalization
+
+<div>
+    <div class="flex items-baseline justify-between text-sm">
+        <span>@Label</span>
+        <span class="tabular-nums">
+            <b>@Format(Mine)</b>
+            <span class="text-xs @(Neutral ? Css.Muted : delta >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400")">@(Neutral ? "" : delta >= 0 ? "▲ " : "▼ ")@((delta >= 0 ? "+" : "−") + Format(Math.Abs(delta)))</span>
+        </span>
+    </div>
+    <div class="relative mt-1.5 h-2 rounded-full bg-zinc-100 dark:bg-zinc-800">
+        <span class="absolute inset-y-0 left-0 rounded-full bg-primary-500" style="width:@Pos(Mine)%"></span>
+        <span class="absolute -inset-y-1 w-0.5 rounded-full bg-zinc-900 dark:bg-zinc-100" style="left:@Pos(Average)%"
+              title="@string.Format(Localizer["Server average: {0}"], Format(Average))"></span>
+    </div>
+    <p class="mt-1 text-xs @Css.Muted">@string.Format(Localizer["Server average {0}"], Format(Average))</p>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string Label { get; set; } = "";
+    [Parameter] public double Mine { get; set; }
+    [Parameter] public double Average { get; set; }
+    /// <summary>The track's full width; 0 = a little past the larger of the two.</summary>
+    [Parameter] public double Max { get; set; }
+    [Parameter, EditorRequired] public Func<double, string> Format { get; set; } = null!;
+    [Parameter] public bool Neutral { get; set; }
+
+    private double delta => Mine - Average;
+    private string Pos(double v)
+    {
+        var max = Max > 0 ? Max : Math.Max(1, Math.Max(Mine, Average) * 1.15);
+        return Math.Clamp(v / max * 100, 0, 100).ToString("0.##", CultureInfo.InvariantCulture);
+    }
+}

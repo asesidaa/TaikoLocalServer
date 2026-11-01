@@ -646,7 +646,7 @@
     <value>连打</value>
   </data>
   <data name="Played" xml:space="preserve">
-    <value>日期</value>
+    <value>已玩</value>
   </data>
   <data name="Total Clears" xml:space="preserve">
     <value>总通过次数</value>
@@ -3575,5 +3575,80 @@
   </data>
   <data name="You" xml:space="preserve">
     <value>你</value>
+  </data>
+  <data name="At a glance" xml:space="preserve">
+    <value>概览</value>
+  </data>
+  <data name="Your standing" xml:space="preserve">
+    <value>你的排名</value>
+  </data>
+  <data name="All charts" xml:space="preserve">
+    <value>所有谱面</value>
+  </data>
+  <data name="Recent personal bests" xml:space="preserve">
+    <value>最近的个人最佳</value>
+  </data>
+  <data name="Last 2 weeks" xml:space="preserve">
+    <value>最近2周</value>
+  </data>
+  <data name="Play some songs to see how you compare." xml:space="preserve">
+    <value>玩几首歌即可比较。</value>
+  </data>
+  <data name="Nobody else has played yet." xml:space="preserve">
+    <value>还没有其他人玩过。</value>
+  </data>
+  <data name="You're in the &lt;b&gt;top {0}%&lt;/b&gt; of players on this server" xml:space="preserve">
+    <value>你位列本服务器玩家的&lt;b&gt;前{0}%&lt;/b&gt;</value>
+  </data>
+  <data name="#{0} of {1} by charts cleared" xml:space="preserve">
+    <value>按通关谱面数排第{0}名，共{1}人</value>
+  </data>
+  <data name="Credits" xml:space="preserve">
+    <value>局数</value>
+  </data>
+  <data name="charts at #1" xml:space="preserve">
+    <value>排名第1的谱面</value>
+  </data>
+  <data name="in the top 3" xml:space="preserve">
+    <value>前3名</value>
+  </data>
+  <data name="in the top 10" xml:space="preserve">
+    <value>前10名</value>
+  </data>
+  <data name="Charts cleared, server ranking" xml:space="preserve">
+    <value>通关谱面数的服务器排名</value>
+  </data>
+  <data name="Play some songs to get goals here." xml:space="preserve">
+    <value>玩几首歌后这里会出现目标。</value>
+  </data>
+  <data name="Closest full combos" xml:space="preserve">
+    <value>最接近全连的谱面</value>
+  </data>
+  <data name="{0} Bad" xml:space="preserve">
+    <value>{0}个不可</value>
+  </data>
+  <data name="{0} Bads" xml:space="preserve">
+    <value>{0}个不可</value>
+  </data>
+  <data name="Your best: {0} Bad, {1} OK" xml:space="preserve">
+    <value>最佳：{0}个不可、{1}个可</value>
+  </data>
+  <data name="Closest places" xml:space="preserve">
+    <value>最接近的名次</value>
+  </data>
+  <data name="To pass {0} for #{1}" xml:space="preserve">
+    <value>超过{0}成为第{1}名</value>
+  </data>
+  <data name="1 more clear to clear half of them ({0} of {1})" xml:space="preserve">
+    <value>再通关1首即可通关一半（{0}/{1}）</value>
+  </data>
+  <data name="{2} more clears to clear half of them ({0} of {1})" xml:space="preserve">
+    <value>再通关{2}首即可通关一半（{0}/{1}）</value>
+  </data>
+  <data name="No new personal bests in the last two weeks." xml:space="preserve">
+    <value>最近两周没有新的个人最佳。</value>
+  </data>
+  <data name="{0} days played · longest streak {1} days" xml:space="preserve">
+    <value>游玩{0}天 · 最长连续{1}天</value>
   </data>
 </root>

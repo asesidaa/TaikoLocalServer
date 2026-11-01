@@ -646,7 +646,7 @@
     <value>Drumroll</value>
   </data>
   <data name="Played" xml:space="preserve">
-    <value>Date</value>
+    <value>Joués</value>
   </data>
   <data name="Total Clears" xml:space="preserve">
     <value>Clears</value>
@@ -3575,5 +3575,80 @@
   </data>
   <data name="You" xml:space="preserve">
     <value>Vous</value>
+  </data>
+  <data name="At a glance" xml:space="preserve">
+    <value>En bref</value>
+  </data>
+  <data name="Your standing" xml:space="preserve">
+    <value>Votre classement</value>
+  </data>
+  <data name="All charts" xml:space="preserve">
+    <value>Tous les niveaux</value>
+  </data>
+  <data name="Recent personal bests" xml:space="preserve">
+    <value>Records personnels récents</value>
+  </data>
+  <data name="Last 2 weeks" xml:space="preserve">
+    <value>2 dernières semaines</value>
+  </data>
+  <data name="Play some songs to see how you compare." xml:space="preserve">
+    <value>Jouez quelques chansons pour vous comparer.</value>
+  </data>
+  <data name="Nobody else has played yet." xml:space="preserve">
+    <value>Personne d'autre n'a encore joué.</value>
+  </data>
+  <data name="You're in the &lt;b&gt;top {0}%&lt;/b&gt; of players on this server" xml:space="preserve">
+    <value>Vous êtes dans les &lt;b&gt;{0} % meilleurs&lt;/b&gt; joueurs du serveur</value>
+  </data>
+  <data name="#{0} of {1} by charts cleared" xml:space="preserve">
+    <value>n°{0} sur {1} en niveaux réussis</value>
+  </data>
+  <data name="Credits" xml:space="preserve">
+    <value>Crédits</value>
+  </data>
+  <data name="charts at #1" xml:space="preserve">
+    <value>niveaux en n°1</value>
+  </data>
+  <data name="in the top 3" xml:space="preserve">
+    <value>dans le top 3</value>
+  </data>
+  <data name="in the top 10" xml:space="preserve">
+    <value>dans le top 10</value>
+  </data>
+  <data name="Charts cleared, server ranking" xml:space="preserve">
+    <value>Niveaux réussis, classement du serveur</value>
+  </data>
+  <data name="Play some songs to get goals here." xml:space="preserve">
+    <value>Jouez quelques chansons pour voir des objectifs ici.</value>
+  </data>
+  <data name="Closest full combos" xml:space="preserve">
+    <value>Full combos les plus proches</value>
+  </data>
+  <data name="{0} Bad" xml:space="preserve">
+    <value>{0} Bad</value>
+  </data>
+  <data name="{0} Bads" xml:space="preserve">
+    <value>{0} Bad</value>
+  </data>
+  <data name="Your best: {0} Bad, {1} OK" xml:space="preserve">
+    <value>Votre meilleure : {0} Bad, {1} OK</value>
+  </data>
+  <data name="Closest places" xml:space="preserve">
+    <value>Places les plus proches</value>
+  </data>
+  <data name="To pass {0} for #{1}" xml:space="preserve">
+    <value>Pour dépasser {0} et être n°{1}</value>
+  </data>
+  <data name="1 more clear to clear half of them ({0} of {1})" xml:space="preserve">
+    <value>Encore 1 réussite pour en réussir la moitié ({0} sur {1})</value>
+  </data>
+  <data name="{2} more clears to clear half of them ({0} of {1})" xml:space="preserve">
+    <value>Encore {2} réussites pour en réussir la moitié ({0} sur {1})</value>
+  </data>
+  <data name="No new personal bests in the last two weeks." xml:space="preserve">
+    <value>Aucun nouveau record personnel ces deux dernières semaines.</value>
+  </data>
+  <data name="{0} days played · longest streak {1} days" xml:space="preserve">
+    <value>{0} jours joués · plus longue série {1} jours</value>
   </data>
 </root>

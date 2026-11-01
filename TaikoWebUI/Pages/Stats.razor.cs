@@ -14,6 +14,8 @@ public partial class Stats
     private List<SongBestData> best = [];
     private List<SongHistoryData> history = [];
     private Dictionary<uint, MusicDetail> music = [];
+    // Across the whole server (api/Stats/{baid}/Server); null while loading or if it failed.
+    private PlayerServerStats? server;
     private bool loaded;
 
     private static readonly Difficulty[] Courses = [Difficulty.Easy, Difficulty.Normal, Difficulty.Hard, Difficulty.Oni, Difficulty.UraOni];
@@ -42,6 +44,9 @@ public partial class Stats
         best = (await bestTask)?.SongBestData ?? [];
         history = (await historyTask)?.SongHistoryData ?? [];
         loaded = true;
+        StateHasChanged();
+        // The server-wide numbers come after the rest is shown.
+        server = await Client.GetFromJsonAsync<PlayerServerStats>($"api/Stats/{Baid}/Server");
     }
 
     protected override Task OnAfterRenderAsync(bool firstRender) => Js.InvokeVoidAsync("ui.hydrateAssets").AsTask();
@@ -129,6 +134,65 @@ public partial class Stats
     }
 
     private static int Bucket(int v) => v switch { 0 => 0, <= 2 => 1, <= 4 => 2, <= 6 => 3, _ => 4 };
+
+    private static int LongestStreak((DateTime Day, int Plays)[] days)
+    {
+        int longest = 0, run = 0;
+        foreach (var (_, plays) in days) longest = Math.Max(longest, run = plays > 0 ? run + 1 : 0);
+        return longest;
+    }
+
+    // ---- Next goals (the closest places come from the server) ----
+
+    // Charts without a full combo, by the fewest Bads in any play of them (that play's OKs alongside).
+    private List<(uint SongId, Difficulty Difficulty, uint Bad, uint Ok)> ClosestFullCombos()
+    {
+        var done = best.Where(b => b.BestCrown >= CrownType.Gold).Select(b => (b.SongId, b.Difficulty)).ToHashSet();
+        return history.Where(h => h.MissCount > 0 && !done.Contains((h.SongId, h.Difficulty)))
+            .GroupBy(h => (h.SongId, h.Difficulty))
+            .Select(g => g.OrderBy(h => h.MissCount).ThenBy(h => h.OkCount).First())
+            .OrderBy(h => h.MissCount).ThenBy(h => h.OkCount).Take(2)
+            .Select(h => (h.SongId, h.Difficulty, h.MissCount, h.OkCount)).ToList();
+    }
+
+    // The Oni star level closest to half cleared (of those you've cleared something at but not half): the fewest clears
+    // to go, the harder level on a tie.
+    private (Difficulty Difficulty, int Star, int Cleared, int Available, int Need)? StarTarget()
+    {
+        var d = Difficulty.Oni;
+        var available = new int[11];
+        var cleared = new int[11];
+        foreach (var id in music.Keys)
+            if (GameDataService.GetMusicStarLevel(music, id, d) is >= 1 and <= 10 and var s) available[s]++;
+        foreach (var b in best.Where(b => b.Difficulty == d && b.BestCrown >= CrownType.Clear))
+            if (GameDataService.GetMusicStarLevel(music, b.SongId, d) is >= 1 and <= 10 and var s) cleared[s]++;
+        (Difficulty, int, int, int, int)? target = null;
+        for (var star = 10; star >= 1; star--)
+        {
+            var need = (available[star] + 1) / 2 - cleared[star];
+            if (cleared[star] > 0 && need > 0 && (target is null || need < target.Value.Item5)) target = (d, star, cleared[star], available[star], need);
+        }
+        return target;
+    }
+
+    // ---- Recent personal bests: plays in the last 14 days that beat the chart's earlier best, the latest per chart ----
+    private List<(uint SongId, Difficulty Difficulty, DateTime PlayTime, uint Score, uint Gain, CrownType Crown)> RecentBests()
+    {
+        var since = DateTime.Now.Date.AddDays(-13);
+        var result = new List<(uint, Difficulty, DateTime, uint, uint, CrownType)>();
+        foreach (var chart in history.GroupBy(h => (h.SongId, h.Difficulty)))
+        {
+            uint? top = null;
+            (uint, Difficulty, DateTime, uint, uint, CrownType)? latest = null;
+            foreach (var h in chart.OrderBy(h => h.PlayTime))
+            {
+                if (top is { } before && h.Score > before && h.PlayTime >= since) latest = (h.SongId, h.Difficulty, h.PlayTime, h.Score, h.Score - before, h.Crown);
+                top = Math.Max(top ?? 0, h.Score);
+            }
+            if (latest is { } pb) result.Add(pb);
+        }
+        return result.OrderByDescending(p => p.Item3).Take(12).ToList();
+    }
 
     // ---- Genres, accuracy, most played (from every play) ----
     private List<(SongGenre Genre, int Plays)> Genres() => history

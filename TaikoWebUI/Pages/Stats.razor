@@ -4,42 +4,41 @@
 @inject GameDataService GameDataService
 @inject IJSRuntime Js
 @inject PageState Page
+@using TaikoWebUI.Components.Profile
 
 <PageTitle>@Localizer["Stats"]</PageTitle>
 
-<PlayDataPage Setting="setting" Dans="dans">
+@* A newspaper grid of separate cards: 3 columns at lg, 2 at md, 1 on phones; cards in a row share its height. The base
+   column is minmax(0,1fr) and cards are min-w-0, or the year heatmap (w-max) would widen a phone's column. *@
+<div class="mx-auto max-w-6xl">
     @if (!loaded)
     {
         <Skeleton />
     }
     else
     {
-        <div class="space-y-6">
-            <div class="grid grid-cols-2 gap-3 xl:grid-cols-3">
-                @Tile(Localizer["Plays"], history.Count.ToString("N0"), PlaysThisWeek > 0 ? string.Format(Localizer["+{0} this week"], PlaysThisWeek) : null)
-                @Tile(Localizer["Songs played"], SongsPlayed.ToString("N0"))
-                @Tile(Localizer["Clear rate"], ClearRate)
-                @Tile(Localizer["Full combos"], FullCombos.ToString("N0"))
-                @Tile(Localizer["Donderful combos"], Donderfuls.ToString("N0"))
-                @Tile(Localizer["Best combo"], BestCombo.ToString("N0"))
+        <div class="grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div class="min-w-0 md:col-span-2 lg:col-span-1 lg:row-span-2">
+                @if (setting is not null)
+                {
+                    <PlayerCard Setting="setting" Dans="dans" />
+                }
             </div>
-
-            @Block(Localizer["Scoreboard"], Scoreboard, $"{Localizer[GameData.Difficulties.First(d => d.Value == PanelDifficulty).Name]} · {Localizer["as shown in game"]}")
-
-            @Block(Localizer["Crowns by difficulty"], CrownsBlock)
-
-            @Block(Localizer["Clears by star level"], StarsBlock)
-
-            @Block(Localizer["Activity"], ActivityBlock, Localizer["Last 12 months"])
-
-            @Block(Localizer["Plays by genre"], GenresBlock)
-
-            @Block(Localizer["Accuracy"], AccuracyBlock, Localizer["All plays"])
-
-            @Block(Localizer["Most played"], MostPlayedBlock)
+            @Box(Localizer["At a glance"], GlanceBlock, span: Wide)
+            @Box(Localizer["You vs the server"], VsServerBlock, server is { Players: > 0 } ? string.Format(Localizer[server.Players == 1 ? "{0} player" : "{0} players"], server.Players.ToString("N0")) : null, Wide)
+            @Box(Localizer["Your standing"], StandingBlock, Localizer["All charts"])
+            @Box(Localizer["Crowns by difficulty"], CrownsBlock, span: Wide)
+            @Box(Localizer["Activity"], ActivityBlock, Localizer["Last 12 months"], Full)
+            @Box(Localizer["Scoreboard"], Scoreboard, $"{Localizer[GameData.Difficulties.First(d => d.Value == PanelDifficulty).Name]} · {Localizer["as shown in game"]}")
+            @Box(Localizer["Clears by star level"], StarsBlock)
+            @Box(Localizer["Plays by genre"], GenresBlock)
+            @Box(Localizer["Next goals"], GoalsBlock)
+            @Box(Localizer["Accuracy"], AccuracyBlock, Localizer["All plays"])
+            @Box(Localizer["Most played"], MostPlayedBlock)
+            @Box(Localizer["Recent personal bests"], RecentBestsBlock, Localizer["Last 2 weeks"], Full)
         </div>
     }
-</PlayDataPage>
+</div>
 
 @code {
     private RenderFragment CrownsBlock => __builder =>
@@ -112,23 +111,27 @@
 
     private RenderFragment ActivityBlock => __builder =>
     {
-        @* Squares share the width, at least 10px; narrower than that (phones) it scrolls, starting at the newest week (rtl). *@
+        var days = Activity();
+        @* 14px squares; narrower than a year (phones) it scrolls, opening at the newest week (rtl). *@
         <div class="overflow-x-auto [direction:rtl]">
-            <div class="grid w-max min-w-full grid-flow-col grid-rows-7 gap-0.5 [direction:ltr]" style="grid-template-columns:repeat(@ActivityWeeks, minmax(10px, 1fr))"
+            <div class="grid w-max min-w-full grid-flow-col grid-rows-7 gap-[3px] [direction:ltr]" style="grid-template-columns:repeat(@ActivityWeeks, 14px)"
                  role="img" aria-label="@Localizer["Plays per day, last 12 months"]">
-                @foreach (var (day, plays) in Activity())
+                @foreach (var (day, plays) in days)
                 {
-                    <span class="aspect-square rounded-[3px] @Seq[Bucket(plays)]" title="@($"{day:d MMM yyyy}: {plays}")"></span>
+                    <span class="size-3.5 rounded-[3px] @Seq[Bucket(plays)]" title="@($"{day:d MMM yyyy}: {plays}")"></span>
                 }
             </div>
         </div>
-        <div class="mt-2 flex items-center gap-1 text-xs @Css.Muted">
-            @Localizer["Less"]
-            @foreach (var c in Seq)
-            {
-                <span class="size-3 rounded-sm @c"></span>
-            }
-            @Localizer["More"]
+        <div class="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs @Css.Muted">
+            <span>@string.Format(Localizer["{0} days played · longest streak {1} days"], days.Count(d => d.Plays > 0), LongestStreak(days))</span>
+            <span class="flex items-center gap-1">
+                @Localizer["Less"]
+                @foreach (var c in Seq)
+                {
+                    <span class="size-3 rounded-sm @c"></span>
+                }
+                @Localizer["More"]
+            </span>
         </div>
     };
 
@@ -192,11 +195,13 @@
         </div>
     };
 
-    private static RenderFragment Block(string title, RenderFragment body, string? note = null) => __builder =>
+    private const string Wide = "lg:col-span-2", Full = "md:col-span-2 lg:col-span-3";
+
+    private static RenderFragment Box(string title, RenderFragment body, string? note = null, string span = "") => __builder =>
     {
-        <section class="space-y-3">
-            <div class="flex items-baseline justify-between">
-                <h3 class="text-sm font-semibold">@title</h3>
+        <section class="@Css.Card min-w-0 p-5 @span">
+            <div class="mb-3 flex items-baseline justify-between gap-2">
+                <h2 class="font-semibold">@title</h2>
                 @if (note is not null)
                 {
                     <span class="text-xs @Css.Muted">@note</span>
@@ -204,6 +209,167 @@
             </div>
             @body
         </section>
+    };
+
+    private RenderFragment GlanceBlock => __builder =>
+    {
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            @Tile(Localizer["Plays"], history.Count.ToString("N0"), PlaysThisWeek > 0 ? string.Format(Localizer["+{0} this week"], PlaysThisWeek) : null)
+            @Tile(Localizer["Songs played"], SongsPlayed.ToString("N0"))
+            @Tile(Localizer["Clear rate"], ClearRate)
+            @Tile(Localizer["Full combos"], FullCombos.ToString("N0"))
+            @Tile(Localizer["Donderful combos"], Donderfuls.ToString("N0"))
+            @Tile(Localizer["Best combo"], BestCombo.ToString("N0"))
+        </div>
+    };
+
+    private RenderFragment VsServerBlock => __builder =>
+    {
+        if (server is null)
+        {
+            <Skeleton />
+        }
+        else if (server.Rank == 0)
+        {
+            <p class="text-sm @Css.Muted">@Localizer["Play some songs to see how you compare."]</p>
+        }
+        else if (server.Players == 1)
+        {
+            <p class="text-sm @Css.Muted">@Localizer["Nobody else has played yet."]</p>
+        }
+        else
+        {
+            var m = server.Mine;
+            var a = server.Average;
+            <p class="text-lg">@((MarkupString)string.Format(Localizer["You're in the <b>top {0}%</b> of players on this server"], Math.Max(1, (int)Math.Round(server.Rank * 100.0 / server.Players))))</p>
+            <p class="text-sm @Css.Muted">@string.Format(Localizer["#{0} of {1} by charts cleared"], server.Rank, server.Players.ToString("N0"))</p>
+            <div class="mt-4 grid gap-x-6 gap-y-3 sm:grid-cols-2">
+                <Bullet Label="@Localizer["Clear rate"]" Mine="m.ClearRate" Average="a.ClearRate" Max="100" Format="@(v => Math.Round(v) + "%")" />
+                <Bullet Label="@Localizer["Full combos"]" Mine="m.FullCombos" Average="a.FullCombos" Format="@(v => Math.Round(v).ToString("N0"))" />
+                <Bullet Label="@Localizer["Accuracy"]" Mine="m.Accuracy" Average="a.Accuracy" Max="100" Format="@(v => v.ToString("0.0") + "%")" />
+                <Bullet Label="@Localizer["Credits"]" Mine="m.Credits" Average="a.Credits" Format="@(v => Math.Round(v).ToString("N0"))" Neutral />
+            </div>
+        }
+    };
+
+    // Charts at #1 / top 3 / top 10, then the players around you in the clears ranking.
+    private RenderFragment StandingBlock => __builder =>
+    {
+        if (server is null)
+        {
+            <Skeleton />
+        }
+        else if (server.Rank == 0)
+        {
+            <p class="text-sm @Css.Muted">@Localizer["Play some songs to see how you compare."]</p>
+        }
+        else
+        {
+            <div class="grid grid-cols-3 gap-2">
+                @foreach (var (n, label) in new[] { (server.First, Localizer["charts at #1"].Value), (server.Top3, Localizer["in the top 3"].Value), (server.Top10, Localizer["in the top 10"].Value) })
+                {
+                    <div class="rounded-xl border border-zinc-200 p-3 text-center dark:border-zinc-800">
+                        <p class="text-2xl font-semibold tabular-nums">@n.ToString("N0")</p>
+                        <p class="text-xs @Css.Muted">@label</p>
+                    </div>
+                }
+            </div>
+            <p class="mt-4 text-xs @Css.Muted">@Localizer["Charts cleared, server ranking"]</p>
+            <ol class="mt-1 space-y-0.5">
+                @foreach (var r in server.Neighbours)
+                {
+                    var me = r.Baid == (uint)Baid;
+                    <li class="flex items-center gap-3 rounded-lg px-2 py-1 text-sm @(me ? "bg-primary-500/10 font-medium" : "")">
+                        <span class="w-6 text-right text-xs tabular-nums @Css.Muted">@r.Rank</span>
+                        <span class="min-w-0 flex-1 truncate">@r.Name@(me ? " " + Localizer["(you)"] : "")</span>
+                        <span class="tabular-nums">@r.Cleared.ToString("N0")</span>
+                    </li>
+                }
+            </ol>
+        }
+    };
+
+    // Across the library: the nearest full combos and places, and a star-level target. Each row opens its song.
+    private RenderFragment GoalsBlock => __builder =>
+    {
+        var fcs = ClosestFullCombos();
+        var places = server?.ClosestPlaces.Take(2).ToList() ?? [];
+        var target = StarTarget();
+        if (fcs.Count == 0 && places.Count == 0 && target is null)
+        {
+            <p class="text-sm @Css.Muted">@Localizer["Play some songs to get goals here."]</p>
+        }
+        @if (fcs.Count > 0)
+        {
+            <p class="text-xs @Css.Muted">@Localizer["Closest full combos"]</p>
+            <ul>
+                @foreach (var g in fcs)
+                {
+                    @GoalRow(g.SongId, g.Difficulty, string.Format(Localizer[g.Bad == 1 ? "{0} Bad" : "{0} Bads"], g.Bad), string.Format(Localizer["Your best: {0} Bad, {1} OK"], g.Bad, g.Ok))
+                }
+            </ul>
+        }
+        @if (places.Count > 0)
+        {
+            <p class="mt-2 text-xs @Css.Muted">@Localizer["Closest places"]</p>
+            <ul>
+                @foreach (var p in places)
+                {
+                    @GoalRow(p.SongId, p.Difficulty, "+" + p.Gap.ToString("N0"), string.Format(Localizer["To pass {0} for #{1}"], p.Name, p.Rank))
+                }
+            </ul>
+        }
+        @if (target is { } t)
+        {
+            <p class="mt-2 text-xs @Css.Muted">@($"{Localizer[GameData.Difficulties.First(d => d.Value == t.Difficulty).Name]} ★{t.Star}")</p>
+            <p class="text-sm">@string.Format(Localizer[t.Need == 1 ? "1 more clear to clear half of them ({0} of {1})" : "{2} more clears to clear half of them ({0} of {1})"], t.Cleared, t.Available, t.Need)</p>
+        }
+    };
+
+    private RenderFragment GoalRow(uint songId, Difficulty d, string right, string sub) => __builder =>
+    {
+        <li>
+            <a href="@($"/Users/{Baid}/Songs/{songId}?diff={(int)d}")" class="flex w-full items-center gap-3 rounded-lg px-1 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+                <img data-asset="@GameData.DifficultyIcon(d)" alt="@GameData.DifficultyName(d)" class="size-6 shrink-0 object-contain" />
+                <span class="min-w-0 flex-1">
+                    <span class="block truncate text-sm">@SongName(songId)</span>
+                    <span class="block truncate text-xs @Css.Muted">@sub</span>
+                </span>
+                <span class="shrink-0 text-xs font-medium tabular-nums">@right</span>
+            </a>
+        </li>
+    };
+
+    private RenderFragment RecentBestsBlock => __builder =>
+    {
+        var pbs = RecentBests();
+        if (pbs.Count == 0)
+        {
+            <p class="text-sm @Css.Muted">@Localizer["No new personal bests in the last two weeks."]</p>
+        }
+        else
+        {
+            <ul class="grid gap-x-6 sm:grid-cols-2 lg:grid-cols-3">
+                @foreach (var p in pbs)
+                {
+                    var days = (DateTime.Now.Date - p.PlayTime.Date).Days;
+                    <li>
+                        <a href="@($"/Users/{Baid}/Songs/{p.SongId}?diff={(int)p.Difficulty}")" class="flex w-full items-center gap-3 border-b border-zinc-100 py-2 dark:border-zinc-800">
+                            <img data-asset="@GameData.DifficultyIcon(p.Difficulty)" alt="@GameData.DifficultyName(p.Difficulty)" class="size-6 shrink-0 object-contain" />
+                            <span class="min-w-0 flex-1">
+                                <span class="block truncate text-sm">@SongName(p.SongId)</span>
+                                <span class="block text-xs @Css.Muted">@(days <= 0 ? Localizer["Today"] : days == 1 ? Localizer["Yesterday"] : string.Format(Localizer["{0} days ago"], days))</span>
+                            </span>
+                            <span class="text-right">
+                                <span class="block font-mono text-sm tabular-nums">@p.Score.ToString("N0")</span>
+                                <span class="block text-xs text-emerald-600 dark:text-emerald-400">+@p.Gain.ToString("N0")</span>
+                            </span>
+                            <img data-asset="@GameData.CrownIcon(p.Crown)" alt="@Localizer[GameData.CrownName(p.Crown)]" class="size-5 shrink-0" />
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
     };
 
     // The game's achievement panel with its digit glyphs (extract: scoreboard/panel_<difficulty>.png, scoreboard/digit_ns_0N.png).

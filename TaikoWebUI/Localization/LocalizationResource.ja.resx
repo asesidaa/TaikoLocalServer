@@ -646,7 +646,7 @@
     <value>連打</value>
   </data>
   <data name="Played" xml:space="preserve">
-    <value>ラストプレイ</value>
+    <value>プレイ済み</value>
   </data>
   <data name="Total Clears" xml:space="preserve">
     <value>日付</value>
@@ -3575,5 +3575,80 @@
   </data>
   <data name="You" xml:space="preserve">
     <value>あなた</value>
+  </data>
+  <data name="At a glance" xml:space="preserve">
+    <value>概要</value>
+  </data>
+  <data name="Your standing" xml:space="preserve">
+    <value>あなたの順位</value>
+  </data>
+  <data name="All charts" xml:space="preserve">
+    <value>全譜面</value>
+  </data>
+  <data name="Recent personal bests" xml:space="preserve">
+    <value>最近の自己ベスト</value>
+  </data>
+  <data name="Last 2 weeks" xml:space="preserve">
+    <value>過去2週間</value>
+  </data>
+  <data name="Play some songs to see how you compare." xml:space="preserve">
+    <value>曲をプレイすると比較できます。</value>
+  </data>
+  <data name="Nobody else has played yet." xml:space="preserve">
+    <value>まだ他に誰もプレイしていません。</value>
+  </data>
+  <data name="You're in the &lt;b&gt;top {0}%&lt;/b&gt; of players on this server" xml:space="preserve">
+    <value>このサーバーの&lt;b&gt;上位{0}%&lt;/b&gt;のプレイヤーです</value>
+  </data>
+  <data name="#{0} of {1} by charts cleared" xml:space="preserve">
+    <value>クリア譜面数で{1}人中{0}位</value>
+  </data>
+  <data name="Credits" xml:space="preserve">
+    <value>クレジット</value>
+  </data>
+  <data name="charts at #1" xml:space="preserve">
+    <value>1位の譜面</value>
+  </data>
+  <data name="in the top 3" xml:space="preserve">
+    <value>トップ3以内</value>
+  </data>
+  <data name="in the top 10" xml:space="preserve">
+    <value>トップ10以内</value>
+  </data>
+  <data name="Charts cleared, server ranking" xml:space="preserve">
+    <value>クリア譜面数のサーバーランキング</value>
+  </data>
+  <data name="Play some songs to get goals here." xml:space="preserve">
+    <value>曲をプレイするとここに目標が出ます。</value>
+  </data>
+  <data name="Closest full combos" xml:space="preserve">
+    <value>フルコンボまであと少し</value>
+  </data>
+  <data name="{0} Bad" xml:space="preserve">
+    <value>不可{0}</value>
+  </data>
+  <data name="{0} Bads" xml:space="preserve">
+    <value>不可{0}</value>
+  </data>
+  <data name="Your best: {0} Bad, {1} OK" xml:space="preserve">
+    <value>ベスト：不可{0}・可{1}</value>
+  </data>
+  <data name="Closest places" xml:space="preserve">
+    <value>あと少しで上がれる順位</value>
+  </data>
+  <data name="To pass {0} for #{1}" xml:space="preserve">
+    <value>{0}を抜いて{1}位へ</value>
+  </data>
+  <data name="1 more clear to clear half of them ({0} of {1})" xml:space="preserve">
+    <value>あと1曲クリアで半分達成（{1}曲中{0}曲）</value>
+  </data>
+  <data name="{2} more clears to clear half of them ({0} of {1})" xml:space="preserve">
+    <value>あと{2}曲クリアで半分達成（{1}曲中{0}曲）</value>
+  </data>
+  <data name="No new personal bests in the last two weeks." xml:space="preserve">
+    <value>この2週間、自己ベストの更新はありません。</value>
+  </data>
+  <data name="{0} days played · longest streak {1} days" xml:space="preserve">
+    <value>プレイ日数{0}日・最長連続{1}日</value>
   </data>
 </root>
