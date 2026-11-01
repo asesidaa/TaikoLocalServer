@@ -36,7 +36,10 @@ public class AiResult
     public int Sections { get; set; }
 }
 
-/// <summary>The Song page: the song and, per chart, this player's best, every play and the AI Battle.</summary>
+/// <summary>
+/// The Song page: the song and, per chart, this player's best, totals, score line and AI Battle. Their plays come a
+/// page at a time from api/Songs/{baid}/{songId}/Plays, so a player with thousands of plays doesn't send them all.
+/// </summary>
 public class SongDetail
 {
     public uint SongId { get; set; }
@@ -55,10 +58,50 @@ public class SongChart
 {
     public Difficulty Difficulty { get; set; }
     public int Stars { get; set; }
-    /// <summary>Every play, oldest first.</summary>
-    public List<SongChartPlay> Plays { get; set; } = [];
+    /// <summary>The highest score (the earliest, on a tie); null = not played.</summary>
+    public SongChartPlay? Best { get; set; }
+    /// <summary>Totals over every play; null = not played.</summary>
+    public SongChartSummary? Summary { get; set; }
+    /// <summary>
+    /// Score per play, oldest first, at most <see cref="ScorePoint.Max"/> points: with more plays each point is the
+    /// best of a run of consecutive plays (<see cref="ScorePoint.Plays"/>), so the best play always shows.
+    /// </summary>
+    public List<ScorePoint> ScoreLine { get; set; } = [];
     public List<AiSection>? AiSections { get; set; }
     public bool? AiWin { get; set; }
+}
+
+public class SongChartSummary
+{
+    public int Plays { get; set; }
+    public long Good { get; set; }
+    public long Ok { get; set; }
+    public long Bad { get; set; }
+    public int Cleared { get; set; }
+    public int FullCombos { get; set; }
+    public int Donderful { get; set; }
+    public double AverageScore { get; set; }
+    public uint BestCombo { get; set; }
+    public DateTime FirstPlayed { get; set; }
+    public CrownType TopCrown { get; set; }
+}
+
+public class ScorePoint
+{
+    public const int Max = 200;
+    public DateTime PlayTime { get; set; }
+    public uint Score { get; set; }
+    /// <summary>How many plays this point stands for (1 unless there are more than <see cref="Max"/> plays).</summary>
+    public int Plays { get; set; } = 1;
+}
+
+/// <summary>One page of a chart's plays, newest first.</summary>
+public class SongPlaysPage
+{
+    public List<SongChartPlay> Items { get; set; } = [];
+    public int Total { get; set; }
+    public int Page { get; set; }
+    public int TotalPages { get; set; }
 }
 
 public class SongChartPlay

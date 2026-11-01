@@ -1779,8 +1779,8 @@
   <data name="Logs" xml:space="preserve">
     <value>Journaux</value>
   </data>
-  <data name="Lost against the AI" xml:space="preserve">
-    <value>Perdu contre l'IA</value>
+  <data name="AI-DON beat you!" xml:space="preserve">
+    <value>AI-DON vous a battu !</value>
   </data>
   <data name="Lost to the AI" xml:space="preserve">
     <value>Perdu contre l'IA</value>
@@ -2886,8 +2886,8 @@
   <data name="Whose data to show. Remembered on this device." xml:space="preserve">
     <value>Les données à afficher. Mémorisé sur cet appareil.</value>
   </data>
-  <data name="Won against the AI" xml:space="preserve">
-    <value>Gagné contre l'IA</value>
+  <data name="You beat AI-DON!" xml:space="preserve">
+    <value>Vous avez battu AI-DON !</value>
   </data>
   <data name="Write a title or a message." xml:space="preserve">
     <value>Écrivez un titre ou un message.</value>
@@ -3194,5 +3194,8 @@
   </data>
   <data name="{0} on this server" xml:space="preserve">
     <value>{0} sur ce serveur</value>
+  </data>
+  <data name="best of {0} plays" xml:space="preserve">
+    <value>meilleure de {0} parties</value>
   </data>
 </root>

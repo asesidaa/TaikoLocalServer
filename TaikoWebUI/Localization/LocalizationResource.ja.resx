@@ -1779,8 +1779,8 @@
   <data name="Logs" xml:space="preserve">
     <value>ログ</value>
   </data>
-  <data name="Lost against the AI" xml:space="preserve">
-    <value>AIに負けました</value>
+  <data name="AI-DON beat you!" xml:space="preserve">
+    <value>AI-DONに負けた！</value>
   </data>
   <data name="Lost to the AI" xml:space="preserve">
     <value>AIに負け</value>
@@ -2886,8 +2886,8 @@
   <data name="Whose data to show. Remembered on this device." xml:space="preserve">
     <value>表示するデータの持ち主。この端末で記憶されます。</value>
   </data>
-  <data name="Won against the AI" xml:space="preserve">
-    <value>AIに勝ちました</value>
+  <data name="You beat AI-DON!" xml:space="preserve">
+    <value>AI-DONに勝った！</value>
   </data>
   <data name="Write a title or a message." xml:space="preserve">
     <value>タイトルかメッセージを入力してください。</value>
@@ -3194,5 +3194,8 @@
   </data>
   <data name="{0} on this server" xml:space="preserve">
     <value>このサーバーで{0}</value>
+  </data>
+  <data name="best of {0} plays" xml:space="preserve">
+    <value>{0}回中のベスト</value>
   </data>
 </root>

@@ -1779,8 +1779,8 @@
   <data name="Logs" xml:space="preserve">
     <value>日志</value>
   </data>
-  <data name="Lost against the AI" xml:space="preserve">
-    <value>输给了AI</value>
+  <data name="AI-DON beat you!" xml:space="preserve">
+    <value>AI-DON战胜了你！</value>
   </data>
   <data name="Lost to the AI" xml:space="preserve">
     <value>输给AI</value>
@@ -2886,8 +2886,8 @@
   <data name="Whose data to show. Remembered on this device." xml:space="preserve">
     <value>要显示谁的数据。会记在此设备上。</value>
   </data>
-  <data name="Won against the AI" xml:space="preserve">
-    <value>战胜了AI</value>
+  <data name="You beat AI-DON!" xml:space="preserve">
+    <value>你战胜了AI-DON！</value>
   </data>
   <data name="Write a title or a message." xml:space="preserve">
     <value>请填写标题或内容。</value>
@@ -3194,5 +3194,8 @@
   </data>
   <data name="{0} on this server" xml:space="preserve">
     <value>本服务器共 {0}</value>
+  </data>
+  <data name="best of {0} plays" xml:space="preserve">
+    <value>{0} 次中的最佳</value>
   </data>
 </root>

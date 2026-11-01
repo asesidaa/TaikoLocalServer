@@ -156,6 +156,8 @@ namespace TaikoLocalServer.Infrastructure.Persistence
 
                 // Every player's play count per song (Song List, Song page) reads only this index, not every play.
                 entity.HasIndex(e => new { e.SongId, e.Skipped });
+                // One player's plays of one chart, in order (Song page totals and history). Also serves Baid lookups.
+                entity.HasIndex(e => new { e.Baid, e.SongId, e.Difficulty, e.PlayTime });
 
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
 

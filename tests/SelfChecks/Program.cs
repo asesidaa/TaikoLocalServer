@@ -1,8 +1,10 @@
 // Self-checks for 2-step verification (Adapters.AdminApi/Authorization/TwoFactorCodes.cs) and the game files an admin
-// may send from the browser (Infrastructure/GameDataCatalog/ExtractRunner.Match).
+// may send from the browser (Infrastructure/GameDataCatalog/ExtractRunner.Match), and the Song page's score line
+// (Adapters.AdminApi/Controllers/SongsController.ScoreLine).
 // A failed check prints its name and the process exits with 1.
 using OtpNet;
 using TaikoLocalServer.Adapters.AdminApi.Authorization;
+using TaikoLocalServer.Adapters.AdminApi.Controllers;
 using TaikoLocalServer.Contracts.AdminApi.Responses;
 using TaikoLocalServer.Domain.Entities;
 using TaikoLocalServer.Infrastructure.GameDataCatalog;
@@ -48,6 +50,18 @@ Check(".. can't climb out of a listed folder", ExtractRunner.Match(inputs, "Data
 Check("backslashes are refused", ExtractRunner.Match(inputs, "Data/x64/model/body/..\\..\\evil") is null);
 Check("a drive or absolute path is refused", ExtractRunner.Match(inputs, "C:/Data/x64/model/body/a") is null && ExtractRunner.Match(inputs, "/Data/x64/model/body/a") is null);
 Check("empty segments are refused", ExtractRunner.Match(inputs, "Data/x64/model/body//a") is null);
+
+// The Song page's score line: at most ScorePoint.Max points, keeping the best play.
+var start = new DateTime(2026, 1, 1);
+List<(DateTime, uint)> Plays(int n, int bestAt) => Enumerable.Range(0, n).Select(i => (start.AddMinutes(i), i == bestAt ? 1_000_000u : (uint)(500_000 + i % 1000))).ToList();
+var few = SongsController.ScoreLine(Plays(50, 20));
+Check("up to the limit, a point per play", few.Count == 50 && few.All(p => p.Plays == 1) && few[20].Score == 1_000_000);
+var many = SongsController.ScoreLine(Plays(6_464, 4_321));
+Check("thousands of plays fit in the limit", many.Count <= ScorePoint.Max && many.Count > ScorePoint.Max / 2);
+Check("every play is counted once", many.Sum(p => p.Plays) == 6_464);
+Check("the best play is still on the line, at its own time", many.Any(p => p.Score == 1_000_000 && p.PlayTime == start.AddMinutes(4_321)));
+Check("the points stay oldest first", many.Zip(many.Skip(1)).All(x => x.First.PlayTime < x.Second.PlayTime));
+Check("no plays, no points", SongsController.ScoreLine([]).Count == 0);
 
 Console.WriteLine(failed == 0 ? "All checks passed." : $"{failed} check(s) failed.");
 return failed == 0 ? 0 : 1;
