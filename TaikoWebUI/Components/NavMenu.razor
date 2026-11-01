@@ -16,9 +16,8 @@
     {
         @Link($"/Users/{Baid}/Profile", "profile", Localizer["Profile"])
         @Link($"/Users/{Baid}/Songs", "music", Localizer["Song List"], prefix: true)
-        @Link($"/Users/{Baid}/Favourites", "heart", Localizer["Favourites"])
         @Group("playData", Localizer["Play Data"], playDataOpen, () => playDataOpen = !playDataOpen,
-            [($"/Users/{Baid}/Stats", Localizer["Stats"]),
+            [($"/Users/{Baid}/Stats", Localizer["Stats"]), ($"/Users/{Baid}/Favourites", Localizer["Favourites"]),
              ($"/Users/{Baid}/HighScores", Localizer["High Scores"]), ($"/Users/{Baid}/PlayHistory", Localizer["Play History"]),
              ($"/Users/{Baid}/DaniDojo", Localizer["Dani Dojo"])])
         @Link("/Settings", "settings", Localizer["Settings"], prefix: true)
