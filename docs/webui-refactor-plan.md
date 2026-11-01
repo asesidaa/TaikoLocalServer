@@ -71,7 +71,7 @@ The app has **two sources of truth** for auth: `JwtAuthenticationStateProvider` 
 | P5 | `GameDataService` lazy init has no concurrency guard, so two components on one page can both fetch `MusicDetails` (it's big). | Cache the `Task` (`musicTask ??= Load()`), not a bool flag. | Fewer duplicate fetches |
 | P6 | `GetHeadTitle/GetBodyTitle/...` are 6 copy-pasted methods with 7-arm switches, each doing a linear `FirstOrDefault` over the whole costume list. Profile calls them per dropdown item, which makes it O(n²) per render. | One `GetCostumeName(type, id, lang)` over a `Dictionary<(string,uint),Costume>`, and one shared `lang → field` selector. The `"jp"` vs `"ja"` key mismatch in some of them is a **bug**: those arms never match. | Less code, and a bug fixed |
 | P7 | `index.html` pulls Roboto from Google Fonts. The server is often on an offline LAN or cabinet network. | Self-host it or drop it (the new kit decides). | Works offline |
-| P8 | `Nijiiro.woff2` is 3.2 MB. | Subset it to the glyphs actually used (pyftsubset), or load it only on pages that show song titles. | -3 MB |
+| P8 | `Nijiiro.woff2` (now `font.woff2`) is 3.2 MB. | Superseded by §2b: replaced by a subset OFL font. | -3 MB |
 | P9 | **21 MB of costume PNG/WebP and nameplate art committed under `wwwroot/images`.** It's game art in the repo, and it ships in every publish. | Generate it from the operator's game files with `extract` (§2). The 3D previewer replaces the costume layers. Nameplates and rank panels come from `Data/x64/lumen` / `textures` later. | Repo/publish -21 MB, and no game art in git |
 | P10 | `textFit.min.js` + `updateTextFit.js` for nameplate text sizing. | CSS `clamp()` / container query units will probably replace it. Check during the Profile rewrite. | One less script |
 | P11 | csproj had a stale `Pages\Pages\...` `_ContentIncludedByDefault` / `UpToDateCheckInput` block, and copy rules for `wwwroot\data\datatable\*` that WebUI doesn't own. | **Done (2026-10-31).** | Tidy |
@@ -100,6 +100,7 @@ The app has **two sources of truth** for auth: `JwtAuthenticationStateProvider` 
 | `wwwroot/images/Nameplates/**`, `TitlePlateStrings`, `textFit.min.js` + `updateTextFit.js` | `api/Assets/nameplate/*` + `plates.json`, CSS text fitting | the Profile port |
 | `window.clipboardCopy` with `alert()` in `index.html` | toast | the Users/OTP dialog port |
 | `blazorCulture` get/set in `index.html` and `BlazorWebAssemblyLoadAllGlobalizationData` | `Blazor.start({ applicationCulture })` (P1) | the shell port |
+| `rank_panel_*.webp` | `api/Assets/scoreboard/panel_*.png` (extracted, §3d) | the Profile port |
 | other `wwwroot/images/*.webp` (crowns, ranks, difficulty) | Lumen renders from `extract` (§3d) | each page that uses them |
 
 **Not checked:** unused `.resx` keys. Many keys are looked up dynamically (`Localizer[variable]`), so a grep can't prove a key is dead. Prune them per page during the port instead.
@@ -250,6 +251,49 @@ The WebUI itself reads one table raw: `GameDataService.InitializeAsync` fetches 
 3. Models: MODL + MESH + SKEL + MATL (both) → GLB. Check `cos_001000` field-by-field against the `numd-exporter` output, then check every model loads in the previewer.
 4. Animations: port `nuanmb_to_glb`, building the skeleton from `.nusktb`.
 5. Server: block static access to `/data`, `/don-model` and `*.db3*`; add `api/GameData/DanData` and the authenticated `api/Assets/{**path}`; point the WebUI at them; README "Run extract"; CI `cargo build` + bundle the exe.
+
+### 2b. No game assets in the repo: `extract` for everything (2026-10-31)
+
+**Goal:** the repo ships no game art. Every image the WebUI shows comes from the operator's install via `extract` and `api/Assets`.
+
+**Inventory of committed assets, and where each one comes from in the game.** All 242 `.nulm` in `lumen/000_default` parse. The three marked ✓ render with the current Lumen renderer.
+
+| Committed today | Files | Game source | Status |
+|---|---|---|---|
+| `images/Costumes/**` (2D layers + masks) | 700 | 3D models (`model/*`) | **extracted** (step 3); deleted in the Profile port |
+| `images/Nameplates/*` | 23 | `common/name_plate` (`wood`…, `5kyuu_red`…) | **extracted** |
+| `rank_panel_*` | 5 | `common/player_board` (`num_kiwami_instance` → `bg_instance`) | **extracted** |
+| `Speed/0…14`, `Doron`, `Mirror`, `Random_Messy/Whimsical`, `NotesAdj` | 20 | `common/option` (`doron abekobe kimagure detarame note_pos speedx1.1…speedx4`) | ✓ renders |
+| `rank_White…Dondaful` (7 score ranks) | 7 | `common_songselect/…main_song_board` (`white bronze silver gold pink violet rainbow`) or `…main_diff_board` (`badge_rank_1–7`) | ✓ renders. The song-board copy carries a difficulty flower (nested sprite at frame 0), so prefer `badge_rank_*` |
+| `difficulty_*` | 5 | `common_songselect/…balloon_info` (`easy normal hard oni ura`) | ✓ renders |
+| `crown_*` | 4 | `common/name_plate` (`clear full donfull`) / `…main_diff_board` (`badge_crown_1–3`) | to render |
+| `ai_crown_*`, `ai_Win`, `ai_Lose` | 6 | `enso_ai/result/result_ai_section` (`crown_silver/gold/rainbow`, `win lose`) | to render |
+| `dani_*` (7 dan result badges) | 7 | somewhere in `enso_dani/*` | to locate |
+| `css/font.woff2` (was `Nijiiro.woff2`) | 1 | **not in the game**: the game ships bitmap glyph atlases (`font/*.nutexb` + `.xml`). This is a 3.3 MB vector OTF of unclear origin | replaced by an OFL font (decision below) |
+| `favicon.ico` | 1 | not game art (2022 don icon) | replace with the design's drum mark |
+
+**Making `extract` generic.** Today each UI set is a hand-written function in `ui.rs`. Instead:
+- **A declarative table of UI sets** compiled into `extract`. Each row is `{ output dir, file prefix, lumen file, sprite selector, label filter/rename, canvas: shared|tight }`. Selectors are either `label:<name>` (the sprite with that label and the most labels) or `instance:<a>/<b>/…` (the child placed under those instance names, starting from the sprite that places `<a>`), never sprite ids. Adding an asset is one row.
+- **Renderer option:** render nested sprites at a named label too (e.g. `badge_rank` without the flower), not only frame 0.
+- **Developer subcommands**, so new assets don't need throwaway scripts:
+  - `extract lumen-ls <file.nulm>` prints sprites, labels and instance names.
+  - `extract lumen-render <file.nulm> <selector> <out_dir>` renders a contact sheet.
+
+  This is exactly what the prototype work used Node scripts for.
+- **Output layout:** `don-model/ui/<set>/<label>.png`, plus one `ui.json` index of every set and its labels in order. The WebUI resolves `api/Assets/ui/<set>/<label>.png` and never hardcodes lists. `TitlePlateStrings` and the difficulty and option string arrays come from the index.
+
+**The "not extracted" warning.**
+- `extract` writes `wwwroot/extract.json`: the extract format version, the game build it came from (Data folder name and datatable hashes), a timestamp, and per-section counts.
+- **Server startup:** if `extract.json` is missing, or its format version is older than the one the server expects (a shared constant), log a clear warning with the exact command to run. Datatables are already fatal if missing; assets are not, and the server still starts.
+- **`GET api/Assets/Status`** (anonymous; contains no game data) returns `{ extracted, formatVersion, expectedVersion, missingSections[] }`.
+- **WebUI:** a dismissible banner. Admins and local mode see "Game assets haven't been extracted, run `extract.exe --game …`". Everyone else sees a neutral "Some images are unavailable". Asset slots fall back to a neutral placeholder rather than broken images.
+
+**Font: decided, an OFL font (2026-10-31).** The game has no vector font to extract (only bitmap glyph atlases), and the old file was a vector OTF of unclear origin, so it gets replaced by an OFL-licensed rounded display font, self-hosted and subset.
+- **File:** `TaikoWebUI/wwwroot/css/font.woff2`, a generic name, so swapping the font later is a file replacement with no reference changes. The old `Nijiiro.woff2` has already been renamed to it, and `app.css` points at it. Its *contents* get replaced with the chosen OFL font in the shell port.
+- **Candidates** (the prototype picks, by eye): M PLUS Rounded 1c (heavy weights, JP + Latin), Zen Maru Gothic, Kosugi Maru. Subset to Latin + kana + the kanji the UI uses, plus the characters in player names if feasible; otherwise keep a full-JP fallback to the system stack.
+- **CSS:** the family name moves to a generic `--font-display` token in the new shell. Today's `'Nijiiro'` family name stays until the Profile page is ported.
+- The OFL licence text ships next to it (`font.LICENSE.txt`).
+- **Not doing:** game-glyph text rendering. It's possible later from `font/*.nutexb` + `.xml` if wanted.
 
 ---
 
@@ -416,7 +460,7 @@ ASB61 has **93 title plates** (sprite 541; the first 21 are unchanged from 39.06
 - **Animated plates** (rainbow shimmer, sparkles) are rendered at frame 0. That's fine for static images.
 - **No base frame yet.** The WebUI currently layers plates on `nameplate.webp`, the black capsule. That frame is part of the full-nameplate sprite (`1p` label), not a sprite of its own. Wait for the final Profile design before deciding whether to export the frame or the whole composite.
 - **WebUI switch:** point the Profile page at `api/Assets/nameplate/plate_{label}.png`, taking the labels from `plates.json` instead of the hardcoded `TitlePlateStrings`, so newer builds' extra plates show up. Then delete `wwwroot/images/Nameplates/`.
-- **The same parser should work for the rest of `lumen/`** (rank panels, crowns, difficulty icons), the other committed art under `wwwroot/images`.
+- **Scoreboard done (2026-10-31):** `common/player_board` → `don-model/scoreboard/panel_{easy,normal,hard,oni,oniura}.png` (these replace `rank_panel_*.webp`) plus the `digit_ns_00…09` glyphs, found by instance name (`num_kiwami_instance` → `bg_instance`, `n1_ins`). The rest of `lumen/` (crown and difficulty icons) can follow the same pattern, the remaining committed art under `wwwroot/images`.
 
 ---
 

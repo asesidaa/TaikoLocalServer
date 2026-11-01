@@ -1,8 +1,8 @@
 mod anims;
 mod lumen;
 mod models;
-mod nameplates;
 mod textures;
+mod ui;
 mod v12;
 
 use std::fs;
@@ -102,7 +102,10 @@ fn run(args: Args) -> Result<Vec<Report>> {
     anims::convert(&x64, &out.join("don-model").join("animation"), &mut report)?;
     reports.push(report);
     let mut report = Report::new("nameplates");
-    nameplates::convert(&x64, &out.join("don-model").join("nameplate"), &mut report)?;
+    ui::nameplates(&x64, &out.join("don-model").join("nameplate"), &mut report)?;
+    reports.push(report);
+    let mut report = Report::new("scoreboard");
+    ui::scoreboard(&x64, &out.join("don-model").join("scoreboard"), &mut report)?;
     reports.push(report);
     Ok(reports)
 }

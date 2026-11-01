@@ -59,7 +59,7 @@ pub struct Sprite {
 
 #[derive(Debug, Clone)]
 enum Op {
-    Place { character: u32, mode: u16, depth: u16, clip: u16, transform: u32, color_mult: i32, color_add: i32 },
+    Place { character: u32, name: u32, mode: u16, depth: u16, clip: u16, transform: u32, color_mult: i32, color_add: i32 },
     Remove { depth: u16 },
 }
 
@@ -155,6 +155,7 @@ impl Lumen {
                 T_PLACE => {
                     let op = Op::Place {
                         character: r.u32(p)?,
+                        name: r.u32(p + 12)?,
                         mode: r.u16(p + 16)?,
                         depth: r.u16(p + 20)?,
                         clip: r.u16(p + 22)?,
@@ -183,6 +184,31 @@ impl Lumen {
             .filter(|(_, s)| s.labels.iter().any(|(n, _)| n == label))
             .max_by_key(|(id, s)| (s.labels.len(), std::cmp::Reverse(**id)))
             .map(|(id, _)| *id)
+    }
+
+    /// Characters `sprite` places on any frame, with their instance names (stable across builds).
+    fn placements(&self, sprite: u32) -> impl Iterator<Item = (u32, &str)> {
+        self.sprites.get(&sprite).into_iter().flat_map(|s| &s.frames).flat_map(|(_, ops)| ops).filter_map(|op| match op {
+            Op::Place { character, name, .. } => Some((*character, self.symbols.get(*name as usize).map_or("", String::as_str))),
+            Op::Remove { .. } => None,
+        })
+    }
+
+    /// The sprite that places an instance called `instance` (lowest id if several do).
+    pub fn sprite_placing(&self, instance: &str) -> Option<u32> {
+        let mut ids: Vec<u32> = self.sprites.keys().copied().filter(|&id| self.placements(id).any(|(_, n)| n == instance)).collect();
+        ids.sort();
+        ids.first().copied()
+    }
+
+    /// The character `parent` places under the instance name `instance`.
+    pub fn child(&self, parent: u32, instance: &str) -> Option<u32> {
+        self.placements(parent).find(|(_, n)| *n == instance).map(|(c, _)| c)
+    }
+
+    /// The labels of `sprite`, in timeline order.
+    pub fn labels(&self, sprite: u32) -> Vec<String> {
+        self.sprites.get(&sprite).map(|s| s.labels.iter().map(|(n, _)| n.clone()).collect()).unwrap_or_default()
     }
 
     /// Renders `sprite` at `label` from `atlas` (the decoded `.nutexb`, layers stacked vertically).
@@ -253,7 +279,7 @@ impl Lumen {
                     Op::Remove { depth } => {
                         list.remove(&depth);
                     }
-                    Op::Place { character, mode, depth, clip, transform, color_mult, color_add } => {
+                    Op::Place { character, mode, depth, clip, transform, color_mult, color_add, .. } => {
                         // mode 2 = move: update the existing object, keeping what isn't given.
                         let mut obj = match (mode, list.get(&depth)) {
                             (2, Some(prev)) => prev.clone(),
@@ -525,6 +551,16 @@ mod tests {
         assert_eq!(img.get_pixel(0, 1).0, [255, 0, 0, 255], "inside the mask: red content");
         assert_eq!(img.get_pixel(3, 1).0[3], 0, "outside the mask: nothing (mask itself not drawn)");
         assert_eq!(lm.bounds(10, "wood").unwrap(), Some([0.0, 0.0, 2.0, 4.0]), "bounds clipped to the mask");
+    }
+
+    #[test]
+    fn finds_sprites_by_instance_name() {
+        let lm = Lumen::parse(&red_square_masked_to_left_half()).unwrap();
+        // Both test placements use name symbol 0 ("wood"); the first placed character wins.
+        assert_eq!(lm.sprite_placing("wood"), Some(10));
+        assert_eq!(lm.child(10, "wood"), Some(1));
+        assert_eq!(lm.sprite_placing("missing"), None);
+        assert_eq!(lm.labels(10), vec!["wood"]);
     }
 
     #[test]
