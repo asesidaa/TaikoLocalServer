@@ -5,3 +5,7 @@ namespace TaikoLocalServer.Contracts.AdminApi.Responses;
 /// <param name="Running">The browser is open (it closes after a few idle minutes).</param>
 public sealed record AvatarRendererStatus(bool Enabled, string? Browser, bool Running, int Queued, int Rendered, int Failed,
     string? LastError, DateTime? LastRenderedAt);
+
+/// <summary>One stored avatar (the image itself is at api/Users/{baid}/Avatar?v={key}).</summary>
+/// <param name="Key">The costume, colours and pose it shows (AvatarKeys).</param>
+public sealed record StoredAvatar(uint Baid, string Name, string Key, string ContentType, int Bytes);

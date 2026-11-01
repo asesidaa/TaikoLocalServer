@@ -3309,4 +3309,37 @@
   <data name="Reverse order" xml:space="preserve">
     <value>Inverser l'ordre</value>
   </data>
+  <data name="Player Settings" xml:space="preserve">
+    <value>Paramètres des joueurs</value>
+  </data>
+  <data name="Stored avatars" xml:space="preserve">
+    <value>Avatars enregistrés</value>
+  </data>
+  <data name="Stored avatars · {0}" xml:space="preserve">
+    <value>Avatars enregistrés · {0}</value>
+  </data>
+  <data name="Clear all avatars" xml:space="preserve">
+    <value>Effacer tous les avatars</value>
+  </data>
+  <data name="Clear all avatars?" xml:space="preserve">
+    <value>Effacer tous les avatars ?</value>
+  </data>
+  <data name="No avatars stored yet." xml:space="preserve">
+    <value>Aucun avatar enregistré pour l'instant.</value>
+  </data>
+  <data name="{0} in the database." xml:space="preserve">
+    <value>{0} dans la base de données.</value>
+  </data>
+  <data name="No name" xml:space="preserve">
+    <value>Sans nom</value>
+  </data>
+  <data name="Every stored avatar is deleted. The server draws them all again in the background." xml:space="preserve">
+    <value>Tous les avatars enregistrés sont supprimés. Le serveur les redessine tous en arrière-plan.</value>
+  </data>
+  <data name="Every stored avatar is deleted. Each is drawn again the next time its player views their card." xml:space="preserve">
+    <value>Tous les avatars enregistrés sont supprimés. Chacun est redessiné la prochaine fois que son joueur affiche sa carte.</value>
+  </data>
+  <data name="Avatars cleared ({0})" xml:space="preserve">
+    <value>Avatars effacés ({0})</value>
+  </data>
 </root>

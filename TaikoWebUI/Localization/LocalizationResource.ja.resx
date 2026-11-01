@@ -3309,4 +3309,37 @@
   <data name="Reverse order" xml:space="preserve">
     <value>逆順</value>
   </data>
+  <data name="Player Settings" xml:space="preserve">
+    <value>プレイヤー設定</value>
+  </data>
+  <data name="Stored avatars" xml:space="preserve">
+    <value>保存済みアバター</value>
+  </data>
+  <data name="Stored avatars · {0}" xml:space="preserve">
+    <value>保存済みアバター · {0}</value>
+  </data>
+  <data name="Clear all avatars" xml:space="preserve">
+    <value>アバターをすべて削除</value>
+  </data>
+  <data name="Clear all avatars?" xml:space="preserve">
+    <value>アバターをすべて削除しますか？</value>
+  </data>
+  <data name="No avatars stored yet." xml:space="preserve">
+    <value>保存済みのアバターはまだありません。</value>
+  </data>
+  <data name="{0} in the database." xml:space="preserve">
+    <value>データベース内 {0}。</value>
+  </data>
+  <data name="No name" xml:space="preserve">
+    <value>名前なし</value>
+  </data>
+  <data name="Every stored avatar is deleted. The server draws them all again in the background." xml:space="preserve">
+    <value>保存済みのアバターをすべて削除します。サーバーがバックグラウンドですべて描き直します。</value>
+  </data>
+  <data name="Every stored avatar is deleted. Each is drawn again the next time its player views their card." xml:space="preserve">
+    <value>保存済みのアバターをすべて削除します。各アバターは、プレイヤーが次にカードを表示したときに描き直されます。</value>
+  </data>
+  <data name="Avatars cleared ({0})" xml:space="preserve">
+    <value>アバターを削除しました（{0}）</value>
+  </data>
 </root>

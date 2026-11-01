@@ -1,6 +1,6 @@
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
-/// <summary>The server-side avatar renderer (Server Management › Status): its status, and the admin's on/off switch.</summary>
+/// <summary>The server-side avatar renderer (Server Management › Settings): its status, the admin's on/off switch, and the stored avatars.</summary>
 [ApiController]
 [Route("api/[controller]")]
 [Authorize(Policy = AuthPolicies.Admin)]
@@ -19,5 +19,24 @@ public class AvatarRendererController(IAvatarRenderer renderer, ITaikoDbContext 
         this.LogActivity(context, "server.avatars", null, request.Enabled ? "on" : "off");
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return renderer.Status;
+    }
+
+    /// <summary>Every stored avatar, without the images.</summary>
+    [HttpGet("Avatars")]
+    public Task<List<StoredAvatar>> Avatars() =>
+        context.UserAvatars.OrderBy(a => a.Baid).Select(a => new StoredAvatar(a.Baid,
+                context.UserData.Where(u => u.Baid == a.Baid).Select(u => u.MyDonName).FirstOrDefault() ?? "", a.Key, a.ContentType, a.Image.Length))
+            .ToListAsync(HttpContext.RequestAborted);
+
+    /// <summary>Deletes every stored avatar; when the renderer is on it draws them all again, otherwise each player's browser does.</summary>
+    [HttpDelete("Avatars")]
+    public async Task<int> Clear()
+    {
+        var deleted = await context.UserAvatars.ExecuteDeleteAsync(HttpContext.RequestAborted);
+        this.LogActivity(context, "server.avatars", null, $"cleared {deleted}");
+        await context.SaveChangesAsync(HttpContext.RequestAborted);
+        foreach (var baid in await context.UserData.Select(u => u.Baid).ToListAsync(HttpContext.RequestAborted))
+            renderer.Enqueue(baid);
+        return deleted;
     }
 }

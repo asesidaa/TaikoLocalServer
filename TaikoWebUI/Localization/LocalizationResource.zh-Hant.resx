@@ -3309,4 +3309,37 @@
   <data name="Reverse order" xml:space="preserve">
     <value>倒序</value>
   </data>
+  <data name="Player Settings" xml:space="preserve">
+    <value>玩家設定</value>
+  </data>
+  <data name="Stored avatars" xml:space="preserve">
+    <value>已儲存的頭像</value>
+  </data>
+  <data name="Stored avatars · {0}" xml:space="preserve">
+    <value>已儲存的頭像 · {0}</value>
+  </data>
+  <data name="Clear all avatars" xml:space="preserve">
+    <value>清除所有頭像</value>
+  </data>
+  <data name="Clear all avatars?" xml:space="preserve">
+    <value>清除所有頭像？</value>
+  </data>
+  <data name="No avatars stored yet." xml:space="preserve">
+    <value>還沒有儲存的頭像。</value>
+  </data>
+  <data name="{0} in the database." xml:space="preserve">
+    <value>資料庫中共 {0}。</value>
+  </data>
+  <data name="No name" xml:space="preserve">
+    <value>無名稱</value>
+  </data>
+  <data name="Every stored avatar is deleted. The server draws them all again in the background." xml:space="preserve">
+    <value>將刪除所有已儲存的頭像。伺服器會在背景重新繪製全部頭像。</value>
+  </data>
+  <data name="Every stored avatar is deleted. Each is drawn again the next time its player views their card." xml:space="preserve">
+    <value>將刪除所有已儲存的頭像。每個頭像會在玩家下次查看自己的卡片時重新繪製。</value>
+  </data>
+  <data name="Avatars cleared ({0})" xml:space="preserve">
+    <value>已清除頭像（{0}）</value>
+  </data>
 </root>
