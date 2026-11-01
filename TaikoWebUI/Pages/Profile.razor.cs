@@ -1,4 +1,6 @@
 using System.Globalization;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.JSInterop;
 
 namespace TaikoWebUI.Pages;
@@ -19,7 +21,10 @@ public partial class Profile : IDisposable
     private List<uint> kigurumiIds = [], headIds = [], bodyIds = [], faceIds = [], puchiIds = [], titlePlateIds = [];
 
     // Autosave: every change saves after a short debounce; the status shows in the top bar (PageState.Save).
+    // Only the fields changed since the last save are sent (PATCH), so two open pages don't undo each other's edits.
     private CancellationTokenSource? saveDelay;
+    private JsonObject? saved;
+    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
 
     private string Culture => CultureInfo.CurrentCulture.ToString();
 
@@ -27,6 +32,7 @@ public partial class Profile : IDisposable
     {
         setting = await Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
         setting.ThrowIfNull();
+        saved = Snapshot();
         Page.Set(Localizer["Profile"]);
         Page.SetSave(PageState.SaveStatus.Idle);
 
@@ -99,8 +105,7 @@ public partial class Profile : IDisposable
     {
         try { await Task.Delay(700, token); }
         catch (TaskCanceledException) { return; }
-        var response = await Client.PostAsJsonAsync($"api/UserSettings/{Baid}", setting, CancellationToken.None);
-        if (!response.IsSuccessStatusCode)
+        if (!await SaveChanges())
         {
             Page.SetSave(PageState.SaveStatus.Idle);
             Toast.Show(Localizer["Couldn't save your changes."], isError: true);
@@ -110,6 +115,24 @@ public partial class Profile : IDisposable
             Page.SetSave(PageState.SaveStatus.Saved);
         }
         await InvokeAsync(StateHasChanged);
+    }
+
+    private JsonObject Snapshot() => JsonSerializer.SerializeToNode(setting, Json)!.AsObject();
+
+    /// <summary>Sends the fields that differ from the last saved state; true when there was nothing to send.</summary>
+    private async Task<bool> SaveChanges()
+    {
+        var now = Snapshot();
+        var changes = new JsonObject();
+        foreach (var (key, value) in now)
+        {
+            if (saved is null || !JsonNode.DeepEquals(value, saved[key]))
+                changes[key] = value?.DeepClone();
+        }
+        if (changes.Count == 0) return true;
+        var response = await Client.PatchAsJsonAsync($"api/UserSettings/{Baid}", changes, CancellationToken.None);
+        if (response.IsSuccessStatusCode) saved = now;
+        return response.IsSuccessStatusCode;
     }
 
     private void Set(Action<UserSetting> change)
@@ -146,6 +169,6 @@ public partial class Profile : IDisposable
     {
         if (saveDelay is null || saveDelay.IsCancellationRequested || Page.Save != PageState.SaveStatus.Saving) return;
         saveDelay.Cancel();
-        _ = Client.PostAsJsonAsync($"api/UserSettings/{Baid}", setting);
+        _ = SaveChanges();
     }
 }

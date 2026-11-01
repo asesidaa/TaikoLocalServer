@@ -1,3 +1,6 @@
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using TaikoLocalServer.Infrastructure.Identity.Settings;
 
@@ -40,6 +43,35 @@ public class UserSettingsController(ITaikoDbContext context, IOptions<AuthSettin
         }
 
         return Ok(BuildUserSetting(user, await context.UserWebProfiles.FindAsync(baid)));
+    }
+
+    /// <summary>
+    /// Saves only the fields in the body (a partial UserSetting), merged over the stored settings and then saved
+    /// like a full POST. Two open pages each send just what they changed, so neither undoes the other's edits.
+    /// </summary>
+    [HttpPatch("{baid}")]
+    public async Task<IActionResult> PatchUserSetting(uint baid, [FromBody] JsonObject changes,
+        [FromServices] IOptions<JsonOptions> jsonOptions)
+    {
+        if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
+            return forbid;
+
+        var user = await context.UserData.Include(d => d.Tokens).FirstOrDefaultAsync(d => d.Baid == baid);
+        if (user is null)
+        {
+            return NotFound();
+        }
+
+        var options = jsonOptions.Value.JsonSerializerOptions;
+        var merged = JsonSerializer.SerializeToNode(BuildUserSetting(user, await context.UserWebProfiles.FindAsync(baid)), options)!.AsObject();
+        foreach (var (key, value) in changes)
+        {
+            // Match the stored property case-insensitively, as deserialization would.
+            var name = merged.Select(p => p.Key).FirstOrDefault(k => string.Equals(k, key, StringComparison.OrdinalIgnoreCase)) ?? key;
+            merged[name] = value?.DeepClone();
+        }
+        var userSetting = merged.Deserialize<UserSetting>(options);
+        return userSetting is null ? BadRequest() : await SaveUserSetting(baid, userSetting);
     }
 
     [HttpPost("{baid}")]
