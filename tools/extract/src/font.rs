@@ -9,8 +9,11 @@ use anyhow::{Context, Result};
 use image::{GenericImageView, RgbaImage};
 use serde_json::{json, Map};
 
-/// One sheet per `MyDonNameLanguage` (Japanese, English, Traditional Chinese, Korean); there is no Simplified sheet.
-pub const SHEETS: [&str; 4] = ["jp_32_DB", "en_32", "tw_32", "kr_32"];
+/// The nameplate's face, one sheet per `MyDonNameLanguage` (Japanese, English, Traditional Chinese, Korean; no
+/// Simplified sheet). Taiko.exe registers five fonts per language in Lumen font-slot order: 0 = `64`, 1 = `30`,
+/// 2 = `32_EB`, 3 = `32_B`, 4 = `32_DB`. Lumen files keep the slots consistent (slot 1 is `ＭＳ Ｐ明朝`, which
+/// banapass__check names as FOT-大江戸勘亭流), and name_plate's text fields use slot 1: the `*_30` sheets.
+pub const SHEETS: [&str; 4] = ["jp_30", "en_30", "tw_30", "kr_30"];
 const PAGE_WIDTH: u32 = 1024;
 
 pub fn convert(game: &crate::game::Game, dst_dir: &Path, report: &mut crate::Report) -> Result<()> {
