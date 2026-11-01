@@ -8,6 +8,7 @@ public interface ITaikoDbContext
     DbSet<UserWebProfile> UserWebProfiles { get; }
     DbSet<AccessRules> AccessRules { get; }
     DbSet<ServerSecrets> ServerSecrets { get; }
+    DbSet<ActivityEntry> Activity { get; }
     DbSet<Token> Tokens { get; }
     DbSet<SongBestDatum> SongBestData { get; }
     DbSet<SongPlayDatum> SongPlayData { get; }

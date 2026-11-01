@@ -119,6 +119,8 @@ try
     {
         var db = scope.ServiceProvider.GetRequiredService<TaikoDbContext>();
         db.Database.Migrate();
+        // Access › Activity keeps a year.
+        db.Activity.Where(e => e.Time < DateTime.UtcNow.AddDays(-365)).ExecuteDelete();
 
         if (AdminCli.IsAdminCommand(args))
             return await AdminCli.RunAsync(args, db);

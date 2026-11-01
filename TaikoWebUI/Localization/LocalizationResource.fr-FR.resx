@@ -852,4 +852,7 @@
   <data name="Config Card Hint" xml:space="preserve">
     <value>What the server read when it started. Change these in {0} and restart the server.</value>
   </data>
+  <data name="Activity Hint" xml:space="preserve">
+    <value>Admin actions on users, scores and access codes. Kept for a year.</value>
+  </data>
 </root>

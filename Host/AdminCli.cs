@@ -45,6 +45,8 @@ public static class AdminCli
                     return 1;
                 }
                 user.IsAdmin = command == "promote";
+                db.Activity.Add(new TaikoLocalServer.Domain.Entities.ActivityEntry
+                    { Time = DateTime.UtcNow, Action = $"user.{command}", TargetBaid = card.Baid, Detail = "from the console" });
                 await db.SaveChangesAsync();
                 Console.WriteLine($"Baid {card.Baid} ({user.MyDonName}) is {(user.IsAdmin ? "now an admin" : "no longer an admin")}.");
                 return 0;

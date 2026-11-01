@@ -42,6 +42,36 @@ namespace TaikoLocalServer.Migrations
                     b.ToTable("AccessRules");
                 });
 
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.ActivityEntry", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<uint?>("ActorBaid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Detail")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<uint?>("TargetBaid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Time")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Time");
+
+                    b.ToTable("Activity");
+                });
+
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.AiScoreDatum", b =>
                 {
                     b.Property<uint>("Baid")

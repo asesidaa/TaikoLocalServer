@@ -155,4 +155,43 @@ public class UsersController(ITaikoDbContext context, IServerAccess access) : Ba
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return NoContent();
     }
+
+    /// <summary>Make a user an admin, or remove the role. Not on yourself, so the server can't lose its last admin by accident.</summary>
+    [HttpPut("{baid}/Admin")]
+    [Authorize(Policy = AuthPolicies.Admin)]
+    public async Task<IActionResult> SetAdmin(uint baid, SetAdminRequest request)
+    {
+        if (access.LoginRequired && User.GetBaid() == baid)
+            return BadRequest(new { message = "You can't change your own admin role." });
+
+        var user = await context.UserData.FindAsync(baid);
+        if (user is null)
+            return NotFound();
+        if (user.IsAdmin == request.IsAdmin)
+            return NoContent();
+
+        user.IsAdmin = request.IsAdmin;
+        this.LogActivity(context, request.IsAdmin ? "user.promote" : "user.demote", baid);
+        await context.SaveChangesAsync(HttpContext.RequestAborted);
+        return NoContent();
+    }
+
+    /// <summary>Remove one best score (a song + difficulty) and the plays behind it.</summary>
+    [HttpDelete("{baid}/Scores/{songId}/{difficulty}")]
+    [Authorize(Policy = AuthPolicies.Admin)]
+    public async Task<IActionResult> RemoveScore(uint baid, uint songId, Difficulty difficulty)
+    {
+        var best = await context.SongBestData.FindAsync(baid, songId, difficulty);
+        if (best is null)
+            return NotFound();
+
+        var plays = await context.SongPlayData
+            .Where(p => p.Baid == baid && p.SongId == songId && p.Difficulty == difficulty)
+            .ToListAsync(HttpContext.RequestAborted);
+        context.SongBestData.Remove(best);
+        context.SongPlayData.RemoveRange(plays);
+        this.LogActivity(context, "score.remove", baid, $"#{songId} {difficulty} · {best.BestScore:N0} · {plays.Count} {(plays.Count == 1 ? "play" : "plays")}");
+        await context.SaveChangesAsync(HttpContext.RequestAborted);
+        return NoContent();
+    }
 }

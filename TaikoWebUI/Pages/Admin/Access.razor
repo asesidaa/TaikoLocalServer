@@ -22,6 +22,10 @@ else
         {
             @Overview
         }
+        else if (Current == "activity")
+        {
+            @ActivityLog
+        }
         else
         {
             var t = tabs.First(x => x.Id == Current);
@@ -61,6 +65,77 @@ else
     }
 
     private void Go(string id) => Nav.NavigateTo($"/Admin/Access/{id}");
+
+    // ---- Activity: newest first, 50 at a time ----
+    private List<ActivityItem>? activity;
+    private long? activityNext;
+    private bool activityLoading;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (AuthService.LoginRequired && Current == "activity" && activity is null)
+            await LoadActivity();
+    }
+
+    private async Task LoadActivity()
+    {
+        activityLoading = true;
+        var page = await Client.GetFromJsonAsync<ActivityResponse>(activityNext is { } b ? $"api/Activity?before={b}" : "api/Activity");
+        activity = [.. activity ?? [], .. page?.Items ?? []];
+        activityNext = page?.NextBefore;
+        activityLoading = false;
+    }
+
+    private string ActionText(string action) => action switch
+    {
+        "user.promote" => Localizer["Made admin"],
+        "user.demote" => Localizer["Removed admin"],
+        "score.remove" => Localizer["Removed a score"],
+        "card.move" => Localizer["Moved an access code"],
+        _ => action,
+    };
+
+    private string Who(uint? baid, string? name) =>
+        baid is null ? Localizer["Server"] : string.IsNullOrEmpty(name) ? $"Baid {baid}" : name;
+
+    private RenderFragment ActivityLog => __builder =>
+    {
+        <section class="@Css.Card p-5 sm:p-6">
+            <h2 class="font-semibold">@Localizer["Activity"]</h2>
+            <p class="text-sm @Css.Muted">@Localizer["Activity Hint"]</p>
+            @if (activity is null)
+            {
+                <p class="mt-4 text-sm @Css.Muted">@Localizer["Loading..."]</p>
+            }
+            else if (activity.Count == 0)
+            {
+                <p class="mt-4 text-sm @Css.Muted">@Localizer["Nothing yet."]</p>
+            }
+            else
+            {
+                <ul class="mt-3 divide-y divide-zinc-100 dark:divide-zinc-800">
+                    @foreach (var e in activity)
+                    {
+                        <li class="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 py-2.5 text-sm">
+                            <span class="font-medium">@Who(e.ActorBaid, e.ActorName)</span>
+                            <span>@ActionText(e.Action)@(e.TargetBaid is null ? "" : $" · {Who(e.TargetBaid, e.TargetName)}")</span>
+                            @if (e.Detail.Length > 0)
+                            {
+                                <span class="whitespace-nowrap @Css.Muted">@e.Detail</span>
+                            }
+                            <time class="ml-auto whitespace-nowrap text-xs tabular-nums @Css.Muted" datetime="@e.Time.ToString("O")">@e.Time.ToLocalTime().ToString("g")</time>
+                        </li>
+                    }
+                </ul>
+                @if (activityNext is not null)
+                {
+                    <div class="mt-3 text-center">
+                        <button class="@Css.GhostButton" disabled="@activityLoading" @onclick="LoadActivity">@Localizer["Show older"]</button>
+                    </div>
+                }
+            }
+        </section>
+    };
 
     private static AccessRulesSettings? Copy(AccessRulesSettings? r) => r is null ? null : new()
     {
