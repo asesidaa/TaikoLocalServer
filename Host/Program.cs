@@ -220,22 +220,28 @@ try
     app.UseAdminApi();
 
     app.UseHttpLogging();
+    // Spots game requests the server doesn't handle (yet). The Web UI's own API is left out: its 404s are normal
+    // (a missing avatar, say) and the page shows its errors. Sign-in headers never reach the log.
     app.Use(async (context, next) =>
     {
         await next();
 
+        if (context.Request.Path.StartsWithSegments("/api")) return;
+        var headers = context.Request.Headers
+            .Where(h => !h.Key.Equals("Authorization", StringComparison.OrdinalIgnoreCase) && !h.Key.Equals("Cookie", StringComparison.OrdinalIgnoreCase))
+            .Select(h => $"{h.Key}: {h.Value}");
         if (context.Response.StatusCode == StatusCodes.Status404NotFound)
         {
             Log.Error("Unknown request from: {RemoteIpAddress} {Method} {Path} {StatusCode}",
                 context.Connection.RemoteIpAddress, context.Request.Method, context.Request.Path, context.Response.StatusCode);
-            Log.Error("Request headers: {Headers}", context.Request.Headers);
+            Log.Error("Request headers: {Headers}", headers);
         }
         else if (context.Response.StatusCode >= StatusCodes.Status400BadRequest
                  && context.Response.StatusCode != StatusCodes.Status401Unauthorized)
         {
             Log.Warning("Unsuccessful request from: {RemoteIpAddress} {Method} {Path} {StatusCode}",
                 context.Connection.RemoteIpAddress, context.Request.Method, context.Request.Path, context.Response.StatusCode);
-            Log.Warning("Request headers: {Headers}", context.Request.Headers);
+            Log.Warning("Request headers: {Headers}", headers);
         }
     });
     app.MapControllers();

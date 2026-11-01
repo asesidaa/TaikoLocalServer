@@ -23,14 +23,11 @@
     <div @ref="box" role="log" aria-live="off" class="relative mt-3 h-[60vh] overflow-y-auto rounded-xl bg-zinc-950 p-3 font-mono text-xs leading-relaxed text-zinc-200">
         @foreach (var l in Visible())
         {
-            <div @key="l.Id" class="whitespace-pre-wrap break-words">
-                <span class="text-zinc-500">@l.Time.ToLocalTime().ToString("HH:mm:ss.fff")</span>
-                <span class="@LevelColor(l.Level)">@l.Level</span>
-                <span>@l.Message</span>
-                @if (l.Exception is not null)
-                {
-                    <div class="pl-6 text-zinc-500">@l.Exception</div>
-                }
+            @* One line per event; only the message and the stack trace keep their own line breaks. *@
+            <div @key="l.Id" class="flex gap-2">
+                <span class="shrink-0 text-zinc-500">@l.Time.ToLocalTime().ToString("HH:mm:ss.fff")</span>
+                <span class="w-7 shrink-0 @LevelColor(l.Level)">@l.Level</span>
+                <span class="min-w-0 whitespace-pre-wrap break-words">@l.Message@if (l.Exception is not null){<span class="block whitespace-pre-wrap pl-4 text-zinc-500">@l.Exception</span>}</span>
             </div>
         }
     </div>
