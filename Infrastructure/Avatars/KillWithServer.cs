@@ -11,8 +11,29 @@ namespace TaikoLocalServer.Infrastructure.Avatars;
 /// </summary>
 internal static class KillWithServer
 {
-    // shortcut: Windows only; on Linux a killed server can still leave its headless browser running (PR_SET_PDEATHSIG would fix it).
     private static nint job;
+
+    /// <summary>
+    /// Linux, which has no job objects: ends the browsers a killed earlier run of this server left running, found by
+    /// their profile folder (each server has its own). Called before the renderer starts a browser of its own.
+    /// </summary>
+    public static void EndOrphans(string profileDir)
+    {
+        if (!OperatingSystem.IsLinux()) return;
+        var marker = "--user-data-dir=" + profileDir;
+        foreach (var dir in Directory.EnumerateDirectories("/proc"))
+        {
+            if (!int.TryParse(Path.GetFileName(dir), out var pid) || pid == Environment.ProcessId) continue;
+            try
+            {
+                if (File.ReadAllText(Path.Combine(dir, "cmdline")).Split('\0').Contains(marker)) Process.GetProcessById(pid).Kill();
+            }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException or ArgumentException or InvalidOperationException)
+            {
+                // Gone already, or another user's process.
+            }
+        }
+    }
 
     public static void Enable()
     {

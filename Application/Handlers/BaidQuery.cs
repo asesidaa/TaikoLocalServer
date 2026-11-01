@@ -31,7 +31,9 @@ public class BaidQueryHandler(
             {
                 Result = 1,
                 IsNewUser = true,
-                Baid = context.Cards.Any() ? context.Cards.AsEnumerable().Max(c => c.Baid) + 1 : 1
+                // The number AddMyDonEntryCommand will give them: after the highest player, not the highest card
+                // (a player whose cards were all removed keeps their number).
+                Baid = await context.UserData.Select(user => user.Baid).DefaultIfEmpty().MaxAsync(cancellationToken) + 1
             };
         }
 

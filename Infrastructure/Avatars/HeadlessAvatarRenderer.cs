@@ -31,6 +31,10 @@ public sealed class HeadlessAvatarRenderer(
     ILogger<HeadlessAvatarRenderer> logger) : BackgroundService, IAvatarRenderer
 {
     private static readonly TimeSpan IdleClose = TimeSpan.FromMinutes(5);
+    // The browser's profile, one per server (by its program and config folders, so servers sharing a machine don't
+    // end each other's browsers): KillWithServer.EndOrphans finds a killed run's browser by it.
+    private static readonly string ProfileDir = Path.Combine(Path.GetTempPath(), "taiko-avatar-renderer-" + Convert.ToHexString(
+        SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(AppContext.BaseDirectory + "|" + Environment.CurrentDirectory)))[..12].ToLowerInvariant());
     private static readonly TimeSpan RenderTimeout = TimeSpan.FromSeconds(30);
     // A key that failed isn't tried again for this long (each avatar request that misses would queue it).
     private static readonly TimeSpan RetryAfter = TimeSpan.FromMinutes(10);
@@ -310,12 +314,15 @@ public sealed class HeadlessAvatarRenderer(
     {
         if (page is { IsClosed: false } && browser is { IsClosed: false }) return page;
         await CloseBrowserAsync();
-        // A server that's killed rather than shut down can't close the browser itself; the job ends it instead.
+        // A server that's killed rather than shut down can't close the browser itself: on Windows the job ends it, on
+        // Linux the next run does (by the profile folder).
         KillWithServer.Enable();
+        KillWithServer.EndOrphans(ProfileDir);
         browser = await Puppeteer.LaunchAsync(new LaunchOptions
         {
             ExecutablePath = browserPath,
             Headless = true,
+            UserDataDir = ProfileDir,
             // WebGL without a GPU falls back to SwiftShader; the server's own certificate may be self-signed.
             // Chrome refuses to start as root (a Linux server bound to ports 80/443) unless sandboxing is off; it only
             // loads this server's own embed.

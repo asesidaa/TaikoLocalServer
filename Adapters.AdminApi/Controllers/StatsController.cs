@@ -12,7 +12,7 @@ public class StatsController(ITaikoDbContext context, IMemoryCache cache) : Base
     private const int ClosestPlaces = 3;
 
     private sealed record ChartTotals(uint Baid, int Played, int Cleared, int FullCombos);
-    private sealed record PlayTotals(uint Baid, long Good, long Ok, long Bad, int Credits);
+    private sealed record PlayTotals(uint Baid, long Good, long Ok, long Bad);
 
     [HttpGet("{baid}/Server")]
     public async Task<ActionResult<PlayerServerStats>> Server(uint baid)
@@ -23,17 +23,21 @@ public class StatsController(ITaikoDbContext context, IMemoryCache cache) : Base
 
         // Every player's totals: the same for every viewer and a scan of every best and play, so they're kept 5 minutes.
         // The viewer's own come fresh below, so they always match the rest of their Stats page.
-        var (allCharts, allPlays) = (await cache.GetOrCreateAsync("stats.server", async entry =>
+        var (allCharts, allPlays, allCredits) = (await cache.GetOrCreateAsync("stats.server", async entry =>
         {
             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);
-            return (await ChartTotalsQuery(context.SongBestData).ToListAsync(ct), await PlayTotalsQuery(context.SongPlayData).ToListAsync(ct));
+            return (await ChartTotalsQuery(context.SongBestData).ToListAsync(ct), await PlayTotalsQuery(context.SongPlayData).ToListAsync(ct),
+                await context.CreditCountsAsync(null, PlayHistoryController.SessionGap, ct));
         }))!;
         var charts = allCharts.ToDictionary(c => c.Baid);
         var plays = allPlays.ToDictionary(p => p.Baid);
+        var credits = new Dictionary<uint, int>(allCredits);
         charts.Remove(baid);
         plays.Remove(baid);
+        credits.Remove(baid);
         if (await ChartTotalsQuery(context.SongBestData.Where(b => b.Baid == baid)).FirstOrDefaultAsync(ct) is { } myCharts) charts[baid] = myCharts;
         if (await PlayTotalsQuery(context.SongPlayData.Where(p => p.Baid == baid)).FirstOrDefaultAsync(ct) is { } myPlays) plays[baid] = myPlays;
+        foreach (var (who, n) in await context.CreditCountsAsync(baid, PlayHistoryController.SessionGap, ct)) credits[who] = n;
 
         PlayerTotals Totals(uint who)
         {
@@ -43,7 +47,7 @@ public class StatsController(ITaikoDbContext context, IMemoryCache cache) : Base
             return new PlayerTotals
             {
                 Cleared = c?.Cleared ?? 0, ClearRate = c is { Played: > 0 } ? c.Cleared * 100.0 / c.Played : 0,
-                FullCombos = c?.FullCombos ?? 0, Accuracy = notes > 0 ? (p!.Good + p.Ok / 2.0) / notes * 100 : 0, Credits = p?.Credits ?? 0,
+                FullCombos = c?.FullCombos ?? 0, Accuracy = notes > 0 ? (p!.Good + p.Ok / 2.0) / notes * 100 : 0, Credits = credits.GetValueOrDefault(who),
             };
         }
 
@@ -166,9 +170,8 @@ public class StatsController(ITaikoDbContext context, IMemoryCache cache) : Base
         bests.GroupBy(b => b.Baid).Select(g => new ChartTotals(g.Key, g.Count(),
             g.Count(b => b.BestCrown >= CrownType.Clear), g.Count(b => b.BestCrown >= CrownType.Gold)));
 
-    // shortcut: a credit is counted at its first song (SongNumber 0), so one whose first song wasn't saved is missed;
-    // PlayHistory numbers credits exactly by walking the plays in order, too slow for every player at once.
+    // Credits aren't here: they need the plays in order (ITaikoDbContext.CreditCountsAsync), as Play History counts them.
     private static IQueryable<PlayTotals> PlayTotalsQuery(IQueryable<SongPlayDatum> plays) =>
         plays.Where(p => !p.Skipped).GroupBy(p => p.Baid).Select(g => new PlayTotals(g.Key, g.Sum(p => (long)p.GoodCount),
-            g.Sum(p => (long)p.OkCount), g.Sum(p => (long)p.MissCount), g.Count(p => p.SongNumber == 0)));
+            g.Sum(p => (long)p.OkCount), g.Sum(p => (long)p.MissCount)));
 }

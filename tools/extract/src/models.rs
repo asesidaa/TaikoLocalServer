@@ -45,8 +45,9 @@ pub fn convert_category(game: &crate::game::Game, rel: &str, dst_dir: &Path, rep
                 continue;
             }
             let dst = dst_dir.join(format!("{name}.glb"));
-            // shortcut: freshness only checks the .numdlb, not its textures; delete the output to force a rebuild.
-            if crate::is_newer_than(&dst, &modl_path)? {
+            // Up to date only if newer than every file of the model (mesh, skeleton, materials and their textures), so a
+            // changed texture (a mod, say) rebuilds it too.
+            if newer_than_folder(&dst, &sub)? {
                 report.up_to_date.push(name);
                 continue;
             }
@@ -66,6 +67,24 @@ struct MaterialSource {
 }
 
 /// Builds a `.glb` for the model whose `<name>.numdlb` lives in `dir`.
+/// Whether `dst` exists and is at least as new as every file under `dir`.
+fn newer_than_folder(dst: &Path, dir: &Path) -> Result<bool> {
+    let Ok(built) = fs::metadata(dst).and_then(|m| m.modified()) else { return Ok(false) };
+    let mut stack = vec![dir.to_path_buf()];
+    while let Some(d) = stack.pop() {
+        for entry in fs::read_dir(&d).with_context(|| format!("reading {}", d.display()))? {
+            let entry = entry?;
+            let meta = entry.metadata()?;
+            if meta.is_dir() {
+                stack.push(entry.path());
+            } else if meta.modified()? > built {
+                return Ok(false);
+            }
+        }
+    }
+    Ok(true)
+}
+
 pub fn build_glb(dir: &Path, name: &str) -> Result<Vec<u8>> {
     let read_err = |what: &str| format!("reading {what} for {name}");
     let modl = ModlData::from_file(dir.join(format!("{name}.numdlb"))).map_err(|e| anyhow::anyhow!("{e}")).with_context(|| read_err("MODL"))?;
@@ -452,5 +471,23 @@ mod tests {
             ..Default::default()
         };
         assert!(skin_attributes(&object, 1, &HashMap::new()).is_err());
+    }
+
+    #[test]
+    fn a_model_is_stale_when_any_of_its_files_changed() {
+        let root = std::env::temp_dir().join(format!("extract-fresh-{}", std::process::id()));
+        let model = root.join("cos_001000");
+        fs::create_dir_all(model.join("textures")).unwrap();
+        fs::write(model.join("cos_001000.numdlb"), b"m").unwrap();
+        let tick = || std::thread::sleep(std::time::Duration::from_millis(50));
+        tick();
+        let glb = root.join("cos_001000.glb");
+        fs::write(&glb, b"g").unwrap();
+        assert!(newer_than_folder(&glb, &model).unwrap(), "built after its files");
+        tick();
+        fs::write(model.join("textures").join("cos_001000.nutexb"), b"t").unwrap();
+        assert!(!newer_than_folder(&glb, &model).unwrap(), "a texture changed after the build");
+        assert!(!newer_than_folder(&root.join("missing.glb"), &model).unwrap(), "not built yet");
+        fs::remove_dir_all(&root).ok();
     }
 }

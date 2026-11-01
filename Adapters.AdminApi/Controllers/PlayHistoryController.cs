@@ -48,7 +48,7 @@ public class PlayHistoryController(ITaikoDbContext context, IGameDataCatalog cat
     }
 
     // Plays further apart than this start a new session.
-    private static readonly TimeSpan SessionGap = TimeSpan.FromMinutes(30);
+    internal static readonly TimeSpan SessionGap = TimeSpan.FromMinutes(30);
 
     /// <summary>The calendar: plays per day of <paramref name="year"/>-<paramref name="month"/>.</summary>
     /// <param name="diff">0 = every difficulty, else 1 Easy … 5 Ura Oni.</param>
@@ -67,10 +67,8 @@ public class PlayHistoryController(ITaikoDbContext context, IGameDataCatalog cat
         DateTime? latest;
         if (best)
         {
-            // shortcut: an all-time count of new bests needs every play in order, so with that filter on the whole
-            // history is read (0.4 s at 100,000 plays); a window-function query would avoid it if that ever matters.
-            var all = (await Plays(baid, DateTime.MinValue, DateTime.MaxValue)).Where(p => Matches(p, diff, true)).ToList();
-            (total, latest) = (all.Count, all.Count == 0 ? null : all.Max(p => p.PlayTime));
+            // New bests over all time, counted by the database in one pass (the same rule as Plays()).
+            (total, latest) = await context.NewBestTotalsAsync(baid, diff == 0 ? null : (Difficulty)diff, HttpContext.RequestAborted);
         }
         else
         {
