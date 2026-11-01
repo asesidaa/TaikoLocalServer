@@ -1,0 +1,294 @@
+@* Server Management › Cabinets: every cabinet the server has seen (they're recorded as they connect), who may
+   connect, and per-cabinet settings (Dani Dojo course set, movies) over the defaults. *@
+@using System.Text.Json
+@using System.Text.Json.Nodes
+@inject HttpClient Client
+@inject ToastService Toast
+
+<div class="mb-4 rounded-2xl border border-zinc-200 bg-zinc-50 p-4 text-sm dark:border-zinc-800 dark:bg-zinc-900/50">
+    @if (list?.Restricted == true)
+    {
+        @Localizer["Restricted: only allowed cabinets can connect. New ones wait for your approval."]
+    }
+    else
+    {
+        @Localizer["Open: any cabinet can connect, except blocked ones."]
+    }
+    <span class="@Css.Muted"> · <code class="font-mono text-xs">ServerSettings.RestrictChassisIds</code></span>
+</div>
+
+<div class="grid gap-4 lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start">
+    <div class="@Css.Card p-3 lg:sticky lg:top-24">
+        <input type="search" class="@Css.Input" placeholder="@Localizer["Chassis ID or shop"]" value="@query" @oninput="e => query = e.Value?.ToString() ?? string.Empty" />
+        <ul class="mt-2 max-h-[calc(100dvh-18rem)] space-y-0.5 overflow-y-auto">
+            <li>@Row(null)</li>
+            @if (list is not null)
+            {
+                foreach (var (title, cabinets) in Groups())
+                {
+                    <li class="px-2.5 pb-1 pt-3 text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">@title · @cabinets.Count</li>
+                    foreach (var c in cabinets)
+                    {
+                        <li>@Row(c)</li>
+                    }
+                }
+                if (list.Cabinets.Count == 0)
+                {
+                    <li class="px-3 py-4 text-sm @Css.Muted">@Localizer["No cabinet has connected yet."]</li>
+                }
+            }
+        </ul>
+        @if (list?.Restricted == true)
+        {
+            <form class="mt-3 flex gap-2 border-t border-zinc-100 pt-3 dark:border-zinc-800" @onsubmit="PreApprove" @onsubmit:preventDefault>
+                <input class="@Css.Input !py-1.5 font-mono text-xs" placeholder="@Localizer["Allow a chassis ID before it connects"]" value="@newChassis" @oninput="e => newChassis = e.Value?.ToString() ?? string.Empty" />
+                <button class="@Css.PrimaryButton shrink-0 !px-3 !py-1.5" disabled="@(newChassis.Trim().Length == 0)">@Localizer["Allow"]</button>
+            </form>
+        }
+    </div>
+
+    <div class="@Css.Card min-w-0">
+        @if (selected is null)
+        {
+            @Defaults
+        }
+        else if (list?.Cabinets.FirstOrDefault(c => c.ChassisId == selected) is { } cabinet)
+        {
+            @Detail(cabinet)
+        }
+    </div>
+</div>
+
+<SaveBar Dirty="Dirty" Saving="saving" OnSave="Save" OnDiscard="Discard" />
+
+@code {
+    private CabinetList? list;
+    private List<DanSetInfo> sets = [];
+    private string? selected;
+    private string query = "", newChassis = "", movieInput = "";
+    private bool saving;
+
+    // The selected cabinet's draft settings, or the defaults' movie list (movie_data.json).
+    private bool draftOwn;
+    private string? draftSet;
+    private List<uint> draftMovies = [];
+    private string originalDraft = "";
+    private JsonArray? defaultMovies;
+
+    private string DraftKey => $"{draftOwn}|{draftSet}|{string.Join(',', draftMovies)}";
+    private bool Dirty => originalDraft.Length > 0 && DraftKey != originalDraft;
+
+    protected override async Task OnInitializedAsync()
+    {
+        sets = await Client.GetFromJsonAsync<List<DanSetInfo>>("api/DanSets") ?? [];
+        await Load();
+        await Pick(null);
+    }
+
+    private async Task Load() => list = await Client.GetFromJsonAsync<CabinetList>("api/Cabinets");
+
+    private IEnumerable<(string, List<CabinetItem>)> Groups()
+    {
+        var q = query.Trim();
+        var shown = list!.Cabinets.Where(c => q.Length == 0 || c.ChassisId.Contains(q, StringComparison.OrdinalIgnoreCase)
+                                                             || c.ShopId.Contains(q, StringComparison.OrdinalIgnoreCase)).ToList();
+        var groups = list.Restricted
+            ? new[] { (Localizer["Waiting for approval"].Value, CabinetAccess.Pending), (Localizer["Allowed"].Value, CabinetAccess.Allowed), (Localizer["Blocked"].Value, CabinetAccess.Blocked) }
+            : new[] { (Localizer["Seen by this server"].Value, CabinetAccess.Allowed), (Localizer["Blocked"].Value, CabinetAccess.Blocked) };
+        foreach (var (title, access) in groups)
+        {
+            var members = shown.Where(c => c.Access == access || (!list.Restricted && access == CabinetAccess.Allowed && c.Access == CabinetAccess.Pending)).ToList();
+            if (members.Count > 0) yield return (title, members);
+        }
+    }
+
+    private RenderFragment Row(CabinetItem? c) => __builder =>
+    {
+        var on = selected == c?.ChassisId;
+        <button aria-current="@(on ? "true" : null)" @onclick="() => Pick(c?.ChassisId)"
+                class="flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-left @(on ? "bg-primary-500/10" : "hover:bg-zinc-100 dark:hover:bg-zinc-800/60")">
+            @if (c is null)
+            {
+                <Icon Name="settings" Class="size-4 text-zinc-400" />
+                <span class="min-w-0 flex-1"><span class="block text-sm font-medium">@Localizer["Defaults"]</span>
+                    <span class="block text-xs @Css.Muted">@Localizer["Every cabinet without its own settings"]</span></span>
+            }
+            else
+            {
+                <span class="size-2 shrink-0 rounded-full @Dot(c)"></span>
+                <span class="min-w-0 flex-1">
+                    <span class="block truncate font-mono text-sm">@c.ChassisId</span>
+                    <span class="block truncate text-xs @Css.Muted">@(c.ShopId.Length > 0 ? c.ShopId : "–") · @(c.OwnSettings ? Localizer["Own settings"] : Localizer["Defaults"])</span>
+                </span>
+            }
+        </button>
+    };
+
+    private static string Dot(CabinetItem c) => c.Access switch
+    {
+        CabinetAccess.Blocked => "bg-red-500",
+        CabinetAccess.Pending => "bg-amber-400",
+        _ => c.Online ? "bg-emerald-500" : "bg-zinc-300 dark:bg-zinc-600",
+    };
+
+    private async Task Pick(string? chassis)
+    {
+        selected = chassis;
+        movieInput = "";
+        if (chassis is null)
+        {
+            defaultMovies = JsonNode.Parse(await Client.GetStringAsync("api/GameData/Files/movie_data.json")) as JsonArray ?? [];
+            draftOwn = true;
+            draftSet = null;
+            draftMovies = defaultMovies.OfType<JsonObject>().Select(m => m["movie_id"]?.GetValue<uint>() ?? 0).ToList();
+        }
+        else if (list!.Cabinets.FirstOrDefault(c => c.ChassisId == chassis) is { } c)
+        {
+            draftOwn = c.OwnSettings;
+            draftSet = c.DanSet;
+            draftMovies = c.Movies.ToList();
+        }
+        originalDraft = DraftKey;
+    }
+
+    private void Discard()
+    {
+        _ = Pick(selected);
+    }
+
+    private async Task Save()
+    {
+        saving = true;
+        HttpResponseMessage res;
+        if (selected is null)
+        {
+            // Keep each movie's enable_days; new ones start at 0.
+            var days = defaultMovies!.OfType<JsonObject>().ToDictionary(m => m["movie_id"]?.GetValue<uint>() ?? 0, m => m["enable_days"]?.GetValue<uint>() ?? 0);
+            var json = new JsonArray(draftMovies.Select(id => (JsonNode)new JsonObject { ["movie_id"] = id, ["enable_days"] = days.GetValueOrDefault(id) }).ToArray());
+            res = await Client.PutAsync("api/GameData/Files/movie_data.json", new StringContent(json.ToJsonString(new JsonSerializerOptions { WriteIndented = true }), System.Text.Encoding.UTF8, "application/json"));
+        }
+        else
+        {
+            res = await Client.PutAsJsonAsync($"api/Cabinets/{selected}/Settings", new CabinetSettingsRequest(draftOwn, draftSet, draftMovies));
+        }
+        saving = false;
+        if (!res.IsSuccessStatusCode) { Toast.Show(Localizer["Save Failed"], true); return; }
+        Toast.Show(Localizer["Saved. Cabinets pick it up on their next startup."]);
+        await Load();
+        await Pick(selected);
+    }
+
+    private async Task SetAccess(CabinetItem c, CabinetAccess access)
+    {
+        var res = await Client.PutAsJsonAsync($"api/Cabinets/{c.ChassisId}/Access", new { access });
+        if (!res.IsSuccessStatusCode) { Toast.Show(Localizer["Save Failed"], true); return; }
+        await Load();
+    }
+
+    private async Task Forget(CabinetItem c)
+    {
+        var res = await Client.DeleteAsync($"api/Cabinets/{c.ChassisId}");
+        if (!res.IsSuccessStatusCode) { Toast.Show(Localizer["Save Failed"], true); return; }
+        await Load();
+        await Pick(null);
+    }
+
+    private async Task PreApprove()
+    {
+        var res = await Client.PostAsJsonAsync("api/Cabinets", new { chassisId = newChassis.Trim() });
+        if (!res.IsSuccessStatusCode) { Toast.Show(Localizer["Save Failed"], true); return; }
+        newChassis = "";
+        await Load();
+    }
+
+    private void AddMovie()
+    {
+        if (uint.TryParse(movieInput.Trim(), out var id) && !draftMovies.Contains(id)) draftMovies.Add(id);
+        movieInput = "";
+    }
+
+    private RenderFragment Movies(bool locked) => __builder =>
+    {
+        <div class="@(locked ? "pointer-events-none opacity-50" : "")">
+            <p class="text-sm font-medium">@Localizer["Movies"]</p>
+            <div class="mt-2 flex flex-wrap items-center gap-1.5">
+                @foreach (var id in draftMovies.ToList())
+                {
+                    <span class="inline-flex items-center gap-1 rounded-full bg-zinc-100 py-1 pl-2.5 pr-1 font-mono text-xs dark:bg-zinc-800">#@id
+                        <button class="grid size-5 place-items-center rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700" aria-label="@Localizer["Remove"]" @onclick="() => draftMovies.Remove(id)"><Icon Name="x" Class="size-3" /></button>
+                    </span>
+                }
+                <form class="inline-flex gap-1" @onsubmit="AddMovie" @onsubmit:preventDefault>
+                    <input inputmode="numeric" class="@Css.Input !w-28 !rounded-full !py-1 text-xs" placeholder="@Localizer["Movie ID"]" value="@movieInput" @oninput="e => movieInput = e.Value?.ToString() ?? string.Empty" />
+                    <button class="rounded-full border border-dashed border-zinc-300 px-2.5 py-1 text-xs font-medium hover:border-primary-500 dark:border-zinc-600">@Localizer["Add"]</button>
+                </form>
+            </div>
+            <p class="mt-1 text-xs @Css.Muted">@Localizer["Movie IDs are the numbered files in the game's Data/x64/movie folder."]</p>
+        </div>
+    };
+
+    private RenderFragment Defaults => __builder =>
+    {
+        <div class="border-b border-zinc-100 p-5 dark:border-zinc-800">
+            <h2 class="font-semibold">@Localizer["Defaults"]</h2>
+            <p class="text-sm @Css.Muted">@Localizer["Every cabinet without its own settings uses these."]</p>
+        </div>
+        <div class="space-y-5 p-5">
+            <div>
+                <p class="text-sm font-medium">@Localizer["Dani Dojo courses"]</p>
+                <p class="mt-1 text-sm">@(sets.FirstOrDefault(s => s.IsDefault)?.Name ?? "–")
+                    <a href="/Admin/Server/dan" class="ml-2 text-xs @Css.Link">@Localizer["Change the default set in Dani Dojo"]</a></p>
+            </div>
+            @Movies(false)
+            <p class="font-mono text-xs @Css.Muted">wwwroot/data/movie_data.json</p>
+        </div>
+    };
+
+    private RenderFragment Detail(CabinetItem c) => __builder =>
+    {
+        <div class="border-b border-zinc-100 p-5 dark:border-zinc-800">
+            <div class="flex flex-wrap items-start gap-3">
+                <div class="min-w-0 flex-1">
+                    <h2 class="font-mono text-lg font-semibold">@c.ChassisId</h2>
+                    <p class="text-sm @Css.Muted">@(c.ShopId.Length > 0 ? $"{Localizer["Shop"]} {c.ShopId}" : Localizer["No shop ID yet"]) · @(c.Version.Length > 0 ? c.Version : "–")</p>
+                    <p class="text-xs @Css.Muted">@(c.Online ? Localizer["Online now"] : c.LastSeen is { } seen ? string.Format(Localizer["Last seen {0}"], seen.ToLocalTime().ToString("g")) : Localizer["Never connected (pre-approved)"])</p>
+                </div>
+                <button class="@Css.GhostButton !px-2.5 !py-1 text-xs" title="@Localizer["Removes it from this list; it reappears if it connects again."]" @onclick="() => Forget(c)">@Localizer["Forget"]</button>
+            </div>
+            <div class="mt-3 flex flex-wrap items-center gap-2 rounded-xl px-3 py-2 text-sm @(c.Access switch { CabinetAccess.Blocked => "bg-red-500/10", CabinetAccess.Pending => "bg-amber-500/10", _ => "bg-emerald-500/10" })">
+                <span class="font-medium">@(c.Access switch { CabinetAccess.Blocked => Localizer["Blocked"], CabinetAccess.Pending => Localizer["Waiting for approval"], _ => Localizer["Allowed"] })</span>
+                <span class="min-w-0 flex-1 text-xs @Css.Muted">
+                    @(c.Access switch
+                    {
+                        CabinetAccess.Blocked => string.Format(Localizer["Its requests are refused ({0} so far). Players' data isn't touched."], c.RefusedCount),
+                        CabinetAccess.Pending => string.Format(Localizer["It tried to connect {0} times. Allow it to let it play."], c.RefusedCount),
+                        _ => Localizer["It can connect and play."],
+                    })
+                </span>
+                @if (c.Access != CabinetAccess.Allowed)
+                {
+                    <button class="@Css.PrimaryButton !px-3 !py-1 text-xs" @onclick="() => SetAccess(c, CabinetAccess.Allowed)">@(c.Access == CabinetAccess.Blocked ? Localizer["Unblock"] : Localizer["Allow"])</button>
+                }
+                @if (c.Access != CabinetAccess.Blocked)
+                {
+                    <button class="@Css.GhostButton !px-3 !py-1 text-xs !text-red-600 dark:!text-red-400" title="@(c.Online ? Localizer["It's online: its next request is refused, and a credit in progress won't save."] : null)"
+                            @onclick="() => SetAccess(c, CabinetAccess.Blocked)">@Localizer["Block"]</button>
+                }
+            </div>
+        </div>
+        <div class="space-y-5 p-5">
+            <Toggle Label="@Localizer["Use this cabinet's own settings"]" Description="@Localizer["Off: it uses the defaults."]" Icon="settings" @bind-Value="draftOwn" />
+            <label class="block @(draftOwn ? "" : "pointer-events-none opacity-50")">
+                <span class="text-sm font-medium">@Localizer["Dani Dojo courses"]</span>
+                <select class="@Css.Input mt-1.5" value="@(draftSet ?? "")" @onchange="e => draftSet = e.Value?.ToString() is { Length: > 0 } v ? v : null">
+                    <option value="">@string.Format(Localizer["The default set ({0})"], sets.FirstOrDefault(s => s.IsDefault)?.Name)</option>
+                    @foreach (var s in sets)
+                    {
+                        <option value="@s.Id">@s.Name</option>
+                    }
+                </select>
+            </label>
+            @Movies(!draftOwn)
+        </div>
+    };
+}

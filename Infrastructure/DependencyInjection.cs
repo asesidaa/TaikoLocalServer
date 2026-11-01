@@ -51,6 +51,7 @@ public static class DependencyInjection
         // Identity
         services.AddSingleton<ServerAccess>();
         services.AddSingleton<IServerAccess>(sp => sp.GetRequiredService<ServerAccess>());
+        services.AddSingleton<ICabinetRegistry, CabinetRegistry>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddHttpContextAccessor();
         // One "Bearer" header, two kinds: tls_… is an admin's API token, anything else a Web UI sign-in (JWT).

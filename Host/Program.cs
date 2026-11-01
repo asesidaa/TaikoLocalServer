@@ -132,6 +132,7 @@ try
             return await AdminCli.RunAsync(args, db);
     }
     await app.Services.GetRequiredService<ServerAccess>().InitializeAsync();
+    await app.Services.GetRequiredService<TaikoLocalServer.Application.Abstractions.ICabinetRegistry>().InitializeAsync();
 
     app.UseSerilogRequestLogging(options =>
     {

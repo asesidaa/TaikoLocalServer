@@ -211,6 +211,46 @@ namespace TaikoLocalServer.Migrations
                     b.ToTable("BannedCards");
                 });
 
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.Cabinet", b =>
+                {
+                    b.Property<string>("ChassisId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Access")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("DanSet")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("FirstSeen")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("LastSeen")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Movies")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("OwnSettings")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RefusedCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ShopId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Version")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ChassisId");
+
+                    b.ToTable("Cabinets");
+                });
+
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.Card", b =>
                 {
                     b.Property<string>("AccessCode")
