@@ -20,6 +20,8 @@ public class AccessRules
 
     /// <summary>Users may pick any costume/title, not only unlocked ones.</summary>
     public bool AllowFreeProfileEditing { get; set; } = true;
+    /// <summary>Players may type their own title text, not only the game's titles (free text can be abused, so off by default; admins always can).</summary>
+    public bool AllowCustomTitles { get; set; }
 
     /// <summary>How many access codes a non-admin may bind to their account.</summary>
     public int AccessCodeLimit { get; set; } = 3;

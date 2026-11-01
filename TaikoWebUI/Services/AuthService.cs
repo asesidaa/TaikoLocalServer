@@ -33,6 +33,8 @@ public sealed class AuthService : IDisposable
     public SignUpMode SignUpMode => authConfig.SignUpMode;
     public bool AllowUserDelete => authConfig.AllowUserDelete;
     public bool AllowFreeProfileEditing => authConfig.AllowFreeProfileEditing;
+    /// <summary>This user may type their own title: the rule (Player Settings), or they're an admin, or there are no accounts.</summary>
+    public bool CanUseCustomTitle => authConfig.AllowCustomTitles || IsAdmin || !LoginRequired;
 
     /// <summary>
     /// True when the user holds a valid server-issued bearer token. Stays false in local

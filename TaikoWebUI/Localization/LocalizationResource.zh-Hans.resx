@@ -3408,4 +3408,10 @@
   <data name="Display" xml:space="preserve">
     <value>显示</value>
   </data>
+  <data name="Custom player titles" xml:space="preserve">
+    <value>自定义称号</value>
+  </data>
+  <data name="Players can type their own title instead of picking one of the game's. Admins always can." xml:space="preserve">
+    <value>玩家可以自行输入称号，而不只是从游戏称号中选择。管理员始终可以。</value>
+  </data>
 </root>

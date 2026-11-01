@@ -3408,4 +3408,10 @@
   <data name="Display" xml:space="preserve">
     <value>Affichage</value>
   </data>
+  <data name="Custom player titles" xml:space="preserve">
+    <value>Titres personnalisés</value>
+  </data>
+  <data name="Players can type their own title instead of picking one of the game's. Admins always can." xml:space="preserve">
+    <value>Les joueurs peuvent écrire leur propre titre au lieu d'en choisir un du jeu. Les administrateurs le peuvent toujours.</value>
+  </data>
 </root>

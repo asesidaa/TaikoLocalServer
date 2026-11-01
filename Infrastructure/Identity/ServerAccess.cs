@@ -100,6 +100,7 @@ public sealed class ServerAccess(
         row.SignUpMode = updated.SignUpMode;
         row.AllowUserDelete = updated.AllowUserDelete;
         row.AllowFreeProfileEditing = updated.AllowFreeProfileEditing;
+        row.AllowCustomTitles = updated.AllowCustomTitles;
         row.AccessCodeLimit = Math.Max(1, updated.AccessCodeLimit);
         row.LockoutAttempts = Math.Max(1, updated.LockoutAttempts);
         row.LockoutMinutes = Math.Max(1, updated.LockoutMinutes);
@@ -152,7 +153,7 @@ public sealed class ServerAccess(
     private static AccessRules Copy(AccessRules r) => new()
     {
         OnlyAdmin = r.OnlyAdmin, SignUpMode = r.SignUpMode, AllowUserDelete = r.AllowUserDelete,
-        AllowFreeProfileEditing = r.AllowFreeProfileEditing, AccessCodeLimit = r.AccessCodeLimit,
+        AllowFreeProfileEditing = r.AllowFreeProfileEditing, AllowCustomTitles = r.AllowCustomTitles, AccessCodeLimit = r.AccessCodeLimit,
         LockoutAttempts = r.LockoutAttempts, LockoutMinutes = r.LockoutMinutes, TwoFactor = r.TwoFactor,
     };
 }

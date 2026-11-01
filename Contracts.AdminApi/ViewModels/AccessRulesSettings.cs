@@ -7,6 +7,7 @@ public class AccessRulesSettings
     public SignUpMode SignUpMode { get; set; }
     public bool AllowUserDelete { get; set; } = true;
     public bool AllowFreeProfileEditing { get; set; } = true;
+    public bool AllowCustomTitles { get; set; }
     public int AccessCodeLimit { get; set; } = 3;
     public int LockoutAttempts { get; set; } = 10;
     public int LockoutMinutes { get; set; } = 15;

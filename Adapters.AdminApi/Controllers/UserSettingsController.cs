@@ -9,7 +9,7 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [Route("/api/[controller]")]
 [Authorize]
 [ApiScope(ApiScopes.ReadProfiles, ApiScopes.AdminUsers)]
-public class UserSettingsController(ITaikoDbContext context, IServerAccess access, IAvatarRenderer avatars) : BaseAdminController<UserSettingsController>
+public class UserSettingsController(ITaikoDbContext context, IServerAccess access, IAvatarRenderer avatars, IGameDataCatalog catalog) : BaseAdminController<UserSettingsController>
 {
 
     [HttpGet]
@@ -88,6 +88,11 @@ public class UserSettingsController(ITaikoDbContext context, IServerAccess acces
         var enforceUnlockedOnly = access.LoginRequired
                                   && !access.Rules.AllowFreeProfileEditing
                                   && !User.IsAdmin();
+        // Custom titles off: free text is refused (the current title is kept); a game title in any language is fine.
+        if (access.LoginRequired && !access.Rules.AllowCustomTitles && !User.IsAdmin() && userSetting.Title != user.Title
+            && !catalog.GetTitleDictionary().Values.Any(t => userSetting.Title == t.TitleName || userSetting.Title == t.TitleNameEN
+                                                            || userSetting.Title == t.TitleNameCN || userSetting.Title == t.TitleNameKO))
+            userSetting.Title = user.Title;
 
         user.IsSkipOn = userSetting.IsSkipOn;
         user.IsVoiceOn = userSetting.IsVoiceOn;

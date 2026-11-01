@@ -158,7 +158,7 @@ else
     private static AccessRulesSettings? Copy(AccessRulesSettings? r) => r is null ? null : new()
     {
         OnlyAdmin = r.OnlyAdmin, SignUpMode = r.SignUpMode, AllowUserDelete = r.AllowUserDelete,
-        AllowFreeProfileEditing = r.AllowFreeProfileEditing, AccessCodeLimit = r.AccessCodeLimit,
+        AllowFreeProfileEditing = r.AllowFreeProfileEditing, AllowCustomTitles = r.AllowCustomTitles, AccessCodeLimit = r.AccessCodeLimit,
         LockoutAttempts = r.LockoutAttempts, LockoutMinutes = r.LockoutMinutes, TwoFactor = r.TwoFactor,
     };
 
@@ -168,7 +168,8 @@ else
         // The player rules are edited on Server Management › Settings: keep their current values.
         var current = await Client.GetFromJsonAsync<AccessRulesSettings>("api/AccessRules");
         if (current is not null)
-            (draft!.AllowUserDelete, draft.AllowFreeProfileEditing, draft.AccessCodeLimit) = (current.AllowUserDelete, current.AllowFreeProfileEditing, current.AccessCodeLimit);
+            (draft!.AllowUserDelete, draft.AllowFreeProfileEditing, draft.AllowCustomTitles, draft.AccessCodeLimit) =
+                (current.AllowUserDelete, current.AllowFreeProfileEditing, current.AllowCustomTitles, current.AccessCodeLimit);
         var res = current is null ? null : await Client.PutAsJsonAsync("api/AccessRules", draft);
         saving = false;
         if (res is not { IsSuccessStatusCode: true })

@@ -14,7 +14,8 @@ public class AccessRulesController(IServerAccess access) : BaseAdminController<A
         return Ok(new AccessRulesSettings
         {
             OnlyAdmin = r.OnlyAdmin, SignUpMode = r.SignUpMode,
-            AllowUserDelete = r.AllowUserDelete, AllowFreeProfileEditing = r.AllowFreeProfileEditing, AccessCodeLimit = r.AccessCodeLimit,
+            AllowUserDelete = r.AllowUserDelete, AllowFreeProfileEditing = r.AllowFreeProfileEditing, AllowCustomTitles = r.AllowCustomTitles,
+            AccessCodeLimit = r.AccessCodeLimit,
             LockoutAttempts = r.LockoutAttempts, LockoutMinutes = r.LockoutMinutes, TwoFactor = r.TwoFactor,
         });
     }
@@ -29,7 +30,7 @@ public class AccessRulesController(IServerAccess access) : BaseAdminController<A
         {
             OnlyAdmin = settings.OnlyAdmin, SignUpMode = Enum.IsDefined(settings.SignUpMode) ? settings.SignUpMode : SignUpMode.LastPlayTime,
             AllowUserDelete = settings.AllowUserDelete, AllowFreeProfileEditing = settings.AllowFreeProfileEditing,
-            AccessCodeLimit = settings.AccessCodeLimit,
+            AllowCustomTitles = settings.AllowCustomTitles, AccessCodeLimit = settings.AccessCodeLimit,
             LockoutAttempts = settings.LockoutAttempts, LockoutMinutes = settings.LockoutMinutes,
             TwoFactor = Enum.IsDefined(settings.TwoFactor) ? settings.TwoFactor : TwoFactorMode.Off,
         }, HttpContext.RequestAborted);

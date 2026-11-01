@@ -40,7 +40,7 @@ else
 
     @if (titlesOpen)
     {
-        <TitlePicker Setting="setting" Titles="unlockedTitles" AllowCustom="AuthService.AllowFreeProfileEditing" OnPick="PickTitle" OnClose="() => titlesOpen = false" />
+        <TitlePicker Setting="setting" Titles="unlockedTitles" AllowCustom="AuthService.CanUseCustomTitle" OnPick="PickTitle" OnClose="() => titlesOpen = false" />
     }
 }
 

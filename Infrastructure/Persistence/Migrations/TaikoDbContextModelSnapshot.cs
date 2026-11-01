@@ -25,6 +25,9 @@ namespace TaikoLocalServer.Migrations
                     b.Property<int>("AccessCodeLimit")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("AllowCustomTitles")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("AllowFreeProfileEditing")
                         .HasColumnType("INTEGER");
 

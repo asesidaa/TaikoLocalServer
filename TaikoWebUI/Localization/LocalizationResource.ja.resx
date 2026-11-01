@@ -3408,4 +3408,10 @@
   <data name="Display" xml:space="preserve">
     <value>表示</value>
   </data>
+  <data name="Custom player titles" xml:space="preserve">
+    <value>自由入力の称号</value>
+  </data>
+  <data name="Players can type their own title instead of picking one of the game's. Admins always can." xml:space="preserve">
+    <value>プレイヤーがゲームの称号から選ぶ代わりに、自分で称号を入力できます。管理者は常に入力できます。</value>
+  </data>
 </root>

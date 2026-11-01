@@ -16,6 +16,7 @@
             @if (AuthService.LoginRequired)
             {
                 <Toggle Label="@Localizer["Free profile editing"]" Description="@Localizer["Free Profile Editing Hint"]" Icon="id" @bind-Value="draft.AllowFreeProfileEditing" />
+                <Toggle Label="@Localizer["Custom player titles"]" Description="@Localizer["Players can type their own title instead of picking one of the game's. Admins always can."]" Icon="pencil" @bind-Value="draft.AllowCustomTitles" />
                 <Toggle Label="@Localizer["Players can delete their account"]" Icon="users" @bind-Value="draft.AllowUserDelete" />
             }
             <label class="flex items-center gap-3 py-2">
@@ -39,7 +40,7 @@
     private bool saving;
 
     private bool Changed => saved is not null && draft is not null &&
-        (saved.AllowFreeProfileEditing, saved.AllowUserDelete, saved.AccessCodeLimit) != (draft.AllowFreeProfileEditing, draft.AllowUserDelete, draft.AccessCodeLimit);
+        (saved.AllowFreeProfileEditing, saved.AllowCustomTitles, saved.AllowUserDelete, saved.AccessCodeLimit) != (draft.AllowFreeProfileEditing, draft.AllowCustomTitles, draft.AllowUserDelete, draft.AccessCodeLimit);
 
     protected override async Task OnInitializedAsync()
     {
@@ -49,7 +50,7 @@
 
     private void Reset() => draft = saved is null ? null : new()
     {
-        AllowFreeProfileEditing = saved.AllowFreeProfileEditing, AllowUserDelete = saved.AllowUserDelete, AccessCodeLimit = saved.AccessCodeLimit,
+        AllowFreeProfileEditing = saved.AllowFreeProfileEditing, AllowCustomTitles = saved.AllowCustomTitles, AllowUserDelete = saved.AllowUserDelete, AccessCodeLimit = saved.AccessCodeLimit,
     };
 
     private async Task Save()
@@ -60,6 +61,7 @@
         if (rules is not null)
         {
             rules.AllowFreeProfileEditing = draft!.AllowFreeProfileEditing;
+            rules.AllowCustomTitles = draft.AllowCustomTitles;
             rules.AllowUserDelete = draft.AllowUserDelete;
             rules.AccessCodeLimit = draft.AccessCodeLimit;
         }
