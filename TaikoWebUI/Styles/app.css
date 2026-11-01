@@ -53,6 +53,7 @@
 @keyframes pop { from { opacity: 0; transform: scale(.96) translateY(-2px); } }
 @keyframes fade { from { opacity: 0; } }
 @keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+@keyframes ticker { to { transform: translateX(-100%); } }
 
 @media (prefers-reduced-motion: reduce) {
     .pop, .fade, .rise { animation: none; }

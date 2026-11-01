@@ -1,0 +1,209 @@
+@* Server Management › Announcements: the cabinets' in-game messages (telop_data.json) and the Web UI Dashboard notice. *@
+@using System.Globalization
+@using System.Text.Json
+@using System.Text.Json.Nodes
+@inject HttpClient Client
+@inject ToastService Toast
+
+<section class="@Css.Card p-5 sm:p-6">
+    <div class="flex flex-wrap items-start justify-between gap-3">
+        <div>
+            <h2 class="font-semibold">@Localizer["In-game messages"]</h2>
+            <p class="text-sm @Css.Muted">@Localizer["The ticker cabinets show. Cabinets pick changes up on their next startup."]</p>
+        </div>
+        <button class="@Css.GhostButton border border-zinc-200 dark:border-zinc-700" @onclick="AddMessage"><Icon Name="plus" />@Localizer["Add message"]</button>
+    </div>
+    @if (telops is null)
+    {
+        <p class="mt-4 text-sm @Css.Muted">@Localizer["Loading..."]</p>
+    }
+    else
+    {
+        <ul class="mt-3 space-y-3">
+            @foreach (var t in telops.OfType<JsonObject>().ToList())
+            {
+                var text = t["telop"]?.ToString() ?? "";
+                var start = Parse(t["startDatetime"]?.ToString());
+                var end = Parse(t["endDatetime"]?.ToString());
+                var (label, tone) = Status(start, end);
+                <li class="rounded-xl border border-zinc-200 p-3 dark:border-zinc-700">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="rounded-full px-2 py-0.5 text-[11px] font-medium @tone">@label</span>
+                        <span class="text-xs @Css.Muted">#@t["telopId"]</span>
+                        <button class="ml-auto grid size-7 place-items-center rounded-lg text-zinc-400 hover:bg-red-500/10 hover:text-red-600" aria-label="@Localizer["Remove"]"
+                                @onclick="() => telops.Remove(t)"><Icon Name="x" /></button>
+                    </div>
+                    <label class="mt-2 block">
+                        <span class="flex justify-between text-xs @Css.Muted"><span>@Localizer["Message"]</span><span class="@(text.Length > MaxText ? "text-red-600" : "")">@text.Length / @MaxText</span></span>
+                        <input class="@Css.Input mt-1" maxlength="@MaxText" value="@text" @oninput='e => t["telop"] = e.Value?.ToString() ?? ""' />
+                    </label>
+                    <div class="mt-2 grid gap-2 sm:grid-cols-2">
+                        <label class="block text-xs @Css.Muted">@Localizer["Starts"]
+                            <input type="datetime-local" class="@Css.Input mt-1" value="@Input(start)" @onchange='e => t["startDatetime"] = Format(e.Value?.ToString())' /></label>
+                        <label class="block text-xs @Css.Muted">@Localizer["Ends"]
+                            <input type="datetime-local" class="@Css.Input mt-1" value="@Input(end)" @onchange='e => t["endDatetime"] = Format(e.Value?.ToString())' /></label>
+                    </div>
+                    @if (text.Length > 0)
+                    {
+                        @* Static when reduced motion is on (motion-reduce:animate-none). *@
+                        <div class="mt-2 overflow-hidden rounded-lg bg-zinc-900 py-1.5 font-display text-sm text-amber-300" aria-hidden="true">
+                            <span class="inline-block animate-[ticker_12s_linear_infinite] whitespace-nowrap pl-[100%] motion-reduce:animate-none motion-reduce:pl-3">@text</span>
+                        </div>
+                    }
+                </li>
+            }
+            @if (telops.Count == 0)
+            {
+                <li class="text-sm @Css.Muted">@Localizer["No messages."]</li>
+            }
+        </ul>
+    }
+</section>
+
+<section class="@Css.Card mt-4 p-5 sm:p-6">
+    <h2 class="font-semibold">@Localizer["Dashboard notice"]</h2>
+    <p class="text-sm @Css.Muted">@Localizer["A banner at the top of everyone's Dashboard in the Web UI."]</p>
+    @if (notice is null)
+    {
+        <p class="mt-4 text-sm @Css.Muted">@Localizer["Loading..."]</p>
+    }
+    else
+    {
+        <div class="mt-3 grid gap-4 lg:grid-cols-2">
+            <div class="space-y-3">
+                <Toggle Label="@Localizer["Show it"]" Icon="megaphone" @bind-Value="notice.Show" />
+                <div class="flex gap-1" role="radiogroup" aria-label="@Localizer["Style"]">
+                    @foreach (var (style, name) in new[] { (NoticeStyle.Info, Localizer["Info"].Value), (NoticeStyle.Event, Localizer["Event"].Value), (NoticeStyle.Warning, Localizer["Warning"].Value) })
+                    {
+                        var on = notice.Style == style;
+                        <button role="radio" aria-checked="@Css.Aria(on)" @onclick="() => notice.Style = style"
+                                class="rounded-full px-3 py-1 text-xs font-medium @(on ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300")">@name</button>
+                    }
+                </div>
+                <label class="block text-sm"><span class="font-medium">@Localizer["Title"]</span>
+                    <input class="@Css.Input mt-1" maxlength="80" @bind="notice.Title" @bind:event="oninput" /></label>
+                <label class="block text-sm"><span class="font-medium">@Localizer["Message"]</span> <span class="text-xs @Css.Muted">@Localizer["**bold**, line breaks"]</span>
+                    <textarea class="@Css.Input mt-1 min-h-24" maxlength="1000" @bind="notice.Message" @bind:event="oninput"></textarea></label>
+                <label class="flex flex-wrap items-center gap-2 text-sm">
+                    <input type="checkbox" class="size-4 accent-primary-500" checked="@(notice.Until is not null)"
+                           @onchange="e => notice.Until = e.Value is true ? DateTime.Now.AddDays(7) : null" />
+                    @Localizer["Show until"]
+                    @if (notice.Until is not null)
+                    {
+                        <input type="datetime-local" class="@Css.Input !w-auto !py-1" @bind="notice.Until" />
+                    }
+                </label>
+            </div>
+            <div>
+                <p class="mb-2 text-xs font-medium @Css.Muted">@Localizer["Preview"]</p>
+                @if (notice.Title.Trim().Length + notice.Message.Trim().Length > 0)
+                {
+                    <NoticeBanner Notice="notice" />
+                }
+                else
+                {
+                    <p class="text-sm @Css.Muted">@Localizer["Write a title or a message."]</p>
+                }
+            </div>
+        </div>
+        <div class="mt-4 flex justify-end">
+            <button class="@Css.PrimaryButton" disabled="@savingNotice" @onclick="SaveNotice">@Localizer["Save"]</button>
+        </div>
+    }
+</section>
+
+<SaveBar Dirty="TelopsDirty" Saving="saving" BlockReason="@TelopBlock" OnSave="SaveTelops" OnDiscard="DiscardTelops" />
+
+@code {
+    private const int MaxText = 80;
+    private const string File = "telop_data.json";
+    private const string Stamp = "yyyyMMddHHmmss";
+
+    private JsonArray? telops;
+    private string original = "";
+    private Dictionary<uint, string> loaded = [];
+    private DashboardNoticeSettings? notice;
+    private bool saving, savingNotice;
+
+    private bool TelopsDirty => telops is not null && telops.ToJsonString() != original;
+
+    private string? TelopBlock => telops?.OfType<JsonObject>().Any(t => (t["telop"]?.ToString()?.Length ?? 0) > MaxText) == true
+        ? string.Format(Localizer["Messages are at most {0} characters."], MaxText) : null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTelops();
+        notice = await Client.GetFromJsonAsync<DashboardNoticeSettings>("api/Notice/Edit");
+        if (notice?.Until is { } u) notice.Until = u.ToLocalTime();
+    }
+
+    private async Task LoadTelops()
+    {
+        telops = JsonNode.Parse(await Client.GetStringAsync($"api/GameData/Files/{File}")) as JsonArray ?? [];
+        original = telops.ToJsonString();
+        loaded = telops.OfType<JsonObject>().ToDictionary(t => t["telopId"]?.GetValue<uint>() ?? 0, t => t.ToJsonString());
+    }
+
+    private static DateTime? Parse(string? s) =>
+        DateTime.TryParseExact(s, Stamp, CultureInfo.InvariantCulture, DateTimeStyles.None, out var d) ? d : null;
+
+    private static string Input(DateTime? d) => d?.ToString("yyyy-MM-ddTHH:mm") ?? "";
+
+    private static string Format(string? input) =>
+        DateTime.TryParse(input, CultureInfo.InvariantCulture, DateTimeStyles.None, out var d) ? d.ToString(Stamp) : "";
+
+    private (string, string) Status(DateTime? start, DateTime? end)
+    {
+        var now = DateTime.Now;
+        return start > now ? (Localizer["Scheduled"], "bg-sky-500/10 text-sky-700 dark:text-sky-300")
+            : end < now ? (Localizer["Ended"], "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400")
+            : (Localizer["Live"], "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400");
+    }
+
+    private void AddMessage()
+    {
+        var id = telops!.OfType<JsonObject>().Select(t => t["telopId"]?.GetValue<uint>() ?? 0).DefaultIfEmpty().Max() + 1;
+        telops.Add(new JsonObject
+        {
+            ["telopId"] = id, ["verupNo"] = 1u, ["startDatetime"] = DateTime.Now.ToString(Stamp),
+            ["endDatetime"] = DateTime.Now.AddDays(7).ToString(Stamp), ["telop"] = "",
+        });
+    }
+
+    private void DiscardTelops() => telops = JsonNode.Parse(original) as JsonArray;
+
+    private async Task SaveTelops()
+    {
+        // Cabinets fetch a message again only when its verupNo goes up.
+        foreach (var t in telops!.OfType<JsonObject>())
+        {
+            var id = t["telopId"]?.GetValue<uint>() ?? 0;
+            if (loaded.TryGetValue(id, out var before) && before != t.ToJsonString())
+                t["verupNo"] = (t["verupNo"]?.GetValue<uint>() ?? 0) + 1;
+        }
+        saving = true;
+        var res = await Client.PutAsync($"api/GameData/Files/{File}", new StringContent(telops.ToJsonString(new JsonSerializerOptions { WriteIndented = true }), System.Text.Encoding.UTF8, "application/json"));
+        saving = false;
+        if (!res.IsSuccessStatusCode) { Toast.Show(Localizer["Save Failed"], true); return; }
+        Toast.Show(Localizer["Saved. Game data reloaded."]);
+        await LoadTelops();
+    }
+
+    private async Task SaveNotice()
+    {
+        savingNotice = true;
+        var res = await Client.PutAsJsonAsync("api/Notice", new DashboardNoticeSettings
+        {
+            Show = notice!.Show, Style = notice.Style, Title = notice.Title, Message = notice.Message,
+            Until = notice.Until is { } u ? DateTime.SpecifyKind(u, DateTimeKind.Local).ToUniversalTime() : null,
+        });
+        savingNotice = false;
+        if (!res.IsSuccessStatusCode)
+        {
+            var body = await res.Content.ReadAsStringAsync();
+            Toast.Show(body.Contains("needs a title") ? Localizer["A notice that shows needs a title or a message."] : Localizer["Save Failed"], true);
+            return;
+        }
+        Toast.Show(Localizer["Saved"]);
+    }
+}

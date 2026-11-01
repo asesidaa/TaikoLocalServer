@@ -1,10 +1,24 @@
 @page "/"
 @attribute [Authorize]
 @inject PageState Page
+@inject HttpClient Client
 
 <PageTitle>Dashboard</PageTitle>
+@if (notice is not null)
+{
+    <div class="mb-4"><NoticeBanner Notice="notice" /></div>
+}
 <ComingSoon Title="@Localizer["Dashboard"]" IconName="dashboard" />
 
 @code {
-    protected override void OnInitialized() => Page.Set(Localizer["Dashboard"]);
+    private DashboardNoticeSettings? notice;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Page.Set(Localizer["Dashboard"]);
+        // 204 when no notice shows.
+        var res = await Client.GetAsync("api/Notice");
+        if (res.StatusCode == System.Net.HttpStatusCode.OK)
+            notice = await res.Content.ReadFromJsonAsync<DashboardNoticeSettings>();
+    }
 }

@@ -321,6 +321,33 @@ namespace TaikoLocalServer.Migrations
                     b.ToTable("DanStageScoreData");
                 });
 
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.DashboardNotice", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Show")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Style")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("Until")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DashboardNotices");
+                });
+
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.ServerSecrets", b =>
                 {
                     b.Property<int>("Id")

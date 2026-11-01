@@ -1,0 +1,33 @@
+@* The Dashboard notice (also the editor's live preview): **bold** and line breaks, nothing else. *@
+@if (Notice is not null)
+{
+    <div role="status" class="flex items-start gap-3 rounded-2xl border p-4 text-sm @Tone">
+        <Icon Name="@(Notice.Style == NoticeStyle.Warning ? "alert" : Notice.Style == NoticeStyle.Event ? "megaphone" : "check")" Class="mt-0.5 size-5 shrink-0" />
+        <div class="min-w-0">
+            @if (Notice.Title.Length > 0)
+            {
+                <p class="font-semibold">@Notice.Title</p>
+            }
+            @if (Notice.Message.Length > 0)
+            {
+                <p class="mt-0.5 text-zinc-700 dark:text-zinc-300">@((MarkupString)Format(Notice.Message))</p>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public DashboardNoticeSettings? Notice { get; set; }
+
+    private string Tone => Notice!.Style switch
+    {
+        NoticeStyle.Warning => "border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-200",
+        NoticeStyle.Event => "border-primary-500/30 bg-primary-500/10 text-primary-800 dark:text-primary-200",
+        _ => "border-sky-500/30 bg-sky-500/10 text-sky-800 dark:text-sky-200",
+    };
+
+    // HTML-encode first, so only the markup added here can render.
+    private static string Format(string text) =>
+        System.Text.RegularExpressions.Regex.Replace(System.Net.WebUtility.HtmlEncode(text), @"\*\*(.+?)\*\*", "<strong>$1</strong>")
+            .Replace("\r\n", "\n").Replace("\n", "<br>");
+}
