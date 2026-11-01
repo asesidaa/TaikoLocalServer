@@ -14,6 +14,7 @@ public interface ITaikoDbContext
     DbSet<BannedCard> BannedCards { get; }
     DbSet<WebSession> WebSessions { get; }
     DbSet<ApiToken> ApiTokens { get; }
+    DbSet<BackupSchedule> BackupSchedules { get; }
     DbSet<Token> Tokens { get; }
     DbSet<SongBestDatum> SongBestData { get; }
     DbSet<SongPlayDatum> SongPlayData { get; }

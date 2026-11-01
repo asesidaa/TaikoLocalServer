@@ -185,6 +185,29 @@ namespace TaikoLocalServer.Migrations
                     b.ToTable("ApiTokens");
                 });
 
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.BackupSchedule", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("BeforeUpdates")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Daily")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Keep")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Time")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BackupSchedules");
+                });
+
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.BannedCard", b =>
                 {
                     b.Property<string>("AccessCode")

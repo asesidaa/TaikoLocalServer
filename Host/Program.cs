@@ -118,6 +118,15 @@ try
     using (var scope = app.Services.CreateScope())
     {
         var db = scope.ServiceProvider.GetRequiredService<TaikoDbContext>();
+        // A database update (pending migrations on an existing database) is backed up first, unless that's switched off.
+        if (db.Database.GetPendingMigrations().Any() && db.Database.GetAppliedMigrations().Any())
+        {
+            bool beforeUpdates;
+            try { beforeUpdates = db.BackupSchedules.AsNoTracking().FirstOrDefault()?.BeforeUpdates ?? true; }
+            catch (Microsoft.Data.Sqlite.SqliteException) { beforeUpdates = true; }   // no schedule table yet
+            if (beforeUpdates)
+                await app.Services.GetRequiredService<TaikoLocalServer.Application.Abstractions.IBackupService>().CreateAsync("update");
+        }
         db.Database.Migrate();
         // Access › Activity keeps a year, Sign-ins 90 days; sessions go a week after their last use (the token lifetime).
         db.Activity.Where(e => e.Time < DateTime.UtcNow.AddDays(-365)).ExecuteDelete();
