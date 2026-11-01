@@ -892,7 +892,7 @@
     <value>Your card. It doesn’t need to have played on this server yet. If it already has an account, this becomes its password.</value>
   </data>
   <data name="Game Assets Hint" xml:space="preserve">
-    <value>Song data, nameplates, the scoreboard and the 3D don-chan, copied in from the game install.</value>
+    <value>Import assets from the game that are required by the WebUI.</value>
   </data>
   <data name="Data Files Hint" xml:space="preserve">
     <value>What the server loaded. Edit the server-owned files here, or by hand and then Reload.</value>
