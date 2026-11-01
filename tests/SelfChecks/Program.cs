@@ -1,9 +1,14 @@
 // Self-checks for 2-step verification (Adapters.AdminApi/Authorization/TwoFactorCodes.cs) and the game files an admin
 // may send from the browser (Infrastructure/GameDataCatalog/ExtractRunner.Match), and the Song page's score line
-// (Adapters.AdminApi/Controllers/SongsController.ScoreLine).
+// (Adapters.AdminApi/Controllers/SongsController.ScoreLine), and a new player's number.
 // A failed check prints its name and the process exits with 1.
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using OtpNet;
 using TaikoLocalServer.Adapters.AdminApi.Authorization;
+using TaikoLocalServer.Application.Handlers;
+using TaikoLocalServer.Infrastructure.Persistence;
 using TaikoLocalServer.Adapters.AdminApi.Controllers;
 using TaikoLocalServer.Contracts.AdminApi.Responses;
 using TaikoLocalServer.Domain.Entities;
@@ -62,6 +67,21 @@ Check("every play is counted once", many.Sum(p => p.Plays) == 6_464);
 Check("the best play is still on the line, at its own time", many.Any(p => p.Score == 1_000_000 && p.PlayTime == start.AddMinutes(4_321)));
 Check("the points stay oldest first", many.Zip(many.Skip(1)).All(x => x.First.PlayTime < x.Second.PlayTime));
 Check("no plays, no points", SongsController.ScoreLine([]).Count == 0);
+
+// A new card's player number (Application/Handlers/AddMyDonEntryCommand.cs), on an in-memory database.
+using (var connection = new SqliteConnection("Data Source=:memory:"))
+{
+    connection.Open();
+    using var db = new TaikoDbContext(new DbContextOptionsBuilder<TaikoDbContext>().UseSqlite(connection).Options);
+    db.Database.EnsureCreated();
+    var entry = new AddMyDonEntryCommandHandler(db, NullLogger<AddMyDonEntryCommandHandler>.Instance);
+    await entry.Handle(new AddMyDonEntryCommand("card-1", "A", 0), default);
+    var second = await entry.Handle(new AddMyDonEntryCommand("card-2", "B", 0), default);
+    db.Cards.Remove(db.Cards.Single(c => c.Baid == second.Baid));
+    await db.SaveChangesAsync();
+    var third = await entry.Handle(new AddMyDonEntryCommand("card-3", "C", 0), default);
+    Check("a new player doesn't take the number of the newest player after their cards are removed", third.Baid == second.Baid + 1);
+}
 
 Console.WriteLine(failed == 0 ? "All checks passed." : $"{failed} check(s) failed.");
 return failed == 0 ? 0 : 1;

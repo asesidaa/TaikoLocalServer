@@ -9,7 +9,8 @@ public class AddMyDonEntryCommandHandler(ITaikoDbContext context, ILogger<AddMyD
 {
     public async ValueTask<CommonMyDonEntryResponse> Handle(AddMyDonEntryCommand request, CancellationToken cancellationToken)
     {
-        var nextBaid = await context.Cards.Select(card => card.Baid)
+        // From users, not cards: a player whose cards were all removed still holds their Baid.
+        var nextBaid = await context.UserData.Select(user => user.Baid)
             .DefaultIfEmpty()
             .MaxAsync(cancellationToken) + 1;
         string friendCode;

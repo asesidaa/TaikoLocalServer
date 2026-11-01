@@ -3,8 +3,9 @@ using Microsoft.JSInterop;
 
 namespace TaikoWebUI.Pages;
 
-// Computed client-side from api/PlayData (best per song × difficulty) and api/PlayHistory (every play).
-// shortcut: pulls the whole play history; move the aggregation to a server Stats endpoint when histories get large.
+// The player's own numbers are computed client-side from api/PlayData (best per song × difficulty) and api/PlayHistory
+// (every play); the comparisons with other players come from api/Stats/{baid}/Server.
+// shortcut: pulls the whole play history; move the own-play sums to api/Stats too when histories get large.
 public partial class Stats
 {
     [Parameter] public int Baid { get; set; }

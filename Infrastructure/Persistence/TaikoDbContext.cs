@@ -147,6 +147,8 @@ namespace TaikoLocalServer.Infrastructure.Persistence
             modelBuilder.Entity<SongBestDatum>(entity =>
             {
                 entity.HasKey(e => new { e.Baid, e.SongId, e.Difficulty });
+                // One chart's bests by score (leaderboards, ranks, Stats' places), without reading every player's bests.
+                entity.HasIndex(e => new { e.SongId, e.Difficulty, e.BestScore });
 
                 entity.HasOne(d => d.Ba)
                     .WithMany()

@@ -521,6 +521,8 @@ namespace TaikoLocalServer.Migrations
 
                     b.HasKey("Baid", "SongId", "Difficulty");
 
+                    b.HasIndex("SongId", "Difficulty", "BestScore");
+
                     b.ToTable("SongBestData");
                 });
 
