@@ -78,6 +78,7 @@ else
         Page.Set(Localizer["Admin"], Localizer["Access"]);
         if (!AuthService.LoginRequired) return;
         saved = await Client.GetFromJsonAsync<AccessRulesSettings>("api/AccessRules");
+        checklist = await Client.GetFromJsonAsync<List<ChecklistItem>>("api/Checklist");
         draft = Copy(saved);
     }
 
@@ -172,6 +173,7 @@ else
             return;
         }
         saved = Copy(draft);
+        checklist = await Client.GetFromJsonAsync<List<ChecklistItem>>("api/Checklist");
         Toast.Show(Localizer["Saved"]);
     }
 
@@ -183,12 +185,32 @@ else
         (SignUpMode.Closed, Localizer["Closed"], Localizer["No new accounts. Admins can still help in User Management."]),
     ];
 
+    private List<ChecklistItem>? checklist;
+
     private RenderFragment Overview => __builder =>
     {
         if (draft is null)
         {
             <p class="text-sm @Css.Muted">@Localizer["Loading..."]</p>
             return;
+        }
+        if (checklist is { Count: > 0 })
+        {
+            var toFix = checklist.Count(c => c.Level == ChecklistLevel.Problem);
+            var warnings = checklist.Count(c => c.Level == ChecklistLevel.Warning);
+            <section class="@Css.Card mb-4 p-5 sm:p-6">
+                <h2 class="font-semibold">@Localizer["Checklist"]</h2>
+                <p class="text-sm @Css.Muted">@(toFix + warnings == 0 ? Localizer["Nothing to fix."] : string.Format(Localizer["{0} to fix, {1} warnings"], toFix, warnings))</p>
+                <ul class="mt-3 space-y-2">
+                    @foreach (var c in checklist)
+                    {
+                        <li class="flex items-start gap-3 rounded-xl border px-3 py-2.5 text-sm @(c.Level switch { ChecklistLevel.Problem => "border-red-500/30 bg-red-500/5", ChecklistLevel.Warning => "border-amber-500/30 bg-amber-500/5", _ => "border-zinc-200 dark:border-zinc-700" })">
+                            <Icon Name="@(c.Level == ChecklistLevel.Ok ? "check" : "alert")" Class="@(c.Level switch { ChecklistLevel.Problem => "mt-0.5 size-4 text-red-500", ChecklistLevel.Warning => "mt-0.5 size-4 text-amber-500", _ => "mt-0.5 size-4 text-emerald-500" })" />
+                            <span class="min-w-0"><span class="block font-medium">@c.Title</span><span class="block text-xs @Css.Muted">@c.Detail</span></span>
+                        </li>
+                    }
+                </ul>
+            </section>
         }
         <section class="@Css.Card p-5 sm:p-6">
             <h2 class="font-semibold">@Localizer["Sign-up and sign-in"]</h2>
